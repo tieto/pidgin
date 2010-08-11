@@ -27,6 +27,7 @@
 #include <gntbutton.h>
 #include <gntlabel.h>
 #include <gnttree.h>
+#include <gntutils.h>
 
 #include <util.h>
 
@@ -72,11 +73,26 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 	if (primary)
 		gnt_box_add_widget(GNT_BOX(window),
 				gnt_label_new_with_format(primary, pf));
-	if (secondary)
-		gnt_box_add_widget(GNT_BOX(window),
-				gnt_label_new_with_format(secondary, sf));
 
 	button = gnt_button_new(_("OK"));
+
+	if (secondary) {
+		GntWidget *msg;
+		if (type == PURPLE_NOTIFY_FORMATTED) {
+			int width = -1, height = -1;
+			msg = gnt_text_view_new();
+			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(msg), secondary, sf);
+			gnt_text_view_scroll(GNT_TEXT_VIEW(msg), 0);
+			gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(msg), button);
+			gnt_util_get_text_bound(secondary, &width, &height);
+			gnt_widget_set_size(msg, width + 3, height + 1);
+		} else {
+			msg = gnt_label_new_with_format(secondary, sf);
+		}
+		gnt_box_add_widget(GNT_BOX(window), msg);
+		g_object_set_data(G_OBJECT(window), "info-widget", msg);
+	}
+
 	gnt_box_add_widget(GNT_BOX(window), button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate",
 			G_CALLBACK(gnt_widget_destroy), window);
@@ -219,19 +235,63 @@ finch_notify_email(PurpleConnection *gc, const char *subject, const char *from,
 			url ? &url : NULL);
 }
 
+/** User information. **/
+static GHashTable *userinfo;
+
+static char *
+userinfo_hash(PurpleAccount *account, const char *who)
+{
+	char key[256];
+	snprintf(key, sizeof(key), "%s - %s", purple_account_get_username(account), purple_normalize(account, who));
+	return g_utf8_strup(key, -1);
+}
+
+static void
+remove_userinfo(GntWidget *widget, gpointer key)
+{
+	g_hash_table_remove(userinfo, key);
+}
+
 static void *
 finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info)
 {
-	/* Xeroxed from gtknotify.c */
 	char *primary;
 	char *info;
 	void *ui_handle;
-	
-	primary = g_strdup_printf(_("Info for %s"), who);
+	char *key = userinfo_hash(purple_connection_get_account(gc), who);
+
 	info = purple_notify_user_info_get_text_with_newline(user_info, "<BR>");
-	ui_handle = finch_notify_formatted(_("Buddy Information"), primary, NULL, info);
+
+	ui_handle = g_hash_table_lookup(userinfo, key);
+	if (ui_handle != NULL) {
+		GntTextView *msg = GNT_TEXT_VIEW(g_object_get_data(G_OBJECT(ui_handle), "info-widget"));
+		char *strip = purple_markup_strip_html(info);
+		int tvw, tvh, width, height, ntvw, ntvh;
+
+		gnt_widget_get_size(GNT_WIDGET(ui_handle), &width, &height);
+		gnt_widget_get_size(GNT_WIDGET(msg), &tvw, &tvh);
+
+		/* Ideally, I would replace the information in "info". But replacing tagged text is a
+		 * bit nasty right now. So clear the view and add the new stuff instead. */
+		gnt_text_view_clear(msg);
+		gnt_text_view_append_text_with_flags(msg, strip, GNT_TEXT_FLAG_NORMAL);
+		gnt_text_view_scroll(msg, 0);
+		gnt_util_get_text_bound(strip, &ntvw, &ntvh);
+		ntvw += 3;
+		ntvh++;
+
+		gnt_screen_resize_widget(GNT_WIDGET(ui_handle), width + (ntvw - tvw), height + (ntvh - tvh));
+		g_free(strip);
+		g_free(key);
+	} else {
+		primary = g_strdup_printf(_("Info for %s"), who);
+		ui_handle = finch_notify_formatted(_("Buddy Information"), primary, NULL, info);
+		g_hash_table_insert(userinfo, key, ui_handle);
+		g_free(primary);
+		g_signal_connect(G_OBJECT(ui_handle), "destroy", G_CALLBACK(remove_userinfo), key);
+	}
+
 	g_free(info);
-	g_free(primary);
 	return ui_handle;
 }
 
@@ -345,17 +405,21 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 
 static PurpleNotifyUiOps ops = 
 {
-	.notify_message = finch_notify_message,
-	.close_notify = finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
-                                              These widgets should be destroyed from here. */
-	.notify_formatted = finch_notify_formatted,
-	.notify_email = finch_notify_email,
-	.notify_emails = finch_notify_emails,
-	.notify_userinfo = finch_notify_userinfo,
+	finch_notify_message,
+	finch_notify_email,
+	finch_notify_emails,
+	finch_notify_formatted,
+	finch_notify_searchresults,
+	finch_notify_sr_new_rows,
+	finch_notify_userinfo,
+	NULL,                     /* notify_uri is of low-priority to me. --sadrul */
+	finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
+                                     These widgets should be destroyed from here. */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 
-	.notify_searchresults = finch_notify_searchresults,
-	.notify_searchresults_new_rows = finch_notify_sr_new_rows,
-	.notify_uri = NULL                     /* This is of low-priority to me */
 };
 
 PurpleNotifyUiOps *finch_notify_get_ui_ops()
@@ -365,10 +429,12 @@ PurpleNotifyUiOps *finch_notify_get_ui_ops()
 
 void finch_notify_init()
 {
+	userinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 }
 
 void finch_notify_uninit()
 {
+	g_hash_table_destroy(userinfo);
 }
 
 

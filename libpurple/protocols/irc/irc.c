@@ -146,10 +146,10 @@ int irc_send(struct irc_conn *irc, const char *buf)
 	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
 	if (tosend == NULL)
 		return 0;
-	
+
 	buflen = strlen(tosend);
-	
-	
+
+
 	/* If we're not buffering writes, try to send immediately */
 	if (!irc->writeh)
 		ret = do_send(irc, tosend, buflen);
@@ -342,7 +342,7 @@ static void irc_login(PurpleAccount *account)
 }
 
 static gboolean do_login(PurpleConnection *gc) {
-	char *buf;
+	char *buf, *tmp = NULL;
 	char hostname[256];
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
@@ -358,12 +358,26 @@ static gboolean do_login(PurpleConnection *gc) {
 		g_free(buf);
 	}
 
+
 	gethostname(hostname, sizeof(hostname));
 	hostname[sizeof(hostname) - 1] = '\0';
-	username = purple_account_get_string(irc->account, "username", "");
 	realname = purple_account_get_string(irc->account, "realname", "");
-	buf = irc_format(irc, "vvvv:", "USER", strlen(username) ? username : g_get_user_name(), hostname, irc->server,
+	username = purple_account_get_string(irc->account, "username", "");
+
+	if (username == NULL || *username == '\0') {
+		username = g_get_user_name();
+	}
+
+	if (username != NULL && strchr(username, ' ') != NULL) {
+		tmp = g_strdup(username);
+		while ((buf = strchr(tmp, ' ')) != NULL) {
+			*buf = '_';
+		}
+	}
+
+	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, irc->server,
 			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
+	g_free(tmp);
 	if (irc_send(irc, buf) < 0) {
 /*		purple_connection_error(gc, "Error registering with server");*/
 		g_free(buf);
@@ -548,13 +562,13 @@ static void read_input(struct irc_conn *irc, int len)
 	irc->inbuf[irc->inbufused] = '\0';
 
 	cur = irc->inbuf;
-	
+
 	/* This is a hack to work around the fact that marv gets messages
 	 * with null bytes in them while using some weird irc server at work
 	 */
 	while ((cur < (irc->inbuf + irc->inbufused)) && !*cur)
 		cur++;
-	
+
 	while (cur < irc->inbuf + irc->inbufused &&
 	       ((end = strstr(cur, "\r\n")) || (end = strstr(cur, "\n")))) {
 		int step = (*end == '\r' ? 2 : 1);
@@ -643,7 +657,7 @@ static char *irc_get_chat_name(GHashTable *data) {
 	return g_strdup(g_hash_table_lookup(data, "channel"));
 }
 
-static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name) 
+static void irc_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
 	struct irc_conn *irc = gc->proto_data;
 	PurpleConversation *convo = purple_find_chat(gc, id);

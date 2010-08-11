@@ -654,11 +654,12 @@ purple_dbus_convert_signal_name(const char *purple_name)
 
 #define my_arg(type) (ptr != NULL ? * ((type *)ptr) : va_arg(data, type))
 
-static void
+static gboolean
 purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		int number, PurpleValue **purple_values, va_list data)
 {
 	int i;
+	gboolean error = FALSE;
 
 	for (i = 0; i < number; i++)
 	{
@@ -668,11 +669,12 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		guint xuint;
 		gboolean xboolean;
 		gpointer ptr = NULL;
+		gpointer val;
 
 		if (purple_value_is_outgoing(purple_values[i]))
 		{
 			ptr = my_arg(gpointer);
-			g_return_if_fail(ptr);
+			g_return_val_if_fail(ptr, TRUE);
 		}
 
 		switch (purple_values[i]->type)
@@ -705,14 +707,18 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		case PURPLE_TYPE_POINTER:
 		case PURPLE_TYPE_OBJECT:
 		case PURPLE_TYPE_BOXED:
-			id = purple_dbus_pointer_to_id(my_arg(gpointer));
+			val = my_arg(gpointer);
+			id = purple_dbus_pointer_to_id(val);
+			if (id == 0 && val != NULL)
+				error = TRUE;      /* Some error happened. */
 			dbus_message_iter_append_basic(iter,
 					(sizeof(void *) == 4) ? DBUS_TYPE_UINT32 : DBUS_TYPE_UINT64, &id);
 			break;
 		default: /* no conversion implemented */
-			g_return_if_reached();
+			g_return_val_if_reached(TRUE);
 		}
 	}
+	return error;
 }
 
 #undef my_arg
@@ -746,7 +752,8 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	signal = dbus_message_new_signal(DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, newname);
 	dbus_message_iter_init_append(signal, &iter);
 
-	purple_dbus_message_append_purple_values(&iter, num_values, values, vargs);
+	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
+		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error.\n", name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 

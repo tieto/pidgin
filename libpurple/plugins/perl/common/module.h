@@ -236,7 +236,7 @@ typedef PurpleRoomlistUiOps *		Purple__Roomlist__UiOps;
 
 /* savedstatuses.h */
 typedef PurpleSavedStatus *		Purple__SavedStatus;
-typedef PurpleSavedStatusSub *		Purple__SavedStatusSub;
+typedef PurpleSavedStatusSub *		Purple__SavedStatus__Sub;
 
 /* sound.h */
 typedef PurpleSoundEventID		Purple__SoundEventID;

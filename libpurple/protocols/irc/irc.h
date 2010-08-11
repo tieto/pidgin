@@ -142,8 +142,8 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_ping(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, char **args);
-void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *from, char **args);

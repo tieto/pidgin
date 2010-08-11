@@ -9,9 +9,9 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.0.0"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.0.1"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.0.0
+%define pidginver 2.0.1
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
@@ -21,7 +21,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.0.0.tar.bz2
+Source:     %{name}-2.0.1.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -29,7 +29,6 @@ BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 BuildRequires: gtk2-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
-%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
@@ -55,7 +54,10 @@ BuildRequires: gnutls-devel
 # For Mandrake/Mandriva:
 BuildRequires: libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
+%{!?_without_modularx:BuildRequires: libsm-devel, libxscrnsaver-devel}
 %else
+# For !Mandriva
+%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 # For SuSE, Red Hat, Fedora and others:
 %if "%{_vendor}" != "suse"
 # For Red Hat, Fedora and others:
@@ -69,6 +71,10 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
+
+Requires(pre): GConf2
+Requires(post): GConf2
+Requires(preun): GConf2
 
 Obsoletes: gaim
 Provides: gaim
@@ -132,7 +138,7 @@ Requires:   pkgconfig
 
 %description
 Pidgin allows you to talk to anyone using a variety of messaging
-protocols including AIM, MSN, Yahoo!, Jabber, Bonjour, Gadu-Gadu,
+protocols including AIM, MSN, Yahoo!, XMPP, Bonjour, Gadu-Gadu,
 ICQ, IRC, Novell Groupwise, QQ, Lotus Sametime, SILC, Simple and
 Zephyr.  These protocols are implemented using a modular, easy to
 use design.  To use a protocol, just add an account using the
@@ -154,7 +160,7 @@ libpurple contains the core IM support for IM clients such as Pidgin
 and Finch.
 
 libpurple supports a variety of messaging protocols including AIM, MSN,
-Yahoo!, Jabber, Bonjour, Gadu-Gadu, ICQ, IRC, Novell Groupwise, QQ,
+Yahoo!, XMPP, Bonjour, Gadu-Gadu, ICQ, IRC, Novell Groupwise, QQ,
 Lotus Sametime, SILC, Simple and Zephyr.
 
 %description -n libpurple-devel
@@ -192,7 +198,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.0.0
+%setup -q -n %{name}-2.0.1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -296,7 +302,7 @@ if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     if [ -f %{_sysconfdir}/gconf/schemas/purple.schemas ]; then
         gconftool-2 --makefile-uninstall-rule \
             %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
-        killall -HUP gconfd-2 || :
+        killall -HUP gconfd-2 &> /dev/null || :
     fi
 fi
 
@@ -305,10 +311,10 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-install-rule \
         %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
-    killall -HUP gconfd-2 || :
+    killall -HUP gconfd-2 &> /dev/null || :
 fi
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -319,12 +325,12 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-uninstall-rule \
       %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
-    killall -HUP gconfd-2 || :
+    killall -HUP gconfd-2 &> /dev/null || :
 fi
 
 %postun
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -443,6 +449,15 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Thu May 24 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Silence errors from gtk-update-icon-cache
+- Change Mandriva build dependencies to reflect the correct (lower case)
+  names for libSM-devel & libXScrnSaver-devel (Sunny Dubey)
+
+* Thu May 10 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add scriptlet Requires for GConf2 to fix schema installation
+- Silence harmless errors when gconfd-2 is not running at install time
+
 * Thu May 3 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add missing BuildRequires: startup-notification-devel, if you really
   need to build on a distro without it use --without startupnotification

@@ -163,9 +163,9 @@ static PurplePluginInfo info =
 	"XMPP",                                           /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Jabber Protocol Plugin"),
+	N_("XMPP Protocol Plugin"),
 	                                                  /**  description    */
-	N_("Jabber Protocol Plugin"),
+	N_("XMPP Protocol Plugin"),
 	NULL,                                             /**< author         */
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
@@ -191,7 +191,8 @@ init_plugin(PurplePlugin *plugin)
         PurpleAccountUserSplit *split;
         PurpleAccountOption *option;
 
-        split = purple_account_user_split_new(_("Server"), "jabber.org", '@');
+	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
+        split = purple_account_user_split_new(_("Domain"), NULL, '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');

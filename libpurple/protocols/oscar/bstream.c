@@ -172,10 +172,10 @@ guint8 *byte_stream_getraw(ByteStream *bs, int len)
 {
 	guint8 *ob;
 
-	ob = malloc(len);
+	ob = g_malloc(len);
 
 	if (byte_stream_getrawbuf(bs, ob, len) < len) {
-		free(ob);
+		g_free(ob);
 		return NULL;
 	}
 
@@ -186,10 +186,10 @@ char *byte_stream_getstr(ByteStream *bs, int len)
 {
 	char *ob;
 
-	ob = malloc(len + 1);
+	ob = g_malloc(len + 1);
 
 	if (byte_stream_getrawbuf(bs, (guint8 *)ob, len) < len) {
-		free(ob);
+		g_free(ob);
 		return NULL;
 	}
 

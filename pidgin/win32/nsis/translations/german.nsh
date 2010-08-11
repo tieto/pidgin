@@ -6,7 +6,7 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2007.
-;;  Version 4
+;;  Version 5
 ;;
  
 ; Startup checks
@@ -33,16 +33,21 @@
  
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Eine alte Version der GTK+ Runtime wurde gefunden. Möchten Sie aktualisieren?$\rHinweis: $(^Name) funktioniert evtl. nicht, wenn Sie nicht aktualisieren."
+!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me sind inkompatibel zu GTK+ 2.8.0 oder neuer.  GTK+ ${GTK_INSTALL_VERSION} wird nicht installiert.$\rWenn Sie nicht GTK+ ${GTK_MIN_VERSION} oder neuer installiert haben, wird die Installation jetzt abgebrochent."
  
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE	"Besuchen Sie die Windows Pidgin Webseite"
  
 ; Pidgin Section Prompts and Texts
 !define PIDGIN_UNINSTALL_DESC			"$(^Name) (nur entfernen)"
+!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Die aktuell installierte Version von Pidgin kann nicht deinstalliert werden. Die neue Version wird installiert, ohne dass die aktuell installierte Version gelöscht wird."
  
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fehler beim Installieren der GTK+ Runtime."
 !define GTK_BAD_INSTALL_PATH			"Der Pfad, den Sie eingegeben haben, existiert nicht und kann nicht erstellt werden."
+
+; URL Handler section
+!define URI_HANDLERS_SECTION_TITLE		"URI-Behandlung"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Pidgin finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendung installiert hat."

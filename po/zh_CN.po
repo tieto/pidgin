@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-04-09 08:32-0400\n"
-"PO-Revision-Date: 2007-05-01 13:46+0800\n"
+"PO-Revision-Date: 2007-05-20 20:22+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
@@ -1057,7 +1057,7 @@ msgstr "仅当我的状态不可用时才监视"
 
 #: ../finch/gntpounce.c:447 ../pidgin/gtkpounce.c:1278
 msgid "Recurring"
-msgstr "在线"
+msgstr "再现"
 
 #: ../finch/gntpounce.c:649 ../pidgin/gtkpounce.c:1095
 #, c-format
@@ -1413,7 +1413,7 @@ msgstr "打开新对话时，此插件将会将上次对话插入当前对话。
 
 #: ../finch/plugins/lastlog.c:69
 msgid "Lastlog"
-msgstr ""
+msgstr "Lastlog"
 
 #: ../finch/plugins/lastlog.c:99
 msgid "lastlog: Searches for a substring in the backlog."
@@ -1426,7 +1426,7 @@ msgstr "历史"
 
 #: ../finch/plugins/lastlog.c:123 ../finch/plugins/lastlog.c:124
 msgid "Lastlog plugin."
-msgstr ""
+msgstr "Lastlog 插件。"
 
 #: ../libpurple/account.c:777
 msgid "accounts"
@@ -2924,9 +2924,8 @@ msgstr "Bonjour 协议插件"
 #: ../libpurple/protocols/bonjour/bonjour.c:463
 #: ../libpurple/protocols/bonjour/bonjour.c:470
 #: ../libpurple/protocols/bonjour/bonjour.c:528
-#, fuzzy
 msgid "Purple Person"
-msgstr "新建联系人"
+msgstr "Purple 联系人"
 
 #. Creating the user splits
 #: ../libpurple/protocols/bonjour/bonjour.c:567
@@ -2965,7 +2964,7 @@ msgstr "Jabber 账户"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
-msgstr ""
+msgstr "Bonjour"
 
 #: ../libpurple/protocols/bonjour/jabber.c:374
 #, c-format
@@ -3004,15 +3003,13 @@ msgstr "您为给定代理类型所指定的主机名或端口号无效。"
 
 #: ../libpurple/protocols/gg/gg.c:115 ../libpurple/protocols/gg/gg.c:137
 #: ../libpurple/protocols/gg/gg.c:180
-#, fuzzy
 msgid "Token Error"
-msgstr "未知错误"
+msgstr "令牌错误"
 
 #: ../libpurple/protocols/gg/gg.c:116 ../libpurple/protocols/gg/gg.c:138
 #: ../libpurple/protocols/gg/gg.c:181
-#, fuzzy
 msgid "Unable to fetch the token.\n"
-msgstr "无法获取房间列表。"
+msgstr "无法获取令牌。\n"
 
 #: ../libpurple/protocols/gg/gg.c:269 ../libpurple/protocols/gg/gg.c:288
 msgid "Save Buddylist..."
@@ -3077,14 +3074,12 @@ msgid "Password (retype)"
 msgstr "密码(重新输入)"
 
 #: ../libpurple/protocols/gg/gg.c:483 ../libpurple/protocols/gg/gg.c:774
-#, fuzzy
 msgid "Enter current token"
-msgstr "%s 目前未登入。"
+msgstr "输入当前令牌"
 
 #: ../libpurple/protocols/gg/gg.c:489 ../libpurple/protocols/gg/gg.c:780
-#, fuzzy
 msgid "Current token"
-msgstr "目前位于"
+msgstr "当前令牌"
 
 #: ../libpurple/protocols/gg/gg.c:493 ../libpurple/protocols/gg/gg.c:494
 msgid "Register New Gadu-Gadu Account"
@@ -3092,7 +3087,7 @@ msgstr "注册新的 Gadu-Gadu 账户"
 
 #: ../libpurple/protocols/gg/gg.c:495
 msgid "Please, fill in the following fields"
-msgstr ""
+msgstr "请填入下列字段"
 
 #: ../libpurple/protocols/gg/gg.c:632 ../libpurple/protocols/gg/gg.c:1039
 #: ../libpurple/protocols/gg/gg.c:1113
@@ -3148,7 +3143,7 @@ msgstr "请在下面输入您的搜索条件"
 
 #: ../libpurple/protocols/gg/gg.c:690
 msgid "Fill in the fields."
-msgstr ""
+msgstr "填入字段。"
 
 #: ../libpurple/protocols/gg/gg.c:702
 msgid "Your current password is different from the one that you specified."
@@ -3849,9 +3844,8 @@ msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;新昵称&gt;: 更改您的昵称。"
 
 #: ../libpurple/protocols/irc/parse.c:134
-#, fuzzy
 msgid "nickserv: Send a command to nickserv"
-msgstr "quot [……]: 向服务器发送原始命令。"
+msgstr "nickserv: 向 nickserv 发送命令"
 
 #: ../libpurple/protocols/irc/parse.c:135
 msgid ""
@@ -3867,9 +3861,8 @@ msgid ""
 msgstr "operwall &lt;消息&gt;: 如果您不知道这是什么功能，请不要使用。"
 
 #: ../libpurple/protocols/irc/parse.c:137
-#, fuzzy
 msgid "operserv: Send a command to operserv"
-msgstr "quot [……]: 向服务器发送原始命令。"
+msgstr "operserv: 向 operserv 发送命令"
 
 #: ../libpurple/protocols/irc/parse.c:138
 msgid ""
@@ -3917,7 +3910,7 @@ msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;: 设置或取消用户模式。"
 
 #: ../libpurple/protocols/irc/parse.c:147
 msgid "version [nick]: send CTCP VERSION request to a user"
-msgstr ""
+msgstr "version [昵称]: 向用户发送 CTCP VERSION 请求"
 
 #: ../libpurple/protocols/irc/parse.c:148
 msgid ""
@@ -3966,7 +3959,7 @@ msgstr "服务器需要在不加密流上使用纯文本验证"
 
 #: ../libpurple/protocols/jabber/auth.c:229
 msgid "Server couldn't authenticate you without a password"
-msgstr ""
+msgstr "在不提供密码的情况下服务器无法通过您的身份验证"
 
 #: ../libpurple/protocols/jabber/auth.c:232
 #: ../libpurple/protocols/jabber/auth.c:233
@@ -4231,6 +4224,7 @@ msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
 "Each field supports wild card searches (%)"
 msgstr ""
+"要查找联系人，请在给出的输入框中输入搜索条件。注意：您可以使用通配符(%)进行搜索"
 
 #: ../libpurple/protocols/jabber/buddy.c:1694
 msgid "Directory Query Failed"
@@ -4249,7 +4243,7 @@ msgstr "服务器指令：%s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
 msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr ""
+msgstr "填入输入框可以搜索匹配的 Jabber 用户。"
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
 #: ../libpurple/protocols/novell/novell.c:1488
@@ -4822,6 +4816,7 @@ msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
 msgstr ""
+"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: 设置用户在房间中的角色。"
 
 #: ../libpurple/protocols/jabber/jabber.c:1838
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4987,27 +4982,22 @@ msgid "User does not exist"
 msgstr "用户不存在"
 
 #: ../libpurple/protocols/msn/error.c:53
-#, fuzzy
 msgid "Fully qualified domain name missing"
 msgstr "缺少全称域名"
 
 #: ../libpurple/protocols/msn/error.c:56
-#, fuzzy
 msgid "Already logged in"
 msgstr "已登入"
 
 #: ../libpurple/protocols/msn/error.c:59
-#, fuzzy
 msgid "Invalid screen name"
 msgstr "用户名无效"
 
 #: ../libpurple/protocols/msn/error.c:62
-#, fuzzy
 msgid "Invalid friendly name"
 msgstr "友好的名称无效"
 
 #: ../libpurple/protocols/msn/error.c:65
-#, fuzzy
 msgid "List full"
 msgstr "列表满"
 
@@ -5061,7 +5051,6 @@ msgid "Switchboard failed"
 msgstr "切换板失败"
 
 #: ../libpurple/protocols/msn/error.c:111
-#, fuzzy
 msgid "Notify transfer failed"
 msgstr "通知传送失败"
 
@@ -5079,7 +5068,6 @@ msgid "Not logged in"
 msgstr "未登入"
 
 #: ../libpurple/protocols/msn/error.c:128
-#, fuzzy
 msgid "Service temporarily unavailable"
 msgstr "服务暂时不可用"
 
@@ -6187,26 +6175,25 @@ msgstr "服务器关闭了连接。"
 #: ../libpurple/protocols/yahoo/yahoo.c:2440 ../libpurple/proxy.c:592
 #: ../libpurple/proxy.c:1097 ../libpurple/proxy.c:1208
 #: ../libpurple/proxy.c:1308 ../libpurple/proxy.c:1436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Lost connection with server:\n"
 "%s"
-msgstr "未连接到服务器。"
+msgstr "失去与服务器的连接：\n%s"
 
 #: ../libpurple/protocols/oscar/flap_connection.c:384
 #: ../libpurple/proxy.c:1114 ../libpurple/proxy.c:1221
 #: ../libpurple/proxy.c:1320 ../libpurple/proxy.c:1392
 #: ../libpurple/proxy.c:1449
-#, fuzzy
 msgid "Received invalid data on connection with server."
-msgstr "无法通过 SSL 连接到服务器。"
+msgstr "在与服务器的连接中收到了无效的数据。"
 
 #: ../libpurple/protocols/oscar/flap_connection.c:386
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not establish a connection with the server:\n"
 "%s"
-msgstr "无法建立与本地 mDNS 服务器的连接。服务器是否在运行中？"
+msgstr "无法建立与服务器：\n%s"
 
 #. *< type
 #. *< ui_requirement
@@ -6220,9 +6207,8 @@ msgstr "无法建立与本地 mDNS 服务器的连接。服务器是否在运行
 #. *  description
 #: ../libpurple/protocols/oscar/libaim.c:112
 #: ../libpurple/protocols/oscar/libaim.c:114
-#, fuzzy
 msgid "AIM Protocol Plugin"
-msgstr "AIM/ICQ 协议插件"
+msgstr "AIM 协议插件"
 
 #. *< type
 #. *< ui_requirement
@@ -6236,9 +6222,8 @@ msgstr "AIM/ICQ 协议插件"
 #. *  description
 #: ../libpurple/protocols/oscar/libicq.c:112
 #: ../libpurple/protocols/oscar/libicq.c:114
-#, fuzzy
 msgid "ICQ Protocol Plugin"
-msgstr "IRC 协议插件"
+msgstr "ICQ 协议插件"
 
 #: ../libpurple/protocols/oscar/libicq.c:135
 #: ../libpurple/protocols/yahoo/yahoo.c:4069
@@ -6247,19 +6232,17 @@ msgid "Encoding"
 msgstr "编码"
 
 #: ../libpurple/protocols/oscar/odc.c:40
-#, fuzzy
 msgid "The remote user has closed the connection."
-msgstr "%s 已经关闭了对话。"
+msgstr "远程用户关闭了连接。"
 
 #: ../libpurple/protocols/oscar/odc.c:42
-#, fuzzy
 msgid "The remote user has declined your request."
-msgstr "用户已经屏蔽了您"
+msgstr "远程用户拒绝了您的请求。"
 
 #: ../libpurple/protocols/oscar/odc.c:44
-#, fuzzy, c-format
+#, c-format
 msgid "Lost connection with the remote user:<br>%s"
-msgstr "您错过了 %2$s 的 %1$hu 条消息，原因未知。"
+msgstr "失去与远程用户的连接：<br>%s"
 
 #: ../libpurple/protocols/oscar/odc.c:47
 msgid "Received invalid data on connection with remote user."
@@ -6528,18 +6511,18 @@ msgid "Buddy Comment"
 msgstr "好友注释"
 
 #: ../libpurple/protocols/oscar/oscar.c:976
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not connect to authentication server:\n"
 "%s"
-msgstr "无法连接到身份验证服务器"
+msgstr "无法连接到身份验证服务器：\n%s"
 
 #: ../libpurple/protocols/oscar/oscar.c:984
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not connect to BOS server:\n"
 "%s"
-msgstr "无法连接到 BOS 服务器"
+msgstr "无法连接到 BOS 服务器：\n%s"
 
 #: ../libpurple/protocols/oscar/oscar.c:1024
 msgid "Screen name sent"
@@ -6626,9 +6609,8 @@ msgstr "输入所显示的六位数字。"
 #: ../libpurple/protocols/oscar/oscar.c:2288
 #: ../libpurple/protocols/oscar/oscar.c:5833
 #: ../libpurple/protocols/oscar/oscar.c:6109 ../libpurple/request.h:1350
-#, fuzzy
 msgid "_OK"
-msgstr "确定"
+msgstr "确定(_O)"
 
 #: ../libpurple/protocols/oscar/oscar.c:1471
 #: ../libpurple/protocols/oscar/oscar.c:1514
@@ -6846,9 +6828,8 @@ msgid "Available Message"
 msgstr "可用消息"
 
 #: ../libpurple/protocols/oscar/oscar.c:2913
-#, fuzzy
 msgid "Profile"
-msgstr "MSN 个人资料"
+msgstr "个人资料"
 
 #: ../libpurple/protocols/oscar/oscar.c:2990
 msgid "Your AIM connection may be lost."
@@ -7324,12 +7305,11 @@ msgid "Show how long you have been idle"
 msgstr "显示您发了多长时间呆"
 
 #: ../libpurple/protocols/oscar/oscar.c:6628
-#, fuzzy
 msgid ""
 "Always use ICQ proxy server for file transfers\n"
 "(slower, but does not reveal your IP address)"
 msgstr ""
-"总是使用 AIM/ICQ 代理服务器\n"
+"总是使用 ICQ 代理服务器\n"
 "(较慢，但不会暴露您的 IP 地址)"
 
 #: ../libpurple/protocols/oscar/peer.c:674
@@ -8115,9 +8095,9 @@ msgid "Connection reset"
 msgstr "连接重置"
 
 #: ../libpurple/protocols/sametime/sametime.c:1709
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from socket: %s"
-msgstr "从套接字读取时出错。"
+msgstr "从套接字读取时出错：%s"
 
 #. this is a regular connect, error out
 #: ../libpurple/protocols/sametime/sametime.c:1732
@@ -8128,7 +8108,7 @@ msgstr "无法连接到主机"
 #: ../libpurple/protocols/sametime/sametime.c:1770
 #, c-format
 msgid "Announcement from %s"
-msgstr ""
+msgstr "来自 %s 的通知"
 
 #: ../libpurple/protocols/sametime/sametime.c:1944
 msgid "Conference Closed"
@@ -8384,9 +8364,8 @@ msgid ""
 msgstr ""
 
 #: ../libpurple/protocols/sametime/sametime.c:5470
-#, fuzzy
 msgid "Notes Address Book Group"
-msgstr "添加到地址簿"
+msgstr "Notes 地址簿组"
 
 #: ../libpurple/protocols/sametime/sametime.c:5471
 msgid ""
@@ -9395,9 +9374,8 @@ msgid "Out of memory"
 msgstr "内存溢出"
 
 #: ../libpurple/protocols/silc/silc.c:294
-#, fuzzy
 msgid "John Noname"
-msgstr "无名称"
+msgstr "张三"
 
 #: ../libpurple/protocols/silc/silc.c:317
 msgid "Cannot initialize SILC protocol"
@@ -10263,9 +10241,8 @@ msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2461
-#, fuzzy
 msgid "Received unexpected HTTP response from server."
-msgstr "服务器的响应无效。"
+msgstr "从服务器收到了意外的 HTTP 响应。"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2485
 #: ../libpurple/protocols/yahoo/yahoo.c:2664
@@ -10364,7 +10341,6 @@ msgid "Join User in Chat..."
 msgstr "在聊天中加入用户..."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3755
-#, fuzzy
 msgid "You have just sent a Buzz!"
 msgstr "您刚刚发送了闪屏振动!"
 
@@ -11003,11 +10979,11 @@ msgid "Error reading from %s: %s"
 msgstr "从套接字读取时出错。"
 
 #: ../libpurple/util.c:3434
-#, fuzzy, c-format
+#, c-format
 msgid "Error writing to %s: %s"
 msgstr ""
-"写入 %s 出错：\n"
-"%s。\n"
+"写入 %s 出错："
+"%s"
 
 #: ../libpurple/util.c:3459
 #, c-format
@@ -12496,11 +12472,11 @@ msgid "_Remove Contact"
 msgstr "删除联系人(_R)"
 
 #: ../pidgin/gtkdialogs.c:1086
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
-msgstr "您即将从您的好友列表中删除组 %s 及其所有成员。您真的要这么做吗？"
+msgstr "您即将把 %s 组合并到 %s 组中。您真的要这么做吗？"
 
 #: ../pidgin/gtkdialogs.c:1093
 msgid "Merge Groups"
@@ -13977,9 +13953,8 @@ msgid "Display Statistics"
 msgstr "显示统计"
 
 #: ../pidgin/plugins/cap/cap.c:461 ../pidgin/plugins/cap/cap.c:464
-#, fuzzy
 msgid "Response Probability:"
-msgstr "响应丢失"
+msgstr "响应可能性："
 
 #: ../pidgin/plugins/cap/cap.c:810
 msgid "Statistics Configuration"

@@ -104,6 +104,7 @@
 #define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
 #define PIDGIN_STOCK_ANIMATION_TYPING3	"pidgin-anim-typing3"
 #define PIDGIN_STOCK_ANIMATION_TYPING4	"pidgin-anim-typing4"
+#define PIDGIN_STOCK_ANIMATION_TYPING5	"pidgin-anim-typing5"
 
 /* Toolbar (and menu) icons */
 #define PIDGIN_STOCK_TOOLBAR_ACCOUNTS     "pidgin-accounts"

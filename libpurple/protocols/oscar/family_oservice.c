@@ -194,12 +194,12 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, &redir);
 
-	free((void *)redir.ip);
-	free((void *)redir.cookie);
+	g_free((void *)redir.ip);
+	g_free((void *)redir.cookie);
 
 	if (origsnac)
-		free(origsnac->data);
-	free(origsnac);
+		g_free(origsnac->data);
+	g_free(origsnac);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -588,7 +588,7 @@ aim_srv_setidle(OscarData *od, guint32 idletime)
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
 	if(!conn)
 		return;
-	
+
 	aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
 }
 
@@ -641,7 +641,7 @@ migrate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame
 		ret = userfunc(od, conn, frame, ip, cktlv ? cktlv->value : NULL);
 
 	aim_tlvlist_free(&tl);
-	free(ip);
+	g_free(ip);
 
 	return ret;
 }
@@ -679,7 +679,7 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, id, msg);
 
-	free(msg);
+	g_free(msg);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -769,7 +769,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	/* This is frivolous. (Thank you SmarterChild.) */
 	vercount = byte_stream_empty(bs)/4;
 	versions = byte_stream_getraw(bs, byte_stream_empty(bs));
-	free(versions);
+	g_free(versions);
 
 	/*
 	 * Now request rates.
@@ -927,7 +927,7 @@ memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, offset, len, modname);
 
-	free(modname);
+	g_free(modname);
 	aim_tlvlist_free(&list);
 
 	return ret;
@@ -1051,13 +1051,13 @@ aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 			/* not sure what the difference between 1 and 0 is */
 			guint8 *md5 = byte_stream_getraw(bs, length);
 			ret = userfunc(od, conn, frame, type, flags, length, md5);
-			free(md5);
+			g_free(md5);
 			} break;
 		case 0x0002: { /* available message */
 			/* there is a second length that is just for the message */
 			char *msg = byte_stream_getstr(bs, byte_stream_get16(bs));
 			ret = userfunc(od, conn, frame, msg);
-			free(msg);
+			g_free(msg);
 			} break;
 		}
 	}

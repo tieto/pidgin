@@ -75,8 +75,6 @@ GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_nam
 
 	if (js->chat_servers)
 		g_hash_table_insert(defaults, "server", g_strdup(js->chat_servers->data));
-	else
-		g_hash_table_insert(defaults, "server", g_strdup("conference.jabber.org"));
 
 	if (chat_name != NULL) {
 		JabberID *jid = jabber_id_new(chat_name);
@@ -782,7 +780,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 
 	purple_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
-			js->chat_servers ? js->chat_servers->data : "conference.jabber.org",
+			js->chat_servers ? js->chat_servers->data : NULL,
 			FALSE, FALSE, NULL,
 			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb),

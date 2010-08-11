@@ -55,14 +55,14 @@ int aim__registermodule(OscarData *od, int (*modfirst)(OscarData *, aim_module_t
 	mod = g_new0(aim_module_t, 1);
 
 	if (modfirst(od, mod) == -1) {
-		free(mod);
+		g_free(mod);
 		return -1;
 	}
 
 	if (aim__findmodule(od, mod->name)) {
 		if (mod->shutdown)
 			mod->shutdown(od, mod);
-		free(mod);
+		g_free(mod);
 		return -1;
 	}
 
@@ -86,7 +86,7 @@ void aim__shutdownmodules(OscarData *od)
 		if (cur->shutdown)
 			cur->shutdown(od, cur);
 
-		free(cur);
+		g_free(cur);
 
 		cur = tmp;
 	}

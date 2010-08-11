@@ -91,8 +91,6 @@ get_widget_coords(GtkWidget *w, gint *x1, gint *y1, gint *x2, gint *y2)
 	if (w->parent && w->parent->window == w->window)
 	{
 		get_widget_coords(w->parent, &ox, &oy, NULL, NULL);
-		ox += w->allocation.x;
-		oy += w->allocation.y;
 		height = w->allocation.height;
 		width = w->allocation.width;
 	}
@@ -174,6 +172,8 @@ dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 	gint x = 0, y = 0;
 
 	get_widget_coords(widget, &x1, &y1, &x2, &y2);
+	x1 += widget->allocation.x;	x2 += widget->allocation.x;
+	y1 += widget->allocation.y;	y2 += widget->allocation.y;
 
 	switch (horiz)
 	{

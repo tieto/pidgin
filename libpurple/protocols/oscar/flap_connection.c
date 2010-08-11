@@ -723,7 +723,7 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 
 	aim_tlvlist_free(&tlvlist);
 
-	free(msg);
+	g_free(msg);
 }
 
 /**

@@ -41,8 +41,8 @@ flap_connection_destroy_chat(OscarData *od, FlapConnection *conn)
 	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->internal;
 
 	if (ccp)
-		free(ccp->name);
-	free(ccp);
+		g_free(ccp->name);
+	g_free(ccp);
 
 	return;
 }
@@ -100,12 +100,12 @@ aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname
 		return -EINVAL;
 
 	if (conn->internal)
-		free(conn->internal);
+		g_free(conn->internal);
 
 	ccp = g_new(struct chatconnpriv, 1);
 
 	ccp->exchange = exchange;
-	ccp->name = strdup(roomname);
+	ccp->name = g_strdup(roomname);
 	ccp->instance = instance;
 
 	conn->internal = (void *)ccp;
@@ -203,7 +203,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 		ByteStream occbs;
 
 		/* Allocate enough userinfo structs for all occupants */
-		userinfo = calloc(usercount, sizeof(aim_userinfo_t));
+		userinfo = g_new0(aim_userinfo_t, usercount);
 
 		byte_stream_init(&occbs, tlv->value, tlv->length);
 
@@ -301,14 +301,14 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 				maxvisiblemsglen);
 	}
 
-	free(roominfo.name);
+	g_free(roominfo.name);
 
 	while (usercount > 0)
 		aim_info_free(&userinfo[--usercount]);
 
-	free(userinfo);
-	free(roomname);
-	free(roomdesc);
+	g_free(userinfo);
+	g_free(roomname);
+	g_free(roomdesc);
 	aim_tlvlist_free(&tlvlist);
 
 	return ret;
@@ -324,7 +324,7 @@ userlistchange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 
 	while (byte_stream_empty(bs)) {
 		curcount++;
-		userinfo = realloc(userinfo, curcount * sizeof(aim_userinfo_t));
+		userinfo = g_realloc(userinfo, curcount * sizeof(aim_userinfo_t));
 		aim_info_extract(od, bs, &userinfo[curcount-1]);
 	}
 
@@ -332,7 +332,7 @@ userlistchange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 		ret = userfunc(od, conn, frame, curcount, userinfo);
 
 	aim_info_free(userinfo);
-	free(userinfo);
+	g_free(userinfo);
 
 	return ret;
 }
@@ -488,8 +488,8 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 		cookie[i] = byte_stream_get8(bs);
 
 	if ((ck = aim_uncachecookie(od, cookie, AIM_COOKIETYPE_CHAT))) {
-		free(ck->data);
-		free(ck);
+		g_free(ck->data);
+		g_free(ck);
 	}
 
 	/*
@@ -569,9 +569,9 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 		ret = userfunc(od, conn, frame, &userinfo, len, msg, encoding, language);
 
 	aim_info_free(&userinfo);
-	free(msg);
-	free(encoding);
-	free(language);
+	g_free(msg);
+	g_free(encoding);
+	g_free(language);
 	aim_tlvlist_free(&tlvlist);
 
 	return ret;

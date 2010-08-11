@@ -212,7 +212,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	flap_connection_send(conn, frame);
 
 	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
 	info->next = od->icq_info;
@@ -256,7 +256,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	flap_connection_send(conn, frame);
 
 	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
 	info->next = od->icq_info;
@@ -426,7 +426,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 
 	flap_connection_send(conn, frame);
 
-	free(xml);
+	g_free(xml);
 
 	return 0;
 }
@@ -437,34 +437,34 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 
 	if (!info)
 		return;
-	free(info->nick);
-	free(info->first);
-	free(info->last);
-	free(info->email);
-	free(info->homecity);
-	free(info->homestate);
-	free(info->homephone);
-	free(info->homefax);
-	free(info->homeaddr);
-	free(info->mobile);
-	free(info->homezip);
-	free(info->personalwebpage);
+	g_free(info->nick);
+	g_free(info->first);
+	g_free(info->last);
+	g_free(info->email);
+	g_free(info->homecity);
+	g_free(info->homestate);
+	g_free(info->homephone);
+	g_free(info->homefax);
+	g_free(info->homeaddr);
+	g_free(info->mobile);
+	g_free(info->homezip);
+	g_free(info->personalwebpage);
 	if (info->email2)
 		for (i = 0; i < info->numaddresses; i++)
-			free(info->email2[i]);
-	free(info->email2);
-	free(info->workcity);
-	free(info->workstate);
-	free(info->workphone);
-	free(info->workfax);
-	free(info->workaddr);
-	free(info->workzip);
-	free(info->workcompany);
-	free(info->workdivision);
-	free(info->workposition);
-	free(info->workwebpage);
-	free(info->info);
-	free(info);
+			g_free(info->email2[i]);
+	g_free(info->email2);
+	g_free(info->workcity);
+	g_free(info->workstate);
+	g_free(info->workphone);
+	g_free(info->workfax);
+	g_free(info->workaddr);
+	g_free(info->workzip);
+	g_free(info->workcompany);
+	g_free(info->workdivision);
+	g_free(info->workposition);
+	g_free(info->workwebpage);
+	g_free(info->info);
+	g_free(info);
 }
 
 /**
@@ -515,7 +515,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG)))
 			ret = userfunc(od, conn, frame, &msg);
 
-		free(msg.msg);
+		g_free(msg.msg);
 
 	} else if (cmd == 0x0042) {
 		aim_rxcallback_t userfunc;
@@ -534,7 +534,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		/* find other data from the same request */
 		for (info = od->icq_info; info && (info->reqid != reqid); info = info->next);
 		if (!info) {
-			info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+			info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 			info->reqid = reqid;
 			info->next = od->icq_info;
 			od->icq_info = info;
@@ -603,7 +603,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		case 0x00eb: { /* email address(es) */
 			int i;
 			info->numaddresses = byte_stream_getle16(&qbs);
-			info->email2 = (char **)calloc(info->numaddresses, sizeof(char *));
+			info->email2 = (char **)g_new0(char *, info->numaddresses);
 			for (i = 0; i < info->numaddresses; i++) {
 				info->email2[i] = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 				if (i+1 != info->numaddresses)

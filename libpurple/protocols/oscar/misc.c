@@ -128,8 +128,8 @@ generror(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		ret = userfunc(od, conn, frame, error, snac2 ? snac2->data : NULL);
 
 	if (snac2)
-		free(snac2->data);
-	free(snac2);
+		g_free(snac2->data);
+	g_free(snac2);
 
 	return ret;
 }

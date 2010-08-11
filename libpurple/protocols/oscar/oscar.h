@@ -274,6 +274,10 @@ struct _ClientInfo
 	"us", "en", \
 }
 
+/*
+ * TODO: Use PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, and
+ *       PURPLE_MICRO_VERSION?  Or did that break things?
+ */
 #define CLIENTINFO_PURPLE { \
 	"Purple/" VERSION, \
 	0x0109, \
@@ -574,7 +578,7 @@ struct aim_redirect_data
 
 void aim_clientready(OscarData *od, FlapConnection *conn);
 int aim_request_login(OscarData *od, FlapConnection *conn, const char *sn);
-int aim_send_login(OscarData *, FlapConnection *, const char *, const char *, ClientInfo *, const char *key);
+int aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key);
 /* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
 
 void aim_cleansnacs(OscarData *, int maxage);

@@ -56,7 +56,8 @@
 #include <gntlabel.h>
 #include <gnttree.h>
 
-#include <gntplugin.h>
+#include "gntplugin.h"
+#include "gntconv.h"
 
 typedef struct
 {
@@ -154,7 +155,7 @@ urgent()
 #endif
 
 static void
-notify(const char *fmt, ...)
+notify(PurpleConversation *conv, const char *fmt, ...)
 {
 	GntWidget *window;
 	GntToast *toast;
@@ -164,6 +165,13 @@ notify(const char *fmt, ...)
 
 	if (purple_prefs_get_bool(PREFS_BEEP))
 		beep();
+
+	if (conv != NULL) {
+		FinchConv *fc = conv->ui_data;
+		if (gnt_widget_has_focus(fc->window))
+			return;
+	}
+
 #ifdef HAVE_X11
 	if (purple_prefs_get_bool(PREFS_URGENT))
 		urgent();
@@ -220,14 +228,14 @@ static void
 buddy_signed_on(PurpleBuddy *buddy, gpointer null)
 {
 	if (purple_prefs_get_bool(PREFS_EVENT_SIGNONF))
-		notify(_("%s just signed on"), purple_buddy_get_alias(buddy));
+		notify(NULL, _("%s just signed on"), purple_buddy_get_alias(buddy));
 }
 
 static void
 buddy_signed_off(PurpleBuddy *buddy, gpointer null)
 {
 	if (purple_prefs_get_bool(PREFS_EVENT_SIGNONF))
-		notify(_("%s just signed off"), purple_buddy_get_alias(buddy));
+		notify(NULL, _("%s just signed off"), purple_buddy_get_alias(buddy));
 }
 
 static void
@@ -235,7 +243,7 @@ received_im_msg(PurpleAccount *account, const char *sender, const char *msg,
 		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
 	if (purple_prefs_get_bool(PREFS_EVENT_IM_MSG))
-		notify(_("%s sent you a message"), sender);
+		notify(conv, _("%s sent you a message"), sender);
 }
 
 static void
@@ -254,9 +262,9 @@ received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
 
 	if (purple_prefs_get_bool(PREFS_EVENT_CHAT_NICK) &&
 			(purple_utf8_has_word(msg, nick)))
-		notify(_("%s said your nick in %s"), sender, purple_conversation_get_name(conv));
+		notify(conv, _("%s said your nick in %s"), sender, purple_conversation_get_name(conv));
 	else if (purple_prefs_get_bool(PREFS_EVENT_CHAT_MSG))
-		notify(_("%s sent a message in %s"), sender, purple_conversation_get_name(conv));
+		notify(conv, _("%s sent a message in %s"), sender, purple_conversation_get_name(conv));
 }
 
 static gboolean

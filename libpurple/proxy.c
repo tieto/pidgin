@@ -217,14 +217,14 @@ purple_gnome_proxy_get_info(void)
 		g_free(path);
 
 		/* See whether to use a proxy. */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_http_proxy", &tmp,
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode", &tmp,
 					       NULL, NULL, NULL))
 			return purple_global_proxy_get_info();
-		if (!strcmp(tmp, "false\n")) {
+		if (!strcmp(tmp, "none\n")) {
 			info.type = PURPLE_PROXY_NONE;
 			g_free(tmp);
 			return &info;
-		} else if (strcmp(tmp, "true\n")) {
+		} else if (strcmp(tmp, "manual\n")) {
 			g_free(tmp);
 			return purple_global_proxy_get_info();
 		}

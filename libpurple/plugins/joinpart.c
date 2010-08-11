@@ -156,7 +156,7 @@ static void received_chat_msg_cb(PurpleAccount *account, char *sender,
 static gboolean check_expire_time(struct joinpart_key *key,
                                   time_t *last_said, time_t *limit)
 {
-	purple_debug_info("joinpart", "Removing key for %s/%s\n", key->conv->name, key->user);
+	purple_debug_info("joinpart", "Removing key for %s\n", key->user);
 	return (*last_said < *limit);
 }
 

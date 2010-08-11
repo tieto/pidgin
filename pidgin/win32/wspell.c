@@ -65,7 +65,7 @@ static void load_gtkspell() {
 static char* lookup_aspell_path() {
 	const char *tmp;
 
-	if ((tmp = g_getenv("PURPLE_ASPELL_DIR")))
+	if ((tmp = g_getenv("PIDGIN_ASPELL_DIR")))
 		return g_strdup(tmp);
 
 	return wpurple_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
