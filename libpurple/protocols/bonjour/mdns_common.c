@@ -46,6 +46,30 @@ void bonjour_dns_sd_free(BonjourDnsSd *data) {
 	g_free(data);
 }
 
+#define MAX_TXT_CONSTITUENT_LEN 255
+
+/* Make sure that the value isn't longer than it is supposed to be */
+static const char*
+get_max_txt_record_value(const char *key, const char *value)
+{
+	/* "each constituent string of a DNS TXT record is limited to 255 bytes"
+	 * This includes the key and the '='
+	 */
+	static char buffer[MAX_TXT_CONSTITUENT_LEN + 1];
+	gchar *end_valid = NULL;
+	int len = MIN(strlen(value), MAX_TXT_CONSTITUENT_LEN - (strlen(key) + 2));
+
+	strncpy(buffer, value, len);
+
+	buffer[len] = '\0';
+
+	/* If we've cut part of a utf-8 character, kill it */
+	if (!g_utf8_validate(buffer, -1, (const gchar **)&end_valid))
+		*end_valid = '\0';
+
+	return buffer;
+}
+
 static GSList *generate_presence_txt_records(BonjourDnsSd *data) {
 	GSList *ret = NULL;
 	PurpleKeyValuePair *kvp;
@@ -62,11 +86,18 @@ static GSList *generate_presence_txt_records(BonjourDnsSd *data) {
 #define _M_ADD_R(k, v) \
 	kvp = g_new0(PurpleKeyValuePair, 1); \
 	kvp->key = g_strdup(k); \
-	kvp->value = g_strdup(v); \
+	kvp->value = g_strdup(get_max_txt_record_value(k, v)); \
 	ret = g_slist_prepend(ret, kvp); \
 
 	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
 	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
+	 */
+
+	/* Large TXT records are problematic.
+	 * While it is technically possible for this to exceed a standard 512-byte
+	 * DNS message, it shouldn't happen unless we get wacky data entered for
+	 * some of the freeform fields.  It is even less likely to exceed the
+	 * recommended maximum of 1300 bytes.
 	 */
 
 	/* Needed by iChat */

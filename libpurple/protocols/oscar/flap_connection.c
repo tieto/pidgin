@@ -158,8 +158,8 @@ static gboolean flap_connection_send_queued(gpointer data)
 	gettimeofday(&now, NULL);
 
 	purple_debug_info("oscar", "Attempting to send %u queued SNACs and %u queued low-priority SNACs for %p\n",
-					  (conn->queued_snacs ? g_queue_get_length(conn->queued_snacs) : 0),
-					  (conn->queued_lowpriority_snacs ? g_queue_get_length(conn->queued_lowpriority_snacs) : 0),
+					  (conn->queued_snacs ? conn->queued_snacs->length : 0),
+					  (conn->queued_lowpriority_snacs ? conn->queued_lowpriority_snacs->length : 0),
 					  conn);
 	if (!conn->queued_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_snacs)) {
 		if (!conn->queued_lowpriority_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_lowpriority_snacs)) {

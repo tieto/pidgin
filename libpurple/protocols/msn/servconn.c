@@ -400,9 +400,9 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 
 	} else if (len <= 0) {
-		purple_debug_error("msn", "servconn read error,"
-		                          "len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
-		                          len, errno, g_strerror(errno));
+		purple_debug_error("msn", "servconn %03d read error,"
+			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+			servconn->num, len, errno, g_strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;

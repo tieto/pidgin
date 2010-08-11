@@ -934,8 +934,8 @@ PurpleStoredImage *
 purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
                                                   const gchar *filename)
 {
-	size_t len;
-	guchar *data;
+	size_t len = 0;
+	guchar *data = NULL;
 
 	g_return_val_if_fail(node != NULL, NULL);
 
@@ -945,8 +945,10 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 		return NULL;
 	}
 
-	if (!read_icon_file(filename, &data, &len)) {
-		return NULL;
+	if (filename != NULL) {
+		if (!read_icon_file(filename, &data, &len)) {
+			return NULL;
+		}
 	}
 
 	return purple_buddy_icons_node_set_custom_icon(node, data, len);

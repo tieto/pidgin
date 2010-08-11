@@ -1749,7 +1749,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	gboolean main_cycle = TRUE;
 	char *c;
 	char *start_log;
-	char *new_line;
+	char *new_line = NULL;
 	int offset = 0;
 	GError *error;
 

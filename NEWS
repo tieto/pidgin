@@ -1,5 +1,49 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.5.2 (10/19/2008):
+	Ethan: After a bit of a struggle with our services, which put
+	this release off for an unfortunate length of time, we're
+	ready for another bugfix release for your bug-free(er?)
+	messaging pleasure.
+
+	Sadrul: Despite our best efforts, this release got delayed by a
+	couple of weeks. But here it is! It is mostly a bug fix release, with
+	a couple of important fixes, e.g. fix for the Yahoo! disconnect
+	problem. Also, welcome our newest Crazy Patch Writer, Marcus Lundblad,
+	who, among various other fixes, has implemented custom smileys for the
+	XMPP protocol, included in this release. Enjoy!
+
+	Stu: I guess this is the time of year for server migrations, and
+	I've just about had enough of them. Fortunately Pidgin is still fun,
+	and this release should be superb.
+
+	John: Although our services were down for quite some time, we didn't
+	lose any data, except perhaps some mail that would have failed to make
+	it to us.  Overall, the only major effect it had was to delay this
+	release far longer than we expected.  Hopefully the bugfixes make you
+	happy!
+
+	Elliott: This release took a while, but that was due to an unfortunate
+	server snafu. I didn't have much to do with it, but hopefully the new
+	servers will help us out a bit. Anyway, mostly bug-fixes this time.
+	Nothing spectacular, unless you happen to suffer from one of those bugs.
+	Oh, and don't forget, the "Has you" tooltip is back!
+
+2.5.1 (08/30/2008):
+	Kevin: This release is mainly a bug-fix release.  It solves a few
+	known crashes and updates some of our artwork.  Google's Summer of
+	code recently finished up.  Some of our students are still working
+	on their branches and none have been merged into released code yet.
+	Look for some of those results to show up in Pidgin releases over the
+	coming months.
+
+	Elliott: I'm just commenting so Kevin wouldn't be the only one in NEWS
+	and no-one else seems to want to. Anyway, there's a couple MSN login
+	fixes, so try it out. The contact list problems might still be around,
+	but you can probably find a workaround in trac. And there's a tooltip
+	fix for our AIM friends, not that I had anything to do with it (except
+	closing many many duplicate tickets).
+
 2.5.0 (08/17/2008):
 	Daniel: Lots of good stuff in this release.  Lots of people have worked
 	very hard on the updated MSN protocol, and it's finally time to bring

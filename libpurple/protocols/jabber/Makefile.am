@@ -11,6 +11,8 @@ JABBERSOURCES = auth.c \
 			  buddy.h \
 			  chat.c \
 			  chat.h \
+			  data.c \
+			  data.h \
 			  disco.c \
 			  disco.h \
 			  google.c \

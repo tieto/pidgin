@@ -50,7 +50,6 @@ typedef struct
 	PurpleAccount *account;
 	char *url;
 	GtkWidget *label;
-	GtkTreeIter iter;
 	int count;
 	gboolean purple_has_handle;
 } PidginNotifyMailData;
@@ -128,7 +127,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 			purple_notify_uri(NULL, data->url);
 
 			gtk_tree_store_remove(dialog->treemodel, &iter);
-			purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+			if (data->purple_has_handle)
+				purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+			else
+				pidgin_close_notify(PURPLE_NOTIFY_EMAILS, data);
 
 			if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter))
 				return;
@@ -362,6 +364,10 @@ pidgin_get_mail_dialog(void)
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						 PIDGIN_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 
+		/* make "Open All Messages" the default response */
+		gtk_dialog_set_default_response(GTK_DIALOG(dialog),
+						GTK_RESPONSE_ACCEPT);
+
 		/* Setup the dialog */
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
 		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
@@ -483,13 +489,9 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 								PIDGIN_MAIL_TEXT, notification,
 								PIDGIN_MAIL_DATA, data,
 								-1);
-	data->iter = iter;              /* XXX: Do we use this for something? */
 	data->account = account;
 	data->count = count;
 
-	/* Why is this necessary?*/
-	gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
-						PIDGIN_MAIL_DATA, &data, -1);
 	if (icon)
 		g_object_unref(icon);
 

@@ -1,16 +1,18 @@
 ;;
-;;  finish.nsh
+;;  finnish.nsh
 ;;
-;;  Finish language strings for the Windows Pidgin NSIS installer.
+;;  Finnish language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Authors: Toni "Daigle" Impiö <toni.impio@pp1.inet.fi>
 ;;           Timo Jyrinki <timo.jyrinki@iki.fi>, 2008
 ;;           
-;;  Version 2
+;;  Version 3
 ;;
 
-; Startup GTK+ check
+; Startup checks
+!define INSTALLER_IS_RUNNING			"Asennusohjelma on jo käynnissä."
+!define PIDGIN_IS_RUNNING			"Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
 !define GTK_INSTALLER_NEEDED			"Ajonaikainen GTK+-ympäristö joko puuttuu tai tarvitsee päivitystä.$\rOle hyvä ja asenna v${GTK_MIN_VERSION} tai uudempi ajonaikainen GTK+-ympäristö."
 
 ; License Page
@@ -19,12 +21,12 @@
 
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin-pikaviestin (vaaditaan)"
-!define GTK_SECTION_TITLE			"Ajonaikainen GTK+-ympäristö (vaaditaan)"
+!define GTK_SECTION_TITLE			"Ajonaikainen GTK-ympäristö (vaaditaan)"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE 		"Pikakuvakkeet"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE 	"Työpöytä"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Käynnistysvalikko"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidginin ytimen tiedostot ja kirjastot"
-!define GTK_SECTION_DESCRIPTION		"Monialustainen Pidginin käyttämä käyttöliittymäkirjasto"
+!define GTK_SECTION_DESCRIPTION		"Pidginin käyttämä monialustainen käyttöliittymäkirjasto"
 
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   	"Pikakuvakkeet Pidginin käynnistämiseksi"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC   		"Tee Pidgin-pikakuvake työpöydälle"
@@ -53,4 +55,26 @@
 !define PIDGIN_SPELLCHECK_DICT_ERROR		"Virhe asennettaessa oikoluvun sanakirjaa"
 !define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
 !define ASPELL_INSTALL_FAILED			"Asennus epäonnistui"
+!define PIDGIN_SPELLCHECK_BRETON		"bretoni"
+!define PIDGIN_SPELLCHECK_CATALAN		"katalaani"
+!define PIDGIN_SPELLCHECK_CZECH		"tshekki"
+!define PIDGIN_SPELLCHECK_WELSH		"kymri"
+!define PIDGIN_SPELLCHECK_DANISH		"tanska"
+!define PIDGIN_SPELLCHECK_GERMAN		"saksa"
+!define PIDGIN_SPELLCHECK_GREEK		"kreikka"
+!define PIDGIN_SPELLCHECK_ENGLISH		"englanti"
+!define PIDGIN_SPELLCHECK_ESPERANTO		"esperanto"
+!define PIDGIN_SPELLCHECK_SPANISH		"espanja"
+!define PIDGIN_SPELLCHECK_FAROESE		"fääri"
+!define PIDGIN_SPELLCHECK_FRENCH		"ranska"
+!define PIDGIN_SPELLCHECK_ITALIAN		"italia"
+!define PIDGIN_SPELLCHECK_DUTCH		"hollanti"
+!define PIDGIN_SPELLCHECK_NORWEGIAN		"norja"
+!define PIDGIN_SPELLCHECK_POLISH		"puola"
+!define PIDGIN_SPELLCHECK_PORTUGUESE		"portugali"
+!define PIDGIN_SPELLCHECK_ROMANIAN		"romania"
+!define PIDGIN_SPELLCHECK_RUSSIAN		"venäjä"
+!define PIDGIN_SPELLCHECK_SLOVAK		"slovakia"
+!define PIDGIN_SPELLCHECK_SWEDISH		"ruotsi"
+!define PIDGIN_SPELLCHECK_UKRAINIAN		"ukraina"
 

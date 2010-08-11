@@ -3275,7 +3275,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Tools/Mute _Sounds"), NULL, pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
@@ -4663,8 +4663,6 @@ add_error_dialog(PidginBuddyList *gtkblist,
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
-
-	set_urgent();
 }
 
 static GtkWidget *
@@ -4811,7 +4809,6 @@ update_generic_error_message(PurpleAccount *account,
 		GTK_CONTAINER(priv->error_scrollbook), account);
 	pidgin_mini_dialog_set_description(PIDGIN_MINI_DIALOG(mini_dialog),
 		description);
-	set_urgent();
 }
 
 
@@ -4967,8 +4964,6 @@ add_to_signed_on_elsewhere(PurpleAccount *account)
 	gtk_widget_show_all(account_label);
 
 	update_signed_on_elsewhere_minidialog_title();
-
-	set_urgent();
 }
 
 static void
@@ -4994,7 +4989,6 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
 	GtkWidget *label = find_child_widget_by_account(c, account);
 	gtk_widget_set_tooltip_text(label, description);
-	set_urgent();
 #endif
 }
 
@@ -6483,7 +6477,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
-		if (whoalias != NULL)
+		if (whoalias != NULL && g != NULL)
 			gtk_blist_auto_personize((PurpleBlistNode *)g, whoalias);
 
 		/*

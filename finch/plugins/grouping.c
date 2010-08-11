@@ -28,6 +28,8 @@
 
 #include "gnttree.h"
 
+static FinchBlistManager *default_manager;
+
 /**
  * Online/Offline
  */
@@ -103,11 +105,7 @@ static gpointer on_offline_find_parent(PurpleBlistNode *node)
 
 static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body, char **tool_title)
 {
-	static FinchBlistManager *def = NULL;
 	PurpleBlistNode *node = selected_row;
-
-	if (def == NULL)
-		def = finch_blist_manager_find("default");
 
 	if (purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE) {
 		/* There should be some easy way of getting the total online count,
@@ -117,7 +115,7 @@ static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body,
 			*body = g_string_new(node == &online ? _("Online Buddies") : _("Offline Buddies"));
 		return TRUE;
 	} else {
-		return def ? def->create_tooltip(selected_row, body, tool_title) : FALSE;
+		return default_manager ? default_manager->create_tooltip(selected_row, body, tool_title) : FALSE;
 	}
 }
 
@@ -149,17 +147,13 @@ static gboolean meebo_init()
 
 static gpointer meebo_find_parent(PurpleBlistNode *node)
 {
-	static FinchBlistManager *def = NULL;
-	if (def == NULL)
-		def = finch_blist_manager_find("default");
-
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
 		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			return &meebo;
 		}
 	}
-	return def->find_parent(node);
+	return default_manager->find_parent(node);
 }
 
 static FinchBlistManager meebo_group =
@@ -223,12 +217,127 @@ static FinchBlistManager no_group =
 	{NULL, NULL, NULL, NULL}
 };
 
+/**
+ * Nested Grouping
+ */
+static GHashTable *groups;
+
+static gboolean
+nested_group_init(void)
+{
+	groups = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	return TRUE;
+}
+
+static gboolean
+nested_group_uninit(void)
+{
+	g_hash_table_destroy(groups);
+	groups = NULL;
+	return TRUE;
+}
+
+static gpointer
+nested_group_find_parent(PurpleBlistNode *node)
+{
+	char *name;
+	PurpleGroup *group;
+	char *sep;
+	PurpleBlistNode *ret, *parent;
+	GntTree *tree;
+
+	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+		return default_manager->find_parent(node);
+
+	group = (PurpleGroup *)node;
+	name = g_strdup(purple_group_get_name(group));
+	if (!(sep = strchr(name, '/'))) {
+		g_free(name);
+		return default_manager->find_parent(node);
+	}
+
+	tree = finch_blist_get_tree();
+	parent = NULL;
+
+	while (sep) {
+		*sep = 0;
+		if (*(sep + 1) && (ret = (PurpleBlistNode *)purple_find_group(name))) {
+			finch_blist_manager_add_node(ret);
+			parent = ret;
+		} else if (!(ret = g_hash_table_lookup(groups, name))) {
+			ret = g_new0(PurpleBlistNode, 1);
+			g_hash_table_insert(groups, g_strdup(name), ret);
+			ret->type = PURPLE_BLIST_OTHER_NODE;
+			gnt_tree_add_row_last(tree, ret,
+					gnt_tree_create_row(tree, name), parent);
+			parent = ret;
+		}
+		*sep = '/';
+		sep = strchr(sep + 1, '/');
+	}
+
+	g_free(name);
+	return ret;
+}
+
+static gboolean
+nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
+{
+	PurpleBlistNode *node = selected_row;
+	if (!node ||
+			purple_blist_node_get_type(node) != PURPLE_BLIST_OTHER_NODE)
+		return default_manager->create_tooltip(selected_row, body, title);
+	if (body)
+		*body = g_string_new(_("Nested Subgroup"));  /* Perhaps list the child groups/subgroups? */
+	return TRUE;
+}
+
+static gboolean
+nested_group_can_add_node(PurpleBlistNode *node)
+{
+	PurpleBlistNode *group;
+	int len;
+
+	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+		return default_manager->can_add_node(node);
+
+	if (default_manager->can_add_node(node))
+		return TRUE;
+
+	len = strlen(purple_group_get_name((PurpleGroup*)node));
+	group = purple_blist_get_root();
+	for (; group; group = purple_blist_node_get_sibling_next(group)) {
+		if (group == node)
+			continue;
+		if (strncmp(purple_group_get_name((PurpleGroup *)node),
+					purple_group_get_name((PurpleGroup *)group), len) == 0 &&
+				default_manager->can_add_node(group))
+			return TRUE;
+	}
+	return FALSE;
+}
+
+static FinchBlistManager nested_group =
+{
+	"nested",
+	N_("Nested Grouping (experimental)"),
+	.init = nested_group_init,
+	.uninit = nested_group_uninit,
+	.find_parent = nested_group_find_parent,
+	.create_tooltip = nested_group_create_tooltip,
+	.can_add_node = nested_group_can_add_node,
+};
+
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+	default_manager = finch_blist_manager_find("default");
+
 	finch_blist_install_manager(&on_offline);
 	finch_blist_install_manager(&meebo_group);
 	finch_blist_install_manager(&no_group);
+	finch_blist_install_manager(&nested_group);
 	return TRUE;
 }
 
@@ -238,6 +347,7 @@ plugin_unload(PurplePlugin *plugin)
 	finch_blist_uninstall_manager(&on_offline);
 	finch_blist_uninstall_manager(&meebo_group);
 	finch_blist_uninstall_manager(&no_group);
+	finch_blist_uninstall_manager(&nested_group);
 	return TRUE;
 }
 

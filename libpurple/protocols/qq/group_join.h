@@ -30,20 +30,20 @@
 #include "group.h"
 
 enum {
-	QQ_GROUP_AUTH_TYPE_NO_AUTH = 0x01,
-	QQ_GROUP_AUTH_TYPE_NEED_AUTH = 0x02,
-	QQ_GROUP_AUTH_TYPE_NO_ADD = 0x03
+	QQ_ROOM_AUTH_TYPE_NO_AUTH = 0x01,
+	QQ_ROOM_AUTH_TYPE_NEED_AUTH = 0x02,
+	QQ_ROOM_AUTH_TYPE_NO_ADD = 0x03
 };
 
 enum {
-	QQ_GROUP_AUTH_REQUEST_APPLY = 0x01,
-	QQ_GROUP_AUTH_REQUEST_APPROVE = 0x02,
-	QQ_GROUP_AUTH_REQUEST_REJECT = 0x03
+	QQ_ROOM_AUTH_REQUEST_APPLY = 0x01,
+	QQ_ROOM_AUTH_REQUEST_APPROVE = 0x02,
+	QQ_ROOM_AUTH_REQUEST_REJECT = 0x03
 };
 
 void qq_send_cmd_group_auth(PurpleConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8);
 void qq_group_join(PurpleConnection *gc, GHashTable *data);
-void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group);
+void qq_request_room_join(PurpleConnection *gc, qq_group *group);
 void qq_group_exit(PurpleConnection *gc, GHashTable *data);
 void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *gc);
 void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnection *gc);

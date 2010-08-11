@@ -51,10 +51,10 @@
 /* BOOLEAN:VOID (./genmarshal:1) */
 void
 gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
-                                   GValue       *return_value G_GNUC_UNUSED,
+                                   GValue       *return_value,
                                    guint         n_param_values,
                                    const GValue *param_values,
-                                   gpointer      invocation_hint G_GNUC_UNUSED,
+                                   gpointer      invocation_hint,
                                    gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__VOID) (gpointer     data1,
@@ -88,10 +88,10 @@ gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
 /* BOOLEAN:STRING (./genmarshal:2) */
 void
 gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
-                                     GValue       *return_value G_GNUC_UNUSED,
+                                     GValue       *return_value,
                                      guint         n_param_values,
                                      const GValue *param_values,
-                                     gpointer      invocation_hint G_GNUC_UNUSED,
+                                     gpointer      invocation_hint,
                                      gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__STRING) (gpointer     data1,
@@ -127,10 +127,10 @@ gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
 /* VOID:INT,INT,INT,INT (./genmarshal:3) */
 void
 gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
-                                           GValue       *return_value G_GNUC_UNUSED,
+                                           GValue       *return_value,
                                            guint         n_param_values,
                                            const GValue *param_values,
-                                           gpointer      invocation_hint G_GNUC_UNUSED,
+                                           gpointer      invocation_hint,
                                            gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__INT_INT_INT_INT) (gpointer     data1,
@@ -168,10 +168,10 @@ gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
 /* VOID:INT,INT (./genmarshal:4) */
 void
 gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
-                                   GValue       *return_value G_GNUC_UNUSED,
+                                   GValue       *return_value,
                                    guint         n_param_values,
                                    const GValue *param_values,
-                                   gpointer      invocation_hint G_GNUC_UNUSED,
+                                   gpointer      invocation_hint,
                                    gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__INT_INT) (gpointer     data1,
@@ -205,10 +205,10 @@ gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
 /* VOID:POINTER,POINTER (./genmarshal:5) */
 void
 gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
-                                           GValue       *return_value G_GNUC_UNUSED,
+                                           GValue       *return_value,
                                            guint         n_param_values,
                                            const GValue *param_values,
-                                           gpointer      invocation_hint G_GNUC_UNUSED,
+                                           gpointer      invocation_hint,
                                            gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__POINTER_POINTER) (gpointer     data1,
@@ -242,10 +242,10 @@ gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
 /* BOOLEAN:INT,INT (./genmarshal:6) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
-                                      GValue       *return_value G_GNUC_UNUSED,
+                                      GValue       *return_value,
                                       guint         n_param_values,
                                       const GValue *param_values,
-                                      gpointer      invocation_hint G_GNUC_UNUSED,
+                                      gpointer      invocation_hint,
                                       gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__INT_INT) (gpointer     data1,
@@ -283,10 +283,10 @@ gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
 /* BOOLEAN:INT,INT,INT (./genmarshal:7) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
-                                          GValue       *return_value G_GNUC_UNUSED,
+                                          GValue       *return_value,
                                           guint         n_param_values,
                                           const GValue *param_values,
-                                          gpointer      invocation_hint G_GNUC_UNUSED,
+                                          gpointer      invocation_hint,
                                           gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__INT_INT_INT) (gpointer     data1,
@@ -326,10 +326,10 @@ gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
 /* BOOLEAN:POINTER,POINTER,POINTER (./genmarshal:8) */
 void
 gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *closure,
-                                                      GValue       *return_value G_GNUC_UNUSED,
+                                                      GValue       *return_value,
                                                       guint         n_param_values,
                                                       const GValue *param_values,
-                                                      gpointer      invocation_hint G_GNUC_UNUSED,
+                                                      gpointer      invocation_hint,
                                                       gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__POINTER_POINTER_POINTER) (gpointer     data1,
@@ -369,10 +369,10 @@ gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *closure,
 /* BOOLEAN:INT,INT,INT,POINTER (./genmarshal:9) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *closure,
-                                                  GValue       *return_value G_GNUC_UNUSED,
+                                                  GValue       *return_value,
                                                   guint         n_param_values,
                                                   const GValue *param_values,
-                                                  gpointer      invocation_hint G_GNUC_UNUSED,
+                                                  gpointer      invocation_hint,
                                                   gpointer      marshal_data)
 {
   typedef gboolean (*GMarshalFunc_BOOLEAN__INT_INT_INT_POINTER) (gpointer     data1,
@@ -414,10 +414,10 @@ gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *closure,
 /* VOID:STRING,STRING (./genmarshal:10) */
 void
 gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
-                                         GValue       *return_value G_GNUC_UNUSED,
+                                         GValue       *return_value,
                                          guint         n_param_values,
                                          const GValue *param_values,
-                                         gpointer      invocation_hint G_GNUC_UNUSED,
+                                         gpointer      invocation_hint,
                                          gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__STRING_STRING) (gpointer     data1,
@@ -451,10 +451,10 @@ gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
 /* VOID:POINTER,BOOLEAN (./genmarshal:11) */
 void
 gnt_closure_marshal_VOID__POINTER_BOOLEAN (GClosure     *closure,
-                                           GValue       *return_value G_GNUC_UNUSED,
+                                           GValue       *return_value,
                                            guint         n_param_values,
                                            const GValue *param_values,
-                                           gpointer      invocation_hint G_GNUC_UNUSED,
+                                           gpointer      invocation_hint,
                                            gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__POINTER_BOOLEAN) (gpointer     data1,

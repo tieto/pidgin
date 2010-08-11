@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-15 11:20-0400\n"
-"PO-Revision-Date: 2008-07-08 17:58+0100\n"
+"POT-Creation-Date: 2008-10-19 02:47+0100\n"
+"PO-Revision-Date: 2008-09-11 16:16+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -75,7 +75,7 @@ msgstr "Obveščanje o prispeli pošti"
 msgid "Remember password"
 msgstr "Zapomni si geslo"
 
-msgid "There's no protocol plugins installed."
+msgid "There are no protocol plugins installed."
 msgstr "Vtičniki protokolov niso nameščeni."
 
 msgid "(You probably forgot to 'make install'.)"
@@ -241,9 +241,6 @@ msgstr "Napaka pri dodajanju skupine"
 
 msgid "You must give a name for the group to add."
 msgstr "Vnesti morate ime skupine, ki jo želite dodati."
-
-msgid "A group with the name already exists."
-msgstr "Skupina s tem imenom že obstaja."
 
 msgid "Add Group"
 msgstr "Dodaj skupino"
@@ -651,13 +648,13 @@ msgstr "Vključi zvoke"
 msgid "<AUTO-REPLY> "
 msgstr "<SAMODEJNI ODGOVOR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
-msgstr[0] "Seznam uporabnikov:\n"
-msgstr[1] "Seznam uporabnikov:\n"
-msgstr[2] "Seznam uporabnikov:\n"
-msgstr[3] "Seznam uporabnikov:\n"
+msgstr[0] "Seznam %d uporabnikov:\n"
+msgstr[1] "Seznam %d uporabnika:\n"
+msgstr[2] "Seznam %d uporabnikov:\n"
+msgstr[3] "Seznam %d uporabnikov:\n"
 
 msgid "Supported debug options are:  version"
 msgstr "Podprte možnosti razhroščevanja:  različica"
@@ -738,6 +735,11 @@ msgid ""
 "background&gt;: black, red, green, blue, white, gray, darkgray, magenta, "
 "cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
 msgstr ""
+"msgcolor &lt;razred&gt; &lt;ospredje&gt; &lt;ozadje&gt;: Nastavite barvo "
+"različnim razredom sporočil v oknu pogovora.<br>    &lt;razred&gt;: receive, "
+"send, highlight, action, timestamp<br>    &lt;ospredje/ozadje&gt;: black, "
+"red, green, blue, white, gray, darkgray, magenta, cyan, "
+"default<br><br>PRIMER:<br>    msgcolor send cyan default"
 
 msgid "Unable to open file."
 msgstr "Datoteke ni bilo mogoče odprti."
@@ -1513,6 +1515,12 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "Brez združevanja v skupine"
 
+msgid "Nested Subgroup"
+msgstr "Gnezdena podskupina"
+
+msgid "Nested Grouping (experimental)"
+msgstr "Gnezdeno združevanje (poskusno)"
+
 msgid "Provides alternate buddylist grouping options."
 msgstr "Omogoča dodatne možnosti urejenosti seznama prijateljev."
 
@@ -1829,8 +1837,8 @@ msgstr ""
 "%s"
 
 #, c-format
-msgid "EOF while reading from resolver process"
-msgstr "EOF pri branju iz procesa razločevanja"
+msgid "Resolver process exited without answering our request"
+msgstr ""
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2230,9 +2238,8 @@ msgstr ""
 "datoteke\n"
 "(le če ni pomenka s pošiljateljem)"
 
-#, fuzzy
 msgid "Create a new directory for each user"
-msgstr "Izberite imenik za iskanje"
+msgstr "Ustvari novo mapo za vsakega uporabnika"
 
 msgid "Notes"
 msgstr "Opombe"
@@ -2415,6 +2422,9 @@ msgstr "Najmanjša velikost sobe"
 
 msgid "User Inactivity Timeout (in minutes)"
 msgstr "Časovni rok neaktivnosti uporabnika (v minutah)"
+
+msgid "Apply hiding rules to buddies"
+msgstr "Uporabi pravila skrivanja za prijatelje"
 
 #. *< type
 #. *< ui_requirement
@@ -3236,7 +3246,7 @@ msgid "Encodings"
 msgstr "Kodiranje znakov"
 
 msgid "Auto-detect incoming UTF-8"
-msgstr ""
+msgstr "Samo-razpoznaj dohodni UTF-8"
 
 msgid "Real name"
 msgstr "Resnično ime"
@@ -3251,9 +3261,9 @@ msgstr "Uporabi SSL"
 msgid "Bad mode"
 msgstr "Neveljaven način"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Ban on %s by %s, set %s ago"
-msgstr "Prepoved za %s s strani %s, nastavljeno %ld sekund nazaj"
+msgstr "Prepoved za %s s strani %s, nastavljeno %s nazaj"
 
 #, c-format
 msgid "Ban on %s"
@@ -3424,7 +3434,7 @@ msgstr ""
 "sporočila za vrnitev iz odsotnosti."
 
 msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
-msgstr ""
+msgstr "ctcp <vzdevek> <sporočilo>: pošlje sporočilo ctcp vzdevku."
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv:  pošlji ukaz chanservu"
@@ -4542,6 +4552,12 @@ msgstr "Poveži se na strežnik"
 msgid "File transfer proxies"
 msgstr "Posredovalni strežniki za prenos datotek"
 
+#. this should probably be part of global smiley theme settings later on,
+#. shared with MSN
+#, fuzzy
+msgid "Show Custom Smileys"
+msgstr "Pokaži smeške po meri ..."
+
 #, c-format
 msgid "%s has left the conversation."
 msgstr "%s je zapustil pogovor."
@@ -4894,6 +4910,10 @@ msgid "Passport account not yet verified"
 msgstr "Račun še ni bil potrjen"
 
 #, c-format
+msgid "Passport account suspended"
+msgstr "Račun potnega lista je zamrznjen"
+
+#, c-format
 msgid "Bad ticket"
 msgstr "Napačna vstopnica"
 
@@ -4904,6 +4924,14 @@ msgstr "Neznana koda napake %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "MSN napaka: %s\n"
+
+#, fuzzy
+msgid "Other Contacts"
+msgstr "Priljubljen stik"
+
+#, fuzzy
+msgid "Non-IM Contacts"
+msgstr "Odstrani stik"
 
 msgid "Nudge"
 msgstr "Pomežikni"
@@ -4953,28 +4981,29 @@ msgstr "Dovoli"
 msgid "Disallow"
 msgstr "Prepovej"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Blocked Text for %s"
-msgstr "Komentar o prijatelju %s"
+msgstr "Blokirano besedilo za uporabnika %s"
 
-#, fuzzy
 msgid "No text is blocked for this account."
-msgstr "Za ta račun uporabi to _ikono prijatelja:"
+msgstr "Za ta račun ni blokiranega besedila."
 
 #, c-format
 msgid ""
 "MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr ""
+msgstr "Strežniki MSN trenutno blokirajo naslednje regularne izraze:<br/>%s"
 
-#, fuzzy
 msgid "This account does not have email enabled."
-msgstr "Ta račun Hotmail morda ni aktiven."
+msgstr "Ta račun nima omogočenega e-poštnega naslova."
 
 msgid "Send a mobile message."
 msgstr "Pošlji sporočilo na mobilnik."
 
 msgid "Page"
 msgstr "Stran/Poziv"
+
+msgid "Has you"
+msgstr "Vas ima"
 
 msgid "Home Phone Number"
 msgstr "Št. domačega telefona"
@@ -5028,7 +5057,7 @@ msgid "Allow/Disallow Mobile Pages..."
 msgstr "Dovoli/prepovej mobilne strani ..."
 
 msgid "View Blocked Text..."
-msgstr ""
+msgstr "Pokaži blokirano besedilo ..."
 
 msgid "Open Hotmail Inbox"
 msgstr "Odpri prispelo pošto Hotmail"
@@ -5238,9 +5267,8 @@ msgstr "nudge: Dregnite prijatelja, da vas bo opazil"
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Overjanje Windows Live ID: Povezava ni mogoča"
 
-#, fuzzy
 msgid "Windows Live ID authentication:Invalid response"
-msgstr "Overjanje Windows Live ID: Povezava ni mogoča"
+msgstr "Overjanje Windows Live ID: Neveljaven odziv"
 
 #, c-format
 msgid "%s is not a valid group."
@@ -5263,6 +5291,10 @@ msgstr "Neznana napaka (%d)"
 
 msgid "Unable to add user"
 msgstr "Ni mogoče dodati uporabnika"
+
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "To so rezultati vašega iskanja"
 
 #, c-format
 msgid "Unable to add user on %s (%s)"
@@ -5287,9 +5319,8 @@ msgstr "%s ni veljaven račun potnega lista."
 msgid "Service Temporarily Unavailable."
 msgstr "Storitev je trenutno nedosegljiva."
 
-#, fuzzy
 msgid "Mobile message was not sent because it was too long."
-msgstr "Sporočila ni mogoče poslati, saj niste prijavljeni."
+msgstr "Mobilnega sporočila ni mogoče poslati, ker je predolgo."
 
 msgid "Unable to rename group"
 msgstr "Skupine ni mogoče preimenovati"
@@ -5337,18 +5368,17 @@ msgid ""
 "Message was not sent because the system is unavailable. This normally "
 "happens when the user is blocked or does not exist."
 msgstr ""
+"Sporočilo ni bilo poslano, ker sistem ni na voljo. To se ponavadi zgodi, ko "
+"je uporabnik blokiran ali ne obstaja."
 
-#, fuzzy
 msgid "Message was not sent because messages are being sent too quickly."
-msgstr "Sporočila ni mogoče poslati, saj je poslano prehitro:"
+msgstr "Sporočila ni bilo poslano, saj je sporočila pošiljajo prehitro."
 
-#, fuzzy
 msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "Sporočila morda ni bilo poslano, ker je prišlo do neznane napake:"
+msgstr "Sporočila ni bilo poslano, ker je prišlo do neznane napake kodiranja."
 
-#, fuzzy
 msgid "Message was not sent because an unknown error occurred."
-msgstr "Sporočila morda ni bilo poslano, ker je prišlo do neznane napake:"
+msgstr "Sporočila ni bilo poslano, ker je prišlo do neznane napake."
 
 msgid "Unable to connect"
 msgstr "Ni se mogoče povezati"
@@ -5460,6 +5490,14 @@ msgstr "%s vas je dodal(a) na svoj seznam prijateljev."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s vas je odstranil(a) s svojega seznama prijateljev."
 
+#, fuzzy
+msgid "Delete Buddy from Address Book?"
+msgstr "Dodaj v adresar"
+
+#, fuzzy
+msgid "Do you want to delete this buddy from your address book as well?"
+msgstr "Ali želite dodati prijatelja s to vizitko na vaš seznam prijateljev?"
+
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5472,9 +5510,6 @@ msgstr "Navedeno uporabniško ime ni veljavno."
 
 msgid "This Hotmail account may not be active."
 msgstr "Ta račun Hotmail morda ni aktiven."
-
-msgid "Has you"
-msgstr "Vas ima"
 
 #. *< type
 #. *< ui_requirement
@@ -6159,6 +6194,9 @@ msgstr "Na povezavi s strežnikom prejeti neveljavni podatki."
 msgid "AIM Protocol Plugin"
 msgstr "Vtičnik za protokol AIM"
 
+msgid "ICQ UIN..."
+msgstr "ICQ UIN ..."
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -6500,7 +6538,6 @@ msgstr "Morda bo povezava v kratkem prekinjena. Preverite %s za posodobitve."
 msgid "Unable to get a valid login hash."
 msgstr "Veljavnega prijavnega izvlečka ni mogoče pridobiti."
 
-#. allow multple logins?
 msgid "Password sent"
 msgstr "Geslo poslano"
 
@@ -7215,14 +7252,27 @@ msgstr "Prašič"
 msgid "Other"
 msgstr "Drugo"
 
-msgid "Modify my information"
+#, fuzzy
+msgid "Modify information"
 msgstr "Spremeni moje podatke"
 
-msgid "Update my information"
+#, fuzzy
+msgid "Update information"
 msgstr "Posodobi moje podatke"
 
-msgid "Your information has been updated"
-msgstr "Vaši podatki so bili posodobljeni"
+#. TODO: We don't really need to notify the user about this, do we?
+#. TODO: Does the user really need to be notified about this?
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Prijatelj"
+
+#, fuzzy
+msgid "Successed:"
+msgstr "Hitrost:"
+
+#, fuzzy
+msgid "Change buddy information."
+msgstr "Prosimo, vnesite podatke o prijatelju."
 
 #, c-format
 msgid ""
@@ -7239,29 +7289,31 @@ msgstr "Neveljaven obraz QQ"
 msgid "You rejected %d's request"
 msgstr "Zahtevo uporabnika %d ste zavrnili."
 
-msgid "Input your reason:"
-msgstr "Vnesite svoj razlog:"
-
 msgid "Reject request"
 msgstr "Zavrni zahtevo"
 
 #. title
-msgid "Sorry, you are not my type..."
+#, fuzzy
+msgid "Sorry, you are not my style..."
 msgstr "Oprosti, nisi moj tip ..."
 
 msgid "Add buddy with auth request failed"
 msgstr "Zahteva po dodajanju prijatelja s pooblastilom ni uspela"
 
-#. TODO: We don't really need to notify the user about this, do we?
-msgid "You have successfully removed a buddy"
-msgstr "Uspešno ste odstranili prijatelja"
+#, fuzzy
+msgid "Failed:"
+msgstr "Neuspeh"
 
-#. TODO: Does the user really need to be notified about this?
-msgid "You have successfully removed yourself from your friend's buddy list"
-msgstr "Uspešno ste se odstranili s prijateljevega seznama prijateljev"
+#, fuzzy
+msgid "Remove buddy"
+msgstr "Odstrani prijatelja"
 
-#, c-format
-msgid "User %d needs authentication"
+#, fuzzy
+msgid "Remove from other's buddy list"
+msgstr "%s vas je odstranil(a) s svojega seznama prijateljev."
+
+#, fuzzy, c-format
+msgid "%d needs authentication"
 msgstr "Uporabnik %d potrebuje avtentikacijo"
 
 msgid "Input request here"
@@ -7277,15 +7329,17 @@ msgstr "Bi bil moj prijatelj?"
 msgid "Send"
 msgstr "Pošlji"
 
-#, c-format
-msgid "You have added %d to buddy list"
-msgstr "%d ste dodali na svoj seznam prijateljev"
+#, fuzzy, c-format
+msgid "Add into %d's buddy list"
+msgstr "Seznama prijateljev ni mogoče naložiti"
 
-msgid "QQid Error"
-msgstr "Napaka QQid"
+#, fuzzy
+msgid "QQ Number Error"
+msgstr "Številka QQ"
 
-msgid "Invalid QQid"
-msgstr "Neveljaven QQid"
+#, fuzzy
+msgid "Invalid QQ Number"
+msgstr "Neveljaven obraz QQ"
 
 msgid "ID: "
 msgstr "ID:"
@@ -7305,19 +7359,21 @@ msgstr "Pooblasti"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-msgid "Please enter external group ID"
-msgstr "Prosimo, vnesite ID zunanje skupine"
+#, fuzzy
+msgid "Please enter Qun number"
+msgstr "Prosimo, vnesite novo ime za %s"
 
-msgid "You can only search for permanent QQ groups\n"
+#, fuzzy
+msgid "You can only search for permanent Qun\n"
 msgstr "Iščete lahko samo stalne skupine QQ\n"
 
-#, c-format
-msgid "User %d requested to join group %d"
+#, fuzzy, c-format
+msgid "%d request to join Qun %d"
 msgstr "Uporabnik %d se je prijavil za članstvo v skupini %d"
 
 #, c-format
-msgid "Reason: %s"
-msgstr "Razlog: %s"
+msgid "Message: %s"
+msgstr "Sporočilo: %s"
 
 msgid "QQ Qun Operation"
 msgstr "Operacija QQ Qun"
@@ -7325,24 +7381,25 @@ msgstr "Operacija QQ Qun"
 msgid "Approve"
 msgstr "Odobri"
 
-#, c-format
-msgid "Your request to join group %d has been rejected by admin %d"
+#, fuzzy, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Prijatelju se ni bilo mogoče pridružiti na pomenku"
+
+#, fuzzy, c-format
+msgid "Successed to join Qun %d, operated by admin %d"
 msgstr "Vašo zahtevo za pridružitev skupini %d je zavrnil administrator %d"
 
-#, c-format
-msgid "Your request to join group %d has been approved by admin %d"
-msgstr "Vašo zahtevo za pridružitev skupini %d je odobril administrator %d"
-
-#, c-format
-msgid "You [%d] have left group \"%d\""
+#, fuzzy, c-format
+msgid "[%d] removed from Qun \"%d\""
 msgstr "Zapustili ste [%d] skupino \"%d\""
 
-#, c-format
-msgid "You [%d] have been added to group \"%d\""
-msgstr "Dodani ste [%d] bili v skupino \"%d\""
+#, fuzzy
+msgid "Notice:"
+msgstr "Opomba"
 
-msgid "This group has been added to your buddy list"
-msgstr "Skupina je bila dodana na vaš seznam prijateljev."
+#, fuzzy, c-format
+msgid "[%d] added to Qun \"%d\""
+msgstr "Dodani ste [%d] bili v skupino \"%d\""
 
 msgid "I am not a member"
 msgstr "Nisem član(-ica)"
@@ -7350,8 +7407,9 @@ msgstr "Nisem član(-ica)"
 msgid "I am a member"
 msgstr "Sem član(ica)"
 
-msgid "I am applying to join"
-msgstr "Prijavljam se za članstvo"
+#, fuzzy
+msgid "I am requesting"
+msgstr "Napačna zahteva"
 
 msgid "I am the admin"
 msgstr "Jaz sem skrbnik"
@@ -7359,17 +7417,24 @@ msgstr "Jaz sem skrbnik"
 msgid "Unknown status"
 msgstr "Neznano stanje"
 
-msgid "This group does not allow others to join"
+#, fuzzy
+msgid "The Qun does not allow others to join"
 msgstr "Ta skupina ne dovoljuje novih članov"
 
-msgid "You have successfully left the group"
-msgstr "Uspešno ste zapustili skupino"
+#, fuzzy
+msgid "Remove from Qun"
+msgstr "Odstrani skupino"
 
-msgid "QQ Group Auth"
-msgstr "Pooblaščanje skupine QQ"
+#, fuzzy
+msgid "Join to Qun"
+msgstr "Pridruži se klepetu"
 
-msgid "Your authorization request has been accepted by the QQ server"
-msgstr "Strežnik QQ je sprejel vašo zahtevo za pooblastitev."
+#, c-format
+msgid "Qun %d denied to join"
+msgstr ""
+
+msgid "Join Qun, Unknow Reply"
+msgstr ""
 
 msgid "You entered a group ID outside the acceptable range"
 msgstr "Vnesli ste ID skupine zunaj veljavnega obsega"
@@ -7388,23 +7453,34 @@ msgstr ""
 msgid "Do you want to approve the request?"
 msgstr "Želite odobriti zahtevo?"
 
-msgid "Enter your reason:"
-msgstr "Vnesite svoj razlog:"
+#, fuzzy
+msgid "Change Qun member"
+msgstr "Telefonska št."
 
-msgid "You have successfully modified Qun member"
-msgstr "Uspešno ste spremenili člana Qun"
-
-msgid "You have successfully modified Qun information"
-msgstr "Uspešno ste spremenili podatke Qun"
+#, fuzzy
+msgid "Change Qun information"
+msgstr "Informacije o kanalu"
 
 msgid "You have successfully created a Qun"
 msgstr "Uspešno ste ustvarili Qun"
 
-msgid "Would you like to set up the Qun details now?"
+#, fuzzy
+msgid "Would you like to set up the detail information now?"
 msgstr "Želite zdaj nastaviti podrobnosti Qun?"
 
 msgid "Setup"
 msgstr "Namestitev"
+
+#, fuzzy, c-format
+msgid ""
+"%s\n"
+"\n"
+"%s"
+msgstr "%s (%s)"
+
+#, fuzzy
+msgid "QQ Server News"
+msgstr "ICQ strežniški posrednik"
 
 msgid "System Message"
 msgstr "Sistemsko sporočilo"
@@ -7419,37 +7495,33 @@ msgstr "Neznano-%d"
 msgid "Level"
 msgstr "Raven"
 
-#, fuzzy
 msgid "Member"
-msgstr "Član od"
+msgstr "Član"
 
 msgid " VIP"
-msgstr ""
+msgstr " VIP"
 
 msgid " TCP"
-msgstr ""
+msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
-msgstr "Mobilec"
+msgstr " zMobilca"
 
-#, fuzzy
 msgid " BindMobile"
-msgstr "Mobilec"
+msgstr " vezaniMobilec"
 
-#, fuzzy
 msgid " Video"
-msgstr "Video v živo"
+msgstr " Video"
 
 #, fuzzy
-msgid " Space"
-msgstr "MySpace"
+msgid " Zone"
+msgstr "brez"
 
 msgid "Flag"
-msgstr ""
+msgstr "Zastavica"
 
 msgid "Ver"
-msgstr ""
+msgstr "Razl"
 
 msgid "Invalid name"
 msgstr "Neveljavno ime"
@@ -7462,20 +7534,36 @@ msgstr "<b>Trenutno povezan</b>: %d<br>\n"
 msgid "<b>Last Refresh</b>: %s<br>\n"
 msgstr "<b>Zadnja osvežitev</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Server</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Strežnik</b>: %s: %d<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Način povezovanja</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>Real hostname</b>: %s: %d<br>\n"
-msgstr "<b>Ime strežnika</b>: %s: %d<br>\n"
+#, fuzzy, c-format
+msgid "<b>My Internet Address</b>: %s<br>\n"
+msgstr "<b>Način povezovanja</b>: %s<br>\n"
 
-#, c-format
-msgid "<b>My Public IP</b>: %s<br>\n"
+#, fuzzy, c-format
+msgid "<b>Sent</b>: %lu<br>\n"
+msgstr "<b>Strežnik</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Resend</b>: %lu<br>\n"
+msgstr "<b>Zadnja osvežitev</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Lost</b>: %lu<br>\n"
+msgstr "<b>Zadnja osvežitev</b>: %s<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received</b>: %lu<br>\n"
+msgstr "<b>Strežnik</b>: %s: %d<br>\n"
+
+#, fuzzy, c-format
+msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Moj javni IP</b>: %s<br>\n"
 
 #, c-format
@@ -7499,10 +7587,12 @@ msgstr "Nastavi moje podatke"
 msgid "Change Password"
 msgstr "Spremeni geslo"
 
-msgid "Show Login Information"
-msgstr "Pokaži prijavne podatke"
+#, fuzzy
+msgid "Account Information"
+msgstr "Prijavni podatki"
 
-msgid "Leave this QQ Qun"
+#, fuzzy
+msgid "Leave the QQ Qun"
 msgstr "Zapusti ta QQ Qun"
 
 msgid "Block this buddy"
@@ -7521,28 +7611,61 @@ msgstr "Blokiraj uporabnika"
 msgid "QQ Protocol\tPlugin"
 msgstr "Protokol QQ\tVtičnik"
 
-msgid "Connect using TCP"
-msgstr "Povezovanje prek TCP"
-
-msgid "resend interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Auto"
+msgstr "Avtor"
 
 #, fuzzy
+msgid "Connect by TCP"
+msgstr "Povezovanje prek TCP"
+
+#, fuzzy
+msgid "Show server notice"
+msgstr "Vrata strežnika"
+
+#, fuzzy
+msgid "Show server news"
+msgstr "Naslov strežnika"
+
 msgid "Keep alive interval(s)"
-msgstr "Napaka pri ohranjanju živega"
+msgstr "Interval(i) ohranjanju povezave"
 
 msgid "Update interval(s)"
+msgstr "Interval(i) posodabljanja"
+
+#, c-format
+msgid "Invalid token reply code, 0x%02X"
+msgstr "Neveljavna koda žetona odziva, "
+
+#, c-format
+msgid "Invalid token len, %d"
+msgstr "Neveljavna dolžina žetona, %d"
+
+msgid "Unable login for not support Redirect_EX now"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "Neveljaven naslov"
+msgid "Error password: %s"
+msgstr "Napaka pri spreminjanju gesla"
+
+#, c-format
+msgid "Need active: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable login for unknow reply code 0x%02X"
+msgstr "Neveljavna koda žetona odziva, "
 
 msgid "Keep alive error"
 msgstr "Napaka pri ohranjanju živega"
 
-msgid "Failed to connect server"
+#, fuzzy
+msgid "Failed to connect all servers"
 msgstr "Povezava na strežnik neuspešna"
+
+#. we didn't successfully connect. tdt->toc_fd is valid here
+msgid "Unable to connect."
+msgstr "Ni se bilo mogoče povezati."
 
 msgid "Socket error"
 msgstr "Napaka vtičnice"
@@ -7564,51 +7687,53 @@ msgstr "Napaka pri pisanju"
 msgid "Connection lost"
 msgstr "Povezava izgubljena"
 
+#. Update the login progress status display
+#, fuzzy, c-format
+msgid "Request token"
+msgstr "Zahteva zavrnjena"
+
 msgid "Couldn't resolve host"
 msgstr "Gostitelja ni mogoče razbrati"
 
-msgid "hostname is NULL or port is 0"
-msgstr "ime gostitelja je NULL ali pa so vrata 0"
+#, fuzzy
+msgid "Invalid server or port"
+msgstr "Neveljavna napaka"
 
 #, c-format
 msgid "Connecting server %s, retries %d"
 msgstr "Povezovanje s strežnikom %s, ponovni poskusi: %d"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Ni se bilo mogoče povezati."
-
-msgid "Could not resolve hostname"
-msgstr "Imena strežnika ni mogoče razločiti"
-
-msgid "Unable to login. Check debug log."
-msgstr "Prijava ni uspela. Preverite zapisnik razhroščevanja."
-
-msgid "Unable to login"
-msgstr "Prijava ni uspela"
-
-#, c-format
-msgid ""
-"Reply %s(0x%02X )\n"
-"Sent %s(0x%02X )\n"
-"Room id %d, reply [0x%02X]: \n"
-"%s"
-msgstr ""
-
 #, fuzzy
-msgid "Failed room reply"
-msgstr "Prijava spodletela, ni odziva!"
+msgid "QQ Error"
+msgstr "Napaka QQid"
+
+msgid "Unknow SERVER CMD"
+msgstr ""
 
 #, fuzzy, c-format
-msgid "You are not a member of group \"%s\"\n"
-msgstr "Dodani ste [%d] bili v skupino \"%d\""
+msgid ""
+"Error reply of %s(0x%02X)\n"
+"Room %d, reply 0x%02X"
+msgstr ""
+"Odgovor %s(0x%02X )\n"
+"Poslan %s(0x%02X )\n"
+"Id-sobe %d, odgovor [0x%02X]: \n"
+"%s"
+
+#, fuzzy
+msgid "QQ Qun Command"
+msgstr "Ukaz"
+
+#, fuzzy, c-format
+msgid "You are not a member of QQ Qun \"%s\"\n"
+msgstr "Niste član(ica) skupine \"%s\"\n"
 
 msgid "Can not decrypt login reply"
-msgstr ""
+msgstr "Odgovora na prijavo ni mogoče dešifrirati"
 
-#, c-format
-msgid "Invalid token reply code, 0x%02X"
-msgstr ""
+#, fuzzy
+msgid "Unknow reply CMD"
+msgstr "Neznan razlog"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -7621,7 +7746,12 @@ msgstr "Datoteka poslana"
 msgid "%d canceled the transfer of %s"
 msgstr "Uporabnik %d je prekinil prenos %s"
 
-msgid "Do you want to add this buddy?"
+#, fuzzy
+msgid "Do you approve the requestion?"
+msgstr "Želite odobriti zahtevo?"
+
+#, fuzzy
+msgid "Do you add the buddy?"
 msgstr "Ali želite dodati tega prijatelja?"
 
 #. only need to get value
@@ -7632,38 +7762,46 @@ msgstr "Uporabnik %s vas je dodal"
 msgid "Would you like to add him?"
 msgstr "Ga želite dodati?"
 
-#, c-format
-msgid "%s has added you [%s] to his or her buddy list"
+#, fuzzy, c-format
+msgid "%s added you [%s] to buddy list"
 msgstr "%s vas [%s] je dodal(a) na svoj seznam prijateljev."
 
-#, c-format
-msgid "User %s rejected your request"
-msgstr "Uuporabnik %s je zavrnil vašo zahtevo."
+#, fuzzy
+msgid "QQ Budy"
+msgstr "Prijatelj"
 
 #, c-format
-msgid "User %s approved your request"
-msgstr "Uporabnik %s je ugodil vaši zahtevi"
+msgid "Requestion rejected by %s"
+msgstr ""
+
+#, c-format
+msgid "Requestion approved by %s"
+msgstr ""
 
 #. TODO: this should go through purple_account_request_authorization()
 #, c-format
 msgid "%s wants to add you [%s] as a friend"
 msgstr "%s vas [%s] želi dodati kot prijatelja"
 
-#, c-format
-msgid "Message: %s"
-msgstr "Sporočilo: %s"
-
-#, c-format
-msgid "%s is not in your buddy list"
+#, fuzzy, c-format
+msgid "%s is not in buddy list"
 msgstr "%s ni na vašem seznamu prijateljev."
 
+#, fuzzy
+msgid "Would you add?"
+msgstr "Ga želite dodati?"
+
 #, fuzzy, c-format
-msgid "Notice from: %s"
-msgstr "Oznanilo od %s"
+msgid "From %s:"
+msgstr "Od"
 
 #, c-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
+
+#, fuzzy
+msgid "QQ Server Notice"
+msgstr "Vrata strežnika"
 
 msgid "Connection closed (writing)"
 msgstr "Povezava zaprta (pisanje)"
@@ -9115,6 +9253,9 @@ msgstr "Neznan odgovor strežnika."
 msgid "Could not create listen socket"
 msgstr "Vtičnice ni bilo mogoče ustvariti"
 
+msgid "Could not resolve hostname"
+msgstr "Imena strežnika ni mogoče razločiti"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Uporabniška imena SIP ne smejo vsebovati presledka ali simbola @"
 
@@ -9503,6 +9644,9 @@ msgstr "list:  Seznam sob na omrežju Yahoo"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Od uporabnika zahtevajte, da začne sejo Doodle"
+
+msgid "Yahoo ID..."
+msgstr "Yahoo-ID ..."
 
 #. *< type
 #. *< ui_requirement
@@ -10070,6 +10214,10 @@ msgid "Unable to connect to %s"
 msgstr "Ni se mogoče povezati z %s."
 
 #, c-format
+msgid "Error reading from %s: response too long (%d bytes limit)"
+msgstr "Napaka pri branju iz %s: odziv predolg (omejeno na %d bajtov)"
+
+#, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
@@ -10118,9 +10266,9 @@ msgid "Connection refused."
 msgstr "Povezava zavrnjena."
 
 #. 10048
-#, fuzzy, c-format
+#, c-format
 msgid "Address already in use."
-msgstr "Ime za pomenek že obstaja"
+msgstr "Naslov je že uporabljen."
 
 msgid "Internet Messenger"
 msgstr "Spletni sel"
@@ -10251,7 +10399,7 @@ msgid ""
 "all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
-"<b>Accounts->Add/Edit</b> in the Buddy List window"
+"<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
 "<span size='larger' weight='bold'>Dobrodošli v %s!</span>\n"
 "\n"
@@ -10261,7 +10409,7 @@ msgstr ""
 "<b>Dodaj</b>, da jih vse nastavite.\n"
 "\n"
 "Vedno se k temu oknu lahko vrnete in dodate, uredite ali odstranite račune z "
-"<b>Računi->Dodaj/Uredi</b> v oknu seznama prijateljev"
+"<b>Računi->Upravljaj z računi</b> v oknu seznama prijateljev"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10725,6 +10873,10 @@ msgstr "/Prijatelji/Razvrsti prijatelje"
 msgid "SSL Servers"
 msgstr "Strežniki SSL"
 
+#, fuzzy
+msgid "Network disconnected"
+msgstr "Oddaljeno odjavljeni"
+
 msgid "Unknown command."
 msgstr "Neznan ukaz."
 
@@ -11072,7 +11224,7 @@ msgstr "razvijalec"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Čung"
 
 msgid "support"
 msgstr "podpora"
@@ -11176,6 +11328,9 @@ msgstr "finsko"
 
 msgid "French"
 msgstr "francosko"
+
+msgid "Irish"
+msgstr "irsko"
 
 msgid "Galician"
 msgstr "galicijsko"
@@ -11598,6 +11753,14 @@ msgstr "Barva povezave"
 
 msgid "Color to draw hyperlinks."
 msgstr "Barva za risanje povezav."
+
+#, fuzzy
+msgid "Hyperlink visited color"
+msgstr "Barva povezave"
+
+#, fuzzy
+msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgstr "Barva za risanje povezav, ko je nad njimi miška."
 
 msgid "Hyperlink prelight color"
 msgstr "Barva presvetljene povezave"
@@ -12471,14 +12634,17 @@ msgstr ""
 "Ukaz za _zvok:\n"
 "(%s namesto datoteke)"
 
+msgid "M_ute sounds"
+msgstr "_Utišaj zvoke"
+
 msgid "Sounds when conversation has _focus"
 msgstr "Zvok, ko pogovorno okno dobi _fokus"
 
-msgid "Enable sounds:"
-msgstr "Omogoči zvoke:"
+msgid "_Enable sounds:"
+msgstr "_Omogoči zvoke:"
 
-msgid "Volume:"
-msgstr "Glasnost:"
+msgid "V_olume:"
+msgstr "_Glasnost:"
 
 msgid "Play"
 msgstr "Predvajaj"
@@ -12662,6 +12828,12 @@ msgstr "Stanje za %s"
 msgid "Custom Smiley"
 msgstr "Smejček po meri"
 
+msgid "More Data needed"
+msgstr "Potrebnih je več podatkov"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Podajte tipke za bližnjico, ki bodo povezane s smejčkom."
+
 msgid "Duplicate Shortcut"
 msgstr "Podvojena tipka za bližnjico"
 
@@ -12671,12 +12843,6 @@ msgid ""
 msgstr ""
 "Smejček po meri za izbrano kombinacijo tipk že obstaja. Navedite druge tipke "
 "za bližnjico."
-
-msgid "More Data needed"
-msgstr "Potrebnih je več podatkov"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Podajte tipke za bližnjico, ki bodo povezane s smejčkom."
 
 msgid "Please select an image for the smiley."
 msgstr "Izberite sliko smejčka."
@@ -12699,6 +12865,14 @@ msgstr "Smejček"
 
 msgid "Custom Smiley Manager"
 msgstr "Upravitelj smejčkov po meri"
+
+#, fuzzy
+msgid "Click to change your buddyicon for this account."
+msgstr "Za ta račun uporabi to _ikono prijatelja:"
+
+#, fuzzy
+msgid "Click to change your buddyicon for all accounts."
+msgstr "Za ta račun uporabi to _ikono prijatelja:"
 
 msgid "Waiting for network connection"
 msgstr "Čakanje na omrežno povezavo"
@@ -12837,6 +13011,9 @@ msgstr "_Spremeni"
 
 msgid "_Open Mail"
 msgstr "_Odpri pošto"
+
+msgid "_Edit"
+msgstr "_Uredi"
 
 msgid "Pidgin Tooltip"
 msgstr "Nasvet Pidgin"
@@ -13407,6 +13584,10 @@ msgstr "Drugotna barva kazalke"
 msgid "Hyperlink Color"
 msgstr "Barva povezave"
 
+#, fuzzy
+msgid "Visited Hyperlink Color"
+msgstr "Barva povezave"
+
 msgid "Highlighted Message Name Color"
 msgstr "Ime barve poudarjenih sporočil"
 
@@ -13824,6 +14005,99 @@ msgstr "Pošlijaj in sprejemaj surove vrstice XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
+
+#~ msgid "A group with the name already exists."
+#~ msgstr "Skupina s tem imenom že obstaja."
+
+#~ msgid "EOF while reading from resolver process"
+#~ msgstr "EOF pri branju iz procesa razločevanja"
+
+#~ msgid "Your information has been updated"
+#~ msgstr "Vaši podatki so bili posodobljeni"
+
+#~ msgid "Input your reason:"
+#~ msgstr "Vnesite svoj razlog:"
+
+#~ msgid "You have successfully removed a buddy"
+#~ msgstr "Uspešno ste odstranili prijatelja"
+
+#~ msgid "You have successfully removed yourself from your friend's buddy list"
+#~ msgstr "Uspešno ste se odstranili s prijateljevega seznama prijateljev"
+
+#~ msgid "You have added %d to buddy list"
+#~ msgstr "%d ste dodali na svoj seznam prijateljev"
+
+#~ msgid "Invalid QQid"
+#~ msgstr "Neveljaven QQid"
+
+#~ msgid "Please enter external group ID"
+#~ msgstr "Prosimo, vnesite ID zunanje skupine"
+
+#~ msgid "Reason: %s"
+#~ msgstr "Razlog: %s"
+
+#~ msgid "Your request to join group %d has been approved by admin %d"
+#~ msgstr "Vašo zahtevo za pridružitev skupini %d je odobril administrator %d"
+
+#~ msgid "This group has been added to your buddy list"
+#~ msgstr "Skupina je bila dodana na vaš seznam prijateljev."
+
+#~ msgid "I am applying to join"
+#~ msgstr "Prijavljam se za članstvo"
+
+#~ msgid "You have successfully left the group"
+#~ msgstr "Uspešno ste zapustili skupino"
+
+#~ msgid "QQ Group Auth"
+#~ msgstr "Pooblaščanje skupine QQ"
+
+#~ msgid "Your authorization request has been accepted by the QQ server"
+#~ msgstr "Strežnik QQ je sprejel vašo zahtevo za pooblastitev."
+
+#~ msgid "Enter your reason:"
+#~ msgstr "Vnesite svoj razlog:"
+
+#~ msgid "You have successfully modified Qun member"
+#~ msgstr "Uspešno ste spremenili člana Qun"
+
+#~ msgid "You have successfully modified Qun information"
+#~ msgstr "Uspešno ste spremenili podatke Qun"
+
+#~ msgid " Space"
+#~ msgstr " Prostor"
+
+#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
+#~ msgstr "<b>Ime strežnika</b>: %s: %d<br>\n"
+
+#~ msgid "Show Login Information"
+#~ msgstr "Pokaži prijavne podatke"
+
+#~ msgid "resend interval(s)"
+#~ msgstr "Interval(i) ponovnega pošiljanja"
+
+#~ msgid "hostname is NULL or port is 0"
+#~ msgstr "ime gostitelja je NULL ali pa so vrata 0"
+
+#~ msgid "Unable to login. Check debug log."
+#~ msgstr "Prijava ni uspela. Preverite zapisnik razhroščevanja."
+
+#~ msgid "Unable to login"
+#~ msgstr "Prijava ni uspela"
+
+#~ msgid "Failed room reply"
+#~ msgstr "Spodleteli odgovor sobe"
+
+#~ msgid "User %s rejected your request"
+#~ msgstr "Uuporabnik %s je zavrnil vašo zahtevo."
+
+#~ msgid "User %s approved your request"
+#~ msgstr "Uporabnik %s je ugodil vaši zahtevi"
+
+#~ msgid "Notice from: %s"
+#~ msgstr "Oznanilo pošilja: %s"
+
+#~ msgid "Keep the status message when the status is changed"
+#~ msgstr "Ohrani sporočilo stanja, ko se stanje spremeni"
 
 #~ msgid "Error setting socket options"
 #~ msgstr "Napaka pri nastavljanju možnosti vtičnice"

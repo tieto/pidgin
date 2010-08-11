@@ -1146,7 +1146,7 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 				toolbar);
 	}
 
-	free(toolbar->sml);
+	g_free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
 
 	menu = g_object_get_data(object, "font_menu");

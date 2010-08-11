@@ -933,11 +933,8 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
 		PurpleUtilFetchUrlData *url_data;
-		gboolean use_whole_url = FALSE;
-
 		/* use whole URL if using HTTP Proxy */
-		if ((info_data->gc->account->proxy_info) && (info_data->gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-		    use_whole_url = TRUE;
+		gboolean use_whole_url = yahoo_account_use_http_proxy(info_data->gc);
 
 		/* User-uploaded photos use a different server that requires the Host
 		 * header, but Yahoo Japan will use the "chunked" content encoding if

@@ -764,7 +764,7 @@ sub type_glade {
     }
 
     ## handle new glade files
-    while ($input =~ /<(property|atkproperty)\s+[^>]*translatable\s*=\s*"yes"(?:\s+[^>]*comments\s*=\s*"([^"]*)")?[^>]*>([^<]+)<\/\1>/sg) {
+    while ($input =~ /<(property|atkproperty|col)\s+[^>]*translatable\s*=\s*"yes"(?:\s+[^>]*comments\s*=\s*"([^"]*)")?[^>]*>([^<]+)<\/\1>/sg) {
 	$messages{entity_decode($3)} = [] unless $3 =~ /^(window|label)[0-9]+$/;
         if (defined($2) and !($3 =~ /^(window|label)[0-9]+$/)) {
 	   $comments{entity_decode($3)} = entity_decode($2) ;
