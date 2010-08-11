@@ -205,12 +205,6 @@ jabber_parser_setup(JabberStream *js)
 	jabber_parser_free(js);
 }
 
-void
-jabber_parser_close_stream(JabberStream *js)
-{
-	xmlParseChunk(js->context, "</stream:stream>", 16 /* length */, 0);
-}
-
 void jabber_parser_free(JabberStream *js) {
 	if (js->context) {
 		xmlParseChunk(js->context, NULL,0,1);

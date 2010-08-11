@@ -68,6 +68,7 @@ void
 msn_history_add(MsnHistory *history, MsnTransaction *trans)
 {
 	GQueue *queue;
+	int max_elems;
 
 	g_return_if_fail(history != NULL);
 	g_return_if_fail(trans   != NULL);
@@ -78,7 +79,12 @@ msn_history_add(MsnHistory *history, MsnTransaction *trans)
 
 	g_queue_push_tail(queue, trans);
 
-	if (queue->length > MSN_HIST_ELEMS)
+	if (trans->cmdproc->servconn->type == MSN_SERVCONN_NS)
+		max_elems = MSN_NS_HIST_ELEMS;
+	else
+		max_elems = MSN_SB_HIST_ELEMS;
+
+	if (queue->length > max_elems)
 	{
 		trans = g_queue_pop_head(queue);
 		msn_transaction_destroy(trans);
