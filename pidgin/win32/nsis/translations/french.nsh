@@ -42,7 +42,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visitez la page web de Pidgin Windows" 
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (supprimer uniquement)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossible de désinstaller la version de Pidgin en place. La nouvelle version sera installée sans supprimer la version en place."
 
 ; GTK+ Section Prompts

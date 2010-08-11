@@ -38,10 +38,9 @@
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me are incompatible with GTK+ 2.8.0 or newer.  GTK+ ${GTK_INSTALL_VERSION} will not be installed.$\rIf you don't have GTK+ ${GTK_MIN_VERSION} or newer already installed, installation will now abort."
 
 ; Installer Finish Page
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_FINISH_VISIT_WEB_SITE		"Visit the WinPidgin Web Page"
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_FINISH_VISIT_WEB_SITE		"Visit the Pidgin Web Page"
 
 ; Pidgin Section Prompts and Texts
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_UNINSTALL_DESC			"$(^Name) (remove only)"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Unable to uninstall the currently installed version of Pidgin. The new version will be installed without removing the currently installed version."
 
 ; GTK+ Section Prompts

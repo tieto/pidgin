@@ -598,8 +598,6 @@ purple_network_is_available(void)
 void
 nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 {
-	GList *l;
-	PurpleAccount *account;
 	static libnm_glib_state prev = LIBNM_NO_DBUS;
 	libnm_glib_state current;
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();

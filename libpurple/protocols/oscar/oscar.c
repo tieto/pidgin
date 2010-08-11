@@ -298,7 +298,7 @@ oscar_encoding_extract(const char *encoding)
 }
 
 gchar *
-oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
+oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen)
 {
 	gchar *utf8 = NULL;
 
@@ -311,7 +311,25 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	{
 		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
 	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
-		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+		/* Some official ICQ clients are apparently total crack,
+		 * and have been known to save a UTF-8 string converted
+		 * from the locale character set to UCS-2 (not from UTF-8
+		 * to UCS-2!) in the away message.  This hack should find
+		 * and do something (un)reasonable with that, and not
+		 * mess up too much else. */
+		const gchar *charset = purple_account_get_string(account, "encoding", NULL);
+		if (charset) {
+			gsize len;
+			utf8 = g_convert(text, textlen, charset, "UCS-2BE", &len, NULL, NULL);
+			if (!utf8 || len != textlen || !g_utf8_validate(utf8, -1, NULL)) {
+				g_free(utf8);
+				utf8 = NULL;
+			} else {
+				purple_debug_info("oscar", "Used broken ICQ fallback encoding\n");
+			}
+		}
+		if (!utf8)
+			utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
 	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
 		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
@@ -1604,8 +1622,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
-		if (pos->modname)
-			g_free(pos->modname);
+		g_free(pos->modname);
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"Check %s for updates."), PURPLE_WEBSITE);
@@ -1775,7 +1792,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	{
 		have_status_message = TRUE;
 		if (info->status[0] != '\0')
-			message = oscar_encoding_to_utf8(info->status_encoding,
+			message = oscar_encoding_to_utf8(account, info->status_encoding,
 											 info->status, info->status_len);
 	}
 
@@ -1791,7 +1808,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
 		{
 			char *itmsurl;
-			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding,
+			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 			purple_prpl_got_user_status(account, info->sn, status_id,
 					"message", message, "itmsurl", itmsurl, NULL);
@@ -1826,9 +1843,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = time(NULL) - info->sessionlen;
 	if (!aim_sncmp(purple_account_get_username(account), info->sn)) {
 		purple_connection_set_display_name(gc, info->sn);
-		od->timeoffset = signon - purple_presence_get_login_time(presence);
 	}
-	purple_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
+	purple_prpl_got_user_login_time(account, info->sn, signon);
 
 	/* Idle time stuff */
 	/* info->idletime is the number of minutes that this user has been idle */
@@ -2049,7 +2065,8 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		{
 			char *encoding = NULL;
 			encoding = oscar_encoding_extract(args->encoding);
-			message = oscar_encoding_to_utf8(encoding, args->msg, args->msglen);
+			message = oscar_encoding_to_utf8(account, encoding, args->msg,
+			                                 args->msglen);
 			g_free(encoding);
 		} else {
 			if (g_utf8_validate(args->msg, args->msglen, NULL))
@@ -2067,7 +2084,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			return 1;
 		}
 		encoding = args->encoding ? oscar_encoding_extract(args->encoding) : NULL;
-		utf8name = oscar_encoding_to_utf8(encoding,
+		utf8name = oscar_encoding_to_utf8(account, encoding,
 				args->info.chat.roominfo.name,
 				args->info.chat.roominfo.namelen);
 		g_free(encoding);
@@ -2202,7 +2219,7 @@ purple_auth_request(struct name_data *data, char *msg)
 				   buddy->name, group->name);
 		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 		if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-			aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 1);
+			aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, TRUE);
 	}
 }
 
@@ -2850,12 +2867,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	g_free(tmp);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		time_t t = userinfo->onlinesince - od->timeoffset;
+		time_t t = userinfo->onlinesince;
 		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		time_t t = userinfo->membersince - od->timeoffset;
+		time_t t = userinfo->membersince;
 		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
 	}
 
@@ -2877,12 +2894,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
 	{
 		if (userinfo->status[0] != '\0')
-			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
+			tmp = oscar_encoding_to_utf8(account, userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
 #if defined (_WIN32) || defined (__APPLE__)
 		if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0')) {
 			gchar *itmsurl, *tmp2;
-			itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
+			itmsurl = oscar_encoding_to_utf8(account, userinfo->itmsurl_encoding,
 					userinfo->itmsurl, userinfo->itmsurl_len);
 			tmp2 = g_strdup_printf("<a href=\"%s\">%s</a>",
 					itmsurl, tmp);
@@ -2898,7 +2915,8 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	/* Away message */
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->away_encoding);
-		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
+		away_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->away,
+		                                   userinfo->away_len);
 		g_free(tmp);
 		if (away_utf8 != NULL) {
 			tmp = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
@@ -2912,7 +2930,8 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	/* Info */
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->info_encoding);
-		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
+		info_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->info,
+		                                   userinfo->info_len);
 		g_free(tmp);
 		if (info_utf8 != NULL) {
 			tmp = purple_str_sub_away_formatters(info_utf8, purple_account_get_username(account));
@@ -2932,6 +2951,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
 	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBuddy *b;
 	PurplePresence *presence;
 	PurpleStatus *status;
@@ -2944,7 +2964,7 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	b = purple_find_buddy(purple_connection_get_account(gc), userinfo->sn);
+	b = purple_find_buddy(account, userinfo->sn);
 	if (b == NULL)
 		return 1;
 
@@ -2964,7 +2984,9 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 		if ((userinfo->flags & AIM_FLAG_AWAY) &&
 			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+			message = oscar_encoding_to_utf8(account, charset,
+			                                 userinfo->away,
+			                                 userinfo->away_len);
 			g_free(charset);
 			purple_status_set_attr_string(status, "message", message);
 			g_free(message);
@@ -3160,6 +3182,7 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 
 static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 	gchar *utf8;
 	va_list ap;
@@ -3178,7 +3201,7 @@ static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Fl
 	charset = va_arg(ap, char *);
 	va_end(ap);
 
-	utf8 = oscar_encoding_to_utf8(charset, msg, len);
+	utf8 = oscar_encoding_to_utf8(account, charset, msg, len);
 	if (utf8 == NULL)
 		/* The conversion failed! */
 		utf8 = g_strdup(_("[Unable to display a message from this user because it contained invalid characters.]"));
@@ -4168,6 +4191,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PeerConnection *conn;
 	int ret;
 	char *tmp1, *tmp2;
+	gboolean is_html;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
@@ -4186,7 +4210,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
-		gsize len;
 		PurpleConversation *conv;
 		PurpleStoredImage *img;
 
@@ -4277,22 +4300,43 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		if (aim_sn_is_sms(name)) {
 			/* Messaging an SMS (mobile) user */
 			tmp2 = purple_markup_strip_html(tmp1);
+			is_html = FALSE;
 		} else if (aim_sn_is_icq(purple_account_get_username(account))) {
-			if (aim_sn_is_icq(name))
+			if (aim_sn_is_icq(name)) {
 				/* From ICQ to ICQ */
 				tmp2 = purple_markup_strip_html(tmp1);
-			else
+				is_html = FALSE;
+			} else {
 				/* From ICQ to AIM */
 				tmp2 = g_strdup(tmp1);
+				is_html = TRUE;
+			}
 		} else {
 			/* From AIM to AIM and AIM to ICQ */
 			tmp2 = g_strdup(tmp1);
+			is_html = TRUE;
 		}
 		g_free(tmp1);
 		tmp1 = tmp2;
-		len = strlen(tmp1);
 
 		purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		if (is_html && (args.msglen > MAXMSGLEN)) {
+			/* If the length was too long, try stripping the HTML and then running it back through
+			* purple_strdup_withhtml() and the encoding process. The result may be shorter. */
+			g_free((char *)args.msg);
+			
+			tmp2 = purple_markup_strip_html(tmp1);
+			g_free(tmp1);
+			
+			tmp1 = purple_strdup_withhtml(tmp2);
+			g_free(tmp2);
+			
+			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+
+			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+								  message, (char *)args.msg);
+		}
+
 		purple_debug_info("oscar", "Sending IM, charset=0x%04hx, charsubset=0x%04hx, length=%d\n",
 						args.charset, args.charsubset, args.msglen);
 		ret = aim_im_sendch1_ext(od, &args);
@@ -4387,7 +4431,7 @@ oscar_set_extendedstatus(PurpleConnection *gc)
 	if (purple_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE))
 		data |= AIM_ICQ_STATE_WEBAWARE;
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
 		data |= AIM_ICQ_STATE_NORMAL;
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
 		data |= AIM_ICQ_STATE_AWAY;
@@ -4592,7 +4636,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
 		purple_debug_info("oscar",
 				   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-		aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+		aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 	}
 
 	/* XXX - Should this be done from AIM accounts, as well? */
@@ -5324,7 +5368,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	OscarData *od = (OscarData *)gc->proto_data;
 	PurpleConversation *conv = NULL;
 	struct chat_connection *c = NULL;
-	char *buf, *buf2;
+	char *buf, *buf2, *buf3;
 	guint16 charset, charsubset;
 	char *charsetstr = NULL;
 	int len;
@@ -5336,7 +5380,6 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		return -EINVAL;
 
 	buf = purple_strdup_withhtml(message);
-	len = strlen(buf);
 
 	if (strstr(buf, "<IMG "))
 		purple_conversation_write(conv, "",
@@ -5350,8 +5393,28 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	 * visible characters" and not "number of bytes"
 	 */
 	if ((len > c->maxlen) || (len > c->maxvis)) {
+		/* If the length was too long, try stripping the HTML and then running it back through
+		 * purple_strdup_withhtml() and the encoding process. The result may be shorter. */
 		g_free(buf2);
-		return -E2BIG;
+
+		buf3 = purple_markup_strip_html(buf);
+		g_free(buf);
+
+		buf = purple_strdup_withhtml(buf3);
+		g_free(buf3);
+
+		purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+
+		if ((len > c->maxlen) || (len > c->maxvis)) {
+			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)",
+					buf2, len, c->maxlen, len, c->maxvis);
+			g_free(buf);
+			g_free(buf2);
+			return -E2BIG;
+		}
+
+		purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+				message, buf2);
 	}
 
 	if (charset == AIM_CHARSET_ASCII)
@@ -5362,6 +5425,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
+	g_free(buf);
 
 	return 0;
 }

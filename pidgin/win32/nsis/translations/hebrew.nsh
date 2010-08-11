@@ -39,7 +39,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		".Pidginבקרו באתר של "
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (מחיקה בלבד)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת הגרסא המותקנת."
 
 ; GTK+ Section Prompts

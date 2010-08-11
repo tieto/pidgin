@@ -77,11 +77,12 @@ install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
 plugins: \
 		convcolors.dll \
 		extplacement.dll \
-		pidginrc.dll \
+		gtkbuddynote.dll \
 		history.dll \
 		iconaway.dll \
 		markerline.dll \
 		notify.dll \
+		pidginrc.dll \
 		relnot.dll \
 		spellchk.dll \
 		timestamp_format.dll \

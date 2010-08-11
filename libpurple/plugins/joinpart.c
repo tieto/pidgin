@@ -210,7 +210,7 @@ static gboolean plugin_unload(PurplePlugin *plugin)
 	 * we don't have to worry one will be called after this. */
 	g_hash_table_destroy((GHashTable *)data[0]);
 
-	g_source_remove(GPOINTER_TO_UINT(data[1]));
+	purple_timeout_remove(GPOINTER_TO_UINT(data[1]));
 	g_free(data);
 
 	return TRUE;

@@ -159,7 +159,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	char *roomname;
 	struct aim_chat_roominfo roominfo;
 	guint16 tlvcount = 0;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	aim_tlv_t *tlv;
 	char *roomdesc;
 	guint16 flags;
@@ -309,7 +309,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	g_free(userinfo);
 	g_free(roomname);
 	g_free(roomdesc);
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -357,7 +357,7 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	IcbmCookie *cookie;
 	aim_snacid_t snacid;
 	guint8 ckstr[8];
-	aim_tlvlist_t *tlvlist = NULL, *inner_tlvlist = NULL;
+	GSList *tlvlist = NULL, *inner_tlvlist = NULL;
 
 	if (!od || !conn || !msg || (msglen <= 0))
 		return 0;
@@ -430,8 +430,8 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 
-	aim_tlvlist_free(&inner_tlvlist);
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(inner_tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -471,7 +471,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	aim_userinfo_t userinfo;
 	guint8 cookie[8];
 	guint16 channel;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	char *msg = NULL;
 	int len = 0;
 	char *encoding = NULL, *language = NULL;
@@ -536,7 +536,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1);
 	if (tlv != NULL)
 	{
-		aim_tlvlist_t *inner_tlvlist;
+		GSList *inner_tlvlist;
 		aim_tlv_t *inner_tlv;
 
 		byte_stream_init(&tbs, tlv->value, tlv->length);
@@ -562,7 +562,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 		 */
 		language = aim_tlv_getstr(inner_tlvlist, 0x0003, 1);
 
-		aim_tlvlist_free(&inner_tlvlist);
+		aim_tlvlist_free(inner_tlvlist);
 	}
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
@@ -572,7 +572,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	g_free(msg);
 	g_free(encoding);
 	g_free(language);
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }

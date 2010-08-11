@@ -54,7 +54,9 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
  */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0, 0}
 
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "blist.h"
 #include "conversation.h"

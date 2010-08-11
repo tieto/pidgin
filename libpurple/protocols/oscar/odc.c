@@ -447,7 +447,7 @@ peer_odc_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (read == -1)
+	if (read < 0)
 	{
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 			/* No worries */

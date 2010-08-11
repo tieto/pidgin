@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "dbus-purple.h"
-#include "purple-client-bindings.h"
+#include "purple-client.h"
 
 static DBusGConnection *bus;
 static DBusGProxy *purple_proxy;

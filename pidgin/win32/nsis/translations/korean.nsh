@@ -19,9 +19,6 @@
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"옛날 버전 GTK+ 런타임을 찾았습니다. 업그레이드할까요?$\rNote: 업그레이드하지 않으면 가임이 동작하지 않을 수도 있습니다."
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (remove only)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ 런타임 설치 중 오류 발생."
 !define GTK_BAD_INSTALL_PATH			"입력하신 경로에 접근할 수 없거나 만들 수 없었습니다."

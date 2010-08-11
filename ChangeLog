@@ -1,5 +1,35 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.0.2 (06/14/2007):
+	Pidgin:
+	* Added a custom conversation font option to preferences
+	* Fixed smiley ordering in the insert smiley popup to be more intuitive
+	* Conversation->More menu items work for Chats as well as Buddies,
+	  including those not on your buddy list
+	* newline plugin should work better with conversation colors plugin now
+	* Get Info on users now provides immediate feedback that something is
+	  happening
+	* Aliasing a buddy will not be interrupted by other buddy list activity
+	* Using the -l option to log in to a specific account works better
+
+	libpurple:
+	* Moving an ICQ buddy from one group to another no longer
+	  re-requests authorization from that person (Rene Hausleitner)
+	* Added nullprpl, an example protocol plugin (Ryan Barrett)
+	* Fixed SOCKS5 bug which caused Jabber file receiving to fail
+	* Remove MSN's random "Authorization Failed" dialogs
+	* Fix MSN to correctly detect incorrect passwords and disable the account
+	* Get User Info on MSN is now more reliable & accurate
+	* Updated SILC protocol to support SILC Toolkit 1.1 (Pekka Riikonen)
+	* Fix for some QQ authentication problems
+	* Fix for building on FreeBSD
+	* Prevent "Logged in:" times for AIM buddies being ridiculously high
+	* Updates and fixes to Bonjour support
+	* Improve ICQ encoding support for some non-latin languages
+
+	Finch:
+	* Auto account reconnecting
+
 version 2.0.1 (05/24/2007):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)

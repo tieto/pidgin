@@ -27,9 +27,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"WejdŸ na stronê Pidgin Web Page"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (usuñ program)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"B³¹d instalacji runtime-a GTK+."
 !define GTK_BAD_INSTALL_PATH			"Nie ma dostêpu do wybranej œcie¿ki / ³aty."

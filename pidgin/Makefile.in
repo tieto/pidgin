@@ -658,6 +658,7 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	-DLIBDIR=\"$(libdir)/pidgin/\" \
 @ENABLE_GTK_TRUE@	-DLOCALEDIR=\"$(datadir)/locale\" \
 @ENABLE_GTK_TRUE@	-DSYSCONFDIR=\"$(sysconfdir)\" \
+@ENABLE_GTK_TRUE@	-I$(top_builddir)/libpurple \
 @ENABLE_GTK_TRUE@	-I$(top_srcdir)/libpurple/ \
 @ENABLE_GTK_TRUE@	$(GLIB_CFLAGS) \
 @ENABLE_GTK_TRUE@	$(GSTREAMER_CFLAGS) \

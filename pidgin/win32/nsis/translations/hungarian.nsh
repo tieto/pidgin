@@ -38,7 +38,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Pidgin weboldalának felkeresése"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Pidgin (csak eltávolítás)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"A Pidgin jelenleg telepített változata nem távolítható el. Az új verzió a jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
 

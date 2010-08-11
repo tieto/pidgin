@@ -39,7 +39,7 @@ aim_bos_reqrights(OscarData *od, FlapConnection *conn)
 static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint16 maxpermits = 0, maxdenies = 0;
 	int ret = 0;
 
@@ -63,7 +63,7 @@ static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, maxpermits, maxdenies);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }

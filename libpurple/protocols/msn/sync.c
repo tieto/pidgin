@@ -99,8 +99,19 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	/* HACK */
 	if (group_id == 0)
+	{
 		/* Group of ungroupped buddies */
+		if (session->sync->total_users == 0)
+		{
+			cmdproc->cbs_table = session->sync->old_cbs_table;
+
+			msn_session_finish_login(session);
+
+			msn_sync_destroy(session->sync);
+			session->sync = NULL;
+		}
 		return;
+	}
 
 	if ((purple_find_group(name)) == NULL)
 	{
@@ -183,6 +194,8 @@ bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 
 	user = sync->last_user;
+
+	g_return_if_fail(user != NULL);
 
 	type     = cmd->params[0];
 	value    = cmd->params[1];

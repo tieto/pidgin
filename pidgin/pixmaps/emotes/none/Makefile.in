@@ -392,8 +392,10 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/none
+pidginsmileypix_in_files = none.theme.in
 pidginsmileypix_DATA = theme
 EXTRA_DIST = $(pidginsmileypix_DATA) \
+	$(pidginsmileypix_in_files) \
 	Makefile.mingw
 
 all: all-am
@@ -577,6 +579,12 @@ uninstall-am: uninstall-info-am uninstall-pidginsmileypixDATA
 	mostlyclean-libtool pdf pdf-am ps ps-am uninstall uninstall-am \
 	uninstall-info-am uninstall-pidginsmileypixDATA
 
+
+theme: none.theme.in
+	sed -e 's/^_Name=/Name=/' \
+	    -e 's/^_Description=/Description=/' \
+	    -e 's/^_Author=/Author=/' \
+	$< > $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

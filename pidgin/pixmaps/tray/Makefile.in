@@ -390,11 +390,13 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-SUBDIRS = 16 22
+SUBDIRS = 16 22 32 48
 EXTRA_DIST = \
 	Makefile.mingw \
 	16/Makefile.mingw \
-	22/Makefile.mingw
+	22/Makefile.mingw \
+	32/Makefile.mingw \
+	48/Makefile.mingw
 
 all: all-recursive
 
@@ -572,7 +574,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/16 $(distdir)/22
+	$(mkdir_p) $(distdir)/16 $(distdir)/22 $(distdir)/32 $(distdir)/48
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

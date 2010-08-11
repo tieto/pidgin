@@ -9,9 +9,9 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.0.1"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.0.2"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.0.1
+%define pidginver 2.0.2
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
@@ -21,7 +21,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.0.1.tar.bz2
+Source:     %{name}-2.0.2.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -83,6 +83,7 @@ Provides: gaim
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
 Requires:   pidgin = %{version}, libpurple-devel = %{version}
+Requires:   gtk2-devel
 Requires:   pkgconfig
 Obsoletes:  gaim-devel
 Provides:   gaim-devel
@@ -95,12 +96,19 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+%{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
 Requires:   libpurple = %{version}
 Requires:   pkgconfig
+%if "%{_vendor}" == "suse"
+# For SuSE:
+%{?_with_dbus:Requires: dbus-1-devel >= 0.35}
+%else
+%{?_with_dbus:Requires: dbus-devel >= 0.35}
+%endif
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
@@ -133,6 +141,7 @@ Requires:   libpurple = %{version}
 Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
 Requires:   finch = %{version}, libpurple-devel = %{version}
+Requires:   ncurses-devel
 Requires:   pkgconfig
 %endif
 
@@ -198,7 +207,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.0.1
+%setup -q -n %{name}-2.0.2
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -449,6 +458,13 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Tue Jun 5 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add missing Requires for gtk2-devel, dbus-devel & ncurses-devel to
+  appropriate -devel subpackages
+
+* Sun May 27 2007 Stu Tomlinson <stu@nosnilmot.com>
+- add cyrus-sasl-plain & cyrus-sasl-md5 to Requires
+
 * Thu May 24 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Silence errors from gtk-update-icon-cache
 - Change Mandriva build dependencies to reflect the correct (lower case)

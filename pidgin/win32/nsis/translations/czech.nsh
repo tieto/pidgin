@@ -28,9 +28,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Navštívit Windows Pidgin Web Page"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (odinstalovat)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Chyba pøi instalaci GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Zadaná cesta je nedostupná, nebo ji nelze vytvoøit."

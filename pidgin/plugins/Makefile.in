@@ -79,6 +79,11 @@ am__gtk_signals_test_la_SOURCES_DIST = gtk-signals-test.c
 @PLUGINS_TRUE@am_gtk_signals_test_la_OBJECTS = gtk-signals-test.lo
 gtk_signals_test_la_OBJECTS = $(am_gtk_signals_test_la_OBJECTS)
 @PLUGINS_TRUE@am_gtk_signals_test_la_rpath =
+@PLUGINS_TRUE@gtkbuddynote_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__gtkbuddynote_la_SOURCES_DIST = gtkbuddynote.c
+@PLUGINS_TRUE@am_gtkbuddynote_la_OBJECTS = gtkbuddynote.lo
+gtkbuddynote_la_OBJECTS = $(am_gtkbuddynote_la_OBJECTS)
+@PLUGINS_TRUE@am_gtkbuddynote_la_rpath = -rpath $(plugindir)
 @PLUGINS_TRUE@history_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__history_la_SOURCES_DIST = history.c
 @PLUGINS_TRUE@am_history_la_OBJECTS = history.lo
@@ -143,15 +148,17 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(contact_priority_la_SOURCES) $(convcolors_la_SOURCES) \
 	$(extplacement_la_SOURCES) $(gtk_signals_test_la_SOURCES) \
-	$(history_la_SOURCES) $(iconaway_la_SOURCES) \
-	$(markerline_la_SOURCES) $(notify_la_SOURCES) \
-	$(pidginrc_la_SOURCES) $(relnot_la_SOURCES) \
-	$(spellchk_la_SOURCES) $(timestamp_la_SOURCES) \
-	$(timestamp_format_la_SOURCES) $(xmppconsole_la_SOURCES)
+	$(gtkbuddynote_la_SOURCES) $(history_la_SOURCES) \
+	$(iconaway_la_SOURCES) $(markerline_la_SOURCES) \
+	$(notify_la_SOURCES) $(pidginrc_la_SOURCES) \
+	$(relnot_la_SOURCES) $(spellchk_la_SOURCES) \
+	$(timestamp_la_SOURCES) $(timestamp_format_la_SOURCES) \
+	$(xmppconsole_la_SOURCES)
 DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__convcolors_la_SOURCES_DIST) \
 	$(am__extplacement_la_SOURCES_DIST) \
 	$(am__gtk_signals_test_la_SOURCES_DIST) \
+	$(am__gtkbuddynote_la_SOURCES_DIST) \
 	$(am__history_la_SOURCES_DIST) $(am__iconaway_la_SOURCES_DIST) \
 	$(am__markerline_la_SOURCES_DIST) \
 	$(am__notify_la_SOURCES_DIST) $(am__pidginrc_la_SOURCES_DIST) \
@@ -518,6 +525,7 @@ convcolors_la_LDFLAGS = -module -avoid-version
 contact_priority_la_LDFLAGS = -module -avoid-version
 extplacement_la_LDFLAGS = -module -avoid-version
 gtk_signals_test_la_LDFLAGS = -module -avoid-version
+gtkbuddynote_la_LDFLAGS = -module -avoid-version
 history_la_LDFLAGS = -module -avoid-version
 iconaway_la_LDFLAGS = -module -avoid-version
 markerline_la_LDFLAGS = -module -avoid-version
@@ -531,6 +539,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@plugin_LTLIBRARIES = \
 @PLUGINS_TRUE@	convcolors.la       \
 @PLUGINS_TRUE@	extplacement.la     \
+@PLUGINS_TRUE@	gtkbuddynote.la     \
 @PLUGINS_TRUE@	history.la          \
 @PLUGINS_TRUE@	iconaway.la         \
 @PLUGINS_TRUE@	markerline.la       \
@@ -550,6 +559,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@contact_priority_la_SOURCES = contact_priority.c
 @PLUGINS_TRUE@extplacement_la_SOURCES = extplacement.c
 @PLUGINS_TRUE@gtk_signals_test_la_SOURCES = gtk-signals-test.c
+@PLUGINS_TRUE@gtkbuddynote_la_SOURCES = gtkbuddynote.c
 @PLUGINS_TRUE@history_la_SOURCES = history.c
 @PLUGINS_TRUE@iconaway_la_SOURCES = iconaway.c
 @PLUGINS_TRUE@markerline_la_SOURCES = markerline.c
@@ -564,6 +574,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@contact_priority_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@extplacement_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@gtk_signals_test_la_LIBADD = $(GTK_LIBS)
+@PLUGINS_TRUE@gtkbuddynote_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@history_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@iconaway_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@markerline_la_LIBADD = $(GTK_LIBS)
@@ -678,6 +689,8 @@ extplacement.la: $(extplacement_la_OBJECTS) $(extplacement_la_DEPENDENCIES)
 	$(LINK) $(am_extplacement_la_rpath) $(extplacement_la_LDFLAGS) $(extplacement_la_OBJECTS) $(extplacement_la_LIBADD) $(LIBS)
 gtk_signals_test.la: $(gtk_signals_test_la_OBJECTS) $(gtk_signals_test_la_DEPENDENCIES) 
 	$(LINK) $(am_gtk_signals_test_la_rpath) $(gtk_signals_test_la_LDFLAGS) $(gtk_signals_test_la_OBJECTS) $(gtk_signals_test_la_LIBADD) $(LIBS)
+gtkbuddynote.la: $(gtkbuddynote_la_OBJECTS) $(gtkbuddynote_la_DEPENDENCIES) 
+	$(LINK) $(am_gtkbuddynote_la_rpath) $(gtkbuddynote_la_LDFLAGS) $(gtkbuddynote_la_OBJECTS) $(gtkbuddynote_la_LIBADD) $(LIBS)
 history.la: $(history_la_OBJECTS) $(history_la_DEPENDENCIES) 
 	$(LINK) $(am_history_la_rpath) $(history_la_LDFLAGS) $(history_la_OBJECTS) $(history_la_LIBADD) $(LIBS)
 iconaway.la: $(iconaway_la_OBJECTS) $(iconaway_la_DEPENDENCIES) 
@@ -709,6 +722,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/convcolors.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extplacement.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtk-signals-test.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkbuddynote.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/history.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iconaway.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markerline.Plo@am__quote@

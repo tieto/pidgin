@@ -98,7 +98,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	struct aim_emailinfo *new;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint8 *cookie8, *cookie16;
 	int tmp, havenewmail = 0; /* Used to tell the client we have _new_ mail */
 
@@ -152,7 +152,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	g_free(alertitle);
 	g_free(alerturl);

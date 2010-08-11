@@ -34,9 +34,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Aplankyti Windows Pidgin tinklalapá"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (tik paðalinti)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ vykdymo meto aplinkos diegimo klaida."
 !define GTK_BAD_INSTALL_PATH			"Jûsø nurodytas katalogas neprieinamas ar negali bûti sukurtas."

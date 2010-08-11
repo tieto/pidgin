@@ -15,10 +15,10 @@
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
    version="1.0"
-   inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/status/16/offline.png"
+   inkscape:export-filename="/home/hbons/Desktop/offline.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/status/16/scalable"
+   sodipodi:docbase="/home/hbons/Desktop/experiment/status/16/scalable"
    sodipodi:docname="offline.svg">
   <defs
      id="defs4">
@@ -160,16 +160,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="25.992076"
-     inkscape:cx="16.806787"
-     inkscape:cy="8.1469775"
+     inkscape:cx="26.27121"
+     inkscape:cy="5.5692688"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      fill="#eeeeec"
-     inkscape:window-width="1268"
-     inkscape:window-height="968"
-     inkscape:window-x="6"
-     inkscape:window-y="23" />
+     inkscape:window-width="1434"
+     inkscape:window-height="844"
+     inkscape:window-x="0"
+     inkscape:window-y="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -195,14 +195,6 @@
        style="opacity:0.7;color:#000000;fill:url(#radialGradient3822);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
        sodipodi:type="arc"
        transform="matrix(0.923568,0,0,0.288615,-20.73469,8.013827)" />
-    <image
-       id="image1323"
-       height="64.794617"
-       width="64.794617"
-       sodipodi:absref="/home/hbons/Desktop/Gaim Refresh/Tango-Palette.png"
-       xlink:href="/home/hbons/Desktop/Gaim Refresh/Tango-Palette.png"
-       x="-74"
-       y="-17" />
     <path
        style="fill:#888a85;fill-opacity:1;stroke:#2e3436;stroke-width:0.99999827;stroke-miterlimit:4;stroke-opacity:1"
        d="M 13.307074,13.307079 C 10.376958,16.237198 5.6213214,16.237693 2.6918157,13.308187 C -0.23769028,10.378679 -0.23719421,5.623042 2.692923,2.6929237 C 5.62304,-0.23719442 10.378675,-0.23769056 13.308181,2.6918165 C 16.237687,5.6213234 16.237192,10.376962 13.307074,13.307079 z "
@@ -218,9 +210,9 @@
        d="M 8,1.5 C 6.3326173,1.5001739 4.674966,2.1375335 3.40625,3.40625 C 0.86479124,5.9477097 0.86538373,10.052882 3.40625,12.59375 C 5.9471154,15.134616 10.052293,15.135209 12.59375,12.59375 C 15.135209,10.052292 15.134616,5.9471167 12.59375,3.40625 C 11.325315,2.1378146 9.6669929,1.4998261 8,1.5 z "
        transform="matrix(1.000056,0,0,1.000028,-4.353349e-4,-2.926381e-5)" />
     <path
-       style="opacity:1;fill:#eeeeec;fill-opacity:1;stroke:#555753;stroke-width:0.99999946;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 10.018233,3.7131793 L 8,5.8786797 L 5.9817663,3.727906 L 3.7131793,5.9817663 L 5.8786797,8 L 3.7131793,10.03296 L 5.9964929,12.316274 L 8,10.12132 L 10.018233,12.301548 L 12.301548,10.018233 L 10.12132,8 L 12.286821,5.9964929 L 10.018233,3.7131793 z "
-       id="rect1322"
-       sodipodi:nodetypes="ccccccccccccc" />
+       style="opacity:1;fill:#eeeeec;fill-opacity:1;stroke:#555753;stroke-width:1.00000036;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 11.54182,4.2658182 C 10.931116,3.6551131 10.447965,3.347327 9.8372602,3.9580321 L 8.0000001,5.7952921 L 6.1627401,3.9580321 C 5.5520351,3.3473271 4.9919392,3.7705329 4.381234,4.381238 C 3.770529,4.991943 3.347323,5.5520393 3.9580281,6.1627441 L 5.7952881,8.0000041 L 3.9580281,9.8372641 C 3.3473229,10.447969 3.6935827,10.969592 4.3042875,11.580298 C 4.9149927,12.191002 5.5520349,12.652681 6.1627401,12.041977 L 8.0000001,10.204716 L 9.8372602,12.041977 C 10.447965,12.652681 11.046535,12.306422 11.657239,11.695718 C 12.267944,11.085012 12.652677,10.447969 12.041972,9.8372641 L 10.204713,8.0000041 L 12.041972,6.1627441 C 12.652677,5.552039 12.152526,4.8765236 11.54182,4.2658182 z "
+       id="rect2920"
+       sodipodi:nodetypes="ccccscccscccscccc" />
   </g>
 </svg>

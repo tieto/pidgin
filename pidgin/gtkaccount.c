@@ -184,6 +184,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_size_group_add_widget(dialog->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
 	gtk_widget_show(label);
 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, PIDGIN_HIG_BORDER);
@@ -426,15 +427,18 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_ref(dialog->protocol_menu);
 	}
 
-	hbox = add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	hbox = add_pref_box(dialog, vbox, _("Pro_tocol:"), dialog->protocol_menu);
 	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
 
 	gtk_widget_unref(dialog->protocol_menu);
 
 	/* Screen name */
 	dialog->screenname_entry = gtk_entry_new();
+#if GTK_CHECK_VERSION(2,10,0)
+	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
+#endif
 
-	add_pref_box(dialog, vbox, _("Screen name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("Screen _name:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
@@ -457,7 +461,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		PurpleAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
+		buf = g_strdup_printf("_%s:", purple_account_user_split_get_text(split));
 
 		entry = gtk_entry_new();
 
@@ -497,8 +501,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 		item = gtk_menu_get_active(GTK_MENU(menu));
 		protocol = g_object_get_data(G_OBJECT(item), "protocol");
-		if (value == NULL && !strcmp(protocol, "prpl-fake") && 
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+		if (value == NULL && protocol != NULL && !strcmp(protocol, "prpl-fake") &&
+				!strcmp(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
 		if (value != NULL)
@@ -516,16 +520,16 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
 	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
 		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
-	dialog->password_box = add_pref_box(dialog, vbox, _("Password:"),
+	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
 	/* Alias */
 	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("Local alias:"), dialog->alias_entry);
+	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
 
 	/* Remember Password */
 	dialog->remember_pass_check =
-		gtk_check_button_new_with_label(_("Remember password"));
+		gtk_check_button_new_with_mnemonic(_("Remember pass_word"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
 								 FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
@@ -596,12 +600,12 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* New mail notifications */
 	dialog->new_mail_check =
-		gtk_check_button_new_with_label(_("New mail notifications"));
+		gtk_check_button_new_with_mnemonic(_("New _mail notifications"));
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->new_mail_check, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->new_mail_check);
 
 	/* Buddy icon */
-	dialog->icon_check = gtk_check_button_new_with_label(_("Use this buddy icon for this account:"));
+	dialog->icon_check = gtk_check_button_new_with_mnemonic(_("Use this buddy _icon for this account:"));
 	g_signal_connect(G_OBJECT(dialog->icon_check), "toggled", G_CALLBACK(icon_check_cb), dialog);
 	gtk_widget_show(dialog->icon_check);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->icon_check, FALSE, FALSE, 0);
@@ -698,7 +702,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleKeyValuePair *kvp;
 	GList *l;
 	char buf[1024];
-	char *title;
+	char *title, *tmp;
 	const char *str_value, *protocol;
 	gboolean bool_value;
 
@@ -755,8 +759,9 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						purple_account_option_get_default_bool(option));
 				}
 
-				check = gtk_check_button_new_with_label(
-					purple_account_option_get_text(option));
+				tmp = g_strconcat("_", purple_account_option_get_text(option), NULL);
+				check = gtk_check_button_new_with_mnemonic(tmp);
+				g_free(tmp);
 
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
 											 bool_value);
@@ -788,7 +793,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				entry = gtk_entry_new();
 				gtk_entry_set_text(GTK_ENTRY(entry), buf);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -826,14 +831,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 				item = gtk_menu_get_active(GTK_MENU(menu));
 				protocol = g_object_get_data(G_OBJECT(item), "protocol");
-				if (str_value == NULL && !strcmp(protocol, "prpl-fake") &&
+				if (str_value == NULL && protocol != NULL && !strcmp(protocol, "prpl-fake") &&
 					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
-					str_value = "talk.google.com";	
-		
+					str_value = "talk.google.com";
+
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -894,7 +899,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo),
 						renderer, "text", 0, NULL);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, combo);
@@ -2024,19 +2029,26 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 {
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
 	PurpleStoredImage *img = NULL;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
-		if (global_buddyicon != NULL)
-			buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
-		/* This is for when set_account() is called for a single account */
-		else
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL) {
+		if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
+			if (global_buddyicon != NULL)
+				buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
+			/* This is for when set_account() is called for a single account */
+			else
+				img = purple_buddy_icons_find_account_icon(account);
+		} else {
 			img = purple_buddy_icons_find_account_icon(account);
-	} else {
-		img = purple_buddy_icons_find_account_icon(account);
+		}
 	}
 
 	if (img != NULL) {

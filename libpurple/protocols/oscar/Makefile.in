@@ -51,16 +51,6 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
-libaim_a_AR = $(AR) $(ARFLAGS)
-libaim_a_LIBADD =
-am__libaim_a_SOURCES_DIST = libaim.c
-@STATIC_OSCAR_TRUE@am_libaim_a_OBJECTS = libaim_a-libaim.$(OBJEXT)
-libaim_a_OBJECTS = $(am_libaim_a_OBJECTS)
-libicq_a_AR = $(AR) $(ARFLAGS)
-libicq_a_LIBADD =
-am__libicq_a_SOURCES_DIST = libicq.c
-@STATIC_OSCAR_TRUE@am_libicq_a_OBJECTS = libicq_a-libicq.$(OBJEXT)
-libicq_a_OBJECTS = $(am_libicq_a_OBJECTS)
 liboscar_a_AR = $(AR) $(ARFLAGS)
 liboscar_a_LIBADD =
 am__liboscar_a_SOURCES_DIST = bstream.c family_admin.c family_advert.c \
@@ -71,7 +61,7 @@ am__liboscar_a_SOURCES_DIST = bstream.c family_admin.c family_advert.c \
 	family_stats.c family_translate.c family_userlookup.c \
 	flap_connection.c misc.c msgcookie.c odc.c oft.c oscar.c \
 	oscar.h oscarcommon.h oscar_data.c peer.c peer.h peer_proxy.c \
-	rxhandlers.c snac.c snactypes.h tlv.c util.c
+	rxhandlers.c snac.c snactypes.h tlv.c util.c libaim.c libicq.c
 am__objects_1 = liboscar_a-bstream.$(OBJEXT) \
 	liboscar_a-family_admin.$(OBJEXT) \
 	liboscar_a-family_advert.$(OBJEXT) \
@@ -100,7 +90,9 @@ am__objects_1 = liboscar_a-bstream.$(OBJEXT) \
 	liboscar_a-peer_proxy.$(OBJEXT) \
 	liboscar_a-rxhandlers.$(OBJEXT) liboscar_a-snac.$(OBJEXT) \
 	liboscar_a-tlv.$(OBJEXT) liboscar_a-util.$(OBJEXT)
-@STATIC_OSCAR_TRUE@am_liboscar_a_OBJECTS = $(am__objects_1)
+@STATIC_OSCAR_TRUE@am_liboscar_a_OBJECTS = $(am__objects_1) \
+@STATIC_OSCAR_TRUE@	liboscar_a-libaim.$(OBJEXT) \
+@STATIC_OSCAR_TRUE@	liboscar_a-libicq.$(OBJEXT)
 liboscar_a_OBJECTS = $(am_liboscar_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -155,11 +147,9 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libaim_a_SOURCES) $(libicq_a_SOURCES) \
-	$(liboscar_a_SOURCES) $(libaim_la_SOURCES) \
+SOURCES = $(liboscar_a_SOURCES) $(libaim_la_SOURCES) \
 	$(libicq_la_SOURCES) $(liboscar_la_SOURCES)
-DIST_SOURCES = $(am__libaim_a_SOURCES_DIST) \
-	$(am__libicq_a_SOURCES_DIST) $(am__liboscar_a_SOURCES_DIST) \
+DIST_SOURCES = $(am__liboscar_a_SOURCES_DIST) \
 	$(am__libaim_la_SOURCES_DIST) $(am__libicq_la_SOURCES_DIST) \
 	$(am__liboscar_la_SOURCES_DIST)
 ETAGS = etags
@@ -548,13 +538,9 @@ libaim_la_LDFLAGS = -module -avoid-version
 libicq_la_LDFLAGS = -module -avoid-version
 @STATIC_OSCAR_FALSE@st = 
 @STATIC_OSCAR_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_OSCAR_TRUE@noinst_LIBRARIES = liboscar.a libaim.a libicq.a
-@STATIC_OSCAR_TRUE@liboscar_a_SOURCES = $(OSCARSOURCES)
+@STATIC_OSCAR_TRUE@noinst_LIBRARIES = liboscar.a
+@STATIC_OSCAR_TRUE@liboscar_a_SOURCES = $(OSCARSOURCES) libaim.c libicq.c
 @STATIC_OSCAR_TRUE@liboscar_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_OSCAR_TRUE@libaim_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_OSCAR_TRUE@libaim_a_SOURCES = libaim.c
-@STATIC_OSCAR_TRUE@libicq_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_OSCAR_TRUE@libicq_a_SOURCES = libicq.c
 @STATIC_OSCAR_FALSE@pkg_LTLIBRARIES = liboscar.la libaim.la libicq.la
 @STATIC_OSCAR_FALSE@liboscar_la_SOURCES = $(OSCARSOURCES)
 @STATIC_OSCAR_FALSE@liboscar_la_LIBADD = $(GLIB_LIBS)
@@ -604,14 +590,6 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libaim.a: $(libaim_a_OBJECTS) $(libaim_a_DEPENDENCIES) 
-	-rm -f libaim.a
-	$(libaim_a_AR) libaim.a $(libaim_a_OBJECTS) $(libaim_a_LIBADD)
-	$(RANLIB) libaim.a
-libicq.a: $(libicq_a_OBJECTS) $(libicq_a_DEPENDENCIES) 
-	-rm -f libicq.a
-	$(libicq_a_AR) libicq.a $(libicq_a_OBJECTS) $(libicq_a_LIBADD)
-	$(RANLIB) libicq.a
 liboscar.a: $(liboscar_a_OBJECTS) $(liboscar_a_DEPENDENCIES) 
 	-rm -f liboscar.a
 	$(liboscar_a_AR) liboscar.a $(liboscar_a_OBJECTS) $(liboscar_a_LIBADD)
@@ -679,9 +657,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/family_userlookup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flap_connection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libaim.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libaim_a-libaim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libicq.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libicq_a-libicq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-bstream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-family_admin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-family_advert.Po@am__quote@
@@ -704,6 +680,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-family_translate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-family_userlookup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-flap_connection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-libaim.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-libicq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-msgcookie.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_a-odc.Po@am__quote@
@@ -749,34 +727,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-libaim_a-libaim.o: libaim.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libaim_a_CFLAGS) $(CFLAGS) -MT libaim_a-libaim.o -MD -MP -MF "$(DEPDIR)/libaim_a-libaim.Tpo" -c -o libaim_a-libaim.o `test -f 'libaim.c' || echo '$(srcdir)/'`libaim.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libaim_a-libaim.Tpo" "$(DEPDIR)/libaim_a-libaim.Po"; else rm -f "$(DEPDIR)/libaim_a-libaim.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libaim.c' object='libaim_a-libaim.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libaim_a_CFLAGS) $(CFLAGS) -c -o libaim_a-libaim.o `test -f 'libaim.c' || echo '$(srcdir)/'`libaim.c
-
-libaim_a-libaim.obj: libaim.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libaim_a_CFLAGS) $(CFLAGS) -MT libaim_a-libaim.obj -MD -MP -MF "$(DEPDIR)/libaim_a-libaim.Tpo" -c -o libaim_a-libaim.obj `if test -f 'libaim.c'; then $(CYGPATH_W) 'libaim.c'; else $(CYGPATH_W) '$(srcdir)/libaim.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libaim_a-libaim.Tpo" "$(DEPDIR)/libaim_a-libaim.Po"; else rm -f "$(DEPDIR)/libaim_a-libaim.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libaim.c' object='libaim_a-libaim.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libaim_a_CFLAGS) $(CFLAGS) -c -o libaim_a-libaim.obj `if test -f 'libaim.c'; then $(CYGPATH_W) 'libaim.c'; else $(CYGPATH_W) '$(srcdir)/libaim.c'; fi`
-
-libicq_a-libicq.o: libicq.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libicq_a_CFLAGS) $(CFLAGS) -MT libicq_a-libicq.o -MD -MP -MF "$(DEPDIR)/libicq_a-libicq.Tpo" -c -o libicq_a-libicq.o `test -f 'libicq.c' || echo '$(srcdir)/'`libicq.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libicq_a-libicq.Tpo" "$(DEPDIR)/libicq_a-libicq.Po"; else rm -f "$(DEPDIR)/libicq_a-libicq.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libicq.c' object='libicq_a-libicq.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libicq_a_CFLAGS) $(CFLAGS) -c -o libicq_a-libicq.o `test -f 'libicq.c' || echo '$(srcdir)/'`libicq.c
-
-libicq_a-libicq.obj: libicq.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libicq_a_CFLAGS) $(CFLAGS) -MT libicq_a-libicq.obj -MD -MP -MF "$(DEPDIR)/libicq_a-libicq.Tpo" -c -o libicq_a-libicq.obj `if test -f 'libicq.c'; then $(CYGPATH_W) 'libicq.c'; else $(CYGPATH_W) '$(srcdir)/libicq.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libicq_a-libicq.Tpo" "$(DEPDIR)/libicq_a-libicq.Po"; else rm -f "$(DEPDIR)/libicq_a-libicq.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libicq.c' object='libicq_a-libicq.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libicq_a_CFLAGS) $(CFLAGS) -c -o libicq_a-libicq.obj `if test -f 'libicq.c'; then $(CYGPATH_W) 'libicq.c'; else $(CYGPATH_W) '$(srcdir)/libicq.c'; fi`
 
 liboscar_a-bstream.o: bstream.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -MT liboscar_a-bstream.o -MD -MP -MF "$(DEPDIR)/liboscar_a-bstream.Tpo" -c -o liboscar_a-bstream.o `test -f 'bstream.c' || echo '$(srcdir)/'`bstream.c; \
@@ -1253,6 +1203,34 @@ liboscar_a-util.obj: util.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util.c' object='liboscar_a-util.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -c -o liboscar_a-util.obj `if test -f 'util.c'; then $(CYGPATH_W) 'util.c'; else $(CYGPATH_W) '$(srcdir)/util.c'; fi`
+
+liboscar_a-libaim.o: libaim.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -MT liboscar_a-libaim.o -MD -MP -MF "$(DEPDIR)/liboscar_a-libaim.Tpo" -c -o liboscar_a-libaim.o `test -f 'libaim.c' || echo '$(srcdir)/'`libaim.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liboscar_a-libaim.Tpo" "$(DEPDIR)/liboscar_a-libaim.Po"; else rm -f "$(DEPDIR)/liboscar_a-libaim.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libaim.c' object='liboscar_a-libaim.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -c -o liboscar_a-libaim.o `test -f 'libaim.c' || echo '$(srcdir)/'`libaim.c
+
+liboscar_a-libaim.obj: libaim.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -MT liboscar_a-libaim.obj -MD -MP -MF "$(DEPDIR)/liboscar_a-libaim.Tpo" -c -o liboscar_a-libaim.obj `if test -f 'libaim.c'; then $(CYGPATH_W) 'libaim.c'; else $(CYGPATH_W) '$(srcdir)/libaim.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liboscar_a-libaim.Tpo" "$(DEPDIR)/liboscar_a-libaim.Po"; else rm -f "$(DEPDIR)/liboscar_a-libaim.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libaim.c' object='liboscar_a-libaim.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -c -o liboscar_a-libaim.obj `if test -f 'libaim.c'; then $(CYGPATH_W) 'libaim.c'; else $(CYGPATH_W) '$(srcdir)/libaim.c'; fi`
+
+liboscar_a-libicq.o: libicq.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -MT liboscar_a-libicq.o -MD -MP -MF "$(DEPDIR)/liboscar_a-libicq.Tpo" -c -o liboscar_a-libicq.o `test -f 'libicq.c' || echo '$(srcdir)/'`libicq.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liboscar_a-libicq.Tpo" "$(DEPDIR)/liboscar_a-libicq.Po"; else rm -f "$(DEPDIR)/liboscar_a-libicq.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libicq.c' object='liboscar_a-libicq.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -c -o liboscar_a-libicq.o `test -f 'libicq.c' || echo '$(srcdir)/'`libicq.c
+
+liboscar_a-libicq.obj: libicq.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -MT liboscar_a-libicq.obj -MD -MP -MF "$(DEPDIR)/liboscar_a-libicq.Tpo" -c -o liboscar_a-libicq.obj `if test -f 'libicq.c'; then $(CYGPATH_W) 'libicq.c'; else $(CYGPATH_W) '$(srcdir)/libicq.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/liboscar_a-libicq.Tpo" "$(DEPDIR)/liboscar_a-libicq.Po"; else rm -f "$(DEPDIR)/liboscar_a-libicq.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libicq.c' object='liboscar_a-libicq.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_a_CFLAGS) $(CFLAGS) -c -o liboscar_a-libicq.obj `if test -f 'libicq.c'; then $(CYGPATH_W) 'libicq.c'; else $(CYGPATH_W) '$(srcdir)/libicq.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

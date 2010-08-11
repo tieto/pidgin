@@ -56,7 +56,7 @@ am__libjabber_a_SOURCES_DIST = auth.c auth.h buddy.c buddy.h chat.c \
 	chat.h disco.c disco.h google.c google.h iq.c iq.h jabber.c \
 	jabber.h jutil.c jutil.h message.c message.h oob.c oob.h \
 	parser.c parser.h presence.c presence.h roster.c roster.h si.c \
-	si.h xdata.c xdata.h
+	si.h xdata.c xdata.h libxmpp.c
 am__objects_1 = libjabber_a-auth.$(OBJEXT) libjabber_a-buddy.$(OBJEXT) \
 	libjabber_a-chat.$(OBJEXT) libjabber_a-disco.$(OBJEXT) \
 	libjabber_a-google.$(OBJEXT) libjabber_a-iq.$(OBJEXT) \
@@ -65,14 +65,9 @@ am__objects_1 = libjabber_a-auth.$(OBJEXT) libjabber_a-buddy.$(OBJEXT) \
 	libjabber_a-parser.$(OBJEXT) libjabber_a-presence.$(OBJEXT) \
 	libjabber_a-roster.$(OBJEXT) libjabber_a-si.$(OBJEXT) \
 	libjabber_a-xdata.$(OBJEXT)
-@STATIC_JABBER_TRUE@am_libjabber_a_OBJECTS = $(am__objects_1)
+@STATIC_JABBER_TRUE@am_libjabber_a_OBJECTS = $(am__objects_1) \
+@STATIC_JABBER_TRUE@	libjabber_a-libxmpp.$(OBJEXT)
 libjabber_a_OBJECTS = $(am_libjabber_a_OBJECTS)
-libxmpp_a_AR = $(AR) $(ARFLAGS)
-libxmpp_a_LIBADD =
-am__libxmpp_a_SOURCES_DIST = libxmpp.c
-@STATIC_JABBER_TRUE@am_libxmpp_a_OBJECTS =  \
-@STATIC_JABBER_TRUE@	libxmpp_a-libxmpp.$(OBJEXT)
-libxmpp_a_OBJECTS = $(am_libxmpp_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -114,10 +109,10 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libjabber_a_SOURCES) $(libxmpp_a_SOURCES) \
-	$(libjabber_la_SOURCES) $(libxmpp_la_SOURCES)
+SOURCES = $(libjabber_a_SOURCES) $(libjabber_la_SOURCES) \
+	$(libxmpp_la_SOURCES)
 DIST_SOURCES = $(am__libjabber_a_SOURCES_DIST) \
-	$(am__libxmpp_a_SOURCES_DIST) $(am__libjabber_la_SOURCES_DIST) \
+	$(am__libjabber_la_SOURCES_DIST) \
 	$(am__libxmpp_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
@@ -496,13 +491,11 @@ libxmpp_la_LDFLAGS = -module -avoid-version
 @STATIC_JABBER_FALSE@st = 
 @STATIC_JABBER_TRUE@st = -DPURPLE_STATIC_PRPL
 @STATIC_JABBER_FALSE@noinst_LIBRARIES = 
-@STATIC_JABBER_TRUE@noinst_LIBRARIES = libjabber.a libxmpp.a
+@STATIC_JABBER_TRUE@noinst_LIBRARIES = libjabber.a
 @STATIC_JABBER_FALSE@pkg_LTLIBRARIES = libjabber.la libxmpp.la
 @STATIC_JABBER_TRUE@pkg_LTLIBRARIES = 
-@STATIC_JABBER_TRUE@libjabber_a_SOURCES = $(JABBERSOURCES)
+@STATIC_JABBER_TRUE@libjabber_a_SOURCES = $(JABBERSOURCES) libxmpp.c
 @STATIC_JABBER_TRUE@libjabber_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_JABBER_TRUE@libxmpp_a_SOURCES = libxmpp.c
-@STATIC_JABBER_TRUE@libxmpp_a_CFLAGS = $(AM_CFLAGS)
 @STATIC_JABBER_FALSE@libjabber_la_SOURCES = $(JABBERSOURCES)
 @STATIC_JABBER_FALSE@libjabber_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
 @STATIC_JABBER_FALSE@libxmpp_la_SOURCES = libxmpp.c
@@ -554,10 +547,6 @@ libjabber.a: $(libjabber_a_OBJECTS) $(libjabber_a_DEPENDENCIES)
 	-rm -f libjabber.a
 	$(libjabber_a_AR) libjabber.a $(libjabber_a_OBJECTS) $(libjabber_a_LIBADD)
 	$(RANLIB) libjabber.a
-libxmpp.a: $(libxmpp_a_OBJECTS) $(libxmpp_a_DEPENDENCIES) 
-	-rm -f libxmpp.a
-	$(libxmpp_a_AR) libxmpp.a $(libxmpp_a_OBJECTS) $(libxmpp_a_LIBADD)
-	$(RANLIB) libxmpp.a
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -612,6 +601,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-iq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-jabber.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-jutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-libxmpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-oob.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-parser.Po@am__quote@
@@ -620,7 +610,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-si.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-xdata.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxmpp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxmpp_a-libxmpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/oob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Plo@am__quote@
@@ -860,19 +849,19 @@ libjabber_a-xdata.obj: xdata.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-xdata.obj `if test -f 'xdata.c'; then $(CYGPATH_W) 'xdata.c'; else $(CYGPATH_W) '$(srcdir)/xdata.c'; fi`
 
-libxmpp_a-libxmpp.o: libxmpp.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libxmpp_a_CFLAGS) $(CFLAGS) -MT libxmpp_a-libxmpp.o -MD -MP -MF "$(DEPDIR)/libxmpp_a-libxmpp.Tpo" -c -o libxmpp_a-libxmpp.o `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libxmpp_a-libxmpp.Tpo" "$(DEPDIR)/libxmpp_a-libxmpp.Po"; else rm -f "$(DEPDIR)/libxmpp_a-libxmpp.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libxmpp.c' object='libxmpp_a-libxmpp.o' libtool=no @AMDEPBACKSLASH@
+libjabber_a-libxmpp.o: libxmpp.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-libxmpp.o -MD -MP -MF "$(DEPDIR)/libjabber_a-libxmpp.Tpo" -c -o libjabber_a-libxmpp.o `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-libxmpp.Tpo" "$(DEPDIR)/libjabber_a-libxmpp.Po"; else rm -f "$(DEPDIR)/libjabber_a-libxmpp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libxmpp.c' object='libjabber_a-libxmpp.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libxmpp_a_CFLAGS) $(CFLAGS) -c -o libxmpp_a-libxmpp.o `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-libxmpp.o `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c
 
-libxmpp_a-libxmpp.obj: libxmpp.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libxmpp_a_CFLAGS) $(CFLAGS) -MT libxmpp_a-libxmpp.obj -MD -MP -MF "$(DEPDIR)/libxmpp_a-libxmpp.Tpo" -c -o libxmpp_a-libxmpp.obj `if test -f 'libxmpp.c'; then $(CYGPATH_W) 'libxmpp.c'; else $(CYGPATH_W) '$(srcdir)/libxmpp.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libxmpp_a-libxmpp.Tpo" "$(DEPDIR)/libxmpp_a-libxmpp.Po"; else rm -f "$(DEPDIR)/libxmpp_a-libxmpp.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libxmpp.c' object='libxmpp_a-libxmpp.obj' libtool=no @AMDEPBACKSLASH@
+libjabber_a-libxmpp.obj: libxmpp.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-libxmpp.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-libxmpp.Tpo" -c -o libjabber_a-libxmpp.obj `if test -f 'libxmpp.c'; then $(CYGPATH_W) 'libxmpp.c'; else $(CYGPATH_W) '$(srcdir)/libxmpp.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-libxmpp.Tpo" "$(DEPDIR)/libjabber_a-libxmpp.Po"; else rm -f "$(DEPDIR)/libjabber_a-libxmpp.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libxmpp.c' object='libjabber_a-libxmpp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libxmpp_a_CFLAGS) $(CFLAGS) -c -o libxmpp_a-libxmpp.obj `if test -f 'libxmpp.c'; then $(CYGPATH_W) 'libxmpp.c'; else $(CYGPATH_W) '$(srcdir)/libxmpp.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-libxmpp.obj `if test -f 'libxmpp.c'; then $(CYGPATH_W) 'libxmpp.c'; else $(CYGPATH_W) '$(srcdir)/libxmpp.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

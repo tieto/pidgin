@@ -55,10 +55,12 @@ am__DEPENDENCIES_1 =
 @STATIC_BONJOUR_TRUE@libbonjour_a_DEPENDENCIES =  \
 @STATIC_BONJOUR_TRUE@	$(am__DEPENDENCIES_1)
 am__libbonjour_a_SOURCES_DIST = bonjour.c bonjour.h buddy.c buddy.h \
-	dns_sd.c dns_sd.h jabber.c jabber.h
+	dns_sd_proxy.h jabber.c jabber.h mdns_common.c mdns_common.h \
+	mdns_howl.c mdns_howl.h mdns_types.h
 am__objects_1 = libbonjour_a-bonjour.$(OBJEXT) \
-	libbonjour_a-buddy.$(OBJEXT) libbonjour_a-dns_sd.$(OBJEXT) \
-	libbonjour_a-jabber.$(OBJEXT)
+	libbonjour_a-buddy.$(OBJEXT) libbonjour_a-jabber.$(OBJEXT) \
+	libbonjour_a-mdns_common.$(OBJEXT) \
+	libbonjour_a-mdns_howl.$(OBJEXT)
 @STATIC_BONJOUR_TRUE@am_libbonjour_a_OBJECTS = $(am__objects_1)
 libbonjour_a_OBJECTS = $(am_libbonjour_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -74,8 +76,10 @@ LTLIBRARIES = $(pkg_LTLIBRARIES)
 @STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1) \
 @STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1)
 am__libbonjour_la_SOURCES_DIST = bonjour.c bonjour.h buddy.c buddy.h \
-	dns_sd.c dns_sd.h jabber.c jabber.h
-am__objects_2 = bonjour.lo buddy.lo dns_sd.lo jabber.lo
+	dns_sd_proxy.h jabber.c jabber.h mdns_common.c mdns_common.h \
+	mdns_howl.c mdns_howl.h mdns_types.h
+am__objects_2 = bonjour.lo buddy.lo jabber.lo mdns_common.lo \
+	mdns_howl.lo
 @STATIC_BONJOUR_FALSE@am_libbonjour_la_OBJECTS = $(am__objects_2)
 libbonjour_la_OBJECTS = $(am_libbonjour_la_OBJECTS)
 @STATIC_BONJOUR_FALSE@am_libbonjour_la_rpath = -rpath $(pkgdir)
@@ -429,6 +433,8 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 EXTRA_DIST = \
+		mdns_win32.c \
+		mdns_win32.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -437,12 +443,16 @@ BONJOURSOURCES = \
 	bonjour.h \
 	buddy.c \
 	buddy.h \
-	dns_sd.c \
-	dns_sd.h \
+	dns_sd_proxy.h \
 	jabber.c \
-	jabber.h
+	jabber.h \
+	mdns_common.c \
+	mdns_common.h \
+	mdns_howl.c \
+	mdns_howl.h \
+	mdns_types.h
 
-AM_CFLAGS = $(st)
+AM_CFLAGS = $(st) -DUSE_BONJOUR_HOWL
 libbonjour_la_LDFLAGS = -module -avoid-version
 @STATIC_BONJOUR_FALSE@st = 
 @STATIC_BONJOUR_TRUE@st = -DPURPLE_STATIC_PRPL
@@ -538,12 +548,14 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bonjour.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dns_sd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jabber.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-bonjour.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-buddy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-dns_sd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-jabber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-mdns_common.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-mdns_howl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdns_common.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdns_howl.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -594,20 +606,6 @@ libbonjour_a-buddy.obj: buddy.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-buddy.obj `if test -f 'buddy.c'; then $(CYGPATH_W) 'buddy.c'; else $(CYGPATH_W) '$(srcdir)/buddy.c'; fi`
 
-libbonjour_a-dns_sd.o: dns_sd.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-dns_sd.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-dns_sd.Tpo" -c -o libbonjour_a-dns_sd.o `test -f 'dns_sd.c' || echo '$(srcdir)/'`dns_sd.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-dns_sd.Tpo" "$(DEPDIR)/libbonjour_a-dns_sd.Po"; else rm -f "$(DEPDIR)/libbonjour_a-dns_sd.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dns_sd.c' object='libbonjour_a-dns_sd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-dns_sd.o `test -f 'dns_sd.c' || echo '$(srcdir)/'`dns_sd.c
-
-libbonjour_a-dns_sd.obj: dns_sd.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-dns_sd.obj -MD -MP -MF "$(DEPDIR)/libbonjour_a-dns_sd.Tpo" -c -o libbonjour_a-dns_sd.obj `if test -f 'dns_sd.c'; then $(CYGPATH_W) 'dns_sd.c'; else $(CYGPATH_W) '$(srcdir)/dns_sd.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-dns_sd.Tpo" "$(DEPDIR)/libbonjour_a-dns_sd.Po"; else rm -f "$(DEPDIR)/libbonjour_a-dns_sd.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dns_sd.c' object='libbonjour_a-dns_sd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-dns_sd.obj `if test -f 'dns_sd.c'; then $(CYGPATH_W) 'dns_sd.c'; else $(CYGPATH_W) '$(srcdir)/dns_sd.c'; fi`
-
 libbonjour_a-jabber.o: jabber.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-jabber.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-jabber.Tpo" -c -o libbonjour_a-jabber.o `test -f 'jabber.c' || echo '$(srcdir)/'`jabber.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-jabber.Tpo" "$(DEPDIR)/libbonjour_a-jabber.Po"; else rm -f "$(DEPDIR)/libbonjour_a-jabber.Tpo"; exit 1; fi
@@ -621,6 +619,34 @@ libbonjour_a-jabber.obj: jabber.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jabber.c' object='libbonjour_a-jabber.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-jabber.obj `if test -f 'jabber.c'; then $(CYGPATH_W) 'jabber.c'; else $(CYGPATH_W) '$(srcdir)/jabber.c'; fi`
+
+libbonjour_a-mdns_common.o: mdns_common.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_common.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_common.Tpo" -c -o libbonjour_a-mdns_common.o `test -f 'mdns_common.c' || echo '$(srcdir)/'`mdns_common.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_common.Tpo" "$(DEPDIR)/libbonjour_a-mdns_common.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_common.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_common.c' object='libbonjour_a-mdns_common.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_common.o `test -f 'mdns_common.c' || echo '$(srcdir)/'`mdns_common.c
+
+libbonjour_a-mdns_common.obj: mdns_common.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_common.obj -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_common.Tpo" -c -o libbonjour_a-mdns_common.obj `if test -f 'mdns_common.c'; then $(CYGPATH_W) 'mdns_common.c'; else $(CYGPATH_W) '$(srcdir)/mdns_common.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_common.Tpo" "$(DEPDIR)/libbonjour_a-mdns_common.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_common.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_common.c' object='libbonjour_a-mdns_common.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_common.obj `if test -f 'mdns_common.c'; then $(CYGPATH_W) 'mdns_common.c'; else $(CYGPATH_W) '$(srcdir)/mdns_common.c'; fi`
+
+libbonjour_a-mdns_howl.o: mdns_howl.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_howl.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo" -c -o libbonjour_a-mdns_howl.o `test -f 'mdns_howl.c' || echo '$(srcdir)/'`mdns_howl.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo" "$(DEPDIR)/libbonjour_a-mdns_howl.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_howl.c' object='libbonjour_a-mdns_howl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_howl.o `test -f 'mdns_howl.c' || echo '$(srcdir)/'`mdns_howl.c
+
+libbonjour_a-mdns_howl.obj: mdns_howl.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_howl.obj -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo" -c -o libbonjour_a-mdns_howl.obj `if test -f 'mdns_howl.c'; then $(CYGPATH_W) 'mdns_howl.c'; else $(CYGPATH_W) '$(srcdir)/mdns_howl.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo" "$(DEPDIR)/libbonjour_a-mdns_howl.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_howl.c' object='libbonjour_a-mdns_howl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_howl.obj `if test -f 'mdns_howl.c'; then $(CYGPATH_W) 'mdns_howl.c'; else $(CYGPATH_W) '$(srcdir)/mdns_howl.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -574,11 +574,12 @@ SMILEYS = act-up.png \
 		yin-yang.png
 
 pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
+pidginsmileypix_in_files = default.theme.in
 pidginsmileypix_DATA = \
         $(SMILEYS) \
         theme
 
-EXTRA_DIST = $(pidginsmileypix_DATA)
+EXTRA_DIST = $(pidginsmileypix_DATA) $(pidginsmileypix_in_files)
 all: all-recursive
 
 .SUFFIXES:
@@ -908,6 +909,12 @@ uninstall-info: uninstall-info-recursive
 	tags tags-recursive uninstall uninstall-am uninstall-info-am \
 	uninstall-pidginsmileypixDATA
 
+
+theme: default.theme.in
+	sed -e 's/^_Name=/Name=/' \
+	    -e 's/^_Description=/Description=/' \
+	    -e 's/^_Author=/Author=/' \
+	$< > $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

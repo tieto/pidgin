@@ -1,4 +1,6 @@
 EXTRA_DIST = \
+		mdns_win32.c \
+		mdns_win32.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -8,12 +10,16 @@ BONJOURSOURCES = \
 	bonjour.h \
 	buddy.c \
 	buddy.h \
-	dns_sd.c \
-	dns_sd.h \
+	dns_sd_proxy.h \
 	jabber.c \
-	jabber.h
+	jabber.h \
+	mdns_common.c \
+	mdns_common.h \
+	mdns_howl.c \
+	mdns_howl.h \
+	mdns_types.h
 
-AM_CFLAGS = $(st)
+AM_CFLAGS = $(st) -DUSE_BONJOUR_HOWL
 
 libbonjour_la_LDFLAGS = -module -avoid-version
 

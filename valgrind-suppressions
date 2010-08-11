@@ -147,8 +147,8 @@
    fun:PR_Init
    fun:rsa_nss_init
    fun:GE_plugin_load
-   fun:gaim_plugin_load
-   fun:gaim_plugins_load_saved
+   fun:purple_plugin_load
+   fun:purple_plugins_load_saved
    fun:main
 }
 

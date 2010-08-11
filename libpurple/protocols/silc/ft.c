@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 Pekka Riikonen
+  Copyright (C) 2004 - 2007 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "silcincludes.h"
+#include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
 
@@ -74,8 +74,20 @@ silcpurple_ftp_monitor(SilcClient client,
 	char tmp[256];
 
 	if (status == SILC_CLIENT_FILE_MONITOR_CLOSED) {
+		/* All started sessions terminate here */
+		xfer->xfer->data = NULL;
 		purple_xfer_unref(xfer->xfer);
 		silc_free(xfer);
+		return;
+	}
+
+	if (status == SILC_CLIENT_FILE_MONITOR_DISCONNECT) {
+		purple_notify_error(gc, _("Secure File Transfer"),
+				    _("Error during file transfer"),
+				    _("Remote disconnected"));
+		xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_REMOTE;
+		purple_xfer_update_progress(xfer->xfer);
+		silc_client_file_close(client, conn, session_id);
 		return;
 	}
 
@@ -96,17 +108,22 @@ silcpurple_ftp_monitor(SilcClient client,
 			purple_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"),
 					  _("Key agreement failed"));
+		} else if (error == SILC_CLIENT_FILE_TIMEOUT) {
+			purple_notify_error(gc, _("Secure File Transfer"),
+					  _("Error during file transfer"),
+					  _("Connection timedout"));
+		} else if (error == SILC_CLIENT_FILE_CONNECT_FAILED) {
+			purple_notify_error(gc, _("Secure File Transfer"),
+					  _("Error during file transfer"),
+					  _("Creating connection failed"));
 		} else if (error == SILC_CLIENT_FILE_UNKNOWN_SESSION) {
 			purple_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"),
 					  _("File transfer session does not exist"));
-		} else {
-			purple_notify_error(gc, _("Secure File Transfer"),
-					  _("Error during file transfer"), NULL);
 		}
+		xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_REMOTE;
+		purple_xfer_update_progress(xfer->xfer);
 		silc_client_file_close(client, conn, session_id);
-		purple_xfer_unref(xfer->xfer);
-		silc_free(xfer);
 		return;
 	}
 
@@ -133,6 +150,10 @@ static void
 silcpurple_ftp_cancel(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
+
+	if (!xfer)
+		return;
+
 	xfer->xfer->status = PURPLE_XFER_STATUS_CANCEL_LOCAL;
 	purple_xfer_update_progress(xfer->xfer);
 	silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
@@ -142,6 +163,9 @@ static void
 silcpurple_ftp_ask_name_cancel(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
+
+	if (!xfer)
+		return;
 
 	/* Cancel the transmission */
 	xfer->completion(NULL, xfer->completion_context);
@@ -153,6 +177,9 @@ silcpurple_ftp_ask_name_ok(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
 	const char *name;
+
+	if (!xfer)
+		return;
 
 	name = purple_xfer_get_local_filename(x);
 	g_unlink(name);
@@ -187,17 +214,57 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 	SilcPurpleXfer xfer = x->data;
 	SilcClientFileError status;
 	PurpleConnection *gc = xfer->sg->gc;
+	SilcClientConnectionParams params;
+	gboolean local = xfer->hostname ? FALSE : TRUE;
+	char *local_ip = NULL, *remote_ip = NULL;
+	SilcSocket sock;
 
 	if (purple_xfer_get_status(x) != PURPLE_XFER_STATUS_ACCEPTED)
 		return;
+	if (!xfer)
+		return;
+
+	silc_socket_stream_get_info(silc_packet_stream_get_stream(xfer->sg->conn->stream),
+				    &sock, NULL, NULL, NULL);
+
+	if (local) {
+		/* Do the same magic what we do with key agreement (see silcpurple_buddy.c)
+		   to see if we are behind NAT. */
+		if (silc_net_check_local_by_sock(sock, NULL, &local_ip)) {
+			/* Check if the IP is private */
+			if (silcpurple_ip_is_private(local_ip)) {
+				local = TRUE;
+				/* Local IP is private, resolve the remote server IP to see whether
+				   we are talking to Internet or just on LAN. */
+				if (silc_net_check_host_by_sock(sock, NULL,
+								&remote_ip))
+				  if (silcpurple_ip_is_private(remote_ip))
+				    /* We assume we are in LAN.  Let's provide the connection point. */
+				    local = TRUE;
+			}
+		}
+
+		if (local && !local_ip)
+		  local_ip = silc_net_localip();
+	}
+
+	memset(&params, 0, sizeof(params));
+	params.timeout_secs = 60;
+	if (local)
+	  /* Provide connection point */
+	  params.local_ip = local_ip;
 
 	/* Start the file transfer */
 	status = silc_client_file_receive(xfer->sg->client, xfer->sg->conn,
+					  &params, xfer->sg->public_key,
+					  xfer->sg->private_key,
 					  silcpurple_ftp_monitor, xfer,
 					  NULL, xfer->session_id,
 					  silcpurple_ftp_ask_name, xfer);
 	switch (status) {
 	case SILC_CLIENT_FILE_OK:
+		silc_free(local_ip);
+		silc_free(remote_ip);
 		return;
 		break;
 
@@ -227,6 +294,8 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 	purple_xfer_unref(xfer->xfer);
 	g_free(xfer->hostname);
 	silc_free(xfer);
+	silc_free(local_ip);
+	silc_free(remote_ip);
 }
 
 static void
@@ -236,8 +305,8 @@ silcpurple_ftp_request_denied(PurpleXfer *x)
 }
 
 void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
-			  SilcClientEntry client_entry, SilcUInt32 session_id,
-			  const char *hostname, SilcUInt16 port)
+			    SilcClientEntry client_entry, SilcUInt32 session_id,
+			    const char *hostname, SilcUInt16 port)
 {
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = gc->proto_data;
@@ -255,7 +324,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 	xfer->hostname = g_strdup(hostname);
 	xfer->port = port;
 	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_RECEIVE,
-				   xfer->client_entry->nickname);
+				     xfer->client_entry->nickname);
 	if (!xfer->xfer) {
 		silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
 		g_free(xfer->hostname);
@@ -277,10 +346,12 @@ static void
 silcpurple_ftp_send_cancel(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
+
+	if (!xfer)
+		return;
+
+	/* This call will free all resources */
 	silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
-	purple_xfer_unref(xfer->xfer);
-	g_free(xfer->hostname);
-	silc_free(xfer);
 }
 
 static void
@@ -290,19 +361,26 @@ silcpurple_ftp_send(PurpleXfer *x)
 	const char *name;
 	char *local_ip = NULL, *remote_ip = NULL;
 	gboolean local = TRUE;
+	SilcClientConnectionParams params;
+	SilcSocket sock;
+
+	if (!xfer)
+		return;
 
 	name = purple_xfer_get_local_filename(x);
 
+	silc_socket_stream_get_info(silc_packet_stream_get_stream(xfer->sg->conn->stream),
+				    &sock, NULL, NULL, NULL);
+
 	/* Do the same magic what we do with key agreement (see silcpurple_buddy.c)
 	   to see if we are behind NAT. */
-	if (silc_net_check_local_by_sock(xfer->sg->conn->sock->sock,
-					 NULL, &local_ip)) {
+	if (silc_net_check_local_by_sock(sock, NULL, &local_ip)) {
 		/* Check if the IP is private */
 		if (silcpurple_ip_is_private(local_ip)) {
 			local = FALSE;
 			/* Local IP is private, resolve the remote server IP to see whether
 			   we are talking to Internet or just on LAN. */
-			if (silc_net_check_host_by_sock(xfer->sg->conn->sock->sock, NULL,
+			if (silc_net_check_host_by_sock(sock, NULL,
 							&remote_ip))
 				if (silcpurple_ip_is_private(remote_ip))
 					/* We assume we are in LAN.  Let's provide the connection point. */
@@ -313,10 +391,17 @@ silcpurple_ftp_send(PurpleXfer *x)
 	if (local && !local_ip)
 		local_ip = silc_net_localip();
 
+	memset(&params, 0, sizeof(params));
+	params.timeout_secs = 60;
+	if (local)
+	  /* Provide connection point */
+	  params.local_ip = local_ip;
+
 	/* Send the file */
 	silc_client_file_send(xfer->sg->client, xfer->sg->conn,
+			      xfer->client_entry, &params,
+			      xfer->sg->public_key, xfer->sg->private_key,
 			      silcpurple_ftp_monitor, xfer,
-			      local_ip, 0, !local, xfer->client_entry,
 			      name, &xfer->session_id);
 
 	silc_free(local_ip);
@@ -325,10 +410,10 @@ silcpurple_ftp_send(PurpleXfer *x)
 
 static void
 silcpurple_ftp_send_file_resolved(SilcClient client,
-				SilcClientConnection conn,
-				SilcClientEntry *clients,
-				SilcUInt32 clients_count,
-				void *context)
+				  SilcClientConnection conn,
+				  SilcStatus status,
+				  SilcDList clients,
+				  void *context)
 {
 	PurpleConnection *gc = client->application;
 	char tmp[256];
@@ -352,38 +437,29 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcClientEntry *clients;
-	SilcUInt32 clients_count;
+	SilcDList clients;
 	SilcPurpleXfer xfer;
-	char *nickname;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	if (!silc_parse_userfqdn(name, &nickname, NULL))
-		return NULL;
-
 	/* Find client entry */
-	clients = silc_client_get_clients_local(client, conn, nickname, name,
-											&clients_count);
+	clients = silc_client_get_clients_local(client, conn, name, FALSE);
 	if (!clients) {
-		silc_client_get_clients(client, conn, nickname, NULL,
-								silcpurple_ftp_send_file_resolved,
-								strdup(name));
-		silc_free(nickname);
+		silc_client_get_clients(client, conn, name, NULL,
+					silcpurple_ftp_send_file_resolved,
+					strdup(name));
 		return NULL;
 	}
+	silc_dlist_start(clients);
 
 	xfer = silc_calloc(1, sizeof(*xfer));
-
 	g_return_val_if_fail(xfer != NULL, NULL);
 
 	xfer->sg = sg;
-	xfer->client_entry = clients[0];
+	xfer->client_entry = silc_dlist_get(clients);
 	xfer->xfer = purple_xfer_new(xfer->sg->account, PURPLE_XFER_SEND,
-							   xfer->client_entry->nickname);
+				     xfer->client_entry->nickname);
 	if (!xfer->xfer) {
-		silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
-		g_free(xfer->hostname);
 		silc_free(xfer);
 		return NULL;
 	}
@@ -393,7 +469,6 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 	xfer->xfer->data = xfer;
 
 	silc_free(clients);
-	silc_free(nickname);
 
 	return xfer->xfer;
 }

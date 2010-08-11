@@ -184,7 +184,7 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 	timeout_handlers = g_list_remove(timeout_handlers, handler);
 
 	if (handler->iotag > 0)
-		g_source_remove(handler->iotag);
+		purple_timeout_remove(handler->iotag);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -405,7 +405,7 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 
 	timeout_handlers = g_list_append(timeout_handlers, handler);
 
-	handler->iotag = g_timeout_add(seconds * 1000, perl_timeout_cb, handler);
+	handler->iotag = purple_timeout_add(seconds * 1000, perl_timeout_cb, handler);
 }
 
 void
