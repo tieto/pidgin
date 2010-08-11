@@ -169,6 +169,12 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 	for (wer = theme->list; wer != NULL; wer = theme->list) {
 		while (wer->smileys) {
 			GtkIMHtmlSmiley *uio = wer->smileys->data;
+			
+			if (uio->imhtml) {
+				g_signal_handlers_disconnect_matched(uio->imhtml, G_SIGNAL_MATCH_DATA,
+					0, 0, NULL, NULL, uio);
+			}
+				
 			if (uio->icon)
 				g_object_unref(uio->icon);
 			if (g_hash_table_lookup(already_freed, uio->file) == NULL) {

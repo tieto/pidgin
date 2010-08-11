@@ -71,7 +71,7 @@ int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	/* we have defined args as args[0] is target and args[1] is ctcp command */
-        char *buf;
+	char *buf;
 	GString *string;
 	
 	/* check if we have args */
@@ -141,11 +141,11 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			action[strlen(action) - 1] = '\0';
 		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
-			         	 purple_connection_get_display_name(gc),
-				         0, action, time(NULL));
+			                 purple_connection_get_display_name(gc),
+			                 0, action, time(NULL));
 		else
 			purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
-			                  action, 0, time(NULL));
+			                     action, 0, time(NULL));
 		g_free(action);
 	}
 
@@ -155,7 +155,6 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 int irc_cmd_ctcp_version(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;
-
 
 	if (!args || !args[0])
 		return 0;

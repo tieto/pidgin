@@ -336,6 +336,12 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	static gboolean initialized = FALSE;
 #endif
 
+	if (!protocol || !*protocol || !transport || !*transport || !domain || !*domain) {
+		purple_debug_error("dnssrv", "Wrong arguments\n");
+		cb(NULL, 0, extradata);
+		g_return_val_if_reached(NULL);
+	}
+
 	query = g_strdup_printf("_%s._%s.%s", protocol, transport, domain);
 	purple_debug_info("dnssrv","querying SRV record for %s\n", query);
 

@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -48,26 +47,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libnovell_a_AR = $(AR) $(ARFLAGS)
-libnovell_a_LIBADD =
-am__libnovell_a_SOURCES_DIST = nmfield.h nmfield.c nmconn.h nmconn.c \
-	nmconference.h nmconference.c nmcontact.h nmcontact.c \
-	nmevent.h nmevent.c nmmessage.h nmmessage.c nmrequest.h \
-	nmrequest.c nmrtf.h nmrtf.c nmuser.h nmuser.c nmuserrecord.h \
-	nmuserrecord.c novell.c
-am__objects_1 = libnovell_a-nmfield.$(OBJEXT) \
-	libnovell_a-nmconn.$(OBJEXT) \
-	libnovell_a-nmconference.$(OBJEXT) \
-	libnovell_a-nmcontact.$(OBJEXT) libnovell_a-nmevent.$(OBJEXT) \
-	libnovell_a-nmmessage.$(OBJEXT) \
-	libnovell_a-nmrequest.$(OBJEXT) libnovell_a-nmrtf.$(OBJEXT) \
-	libnovell_a-nmuser.$(OBJEXT) \
-	libnovell_a-nmuserrecord.$(OBJEXT) \
-	libnovell_a-novell.$(OBJEXT)
-@STATIC_NOVELL_TRUE@am_libnovell_a_OBJECTS = $(am__objects_1)
-libnovell_a_OBJECTS = $(am_libnovell_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -76,7 +55,7 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_NOVELL_FALSE@libnovell_la_DEPENDENCIES =  \
 @STATIC_NOVELL_FALSE@	$(am__DEPENDENCIES_1)
@@ -85,12 +64,17 @@ am__libnovell_la_SOURCES_DIST = nmfield.h nmfield.c nmconn.h nmconn.c \
 	nmevent.h nmevent.c nmmessage.h nmmessage.c nmrequest.h \
 	nmrequest.c nmrtf.h nmrtf.c nmuser.h nmuser.c nmuserrecord.h \
 	nmuserrecord.c novell.c
-am__objects_2 = nmfield.lo nmconn.lo nmconference.lo nmcontact.lo \
-	nmevent.lo nmmessage.lo nmrequest.lo nmrtf.lo nmuser.lo \
-	nmuserrecord.lo novell.lo
-@STATIC_NOVELL_FALSE@am_libnovell_la_OBJECTS = $(am__objects_2)
+am__objects_1 = libnovell_la-nmfield.lo libnovell_la-nmconn.lo \
+	libnovell_la-nmconference.lo libnovell_la-nmcontact.lo \
+	libnovell_la-nmevent.lo libnovell_la-nmmessage.lo \
+	libnovell_la-nmrequest.lo libnovell_la-nmrtf.lo \
+	libnovell_la-nmuser.lo libnovell_la-nmuserrecord.lo \
+	libnovell_la-novell.lo
+@STATIC_NOVELL_FALSE@am_libnovell_la_OBJECTS = $(am__objects_1)
+@STATIC_NOVELL_TRUE@am_libnovell_la_OBJECTS = $(am__objects_1)
 libnovell_la_OBJECTS = $(am_libnovell_la_OBJECTS)
 @STATIC_NOVELL_FALSE@am_libnovell_la_rpath = -rpath $(pkgdir)
+@STATIC_NOVELL_TRUE@am_libnovell_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -102,9 +86,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libnovell_a_SOURCES) $(libnovell_la_SOURCES)
-DIST_SOURCES = $(am__libnovell_a_SOURCES_DIST) \
-	$(am__libnovell_la_SOURCES_DIST)
+SOURCES = $(libnovell_la_SOURCES)
+DIST_SOURCES = $(am__libnovell_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -132,10 +115,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -149,6 +128,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -181,7 +161,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -201,8 +180,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -275,6 +253,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -283,6 +262,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -296,10 +276,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -412,12 +395,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -451,6 +431,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -471,7 +452,7 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 NOVELLSOURCES = \
@@ -501,13 +482,11 @@ AM_CFLAGS = $(st)
 libnovell_la_LDFLAGS = -module -avoid-version
 @STATIC_NOVELL_FALSE@st = 
 @STATIC_NOVELL_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_NOVELL_FALSE@noinst_LIBRARIES = 
-@STATIC_NOVELL_TRUE@noinst_LIBRARIES = libnovell.a
-@STATIC_NOVELL_FALSE@pkg_LTLIBRARIES = libnovell.la
-@STATIC_NOVELL_TRUE@pkg_LTLIBRARIES = 
-@STATIC_NOVELL_TRUE@libnovell_a_SOURCES = $(NOVELLSOURCES)
-@STATIC_NOVELL_TRUE@libnovell_a_CFLAGS = $(AM_CFLAGS)
+@STATIC_NOVELL_TRUE@noinst_LTLIBRARIES = libnovell.la
 @STATIC_NOVELL_FALSE@libnovell_la_SOURCES = $(NOVELLSOURCES)
+@STATIC_NOVELL_TRUE@libnovell_la_SOURCES = $(NOVELLSOURCES)
+@STATIC_NOVELL_TRUE@libnovell_la_CFLAGS = $(AM_CFLAGS)
+@STATIC_NOVELL_FALSE@pkg_LTLIBRARIES = libnovell.la
 @STATIC_NOVELL_FALSE@libnovell_la_LIBADD = $(GLIB_LIBS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
@@ -549,12 +528,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libnovell.a: $(libnovell_a_OBJECTS) $(libnovell_a_DEPENDENCIES) 
-	-rm -f libnovell.a
-	$(libnovell_a_AR) libnovell.a $(libnovell_a_OBJECTS) $(libnovell_a_LIBADD)
-	$(RANLIB) libnovell.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -591,28 +572,17 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmconference.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmconn.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmcontact.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmevent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmfield.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmmessage.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmrequest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmrtf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmuser.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-nmuserrecord.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_a-novell.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmconference.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmconn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmcontact.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmevent.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmfield.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmmessage.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmrequest.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmrtf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmuser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nmuserrecord.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/novell.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmconference.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmconn.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmcontact.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmevent.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmfield.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmmessage.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmrequest.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmrtf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmuser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-nmuserrecord.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnovell_la-novell.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -635,159 +605,82 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libnovell_a-nmfield.o: nmfield.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmfield.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmfield.Tpo" -c -o libnovell_a-nmfield.o `test -f 'nmfield.c' || echo '$(srcdir)/'`nmfield.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmfield.Tpo" "$(DEPDIR)/libnovell_a-nmfield.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmfield.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmfield.c' object='libnovell_a-nmfield.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmfield.lo: nmfield.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmfield.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmfield.Tpo" -c -o libnovell_la-nmfield.lo `test -f 'nmfield.c' || echo '$(srcdir)/'`nmfield.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmfield.Tpo" "$(DEPDIR)/libnovell_la-nmfield.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmfield.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmfield.c' object='libnovell_la-nmfield.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmfield.o `test -f 'nmfield.c' || echo '$(srcdir)/'`nmfield.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmfield.lo `test -f 'nmfield.c' || echo '$(srcdir)/'`nmfield.c
 
-libnovell_a-nmfield.obj: nmfield.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmfield.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmfield.Tpo" -c -o libnovell_a-nmfield.obj `if test -f 'nmfield.c'; then $(CYGPATH_W) 'nmfield.c'; else $(CYGPATH_W) '$(srcdir)/nmfield.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmfield.Tpo" "$(DEPDIR)/libnovell_a-nmfield.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmfield.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmfield.c' object='libnovell_a-nmfield.obj' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmconn.lo: nmconn.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmconn.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmconn.Tpo" -c -o libnovell_la-nmconn.lo `test -f 'nmconn.c' || echo '$(srcdir)/'`nmconn.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmconn.Tpo" "$(DEPDIR)/libnovell_la-nmconn.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmconn.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconn.c' object='libnovell_la-nmconn.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmfield.obj `if test -f 'nmfield.c'; then $(CYGPATH_W) 'nmfield.c'; else $(CYGPATH_W) '$(srcdir)/nmfield.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmconn.lo `test -f 'nmconn.c' || echo '$(srcdir)/'`nmconn.c
 
-libnovell_a-nmconn.o: nmconn.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmconn.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmconn.Tpo" -c -o libnovell_a-nmconn.o `test -f 'nmconn.c' || echo '$(srcdir)/'`nmconn.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmconn.Tpo" "$(DEPDIR)/libnovell_a-nmconn.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmconn.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconn.c' object='libnovell_a-nmconn.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmconference.lo: nmconference.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmconference.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmconference.Tpo" -c -o libnovell_la-nmconference.lo `test -f 'nmconference.c' || echo '$(srcdir)/'`nmconference.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmconference.Tpo" "$(DEPDIR)/libnovell_la-nmconference.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmconference.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconference.c' object='libnovell_la-nmconference.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmconn.o `test -f 'nmconn.c' || echo '$(srcdir)/'`nmconn.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmconference.lo `test -f 'nmconference.c' || echo '$(srcdir)/'`nmconference.c
 
-libnovell_a-nmconn.obj: nmconn.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmconn.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmconn.Tpo" -c -o libnovell_a-nmconn.obj `if test -f 'nmconn.c'; then $(CYGPATH_W) 'nmconn.c'; else $(CYGPATH_W) '$(srcdir)/nmconn.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmconn.Tpo" "$(DEPDIR)/libnovell_a-nmconn.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmconn.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconn.c' object='libnovell_a-nmconn.obj' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmcontact.lo: nmcontact.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmcontact.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmcontact.Tpo" -c -o libnovell_la-nmcontact.lo `test -f 'nmcontact.c' || echo '$(srcdir)/'`nmcontact.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmcontact.Tpo" "$(DEPDIR)/libnovell_la-nmcontact.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmcontact.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmcontact.c' object='libnovell_la-nmcontact.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmconn.obj `if test -f 'nmconn.c'; then $(CYGPATH_W) 'nmconn.c'; else $(CYGPATH_W) '$(srcdir)/nmconn.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmcontact.lo `test -f 'nmcontact.c' || echo '$(srcdir)/'`nmcontact.c
 
-libnovell_a-nmconference.o: nmconference.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmconference.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmconference.Tpo" -c -o libnovell_a-nmconference.o `test -f 'nmconference.c' || echo '$(srcdir)/'`nmconference.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmconference.Tpo" "$(DEPDIR)/libnovell_a-nmconference.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmconference.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconference.c' object='libnovell_a-nmconference.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmevent.lo: nmevent.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmevent.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmevent.Tpo" -c -o libnovell_la-nmevent.lo `test -f 'nmevent.c' || echo '$(srcdir)/'`nmevent.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmevent.Tpo" "$(DEPDIR)/libnovell_la-nmevent.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmevent.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmevent.c' object='libnovell_la-nmevent.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmconference.o `test -f 'nmconference.c' || echo '$(srcdir)/'`nmconference.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmevent.lo `test -f 'nmevent.c' || echo '$(srcdir)/'`nmevent.c
 
-libnovell_a-nmconference.obj: nmconference.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmconference.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmconference.Tpo" -c -o libnovell_a-nmconference.obj `if test -f 'nmconference.c'; then $(CYGPATH_W) 'nmconference.c'; else $(CYGPATH_W) '$(srcdir)/nmconference.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmconference.Tpo" "$(DEPDIR)/libnovell_a-nmconference.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmconference.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmconference.c' object='libnovell_a-nmconference.obj' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmmessage.lo: nmmessage.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmmessage.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmmessage.Tpo" -c -o libnovell_la-nmmessage.lo `test -f 'nmmessage.c' || echo '$(srcdir)/'`nmmessage.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmmessage.Tpo" "$(DEPDIR)/libnovell_la-nmmessage.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmmessage.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmmessage.c' object='libnovell_la-nmmessage.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmconference.obj `if test -f 'nmconference.c'; then $(CYGPATH_W) 'nmconference.c'; else $(CYGPATH_W) '$(srcdir)/nmconference.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmmessage.lo `test -f 'nmmessage.c' || echo '$(srcdir)/'`nmmessage.c
 
-libnovell_a-nmcontact.o: nmcontact.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmcontact.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmcontact.Tpo" -c -o libnovell_a-nmcontact.o `test -f 'nmcontact.c' || echo '$(srcdir)/'`nmcontact.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmcontact.Tpo" "$(DEPDIR)/libnovell_a-nmcontact.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmcontact.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmcontact.c' object='libnovell_a-nmcontact.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmrequest.lo: nmrequest.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmrequest.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmrequest.Tpo" -c -o libnovell_la-nmrequest.lo `test -f 'nmrequest.c' || echo '$(srcdir)/'`nmrequest.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmrequest.Tpo" "$(DEPDIR)/libnovell_la-nmrequest.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmrequest.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrequest.c' object='libnovell_la-nmrequest.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmcontact.o `test -f 'nmcontact.c' || echo '$(srcdir)/'`nmcontact.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmrequest.lo `test -f 'nmrequest.c' || echo '$(srcdir)/'`nmrequest.c
 
-libnovell_a-nmcontact.obj: nmcontact.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmcontact.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmcontact.Tpo" -c -o libnovell_a-nmcontact.obj `if test -f 'nmcontact.c'; then $(CYGPATH_W) 'nmcontact.c'; else $(CYGPATH_W) '$(srcdir)/nmcontact.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmcontact.Tpo" "$(DEPDIR)/libnovell_a-nmcontact.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmcontact.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmcontact.c' object='libnovell_a-nmcontact.obj' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmrtf.lo: nmrtf.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmrtf.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmrtf.Tpo" -c -o libnovell_la-nmrtf.lo `test -f 'nmrtf.c' || echo '$(srcdir)/'`nmrtf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmrtf.Tpo" "$(DEPDIR)/libnovell_la-nmrtf.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmrtf.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrtf.c' object='libnovell_la-nmrtf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmcontact.obj `if test -f 'nmcontact.c'; then $(CYGPATH_W) 'nmcontact.c'; else $(CYGPATH_W) '$(srcdir)/nmcontact.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmrtf.lo `test -f 'nmrtf.c' || echo '$(srcdir)/'`nmrtf.c
 
-libnovell_a-nmevent.o: nmevent.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmevent.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmevent.Tpo" -c -o libnovell_a-nmevent.o `test -f 'nmevent.c' || echo '$(srcdir)/'`nmevent.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmevent.Tpo" "$(DEPDIR)/libnovell_a-nmevent.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmevent.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmevent.c' object='libnovell_a-nmevent.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmuser.lo: nmuser.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmuser.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmuser.Tpo" -c -o libnovell_la-nmuser.lo `test -f 'nmuser.c' || echo '$(srcdir)/'`nmuser.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmuser.Tpo" "$(DEPDIR)/libnovell_la-nmuser.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmuser.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuser.c' object='libnovell_la-nmuser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmevent.o `test -f 'nmevent.c' || echo '$(srcdir)/'`nmevent.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmuser.lo `test -f 'nmuser.c' || echo '$(srcdir)/'`nmuser.c
 
-libnovell_a-nmevent.obj: nmevent.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmevent.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmevent.Tpo" -c -o libnovell_a-nmevent.obj `if test -f 'nmevent.c'; then $(CYGPATH_W) 'nmevent.c'; else $(CYGPATH_W) '$(srcdir)/nmevent.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmevent.Tpo" "$(DEPDIR)/libnovell_a-nmevent.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmevent.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmevent.c' object='libnovell_a-nmevent.obj' libtool=no @AMDEPBACKSLASH@
+libnovell_la-nmuserrecord.lo: nmuserrecord.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-nmuserrecord.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-nmuserrecord.Tpo" -c -o libnovell_la-nmuserrecord.lo `test -f 'nmuserrecord.c' || echo '$(srcdir)/'`nmuserrecord.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-nmuserrecord.Tpo" "$(DEPDIR)/libnovell_la-nmuserrecord.Plo"; else rm -f "$(DEPDIR)/libnovell_la-nmuserrecord.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuserrecord.c' object='libnovell_la-nmuserrecord.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmevent.obj `if test -f 'nmevent.c'; then $(CYGPATH_W) 'nmevent.c'; else $(CYGPATH_W) '$(srcdir)/nmevent.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-nmuserrecord.lo `test -f 'nmuserrecord.c' || echo '$(srcdir)/'`nmuserrecord.c
 
-libnovell_a-nmmessage.o: nmmessage.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmmessage.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmmessage.Tpo" -c -o libnovell_a-nmmessage.o `test -f 'nmmessage.c' || echo '$(srcdir)/'`nmmessage.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmmessage.Tpo" "$(DEPDIR)/libnovell_a-nmmessage.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmmessage.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmmessage.c' object='libnovell_a-nmmessage.o' libtool=no @AMDEPBACKSLASH@
+libnovell_la-novell.lo: novell.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -MT libnovell_la-novell.lo -MD -MP -MF "$(DEPDIR)/libnovell_la-novell.Tpo" -c -o libnovell_la-novell.lo `test -f 'novell.c' || echo '$(srcdir)/'`novell.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_la-novell.Tpo" "$(DEPDIR)/libnovell_la-novell.Plo"; else rm -f "$(DEPDIR)/libnovell_la-novell.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='novell.c' object='libnovell_la-novell.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmmessage.o `test -f 'nmmessage.c' || echo '$(srcdir)/'`nmmessage.c
-
-libnovell_a-nmmessage.obj: nmmessage.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmmessage.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmmessage.Tpo" -c -o libnovell_a-nmmessage.obj `if test -f 'nmmessage.c'; then $(CYGPATH_W) 'nmmessage.c'; else $(CYGPATH_W) '$(srcdir)/nmmessage.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmmessage.Tpo" "$(DEPDIR)/libnovell_a-nmmessage.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmmessage.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmmessage.c' object='libnovell_a-nmmessage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmmessage.obj `if test -f 'nmmessage.c'; then $(CYGPATH_W) 'nmmessage.c'; else $(CYGPATH_W) '$(srcdir)/nmmessage.c'; fi`
-
-libnovell_a-nmrequest.o: nmrequest.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmrequest.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmrequest.Tpo" -c -o libnovell_a-nmrequest.o `test -f 'nmrequest.c' || echo '$(srcdir)/'`nmrequest.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmrequest.Tpo" "$(DEPDIR)/libnovell_a-nmrequest.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmrequest.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrequest.c' object='libnovell_a-nmrequest.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmrequest.o `test -f 'nmrequest.c' || echo '$(srcdir)/'`nmrequest.c
-
-libnovell_a-nmrequest.obj: nmrequest.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmrequest.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmrequest.Tpo" -c -o libnovell_a-nmrequest.obj `if test -f 'nmrequest.c'; then $(CYGPATH_W) 'nmrequest.c'; else $(CYGPATH_W) '$(srcdir)/nmrequest.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmrequest.Tpo" "$(DEPDIR)/libnovell_a-nmrequest.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmrequest.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrequest.c' object='libnovell_a-nmrequest.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmrequest.obj `if test -f 'nmrequest.c'; then $(CYGPATH_W) 'nmrequest.c'; else $(CYGPATH_W) '$(srcdir)/nmrequest.c'; fi`
-
-libnovell_a-nmrtf.o: nmrtf.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmrtf.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmrtf.Tpo" -c -o libnovell_a-nmrtf.o `test -f 'nmrtf.c' || echo '$(srcdir)/'`nmrtf.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmrtf.Tpo" "$(DEPDIR)/libnovell_a-nmrtf.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmrtf.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrtf.c' object='libnovell_a-nmrtf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmrtf.o `test -f 'nmrtf.c' || echo '$(srcdir)/'`nmrtf.c
-
-libnovell_a-nmrtf.obj: nmrtf.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmrtf.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmrtf.Tpo" -c -o libnovell_a-nmrtf.obj `if test -f 'nmrtf.c'; then $(CYGPATH_W) 'nmrtf.c'; else $(CYGPATH_W) '$(srcdir)/nmrtf.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmrtf.Tpo" "$(DEPDIR)/libnovell_a-nmrtf.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmrtf.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmrtf.c' object='libnovell_a-nmrtf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmrtf.obj `if test -f 'nmrtf.c'; then $(CYGPATH_W) 'nmrtf.c'; else $(CYGPATH_W) '$(srcdir)/nmrtf.c'; fi`
-
-libnovell_a-nmuser.o: nmuser.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmuser.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmuser.Tpo" -c -o libnovell_a-nmuser.o `test -f 'nmuser.c' || echo '$(srcdir)/'`nmuser.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmuser.Tpo" "$(DEPDIR)/libnovell_a-nmuser.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmuser.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuser.c' object='libnovell_a-nmuser.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmuser.o `test -f 'nmuser.c' || echo '$(srcdir)/'`nmuser.c
-
-libnovell_a-nmuser.obj: nmuser.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmuser.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmuser.Tpo" -c -o libnovell_a-nmuser.obj `if test -f 'nmuser.c'; then $(CYGPATH_W) 'nmuser.c'; else $(CYGPATH_W) '$(srcdir)/nmuser.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmuser.Tpo" "$(DEPDIR)/libnovell_a-nmuser.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmuser.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuser.c' object='libnovell_a-nmuser.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmuser.obj `if test -f 'nmuser.c'; then $(CYGPATH_W) 'nmuser.c'; else $(CYGPATH_W) '$(srcdir)/nmuser.c'; fi`
-
-libnovell_a-nmuserrecord.o: nmuserrecord.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmuserrecord.o -MD -MP -MF "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo" -c -o libnovell_a-nmuserrecord.o `test -f 'nmuserrecord.c' || echo '$(srcdir)/'`nmuserrecord.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo" "$(DEPDIR)/libnovell_a-nmuserrecord.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuserrecord.c' object='libnovell_a-nmuserrecord.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmuserrecord.o `test -f 'nmuserrecord.c' || echo '$(srcdir)/'`nmuserrecord.c
-
-libnovell_a-nmuserrecord.obj: nmuserrecord.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-nmuserrecord.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo" -c -o libnovell_a-nmuserrecord.obj `if test -f 'nmuserrecord.c'; then $(CYGPATH_W) 'nmuserrecord.c'; else $(CYGPATH_W) '$(srcdir)/nmuserrecord.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo" "$(DEPDIR)/libnovell_a-nmuserrecord.Po"; else rm -f "$(DEPDIR)/libnovell_a-nmuserrecord.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nmuserrecord.c' object='libnovell_a-nmuserrecord.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-nmuserrecord.obj `if test -f 'nmuserrecord.c'; then $(CYGPATH_W) 'nmuserrecord.c'; else $(CYGPATH_W) '$(srcdir)/nmuserrecord.c'; fi`
-
-libnovell_a-novell.o: novell.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-novell.o -MD -MP -MF "$(DEPDIR)/libnovell_a-novell.Tpo" -c -o libnovell_a-novell.o `test -f 'novell.c' || echo '$(srcdir)/'`novell.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-novell.Tpo" "$(DEPDIR)/libnovell_a-novell.Po"; else rm -f "$(DEPDIR)/libnovell_a-novell.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='novell.c' object='libnovell_a-novell.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-novell.o `test -f 'novell.c' || echo '$(srcdir)/'`novell.c
-
-libnovell_a-novell.obj: novell.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -MT libnovell_a-novell.obj -MD -MP -MF "$(DEPDIR)/libnovell_a-novell.Tpo" -c -o libnovell_a-novell.obj `if test -f 'novell.c'; then $(CYGPATH_W) 'novell.c'; else $(CYGPATH_W) '$(srcdir)/novell.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libnovell_a-novell.Tpo" "$(DEPDIR)/libnovell_a-novell.Po"; else rm -f "$(DEPDIR)/libnovell_a-novell.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='novell.c' object='libnovell_a-novell.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_a_CFLAGS) $(CFLAGS) -c -o libnovell_a-novell.obj `if test -f 'novell.c'; then $(CYGPATH_W) 'novell.c'; else $(CYGPATH_W) '$(srcdir)/novell.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnovell_la_CFLAGS) $(CFLAGS) -c -o libnovell_la-novell.lo `test -f 'novell.c' || echo '$(srcdir)/'`novell.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -876,7 +769,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -907,7 +800,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -957,8 +850,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

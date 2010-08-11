@@ -66,6 +66,8 @@
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
 static DBusGProxy *dbus_proxy = NULL;
+static NMState nm_state = NM_STATE_UNKNOWN;
+static gboolean have_nm_state = FALSE;
 
 #elif defined _WIN32
 static int current_network_count;
@@ -596,13 +598,15 @@ gboolean
 purple_network_is_available(void)
 {
 #ifdef HAVE_NETWORKMANAGER
-	NMState state = nm_get_network_state();
-	if (state == NM_STATE_UNKNOWN)
+	if (!have_nm_state)
 	{
-		purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
-		return TRUE;
+		have_nm_state = TRUE;
+		nm_state = nm_get_network_state();
+		if (nm_state == NM_STATE_UNKNOWN)
+			purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
 	}
-	else if (state == NM_STATE_CONNECTED)
+
+	if (nm_state == NM_STATE_UNKNOWN || nm_state == NM_STATE_CONNECTED)
 		return TRUE;
 
 	return FALSE;
@@ -618,8 +622,11 @@ purple_network_is_available(void)
 static void
 nm_update_state(NMState state)
 {
-	static NMState prev = NM_STATE_UNKNOWN;
+	NMState prev = nm_state;
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
+
+	have_nm_state = TRUE;
+	nm_state = state;
 
 	purple_signal_emit(purple_network_get_handle(), "network-configuration-changed", NULL);
 
@@ -630,16 +637,14 @@ nm_update_state(NMState state)
 			res_init();
 			if (ui_ops != NULL && ui_ops->network_connected != NULL)
 				ui_ops->network_connected();
-			prev = state;
 			break;
 		case NM_STATE_ASLEEP:
 		case NM_STATE_CONNECTING:
 		case NM_STATE_DISCONNECTED:
-			if (prev != NM_STATE_CONNECTED)
+			if (prev != NM_STATE_CONNECTED && prev != NM_STATE_UNKNOWN)
 				break;
 			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
 				ui_ops->network_disconnected();
-			prev = state;
 			break;
 		case NM_STATE_UNKNOWN:
 		default:
@@ -664,7 +669,6 @@ nm_get_network_state(void)
 		return NM_STATE_UNKNOWN;
 
 	if (!dbus_g_proxy_call(nm_proxy, "state", &err, G_TYPE_INVALID, G_TYPE_UINT, &state, G_TYPE_INVALID)) {
-		/* XXX: Print an error? */
 		g_error_free(err);
 		return NM_STATE_UNKNOWN;
 	}

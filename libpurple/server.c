@@ -259,16 +259,21 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-		if(conv != NULL && alias != NULL && strcmp(alias, who))
+		if(conv != NULL && alias != NULL &&
+		   who != NULL && strcmp(alias, who))
 		{
+			char *escaped = g_markup_escape_text(who, -1);
+			char *escaped2 = g_markup_escape_text(alias, -1);
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
-										who, alias);
+										escaped, escaped2);
 
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
 					time(NULL));
 
 			g_free(tmp);
+			g_free(escaped2);
+			g_free(escaped);
 		}
 	}
 }

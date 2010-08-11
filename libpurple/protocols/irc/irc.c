@@ -62,8 +62,6 @@ static void irc_buddy_free(struct irc_buddy *ib);
 
 PurplePlugin *_irc_plugin = NULL;
 
-static const char *status_chars = "@+%&";
-
 static void irc_view_motd(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
@@ -518,10 +516,7 @@ static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, 
 	char *plain;
 	const char *args[2];
 
-	if (strchr(status_chars, *who) != NULL)
-		args[0] = who + 1;
-	else
-		args[0] = who;
+	args[0] = irc_nick_skip_mode(irc, who);
 
 	purple_markup_html_to_xhtml(what, NULL, &plain);
 	args[1] = plain;

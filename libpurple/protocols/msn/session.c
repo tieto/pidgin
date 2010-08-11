@@ -118,12 +118,7 @@ msn_session_connect(MsnSession *session, const char *host, int port,
 		g_return_val_if_reached(FALSE);
 	}
 
-	if (msn_notification_connect(session->notification, host, port))
-	{
-		return TRUE;
-	}
-
-	return FALSE;
+	return msn_notification_connect(session->notification, host, port);
 }
 
 void
@@ -453,23 +448,23 @@ msn_session_finish_login(MsnSession *session)
 	PurpleConnection *gc;
 	PurpleStoredImage *img;
 
-	if (session->logged_in)
-		return;
+	if (!session->logged_in) {
+		account = session->account;
+		gc = purple_account_get_connection(account);
 
-	account = session->account;
-	gc = purple_account_get_connection(account);
+		img = purple_buddy_icons_find_account_icon(session->account);
+		/* TODO: Do we really want to call this if img is NULL? */
+		msn_user_set_buddy_icon(session->user, img);
+		if (img != NULL)
+			purple_imgstore_unref(img);
 
-	img = purple_buddy_icons_find_account_icon(session->account);
-	msn_user_set_buddy_icon(session->user, img);
-	purple_imgstore_unref(img);
+		session->logged_in = TRUE;
+		purple_connection_set_state(gc, PURPLE_CONNECTED);
 
-	session->logged_in = TRUE;
+		/* Sync users */
+		msn_session_sync_users(session);
+	}
 
 	msn_change_status(session);
-
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
-
-	/* Sync users */
-	msn_session_sync_users(session);
 }
 

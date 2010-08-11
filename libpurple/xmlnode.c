@@ -249,6 +249,7 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB && !strcmp(attr, x->name)) {
@@ -265,6 +266,7 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 	xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(attr != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB &&

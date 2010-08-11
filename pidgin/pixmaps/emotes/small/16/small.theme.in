@@ -1,0 +1,173 @@
+_Name=Small
+_Description=Smaller versions of the default smilies
+Icon=wink.png
+Author=Hylke Bons
+
+
+# Default smileys
+[default]
+smile.png           :)      :-)
+smile-big.png       :-D     :-d     :D      :d
+sad.png             :-(     :(
+wink.png            ;-)     ;)
+tongue.png          :P      :-P     :-p     :p
+shock.png           =-O     =-o
+kiss.png            :-*
+crying.png          :'(
+thinking.png        :-/     :-\\
+angel.png           O:-)    o:-)
+
+
+# Following AIM 6.1
+[AIM]
+smile.png           :-)     :)
+wink.png            ;-)     ;)
+sad.png             :-(     :(
+tongue.png          :-P     :P      :-p    :p
+shock.png           =-O
+kiss.png            :-*
+smile-big.png       :-D     :D
+angel.png           O:-)
+thinking.png        :-\\    :-/
+crying.png          :'(
+
+
+# Following Windows Live Messenger 8.1
+[MSN]
+smile.png           :)      :-)
+smile-big.png       :D      :d :-D :-d
+wink.png            ;)      ;-)
+shock.png           :-O     :-o :O :o
+tongue.png          :P      :p :-P :-p
+angry.png           :@      :-@
+confused.png        :S      :s :-S :-s
+sad.png             :(      :-(
+crying.png          :'(
+neutral.png         :|      :-|
+devil.png           (6)
+angel.png           (A)     (a)
+love.png            (L)     (l)
+musical-note.png    (8)
+kiss.png            (K)     (k)
+camera.png          (P)     (p)
+coffee.png          (C)     (c)
+phone.png           (T)     (t)
+hug-left.png        ({)
+hug-right.png       (})
+beer.png            (B)     (b)
+sick.png            +o(
+plate.png           (pl)
+dont-know.png       :^)
+thinking.png        *-)
+party.png           <:o)
+yawn.png            |-) 
+
+# Hidden MSN emotes
+cigarette.png      	(ci)    (CI)
+console.png			(xx)    (XX)
+
+
+# Following QQ 2006
+[QQ]
+shock.png           /:O      /jy       /surprised
+party.png           /8-)     /dy       /revel
+crying.png          /:<      /ll       /cry
+sleepy.png          /:Z      /shui     /sleep
+smile-big.png       /:D      /cy       /toothy_smile
+smile.png           /:)      /wx       /small_smile
+sad.png             /:(      /ng       /sad
+sick.png            /:T      /tu       /vomit
+yawn.png            /|-)     /kun      /sleepy
+question.png        /?       /yiw      /question
+search.png          /find    /zhao     /search
+hug-left.png        /hug     /yb       /hug
+musical-note.png    /music   /yy       /music
+coffee.png          /coffee  /kf       /coffee
+kiss.png            /kiss    /wen      /kiss
+love.png            /heart   /xin      /heart
+meeting.png         /meeting /hy       /meeting
+phone.png           /phone   /dh       /phone
+tv.png              /TV      /ds       /TV
+angry.png           /<O>     /oh       /angry
+
+
+# Following ICQ 6.0
+[ICQ]
+smile.png           :-)     :)
+neutral.png         :-$
+sad.png             :-(     :(
+shock.png           =-O
+wink.png            ;-)     ;)
+tongue.png          :-P     :P      :-p     :p
+sleepy.png          *TIRED*
+crying.png          :'(    :'-(
+sick.png            :-!
+kiss.png            :-{} :-*
+devil.png           ]:->
+angel.png           O:-)
+thinking.png        :-\\    :-/
+beer.png            *DRINK*
+smile-big.png       :-D     :D
+
+
+# Following Yahoo! Messenger 8.1
+[Yahoo]
+smile.png           :)      :-)
+question.png        :-/     :-\\
+shock.png           :-O     :O      :-o     :o 
+devil.png           >:)
+angel.png           O:-)    o:-)    0:-)
+sick.png            :-&
+yawn.png            (:|
+sad.png             :(      :-(
+angry.png           X-(     x-(     X(      x(
+crying.png          :((
+wink.png            ;)      ;-)
+thinking.png        :-?
+smile-big.png       :D      :-D     :d      :-d
+tongue.png          :-P     :P      :-p     :p
+neutral.png         :|      :-|
+sleepy.png          I-)     i-)     |-)
+kiss.png            :-*     :*
+confused.png        :-S     :-s
+hug-left.png        >:D<    >:d<
+party.png           <:-P    <:-p
+
+# Hidden Yahoo emotes
+coffee.png          ~o)     ~O)
+dont-know.png       :-L     :-l
+shame.png           [-X     [-x
+musical-note.png    :-"
+
+# Only available after activating the Yahoo! Fighter IMVironment
+
+
+# Following MySpaceIM Beta 1.0.697.0
+[MySpaceIM]
+smile-big.png	    :D      :-D
+devil.png	    }:)
+confused.png	    :Z
+smile.png	    :)      :-)
+shock.png	    :O
+neutral.png	    :|
+tongue.png	    :P      :p
+wink.png	    ;-)     ;)
+sad.png		    :[
+kiss.png            :x
+
+[XMPP]
+# XMPP emoticons
+smile.png                 :)    :-)    =)
+smile-big.png             :D    :-D    =D
+wink.png                  ;)    ;-)    ;^)
+shock.png                 :-o
+tongue.png                :P    :-P
+glasses-cool.png          B-)
+angry.png                 X-(
+sad.png                   :(
+crying.png                :'(
+neutral.png               :-|
+thinking.png              :-/
+love.png                  <3
+monkey.png                :(|)
+victory.png               \\m/

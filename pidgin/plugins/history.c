@@ -47,10 +47,11 @@ static void historize(PurpleConversation *c)
 
 	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
-	if (gtkconv == NULL)
-		return;
+	g_return_if_fail(gtkconv != NULL);
 
-	if (convtype == PURPLE_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
+	/* An IM which is the first active conversation. */
+	g_return_if_fail(gtkconv->convs != NULL);
+	if (convtype == PURPLE_CONV_TYPE_IM && !gtkconv->convs->next)
 	{
 		GSList *buddies;
 		GSList *cur;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 2.0beta6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-03-14 13:08+0500\n"
 "Last-Translator: Kashif Masood <masudmails@yahoo.com>\n"
 "Language-Team: Pashto\n"
@@ -233,9 +233,6 @@ msgstr "په ډاله شاملول شی خطا و شوه"
 msgid "You must give a name for the group to add."
 msgstr ""
 
-msgid "A group with the name already exists."
-msgstr ""
-
 msgid "Add Group"
 msgstr "ډاله زياته که"
 
@@ -267,15 +264,15 @@ msgstr "معلومات اخله"
 msgid "Add Buddy Pounce"
 msgstr "ملګری اونيسه"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "دوسیه استول..."
 
 msgid "Blocked"
 msgstr "مانع کړی"
 
-msgid "View Log"
-msgstr ""
+#, fuzzy
+msgid "Show when offline"
+msgstr "ملګری ليکه نه لرې دی"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -316,6 +313,9 @@ msgid "Place tagged"
 msgstr ""
 
 msgid "Toggle Tag"
+msgstr ""
+
+msgid "View Log"
 msgstr ""
 
 #. General
@@ -1330,7 +1330,7 @@ msgstr ""
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -4896,7 +4896,7 @@ msgstr ""
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5104,8 +5104,7 @@ msgstr "د پېزندنې څېره ارل"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "د بانجوړ نښلولي"
@@ -5146,6 +5145,7 @@ msgstr ""
 msgid "%s just sent you a Nudge!"
 msgstr ""
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "نااشنا خطا رمز %d"
@@ -6278,6 +6278,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "باطل نوم"
@@ -6637,11 +6638,13 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
+#, fuzzy
+msgid "Unable to Add"
 msgstr "زیاتول نه و شوه"
 
-msgid "Unable To Retrieve Buddy List"
-msgstr ""
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
+msgstr "د دوسیه %s ویل نه و شول."
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
@@ -6842,42 +6845,6 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
-msgid "Primary Information"
-msgstr "لومړنی معلومات"
-
-msgid "Personal Introduction"
-msgstr ""
-
-msgid "QQ Number"
-msgstr ""
-
-msgid "Country/Region"
-msgstr "هیواد / سیمه"
-
-msgid "Province/State"
-msgstr "ولایت / ایالت"
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-msgid "College"
-msgstr "پوهنځی"
-
-msgid "Zipcode"
-msgstr "زپ رمز"
-
-msgid "Cellphone Number"
-msgstr ""
-
-msgid "Phone Number"
-msgstr ""
-
 msgid "Aquarius"
 msgstr "دلو"
 
@@ -6954,106 +6921,183 @@ msgid "Other"
 msgstr "بل"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "زما معلومات کی بدلون"
+msgid "Visible"
+msgstr "ناڅرګند"
 
-#, fuzzy
-msgid "Update information"
-msgstr "کاروونکی معلومات"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "ملګری زيات که"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "د تراپ اندازه:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "په مهرباني سره د ملګری معلومات را که."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
-msgstr ""
-
-msgid "Invalid QQ Face"
-msgstr ""
-
-#, c-format
-msgid "You rejected %d's request"
-msgstr ""
-
-msgid "Reject request"
-msgstr ""
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "ماګری زیاتول رد کړي شول"
+msgid "Private"
+msgstr "پرده"
+
+msgid "QQ Number"
+msgstr ""
+
+msgid "Country/Region"
+msgstr "هیواد / سیمه"
+
+msgid "Province/State"
+msgstr "ولایت / ایالت"
+
+msgid "Zipcode"
+msgstr "زپ رمز"
+
+msgid "Phone Number"
+msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Authorize adding"
+msgstr "اجازه ورکول"
+
+msgid "Cellphone Number"
+msgstr ""
+
+msgid "Personal Introduction"
+msgstr ""
+
+#, fuzzy
+msgid "City/Area"
+msgstr "ښار"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "شخصي ګرځنده پون"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "اړیکه بل نوم"
+
+msgid "College"
+msgstr "پوهنځی"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "اس"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "مانع کړی"
+
+#, fuzzy
+msgid "True"
+msgstr "ثور"
+
+#, fuzzy
+msgid "False"
 msgstr "ناکام شه"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "ملګری خوځول"
+msgid "Modify Contact"
+msgstr "شمېرل بدلون"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
+msgid "Modify Address"
+msgstr "کور پته"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "زما معلومات کی بدلون"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "زما معلومات کی بدلون"
+
+msgid "Update"
+msgstr ""
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "په مهرباني سره د ملګری معلومات را که."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "ملګری زيات که"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "استول"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "باطل نوم"
+
+msgid "Authorization denied message:"
+msgstr ""
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "د یاهو کره کول ناکام شول"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "ملګری فهرست ته شامل کړه؟"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 msgid "Would you be my friend?"
 msgstr ""
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "استول"
-
-#, c-format
-msgid "Add into %d's buddy list"
-msgstr ""
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "ملګری زيات که"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "د کوکو هویت خطا"
+msgid "Add buddy"
+msgstr "ملګری زيات که"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "باطل کوټه نوم"
+
+msgid "Failed sending authorize"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "کاروونکی نه شه شامل"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
+
+msgid "No reason given"
+msgstr ""
+
+#. only need to get value
+#, c-format
+msgid "You have been added by %s"
+msgstr ""
+
+msgid "Would you like to add him?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "ردول"
+
+#, c-format
+msgid "Message: %s"
+msgstr "پیغام: %s"
 
 msgid "ID: "
 msgstr "هویت"
 
 msgid "Group ID"
 msgstr "د ډالی هویت"
-
-msgid "Creator"
-msgstr "خالق"
-
-msgid "Group Description"
-msgstr "ډالی تفصیل"
-
-msgid "Auth"
-msgstr "کره کول"
 
 msgid "QQ Qun"
 msgstr "کوکو کون"
@@ -7065,123 +7109,121 @@ msgstr "په مهرباني سره د ملګری معلومات را که."
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
-
-#, c-format
-msgid "Message: %s"
-msgstr "پیغام: %s"
-
-msgid "QQ Qun Operation"
-msgstr "د کوکو کون عمل"
-
-msgid "Approve"
-msgstr "منل"
-
-#, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
-msgstr ""
-
 #, fuzzy
-msgid "Notice:"
-msgstr "یادونه"
-
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-#, fuzzy
-msgid "I am not a member"
+msgid "Not member"
 msgstr "ز غړی نه یم"
 
-msgid "I am a member"
-msgstr "ز غړی یم"
-
-msgid "I am requesting"
+msgid "Member"
 msgstr ""
 
-msgid "I am the admin"
-msgstr "ز ادارې یم"
+#, fuzzy
+msgid "Requesting"
+msgstr "پاتی دی"
 
-msgid "Unknown status"
-msgstr "نااشنا موقعیت"
+#, fuzzy
+msgid "Admin"
+msgstr "اډیام"
+
+#, fuzzy
+msgid "Notice"
+msgstr "یادونه"
+
+#, fuzzy
+msgid "Detail"
+msgstr "اوبسه"
+
+msgid "Creator"
+msgstr "خالق"
+
+#, fuzzy
+msgid "About me"
+msgstr "ګېم باره کې"
+
+#, fuzzy
+msgid "Category"
+msgstr "ګپ شپ خطا"
 
 msgid "The Qun does not allow others to join"
 msgstr ""
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "ډاله خوځول"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "په ګپ شپ نښلول"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+msgid "QQ Qun Operation"
+msgstr "د کوکو کون عمل"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "ناکام شه"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
-msgid "Are you sure you want to leave this Qun?"
-msgstr ""
+#, fuzzy
+msgid "Quit Qun"
+msgstr "کوکو کون"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-msgid "Do you want to approve the request?"
+msgid "Sorry, you are not our style ..."
 msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "ز غړی یم"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "کانال تفصیل"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
-msgid "Would you like to set up the detail information now?"
-msgstr ""
+#, fuzzy
+msgid "Would you like to set detailed information now?"
+msgstr "زما معلومات کی بدلون"
 
 msgid "Setup"
 msgstr ""
 
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
+
+#, c-format
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr ""
+
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
+
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "‫%s (%s)"
+msgid "<b>Removed buddy %d.</b>"
+msgstr "ملګری خوځول"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "خادم پته"
-
-msgid "System Message"
-msgstr "سیستم پیغام"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "ګپ شپ نښلول ناکام شو"
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, c-format
 msgid "Unknown-%d"
@@ -7189,9 +7231,6 @@ msgstr "نااشنا-%d"
 
 msgid "Level"
 msgstr "رتبه"
-
-msgid "Member"
-msgstr ""
 
 msgid " VIP"
 msgstr ""
@@ -7223,12 +7262,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "باطل نوم"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "ليکبڼه خواښه"
+
 #, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
+msgstr ""
+
+#, c-format
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
 #, c-format
@@ -7236,11 +7283,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr ""
 
 #, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr ""
+
+#, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr ""
 
 #, c-format
@@ -7264,23 +7315,41 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr ""
 
 #, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Last Login Time</b>: %s\n"
+msgid "<b>IP</b>: %s<br>\n"
 msgstr ""
 
 msgid "Login Information"
 msgstr "ننوتو معلومات"
 
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr ""
+
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr ""
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "ګېم باره کې"
+
 #, fuzzy
-msgid "Set My Information"
-msgstr "د خادم معلومات"
+msgid "Change Icon"
+msgstr "تمثال و ساته"
 
 msgid "Change Password"
 msgstr "پټ ټکی بدلول"
@@ -7289,11 +7358,12 @@ msgstr "پټ ټکی بدلول"
 msgid "Account Information"
 msgstr "ننوتو معلومات"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
-msgid "Block this buddy"
-msgstr ""
+#, fuzzy
+msgid "About OpenQ"
+msgstr "ګېم باره کې"
 
 #. *< type
 #. *< ui_requirement
@@ -7305,13 +7375,28 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-msgid "QQ Protocol\tPlugin"
-msgstr ""
+#, fuzzy
+msgid "QQ Protocol Plugin"
+msgstr "د أېم پروتوکول نښلولی"
 
 #, fuzzy
 msgid "Auto"
 msgstr "کره کول"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "کاروونکی خواښول"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "رابطه قطع شوه"
@@ -7324,41 +7409,78 @@ msgstr "د خادم معلومات"
 msgid "Show server news"
 msgstr "خادم پته"
 
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr ""
 
-msgid "Update interval(s)"
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "کاروونکی معلومات"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "د رابطه خادم"
+
+msgid "Can not decrypt get server reply"
 msgstr ""
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "باطل نوم"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "اوسنی پټ ټکی"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "کره کول ناکام شو"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 msgid "Keep alive error"
 msgstr ""
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "د خادم سره رابطه کول ناکامه شوه."
+msgid "Captcha Image"
+msgstr "انځور و ساته"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "مخ"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+msgid "Enter the text from the image"
+msgstr ""
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7384,8 +7506,10 @@ msgstr "لیک کولو خطا"
 msgid "Connection lost"
 msgstr "رابطه قطع شوه"
 
-#. Update the login progress status display
-#, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "کاروونکی معلومات ورکه..."
+
 msgid "Request token"
 msgstr ""
 
@@ -7395,15 +7519,35 @@ msgstr ""
 msgid "Invalid server or port"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"د %s خادم څخه د ارتباط خطا:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "د رابطه خادم"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "د کوکو هویت خطا"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "ګپ شپ نښلول ناکام شو"
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "خادم پته"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "له"
+
+#, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr ""
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7419,13 +7563,16 @@ msgid "QQ Qun Command"
 msgstr "د ملګری تبصره:"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr ""
+
+msgid "Unknow CLIENT CMD"
 msgstr ""
 
 #, c-format
@@ -7437,60 +7584,6 @@ msgstr "دوسیه استول"
 
 #, c-format
 msgid "%d canceled the transfer of %s"
-msgstr ""
-
-msgid "Do you approve the requestion?"
-msgstr ""
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "کاروونکی نه شه شامل"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-msgid "Would you like to add him?"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "ملګری زيات که"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "ملګری فهرست"
-
-msgid "Would you add?"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "له"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-msgid "QQ Server Notice"
 msgstr ""
 
 msgid "Connection closed (writing)"
@@ -9094,9 +9187,6 @@ msgstr ""
 msgid "Yahoo! system message for %s:"
 msgstr "د یاهو سیستم د %s لپاره پېغام:"
 
-msgid "Authorization denied message:"
-msgstr ""
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -9950,9 +10040,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10014,10 +10104,6 @@ msgstr "د یاداشت لیک لیدل"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "ملګری ليکه نه لرې دی"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "ملګری ليکه نه لرې دی"
 
 msgid "_Alias..."
@@ -10393,7 +10479,7 @@ msgstr "بل نوم:"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10429,10 +10515,6 @@ msgstr "ملګری فهرست ترتيب"
 #, fuzzy
 msgid "SSL Servers"
 msgstr "خادم"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "‫%s قطع شو"
 
 #, fuzzy
 msgid "Unknown command."
@@ -10775,8 +10857,12 @@ msgstr "خطا"
 msgid "Fatal Error"
 msgstr "وژونکی خطا"
 
-msgid "developer"
+msgid "bug master"
 msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "حمل"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -10785,10 +10871,7 @@ msgstr ""
 msgid "support"
 msgstr ""
 
-msgid "support/QA"
-msgstr ""
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr ""
 
 msgid "Senior Contributor/QA"
@@ -10807,7 +10890,10 @@ msgstr ""
 msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
-msgid "XMPP developer"
+msgid "support/QA"
+msgstr ""
+
+msgid "XMPP"
 msgstr ""
 
 msgid "original author"
@@ -11065,10 +11151,6 @@ msgstr ""
 
 msgid "Retired Crazy Patch Writers"
 msgstr ""
-
-#, fuzzy
-msgid "Artists"
-msgstr "حمل"
 
 msgid "Current Translators"
 msgstr ""
@@ -11661,11 +11743,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -12502,8 +12579,13 @@ msgstr "معلومات اخله"
 msgid "_Invite"
 msgstr "بلل"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "بدلول"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "زياتول"
 
 msgid "_Open Mail"
 msgstr "برېښنالیک ښکاره کول"
@@ -12528,6 +12610,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "(هیڅ نه)"
+
+#, fuzzy
+msgid "Small"
+msgstr "برېښنالیک"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 msgid "Response Probability:"
 msgstr ""
@@ -12968,6 +13057,10 @@ msgstr ""
 msgid "Set window manager \"_URGENT\" hint"
 msgstr ""
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "ګپ شپ کړکی"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr ""
@@ -13141,16 +13234,17 @@ msgid ""
 msgstr ""
 
 #, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
+msgid "You can upgrade to %s %s today."
 msgstr ""
 
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
-msgstr "<br><b>د کانال عنوان:</b><br>%s"
-
 msgid "New Version Available"
+msgstr ""
+
+#, fuzzy
+msgid "Later"
+msgstr "بل"
+
+msgid "Download Now"
 msgstr ""
 
 #. *< type
@@ -13452,6 +13546,99 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#~ msgid "Primary Information"
+#~ msgstr "لومړنی معلومات"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "د تراپ اندازه:"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "ماګری زیاتول رد کړي شول"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "د کوکو هویت خطا"
+
+#~ msgid "Group Description"
+#~ msgstr "ډالی تفصیل"
+
+#~ msgid "Auth"
+#~ msgstr "کره کول"
+
+#~ msgid "Approve"
+#~ msgstr "منل"
+
+#~ msgid "I am a member"
+#~ msgstr "ز غړی یم"
+
+#~ msgid "I am the admin"
+#~ msgstr "ز ادارې یم"
+
+#~ msgid "Unknown status"
+#~ msgstr "نااشنا موقعیت"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "ډاله خوځول"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "‫%s (%s)"
+
+#~ msgid "System Message"
+#~ msgstr "سیستم پیغام"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "د خادم معلومات"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "اوسنی پټ ټکی"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "د خادم سره رابطه کول ناکامه شوه."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "د %s خادم څخه د ارتباط خطا:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "کاروونکی نه شه شامل"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "ملګری زيات که"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "ملګری فهرست"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "‫%s قطع شو"
+
+#, fuzzy
+#~ msgid "Artists"
+#~ msgstr "حمل"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<br><b>د کانال عنوان:</b><br>%s"
 
 #, fuzzy
 #~ msgid "Sort by status"

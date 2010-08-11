@@ -32,13 +32,11 @@
 /* note:
  * 1, in these functions, 'b' stands for byte, 'w' stands for word, 'dw' stands for double word.
  * 2, we use '*cursor' and 'buf' as two addresses to calculate the length.
- * 3, change '0' to '1', if want to get more info about the packet parsing. */
+ * 3, change 'undef' to 'define' to get more info about the packet parsing. */
 
-#if 0
-#define PARSER_DEBUG
-#endif
+#undef PARSER_DEBUG
 
-/* read one byte from buf, 
+/* read one byte from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get8(guint8 *b, guint8 *buf)
 {
@@ -53,7 +51,7 @@ gint qq_get8(guint8 *b, guint8 *buf)
 }
 
 
-/* read two bytes as "guint16" from buf, 
+/* read two bytes as "guint16" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get16(guint16 *w, guint8 *buf)
 {
@@ -67,7 +65,7 @@ gint qq_get16(guint16 *w, guint8 *buf)
 	return sizeof(w_dest);
 }
 
-/* read four bytes as "guint32" from buf, 
+/* read four bytes as "guint32" from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get32(guint32 *dw, guint8 *buf)
 {
@@ -87,7 +85,7 @@ gint qq_getIP(struct in_addr *ip, guint8 *buf)
 	return sizeof(struct in_addr);
 }
 
-/* read datalen bytes from buf, 
+/* read datalen bytes from buf,
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_getdata(guint8 *data, gint datalen, guint8 *buf)
 {
@@ -151,7 +149,20 @@ gint qq_put16(guint8 *buf, guint16 w)
  * return the number of bytes packed, otherwise return -1 */
 gint qq_put32(guint8 *buf, guint32 dw)
 {
-    guint32 dw_porter;
+	guint32 dw_porter;
+    dw_porter = g_htonl(dw);
+#ifdef PARSER_DEBUG
+	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);
+	purple_debug_info("QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
+#endif
+    memcpy(buf, &dw_porter, sizeof(dw_porter));
+    return sizeof(dw_porter);
+}
+
+gint qq_putime(guint8 *buf, time_t *t)
+{
+	guint32 dw, dw_porter;
+	memcpy(&dw, t, sizeof(dw));
     dw_porter = g_htonl(dw);
 #ifdef PARSER_DEBUG
 	purple_debug_info("QQ", "[DBG][put32] buf %p\n", (void *)buf);
@@ -171,7 +182,7 @@ gint qq_putIP(guint8* buf, struct in_addr *ip)
  * return the number of bytes packed, otherwise return -1 */
 gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen)
 {
-    memcpy(buf, data, datalen);
+   	memcpy(buf, data, datalen);
 #ifdef PARSER_DEBUG
 	purple_debug_info("QQ", "[DBG][putdata] buf %p\n", (void *)buf);
 #endif

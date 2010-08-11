@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -48,29 +47,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libgg_a_AR = $(AR) $(ARFLAGS)
-am__DEPENDENCIES_1 =
-@STATIC_GG_TRUE@libgg_a_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__libgg_a_SOURCES_DIST = lib/common.c lib/compat.h lib/dcc.c \
-	lib/events.c lib/http.c lib/libgadu.c lib/libgadu-config.h \
-	lib/libgadu.h lib/obsolete.c lib/pubdir50.c lib/pubdir.c \
-	gg-utils.h gg-utils.c confer.h confer.c search.h search.c \
-	buddylist.h buddylist.c gg.h gg.c
-@USE_INTERNAL_LIBGADU_TRUE@am__objects_1 = libgg_a-common.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-dcc.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-events.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-http.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-libgadu.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-obsolete.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-pubdir50.$(OBJEXT) \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_a-pubdir.$(OBJEXT)
-am__objects_2 = $(am__objects_1) libgg_a-gg-utils.$(OBJEXT) \
-	libgg_a-confer.$(OBJEXT) libgg_a-search.$(OBJEXT) \
-	libgg_a-buddylist.$(OBJEXT) libgg_a-gg.$(OBJEXT)
-@STATIC_GG_TRUE@am_libgg_a_OBJECTS = $(am__objects_2)
-libgg_a_OBJECTS = $(am_libgg_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -79,22 +55,31 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
+am__DEPENDENCIES_1 =
 @STATIC_GG_FALSE@libgg_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 @STATIC_GG_FALSE@	$(am__DEPENDENCIES_1)
+@STATIC_GG_TRUE@libgg_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libgg_la_SOURCES_DIST = lib/common.c lib/compat.h lib/dcc.c \
 	lib/events.c lib/http.c lib/libgadu.c lib/libgadu-config.h \
 	lib/libgadu.h lib/obsolete.c lib/pubdir50.c lib/pubdir.c \
 	gg-utils.h gg-utils.c confer.h confer.c search.h search.c \
 	buddylist.h buddylist.c gg.h gg.c
-@USE_INTERNAL_LIBGADU_TRUE@am__objects_3 = common.lo dcc.lo events.lo \
-@USE_INTERNAL_LIBGADU_TRUE@	http.lo libgadu.lo obsolete.lo \
-@USE_INTERNAL_LIBGADU_TRUE@	pubdir50.lo pubdir.lo
-am__objects_4 = $(am__objects_3) gg-utils.lo confer.lo search.lo \
-	buddylist.lo gg.lo
-@STATIC_GG_FALSE@am_libgg_la_OBJECTS = $(am__objects_4)
+@USE_INTERNAL_LIBGADU_TRUE@am__objects_1 = libgg_la-common.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-dcc.lo libgg_la-events.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-http.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-libgadu.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-obsolete.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-pubdir50.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-pubdir.lo
+am__objects_2 = $(am__objects_1) libgg_la-gg-utils.lo \
+	libgg_la-confer.lo libgg_la-search.lo libgg_la-buddylist.lo \
+	libgg_la-gg.lo
+@STATIC_GG_FALSE@am_libgg_la_OBJECTS = $(am__objects_2)
+@STATIC_GG_TRUE@am_libgg_la_OBJECTS = $(am__objects_2)
 libgg_la_OBJECTS = $(am_libgg_la_OBJECTS)
 @STATIC_GG_FALSE@am_libgg_la_rpath = -rpath $(pkgdir)
+@STATIC_GG_TRUE@am_libgg_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -106,9 +91,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libgg_a_SOURCES) $(libgg_la_SOURCES)
-DIST_SOURCES = $(am__libgg_a_SOURCES_DIST) \
-	$(am__libgg_la_SOURCES_DIST)
+SOURCES = $(libgg_la_SOURCES)
+DIST_SOURCES = $(am__libgg_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -136,10 +120,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -153,6 +133,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -185,7 +166,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -205,8 +185,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -279,6 +258,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -287,6 +267,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -300,10 +281,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -416,12 +400,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -455,6 +436,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -521,15 +503,13 @@ AM_CFLAGS = $(st)
 libgg_la_LDFLAGS = -module -avoid-version
 @STATIC_GG_FALSE@st = $(GADU_CFLAGS)
 @STATIC_GG_TRUE@st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
-@STATIC_GG_FALSE@noinst_LIBRARIES = 
-@STATIC_GG_TRUE@noinst_LIBRARIES = libgg.a
-@STATIC_GG_FALSE@pkg_LTLIBRARIES = libgg.la
-@STATIC_GG_TRUE@pkg_LTLIBRARIES = 
-@STATIC_GG_TRUE@libgg_a_SOURCES = $(GGSOURCES)
-@STATIC_GG_TRUE@libgg_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_GG_TRUE@libgg_a_LIBADD = $(GADU_LIBS)
+@STATIC_GG_TRUE@noinst_LTLIBRARIES = libgg.la
 @STATIC_GG_FALSE@libgg_la_SOURCES = $(GGSOURCES)
+@STATIC_GG_TRUE@libgg_la_SOURCES = $(GGSOURCES)
+@STATIC_GG_TRUE@libgg_la_CFLAGS = $(AM_CFLAGS)
 @STATIC_GG_FALSE@libgg_la_LIBADD = $(GLIB_LIBS) $(GADU_LIBS)
+@STATIC_GG_TRUE@libgg_la_LIBADD = $(GADU_LIBS)
+@STATIC_GG_FALSE@pkg_LTLIBRARIES = libgg.la
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
@@ -571,12 +551,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libgg.a: $(libgg_a_OBJECTS) $(libgg_a_DEPENDENCIES) 
-	-rm -f libgg.a
-	$(libgg_a_AR) libgg.a $(libgg_a_OBJECTS) $(libgg_a_LIBADD)
-	$(RANLIB) libgg.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -613,32 +595,19 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddylist.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/confer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/events.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gg-utils.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/http.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgadu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-buddylist.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-confer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-dcc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-events.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-gg-utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-gg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-http.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-libgadu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-obsolete.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-pubdir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-pubdir50.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_a-search.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obsolete.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pubdir.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pubdir50.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/search.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-buddylist.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-common.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-confer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-dcc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-events.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-gg-utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-gg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-http.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-libgadu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-obsolete.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-pubdir.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-pubdir50.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-search.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -661,243 +630,96 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libgg_a-common.o: lib/common.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-common.o -MD -MP -MF "$(DEPDIR)/libgg_a-common.Tpo" -c -o libgg_a-common.o `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-common.Tpo" "$(DEPDIR)/libgg_a-common.Po"; else rm -f "$(DEPDIR)/libgg_a-common.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/common.c' object='libgg_a-common.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-common.lo: lib/common.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-common.lo -MD -MP -MF "$(DEPDIR)/libgg_la-common.Tpo" -c -o libgg_la-common.lo `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-common.Tpo" "$(DEPDIR)/libgg_la-common.Plo"; else rm -f "$(DEPDIR)/libgg_la-common.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/common.c' object='libgg_la-common.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-common.o `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-common.lo `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c
 
-libgg_a-common.obj: lib/common.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-common.obj -MD -MP -MF "$(DEPDIR)/libgg_a-common.Tpo" -c -o libgg_a-common.obj `if test -f 'lib/common.c'; then $(CYGPATH_W) 'lib/common.c'; else $(CYGPATH_W) '$(srcdir)/lib/common.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-common.Tpo" "$(DEPDIR)/libgg_a-common.Po"; else rm -f "$(DEPDIR)/libgg_a-common.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/common.c' object='libgg_a-common.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-dcc.lo: lib/dcc.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-dcc.lo -MD -MP -MF "$(DEPDIR)/libgg_la-dcc.Tpo" -c -o libgg_la-dcc.lo `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-dcc.Tpo" "$(DEPDIR)/libgg_la-dcc.Plo"; else rm -f "$(DEPDIR)/libgg_la-dcc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/dcc.c' object='libgg_la-dcc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-common.obj `if test -f 'lib/common.c'; then $(CYGPATH_W) 'lib/common.c'; else $(CYGPATH_W) '$(srcdir)/lib/common.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-dcc.lo `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c
 
-libgg_a-dcc.o: lib/dcc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-dcc.o -MD -MP -MF "$(DEPDIR)/libgg_a-dcc.Tpo" -c -o libgg_a-dcc.o `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-dcc.Tpo" "$(DEPDIR)/libgg_a-dcc.Po"; else rm -f "$(DEPDIR)/libgg_a-dcc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/dcc.c' object='libgg_a-dcc.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-events.lo: lib/events.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-events.lo -MD -MP -MF "$(DEPDIR)/libgg_la-events.Tpo" -c -o libgg_la-events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-events.Tpo" "$(DEPDIR)/libgg_la-events.Plo"; else rm -f "$(DEPDIR)/libgg_la-events.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/events.c' object='libgg_la-events.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-dcc.o `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c
 
-libgg_a-dcc.obj: lib/dcc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-dcc.obj -MD -MP -MF "$(DEPDIR)/libgg_a-dcc.Tpo" -c -o libgg_a-dcc.obj `if test -f 'lib/dcc.c'; then $(CYGPATH_W) 'lib/dcc.c'; else $(CYGPATH_W) '$(srcdir)/lib/dcc.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-dcc.Tpo" "$(DEPDIR)/libgg_a-dcc.Po"; else rm -f "$(DEPDIR)/libgg_a-dcc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/dcc.c' object='libgg_a-dcc.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-http.lo: lib/http.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-http.lo -MD -MP -MF "$(DEPDIR)/libgg_la-http.Tpo" -c -o libgg_la-http.lo `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-http.Tpo" "$(DEPDIR)/libgg_la-http.Plo"; else rm -f "$(DEPDIR)/libgg_la-http.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/http.c' object='libgg_la-http.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-dcc.obj `if test -f 'lib/dcc.c'; then $(CYGPATH_W) 'lib/dcc.c'; else $(CYGPATH_W) '$(srcdir)/lib/dcc.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-http.lo `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c
 
-libgg_a-events.o: lib/events.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-events.o -MD -MP -MF "$(DEPDIR)/libgg_a-events.Tpo" -c -o libgg_a-events.o `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-events.Tpo" "$(DEPDIR)/libgg_a-events.Po"; else rm -f "$(DEPDIR)/libgg_a-events.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/events.c' object='libgg_a-events.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-libgadu.lo: lib/libgadu.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-libgadu.lo -MD -MP -MF "$(DEPDIR)/libgg_la-libgadu.Tpo" -c -o libgg_la-libgadu.lo `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-libgadu.Tpo" "$(DEPDIR)/libgg_la-libgadu.Plo"; else rm -f "$(DEPDIR)/libgg_la-libgadu.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/libgadu.c' object='libgg_la-libgadu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-events.o `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-libgadu.lo `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c
 
-libgg_a-events.obj: lib/events.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-events.obj -MD -MP -MF "$(DEPDIR)/libgg_a-events.Tpo" -c -o libgg_a-events.obj `if test -f 'lib/events.c'; then $(CYGPATH_W) 'lib/events.c'; else $(CYGPATH_W) '$(srcdir)/lib/events.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-events.Tpo" "$(DEPDIR)/libgg_a-events.Po"; else rm -f "$(DEPDIR)/libgg_a-events.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/events.c' object='libgg_a-events.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-obsolete.lo: lib/obsolete.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-obsolete.lo -MD -MP -MF "$(DEPDIR)/libgg_la-obsolete.Tpo" -c -o libgg_la-obsolete.lo `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-obsolete.Tpo" "$(DEPDIR)/libgg_la-obsolete.Plo"; else rm -f "$(DEPDIR)/libgg_la-obsolete.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/obsolete.c' object='libgg_la-obsolete.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-events.obj `if test -f 'lib/events.c'; then $(CYGPATH_W) 'lib/events.c'; else $(CYGPATH_W) '$(srcdir)/lib/events.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-obsolete.lo `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c
 
-libgg_a-http.o: lib/http.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-http.o -MD -MP -MF "$(DEPDIR)/libgg_a-http.Tpo" -c -o libgg_a-http.o `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-http.Tpo" "$(DEPDIR)/libgg_a-http.Po"; else rm -f "$(DEPDIR)/libgg_a-http.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/http.c' object='libgg_a-http.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-pubdir50.lo: lib/pubdir50.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-pubdir50.lo -MD -MP -MF "$(DEPDIR)/libgg_la-pubdir50.Tpo" -c -o libgg_la-pubdir50.lo `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-pubdir50.Tpo" "$(DEPDIR)/libgg_la-pubdir50.Plo"; else rm -f "$(DEPDIR)/libgg_la-pubdir50.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir50.c' object='libgg_la-pubdir50.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-http.o `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-pubdir50.lo `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c
 
-libgg_a-http.obj: lib/http.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-http.obj -MD -MP -MF "$(DEPDIR)/libgg_a-http.Tpo" -c -o libgg_a-http.obj `if test -f 'lib/http.c'; then $(CYGPATH_W) 'lib/http.c'; else $(CYGPATH_W) '$(srcdir)/lib/http.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-http.Tpo" "$(DEPDIR)/libgg_a-http.Po"; else rm -f "$(DEPDIR)/libgg_a-http.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/http.c' object='libgg_a-http.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-pubdir.lo: lib/pubdir.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-pubdir.lo -MD -MP -MF "$(DEPDIR)/libgg_la-pubdir.Tpo" -c -o libgg_la-pubdir.lo `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-pubdir.Tpo" "$(DEPDIR)/libgg_la-pubdir.Plo"; else rm -f "$(DEPDIR)/libgg_la-pubdir.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir.c' object='libgg_la-pubdir.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-http.obj `if test -f 'lib/http.c'; then $(CYGPATH_W) 'lib/http.c'; else $(CYGPATH_W) '$(srcdir)/lib/http.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-pubdir.lo `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c
 
-libgg_a-libgadu.o: lib/libgadu.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-libgadu.o -MD -MP -MF "$(DEPDIR)/libgg_a-libgadu.Tpo" -c -o libgg_a-libgadu.o `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-libgadu.Tpo" "$(DEPDIR)/libgg_a-libgadu.Po"; else rm -f "$(DEPDIR)/libgg_a-libgadu.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/libgadu.c' object='libgg_a-libgadu.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-gg-utils.lo: gg-utils.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-gg-utils.lo -MD -MP -MF "$(DEPDIR)/libgg_la-gg-utils.Tpo" -c -o libgg_la-gg-utils.lo `test -f 'gg-utils.c' || echo '$(srcdir)/'`gg-utils.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-gg-utils.Tpo" "$(DEPDIR)/libgg_la-gg-utils.Plo"; else rm -f "$(DEPDIR)/libgg_la-gg-utils.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg-utils.c' object='libgg_la-gg-utils.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-libgadu.o `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-gg-utils.lo `test -f 'gg-utils.c' || echo '$(srcdir)/'`gg-utils.c
 
-libgg_a-libgadu.obj: lib/libgadu.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-libgadu.obj -MD -MP -MF "$(DEPDIR)/libgg_a-libgadu.Tpo" -c -o libgg_a-libgadu.obj `if test -f 'lib/libgadu.c'; then $(CYGPATH_W) 'lib/libgadu.c'; else $(CYGPATH_W) '$(srcdir)/lib/libgadu.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-libgadu.Tpo" "$(DEPDIR)/libgg_a-libgadu.Po"; else rm -f "$(DEPDIR)/libgg_a-libgadu.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/libgadu.c' object='libgg_a-libgadu.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-confer.lo: confer.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-confer.lo -MD -MP -MF "$(DEPDIR)/libgg_la-confer.Tpo" -c -o libgg_la-confer.lo `test -f 'confer.c' || echo '$(srcdir)/'`confer.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-confer.Tpo" "$(DEPDIR)/libgg_la-confer.Plo"; else rm -f "$(DEPDIR)/libgg_la-confer.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='confer.c' object='libgg_la-confer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-libgadu.obj `if test -f 'lib/libgadu.c'; then $(CYGPATH_W) 'lib/libgadu.c'; else $(CYGPATH_W) '$(srcdir)/lib/libgadu.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-confer.lo `test -f 'confer.c' || echo '$(srcdir)/'`confer.c
 
-libgg_a-obsolete.o: lib/obsolete.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-obsolete.o -MD -MP -MF "$(DEPDIR)/libgg_a-obsolete.Tpo" -c -o libgg_a-obsolete.o `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-obsolete.Tpo" "$(DEPDIR)/libgg_a-obsolete.Po"; else rm -f "$(DEPDIR)/libgg_a-obsolete.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/obsolete.c' object='libgg_a-obsolete.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-search.lo: search.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-search.lo -MD -MP -MF "$(DEPDIR)/libgg_la-search.Tpo" -c -o libgg_la-search.lo `test -f 'search.c' || echo '$(srcdir)/'`search.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-search.Tpo" "$(DEPDIR)/libgg_la-search.Plo"; else rm -f "$(DEPDIR)/libgg_la-search.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='search.c' object='libgg_la-search.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-obsolete.o `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-search.lo `test -f 'search.c' || echo '$(srcdir)/'`search.c
 
-libgg_a-obsolete.obj: lib/obsolete.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-obsolete.obj -MD -MP -MF "$(DEPDIR)/libgg_a-obsolete.Tpo" -c -o libgg_a-obsolete.obj `if test -f 'lib/obsolete.c'; then $(CYGPATH_W) 'lib/obsolete.c'; else $(CYGPATH_W) '$(srcdir)/lib/obsolete.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-obsolete.Tpo" "$(DEPDIR)/libgg_a-obsolete.Po"; else rm -f "$(DEPDIR)/libgg_a-obsolete.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/obsolete.c' object='libgg_a-obsolete.obj' libtool=no @AMDEPBACKSLASH@
+libgg_la-buddylist.lo: buddylist.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-buddylist.lo -MD -MP -MF "$(DEPDIR)/libgg_la-buddylist.Tpo" -c -o libgg_la-buddylist.lo `test -f 'buddylist.c' || echo '$(srcdir)/'`buddylist.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-buddylist.Tpo" "$(DEPDIR)/libgg_la-buddylist.Plo"; else rm -f "$(DEPDIR)/libgg_la-buddylist.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddylist.c' object='libgg_la-buddylist.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-obsolete.obj `if test -f 'lib/obsolete.c'; then $(CYGPATH_W) 'lib/obsolete.c'; else $(CYGPATH_W) '$(srcdir)/lib/obsolete.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-buddylist.lo `test -f 'buddylist.c' || echo '$(srcdir)/'`buddylist.c
 
-libgg_a-pubdir50.o: lib/pubdir50.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-pubdir50.o -MD -MP -MF "$(DEPDIR)/libgg_a-pubdir50.Tpo" -c -o libgg_a-pubdir50.o `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-pubdir50.Tpo" "$(DEPDIR)/libgg_a-pubdir50.Po"; else rm -f "$(DEPDIR)/libgg_a-pubdir50.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir50.c' object='libgg_a-pubdir50.o' libtool=no @AMDEPBACKSLASH@
+libgg_la-gg.lo: gg.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-gg.lo -MD -MP -MF "$(DEPDIR)/libgg_la-gg.Tpo" -c -o libgg_la-gg.lo `test -f 'gg.c' || echo '$(srcdir)/'`gg.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_la-gg.Tpo" "$(DEPDIR)/libgg_la-gg.Plo"; else rm -f "$(DEPDIR)/libgg_la-gg.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg.c' object='libgg_la-gg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-pubdir50.o `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c
-
-libgg_a-pubdir50.obj: lib/pubdir50.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-pubdir50.obj -MD -MP -MF "$(DEPDIR)/libgg_a-pubdir50.Tpo" -c -o libgg_a-pubdir50.obj `if test -f 'lib/pubdir50.c'; then $(CYGPATH_W) 'lib/pubdir50.c'; else $(CYGPATH_W) '$(srcdir)/lib/pubdir50.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-pubdir50.Tpo" "$(DEPDIR)/libgg_a-pubdir50.Po"; else rm -f "$(DEPDIR)/libgg_a-pubdir50.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir50.c' object='libgg_a-pubdir50.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-pubdir50.obj `if test -f 'lib/pubdir50.c'; then $(CYGPATH_W) 'lib/pubdir50.c'; else $(CYGPATH_W) '$(srcdir)/lib/pubdir50.c'; fi`
-
-libgg_a-pubdir.o: lib/pubdir.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-pubdir.o -MD -MP -MF "$(DEPDIR)/libgg_a-pubdir.Tpo" -c -o libgg_a-pubdir.o `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-pubdir.Tpo" "$(DEPDIR)/libgg_a-pubdir.Po"; else rm -f "$(DEPDIR)/libgg_a-pubdir.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir.c' object='libgg_a-pubdir.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-pubdir.o `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c
-
-libgg_a-pubdir.obj: lib/pubdir.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-pubdir.obj -MD -MP -MF "$(DEPDIR)/libgg_a-pubdir.Tpo" -c -o libgg_a-pubdir.obj `if test -f 'lib/pubdir.c'; then $(CYGPATH_W) 'lib/pubdir.c'; else $(CYGPATH_W) '$(srcdir)/lib/pubdir.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-pubdir.Tpo" "$(DEPDIR)/libgg_a-pubdir.Po"; else rm -f "$(DEPDIR)/libgg_a-pubdir.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir.c' object='libgg_a-pubdir.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-pubdir.obj `if test -f 'lib/pubdir.c'; then $(CYGPATH_W) 'lib/pubdir.c'; else $(CYGPATH_W) '$(srcdir)/lib/pubdir.c'; fi`
-
-libgg_a-gg-utils.o: gg-utils.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-gg-utils.o -MD -MP -MF "$(DEPDIR)/libgg_a-gg-utils.Tpo" -c -o libgg_a-gg-utils.o `test -f 'gg-utils.c' || echo '$(srcdir)/'`gg-utils.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-gg-utils.Tpo" "$(DEPDIR)/libgg_a-gg-utils.Po"; else rm -f "$(DEPDIR)/libgg_a-gg-utils.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg-utils.c' object='libgg_a-gg-utils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-gg-utils.o `test -f 'gg-utils.c' || echo '$(srcdir)/'`gg-utils.c
-
-libgg_a-gg-utils.obj: gg-utils.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-gg-utils.obj -MD -MP -MF "$(DEPDIR)/libgg_a-gg-utils.Tpo" -c -o libgg_a-gg-utils.obj `if test -f 'gg-utils.c'; then $(CYGPATH_W) 'gg-utils.c'; else $(CYGPATH_W) '$(srcdir)/gg-utils.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-gg-utils.Tpo" "$(DEPDIR)/libgg_a-gg-utils.Po"; else rm -f "$(DEPDIR)/libgg_a-gg-utils.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg-utils.c' object='libgg_a-gg-utils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-gg-utils.obj `if test -f 'gg-utils.c'; then $(CYGPATH_W) 'gg-utils.c'; else $(CYGPATH_W) '$(srcdir)/gg-utils.c'; fi`
-
-libgg_a-confer.o: confer.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-confer.o -MD -MP -MF "$(DEPDIR)/libgg_a-confer.Tpo" -c -o libgg_a-confer.o `test -f 'confer.c' || echo '$(srcdir)/'`confer.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-confer.Tpo" "$(DEPDIR)/libgg_a-confer.Po"; else rm -f "$(DEPDIR)/libgg_a-confer.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='confer.c' object='libgg_a-confer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-confer.o `test -f 'confer.c' || echo '$(srcdir)/'`confer.c
-
-libgg_a-confer.obj: confer.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-confer.obj -MD -MP -MF "$(DEPDIR)/libgg_a-confer.Tpo" -c -o libgg_a-confer.obj `if test -f 'confer.c'; then $(CYGPATH_W) 'confer.c'; else $(CYGPATH_W) '$(srcdir)/confer.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-confer.Tpo" "$(DEPDIR)/libgg_a-confer.Po"; else rm -f "$(DEPDIR)/libgg_a-confer.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='confer.c' object='libgg_a-confer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-confer.obj `if test -f 'confer.c'; then $(CYGPATH_W) 'confer.c'; else $(CYGPATH_W) '$(srcdir)/confer.c'; fi`
-
-libgg_a-search.o: search.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-search.o -MD -MP -MF "$(DEPDIR)/libgg_a-search.Tpo" -c -o libgg_a-search.o `test -f 'search.c' || echo '$(srcdir)/'`search.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-search.Tpo" "$(DEPDIR)/libgg_a-search.Po"; else rm -f "$(DEPDIR)/libgg_a-search.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='search.c' object='libgg_a-search.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-search.o `test -f 'search.c' || echo '$(srcdir)/'`search.c
-
-libgg_a-search.obj: search.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-search.obj -MD -MP -MF "$(DEPDIR)/libgg_a-search.Tpo" -c -o libgg_a-search.obj `if test -f 'search.c'; then $(CYGPATH_W) 'search.c'; else $(CYGPATH_W) '$(srcdir)/search.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-search.Tpo" "$(DEPDIR)/libgg_a-search.Po"; else rm -f "$(DEPDIR)/libgg_a-search.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='search.c' object='libgg_a-search.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-search.obj `if test -f 'search.c'; then $(CYGPATH_W) 'search.c'; else $(CYGPATH_W) '$(srcdir)/search.c'; fi`
-
-libgg_a-buddylist.o: buddylist.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-buddylist.o -MD -MP -MF "$(DEPDIR)/libgg_a-buddylist.Tpo" -c -o libgg_a-buddylist.o `test -f 'buddylist.c' || echo '$(srcdir)/'`buddylist.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-buddylist.Tpo" "$(DEPDIR)/libgg_a-buddylist.Po"; else rm -f "$(DEPDIR)/libgg_a-buddylist.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddylist.c' object='libgg_a-buddylist.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-buddylist.o `test -f 'buddylist.c' || echo '$(srcdir)/'`buddylist.c
-
-libgg_a-buddylist.obj: buddylist.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-buddylist.obj -MD -MP -MF "$(DEPDIR)/libgg_a-buddylist.Tpo" -c -o libgg_a-buddylist.obj `if test -f 'buddylist.c'; then $(CYGPATH_W) 'buddylist.c'; else $(CYGPATH_W) '$(srcdir)/buddylist.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-buddylist.Tpo" "$(DEPDIR)/libgg_a-buddylist.Po"; else rm -f "$(DEPDIR)/libgg_a-buddylist.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddylist.c' object='libgg_a-buddylist.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-buddylist.obj `if test -f 'buddylist.c'; then $(CYGPATH_W) 'buddylist.c'; else $(CYGPATH_W) '$(srcdir)/buddylist.c'; fi`
-
-libgg_a-gg.o: gg.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-gg.o -MD -MP -MF "$(DEPDIR)/libgg_a-gg.Tpo" -c -o libgg_a-gg.o `test -f 'gg.c' || echo '$(srcdir)/'`gg.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-gg.Tpo" "$(DEPDIR)/libgg_a-gg.Po"; else rm -f "$(DEPDIR)/libgg_a-gg.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg.c' object='libgg_a-gg.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-gg.o `test -f 'gg.c' || echo '$(srcdir)/'`gg.c
-
-libgg_a-gg.obj: gg.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -MT libgg_a-gg.obj -MD -MP -MF "$(DEPDIR)/libgg_a-gg.Tpo" -c -o libgg_a-gg.obj `if test -f 'gg.c'; then $(CYGPATH_W) 'gg.c'; else $(CYGPATH_W) '$(srcdir)/gg.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgg_a-gg.Tpo" "$(DEPDIR)/libgg_a-gg.Po"; else rm -f "$(DEPDIR)/libgg_a-gg.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gg.c' object='libgg_a-gg.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_a_CFLAGS) $(CFLAGS) -c -o libgg_a-gg.obj `if test -f 'gg.c'; then $(CYGPATH_W) 'gg.c'; else $(CYGPATH_W) '$(srcdir)/gg.c'; fi`
-
-common.lo: lib/common.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT common.lo -MD -MP -MF "$(DEPDIR)/common.Tpo" -c -o common.lo `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/common.Tpo" "$(DEPDIR)/common.Plo"; else rm -f "$(DEPDIR)/common.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/common.c' object='common.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o common.lo `test -f 'lib/common.c' || echo '$(srcdir)/'`lib/common.c
-
-dcc.lo: lib/dcc.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dcc.lo -MD -MP -MF "$(DEPDIR)/dcc.Tpo" -c -o dcc.lo `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/dcc.Tpo" "$(DEPDIR)/dcc.Plo"; else rm -f "$(DEPDIR)/dcc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/dcc.c' object='dcc.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dcc.lo `test -f 'lib/dcc.c' || echo '$(srcdir)/'`lib/dcc.c
-
-events.lo: lib/events.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT events.lo -MD -MP -MF "$(DEPDIR)/events.Tpo" -c -o events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/events.Tpo" "$(DEPDIR)/events.Plo"; else rm -f "$(DEPDIR)/events.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/events.c' object='events.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c
-
-http.lo: lib/http.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT http.lo -MD -MP -MF "$(DEPDIR)/http.Tpo" -c -o http.lo `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/http.Tpo" "$(DEPDIR)/http.Plo"; else rm -f "$(DEPDIR)/http.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/http.c' object='http.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o http.lo `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c
-
-libgadu.lo: lib/libgadu.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libgadu.lo -MD -MP -MF "$(DEPDIR)/libgadu.Tpo" -c -o libgadu.lo `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libgadu.Tpo" "$(DEPDIR)/libgadu.Plo"; else rm -f "$(DEPDIR)/libgadu.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/libgadu.c' object='libgadu.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libgadu.lo `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c
-
-obsolete.lo: lib/obsolete.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT obsolete.lo -MD -MP -MF "$(DEPDIR)/obsolete.Tpo" -c -o obsolete.lo `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/obsolete.Tpo" "$(DEPDIR)/obsolete.Plo"; else rm -f "$(DEPDIR)/obsolete.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/obsolete.c' object='obsolete.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o obsolete.lo `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c
-
-pubdir50.lo: lib/pubdir50.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pubdir50.lo -MD -MP -MF "$(DEPDIR)/pubdir50.Tpo" -c -o pubdir50.lo `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/pubdir50.Tpo" "$(DEPDIR)/pubdir50.Plo"; else rm -f "$(DEPDIR)/pubdir50.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir50.c' object='pubdir50.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pubdir50.lo `test -f 'lib/pubdir50.c' || echo '$(srcdir)/'`lib/pubdir50.c
-
-pubdir.lo: lib/pubdir.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pubdir.lo -MD -MP -MF "$(DEPDIR)/pubdir.Tpo" -c -o pubdir.lo `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/pubdir.Tpo" "$(DEPDIR)/pubdir.Plo"; else rm -f "$(DEPDIR)/pubdir.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/pubdir.c' object='pubdir.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pubdir.lo `test -f 'lib/pubdir.c' || echo '$(srcdir)/'`lib/pubdir.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-gg.lo `test -f 'gg.c' || echo '$(srcdir)/'`gg.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -987,7 +809,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -1018,7 +840,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -1068,8 +890,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

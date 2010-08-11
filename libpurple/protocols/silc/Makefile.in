@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -48,21 +47,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libsilcpurple_a_AR = $(AR) $(ARFLAGS)
-am__DEPENDENCIES_1 =
-@STATIC_SILC_TRUE@libsilcpurple_a_DEPENDENCIES =  \
-@STATIC_SILC_TRUE@	$(am__DEPENDENCIES_1)
-am__libsilcpurple_a_SOURCES_DIST = silc.c silcpurple.h buddy.c chat.c \
-	ft.c ops.c pk.c util.c wb.c wb.h
-am__objects_1 = libsilcpurple_a-silc.$(OBJEXT) \
-	libsilcpurple_a-buddy.$(OBJEXT) libsilcpurple_a-chat.$(OBJEXT) \
-	libsilcpurple_a-ft.$(OBJEXT) libsilcpurple_a-ops.$(OBJEXT) \
-	libsilcpurple_a-pk.$(OBJEXT) libsilcpurple_a-util.$(OBJEXT) \
-	libsilcpurple_a-wb.$(OBJEXT)
-@STATIC_SILC_TRUE@am_libsilcpurple_a_OBJECTS = $(am__objects_1)
-libsilcpurple_a_OBJECTS = $(am_libsilcpurple_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -71,16 +55,23 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
+am__DEPENDENCIES_1 =
 @STATIC_SILC_FALSE@libsilcpurple_la_DEPENDENCIES =  \
 @STATIC_SILC_FALSE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am__libsilcpurple_la_SOURCES_DIST = silc.c silcpurple.h buddy.c chat.c \
-	ft.c ops.c pk.c util.c wb.c wb.h
-am__objects_2 = silc.lo buddy.lo chat.lo ft.lo ops.lo pk.lo util.lo \
-	wb.lo
-@STATIC_SILC_FALSE@am_libsilcpurple_la_OBJECTS = $(am__objects_2)
+@STATIC_SILC_TRUE@libsilcpurple_la_DEPENDENCIES =  \
+@STATIC_SILC_TRUE@	$(am__DEPENDENCIES_1)
+am__libsilcpurple_la_SOURCES_DIST = buddy.c chat.c ft.c ops.c pk.c \
+	silc.c silcpurple.h util.c wb.c wb.h
+am__objects_1 = libsilcpurple_la-buddy.lo libsilcpurple_la-chat.lo \
+	libsilcpurple_la-ft.lo libsilcpurple_la-ops.lo \
+	libsilcpurple_la-pk.lo libsilcpurple_la-silc.lo \
+	libsilcpurple_la-util.lo libsilcpurple_la-wb.lo
+@STATIC_SILC_FALSE@am_libsilcpurple_la_OBJECTS = $(am__objects_1)
+@STATIC_SILC_TRUE@am_libsilcpurple_la_OBJECTS = $(am__objects_1)
 libsilcpurple_la_OBJECTS = $(am_libsilcpurple_la_OBJECTS)
 @STATIC_SILC_FALSE@am_libsilcpurple_la_rpath = -rpath $(pkgdir)
+@STATIC_SILC_TRUE@am_libsilcpurple_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -92,9 +83,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libsilcpurple_a_SOURCES) $(libsilcpurple_la_SOURCES)
-DIST_SOURCES = $(am__libsilcpurple_a_SOURCES_DIST) \
-	$(am__libsilcpurple_la_SOURCES_DIST)
+SOURCES = $(libsilcpurple_la_SOURCES)
+DIST_SOURCES = $(am__libsilcpurple_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -122,10 +112,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -139,6 +125,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -171,7 +158,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -191,8 +177,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -265,6 +250,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -273,6 +259,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -286,10 +273,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -402,12 +392,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -441,6 +428,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -460,27 +448,41 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = README TODO Makefile.mingw
+EXTRA_DIST = \
+	Makefile.mingw \
+	README \
+	TODO
+
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
-SILCSOURCES = silc.c silcpurple.h buddy.c chat.c ft.c ops.c pk.c util.c wb.c wb.h
+SILCSOURCES = \
+	buddy.c \
+	chat.c \
+	ft.c \
+	ops.c \
+	pk.c \
+	silc.c \
+	silcpurple.h \
+	util.c \
+	wb.c \
+	wb.h
+
 AM_CFLAGS = $(st)
 libsilcpurple_la_LDFLAGS = -module -avoid-version
 @STATIC_SILC_FALSE@st = $(SILC_CFLAGS)
 @STATIC_SILC_TRUE@st = -DPURPLE_STATIC_PRPL $(SILC_CFLAGS)
-@STATIC_SILC_FALSE@noinst_LIBRARIES = 
-@STATIC_SILC_TRUE@noinst_LIBRARIES = libsilcpurple.a
-@STATIC_SILC_FALSE@pkg_LTLIBRARIES = libsilcpurple.la
-@STATIC_SILC_TRUE@pkg_LTLIBRARIES = 
-@STATIC_SILC_TRUE@libsilcpurple_a_SOURCES = $(SILCSOURCES)
-@STATIC_SILC_TRUE@libsilcpurple_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_SILC_TRUE@libsilcpurple_a_LIBADD = $(SILC_LIBS)
+@STATIC_SILC_TRUE@noinst_LTLIBRARIES = libsilcpurple.la
 @STATIC_SILC_FALSE@libsilcpurple_la_SOURCES = $(SILCSOURCES)
+@STATIC_SILC_TRUE@libsilcpurple_la_SOURCES = $(SILCSOURCES)
+@STATIC_SILC_TRUE@libsilcpurple_la_CFLAGS = $(AM_CFLAGS)
 @STATIC_SILC_FALSE@libsilcpurple_la_LIBADD = $(GLIB_LIBS) $(SILC_LIBS)
+@STATIC_SILC_TRUE@libsilcpurple_la_LIBADD = $(SILC_LIBS)
+@STATIC_SILC_FALSE@pkg_LTLIBRARIES = libsilcpurple.la
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(DEBUG_CFLAGS)
+	$(SILC_CFLAGS)
 
 all: all-am
 
@@ -516,12 +518,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libsilcpurple.a: $(libsilcpurple_a_OBJECTS) $(libsilcpurple_a_DEPENDENCIES) 
-	-rm -f libsilcpurple.a
-	$(libsilcpurple_a_AR) libsilcpurple.a $(libsilcpurple_a_OBJECTS) $(libsilcpurple_a_LIBADD)
-	$(RANLIB) libsilcpurple.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -558,22 +562,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-buddy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-chat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-ft.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-ops.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-pk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-silc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-util.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_a-wb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ops.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/silc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wb.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-buddy.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-chat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-ft.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-ops.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-pk.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-silc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-util.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsilcpurple_la-wb.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -596,117 +592,61 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libsilcpurple_a-silc.o: silc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-silc.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-silc.Tpo" -c -o libsilcpurple_a-silc.o `test -f 'silc.c' || echo '$(srcdir)/'`silc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-silc.Tpo" "$(DEPDIR)/libsilcpurple_a-silc.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-silc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='silc.c' object='libsilcpurple_a-silc.o' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-buddy.lo: buddy.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-buddy.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-buddy.Tpo" -c -o libsilcpurple_la-buddy.lo `test -f 'buddy.c' || echo '$(srcdir)/'`buddy.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-buddy.Tpo" "$(DEPDIR)/libsilcpurple_la-buddy.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-buddy.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddy.c' object='libsilcpurple_la-buddy.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-silc.o `test -f 'silc.c' || echo '$(srcdir)/'`silc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-buddy.lo `test -f 'buddy.c' || echo '$(srcdir)/'`buddy.c
 
-libsilcpurple_a-silc.obj: silc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-silc.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-silc.Tpo" -c -o libsilcpurple_a-silc.obj `if test -f 'silc.c'; then $(CYGPATH_W) 'silc.c'; else $(CYGPATH_W) '$(srcdir)/silc.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-silc.Tpo" "$(DEPDIR)/libsilcpurple_a-silc.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-silc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='silc.c' object='libsilcpurple_a-silc.obj' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-chat.lo: chat.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-chat.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-chat.Tpo" -c -o libsilcpurple_la-chat.lo `test -f 'chat.c' || echo '$(srcdir)/'`chat.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-chat.Tpo" "$(DEPDIR)/libsilcpurple_la-chat.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-chat.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='chat.c' object='libsilcpurple_la-chat.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-silc.obj `if test -f 'silc.c'; then $(CYGPATH_W) 'silc.c'; else $(CYGPATH_W) '$(srcdir)/silc.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-chat.lo `test -f 'chat.c' || echo '$(srcdir)/'`chat.c
 
-libsilcpurple_a-buddy.o: buddy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-buddy.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-buddy.Tpo" -c -o libsilcpurple_a-buddy.o `test -f 'buddy.c' || echo '$(srcdir)/'`buddy.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-buddy.Tpo" "$(DEPDIR)/libsilcpurple_a-buddy.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-buddy.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddy.c' object='libsilcpurple_a-buddy.o' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-ft.lo: ft.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-ft.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-ft.Tpo" -c -o libsilcpurple_la-ft.lo `test -f 'ft.c' || echo '$(srcdir)/'`ft.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-ft.Tpo" "$(DEPDIR)/libsilcpurple_la-ft.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-ft.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ft.c' object='libsilcpurple_la-ft.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-buddy.o `test -f 'buddy.c' || echo '$(srcdir)/'`buddy.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-ft.lo `test -f 'ft.c' || echo '$(srcdir)/'`ft.c
 
-libsilcpurple_a-buddy.obj: buddy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-buddy.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-buddy.Tpo" -c -o libsilcpurple_a-buddy.obj `if test -f 'buddy.c'; then $(CYGPATH_W) 'buddy.c'; else $(CYGPATH_W) '$(srcdir)/buddy.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-buddy.Tpo" "$(DEPDIR)/libsilcpurple_a-buddy.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-buddy.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddy.c' object='libsilcpurple_a-buddy.obj' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-ops.lo: ops.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-ops.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-ops.Tpo" -c -o libsilcpurple_la-ops.lo `test -f 'ops.c' || echo '$(srcdir)/'`ops.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-ops.Tpo" "$(DEPDIR)/libsilcpurple_la-ops.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-ops.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ops.c' object='libsilcpurple_la-ops.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-buddy.obj `if test -f 'buddy.c'; then $(CYGPATH_W) 'buddy.c'; else $(CYGPATH_W) '$(srcdir)/buddy.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-ops.lo `test -f 'ops.c' || echo '$(srcdir)/'`ops.c
 
-libsilcpurple_a-chat.o: chat.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-chat.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-chat.Tpo" -c -o libsilcpurple_a-chat.o `test -f 'chat.c' || echo '$(srcdir)/'`chat.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-chat.Tpo" "$(DEPDIR)/libsilcpurple_a-chat.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-chat.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='chat.c' object='libsilcpurple_a-chat.o' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-pk.lo: pk.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-pk.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-pk.Tpo" -c -o libsilcpurple_la-pk.lo `test -f 'pk.c' || echo '$(srcdir)/'`pk.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-pk.Tpo" "$(DEPDIR)/libsilcpurple_la-pk.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-pk.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk.c' object='libsilcpurple_la-pk.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-chat.o `test -f 'chat.c' || echo '$(srcdir)/'`chat.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-pk.lo `test -f 'pk.c' || echo '$(srcdir)/'`pk.c
 
-libsilcpurple_a-chat.obj: chat.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-chat.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-chat.Tpo" -c -o libsilcpurple_a-chat.obj `if test -f 'chat.c'; then $(CYGPATH_W) 'chat.c'; else $(CYGPATH_W) '$(srcdir)/chat.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-chat.Tpo" "$(DEPDIR)/libsilcpurple_a-chat.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-chat.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='chat.c' object='libsilcpurple_a-chat.obj' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-silc.lo: silc.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-silc.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-silc.Tpo" -c -o libsilcpurple_la-silc.lo `test -f 'silc.c' || echo '$(srcdir)/'`silc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-silc.Tpo" "$(DEPDIR)/libsilcpurple_la-silc.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-silc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='silc.c' object='libsilcpurple_la-silc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-chat.obj `if test -f 'chat.c'; then $(CYGPATH_W) 'chat.c'; else $(CYGPATH_W) '$(srcdir)/chat.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-silc.lo `test -f 'silc.c' || echo '$(srcdir)/'`silc.c
 
-libsilcpurple_a-ft.o: ft.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-ft.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-ft.Tpo" -c -o libsilcpurple_a-ft.o `test -f 'ft.c' || echo '$(srcdir)/'`ft.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-ft.Tpo" "$(DEPDIR)/libsilcpurple_a-ft.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-ft.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ft.c' object='libsilcpurple_a-ft.o' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-util.lo: util.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-util.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-util.Tpo" -c -o libsilcpurple_la-util.lo `test -f 'util.c' || echo '$(srcdir)/'`util.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-util.Tpo" "$(DEPDIR)/libsilcpurple_la-util.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-util.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util.c' object='libsilcpurple_la-util.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-ft.o `test -f 'ft.c' || echo '$(srcdir)/'`ft.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-util.lo `test -f 'util.c' || echo '$(srcdir)/'`util.c
 
-libsilcpurple_a-ft.obj: ft.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-ft.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-ft.Tpo" -c -o libsilcpurple_a-ft.obj `if test -f 'ft.c'; then $(CYGPATH_W) 'ft.c'; else $(CYGPATH_W) '$(srcdir)/ft.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-ft.Tpo" "$(DEPDIR)/libsilcpurple_a-ft.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-ft.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ft.c' object='libsilcpurple_a-ft.obj' libtool=no @AMDEPBACKSLASH@
+libsilcpurple_la-wb.lo: wb.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -MT libsilcpurple_la-wb.lo -MD -MP -MF "$(DEPDIR)/libsilcpurple_la-wb.Tpo" -c -o libsilcpurple_la-wb.lo `test -f 'wb.c' || echo '$(srcdir)/'`wb.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_la-wb.Tpo" "$(DEPDIR)/libsilcpurple_la-wb.Plo"; else rm -f "$(DEPDIR)/libsilcpurple_la-wb.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wb.c' object='libsilcpurple_la-wb.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-ft.obj `if test -f 'ft.c'; then $(CYGPATH_W) 'ft.c'; else $(CYGPATH_W) '$(srcdir)/ft.c'; fi`
-
-libsilcpurple_a-ops.o: ops.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-ops.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-ops.Tpo" -c -o libsilcpurple_a-ops.o `test -f 'ops.c' || echo '$(srcdir)/'`ops.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-ops.Tpo" "$(DEPDIR)/libsilcpurple_a-ops.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-ops.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ops.c' object='libsilcpurple_a-ops.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-ops.o `test -f 'ops.c' || echo '$(srcdir)/'`ops.c
-
-libsilcpurple_a-ops.obj: ops.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-ops.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-ops.Tpo" -c -o libsilcpurple_a-ops.obj `if test -f 'ops.c'; then $(CYGPATH_W) 'ops.c'; else $(CYGPATH_W) '$(srcdir)/ops.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-ops.Tpo" "$(DEPDIR)/libsilcpurple_a-ops.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-ops.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ops.c' object='libsilcpurple_a-ops.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-ops.obj `if test -f 'ops.c'; then $(CYGPATH_W) 'ops.c'; else $(CYGPATH_W) '$(srcdir)/ops.c'; fi`
-
-libsilcpurple_a-pk.o: pk.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-pk.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-pk.Tpo" -c -o libsilcpurple_a-pk.o `test -f 'pk.c' || echo '$(srcdir)/'`pk.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-pk.Tpo" "$(DEPDIR)/libsilcpurple_a-pk.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-pk.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk.c' object='libsilcpurple_a-pk.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-pk.o `test -f 'pk.c' || echo '$(srcdir)/'`pk.c
-
-libsilcpurple_a-pk.obj: pk.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-pk.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-pk.Tpo" -c -o libsilcpurple_a-pk.obj `if test -f 'pk.c'; then $(CYGPATH_W) 'pk.c'; else $(CYGPATH_W) '$(srcdir)/pk.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-pk.Tpo" "$(DEPDIR)/libsilcpurple_a-pk.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-pk.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk.c' object='libsilcpurple_a-pk.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-pk.obj `if test -f 'pk.c'; then $(CYGPATH_W) 'pk.c'; else $(CYGPATH_W) '$(srcdir)/pk.c'; fi`
-
-libsilcpurple_a-util.o: util.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-util.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-util.Tpo" -c -o libsilcpurple_a-util.o `test -f 'util.c' || echo '$(srcdir)/'`util.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-util.Tpo" "$(DEPDIR)/libsilcpurple_a-util.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-util.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util.c' object='libsilcpurple_a-util.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-util.o `test -f 'util.c' || echo '$(srcdir)/'`util.c
-
-libsilcpurple_a-util.obj: util.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-util.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-util.Tpo" -c -o libsilcpurple_a-util.obj `if test -f 'util.c'; then $(CYGPATH_W) 'util.c'; else $(CYGPATH_W) '$(srcdir)/util.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-util.Tpo" "$(DEPDIR)/libsilcpurple_a-util.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-util.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util.c' object='libsilcpurple_a-util.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-util.obj `if test -f 'util.c'; then $(CYGPATH_W) 'util.c'; else $(CYGPATH_W) '$(srcdir)/util.c'; fi`
-
-libsilcpurple_a-wb.o: wb.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-wb.o -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-wb.Tpo" -c -o libsilcpurple_a-wb.o `test -f 'wb.c' || echo '$(srcdir)/'`wb.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-wb.Tpo" "$(DEPDIR)/libsilcpurple_a-wb.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-wb.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wb.c' object='libsilcpurple_a-wb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-wb.o `test -f 'wb.c' || echo '$(srcdir)/'`wb.c
-
-libsilcpurple_a-wb.obj: wb.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -MT libsilcpurple_a-wb.obj -MD -MP -MF "$(DEPDIR)/libsilcpurple_a-wb.Tpo" -c -o libsilcpurple_a-wb.obj `if test -f 'wb.c'; then $(CYGPATH_W) 'wb.c'; else $(CYGPATH_W) '$(srcdir)/wb.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsilcpurple_a-wb.Tpo" "$(DEPDIR)/libsilcpurple_a-wb.Po"; else rm -f "$(DEPDIR)/libsilcpurple_a-wb.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wb.c' object='libsilcpurple_a-wb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_a_CFLAGS) $(CFLAGS) -c -o libsilcpurple_a-wb.obj `if test -f 'wb.c'; then $(CYGPATH_W) 'wb.c'; else $(CYGPATH_W) '$(srcdir)/wb.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsilcpurple_la_CFLAGS) $(CFLAGS) -c -o libsilcpurple_la-wb.lo `test -f 'wb.c' || echo '$(srcdir)/'`wb.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -795,7 +735,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -826,7 +766,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -876,8 +816,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

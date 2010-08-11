@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -48,17 +47,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libirc_a_AR = $(AR) $(ARFLAGS)
-libirc_a_LIBADD =
-am__libirc_a_SOURCES_DIST = irc.c parse.c cmds.c msgs.c irc.h \
-	dcc_send.c
-am__objects_1 = libirc_a-irc.$(OBJEXT) libirc_a-parse.$(OBJEXT) \
-	libirc_a-cmds.$(OBJEXT) libirc_a-msgs.$(OBJEXT) \
-	libirc_a-dcc_send.$(OBJEXT)
-@STATIC_IRC_TRUE@am_libirc_a_OBJECTS = $(am__objects_1)
-libirc_a_OBJECTS = $(am_libirc_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -67,15 +55,18 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_IRC_FALSE@libirc_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__libirc_la_SOURCES_DIST = irc.c parse.c cmds.c msgs.c irc.h \
-	dcc_send.c
-am__objects_2 = irc.lo parse.lo cmds.lo msgs.lo dcc_send.lo
-@STATIC_IRC_FALSE@am_libirc_la_OBJECTS = $(am__objects_2)
+am__libirc_la_SOURCES_DIST = cmds.c dcc_send.c irc.c irc.h msgs.c \
+	parse.c
+am__objects_1 = libirc_la-cmds.lo libirc_la-dcc_send.lo \
+	libirc_la-irc.lo libirc_la-msgs.lo libirc_la-parse.lo
+@STATIC_IRC_FALSE@am_libirc_la_OBJECTS = $(am__objects_1)
+@STATIC_IRC_TRUE@am_libirc_la_OBJECTS = $(am__objects_1)
 libirc_la_OBJECTS = $(am_libirc_la_OBJECTS)
 @STATIC_IRC_FALSE@am_libirc_la_rpath = -rpath $(pkgdir)
+@STATIC_IRC_TRUE@am_libirc_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -87,9 +78,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libirc_a_SOURCES) $(libirc_la_SOURCES)
-DIST_SOURCES = $(am__libirc_a_SOURCES_DIST) \
-	$(am__libirc_la_SOURCES_DIST)
+SOURCES = $(libirc_la_SOURCES)
+DIST_SOURCES = $(am__libirc_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -117,10 +107,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -134,6 +120,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -166,7 +153,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -186,8 +172,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -260,6 +245,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -268,6 +254,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -281,10 +268,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -397,12 +387,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -436,6 +423,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -455,20 +443,27 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = Makefile.mingw
+EXTRA_DIST = \
+	Makefile.mingw
+
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
-IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h dcc_send.c
+IRCSOURCES = \
+	cmds.c \
+	dcc_send.c \
+	irc.c \
+	irc.h \
+	msgs.c \
+	parse.c
+
 AM_CFLAGS = $(st)
 libirc_la_LDFLAGS = -module -avoid-version
 @STATIC_IRC_FALSE@st = 
 @STATIC_IRC_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_IRC_FALSE@noinst_LIBRARIES = 
-@STATIC_IRC_TRUE@noinst_LIBRARIES = libirc.a
-@STATIC_IRC_FALSE@pkg_LTLIBRARIES = libirc.la
-@STATIC_IRC_TRUE@pkg_LTLIBRARIES = 
-@STATIC_IRC_TRUE@libirc_a_SOURCES = $(IRCSOURCES)
-@STATIC_IRC_TRUE@libirc_a_CFLAGS = $(AM_CFLAGS)
+@STATIC_IRC_TRUE@noinst_LTLIBRARIES = libirc.la
 @STATIC_IRC_FALSE@libirc_la_SOURCES = $(IRCSOURCES)
+@STATIC_IRC_TRUE@libirc_la_SOURCES = $(IRCSOURCES)
+@STATIC_IRC_TRUE@libirc_la_CFLAGS = $(AM_CFLAGS)
+@STATIC_IRC_FALSE@pkg_LTLIBRARIES = libirc.la
 @STATIC_IRC_FALSE@libirc_la_LIBADD = $(GLIB_LIBS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
@@ -510,12 +505,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libirc.a: $(libirc_a_OBJECTS) $(libirc_a_DEPENDENCIES) 
-	-rm -f libirc.a
-	$(libirc_a_AR) libirc.a $(libirc_a_OBJECTS) $(libirc_a_LIBADD)
-	$(RANLIB) libirc.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -552,16 +549,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmds.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcc_send.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/irc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_a-cmds.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_a-dcc_send.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_a-irc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_a-msgs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_a-parse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msgs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_la-cmds.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_la-dcc_send.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_la-irc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_la-msgs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libirc_la-parse.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -584,75 +576,40 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libirc_a-irc.o: irc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-irc.o -MD -MP -MF "$(DEPDIR)/libirc_a-irc.Tpo" -c -o libirc_a-irc.o `test -f 'irc.c' || echo '$(srcdir)/'`irc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-irc.Tpo" "$(DEPDIR)/libirc_a-irc.Po"; else rm -f "$(DEPDIR)/libirc_a-irc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='irc.c' object='libirc_a-irc.o' libtool=no @AMDEPBACKSLASH@
+libirc_la-cmds.lo: cmds.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -MT libirc_la-cmds.lo -MD -MP -MF "$(DEPDIR)/libirc_la-cmds.Tpo" -c -o libirc_la-cmds.lo `test -f 'cmds.c' || echo '$(srcdir)/'`cmds.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_la-cmds.Tpo" "$(DEPDIR)/libirc_la-cmds.Plo"; else rm -f "$(DEPDIR)/libirc_la-cmds.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cmds.c' object='libirc_la-cmds.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-irc.o `test -f 'irc.c' || echo '$(srcdir)/'`irc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -c -o libirc_la-cmds.lo `test -f 'cmds.c' || echo '$(srcdir)/'`cmds.c
 
-libirc_a-irc.obj: irc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-irc.obj -MD -MP -MF "$(DEPDIR)/libirc_a-irc.Tpo" -c -o libirc_a-irc.obj `if test -f 'irc.c'; then $(CYGPATH_W) 'irc.c'; else $(CYGPATH_W) '$(srcdir)/irc.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-irc.Tpo" "$(DEPDIR)/libirc_a-irc.Po"; else rm -f "$(DEPDIR)/libirc_a-irc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='irc.c' object='libirc_a-irc.obj' libtool=no @AMDEPBACKSLASH@
+libirc_la-dcc_send.lo: dcc_send.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -MT libirc_la-dcc_send.lo -MD -MP -MF "$(DEPDIR)/libirc_la-dcc_send.Tpo" -c -o libirc_la-dcc_send.lo `test -f 'dcc_send.c' || echo '$(srcdir)/'`dcc_send.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_la-dcc_send.Tpo" "$(DEPDIR)/libirc_la-dcc_send.Plo"; else rm -f "$(DEPDIR)/libirc_la-dcc_send.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dcc_send.c' object='libirc_la-dcc_send.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-irc.obj `if test -f 'irc.c'; then $(CYGPATH_W) 'irc.c'; else $(CYGPATH_W) '$(srcdir)/irc.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -c -o libirc_la-dcc_send.lo `test -f 'dcc_send.c' || echo '$(srcdir)/'`dcc_send.c
 
-libirc_a-parse.o: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-parse.o -MD -MP -MF "$(DEPDIR)/libirc_a-parse.Tpo" -c -o libirc_a-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-parse.Tpo" "$(DEPDIR)/libirc_a-parse.Po"; else rm -f "$(DEPDIR)/libirc_a-parse.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='libirc_a-parse.o' libtool=no @AMDEPBACKSLASH@
+libirc_la-irc.lo: irc.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -MT libirc_la-irc.lo -MD -MP -MF "$(DEPDIR)/libirc_la-irc.Tpo" -c -o libirc_la-irc.lo `test -f 'irc.c' || echo '$(srcdir)/'`irc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_la-irc.Tpo" "$(DEPDIR)/libirc_la-irc.Plo"; else rm -f "$(DEPDIR)/libirc_la-irc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='irc.c' object='libirc_la-irc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -c -o libirc_la-irc.lo `test -f 'irc.c' || echo '$(srcdir)/'`irc.c
 
-libirc_a-parse.obj: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-parse.obj -MD -MP -MF "$(DEPDIR)/libirc_a-parse.Tpo" -c -o libirc_a-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-parse.Tpo" "$(DEPDIR)/libirc_a-parse.Po"; else rm -f "$(DEPDIR)/libirc_a-parse.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='libirc_a-parse.obj' libtool=no @AMDEPBACKSLASH@
+libirc_la-msgs.lo: msgs.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -MT libirc_la-msgs.lo -MD -MP -MF "$(DEPDIR)/libirc_la-msgs.Tpo" -c -o libirc_la-msgs.lo `test -f 'msgs.c' || echo '$(srcdir)/'`msgs.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_la-msgs.Tpo" "$(DEPDIR)/libirc_la-msgs.Plo"; else rm -f "$(DEPDIR)/libirc_la-msgs.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='msgs.c' object='libirc_la-msgs.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -c -o libirc_la-msgs.lo `test -f 'msgs.c' || echo '$(srcdir)/'`msgs.c
 
-libirc_a-cmds.o: cmds.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-cmds.o -MD -MP -MF "$(DEPDIR)/libirc_a-cmds.Tpo" -c -o libirc_a-cmds.o `test -f 'cmds.c' || echo '$(srcdir)/'`cmds.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-cmds.Tpo" "$(DEPDIR)/libirc_a-cmds.Po"; else rm -f "$(DEPDIR)/libirc_a-cmds.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cmds.c' object='libirc_a-cmds.o' libtool=no @AMDEPBACKSLASH@
+libirc_la-parse.lo: parse.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -MT libirc_la-parse.lo -MD -MP -MF "$(DEPDIR)/libirc_la-parse.Tpo" -c -o libirc_la-parse.lo `test -f 'parse.c' || echo '$(srcdir)/'`parse.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_la-parse.Tpo" "$(DEPDIR)/libirc_la-parse.Plo"; else rm -f "$(DEPDIR)/libirc_la-parse.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='libirc_la-parse.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-cmds.o `test -f 'cmds.c' || echo '$(srcdir)/'`cmds.c
-
-libirc_a-cmds.obj: cmds.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-cmds.obj -MD -MP -MF "$(DEPDIR)/libirc_a-cmds.Tpo" -c -o libirc_a-cmds.obj `if test -f 'cmds.c'; then $(CYGPATH_W) 'cmds.c'; else $(CYGPATH_W) '$(srcdir)/cmds.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-cmds.Tpo" "$(DEPDIR)/libirc_a-cmds.Po"; else rm -f "$(DEPDIR)/libirc_a-cmds.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cmds.c' object='libirc_a-cmds.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-cmds.obj `if test -f 'cmds.c'; then $(CYGPATH_W) 'cmds.c'; else $(CYGPATH_W) '$(srcdir)/cmds.c'; fi`
-
-libirc_a-msgs.o: msgs.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-msgs.o -MD -MP -MF "$(DEPDIR)/libirc_a-msgs.Tpo" -c -o libirc_a-msgs.o `test -f 'msgs.c' || echo '$(srcdir)/'`msgs.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-msgs.Tpo" "$(DEPDIR)/libirc_a-msgs.Po"; else rm -f "$(DEPDIR)/libirc_a-msgs.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='msgs.c' object='libirc_a-msgs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-msgs.o `test -f 'msgs.c' || echo '$(srcdir)/'`msgs.c
-
-libirc_a-msgs.obj: msgs.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-msgs.obj -MD -MP -MF "$(DEPDIR)/libirc_a-msgs.Tpo" -c -o libirc_a-msgs.obj `if test -f 'msgs.c'; then $(CYGPATH_W) 'msgs.c'; else $(CYGPATH_W) '$(srcdir)/msgs.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-msgs.Tpo" "$(DEPDIR)/libirc_a-msgs.Po"; else rm -f "$(DEPDIR)/libirc_a-msgs.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='msgs.c' object='libirc_a-msgs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-msgs.obj `if test -f 'msgs.c'; then $(CYGPATH_W) 'msgs.c'; else $(CYGPATH_W) '$(srcdir)/msgs.c'; fi`
-
-libirc_a-dcc_send.o: dcc_send.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-dcc_send.o -MD -MP -MF "$(DEPDIR)/libirc_a-dcc_send.Tpo" -c -o libirc_a-dcc_send.o `test -f 'dcc_send.c' || echo '$(srcdir)/'`dcc_send.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-dcc_send.Tpo" "$(DEPDIR)/libirc_a-dcc_send.Po"; else rm -f "$(DEPDIR)/libirc_a-dcc_send.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dcc_send.c' object='libirc_a-dcc_send.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-dcc_send.o `test -f 'dcc_send.c' || echo '$(srcdir)/'`dcc_send.c
-
-libirc_a-dcc_send.obj: dcc_send.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -MT libirc_a-dcc_send.obj -MD -MP -MF "$(DEPDIR)/libirc_a-dcc_send.Tpo" -c -o libirc_a-dcc_send.obj `if test -f 'dcc_send.c'; then $(CYGPATH_W) 'dcc_send.c'; else $(CYGPATH_W) '$(srcdir)/dcc_send.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libirc_a-dcc_send.Tpo" "$(DEPDIR)/libirc_a-dcc_send.Po"; else rm -f "$(DEPDIR)/libirc_a-dcc_send.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dcc_send.c' object='libirc_a-dcc_send.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_a_CFLAGS) $(CFLAGS) -c -o libirc_a-dcc_send.obj `if test -f 'dcc_send.c'; then $(CYGPATH_W) 'dcc_send.c'; else $(CYGPATH_W) '$(srcdir)/dcc_send.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libirc_la_CFLAGS) $(CFLAGS) -c -o libirc_la-parse.lo `test -f 'parse.c' || echo '$(srcdir)/'`parse.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -741,7 +698,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -772,7 +729,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -822,8 +779,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

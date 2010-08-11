@@ -15,7 +15,6 @@
 @SET_MAKE@
 
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -50,14 +49,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libsametime_a_AR = $(AR) $(ARFLAGS)
-libsametime_a_LIBADD =
-am__libsametime_a_SOURCES_DIST = sametime.c
-am__objects_1 = libsametime_a-sametime.$(OBJEXT)
-@STATIC_SAMETIME_TRUE@am_libsametime_a_OBJECTS = $(am__objects_1)
-libsametime_a_OBJECTS = $(am_libsametime_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -66,15 +57,17 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libsametime_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am__libsametime_la_SOURCES_DIST = sametime.c
-am__objects_2 = sametime.lo
-@STATIC_SAMETIME_FALSE@am_libsametime_la_OBJECTS = $(am__objects_2)
+am__objects_1 = libsametime_la-sametime.lo
+@STATIC_SAMETIME_FALSE@am_libsametime_la_OBJECTS = $(am__objects_1)
+@STATIC_SAMETIME_TRUE@am_libsametime_la_OBJECTS = $(am__objects_1)
 libsametime_la_OBJECTS = $(am_libsametime_la_OBJECTS)
 @STATIC_SAMETIME_FALSE@am_libsametime_la_rpath = -rpath $(pkgdir)
+@STATIC_SAMETIME_TRUE@am_libsametime_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -86,9 +79,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libsametime_a_SOURCES) $(libsametime_la_SOURCES)
-DIST_SOURCES = $(am__libsametime_a_SOURCES_DIST) \
-	$(am__libsametime_la_SOURCES_DIST)
+SOURCES = $(libsametime_la_SOURCES)
+DIST_SOURCES = $(am__libsametime_la_SOURCES_DIST)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -117,10 +109,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -134,6 +122,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -166,7 +155,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -186,8 +174,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -260,6 +247,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -268,6 +256,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -281,10 +270,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -397,12 +389,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -436,6 +425,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -455,28 +445,31 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = Makefile.mingw
+EXTRA_DIST = \
+	Makefile.mingw
+
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 noinst_HEADERS = sametime.h
 SAMETIMESOURCES = sametime.c
+AM_CFLAGS = \
+	$(st) \
+	-DG_LOG_DOMAIN=\"sametime\"
+
 @STATIC_SAMETIME_FALSE@st = 
 @STATIC_SAMETIME_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_SAMETIME_TRUE@noinst_LIBRARIES = libsametime.a
-@STATIC_SAMETIME_TRUE@libsametime_a_SOURCES = $(SAMETIMESOURCES)
-@STATIC_SAMETIME_TRUE@libsametime_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_SAMETIME_FALSE@pkg_LTLIBRARIES = libsametime.la
+@STATIC_SAMETIME_TRUE@noinst_LTLIBRARIES = libsametime.la
 @STATIC_SAMETIME_FALSE@libsametime_la_SOURCES = $(SAMETIMESOURCES)
+@STATIC_SAMETIME_TRUE@libsametime_la_SOURCES = $(SAMETIMESOURCES)
+@STATIC_SAMETIME_TRUE@libsametime_la_CFLAGS = $(AM_CFLAGS)
+@STATIC_SAMETIME_FALSE@pkg_LTLIBRARIES = libsametime.la
 libsametime_la_LDFLAGS = -module -avoid-version
 libsametime_la_LIBADD = $(GLIB_LIBS) $(MEANWHILE_LIBS)
-AM_CFLAGS = \
-	$(GLIB_CFLAGS) $(MEANWHILE_CFLAGS) \
-	$(DEBUG_CFLAGS) \
-	-I$(top_srcdir)/libpurple \
-	-I$(top_builddir)/libpurple
-
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"sametime\" \
-	$(st)
+	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
+	$(DEBUG_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(MEANWHILE_CFLAGS)
 
 all: all-am
 
@@ -512,12 +505,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libsametime.a: $(libsametime_a_OBJECTS) $(libsametime_a_DEPENDENCIES) 
-	-rm -f libsametime.a
-	$(libsametime_a_AR) libsametime.a $(libsametime_a_OBJECTS) $(libsametime_a_LIBADD)
-	$(RANLIB) libsametime.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -554,8 +549,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsametime_a-sametime.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sametime.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsametime_la-sametime.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -578,19 +572,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libsametime_a-sametime.o: sametime.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_a_CFLAGS) $(CFLAGS) -MT libsametime_a-sametime.o -MD -MP -MF "$(DEPDIR)/libsametime_a-sametime.Tpo" -c -o libsametime_a-sametime.o `test -f 'sametime.c' || echo '$(srcdir)/'`sametime.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsametime_a-sametime.Tpo" "$(DEPDIR)/libsametime_a-sametime.Po"; else rm -f "$(DEPDIR)/libsametime_a-sametime.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sametime.c' object='libsametime_a-sametime.o' libtool=no @AMDEPBACKSLASH@
+libsametime_la-sametime.lo: sametime.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_la_CFLAGS) $(CFLAGS) -MT libsametime_la-sametime.lo -MD -MP -MF "$(DEPDIR)/libsametime_la-sametime.Tpo" -c -o libsametime_la-sametime.lo `test -f 'sametime.c' || echo '$(srcdir)/'`sametime.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsametime_la-sametime.Tpo" "$(DEPDIR)/libsametime_la-sametime.Plo"; else rm -f "$(DEPDIR)/libsametime_la-sametime.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sametime.c' object='libsametime_la-sametime.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_a_CFLAGS) $(CFLAGS) -c -o libsametime_a-sametime.o `test -f 'sametime.c' || echo '$(srcdir)/'`sametime.c
-
-libsametime_a-sametime.obj: sametime.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_a_CFLAGS) $(CFLAGS) -MT libsametime_a-sametime.obj -MD -MP -MF "$(DEPDIR)/libsametime_a-sametime.Tpo" -c -o libsametime_a-sametime.obj `if test -f 'sametime.c'; then $(CYGPATH_W) 'sametime.c'; else $(CYGPATH_W) '$(srcdir)/sametime.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libsametime_a-sametime.Tpo" "$(DEPDIR)/libsametime_a-sametime.Po"; else rm -f "$(DEPDIR)/libsametime_a-sametime.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sametime.c' object='libsametime_a-sametime.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_a_CFLAGS) $(CFLAGS) -c -o libsametime_a-sametime.obj `if test -f 'sametime.c'; then $(CYGPATH_W) 'sametime.c'; else $(CYGPATH_W) '$(srcdir)/sametime.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libsametime_la_CFLAGS) $(CFLAGS) -c -o libsametime_la-sametime.lo `test -f 'sametime.c' || echo '$(srcdir)/'`sametime.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -679,7 +666,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -710,7 +697,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -760,8 +747,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

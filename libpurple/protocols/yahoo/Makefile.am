@@ -1,5 +1,5 @@
 EXTRA_DIST = \
-		Makefile.mingw
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -36,9 +36,9 @@ libyahoo_la_LDFLAGS = -module -avoid-version
 if STATIC_YAHOO
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES   = libyahoo.a
-libyahoo_a_SOURCES = $(YAHOOSOURCES)
-libyahoo_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LTLIBRARIES  = libyahoo.la
+libyahoo_la_SOURCES = $(YAHOOSOURCES)
+libyahoo_la_CFLAGS  = $(AM_CFLAGS)
 
 else
 

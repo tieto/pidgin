@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "TextView"
+
 #include "gntstyle.h"
 #include "gnttextview.h"
 #include "gntutils.h"
@@ -67,6 +71,7 @@ static void
 gnt_text_view_draw(GntWidget *widget)
 {
 	GntTextView *view = GNT_TEXT_VIEW(widget);
+	int n;
 	int i = 0;
 	GList *lines;
 	int rows, scrcol;
@@ -76,10 +81,11 @@ gnt_text_view_draw(GntWidget *widget)
 	wbkgd(widget->window, gnt_color_pair(GNT_COLOR_NORMAL));
 	werase(widget->window);
 
+	n = g_list_length(view->list);
 	if ((view->flags & GNT_TEXT_VIEW_TOP_ALIGN) &&
-			g_list_length(view->list) < widget->priv.height) {
+			n < widget->priv.height) {
 		GList *now = view->list;
-		comp = widget->priv.height - g_list_length(view->list);
+		comp = widget->priv.height - n;
 		view->list = g_list_nth_prev(view->list, comp);
 		if (!view->list) {
 			view->list = g_list_first(now);
@@ -236,6 +242,7 @@ gnt_text_view_destroy(GntWidget *widget)
 static char *
 gnt_text_view_get_p(GntTextView *view, int x, int y)
 {
+	int n;
 	int i = 0;
 	GntWidget *wid = GNT_WIDGET(view);
 	GntTextLine *line;
@@ -244,10 +251,11 @@ gnt_text_view_get_p(GntTextView *view, int x, int y)
 	GntTextSegment *seg;
 	gchar *pos;
 
+	n = g_list_length(view->list);
 	y = wid->priv.height - y;
-	if (g_list_length(view->list) < y) {
+	if (n < y) {
 		x = 0;
-		y = g_list_length(view->list) - 1;
+		y = n - 1;
 	}
 
 	lines = g_list_nth(view->list, y - 1);
@@ -776,7 +784,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 						/* XXX: Make things work if the tagged text spans over several lines. */
 					} else {
 						/* XXX: handle the rest of the conditions */
-						g_printerr("WTF! This needs to be handled properly!!\n");
+						gnt_warning("WTF! This needs to be handled properly!!%s", "");
 					}
 				}
 			}

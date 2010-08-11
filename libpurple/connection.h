@@ -44,7 +44,7 @@ typedef enum
 	PURPLE_CONNECTION_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
 	PURPLE_CONNECTION_NO_URLDESC = 0x0040,  /**< Connection does not support descriptions with links */ 
 	PURPLE_CONNECTION_NO_IMAGES = 0x0080,  /**< Connection does not support sending of images */
-	PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100, /**< Connection supports sending and receiving custom smileys */
+	PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100 /**< Connection supports sending and receiving custom smileys */
 
 } PurpleConnectionFlags;
 
@@ -268,7 +268,7 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_CONNECTION_C_)
 /**
  * This function should only be called by purple_account_connect()
  * in account.c.  If you're trying to sign on an account, use that
@@ -292,7 +292,7 @@ void purple_connection_new(PurpleAccount *account, gboolean regist,
 									const char *password);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_CONNECTION_C_)
 /**
  * This function should only be called by purple_account_unregister()
  * in account.c.
@@ -310,7 +310,7 @@ void purple_connection_new(PurpleAccount *account, gboolean regist,
 void purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_CONNECTION_C_)
 /**
  * Disconnects and destroys a PurpleConnection.
  *

@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -39,8 +38,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 subdir = libpurple/protocols/myspace
-DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	ChangeLog
+DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -49,19 +47,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-libmyspace_a_AR = $(AR) $(ARFLAGS)
-libmyspace_a_LIBADD =
-am__libmyspace_a_SOURCES_DIST = markup.c markup.h message.c message.h \
-	myspace.c myspace.h persist.h session.c session.h user.c \
-	user.h zap.c zap.h
-am__objects_1 = libmyspace_a-markup.$(OBJEXT) \
-	libmyspace_a-message.$(OBJEXT) libmyspace_a-myspace.$(OBJEXT) \
-	libmyspace_a-session.$(OBJEXT) libmyspace_a-user.$(OBJEXT) \
-	libmyspace_a-zap.$(OBJEXT)
-@STATIC_MYSPACE_TRUE@am_libmyspace_a_OBJECTS = $(am__objects_1)
-libmyspace_a_OBJECTS = $(am_libmyspace_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -70,18 +55,21 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
-LTLIBRARIES = $(pkg_LTLIBRARIES)
+LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_MYSPACE_FALSE@libmyspace_la_DEPENDENCIES =  \
 @STATIC_MYSPACE_FALSE@	$(am__DEPENDENCIES_1)
 am__libmyspace_la_SOURCES_DIST = markup.c markup.h message.c message.h \
 	myspace.c myspace.h persist.h session.c session.h user.c \
 	user.h zap.c zap.h
-am__objects_2 = markup.lo message.lo myspace.lo session.lo user.lo \
-	zap.lo
-@STATIC_MYSPACE_FALSE@am_libmyspace_la_OBJECTS = $(am__objects_2)
+am__objects_1 = libmyspace_la-markup.lo libmyspace_la-message.lo \
+	libmyspace_la-myspace.lo libmyspace_la-session.lo \
+	libmyspace_la-user.lo libmyspace_la-zap.lo
+@STATIC_MYSPACE_FALSE@am_libmyspace_la_OBJECTS = $(am__objects_1)
+@STATIC_MYSPACE_TRUE@am_libmyspace_la_OBJECTS = $(am__objects_1)
 libmyspace_la_OBJECTS = $(am_libmyspace_la_OBJECTS)
 @STATIC_MYSPACE_FALSE@am_libmyspace_la_rpath = -rpath $(pkgdir)
+@STATIC_MYSPACE_TRUE@am_libmyspace_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -93,9 +81,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libmyspace_a_SOURCES) $(libmyspace_la_SOURCES)
-DIST_SOURCES = $(am__libmyspace_a_SOURCES_DIST) \
-	$(am__libmyspace_la_SOURCES_DIST)
+SOURCES = $(libmyspace_la_SOURCES)
+DIST_SOURCES = $(am__libmyspace_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -123,10 +110,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -140,6 +123,7 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_BONJOUR_FALSE = @DYNAMIC_BONJOUR_FALSE@
 DYNAMIC_BONJOUR_TRUE = @DYNAMIC_BONJOUR_TRUE@
@@ -172,7 +156,6 @@ DYNAMIC_YAHOO_FALSE = @DYNAMIC_YAHOO_FALSE@
 DYNAMIC_YAHOO_TRUE = @DYNAMIC_YAHOO_TRUE@
 DYNAMIC_ZEPHYR_FALSE = @DYNAMIC_ZEPHYR_FALSE@
 DYNAMIC_ZEPHYR_TRUE = @DYNAMIC_ZEPHYR_TRUE@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -192,8 +175,7 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -266,6 +248,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -274,6 +257,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -287,10 +271,13 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -403,12 +390,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -442,6 +426,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -461,7 +446,9 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-EXTRA_DIST = Makefile.mingw
+EXTRA_DIST = \
+	Makefile.mingw
+
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 MSIMSOURCES = markup.c \
 	  markup.h \
@@ -481,11 +468,11 @@ AM_CFLAGS = $(st)
 libmyspace_la_LDFLAGS = -module -avoid-version
 @STATIC_MYSPACE_FALSE@st = 
 @STATIC_MYSPACE_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_MYSPACE_TRUE@noinst_LIBRARIES = libmyspace.a
-@STATIC_MYSPACE_TRUE@libmyspace_a_SOURCES = $(MSIMSOURCES)
-@STATIC_MYSPACE_TRUE@libmyspace_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_MYSPACE_FALSE@pkg_LTLIBRARIES = libmyspace.la
+@STATIC_MYSPACE_TRUE@noinst_LTLIBRARIES = libmyspace.la
 @STATIC_MYSPACE_FALSE@libmyspace_la_SOURCES = $(MSIMSOURCES)
+@STATIC_MYSPACE_TRUE@libmyspace_la_SOURCES = $(MSIMSOURCES)
+@STATIC_MYSPACE_TRUE@libmyspace_la_CFLAGS = $(AM_CFLAGS)
+@STATIC_MYSPACE_FALSE@pkg_LTLIBRARIES = libmyspace.la
 @STATIC_MYSPACE_FALSE@libmyspace_la_LIBADD = $(GLIB_LIBS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
@@ -527,12 +514,14 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libmyspace.a: $(libmyspace_a_OBJECTS) $(libmyspace_a_DEPENDENCIES) 
-	-rm -f libmyspace.a
-	$(libmyspace_a_AR) libmyspace.a $(libmyspace_a_OBJECTS) $(libmyspace_a_LIBADD)
-	$(RANLIB) libmyspace.a
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 install-pkgLTLIBRARIES: $(pkg_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdir)" || $(mkdir_p) "$(DESTDIR)$(pkgdir)"
@@ -569,18 +558,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-markup.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-message.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-myspace.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-session.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-user.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_a-zap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/markup.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/myspace.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/session.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/user.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-markup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-message.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-myspace.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-session.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-user.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmyspace_la-zap.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -603,89 +586,47 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libmyspace_a-markup.o: markup.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-markup.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-markup.Tpo" -c -o libmyspace_a-markup.o `test -f 'markup.c' || echo '$(srcdir)/'`markup.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-markup.Tpo" "$(DEPDIR)/libmyspace_a-markup.Po"; else rm -f "$(DEPDIR)/libmyspace_a-markup.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='markup.c' object='libmyspace_a-markup.o' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-markup.lo: markup.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-markup.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-markup.Tpo" -c -o libmyspace_la-markup.lo `test -f 'markup.c' || echo '$(srcdir)/'`markup.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-markup.Tpo" "$(DEPDIR)/libmyspace_la-markup.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-markup.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='markup.c' object='libmyspace_la-markup.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-markup.o `test -f 'markup.c' || echo '$(srcdir)/'`markup.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-markup.lo `test -f 'markup.c' || echo '$(srcdir)/'`markup.c
 
-libmyspace_a-markup.obj: markup.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-markup.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-markup.Tpo" -c -o libmyspace_a-markup.obj `if test -f 'markup.c'; then $(CYGPATH_W) 'markup.c'; else $(CYGPATH_W) '$(srcdir)/markup.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-markup.Tpo" "$(DEPDIR)/libmyspace_a-markup.Po"; else rm -f "$(DEPDIR)/libmyspace_a-markup.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='markup.c' object='libmyspace_a-markup.obj' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-message.lo: message.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-message.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-message.Tpo" -c -o libmyspace_la-message.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-message.Tpo" "$(DEPDIR)/libmyspace_la-message.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-message.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='message.c' object='libmyspace_la-message.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-markup.obj `if test -f 'markup.c'; then $(CYGPATH_W) 'markup.c'; else $(CYGPATH_W) '$(srcdir)/markup.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-message.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c
 
-libmyspace_a-message.o: message.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-message.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-message.Tpo" -c -o libmyspace_a-message.o `test -f 'message.c' || echo '$(srcdir)/'`message.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-message.Tpo" "$(DEPDIR)/libmyspace_a-message.Po"; else rm -f "$(DEPDIR)/libmyspace_a-message.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='message.c' object='libmyspace_a-message.o' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-myspace.lo: myspace.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-myspace.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-myspace.Tpo" -c -o libmyspace_la-myspace.lo `test -f 'myspace.c' || echo '$(srcdir)/'`myspace.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-myspace.Tpo" "$(DEPDIR)/libmyspace_la-myspace.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-myspace.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='myspace.c' object='libmyspace_la-myspace.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-message.o `test -f 'message.c' || echo '$(srcdir)/'`message.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-myspace.lo `test -f 'myspace.c' || echo '$(srcdir)/'`myspace.c
 
-libmyspace_a-message.obj: message.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-message.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-message.Tpo" -c -o libmyspace_a-message.obj `if test -f 'message.c'; then $(CYGPATH_W) 'message.c'; else $(CYGPATH_W) '$(srcdir)/message.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-message.Tpo" "$(DEPDIR)/libmyspace_a-message.Po"; else rm -f "$(DEPDIR)/libmyspace_a-message.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='message.c' object='libmyspace_a-message.obj' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-session.lo: session.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-session.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-session.Tpo" -c -o libmyspace_la-session.lo `test -f 'session.c' || echo '$(srcdir)/'`session.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-session.Tpo" "$(DEPDIR)/libmyspace_la-session.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-session.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='session.c' object='libmyspace_la-session.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-message.obj `if test -f 'message.c'; then $(CYGPATH_W) 'message.c'; else $(CYGPATH_W) '$(srcdir)/message.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-session.lo `test -f 'session.c' || echo '$(srcdir)/'`session.c
 
-libmyspace_a-myspace.o: myspace.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-myspace.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-myspace.Tpo" -c -o libmyspace_a-myspace.o `test -f 'myspace.c' || echo '$(srcdir)/'`myspace.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-myspace.Tpo" "$(DEPDIR)/libmyspace_a-myspace.Po"; else rm -f "$(DEPDIR)/libmyspace_a-myspace.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='myspace.c' object='libmyspace_a-myspace.o' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-user.lo: user.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-user.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-user.Tpo" -c -o libmyspace_la-user.lo `test -f 'user.c' || echo '$(srcdir)/'`user.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-user.Tpo" "$(DEPDIR)/libmyspace_la-user.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-user.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='user.c' object='libmyspace_la-user.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-myspace.o `test -f 'myspace.c' || echo '$(srcdir)/'`myspace.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-user.lo `test -f 'user.c' || echo '$(srcdir)/'`user.c
 
-libmyspace_a-myspace.obj: myspace.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-myspace.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-myspace.Tpo" -c -o libmyspace_a-myspace.obj `if test -f 'myspace.c'; then $(CYGPATH_W) 'myspace.c'; else $(CYGPATH_W) '$(srcdir)/myspace.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-myspace.Tpo" "$(DEPDIR)/libmyspace_a-myspace.Po"; else rm -f "$(DEPDIR)/libmyspace_a-myspace.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='myspace.c' object='libmyspace_a-myspace.obj' libtool=no @AMDEPBACKSLASH@
+libmyspace_la-zap.lo: zap.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -MT libmyspace_la-zap.lo -MD -MP -MF "$(DEPDIR)/libmyspace_la-zap.Tpo" -c -o libmyspace_la-zap.lo `test -f 'zap.c' || echo '$(srcdir)/'`zap.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_la-zap.Tpo" "$(DEPDIR)/libmyspace_la-zap.Plo"; else rm -f "$(DEPDIR)/libmyspace_la-zap.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='zap.c' object='libmyspace_la-zap.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-myspace.obj `if test -f 'myspace.c'; then $(CYGPATH_W) 'myspace.c'; else $(CYGPATH_W) '$(srcdir)/myspace.c'; fi`
-
-libmyspace_a-session.o: session.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-session.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-session.Tpo" -c -o libmyspace_a-session.o `test -f 'session.c' || echo '$(srcdir)/'`session.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-session.Tpo" "$(DEPDIR)/libmyspace_a-session.Po"; else rm -f "$(DEPDIR)/libmyspace_a-session.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='session.c' object='libmyspace_a-session.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-session.o `test -f 'session.c' || echo '$(srcdir)/'`session.c
-
-libmyspace_a-session.obj: session.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-session.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-session.Tpo" -c -o libmyspace_a-session.obj `if test -f 'session.c'; then $(CYGPATH_W) 'session.c'; else $(CYGPATH_W) '$(srcdir)/session.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-session.Tpo" "$(DEPDIR)/libmyspace_a-session.Po"; else rm -f "$(DEPDIR)/libmyspace_a-session.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='session.c' object='libmyspace_a-session.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-session.obj `if test -f 'session.c'; then $(CYGPATH_W) 'session.c'; else $(CYGPATH_W) '$(srcdir)/session.c'; fi`
-
-libmyspace_a-user.o: user.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-user.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-user.Tpo" -c -o libmyspace_a-user.o `test -f 'user.c' || echo '$(srcdir)/'`user.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-user.Tpo" "$(DEPDIR)/libmyspace_a-user.Po"; else rm -f "$(DEPDIR)/libmyspace_a-user.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='user.c' object='libmyspace_a-user.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-user.o `test -f 'user.c' || echo '$(srcdir)/'`user.c
-
-libmyspace_a-user.obj: user.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-user.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-user.Tpo" -c -o libmyspace_a-user.obj `if test -f 'user.c'; then $(CYGPATH_W) 'user.c'; else $(CYGPATH_W) '$(srcdir)/user.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-user.Tpo" "$(DEPDIR)/libmyspace_a-user.Po"; else rm -f "$(DEPDIR)/libmyspace_a-user.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='user.c' object='libmyspace_a-user.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-user.obj `if test -f 'user.c'; then $(CYGPATH_W) 'user.c'; else $(CYGPATH_W) '$(srcdir)/user.c'; fi`
-
-libmyspace_a-zap.o: zap.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-zap.o -MD -MP -MF "$(DEPDIR)/libmyspace_a-zap.Tpo" -c -o libmyspace_a-zap.o `test -f 'zap.c' || echo '$(srcdir)/'`zap.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-zap.Tpo" "$(DEPDIR)/libmyspace_a-zap.Po"; else rm -f "$(DEPDIR)/libmyspace_a-zap.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='zap.c' object='libmyspace_a-zap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-zap.o `test -f 'zap.c' || echo '$(srcdir)/'`zap.c
-
-libmyspace_a-zap.obj: zap.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -MT libmyspace_a-zap.obj -MD -MP -MF "$(DEPDIR)/libmyspace_a-zap.Tpo" -c -o libmyspace_a-zap.obj `if test -f 'zap.c'; then $(CYGPATH_W) 'zap.c'; else $(CYGPATH_W) '$(srcdir)/zap.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libmyspace_a-zap.Tpo" "$(DEPDIR)/libmyspace_a-zap.Po"; else rm -f "$(DEPDIR)/libmyspace_a-zap.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='zap.c' object='libmyspace_a-zap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_a_CFLAGS) $(CFLAGS) -c -o libmyspace_a-zap.obj `if test -f 'zap.c'; then $(CYGPATH_W) 'zap.c'; else $(CYGPATH_W) '$(srcdir)/zap.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmyspace_la_CFLAGS) $(CFLAGS) -c -o libmyspace_la-zap.lo `test -f 'zap.c' || echo '$(srcdir)/'`zap.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -774,7 +715,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES) $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(pkgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
@@ -805,7 +746,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	clean-pkgLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -855,8 +796,8 @@ ps-am:
 uninstall-am: uninstall-info-am uninstall-pkgLTLIBRARIES
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLIBRARIES clean-pkgLTLIBRARIES ctags \
-	distclean distclean-compile distclean-generic \
+	clean-libtool clean-noinstLTLIBRARIES clean-pkgLTLIBRARIES \
+	ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \

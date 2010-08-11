@@ -10,9 +10,6 @@ This code was initially developed under Google Summer of Code 2007.
 
 For features and TODO, see http://developer.pidgin.im/wiki/MySpaceIM
 
-Windows installation: Unzip the archive to C:\Program Files\Pidgin
-Unix/source installation: run "make install"
-
 Usage:
 
 Login using your _email address_ you use to login to myspace.com. You can't

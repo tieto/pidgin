@@ -434,6 +434,9 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 #endif
 	char *decrypted_data;
 
+	if (resp == NULL)
+		return;
+
 	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
 	enckey = xmlnode_get_child(resp->xml, "Header/Security/DerivedKeyToken");

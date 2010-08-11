@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "conversation.h"
 #include "debug.h"
+#include "network.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
@@ -317,7 +318,8 @@ do_prpl_change_account_status(PurpleAccount *account,
 	PurplePluginProtocolInfo *prpl_info;
 
 	if (purple_status_is_online(new_status) &&
-		purple_account_is_disconnected(account))
+		purple_account_is_disconnected(account) &&
+		purple_network_is_available())
 	{
 		purple_account_connect(account);
 		return;

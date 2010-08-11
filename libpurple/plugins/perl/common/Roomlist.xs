@@ -80,7 +80,7 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(fields));
 
-	for (i = 0; i < t_len; i++)
+	for (i = 0; i <= t_len; i++)
 		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(fields), i, 0)));
 
 	purple_roomlist_set_fields(list, t_GL);

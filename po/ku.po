@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 00:55-0700\n"
+"POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-02-26 09:48+0000\n"
 "Last-Translator: Erdal Ronahi <erdal.ronahi@gmail.com>\n"
 "Language-Team: Kurdish <gnu-ku-wergerandin@lists.sourceforge.net>\n"
@@ -248,10 +248,6 @@ msgstr "Dema %s Dihate Xwendin Çewtî"
 msgid "You must give a name for the group to add."
 msgstr "Ji kerema xwe re navê gruba ku dixwazî bikeviyê, bikevê"
 
-#, fuzzy
-msgid "A group with the name already exists."
-msgstr "Peldankeke bi vî navê jixwe heye"
-
 msgid "Add Group"
 msgstr "Kome zêde bike"
 
@@ -288,7 +284,6 @@ msgstr "agahiyan bistîne"
 msgid "Add Buddy Pounce"
 msgstr "Hişyarkera Kesan Lê Zêde Bike"
 
-#. if (q_bud && is_online(q_bud->status)) {
 msgid "Send File"
 msgstr "Pelî Bişîne"
 
@@ -296,8 +291,8 @@ msgid "Blocked"
 msgstr "(Hat qedexekirin)"
 
 #, fuzzy
-msgid "View Log"
-msgstr "_Tomarkirinan Nîşan Bide"
+msgid "Show when offline"
+msgstr "Dema negirêdayî be destûrê nade"
 
 #, fuzzy, c-format
 msgid "Please enter the new name for %s"
@@ -341,6 +336,10 @@ msgstr ""
 
 msgid "Toggle Tag"
 msgstr ""
+
+#, fuzzy
+msgid "View Log"
+msgstr "_Tomarkirinan Nîşan Bide"
 
 #. General
 msgid "Nickname"
@@ -1408,7 +1407,7 @@ msgstr "Cure"
 #. PurpleStatusPrimitive
 #. id - use default
 #. name - use default
-#. savable
+#. saveable
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
@@ -5149,7 +5148,7 @@ msgstr ""
 #. primitive
 #. ID
 #. name - use default
-#. savable
+#. saveable
 #. should be user_settable some day
 #. independent
 #, fuzzy
@@ -5381,8 +5380,7 @@ msgstr "URL'a Profîlê"
 #. *< id
 #. *< name
 #. *< version
-#. *  summary
-#. *  description
+#. *< summary
 #, fuzzy
 msgid "Windows Live Messenger Protocol Plugin"
 msgstr "Pêveka Protokla Yahooyê"
@@ -5423,6 +5421,7 @@ msgstr "%s - %s (%s)"
 msgid "%s just sent you a Nudge!"
 msgstr "%s lerizandinek ji te re şand"
 
+#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "Çewtiya nenas"
@@ -6606,6 +6605,7 @@ msgid ""
 msgstr ""
 
 #. Unregistered screen name
+#. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "Nicka nederbasdar"
@@ -6986,11 +6986,13 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
-msgid "Unable To Add"
-msgstr ""
+#, fuzzy
+msgid "Unable to Add"
+msgstr "Nikare bixwîne"
 
-msgid "Unable To Retrieve Buddy List"
-msgstr ""
+#, fuzzy
+msgid "Unable to Retrieve Buddy List"
+msgstr "Jêbirina lîsteya hevalan a Gadu-Gadu bi ser neket"
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
@@ -7208,49 +7210,6 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
-#, fuzzy
-msgid "Primary Information"
-msgstr "Agahiya Şexsî"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "Agahiya Şexsî"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "Welat"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Horoscope Symbol"
-msgstr ""
-
-msgid "Zodiac Sign"
-msgstr ""
-
-msgid "Blood Type"
-msgstr ""
-
-#, fuzzy
-msgid "College"
-msgstr "_Teng bike"
-
-#, fuzzy
-msgid "Zipcode"
-msgstr "Zip Code"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "Hejmara Telefonê"
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "Hejmara Telefonê"
-
 msgid "Aquarius"
 msgstr ""
 
@@ -7341,94 +7300,189 @@ msgid "Other"
 msgstr "Opera"
 
 #, fuzzy
-msgid "Modify information"
-msgstr "Agahiya Heval"
+msgid "Visible"
+msgstr "Nexuya"
 
-#, fuzzy
-msgid "Update information"
-msgstr "Agahiyen bîkarhêner"
-
-#. TODO: We don't really need to notify the user about this, do we?
-#. TODO: Does the user really need to be notified about this?
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Kesekê/î lê zêde bike"
-
-#, fuzzy
-msgid "Successed:"
-msgstr "Lez:"
-
-#, fuzzy
-msgid "Change buddy information."
-msgstr "Ji bo hişyarkirinê kesekê/î têkevê."
-
-#, c-format
-msgid ""
-"Setting custom faces is not currently supported. Please choose an image from "
-"%s."
+msgid "Firend Only"
 msgstr ""
 
 #, fuzzy
-msgid "Invalid QQ Face"
-msgstr "Navê Nederbasdar ê Odeyan"
+msgid "Private"
+msgstr "Veşarî"
 
-#, fuzzy, c-format
-msgid "You rejected %d's request"
-msgstr "Daxwaza Nedihat hêvîkirin"
-
-#, fuzzy
-msgid "Reject request"
-msgstr "Daxwaza Nedihat hêvîkirin"
-
-#. title
-msgid "Sorry, you are not my style..."
+msgid "QQ Number"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy with auth request failed"
-msgstr "Lêzêdekirina kesan hate redkirin"
+msgid "Country/Region"
+msgstr "Welat"
+
+msgid "Province/State"
+msgstr ""
 
 #, fuzzy
-msgid "Failed:"
+msgid "Zipcode"
+msgstr "Zip Code"
+
+#, fuzzy
+msgid "Phone Number"
+msgstr "Hejmara Telefonê"
+
+#, fuzzy
+msgid "Authorize adding"
+msgstr "Destûrê Bidê"
+
+#, fuzzy
+msgid "Cellphone Number"
+msgstr "Hejmara Telefonê"
+
+#, fuzzy
+msgid "Personal Introduction"
+msgstr "Agahiya Şexsî"
+
+#, fuzzy
+msgid "City/Area"
+msgstr "Bajar"
+
+#, fuzzy
+msgid "Publish Mobile"
+msgstr "Sernav"
+
+#, fuzzy
+msgid "Publish Contact"
+msgstr "Navê Xuya Dibe"
+
+#, fuzzy
+msgid "College"
+msgstr "_Teng bike"
+
+#, fuzzy
+msgid "Horoscope"
+msgstr "Navê Makîneyê"
+
+msgid "Zodiac"
+msgstr ""
+
+#, fuzzy
+msgid "Blood"
+msgstr "(Hat qedexekirin)"
+
+#, fuzzy
+msgid "True"
+msgstr "Tirkî"
+
+#, fuzzy
+msgid "False"
 msgstr "Serneket"
 
 #, fuzzy
-msgid "Remove buddy"
-msgstr "Jê bibe"
+msgid "Modify Contact"
+msgstr "Hesabê biguherîne"
 
 #, fuzzy
-msgid "Remove from other's buddy list"
-msgstr "Bikarhênerê ji lîsteya xwe derxe"
+msgid "Modify Address"
+msgstr "Navnîşana malê"
+
+#, fuzzy
+msgid "Modify Extended Information"
+msgstr "Agahiya Heval"
+
+#, fuzzy
+msgid "Modify Information"
+msgstr "Agahiya Heval"
+
+#, fuzzy
+msgid "Update"
+msgstr "Rojanekirina dawî"
+
+#, fuzzy
+msgid "Could not change buddy information."
+msgstr "Ji bo hişyarkirinê kesekê/î têkevê."
+
+#, c-format
+msgid "%d needs Q&A"
+msgstr ""
+
+#, fuzzy
+msgid "Add buddy Q&A"
+msgstr "Kesekê/î lê zêde bike"
+
+msgid "Input answer here"
+msgstr ""
+
+msgid "Send"
+msgstr "Bişîne"
+
+#, fuzzy
+msgid "Invalid answer."
+msgstr "Şîfreya nederbasdar"
+
+#, fuzzy
+msgid "Authorization denied message:"
+msgstr "Mezinahiya Peyamê ya Xelet:"
+
+msgid "Sorry, You are not my style."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%d needs authentication"
 msgstr "Nasname tê kontrolkirin"
 
+#, fuzzy
+msgid "Add buddy authorize"
+msgstr "Vê/î kesê/î li lîsteya xwe ya kesan zêde bike"
+
 msgid "Input request here"
 msgstr ""
 
-#. TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands
 #, fuzzy
 msgid "Would you be my friend?"
 msgstr "Dixwazî li ser binivîsî?"
 
-#. multiline
-#. masked
-#. hint
-msgid "Send"
-msgstr "Bişîne"
-
-#, fuzzy, c-format
-msgid "Add into %d's buddy list"
-msgstr "Chatê li lîsteya xwe zêde bike"
+#, fuzzy
+msgid "QQ Buddy"
+msgstr "Kesekê/î lê zêde bike"
 
 #, fuzzy
-msgid "QQ Number Error"
-msgstr "Çewtiya Xwendinê"
+msgid "Add buddy"
+msgstr "Kesekê/î lê zêde bike"
 
 #, fuzzy
 msgid "Invalid QQ Number"
 msgstr "Navê Nederbasdar ê Odeyan"
+
+#, fuzzy
+msgid "Failed sending authorize"
+msgstr "Ji kerema xwe re hesabekî çêbikin."
+
+#, fuzzy, c-format
+msgid "Failed removing buddy %d"
+msgstr "Bi kes re beşdarî sohbetê nebû"
+
+#, fuzzy, c-format
+msgid "Failed removing me from %d's buddy list"
+msgstr "Bikarhênerê ji lîsteya xwe derxe"
+
+#, fuzzy
+msgid "No reason given"
+msgstr "Navê xuya dibe tune."
+
+#. only need to get value
+#, fuzzy, c-format
+msgid "You have been added by %s"
+msgstr "Ji hêla %s ve hatî dakirin: (%s)"
+
+#, fuzzy
+msgid "Would you like to add him?"
+msgstr "Dixwazî li ser binivîsî?"
+
+#, fuzzy, c-format
+msgid "Rejected by %s"
+msgstr "Vala Bike"
+
+#, fuzzy, c-format
+msgid "Message: %s"
+msgstr "_Peyam"
 
 msgid "ID: "
 msgstr ""
@@ -7436,18 +7490,6 @@ msgstr ""
 #, fuzzy
 msgid "Group ID"
 msgstr "Kom:"
-
-#, fuzzy
-msgid "Creator"
-msgstr "Avakirin"
-
-#, fuzzy
-msgid "Group Description"
-msgstr "Şîrove"
-
-#, fuzzy
-msgid "Auth"
-msgstr "Destûrê Bidê"
 
 msgid "QQ Qun"
 msgstr ""
@@ -7459,57 +7501,40 @@ msgstr "Ji kerema xwe re ji bo gruba ku hatiye hilbijartin navekî din bibîne."
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
-#, c-format
-msgid "%d request to join Qun %d"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_Peyam"
+#, fuzzy
+msgid "Not member"
+msgstr "Maweyê Girêdanê:"
 
 #, fuzzy
-msgid "QQ Qun Operation"
-msgstr "Vebijartokên Deng"
+msgid "Member"
+msgstr "Maweyê Girêdanê:"
 
-msgid "Approve"
-msgstr ""
+#, fuzzy
+msgid "Requesting"
+msgstr "Diyaloga Daxwazan"
 
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Bi kes re beşdarî sohbetê nebû"
-
-#, c-format
-msgid "Successed to join Qun %d, operated by admin %d"
-msgstr ""
-
-#, c-format
-msgid "[%d] removed from Qun \"%d\""
+msgid "Admin"
 msgstr ""
 
 #, fuzzy
-msgid "Notice:"
+msgid "Notice"
 msgstr "Not"
 
-#, c-format
-msgid "[%d] added to Qun \"%d\""
-msgstr ""
-
-msgid "I am not a member"
-msgstr ""
-
-msgid "I am a member"
-msgstr ""
+#, fuzzy
+msgid "Detail"
+msgstr "Hûragahî"
 
 #, fuzzy
-msgid "I am requesting"
-msgstr "Daxwaza Xerab"
-
-msgid "I am the admin"
-msgstr ""
+msgid "Creator"
+msgstr "Avakirin"
 
 #, fuzzy
-msgid "Unknown status"
-msgstr "Peyama nayê zanîn"
+msgid "About me"
+msgstr "Derbarê Gaimê de"
+
+#, fuzzy
+msgid "Category"
+msgstr "Çewtiya sohbetê"
 
 #, fuzzy
 msgid "The Qun does not allow others to join"
@@ -7518,74 +7543,85 @@ msgstr ""
 "têkeve têkiliyê."
 
 #, fuzzy
-msgid "Remove from Qun"
-msgstr "Komê jê bibe"
-
-#, fuzzy
-msgid "Join to Qun"
+msgid "Join QQ Qun"
 msgstr "Têkeve Sohbetê"
+
+#, c-format
+msgid "Successfully joined Qun %s (%d)"
+msgstr ""
+
+msgid "Successfully joined Qun"
+msgstr ""
 
 #, c-format
 msgid "Qun %d denied to join"
 msgstr ""
 
+#, fuzzy
+msgid "QQ Qun Operation"
+msgstr "Vebijartokên Deng"
+
+#, fuzzy
+msgid "Failed:"
+msgstr "Serneket"
+
 msgid "Join Qun, Unknow Reply"
 msgstr ""
 
-msgid "You entered a group ID outside the acceptable range"
-msgstr ""
-
 #, fuzzy
-msgid "Are you sure you want to leave this Qun?"
-msgstr "Li xwe bawer î ku tu dixwazî %s'yê jê bibî?"
+msgid "Quit Qun"
+msgstr "Têkeve Sohbetê"
 
 msgid ""
 "Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
 
-#. we want to see window
-#, fuzzy
-msgid "Do you want to approve the request?"
-msgstr "Tu li xwe bawer î ku tu dixwazî peyama li derve \"%s\" rakî?"
+msgid "Sorry, you are not our style ..."
+msgstr ""
 
 #, fuzzy
-msgid "Change Qun member"
+msgid "Successfully changed Qun member"
 msgstr "Hejmara Telefonê"
 
 #, fuzzy
-msgid "Change Qun information"
+msgid "Successfully changed Qun information"
 msgstr "Agahiya Kanalê"
 
 msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set up the detail information now?"
+msgid "Would you like to set detailed information now?"
 msgstr "Tu dixwazî ku vê wekî îkona heval mîheng bikî?"
 
 #, fuzzy
 msgid "Setup"
 msgstr "_Mîheng bike"
 
+#, c-format
+msgid "%d requested to join Qun %d for %s"
+msgstr ""
+
+#, c-format
+msgid "%d request to join Qun %d"
+msgstr ""
+
 #, fuzzy, c-format
-msgid ""
-"%s\n"
-"\n"
-"%s"
-msgstr "%s - %s (%s)"
+msgid "Failed to join Qun %d, operated by admin %d"
+msgstr "Bi kes re beşdarî sohbetê nebû"
 
-#, fuzzy
-msgid "QQ Server News"
-msgstr "Navnîşana pêşkêşkar"
+#, c-format
+msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgstr ""
 
-#, fuzzy
-msgid "System Message"
-msgstr "Peyamê Bişîne"
+#, fuzzy, c-format
+msgid "<b>Removed buddy %d.</b>"
+msgstr "Jê bibe"
 
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "Peyam nehat şandin."
+#, c-format
+msgid "<b>New buddy %d joined.</b>"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7594,10 +7630,6 @@ msgstr "Nenas"
 #, fuzzy
 msgid "Level"
 msgstr "Qet"
-
-#, fuzzy
-msgid "Member"
-msgstr "Maweyê Girêdanê:"
 
 msgid " VIP"
 msgstr ""
@@ -7631,12 +7663,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "Nicka nederbasdar"
 
+#, fuzzy
+msgid "Select icon..."
+msgstr "Rengî hilbijêre"
+
 #, fuzzy, c-format
-msgid "<b>Current Online</b>: %d<br>\n"
+msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+msgstr "<b>Bikarhêner:</b> %s<br>"
+
+#, fuzzy, c-format
+msgid "<b>Total Online Buddies</b>: %d<br>\n"
 msgstr "<b>Maxlas:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %s<br>\n"
+msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Bikarhêner:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7644,11 +7684,15 @@ msgid "<b>Server</b>: %s<br>\n"
 msgstr "<b>Bikarhêner:</b> %s<br>"
 
 #, fuzzy, c-format
+msgid "<b>Client Tag</b>: %s<br>\n"
+msgstr "<b>Bikarhêner:</b> %s<br>"
+
+#, fuzzy, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Amade:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>My Internet Address</b>: %s<br>\n"
+msgid "<b>My Internet IP</b>: %s:%d<br>\n"
 msgstr "<b>Navnîşana IPê:</b> %s<br>"
 
 #, fuzzy, c-format
@@ -7672,26 +7716,45 @@ msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Maxlas:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Login Time</b>: %s<br>\n"
+msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
 msgstr "<b>Bikarhêner:</b> %s<br>"
 
 #, fuzzy, c-format
-msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>Maxlas:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Login Time</b>: %s\n"
-msgstr ""
-"\n"
-"<b>Dîtina Dawî:</b> berî %s"
+msgid "<b>IP</b>: %s<br>\n"
+msgstr "<b>Bikarhêner:</b> %s<br>"
 
 #, fuzzy
 msgid "Login Information"
 msgstr "Agahiya neqandinê"
 
 #, fuzzy
-msgid "Set My Information"
-msgstr "Agahiyên Pêşkêşkerê"
+msgid "<p><b>Original Author</b>:<br>\n"
+msgstr "<br><b>Şexsî</b><br>%s"
+
+msgid "<p><b>Code Contributors</b>:<br>\n"
+msgstr ""
+
+#, fuzzy
+msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+msgstr "<b>Bikarhêner:</b> %s<br>"
+
+#, fuzzy
+msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<b>Maxlas:</b> %s<br>"
+
+msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+msgstr ""
+
+msgid "<i>Feel free to join us!</i> :)"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "About OpenQ r%s"
+msgstr "Derbarê Gaimê de"
+
+#, fuzzy
+msgid "Change Icon"
+msgstr "Îkonê Tomar Bike"
 
 msgid "Change Password"
 msgstr "Şîfreyê Biguherîne"
@@ -7700,12 +7763,12 @@ msgstr "Şîfreyê Biguherîne"
 msgid "Account Information"
 msgstr "Agahiya neqandinê"
 
-msgid "Leave the QQ Qun"
+msgid "Update all QQ Quns"
 msgstr ""
 
 #, fuzzy
-msgid "Block this buddy"
-msgstr "Bikarhênerê asteng bike"
+msgid "About OpenQ"
+msgstr "Derbarê Gaimê de"
 
 #. *< type
 #. *< ui_requirement
@@ -7718,13 +7781,27 @@ msgstr "Bikarhênerê asteng bike"
 #. *  summary
 #. *  description
 #, fuzzy
-msgid "QQ Protocol\tPlugin"
+msgid "QQ Protocol Plugin"
 msgstr "Pêveka Protokola IRC"
 
 #, fuzzy
 msgid "Auto"
 msgstr "Destûrê Bidê"
 
+#, fuzzy
+msgid "Select Server"
+msgstr "Bikarhêner Hilbijêre"
+
+msgid "QQ2005"
+msgstr ""
+
+msgid "QQ2007"
+msgstr ""
+
+msgid "QQ2008"
+msgstr ""
+
+#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "Girêdide"
@@ -7738,42 +7815,81 @@ msgid "Show server news"
 msgstr "Hûragahiyên bikarhêneran nîşan bide"
 
 #, fuzzy
-msgid "Keep alive interval(s)"
+msgid "Keep alive interval (seconds)"
 msgstr "Xeletiya xwendinê"
 
-msgid "Update interval(s)"
-msgstr ""
+#, fuzzy
+msgid "Update interval (seconds)"
+msgstr "Xeletiya xwendinê"
+
+#, fuzzy
+msgid "Can not decrypt server reply"
+msgstr "Agahiyên pêşkêşkerê nayên wergirtin"
+
+#, fuzzy
+msgid "Can not decrypt get server reply"
+msgstr "Agahiyên pêşkêşkerê nayên wergirtin"
 
 #, c-format
-msgid "Invalid token reply code, 0x%02X"
+msgid "Failed requesting token, 0x%02X"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Invalid token len, %d"
 msgstr "Rêdaneke ne derbasbar"
 
-msgid "Unable login for not support Redirect_EX now"
+#. extend redirect used in QQ2006
+msgid "Redirect_EX is not currently supported"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error password: %s"
-msgstr "Xeletiya guherandina şîfreyê"
+#. need activation
+#. need activation
+#. need activation
+#, fuzzy
+msgid "Activation required"
+msgstr "Tomarbûn Divê"
 
 #, c-format
-msgid "Need active: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable login for unknow reply code 0x%02X"
+msgid "Unknow reply code when login (0x%02X)"
 msgstr ""
 
 #, fuzzy
 msgid "Keep alive error"
 msgstr "Xeletiya xwendinê"
 
+msgid "Requesting captcha ..."
+msgstr ""
+
+msgid "Checking code of captcha ..."
+msgstr ""
+
+msgid "Failed captcha verify"
+msgstr ""
+
 #, fuzzy
-msgid "Failed to connect all servers"
-msgstr "Li makekompîturê nehate girêdan."
+msgid "Captcha Image"
+msgstr "Wêneyê Tomar Bike"
+
+#, fuzzy
+msgid "Enter code"
+msgstr "Şîfreyê Binivîse"
+
+msgid "QQ Captcha Verifing"
+msgstr ""
+
+#, fuzzy
+msgid "Enter the text from the image"
+msgstr "Ji kerema xwe re navê gruba ku dixwazî bikeviyê, bikevê"
+
+#, c-format
+msgid "Unknow reply code when checking password (0x%02X)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Unknow reply code when login (0x%02X):\n"
+"%s"
+msgstr ""
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7800,8 +7916,11 @@ msgstr "Çewtiya Nivîsandinê"
 msgid "Connection lost"
 msgstr "Girêdan Hate Qutkirin"
 
-#. Update the login progress status display
-#, fuzzy, c-format
+#, fuzzy
+msgid "Get server ..."
+msgstr "Agahiya Bikarhêner Biguherîne..."
+
+#, fuzzy
 msgid "Request token"
 msgstr "Daxwaz hat redkirin"
 
@@ -7812,15 +7931,35 @@ msgstr ""
 msgid "Invalid server or port"
 msgstr "Nav an jî şîfre çewt e"
 
-#, fuzzy, c-format
-msgid "Connecting server %s, retries %d"
-msgstr ""
-"Çewtiya têkiliyê ji pêşkêşker%s:\n"
-"%s"
+#, fuzzy
+msgid "Connecting server ..."
+msgstr "Digel pêşkêşkar girêdan çêke"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "Çewtiya Xwendinê"
+
+#, fuzzy
+msgid "Failed to send IM."
+msgstr "Peyam nehat şandin."
+
+#, fuzzy, c-format
+msgid ""
+"Server News:\n"
+"%s\n"
+"%s\n"
+"%s"
+msgstr "Navnîşana pêşkêşkar"
+
+#, fuzzy, c-format
+msgid "From %s:"
+msgstr "Ji"
+
+#, fuzzy, c-format
+msgid ""
+"Server notice From %s: \n"
+"%s"
+msgstr "Avakerên pêşkêşker: %s"
 
 msgid "Unknow SERVER CMD"
 msgstr ""
@@ -7836,14 +7975,18 @@ msgid "QQ Qun Command"
 msgstr "Ferman"
 
 #, c-format
-msgid "You are not a member of QQ Qun \"%s\"\n"
+msgid "Not a member of room \"%s\"\n"
 msgstr ""
 
 msgid "Can not decrypt login reply"
 msgstr ""
 
 #, fuzzy
-msgid "Unknow reply CMD"
+msgid "Unknow LOGIN CMD"
+msgstr "Sedema nenas."
+
+#, fuzzy
+msgid "Unknow CLIENT CMD"
 msgstr "Sedema nenas."
 
 #, fuzzy, c-format
@@ -7857,64 +8000,6 @@ msgstr "Verêkirina Pelî Bi Ser Neket"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s, şandina %s'yê betal kir"
-
-#, fuzzy
-msgid "Do you approve the requestion?"
-msgstr "Tu li xwe bawer î ku tu dixwazî peyama li derve \"%s\" rakî?"
-
-#, fuzzy
-msgid "Do you add the buddy?"
-msgstr "Tu dixwazî vî/ê li lîsteya xwe ya hevalan zêde bikî?"
-
-#. only need to get value
-#, fuzzy, c-format
-msgid "You have been added by %s"
-msgstr "Ji hêla %s ve hatî dakirin: (%s)"
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "Dixwazî li ser binivîsî?"
-
-#, fuzzy, c-format
-msgid "%s added you [%s] to buddy list"
-msgstr "Bikarhêner %s dixwaze ku %s têxe lîsteya xwe ya hevalan."
-
-#, fuzzy
-msgid "QQ Budy"
-msgstr "Kesekê/î lê zêde bike"
-
-#, c-format
-msgid "Requestion rejected by %s"
-msgstr ""
-
-#, c-format
-msgid "Requestion approved by %s"
-msgstr ""
-
-#. TODO: this should go through purple_account_request_authorization()
-#, fuzzy, c-format
-msgid "%s wants to add you [%s] as a friend"
-msgstr "%s dixwaze pelekî ji te re bişîne"
-
-#, fuzzy, c-format
-msgid "%s is not in buddy list"
-msgstr "Bikarhênerê têxe lîsteya xwe"
-
-#, fuzzy
-msgid "Would you add?"
-msgstr "Dixwazî li ser binivîsî?"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Ji"
-
-#, c-format
-msgid "%s"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Server Notice"
-msgstr "Porta pêşkêşkar"
 
 msgid "Connection closed (writing)"
 msgstr ""
@@ -9553,10 +9638,6 @@ msgstr "Peyama te ya Yahooyê nehate şandin."
 msgid "Yahoo! system message for %s:"
 msgstr "Ji bo %s peyama pergalê ya Yahoo!yê:"
 
-#, fuzzy
-msgid "Authorization denied message:"
-msgstr "Mezinahiya Peyamê ya Xelet:"
-
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10428,9 +10509,9 @@ msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
 "You have no IM accounts configured. To start connecting with %s press the "
-"<b>Add</b> button below and configure your first account. If you want %s to "
-"connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\n"
+"<b>Add...</b> button below and configure your first account. If you want %s "
+"to connect to multiple IM accounts, press <b>Add...</b> again to configure "
+"them all.\n"
 "\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
@@ -10495,10 +10576,6 @@ msgstr "_Tomarkirinan Nîşan Bide"
 
 #, fuzzy
 msgid "Hide when offline"
-msgstr "Dema negirêdayî be destûrê nade"
-
-#, fuzzy
-msgid "Show when offline"
 msgstr "Dema negirêdayî be destûrê nade"
 
 msgid "_Alias..."
@@ -10894,7 +10971,7 @@ msgstr "Navê ku xuya dibe"
 msgid "Auto_join when account becomes online."
 msgstr ""
 
-msgid "_Hide chat when the window is closed."
+msgid "_Remain in chat after window is closed."
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10928,10 +11005,6 @@ msgstr "/Kes/Kesan Rêz Bike"
 #, fuzzy
 msgid "SSL Servers"
 msgstr "Pêşkêşkar"
-
-#, fuzzy
-msgid "Network disconnected"
-msgstr "%s Girêdan çû"
 
 #, fuzzy
 msgid "Unknown command."
@@ -11287,8 +11360,12 @@ msgstr "Çewtî"
 msgid "Fatal Error"
 msgstr "Xeletiya Herêmî"
 
-msgid "developer"
-msgstr "pêşxistinkar"
+msgid "bug master"
+msgstr ""
+
+#, fuzzy
+msgid "artist"
+msgstr "Navnîşan"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11298,10 +11375,7 @@ msgid "support"
 msgstr "piştgirî"
 
 #, fuzzy
-msgid "support/QA"
-msgstr "piştgirî"
-
-msgid "developer & webmaster"
+msgid "webmaster"
 msgstr "pêşxistinkar & webmaster"
 
 msgid "Senior Contributor/QA"
@@ -11321,8 +11395,11 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "Hacker û pêşkêşkera sepandî [lazy bum]"
 
 #, fuzzy
-msgid "XMPP developer"
-msgstr "pêşxistinkar"
+msgid "support/QA"
+msgstr "piştgirî"
+
+msgid "XMPP"
+msgstr ""
 
 msgid "original author"
 msgstr "tîprêziya xweser"
@@ -11586,9 +11663,6 @@ msgstr "Pêşkêşkerên berê"
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "Crazy Patch Writers"
-
-msgid "Artists"
-msgstr ""
 
 msgid "Current Translators"
 msgstr "Wergêrên Niha"
@@ -12214,11 +12288,6 @@ msgid ""
 "and post the backtrace from the core file.  If you do not know\n"
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%swiki/DeveloperPages\n"
 msgstr ""
 
 #. Translators may want to transliterate the name.
@@ -13101,8 +13170,13 @@ msgstr "_Agahî bistîne"
 msgid "_Invite"
 msgstr "_Dawet bike"
 
-msgid "_Modify"
+#, fuzzy
+msgid "_Modify..."
 msgstr "_Biguherîne"
+
+#, fuzzy
+msgid "_Add..."
+msgstr "_Lê zêde bike"
 
 msgid "_Open Mail"
 msgstr "_Mail veke"
@@ -13127,6 +13201,13 @@ msgstr ""
 #, fuzzy
 msgid "none"
 msgstr "Herkes"
+
+#, fuzzy
+msgid "Small"
+msgstr "E-peyam"
+
+msgid "Smaller versions of the default smilies"
+msgstr ""
 
 #, fuzzy
 msgid "Response Probability:"
@@ -13608,6 +13689,10 @@ msgstr "Hejmara peyamên nû li sernavê pacê zêde bike"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Rêvebira pacê bi serbena \"_BILEZ\" ve mîheng bike"
 
+#, fuzzy
+msgid "_Flash window"
+msgstr "_Paceya Chatê"
+
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "Paceya hevpeyvînê B_ilind bike"
@@ -13793,20 +13878,20 @@ msgstr ""
 "dihêle ku tu têketanên negihiştî bişînî protokolên nivîskî (Jabber, MSN, "
 "IRC, TOC). ji bo şandinê  'Enter' bitikîne.li Paceya vebijartinê binhêre."
 
-#, fuzzy, c-format
-msgid ""
-"You are using %s version %s.  The current version is %s.  You can get it "
-"from <a href=\"%s\">%s</a><hr>"
-msgstr "Guhertoya Gaimê ya ku tu bikartînî %s ye. Ya nûtirîn %s ye.<hr>"
-
-#, fuzzy, c-format
-msgid "<b>ChangeLog:</b><br>%s"
+#, c-format
+msgid "You can upgrade to %s %s today."
 msgstr ""
-"<b>Tomarkirin:</b>\n"
-"%s<br><br>"
 
 msgid "New Version Available"
 msgstr "Guhertoya Nû Heye"
+
+#, fuzzy
+msgid "Later"
+msgstr "Dîrok"
+
+#, fuzzy
+msgid "Download Now"
+msgstr "Bikarhêner %s:%s"
 
 #. *< type
 #. *< ui_requirement
@@ -14120,6 +14205,172 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "A group with the name already exists."
+#~ msgstr "Peldankeke bi vî navê jixwe heye"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "Agahiya Şexsî"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "Agahiyen bîkarhêner"
+
+#, fuzzy
+#~ msgid "Successed:"
+#~ msgstr "Lez:"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "Navê Nederbasdar ê Odeyan"
+
+#, fuzzy
+#~ msgid "You rejected %d's request"
+#~ msgstr "Daxwaza Nedihat hêvîkirin"
+
+#, fuzzy
+#~ msgid "Reject request"
+#~ msgstr "Daxwaza Nedihat hêvîkirin"
+
+#, fuzzy
+#~ msgid "Add buddy with auth request failed"
+#~ msgstr "Lêzêdekirina kesan hate redkirin"
+
+#, fuzzy
+#~ msgid "Add into %d's buddy list"
+#~ msgstr "Chatê li lîsteya xwe zêde bike"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "Çewtiya Xwendinê"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "Şîrove"
+
+#, fuzzy
+#~ msgid "Auth"
+#~ msgstr "Destûrê Bidê"
+
+#, fuzzy
+#~ msgid "I am requesting"
+#~ msgstr "Daxwaza Xerab"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "Peyama nayê zanîn"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "Komê jê bibe"
+
+#, fuzzy
+#~ msgid "Are you sure you want to leave this Qun?"
+#~ msgstr "Li xwe bawer î ku tu dixwazî %s'yê jê bibî?"
+
+#, fuzzy
+#~ msgid "Do you want to approve the request?"
+#~ msgstr "Tu li xwe bawer î ku tu dixwazî peyama li derve \"%s\" rakî?"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "%s - %s (%s)"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "Peyamê Bişîne"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>Maxlas:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>Dîtina Dawî:</b> berî %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "Agahiyên Pêşkêşkerê"
+
+#, fuzzy
+#~ msgid "Block this buddy"
+#~ msgstr "Bikarhênerê asteng bike"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr "Xeletiya guherandina şîfreyê"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "Li makekompîturê nehate girêdan."
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr ""
+#~ "Çewtiya têkiliyê ji pêşkêşker%s:\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "Do you approve the requestion?"
+#~ msgstr "Tu li xwe bawer î ku tu dixwazî peyama li derve \"%s\" rakî?"
+
+#, fuzzy
+#~ msgid "Do you add the buddy?"
+#~ msgstr "Tu dixwazî vî/ê li lîsteya xwe ya hevalan zêde bikî?"
+
+#, fuzzy
+#~ msgid "%s added you [%s] to buddy list"
+#~ msgstr "Bikarhêner %s dixwaze ku %s têxe lîsteya xwe ya hevalan."
+
+#, fuzzy
+#~ msgid "QQ Budy"
+#~ msgstr "Kesekê/î lê zêde bike"
+
+#, fuzzy
+#~ msgid "%s wants to add you [%s] as a friend"
+#~ msgstr "%s dixwaze pelekî ji te re bişîne"
+
+#, fuzzy
+#~ msgid "%s is not in buddy list"
+#~ msgstr "Bikarhênerê têxe lîsteya xwe"
+
+#, fuzzy
+#~ msgid "Would you add?"
+#~ msgstr "Dixwazî li ser binivîsî?"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "Porta pêşkêşkar"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "%s Girêdan çû"
+
+#~ msgid "developer"
+#~ msgstr "pêşxistinkar"
+
+#, fuzzy
+#~ msgid "XMPP developer"
+#~ msgstr "pêşxistinkar"
+
+#, fuzzy
+#~ msgid ""
+#~ "You are using %s version %s.  The current version is %s.  You can get it "
+#~ "from <a href=\"%s\">%s</a><hr>"
+#~ msgstr "Guhertoya Gaimê ya ku tu bikartînî %s ye. Ya nûtirîn %s ye.<hr>"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr ""
+#~ "<b>Tomarkirin:</b>\n"
+#~ "%s<br><br>"
 
 #~ msgid "Screen name:"
 #~ msgstr "Navê dîmender:"
@@ -14561,9 +14812,6 @@ msgstr ""
 #~ msgid "%s<b>Social</b><br>%s"
 #~ msgstr "%s<b>Civakî</b><br>%s"
 
-#~ msgid "<br><b>Personal</b><br>%s"
-#~ msgstr "<br><b>Şexsî</b><br>%s"
-
 #~ msgid "<br><b>Business</b><br>%s"
 #~ msgstr "<br><b>Kar</b><br>%s"
 
@@ -14598,9 +14846,6 @@ msgstr ""
 
 #~ msgid "NAPSTER Protocol Plugin"
 #~ msgstr "Pêveka Protokola NAPSTER"
-
-#~ msgid "Invalid password"
-#~ msgstr "Şîfreya nederbasdar"
 
 #~ msgid "Direct IM with %s failed"
 #~ msgstr "Peyamşandina demdemî ya bi %s nehate kirin."
@@ -14676,9 +14921,6 @@ msgstr ""
 
 #~ msgid "TOC port"
 #~ msgstr "Porta TOC"
-
-#~ msgid "Unable to read"
-#~ msgstr "Nikare bixwîne"
 
 #~ msgid "Pager host"
 #~ msgstr "Hosta Bangkirinê"
@@ -15410,9 +15652,6 @@ msgstr ""
 #~ msgid "Summary"
 #~ msgstr "Kurte"
 
-#~ msgid "Details"
-#~ msgstr "Hûragahî"
-
 #~ msgid "Message Text"
 #~ msgstr "Nivîsa Peyamê"
 
@@ -15515,9 +15754,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Gaimê bi lîsteya te ya hevalan re têkilî daneynî. Ji kerema xwe re dû re "
 #~ "dîsa biceribîne."
-
-#~ msgid "Unable to delete Gadu-Gadu buddy list"
-#~ msgstr "Jêbirina lîsteya hevalan a Gadu-Gadu bi ser neket"
 
 #~ msgid "Unable to access directory"
 #~ msgstr "Negihîşt peldankê"
