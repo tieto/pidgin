@@ -156,6 +156,18 @@ bonjour_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	xmlnode_insert_data(bconv->current, (const char*) text, text_len);
 }
 
+static void
+bonjour_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
+{
+	BonjourJabberConversation *bconv = user_data;
+
+	purple_debug_error("jabber", "XML parser error for BonjourJabberConversation %p: "
+	                             "Domain %i, code %i, level %i: %s",
+	                   bconv,
+	                   error->domain, error->code, error->level,
+	                   (error->message ? error->message : "(null)\n"));
+}
+
 static xmlSAXHandler bonjour_parser_libxml = {
 	NULL,									/*internalSubset*/
 	NULL,									/*isStandalone*/
@@ -188,7 +200,7 @@ static xmlSAXHandler bonjour_parser_libxml = {
 	NULL,									/*_private*/
 	bonjour_parser_element_start_libxml,	/*startElementNs*/
 	bonjour_parser_element_end_libxml,		/*endElementNs*/
-	NULL									/*serror*/
+	bonjour_parser_structured_error_handler /*serror*/
 };
 
 void

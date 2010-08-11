@@ -601,9 +601,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(type && !strcmp(type, "unavailable")) {
 			gboolean nick_change = FALSE;
 
-			/* If we haven't joined the chat yet, we don't care that someone
-			 * left, or it was us leaving after we closed the chat */
-			if (!chat->conv || chat->left) {
+			/* If the chat nick is invalid, we haven't yet joined, or we've
+			 * already left (it was probably us leaving after we closed the
+			 * chat), we don't care.
+			 */
+			if (!jid->resource || !chat->conv || chat->left) {
 				if (chat->left &&
 						jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
 					jabber_chat_destroy(chat);
@@ -664,6 +666,18 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 		} else {
+			/*
+			 * XEP-0045 mandates the presence to include a resource (which is
+			 * treated as the chat nick). Some non-compliant servers allow
+			 * joining without a nick.
+			 */
+			if (!jid->resource) {
+				jabber_id_free(jid);
+				g_free(avatar_hash);
+				g_free(status);
+				return;
+			}
+
 			if(!chat->conv) {
 				chat->id = i++;
 				chat->muc = muc;

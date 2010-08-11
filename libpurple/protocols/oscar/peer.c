@@ -812,7 +812,7 @@ peer_connection_trynext(PeerConnection *conn)
 			(conn->client_connect_data != NULL))
 		{
 			/* Connecting... */
-			conn->connect_timeout_timer = purple_timeout_add(5000,
+			conn->connect_timeout_timer = purple_timeout_add_seconds(5,
 					peer_connection_tooktoolong, conn);
 			return;
 		}

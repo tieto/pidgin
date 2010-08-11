@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-25 17:28+0100\n"
-"PO-Revision-Date: 2009-02-25 17:28+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2009-05-01 00:50+0200\n"
+"PO-Revision-Date: 2009-05-01 00:49+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7253,6 +7253,34 @@ msgstr "Aktualisieren"
 msgid "Could not change buddy information."
 msgstr "Konnte Buddy-Informationen nicht bearbeiten."
 
+msgid "Mobile"
+msgstr "Mobil"
+
+msgid "Note"
+msgstr "Bemerkung"
+
+#. callback
+msgid "Buddy Memo"
+msgstr "Buddy-Notiz"
+
+msgid "Change his/her memo as you like"
+msgstr "Ändern Sie seine/ihre Notiz, wenn Sie wollen"
+
+msgid "_Modify"
+msgstr "_Bearbeiten"
+
+msgid "Memo Modify"
+msgstr "Notiz bearbeiten"
+
+msgid "Server says:"
+msgstr "Server meldet:"
+
+msgid "Your request was accepted."
+msgstr "Ihre Anfrage wurde akzeptiert."
+
+msgid "Your request was rejected."
+msgstr "Ihre Anfrage wurde abgelehnt."
+
 #, c-format
 msgid "%u requires verification"
 msgstr "%u erfordert Autorisierung"
@@ -8612,9 +8640,6 @@ msgstr "Organisation"
 
 msgid "Unit"
 msgstr "Abteilung"
-
-msgid "Note"
-msgstr "Bemerkung"
 
 msgid "Join Chat"
 msgstr "Chat betreten"
@@ -10098,9 +10123,6 @@ msgstr "Nicht stören"
 
 msgid "Extended away"
 msgstr "Abwesend (erweitert)"
-
-msgid "Mobile"
-msgstr "Mobil"
 
 msgid "Listening to music"
 msgstr "Musik hören"
@@ -12517,7 +12539,7 @@ msgstr "Kein Proxy"
 
 #. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
 msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Remote-DNS mit SOCKS4-Proxys benuten"
+msgstr "Remote-DNS mit SOCKS4-Proxys benutzen"
 
 msgid "_User:"
 msgstr "_Benutzer:"

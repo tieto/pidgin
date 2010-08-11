@@ -169,14 +169,17 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 	gboolean delete_buddy = FALSE;
 	PurpleBuddy *pb = NULL;
 
+	if ((pb = purple_find_buddy(args->account, args->res_data->name))) {
+		if (pb->proto_data != args->bb) {
+			purple_debug_error("bonjour", "Found purple buddy for %s not matching bonjour buddy record.",
+				args->res_data->name);
+			goto cleanup;
+		}
 	/* Make sure that the BonjourBuddy associated with this request is still around */
-	if (g_slist_find(pending_buddies, args->bb) == NULL)
+	} else if (g_slist_find(pending_buddies, args->bb) == NULL) {
+		purple_debug_error("bonjour", "host resolution - complete, but buddy no longer pending.\n");
 		goto cleanup;
-
-	if ((pb = purple_find_buddy(args->account, args->bb->name)))
-		if (pb->proto_data != args->bb)
-			purple_debug_error("bonjour", "Found purple buddy for %s not matching bonjour buddy record. "
-				"This is going to be ugly!.\n", args->bb->name);
+	}
 
 	if (!hosts || !hosts->data) {
 		purple_debug_error("bonjour", "host resolution - callback error.\n");

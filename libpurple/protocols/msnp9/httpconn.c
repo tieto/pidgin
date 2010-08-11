@@ -703,7 +703,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 		httpconn->inpa = purple_input_add(httpconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
 
-		httpconn->timer = purple_timeout_add(2000, msn_httpconn_poll, httpconn);
+		httpconn->timer = purple_timeout_add_seconds(3, msn_httpconn_poll, httpconn);
 
 		msn_httpconn_process_queue(httpconn);
 	}

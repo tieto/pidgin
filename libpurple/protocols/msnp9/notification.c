@@ -1280,14 +1280,11 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		if (count > 0)
 		{
-			const char *passport;
-			const char *url;
+			const char *passports[2] = { msn_user_get_passport(session->user) };
+			const char *urls[2] = { session->passport_info.file };
 
-			passport = msn_user_get_passport(session->user);
-			url = session->passport_info.file;
-
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
-							   &passport, &url, NULL, NULL);
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
+							   passports, urls, NULL, NULL);
 		}
 	}
 

@@ -219,7 +219,13 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		g_free(tmp);
 
 		t = strchr(full_session_id, '.');
-		session_id = g_strndup(full_session_id, t - full_session_id);
+		if (t != NULL)
+			session_id = g_strndup(full_session_id, t - full_session_id);
+		else {
+			purple_debug_error("msn", "Malformed full_session_id[%s]\n",
+					   full_session_id ? full_session_id : NULL);
+			session_id = g_strdup(full_session_id);
+		}
 
 		if (session_action == NULL || strcmp(session_action, "close") != 0)
 		{

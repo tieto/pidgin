@@ -117,7 +117,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
-		irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -325,7 +325,11 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 		if (args[3])
 			irc->whois.signon = (time_t)atoi(args[3]);
 	} else if (!strcmp(name, "319")) {
-		irc->whois.channels = g_strdup(args[2]);
+		if (irc->whois.channels == NULL) {
+			irc->whois.channels = g_string_new(args[2]);
+		} else {
+			irc->whois.channels = g_string_append(irc->whois.channels, args[2]);
+		}
 	} else if (!strcmp(name, "320")) {
 		irc->whois.identified = 1;
 	}
@@ -380,8 +384,8 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		purple_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels);
-		g_free(irc->whois.channels);
+		purple_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels->str);
+		g_string_free(irc->whois.channels, TRUE);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = purple_str_seconds_to_string(irc->whois.idle);
@@ -989,9 +993,24 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	char *newnick, *buf, *end;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
 	if (!args || !args[1])
 		return;
+
+	if (gc && purple_connection_get_state(gc) == PURPLE_CONNECTED) {
+		/* We only want to do the following dance if the connection
+		   has not been successfully completed.  If it has, just
+		   notify the user that their /nick command didn't go. */
+		buf = g_strdup_printf("The nickname \"%s\" is already being used.",
+				      irc->reqnick);
+		purple_notify_error(gc, "Nickname in use",
+				    "Nickname in use", buf);
+		g_free(buf);
+		g_free(irc->reqnick);
+		irc->reqnick = NULL;
+		return;
+	}
 
 	if (strlen(args[1]) < strlen(irc->reqnick) || irc->nickused)
 		newnick = g_strdup(args[1]);

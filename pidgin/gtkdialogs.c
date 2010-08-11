@@ -33,6 +33,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
+#include "core.h"
 
 #include "gtkblist.h"
 #include "gtkdialogs.h"
@@ -441,7 +442,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, DISPLAY_VERSION);
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version());
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "

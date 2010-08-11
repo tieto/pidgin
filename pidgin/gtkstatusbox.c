@@ -417,16 +417,15 @@ setup_icon_box(PidginStatusBox *status_box)
 		PurpleStoredImage *img = NULL;
 
 		if (filename != NULL)
-		{
-			gchar *contents;
-			gsize size;
-			if (g_file_get_contents(filename, &contents, &size, NULL))
-			{
-				img = purple_imgstore_add(contents, size, filename);
-			}
-		}
+			img = purple_imgstore_new_from_file(filename);
 
 		pidgin_status_box_set_buddy_icon(status_box, img);
+		if (img)
+			/*
+			 * purple_imgstore_new gives us a reference and
+			 * pidgin_status_box_set_buddy_icon also takes one.
+			 */
+			purple_imgstore_unref(img);
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -1496,6 +1495,13 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				if (filename)
 					data = pidgin_convert_buddy_icon(plug, filename, &len);
 				img = purple_buddy_icons_set_account_icon(box->account, data, len);
+				if (img)
+					/*
+					 * set_account_icon doesn't give us a reference, but we
+					 * unref one below (for the other code path)
+					 */
+					purple_imgstore_ref(img);
+
 				purple_account_set_buddy_icon_path(box->account, filename);
 
 				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
@@ -1515,7 +1521,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 					size_t len = 0;
 					if (filename)
 						data = pidgin_convert_buddy_icon(plug, filename, &len);
-					img = purple_buddy_icons_set_account_icon(account, data, len);
+					purple_buddy_icons_set_account_icon(account, data, len);
 					purple_account_set_buddy_icon_path(account, filename);
 				}
 			}
@@ -1523,17 +1529,12 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 
 		/* Even if no accounts were processed, load the icon that was set. */
 		if (filename != NULL)
-		{
-			gchar *contents;
-			gsize size;
-			if (g_file_get_contents(filename, &contents, &size, NULL))
-			{
-				img = purple_imgstore_add(contents, size, filename);
-			}
-		}
+			img = purple_imgstore_new_from_file(filename);
 	}
 
 	pidgin_status_box_set_buddy_icon(box, img);
+	if (img)
+		purple_imgstore_unref(img);
 }
 
 static void

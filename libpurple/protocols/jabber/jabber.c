@@ -77,6 +77,10 @@ static void jabber_stream_init(JabberStream *js)
 						  "xmlns:stream='http://etherx.jabber.org/streams' "
 						  "version='1.0'>",
 						  js->user->domain);
+	if (js->reinit)
+		/* Close down the current stream to keep the XML parser happy */
+		jabber_parser_close_stream(js);
+
 	/* setup the parser fresh for each stream */
 	jabber_parser_setup(js);
 	jabber_send_raw(js, open_stream, -1);
@@ -372,6 +376,11 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			char *data_start, *tag_end = strchr(tag_start, '>');
 			text = g_strdup(data);
 
+			/* Better to print out some wacky debugging than crash
+			 * due to a plugin sending bad xml */
+			if (tag_end == NULL)
+				tag_end = tag_start;
+
 			data_start = text + (tag_end - data) + 1;
 
 			last_part = strchr(data_start, '<');
@@ -636,6 +645,9 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 static void tls_init(JabberStream *js)
 {
+	/* Close down the current stream to keep the XML parser happy */
+	jabber_parser_close_stream(js);
+
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
@@ -1316,6 +1328,11 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	jabber_unregister_account_cb(js);
 }
 
+/* TODO: As Will pointed out in IRC, after being notified by the core to
+ * shutdown, we should async. wait for the server to send us the stream
+ * termination before destorying everything. That seems like it would require
+ * changing the semantics of prpl->close(), so it's a good idea for 3.0.0.
+ */
 void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;

@@ -1266,7 +1266,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 	aim_ssi_reqdata(od);
 	if (od->getblisttimer > 0)
 		purple_timeout_remove(od->getblisttimer);
-	od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+	od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 
 	aim_locate_reqrights(od);
 	aim_buddylist_reqrights(od, conn);
@@ -3560,8 +3560,10 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 		gchar *to = g_strdup_printf("%s%s%s", purple_account_get_username(purple_connection_get_account(gc)),
 									emailinfo->domain ? "@" : "",
 									emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = {emailinfo->url }; 
 		if (emailinfo->unread && havenewmail)
-			purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+			purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, tos, urls, NULL, NULL);
 		g_free(to);
 	}
 
@@ -5031,7 +5033,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
-		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
 
