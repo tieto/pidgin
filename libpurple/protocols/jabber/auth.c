@@ -697,7 +697,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
 			const char *challenge;
 			guchar digest[16];
-			char h[17], *p;
+			char h[33], *p;
 			int i;
 
 			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
@@ -936,6 +936,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 					_("Invalid challenge from server"));
 			}
 			g_free(js->expected_rspauth);
+			js->expected_rspauth = NULL;
 		} else {
 			/* assemble a response, and send it */
 			/* see RFC 2831 */

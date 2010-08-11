@@ -3877,7 +3877,7 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "Kunne ikke finne en ActiveTCL installasjon. Om du ønsker å bruke TCL tillegg, installer ActiveTCL fra http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:101
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:120
@@ -10325,7 +10325,7 @@ msgstr "Ønsker du å legge denne kontakten?"
 #: ../libpurple/protocols/qq/sys_msg.c:166
 #, c-format
 msgid "You have been added by %s"
-msgstr "Du har blitt lagt til av %s (%s)"
+msgstr "Du har blitt lagt til av %s"
 
 #: ../libpurple/protocols/qq/sys_msg.c:169
 #: ../libpurple/protocols/qq/sys_msg.c:263

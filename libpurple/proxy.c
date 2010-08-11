@@ -265,6 +265,7 @@ purple_gnome_proxy_get_info(void)
 				"'manual' but no proxy server is specified.  Using "
 				"Pidgin's proxy settings instead.\n");
 		g_free(info.host);
+		info.host = NULL;
 		return purple_global_proxy_get_info();
 	}
 
@@ -272,6 +273,7 @@ purple_gnome_proxy_get_info(void)
 			&info.username, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		return purple_global_proxy_get_info();
 	}
 	g_strchomp(info.username);
@@ -280,7 +282,9 @@ purple_gnome_proxy_get_info(void)
 			&info.password, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		g_free(info.username);
+		info.username = NULL;
 		return purple_global_proxy_get_info();
 	}
 	g_strchomp(info.password);
@@ -289,8 +293,11 @@ purple_gnome_proxy_get_info(void)
 			&tmp, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		g_free(info.username);
+		info.username = NULL;
 		g_free(info.password);
+		info.password = NULL;
 		return purple_global_proxy_get_info();
 	}
 	info.port = atoi(tmp);
@@ -837,32 +844,9 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
-{
+http_start_connect_tunneling(PurpleProxyConnectData *connect_data) {
 	GString *request;
-	PurpleProxyConnectData *connect_data;
-	int error = ETIMEDOUT;
 	int ret;
-
-	connect_data = data;
-
-	purple_debug_info("proxy", "Connected to %s:%d.\n",
-		connect_data->host, connect_data->port);
-
-	if (connect_data->inpa > 0)
-	{
-		purple_input_remove(connect_data->inpa);
-		connect_data->inpa = 0;
-	}
-
-	ret = purple_input_get_error(connect_data->fd, &error);
-	if ((ret != 0) || (error != 0))
-	{
-		if (ret != 0)
-			error = errno;
-		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
-		return;
-	}
 
 	purple_debug_info("proxy", "Using CONNECT tunneling for %s:%d\n",
 		connect_data->host, connect_data->port);
@@ -912,7 +896,45 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 	connect_data->inpa = purple_input_add(connect_data->fd,
 			PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
-	proxy_do_write(connect_data, connect_data->fd, cond);
+	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+}
+
+static void
+http_canwrite(gpointer data, gint source, PurpleInputCondition cond) {
+	PurpleProxyConnectData *connect_data = data;
+	int ret, error = ETIMEDOUT;
+
+	purple_debug_info("proxy", "Connected to %s:%d.\n",
+		connect_data->host, connect_data->port);
+
+	if (connect_data->inpa > 0)	{
+		purple_input_remove(connect_data->inpa);
+		connect_data->inpa = 0;
+	}
+
+	ret = purple_input_get_error(connect_data->fd, &error);
+	if (ret != 0 || error != 0) {
+		if (ret != 0)
+			error = errno;
+		purple_proxy_connect_data_disconnect(connect_data, g_strerror(error));
+		return;
+	}
+
+	if (connect_data->port == 80) {
+		/*
+		 * If we're trying to connect to something running on
+		 * port 80 then we assume the traffic using this
+		 * connection is going to be HTTP traffic.  If it's
+		 * not then this will fail (uglily).  But it's good
+		 * to avoid using the CONNECT method because it's
+		 * not always allowed.
+		 */
+		purple_debug_info("proxy", "HTTP proxy connection established\n");
+		purple_proxy_connect_data_connected(connect_data);
+	} else {
+		http_start_connect_tunneling(connect_data);
+	}
+
 }
 
 static void
@@ -940,39 +962,15 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, addr, addrlen) != 0)
-	{
-		if ((errno == EINPROGRESS) || (errno == EINTR))
-		{
+	if (connect(connect_data->fd, addr, addrlen) != 0) {
+		if (errno == EINPROGRESS || errno == EINTR) {
 			purple_debug_info("proxy", "Connection in progress\n");
 
-			if (connect_data->port != 80)
-			{
-				/* we need to do CONNECT first */
-				connect_data->inpa = purple_input_add(connect_data->fd,
-						PURPLE_INPUT_WRITE, http_canwrite, connect_data);
-			}
-			else
-			{
-				/*
-				 * If we're trying to connect to something running on
-				 * port 80 then we assume the traffic using this
-				 * connection is going to be HTTP traffic.  If it's
-				 * not then this will fail (uglily).  But it's good
-				 * to avoid using the CONNECT method because it's
-				 * not always allowed.
-				 */
-				purple_debug_info("proxy", "HTTP proxy connection established\n");
-				purple_proxy_connect_data_connected(connect_data);
-			}
-		}
-		else
-		{
+			connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, http_canwrite, connect_data);
+		} else
 			purple_proxy_connect_data_disconnect(connect_data, g_strerror(errno));
-		}
-	}
-	else
-	{
+	} else {
 		purple_debug_info("proxy", "Connected immediately.\n");
 
 		http_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);

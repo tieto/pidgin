@@ -383,6 +383,9 @@ perl_signal_cb(va_list args, void *data)
 				case PURPLE_TYPE_BOXED:
 					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
 					break;
+				case PURPLE_TYPE_SUBTYPE:
+					*((void **)copy_args[i]) = purple_perl_ref_object(sv_args[i]);
+					break;
 
 				default:
 					break;

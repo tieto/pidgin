@@ -461,6 +461,7 @@ gtk_imhtml_tip (gpointer data)
 			tmp);
 		g_free(tmp);
 
+		g_object_unref(layout);
 		return FALSE;
 	}
 
@@ -498,6 +499,7 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_show (imhtml->tip_window);
 
 	pango_font_metrics_unref(font_metrics);
+	g_object_unref(font);
 	g_object_unref(layout);
 
 	return FALSE;
@@ -713,7 +715,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &end,
 	                                   buf_x + event->area.width, buf_y + event->area.height);
 
-
+	gtk_text_iter_order(&start, &end);
 
 	cur = start;
 
@@ -948,19 +950,14 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		char *selection;
 #ifndef _WIN32
 		gsize len;
-		GString *str = g_string_new(NULL);
 		if (primary) {
 			text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 		} else
 			text = html_clipboard;
 
 		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
-		str = g_string_append_unichar(str, 0xfeff);
-		str = g_string_append(str, text);
-		str = g_string_append_unichar(str, 0x0000);
-		selection = g_convert(str->str, str->len, "UTF-16", "UTF-8", NULL, &len, NULL);
+		selection = g_convert(text, -1, "UTF-16", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
-		g_string_free(str, TRUE);
 #else
 		selection = clipboard_html_to_win32(html_clipboard);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("HTML Format", FALSE), 8, (const guchar *)selection, strlen(selection));

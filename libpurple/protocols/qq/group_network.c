@@ -39,7 +39,7 @@
 #include "group_opt.h"
 #include "group_search.h"
 #include "header_info.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 enum {
@@ -81,12 +81,12 @@ const gchar *qq_group_cmd_get_desc(qq_group_cmd cmd)
 }
 
 /* default process of reply error */
-static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *cursor, gint len, PurpleConnection *gc)
+static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *data, gint len, PurpleConnection *gc)
 {
 	gchar *msg, *msg_utf8;
-	g_return_if_fail(cursor != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
-	msg = g_strndup((gchar *) cursor, len);	/* it will append 0x00 */
+	msg = g_strndup((gchar *) data, len);	/* it will append 0x00 */
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 	g_free(msg);
 	msg = g_strdup_printf(_("Code [0x%02X]: %s"), reply, msg_utf8);
@@ -96,14 +96,13 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *curs
 }
 
 /* default process, dump only */
-static void _qq_process_group_cmd_reply_default(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
+static void _qq_process_group_cmd_reply_default(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gchar *hex_dump;
 	g_return_if_fail(data != NULL && len > 0);
 
-	hex_dump = hex_dump_to_str(data, len);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump);
-	g_free(hex_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		data, len, 
+		"Dump unprocessed group cmd reply:");
 }
 
 /* The lower layer command of send group cmd */
@@ -116,7 +115,7 @@ void qq_send_group_cmd(PurpleConnection *gc, qq_group *group, guint8 *raw_data, 
 
 	qd = (qq_data *) gc->proto_data;
 
-	qq_send_cmd(gc, QQ_CMD_GROUP_CMD, TRUE, 0, TRUE, raw_data, data_len);
+	qq_send_cmd(qd, QQ_CMD_GROUP_CMD, raw_data, data_len);
 
 	p = g_new0(group_packet, 1);
 
@@ -136,7 +135,7 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 	qq_data *qd;
 	gint len, bytes;
 	guint32 internal_group_id;
-	guint8 *data, *cursor, sub_cmd, reply;
+	guint8 *data, sub_cmd, reply;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -149,102 +148,101 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 		return;
 	}
 
-	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		if (len <= 2) {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Group cmd reply is too short, only %d bytes\n", len);
-			return;
-		}
+	if ( !qq_decrypt(buf, buf_len, qd->session_key, data, &len) ) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt group cmd reply\n");
+		return;
+	}
 
-		bytes = 0;
-		cursor = data;
-		bytes += read_packet_b(data, &cursor, len, &sub_cmd);
-		bytes += read_packet_b(data, &cursor, len, &reply);
+	if (len <= 2) {
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Group cmd reply is too short, only %d bytes\n", len);
+		return;
+	}
 
-		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
+	bytes = 0;
+	bytes += qq_get8(&sub_cmd, data + bytes);
+	bytes += qq_get8(&reply, data + bytes);
 
-		if (reply != QQ_GROUP_CMD_REPLY_OK) {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				   "Group cmd reply says cmd %s fails\n", qq_group_cmd_get_desc(sub_cmd));
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 
-			if (group != NULL)
-				qq_set_pending_id(&qd->joining_groups, group->external_group_id, FALSE);
+	if (reply != QQ_GROUP_CMD_REPLY_OK) {
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
+			   "Group cmd reply says cmd %s fails\n", qq_group_cmd_get_desc(sub_cmd));
 
-			switch (reply) {	/* this should be all errors */
-			case QQ_GROUP_CMD_REPLY_NOT_MEMBER:
-				if (group != NULL) {
-					purple_debug(PURPLE_DEBUG_WARNING,
-						   "QQ",
-						   "You are not a member of group \"%s\"\n", group->group_name_utf8);
-					group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
-					qq_group_refresh(gc, group);
-				}
-				break;
-			case QQ_GROUP_CMD_REPLY_SEARCH_ERROR:
-				if (qd->roomlist != NULL) {
-					if (purple_roomlist_get_in_progress(qd->roomlist))
-						purple_roomlist_set_in_progress(qd->roomlist, FALSE);
-				}
-				_qq_process_group_cmd_reply_error_default(reply, cursor, len - bytes, gc);
-				break;
-			default:
-				_qq_process_group_cmd_reply_error_default(reply, cursor, len - bytes, gc);
-			}
-			return;
-		}
+		if (group != NULL)
+			qq_set_pending_id(&qd->joining_groups, group->external_group_id, FALSE);
 
-		/* seems ok so far, so we process the reply according to sub_cmd */
-		switch (sub_cmd) {
-		case QQ_GROUP_CMD_GET_GROUP_INFO:
-			qq_process_group_cmd_get_group_info(data, &cursor, len, gc);
+		switch (reply) {	/* this should be all errors */
+		case QQ_GROUP_CMD_REPLY_NOT_MEMBER:
 			if (group != NULL) {
-				qq_send_cmd_group_get_members_info(gc, group);
-				qq_send_cmd_group_get_online_members(gc, group);
+				purple_debug(PURPLE_DEBUG_WARNING,
+					   "QQ",
+					   "You are not a member of group \"%s\"\n", group->group_name_utf8);
+				group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
+				qq_group_refresh(gc, group);
 			}
 			break;
-		case QQ_GROUP_CMD_CREATE_GROUP:
-			qq_group_process_create_group_reply(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_MODIFY_GROUP_INFO:
-			qq_group_process_modify_info_reply(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_MEMBER_OPT:
-			qq_group_process_modify_members_reply(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_ACTIVATE_GROUP:
-			qq_group_process_activate_group_reply(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_SEARCH_GROUP:
-			qq_process_group_cmd_search_group(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_JOIN_GROUP:
-			qq_process_group_cmd_join_group(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_JOIN_GROUP_AUTH:
-			qq_process_group_cmd_join_group_auth(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_EXIT_GROUP:
-			qq_process_group_cmd_exit_group(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_SEND_MSG:
-			qq_process_group_cmd_im(data, &cursor, len, gc);
-			break;
-		case QQ_GROUP_CMD_GET_ONLINE_MEMBER:
-			qq_process_group_cmd_get_online_members(data, &cursor, len, gc);
-			if (group != NULL)
-				qq_group_conv_refresh_online_member(gc, group);
-			break;
-		case QQ_GROUP_CMD_GET_MEMBER_INFO:
-			qq_process_group_cmd_get_members_info(data, &cursor, len, gc);
-			if (group != NULL)
-				qq_group_conv_refresh_online_member(gc, group);
+		case QQ_GROUP_CMD_REPLY_SEARCH_ERROR:
+			if (qd->roomlist != NULL) {
+				if (purple_roomlist_get_in_progress(qd->roomlist))
+					purple_roomlist_set_in_progress(qd->roomlist, FALSE);
+			}
+			_qq_process_group_cmd_reply_error_default(reply, data + bytes, len - bytes, gc);
 			break;
 		default:
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				   "Group cmd %s is processed by default\n", qq_group_cmd_get_desc(sub_cmd));
-			_qq_process_group_cmd_reply_default(data, &cursor, len, gc);
+			_qq_process_group_cmd_reply_error_default(reply, data + bytes, len - bytes, gc);
 		}
+		return;
+	}
 
-	} else {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt group cmd reply\n");
+	/* seems ok so far, so we process the reply according to sub_cmd */
+	switch (sub_cmd) {
+	case QQ_GROUP_CMD_GET_GROUP_INFO:
+		qq_process_group_cmd_get_group_info(data + bytes, len - bytes, gc);
+		if (group != NULL) {
+			qq_send_cmd_group_get_members_info(gc, group);
+			qq_send_cmd_group_get_online_members(gc, group);
+		}
+		break;
+	case QQ_GROUP_CMD_CREATE_GROUP:
+		qq_group_process_create_group_reply(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_MODIFY_GROUP_INFO:
+		qq_group_process_modify_info_reply(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_MEMBER_OPT:
+		qq_group_process_modify_members_reply(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_ACTIVATE_GROUP:
+		qq_group_process_activate_group_reply(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_SEARCH_GROUP:
+		qq_process_group_cmd_search_group(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_JOIN_GROUP:
+		qq_process_group_cmd_join_group(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_JOIN_GROUP_AUTH:
+		qq_process_group_cmd_join_group_auth(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_EXIT_GROUP:
+		qq_process_group_cmd_exit_group(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_SEND_MSG:
+		qq_process_group_cmd_im(data + bytes, len - bytes, gc);
+		break;
+	case QQ_GROUP_CMD_GET_ONLINE_MEMBER:
+		qq_process_group_cmd_get_online_members(data + bytes, len - bytes, gc);
+		if (group != NULL)
+			qq_group_conv_refresh_online_member(gc, group);
+		break;
+	case QQ_GROUP_CMD_GET_MEMBER_INFO:
+		qq_process_group_cmd_get_members_info(data + bytes, len - bytes, gc);
+		if (group != NULL)
+			qq_group_conv_refresh_online_member(gc, group);
+		break;
+	default:
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
+			   "Group cmd %s is processed by default\n", qq_group_cmd_get_desc(sub_cmd));
+		_qq_process_group_cmd_reply_default(data + bytes, len, gc);
 	}
 }

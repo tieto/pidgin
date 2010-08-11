@@ -913,7 +913,7 @@ msgstr "닫기"
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
 msgstr[0] "%s (%s) 에는 %d 개의 새 메일이 있습니다."
-msgstr[1] "%s (%s) 에는 %d 개의 새 메일이 있습니다."
+#msgstr[1] "%s (%s) 에는 %d 개의 새 메일이 있습니다."
 
 #: ../console/gntnotify.c:206
 #: ../gtk/gtknotify.c:322
@@ -1875,7 +1875,7 @@ msgstr "/도구/대화실 목록"
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] "%2$s 님으로부터 %1$d개의 읽지 않은 메일이 있습니다.\n"
-msgstr[1] "%2$s さんから %1$d個の未?のメッセ?ジがあります\n"
+#msgstr[1] "%2$s さんから %1$d個の未?のメッセ?ジがあります\n"
 
 #: ../gtk/gtkblist.c:3654
 msgid "Manually"
@@ -2357,7 +2357,7 @@ msgstr "아무도 없습니다."
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "대화실에 %d 명이 있습니다."
-msgstr[1] "대화실에 %d 명이 있습니다."
+#msgstr[1] "대화실에 %d 명이 있습니다."
 
 #: ../gtk/gtkconv.c:5855
 #: ../gtk/gtkstatusbox.c:567
@@ -2902,7 +2902,7 @@ msgstr "이 대화의 별칭을 입력해 주십시오."
 msgid "You are about to remove the contact containing %s and %d other buddy from your buddy list.  Do you want to continue?"
 msgid_plural "You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"
 msgstr[0] "친구 목록에서 %s 님을 포함한 %d 명의 친구의 삭제하려고 합니다. 계속 하시겠습니까?"
-msgstr[1] "친구 목록에서 %s 님을 포함한 %d 명의 친구의 삭제하려고 합니다. 계속 하시겠습니까?"
+#msgstr[1] "친구 목록에서 %s 님을 포함한 %d 명의 친구의 삭제하려고 합니다. 계속 하시겠습니까?"
 
 #: ../gtk/gtkdialogs.c:1016
 msgid "Remove Contact"
@@ -3598,14 +3598,14 @@ msgstr "보낸 사람"
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] "%s 에는 %d 개의 새로운 메시지가 있습니다."
-msgstr[1] "%s 에는 %d 개의 새로운 메시지가 있습니다."
+#msgstr[1] "%s 에는 %d 개의 새로운 메시지가 있습니다."
 
 #: ../gtk/gtknotify.c:511
 #, c-format
 msgid "<b>You have %d new e-mail.</b>"
 msgid_plural "<b>You have %d new e-mails.</b>"
 msgstr[0] "<b>%d 개의 새로운 메시지가 있습니다.</b>"
-msgstr[1] "<b>%d 개의 새로운 메시지가 있습니다.</b>"
+#msgstr[1] "<b>%d 개의 새로운 메시지가 있습니다.</b>"
 
 #: ../gtk/gtknotify.c:699
 #: ../libgaim/protocols/sametime/sametime.c:5548
@@ -5919,7 +5919,7 @@ msgstr "친구 목록"
 msgid "%d buddy from group %s was not removed because it belongs to an account which is disabled or offline.  This buddy and the group were not removed.\n"
 msgid_plural "%d buddies from group %s were not removed because they belong to accounts which are currently disabled or offline.  These buddies and the group were not removed.\n"
 msgstr[0] "%d 개의 계정이 사용 안 함 또는 오프라인 상태이기 때문에 그 계정을 그룹 %s (으)로부터 삭제하지 못했습니다. 그 친구와 그룹은 삭제할 수 없습니다.\n"
-msgstr[1] "%d 개의 계정이 사용 안 함 또는 오프라인 상태이기 때문에 그 계정을 그룹 %s (으)로부터 삭제하지 못했습니다. 그 친구와 그룹은 삭제할 수 없습니다.\n"
+#msgstr[1] "%d 개의 계정이 사용 안 함 또는 오프라인 상태이기 때문에 그 계정을 그룹 %s (으)로부터 삭제하지 못했습니다. 그 친구와 그룹은 삭제할 수 없습니다.\n"
 
 #: ../libgaim/blist.c:1929
 msgid "Group not removed"
@@ -9879,10 +9879,10 @@ msgstr[0] ""
 "MSN 서비스가 유지보수를 위해 %d 분간 정지하고 있습니다. 자동으로 접속이 끊길 예정이므로, 지금 수행되고 있는 대화를 종료해 주십시오.\n"
 "\n"
 "유지보수가 완료되면 다시 접속이 가능합니다."
-msgstr[1] ""
-"MSN 서비스가 유지보수를 위해 %d 분간 정지하고 있습니다. 자동으로 접속이 끊길 예정이므로, 지금 수행되고 있는 대화를 종료해 주십시오.\n"
-"\n"
-"유지보수가 완료되면 다시 접속이 가능합니다."
+#msgstr[1] ""
+#"MSN 서비스가 유지보수를 위해 %d 분간 정지하고 있습니다. 자동으로 접속이 끊길 예정이므로, 지금 수행되고 있는 대화를 종료해 주십시오.\n"
+#"\n"
+#"유지보수가 완료되면 다시 접속이 가능합니다."
 
 #: ../libgaim/protocols/msn/servconn.c:135
 msgid "Writing error"
@@ -10931,42 +10931,42 @@ msgstr "거절(_D)"
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "%2$s 님으로부터의 %1$hu 개의 메시지는 타당하지 않아 받지 못했습니다."
-msgstr[1] "%2$s 님으로부터의 %1$hu 개의 메시지는 타당하지 않아 받지 못했습니다."
+#msgstr[1] "%2$s 님으로부터의 %1$hu 개의 메시지는 타당하지 않아 받지 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2560
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "%2$s 님으로부터의 %1$hu개의 메시지는 너무 커서 받지 못했습니다."
-msgstr[1] "%2$s 님으로부터의 %1$hu개의 메시지는 너무 커서 받지 못했습니다."
+#msgstr[1] "%2$s 님으로부터의 %1$hu개의 메시지는 너무 커서 받지 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2569
 #, c-format
 msgid "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] "속도 제한을 상회하여, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
-msgstr[1] "속도 제한을 상회하여, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
+#msgstr[1] "속도 제한을 상회하여, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2578
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "유해한 상대방이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
-msgstr[1] "유해한 상대방이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
+#msgstr[1] "유해한 상대방이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2587
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "유해한 자신이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
-msgstr[1] "유해한 자신이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
+#msgstr[1] "유해한 자신이어서, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2596
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
-msgstr[1] "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
+#msgstr[1] "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:2718
 #, c-format
@@ -11188,7 +11188,7 @@ msgstr "로그인 수속이 완료되기 전에 사용자 프로파일을 설정
 msgid "The maximum profile length of %d byte has been exceeded.  It has been truncated for you."
 msgid_plural "The maximum profile length of %d bytes has been exceeded.  It has been truncated for you."
 msgstr[0] "프로파일 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
-msgstr[1] "프로파일 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
+#msgstr[1] "프로파일 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:4461
 msgid "Profile too long."
@@ -11199,7 +11199,7 @@ msgstr "프로파일이 너무 깁니다."
 msgid "The maximum away message length of %d byte has been exceeded.  It has been truncated for you."
 msgid_plural "The maximum away message length of %d bytes has been exceeded.  It has been truncated for you."
 msgstr[0] "자리 비움 메시지 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
-msgstr[1] "자리 비움 메시지 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
+#msgstr[1] "자리 비움 메시지 길이가 최대값 %d 바이트를 초과하여 일부가 잘렸습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:4510
 msgid "Away message too long."
@@ -14197,7 +14197,7 @@ msgstr "다른 이름으로 저장..."
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
-msgstr[1] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
+#msgstr[1] "%s 님으로부터 %s 님에게 %d 개의 파일 요청: %s (%.2f %s)%s%s"
 
 #: ../libgaim/protocols/toc/toc.c:2236
 #, c-format
@@ -14959,42 +14959,42 @@ msgstr "알 수 없음."
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d 초"
-msgstr[1] "%d 초"
+#msgstr[1] "%d 초"
 
 #: ../libgaim/util.c:2939
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d 일"
-msgstr[1] "%d 일"
+#msgstr[1] "%d 일"
 
 #: ../libgaim/util.c:2947
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
 msgstr[0] "%s %d 시간"
-msgstr[1] "%s %d 시간"
+#msgstr[1] "%s %d 시간"
 
 #: ../libgaim/util.c:2953
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d 시간"
-msgstr[1] "%d 시간"
+#msgstr[1] "%d 시간"
 
 #: ../libgaim/util.c:2961
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] "%s %d 분"
-msgstr[1] "%s %d 분"
+#msgstr[1] "%s %d 분"
 
 #: ../libgaim/util.c:2967
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d 분"
-msgstr[1] "%d 분"
+#msgstr[1] "%d 분"
 
 #: ../libgaim/util.c:3166
 #: ../libgaim/util.c:3464

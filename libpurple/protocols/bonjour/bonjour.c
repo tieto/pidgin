@@ -91,7 +91,7 @@ bonjour_login(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: "
-			  "http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging"
+			  "http://d.pidgin.im/BonjourWindows"
 			  " for more information."));
 		return;
 	}
@@ -413,6 +413,15 @@ bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *o
 }
 
 static gboolean
+bonjour_can_receive_file(PurpleConnection *connection, const char *who)
+{
+	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+
+	return (buddy != NULL && buddy->proto_data != NULL);
+
+}
+
+static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	/* These shouldn't happen here because they are allocated in _init() */
@@ -483,7 +492,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* roomlist_get_list */
 	NULL,                                                    /* roomlist_cancel */
 	NULL,                                                    /* roomlist_expand_category */
-	NULL,                                                    /* can_receive_file */
+	bonjour_can_receive_file,                                /* can_receive_file */
 	bonjour_send_file,                                       /* send_file */
 	bonjour_new_xfer,                                        /* new_xfer */
 	NULL,                                                    /* offline_message */

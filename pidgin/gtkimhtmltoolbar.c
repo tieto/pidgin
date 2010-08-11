@@ -1004,7 +1004,10 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	}
 
 	destroy_toolbar_font(NULL, NULL, toolbar);
-	destroy_smiley_dialog(toolbar);
+	if (toolbar->smiley_dialog != NULL) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(toolbar->smiley_dialog), close_smiley_dialog, toolbar);
+		destroy_smiley_dialog(toolbar);
+	}
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
 	close_link_dialog(toolbar);

@@ -114,18 +114,15 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 	char *ret;
 	const char *to_codeset;
 
-	if (yd->jp && utf8 && *utf8)
-		*utf8 = FALSE;
+	if (yd->jp)
+		return g_strdup(str);
 
 	if (utf8 && *utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
 		return g_strdup(str);
 
-	if (yd->jp)
-		to_codeset = "SHIFT_JIS";
-	else
-		to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
-
+	to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 	ret = g_convert_with_fallback(str, -1, to_codeset, "UTF-8", "?", NULL, NULL, NULL);
+
 	if (ret)
 		return ret;
 	else

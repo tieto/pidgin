@@ -25,119 +25,147 @@
 #include <string.h>
 
 #include "packet_parse.h"
+#include "debug.h"
+
+
+/*------------------------------------------------PUT------------------------------------------------*/
+
+/* note:
+ * 1, in these functions, 'b' stands for byte, 'w' stands for word, 'dw' stands for double word.
+ * 2, we use '*cursor' and 'buf' as two addresses to calculate the length.
+ * 3, change '0' to '1', if want to get more info about the packet parsing. */
+
+#if 0
+#define PARSER_DEBUG
+#endif
 
 /* read one byte from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
-gint read_packet_b(guint8 *buf, guint8 **cursor, gint buflen, guint8 *b)
+gint qq_get8(guint8 *b, guint8 *buf)
 {
-	if (*cursor <= buf + buflen - sizeof(*b)) {
-		*b = **(guint8 **) cursor;
-		*cursor += sizeof(*b);
-		return sizeof(*b);
-	} else {
-		return -1;
-	}
+	guint8 b_dest;
+	memcpy(&b_dest, buf, sizeof(b_dest));
+	*b = b_dest;
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get8] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get8] b_dest 0x%2x, *b 0x%02x\n", b_dest, *b);
+#endif
+	return sizeof(b_dest);
 }
+
 
 /* read two bytes as "guint16" from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
-gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w)
+gint qq_get16(guint16 *w, guint8 *buf)
 {
-	if (*cursor <= buf + buflen - sizeof(*w)) {
-		*w = g_ntohs(**(guint16 **) cursor);
-		*cursor += sizeof(*w);
-		return sizeof(*w);
-	} else {
-		return -1;
-	}
+	guint16 w_dest;
+	memcpy(&w_dest, buf, sizeof(w_dest));
+	*w = g_ntohs(w_dest);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get16] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get16] w_dest 0x%04x, *w 0x%04x\n", w_dest, *w);
+#endif
+	return sizeof(w_dest);
 }
+
 
 /* read four bytes as "guint32" from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
-gint read_packet_dw(guint8 *buf, guint8 **cursor, gint buflen, guint32 *dw)
+gint qq_get32(guint32 *dw, guint8 *buf)
 {
-	if (*cursor <= buf + buflen - sizeof(*dw)) {
-		*dw = g_ntohl(**(guint32 **) cursor);
-		*cursor += sizeof(*dw);
-		return sizeof(*dw);
-	} else {
-		return -1;
-	}
+	guint32 dw_dest;
+	memcpy(&dw_dest, buf, sizeof(dw_dest));
+	*dw = g_ntohl(dw_dest);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get32] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][get32] dw_dest 0x%08x, *dw 0x%08x\n", dw_dest, *dw);
+#endif
+	return sizeof(dw_dest);
 }
+
+
+/* read datalen bytes from buf, 
+ * return the number of bytes read if succeeds, otherwise return -1 */
+gint qq_getdata(guint8 *data, gint datalen, guint8 *buf)
+{
+    memcpy(data, buf, datalen);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getdata] buf %p\n", (void *)buf);
+#endif
+    return datalen;
+}
+
 
 /* read four bytes as "time_t" from buf,
  * return the number of bytes read if succeeds, otherwise return -1
  * This function is a wrapper around read_packet_dw() to avoid casting. */
-gint read_packet_time(guint8 *buf, guint8 **cursor, gint buflen, time_t *t)
+gint qq_getime(time_t *t, guint8 *buf)
 {
-	guint32 time;
-	gint ret = read_packet_dw(buf, cursor, buflen, &time);
-	if (ret != -1 ) {
-		*t = time;
-	}
-	return ret;
+	guint32 dw_dest;
+	memcpy(&dw_dest, buf, sizeof(dw_dest));
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] dw_dest before 0x%08x\n", dw_dest);
+#endif
+	dw_dest = g_ntohl(dw_dest);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][getime] dw_dest after 0x%08x\n", dw_dest);
+#endif
+	memcpy(t, &dw_dest, sizeof(dw_dest));
+	return sizeof(dw_dest);
 }
 
-/* read datalen bytes from buf, 
- * return the number of bytes read if succeeds, otherwise return -1 */
-gint read_packet_data(guint8 *buf, guint8 **cursor, gint buflen, guint8 *data, gint datalen) {
-	if (*cursor <= buf + buflen - datalen) {
-		g_memmove(data, *cursor, datalen);
-		*cursor += datalen;
-		return datalen;
-	} else {
-		return -1;
-	}
-}
-
+/*------------------------------------------------PUT------------------------------------------------*/
 /* pack one byte into buf
  * return the number of bytes packed, otherwise return -1 */
-gint create_packet_b(guint8 *buf, guint8 **cursor, guint8 b)
+gint qq_put8(guint8 *buf, guint8 b)
 {
-	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint8)) {
-		**(guint8 **) cursor = b;
-		*cursor += sizeof(guint8);
-		return sizeof(guint8);
-	} else {
-		return -1;
-	}
+    memcpy(buf, &b, sizeof(b));
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put8] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put8] b 0x%02x\n", b);
+#endif
+    return sizeof(b);
 }
+
 
 /* pack two bytes as "guint16" into buf
  * return the number of bytes packed, otherwise return -1 */
-gint create_packet_w(guint8 *buf, guint8 **cursor, guint16 w)
+gint qq_put16(guint8 *buf, guint16 w)
 {
-	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint16)) {
-		**(guint16 **) cursor = g_htons(w);
-		*cursor += sizeof(guint16);
-		return sizeof(guint16);
-	} else {
-		return -1;
-	}
+    guint16 w_porter;
+    w_porter = g_htons(w);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put16] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put16] w 0x%04x, w_porter 0x%04x\n", w, w_porter);
+#endif
+    memcpy(buf, &w_porter, sizeof(w_porter));
+    return sizeof(w_porter);
 }
+
 
 /* pack four bytes as "guint32" into buf
  * return the number of bytes packed, otherwise return -1 */
-gint create_packet_dw(guint8 *buf, guint8 **cursor, guint32 dw)
+gint qq_put32(guint8 *buf, guint32 dw)
 {
-	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint32)) {
-		**(guint32 **) cursor = g_htonl(dw);
-		*cursor += sizeof(guint32);
-		return sizeof(guint32);
-	} else {
-		return -1;
-	}
+    guint32 dw_porter;
+    dw_porter = g_htonl(dw);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put32] buf %p\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
+#endif
+    memcpy(buf, &dw_porter, sizeof(dw_porter));
+    return sizeof(dw_porter);
 }
+
 
 /* pack datalen bytes into buf
  * return the number of bytes packed, otherwise return -1 */
-gint create_packet_data(guint8 *buf, guint8 **cursor, guint8 *data, gint datalen)
+gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen)
 {
-	if (*cursor <= buf + MAX_PACKET_SIZE - datalen) {
-		g_memmove(*cursor, data, datalen);
-		*cursor += datalen;
-		return datalen;
-	} else {
-		return -1;
-	}
+    memcpy(buf, data, datalen);
+#ifdef PARSER_DEBUG
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "[DBG][putdata] buf %p\n", (void *)buf);
+#endif
+    return datalen;
 }

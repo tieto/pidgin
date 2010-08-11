@@ -2489,10 +2489,11 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Gemeenschappelijke naam: %s\n"
-"\n"
-"Vingerafdruk (SHA1): %s\n"
-"\n"
+#msgstr ""
+#"Gemeenschappelijke naam: %s\n"
+#"\n"
+#"Vingerafdruk (SHA1): %s\n"
+#"\n"
 
 #. TODO: Find what the handle ought to be
 #: ../libpurple/certificate.c:1905
@@ -6992,7 +6993,7 @@ msgstr "Aanstoten"
 #: ../libpurple/protocols/msn/msn.c:129 ../libpurple/protocols/msnp9/msn.c:130
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s heeft je aangestoten [%s]"
+msgstr "%s heeft je aangestoten"
 
 #: ../libpurple/protocols/msn/msn.c:129 ../libpurple/protocols/msnp9/msn.c:130
 #, c-format
@@ -8187,7 +8188,8 @@ msgstr "Fakkel"
 #: ../libpurple/protocols/myspace/zap.c:59
 #, c-format
 msgid "%s has torched you!"
-msgstr "De gebruiker heeft u befakkeld"
+msgstr ""
+#msgstr "De gebruiker heeft u befakkeld"
 
 #: ../libpurple/protocols/myspace/zap.c:59
 #, c-format
@@ -8886,9 +8888,10 @@ msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
-"(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
-"hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
-"een chatprogramma met fouten.)"
+#msgstr ""
+#"(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
+#"hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
+#"een chatprogramma met fouten.)"
 
 #. Label
 #: ../libpurple/protocols/oscar/oscar.c:640 ../pidgin/gtkutils.c:2449
@@ -10466,7 +10469,7 @@ msgstr "Kan niet lezen van socket"
 #: ../libpurple/protocols/qq/send_file.c:707
 #, c-format
 msgid "%d has declined the file %s"
-msgstr "%s heeft het onderwerp veranderd naar: %sx"
+msgstr "%d heeft het onderwerp veranderd naar: %s"
 
 #: ../libpurple/protocols/qq/send_file.c:710
 #: ../libpurple/protocols/qq/send_file.c:739
@@ -14572,7 +14575,7 @@ msgid ""
 "<b>Occupants:</b> %d"
 msgstr ""
 "\n"
-"<b>Deelnemers:</b> %s"
+"<b>Deelnemers:</b> %d"
 
 #: ../pidgin/gtkblist.c:3253
 #, c-format

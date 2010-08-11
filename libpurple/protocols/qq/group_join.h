@@ -46,8 +46,8 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data);
 void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group);
 void qq_group_exit(PurpleConnection *gc, GHashTable *data);
 void qq_send_cmd_group_exit_group(PurpleConnection *gc, qq_group *group);
-void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
-void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
-void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *gc);
 
 #endif

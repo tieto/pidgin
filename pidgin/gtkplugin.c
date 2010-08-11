@@ -421,6 +421,8 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		"<span size=\"smaller\">%s</span>",
 		name, version);
 	gtk_label_set_markup(plugin_name, buf);
+	g_free(name);
+	g_free(version);
 	g_free(buf);
 
 	gtk_text_buffer_set_text(plugin_desc, purple_plugin_get_description(plug), -1);
@@ -693,6 +695,8 @@ create_details()
 		GTK_WIDGET(plugin_filename), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Filename:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+
+	g_object_unref(sg);
 
 	return GTK_WIDGET(vbox);
 }

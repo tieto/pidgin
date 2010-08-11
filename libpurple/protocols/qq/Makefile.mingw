@@ -63,13 +63,10 @@ C_SRC = \
 	login_logout.c \
 	packet_parse.c \
 	qq.c \
-	qq_proxy.c \
-	recv_core.c \
-	send_core.c \
+	qq_network.c \
 	send_file.c \
-	sendqueue.c \
+	qq_trans.c \
 	sys_msg.c \
-	udp_proxy_s5.c \
 	utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
