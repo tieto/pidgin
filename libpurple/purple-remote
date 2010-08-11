@@ -61,6 +61,8 @@ Examples of commands:
     jabber:addbuddy?screenname=my friend
 
     setstatus?status=away&message=don't disturb
+    getstatus
+    getstatusmessage
     quit
 
     PurpleAccountsFindConnected?name=&protocol=prpl-jabber

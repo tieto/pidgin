@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-05 10:49+0100\n"
-"PO-Revision-Date: 2009-01-05 10:48+0100\n"
+"POT-Creation-Date: 2009-02-23 01:27+0100\n"
+"PO-Revision-Date: 2009-02-23 01:25+0100\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -55,10 +55,10 @@ msgstr ""
 "\n"
 "  -c, --config=DIR    lit les fichiers de configuration depuis le dossier "
 "DIR\n"
-"  -d, --debug         affiche les messages de debug sur la sortie standard\n"
-"  -h, --help          affiche ce texte d'aide\n"
+"  -d, --debug         affiche les messages de debug sur la sortie stderr\n"
+"  -h, --help          affiche ce texte d'aide et quitte\n"
 "  -n, --nologin       ne se connecte pas automatiquement au lancement\n"
-"  -v, --version       affiche le numéro de la version actuelle\n"
+"  -v, --version       affiche le numéro de la version actuelle et quitte\n"
 
 #, c-format
 msgid ""
@@ -1180,7 +1180,6 @@ msgstr "Minutes avant de changer d'état"
 msgid "Change status to"
 msgstr "Changer l'état en"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Conversations"
 
@@ -1502,7 +1501,6 @@ msgstr ""
 "Quand une nouvelle conversation est ouverte, le plugin rajoute la dernière "
 "conversation avec l'interlocuteur dans la fenêtre."
 
-#, c-format
 msgid "Online"
 msgstr "En ligne"
 
@@ -1937,7 +1935,6 @@ msgstr "Démarrage du transfert de %s depuis %s."
 msgid "Transfer of file %s complete"
 msgstr "Transfert du fichier « %s » terminé"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Transfert de fichier terminé"
 
@@ -1945,7 +1942,6 @@ msgstr "Transfert de fichier terminé"
 msgid "You canceled the transfer of %s"
 msgstr "Vous avez a annulé le transfert de « %s »"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Transfert de fichier annulé"
 
@@ -2155,7 +2151,6 @@ msgstr "(%s) %s <Réponse automatique> : %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Vous utilisez %s, mais ce plugin a besoin de %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Ce plugin n'a pas défini son identifiant."
 
@@ -2862,7 +2857,6 @@ msgstr ""
 "Impossible d'établir une connexion vers le serveur local mDNS. Fonctionne-t-"
 "il ?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Prénom :"
 
@@ -2893,6 +2887,10 @@ msgstr "Plugin pour le protocole Bonjour"
 
 msgid "Purple Person"
 msgstr "Personne Purple"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Port local"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3057,7 +3055,6 @@ msgstr "Disponible"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Absent"
 
@@ -3950,7 +3947,6 @@ msgstr "Bavard"
 msgid "Extended Away"
 msgstr "Longue absence"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Ne pas déranger"
 
@@ -4705,9 +4701,6 @@ msgstr "Actions"
 
 msgid "Select an action"
 msgstr "Choisissez une action"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Impossible de récupérer le carnet d'adresses MSN"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6164,7 +6157,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Support SSL non installé"
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Cette conférence est fermée. Aucun message ne peut être envoyé."
 
@@ -6430,23 +6422,18 @@ msgstr "Caméra"
 msgid "Screen Sharing"
 msgstr "Partage d'écran"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Libre pour discuter"
 
-#, c-format
 msgid "Not Available"
 msgstr "Non disponible"
 
-#, c-format
 msgid "Occupied"
 msgstr "Occupé"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Sur internet"
 
-#, c-format
 msgid "Invisible"
 msgstr "Invisible"
 
@@ -7026,6 +7013,7 @@ msgstr "_Connecter"
 msgid "Get AIM Info"
 msgstr "Récupérer les infos AIM"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Modifier le commentaire"
 
@@ -7135,7 +7123,6 @@ msgstr "Demande à %s de se connecter directement à %s:%hu pour le message"
 msgid "Attempting to connect to %s:%hu."
 msgstr "Tentative de connexion vers %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Tentative de connexion au travers d'un serveur mandataire."
 
@@ -7674,6 +7661,9 @@ msgstr "Afficher les infos du serveur"
 
 msgid "Show server news"
 msgstr "Afficher les nouveautés du serveur"
+
+msgid "Show chat room when msg comes"
+msgstr "Afficher le salon de discussions quand un message arrive"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Délai de Keep alive (en secondes)"
@@ -11424,6 +11414,9 @@ msgstr "Lituanien"
 msgid "Macedonian"
 msgstr "Macédonien"
 
+msgid "Mongolian"
+msgstr "Mongol"
+
 msgid "Bokmål Norwegian"
 msgstr "Norvégien bokmål"
 
@@ -11538,8 +11531,31 @@ msgstr ""
 "Aucune garantie n'est fournie pour l'utilisation de ce programme.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC :</FONT> #pidgin sur irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">FAQ :</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Aide par courrier électronique :</FONT> <A HREF=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">Salon IRC :</FONT> #pidgin sur irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">Salon XMPP :</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Codeurs"
@@ -12201,6 +12217,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Arrêt à cause d'un autre client libpurple existant.\n"
+
 msgid "Open All Messages"
 msgstr "Ouvrir tous les messages"
 
@@ -12543,6 +12563,10 @@ msgstr "Serveur mandataire"
 
 msgid "No proxy"
 msgstr "Aucun"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Utiliser une DNS distantes avec SOCKS4"
 
 msgid "_User:"
 msgstr "_Utilisateur :"
@@ -14004,9 +14028,6 @@ msgstr "Liste de contacts toujours _visible :"
 msgid "Only when docked"
 msgstr "Seulement quand la fenêtre est accrochée"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Faire clignoter la fenêtre dans les discussions actives"
-
 msgid "Windows Pidgin Options"
 msgstr "Options de Pidgin Windows"
 
@@ -14055,6 +14076,12 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Impossible de récupérer le carnet d'adresses MSN"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Faire clignoter la fenêtre dans les discussions actives"
 
 #~ msgid "Failed to send IM."
 #~ msgstr "Impossible d'envoyer le message."

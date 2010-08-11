@@ -5,7 +5,7 @@
 # Copyright (C) 2003-2008, Ambrose C. Li <acli@ada.dhs.org>
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.553 2008/09/30 05:14:21 acli Exp $
+# $InternalId: zh_TW.po,v 1.562 2009/02/27 04:50:13 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -43,18 +43,17 @@
 # NOTE  以前分「Deny」(拒絕) 和「Block」(封鎖)，現在不分了
 # NOTE  拒絕可以說等同於封鎖和某一個使用者的聯繫，有時用封鎖比較好。
 # NOTE  MSN6.0中文版對「Block」一詞的譯文為「封鎖」
-# XXX   Stream 暫譯「串流」，應該不是「通道」
 # NOTE  nplurals 重設為 2，因為部分原文要分辨例如「它」及「它們」一類的字眼
 # NOTE 所有語文名稱（除「世界語」外）一概譯成「XX文」，不譯「XX語」，因為寫下的是文，不是語
 # ----------------------------------------------------------
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.5.2\n"
+"Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:17-0800\n"
-"PO-Revision-Date: 2008-12-17 12:15+0800\n"
-"Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
+"POT-Creation-Date: 2009-02-27 10:14-0800\n"
+"PO-Revision-Date: 2009-02-25 09:57-0500\n"
+"Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -77,7 +76,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -86,7 +85,7 @@ msgstr ""
 "使用方法： %s [選項]...\n"
 "\n"
 "  -c, --config=DIR    設定檔所在目錄\n"
-"  -d, --debug         在標準輸出中顯示除錯訊息\n"
+"  -d, --debug         在標準錯誤輸出中顯示除錯訊息\n"
 "  -h, --help          顯示輔助訊息並離開\n"
 "  -n, --nologin       不自動登入\n"
 "  -v, --version       顯示版本訊息並離開\n"
@@ -238,14 +237,16 @@ msgstr "必須指定帳號"
 msgid "The selected account is not online."
 msgstr "所指定的帳號目前沒有連線。"
 
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
 msgid "Error adding buddy"
 msgstr "新增好友途中發生了錯誤"
 
 msgid "Username"
 msgstr "使用者"
 
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
 msgid "Alias (optional)"
-msgstr "別名（可以不填）"
+msgstr "別名（選用）"
 
 # XXX 譯文可能不太通順 - acli 20080229
 msgid "Add in group"
@@ -285,7 +286,7 @@ msgid "You can edit more information from the context menu later."
 msgstr "如果要繼續修改其他細節，請用快顯選單。"
 
 msgid "Error adding group"
-msgstr "新增羣組途中發生了錯誤"
+msgstr "新增羣組發生了錯誤"
 
 msgid "You must give a name for the group to add."
 msgstr "請給你新增的羣組輸入名稱。"
@@ -871,9 +872,9 @@ msgstr "已完成"
 msgid "The file was saved as %s."
 msgstr "成功存檔至 %s。"
 
-# XXX 20080508 acli
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
 msgid "Sending"
-msgstr "送出中"
+msgstr "傳送中"
 
 # XXX 20080508 acli
 msgid "Receiving"
@@ -1216,7 +1217,6 @@ msgstr "閒置多少分鐘更改狀態"
 msgid "Change status to"
 msgstr "更改狀態為"
 
-#. Conversations
 msgid "Conversations"
 msgstr "交談"
 
@@ -1333,14 +1333,18 @@ msgstr "音效選項"
 msgid "Sounds when conversation has focus"
 msgstr "當交談取得輸入焦點發出音效"
 
+# XXX: 務必 聽起來不太恰當。這裡是指 Enable Sound 的選項 - c9s, 08 Dec 27 12/27/2008
+# XXX 「務必」不只指 Enable Sound，也在其他地方用到，改譯「完全啟用」不行 - 20090226 acli
 msgid "Always"
 msgstr "務必"
 
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
 msgid "Only when available"
-msgstr "上線而非離開期間"
+msgstr "狀態為上線時"
 
+# XXX: 離開區間？ - c9s, 08 Dec 27 12/27/2008
 msgid "Only when not available"
-msgstr "離開期間"
+msgstr "狀態為非上線時"
 
 msgid "Volume(0-100):"
 msgstr "音量(0-100)："
@@ -1539,7 +1543,6 @@ msgid ""
 "conversation into the current conversation."
 msgstr "當新的交談開啟時，這個模組將會把上次的交談內容也顯示出來。"
 
-#, c-format
 msgid "Online"
 msgstr "上線"
 
@@ -1986,7 +1989,6 @@ msgstr "開始自 %2$s 傳送 %1$s"
 msgid "Transfer of file %s complete"
 msgstr "檔案 %s 傳送完畢"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "檔案傳輸完畢"
 
@@ -1994,7 +1996,6 @@ msgstr "檔案傳輸完畢"
 msgid "You canceled the transfer of %s"
 msgstr "你取消了 %s 的傳送"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "檔案傳輸已取消"
 
@@ -2185,7 +2186,6 @@ msgstr "(%s) %s <自動回覆>：%s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "你目前使用的是 %s，但這模組需要 %s。"
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "這個模組未有定義它的 ID。"
 
@@ -2897,7 +2897,6 @@ msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "無法與近端的 mDNS 伺服器建立連線。它在執行中嗎？"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "名"
 
@@ -2930,6 +2929,10 @@ msgstr "Bonjour 協定模組"
 #  NOTE 對應 evolution PO 檔之譯法，詳見上面「Local Addressbook」條
 msgid "Purple Person"
 msgstr "聯絡人"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "本地端通訊埠"
 
 # NOTE 這是通訊協定名稱，不是問候語
 msgid "Bonjour"
@@ -3094,7 +3097,6 @@ msgstr "上線"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "離開"
 
@@ -3912,6 +3914,7 @@ msgstr "發佈公開密碼匙"
 msgid "User Chatting"
 msgstr ""
 
+# NOTE Jabber 新功能規格
 msgid "User Browsing"
 msgstr "使用者瀏覽"
 
@@ -4019,7 +4022,6 @@ msgstr "想聊天"
 msgid "Extended Away"
 msgstr "長時間離開"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "請勿打擾"
 
@@ -4261,6 +4263,9 @@ msgstr "認證中"
 
 msgid "Re-initializing Stream"
 msgstr "串流重新初始中"
+
+msgid "Server doesn't support blocking"
+msgstr ""
 
 msgid "Not Authorized"
 msgstr "未認證"
@@ -4852,9 +4857,6 @@ msgstr "動作"
 msgid "Select an action"
 msgstr "選擇一個動作"
 
-msgid "Unable to retrieve MSN Address Book"
-msgstr "無法讀取 MSN 通訊錄"
-
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -5103,7 +5105,6 @@ msgstr "未經家長同意下使用兒童護照"
 msgid "Passport account not yet verified"
 msgstr "護照帳號尚未經過驗證"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "護照帳號被暫時吊銷"
 
@@ -5122,14 +5123,19 @@ msgstr "未知的錯誤代碼 %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN 錯誤：%s\n"
 
-#, fuzzy
+# XXX 暫譯，有待改進 - 20090226 acli
+# NOTE: (09時14分13秒 EST) wing: what does "Other Contacts" (msn/group.h:36) actually mean? ..
+# NOTE: (09時24分18秒 EST) khc: I'd probably just translate to 其他人, hehe
+# NOTE: (09時24分44秒 EST) QuLogic: Other Contacts is non-grouped
+# NOTE: (09時25分02秒 EST) QuLogic: which is a group because libpurple doesn't understand non-grouped
 msgid "Other Contacts"
-msgstr "聯絡方法"
+msgstr "沒有羣組的好友"
 
-# XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#, fuzzy
+# XXX 暫譯，有待改進 - 20090226 acli
+# XXX 這可能是MSN的「基本資料連絡人」？ 
+# XXX「Buddy」和「Contact」在中文版Pidgin無法析別；可能有改進的空間
 msgid "Non-IM Contacts"
-msgstr "移除這組好友"
+msgstr "非即時訊息的好友"
 
 msgid "Nudge"
 msgstr "呼叫"
@@ -5206,9 +5212,8 @@ msgstr "傳呼"
 msgid "Playing a game"
 msgstr "正在玩遊戲"
 
-#, fuzzy
 msgid "Working"
-msgstr "工作資料"
+msgstr "正在工作"
 
 msgid "Has you"
 msgstr "你在他（她）的好友清單裏"
@@ -5246,13 +5251,12 @@ msgstr "樂手名稱"
 msgid "Album"
 msgstr "專輯名稱"
 
-#, fuzzy
 msgid "Game Title"
-msgstr "樂曲名稱"
+msgstr "遊戲名稱"
 
-#, fuzzy
+# XXX 這是盲猜，但MSN「工作資訊」分頁內比較可能對應「Office Title」的應該是這個 - 20090226
 msgid "Office Title"
-msgstr "樂曲名稱"
+msgstr "職位"
 
 msgid "Set Friendly Name..."
 msgstr "設定網名..."
@@ -5445,9 +5449,8 @@ msgid ""
 msgstr ""
 "在這個使用者的個人資料網頁找不到任何可用的資料。這個使用者極有可能並不存在。"
 
-#, fuzzy
 msgid "View web profile"
-msgstr "離線時隱藏"
+msgstr "檢視個人資料網頁"
 
 #. *< type
 #. *< ui_requirement
@@ -5505,9 +5508,9 @@ msgstr "不明錯誤（代碼 %d）"
 msgid "Unable to add user"
 msgstr "無法新增使用者"
 
-#, fuzzy
+# XXX 暫譯 - 20090226
 msgid "The following users are missing from your addressbook"
-msgstr "以下為搜尋結果"
+msgstr "以下使用者不在通訊錄內"
 
 #  TODO 請覆查，譯文有待改進
 #, c-format
@@ -6336,7 +6339,6 @@ msgstr "無法連線至伺服器。請輸入你希望連線至的伺服器的位
 msgid "Error. SSL support is not installed."
 msgstr "錯誤：沒有安裝 SSL 支援。"
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "這個會議已經關閉。無法繼續送出任何訊息。"
 
@@ -6596,6 +6598,7 @@ msgstr "ICQ UTF8"
 msgid "Hiptop"
 msgstr "Hiptop"
 
+# FIXME flagged "有保安功能？" by c9s (http://developer.pidgin.im/ticket/7917), need to verify - 20090226 acli
 msgid "Security Enabled"
 msgstr "有保安功能"
 
@@ -6618,24 +6621,19 @@ msgstr "照相機"
 msgid "Screen Sharing"
 msgstr "螢幕共享"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "我有空聊天"
 
-#, c-format
 msgid "Not Available"
 msgstr "長時間離開"
 
-#, c-format
 msgid "Occupied"
 msgstr "忙碌"
 
 # NOTE 參閱 http://www.geocities.com/Athens/Delphi/6470/icq99.html
-#, c-format
 msgid "Web Aware"
 msgstr "允許其他使用者在網絡上查看你目前的狀態"
 
-#, c-format
 msgid "Invisible"
 msgstr "隱身"
 
@@ -6737,19 +6735,15 @@ msgid "_OK"
 msgstr "確定(_O)"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-"你可能會短時間中斷連線。你可能會想在這個問題被修正後使用 TOC。請到 %s 看看有"
-"沒有更新。"
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "你可能會在短時間內中斷連線。如果屬實，請到 %s 看看有沒有更新。"
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "無法取得有效的 AIM 登入碼。"
 
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "你可能會短時間中斷連線。請到 %s 看看有沒有更新。"
+msgstr "你可能會在短時間內中斷連線。請到 %s 看看有沒有更新。"
 
 msgid "Unable to get a valid login hash."
 msgstr "無法取得有效的登入雜湊。"
@@ -7180,6 +7174,7 @@ msgstr "連線(_O)"
 msgid "Get AIM Info"
 msgstr "取得 AIM 資訊"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "編輯好友說明"
 
@@ -7290,7 +7285,6 @@ msgstr "正在要求 %s 連線至此處 (%s:%hu)，以便建立即時訊息。"
 msgid "Attempting to connect to %s:%hu."
 msgstr "正在嘗試連線至 %s:%hu。"
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "正在嘗試透過代理伺服器連線。"
 
@@ -7381,16 +7375,15 @@ msgstr "豬"
 msgid "Other"
 msgstr "其他"
 
-#, fuzzy
 msgid "Visible"
-msgstr "隱身"
+msgstr "公開"
 
+# XXX 暫譯 - 20090226
 msgid "Friend Only"
-msgstr ""
+msgstr "只允許好友"
 
-#, fuzzy
 msgid "Private"
-msgstr "私隱設定"
+msgstr "非公開"
 
 msgid "QQ Number"
 msgstr "QQ 號碼"
@@ -7417,18 +7410,14 @@ msgstr "流動電話號碼"
 msgid "Personal Introduction"
 msgstr "個人簡介"
 
-#, fuzzy
 msgid "City/Area"
-msgstr "城市"
+msgstr "城市/地區"
 
-#, fuzzy
 msgid "Publish Mobile"
-msgstr "個人流動電話"
+msgstr "刊登流動電話號碼"
 
-# XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#, fuzzy
 msgid "Publish Contact"
-msgstr "為這組好友加上別名"
+msgstr "刊登個人資料"
 
 msgid "College"
 msgstr "大學／大專"
@@ -7445,21 +7434,21 @@ msgid "Blood"
 msgstr "血型"
 
 msgid "True"
-msgstr ""
+msgstr "是"
 
 msgid "False"
-msgstr ""
+msgstr "不是"
 
-#, fuzzy
+# FIXME - qq.c is buggy - it uses "Contact" here to mean "personal contact info" - filed ticket #8523
+# FIXME - 原文一詞多義，無法翻譯 - 20090226
 msgid "Modify Contact"
 msgstr "修改帳號"
 
 msgid "Modify Address"
 msgstr "修改地址"
 
-#, fuzzy
 msgid "Modify Extended Information"
-msgstr "修改資訊"
+msgstr "修改詳細資訊"
 
 msgid "Modify Information"
 msgstr "修改資訊"
@@ -7578,12 +7567,9 @@ msgstr "不是成員"
 msgid "Member"
 msgstr "用戶"
 
-#  XXX 這譯文絶對有問題，但想不到怎樣譯較好 - ambrose 20070415
-#, fuzzy
 msgid "Requesting"
-msgstr "對話視窗 (Request Dialog)"
+msgstr ""
 
-# #NOTE 根據「plugins/log_reader.c#1971」的訊息來判斷，應該是指一種新式的通訊協定。
 msgid "Admin"
 msgstr ""
 
@@ -7599,14 +7585,12 @@ msgstr "創立者"
 msgid "About me"
 msgstr "關於我"
 
-#, fuzzy
 msgid "Category"
-msgstr "聊天錯誤"
+msgstr "類別"
 
 msgid "The Qun does not allow others to join"
 msgstr "這羣組不容許外人加入"
 
-#, fuzzy
 msgid "Join QQ Qun"
 msgstr "加入羣組"
 
@@ -7671,9 +7655,9 @@ msgstr "設定"
 msgid "%u requested to join Qun %u for %s"
 msgstr "使用者 %d 要求加入羣組 %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u request to join Qun %u"
-msgstr "使用者 %d 要求加入羣組 %d"
+msgstr "使用者 %u 要求加入羣組 %u"
 
 #, c-format
 msgid "Failed to join Qun %u, operated by admin %u"
@@ -7684,9 +7668,9 @@ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Removed buddy %u.</b>"
-msgstr "移除好友"
+msgstr "<b>成功移除好友 %u。</b>"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
 #, c-format
@@ -7720,14 +7704,12 @@ msgstr " TCP"
 msgid " FromMobile"
 msgstr " 使用流動通訊器材"
 
-#, fuzzy
 msgid " BindMobile"
 msgstr " 綁定流動通訊器材"
 
 msgid " Video"
 msgstr " 視像"
 
-#, fuzzy
 msgid " Zone"
 msgstr " 區"
 
@@ -7807,21 +7789,20 @@ msgstr "<b>IP位址</b>：%s<br>\n"
 msgid "Login Information"
 msgstr "登入資訊"
 
-#, fuzzy
 msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<b>外部使用者</b><br>"
+msgstr "<p><b>原作者</b>：<br>\n"
 
 msgid "<p><b>Code Contributors</b>:<br>\n"
 msgstr "<p><b>程式碼貢獻者</b>：<br>\n"
 
-#, fuzzy
 msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>最近更新時間：</b>%s<br>\n"
+msgstr "<p><b>可愛的模組作者</b>：<br>\n"
 
-# NOTE qq_data->net_stat.sent，送出的數據封包數量（並非位元組數量）的總計
-#, fuzzy
 msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>送出封包</b>：%lu 個<br>\n"
+msgstr "<p><b>鳴謝</b>：<br>\n"
+
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>仔細的品管人員</b>:<br>\n"
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>還有所有幕後默默貢獻的無名英雄們…</i><br>\n"
@@ -7848,6 +7829,10 @@ msgstr ""
 msgid "About OpenQ"
 msgstr "關於 OpenQ"
 
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "修改地址"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -7868,13 +7853,13 @@ msgid "Select Server"
 msgstr "選擇伺服器"
 
 msgid "QQ2005"
-msgstr ""
+msgstr "QQ2005"
 
 msgid "QQ2007"
-msgstr ""
+msgstr "QQ2007"
 
 msgid "QQ2008"
-msgstr ""
+msgstr "QQ2008"
 
 msgid "Connect by TCP"
 msgstr "使用 TCP 連線"
@@ -7886,6 +7871,9 @@ msgstr "顯示伺服器通告"
 # XXX 半胡猜，請搜尋「server news」 - 20080929 acli
 msgid "Show server news"
 msgstr "顯示伺服器是日訊息"
+
+msgid "Show chat room when msg comes"
+msgstr ""
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
 msgid "Keep alive interval (seconds)"
@@ -7900,7 +7888,7 @@ msgstr "無法解密伺服器回應"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
-msgstr ""
+msgstr "請求符記失敗，回應碼「0x%02X」"
 
 #, c-format
 msgid "Invalid token len, %d"
@@ -7908,7 +7896,7 @@ msgstr "符記長度「%d」無效"
 
 #. extend redirect used in QQ2006
 msgid "Redirect_EX is not currently supported"
-msgstr ""
+msgstr "暫時不支援 Redirect_EX"
 
 #. need activation
 #. need activation
@@ -7978,9 +7966,8 @@ msgid "Getting server"
 msgstr "設定使用者資訊..."
 
 # XXX 這是看了原始碼後的結論（但可能會錯）- acli 20080930
-#, fuzzy
 msgid "Requesting token"
-msgstr "送出請求符記中"
+msgstr "請求符記中"
 
 msgid "Couldn't resolve host"
 msgstr "無法解析主機"
@@ -9534,6 +9521,9 @@ msgstr "無法解析主機"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP 的帳號不可含有空白字符或「@」符號"
+
+msgid "SIP connect server not specified"
+msgstr "未有指定 SIP 伺服器"
 
 #. *< type
 #. *< ui_requirement
@@ -11467,8 +11457,10 @@ msgid "Invert"
 msgstr "反向"
 
 # XXX TODO 我非常討厭把「Highlight」譯成「高亮度」，但譯文可以改進 - Ambrose 20061029
+# XXX flagged "有保安功能？" by c9s (http://developer.pidgin.im/ticket/7917), need to verify - 20090226 acli
+# NOTE 譯文改動 by c9s
 msgid "Highlight matches"
-msgstr "標示匹配字串"
+msgstr "標示比對字串"
 
 #  NOTE 除錯視窗的工具列的快取選單的指令，指「工具列的按紐以圖示標示」，下二同
 msgid "_Icon Only"
@@ -11513,11 +11505,13 @@ msgstr "錯誤訊息"
 msgid "Fatal Error"
 msgstr "嚴重錯誤訊息"
 
+# XXX 暫譯 - 20090226 acli
 msgid "bug master"
-msgstr ""
+msgstr "除錯主管"
 
+# NOTE 這個「artist」（有別於其他的「Artist」字串）係指設計pidgin圖示的「graphic designer」，絕對不可譯成「藝人」
 msgid "artist"
-msgstr "藝人"
+msgstr "平面設計"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11549,7 +11543,7 @@ msgid "support/QA"
 msgstr "支援兼品管"
 
 msgid "XMPP"
-msgstr ""
+msgstr "XMPP"
 
 msgid "original author"
 msgstr "原作者"
@@ -11706,6 +11700,9 @@ msgstr "立陶宛文"
 msgid "Macedonian"
 msgstr "馬其頓文"
 
+msgid "Mongolian"
+msgstr "蒙古文"
+
 #  NOTE 譯文不統一，一般似乎偏向音譯，但譯音也不統一
 #  NOTE 音譯包括：博克馬爾、波克默爾、布克莫爾、巴克摩
 #  NOTE 其他譯法包括：丹麥－挪威文（大英百科）、丹麥式挪威文（維基百科）、東挪威文、標準挪威文（國內不是標準，國外是 :P）
@@ -11837,9 +11834,31 @@ msgstr ""
 "<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net 上的 #pidgin 頻道<BR><BR>"
+"<FONT SIZE=\"4\">常見問題：</FONT> <A HREF=\"http://developer.pidgin.im/wiki/"
+"FAQ\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">電郵支援：</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC 頻道</FONT> irc.freenode.net 上的 #pidgin 頻道<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">XMPP 聊天室：</FONT>devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "現任開發者"
@@ -12503,6 +12522,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr ""
+
 msgid "Open All Messages"
 msgstr "開啟所有訊息"
 
@@ -12842,6 +12865,10 @@ msgstr "代理伺服器"
 # NOTE 理由同前，不用「毋須」，改為「不使用」
 msgid "No proxy"
 msgstr "不使用代理伺服器"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "使用 SOCKS4 代理伺服器時使用遠端 DNS"
 
 msgid "_User:"
 msgstr "使用者(_U)："
@@ -13345,9 +13372,9 @@ msgstr "開啟郵件(_O)"
 msgid "_Edit"
 msgstr "修改(_E)"
 
-#  FIXME Tooltip中文怎寫？
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
 msgid "Pidgin Tooltip"
-msgstr "Pidgin Tooltip"
+msgstr "Pidgin 工具提示"
 
 # NOTE 這是「Default」表情主題的說明
 msgid "Pidgin smileys"
@@ -13481,9 +13508,9 @@ msgstr "自選交談視窗內各種顏色的使用"
 msgid "Error Messages"
 msgstr "錯誤訊息"
 
-# XXX TODO 我非常討厭把「Highlight」譯成「高亮度」，但譯文可以改進 - Ambrose 20061029
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) 12/27/2008 - 20090226 acli
 msgid "Highlighted Messages"
-msgstr "反白訊息"
+msgstr "已標示訊息"
 
 msgid "System Messages"
 msgstr "系統訊息"
@@ -13951,9 +13978,9 @@ msgid "Visited Hyperlink Color"
 msgstr "瀏覽過的超連結顏色"
 
 # XXX TODO 我非常討厭把「Highlight」譯成「高亮度」，但譯文可以改進 - Ambrose 20061029
-# FIXME 什麼是「反白訊息名稱」？ - acli 20080511
+# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) 20081227 - 20090226 acli
 msgid "Highlighted Message Name Color"
-msgstr "反白訊息名稱顏色"
+msgstr "已標示訊息名稱顏"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView 水平間隔距離"
@@ -14048,7 +14075,7 @@ msgstr ""
 
 #, c-format
 msgid "You can upgrade to %s %s today."
-msgstr ""
+msgstr "%s 現已可升級至 %s 版。"
 
 msgid "New Version Available"
 msgstr "有新版本"
@@ -14318,9 +14345,6 @@ msgstr "好友清單視窗保持在桌面最上層(_K)；"
 msgid "Only when docked"
 msgstr "只在停駐時生效"
 
-msgid "_Flash window when chat messages are received"
-msgstr "收到聊天訊息後閃動視窗(_F)"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows 版 Pidgin 選項"
 
@@ -14369,6 +14393,19 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "無法讀取 MSN 通訊錄"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "收到聊天訊息後閃動視窗(_F)"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "您可能會短時間中斷連線。您可能會想在這個問題被修正後使用 TOC。請到 %s 看看"
+#~ "有沒有更新。"
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""

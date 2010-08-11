@@ -41,6 +41,7 @@ LIB_PATHS += \
 C_SRC = \
 	buddy_info.c \
 	buddy_list.c \
+	buddy_memo.c \
 	buddy_opt.c \
 	char_conv.c \
 	qq_crypt.c \

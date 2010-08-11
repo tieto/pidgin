@@ -48,19 +48,19 @@ silcpurple_away_states(PurpleAccount *account)
 	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_AVAILABLE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_AVAILABLE, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_HYPER, _("Hyper Active"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_AWAY, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_AWAY, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE, SILCPURPLE_STATUS_ID_BUSY, _("Busy"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE, SILCPURPLE_STATUS_ID_BUSY, _("Busy"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_INDISPOSED, _("Indisposed"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_INDISPOSED, _("Indisposed"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_PAGE, _("Wake Me Up"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_PAGE, _("Wake Me Up"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, SILCPURPLE_STATUS_ID_OFFLINE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, SILCPURPLE_STATUS_ID_OFFLINE, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	return types;
@@ -1357,6 +1357,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	char tmp[256];
 	SilcClientEntry client_entry;
 	SilcDList list;
+	gboolean free_list = FALSE;
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 						      sg->account);
@@ -1373,6 +1374,8 @@ silcpurple_send_im_resolved(SilcClient client,
 							im->nick, FALSE);
 		if (!clients)
 			goto err;
+
+		free_list = TRUE;
 	}
 
 	silc_dlist_start(clients);
@@ -1413,6 +1416,9 @@ silcpurple_send_im_resolved(SilcClient client,
 	purple_conversation_write(convo, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
  out:
+	if (free_list) {
+		silc_client_list_free(client, conn, clients);
+	}
 	g_free(im->nick);
 	g_free(im->message);
 	silc_free(im);

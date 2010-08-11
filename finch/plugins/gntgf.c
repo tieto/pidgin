@@ -21,7 +21,7 @@
 
 #include "internal.h"
 
-#define PLUGIN_STATIC_NAME	"GntGf"
+#define PLUGIN_STATIC_NAME	GntGf
 
 #define PREFS_PREFIX          "/plugins/gnt/gntgf"
 #define PREFS_EVENT           PREFS_PREFIX "/events"

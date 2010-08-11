@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-08 22:27-0500\n"
-"PO-Revision-Date: 2009-01-07 18:48+0100\n"
+"POT-Creation-Date: 2009-02-22 11:04-0500\n"
+"PO-Revision-Date: 2009-02-22 14:43+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -1157,7 +1157,6 @@ msgstr "Minuty před změnou stavu"
 msgid "Change status to"
 msgstr "Změnit stav na"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Konverzace"
 
@@ -2804,7 +2803,6 @@ msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "Nemohu vytvořit spojení s místním serverem mDNS. Běží?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Křestní jméno"
 
@@ -2835,6 +2833,11 @@ msgstr "Zásuvný modul protokolu Bonjour"
 
 msgid "Purple Person"
 msgstr "Osoba Purple"
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "Lokalita"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -4620,9 +4623,6 @@ msgstr "Akce"
 
 msgid "Select an action"
 msgstr "Zvolte akci"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Nemohu získat adresář MSN"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6923,6 +6923,7 @@ msgstr "_Připojit"
 msgid "Get AIM Info"
 msgstr "Získat informace AIM"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Upravit poznámku o kamarádovi"
 
@@ -7568,6 +7569,9 @@ msgstr "Zobrazit poznámky serveru"
 
 msgid "Show server news"
 msgstr "Zobrazit novinky serveru"
+
+msgid "Show chat room when msg comes"
+msgstr "Zobrazit místnost při přijetí zprávy"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Interval udržování naživu (v sekundách)"
@@ -11284,6 +11288,9 @@ msgstr "Litevština"
 msgid "Macedonian"
 msgstr "Makedonština"
 
+msgid "Mongolian"
+msgstr "Mongolština"
+
 msgid "Bokmål Norwegian"
 msgstr "Norština Bokmål"
 
@@ -11396,8 +11403,29 @@ msgstr ""
 "soubor 'COPYRIGHT'. Pro tento program neposkytujeme žádnou záruku.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin na irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Podpora přes e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+"im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC kanál:</FONT> #pidgin na irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Současní vývojáři"
@@ -12047,6 +12075,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Exiting because another libpurple client is already running.\n"
+
 msgid "Open All Messages"
 msgstr "Otevřít všechny zprávy"
 
@@ -12384,6 +12416,10 @@ msgstr "Proxy server"
 
 msgid "No proxy"
 msgstr "Žádná proxy"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Použít vzdálený DNS s SOCKS4 proxy"
 
 msgid "_User:"
 msgstr "_Uživatel:"
@@ -13817,9 +13853,6 @@ msgstr "_Udržovat okno seznamu kamarádů nahoře:"
 msgid "Only when docked"
 msgstr "Jen při zadokování"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Bliknout oknem, když jsou přijaty zprávy chatu"
-
 msgid "Windows Pidgin Options"
 msgstr "Možnosti Pidginu ve Windows"
 
@@ -13868,6 +13901,12 @@ msgstr "Přijímat a odesílat přímo sekce XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů XMPP."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Nemohu získat adresář MSN"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Bliknout oknem, když jsou přijaty zprávy chatu"
 
 #~ msgid ""
 #~ "You may be disconnected shortly.  You may want to use TOC until this is "

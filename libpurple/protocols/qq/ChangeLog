@@ -1,3 +1,31 @@
+2009.02.25 - flos <lonicerae(at)gmail.com>
+	* Changed text 'ZipCode' to 'Postal Code'
+
+2009.02.24 - flos <lonicerae(at)gmail.com>
+	* NEVER forget our COPYRIGHT, ;)
+
+2009.02.24 - flos <lonicerae(at)gmail.com>
+	* Changed update_class type from gint to guint32
+	* Fixed a bug of displaying of memo when memo is nothing
+
+2009.02.21 - flos <lonicerae(at)gmail.com>
+	* Added 'qq_strlen' and 'qq_strcmp' funtions in qq.h
+	* Fixed compiling problems with lower version of GTK+
+
+2009.02.21 - flos <lonicerae(at)gmail.com>
+	* Rewrite whole buddy memo part
+	* Remove 'qq_to_utf8_len' and 'utf8_to_qq_len' functions in char_conv.c
+	* Update ChangeLog, AUTHORS
+
+2009.02.09 - Chengming Wang <tiger2007532246(at)gmail.com>
+	* Rewrite buddy_memo using qq_put/qq_get series functions
+
+2009.02.09 - Chengming Wang <tiger2007532246(at)gmail.com>
+	* Added buddy 'get memo', 'remove memo', 'upload memo' functions
+
+2009.02.08 - flos <lonicerae(at)gmail.com>
+	* Fixed showing message of chat room when message comes in
+
 2008.12.28 - flos <lonicerae(at)gmail.com>
 	* Fixes #7908
 

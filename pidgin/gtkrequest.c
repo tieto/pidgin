@@ -430,8 +430,10 @@ pidgin_request_input(const char *title, const char *primary,
 			if (masked)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 			}
 		}
 		gtk_widget_show_all(vbox);
@@ -791,8 +793,10 @@ create_string_field(PurpleRequestField *field)
 		if (purple_request_field_string_is_masked(field))
 		{
 			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
+#if !GTK_CHECK_VERSION(2,16,0)
 			if (gtk_entry_get_invisible_char(GTK_ENTRY(widget)) == '*')
 				gtk_entry_set_invisible_char(GTK_ENTRY(widget),	PIDGIN_INVISIBLE_CHAR);
+#endif /* Less than GTK+ 2.16 */
 		}
 
 		gtk_editable_set_editable(GTK_EDITABLE(widget),

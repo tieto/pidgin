@@ -47,6 +47,7 @@
 #include "qq_network.h"
 #include "qq_trans.h"
 #include "utils.h"
+#include "buddy_memo.h"
 
 enum {
 	QQ_ROOM_CMD_REPLY_OK = 0x00,
@@ -740,7 +741,7 @@ void qq_update_online(PurpleConnection *gc, guint16 cmd)
 
 void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		guint8 room_cmd, guint32 room_id, guint8 *rcved, gint rcved_len,
-		gint update_class, guint32 ship32)
+		guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *data;
@@ -876,7 +877,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 }
 
 guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
-		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32)
+		guint8 *rcved, gint rcved_len, guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *data = NULL;
@@ -1028,7 +1029,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 }
 
 void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
-		guint8 *rcved, gint rcved_len, gint update_class, guint32 ship32)
+		guint8 *rcved, gint rcved_len, guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 
@@ -1141,6 +1142,12 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 			break;
 		case QQ_CMD_BUDDY_CHECK_CODE:
 			qq_process_buddy_check_code(gc, data, data_len);
+			break;
+		case QQ_CMD_BUDDY_MEMO:
+			purple_debug_info("QQ", "Receive memo from server!\n");
+			qq_process_get_buddy_memo(gc, data, data_len, update_class, ship32);
+			return;
+			purple_debug_info("QQ", "Should NOT be here...\n");
 			break;
 		default:
 			process_unknow_cmd(gc, _("Unknown CLIENT CMD"), data, data_len, cmd, seq);

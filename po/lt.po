@@ -1,17 +1,17 @@
 # Pidgin eilučių vertimai į lietuvių kalbą
-# Copyright (C) 2004, 2005, 2006, 2007, 2008 Pidgin authors
+# Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Pidgin authors
 # This file is distributed under the same license as the Pidgin package.
-# Laurynas Biveinis <laurynas.biveinis@gmail.com>, 2005, 2006, 2007, 2008.
+# Laurynas Biveinis <laurynas.biveinis@gmail.com>, 2005, 2006, 2007, 2008, 2009.
 # Marius Karnauskas <marius@akl.lt>, 2005.
 # Gediminas Čičinskas. <gediminas@parok.lt>, 2004, 2005.
-# 
-# 
+#
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.0.0\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-01 15:52-0800\n"
-"PO-Revision-Date: 2008-10-02 08:52+0200\n"
+"POT-Creation-Date: 2009-02-24 09:03+0100\n"
+"PO-Revision-Date: 2009-02-24 09:02+0100\n"
 "Last-Translator: Laurynas Biveinis <laurynas.biveinis@gmail.com>\n"
 "Language-Team:\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -74,9 +74,8 @@ msgstr "Pranešimai apie naujus laiškus"
 msgid "Remember password"
 msgstr "Prisiminti slaptažodį"
 
-#, fuzzy
 msgid "There are no protocol plugins installed."
-msgstr "Nesuinstaliuotas nė vienas protokolo papildinys."
+msgstr "Neįdiegtas nė vienas protokolo papildinys."
 
 msgid "(You probably forgot to 'make install'.)"
 msgstr "(Turbūt pamiršote paleisti „make install“.)"
@@ -1201,7 +1200,6 @@ msgstr "Kiek minučių turi praeiti iki būsenos pakeitimo"
 msgid "Change status to"
 msgstr "Pakeisti būseną į"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Pokalbiai"
 
@@ -1523,7 +1521,6 @@ msgstr ""
 "Kai pradedamas naujas pokalbis, šis papildinys įterps paskutinio pokalbio "
 "tekstą su tuo pačiu pašnekovu į pokalbių langą."
 
-#, c-format
 msgid "Online"
 msgstr "Prisijungęs"
 
@@ -1550,10 +1547,10 @@ msgid "No Grouping"
 msgstr "Be grupavimo"
 
 msgid "Nested Subgroup"
-msgstr ""
+msgstr "Įdėtas pogrupis"
 
 msgid "Nested Grouping (experimental)"
-msgstr ""
+msgstr "Įdėtinis grupavimas (eksperimentinis)"
 
 msgid "Provides alternate buddylist grouping options."
 msgstr "Siūlo papildomus bičiulių sąrašo grupavimo būdus."
@@ -1871,7 +1868,7 @@ msgstr ""
 
 #, c-format
 msgid "Resolver process exited without answering our request"
-msgstr ""
+msgstr "Adresų keitiklio procesas baigė darbą neatsakęs į mūsų užklausą"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -1959,7 +1956,6 @@ msgstr "Pradedamas %s gavimas iš %s"
 msgid "Transfer of file %s complete"
 msgstr "Failo %s perdavimas baigtas"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Failo perdavimas baigtas"
 
@@ -1967,7 +1963,6 @@ msgstr "Failo perdavimas baigtas"
 msgid "You canceled the transfer of %s"
 msgstr "Jūs nutraukėte %s perdavimą"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Failo perdavimas nutrauktas"
 
@@ -2176,7 +2171,6 @@ msgstr "(%s) %s <AUTOMATINIS-ATSAKYMAS>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Jūs naudojatės %s, bet šiam papildiniui reikia %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Šis papildinys nenustatė ID"
 
@@ -2922,7 +2916,6 @@ msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "Nepavyko prisijungti su vietiniu mDNS serveriu.  Ar jis paleistas?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Tikrasis vardas"
 
@@ -2953,6 +2946,10 @@ msgstr "Bonjour protokolo papildinys"
 
 msgid "Purple Person"
 msgstr "(nežinomas vardas)"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Vietinis prievadas"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3117,7 +3114,6 @@ msgstr "Pasiekiamas"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Pasitraukęs"
 
@@ -4029,7 +4025,6 @@ msgstr "Plepiai nusiteikęs"
 msgid "Extended Away"
 msgstr "Ilgam pasitraukęs"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Netrukdyti"
 
@@ -4263,6 +4258,9 @@ msgstr "Nustatoma tapatybė"
 
 msgid "Re-initializing Stream"
 msgstr "Iš naujo inicializuojamas duomenų srautas"
+
+msgid "Server doesn't support blocking"
+msgstr "Serveris nepalaiko blokavimo"
 
 msgid "Not Authorized"
 msgstr "Prieiga nesuteikta"
@@ -4655,7 +4653,6 @@ msgstr "Failų perdavimo tarpininkaujantys serveriai"
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
-#, fuzzy
 msgid "Show Custom Smileys"
 msgstr "Rodyti nestandartines šypsenėles"
 
@@ -4779,8 +4776,18 @@ msgstr "Veiksmai"
 msgid "Select an action"
 msgstr "Pasirinkite veiksmą"
 
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Nepavyko gauti MSN adresų knygos"
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "Negalima pridėti \"%s\"."
+
+msgid "Buddy Add error"
+msgstr "Bičiulio pridėjimo klaida"
+
+msgid "The username specified does not exist."
+msgstr "Nurodyto naudotojo vardo nėra."
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -5011,9 +5018,8 @@ msgstr "Vaikiškas Microsoft .NET pasas be tėvų sutikimo"
 msgid "Passport account not yet verified"
 msgstr "Microsoft .NET paso paskyra dar nepatikrinta"
 
-#, fuzzy, c-format
 msgid "Passport account suspended"
-msgstr "Microsoft .NET paso paskyra dar nepatikrinta"
+msgstr "Microsoft .NET paso paskyra suspenduota"
 
 #, c-format
 msgid "Bad ticket"
@@ -5027,13 +5033,11 @@ msgstr "Nežinomas klaidos kodas %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN klaida: %s\n"
 
-#, fuzzy
 msgid "Other Contacts"
-msgstr "Labiausiai mėgstamas kontaktas"
+msgstr "Kiti kontaktai"
 
-#, fuzzy
 msgid "Non-IM Contacts"
-msgstr "Pašalinti kontaktą"
+msgstr "Kontaktai ne iš greitųjų žinučių tinklų"
 
 msgid "Nudge"
 msgstr "Bakstelėjimas"
@@ -5105,6 +5109,12 @@ msgstr "Nusiųsti mobiliąją žinutę"
 msgid "Page"
 msgstr "Siųsti"
 
+msgid "Playing a game"
+msgstr "Žaidžia žaidimą"
+
+msgid "Working"
+msgstr "Dirba"
+
 msgid "Has you"
 msgstr "Turi Jus"
 
@@ -5136,10 +5146,16 @@ msgstr "išėjęs papietauti"
 #. should be user_settable some day
 #. independent
 msgid "Artist"
-msgstr "Atlikėjas"
+msgstr "Dailininkas"
 
 msgid "Album"
 msgstr "Albumas"
+
+msgid "Game Title"
+msgstr "Žaidimo pavadinimas"
+
+msgid "Office Title"
+msgstr "Ofiso pavadinimas"
 
 msgid "Set Friendly Name..."
 msgstr "Nustatyti patogųjį vardą..."
@@ -5336,8 +5352,8 @@ msgstr ""
 "Nepavyko rasti jokios informacijos vartotojo profilyje. Greičiausiai toks "
 "vartotojas neegzistuoja."
 
-msgid "Profile URL"
-msgstr "Profilio URL"
+msgid "View web profile"
+msgstr "Žiūrėti profilį žiniatinklyje"
 
 #. *< type
 #. *< ui_requirement
@@ -5392,9 +5408,8 @@ msgstr "Nežinoma klaida (%d)"
 msgid "Unable to add user"
 msgstr "Nepavyko pridėti vartotojo"
 
-#, fuzzy
 msgid "The following users are missing from your addressbook"
-msgstr "Toliau yra Jūsų paieškos rezultatai"
+msgstr "Tolesnių vartotojų nėra Jūsų adresų knygoje"
 
 #, c-format
 msgid "Unable to add user on %s (%s)"
@@ -5585,26 +5600,20 @@ msgstr "Vartotojas %s įtraukė Jus į savo bičiulių sąrašo."
 msgid "%s has removed you from his or her buddy list."
 msgstr "Vartotojas %s pašalino Jus iš savo bičiulių sąrašo."
 
-#, fuzzy
 msgid "Delete Buddy from Address Book?"
-msgstr "Įtraukti į adresų knygą"
+msgstr "Ar pašalinti bičiulį iš adresų knygos?"
 
-#, fuzzy
 msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "Ar norite įtraukti šį bičiulį į Jūsų bičiulių sąrašą?"
-
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Negalima pridėti \"%s\"."
+msgstr "Ar norite pašalinti šį bičiulį taip pat ir iš adresų knygos?"
 
 msgid "The username specified is invalid."
 msgstr "Nurodytas neteisingas vardas."
 
 msgid "This Hotmail account may not be active."
 msgstr "Ši Hotmail paskyra gali būti neaktyvi."
+
+msgid "Profile URL"
+msgstr "Profilio URL"
 
 #. *< type
 #. *< ui_requirement
@@ -5619,18 +5628,12 @@ msgstr "Ši Hotmail paskyra gali būti neaktyvi."
 msgid "MSN Protocol Plugin"
 msgstr "MSN protokolo papildinys"
 
-msgid "Missing Cipher"
-msgstr "Šifras nerastas"
+#, c-format
+msgid "No such user: %s"
+msgstr "Naudotojas nerastas: %s"
 
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 šifras nerastas"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Atnaujinkite libpurple į versiją su RC4 palaikymu (>= 2.0.1).  MySpaceIM "
-"papildinys nebus įkeltas."
+msgid "User lookup"
+msgstr "Naudotojo paieška"
 
 msgid "Reading challenge"
 msgstr "Skaitomas serverio iššūkis"
@@ -5641,12 +5644,17 @@ msgstr "Neteisingas serverio iššūkio ilgis"
 msgid "Logging in"
 msgstr "Prisijungiama"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundę)"
-msgstr[1] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundes)"
-msgstr[2] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundžių)"
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM – nenustatytas naudotojo vardas"
+
+msgid "You appear to have no MySpace username."
+msgstr "Atrodo, kad neturite MySpace naudojo vardo."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr "Ar norite dabar jį nustatyti? (Pastaba: jis negalės būti keičiamas!)"
+
+msgid "Lost connection with server"
+msgstr "Prarastas prisijungimas prie serverio"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5667,14 +5675,28 @@ msgstr "Nauji nuotraukų komentarai"
 msgid "MySpace"
 msgstr "MySpace"
 
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM – nenustatytas naudotojo vardas"
+msgid "IM Friends"
+msgstr "IM draugai"
 
-msgid "You appear to have no MySpace username."
-msgstr "Atrodo, kad neturite MySpace naudojo vardo."
+#, c-format
+msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
+"%d buddies were added or updated from the server (including buddies already "
+"on the server-side list)"
+msgstr[0] ""
+"%d bičiulis buvo pridėtas ar atnaujintas iš serverio (įskaitant ir "
+"bičiulius, jau esančius serverio sąraše)"
+msgstr[1] ""
+"%d bičiuliai buvo pridėti ar atnaujinti iš serverio (įskaitant ir bičiulius, "
+"jau esančius serverio sąraše)"
+msgstr[2] ""
+"%d bičiulių buvo pridėta ar atnaujinta iš serverio (įskaitant ir bičiulius, "
+"jau esančius serverio sąraše)"
 
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "Ar norite dabar jį nustatyti? (Pastaba: jis negalės būti keičiamas!)"
+msgid "Add contacts from server"
+msgstr "Pridėti kontaktus iš serverio"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -5701,31 +5723,6 @@ msgstr ""
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM klaida"
 
-msgid "Failed to add buddy"
-msgstr "Nepavyko pridėti bičiulio"
-
-msgid "'addbuddy' command failed."
-msgstr "Komanda „addbuddy“ nepavyko."
-
-msgid "persist command failed"
-msgstr "Komanda „persist“ nepavyko."
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Naudotojas nerastas: %s"
-
-msgid "User lookup"
-msgstr "Naudotojo paieška"
-
-msgid "Failed to remove buddy"
-msgstr "Nepavyko pašalinti bičiulio"
-
-msgid "'delbuddy' command failed"
-msgstr "Komanda „delbuddy“ nepavyko"
-
-msgid "blocklist command failed"
-msgstr "Komanda „blocklist“ nepavyko"
-
 msgid "Invalid input condition"
 msgstr "Neteisinga įvesties sąlyga"
 
@@ -5739,28 +5736,36 @@ msgstr "Nepavyko išanalizuoti pranešimo"
 msgid "Couldn't connect to host: %s (%d)"
 msgstr "Nepavyko prisijungti prie mazgo: %s (%d)"
 
-msgid "IM Friends"
-msgstr "IM draugai"
+msgid "Failed to add buddy"
+msgstr "Nepavyko pridėti bičiulio"
 
-#, c-format
+msgid "'addbuddy' command failed."
+msgstr "Komanda „addbuddy“ nepavyko."
+
+msgid "persist command failed"
+msgstr "Komanda „persist“ nepavyko."
+
+msgid "Failed to remove buddy"
+msgstr "Nepavyko pašalinti bičiulio"
+
+msgid "'delbuddy' command failed"
+msgstr "Komanda „delbuddy“ nepavyko"
+
+msgid "blocklist command failed"
+msgstr "Komanda „blocklist“ nepavyko"
+
+msgid "Missing Cipher"
+msgstr "Šifras nerastas"
+
+msgid "The RC4 cipher could not be found"
+msgstr "RC4 šifras nerastas"
+
 msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d bičiulis buvo pridėtas ar atnaujintas iš serverio (įskaitant ir "
-"bičiulius, jau esančius serverio sąraše)"
-msgstr[1] ""
-"%d bičiuliai buvo pridėti ar atnaujinti iš serverio (įskaitant ir bičiulius, "
-"jau esančius serverio sąraše)"
-msgstr[2] ""
-"%d bičiulių buvo pridėta ar atnaujinta iš serverio (įskaitant ir bičiulius, "
-"jau esančius serverio sąraše)"
-
-msgid "Add contacts from server"
-msgstr "Pridėti kontaktus iš serverio"
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
+"Atnaujinkite libpurple į versiją su RC4 palaikymu (>= 2.0.1).  MySpaceIM "
+"papildinys nebus įkeltas."
 
 msgid "Add friends from MySpace.com"
 msgstr "Pridėti draugus iš MySpace.com"
@@ -5802,9 +5807,6 @@ msgstr "Numatytojo šrifto dydis (punktais)"
 msgid "User"
 msgstr "Vartotojas"
 
-msgid "Profile"
-msgstr "Profilis"
-
 msgid "Headline"
 msgstr "Antraštė"
 
@@ -5817,16 +5819,6 @@ msgstr "Iš viso draugų"
 msgid "Client Version"
 msgstr "Kliento programos versija"
 
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Nenustatytas naudotojo vardas"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM – nustatykite naudotojo vardą"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Įveskite naudotojo vardą, kad patikrintumėte, ar jis laisvas:"
-
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM – naudotojo vardas laisvas"
 
@@ -5836,11 +5828,21 @@ msgstr "Šis naudotojo vardas laisvas.  Ar norite juo pasivadinti?"
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "KARTĄ NUSTATYTAS, JIS NEGALI BŪTI PAKEISTAS!"
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM – nustatykite naudotojo vardą"
+
 msgid "This username is unavailable."
 msgstr "Šis naudotojo vardas užimtas."
 
 msgid "Please try another username:"
 msgstr "Pabandykite kitokį naudotojo vardą:"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "Nenustatytas naudotojo vardas"
+
+msgid "Please enter a username to check its availability:"
+msgstr "Įveskite naudotojo vardą, kad patikrintumėte, ar jis laisvas:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -6229,7 +6231,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Klaida. SSL palaikymas neįdiegtas."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Ši konferencija uždaryta. Daugiau žinučių siųsti negalima."
 
@@ -6297,7 +6298,7 @@ msgid "AIM Protocol Plugin"
 msgstr "AIM protokolo papildinys"
 
 msgid "ICQ UIN..."
-msgstr ""
+msgstr "ICQ UIN..."
 
 #  *< api_version
 #  *< type
@@ -6515,23 +6516,18 @@ msgstr "Kamera"
 msgid "Screen Sharing"
 msgstr "Ekrano dalinimasis"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Prieinamas pokalbiui"
 
-#, c-format
 msgid "Not Available"
 msgstr "Neprieinamas"
 
-#, c-format
 msgid "Occupied"
 msgstr "Užimtas"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Žinantis apie žiniatinklį"
 
-#, c-format
 msgid "Invisible"
 msgstr "Nematomas"
 
@@ -6635,12 +6631,10 @@ msgid "_OK"
 msgstr "_Gerai"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Jus netrukus gali atjungti.  Galbūt norėsite naudoti TOC protokolą, kol tai "
-"nebus pataisyta.  Pasižiūrėkite %s, ar nėra atnaujinimų."
+"Jus netrukus gali atjungti.  Jei taip atsitiks, patikrinkite %s, ar nėra "
+"atnaujinimų."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Nepavyko gauti teisingos AIM prisijungimo maišos."
@@ -6829,6 +6823,9 @@ msgstr "Prisijungęs nuo"
 
 msgid "Member Since"
 msgstr "Narys nuo"
+
+msgid "Profile"
+msgstr "Profilis"
 
 msgid "Your AIM connection may be lost."
 msgstr "Jūsų AIM jungtis gali būti prarasta."
@@ -7028,11 +7025,9 @@ msgstr ""
 "turi būti arba teisingi el. pašto adresai, arba turi prasidėti raide ir "
 "turėti tik raides, skaitmenis ir tarpus, arba turėti tik skaitmenis."
 
-#, fuzzy
 msgid "Unable to Add"
 msgstr "Negalima pridėti"
 
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "Negalima gauti bičiulių sąrašo"
 
@@ -7130,6 +7125,7 @@ msgstr "_Jungtis"
 msgid "Get AIM Info"
 msgstr "Gauti AIM informaciją"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Redaguoti bičiulio komentarą"
 
@@ -7241,7 +7237,6 @@ msgstr "Prašoma %s prisijungti prie mūsų tiesioginiu ryšiu adresu %s:%hu."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Bandoma prisijungti prie %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Bandoma jungtis per tarpininką serverį."
 
@@ -7333,16 +7328,14 @@ msgstr "Kiaulė"
 msgid "Other"
 msgstr "Kitas"
 
-#, fuzzy
 msgid "Visible"
-msgstr "Nematomas"
+msgstr "Matomas"
 
-msgid "Firend Only"
-msgstr ""
+msgid "Friend Only"
+msgstr "Tik draugams"
 
-#, fuzzy
 msgid "Private"
-msgstr "Privatumas"
+msgstr "Privatus"
 
 msgid "QQ Number"
 msgstr "QQ numeris"
@@ -7360,9 +7353,8 @@ msgstr "Pašto kodas"
 msgid "Phone Number"
 msgstr "Telefonas"
 
-#, fuzzy
 msgid "Authorize adding"
-msgstr "Ar leisti?"
+msgstr "Leisti pridėjimą"
 
 msgid "Cellphone Number"
 msgstr "Mobilus telefonas"
@@ -7370,135 +7362,111 @@ msgstr "Mobilus telefonas"
 msgid "Personal Introduction"
 msgstr "Asmeninis prisistatymas"
 
-#, fuzzy
 msgid "City/Area"
-msgstr "Miestas"
+msgstr "Miestas/vietovė"
 
-# Ar čia turima omeny „Mr.“, „Ms.“, „Dr.“ ???
-#, fuzzy
 msgid "Publish Mobile"
-msgstr "Asmeninis mobilusis telefonas"
+msgstr "Skelbti mobilaus telefono numerį"
 
-#, fuzzy
 msgid "Publish Contact"
-msgstr "Alternatyvusis kontakto vardas"
+msgstr "Skelbti kontaktą"
 
 msgid "College"
 msgstr "Koledžas"
 
-#, fuzzy
 msgid "Horoscope"
-msgstr "Kinų horoskopo ženklas"
+msgstr "Horoskopas"
 
-#, fuzzy
 msgid "Zodiac"
 msgstr "Zodiako ženklas"
 
 #  Block button
-#, fuzzy
 msgid "Blood"
-msgstr "Blokuotas"
+msgstr "Kraujas"
 
-#, fuzzy
+# True ir False išversti buddy_info kontekste
 msgid "True"
-msgstr "Jautis"
+msgstr "Taip"
 
-#, fuzzy
 msgid "False"
-msgstr "Nepavyko"
+msgstr "Ne"
 
-#, fuzzy
 msgid "Modify Contact"
-msgstr "Redaguoti paskyrą"
+msgstr "Redaguoti kontaktą"
 
-#, fuzzy
 msgid "Modify Address"
-msgstr "Namų adresas"
+msgstr "Redaguoti adresą"
 
-#, fuzzy
 msgid "Modify Extended Information"
-msgstr "Keisti savo informaciją"
+msgstr "Redaguoti išplėstinę informaciją"
 
-#, fuzzy
 msgid "Modify Information"
-msgstr "Keisti savo informaciją"
+msgstr "Keisti informaciją"
 
-#, fuzzy
 msgid "Update"
-msgstr "Paskutinis atnaujinimas"
+msgstr "Atnaujinti"
 
-#, fuzzy
 msgid "Could not change buddy information."
-msgstr "Įveskite bičiulio informaciją."
+msgstr "Nepavyko pakeisti bičiulio informacijos."
 
 #, c-format
-msgid "%d needs Q&A"
-msgstr ""
+msgid "%u requires verification"
+msgstr "%u reikalauja patikrinimo"
 
-#, fuzzy
-msgid "Add buddy Q&A"
-msgstr "Pridėti bičiulį"
+msgid "Add buddy question"
+msgstr "Pridėti klausimą bičiuliui"
 
-#, fuzzy
-msgid "Input answer here"
-msgstr "Įveskite prašymą čia"
+msgid "Enter answer here"
+msgstr "Čia įveskite atsakymą"
 
 #  Build the Send As menu
 msgid "Send"
 msgstr "Siųsti"
 
-#, fuzzy
 msgid "Invalid answer."
-msgstr "Neteisingas naudotojo vardas"
+msgstr "Atsakymas neteisingas."
 
 msgid "Authorization denied message:"
 msgstr "Prieigos teisės nesuteikimo žinutė:"
 
-#, fuzzy
-msgid "Sorry, You are not my style."
-msgstr "Atleisk, tu nesi iš man patinkančių..."
+msgid "Sorry, you're not my style."
+msgstr "Atleisk, tu ne mano tipo."
 
-#, fuzzy, c-format
-msgid "%d needs authentication"
-msgstr "Vartotojui %d reikia prieigos patvirtinimo"
+#, c-format
+msgid "%u needs authorization"
+msgstr "%u reikia leidimo pridėti"
 
-#, fuzzy
 msgid "Add buddy authorize"
-msgstr "Pridėti bičiulį į Jūsų sąrašą?"
+msgstr "Leidimas pridėti bičiulį"
 
-msgid "Input request here"
-msgstr "Įveskite prašymą čia"
+msgid "Enter request here"
+msgstr "Čia įveskite prašymą"
 
 msgid "Would you be my friend?"
 msgstr "Ar draugausi su manimi?"
 
-#, fuzzy
 msgid "QQ Buddy"
-msgstr "bičiulį"
+msgstr "QQ bičiulis"
 
-#, fuzzy
 msgid "Add buddy"
 msgstr "Pridėti bičiulį"
 
-#, fuzzy
 msgid "Invalid QQ Number"
-msgstr "Negalima QQ veidukas"
+msgstr "Neteisingas QQ numeris"
 
-#, fuzzy
 msgid "Failed sending authorize"
-msgstr "Prašau suteikti man prieigos teisę!"
+msgstr "Nepavyko išsiųsti leidimo prašymo"
 
-#, fuzzy, c-format
-msgid "Failed removing buddy %d"
-msgstr "Nepavyko pašalinti bičiulio"
+#, c-format
+msgid "Failed removing buddy %u"
+msgstr "Nepavyko pašalinti bičiulio %u"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed removing me from %d's buddy list"
-msgstr "Vartotojas %s pašalino Jus iš savo bičiulių sąrašo."
+msgstr "Nepavyko pašalinti savęs iš %d bičiulių sąrašo"
 
-#, fuzzy
 msgid "No reason given"
-msgstr "Nenurodyta priežastis."
+msgstr "Priežastis nenurodyta"
 
 #. only need to get value
 #, c-format
@@ -7508,9 +7476,9 @@ msgstr "Jus prisidėjo %s"
 msgid "Would you like to add him?"
 msgstr "Ar norite jį prisidėti?"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Rejected by %s"
-msgstr "Atmesti"
+msgstr "Atmesta %s"
 
 #, c-format
 msgid "Message: %s"
@@ -7525,81 +7493,73 @@ msgstr "Grupės ID"
 msgid "QQ Qun"
 msgstr "QQ Qun"
 
-#, fuzzy
 msgid "Please enter Qun number"
-msgstr "Įveskite naują „%s“ vardą"
+msgstr "Įveskite QQ pokalbių kambario numerį"
 
-#, fuzzy
 msgid "You can only search for permanent Qun\n"
-msgstr "Galite ieškoti tik pastovių QQ grupių\n"
+msgstr "Galite ieškoti tik pastovių QQ kambarių\n"
 
-#, fuzzy
+msgid "(Invalid UTF-8 string)"
+msgstr "(Neteisinga UTF-8 eilutė)"
+
 msgid "Not member"
-msgstr "Nesu narys"
+msgstr "Ne narys"
 
 msgid "Member"
 msgstr "Narys"
 
-#, fuzzy
 msgid "Requesting"
-msgstr "Užklausos dialogas"
+msgstr "Prašoma"
 
-#, fuzzy
 msgid "Admin"
-msgstr "Adium"
+msgstr "Administratorius"
 
-#, fuzzy
 msgid "Notice"
-msgstr "Pastabos"
+msgstr "Pastaba"
 
-#, fuzzy
 msgid "Detail"
-msgstr "Numatytosios"
+msgstr "Išsamiau"
 
 msgid "Creator"
 msgstr "Kūrėjas"
 
-#, fuzzy
 msgid "About me"
-msgstr "Apie %s"
+msgstr "Apie mane"
 
-#, fuzzy
 msgid "Category"
-msgstr "Pokalbių kambario klaida"
+msgstr "Kategorija"
 
-#, fuzzy
 msgid "The Qun does not allow others to join"
-msgstr "Ši grupė neleidžia kitiems prisijungti"
+msgstr "Šis QQ pokalbių kambarys neleidžia prisijungti pašaliniams"
 
-#, fuzzy
 msgid "Join QQ Qun"
-msgstr "Prisijungti prie pokalbių kambario"
+msgstr "Prisijungti prie QQ pokalbių kambario"
+
+msgid "Input request here"
+msgstr "Įveskite prašymą čia"
 
 #, c-format
-msgid "Successfully joined Qun %s (%d)"
-msgstr ""
+msgid "Successfully joined Qun %s (%u)"
+msgstr "Sėkmingai prisijungta prie QQ pokalbių kambario %s (%u)"
 
-#, fuzzy
 msgid "Successfully joined Qun"
-msgstr "Jūs sėkmingai pakeitėte Qun narį"
+msgstr "Sėkmingai prisijungta prie QQ pokalbių kambario"
 
 #, c-format
-msgid "Qun %d denied to join"
-msgstr ""
+msgid "Qun %u denied from joining"
+msgstr "QQ pokalbių kambarys %u neleido prisijungti"
 
 msgid "QQ Qun Operation"
 msgstr "Operacija su QQ pokalbių kambariu"
 
-#, fuzzy
 msgid "Failed:"
-msgstr "Nepavyko"
+msgstr "Nepavyko:"
 
-msgid "Join Qun, Unknow Reply"
-msgstr ""
+msgid "Join Qun, Unknown Reply"
+msgstr "Prisijungimas prie QQ pokalbių kambario, atsakymas nežinomas"
 
-#, fuzzy
 msgid "Quit Qun"
-msgstr "QQ Qun"
+msgstr "Palikti QQ pokalbių kambarį"
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7608,51 +7568,50 @@ msgstr ""
 "Jeigu esate grupės sukūrėjas, ši operacija galiausiai pašalins šį pokalbių "
 "kambarį."
 
-#, fuzzy
-msgid "Sorry, you are not our style ..."
-msgstr "Atleisk, tu nesi iš man patinkančių..."
+msgid "Sorry, you are not our style"
+msgstr "Atleisk, tu ne mano tipo"
 
-#, fuzzy
-msgid "Successfully changed Qun member"
-msgstr "Jūs sėkmingai pakeitėte Qun narį"
+msgid "Successfully changed Qun members"
+msgstr "Sėkmingai pakoregavote QQ pokalbių kambario narius"
 
-#, fuzzy
 msgid "Successfully changed Qun information"
-msgstr "Jūs sėkmingai pakeitėte Qun informaciją"
+msgstr "Sėkmingai pakeitėte QQ pokalbių kambario informaciją"
 
 msgid "You have successfully created a Qun"
 msgstr "Jūs sėkmingai sukūrėte pokalbių kambarį"
 
-#, fuzzy
-msgid "Would you like to set detailed information now?"
-msgstr "Ar norite nustatyti šio Qun detales dabar?"
+msgid "Would you like to set up detailed information now?"
+msgstr "Ar norėtumėte nustatyti išsamesnę informaciją dabar?"
 
 msgid "Setup"
 msgstr "Nustatyti"
 
-#, fuzzy, c-format
-msgid "%d requested to join Qun %d for %s"
-msgstr "Vartotojas %d paprašė prisijungti prie grupės %d"
-
-#, fuzzy, c-format
-msgid "%d request to join Qun %d"
-msgstr "Vartotojas %d paprašė prisijungti prie grupės %d"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
-msgstr "Nepavyko prisijungti prie bičiulio pokalbių kambaryje"
+#, c-format
+msgid "%u requested to join Qun %u for %s"
+msgstr "%u paprašė būti įleistas į QQ pokalbių kambarį %u dėl %s"
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %d.</b>"
-msgstr "Pašalinti bičiulį"
+msgid "%u request to join Qun %u"
+msgstr "%u paprašė būti įleistas į QQ pokalbių kambarį %u"
 
 #, c-format
-msgid "<b>New buddy %d joined.</b>"
+msgid "Failed to join Qun %u, operated by admin %u"
 msgstr ""
+"Nepavyko prisijungti prie QQ pokalbių kambario %u, kurį administruoja %u"
+
+#, c-format
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+msgstr ""
+"<b>Prisijungimas prie QQ pokalbių kambario %u patvirtintas administratoriaus "
+"%u vartotojui %s</b>"
+
+#, c-format
+msgid "<b>Removed buddy %u.</b>"
+msgstr "<b>Pašalintas bičiulis %u.</b>"
+
+#, c-format
+msgid "<b>New buddy %u joined.</b>"
+msgstr "<b>Naujas bičiulis %u prisijungė.</b>"
 
 #, c-format
 msgid "Unknown-%d"
@@ -7676,9 +7635,8 @@ msgstr " „BindMobile“"
 msgid " Video"
 msgstr " Vaizdas"
 
-#, fuzzy
 msgid " Zone"
-msgstr "niekaip"
+msgstr " Zona"
 
 msgid "Flag"
 msgstr "Vėliava"
@@ -7689,110 +7647,105 @@ msgstr "Versija"
 msgid "Invalid name"
 msgstr "Neteisingas vardas"
 
-#, fuzzy
 msgid "Select icon..."
-msgstr "Pasirinkite aplanką..."
+msgstr "Pasirinkite piktogramą..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Prisijungimo laikas</b>: %s\n"
+msgstr "<b>Prisijungimo laikas</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Dabar prisijungę</b>: %d<br>\n"
+msgstr "<b>Iš viso prisijungusių bičiulių</b>: %d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Paskutinis atnaujinimas</b>: %s<br>\n"
+msgstr "<b>Paskutinis atnaujinimas</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Serveris</b>: %s: %d<br>\n"
+msgstr "<b>Serveris</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Prisijungimo laikas</b>: %s\n"
+msgstr "<b>Kliento žymė</b>: %s<br>\n"
 
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Jungties režimas</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Jungties režimas</b>: %s<br>\n"
+msgstr "<b>Mano internetinis adresas</b>: %s:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Serveris</b>: %s: %d<br>\n"
+msgstr "<b>Išsiųsta</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Paskutinis atnaujinimas</b>: %s<br>\n"
+msgstr "<b>Persiųsta</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Paskutinis atnaujinimas</b>: %s<br>\n"
+msgstr "<b>Prarasta</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Serveris</b>: %s: %d<br>\n"
+msgstr "<b>Gauta</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Mano viešasis IP</b>: %s<br>\n"
+msgstr "<b>Gauta po kelis kartus</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Prisijungimo laikas</b>: %s\n"
+msgstr "<b>Laikas</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>Serveris</b>: %s: %d<br>\n"
+msgstr "<b>IP</b>: %s<br>\n"
 
 msgid "Login Information"
 msgstr "Prisijungimo informacija"
 
 msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
+msgstr "<p><b>Pirmasis autorius</b>:<br>\n"
 
 msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
+msgstr "<p><b>Prie programavimo prisidėjo</b>:<br>\n"
 
-#, fuzzy
 msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>Paskutinis atnaujinimas</b>: %s<br>\n"
+msgstr "<p><b>Mieli pataisų rašytojai</b>:<br>\n"
 
-#, fuzzy
 msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>Serveris</b>: %s: %d<br>\n"
+msgstr "<p><b>Padėkos</b>:<br>\n"
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
+"<p><i>Ir visi kiti mažiau žinomi, bet ne mažiau svarbūs vaikinai...</i><br>\n"
 
 msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
+msgstr "<i>Prašom prisijungti prie mūsų!</i> :)"
 
-#, fuzzy, c-format
-msgid "About OpenQ r%s"
-msgstr "Apie %s"
+#, c-format
+msgid "About OpenQ %s"
+msgstr "Apie OpenQ %s"
 
-#, fuzzy
 msgid "Change Icon"
-msgstr "Įrašyti vartotojo paveiksliuką"
+msgstr "Pakeisti paveiksliuką"
 
 msgid "Change Password"
 msgstr "Pakeisti slaptažodį"
 
-#, fuzzy
 msgid "Account Information"
-msgstr "Prisijungimo informacija"
+msgstr "Paskyro informacija"
 
 msgid "Update all QQ Quns"
-msgstr ""
+msgstr "Atnaujinti visus QQ pokalbių kambarius"
 
-#, fuzzy
 msgid "About OpenQ"
-msgstr "Apie %s"
+msgstr "Apie OpenQ"
 
 #  *< api_version
 #  *< type
@@ -7813,59 +7766,48 @@ msgstr "Apie %s"
 #. *< version
 #. *  summary
 #. *  description
-#, fuzzy
 msgid "QQ Protocol Plugin"
-msgstr "QQ protokolo    papildinys"
+msgstr "QQ protokolo papildinys"
 
-#, fuzzy
 msgid "Auto"
-msgstr "Autorius"
+msgstr "Automatiškai"
 
-#, fuzzy
 msgid "Select Server"
-msgstr "Pasirinkite vartotoją"
+msgstr "Pasirinkite serverį"
 
 msgid "QQ2005"
-msgstr ""
+msgstr "QQ2005"
 
 msgid "QQ2007"
-msgstr ""
+msgstr "QQ2007"
 
 msgid "QQ2008"
-msgstr ""
+msgstr "QQ2008"
 
-#. #endif
-#, fuzzy
 msgid "Connect by TCP"
 msgstr "Prisijungti naudojant TCP"
 
-#, fuzzy
 msgid "Show server notice"
-msgstr "Serverio prievadas"
+msgstr "Rodyti serverio žinutę"
 
-#, fuzzy
 msgid "Show server news"
-msgstr "Serverio adresas"
+msgstr "Rodyti serverio naujienas"
 
-#, fuzzy
+msgid "Show chat room when msg comes"
+msgstr "Atėjus žinutei parodyti pokalbių kambarį"
+
 msgid "Keep alive interval (seconds)"
-msgstr "Jungties palaikymo intervalas (-ai)"
+msgstr "Jungties palaikymo intervalas (sekundėmis)"
 
-#, fuzzy
 msgid "Update interval (seconds)"
-msgstr "Atnaujinimo intervalas (-ai)"
+msgstr "Atnaujinimo intervalas (sekundėmis)"
 
-#, fuzzy
-msgid "Can not decrypt server reply"
-msgstr "Nepavyko iššifruoti prisijungimo atsakymo"
-
-#, fuzzy
-msgid "Can not decrypt get server reply"
-msgstr "Nepavyko iššifruoti prisijungimo atsakymo"
+msgid "Cannot decrypt server reply"
+msgstr "Nepavyko iššifruoti serverio atsakymo"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
-msgstr ""
+msgstr "Nepavyko gauti žetono, 0x%02X"
 
 #, c-format
 msgid "Invalid token len, %d"
@@ -7873,56 +7815,53 @@ msgstr "Neteisingas žymės ilgis %d"
 
 #. extend redirect used in QQ2006
 msgid "Redirect_EX is not currently supported"
-msgstr ""
+msgstr "„Redirect_EX“ šiuo metu nepalaikoma"
 
 #. need activation
 #. need activation
 #. need activation
-#, fuzzy
 msgid "Activation required"
-msgstr "Rekalinga registracija"
-
-#, fuzzy, c-format
-msgid "Unknow reply code when login (0x%02X)"
-msgstr "Neteisingas žymės atsakymo kodas, 0x%02X\""
-
-msgid "Keep alive error"
-msgstr "Jungties palaikymo klaida"
-
-#, fuzzy
-msgid "Requesting captcha ..."
-msgstr "Prašoma %s dėmesio..."
-
-msgid "Checking code of captcha ..."
-msgstr ""
-
-msgid "Failed captcha verify"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "Įrašyti vaizdą"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "Įveskite slaptažodį"
-
-msgid "QQ Captcha Verifing"
-msgstr ""
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "Įveskite grupės pavadinimą"
+msgstr "Būtinas aktyvavimas"
 
 #, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
-msgstr ""
+msgid "Unknown reply code when logging in (0x%02X)"
+msgstr "Nežinomas atsakymo kodas prisijungimo metu (0x%02X)"
+
+msgid "Could not decrypt server reply"
+msgstr "Nepavyko iššifruoti serverio atsakymo"
+
+msgid "Requesting captcha"
+msgstr "Prašoma „captcha“"
+
+msgid "Checking captcha"
+msgstr "Tikrinama „captcha“"
+
+msgid "Failed captcha verification"
+msgstr "Nepavyko „captcha“ patikrinimas"
+
+msgid "Captcha Image"
+msgstr "„Captcha“ paveiksliukas"
+
+msgid "Enter code"
+msgstr "Įveskite kodą"
+
+msgid "QQ Captcha Verification"
+msgstr "QQ „captcha“ patikrinimas"
+
+msgid "Enter the text from the image"
+msgstr "Įveskite tekstą iš paveiksliuko"
+
+#, c-format
+msgid "Unknown reply when checking password (0x%02X)"
+msgstr "Nežinomas atsakymas tikrinant slaptažodį (0x%02X)"
 
 #, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
+"Neteisingas atsakymo kodas prisijungimo metu (0x%02X):\n"
+"%s"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -7930,14 +7869,6 @@ msgstr "Nepavyko prisijungti."
 
 msgid "Socket error"
 msgstr "Jungties klaida"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr ""
-"Dingo jungtis su serveriu:\n"
-"%d, %s"
 
 msgid "Unable to read from socket"
 msgstr "Nepavyko skaityti iš jungties"
@@ -7948,81 +7879,74 @@ msgstr "Rašymo klaida"
 msgid "Connection lost"
 msgstr "Prisijungimas prarastas"
 
-#, fuzzy
-msgid "Get server ..."
-msgstr "Nustatyti vartotojo informaciją..."
+msgid "Getting server"
+msgstr "Gaunamas serveris"
 
-#, fuzzy
-msgid "Request token"
-msgstr "Užklausa negalima"
+msgid "Requesting token"
+msgstr "Prašoma žymės"
 
 msgid "Couldn't resolve host"
 msgstr "Nepavyko nustatyti mazgo IP adreso"
 
-#, fuzzy
 msgid "Invalid server or port"
-msgstr "Neteisinga klaida"
+msgstr "Neteisingas serveris ar prievadas"
 
-#, fuzzy
-msgid "Connecting server ..."
-msgstr "Prisijungimo serveris"
+msgid "Connecting to server"
+msgstr "Jungiamasi prie serverio"
 
-#, fuzzy
 msgid "QQ Error"
-msgstr "QQid klaida"
+msgstr "QQ klaida"
 
-msgid "Failed to send IM."
-msgstr "Nepavyko išsiųsti pokalbio žinutės."
-
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server News:\n"
 "%s\n"
 "%s\n"
 "%s"
-msgstr "Perdavimas per ICQ serverį"
+msgstr ""
+"Serverio naujienos:\n"
+"%s\n"
+"%s\n"
+"%s"
 
-#, fuzzy, c-format
+#, c-format
+msgid "%s:%s"
+msgstr "%s:%s"
+
+#, c-format
 msgid "From %s:"
-msgstr "Iš"
+msgstr "Nuo %s:"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Server notice From %s: \n"
 "%s"
-msgstr "Serverio instrukcijos: %s"
-
-msgid "Unknow SERVER CMD"
 msgstr ""
-
-#, fuzzy, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
-msgstr ""
-"Atsakymas %s(0x%02X )\n"
-"Išsiųsta %s(0x%02X )\n"
-"Kambario ID %d, atsakymas [0x%02X]: \n"
+"Serverio žinutė iš %s: \n"
 "%s"
 
-#, fuzzy
+msgid "Unknown SERVER CMD"
+msgstr "Nežinoma „SERVER CMD“"
+
+#, c-format
+msgid ""
+"Error reply of %s(0x%02X)\n"
+"Room %u, reply 0x%02X"
+msgstr ""
+"Klaidos atsakymas iš %s(0x%02X)\n"
+"Kambarys %u, atsakymas 0x%02X"
+
 msgid "QQ Qun Command"
-msgstr "komanda"
+msgstr "QQ pokalbių kambario komanda"
 
-#, fuzzy, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr "Nesate grupės „%s“ narys\n"
-
-msgid "Can not decrypt login reply"
+msgid "Could not decrypt login reply"
 msgstr "Nepavyko iššifruoti prisijungimo atsakymo"
 
-#, fuzzy
-msgid "Unknow LOGIN CMD"
-msgstr "Nežinoma priežastis"
+msgid "Unknown LOGIN CMD"
+msgstr "Nežinoma „LOGIN CMD“"
 
-#, fuzzy
-msgid "Unknow CLIENT CMD"
-msgstr "Nežinoma priežastis"
+msgid "Unknown CLIENT CMD"
+msgstr "Nežinoma „CLIENT CMD“"
 
 #, c-format
 msgid "%d has declined the file %s"
@@ -9518,6 +9442,9 @@ msgstr "Nepavyko nustatyti mazgo IP adreso"
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP naudotojų vardai negali turėti matomų tarpų arba „@“ simbolių"
 
+msgid "SIP connect server not specified"
+msgstr "Nenurodytas SIP prisijungimo serveris"
+
 #  *< api_version
 #  *< type
 #  *< ui_requirement
@@ -9923,9 +9850,8 @@ msgstr "list:  parodyti šio Yahoo tinklo kanalų sąrašą"
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle:  paprašyti kontakto pradėti su juo paišymo seansą"
 
-#, fuzzy
 msgid "Yahoo ID..."
-msgstr "Yahoo! ID"
+msgstr "Yahoo ID..."
 
 #. *< type
 #. *< ui_requirement
@@ -10031,16 +9957,9 @@ msgstr "Puiki nuoroda 3"
 msgid "Last Update"
 msgstr "Paskutinis atnaujinimas"
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr "Vartotojo %s informacija nepasiekiama"
-
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
-msgstr ""
-"Atsiprašome, bet atrodo, jog šis profilis parašytas šiuo metu nepalaikoma "
-"kalba ar formatu."
+"This profile is in a language or format that is not supported at this time."
+msgstr "Šis profilis parašytas šiuo metu nepalaikoma kalba ar formatu."
 
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
@@ -10489,9 +10408,10 @@ msgstr "Nepavyko atverti %s: per daug peradresavimų"
 msgid "Unable to connect to %s"
 msgstr "Nepavyko prisijungti prie %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr "Skaitymo iš %s klaida: %s"
+msgstr ""
+"Skaitymo iš %s klaida: atsakymas per ilgas (maksimalus ilgis baitais: %d)"
 
 #, c-format
 msgid ""
@@ -10670,7 +10590,7 @@ msgstr "Įjungta"
 msgid "Protocol"
 msgstr "Protokolas"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
 "\n"
@@ -10684,13 +10604,13 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>Sveikiname pradėjus naudoti %s!</span>\n"
 "\n"
-"Jūs neturite nustatytų paskyrų.  Norėdami su %s prisijungti, paspauskite <b>"
-"„Pridėti“</b> mygtuką žemiau ir sukonfigūruokite pirmąją savo paskyrą.  Jei "
-"norite, kad %s prisijungtų prie daugiau paskyrų, paspauskite <b>„Pridėti“</"
-"b> daugiau kartų ir sukonfigūruokite visas paskyras.\n"
+"Jūs neturite nustatytų paskyrų.  Norėdami su %s prisijungti, paspauskite "
+"<b>Pridėti...</b> mygtuką žemiau ir sukonfigūruokite pirmąją savo paskyrą.  "
+"Jei norite, kad %s prisijungtų prie daugiau paskyrų, paspauskite "
+"<b>Pridėti...</b> daugiau kartų ir sukonfigūruokite visas paskyras.\n"
 "\n"
 "Vėliau galite sugrįžti į šį langą sukurti, keisti, ar pašalinti paskyrų per "
-"<b>„Paskyros“ -> „Pridėti/Keisti“</b> meniu bičiulių sąrašo lange."
+"<b>Paskyros->Tvarkyti paskyras</b> meniu bičiulių sąrašo lange."
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -11136,9 +11056,8 @@ msgstr "A_lternatyvusis vardas:"
 msgid "Auto_join when account becomes online."
 msgstr "Automatiškai prisi_jungti, kai paskyra aktyvuojama."
 
-#, fuzzy
 msgid "_Remain in chat after window is closed."
-msgstr "_Paslėpti pokalbį, kai uždaromas langas."
+msgstr "_Pasilikti pokalbyje ir uždarius langą."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Prašome įvesti pridedamos grupės pavadinimą."
@@ -11526,11 +11445,10 @@ msgid "Fatal Error"
 msgstr "Lemtingos klaidos"
 
 msgid "bug master"
-msgstr ""
+msgstr "Riktų šeimininkas"
 
-#, fuzzy
 msgid "artist"
-msgstr "Atlikėjas"
+msgstr "dailininkas"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
@@ -11539,9 +11457,8 @@ msgstr "Ka-Hing Cheung"
 msgid "support"
 msgstr "palaikymas"
 
-#, fuzzy
 msgid "webmaster"
-msgstr "kūrėjas ir svetainės administratorius"
+msgstr "svetainės administratorius"
 
 msgid "Senior Contributor/QA"
 msgstr "Vyresnysis bendradarbis/kokybės kontrolė"
@@ -11563,7 +11480,7 @@ msgid "support/QA"
 msgstr "priežiūra ir kokybės kontrolė"
 
 msgid "XMPP"
-msgstr ""
+msgstr "XMPP"
 
 msgid "original author"
 msgstr "pradinis autorius"
@@ -11640,9 +11557,8 @@ msgstr "Suomių kalba"
 msgid "French"
 msgstr "Prancūzų kalba"
 
-#, fuzzy
 msgid "Irish"
-msgstr "Kurdų kalba"
+msgstr "Airių kalba"
 
 msgid "Galician"
 msgstr "Galeganų kalba"
@@ -11697,6 +11613,9 @@ msgstr "Lietuvių kalba"
 
 msgid "Macedonian"
 msgstr "Makedoniečių kalba"
+
+msgid "Mongolian"
+msgstr "Mongolų kalba"
 
 msgid "Bokmål Norwegian"
 msgstr "Norvegų kalba (Bokmål)"
@@ -11812,10 +11731,31 @@ msgstr ""
 "programai.<br><br>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> #pidgin kanalas serveryje irc.freenode."
+"<FONT SIZE=\"4\">DUK:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Pagalba el. paštu:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC kanalas:</FONT> #pidgin serveryje irc.freenode."
 "net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Dabartiniai kūrėjai"
@@ -12068,13 +12008,11 @@ msgstr "Hipersaito spalva"
 msgid "Color to draw hyperlinks."
 msgstr "Spalva hipersaitų vaizdavimui."
 
-#, fuzzy
 msgid "Hyperlink visited color"
-msgstr "Hipersaito spalva"
+msgstr "Aplankyto hipersaito spalva"
 
-#, fuzzy
 msgid "Color to draw hyperlinks after it has been visited (or activated)."
-msgstr "Hipersaito spalva, kai virš jo yra pelės žymeklis."
+msgstr "Aplankyto ar aktyvuoto hipersaito spalva."
 
 msgid "Hyperlink prelight color"
 msgstr "Hipersaito paryškinimo spalva"
@@ -12442,7 +12380,7 @@ msgstr ""
 "                          paskyra.\n"
 "  -v, --version           parodyti šios programos versiją ir baigti\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s %s has segfaulted and attempted to dump a core file.\n"
 "This is a bug in the software and has happened through\n"
@@ -12457,27 +12395,27 @@ msgid ""
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
 msgstr ""
-"Įvyko %s %s segmentacijos klaida ir pabandyta išvesti atminties išklotinę.\n"
+"%s %s padarė segmentacijos klaidą ir pabandė išvesti atminties išklotinę.\n"
 "Tai yra programos riktas ir atsitiko be jokios Jūsų kaltės.\n"
 "\n"
 "Jeigu Jūs galite atkartoti šią klaidą, prašome informuoti kūrėjus apie "
 "klaidą\n"
-"adresu %ssimpleticket/\n"
+"adresu:\n"
+"%ssimpleticket/\n"
 "\n"
 "Įsitikinkite, kad nurodote, ką darėte, kai įvyko klaida, ir pridėkite \n"
 "programos steko išklotinę (angl. „backtrace“) iš atminties išklotinės \n"
 "failo.  Jeigu nežinote, kaip gauti programos steko išklotinę, perskaitykite\n"
 "instrukcijas adresu %swiki/GetABacktrace\n"
-"\n"
-"Jeigu jums reikia papildomos pagalbos, AIM tinkle parašykite \n"
-"vartotojui SeanEgn arba LSchiere.  Informacija, kaip pasiekti Sean ir \n"
-"Luke kitais protokolais, yra adresu\n"
-"%swiki/DeveloperPages\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Pidgin"
 msgstr "Pidgin"
+
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Programa uždaroma, nes jau yra paleistas kitas libpurple klientas.\n"
 
 msgid "Open All Messages"
 msgstr "Atidaryti visas žinutes"
@@ -12846,6 +12784,10 @@ msgstr "Tarpininkaujantis serveris"
 msgid "No proxy"
 msgstr "be tarpininko"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Naudoti nutolusį DNS su SOCKS4 tarpininku"
+
 msgid "_User:"
 msgstr "_Vartotojas:"
 
@@ -12967,20 +12909,17 @@ msgstr ""
 "Garso k_omanda:\n"
 "(%s reiškia failo vardą)"
 
-#, fuzzy
 msgid "M_ute sounds"
-msgstr "_Išjungti garsus"
+msgstr "Išj_ungti garsus"
 
 msgid "Sounds when conversation has _focus"
 msgstr "Groti _garsus, kai pokalbio langas yra veikiamasis"
 
-#, fuzzy
 msgid "_Enable sounds:"
-msgstr "Įjungti garsus:"
+msgstr "_Įjungti garsus:"
 
-#, fuzzy
 msgid "V_olume:"
-msgstr "Garsumas:"
+msgstr "_Garsumas:"
 
 msgid "Play"
 msgstr "Groti"
@@ -13205,13 +13144,11 @@ msgstr "Šypsenėlė"
 msgid "Custom Smiley Manager"
 msgstr "Tinkintų šypsenėlių tvarkytuvė"
 
-#, fuzzy
 msgid "Click to change your buddyicon for this account."
-msgstr "Naudot_i tokį vartotojo paveiksliuką šiai paskyrai:"
+msgstr "Paspauskite, kad pakeistumėte savo paveiksliuką šiai paskyrai."
 
-#, fuzzy
 msgid "Click to change your buddyicon for all accounts."
-msgstr "Naudot_i tokį vartotojo paveiksliuką šiai paskyrai:"
+msgstr "Paspauskite, kad pakeistumėte savo paveiksliuką visoms paskyroms."
 
 msgid "Waiting for network connection"
 msgstr "Laukiama tinklo jungties"
@@ -13349,13 +13286,11 @@ msgstr "_Gauti informaciją"
 msgid "_Invite"
 msgstr "Pakv_iesti"
 
-#, fuzzy
 msgid "_Modify..."
-msgstr "_Keisti"
+msgstr "_Keisti..."
 
-#, fuzzy
 msgid "_Add..."
-msgstr "_Pridėti"
+msgstr "_Pridėti..."
 
 msgid "_Open Mail"
 msgstr "_Atverti paštą"
@@ -13378,12 +13313,11 @@ msgstr "Išjungia grafines šypsenėles"
 msgid "none"
 msgstr "Jokių šypsenėlių"
 
-#, fuzzy
 msgid "Small"
-msgstr "El. paštas"
+msgstr "Mažas"
 
 msgid "Smaller versions of the default smilies"
-msgstr ""
+msgstr "Mažesni numatytųjų šypsenėlių variantai"
 
 msgid "Response Probability:"
 msgstr "Atsakymo tikimybė:"
@@ -13908,9 +13842,8 @@ msgstr "įterpti naujų žinučių skaičių į _X sąvybę"
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "nustatyti langų tvarkytuvės „_URGENT“ patarimą"
 
-#, fuzzy
 msgid "_Flash window"
-msgstr "_pokalbių kambarių languose"
+msgstr "_Mirginti langą"
 
 #  IM Convo trans options
 #. Raise window method button
@@ -14017,9 +13950,8 @@ msgstr "Antrinė žymeklio spalva"
 msgid "Hyperlink Color"
 msgstr "Hipersaito spalva"
 
-#, fuzzy
 msgid "Visited Hyperlink Color"
-msgstr "Hipersaito spalva"
+msgstr "Aplankyhto hipersaito spalva"
 
 msgid "Highlighted Message Name Color"
 msgstr "Vardo paryškintoje žinutėje spalva"
@@ -14122,18 +14054,16 @@ msgstr ""
 
 #, c-format
 msgid "You can upgrade to %s %s today."
-msgstr ""
+msgstr "Šiandien jau galite atnaujinti į %s %s."
 
 msgid "New Version Available"
 msgstr "Pasirodė nauja versija"
 
-#, fuzzy
 msgid "Later"
-msgstr "Data"
+msgstr "Vėliau"
 
-#, fuzzy
 msgid "Download Now"
-msgstr "Atsisiųsk %s: %s"
+msgstr "Atsisiųsti dabar"
 
 #  *< api_version
 #  *< type
@@ -14149,7 +14079,7 @@ msgstr "Atsisiųsk %s: %s"
 #. *< priority
 #. *< id
 msgid "Release Notification"
-msgstr "Pranešimai apie išleistas naujas versijas"
+msgstr "Pranešimas apie laidą"
 
 #  *< name
 #  *< version
@@ -14417,9 +14347,6 @@ msgstr "Lai_kyti bičiulių sąrašo langą viršuje:"
 msgid "Only when docked"
 msgstr "tik kai pritvirtintas"
 
-msgid "_Flash window when chat messages are received"
-msgstr "Gavus pokalbių žinučių _mirginti langą"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows Pidgin parinktys"
 
@@ -14469,285 +14396,3 @@ msgstr "Siųsti ir gauti neapdorotas XMPP strofas."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Šis papildinys naudingas XMPP serverių ir klientų derinimui."
-
-#~ msgid "A group with the name already exists."
-#~ msgstr "Grupė su tokiu vardu jau yra."
-
-#~ msgid "Primary Information"
-#~ msgstr "Pagrindinė informacija"
-
-#~ msgid "Blood Type"
-#~ msgstr "Kraujo grupė"
-
-#, fuzzy
-#~ msgid "Update information"
-#~ msgstr "Atnaujinti savo informaciją"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "Greitis:"
-
-#~ msgid ""
-#~ "Setting custom faces is not currently supported. Please choose an image "
-#~ "from %s."
-#~ msgstr ""
-#~ "Specialių veidukų nustatymas šiuo metu nėra palaikomas.  Prašome "
-#~ "pasirinkti paveiksliuką iš %s."
-
-#~ msgid "Invalid QQ Face"
-#~ msgstr "Negalima QQ veidukas"
-
-#~ msgid "You rejected %d's request"
-#~ msgstr "Atmetėte iš %d gautą prašymą"
-
-#~ msgid "Reject request"
-#~ msgstr "Atmesti prašymą"
-
-#~ msgid "Add buddy with auth request failed"
-#~ msgstr "Bičiulio pridėjimo su prieigos patvirtinimu užklausa nepavyko"
-
-#, fuzzy
-#~ msgid "Add into %d's buddy list"
-#~ msgstr "Nepavyko įkelti bičiulių sąrašo"
-
-#, fuzzy
-#~ msgid "QQ Number Error"
-#~ msgstr "QQ numeris"
-
-#~ msgid "Group Description"
-#~ msgstr "Grupės aprašymas"
-
-#~ msgid "Auth"
-#~ msgstr "Patvirtinti prieigos teisę"
-
-#~ msgid "Approve"
-#~ msgstr "Patvirtinti"
-
-#, fuzzy
-#~ msgid "Successed to join Qun %d, operated by admin %d"
-#~ msgstr ""
-#~ "Jūsų prašymas prisijungti prie grupės %d buvo atmestas administratoriaus %"
-#~ "d"
-
-#, fuzzy
-#~ msgid "[%d] removed from Qun \"%d\""
-#~ msgstr "Jūs [%d] palikote grupę „%d“"
-
-#, fuzzy
-#~ msgid "[%d] added to Qun \"%d\""
-#~ msgstr "Jūs [%d] prisijungėte prie grupės „%d“"
-
-#~ msgid "I am a member"
-#~ msgstr "Esu narys"
-
-#, fuzzy
-#~ msgid "I am requesting"
-#~ msgstr "Bloga užklausa"
-
-#~ msgid "I am the admin"
-#~ msgstr "Esu administratorius"
-
-#~ msgid "Unknown status"
-#~ msgstr "Nežinoma būsena"
-
-#, fuzzy
-#~ msgid "Remove from Qun"
-#~ msgstr "Pašalinti grupę"
-
-#~ msgid "You entered a group ID outside the acceptable range"
-#~ msgstr "Įvedėte grupės identifikacinį numerį, nesantį priimtiname intervale"
-
-#~ msgid "Are you sure you want to leave this Qun?"
-#~ msgstr "Ar Jūs tikrai norite paliktį šį Qun pokalbių kambarį?"
-
-#~ msgid "Do you want to approve the request?"
-#~ msgstr "Ar norite patvirtinti šį prašymą?"
-
-#, fuzzy
-#~ msgid "Change Qun member"
-#~ msgstr "Telefonas"
-
-#, fuzzy
-#~ msgid "Change Qun information"
-#~ msgstr "Kanalo informacija"
-
-#, fuzzy
-#~ msgid ""
-#~ "%s\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr "%s (%s)"
-
-#  Window **********
-#~ msgid "System Message"
-#~ msgstr "Sistemos pranešimas"
-
-#~ msgid "<b>Last Login IP</b>: %s<br>\n"
-#~ msgstr "<b>Paskutinio prisijungimo IP</b>: %s<br>\n"
-
-#~ msgid "<b>Last Login Time</b>: %s\n"
-#~ msgstr "<b>Paskutinio prisijungimo laikas</b>: %s\n"
-
-#~ msgid "Set My Information"
-#~ msgstr "Nustatyti informaciją apie save"
-
-#, fuzzy
-#~ msgid "Leave the QQ Qun"
-#~ msgstr "Palikti šį QQ Qun"
-
-#~ msgid "Block this buddy"
-#~ msgstr "Blokuoti šį bičiulį"
-
-#~ msgid "Invalid token reply code, 0x%02X"
-#~ msgstr "Neteisingas žymės atsakymo kodas, 0x%02X\""
-
-#, fuzzy
-#~ msgid "Error password: %s"
-#~ msgstr "Slaptažodžio keitimo klaida"
-
-#, fuzzy
-#~ msgid "Failed to connect all servers"
-#~ msgstr "Nepavyko prisijungti prie serverio."
-
-#~ msgid "Connecting server %s, retries %d"
-#~ msgstr "Jungiamasi prie serverio %s, kartojimas %d"
-
-#, fuzzy
-#~ msgid "Do you approve the requestion?"
-#~ msgstr "Ar norite patvirtinti šį prašymą?"
-
-#, fuzzy
-#~ msgid "Do you add the buddy?"
-#~ msgstr "Ar norite įtraukti šį bičiulį?"
-
-#, fuzzy
-#~ msgid "%s added you [%s] to buddy list"
-#~ msgstr "Vartotojas %s įtraukė Jus [%s] į savo bičiulių sąrašo."
-
-#, fuzzy
-#~ msgid "QQ Budy"
-#~ msgstr "bičiulį"
-
-#~ msgid "%s wants to add you [%s] as a friend"
-#~ msgstr "%s nori prisidėti Jus [%s] kaip draugą"
-
-#, fuzzy
-#~ msgid "%s is not in buddy list"
-#~ msgstr "%s nėra Jūsų bičiulių sąraše"
-
-#, fuzzy
-#~ msgid "Would you add?"
-#~ msgstr "Ar norite jį prisidėti?"
-
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#, fuzzy
-#~ msgid "QQ Server Notice"
-#~ msgstr "Serverio prievadas"
-
-#, fuzzy
-#~ msgid "Network disconnected"
-#~ msgstr "Kitas vartotojas atsijungė"
-
-#~ msgid "developer"
-#~ msgstr "kūrėjas"
-
-#~ msgid "XMPP developer"
-#~ msgstr "XMPP kūrėjas"
-
-#~ msgid "Artists"
-#~ msgstr "Menininkai"
-
-#~ msgid ""
-#~ "You are using %s version %s.  The current version is %s.  You can get it "
-#~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr ""
-#~ "Jūs naudojate %s versiją %s.  Naujausia versija yra %s.  Galite ją gauti "
-#~ "iš <a href=\\\"%s\\\">%s</a><hr>"
-
-#~ msgid "<b>ChangeLog:</b><br>%s"
-#~ msgstr "<b>Atnaujinimų žurnalas:</b><br>%s"
-
-#~ msgid "EOF while reading from resolver process"
-#~ msgstr "EOF (failo pabaiga) beskaitant iš adresų keitiklio proceso"
-
-#~ msgid "Your information has been updated"
-#~ msgstr "Jūsų informacija buvo atnaujinta"
-
-#~ msgid "Input your reason:"
-#~ msgstr "Įveskite priežastį:"
-
-#~ msgid "You have successfully removed a buddy"
-#~ msgstr "Jūs sėkmingai pašalinote bičiulį"
-
-#~ msgid "You have successfully removed yourself from your friend's buddy list"
-#~ msgstr "Jūs sėkmingai pašalinote save iš savo draugo bičiulių sąrašo"
-
-#~ msgid "You have added %d to buddy list"
-#~ msgstr "Jūs pridėjote %d į bičiulių sąrašą"
-
-#~ msgid "Invalid QQid"
-#~ msgstr "Neteisingas QQid"
-
-#~ msgid "Please enter external group ID"
-#~ msgstr "Įveskite išorinį grupės ID"
-
-#~ msgid "Reason: %s"
-#~ msgstr "Priežastis: %s"
-
-#~ msgid "Your request to join group %d has been approved by admin %d"
-#~ msgstr ""
-#~ "Jūsų prašymas prisijungti prie grupės %d buvo patvirtintas "
-#~ "administratoriaus %d"
-
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "Ši grupė pridėta į Jūsų bičiulių sąrašą"
-
-#~ msgid "I am applying to join"
-#~ msgstr "Esu prašantis prisijungti"
-
-#~ msgid "You have successfully left the group"
-#~ msgstr "Jūs sėkmingai palikote pokalbių kambarį"
-
-#~ msgid "QQ Group Auth"
-#~ msgstr "QQ grupės prieigos teisė"
-
-#~ msgid "Your authorization request has been accepted by the QQ server"
-#~ msgstr "Jūsų prieigos teisės prašymas priimtas QQ serverio"
-
-#~ msgid "Enter your reason:"
-#~ msgstr "Įveskite priežastį:"
-
-#~ msgid " Space"
-#~ msgstr " Vieta"
-
-#~ msgid "<b>Real hostname</b>: %s: %d<br>\n"
-#~ msgstr "<b>Tikrasis serverio vardas</b>: %s: %d<br>\n"
-
-#~ msgid "Show Login Information"
-#~ msgstr "Rodyti prisijungimo informaciją"
-
-#~ msgid "resend interval(s)"
-#~ msgstr "Persiuntimo intervalas(-ai)"
-
-#~ msgid "hostname is NULL or port is 0"
-#~ msgstr "Mazgo vardas NULL arba prievado numeris 0"
-
-#~ msgid "Unable to login. Check debug log."
-#~ msgstr "Prisijungti nepavyko.  Pažiūrėkite į derinimo žurnalą"
-
-#~ msgid "Unable to login"
-#~ msgstr "Prisijungti nepavyko"
-
-#~ msgid "Failed room reply"
-#~ msgstr "Nepavykęs kambario atsakas"
-
-#~ msgid "User %s rejected your request"
-#~ msgstr "Vartotojas %s atmetė Jūsų prašymą"
-
-#~ msgid "User %s approved your request"
-#~ msgstr "Vartotojas %s patvirtino Jūsų prašymą"
-
-#~ msgid "Notice from: %s"
-#~ msgstr "Pranešimas iš: %s"

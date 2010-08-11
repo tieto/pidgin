@@ -21,6 +21,7 @@
  */
 
 #include "gntbox.h"
+#include "gntstyle.h"
 #include "gntutils.h"
 
 #include <string.h>
@@ -304,44 +305,56 @@ static gboolean
 gnt_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntBox *box = GNT_BOX(widget);
-	GntWidget *now;
+	gboolean ret;
+
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DISABLE_ACTIONS))
+		return FALSE;
 
 	if (box->active == NULL && !find_focusable_widget(box))
 		return FALSE;
 
 	if (gnt_widget_key_pressed(box->active, text))
 		return TRUE;
-	
+
+	/* This dance is necessary to make sure that the child widgets get a chance
+	   to trigger their bindings first */
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DISABLE_ACTIONS);
+	ret = gnt_widget_key_pressed(widget, text);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_DISABLE_ACTIONS);
+	return ret;
+}
+
+static gboolean
+box_focus_change(GntBox *box, gboolean next)
+{
+	GntWidget *now;
 	now = box->active;
 
-	if (text[0] == 27)
-	{
-		if (strcmp(text, GNT_KEY_LEFT) == 0)
-		{
-			find_prev_focus(box);
-		}
-		else if (strcmp(text, GNT_KEY_RIGHT) == 0)
-		{
-			find_next_focus(box);
-		}
-		else if (strcmp(text, GNT_KEY_BACK_TAB) == 0)
-		{
-			find_prev_focus(box);
-		}
-	}
-	else if (text[0] == '\t')
-	{
+	if (next) {
 		find_next_focus(box);
+	} else {
+		find_prev_focus(box);
 	}
 
-	if (now && now != box->active)
-	{
+	if (now && now != box->active) {
 		gnt_widget_set_focus(now, FALSE);
 		gnt_widget_set_focus(box->active, TRUE);
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+static gboolean
+action_focus_next(GntBindable *bindable, GList *null)
+{
+	return box_focus_change(GNT_BOX(bindable), TRUE);
+}
+
+static gboolean
+action_focus_prev(GntBindable *bindable, GList *null)
+{
+	return box_focus_change(GNT_BOX(bindable), FALSE);
 }
 
 static void
@@ -556,6 +569,7 @@ gnt_box_get_property(GObject *obj, guint prop_id, GValue *value,
 static void
 gnt_box_class_init(GntBoxClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	GObjectClass *gclass = G_OBJECT_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_box_destroy;
@@ -589,6 +603,15 @@ gnt_box_class_init(GntBoxClass *klass)
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
 			)
 		);
+
+	gnt_bindable_class_register_action(bindable, "focus-next", action_focus_next,
+			"\t", NULL);
+	gnt_bindable_register_binding(bindable, "focus-next", GNT_KEY_RIGHT, NULL);
+	gnt_bindable_class_register_action(bindable, "focus-prev", action_focus_prev,
+			GNT_KEY_BACK_TAB, NULL);
+	gnt_bindable_register_binding(bindable, "focus-prev", GNT_KEY_LEFT, NULL);
+
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 }
 
 static void
@@ -599,7 +622,7 @@ gnt_box_init(GTypeInstance *instance, gpointer class)
 	/* Initially make both the height and width resizable.
 	 * Update the flags as necessary when widgets are added to it. */
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_DISABLE_ACTIONS);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	box->pad = 1;
 	box->fill = TRUE;

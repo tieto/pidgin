@@ -102,7 +102,7 @@ bonjour_login(PurpleAccount *account)
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
-	bd->jabber_data->port = BONJOUR_DEFAULT_PORT_INT;
+	bd->jabber_data->port = purple_account_get_int(account, "port", BONJOUR_DEFAULT_PORT);
 	bd->jabber_data->account = account;
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
@@ -706,6 +706,9 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
+	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

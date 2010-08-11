@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"core-plugin_pack-autoaccept"
 #define PLUGIN_NAME			N_("Autoaccept")
-#define PLUGIN_STATIC_NAME	"Autoaccept"
+#define PLUGIN_STATIC_NAME	Autoaccept
 #define PLUGIN_SUMMARY		N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_DESCRIPTION	N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"

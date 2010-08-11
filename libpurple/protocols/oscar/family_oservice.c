@@ -103,12 +103,29 @@ void
 aim_srv_requestnew(OscarData *od, guint16 serviceid)
 {
 	FlapConnection *conn;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	GSList *tlvlist = NULL;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
 	if(!conn)
 		return;
 
-	aim_genericreq_s(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, &serviceid);
+	byte_stream_new(&bs, 6);
+
+	byte_stream_put16(&bs, serviceid);
+
+	if (od->use_ssl)
+		/* Request SSL Connection */
+		aim_tlvlist_add_noval(&tlvlist, 0x008c);
+
+	aim_tlvlist_write(&bs, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /*
@@ -127,10 +144,10 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	struct chatsnacinfo csi;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
-	if (!conn || !roomname || !strlen(roomname))
+	if (!conn || !roomname || roomname[0] == '\0')
 		return -EINVAL;
 
-	byte_stream_new(&bs, 502);
+	byte_stream_new(&bs, 506);
 
 	memset(&csi, 0, sizeof(csi));
 	csi.exchange = exchange;
@@ -143,6 +160,11 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	byte_stream_put16(&bs, 0x000e);
 
 	aim_tlvlist_add_chatroom(&tlvlist, 0x0001, exchange, roomname, instance);
+
+	if (od->use_ssl)
+		/* Request SSL Connection */
+		aim_tlvlist_add_noval(&tlvlist, 0x008c);
+
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
@@ -179,6 +201,8 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	redir.ip = aim_tlv_getstr(tlvlist, 0x0005, 1);
 	redir.cookielen = aim_tlv_gettlv(tlvlist, 0x0006, 1)->length;
 	redir.cookie = (guchar *)aim_tlv_getstr(tlvlist, 0x0006, 1);
+	redir.ssl_cert_cn = aim_tlv_getstr(tlvlist, 0x008d, 1);
+	redir.use_ssl = aim_tlv_get8(tlvlist, 0x008e, 1);
 
 	/* Fetch original SNAC so we can get csi if needed */
 	origsnac = aim_remsnac(od, snac->id);
@@ -196,6 +220,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 	g_free((void *)redir.ip);
 	g_free((void *)redir.cookie);
+	g_free((void *)redir.ssl_cert_cn);
 
 	if (origsnac)
 		g_free(origsnac->data);

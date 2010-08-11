@@ -108,41 +108,41 @@ typedef struct {
 } QQ_FIELD_INFO;
 
 static const QQ_FIELD_INFO field_infos[] = {
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "uid", 			N_("QQ Number"), NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "nick", 			N_("Nickname"), NULL, 0 },
-	{ QQ_FIELD_ADDR, 		QQ_FIELD_STRING, "country", 	N_("Country/Region"), NULL, 0 },
-	{ QQ_FIELD_ADDR, 		QQ_FIELD_STRING, "province", 	N_("Province/State"), NULL, 0 },
-	{ QQ_FIELD_ADDR, 		QQ_FIELD_STRING, "zipcode", 	N_("Zipcode"), NULL, 0 },
-	{ QQ_FIELD_ADDR, 		QQ_FIELD_STRING, "address", 	N_("Address"), NULL, 0 },
-	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "tel", 				N_("Phone Number"), NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "age", 			N_("Age"), NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_CHOICE, "gender", 		N_("Gender"), genders, QQ_GENDER_SIZE },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "name", 			N_("Name"), NULL, 0 },
-	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "email", 			N_("Email"), NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sn",		"Pager Serial Num", NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_STRING, "uid", 	N_("QQ Number"), NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_STRING, "nick", 	N_("Nickname"), NULL, 0 },
+	{ QQ_FIELD_ADDR, 	QQ_FIELD_STRING, "country", 	N_("Country/Region"), NULL, 0 },
+	{ QQ_FIELD_ADDR, 	QQ_FIELD_STRING, "province", 	N_("Province/State"), NULL, 0 },
+	{ QQ_FIELD_ADDR, 	QQ_FIELD_STRING, "zipcode", 	N_("Zipcode"), NULL, 0 },
+	{ QQ_FIELD_ADDR, 	QQ_FIELD_STRING, "address", 	N_("Address"), NULL, 0 },
+	{ QQ_FIELD_CONTACT, 	QQ_FIELD_STRING, "tel", 	N_("Phone Number"), NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_STRING, "age", 	N_("Age"), NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_CHOICE, "gender", 	N_("Gender"), genders, QQ_GENDER_SIZE },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_STRING, "name", 	N_("Name"), NULL, 0 },
+	{ QQ_FIELD_CONTACT, 	QQ_FIELD_STRING, "email", 	N_("Email"), NULL, 0 },
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sn",	"Pager Serial Num", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_num",	"Pager Num", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sp",		"Pager Serivce Provider", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sta",		"Pager Station Num", NULL, 0 },
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sp",	"Pager Serivce Provider", NULL, 0 },
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_sta",	"Pager Station Num", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "pg_type",	"Pager Type", NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_STRING, "occupation", 	N_("Occupation"), NULL, 0 },
-	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "homepage", 		N_("Homepage"), NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_BOOL, 	"auth", 				N_("Authorize adding"), NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_STRING, "occupation", 	N_("Occupation"), NULL, 0 },
+	{ QQ_FIELD_CONTACT, 	QQ_FIELD_STRING, "homepage", 	N_("Homepage"), NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_BOOL, 	"auth", 	N_("Authorize adding"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow1",	"Unknow1", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow2",	"Unknow2", NULL, 0 },
-	{ QQ_FIELD_UNUSED, 		QQ_FIELD_STRING, "face",				"Face", NULL, 0 },
-	{ QQ_FIELD_CONTACT, QQ_FIELD_STRING, "mobile",		N_("Cellphone Number"), NULL, 0 },
-	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "mobile_type","Cellphone Type", NULL, 0 },
-	{ QQ_FIELD_BASE, 		QQ_FIELD_MULTI, 	"intro", 		N_("Personal Introduction"), NULL, 0 },
-	{ QQ_FIELD_ADDR, 		QQ_FIELD_STRING, "city",			N_("City/Area"), NULL, 0 },
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "face",	"Face", NULL, 0 },
+	{ QQ_FIELD_CONTACT, 	QQ_FIELD_STRING, "mobile",	N_("Cellphone Number"), NULL, 0 },
+	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "mobile_type", "Cellphone Type", NULL, 0 },
+	{ QQ_FIELD_BASE, 	QQ_FIELD_MULTI,  "intro", 	N_("Personal Introduction"), NULL, 0 },
+	{ QQ_FIELD_ADDR, 	QQ_FIELD_STRING, "city",	N_("City/Area"), NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow3",	"Unknow3", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow4",	"Unknow4", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow5",	"Unknow5", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_CHOICE, "pub_mobile",	N_("Publish Mobile"), publish_types, QQ_PUBLISH_SIZE },
-	{ QQ_FIELD_CONTACT, QQ_FIELD_CHOICE, "pub_contact",	N_("Publish Contact"), publish_types, QQ_PUBLISH_SIZE },
-	{ QQ_FIELD_EXT, 		QQ_FIELD_STRING, "college",			N_("College"), NULL, 0 },
-	{ QQ_FIELD_EXT, 		QQ_FIELD_CHOICE, "horoscope",	N_("Horoscope"), horoscope_names, QQ_HOROSCOPE_SIZE },
-	{ QQ_FIELD_EXT, 		QQ_FIELD_CHOICE, "zodiac",		N_("Zodiac"), zodiac_names, QQ_ZODIAC_SIZE },
-	{ QQ_FIELD_EXT, 		QQ_FIELD_CHOICE, "blood",			N_("Blood"), blood_types, QQ_BLOOD_SIZE },
+	{ QQ_FIELD_CONTACT, 	QQ_FIELD_CHOICE, "pub_contact",	N_("Publish Contact"), publish_types, QQ_PUBLISH_SIZE },
+	{ QQ_FIELD_EXT, 	QQ_FIELD_STRING, "college",	N_("College"), NULL, 0 },
+	{ QQ_FIELD_EXT, 	QQ_FIELD_CHOICE, "horoscope",	N_("Horoscope"), horoscope_names, QQ_HOROSCOPE_SIZE },
+	{ QQ_FIELD_EXT, 	QQ_FIELD_CHOICE, "zodiac",	N_("Zodiac"), zodiac_names, QQ_ZODIAC_SIZE },
+	{ QQ_FIELD_EXT, 	QQ_FIELD_CHOICE, "blood",	N_("Blood"), blood_types, QQ_BLOOD_SIZE },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "qq_show",	"QQ Show", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "unknow6",	"Unknow6", NULL, 0 },
 	{ QQ_FIELD_UNUSED, 	QQ_FIELD_STRING, "LAST_2005",	"LAST_2005", NULL, 0 }
@@ -196,7 +196,9 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 				break;
 			case QQ_FIELD_CHOICE:
 				choice_num = strtol(segments[index], NULL, 10);
-				if (choice_num < 0 || choice_num >= field_infos[index].choice_size)	choice_num = 0;
+				if (choice_num < 0 || choice_num >= field_infos[index].choice_size) {
+					choice_num = 0;
+				}
 
 				purple_notify_user_info_add_pair(user_info, field_infos[index].text, field_infos[index].choice[choice_num]);
 				break;
@@ -220,7 +222,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 }
 
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
-		gint update_class, int action)
+		guint32 update_class, int action)
 {
 	qq_data *qd;
 	gchar raw_data[16] = {0};
@@ -750,7 +752,7 @@ void qq_request_get_level_2007(PurpleConnection *gc, guint32 uid)
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
-void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
+void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 {
 	qq_data *qd = (qq_data *) gc->proto_data;
 	PurpleBuddy *buddy;

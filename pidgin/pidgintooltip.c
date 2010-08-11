@@ -82,7 +82,8 @@ initialize_tooltip_delay()
 static void
 destroy_tooltip_data(PidginTooltipData *data)
 {
-	gtk_tree_path_free(data->common.treeview.path);
+	if (data->common.treeview.path)
+		gtk_tree_path_free(data->common.treeview.path);
 	pidgin_tooltip_destroy();
 	g_free(data);
 }
@@ -134,14 +135,14 @@ static void
 setup_tooltip_window_position(gpointer data, int w, int h)
 {
 	int sig;
-	int scr_w, scr_h, x, y;
+	int scr_w, scr_h, x, y, dy;
 #if GTK_CHECK_VERSION(2,2,0)
 	int mon_num;
 	GdkScreen *screen = NULL;
 #endif
 	GdkRectangle mon_size;
 	GtkWidget *tipwindow = pidgin_tooltip.tipwindow;
-
+	
 #if GTK_CHECK_VERSION(2,2,0)
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
 	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
@@ -157,6 +158,12 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 	mon_size.y = 0;
 #endif
 
+#if GTK_CHECK_VERSION(2,4,0)
+	dy = gdk_display_get_default_cursor_size(gdk_display_get_default()) / 2;
+#else
+	dy = 0;
+#endif
+
 #if GTK_CHECK_VERSION(2,2,0)
 	if (w > mon_size.width)
 		w = mon_size.width - 10;
@@ -167,9 +174,9 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 	x -= ((w >> 1) + 4);
 
 	if ((y + h + 4) > scr_h)
-		y = y - h - 5;
+		y = y - h - dy - 5;
 	else
-		y = y + 6;
+		y = y + dy + 6;
 
 	if (y < mon_size.y)
 		y = mon_size.y;
@@ -352,6 +359,7 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 
 	g_signal_connect(G_OBJECT(tree), "motion-notify-event", G_CALLBACK(row_motion_cb), tdata);
 	g_signal_connect(G_OBJECT(tree), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
+	g_signal_connect(G_OBJECT(tree), "scroll-event", G_CALLBACK(widget_leave_cb), NULL);
 	g_signal_connect_swapped(G_OBJECT(tree), "destroy", G_CALLBACK(destroy_tooltip_data), tdata);
 	return TRUE;
 }
@@ -380,7 +388,8 @@ gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
 
 	g_signal_connect(G_OBJECT(widget), "motion-notify-event", G_CALLBACK(widget_motion_cb), wdata);
 	g_signal_connect(G_OBJECT(widget), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
-	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(g_free), wdata);
+	g_signal_connect(G_OBJECT(widget), "scroll-event", G_CALLBACK(widget_leave_cb), NULL);
+	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(destroy_tooltip_data), wdata);
 	return TRUE;
 }
 

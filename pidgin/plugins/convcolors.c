@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"gtk-plugin_pack-convcolors"
 #define PLUGIN_NAME			N_("Conversation Colors")
-#define PLUGIN_STATIC_NAME	"Conversation Colors"
+#define PLUGIN_STATIC_NAME	ConversationColors
 #define PLUGIN_SUMMARY		N_("Customize colors in the conversation window")
 #define PLUGIN_DESCRIPTION	N_("Customize colors in the conversation window")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"

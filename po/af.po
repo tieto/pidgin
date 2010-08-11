@@ -3,19 +3,21 @@
 # This file is distributed under the same license as the pidgin package.
 # Friedel Wolff <friedel BY translate.org.za>, 2006-2008.
 # Samuel Murray <afrikaans BY gmail.com>, 2007
+# F Wolff <friedel@translate.org.za>, 2009
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:17-0800\n"
-"PO-Revision-Date: 2008-12-18 00:13+0200\n"
+"POT-Creation-Date: 2009-02-27 10:14-0800\n"
+"PO-Revision-Date: 2009-02-23 19:54+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
-"Language-Team: translate-discuss-swedish@lists.kde.org\n"
+"Language-Team: translate-discuss-af@lists.sourceforge.net\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: af\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.2\n"
+"X-Generator: Virtaal 0.3.1\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -32,7 +34,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -41,7 +43,7 @@ msgstr ""
 "Gebruik: %s [OPSIE]...\n"
 "\n"
 "  -c, --config=GIDS   gebruik GIDS vir konfigurasielêers\n"
-"  -d, --debug         skryf ontfoutboodskappe na stdout\n"
+"  -d, --debug         skryf ontfoutboodskappe na stderr\n"
 "  -h, --help          wys hierdie hulp en sluit af\n"
 "  -n, --nologin       moenie outomaties aanmeld nie\n"
 "  -v, --version       wys die huidige weergawe en sluit af\n"
@@ -1163,7 +1165,6 @@ msgstr "Minute voor verandering van status:"
 msgid "Change status to"
 msgstr "Verander status na:"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Gesprekke"
 
@@ -1486,7 +1487,6 @@ msgstr ""
 "Wanneer 'n nuwe gesprek geopen word, sal hierdie inprop die laaste gesprek "
 "in die huidige een invoeg."
 
-#, c-format
 msgid "Online"
 msgstr "Aanlyn"
 
@@ -1922,7 +1922,6 @@ msgstr "Begin nou met oordrag van %s vanaf %s"
 msgid "Transfer of file %s complete"
 msgstr "Oordrag van lêer %s voltooi"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Lêeroordrag voltooi"
 
@@ -1930,7 +1929,6 @@ msgstr "Lêeroordrag voltooi"
 msgid "You canceled the transfer of %s"
 msgstr "U het die oordrag van %s gekanselleer"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Lêeroordrag gekanselleer"
 
@@ -2145,7 +2143,6 @@ msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "U gebruik tans %s, maar hierdie inprop vereis %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Hierdie inprop is nie as 'n ID gedefinieer nie."
 
@@ -2838,7 +2835,6 @@ msgstr ""
 "Kon nie verbinding met plaaslike mDNS-bediener bewerkstellig nie.  Loop dit "
 "tans?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Naam"
 
@@ -2869,6 +2865,11 @@ msgstr "Bonjour-protokolinprop"
 
 msgid "Purple Person"
 msgstr "Pers persoon"
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "Plaaslike poort"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3033,7 +3034,6 @@ msgstr "Beskikbaar"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Weg"
 
@@ -3917,7 +3917,6 @@ msgstr "Geselserig"
 msgid "Extended Away"
 msgstr "Vir lank weg"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Moenie pla nie"
 
@@ -4152,6 +4151,9 @@ msgstr "Stawing"
 
 msgid "Re-initializing Stream"
 msgstr "Herinisialiseer stroom"
+
+msgid "Server doesn't support blocking"
+msgstr "Bediener ondersteun nie blokkering nie"
 
 msgid "Not Authorized"
 msgstr "Nie gemagtig nie"
@@ -4663,9 +4665,6 @@ msgstr "Aksies"
 msgid "Select an action"
 msgstr "Stel 'n aksie op"
 
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Kan nie MSN-adresboek haal nie"
-
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
@@ -4907,7 +4906,6 @@ msgstr "Kinderpaspoort sonder ouertoestemming"
 msgid "Passport account not yet verified"
 msgstr "Paspoortrekening nog nie geverifieer nie"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Paspoortrekening opgeskort"
 
@@ -4926,9 +4924,8 @@ msgstr "MSN-fout: %s\n"
 msgid "Other Contacts"
 msgstr "Ander kontakte"
 
-#, fuzzy
 msgid "Non-IM Contacts"
-msgstr "Verwyder kontak"
+msgstr ""
 
 msgid "Nudge"
 msgstr "Stootjie"
@@ -6112,7 +6109,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Fout. SSL-steun nie geïnstalleer nie."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 "Hierdie konferensie is gesluit. Geen verdere boodskappe kan gestuur word nie."
@@ -6377,23 +6373,18 @@ msgstr "Kammera"
 msgid "Screen Sharing"
 msgstr "Skermdeling"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Beskikbaar vir geselsies"
 
-#, c-format
 msgid "Not Available"
 msgstr "Nie beskikbaar nie"
 
-#, c-format
 msgid "Occupied"
 msgstr "Beset"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Web Aware"
 
-#, c-format
 msgid "Invisible"
 msgstr "Onsigbaar"
 
@@ -6492,13 +6483,11 @@ msgstr "Tik die 6-syfer-nommer vanaf die digitale skerm."
 msgid "_OK"
 msgstr "_Regso"
 
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"U kan dalk binnekort ontkoppel word.  U moet dalk TOC gebruik tot dit "
-"reggemaak is.  Kontroleer %s vir bywerkings."
+"U kan dalk binnekort ontkoppel word.  As dit gebeur, kontroleer %s vir "
+"bywerkings."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Kan nie 'n geldige AIM-aanmeldhutswaarde kry nie."
@@ -6960,6 +6949,7 @@ msgstr "_Verbind"
 msgid "Get AIM Info"
 msgstr "Kry AIM-inligting"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Wysig vriendkommentaar"
 
@@ -7067,7 +7057,6 @@ msgstr "Vra tans %s om aan ons by %s:%hu te koppel vir direkte kitsboodskap."
 msgid "Attempting to connect to %s:%hu."
 msgstr "Probeer tans om aan %s:%hu te koppel."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Probeer tans om via instaanbediener te koppel."
 
@@ -7295,7 +7284,6 @@ msgstr "Verwyder van vriend %u het misluk"
 msgid "Failed removing me from %d's buddy list"
 msgstr "%s het u van sy of haar vriendelys verwyder."
 
-#, fuzzy
 msgid "No reason given"
 msgstr "Geen rede gegee nie"
 
@@ -7331,32 +7319,26 @@ msgstr "Tik gerus die Qun-nommer"
 msgid "You can only search for permanent Qun\n"
 msgstr "U kan net vir permanente QQ-groepe soek\n"
 
-#, fuzzy
 msgid "(Invalid UTF-8 string)"
-msgstr "Ongeldige instaaninstellings"
+msgstr "(Ongeldige UTF-8-string)"
 
-#, fuzzy
 msgid "Not member"
-msgstr "Ek is nie 'n lid nie"
+msgstr "Nie 'n lid nie"
 
 msgid "Member"
 msgstr "Lid"
 
-#, fuzzy
 msgid "Requesting"
-msgstr "Versoek-dialoog"
+msgstr "Versoek tans"
 
-#, fuzzy
 msgid "Admin"
-msgstr "Adium"
+msgstr "Admin"
 
-#, fuzzy
 msgid "Notice"
-msgstr "Kennisgewing:"
+msgstr "Kennisgewing"
 
-#, fuzzy
 msgid "Detail"
-msgstr "Verstek"
+msgstr "Detail"
 
 msgid "Creator"
 msgstr "Skepper"
@@ -7365,17 +7347,14 @@ msgstr "Skepper"
 msgid "About me"
 msgstr "Omtrent %s"
 
-#, fuzzy
 msgid "Category"
-msgstr "Geselsiefout"
+msgstr "Kategorie"
 
-#, fuzzy
 msgid "The Qun does not allow others to join"
-msgstr "Hierdie groep laat nie ander toe om aan te sluit nie"
+msgstr "De Qun laat nie ander toe om aan te sluit nie"
 
-#, fuzzy
 msgid "Join QQ Qun"
-msgstr "Sluit by geselsie aan"
+msgstr "Sluit by QQ Qun aan"
 
 msgid "Input request here"
 msgstr "Gee versoek hier"
@@ -7401,9 +7380,8 @@ msgstr "Misluk:"
 msgid "Join Qun, Unknown Reply"
 msgstr ""
 
-#, fuzzy
 msgid "Quit Qun"
-msgstr "QQ-qun"
+msgstr ""
 
 msgid ""
 "Note, if you are the creator, \n"
@@ -7412,9 +7390,8 @@ msgstr ""
 "Let wel, as u die skepper is, \n"
 "sal hierdie bewerking eindelik hierdie qun verwyder."
 
-#, fuzzy
 msgid "Sorry, you are not our style"
-msgstr "Jammer, u's nie my tipe nie..."
+msgstr "Jammer, u's nie my tipe nie"
 
 #, fuzzy
 msgid "Successfully changed Qun members"
@@ -7494,21 +7471,20 @@ msgstr ""
 msgid "Invalid name"
 msgstr "Ongeldige naam"
 
-#, fuzzy
 msgid "Select icon..."
-msgstr "Kies vouer..."
+msgstr "Kies ikoon..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Aanmeldtyd</b>: %s<br>\n"
+msgstr "<b>Aanmeldtyd</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Tans aanlyn</b>: %d<br>\n"
+msgstr "<b>Totale aantal vriende aanlyn</b>: %d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Vorige verfrissing</b>: %s<br>\n"
+msgstr "<b>Vorige verfrissing</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
 #, c-format
 msgid "<b>Server</b>: %s<br>\n"
@@ -7522,9 +7498,9 @@ msgstr "<b>Aanmeldtyd</b>: %s<br>\n"
 msgid "<b>Connection Mode</b>: %s<br>\n"
 msgstr "<b>Verbindingmodus</b>: %s<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>My internetadres</b>: %s<br>\n"
+msgstr "<b>My internetadres</b>: %s:%d<br>\n"
 
 #, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
@@ -7546,13 +7522,13 @@ msgstr "<b>Ontvang</b>: %lu<br>\n"
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
 msgstr "<b>Duplikaat ontvang</b>: %lu<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Aanmeldtyd</b>: %s<br>\n"
+msgstr "<b>Tyd</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>Bediener</b>: %s<br>\n"
+msgstr "<b>IP</b>: %s<br>\n"
 
 msgid "Login Information"
 msgstr "Aanmeldinligting"
@@ -7571,6 +7547,10 @@ msgstr "<b>Vorige verfrissing</b>: %s<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<b>Gestuur</b>: %lu<br>\n"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<b>Vorige verfrissing</b>: %s<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7581,9 +7561,8 @@ msgstr ""
 msgid "About OpenQ %s"
 msgstr "Omtrent %s"
 
-#, fuzzy
 msgid "Change Icon"
-msgstr "Stoor ikoon"
+msgstr "Verander ikoon"
 
 msgid "Change Password"
 msgstr "Verander wagwoord"
@@ -7597,6 +7576,10 @@ msgstr ""
 #, fuzzy
 msgid "About OpenQ"
 msgstr "Omtrent %s"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "Wysig adres"
 
 #. *< type
 #. *< ui_requirement
@@ -7617,7 +7600,7 @@ msgstr "Outomaties"
 
 #, fuzzy
 msgid "Select Server"
-msgstr "Kies gebruiker"
+msgstr "Kies bediener"
 
 msgid "QQ2005"
 msgstr ""
@@ -7636,6 +7619,9 @@ msgstr "Wys bedienerkennisgewing"
 
 msgid "Show server news"
 msgstr "Wys bedienernuus"
+
+msgid "Show chat room when msg comes"
+msgstr ""
 
 #, fuzzy
 msgid "Keep alive interval (seconds)"
@@ -9283,6 +9269,9 @@ msgstr "Kon nie gasheernaam oplos nie"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-gebruikername mag nie spasies of @-simbole bevat nie"
+
+msgid "SIP connect server not specified"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -11369,6 +11358,10 @@ msgstr "Litous"
 msgid "Macedonian"
 msgstr "Masedonies"
 
+#, fuzzy
+msgid "Mongolian"
+msgstr "Mongools"
+
 msgid "Bokmål Norwegian"
 msgstr "Bokmål-Noorweegs"
 
@@ -11483,8 +11476,30 @@ msgstr ""
 "program nie.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Vrae:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Hulp d.m.v. e-pos:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC-kanaal:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Huidige programmeerders"
@@ -12139,6 +12154,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Sluit af omdat 'n ander libpurple-kliënt reeds loop.\n"
+
 msgid "Open All Messages"
 msgstr "Open alle boodskappe"
 
@@ -12477,6 +12496,10 @@ msgstr "Instaanbediener"
 
 msgid "No proxy"
 msgstr "Geen instaanbediener"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Gebruik afgeleë DNS met SOCKS4-instaanbedieners"
 
 msgid "_User:"
 msgstr "_Gebruiker:"
@@ -13918,9 +13941,6 @@ msgstr "_Hou vriendelysvenster bo:"
 msgid "Only when docked"
 msgstr "Net indien gedok"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Flits venster wanneer geselsieboodskappe ontvang word"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows Pidgin-opsies"
 
@@ -13968,6 +13988,19 @@ msgstr "Stuur en ontvang rou XMPP-stanzas."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Hierdie inprop is nuttig om XMPP-bedieners of -kliënte te ontfout."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Kan nie MSN-adresboek haal nie"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "U kan dalk binnekort ontkoppel word.  U moet dalk TOC gebruik tot dit "
+#~ "reggemaak is.  Kontroleer %s vir bywerkings."
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "_Flits venster wanneer geselsieboodskappe ontvang word"
 
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""

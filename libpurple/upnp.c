@@ -567,7 +567,7 @@ static void
 purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 {
 	gchar *sendMessage = NULL;
-	gsize totalSize;
+	size_t totalSize;
 	gboolean sentSuccess;
 
 	/* because we are sending over UDP, if there is a failure
@@ -693,6 +693,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 		/* XXX: This should probably be async */
 		if(cb)
 			cb(NULL, cb_data, NULL, 0, NULL);
+		return NULL;
 	}
 	if(port == 0 || port == -1) {
 		port = DEFAULT_HTTP_PORT;
@@ -711,11 +712,11 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(soapMessage);
 
 	gfud = purple_util_fetch_url_request_len(control_info.control_url, FALSE, NULL, TRUE,
-				totalSendMessage,  TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
+				totalSendMessage, TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
-	
+
 	return gfud;
 }
 

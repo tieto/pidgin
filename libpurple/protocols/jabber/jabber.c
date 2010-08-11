@@ -148,7 +148,8 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 }
 
 static char *jabber_prep_resource(char *input) {
-	char hostname[256]; /* current hostname */
+	char hostname[256], /* current hostname */
+		 *dot = NULL;
 
 	/* Empty resource == don't send any */
 	if (input == NULL || *input == '\0')
@@ -169,6 +170,12 @@ static char *jabber_prep_resource(char *input) {
 		strcpy(hostname, "localhost");
 	}
 	hostname[sizeof(hostname) - 1] = '\0';
+
+	/* We want only the short hostname, not the FQDN - this will prevent the
+	 * resource string from being unreasonably long on systems which stuff the
+	 * whole FQDN in the hostname */
+	if((dot = strchr(hostname, '.')))
+			dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
@@ -802,10 +809,11 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				js->user->node, js->user->domain);
 			if(account->registration_cb)
 				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
-		}
-		else
+		} else {
+			g_return_if_fail(to != NULL);
 			buf = g_strdup_printf(_("Registration to %s successful"),
 				to);
+		}
 		purple_notify_info(NULL, _("Registration Successful"),
 				_("Registration Successful"), buf);
 		g_free(buf);
@@ -832,7 +840,11 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
-	
+
+	/* This function is never called for unregistering our XMPP account from
+	 * the server, so there should always be a 'to' address. */
+	g_return_if_fail(to != NULL);
+
 	if(!strcmp(type, "result")) {
 		buf = g_strdup_printf(_("Registration from %s successfully removed"),
 							  to);
@@ -867,7 +879,8 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 
 	iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
-	xmlnode_set_attrib(iq->node, "to", cbdata->who);
+	if (cbdata->who)
+		xmlnode_set_attrib(iq->node, "to", cbdata->who);
 
 	for(groups = purple_request_fields_get_groups(fields); groups;
 			groups = groups->next) {
@@ -883,7 +896,8 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					jabber_iq_free(iq);
 					iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
 					query = xmlnode_get_child(iq->node, "query");
-					xmlnode_set_attrib(iq->node,"to",cbdata->who);
+					if (cbdata->who)
+						xmlnode_set_attrib(iq->node,"to",cbdata->who);
 					xmlnode_new_child(query, "remove");
 					
 					jabber_iq_set_callback(iq, jabber_unregistration_result_cb, cbdata->who);
@@ -928,8 +942,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 			}
 			xmlnode_insert_data(y, value, -1);
 				if(cbdata->js->registration && !strcmp(id, "username")) {
-					if(cbdata->js->user->node)
-						g_free(cbdata->js->user->node);
+					g_free(cbdata->js->user->node);
 					cbdata->js->user->node = g_strdup(value);
 			}
 				if(cbdata->js->registration && !strcmp(id, "password"))
@@ -972,7 +985,8 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
-	xmlnode_set_attrib(iq->node,"to",to);
+	if (to)
+		xmlnode_set_attrib(iq->node,"to",to);
 
 	xmlnode_insert_child(query, result);
 
@@ -997,10 +1011,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	from = xmlnode_get_attrib(packet, "from");
-	if (!from)
-		from = js->serverFQDN;
-	g_return_if_fail(from != NULL);
-	
+
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
@@ -1021,11 +1032,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 	
-	if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:data"))) {
+	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
 		return;
 
-	} else if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:oob"))) {
+	} else if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:oob"))) {
 		xmlnode *url;
 
 		if((url = xmlnode_get_child(x, "url"))) {
@@ -1145,7 +1156,9 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				purple_connection_get_account(js->gc), NULL, NULL,
 				cbdata);
 	else {
-		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
+		char *title;
+		g_return_if_fail(from != NULL);
+		title = registered ? g_strdup_printf(_("Change Account Registration at %s"), from)
 								:g_strdup_printf(_("Register New Account at %s"), from);
 		purple_request_fields(js->gc, title,
 			  title, instructions, fields,
@@ -1864,7 +1877,7 @@ GList *jabber_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
-			NULL, FALSE, TRUE, FALSE,
+			NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);

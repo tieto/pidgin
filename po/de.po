@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2008, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2009, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,15 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-09 00:39+0100\n"
-"PO-Revision-Date: 2009-01-09 00:38+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
-"Language-Team: Deutsch <de@li.org>\n"
+"POT-Creation-Date: 2009-02-25 17:28+0100\n"
+"PO-Revision-Date: 2009-02-25 17:28+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.11.4\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -36,7 +35,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -45,7 +44,7 @@ msgstr ""
 "Benutzung: %s [OPTION]...\n"
 "\n"
 "  -c, --config=VERZ   benutze VERZ als Konfigurationsverzeichnis\n"
-"  -d, --debug         drucke Debugging-Meldungen nach stdout\n"
+"  -d, --debug         drucke Debugging-Meldungen nach stderr\n"
 "  -h, --help          zeigt diese Hilfe und beendet das Programm\n"
 "  -n, --nologin       nicht automatisch anmelden\n"
 "  -v, --version       zeigt aktuelle Version und beendet das Programm\n"
@@ -1172,7 +1171,6 @@ msgstr "Minuten, bevor Status geändert wird"
 msgid "Change status to"
 msgstr "Ändere Status zu"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Unterhaltungen"
 
@@ -2840,7 +2838,6 @@ msgid ""
 msgstr "Keine Verbindung zum lokalen mDNS-Server. Ist er aktiviert?"
 
 # old strings
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Vorname"
 
@@ -2871,6 +2868,10 @@ msgstr "Bonjour-Protokoll-Plugin"
 
 msgid "Purple Person"
 msgstr "Purple-Person"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Lokaler Port"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -4033,7 +4034,7 @@ msgstr "Registrierungsfehler"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
-"Die Änderung des Nick-Namens wird in nicht-MUC Chaträumen nicht unterstützt"
+"Die Änderung des Nick-Namens wird in nicht-MUC-Chaträumen nicht unterstützt"
 
 msgid "Error retrieving room list"
 msgstr "Fehler beim Empfangen der Raumliste"
@@ -4680,9 +4681,6 @@ msgstr "Aktionen"
 
 msgid "Select an action"
 msgstr "Wählen Sie eine Aktion"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Konnte das MSN-Adressbuch nicht abrufen"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6975,6 +6973,7 @@ msgstr "V_erbinden"
 msgid "Get AIM Info"
 msgstr "AIM-Info"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Buddy-Kommentar bearbeiten"
 
@@ -7564,6 +7563,9 @@ msgstr "<p><b>Wunderbare Patch-Schreiber</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Bestätigung</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Gewissenhafte Tester</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>Und all die Jungs im Hinterzimmer...</i><br>\n"
 
@@ -7588,6 +7590,9 @@ msgstr "Alle QQ-Quns aktualisieren"
 
 msgid "About OpenQ"
 msgstr "Über OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr "Buddy-Notiz bearbeiten"
 
 #. *< type
 #. *< ui_requirement
@@ -7625,6 +7630,9 @@ msgstr "Server-Nachricht anzeigen"
 
 msgid "Show server news"
 msgstr "Server-News anzeigen"
+
+msgid "Show chat room when msg comes"
+msgstr "Chatraum zeigen, wenn Nachricht empfangen wird"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervall zum Aufrechterhalten der Verbindung (Sekunden)"
@@ -11365,6 +11373,9 @@ msgstr "Litauisch"
 msgid "Macedonian"
 msgstr "Makedonisch"
 
+msgid "Mongolian"
+msgstr "Mongolisch"
+
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Norwegisch"
 
@@ -11478,8 +11489,27 @@ msgstr ""
 "geschützt.  Die Datei 'COPYRIGHT' enthält die komplette Liste der "
 "Mitwirkenden.  Wir übernehmen keine Haftung für dieses Programm.<BR><BR>"
 
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin auf irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Hilfe per E-Mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC-Kanal:</FONT> #pidgin auf irc.freenode.net<BR><BR>"
+
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP-MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Aktuelle Entwickler"
@@ -11908,7 +11938,7 @@ msgid "This theme has no available smileys."
 msgstr "Dieses Thema verfügt über keine Smileys."
 
 msgid "_Font"
-msgstr "_Schrift"
+msgstr "S_chrift"
 
 msgid "Group Items"
 msgstr "Elemente gruppieren"
@@ -12142,6 +12172,9 @@ msgstr ""
 #. It is not to be translated.
 msgid "Pidgin"
 msgstr "Pidgin"
+
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft\n"
 
 msgid "Open All Messages"
 msgstr "Alle Nachrichten öffnen"
@@ -12481,6 +12514,10 @@ msgstr "Proxy-Server"
 
 msgid "No proxy"
 msgstr "Kein Proxy"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Remote-DNS mit SOCKS4-Proxys benuten"
 
 msgid "_User:"
 msgstr "_Benutzer:"
@@ -13938,9 +13975,6 @@ msgstr "_Buddy-Listen-Fenster bleibt im Vordergrund:"
 msgid "Only when docked"
 msgstr "Nur wenn angedockt"
 
-msgid "_Flash window when chat messages are received"
-msgstr "_Fenster blinkt, wenn Chat-Nachrichten empfangen werden"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows-Pidgin-Optionen"
 
@@ -13989,3 +14023,6 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Konnte das MSN-Adressbuch nicht abrufen"

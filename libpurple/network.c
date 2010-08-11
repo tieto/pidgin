@@ -74,8 +74,12 @@ static int current_network_count;
 
 /* Mutex for the other global vars */
 static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
-static gboolean network_initialized;
-static HANDLE network_change_handle;
+static gboolean network_initialized = FALSE;
+static HANDLE network_change_handle = NULL;
+static int (WSAAPI *MyWSANSPIoctl) (
+		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
+		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
+		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
 #endif
 
 struct _PurpleNetworkListenData {
@@ -538,27 +542,28 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 	return FALSE;
 }
 
+static gboolean _print_debug_msg(gpointer data) {
+	gchar *msg = data;
+	purple_debug_warning("network", msg);
+	g_free(msg);
+	return FALSE;
+}
+
 static gpointer wpurple_network_change_thread(gpointer data)
 {
 	WSAQUERYSET qs;
 	WSAEVENT *nla_event;
-	time_t last_trigger = time(NULL);
-
-	int (WSAAPI *MyWSANSPIoctl) (
-		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
-		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
-		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
-
-	if (!(MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
-		g_thread_exit(NULL);
-		return NULL;
-	}
+	time_t last_trigger = time(NULL) - 31;
+	char buf[4096];
+	WSAQUERYSET *res = (LPWSAQUERYSET) buf;
+	DWORD size;
 
 	if ((nla_event = WSACreateEvent()) == WSA_INVALID_EVENT) {
 		int errorid = WSAGetLastError();
 		gchar *msg = g_win32_error_message(errorid);
-		purple_debug_warning("network", "Couldn't create WSA event. "
-			"Message: %s (%d).\n", msg, errorid);
+		purple_timeout_add(0, _print_debug_msg,
+						   g_strdup_printf("Couldn't create WSA event. "
+										   "Message: %s (%d).\n", msg, errorid));
 		g_free(msg);
 		g_thread_exit(NULL);
 		return NULL;
@@ -579,29 +584,25 @@ static gpointer wpurple_network_change_thread(gpointer data)
 			return NULL;
 		}
 
-		memset(&qs, 0, sizeof(WSAQUERYSET));
-		qs.dwSize = sizeof(WSAQUERYSET);
-		qs.dwNameSpace = NS_NLA;
-		if (WSALookupServiceBegin(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
-			int errorid = WSAGetLastError();
-			gchar *msg = g_win32_error_message(errorid);
-			purple_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
-				"NLA service is probably not running. Message: %s (%d).\n",
-				msg, errorid);
-			g_free(msg);
-			WSACloseEvent(nla_event);
-			g_static_mutex_unlock(&mutex);
-			g_thread_exit(NULL);
-			return NULL;
+		if (network_change_handle == NULL) {
+			memset(&qs, 0, sizeof(WSAQUERYSET));
+			qs.dwSize = sizeof(WSAQUERYSET);
+			qs.dwNameSpace = NS_NLA;
+			if (WSALookupServiceBegin(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
+				int errorid = WSAGetLastError();
+				gchar *msg = g_win32_error_message(errorid);
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup_printf("Couldn't retrieve NLA SP lookup handle. "
+												   "NLA service is probably not running. Message: %s (%d).\n",
+													msg, errorid));
+				g_free(msg);
+				WSACloseEvent(nla_event);
+				g_static_mutex_unlock(&mutex);
+				g_thread_exit(NULL);
+				return NULL;
+			}
 		}
 		g_static_mutex_unlock(&mutex);
-
-		/* Make sure at least 30 seconds have elapsed since the last
-		 * notification so we don't peg the cpu if this keeps changing. */
-		if ((time(NULL) - last_trigger) < 30)
-			Sleep(30000);
-
-		last_trigger = time(NULL);
 
 		memset(&completion, 0, sizeof(WSACOMPLETION));
 		completion.Type = NSP_NOTIFY_EVENT;
@@ -610,17 +611,33 @@ static gpointer wpurple_network_change_thread(gpointer data)
 
 		if (MyWSANSPIoctl(network_change_handle, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, &completion) == SOCKET_ERROR) {
 			int errorid = WSAGetLastError();
+			if (errorid == WSA_INVALID_HANDLE) {
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup("Invalid NLA handle; resetting.\n"));
+				g_static_mutex_lock(&mutex);
+				retval = WSALookupServiceEnd(network_change_handle);
+				network_change_handle = NULL;
+				g_static_mutex_unlock(&mutex);
+				continue;
 			/* WSA_IO_PENDING indicates successful async notification will happen */
-			if (errorid != WSA_IO_PENDING) {
+			} else if (errorid != WSA_IO_PENDING) {
 				gchar *msg = g_win32_error_message(errorid);
-				purple_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
-					msg, errorid);
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup_printf("Unable to wait for changes. Message: %s (%d).\n",
+												   msg, errorid));
 				g_free(msg);
 			}
 		}
 
+		/* Make sure at least 30 seconds have elapsed since the last
+		 * notification so we don't peg the cpu if this keeps changing. */
+		if ((time(NULL) - last_trigger) < 30)
+			Sleep(30000);
+
 		/* This will block until NLA notifies us */
 		retval = WaitForSingleObjectEx(nla_event, WSA_INFINITE, TRUE);
+
+		last_trigger = time(NULL);
 
 		g_static_mutex_lock(&mutex);
 		if (network_initialized == FALSE) {
@@ -631,8 +648,14 @@ static gpointer wpurple_network_change_thread(gpointer data)
 			return NULL;
 		}
 
-		retval = WSALookupServiceEnd(network_change_handle);
-		network_change_handle = NULL;
+		size = sizeof(buf);
+		while ((retval = WSALookupServiceNext(network_change_handle, 0, &size, res)) == ERROR_SUCCESS) {
+			/*purple_timeout_add(0, _print_debug_msg,
+							   g_strdup_printf("thread found network '%s'\n",
+											   res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)"));*/
+			size = sizeof(buf);
+		}
+
 		WSAResetEvent(nla_event);
 		g_static_mutex_unlock(&mutex);
 
@@ -768,11 +791,12 @@ purple_network_init(void)
 	if (cnt < 0) /* Assume there is a network */
 		current_network_count = 1;
 	/* Don't listen for network changes if we can't tell anyway */
-	else
-	{
+	else {
 		current_network_count = cnt;
-		if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
-			purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+		if ((MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
+			if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
+				purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+		}
 	}
 #endif
 
@@ -848,10 +872,12 @@ purple_network_uninit(void)
 				msg, errorid);
 			g_free(msg);
 		}
+		network_change_handle = NULL;
+
 	}
 	g_static_mutex_unlock(&mutex);
 
 #endif
 	purple_signal_unregister(purple_network_get_handle(),
-	                         "network-configuration-changed");
+							 "network-configuration-changed");
 }

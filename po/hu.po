@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-04 22:44+0100\n"
-"PO-Revision-Date: 2009-01-04 22:42+0100\n"
+"POT-Creation-Date: 2009-02-25 03:23+0100\n"
+"PO-Revision-Date: 2009-02-25 03:21+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -42,8 +42,8 @@ msgstr ""
 "%s\n"
 "Használat: %s [KAPCSOLÓ]…\n"
 "\n"
-"  -c, --config=KÖNYVTÁR A KÖNYVTÁR használata a beállítófájlokhoz\n"
-"  -d, --debug         hibakereső üzenetek kiírása a szabványos kimenetre\n"
+"  -c, --config=KÖNYVTÁR  A KÖNYVTÁR használata a beállítófájlokhoz\n"
+"  -d, --debug         hibakereső üzenetek kiírása a szabványos hibakimenetre\n"
 "  -h, --help          ezen súgó megjelenítése és kilépés\n"
 "  -n, --nologin       ne jelentkezzen be automatikusan\n"
 "  -v, --version       az aktuális verzió megjelenítése és kilépés\n"
@@ -1163,7 +1163,6 @@ msgstr "Állapot módosítása ennyi perc után"
 msgid "Change status to"
 msgstr "Állapot módosítása a következőre"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Társalgások"
 
@@ -1485,7 +1484,6 @@ msgstr ""
 "Ez a bővítmény új társalgás megnyitásakor beszúrja az utolsó társalgást az "
 "aktuális társalgásba."
 
-#, c-format
 msgid "Online"
 msgstr "Elérhető"
 
@@ -1918,7 +1916,6 @@ msgstr "%s átvitelének megkezdése a következőtől: %s"
 msgid "Transfer of file %s complete"
 msgstr "%s fájl átvitele befejeződött"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "A fájlátvitel befejeződött"
 
@@ -1926,7 +1923,6 @@ msgstr "A fájlátvitel befejeződött"
 msgid "You canceled the transfer of %s"
 msgstr "Megszakította %s átvitelét"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Fájlátvitel megszakítva"
 
@@ -2134,7 +2130,6 @@ msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "A(z) %s programot használja, de a bővítmény a következőt igényli: %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "A bővítmény nem adott meg azonosítót."
 
@@ -2832,7 +2827,6 @@ msgid ""
 msgstr ""
 "Nem hozható létre kapcsolat a helyi mDNS kiszolgálóval. Egyáltalán fut?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Utónév"
 
@@ -2863,6 +2857,10 @@ msgstr "Bonjour protokollbővítmény"
 
 msgid "Purple Person"
 msgstr "Purple személy"
+
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Helyi port"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3027,7 +3025,6 @@ msgstr "Elérhető"
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Távol"
 
@@ -3921,7 +3918,6 @@ msgstr "Beszédes"
 msgid "Extended Away"
 msgstr "Nem vagyok a gépnél"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Ne zavarjanak"
 
@@ -4667,9 +4663,6 @@ msgstr "Műveletek"
 
 msgid "Select an action"
 msgstr "Válasszon műveletet"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Az MSN címjegyzék nem kérhető le"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -6124,7 +6117,6 @@ msgstr ""
 msgid "Error. SSL support is not installed."
 msgstr "Hiba: az SSL támogatás nincs telepítve."
 
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Ez a konferencia le lett zárva. További üzenetek már nem küldhetőek."
 
@@ -6388,23 +6380,18 @@ msgstr "Fényképezőgép"
 msgid "Screen Sharing"
 msgstr "Képernyőmegosztás"
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Ráérek csevegni"
 
-#, c-format
 msgid "Not Available"
 msgstr "Nem érhető el"
 
-#, c-format
 msgid "Occupied"
 msgstr "Elfoglalt"
 
-#, c-format
 msgid "Web Aware"
 msgstr "A weben"
 
-#, c-format
 msgid "Invisible"
 msgstr "Láthatatlan"
 
@@ -6986,6 +6973,7 @@ msgstr "Kapcs_olódás"
 msgid "Get AIM Info"
 msgstr "AIM információk lekérése"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Partnermegjegyzés szerkesztése"
 
@@ -7096,7 +7084,6 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr "Kapcsolódási kísérlet a következőhöz: %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Kapcsolódási kísérlet proxy kiszolgálón keresztül."
 
@@ -7574,6 +7561,9 @@ msgstr "<p><b>Javítások</b>:<br>\n"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<p><b>Köszönetnyilvánítás</b>:<br>\n"
 
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Lelkiismeretes tesztelők</b>:<br>\n"
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>és a háttéremberek...</i><br>\n"
 
@@ -7598,6 +7588,9 @@ msgstr "Minden QQ Qun frissítése"
 
 msgid "About OpenQ"
 msgstr "Az OpenQ névjegye"
+
+msgid "Modify Buddy Memo"
+msgstr "Partnerfeljegyzés módosítása"
 
 #. *< type
 #. *< ui_requirement
@@ -7635,6 +7628,9 @@ msgstr "Kiszolgálómegjegyzés megjelenítése"
 
 msgid "Show server news"
 msgstr "Kiszolgálóhírek megjelenítése"
+
+msgid "Show chat room when msg comes"
+msgstr "Csevegőszoba megjelenítése ha üzenet jön"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Kapcsolat-fenntartási időköz (mp)"
@@ -11390,6 +11386,9 @@ msgstr "litván"
 msgid "Macedonian"
 msgstr "macedón"
 
+msgid "Mongolian"
+msgstr "Mongol"
+
 msgid "Bokmål Norwegian"
 msgstr "Norvég Bokmål"
 
@@ -11504,9 +11503,31 @@ msgstr ""
 "fájlban. A programra nem biztosítunk garanciát.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> #pidgin az irc.freenode.net hálózaton<BR><BR>"
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Segítség e-mailben (angol):</FONT> <A HREF=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">IRC csatorna:</FONT> #pidgin az irc.freenode.net "
+"hálózaton<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP szoba:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Jelenlegi fejlesztők"
@@ -12155,6 +12176,10 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Kilépés, mert már fut egy másik libpurple kliens.\n"
+
 msgid "Open All Messages"
 msgstr "Összes üzenet megnyitása"
 
@@ -12492,6 +12517,10 @@ msgstr "Proxy-kiszolgáló"
 
 msgid "No proxy"
 msgstr "Nincs Proxy"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Távoli DNS használata SOCKS4 proxykkal"
 
 msgid "_User:"
 msgstr "_Felhasználó:"
@@ -13946,9 +13975,6 @@ msgstr "_Partnerlista-ablak mindig felül:"
 #. XXX: Did this ever work?
 msgid "Only when docked"
 msgstr "Csak ha dokkolt"
-
-msgid "_Flash window when chat messages are received"
-msgstr "_Villogtassa az ablakot új csevegésüzenetek fogadásakor"
 
 msgid "Windows Pidgin Options"
 msgstr "A windowsos Pidin beállításai"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-12 03:07+0000\n"
-"PO-Revision-Date: 2009-01-08 16:54+0100\n"
+"POT-Creation-Date: 2009-02-22 11:04-0500\n"
+"PO-Revision-Date: 2009-02-20 23:45+0100\n"
 "Last-Translator: YS Landro <nynorsk@strilen.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -1151,7 +1151,6 @@ msgstr "Minutt før tilstandsendring"
 msgid "Change status to"
 msgstr "Endra tilstand til"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Samtaler"
 
@@ -2435,7 +2434,7 @@ msgid ""
 msgstr "Du er fråkopla. Du kan ikkje få nye meldingar før du loggar på."
 
 msgid "Message could not be sent because the maximum length was exceeded."
-msgstr "Meldinga kunne ikkje sendast sia ho var for stor."
+msgstr "Meldinga kunne ikkje sendast sidan ho var for stor."
 
 msgid "Message could not be sent."
 msgstr "Meldinga kunne ikkje sendast."
@@ -2807,7 +2806,6 @@ msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "Klarer ikkje å kopla til den lokale mDNS-tenaren. Kjører han?"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Fornamn"
 
@@ -2838,6 +2836,11 @@ msgstr "Bonjour protokolktillegg"
 
 msgid "Purple Person"
 msgstr "Purple-person"
+
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "Stad"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3212,7 +3215,7 @@ msgstr "Ugyldig tilstand"
 
 #, c-format
 msgid "Ban on %s by %s, set %s ago"
-msgstr "%s er utestengt av %s, utført for %s sia"
+msgstr "%s er utestengt av %s, utført for %s sidan"
 
 #, c-format
 msgid "Ban on %s"
@@ -3248,7 +3251,7 @@ msgid "Idle for"
 msgstr "Uverksam i "
 
 msgid "Online since"
-msgstr "Tilkopla sia"
+msgstr "Tilkopla sidan"
 
 msgid "<b>Defining adjective:</b>"
 msgstr "<b>Definerer adjektiv:</b>"
@@ -4389,11 +4392,11 @@ msgstr "Klarer ikkje å pinga brukaren %s"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr "Klarer ikkje å alarmera sia det ikkje er noko kjent om brukaren %s."
+msgstr "Klarer ikkje å alarmera sidan ein ikkje veit noko om brukaren %s."
 
 #, c-format
 msgid "Unable to buzz, because user %s might be offline."
-msgstr "Klarer ikkje å alarmera sia brukaren %s kan vera fråkopla."
+msgstr "Klarer ikkje å alarmera sidan brukaren %s kan vera fråkopla."
 
 #, c-format
 msgid "Unable to buzz, because the user %s does not support it."
@@ -4625,9 +4628,6 @@ msgstr "Handlingar"
 
 msgid "Select an action"
 msgstr "Vel ei handling"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Klarer ikkje å hente MSN-adresseboka"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -5281,7 +5281,7 @@ msgid "Service Temporarily Unavailable."
 msgstr "Tenesta er mellombels utilgjengeleg."
 
 msgid "Mobile message was not sent because it was too long."
-msgstr "Mobilmeldinga blei ikkje sendt sia ho var for lang."
+msgstr "Mobilmeldinga blei ikkje sendt sidan ho var for lang."
 
 msgid "Unable to rename group"
 msgstr "Klarte ikkje å endra namnet til gruppa"
@@ -5319,17 +5319,18 @@ msgid ""
 "Message was not sent because the system is unavailable. This normally "
 "happens when the user is blocked or does not exist."
 msgstr ""
-"Meldinga blei ikkje sendt sia systemet ikkje er tilgjengeleg. Dette skjer "
+"Meldinga blei ikkje sendt sidan systemet ikkje er tilgjengeleg. Dette skjer "
 "vanlegvis når brukaren er blokkert eller ikkje finst."
 
 msgid "Message was not sent because messages are being sent too quickly."
-msgstr "Meldinga blei ikkje sendt sia dei blir sende for raskt."
+msgstr "Meldinga blei ikkje sendt sidan dei blir sende for raskt."
 
 msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "Meldinga blei ikkje sendt sia det oppstod ein ukjend teiknkodingsfeil."
+msgstr ""
+"Meldinga blei ikkje sendt sidan det oppstod ein ukjend teiknkodingsfeil."
 
 msgid "Message was not sent because an unknown error occurred."
-msgstr "Meldinga blei ikkje sendt sia det oppstod ein ukjend feil."
+msgstr "Meldinga blei ikkje sendt sidan det oppstod ein ukjend feil."
 
 msgid "Unable to connect"
 msgstr "Klarte ikkje å kopla til"
@@ -5404,7 +5405,7 @@ msgid "Message may have not been sent because a timeout occurred:"
 msgstr "Meldinga blei kanskje ikkje sendt grunna tidsavbrot:"
 
 msgid "Message could not be sent, not allowed while invisible:"
-msgstr "Meldinga kunne ikkje sendast sia du er merka som usynleg:"
+msgstr "Meldinga kunne ikkje sendast sidan du er merka som usynleg:"
 
 msgid "Message could not be sent because the user is offline:"
 msgstr "Klarte ikkje å senda meldinga fordi brukaren er fråkopla:"
@@ -5413,7 +5414,7 @@ msgid "Message could not be sent because a connection error occurred:"
 msgstr "Klarte ikkje å senda meldinga grunna tilkoplingsfeil:"
 
 msgid "Message could not be sent because we are sending too quickly:"
-msgstr "Meldinga blei ikkje sendt sia vi sender for raskt:"
+msgstr "Meldinga blei ikkje sendt sidan vi sender for raskt:"
 
 msgid ""
 "Message could not be sent because we were unable to establish a session with "
@@ -5427,7 +5428,8 @@ msgid ""
 msgstr "Klarte ikkje å senda meldinga grunna feil på sentralbordet:"
 
 msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "Det kan vera at meldinga ikkje blei sendt sia ein ukjend feil oppstod:"
+msgstr ""
+"Det kan vera at meldinga ikkje blei sendt sidan ein ukjend feil oppstod:"
 
 #, c-format
 msgid "%s has added you to his or her buddy list."
@@ -6537,8 +6539,8 @@ msgstr "_Avvis"
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "Du fekk ikkje %hu melding frå %s sia ho var ugyldig."
-msgstr[1] "Du fekk ikkje %hu meldingar frå %s sia dei var ugyldige."
+msgstr[0] "Du fekk ikkje %hu melding frå %s sidan ho var ugyldig."
+msgstr[1] "Du fekk ikkje %hu meldingar frå %s sidan dei var ugyldige."
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
@@ -6551,8 +6553,9 @@ msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "Du fekk ikkje %hu melding frå %s sia mengdegrensa er overskriden."
-msgstr[1] "Du fekk ikkje %hu meldingar frå %s sia mengdegrensa er overskriden."
+msgstr[0] "Du fekk ikkje %hu melding frå %s sidan mengdegrensa er overskriden."
+msgstr[1] ""
+"Du fekk ikkje %hu meldingar frå %s sidan mengdegrensa er overskriden."
 
 #, c-format
 msgid ""
@@ -6560,9 +6563,10 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
-"Du fekk ikkje %hu melding frå %s sia åtvaringsnivået hans/hennar er for høgt."
+"Du fekk ikkje %hu melding frå %s sidan åtvaringsnivået hans/hennar er for "
+"høgt."
 msgstr[1] ""
-"Du fekk ikkje %hu meldingar frå %s sia åtvaringsnivået hans/hennar er for "
+"Du fekk ikkje %hu meldingar frå %s sidan åtvaringsnivået hans/hennar er for "
 "høgt."
 
 #, c-format
@@ -6570,9 +6574,9 @@ msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-"Du fekk ikkje %hu melding frå %s sia åtvaringsnivået ditt er for høgt."
+"Du fekk ikkje %hu melding frå %s sidan åtvaringsnivået ditt er for høgt."
 msgstr[1] ""
-"Du fekk ikkje %hu meldingar frå %s sia åtvaringsnivået ditt er for høgt."
+"Du fekk ikkje %hu meldingar frå %s sidan åtvaringsnivået ditt er for høgt."
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
@@ -6597,10 +6601,10 @@ msgid "User information not available: %s"
 msgstr "Brukarinformasjon er ikkje tilgjengeleg: %s"
 
 msgid "Online Since"
-msgstr "Tilkopla sia"
+msgstr "Tilkopla sidan"
 
 msgid "Member Since"
-msgstr "Medlem sia"
+msgstr "Medlem sidan"
 
 msgid "Profile"
 msgstr "Profil"
@@ -6620,8 +6624,8 @@ msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
 msgstr ""
-"Klarte ikkje å utføra den siste handlinga sia du er over mengdegrensa. Vent "
-"i 10 minutt og prøv igjen."
+"Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
+"Vent i 10 minutt og prøv igjen."
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -6678,19 +6682,19 @@ msgid ""
 "Error 0x%04x: Unable to format username because the requested name differs "
 "from the original."
 msgstr ""
-"Feil 0x%04x: kan ikkje formatera brukarnamnet sia det førespurde namnet er "
+"Feil 0x%04x: kan ikkje formatera brukarnamnet sidan det førespurde namnet er "
 "ulikt originalen."
 
 #, c-format
 msgid "Error 0x%04x: Unable to format username because it is invalid."
-msgstr "Feil 0x%04x: kan ikkje formatera brukarnamnet sia det er ugyldig."
+msgstr "Feil 0x%04x: kan ikkje formatera brukarnamnet sidan det er ugyldig."
 
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format username because the requested name is too "
 "long."
 msgstr ""
-"Feil 0x%04x: kan ikkje formatera brukarnamnet sia det førespurde namnet er "
+"Feil 0x%04x: kan ikkje formatera brukarnamnet sidan det førespurde namnet er "
 "for langt."
 
 #, c-format
@@ -6698,7 +6702,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Feil 0x%04x: kan ikkje endra e-postadressa sia det allereie finst ein "
+"Feil 0x%04x: kan ikkje endra e-postadressa sidan det allereie finst ein "
 "førespurnad for dette brukarnamnet."
 
 #, c-format
@@ -6706,15 +6710,15 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Feil 0x%04x: kan ikkje endra e-postadressa sia den oppgjevne adressa har for "
-"mange brukarnamn knytte til seg."
+"Feil 0x%04x: kan ikkje endra e-postadressa sidan den oppgjevne adressa har "
+"for mange brukarnamn knytte til seg."
 
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Feil 0x%04x: kan ikkje endra e-postadressa sia den oppgjevne adressa er "
+"Feil 0x%04x: kan ikkje endra e-postadressa sidan den oppgjevne adressa er "
 "ugyldig."
 
 #, c-format
@@ -6813,7 +6817,7 @@ msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Kan ikkje leggja til vennen %s sia vennelista er full. Slett ein venn frå "
+"Kan ikkje leggja til vennen %s sidan vennelista er full. Slett ein venn frå "
 "lista og prøv igjen."
 
 msgid "(no name)"
@@ -7541,6 +7545,9 @@ msgstr "Vis tenarvarsel"
 
 msgid "Show server news"
 msgstr "Vis tenarnytt"
+
+msgid "Show chat room when msg comes"
+msgstr "Vis praterommet når meldinga kjem"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervall vedlikehaldstilkopling (sekund)"
@@ -9776,7 +9783,7 @@ msgstr "Skjult eller ikkje pålogga"
 
 #, c-format
 msgid "<br>At %s since %s"
-msgstr "<br>På %s sia %s"
+msgstr "<br>På %s sidan %s"
 
 msgid "Anyone"
 msgstr "Kven som helst"
@@ -10639,8 +10646,8 @@ msgstr "Velkomen tilbake"
 msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
-msgstr[0] "%d konto blei slått av sia du logga på frå ein annan stad:"
-msgstr[1] "%d kontoar blei slått av sia du logga på frå ein annan stad:"
+msgstr[0] "%d konto blei slått av sidan du logga på frå ein annan stad:"
+msgstr[1] "%d kontoar blei slått av sidan du logga på frå ein annan stad:"
 
 msgid "<b>Username:</b>"
 msgstr "<b>Brukarnamn:</b>"
@@ -11266,6 +11273,9 @@ msgstr "Litauisk"
 msgid "Macedonian"
 msgstr "Makedonsk"
 
+msgid "Mongolian"
+msgstr "Mongolsk"
+
 msgid "Bokmål Norwegian"
 msgstr "Norsk bokmål"
 
@@ -11380,8 +11390,31 @@ msgstr ""
 "form for garanti.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin på irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">OSS:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Hjelp per e-post:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC-kanal:</FONT> #pidgin på irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">XMPP fleirbrukarprat (MUC):</FONT> devel@conference.pidgin."
+"im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Noverande utviklarar"
@@ -11786,7 +11819,7 @@ msgid ""
 "This smiley is disabled because a custom smiley exists for this shortcut:\n"
 " %s"
 msgstr ""
-"Smilefjeset er ikkje i bruk sia det allereie finst eit tilpassa smilefjes "
+"Smilefjeset er ikkje i bruk sidan det allereie finst eit tilpassa smilefjes "
 "til denne snarvegen:\n"
 "%s"
 
@@ -12031,6 +12064,10 @@ msgstr ""
 #. It is not to be translated.
 msgid "Pidgin"
 msgstr "Pidgin"
+
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Avsluttar sidan en annan libpurple-klient allereie kjører.\n"
 
 msgid "Open All Messages"
 msgstr "Opna alle meldingar"
@@ -12370,6 +12407,10 @@ msgstr "Mellomtenar"
 
 msgid "No proxy"
 msgstr "Inga mellomlagring"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr "Bruk fjern-DNS med SOCKS4-mellomtenarar"
 
 msgid "_User:"
 msgstr "Br_ukar:"
@@ -13809,9 +13850,6 @@ msgstr "_Hald vennelistevindauget øvst:"
 msgid "Only when docked"
 msgstr "Berre når festa"
 
-msgid "_Flash window when chat messages are received"
-msgstr "La vindauget _blinka når det kjem nye meldingar"
-
 msgid "Windows Pidgin Options"
 msgstr "Windows Pidgin-val"
 
@@ -13861,6 +13899,12 @@ msgstr "Senda og ta i mot reine XMPP-blokker."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Klarer ikkje å hente MSN-adresseboka"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "La vindauget _blinka når det kjem nye meldingar"
 
 #~ msgid ""
 #~ "You may be disconnected shortly.  You may want to use TOC until this is "

@@ -34,11 +34,16 @@
 #include "signals.h"
 #include "value.h"
 
+/** @copydoc _PurplePlugin */
 typedef struct _PurplePlugin           PurplePlugin;
+/** @copydoc _PurplePluginInfo */
 typedef struct _PurplePluginInfo       PurplePluginInfo;
+/** @copydoc _PurplePluginUiInfo */
 typedef struct _PurplePluginUiInfo     PurplePluginUiInfo;
+/** @copydoc _PurplePluginLoaderInfo */
 typedef struct _PurplePluginLoaderInfo PurplePluginLoaderInfo;
 
+/** @copydoc _PurplePluginAction */
 typedef struct _PurplePluginAction     PurplePluginAction;
 
 typedef int PurplePluginPriority; /**< Plugin priority. */

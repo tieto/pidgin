@@ -1,4 +1,5 @@
 CERTIFICATES = \
+		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
@@ -9,8 +10,10 @@ CERTIFICATES = \
 		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem
 
 EXTRA_CERTS = \
+		AOL_Member_CA.pem \
 		Microsoft_Internet_Authority.pem \
-		Microsoft_Secure_Server_Authority.pem
+		Microsoft_Secure_Server_Authority.pem \
+		VeriSign_International_Server_Class_3_CA.pem
 
 
 cacertsdir =	$(datadir)/purple/ca-certs

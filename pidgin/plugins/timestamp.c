@@ -229,4 +229,4 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_int("/plugins/gtk/timestamp/interval", interval * 1000);
 }
 
-PURPLE_INIT_PLUGIN(interval, init_plugin, info)
+PURPLE_INIT_PLUGIN(timestamp, init_plugin, info)

@@ -322,9 +322,6 @@ pidgin_quit(void)
 	pidgin_session_end();
 #endif
 
-	/* Save the plugins we have loaded for next time. */
-	pidgin_plugins_save();
-
 	/* Uninit */
 	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
@@ -787,8 +784,8 @@ int main(int argc, char *argv[])
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
 		dbus_message_unref(message);
 #endif
-		purple_debug_info("main", "exiting because another libpurple client is already running\n");
 		purple_core_quit();
+		g_printerr(_("Exiting because another libpurple client is already running.\n"));
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif

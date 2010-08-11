@@ -19,7 +19,7 @@
  */
 
 
-#define PLUGIN_STATIC_NAME	"GntLastlog"
+#define PLUGIN_STATIC_NAME	GntLastlog
 
 #include "internal.h"
 

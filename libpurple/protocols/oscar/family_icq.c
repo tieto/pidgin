@@ -456,64 +456,6 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	return 0;
 }
 
-/*
- * getstatusnote may be a misleading name because the response
- * contains a lot of different information but currently it's only
- * used to get that.
- */
-int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	purple_debug_misc("oscar", "aim_icq_getstatusnote: requesting status note for %s.\n", uin);
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
-	{
-		purple_debug_misc("oscar", "aim_icq_getstatusnote: no connection.\n");
-		return -EINVAL;
-	}
-
-	bslen = 2 + 4 + 2 + 2 + 2 + 2 + 58 + strlen(uin);
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
-
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putuid(&bs, od);
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x0fa0); /* shrug. */
-	byte_stream_putle16(&bs, 58 + strlen(uin));
-
-	byte_stream_put32(&bs, 0x05b90002);    /* don't ask */
-	byte_stream_put32(&bs, 0x80000000);
-	byte_stream_put32(&bs, 0x00000006);
-	byte_stream_put32(&bs, 0x00010002);
-	byte_stream_put32(&bs, 0x00020000);
-	byte_stream_put32(&bs, 0x04e30000);
-	byte_stream_put32(&bs, 0x00020002);
-	byte_stream_put32(&bs, 0x00000001);
-
-	byte_stream_put16(&bs, 24 + strlen(uin));
-	byte_stream_put32(&bs, 0x003c0010);
-	byte_stream_putraw(&bs, note_hash, 16); /* status note hash */
-	byte_stream_put16(&bs, 0x0032);        /* buddy uin */
-	byte_stream_put16(&bs, strlen(uin));
-	byte_stream_putstr(&bs, uin);
-
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs, FALSE);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	int i;
 

@@ -66,7 +66,9 @@ enum {
 	QQ_CMD_TOKEN  = 0x0062, 		/* get login token */
 	QQ_CMD_RECV_MSG_SYS = 0x0080,			/* receive a system message */
 	QQ_CMD_BUDDY_CHANGE_STATUS = 0x0081,	/* buddy change status */
-	/* for QQ2007*/
+	QQ_CMD_BUDDY_MEMO = 0x003E,    /* the message about buddy memo */
+
+    /* for QQ2007*/
 	QQ_CMD_GET_SERVER = 0x0091,					/* select login server */
 	QQ_CMD_TOKEN_EX = 0x00BA,						/* get LOGIN token */
 	QQ_CMD_CHECK_PWD = 0x00DD,				/* Password verify */
@@ -130,6 +132,7 @@ enum {
 	QQ_BUDDY_ONLINE_INVISIBLE = 40,
 	QQ_BUDDY_ONLINE_BUSY = 50
 };
+
 
 gboolean is_online(guint8 status);
 

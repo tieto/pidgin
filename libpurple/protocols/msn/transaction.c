@@ -199,6 +199,7 @@ transaction_timeout(gpointer data)
 	if (trans->timeout_cb != NULL)
 		trans->timeout_cb(trans->cmdproc, trans);
 
+	trans->timer = 0;
 	return FALSE;
 }
 
