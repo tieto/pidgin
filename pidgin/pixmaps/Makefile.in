@@ -212,9 +212,9 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	toolbar/16/send-file.png toolbar/16/transfer.png \
 	toolbar/16/unblock.png toolbar/16/video-call.png \
 	toolbar/22/select-avatar.png toolbar/22/video-call.png \
-	toolbar/22/voice-call.png toolbar/32/video-call.png \
-	toolbar/32/voice-call.png toolbar/48/video-call.png \
-	toolbar/48/voice-call.png tray/16/tray-away.png \
+	toolbar/22/audio-call.png toolbar/32/video-call.png \
+	toolbar/32/audio-call.png toolbar/48/video-call.png \
+	toolbar/48/audio-call.png tray/16/tray-away.png \
 	tray/16/tray-busy.png tray/16/tray-invisible.png \
 	tray/16/tray-connecting.png tray/16/tray-extended-away.png \
 	tray/16/tray-message.png tray/16/tray-new-im.png \
@@ -511,6 +511,8 @@ USE_TCL_FALSE = @USE_TCL_FALSE@
 USE_TCL_TRUE = @USE_TCL_TRUE@
 USE_TK_FALSE = @USE_TK_FALSE@
 USE_TK_TRUE = @USE_TK_TRUE@
+USE_VV_FALSE = @USE_VV_FALSE@
+USE_VV_TRUE = @USE_VV_TRUE@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
@@ -1023,28 +1025,28 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_22_SCALABLE = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/22/scalable/select-avatar.svg \
 @INSTALL_PIXMAPS_TRUE@		toolbar/22/scalable/video-call.svg \
-@INSTALL_PIXMAPS_TRUE@		toolbar/22/scalable/voice-call.svg
+@INSTALL_PIXMAPS_TRUE@		toolbar/22/scalable/audio-call.svg
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_22 = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/22/select-avatar.png \
 @INSTALL_PIXMAPS_TRUE@		toolbar/22/video-call.png \
-@INSTALL_PIXMAPS_TRUE@		toolbar/22/voice-call.png
+@INSTALL_PIXMAPS_TRUE@		toolbar/22/audio-call.png
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_32_SCALABLE = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/32/scalable/video-call.svg \
-@INSTALL_PIXMAPS_TRUE@		toolbar/32/scalable/voice-call.svg
+@INSTALL_PIXMAPS_TRUE@		toolbar/32/scalable/audio-call.svg
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_32 = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/32/video-call.png \
-@INSTALL_PIXMAPS_TRUE@		toolbar/32/voice-call.png
+@INSTALL_PIXMAPS_TRUE@		toolbar/32/audio-call.png
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_48_SCALABLE = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/48/scalable/video-call.svg \
-@INSTALL_PIXMAPS_TRUE@		toolbar/48/scalable/voice-call.svg
+@INSTALL_PIXMAPS_TRUE@		toolbar/48/scalable/audio-call.svg
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_48 = \
 @INSTALL_PIXMAPS_TRUE@		toolbar/48/video-call.png \
-@INSTALL_PIXMAPS_TRUE@		toolbar/48/voice-call.png
+@INSTALL_PIXMAPS_TRUE@		toolbar/48/audio-call.png
 
 @INSTALL_PIXMAPS_TRUE@TRAY_16_ICO = \
 @INSTALL_PIXMAPS_TRUE@		tray/16/available_4bit.ico \

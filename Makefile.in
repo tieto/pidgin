@@ -355,6 +355,8 @@ USE_TCL_FALSE = @USE_TCL_FALSE@
 USE_TCL_TRUE = @USE_TCL_TRUE@
 USE_TK_FALSE = @USE_TK_FALSE@
 USE_TK_TRUE = @USE_TK_TRUE@
+USE_VV_FALSE = @USE_VV_FALSE@
+USE_VV_TRUE = @USE_VV_TRUE@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
@@ -1014,13 +1016,13 @@ package_revision_raw.txt:
 	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
-	if [ -f $< ]; then \
-	  sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+	if test -f $<; then \
+	  echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
-	if [ ! -f $@ -a -f $(srcdir)/$@ ]; then \
+	if test ! -f $@ -a -f $(srcdir)/$@; then \
 	  cp $(srcdir)/$@ $@; \
 	fi
-	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
+	test -f $@ || echo "#define REVISION \"unknown\"" > $@
 
 docs: Doxyfile
 @HAVE_DOXYGEN_TRUE@	@echo "Running doxygen..."

@@ -156,7 +156,7 @@ finch_media_init (FinchMedia *media)
 {
 	media->priv = FINCH_MEDIA_GET_PRIVATE(media);
 
-	media->priv->calling = gnt_label_new(_("Calling ... "));
+	media->priv->calling = gnt_label_new(_("Calling..."));
 	media->priv->hangup = gnt_button_new(_("Hangup"));
 	media->priv->accept = gnt_button_new(_("Accept"));
 	media->priv->reject = gnt_button_new(_("Reject"));

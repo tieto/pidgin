@@ -224,6 +224,8 @@ static void browse_button_cb(GtkWidget *button, PidginDiscoDialog *dialog)
 		/* This shouldn't ever happen since the account is connected */
 		server = g_strdup("jabber.org");
 
+	/* Note to translators: The string "Enter an XMPP Server" is asking the
+	   user to type the name of an XMPP server which will then be queried */
 	purple_request_input(my_plugin, _("Server name request"), _("Enter an XMPP Server"),
 			_("Select an XMPP server to query"),
 			server, FALSE, FALSE, NULL,

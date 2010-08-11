@@ -69,7 +69,8 @@
  */
 
 static GIOChannel *channel = NULL;
-static int channel_read_callback;
+static guint channel_read_callback = 0;
+static guint channel_error_callback = 0;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -314,11 +315,11 @@ setup_io()
 	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
-	
-	g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+
+	channel_error_callback = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_NVAL),
 					io_invoke_error, GINT_TO_POINTER(result), NULL);
-	
+
 	g_io_channel_unref(channel);  /* Apparently this caused crashes for some people.
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
@@ -583,6 +584,13 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 void gnt_quit()
 {
+	/* Prevent io_invoke() from being called after wm is destroyed */
+	g_source_remove(channel_error_callback);
+	g_source_remove(channel_read_callback);
+
+	channel_error_callback = 0;
+	channel_read_callback = 0;
+
 	g_object_unref(G_OBJECT(wm));
 	wm = NULL;
 

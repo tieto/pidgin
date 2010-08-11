@@ -465,9 +465,16 @@ res_main_thread_cb(gpointer data)
 {
 	PurpleSrvResponse *srvres = NULL;
 	PurpleSrvQueryData *query_data = data;
-	if(query_data->error_message != NULL)
+	if(query_data->error_message != NULL) {
 		purple_debug_error("dnssrv", query_data->error_message);
-	else {
+		if (query_data->type == DNS_TYPE_SRV) {
+			if (query_data->cb.srv)
+				query_data->cb.srv(srvres, 0, query_data->extradata);
+		} else if (query_data->type == DNS_TYPE_TXT) {
+			if (query_data->cb.txt)
+				query_data->cb.txt(NULL, query_data->extradata);
+		}
+	} else {
 		if (query_data->type == DNS_TYPE_SRV) {
 			PurpleSrvResponse *srvres_tmp = NULL;
 			GList *lst = query_data->results;

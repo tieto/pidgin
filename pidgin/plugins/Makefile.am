@@ -47,6 +47,7 @@ spellchk_la_LDFLAGS         = -module -avoid-version
 themeedit_la_LDFLAGS        = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
+vvconfig_la_LDFLAGS         = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
 if PLUGINS
@@ -68,6 +69,10 @@ plugin_LTLIBRARIES = \
 	timestamp_format.la \
 	xmppconsole.la
 
+if USE_VV
+plugin_LTLIBRARIES +=	vvconfig.la
+endif
+
 noinst_LTLIBRARIES = \
 	contact_priority.la \
 	gtk_signals_test.la
@@ -88,6 +93,7 @@ spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
+vvconfig_la_SOURCES         = vvconfig.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
@@ -106,6 +112,7 @@ spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
+vvconfig_la_LIBADD          = $(GTK_LIBS) $(GSTREAMER_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
@@ -129,6 +136,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
 #

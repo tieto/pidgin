@@ -403,9 +403,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			if (conv) {
 				char *buf;
 				buf = g_strdup_printf(
-						_("%s has sent you a webcam "
-						"invite, which is not yet "
-						"supported."), from);
+						_("%s invited you to view his/her webcam, but "
+						"this is not yet supported."), from);
 				purple_conversation_write(conv, NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,
@@ -709,7 +708,15 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		content = get_token(body, "\r\n\r\n", NULL);
 
-		got_invite(slpcall, branch, content_type, content);
+		if (branch && content_type && content)
+		{
+			got_invite(slpcall, branch, content_type, content);
+		}
+		else
+		{
+			msn_slpcall_destroy(slpcall);
+			slpcall = NULL;
+		}
 
 		g_free(branch);
 		g_free(content_type);

@@ -91,6 +91,8 @@ static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 
+static gboolean prefs_sound_themes_loading;
+
 /*
  * PROTOTYPES
  */
@@ -580,6 +582,7 @@ prefs_themes_refresh(void)
 	gchar *filename;
 	GtkTreeIter iter;
 
+	prefs_sound_themes_loading = TRUE;
 	/* refresh the list of themes in the manager */
 	purple_theme_manager_refresh();
 
@@ -614,6 +617,7 @@ prefs_themes_refresh(void)
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
+	prefs_sound_themes_loading = FALSE;
 }
 
 /* init all the theme variables so that the themes can be sorted later and used by pref pages */
@@ -930,7 +934,11 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme, gch
 {
 	GtkCellRenderer *cell_rend;
 	GtkWidget *combo_box;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	g_return_val_if_fail(store != NULL && current_theme != NULL, NULL);
 
@@ -965,7 +973,7 @@ prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	gchar *new_theme;
 	GtkTreeIter new_iter;
 
-	if(gtk_combo_box_get_active_iter(combo_box, &new_iter)) {
+	if(gtk_combo_box_get_active_iter(combo_box, &new_iter) && !prefs_sound_themes_loading) {
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &new_iter, 2, &new_theme, -1);
 
@@ -1086,12 +1094,17 @@ theme_page(void)
 	GtkTreeSelection *sel;
 	GtkTreeRowReference *rowref;
 	GtkWidget *label;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
-	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
+	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below."
+	                        " New themes can be installed by dragging and dropping them onto the theme list."));
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -1409,6 +1422,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		g_free(name);
 
 		pidgin_stock_load_status_icon_theme(theme);
+		pidgin_blist_refresh(purple_get_blist());
 	}
 }
 
@@ -1877,14 +1891,14 @@ network_page(void)
 			G_CALLBACK(network_turn_server_changed_cb), NULL);
 	gtk_widget_show(entry);
 
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), "_TURN server:",
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
 
 	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:",
+	hbox = pidgin_prefs_labeled_entry(vbox, _("_Username:"),
 		"/purple/network/turn_username", sg);
-	pidgin_prefs_labeled_password(hbox, "_Password:",
+	pidgin_prefs_labeled_password(hbox, _("_Password:"),
 		"/purple/network/turn_password", NULL);
 
 	if (purple_running_gnome()) {

@@ -7397,7 +7397,7 @@ msgstr "Συγγνώμη, δεν είσαι ο τύπος μου."
 
 #, c-format
 msgid "%u needs authorization"
-msgstr "%d χρειάζεται έγκριση"
+msgstr "%u χρειάζεται έγκριση"
 
 msgid "Add buddy authorize"
 msgstr "Έγκριση προσθήκης φίλου"

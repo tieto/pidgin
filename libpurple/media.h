@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _PURPLE_MEDIA_H_
@@ -59,11 +59,11 @@ G_BEGIN_DECLS
 #define PURPLE_MEDIA_TYPE_STATE      (purple_media_state_changed_get_type())
 #define PURPLE_MEDIA_TYPE_INFO_TYPE	(purple_media_info_type_get_type())
 
-/** @copydoc _PurpleMedia */
+/** An opaque structure representing a media call. */
 typedef struct _PurpleMedia PurpleMedia;
-/** @copydoc _PurpleMediaCandidate */
+/** An opaque structure representing a network candidate (IP Address and port pair). */
 typedef struct _PurpleMediaCandidate PurpleMediaCandidate;
-/** @copydoc _PurpleMediaCodec */
+/** An opaque structure representing an audio or video codec. */
 typedef struct _PurpleMediaCodec PurpleMediaCodec;
 
 /** Media caps */
@@ -559,6 +559,7 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * @param media The media object to find the session in.
  * @param sess_id The session id of the session find the stream in.
  * @param participant The name of the remote user to set the candidates from.
+ * @param codecs The list of remote codecs to set.
  *
  * @return @c TRUE The codecs were set successfully, or @c FALSE otherwise.
  *

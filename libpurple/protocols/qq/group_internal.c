@@ -188,7 +188,7 @@ void qq_room_remove(PurpleConnection *gc, guint32 id)
 	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	purple_debug_info("QQ", "Find and remove room data, id %u", id);
+	purple_debug_info("QQ", "Find and remove room data, id %u\n", id);
 	rmd = qq_room_data_find(gc, id);
 	g_return_if_fail (rmd != NULL);
 
@@ -196,7 +196,7 @@ void qq_room_remove(PurpleConnection *gc, guint32 id)
 	qd->groups = g_list_remove(qd->groups, rmd);
 	room_data_free(rmd);
 
-	purple_debug_info("QQ", "Find and remove chat, ext_id %u", ext_id);
+	purple_debug_info("QQ", "Find and remove chat, ext_id %u\n", ext_id);
 	num_str = g_strdup_printf("%u", ext_id);
 	chat = purple_blist_find_chat(purple_connection_get_account(gc), num_str);
 	g_free(num_str);

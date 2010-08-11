@@ -325,7 +325,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 	}
 
 	if (bytes != bytes_expected) {
-		purple_debug_error("QQ", "qq_send_file_ctl_packet: Expected to get %d bytes, but get %d",
+		purple_debug_error("QQ", "qq_send_file_ctl_packet: Expected to get %d bytes, but get %d\n",
 				bytes_expected, bytes);
 		return;
 	}
@@ -334,7 +334,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 		raw_data, bytes,
 		"sending packet[%s]:", qq_get_file_cmd_desc(packet_type));
 
-	encrypted = g_newa(guint8, bytes + 16);
+	encrypted = g_newa(guint8, bytes + 17);
 	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, info->file_session_key);
 	/*debug: try to decrypt it */
 
@@ -342,7 +342,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 	guint8 *buf;
 	int buflen;
 	hex_dump = hex_dump_to_str(encrypted, encrypted_len);
-	purple_debug_info("QQ", "encrypted packet: \n%s", hex_dump);
+	purple_debug_info("QQ", "encrypted packet: \n%s\n", hex_dump);
 	g_free(hex_dump);
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	buflen = encrypted_len;
@@ -352,7 +352,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 			purple_debug_info("QQ", "checksum ok\n");
 
 		hex_dump = hex_dump_to_str(buf, buflen);
-		purple_debug_info("QQ", "decrypted packet: \n%s", hex_dump);
+		purple_debug_info("QQ", "decrypted packet: \n%s\n", hex_dump);
 		g_free(hex_dump);
 	 } else {
 		purple_debug_info("QQ", "decrypt fail\n");
@@ -820,6 +820,6 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 			_qq_process_recv_file_data(gc, data + bytes, len - bytes);
 			break;
 		default:
-			purple_debug_info("QQ", "unknown packet tag");
+			purple_debug_info("QQ", "unknown packet tag\n");
 	}
 }

@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +26,7 @@
 #include "util.h"
 
 #include "buddy.h"
+#include "chat.h"
 #include "google.h"
 #include "presence.h"
 #include "roster.h"
@@ -334,6 +337,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 {
 	JabberStream *js = gc->proto_data;
 	char *who;
+	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	const char *name;
@@ -343,13 +347,39 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		return;
 
 	name = purple_buddy_get_name(buddy);
-	if(!(who = jabber_get_bare_jid(name)))
+	jid = jabber_id_new(name);
+	if (jid == NULL) {
+		/* TODO: Remove the buddy from the list? */
 		return;
+	}
 
-	jb = jabber_buddy_find(js, name, FALSE);
+	/* Adding a chat room or a chat buddy to the roster is *not* supported. */
+	if (jabber_chat_find(js, jid->node, jid->domain) != NULL) {
+		/*
+		 * This is the same thing Bonjour does. If it causes problems, move
+		 * it to an idle callback.
+		 */
+		purple_debug_warning("jabber", "Cowardly refusing to add a MUC user "
+		                     "to your buddy list and removing the buddy. "
+		                     "Buddies can only be added by real (non-MUC) "
+		                     "JID\n");
+		purple_blist_remove_buddy(buddy);
+		jabber_id_free(jid);
+		return;
+	}
 
-	purple_debug_info("jabber", "jabber_roster_add_buddy(): Adding %s\n",
-	                  name);
+	who = jabber_id_get_bare_jid(jid);
+	if (jid->resource != NULL) {
+		/*
+		 * If the buddy name added contains a resource, strip that off and
+		 * rename the buddy.
+		 */
+		purple_blist_rename_buddy(buddy, who);
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	purple_debug_info("jabber", "jabber_roster_add_buddy(): Adding %s\n", who);
 
 	jabber_roster_update(js, who, NULL);
 

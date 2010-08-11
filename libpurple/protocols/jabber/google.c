@@ -91,20 +91,6 @@ google_session_create_xmlnode(GoogleSession *session, const char *type)
 }
 
 static void
-google_session_send_terminate(GoogleSession *session)
-{
-	xmlnode *sess;
-	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-
-	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
-	sess = google_session_create_xmlnode(session, "terminate");
-	xmlnode_insert_child(iq->node, sess);
-
-	jabber_iq_send(iq);
-	google_session_destroy(session);
-}
-
-static void
 google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
@@ -310,6 +296,9 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		GoogleSession *session)
 {
+	if (sid != NULL || name != NULL)
+		return;
+
 	if (type == PURPLE_MEDIA_INFO_HANGUP) {
 		xmlnode *sess;
 		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
@@ -328,6 +317,8 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		xmlnode_insert_child(iq->node, sess);
 
 		jabber_iq_send(iq);
+	} else if (type == PURPLE_MEDIA_INFO_ACCEPT && local == TRUE) {
+		google_session_ready(session);
 	}
 }
 
@@ -398,6 +389,16 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 
 	purple_media_set_prpl_data(session->media, session);
 
+	g_signal_connect_swapped(G_OBJECT(session->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect(G_OBJECT(session->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
+
 	params = jabber_google_session_get_params(js, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
@@ -408,22 +409,10 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 			session->remote_jid, PURPLE_MEDIA_VIDEO,
 			TRUE, "nice", num_params, params) == FALSE)) {
 		purple_media_error(session->media, "Error adding stream.");
-		purple_media_stream_info(session->media,
-				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
-		google_session_destroy(session);
+		purple_media_end(session->media, NULL, NULL);
 		g_free(params);
 		return FALSE;
 	}
-
-	g_signal_connect_swapped(G_OBJECT(session->media),
-			"candidates-prepared",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect(G_OBJECT(session->media), "state-changed",
-			G_CALLBACK(google_session_state_changed_cb), session);
-	g_signal_connect(G_OBJECT(session->media), "stream-info",
-			G_CALLBACK(google_session_stream_info_cb), session);
 
 	g_free(params);
 
@@ -466,6 +455,16 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	purple_media_set_prpl_data(session->media, session);
 
+	g_signal_connect_swapped(G_OBJECT(session->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect(G_OBJECT(session->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
+
 	params = jabber_google_session_get_params(js, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
@@ -477,8 +476,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			FALSE, "nice", num_params, params) == FALSE)) {
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_stream_info(session->media,
-				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
-		google_session_send_terminate(session);
+				PURPLE_MEDIA_INFO_REJECT, NULL, NULL, TRUE);
 		g_free(params);
 		return FALSE;
 	}
@@ -534,18 +532,6 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	purple_media_codec_list_free(codecs);
 	purple_media_codec_list_free(video_codecs);
-
-	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session->media),
-			"candidates-prepared",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect(G_OBJECT(session->media), "state-changed",
-			G_CALLBACK(google_session_state_changed_cb), session);
-	g_signal_connect(G_OBJECT(session->media), "stream-info",
-			G_CALLBACK(google_session_stream_info_cb), session);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, iq_id);
@@ -778,8 +764,7 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
 
-	if (!google_session_handle_initiate(js, session, session_node, iq_id))
-		google_session_destroy(session);
+	google_session_handle_initiate(js, session, session_node, iq_id);
 }
 #endif /* USE_VV */
 
@@ -1316,6 +1301,7 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",
 			error_message);
 		g_slist_free(hosts);
+		js->stun_query = NULL;
 		return;
 	}
 
@@ -1334,18 +1320,16 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
 		}
 
-		if (js) {
-			if (js->stun_ip) {
-				g_free(js->stun_ip);
-			}
-			js->stun_ip = g_strdup(dst);
-			purple_debug_info("jabber", "set Google STUN IP address: %s\n", dst);
-			js->stun_port = port;
-			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
-			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
-			/* unmark ongoing query */
-			js->stun_query = NULL;
-		}
+		if (js->stun_ip)
+			g_free(js->stun_ip);
+		js->stun_ip = g_strdup(dst);
+		js->stun_port = port;
+
+		purple_debug_info("jabber", "set Google STUN IP/port address: "
+		                  "%s:%d\n", dst, port);
+
+		/* unmark ongoing query */
+		js->stun_query = NULL;
 	}
 
 	while (hosts != NULL) {

@@ -205,7 +205,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if (slpmsg->session_id == 64)
 		{
 			/* This is for handwritten messages (Ink) */
-			GError *error;
+			GError *error = NULL;
 			gsize bytes_read, bytes_written;
 
 			body_str = g_convert((const gchar *)body, body_len / 2,
@@ -232,7 +232,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			g_free(body_str);
 
 			body_str = g_convert((const gchar *)body, body_len / 2,
-			                     "UTF-8", "UTF16-LE",
+			                     "UTF-8", "UTF-16LE",
 			                     &bytes_read, &bytes_written, &error);
 			if (!body_str)
 			{

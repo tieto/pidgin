@@ -229,16 +229,17 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 
 	frame = purple_plugin_pref_frame_new();
 
-	ppref = purple_plugin_pref_new_with_label(_("Join/Part Hiding Configuration"));
+	ppref = purple_plugin_pref_new_with_label(_("Hide Joins/Parts"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(THRESHOLD_PREF,
-	                                                 _("Minimum Room Size"));
+	                                                 /* Translators: Followed by an input request a number of people */
+	                                                 _("For rooms with more than this many people"));
 	purple_plugin_pref_set_bounds(ppref, 0, 1000);
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(DELAY_PREF,
-	                                                 _("User Inactivity Timeout (in minutes)"));
+	                                                 _("If user has not spoken in this many minutes"));
 	purple_plugin_pref_set_bounds(ppref, 0, 8 * 60); /* 8 Hours */
 	purple_plugin_pref_frame_add(frame, ppref);
 

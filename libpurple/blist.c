@@ -1118,7 +1118,7 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	old_alias = buddy->alias;
 
 	if ((new_alias != NULL) && (*new_alias != '\0'))
-		buddy->alias = g_strdup(alias);
+		buddy->alias = new_alias;
 	else {
 		buddy->alias = NULL;
 		g_free(new_alias); /* could be "\0" */

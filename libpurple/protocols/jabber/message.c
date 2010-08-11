@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,8 +89,12 @@ static void handle_chat(JabberMessage *jm)
 	}
 
 	if(!jm->xhtml && !jm->body) {
-		if (jbr)
-			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+		if (jbr) {
+			if (jm->chat_state != JM_STATE_NONE)
+				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+			else
+				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+		}
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
@@ -487,7 +493,7 @@ jabber_message_get_data_cb(JabberStream *js, const char *from,
 	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
 
 	/* did we get a data element as result? */
-	if (data_element) {
+	if (data_element && type == JABBER_IQ_RESULT) {
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
 		if (data) {

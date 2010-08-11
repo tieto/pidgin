@@ -223,7 +223,7 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib node    The node which has been modified.
+	 * @param node    The node which has been modified.
 	 *
 	 * @since 2.6.0.
 	 */
@@ -238,7 +238,7 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib node  The node which has been modified.
+	 * @param node  The node which has been modified.
 	 * @since 2.6.0.
 	 */
 	void (*remove_node)(PurpleBlistNode *node);
@@ -252,7 +252,7 @@ struct _PurpleBlistUiOps
 	 * be set to a fallback function that saves data to blist.xml like in
 	 * previous libpurple versions.
 	 *
-	 * @attrib account  The account whose data to save. If NULL, save all data
+	 * @param account  The account whose data to save. If NULL, save all data
 	 *                  for all accounts.
 	 * @since 2.6.0.
 	 */
