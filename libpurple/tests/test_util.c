@@ -66,17 +66,70 @@ START_TEST(test_util_text_strip_mnemonic)
 }
 END_TEST
 
+/*
+ * Many of the valid and invalid email addresses lised below are from
+ * http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+ */
+const char *valid_emails[] = {
+	"purple-devel@lists.sf.net",
+	"l3tt3rsAndNumb3rs@domain.com",
+	"has-dash@domain.com",
+	"hasApostrophe.o'leary@domain.org",
+	"uncommonTLD@domain.museum",
+	"uncommonTLD@domain.travel",
+	"uncommonTLD@domain.mobi",
+	"countryCodeTLD@domain.uk",
+	"countryCodeTLD@domain.rw",
+	"lettersInDomain@911.com",
+	"underscore_inLocal@domain.net",
+	"IPInsteadOfDomain@127.0.0.1",
+	/* "IPAndPort@127.0.0.1:25", */
+	"subdomain@sub.domain.com",
+	"local@dash-inDomain.com",
+	"dot.inLocal@foo.com",
+	"a@singleLetterLocal.org",
+	"singleLetterDomain@x.org",
+	"&*=?^+{}'~@validCharsInLocal.net",
+	"foor@bar.newTLD"
+};
+
+const char *invalid_emails[] = {
+	"purple-devel@@lists.sf.net",
+	"purple@devel@lists.sf.net",
+	"purple-devel@list..sf.net",
+	"purple-devel",
+	"purple-devel@",
+	"@lists.sf.net",
+	"totally bogus",
+	"missingDomain@.com",
+	"@missingLocal.org",
+	"missingatSign.net",
+	"missingDot@com",
+	"two@@signs.com",
+	"colonButNoPort@127.0.0.1:",
+	""
+	/* "someone-else@127.0.0.1.26", */
+	".localStartsWithDot@domain.com",
+	/* "localEndsWithDot.@domain.com", */ /* I don't think this is invalid -- Stu */
+	/* "two..consecutiveDots@domain.com", */ /* I don't think this is invalid -- Stu */
+	"domainStartsWithDash@-domain.com",
+	"domainEndsWithDash@domain-.com",
+	/* "numbersInTLD@domain.c0m", */
+	/* "missingTLD@domain.", */ /* This certainly isn't invalid -- Stu */
+	"! \"#$%(),/;<>[]`|@invalidCharsInLocal.org",
+	"invalidCharsInDomain@! \"#$%(),/;<>_[]`|.org",
+	/* "local@SecondLevelDomainNamesAreInvalidIfTheyAreLongerThan64Charactersss.org" */
+};
+
 START_TEST(test_util_email_is_valid)
 {
-	fail_unless(purple_email_is_valid("purple-devel@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple-devel@@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple@devel@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple-devel@list..sf.net"));
-	fail_if(purple_email_is_valid("purple-devel"));
-	fail_if(purple_email_is_valid("purple-devel@"));
-	fail_if(purple_email_is_valid("@lists.sf.net"));
-	fail_if(purple_email_is_valid(""));
-	fail_if(purple_email_is_valid("totally bogus"));
+	size_t i;
+
+	for (i = 0; i < G_N_ELEMENTS(valid_emails); i++)
+		fail_unless(purple_email_is_valid(valid_emails[i]), "Email address was: %s", valid_emails[i]);
+
+	for (i = 0; i < G_N_ELEMENTS(invalid_emails); i++)
+		fail_if(purple_email_is_valid(invalid_emails[i]), "Email address was: %s", invalid_emails[i]);
 }
 END_TEST
 

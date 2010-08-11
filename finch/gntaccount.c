@@ -125,7 +125,8 @@ save_account_cb(AccountEditDialog *dialog)
 
 	if (value == NULL || *value == '\0')
 	{
-		purple_notify_error(NULL, _("Error"), _("Account was not added"),
+		purple_notify_error(NULL, _("Error"),
+				dialog->account ? _("Account was not modified") : _("Account was not added"),
 				_("Username of an account must be non-empty."));
 		return;
 	}
@@ -160,8 +161,28 @@ save_account_cb(AccountEditDialog *dialog)
 		account = dialog->account;
 
 		/* Protocol */
-		purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
-		purple_account_set_username(account, username->str);
+		if (purple_account_is_disconnected(account)) {
+			purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
+			purple_account_set_username(account, username->str);
+		} else {
+			const char *old = purple_account_get_protocol_id(account);
+			char *oldprpl;
+			if (strcmp(old, purple_plugin_get_id(plugin))) {
+				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
+						_("The account's protocol cannot be changed while it is connected to the server."));
+				return;
+			}
+
+			oldprpl = g_strdup(purple_normalize(account, purple_account_get_username(account)));
+			if (g_utf8_collate(oldprpl, purple_normalize(account, username->str))) {
+				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
+						_("The account's username cannot be changed while it is connected to the server."));
+				g_free(oldprpl);
+				return;
+			}
+			g_free(oldprpl);
+			purple_account_set_username(account, username->str);
+		}
 	}
 	g_string_free(username, TRUE);
 
@@ -243,6 +264,17 @@ save_account_cb(AccountEditDialog *dialog)
 			purple_savedstatus_activate_for_account(saved_status, account);
 			purple_account_set_enabled(account, FINCH_UI, TRUE);
 		}
+	}
+
+	/* In case of a new account, the 'Accounts' window is updated from the account-added
+	 * callback. In case of changes in an existing account, we need to explicitly do it
+	 * here.
+	 */
+	if (dialog->account != NULL && accounts.window) {
+		gnt_tree_change_text(GNT_TREE(accounts.tree), dialog->account,
+				0, purple_account_get_username(dialog->account));
+		gnt_tree_change_text(GNT_TREE(accounts.tree), dialog->account,
+				1, purple_account_get_protocol_name(dialog->account));
 	}
 
 	gnt_widget_destroy(dialog->window);
@@ -603,7 +635,7 @@ edit_account(PurpleAccount *account)
 	button = gnt_button_new(_("Cancel"));
 	gnt_box_add_widget(GNT_BOX(hbox), button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), window);
-	
+
 	button = gnt_button_new(_("Save"));
 	gnt_box_add_widget(GNT_BOX(hbox), button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(save_account_cb), dialog);

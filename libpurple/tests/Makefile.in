@@ -47,12 +47,13 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__check_libpurple_SOURCES_DIST = check_libpurple.c tests.h \
-	test_cipher.c test_jabber_jutil.c test_jabber_scram.c \
-	test_qq.c test_yahoo_util.c test_util.c \
+	test_cipher.c test_jabber_caps.c test_jabber_jutil.c \
+	test_jabber_scram.c test_qq.c test_yahoo_util.c test_util.c \
 	$(top_builddir)/libpurple/util.h
 @HAVE_CHECK_TRUE@am_check_libpurple_OBJECTS =  \
 @HAVE_CHECK_TRUE@	check_libpurple-check_libpurple.$(OBJEXT) \
 @HAVE_CHECK_TRUE@	check_libpurple-test_cipher.$(OBJEXT) \
+@HAVE_CHECK_TRUE@	check_libpurple-test_jabber_caps.$(OBJEXT) \
 @HAVE_CHECK_TRUE@	check_libpurple-test_jabber_jutil.$(OBJEXT) \
 @HAVE_CHECK_TRUE@	check_libpurple-test_jabber_scram.$(OBJEXT) \
 @HAVE_CHECK_TRUE@	check_libpurple-test_qq.$(OBJEXT) \
@@ -425,6 +426,7 @@ target_alias = @target_alias@
 @HAVE_CHECK_TRUE@        check_libpurple.c \
 @HAVE_CHECK_TRUE@	    tests.h \
 @HAVE_CHECK_TRUE@		test_cipher.c \
+@HAVE_CHECK_TRUE@		test_jabber_caps.c \
 @HAVE_CHECK_TRUE@		test_jabber_jutil.c \
 @HAVE_CHECK_TRUE@		test_jabber_scram.c \
 @HAVE_CHECK_TRUE@		test_qq.c \
@@ -501,6 +503,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-check_libpurple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-test_cipher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-test_jabber_caps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-test_jabber_jutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-test_jabber_scram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_libpurple-test_qq.Po@am__quote@
@@ -555,6 +558,20 @@ check_libpurple-test_cipher.obj: test_cipher.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_cipher.c' object='check_libpurple-test_cipher.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -c -o check_libpurple-test_cipher.obj `if test -f 'test_cipher.c'; then $(CYGPATH_W) 'test_cipher.c'; else $(CYGPATH_W) '$(srcdir)/test_cipher.c'; fi`
+
+check_libpurple-test_jabber_caps.o: test_jabber_caps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -MT check_libpurple-test_jabber_caps.o -MD -MP -MF "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo" -c -o check_libpurple-test_jabber_caps.o `test -f 'test_jabber_caps.c' || echo '$(srcdir)/'`test_jabber_caps.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo" "$(DEPDIR)/check_libpurple-test_jabber_caps.Po"; else rm -f "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_jabber_caps.c' object='check_libpurple-test_jabber_caps.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -c -o check_libpurple-test_jabber_caps.o `test -f 'test_jabber_caps.c' || echo '$(srcdir)/'`test_jabber_caps.c
+
+check_libpurple-test_jabber_caps.obj: test_jabber_caps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -MT check_libpurple-test_jabber_caps.obj -MD -MP -MF "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo" -c -o check_libpurple-test_jabber_caps.obj `if test -f 'test_jabber_caps.c'; then $(CYGPATH_W) 'test_jabber_caps.c'; else $(CYGPATH_W) '$(srcdir)/test_jabber_caps.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo" "$(DEPDIR)/check_libpurple-test_jabber_caps.Po"; else rm -f "$(DEPDIR)/check_libpurple-test_jabber_caps.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_jabber_caps.c' object='check_libpurple-test_jabber_caps.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -c -o check_libpurple-test_jabber_caps.obj `if test -f 'test_jabber_caps.c'; then $(CYGPATH_W) 'test_jabber_caps.c'; else $(CYGPATH_W) '$(srcdir)/test_jabber_caps.c'; fi`
 
 check_libpurple-test_jabber_jutil.o: test_jabber_jutil.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(check_libpurple_CFLAGS) $(CFLAGS) -MT check_libpurple-test_jabber_jutil.o -MD -MP -MF "$(DEPDIR)/check_libpurple-test_jabber_jutil.Tpo" -c -o check_libpurple-test_jabber_jutil.o `test -f 'test_jabber_jutil.c' || echo '$(srcdir)/'`test_jabber_jutil.c; \

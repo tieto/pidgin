@@ -459,7 +459,7 @@ sad.png             :-(     :(
 wink.png            ;-)     ;)
 excited.png         :-D     :D     :->      :>
 neutral.png         :-|     :|
-shock.png           :-O     :O
+shocked.png         :-O     :O
 tongue.png          :-P     :P
 embarrassed.png     :-$     :$
 glasses-cool.png    8-)
@@ -489,3 +489,9 @@ sleeping.png        :-z     :z
 lying.png           :L)
 glasses-nerdy.png   8-|     8|
 pirate.png          P-)
+### Added in v5.9.7
+bored.png           :-[     :[
+cold.png            :-<     :<
+confused.png        :-,     :,
+hungry.png          :-C     :C
+stressed.png        :-s     :s

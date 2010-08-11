@@ -1262,12 +1262,10 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_namespace(si, "http://jabber.org/protocol/si");
 	jsx->stream_id = jabber_get_next_id(jsx->js);
 	xmlnode_set_attrib(si, "id", jsx->stream_id);
-	xmlnode_set_attrib(si, "profile",
-			"http://jabber.org/protocol/si/profile/file-transfer");
+	xmlnode_set_attrib(si, "profile", NS_SI_FILE_TRANSFER);
 
 	file = xmlnode_new_child(si, "file");
-	xmlnode_set_namespace(file,
-			"http://jabber.org/protocol/si/profile/file-transfer");
+	xmlnode_set_namespace(file, NS_SI_FILE_TRANSFER);
 	xmlnode_set_attrib(file, "name", xfer->filename);
 	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
 	xmlnode_set_attrib(file, "size", buf);
@@ -1488,7 +1486,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 
 		if (jabber_resource_has_capability(jbr, NS_IBB))
 			jsx->stream_method |= STREAM_METHOD_IBB;
-		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
+		if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)) {
 			jabber_si_xfer_send_request(xfer);
 			return;
 		}
@@ -1523,7 +1521,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		char *resource;
-
+		GList *resources = NULL;
+		
 		if(NULL != (resource = jabber_get_resource(xfer->who))) {
 			/* they've specified a resource, no need to ask or
 			 * default or anything, just do it */
@@ -1535,7 +1534,22 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
 
-		if(!jb || !jb->resources) {
+		if (jb) {
+			GList *l;
+
+			for (l = jb->resources ; l ; l = g_list_next(l)) {
+				jbr = l->data;
+
+				if (!jabber_resource_know_capabilities(jbr) ||
+				    (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)
+				     && (jabber_resource_has_capability(jbr, NS_BYTESTREAMS)
+				         || jabber_resource_has_capability(jbr, NS_IBB)))) {
+					resources = g_list_append(resources, jbr);
+				}
+			}
+		}
+		
+		if (!resources) {
 			/* no resources online, we're trying to send to someone
 			 * whose presence we're not subscribed to, or
 			 * someone who is offline.  Let's inform the user */
@@ -1551,13 +1565,11 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
 			g_free(msg);
-		} else if(!jb->resources->next) {
+		} else if (g_list_length(resources) == 1) {
 			/* only 1 resource online (probably our most common case)
 			 * so no need to ask who to send to */
-			jbr = jb->resources->data;
-
+			jbr = resources->data;
 			do_transfer_send(xfer, jbr->name);
-
 		} else {
 			/* we've got multiple resources, we need to pick one to send to */
 			GList *l;
@@ -1565,11 +1577,9 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 			PurpleRequestFields *fields = purple_request_fields_new();
 			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
 			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
-
-			for(l = jb->resources; l; l = l->next)
-			{
+			
+			for(l = resources; l; l = l->next) {
 				jbr = l->data;
-
 				purple_request_field_choice_add(field, jbr->name);
 			}
 
@@ -1583,6 +1593,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			g_free(msg);
 		}
+
+		g_list_free(resources);
 	} else {
 		xmlnode *si, *feature, *x, *field, *value;
 
@@ -1695,7 +1707,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	size_t filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
-			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
+			strcmp(profile, NS_SI_FILE_TRANSFER))
 		return;
 
 	if(!(stream_id = xmlnode_get_attrib(si, "id")))

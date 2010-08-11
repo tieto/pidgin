@@ -303,6 +303,9 @@ typedef struct _JabberBytestreamsStreamhost {
 
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;
+/* A sorted list of identities advertised.  Use jabber_add_identity to add
+ * so it remains sorted.
+ */
 extern GList *jabber_identities;
 
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
@@ -340,6 +343,11 @@ void jabber_remove_feature(const gchar *namespace);
  *  @param name the name of the identity.
  */
 void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name);
+
+/**
+ * GCompareFunc for JabberIdentity structs.
+ */
+gint jabber_identity_compare(gconstpointer a, gconstpointer b);
 
 /**
  * Returns true if this connection is over a secure (SSL) stream. Use this

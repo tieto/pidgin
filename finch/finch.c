@@ -252,6 +252,7 @@ init_libpurple(int argc, char **argv)
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
 	gboolean debug_enabled = FALSE;
+	struct stat st;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -361,6 +362,8 @@ init_libpurple(int argc, char **argv)
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
 	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(path, &st))
+		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(path);
 	g_free(path);
 

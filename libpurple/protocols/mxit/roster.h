@@ -66,6 +66,11 @@
 #define		MXIT_MOOD_HOT				0x08
 #define		MXIT_MOOD_SICK				0x09
 #define		MXIT_MOOD_SLEEPY			0x0A
+#define		MXIT_MOOD_BORED				0x0B
+#define		MXIT_MOOD_COLD				0x0C
+#define		MXIT_MOOD_CONFUSED			0x0D
+#define		MXIT_MOOD_HUNGRY			0x0E
+#define		MXIT_MOOD_STRESSED			0x0F
 
 
 /* MXit contact flags */
@@ -124,7 +129,8 @@ const char* mxit_convert_mood_to_name( short id );
 
 /* MXit Protocol callbacks */
 void mxit_update_contact( struct MXitSession* session, struct contact* contact );
-void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg, const char* avatarId );
+void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg );
+void mxit_update_buddy_avatar( struct MXitSession* session, const char* username, const char* avatarId );
 void mxit_new_subscription( struct MXitSession* session, struct contact* contact );
 void mxit_update_blist( struct MXitSession* session );
 gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* username );

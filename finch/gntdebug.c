@@ -77,7 +77,10 @@ handle_fprintf_stderr(gboolean stop)
 		}
 		return;
 	}
-	pipe(pipes);
+	if (pipe(pipes)) {
+		readhandle = -1;
+		return;
+	};
 	dup2(pipes[1], STDERR_FILENO);
 
 	stderrch = g_io_channel_unix_new(pipes[0]);

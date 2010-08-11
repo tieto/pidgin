@@ -811,14 +811,11 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 static gboolean
 msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	MsnDirectConn *dc = data;
-	MsnSlpCall *slpcall;
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "msn_dc_incoming_connection_timeout_cb %p\n", dc);
 
 	g_return_val_if_fail(dc != NULL, FALSE);
-
-	slpcall = dc->slpcall;
 
 	if (dc->listen_data != NULL) {
 		purple_network_listen_cancel(dc->listen_data);
