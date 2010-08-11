@@ -31,6 +31,19 @@
 
 #include <string.h>
 
+/* Take a list of strings and join them with a ", " separator */
+static gchar *roster_groups_join(GSList *list)
+{
+	GString *out = g_string_new(NULL);
+	for ( ; list; list = list->next) {
+		out = g_string_append(out, (const char *)list->data);
+		if (list->next)
+			out = g_string_append(out, ", ");
+	}
+
+	return g_string_free(out, FALSE);
+}
+
 void jabber_roster_request(JabberStream *js)
 {
 	JabberIq *iq;
@@ -52,123 +65,128 @@ static void remove_purple_buddies(JabberStream *js, const char *jid)
 	g_slist_free(buddies);
 }
 
-static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
+static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
-	GSList *buddies, *g2, *l;
-	gchar *my_bare_jid;
-	GList *pool = NULL;
+	GSList *buddies, *l;
+	GSList *pool = NULL;
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
-	g2 = groups;
-
 	if(!groups) {
 		if(!buddies)
-			g2 = g_slist_append(g2, g_strdup(_("Buddies")));
+			groups = g_slist_append(groups, g_strdup(_("Buddies")));
 		else {
+			/* TODO: What should we do here? Removing the local buddies
+			 * is wrong, but so is letting the group state get out of sync with
+			 * the server.
+			 */
 			g_slist_free(buddies);
 			return;
 		}
 	}
 
-	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-
 	while(buddies) {
 		PurpleBuddy *b = buddies->data;
 		PurpleGroup *g = purple_buddy_get_group(b);
 
-		buddies = g_slist_remove(buddies, b);
+		buddies = g_slist_delete_link(buddies, buddies);
 
-		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
-			const char *servernick;
+		/* XMPP groups are case-sensitive, but libpurple groups are
+		 * case-insensitive. We treat a buddy in both "Friends" and "friends"
+		 * as only being in one group, but if we push changes about the buddy
+		 * to the server, the buddy will be dropped from one of the groups.
+		 * Not optimal, but better than the alternative, I think.
+		 */
+		if((l = g_slist_find_custom(groups, purple_group_get_name(g), (GCompareFunc)purple_utf8_strcasecmp))) {
+			/* The buddy is already on the local list. Update info. */
+			const char *servernick, *balias;
 
 			/* Previously stored serverside / buddy-supplied alias */
 			if((servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick")))
 				serv_got_alias(js->gc, jid, servernick);
 
 			/* Alias from our roster retrieval */
-			if(alias && (!b->alias || strcmp(b->alias, alias)))
+			balias = purple_buddy_get_local_buddy_alias(b);
+			if(alias && !purple_strequal(alias, balias))
 				purple_serv_got_private_alias(js->gc, jid, alias);
 			g_free(l->data);
-			g2 = g_slist_delete_link(g2, l);
+			groups = g_slist_delete_link(groups, l);
 		} else {
-			pool = g_list_prepend(pool, b);
+			/* This buddy isn't in the group on the server anymore */
+			pool = g_slist_prepend(pool, b);
 		}
 	}
 
-	while(g2) {
-		PurpleGroup *g = purple_find_group(g2->data);
+	if (pool) {
+		GString *tmp = g_string_new(NULL);
+		GSList *list = pool;
+		for ( ; list; list = list->next) {
+			tmp = g_string_append(tmp,
+					purple_group_get_name(purple_buddy_get_group(list->data)));
+			if (list->next)
+				tmp = g_string_append(tmp, ", ");
+		}
+
+		purple_debug_info("jabber", "jabber_roster_parse(): Removing %s from "
+		                  "groups: %s\n", jid, tmp->str);
+		g_string_free(tmp, TRUE);
+	}
+
+	if (groups) {
+		char *tmp = roster_groups_join(groups);
+		purple_debug_info("jabber", "jabber_roster_parse(): Adding %s to "
+		                  "groups: %s\n", jid, tmp);
+		g_free(tmp);
+	}
+
+	while(groups) {
+		PurpleGroup *g = purple_find_group(groups->data);
 		PurpleBuddy *b = NULL;
 
+		/* If there are buddies we would otherwise delete, move them to
+		 * the new group (instead of deleting them below)
+		 */
 		if (pool) {
 			b = pool->data;
-			pool = g_list_delete_link(pool, pool);
-		} else {			
+			pool = g_slist_delete_link(pool, pool);
+		} else {
 			b = purple_buddy_new(js->gc->account, jid, alias);
 		}
 
 		if(!g) {
-			g = purple_group_new(g2->data);
+			g = purple_group_new(groups->data);
 			purple_blist_add_group(g, NULL);
 		}
 
 		purple_blist_add_buddy(b, NULL, g, NULL);
 		purple_blist_alias_buddy(b, alias);
 
-		/* If we just learned about ourself, then fake our status,
-		 * because we won't be receiving a normal presence message
-		 * about ourself. */
-		if(!strcmp(b->name, my_bare_jid)) {
-			PurplePresence *gpresence;
-			PurpleStatus *status;
-
-			gpresence = purple_account_get_presence(js->gc->account);
-			status = purple_presence_get_active_status(gpresence);
-			jabber_presence_fake_to_self(js, status);
-		}
-
-		g_free(g2->data);
-		g2 = g_slist_delete_link(g2, g2);
+		g_free(groups->data);
+		groups = g_slist_delete_link(groups, groups);
 	}
 
+	/* Remove this person from all the groups they're no longer in on the
+	 * server */
 	while (pool) {
 		PurpleBuddy *b = pool->data;
 		purple_blist_remove_buddy(b);
-		pool = g_list_delete_link(pool, pool);
+		pool = g_slist_delete_link(pool, pool);
 	}
 
-	g_free(my_bare_jid);
 	g_slist_free(buddies);
 }
 
-void jabber_roster_parse(JabberStream *js, xmlnode *packet)
+void jabber_roster_parse(JabberStream *js, const char *from,
+                         JabberIqType type, const char *id, xmlnode *query)
 {
-	xmlnode *query, *item, *group;
-	const char *from = xmlnode_get_attrib(packet, "from");
+	xmlnode *item, *group;
 
-	if(from) {
-		char *from_norm;
-		gboolean invalid;
-
-		from_norm = g_strdup(jabber_normalize(js->gc->account, from));
-
-		if(!from_norm)
-			return;
-
-		invalid = g_utf8_collate(from_norm,
-				jabber_normalize(js->gc->account,
-					purple_account_get_username(js->gc->account)));
-
-		g_free(from_norm);
-
-		if(invalid)
-			return;
-	}
-
-	query = xmlnode_get_child(packet, "query");
-	if(!query)
+	if (!jabber_is_own_account(js, from)) {
+		purple_debug_warning("jabber", "Received bogon roster push from %s\n",
+		                     from);
 		return;
+	}
 
 	js->currently_parsing_roster_push = TRUE;
 
@@ -189,18 +207,7 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			continue;
 
 		if(subscription) {
-			gint me = -1;
-			char *jid_norm;
-			const char *username;
-
-			jid_norm = g_strdup(jabber_normalize(js->gc->account, jid));
-			username = purple_account_get_username(js->gc->account);
-			me = g_utf8_collate(jid_norm,
-			                    jabber_normalize(js->gc->account,
-			                                     username));
-			g_free(jid_norm);
-
-			if(me == 0)
+			if (jb == js->user_jb)
 				jb->subscription = JABBER_SUB_BOTH;
 			else if(!strcmp(subscription, "none"))
 				jb->subscription = JABBER_SUB_NONE;
@@ -212,20 +219,9 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 				jb->subscription = JABBER_SUB_BOTH;
 			else if(!strcmp(subscription, "remove"))
 				jb->subscription = JABBER_SUB_REMOVE;
-			/* XXX: if subscription is now "from" or "none" we need to
-			 * fake a signoff, since we won't get any presence from them
-			 * anymore */
-			/* YYY: I was going to use this, but I'm not sure it's necessary
-			 * anymore, but it's here in case it is. */
-			/*
-			if ((jb->subscription & JABBER_SUB_FROM) ||
-					(jb->subscription & JABBER_SUB_NONE)) {
-				purple_prpl_got_user_status(js->gc->account, jid, "offline", NULL);
-			}
-			*/
 		}
 
-		if(ask && !strcmp(ask, "subscribe"))
+		if(purple_strequal(ask, "subscribe"))
 			jb->subscription |= JABBER_SUB_PENDING;
 		else
 			jb->subscription &= ~JABBER_SUB_PENDING;
@@ -234,45 +230,48 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			remove_purple_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
+			gboolean seen_empty = FALSE;
 
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 				if (!jabber_google_roster_incoming(js, item))
 					continue;
 
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
-				char *group_name;
+				char *group_name = xmlnode_get_data(group);
 
-				if(!(group_name = xmlnode_get_data(group)))
+				if (!group_name && !seen_empty) {
 					group_name = g_strdup("");
+					seen_empty = TRUE;
+				}
 
-				if (g_slist_find_custom(groups, group_name, (GCompareFunc)purple_utf8_strcasecmp) == NULL)
-					groups = g_slist_append(groups, group_name);
-				else
-					g_free(group_name);
+				groups = g_slist_prepend(groups, group_name);
 			}
-			add_purple_buddies_to_groups(js, jid, name, groups);
+
+			add_purple_buddy_to_groups(js, jid, name, groups);
+			if (jb == js->user_jb)
+				jabber_presence_fake_to_self(js, NULL);
 		}
 	}
 
 	js->currently_parsing_roster_push = FALSE;
 
 	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to send our initial presence */
-	if(!js->roster_parsed) {
-		js->roster_parsed = TRUE;
-
-		jabber_presence_send(js->gc->account, NULL);
-	}
+	 * then now would be the time to declare ourselves connected.
+	 */
+	if (js->state != JABBER_STREAM_CONNECTED)
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 }
 
+/* jabber_roster_update frees the GSList* passed in */
 static void jabber_roster_update(JabberStream *js, const char *name,
-		GSList *grps)
+		GSList *groups)
 {
 	PurpleBuddy *b;
 	PurpleGroup *g;
-	GSList *groups = NULL, *l;
+	GSList *l;
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
+	const char *balias;
 
 	if (js->currently_parsing_roster_push)
 		return;
@@ -280,18 +279,29 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	if(!(b = purple_find_buddy(js->gc->account, name)))
 		return;
 
-	if(grps) {
-		groups = grps;
+	if (groups) {
+		char *tmp = roster_groups_join(groups);
+
+		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: "
+		                  "groups]: groups: %s\n", name, tmp);
+		g_free(tmp);
 	} else {
 		GSList *buddies = purple_find_buddies(js->gc->account, name);
+		char *tmp;
+
 		if(!buddies)
 			return;
 		while(buddies) {
 			b = buddies->data;
 			g = purple_buddy_get_group(b);
-			groups = g_slist_append(groups, g->name);
+			groups = g_slist_append(groups, (char *)purple_group_get_name(g));
 			buddies = g_slist_remove(buddies, b);
 		}
+
+		tmp = roster_groups_join(groups);
+		purple_debug_info("jabber", "jabber_roster_update(%s): [Source: local blist]: groups: %s\n",
+		                  name, tmp);
+		g_free(tmp);
 	}
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
@@ -301,16 +311,16 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	xmlnode_set_attrib(item, "jid", name);
 
-	xmlnode_set_attrib(item, "name", b->alias ? b->alias : "");
+	balias = purple_buddy_get_local_buddy_alias(b);
+	xmlnode_set_attrib(item, "name", balias ? balias : "");
 
 	for(l = groups; l; l = l->next) {
 		group = xmlnode_new_child(item, "group");
 		xmlnode_insert_data(group, l->data, -1);
 	}
 
-	if(!grps)
-		g_slist_free(groups);
-	
+	g_slist_free(groups);
+
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
 		jabber_google_roster_outgoing(js, query, item);
 		xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
@@ -326,26 +336,25 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	char *who;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *my_bare_jid;
+	const char *name;
 
-	if(!js->roster_parsed)
+	/* If we haven't received the roster yet, ignore any adds */
+	if (js->state != JABBER_STREAM_CONNECTED)
 		return;
 
-	if(!(who = jabber_get_bare_jid(buddy->name)))
+	name = purple_buddy_get_name(buddy);
+	if(!(who = jabber_get_bare_jid(name)))
 		return;
 
-	jb = jabber_buddy_find(js, buddy->name, FALSE);
+	jb = jabber_buddy_find(js, name, FALSE);
+
+	purple_debug_info("jabber", "jabber_roster_add_buddy(): Adding %s\n",
+	                  name);
 
 	jabber_roster_update(js, who, NULL);
 
-	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(!strcmp(who, my_bare_jid)) {
-		PurplePresence *gpresence;
-		PurpleStatus *status;
-
-		gpresence = purple_account_get_presence(js->gc->account);
-		status = purple_presence_get_active_status(gpresence);
-		jabber_presence_fake_to_self(js, status);
+	if (jb == js->user_jb) {
+		jabber_presence_fake_to_self(js, NULL);
 	} else if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		jabber_presence_subscription_set(js, who, "subscribe");
 	} else if((jbr =jabber_buddy_find_resource(jb, NULL))) {
@@ -354,7 +363,6 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 	}
 
-	g_free(my_bare_jid);
 	g_free(who);
 }
 
@@ -364,6 +372,9 @@ void jabber_roster_alias_change(PurpleConnection *gc, const char *name, const ch
 
 	if(b != NULL) {
 		purple_blist_alias_buddy(b, alias);
+
+		purple_debug_info("jabber", "jabber_roster_alias_change(): Aliased %s to %s\n",
+				name, alias ? alias : "(null)");
 
 		jabber_roster_update(gc->proto_data, name, NULL);
 	}
@@ -375,6 +386,7 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	GSList *buddies, *groups = NULL;
 	PurpleBuddy *b;
 	PurpleGroup *g;
+	const char *gname;
 
 	if(!old_group || !new_group || !strcmp(old_group, new_group))
 		return;
@@ -383,29 +395,35 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	while(buddies) {
 		b = buddies->data;
 		g = purple_buddy_get_group(b);
-		if(!strcmp(g->name, old_group))
+		gname = purple_group_get_name(g);
+		if(!strcmp(gname, old_group))
 			groups = g_slist_append(groups, (char*)new_group); /* ick */
 		else
-			groups = g_slist_append(groups, g->name);
+			groups = g_slist_append(groups, (char*)gname);
 		buddies = g_slist_remove(buddies, b);
 	}
+
+	purple_debug_info("jabber", "jabber_roster_group_change(): Moving %s from %s to %s\n",
+	                  name, old_group, new_group);
+
 	jabber_roster_update(gc->proto_data, name, groups);
-	g_slist_free(groups);
 }
 
 void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 		PurpleGroup *group, GList *moved_buddies)
 {
 	GList *l;
+	const char *gname = purple_group_get_name(group);
 	for(l = moved_buddies; l; l = l->next) {
 		PurpleBuddy *buddy = l->data;
-		jabber_roster_group_change(gc, buddy->name, old_name, group->name);
+		jabber_roster_group_change(gc, purple_buddy_get_name(buddy), old_name, gname);
 	}
 }
 
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group) {
-	GSList *buddies = purple_find_buddies(gc->account, buddy->name);
+	const char *name = purple_buddy_get_name(buddy);
+	GSList *buddies = purple_find_buddies(purple_connection_get_account(gc), name);
 
 	buddies = g_slist_remove(buddies, buddy);
 	if(buddies != NULL) {
@@ -416,20 +434,25 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		while(buddies) {
 			tmpbuddy = buddies->data;
 			tmpgroup = purple_buddy_get_group(tmpbuddy);
-			groups = g_slist_append(groups, tmpgroup->name);
+			groups = g_slist_append(groups, (char *)purple_group_get_name(tmpgroup));
 			buddies = g_slist_remove(buddies, tmpbuddy);
 		}
 
-		jabber_roster_update(gc->proto_data, buddy->name, groups);
-		g_slist_free(groups);
+		purple_debug_info("jabber", "jabber_roster_remove_buddy(): Removing %s from %s\n",
+		                  purple_buddy_get_name(buddy), purple_group_get_name(group));
+
+		jabber_roster_update(gc->proto_data, name, groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
 				"jabber:iq:roster");
 		xmlnode *query = xmlnode_get_child(iq->node, "query");
 		xmlnode *item = xmlnode_new_child(query, "item");
 
-		xmlnode_set_attrib(item, "jid", buddy->name);
+		xmlnode_set_attrib(item, "jid", name);
 		xmlnode_set_attrib(item, "subscription", "remove");
+
+		purple_debug_info("jabber", "jabber_roster_remove_buddy(): Removing %s\n",
+		                  purple_buddy_get_name(buddy));
 
 		jabber_iq_send(iq);
 	}

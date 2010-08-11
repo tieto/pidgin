@@ -60,6 +60,7 @@ typedef enum {
 
 #include "pidgin.h"
 #include "blist.h"
+#include "gtkblist-theme.h"
 
 /**************************************************************************
  * @name Structures
@@ -251,6 +252,23 @@ void pidgin_blist_visibility_manager_remove(void);
  */
 void pidgin_blist_add_alert(GtkWidget *widget);
 
+/**
+ * Sets the current theme for Pidgin to use
+ *
+ * @param theme	the new theme to use
+ *
+ * @since 2.6.0
+ */
+void pidgin_blist_set_theme(PidginBlistTheme *theme);
+
+/**
+ * Gets Pidgin's current buddy list theme
+ *
+ * @returns	the current theme
+ *
+ * @since 2.6.0
+ */
+PidginBlistTheme *pidgin_blist_get_theme(void);
 
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
@@ -382,7 +400,7 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
  *
  * @param buddy The buddy to return markup from
  * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
- * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname and status information
+ * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
  * @return The markup for this buddy
  *
  * @since 2.1.0

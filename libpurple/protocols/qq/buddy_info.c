@@ -191,7 +191,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 		}
 		switch (field_infos[index].type) {
 			case QQ_FIELD_BOOL:
-				purple_notify_user_info_add_pair(user_info, field_infos[index].text,
+				purple_notify_user_info_add_pair(user_info, _(field_infos[index].text),
 					strtol(segments[index], NULL, 10) ? _("True") : _("False"));
 				break;
 			case QQ_FIELD_CHOICE:
@@ -200,7 +200,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 					choice_num = 0;
 				}
 
-				purple_notify_user_info_add_pair(user_info, field_infos[index].text, field_infos[index].choice[choice_num]);
+				purple_notify_user_info_add_pair(user_info, _(field_infos[index].text), field_infos[index].choice[choice_num]);
 				break;
 			case QQ_FIELD_LABEL:
 			case QQ_FIELD_STRING:
@@ -208,7 +208,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 			default:
 				if (strlen(segments[index]) != 0) {
 					utf8_value = qq_to_utf8(segments[index], QQ_CHARSET_DEFAULT);
-					purple_notify_user_info_add_pair(user_info, field_infos[index].text, utf8_value);
+					purple_notify_user_info_add_pair(user_info, _(field_infos[index].text), utf8_value);
 					g_free(utf8_value);
 				}
 				break;
@@ -348,18 +348,18 @@ static void field_request_new(PurpleRequestFieldGroup *group, gint index, gchar 
 			utf8_value = qq_to_utf8(segments[index], QQ_CHARSET_DEFAULT);
 			if (field_infos[index].type == QQ_FIELD_STRING) {
 				field = purple_request_field_string_new(
-						field_infos[index].id, field_infos[index].text, utf8_value, FALSE);
+					field_infos[index].id, _(field_infos[index].text), utf8_value, FALSE);
 			} else {
 				field = purple_request_field_string_new(
-						field_infos[index].id, field_infos[index].text, utf8_value, TRUE);
+					field_infos[index].id, _(field_infos[index].text), utf8_value, TRUE);
 			}
 			purple_request_field_group_add_field(group, field);
 			g_free(utf8_value);
 			break;
 		case QQ_FIELD_BOOL:
 			field = purple_request_field_bool_new(
-					field_infos[index].id, field_infos[index].text,
-					strtol(segments[index], NULL, 10) ? TRUE : FALSE);
+				field_infos[index].id, _(field_infos[index].text),
+				strtol(segments[index], NULL, 10) ? TRUE : FALSE);
 			purple_request_field_group_add_field(group, field);
 			break;
 		case QQ_FIELD_CHOICE:
@@ -374,7 +374,7 @@ static void field_request_new(PurpleRequestFieldGroup *group, gint index, gchar 
 				}
 			}
 			field = purple_request_field_choice_new(
-					field_infos[index].id, field_infos[index].text, choice_num);
+				field_infos[index].id, _(field_infos[index].text), choice_num);
 			for (i = 0; i < field_infos[index].choice_size; i++) {
 				purple_request_field_choice_add(field, field_infos[index].choice[i]);
 			}
@@ -530,6 +530,13 @@ gchar *qq_get_icon_name(gint face)
 	return icon_name;
 }
 
+/*
+ * This function seems to let people set their buddy icon, but it restricts
+ * them to using a small list of stock icons.  Wouldn't it make more sense
+ * to use libpurple's normal icon setting stuff?
+ *
+ * Also it would be nice to unify the icon_dir code for Windows and Linux.
+ */
 gchar *qq_get_icon_path(gchar *icon_name)
 {
 	gchar *icon_path;
@@ -542,6 +549,13 @@ gchar *qq_get_icon_path(gchar *icon_name)
 	}
 #endif
 
+	/*
+	 * TODO: The QQ protocol plugin should probably call
+	 *       purple_prefs_add_string() at startup to initialize this
+	 *       preference.  It is used to allow users or distributions
+	 *       to specify this directory.  We don't include these icons
+	 *       with libpurple because of possible copyright concerns.
+	 */
 	icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
 	if ( icon_dir == NULL || strlen(icon_dir) == 0) {
 #ifdef _WIN32
@@ -606,21 +620,21 @@ void qq_update_buddy_icon(PurpleAccount *account, const gchar *who, gint face)
 /* after getting info or modify myself, refresh the buddy list accordingly */
 static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 {
-	PurpleBuddy *buddy;
-	qq_data *qd;
-	qq_buddy_data *bd;
+	PurpleBuddy *buddy = NULL;
+	qq_data *qd = NULL;
+	qq_buddy_data *bd = NULL;
 	guint32 uid;
 	gchar *who;
 	gchar *alias_utf8;
-	PurpleAccount *account = purple_connection_get_account(gc);
 
-	qd = (qq_data *) gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	qd = (qq_data *)purple_connection_get_protocol_data(gc);
 
 	uid = strtoul(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
-
 	qq_filter_str(segments[QQ_INFO_NICK]);
 	alias_utf8 = qq_to_utf8(segments[QQ_INFO_NICK], QQ_CHARSET_DEFAULT);
+
 	if (uid == qd->uid) {	/* it is me */
 		purple_debug_info("QQ", "Got my info\n");
 		qd->my_icon = strtol(segments[QQ_INFO_FACE], NULL, 10);
@@ -631,20 +645,24 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 		buddy = qq_buddy_find_or_new(gc, uid);
 	} else {
 		buddy = purple_find_buddy(gc->account, who);
+		/* purple_debug_info("QQ", "buddy=%p\n", (void*)buddy); */
 	}
 
-	if (buddy == NULL || buddy->proto_data == NULL) {
+	/* if the buddy is null, the api will catch it and return null here */
+	bd = purple_buddy_get_protocol_data(buddy);
+	/* purple_debug_info("QQ", "bd=%p\n", (void*)bd); */
+
+	if (bd == NULL || buddy == NULL) {
 		g_free(who);
 		g_free(alias_utf8);
 		return;
 	}
 
 	/* update buddy list (including myself, if myself is the buddy) */
-	bd = (qq_buddy_data *)buddy->proto_data;
-
 	bd->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
 	bd->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
 	bd->face = strtol(segments[QQ_INFO_FACE], NULL, 10);
+
 	if (alias_utf8 != NULL) {
 		if (bd->nickname) g_free(bd->nickname);
 		bd->nickname = g_strdup(alias_utf8);
@@ -770,8 +788,7 @@ void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 	for (it = buddies; it; it = it->next) {
 		buddy = it->data;
 		if (buddy == NULL) continue;
-		if (buddy->proto_data == NULL) continue;
-		bd = (qq_buddy_data *)buddy->proto_data;
+		if ((bd = purple_buddy_get_protocol_data(buddy)) == NULL) continue;
 		if (bd->uid == 0) continue;	/* keep me as end of packet*/
 		if (bd->uid == qd->uid) continue;
 		bytes += qq_put32(buf + bytes, bd->uid);

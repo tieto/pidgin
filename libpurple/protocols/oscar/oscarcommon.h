@@ -45,6 +45,7 @@
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 #define OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS TRUE
 #define OSCAR_DEFAULT_USE_SSL FALSE
+#define OSCAR_DEFAULT_USE_CLIENTLOGIN FALSE
 
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
@@ -91,5 +92,6 @@ gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
 void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
 PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
+void oscar_format_username(PurpleConnection *gc, const char *nick);
 GList *oscar_actions(PurplePlugin *plugin, gpointer context);
 void oscar_init(PurplePluginProtocolInfo *prpl_info);

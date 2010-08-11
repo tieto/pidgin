@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_CHAT_H_
-#define _PURPLE_JABBER_CHAT_H_
+#ifndef PURPLE_JABBER_CHAT_H_
+#define PURPLE_JABBER_CHAT_H_
 
 #include "internal.h"
 #include "connection.h"
@@ -81,8 +81,10 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who,
 		const char *why);
 gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who,
 		const char *affiliation);
+gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation);
 gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
 		const char *role);
+gboolean jabber_chat_role_list(JabberChat *chat, const char *role);
 gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
 		const char *why);
 
@@ -93,5 +95,8 @@ void jabber_chat_disco_traffic(JabberChat *chat);
 
 char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room);
 
+gboolean jabber_chat_all_participants_have_capability(const JabberChat *chat,
+	const gchar *cap);
+guint jabber_chat_get_num_participants(const JabberChat *chat);
 
-#endif /* _PURPLE_JABBER_CHAT_H_ */
+#endif /* PURPLE_JABBER_CHAT_H_ */

@@ -2,7 +2,7 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Copyright (C) Bouklis Panos <panos@echidna-band.com>, 2005-2008.
+# Copyright (C) Bouklis Panos <panos@echidna-band.com>, 2005-2009.
 # Copyright (C) Panayotis Katsaloulis <panayotis@panayotis.com>, 2005.
 # Copyright (C) Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005.
 #
@@ -10,15 +10,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 01:17-0800\n"
-"PO-Revision-Date: 2008-12-17 23:56+0200\n"
+"POT-Creation-Date: 2009-07-19 00:16-0700\n"
+"PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: Plural-Forms:  nplurals=2; plural=(n != 1)\n"
-"X-Generator: Lokalize 0.2\n"
+"X-Generator: Lokalize 0.3\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -35,16 +35,16 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Pidgin %s\n"
+"%s\n"
 "Χρήση: %s [ΕΠΙΛΟΓΉ]...\n"
 "\n"
 "  -c, --config=DIR    χρήση του DIR για τα αρχεία ρυθμίσεων\n"
-"  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stdout\n"
+"  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stderr\n"
 "  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
 "  -n, --nologin       χωρίς αυτόματη είσοδο\n"
 "  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
@@ -100,7 +100,7 @@ msgstr "Γνωστός ως:"
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr "Δημιουργία αυτού του νέου λογαριασμού στον εξυπηρετητή"
+msgstr "Δημιουργία αυτού του λογαριασμού στον εξυπηρετητή"
 
 #. Cancel button
 #. Cancel
@@ -234,6 +234,8 @@ msgstr "Προσθήκη συζήτησης"
 
 msgid "You can edit more information from the context menu later."
 msgstr ""
+"Μπορείτε αργότερα να επεξεργαστείτε περισσότερες πληροφορίες από το σχετικό "
+"μενού."
 
 msgid "Error adding group"
 msgstr "Σφάλμα κατά την προσθήκη ομάδας"
@@ -278,7 +280,7 @@ msgid "Blocked"
 msgstr "Αποκλεισμένος"
 
 msgid "Show when offline"
-msgstr ""
+msgstr "Εμφάνιση και χωρίς σύνδεση"
 
 #, c-format
 msgid "Please enter the new name for %s"
@@ -349,7 +351,7 @@ msgid "Plugins"
 msgstr "Πρόσθετα"
 
 msgid "Block/Unblock"
-msgstr "Αποκλεισμός / Ακύρωση αποκλεισμού"
+msgstr "Αποκλεισμός/Ακύρωση αποκλεισμού"
 
 msgid "Block"
 msgstr "Αποκλεισμός"
@@ -362,7 +364,7 @@ msgid ""
 "Unblock."
 msgstr ""
 "Παρακαλούμε εισάγετε το όνομα χρήστη ή το ψευδώνυμο του ατόμου το οποίο "
-"θέλετε να αποκλείσετε / ακυρώσετε τον αποκλεισμό του."
+"θέλετε να αποκλείσετε/ακυρώσετε τον αποκλεισμό του."
 
 #. Not multiline
 #. Not masked?
@@ -406,7 +408,7 @@ msgid "Send IM..."
 msgstr "Αποστολή άμεσου μηνύματος..."
 
 msgid "Block/Unblock..."
-msgstr "Αποκλεισμός / Ακύρωση αποκλεισμού"
+msgstr "Αποκλεισμός/Ακύρωση αποκλεισμού"
 
 msgid "Join Chat..."
 msgstr "Συμμετοχή σε συζήτηση..."
@@ -612,19 +614,6 @@ msgstr ""
 msgid "Send To"
 msgstr "Αποστολή σε"
 
-msgid "Invite message"
-msgstr "Μήνυμα πρόσκλησης"
-
-msgid "Invite"
-msgstr "Πρόσκληση"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-"Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε,\n"
-"μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
-
 msgid "Conversation"
 msgstr "Συνομιλία"
 
@@ -701,7 +690,7 @@ msgstr ""
 "τρέχουσα συνομιλία."
 
 msgid "clear: Clears the conversation scrollback."
-msgstr ""
+msgstr "clear: Καθαρίζει την αναδίφηση της συζήτησης."
 
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;εντολή&gt;:  Βοήθεια σε μια συγκεκριμένη εντολή."
@@ -879,6 +868,41 @@ msgstr "Όλες οι συνομιλίες"
 msgid "System Log"
 msgstr "Καταγραφή συστήματος"
 
+msgid "Calling ... "
+msgstr "Κλήση... "
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+msgid "Accept"
+msgstr "Αποδοχή"
+
+msgid "Reject"
+msgstr "Απόρριψη"
+
+msgid "Call in progress."
+msgstr "Κλήση σε εξέλιξη."
+
+msgid "The call has been terminated."
+msgstr "Η κλήση τερματίστηκε."
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr "%s επιθυμεί να ξεκινήσει μαζί σας μία συνεδρία ήχου."
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+"%s προσπαθεί να ξεκινήσει μαζί σας μία συνεδρία πολυμέσων που δεν "
+"υποστηρίζεται."
+
+msgid "You have rejected the call."
+msgstr "Απορρίψατε την κλήση."
+
+msgid "call: Make an audio call."
+msgstr "call: Πραγματοποίηση μίας κλήσης ήχου."
+
 msgid "Emails"
 msgstr "Emails"
 
@@ -912,6 +936,9 @@ msgstr "Συνέχεια"
 
 msgid "IM"
 msgstr "Μήνυμα"
+
+msgid "Invite"
+msgstr "Πρόσκληση"
 
 msgid "(none)"
 msgstr "(κανένα)"
@@ -1118,7 +1145,6 @@ msgstr "%s απουσιάζει. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr "%s σας έστειλε ένα μήνυμα. (%s)"
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Άγνωστο γεγονός εφόρμησης. Παρακαλούμε αναφέρετέ το!"
 
@@ -1164,7 +1190,6 @@ msgstr "Λεπτά πριν την αλλαγή της κατάστασης"
 msgid "Change status to"
 msgstr "Αλλαγή κατάστασης σε"
 
-#. Conversations
 msgid "Conversations"
 msgstr "Συνομιλίες"
 
@@ -1491,7 +1516,6 @@ msgstr ""
 "Όταν ανοίγει μία νέα συνομιλία αυτό το πρόσθετο θα εισάγει την τελευταία "
 "συνομιλία μέσα στην τρέχουσα."
 
-#, c-format
 msgid "Online"
 msgstr "Συνδεδεμένος"
 
@@ -1534,6 +1558,29 @@ msgstr ""
 
 msgid "Lastlog plugin."
 msgstr "Πρόσθετο lastlog."
+
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr "Δημιουργία TinyURL μόνο για url μεγαλύτερα από αυτό το μήκος"
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "Πρόσθετο TinyURL"
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr ""
+"Κατά τη λήψη ενός μηνήματος με URL, χρήση του TinyURL για ευκολότερη "
+"αντιγραφή"
 
 msgid "accounts"
 msgstr "λογαριασμοί"
@@ -1633,13 +1680,6 @@ msgstr "Αποδοχή πιστοποιητικού για %s;"
 msgid "SSL Certificate Verification"
 msgstr "Επιβεβαίωση πιστοποιητικού SSL"
 
-#. Number of actions
-msgid "Accept"
-msgstr "Αποδοχή"
-
-msgid "Reject"
-msgstr "Απόρριψη"
-
 msgid "_View Certificate..."
 msgstr "_Προβολή πιστοποιητικού..."
 
@@ -1731,6 +1771,7 @@ msgstr "+++ %s συνδέθηκε"
 msgid "+++ %s signed off"
 msgstr "+++ %s αποσυνδέθηκε"
 
+#. Unknown error
 msgid "Unknown error"
 msgstr "Άγνωστο σφάλμα"
 
@@ -1776,6 +1817,17 @@ msgstr "%s έφυγε από το δωμάτιο."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s έφυγε από το δωμάτιο (%s)."
+
+msgid "Invite to chat"
+msgstr "Πρόσκληση σε συζήτηση"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
+"Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε, "
+"μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -1908,10 +1960,13 @@ msgid "Starting transfer of %s from %s"
 msgstr "Εκκίνηση μεταφοράς του %s από %s"
 
 #, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Η μεταφορά του αρχείου <A HREF=\"file://%s\">%s</A> ολοκληρώθηκε"
+
+#, c-format
 msgid "Transfer of file %s complete"
 msgstr "Η μεταφορά του αρχείου %s ολοκληρώθηκε"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "Μεταφορά αρχείου ολοκληρώθηκε"
 
@@ -1919,7 +1974,6 @@ msgstr "Μεταφορά αρχείου ολοκληρώθηκε"
 msgid "You canceled the transfer of %s"
 msgstr "Ακυρώσατε τη μεταφορά του %s"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "Μεταφορά αρχείου ακυρώθηκε"
 
@@ -2125,11 +2179,13 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ>: %s\n"
 
+msgid "Error creating conference."
+msgstr "Σφάλμα δημιουργίας συζήτησης."
+
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Χρησιμοποιείτε το %s, αλλά αυτό το πρόσθετο απαιτεί το %s."
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Αυτό το πρόσθετο δεν έχει αναγνωριστικό ID."
 
@@ -2535,16 +2591,17 @@ msgstr ""
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
 msgstr ""
 "Κατά την προβολή των καταγραφών, αυτό το πρόσθετο θα περιλάβει τις "
 "καταγραφές από άλλους πελάτες άμεσων μηνυμάτων. Αυτή τη στιγμή, αυτό "
-"περιλαμβάνει τα Adium, Fire, Messenger Plus!, MSN Messenger, και Trillian. \n"
+"περιλαμβάνει τα Adium, MSN Messenger, aMSN, και Trillian. \n"
+"\n"
 "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό το πρόσθετο είναι ακόμη σε κώδικα aplha και μπορεί να "
-"κρασάρει συχνά.  Χρησιμοποιείστε το με δική σας ευθύνη!"
+"καταρρέει συχνά.  Χρησιμοποιείστε το με δική σας ευθύνη!"
 
 msgid "Mono Plugin Loader"
 msgstr "Φορτωτής προσθέτων Mono"
@@ -2592,7 +2649,7 @@ msgstr ""
 "εφόρμηση."
 
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Τα υπόλοιπα μηνύματα θα αποθηκευτούν ως εφόρμηση. Μπορείτε να επεξεργαστείτε/"
@@ -2626,6 +2683,34 @@ msgstr "Αποθήκευση των μηνυμάτων χωρίς σύνδεση
 
 msgid "Do not ask. Always save in pounce."
 msgstr "Χωρίς ερώτηση. Πάντα αποθήκευση ως εφόρμηση."
+
+msgid "One Time Password"
+msgstr "Κωδικός μίας χρήσης"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr "Υποστήριξη κωδικών μιας χρήσης"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr "Εξαναγκασμός χρήσης κωδικών για μια φορά μόνο."
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
+msgstr ""
+"Σας επιτρέπει να εξαναγκάσετε, ανα λογαριασμό, ώστε οι κωδικοί που δεν "
+"αποθηκεύονται να χρησιμοποιούνται σε μόνο μία επιτυχημένη σύνδεση.\n"
+"Σημείωση: Για να λειτουργήσει δεν πρέπει να αποθηκευτεί ο κωδικός λογαριασμού"
 
 #. *< type
 #. *< ui_requirement
@@ -2821,15 +2906,14 @@ msgstr ""
 "activestate.com\n"
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
-"Δε βρέθηκε το σετ εργαλείων Apple Bonjour για Windows, δείτε τις Συχνές "
-"Ερωτήσεις στο: http://d.pidgin.im/BonjourWindows για περισσότερες "
-"πληροφορίες."
+"Δε βρέθηκε το σετ εργαλείων της Apple, \"Bonjour για Windows\", δείτε το "
+"http://d.pidgin.im/BonjourWindows για περισσότερες πληροφορίες."
 
-msgid "Unable to listen for incoming IM connections\n"
-msgstr "Αδυναμία ακρόασης εισερχόμενων συνδέσεων άμεσων μηνυμάτων\n"
+msgid "Unable to listen for incoming IM connections"
+msgstr "Αδυναμία ακρόασης εισερχόμενων συνδέσεων άμεσων μηνυμάτων"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
@@ -2837,7 +2921,6 @@ msgstr ""
 "Αδυναμία δημιουργία σύνδεσης με τον τοπικό εξυπηρετητή mDNS.  Είναι σε "
 "λειτουργία;"
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "Όνομα"
 
@@ -2869,6 +2952,10 @@ msgstr "Πρόσθετο πρωτοκόλλου Bonjour"
 msgid "Purple Person"
 msgstr ""
 
+#. Creating the options for the protocol
+msgid "Local Port"
+msgstr "Τοπική θύρα"
+
 msgid "Bonjour"
 msgstr "Bonjour"
 
@@ -2879,14 +2966,17 @@ msgstr "%s έκλεισε τη συνομιλία."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Αδύνατο να σταλεί το μήνυμα, η συνομιλία δεν ξεκίνησε."
 
-msgid "Cannot open socket"
-msgstr "Δεν είναι δυνατό το άνοιγμα του υποδοχέα"
+#, c-format
+msgid "Unable to create socket: %s"
+msgstr "Αδυναμία δημιουργίας υποδοχέα: %s"
 
-msgid "Could not bind socket to port"
+#, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr ""
 
-msgid "Could not listen on socket"
-msgstr "Δεν ήταν δυνατή η ακρόαση του υποδοχέα"
+#, c-format
+msgid "Unable to listen on socket: %s"
+msgstr "Αδυναμία ακρόασης στον υποδοχέα: %s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr ""
@@ -2935,14 +3025,14 @@ msgstr "Αποθήκευση λίστας φίλων..."
 msgid "Load buddylist from file..."
 msgstr "Φόρτωμα λίστας φίλων από αρχείο..."
 
-msgid "Fill in the registration fields."
-msgstr "Συμπληρώστε τα πεδία καταχώρησης."
+msgid "You must fill in all registration fields"
+msgstr "Πρέπει να συμπληρώσετε τα πεδία εγγραφής"
 
-msgid "Passwords do not match."
-msgstr "Οι κωδικοί δεν ταιριάζουν."
+msgid "Passwords do not match"
+msgstr "Οι κωδικοί δεν ταιριάζουν"
 
-msgid "Unable to register new account. Error occurred.\n"
-msgstr "Αδυναμία καταχώρησης νέου λογαριασμού. Συνέβη σφάλμα.\n"
+msgid "Unable to register new account.  An unknown error occurred."
+msgstr "Αδυναμία καταχώρησης νέου λογαριασμού. Συνέβη ένα άγνωστο σφάλμα."
 
 msgid "New Gadu-Gadu Account Registered"
 msgstr "Καταχωρήθηκε νέος λογαριασμός Gadu-Gadu"
@@ -2953,13 +3043,13 @@ msgstr "Η καταχώρηση ολοκληρώθηκε επιτυχώς!"
 msgid "Password"
 msgstr "Κωδικός"
 
-msgid "Password (retype)"
+msgid "Password (again)"
 msgstr "Κωδικός (ξανά)"
 
-msgid "Enter current token"
+msgid "Enter captcha text"
 msgstr ""
 
-msgid "Current token"
+msgid "Captcha"
 msgstr ""
 
 msgid "Register New Gadu-Gadu Account"
@@ -3013,6 +3103,15 @@ msgstr "Ο κωδικός άλλαξε επιτυχώς!"
 msgid "Current password"
 msgstr "Τρέχων κωδικός"
 
+msgid "Password (retype)"
+msgstr "Κωδικός (ξανά)"
+
+msgid "Enter current token"
+msgstr ""
+
+msgid "Current token"
+msgstr ""
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr ""
 "Παρακαλούμε εισάγετε τον παλιό και τον καινούριο κωδικό σας για το UIN. "
@@ -3027,13 +3126,13 @@ msgstr "Επιλογή συζήτησης φίλου: %s"
 msgid "Add to chat..."
 msgstr "Προσθήκη στη συζήτηση..."
 
+#. Global
 msgid "Available"
 msgstr "Διαθέσιμος"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "Απών"
 
@@ -3061,8 +3160,8 @@ msgstr "Δε βρέθηκαν χρήστες που να ταιριάζουν"
 msgid "There are no users matching your search criteria."
 msgstr "Δε βρέθηκαν χρήστες που να ταιριάζουν με τα κριτήρια αναζήτησης."
 
-msgid "Unable to read socket"
-msgstr "Αδυναμία ανάγνωσης υποδοχέα"
+msgid "Unable to read from socket"
+msgstr "Αδυναμία ανάγνωσης από τον υποδοχέα"
 
 msgid "Buddy list downloaded"
 msgstr "Η λίστα φίλων λήφθηκε"
@@ -3076,8 +3175,14 @@ msgstr "Η λίστα φίλων στάλθηκε"
 msgid "Your buddy list was stored on the server."
 msgstr "Η λίστα φίλων σας αποθηκεύτηκε στον εξυπηρετητή."
 
-msgid "Connection failed."
-msgstr "Αποτυχία σύνδεσης."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "Συνδέθηκε"
+
+msgid "Connection failed"
+msgstr "Αποτυχία σύνδεσης"
 
 msgid "Add to chat"
 msgstr "Προσθήκη στη συζήτηση"
@@ -3085,14 +3190,23 @@ msgstr "Προσθήκη στη συζήτηση"
 msgid "Chat _name:"
 msgstr "Όνομα _συζήτησης:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr ""
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "Γίνεται σύνδεση"
+
 msgid "Chat error"
 msgstr "Σφάλμα συζήτησης"
 
 msgid "This chat name is already in use"
 msgstr "Αυτό το όνομα συζήτησης χρησιμοποιείται ήδη"
 
-msgid "Not connected to the server."
-msgstr "Δεν είστε συνδεδεμένοι με τον εξυπηρετητή."
+msgid "Not connected to the server"
+msgstr "Δεν υπάρχει σύνδεση με τον εξυπηρετητή"
 
 msgid "Find buddies..."
 msgstr "Εύρεση φίλων..."
@@ -3133,6 +3247,9 @@ msgstr "Δημοφιλής υπηρεσία άμεσων μηνυμάτων στ
 msgid "Gadu-Gadu User"
 msgstr "Χρήστης Gadu-Gadu"
 
+msgid "GG server"
+msgstr "Εξυπηρετητής GG"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Άγνωστη εντολή: %s"
@@ -3147,8 +3264,8 @@ msgstr "Δεν ορίστηκε θέμα συζήτησης"
 msgid "File Transfer Failed"
 msgstr "Αποτυχία μεταφοράς αρχείου"
 
-msgid "Could not open a listening port."
-msgstr "Αδυναμία ανοίγματος μιας θύρας ακρόασης."
+msgid "Unable to open a listening port."
+msgstr "Αδυναμία ανοίγματος μιας θύρας ακρόασης"
 
 msgid "Error displaying MOTD"
 msgstr "Σφάλμα εμφάνισης μηνύματος της ημέρας"
@@ -3163,8 +3280,16 @@ msgstr "Δεν υπάρχει μήνυμα της ημέρας σχετικό μ
 msgid "MOTD for %s"
 msgstr "Μήνυμα της ημέρας για %s"
 
-msgid "Server has disconnected"
-msgstr "Ο εξυπηρετητής αποσυνδέθηκε"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, c-format
+msgid "Lost connection with server: %s"
+msgstr "Η σύνδεση με τον εξυπηρετητή χάθηκε: %s"
 
 msgid "View MOTD"
 msgstr "Εμφάνιση μηνύματος της ημέρας"
@@ -3175,25 +3300,23 @@ msgstr "_Κανάλι:"
 msgid "_Password:"
 msgstr "_Κωδικός:"
 
-msgid "IRC nicks may not contain whitespace"
-msgstr "Τα ψευδώνυμα IRC δεν πρέπει να περιέχουν κενά"
-
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "Γίνεται σύνδεση"
+msgid "IRC nick and server may not contain whitespace"
+msgstr "Τα ψευδώνυμα και οι εξυπηρετητές IRC δεν πρέπει να περιέχουν κενά"
 
 msgid "SSL support unavailable"
 msgstr "Υποστήριξη SSL μη διαθέσιμη"
 
-msgid "Couldn't create socket"
-msgstr "Δεν ήταν δυνατή η δημιουργία υποδοχέα"
+msgid "Unable to connect"
+msgstr "Αδυναμία σύνδεσης"
 
-msgid "Couldn't connect to host"
-msgstr "Δεν ήταν δυνατή η σύνδεση με τον κεντρικό υπολογιστή"
+#. this is a regular connect, error out
+#, c-format
+msgid "Unable to connect: %s"
+msgstr "Αδυναμία σύνδεσης: %s"
 
-msgid "Read error"
-msgstr "Σφάλμα ανάγνωσης"
+#, c-format
+msgid "Server closed the connection"
+msgstr "Ο εξυπηρετητής έκλεισε τη σύνδεση"
 
 msgid "Users"
 msgstr "Χρήστες"
@@ -3373,6 +3496,16 @@ msgid ""
 msgstr ""
 "Το όνομα λογαριασμού που επιλέξατε απορρίφθηκε από τον εξυπηρετητή.  Πιθανώς "
 "να περιέχει μη έγκυρους χαρακτήρες."
+
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr "Το ψευδώνυμο \"%s\" χρησιμοποιείται ήδη."
+
+msgid "Nickname in use"
+msgstr "Ψευδώνυμο που χρησιμοποιείται"
 
 msgid "Cannot change nick"
 msgstr "Δεν είναι δυνατή η αλλαγή του ψευδωνύμου"
@@ -3615,13 +3748,11 @@ msgstr ""
 msgid "execute"
 msgstr "εκτέλεση"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
-msgstr ""
-"Ο εξυπηρετητής απαιτεί TLS/SSL για να γίνει σύνδεση.  Δε βρέθηκε υποστήριξη "
-"TLS/SSL."
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Ο εξυπηρετητής απαιτεί TLS/SSL, όμως δε βρέθηκε υποστήριξη TLS/SSL."
 
-msgid "You require encryption, but no TLS/SSL support found."
-msgstr "Θέλετε κρυπτογράφηση αλλά δε βρέθηκε υποστήριξη TLS/SSL."
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Θέλετε κρυπτογράφηση, όμως δε βρέθηκε υποστήριξη TLS/SSL."
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
@@ -3639,17 +3770,44 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Έγκριση με σκέτο κείμενο"
 
-msgid "Invalid response from server."
-msgstr "Λανθασμένη ανταπόκριση του εξυπηρετητή."
+msgid "SASL authentication failed"
+msgstr "Αποτυχία έγκρισης SASL"
+
+msgid "Invalid response from server"
+msgstr "Λανθασμένη ανταπόκριση του εξυπηρετητή"
 
 msgid "Server does not use any supported authentication method"
 msgstr "Ο εξυπηρετητής δε χρησιμοποιεί καμία υποστηριζόμενη μέθοδο έγκρισης"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+"Απαιτείτε κρυπτογράφηση, αλλά δεν είναι διαθέσιμη σε αυτόν τον εξυπηρετητή."
+
 msgid "Invalid challenge from server"
 msgstr "Μη έγκυρη πρόκληση από τον εξυπηρετητή"
 
-msgid "SASL error"
-msgstr "Σφάλμα SASL"
+#, c-format
+msgid "SASL error: %s"
+msgstr "Σφάλμα SASL: %s"
+
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+msgid "No session ID given"
+msgstr "Δε δόθηκε ID συνεδρίας"
+
+msgid "Unsupported version of BOSH protocol"
+msgstr "Μη υποστηριζόμενη έκδοση του πρωτοκόλλου BOSH"
+
+msgid "Unable to establish a connection with the server"
+msgstr "Αδυναμία δημιουργίας σύνδεσης με τον εξυπηρετητή"
+
+#, c-format
+msgid "Unable to establish a connection with the server: %s"
+msgstr "Αδυναμία δημιουργίας σύνδεσης με τον εξυπηρετητή %s"
+
+msgid "Unable to establish SSL connection"
+msgstr "Αδυναμίας δημιουργίας σύνδεσης SSL"
 
 msgid "Full Name"
 msgstr "Ονοματεπώνυμο"
@@ -3717,164 +3875,21 @@ msgstr "Πελάτης"
 msgid "Operating System"
 msgstr "Λειτουργικό σύστημα"
 
-msgid "Last Activity"
-msgstr "Τελευταία ενέργεια"
-
-msgid "Service Discovery Info"
-msgstr ""
-
-msgid "Service Discovery Items"
-msgstr ""
-
-msgid "Extended Stanza Addressing"
-msgstr ""
-
-msgid "Multi-User Chat"
-msgstr "Συζήτηση πολλών ατόμων"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr ""
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr ""
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr ""
-
-msgid "User Location"
-msgstr "Τοποθεσία χρήστη"
-
-msgid "User Avatar"
-msgstr "Εικόνα χρήστη"
-
-msgid "Chat State Notifications"
-msgstr "Ειδοποιήσεις κατάστασης συζήτησης"
-
-msgid "Software Version"
-msgstr "Έκδοση λογισμικού"
-
-msgid "Stream Initiation"
-msgstr ""
-
-msgid "File Transfer"
-msgstr "Μεταφορές αρχείων"
-
-msgid "User Mood"
-msgstr "Διάθεση χρήστη"
-
-msgid "User Activity"
-msgstr "Δραστηριότητα χρήστη"
-
-msgid "Entity Capabilities"
-msgstr ""
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-msgid "User Tune"
-msgstr ""
-
-msgid "Roster Item Exchange"
-msgstr ""
-
-msgid "Reachability Address"
-msgstr ""
-
-msgid "User Profile"
-msgstr "Προφίλ χρήστη"
-
-msgid "Jingle"
-msgstr ""
-
-msgid "Jingle Audio"
-msgstr ""
-
-msgid "User Nickname"
-msgstr "Όνομα χρήστη"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-msgid "Jingle Video"
-msgstr ""
-
-msgid "Jingle DTMF"
-msgstr ""
-
-msgid "Message Receipts"
-msgstr "Λήψεις μηνυμάτων"
-
-msgid "Public Key Publishing"
-msgstr ""
-
-msgid "User Chatting"
-msgstr "Ο χρήστης συζητάει"
-
-msgid "User Browsing"
-msgstr "Ο χρήστης περιηγείται"
-
-msgid "User Gaming"
-msgstr "Ο χρήστης παίζει"
-
-msgid "User Viewing"
-msgstr "Ο χρήστεις προβάλλει"
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr ""
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr "Καθυστερημένη παράδοση"
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "Δυνατότητες"
+msgid "Local Time"
+msgstr "Τοπική ώρα"
 
 msgid "Priority"
 msgstr "Προτεραιότητα"
 
 msgid "Resource"
 msgstr "Πηγή"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+msgid "Logged Off"
+msgstr "Αποσυνδεδεμένος"
 
 msgid "Middle Name"
 msgstr "Πατρώνυμο"
@@ -3922,7 +3937,6 @@ msgstr "Ομιλητικός"
 msgid "Extended Away"
 msgstr "Πολύ απών"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr "Μην ενοχλείτε"
 
@@ -4043,35 +4057,31 @@ msgstr "Επιλέξτε τον εξυπηρετητή συνομιλίας πο
 msgid "Find Rooms"
 msgstr "Εύρεση δωματίων"
 
-msgid "You require encryption, but it is not available on this server."
+msgid "Affiliations:"
 msgstr ""
-"Απαιτείτε κρυπτογράφηση, αλλά δεν είναι διαθέσιμη σε αυτόν τον εξυπηρετητή."
 
-msgid "Write error"
-msgstr "Σφάλμα εγγραφής"
+msgid "No users found"
+msgstr "Δε βρέθηκαν χρήστες"
 
-msgid "Ping timeout"
+msgid "Roles:"
+msgstr "Ρόλοι:"
+
+msgid "Ping timed out"
 msgstr "Τέλος χρονικού ορίου για ping"
 
-msgid "Read Error"
-msgstr "Σφάλμα ανάγνωσης"
-
-#, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
-"Αδυναμία δημιουργίας σύνδεσης με τον εξυπηρετητή:\n"
-"%s"
-
-msgid "Unable to create socket"
-msgstr "Αδυναμία δημιουργίας υποδοχέα"
 
 msgid "Invalid XMPP ID"
 msgstr "Μη έγκυρο XMPP ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
+
+msgid "Malformed BOSH URL"
+msgstr "Παραμορφωμένο BOSH URL"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4097,9 +4107,6 @@ msgstr "Επιτυχής διαγραφή"
 msgid "Unregistration Failed"
 msgstr "Αποτυχία διαγραφής"
 
-msgid "Already Registered"
-msgstr "Ήδη καταχωρημένος"
-
 msgid "State"
 msgstr "Πολιτεία"
 
@@ -4111,6 +4118,9 @@ msgstr "Τηλέφωνο"
 
 msgid "Date"
 msgstr "Ημερομηνία"
+
+msgid "Already Registered"
+msgstr "Ήδη καταχωρημένος"
 
 msgid "Unregister"
 msgstr ""
@@ -4161,8 +4171,17 @@ msgstr "Γίνεται έγκριση"
 msgid "Re-initializing Stream"
 msgstr "Επανεκκίνηση ροής"
 
+msgid "Server doesn't support blocking"
+msgstr "Ο εξυπηρετητής δεν υπηστηρίζει αποκλεισμούς"
+
 msgid "Not Authorized"
 msgstr "Δεν εγκρίθηκε"
+
+msgid "Mood"
+msgstr "Διάθεση"
+
+msgid "Now Listening"
+msgstr "Τώρα ακούει"
 
 msgid "Both"
 msgstr "Και τα δύο"
@@ -4184,12 +4203,6 @@ msgstr "Καμία"
 
 msgid "Subscription"
 msgstr "Εγγραφή"
-
-msgid "Mood"
-msgstr "Διάθεση"
-
-msgid "Now Listening"
-msgstr "Τώρα ακούει"
 
 msgid "Mood Text"
 msgstr "Κείμενο διάθεσης"
@@ -4232,9 +4245,6 @@ msgstr "Ο κωδικός σας έχει αλλάξει."
 
 msgid "Error changing password"
 msgstr "Σφάλμα αλλαγής κωδικού"
-
-msgid "Password (again)"
-msgstr "Κωδικός (ξανά)"
 
 msgid "Change XMPP Password"
 msgstr "Αλλαγή κωδικού XMPP"
@@ -4429,15 +4439,21 @@ msgid "Unable to ping user %s"
 msgstr "Δεν ήταν δυνατό να γίνει ping στο χρήστη %s"
 
 #, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr ""
 
 #, c-format
-msgid "Unable to buzz, because user %s might be offline."
+msgid "Unable to buzz, because %s might be offline."
 msgstr ""
 
 #, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr ""
+
+#, c-format
+msgid "Buzzing %s..."
 msgstr ""
 
 #. Yahoo only supports one attention command: the 'buzz'.
@@ -4450,8 +4466,33 @@ msgid "%s has buzzed you!"
 msgstr ""
 
 #, c-format
-msgid "Buzzing %s..."
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "Αδυναμία εκκίνησης πολυμέσων με %s: μη έγκυρο JID"
+
+#, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr "Αδυναμία εκκίνησης πολυμέσων με %s: ο χρήστης δεν είναι συνδεδεμένος"
+
+#, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
 msgstr ""
+
+msgid "Media Initiation Failed"
+msgstr "Αδυναμία εκκίνησης πολυμέσων"
+
+#, c-format
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr ""
+"Παρακαλούμε εισάγετε την πηγή του %s με την οποία θέλετε να ξεκινήσετε τη "
+"συνεδρία πολυμέσων."
+
+msgid "Select a Resource"
+msgstr "Επιλογή πηγής"
+
+msgid "Initiate Media"
+msgstr "Έναρξη πολυμέσων"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Ρύθμιση του δωματίου συζήτησης."
@@ -4473,16 +4514,16 @@ msgstr ""
 "ban &lt;χρήστης&gt; [αιτία]:  Απαγόρευση εισόδου ενός χρήστη στο δωμάτιο."
 
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
-"role &lt;χρήστης&gt; &lt;moderator|participant|visitor|none&gt;: Ορίζει το "
-"ρόλο ενός χρήστη στο δωμάτιο."
+"role &lt;moderator|participant|visitor|none&gt; [ψευδώνυμο 1] [ψευδώνυμο "
+"2] ... : Ορίζει το ρόλο ενός χρήστη στο δωμάτιο."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;χρήστης&gt; [μήνυμα]:  Πρόσκληση ενός χρήστη στο δωμάτιο."
@@ -4545,6 +4586,9 @@ msgstr "Σύνδεση με εξυπηρετητή"
 msgid "File transfer proxies"
 msgstr "Διαμεσολαβητές μεταφοράς αρχείων"
 
+msgid "BOSH URL"
+msgstr "BOSH URL"
+
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
@@ -4583,6 +4627,14 @@ msgstr "Σφάλμα ανάλυσης XML"
 msgid "Unknown Error in presence"
 msgstr "Υπάρχει άγνωστο σφάλμα"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "Σφάλμα κατά τη συμμετοχή στη συζήτηση %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Σφάλμα στη συζήτηση %s"
+
 msgid "Create New Room"
 msgstr "Δημιουργία νέου δωματίου"
 
@@ -4599,13 +4651,28 @@ msgstr "_Ρύθμιση δωματίου"
 msgid "_Accept Defaults"
 msgstr "_Αποδοχή προεπιλεγμένων"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "Σφάλμα κατά τη συμμετοχή στη συζήτηση %s"
+msgid "No reason"
+msgstr "Χωρίς αιτία"
 
 #, c-format
-msgid "Error in chat %s"
-msgstr "Σφάλμα στη συζήτηση %s"
+msgid "You have been kicked: (%s)"
+msgstr "Έχετε εκδιωχθεί: (%s)"
+
+#, c-format
+msgid "Kicked (%s)"
+msgstr "Εκδιωγμένος (%s)"
+
+msgid "An error occurred on the in-band bytestream transfer\n"
+msgstr ""
+
+msgid "Transfer was closed."
+msgstr "Η μεταφορά έκλεισε."
+
+msgid "Failed to open the file"
+msgstr "Αποτυχία κατά το άνοιγμα του αρχείου"
+
+msgid "Failed to open in-band bytestream"
+msgstr ""
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -4631,9 +4698,6 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 "Παρακαλούμε επιλέξτε την πηγή του %s στο οποίο θέλετε να στείλετε ένα αρχείο"
-
-msgid "Select a Resource"
-msgstr "Επιλογή πηγής"
 
 msgid "Edit User Mood"
 msgstr "Επεξεργασία διάθεσης χρήστη"
@@ -4668,9 +4732,6 @@ msgstr "Ενέργειες"
 
 msgid "Select an action"
 msgstr "Επιλέξτε μία ενέργεια"
-
-msgid "Unable to retrieve MSN Address Book"
-msgstr "Αδύνατη η λήψη ενός βιβλίου διευθύνσεων του MSN"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
@@ -4913,7 +4974,6 @@ msgstr "Διαβατήριο παιδιών χωρίς γονική συναίν
 msgid "Passport account not yet verified"
 msgstr "Ο λογαριασμός διαβατηρίου δεν πιστοποιήθηκε"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr ""
 
@@ -4935,16 +4995,38 @@ msgstr "Άλλες επαφές"
 msgid "Non-IM Contacts"
 msgstr "Επαφές μη-άμεσων μηνυμάτων"
 
-msgid "Nudge"
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
 msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+"%s σας έστειλε πρόσκληση για συζήτηση με φωνή, κάτι το οποίο δεν "
+"υποστηρίζεται ακόμα."
+
+msgid "Nudge"
+msgstr "Σκούντηγμα"
 
 #, c-format
 msgid "%s has nudged you!"
-msgstr ""
+msgstr "%s σας σκούντηξε"
 
 #, c-format
 msgid "Nudging %s..."
-msgstr ""
+msgstr "Σκούντηγμα %s..."
 
 msgid "Email Address..."
 msgstr "Διεύθυνση email..."
@@ -5062,7 +5144,7 @@ msgid "Set Work Phone Number..."
 msgstr "Ορισμός τηλεφώνου εργασίας..."
 
 msgid "Set Mobile Phone Number..."
-msgstr "Ορισμός κινητού τηλεφώνου..."
+msgstr "Ορισ�ός κινητού τηλεφώνου..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Ενεργοποίηση/Απενεργοποίηση φορητών συσκευών..."
@@ -5087,8 +5169,29 @@ msgstr ""
 "Χρειάζεται υποστήριξη SSL για το MSN. Παρακαλούμε εγκαταστήστε μία "
 "υποστηριζόμενη βιβλιοθήκη SSL."
 
-msgid "Failed to connect to server."
-msgstr "Αποτυχία σύνδεσης με τον εξυπηρετητή."
+#, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+"Δεν ήταν δυνατή η προσθήκη του φίλου %s επειδή το όνομα χρήστη δεν είναι "
+"έγκυρο.  Τα ονόματα χρήστη πρέπει να είναι μία έγκυρη διεύθυνση ηλεκτρονικού "
+"ταχυδρομείου."
+
+msgid "Unable to Add"
+msgstr "Αδυναμία προσθήκης"
+
+msgid "Authorization Request Message:"
+msgstr "Μήνυμα αίτησης έγκρισης:"
+
+msgid "Please authorize me!"
+msgstr "Παρακαλώ δώστε μου έγκριση!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_Εντάξει"
 
 msgid "Error retrieving profile"
 msgstr "Σφάλμα κατά τη λήψη του προφίλ"
@@ -5270,7 +5373,7 @@ msgid "Show custom smileys"
 msgstr "Εμφάνισε τις προσαρμοσμένες φατσούλες"
 
 msgid "nudge: nudge a user to get their attention"
-msgstr ""
+msgstr "nudge: σκούντηγμα ενός χρήστη για να ζητήσετε την προσοχή του"
 
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Έγκριση Windows Live ID:Αδυναμία σύνδεσης"
@@ -5279,62 +5382,26 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Έγκριση Windows Live ID:Μη έγκυρη απάντηση"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s δεν είναι έγκυρη ομάδα."
-
-msgid "Unknown error."
-msgstr "Άγνωστο σφάλμα."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s σε %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
-msgstr ""
+msgstr "%s μόλις σας σκούντηξε!"
 
-#. char *adl = g_strndup(payload, len);
 #, c-format
-msgid "Unknown error (%d)"
-msgstr "Άγνωστο σφάλμα (%d)"
+msgid "Unknown error (%d): %s"
+msgstr "Άγνωστο σφάλμα (%d): %s"
 
 msgid "Unable to add user"
 msgstr "Αδυναμία προσθήκης χρήστη"
 
+#. Unknown error!
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Άγνωστο σφάλμα (%d)"
+
 msgid "The following users are missing from your addressbook"
 msgstr "Οι ακόλουθοι χρήστες λείπουν από το βιβλίο επαφών σας"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Αδυναμία προσθήκης χρήστη σε %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Αδυναμία αποκλεισμού χρήστη σε %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Αδύνατο να επιτραπεί ο χρήστης σε %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s δεν ήταν δυνατό να προστεθεί επειδή η λίστα φίλων είναι πλήρης."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s δεν είναι ένας έγκυρος λογαριασμός διαβατηρίου."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Υπηρεσία προσωρινά μη διαθέσιμη."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "Το μήνυμα κινητού δε στάλθηκε επειδή ήταν πολύ μεγάλο."
-
-msgid "Unable to rename group"
-msgstr "Αδυναμία μετονομασίας ομάδας"
-
-msgid "Unable to delete group"
-msgstr "Αδυναμία διαγραφής ομάδας"
 
 #, c-format
 msgid ""
@@ -5380,9 +5447,6 @@ msgstr "Το μήνυμα δε στάλθηκε επειδή συνέβη ένα
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Το μήνυμα δε στάλθηκε επειδή συνέβη ένα άγνωστο σφάλμα."
 
-msgid "Unable to connect"
-msgstr "Αδυναμία σύνδεσης"
-
 msgid "Writing error"
 msgstr "Σφάλμα εγγραφής"
 
@@ -5397,22 +5461,22 @@ msgstr ""
 "Σφάλμα σύνδεσης από %s διακομιστή:\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
-msgstr "Το πρωτόκολλό μας δεν υποστηρίζεται από τον εξυπηρετητή."
+msgid "Our protocol is not supported by the server"
+msgstr "Το πρωτόκολλό μας δεν υποστηρίζεται από τον εξυπηρετητή"
 
-msgid "Error parsing HTTP."
-msgstr "Σφάλμα ανάλυσης HTTP."
+msgid "Error parsing HTTP"
+msgstr "Σφάλμα ανάλυσης HTTP"
 
-msgid "You have signed on from another location."
-msgstr "Έχετε συνδεθεί από άλλη τοποθεσία."
+msgid "You have signed on from another location"
+msgstr "Έχετε συνδεθεί από άλλη τοποθεσία"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "Οι εξυπηρετητές του MSN είναι προσωρινά μη διαθέσιμοι. Παρακαλούμε "
 "περιμένετε και ξαναδοκιμάστε."
 
-msgid "The MSN servers are going down temporarily."
-msgstr "Οι εξυπηρετητές του MSN κλείνουν προσωρινά."
+msgid "The MSN servers are going down temporarily"
+msgstr "Οι εξυπηρετητές του MSN κλείνουν προσωρινά"
 
 #, c-format
 msgid "Unable to authenticate: %s"
@@ -5441,6 +5505,16 @@ msgstr "Αποστολή cookie"
 
 msgid "Retrieving buddy list"
 msgstr "Λήψη λίστας φίλων"
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+"%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
 
 msgid "Away From Computer"
 msgstr "Μακριά από τον υπολογιστή"
@@ -5485,14 +5559,6 @@ msgstr ""
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Το μήνυμα πιθανό να μη στάλθηκε επειδή συνέβη ένα άγνωστο σφάλμα:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s σας προσέθεσε στη λίστα φίλων του."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s σας αφαίρεσε από τη λίστα φίλων του."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "Διαγραφή φίλου από το βιβλίο διευθύνσεων;"
 
@@ -5520,6 +5586,54 @@ msgstr "URL προφίλ"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "Πρόσθετο πρωτοκόλλου MSN"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s δεν είναι έγκυρη ομάδα."
+
+msgid "Unknown error."
+msgstr "Άγνωστο σφάλμα."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s σε %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Αδυναμία προσθήκης χρήστη σε %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Αδυναμία αποκλεισμού χρήστη σε %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Αδύνατο να επιτραπεί ο χρήστης σε %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s δεν ήταν δυνατό να προστεθεί επειδή η λίστα φίλων είναι πλήρης."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s δεν είναι ένας έγκυρος λογαριασμός διαβατηρίου."
+
+msgid "Service Temporarily Unavailable."
+msgstr "Υπηρεσία προσωρινά μη διαθέσιμη."
+
+msgid "Unable to rename group"
+msgstr "Αδυναμία μετονομασίας ομάδας"
+
+msgid "Unable to delete group"
+msgstr "Αδυναμία διαγραφής ομάδας"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s σας προσέθεσε στη λίστα φίλων του."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s σας αφαίρεσε από τη λίστα φίλων του."
 
 #, c-format
 msgid "No such user: %s"
@@ -5550,6 +5664,8 @@ msgid "Lost connection with server"
 msgstr "Η σύνδεση με τον εξυπηρετητή χάθηκε"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Νέα αλληλογραφία"
 
@@ -5588,43 +5704,29 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr "Προσθήκη επαφών από τον εξυπηρετητή"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "Συνδέθηκε"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "Σφάλμα πρωτοκόλλου, κώδικας %d: %s"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
-"%s Ο κωδικό σας είναι %d χαρακτήρες, μεγαλύτερος από το μέγιστο επιτρεπόμενο "
-"μήκος των %d για το MySpaceIM. Παρακαλούμε μικρύνετε τον κωδικό σας στο "
-"http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings."
-"changePassword και δοκιμάστε ξανά."
+"%s Ο κωδικός σας είναι %zu χαρακτήρες, μεγαλύτερος από το μέγιστο "
+"επιτρεπόμενο μήκος των %d. Παρακαλούμε μικρύνετε τον κωδικό σας στο http://"
+"profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword "
+"και δοκιμάστε ξανά."
+
+msgid "Incorrect username or password"
+msgstr "Λανθασμένο όνομα χρήστη ή κωδικός."
 
 msgid "MySpaceIM Error"
 msgstr "Σφάλμα MySpaceIM"
 
 msgid "Invalid input condition"
 msgstr "λανθασμένη συνθήκη εισόδου"
-
-msgid "Read buffer full (2)"
-msgstr "Η ενδιάμεση μνήμη ανάγνωσης είναι γεμάτη (2)"
-
-msgid "Unparseable message"
-msgstr "Μη αναλυόμενο μήνυμα"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "Αδυναμία σύνδεσης στον υπολογιστή: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "Αδυναμία προσθήκης φίλου"
@@ -5709,6 +5811,12 @@ msgstr "Σύνολο φίλων"
 
 msgid "Client Version"
 msgstr "Έκδοση πελάτη"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Το όνομα χρήστη είναι διαθέσιμο"
@@ -5927,9 +6035,6 @@ msgstr "Δεν μπορείτε να προσθέσετε τον εαυτό σα
 msgid "Master archive is misconfigured"
 msgstr ""
 
-msgid "Incorrect username or password"
-msgstr "Λανθασμένο όνομα χρήστη ή κωδικός."
-
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
 "Δεν ήταν δυνατή η αναγνώριση του κεντρικού υπολογιστή τουονόματος χρήστη που "
@@ -5975,8 +6080,8 @@ msgid "Unknown error: 0x%X"
 msgstr "Άγνωστο σφάλμα: 0x%X"
 
 #, c-format
-msgid "Login failed (%s)."
-msgstr "Η σύνδεση απέτυχε (%s)."
+msgid "Unable to login: %s"
+msgstr "Αδυναμία εισόδου: %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6086,9 +6191,6 @@ msgstr "Συζήτηση GroupWise %d"
 msgid "Authenticating..."
 msgstr "Γίνεται έγκριση..."
 
-msgid "Unable to connect to server."
-msgstr "Αδύνατη η σύνδεση με τον εξυπηρετητή."
-
 msgid "Waiting for response..."
 msgstr "Αναμονή ανταπόκρισης..."
 
@@ -6112,9 +6214,6 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Θέλετε να συμμετάσχετε στη συζήτηση;"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "Αποσυνδεθήκατε επειδή είστε συνδεδεμένοι από άλλο σταθμό εργασίας."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6123,16 +6222,12 @@ msgstr ""
 "στείλατε."
 
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "Αδύνατη η σύνδεση με τον εξυπηρετητή. Παρακαλούμε εισάγετε τη διεύθυνση του "
 "εξυπηρετητή με τον οποίο επιθυμείτε να συνδεθείτε."
 
-msgid "Error. SSL support is not installed."
-msgstr "Σφάλμα. Δεν είναι εγκατεστημένη η υποστήριξη SSL."
-
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Αυτή η συζήτηση έκλεισε. Δεν είναι δυνατή η αποστολή άλλων μηνυμάτων."
 
@@ -6155,25 +6250,33 @@ msgstr "Διεύθυνση εξυπηρετητή"
 msgid "Server port"
 msgstr "Θύρα εξυπηρετητή"
 
+msgid "Received unexpected response from "
+msgstr "Λήφθηκε αναπάντεχη ανταπόκριση από "
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα. Περιμένετε δέκα λεπτά και "
+"ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
+"περισσότερο."
+
+#, c-format
+msgid "Error requesting "
+msgstr "Σφάλμα αίτησης "
+
+msgid "AOL does not allow your screen name to authenticate here"
+msgstr ""
+
 msgid "Could not join chat room"
 msgstr "Δεν ήταν δυνατή η είσοδος στο δωμάτιο συζήτησης"
 
 msgid "Invalid chat room name"
 msgstr "Μη έγκυρο όνομα δωματίου"
 
-msgid "Server closed the connection."
-msgstr "Ο εξυπηρετητής έκλεισε τη σύνδεση"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"Η σύνδεση με τον εξυπηρετητή χάθηκε:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
-msgstr "Λήφθηκαν μη έγκυρα δεδομένα κατά τη σύνδεση με τον εξυπηρετητή."
+msgid "Received invalid data on connection with server"
+msgstr "Λήφθηκαν μη έγκυρα δεδομένα κατά τη σύνδεση με τον εξυπηρετητή"
 
 #. *< type
 #. *< ui_requirement
@@ -6221,7 +6324,7 @@ msgid "Received invalid data on connection with remote user."
 msgstr ""
 "Λήφθηκαν μη έγκυρα δεδομένα κατά τη σύνδεση με τον απομακρυσμένο χρήστη."
 
-msgid "Could not establish a connection with the remote user."
+msgid "Unable to establish a connection with the remote user."
 msgstr "Δεν ήταν δυνατή η δημιουργία σύνδεσης με τον απομακρυσμένο χρήστη."
 
 msgid "Direct IM established"
@@ -6400,23 +6503,18 @@ msgstr "Κάμερα"
 msgid "Screen Sharing"
 msgstr ""
 
-#, c-format
 msgid "Free For Chat"
 msgstr "Ελεύθερος για συζήτηση"
 
-#, c-format
 msgid "Not Available"
 msgstr "Μη διαθέσιμος"
 
-#, c-format
 msgid "Occupied"
 msgstr "Απασχολημένος"
 
-#, c-format
 msgid "Web Aware"
 msgstr "Εμφανής στον ιστό"
 
-#, c-format
 msgid "Invisible"
 msgstr "Αόρατος"
 
@@ -6430,20 +6528,12 @@ msgid "Buddy Comment"
 msgstr "Σχόλιο φίλου"
 
 #, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
-msgstr ""
-"Δεν ήταν δυνατή η σύνδεση με τον εξυπηρετητή πιστοποίησης:\n"
-"%s"
+msgid "Unable to connect to authentication server: %s"
+msgstr "Δεν ήταν δυνατή η σύνδεση με τον εξυπηρετητή πιστοποίησης: %s"
 
 #, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"Δεν ήταν δυνατή η σύνδεση με τον εξυπηρετητή BOS:\n"
-"%s"
+msgid "Unable to connect to BOS server: %s"
+msgstr "Δεν ήταν δυνατή η σύνδεση με τον εξυπηρετητή BOS: %s"
 
 msgid "Username sent"
 msgstr "Το όνομα χρήστη στάλθηκε"
@@ -6457,85 +6547,68 @@ msgstr "Ολοκλήρωση σύνδεσης"
 
 #, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
-"Αδυναμία εισόδου: Δεν ήταν δυνατό να συνδεθείτε ως %s επειδή το όνομα χρήστη "
-"δεν είναι έγκυρο.  Τα ονόματα χρήστη πρέπει είτε να είναι μία έγκυρη "
-"διεύθυνση ηλεκτρονικού ταχυδρομείου, είτε να ξεκινούν με ένα γράμμα και να "
-"περιέχουν μόνο γράμματα, αριθμούς και κενά, είτε να περιέχουν μόνο αριθμούς."
+"Αδυναμία εισόδου ως %s επειδή το όνομα χρήστη δεν είναι έγκυρο.  Τα ονόματα "
+"χρήστη πρέπει είτε να είναι μία έγκυρη διεύθυνση ηλεκτρονικού ταχυδρομείου, "
+"είτε να ξεκινούν με ένα γράμμα και να περιέχουν μόνο γράμματα, αριθμούς και "
+"κενά, είτε να περιέχουν μόνο αριθμούς."
 
-#. Unregistered screen name
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
+"Μπορεί να αποσυνδεθείτε πολύ γρήγορα.  Αν γίνει αυτό, ελέγξτε το %s για "
+"αναβαθμίσεις."
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "Αδυναμία λήψης ενός έγκυρου hash εισόδου στο AIM."
+
+msgid "Unable to get a valid login hash."
+msgstr "Αδυναμία λήψης ενός έγκυρου hash εισόδου."
+
+msgid "Received authorization"
+msgstr "Λήφθηκε έγκριση"
+
+#. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "Μη έγκυρο όνομα χρήστη."
-
-msgid "Incorrect password."
-msgstr "Λανθασμένος κωδικός."
+#. the username does not exist
+msgid "Username does not exist"
+msgstr "Το όνομα χρήστη δεν υπάρχει"
 
 #. Suspended account
-msgid "Your account is currently suspended."
-msgstr "Ο λογαριασμός σας είναι προς το παρόν σε αναστολή."
+msgid "Your account is currently suspended"
+msgstr "Ο λογαριασμός σας είναι προς το παρόν σε αναστολή"
 
 #. service temporarily unavailable
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Η υπηρεσία AOL Instant Messenger είναι προσωρινά μη διαθέσιμη."
 
-#. screen name connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα. Περιμένετε δέκα λεπτά και "
-"ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
-"περισσότερο."
-
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 "Η έκδοση πελάτη που χρησιμοποιείτε είναι πολύ παλιά. Παρακαλούμε αναβαθμίστε "
 "σε %s"
 
-msgid "Could Not Connect"
-msgstr "Δεν ήταν δυνατή η σύνδεση"
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα. Περιμένετε ένα λεπτό και "
+"ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
+"περισσότερο."
 
-msgid "Received authorization"
-msgstr "Λήφθηκε έγκριση"
-
-msgid "The SecurID key entered is invalid."
-msgstr "Το SecurID που πληκτρολογήθηκε είναι λανθασμένο."
+msgid "The SecurID key entered is invalid"
+msgstr "Το SecurID που πληκτρολογήθηκε είναι λανθασμένο"
 
 msgid "Enter SecurID"
 msgstr "Εισαγωγή SecurID"
 
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Δώστε τα 6 ψηφία από τη ψηφιακή οθόνη."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_Εντάξει"
-
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-"Αποσυνδεθήκατε πολύ γρήγορα.  Ίσως να θέλετε να χρησιμοποιήσετε το TOC μέχρι "
-"να διορθωθεί αυτό.  Ελέγξτε το %s για αναβαθμίσεις."
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "Αδυναμία λήψης ενός έγκυρου hash εισόδου στο AIM."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Αποσυνδεθήκατε πολύ γρήγορα.  Ελέγξτε το %s για αναβαθμίσεις."
-
-msgid "Unable to get a valid login hash."
-msgstr "Αδυναμία λήψης ενός έγκυρου hash εισόδου."
 
 msgid "Password sent"
 msgstr "Κωδικός στάλθηκε"
@@ -6546,12 +6619,6 @@ msgstr "Αδυναμία δημιουργίας σύνδεσης"
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Παρακαλώ δώστε μου έγκριση ώστε να μπορώ να σας προσθέσω στη λίστα φίλων μου."
-
-msgid "Authorization Request Message:"
-msgstr "Μήνυμα αίτησης έγκρισης:"
-
-msgid "Please authorize me!"
-msgstr "Παρακαλώ δώστε μου έγκριση!"
 
 msgid "No reason given."
 msgstr "Δεν δόθηκε αιτία."
@@ -6676,7 +6743,7 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Χάσατε %hu μήνυμα από %s για άγνωστο λόγο."
 msgstr[1] "Χάσατε %hu μηνύματα από %s για άγνωστο λόγο."
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Αδυναμία αποστολής μηνύματος: %s"
@@ -6697,6 +6764,9 @@ msgstr "Συνδεδεμένος από"
 
 msgid "Member Since"
 msgstr "Μέλος από"
+
+msgid "Capabilities"
+msgstr "Δυνατότητες"
 
 msgid "Profile"
 msgstr "Προφίλ"
@@ -6883,7 +6953,7 @@ msgstr "Πολύ μεγάλο μήνυμα απουσίας."
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -6891,9 +6961,6 @@ msgstr ""
 "έγκυρο.  Τα ονόματα χρήστη πρέπει να είναι μία έγκυρη διεύθυνση ηλεκτρονικού "
 "ταχυδρομείου, ή ξεκινούν με ένα γράμμα και να  περιέχουν μόνο γράμματα, "
 "αριθμούς και κενά, ή να περιέχουν μόνο αριθμούς."
-
-msgid "Unable to Add"
-msgstr "Αδυναμία προσθήκης"
 
 msgid "Unable to Retrieve Buddy List"
 msgstr "Αδυναμία λήψης της λίστας φίλων"
@@ -6910,7 +6977,7 @@ msgstr "Ορφανά"
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "Αδύνατη η προσθήκη του %s επειδή έχετε πάρα πολλούς φίλους στη λίστα φίλων "
@@ -6920,7 +6987,7 @@ msgid "(no name)"
 msgstr "(χωρίς όνομα)"
 
 #, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Δεν ήταν δυνατή η προσθήκη του φίλου %s για άγνωστο λόγο."
 
 #, c-format
@@ -6992,6 +7059,7 @@ msgstr "_Σύνδεση"
 msgid "Get AIM Info"
 msgstr "Λήψη πληροφοριών AIM"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr "Επεξεργασία σχολίου φίλου"
 
@@ -7054,6 +7122,7 @@ msgstr "_Αναζήτηση"
 msgid "Set User Info (web)..."
 msgstr "Ορισμός πληροφοριών χρήστη (διαδίκτυο)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Αλλαγή κωδικού (διαδίκτυο)"
 
@@ -7083,6 +7152,9 @@ msgstr "Αναζήτηση φίλου με email..."
 msgid "Search for Buddy by Information"
 msgstr "Αναζήτηση φίλου με πληροφορίες"
 
+msgid "Use clientLogin"
+msgstr ""
+
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
 "file transfers and direct IM (slower,\n"
@@ -7104,7 +7176,6 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr "Προσπάθεια σύνδεσης με %s:%hu."
 
-#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Προσπάθεια σύνδεσης με διαμεσολαβητή."
 
@@ -7273,6 +7344,34 @@ msgstr "Ενημέρωση"
 
 msgid "Could not change buddy information."
 msgstr "Δεν ήταν δυνατή η αλλαγή των πληροφοριών φίλου."
+
+msgid "Mobile"
+msgstr "Με φορητή συσκευή"
+
+msgid "Note"
+msgstr "Σημείωση"
+
+#. callback
+msgid "Buddy Memo"
+msgstr ""
+
+msgid "Change his/her memo as you like"
+msgstr ""
+
+msgid "_Modify"
+msgstr "_Τροποποίηση"
+
+msgid "Memo Modify"
+msgstr ""
+
+msgid "Server says:"
+msgstr "Ο εξυπηρετητής λέει:"
+
+msgid "Your request was accepted."
+msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
 
 #, c-format
 msgid "%u requires verification"
@@ -7545,7 +7644,7 @@ msgstr "<b>Στάλθηκαν</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr ""
+msgstr "<b>Αποστολή ξανά</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
@@ -7580,6 +7679,12 @@ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
 msgstr ""
 
 msgid "<p><b>Acknowledgement</b>:<br>\n"
+msgstr "<p><b>Αναγνώριση</b>:<br>\n"
+
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<p><b>Προσεκτικοί Δοκιμαστές</b>:<br>\n"
+
+msgid "and more, please let me know... thank you!))"
 msgstr ""
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
@@ -7606,6 +7711,9 @@ msgstr "Ανανέωση όλων των QQ Quns"
 
 msgid "About OpenQ"
 msgstr "Σχετικά με το OpenQ"
+
+msgid "Modify Buddy Memo"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7644,14 +7752,17 @@ msgstr "Εμφάνιση μηνύματος εξυπηρετητή"
 msgid "Show server news"
 msgstr "Εμφάνιση νέων εξυπηρετητή"
 
+msgid "Show chat room when msg comes"
+msgstr "Εμφάνιση δωματίου συζήτησης όταν λαμβάνεται μήνυμα"
+
 msgid "Keep alive interval (seconds)"
 msgstr ""
 
 msgid "Update interval (seconds)"
 msgstr ""
 
-msgid "Cannot decrypt server reply"
-msgstr "Δεν ήταν δυνατή η απόκρυψη της απάντησης του εξυπηρετητή"
+msgid "Unable to decrypt server reply"
+msgstr "Δεν ήταν δυνατή η αποκρυπτογράφηση της απάντησης του εξυπηρετητή"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
@@ -7674,9 +7785,6 @@ msgstr "Απαιτείται ενεργοποίηση"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "Άγνωστος κωδικός απάντησης κατά την είσοδο (0x%02X)"
-
-msgid "Could not decrypt server reply"
-msgstr "Δεν ήταν δυνατή η αποκρυπτογράφηση της απάντησης του εξυπηρετητή"
 
 msgid "Requesting captcha"
 msgstr ""
@@ -7711,21 +7819,8 @@ msgstr ""
 "Άγνωστος κωδικός απάντησης κατά την είσοδο (0x%02X):\n"
 "%s"
 
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "Αδυναμία σύνδεσης."
-
 msgid "Socket error"
 msgstr "Σφάλμα υποδοχέα"
-
-msgid "Unable to read from socket"
-msgstr "Αδυναμία ανάγνωσης από τον υποδοχέα"
-
-msgid "Write Error"
-msgstr "Σφάλμα εγγραφής"
-
-msgid "Connection lost"
-msgstr "Η σύνδεση χάθηκε"
 
 msgid "Getting server"
 msgstr "Λήψη εξυπηρετητή"
@@ -7733,8 +7828,8 @@ msgstr "Λήψη εξυπηρετητή"
 msgid "Requesting token"
 msgstr ""
 
-msgid "Couldn't resolve host"
-msgstr "Δεν ήταν δυνατή η εύρεση του κεντρικού υπολογιστή"
+msgid "Unable to resolve hostname"
+msgstr ""
 
 msgid "Invalid server or port"
 msgstr "Μη έγκυρος εξυπηρετητής ή θύρα"
@@ -7787,7 +7882,7 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr "Εντολή QQ Qun"
 
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "Δεν ήταν δυνατή η αποκρυπτογράφηση της απάντησης εισόδου"
 
 msgid "Unknown LOGIN CMD"
@@ -7806,9 +7901,6 @@ msgstr "Αποστολή αρχείου"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d ακύρωσε τη μεταφορά του %s"
-
-msgid "Connection closed (writing)"
-msgstr "Η σύνδεση έκλεισε (γίνεται εγγραφή)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -7865,17 +7957,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr "Ανακοίνωση διαχειριστή Sametime"
 
-msgid "Connection reset"
-msgstr "Επαναφορά σύνδεσης"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "Σφάλμα ανάγνωσης από τον υποδοχέα: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "Αδύνατη η σύνδεση με τον κεντρικό υπολογιστή"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "Ανακοίνωση από %s"
@@ -7897,6 +7978,9 @@ msgstr "Ηχεία"
 
 msgid "Video Camera"
 msgstr "Βιντεοκάμερα"
+
+msgid "File Transfer"
+msgstr "Μεταφορές αρχείων"
 
 msgid "Supports"
 msgstr "Υποστηρίζει"
@@ -8610,9 +8694,6 @@ msgstr "Οργανισμός"
 msgid "Unit"
 msgstr "Μονάδα"
 
-msgid "Note"
-msgstr "Σημείωση"
-
 msgid "Join Chat"
 msgstr "Συμμετοχή σε συζήτηση"
 
@@ -8712,6 +8793,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "Στατιστικά δικτύου"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Αποτυχία Ping"
 
@@ -8773,7 +8857,7 @@ msgstr "Μη υποστηριζόμενος τύπος δημοσίου κλει
 msgid "Disconnected by server"
 msgstr "Έγινε αποσύνδεση από τον εξυπηρετητή"
 
-msgid "Error during connecting to SILC Server"
+msgid "Error connecting to SILC Server"
 msgstr "Σφάλμα κατά τη σύνδεση με τον εξυπηρετητή SILC"
 
 msgid "Key Exchange failed"
@@ -8785,27 +8869,24 @@ msgstr ""
 "Αποτυχία συνέχειας αποδεσμευμένης συνεδρίας. Πατήστε Επανασύνδεση για να "
 "δημιουργήσετε νέα σύνδεση"
 
-msgid "Connection failed"
-msgstr "Αποτυχία σύνδεσης"
-
 msgid "Performing key exchange"
 msgstr "Γίνεται ανταλλαγή κλειδιού"
 
-msgid "Unable to create connection"
-msgstr "Αδυναμία δημιουργίας σύνδεσης"
-
-msgid "Could not load SILC key pair"
-msgstr "Αδυναμία φορτώματος του κλειδιού SILC"
+msgid "Unable to load SILC key pair"
+msgstr "Αδυναμία φορτώματος του ζεύγους κλειδιών SILC"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "Γίνεται σύνδεση με τον εξυπηρετητή SILC"
 
+msgid "Unable to not load SILC key pair"
+msgstr "Αδυναμία μη φορτώματος του ζεύγους κλειδιών SILC"
+
 msgid "Out of memory"
 msgstr "Τέλος μνήμης"
 
-msgid "Cannot initialize SILC protocol"
-msgstr "Αδυναμία εκκίνησης πρωτοκόλλου SILC"
+msgid "Unable to initialize SILC protocol"
+msgstr "Αδυναμία αρχικοποίησης πρωτοκόλλου SILC"
 
 msgid "Error loading SILC key pair"
 msgstr "Σφάλμα κατά το φόρτωμα του κλειδιού SILC"
@@ -9112,8 +9193,8 @@ msgstr "Ψηφιακή υπογραφή και έλεγχος όλων των μ
 msgid "Creating SILC key pair..."
 msgstr "Δημιουργία κλειδιού SILC..."
 
-msgid "Cannot create SILC key pair\n"
-msgstr "Αδύνατη η δημιουργία κλειδιού SILC\n"
+msgid "Unable to create SILC key pair"
+msgstr "Αδύνατη η δημιουργία του ζεύγους κλειδιών SILC"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -9204,6 +9285,9 @@ msgstr ""
 msgid "No server statistics available"
 msgstr "Δεν υπάρχουν διαθέσιμα στατιστικά εξυπηρετητή"
 
+msgid "Error during connecting to SILC Server"
+msgstr "Σφάλμα κατά τη σύνδεση με τον εξυπηρετητή SILC"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Αποτυχία: Δεν ταιριάζουν οι εκδόσεις, αναβαθμίστε τον πελάτη σας"
@@ -9249,33 +9333,30 @@ msgstr "Αποτυχία: Μη έγκυρο cookie"
 msgid "Failure: Authentication failed"
 msgstr "Αποτυχία: Η έγκρισή απέτυχε"
 
-msgid "Cannot initialize SILC Client connection"
-msgstr "Αδυναμία έναρξης σύνδεσης του πελάτη SILC"
+msgid "Unable to initialize SILC Client connection"
+msgstr "Αδυναμία αρχικοποίησης σύνδεσης του πελάτη SILC"
 
 msgid "John Noname"
 msgstr "Γιάννης Χωρίς-όνομα"
 
 #, c-format
-msgid "Could not load SILC key pair: %s"
+msgid "Unable to load SILC key pair: %s"
 msgstr "Δεν ήταν δυνατό το φόρτωμα του ζεύγους κλειδιών SILC: %s"
 
-msgid "Could not write"
-msgstr "Δεν ήταν δυνατή η εγγραφή"
+msgid "Unable to create connection"
+msgstr "Αδυναμία δημιουργίας σύνδεσης"
 
-msgid "Could not connect"
-msgstr "Δεν ήταν δυνατή η σύνδεση"
+msgid "Unknown server response"
+msgstr "Άγνωστη απάντηση εξυπηρετητή"
 
-msgid "Unknown server response."
-msgstr "Άγνωστη απάντηση εξυπηρετητή."
-
-msgid "Could not create listen socket"
-msgstr "Δεν ήταν δυνατή η δημιουργία υποδοχέα ακρόασης"
-
-msgid "Could not resolve hostname"
-msgstr "Δεν ήταν δυνατή η εύρεση του ονόματος του κεντρικού υπολογιστή"
+msgid "Unable to create listen socket"
+msgstr "Αδυναμία δημιουργίας υποδοχέα ακρόασης"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Τα ονόματα χρήστη χρηστών SIP δεν πρέπει να περιέχουν κενά ή σύμβολα @"
+
+msgid "SIP connect server not specified"
+msgstr "Δεν ορίστηκε εξυπηρετητής SIP"
 
 #. *< type
 #. *< ui_requirement
@@ -9310,179 +9391,18 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
-#, c-format
-msgid "Looking up %s"
-msgstr "Εύρεση του %s"
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr ""
+"join &lt;δωμάτιο&gt;:  συμμετοχή σε ένα δωμάτιο συζήτησης στο δίκτυο Yahoo"
 
-#, c-format
-msgid "Connect to %s failed"
-msgstr "Αποτυχία σύνδεσης με %s"
+msgid "list: List rooms on the Yahoo network"
+msgstr "list:  Λίστα των καναλιών στο δίκτυο Yahoo"
 
-#, c-format
-msgid "Signon: %s"
-msgstr "Σύνδεση: %s"
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Αδύνατη η εγγραφή του αρχείου %s."
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Αδύνατη η ανάγνωση του αρχείου %s."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Πολύ μεγάλο μήνυμα, τα τελευταία %s bytes αποκόπηκαν."
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s δεν είναι συνδεδεμένος."
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "Η προειδοποίηση του %s δεν επιτρέπεται."
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Το μήνυμα απορρίφθηκε, ξεπεράσατε το όριο ταχύτητας του εξυπηρετητή."
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Η συζήτηση στο %s δεν είναι διαθέσιμη."
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Στέλνετε πολύ γρήγορα μηνύματα σε %s."
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "Χάσατε ένα μήνυμα από %s επειδή ήταν πολύ μεγάλο."
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Χάσατε ένα άμεσο μήνυμα από %s επειδή στάλθηκε πολύ γρήγορα."
-
-#, c-format
-msgid "Failure."
-msgstr "Αποτυχία."
-
-#, c-format
-msgid "Too many matches."
-msgstr "Πάρα πολλές αντιστοιχίες."
-
-#, c-format
-msgid "Need more qualifiers."
+msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr "Η υπηρεσία καταλόγου είναι προσωρινά μη διαθέσιμη."
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr "Απαγορεύεται η εύρεση email."
-
-#, c-format
-msgid "Keyword ignored."
-msgstr "Η λέξη-κλειδί αγνοήθηκε."
-
-#, c-format
-msgid "No keywords."
-msgstr "Δεν υπάρχουν λέξεις κλειδιά."
-
-#, c-format
-msgid "User has no directory information."
-msgstr "Ο χρήστης δεν έχει πληροφορίες καταλόγου."
-
-#, c-format
-msgid "Country not supported."
-msgstr "Η χώρα δεν υποστηρίζεται."
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Άγνωστη αποτυχία: %s."
-
-#, c-format
-msgid "Incorrect username or password."
-msgstr "Λανθασμένο όνομα χρήστη ή κωδικός."
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr "Η υπηρεσία είναι προσωρινά μη διαθέσιμη."
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr "Έχετε πολύ υψηλό επίπεδο προειδοποίησης για να συνδεθείτε."
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα.  Περιμένετε δέκα λεπτά και "
-"προσπαθήστε ξανά.  Αν συνεχίσετε να προσπαθείτε, θα χρειαστεί να περιμένετε "
-"ακόμα περισσότερο."
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Ένα άγνωστο σφάλμα, %d, συνέβη.  Πληροφορίες: %s"
-
-msgid "Invalid Groupname"
-msgstr "Μη έγκυρο όνομα ομάδας"
-
-msgid "Connection Closed"
-msgstr "Η σύνδεση έκλεισε"
-
-msgid "Waiting for reply..."
-msgstr "Αναμονή απάντησης..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr ""
-"Το TOC επέστρεψε από την παύση του. Τώρα μπορείτε να στείλετε μηνύματα ξανά."
-
-msgid "Password Change Successful"
-msgstr "Επιτυχής αλλαγή κωδικού"
-
-msgid "_Group:"
-msgstr "_Ομάδα:"
-
-msgid "Get Dir Info"
-msgstr "Λήψη πληροφοριών καταλόγου"
-
-msgid "Set Dir Info"
-msgstr "Ορισμός πληροφοριών καταλόγου"
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr "Αδύνατο το άνοιγμα του %s για εγγραφή!"
-
-msgid "File transfer failed; other side probably canceled."
-msgstr "Αποτυχία μεταφοράς αρχείου. Πιθανώς να ακυρώθηκε από την άλλη πλευρά."
-
-msgid "Could not connect for transfer."
-msgstr "Δεν ήταν δυνατή η σύνδεση για τη μεταφορά."
-
-msgid "Could not write file header.  The file will not be transferred."
-msgstr ""
-"Δεν ήταν δυνατή η εγγραφή της κεφαλίδας του αρχείου.  Το αρχείο δε θα "
-"μεταφερθεί."
-
-msgid "Save As..."
-msgstr "Αποθήκευση ως..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s ζητά %s την αποδοχή %d αρχείου: %s (%.2f %s)%s%s"
-msgstr[1] "%s ζητά %s την αποδοχή %d αρχείων: %s (%.2f %s)%s%s"
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s ζητά να του στείλετε ένα αρχείο"
+msgid "Yahoo ID..."
+msgstr "Yahoo ID..."
 
 #. *< type
 #. *< ui_requirement
@@ -9494,13 +9414,54 @@ msgstr "%s ζητά να του στείλετε ένα αρχείο"
 #. *< version
 #. *  summary
 #. *  description
-msgid "TOC Protocol Plugin"
-msgstr "Πρόσθετο πρωτοκόλλου TOC"
+msgid "Yahoo! Protocol Plugin"
+msgstr "Πρόσθετο πρωτοκόλλου Yahoo!"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-"%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
+msgid "Pager server"
+msgstr "Εξυπηρετητής τηλεειδοποίησης"
+
+msgid "Pager port"
+msgstr "Θύρα τηλεειδοποιητή"
+
+msgid "File transfer server"
+msgstr "Εξυπηρετητής μεταφοράς αρχείων"
+
+msgid "File transfer port"
+msgstr "Θύρα μεταφοράς αρχείων"
+
+msgid "Chat room locale"
+msgstr "Εντοπιότητα δωματίου συζήτησης"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "Παράβλεψη προσκλήσεων συζητήσεων και δωματίων συζητήσεων"
+
+msgid "Chat room list URL"
+msgstr "URL λίστας δωματίων συζήτησης"
+
+msgid "Yahoo Chat server"
+msgstr "Εξυπηρετητής συζητήσεων Yahoo"
+
+msgid "Yahoo Chat port"
+msgstr "Θύρα συζητήσεων Yahoo"
+
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo JAPAN ID..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Πρόσθετο πρωτοκόλλου Yahoo! JAPAN"
+
+msgid "Your SMS was not delivered"
+msgstr "Το SMS σας δεν παραδόθηκε"
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Το μήνυμα σας Yahoo! δε στάλθηκε."
@@ -9524,6 +9485,30 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "Η προσθήκη φίλου απορρίφθηκε"
+
+#. Some error in the received stream
+msgid "Received invalid data"
+msgstr "Λήφθηκαν μη έγκυρα δεδομένα"
+
+#. security lock from too many failed login attempts
+msgid ""
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
+msgstr ""
+"Ο λογαριασμός κλειδώθηκε: Πολλές αποτυχημένες προσπάθειες εισόδου. Η είσοδος "
+"στην ιστοσελίδα του Yahoo! πιθανώς να το διορθώσει αυτό."
+
+#. indicates a lock of some description
+msgid ""
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
+msgstr ""
+"Ο λογαριασμός κλειδώθηκε: Άγνωστη αιτία. Η είσοδος στην ιστοσελίδα του "
+"Yahoo! πιθανώς να το διορθώσει αυτό."
+
+#. username or password missing
+msgid "Username or password missing"
+msgstr "Λείπει το όνομα χρήστη ή ο κωδικός."
 
 #, c-format
 msgid ""
@@ -9561,39 +9546,28 @@ msgstr ""
 "διορθωθεί."
 
 #, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
-"Δεν ήταν δυνατή η προσθήκη του φίλου %s στην ομάδα %s της λίστας εξυπηρετητή "
-"στο λογαριασμό %s."
+"Δεν ήταν δυνατή η προσθήκη του φίλου %s στην ομάδα %s στη λίστα του "
+"εξυπηρετητή για το λογαριασμό %s."
 
-msgid "Could not add buddy to server list"
+msgid "Unable to add buddy to server list"
 msgstr "Δεν ήταν δυνατή η προσθήκη του φίλου στη λίστα εξυπηρετητή"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ %s/%s/%s.swf με ήχο ] %s"
 
-msgid "Received unexpected HTTP response from server."
-msgstr "Λήφθηκε αναπάντεχη ανταπόκριση HTTP από τον εξυπηρετητή."
-
-msgid "Connection problem"
-msgstr "Πρόβλημα σύνδεσης"
+msgid "Received unexpected HTTP response from server"
+msgstr "Λήφθηκε αναπάντεχη ανταπόκριση HTTP από τον εξυπηρετητή"
 
 #, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
-msgstr ""
-"Χάθηκε η σύνδεση με %s:\n"
-"%s"
+msgid "Lost connection with %s: %s"
+msgstr "Χάθηκε η σύνδεση με %s: %s"
 
 #, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
-msgstr ""
-"Αδυναμία δημιουργίας σύνδεσης με %s:\n"
-"%s"
+msgid "Unable to establish a connection with %s: %s"
+msgstr "Αδυναμία δημιουργίας σύνδεσης με %s: %s"
 
 msgid "Not at Home"
 msgstr "Εκτός σπιτιού"
@@ -9640,8 +9614,8 @@ msgstr "Ρυθμίσεις παρουσίας"
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr "Ενεργοποίηση ποιανού ID;"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "Συμμετοχή στη συζήτηση με ποιον;"
@@ -9655,73 +9629,14 @@ msgstr "Συμμετοχή χρήστη σε συζήτηση..."
 msgid "Open Inbox"
 msgstr "Άνοιγμα εισερχομένων"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-"join &lt;δωμάτιο&gt;:  συμμετοχή σε ένα δωμάτιο συζήτησης στο δίκτυο Yahoo"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Λίστα των καναλιών στο δίκτυο Yahoo"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-msgid "Yahoo ID..."
-msgstr "Yahoo ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Πρόσθετο πρωτοκόλλου Yahoo"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo Ιαπωνίας"
-
-msgid "Pager server"
-msgstr "Εξυπηρετητής τηλεειδοποίησης"
-
-msgid "Japan Pager server"
-msgstr "Εξυπηρετητής τηλεειδοποίησης Ιαπωνίας"
-
-msgid "Pager port"
-msgstr "Θύρα τηλεειδοποιητή"
-
-msgid "File transfer server"
-msgstr "Εξυπηρετητής μεταφοράς αρχείων"
-
-msgid "Japan file transfer server"
-msgstr "Εξυπηρετητής μεταφοράς αρχείων Ιαπωνίας"
-
-msgid "File transfer port"
-msgstr "Θύρα μεταφοράς αρχείων"
-
-msgid "Chat room locale"
-msgstr "Εντοπιότητα δωματίου συζήτησης"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Παράβλεψη προσκλήσεων συζητήσεων και δωματίων συζητήσεων"
-
-msgid "Chat room list URL"
-msgstr "URL λίστας δωματίων συζήτησης"
-
-msgid "Yahoo Chat server"
-msgstr "Εξυπηρετητής συζητήσεων Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Θύρα συζητήσεων Yahoo"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "Αδυναμία σύνδεσης."
 
 msgid "Unable to establish file descriptor."
 msgstr "Αδυναμία σύνδεσης με τον περιγραφέα αρχείων."
@@ -9729,6 +9644,9 @@ msgstr "Αδυναμία σύνδεσης με τον περιγραφέα αρ�
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s προσπαθεί να σας στείλει ένα σύνολο %d αρχείων.\n"
+
+msgid "Write Error"
+msgstr "Σφάλμα εγγραφής"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Προφίλ Yahoo! Ιαπωνίας"
@@ -9847,22 +9765,17 @@ msgstr "Φωνές"
 msgid "Webcams"
 msgstr "Ιστοκάμερες"
 
+msgid "Connection problem"
+msgstr "Πρόβλημα σύνδεσης"
+
 msgid "Unable to fetch room list."
 msgstr "Αδύνατη η λήψη της λίστας δωματίων."
 
 msgid "User Rooms"
 msgstr "Δωμάτια χρηστών"
 
-msgid "Connection problem with the YCHT server."
-msgstr "Πρόβλημα σύνδεσης με τον εξυπηρετητή YCHT."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"Η σύνδεση με τον εξυπηρετητή χάθηκε\n"
-"%s"
+msgid "Connection problem with the YCHT server"
+msgstr "Πρόβλημα σύνδεσης με τον εξυπηρετητή YCHT"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -9982,23 +9895,15 @@ msgid "Exposure"
 msgstr "Έκθεση"
 
 #, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"Αδυναμία δημιουργίας υποδοχέα\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
-msgstr "Αδυναμία ανάλυσης της ανταπόκρισης του διακομιστή HTTP: %s\n"
+msgid "Unable to parse response from HTTP proxy: %s"
+msgstr "Αδυναμία ανάλυσης της ανταπόκρισης του διακομιστή HTTP: %s"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "Σφάλμα σύνδεσης διαμεσολαβητή HTTP %d"
 
 #, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 "Άρνηση πρόσβασης: ο διαμεσολαβητής HTTP απαγορεύει την σηράγγωση της θύρας %"
 "d."
@@ -10006,9 +9911,6 @@ msgstr ""
 #, c-format
 msgid "Error resolving %s"
 msgstr "Σφάλμα εύρεσης του %s"
-
-msgid "Could not resolve host name"
-msgstr "Δεν ήταν δυνατή η εύρεση του ονόματος του κεντρικού υπολογιστή"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10096,9 +9998,6 @@ msgstr "Μην ενοχλείτε"
 msgid "Extended away"
 msgstr "Πολύ απών"
 
-msgid "Mobile"
-msgstr "Με φορητή συσκευή"
-
 msgid "Listening to music"
 msgstr "Ακούει μουσική"
 
@@ -10139,18 +10038,6 @@ msgstr "+++ %s δεν είναι πια ανενεργός"
 #, c-format
 msgid "%x %X"
 msgstr "%x %X"
-
-#, c-format
-msgid "Error Reading %s"
-msgstr "Σφάλμα ανάγνωσης του %s"
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
-msgstr ""
-"Ένα σφάλμα συνέβη κατά την ανάγνωση του %s σας.  Δεν φορτώθηκε, και το παλιό "
-"αρχείο μετονομάστηκε σε %s~."
 
 msgid "Calculating..."
 msgstr "Υπολογισμός..."
@@ -10259,6 +10146,18 @@ msgstr "Άρνηση σύνδεσης."
 msgid "Address already in use."
 msgstr "Η διεύθυνση ήδη χρησιμοποιείται."
 
+#, c-format
+msgid "Error Reading %s"
+msgstr "Σφάλμα ανάγνωσης του %s"
+
+#, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+"Ένα σφάλμα συνέβη κατά την ανάγνωση του %s σας.  Δεν φορτώθηκε, και το παλιό "
+"αρχείο μετονομάστηκε σε %s~."
+
 msgid "Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου"
 
@@ -10301,10 +10200,8 @@ msgstr "Ειδοποιήσεις νέας α_λληλογραφίας"
 msgid "Use this buddy _icon for this account:"
 msgstr "Χρήση αυτού του _εικονιδίου φίλου για αυτόν το λογαριασμό."
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "Επιλογές %s"
+msgid "Ad_vanced"
+msgstr "_Για προχωρημένους"
 
 msgid "Use GNOME Proxy Settings"
 msgstr "Χρήση ρυθμίσεων διαμεσολαβητή GNOME"
@@ -10339,9 +10236,6 @@ msgstr "Αν κοιτάξεις από πραγματικά πολύ κοντά"
 msgid "you can see the butterflies mating"
 msgstr "θα μπορέσεις να δεις τις πεταλούδες να ζευγαρώνουν"
 
-msgid "Proxy Options"
-msgstr "Επιλογές διαμεσολαβητή"
-
 msgid "Proxy _type:"
 msgstr "_Τύπος διαμεσολαβητή:"
 
@@ -10369,8 +10263,8 @@ msgstr "_Βασικά"
 msgid "Create _this new account on the server"
 msgstr "Δημιουργία αυτού του νέου _λογαριασμού στον εξυπηρετητή"
 
-msgid "_Advanced"
-msgstr "_Για προχωρημένους"
+msgid "P_roxy"
+msgstr "_Διαμεσολαβητής"
 
 msgid "Enabled"
 msgstr "Ενεργοποιήθηκε"
@@ -10418,8 +10312,8 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Παρακαλούμε ανανεώστε τα απαραίτητα πεδία."
 
-msgid "Room _List"
-msgstr "_Λίστα δωματίων"
+msgid "A_ccount"
+msgstr "_Λογαριασμός"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10428,8 +10322,8 @@ msgstr ""
 "Παρακαλούμε εισάγετε τις κατάλληλες πληροφορίες σχετικά με τη συζήτηση που "
 "θέλετε να συμμετάσχετε.\n"
 
-msgid "_Account:"
-msgstr "_Λογαριασμός:"
+msgid "Room _List"
+msgstr "_Λίστα δωματίων"
 
 msgid "_Block"
 msgstr "_Αποκλεισμός"
@@ -10446,6 +10340,15 @@ msgstr "Λήψη _πληροφοριών"
 msgid "I_M"
 msgstr "_Μήνυμα"
 
+msgid "_Audio Call"
+msgstr "Κλήση _ήχου"
+
+msgid "Audio/_Video Call"
+msgstr "Ήχος/_Κλήση βίντεο"
+
+msgid "_Video Call"
+msgstr "Κλήση _βίντεο"
+
 msgid "_Send File..."
 msgstr "_Αποστολή αρχείου..."
 
@@ -10455,8 +10358,11 @@ msgstr "Προσθήκη ε_φόρμησης φίλου..."
 msgid "View _Log"
 msgstr "Εμφάνιση _καταγραφής"
 
-msgid "Hide when offline"
+msgid "Hide When Offline"
 msgstr ""
+
+msgid "Show When Offline"
+msgstr "Εμφάνιση και χωρίς σύνδεση"
 
 msgid "_Alias..."
 msgstr "_Γνωστός ως..."
@@ -10493,7 +10399,7 @@ msgid "Persistent"
 msgstr ""
 
 msgid "_Edit Settings..."
-msgstr "_Επεξεργασία ρυθμίσεων..."
+msgstr "_Επεξεργασία ρυ�μίσεων..."
 
 msgid "_Collapse"
 msgstr "_Σύμπτυξη"
@@ -10582,6 +10488,9 @@ msgstr "/Εργαλεία/_Εφόρμηση φίλων"
 msgid "/Tools/_Certificates"
 msgstr "/Εργαλεία/_Πιστοποιητικά"
 
+msgid "/Tools/Custom Smile_ys"
+msgstr "/Εργαλεία/Προσαρμοσμένες _φατσούλες"
+
 msgid "/Tools/Plu_gins"
 msgstr "/Εργαλεία/_Πρόσθετα"
 
@@ -10590,9 +10499,6 @@ msgstr "/Εργαλεία/Π_ροτιμήσεις"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Εργαλεία/Προσωπικό _απόρρητο"
-
-msgid "/Tools/Smile_y"
-msgstr "/Εργαλεία/Smile_y"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Εργαλεία/_Μεταφορές αρχείων"
@@ -10711,8 +10617,8 @@ msgstr "Με το χέρι"
 msgid "By status"
 msgstr "Ανά κατάσταση"
 
-msgid "By log size"
-msgstr "Ανά μέγεθος καταγραφής"
+msgid "By recent log activity"
+msgstr ""
 
 #, c-format
 msgid "%s disconnected"
@@ -10727,6 +10633,9 @@ msgstr "Επανασύνδεση"
 
 msgid "Re-enable"
 msgstr "Επανενεργοποίηση"
+
+msgid "SSL FAQs"
+msgstr "Συχνές ερωτήσεις SSL"
 
 msgid "Welcome back!"
 msgstr "Καλώς ήρθατε πίσω!"
@@ -10819,6 +10728,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "_Γνωστός ως:"
 
+msgid "_Group:"
+msgstr "_Ομάδα:"
+
 msgid "Auto_join when account becomes online."
 msgstr "Αυτόματη ε_πανασύνδεση όταν ο λογαριασμός συνδέεται."
 
@@ -10852,6 +10764,103 @@ msgstr "/Εργαλεία"
 msgid "/Buddies/Sort Buddies"
 msgstr "/Φίλοι/Ταξινόμηση φίλων"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Χρώμα παρασκηνίου"
+
+msgid "The background color for the buddy list"
+msgstr "Το χρώμα παρασκηνίου της λίστας φίλων"
+
+msgid "Layout"
+msgstr ""
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+msgid "Expanded Background Color"
+msgstr ""
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+msgid "Expanded Text"
+msgstr ""
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+msgid "Collapsed Background Color"
+msgstr ""
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+msgid "Collapsed Text"
+msgstr ""
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+msgid "Contact/Chat Background Color"
+msgstr "Χρώμα παρασκηνίου συζητήσεων/επαφών"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+msgid "Contact Text"
+msgstr "Κείμενο επαφών"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+msgid "On-line Text"
+msgstr ""
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+msgid "Away Text"
+msgstr ""
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+msgid "Off-line Text"
+msgstr ""
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+msgid "Idle Text"
+msgstr ""
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+msgid "Message Text"
+msgstr "Κείμενο μηνύματος"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+"Το κείμενο πληροφορίας για όταν μία συζήτηση έχει ένα μη αναγνωσμένο μήνυμα "
+"που αναφέρει το ψυεδώνυμό σας"
+
+msgid "The text information for a buddy's status"
+msgstr "Το κείμενο πληροφοριών για την κατάσταση ενός φίλου"
+
+msgid "Type the host name for this certificate."
+msgstr "Εισάγετε το όνομα του υπολογιστή για αυτό το πιστοποιητικό"
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Εξυπηρετητές SSL"
@@ -10870,14 +10879,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "Πρόσκληση φίλου στο δωμάτιο συζήτησης"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
-"Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε, "
-"μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
 
 msgid "_Buddy:"
 msgstr "_Φίλος:"
@@ -10907,7 +10908,7 @@ msgstr "Παράβλεψη"
 msgid "Get Away Message"
 msgstr "Λήψη μηνύματος απουσίας"
 
-msgid "Last said"
+msgid "Last Said"
 msgstr "Τελευταία φράση"
 
 msgid "Unable to save icon file to disk."
@@ -10952,6 +10953,18 @@ msgstr "/Συνομιλία/_Αποθήκευση ως..."
 
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Συνομιλία/_Καθαρισμός αναδίφησης"
+
+msgid "/Conversation/M_edia"
+msgstr "/Συνομιλία/Πολυ_μέσα"
+
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/Συνομιλία/Πολυμέσα/_Κλήση ήχου"
+
+msgid "/Conversation/Media/_Video Call"
+msgstr "/Συνομιλία/Πολυμέσα/Κλήση _βίντεο"
+
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/Συνομιλία/Πολυμέσα/Ήχος\\/Κλήση _βίντεο"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Συνομιλία/_Αποστολή αρχείου..."
@@ -11024,6 +11037,15 @@ msgstr "/Συνομιλία"
 
 msgid "/Conversation/View Log"
 msgstr "/Συνομιλία/Εμφάνιση καταγραφής"
+
+msgid "/Conversation/Media/Audio Call"
+msgstr "/Συνομιλία/Πολυμέσα/Κλήση ήχου"
+
+msgid "/Conversation/Media/Video Call"
+msgstr "/Συνομιλία/Πολυμέσα/Κλήση βίντεο"
+
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/Συνομιλία/Πολυμέσα/Ήχος\\/Κλήση βίντεο"
 
 msgid "/Conversation/Send File..."
 msgstr "/Συνομιλία/Αποστολή αρχείου..."
@@ -11114,7 +11136,7 @@ msgid "New Event"
 msgstr "Νέο γεγονός"
 
 msgid "clear: Clears all conversation scrollbacks."
-msgstr ""
+msgstr "clear: Καθαρίζει όλες τις αναδιφήσεις συνομιλιών"
 
 msgid "Confirm close"
 msgstr "Επιβεβαίωση κλεισίματος"
@@ -11207,7 +11229,10 @@ msgstr "καλλιτέχνης"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Cheung"
+
+msgid "voice and video"
+msgstr "Φωνή και βίντεο"
 
 msgid "support"
 msgstr "υποστήριξη"
@@ -11333,6 +11358,9 @@ msgstr "Ινδικά"
 msgid "Hungarian"
 msgstr "Ουγγρικά"
 
+msgid "Armenian"
+msgstr "Αρμένικα"
+
 msgid "Indonesian"
 msgstr "Ινδονησιακά"
 
@@ -11347,6 +11375,9 @@ msgstr "Γεωργιανά"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Γεωργιανοί μεταφραστές Ubuntu"
+
+msgid "Khmer"
+msgstr ""
 
 msgid "Kannada"
 msgstr ""
@@ -11368,6 +11399,9 @@ msgstr "Λιθουανικά"
 
 msgid "Macedonian"
 msgstr "Μακεδονικά (Σλαβικά)"
+
+msgid "Mongolian"
+msgstr "Μογγολικά"
 
 msgid "Bokmål Norwegian"
 msgstr ""
@@ -11422,6 +11456,9 @@ msgstr ""
 
 msgid "Swedish"
 msgstr "Σουηδικά"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr ""
@@ -11484,8 +11521,30 @@ msgstr ""
 "εγγύηση για αυτό το πρόγραμμα.<BR><BR>"
 
 #, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin στο irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Συχνές ερωτήσεις:</FONT> <A HREF=\"http://developer.pidgin."
+"im/wiki/FAQ\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+"<FONT SIZE=\"4\">Βοήθεια μέσω ηλ. ταχυδρομίου:</FONT> <A HREF=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr ""
+"<FONT SIZE=\"4\">Κανάλι IRC:</FONT> #pidgin στο irc.freenode.net<BR><BR>"
+
+#, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 
 msgid "Current Developers"
 msgstr "Υπεύθυνοι ανάπτυξης"
@@ -11497,7 +11556,7 @@ msgid "Retired Developers"
 msgstr "Υπεύθυνοι ανάπτυξης που έχουν πλέον αποσυρθεί"
 
 msgid "Retired Crazy Patch Writers"
-msgstr ""
+msgstr "Τρελοί συγγραφείς μπαλωμάτων που έχουν πλέον αποσυρθεί"
 
 msgid "Current Translators"
 msgstr "Τωρινοί μεταφραστές"
@@ -11734,9 +11793,9 @@ msgid "Color to draw hyperlinks."
 msgstr "Χρώμα για να ζωγραφιστούν οι υπερσύνδεσμοι."
 
 msgid "Hyperlink visited color"
-msgstr ""
+msgstr "Χρώμα υπερσυνδέσμου που έχει επισκεφτεί"
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr ""
 "Χρώμα για να ζωγραφιστούν οι υπερσύνδεσμοι αφού τους έχετε επισκεφτεί (ή "
 "ενεργοποιήσει)."
@@ -11777,13 +11836,19 @@ msgstr "Χρώμα που θα ζωγραφίζεται το όνομα ενός
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 msgid "Typing notification color"
 msgstr "Χρώμα ειδοποίησης πληκτρολόγησης"
 
-msgid "The color to use for the typing notification font"
+msgid "The color to use for the typing notification"
 msgstr ""
 "Το χρώμα που θα χρησιμοποιείται για τη γραμματοσειρά ειδοποίησης "
 "πληκτρολόγησης"
@@ -11797,15 +11862,6 @@ msgstr ""
 
 msgid "Enable typing notification"
 msgstr "Ενεργοποίηση ειδοποίησης πληκτρολόγησης"
-
-msgid "_Copy Email Address"
-msgstr "_Αντιγραφή διεύθυνσης email"
-
-msgid "_Open Link in Browser"
-msgstr "_Άνοιγμα στον περιηγητή"
-
-msgid "_Copy Link Location"
-msgstr "_Αντιγραφή τοποθεσίας συνδέσμου"
 
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
@@ -11849,11 +11905,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Αποθήκευση εικόνας"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Αποθήκευση εικόνας..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "Π_ροσθήκη προσαρμοσμένης φατσούλας.."
 
@@ -11942,9 +11996,6 @@ msgstr "Μείωση μεγέθους γραμματοσειράς"
 
 msgid "Font Face"
 msgstr "Είδος γραμματοσειράς"
-
-msgid "Background Color"
-msgstr "Χρώμα παρασκηνίου"
 
 msgid "Foreground Color"
 msgstr "Χρώμα προσκηνίου"
@@ -12062,6 +12113,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12079,11 +12131,13 @@ msgstr ""
 "  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       χωρίς αυτόματη είσοδο\n"
-"  -l, --login[=ΟΝΟΜΑ] αυτόματη είσοδος (το όρισμα ΟΝΟΜΑ προσδιορίζει\n"
-"                      τους λογαριασμούς που θα χρησιμοποιηθούν, χωρισμένους "
-"με κόμμα\n"
-"Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος λογαριασμός)\n"
-"  --display=DISPLAY   Οθόνη X που θα χρησιμοποιηθεί\n"
+"  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
+"ΟΝΟΜΑ προσδιορίζει\n"
+"                        τους λογαριασμούς που θα χρησιμοποιηθούν, "
+"χωρισμένους με κόμματα.\n"
+"                        Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
+"λογαριασμός)\n"
+"  --display=ΟΘΟΝΗ   Οθόνη X που θα χρησιμοποιηθεί\n"
 "  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
 
 #, c-format
@@ -12093,6 +12147,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12109,10 +12164,12 @@ msgstr ""
 "  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       χωρίς αυτόματη είσοδο\n"
-"  -l, --login[=ΟΝΟΜΑ] αυτόματη είσοδος (το όρισμα ΟΝΟΜΑ προσδιορίζει\n"
+"  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
+"ΟΝΟΜΑ προσδιορίζει\n"
 "                      τους λογαριασμούς που θα χρησιμοποιηθούν, χωρισμένους "
-"με κόμμα)\n"
-"Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος λογαριασμός)\n"
+"με κόμματα.\n"
+"                      Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
+"λογαριασμός).\n"
 "  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
 
 #, c-format
@@ -12136,14 +12193,26 @@ msgstr ""
 msgid "Pidgin"
 msgstr "Pidgin"
 
-msgid "Open All Messages"
-msgstr "Άνοιγμα όλων των μηνυμάτων"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr "Έξοδος επειδή ήδη τρέχει ένας άλλος πελάτης της libpurple.\n"
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgid "/_Media"
+msgstr "/_Πολυμέσα"
+
+msgid "/Media/_Hangup"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Έχετε αλληλογραφία!</span>\n"
-"\n"
-"%s"
+
+msgid "Calling..."
+msgstr "Κλήση..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία ήχου/βίντεο μαζί σας."
+
+#, c-format
+msgid "%s wishes to start a video session with you."
+msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία βίντεο μαζί σας."
 
 #, c-format
 msgid "%s has %d new message."
@@ -12173,6 +12242,27 @@ msgid ""
 msgstr ""
 "Έχει επιλεχθεί η 'με το χέρι' εντολή του περιηγητή, αλλά δεν έχει ορισθεί "
 "καμία εντολή."
+
+msgid "No message"
+msgstr "Χωρίς μήνυμα"
+
+msgid "Open All Messages"
+msgstr "Άνοιγμα όλων των μηνυμάτων"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Έχετε αλληλογραφία!</span>\n"
+"\n"
+"%s"
+
+msgid "New Pounces"
+msgstr "Νέες εφορμήσεις"
+
+msgid "Dismiss"
+msgstr ""
+
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr ""
 
 msgid "The following plugins will be unloaded."
 msgstr "Τα ακόλουθα πρόσθετα θα αποφορτωθούν."
@@ -12222,9 +12312,15 @@ msgstr "<b>Λεπτομέρειες προσθέτου</b>"
 msgid "Select a file"
 msgstr "Επιλογή αρχείου"
 
+msgid "Modify Buddy Pounce"
+msgstr "Επεξεργασία εφόρμησης φίλου"
+
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
 msgstr "Εφόρμηση σε"
+
+msgid "_Account:"
+msgstr "_Λογαριασμός:"
 
 msgid "_Buddy name:"
 msgstr "_Όνομα φίλου:"
@@ -12292,7 +12388,57 @@ msgstr "_Κατ' επανάληψη"
 msgid "Pounce Target"
 msgstr "Στόχος εφόρμησης"
 
-msgid "Smiley theme failed to unpack."
+#, c-format
+msgid "Started typing"
+msgstr "Ξεκίνησε να πληκτρολογεί"
+
+#, c-format
+msgid "Paused while typing"
+msgstr "Έκανε παύση κατά την πληκτρολόγηση"
+
+#, c-format
+msgid "Signed on"
+msgstr "Συνδέθηκε"
+
+#, c-format
+msgid "Returned from being idle"
+msgstr ""
+
+#, c-format
+msgid "Returned from being away"
+msgstr "Επιστρέφει από απών"
+
+#, c-format
+msgid "Stopped typing"
+msgstr "Σταμάτησε την πληκτρολόγηση"
+
+#, c-format
+msgid "Signed off"
+msgstr "Αποσυνδέθηκε"
+
+#, c-format
+msgid "Became idle"
+msgstr "Έγινε ανενεργός"
+
+#, c-format
+msgid "Went away"
+msgstr "Έγινε απών"
+
+#, c-format
+msgid "Sent a message"
+msgstr "Έστειλε ένα μήνυμα"
+
+#, c-format
+msgid "Unknown.... Please report this!"
+msgstr "Άγνωστο.... Παρακαλούμε αναφέρετέ το!"
+
+msgid "Theme failed to unpack."
+msgstr ""
+
+msgid "Theme failed to load."
+msgstr "Αποτυχία φορτώματος του θέματος"
+
+msgid "Theme failed to copy."
 msgstr ""
 
 msgid "Install Theme"
@@ -12315,6 +12461,11 @@ msgstr "Συντομεύσεις πληκτρολογίου"
 msgid "Cl_ose conversations with the Escape key"
 msgstr "_Κλείσιμο των συνομιλιών με το Escape"
 
+#. Buddy List Themes
+msgid "Buddy List Theme"
+msgstr "Θέμα λίστα φίλων"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "Εικονίδιο εργαλειοθήκης συστήματος"
 
@@ -12324,14 +12475,17 @@ msgstr "Εμφάνιση εικονιδίου εργαλειοθήκης συσ�
 msgid "On unread messages"
 msgstr "Όταν υπάρχουν μη αναγνωσμένα μηνύματα"
 
-msgid "Conversation Window Hiding"
-msgstr "Απόκρυψη παραθύρων συνομιλιών"
+msgid "Conversation Window"
+msgstr "Παράθυρο συζήτησης"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Απόκρυψη νέων συνομιλιών άμεσων μηνυμάτων:"
 
 msgid "When away"
 msgstr "Κατά την απουσία"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "Ελαχιστοποίηση παραθύρων _νέων συνομιλιών"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12391,9 +12545,6 @@ msgstr "Χρήση ομαλής κύλισης"
 msgid "F_lash window when IMs are received"
 msgstr "Να ανα_βοσβήνει το παράθυρο όταν λαμβάνονται άμεσα μηνύματα"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "Ελαχιστοποίηση παραθύρων _νέων συνομιλιών"
-
 msgid "Minimum input area height in lines:"
 msgstr "Ελάχιστο ύψος περιοχής εισαγωγής κειμένου σε γραμμές:"
 
@@ -12401,7 +12552,7 @@ msgid "Font"
 msgstr "Γραμματοσειρά"
 
 msgid "Use document font from _theme"
-msgstr ""
+msgstr "Χρήση γραμματοσειράς κειμένου από το _θέμα"
 
 msgid "Use font from _theme"
 msgstr "Χρήση γραμματοσειράς _θέματος"
@@ -12425,14 +12576,12 @@ msgstr "Δεν είναι δυνατή η εκκίνηση του προγράμ
 msgid "Cannot start browser configuration program."
 msgstr "Δεν είναι δυνατή η εκκίνηση του προγράμματος ρυθμίσεων περιηγητή."
 
-msgid "ST_UN server:"
-msgstr "Εξυπηρετητής STUN:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Παράδειγμα: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
-msgstr "_Αυτόματος εντοπισμός διεύθυνσης IP"
+#, c-format
+msgid "Use _automatically detected IP address: %s"
+msgstr "Χρήση _αυτόματου εντοπισμού διεύθυνσης IP: %s"
 
 msgid "Public _IP:"
 msgstr "Δημόσια _IP:"
@@ -12451,6 +12600,10 @@ msgstr "_Θύρα εκκίνησης:"
 
 msgid "_End port:"
 msgstr "_Θύρα τέλους:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 msgid "Proxy Server &amp; Browser"
 msgstr ""
@@ -12479,6 +12632,10 @@ msgstr "Διαμεσολαβητής"
 
 msgid "No proxy"
 msgstr "Χωρίς διαμεσολαβητή"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr ""
 
 msgid "_User:"
 msgstr "_Χρήστης:"
@@ -12638,11 +12795,11 @@ msgstr "Απών και ανενεργός"
 msgid "Auto-away"
 msgstr "Αυτόματη απουσία"
 
-msgid "Change status when _idle"
-msgstr "Αλλαγή κατάστασης όταν είμαι _ανενεργός"
-
 msgid "_Minutes before becoming idle:"
 msgstr "_Λεπτά πριν γίνω ανενεργός:"
+
+msgid "Change status when _idle"
+msgstr "Αλλαγή κατάστασης όταν είμαι _ανενεργός"
 
 msgid "Change _status to:"
 msgstr "Αλλαγή _κατάστασης σε:"
@@ -12799,27 +12956,18 @@ msgstr "_Αποθήκευση & Χρήση"
 msgid "Status for %s"
 msgstr "Κατάσταση %s"
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+"Υπάρχει ήδη μία προσπαρμοσμένη φατσούλα για το %s. Παρακαλούμε "
+"χρησιμοποιείστε μία διαφορετική συντόμευση."
+
 msgid "Custom Smiley"
 msgstr "Προσαρμοσμένη φατσούλα"
 
-msgid "More Data needed"
-msgstr "Χρειάζονται περισσότερα δεδομένα"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Παρακαλούμε εισάγετε μία συντόμευση για να συσχετιστεί με τη φατσούλα."
-
 msgid "Duplicate Shortcut"
 msgstr "Αντιγραφή συντόμευσης"
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
-"Υπάρχει ήδη μία προσπαρμοσμένη φατσούλα για την επιλεγμένη συντόμευση. "
-"Παρακαλούμε εισάγετε μία διαφορετική συντόμευση."
-
-msgid "Please select an image for the smiley."
-msgstr "Παρακαλούμε επιλέξτε μία εικόνα για τη φατσούλα."
 
 msgid "Edit Smiley"
 msgstr "Επεξεργασία φατσούλας"
@@ -12827,18 +12975,24 @@ msgstr "Επεξεργασία φατσούλας"
 msgid "Add Smiley"
 msgstr "Προσθήκη φατσούλας"
 
-msgid "Smiley _Image"
-msgstr "Εικόνα _φατσούλας"
+msgid "_Image:"
+msgstr "Ει_κόνα:"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr "_Συντόμευση φατσούλας"
+#. Shortcut text
+msgid "S_hortcut text:"
+msgstr "_Κείμενο συντόμευσης:"
 
 msgid "Smiley"
 msgstr "Φατσούλα"
 
+msgid "Shortcut Text"
+msgstr "Κείμενο συντόμευσης"
+
 msgid "Custom Smiley Manager"
 msgstr "Διαχειριστής προσαρμοσμένων φατσουλών"
+
+msgid "Select Buddy Icon"
+msgstr "Επιλογή εικονιδίου φίλου"
 
 msgid "Click to change your buddyicon for this account."
 msgstr "Κάντε κλικ για να αλλάξετε την εικόνα φίλου για αυτό το λογαριασμό."
@@ -12926,8 +13080,8 @@ msgid "Cannot send launcher"
 msgstr "Δεν είναι δυνατή η αποστολή συντόμευσης"
 
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "Σύρατε μία συντόμευση της επιφάνειας εργασίας. Το πιθανότερο είναι να θέλετε "
 "να στείλετε το στόχο αυτής της συντόμευσης και όχι την ίδια τη συντόμευση."
@@ -12965,8 +13119,29 @@ msgstr ""
 "Αποτυχία κατά το φόρτωμα της εικόνας '%s': άγνωστη αιτία, πιθανώς ένα "
 "κατεστραμμένο αρχείο εικόνας"
 
+msgid "_Open Link"
+msgstr "_Άνοιγμα συνδέσμου"
+
+msgid "_Copy Link Location"
+msgstr "_Αντιγραφή τοποθεσίας συνδέσμου"
+
+msgid "_Copy Email Address"
+msgstr "_Αντιγραφή διεύθυνσης email"
+
+msgid "_Open File"
+msgstr "_Άνοιγμα αρχείου"
+
+msgid "Open _Containing Directory"
+msgstr "Άνοιγμα _περιεχόμενου καταλόγου"
+
 msgid "Save File"
 msgstr "Αποθήκευση αρχείου"
+
+msgid "_Play Sound"
+msgstr "Αναπαραγωγή _ήχου"
+
+msgid "_Save File"
+msgstr "_Αποθήκευση αρχείου"
 
 msgid "Select color"
 msgstr "Επιλογή χρώματος"
@@ -13055,6 +13230,64 @@ msgstr "Πρόσθετο πρόβλεψης διαθεσιμότητας επα�
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 "Εμφανίζει στατιστικές πληροφορίες σχετικά με τη διαθεσιμότητα των φίλων σας"
+
+msgid "Server name request"
+msgstr "Αίτημα ονόματος εξυπηρετητή"
+
+msgid "Enter an XMPP Server"
+msgstr "Εισάγετε έναν εξυπηρετητή XMPP"
+
+msgid "Select an XMPP server to query"
+msgstr "Επιλέξτε έναν εξυπηρετητή XMPP για ερώτημα"
+
+msgid "Find Services"
+msgstr "Εύρεση υπηρεσιών"
+
+msgid "Add to Buddy List"
+msgstr "Προσθήκη στη λίστα φίλων"
+
+msgid "Gateway"
+msgstr ""
+
+msgid "Directory"
+msgstr "Κατάλογος"
+
+msgid "PubSub Collection"
+msgstr ""
+
+msgid "PubSub Leaf"
+msgstr ""
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Περιγραφή:</b> "
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Ανακάλυψη υπηρεσιών"
+
+msgid "_Browse"
+msgstr "_Περιήγηση"
+
+msgid "Server does not exist"
+msgstr "Ο εξυπηρετητής δεν υπάρχει"
+
+msgid "Server does not support service discovery"
+msgstr "Ο εξυπηρετητής δεν επιτρέπη την ανακάλυψη υπηρεσιών"
+
+msgid "XMPP Service Discovery"
+msgstr "Ανακάλυψη υπηρεσιών XMPP"
+
+msgid "Allows browsing and registering services."
+msgstr "Επιτρέπει την περιήγηση και την εγγραφή σε υπηρεσίες."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
 
 msgid "Buddy is idle"
 msgstr "Ο φίλος είναι ανενεργός"
@@ -13461,7 +13694,7 @@ msgstr "Πρόσθετο μουσικών μηνυμάτων για συνεργ
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "Το πρόσθετο μηνυμάτων μουσικής επιτρέπει σε έναν αριθμό χρηστών να δουλεύουν "
 "ταυτόχρονα πάνω σε ένα κομμάτι μουσικής καθώς επεξεργάζονται μία κοινή "
@@ -13497,7 +13730,7 @@ msgid "Set window manager \"_URGENT\" hint"
 msgstr "Καθορισμός της υπόδειξης \"_URGENT\" του διαχειριστή παραθύρων"
 
 msgid "_Flash window"
-msgstr ""
+msgstr "_Αναβόσβημα παραθύρου"
 
 #. Raise window method button
 msgid "R_aise conversation window"
@@ -13505,7 +13738,7 @@ msgstr "Α_νύψωση παραθύρου συνομιλίας"
 
 #. Present conversation method button
 msgid "_Present conversation window"
-msgstr ""
+msgstr "_Παράθυρο τρέχουσας συνομιλίας"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -13575,12 +13808,6 @@ msgstr ""
 "- Αντιστρέφει το εισερχόμενο κείμενο\n"
 "- Στέλνει ένα μήνυμα στα άτομα της λίστας σας μόλις συνδεθούν"
 
-msgid "Cursor Color"
-msgstr "Χρώμα δείκτη ποντικιού"
-
-msgid "Secondary Cursor Color"
-msgstr "Δευτερεύον χρώμα δείκτη ποντικιού"
-
 msgid "Hyperlink Color"
 msgstr "Χρώμα υπερσυνδέσμου"
 
@@ -13589,6 +13816,9 @@ msgstr ""
 
 msgid "Highlighted Message Name Color"
 msgstr "Χρώμα ονομάτων τονισμένων μηνυμάτων"
+
+msgid "Typing Notification Color"
+msgstr "Χρώμα ειδοποίησης πληκτρολόγησης"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr ""
@@ -13619,34 +13849,20 @@ msgstr "Γραμματοσειρά περιβάλλοντος GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Θέμα κειμένου συντόμευσης GTK+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Χρώματα περιβάλλοντος"
+msgid "Disable Typing Notification Text"
+msgstr "Απενεργοποίηση κειμένου ειδοποίησης πληκτρολόγησης"
 
-msgid "Widget Sizes"
-msgstr "Μεγέθη εφαρμογιδίων"
+msgid "GTK+ Theme Control Settings"
+msgstr "Ρυθμίσεις ελέγχου θεμάτων GTK+"
+
+msgid "Colors"
+msgstr "Χρώματα"
 
 msgid "Fonts"
 msgstr "Γραμματοσειρές"
+
+msgid "Miscellaneous"
+msgstr "Διάφορα"
 
 msgid "Gtkrc File Tools"
 msgstr "Εργαλεία αρχείων Gtkrc"
@@ -13735,10 +13951,10 @@ msgstr "Κουμπί αποστολής παραθύρου συνομιλίας.
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
-"Προσθέτει ένα κουμπί αποστολής στο πεδίο εισαγωγής στο παράθυρο συνομιλίας. "
-"Προορίζεται για περιπτώσης που δεν υπάρχει πραγματικό πληκτρολόγιο."
+"Προσθέτει ένα κουμπί Αποστολή στο πεδίο εισαγωγής στο παράθυρο συνομιλίας. "
+"Προορίζεται για περιπτώσεις που δεν υπάρχει πραγματικό πληκτρολόγιο."
 
 msgid "Duplicate Correction"
 msgstr "Διόρθωση επανάληψης"
@@ -13792,6 +14008,95 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Αντικαθιστά το κείμενο στα εξερχόμενα μηνύματα σύμφωνα με ορισμένους από τον "
 "χρήστη κανόνες."
+
+msgid "Just logged in"
+msgstr "Μόλις συνδέθηκε"
+
+msgid "Just logged out"
+msgstr "Μόλις αποσυνδέθηκε"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+"Εικονίδιο για επαφή/\n"
+"Εικονίδιο για άγνωστο άτομο"
+
+msgid "Icon for Chat"
+msgstr "Εικονίδιο για συζήτηση"
+
+msgid "Ignored"
+msgstr "Παραβλέφθηκε"
+
+msgid "Founder"
+msgstr "Ιδρυτής"
+
+msgid "Operator"
+msgstr ""
+
+msgid "Half Operator"
+msgstr ""
+
+msgid "Authorization dialog"
+msgstr "Διάλογος έγκρισης"
+
+msgid "Error dialog"
+msgstr "Διάλογος σφάλματος"
+
+msgid "Information dialog"
+msgstr "Διάλογος πληροφοριών"
+
+msgid "Mail dialog"
+msgstr "Διάλογος αλληλογραφίας"
+
+msgid "Question dialog"
+msgstr "Διάλογος ερώτησης"
+
+msgid "Warning dialog"
+msgstr "Διάλογος προειδοποίησης"
+
+msgid "What kind of dialog is this?"
+msgstr "Τι είδος διαλόγου είναι αυτό;"
+
+msgid "Status Icons"
+msgstr "Εικονίδια κατάστασης"
+
+msgid "Chatroom Emblems"
+msgstr "Εμβλήματα δωματίων συζητήσεων"
+
+msgid "Dialog Icons"
+msgstr "Εικονίδια διαλόγων"
+
+msgid "Pidgin Icon Theme Editor"
+msgstr "Έλεγχος θεμάτων εικονιδίων Pidgin"
+
+msgid "Contact"
+msgstr "Επικοινωνία"
+
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Επεξεργαστής θεμάτων λίστα φίλων Pidgin"
+
+msgid "Edit Buddylist Theme"
+msgstr "Επεξεργασία θεμάτων λίστας φίλων"
+
+msgid "Edit Icon Theme"
+msgstr "Επεξεργασία θέματος εικονιδίων"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+msgid "Pidgin Theme Editor"
+msgstr "Επεξεργαστής θεμάτων Pidgin"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Pidgin Theme Editor."
+msgstr "Επεξεργαστής θεμάτων Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -13954,9 +14259,6 @@ msgstr "_Διατήρηση παραθύρου λίστας φίλων στην 
 msgid "Only when docked"
 msgstr "Μόνο όταν είναι προσαρτημένο"
 
-msgid "_Flash window when chat messages are received"
-msgstr "Να ανα_βοσβήνει το παράθυρο όταν λαμβάνονται νέα μηνύματα συζήτησης"
-
 msgid "Windows Pidgin Options"
 msgstr "Επιλογές Windows Pidgin"
 
@@ -13964,10 +14266,10 @@ msgid "Options specific to Pidgin for Windows."
 msgstr "Επιλογές ειδικά για το Pidgin για Windows."
 
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
-"Παρέχει επιλογές ειδικά για το Windows Pidgin, όπως είναι η προσάρτηση της "
-"λίστας φίλων."
+"Παρέχει επιλογές ειδικά για το Pidgin για Windows, όπως είναι η προσάρτηση "
+"της λίστας φίλων."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Αποσυνδέθηκε.</font>"
@@ -14007,6 +14309,426 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Αυτό το πρόσθετο είναι χρήσιμο για την αποσφαλμάτωση εξυπηρετητών και "
 "πελατών XMPP."
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Διαμεσολαβητής"
+
+#~ msgid "Cannot open socket"
+#~ msgstr "Δεν είναι δυνατό το άνοιγμα του υποδοχέα"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "Δεν ήταν δυνατή η ακρόαση του υποδοχέα"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "Αδυναμία ανάγνωσης υποδοχέα"
+
+#~ msgid "Connection failed."
+#~ msgstr "Αποτυχία σύνδεσης."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "Ο εξυπηρετητής αποσυνδέθηκε"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "Δεν ήταν δυνατή η δημιουργία υποδοχέα"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "Δεν ήταν δυνατή η σύνδεση με τον κεντρικό υπολογιστή"
+
+#~ msgid "Read error"
+#~ msgstr "Σφάλμα ανάγνωσης"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Αδυναμία δημιουργίας σύνδεσης με τον εξυπηρετητή:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "Σφάλμα εγγραφής"
+
+#~ msgid "Last Activity"
+#~ msgstr "Τελευταία ενέργεια"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Συζήτηση πολλών ατόμων"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "User Location"
+#~ msgstr "Τοποθεσία χρήστη"
+
+#~ msgid "User Avatar"
+#~ msgstr "Εικόνα χρήστη"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Ειδοποιήσεις κατάστασης συζήτησης"
+
+#~ msgid "Software Version"
+#~ msgstr "Έκδοση λογισμικού"
+
+#~ msgid "User Mood"
+#~ msgstr "Διάθεση χρήστη"
+
+#~ msgid "User Activity"
+#~ msgstr "Δραστηριότητα χρήστη"
+
+#~ msgid "User Profile"
+#~ msgstr "Προφίλ χρήστη"
+
+#~ msgid "User Nickname"
+#~ msgstr "Όνομα χρήστη"
+
+#~ msgid "Message Receipts"
+#~ msgstr "Λήψεις μηνυμάτων"
+
+#~ msgid "User Chatting"
+#~ msgstr "Ο χρήστης συζητάει"
+
+#~ msgid "User Browsing"
+#~ msgstr "Ο χρήστης περιηγείται"
+
+#~ msgid "User Gaming"
+#~ msgstr "Ο χρήστης παίζει"
+
+#~ msgid "User Viewing"
+#~ msgstr "Ο χρήστεις προβάλλει"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "Καθυστερημένη παράδοση"
+
+#~ msgid "Read Error"
+#~ msgstr "Σφάλμα ανάγνωσης"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "Αποτυχία σύνδεσης με τον εξυπηρετητή."
+
+#~ msgid "Read buffer full (2)"
+#~ msgstr "Η ενδιάμεση μνήμη ανάγνωσης είναι γεμάτη (2)"
+
+#~ msgid "Unparseable message"
+#~ msgstr "Μη αναλυόμενο μήνυμα"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Αδυναμία σύνδεσης στον υπολογιστή: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "Η σύνδεση απέτυχε (%s)."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "Αποσυνδεθήκατε επειδή είστε συνδεδεμένοι από άλλο σταθμό εργασίας."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "Σφάλμα. Δεν είναι εγκατεστημένη η υποστήριξη SSL."
+
+#~ msgid "Incorrect password."
+#~ msgstr "Λανθασμένος κωδικός."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Δεν ήταν δυνατή η σύνδεση με τον εξυπηρετητή BOS:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "Αποσυνδεθήκατε πολύ γρήγορα.  Ελέγξτε το %s για αναβαθμίσεις."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "Δεν ήταν δυνατή η σύνδεση"
+
+#~ msgid "Invalid username."
+#~ msgstr "Μη έγκυρο όνομα χρήστη."
+
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "Δεν ήταν δυνατή η αποκρυπτογράφηση της απάντησης του εξυπηρετητή"
+
+#~ msgid "Connection lost"
+#~ msgstr "Η σύνδεση χάθηκε"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "Δεν ήταν δυνατή η εύρεση του κεντρικού υπολογιστή"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "Η σύνδεση έκλεισε (γίνεται εγγραφή)"
+
+#~ msgid "Connection reset"
+#~ msgstr "Επαναφορά σύνδεσης"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Σφάλμα ανάγνωσης από τον υποδοχέα: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "Αδύνατη η σύνδεση με τον κεντρικό υπολογιστή"
+
+#~ msgid "Could not write"
+#~ msgstr "Δεν ήταν δυνατή η εγγραφή"
+
+#~ msgid "Could not connect"
+#~ msgstr "Δεν ήταν δυνατή η σύνδεση"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "Δεν ήταν δυνατή η δημιουργία υποδοχέα ακρόασης"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "Δεν ήταν δυνατή η εύρεση του ονόματος του κεντρικού υπολογιστή"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Λανθασμένος κωδικός."
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Αδυναμία δημιουργίας σύνδεσης με %s:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo Ιαπωνίας"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "Εξυπηρετητής τηλεειδοποίησης Ιαπωνίας"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "Εξυπηρετητής μεταφοράς αρχείων Ιαπωνίας"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Η σύνδεση με τον εξυπηρετητή χάθηκε\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "Δεν ήταν δυνατή η εύρεση του ονόματος του κεντρικού υπολογιστή"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "Ο εξυπηρετητής απαιτεί TLS/SSL για να γίνει σύνδεση.  Δε βρέθηκε "
+#~ "υποστήριξη TLS/SSL."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Απόκρυψη παραθύρων συνομιλιών"
+
+#~ msgid "More Data needed"
+#~ msgstr "Χρειάζονται περισσότερα δεδομένα"
+
+#~ msgid "Please provide a shortcut to associate with the smiley."
+#~ msgstr ""
+#~ "Παρακαλούμε εισάγετε μία συντόμευση για να συσχετιστεί με τη φατσούλα."
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Παρακαλούμε επιλέξτε μία εικόνα για τη φατσούλα."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Ενεργοποίηση ποιανού ID;"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Χρώμα δείκτη ποντικιού"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Δευτερεύον χρώμα δείκτη ποντικιού"
+
+#~ msgid "Interface colors"
+#~ msgstr "Χρώματα περιβάλλοντος"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Μεγέθη εφαρμογιδίων"
+
+#~ msgid "Invite message"
+#~ msgstr "Μήνυμα πρόσκλησης"
+
+#~ msgid ""
+#~ "Please enter the name of the user you wish to invite,\n"
+#~ "along with an optional invite message."
+#~ msgstr ""
+#~ "Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε,\n"
+#~ "μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
+
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "Αδύνατη η λήψη ενός βιβλίου διευθύνσεων του MSN"
+
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Αποσυνδεθήκατε πολύ γρήγορα.  Ίσως να θέλετε να χρησιμοποιήσετε το TOC "
+#~ "μέχρι να διορθωθεί αυτό.  Ελέγξτε το %s για αναβαθμίσεις."
+
+#~ msgid "Looking up %s"
+#~ msgstr "Εύρεση του %s"
+
+#~ msgid "Connect to %s failed"
+#~ msgstr "Αποτυχία σύνδεσης με %s"
+
+#~ msgid "Signon: %s"
+#~ msgstr "Σύνδεση: %s"
+
+#~ msgid "Unable to write file %s."
+#~ msgstr "Αδύνατη η εγγραφή του αρχείου %s."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "Αδύνατη η ανάγνωση του αρχείου %s."
+
+#~ msgid "Message too long, last %s bytes truncated."
+#~ msgstr "Πολύ μεγάλο μήνυμα, τα τελευταία %s bytes αποκόπηκαν."
+
+#~ msgid "%s not currently logged in."
+#~ msgstr "%s δεν είναι συνδεδεμένος."
+
+#~ msgid "Warning of %s not allowed."
+#~ msgstr "Η προειδοποίηση του %s δεν επιτρέπεται."
+
+#~ msgid ""
+#~ "A message has been dropped, you are exceeding the server speed limit."
+#~ msgstr ""
+#~ "Το μήνυμα απορρίφθηκε, ξεπεράσατε το όριο ταχύτητας του εξυπηρετητή."
+
+#~ msgid "Chat in %s is not available."
+#~ msgstr "Η συζήτηση στο %s δεν είναι διαθέσιμη."
+
+#~ msgid "You are sending messages too fast to %s."
+#~ msgstr "Στέλνετε πολύ γρήγορα μηνύματα σε %s."
+
+#~ msgid "You missed an IM from %s because it was too big."
+#~ msgstr "Χάσατε ένα μήνυμα από %s επειδή ήταν πολύ μεγάλο."
+
+#~ msgid "You missed an IM from %s because it was sent too fast."
+#~ msgstr "Χάσατε ένα άμεσο μήνυμα από %s επειδή στάλθηκε πολύ γρήγορα."
+
+#~ msgid "Failure."
+#~ msgstr "Αποτυχία."
+
+#~ msgid "Too many matches."
+#~ msgstr "Πάρα πολλές αντιστοιχίες."
+
+#~ msgid "Dir service temporarily unavailable."
+#~ msgstr "Η υπηρεσία καταλόγου είναι προσωρινά μη διαθέσιμη."
+
+#~ msgid "Email lookup restricted."
+#~ msgstr "Απαγορεύεται η εύρεση email."
+
+#~ msgid "Keyword ignored."
+#~ msgstr "Η λέξη-κλειδί αγνοήθηκε."
+
+#~ msgid "No keywords."
+#~ msgstr "Δεν υπάρχουν λέξεις κλειδιά."
+
+#~ msgid "User has no directory information."
+#~ msgstr "Ο χρήστης δεν έχει πληροφορίες καταλόγου."
+
+#~ msgid "Country not supported."
+#~ msgstr "Η χώρα δεν υποστηρίζεται."
+
+#~ msgid "Failure unknown: %s."
+#~ msgstr "Άγνωστη αποτυχία: %s."
+
+#~ msgid "Incorrect username or password."
+#~ msgstr "Λανθασμένο όνομα χρήστη ή κωδικός."
+
+#~ msgid "The service is temporarily unavailable."
+#~ msgstr "Η υπηρεσία είναι προσωρινά μη διαθέσιμη."
+
+#~ msgid "Your warning level is currently too high to log in."
+#~ msgstr "Έχετε πολύ υψηλό επίπεδο προειδοποίησης για να συνδεθείτε."
+
+#~ msgid ""
+#~ "You have been connecting and disconnecting too frequently.  Wait ten "
+#~ "minutes and try again.  If you continue to try, you will need to wait "
+#~ "even longer."
+#~ msgstr ""
+#~ "Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα.  Περιμένετε δέκα λεπτά και "
+#~ "προσπαθήστε ξανά.  Αν συνεχίσετε να προσπαθείτε, θα χρειαστεί να "
+#~ "περιμένετε ακόμα περισσότερο."
+
+#~ msgid "An unknown signon error has occurred: %s."
+#~ msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
+
+#~ msgid "An unknown error, %d, has occurred.  Info: %s"
+#~ msgstr "Ένα άγνωστο σφάλμα, %d, συνέβη.  Πληροφορίες: %s"
+
+#~ msgid "Invalid Groupname"
+#~ msgstr "Μη έγκυρο όνομα ομάδας"
+
+#~ msgid "Connection Closed"
+#~ msgstr "Η σύνδεση έκλεισε"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "Αναμονή απάντησης..."
+
+#~ msgid "TOC has come back from its pause. You may now send messages again."
+#~ msgstr ""
+#~ "Το TOC επέστρεψε από την παύση του. Τώρα μπορείτε να στείλετε μηνύματα "
+#~ "ξανά."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "Επιτυχής αλλαγή κωδικού"
+
+#~ msgid "Get Dir Info"
+#~ msgstr "Λήψη πληροφοριών καταλόγου"
+
+#~ msgid "Set Dir Info"
+#~ msgstr "Ορισμός πληροφοριών καταλόγου"
+
+#~ msgid "Could not open %s for writing!"
+#~ msgstr "Αδύνατο το άνοιγμα του %s για εγγραφή!"
+
+#~ msgid "File transfer failed; other side probably canceled."
+#~ msgstr ""
+#~ "Αποτυχία μεταφοράς αρχείου. Πιθανώς να ακυρώθηκε από την άλλη πλευρά."
+
+#~ msgid "Could not connect for transfer."
+#~ msgstr "Δεν ήταν δυνατή η σύνδεση για τη μεταφορά."
+
+#~ msgid "Could not write file header.  The file will not be transferred."
+#~ msgstr ""
+#~ "Δεν ήταν δυνατή η εγγραφή της κεφαλίδας του αρχείου.  Το αρχείο δε θα "
+#~ "μεταφερθεί."
+
+#~ msgid "Save As..."
+#~ msgstr "Αποθήκευση ως..."
+
+#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+#~ msgstr[0] "%s ζητά %s την αποδοχή %d αρχείου: %s (%.2f %s)%s%s"
+#~ msgstr[1] "%s ζητά %s την αποδοχή %d αρχείων: %s (%.2f %s)%s%s"
+
+#~ msgid "%s requests you to send them a file"
+#~ msgstr "%s ζητά να του στείλετε ένα αρχείο"
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "Πρόσθετο πρωτοκόλλου TOC"
+
+#~ msgid "%s Options"
+#~ msgstr "Επιλογές %s"
+
+#~ msgid "Proxy Options"
+#~ msgstr "Επιλογές διαμεσολαβητή"
+
+#~ msgid "By log size"
+#~ msgstr "Ανά μέγεθος καταγραφής"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_Άνοιγμα στον περιηγητή"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "Εξυπηρετητής STUN:"
+
+#~ msgid "Smiley _Image"
+#~ msgstr "Εικόνα _φατσούλας"
+
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "_Συντόμευση φατσούλας"
+
+#~ msgid "_Flash window when chat messages are received"
+#~ msgstr "Να ανα_βοσβήνει το παράθυρο όταν λαμβάνονται νέα μηνύματα συζήτησης"
 
 #, fuzzy
 #~ msgid "Connection to server lost (no data received within %d second)"
@@ -14213,9 +14935,6 @@ msgstr ""
 #~ msgid "developer"
 #~ msgstr "υπεύθυνος ανάπτυξης"
 
-#~ msgid "XMPP developer"
-#~ msgstr "υπεύθυνος ανάπτυξης XMPP"
-
 #~ msgid "Artists"
 #~ msgstr "Καλλιτέχνες"
 
@@ -14298,9 +15017,6 @@ msgstr ""
 #~ "Το αίτημά σας να συμμετάσχετε στην ομάδα %d εγκρίθηκε από το διαχειριστή %"
 #~ "d"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "Αυτή η ομάδα προστέθηκε στη λίστα φίλων σας"
-
 #~ msgid "I am applying to join"
 #~ msgstr "Κάνω αίτηση για συμμετοχή"
 
@@ -14321,9 +15037,6 @@ msgstr ""
 
 #~ msgid "Unable to login. Check debug log."
 #~ msgstr "Αδυναμία εισόδου. Ελέγξτε την καταγραφή αποσφαλμάτωσης."
-
-#~ msgid "Unable to login"
-#~ msgstr "Αδυναμία εισόδου"
 
 #~ msgid "TCP Address"
 #~ msgstr "Διεύθυνση TCP"
@@ -14359,9 +15072,6 @@ msgstr ""
 #~ "προσθέσετε στη λίστα φίλων σας. Μπορείτε προαιρετικά να εισάγετε πως θα "
 #~ "είναι γνωστός ή ένα ψευδώνυμο. Το πως θα είναι γνωστός θα εμφανίζεται στη "
 #~ "θέση του ονόματος λογαριασμού όποτε αυτό είναι δυνατό.\n"
-
-#~ msgid "A_ccount:"
-#~ msgstr "_Λογαριασμός:"
 
 #~ msgid "_Screen name:"
 #~ msgstr "Εμ_φανιζόμενο όνομα:"

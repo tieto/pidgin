@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_AUTH_H_
-#define _PURPLE_JABBER_AUTH_H_
+#ifndef PURPLE_JABBER_AUTH_H_
+#define PURPLE_JABBER_AUTH_H_
 
 #include "jabber.h"
 #include "xmlnode.h"
@@ -32,4 +32,4 @@ void jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet);
 void jabber_auth_handle_success(JabberStream *js, xmlnode *packet);
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet);
 
-#endif /* _PURPLE_JABBER_AUTH_H_ */
+#endif /* PURPLE_JABBER_AUTH_H_ */

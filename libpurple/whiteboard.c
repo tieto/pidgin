@@ -115,7 +115,7 @@ PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, co
 	{
 		wb = l->data;
 
-		if(wb->account == account && !strcmp(wb->who, who))
+		if(wb->account == account && purple_strequal(wb->who, who))
 			return wb;
 
 		l = l->next;

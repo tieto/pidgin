@@ -13,7 +13,7 @@
 #define UNREAD_MAIL 0x02
 #define NEW_MAIL    0x04
 
-static guint32 timer = 0;
+static guint timer = 0;
 static GtkWidget *mail = NULL;
 
 static gint
@@ -93,7 +93,7 @@ signon_cb(PurpleConnection *gc)
 	PurpleBuddyList *list = purple_get_blist();
 	if (list && PURPLE_IS_GTK_BLIST(list) && !timer) {
 		check_timeout(NULL); /* we want the box to be drawn immediately */
-		timer = g_timeout_add(2000, check_timeout, NULL);
+		timer = purple_timeout_add_seconds(2, check_timeout, NULL);
 	}
 }
 
@@ -102,7 +102,7 @@ signoff_cb(PurpleConnection *gc)
 {
 	PurpleBuddyList *list = purple_get_blist();
 	if ((!list || !PURPLE_IS_GTK_BLIST(list) || !PIDGIN_BLIST(list)->vbox) && timer) {
-		g_source_remove(timer);
+		purple_timeout_remove(timer);
 		timer = 0;
 	}
 }
@@ -123,7 +123,7 @@ plugin_load(PurplePlugin *plugin)
 	}
 
 	if (list && PURPLE_IS_GTK_BLIST(list) && PIDGIN_BLIST(list)->vbox)
-		timer = g_timeout_add(2000, check_timeout, NULL);
+		timer = purple_timeout_add_seconds(2, check_timeout, NULL);
 
 	purple_signal_connect(conn_handle, "signed-on",
 						plugin, PURPLE_CALLBACK(signon_cb), NULL);
@@ -137,7 +137,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	if (timer)
-		g_source_remove(timer);
+		purple_timeout_remove(timer);
 	timer = 0;
 	if (mail)
 		gtk_widget_destroy(mail);

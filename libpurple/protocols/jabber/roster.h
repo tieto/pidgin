@@ -19,14 +19,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_ROSTER_H_
-#define _PURPLE_JABBER_ROSTER_H_
+#ifndef PURPLE_JABBER_ROSTER_H_
+#define PURPLE_JABBER_ROSTER_H_
 
 #include "jabber.h"
 
 void jabber_roster_request(JabberStream *js);
 
-void jabber_roster_parse(JabberStream *js, xmlnode *packet);
+void jabber_roster_parse(JabberStream *js, const char *from,
+                         JabberIqType type, const char *id, xmlnode *query);
 
 void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group);
@@ -39,4 +40,4 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group);
 
-#endif /* _PURPLE_JABBER_ROSTER_H_ */
+#endif /* PURPLE_JABBER_ROSTER_H_ */

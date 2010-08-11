@@ -91,14 +91,12 @@ bonjour_parser_element_start_libxml(void *user_data,
 		xmlnode_set_namespace(node, (const char*) namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
+			const char *name = (const char *)attributes[i];
+			const char *prefix = (const char *)attributes[i+1];
+			const char *attrib_ns = (const char *)attributes[i+2];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
-			char *attrib_ns = NULL;
-
-			if (attributes[i+2]) {
-				attrib_ns = g_strdup((char*)attributes[i+2]);
-			}
 
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
@@ -106,9 +104,8 @@ bonjour_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
 			g_free(txt);
-			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
+			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
-			g_free(attrib_ns);
 		}
 
 		bconv->current = node;

@@ -59,7 +59,6 @@ msn_command_from_string(const char *string)
 
 	if (cmd->params != NULL)
 	{
-		char *param;
 		int c;
 
 		for (c = 0; cmd->params[c]; c++);

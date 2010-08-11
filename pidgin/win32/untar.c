@@ -212,9 +212,11 @@ static void linkorcopy(src, dst, sym)
 	 * make sure the directory path exists.
 	 */
 	fpdst = createpath(dst);
-	if (!fpdst)
+	if (!fpdst) {
 		/* error message already given */
+		fclose(fpsrc);
 		return;
+	}
 
 #ifdef _POSIX_SOURCE
 # ifndef _WEAK_POSIX

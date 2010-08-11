@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_USERMOOD_H_
-#define _PURPLE_JABBER_USERMOOD_H_
+#ifndef PURPLE_JABBER_USERMOOD_H_
+#define PURPLE_JABBER_USERMOOD_H_
 
 #include "jabber.h"
 
@@ -34,4 +34,4 @@ void jabber_mood_set(JabberStream *js,
 		     const char *mood, /* must be one of the valid strings defined in the XEP */
 		     const char *text /* might be NULL */);
 
-#endif /* _PURPLE_JABBER_USERMOOD_H_ */
+#endif /* PURPLE_JABBER_USERMOOD_H_ */

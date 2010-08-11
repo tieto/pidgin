@@ -322,9 +322,12 @@ static void
 silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *buddy;
+	PurpleAccount *account;
 
 	buddy = (PurpleBuddy *)node;
-	silcpurple_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
+	account = purple_buddy_get_account(buddy);
+	silcpurple_buddy_keyagr_do(purple_account_get_connection(account),
+			purple_buddy_get_name(buddy), FALSE);
 }
 
 
@@ -341,12 +344,12 @@ silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(b->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(b));
 	sg = gc->proto_data;
 
 	/* Find client entry */
 	clients = silc_client_get_clients_local(sg->client, sg->conn,
-						b->name, FALSE);
+						purple_buddy_get_name(b), FALSE);
 	if (!clients)
 		return;
 
@@ -467,9 +470,9 @@ silcpurple_buddy_privkey_menu(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	silcpurple_buddy_privkey(gc, buddy->name);
+	silcpurple_buddy_privkey(gc, purple_buddy_get_name(buddy));
 }
 
 
@@ -596,9 +599,9 @@ silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	silcpurple_buddy_getkey(gc, buddy->name);
+	silcpurple_buddy_getkey(gc, purple_buddy_get_name(buddy));
 }
 
 static void
@@ -613,7 +616,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(b->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(b));
 	sg = gc->proto_data;
 
 	pkfile = purple_blist_node_get_string(node, "public-key");
@@ -624,7 +627,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 		return;
 	}
 
-	silcpurple_show_public_key(sg, b->name, public_key, NULL, NULL);
+	silcpurple_show_public_key(sg, purple_buddy_get_name(b), public_key, NULL, NULL);
 	silc_pkcs_public_key_free(public_key);
 }
 
@@ -686,6 +689,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
+		gpointer proto_data;
 		filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 		if (filename) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
@@ -695,15 +699,15 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 			return;
 		}
 
-		if (!b->proto_data) {
+		if (!(proto_data = purple_buddy_get_protocol_data(b))) {
 			g_snprintf(tmp, sizeof(tmp),
-				   _("User %s is not present in the network"), b->name);
+				   _("User %s is not present in the network"), purple_buddy_get_name(b));
 			purple_notify_error(gc, _("User Information"),
 					  _("Cannot get user information"), tmp);
 			return;
 		}
 
-		client_entry = silc_client_get_client_by_id(client, conn, b->proto_data);
+		client_entry = silc_client_get_client_by_id(client, conn, proto_data);
 		if (client_entry) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
 			   command reply. */
@@ -721,7 +725,7 @@ silcpurple_add_buddy_pk_no(SilcPurpleBuddyRes r)
 {
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not trusted"),
-		   r->b->name);
+		   purple_buddy_get_name(r->b));
 	purple_notify_error(r->client->application, _("Add Buddy"), tmp,
 			    _("You cannot receive buddy notifications until you "
 			      "import his/her public key.  You can use the Get Public Key "
@@ -1033,7 +1037,7 @@ silcpurple_add_buddy_ask_import(void *user_data, const char *name)
 
 	/* Now verify the public key */
 	r->offline_pk = silc_pkcs_public_key_encode(r->public_key, &r->offline_pk_len);
-	silcpurple_verify_public_key(r->client, r->conn, r->b->name,
+	silcpurple_verify_public_key(r->client, r->conn, purple_buddy_get_name(r->b),
 				     SILC_CONN_CLIENT, r->public_key,
 				     silcpurple_add_buddy_save, r);
 }
@@ -1071,7 +1075,7 @@ silcpurple_add_buddy_ask_pk(SilcPurpleBuddyRes r)
 {
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not present in the network"),
-		   r->b->name);
+		   purple_buddy_get_name(r->b));
 	purple_request_action(r->client->application, _("Add Buddy"), tmp,
 			      _("To add the buddy you must import his/her public key. "
 				"Press Import to import a public key."), 0,
@@ -1209,6 +1213,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 	const char *filename;
 	SilcClientEntry client_entry = NULL;
 	SilcUInt16 cmd_ident;
+	const char *name;
 
 	filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 
@@ -1246,17 +1251,19 @@ silcpurple_add_buddy_resolved(SilcClient client,
 	silc_dlist_start(clients);
 	client_entry = silc_dlist_get(clients);
 
+	name = purple_buddy_get_name(b);
+
 	/* If we searched using public keys and more than one entry was found
 	   the same person is logged on multiple times. */
-	if (silc_dlist_count(clients) > 1 && r->pubkey_search && b->name) {
+	if (silc_dlist_count(clients) > 1 && r->pubkey_search && name) {
 		if (r->init) {
 			/* Find the entry that closest matches to the
 			   buddy nickname. */
 			SilcClientEntry entry;
 			silc_dlist_start(clients);
 			while ((entry = silc_dlist_get(clients))) {
-				if (!g_ascii_strncasecmp(b->name, entry->nickname,
-						 strlen(b->name))) {
+				if (!g_ascii_strncasecmp(name, entry->nickname,
+						 strlen(name))) {
 					client_entry = entry;
 					break;
 				}
@@ -1271,7 +1278,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 	/* The client was found.  Now get its public key and verify
 	   that before adding the buddy. */
 	memset(&userpk, 0, sizeof(userpk));
-	b->proto_data = silc_memdup(&client_entry->id, sizeof(client_entry->id));
+	purple_buddy_set_protocol_data(b, silc_memdup(&client_entry->id, sizeof(client_entry->id)));
 	r->client_id = client_entry->id;
 
 	/* Get the public key from attributes, if not present then
@@ -1335,7 +1342,7 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 	SilcClientConnection conn = sg->conn;
 	SilcPurpleBuddyRes r;
 	SilcBuffer attrs;
-	const char *filename, *name = b->name;
+	const char *filename, *name = purple_buddy_get_name(b);
 
 	r = silc_calloc(1, sizeof(*r));
 	if (!r)
@@ -1390,45 +1397,33 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 
 void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	silcpurple_add_buddy_i(gc, buddy, FALSE);
+	/* Don't add if the buddy is already on the list.
+	 *
+	 * SILC doesn't have groups, so we also don't need to do anything
+	 * for a move. */
+	if (purple_buddy_get_protocol_data(buddy) == NULL)
+		silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
 void silcpurple_send_buddylist(PurpleConnection *gc)
 {
-	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *buddy;
+	GSList *buddies;
 	PurpleAccount *account;
 
 	account = purple_connection_get_account(gc);
 
-	if ((blist = purple_get_blist()) != NULL)
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies))
 	{
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
-		{
-			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-			{
-				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-				{
-					if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					buddy = (PurpleBuddy *)bnode;
-					if (purple_buddy_get_account(buddy) == account)
-						silcpurple_add_buddy_i(gc, buddy, TRUE);
-				}
-			}
-		}
+		PurpleBuddy *buddy = buddies->data;
+		silcpurple_add_buddy_i(gc, buddy, TRUE);
 	}
 }
 
 void silcpurple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 			   PurpleGroup *group)
 {
-	silc_free(buddy->proto_data);
+	silc_free(purple_buddy_get_protocol_data(buddy));
 }
 
 void silcpurple_idle_set(PurpleConnection *gc, int idle)
@@ -1469,10 +1464,12 @@ void silcpurple_idle_set(PurpleConnection *gc, int idle)
 
 char *silcpurple_status_text(PurpleBuddy *b)
 {
-	SilcPurple sg = b->account->gc->proto_data;
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcClientID *client_id = b->proto_data;
+	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
 	SilcClientEntry client_entry;
 	SilcAttributePayload attr;
 	SilcAttributeMood mood = 0;
@@ -1533,10 +1530,12 @@ char *silcpurple_status_text(PurpleBuddy *b)
 
 void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
-	SilcPurple sg = b->account->gc->proto_data;
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcClientID *client_id = b->proto_data;
+	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
 	SilcClientEntry client_entry;
 	char *moodstr, *statusstr, *contactstr, *langstr, *devicestr, *tzstr, *geostr;
 	char tmp[256];
@@ -1610,12 +1609,12 @@ silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	b = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(b->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(b));
 	sg = gc->proto_data;
 
 	/* Call KILL */
 	silc_client_command_call(sg->client, sg->conn, NULL, "KILL",
-				 b->name, "Killed by operator", NULL);
+				 purple_buddy_get_name(b), "Killed by operator", NULL);
 }
 
 typedef struct {
@@ -1633,7 +1632,8 @@ silcpurple_buddy_wb(PurpleBlistNode *node, gpointer data)
 
 GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 {
-	PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	SilcPurple sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
 	const char *pkfile = NULL;
@@ -1645,7 +1645,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 	pkfile = purple_blist_node_get_string((PurpleBlistNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
 						    sg->conn,
-						    buddy->proto_data);
+						    purple_buddy_get_protocol_data(buddy));
 
 	if (client_entry &&
 	    silc_client_private_message_key_is_set(sg->client,

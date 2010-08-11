@@ -236,7 +236,7 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (strcmp(c->cmd, cmd) != 0)
+		if (!purple_strequal(c->cmd, cmd))
 			continue;
 
 		found = TRUE;
@@ -250,8 +250,8 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
 
 		right_type = TRUE;
 
-		if ((c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
-		    (strcmp(c->prpl_id, prpl_id) != 0))
+		if ((c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) &&
+		    !purple_strequal(c->prpl_id, prpl_id))
 			continue;
 
 		right_prpl = TRUE;
@@ -320,8 +320,8 @@ GList *purple_cmd_list(PurpleConversation *conv)
 			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
-		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
-		    (strcmp(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))) != 0))
+		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) &&
+		    !purple_strequal(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))))
 			continue;
 
 		ret = g_list_append(ret, c->cmd);
@@ -342,7 +342,7 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd)
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (cmd && (strcmp(cmd, c->cmd) != 0))
+		if (cmd && !purple_strequal(cmd, c->cmd))
 			continue;
 
 		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM))
@@ -352,8 +352,8 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd)
 			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
-		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
-		    (strcmp(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))) != 0))
+		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) &&
+		    !purple_strequal(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))))
 			continue;
 
 		ret = g_list_append(ret, c->help);

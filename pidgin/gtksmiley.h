@@ -25,8 +25,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PIDGIN_GTKSMILEY_H_
-#define _PIDGIN_GTKSMILEY_H_
+#ifndef PIDGIN_GTKSMILEY_H
+#define PIDGIN_GTKSMILEY_H
 
 #include "smiley.h"
 
@@ -62,7 +62,7 @@ void pidgin_smileys_uninit(void);
  *
  * @constreturn A GtkIMHmlSmiley list
  */
-GSList* pidgin_smileys_get_all(void);
+GSList *pidgin_smileys_get_all(void);
 
 /******************************************************************************
  * Smiley Manager
@@ -100,4 +100,15 @@ void pidgin_smiley_editor_set_shortcut(PidginSmiley *editor, const gchar *shortc
  */
 void pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image);
 
-#endif /* _PIDGIN_GTKSMILEY_H_*/
+/**
+ * Sets the image data in a smiley add dialog
+ *
+ * @param editor A smiley editor dialog
+ * @param data A pointer to smiley's data
+ * @param datasize The size of smiley's data
+ *
+ * @since 2.6.0
+ */
+void pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer *data, gsize datasize);
+
+#endif /* PIDGIN_GTKSMILEY_H */

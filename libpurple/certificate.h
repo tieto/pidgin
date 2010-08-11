@@ -60,7 +60,7 @@ typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificati
 typedef void (*PurpleCertificateVerifiedCallback)
 		(PurpleCertificateVerificationStatus st,
 		 gpointer userdata);
-							  
+
 /** A certificate instance
  *
  *  An opaque data structure representing a single certificate under some
@@ -96,7 +96,7 @@ struct _PurpleCertificatePool
 
 	/** Internal pool data */
 	gpointer data;
-	
+
 	/**
 	 * Set up the Pool's internal state
 	 *
@@ -249,7 +249,7 @@ struct _PurpleCertificateScheme
 
 	/** Retrieve the certificate activation/expiration times */
 	gboolean (* get_times)(PurpleCertificate *crt, time_t *activation, time_t *expiration);
-	
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -276,7 +276,7 @@ struct _PurpleCertificateVerifier
 
 	/** Name of the Verifier - case insensitive */
 	gchar *name;
-	
+
 	/**
 	 * Start the verification process
 	 *
@@ -326,14 +326,14 @@ struct _PurpleCertificateVerificationRequest
 	 * For X.509 certificates, this is the Common Name
 	 */
 	gchar *subject_name;
-	
+
 	/** List of certificates in the chain to be verified (such as that returned by purple_ssl_get_peer_certificates )
 	 *
 	 * This is most relevant for X.509 certificates used in SSL sessions.
 	 * The list order should be: certificate, issuer, issuer's issuer, etc.
 	 */
 	GList *cert_chain;
-	
+
 	/** Internal data used by the Verifier code */
 	gpointer data;
 
@@ -437,10 +437,32 @@ purple_certificate_destroy_list (GList * crt_list);
  *
  * @return TRUE if 'crt' has a valid signature made by 'issuer',
  *         otherwise FALSE
- * @todo Find a way to give the reason (bad signature, not the issuer, etc.) 
+ * @todo Find a way to give the reason (bad signature, not the issuer, etc.)
  */
 gboolean
 purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
+
+/**
+ * Check that a certificate chain is valid and, if not, the failing certificate.
+ *
+ * Uses purple_certificate_signed_by() to verify that each PurpleCertificate
+ * in the chain carries a valid signature from the next. A single-certificate
+ * chain is considered to be valid.
+ *
+ * @param chain      List of PurpleCertificate instances comprising the chain,
+ *                   in the order certificate, issuer, issuer's issuer, etc.
+ * @param failing    A pointer to a PurpleCertificate*. If not NULL, if the
+ *                   chain fails to validate, this will be set to the
+ *                   certificate whose signature could not be validated.
+ * @return TRUE if the chain is valid. See description.
+ *
+ * @since 2.6.0
+ * @deprecated  This function will become
+ *              purple_certificate_check_signature_chain in 3.0.0
+ */
+gboolean
+purple_certificate_check_signature_chain_with_failing(GList *chain,
+		PurpleCertificate **failing);
 
 /**
  * Check that a certificate chain is valid
@@ -453,6 +475,8 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
  *                   in the order certificate, issuer, issuer's issuer, etc.
  * @return TRUE if the chain is valid. See description.
  * @todo Specify which certificate in the chain caused a failure
+ * @deprecated  This function will be removed in 3.0.0 and replaced with
+ *              purple_certificate_check_signature_chain_with_failing
  */
 gboolean
 purple_certificate_check_signature_chain(GList *chain);
@@ -523,7 +547,7 @@ purple_certificate_get_subject_name(PurpleCertificate *crt);
 /**
  * Check the subject name against that on the certificate
  * @param crt   Certificate instance
- * @param name  Name to check. 
+ * @param name  Name to check.
  * @return TRUE if it is a match, else FALSE
  */
 gboolean

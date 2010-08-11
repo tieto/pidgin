@@ -25,6 +25,7 @@
  */
 
 #include "finch.h"
+#include <internal.h>
 
 #include "gntrequest.h"
 #include "gntroomlist.h"
@@ -190,7 +191,7 @@ roomlist_selection_changed(GntWidget *widget, gpointer old, gpointer current, gp
 				label = g_strdup(iter->data ? "True" : "False");
 				break;
 			case PURPLE_ROOMLIST_FIELD_INT:
-				label = g_strdup_printf("%d", (int)iter->data);
+				label = g_strdup_printf("%d", GPOINTER_TO_INT(iter->data));
 				break;
 			case PURPLE_ROOMLIST_FIELD_STRING:
 				label = g_strdup(iter->data);

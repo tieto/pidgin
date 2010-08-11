@@ -76,6 +76,7 @@ int main(void)
 
 	srunner_add_suite(sr, cipher_suite());
 	srunner_add_suite(sr, jabber_jutil_suite());
+	srunner_add_suite(sr, yahoo_util_suite());
 	srunner_add_suite(sr, util_suite());
 
 	/* make this a libpurple "ui" */

@@ -261,9 +261,9 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 static void
 msn_session_sync_users(MsnSession *session)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleConnection *gc = purple_account_get_connection(session->account);
 	GList *to_remove = NULL;
+	GSList *buddies;
 
 	g_return_if_fail(gc != NULL);
 
@@ -271,55 +271,36 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *group_name;
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		group_name = group->name;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
-				PurpleBuddy *b;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if(purple_buddy_get_account(b) == purple_connection_get_account(gc)) {
-					MsnUser *remote_user;
-					gboolean found = FALSE;
+	for (buddies = purple_find_buddies(session->account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *buddy = buddies->data;
+		const gchar *buddy_name = purple_buddy_get_name(buddy);
+		const gchar *group_name = purple_group_get_name(purple_buddy_get_group(buddy));
+		MsnUser *remote_user;
+		gboolean found = FALSE;
 
-					remote_user = msn_userlist_find_user(session->userlist, purple_buddy_get_name(b));
+		remote_user = msn_userlist_find_user(session->userlist, buddy_name);
+		if (remote_user && remote_user->list_op & MSN_LIST_FL_OP) {
+			GList *l;
+			for (l = remote_user->group_ids; l; l = l->next) {
+				const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
+				if (name && !g_ascii_strcasecmp(group_name, name)) {
+					found = TRUE;
+					break;
+				}
+			}
 
-					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
-					{
-						GList *l;
-
-						for (l = remote_user->group_ids; l != NULL; l = l->next)
-						{
-							const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
-							if (name && !g_strcasecmp(group_name, name))
-							{
-								found = TRUE;
-								break;
-							}
-						}
-					}
-
-					/* We don't care if they're in a different group, as long as they're on the
-					 * list somewhere. If we check for the group, we cause pain, agony and
-					 * suffering for people who decide to re-arrange their buddy list elsewhere.
-					 */
-					if (!found)
-					{
-						if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
-							/* The user is not on the server list */
-							msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
-						} else {
-							/* The user is not in that group on the server list */
-							to_remove = g_list_prepend(to_remove, b);
-						}
-					}
+			/* We don't care if they're in a different group, as long as they're on the
+			 * list somewhere. If we check for the group, we cause pain, agony and
+			 * suffering for people who decide to re-arrange their buddy list elsewhere.
+			 */
+			if (!found) {
+				if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
+					/* The user is not on the server list */
+					msn_show_sync_issue(session, buddy_name, group_name);
+				} else {
+					/* The user is not in that group on the server list */
+					to_remove = g_list_prepend(to_remove, buddy);
 				}
 			}
 		}
@@ -353,15 +334,15 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_UNSUPPORTED_PROTOCOL:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Our protocol is not supported by the "
-							 "server."));
+							 "server"));
 			break;
 		case MSN_ERROR_HTTP_MALFORMED:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Error parsing HTTP."));
+			msg = g_strdup(_("Error parsing HTTP"));
 			break;
 		case MSN_ERROR_SIGN_OTHER:
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			msg = g_strdup(_("You have signed on from another location."));
+			msg = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(session->account))
 				purple_account_set_password(session->account, NULL);
 			break;
@@ -374,7 +355,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SERV_DOWN:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("The MSN servers are going down "
-							 "temporarily."));
+							 "temporarily"));
 			break;
 		case MSN_ERROR_AUTH:
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
@@ -390,13 +371,13 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			break;
 		default:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Unknown error."));
+			msg = g_strdup(_("Unknown error"));
 			break;
 	}
 
 	msn_session_disconnect(session);
 
-	purple_connection_error_reason (gc, reason, msg);
+	purple_connection_error_reason(gc, reason, msg);
 
 	g_free(msg);
 }

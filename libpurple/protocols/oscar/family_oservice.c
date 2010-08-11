@@ -825,7 +825,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 int
 aim_srv_setextrainfo(OscarData *od,
 		gboolean seticqstatus, guint32 icqstatus,
-		gboolean setavailmsg, const char *availmsg, const char *itmsurl)
+		gboolean setstatusmsg, const char *statusmsg, const char *itmsurl)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -851,30 +851,17 @@ aim_srv_setextrainfo(OscarData *od,
 	}
 #endif
 
-	if (setavailmsg)
+	if (setstatusmsg)
 	{
-		int availmsglen, itmsurllen;
+		size_t statusmsglen, itmsurllen;
 		ByteStream tmpbs;
 
-		availmsglen = (availmsg != NULL) ? strlen(availmsg) : 0;
+		statusmsglen = (statusmsg != NULL) ? strlen(statusmsg) : 0;
 		itmsurllen = (itmsurl != NULL) ? strlen(itmsurl) : 0;
 
-		byte_stream_new(&tmpbs, availmsglen + 8 + itmsurllen + 8);
-		byte_stream_put16(&tmpbs, 0x0002);
-		byte_stream_put8(&tmpbs, 0x04); /* Flags */
-		byte_stream_put8(&tmpbs, availmsglen + 4);
-		byte_stream_put16(&tmpbs, availmsglen);
-		if (availmsglen > 0)
-			byte_stream_putstr(&tmpbs, availmsg);
-		byte_stream_put16(&tmpbs, 0x0000);
-
-		byte_stream_put16(&tmpbs, 0x0009);
-		byte_stream_put8(&tmpbs, 0x04); /* Flags */
-		byte_stream_put8(&tmpbs, itmsurllen + 4);
-		byte_stream_put16(&tmpbs, itmsurllen);
-		if (itmsurllen > 0)
-			byte_stream_putstr(&tmpbs, itmsurl);
-		byte_stream_put16(&tmpbs, 0x0000);
+		byte_stream_new(&tmpbs, statusmsglen + 8 + itmsurllen + 8);
+		byte_stream_put_bart_asset_str(&tmpbs, 0x0002, statusmsg);
+		byte_stream_put_bart_asset_str(&tmpbs, 0x0009, itmsurl);
 
 		aim_tlvlist_add_raw(&tlvlist, 0x001d,
 				byte_stream_curpos(&tmpbs), tmpbs.data);

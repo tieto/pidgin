@@ -18,7 +18,7 @@ void (*displaying_userinfo)(PurpleAccount *account, const char *who, PurpleNotif
   @note
     If adding a PurpleNotifyUserInfoEntry, be sure not to free it -- PurpleNotifyUserInfo assumes responsibility for its objects.
   @param account   The account on which the info was obtained.
-  @param who       The screen name of the user whose info is to be displayed.
+  @param who       The name of the buddy whose info is to be displayed.
   @param user_info The information to be displayed, as PurpleNotifyUserInfoEntry objects
  @endsignaldef
 
@@ -30,7 +30,7 @@ void (*displaying_email_notification)(const char *subject,
                                       const char *url);
   @endsignalproto
   @signaldesc
-   Emitted before email notification is handed to the UI to display.
+   Emitted before notification of a single email is handed to the UI to display.
   @param subject   Subject of email being notified of.
   @param from      Who the email is from.
   @param to        Who the email is to.

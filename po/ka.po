@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0 CVS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-01 15:52-0800\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2006-02-05 23:19+0100\n"
 "Last-Translator: Ubuntu Georgian Translators <>\n"
 "Language-Team: Georgian <ka@li.org>\n"
@@ -32,7 +32,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
+"  -d, --debug         print debugging messages to stderr\n"
 "  -h, --help          display this help and exit\n"
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
@@ -621,18 +621,6 @@ msgid "Send To"
 msgstr "_გაგზავნა"
 
 #, fuzzy
-msgid "Invite message"
-msgstr "გახსენი ყველა შეტყობინება"
-
-msgid "Invite"
-msgstr "დაპატიჟება"
-
-msgid ""
-"Please enter the name of the user you wish to invite,\n"
-"along with an optional invite message."
-msgstr ""
-
-#, fuzzy
 msgid "Conversation"
 msgstr "საუბრები"
 
@@ -885,6 +873,43 @@ msgid "System Log"
 msgstr "სისტემის პროტოკოლი"
 
 #, fuzzy
+msgid "Calling ... "
+msgstr "გაანგარიშება..."
+
+msgid "Hangup"
+msgstr ""
+
+#. Number of actions
+#, fuzzy
+msgid "Accept"
+msgstr "_აქცეპტირება"
+
+#, fuzzy
+msgid "Reject"
+msgstr "განულება"
+
+msgid "Call in progress."
+msgstr ""
+
+msgid "The call has been terminated."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start an audio session with you."
+msgstr ""
+
+#, c-format
+msgid "%s is trying to start an unsupported media session type with you."
+msgstr ""
+
+#, fuzzy
+msgid "You have rejected the call."
+msgstr "თქვენ"
+
+msgid "call: Make an audio call."
+msgstr ""
+
+#, fuzzy
 msgid "Emails"
 msgstr "ელ.ფოსტა"
 
@@ -919,6 +944,9 @@ msgstr "დაკავშირება"
 
 msgid "IM"
 msgstr "მოკ-შე"
+
+msgid "Invite"
+msgstr "დაპატიჟება"
 
 #, fuzzy
 msgid "(none)"
@@ -1137,7 +1165,6 @@ msgstr "%s გავიდა. (%s)"
 msgid "%s has sent you a message. (%s)"
 msgstr ""
 
-#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
 
@@ -1191,7 +1218,6 @@ msgstr "_დრო სტატუსის შეცვლამდე(წუ�
 msgid "Change status to"
 msgstr "სტატუსის შეცვლა"
 
-#. Conversations
 msgid "Conversations"
 msgstr "საუბრები"
 
@@ -1528,7 +1554,6 @@ msgid ""
 msgstr ""
 "პლაგინი, ახალი საუბრის ჩართვისას გიჩვენებთ ბოლო საუბრარს მოცემულ ფანჯარაში."
 
-#, c-format
 msgid "Online"
 msgstr "ხაზზე"
 
@@ -1575,6 +1600,28 @@ msgid "GntLastlog"
 msgstr ""
 
 msgid "Lastlog plugin."
+msgstr ""
+
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for urls of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
 
 msgid "accounts"
@@ -1675,15 +1722,6 @@ msgstr ""
 msgid "SSL Certificate Verification"
 msgstr ""
 
-#. Number of actions
-#, fuzzy
-msgid "Accept"
-msgstr "_აქცეპტირება"
-
-#, fuzzy
-msgid "Reject"
-msgstr "განულება"
-
 msgid "_View Certificate..."
 msgstr ""
 
@@ -1773,6 +1811,8 @@ msgstr "+++ %s შემოვიდა ქსელში"
 msgid "+++ %s signed off"
 msgstr "+++ %s გავიდა ქსელიდან"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "უცნობი შეცდომა"
 
@@ -1820,6 +1860,16 @@ msgstr "%s გავიდა ოთახიდან."
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s გავიდა ოთახიდან (%s)."
+
+#, fuzzy
+msgid "Invite to chat"
+msgstr "დაპატიჟება კონფერენციაზე"
+
+#. Put our happy label in it.
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Failed to get connection: %s"
@@ -1956,7 +2006,6 @@ msgstr ""
 msgid "Transfer of file %s complete"
 msgstr "%s ფაილის გადატანა დასრულდა"
 
-#, c-format
 msgid "File transfer complete"
 msgstr "ფაილის გადაგზავნა შესრულდა"
 
@@ -1964,7 +2013,6 @@ msgstr "ფაილის გადაგზავნა შესრულდ�
 msgid "You canceled the transfer of %s"
 msgstr "თქვენ შეწყვიტეთ %s ფაილის გადატანა"
 
-#, c-format
 msgid "File transfer cancelled"
 msgstr "ფაილის გადაგზავნა შეწყვეტილია"
 
@@ -2145,11 +2193,14 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ავტო-პასუხი>: %s\n"
 
+#, fuzzy
+msgid "Error creating conference."
+msgstr "ვერ ვქმნი კონფერენციას (%s)."
+
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
 msgstr ""
 
-#, c-format
 msgid "This plugin has not defined an ID."
 msgstr ""
 
@@ -2545,7 +2596,7 @@ msgstr ""
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2596,7 +2647,7 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr ""
 
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 
@@ -2623,6 +2674,32 @@ msgid "Save offline messages in pounce"
 msgstr ""
 
 msgid "Do not ask. Always save in pounce."
+msgstr ""
+
+#, fuzzy
+msgid "One Time Password"
+msgstr "შეიყვანე პაროლი"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "One Time Password Support"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Enforce that passwords are used only once."
+msgstr ""
+
+#. *  description
+msgid ""
+"Allows you to enforce on a per-account basis that passwords not being saved "
+"are only used in a single successful connection.\n"
+"Note: The account password must not be saved for this to work."
 msgstr ""
 
 #. *< type
@@ -2815,18 +2892,18 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
-msgstr ""
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
+msgstr "ახალი კავშირის დამყარება შეუძლებელია"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr ""
 
-#. Creating the options for the protocol
 msgid "First name"
 msgstr "სახელი"
 
@@ -2861,6 +2938,11 @@ msgstr "Bonjour პროტოკოლის პლაგინი"
 msgid "Purple Person"
 msgstr "ახალი პერსონა"
 
+#. Creating the options for the protocol
+#, fuzzy
+msgid "Local Port"
+msgstr "მდებარეობა"
+
 msgid "Bonjour"
 msgstr ""
 
@@ -2873,17 +2955,17 @@ msgid "Unable to send the message, the conversation couldn't be started."
 msgstr ""
 "პროტოკოლირება გამორთულია. ამ მომენტიდან საუბრის პროტოკოლირება შეწყვეტილია."
 
-#, fuzzy
-msgid "Cannot open socket"
-msgstr "ვერ ვაგზავნი ფაილს"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr "ვერ ვქმნი სოკეტს"
 
-#, fuzzy
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
 
-#, fuzzy
-msgid "Could not listen on socket"
-msgstr "შეუძლებელია სოკეტის შექმნა"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr "ვერ ვქმნი სოკეტს"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr ""
@@ -2930,13 +3012,14 @@ msgstr "მეგობრების სიის შენახვა..."
 msgid "Load buddylist from file..."
 msgstr ""
 
-msgid "Fill in the registration fields."
+msgid "You must fill in all registration fields"
 msgstr ""
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "პაროლები არ ემთხვევა ერთმანეთს."
 
-msgid "Unable to register new account. Error occurred.\n"
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr ""
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2948,14 +3031,15 @@ msgstr "რეგისტრაცია მოხერხდა!"
 msgid "Password"
 msgstr "პაროლი"
 
-msgid "Password (retype)"
-msgstr "პაროლი (მეორედ)"
+msgid "Password (again)"
+msgstr "პაროლი (კიდევ ერთხელ)"
 
-msgid "Enter current token"
+msgid "Enter captcha text"
 msgstr ""
 
-msgid "Current token"
-msgstr ""
+#, fuzzy
+msgid "Captcha"
+msgstr "სურათის შენახვა"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr ""
@@ -3008,6 +3092,15 @@ msgstr "პაროლი შეიცვალა!"
 msgid "Current password"
 msgstr ""
 
+msgid "Password (retype)"
+msgstr "პაროლი (მეორედ)"
+
+msgid "Enter current token"
+msgstr ""
+
+msgid "Current token"
+msgstr ""
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr ""
 
@@ -3021,13 +3114,13 @@ msgstr ""
 msgid "Add to chat..."
 msgstr "დაამატე ჩატს..."
 
+#. Global
 msgid "Available"
 msgstr "მისაწვდომია"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
-#, c-format
 msgid "Away"
 msgstr "გასული"
 
@@ -3056,7 +3149,8 @@ msgstr ""
 msgid "There are no users matching your search criteria."
 msgstr ""
 
-msgid "Unable to read socket"
+#, fuzzy
+msgid "Unable to read from socket"
 msgstr "ვერ ვკითხულობ სოკეტს"
 
 msgid "Buddy list downloaded"
@@ -3071,8 +3165,14 @@ msgstr ""
 msgid "Your buddy list was stored on the server."
 msgstr ""
 
-msgid "Connection failed."
-msgstr "კავშირი ვერ განხორციელდა."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "შეერთებული"
+
+msgid "Connection failed"
+msgstr ""
 
 msgid "Add to chat"
 msgstr ""
@@ -3080,13 +3180,23 @@ msgstr ""
 msgid "Chat _name:"
 msgstr "ჩატის _სახელი:"
 
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "დაკავშირება"
+
 msgid "Chat error"
 msgstr "ჩატის შეცდომა"
 
 msgid "This chat name is already in use"
 msgstr ""
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 #, fuzzy
@@ -3129,6 +3239,10 @@ msgstr ""
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu მომხმარებელი"
 
+#, fuzzy
+msgid "GG server"
+msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "უცნობი ბრძანება: %s"
@@ -3145,7 +3259,7 @@ msgid "File Transfer Failed"
 msgstr "ფაილის გადაგზავნა ვერ მოხერხდა"
 
 #, fuzzy
-msgid "Could not open a listening port."
+msgid "Unable to open a listening port."
 msgstr "Pidgin ვერ ხსნის მხმენელ პორტს."
 
 msgid "Error displaying MOTD"
@@ -3161,8 +3275,16 @@ msgstr ""
 msgid "MOTD for %s"
 msgstr ""
 
-msgid "Server has disconnected"
-msgstr "სერვერი გაითიშა"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 msgid "View MOTD"
 msgstr ""
@@ -3173,26 +3295,24 @@ msgstr "_არხი:"
 msgid "_Password:"
 msgstr "_პაროლი:"
 
-msgid "IRC nicks may not contain whitespace"
+msgid "IRC nick and server may not contain whitespace"
 msgstr ""
-
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "დაკავშირება"
 
 #, fuzzy
 msgid "SSL support unavailable"
 msgstr "SSL სუპორტი"
 
-msgid "Couldn't create socket"
-msgstr "შეუძლებელია სოკეტის შექმნა"
+msgid "Unable to connect"
+msgstr "დაკავშირება შეუძლებელია"
 
-msgid "Couldn't connect to host"
-msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
-msgid "Read error"
-msgstr "კითხვის შეცდომა"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "სერვერი გაითიშა"
 
 msgid "Users"
 msgstr "მომხმარებლები"
@@ -3373,6 +3493,17 @@ msgid ""
 "Your selected account name was rejected by the server.  It probably contains "
 "invalid characters."
 msgstr ""
+
+#. We only want to do the following dance if the connection
+#. has not been successfully completed.  If it has, just
+#. notify the user that their /nick command didn't go.
+#, c-format
+msgid "The nickname \"%s\" is already being used."
+msgstr ""
+
+#, fuzzy
+msgid "Nickname in use"
+msgstr "მეტსახელი"
 
 msgid "Cannot change nick"
 msgstr ""
@@ -3575,10 +3706,10 @@ msgstr "ბრძანება გაუქმებულია"
 msgid "execute"
 msgstr "მოულოდნელი"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 
-msgid "You require encryption, but no TLS/SSL support found."
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3593,17 +3724,48 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "ტექსტური დადასტურება"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "აუტენტიფიკაცია ვერ მოხერხდა"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "სერვერის არასწორი პასუხი"
 
 msgid "Server does not use any supported authentication method"
 msgstr ""
 
+msgid "You require encryption, but it is not available on this server."
+msgstr ""
+
 msgid "Invalid challenge from server"
 msgstr ""
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL შეცდომა"
+
+msgid "The BOSH connection manager terminated your session."
+msgstr ""
+
+#, fuzzy
+msgid "No session ID given"
+msgstr "მიზეზი მითითებული არაა"
+
+msgid "Unsupported version of BOSH protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to establish a connection with the server"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#, fuzzy
+msgid "Unable to establish SSL connection"
+msgstr "ახალი კავშირის დამყარება შეუძლებელია"
 
 msgid "Full Name"
 msgstr "სრული სახელი"
@@ -3671,189 +3833,23 @@ msgstr "ქალაქი"
 msgid "Operating System"
 msgstr ""
 
-msgid "Last Activity"
-msgstr ""
-
-msgid "Service Discovery Info"
-msgstr ""
-
-msgid "Service Discovery Items"
-msgstr ""
-
 #, fuzzy
-msgid "Extended Stanza Addressing"
-msgstr "მთლიანი მისამართი"
-
-msgid "Multi-User Chat"
-msgstr ""
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr ""
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-#, fuzzy
-msgid "Ad-Hoc Commands"
-msgstr "ბრძანება"
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr ""
-
-#, fuzzy
-msgid "In-Band Registration"
-msgstr "რეგისტრაციის შეცდომა"
-
-#, fuzzy
-msgid "User Location"
-msgstr "ადგილმდებარეობა"
-
-#, fuzzy
-msgid "User Avatar"
-msgstr "მომხმარებლის ძებნა"
-
-#, fuzzy
-msgid "Chat State Notifications"
-msgstr "მდგომარეობა შეტყობინება"
-
-#, fuzzy
-msgid "Software Version"
-msgstr "საუბრის შენახვა"
-
-#, fuzzy
-msgid "Stream Initiation"
-msgstr "ორიენტაცია"
-
-#, fuzzy
-msgid "File Transfer"
-msgstr "ფაილის გადაგზავნა"
-
-#, fuzzy
-msgid "User Mood"
-msgstr "მომხმარებლის ოთახები"
-
-#, fuzzy
-msgid "User Activity"
-msgstr "მომხმარებელთა ლიმიტი"
-
-#, fuzzy
-msgid "Entity Capabilities"
-msgstr "შეუძლია"
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-#, fuzzy
-msgid "User Tune"
-msgstr "მომხმარებლის სახელი"
-
-msgid "Roster Item Exchange"
-msgstr ""
-
-#, fuzzy
-msgid "Reachability Address"
-msgstr "Email მისამართი"
-
-#, fuzzy
-msgid "User Profile"
-msgstr "MSN პროფაილი"
-
-#, fuzzy
-msgid "Jingle"
-msgstr "Ping"
-
-msgid "Jingle Audio"
-msgstr ""
-
-#, fuzzy
-msgid "User Nickname"
-msgstr "მომხმარებლის სახელი"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-#, fuzzy
-msgid "Jingle Video"
-msgstr "ცოცხალი ვიდეო"
-
-msgid "Jingle DTMF"
-msgstr ""
-
-#, fuzzy
-msgid "Message Receipts"
-msgstr "შეტყობინება მიღებულია"
-
-#, fuzzy
-msgid "Public Key Publishing"
-msgstr "ავთენტურობის დადგენა ღია გასაღებით"
-
-#, fuzzy
-msgid "User Chatting"
-msgstr "მომხმარებლის პარამეტრები"
-
-#, fuzzy
-msgid "User Browsing"
-msgstr "მომხმარებლის ოთახები"
-
-#, fuzzy
-msgid "User Gaming"
-msgstr "მომხმარებლის სახელი"
-
-#, fuzzy
-msgid "User Viewing"
-msgstr "მომხმარებელთა ლიმიტი"
-
-msgid "Ping"
-msgstr "Ping"
-
-#, fuzzy
-msgid "Stanza Encryption"
-msgstr "Trillian შიფრი"
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr ""
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "შეუძლია"
+msgid "Local Time"
+msgstr "ლოკალური ფაილი:"
 
 msgid "Priority"
 msgstr "პრიორიტეტი"
 
 msgid "Resource"
 msgstr "რესურსი"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged Off"
+msgstr "პროტოკოლირება"
 
 msgid "Middle Name"
 msgstr "ოჯახური სახელი"
@@ -3904,7 +3900,6 @@ msgstr ""
 msgid "Extended Away"
 msgstr "გაფართოებული გასული"
 
-#, c-format
 msgid "Do Not Disturb"
 msgstr ""
 
@@ -4024,27 +4019,26 @@ msgstr ""
 msgid "Find Rooms"
 msgstr "იპოვე ოთახები"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr ""
-
-msgid "Write error"
-msgstr "წერის შეცდომა"
+#, fuzzy
+msgid "Affiliations:"
+msgstr "სინონიმი:"
 
 #, fuzzy
-msgid "Ping timeout"
+msgid "No users found"
+msgstr "ვერ ვიპოვე პროტოკოლები"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "როლი"
+
+#, fuzzy
+msgid "Ping timed out"
 msgstr "ტექსტი"
 
-msgid "Read Error"
-msgstr "კითხვის შეცდომა"
-
-#, c-format
 msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
-
-msgid "Unable to create socket"
-msgstr "ვერ ვქმნი სოკეტს"
 
 #, fuzzy
 msgid "Invalid XMPP ID"
@@ -4052,6 +4046,10 @@ msgstr "არასწორი ID"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
+
+#, fuzzy
+msgid "Malformed BOSH URL"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4079,9 +4077,6 @@ msgstr "რეგისტრაცია მოხერხდა"
 msgid "Unregistration Failed"
 msgstr "რეგისტრაცია ვერ მოხერხდა"
 
-msgid "Already Registered"
-msgstr "უკვე რესგისტრირებულია"
-
 #, fuzzy
 msgid "State"
 msgstr "მდგომარეობა"
@@ -4095,6 +4090,9 @@ msgstr "ტელეფონი"
 
 msgid "Date"
 msgstr "თარიღი"
+
+msgid "Already Registered"
+msgstr "უკვე რესგისტრირებულია"
 
 #, fuzzy
 msgid "Unregister"
@@ -4127,6 +4125,10 @@ msgid "Change Registration"
 msgstr "რეგისტრაციის შეცდომა"
 
 #, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#, fuzzy
 msgid "Error unregistering account"
 msgstr "შეცდომა ანგარიში ინფორმაცია"
 
@@ -4148,9 +4150,18 @@ msgstr "მიმდენარეობს აუტენტიფიკა�
 msgid "Re-initializing Stream"
 msgstr "სტრიმი"
 
+msgid "Server doesn't support blocking"
+msgstr ""
+
 #, fuzzy
 msgid "Not Authorized"
 msgstr "ავტორიზაცია"
+
+msgid "Mood"
+msgstr ""
+
+msgid "Now Listening"
+msgstr ""
 
 msgid "Both"
 msgstr "ორივე"
@@ -4174,12 +4185,6 @@ msgstr "არაფერი"
 #, fuzzy
 msgid "Subscription"
 msgstr "აბონირება"
-
-msgid "Mood"
-msgstr ""
-
-msgid "Now Listening"
-msgstr ""
 
 msgid "Mood Text"
 msgstr ""
@@ -4224,9 +4229,6 @@ msgstr ""
 
 msgid "Error changing password"
 msgstr "შეცდომა პაროლის შეცვლისას"
-
-msgid "Password (again)"
-msgstr "პაროლი (კიდევ ერთხელ)"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -4426,18 +4428,26 @@ msgstr ""
 msgid "Unable to ping user %s"
 msgstr "შეუძლებელია შეტყობინების გაგზავნა: %s"
 
-#, c-format
-msgid "Unable to buzz, because there is nothing known about user %s."
-msgstr ""
-
-#, c-format
-msgid "Unable to buzz, because user %s might be offline."
-msgstr ""
-
 #, fuzzy, c-format
-msgid "Unable to buzz, because the user %s does not support it."
+msgid "Unable to buzz, because there is nothing known about %s."
 msgstr ""
 "ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
+
+#, fuzzy, c-format
+msgid "Unable to buzz, because %s might be offline."
+msgstr ""
+"ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
+
+#, fuzzy, c-format
+msgid ""
+"Unable to buzz, because %s does not support it or does not wish to receive "
+"buzzes now."
+msgstr ""
+"ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr ""
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
@@ -4448,8 +4458,35 @@ msgstr ""
 msgid "%s has buzzed you!"
 msgstr "%s შემოვიდა ქსელში."
 
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: invalid JID"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: user is not online"
+msgstr ""
+"ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
+
+#, fuzzy, c-format
+msgid "Unable to initiate media with %s: not subscribed to user presence"
+msgstr ""
+"ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
+
+#, fuzzy
+msgid "Media Initiation Failed"
+msgstr "რეგისტრაცია ვერ მოხერხდა"
+
 #, c-format
-msgid "Buzzing %s..."
+msgid ""
+"Please select the resource of %s with which you would like to start a media "
+"session."
+msgstr ""
+
+#, fuzzy
+msgid "Select a Resource"
+msgstr "ფაილის არჩევა"
+
+msgid "Initiate Media"
 msgstr ""
 
 msgid "config:  Configure a chat room."
@@ -4471,13 +4508,13 @@ msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr ""
 
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4541,6 +4578,9 @@ msgstr "კავშირის სერვერი"
 msgid "File transfer proxies"
 msgstr "ფაილების გადაგზავნა"
 
+msgid "BOSH URL"
+msgstr ""
+
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
@@ -4581,6 +4621,14 @@ msgstr "შეცდომა XML ფაილის შეტანისას
 msgid "Unknown Error in presence"
 msgstr "უცნობი შეცდომის კოდი"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr ""
+
+#, c-format
+msgid "Error in chat %s"
+msgstr ""
+
 msgid "Create New Room"
 msgstr "შექმენი ახალი ოთახი"
 
@@ -4595,12 +4643,30 @@ msgstr "ოთახის _კონფიგურაცია"
 msgid "_Accept Defaults"
 msgstr ""
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr ""
+#, fuzzy
+msgid "No reason"
+msgstr "მიზეზი მითითებული არაა"
+
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "%s გახდა უმოქმედო (%s)"
 
 #, c-format
-msgid "Error in chat %s"
+msgid "Kicked (%s)"
+msgstr ""
+
+msgid "An error occurred on the in-band bytestream transfer\n"
+msgstr ""
+
+#, fuzzy
+msgid "Transfer was closed."
+msgstr "ფაილის გადაგზავნა ვერ მოხერხდა"
+
+#, fuzzy
+msgid "Failed to open the file"
+msgstr "ფაილის გახსნა შეუძლებელია."
+
+msgid "Failed to open in-band bytestream"
 msgstr ""
 
 #, c-format
@@ -4628,10 +4694,6 @@ msgstr ""
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
-
-#, fuzzy
-msgid "Select a Resource"
-msgstr "ფაილის არჩევა"
 
 msgid "Edit User Mood"
 msgstr ""
@@ -4671,9 +4733,19 @@ msgstr "მოქმედება"
 msgid "Select an action"
 msgstr "ფაილის არჩევა"
 
+#. only notify the user about problems adding to the friends list
+#. * maybe we should do something else for other lists, but it probably
+#. * won't cause too many problems if we just ignore it
+#, c-format
+msgid "Unable to add \"%s\"."
+msgstr "ვერ ვამატებ \"%s\"-ს"
+
+msgid "Buddy Add error"
+msgstr ""
+
 #, fuzzy
-msgid "Unable to retrieve MSN Address Book"
-msgstr "ვერ ვქმნი სოკეტს"
+msgid "The username specified does not exist."
+msgstr "მომხმარებელი არ არსებობს"
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -4899,7 +4971,6 @@ msgstr ""
 msgid "Passport account not yet verified"
 msgstr ""
 
-#, c-format
 msgid "Passport account suspended"
 msgstr ""
 
@@ -4922,6 +4993,10 @@ msgstr "კონტატის წაშლა"
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "კონტატის წაშლა"
+
+#, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
 
 msgid "Nudge"
 msgstr ""
@@ -4991,6 +5066,13 @@ msgstr ""
 msgid "Page"
 msgstr "გვერდი"
 
+msgid "Playing a game"
+msgstr ""
+
+#, fuzzy
+msgid "Working"
+msgstr "შენშვნის დონე"
+
 msgid "Has you"
 msgstr "ხართ მის სიაში"
 
@@ -5031,6 +5113,14 @@ msgstr "მისამართი"
 msgid "Album"
 msgstr ""
 
+#, fuzzy
+msgid "Game Title"
+msgstr "სათაური"
+
+#, fuzzy
+msgid "Office Title"
+msgstr "სათაური"
+
 msgid "Set Friendly Name..."
 msgstr "შეიტანე მეტსახელი..."
 
@@ -5062,9 +5152,6 @@ msgid "Initiate _Chat"
 msgstr ""
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-
-msgid "Failed to connect to server."
 msgstr ""
 
 msgid "Error retrieving profile"
@@ -5234,8 +5321,9 @@ msgid ""
 "does not exist."
 msgstr ""
 
-msgid "Profile URL"
-msgstr "პროფაილის URL"
+#, fuzzy
+msgid "View web profile"
+msgstr "მომხმარებელი გასულია ქსელიდან"
 
 #. *< type
 #. *< ui_requirement
@@ -5271,63 +5359,26 @@ msgstr "ჩვეულებრივი ავთენტურობის �
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "ჩვეულებრივი ავთენტურობის დადგენა ვერ მოხერხდა!"
 
-#, c-format
-msgid "%s is not a valid group."
-msgstr ""
-
-msgid "Unknown error."
-msgstr "უცნობი შეცდომა."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr ""
-
 #, fuzzy, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "შეტყობინების გაგზავნა"
 
-#. char *adl = g_strndup(payload, len);
 #, fuzzy, c-format
-msgid "Unknown error (%d)"
+msgid "Unknown error (%d): %s"
 msgstr "უცნობი შეცდომა"
 
 msgid "Unable to add user"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Unknown error (%d)"
+msgstr "უცნობი შეცდომა"
+
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr ""
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr ""
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr ""
-
-msgid "Service Temporarily Unavailable."
-msgstr "სერვისი დროებით მიუწვდომელია."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
-
-msgid "Unable to rename group"
-msgstr "ვერ ვცვლი ჯგუფის სახელს"
-
-msgid "Unable to delete group"
-msgstr "ვერ ვშლი ჯგუფს"
 
 #, c-format
 msgid ""
@@ -5360,9 +5411,6 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr ""
 
-msgid "Unable to connect"
-msgstr "დაკავშირება შეუძლებელია"
-
 msgid "Writing error"
 msgstr "წერის შეცდომა"
 
@@ -5375,19 +5423,21 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Our protocol is not supported by the server."
-msgstr ""
+#, fuzzy
+msgid "Our protocol is not supported by the server"
+msgstr "ეს პროტოკოლს არ ააქ chat-ოთახების მხარდაჭერა."
 
-msgid "Error parsing HTTP."
-msgstr ""
+#, fuzzy
+msgid "Error parsing HTTP"
+msgstr "შეცდომა პროფაილის ჩამოტანისას"
 
-msgid "You have signed on from another location."
+msgid "You have signed on from another location"
 msgstr ""
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 
-msgid "The MSN servers are going down temporarily."
+msgid "The MSN servers are going down temporarily"
 msgstr ""
 
 #, c-format
@@ -5414,6 +5464,14 @@ msgid "Sending cookie"
 msgstr "ქუკის გაგზავნა"
 
 msgid "Retrieving buddy list"
+msgstr ""
+
+#, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5452,14 +5510,6 @@ msgstr ""
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr ""
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr ""
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr ""
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "მისამართების წიგნში ჩამატება"
@@ -5467,18 +5517,14 @@ msgstr "მისამართების წიგნში ჩამატ�
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr ""
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "ვერ ვამატებ \"%s\"-ს"
-
 msgid "The username specified is invalid."
 msgstr ""
 
 msgid "This Hotmail account may not be active."
 msgstr ""
+
+msgid "Profile URL"
+msgstr "პროფაილის URL"
 
 #. *< type
 #. *< ui_requirement
@@ -5494,16 +5540,61 @@ msgstr ""
 msgid "MSN Protocol Plugin"
 msgstr "AIM/ICQ პროტოკოლის პლაგინი"
 
-msgid "Missing Cipher"
+#, c-format
+msgid "%s is not a valid group."
 msgstr ""
 
-msgid "The RC4 cipher could not be found"
+msgid "Unknown error."
+msgstr "უცნობი შეცდომა."
+
+#, c-format
+msgid "%s on %s (%s)"
 msgstr ""
 
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
+#, c-format
+msgid "Unable to add user on %s (%s)"
 msgstr ""
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr ""
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr ""
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr ""
+
+msgid "Service Temporarily Unavailable."
+msgstr "სერვისი დროებით მიუწვდომელია."
+
+msgid "Unable to rename group"
+msgstr "ვერ ვცვლი ჯგუფის სახელს"
+
+msgid "Unable to delete group"
+msgstr "ვერ ვშლი ჯგუფს"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr ""
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr ""
+
+#, c-format
+msgid "No such user: %s"
+msgstr ""
+
+#, fuzzy
+msgid "User lookup"
+msgstr "მომხმარებლის ოთახები"
 
 #, fuzzy
 msgid "Reading challenge"
@@ -5517,12 +5608,23 @@ msgstr "ვერ ვკიტხულობ"
 msgid "Logging in"
 msgstr "პროტოკოლირება"
 
-#, c-format
-msgid "Connection to server lost (no data received within %d second)"
-msgid_plural "Connection to server lost (no data received within %d seconds)"
-msgstr[0] ""
+#, fuzzy
+msgid "MySpaceIM - No Username Set"
+msgstr "უსახელო"
+
+msgid "You appear to have no MySpace username."
+msgstr ""
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+
+#, fuzzy
+msgid "Lost connection with server"
+msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 #, fuzzy
 msgid "New mail messages"
 msgstr "შეტყობინების გაგზავნა"
@@ -5543,78 +5645,6 @@ msgid "MySpace"
 msgstr ""
 
 #, fuzzy
-msgid "MySpaceIM - No Username Set"
-msgstr "უსახელო"
-
-msgid "You appear to have no MySpace username."
-msgstr ""
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
-
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "შეერთებული"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
-msgstr ""
-
-msgid "MySpaceIM Error"
-msgstr ""
-
-msgid "Failed to add buddy"
-msgstr ""
-
-msgid "'addbuddy' command failed."
-msgstr ""
-
-msgid "persist command failed"
-msgstr ""
-
-#, c-format
-msgid "No such user: %s"
-msgstr ""
-
-#, fuzzy
-msgid "User lookup"
-msgstr "მომხმარებლის ოთახები"
-
-msgid "Failed to remove buddy"
-msgstr ""
-
-msgid "'delbuddy' command failed"
-msgstr ""
-
-msgid "blocklist command failed"
-msgstr ""
-
-#, fuzzy
-msgid "Invalid input condition"
-msgstr "კავშირის დასრულება"
-
-msgid "Read buffer full (2)"
-msgstr ""
-
-#, fuzzy
-msgid "Unparseable message"
-msgstr "შეტყობინების გაგზავნა"
-
-#, fuzzy, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
-
-#, fuzzy
 msgid "IM Friends"
 msgstr "_მოკლე შეტყობინებების ფანჯრები"
 
@@ -5630,6 +5660,57 @@ msgstr[0] ""
 #, fuzzy
 msgid "Add contacts from server"
 msgstr "სერვერის არასწორი პასუხი"
+
+#, c-format
+msgid "Protocol error, code %d: %s"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
+msgstr ""
+
+#, fuzzy
+msgid "Incorrect username or password"
+msgstr "არასწორია მეტსახელი ან პაროლი"
+
+msgid "MySpaceIM Error"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid input condition"
+msgstr "კავშირის დასრულება"
+
+msgid "Failed to add buddy"
+msgstr ""
+
+msgid "'addbuddy' command failed."
+msgstr ""
+
+msgid "persist command failed"
+msgstr ""
+
+msgid "Failed to remove buddy"
+msgstr ""
+
+msgid "'delbuddy' command failed"
+msgstr ""
+
+msgid "blocklist command failed"
+msgstr ""
+
+msgid "Missing Cipher"
+msgstr ""
+
+msgid "The RC4 cipher could not be found"
+msgstr ""
+
+msgid ""
+"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+"not be loaded."
+msgstr ""
 
 msgid "Add friends from MySpace.com"
 msgstr ""
@@ -5677,10 +5758,6 @@ msgid "User"
 msgstr "მომხმარებლები"
 
 #, fuzzy
-msgid "Profile"
-msgstr "MSN პროფაილი"
-
-#, fuzzy
 msgid "Headline"
 msgstr "ნამდვილი სახელი"
 
@@ -5695,15 +5772,10 @@ msgstr ""
 msgid "Client Version"
 msgstr "დაასრულე საუბარი"
 
-#. Protocol won't log in now without a username set.. Disconnect
-#, fuzzy
-msgid "No username set"
-msgstr "უსახელო"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr ""
-
-msgid "Please enter a username to check its availability:"
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
 msgstr ""
 
 #, fuzzy
@@ -5716,6 +5788,9 @@ msgstr ""
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr ""
 
+msgid "MySpaceIM - Please Set a Username"
+msgstr ""
+
 #, fuzzy
 msgid "This username is unavailable."
 msgstr "სერვერი მიუწვდომელია"
@@ -5723,6 +5798,14 @@ msgstr "სერვერი მიუწვდომელია"
 #, fuzzy
 msgid "Please try another username:"
 msgstr "გთხოვთ შეიყვანოთ თქვენი ახალი პაროლი"
+
+#. Protocol won't log in now without a username set.. Disconnect
+#, fuzzy
+msgid "No username set"
+msgstr "უსახელო"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -5921,10 +6004,6 @@ msgstr ""
 msgid "Master archive is misconfigured"
 msgstr ""
 
-#, fuzzy
-msgid "Incorrect username or password"
-msgstr "არასწორია მეტსახელი ან პაროლი"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
 
@@ -5963,9 +6042,9 @@ msgstr ""
 msgid "Unknown error: 0x%X"
 msgstr "უცნობი შეცდომა: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა: %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6063,9 +6142,6 @@ msgstr ""
 msgid "Authenticating..."
 msgstr "მიმდენარეობს აუტენტიფიკაცია..."
 
-msgid "Unable to connect to server."
-msgstr "შეუძლებელია სერვერთან დაკავშირება"
-
 msgid "Waiting for response..."
 msgstr "ველოდები პასუხს..."
 
@@ -6086,23 +6162,16 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr ""
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr ""
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr ""
 
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 
-msgid "Error. SSL support is not installed."
-msgstr ""
-
-#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 
@@ -6126,6 +6195,23 @@ msgid "Server port"
 msgstr "სერვერი-პორტი"
 
 #, fuzzy
+msgid "Received unexpected response from "
+msgstr "სერვერის არასწორი პასუხი"
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "შეცდომა პროფაილის ჩამოტანისას"
+
+msgid "AOL does not allow your screen name to authenticate here"
+msgstr ""
+
+#, fuzzy
 msgid "Could not join chat room"
 msgstr "ვერ ვუკავშირდები"
 
@@ -6134,17 +6220,7 @@ msgid "Invalid chat room name"
 msgstr "არასწორი ოთახის სახელი"
 
 #, fuzzy
-msgid "Server closed the connection."
-msgstr "სერვერი გაითიშა"
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr "არ ვარ დაკავშირებული სერვერთან."
-
-#, fuzzy
-msgid "Received invalid data on connection with server."
+msgid "Received invalid data on connection with server"
 msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #. *< type
@@ -6194,8 +6270,9 @@ msgstr ""
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
-msgid "Could not establish a connection with the remote user."
-msgstr ""
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 msgid "Direct IM established"
 msgstr ""
@@ -6363,23 +6440,19 @@ msgstr "კამერა"
 msgid "Screen Sharing"
 msgstr "მომხმარებელი"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Free For Chat"
 msgstr "თავისუფალი Chat-ი"
 
-#, c-format
 msgid "Not Available"
 msgstr "ხელმიუწვდომელია"
 
-#, c-format
 msgid "Occupied"
 msgstr "დაკავებულია"
 
-#, c-format
 msgid "Web Aware"
 msgstr ""
 
-#, c-format
 msgid "Invisible"
 msgstr "უხილავია"
 
@@ -6393,16 +6466,12 @@ msgid "Buddy Comment"
 msgstr ""
 
 #, fuzzy, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+msgid "Unable to connect to authentication server: %s"
 msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 #, fuzzy, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+msgid "Unable to connect to BOS server: %s"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #, fuzzy
 msgid "Username sent"
@@ -6417,46 +6486,52 @@ msgstr "კავშირის დასრულება"
 
 #, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 
-#. Unregistered screen name
-#. uid is not exist
-#, fuzzy
-msgid "Invalid username."
-msgstr "არასწორი"
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
 
-msgid "Incorrect password."
-msgstr "არასწორი პაროლი."
+#, fuzzy
+msgid "Unable to get a valid AIM login hash."
+msgstr "ვერ ვკითხულობ ფაილს %s."
+
+#, fuzzy
+msgid "Unable to get a valid login hash."
+msgstr "ვერ ვკითხულობ ფაილს %s."
+
+msgid "Received authorization"
+msgstr "მივიღე ავტორიზაცია"
+
+#. Unregistered username
+#. uid is not exist
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "მომხმარებელი არ არსებობს"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+msgid "Your account is currently suspended"
 msgstr ""
 
 #. service temporarily unavailable
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 
-#. screen name connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 
-msgid "Could Not Connect"
-msgstr "ვერ ვუკავშირდები"
+#. IP address connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
 
-msgid "Received authorization"
-msgstr "მივიღე ავტორიზაცია"
-
-msgid "The SecurID key entered is invalid."
+msgid "The SecurID key entered is invalid"
 msgstr ""
 
 msgid "Enter SecurID"
@@ -6471,24 +6546,6 @@ msgstr ""
 #, fuzzy
 msgid "_OK"
 msgstr "OK"
-
-#, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
-msgstr ""
-
-#, fuzzy
-msgid "Unable to get a valid AIM login hash."
-msgstr "ვერ ვკითხულობ ფაილს %s."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-
-#, fuzzy
-msgid "Unable to get a valid login hash."
-msgstr "ვერ ვკითხულობ ფაილს %s."
 
 msgid "Password sent"
 msgstr "პაროლი გაგზავნილია"
@@ -6599,7 +6656,7 @@ msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 
-#. Data is assumed to be the destination sn
+#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "შეუძლებელია შეტყობინების გაგზავნა: %s"
@@ -6620,6 +6677,13 @@ msgstr ""
 
 msgid "Member Since"
 msgstr ""
+
+msgid "Capabilities"
+msgstr "შეუძლია"
+
+#, fuzzy
+msgid "Profile"
+msgstr "MSN პროფაილი"
 
 msgid "Your AIM connection may be lost."
 msgstr ""
@@ -6774,7 +6838,7 @@ msgstr "გასულობის შეტყობინება ძალ�
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -6797,7 +6861,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 
@@ -6805,7 +6869,7 @@ msgid "(no name)"
 msgstr "(უსახელო)"
 
 #, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr ""
 
 #, c-format
@@ -6870,6 +6934,7 @@ msgstr "დაკავშირება"
 msgid "Get AIM Info"
 msgstr "გამოიძახე ინფორმაცია"
 
+#. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr ""
 
@@ -6929,6 +6994,7 @@ msgstr "ძებნა"
 msgid "Set User Info (web)..."
 msgstr "მომხმარებლის ინფორმაციის შეცვლა (URL)"
 
+#. This only happens when connecting with the old-style BUCP login
 #, fuzzy
 msgid "Change Password (web)"
 msgstr "პაროლის შეცვლა (URL)"
@@ -6959,6 +7025,10 @@ msgstr ""
 msgid "Search for Buddy by Information"
 msgstr ""
 
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "მომხმარებელი არ არის ხაზზე"
+
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
 "file transfers and direct IM (slower,\n"
@@ -6976,7 +7046,7 @@ msgstr ""
 msgid "Attempting to connect to %s:%hu."
 msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Attempting to connect via proxy server."
 msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
@@ -7082,7 +7152,7 @@ msgstr "Opera"
 msgid "Visible"
 msgstr "უხილავია"
 
-msgid "Firend Only"
+msgid "Friend Only"
 msgstr ""
 
 #, fuzzy
@@ -7176,16 +7246,49 @@ msgstr "ბოლო განახლება"
 msgid "Could not change buddy information."
 msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
 
-#, c-format
-msgid "%d needs Q&A"
+msgid "Mobile"
+msgstr ""
+
+msgid "Note"
+msgstr "შენიშვნა"
+
+#. callback
+#, fuzzy
+msgid "Buddy Memo"
+msgstr "მეგობრის მინი-სურათი"
+
+msgid "Change his/her memo as you like"
 msgstr ""
 
 #, fuzzy
-msgid "Add buddy Q&A"
-msgstr "დაამატე მეგობარი"
+msgid "_Modify"
+msgstr "შეცვლა"
 
-msgid "Input answer here"
+#, fuzzy
+msgid "Memo Modify"
+msgstr "შეცვლა"
+
+#, fuzzy
+msgid "Server says:"
+msgstr "სერვერი დაკავებულია"
+
+msgid "Your request was accepted."
 msgstr ""
+
+msgid "Your request was rejected."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%u requires verification"
+msgstr "დადასტურების მოთხოვნა"
+
+#, fuzzy
+msgid "Add buddy question"
+msgstr "დავამატო მეგობარი შენ სიას?"
+
+#, fuzzy
+msgid "Enter answer here"
+msgstr "შეიყვანეთ კონფერენციების სერვერი"
 
 #, fuzzy
 msgid "Send"
@@ -7199,19 +7302,20 @@ msgstr "არასწორი პაროლი"
 msgid "Authorization denied message:"
 msgstr "ავტორიზაციის უარყოფის შეტყობინება"
 
-msgid "Sorry, You are not my style."
+msgid "Sorry, you're not my style."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%d needs authentication"
+msgid "%u needs authorization"
 msgstr "ვიწყებ ავთენტურობის დადგენას"
 
 #, fuzzy
 msgid "Add buddy authorize"
 msgstr "დავამატო მეგობარი შენ სიას?"
 
-msgid "Input request here"
-msgstr ""
+#, fuzzy
+msgid "Enter request here"
+msgstr "შეიყვანეთ კონფერენციების სერვერი"
 
 #, fuzzy
 msgid "Would you be my friend?"
@@ -7234,7 +7338,7 @@ msgid "Failed sending authorize"
 msgstr "გთხოვთ გამიკეთოთ ავტორიზაცია!"
 
 #, c-format
-msgid "Failed removing buddy %d"
+msgid "Failed removing buddy %u"
 msgstr ""
 
 #, c-format
@@ -7279,6 +7383,9 @@ msgstr "გთხოვთ შეიყვანოთ თქვენი ახ
 msgid "You can only search for permanent Qun\n"
 msgstr ""
 
+msgid "(Invalid UTF-8 string)"
+msgstr ""
+
 msgid "Not member"
 msgstr ""
 
@@ -7319,15 +7426,18 @@ msgstr ""
 msgid "Join QQ Qun"
 msgstr "ჩაერთე საუბარში"
 
-#, c-format
-msgid "Successfully joined Qun %s (%d)"
+msgid "Input request here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully joined Qun %s (%u)"
+msgstr "ტელეფონის ნომერი"
 
 msgid "Successfully joined Qun"
 msgstr ""
 
 #, c-format
-msgid "Qun %d denied to join"
+msgid "Qun %u denied from joining"
 msgstr ""
 
 #, fuzzy
@@ -7338,7 +7448,7 @@ msgstr "ხმის პარამეტრები"
 msgid "Failed:"
 msgstr "ოპერაცია ვერ/არ ჩატარდა"
 
-msgid "Join Qun, Unknow Reply"
+msgid "Join Qun, Unknown Reply"
 msgstr ""
 
 #, fuzzy
@@ -7350,11 +7460,11 @@ msgid ""
 "this operation will eventually remove this Qun."
 msgstr ""
 
-msgid "Sorry, you are not our style ..."
+msgid "Sorry, you are not our style"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully changed Qun member"
+msgid "Successfully changed Qun members"
 msgstr "ტელეფონის ნომერი"
 
 #, fuzzy
@@ -7365,7 +7475,7 @@ msgid "You have successfully created a Qun"
 msgstr ""
 
 #, fuzzy
-msgid "Would you like to set detailed information now?"
+msgid "Would you like to set up detailed information now?"
 msgstr "გადავაწერო მას?"
 
 #, fuzzy
@@ -7373,28 +7483,28 @@ msgid "Setup"
 msgstr "შენახვა"
 
 #, c-format
-msgid "%d requested to join Qun %d for %s"
+msgid "%u requested to join Qun %u for %s"
 msgstr ""
 
 #, c-format
-msgid "%d request to join Qun %d"
+msgid "%u request to join Qun %u"
 msgstr ""
 
 #, c-format
-msgid "Failed to join Qun %d, operated by admin %d"
+msgid "Failed to join Qun %u, operated by admin %u"
 msgstr ""
 
 #, c-format
-msgid "<b>Joining Qun %d is approved by admin %d for %s</b>"
+msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "<b>Removed buddy %d.</b>"
+msgid "<b>Removed buddy %u.</b>"
 msgstr "ამოშალე მეგობარი"
 
-#, c-format
-msgid "<b>New buddy %d joined.</b>"
-msgstr ""
+#, fuzzy, c-format
+msgid "<b>New buddy %u joined.</b>"
+msgstr "ამოშალე მეგობარი"
 
 #, fuzzy, c-format
 msgid "Unknown-%d"
@@ -7515,6 +7625,13 @@ msgstr "<b>მომხმარებელი:</b> %s<br>"
 msgid "<p><b>Acknowledgement</b>:<br>\n"
 msgstr "<b>ჯგუფის სათაური:</b> %s<br>"
 
+#, fuzzy
+msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+msgstr "<b>გარე მომხმარებელი</b><br>"
+
+msgid "and more, please let me know... thank you!))"
+msgstr ""
+
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
@@ -7522,7 +7639,7 @@ msgid "<i>Feel free to join us!</i> :)"
 msgstr ""
 
 #, fuzzy, c-format
-msgid "About OpenQ r%s"
+msgid "About OpenQ %s"
 msgstr "Pidgin-ის შესახებ"
 
 #, fuzzy
@@ -7542,6 +7659,10 @@ msgstr ""
 #, fuzzy
 msgid "About OpenQ"
 msgstr "Pidgin-ის შესახებ"
+
+#, fuzzy
+msgid "Modify Buddy Memo"
+msgstr "სახლის მისამართი"
 
 #. *< type
 #. *< ui_requirement
@@ -7574,7 +7695,6 @@ msgstr ""
 msgid "QQ2008"
 msgstr ""
 
-#. #endif
 #, fuzzy
 msgid "Connect by TCP"
 msgstr "დაკავშირება"
@@ -7587,6 +7707,9 @@ msgstr "სერვერი-პორტი"
 msgid "Show server news"
 msgstr "სერვერის მისამართი"
 
+msgid "Show chat room when msg comes"
+msgstr ""
+
 #, fuzzy
 msgid "Keep alive interval (seconds)"
 msgstr "კითხვის შეცდომა"
@@ -7596,11 +7719,8 @@ msgid "Update interval (seconds)"
 msgstr "კითხვის შეცდომა"
 
 #, fuzzy
-msgid "Can not decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "კავშირის სერვერი"
-
-msgid "Can not decrypt get server reply"
-msgstr ""
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
@@ -7622,20 +7742,17 @@ msgid "Activation required"
 msgstr "საჭიროა რეგისტრაცია"
 
 #, c-format
-msgid "Unknow reply code when login (0x%02X)"
+msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
 
 #, fuzzy
-msgid "Keep alive error"
-msgstr "კითხვის შეცდომა"
+msgid "Requesting captcha"
+msgstr "პრივატი"
 
-msgid "Requesting captcha ..."
+msgid "Checking captcha"
 msgstr ""
 
-msgid "Checking code of captcha ..."
-msgstr ""
-
-msgid "Failed captcha verify"
+msgid "Failed captcha verification"
 msgstr ""
 
 #, fuzzy
@@ -7646,7 +7763,7 @@ msgstr "სურათის შენახვა"
 msgid "Enter code"
 msgstr "შეიყვანე პაროლი"
 
-msgid "QQ Captcha Verifing"
+msgid "QQ Captcha Verification"
 msgstr ""
 
 #, fuzzy
@@ -7654,67 +7771,42 @@ msgid "Enter the text from the image"
 msgstr "ჩასამატებელი ჯგუფის სახელი"
 
 #, c-format
-msgid "Unknow reply code when checking password (0x%02X)"
+msgid "Unknown reply when checking password (0x%02X)"
 msgstr ""
 
 #, c-format
 msgid ""
-"Unknow reply code when login (0x%02X):\n"
+"Unknown reply code when logging in (0x%02X):\n"
 "%s"
 msgstr ""
-
-#. we didn't successfully connect. tdt->toc_fd is valid here
-msgid "Unable to connect."
-msgstr "დაკავშირება შეუძლებელია"
 
 #, fuzzy
 msgid "Socket error"
 msgstr "ჩატის შეცდომა"
 
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server:\n"
-"%d, %s"
-msgstr "არ ვარ დაკავშირებული სერვერთან."
-
 #, fuzzy
-msgid "Unable to read from socket"
-msgstr "ვერ ვკითხულობ სოკეტს"
-
-#, fuzzy
-msgid "Write Error"
-msgstr "წერის შეცდომა"
-
-#, fuzzy
-msgid "Connection lost"
-msgstr "კავშირის შეცდომა"
-
-#, fuzzy
-msgid "Get server ..."
+msgid "Getting server"
 msgstr "მომხმარებლის ინფორმაციის შეტანა..."
 
 #, fuzzy
-msgid "Request token"
+msgid "Requesting token"
 msgstr "პრივატი"
 
-msgid "Couldn't resolve host"
-msgstr ""
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #, fuzzy
 msgid "Invalid server or port"
 msgstr "არასწორია მომხმარებელი ან პაროლი"
 
 #, fuzzy
-msgid "Connecting server ..."
+msgid "Connecting to server"
 msgstr "კავშირის სერვერი"
 
 #, fuzzy
 msgid "QQ Error"
 msgstr "კითხვის შეცდომა"
-
-#, fuzzy
-msgid "Failed to send IM."
-msgstr "შეუძლებელია შეტყობინების გაგზავნა."
 
 #, fuzzy, c-format
 msgid ""
@@ -7723,6 +7815,10 @@ msgid ""
 "%s\n"
 "%s"
 msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+
+#, c-format
+msgid "%s:%s"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "From %s:"
@@ -7734,32 +7830,30 @@ msgid ""
 "%s"
 msgstr "ინფორმაცია სერვერის შესახებ"
 
-msgid "Unknow SERVER CMD"
-msgstr ""
+#, fuzzy
+msgid "Unknown SERVER CMD"
+msgstr "უცნობი მიზეზი."
 
 #, c-format
 msgid ""
 "Error reply of %s(0x%02X)\n"
-"Room %d, reply 0x%02X"
+"Room %u, reply 0x%02X"
 msgstr ""
 
 #, fuzzy
 msgid "QQ Qun Command"
 msgstr "ბრძანება"
 
-#, c-format
-msgid "Not a member of room \"%s\"\n"
-msgstr ""
-
-msgid "Can not decrypt login reply"
-msgstr ""
+#, fuzzy
+msgid "Unable to decrypt login reply"
+msgstr "კავშირის სერვერი"
 
 #, fuzzy
-msgid "Unknow LOGIN CMD"
+msgid "Unknown LOGIN CMD"
 msgstr "უცნობი მიზეზი."
 
 #, fuzzy
-msgid "Unknow CLIENT CMD"
+msgid "Unknown CLIENT CMD"
 msgstr "უცნობი მიზეზი."
 
 #, fuzzy, c-format
@@ -7773,9 +7867,6 @@ msgstr "ფაილის გაგზავნა ვერ მოხერხ
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s -მა შეწყვიტა %s ფაილის გადატანა"
-
-msgid "Connection closed (writing)"
-msgstr ""
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -7831,17 +7922,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr ""
 
-msgid "Connection reset"
-msgstr ""
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr ""
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr ""
-
 #, c-format
 msgid "Announcement from %s"
 msgstr ""
@@ -7863,6 +7943,10 @@ msgstr ""
 
 msgid "Video Camera"
 msgstr "ვიდეო კამერა"
+
+#, fuzzy
+msgid "File Transfer"
+msgstr "ფაილის გადაგზავნა"
 
 #, fuzzy
 msgid "Supports"
@@ -8547,9 +8631,6 @@ msgstr "ორგანიზაცია"
 msgid "Unit"
 msgstr "განყოფილება"
 
-msgid "Note"
-msgstr "შენიშვნა"
-
 msgid "Join Chat"
 msgstr "ჩაერთე საუბარში"
 
@@ -8635,6 +8716,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "ქსელის სტატისტიკა"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr ""
 
@@ -8694,8 +8778,9 @@ msgstr ""
 msgid "Disconnected by server"
 msgstr ""
 
-msgid "Error during connecting to SILC Server"
-msgstr ""
+#, fuzzy
+msgid "Error connecting to SILC Server"
+msgstr "კავშირის სერვერი"
 
 msgid "Key Exchange failed"
 msgstr ""
@@ -8704,27 +8789,27 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 
-msgid "Connection failed"
-msgstr ""
-
 msgid "Performing key exchange"
 msgstr ""
 
-msgid "Unable to create connection"
-msgstr ""
-
-msgid "Could not load SILC key pair"
-msgstr ""
+#, fuzzy
+msgid "Unable to load SILC key pair"
+msgstr "Pidgin-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr ""
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "Pidgin-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
+
 msgid "Out of memory"
 msgstr ""
 
-msgid "Cannot initialize SILC protocol"
-msgstr ""
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
+msgstr "ახალი კავშირის დამყარება შეუძლებელია"
 
 msgid "Error loading SILC key pair"
 msgstr ""
@@ -9004,8 +9089,9 @@ msgstr ""
 msgid "Creating SILC key pair..."
 msgstr ""
 
-msgid "Cannot create SILC key pair\n"
-msgstr ""
+#, fuzzy
+msgid "Unable to create SILC key pair"
+msgstr "ვერ ვქმნი სოკეტს"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -9093,6 +9179,9 @@ msgstr ""
 msgid "No server statistics available"
 msgstr ""
 
+msgid "Error during connecting to SILC Server"
+msgstr ""
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr ""
@@ -9133,38 +9222,35 @@ msgstr ""
 msgid "Failure: Authentication failed"
 msgstr ""
 
-msgid "Cannot initialize SILC Client connection"
-msgstr ""
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
+msgstr "ახალი კავშირის დამყარება შეუძლებელია"
 
 #, fuzzy
 msgid "John Noname"
 msgstr "უსახელო"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
+msgstr "Pidgin-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
+
+msgid "Unable to create connection"
 msgstr ""
 
 #, fuzzy
-msgid "Could not write"
-msgstr "ვერ ვაგზავნი"
-
-#, fuzzy
-msgid "Could not connect"
-msgstr "ვერ ვუკავშირდები"
-
-#, fuzzy
-msgid "Unknown server response."
+msgid "Unknown server response"
 msgstr "სერვერის უცნობი შეცდომა."
 
-msgid "Could not create listen socket"
-msgstr ""
-
 #, fuzzy
-msgid "Could not resolve hostname"
-msgstr "ვერ ვაგზავნი"
+msgid "Unable to create listen socket"
+msgstr "ვერ ვქმნი სოკეტს"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
+
+#, fuzzy
+msgid "SIP connect server not specified"
+msgstr "სერვერი-პორტი"
 
 #. *< type
 #. *< ui_requirement
@@ -9199,173 +9285,18 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
-#, c-format
-msgid "Looking up %s"
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr ""
 
-#, c-format
-msgid "Connect to %s failed"
+msgid "list: List rooms on the Yahoo network"
 msgstr ""
 
-#, c-format
-msgid "Signon: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable to write file %s."
-msgstr ""
-
-#, c-format
-msgid "Unable to read file %s."
-msgstr "ვერ ვკითხულობ ფაილს %s."
-
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr ""
-
-#, c-format
-msgid "%s not currently logged in."
-msgstr ""
-
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr ""
-
-#, c-format
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr ""
-
-#, c-format
-msgid "Chat in %s is not available."
-msgstr ""
-
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr ""
-
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr ""
-
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr ""
-
-#, c-format
-msgid "Failure."
-msgstr "შეცდომა."
-
-#, c-format
-msgid "Too many matches."
-msgstr ""
-
-#, c-format
-msgid "Need more qualifiers."
-msgstr ""
-
-#, c-format
-msgid "Dir service temporarily unavailable."
-msgstr ""
-
-#, c-format
-msgid "Email lookup restricted."
-msgstr ""
-
-#, c-format
-msgid "Keyword ignored."
-msgstr ""
-
-#, c-format
-msgid "No keywords."
-msgstr ""
-
-#, c-format
-msgid "User has no directory information."
-msgstr ""
-
-#, c-format
-msgid "Country not supported."
-msgstr ""
-
-#, c-format
-msgid "Failure unknown: %s."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Incorrect username or password."
-msgstr "არასწორია მეტსახელი ან პაროლი"
-
-#, c-format
-msgid "The service is temporarily unavailable."
-msgstr ""
-
-#, c-format
-msgid "Your warning level is currently too high to log in."
-msgstr ""
-
-#, c-format
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr ""
-
-#, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr ""
-
-msgid "Invalid Groupname"
-msgstr ""
-
-msgid "Connection Closed"
-msgstr ""
-
-msgid "Waiting for reply..."
-msgstr "ველოდები პასუხს..."
-
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr ""
-
-msgid "Password Change Successful"
-msgstr "პაროლი შეიცვალა!"
-
-msgid "_Group:"
-msgstr "_ჯგუფი:"
-
-msgid "Get Dir Info"
-msgstr ""
-
-msgid "Set Dir Info"
-msgstr ""
-
-#, c-format
-msgid "Could not open %s for writing!"
-msgstr ""
-
-msgid "File transfer failed; other side probably canceled."
-msgstr ""
-
-msgid "Could not connect for transfer."
-msgstr ""
-
-msgid "Could not write file header.  The file will not be transferred."
+msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
 #, fuzzy
-msgid "Save As..."
-msgstr "შეინახე ხატულა როგორც..."
-
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] ""
-
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr ""
+msgid "Yahoo ID..."
+msgstr "Yahoo! ID"
 
 #. *< type
 #. *< ui_requirement
@@ -9377,11 +9308,59 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-msgid "TOC Protocol Plugin"
-msgstr "TOC პროტოკოლის პლაგინი"
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo პროტოკოლის პლაგინი"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy
+msgid "Pager server"
+msgstr "პროქსი სერვერი"
+
+msgid "Pager port"
+msgstr ""
+
+#, fuzzy
+msgid "File transfer server"
+msgstr "ფაილების გადაგზავნა"
+
+msgid "File transfer port"
+msgstr ""
+
+msgid "Chat room locale"
+msgstr ""
+
+msgid "Ignore conference and chatroom invitations"
+msgstr ""
+
+msgid "Chat room list URL"
+msgstr ""
+
+msgid "Yahoo Chat server"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo Chat port"
+msgstr "Yahoo იაპონია"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo! ID"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Yahoo პროტოკოლის პლაგინი"
+
+msgid "Your SMS was not delivered"
 msgstr ""
 
 msgid "Your Yahoo! message did not get sent."
@@ -9403,6 +9382,28 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr ""
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#. security lock from too many failed login attempts
+msgid ""
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
+msgstr ""
+
+#. indicates a lock of some description
+msgid ""
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
+msgstr ""
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "არასწორია მეტსახელი ან პაროლი"
 
 #, c-format
 msgid ""
@@ -9431,34 +9432,28 @@ msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 
 #, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 
-msgid "Could not add buddy to server list"
-msgstr ""
+#, fuzzy
+msgid "Unable to add buddy to server list"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
 #, fuzzy
-msgid "Received unexpected HTTP response from server."
+msgid "Received unexpected HTTP response from server"
 msgstr "სერვერის არასწორი პასუხი"
 
-msgid "Connection problem"
-msgstr ""
-
 #, fuzzy, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+msgid "Lost connection with %s: %s"
 msgstr "საუბარი %s-თან"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 msgid "Not at Home"
 msgstr ""
@@ -9505,7 +9500,7 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
+msgid "Select the ID you want to activate"
 msgstr ""
 
 msgid "Join whom in chat?"
@@ -9521,78 +9516,14 @@ msgstr ""
 msgid "Open Inbox"
 msgstr "Hotmail საფოსტო ყუთის გახსნა"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-
-msgid "list: List rooms on the Yahoo network"
-msgstr ""
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo ID..."
-msgstr "Yahoo! ID"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo პროტოკოლის პლაგინი"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo იაპონია"
-
-#, fuzzy
-msgid "Pager server"
-msgstr "პროქსი სერვერი"
-
-#, fuzzy
-msgid "Japan Pager server"
-msgstr "იაპონური"
-
-msgid "Pager port"
-msgstr ""
-
-#, fuzzy
-msgid "File transfer server"
-msgstr "ფაილების გადაგზავნა"
-
-#, fuzzy
-msgid "Japan file transfer server"
-msgstr "ფაილის გადაგზავნა შესრულდა"
-
-msgid "File transfer port"
-msgstr ""
-
-msgid "Chat room locale"
-msgstr ""
-
-msgid "Ignore conference and chatroom invitations"
-msgstr ""
-
-msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo Chat port"
-msgstr "Yahoo იაპონია"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "დაკავშირება შეუძლებელია"
 
 msgid "Unable to establish file descriptor."
 msgstr ""
@@ -9600,6 +9531,10 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s სურს გამოგიგზავნოთ ფაილი"
+
+#, fuzzy
+msgid "Write Error"
+msgstr "წერის შეცდომა"
 
 msgid "Yahoo! Japan Profile"
 msgstr ""
@@ -9641,13 +9576,8 @@ msgstr "საინტერესო ლინკი 3"
 msgid "Last Update"
 msgstr "ბოლო განახლება"
 
-#, c-format
-msgid "User information for %s unavailable"
-msgstr ""
-
 msgid ""
-"Sorry, this profile seems to be in a language or format that is not "
-"supported at this time."
+"This profile is in a language or format that is not supported at this time."
 msgstr ""
 
 msgid ""
@@ -9710,19 +9640,17 @@ msgstr "ხმები"
 msgid "Webcams"
 msgstr "ვებ კამერები"
 
+msgid "Connection problem"
+msgstr ""
+
 msgid "Unable to fetch room list."
 msgstr ""
 
 msgid "User Rooms"
 msgstr "მომხმარებლის ოთახები"
 
-msgid "Connection problem with the YCHT server."
-msgstr ""
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 msgid ""
@@ -9843,30 +9771,20 @@ msgid "Exposure"
 msgstr ""
 
 #, fuzzy, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr "ვერ ვქმნი სოკეტს"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
-msgstr ""
+msgid "Unable to parse response from HTTP proxy: %s"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა: %s"
 
 #, fuzzy, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "კავშირის შეცდომა"
 
 #, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Error resolving %s"
 msgstr "შეცდომა"
-
-#, fuzzy
-msgid "Could not resolve host name"
-msgstr "ვერ ვაგზავნი"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -9961,9 +9879,6 @@ msgstr ""
 msgid "Extended away"
 msgstr "გაფართოებული გასული"
 
-msgid "Mobile"
-msgstr ""
-
 msgid "Listening to music"
 msgstr ""
 
@@ -10003,16 +9918,6 @@ msgstr "%s გახდა უმოქმედო."
 #.
 #, c-format
 msgid "%x %X"
-msgstr ""
-
-#, c-format
-msgid "Error Reading %s"
-msgstr ""
-
-#, c-format
-msgid ""
-"An error was encountered reading your %s.  They have not been loaded, and "
-"the old file has been renamed to %s~."
 msgstr ""
 
 msgid "Calculating..."
@@ -10120,6 +10025,16 @@ msgstr "კავშირი ვერ განხორციელდა."
 msgid "Address already in use."
 msgstr ""
 
+#, c-format
+msgid "Error Reading %s"
+msgstr ""
+
+#, c-format
+msgid ""
+"An error was encountered reading your %s.  The file has not been loaded, and "
+"the old file has been renamed to %s~."
+msgstr ""
+
 #, fuzzy
 msgid "Internet Messenger"
 msgstr "მოკლე-შეტყობინება"
@@ -10167,10 +10082,8 @@ msgstr "ახალი ელ.ფოსტის შეტყობინებ
 msgid "Use this buddy _icon for this account:"
 msgstr ""
 
-#. Build the protocol options frame.
-#, c-format
-msgid "%s Options"
-msgstr "%s პარამეტრები"
+msgid "_Advanced"
+msgstr "_დამატებითი"
 
 #, fuzzy
 msgid "Use GNOME Proxy Settings"
@@ -10206,9 +10119,6 @@ msgstr ""
 msgid "you can see the butterflies mating"
 msgstr ""
 
-msgid "Proxy Options"
-msgstr "პროქსის პარამეტრები"
-
 msgid "Proxy _type:"
 msgstr "პროქსის ტიპი"
 
@@ -10237,8 +10147,9 @@ msgstr "_ძირითადი"
 msgid "Create _this new account on the server"
 msgstr ""
 
-msgid "_Advanced"
-msgstr "_დამატებითი"
+#, fuzzy
+msgid "_Proxy"
+msgstr "პროქსი"
 
 msgid "Enabled"
 msgstr "აქტიური"
@@ -10275,16 +10186,17 @@ msgid "Please update the necessary fields."
 msgstr ""
 
 #, fuzzy
-msgid "Room _List"
-msgstr "ოთახების სია"
+msgid "A_ccount"
+msgstr "ანგარიში:"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr ""
 
-msgid "_Account:"
-msgstr "_ანგარიში:"
+#, fuzzy
+msgid "Room _List"
+msgstr "ოთახების სია"
 
 msgid "_Block"
 msgstr "_ბლოკირება"
@@ -10303,6 +10215,17 @@ msgid "I_M"
 msgstr "მოკ_შე"
 
 #, fuzzy
+msgid "_Audio Call"
+msgstr "ჩატის _დამატება"
+
+msgid "Audio/_Video Call"
+msgstr ""
+
+#, fuzzy
+msgid "_Video Call"
+msgstr "ვიდეო ჩატი"
+
+#, fuzzy
 msgid "_Send File..."
 msgstr "ფაილის გაგზავნა"
 
@@ -10314,7 +10237,11 @@ msgid "View _Log"
 msgstr "დაათვალიერე _ლოგი"
 
 #, fuzzy
-msgid "Hide when offline"
+msgid "Hide When Offline"
+msgstr "მომხმარებელი გასულია ქსელიდან"
+
+#, fuzzy
+msgid "Show When Offline"
 msgstr "მომხმარებელი გასულია ქსელიდან"
 
 msgid "_Alias..."
@@ -10455,6 +10382,10 @@ msgstr "ხელსაწყო"
 msgid "/Tools/_Certificates"
 msgstr "/ხელსაწყოები/პარამ_ეტრები"
 
+#, fuzzy
+msgid "/Tools/Custom Smile_ys"
+msgstr "/ხელსაწყოები/პრივატობა"
+
 msgid "/Tools/Plu_gins"
 msgstr "/ხელსაწყოები/_პლაგინები"
 
@@ -10463,10 +10394,6 @@ msgstr "/ხელსაწყოები/პარამ_ეტრები"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/ხელსაწყოები/პრი_ვატობა"
-
-#, fuzzy
-msgid "/Tools/Smile_y"
-msgstr "/ხელსაწყოები/პრივატობა"
 
 msgid "/Tools/_File Transfers"
 msgstr "/ხელსაწყოები/_ფაილების გადაგზავნა"
@@ -10591,8 +10518,8 @@ msgstr "მანუალურად"
 msgid "By status"
 msgstr "სტატუსის მიხედვით"
 
-msgid "By log size"
-msgstr "პროტოკოლის ზომის მიხედვით"
+msgid "By recent log activity"
+msgstr ""
 
 #, fuzzy, c-format
 msgid "%s disconnected"
@@ -10609,6 +10536,9 @@ msgstr "დაკავშირება"
 #, fuzzy
 msgid "Re-enable"
 msgstr "ანგარიშის გააქტიურება"
+
+msgid "SSL FAQs"
+msgstr ""
 
 #, fuzzy
 msgid "Welcome back!"
@@ -10701,6 +10631,9 @@ msgstr ""
 msgid "A_lias:"
 msgstr "სინონიმი:"
 
+msgid "_Group:"
+msgstr "_ჯგუფი:"
+
 msgid "Auto_join when account becomes online."
 msgstr ""
 
@@ -10734,6 +10667,113 @@ msgstr "/ხელსაწყოები"
 msgid "/Buddies/Sort Buddies"
 msgstr "/მეგობრები/მეგობრების სორტირება"
 
+#. Buddy List
+#, fuzzy
+msgid "Background Color"
+msgstr "ფონის ფერი"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "შესვლის პარამეტრები"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "ფონის ფერი"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+msgid "Expanded Text"
+msgstr ""
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "ფონიდ ფერის არჩევა"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+msgid "Collapsed Text"
+msgstr ""
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "ფონიდ ფერის არჩევა"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "პორტი"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "ხაზზე"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "გასული"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "გასული ქსელიდან"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "უმოქმედო"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "შეტყობინება გაგზავნილია"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "ინფორმაციის შეცვლა %s მომხმარებლისათვის"
+
+msgid "Type the host name for this certificate."
+msgstr ""
+
 #. Widget creation function
 #, fuzzy
 msgid "SSL Servers"
@@ -10752,12 +10792,6 @@ msgstr ""
 
 msgid "Invite Buddy Into Chat Room"
 msgstr "მოიწვიე მეგობარი Chat-ოთახში"
-
-#. Put our happy label in it.
-msgid ""
-"Please enter the name of the user you wish to invite, along with an optional "
-"invite message."
-msgstr ""
 
 msgid "_Buddy:"
 msgstr "_მეგობარი:"
@@ -10788,7 +10822,8 @@ msgstr "იგნორირება"
 msgid "Get Away Message"
 msgstr "მიიღე გასულობის შეტყობინება"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "ბოლოს ნათქვამი"
 
 msgid "Unable to save icon file to disk."
@@ -10836,6 +10871,22 @@ msgstr "/საუბარი/_შეინახე როგორც..."
 #, fuzzy
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/საუბარი/გაწმინდე"
+
+#, fuzzy
+msgid "/Conversation/M_edia"
+msgstr "/საუბარი/_დახურვა"
+
+#, fuzzy
+msgid "/Conversation/Media/_Audio Call"
+msgstr "/საუბარი/_დახურვა"
+
+#, fuzzy
+msgid "/Conversation/Media/_Video Call"
+msgstr "/საუბარი/_დახურვა"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video _Call"
+msgstr "/საუბარი/_მანახე ლოგი"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/საუბარი/გააგზავნე ფაილი..."
@@ -10915,6 +10966,18 @@ msgstr "/_საუბარი"
 
 msgid "/Conversation/View Log"
 msgstr "/საუბარი/მოჩვენე ლოგი"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio Call"
+msgstr "/საუბარი/_დახურვა"
+
+#, fuzzy
+msgid "/Conversation/Media/Video Call"
+msgstr "/საუბარი/მოჩვენე ლოგი"
+
+#, fuzzy
+msgid "/Conversation/Media/Audio\\/Video Call"
+msgstr "/საუბარი/_დახურვა"
 
 msgid "/Conversation/Send File..."
 msgstr "/საუბარი/გააგზავნე ფაილი..."
@@ -11105,6 +11168,9 @@ msgstr "მისამართი"
 msgid "Ka-Hing Cheung"
 msgstr ""
 
+msgid "voice and video"
+msgstr ""
+
 msgid "support"
 msgstr "სუპორტი"
 
@@ -11235,6 +11301,10 @@ msgid "Hungarian"
 msgstr "უნგრული"
 
 #, fuzzy
+msgid "Armenian"
+msgstr "რუმინული"
+
+#, fuzzy
 msgid "Indonesian"
 msgstr "მაკედონიური"
 
@@ -11250,6 +11320,10 @@ msgstr "ქართული"
 #, fuzzy
 msgid "Ubuntu Georgian Translators"
 msgstr "მიმდინარე თარგმანები"
+
+#, fuzzy
+msgid "Khmer"
+msgstr "Opera"
 
 msgid "Kannada"
 msgstr ""
@@ -11270,6 +11344,10 @@ msgid "Lithuanian"
 msgstr "ლიტვური"
 
 msgid "Macedonian"
+msgstr "მაკედონიური"
+
+#, fuzzy
+msgid "Mongolian"
 msgstr "მაკედონიური"
 
 #, fuzzy
@@ -11332,6 +11410,9 @@ msgstr ""
 msgid "Swedish"
 msgstr "შვედური"
 
+msgid "Swahili"
+msgstr ""
+
 #, fuzzy
 msgid "Tamil"
 msgstr "თამილური"
@@ -11386,8 +11467,25 @@ msgid ""
 "<BR><BR>"
 msgstr ""
 
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</A><BR/><BR/>"
+msgstr ""
+
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid ""
+"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
+
+#, fuzzy, c-format
+msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
@@ -11648,7 +11746,7 @@ msgid "Hyperlink visited color"
 msgstr "ლინკების ფერი"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "ლინკების ფერი მაუსის შეხებისას."
 
 msgid "Hyperlink prelight color"
@@ -11686,15 +11784,22 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 #, fuzzy
 msgid "Typing notification color"
 msgstr "ახალი ელ.ფოსტის შეტყობინებები"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "ახალი ელ.ფოსტის შეტყობინებები"
 
 #, fuzzy
 msgid "Typing notification font"
@@ -11706,15 +11811,6 @@ msgstr ""
 #, fuzzy
 msgid "Enable typing notification"
 msgstr "ახალი ელ.ფოსტის შეტყობინებები"
-
-msgid "_Copy Email Address"
-msgstr "_Email მისამართის კოპირება"
-
-msgid "_Open Link in Browser"
-msgstr "_ლინკის ბრაუზერში გახსნა"
-
-msgid "_Copy Link Location"
-msgstr "_ლინკის კოპირება"
 
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
@@ -11748,11 +11844,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "სურათის შენახვა"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "სურათის შენახვა...."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr ""
 
@@ -11838,10 +11932,6 @@ msgstr ""
 
 msgid "Font Face"
 msgstr "ფონტი"
-
-#, fuzzy
-msgid "Background Color"
-msgstr "ფონის ფერი"
 
 #, fuzzy
 msgid "Foreground Color"
@@ -11970,6 +12060,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -11987,6 +12078,7 @@ msgid ""
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
+"  -f, --force-online  force online, regardless of network status\n"
 "  -h, --help          display this help and exit\n"
 "  -m, --multiple      do not ensure single instance\n"
 "  -n, --nologin       don't automatically login\n"
@@ -12018,10 +12110,26 @@ msgstr ""
 msgid "Pidgin"
 msgstr "პლაგინები"
 
-msgid "Open All Messages"
-msgstr "გახსენი ყველა შეტყობინება"
+#, c-format
+msgid "Exiting because another libpurple client is already running.\n"
+msgstr ""
 
-msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgid "/_Media"
+msgstr ""
+
+msgid "/Media/_Hangup"
+msgstr ""
+
+#, fuzzy
+msgid "Calling..."
+msgstr "გაანგარიშება..."
+
+#, c-format
+msgid "%s wishes to start an audio/video session with you."
+msgstr ""
+
+#, c-format
+msgid "%s wishes to start a video session with you."
 msgstr ""
 
 #, c-format
@@ -12048,6 +12156,30 @@ msgstr "შეცდომა"
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
+
+#, fuzzy
+msgid "No message"
+msgstr "უცნობი შეტყობინება"
+
+msgid "Open All Messages"
+msgstr "გახსენი ყველა შეტყობინება"
+
+msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+msgstr ""
+
+#, fuzzy
+msgid "New Pounces"
+msgstr "ახალი პერსონა"
+
+msgid "Dismiss"
+msgstr ""
+
+#, fuzzy
+msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">მოსულია ახალი წერილი!</span>\n"
+"\n"
+"%s"
 
 msgid "The following plugins will be unloaded."
 msgstr ""
@@ -12101,9 +12233,16 @@ msgstr "<b>პლაგინის დეტალები</b>"
 msgid "Select a file"
 msgstr "ფაილის არჩევა"
 
+#, fuzzy
+msgid "Modify Buddy Pounce"
+msgstr "დაამატე მეგობარი"
+
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
 msgstr ""
+
+msgid "_Account:"
+msgstr "_ანგარიში:"
 
 msgid "_Buddy name:"
 msgstr "_მეგობრის სახელი:"
@@ -12171,7 +12310,58 @@ msgstr ""
 msgid "Pounce Target"
 msgstr ""
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy, c-format
+msgid "Started typing"
+msgstr "ჩართვის დროს"
+
+#, fuzzy, c-format
+msgid "Paused while typing"
+msgstr "მომხმარებელი კრიფავს..."
+
+#, fuzzy, c-format
+msgid "Signed on"
+msgstr "სიგნალების ტესტი"
+
+#, c-format
+msgid "Returned from being idle"
+msgstr ""
+
+#, c-format
+msgid "Returned from being away"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Stopped typing"
+msgstr "%s შემოვიდა ქსელში."
+
+#, fuzzy, c-format
+msgid "Signed off"
+msgstr "%s გავიდა ქსელიდან"
+
+#, fuzzy, c-format
+msgid "Became idle"
+msgstr "%s გახდა უმოქმედო."
+
+#, fuzzy, c-format
+msgid "Went away"
+msgstr "როდესაც გასულია"
+
+#, fuzzy, c-format
+msgid "Sent a message"
+msgstr "შეტყობინების გაგზავნა"
+
+#, c-format
+msgid "Unknown.... Please report this!"
+msgstr ""
+
+msgid "Theme failed to unpack."
+msgstr ""
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "შეტყობინება ძალიან დიდია"
+
+msgid "Theme failed to copy."
 msgstr ""
 
 msgid "Install Theme"
@@ -12192,6 +12382,12 @@ msgstr ""
 msgid "Cl_ose conversations with the Escape key"
 msgstr "საუბარი %s-თან"
 
+#. Buddy List Themes
+#, fuzzy
+msgid "Buddy List Theme"
+msgstr "მეგობრების სია"
+
+#. System Tray
 msgid "System Tray Icon"
 msgstr "სისტემური პანელის ნახატი"
 
@@ -12204,7 +12400,7 @@ msgid "On unread messages"
 msgstr "შეტყობინების გაგზავნა"
 
 #, fuzzy
-msgid "Conversation Window Hiding"
+msgid "Conversation Window"
 msgstr "IMის საუბრის ფანჯარა"
 
 #, fuzzy
@@ -12213,6 +12409,10 @@ msgstr "_ახალი საუბარი:"
 
 msgid "When away"
 msgstr "როდესაც გასულია"
+
+#, fuzzy
+msgid "Minimi_ze new conversation windows"
+msgstr "IMის საუბრის ფანჯარა"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12273,10 +12473,6 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr ""
 
-#, fuzzy
-msgid "Minimi_ze new conversation windows"
-msgstr "IMის საუბრის ფანჯარა"
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12311,13 +12507,11 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr ""
 
-msgid "ST_UN server:"
-msgstr "ST_UN სერვერი:"
-
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "IP მისამართის _ავტომატური დადგენა"
 
 msgid "Public _IP:"
@@ -12337,6 +12531,10 @@ msgstr "_საწყისი პორტი:"
 
 msgid "_End port:"
 msgstr "სა_ბოლოო პორტი:"
+
+#. TURN server
+msgid "Relay Server (TURN)"
+msgstr ""
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12366,6 +12564,10 @@ msgstr "პროქსი სერვერი"
 
 msgid "No proxy"
 msgstr "უპროქსიოდ"
+
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote DNS with SOCKS4 proxies"
+msgstr ""
 
 msgid "_User:"
 msgstr "_მომხმარებელი:"
@@ -12527,12 +12729,12 @@ msgstr ""
 msgid "Auto-away"
 msgstr "თვითგასვლა"
 
-msgid "Change status when _idle"
-msgstr ""
-
 #, fuzzy
 msgid "_Minutes before becoming idle:"
 msgstr "_დრო სტატუსის შეცვლამდე(წუთებში):"
+
+msgid "Change status when _idle"
+msgstr ""
 
 msgid "Change _status to:"
 msgstr ""
@@ -12687,27 +12889,17 @@ msgstr "შენახვა და გამოყენება"
 msgid "Status for %s"
 msgstr ""
 
+#, c-format
+msgid ""
+"A custom smiley for '%s' already exists.  Please use a different shortcut."
+msgstr ""
+
 #, fuzzy
 msgid "Custom Smiley"
 msgstr "სიცილაკის ჩამატება"
 
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 msgid "Duplicate Shortcut"
 msgstr ""
-
-msgid ""
-"A custom smiley for the selected shortcut already exists. Please specify a "
-"different shortcut."
-msgstr ""
-
-#, fuzzy
-msgid "Please select an image for the smiley."
-msgstr "გთხოვთ შეიყვანოთ თქვენი ახალი პაროლი"
 
 #, fuzzy
 msgid "Edit Smiley"
@@ -12718,19 +12910,28 @@ msgid "Add Smiley"
 msgstr "სიცილაკი"
 
 #, fuzzy
-msgid "Smiley _Image"
+msgid "_Image:"
 msgstr "სურათის შენახვა"
 
-#. Smiley shortcut
-msgid "Smiley S_hortcut"
-msgstr ""
+#. Shortcut text
+#, fuzzy
+msgid "S_hortcut text:"
+msgstr "პორტი"
 
 #, fuzzy
 msgid "Smiley"
 msgstr "სიცილაკი"
 
+#, fuzzy
+msgid "Shortcut Text"
+msgstr "პორტი"
+
 msgid "Custom Smiley Manager"
 msgstr ""
+
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "ფონტის არჩევა"
 
 msgid "Click to change your buddyicon for this account."
 msgstr ""
@@ -12813,8 +13014,8 @@ msgid "Cannot send launcher"
 msgstr ""
 
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 
 #, c-format
@@ -12847,6 +13048,16 @@ msgstr "ფაილის გახსნა შეუძლებელია.
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
+
+#, fuzzy
+msgid "_Open Link"
+msgstr "გახსნას მაჩვენებელი :"
+
+msgid "_Copy Link Location"
+msgstr "_ლინკის კოპირება"
+
+msgid "_Copy Email Address"
+msgstr "_Email მისამართის კოპირება"
 
 #, fuzzy
 msgid "Save File"
@@ -12945,6 +13156,75 @@ msgstr ""
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
+msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "სერვერის მისამართი"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "შეიყვანეთ კონფერენციების სერვერი"
+
+msgid "Select an XMPP server to query"
+msgstr ""
+
+#, fuzzy
+msgid "Find Services"
+msgstr "იპოვე მეგობრები"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "მეგობრების სია"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "როდესაც გასულია"
+
+#, fuzzy
+msgid "Directory"
+msgstr "პროტოკოლირების დირექტორია"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "ხმის არჩევა"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>აღწერა:</b> Spooky"
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr ""
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Browser:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "მომხმარებელი არ არსებობს"
+
+msgid "Server does not support service discovery"
+msgstr ""
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Jabber"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
 msgstr ""
 
 msgid "Buddy is idle"
@@ -13338,7 +13618,7 @@ msgstr ""
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 
 #. ---------- "Notify For" ----------
@@ -13447,12 +13727,6 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 
-msgid "Cursor Color"
-msgstr "კურსორის ფერი"
-
-msgid "Secondary Cursor Color"
-msgstr "მეორადი კურსორის ფერი"
-
 msgid "Hyperlink Color"
 msgstr "ლინკის ფერი"
 
@@ -13463,6 +13737,10 @@ msgstr "ლინკის ფერი"
 #, fuzzy
 msgid "Highlighted Message Name Color"
 msgstr "შეტყობინების გაგზავნა"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "ახალი ელ.ფოსტის შეტყობინებები"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr ""
@@ -13497,35 +13775,22 @@ msgstr "GTK+ ინტერფეისის ფონტი"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "ტექსტი მალსახმობი გაფორმება"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "ინტერფეისის ფერები"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+
+msgid "GTK+ Theme Control Settings"
+msgstr ""
 
 #, fuzzy
-msgid "Widget Sizes"
-msgstr "Widget ზომები"
+msgid "Colors"
+msgstr "დახურვა"
 
 msgid "Fonts"
 msgstr "ფონტები"
+
+msgid "Miscellaneous"
+msgstr ""
 
 #, fuzzy
 msgid "Gtkrc File Tools"
@@ -13611,7 +13876,7 @@ msgstr "IMის საუბრის ფანჯარა"
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -13661,6 +13926,109 @@ msgid "Text replacement"
 msgstr "ტექსტის შენაცვლება"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr ""
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "მომხმარებელი არ არის ხაზზე"
+
+msgid "Just logged out"
+msgstr ""
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "საუბარში ჩართვა"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "იგნორირება"
+
+#, fuzzy
+msgid "Founder"
+msgstr "ჩატვირთვა"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "ავტორიზაცია მიღებულია"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "შეცდომა"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "ინფორმაცია სამსახურის შესახებ"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "პრივატი"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "შენშვნის დონე"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "სტატუსი"
+
+msgid "Chatroom Emblems"
+msgstr ""
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "ხატულას შენახვა"
+
+msgid "Pidgin Icon Theme Editor"
+msgstr ""
+
+#, fuzzy
+msgid "Contact"
+msgstr "ინფორმაცია ანგარიშის შესახებ"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "მეგობრების სია"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "მეგობრების სია"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Pidgin-ის მომხმარებელი"
+
+#. *< name
+#. *< version
+#. *  summary
+msgid "Pidgin Theme Editor."
 msgstr ""
 
 #. *< type
@@ -13822,9 +14190,6 @@ msgstr "_დატოვე მეგობრების სიის ფა�
 msgid "Only when docked"
 msgstr ""
 
-msgid "_Flash window when chat messages are received"
-msgstr ""
-
 #, fuzzy
 msgid "Windows Pidgin Options"
 msgstr "შესვლის პარამეტრები"
@@ -13833,9 +14198,10 @@ msgstr "შესვლის პარამეტრები"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Windows Pidgin-ის სპეციფიკური პარამეტრები."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr ""
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
+msgstr "Windows Pidgin-ის სპეციფიკური პარამეტრები."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr ""
@@ -13874,6 +14240,292 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Cannot open socket"
+#~ msgstr "ვერ ვაგზავნი ფაილს"
+
+#, fuzzy
+#~ msgid "Could not listen on socket"
+#~ msgstr "შეუძლებელია სოკეტის შექმნა"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "ვერ ვკითხულობ სოკეტს"
+
+#~ msgid "Connection failed."
+#~ msgstr "კავშირი ვერ განხორციელდა."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "სერვერი გაითიშა"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "შეუძლებელია სოკეტის შექმნა"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+
+#~ msgid "Read error"
+#~ msgstr "კითხვის შეცდომა"
+
+#~ msgid "Write error"
+#~ msgstr "წერის შეცდომა"
+
+#, fuzzy
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "მთლიანი მისამართი"
+
+#, fuzzy
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "ბრძანება"
+
+#, fuzzy
+#~ msgid "In-Band Registration"
+#~ msgstr "რეგისტრაციის შეცდომა"
+
+#, fuzzy
+#~ msgid "User Location"
+#~ msgstr "ადგილმდებარეობა"
+
+#, fuzzy
+#~ msgid "User Avatar"
+#~ msgstr "მომხმარებლის ძებნა"
+
+#, fuzzy
+#~ msgid "Chat State Notifications"
+#~ msgstr "მდგომარეობა შეტყობინება"
+
+#, fuzzy
+#~ msgid "Software Version"
+#~ msgstr "საუბრის შენახვა"
+
+#, fuzzy
+#~ msgid "Stream Initiation"
+#~ msgstr "ორიენტაცია"
+
+#, fuzzy
+#~ msgid "User Mood"
+#~ msgstr "მომხმარებლის ოთახები"
+
+#, fuzzy
+#~ msgid "User Activity"
+#~ msgstr "მომხმარებელთა ლიმიტი"
+
+#, fuzzy
+#~ msgid "Entity Capabilities"
+#~ msgstr "შეუძლია"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "მომხმარებლის სახელი"
+
+#, fuzzy
+#~ msgid "Reachability Address"
+#~ msgstr "Email მისამართი"
+
+#, fuzzy
+#~ msgid "User Profile"
+#~ msgstr "MSN პროფაილი"
+
+#, fuzzy
+#~ msgid "Jingle"
+#~ msgstr "Ping"
+
+#, fuzzy
+#~ msgid "User Nickname"
+#~ msgstr "მომხმარებლის სახელი"
+
+#, fuzzy
+#~ msgid "Jingle Video"
+#~ msgstr "ცოცხალი ვიდეო"
+
+#, fuzzy
+#~ msgid "Message Receipts"
+#~ msgstr "შეტყობინება მიღებულია"
+
+#, fuzzy
+#~ msgid "Public Key Publishing"
+#~ msgstr "ავთენტურობის დადგენა ღია გასაღებით"
+
+#, fuzzy
+#~ msgid "User Chatting"
+#~ msgstr "მომხმარებლის პარამეტრები"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "მომხმარებლის ოთახები"
+
+#, fuzzy
+#~ msgid "User Gaming"
+#~ msgstr "მომხმარებლის სახელი"
+
+#, fuzzy
+#~ msgid "User Viewing"
+#~ msgstr "მომხმარებელთა ლიმიტი"
+
+#, fuzzy
+#~ msgid "Stanza Encryption"
+#~ msgstr "Trillian შიფრი"
+
+#~ msgid "Read Error"
+#~ msgstr "კითხვის შეცდომა"
+
+#, fuzzy
+#~ msgid "Unparseable message"
+#~ msgstr "შეტყობინების გაგზავნა"
+
+#, fuzzy
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+
+#~ msgid "Incorrect password."
+#~ msgstr "არასწორი პაროლი."
+
+#, fuzzy
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+
+#~ msgid "Could Not Connect"
+#~ msgstr "ვერ ვუკავშირდები"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "არასწორი"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "კავშირის სერვერი"
+
+#, fuzzy
+#~ msgid "Connection lost"
+#~ msgstr "კავშირის შეცდომა"
+
+#, fuzzy
+#~ msgid "Could not write"
+#~ msgstr "ვერ ვაგზავნი"
+
+#, fuzzy
+#~ msgid "Could not connect"
+#~ msgstr "ვერ ვუკავშირდები"
+
+#, fuzzy
+#~ msgid "Could not resolve hostname"
+#~ msgstr "ვერ ვაგზავნი"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "არასწორი პაროლი."
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo იაპონია"
+
+#, fuzzy
+#~ msgid "Japan Pager server"
+#~ msgstr "იაპონური"
+
+#, fuzzy
+#~ msgid "Japan file transfer server"
+#~ msgstr "ფაილის გადაგზავნა შესრულდა"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr "არ ვარ დაკავშირებული სერვერთან."
+
+#, fuzzy
+#~ msgid "Could not resolve host name"
+#~ msgstr "ვერ ვაგზავნი"
+
+#, fuzzy
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "IMის საუბრის ფანჯარა"
+
+#, fuzzy
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "გთხოვთ შეიყვანოთ თქვენი ახალი პაროლი"
+
+#~ msgid "Cursor Color"
+#~ msgstr "კურსორის ფერი"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "მეორადი კურსორის ფერი"
+
+#~ msgid "Interface colors"
+#~ msgstr "ინტერფეისის ფერები"
+
+#, fuzzy
+#~ msgid "Widget Sizes"
+#~ msgstr "Widget ზომები"
+
+#, fuzzy
+#~ msgid "Invite message"
+#~ msgstr "გახსენი ყველა შეტყობინება"
+
+#, fuzzy
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "ვერ ვქმნი სოკეტს"
+
+#, fuzzy
+#~ msgid "Add buddy Q&A"
+#~ msgstr "დაამატე მეგობარი"
+
+#, fuzzy
+#~ msgid "Keep alive error"
+#~ msgstr "კითხვის შეცდომა"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server:\n"
+#~ "%d, %s"
+#~ msgstr "არ ვარ დაკავშირებული სერვერთან."
+
+#, fuzzy
+#~ msgid "Failed to send IM."
+#~ msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+
+#~ msgid "Unable to read file %s."
+#~ msgstr "ვერ ვკითხულობ ფაილს %s."
+
+#~ msgid "Failure."
+#~ msgstr "შეცდომა."
+
+#, fuzzy
+#~ msgid "Incorrect username or password."
+#~ msgstr "არასწორია მეტსახელი ან პაროლი"
+
+#~ msgid "Waiting for reply..."
+#~ msgstr "ველოდები პასუხს..."
+
+#~ msgid "Password Change Successful"
+#~ msgstr "პაროლი შეიცვალა!"
+
+#, fuzzy
+#~ msgid "Save As..."
+#~ msgstr "შეინახე ხატულა როგორც..."
+
+#~ msgid "TOC Protocol Plugin"
+#~ msgstr "TOC პროტოკოლის პლაგინი"
+
+#~ msgid "%s Options"
+#~ msgstr "%s პარამეტრები"
+
+#~ msgid "Proxy Options"
+#~ msgstr "პროქსის პარამეტრები"
+
+#~ msgid "By log size"
+#~ msgstr "პროტოკოლის ზომის მიხედვით"
+
+#~ msgid "_Open Link in Browser"
+#~ msgstr "_ლინკის ბრაუზერში გახსნა"
+
+#~ msgid "ST_UN server:"
+#~ msgstr "ST_UN სერვერი:"
+
+#, fuzzy
+#~ msgid "Smiley _Image"
+#~ msgstr "სურათის შენახვა"
 
 #, fuzzy
 #~ msgid "A group with the name already exists."
@@ -13940,10 +14592,6 @@ msgstr ""
 #~ msgstr "შეცდომა პაროლის შეცვლისას"
 
 #, fuzzy
-#~ msgid "Failed to connect all servers"
-#~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
-
-#, fuzzy
 #~ msgid "Connecting server %s, retries %d"
 #~ msgstr "კავშირის სერვერი"
 
@@ -13978,10 +14626,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Network disconnected"
 #~ msgstr "სერვერი გაითიშა"
-
-#, fuzzy
-#~ msgid "XMPP developer"
-#~ msgstr "Jabber"
 
 #, fuzzy
 #~ msgid ""
@@ -14060,10 +14704,6 @@ msgstr ""
 #~ msgstr "რეგისტრაციის შეცდომა"
 
 #, fuzzy
-#~ msgid "Error requesting login token"
-#~ msgstr "შეცდომა პროფაილის ჩამოტანისას"
-
-#, fuzzy
 #~ msgid "TCP Address"
 #~ msgstr "IP მისამართი"
 
@@ -14124,16 +14764,8 @@ msgstr ""
 #~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #, fuzzy
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
-
-#, fuzzy
 #~ msgid "_Merge"
 #~ msgstr "_შეტყობინება:"
-
-#, fuzzy
-#~ msgid "A_ccount:"
-#~ msgstr "ანგარიში:"
 
 #~ msgid "TCP port"
 #~ msgstr "TCP პორტი"
@@ -14207,13 +14839,6 @@ msgstr ""
 
 #~ msgid ""
 #~ "\n"
-#~ "<b>Description:</b> Spooky"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>აღწერა:</b> Spooky"
-
-#~ msgid ""
-#~ "\n"
 #~ "<b>Status:</b> Awesome"
 #~ msgstr ""
 #~ "\n"
@@ -14264,15 +14889,6 @@ msgstr ""
 #~ msgid "_Mute"
 #~ msgstr "_გაჩუმება"
 
-#~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">მოსულია ახალი წერილი!</span>\n"
-#~ "\n"
-#~ "%s"
-
 #~ msgid "Send unknown \"_slash\" commands as messages"
 #~ msgstr "გავაგზავნოთ უცნობი 'დახრილი ხაზი' ბრძანებები როგორც შეტყობინებები"
 
@@ -14291,9 +14907,6 @@ msgstr ""
 #~ msgstr ""
 #~ "\n"
 #~ "<b>სტატუსი:</b> %s"
-
-#~ msgid "Pidgin User"
-#~ msgstr "Pidgin-ის მომხმარებელი"
 
 #~ msgid "Invalid Jabber ID"
 #~ msgstr "არასწორი Jabber ID"

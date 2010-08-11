@@ -191,16 +191,16 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	PurpleConnection *gc;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
-	
+
 	g_return_if_fail(account != NULL);
-		
+
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	
+
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	else {
 		gchar *message;
-		
+
 		message = g_strdup_printf(_("Missing protocol plugin for %s"),
 								  purple_account_get_username(account));
 		purple_notify_error(NULL, _("Unregistration Error"), message, NULL);
@@ -212,7 +212,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 		prpl_info->unregister_user(account, cb, user_data);
 		return;
 	}
-	
+
 	if (((password == NULL) || (*password == '\0')) &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
@@ -221,10 +221,10 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 						   "a password.\n", purple_account_get_username(account));
 		return;
 	}
-	
+
 	gc = g_new0(PurpleConnection, 1);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
-	
+
 	gc->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);
@@ -232,11 +232,11 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	purple_connection_set_state(gc, PURPLE_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
-	
+
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
-	
+
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
-	
+
 	prpl_info->unregister_user(account, cb, user_data);
 }
 
@@ -285,7 +285,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 	buddies = purple_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;
-		buddy->proto_data = NULL;
+		purple_buddy_set_protocol_data(buddy, NULL);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
@@ -309,7 +309,7 @@ _purple_connection_destroy(PurpleConnection *gc)
 	g_free(gc->password);
 	g_free(gc->display_name);
 
-	if (gc->disconnect_timeout)
+	if (gc->disconnect_timeout > 0)
 		purple_timeout_remove(gc->disconnect_timeout);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(gc);
@@ -427,6 +427,13 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 	gc->display_name = g_strdup(name);
 }
 
+void
+purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data) {
+	g_return_if_fail(connection != NULL);
+
+	connection->proto_data = proto_data;
+}
+
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
@@ -467,6 +474,13 @@ purple_connection_get_display_name(const PurpleConnection *gc)
 	return gc->display_name;
 }
 
+void *
+purple_connection_get_protocol_data(const PurpleConnection *connection) {
+	g_return_val_if_fail(connection != NULL, NULL);
+
+	return connection->proto_data;
+}
+
 void
 purple_connection_update_progress(PurpleConnection *gc, const char *text,
 								size_t step, size_t count)
@@ -501,11 +515,20 @@ purple_connection_notice(PurpleConnection *gc, const char *text)
 static gboolean
 purple_connection_disconnect_cb(gpointer data)
 {
-	PurpleAccount *account = data;
-	char *password = g_strdup(purple_account_get_password(account));
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	char *password;
+
+	account = data;
+	gc = purple_account_get_connection(account);
+
+	gc->disconnect_timeout = 0;
+
+	password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
 	purple_account_set_password(account, password);
 	g_free(password);
+
 	return FALSE;
 }
 
@@ -550,10 +573,13 @@ purple_connection_error_reason (PurpleConnection *gc,
 	}
 
 	/* If we've already got one error, we don't need any more */
-	if (gc->disconnect_timeout)
+	if (gc->disconnect_timeout > 0)
 		return;
 
 	gc->wants_to_die = purple_connection_error_is_fatal (reason);
+
+	purple_debug_info("connection", "Connection error on %p (reason: %u description: %s)\n",
+	                  gc, reason, description);
 
 	ops = purple_connections_get_ui_ops();
 

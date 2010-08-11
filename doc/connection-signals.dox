@@ -54,8 +54,8 @@ void (*connection_error)(PurpleConnection *gc, PurpleConnectionError err, const 
   @endsignalproto
   @signaldesc
    Emitted when a connection error occurs, before @ref signed-off.
-   @param gc     The connection on which the error has occured
-   @param err    The error that occured
+   @param gc     The connection on which the error has occurred
+   @param err    The error that occurred
    @param desc   A description of the error, giving more information.
  @endsignaldef
 

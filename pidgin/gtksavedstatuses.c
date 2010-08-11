@@ -76,7 +76,7 @@ enum
 	STATUS_EDITOR_COLUMN_WINDOW,
 	STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 	STATUS_EDITOR_COLUMN_ICON,
-	STATUS_EDITOR_COLUMN_SCREENNAME,
+	STATUS_EDITOR_COLUMN_USERNAME,
 	/** A hidden column containing the ID of this PurpleStatusType. */
 	STATUS_EDITOR_COLUMN_STATUS_ID,
 	STATUS_EDITOR_COLUMN_STATUS_NAME,
@@ -390,7 +390,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 
 	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1) && can_use);
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
-	gtk_widget_set_sensitive(dialog->delete_button, can_delete);
+	gtk_widget_set_sensitive(dialog->delete_button, num_selected > 0 && can_delete);
 
     g_list_free(sel_paths);
 }
@@ -398,23 +398,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 static const gchar *
 get_stock_icon_from_primitive(PurpleStatusPrimitive type)
 {
-	switch (type) {
-		case PURPLE_STATUS_AVAILABLE:
-			return PIDGIN_STOCK_STATUS_AVAILABLE;
-		case PURPLE_STATUS_AWAY:
-			return PIDGIN_STOCK_STATUS_AWAY;
-		case PURPLE_STATUS_EXTENDED_AWAY:
-			return PIDGIN_STOCK_STATUS_XA;
-		case PURPLE_STATUS_INVISIBLE:
-			return PIDGIN_STOCK_STATUS_INVISIBLE;
-		case PURPLE_STATUS_OFFLINE:
-			return PIDGIN_STOCK_STATUS_OFFLINE;
-		case PURPLE_STATUS_UNAVAILABLE:
-			return PIDGIN_STOCK_STATUS_BUSY;
-		default:
-			/* this shouldn't happen */
-			return NULL;
-	}
+	return pidgin_stock_id_from_status_primitive(type);
 }
 
 static void
@@ -664,6 +648,7 @@ pidgin_status_window_show(void)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY,
 			G_CALLBACK(status_window_modify_cb), dialog);
 	dialog->modify_button = button;
+	gtk_widget_set_sensitive(button, FALSE);
 
 	/* Delete button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_DELETE,
@@ -1007,7 +992,7 @@ status_editor_add_columns(StatusEditor *dialog)
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 			 G_CALLBACK(status_editor_substatus_cb), dialog);
 
-	/* Screen Name column */
+	/* Username column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_column_set_title(column, _("Username"));
@@ -1020,11 +1005,11 @@ status_editor_add_columns(StatusEditor *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer, "pixbuf",
 									   STATUS_EDITOR_COLUMN_ICON);
 
-	/* Screen Name */
+	/* Username */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
-									   STATUS_EDITOR_COLUMN_SCREENNAME);
+									   STATUS_EDITOR_COLUMN_USERNAME);
 
 	/* Status column */
 	column = gtk_tree_view_column_new();
@@ -1086,7 +1071,7 @@ status_editor_set_account(GtkListStore *store, PurpleAccount *account,
 			STATUS_EDITOR_COLUMN_ACCOUNT, account,
 			STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, (substatus != NULL),
 			STATUS_EDITOR_COLUMN_ICON, pixbuf,
-			STATUS_EDITOR_COLUMN_SCREENNAME, purple_account_get_username(account),
+			STATUS_EDITOR_COLUMN_USERNAME, purple_account_get_username(account),
 			STATUS_EDITOR_COLUMN_STATUS_ID, id,
 			STATUS_EDITOR_COLUMN_STATUS_NAME, name,
 			STATUS_EDITOR_COLUMN_STATUS_MESSAGE, message,
@@ -1217,6 +1202,8 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 	g_list_free(focus_chain);
+
+	gtk_imhtml_set_return_inserts_newline(dialog->message);
 
 	if ((saved_status != NULL) && (purple_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
@@ -1501,16 +1488,19 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	gtk_size_group_add_widget(sg, label);
 
 	dialog->model = gtk_list_store_new(SUBSTATUS_NUM_COLUMNS,
-									   GDK_TYPE_PIXBUF,
+									   G_TYPE_STRING,
 									   G_TYPE_STRING,
 									   G_TYPE_STRING);
 	combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(dialog->model));
 	dialog->box = GTK_COMBO_BOX(combo);
 
 	rend = GTK_CELL_RENDERER(gtk_cell_renderer_pixbuf_new());
+	g_object_set(G_OBJECT(rend),
+			"stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
+			NULL);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo), rend,
-						"pixbuf", SUBSTATUS_COLUMN_ICON, NULL);
+						"stock-id", SUBSTATUS_COLUMN_ICON, NULL);
 
 	rend = GTK_CELL_RENDERER(gtk_cell_renderer_text_new());
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), rend, TRUE);
@@ -1547,7 +1537,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	/* Seed the input widgets with the current values */
 
 	/* Only look at the saved status if we can't find it in the parent status dialog's substatuses model */
-	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter, 
+	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
 		STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &parent_dialog_has_substatus, -1);
 	if (parent_dialog_has_substatus) {
 		gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
@@ -1572,8 +1562,8 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	for (list = purple_account_get_status_types(account); list; list = list->next)
 	{
 		PurpleStatusType *status_type;
-		GdkPixbuf *pixbuf;
 		const char *id, *name;
+		PurpleStatusPrimitive prim;
 
 		status_type = list->data;
 
@@ -1586,17 +1576,15 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 			continue;
 
 		id = purple_status_type_get_id(status_type);
-		pixbuf = pidgin_create_status_icon(purple_status_type_get_primitive(status_type), combo, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		prim = purple_status_type_get_primitive(status_type);
 		name = purple_status_type_get_name(status_type);
 
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter,
-						   SUBSTATUS_COLUMN_ICON, pixbuf,
+						   SUBSTATUS_COLUMN_ICON, pidgin_stock_id_from_status_primitive(prim),
 						   SUBSTATUS_COLUMN_STATUS_ID, id,
 						   SUBSTATUS_COLUMN_STATUS_NAME, name,
 						   -1);
-		if (pixbuf != NULL)
-			g_object_unref(pixbuf);
 		if ((status_id != NULL) && !strcmp(status_id, id))
 		{
 			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
@@ -1656,7 +1644,7 @@ enum {
 	 * And whether or not that emblem is visible
 	 */
 	SS_MENU_EMBLEM_VISIBLE_COLUMN,
-	
+
 	SS_MENU_NUM_COLUMNS
 };
 
@@ -1703,18 +1691,15 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 {
 	GtkTreeIter iter;
 	gboolean currently_selected = FALSE;
-	GdkPixbuf *pixbuf = pidgin_create_status_icon(primitive, w, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			   SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_PRIMITIVE,
-			   SS_MENU_ICON_COLUMN, pixbuf,
+			   SS_MENU_ICON_COLUMN, pidgin_stock_id_from_status_primitive(primitive),
 			   SS_MENU_TEXT_COLUMN, purple_primitive_get_name_from_type(primitive),
 			   SS_MENU_DATA_COLUMN, GINT_TO_POINTER(primitive),
 			   SS_MENU_EMBLEM_VISIBLE_COLUMN, FALSE,
 			   -1);
-	if (pixbuf != NULL)
-		g_object_unref(pixbuf);
 
 	if (purple_savedstatus_is_transient(current_status)
 			&& !purple_savedstatus_has_substatuses(current_status)
@@ -1728,23 +1713,20 @@ static void
 pidgin_status_menu_update_iter(GtkWidget *combobox, GtkListStore *store, GtkTreeIter *iter,
 		PurpleSavedStatus *status)
 {
-	GdkPixbuf *pixbuf;
+	PurpleStatusPrimitive primitive;
 
 	if (store == NULL)
 		store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
 
-	pixbuf = pidgin_create_status_icon(purple_savedstatus_get_type(status),
-			combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+	primitive = purple_savedstatus_get_type(status);
 	gtk_list_store_set(store, iter,
 			SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
-			SS_MENU_ICON_COLUMN, pixbuf,
+			SS_MENU_ICON_COLUMN, pidgin_stock_id_from_status_primitive(primitive),
 			SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
 			SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
 			SS_MENU_EMBLEM_COLUMN, GTK_STOCK_SAVE,
 			SS_MENU_EMBLEM_VISIBLE_COLUMN, TRUE,
 			-1);
-	if (pixbuf)
-		g_object_unref(G_OBJECT(pixbuf));
 }
 
 static gboolean
@@ -1826,7 +1808,7 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	GtkCellRenderer *icon_rend;
 	GtkCellRenderer *emblem_rend;
 
-	model = gtk_list_store_new(SS_MENU_NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF,
+	model = gtk_list_store_new(SS_MENU_NUM_COLUMNS, G_TYPE_INT, G_TYPE_STRING,
 				   G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	combobox = gtk_combo_box_new();
@@ -1873,10 +1855,13 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), text_rend, TRUE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), emblem_rend, FALSE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), icon_rend, "pixbuf", SS_MENU_ICON_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), icon_rend, "stock-id", SS_MENU_ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), text_rend, "markup", SS_MENU_TEXT_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), emblem_rend,
 					"stock-id", SS_MENU_EMBLEM_COLUMN, "visible", SS_MENU_EMBLEM_VISIBLE_COLUMN, NULL);
+	g_object_set(G_OBJECT(icon_rend),
+			"stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
+			NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);

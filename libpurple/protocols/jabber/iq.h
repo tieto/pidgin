@@ -19,12 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_IQ_H_
-#define _PURPLE_JABBER_IQ_H_
-
-#include "jabber.h"
-
-typedef struct _JabberIq JabberIq;
+#ifndef PURPLE_JABBER_IQ_H_
+#define PURPLE_JABBER_IQ_H_
 
 typedef enum {
 	JABBER_IQ_SET,
@@ -34,9 +30,52 @@ typedef enum {
 	JABBER_IQ_NONE
 } JabberIqType;
 
-typedef void (JabberIqHandler)(JabberStream *js, xmlnode *packet);
+#include "jabber.h"
+#include "connection.h"
 
-typedef void (JabberIqCallback)(JabberStream *js, xmlnode *packet, gpointer data);
+typedef struct _JabberIq JabberIq;
+
+/**
+ * A JabberIqHandler is called to process an incoming IQ stanza.
+ * Handlers typically process unsolicited incoming GETs or SETs for their
+ * registered namespace, but may be called to handle the results of a
+ * GET or SET that we generated if no JabberIqCallback was generated
+ * The handler may be called for the results of a GET or SET (RESULT or ERROR)
+ * that we generated
+ * if the generating function did not register a JabberIqCallback.
+ *
+ * @param js    The JabberStream object.
+ * @param from  The remote entity (the from attribute on the <iq/> stanza)
+ * @param type  The IQ type.
+ * @param id    The IQ id (the id attribute on the <iq/> stanza)
+ * @param child The child element of the <iq/> stanza that matches the name
+ *              and namespace registered with jabber_iq_register_handler.
+ *
+ * @see jabber_iq_register_handler()
+ * @see JabberIqCallback
+ */
+typedef void (JabberIqHandler)(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *child);
+
+/**
+ * A JabberIqCallback is called to process the results of a GET or SET that
+ * we send to a remote entity. The callback is matched based on the id
+ * of the incoming stanza (which matches the one on the initial stanza).
+ *
+ * @param js     The JabberStream object.
+ * @param from   The remote entity (the from attribute on the <iq/> stanza)
+ * @param type   The IQ type. The only possible values are JABBER_IQ_RESULT
+ *               and JABBER_IQ_ERROR.
+ * @param id     The IQ id (the id attribute on the <iq/> stanza)
+ * @param packet The <iq/> stanza
+ * @param data   The callback data passed to jabber_iq_set_callback()
+ *
+ * @see jabber_iq_set_callback()
+ */
+typedef void (JabberIqCallback)(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data);
 
 struct _JabberIq {
 	JabberIqType type;
@@ -65,6 +104,11 @@ void jabber_iq_free(JabberIq *iq);
 void jabber_iq_init(void);
 void jabber_iq_uninit(void);
 
-void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *func);
+void jabber_iq_register_handler(const char *node, const char *xmlns,
+                                JabberIqHandler *func);
 
-#endif /* _PURPLE_JABBER_IQ_H_ */
+/* Connected to namespace-handler registration signals */
+void jabber_iq_signal_register(const gchar *node, const gchar *xmlns);
+void jabber_iq_signal_unregister(const gchar *node, const gchar *xmlns);
+
+#endif /* PURPLE_JABBER_IQ_H_ */

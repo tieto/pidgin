@@ -27,8 +27,6 @@
 
 #include "slp.h"
 
-/* #define MSN_DEBUG_SLPCALL */
-
 /**************************************************************************
  * Main
  **************************************************************************/
@@ -40,9 +38,8 @@ msn_slpcall_timeout(gpointer data)
 
 	slpcall = data;
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
 
 	if (!slpcall->pending && !slpcall->progress)
 	{
@@ -64,9 +61,8 @@ msn_slpcall_new(MsnSlpLink *slplink)
 
 	slpcall = g_new0(MsnSlpCall, 1);
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
 
 	slpcall->slplink = slplink;
 
@@ -82,9 +78,8 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -96,10 +91,9 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 		MsnSlpMessage *slpmsg = e->data;
 		e = e->next;
 
-#ifdef MSN_DEBUG_SLPCALL_VERBOSE
-		purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
-						slpmsg);
-#endif
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
+			                  slpmsg);
 
 		if (slpmsg->slpcall == slpcall)
 		{
@@ -173,10 +167,8 @@ msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
 
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
 	slpmsg->text_body = TRUE;
-#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 
@@ -210,8 +202,61 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	{
 		char *body_str;
 
-		body_str = g_strndup((const char *)body, body_len);
-		slpcall = msn_slp_sip_recv(slplink, body_str);
+		if (slpmsg->session_id == 64)
+		{
+			/* This is for handwritten messages (Ink) */
+			GError *error;
+			gsize bytes_read, bytes_written;
+
+			body_str = g_convert((const gchar *)body, body_len / 2,
+			                     "UTF-8", "UTF-16LE",
+			                     &bytes_read, &bytes_written, &error);
+			body_len -= bytes_read + 2;
+			body += bytes_read + 2;
+			if (body_str == NULL
+			 || body_len <= 0
+			 || strstr(body_str, "image/gif") == NULL)
+			{
+				if (error != NULL) {
+					purple_debug_error("msn",
+					                   "Unable to convert Ink header from UTF-16 to UTF-8: %s\n",
+					                   error->message);
+					g_error_free(error);
+				}
+				else
+					purple_debug_error("msn",
+					                   "Received Ink in unknown format\n");
+				g_free(body_str);
+				return NULL;
+			}
+			g_free(body_str);
+
+			body_str = g_convert((const gchar *)body, body_len / 2,
+			                     "UTF-8", "UTF16-LE",
+			                     &bytes_read, &bytes_written, &error);
+			if (!body_str)
+			{
+				if (error != NULL) {
+					purple_debug_error("msn",
+					                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
+					                   error->message);
+					g_error_free(error);
+				}
+				else
+					purple_debug_error("msn",
+					                   "Received Ink in unknown format\n");
+				return NULL;
+			}
+
+			msn_switchboard_show_ink(slpmsg->slplink->swboard,
+			                         slplink->remote_user,
+			                         body_str);
+		}
+		else
+		{
+			body_str = g_strndup((const char *)body, body_len);
+			slpcall = msn_slp_sip_recv(slplink, body_str);
+		}
 		g_free(body_str);
 	}
 	else if (slpmsg->flags == 0x20 ||

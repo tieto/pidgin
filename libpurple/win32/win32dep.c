@@ -326,7 +326,7 @@ static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		purple_debug_info("wpurple", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_error("wpurple", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
 					((rootkey == HKEY_LOCAL_MACHINE) ? "HKLM" :
 					 (rootkey == HKEY_CURRENT_USER) ? "HKCU" :
 					  (rootkey == HKEY_CLASSES_ROOT) ? "HKCR" : "???"),
@@ -356,7 +356,7 @@ static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYT
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		purple_debug_info("wpurple", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_error("wpurple", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
 					valname, rv, errmsg);
 		g_free(errmsg);
 	}
@@ -419,8 +419,6 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
-	const char *perlenv;
-	char *newenv;
 
 	if (!g_thread_supported())
 		g_thread_init(NULL);
@@ -444,17 +442,6 @@ void wpurple_init(void) {
 		WSACleanup();
 	}
 
-	/* Set Environmental Variables */
-	/* Tell perl where to find Purple's perl modules */
-	perlenv = g_getenv("PERL5LIB");
-	newenv = g_strdup_printf("%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
-		perlenv ? perlenv : "",
-		perlenv ? ";" : "",
-		wpurple_install_dir());
-	if (!g_setenv("PERL5LIB", newenv, TRUE))
-		purple_debug_warning("wpurple", "putenv failed for PERL5LIB\n");
-	g_free(newenv);
-
 	purple_debug_info("wpurple", "wpurple_init end\n");
 }
 
@@ -467,7 +454,14 @@ void wpurple_cleanup(void) {
 	WSACleanup();
 
 	g_free(app_data_dir);
+	g_free(install_dir);
+	g_free(lib_dir);
+	g_free(locale_dir);
+
 	app_data_dir = NULL;
+	install_dir = NULL;
+	lib_dir = NULL;
+	locale_dir = NULL;
 
 	libpurpledll_hInstance = NULL;
 }

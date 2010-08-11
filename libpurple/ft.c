@@ -40,7 +40,34 @@
 static PurpleXferUiOps *xfer_ui_ops = NULL;
 static GList *xfers;
 
+/*
+ * A hack to store more data since we can't extend the size of PurpleXfer
+ * easily.
+ */
+static GHashTable *xfers_data = NULL;
+
+typedef struct _PurpleXferPrivData {
+	/*
+	 * Used to moderate the file transfer when either the read/write ui_ops are
+	 * set or fd is not set. In those cases, the UI/prpl call the respective
+	 * function, which is somewhat akin to a fd watch being triggered.
+	 */
+	enum {
+		PURPLE_XFER_READY_NONE = 0x0,
+		PURPLE_XFER_READY_UI   = 0x1,
+		PURPLE_XFER_READY_PRPL = 0x2,
+	} ready;
+} PurpleXferPrivData;
+
 static int purple_xfer_choose_file(PurpleXfer *xfer);
+
+static void
+purple_xfer_priv_data_destroy(gpointer data)
+{
+	PurpleXferPrivData *priv = data;
+
+	g_free(priv);
+}
 
 GList *
 purple_xfers_get_all()
@@ -53,6 +80,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 {
 	PurpleXfer *xfer;
 	PurpleXferUiOps *ui_ops;
+	PurpleXferPrivData *priv;
 
 	g_return_val_if_fail(type    != PURPLE_XFER_UNKNOWN, NULL);
 	g_return_val_if_fail(account != NULL,              NULL);
@@ -69,6 +97,11 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	xfer->message = NULL;
 	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
 	xfer->fd = -1;
+
+	priv = g_new0(PurpleXferPrivData, 1);
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	g_hash_table_insert(xfers_data, xfer, priv);
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 
@@ -102,9 +135,11 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	g_free(xfer->remote_ip);
 	g_free(xfer->local_filename);
 
+	g_hash_table_remove(xfers_data, xfer);
+
 	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
-	g_free(xfer);
 	xfers = g_list_remove(xfers, xfer);
+	g_free(xfer);
 }
 
 void
@@ -131,6 +166,11 @@ static void
 purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
+
+	if (xfer->status == status)
+		return;
+
+	xfer->status = status;
 
 	if(xfer->type == PURPLE_XFER_SEND) {
 		switch(status) {
@@ -169,8 +209,6 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 				break;
 		}
 	}
-
-	xfer->status = status;
 }
 
 void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error)
@@ -458,7 +496,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 {
 	PurpleXferType type;
 	struct stat st;
-	char *msg, *utf8;
+	char *msg, *utf8, *base;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 
@@ -479,13 +517,16 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	if (type == PURPLE_XFER_SEND) {
 		/* Sending a file */
 		/* Check the filename. */
+		PurpleXferUiOps *ui_ops;
+		ui_ops = purple_xfer_get_ui_ops(xfer);
+
 #ifdef _WIN32
 		if (g_strrstr(filename, "../") || g_strrstr(filename, "..\\"))
 #else
 		if (g_strrstr(filename, "../"))
 #endif
 		{
-			char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+			utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 
 			msg = g_strdup_printf(_("%s is not a valid filename.\n"), utf8);
 			purple_xfer_error(type, account, xfer->who, msg);
@@ -496,22 +537,28 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 			return;
 		}
 
-		if (g_stat(filename, &st) == -1) {
-			purple_xfer_show_file_error(xfer, filename);
-			purple_xfer_unref(xfer);
-			return;
+		if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
+			if (g_stat(filename, &st) == -1) {
+				purple_xfer_show_file_error(xfer, filename);
+				purple_xfer_unref(xfer);
+				return;
+			}
+
+			purple_xfer_set_local_filename(xfer, filename);
+			purple_xfer_set_size(xfer, st.st_size);
+		} else {
+			utf8 = g_strdup(filename);
+			purple_xfer_set_local_filename(xfer, filename);
 		}
 
-		purple_xfer_set_local_filename(xfer, filename);
-		purple_xfer_set_size(xfer, st.st_size);
-
-		utf8 = g_filename_to_utf8(g_basename(filename), -1, NULL, NULL, NULL);
+		base = g_path_get_basename(filename);
+		utf8 = g_filename_to_utf8(base, -1, NULL, NULL, NULL);
+		g_free(base);
 		purple_xfer_set_filename(xfer, utf8);
 
 		msg = g_strdup_printf(_("Offering to send %s to %s"),
 				utf8, buddy ? purple_buddy_get_alias(buddy) : xfer->who);
 		g_free(utf8);
-
 		purple_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
 	}
@@ -694,14 +741,34 @@ purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 
 	if (completed == TRUE) {
 		char *msg = NULL;
+		PurpleConversation *conv;
+
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_DONE);
 
 		if (purple_xfer_get_filename(xfer) != NULL)
-			msg = g_strdup_printf(_("Transfer of file %s complete"),
-								purple_xfer_get_filename(xfer));
+		{
+			char *filename = g_markup_escape_text(purple_xfer_get_filename(xfer), -1);
+			if (purple_xfer_get_local_filename(xfer)
+			 && purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE)
+			{
+				char *local = g_markup_escape_text(purple_xfer_get_local_filename(xfer), -1);
+				msg = g_strdup_printf(_("Transfer of file <A HREF=\"file://%s\">%s</A> complete"),
+				                      local, filename);
+				g_free(local);
+			}
+			else
+				msg = g_strdup_printf(_("Transfer of file %s complete"),
+				                      filename);
+			g_free(filename);
+		}
 		else
 			msg = g_strdup(_("File transfer complete"));
-		purple_xfer_conversation_write(xfer, msg, FALSE);
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
+		                                             purple_xfer_get_account(xfer));
+
+		if (conv != NULL)
+			purple_conversation_write(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
 
@@ -857,8 +924,9 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 	else
 		s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
-	if (xfer->ops.read != NULL)
+	if (xfer->ops.read != NULL)	{
 		r = (xfer->ops.read)(buffer, xfer);
+	}
 	else {
 		*buffer = g_malloc0(s);
 
@@ -867,9 +935,6 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 			r = 0;
 		else if (r < 0)
 			r = -1;
-		else if ((purple_xfer_get_size(xfer) > 0) &&
-			((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
-			purple_xfer_set_completed(xfer, TRUE);
 		else if (r == 0)
 			r = -1;
 	}
@@ -910,29 +975,39 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 }
 
 static void
-transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
+do_transfer(PurpleXfer *xfer)
 {
 	PurpleXferUiOps *ui_ops;
-	PurpleXfer *xfer = (PurpleXfer *)data;
 	guchar *buffer = NULL;
 	gssize r = 0;
 
-	if (condition & PURPLE_INPUT_READ) {
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+
+	if (xfer->type == PURPLE_XFER_RECEIVE) {
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
-			const size_t wc = fwrite(buffer, 1, r, xfer->dest_fp);
+			size_t wc;
+			if (ui_ops && ui_ops->ui_write)
+				wc = ui_ops->ui_write(xfer, buffer, r);
+			else
+				wc = fwrite(buffer, 1, r, xfer->dest_fp);
+
 			if (wc != r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
-				purple_xfer_cancel_remote(xfer);
+				purple_xfer_cancel_local(xfer);
+				g_free(buffer);
 				return;
 			}
+
+			if ((purple_xfer_get_size(xfer) > 0) &&
+				((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
+				purple_xfer_set_completed(xfer, TRUE);
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
+			g_free(buffer);
 			return;
 		}
-	}
-
-	if (condition & PURPLE_INPUT_WRITE) {
+	} else if (xfer->type == PURPLE_XFER_SEND) {
 		size_t result;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
@@ -946,26 +1021,53 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			return;
 		}
 
-		buffer = g_malloc0(s);
+		if (ui_ops && ui_ops->ui_read) {
+			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
+			if (tmp == 0) {
+				/*
+				 * UI isn't ready to send data. It will call
+				 * purple_xfer_ui_ready when ready, which sets back up this
+				 * watcher.
+				 */
+				if (xfer->watcher != 0) {
+					purple_timeout_remove(xfer->watcher);
+					xfer->watcher = 0;
+				}
 
-		result = fread(buffer, 1, s, xfer->dest_fp);
-		if (result != s) {
-			purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-			purple_xfer_cancel_remote(xfer);
-			g_free(buffer);
-			return;
+				return;
+			} else if (tmp < 0) {
+				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+				purple_xfer_cancel_local(xfer);
+				return;
+			}
+
+			result = tmp;
+		} else {
+			buffer = g_malloc0(s);
+			result = fread(buffer, 1, s, xfer->dest_fp);
+			if (result != s) {
+				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+				purple_xfer_cancel_local(xfer);
+				g_free(buffer);
+				return;
+			}
 		}
 
 		/* Write as much as we're allowed to. */
-		r = purple_xfer_write(xfer, buffer, s);
+		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
 			g_free(buffer);
 			return;
-		} else if (r < s) {
-			/* We have to seek back in the file now. */
-			fseek(xfer->dest_fp, r - s, SEEK_CUR);
+		} else if (r < result) {
+			if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
+				/* We have to seek back in the file now. */
+				fseek(xfer->dest_fp, r - s, SEEK_CUR);
+			}
+			else {
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
+			}
 		} else {
 			/*
 			 * We managed to write the entire buffer.  This means our
@@ -987,8 +1089,6 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 		g_free(buffer);
 
-		ui_ops = purple_xfer_get_ui_ops(xfer);
-
 		if (ui_ops != NULL && ui_ops->update_progress != NULL)
 			ui_ops->update_progress(xfer,
 				purple_xfer_get_progress(xfer));
@@ -999,22 +1099,45 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 }
 
 static void
+transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
+{
+	PurpleXfer *xfer = data;
+
+	if (xfer->dest_fp == NULL) {
+		/* The UI is moderating its side manually */
+		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		if (0 == (priv->ready & PURPLE_XFER_READY_UI)) {
+			priv->ready |= PURPLE_XFER_READY_PRPL;
+
+			purple_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			return;
+		}
+	}
+
+	do_transfer(xfer);
+}
+
+static void
 begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 {
 	PurpleXferType type = purple_xfer_get_type(xfer);
+	PurpleXferUiOps *ui_ops = purple_xfer_get_ui_ops(xfer);
 
-	xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
-						  type == PURPLE_XFER_RECEIVE ? "wb" : "rb");
+	if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
+		xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
+		                        type == PURPLE_XFER_RECEIVE ? "wb" : "rb");
 
-	if (xfer->dest_fp == NULL) {
-		purple_xfer_show_file_error(xfer, purple_xfer_get_local_filename(xfer));
-		purple_xfer_cancel_local(xfer);
-		return;
+		if (xfer->dest_fp == NULL) {
+			purple_xfer_show_file_error(xfer, purple_xfer_get_local_filename(xfer));
+			purple_xfer_cancel_local(xfer);
+			return;
+		}
+
+		fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
 	}
 
-	fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
-
-	if (xfer->fd)
+	if (xfer->fd != -1)
 		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
 
 	xfer->start_time = time(NULL);
@@ -1039,6 +1162,54 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 }
 
 void
+purple_xfer_ui_ready(PurpleXfer *xfer)
+{
+	PurpleInputCondition cond;
+	PurpleXferType type;
+	PurpleXferPrivData *priv;
+
+	g_return_if_fail(xfer != NULL);
+
+	priv = g_hash_table_lookup(xfers_data, xfer);
+	priv->ready |= PURPLE_XFER_READY_UI;
+
+	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL))
+		return;
+
+	type = purple_xfer_get_type(xfer);
+	if (type == PURPLE_XFER_SEND)
+		cond = PURPLE_INPUT_WRITE;
+	else /* if (type == PURPLE_XFER_RECEIVE) */
+		cond = PURPLE_INPUT_READ;
+
+	if (xfer->watcher == 0 && xfer->fd != -1)
+		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
+
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	do_transfer(xfer);
+}
+
+void
+purple_xfer_prpl_ready(PurpleXfer *xfer)
+{
+	PurpleXferPrivData *priv;
+
+	g_return_if_fail(xfer != NULL);
+
+	priv = g_hash_table_lookup(xfers_data, xfer);
+	priv->ready |= PURPLE_XFER_READY_PRPL;
+
+	/* I don't think fwrite/fread are ever *not* ready */
+	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI))
+		return;
+
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	do_transfer(xfer);
+}
+
+void
 purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
 				unsigned int port)
 {
@@ -1051,6 +1222,13 @@ purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
 	type = purple_xfer_get_type(xfer);
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_STARTED);
+
+	/*
+	 * FIXME 3.0.0 -- there's too much broken code depending on fd == 0
+	 * meaning "don't use a real fd"
+	 */
+	if (fd == 0)
+		fd = -1;
 
 	if (type == PURPLE_XFER_RECEIVE) {
 		cond = PURPLE_INPUT_READ;
@@ -1098,7 +1276,7 @@ purple_xfer_end(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
@@ -1161,7 +1339,7 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
@@ -1226,7 +1404,7 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
@@ -1296,6 +1474,9 @@ void
 purple_xfers_init(void) {
 	void *handle = purple_xfers_get_handle();
 
+	xfers_data = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+	                                   NULL, purple_xfer_priv_data_destroy);
+
 	/* register signals */
 	purple_signal_register(handle, "file-recv-accept",
 	                     purple_marshal_VOID__POINTER, NULL, 1,
@@ -1342,6 +1523,9 @@ purple_xfers_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	g_hash_table_destroy(xfers_data);
+	xfers_data = NULL;
 }
 
 void

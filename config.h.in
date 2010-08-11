@@ -432,11 +432,20 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
+/* Use Farsight for voice and video */
+#undef USE_FARSIGHT
+
+/* Use GStreamer interfaces for X overlay support */
+#undef USE_GSTINTERFACES
+
 /* Use GStreamer for playing sounds */
 #undef USE_GSTREAMER
 
 /* Define if we're using GtkSpell */
 #undef USE_GTKSPELL
+
+/* Use GNU Libidn for stringprep and IDN */
+#undef USE_IDN
 
 /* Define if python headers are available. */
 #undef USE_PYTHON
@@ -446,6 +455,9 @@
 
 /* Define if we're using X Session Management. */
 #undef USE_SM
+
+/* Use voice and video */
+#undef USE_VV
 
 /* 'va_lists' cannot be copied as values */
 #undef VA_COPY_AS_ARRAY

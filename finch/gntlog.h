@@ -50,7 +50,7 @@ struct _FinchLogViewer {
 
 
 
-void finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
+void finch_log_show(PurpleLogType type, const char *username, PurpleAccount *account);
 void finch_log_show_contact(PurpleContact *contact);
 
 void finch_syslog_show(void);

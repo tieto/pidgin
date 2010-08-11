@@ -41,10 +41,10 @@ msim_format_now_playing(const gchar *band, const gchar *song)
 }
 
 /**
- * Get the MsimUser from a PurpleBuddy, creating it if needed.
+ * Get the MsimUser from a PurpleBuddy, optionally creating it if needed.
  */
 MsimUser *
-msim_get_user_from_buddy(PurpleBuddy *buddy)
+msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 {
 	MsimUser *user;
 
@@ -52,16 +52,15 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		return NULL;
 	}
 
-	if (!buddy->proto_data) {
+	user = purple_buddy_get_protocol_data(buddy);
+	if (create && !user) {
 		/* No MsimUser for this buddy; make one. */
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		user->id = purple_blist_node_get_int((PurpleBlistNode*)buddy, "UserID");
-		buddy->proto_data = (gpointer)user;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
+		purple_buddy_set_protocol_data(buddy, user);
 	}
-
-	user = (MsimUser *)(buddy->proto_data);
 
 	return user;
 }
@@ -97,7 +96,7 @@ msim_find_user(MsimSession *session, const gchar *username)
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy);
+	user = msim_get_user_from_buddy(buddy, TRUE);
 
 	return user;
 }
@@ -209,9 +208,9 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 		gsize len,
 		const gchar *error_message)
 {
-	MsimUser *user;
-
-	user = (MsimUser *)user_data;
+	MsimUser *user = (MsimUser *)user_data;
+	const char *name = purple_buddy_get_name(user->buddy);
+	PurpleAccount *account;
 
 	purple_debug_info("msim_downloaded_buddy_icon",
 			"Downloaded %" G_GSIZE_FORMAT " bytes\n", len);
@@ -219,12 +218,12 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	if (!url_text) {
 		purple_debug_info("msim_downloaded_buddy_icon",
 				"failed to download icon for %s",
-				user->buddy->name);
+				name);
 		return;
 	}
 
-	purple_buddy_icons_set_for_user(user->buddy->account,
-			user->buddy->name,
+	account = purple_buddy_get_account(user->buddy);
+	purple_buddy_icons_set_for_user(account, name,
 			g_memdup((gchar *)url_text, len), len,
 			/* Use URL itself as buddy icon "checksum" (TODO: ETag) */
 			user->image_url);		/* checksum */
@@ -247,7 +246,9 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, const char *new_title)
 {
 	PurplePresence *presence;
+	PurpleAccount *account;
 	const char *prev_artist, *prev_title;
+	const char *name;
 
 	if (user->buddy == NULL)
 		/* User not on buddy list so nothing to do */
@@ -261,8 +262,11 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	if (new_title && !*new_title)
 		new_title = NULL;
 
+	account = purple_buddy_get_account(user->buddy);
+	name = purple_buddy_get_name(user->buddy);
+
 	if (!new_artist && !new_title) {
-		purple_prpl_got_user_status_deactive(user->buddy->account, user->buddy->name, "tune");
+		purple_prpl_got_user_status_deactive(account, name, "tune");
 		return;
 	}
 
@@ -282,7 +286,7 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 	if (!new_title)
 		new_title = prev_title;
 
-	purple_prpl_got_user_status(user->buddy->account, user->buddy->name, "tune",
+	purple_prpl_got_user_status(account, name, "tune",
 			PURPLE_TUNE_TITLE, new_title,
 			PURPLE_TUNE_ARTIST, new_artist,
 			NULL);
@@ -299,14 +303,16 @@ static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, con
 static void
 msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
 {
+	const char *name = user->buddy ? purple_buddy_get_name(user->buddy) : NULL;
+
 	if (g_str_equal(key_str, "UserID") || g_str_equal(key_str, "ContactID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
 		user->id = atol(value_str);
 		g_free(value_str);
 		if (user->buddy)
 		{
-			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, user->buddy->name);
-			purple_blist_node_set_int(&user->buddy->node, "UserID", user->id);
+			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, name);
+			purple_blist_node_set_int(PURPLE_BLIST_NODE(user->buddy), "UserID", user->id);
 		}
 		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (g_str_equal(key_str, "Age")) {
@@ -359,9 +365,8 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Instead of showing 'no photo' picture, show nothing. */
 		if (g_str_equal(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
 		{
-			purple_buddy_icons_set_for_user(user->buddy->account,
-				user->buddy->name,
-				NULL, 0, NULL);
+			purple_buddy_icons_set_for_user(purple_buddy_get_account(user->buddy),
+				name, NULL, 0, NULL);
 			return;
 		}
 
@@ -632,8 +637,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	uid = msim_msg_get_integer(userinfo, "uid");
 	lid = msim_msg_get_integer(userinfo, "lid");
 	body = msim_msg_get_dictionary(userinfo, "body");
-	/* XXX: Mark for translation */
-	errmsg = ("An error occurred while trying to set the username.\n"
+	errmsg = _("An error occurred while trying to set the username.  "
 			"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 			"fuseaction=profile.username to set your username.");
 
@@ -792,9 +796,9 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
 		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-				"An error occurred while trying to set the username.\n"
+				_("An error occurred while trying to set the username.  "
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
-				"fuseaction=profile.username to set your username.");
+				"fuseaction=profile.username to set your username."));
 		return;
 	}
 

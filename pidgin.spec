@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.5.9"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.6.1"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.5.9
+%define pidginver 2.6.1
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.5.9"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.6.1"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.5.9.tar.bz2
+Source:     %{name}-2.6.1.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -215,7 +215,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.5.9
+%setup -q -n %{name}-2.6.1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -234,8 +234,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_without_nm:--disable-nm} \
                                     %{!?_without_gevolution:--enable-gevolution} \
                                     %{?_with_mono:--enable-mono} \
-                                    %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
-                                    %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
@@ -244,15 +242,7 @@ make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
 %install
 rm -rf %{buildroot}
-%if 0%{?_with_perlmakehack:1}
-make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
-     datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
-     libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
-     sysconfdir=%{buildroot}%{_sysconfdir} \
-     install
-%else
 make DESTDIR=$RPM_BUILD_ROOT LIBTOOL=/usr/bin/libtool install
-%endif
 
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
@@ -261,6 +251,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libymsg.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name '*.a' -exec rm -f {} ';'
@@ -374,9 +365,9 @@ fi
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/pidgin
-%attr(755, root, root) %{perl_vendorarch}/Pidgin.pm
-%attr(755, root, root) %{perl_vendorarch}/auto/Pidgin
-
+%dir %{_libdir}/pidgin/perl
+%dir %{_libdir}/pidgin/perl/auto
+%dir %{_libdir}/pidgin/perl/auto/Pidgin
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
 %{_datadir}/icons/hicolor/*/apps/pidgin.*
@@ -389,10 +380,11 @@ fi
 
 %{_libdir}/libpurple.so.*
 %dir %{_libdir}/purple-2
+%dir %{_libdir}/purple-2/perl
+%dir %{_libdir}/purple-2/perl/auto
+%dir %{_libdir}/purple-2/perl/auto/Purple
 %{_datadir}/purple
 %{_datadir}/sounds/purple
-%attr(755, root, root) %{perl_vendorarch}/Purple.pm
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example
@@ -473,6 +465,9 @@ fi
 %endif
 
 %changelog
+* Sat Jul 11 2009 Stu Tomlinson <stu@nosnilmot.com>
+- Update to reflect changes in perl module installation directories
+
 * Mon May 19 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Fix building without meanwhile support
 

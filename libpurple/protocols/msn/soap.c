@@ -80,7 +80,7 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 	conn->session = session;
 	conn->host = g_strdup(host);
 	conn->queue = g_queue_new();
-	conn->unsafe_debug = g_getenv("PURPLE_UNSAFE_DEBUG") != NULL;
+	conn->unsafe_debug = purple_debug_is_unsafe();
 	return conn;
 }
 
@@ -385,7 +385,7 @@ msn_soap_process(MsnSoapConnection *conn)
 					msn_soap_connection_handle_next(conn);
 					handled = TRUE;
 					break;
-				} else if (conn->response_code == 503) {
+				} else if (conn->response_code == 503 && conn->session->login_step < MSN_LOGIN_STEP_END) {
 					msn_soap_connection_sanitize(conn, TRUE);
 					msn_session_set_error(conn->session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
 					return;
@@ -667,7 +667,8 @@ msn_soap_connection_run(gpointer data)
 			conn->handled_len = 0;
 			conn->current_request = req;
 
-			purple_input_remove(conn->event_handle);
+			if (conn->event_handle)
+				purple_input_remove(conn->event_handle);
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
 			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {

@@ -9,6 +9,8 @@ JABBERSOURCES = auth.c \
 			  auth.h \
 			  buddy.c \
 			  buddy.h \
+			  bosh.c \
+			  bosh.h \
 			  chat.c \
 			  chat.h \
 			  data.c \
@@ -17,10 +19,26 @@ JABBERSOURCES = auth.c \
 			  disco.h \
 			  google.c \
 			  google.h \
+			  ibb.c \
+			  ibb.h \
 			  iq.c \
 			  iq.h \
 			  jabber.c \
 			  jabber.h \
+			  jingle/jingle.c \
+			  jingle/jingle.h \
+			  jingle/content.c \
+			  jingle/content.h \
+			  jingle/iceudp.c \
+			  jingle/iceudp.h \
+			  jingle/rawudp.c \
+			  jingle/rawudp.h \
+			  jingle/rtp.c \
+			  jingle/rtp.h \
+			  jingle/session.c \
+			  jingle/session.h \
+			  jingle/transport.c \
+			  jingle/transport.h \
 			  jutil.c \
 			  jutil.h \
 			  message.c \
@@ -45,6 +63,8 @@ JABBERSOURCES = auth.c \
 			  adhoccommands.h \
 			  pep.c \
 			  pep.h \
+			  useravatar.c \
+			  useravatar.h \
 			  usermood.c \
 			  usermood.h \
 			  usernick.c \
@@ -68,7 +88,7 @@ else
 st =
 pkg_LTLIBRARIES      = libjabber.la libxmpp.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
-libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
+libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)
 
 libxmpp_la_SOURCES = libxmpp.c
 libxmpp_la_LIBADD = libjabber.la
@@ -80,4 +100,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(IDN_CFLAGS) \
 	$(LIBXML_CFLAGS)

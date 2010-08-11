@@ -32,6 +32,7 @@ EXTRA_DIST = \
 	gtkimhtml-signals.dox \
 	gtkrc-2.0 \
 	imgstore-signals.dox \
+	jabber-signals.dox \
 	log-signals.dox \
 	notify-signals.dox \
 	pidgin.1.in \

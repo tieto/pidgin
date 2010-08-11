@@ -56,6 +56,8 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 PIDGIN_C_SRC =	\
 			gtkaccount.c \
 			gtkblist.c \
+			gtkblist-theme.c \
+			gtkblist-theme-loader.c \
 			gtkcertmgr.c \
 			gtkcellrendererexpander.c \
 			gtkcellrendererprogress.c \
@@ -68,11 +70,14 @@ PIDGIN_C_SRC =	\
 			gtkeventloop.c \
 			gtkexpander.c \
 			gtkft.c \
+			gtkicon-theme.c \
+			gtkicon-theme-loader.c \
 			gtkidle.c \
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
 			gtklog.c \
 			gtkmain.c \
+			gtkmedia.c \
 			gtkmenutray.c \
 			gtknotify.c \
 			gtkplugin.c \
@@ -88,6 +93,7 @@ PIDGIN_C_SRC =	\
 			gtksound.c \
 			gtksourceiter.c \
 			gtksourceundomanager.c \
+			gtkstatus-icon-theme.c \
 			gtkstatusbox.c \
 			gtkthemes.c \
 			gtkutils.c \

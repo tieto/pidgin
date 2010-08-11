@@ -790,6 +790,7 @@ void *gg_recv_packet(struct gg_session *sess)
 		gg_debug(GG_DEBUG_MISC, "// gg_recv_packet() body recv(%d,%p,%d) = %d\n", sess->fd, buf + sizeof(h) + offset, size, ret);
 		if (!ret) {
 			gg_debug(GG_DEBUG_MISC, "// gg_recv_packet() body recv() failed: connection broken\n");
+			free(buf);
 			errno = ECONNRESET;
 			return NULL;
 		}

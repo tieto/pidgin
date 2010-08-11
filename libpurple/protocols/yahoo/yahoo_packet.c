@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "debug.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -187,19 +187,18 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
-#ifdef DEBUG
-			{
+			if (purple_debug_is_verbose() || g_getenv("PURPLE_YAHOO_DEBUG")) {
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
-				purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-						   "Key: %d  \tValue: %s\n", pair->key, esc);
+				purple_debug_misc("yahoo", "Key: %d  \tValue: %s\n", pair->key, esc);
 				g_free(esc);
 			}
-#endif
 		} else {
 			g_free(pair);
 		}
 		pos += 2;
+
+		if (pos + 1 > len) break;
 
 		/* Skip over garbage we've noticed in the mail notifications */
 		if (data[0] == '9' && data[pos] == 0x01)
@@ -251,42 +250,42 @@ void yahoo_packet_dump(guchar *data, int len)
 #ifdef YAHOO_DEBUG
 	int i;
 
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i + 1 < len; i += 2) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x%02x ", data[i], data[i + 1]);
+		purple_debug_misc(NULL, "%02x%02x ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x", data[i]);
+		purple_debug_misc(NULL, "%02x", data[i]);
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc(NULL, "\n");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
 		if (g_ascii_isprint(data[i]))
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "%c ", data[i]);
+			purple_debug_misc(NULL, "%c ", data[i]);
 		else
-			purple_debug(PURPLE_DEBUG_MISC, NULL, ". ");
+			purple_debug_misc(NULL, ". ");
 	}
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-#endif
+	purple_debug_misc(NULL, "\n");
+#endif /* YAHOO_DEBUG */
 }
 
 static void
 yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition cond)
 {
-	struct yahoo_data *yd = data;
+	YahooData *yd = data;
 	int ret, writelen;
 
 	writelen = purple_circ_buffer_get_max_read(yd->txbuf);
@@ -327,7 +326,7 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 	if (wm)
 		pos += yahoo_put16(data + pos, YAHOO_WEBMESSENGER_PROTO_VER);
 	else if (jp)
-		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER_JAPAN);		
+		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER_JAPAN);
 	else
 		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
 	pos += yahoo_put16(data + pos, 0x0000);
@@ -343,7 +342,7 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 	return len;
 }
 
-int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
+int yahoo_packet_send(struct yahoo_packet *pkt, YahooData *yd)
 {
 	size_t len;
 	gssize ret;
@@ -383,7 +382,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	return ret;
 }
 
-int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd)
+int yahoo_packet_send_and_free(struct yahoo_packet *pkt, YahooData *yd)
 {
 	int ret;
 
@@ -398,7 +397,7 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = pkt->hash->data;
 		g_free(pair->value);
 		g_free(pair);
-		pkt->hash = g_slist_remove(pkt->hash, pair);
+		pkt->hash = g_slist_delete_link(pkt->hash, pkt->hash);
 	}
 	g_free(pkt);
 }

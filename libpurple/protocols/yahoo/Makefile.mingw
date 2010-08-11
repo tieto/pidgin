@@ -7,7 +7,9 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-TARGET = libyahoo
+TARGET = libymsg
+YAHOO_TARGET = libyahoo
+YAHOOJP_TARGET = libyahoojp
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -31,14 +33,15 @@ INCLUDE_PATHS +=	-I. \
 			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP)
 
-LIB_PATHS +=		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L. \
+			-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP)
 
 ##
 ##  SOURCES, OBJECTS
 ##
 C_SRC =			util.c \
-			yahoo.c \
+			libymsg.c \
 			yahoochat.c \
 			yahoo_aliases.c \
 			yahoo_doodle.c \
@@ -50,6 +53,12 @@ C_SRC =			util.c \
 			ycht.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
+
+YAHOO_C_SRC = libyahoo.c
+YAHOO_OBJECTS = $(YAHOO_C_SRC:%.c=%.o)
+
+YAHOOJP_C_SRC = libyahoojp.c
+YAHOOJP_OBJECTS = $(YAHOOJP_C_SRC:%.c=%.o)
 
 ##
 ## LIBRARIES
@@ -68,21 +77,29 @@ include $(PIDGIN_COMMON_RULES)
 
 .PHONY: all install clean
 
-all: $(TARGET).dll
+all: $(TARGET).dll $(YAHOO_TARGET).dll $(YAHOOJP_TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(YAHOO_TARGET).dll $(YAHOOJP_TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
+$(TARGET).dll.a $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+
+$(YAHOO_TARGET).dll: $(TARGET).dll.a $(YAHOO_OBJECTS)
+	$(CC) -shared $(YAHOO_OBJECTS) $(LIB_PATHS) $(LIBS) -lymsg $(DLL_LD_FLAGS) -o $(YAHOO_TARGET).dll
+
+$(YAHOOJP_TARGET).dll: $(TARGET).dll.a $(YAHOOJP_OBJECTS)
+	$(CC) -shared $(YAHOOJP_OBJECTS) $(LIB_PATHS) $(LIBS) -lymsg $(DLL_LD_FLAGS) -o $(YAHOOJP_TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS)
-	rm -f $(TARGET).dll
+	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
+	rm -f $(YAHOO_OBJECTS) $(YAHOO_TARGET).dll
+	rm -f $(YAHOOJP_OBJECTS) $(YAHOOJP_TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)

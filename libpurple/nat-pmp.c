@@ -126,7 +126,7 @@ get_rtaddrs(int bitmask, struct sockaddr *sa, struct sockaddr *addrs[])
 
 	for (i = 0; i < RTAX_MAX; i++)
 	{
-		if (bitmask & (1 << i)) 
+		if (bitmask & (1 << i))
 		{
 			addrs[i] = sa;
 #ifdef HAVE_STRUCT_SOCKADDR_SA_LEN
@@ -139,7 +139,7 @@ get_rtaddrs(int bitmask, struct sockaddr *sa, struct sockaddr *addrs[])
 				sa = (struct sockaddr*)(sizeof(struct sockaddr_in6) + (char *)sa);
 #endif
 #endif
-		} 
+		}
 		else
 		{
 			addrs[i] = NULL;
@@ -192,7 +192,7 @@ default_gw()
     mib[5] = 0;
 
 	/* Determine the buffer side needed to get the full routing table */
-    if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) 
+    if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0)
 	{
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate\n");
 		return NULL;
@@ -200,12 +200,12 @@ default_gw()
 
     if (!(buf = malloc(needed)))
 	{
-		purple_debug_warning("nat-pmp", "Failed to malloc %i\n", needed);
+		purple_debug_warning("nat-pmp", "Failed to malloc %" G_GSIZE_FORMAT "\n", needed);
 		return NULL;
     }
 
 	/* Read the routing table into buf */
-    if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0) 
+    if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0)
 	{
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump\n");
 		return NULL;
@@ -213,12 +213,12 @@ default_gw()
 
     lim = buf + needed;
 
-    for (next = buf; next < lim; next += rtm->rtm_msglen) 
+    for (next = buf; next < lim; next += rtm->rtm_msglen)
 	{
 		rtm = (struct rt_msghdr *)next;
 		sa = (struct sockaddr *)(rtm + 1);
-		
-		if (sa->sa_family == AF_INET) 
+
+		if (sa->sa_family == AF_INET)
 		{
 			sin = (struct sockaddr_in*) sa;
 
@@ -240,7 +240,7 @@ default_gw()
 					memcpy(&mask, rti_info[RTAX_NETMASK], sizeof(mask));
 
 				if (rtm->rtm_addrs & RTA_GATEWAY &&
-					is_default_route(&addr, &mask)) 
+					is_default_route(&addr, &mask))
 				{
 					if (rti_info[RTAX_GATEWAY]) {
 						struct sockaddr_in *rti_sin = (struct sockaddr_in *)rti_info[RTAX_GATEWAY];
@@ -263,7 +263,7 @@ default_gw()
 }
 
 /*!
- *	purple_pmp_get_public_ip() will return the publicly facing IP address of the 
+ *	purple_pmp_get_public_ip() will return the publicly facing IP address of the
  *	default NAT gateway. The function will return NULL if:
  *		- The gateway doesn't support NAT-PMP
  *		- The gateway errors in some other spectacular fashion
@@ -278,10 +278,10 @@ purple_pmp_get_public_ip()
 	PurplePmpIpRequest req;
 	PurplePmpIpResponse resp;
 	int sendfd;
-	
+
 	if (pmp_info.status == PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER)
 		return NULL;
-	
+
 	if ((pmp_info.status == PURPLE_PMP_STATUS_DISCOVERED) && (pmp_info.publicip != NULL))
 	{
 #ifdef PMP_DEBUG
@@ -318,7 +318,7 @@ purple_pmp_get_public_ip()
 	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
 	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
 	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
-	 * 
+	 *
 	 * This seems really silly... if this were nonblocking, a couple retries might be in order, but it's not at present.
 	 */
 #ifdef PMP_DEBUG
@@ -327,7 +327,7 @@ purple_pmp_get_public_ip()
 #endif
 
 	/* TODO: Non-blocking! */
-	
+
 	if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 	{
 		purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", g_strerror(errno));
@@ -370,7 +370,7 @@ purple_pmp_get_public_ip()
 
 	if (!publicsockaddr) {
 		g_free(gateway);
-		
+
 		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}
@@ -437,7 +437,7 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
 	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
 	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
-	 * 
+	 *
 	 * This seems really silly... if this were nonblocking, a couple retries might be in order, but it's not at present.
 	 * XXX Make this nonblocking.
 	 * XXX This code looks like the pmp_get_public_ip() code. Can it be consolidated?

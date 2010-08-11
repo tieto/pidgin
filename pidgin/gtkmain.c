@@ -53,6 +53,7 @@
 #include "gtkft.h"
 #include "gtkidle.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
 #include "gtkpounce.h"
@@ -310,6 +311,9 @@ pidgin_ui_init(void)
 	pidgin_log_init();
 	pidgin_docklet_init();
 	pidgin_smileys_init();
+	pidgin_utils_init();
+	pidgin_medias_init();
+	pidgin_notify_init();
 }
 
 static GHashTable *ui_info = NULL;
@@ -323,6 +327,8 @@ pidgin_quit(void)
 #endif
 
 	/* Uninit */
+	pidgin_utils_uninit();
+	pidgin_notify_uninit();
 	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
@@ -349,6 +355,26 @@ static GHashTable *pidgin_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "pc");
+
+		/*
+		 * This is the client key for "Pidgin."  It is owned by the AIM
+		 * account "markdoliner."  Please don't use this key for other
+		 * applications.  You can either not specify a client key, in
+		 * which case the default "libpurple" key will be used, or you
+		 * can register for your own client key at
+		 * http://developer.aim.com/manageKeys.jsp
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
+		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
+
+		/*
+		 * This is the distid for Pidgin, given to us by AOL.  Please
+		 * don't use this for other applications.  You can just not
+		 * specify a distid and libpurple will use a default.
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1550));
+		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1550));
 	}
 
 	return ui_info;
@@ -385,6 +411,7 @@ show_usage(const char *name, gboolean terse)
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -f, --force-online  force online, regardless of network status\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
@@ -398,6 +425,7 @@ show_usage(const char *name, gboolean terse)
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -f, --force-online  force online, regardless of network status\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
@@ -457,10 +485,10 @@ int pidgin_main(HINSTANCE hint, int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+	gboolean opt_force_online = FALSE;
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
-	gboolean opt_nocrash = FALSE;
 	gboolean opt_version = FALSE;
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
@@ -485,17 +513,17 @@ int main(int argc, char *argv[])
 	GList *active_accounts;
 
 	struct option long_options[] = {
-		{"config",   required_argument, NULL, 'c'},
-		{"debug",    no_argument,       NULL, 'd'},
-		{"help",     no_argument,       NULL, 'h'},
-		{"login",    optional_argument, NULL, 'l'},
-		{"multiple", no_argument,       NULL, 'm'},
-		{"nologin",  no_argument,       NULL, 'n'},
-		{"nocrash",  no_argument,       NULL, 'x'},
-		{"session",  required_argument, NULL, 's'},
-		{"version",  no_argument,       NULL, 'v'},
-		{"display",  required_argument, NULL, 'D'},
-		{"sync",     no_argument,       NULL, 'S'},
+		{"config",       required_argument, NULL, 'c'},
+		{"debug",        no_argument,       NULL, 'd'},
+		{"force-online", no_argument,       NULL, 'd'},
+		{"help",         no_argument,       NULL, 'h'},
+		{"login",        optional_argument, NULL, 'l'},
+		{"multiple",     no_argument,       NULL, 'm'},
+		{"nologin",      no_argument,       NULL, 'n'},
+		{"session",      required_argument, NULL, 's'},
+		{"version",      no_argument,       NULL, 'v'},
+		{"display",      required_argument, NULL, 'D'},
+		{"sync",         no_argument,       NULL, 'S'},
 		{0, 0, 0, 0}
 	};
 
@@ -602,9 +630,9 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhmnl::s:v",
+				  "c:dfhmnl::s:v",
 #else
-				  "c:dhmnl::v",
+				  "c:dfhmnl::v",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -614,6 +642,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':	/* debug */
 			debug_enabled = TRUE;
+			break;
+		case 'f':	/* force-online */
+			opt_force_online = TRUE;
 			break;
 		case 'h':	/* help */
 			opt_help = TRUE;
@@ -636,9 +667,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
-			break;
-		case 'x':   /* --nocrash */
-			opt_nocrash = TRUE;
 			break;
 		case 'D':   /* --display */
 		case 'S':   /* --sync */
@@ -816,6 +844,11 @@ int main(int argc, char *argv[])
 		g_free(opt_config_dir_arg);
 		opt_config_dir_arg = NULL;
 	}
+
+	/* This needs to be before purple_blist_show() so the
+	 * statusbox gets the forced online status. */
+	if (opt_force_online)
+		purple_network_force_online();
 
 	/*
 	 * We want to show the blist early in the init process so the

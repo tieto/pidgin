@@ -26,8 +26,7 @@
 
 #include "internal.h"
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkbutton.h>
+#include <gtk/gtk.h>
 
 #include "libpurple/prefs.h"
 

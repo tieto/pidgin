@@ -130,7 +130,7 @@ typedef struct {
 	guint tima;	/* purple_timeout_add handle */
 	int fd;
 	struct sockaddr_in server;
-	gchar service_type[25];
+	gchar service_type[20];
 	int retry_count;
 	gchar *full_url;
 } UPnPDiscoveryData;
@@ -807,7 +807,7 @@ looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 				control_info.internalip);
 		close(source);
 	} else
-		purple_debug_info("upnp", "Unable to look up local IP\n");
+		purple_debug_error("upnp", "Unable to look up local IP\n");
 
 }
 
@@ -1049,7 +1049,7 @@ static void*
 purple_upnp_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 

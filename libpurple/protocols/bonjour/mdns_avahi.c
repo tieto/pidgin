@@ -124,7 +124,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	g_return_if_fail(r != NULL);
 
 	pb = purple_find_buddy(account, name);
-	bb = (pb != NULL) ? pb->proto_data : NULL;
+	bb = (pb != NULL) ? purple_buddy_get_protocol_data(pb) : NULL;
 
 	switch (event) {
 		case AVAHI_RESOLVER_FAILURE:
@@ -200,8 +200,8 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 
 			if (!bonjour_buddy_check(bb)) {
-				_cleanup_resolver_data(rd);
 				b_impl->resolvers = g_slist_remove(b_impl->resolvers, rd);
+				_cleanup_resolver_data(rd);
 				/* If this was the last resolver, remove the buddy */
 				if (b_impl->resolvers == NULL) {
 					if (pb != NULL)
@@ -252,7 +252,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
 			pb = purple_find_buddy(account, name);
 			if (pb != NULL) {
-				BonjourBuddy *bb = pb->proto_data;
+				BonjourBuddy *bb = purple_buddy_get_protocol_data(pb);
 				AvahiBuddyImplData *b_impl;
 				GSList *l;
 				AvahiSvcResolverData *rd_search;
@@ -357,14 +357,16 @@ _buddy_icon_record_cb(AvahiRecordBrowser *b, AvahiIfIndex interface, AvahiProtoc
 	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
 
 	switch (event) {
+		case AVAHI_BROWSER_CACHE_EXHAUSTED:
+		case AVAHI_BROWSER_ALL_FOR_NOW:
+			/* Ignore these "meta" informational events */
+			return;
 		case AVAHI_BROWSER_NEW:
 			bonjour_buddy_got_buddy_icon(buddy, rdata, size);
 			break;
 		case AVAHI_BROWSER_REMOVE:
-		case AVAHI_BROWSER_CACHE_EXHAUSTED:
-		case AVAHI_BROWSER_ALL_FOR_NOW:
 		case AVAHI_BROWSER_FAILURE:
-			purple_debug_error("bonjour", "Error rerieving buddy icon record: %s\n",
+			purple_debug_error("bonjour", "Error retrieving buddy icon record: %s\n",
 				avahi_strerror(avahi_client_errno(avahi_record_browser_get_client(b))));
 			break;
 	}

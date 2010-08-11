@@ -135,7 +135,13 @@ update_plugin_list(void *data)
 
 		gtk_list_store_append (ls, &iter);
 
-		name = g_markup_escape_text(plug->info->name ? _(plug->info->name) : g_basename(plug->path), -1);
+		if (plug->info->name) {
+			name = g_markup_escape_text(_(plug->info->name), -1);
+		} else {
+			char *tmp = g_path_get_basename(plug->path);
+			name = g_markup_escape_text(tmp, -1);
+			g_free(tmp);
+		}
 		version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
 		summary = g_markup_escape_text(purple_plugin_get_summary(plug), -1);
 

@@ -108,7 +108,7 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 	purple_debug(PURPLE_DEBUG_INFO, NULL, "done.\n");
 }
 
-/* We call any handler installed before (or after) ice_init but 
+/* We call any handler installed before (or after) ice_init but
  * avoid calling the default libICE handler which does an exit().
  *
  * This means we do nothing by default, which is probably correct,

@@ -220,25 +220,7 @@ static GList *nullprpl_actions(PurplePlugin *plugin, gpointer context)
  */
 static const char *nullprpl_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
-  /* shamelessly steal (er, borrow) the meanwhile protocol icon. it's cute! */
-  return "meanwhile";
-}
-
-static const char *nullprpl_list_emblem(PurpleBuddy *buddy)
-{
-  const char* emblem;
-
-  if (get_nullprpl_gc(buddy->name)) {
-    PurplePresence *presence = purple_buddy_get_presence(buddy);
-    PurpleStatus *status = purple_presence_get_active_status(presence);
-    emblem = purple_status_get_name(status);
-  } else {
-    emblem = "offline";
-  }
-
-  purple_debug_info("nullprpl", "using emblem %s for %s's buddy %s\n",
-                    emblem, buddy->account->username, buddy->name);
-  return emblem;
+  return "null";
 }
 
 static char *nullprpl_status_text(PurpleBuddy *buddy) {
@@ -304,22 +286,22 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
                     acct->username,
                     NULL_STATUS_ONLINE, NULL_STATUS_AWAY, NULL_STATUS_OFFLINE);
 
-  type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, NULL_STATUS_ONLINE,
-                                NULL_STATUS_ONLINE, TRUE);
-  purple_status_type_add_attr(type, "message", _("Online"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+      NULL_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
 
-  type = purple_status_type_new(PURPLE_STATUS_AWAY, NULL_STATUS_AWAY,
-                                NULL_STATUS_AWAY, TRUE);
-  purple_status_type_add_attr(type, "message", _("Away"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+      NULL_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
-  
-  type = purple_status_type_new(PURPLE_STATUS_OFFLINE, NULL_STATUS_OFFLINE,
-                                NULL_STATUS_OFFLINE, TRUE);
-  purple_status_type_add_attr(type, "message", _("Offline"),
-                              purple_value_new(PURPLE_TYPE_STRING));
+
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
+      NULL_STATUS_OFFLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
   types = g_list_prepend(types, type);
 
   return g_list_reverse(types);
@@ -1074,7 +1056,7 @@ static PurplePluginProtocolInfo prpl_info =
       PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
   },
   nullprpl_list_icon,                  /* list_icon */
-  nullprpl_list_emblem,                /* list_emblem */
+  NULL,                                /* list_emblem */
   nullprpl_status_text,                /* status_text */
   nullprpl_tooltip_text,               /* tooltip_text */
   nullprpl_status_types,               /* status_types */
@@ -1131,24 +1113,26 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* whiteboard_prpl_ops */
   NULL,                                /* send_raw */
   NULL,                                /* roomlist_room_serialize */
-  NULL,                                /* padding... */
+  NULL,                                /* unregister_user */
+  NULL,                                /* send_attention */
+  NULL,                                /* get_attention_types */
+  sizeof(PurplePluginProtocolInfo),    /* struct_size */
   NULL,
-  NULL,
-	sizeof(PurplePluginProtocolInfo),    /* struct_size */
-  NULL
+  NULL,                                 /* initiate_media */
+  NULL                                  /* can_do_media */	
 };
 
 static void nullprpl_init(PurplePlugin *plugin)
 {
   /* see accountopt.h for information about user splits and protocol options */
   PurpleAccountUserSplit *split = purple_account_user_split_new(
-    _("Example user split (unused)"),  /* text shown to user */
-    "default",                         /* default value */
-    '@');                              /* field separator */
+    _("Example user split"),  /* text shown to user */
+    "default",                /* default value */
+    '@');                     /* field separator */
   PurpleAccountOption *option = purple_account_option_string_new(
-    _("Example option (unused)"),      /* text shown to user */
-    "example",                         /* pref name */
-    "default");                        /* default value */
+    _("Example option"),      /* text shown to user */
+    "example",                /* pref name */
+    "default");               /* default value */
 
   purple_debug_info("nullprpl", "starting up\n");
 
@@ -1157,13 +1141,13 @@ static void nullprpl_init(PurplePlugin *plugin)
 
   /* register whisper chat command, /msg */
   purple_cmd_register("msg",
-                    "ws",                /* args: recipient and message */
+                    "ws",                  /* args: recipient and message */
                     PURPLE_CMD_P_DEFAULT,  /* priority */
                     PURPLE_CMD_FLAG_CHAT,
                     "prpl-null",
                     send_whisper,
                     "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
-                    NULL);               /* userdata */
+                    NULL);                 /* userdata */
 
   /* get ready to store offline messages */
   goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
@@ -1190,12 +1174,12 @@ static PurplePluginInfo info =
   NULL,                                                    /* dependencies */
   PURPLE_PRIORITY_DEFAULT,                                 /* priority */
   NULLPRPL_ID,                                             /* id */
-  "Nullprpl",                                              /* name */
-  "0.3",                                                   /* version */
-  "Null Protocol Plugin",                                  /* summary */
-  "Null Protocol Plugin",                                  /* description */
-  "Ryan Barrett <nullprpl@ryanb.org>",                     /* author */
-  "http://snarfed.org/space/pidgin+null+protocol+plugin",  /* homepage */
+  "Null - Testing Plugin",                                 /* name */
+  DISPLAY_VERSION,                                         /* version */
+  N_("Null Protocol Plugin"),                              /* summary */
+  N_("Null Protocol Plugin"),                              /* description */
+  NULL,                                                    /* author */
+  PURPLE_WEBSITE,                                          /* homepage */
   NULL,                                                    /* load */
   NULL,                                                    /* unload */
   nullprpl_destroy,                                        /* destroy */

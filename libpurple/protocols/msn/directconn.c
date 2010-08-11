@@ -201,24 +201,6 @@ msn_directconn_write(MsnDirectConn *directconn,
 
 	g_free(buffer);
 
-#if 0
-	/* Let's write the length of the data. */
-	ret = write(directconn->fd, &len, sizeof(len));
-
-	/* Let's write the data. */
-	ret = write(directconn->fd, data, len);
-
-	char *str;
-	str = g_strdup_printf("/home/revo/msntest/w%.4d.bin", directconn->c);
-
-	FILE *tf = g_fopen(str, "w");
-	fwrite(&len, 1, sizeof(len), tf);
-	fwrite(data, 1, len, tf);
-	fclose(tf);
-
-	g_free(str);
-#endif
-
 	directconn->c++;
 
 	return ret;
@@ -265,14 +247,6 @@ msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg)
 }
 
 static void
-msn_directconn_process_msg(MsnDirectConn *directconn, MsnMessage *msg)
-{
-	purple_debug_info("msn", "directconn: process_msg\n");
-
-	msn_slplink_process_msg(directconn->slplink, msg);
-}
-
-static void
 read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnDirectConn* directconn;
@@ -285,6 +259,19 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	directconn = data;
 
 	/* Let's read the length of the data. */
+#error This code is broken.  See the note below.
+	/*
+	 * TODO: This has problems!  First of all, sizeof(body_len) will be
+	 *       different on 32bit systems and on 64bit systems (4 bytes
+	 *       vs. 8 bytes).
+	 *       Secondly, we're reading from a TCP stream.  There is no
+	 *       guarantee that we have received the number of bytes we're
+	 *       trying to read.  We need to read into a buffer.  If read
+	 *       returns <0 then we need to check errno.  If errno is EAGAIN
+	 *       then don't destroy anything, just exit and wait for more
+	 *       data.  See every other function in libpurple that does this
+	 *       correctly for an example.
+	 */
 	len = read(directconn->fd, &body_len, sizeof(body_len));
 
 	if (len <= 0)
@@ -341,7 +328,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		MsnMessage *msg;
 
 #ifdef DEBUG_DC
-		str = g_strdup_printf("/home/revo/msntest/r%.4d.bin", directconn->c);
+		str = g_strdup_printf("%s/msntest/r%.4d.bin", g_get_home_dir(), directconn->c);
 
 		FILE *tf = g_fopen(str, "w");
 		fwrite(body, 1, len, tf);
@@ -355,7 +342,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		msg = msn_message_new_msnslp();
 		msn_message_parse_slp_body(msg, body, body_len);
 
-		msn_directconn_process_msg(directconn, msg);
+		purple_debug_info("msn", "directconn: process_msg\n");
+		msn_slplink_process_msg(directconn->slplink, msg);
 	}
 	else
 	{
@@ -369,6 +357,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		msn_directconn_destroy(directconn);
 	}
+
+	g_free(body);
 }
 
 static void

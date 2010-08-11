@@ -3,17 +3,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
- 
+
 #include <stdlib.h>
 #include <glib.h>
 #include <string.h>
@@ -71,7 +71,7 @@ jabber_data_create_from_xml(xmlnode *tag)
 
 	data->cid = g_strdup(xmlnode_get_attrib(tag, "cid"));
 	data->type = g_strdup(xmlnode_get_attrib(tag, "type"));
-	
+
 	raw_data = xmlnode_get_data(tag);
 	data->data = purple_base64_decode(raw_data, &size);
 	data->size = size;
@@ -176,7 +176,7 @@ const JabberData *
 jabber_data_find_remote_by_cid(const gchar *cid)
 {
 	purple_debug_info("jabber", "lookup remote smiley with cid = %s\n", cid);
-	
+
 	return g_hash_table_lookup(remote_data_by_cid, cid);
 }
 
@@ -186,7 +186,7 @@ jabber_data_associate_local(JabberData *data, const gchar *alt)
 	purple_debug_info("jabber", "associating local smiley\n alt = %s, cid = %s\n",
 		alt, jabber_data_get_cid(data));
 	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
-	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
+	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)),
 		data);
 }
 
@@ -195,30 +195,31 @@ jabber_data_associate_remote(JabberData *data)
 {
 	purple_debug_info("jabber", "associating remote smiley, cid = %s\n",
 		jabber_data_get_cid(data));
-	g_hash_table_insert(remote_data_by_cid, g_strdup(jabber_data_get_cid(data)), 
+	g_hash_table_insert(remote_data_by_cid, g_strdup(jabber_data_get_cid(data)),
 		data);
 }
 
 void
-jabber_data_parse(JabberStream *js, xmlnode *packet)
+jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
+                  const char *id, xmlnode *data_node)
 {
 	JabberIq *result = NULL;
-	const char *who = xmlnode_get_attrib(packet, "from");
-	xmlnode *data_node = xmlnode_get_child(packet, "data");
-	const JabberData *data =
-		jabber_data_find_local_by_cid(xmlnode_get_attrib(data_node, "cid"));
+	const char *cid = xmlnode_get_attrib(data_node, "cid");
+	const JabberData *data = cid ? jabber_data_find_local_by_cid(cid) : NULL;
 
 	if (!data) {
 		xmlnode *item_not_found = xmlnode_new("item-not-found");
 
 		result = jabber_iq_new(js, JABBER_IQ_ERROR);
-		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
+		if (who)
+			xmlnode_set_attrib(result->node, "to", who);
+		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node, item_not_found);
 	} else {
 		result = jabber_iq_new(js, JABBER_IQ_RESULT);
-		xmlnode_set_attrib(result->node, "to", who);
-		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
+		if (who)
+			xmlnode_set_attrib(result->node, "to", who);
+		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
 	}
@@ -235,6 +236,8 @@ jabber_data_init(void)
 		g_free, jabber_data_delete);
 	remote_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, jabber_data_delete);
+
+	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
 }
 
 void
@@ -244,4 +247,5 @@ jabber_data_uninit(void)
 	g_hash_table_destroy(local_data_by_alt);
 	g_hash_table_destroy(local_data_by_cid);
 	g_hash_table_destroy(remote_data_by_cid);
+	local_data_by_alt = local_data_by_cid = remote_data_by_cid = NULL;
 }

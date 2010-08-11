@@ -46,7 +46,7 @@ flap_connection_send_version(OscarData *od, FlapConnection *conn)
 	FlapFrame *frame;
 
 	frame = flap_frame_new(od, 0x01, 4);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	flap_connection_send(conn, frame);
 }
 
@@ -64,9 +64,40 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
 	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	flap_connection_send(conn, frame);
+}
+
+void
+flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci)
+{
+	FlapFrame *frame;
+	GSList *tlvlist = NULL;
+
+	frame = flap_frame_new(od, 0x01, 1152 + length);
+
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
+	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
+
+	if (ci->clientstring != NULL)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
+		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
+	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+
+	aim_tlvlist_write(&frame->data, &tlvlist);
+
 	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
@@ -355,23 +386,9 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	if (conn->fd >= 0)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		close(conn->fd);
-		conn->fd = -1;
-	}
-
-	if (conn->gsc != NULL)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		purple_ssl_close(conn->gsc);
-		conn->gsc = NULL;
-	}
+	if ((conn->fd >= 0 || conn->gsc != NULL)
+			&& conn->type == SNAC_FAMILY_LOCATE)
+		flap_connection_send_close(od, conn);
 
 	if (conn->watcher_incoming != 0)
 	{
@@ -383,6 +400,18 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 	{
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
+	}
+
+	if (conn->fd >= 0)
+	{
+		close(conn->fd);
+		conn->fd = -1;
+	}
+
+	if (conn->gsc != NULL)
+	{
+		purple_ssl_close(conn->gsc);
+		conn->gsc = NULL;
 	}
 
 	g_free(conn->buffer_incoming.data.data);
@@ -445,18 +474,18 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (conn->disconnect_code == 0x0001) {
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			tmp = g_strdup(_("You have signed on from another location."));
+			tmp = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-			tmp = g_strdup(_("Server closed the connection."));
+			tmp = g_strdup(_("Server closed the connection"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
+			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					conn->error_message);
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-			tmp = g_strdup(_("Received invalid data on connection with server."));
+			tmp = g_strdup(_("Received invalid data on connection with server"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+			tmp = g_strdup_printf(_("Unable to connect: %s"),
 					conn->error_message);
 		else
 			/*
@@ -476,7 +505,6 @@ flap_connection_destroy_cb(gpointer data)
 
 	g_free(conn->error_message);
 	g_free(conn->cookie);
-	g_free(conn->ssl_cert_cn);
 
 	/*
 	 * Free conn->internal, if necessary
@@ -1029,7 +1057,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+		if (ret < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 			/* No worries */
 			return;
 

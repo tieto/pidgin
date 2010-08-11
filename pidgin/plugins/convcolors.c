@@ -101,6 +101,7 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	gboolean bold, italic, underline;
 	int f;
 	const char *color;
+	gboolean rtl = FALSE;
 
 	for (i = 0; formats[i].prefix; i++)
 		if (flags & formats[i].flag)
@@ -126,6 +127,7 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	bold = (f & FONT_BOLD);
 	italic = (f & FONT_ITALIC);
 	underline = (f & FONT_UNDERLINE);
+	rtl = purple_markup_is_rtl(*displaying);
 
 	if (purple_prefs_get_bool(PREF_IGNORE))
 	{
@@ -156,11 +158,13 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	}
 
 	t = *displaying;
-	*displaying = g_strdup_printf("%s%s%s%s%s%s%s",
+	*displaying = g_strdup_printf("%s%s%s%s%s%s%s%s%s",
 						bold ? "<B>" : "</B>",
 						italic ? "<I>" : "</I>",
 						underline ? "<U>" : "</U>",
-						t, 
+						rtl ? "<SPAN style=\"direction:rtl;text-align:right;\">" : "",
+						t,
+						rtl ? "</SPAN>" : "",
 						bold ? "</B>" : "<B>",
 						italic ? "</I>" : "<I>",
 						underline ? "</U>" : "<U>"

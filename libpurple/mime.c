@@ -25,9 +25,6 @@
 #include <string.h>
 
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
-#include <glib/gstring.h>
 
 #include "internal.h"
 
@@ -406,7 +403,7 @@ doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, g
 	char *b = (char *) buf;
 	gsize n = len;
 
-	const char *bnd;
+	char *bnd;
 	gsize bl;
 
 	bnd = g_strdup_printf("--%s", boundary);

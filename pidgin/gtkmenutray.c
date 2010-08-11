@@ -21,9 +21,7 @@
 
 #include "gtkmenutray.h"
 
-#include <gtk/gtkeventbox.h>
-#include <gtk/gtkiconfactory.h>
-#include <gtk/gtkversion.h>
+#include <gtk/gtk.h>
 
 /******************************************************************************
  * Enums

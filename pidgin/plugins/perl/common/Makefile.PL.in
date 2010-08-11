@@ -13,4 +13,15 @@ WriteMakefile(
     'OBJECT'        => '$(O_FILES)', # link all the C files too
     'TYPEMAPS'      => ["@top_srcdir@/libpurple/plugins/perl/common/typemap"],
 #    'OPTIMIZE'      => '-g', # For debugging.
+    'INSTALLDIRS'          => 'vendor',
+    'INSTALL_BASE'         => '$(prefix)',
+    'INSTALLVENDORARCH'    => '$(libdir)/pidgin/perl',
+    'INSTALLVENDORMAN3DIR' => '$(mandir)/man3',
+    'macro'                => {
+        'prefix'      => '@prefix@',
+        'exec_prefix' => '@exec_prefix@',
+        'libdir'      => '@libdir@',
+        'mandir'      => '@mandir@',
+        'datarootdir' => '@datarootdir@',
+    },
 );

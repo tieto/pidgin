@@ -84,7 +84,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 		gdk_gc_set_rgb_fg_color(gc, &red);
 		gdk_draw_line(event->window, gc,
 					0, y, visible_rect.width, y);
-		gdk_gc_unref(gc);
+		g_object_unref(G_OBJECT(gc));
 	}
 	return FALSE;
 }

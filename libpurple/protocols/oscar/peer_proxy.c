@@ -63,19 +63,19 @@ peer_proxy_send_create_new_conn(PeerConnection *conn)
 {
 	ProxyFrame frame;
 	PurpleAccount *account;
-	const gchar *sn;
-	guint8 sn_length;
+	const gchar *bn;
+	guint8 bn_length;
 
 	memset(&frame, 0, sizeof(ProxyFrame));
 	frame.type = PEER_PROXY_TYPE_CREATE;
 	frame.flags = 0x0000;
 
 	account = purple_connection_get_account(conn->od->gc);
-	sn = purple_account_get_username(account);
-	sn_length = strlen(sn);
-	byte_stream_new(&frame.payload, 1 + sn_length + 8 + 20);
-	byte_stream_put8(&frame.payload, sn_length);
-	byte_stream_putraw(&frame.payload, (const guint8 *)sn, sn_length);
+	bn = purple_account_get_username(account);
+	bn_length = strlen(bn);
+	byte_stream_new(&frame.payload, 1 + bn_length + 8 + 20);
+	byte_stream_put8(&frame.payload, bn_length);
+	byte_stream_putraw(&frame.payload, (const guint8 *)bn, bn_length);
 	byte_stream_putraw(&frame.payload, conn->cookie, 8);
 
 	byte_stream_put16(&frame.payload, 0x0001); /* Type */
@@ -99,19 +99,19 @@ peer_proxy_send_join_existing_conn(PeerConnection *conn, guint16 pin)
 {
 	ProxyFrame frame;
 	PurpleAccount *account;
-	const gchar *sn;
-	guint8 sn_length;
+	const gchar *bn;
+	guint8 bn_length;
 
 	memset(&frame, 0, sizeof(ProxyFrame));
 	frame.type = PEER_PROXY_TYPE_JOIN;
 	frame.flags = 0x0000;
 
 	account = purple_connection_get_account(conn->od->gc);
-	sn = purple_account_get_username(account);
-	sn_length = strlen(sn);
-	byte_stream_new(&frame.payload, 1 + sn_length + 2 + 8 + 20);
-	byte_stream_put8(&frame.payload, sn_length);
-	byte_stream_putraw(&frame.payload, (const guint8 *)sn, sn_length);
+	bn = purple_account_get_username(account);
+	bn_length = strlen(bn);
+	byte_stream_new(&frame.payload, 1 + bn_length + 2 + 8 + 20);
+	byte_stream_put8(&frame.payload, bn_length);
+	byte_stream_putraw(&frame.payload, (const guint8 *)bn, bn_length);
 	byte_stream_put16(&frame.payload, pin);
 	byte_stream_putraw(&frame.payload, conn->cookie, 8);
 
@@ -149,11 +149,11 @@ peer_proxy_recv_frame(PeerConnection *conn, ProxyFrame *frame)
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 			aim_im_sendch2_odc_requestproxy(conn->od,
 					conn->cookie,
-					conn->sn, ip, pin, ++conn->lastrequestnumber);
+					conn->bn, ip, pin, ++conn->lastrequestnumber);
 		else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 		{
 			aim_im_sendch2_sendfile_requestproxy(conn->od,
-					conn->cookie, conn->sn,
+					conn->cookie, conn->bn,
 					ip, pin, ++conn->lastrequestnumber,
 					(const gchar *)conn->xferdata.name,
 					conn->xferdata.size, conn->xferdata.totfiles);

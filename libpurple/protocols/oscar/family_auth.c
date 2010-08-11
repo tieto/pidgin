@@ -26,11 +26,11 @@
  *
  */
 
-#include "oscar.h"
+#include <ctype.h>
 
 #include "cipher.h"
 
-#include <ctype.h>
+#include "oscar.h"
 
 /* #define USE_XOR_FOR_ICQ */
 
@@ -129,6 +129,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
+	guint32 distrib;
 
 	passwdlen = strlen(password);
 	password_encoded = (guint8 *)g_malloc(passwdlen+1);
@@ -139,18 +140,27 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
+
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
-	if (ci->clientstring)
+	if (ci->clientstring != NULL)
 		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
+		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib); /* distribution chan */
+	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib); /* distribution chan */
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
@@ -210,6 +220,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
+	guint32 distrib;
 
 	if (!ci || !sn || !password)
 		return -EINVAL;
@@ -229,12 +240,16 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	/* Truncate ICQ and AOL passwords, if necessary */
 	password_len = strlen(password);
-	if (aim_snvalid_icq(sn) && (password_len > MAXICQPASSLEN))
+	if (oscar_util_valid_name_icq(sn) && (password_len > MAXICQPASSLEN))
 		password_len = MAXICQPASSLEN;
 	else if (truncate_pass && password_len > 8)
 		password_len = 8;
 
 	aim_encode_password_md5(password, password_len, key, digest);
+
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
 
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 
@@ -242,14 +257,19 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
-	if (ci->clientstring)
+	if (ci->clientstring != NULL)
 		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
+		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib);
+	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib);
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
@@ -293,11 +313,11 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	tlvlist = aim_tlvlist_read(bs);
 
 	/*
-	 * No matter what, we should have a screen name.
+	 * No matter what, we should have a username.
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
-		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
-		purple_connection_set_display_name(od->gc, info->sn);
+		info->bn = aim_tlv_getstr(tlvlist, 0x0001, 1);
+		purple_connection_set_display_name(od->gc, info->bn);
 	}
 
 	/*
@@ -394,7 +414,7 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 #if 0
 	/*
-	 * Unknown.  Seen on an @mac.com screen name with value of 0x003f
+	 * Unknown.  Seen on an @mac.com username with value of 0x003f
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0055, 1)) {
 		/* Unhandled */
@@ -421,7 +441,7 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
  *   - connect
  *   - server sends flap version
  *   - client sends flap version
- *   - client sends screen name (17/6)
+ *   - client sends username (17/6)
  *   - server sends hash key (17/7)
  *   - client sends auth request (17/2 -- aim_send_login)
  *   - server yells
@@ -460,7 +480,7 @@ goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)
  * Subtype 0x0006
  *
  * In AIM 3.5 protocol, the first stage of login is to request login from the
- * Authorizer, passing it the screen name for verification.  If the name is
+ * Authorizer, passing it the username for verification.  If the name is
  * invalid, a 0017/0003 is spit back, with the standard error contents.  If
  * valid, a 0017/0007 comes back, which is the signal to send it the main
  * login command (0017/0002).
@@ -527,7 +547,7 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	/*
 	 * If the truncate_pass TLV exists then we should truncate the
 	 * user's password to 8 characters.  This flag is sent to us
-	 * when logging in with an AOL user's screen name.
+	 * when logging in with an AOL user's username.
 	 */
 	truncate_pass = aim_tlv_gettlv(tlvlist, 0x0026, 1) != NULL;
 
@@ -597,7 +617,7 @@ auth_shutdown(OscarData *od, aim_module_t *mod)
 {
 	if (od->authinfo != NULL)
 	{
-		g_free(od->authinfo->sn);
+		g_free(od->authinfo->bn);
 		g_free(od->authinfo->bosip);
 		g_free(od->authinfo->errorurl);
 		g_free(od->authinfo->email);

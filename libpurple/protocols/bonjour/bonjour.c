@@ -89,13 +89,12 @@ bonjour_login(PurpleAccount *account)
 #ifdef _WIN32
 	if (!dns_sd_available()) {
 		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: "
-			  "http://d.pidgin.im/BonjourWindows"
-			  " for more information."));
+				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
+				  "http://d.pidgin.im/BonjourWindows for more information."));
 		return;
 	}
-#endif
+#endif /* _WIN32 */
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
 	gc->proto_data = bd = g_new0(BonjourData, 1);
@@ -108,8 +107,8 @@ bonjour_login(PurpleAccount *account)
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to listen for incoming IM connections\n"));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to listen for incoming IM connections"));
 		return;
 	}
 
@@ -261,9 +260,10 @@ bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *gr
 
 
 static void bonjour_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
-	if (buddy->proto_data) {
-		bonjour_buddy_delete(buddy->proto_data);
-		buddy->proto_data = NULL;
+	BonjourBuddy *bb = purple_buddy_get_protocol_data(buddy);
+	if (bb) {
+		bonjour_buddy_delete(bb);
+		purple_buddy_set_protocol_data(buddy, NULL);
 	}
 }
 
@@ -303,7 +303,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
 	BonjourBuddy *bb;
 
-	if (buddy == NULL || buddy->proto_data == NULL)
+	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
 	{
 		/*
 		 * This buddy is not in our buddy list, and therefore does not really
@@ -312,7 +312,6 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 		return;
 	}
 
-	bb = buddy->proto_data;
 	bonjour_jabber_close_conversation(bb->conversation);
 	bb->conversation = NULL;
 }
@@ -351,7 +350,7 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
-	BonjourBuddy *bb = buddy->proto_data;
+	BonjourBuddy *bb = purple_buddy_get_protocol_data(buddy);
 	const char *status_description;
 	const char *message;
 
@@ -417,8 +416,7 @@ bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
 
-	return (buddy != NULL && buddy->proto_data != NULL);
-
+	return (buddy != NULL && purple_buddy_get_protocol_data(buddy) != NULL);
 }
 
 static gboolean
@@ -499,13 +497,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* whiteboard_prpl_ops */
 	NULL,                                                    /* send_raw */
 	NULL,                                                    /* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,                                                    /* unregister_user */
+	NULL,                                                    /* send_attention */
+	NULL,                                                    /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
+	NULL,                                                    /* get_account_text_table */
+	NULL,                                                    /* initiate_media */
+	NULL                                                     /* can_do_media */
 };
 
 static PurplePluginInfo info =

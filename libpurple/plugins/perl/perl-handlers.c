@@ -284,6 +284,8 @@ perl_signal_cb(va_list args, void *data)
 	DATATYPE **copy_args;
 
 	dSP;
+	PERL_SET_CONTEXT(my_perl);
+	SPAGAIN;
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);
@@ -364,7 +366,8 @@ perl_signal_cb(va_list args, void *data)
 					break;
 
 				case PURPLE_TYPE_STRING:
-					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
+					if (!*((char **)copy_args[i]) || !SvPVX(sv_args[i]) ||
+							strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
 							g_strdup(SvPVutf8_nolen(sv_args[i]));

@@ -35,6 +35,7 @@
 
 #include "gntdebug.h"
 #include "finch.h"
+#include <internal.h>
 #include "notify.h"
 #include "util.h"
 

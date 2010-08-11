@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
+#include <internal.h>
 
 #include "account.h"
 #include "conversation.h"
@@ -47,6 +48,7 @@
 #include <getopt.h>
 
 #include "config.h"
+#include "package_revision.h"
 
 static void
 debug_init(void)
@@ -65,6 +67,26 @@ static GHashTable *finch_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "console");
+
+		/*
+		 * This is the client key for "Finch."  It is owned by the AIM
+		 * account "markdoliner."  Please don't use this key for other
+		 * applications.  You can either not specify a client key, in
+		 * which case the default "libpurple" key will be used, or you
+		 * can register for your own client key at
+		 * http://developer.aim.com/manageKeys.jsp
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma19sqWV9ymU6UYc");
+		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma19sqWV9ymU6UYc");
+
+		/*
+		 * This is the distid for Finch, given to us by AOL.  Please
+		 * don't use this for other applications.  You can just not
+		 * specify a distid and libpurple will use a default.
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1552));
+		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1552));
 	}
 
 	return ui_info;
@@ -293,7 +315,7 @@ init_libpurple(int argc, char **argv)
 	if (opt_version) {
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
-		printf("%s %s\n", _("Finch"), DISPLAY_VERSION);
+		printf("%s %s (%s)\n", _("Finch"), DISPLAY_VERSION, REVISION);
 		return 0;
 	}
 
