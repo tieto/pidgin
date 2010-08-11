@@ -3014,7 +3014,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		case 0x1a: { /* Handle SMS or someone has sent you a greeting card or requested buddies? */
 			ByteStream qbs;
-			int smstype, taglen, smslen;
+			guint16 smstype;
+			guint32 taglen, smslen;
 			char *tagstr = NULL, *smsmsg = NULL;
 			xmlnode *xmlroot = NULL, *xmltmp = NULL;
 			gchar *uin = NULL, *message = NULL;

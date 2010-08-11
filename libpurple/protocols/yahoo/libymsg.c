@@ -2702,6 +2702,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	PurpleAccount *account;
 	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
+	const char *norm_username;
 
 	f = yahoo_friend_find(gc, who);
 	account = purple_connection_get_account(gc);
@@ -2734,10 +2735,11 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	sprintf(temp_str, "%d", ip);
 	base64_ip = purple_base64_encode( (guchar *)temp_str, strlen(temp_str) );
 
+	norm_username = purple_normalize(account, purple_account_get_username(account));
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PEERTOPEER, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sssissis",
-		1, purple_normalize(account, purple_account_get_username(account)),
-		4, purple_normalize(account, purple_account_get_username(account)),
+		1, norm_username,
+		4, norm_username,
 		12, base64_ip,	/* base64 encode ip */
 		61, 0,		/* To-do : figure out what is 61 for?? */
 		2, "",

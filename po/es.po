@@ -5,10 +5,10 @@
 # Copyright (C) April 2003, JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>
 # Copyright (c) December 2003, Francisco Javier F. Serrador
 #               <franciscojavier.fernandez.serrador@hispalinux.es>, 2003.
-# Copyright (C) June 2002, April 2003, January 2004, March 2004, September 2004,
-# 	      January 2005, 2006-2008, July 2009, July 2010
-# 		Javier Fernández-Sanguino Peña  <jfs@debian.org>
 # Copyright (C) February 2010, Francisco Javier F. Serrador <fserrador@gmail.com>
+# Copyright (C) June 2002, April 2003, January 2004, March 2004, September 2004,
+# 	      January 2005, 2006-2008, July 2009, July 2010, August 2010
+# 		Javier Fernández-Sanguino Peña  <jfs@debian.org>
 #
 # Agradecemos la ayuda de revisión realizada por:
 # Nathaniel Case, Santiago Erquicia, Francisco Javier F. Serrador,
@@ -53,8 +53,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 02:07-0400\n"
-"PO-Revision-Date: 2010-07-25 16:41+0200\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-02 23:10+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "Language: \n"
@@ -6088,7 +6088,7 @@ msgstr "El PIN es inválido. Debería sólo consistir dígitos [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "Las dos PINes que introdujo no coinciden."
 
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "El nombre que introdujo es inválido."
 
 msgid ""
@@ -6182,9 +6182,6 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Conectando..."
-
-msgid "The Display Name you entered is invalid."
-msgstr "El nombre que introdujo es inválido."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "El PIN que ha introducido no tiene una longitud válida [7-10]."
@@ -13236,13 +13233,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Saliendo porque está ejecutándose otro cliente de libpurple.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Media"
+msgstr "_Media"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Colgar"
+msgstr "_Colgar"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15570,6 +15565,9 @@ msgstr "Visite la página Web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "No tiene permisos para desinstalar esta aplicación."
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "El nombre que introdujo es inválido."
 
 #~ msgid "/Media/_Hangup"
 #~ msgstr "/Media/_Colgar"
