@@ -245,8 +245,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 
 	rd += HOLDING_ESCAPE;
-	if (HOLDING_ESCAPE)
+	if (HOLDING_ESCAPE) {
 		keys[0] = '\033';
+		g_source_remove(escape_stuff.timer);
+		escape_stuff.timer = 0;
+	}
 	keys[rd] = 0;
 	gnt_wm_set_event_stack(wm, TRUE);
 
@@ -271,12 +274,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		int p;
 
 		if (k[0] == '\033' && rd == 1) {
-			if (escape_stuff.timer) {
-				gnt_wm_process_input(wm, "\033\033");
-				g_source_remove(escape_stuff.timer);
-				escape_stuff.timer = 0;
-				break;
-			}
 			escape_stuff.timer = g_timeout_add(250, escape_timeout, NULL);
 			break;
 		}

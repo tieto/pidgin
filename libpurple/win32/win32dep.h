@@ -22,8 +22,9 @@
  */
 #ifndef _WIN32DEP_H_
 #define _WIN32DEP_H_
-#include <shlobj.h>
 #include <winsock2.h>
+#include <windows.h>
+#include <shlobj.h>
 #include <process.h>
 #include "wpurpleerror.h"
 #include "libc_interface.h"

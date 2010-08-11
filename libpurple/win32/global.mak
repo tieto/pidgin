@@ -110,3 +110,6 @@ STRIP ?= strip
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
 MINGW_MAKEFILE := Makefile.mingw
+
+INSTALL_PIXMAPS ?= 1
+

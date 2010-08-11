@@ -76,14 +76,9 @@
 
 #define YAHOO_CLIENT_VERSION_ID "2097087"
 #define YAHOO_CLIENT_VERSION "8.1.0.421"
-#define YAHOOJP_CLIENT_VERSION "6,0,0,1710"
 
-#if 0
-/* The following were observed with the Yahoo Japan client current as of January
- * 2008, but appear not to work correctly for file transfer.  Here as reference */
-# define YAHOOJP_CLIENT_VERSION_ID "524223"
-# define YAHOOJP_CLIENT_VERSION "7,0,1,1"
-#endif
+#define YAHOOJP_CLIENT_VERSION_ID "524223"
+#define YAHOOJP_CLIENT_VERSION "7,0,1,1"
 
 
 /* Index into attention types list. */

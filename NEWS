@@ -1,5 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.4.2 (5/XX/2008):
+	Sadrul: We added some usability changes in this release, including the
+	typing notification, buddyicon and input area size in the conversation
+	windows, escape to close conversation windows etc. These changes should
+	make pidgin more usable and more fun for Everyone! *wink*
+
+	Stu: I fixed some memory leaks, but nothing like as many as Daniel did.
+	MSN buddy list synchronization should be significantly less painful now,
+	and opening MSN inboxes might work better too. SILC passphrase changes
+	and support for passphrase-less keys has been improved also.
+
 2.4.1 (3/31/2008):
 	Stu: We fixed some bugs, this release should be 110% better than 2.4.0
 

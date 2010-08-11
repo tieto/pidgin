@@ -132,7 +132,7 @@ IcbmCookie *aim_mkcookie(guint8 *c, int type, void *data)
  *         on success; returns NULL on error/not found
  */
 
-IcbmCookie *aim_checkcookie(OscarData *od, const guint8 *cookie, int type)
+IcbmCookie *aim_checkcookie(OscarData *od, const guint8 *cookie, const int type)
 {
 	IcbmCookie *cur;
 

@@ -8,11 +8,11 @@ PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 datadir := $(PIDGIN_INSTALL_DIR)
-include ./Makefile.am
+-include ./Makefile.am.mingw
 
 .PHONY: install clean
 
-install:
+install: ./Makefile.am.mingw
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
 	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
@@ -34,9 +34,14 @@ install:
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
 
-clean:
+clean: ./Makefile.am.mingw
 	if test '$(SUBDIRS)'; then \
 		list='$(SUBDIRS)'; for subdir in $$list; do \
 		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) clean;\
 		done; \
 	fi;
+
+./Makefile.am.mingw: ./Makefile.am
+	sed -e 's/^if\ INSTALL_PIXMAPS/ifeq (\$$(INSTALL_PIXMAPS), 1)/' ./Makefile.am > $@
+        include $@
+

@@ -122,7 +122,7 @@ save_account_cb(AccountEditDialog *dialog)
 	if (value == NULL || *value == '\0')
 	{
 		purple_notify_error(NULL, _("Error"), _("Account was not added"),
-				_("Screenname of an account must be non-empty."));
+				_("Username of an account must be non-empty."));
 		return;
 	}
 	
@@ -526,7 +526,7 @@ edit_account(PurpleAccount *account)
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->screenname = entry = gnt_entry_new(NULL);
-	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Screen name:")));
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Username:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 
 	/* User splits */

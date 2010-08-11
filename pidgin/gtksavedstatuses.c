@@ -968,7 +968,7 @@ status_editor_add_columns(StatusEditor *dialog)
 	/* Screen Name column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(column, TRUE);
-	gtk_tree_view_column_set_title(column, _("Screen Name"));
+	gtk_tree_view_column_set_title(column, _("Username"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(dialog->treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 

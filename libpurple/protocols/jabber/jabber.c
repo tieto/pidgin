@@ -1327,6 +1327,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_source);
 	g_free(js->old_uri);
 	g_free(js->old_track);
+	g_free(js->expected_rspauth);
 
 	if (js->keepalive_timeout != -1)
 		purple_timeout_remove(js->keepalive_timeout);
@@ -2377,7 +2378,7 @@ void jabber_register_commands(void)
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_ban,
-	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
+	                  _("ban &lt;user&gt; [reason]:  Ban a user from the room."),
 	                  NULL);
 	purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -2401,13 +2402,13 @@ void jabber_register_commands(void)
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
-	                  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
+	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
 	                  NULL);
 	purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_kick,
-	                  _("kick &lt;user&gt; [room]:  Kick a user from the room."),
+	                  _("kick &lt;user&gt; [reason]:  Kick a user from the room."),
 	                  NULL);
 	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,

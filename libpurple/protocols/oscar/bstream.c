@@ -45,6 +45,11 @@ int byte_stream_init(ByteStream *bs, guint8 *data, int len)
 	return 0;
 }
 
+void byte_stream_destroy(ByteStream *bs)
+{
+	g_free(bs->data);
+}
+
 int byte_stream_empty(ByteStream *bs)
 {
 	return bs->len - bs->offset;

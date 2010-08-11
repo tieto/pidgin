@@ -362,6 +362,20 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_friendly_name(user);
 
+	if (list_op & MSN_LIST_AL_OP)
+	{
+		/* These are users who are allowed to see our status. */
+		purple_privacy_deny_remove(account, passport, TRUE);
+		purple_privacy_permit_add(account, passport, TRUE);
+	}
+
+	if (list_op & MSN_LIST_BL_OP)
+	{
+		/* These are users who are not allowed to see our status. */
+		purple_privacy_permit_remove(account, passport, TRUE);
+		purple_privacy_deny_add(account, passport, TRUE);
+	}
+
 	if (list_op & MSN_LIST_FL_OP)
 	{
 		GSList *c;
@@ -375,20 +389,6 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		/* FIXME: It might be a real alias */
 		/* Umm, what? This might fix bug #1385130 */
 		serv_got_alias(gc, passport, store);
-	}
-
-	if (list_op & MSN_LIST_AL_OP)
-	{
-		/* These are users who are allowed to see our status. */
-		purple_privacy_deny_remove(account, passport, TRUE);
-		purple_privacy_permit_add(account, passport, TRUE);
-	}
-
-	if (list_op & MSN_LIST_BL_OP)
-	{
-		/* These are users who are not allowed to see our status. */
-		purple_privacy_permit_remove(account, passport, TRUE);
-		purple_privacy_deny_add(account, passport, TRUE);
 	}
 
 	if (list_op & MSN_LIST_RL_OP)
@@ -652,7 +652,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		{
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
 			purple_notify_error(NULL, NULL, str,
-							  _("The screen name specified is invalid."));
+							  _("The username specified is invalid."));
 			g_free(str);
 		}
 

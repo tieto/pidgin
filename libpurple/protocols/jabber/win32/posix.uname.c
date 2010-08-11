@@ -33,10 +33,12 @@
 /*#define _ANONYMOUS_STRUCT*/
 /*#define _ANONYMOUS_UNION*/
 #include <windows.h>
+#ifdef __MINGW32__
 #include <_mingw.h>
+#endif
 
 int
-uname( struct utsname *uts )
+jabber_win32_uname( struct utsname *uts )
 {
   DWORD sLength;
   OSVERSIONINFO OS_version;
@@ -52,7 +54,7 @@ uname( struct utsname *uts )
   GetVersionEx ( &OS_version );
   GetSystemInfo ( &System_Info );
 
-  strcpy( uts->sysname, "MINGW_" );
+  strcpy( uts->sysname, "WIN32_" );
   switch( OS_version.dwPlatformId )
   {
     case VER_PLATFORM_WIN32_NT:
@@ -82,8 +84,10 @@ uname( struct utsname *uts )
       break;
   }
 
+#ifdef __MINGW32__
   sprintf( uts->version, "%i", __MINGW32_MAJOR_VERSION );
   sprintf( uts->release, "%i", __MINGW32_MINOR_VERSION );
+#endif
 
   switch( System_Info.wProcessorArchitecture )
   {

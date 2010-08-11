@@ -39,14 +39,9 @@ msn_page_destroy(MsnPage *page)
 {
 	g_return_if_fail(page != NULL);
 
-	if (page->body != NULL)
-		g_free(page->body);
-
-	if (page->from_location != NULL)
-		g_free(page->from_location);
-
-	if (page->from_phone != NULL)
-		g_free(page->from_phone);
+	g_free(page->body);
+	g_free(page->from_location);
+	g_free(page->from_phone);
 
 	g_free(page);
 }

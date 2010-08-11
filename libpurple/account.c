@@ -1359,8 +1359,12 @@ change_password_cb(PurpleAccount *account, PurpleRequestFields *fields)
 		return;
 	}
 
-	if (orig_pass == NULL || new_pass_1 == NULL || new_pass_2 == NULL ||
-		*orig_pass == '\0' || *new_pass_1 == '\0' || *new_pass_2 == '\0')
+	if ((purple_request_fields_is_field_required(fields, "password") &&
+			(orig_pass == NULL || *orig_pass == '\0')) ||
+		(purple_request_fields_is_field_required(fields, "new_password_1") &&
+			(new_pass_1 == NULL || *new_pass_1 == '\0')) ||
+		(purple_request_fields_is_field_required(fields, "new_password_2") &&
+			(new_pass_2 == NULL || *new_pass_2 == '\0')))
 	{
 		purple_notify_error(account, NULL,
 						  _("Fill out all fields completely."), NULL);
@@ -1376,10 +1380,19 @@ purple_account_request_change_password(PurpleAccount *account)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
+	PurpleConnection *gc;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 	char primary[256];
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(purple_account_is_connected(account));
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	fields = purple_request_fields_new();
 
@@ -1389,21 +1402,24 @@ purple_account_request_change_password(PurpleAccount *account)
 	field = purple_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_set_required(field, TRUE);
+	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("new_password_1",
 										  _("New password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_set_required(field, TRUE);
+	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("new_password_2",
 										  _("New password (again)"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_set_required(field, TRUE);
+	if (!(prpl_info && (prpl_info->options | OPT_PROTO_PASSWORD_OPTIONAL)))
+		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	g_snprintf(primary, sizeof(primary), _("Change password for %s"),

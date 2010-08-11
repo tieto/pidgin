@@ -1919,10 +1919,10 @@ nm_error_to_string(NMERR_T err)
 
 		case NMERR_AUTHENTICATION_FAILED:
 		case NMERR_CREDENTIALS_MISSING:
-			return _("Incorrect screen name or password");
+			return _("Incorrect username or password");
 
 		case NMERR_HOST_NOT_FOUND:
-			return _("Could not recognize the host of the screen name you entered");
+			return _("Could not recognize the host of the username you entered");
 
 		case NMERR_ACCESS_DENIED:
 			return _("Your account has been disabled because too many incorrect passwords were entered");
@@ -1935,7 +1935,7 @@ nm_error_to_string(NMERR_T err)
 			return _("You have reached your limit for the number of contacts allowed");
 
 		case NMERR_OBJECT_NOT_FOUND:
-			return _("You have entered an incorrect screen name");
+			return _("You have entered an incorrect username");
 
 		case NMERR_DIRECTORY_UPDATE:
 			return _("An error occurred while updating the directory");

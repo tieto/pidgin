@@ -156,16 +156,13 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		for (c = tokens; *c != NULL; c++)
 		{
-			char *id;
-
-			id = *c;
-			group_ids = g_slist_append(group_ids, g_strdup(id));
+			group_ids = g_slist_append(group_ids, *c);
 		}
 
-		g_strfreev(tokens);
 
 		msn_got_lst_user(session, user, list_op, group_ids);
 
+		g_strfreev(tokens);
 		g_slist_free(group_ids);
 	}
 	else

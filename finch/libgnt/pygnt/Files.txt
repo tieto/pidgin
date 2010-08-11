@@ -1,6 +1,0 @@
-gendef.sh
-gnt.override
-Makefile
-test.py
-dbus-gnt
-gntmodule.c

@@ -614,6 +614,78 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	pidgin_blist_refresh(list);
 }
 
+static void
+chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
+{
+	GList *groups, *fields;
+
+	for (groups = purple_request_fields_get_groups(allfields); groups; groups = groups->next) {
+		fields = purple_request_field_group_get_fields(groups->data);
+		for (; fields; fields = fields->next) {
+			PurpleRequestField *field = fields->data;
+			const char *id;
+			char *val;
+
+			id = purple_request_field_get_id(field);
+			if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
+				val = g_strdup_printf("%d", purple_request_field_int_get_value(field));
+			else
+				val = g_strdup(purple_request_field_string_get_value(field));
+
+			if (!val) {
+				g_hash_table_remove(purple_chat_get_components(chat), id);
+			} else {
+				g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			}
+		}
+	}
+}
+
+static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
+{
+	PurpleRequestFields *fields = purple_request_fields_new();
+	PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
+	PurpleRequestField *field;
+	GList *parts, *iter;
+	struct proto_chat_entry *pce;
+	PurpleConnection *gc;
+	PurpleChat *chat = (PurpleChat*)node;
+
+	purple_request_fields_add_group(fields, group);
+
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
+	parts = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info(gc);
+
+	for (iter = parts; iter; iter = iter->next) {
+		pce = iter->data;
+		if (pce->is_int) {
+			int val;
+			const char *str = g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier);
+			if (!str || sscanf(str, "%d", &val) != 1)
+				val = pce->min;
+			field = purple_request_field_int_new(pce->identifier, pce->label, val);
+		} else {
+			field = purple_request_field_string_new(pce->identifier, pce->label,
+					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);
+			if (pce->secret)
+				purple_request_field_string_set_masked(field, TRUE);
+		}
+
+		if (pce->required)
+			purple_request_field_set_required(field, TRUE);
+
+		purple_request_field_group_add_field(group, field);
+		g_free(pce);
+	}
+
+	g_list_free(parts);
+
+	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please update the necessary fields."),
+			fields, _("Save"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			chat);
+}
+
 static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 {
 	GtkTreeIter iter;
@@ -695,6 +767,7 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 	{
 		purple_blist_node_set_bool(node, "show_offline",
 		                           !purple_blist_node_get_bool(node, "show_offline"));
+		pidgin_blist_update(purple_get_blist(), node);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 	{
@@ -704,6 +777,7 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		purple_blist_node_set_bool(node, "show_offline", setting);
 		for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
 			purple_blist_node_set_bool(bnode, "show_offline", setting);
+			pidgin_blist_update(purple_get_blist(), bnode);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleBlistNode *cnode, *bnode;
@@ -714,10 +788,10 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 			purple_blist_node_set_bool(cnode, "show_offline", setting);
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
 				purple_blist_node_set_bool(bnode, "show_offline", setting);
+				pidgin_blist_update(purple_get_blist(), bnode);
 			}
 		}
 	}
-	pidgin_blist_update(purple_get_blist(), node);
 }
 
 static void gtk_blist_show_systemlog_cb(void)
@@ -1033,6 +1107,7 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 		g_free(title);
 
 		purple_blist_node_set_bool(node, "collapsed", FALSE);
+		pidgin_blist_tooltip_destroy();
 	}
 }
 
@@ -1070,7 +1145,7 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 				pidgin_blist_update_contact(NULL, cnode);
 			}
 		}
-
+		pidgin_blist_tooltip_destroy();
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_blist_collapse_contact_cb(NULL, node);
 	}
@@ -1507,6 +1582,8 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 
 	pidgin_separator(menu);
 
+	pidgin_new_item_from_stock(menu, _("_Edit Settings..."), NULL,
+				 G_CALLBACK(chat_components_edit), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
@@ -1641,6 +1718,8 @@ pidgin_blist_show_context_menu(PurpleBlistNode *node,
 	}
 
 #ifdef _WIN32
+	pidgin_blist_tooltip_destroy();
+
 	/* Unhook the tooltip-timeout since we don't want a tooltip
 	 * to appear and obscure the context menu we are about to show
 	   This is a workaround for GTK+ bug 107320. */
@@ -2639,7 +2718,8 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 		 * above node types first. */
 		tmp = g_strdup(_("Unknown node type"));
 	}
-	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
+	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>",
+								tmp ? tmp : "");
 	g_free(tmp);
 
 	td->name_layout = create_pango_layout(node_name, &td->name_width, &td->name_height);
@@ -3165,11 +3245,16 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 					chat->account);
 			g_free(chat_name);
 		}
-		if (conv && prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
-				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
-			char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
-			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
-			g_free(topic);
+
+		if (conv && !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			g_string_append_printf(str, _("\n<b>Occupants:</b> %d"),
+					g_list_length(purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv))));
+
+			if (prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC)) {
+				char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
+				g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
+				g_free(topic);
+			}
 		}
 
 		if (prpl_info->chat_info != NULL)
@@ -3657,13 +3742,13 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			}
 			return text;
 		}
-		else
-			if (hidden_conv) {
-				char *tmp = esc;
-				esc = g_strdup_printf("<b>%s</b>", esc);
-				g_free(tmp);
-			}
-			return esc;
+		else if (hidden_conv)
+		{
+			char *tmp = esc;
+			esc = g_strdup_printf("<b>%s</b>", esc);
+			g_free(tmp);
+		}
+		return esc;
 	}
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));
@@ -4430,9 +4515,10 @@ reset_headline(PidginBuddyList *gtkblist)
 }
 
 static gboolean
-headline_click_callback(gpointer data)
+headline_click_callback(gpointer unused)
 {
-	((GSourceFunc)gtkblist->headline_callback)(gtkblist->headline_data);
+	if (gtkblist->headline_callback)
+		((GSourceFunc) gtkblist->headline_callback)(gtkblist->headline_data);
 	reset_headline(gtkblist);
 	return FALSE;
 }
@@ -4442,7 +4528,7 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 {
 	gtk_widget_hide(gtkblist->headline_hbox);
 	if (gtkblist->headline_callback && !headline_hover_close((int)event->x, (int)event->y))
-		g_idle_add((GSourceFunc)headline_click_callback, gtkblist->headline_data);
+		g_idle_add(headline_click_callback, NULL);
 	else {
 		if (gtkblist->headline_destroy)
 			gtkblist->headline_destroy(gtkblist->headline_data);
@@ -6384,7 +6470,7 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 
 	gtk_table_attach_defaults(GTK_TABLE(table), data->account_box, 0, 2, 0, 1);
 
-	label = gtk_label_new_with_mnemonic(_("Buddy's _screen name:"));
+	label = gtk_label_new_with_mnemonic(_("Buddy's _username:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 

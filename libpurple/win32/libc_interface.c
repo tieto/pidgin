@@ -319,23 +319,23 @@ char* wpurple_strerror(int errornum) {
 	if (errornum > WSABASEERR) {
 		switch(errornum) {
 			case WSAECONNABORTED: /* 10053 */
-				snprintf(errbuf, sizeof(errbuf), _("Connection interrupted by other software on your computer."));
+				g_snprintf(errbuf, sizeof(errbuf), _("Connection interrupted by other software on your computer."));
 				break;
 			case WSAECONNRESET: /* 10054 */
-				snprintf(errbuf, sizeof(errbuf), _("Remote host closed connection."));
+				g_snprintf(errbuf, sizeof(errbuf), _("Remote host closed connection."));
 				break;
 			case WSAETIMEDOUT: /* 10060 */
-				snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
+				g_snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
 				break;
 			case WSAECONNREFUSED: /*10061 */
-				snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
+				g_snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
 				break;
 			default:
-				snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
+				g_snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
 		}
 	} else {
 		const char *tmp = g_strerror(errornum);
-		snprintf(errbuf, sizeof(errbuf), tmp);
+		g_snprintf(errbuf, sizeof(errbuf), tmp);
 	}
 	return errbuf;
 }
@@ -368,7 +368,7 @@ int wpurple_read(int fd, void *buf, unsigned int size) {
 		}
 	} else {
 		/* fd is not a socket handle.. pass it off to read */
-		return read(fd, buf, size);
+		return _read(fd, buf, size);
 	}
 }
 
@@ -391,7 +391,7 @@ int wpurple_write(int fd, const void *buf, unsigned int size) {
 	if(wpurple_is_socket(fd))
 		return wpurple_send(fd, buf, size, 0);
 	else
-		return write(fd, buf, size);
+		return _write(fd, buf, size);
 }
 
 int wpurple_recv(int fd, void *buf, size_t len, int flags) {
@@ -419,7 +419,7 @@ int wpurple_close(int fd) {
 			return 0;
 	}
 	else
-		return close(fd);
+		return _close(fd);
 }
 
 int wpurple_gethostname(char *name, size_t size) {
@@ -454,6 +454,14 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 /* stdio.h */
 
 int wpurple_rename (const char *oldname, const char *newname) {
+
+#if GLIB_CHECK_VERSION(2,8,5)
+
+	return g_rename(oldname, newname);
+
+#else
+
+	/* This is a ugly, but we still compile with 2.6.10 but use newer runtimes */
 	struct stat oldstat, newstat;
 
 	/* As of Glib 2.8.5, g_rename() uses MoveFileEx() with MOVEFILE_REPLACE_EXISTING to behave more sanely */
@@ -502,6 +510,8 @@ int wpurple_rename (const char *oldname, const char *newname) {
 		errno = ENOENT;
 		return -1;
 	}
+
+#endif
 
 }
 
@@ -1080,7 +1090,6 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 	return "";
 }
 
-#if !GLIB_CHECK_VERSION(2,8,0)
 /**
  * g_access:
  * @filename: a pathname in the GLib file name encoding (UTF-8 on Windows)
@@ -1105,6 +1114,12 @@ int
 wpurple_g_access (const gchar *filename,
 	  int          mode)
 {
+#if GLIB_CHECK_VERSION(2,8,0)
+
+	return g_access(filename, mode);
+
+#else
+
   if (G_WIN32_HAVE_WIDECHAR_API ())
     {
       wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
@@ -1145,7 +1160,8 @@ wpurple_g_access (const gchar *filename,
       errno = save_errno;
       return retval;
     }
-}
+
 #endif
+}
 
 

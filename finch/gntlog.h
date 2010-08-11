@@ -1,7 +1,6 @@
 /**
  * @file gntlog.h GNT Log viewer
  * @ingroup finch
- * @see @ref gntlog-signals
  */
 
 /* finch

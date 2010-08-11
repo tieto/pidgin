@@ -167,6 +167,17 @@ purple_prefs_trigger_callback(name)
 	const char *name
 
 void
+purple_prefs_get_children_names(name)
+	const char *name
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_prefs_get_children_names(name); l != NULL; l = g_list_delete_link(l, l)) {
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
+		g_free(l->data);
+	}
+
+void
 purple_prefs_uninit()
 
 void

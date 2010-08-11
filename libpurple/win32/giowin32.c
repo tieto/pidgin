@@ -37,8 +37,8 @@
 #include <glib.h>
 
 #include <stdlib.h>
+#include <winsock2.h>
 #include <windows.h>
-#include <winsock.h>          /* Not everybody has winsock2 */
 #include <fcntl.h>
 #include <io.h>
 #include <process.h>
@@ -541,7 +541,7 @@ g_io_win32_finalize (GSource *source)
   g_io_channel_unref (watch->channel);
 }
 
-GSourceFuncs g_io_watch_funcs = {
+static GSourceFuncs wp_g_io_watch_funcs = {
   g_io_win32_prepare,
   g_io_win32_check,
   g_io_win32_dispatch,
@@ -559,7 +559,7 @@ g_io_win32_create_watch (GIOChannel    *channel,
   GSource *source;
   char send_buffer[] = "c";
 
-  source = g_source_new (&g_io_watch_funcs, sizeof (GIOWin32Watch));
+  source = g_source_new (&wp_g_io_watch_funcs, sizeof (GIOWin32Watch));
   watch = (GIOWin32Watch *)source;
   
   watch->channel = channel;

@@ -12,11 +12,10 @@ $(PURPLE_PURPLE_H): $(PURPLE_PURPLE_H).in
 	sed -e 's/@PLUGINS_DEFINE@/#define PURPLE_PLUGINS 1/' $@.in > $@
 
 $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
-	cp $@.in $@
 	awk 'BEGIN {FS="[\\(\\)\\[\\]]"} \
-	  /^m4_define..purple_major_version/ {system("sed -i -e s/@PURPLE_MAJOR_VERSION@/"$$5"/ $@");} \
-	  /^m4_define..purple_minor_version/ {system("sed -i -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $@");} \
-	  /^m4_define..purple_micro_version/ {system("sed -i -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $@"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
+	  /^m4_define..purple_major_version/ {system("sed -e s/@PURPLE_MAJOR_VERSION@/"$$5"/ $@.in > $@");} \
+	  /^m4_define..purple_minor_version/ {system("sed -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $@ > $@.tmp & mv $@.tmp $@");} \
+	  /^m4_define..purple_micro_version/ {system("sed -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $@ > $@.tmp & mv $@.tmp $@"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
 
 $(PURPLE_DLL) $(PURPLE_DLL).a: $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) libpurple.dll

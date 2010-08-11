@@ -118,6 +118,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	while (slplink->slp_calls != NULL)
 		msn_slp_call_destroy(slplink->slp_calls->data);
 
+	g_queue_free(slplink->slp_msg_queue);
+
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
 

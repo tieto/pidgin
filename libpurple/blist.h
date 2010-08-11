@@ -475,7 +475,8 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
  * @param buddy   The new buddy who gets added
  * @param contact The optional contact to place the buddy in.
  * @param group   The group to add the new buddy to.
- * @param node    The insertion point
+ * @param node    The insertion point.  Pass in NULL to add the node as
+ *                the last child in the given group.
  */
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 
@@ -956,6 +957,7 @@ PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
  * @param node The node.
  *
  * @return The type of the node.
+ * @since 2.1.0
  */
 PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
 

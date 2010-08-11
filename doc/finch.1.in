@@ -111,8 +111,11 @@ Jump to the next URGENT (highlighted) window.
 .B Alt \+ Shift \+ Tab
 Jump to the previous URGENT (highlighted) window.
 .TP
-.B Ctrl \+ o
+.B Ctrl \+ o \fR or \fB F10
 Bring up the menu (if there is one) for a window.
+.TP
+.B F11
+Popup the context menu (if there is one) for the selected widget.
 .TP
 .B Alt \+ /
 Show a list of available key-bindings for the current widget in focus.

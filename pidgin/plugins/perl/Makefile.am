@@ -39,7 +39,9 @@ EXTRA_DIST = \
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \
-			${LN_S} -f ../${srcdir}/$$f $$f; \
+			srcloc=${srcdir}; \
+			case $$srcloc in /*) ;; *) srcloc=../${srcdir} ;; esac; \
+			${LN_S} -f $$srcloc/$$f $$f; \
 		done; \
 	fi
 	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)

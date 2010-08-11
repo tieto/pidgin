@@ -76,8 +76,7 @@ YahooFriend *yahoo_friend_find_or_new(PurpleConnection *gc, const char *name)
 
 void yahoo_friend_set_ip(YahooFriend *f, const char *ip)
 {
-	if (f->ip)
-		g_free(f->ip);
+	g_free(f->ip);
 	f->ip = g_strdup(ip);
 }
 
@@ -88,8 +87,7 @@ const char *yahoo_friend_get_ip(YahooFriend *f)
 
 void yahoo_friend_set_game(YahooFriend *f, const char *game)
 {
-	if (f->game)
-		g_free(f->game);
+	g_free(f->game);
 
 	if (game)
 		f->game = g_strdup(game);
@@ -104,8 +102,7 @@ const char *yahoo_friend_get_game(YahooFriend *f)
 
 void yahoo_friend_set_status_message(YahooFriend *f, char *msg)
 {
-	if (f->msg)
-		g_free(f->msg);
+	g_free(f->msg);
 
 	f->msg = msg;
 }
@@ -125,15 +122,24 @@ gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f)
 	return !f->bicon_sent_request;
 }
 
+void yahoo_friend_set_alias_id(YahooFriend *f, const char *alias_id)
+{
+	g_free(f->alias_id);
+	f->alias_id = g_strdup(alias_id);
+}
+
+const char *yahoo_friend_get_alias_id(YahooFriend *f)
+{
+	return f->alias_id;
+}
+
 void yahoo_friend_free(gpointer p)
 {
 	YahooFriend *f = p;
-	if (f->msg)
-		g_free(f->msg);
-	if (f->game)
-		g_free(f->game);
-	if (f->ip)
-		g_free(f->ip);
+	g_free(f->msg);
+	g_free(f->game);
+	g_free(f->ip);
+	g_free(f->alias_id);
 	g_free(f);
 }
 

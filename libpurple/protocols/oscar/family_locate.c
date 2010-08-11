@@ -1047,7 +1047,7 @@ aim_locate_setprofile(OscarData *od,
 				  const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 	char *encoding;
@@ -1092,15 +1092,16 @@ aim_locate_setprofile(OscarData *od,
 			aim_tlvlist_add_noval(&tlvlist, 0x0004);
 	}
 
-	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(tlvlist));
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0002, 0x004, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0004, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1112,7 +1113,7 @@ int
 aim_locate_setcaps(OscarData *od, guint32 caps)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
@@ -1121,15 +1122,16 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 
 	aim_tlvlist_add_caps(&tlvlist, 0x0005, caps);
 
-	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(tlvlist));
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0002, 0x004, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0004, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1147,22 +1149,23 @@ int
 aim_locate_getinfo(OscarData *od, const char *sn, guint16 infotype)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 12+1+strlen(sn));
+	byte_stream_new(&bs, 2+1+strlen(sn));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0005, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, 0x0002, 0x0005, 0x0000, snacid);
-	byte_stream_put16(&frame->data, infotype);
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put16(&bs, infotype);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0005, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1238,7 +1241,7 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
@@ -1269,15 +1272,16 @@ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, 
 	if (street)
 		aim_tlvlist_add_str(&tlvlist, 0x0021, street);
 
-	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(tlvlist));
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0009, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, 0x0002, 0x0009, 0x0000, snacid);
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0009, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1288,7 +1292,7 @@ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, 
 int aim_locate_000b(OscarData *od, const char *sn)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 		return -EINVAL;
@@ -1296,15 +1300,16 @@ int aim_locate_000b(OscarData *od, const char *sn)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn));
+	byte_stream_new(&bs, 1+strlen(sn));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x000b, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, 0x0002, 0x000b, 0x0000, snacid);
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x000b, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1319,7 +1324,7 @@ int
 aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
@@ -1340,21 +1345,21 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
 	if (interest5)
 		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest5);
 
-	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(tlvlist));
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
 
 	snacid = aim_cachesnac(od, 0x0002, 0x000f, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, 0x0002, 0x000f, 0x0000, 0);
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0002, 0x000f, 0x0000, snacid, &bs);
 
+	byte_stream_destroy(&bs);
 	return 0;
 }
 
 /*
- * Subtype 0x0015 - Request the info a user using the short method.  This is
+ * Subtype 0x0015 - Request the info of a user using the short method.  This is
  * what iChat uses.  It normally is VERY leniently rate limited.
  *
  * @param sn The screen name whose info you wish to request.
@@ -1369,21 +1374,21 @@ int
 aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 {
 	FlapConnection *conn;
-	ByteStream data;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	byte_stream_new(&data, 4 + 1 + strlen(sn));
-	byte_stream_put32(&data, flags);
-	byte_stream_put8(&data, strlen(sn));
-	byte_stream_putstr(&data, sn);
+	byte_stream_new(&bs, 4 + 1 + strlen(sn));
+	byte_stream_put32(&bs, flags);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, 0x0002, 0x0015, 0x0000, snacid, &data);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0015, 0x0000, snacid, &bs);
 
-	g_free(data.data);
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

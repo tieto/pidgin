@@ -813,14 +813,27 @@ purple_find_conversation_with_account(PurpleConversationType type,
 
 	g_return_val_if_fail(name != NULL, NULL);
 
+	switch (type) {
+		case PURPLE_CONV_TYPE_IM:
+			cnv = purple_get_ims();
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			cnv = purple_get_chats();
+			break;
+		case PURPLE_CONV_TYPE_ANY:
+			cnv = purple_get_conversations();
+			break;
+		default:
+			g_return_val_if_reached(NULL);
+	}
+
 	name1 = g_strdup(purple_normalize(account, name));
 
-	for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
+	for (; cnv != NULL; cnv = cnv->next) {
 		c = (PurpleConversation *)cnv->data;
 		name2 = purple_normalize(account, purple_conversation_get_name(c));
 
-		if (((type == PURPLE_CONV_TYPE_ANY) || (type == purple_conversation_get_type(c))) &&
-				(account == purple_conversation_get_account(c)) &&
+		if ((account == purple_conversation_get_account(c)) &&
 				!purple_utf8_strcasecmp(name1, name2)) {
 
 			break;
@@ -862,7 +875,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		gc = purple_account_get_connection(account);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-		(gc == NULL || !g_slist_find(gc->buddy_chats, conv)))
+		(gc != NULL && !g_slist_find(gc->buddy_chats, conv)))
 		return;
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&

@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-30 22:16+0200\n"
-"PO-Revision-Date: 2008-03-24 23:02+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-05-15 22:36+0200\n"
+"PO-Revision-Date: 2008-05-15 22:35+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -67,7 +67,7 @@ msgstr "Fehler"
 msgid "Account was not added"
 msgstr "Konto wurde nicht hinzugefügt"
 
-msgid "Screenname of an account must be non-empty."
+msgid "Username of an account must be non-empty."
 msgstr "Benutzername eines Kontos darf nicht leer sein."
 
 msgid "New mail notifications"
@@ -91,7 +91,7 @@ msgstr "Neues Konto"
 msgid "Protocol:"
 msgstr "Protokoll:"
 
-msgid "Screen name:"
+msgid "Username:"
 msgstr "Benutzername:"
 
 msgid "Password:"
@@ -178,7 +178,7 @@ msgstr ""
 msgid "Default"
 msgstr "Standard"
 
-msgid "You must provide a screename for the buddy."
+msgid "You must provide a username for the buddy."
 msgstr "Sie müssen einen Benutzernamen für den Buddy angeben."
 
 msgid "You must provide a group."
@@ -193,8 +193,8 @@ msgstr "Das gewählte Konto ist nicht online."
 msgid "Error adding buddy"
 msgstr "Fehler beim Hinzufügen des Buddys"
 
-msgid "Screen Name"
-msgstr "Benutzername"
+msgid "Username"
+msgstr "Benutzer"
 
 msgid "Alias (optional)"
 msgstr "Alias (optional)"
@@ -354,11 +354,11 @@ msgid "Unblock"
 msgstr "Sperrung aufheben"
 
 msgid ""
-"Please enter the screen name or alias of the person you would like to Block/"
+"Please enter the username or alias of the person you would like to Block/"
 "Unblock."
 msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, die Sie blockieren oder "
-"für die Sie die Blockierung aufheben wollen."
+"Bitte geben Sie den Benutzernamen oder den Alias der Person ein, die Sie "
+"blockieren oder für die Sie die Blockierung aufheben wollen."
 
 #. Not multiline
 #. Not masked?
@@ -369,10 +369,10 @@ msgstr "OK"
 msgid "New Instant Message"
 msgstr "Neue Sofortnachricht"
 
-msgid ""
-"Please enter the screen name or alias of the person you would like to IM."
+msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, mit der Sie chatten wollen."
+"Bitte geben Sie den Benutzernamen oder den Alias der Person ein, mit der Sie "
+"chatten wollen."
 
 msgid "Channel"
 msgstr "Kanal"
@@ -386,6 +386,13 @@ msgstr "Bitte geben Sie die den Namen des Chats an, den Sie betreten möchten."
 msgid "Join"
 msgstr "Betreten"
 
+msgid ""
+"Please enter the username or alias of the person whose log you would like to "
+"view."
+msgstr ""
+"Bitte geben Sie den Benutzernamen oder den Alias der Person ein, deren "
+"Mitschnitt Sie sehen möchten."
+
 #. Create the "Options" frame.
 msgid "Options"
 msgstr "Optionen"
@@ -398,6 +405,9 @@ msgstr "Sperren/Sperrung aufheben..."
 
 msgid "Join Chat..."
 msgstr "Chat betreten..."
+
+msgid "View Log..."
+msgstr "Mitschnitt anzeigen..."
 
 msgid "Show"
 msgstr "Anzeigen"
@@ -610,9 +620,6 @@ msgstr "Zeige Zeitstempel"
 msgid "Add Buddy Pounce..."
 msgstr "Buddy-Alarm hinzufügen..."
 
-msgid "View Log..."
-msgstr "Mitschnitt anzeigen.."
-
 msgid "Enable Logging"
 msgstr "Mitschnitt einschalten"
 
@@ -752,17 +759,26 @@ msgstr "Gescheitert"
 
 #, c-format
 msgid "%.2f KiB/s"
-msgstr "%.2f KB/s"
+msgstr "%.2f KiB/s"
+
+msgid "Sent"
+msgstr "Gesendet"
+
+msgid "Received"
+msgstr "Empfangen"
+
+msgid "Finished"
+msgstr "Fertig"
 
 #, c-format
 msgid "The file was saved as %s."
 msgstr "Die Datei wurde unter %s gespeichert."
 
-msgid "Finished"
-msgstr "Fertig"
+msgid "Sending"
+msgstr "Sende"
 
-msgid "Transferring"
-msgstr "Übertragung"
+msgid "Receiving"
+msgstr "Empfange"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -855,6 +871,9 @@ msgstr "Einladen"
 
 msgid "(none)"
 msgstr "(kein)"
+
+msgid "URI"
+msgstr "URI"
 
 msgid "ERROR"
 msgstr "FEHLER"
@@ -1105,6 +1124,12 @@ msgstr "Unterhaltungen"
 msgid "Logging"
 msgstr "Mitschnitt"
 
+msgid "You must fill all the required fields."
+msgstr "Sie müssen alle erforderlichen Felder ausfüllen."
+
+msgid "The required fields are underlined."
+msgstr "Die erforderlichen Felder sind unterstrichen."
+
 msgid "Not implemented yet."
 msgstr "Noch nicht implementiert."
 
@@ -1154,7 +1179,7 @@ msgstr "Sie sprechen im Chat"
 msgid "Others talk in chat"
 msgstr "Andere sprechen im Chat"
 
-msgid "Someone says your screen name in chat"
+msgid "Someone says your username in chat"
 msgstr "Jemand nennt Ihren Benutzernamen im Chat"
 
 msgid "GStreamer Failure"
@@ -2457,10 +2482,10 @@ msgid ""
 "at your own risk!"
 msgstr ""
 "Dieses Plugin zeigt auch die Mitschnitte anderer Sofortnachrichtenprogramme "
-"im Mitschnittsbetrachter an. Momentan sind das Adium, Fire, Messenger Plus!, "
-"MSN Messenger und Trillian.\n"
-"WARNUNG: Dieses Plugin befindet sich noch im Entwicklungsstadium und kann "
-"oft Abstürzen. Benutzung auf eigene Gefahr!"
+"im Mitschnittsbetrachter an. Momentan sind das Adium, MSN Messenger und "
+"Trillian.\n"
+"WARNUNG: Dieses Plugin ist immer noch im Alpha-Stadium und kann oft "
+"abstürzen. Benutzung auf eigene Gefahr!"
 
 msgid "Mono Plugin Loader"
 msgstr "Mono-Plugin-Lader"
@@ -2494,10 +2519,10 @@ msgstr "Fügt einen Zeilenumbruch vor angezeigter Nachricht ein."
 #. *< summary
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
-"the screen name in the conversation window."
+"the username in the conversation window."
 msgstr ""
 "Fügt einen Zeilenumbruch vor Nachrichten ein, sodass im Gesprächsfenster der "
-"Nachrichtentext unter dem Benutzernamen erscheint."
+"Rest der Nachricht unter dem Benutzernamen erscheint."
 
 msgid "Offline Message Emulation"
 msgstr "Offline-Nachrichten-Emulation"
@@ -3143,9 +3168,6 @@ msgstr "Port"
 msgid "Encodings"
 msgstr "Kodierungen"
 
-msgid "Username"
-msgstr "Benutzer"
-
 msgid "Real name"
 msgstr "Echter Name"
 
@@ -3158,6 +3180,17 @@ msgstr "Benutze SSL"
 
 msgid "Bad mode"
 msgstr "Falscher Modus"
+
+#, c-format
+msgid "Ban on %s by %s, set %ld seconds ago"
+msgstr "Verbot zu %s von %s, gesetzt vor %ld Sekunden"
+
+#, c-format
+msgid "Ban on %s"
+msgstr "Verbot zu %s"
+
+msgid "End of ban list"
+msgstr "Ende der Bannliste"
 
 #, c-format
 msgid "You are banned from %s."
@@ -3351,7 +3384,7 @@ msgid ""
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
 "j &lt;Raum1&gt;[,Raum2][,...] [Schlüssel1[,Schlüssel2][,...]]:  Einen oder "
-"mehrere Räume angeben, optional jeden mit einem Kanal-Schlüssel, falls "
+"mehrere Kanäle angeben, optional jeden mit einem Kanal-Schlüssel, falls "
 "dieser benötigt wird."
 
 msgid ""
@@ -3522,6 +3555,11 @@ msgstr ""
 "Der Server benötigt TLS/SSL zur Anmeldung.  Es wurde kein TLS/SSL-Support "
 "gefunden."
 
+msgid "You require encryption, but no TLS/SSL support found."
+msgstr ""
+"Sie fordern Verschlüsselung, aber es wurde keine TLS/SSL-Unterstützung "
+"gefunden."
+
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Der Server erfordert eine Klartext-Authentifizierung über einen "
@@ -3544,13 +3582,6 @@ msgstr "Ungültige Serverantwort."
 
 msgid "Server does not use any supported authentication method"
 msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
-
-msgid ""
-"This server requires plaintext authentication over an unencrypted "
-"connection.  Allow this and continue authentication?"
-msgstr ""
-"Der Server erfordert eine Klartext-Authentifizierung über einen "
-"unverschlüsselten Kanal.  Wollen Sie dies erlauben und fortfahren?"
 
 msgid "Invalid challenge from server"
 msgstr "Ungültige Challenge vom Server"
@@ -4375,8 +4406,8 @@ msgstr "register:  Für einen Chatraum anmelden."
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [neues Thema]:  Thema ändern oder anzeigen."
 
-msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr "ban &lt;Benutzer&gt; [Raum]:  Verbanne einen Benutzer aus dem Raum."
+msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
+msgstr "ban &lt;Benutzer&gt; [Grund]:  Verbanne einen Benutzer aus dem Raum."
 
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
@@ -4396,11 +4427,11 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 "invite &lt;Benutzer&gt; [Nachricht]:  Lade einen Benutzer in den Raum ein."
 
-msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr "join: &lt;Raum&gt; [Server]:  Betrete einen Chat auf diesem Server."
+msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgstr "join: &lt;Raum&gt; [Passwort]:  Betrete einen Chat auf diesem Server."
 
-msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr "kick &lt;Benutzer&gt; [Raum]:  Kickt einen Benutzer aus dem Raum."
+msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
+msgstr "kick &lt;Benutzer&gt; [Grund]:  Kickt einen Benutzer aus dem Raum."
 
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
@@ -4439,9 +4470,6 @@ msgstr "Erzwinge altes SSL (Port 5223)"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Erlaube Klartext-Authentifikation über einen unverschlüsselten Kanal"
-
-msgid "Use GSSAPI (Kerberos v5) for authentication"
-msgstr "GSSAPI (Kerberos v5) für Authentifizierung benutzen"
 
 msgid "Connect port"
 msgstr "Verbindungsport"
@@ -4617,7 +4645,7 @@ msgstr "Der Fully Qualified Domain Name fehlt"
 msgid "Already logged in"
 msgstr "Schon angemeldet"
 
-msgid "Invalid screen name"
+msgid "Invalid username"
 msgstr "Ungültiger Benutzername"
 
 msgid "Invalid friendly name"
@@ -5212,7 +5240,10 @@ msgstr ""
 "versuchen Sie es später nochmal."
 
 msgid "Handshaking"
-msgstr "Händedruck"
+msgstr "Abgleich"
+
+msgid "Transferring"
+msgstr "Übertrage"
 
 msgid "Starting authentication"
 msgstr "Starte Authentifizierung"
@@ -5290,7 +5321,7 @@ msgstr "Der Benutzer %s hat Sie von seiner Buddy-Liste gelöscht."
 msgid "Unable to add \"%s\"."
 msgstr "Kann „%s“ nicht hinzufügen."
 
-msgid "The screen name specified is invalid."
+msgid "The username specified is invalid."
 msgstr "Der angegebene Benutzername ist ungültig."
 
 msgid "Has you"
@@ -5717,10 +5748,10 @@ msgstr "Kann Sie nicht selbst hinzufügen"
 msgid "Master archive is misconfigured"
 msgstr "Master-Archiv ist falsch konfiguriert"
 
-msgid "Incorrect screen name or password"
-msgstr "Falscher Benutzername oder falsches Passwort"
+msgid "Incorrect username or password"
+msgstr "Ungültiger Benutzername oder Passwort"
 
-msgid "Could not recognize the host of the screen name you entered"
+msgid "Could not recognize the host of the username you entered"
 msgstr ""
 "Konnte den Rechnernamen des Benutzers, den Sie eingegeben haben, nicht "
 "erkennen"
@@ -5737,8 +5768,8 @@ msgstr "Sie können die selbe Person nicht zweimal zu einem Gespräch hinzufüge
 msgid "You have reached your limit for the number of contacts allowed"
 msgstr "Sie haben die Grenze der maximal erlaubten Kontakte erreicht"
 
-msgid "You have entered an incorrect screen name"
-msgstr "Sie haben einen falschen Benutzernamen eingegeben"
+msgid "You have entered an incorrect username"
+msgstr "Sie haben einen ungültigen Benutzernamen eingegeben"
 
 msgid "An error occurred while updating the directory"
 msgstr "Beim Aktualisieren des Verzeichnisses trat ein Fehler auf"
@@ -6708,11 +6739,11 @@ msgstr "Konnte den Buddy %s aus einem unbekannten Grund nicht hinzufügen."
 
 #, c-format
 msgid ""
-"The user %s has given you permission to add you to their buddy list.  Do you "
-"want to add them?"
+"The user %s has given you permission to add him or her to your buddy list.  "
+"Do you want to add this user?"
 msgstr ""
-"Der Benutzer %s hat Ihnen gestattet, Sie zu seiner Buddy-Liste hinzuzufügen. "
-"Möchten Sie ihn hinzufügen?"
+"Der Benutzer %s hat Ihnen gestattet, Sie zu Ihrer Buddy-Liste hinzuzufügen. "
+"Möchten Sie diesen Benutzer hinzufügen?"
 
 msgid "Authorization Given"
 msgstr "Autorisierung wurde gegeben"
@@ -8383,15 +8414,15 @@ msgstr "Verbindung fehlgeschlagen"
 msgid "Performing key exchange"
 msgstr "Schlüsselaustausch"
 
-#. Progress
-msgid "Connecting to SILC Server"
-msgstr "Verbinde mit SILC-Server"
+msgid "Unable to create connection"
+msgstr "Kann Verbindung nicht erstellen"
 
 msgid "Could not load SILC key pair"
 msgstr "Konnte SILC-Schlüsselpaar nicht laden"
 
-msgid "Unable to create connection"
-msgstr "Kann Verbindung nicht erstellen"
+#. Progress
+msgid "Connecting to SILC Server"
+msgstr "Verbinde mit SILC-Server"
 
 msgid "Out of memory"
 msgstr "Kein Speicher verfügbar"
@@ -8852,7 +8883,7 @@ msgstr "Kann den Hostnamen nicht auflösen"
 msgid "Could not resolve hostname"
 msgstr "Konnte den Hostnamen nicht auflösen"
 
-msgid "SIP screen names may not contain whitespaces or @ symbols"
+msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-Benutzernamen dürfen keine Leerzeichen oder @-Symbole enthalten"
 
 #. *< type
@@ -8974,7 +9005,7 @@ msgstr "Land nicht unterstützt."
 msgid "Failure unknown: %s."
 msgstr "Unbekannter Fehler: %s."
 
-msgid "Incorrect screen name or password."
+msgid "Incorrect username or password."
 msgstr "Ungültiger Benutzername oder Passwort."
 
 msgid "The service is temporarily unavailable."
@@ -9121,9 +9152,6 @@ msgstr ""
 
 msgid "Ignore buddy?"
 msgstr "Buddy ignorieren?"
-
-msgid "Invalid screen name."
-msgstr "Ungültiger Benutzername."
 
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr ""
@@ -9805,24 +9833,20 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 "Die Verbindung wurde von einer anderen Software auf ihrem Computer "
 "unterbrochen."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Der entfernte Host hat die Verbindung beendet."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Verbindungsabbruch wegen Zeitüberschreitung."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Verbindung abgelehnt."
 
@@ -9848,11 +9872,8 @@ msgstr "Anmeldeoptionen"
 msgid "Pro_tocol:"
 msgstr "Pro_tokoll:"
 
-msgid "Screen _name:"
-msgstr "Benutzer_name:"
-
-msgid "_Local alias:"
-msgstr "Lokaler _Alias:"
+msgid "_Username:"
+msgstr "_Benutzer:"
 
 msgid "Remember pass_word"
 msgstr "Pass_wort speichern"
@@ -9860,6 +9881,9 @@ msgstr "Pass_wort speichern"
 #. Build the user options frame.
 msgid "User Options"
 msgstr "Benutzereinstellungen"
+
+msgid "_Local alias:"
+msgstr "Lokaler _Alias:"
 
 msgid "New _mail notifications"
 msgstr "Benachrichtigung über neue _Mails"
@@ -9917,9 +9941,6 @@ msgstr "_Host:"
 
 msgid "_Port:"
 msgstr "_Port:"
-
-msgid "_Username:"
-msgstr "_Benutzer:"
 
 msgid "Pa_ssword:"
 msgstr "P_asswort:"
@@ -9991,6 +10012,9 @@ msgstr ""
 "auseinandernehmen, wenn Sie auf 'Expandieren' im Kontextmenü des Kontakts "
 "klicken"
 
+msgid "Please update the necessary fields."
+msgstr "Bitte aktualisieren Sie die erforderlichen Felder."
+
 msgid "Room _List"
 msgstr "Ra_umliste"
 
@@ -10061,6 +10085,9 @@ msgstr "Automatisch beitreten"
 
 msgid "Persistent"
 msgstr "Persistent"
+
+msgid "_Edit Settings..."
+msgstr "_Einstellungen bearbeiten..."
 
 msgid "_Collapse"
 msgstr "_Zusammenklappen"
@@ -10186,6 +10213,14 @@ msgstr "/Hilfe/Ü_ber"
 #, c-format
 msgid "<b>Account:</b> %s"
 msgstr "<b>Konto:</b> %s"
+
+#, c-format
+msgid ""
+"\n"
+"<b>Occupants:</b> %d"
+msgstr ""
+"\n"
+"<b>Besucher:</b> %d"
 
 #, c-format
 msgid ""
@@ -10347,7 +10382,7 @@ msgstr "/Buddys/Anzeigen/Protokoll-Icons"
 msgid "Add a buddy.\n"
 msgstr "Einen Buddy hinzufügen.\n"
 
-msgid "Buddy's _screen name:"
+msgid "Buddy's _username:"
 msgstr "_Benutzername des Buddys:"
 
 msgid "(Optional) A_lias:"
@@ -10482,6 +10517,9 @@ msgstr "Icon speichern unter..."
 
 msgid "Set Custom Icon..."
 msgstr "Setze benutzerdefiniertes Icon..."
+
+msgid "Change Size"
+msgstr "Ändere Größe"
 
 msgid "Remove Custom Icon"
 msgstr "Benutzerdefiniertes Icon entfernen"
@@ -11060,21 +11098,14 @@ msgid "Get User Info"
 msgstr "Benutzer-Info abrufen"
 
 msgid ""
-"Please enter the screen name or alias of the person whose info you would "
-"like to view."
+"Please enter the username or alias of the person whose info you would like "
+"to view."
 msgstr ""
 "Bitte geben Sie den Benutzernamen oder den Alias der Person ein, deren Info "
 "Sie sehen möchten."
 
 msgid "View User Log"
 msgstr "Benutzer-Mitschnitt anzeigen"
-
-msgid ""
-"Please enter the screen name or alias of the person whose log you would like "
-"to view."
-msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, deren Mitschnitt Sie sehen "
-"möchten."
 
 msgid "Alias Contact"
 msgstr "Kontakt-Alias"
@@ -11263,6 +11294,9 @@ msgstr "Einfügen als normaler _Text"
 msgid "_Reset formatting"
 msgstr "Formatierung _zurücksetzen"
 
+msgid "Disable _smileys in selected text"
+msgstr "_Smileys im selektierten Text abschalten"
+
 msgid "Hyperlink color"
 msgstr "Hyperlink-Farbe"
 
@@ -11303,6 +11337,23 @@ msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
 
 msgid "Color to draw the name of an action message."
 msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
+
+msgid "Typing notification color"
+msgstr "Farbe der Tipp-Benachrichtigung"
+
+msgid "The color to use for the typing notification font"
+msgstr ""
+"Die Farbe, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
+
+msgid "Typing notification font"
+msgstr "Tipp-Benachrichtigungs-Schriftart"
+
+msgid "The font to use for the typing notification"
+msgstr ""
+"Die Schriftart, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
+
+msgid "Enable typing notification"
+msgstr "Tipp-Benachrichtigung aktivieren"
 
 msgid "_Copy E-Mail Address"
 msgstr "Kopiere _E-Mail-Adresse"
@@ -11702,26 +11753,23 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
-"<span weight=\"bold\">Website:</span>\t\t%s\n"
-"<span weight=\"bold\">Filename:</span>\t\t%s"
-msgstr ""
-"%s%s<span weight=\"bold\">Geschrieben von:</span>\t%s\n"
-"<span weight=\"bold\">Webseite: </span>\t\t%s\n"
-"<span weight=\"bold\">Dateiname:</span>\t\t%s"
-
-#, c-format
-msgid ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Error: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Fehler: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Fehler: %s\n"
 "Überprüfen Sie die Website des Plugins auf eine neue Version.</span>"
 
 msgid "Author"
 msgstr "Autor"
+
+msgid "<b>Written by:</b>"
+msgstr "<b>Geschrieben von:</b>"
+
+msgid "<b>Web site:</b>"
+msgstr "<b>Webseite:</b>"
+
+msgid "<b>Filename:</b>"
+msgstr "<b>Dateiname:</b>"
 
 msgid "Configure Pl_ugin"
 msgstr "Pl_ugin konfigurieren"
@@ -11818,6 +11866,12 @@ msgstr ""
 msgid "Icon"
 msgstr "Icon"
 
+msgid "Keyboard Shortcuts"
+msgstr "Tastaturkürzel"
+
+msgid "Cl_ose conversations with the Escape key"
+msgstr "_Schließe Gespräche mit der Escape-Taste"
+
 msgid "System Tray Icon"
 msgstr "Kontrollleisten-Icon"
 
@@ -11892,10 +11946,13 @@ msgid "Use smooth-scrolling"
 msgstr "Weiches Scrollen aktivieren"
 
 msgid "F_lash window when IMs are received"
-msgstr "Fenster b_linkt, wenn Nachrichten empfangen werden"
+msgstr "Fenster b_linkt, wenn IM-Nachrichten empfangen werden"
 
 msgid "Minimi_ze new conversation windows"
 msgstr "Neue Gesprächsfenster mi_nimieren"
+
+msgid "Minimum input area height in lines:"
+msgstr "Minimale Höhe des Eingabefeldes in Zeilen:"
 
 msgid "Font"
 msgstr "Schriftart"
@@ -12294,6 +12351,9 @@ msgstr "Neuer Status..."
 msgid "Saved statuses..."
 msgstr "Gespeicherter Status..."
 
+msgid "Status Selector"
+msgstr "Statusauswahl"
+
 msgid "Google Talk"
 msgstr "Google Talk"
 
@@ -12473,12 +12533,8 @@ msgid "Contact Availability Prediction plugin."
 msgstr "Kontakt-Verfügbarkeits-Vorhersage-Plugin."
 
 #. *  summary
-msgid ""
-"The contact availability plugin (cap) is used to display statistical "
-"information about buddies in a users contact list."
-msgstr ""
-"Das Kontakt-Verfügbarkeits-Plugin (cap) wird benutzt um statistische "
-"Informationen über Buddys anzuzeigen."
+msgid "Displays statistical information about your buddies' availability"
+msgstr "Statistische Informationen über die Verfügbarkeit Ihrer Buddys zeigen"
 
 msgid "Buddy is idle"
 msgstr "Buddy ist untätig"
@@ -12628,7 +12684,7 @@ msgstr "Rechte Maustaste"
 
 #. "Visual gesture display" checkbox
 msgid "_Visual gesture display"
-msgstr "_Gestiken anzeigen"
+msgstr "_Gesten anzeigen"
 
 #. *< type
 #. *< ui_requirement
@@ -12637,29 +12693,27 @@ msgstr "_Gestiken anzeigen"
 #. *< priority
 #. *< id
 msgid "Mouse Gestures"
-msgstr "Maus-Gestiken"
+msgstr "Maus-Gesten"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides support for mouse gestures"
-msgstr "Ermöglicht die Bedienung mit Maus-Gestiken"
+msgstr "Ermöglicht die Bedienung mit Maus-Gesten"
 
 #. *  description
 msgid ""
-"Allows support for mouse gestures in conversation windows.\n"
-"Drag the middle mouse button to perform certain actions:\n"
-"\n"
-"Drag down and then to the right to close a conversation.\n"
-"Drag up and then to the left to switch to the previous conversation.\n"
-"Drag up and then to the right to switch to the next conversation."
+"Allows support for mouse gestures in conversation windows. Drag the middle "
+"mouse button to perform certain actions:\n"
+" • Drag down and then to the right to close a conversation.\n"
+" • Drag up and then to the left to switch to the previous conversation.\n"
+" • Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Ermöglicht das Benutzen von Maus-Gestiken im Gesprächsfenster. Halten Sie "
-"die mittlere Maustaste gedrückt um folgende Aktionen auszuführen:\n"
-"\n"
-"Herunterziehen und dann nach rechts, um ein Gespräch zu beenden. Hochziehen "
-"und dann nach links, um auf ein voriges Gespräch zu wechseln. Hochziehen und "
-"dann nach rechts, um zum nächsten Gespräche zu wechseln."
+"Ermöglicht das Benutzen von Maus-Gesten in Gesprächsfenstern. Halten Sie die "
+"mittlere Maustaste gedrückt um folgende Aktionen auszuführen:\n"
+" • Herunterziehen und dann nach rechts, um ein Gespräch zu beenden.\n"
+" • Hochziehen und dann nach links, um auf ein voriges Gespräch zu wechseln.\n"
+" • Hochziehen und dann nach rechts, um zum nächsten Gespräche zu wechseln."
 
 msgid "Instant Messaging"
 msgstr "Sofortnachrichten"
@@ -12741,7 +12795,7 @@ msgstr "Erlaubt die Integration mit Evolution."
 msgid "Please enter the person's information below."
 msgstr "Bitte geben Sie die Informationen zu der Person unten ein."
 
-msgid "Please enter the buddy's screen name and account type below."
+msgid "Please enter the buddy's username and account type below."
 msgstr ""
 "Geben Sie bitte den Benutzernamen des Buddys und den Kontentyp unten ein."
 
@@ -12823,6 +12877,9 @@ msgid "Draw a line to indicate new messages in a conversation."
 msgstr ""
 "Eine Linie zeichnen um neue Nachrichten in einer Unterhaltung anzuzeigen."
 
+msgid "Jump to markerline"
+msgstr "Springen zur Markierunglinie"
+
 msgid "Draw Markerline in "
 msgstr "Zeichne eine Markierunglinie in "
 
@@ -12887,7 +12944,7 @@ msgstr ""
 msgid "Notify For"
 msgstr "Benachrichtigung für"
 
-msgid "\t_Only when someone says your screen name"
+msgid "\t_Only when someone says your username"
 msgstr "\t_Nur wenn jemand Ihren Benutzernamen nennt"
 
 msgid "_Focused windows"
@@ -12906,7 +12963,7 @@ msgstr "Füge _Anzahl der neuen Nachrichten in den Fenstertitel ein"
 
 #. Count xprop method button
 msgid "Insert count of new message into _X property"
-msgstr "Füge _Anzahl der neuen Nachrichten in den Fenstertitel ein"
+msgstr "Füge Anzahl der neuen Nachrichten in die _X-Window-Eigenschaften ein"
 
 #. Urgent method button
 msgid "Set window manager \"_URGENT\" hint"
@@ -12915,6 +12972,10 @@ msgstr "Setze den „_URGENT“-Hinweis für den Window-Manager"
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "G_esprächsfenster in den Vordergrund bringen"
+
+#. Present conversation method button
+msgid "_Present conversation window"
+msgstr "Ges_prächsfenster anzeigen"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -12934,7 +12995,7 @@ msgstr "Entferne, wenn im Gesprächsfenster ge_tippt wird"
 
 #. Remove on message send button
 msgid "Remove when a _message gets sent"
-msgstr "Entferne, wenn eine _Nachricht gesendet wird"
+msgstr "Entferne, wenn eine Nachricht ge_sendet wird"
 
 #. Remove on conversation switch button
 msgid "Remove on switch to conversation ta_b"
@@ -13124,6 +13185,30 @@ msgid ""
 msgstr ""
 "Prüft regelmäßig, ob neue Versionen verfügbar sind und zeigt die Änderungen "
 "an."
+
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Send Button"
+msgstr "Senden-Knopf"
+
+#. *< name
+#. *< version
+msgid "Conversation Window Send Button."
+msgstr "Senden-Knopf für das Gesprächsfenster."
+
+#. *< summary
+msgid ""
+"Adds a Send button to the entry area of the conversation window. Intended "
+"for when no physical keyboard is present."
+msgstr ""
+"Fügt einen Senden-Knopf zum Eingabefeld des Gesprächsfensters hinzu. Die ist "
+"für Fälle gedacht, wo keine Tastatur vorhanden ist."
 
 msgid "Duplicate Correction"
 msgstr "Duplikat-Korrektur"
@@ -13337,7 +13422,7 @@ msgid "Only when docked"
 msgstr "Nur wenn angedockt"
 
 msgid "_Flash window when chat messages are received"
-msgstr "_Fenster blinkt, wenn Nachrichten empfangen werden"
+msgstr "_Fenster blinkt, wenn Chat-Nachrichten empfangen werden"
 
 msgid "Windows Pidgin Options"
 msgstr "Windows-Pidgin-Optionen"

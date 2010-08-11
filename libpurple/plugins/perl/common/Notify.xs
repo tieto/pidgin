@@ -172,10 +172,10 @@ void purple_notify_user_info_add_section_header(user_info, label)
 void purple_notify_user_info_remove_last_item(user_info)
 	Purple::NotifyUserInfo user_info
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_label(user_info_entry)
 	Purple::NotifyUserInfoEntry user_info_entry
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_value(user_info_entry)
 	Purple::NotifyUserInfoEntry user_info_entry

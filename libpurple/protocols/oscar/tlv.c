@@ -231,13 +231,13 @@ int aim_tlvlist_cmp(GSList *one, GSList *two)
 	aim_tlvlist_write(&bs2, &two);
 
 	if (memcmp(bs1.data, bs2.data, bs1.len)) {
-		g_free(bs1.data);
-		g_free(bs2.data);
+		byte_stream_destroy(&bs1);
+		byte_stream_destroy(&bs2);
 		return 1;
 	}
 
-	g_free(bs1.data);
-	g_free(bs2.data);
+	byte_stream_destroy(&bs1);
+	byte_stream_destroy(&bs2);
 
 	return 0;
 }
@@ -445,7 +445,7 @@ int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, cons
 
 	len = aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 
 	return len;
 }
@@ -494,7 +494,7 @@ int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tlvlist)
 
 	aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 
 	return buflen;
 }
