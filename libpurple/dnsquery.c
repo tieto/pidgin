@@ -918,7 +918,6 @@ resolve_host(gpointer data)
 	PurpleDnsQueryData *query_data;
 	struct sockaddr_in sin;
 	GSList *hosts = NULL;
-	char *hostname;
 
 	query_data = data;
 	query_data->timeout = 0;
@@ -931,6 +930,7 @@ resolve_host(gpointer data)
 
 	if (!inet_aton(query_data->hostname, &sin.sin_addr)) {
 		struct hostent *hp;
+		gchar *hostname;
 #ifdef USE_IDN
 		if (!dns_str_is_ascii(query_data->hostname)) {
 			int ret = purple_network_convert_idn_to_ascii(query_data->hostname,
@@ -956,11 +956,11 @@ resolve_host(gpointer data)
 		memset(&sin, 0, sizeof(struct sockaddr_in));
 		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 		sin.sin_family = hp->h_addrtype;
+		g_free(hostname);
 	} else
 		sin.sin_family = AF_INET;
 	sin.sin_port = htons(query_data->port);
 
-	g_free(hostname);
 	hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
 	hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
 

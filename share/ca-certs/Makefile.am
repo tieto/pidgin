@@ -2,6 +2,7 @@ CERTIFICATES = \
 		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
+		Entrust.net_Secure_Server_CA.pem \
 		Equifax_Secure_CA.pem \
 		Equifax_Secure_Global_eBusiness_CA-1.pem \
 		GTE_CyberTrust_Global_Root.pem \

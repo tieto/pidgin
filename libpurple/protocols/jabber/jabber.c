@@ -1077,53 +1077,53 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					return;
 				}
 			} else {
-			const char *value = purple_request_field_string_get_value(field);
+				const char *value = purple_request_field_string_get_value(field);
 
-			if(!strcmp(id, "username")) {
-				y = xmlnode_new_child(query, "username");
-			} else if(!strcmp(id, "password")) {
-				y = xmlnode_new_child(query, "password");
-			} else if(!strcmp(id, "name")) {
-				y = xmlnode_new_child(query, "name");
-			} else if(!strcmp(id, "email")) {
-				y = xmlnode_new_child(query, "email");
-			} else if(!strcmp(id, "nick")) {
-				y = xmlnode_new_child(query, "nick");
-			} else if(!strcmp(id, "first")) {
-				y = xmlnode_new_child(query, "first");
-			} else if(!strcmp(id, "last")) {
-				y = xmlnode_new_child(query, "last");
-			} else if(!strcmp(id, "address")) {
-				y = xmlnode_new_child(query, "address");
-			} else if(!strcmp(id, "city")) {
-				y = xmlnode_new_child(query, "city");
-			} else if(!strcmp(id, "state")) {
-				y = xmlnode_new_child(query, "state");
-			} else if(!strcmp(id, "zip")) {
-				y = xmlnode_new_child(query, "zip");
-			} else if(!strcmp(id, "phone")) {
-				y = xmlnode_new_child(query, "phone");
-			} else if(!strcmp(id, "url")) {
-				y = xmlnode_new_child(query, "url");
-			} else if(!strcmp(id, "date")) {
-				y = xmlnode_new_child(query, "date");
-			} else {
-				continue;
-			}
-			xmlnode_insert_data(y, value, -1);
+				if(!strcmp(id, "username")) {
+					y = xmlnode_new_child(query, "username");
+				} else if(!strcmp(id, "password")) {
+					y = xmlnode_new_child(query, "password");
+				} else if(!strcmp(id, "name")) {
+					y = xmlnode_new_child(query, "name");
+				} else if(!strcmp(id, "email")) {
+					y = xmlnode_new_child(query, "email");
+				} else if(!strcmp(id, "nick")) {
+					y = xmlnode_new_child(query, "nick");
+				} else if(!strcmp(id, "first")) {
+					y = xmlnode_new_child(query, "first");
+				} else if(!strcmp(id, "last")) {
+					y = xmlnode_new_child(query, "last");
+				} else if(!strcmp(id, "address")) {
+					y = xmlnode_new_child(query, "address");
+				} else if(!strcmp(id, "city")) {
+					y = xmlnode_new_child(query, "city");
+				} else if(!strcmp(id, "state")) {
+					y = xmlnode_new_child(query, "state");
+				} else if(!strcmp(id, "zip")) {
+					y = xmlnode_new_child(query, "zip");
+				} else if(!strcmp(id, "phone")) {
+					y = xmlnode_new_child(query, "phone");
+				} else if(!strcmp(id, "url")) {
+					y = xmlnode_new_child(query, "url");
+				} else if(!strcmp(id, "date")) {
+					y = xmlnode_new_child(query, "date");
+				} else {
+					continue;
+				}
+				xmlnode_insert_data(y, value, -1);
 				if(cbdata->js->registration && !strcmp(id, "username")) {
 					g_free(cbdata->js->user->node);
 					cbdata->js->user->node = g_strdup(value);
-			}
+				}
 				if(cbdata->js->registration && !strcmp(id, "password"))
 					purple_account_set_password(cbdata->js->gc->account, value);
+			}
 		}
-	}
 	}
 
 	if(cbdata->js->registration) {
-		username = g_strdup_printf("%s@%s/%s", cbdata->js->user->node, cbdata->js->user->domain,
-				cbdata->js->user->resource);
+		username = g_strdup_printf("%s@%s%s%s", cbdata->js->user->node, cbdata->js->user->domain,
+			cbdata->js->user->resource ? "/" : "", cbdata->js->user->resource);
 		purple_account_set_username(cbdata->js->gc->account, username);
 		g_free(username);
 	}
