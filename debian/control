@@ -69,7 +69,7 @@ Description: multi-protocol instant messaging client - data files
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: ${misc:Depends}, pidgin (>= ${source:Version}), pkg-config, libpurple-dev, libgtk2.0-dev
+Depends: ${misc:Depends}, pidgin (>= ${source:Upstream-Version}), pidgin (<< ${source:Upstream-Version}+1~), pkg-config, libpurple-dev, libgtk2.0-dev
 Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Suggests: doc-base
@@ -109,7 +109,7 @@ Description: text-based multi-protocol instant messaging client
 Package: finch-dev
 Section: devel
 Architecture: all
-Depends: ${misc:Depends}, finch (>= ${source:Version}), pkg-config, libpurple-dev, libglib2.0-dev, libncursesw5-dev
+Depends: ${misc:Depends}, finch (>= ${source:Upstream-Version}), finch (<< ${source:Upstream-Version}+1~), pkg-config, libpurple-dev, libglib2.0-dev, libncursesw5-dev
 Description: text-based multi-protocol instant messaging client - development
  This package contains the headers and other development files not included in
  the main finch package. Install this if you wish to compile your own plugins,
@@ -118,7 +118,7 @@ Description: text-based multi-protocol instant messaging client - development
 Package: libpurple-dev
 Section: libdevel
 Architecture: all
-Depends: libpurple0 (>= ${source:Version}), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, ${misc:Depends}
+Depends: libpurple0 (>= ${source:Upstream-Version}), libpurple0 (<< ${source:Upstream-Version}+1~), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, ${misc:Depends}
 Description: multi-protocol instant messaging library - development files
  This package contains the headers and other development files not included in
  the main libpurple0 package. Install this if you wish to compile your own
