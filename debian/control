@@ -15,8 +15,8 @@ Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool,
  network-manager-dev (>= 0.5.0) [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates
 Standards-Version: 3.8.3
-XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
-XS-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/pidgin/
+Vcs-Git: git://git.debian.org/git/collab-maint/pidgin.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/pidgin.git
 Homepage: http://www.pidgin.im
 
 Package: libpurple0
