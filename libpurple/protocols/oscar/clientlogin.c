@@ -43,7 +43,7 @@
 #include "core.h"
 
 #define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
-#define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
+#define URL_START_OSCAR_SESSION "https://api.oscar.aol.com/aim/startOSCARSession"
 
 /*
  * Using clientLogin requires a developer ID.  This key is for libpurple.
@@ -177,10 +177,23 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	code = atoi(tmp);
 	if (code != 200)
 	{
+		xmlnode *status_detail_node;
+		guint status_detail = 0;
+
+		status_detail_node = xmlnode_get_child(response_node,
+		                                       "statusDetailCode");
+		if (status_detail_node) {
+			gchar *data = xmlnode_get_data(status_detail_node);
+			if (data) {
+				status_detail = atoi(data);
+				g_free(data);
+			}
+		}
+
 		purple_debug_error("oscar", "startOSCARSession response statusCode "
 				"was %s: %s\n", tmp, response);
 
-		if (code == 401 || code == 607)
+		if ((code == 401 && status_detail != 1014) || code == 607)
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("You have been connecting and disconnecting too "
@@ -293,7 +306,11 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 static void send_start_oscar_session(OscarData *od, const char *token, const char *session_key, time_t hosttime)
 {
 	char *query_string, *signature, *url;
-	gboolean use_tls = purple_account_get_bool(purple_connection_get_account(od->gc), "use_ssl", OSCAR_DEFAULT_USE_SSL);
+	PurpleAccount *account;
+	gboolean use_tls;
+
+	account = purple_connection_get_account(od->gc);
+	use_tls = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
 	/*
 	 * Construct the GET parameters.  0x00000611 is the distid given to
@@ -317,7 +334,8 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	g_free(signature);
 
 	/* Make the request */
-	od->url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE,
+	od->url_data = purple_util_fetch_url_request_len_with_account(account,
+			url, TRUE, NULL, FALSE, NULL, FALSE, -1,
 			start_oscar_session_cb, od);
 	g_free(url);
 }
@@ -410,6 +428,9 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"was %d (%d): %s\n", status_code, status_detail_code, response);
 
 		if (status_code == 330 && status_detail_code == 3011) {
+			PurpleAccount *account = purple_connection_get_account(gc);
+			if (!purple_account_get_remember_password(account))
+				purple_account_set_password(account, NULL);
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 					_("Incorrect password"));
@@ -497,8 +518,12 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				URL_CLIENT_LOGIN, error_message);
+		if (error_message != NULL)
+			tmp = g_strdup_printf(_("Error requesting %s: %s"),
+					URL_CLIENT_LOGIN, error_message);
+		else
+			tmp = g_strdup_printf(_("Error requesting %s"),
+					URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -573,8 +598,9 @@ void send_client_login(OscarData *od, const char *username)
 	g_string_free(body, TRUE);
 
 	/* Send the POST request  */
-	od->url_data = purple_util_fetch_url_request(URL_CLIENT_LOGIN,
-			TRUE, NULL, FALSE, request->str, FALSE,
+	od->url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), URL_CLIENT_LOGIN,
+			TRUE, NULL, FALSE, request->str, FALSE, -1,
 			client_login_cb, od);
 	g_string_free(request, TRUE);
 }

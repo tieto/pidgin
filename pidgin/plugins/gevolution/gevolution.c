@@ -111,12 +111,10 @@ update_buddies_from_contact(EContact *contact)
 	name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
 	update_ims_from_contact(contact, name, "prpl-aim",    E_CONTACT_IM_AIM);
-	update_ims_from_contact(contact, name, "prpl-oscar",  E_CONTACT_IM_AIM);
 	update_ims_from_contact(contact, name, "prpl-jabber", E_CONTACT_IM_JABBER);
 	update_ims_from_contact(contact, name, "prpl-yahoo",  E_CONTACT_IM_YAHOO);
 	update_ims_from_contact(contact, name, "prpl-msn",    E_CONTACT_IM_MSN);
 	update_ims_from_contact(contact, name, "prpl-icq",    E_CONTACT_IM_ICQ);
-	update_ims_from_contact(contact, name, "prpl-oscar",  E_CONTACT_IM_ICQ);
 	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
 }
 

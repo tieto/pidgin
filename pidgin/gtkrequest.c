@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
+#include "debug.h"
 #include "prefs.h"
 #include "util.h"
 
@@ -230,10 +231,10 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 }
 
 static void
-field_choice_menu_cb(GtkOptionMenu *menu, PurpleRequestField *field)
+field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
 {
 	purple_request_field_choice_set_value(field,
-			gtk_option_menu_get_history(menu));
+			gtk_combo_box_get_active(menu));
 }
 
 static void
@@ -592,9 +593,11 @@ pidgin_request_choice(const char *title, const char *primary,
 }
 
 static void *
-pidgin_request_action(const char *title, const char *primary,
+pidgin_request_action_with_icon(const char *title, const char *primary,
 						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+					    PurpleAccount *account, const char *who, 
+						PurpleConversation *conv, gconstpointer icon_data,
+						gsize icon_size,
 						void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
@@ -602,7 +605,7 @@ pidgin_request_action(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *img;
+	GtkWidget *img = NULL;
 	void **buttons;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
@@ -626,9 +629,7 @@ pidgin_request_action(const char *title, const char *primary,
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
 
-#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
-#endif
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
@@ -661,8 +662,42 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+	if (icon_data) {
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		GdkPixbuf *pixbuf = NULL;
+		if (gdk_pixbuf_loader_write(loader, icon_data, icon_size, NULL)) {
+			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+			if (pixbuf) {
+				/* scale the image if it is too large */
+				int width = gdk_pixbuf_get_width(pixbuf);
+				int height = gdk_pixbuf_get_height(pixbuf);
+				if (width > 128 || height > 128) {
+					int scaled_width = width > height ? 128 : (128 * width) / height;
+					int scaled_height = height > width ? 128 : (128 * height) / width;
+					GdkPixbuf *scaled =
+							gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
+							    GDK_INTERP_BILINEAR);
+
+					purple_debug_info("pidgin",
+					    "dialog icon was too large, scale it down\n");
+					if (scaled) {
+						g_object_unref(pixbuf);
+						pixbuf = scaled;
+					}
+				}
+				img = gtk_image_new_from_pixbuf(pixbuf);
+			}
+		} else {
+			purple_debug_info("pidgin", "failed to parse dialog icon\n");
+		}
+		gdk_pixbuf_loader_close(loader, NULL);
+		g_object_unref(loader);
+	}
+	
+	if (!img) {
+		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	}
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -712,6 +747,17 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
+}
+
+static void *
+pidgin_request_action(const char *title, const char *primary,
+						const char *secondary, int default_action,
+					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+						void *user_data, size_t action_count, va_list actions)
+{
+	return pidgin_request_action_with_icon(title, primary, secondary,
+		default_action, account, who, conv, NULL, 0, user_data, action_count,
+		actions);
 }
 
 static void
@@ -930,26 +976,15 @@ create_choice_field(PurpleRequestField *field)
 
 	if (num_labels > 5)
 	{
-		GtkWidget *menu;
-		GtkWidget *item;
-
-		widget = gtk_option_menu_new();
-
-		menu = gtk_menu_new();
+		widget = gtk_combo_box_new_text();
 
 		for (l = labels; l != NULL; l = l->next)
 		{
 			const char *text = l->data;
-
-			item = gtk_menu_item_new_with_label(text);
-			gtk_widget_show(item);
-
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
 		}
 
-		gtk_widget_show(menu);
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
-		gtk_option_menu_set_history(GTK_OPTION_MENU(widget),
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
 						purple_request_field_choice_get_default_value(field));
 
 		g_signal_connect(G_OBJECT(widget), "changed",
@@ -1066,6 +1101,9 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
 	GList *l;
+	GList *icons = NULL;
+
+	icons = purple_request_field_list_get_icons(field);
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1077,7 +1115,10 @@ create_list_field(PurpleRequestField *field)
 	gtk_widget_show(sw);
 
 	/* Create the list store */
-	store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
+	if (icons)
+		store = gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	else
+		store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
@@ -1096,13 +1137,38 @@ create_list_field(PurpleRequestField *field)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text", 1);
 
+	if (icons)
+	{
+		renderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(column, renderer, TRUE);
+		gtk_tree_view_column_add_attribute(column, renderer, "pixbuf", 2);
+
+		gtk_widget_set_size_request(treeview, 200, 400);
+	}
+
 	for (l = purple_request_field_list_get_items(field); l != NULL; l = l->next)
 	{
 		const char *text = (const char *)l->data;
 
 		gtk_list_store_append(store, &iter);
 
-		gtk_list_store_set(store, &iter,
+		if (icons)
+		{
+			const char *icon_path = (const char *)icons->data;
+			GdkPixbuf* pixbuf = NULL;
+
+			if (icon_path)
+				pixbuf = gdk_pixbuf_new_from_file(icon_path, NULL);
+
+			gtk_list_store_set(store, &iter,
+						   0, purple_request_field_list_get_data(field, text),
+						   1, text,
+						   2, pixbuf,
+						   -1);
+			icons = icons->next;
+		}
+		else
+			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),
 						   1, text,
 						   -1);
@@ -1503,7 +1569,6 @@ file_yes_no_cb(PidginRequestData *data, gint id)
 	}
 }
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
 file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *data)
 {
@@ -1528,51 +1593,6 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 		}
 		g_free(current_folder);
 	}
-
-#else /* FILECHOOSER */
-
-static void
-file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
-{
-	const gchar *name;
-	gchar *current_folder;
-
-	generic_response_start(data);
-
-	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
-
-	/* If name is a directory then change directories */
-	if (data->type == PURPLE_REQUEST_FILE) {
-		if (pidgin_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
-			return;
-	}
-
-	current_folder = g_path_get_dirname(name);
-
-	g_free(data->u.file.name);
-	if (data->type == PURPLE_REQUEST_FILE)
-		data->u.file.name = g_strdup(name);
-	else
-	{
-		if (g_file_test(name, G_FILE_TEST_IS_DIR))
-			data->u.file.name = g_strdup(name);
-		else
-			data->u.file.name = g_strdup(current_folder);
-	}
-
-	if (current_folder != NULL) {
-		if (data->u.file.savedialog) {
-			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder", current_folder);
-		} else {
-			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder", current_folder);
-		}
-		g_free(current_folder);
-	}
-
-#endif /* FILECHOOSER */
-#if 0 /* mismatched curly braces */
-	}
-#endif
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		purple_request_action(data, NULL, _("That file already exists"),
@@ -1585,20 +1605,6 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 		file_yes_no_cb(data, 1);
 }
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static gboolean
-file_cancel_cb(PidginRequestData *data)
-{
-	generic_response_start(data);
-
-	if (data->cbs[0] != NULL)
-		((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
-
-	purple_request_close(data->type, data);
-	return FALSE;
-}
-#endif /* FILECHOOSER */
-
 static void *
 pidgin_request_file(const char *title, const char *filename,
 					  gboolean savedialog,
@@ -1609,9 +1615,7 @@ pidgin_request_file(const char *title, const char *filename,
 	PidginRequestData *data;
 	GtkWidget *filesel;
 	const gchar *current_folder;
-#if GTK_CHECK_VERSION(2,4,0)
 	gboolean folder_set = FALSE;
-#endif
 
 	data = g_new0(PidginRequestData, 1);
 	data->type = PURPLE_REQUEST_FILE;
@@ -1622,7 +1626,6 @@ pidgin_request_file(const char *title, const char *filename,
 	data->cbs[1] = ok_cb;
 	data->u.file.savedialog = savedialog;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filesel = gtk_file_chooser_dialog_new(
 						title ? title : (savedialog ? _("Save File...")
 													: _("Open File...")),
@@ -1668,30 +1671,6 @@ pidgin_request_file(const char *title, const char *filename,
 #endif
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(filesel)), "response",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
-#else /* FILECHOOSER */
-	filesel = gtk_file_selection_new(
-			title ? title : (savedialog ? _("Save File...")
-				: _("Open File...")));
-	if (savedialog) {
-		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
-	} else {
-		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder");
-	}
-	if (current_folder != NULL) {
-		gchar *path = g_strdup_printf("%s%s", current_folder, G_DIR_SEPARATOR_S);
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), path);
-		g_free(path);
-	}
-	if (filename != NULL)
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), filename);
-
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)), "delete_event",
-							 G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
-					 "clicked", G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
-					 G_CALLBACK(file_ok_check_if_exists_cb), data);
-#endif /* FILECHOOSER */
 
 	pidgin_auto_parent_window(filesel);
 
@@ -1719,7 +1698,6 @@ pidgin_request_folder(const char *title, const char *dirname,
 	data->cbs[1] = ok_cb;
 	data->u.file.savedialog = FALSE;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dirsel = gtk_file_chooser_dialog_new(
 						title ? title : _("Select Folder..."),
 						NULL,
@@ -1734,16 +1712,6 @@ pidgin_request_folder(const char *title, const char *dirname,
 
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(dirsel)), "response",
 						G_CALLBACK(file_ok_check_if_exists_cb), data);
-#else
-	dirsel = gtk_file_selection_new(title ? title : _("Select Folder..."));
-
-	g_signal_connect_swapped(G_OBJECT(dirsel), "delete_event",
-							 G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(dirsel)->cancel_button),
-					 "clicked", G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dirsel)->ok_button), "clicked",
-					 G_CALLBACK(file_ok_check_if_exists_cb), data);
-#endif
 
 	data->dialog = dirsel;
 	pidgin_auto_parent_window(dirsel);
@@ -1779,7 +1747,7 @@ static PurpleRequestUiOps ops =
 	pidgin_request_file,
 	pidgin_close_request,
 	pidgin_request_folder,
-	NULL,
+	pidgin_request_action_with_icon,
 	NULL,
 	NULL,
 	NULL

@@ -94,6 +94,9 @@
 /* Define to 1 if you have the `gethostid' function. */
 #undef HAVE_GETHOSTID
 
+/* Define to 1 if you have the `getifaddrs' function. */
+#undef HAVE_GETIFADDRS
+
 /* Define to 1 if you have the `getopt_long' function. */
 #undef HAVE_GETOPT_LONG
 
@@ -120,6 +123,9 @@
 
 /* Define if we have IOKit */
 #undef HAVE_IOKIT
+
+/* Define if the IPV6_V6ONLY setsockopt option exists */
+#undef HAVE_IPV6_V6ONLY
 
 /* Define to 1 if you have the `krb_get_err_text' function. */
 #undef HAVE_KRB_GET_ERR_TEXT
@@ -289,7 +295,7 @@
 /* Define if struct sockaddr has an sa_len member */
 #undef HAVE_STRUCT_SOCKADDR_SA_LEN
 
-/* Define to 1 if `struct tm' is a member of `tm_zone'. */
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
 #undef HAVE_STRUCT_TM_TM_ZONE
 
 /* Define to 1 if you have the <sys/cdefs.h> header file. */
@@ -464,6 +470,9 @@
 
 /* Use voice and video */
 #undef USE_VV
+
+/* 'va_lists' cannot be copied as values */
+#undef VA_COPY_AS_ARRAY
 
 /* Version number of package */
 #undef VERSION

@@ -43,6 +43,8 @@ struct _MsnSlpLink
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 
+	int refs;
+
 	char *remote_user;
 
 	int slp_seq_id;
@@ -54,6 +56,9 @@ struct _MsnSlpLink
 
 	GQueue *slp_msg_queue;
 };
+
+MsnSlpLink *msn_slplink_ref(MsnSlpLink *slplink);
+void msn_slplink_unref(MsnSlpLink *slplink);
 
 void msn_slplink_destroy(MsnSlpLink *slplink);
 

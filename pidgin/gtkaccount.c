@@ -474,9 +474,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Username */
 	dialog->username_entry = gtk_entry_new();
-#if GTK_CHECK_VERSION(2,10,0)
 	g_object_set(G_OBJECT(dialog->username_entry), "truncate-multiline", TRUE, NULL);
-#endif
 
 	add_pref_box(dialog, vbox, _("_Username:"), dialog->username_entry);
 
@@ -2081,25 +2079,12 @@ populate_accounts_list(AccountsWindow *dialog)
 	return ret;
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-get_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	*((gboolean *)user_data) = TRUE;
-}
-#endif
-
 static void
 account_selected_cb(GtkTreeSelection *sel, AccountsWindow *dialog)
 {
 	gboolean selected = FALSE;
 
-#if GTK_CHECK_VERSION(2,2,0)
 	selected = (gtk_tree_selection_count_selected_rows(sel) > 0);
-#else
-	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &selected);
-#endif
 
 	gtk_widget_set_sensitive(dialog->modify_button, selected);
 	gtk_widget_set_sensitive(dialog->delete_button, selected);

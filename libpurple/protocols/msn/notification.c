@@ -361,81 +361,6 @@ uum_send_msg(MsnSession *session,MsnMessage *msg)
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
-#if 0
-static void
-ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
-			 size_t len)
-{
-	MsnMessage *msg;
-	PurpleConnection *gc;
-	const char *passport;
-	const char *content_type;
-
-	purple_debug_info("msn", "Process UBM payload:%.*s\n", (guint)len, payload);
-	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
-
-	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
-	if (purple_debug_is_verbose())
-		msn_message_show_readable(msg, "Notification", TRUE);
-
-	gc = cmdproc->session->account->gc;
-	passport = msg->remote_user;
-
-	content_type = msn_message_get_content_type(msg);
-	purple_debug_info("msn", "type:%s\n", content_type);
-	if(!strcmp(content_type,"text/plain")){
-		const char *value;
-		const char *body;
-		char *body_enc;
-		char *body_final = NULL;
-		size_t body_len;
-
-		body = msn_message_get_bin_data(msg, &body_len);
-		body_enc = g_markup_escape_text(body, body_len);
-
-		if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
-			char *pre, *post;
-
-			msn_parse_format(value, &pre, &post);
-			body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
-							body_enc ? body_enc : "", post ? post : "");
-			g_free(pre);
-			g_free(post);
-		}
-		g_free(body_enc);
-		serv_got_im(gc, passport, body_final, 0, time(NULL));
-		g_free(body_final);
-	}
-	if(!strcmp(content_type,"text/x-msmsgscontrol")){
-		if(msn_message_get_attr(msg, "TypingUser") != NULL){
-			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-						PURPLE_TYPING);
-		}
-	}
-	if(!strcmp(content_type,"text/x-msnmsgr-datacast")){
-		char *username, *str;
-		PurpleAccount *account;
-		PurpleBuddy *buddy;
-		const char *user;
-
-		account = cmdproc->session->account;
-		user = msg->remote_user;
-
-		if ((buddy = purple_find_buddy(account, user)) != NULL){
-			username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-		}else{
-			username = g_markup_escape_text(user, -1);
-		}
-
-		str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
-		g_free(username);
-		msn_session_report_user(cmdproc->session,user,str,PURPLE_MESSAGE_SYSTEM);
-		g_free(str);
-	}
-	msn_message_destroy(msg);
-}
-#endif
-
 /*Yahoo msg process*/
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
@@ -642,6 +567,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	int fqy_count = 0;
+	PurpleConnection *pc;
 	const char *display_name;
 
 	adl_node = xmlnode_new("ml");
@@ -748,11 +674,12 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_free(adl_node);
 	xmlnode_free(fqy_node);
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	pc = purple_account_get_connection(session->account);
+	display_name = purple_connection_get_display_name(pc);
 	if (display_name
 	    && strcmp(display_name,
 		      purple_account_get_username(session->account))) {
-		msn_act_id(session->account->gc, display_name);
+		msn_set_public_alias(pc, display_name, NULL, NULL);
 	}
 
 }
@@ -1058,19 +985,12 @@ qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSlpLink *slplink;
 	MsnUser *user;
 
 	/* Tell libpurple that the user has signed off */
 	user = msn_userlist_find_user(cmdproc->session->userlist, cmd->params[0]);
 	msn_user_set_state(user, NULL);
 	msn_user_update(user);
-
-	/* If we have an open MsnSlpLink with the user then close it */
-	slplink = msn_session_find_slplink(cmdproc->session, cmd->params[0]);
-	if (slplink != NULL)
-		msn_slplink_destroy(slplink);
-
 }
 
 static void
@@ -1374,11 +1294,11 @@ static void
 prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	const char *type, *value, *friendlyname;
+	const char *type, *value;
 
 	g_return_if_fail(cmd->param_count >= 3);
 
-	type  = cmd->params[2];
+	type = cmd->params[2];
 
 	if (cmd->param_count == 4)
 	{
@@ -1398,19 +1318,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_work_phone(session->user, NULL);
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(session->user, NULL);
-		else {
-			type = cmd->params[1];
-			if (!strcmp(type, "MFN")) {
-				friendlyname = purple_url_decode(cmd->params[2]);
-
-				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
-
-				purple_connection_set_display_name(
-					purple_account_get_connection(session->account),
-					friendlyname);
-				purple_account_set_string(session->account, "display-name", friendlyname);
-			}
-		}
 	}
 }
 
@@ -1624,11 +1531,7 @@ static void parse_currentmedia(MsnUser *user, const char *cmedia)
 	 *  6: Album
 	 *  7: ?
 	 */
-#if GLIB_CHECK_VERSION(2,6,0)
 	strings  = g_strv_length(cmedia_array);
-#else
-	while (cmedia_array[++strings] != NULL);
-#endif
 
 	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
 		if (user->extinfo == NULL)

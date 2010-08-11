@@ -109,6 +109,16 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a small button
+ *
+ * @param  image   A button image.
+ *
+ * @return   A GtkButton created from the image.
+ * @since 2.7.0
+ */
+GtkWidget *pidgin_create_small_button(GtkWidget *image);
+
+/**
  * Creates a new window
  *
  * @param title        The window title, or @c NULL
@@ -648,17 +658,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  */
 gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
 
-#if !GTK_CHECK_VERSION(2,6,0)
-/**
- * Creates a new pixbuf by loading an image from a file. The image will
- * be scaled to fit in the requested size, optionally preserving the image's
- * aspect ratio.
- */
-GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
-											 gboolean preserve_aspect_ratio,
-											 GError **error);
-#endif
-
 #if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKUTILS_C_)
 /**
  * Set or unset a custom buddyicon for a user.
@@ -759,20 +758,6 @@ void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
  * @return The dim grey string
  */
 const char *pidgin_get_dim_grey_string(GtkWidget *widget);
-
-#if !GTK_CHECK_VERSION(2,2,0)
-/**
- * This is copied from Gtk to support Gtk 2.0
- *
- * Creates a new path with @a first_index and the varargs as indices.
- *
- * @param first_index    first integer
- * @param ...            list of integers terminated by -1
- *
- * @return               A newly created GtkTreePath.
- */
-GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
-#endif
 
 /**
  * Create a simple text GtkComboBoxEntry equivalent

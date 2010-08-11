@@ -105,18 +105,22 @@ struct _JabberStream
 	xmlParserCtxt *context;
 	xmlnode *current;
 
-	enum {
-		JABBER_PROTO_0_9,
-		JABBER_PROTO_1_0
+	struct {
+		guint8 major;
+		guint8 minor;
 	} protocol_version;
 
 	JabberSaslMech *auth_mech;
 	gpointer auth_mech_data;
+
+	/**
+	 * The header from the opening <stream/> tag.  This being NULL is treated
+	 * as a special condition in the parsing code (signifying the next
+	 * stanza started is an opening stream tag), and its being missing on
+	 * the stream header is treated as a fatal error.
+	 */
 	char *stream_id;
 	JabberStreamState state;
-
-	/* SASL authentication */
-	char *expected_rspauth;
 
 	GHashTable *buddies;
 
@@ -165,6 +169,11 @@ struct _JabberStream
 
 	time_t idle;
 	time_t old_idle;
+
+	/** When we last pinged the server, so we don't ping more
+	 *  often than once every minute.
+	 */
+	time_t last_ping;
 
 	JabberID *user;
 	JabberBuddy *user_jb;
@@ -243,6 +252,8 @@ struct _JabberStream
 
 	/* A purple timeout tag for the keepalive */
 	guint keepalive_timeout;
+	guint max_inactivity;
+	guint inactivity_timer;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
@@ -337,6 +348,13 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
  */
 gboolean jabber_stream_is_ssl(JabberStream *js);
 
+/**
+ * Restart the "we haven't sent anything in a while and should send
+ * something or the server will kick us off" timer (obviously
+ * called when sending something.  It's exposed for BOSH.)
+ */
+void jabber_stream_restart_inactivity_timer(JabberStream *js);
+
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char* jabber_list_emblem(PurpleBuddy *b);
@@ -371,10 +389,7 @@ gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
 gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
-void jabber_register_commands(void);
-void jabber_unregister_commands(void);
-
-void jabber_init_plugin(PurplePlugin *plugin);
-void jabber_uninit_plugin(PurplePlugin *plugin);
+void jabber_plugin_init(PurplePlugin *plugin);
+void jabber_plugin_uninit(PurplePlugin *plugin);
 
 #endif /* PURPLE_JABBER_H_ */

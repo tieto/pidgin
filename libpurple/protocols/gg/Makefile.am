@@ -4,14 +4,20 @@ EXTRA_DIST = \
 	lib/compat.h \
 	lib/COPYING \
 	lib/dcc.c \
+	lib/dcc7.c \
 	lib/events.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
+	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
+	lib/protocol.h \
+	lib/pubdir.c \
 	lib/pubdir50.c \
-	lib/pubdir.c
+	lib/resolver.c \
+	lib/resolver.h \
+	lib/sha1.c
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -20,16 +26,22 @@ INTGGSOURCES = \
 	lib/common.c \
 	lib/compat.h \
 	lib/dcc.c \
+	lib/dcc7.c \
 	lib/events.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
+	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
+	lib/protocol.h \
+	lib/pubdir.c \
 	lib/pubdir50.c \
-	lib/pubdir.c
+	lib/resolver.c \
+	lib/resolver.h \
+	lib/sha1.c
 
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib
+INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED
 endif
 
 GGSOURCES = \

@@ -627,12 +627,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						PIDGIN_MAIL_DATA, &data, -1);
 				if (data && data->account == account) {
 					if (clear) {
-#if GTK_CHECK_VERSION(2,2,0)
 						advanced = gtk_tree_store_remove(treemodel, &iter);
-#else
-						gtk_tree_store_remove(treemodel, &iter);
-						advanced = (iter.stamp == 0) ? FALSE : TRUE;
-#endif
 						mail_dialog->total_count -= data->count;
 
 						if (data->purple_has_handle)

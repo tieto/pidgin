@@ -475,7 +475,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
 			   ident->realname ? ident->realname : ident->username ?
 			   ident->username : "", fingerprint, babbleprint);
-		purple_request_field_list_add(f, tmp2, public_key);
+		purple_request_field_list_add_icon(f, tmp2, NULL, public_key);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);

@@ -61,10 +61,17 @@ static void
 theme_color_selected(GtkDialog *dialog, gint response, const char *prop)
 {
 	if (response == GTK_RESPONSE_OK) {
+		GtkWidget *colorsel;
 		GdkColor color;
 		PidginBlistTheme *theme;
 
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel), &color);
+#if GTK_CHECK_VERSION(2,14,0)
+		colorsel =
+			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog));
+#else
+		colorsel = GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel;
+#endif
+		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
 
 		theme = pidgin_blist_get_theme();
 
@@ -119,7 +126,7 @@ theme_font_select_face(GtkWidget *widget, gpointer prop)
 	face = pidgin_theme_font_get_font_face(font);
 	dialog = gtk_font_selection_dialog_new(_("Select Font"));
 	if (face && *face)
-		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(dialog)->fontsel),
+		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog),
 				face);
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_font_face_selected),
 			font);
@@ -145,9 +152,16 @@ theme_color_select(GtkWidget *widget, gpointer prop)
 	}
 
 	dialog = gtk_color_selection_dialog_new(_("Select Color"));
+#if GTK_CHECK_VERSION(2,14,0)
+	if (color)
+		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
+			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dialog))),
+			color);
+#else
 	if (color)
 		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dialog)->colorsel),
 				color);
+#endif
 	g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(theme_color_selected),
 			prop);
 

@@ -509,9 +509,6 @@ static gssize yahoo_xfer_write(const guchar *buffer, size_t size, PurpleXfer *xf
 		return 0;
 	}
 
-	if ((purple_xfer_get_bytes_sent(xfer) + len) >= purple_xfer_get_size(xfer))
-		purple_xfer_set_completed(xfer, TRUE);
-
 	return len;
 }
 

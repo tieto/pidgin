@@ -63,17 +63,7 @@
 
 #include <pango/pango-font.h>
 
-/* GTK+ < 2.4.x hack, see pidgin.h for details. */
-#if (!GTK_CHECK_VERSION(2,4,0))
-#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-#endif
-
 #define TOOLTIP_TIMEOUT 500
-
-/* GTK+ 2.0 hack */
-#if (!GTK_CHECK_VERSION(2,2,0))
-#define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
-#endif
 
 static GtkTextViewClass *parent_class = NULL;
 
@@ -162,6 +152,7 @@ enum {
 	MESSAGE_SEND,
 	UNDO,
 	REDO,
+	PASTE,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -201,7 +192,7 @@ clipboard_win32_to_html(char *clipboard) {
 
 	purple_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
-	fd = g_fopen("e:\\purplecb.txt", "wb");
+	fd = g_fopen("c:\\purplecb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif
@@ -552,10 +543,8 @@ gtk_imhtml_tip (gpointer data)
 	gtk_window_set_title(GTK_WINDOW(imhtml->tip_window), "GtkIMHtml");
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
-#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
 		GDK_WINDOW_TYPE_HINT_TOOLTIP);
-#endif
 	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
@@ -759,32 +748,6 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 	/* propagate the event normally */
 	return FALSE;
 }
-
-#if (!GTK_CHECK_VERSION(2,2,0))
-/*
- * XXX - This should be removed eventually.
- *
- * This function exists to work around a gross bug in GtkTextView.
- * Basically, we short circuit ctrl+a and ctrl+end because they make
- * el program go boom.
- *
- * It's supposed to be fixed in gtk2.2.  You can view the bug report at
- * http://bugzilla.gnome.org/show_bug.cgi?id=107939
- */
-static gboolean
-gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
-{
-	if (event->state & GDK_CONTROL_MASK) {
-		switch (event->keyval) {
-			case 'a':
-			case GDK_Home:
-			case GDK_End:
-				return TRUE;
-		}
-	}
-	return FALSE;
-}
-#endif /* !(GTK+ >= 2.2.0) */
 
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
@@ -1222,9 +1185,23 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		printf("\n");
 		}
 #endif
-		text = g_malloc(selection_data->length);
+
+		text = g_malloc(selection_data->length + 1);
 		memcpy(text, selection_data->data, selection_data->length);
+		/* Make sure the paste data is null-terminated.  Given that
+		 * we're passed length (but assume later that it is
+		 * null-terminated), this seems sensible to me.
+		 */
+		text[selection_data->length] = '\0';
 	}
+
+#ifdef _WIN32
+	if (gtk_selection_data_get_data_type(selection_data) == gdk_atom_intern("HTML Format", FALSE)) {
+		char *tmp = clipboard_win32_to_html(text);
+		g_free(text);
+		text = tmp;
+	}
+#endif
 
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
@@ -1285,13 +1262,16 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml))
-#endif
-	{
+	if (!clipboard_paste_html_win32(imhtml)) {
+		GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
+		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
+
+	}
+#else
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
 				       paste_received_cb, imhtml);
-	}
+#endif
 	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
@@ -1368,6 +1348,15 @@ gtk_imhtml_redo(GtkIMHtml *imhtml)
 static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 {
 	return FALSE;
+}
+
+static void
+imhtml_paste_cb(GtkIMHtml *imhtml, const char *str)
+{
+	if (!str || !*str || !strcmp(str, "html"))
+		g_signal_emit_by_name(imhtml, "paste_clipboard");
+	else if (!strcmp(str, "text"))
+		paste_unformatted_cb(NULL, imhtml);
 }
 
 static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
@@ -1540,24 +1529,31 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					     NULL,
 					     0, g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
-        signals [UNDO] = g_signal_new ("undo",
-                        		      G_TYPE_FROM_CLASS (klass),
-		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                		              G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
-		                              NULL,
-		                              NULL,
-                		              gtksourceview_marshal_VOID__VOID,
-		                              G_TYPE_NONE,
-		                              0);
-        signals [REDO] = g_signal_new ("redo",
-                        		      G_TYPE_FROM_CLASS (klass),
-		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-		                              G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
-		                              NULL,
-		                              NULL,
-		                              gtksourceview_marshal_VOID__VOID,
-		                              G_TYPE_NONE,
-		                              0);
+	signals[PASTE] = g_signal_new("paste",
+					     G_TYPE_FROM_CLASS(gobject_class),
+					     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+						 0,
+					     NULL,
+					     0, g_cclosure_marshal_VOID__STRING,
+					     G_TYPE_NONE, 1, G_TYPE_STRING);
+	signals [UNDO] = g_signal_new ("undo",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
+			NULL,
+			NULL,
+			gtksourceview_marshal_VOID__VOID,
+			G_TYPE_NONE,
+			0);
+	signals [REDO] = g_signal_new ("redo",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
+			NULL,
+			NULL,
+			gtksourceview_marshal_VOID__VOID,
+			G_TYPE_NONE,
+			0);
 
 
 
@@ -1642,10 +1638,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
-
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
+	gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -1700,10 +1696,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "enter-notify-event", G_CALLBACK(gtk_enter_event_notify), NULL);
-#if (!GTK_CHECK_VERSION(2,2,0))
-	/* See the comment for gtk_key_pressed_cb */
-	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
-#endif
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "delete_range", G_CALLBACK(delete_cb), imhtml);
@@ -1720,9 +1712,12 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "paste", G_CALLBACK(imhtml_paste_cb), NULL);
 
+#ifndef _WIN32
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
+#endif
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml),
 			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);
@@ -2173,50 +2168,56 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-GtkIMHtmlSmiley *
-gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
-	const gchar *sml,
-	const gchar *text)
+static GtkIMHtmlSmiley *gtk_imhtml_smiley_get_from_tree(GtkSmileyTree *t, const gchar *text)
 {
-	GtkSmileyTree *t;
 	const gchar *x = text;
-	if (sml == NULL)
-		t = imhtml->default_smilies;
-	else
-		t = g_hash_table_lookup(imhtml->smiley_data, sml);
-
+	gchar *pos;
 
 	if (t == NULL)
-		return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
+		return NULL;
 
 	while (*x) {
-		gchar *pos;
+		if (!t->values)
+			return NULL;
 
-		if (!t->values) {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		pos = strchr(t->values->str, *x);
+		if (!pos)
+			return NULL;
 
-		pos = strchr (t->values->str, *x);
-		if (pos) {
-			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
-		} else {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		t = t->children[GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		x++;
 	}
 
 	return t->image;
 }
 
+GtkIMHtmlSmiley *
+gtk_imhtml_smiley_get(GtkIMHtml *imhtml, const gchar *sml, const gchar *text)
+{
+	GtkIMHtmlSmiley *ret;
+
+	/* Look for custom smileys first */
+	if (sml != NULL) {
+		ret = gtk_imhtml_smiley_get_from_tree(g_hash_table_lookup(imhtml->smiley_data, sml), text);
+		if (ret != NULL)
+			return ret;
+	}
+
+	/* Fall back to check for default smileys */
+	return gtk_imhtml_smiley_get_from_tree(imhtml->default_smilies, text);
+}
+
 static GdkPixbufAnimation *
 gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
 {
-	if (!smiley->icon && smiley->file) {
-		smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
-	} else if (!smiley->icon && smiley->loader) {
-		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-		if (smiley->icon)
-			g_object_ref(G_OBJECT(smiley->icon));
+	if (!smiley->icon) {
+		if (smiley->file) {
+			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+		} else if (smiley->loader) {
+			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+			if (smiley->icon)
+				g_object_ref(G_OBJECT(smiley->icon));
+		}
 	}
 
 	return smiley->icon;
@@ -3692,22 +3693,12 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 	image->filesel = NULL;
 
 	if (save->data && save->datasize) {
-#if GLIB_CHECK_VERSION(2,8,0)
 		g_file_set_contents(filename, save->data, save->datasize, &error);
-#else
-		purple_util_write_data_to_file_absolute(filename, save->data, save->datasize);
-#endif
 	} else {
 		gchar *type = NULL;
-#if GTK_CHECK_VERSION(2,2,0)
 		GSList *formats = gdk_pixbuf_get_formats();
-#else
-		char *basename = g_path_get_basename(filename);
-		char *ext = strrchr(basename, '.');
-#endif
 		char *newfilename;
 
-#if GTK_CHECK_VERSION(2,2,0)
 		while (formats) {
 			GdkPixbufFormat *format = formats->data;
 			gchar **extensions = gdk_pixbuf_format_get_extensions(format);
@@ -3734,31 +3725,14 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 		}
 
 		g_slist_free(formats);
-#else
-		/* this is really ugly code, but I think it will work */
-		if (ext) {
-			ext++;
-			if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
-				type = g_strdup("jpeg");
-			else if (!g_ascii_strcasecmp(ext, "png"))
-				type = g_strdup("png");
-		}
-
-		g_free(basename);
-#endif
 
 		/* If I can't find a valid type, I will just tell the user about it and then assume
 		   it's a png */
 		if (!type){
 			char *basename, *tmp;
 			char *dirname;
-#if GTK_CHECK_VERSION(2,4,0)
 			GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 							_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
-#else
-			GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("Unrecognized file type\n\nDefaulting to PNG."));
-#endif
 
 			g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 			gtk_widget_show(dialog);
@@ -3787,20 +3761,14 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 	}
 
 	if (error){
-#if GTK_CHECK_VERSION(2,4,0)
 		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("<span size='larger' weight='bold'>Error saving image</span>\n\n%s"), error->message);
-#else
-		GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-				_("Error saving image\n\n%s"), error->message);
-#endif
 		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show(dialog);
 		g_error_free(error);
 	}
 }
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
 image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSave *save)
 {
@@ -3814,32 +3782,6 @@ image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSa
 	}
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-static void
-image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImageSave *save)
-{
-	gchar *filename;
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-
-	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(image->filesel)));
-
-	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
-		gchar *dirname;
-		/* append a / is needed */
-		if (filename[strlen(filename) - 1] != G_DIR_SEPARATOR) {
-			dirname = g_strconcat(filename, G_DIR_SEPARATOR_S, NULL);
-		} else {
-			dirname = g_strdup(filename);
-		}
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), dirname);
-		g_free(dirname);
-		g_free(filename);
-		return;
-	}
-#endif /* FILECHOOSER */
-#if 0 /* mismatched curly braces */
-	}
-#endif
 
 	/*
 	 * XXX - We should probably prompt the user to determine if they really
@@ -3857,15 +3799,6 @@ image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImageSave *save)
 	g_free(filename);
 }
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-image_save_cancel_cb(GtkIMHtmlImage *image)
-{
-	gtk_widget_destroy(image->filesel);
-	image->filesel = NULL;
-}
-#endif /* FILECHOOSER */
-
 static void
 gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
@@ -3876,7 +3809,6 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	image->filesel = gtk_file_chooser_dialog_new(_("Save Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -3888,17 +3820,6 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(image->filesel), image->filename);
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(image->filesel)), "response",
 					 G_CALLBACK(image_save_check_if_exists_cb), save);
-#else /* FILECHOOSER */
-	image->filesel = gtk_file_selection_new(_("Save Image"));
-	if (image->filename != NULL)
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), image->filename);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)), "delete_event",
-							 G_CALLBACK(image_save_cancel_cb), image);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button),
-							 "clicked", G_CALLBACK(image_save_cancel_cb), image);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
-					 G_CALLBACK(image_save_check_if_exists_cb), save);
-#endif /* FILECHOOSER */
 
 	gtk_widget_show(image->filesel);
 }
@@ -5030,9 +4951,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 
 	if (imhtml_smiley && imhtml_smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) {
 		ebox = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
-#endif
 		gtk_widget_show(ebox);
 	}
 

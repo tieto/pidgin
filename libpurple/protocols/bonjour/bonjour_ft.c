@@ -747,8 +747,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	XepIq *iq;
 	xmlnode *query, *streamhost;
 	gchar *port;
-	const char *next_ip, *local_ip;
-	const char token [] = ";";
+	GSList *local_ips;
 	BonjourData *bd;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
@@ -773,17 +772,16 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	xfer->local_port = purple_network_get_port_from_fd(sock);
 
-	local_ip = purple_network_get_my_ip_ext2(sock);
-	/* cheat a little here - the intent of the "const" attribute is to make it clear that the string doesn't need to be freed */
-	next_ip = strtok((char *)local_ip, token);
+	local_ips = bonjour_jabber_get_local_ips(sock);
 
 	port = g_strdup_printf("%hu", xfer->local_port);
-	while(next_ip != NULL) {
+	while(local_ips) {
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", xf->sid);
-		xmlnode_set_attrib(streamhost, "host", next_ip);
+		xmlnode_set_attrib(streamhost, "host", local_ips->data);
 		xmlnode_set_attrib(streamhost, "port", port);
-		next_ip = strtok(NULL, token);
+		g_free(local_ips->data);
+		local_ips = g_slist_delete_link(local_ips, local_ips);
 	}
 	g_free(port);
 
@@ -796,15 +794,17 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 	XepXfer *xf;
 	if(xfer == NULL)
 		return;
+
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
 	xf = xfer->data;
+
 	purple_network_listen_map_external(FALSE);
 	xf->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 						      bonjour_bytestreams_listen, xfer);
 	purple_network_listen_map_external(TRUE);
-	if (xf->listen_data == NULL) {
+	if (xf->listen_data == NULL)
 		purple_xfer_cancel_local(xfer);
-	}
+
 	return;
 }
 

@@ -545,31 +545,6 @@ xmlnode_to_formatted_str(const xmlnode *node, int *len)
 	return xml_with_declaration;
 }
 
-static char *purple_unescape_text(const char *in)
-{
-    GString *ret;
-    const char *c = in;
-
-    if (in == NULL)
-        return NULL;
-
-    ret = g_string_new("");
-    while (*c) {
-        int len;
-        const char *ent;
-
-        if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
-            g_string_append(ret, ent);
-            c += len;
-        } else {
-            g_string_append_c(ret, *c);
-            c++;
-        }
-    }
-
-    return g_string_free(ret, FALSE);
-}
-
 struct _xmlnode_parser_data {
 	xmlnode *current;
 	gboolean error;
