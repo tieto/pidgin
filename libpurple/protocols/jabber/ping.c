@@ -74,7 +74,7 @@ void jabber_keepalive_ping(JabberStream *js)
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
 	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, "urn:xmpp:ping");
+	xmlnode_set_namespace(ping, NS_PING);
 
 	jabber_iq_set_callback(iq, jabber_keepalive_pong_cb, NULL);
 	jabber_iq_send(iq);
@@ -90,7 +90,7 @@ gboolean jabber_ping_jid(JabberStream *js, const char *jid)
 		xmlnode_set_attrib(iq->node, "to", jid);
 
 	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, "urn:xmpp:ping");
+	xmlnode_set_namespace(ping, NS_PING);
 
 	jabber_iq_set_callback(iq, jabber_ping_result_cb, NULL);
 	jabber_iq_send(iq);

@@ -330,8 +330,8 @@ jingle_content_get_transport(JingleContent *content)
 void
 jingle_content_set_session(JingleContent *content, JingleSession *session)
 {
-	JINGLE_IS_CONTENT(content);
-	JINGLE_IS_SESSION(session);
+	g_return_if_fail(JINGLE_IS_CONTENT(content));
+	g_return_if_fail(JINGLE_IS_SESSION(session));
 	g_object_set(content, "session", session, NULL);
 }
 

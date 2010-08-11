@@ -25,7 +25,6 @@
 #ifndef _QQ_QQ_H_
 #define _QQ_QQ_H_
 
-#include <glib.h>
 #include "internal.h"
 #include "ft.h"
 #include "circbuffer.h"

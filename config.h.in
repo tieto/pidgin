@@ -103,6 +103,9 @@
 /* Define if you have GnuTLS */
 #undef HAVE_GNUTLS
 
+/* Define if your gnutls has the GNUTLS_CERT_INSECURE_ALGORITHM flag */
+#undef HAVE_GNUTLS_CERT_INSECURE_ALGORITHM
+
 /* Define to 1 if you have the <gnutls/gnutls.h> header file. */
 #undef HAVE_GNUTLS_GNUTLS_H
 
@@ -286,7 +289,7 @@
 /* Define if struct sockaddr has an sa_len member */
 #undef HAVE_STRUCT_SOCKADDR_SA_LEN
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
+/* Define to 1 if `struct tm' is a member of `tm_zone'. */
 #undef HAVE_STRUCT_TM_TM_ZONE
 
 /* Define to 1 if you have the <sys/cdefs.h> header file. */
@@ -402,6 +405,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION

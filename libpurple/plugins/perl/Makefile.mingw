@@ -7,10 +7,12 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
+
 TARGET = perl
 
 # Perl headers with /* /* */ type comments.. Turn off warnings.
-CFLAGS += -Wno-comment
+GCCWARNINGS += -Wno-comment
 
 ##
 ## INCLUDE PATHS

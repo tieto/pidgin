@@ -62,11 +62,6 @@ jabber_parser_element_start_libxml(void *user_data,
 				g_free(attrib);
 			}
 		}
-		if(js->protocol_version == JABBER_PROTO_0_9)
-			js->auth_type = JABBER_AUTH_IQ_AUTH;
-
-		if(js->state == JABBER_STREAM_INITIALIZING || js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)
-			jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	} else {
 
 		if(js->current)
@@ -150,10 +145,19 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 	JabberStream *js = user_data;
 
 	if (error->level == XML_ERR_WARNING && error->message != NULL
-			&& strcmp(error->message, "xmlns: URI vcard-temp is not absolute\n") == 0)
+			&& g_str_equal(error->message, "xmlns: URI vcard-temp is not absolute\n"))
 		/*
 		 * This message happens when parsing vcards, and is normal, so don't
 		 * bother logging it because people scare easily.
+		 */
+		return;
+
+	if (error->level == XML_ERR_FATAL && error->message != NULL
+			&& g_str_equal(error->message, "Extra content at the end of the document\n"))
+		/*
+		 * This is probably more annoying than the vcard-temp error; it occurs
+		 * because we disconnect in most cases without waiting for the receiving
+		 * </stream:stream> (limitations of libpurple)
 		 */
 		return;
 
@@ -255,6 +259,18 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 				                                _("XML Parse error"));
 				break;
 		}
+	}
+
+	if (js->protocol_version == JABBER_PROTO_0_9 && !js->gc->disconnect_timeout &&
+			(js->state == JABBER_STREAM_INITIALIZING ||
+			 js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)) {
+		/*
+		 * Legacy servers don't advertise features, so if we've just gotten
+		 * the opening <stream:stream> and there was no version, we need to
+		 * immediately start legacy IQ auth.
+		 */
+		js->auth_type = JABBER_AUTH_IQ_AUTH;
+		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	}
 }
 

@@ -32,7 +32,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
+SUBDIRS = $(GCONF_DIR) plugins protocols . tests example
 
 purple_coresources = \
 	account.c \

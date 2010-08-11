@@ -40,13 +40,13 @@ Yahoo.
 The following options are provided by \fBfinch\fR using the standard GNU
 command line syntax:
 .TP
+.B \-c, \-\-config=\fIDIR\fB
+Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
+.TP
 .B \-d, \-\-debug
 Print debugging messages to stderr and start with the \fBDebug\fR window. The
 messages shown in the \fBDebug\fR window are the same as the ones printed in
 stderr.
-.TP
-.B \-c, \-\-config=\fIDIR\fB
-Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .TP
 .B \-h, \-\-help
 Print this help and exit.
@@ -114,7 +114,7 @@ Jump to the previous URGENT (highlighted) window.
 .B Ctrl \+ o \fR or \fB F10
 Bring up the menu (if there is one) for a window.
 .TP
-.B F11
+.B F11 \fR or \fB Ctrl \+ x
 Popup the context menu (if there is one) for the selected widget.
 .TP
 .B Alt \+ /

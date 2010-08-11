@@ -21,8 +21,6 @@
  *
  */
 
-#include <string.h>
-
 #include "internal.h"
 
 #include "account.h"

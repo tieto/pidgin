@@ -26,8 +26,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-
 #include "internal.h"
 #include "certificate.h"
 #include "dbus-maybe.h"
@@ -97,8 +95,8 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "automatically checked.");
 			break;
 		case PURPLE_CERTIFICATE_CA_UNKNOWN:
-			return _("The root certificate this one claims to be issued by is "
-			         "unknown to Pidgin.");
+			return _("The certificate is not trusted because no certificate "
+			         "that can verify it is currently trusted.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
 			return _("The certificate is not valid yet.");

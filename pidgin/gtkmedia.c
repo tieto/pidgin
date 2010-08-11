@@ -23,9 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-#include "debug.h"
 #include "internal.h"
+#include "debug.h"
 #include "connection.h"
 #include "media.h"
 #include "mediamanager.h"
@@ -89,6 +88,7 @@ struct _PidginMediaPrivate
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
+	GtkWidget *hold;
 	GtkWidget *mute;
 	GtkWidget *pause;
 
@@ -184,6 +184,15 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(PidginMediaPrivate));
+}
+
+static void
+pidgin_media_hold_toggled(GtkToggleButton *toggle, PidginMedia *media)
+{
+	purple_media_stream_info(media->priv->media,
+			gtk_toggle_button_get_active(toggle) ?
+			PURPLE_MEDIA_INFO_HOLD : PURPLE_MEDIA_INFO_UNHOLD,
+			NULL, NULL, TRUE);
 }
 
 static void
@@ -633,6 +642,16 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 				FALSE, FALSE, 0);
 		gtk_widget_show(GTK_WIDGET(button_widget));
 		gtk_widget_show(send_widget);
+
+		/* Hold button */
+		gtkmedia->priv->hold =
+				gtk_toggle_button_new_with_mnemonic("_Hold");
+		g_signal_connect(gtkmedia->priv->hold, "toggled",
+				G_CALLBACK(pidgin_media_hold_toggled),
+				gtkmedia);
+		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
+				FALSE, FALSE, 0);
+		gtk_widget_show(gtkmedia->priv->hold);
 	} else {
 		send_widget = gtkmedia->priv->send_widget;
 		button_widget = gtkmedia->priv->button_widget;

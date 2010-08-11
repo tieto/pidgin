@@ -5,8 +5,11 @@
 #
 
 PIDGIN_TREE_TOP := ../../../..
-GCCWARNINGS := -Wno-comment -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wpointer-arith -Wundef -Wno-unused
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+GCCWARNINGS += -Wno-comment -Wno-unused -Wno-nested-externs
+
+DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
 
 TARGET = Purple
 AUTOSPLIT = lib/auto/Purple/autosplit.ix

@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gntmarshal.h"
@@ -284,7 +285,7 @@ gnt_entry_draw(GntWidget *widget)
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
 	else
-		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+		mvwprintw(widget->window, 0, 0, "%s", C_(entry->scroll));
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
@@ -495,7 +496,7 @@ suggest_show(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down", NULL);
 		return TRUE;
 	}
 	return show_suggest_dropdown(entry);
@@ -1044,8 +1045,11 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 		snprintf(entry->start, len + 1, "%s", text);
 	entry->end = entry->start + len;
 
-	entry->scroll = entry->start + scroll;
-	entry->cursor = entry->end - cursor;
+	if ((entry->scroll = entry->start + scroll) > entry->end)
+		entry->scroll = entry->end;
+
+	if ((entry->cursor = entry->end - cursor) > entry->end)
+		entry->cursor = entry->end;
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(entry), GNT_WIDGET_MAPPED))
 		entry_redraw(GNT_WIDGET(entry));

@@ -178,8 +178,10 @@ void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
  * data from the socket.
  *
  * @param servconn The servconn.
+ *
+ * @return @c NULL if servconn was destroyed, 'servconn' otherwise.
  */
-void msn_servconn_process_data(MsnServConn *servconn);
+MsnServConn *msn_servconn_process_data(MsnServConn *servconn);
 
 /**
  * Set a idle timeout fot this servconn

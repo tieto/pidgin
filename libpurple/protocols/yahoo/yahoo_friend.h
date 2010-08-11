@@ -41,6 +41,7 @@ typedef enum {
 	YAHOO_P2PSTATUS_WE_ARE_CLIENT
 } YahooP2PStatus;
 
+
 /* these are called friends instead of buddies mainly so I can use variables
  * named f and not confuse them with variables named b
  */
@@ -54,7 +55,7 @@ typedef struct _YahooFriend {
 	gchar *ip;
 	gboolean bicon_sent_request;
 	YahooPresenceVisibility presence;
-	int protocol; /* 1=LCS, 2=MSN*/
+	YahooFederation fed; 
 	long int version_id;
 	YahooPersonalDetails ypd;
 	YahooP2PStatus p2p_status;

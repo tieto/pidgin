@@ -676,6 +676,13 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			outinfo->sessionlen = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
+		} else if (type == 0x0014) {
+			/*
+			 * My instance number.
+			 */
+			guint8 instance_number;
+			instance_number = byte_stream_get8(bs);
+
 		} else if (type == 0x0019) {
 			/*
 			 * OSCAR short capability information.  A shortened
@@ -797,8 +804,30 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x001f) {
 			/*
+			 * Upper bytes of user flags.  Can be any size
+			 *
 			 * Seen on a buddy using DeadAIM.  Data was 4 bytes:
 			 * 0x00 00 00 10
+			 */
+
+		} else if (type == 0x0023) {
+			/*
+			 * Last Buddy Feed update time, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0026) {
+			/*
+			 * Time that the profile was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0027) {
+			/*
+			 * Time that the away message was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x002a) {
+			/*
+			 * Country code based on GeoIP data.
 			 */
 
 		} else {

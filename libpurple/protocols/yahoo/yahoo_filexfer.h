@@ -43,6 +43,18 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
 PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who);
 
 /**
+ * Returns TRUE if the buddy can receive file, FALSE otherwise.
+ * Federated users cannot receive files. So this will return FALSE only
+ * for them.
+ *
+ * @param gc The connection
+ * @param who The name of the remote user
+ *
+ * @return TRUE or FALSE
+ */
+gboolean yahoo_can_receive_file(PurpleConnection *gc, const char *who);
+
+/**
  * Send a file.
  *
  * @param gc The PurpleConnection handle.

@@ -374,6 +374,7 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 	gnt_widget_from_xmlnode(node, data, num);
 
 	xmlFreeDoc(doc);
+	xmlFreeParserCtxt(ctxt);
 	xmlCleanupParser();
 	va_end(list);
 	g_free(data);
@@ -470,6 +471,7 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv)
 		xmlFreeDoc(doc);
 		ret = TRUE;
 	}
+	xmlFreeParserCtxt(ctxt);
 	xmlCleanupParser();
 	return ret;
 #endif

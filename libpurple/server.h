@@ -168,6 +168,14 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
 
+/**
+ * Called by a prpl when an account has joined a chat.
+ *
+ * @param gc   The connection on which the chat was joined. 
+ * @param id   The id of the chat, assigned by the prpl.
+ * @param name The name of the chat.
+ * @return     The resulting conversation
+ */
 PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
 /**
@@ -181,7 +189,24 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
  */
 void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
 
+/**
+ * Called by a prpl when an account has left a chat.
+ *
+ * @param g  The connection on which the chat was left.
+ * @param id The id of the chat, as assigned by the prpl.
+ */
 void serv_got_chat_left(PurpleConnection *g, int id);
+
+/**
+ * Called by a prpl when a message has been received in a chat.
+ *
+ * @param g       The connection on which the message was received.
+ * @param id      The id of the chat, as assigned by the prpl.
+ * @param who     The name of the user who sent the message.
+ * @param flags   The flags of the message.
+ * @param message The message received in the chat.
+ * @param mtime   The time when the message was received.
+ */
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);

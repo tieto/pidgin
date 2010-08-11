@@ -22,8 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "debug.h"
 #include "internal.h"
+#include "debug.h"
 #include "server.h"
 #include "cipher.h"
 #include "request.h"

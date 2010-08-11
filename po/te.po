@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Telugu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-11-14 20:36-0500\n"
 "PO-Revision-Date: 2007-11-14 14:05+0530\n"
 "Last-Translator: RKVS Raman <raman@cdacbangalore.in>\n"
 "Language-Team: GIST CDAC Pune / BharateeyaOO.o <info.gist@cdac.in / "
@@ -50,6 +50,7 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "పొరపాటు "
 
@@ -575,11 +576,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "తిరిగి సాధ్యపడే అకౌంటు"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-
 msgid "No such command."
 msgstr "అలాంటి కమాండ్ లేదు."
 
@@ -622,6 +618,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "మీరు చాట్‌లో సంభాషిస్తున్నారు. "
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "లాగింగ్ ప్రారంభమైంది. ఈ సంభాషణలోని రాబోయే సందేశాలు లాగ్ అవుతాయి."
 
@@ -662,6 +663,10 @@ msgstr "/ఆప్షన్స్/ఎనేబుల్ లాగింగ్ "
 msgid "Enable Sounds"
 msgstr "శబ్ధాలకు వీలుకల్పించు:"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "కనెక్ట్ చేయడం సాధ్యంమగుట లేదు. "
+
 msgid "<AUTO-REPLY> "
 msgstr "<ఆటో-రిప్లై> "
 
@@ -671,7 +676,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "వినియోగదారుల జాబితా:\n"
 msgstr[1] "వినియోగదారుల జాబితా:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "సపోర్టు చేసిన డీబగ్ ఆప్షన్లు : వెర్షన్ "
 
 msgid "No such command (in this context)."
@@ -791,6 +797,7 @@ msgstr "మిగిలినది "
 
 # Autostart
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "స్థాయి "
 
@@ -908,7 +915,7 @@ msgid "System Log"
 msgstr "సిస్టం లాగ్"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "లెక్కిస్తూ..."
 
 msgid "Hangup"
@@ -986,6 +993,9 @@ msgstr "ఆహ్వానించు "
 msgid "(none)"
 msgstr "(ఏమీ లేదు)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "UIN"
@@ -1426,6 +1436,8 @@ msgstr "స్థాయిని తొలగించు"
 msgid "Saved Statuses"
 msgstr "సేవ్ చేసిన స్థాయులు"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "శీర్షిక "
 
@@ -1592,6 +1604,35 @@ msgid ""
 "conversation into the current conversation."
 msgstr "కొత్త సంభాషణ ప్రారంభించినప్పుడు ఈ ప్లగ్‌ఇన్ ఇదివరకటి సంభాషణను ప్రస్తుత సంభాషణలో చేరుస్తుంది."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 # zephyr has several exposures
 # NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
 # OPSTAFF "hidden"
@@ -1649,28 +1690,6 @@ msgstr "Gntచివరిలాగ్"
 
 msgid "Lastlog plugin."
 msgstr "చివరిలాగ్ ప్లగ్ ఇన్"
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "URL"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 # And now for the buttons
 msgid "accounts"
@@ -1738,6 +1757,41 @@ msgstr "మిత్రులు "
 msgid "buddy list"
 msgstr "మిత్రుల జాబితా"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "సూచించిన స్క్రీన్‌పేరుకు విలువలేదు."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr ""
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr ""
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "సూచించిన స్క్రీన్‌పేరుకు విలువలేదు."
+
+msgid "The certificate has been revoked."
+msgstr ""
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "అజ్ఞాత సైనాన్ పొరపాటు సంభవించింది: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr ""
 
@@ -1779,60 +1833,23 @@ msgstr ""
 msgid "_View Certificate..."
 msgstr ""
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
+msgid "The certificate for %s could not be validated."
 msgstr ""
 
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr ""
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 #, fuzzy
 msgid "SSL Certificate Error"
 msgstr "రైట్ చేయడంలో పొరపాటు"
 
 #, fuzzy
-msgid "Invalid certificate chain"
-msgstr "చెల్లని శీర్షిక"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
+msgid "Unable to validate certificate"
+msgstr "ప్రమాణీకరణలో అసమర్థత: %s"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-
-msgid "Invalid certificate authority signature"
-msgstr ""
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 
 #. Make messages
@@ -1851,6 +1868,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "సర్వర్ సమాచారం "
 
+#. show error to user
 msgid "Registration Error"
 msgstr "నమోదులో పొరపాటు "
 
@@ -1869,8 +1887,8 @@ msgstr "+++ %s సైన్డ్ ఆఫ్ "
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+#. Undocumented
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "అజ్ఞాత పొరపాటు"
 
@@ -1977,6 +1995,10 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "రిసాల్వ్ చేయడంలో పొరపాటు %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Thread ను సృష్టించడంలో వైఫల్యం: %s"
@@ -1984,6 +2006,7 @@ msgstr "Thread ను సృష్టించడంలో వైఫల్యం
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+#. Data is assumed to be the destination bn
 #, fuzzy
 msgid "Unknown reason"
 msgstr "కారణం తెలియదు. "
@@ -2063,6 +2086,10 @@ msgstr "%s కు %s పంపదలుచుకున్నారు  "
 msgid "Starting transfer of %s from %s"
 msgstr "%s నుండి %s ను ట్రాన్స్ఫర్ చేయడం ప్రారంభిస్తున్నాం"
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "%s ఫైలు బదిలీ పూర్తయినది "
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "%s ఫైలు బదిలీ పూర్తయినది "
@@ -2070,19 +2097,19 @@ msgstr "%s ఫైలు బదిలీ పూర్తయినది "
 msgid "File transfer complete"
 msgstr "ఫైలు బదిలీ  పూర్తయినది"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "%s ఫైలు బదిలీని మీరు రద్దుచేశారు"
 
 msgid "File transfer cancelled"
 msgstr "ఫైలు బదిలీ రద్దయినది"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s బదిలీని %s రద్దు చేశారు"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr " ఫైలు బదిలీని %s రద్దు చేశారు"
 
 #, c-format
@@ -2257,6 +2284,33 @@ msgstr "<font color=\"red\"><b>ఫైలును రీడ్ చేయడం �
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ఆటో రిప్లై>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "అజ్ఞాత సైనాన్ పొరపాటు సంభవించింది: %s."
+
+#, fuzzy
+msgid "Conference error"
+msgstr "సంభాషణ ముగిసింది"
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "కనెక్షన్ ఏర్పాటులో పొరపాటు"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2562,14 +2616,15 @@ msgstr "సర్వర్ గా టెస్ట్ ప్లగ్‌ఇన్
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr "సర్వర్ గా టెస్ట్ ప్లగ్‌ఇన్ IPC సపోర్టు.IPC కమాండ్స్ ను ఇది నమోదు చేస్తుంది."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "చేరడం/భాగంగా ఉండటం, దాచి ఉంచడం కోసం కన్ఫిగర్ చేయండి"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "కనీస రూమ్ పరిమాణం"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "వినియోగదారు సచేతనంగా లేనప్పుడు టైమ్అవుట్ (నిముషాల్లో)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr ""
@@ -3128,6 +3183,7 @@ msgstr "పేరులోని మొదటి భాగం"
 msgid "Last name"
 msgstr "పేరులోని చివరి భాగం"
 
+#. email
 msgid "Email"
 msgstr "ఇ-మెయిల్ "
 
@@ -3273,12 +3329,14 @@ msgstr "నగరం "
 msgid "Year of birth"
 msgstr "పుట్టిన సంవత్సరం"
 
+#. gender
 msgid "Gender"
 msgstr "లింగము"
 
 msgid "Male or female"
 msgstr "పురుషుడా లేక స్త్రీనా"
 
+#. 0
 msgid "Male"
 msgstr "పురుష "
 
@@ -3348,6 +3406,7 @@ msgstr "దూరంగా "
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "పేరులోని మొదటి భాగం"
 
@@ -4072,6 +4131,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "వీధి పేరు "
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "సంపూర్ణ అడ్రస్ "
 
@@ -4101,6 +4165,7 @@ msgstr "విభాగం పేరు "
 msgid "Role"
 msgstr "చేస్తున్న పని "
 
+#. birthday
 msgid "Birthday"
 msgstr "పుట్టినరోజు "
 
@@ -4155,16 +4220,21 @@ msgstr "ఫొటో "
 msgid "Logo"
 msgstr "లోగో "
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "మీ మిత్రుల లిస్టునుండి %s ను  తొలగించదల్చుకున్నారు. కొనసాగించదల్చుకున్నారా? "
+
+# && NOT ME
+msgid "Cancel Presence Notification"
+msgstr "మీ అస్తిత్వపు సూచనను రద్దుచేయండి"
+
 msgid "Un-hide From"
 msgstr "ముందుకు రండి"
 
 msgid "Temporarily Hide From"
 msgstr "తాత్కాలికంగా దాగండి"
-
-# && NOT ME
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "మీ అస్తిత్వపు సూచనను రద్దుచేయండి"
 
 msgid "(Re-)Request authorization"
 msgstr "(Re-) ప్రమాణీకరణకోసం విజ్ఞప్తి చేయండి"
@@ -4172,11 +4242,13 @@ msgstr "(Re-) ప్రమాణీకరణకోసం విజ్ఞప్�
 # if(NOT ME)
 # shouldn't this just happen automatically when the buddy is
 # removed?
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "తొలగించు"
+
+msgid "Initiate _Chat"
+msgstr "_సంభాషణను ప్రారంభించండి"
 
 #, fuzzy
 msgid "Log In"
@@ -4198,6 +4270,7 @@ msgstr "అంతరాయము కలిగించవద్దు"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "పేరులోని చివరిభాగం "
 
@@ -4425,10 +4498,6 @@ msgid "Change Registration"
 msgstr ""
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "సర్వర్‌కు కనెక్ట్ చేయడంలో వైఫల్యం. "
-
-#, fuzzy
 msgid "Error unregistering account"
 msgstr "అకౌంటు సమాచారాన్ని మార్చడంలో పొరపాటు. "
 
@@ -4455,6 +4524,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "ప్రమాణీకరణ జరగలేదు "
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "స్వభావం "
 
@@ -4479,6 +4549,7 @@ msgstr "ఎవరూ లేరు (To pending)"
 msgid "None"
 msgstr "ఎవరూ లేరు"
 
+#. subscription type
 msgid "Subscription"
 msgstr "చందా "
 
@@ -4807,7 +4878,8 @@ msgstr "కన్ఫిగరేషన్:  సంభాషణ రూమ్ న�
 msgid "configure:  Configure a chat room."
 msgstr "కన్ఫిగర్: సంభాషణ రూమ్ ను కన్ఫిగర్ చేయండి. "
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [room]: రూమ్ ను వదలండి.  "
 
 msgid "register:  Register with a chat room."
@@ -4831,7 +4903,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: వినియోగదారు పాత్రను "
 "రూమ్ తో సెట్ చేయండి."
@@ -4993,10 +5065,6 @@ msgstr "ఫైలు ఓపెన్ చేయుచున్నప్పుడ�
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "ఫైలు బదిలీలో వైఫల్యం"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "ఫైలు '%s': %s ను తెరవడంలో వైఫల్యం"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -5275,8 +5343,8 @@ msgstr " మిత్రుని ఫైలు సరిగాలేదు"
 msgid "Not expected"
 msgstr "ఆశించినది కాదు "
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "స్నేహపాత్రమైన పేరు  త్వరగా మారుతోంది"
 
 #, c-format
@@ -5340,6 +5408,22 @@ msgstr "మనోభీష్ట సంబంధం "
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "సంబంధాన్ని తొలగించండి "
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
 
 #, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5509,11 +5593,33 @@ msgstr "హాట్ మెయిల్ ఇన్ బాక్స్ ను త�
 msgid "Send to Mobile"
 msgstr "మొబైల్‌కు పంపండి"
 
-msgid "Initiate _Chat"
-msgstr "_సంభాషణను ప్రారంభించండి"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSNకోసం SSL సహకారం అవసరం. దయచేసి సహకరించే SSL లైబ్రరీని ఏర్పాటు చేయండి."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be valid email addresses."
+msgstr ""
+"మిత్రుడు  %s ను చేర్చడం సాధ్యం కాదు, ఎందుకంటే స్క్రీన్‌పేరుకు విలువ లేదు. స్క్రీన్‌పేరులు విధిగా "
+"అక్షరంతో ప్రారంభమై తర్వాత అక్షరాలు, అంకెలు మరియు స్పేసులు ఉండవచ్చు, లేదా కేవలం అంకెలుమాత్రమే "
+"ఉండవచ్చు."
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "చేర్చుట సాధ్యం కాదు. "
+
+msgid "Authorization Request Message:"
+msgstr "ఆథరైజేషన్ కోసం విజ్ఞప్తి సందేశం: "
+
+msgid "Please authorize me!"
+msgstr "దయచేసి నన్ను ఆథరైజ్ చేయండి!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_సరే"
 
 msgid "Error retrieving profile"
 msgstr "ప్రొఫైల్‌ను బయటకు తీసుకురావడంలో పొరపాటు"
@@ -5717,6 +5823,10 @@ msgstr "సామాన్య ప్రమాణీకరణ వైఫల్య�
 msgid "%s just sent you a Nudge!"
 msgstr "%s ఇప్పుడే మీకొక పలకరింపును పంపారు!"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "మీ అన్వేషణా ఫలితాలు ఇలా ఉన్నాయి"
+
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
@@ -5731,13 +5841,15 @@ msgstr "వినియోగదారును చేర్చలేని స�
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr ""
 
+# msgstr "అజ్ఞాత పొరపాటు"
 #, fuzzy
-msgid "The following users are missing from your addressbook"
-msgstr "మీ అన్వేషణా ఫలితాలు ఇలా ఉన్నాయి"
+msgid "Unable to remove user"
+msgstr "వినియోగదారును చేర్చలేని స్థితి "
 
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
@@ -5855,7 +5967,7 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5905,6 +6017,10 @@ msgstr "ఈ మిత్రుని మీ మిత్రుల లిస్�
 #, fuzzy
 msgid "The username specified is invalid."
 msgstr "సూచించిన స్క్రీన్‌పేరుకు విలువలేదు."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "స్నేహపాత్రమైన పేరు  త్వరగా మారుతోంది"
 
 msgid "This Hotmail account may not be active."
 msgstr "ఈ హాట్ మెయిల్ అకౌంటు సచేతనంగా లేకపోవచ్చు."
@@ -5985,6 +6101,389 @@ msgstr "%s మిమ్మల్ని తన మిత్రుల జాబి
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s మిమ్మల్ని తన మిత్రుల జాబితా నుంచి తొలగించారు."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "మీ వర్తమాన స్వభావం "
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "వినియోగదారుని మోడ్స్ "
+
+# if (js->protocol_options & CHANGE_PASSWORD) {
+#, fuzzy
+msgid "Change your Mood"
+msgstr "పాస్‌వర్డ్‌ను మార్చండి."
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "నేను ప్రస్తుతం ఇక్కడ లేను"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "రైట్ చేయడంలో పొరపాటు"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "ప్రొఫైల్ "
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "ఇంటిపేరు "
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "మొబైల్ ఫోన్ నెంబరును సెట్ చేయండి."
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "ప్రొఫైల్ "
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "సుమారు %s"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "పాస్‌వర్డ్‌ను మార్చండి ..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "పాస్‌వర్డ్‌ను మార్చండి ..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "View _Log"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "సుమారు %s"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "ఈ సందేశం చాలా పెద్దది."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "లాగింగ్ "
+
+# TODO: Would be nice to prompt if not set!
+# *  Pidgin_request_fields(gc, _("Server Address"),...);
+# ...but for now just error out with a nice message.
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"సర్వర్‌కు కనెక్ట్ చేయడం సాధ్యం కాదు. మీరు కనెక్ట్ చేయదల్చుకున్న సెర్వర్ అడ్రసును ఎంటర్ చేయండి. "
+
+# connect to the server
+#, fuzzy
+msgid "Connecting..."
+msgstr "కనెక్ట్ చేస్తున్నది"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "ముద్దుపేరు "
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "కొత్త జాబర్ అకౌంట్‌ను నమోదు చేయండి"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "దయచేసి, ఈ కింది జాగాల్లోని ఖాళీలను పూర్తిచేయండి"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "సెర్వర్ దొరకడం లేదు;  తర్వాత మరల ప్రయత్నించండి."
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "సురక్ష సమర్థత"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "పాస్ వర్డ్ ను ఎంటర్ చేయండి"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "దేశం "
+
+#, fuzzy
+msgid "Your Language"
+msgstr "ఇష్టపడిన భాష "
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "సాధికారిత అవసరం "
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "సర్వర్ సమాచారం "
+
+#, fuzzy
+msgid "Status Message"
+msgstr "సందేశాలను పంపించు "
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "పేరులోని మధ్యభాగం"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "మొబైల్ ఫోన్ నెంబరును సెట్ చేయండి."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "సర్వర్ "
+
+# connect to the server
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "కనెక్ట్ చేస్తున్నది"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "జాబర్ సందేశంలో పొరపాటు"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "సెర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "మీరు  విజయవంతంగా Qunను సృష్టించగలిగారు"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "జాబర్ సందేశంలో పొరపాటు"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "కనెక్షన్ లో పొరపాటు"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "జాబర్ సందేశంలో పొరపాటు"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "స్ట్రీమ్ పొరపాటు"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "ఐకాన్ లోపం"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "నమోదులో పొరపాటు "
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "కనెక్షన్ లో పొరపాటు"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "చందా "
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "కనెక్షన్ లో పొరపాటు"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "ఫైల్‌ బదిలీ"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "నిక్ ను మార్చజాలదు"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "నమోదులో పొరపాటు "
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "రైట్ చేయడంలో పొరపాటు"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "కోపము "
+
+msgid "Excited"
+msgstr "ఉత్సాహముతో "
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "గ్రూపు:"
+
+msgid "Happy"
+msgstr "సంతోషం "
+
+msgid "In Love"
+msgstr "ప్రేమతో "
+
+msgid "Invincible"
+msgstr "అజేయమైన "
+
+msgid "Sad"
+msgstr "దుఃఖము "
+
+#, fuzzy
+msgid "Hot"
+msgstr "_హోస్ట్:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "నిక్  "
+
+msgid "Sleepy"
+msgstr "నిద్రతో"
+
+#, fuzzy
+msgid "Pending"
+msgstr "పంపుము "
+
+#, fuzzy
+msgid "Invited"
+msgstr "ఆహ్వానించు "
+
+#, fuzzy
+msgid "Rejected"
+msgstr "నిరాకరించు"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "తొలగించు"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "పని సమాచారం "
 
 #, c-format
 msgid "No such user: %s"
@@ -6631,11 +7130,11 @@ msgstr "సెర్వర్ అడ్రసు "
 msgid "Server port"
 msgstr "సెర్వర్ పోర్ట్ "
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "సర్వర్ నుంచి ఊహించని HTTP ప్రతిస్పందన అందింది."
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6643,8 +7142,10 @@ msgstr ""
 "మీరు తరచుగా కనెక్ట్ చేస్తున్నారు, డిస్‌కనెక్ట్ చేస్తున్నారు. పది నిమిషాలు ఆగి మరల ప్రయత్నించండి. మీరు "
 "ప్రయత్నాన్ని కొనసాగిస్తే, మీరు ఇంకా ఎక్కువ కాలం ఆగవలసియుంటుంది."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "కనెక్షన్ ఏర్పాటులో పొరపాటు"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6812,6 +7313,48 @@ msgstr "పూర్తి క్యూ."
 
 msgid "Not while on AOL"
 msgstr "AOL ఉన్నప్పుడు కాదు "
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ఫైలును పంపుట సాధ్యం కాదు. "
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "డైరెక్టరీని పంపలేదు."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "సందేశాన్ని పంపడం కష్టం."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "ఆఫ్ లైన్ సందేశం"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6989,6 +7532,17 @@ msgstr "ప్రస్తుతానికి మీ అకౌంట్ సస
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL సత్వర మెసెంజర్ సర్వీస్ తాత్కాలికంగా అలభ్యం. "
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"మీరు తరచుగా కనెక్ట్ చేస్తున్నారు, డిస్‌కనెక్ట్ చేస్తున్నారు. పది నిమిషాలు ఆగి మరల ప్రయత్నించండి. మీరు "
+"ప్రయత్నాన్ని కొనసాగిస్తే, మీరు ఇంకా ఎక్కువ కాలం ఆగవలసియుంటుంది."
+
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "మీకు వాడుతున్న ఖాతాదారుని వెర్షన్ చాలా పాతది. దయచేసి  %s వద్ద అప్‌గ్రేడ్ చేయండి."
@@ -6996,8 +7550,9 @@ msgstr "మీకు వాడుతున్న ఖాతాదారుని 
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "మీరు తరచుగా కనెక్ట్ చేస్తున్నారు, డిస్‌కనెక్ట్ చేస్తున్నారు. పది నిమిషాలు ఆగి మరల ప్రయత్నించండి. మీరు "
 "ప్రయత్నాన్ని కొనసాగిస్తే, మీరు ఇంకా ఎక్కువ కాలం ఆగవలసియుంటుంది."
@@ -7012,12 +7567,6 @@ msgstr "SecurIDని ఎంటర్ చేయండి"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "డిజిటల్ ప్రదర్శననుండి 6 అంకెల నెంబరును ఎంటర్ చేయండి. "
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_సరే"
-
 msgid "Password sent"
 msgstr "పాస్‌వర్డ్ పంపబడింది"
 
@@ -7026,12 +7575,6 @@ msgstr "కనెక్షన్ ను ప్రారంభించలేక�
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "నాకు అధికారమివ్వండి, తద్వారా మీ పేరును నా మిత్రుల లిస్టులో చేర్చుకుంటాను. "
-
-msgid "Authorization Request Message:"
-msgstr "ఆథరైజేషన్ కోసం విజ్ఞప్తి సందేశం: "
-
-msgid "Please authorize me!"
-msgstr "దయచేసి నన్ను ఆథరైజ్ చేయండి!"
 
 msgid "No reason given."
 msgstr "కారణం ఇవ్వలేదు. "
@@ -7149,27 +7692,35 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
+# TODO: Improve this! message to who or for what conference?
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "సందేశాన్ని పంపలేని అసమర్థత (%s)."
+
 # msgstr[0] "అజ్ఞాత కారణములచేత మీరు %hu సందేశాలను %s నుండి  కోల్పోయినారు. "
 # msgstr[1] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 # Data is assumed to be the destination sn
-#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "సందేశం పంపడం సాధ్యంకాదు: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s కి సందేశం పంపడం కష్టం."
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s కి సందేశం పంపడం కష్టం."
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "వినియోగదారుని జాడ లభించడంలేదు: %s"
 
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 msgid "Unknown reason."
 msgstr "కారణం తెలియదు. "
-
-#, c-format
-msgid "Unable to send message to %s:"
-msgstr "%s కి సందేశం పంపడం కష్టం."
-
-#, c-format
-msgid "User information not available: %s"
-msgstr "వినియోగదారుని జాడ లభించడంలేదు: %s"
 
 msgid "Online Since"
 msgstr "నుండి ఆన్‌లైన్. "
@@ -7179,9 +7730,6 @@ msgstr "నుండి సభ్యుడు."
 
 msgid "Capabilities"
 msgstr "యోగ్యతలు "
-
-msgid "Profile"
-msgstr "ప్రొఫైల్ "
 
 msgid "Your AIM connection may be lost."
 msgstr "మీరు AIM కనెక్షన్ కోల్పోవచ్చు."
@@ -7193,9 +7741,10 @@ msgid ""
 "characters.]"
 msgstr "[ఈ వినియోగదారుని సందేశంలో విలువలేని అక్షరాలున్నందువల్ల ప్రదర్శించుట  సాధ్యపడదు]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "మీరు ప్రయత్నించిన చివరి చర్యను నెరవేర్చడం సాధ్యం కాదు ఎందుకంటే మీరు ధరయొక్క హద్దును దాటిపోయారు. పది "
 "సెకండ్లు ఆగి మరల ప్రయత్నించండి. "
@@ -7362,10 +7911,6 @@ msgstr ""
 "ఉండవచ్చు."
 
 #, fuzzy
-msgid "Unable to Add"
-msgstr "చేర్చుట సాధ్యం కాదు. "
-
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "మిత్రుల లిస్టును పొందుట సాధ్యంకాదు."
 
@@ -7459,6 +8004,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "C_onnect"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "సర్వర్ కనెక్షన్ ను ముగించింది."
+
 msgid "Get AIM Info"
 msgstr "AIM సమాచారాన్ని పొందండి"
 
@@ -7468,6 +8017,10 @@ msgstr "మిత్రుని వ్యాఖ్యను ఎడిట్ చ
 
 msgid "Get Status Msg"
 msgstr "స్టాటస్ సందేశాన్ని తీసుకురండి."
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "ప్రత్యక్ష IM స్థాపించబడింది"
 
 msgid "Direct IM"
 msgstr "డైరెక్ట్ IM"
@@ -8412,9 +8965,9 @@ msgstr "ఫైలు %2$s ను %1$d నిరాకరించింది "
 msgid "File Send"
 msgstr "ఫైలును పంపడంజరిగింది"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
-msgstr ""
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
+msgstr "%s బదిలీని %s రద్దు చేశారు"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8479,6 +9032,10 @@ msgstr "సంభాషణ ముగిసింది"
 # Data is assumed to be the destination sn
 msgid "Unable to send message: "
 msgstr "సందేశం పంపలేని స్థితి:  "
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "%s కి సందేశం పంపడం కష్టం."
 
 msgid "Place Closed"
 msgstr "చోటు లేదు"
@@ -8883,35 +9440,14 @@ msgstr "అత్యంత ఆతృత "
 msgid "Robot"
 msgstr "రోబోట్ "
 
-msgid "Happy"
-msgstr "సంతోషం "
-
-msgid "Sad"
-msgstr "దుఃఖము "
-
-msgid "Angry"
-msgstr "కోపము "
-
 msgid "Jealous"
 msgstr "ఈర్ష్య"
 
 msgid "Ashamed"
 msgstr "సిగ్గుపడిన"
 
-msgid "Invincible"
-msgstr "అజేయమైన "
-
-msgid "In Love"
-msgstr "ప్రేమతో "
-
-msgid "Sleepy"
-msgstr "నిద్రతో"
-
 msgid "Bored"
 msgstr "విసుగుచెందిన "
-
-msgid "Excited"
-msgstr "ఉత్సాహముతో "
 
 msgid "Anxious"
 msgstr "గాబరాతో "
@@ -9412,10 +9948,6 @@ msgstr " SILC కీ పెయిర్: %s ను లోడ్ చేయలే�
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "SILC సెర్వర్‌కు కనెక్ట్ చేయుచున్నది. "
-
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr " SILC కీ పెయిర్: %s ను లోడ్ చేయలేదు"
 
 msgid "Out of memory"
 msgstr "మెమొరీ లేదు. "
@@ -9988,6 +10520,9 @@ msgstr "చాట్ రూమ్ ప్రదేశం "
 msgid "Ignore conference and chatroom invitations"
 msgstr "చాట్ రూమ్ మరియు గోష్టులను పట్టించుకోవద్దు"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "చాట్ రూమ్ జాబితా Url"
 
@@ -10024,6 +10559,10 @@ msgstr "యాహూ! ID"
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo Protocol Plugin"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -10095,8 +10634,24 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "మిత్రుని విస్మరిస్తారా?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "మీ అకౌంట్ లాక్ అయినది. దయచేసి యాహూ! వెబ్‌సైట్‌లో లాగ్‌ఇన్ చేయండి. "
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "తప్పుడు స్క్రీన్ పేరు లేక పాస్‌వర్డ్ "
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr "అజ్ఞాత పొరపాటు సంఖ్య %d. యాహూ! లోకి లాగ్-ఇన్ అవుతోంది. దీనిని వెబ్‌సైట్ సరిచేయవచ్చు."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10195,6 +10750,15 @@ msgstr "వినియోగదారుతో చాట్ లో చేరం
 msgid "Open Inbox"
 msgstr "హాట్ మెయిల్ ఇన్ బాక్స్ ను తెరవండి."
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10279,12 +10843,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "వినియోగదారుని ప్రొఫైల్ కాళీగా ఉంది. "
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s సమావేశానికి మీ ఆహ్వానాన్ని నిరాకరించారు \"%s\" because \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "అహ్వానం నిరాకరించబడింది."
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s సైన్డ్ ఆన్ చేశారు."
 
 msgid "Failed to join chat"
 msgstr "సంభాషణలో చేరడానికి వైఫల్యం. "
@@ -10769,15 +11330,16 @@ msgid ""
 msgstr ""
 "%sను చదువుతున్నప్పుడు పొరపాటు జరిగింది. అవి లోడ్ కాలేదు, మరియు  పాత ఫైలు పేరు %s~గా మార్చబడింది."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 # msgstr "సర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
 msgid "Internet Messenger"
 msgstr "ఇంటర్నెట్ మెసెంజర్"
 
 msgid "Pidgin Internet Messenger"
 msgstr "పిడ్జిన్ ఇంటర్నెట్ మెసెంజర్"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "వివిధ ప్రొటోకాల్స్ కి సత్వర సందేశాన్ని పంపండి"
 
 msgid "Orientation"
 msgstr "దిశ"
@@ -10819,7 +11381,8 @@ msgstr "కొత్త మెయిల్ నోటిఫికేషన్ల�
 msgid "Use this buddy _icon for this account:"
 msgstr "ఈ అకౌంటు కోసం ఈ మిత్రుని ఐకన్ ను ఉపయోగించండి:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "_Advanced"
 
 # Use Global Proxy Settings
@@ -10892,7 +11455,7 @@ msgid "Create _this new account on the server"
 msgstr ""
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "ప్రాక్సీ"
 
 msgid "Enabled"
@@ -10913,6 +11476,149 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
+
+#. Buddy List
+#, fuzzy
+msgid "Background Color"
+msgstr "నేపధ్య ఫాంట్ కలర్ "
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "మీ మిత్రుల జాబితాకు ఈ గ్రూపును చేర్చడం జరిగింది"
+
+#, fuzzy
+msgid "Layout"
+msgstr "సింహం"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "నేపధ్య ఫాంట్ కలర్ "
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Expand"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "నేపధ్యపు రంగును సెలక్ట్ చేయుము."
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_కూలిపోవుట"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "నేపధ్యపు రంగును సెలక్ట్ చేయుము."
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+# Creating the options for the protocol
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "పోర్ట్ "
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+# zephyr has several exposures
+# NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
+# OPSTAFF "hidden"
+# REALM-VISIBLE visible to people in local realm
+# REALM-ANNOUNCED REALM-VISIBLE+ plus your logins/logouts are announced to <login,username,*>
+# NET-VISIBLE REALM-ANNOUNCED, plus visible to people in foreign realm
+# NET-ANNOUNCED NET-VISIBLE, plus logins/logouts are announced	 to <login,username,*>
+# Online will set the user to the exposure they have in their options (defaulting to REALM-VISIBLE),
+# Hidden, will set the user's exposure to OPSTAFF
+# Away won't change their exposure but will set an auto away message (for IMs only)
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "ఆన్‌లైన్ "
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "దూరంగా "
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "ఆఫ్‌లైన్ "
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "%s కోసం వినియోగదారు సమాచారాన్ని  మార్చండి. "
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "రక్తం గ్రూపు"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "సందేశం పంపబడినది"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "%s కోసం వినియోగదారు సమాచారాన్ని  మార్చండి. "
 
 # msgstr ""
 # "<స్పాన్ పరిమాణం='పెద్ద' బరువు='బోల్డ్'>స్వాగతం %s!</స్పాన్>\n"
@@ -11400,7 +12106,7 @@ msgstr "మారు పేరు:"
 msgid "_Group:"
 msgstr "_గ్రూప్:"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr ""
 
 msgid "_Remain in chat after window is closed."
@@ -11433,124 +12139,6 @@ msgstr "/ఉపకరణాలు "
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/మిత్రులు/మిత్రులను వర్గీకరించు"
-
-#. Buddy List
-#, fuzzy
-msgid "Background Color"
-msgstr "నేపధ్య ఫాంట్ కలర్ "
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "మీ మిత్రుల జాబితాకు ఈ గ్రూపును చేర్చడం జరిగింది"
-
-#, fuzzy
-msgid "Layout"
-msgstr "సింహం"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "నేపధ్య ఫాంట్ కలర్ "
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "_Expand"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "నేపధ్యపు రంగును సెలక్ట్ చేయుము."
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_కూలిపోవుట"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "నేపధ్యపు రంగును సెలక్ట్ చేయుము."
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-# Creating the options for the protocol
-#, fuzzy
-msgid "Contact Text"
-msgstr "పోర్ట్ "
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-# zephyr has several exposures
-# NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
-# OPSTAFF "hidden"
-# REALM-VISIBLE visible to people in local realm
-# REALM-ANNOUNCED REALM-VISIBLE+ plus your logins/logouts are announced to <login,username,*>
-# NET-VISIBLE REALM-ANNOUNCED, plus visible to people in foreign realm
-# NET-ANNOUNCED NET-VISIBLE, plus logins/logouts are announced	 to <login,username,*>
-# Online will set the user to the exposure they have in their options (defaulting to REALM-VISIBLE),
-# Hidden, will set the user's exposure to OPSTAFF
-# Away won't change their exposure but will set an auto away message (for IMs only)
-#, fuzzy
-msgid "On-line Text"
-msgstr "ఆన్‌లైన్ "
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "దూరంగా "
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "ఆఫ్‌లైన్ "
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "రక్తం గ్రూపు"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "సందేశం పంపబడినది"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "%s కోసం వినియోగదారు సమాచారాన్ని  మార్చండి. "
 
 msgid "Type the host name for this certificate."
 msgstr ""
@@ -11644,6 +12232,11 @@ msgstr "/_సంభాషణ"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/సంభాషణ/సరికొత్త సత్వర _సందేశం ..."
+
+# Conversations
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/సంభాషణ/ఆహ్వానించుము..."
 
 # Conversations
 msgid "/Conversation/_Find..."
@@ -12081,8 +12674,8 @@ msgstr "స్పానిష్ "
 msgid "Estonian"
 msgstr "బోస్నియన్"
 
-msgid "Euskera(Basque)"
-msgstr "యుస్కెరా (బాస్క్)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "పర్షియన్"
@@ -12288,8 +12881,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
 
 #, fuzzy, c-format
@@ -12580,16 +13177,6 @@ msgstr "పూర్తయిన బదిలీలను క్లియర్_
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "ఫైల్ బదిలీ _వివరాలు"
-
-# Pause button
-#. Pause button
-msgid "_Pause"
-msgstr "_ఆగుము "
-
-# Resume button
-#. Resume button
-msgid "_Resume"
-msgstr "_పునఃప్రారంభించండి."
 
 msgid "Paste as Plain _Text"
 msgstr "సాధారణ _టెక్స్ట గా పేస్ట్ చేయండి"
@@ -12936,60 +13523,47 @@ msgstr "లాగ్ ల ఫోల్టర్ ను బ్రౌజ్_ చే
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. ఇంకా వివరములకు `%s -h' ప్రయత్నించండి.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -h, --help          display this help and exit\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-"                      account(s) to use, separated by commas)\n"
-"  -v, --version       display the current version and exit\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -h, --help          display this help and exit\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-"                      account(s) to use, separated by commas)\n"
-"  -v, --version       display the current version and exit\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -13007,12 +13581,6 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-#, fuzzy
-msgid "Pidgin"
-msgstr "పేజింగ్ "
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
@@ -13023,10 +13591,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "లెక్కిస్తూ..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -13034,6 +13598,13 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+# Pause button
+msgid "_Pause"
+msgstr "_ఆగుము "
 
 # Descriptive label
 #, c-format
@@ -13229,49 +13800,67 @@ msgstr "రికరింగ్"
 msgid "Pounce Target"
 msgstr "లక్ష్యంవైపు దూసుకురండి"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "టైప్ చేస్తున్నారు"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "టైప్ చేస్తుండగా దూసుకు రానీయండి"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "సైన్ ఆన్"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr " (%s) ఖాళీగా ఉన్న %s  తిరిగి వచ్చారు"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "తిరిగివచ్చారు"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "టైపుచేయడం ఆపేశారు"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "సైన్‌ఆఫ్ "
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "ఖాళీగా ఉన్నారు"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "దూరంగా ఉన్నప్పుడు "
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "సందేశాన్ని పంపండి"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "తెలియని వారెవరో దూసుకొచ్చారు. దయచేసి రిపోర్టు చేయండి!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "గ్నోమ్ డిఫాల్ట్ "
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+# Buddy List
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "మిత్రుల జాబితా "
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -13441,12 +14030,20 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "వినియోగదారుని సమాచారం తీసుకొనివచ్చుటకు వీలుపడదు. "
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<స్పాన్ స్టైల్=\"ఇటాలిక్\">ఉదాహరణ: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_పనిచేయనీయకుండా చేయు"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "_ఆటోడిటెక్ట్ IP అడ్రస్  "
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ST_UN సర్వర్:"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<స్పాన్ స్టైల్=\"ఇటాలిక్\">ఉదాహరణ: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "పబ్లిక్ _IP:"
@@ -13457,18 +14054,34 @@ msgstr "పోర్ట్స్ "
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "వినుటకు పోర్టుల శ్రేణిని _మాన్యుయల్‌గా నోటిఫై చేయండి."
 
-msgid "_Start port:"
-msgstr "_పోర్ట్ ను ప్రారంభించండి:"
+# Autostart
+#, fuzzy
+msgid "_Start:"
+msgstr "_స్థాయి :"
 
-msgid "_End port:"
-msgstr "_పోర్ట్ ను ముగించండి:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Expand"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN సర్వర్:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "వినియోగదారుని పేరు:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "పాస్‌వర్డ్:"
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -13496,15 +14109,24 @@ msgstr "_కన్ఫిగర్ రూమ్"
 msgid "Proxy Server"
 msgstr "ప్రాక్సీ సర్వర్ "
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "ప్రాక్సీ _టైప్:"
+
 msgid "No proxy"
 msgstr "ప్రాక్సీ లేదు "
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "_పోర్ట్:"
 
-msgid "_User:"
-msgstr "_వినియోగదారుడు:"
+#, fuzzy
+msgid "User_name:"
+msgstr "వినియోగదారుని పేరు:"
 
 msgid "Seamonkey"
 msgstr "సీమంకీ"
@@ -14027,11 +14649,33 @@ msgstr "_లింక్ లొకేషన్‌ను కాపీ చేయ�
 msgid "_Copy Email Address"
 msgstr "_ఇ-మెయిల్ అడ్రసును కాపీ చేయండి. "
 
+#, fuzzy
+msgid "_Open File"
+msgstr "ఫైలును ఓపెన్ చేయు..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "లాగ్ డైరెక్టరీ"
+
 msgid "Save File"
+msgstr "ఫైలును సేవ్ చేయి"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "శబ్దాన్ని పలికించండి"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "ఫైలును సేవ్ చేయి"
 
 msgid "Select color"
 msgstr "రంగును ఎంపికచేయు"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+#, fuzzy
+msgid "Pidgin"
+msgstr "పేజింగ్ "
 
 msgid "_Alias"
 msgstr "_మారుపేరు"
@@ -14124,78 +14768,6 @@ msgstr "అవైలబిలిటి ప్రెడిక్షన్ ప్�
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
-
-#, fuzzy
-msgid "Server name request"
-msgstr "సెర్వర్ అడ్రసు "
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "కాన్ఫరెన్స్  సర్వర్‌ను ఎంటర్ చేయండి"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "ప్రశ్నించడానికి కాన్ఫరెన్స్ సర్వర్‌ను ఎంపిక చేయండి "
-
-#, fuzzy
-msgid "Find Services"
-msgstr "ఆన్‌లైన్ సర్వీసులు "
-
-# Buddy List
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "మిత్రుల లిస్టును పంపుము"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "దూరం వెళ్తున్నారు"
-
-#, fuzzy
-msgid "Directory"
-msgstr "లాగ్ డైరెక్టరీ"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "సౌండ్ సెలక్షన్ "
-
-msgid "PubSub Leaf"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "వివరణ"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "డైరెక్టరీ సమాచారాన్ని సెట్ చేయండి. "
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_బ్రౌజర్:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "వినియోగదారు అస్తిత్వంలో లేరు"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr " సపోర్టు కలిగిన  ప్రమాణీకరణ  పద్ధతిని సర్వర్ వాడటం లేదు."
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "డైరెక్టరీ సమాచారాన్ని సెట్ చేయండి. "
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేదా క్లైంట్స్ ను డీబగ్గింగ్ చేయాడానికి ఉపయోగపడుతుంది."
 
 msgid "Buddy is idle"
 msgstr "మిత్రుడు ఖాళీగా ఉన్నాడు "
@@ -14303,6 +14875,80 @@ msgstr "సంభాషణల్లో ఉపయోగించు"
 
 msgid "Apply in IMs"
 msgstr "IM లలో ఉపయోగించు"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "సెర్వర్ అడ్రసు "
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "కాన్ఫరెన్స్  సర్వర్‌ను ఎంటర్ చేయండి"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "ప్రశ్నించడానికి కాన్ఫరెన్స్ సర్వర్‌ను ఎంపిక చేయండి "
+
+#, fuzzy
+msgid "Find Services"
+msgstr "ఆన్‌లైన్ సర్వీసులు "
+
+# Buddy List
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "మిత్రుల లిస్టును పంపుము"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "దూరం వెళ్తున్నారు"
+
+#, fuzzy
+msgid "Directory"
+msgstr "లాగ్ డైరెక్టరీ"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "సౌండ్ సెలక్షన్ "
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "వివరణ"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "డైరెక్టరీ సమాచారాన్ని సెట్ చేయండి. "
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_బ్రౌజర్:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "వినియోగదారు అస్తిత్వంలో లేరు"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr " సపోర్టు కలిగిన  ప్రమాణీకరణ  పద్ధతిని సర్వర్ వాడటం లేదు."
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "డైరెక్టరీ సమాచారాన్ని సెట్ చేయండి. "
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేదా క్లైంట్స్ ను డీబగ్గింగ్ చేయాడానికి ఉపయోగపడుతుంది."
 
 # Conversations
 msgid "By conversation count"
@@ -15079,10 +15725,13 @@ msgstr "ఉపేక్ష "
 msgid "Founder"
 msgstr "బిగ్గరగా"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "ఒపెరా "
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -15265,6 +15914,58 @@ msgstr ""
 "సంభాషణలను, లాగింగ్ సందేశపు టైంస్టాంపు ఫార్మాట్లను సంభాషణలను వినియోగదారునికి అనుకూలంగా మార్చడానికి ఈ "
 "ప్లగ్ ఇన్ వీలుకల్పిస్తుంది."
 
+#, fuzzy
+msgid "Audio"
+msgstr "ప్రమాణీకరణ"
+
+#, fuzzy
+msgid "Video"
+msgstr "ప్రత్యక్ష వీడియో "
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "ప్లగ్‌ఇన్స్ "
+
+#, fuzzy
+msgid "_Device"
+msgstr "సాధనం "
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "ప్లగ్‌ఇన్స్ "
+
+#, fuzzy
+msgid "D_evice"
+msgstr "సాధనం "
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "సెట్టింగులను ఎడిట్ చేయండి"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "అపారదర్శకత:"
 
@@ -15331,9 +16032,6 @@ msgstr ""
 "\n"
 "* గమనిక: ఈ ప్లగ్ ఇన్ కు Win2000 లేదా ఆ తర్వాతది అవసరం."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ రన్‌టైమ్ వెర్షన్ "
-
 # Autostart
 #. Autostart
 msgid "Startup"
@@ -15342,6 +16040,9 @@ msgstr "ప్రారంభం "
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_విండోస్ స్టార్టప్‌తో %s ప్రారంభించండి."
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "_కనిపించే మిత్రుల లిస్టు"
@@ -15404,6 +16105,132 @@ msgstr "కొత్త raw XMPP స్టాంజాలను పంపిం�
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేదా క్లైంట్స్ ను డీబగ్గింగ్ చేయాడానికి ఉపయోగపడుతుంది."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "వివిధ ప్రొటోకాల్స్ కి సత్వర సందేశాన్ని పంపండి"
+
+#~ msgid "_Start port:"
+#~ msgstr "_పోర్ట్ ను ప్రారంభించండి:"
+
+#~ msgid "_End port:"
+#~ msgstr "_పోర్ట్ ను ముగించండి:"
+
+#~ msgid "_User:"
+#~ msgstr "_వినియోగదారుడు:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ రన్‌టైమ్ వెర్షన్ "
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "లెక్కిస్తూ..."
+
+#, fuzzy
+#~ msgid "Invalid certificate chain"
+#~ msgstr "చెల్లని శీర్షిక"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "చేరడం/భాగంగా ఉండటం, దాచి ఉంచడం కోసం కన్ఫిగర్ చేయండి"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "కనీస రూమ్ పరిమాణం"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "వినియోగదారు సచేతనంగా లేనప్పుడు టైమ్అవుట్ (నిముషాల్లో)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "సర్వర్‌కు కనెక్ట్ చేయడంలో వైఫల్యం. "
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "ఫైలు '%s': %s ను తెరవడంలో వైఫల్యం"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr " SILC కీ పెయిర్: %s ను లోడ్ చేయలేదు"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "మీ అకౌంట్ లాక్ అయినది. దయచేసి యాహూ! వెబ్‌సైట్‌లో లాగ్‌ఇన్ చేయండి. "
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "%s సమావేశానికి మీ ఆహ్వానాన్ని నిరాకరించారు \"%s\" because \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "అహ్వానం నిరాకరించబడింది."
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "ప్రాక్సీ"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "యుస్కెరా (బాస్క్)"
+
+# Resume button
+#~ msgid "_Resume"
+#~ msgstr "_పునఃప్రారంభించండి."
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  automatically login (optional argument NAME "
+#~ "specifies\n"
+#~ "                      account(s) to use, separated by commas)\n"
+#~ "  -v, --version       display the current version and exit\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  automatically login (optional argument NAME "
+#~ "specifies\n"
+#~ "                      account(s) to use, separated by commas)\n"
+#~ "  -v, --version       display the current version and exit\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "సాకెట్ ను తెరవజాలదు"
@@ -15494,10 +16321,6 @@ msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేద�
 #~ msgstr "దిశ"
 
 #, fuzzy
-#~ msgid "User Mood"
-#~ msgstr "వినియోగదారుని మోడ్స్ "
-
-#, fuzzy
 #~ msgid "User Activity"
 #~ msgstr "వినియోగదారుని హద్దు "
 
@@ -15516,10 +16339,6 @@ msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేద�
 #, fuzzy
 #~ msgid "Reachability Address"
 #~ msgstr "ఇ-మెయిల్ అడ్రస్ "
-
-#, fuzzy
-#~ msgid "User Profile"
-#~ msgstr "ప్రొఫైల్ "
 
 #, fuzzy
 #~ msgid "Jingle"
@@ -15631,9 +16450,6 @@ msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేద�
 
 #~ msgid "Could not write"
 #~ msgstr "రాయలేక పోతున్నాం"
-
-#~ msgid "Could not connect"
-#~ msgstr "కనెక్ట్ చేయడం సాధ్యంమగుట లేదు. "
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "వినదగిన సాకెట్ ను సృష్టించలేకపోతున్నాం"
@@ -15828,9 +16644,6 @@ msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేద�
 #~ "మీరు చాలా తరచుగా కనెక్ట్ చేస్తున్నారు, డిస్‌కనెక్ట్ చేస్తున్నారు. పది నిమిషాలు వేచి చూసి మరల "
 #~ "ప్రయత్నించండి. మీరు ఇలాగే ప్రయత్నిస్తుంటే ఇంకా ఎక్కువ సమయం నిరీక్షించాల్సివస్తుంది. "
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "అజ్ఞాత సైనాన్ పొరపాటు సంభవించింది: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "అజ్ఞాత పొరపాటు, %d , సంభవించింది. సమాచారం: %s"
 
@@ -15906,9 +16719,6 @@ msgstr "ఈ ప్లగ్ ఇన్ XMPP సర్వర్ ను లేద�
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_బ్రౌజర్‌లో లింక్‌ను ఓపెన్ చేయండి. "
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN సర్వర్:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"

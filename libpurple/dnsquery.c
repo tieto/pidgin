@@ -172,6 +172,7 @@ resolve_ip(PurpleDnsQueryData *query_data)
 	return FALSE;
 }
 
+#ifdef USE_IDN
 static gboolean
 dns_str_is_ascii(const char *name)
 {
@@ -183,6 +184,7 @@ dns_str_is_ascii(const char *name)
 
 	return TRUE;
 }
+#endif
 
 #if defined(PURPLE_DNSQUERY_USE_FORK)
 
@@ -293,12 +295,11 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			rc = purple_network_convert_idn_to_ascii(dns_params.hostname, &hostname);
 			if (rc != 0) {
 				write_to_parent(child_out, &rc, sizeof(rc));
-				close(child_out);
 				if (show_debug)
 					fprintf(stderr, "dns[%d] Error: IDN conversion returned "
 							"%d\n", getpid(), rc);
 				dns_params.hostname[0] = '\0';
-				continue;
+				break;
 			}
 		} else /* intentional to execute the g_strdup */
 #endif
@@ -323,12 +324,13 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		rc = getaddrinfo(hostname, servname, &hints, &res);
 		write_to_parent(child_out, &rc, sizeof(rc));
 		if (rc != 0) {
-			close(child_out);
 			if (show_debug)
 				printf("dns[%d] Error: getaddrinfo returned %d\n",
 					getpid(), rc);
 			dns_params.hostname[0] = '\0';
-			continue;
+			g_free(hostname);
+			hostname = NULL;
+			break;
 		}
 		tmp = res;
 		while (res) {
@@ -774,11 +776,8 @@ dns_thread(gpointer data)
 	if (!dns_str_is_ascii(query_data->hostname)) {
 		rc = purple_network_convert_idn_to_ascii(query_data->hostname, &hostname);
 		if (rc != 0) {
-			/* FIXME: Dirty 2.6.0 string freeze hack */
-			char tmp[8];
-			g_snprintf(tmp, sizeof(tmp), "%d", rc);
-			query_data->error_message = g_strdup_printf(_("Error resolving %s:\n%s"),
-					query_data->hostname, tmp);
+			query_data->error_message = g_strdup_printf(_("Error converting %s "
+					"to punycode: %d"), query_data->hostname, rc);
 			/* back to main thread */
 			purple_timeout_add(0, dns_main_thread_cb, query_data);
 			return 0;
@@ -951,6 +950,7 @@ resolve_host(gpointer data)
 			g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 					query_data->hostname, h_errno);
 			purple_dnsquery_failed(query_data, message);
+			g_free(hostname);
 			return FALSE;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));

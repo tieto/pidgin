@@ -151,6 +151,55 @@ guint16 aim_im_fingerprint(const guint8 *msghdr, int len)
 	return AIM_CLIENTTYPE_UNKNOWN;
 }
 
+/*
+ * Subtype 0x0001 - Error
+ */
+static int
+error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	aim_snac_t *snac2;
+	guint16 reason, errcode = 0;
+	char *bn;
+	GSList *tlvlist;
+
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
+		purple_debug_misc("oscar", "icbm error: received response from unknown request!\n");
+		return 0;
+	}
+
+	if (snac2->family != SNAC_FAMILY_ICBM) {
+		purple_debug_misc("oscar", "icbm error: received response from invalid request! %d\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
+		return 0;
+	}
+
+	if (!(bn = snac2->data)) {
+		purple_debug_misc("oscar", "icbm error: received response from request without a buddy name!\n");
+		g_free(snac2);
+		return 0;
+	}
+
+	reason = byte_stream_get16(bs);
+
+	tlvlist = aim_tlvlist_read(bs);
+	if (aim_tlv_gettlv(tlvlist, 0x0008, 1))
+		errcode = aim_tlv_get16(tlvlist, 0x0008, 1);
+	aim_tlvlist_free(tlvlist);
+
+	/* Notify the user that the message wasn't delivered */
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, reason, errcode, bn);
+
+	if (snac2)
+		g_free(snac2->data);
+	g_free(snac2);
+
+	return ret;
+}
+
 /**
  * Subtype 0x0002 - Set ICBM parameters.
  *
@@ -1466,7 +1515,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 	/* Should this be ASCII -> UNICODE -> Custom */
 	static const guint16 charsetpri[] = {
 		AIM_CHARSET_ASCII, /* ASCII first */
-		AIM_CHARSET_CUSTOM, /* then ISO-8859-1 */
+		AIM_CHARSET_LATIN_1, /* then ISO-8859-1 */
 		AIM_CHARSET_UNICODE, /* UNICODE as last resort */
 	};
 	static const int charsetpricount = 3;
@@ -2714,7 +2763,7 @@ int aim_im_reqofflinemsgs(OscarData *od)
  * and Purple 0.60 and newer.
  *
  */
-int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
+int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -2730,19 +2779,14 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0014, 0x0000, NULL, 0);
 
-	/*
-	 * 8 days of light
-	 * Er, that is to say, 8 bytes of 0's
-	 */
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
+	/* ICBM cookie */
+	byte_stream_put32(&bs, 0x00000000);
+	byte_stream_put32(&bs, 0x00000000);
 
 	/*
-	 * Type 1 (should be 0x0001 for mtn)
+	 * Channel (should be 0x0001 for mtn)
 	 */
-	byte_stream_put16(&bs, type1);
+	byte_stream_put16(&bs, channel);
 
 	/*
 	 * Dest buddy name
@@ -2751,9 +2795,9 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
 	byte_stream_putstr(&bs, bn);
 
 	/*
-	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
+	 * Event (should be 0x0000, 0x0001, or 0x0002 for mtn)
 	 */
-	byte_stream_put16(&bs, type2);
+	byte_stream_put16(&bs, event);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, 0x0000, snacid, &bs);
 
@@ -2775,16 +2819,16 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 	aim_rxcallback_t userfunc;
 	char *bn;
 	guint8 bnlen;
-	guint16 type1, type2;
+	guint16 channel, event;
 
-	byte_stream_advance(bs, 8); /* Unknown - All 0's */
-	type1 = byte_stream_get16(bs);
+	byte_stream_advance(bs, 8); /* ICBM cookie */
+	channel = byte_stream_get16(bs);
 	bnlen = byte_stream_get8(bs);
 	bn = byte_stream_getstr(bs, bnlen);
-	type2 = byte_stream_get16(bs);
+	event = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, type1, bn, type2);
+		ret = userfunc(od, conn, frame, channel, bn, event);
 
 	g_free(bn);
 
@@ -2794,7 +2838,9 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0005)
+	if (snac->subtype == 0x0001)
+		return error(od, conn, mod, frame, snac, bs);
+	else if (snac->subtype == 0x0005)
 		return aim_im_paraminfo(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0006)
 		return outgoingim(od, conn, mod, frame, snac, bs);

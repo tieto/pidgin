@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
@@ -549,7 +550,7 @@ redraw_tree(GntTree *tree)
 		}
 
 		wbkgdset(widget->window, '\0' | attr);
-		mvwaddstr(widget->window, i, pos, str);
+		mvwaddstr(widget->window, i, pos, C_(str));
 		whline(widget->window, ' ', scrcol - wr);
 		tree->bottom = row;
 		g_free(str);
@@ -815,7 +816,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		gnt_widget_activate(widget);
 	} else if (tree->priv->search) {
 		gboolean changed = TRUE;
-		if (isalnum(*text)) {
+		if (g_unichar_isprint(*text)) {
 			tree->priv->search = g_string_append_c(tree->priv->search, *text);
 		} else if (g_utf8_collate(text, GNT_KEY_BACKSPACE) == 0) {
 			if (tree->priv->search->len)
