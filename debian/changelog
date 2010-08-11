@@ -1,3 +1,11 @@
+pidgin (2.7.3-1~1.gbp72eb60) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @72eb60b9198493dbc8ee4ec491c959ea32a53d71 **
+
+  * Imported Upstream version 2.7.3
+
+ -- Ari Pollak <ari@debian.org>  Tue, 10 Aug 2010 21:40:15 -0400
+
 pidgin (2.7.2-1) unstable; urgency=medium
 
   * New upstream release
