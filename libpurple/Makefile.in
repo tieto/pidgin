@@ -1382,36 +1382,34 @@ uninstall-info: uninstall-info-recursive
 
 
 marshallers.h: marshallers.list
-	@echo "Generating marshallers.h"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
 
 marshallers.c: marshallers.list marshallers.h
-	@echo "Generating marshallers.c"
-	echo "#include \"marshallers.h\"" > marshallers.c
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
+	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
+	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
 @ENABLE_DBUS_TRUE@dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
-@ENABLE_DBUS_TRUE@	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
 
 @ENABLE_DBUS_TRUE@dbus-types.h: dbus-analyze-types.py $(purple_build_coreheaders)
-@ENABLE_DBUS_TRUE@	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
 
 @ENABLE_DBUS_TRUE@dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-@ENABLE_DBUS_TRUE@	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
 
 @ENABLE_DBUS_TRUE@dbus-signals.c: dbus-analyze-signals.py $(dbus_signals)
-@ENABLE_DBUS_TRUE@	cat $(dbus_signals) | $(PYTHON) $(srcdir)/dbus-analyze-signals.py > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(dbus_signals) | $(PYTHON) $(srcdir)/dbus-analyze-signals.py > $@
 
 @ENABLE_DBUS_TRUE@dbus-server.$(OBJEXT): dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
 @ENABLE_DBUS_TRUE@dbus-server.lo: dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
 @ENABLE_DBUS_TRUE@$(libpurple_la_OBJECTS): dbus-types.h
 
 @ENABLE_DBUS_TRUE@purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-@ENABLE_DBUS_TRUE@	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
 @ENABLE_DBUS_TRUE@purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
-@ENABLE_DBUS_TRUE@	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
-@ENABLE_DBUS_TRUE@	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
+@ENABLE_DBUS_TRUE@	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
+@ENABLE_DBUS_TRUE@	$(AM_V_at)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
 @ENABLE_DBUS_TRUE@$(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
 

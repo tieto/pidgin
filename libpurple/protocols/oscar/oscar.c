@@ -2667,10 +2667,10 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					g_free(rtfmsg);
 				}
 			}
-		} else if (args->info.rtfmsg.msgtype == 26)
+		} else if (args->info.rtfmsg.msgtype == 26) {
 			purple_debug_info("oscar", "Sending X-Status Reply\n");
 			icq_relay_xstatus(od, userinfo->bn, args->cookie);
-
+		}
 	}
 	else
 	{
@@ -3014,7 +3014,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		case 0x1a: { /* Handle SMS or someone has sent you a greeting card or requested buddies? */
 			ByteStream qbs;
-			int smstype, taglen, smslen;
+			guint16 smstype;
+			guint32 taglen, smslen;
 			char *tagstr = NULL, *smsmsg = NULL;
 			xmlnode *xmlroot = NULL, *xmltmp = NULL;
 			gchar *uin = NULL, *message = NULL;

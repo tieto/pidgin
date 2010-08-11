@@ -401,15 +401,13 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	GSList *list, *i;
-	gboolean onlist = 0;
+	gboolean onlist = FALSE;
 	char *oname = NULL;
-	char **oname_p = &oname;
-	GSList **list_p = &list;
 
-	if (!g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *) oname_p, (gpointer *) list_p))
-		list = purple_find_buddies(account, name);
+	if (g_hash_table_lookup_extended(ht, name, (gpointer *)&oname, (gpointer *)&list))
+		g_hash_table_steal(ht, oname);
 	else
-		g_hash_table_steal(ht, name);
+		list = purple_find_buddies(account, name);
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
@@ -418,7 +416,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 			purple_debug_misc("yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
 			list = g_slist_delete_link(list, i);
-			onlist = 1;
+			onlist = TRUE;
 			break;
 		}
 	}
@@ -436,9 +434,9 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 
 	if (list) {
 		if (!oname)
-			oname = g_strdup(purple_normalize(account, name));
+			oname = g_strdup(name);
 		g_hash_table_insert(ht, oname, list);
-	} else if (oname)
+	} else
 		g_free(oname);
 }
 
@@ -843,12 +841,12 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			default:
 				break;
 		}
-	
+
 		if (*stat == '1')
 			serv_got_typing(gc, fed_from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
-		
+
 		if (fed_from != from)
 			g_free(fed_from);
 	
@@ -2704,6 +2702,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	PurpleAccount *account;
 	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
+	const char *norm_username;
 
 	f = yahoo_friend_find(gc, who);
 	account = purple_connection_get_account(gc);
@@ -2736,10 +2735,11 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	sprintf(temp_str, "%d", ip);
 	base64_ip = purple_base64_encode( (guchar *)temp_str, strlen(temp_str) );
 
+	norm_username = purple_normalize(account, purple_account_get_username(account));
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PEERTOPEER, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sssissis",
-		1, purple_normalize(account, purple_account_get_username(account)),
-		4, purple_normalize(account, purple_account_get_username(account)),
+		1, norm_username,
+		4, norm_username,
 		12, base64_ip,	/* base64 encode ip */
 		61, 0,		/* To-do : figure out what is 61 for?? */
 		2, "",
@@ -3594,7 +3594,8 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 	PurpleConnection *gc = yd->gc;
 	PurpleAccount *a = purple_connection_get_account(gc);
 	gchar **strings = NULL, *cs_server = NULL;
-	int port = 0, stringslen = 0;
+	int port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
+	int stringslen = 0;
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -3602,8 +3603,17 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		purple_debug_error("yahoo", "Unable to retrieve server info. %"
 				G_GSIZE_FORMAT " bytes retrieved with error message: %s\n", len,
 				error_message ? error_message : "(null)");
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to connect: The server returned an empty response."));
+
+		if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					_("Unable to connect: The server returned an empty response."));
+		} else {
+				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+							yahoo_got_connected, gc) == NULL) {
+					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+							_("Unable to connect"));
+				}
+		}
 	} else {
 		strings = g_strsplit(url_text, "\r\n", -1);
 
@@ -3621,17 +3631,23 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		}
 
 		if(cs_server) { /* got an address; get on with connecting */
-			port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
-
 			if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 								_("Unable to connect"));
 		} else {
 			purple_debug_error("yahoo", "No CS address retrieved!  Server "
 					"response:\n%s\n", url_text ? url_text : "(null)");
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Unable to connect: The server's response did not contain "
-						"the necessary information"));
+
+			if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Unable to connect: The server's response did not contain "
+							"the necessary information"));
+			} else
+				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+							yahoo_got_connected, gc) == NULL) {
+					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+							_("Unable to connect"));
+				}
 		}
 	}
 
@@ -3644,6 +3660,7 @@ void yahoo_login(PurpleAccount *account) {
 	YahooData *yd = gc->proto_data = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 	PurpleUtilFetchUrlData *url_data;
 
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
@@ -3678,10 +3695,10 @@ void yahoo_login(PurpleAccount *account) {
 	/* Get the pager server.  Actually start connecting in the callback since we
 	 * must have the contents of the HTTP response to proceed. */
 	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc),
+			proxy_ssl ? purple_connection_get_account(gc) : NULL,
 			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
 			use_whole_url ? TRUE : FALSE,
-			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+			YAHOO_CLIENT_USERAGENT, FALSE, NULL, FALSE, -1,
 			yahoo_got_pager_server, yd);
 	if (url_data)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);

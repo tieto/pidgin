@@ -36,7 +36,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 {
 	purple_connection_error_reason(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-		_("Server requires plaintext authentication over an unencrypted stream"));
+		_("Server may require plaintext authentication over an unencrypted stream"));
 }
 
 static void start_cyrus_wrapper(JabberStream *js)
@@ -240,8 +240,9 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				 * it in plaintext, see if we can turn on
 				 * plaintext auth
 				 */
+				/* XXX Should we just check for PLAIN/LOGIN being offered mechanisms? */
 				} else if (!plaintext) {
-					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+					char *msg = g_strdup_printf(_("%s may require plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
@@ -408,6 +409,12 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 
+		/* Ignore blank mechanisms and EXTERNAL.  External isn't
+		 * supported, and Cyrus SASL's mechanism returns
+		 * SASL_NOMECH when the caller (us) doesn't configure it.
+		 * Except SASL_NOMECH is supposed to mean "no concordant
+		 * mechanisms"...  Easiest just to blacklist it (for now).
+		 */
 		if (!mech_name || !*mech_name ||
 				g_str_equal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
@@ -418,6 +425,10 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 		g_string_append_c(js->sasl_mechs, ' ');
 		g_free(mech_name);
 	}
+
+	/* Strip off the trailing ' ' */
+	if (js->sasl_mechs->len > 1)
+		g_string_truncate(js->sasl_mechs, js->sasl_mechs->len - 1);
 
 	jabber_sasl_build_callbacks(js);
 	ret = jabber_auth_start_cyrus(js, reply, error);

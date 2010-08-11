@@ -3601,11 +3601,12 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	/* TODO: rlaager wants this sorted. */
-	/* The connection is checked for PURPLE_CONNECTION_SUPPORT_MOODS flag before
-	 * this function is called for a non-null account. So using
-	 * PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary here */
-	for (mood = account ? prpl_info->get_moods(account) : global_moods;
-	     mood->mood != NULL ; mood++) {
+	/* TODO: darkrain wants it sorted post-translation */
+	if (account && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
+		mood = prpl_info->get_moods(account);
+	else
+		mood = global_moods;
+	for ( ; mood->mood != NULL ; mood++) {
 		char *path;
 
 		if (mood->mood == NULL || mood->description == NULL)
@@ -3686,7 +3687,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Set _Mood"), "<CTL>M", set_mood_show, 0, "<Item>", NULL },
+	{ N_("/Tools/Set _Mood"), "<CTL>O", set_mood_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
@@ -4590,7 +4591,7 @@ sign_on_off_cb(PurpleConnection *gc, PurpleBuddyList *blist)
 }
 
 static void
-plugin_changed_cb(PurplePlugin *p, gpointer *data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	pidgin_blist_update_plugin_actions();
 }

@@ -59,7 +59,7 @@ Offline.
 Display the version information window.
 
 .SH GNT Shortcuts
-You can use the following shortcuts (see the "\*QWidget Actions\*U" section for a more complete list):
+You can use the following shortcuts (see the "Widget Actions" section for a more complete list):
 .TP
 .B Alt \+ a
 Bring up a list of available actions. You can use this list to access the
@@ -305,6 +305,13 @@ right = focus-next
 left = focus-prev
 
 .br
+[GntComboBox::binding]
+.br
+down = dropdown
+.br
+up = dropdown
+
+.br
 [GntEntry::binding]
 .br
 c-a = cursor-home
@@ -338,6 +345,10 @@ tab = suggest-show
 down = suggest-next
 .br
 up = suggest-prev
+.br
+page-down = suggest-next-page
+.br
+page-up = suggest-prev-page
 .br
 c-w = delete-prev-word
 .br
@@ -495,6 +506,10 @@ a-T = place-tagged
 a-C = toggle-clipboard
 .br
 a-/ = help-for-widget
+.br
+a-c-j = window-scroll-down
+.br
+a-c-k = window-scroll-up
 .br
 # The following action is still incomplete, and doesn't have a default binding
 .br

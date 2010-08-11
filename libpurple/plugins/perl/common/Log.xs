@@ -27,6 +27,9 @@ BOOT:
 		newCONSTSUB(flags_stash, (char *)civ->name, newSViv(civ->iv));
 }
 
+Purple::Handle
+purple_log_get_handle()
+
 int
 purple_log_common_sizer(log)
 	Purple::Log log

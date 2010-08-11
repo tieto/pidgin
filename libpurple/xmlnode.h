@@ -205,7 +205,7 @@ void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
  *
  * @return The value of the attribute.
  */
-const char *xmlnode_get_attrib(xmlnode *node, const char *attr);
+const char *xmlnode_get_attrib(const xmlnode *node, const char *attr);
 
 /**
  * Gets a namespaced attribute from a node
@@ -216,7 +216,7 @@ const char *xmlnode_get_attrib(xmlnode *node, const char *attr);
  *
  * @return The value of the attribute/
  */
-const char *xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns);
+const char *xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const char *xmlns);
 
 /**
  * Removes an attribute from a node.

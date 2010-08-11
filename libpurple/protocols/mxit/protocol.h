@@ -190,13 +190,17 @@
 #define		CP_PROFILE_EMAIL		"email"					/* Email address (UTF8 String) */
 #define		CP_PROFILE_MOBILENR		"mobilenumber"			/* Mobile Number (UTF8 String) */
 #define		CP_PROFILE_REGCOUNTRY	"registeredcountry"		/* Registered Country Code (UTF8 String) */
+#define		CP_PROFILE_FLAGS		"flags"					/* Profile flags (Bitset) */
+#define		CP_PROFILE_LASTSEEN		"lastseen"				/* Last-Online timestamp */
 
 /* extended profile field types */
-#define		CP_PROF_TYPE_BOOL		0x02					/* boolean profile attribute type */
-#define		CP_PROF_TYPE_INT		0x05					/* integer profile attribute type */
-#define		CP_PROF_TYPE_UTF8		0x0A					/* UTF8 string profile attribute type */
-#define		CP_PROF_TYPE_DATE		0x0B					/* date-time profile attribute type */
+#define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean profile attribute type */
+#define		CP_PROFILE_TYPE_INT		0x05					/* integer profile attribute type */
+#define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string profile attribute type */
+#define		CP_PROFILE_TYPE_DATE	0x0B					/* date-time profile attribute type */
 
+/* profile flags */
+#define		CP_PROF_DOBLOCKED		0x40					/* date-of-birth cannot be changed */
 
 /* define this to enable protocol debugging (very verbose logging) */
 #define		DEBUG_PROTOCOL
