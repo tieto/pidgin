@@ -27,8 +27,7 @@ typedef struct _BonjourBuddy
 	PurpleAccount *account;
 
 	gchar *name;
-	/* TODO: Remove and just use the hostname */
-	gchar *ip;
+	GSList *ips;
 	gint port_p2pj;
 
 	gchar *first;

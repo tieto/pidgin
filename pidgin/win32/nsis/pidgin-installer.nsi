@@ -699,7 +699,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
-    Delete "$INSTDIR\ca-certs\Verisign_Class3_Extended_Validation_CA.pem"
+    Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
@@ -1154,11 +1154,24 @@ FunctionEnd
 !macro RunCheckMacro UN
 Function ${UN}RunCheck
   Push $R0
-  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "pidgin_is_running") i .R0'
-  IntCmp $R0 0 done
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDOK
+  Push $R1
+
+  IntOp $R1 0 + 0
+  retry_runcheck:
+  ; Close the Handle (needed if we're retrying)
+  IntCmp $R1 0 +2
+    System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_is_running") i .R1 ?e'
+  Pop $R0
+  IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
-  done:
+
+  ; Close the Handle (If we don't do this, the uninstaller called from within will fail)
+  ; This is not optimal because there is a (small) window of time when a new process could start
+  System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+
+  Pop $R1
   Pop $R0
 FunctionEnd
 !macroend
@@ -1169,10 +1182,16 @@ Function .onInit
   Push $R0
   Push $R1
   Push $R2
-  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .r1 ?e'
+
+  IntOp $R1 0 + 0
+  retry_runcheck:
+  ; Close the Handle (needed if we're retrying)
+  IntCmp $R1 0 +2
+    System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .R1 ?e'
   Pop $R0
-  StrCmp $R0 0 +3
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDOK
+  IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
   Call RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
@@ -1247,7 +1266,7 @@ Function .onInit
 
   ClearErrors
   ${GetOptions} "$R0" "/DS=" $R1
-  IfErrors +7
+  IfErrors +8
   SectionGetFlags ${SecDesktopShortcut} $R2
   StrCmp "1" $R1 0 +2
   IntOp $R2 $R2 | ${SF_SELECTED}
@@ -1258,7 +1277,7 @@ Function .onInit
 
   ClearErrors
   ${GetOptions} "$R0" "/SMS=" $R1
-  IfErrors +7
+  IfErrors +8
   SectionGetFlags ${SecStartMenuShortcut} $R2
   StrCmp "1" $R1 0 +2
   IntOp $R2 $R2 | ${SF_SELECTED}

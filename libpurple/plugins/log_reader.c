@@ -2426,7 +2426,7 @@ init_plugin(PurplePlugin *plugin)
 
 }
 
-static void log_reader_init_prefs() {
+static void log_reader_init_prefs(void) {
 	char *path;
 #ifdef _WIN32
 	char *folder;

@@ -126,8 +126,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -213,6 +211,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -296,6 +296,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -313,6 +314,7 @@ cacerts_DATA = \
 		Equifax_Secure_CA.pem \
 		GTE_CyberTrust_Global_Root.pem \
 		Microsoft_Secure_Server_Authority.pem \
+		StartCom_Free_SSL_CA.pem \
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem
 

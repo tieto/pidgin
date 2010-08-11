@@ -777,7 +777,7 @@ lookup_public_ip()
 
 /* TODO: This could be exported */
 static const gchar *
-purple_upnp_get_internal_ip()
+purple_upnp_get_internal_ip(void)
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
 			&& control_info.internalip

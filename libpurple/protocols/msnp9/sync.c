@@ -206,6 +206,8 @@ bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		{
 			if (!strcmp(value, "Y"))
 				user->mobile = TRUE;
+			else if (!strcmp(value, "N"))
+				user->mobile = FALSE;
 		}
 		else if (!strcmp(type, "PHH"))
 			msn_user_set_home_phone(user, purple_url_decode(value));

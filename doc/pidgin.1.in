@@ -88,8 +88,8 @@ file transfer).
 .TP
 .B Add Buddy Pounce
 A Buddy Pounce is a configurable automated action to be performed when the
-buddy's state changes.  This will open the \fBBuddy Pounce\fR dialog to be
-discussed later.
+buddy's state changes.  This will open the \fBBuddy Pounce\fR dialog, which
+will be discussed later.
 .TP
 .B View Log
 Pidgin is capable of automatically logging messages.  These logs are
@@ -118,7 +118,7 @@ MESSAGES\fR section below.
 
 .SH ACCOUNT EDITOR
 The account editor consists of a list of accounts and information about
-them.  It can be accessed by selecting \fBManage\fR from the Tools menu.
+them.  It can be accessed by selecting \fBManage\fR from the Accounts menu.
 Clicking \fIDelete\fR will delete the currently selected account.
 Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR
 window.  Here, the user  can add or alter account information.  When creating
@@ -590,6 +590,8 @@ Pidgin's active developers are:
 .br
   Kevin 'SimGuy' Stange (developer and webmaster)
 .br
+  Will 'resiak' Thompson (developer)
+.br
   Stu 'nosnilmot' Tomlinson (developer)
 .br
   Nathan 'faceprint' Walp (developer)
@@ -602,9 +604,9 @@ Our crazy patch writers include:
 .br
   Peter 'fmoo' Ruibal
 .br
-  Gabriel 'Nix' Schulhof
+  Elliott 'QuLogic' Sales de Andrade
 .br
-  Will 'resiak' Thompson
+  Gabriel 'Nix' Schulhof
 .br
 
 

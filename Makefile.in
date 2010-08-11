@@ -162,8 +162,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -249,6 +247,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -332,6 +332,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -369,9 +370,9 @@ EXTRA_DIST = \
 
 noinst_HEADERS = config.h
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
-appsdir = $(datadir)/applications
-apps_in_files = pidgin.desktop.in
-apps_DATA = $(apps_in_files:.desktop.in=.desktop)
+@ENABLE_GTK_TRUE@appsdir = $(datadir)/applications
+@ENABLE_GTK_TRUE@apps_in_files = pidgin.desktop.in
+@ENABLE_GTK_TRUE@apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @ENABLE_GTK_TRUE@GTK_DIR = pidgin
 @ENABLE_GNT_TRUE@GNT_DIR = finch
 SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po share/ca-certs share/sounds
@@ -869,13 +870,13 @@ dist-hook: pidgin.spec
 	rm $(distdir)/config.h
 
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
-@INTLTOOL_DESKTOP_RULE@
+@ENABLE_GTK_TRUE@@INTLTOOL_DESKTOP_RULE@
 
 docs: Doxyfile
 @HAVE_DOXYGEN_TRUE@	@echo "Running doxygen..."
 @HAVE_DOXYGEN_TRUE@	@doxygen
 @HAVE_DOXYGEN_TRUE@@HAVE_XSLTPROC_TRUE@	@echo "Generating devhelp index..."
-@HAVE_DOXYGEN_TRUE@@HAVE_XSLTPROC_TRUE@	@xsltproc doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
+@HAVE_DOXYGEN_TRUE@@HAVE_XSLTPROC_TRUE@	@xsltproc $(top_srcdir)/doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
 @HAVE_DOXYGEN_TRUE@@HAVE_XSLTPROC_TRUE@	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
 @HAVE_DOXYGEN_TRUE@@HAVE_XSLTPROC_FALSE@	@echo "Not generating devhelp index: xsltproc was not found by configure"
 @HAVE_DOXYGEN_FALSE@	@echo "doxygen was not found during configure.  Aborting."

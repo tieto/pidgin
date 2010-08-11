@@ -89,6 +89,15 @@ gntlastlog_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(gntlastlog_la_LDFLAGS) $(LDFLAGS) -o $@
 @PLUGINS_TRUE@am_gntlastlog_la_rpath = -rpath $(plugindir)
+@PLUGINS_TRUE@grouping_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+@PLUGINS_TRUE@	$(top_builddir)/finch/libgnt/libgnt.la
+am__grouping_la_SOURCES_DIST = grouping.c
+@PLUGINS_TRUE@am_grouping_la_OBJECTS = grouping.lo
+grouping_la_OBJECTS = $(am_grouping_la_OBJECTS)
+grouping_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(grouping_la_LDFLAGS) $(LDFLAGS) -o $@
+@PLUGINS_TRUE@am_grouping_la_rpath = -rpath $(plugindir)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -102,10 +111,12 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(gntclipboard_la_SOURCES) $(gntgf_la_SOURCES) \
-	$(gnthistory_la_SOURCES) $(gntlastlog_la_SOURCES)
+	$(gnthistory_la_SOURCES) $(gntlastlog_la_SOURCES) \
+	$(grouping_la_SOURCES)
 DIST_SOURCES = $(am__gntclipboard_la_SOURCES_DIST) \
 	$(am__gntgf_la_SOURCES_DIST) $(am__gnthistory_la_SOURCES_DIST) \
-	$(am__gntlastlog_la_SOURCES_DIST)
+	$(am__gntlastlog_la_SOURCES_DIST) \
+	$(am__grouping_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -180,8 +191,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -267,6 +276,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -350,6 +361,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -366,23 +378,27 @@ gntclipboard_la_LDFLAGS = -module -avoid-version
 gntgf_la_LDFLAGS = -module -avoid-version
 gnthistory_la_LDFLAGS = -module -avoid-version
 gntlastlog_la_LDFLAGS = -module -avoid-version
+grouping_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@plugin_LTLIBRARIES = \
 @PLUGINS_TRUE@	gntclipboard.la \
 @PLUGINS_TRUE@	gntgf.la \
 @PLUGINS_TRUE@	gnthistory.la \
-@PLUGINS_TRUE@	gntlastlog.la
+@PLUGINS_TRUE@	gntlastlog.la \
+@PLUGINS_TRUE@	grouping.la
 
 @PLUGINS_TRUE@plugindir = $(libdir)/finch
 @PLUGINS_TRUE@gntclipboard_la_SOURCES = gntclipboard.c
 @PLUGINS_TRUE@gntgf_la_SOURCES = gntgf.c
 @PLUGINS_TRUE@gnthistory_la_SOURCES = gnthistory.c
 @PLUGINS_TRUE@gntlastlog_la_SOURCES = lastlog.c
+@PLUGINS_TRUE@grouping_la_SOURCES = grouping.c
 @PLUGINS_TRUE@gntclipboard_la_CFLAGS = $(X11_CFLAGS)
 @PLUGINS_TRUE@gntgf_la_CFLAGS = $(X11_CFLAGS)
 @PLUGINS_TRUE@gntclipboard_la_LIBADD = $(GLIB_LIBS) $(X11_LIBS)
 @PLUGINS_TRUE@gntgf_la_LIBADD = $(GLIB_LIBS) $(X11_LIBS) $(top_builddir)/finch/libgnt/libgnt.la
 @PLUGINS_TRUE@gnthistory_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@gntlastlog_la_LIBADD = $(GLIB_LIBS)
+@PLUGINS_TRUE@grouping_la_LIBADD = $(GLIB_LIBS) $(top_builddir)/finch/libgnt/libgnt.la
 EXTRA_DIST = pietray.py
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
@@ -470,6 +486,8 @@ gnthistory.la: $(gnthistory_la_OBJECTS) $(gnthistory_la_DEPENDENCIES)
 	$(gnthistory_la_LINK) $(am_gnthistory_la_rpath) $(gnthistory_la_OBJECTS) $(gnthistory_la_LIBADD) $(LIBS)
 gntlastlog.la: $(gntlastlog_la_OBJECTS) $(gntlastlog_la_DEPENDENCIES) 
 	$(gntlastlog_la_LINK) $(am_gntlastlog_la_rpath) $(gntlastlog_la_OBJECTS) $(gntlastlog_la_LIBADD) $(LIBS)
+grouping.la: $(grouping_la_OBJECTS) $(grouping_la_DEPENDENCIES) 
+	$(grouping_la_LINK) $(am_grouping_la_rpath) $(grouping_la_OBJECTS) $(grouping_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -480,6 +498,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntclipboard_la-gntclipboard.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntgf_la-gntgf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gnthistory.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grouping.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lastlog.Plo@am__quote@
 
 .c.o:

@@ -59,6 +59,42 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 #endif
 }
 
+int
+gnt_style_get_color(char *group, char *key)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	int fg = 0, bg = 0;
+	gsize n;
+	char **vals;
+	int ret = 0;
+	vals = gnt_style_get_string_list(group, key, &n);
+	if (vals && n == 2) {
+		fg = gnt_colors_get_color(vals[0]);
+		bg = gnt_colors_get_color(vals[1]);
+		ret = gnt_color_add_pair(fg, bg);
+	}
+	g_strfreev(vals);
+	return ret;
+#else
+	return 0;
+#endif
+}
+
+char **gnt_style_get_string_list(const char *group, const char *key, gsize *length)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	const char *prg = g_get_prgname();
+	if ((group == NULL || *group == '\0') && prg &&
+			g_key_file_has_group(gkfile, prg))
+		group = prg;
+	if (!group)
+		group = "general";
+	return g_key_file_get_string_list(gkfile, group, key, length, NULL);
+#else
+	return NULL;
+#endif
+}
+
 gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 {
 	const char * str;

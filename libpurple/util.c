@@ -921,6 +921,7 @@ purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
 	int len, pound;
+	char temp[2];
 
 	if (!text || *text != '&')
 		return NULL;
@@ -943,8 +944,9 @@ purple_markup_unescape_entity(const char *text, int *length)
 		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
-	else if(*(text+1) == '#' && (sscanf(text, "&#%u;", &pound) == 1) &&
-			pound != 0 && *(text+3+(gint)log10(pound)) == ';') {
+	else if(*(text+1) == '#' &&
+			(sscanf(text, "&#%u%1[;]", &pound, temp) == 2 || sscanf(text, "&#x%x%1[;]", &pound, temp) == 2) &&
+			pound != 0) {
 		static char buf[7];
 		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
 		buf[buflen] = '\0';
@@ -1443,7 +1445,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("pre");
 				ALLOW_TAG("q");
 				ALLOW_TAG("span");
-				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
 
 
@@ -1463,9 +1464,14 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						plain = g_string_append_c(plain, '\n');
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
+				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>")) || !g_ascii_strncasecmp(c, "<strong>", strlen("<strong>"))) {
 					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
-					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
+					if (*(c+2) == '>')
+						pt->src_tag = "b";
+					else if (*(c+2) == 'o')
+						pt->src_tag = "bold";
+					else
+						pt->src_tag = "strong";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
@@ -4123,6 +4129,17 @@ purple_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	int c, o1, o2, o3, o4;
+	char end;
+	c = sscanf(ip, "%d.%d.%d.%d%c", &o1, &o2, &o3, &o4, &end);
+	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
+		return FALSE;
+	return TRUE;
+}
+
 /* Stolen from gnome_uri_list_extract_uris */
 GList *
 purple_uri_list_extract_uris(const gchar *uri_list)
@@ -4255,6 +4272,53 @@ purple_utf8_salvage(const char *str)
 	return g_string_free(workstr, FALSE);
 }
 
+/*
+ * This function is copied from g_strerror() but changed to use
+ * gai_strerror().
+ */
+G_CONST_RETURN gchar *
+purple_gai_strerror(gint errnum)
+{
+	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
+	char *msg;
+	int saved_errno = errno;
+
+	const char *msg_locale;
+
+	msg_locale = gai_strerror(errnum);
+	if (g_get_charset(NULL))
+	{
+		/* This string is already UTF-8--great! */
+		errno = saved_errno;
+		return msg_locale;
+	}
+	else
+	{
+		gchar *msg_utf8 = g_locale_to_utf8(msg_locale, -1, NULL, NULL, NULL);
+		if (msg_utf8)
+		{
+			/* Stick in the quark table so that we can return a static result */
+			GQuark msg_quark = g_quark_from_string(msg_utf8);
+			g_free(msg_utf8);
+
+			msg_utf8 = (gchar *)g_quark_to_string(msg_quark);
+			errno = saved_errno;
+			return msg_utf8;
+		}
+	}
+
+	msg = g_static_private_get(&msg_private);
+	if (!msg)
+	{
+		msg = g_new(gchar, 64);
+		g_static_private_set(&msg_private, msg, g_free);
+	}
+
+	sprintf(msg, "unknown error (%d)", errnum);
+
+	errno = saved_errno;
+	return msg;
+}
 
 char *
 purple_utf8_ncr_encode(const char *str)
@@ -4579,3 +4643,67 @@ void purple_restore_default_signal_handlers(void)
 #endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
 }
+
+static void
+set_status_with_attrs(PurpleStatus *status, ...)
+{
+	va_list args;
+	va_start(args, status);
+	purple_status_set_active_with_attrs(status, TRUE, args);
+	va_end(args);
+}
+
+void purple_util_set_current_song(const char *title, const char *artist, const char *album)
+{
+	GList *list = purple_accounts_get_all();
+	for (; list; list = list->next) {
+		PurplePresence *presence;
+		PurpleStatus *tune;
+		PurpleAccount *account = list->data;
+		if (!purple_account_get_enabled(account, purple_core_get_ui()))
+			continue;
+
+		presence = purple_account_get_presence(account);
+		tune = purple_presence_get_status(presence, "tune");
+		if (!tune)
+			continue;
+		if (title) {
+			set_status_with_attrs(tune,
+					PURPLE_TUNE_TITLE, title,
+					PURPLE_TUNE_ARTIST, artist,
+					PURPLE_TUNE_ALBUM, album,
+					NULL);
+		} else {
+			purple_status_set_active(tune, FALSE);
+		}
+	}
+}
+
+char * purple_util_format_song_info(const char *title, const char *artist, const char *album, gpointer unused)
+{
+	GString *string;
+	char *esc;
+
+	if (!title || !*title)
+		return NULL;
+
+	esc = g_markup_escape_text(title, -1);
+	string = g_string_new("");
+	g_string_append_printf(string, "%s", esc);
+	g_free(esc);
+
+	if (artist && *artist) {
+		esc = g_markup_escape_text(artist, -1);
+		g_string_append_printf(string, _(" - %s"), esc);
+		g_free(esc);
+	}
+
+	if (album && *album) {
+		esc = g_markup_escape_text(album, -1);
+		g_string_append_printf(string, _(" (%s)"), esc);
+		g_free(esc);
+	}
+
+	return g_string_free(string, FALSE);
+}
+

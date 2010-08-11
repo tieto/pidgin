@@ -109,7 +109,7 @@ set_errno(int code)
 	}
 }
 
-static gchar *get_error_text()
+static gchar *get_error_text(void)
 {
 	PRInt32 len = PR_GetErrorTextLength();
 	gchar *ret = NULL;

@@ -1,7 +1,8 @@
 #ifndef TESTS_H
 #  define TESTS_H
 
-#include <glib.h>
+#include "../purple.h"
+
 #include <check.h>
 
 /* define the test suites here */

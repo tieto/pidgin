@@ -737,6 +737,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
+				gchar *ntlm_type1;
 				gchar request[2048];
 				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
 				gchar *username = NULL;
@@ -759,11 +760,13 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 						connect_data->host, connect_data->port);
 
 				g_return_if_fail(request_len < sizeof(request));
+				ntlm_type1 = purple_ntlm_gen_type1(hostname, domain);
 				request_len += g_snprintf(request + request_len,
 					sizeof(request) - request_len,
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					purple_ntlm_gen_type1(hostname, domain));
+					ntlm_type1);
+				g_free(ntlm_type1);
 				*username = '\\';
 
 				purple_input_remove(connect_data->inpa);
@@ -847,7 +850,7 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (purple_proxy_info_get_username(connect_data->gpi) != NULL)
 	{
-		char *t1, *t2;
+		char *t1, *t2, *ntlm_type1;
 		char hostname[256];
 
 		ret = gethostname(hostname, sizeof(hostname));
@@ -864,11 +867,14 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 		t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 
+		ntlm_type1 = purple_ntlm_gen_type1(hostname, "");
+
 		g_string_append_printf(request,
 			"Proxy-Authorization: Basic %s\r\n"
 			"Proxy-Authorization: NTLM %s\r\n"
 			"Proxy-Connection: Keep-Alive\r\n",
-			t2, purple_ntlm_gen_type1(hostname, ""));
+			t2, ntlm_type1);
+		g_free(ntlm_type1);
 		g_free(t2);
 	}
 

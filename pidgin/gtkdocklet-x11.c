@@ -48,7 +48,7 @@ static int docklet_height = 0;
 static void docklet_x11_create(gboolean);
 
 static gboolean
-docklet_x11_recreate_cb()
+docklet_x11_recreate_cb(gpointer data)
 {
 	docklet_x11_create(TRUE);
 
@@ -79,13 +79,14 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 	g_idle_add(docklet_x11_recreate_cb, NULL);
 }
 
-static void
+static gboolean
 docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 {
 	if (event->type != GDK_BUTTON_RELEASE)
-		return;
+		return FALSE;
 
 	pidgin_docklet_clicked(event->button);
+	return TRUE;
 }
 
 static void
@@ -146,7 +147,7 @@ docklet_x11_resize_icon(GtkWidget *widget)
 }
 
 static void
-docklet_x11_blank_icon()
+docklet_x11_blank_icon(void)
 {
 	if (!blank_icon) {
 		GtkIconSize size = GTK_ICON_SIZE_LARGE_TOOLBAR;
@@ -204,7 +205,7 @@ docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 #endif
 
 static void
-docklet_x11_destroy()
+docklet_x11_destroy(void)
 {
 	g_return_if_fail(docklet != NULL);
 
@@ -229,7 +230,7 @@ docklet_x11_destroy()
 }
 
 static gboolean
-docklet_x11_embed_timeout_cb()
+docklet_x11_embed_timeout_cb(gpointer data)
 {
 	/* The docklet was not embedded within the timeout.
 	 * Remove it as a visibility manager, but leave the plugin
@@ -300,7 +301,7 @@ docklet_x11_create(gboolean recreate)
 }
 
 static void
-docklet_x11_create_ui_op()
+docklet_x11_create_ui_op(void)
 {
 	docklet_x11_create(FALSE);
 }

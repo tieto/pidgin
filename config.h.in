@@ -109,6 +109,9 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #undef HAVE_LC_MESSAGES
 
+/* Define to 1 if you have the `db' library (-ldb). */
+#undef HAVE_LIBDB
+
 /* Define to 1 if you have libgadu. */
 #undef HAVE_LIBGADU
 
@@ -118,11 +121,17 @@
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
+/* Define to 1 if you have the `pthread' library (-lpthread). */
+#undef HAVE_LIBPTHREAD
+
 /* Define to 1 if you have the `resolv' library (-lresolv). */
 #undef HAVE_LIBRESOLV
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the `util' library (-lutil). */
+#undef HAVE_LIBUTIL
 
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
@@ -380,6 +389,9 @@
 
 /* Define if we're using GtkSpell */
 #undef USE_GTKSPELL
+
+/* Define if python headers are available. */
+#undef USE_PYTHON
 
 /* Define if we're using XScreenSaver. */
 #undef USE_SCREENSAVER

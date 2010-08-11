@@ -43,19 +43,19 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [3])
+m4_define([purple_lt_current], [4])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [3])
-m4_define([purple_micro_version], [1])
+m4_define([purple_minor_version], [4])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [3])
+m4_define([gnt_lt_current], [4])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [3])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_minor_version], [4])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -136,13 +136,13 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT = x
+if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT$INTLTOOL_MSGFMT = x
 then
 	AC_ERROR([
 
@@ -678,7 +678,6 @@ dnl #######################################################################
 PKG_CHECK_MODULES(MEANWHILE, [meanwhile >= 1.0.0 meanwhile < 2.0.0], [
 	have_meanwhile="yes"
 ], [
-	AC_MSG_RESULT(no)
 	have_meanwhile="no"
 ])
 AC_SUBST(MEANWHILE_CFLAGS)
@@ -697,7 +696,6 @@ PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
 	avahiincludes="yes"
 	avahilibs="yes"
 ], [
-	AC_MSG_RESULT(no)
 	avahiincludes="no"
 	avahilibs="no"
 ])
@@ -722,59 +720,6 @@ AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $A
 AC_SUBST(AVAHI_CFLAGS)
 AC_SUBST(AVAHI_LIBS)
 
-AM_CONDITIONAL(MDNS_AVAHI, test "x$avahiincludes" = "xyes" -a "x$avahilibs" = "xyes")
-
-dnl #######################################################################
-dnl # Check for Howl headers (for Bonjour)
-dnl #######################################################################
-AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
-AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
-HOWL_CFLAGS=""
-HOWL_LIBS=""
-
-dnl Attempt to autodetect avahi-compat-howl
-dnl TODO: (This should be removed when the native avahi stuff is stable)
-PKG_CHECK_MODULES(HOWL, avahi-compat-howl, [
-	howlincludes="yes"
-	howllibs="yes"
-], [
-	AC_MSG_RESULT(no)
-	howlincludes="no"
-	howllibs="no"
-])
-
-dnl Attempt to autodetect Howl
-if test "x$howlincludes" = "xno"; then
-	PKG_CHECK_MODULES(HOWL, howl, [
-		howlincludes="yes"
-		howllibs="yes"
-	], [
-		AC_MSG_RESULT(no)
-		howlincludes="no"
-		howllibs="no"
-	])
-fi
-
-dnl Override HOWL_CFLAGS if the user specified an include dir
-if test "$ac_howl_includes" != "no"; then
-	HOWL_CFLAGS="-I$ac_howl_includes"
-fi
-CPPFLAGS_save="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $HOWL_CFLAGS"
-AC_CHECK_HEADER(howl.h, [howlincludes=yes], [howlincludes=no])
-CPPFLAGS="$CPPFLAGS_save"
-
-dnl Override HOWL_LIBS if the user specified a libs dir
-if test "$ac_howl_libs" != "no"; then
-	HOWL_LIBS="-L$ac_howl_libs -lhowl"
-fi
-AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
-
-AC_SUBST(HOWL_CFLAGS)
-AC_SUBST(HOWL_LIBS)
-
-AM_CONDITIONAL(MDNS_HOWL, test "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
-
 
 dnl #######################################################################
 dnl # Check for SILC client includes and libraries
@@ -795,7 +740,6 @@ if test "x$silc_manual_check" = "xno"; then
 		silcincludes="yes"
 		silcclient="yes"
 	], [
-		AC_MSG_RESULT(no)
 		have_silc="no"
 	])
 	if test "x$have_silc" = "xno"; then
@@ -804,7 +748,6 @@ if test "x$silc_manual_check" = "xno"; then
 			silc10includes="yes"
 			silc10client="yes"
 		], [
-			AC_MSG_RESULT(no)
 			have_silc="no"
 		])
 		dnl If silcclient.pc wasn't found, check for just silc.pc
@@ -814,7 +757,6 @@ if test "x$silc_manual_check" = "xno"; then
 				silc10includes="yes"
 				silc10client="yes"
 			], [
-				AC_MSG_RESULT(no)
 				have_silc="no"
 			])
 		fi
@@ -960,9 +902,7 @@ if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
 fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
-	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-		STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
-	fi
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$enable_msnp14" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/msn/msnp9/'`
@@ -1038,7 +978,7 @@ AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
-AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init() { $load_proto },
+AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init(void) { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
@@ -1049,9 +989,7 @@ if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
 fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
-	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-		DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
-	fi
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$enable_msnp14" != "xyes" ; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/msn/msnp9/'`
@@ -1087,7 +1025,7 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] -o [ "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes" ] ] )
+AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] )
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
@@ -1211,7 +1149,6 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
-		AC_MSG_RESULT(no)
 		enable_dbus=no
 	])
 
@@ -1335,6 +1272,34 @@ else
 fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
+
+dnl Check for Python headers (currently useful only for libgnt)
+dnl (Thanks to XChat)
+AC_PATH_PROG(pythonpath, python)
+if test "_$pythonpath" != _ ; then
+	AC_MSG_CHECKING(for Python compile flags)
+	PY_PREFIX=`$pythonpath -c 'import sys ; print sys.prefix'`
+	PY_EXEC_PREFIX=`$pythonpath -c 'import sys ; print sys.exec_prefix'`
+	changequote(<<, >>)dnl
+	PY_VERSION=`$pythonpath -c 'import sys ; print sys.version[0:3]'`
+	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
+	changequote([, ])dnl
+	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+		AC_CHECK_LIB(pthread, pthread_create, )
+		AC_CHECK_LIB(util, openpty, )
+		AC_CHECK_LIB(db, dbopen, )
+		PY_LIBS="-lpython$PY_VERSION -L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config"
+		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
+		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
+		AC_MSG_RESULT(ok)
+	else
+		AC_MSG_RESULT([Can't find Python.h])
+		PY_LIBS=""
+		PY_CFLAGS=""
+	fi
+fi
+AC_SUBST(PY_CFLAGS)
+AC_SUBST(PY_LIBS)
 
 dnl #######################################################################
 dnl # Check for Mono support

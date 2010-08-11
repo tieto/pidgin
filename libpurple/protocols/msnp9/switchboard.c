@@ -166,6 +166,14 @@ msn_switchboard_get_session_id(MsnSwitchBoard *swboard)
 	return swboard->session_id;
 }
 
+int
+msn_switchboard_get_chat_id(void)
+{
+	static int chat_id = 1;
+
+	return chat_id++;
+}
+
 void
 msn_switchboard_set_invited(MsnSwitchBoard *swboard, gboolean invited)
 {
@@ -252,7 +260,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 				purple_conversation_destroy(swboard->conv);
 #endif
 
-			swboard->chat_id = cmdproc->session->conv_seq++;
+			swboard->chat_id = msn_switchboard_get_chat_id();
 			swboard->flag |= MSN_SB_FLAG_IM;
 			swboard->conv = serv_got_joined_chat(account->gc,
 												 swboard->chat_id,

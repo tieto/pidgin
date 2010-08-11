@@ -136,6 +136,7 @@ static struct _irc_user_cmd {
 	{ "names", "c", irc_cmd_names, N_("names [channel]:  List the users currently in a channel.") },
 	{ "nick", "n", irc_cmd_nick, N_("nick &lt;new nickname&gt;:  Change your nickname.") },
 	{ "nickserv", ":", irc_cmd_service, N_("nickserv: Send a command to nickserv") },
+	{ "notice", "t:", irc_cmd_privmsg, N_("notice &lt;target&lt;:  Send a notice to a user or channel.") },
 	{ "op", ":", irc_cmd_op, N_("op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You must be a channel operator to do this.") },
 	{ "operwall", ":", irc_cmd_wallops, N_("operwall &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
 	{ "operserv", ":", irc_cmd_service, N_("operserv: Send a command to operserv") },

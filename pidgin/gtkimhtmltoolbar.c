@@ -99,7 +99,7 @@ do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 					 GtkIMHtmlToolbar *toolbar)
 {
@@ -111,6 +111,7 @@ destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->font_dialog);
 		toolbar->font_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void
@@ -191,7 +192,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
@@ -203,6 +204,7 @@ destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->fgcolor_dialog);
 		toolbar->fgcolor_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void cancel_toolbar_fgcolor(GtkWidget *widget,
@@ -263,7 +265,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
@@ -279,6 +281,7 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->bgcolor_dialog);
 		toolbar->bgcolor_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void
@@ -467,10 +470,11 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	GtkTextMark *ins;
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (response != GTK_RESPONSE_ACCEPT) {
+	if (response != GTK_RESPONSE_ACCEPT)
 #else /* FILECHOOSER */
-	if (response != GTK_RESPONSE_OK) {
+	if (response != GTK_RESPONSE_OK)
 #endif /* FILECHOOSER */
+	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
@@ -574,11 +578,12 @@ destroy_smiley_dialog(GtkIMHtmlToolbar *toolbar)
 	}
 }
 
-static void
+static gboolean
 close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
 					GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
+	return FALSE;
 }
 
 
@@ -704,10 +709,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smileys = smileys->next;
 	}
 
-	PIDGIN_DIALOG(dialog);
+	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
 	if (unique_smileys != NULL) {
@@ -764,19 +767,18 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
-	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
+	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), smiley_table);
 
 	gtk_widget_show(smiley_table);
-
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
 	/* connect signals */
 	g_signal_connect(G_OBJECT(dialog), "delete_event",
 					 G_CALLBACK(close_smiley_dialog), toolbar);
 
 	/* show everything */
-	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 #ifdef _WIN32
 	winpidgin_ensure_onscreen(dialog);
 #endif
@@ -1094,8 +1096,8 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &toolbar->smaller_size, _("Decrease Font Size")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &toolbar->font, _("Font Face")},
-		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
-		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
+		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
+		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &toolbar->clear, _("Reset Formatting")},
 		{"", NULL, NULL, NULL},
@@ -1310,10 +1312,13 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
+	gtk_widget_show(box);
 
 	purple_prefs_connect_callback(toolbar, PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			imhtmltoolbar_view_pref_changed, toolbar);
-	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide");
+	g_signal_connect_data(G_OBJECT(toolbar), "realize",
+			G_CALLBACK(purple_prefs_trigger_callback), PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
+			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);

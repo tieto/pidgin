@@ -149,7 +149,7 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 static PurpleXfer*
 bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 {
-	GList *xfers = NULL;
+	GSList *xfers = NULL;
 	PurpleXfer *xfer = NULL;
 	XepXfer *xf = NULL;
 
@@ -309,7 +309,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 	if(xf != NULL) {
 		bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
-			bd->xfer_lists = g_list_remove(bd->xfer_lists, xfer);
+			bd->xfer_lists = g_slist_remove(bd->xfer_lists, xfer);
 			purple_debug_info("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
 		}
 		if (xf->proxy_connection != NULL)
@@ -359,7 +359,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 	purple_xfer_set_cancel_send_fnc(xfer, bonjour_xfer_cancel_send);
 	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
 
-	bd->xfer_lists = g_list_append(bd->xfer_lists, xfer);
+	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 
 	return xfer;
 }
@@ -387,7 +387,7 @@ static void
 bonjour_xfer_init(PurpleXfer *xfer)
 {
 	PurpleBuddy *buddy = NULL;
-	BonjourBuddy *bd = NULL;
+	BonjourBuddy *bb = NULL;
 	XepXfer *xf = NULL;
 
 	xf = (XepXfer*)xfer->data;
@@ -401,8 +401,10 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	if (buddy == NULL)
 		return;
 
-	bd = (BonjourBuddy *)buddy->proto_data;
-	xf->buddy_ip = g_strdup(bd->ip);
+	bb = (BonjourBuddy *)buddy->proto_data;
+	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
+	if (bb->ips)
+		xf->buddy_ip = g_strdup(bb->ips->data);
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 		/* initiate file transfer, send SI offer. */
 		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
@@ -603,7 +605,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	purple_xfer_set_cancel_recv_fnc(xfer, bonjour_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
 
-	bd->xfer_lists = g_list_append(bd->xfer_lists, xfer);
+	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 
 	purple_xfer_request(xfer);
 }

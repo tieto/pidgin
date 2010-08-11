@@ -104,7 +104,7 @@ static void close_stun_conn(struct stun_conn *sc) {
 	g_free(sc);
 }
 
-static void do_callbacks() {
+static void do_callbacks(void) {
 	while(callbacks) {
 		StunCallback cb = callbacks->data;
 		if(cb)

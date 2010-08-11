@@ -140,7 +140,6 @@ get_beginning_of_word(GntEntry *entry)
 static gboolean
 complete_suggest(GntEntry *entry, const char *text)
 {
-	gboolean changed = FALSE;
 	int offstart = 0, offend = 0;
 
 	if (entry->word) {
@@ -148,27 +147,22 @@ complete_suggest(GntEntry *entry, const char *text)
 		const char *iter = text;
 		offstart = g_utf8_pointer_to_offset(entry->start, s);
 		while (*iter && toupper(*s) == toupper(*iter)) {
-			if (*s != *iter)
-				changed = TRUE;
 			*s++ = *iter++;
 		}
 		if (*iter) {
 			gnt_entry_key_pressed(GNT_WIDGET(entry), iter);
-			changed = TRUE;
 		}
 		offend = g_utf8_pointer_to_offset(entry->start, entry->cursor);
 	} else {
 		offstart = 0;
 		gnt_entry_set_text_internal(entry, text);
-		changed = TRUE;
 		offend = g_utf8_strlen(text, -1);
 	}
 
-	if (changed)
-		g_signal_emit(G_OBJECT(entry), signals[SIG_COMPLETION], 0,
-				entry->start + offstart, entry->start + offend);
+	g_signal_emit(G_OBJECT(entry), signals[SIG_COMPLETION], 0,
+			entry->start + offstart, entry->start + offend);
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
-	return changed;
+	return TRUE;
 }
 
 static int
@@ -719,7 +713,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		return FALSE;
 	}
 
-	if ((text[0] == '\r' || text[0] == ' ') && entry->ddown)
+	if ((text[0] == '\r' || text[0] == ' ' || text[0] == '\n') && entry->ddown)
 	{
 		char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
 		destroy_suggest(entry);
@@ -788,7 +782,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		return TRUE;
 	}
 
-	if (text[0] == '\r') {
+	if (text[0] == '\r' || text[0] == '\n') {
 		gnt_widget_activate(widget);
 		return TRUE;
 	}
@@ -922,7 +916,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 }
 
 static GntEntryKillRing *
-new_killring()
+new_killring(void)
 {
 	GntEntryKillRing *kr = g_new0(GntEntryKillRing, 1);
 	kr->buffer = g_string_new(NULL);

@@ -98,6 +98,17 @@ int  serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags fl
 void serv_alias_buddy(PurpleBuddy *);
 void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
 
+/**
+ * A protocol plugin should call this when it retrieves a private alias from
+ * the server.  Private aliases are the aliases the user sets, while public
+ * aliases are the aliases or display names that buddies set for themselves.
+ *
+ * @param gc The connection on which the alias was received.
+ * @param who The screen name of the buddy whose alias was received.
+ * @param alias The alias that was received.
+ */
+void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char *alias);
+
 
 /**
  * Receive a typing message from a remote user.  Either PURPLE_TYPING

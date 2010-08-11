@@ -24,6 +24,7 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "eventloop.h"
 #include "idle.h"
 #include "log.h"
 #include "prefs.h"
@@ -215,8 +216,8 @@ check_idleness(void)
 /*
  * Check idle and set the timer to fire at the next idle-worth event 
  */
-static gint
-check_idleness_timer()
+static gboolean
+check_idleness_timer(void)
 {
 	check_idleness();
 	if (time_until_next_idle_event == 0)
@@ -225,7 +226,7 @@ check_idleness_timer()
 	{
 		/* +1 for the boundary,
 		 * +1 more for g_timeout_add_seconds rounding. */
-		idle_timer = purple_timeout_add_seconds(time_until_next_idle_event + 2, check_idleness_timer, NULL);
+		idle_timer = purple_timeout_add_seconds(time_until_next_idle_event + 2, (GSourceFunc)check_idleness_timer, NULL);
 	}
 	return FALSE;
 }
@@ -295,7 +296,7 @@ purple_idle_get_ui_ops(void)
 }
 
 static void *
-purple_idle_get_handle()
+purple_idle_get_handle(void)
 {
 	static int handle;
 
@@ -307,7 +308,7 @@ static gboolean _do_purple_idle_touch_cb(gpointer data)
 	int idle_poll_minutes = purple_prefs_get_int("/purple/away/mins_before_away");
 
 	 /* +1 more for g_timeout_add_seconds rounding. */
-	idle_timer = purple_timeout_add_seconds((idle_poll_minutes * 60) + 2, check_idleness_timer, NULL);
+	idle_timer = purple_timeout_add_seconds((idle_poll_minutes * 60) + 2, (GSourceFunc)check_idleness_timer, NULL);
 
 	purple_idle_touch();
 
@@ -333,7 +334,7 @@ purple_idle_init()
 
 	/* Initialize the idleness asynchronously so it doesn't check idleness,
 	 * and potentially try to change the status before the UI is initialized */
-	g_idle_add(_do_purple_idle_touch_cb, NULL);
+	purple_timeout_add(0, _do_purple_idle_touch_cb, NULL);
 
 }
 

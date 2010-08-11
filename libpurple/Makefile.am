@@ -135,8 +135,6 @@ purple_coreheaders = \
 
 purple_builtheaders = purple.h version.h
 
-BUILT_SOURCES = $(purple_builtheaders)
-
 if ENABLE_DBUS
 
 CLEANFILES = \
@@ -210,6 +208,17 @@ purple-client-example.$(OBJEXT): purple-client-bindings.h
 # scripts
 
 bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
+
+BUILT_SOURCES = $(purple_builtheaders) \
+	dbus-types.c \
+	dbus-types.h \
+	dbus-bindings.c \
+	purple-client-bindings.c \
+	purple-client-bindings.h
+
+else
+
+BUILT_SOURCES = $(purple_builtheaders)
 
 endif
 

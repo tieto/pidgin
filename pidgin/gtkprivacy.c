@@ -44,7 +44,8 @@ typedef struct
 
 	GtkWidget *add_button;
 	GtkWidget *remove_button;
-	GtkWidget *clear_button;
+	GtkWidget *removeall_button;
+	GtkWidget *close_button;
 
 	GtkWidget *button_box;
 	GtkWidget *allow_widget;
@@ -114,23 +115,6 @@ rebuild_block_list(PidginPrivacyDialog *dialog)
 		gtk_list_store_append(dialog->block_store, &iter);
 		gtk_list_store_set(dialog->block_store, &iter, 0, l->data, -1);
 	}
-}
-
-static const char *
-find_permit_block_by_name(GSList *list, const char *name)
-{
-	const char *temp_name;
-	GSList *l;
-
-	for (l = list; l != NULL; l = l->next) {
-		temp_name = (const char *)l->data;
-
-		/* Should this use purple_normalize()? */
-		if (!purple_utf8_strcasecmp(name, temp_name))
-			return temp_name;
-	}
-
-	return NULL;
 }
 
 static void
@@ -259,18 +243,21 @@ type_changed_cb(GtkOptionMenu *optmenu, PidginPrivacyDialog *dialog)
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);
-	gtk_widget_hide(dialog->button_box);
+	gtk_widget_hide_all(dialog->button_box);
 
 	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
-		gtk_widget_show(dialog->button_box);
+		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
 	else if (new_type == PURPLE_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
-		gtk_widget_show(dialog->button_box);
+		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
+
+	gtk_widget_show_all(dialog->close_button);
+	gtk_widget_show(dialog->button_box);
 
 	purple_blist_schedule_save();
 	pidgin_blist_refresh(purple_get_blist());
@@ -313,19 +300,16 @@ remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 	else
 		return;
 
-	if (dialog->in_allow_list) {
-		if (find_permit_block_by_name(dialog->account->permit, name))
-			purple_privacy_permit_remove(dialog->account, name, FALSE);
-	}
-	else {
-		if (find_permit_block_by_name(dialog->account->deny, name))
-			purple_privacy_deny_remove(dialog->account, name, FALSE);
-	}
+	if (dialog->in_allow_list)
+		purple_privacy_permit_remove(dialog->account, name, FALSE);
+	else
+		purple_privacy_deny_remove(dialog->account, name, FALSE);
+
 	g_free(name);
 }
 
 static void
-clear_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
+removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	if (dialog->in_allow_list)
@@ -355,8 +339,6 @@ static PidginPrivacyDialog *
 privacy_dialog_new(void)
 {
 	PidginPrivacyDialog *dialog;
-	GtkWidget *bbox;
-	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *button;
 	GtkWidget *dropdown;
@@ -367,15 +349,13 @@ privacy_dialog_new(void)
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
-	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
+	dialog->win = pidgin_create_dialog(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog->win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Description label */
 	label = gtk_label_new(
@@ -385,22 +365,10 @@ privacy_dialog_new(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_widget_show(label);
 
-	/* Hbox for the accounts drop-down and label. */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	/* "Set privacy for:" label */
-	label = gtk_label_new(_("Set privacy for:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	/* Accounts drop-down */
 	dropdown = pidgin_account_option_menu_new(NULL, FALSE,
 												G_CALLBACK(select_account_cb), NULL, dialog);
-	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
-	gtk_widget_show(dropdown);
-	pidgin_set_accessible_label (dropdown, label);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Set privacy for:"), NULL, dropdown, TRUE, NULL);
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
@@ -432,53 +400,29 @@ privacy_dialog_new(void)
 	dialog->block_widget = build_block_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->block_widget, TRUE, TRUE, 0);
 
-	/* Add the button box for Add, Remove, Clear */
-	dialog->button_box = bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_SPREAD);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+	/* Add the button box for Add, Remove, Remove All */
+	dialog->button_box = pidgin_dialog_get_action_area(GTK_DIALOG(dialog->win));
 
 	/* Add button */
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_ADD, G_CALLBACK(add_cb), dialog);
 	dialog->add_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(add_cb), dialog);
 
 	/* Remove button */
-	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_REMOVE, G_CALLBACK(remove_cb), dialog);
 	dialog->remove_button = button;
+	/* TODO: This button should be sensitive/invisitive more cleverly */
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(remove_cb), dialog);
-
-	/* Clear button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	dialog->clear_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(clear_cb), dialog);
-
-	/* Another button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
-	gtk_widget_show(bbox);
+	/* Remove All button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), _("Remove Al_l"), G_CALLBACK(removeall_cb), dialog);
+	dialog->removeall_button = button;
 
 	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLOSE, G_CALLBACK(close_cb), dialog);
+	dialog->close_button = button;
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(close_cb), dialog);
-
+	type_changed_cb(GTK_OPTION_MENU(dialog->type_menu), dialog);
+#if 0
 	if (dialog->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
@@ -489,7 +433,7 @@ privacy_dialog_new(void)
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
-
+#endif
 	return dialog;
 }
 
@@ -511,6 +455,8 @@ pidgin_privacy_dialog_hide(void)
 	if (privacy_dialog == NULL)
 		return;
 
+	g_object_unref(G_OBJECT(privacy_dialog->allow_store));
+	g_object_unref(G_OBJECT(privacy_dialog->block_store));
 	g_free(privacy_dialog);
 	privacy_dialog = NULL;
 }

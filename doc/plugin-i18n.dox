@@ -1,13 +1,19 @@
 /** @page plugin-i18n Third Party Plugin Translation Support
 
  @section Introduction
+  For the purpose of this document we're going to assume that your plugin:
+
+   - Is set up to use autotools.  It may be possible to add translation support
+     without autotools, but we have no idea how.  We may not want to know, either ;)
+   - Has an autogen.sh.  You may have also called this bootstrap.sh or similar.
+   - Resides in a source tree that has @c configure.ac and @c Makefile.am in the
+     top-level directory as well as a @c src directory in which the plugin's source
+     is located.  A @c Makefile.am should also exist in the @c src directory.
+
   For a plugin to have translation support there are a few steps that need to
   followed:
 
-   - The plugin must be setup to use autotools.  It may be possible to add
-     translation support without autotools, but I have no idea how.
-   - In your autogen.sh, bootstrap.sh, or whatever you called it, add the
-     following after your other utility checks:
+   - In your autogen.sh, add the following after your other utility checks:
      @code
 (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo;
@@ -16,12 +22,11 @@
     exit;
 }
      @endcode
-     Then before your call aclocal add:
+     Then before your call to aclocal add:
      @code
 intltoolize --force --copy
      @endcode
-   - Now edit configure.ac, configure.in, or whatever you may have called it
-     and add the following:
+   - Now edit configure.ac and add the following:
      @code
 AC_PROG_INTLTOOL
 
@@ -40,13 +45,13 @@ AM_GLIB_GNU_GETTEXT
    - Create/edit the file 'POTFILE.in' in your favorite editor.  Each line
      should be the name of a file that could or does have strings marked for
 	 translating (we're getting to that step).  These file names should be
-	 relative to the top directory of your plugin.
-   - 'cd' back to the top directory of your plugin.
+	 relative to the top directory of your plugin's source tree.
+   - 'cd' back to the top directory of your plugin's source tree.
    - Open 'Makefile.am' and add 'po' to your 'SUBDIRS' variable.
-   - While still in the top directory of your plugin execute
+   - While still in the top directory of your plugin's source tree,  execute
      'intltool-prepare'.  This will setup anything extra that intltool needs.
-   - Fire off an 'autogen.sh' and when it's completed, verify that you have a
-     'po/POTFILES', notice the lack of a .in.  If you do, everything should be
+   - Fire off 'autogen.sh' and when it's completed, verify that you have a
+     'po/POTFILES' (notice the lack of a .in).  If you do, everything should be
 	 set on the autotools side.
    - Take a break, stretch your legs, smoke a cigarette, whatever, because
      we're done with the autotools part.
@@ -60,8 +65,10 @@ AM_GLIB_GNU_GETTEXT
 #include <glib/gi18n-lib.h>
      @endcode
 	 Make sure that this include is after you include of your 'config.h',
-	 otherwise you will break your build.
-   - This is where things get a bit goofy.  libpurple is going to try and
+	 otherwise you will break your build.  Also note that if you wish to
+     maintain compatibility with older versions of GLib, you will need to
+     include additional preprocessor directives, which we won't cover here.
+   - This is where things get a bit goofy.  libpurple is going to try to
      translate our strings using the libpurple gettext package.  So we have to
      convert them before libpurple attempts to.
    - To do this, we're going to change the entries for name, summary, and

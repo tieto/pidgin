@@ -33,13 +33,14 @@
 #include <string.h>
 
 static gboolean hascolors;
+static int custom_type = GNT_COLORS;
 static struct
 {
 	short r, g, b;
 } colors[GNT_TOTAL_COLORS];
 
 static void
-backup_colors()
+backup_colors(void)
 {
 	short i;
 	for (i = 0; i < GNT_TOTAL_COLORS; i++)
@@ -50,13 +51,13 @@ backup_colors()
 }
 
 static gboolean
-can_use_custom_color()
+can_use_custom_color(void)
 {
 	return (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color());
 }
 
 static void
-restore_colors()
+restore_colors(void)
 {
 	short i;
 	for (i = 0; i < GNT_TOTAL_COLORS; i++)
@@ -137,8 +138,8 @@ gnt_uninit_colors()
 }
 
 #if GLIB_CHECK_VERSION(2,6,0)
-static int
-get_color(char *key)
+int
+gnt_colors_get_color(char *key)
 {
 	int color;
 	gboolean custom = can_use_custom_color();
@@ -163,8 +164,12 @@ get_color(char *key)
 		color = COLOR_MAGENTA;
 	else if (strcmp(key, "cyan") == 0)
 		color = COLOR_CYAN;
-	else
+	else if (strcmp(key, "default") == 0)
 		color = -1;
+	else {
+		g_warning("Invalid color name: %s\n", key);
+		color = -1;
+	}
 	return color;
 }
 
@@ -196,7 +201,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 				int color = -1;
 
 				key = g_ascii_strdown(key, -1);
-				color = get_color(key);
+				color = gnt_colors_get_color(key);
 				g_free(key);
 				if (color == -1)
 					continue;
@@ -237,8 +242,8 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			GntColorType type = 0;
 			gchar *fgc = g_ascii_strdown(list[0], -1);
 			gchar *bgc = g_ascii_strdown(list[1], -1);
-			int fg = get_color(fgc);
-			int bg = get_color(bgc);
+			int fg = gnt_colors_get_color(fgc);
+			int bg = gnt_colors_get_color(bgc);
 			g_free(fgc);
 			g_free(bgc);
 			if (fg == -1 || bg == -1)
@@ -287,3 +292,8 @@ int gnt_color_pair(int pair)
 		  pair == GNT_COLOR_TITLE_D || pair == GNT_COLOR_DISABLED) ? 0 : A_STANDOUT));
 }
 
+int gnt_color_add_pair(int fg, int bg)
+{
+	init_pair(custom_type, fg, bg);
+	return custom_type++;
+}

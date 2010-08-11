@@ -780,6 +780,9 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 			g_snprintf(port, sizeof(port), "%hu", portnum);
 
+			if(g_list_find_custom(jsx->streamhosts, ft_proxy_list[i], jabber_si_compare_jid) != NULL)
+				continue;
+
 			streamhost = xmlnode_new_child(query, "streamhost");
 			xmlnode_set_attrib(streamhost, "jid", ft_proxy_list[i]);
 			xmlnode_set_attrib(streamhost, "host", ft_proxy_list[i]);
@@ -801,7 +804,10 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 		/* TODO: deal with zeroconf proxies */
 
-		if (!(sh->host && sh->port > 0))
+		if (!(sh->jid && sh->host && sh->port > 0))
+			continue;
+
+		if(g_list_find_custom(jsx->streamhosts, sh->jid, jabber_si_compare_jid) != NULL)
 			continue;
 
 		streamhost = xmlnode_new_child(query, "streamhost");
@@ -1083,7 +1089,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		} else {
 			/* we've got multiple resources, we need to pick one to send to */
 			GList *l;
-			char *msg = g_strdup_printf(_("Please select which resource of %s you would like to send a file to"), xfer->who);
+			char *msg = g_strdup_printf(_("Please select the resource of %s to which you would like to send a file"), xfer->who);
 			PurpleRequestFields *fields = purple_request_fields_new();
 			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
 			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);

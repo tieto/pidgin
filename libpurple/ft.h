@@ -358,6 +358,26 @@ const char *purple_xfer_get_remote_ip(const PurpleXfer *xfer);
 unsigned int purple_xfer_get_remote_port(const PurpleXfer *xfer);
 
 /**
+ * Returns the time the transfer of a file started.
+ *
+ * @param xfer  The file transfer.
+ *
+ * @return The time when the transfer started.
+ * @since 2.4.0
+ */
+time_t purple_xfer_get_start_time(const PurpleXfer *xfer);
+
+/**
+ * Returns the time the transfer of a file ended.
+ *
+ * @param xfer  The file transfer.
+ *
+ * @return The time when the transfer ended.
+ * @since 2.4.0
+ */
+time_t purple_xfer_get_end_time(const PurpleXfer *xfer);
+
+/**
  * Sets the completed state for the file transfer.
  *
  * @param xfer      The file transfer.

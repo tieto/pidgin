@@ -182,22 +182,22 @@ purple_network_get_my_ip(int fd)
 		/* Make sure the IP address entered by the user is valid */
 		if ((ip != NULL) && (purple_network_ip_atoi(ip) != NULL))
 			return ip;
+	} else {
+		/* Check if STUN discovery was already done */
+		stun = purple_stun_discover(NULL);
+		if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED))
+			return stun->publicip;
+
+		/* Attempt to get the IP from a NAT device using UPnP */
+		ip = purple_upnp_get_public_ip();
+		if (ip != NULL)
+			return ip;
+
+		/* Attempt to get the IP from a NAT device using NAT-PMP */
+		ip = purple_pmp_get_public_ip();
+		if (ip != NULL)
+			return ip;
 	}
-
-	/* Check if STUN discovery was already done */
-	stun = purple_stun_discover(NULL);
-	if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED))
-		return stun->publicip;
-
-	/* Attempt to get the IP from a NAT device using UPnP */
-	ip = purple_upnp_get_public_ip();
-	if (ip != NULL)
-	  return ip;
-
-	/* Attempt to get the IP from a NAT device using NAT-PMP */
-	ip = purple_pmp_get_public_ip();
-	if (ip != NULL)
-		return ip;
 
 	/* Just fetch the IP of the local system */
 	return purple_network_get_local_system_ip(fd);
@@ -289,7 +289,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
 #ifndef _WIN32
-		purple_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
+		purple_debug_warning("network", "getaddrinfo: %s\n", purple_gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
 			purple_debug_warning("network", "getaddrinfo: system error: %s\n", g_strerror(errno));
 #else
@@ -362,7 +362,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->cb_data = cb_data;
 	listen_data->socket_type = socket_type;
 
-	if (!listen_map_external)
+	if (!listen_map_external || !purple_prefs_get_bool("/purple/network/map_ports"))
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
 		/* The pmp_map_cb does what we want to do */
@@ -677,11 +677,13 @@ purple_network_init(void)
 	purple_prefs_add_none  ("/purple/network");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);
 	purple_prefs_add_string("/purple/network/public_ip", "");
+	purple_prefs_add_bool  ("/purple/network/map_ports", TRUE);
 	purple_prefs_add_bool  ("/purple/network/ports_range_use", FALSE);
 	purple_prefs_add_int   ("/purple/network/ports_range_start", 1024);
 	purple_prefs_add_int   ("/purple/network/ports_range_end", 2048);
 
-	purple_upnp_discover(NULL, NULL);
+	if(purple_prefs_get_bool("/purple/network/map_ports") || purple_prefs_get_bool("/purple/network/auto_ip"))
+		purple_upnp_discover(NULL, NULL);
 
 #ifdef HAVE_LIBNM
 	nm_context = libnm_glib_init();
@@ -708,4 +710,7 @@ purple_network_uninit(void)
 	if(nm_context)
 		libnm_glib_shutdown(nm_context);
 #endif
+
+	purple_signal_unregister(purple_network_get_handle(),
+	                         "network-configuration-changed");
 }

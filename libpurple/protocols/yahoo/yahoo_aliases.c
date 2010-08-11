@@ -37,6 +37,8 @@
 /* I hate hardcoding this stuff, but Yahoo never sends us anything to use.  Someone in the know may be able to tweak this URL */
 #define YAHOO_ALIAS_FETCH_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=0&tags=short&rt=0&prog-ver=8.1.0.249&useutf8=1&legenc=codepage-1252"
 #define YAHOO_ALIAS_UPDATE_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1&useutf8=1&legenc=codepage-1252"
+#define YAHOOJP_ALIAS_FETCH_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&diffs=1&t=0&tags=short&rt=0&prog-ver=7.0.0.7"
+#define YAHOOJP_ALIAS_UPDATE_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&sync=1&tags=short&noclear=1"
 
 void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias);
 
@@ -90,7 +92,10 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 				id = xmlnode_get_attrib(item,"id");
 
 		                /* Yahoo stores first and last names separately, lets put them together into a full name */
-				full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
+				if (yd->jp)
+					full_name = g_strstrip(g_strdup_printf("%s %s", (ln != NULL ? ln : "") , (fn != NULL ? fn : "")));
+				else
+					full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
 				nick_name = (nn != NULL ? g_strstrip(g_strdup_printf("%s", nn)) : NULL);
 
 				if (nick_name != NULL)
@@ -139,25 +144,32 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct callback_data *cb;
-	const char *url = YAHOO_ALIAS_FETCH_URL;
+	const char *url;
 	char *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
+
+	gboolean use_whole_url = FALSE;
+
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
+	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
 	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
-	request = g_strdup_printf("GET /%s HTTP/1.1\r\n"
+	request = g_strdup_printf("GET %s%s/%s HTTP/1.1\r\n"
 				 "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
 				 "Host: %s\r\n"
 				 "Cache-Control: no-cache\r\n\r\n",
-				 webpage, yd->cookie_t,yd->cookie_y, webaddress);
+				  use_whole_url ? "http://" : "", use_whole_url ? webaddress : "", webpage, yd->cookie_t,yd->cookie_y, webaddress);
 
 	/* We have a URL and some header information, let's connect and get some aliases  */
-	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_fetch_aliases_cb, cb);
+	url_data = purple_util_fetch_url_request(url, use_whole_url, NULL, TRUE, request, FALSE, yahoo_fetch_aliases_cb, cb);
 	if (url_data != NULL) {
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	}
@@ -221,14 +233,20 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	struct yahoo_data *yd;
 	struct YahooUser *yu;
 	char *content, *url, *request, *webpage, *webaddress, *strtmp;
+	char *escaped_alias, *alias_jp, *converted_alias_jp;
 	int inttmp;
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
+	gboolean use_whole_url = FALSE;
 
-	g_return_if_fail(alias!= NULL);
-	g_return_if_fail(who!=NULL);
-	g_return_if_fail(gc!=NULL);
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
+
+	g_return_if_fail(alias != NULL);
+	g_return_if_fail(who != NULL);
+	g_return_if_fail(gc != NULL);
 
 	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
 
@@ -247,31 +265,43 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
-	url = g_strdup(YAHOO_ALIAS_UPDATE_URL);
+	url = yd->jp? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
 	purple_url_parse(url, &webaddress, &inttmp, &webpage, &strtmp, &strtmp);
 
-	content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
-				  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-				  gc->account->username, who, yu->id, g_markup_escape_text(alias, strlen(alias)));
+	if (yd->jp) {
+		alias_jp = g_convert(alias, strlen(alias), "EUC-JP", "UTF-8", NULL, NULL, NULL);
+		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
+		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
+		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+		                          gc->account->username, who, yu->id, converted_alias_jp);
+		free(converted_alias_jp);
+		g_free(alias_jp);
+	}
+	else {
+		escaped_alias = g_markup_escape_text(alias, strlen(alias));
+		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
+		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+		                          gc->account->username, who, yu->id, escaped_alias);
+		g_free(escaped_alias);
+	}
 
-	request = g_strdup_printf("POST /%s HTTP/1.1\r\n"
+	request = g_strdup_printf("POST %s%s/%s HTTP/1.1\r\n"
 				  "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 				  "Cookie: T=%s; Y=%s\r\n"
 				  "Host: %s\r\n"
 				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
 				  "Cache-Control: no-cache\r\n\r\n"
 				  "%s",
-				  webpage, yd->cookie_t,yd->cookie_y, webaddress,
+				  use_whole_url ? "http://" : "", use_whole_url ? webaddress : "", webpage, yd->cookie_t,yd->cookie_y, webaddress,
 			 	  strlen(content), content);
 
 	/* We have a URL and some header information, let's connect and update the alias  */
-	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
+	url_data = purple_util_fetch_url_request(url, use_whole_url, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
 	if (url_data != NULL) {
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	}
 
 	g_free(content);
-	g_free(url);
 	g_free(request);
 }
 

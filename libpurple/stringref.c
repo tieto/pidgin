@@ -31,6 +31,7 @@
 #include <stdarg.h>
 
 #include "debug.h"
+#include "eventloop.h"
 #include "stringref.h"
 
 /**
@@ -87,7 +88,7 @@ PurpleStringref *purple_stringref_new_noref(const char *value)
 	newref->ref = 0x80000000;
 
 	if (gclist == NULL)
-		g_idle_add(gs_idle_cb, NULL);
+		purple_timeout_add(0, gs_idle_cb, NULL);
 	gclist = g_list_prepend(gclist, newref);
 
 	return newref;

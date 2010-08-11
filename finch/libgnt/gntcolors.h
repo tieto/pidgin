@@ -86,6 +86,16 @@ void gnt_colors_parse(GKeyFile *kfile);
  */
 void gnt_color_pairs_parse(GKeyFile *kfile);
 
+/**
+ * Parse a string color
+ *
+ * @param kfile The string value
+ *
+ * @return A color
+ *
+ * @since 2.4.0
+ */
+int gnt_colors_get_color(char *key);
 #endif
 
 /**
@@ -101,4 +111,15 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
  */
 int gnt_color_pair(int color);
 
+/**
+ * Adds a color definition
+ *
+ * @param fg   Foreground
+ * @param bg   Background
+ *
+ * @return  A color pair
+ *
+ * @since 2.4.0
+ */
+int gnt_color_add_pair(int fg, int bg);
 #endif

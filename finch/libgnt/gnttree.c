@@ -39,6 +39,7 @@ enum
 {
 	PROP_0,
 	PROP_COLUMNS,
+	PROP_EXPANDER,
 };
 
 enum
@@ -59,6 +60,7 @@ struct _GntTreePriv
 
 	GCompareFunc compare;
 	int lastvisible;
+	int expander_level;
 };
 
 #define	TAB_SIZE 3
@@ -75,6 +77,7 @@ struct _GntTreeRow
 	                               If choice is true, then child will be NULL */
 	gboolean isselected;
 	GntTextFormatFlags flags;
+	int color;
 
 	GntTreeRow *parent;
 	GntTreeRow *child;
@@ -337,7 +340,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 						row->isselected ? 'X' : ' ');
 				fl = 4;
 			}
-			else if (row->parent == NULL && row->child)
+			else if (find_depth(row) < tree->priv->expander_level && row->child)
 			{
 				if (row->collapsed)
 				{
@@ -522,9 +525,14 @@ redraw_tree(GntTree *tree)
 		else
 		{
 			if (flags & GNT_TEXT_FLAG_DIM)
-				attr |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
+				if (row->color)
+					attr |= (A_DIM | gnt_color_pair(row->color));
+				else
+					attr |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
 			else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
 				attr |= (A_DIM | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
+			else if (row->color)
+				attr |= gnt_color_pair(row->color);
 			else
 				attr |= gnt_color_pair(GNT_COLOR_NORMAL);
 		}
@@ -676,7 +684,7 @@ action_move_parent(GntBindable *bind, GList *null)
 	GntTreeRow *row = tree->current;
 	int dist;
 
-	if (!row->parent || SEARCHING(tree))
+	if (!row || !row->parent || SEARCHING(tree))
 		return FALSE;
 
 	tree->current = row->parent;
@@ -790,7 +798,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
 
-	if (text[0] == '\r') {
+	if (text[0] == '\r' || text[0] == '\n') {
 		end_search(tree);
 		gnt_widget_activate(widget);
 	} else if (tree->priv->search) {
@@ -945,6 +953,11 @@ gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
 		case PROP_COLUMNS:
 			_gnt_tree_init_internals(tree, g_value_get_int(value));
 			break;
+		case PROP_EXPANDER:
+			if (tree->priv->expander_level == g_value_get_int(value))
+				break;
+			tree->priv->expander_level = g_value_get_int(value);
+			g_object_notify(obj, "expander-level");
 		default:
 			break;
 	}
@@ -958,6 +971,9 @@ gnt_tree_get_property(GObject *obj, guint prop_id, GValue *value,
 	switch (prop_id) {
 		case PROP_COLUMNS:
 			g_value_set_int(value, tree->ncol);
+			break;
+		case PROP_EXPANDER:
+			g_value_set_int(value, tree->priv->expander_level);
 			break;
 		default:
 			break;
@@ -986,6 +1002,14 @@ gnt_tree_class_init(GntTreeClass *klass)
 			g_param_spec_int("columns", "Columns",
 				"Number of columns in the tree.",
 				1, G_MAXINT, 1,
+				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+			)
+		);
+	g_object_class_install_property(gclass,
+			PROP_EXPANDER,
+			g_param_spec_int("expander-level", "Expander level",
+				"Number of levels to show expander in the tree.",
+				0, G_MAXINT, 1,
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
 			)
 		);
@@ -1559,6 +1583,16 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
 	redraw_tree(tree);	/* XXX: It shouldn't be necessary to redraw the whole darned tree */
 }
 
+void gnt_tree_set_row_color(GntTree *tree, void *key, int color)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (!row || row->color == color)
+		return;
+
+	row->color = color;
+	redraw_tree(tree);
+}
+
 void gnt_tree_set_selected(GntTree *tree , void *key)
 {
 	int dist;
@@ -1602,6 +1636,7 @@ GntWidget *gnt_tree_new_with_columns(int col)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_TREE,
 			"columns", col,
+			"expander-level", 1,
 			NULL);
 
 	return widget;
@@ -1823,5 +1858,11 @@ void gnt_tree_set_search_function(GntTree *tree,
 		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current))
 {
 	tree->priv->search_func = func;
+}
+
+gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	return (row && row->parent) ? row->parent->key : NULL;
 }
 

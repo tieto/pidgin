@@ -345,6 +345,7 @@ xmlnode_free(xmlnode *node)
 	g_free(node->name);
 	g_free(node->data);
 	g_free(node->xmlns);
+	g_free(node->prefix);
 
 	if(node->namespace_map)
 		g_hash_table_destroy(node->namespace_map);
@@ -550,6 +551,9 @@ xmlnode_to_formatted_str(xmlnode *node, int *len)
 	xml_with_declaration =
 		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S "%s", xml);
 	g_free(xml);
+
+	if (len)
+		*len += sizeof("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S) - 1;
 
 	return xml_with_declaration;
 }

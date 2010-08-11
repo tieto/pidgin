@@ -294,17 +294,15 @@ int irc_cmd_op(struct irc_conn *irc, const char *cmd, const char *target, const 
 	ops = g_new0(char *, i * 2 + 1);
 
 	for (i = 0; nicks[i]; i++) {
-		if (!*nicks[i]) {
-			g_free(nicks[i]);
-			continue;
+		if (*nicks[i]) {
+			ops[used++] = mode;
+			ops[used++] = nicks[i];
 		}
-		ops[used++] = mode;
-		ops[used++] = nicks[i];
 	}
 
 	irc_do_mode(irc, target, sign, ops);
 	g_free(ops);
-	g_free(nicks);  /* No, not g_strfreev */
+	g_strfreev(nicks);
 
 	return 0;
 }
@@ -367,7 +365,12 @@ int irc_cmd_privmsg(struct irc_conn *irc, const char *cmd, const char *target, c
 		if (!end)
 			end = cur + strlen(cur);
 		msg = g_strndup(cur, end - cur);
-		buf = irc_format(irc, "vt:", "PRIVMSG", args[0], msg);
+
+		if(!strcmp(cmd, "notice"))
+			buf = irc_format(irc, "vt:", "NOTICE", args[0], msg);
+		else
+			buf = irc_format(irc, "vt:", "PRIVMSG", args[0], msg);
+
 		irc_send(irc, buf);
 		g_free(msg);
 		g_free(buf);

@@ -45,7 +45,7 @@ static struct
 } rebind_info;
 
 static void 
-gnt_bindable_free_rebind_info()
+gnt_bindable_free_rebind_info(void)
 {
 	g_free(rebind_info.name);
 	g_free(rebind_info.keys);

@@ -85,6 +85,31 @@ PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callb
  */
 void purple_menu_action_free(PurpleMenuAction *act);
 
+/**
+ * Set the appropriate presence values for the currently playing song.
+ *
+ * @param title     The title of the song, @c NULL to unset the value.
+ * @param artist    The artist of the song, can be @c NULL.
+ * @param album     The album of the song, can be @c NULL.
+ * @since 2.4.0
+ */
+void purple_util_set_current_song(const char *title, const char *artist,
+		const char *album);
+
+/**
+ * Format song information.
+ *
+ * @param title     The title of the song, @c NULL to unset the value.
+ * @param artist    The artist of the song, can be @c NULL.
+ * @param album     The album of the song, can be @c NULL.
+ * @param unused    Currently unused, must be @c NULL.
+ *
+ * @return   The formatted string. The caller must #g_free the returned string.
+ * @since 2.4.0
+ */
+char * purple_util_format_song_info(const char *title, const char *artist,
+		const char *album, gpointer unused);
+
 /**************************************************************************/
 /** @name Utility Subsystem                                               */
 /**************************************************************************/
@@ -1056,6 +1081,15 @@ const char *purple_url_encode(const char *str);
 gboolean purple_email_is_valid(const char *address);
 
 /**
+ * Checks if the given IP address is a syntactically valid IPv4 address.
+ *
+ * @param address The IP address to validate.
+ *
+ * @return True if the IP address is syntactically correct.
+ */
+gboolean purple_ip_address_is_valid(const char *ip);
+
+/**
  * This function extracts a list of URIs from the a "text/uri-list"
  * string.  It was "borrowed" from gnome_uri_list_extract_uris
  *
@@ -1108,6 +1142,18 @@ gchar *purple_utf8_try_convert(const char *str);
  * @return A valid UTF-8 string.
  */
 gchar *purple_utf8_salvage(const char *str);
+
+/**
+ * Return the UTF-8 version of gai_strerror().  It calls gai_strerror()
+ * then converts the result to UTF-8.  This function is analogous to
+ * g_strerror().
+ *
+ * @param errnum The error code.
+ *
+ * @return The UTF-8 error message.
+ * @since 2.4.0
+ */
+G_CONST_RETURN gchar *purple_gai_strerror(gint errnum);
 
 /**
  * Compares two UTF-8 strings case-insensitively.  This string is

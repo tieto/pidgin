@@ -325,19 +325,27 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							2, js->gc->account, NULL, NULL, js->gc->account,
+							1, js->gc->account, NULL, NULL, js->gc->account,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);
 					return;
-				/* Everything else has failed, so fail the
-				 * connection. Should probably have a better
-				 * error here.
-				 */
+
 				} else {
-					purple_connection_error_reason (js->gc,
-						PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
-						_("Server does not use any supported authentication method"));
+					/* We have no mechs which can work.
+					 * Try falling back on the old jabber:iq:auth method. We get here if the server supports
+					 * one or more sasl mechs, we are compiled with cyrus-sasl support, but we support or can connect with none of
+					 * the offerred mechs. jabberd 2.0 w/ SASL and Apple's iChat Server 10.5 both handle and expect
+					 * jabber:iq:auth in this situation.  iChat Server in particular offers SASL GSSAPI by default, which is often
+					 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
+					 *
+					 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
+					 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
+					 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
+					 * which would connect without issue otherwise. -evands
+					 */
+					js->auth_type = JABBER_AUTH_IQ_AUTH;
+					jabber_auth_start_old(js);
 					return;
 				}
 				/* not reached */
@@ -520,7 +528,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					msg,
-					2,
+					1,
 					purple_connection_get_account(js->gc), NULL, NULL,
 					purple_connection_get_account(js->gc), allow_plaintext_auth,
 					disallow_plaintext_auth);
@@ -561,6 +569,75 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
 	}
+}
+
+/*!
+ * @brief Given the server challenge (message) and the key (password), calculate the HMAC-MD5 digest
+ *
+ * This is the crammd5 response.  Inspired by cyrus-sasl's _sasl_hmac_md5()
+ */
+static void
+auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
+{
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
+	int i;
+	/* inner padding - key XORd with ipad */
+	unsigned char k_ipad[65];    
+	/* outer padding - key XORd with opad */
+	unsigned char k_opad[65];    
+
+	cipher = purple_ciphers_find_cipher("md5");
+
+	/* if key is longer than 64 bytes reset it to key=MD5(key) */
+	if (strlen(key) > 64) {
+		guchar keydigest[16];
+
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, (const guchar *)key, strlen(key));
+		purple_cipher_context_digest(context, 16, keydigest, NULL);
+		purple_cipher_context_destroy(context);
+
+		key = (char *)keydigest;
+		key_len = 16;
+	} 
+
+	/*
+	 * the HMAC_MD5 transform looks like:
+	 *
+	 * MD5(K XOR opad, MD5(K XOR ipad, text))
+	 *
+	 * where K is an n byte key
+	 * ipad is the byte 0x36 repeated 64 times
+	 * opad is the byte 0x5c repeated 64 times
+	 * and text is the data being protected
+	 */
+
+	/* start out by storing key in pads */
+	memset(k_ipad, '\0', sizeof k_ipad);
+	memset(k_opad, '\0', sizeof k_opad);
+	memcpy(k_ipad, (void *)key, key_len);
+	memcpy(k_opad, (void *)key, key_len);
+
+	/* XOR key with ipad and opad values */
+	for (i=0; i<64; i++) {
+		k_ipad[i] ^= 0x36;
+		k_opad[i] ^= 0x5c;
+	}
+
+	/* perform inner MD5 */
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, k_ipad, 64); /* start with inner pad */
+	purple_cipher_context_append(context, (const guchar *)challenge, challenge_len); /* then text of datagram */
+	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 1st pass */
+	purple_cipher_context_destroy(context);
+
+	/* perform outer MD5 */	
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, k_opad, 64); /* start with outer pad */
+	purple_cipher_context_append(context, digest, 16); /* then results of 1st hash */
+	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 2nd pass */
+	purple_cipher_context_destroy(context);
 }
 
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
@@ -608,13 +685,42 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
 
+		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
+			const char *challenge;
+			guchar digest[16];
+			char h[17], *p;
+			int i;
+
+			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
+			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), digest);
+
+			/* Create the response query */
+			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
+			query = xmlnode_get_child(iq->node, "query");
+
+			x = xmlnode_new_child(query, "username");
+			xmlnode_insert_data(x, js->user->node, -1);
+			x = xmlnode_new_child(query, "resource");
+			xmlnode_insert_data(x, js->user->resource, -1);
+
+			x = xmlnode_new_child(query, "crammd5");
+
+			/* Translate the digest to a hexadecimal notation */
+			p = h;
+			for(i=0; i<16; i++, p+=2)
+				snprintf(p, 3, "%02x", digest[i]);
+			xmlnode_insert_data(x, h, -1);
+
+			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
+			jabber_iq_send(iq);
+
 		} else if(xmlnode_get_child(query, "password")) {
 			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-						2,
+						1,
 						purple_connection_get_account(js->gc), NULL, NULL,
 						purple_connection_get_account(js->gc), allow_plaintext_auth,
 						disallow_plaintext_auth);
@@ -972,10 +1078,12 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
-	sasl_getprop(js->sasl, SASL_SSF, &x);
-	if (*(int *)x > 0) {
-		sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
-		js->sasl_maxbuf = *(int *)x;
+	if (js->sasl) {
+		sasl_getprop(js->sasl, SASL_SSF, &x);
+		if (*(int *)x > 0) {
+			sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
+			js->sasl_maxbuf = *(int *)x;
+		}
 	}
 #endif
 

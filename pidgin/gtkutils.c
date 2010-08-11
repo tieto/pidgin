@@ -132,12 +132,9 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	}
 }
 
-GtkWidget *
-pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable)
+static
+void pidgin_window_init(GtkWindow *wnd, const char *title, guint border_width, const char *role, gboolean resizable)
 {
-	GtkWindow *wnd = NULL;
-
-	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	if (title)
 		gtk_window_set_title(wnd, title);
 #ifdef _WIN32
@@ -148,8 +145,60 @@ pidgin_create_window(const char *title, guint border_width, const char *role, gb
 	if (role)
 		gtk_window_set_role(wnd, role);
 	gtk_window_set_resizable(wnd, resizable);
+}
+
+GtkWidget *
+pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable)
+{
+	GtkWindow *wnd = NULL;
+
+	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+	pidgin_window_init(wnd, title, border_width, role, resizable);
 
 	return GTK_WIDGET(wnd);
+}
+
+GtkWidget *
+pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable)
+{
+	GtkWindow *wnd = NULL;
+
+	wnd = GTK_WINDOW(gtk_dialog_new());
+	pidgin_window_init(wnd, title, border_width, role, resizable);
+	g_object_set(G_OBJECT(wnd), "has-separator", FALSE, NULL);
+
+	return GTK_WIDGET(wnd);
+}
+
+GtkWidget *
+pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing)
+{
+	GtkBox *vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+	gtk_box_set_homogeneous(vbox, homogeneous);
+	gtk_box_set_spacing(vbox, spacing);
+	return GTK_WIDGET(vbox);
+}
+
+GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog)
+{
+	return GTK_DIALOG(dialog)->vbox;
+}
+
+GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog)
+{
+	return GTK_DIALOG(dialog)->action_area;
+}
+
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata)
+{
+	GtkWidget *button = gtk_button_new_from_stock(label);
+	GtkWidget *bbox = pidgin_dialog_get_action_area(dialog);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (callback)
+		g_signal_connect(G_OBJECT(button), "clicked", callback, callbackdata);
+	gtk_widget_show(button);
+	return button;
 }
 
 GtkWidget *
@@ -1399,7 +1448,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			char *str;
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
-						data->filename, strerror(errno));
+						data->filename, g_strerror(errno));
 			purple_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
@@ -1546,7 +1595,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else if (!(im || ft))
 				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
 							_("Would you like to set it as the buddy icon for this user?"),
-							0,
+							PURPLE_DEFAULT_ACTION_NONE,
 							account, who, NULL,
 							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else
@@ -1652,23 +1701,23 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 	GdkPixbuf *pixbuf = NULL;
 
 	if (prim == PURPLE_STATUS_UNAVAILABLE)
-        	pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_AWAY)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_INVISIBLE)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_OFFLINE)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-                                                 icon_size, "GtkWidget");
-        else
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-                                                 icon_size, "GtkWidget");
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_AWAY)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_INVISIBLE)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_OFFLINE)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
+				icon_size, "GtkWidget");
+	else
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
+				icon_size, "GtkWidget");
 	return pixbuf;
 
 }
@@ -2306,6 +2355,9 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 	}
 
 #endif /* FILECHOOSER */
+#if 0 /* mismatched curly braces */
+	}
+#endif
 	if (dialog->callback)
 		dialog->callback(filename, dialog->data);
 	gtk_widget_destroy(dialog->icon_filesel);
@@ -2895,7 +2947,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 GSList *minidialogs = NULL;
 
 static void *
-pidgin_utils_get_handle()
+pidgin_utils_get_handle(void)
 {
 	static int handle;
 
@@ -3267,5 +3319,143 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
 {
 	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
+}
+
+GtkWidget *
+pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label)
+{
+	GtkWidget *hbox;
+	GtkWidget *label = NULL;
+
+	if (widget_label) {
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_widget_show(hbox);
+		gtk_box_pack_start(vbox, hbox, FALSE, FALSE, 0);
+
+		label = gtk_label_new_with_mnemonic(widget_label);
+		gtk_widget_show(label);
+		if (sg) {
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+			gtk_size_group_add_widget(sg, label);
+		}
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	} else {
+		hbox = GTK_WIDGET(vbox);
+	}
+
+	gtk_widget_show(widget);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, expand, TRUE, 0);
+	if (label) {
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+		pidgin_set_accessible_label (widget, label);
+	}
+
+	if (p_label)
+		(*p_label) = label;
+	return hbox;
+}
+
+gboolean pidgin_auto_parent_window(GtkWidget *widget)
+{
+#if 0
+	/* This looks at the most recent window that received focus, and makes
+	 * that the parent window. */
+#ifndef _WIN32
+	static GdkAtom _WindowTime = GDK_NONE;
+	static GdkAtom _Cardinal = GDK_NONE;
+	GList *windows = NULL;
+	GtkWidget *parent = NULL;
+	time_t window_time = 0;
+
+	windows = gtk_window_list_toplevels();
+
+	if (_WindowTime == GDK_NONE) {
+		_WindowTime = gdk_x11_xatom_to_atom(gdk_x11_get_xatom_by_name("_NET_WM_USER_TIME"));
+	}
+	if (_Cardinal == GDK_NONE) {
+		_Cardinal = gdk_atom_intern("CARDINAL", FALSE);
+	}
+
+	while (windows) {
+		GtkWidget *window = windows->data;
+		guchar *data = NULL;
+		int al = 0;
+		time_t value;
+
+		windows = g_list_delete_link(windows, windows);
+
+		if (window == widget ||
+				!GTK_WIDGET_VISIBLE(window))
+			continue;
+
+		if (!gdk_property_get(window->window, _WindowTime, _Cardinal, 0, sizeof(time_t), FALSE,
+				NULL, NULL, &al, &data))
+			continue;
+		value = *(time_t *)data;
+		if (window_time < value) {
+			window_time = value;
+			parent = window;
+		}
+		g_free(data);
+	}
+	if (windows)
+		g_list_free(windows);
+	if (parent) {
+		if (!gtk_get_current_event() && gtk_window_has_toplevel_focus(GTK_WINDOW(parent))) {
+			/* The window is in focus, and the new window was not triggered by a keypress/click
+			 * event. So do not set it transient, to avoid focus stealing and all that.
+			 */
+			return FALSE;
+		}
+		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
+		return TRUE;
+	}
+	return FALSE;
+#endif
+#else
+	/* This finds the currently active window and makes that the parent window. */
+	GList *windows = NULL;
+	GtkWidget *parent = NULL;
+	GdkEvent *event = gtk_get_current_event();
+	GdkWindow *menu = NULL;
+
+	if (event == NULL)
+		/* The window was not triggered by a user action. */
+		return FALSE;
+
+	/* We need to special case events from a popup menu. */
+	if (event->type == GDK_BUTTON_RELEASE) {
+		/* XXX: Neither of the following works:
+			menu = event->button.window;
+			menu = gdk_window_get_parent(event->button.window);
+			menu = gdk_window_get_toplevel(event->button.window);
+		*/
+	} else if (event->type == GDK_KEY_PRESS)
+		menu = event->key.window;
+
+	windows = gtk_window_list_toplevels();
+	while (windows) {
+		GtkWidget *window = windows->data;
+		windows = g_list_delete_link(windows, windows);
+
+		if (window == widget ||
+				!GTK_WIDGET_VISIBLE(window)) {
+			continue;
+		}
+
+		if (gtk_window_has_toplevel_focus(GTK_WINDOW(window)) ||
+				(menu && menu == window->window)) {
+			parent = window;
+			break;
+		}
+	}
+	if (windows)
+		g_list_free(windows);
+	if (parent) {
+		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
+		return TRUE;
+	}
+	return FALSE;
+#endif
 }
 

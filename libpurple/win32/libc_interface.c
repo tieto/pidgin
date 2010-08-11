@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <glib.h>
+#include "config.h"
 #include "debug.h"
 #include "libc_internal.h"
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -37,6 +38,26 @@
 #define g_rename rename
 #define g_stat stat
 #endif
+
+#ifdef ENABLE_NLS
+#  include <locale.h>
+#  include <libintl.h>
+#  define _(String) ((const char *)dgettext(PACKAGE, String))
+#  ifdef gettext_noop
+#    define N_(String) gettext_noop (String)
+#  else
+#    define N_(String) (String)
+#  endif
+#else
+#  include <locale.h>
+#  define N_(String) (String)
+#  ifndef _
+#    define _(String) ((const char *)String)
+#  endif
+#  define ngettext(Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
+#  define dngettext(Domain, Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
+#endif
+
 
 static char errbuf[1024];
 
@@ -294,15 +315,25 @@ struct hostent* wpurple_gethostbyname(const char *name) {
 }
 
 /* string.h */
-char* wpurple_strerror( int errornum ) {
-	if( errornum > WSABASEERR ) {
-		sprintf( errbuf, "Windows socket error #%d", errornum );
-		return errbuf;
+char* wpurple_strerror(int errornum) {
+	if (errornum > WSABASEERR) {
+		switch(errornum) {
+			case WSAECONNABORTED: /* 10053 */
+				snprintf(errbuf, sizeof(errbuf), _("Connection interrupted by other software on your computer."));
+			case WSAECONNRESET: /* 10054 */
+				snprintf(errbuf, sizeof(errbuf), _("Remote host closed connection."));
+			case WSAETIMEDOUT: /* 10060 */
+				snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
+			case WSAECONNREFUSED: /*10061 */
+				snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
+			default:
+				snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
+		}
+	} else {
+		const char *tmp = g_strerror(errornum);
+		snprintf(errbuf, sizeof(errbuf), tmp);
 	}
-	else
-		/* Nothing is supposed to modify what is returned by strerror,
-		   but it isn't const for some reason */
-		return (char *)g_strerror( errornum );
+	return errbuf;
 }
 
 /* unistd.h */
@@ -409,7 +440,7 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 
 	if (p != 0) {
 		_ftime(&timebuffer);
-	   	p->tv_sec = timebuffer.time;			/* seconds since 1-1-1970 */
+		p->tv_sec = timebuffer.time;			/* seconds since 1-1-1970 */
 		p->tv_usec = timebuffer.millitm*1000; 	/* microseconds */
 	}
 

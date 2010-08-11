@@ -38,6 +38,8 @@
 #include "signals.h"
 #include "util.h"
 
+#define KEEPALIVE_INTERVAL 30
+
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
@@ -50,8 +52,19 @@ send_keepalive(gpointer data)
 	PurpleConnection *gc = data;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (gc == NULL)
+		return TRUE;
+
+	/* Only send keep-alives if we haven't heard from the
+	 * server in a while.
+	 */
+	if ((time(NULL) - gc->last_received) < KEEPALIVE_INTERVAL)
+		return TRUE;
+
+	if (gc->prpl == NULL)
+		return TRUE;
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->keepalive)
 		prpl_info->keepalive(gc);
@@ -73,7 +86,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add_seconds(30, send_keepalive, gc);
+		gc->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{
@@ -219,9 +232,6 @@ purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
 	GSList *buddies;
-#if 0
-	GList *wins;
-#endif
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean remove = FALSE;
 
@@ -268,19 +278,6 @@ purple_connection_destroy(PurpleConnection *gc)
 		purple_blist_remove_account(account);
 
 	purple_signal_emit(purple_connections_get_handle(), "signed-off", gc);
-
-#if 0
-	/* see comment later in file on if 0'd same code */
-	/*
-	 * XXX This is a hack! Remove this and replace it with a better event
-	 *     notification system.
-	 */
-	for (wins = purple_get_windows(); wins != NULL; wins = wins->next) {
-		PurpleConvWindow *win = (PurpleConvWindow *)wins->data;
-		purple_conversation_update(purple_conv_window_get_conversation_at(win, 0),
-								 PURPLE_CONV_ACCOUNT_OFFLINE);
-	}
-#endif
 
 	purple_account_request_close_with_account(account);
 	purple_request_close_with_handle(gc);
@@ -427,6 +424,14 @@ purple_connection_get_account(const PurpleConnection *gc)
 	return gc->account;
 }
 
+PurplePlugin *
+purple_connection_get_prpl(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, NULL);
+
+	return gc->prpl;
+}
+
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
@@ -556,8 +561,10 @@ purple_connection_ssl_error (PurpleConnection *gc,
 
 	switch (ssl_error) {
 		case PURPLE_SSL_HANDSHAKE_FAILED:
-		case PURPLE_SSL_CONNECT_FAILED:
 			reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
+			break;
+		case PURPLE_SSL_CONNECT_FAILED:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			break;
 		case PURPLE_SSL_CERTIFICATE_INVALID:
 			/* TODO: maybe PURPLE_SSL_* should be more specific? */
@@ -565,7 +572,7 @@ purple_connection_ssl_error (PurpleConnection *gc,
 			break;
 		default:
 			g_assert_not_reached ();
-			reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
+			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 	}
 
 	purple_connection_error_reason (gc, reason,
@@ -578,12 +585,12 @@ purple_connection_error_is_fatal (PurpleConnectionError reason)
 	switch (reason)
 	{
 		case PURPLE_CONNECTION_ERROR_NETWORK_ERROR:
+		case PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR:
 			return FALSE;
 		case PURPLE_CONNECTION_ERROR_INVALID_USERNAME:
 		case PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED:
 		case PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE:
 		case PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT:
-		case PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR:
 		case PURPLE_CONNECTION_ERROR_NAME_IN_USE:
 		case PURPLE_CONNECTION_ERROR_INVALID_SETTINGS:
 		case PURPLE_CONNECTION_ERROR_OTHER_ERROR:

@@ -30,10 +30,12 @@ dist-hook: pidgin.spec
 distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
+if ENABLE_GTK
 appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
+endif
 
 if ENABLE_GTK
 GTK_DIR=pidgin
@@ -51,7 +53,7 @@ if HAVE_DOXYGEN
 	@doxygen
 if HAVE_XSLTPROC
 	@echo "Generating devhelp index..."
-	@xsltproc doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
+	@xsltproc $(top_srcdir)/doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
 	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
 else
 	@echo "Not generating devhelp index: xsltproc was not found by configure"

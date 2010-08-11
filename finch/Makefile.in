@@ -54,9 +54,10 @@ PROGRAMS = $(bin_PROGRAMS)
 am_finch_OBJECTS = gntaccount.$(OBJEXT) gntblist.$(OBJEXT) \
 	gntcertmgr.$(OBJEXT) gntconn.$(OBJEXT) gntconv.$(OBJEXT) \
 	gntdebug.$(OBJEXT) gntft.$(OBJEXT) finch.$(OBJEXT) \
-	gntidle.$(OBJEXT) gntnotify.$(OBJEXT) gntplugin.$(OBJEXT) \
-	gntpounce.$(OBJEXT) gntprefs.$(OBJEXT) gntrequest.$(OBJEXT) \
-	gntsound.$(OBJEXT) gntstatus.$(OBJEXT) gntui.$(OBJEXT)
+	gntidle.$(OBJEXT) gntlog.$(OBJEXT) gntnotify.$(OBJEXT) \
+	gntplugin.$(OBJEXT) gntpounce.$(OBJEXT) gntprefs.$(OBJEXT) \
+	gntrequest.$(OBJEXT) gntroomlist.$(OBJEXT) gntsound.$(OBJEXT) \
+	gntstatus.$(OBJEXT) gntui.$(OBJEXT)
 finch_OBJECTS = $(am_finch_OBJECTS)
 am__DEPENDENCIES_1 =
 finch_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -170,8 +171,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -257,6 +256,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -340,6 +341,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -371,11 +373,13 @@ finch_SOURCES = \
 	gntft.c \
 	finch.c \
 	gntidle.c \
+	gntlog.c \
 	gntnotify.c \
 	gntplugin.c \
 	gntpounce.c \
 	gntprefs.c \
 	gntrequest.c \
+	gntroomlist.c \
 	gntsound.c \
 	gntstatus.c \
 	gntui.c
@@ -390,11 +394,13 @@ finch_headers = \
 	gntft.h \
 	finch.h \
 	gntidle.h \
+	gntlog.h \
 	gntnotify.h \
 	gntplugin.h \
 	gntpounce.h \
 	gntprefs.h \
 	gntrequest.h \
+	gntroomlist.h \
 	gntsound.h \
 	gntstatus.h \
 	gntui.h
@@ -517,11 +523,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntdebug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntidle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntlog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntnotify.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntplugin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntpounce.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntprefs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntrequest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntroomlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntsound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntstatus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gntui.Po@am__quote@

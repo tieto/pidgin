@@ -650,8 +650,10 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
 		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
 	else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
 		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
-	else
+	else if ((flags & A_COLOR) == 0)
 		fl |= gnt_color_pair(GNT_COLOR_NORMAL);
+	else
+		fl |= (flags & A_COLOR);
 
 	return fl;
 }
@@ -828,7 +830,7 @@ struct
 
 
 static void
-cleanup_pageditor()
+cleanup_pageditor(void)
 {
 	unlink(pageditor.file);
 	g_free(pageditor.file);
