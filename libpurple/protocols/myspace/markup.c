@@ -400,6 +400,8 @@ static void
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	g_return_if_fail(root != NULL);
+
 	if (g_str_equal(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
 	} else if (g_str_equal(root->name, "a")) {
@@ -415,7 +417,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
 				"unknown tag name=%s, ignoring", 
-				(root && root->name) ? root->name : "(NULL)");
+				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 	}
@@ -444,7 +446,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
 	} else if (!purple_utf8_strcasecmp(root->name, "a")) {
-		const gchar *href, *link_text;
+		const gchar *href;
+		gchar *link_text;
 
 		href = xmlnode_get_attrib(root, "href");
 
@@ -476,6 +479,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
 		xmlnode_free(root->child);
+		g_free(link_text);
 		root->child = NULL;
 
 		*end = g_strdup("");
@@ -567,10 +571,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	
 		case XMLNODE_TYPE_DATA:
 			/* Literal text. */
-			inner = g_new0(char, node->data_sz + 1);
-			strncpy(inner, node->data, node->data_sz);
-			inner[node->data_sz] = 0;
-
+			inner = g_strndup(node->data, node->data_sz);
 			purple_debug_info("msim", " ** node data=%s\n", 
 					inner ? inner : "(NULL)");
 			break;
@@ -583,6 +584,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 
 		if (inner) {
 			g_string_append(final, inner);
+			g_free(inner);
+			inner = NULL;
 		}
 	}
 
@@ -591,6 +594,9 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	 * to _nest_ <f> tags to intersperse different text in one paragraph!
 	 * Comment out this line below to see. */
 	g_string_append(final, end);
+
+	g_free(begin);
+	g_free(end);
 
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
 			(final && final->str) ? final->str : "(NULL)");

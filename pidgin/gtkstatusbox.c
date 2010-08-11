@@ -1395,7 +1395,7 @@ pidgin_status_box_popup(PidginStatusBox *box)
 		return;
 	}
 	gtk_grab_add (box->popup_window);
-//	box->popup_in_progress = TRUE;
+	/*box->popup_in_progress = TRUE;*/
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
 				      TRUE);
 
@@ -1407,7 +1407,8 @@ pidgin_status_box_popup(PidginStatusBox *box)
 }
 
 static void
-pidgin_status_box_popdown(PidginStatusBox *box) {
+pidgin_status_box_popdown(PidginStatusBox *box)
+{
 	gtk_widget_hide(box->popup_window);
 	box->popup_in_progress = FALSE;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
@@ -1415,16 +1416,34 @@ pidgin_status_box_popdown(PidginStatusBox *box) {
 	gtk_grab_remove (box->popup_window);
 }
 
+static gboolean
+toggle_key_press_cb(GtkWidget *widget, GdkEventKey *event, PidginStatusBox *box)
+{
+	switch (event->keyval) {
+		case GDK_Return:
+		case GDK_KP_Enter:
+		case GDK_KP_Space:
+		case GDK_space:
+			if (!box->popup_in_progress) {
+				pidgin_status_box_popup (box);
+				box->popup_in_progress = TRUE;
+			} else {
+				pidgin_status_box_popdown(box);
+			}
+			return TRUE;
+		default:
+			return TRUE;
+	}
+}
 
-static 
-gboolean
+static gboolean
 toggled_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-		if (!box->popup_in_progress)
-			pidgin_status_box_popup (box);
-		else
-			pidgin_status_box_popdown(box);
-return TRUE;
+	if (!box->popup_in_progress)
+		pidgin_status_box_popup (box);
+	else
+		pidgin_status_box_popdown(box);
+	return TRUE;
 }
 
 static void
@@ -1775,6 +1794,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event",
 			 G_CALLBACK(button_released_cb), status_box);
 #endif
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "key-press-event",
+	                 G_CALLBACK(toggle_key_press_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
 	                 G_CALLBACK(toggled_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);

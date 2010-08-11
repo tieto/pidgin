@@ -1532,8 +1532,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							plain = g_string_append(plain, alt->str);
 						if(!src && xhtml)
 							xhtml = g_string_append(xhtml, alt->str);
+						g_string_free(alt, TRUE);
 					}
-					g_string_free(alt, TRUE);
 					g_string_free(src, TRUE);
 					continue;
 				}
@@ -1566,7 +1566,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
+						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -2565,15 +2565,14 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 
 	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
 
-	ret = purple_util_write_data_to_file_absolute(filename_full,
-						      data,size);
+	ret = purple_util_write_data_to_file_absolute(filename_full, data, size);
 
 	g_free(filename_full);
 	return ret;
 }
 
 gboolean
-purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size)
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size)
 {
 	gchar *filename_temp;
 	FILE *file;
@@ -2582,6 +2581,8 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
+
+	g_return_val_if_fail((size >= -1), FALSE);
 
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
@@ -2608,7 +2609,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	}
 
 	/* Write to file */
-	real_size = (size == -1) ? strlen(data) : size;
+	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
 	/* Close file */
@@ -3509,7 +3510,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 	gboolean full;
 	int len;
 
-	if ((s = g_strstr_len(data, data_len, "Location: ")) == NULL)
+	if ((s = g_strstr_len(data, data_len, "\nLocation: ")) == NULL)
 		/* We're not being redirected */
 		return FALSE;
 

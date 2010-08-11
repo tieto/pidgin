@@ -470,6 +470,7 @@ static int
 create_listener(int port)
 {
 	int fd;
+	int flags;
 	const int on = 1;
 
 #if 0
@@ -545,7 +546,8 @@ create_listener(int port)
 		return -1;
 	}
 
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(fd, F_GETFL);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 
 	return fd;
 }

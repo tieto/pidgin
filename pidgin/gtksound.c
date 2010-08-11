@@ -118,12 +118,9 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
 		PidginConversation *gtkconv;
-		PidginWindow *win;
 		gboolean has_focus;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		win = gtkconv->win;
-
 		has_focus = purple_conversation_has_focus(conv);
 
 		if (!gtkconv->make_sound ||

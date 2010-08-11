@@ -263,6 +263,7 @@ static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
+	int flags;
 	const int on = 1;
 	PurpleNetworkListenData *listen_data;
 	unsigned short actual_port;
@@ -340,7 +341,8 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		close(listenfd);
 		return NULL;
 	}
-	fcntl(listenfd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(listenfd, F_GETFL);
+	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 
 	actual_port = purple_network_get_port_from_fd(listenfd);
 

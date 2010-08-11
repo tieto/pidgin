@@ -49,9 +49,10 @@ struct hostent* wpurple_gethostbyname(const char *name);
 char* wpurple_strerror( int errornum );
 
 /* fcntl.h */
-int wpurple_fcntl(int socket, int command, int val);
-#define F_SETFL 1
-#define O_NONBLOCK 1
+int wpurple_fcntl(int socket, int command, ...);
+#define F_GETFL 3
+#define F_SETFL 4
+#define O_NONBLOCK 04000
 
 /* sys/ioctl.h */
 #define SIOCGIFCONF 0x8912 /* get iface list */

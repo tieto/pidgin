@@ -2439,11 +2439,16 @@ update_tab_icon(PurpleConversation *conv)
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
 			&(gtkconv->infopane_iter),
 			CONV_EMBLEM_COLUMN, emblem, -1);
+	if (emblem)
+		g_object_unref(emblem);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons")) {
+		emblem = pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL);
 		gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
 			&(gtkconv->infopane_iter),
-			CONV_PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL), -1);
+			CONV_PROTOCOL_ICON_COLUMN, emblem, -1);
+		if (emblem)
+			g_object_unref(emblem);
 	}
 
 	/* XXX seanegan Why do I have to do this? */
@@ -3456,6 +3461,7 @@ update_send_to_selection(PidginWindow *win)
 
 		if (b == item_buddy) {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
+			g_list_free(child);
 			break;
 		}
 	}
@@ -4295,45 +4301,54 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 1);
 }
 
-
 static void resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-        int wrapped_lines;
-        int lines;
-        GdkRectangle oneline;
+	int wrapped_lines;
+	int lines;
+	GdkRectangle oneline;
 	GtkRequisition sr;
-        int height;
-        int pad_top, pad_inside, pad_bottom;
+	int height, diff;
+	int pad_top, pad_inside, pad_bottom;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
-        wrapped_lines = 1;
-        gtk_text_buffer_get_start_iter(buffer, &iter);
-        gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
-        while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
-                wrapped_lines++;
+	wrapped_lines = 1;
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
+		wrapped_lines++;
 
-        lines = gtk_text_buffer_get_line_count(buffer);
+	lines = gtk_text_buffer_get_line_count(buffer);
 
-        /* Show a maximum of 4 lines */
-        lines = MIN(lines, 4);
-        wrapped_lines = MIN(wrapped_lines, 4);
+	/* Show a maximum of 4 lines */
+	lines = MIN(lines, 4);
+	wrapped_lines = MIN(wrapped_lines, 4);
 
-        pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
-        pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
-        pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-        height = (oneline.height + pad_top + pad_bottom) * lines;
-        height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	height = (oneline.height + pad_top + pad_bottom) * lines;
+	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtkconv->auto_resize = TRUE;
-        g_idle_add(reset_auto_resize_cb, gtkconv);
-	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
-	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
+	g_idle_add(reset_auto_resize_cb, gtkconv);
+
+	diff = height - gtkconv->entry->allocation.height;
+
+	if (diff > 0) {
+		gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
+
+		/* uncomment this to auto resize even after the user manually
+		   resizes
+		gtk_paned_set_position(GTK_PANED(gtkconv->lower_hbox->parent->parent),
+			-1);
+		*/
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+			diff + gtkconv->lower_hbox->allocation.height);
 	}
 }
 
@@ -4664,7 +4679,6 @@ setup_common_pane(PidginConversation *gtkconv)
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
-
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
@@ -5063,6 +5077,9 @@ void
 pidgin_conv_new(PurpleConversation *conv)
 {
 	private_gtkconv_new(conv, FALSE);
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+		purple_signal_emit(pidgin_conversations_get_handle(),
+				"conversation-displayed", PIDGIN_CONVERSATION(conv));
 }
 
 static void
@@ -6439,6 +6456,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
+		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6472,7 +6490,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
-        	gtk_widget_queue_draw(gtkconv->infopane);
+		gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -6491,31 +6509,38 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\" weight=\"bold\"";
+			style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			style = "color=\"#cc0000\" weight=\"bold\"";
+			style = "color=\"#cc0000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\" weight=\"bold\"";
+			style = "color=\"#888a85\"";
 		} else {
-			style = "";
+			style = NULL;
 		}
+
+		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
+			bold = TRUE;
 		
-		if (*style != '\0')
+		if (style || bold)
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s>%s</span>",
-			                        style, html_title);
+			label = g_strdup_printf("<span %s %s>%s</span>",
+			                        style ? style : "",
+			                        bold ? "weight=\"bold\"" : "",
+			                        html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-		
+
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 

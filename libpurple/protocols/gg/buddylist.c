@@ -27,6 +27,13 @@
 #include "gg-utils.h"
 #include "buddylist.h"
 
+#define F_FIRSTNAME 0
+#define F_LASTNAME 1
+/* #define F_ 2 */
+#define F_NICKNAME 3
+#define F_PHONE 4
+#define F_GROUP 5
+#define F_UIN 6
 
 /* void ggp_buddylist_send(PurpleConnection *gc) {{{ */
 void ggp_buddylist_send(PurpleConnection *gc)
@@ -90,7 +97,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	gchar **users_tbl;
 	int i;
 
-	/* Don't limit a number of records in a buddylist. */
+	/* Don't limit the number of records in a buddylist. */
 	users_tbl = g_strsplit(buddylist, "\r\n", -1);
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
@@ -108,8 +115,8 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			continue;
 		}
 
-		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
-		name = data_tbl[6];
+		show = charset_convert(data_tbl[F_NICKNAME], "CP1250", "UTF-8");
+		name = data_tbl[F_UIN];
 		if ('\0' == *name) {
 			purple_debug_warning("gg",
 				"Something is wrong on line %d of the buddylist. Skipping.\n",
@@ -121,7 +128,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			show = g_strdup(name);
 		}
 
-		purple_debug_info("gg", "got buddy: name=%s show=%s\n", name, show);
+		purple_debug_info("gg", "got buddy: name=%s; show=%s\n", name, show);
 
 		if (purple_find_buddy(purple_connection_get_account(gc), name)) {
 			g_free(show);
@@ -131,19 +138,19 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 
 		g = g_strdup("Gadu-Gadu");
 
-		if ('\0' != data_tbl[5]) {
+		if ('\0' != data_tbl[F_GROUP]) {
 			/* XXX: Probably buddy should be added to all the groups. */
 			/* Hard limit to at most 50 groups */
-			gchar **group_tbl = g_strsplit(data_tbl[5], ",", 50);
+			gchar **group_tbl = g_strsplit(data_tbl[F_GROUP], ",", 50);
 			if (ggp_array_size(group_tbl) > 0) {
 				g_free(g);
-				g = g_strdup(group_tbl[0]);
+				g = charset_convert(group_tbl[0], "CP1250", "UTF-8");
 			}
 			g_strfreev(group_tbl);
 		}
 
 		buddy = purple_buddy_new(purple_connection_get_account(gc), name,
-				       strlen(show) ? show : NULL);
+					 strlen(show) ? show : NULL);
 
 		if (!(group = purple_find_group(g))) {
 			group = purple_group_new(g);
@@ -159,7 +166,6 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	g_strfreev(users_tbl);
 
 	ggp_buddylist_send(gc);
-
 }
 /* }}} */
 
@@ -192,8 +198,7 @@ void ggp_buddylist_offline(PurpleConnection *gc)
 					continue;
 
 				purple_prpl_got_user_status(
-					purple_connection_get_account(gc),
-					buddy->name, "offline", NULL);
+					account, buddy->name, "offline", NULL);
 
 				purple_debug_info("gg",
 					"ggp_buddylist_offline: gone: %s\n",

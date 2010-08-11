@@ -1328,8 +1328,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					break;
 
 				case PURPLE_PREF_STRING_LIST:
-					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
-					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
+					value2 = NULL;
+					if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter))
+						gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
 					purple_account_set_string(account, setting, value2);
 					break;
 

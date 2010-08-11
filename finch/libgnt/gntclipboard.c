@@ -48,7 +48,7 @@ gnt_clipboard_class_init(GntClipboardClass *klass)
  *****************************************************************************/
 
 void
-gnt_clipboard_set_string(GntClipboard *clipboard, gchar *string)
+gnt_clipboard_set_string(GntClipboard *clipboard, const gchar *string)
 {
 	g_free(clipboard->string);
 	clipboard->string = g_strdup(string);

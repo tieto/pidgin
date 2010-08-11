@@ -412,10 +412,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
 								  encode_spaces(fontface),
 								  fonteffect, fontcolor, direction);
-	*message = g_strdup(msg);
+	*message = msg;
 
 	g_free(fontface);
-	g_free(msg);
 }
 
 void

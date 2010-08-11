@@ -1484,7 +1484,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	gboolean sect_info = FALSE;
 	gboolean has_contact_info = FALSE;
 	char *url_buffer;
-	GString *s, *s2;
 	int stripped_len;
 #if PHOTO_SUPPORT
 	char *photo_url_text = NULL;
@@ -1568,11 +1567,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	purple_debug_misc("msn", "stripped = %p\n", stripped);
 	purple_debug_misc("msn", "url_buffer = %p\n", url_buffer);
-
-	/* Gonna re-use the memory we've already got for url_buffer */
-	/* No we're not. */
-	s = g_string_sized_new(strlen(url_buffer));
-	s2 = g_string_sized_new(strlen(url_buffer));
 
 	/* General section header */
 	if (has_tooltip_text)
@@ -1919,7 +1913,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
 		g_free(url_buffer);
-		g_free(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(info_data->name);
 		g_free(info_data);
 		g_free(photo_url_text);
