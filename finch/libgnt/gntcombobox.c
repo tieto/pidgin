@@ -85,15 +85,15 @@ gnt_combo_box_draw(GntWidget *widget)
 	else
 		type = GNT_COLOR_NORMAL;
 
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
+	wbkgdset(widget->window, '\0' | gnt_color_pair(type));
 
 	s = (char*)gnt_util_onscreen_width_to_pointer(text, widget->priv.width - 4, &len);
 	*s = '\0';
 
 	mvwaddstr(widget->window, 1, 1, text);
-	whline(widget->window, ' ' | COLOR_PAIR(type), widget->priv.width - 4 - len);
-	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
-	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | COLOR_PAIR(GNT_COLOR_NORMAL));
+	whline(widget->window, ' ' | gnt_color_pair(type), widget->priv.width - 4 - len);
+	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | gnt_color_pair(GNT_COLOR_NORMAL));
+	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | gnt_color_pair(GNT_COLOR_NORMAL));
 
 	g_free(text);
 	GNTDEBUG;

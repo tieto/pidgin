@@ -207,15 +207,15 @@ static void purple_xfer_show_file_error(PurpleXfer *xfer, const char *filename)
 	switch(xfer_type) {
 		case PURPLE_XFER_SEND:
 			msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
-								  utf8, strerror(err));
+								  utf8, g_strerror(err));
 			break;
 		case PURPLE_XFER_RECEIVE:
 			msg = g_strdup_printf(_("Error writing %s: \n%s.\n"),
-								  utf8, strerror(err));
+								  utf8, g_strerror(err));
 			break;
 		default:
 			msg = g_strdup_printf(_("Error accessing %s: \n%s.\n"),
-								  utf8, strerror(err));
+								  utf8, g_strerror(err));
 			break;
 	}
 	g_free(utf8);
@@ -997,6 +997,11 @@ static void
 connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleXfer *xfer = (PurpleXfer *)data;
+
+	if (source < 0) {
+		purple_xfer_cancel_local(xfer);
+		return;
+	}
 
 	xfer->fd = source;
 

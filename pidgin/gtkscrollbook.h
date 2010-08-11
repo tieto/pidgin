@@ -29,10 +29,6 @@
 
 #include <gtk/gtk.h>
 
-#if !GTK_CHECK_VERSION(2,4,0)
-#include "pidgincombobox.h"
-#endif
-
 G_BEGIN_DECLS
 
 #define PIDGIN_TYPE_SCROLL_BOOK             (pidgin_scroll_book_get_type ())
@@ -54,9 +50,9 @@ struct _PidginScrollBook
 	GtkWidget *label;
 	GtkWidget *left_arrow;
 	GtkWidget *right_arrow;
+	GList *children;
 	
 	/* Padding for future expansion */
-	void (*_gtk_reserved0) (void);
 	void (*_gtk_reserved1) (void);
 	void (*_gtk_reserved2) (void);
 	void (*_gtk_reserved3) (void);
@@ -66,7 +62,7 @@ struct _PidginScrollBook
 
 struct _PidginScrollBookClass
 {
-	GtkComboBoxClass parent_class;
+	GtkContainerClass parent_class;
 
 	/* Padding for future expansion */
 	void (*_gtk_reserved0) (void);

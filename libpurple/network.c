@@ -259,6 +259,12 @@ purple_network_finish_pmp_map_cb(gpointer data)
 	return FALSE;
 }
 
+static gboolean listen_map_external = TRUE;
+void purple_network_listen_map_external(gboolean map_external)
+{
+	listen_map_external = map_external;
+}
+
 static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
@@ -285,7 +291,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 #ifndef _WIN32
 		purple_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
-			purple_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
+			purple_debug_warning("network", "getaddrinfo: system error: %s\n", g_strerror(errno));
 #else
 		purple_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
 #endif
@@ -302,7 +308,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-			purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+			purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		/* XXX - It is unclear to me (datallah) whether we need to be
@@ -318,26 +324,26 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	struct sockaddr_in sockin;
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
-		purple_debug_warning("network", "socket: %s\n", strerror(errno));
+		purple_debug_warning("network", "socket: %s\n", g_strerror(errno));
 		return NULL;
 	}
 
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-		purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+		purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
 
 	memset(&sockin, 0, sizeof(struct sockaddr_in));
 	sockin.sin_family = PF_INET;
 	sockin.sin_port = htons(port);
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
-		purple_debug_warning("network", "bind: %s\n", strerror(errno));
+		purple_debug_warning("network", "bind: %s\n", g_strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
 #endif
 
 	if (socket_type == SOCK_STREAM && listen(listenfd, 4) != 0) {
-		purple_debug_warning("network", "listen: %s\n", strerror(errno));
+		purple_debug_warning("network", "listen: %s\n", g_strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
@@ -356,11 +362,17 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->cb_data = cb_data;
 	listen_data->socket_type = socket_type;
 
+	if (!listen_map_external)
+	{
+		purple_debug_info("network", "Skipping external port mapping.\n");
+		/* The pmp_map_cb does what we want to do */
+		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+	}
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
-	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
+	else if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
 							  actual_port, actual_port, PURPLE_PMP_LIFETIME))
 	{
-		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n",actual_port);
+		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n", actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
 		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
@@ -426,7 +438,7 @@ purple_network_get_port_from_fd(int fd)
 
 	len = sizeof(addr);
 	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
-		purple_debug_warning("network", "getsockname: %s\n", strerror(errno));
+		purple_debug_warning("network", "getsockname: %s\n", g_strerror(errno));
 		return 0;
 	}
 
@@ -567,7 +579,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 
 		retval = WSALookupServiceEnd(h);
 
-		g_idle_add(wpurple_network_change_thread_cb, NULL);
+		purple_timeout_add(0, wpurple_network_change_thread_cb, NULL);
 
 	}
 

@@ -41,8 +41,8 @@ target_triplet = @target@
 subdir = libpurple
 DIST_COMMON = $(am__libpurpleinclude_HEADERS_DIST) $(noinst_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/purple-uninstalled.pc.in $(srcdir)/purple.pc.in \
-	$(srcdir)/version.h.in
+	$(srcdir)/purple-uninstalled.pc.in $(srcdir)/purple.h.in \
+	$(srcdir)/purple.pc.in $(srcdir)/version.h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -50,7 +50,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = purple.pc purple-uninstalled.pc version.h
+CONFIG_CLEAN_FILES = purple.pc purple-uninstalled.pc purple.h \
+	version.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -139,8 +140,8 @@ am__libpurpleinclude_HEADERS_DIST = account.h accountopt.h blist.h \
 	pluginpref.h pounce.h prefs.h privacy.h proxy.h prpl.h \
 	request.h roomlist.h savedstatuses.h server.h signals.h \
 	dnsquery.h dnssrv.h status.h stringref.h stun.h sound.h \
-	sslconn.h upnp.h util.h value.h version.h xmlnode.h \
-	whiteboard.h dbus-bindings.h dbus-purple.h dbus-server.h \
+	sslconn.h upnp.h util.h value.h xmlnode.h whiteboard.h \
+	purple.h version.h dbus-bindings.h dbus-purple.h dbus-server.h \
 	dbus-useful.h dbus-define-api.h dbus-types.h
 libpurpleincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(libpurpleinclude_HEADERS) $(noinst_HEADERS)
@@ -289,12 +290,15 @@ PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+PANGO_CFLAGS = @PANGO_CFLAGS@
+PANGO_LIBS = @PANGO_LIBS@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PERL_MM_PARAMS = @PERL_MM_PARAMS@
 PKG_CONFIG = @PKG_CONFIG@
+PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
@@ -329,6 +333,7 @@ X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
 XMKMF = @XMKMF@
+XSLTPROC = @XSLTPROC@
 XSS_LIBS = @XSS_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -361,6 +366,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 enable_dbus = @enable_dbus@
+enable_devhelp = @enable_devhelp@
 enable_dot = @enable_dot@
 enable_doxygen = @enable_doxygen@
 exec_prefix = @exec_prefix@
@@ -380,8 +386,6 @@ localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
-pango_CFLAGS = @pango_CFLAGS@
-pango_LIBS = @pango_LIBS@
 pdfdir = @pdfdir@
 perlpath = @perlpath@
 pidginpath = @pidginpath@
@@ -408,6 +412,7 @@ EXTRA_DIST = \
 		purple-send \
 		purple-send-async \
 		purple-url-handler \
+		purple.h.in \
 		purple.pc.in \
 		purple-uninstalled.pc.in \
 		version.h.in \
@@ -526,11 +531,11 @@ purple_coreheaders = \
 	upnp.h \
 	util.h \
 	value.h \
-	version.h \
 	xmlnode.h \
 	whiteboard.h
 
-BUILT_SOURCES = version.h
+purple_builtheaders = purple.h version.h
+BUILT_SOURCES = $(purple_builtheaders)
 @ENABLE_DBUS_TRUE@CLEANFILES = \
 @ENABLE_DBUS_TRUE@	dbus-bindings.c \
 @ENABLE_DBUS_TRUE@	dbus-client-binding.c \
@@ -549,7 +554,9 @@ BUILT_SOURCES = version.h
 @ENABLE_DBUS_TRUE@                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
 @ENABLE_DBUS_TRUE@                savedstatuses.h status.h server.h util.h xmlnode.h
 
-@ENABLE_DBUS_TRUE@purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders))
+@ENABLE_DBUS_TRUE@purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
+@ENABLE_DBUS_TRUE@		$(purple_builtheaders)
+
 @ENABLE_DBUS_TRUE@dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 
 # libpurple-client
@@ -580,6 +587,7 @@ noinst_HEADERS = \
 libpurpleincludedir = $(includedir)/libpurple
 libpurpleinclude_HEADERS = \
 	$(purple_coreheaders) \
+	$(purple_builtheaders) \
 	$(dbus_headers)
 
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
@@ -642,6 +650,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 purple.pc: $(top_builddir)/config.status $(srcdir)/purple.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 purple-uninstalled.pc: $(top_builddir)/config.status $(srcdir)/purple-uninstalled.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+purple.h: $(top_builddir)/config.status $(srcdir)/purple.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 version.h: $(top_builddir)/config.status $(srcdir)/version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -1162,7 +1172,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 @ENABLE_DBUS_TRUE@purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 @ENABLE_DBUS_TRUE@	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
-@ENABLE_DBUS_TRUE@purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(dbus_exported)
+@ENABLE_DBUS_TRUE@purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(purple_builtheaders) $(dbus_exported)
 @ENABLE_DBUS_TRUE@	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
 @ENABLE_DBUS_TRUE@	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 

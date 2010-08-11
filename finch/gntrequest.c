@@ -76,6 +76,8 @@ setup_request_window(const char *title, const char *primary,
 static void
 setup_default_callback(GntWidget *window, gpointer default_cb, gpointer data)
 {
+	if (default_cb == NULL)
+		return;
 	g_object_set_data(G_OBJECT(window), "default-callback", default_cb);
 	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(default_cb), data);
 }

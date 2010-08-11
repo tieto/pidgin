@@ -1,3 +1,8 @@
+version 2.3.0 (11/24/2007):
+	* Updated GTK+ to 2.12.1 (This was actually included in 2.2.2, but 
+	  didn't get into the Changelog.)
+	* Upgrade SILC to use the 1.1.5 toolkit
+
 version 2.2.2 (10/23/2007):
 	* Updated gtkspell to include a patch to share Aspell dictionaries
 	  among all the input fields to avoid excessive memory usage.
@@ -8,6 +13,10 @@ version 2.2.2 (10/23/2007):
 	* libpurple now looks for a default prefs.xml in the COMMON_APPDATA
 	  directory (e.g. \Documents and Settings\All Users\Application Data\purple\prefs.xml)
 	  similarly to how this is done on other platforms.
+	* Updated GTK+ to 2.12.1
+
+version 2.2.1 (09/29/2007):
+	* No changes
 
 version 2.2.0 (09/13/2007):
 	* Updated gtkspell to 2.0.11
@@ -126,7 +135,7 @@ version 0.82.1 (08/27/2004):
 
 version 0.82 (08/26/2004):
 	* Selecting away messages using the system tray icon works
-	  (Thanks François Gagné)
+	  (Thanks Fran?ois Gagn?)
 	* Transparency plugin will save your settings again (Kevin Stange)
 	* Updated gtk-wimp to 0.6.2
 	* Updated libpng to 1.2.6 (major security update)

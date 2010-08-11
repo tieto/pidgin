@@ -1,5 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.3.0 (11/20/2007):
+	Luke: While this does not have the new MSN code, rest assured that
+	we are working on it and that it is nearing release.  This contains
+	a significant number of fixes, including some that were marked as
+	fixed for earlier releases.  Happy Thanksgiving!
+
+	John: This is my first NEWS entry!  So, this time around we have an
+	updated man page (the old one hadn't been really updated since
+	before the GTK+ 2.0 migration!), lots of bug fixes, and some new
+	features for you all.  Enjoy!
+
 2.2.2 (10/23/2007):
 	Luke: Because the main branch of pidgin development is still not
 	ready for public consumption, I have taken some time to try to

@@ -9,9 +9,9 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.2.2"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.3.0"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.2.2
+%define pidginver 2.3.0
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
@@ -21,7 +21,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.2.2.tar.bz2
+Source:     %{name}-2.3.0.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -211,7 +211,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.2.2
+%setup -q -n %{name}-2.3.0
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -455,12 +455,16 @@ touch --no-create %{_datadir}/icons/hicolor || :
 # libgnt
 %dir %{_includedir}/gnt
 %{_includedir}/gnt/*.h
+%{_libdir}/pkgconfig/finch.pc
 %{_libdir}/pkgconfig/gnt.pc
 %{_libdir}/libgnt.so
 
 %endif
 
 %changelog
+* Tue Oct 23 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add finch.pc to finch-devel
+
 * Mon Sep 17 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add version dependency on libpurple for pidgin
 - Support for OpenSuse lowercase package name for GConf2

@@ -139,7 +139,7 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	if (source < 0) {	/* socket returns -1 */
-		purple_connection_error(gc, error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		return;
 	}
 
@@ -237,7 +237,7 @@ static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 		close(source);
 		purple_input_remove(phb->inpa);
 
-		purple_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", strerror(error));
+		purple_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", g_strerror(error));
 
 		phb->func(phb->data, -1, _("Unable to connect"));
 		return;
@@ -265,7 +265,7 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 
 	if (fd < 0) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ Redirect", 
-			"Unable to create socket: %s\n", strerror(errno));
+			"Unable to create socket: %s\n", g_strerror(errno));
 		return -1;
 	}
 
@@ -297,7 +297,7 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
 			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", strerror(errno));
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", g_strerror(errno));
 			close(fd);
 			return -1;
 		}		/* if errno */
@@ -497,7 +497,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error(qd->gc, strerror(errno));
+		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 
 	return ret;
 }

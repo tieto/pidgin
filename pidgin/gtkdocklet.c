@@ -145,15 +145,22 @@ docklet_update_status()
 		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
-				if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
-					PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
-					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
-						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
-					else
-						g_string_append_printf(tooltip_text,
-							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-							gtkconv->unseen_count,
-							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+				PurpleConversation *conv = (PurpleConversation *)l->data;
+				PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+
+				if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1) {
+					g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
+				} else if(gtkconv) {
+					g_string_append_printf(tooltip_text,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+						gtkconv->unseen_count,
+						purple_conversation_get_title(conv));
+				} else {
+					g_string_append_printf(tooltip_text,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
+						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
+						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
+						purple_conversation_get_title(conv));
 				}
 			}
 
@@ -578,6 +585,87 @@ docklet_status_submenu()
 	return menuitem;
 }
 
+
+
+static void
+plugin_act(GtkObject *obj, PurplePluginAction *pam)
+{
+	if (pam && pam->callback)
+		pam->callback(pam);
+}
+
+static void
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
+		gpointer context)
+{
+	GtkWidget *menuitem;
+	PurplePluginAction *action = NULL;
+	GList *actions, *l;
+
+	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
+
+	for (l = actions; l != NULL; l = l->next)
+	{
+		if (l->data)
+		{
+			action = (PurplePluginAction *) l->data;
+			action->plugin = plugin;
+			action->context = context;
+
+			menuitem = gtk_menu_item_new_with_label(action->label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(plugin_act), action);
+			g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+								   action,
+								   (GDestroyNotify)purple_plugin_action_free);
+			gtk_widget_show(menuitem);
+		}
+		else
+			pidgin_separator(menu);
+	}
+
+	g_list_free(actions);
+}
+
+
+static void
+docklet_plugin_actions(GtkWidget *menu)
+{
+	GtkWidget *menuitem, *submenu;
+	PurplePlugin *plugin = NULL;
+	GList *l;
+	int c = 0;
+
+	g_return_if_fail(menu != NULL);
+
+	/* Add a submenu for each plugin with custom actions */
+	for (l = purple_plugins_get_loaded(); l; l = l->next) {
+		plugin = (PurplePlugin *) l->data;
+
+		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+			continue;
+
+		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
+			continue;
+
+		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		gtk_widget_show(menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+		build_plugin_actions(submenu, plugin, NULL);
+
+		c++;
+	}
+	if(c>0)
+		pidgin_separator(menu);
+}
+
 static void
 docklet_menu() {
 	static GtkWidget *menu = NULL;
@@ -637,12 +725,15 @@ docklet_menu() {
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
+	menuitem = gtk_check_menu_item_new_with_label(_("Blink on New Message"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	pidgin_separator(menu);
+
+	/* add plugin actions */
+	docklet_plugin_actions(menu);
 
 	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(purple_core_quit), NULL, 0, 0, NULL);
 
@@ -674,7 +765,7 @@ pidgin_docklet_clicked(int button_type)
 			if (pending) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					purple_conversation_present((PurpleConversation *)l->data);
+					pidgin_conv_present_conversation((PurpleConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {

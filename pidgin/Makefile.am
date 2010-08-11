@@ -118,7 +118,8 @@ pidgin_SOURCES = \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
-	gtkwhiteboard.c
+	gtkwhiteboard.c \
+	minidialog.c
 
 pidgin_headers = \
 	eggtrayicon.h \
@@ -170,6 +171,7 @@ pidgin_headers = \
 	gtkthemes.h \
 	gtkutils.h \
 	gtkwhiteboard.h \
+	minidialog.h \
 	pidgin.h
 
 pidginincludedir=$(includedir)/pidgin
@@ -204,6 +206,8 @@ AM_CPPFLAGS = \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
+	-I$(top_builddir) \
+	-I$(top_srcdir) \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \

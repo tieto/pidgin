@@ -32,15 +32,19 @@ The simplest way to compile this package is:
      `configure' itself.
 
      Running `configure' takes awhile.  While running, it prints some
-     messages telling which features it is checking for.
+     messages telling which features it is checking for.  If it finishes
+	 successfully, it will print out of a summary of the build options.
+	 This summary will also appear in the help->about dialog.
 
-  2. Type `make' to compile the package.
+  2. Type `make' to compile the package.  On some systems, you may need
+     to use `gmake' instead. 
 
   3. Optionally, type `make check' to run any self-tests that come with
      the package.
 
   4. Type `make install' to install the programs and any data files and
-     documentation.
+     documentation.  You must have write access to the prefix you are
+	 installing to.  See below for more details on the prefix.
 
   5. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  To also remove the
@@ -50,6 +54,9 @@ The simplest way to compile this package is:
      for the package's developers.  If you use it, you may have to get
      all sorts of other programs in order to regenerate files that came
      with the distribution.
+	 
+  6. If you have *not* run make distclean, you can use the target
+     `make uninstall` to remove the files installed by `make install`.
 
 Compilers and Options
 =====================
@@ -119,6 +126,40 @@ find the X include and library files automatically, but if it doesn't,
 you can use the `configure' options `--x-includes=DIR' and
 `--x-libraries=DIR' to specify their locations.
 
+	By default both the GTK+ UI (Pidgin) and the ncurses UI (Finch) will be
+built, assuming that configure finds the necessary libraries and headers for
+each.  You can disable the GTK+ UI with `--disable-gtkui' and the ncurses UI
+with `--disable-consoleui'.
+
+	`--disable-screensaver' will build libpurple without support for detecting
+when it should mark accounts idle based on mouse or keyboard usage.
+
+	`--disable-sm' will build without support for the X session management.
+Doing so will remove the ability to have pidgin start up with your window
+manager.
+
+	`--disable-gtkspell' will remove the ability to highlight misspelled words.
+
+	`--disable-gevolution' will cause the evolution integration plugin not to
+compile.
+
+	`--disable-gstreamer' will build without sound support.  This applies to
+*both* Pidgin and Finch.
+
+	`--enable-gnutls=yes,no' will enable or disable the use of gnutls for ssl support.  Disabling both gnutls and nss will mean you cannot use either MSN or Google Talk.  There is no static option for gnutls at this time.
+
+	`--enable-nss=yes,no,static'  will enable or disable the use of nss for ssl support.  This is the only option for ssl support if you are attempting to compile a static version of Pidgin or Finch.  
+
+Optional Packages:
+
+	`--with-silc-includes=DIR' 	and `--with-silc-libs=DIR' can be used if your silc libraries are installed to a location not in your path. 
+
+	`--with-static-prpls' takes a list of comma separated protocols to build in statically (rather than as plugins).  Use this with care.
+
+	`--with-dynamic-prpls' takes a list of comma separated protocols also.  If used only those listed will be built.  If no protocols are listed with either `--with-static-prpls' or with `--with-dynamic-prpls' then Pidgin and Finch will be effectively useless.
+
+	If configure does not find python, it will build without DBUS support.  Thiswill disable scripts such as purple-remote and purple-uri-handler, effectively disabling integration with the browser.  You can tell configure where your python binary is located with `--with-python=PATH'
+
 Specifying the System Type
 ==========================
 
@@ -179,4 +220,4 @@ operates.
      Print the version of Autoconf used to generate the `configure'
      script, and exit.
 
-`configure' also accepts some other, not widely useful, options.
+`configure' also accepts some other, not widely useful, options.  Many of these are related to having various optional libaries installed to locations outside of your path.  

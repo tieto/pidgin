@@ -74,7 +74,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, PurpleInputConditio
 	memcpy(&sin.sin_port, buf + 8, 2);
 
 	if (connect(phb->udpsock, (struct sockaddr *) &sin, sizeof(struct sockaddr_in)) < 0) {
-		purple_debug(PURPLE_DEBUG_INFO, "s5_canread_again", "connect failed: %s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "s5_canread_again", "connect failed: %s\n", g_strerror(errno));
 		close(phb->udpsock);
 		close(source);
 		g_free(phb->host);
@@ -120,7 +120,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 
 	ctllen = sizeof(ctlsin);
 	if (getsockname(source, (struct sockaddr *) &ctlsin, &ctllen) < 0) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "getsockname: %s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "getsockname: %s\n", g_strerror(errno));
 		close(source);
 		g_free(phb->host);
 		g_free(phb);
@@ -300,7 +300,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-		purple_debug(PURPLE_DEBUG_INFO, "getsockopt", "%s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "getsockopt", "%s\n", g_strerror(errno));
 		close(source);
 		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
@@ -329,7 +329,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 	}
 
 	if (write(source, buf, i) < i) {
-		purple_debug(PURPLE_DEBUG_INFO, "write", "%s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "write", "%s\n", g_strerror(errno));
 		purple_debug(PURPLE_DEBUG_ERROR, "socks5 proxy", "Unable to write\n");
 		close(source);
 

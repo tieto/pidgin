@@ -88,4 +88,17 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
 
 #endif
 
+/**
+ * Return the appropriate character attribute for a specified color.
+ * If the terminal doesn't have color support, this returns A_STANDOUT
+ * when deemed appropriate.
+ *
+ * @param color   The color code.
+ *
+ * @return  A character attribute.
+ *
+ * @since 2.3.0
+ */
+int gnt_color_pair(int color);
+
 #endif

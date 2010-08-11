@@ -225,7 +225,7 @@ static PurplePluginInfo info =
 
 	PLUGIN_ID,				/* plugin id			*/
 	PLUGIN_NAME,				/* name					*/
-	VERSION,				/* version				*/
+	DISPLAY_VERSION,			/* version				*/
 	PLUGIN_SUMMARY,				/* summary				*/
 	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/

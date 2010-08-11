@@ -212,6 +212,9 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 		                        purple_imgstore_get_size(dialog->icon_img), NULL);
 		gdk_pixbuf_loader_close(loader, NULL);
 		pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+		if (pixbuf)
+			g_object_ref(pixbuf);
+		g_object_unref(loader);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
@@ -1129,6 +1132,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	g_list_free(dialog->user_split_entries);
 	g_list_free(dialog->protocol_opt_entries);
 	g_free(dialog->protocol_id);
+	g_object_unref(dialog->sg);
 
 	purple_imgstore_unref(dialog->icon_img);
 
@@ -2055,8 +2059,9 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 
 		if (buddyicon_pixbuf != NULL) {
 			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
-			g_object_unref(G_OBJECT(buddyicon_pixbuf));
 		}
+
+		g_object_unref(loader);
 	}
 
 	gtk_list_store_set(store, iter,

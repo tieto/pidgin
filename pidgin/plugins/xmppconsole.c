@@ -325,8 +325,9 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</iq>") - stanza);
 	gtk_text_buffer_place_cursor(buffer, &iter);
 	g_free(stanza);
-       
+
 	gtk_widget_destroy(dialog);
+	g_object_unref(sg);
 
 }
 
@@ -483,6 +484,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	g_free(stanza);
 
 	gtk_widget_destroy(dialog);
+	g_object_unref(sg);
 }
 
 static void message_clicked_cb(GtkWidget *w, gpointer nul)
@@ -619,6 +621,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	g_free(stanza);
 
 	gtk_widget_destroy(dialog);
+	g_object_unref(sg);
 }
 
 static void
@@ -858,7 +861,7 @@ static PurplePluginInfo info =
 
 	"gtk-xmpp",                                       /**< id             */
 	N_("XMPP Console"),                                  /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Send and receive raw XMPP stanzas."),
 	                                                  /**  description    */

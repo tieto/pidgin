@@ -1,6 +1,121 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.0 (09/13/2007):
+version 2.3.0 (11/24/2007):
+	libpurple:
+		Added:
+		* a PurpleConversation field and an alias field in PurpleConvMessage
+		* account-authorization signals (see account-signals.dox for
+		  details) (Stefan Ott)
+		* libpurple/purple.h, which includes #define's and #include's
+		  required to compile stand-alone plugins
+		* PURPLE_STATUS_TUNE as a new PurpleStatusPrimitive
+		* purple_plugin_disable(), which is intended to be called when
+		  a purple_plugin_unload()--which was called when a user tried
+		  to unload a plugin--fails.  This then prevents the plugin
+		  from being saved in the saved plugins list, so it'll won't
+		  be loaded at the next startup.
+		* PurpleDisconnectReason enumeration of machine-readable
+		  types of connection error.
+		* purple_connection_error_reason(), to be used by prpls
+		  (instead of purple_connection_error() and setting
+		  gc->wants_to_die) to report errors along with a
+		  PurpleDisconnectReason.
+		* PurpleConnectionUiOps.report_disconnect_reason, to be
+		  implemented by UIs (rather than .report_disconnect) if
+		  they want to use the reported PurpleDisconnectReason
+		  to give a more specific error.
+		* A connection-error signal, fired just after the UiOp is
+		  called with the same information.
+		* purple_connection_reason_is_fatal(), acting as a hint
+		  to whether automatic reconnection should be attempted
+		  after a connection error (rather than checking
+		  gc->wants_to_die).
+		* PurpleConnectionErrorInfo, a struct to hold a
+		  PurpleConnectionError and a const char *description.
+		* purple_account_get_current_error() to get the most recent
+		  PurpleConnectionError and description (or NULL if the
+		  account is happy with life), to allow bits of the UI to know
+		  the last error without caching it themselves (as
+		  PidginBuddyList does).
+		* purple_account_clear_current_error() to reset an account's
+		  error state to NULL.
+		* An account-error-changed signal, firing when
+		  purple_account_get_current_error()'s return value changes.
+
+		* PidginMiniDialog, a Gtk widget-ified version of
+		  pidgin_make_mini_dialog().
+
+		* purple_util_init()
+		* purple_util_uninit()
+
+		* purple_network_listen_map_external() to temporarily disable
+		  mapping ports externally via NAT-PMP or UPnP.
+
+		Changed:
+		* purple_plugin_unload() now honors the return value of a
+		  plugin's unload function and can actually return FALSE now.
+		* purple_plugin_unload() no longer does its own notifications
+		  when a dependent plugin fails to unload.  The UI should do
+		  something appropriate.
+
+		* pidgin_make_mini_dialog() now declares its return type to be
+		  GtkWidget * rather than void *.  This should not break any
+		  existing code since any code using it must already rely on
+		  the return type actually being GtkWidget * all along.
+
+		Deprecated:
+		* pidgin_dialogs_about()
+		* pidgin_log_show_contact()
+		* pidgin_log_show()
+		* pidgin_plugin_dialog_show()
+		* pidgin_pounce_editor_show()
+		* pidgin_pounces_manager_show()
+		* pidgin_syslog_show()
+
+		* purple_connection_error()
+		* pidgin_blist_update_account_error_state()
+		* PidginBuddyList.connection_errors
+
+		MSN:
+		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
+		  PURPLE_TUNE_ARTIST, PURPLE_TUNE_ALBUM and PURPLE_TUNE_TITLE
+		  attributes.
+
+		XMPP:
+		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
+		  PURPLE_TUNE_{ARTIST, TITLE, ALBUM, GENRE, COMMENT, TRACK, TIME,
+		  YEAR, URL} attributes.
+
+	Finch:
+		libgnt:
+		* Added gnt_color_pair, which will try to intelligenty set text
+		  attributes in place of colors if the terminal doesn't have color
+		  support. (Bug: #3560) All future code should use gnt_color_pair
+		  instead of COLOR_PAIR.
+		* Added gnt_menuitem_set_id and gnt_menuitem_get_id to set and get the
+		  string id of a menuitem respectively.
+		* Added gnt_window_get_accel_item, which returns a the id of a menuitem
+		  bound to a keystroke.
+		* Added gnt_menu_get_item to get a menuitem of the given id from a
+		  menu.
+		* Added gnt_menuitem_activate, which triggers the 'activate' signal on
+		  the menuitem and calls the callback function, if available.
+		* Added GntEntryKillRing in GntEntry.
+		* Added gnt_window_set_maximize and gnt_window_get_maximize, and
+		  GntWindowFlags enum.
+
+version 2.2.2 (??/??/????):
+	libpurple:
+		Changed:
+		* The size parameter of purple_util_write_data_to_file_absolute
+		  has been changed to gssize instead of a size_t to correctly
+		  indicate that -1 can be used for a nul-delimited string.
+		* The documentation for purple_savedstatuses_get_popular used to
+		  incorrectly claim that the active status is excluded from the
+		  returned list. The documentation has been corrected. Also, the
+		  function now returns a correct list when called with a value of 0.
+
+version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
 		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
@@ -57,7 +172,7 @@ Version 2.2.0 (09/13/2007):
 		* gnt_util_parse_xhtml_to_textview to parse XHTML strings in a
 		  GntTextView (this works only if libxml2 is available)
 
-Version 2.1.1 (08/20/2007):
+version 2.1.1 (08/20/2007):
 	libpurple:
 		Changed:
 		* PurpleAccountUiOps.request_authorize's authorize_cb and
@@ -86,9 +201,6 @@ version 2.1.0 (7/28/2007):
 		* purple_core_ensure_single_instance
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
-		* purple_timeout_add_seconds
-		    Callers should prefer this to purple_timeout_add for timers
-		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.

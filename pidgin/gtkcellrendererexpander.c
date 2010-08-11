@@ -270,6 +270,9 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 			    cell_area->x + cell->xpad + (width / 2),
 			    cell_area->y + cell->ypad + (height / 2),
 			    cell->is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
+	if (cell->is_expanded)
+		gtk_paint_hline (widget->style, window, state, NULL, widget, NULL, 0, 
+				 widget->allocation.width, cell_area->y + cell_area->height);
 }
 
 static gboolean pidgin_cell_renderer_expander_activate(GtkCellRenderer *r,

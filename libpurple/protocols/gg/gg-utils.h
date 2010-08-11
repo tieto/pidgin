@@ -92,6 +92,15 @@ ggp_get_uin(PurpleAccount *account);
 char *
 ggp_buddy_get_name(PurpleConnection *gc, const uin_t uin);
 
+/**
+ * Manages the display of account's status in the buddylist.
+ *
+ * @param account Current account.
+ */
+void
+ggp_status_fake_to_self(PurpleAccount *account);
+
+
 #endif /* _PURPLE_GG_UTILS_H */
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

@@ -109,7 +109,7 @@ static PurplePluginInfo info = {
 
 	PLUGIN_ID,                  /* id */
 	"Debug API Example",        /* name */
-	VERSION,                    /* version */
+	DISPLAY_VERSION,            /* version */
 	"Debug API Example",        /* summary */
 	"Debug API Example",        /* description */
 	PLUGIN_AUTHOR,              /* author */

@@ -99,7 +99,6 @@ static void buddy_signed_on(PurpleBuddy *buddy);
 /* buddy-signed-off */
 static void buddy_signed_off(PurpleBuddy *buddy);
 static void buddy_idle(PurpleBuddy *buddy, gboolean old_idle, gboolean idle);
-static void blist_node_extended_menu(PurpleBlistNode *node, GList **menu);
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full);
 /* signed-on */

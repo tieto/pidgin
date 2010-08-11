@@ -113,7 +113,7 @@ static void imhtml_clear_formatting(GtkIMHtml *imhtml);
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
-static gdouble _point_sizes [] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736};
+static const gdouble _point_sizes [] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum {
 	TARGET_HTML,
@@ -138,9 +138,9 @@ static guint signals [LAST_SIGNAL] = { 0 };
 
 static char *html_clipboard = NULL;
 static char *text_clipboard = NULL;
-GtkClipboard *clipboard_selection = NULL;
+static GtkClipboard *clipboard_selection = NULL;
 
-static GtkTargetEntry selection_targets[] = {
+static const GtkTargetEntry selection_targets[] = {
 #ifndef _WIN32
 	{ "text/html", 0, TARGET_HTML },
 #else
@@ -151,7 +151,7 @@ static GtkTargetEntry selection_targets[] = {
 	{ "STRING", 0, TARGET_STRING },
 	{ "TEXT", 0, TARGET_TEXT}};
 
-static GtkTargetEntry link_drag_drop_targets[] = {
+static const GtkTargetEntry link_drag_drop_targets[] = {
 	GTK_IMHTML_DND_TARGETS
 };
 
@@ -203,8 +203,6 @@ clipboard_win32_to_html(char *clipboard) {
 	g_free(html);
 	html = g_strjoinv("\n", split);
 	g_strfreev(split);
-
-	html = g_strstrip(html);
 
 #if 0 /* Debugging for Windows clipboard */
 	purple_debug_info("imhtml clipboard", "HTML fragment: '%s'\n", html);
@@ -898,10 +896,12 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	char *text = NULL;
 	gboolean primary = (clipboard != clipboard_selection);
 	GtkTextIter start, end;
-	GtkTextMark *sel = NULL;
-	GtkTextMark *ins = NULL; 
 
-	if (primary) { 
+	if (primary) {
+		GtkTextMark *sel = NULL, *ins = NULL;
+
+		g_return_if_fail(imhtml != NULL);
+
 		ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 		sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
@@ -960,7 +960,6 @@ static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtm
 static void gtk_imhtml_clipboard_clear (GtkClipboard *clipboard, GtkSelectionData *sel_data,
 				 guint info, gpointer user_data_or_owner)
 {
-	clipboard_selection = NULL;
 }
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
@@ -969,20 +968,16 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		if (!clipboard_selection)
 			clipboard_selection = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
-		gtk_clipboard_set_with_owner(clipboard_selection,
+		gtk_clipboard_set_with_data(clipboard_selection,
 						 selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, NULL);
 
 		g_free(html_clipboard);
 		g_free(text_clipboard);
 
-		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
-
-		text_clipboard = imhtml->clipboard_text_string;
-		html_clipboard = imhtml->clipboard_html_string;
-	
+		html_clipboard = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		text_clipboard = gtk_imhtml_get_text(imhtml, &start, &end);
 	}
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
@@ -994,19 +989,16 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		if (!clipboard_selection)
 			clipboard_selection = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
-		gtk_clipboard_set_with_owner(clipboard_selection,
+		gtk_clipboard_set_with_data(clipboard_selection,
 						 selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, NULL);
 
 		g_free(html_clipboard);
 		g_free(text_clipboard);
 
-		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
-
-		text_clipboard = imhtml->clipboard_text_string;
-		html_clipboard = imhtml->clipboard_html_string;
+		html_clipboard = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		text_clipboard = gtk_imhtml_get_text(imhtml, &start, &end);
 
 		if (imhtml->editable)
 			gtk_text_buffer_delete_selection(imhtml->text_buffer, FALSE, FALSE);
@@ -1175,17 +1167,15 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 static void
 gtk_imhtml_undo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_undo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
 gtk_imhtml_redo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_redo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
 
@@ -1269,11 +1259,6 @@ gtk_imhtml_finalize (GObject *object)
 	g_free(imhtml->search_string);
 	g_object_unref(imhtml->undo_manager);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
-	if (clipboard_selection)
-		gtk_clipboard_set_with_owner(clipboard_selection,
-        	                             selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
-                	                     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-                        	             (GtkClipboardClearFunc)NULL, G_OBJECT(imhtml));
 
 }
 
@@ -1463,9 +1448,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml),
 			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);
-
-	imhtml->clipboard_text_string = NULL;
-	imhtml->clipboard_html_string = NULL;
 
 	imhtml->tip = NULL;
 	imhtml->tip_timer = 0;
@@ -2851,8 +2833,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						{
 						    gtk_imhtml_toggle_underline(imhtml);
 						    font->underline = 1;
-						} else
-							g_free(textdec);
+						}
+						g_free(textdec);
 
 						if (oldfont)
 						{
@@ -2968,8 +2950,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		} else if (imhtml->edit.link == NULL &&
 				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
-
 			gchar *sml = NULL;
+
+			br = FALSE;
+
 			if (fonts) {
 				fd = fonts->data;
 				sml = fd->sml;
@@ -2987,6 +2971,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			wpos = 0;
 			ws[0] = 0;
 		} else if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
+			br = FALSE;
 			while(*amp) {
 				ws [wpos++] = *amp++;
 			}
@@ -3015,6 +3000,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+			br = FALSE;
 			while(len_protocol--){
 				/* Skip the next len_protocol characters, but make sure they're
 				   copied into the ws array.
@@ -3023,6 +3009,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				 pos++;
 			}
 		} else if (*c) {
+			br = FALSE;
 			ws [wpos++] = *c++;
 			pos++;
 		} else {
@@ -3132,9 +3119,10 @@ gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end) {
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer,
 			&i, sd->mark);
 		if (gtk_text_iter_in_range(&i, start, end)) {
-			GtkIMHtmlScalable *scale = sd->scalable;
+			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(sd->scalable);
 			scale->free(scale);
-			imhtml->scalables = g_list_remove_link(imhtml->scalables, l);
+			g_free(sd);
+			imhtml->scalables = g_list_delete_link(imhtml->scalables, l);
 		}
 		l = next;
 	}

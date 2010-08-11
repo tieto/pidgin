@@ -144,7 +144,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
 	"gtk-extplacement",								/**< id				*/
 	N_("ExtPlacement"),								/**< name			*/
-	VERSION,										/**< version		*/
+	DISPLAY_VERSION,									/**< version		*/
 	N_("Extra conversation placement options."),	/**< summary		*/
 													/**  description	*/
 	N_("Restrict the number of conversations per windows,"

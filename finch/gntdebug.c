@@ -28,12 +28,14 @@
 #include <gntbutton.h>
 #include <gntcheckbox.h>
 #include <gntentry.h>
+#include <gntfilesel.h>
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttextview.h>
 
 #include "gntdebug.h"
 #include "finch.h"
+#include "notify.h"
 #include "util.h"
 
 #include <stdio.h>
@@ -220,9 +222,43 @@ update_filter_string(GntEntry *entry, gpointer null)
 					(GDestroyNotify)g_source_remove);
 }
 
+static void
+file_save(GntFileSel *fs, const char *path, const char *file, GntTextView *tv)
+{
+	FILE *fp;
+
+	if ((fp = g_fopen(path, "w+")) == NULL) {
+		purple_notify_error(NULL, NULL, _("Unable to open file."), NULL);
+		return;
+	}
+
+	fprintf(fp, "Finch Debug Log : %s\n", purple_date_format_full(NULL));
+	fprintf(fp, tv->string->str);
+	fclose(fp);
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static void
+file_cancel(GntWidget *w, GntFileSel *fs)
+{
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static void
+save_debug_win(GntWidget *w, GntTextView *tv)
+{
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
+	gnt_file_sel_set_current_location(sel, purple_home_dir());
+	gnt_file_sel_set_suggested_filename(sel, "debug.txt");
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(file_save), tv);
+	g_signal_connect(G_OBJECT(sel->cancel), "activate", G_CALLBACK(file_cancel), sel);
+	gnt_widget_show(window);
+}
+
 void finch_debug_window_show()
 {
-	GntWidget *wid, *box;
+	GntWidget *wid, *box, *label;
 
 	debug.paused = FALSE;
 	if (debug.window) {
@@ -258,8 +294,15 @@ void finch_debug_window_show()
 	GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
 	gnt_box_add_widget(GNT_BOX(box), wid);
 
+	wid = gnt_button_new(_("Save"));
+	g_signal_connect(G_OBJECT(wid), "activate", G_CALLBACK(save_debug_win), debug.tview);
+	GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
+	gnt_box_add_widget(GNT_BOX(box), wid);
+
 	debug.search = gnt_entry_new(purple_prefs_get_string(PREF_ROOT "/filter"));
-	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Filter: ")));
+	label = gnt_label_new(_("Filter:"));
+	GNT_WIDGET_UNSET_FLAGS(label, GNT_WIDGET_GROW_X);
+	gnt_box_add_widget(GNT_BOX(box), label);
 	gnt_box_add_widget(GNT_BOX(box), debug.search);
 	g_signal_connect(G_OBJECT(debug.search), "text_changed", G_CALLBACK(update_filter_string), NULL);
 

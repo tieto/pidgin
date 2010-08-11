@@ -939,8 +939,11 @@ silcpurple_add_buddy_save(bool success, void *context)
 		/* Create dir if it doesn't exist */
 		if ((g_stat(filename, &st)) == -1) {
 			if (errno == ENOENT) {
-				if (pw->pw_uid == geteuid())
-					g_mkdir(filename, 0755);
+				if (pw->pw_uid == geteuid()) {
+					int ret = g_mkdir(filename, 0755);
+					if (ret < 0)
+						return;
+				}
 			}
 		}
 

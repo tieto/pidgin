@@ -255,5 +255,7 @@ pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame) {
 		}
 	}
 
+	g_object_unref(sg);
+
 	return ret;
 }

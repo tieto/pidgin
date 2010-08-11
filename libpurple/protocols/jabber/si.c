@@ -36,19 +36,14 @@
 #include "iq.h"
 #include "si.h"
 
-#include "si.h"
-
-struct bytestreams_streamhost {
-	char *jid;
-	char *host;
-	int port;
-};
+#define STREAMHOST_CONNECT_TIMEOUT 15
 
 typedef struct _JabberSIXfer {
 	JabberStream *js;
 
 	PurpleProxyConnectData *connect_data;
 	PurpleNetworkListenData *listen_data;
+	guint connect_timeout;
 
 	gboolean accepted;
 
@@ -99,39 +94,82 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	JabberSIXfer *jsx = xfer->data;
 	JabberIq *iq;
 	xmlnode *query, *su;
-	struct bytestreams_streamhost *streamhost = jsx->streamhosts->data;
+	JabberBytestreamsStreamhost *streamhost = jsx->streamhosts->data;
 
 	purple_proxy_info_destroy(jsx->gpi);
+	jsx->gpi = NULL;
 	jsx->connect_data = NULL;
+
+	if (jsx->connect_timeout > 0)
+		purple_timeout_remove(jsx->connect_timeout);
+	jsx->connect_timeout = 0;
 
 	if(source < 0) {
 		purple_debug_warning("jabber",
 				"si connection failed, jid was %s, host was %s, error was %s\n",
-				streamhost->jid, streamhost->host, error_message);
+				streamhost->jid, streamhost->host,
+				error_message ? error_message : "(null)");
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
 		g_free(streamhost->jid);
 		g_free(streamhost->host);
+		g_free(streamhost->zeroconf);
 		g_free(streamhost);
 		jabber_si_bytestreams_attempt_connect(xfer);
 		return;
 	}
 
-	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_RESULT, "http://jabber.org/protocol/bytestreams");
-	xmlnode_set_attrib(iq->node, "to", xfer->who);
-	jabber_iq_set_id(iq, jsx->iq_id);
-	query = xmlnode_get_child(iq->node, "query");
-	su = xmlnode_new_child(query, "streamhost-used");
-	xmlnode_set_attrib(su, "jid", streamhost->jid);
+	/* unknown file transfer type is assumed to be RECEIVE */
+	if(xfer->type == PURPLE_XFER_SEND)
+	{
+		xmlnode *activate;
+		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, "http://jabber.org/protocol/bytestreams");
+		xmlnode_set_attrib(iq->node, "to", streamhost->jid);
+		query = xmlnode_get_child(iq->node, "query");
+		xmlnode_set_attrib(query, "sid", jsx->stream_id);
+		activate = xmlnode_new_child(query, "activate");
+		xmlnode_insert_data(activate, xfer->who, -1);
+
+		/* TODO: We need to wait for an activation result before starting */
+	}
+	else
+	{
+		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_RESULT, "http://jabber.org/protocol/bytestreams");
+		xmlnode_set_attrib(iq->node, "to", xfer->who);
+		jabber_iq_set_id(iq, jsx->iq_id);
+		query = xmlnode_get_child(iq->node, "query");
+		su = xmlnode_new_child(query, "streamhost-used");
+		xmlnode_set_attrib(su, "jid", streamhost->jid);
+	}
 
 	jabber_iq_send(iq);
 
 	purple_xfer_start(xfer, source, NULL, -1);
 }
 
+static gboolean
+connect_timeout_cb(gpointer data)
+{
+	PurpleXfer *xfer = data;
+	JabberSIXfer *jsx = xfer->data;
+
+	purple_debug_info("jabber", "Streamhost connection timeout of %d seconds exceeded.\n", STREAMHOST_CONNECT_TIMEOUT);
+
+	jsx->connect_timeout = 0;
+
+	if (jsx->connect_data != NULL)
+		purple_proxy_connect_cancel(jsx->connect_data);
+	jsx->connect_data = NULL;
+
+	/* Trigger the connect error manually */
+	jabber_si_bytestreams_connect_cb(xfer, -1, "Timeout Exceeded.");
+
+	return FALSE;
+}
+
 static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
-	struct bytestreams_streamhost *streamhost;
+	JabberBytestreamsStreamhost *streamhost;
 	char *dstaddr, *p;
 	int i;
 	unsigned char hashval[20];
@@ -160,18 +198,28 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 
 	streamhost = jsx->streamhosts->data;
 
+	jsx->connect_data = NULL;
+	if (jsx->gpi != NULL)
+		purple_proxy_info_destroy(jsx->gpi);
+	jsx->gpi = NULL;
+
 	dstjid = jabber_id_new(xfer->who);
 
-	if(dstjid != NULL) {
+	/* TODO: Deal with zeroconf */
+
+	if(dstjid != NULL && streamhost->host && streamhost->port > 0) {
 		jsx->gpi = purple_proxy_info_new();
 		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
 		purple_proxy_info_set_port(jsx->gpi, streamhost->port);
 
-
-
-		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, dstjid->node, dstjid->domain, dstjid->resource, jsx->js->user->node,
-				jsx->js->user->domain, jsx->js->user->resource);
+		/* unknown file transfer type is assumed to be RECEIVE */
+		if(xfer->type == PURPLE_XFER_SEND)
+			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, jsx->js->user->node, jsx->js->user->domain,
+				jsx->js->user->resource, dstjid->node, dstjid->domain, dstjid->resource);
+		else
+			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, dstjid->node, dstjid->domain, dstjid->resource,
+				jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
 
 		purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
 				sizeof(hashval), hashval, NULL);
@@ -186,6 +234,11 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jabber_si_bytestreams_connect_cb, xfer);
 		g_free(dstaddr);
 
+		/* When selecting a streamhost, timeout after STREAMHOST_CONNECT_TIMEOUT seconds, otherwise it takes forever */
+		if (xfer->type != PURPLE_XFER_SEND && jsx->connect_data != NULL)
+			jsx->connect_timeout = purple_timeout_add_seconds(
+				STREAMHOST_CONNECT_TIMEOUT, connect_timeout_cb, xfer);
+
 		jabber_id_free(dstjid);
 	}
 
@@ -194,6 +247,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
 		g_free(streamhost->jid);
 		g_free(streamhost->host);
+		g_free(streamhost->zeroconf);
 		g_free(streamhost);
 		jabber_si_bytestreams_attempt_connect(xfer);
 	}
@@ -232,17 +286,19 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 
 	for(streamhost = xmlnode_get_child(query, "streamhost"); streamhost;
 			streamhost = xmlnode_get_next_twin(streamhost)) {
-		const char *jid, *host, *port;
-		int portnum;
+		const char *jid, *host = NULL, *port, *zeroconf;
+		int portnum = 0;
 
 		if((jid = xmlnode_get_attrib(streamhost, "jid")) &&
-				(host = xmlnode_get_attrib(streamhost, "host")) &&
+				((zeroconf = xmlnode_get_attrib(streamhost, "zeroconf")) ||
+				((host = xmlnode_get_attrib(streamhost, "host")) &&
 				(port = xmlnode_get_attrib(streamhost, "port")) &&
-				(portnum = atoi(port))) {
-			struct bytestreams_streamhost *sh = g_new0(struct bytestreams_streamhost, 1);
+				(portnum = atoi(port))))) {
+			JabberBytestreamsStreamhost *sh = g_new0(JabberBytestreamsStreamhost, 1);
 			sh->jid = g_strdup(jid);
 			sh->host = g_strdup(host);
 			sh->port = portnum;
+			sh->zeroconf = g_strdup(zeroconf);
 			jsx->streamhosts = g_list_append(jsx->streamhosts, sh);
 		}
 	}
@@ -351,7 +407,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->resource, xfer->who);
 
 	purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-							  sizeof(hashval), hashval, NULL);
+				    sizeof(hashval), hashval, NULL);
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
 	p = dstaddr;
@@ -363,8 +419,11 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		purple_debug_error("jabber", "someone connected with the wrong info!\n");
 		close(source);
 		purple_xfer_cancel_remote(xfer);
+		g_free(dstaddr);
 		return;
 	}
+
+	g_free(dstaddr);
 
 	g_free(jsx->rxqueue);
 	host = purple_network_get_my_ip(jsx->js->fd);
@@ -523,6 +582,32 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		source, PURPLE_INPUT_WRITE);
 }
 
+static gint
+jabber_si_compare_jid(gconstpointer a, gconstpointer b)
+{
+	const JabberBytestreamsStreamhost *sh = a;
+
+	if(!a)
+		return -1;
+
+	return strcmp(sh->jid, (char *)b);
+}
+
+
+static void
+jabber_si_free_streamhost(gpointer data, gpointer user_data)
+{
+	JabberBytestreamsStreamhost *sh = data;
+
+	if(!data)
+		return;
+
+	g_free(sh->jid);
+	g_free(sh->host);
+	g_free(sh->zeroconf);
+	g_free(sh);
+}
+
 static void
 jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
@@ -536,7 +621,8 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
 		return;
 	else if(acceptfd == -1) {
-		purple_debug_warning("jabber", "accept: %s\n", strerror(errno));
+		purple_debug_warning("jabber", "accept: %s\n", g_strerror(errno));
+		/* TODO: This should cancel the ft */
 		return;
 	}
 
@@ -544,7 +630,61 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	close(source);
 
 	xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
-			jabber_si_xfer_bytestreams_send_read_cb, xfer);
+					 jabber_si_xfer_bytestreams_send_read_cb, xfer);
+}
+
+static void
+jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
+		gpointer data)
+{
+	PurpleXfer *xfer = data;
+	JabberSIXfer *jsx = xfer->data;
+	xmlnode *query, *streamhost_used;
+	const char *from, *type, *jid;
+	GList *matched;
+
+	/* TODO: This need to send errors if we don't see what we're looking for */
+
+	/* In the case of a direct file transfer, this is expected to return */
+	if(!jsx)
+		return;
+
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+		return;
+
+	if(!(from = xmlnode_get_attrib(packet, "from")))
+		return;
+
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	if(!(streamhost_used = xmlnode_get_child(query, "streamhost-used")))
+		return;
+
+	if(!(jid = xmlnode_get_attrib(streamhost_used, "jid")))
+		return;
+
+	if(!(matched = g_list_find_custom(jsx->streamhosts, jid, jabber_si_compare_jid)))
+	{
+		gchar *my_jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
+			jsx->js->user->domain, jsx->js->user->resource);
+		if (!strcmp(jid, my_jid))
+			purple_debug_info("jabber", "Got local SOCKS5 streamhost-used.\n");
+		else
+			purple_debug_info("jabber", "streamhost-used does not match any proxy that was offered to target\n");
+		g_free(my_jid);
+		return;
+	}
+
+	/* TODO: Clean up the local SOCKS5 proxy - it isn't going to be used.*/
+
+	jsx->streamhosts = g_list_remove_link(jsx->streamhosts, matched);
+	g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
+	g_list_free(jsx->streamhosts);
+
+	jsx->streamhosts = matched;
+
+	jabber_si_bytestreams_attempt_connect(xfer);
 }
 
 static void
@@ -554,7 +694,10 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	JabberSIXfer *jsx;
 	JabberIq *iq;
 	xmlnode *query, *streamhost;
-	char *jid, *port;
+	char *jid, port[6];
+	const char *local_ip, *public_ip, *ft_proxies;
+	GList *tmp;
+	JabberBytestreamsStreamhost *sh, *sh2;
 
 	jsx = xfer->data;
 	jsx->listen_data = NULL;
@@ -578,27 +721,106 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 	xmlnode_set_attrib(query, "sid", jsx->stream_id);
 
-	streamhost = xmlnode_new_child(query, "streamhost");
 	jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-	xmlnode_set_attrib(streamhost, "jid", jid);
+	xfer->local_port = purple_network_get_port_from_fd(sock);
+	g_snprintf(port, sizeof(port), "%hu", xfer->local_port);
+
+	/* TODO: Should there be an option to not use the local host as a ft proxy?
+	 *       (to prevent revealing IP address, etc.) */
+
+	/* Include the localhost's IP (for in-network transfers) */
+	local_ip = purple_network_get_local_system_ip(jsx->js->fd);
+	if (strcmp(local_ip, "0.0.0.0") != 0)
+	{
+		streamhost = xmlnode_new_child(query, "streamhost");
+		xmlnode_set_attrib(streamhost, "jid", jid);
+		xmlnode_set_attrib(streamhost, "host", local_ip);
+		xmlnode_set_attrib(streamhost, "port", port);
+	}
+
+	/* Include the public IP (assuming that there is a port mapped somehow) */
+	/* TODO: Check that it isn't the same as above and is a valid IP */
+	public_ip = purple_network_get_my_ip(jsx->js->fd);
+	if (strcmp(public_ip, local_ip) != 0)
+	{
+		streamhost = xmlnode_new_child(query, "streamhost");
+		xmlnode_set_attrib(streamhost, "jid", jid);
+		xmlnode_set_attrib(streamhost, "host", public_ip);
+		xmlnode_set_attrib(streamhost, "port", port);
+	}
+
 	g_free(jid);
 
-	/* XXX: shouldn't we use the public IP or something? here */
-	xmlnode_set_attrib(streamhost, "host",
-			purple_network_get_my_ip(jsx->js->fd));
-	xfer->local_port = purple_network_get_port_from_fd(sock);
-	port = g_strdup_printf("%hu", xfer->local_port);
-	xmlnode_set_attrib(streamhost, "port", port);
-	g_free(port);
-
+	/* The listener for the local proxy */
 	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
 			jabber_si_xfer_bytestreams_send_connected_cb, xfer);
 
-	/* XXX: insert proxies here */
+	/* insert proxies here */
+	ft_proxies = purple_account_get_string(xfer->account, "ft_proxies", NULL);
+	if (ft_proxies) {
+		int i, portnum;
+		char *tmp;
+		gchar **ft_proxy_list = g_strsplit(ft_proxies, ",", 0);
 
-	/* XXX: callback to find out which streamhost they used, or see if they
-	 * screwed it up */
+		g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
+		g_list_free(jsx->streamhosts);
+		jsx->streamhosts = NULL;
+
+		for(i = 0; ft_proxy_list[i]; i++) {
+			g_strstrip(ft_proxy_list[i]);
+			if(!(*ft_proxy_list[i]))
+				continue;
+
+			if((tmp = strchr(ft_proxy_list[i], ':'))) {
+				portnum = atoi(tmp + 1);
+				*tmp = '\0';
+			} else
+				portnum = 7777;
+
+			g_snprintf(port, sizeof(port), "%hu", portnum);
+
+			streamhost = xmlnode_new_child(query, "streamhost");
+			xmlnode_set_attrib(streamhost, "jid", ft_proxy_list[i]);
+			xmlnode_set_attrib(streamhost, "host", ft_proxy_list[i]);
+			xmlnode_set_attrib(streamhost, "port", port);
+
+			sh = g_new0(JabberBytestreamsStreamhost, 1);
+			sh->jid = g_strdup(ft_proxy_list[i]);
+			sh->host = g_strdup(ft_proxy_list[i]);
+			sh->port = portnum;
+
+			jsx->streamhosts = g_list_prepend(jsx->streamhosts, sh);
+		}
+
+		g_strfreev(ft_proxy_list);
+	}
+
+	for (tmp = jsx->js->bs_proxies; tmp; tmp = tmp->next) {
+		sh = tmp->data;
+
+		/* TODO: deal with zeroconf proxies */
+
+		if (!(sh->host && sh->port > 0))
+			continue;
+
+		streamhost = xmlnode_new_child(query, "streamhost");
+		xmlnode_set_attrib(streamhost, "jid", sh->jid);
+		xmlnode_set_attrib(streamhost, "host", sh->host);
+		g_snprintf(port, sizeof(port), "%hu", sh->port);
+		xmlnode_set_attrib(streamhost, "port", port);
+
+		sh2 = g_new0(JabberBytestreamsStreamhost, 1);
+		sh2->jid = g_strdup(sh->jid);
+		sh2->host = g_strdup(sh->host);
+		sh2->zeroconf = g_strdup(sh->zeroconf);
+		sh2->port = sh->port;
+
+		jsx->streamhosts = g_list_prepend(jsx->streamhosts, sh2);
+	}
+
+	jabber_iq_set_callback(iq, jabber_si_connect_proxy_cb, xfer);
+
 	jabber_iq_send(iq);
 
 }
@@ -688,8 +910,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	/* maybe later we'll do hash and date attribs */
 
 	feature = xmlnode_new_child(si, "feature");
-	xmlnode_set_namespace(feature,
-			"http://jabber.org/protocol/feature-neg");
+	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
 	xmlnode_set_namespace(x, "jabber:x:data");
 	xmlnode_set_attrib(x, "type", "form");
@@ -698,8 +919,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(field, "type", "list-single");
 	option = xmlnode_new_child(field, "option");
 	value = xmlnode_new_child(option, "value");
-	xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams",
-			-1);
+	xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
 	/*
 	option = xmlnode_new_child(field, "option");
 	value = xmlnode_new_child(option, "value");
@@ -728,6 +948,14 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		purple_network_listen_cancel(jsx->listen_data);
 	if (jsx->iq_id != NULL)
 		jabber_iq_remove_callback_by_id(js, jsx->iq_id);
+
+	if (jsx->connect_timeout > 0)
+		purple_timeout_remove(jsx->connect_timeout);
+
+	if (jsx->streamhosts) {
+		g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
+		g_list_free(jsx->streamhosts);
+	}
 
 	g_free(jsx->stream_id);
 	g_free(jsx->iq_id);
@@ -824,6 +1052,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			do_transfer_send(xfer, resource);
 			g_free(resource);
+			return;
 		}
 
 		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);

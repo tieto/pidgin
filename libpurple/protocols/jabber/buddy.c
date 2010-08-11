@@ -279,7 +279,7 @@ struct vcard_template {
 	char *tag;			/* tag text */
 	char *ptag;			/* parent tag "path" text */
 	char *url;			/* vCard display format if URL */
-} vcard_template_data[] = {
+} const vcard_template_data[] = {
 	{N_("Full Name"),          NULL, TRUE, TRUE, "FN",        NULL,  NULL},
 	{N_("Family Name"),        NULL, TRUE, TRUE, "FAMILY",    "N",   NULL},
 	{N_("Given Name"),         NULL, TRUE, TRUE, "GIVEN",     "N",   NULL},
@@ -311,7 +311,7 @@ struct vcard_template {
 struct tag_attr {
 	char *attr;
 	char *value;
-} vcard_tag_attr_list[] = {
+} const vcard_tag_attr_list[] = {
 	{"prodid",   "-//HandGen//NONSGML vGen v1.0//EN"},
 	{"version",  "2.0",                             },
 	{"xmlns",    "vcard-temp",                      },
@@ -337,7 +337,7 @@ static xmlnode *insert_tag_to_parent_tag(xmlnode *start, const char *parent_tag,
 	 * from the vCard template struct.
 	 */
 	if(parent_tag == NULL) {
-		struct vcard_template *vc_tp = vcard_template_data;
+		const struct vcard_template *vc_tp = vcard_template_data;
 
 		while(vc_tp->label != NULL) {
 			if(strcmp(vc_tp->tag, new_tag) == 0) {
@@ -395,7 +395,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	JabberIq *iq;
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
-	struct tag_attr *tag_attr;
+	const struct tag_attr *tag_attr;
 
 	/* if we have't grabbed the remote vcard yet, we can't
 	 * assume that what we have here is correct */
@@ -558,7 +558,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				g_free(widthstring);
 				heightstring = g_strdup_printf("%u", height);
 				xmlnode_set_attrib(info, "height", heightstring);
-				g_free(lengthstring);
+				g_free(heightstring);
 				
 				/* publish the metadata */
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
@@ -614,7 +614,7 @@ jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
 	const char *text;
 	char *p;
 	const struct vcard_template *vc_tp;
-	struct tag_attr *tag_attr;
+	const struct tag_attr *tag_attr;
 
 	vc_node = xmlnode_new("vCard");
 
@@ -2252,6 +2252,16 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 	xmlnode *query;
 	JabberIq *iq;
 	char *dir_server = data;
+	const char *type;
+
+	/* if they've cancelled the search, we're
+	 * just going to get an error if we send
+	 * a cancel, so skip it */
+	type = xmlnode_get_attrib(result, "type");
+	if(type && !strcmp(type, "cancel")) {
+		g_free(dir_server);
+		return;
+	}
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:search");
 	query = xmlnode_get_child(iq->node, "query");
@@ -2334,7 +2344,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		if(!msg)
 			msg = g_strdup(_("Unknown error"));

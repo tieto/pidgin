@@ -369,7 +369,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	WINPREFS_PLUGIN_ID,
 	N_("Windows Pidgin Options"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Options specific to Pidgin for Windows."),
 	N_("Provides options specific to Pidgin for Windows , such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",

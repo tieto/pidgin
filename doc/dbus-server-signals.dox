@@ -5,6 +5,8 @@
   @signal dbus-introspect
  @endsignals
 
+ @see dbus-server.h
+
  <hr>
 
  @signaldef dbus-method-called
@@ -29,4 +31,4 @@ void (*dbus_introspect)(GList **bidings_list);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

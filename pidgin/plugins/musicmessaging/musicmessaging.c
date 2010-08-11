@@ -681,7 +681,7 @@ static PurplePluginInfo info = {
 
     MUSICMESSAGING_PLUGIN_ID,                            /**< id             */
     "Music Messaging",	                                 /**< name           */
-    VERSION,                                             /**< version        */
+    DISPLAY_VERSION,                                     /**< version        */
     N_("Music Messaging Plugin for collaborative composition."),
                                                          /**  summary        */
     N_("The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time."),

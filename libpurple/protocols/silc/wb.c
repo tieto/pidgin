@@ -254,10 +254,10 @@ silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 
 static void
 silcpurple_wb_request(SilcClient client, const unsigned char *message,
-		    SilcUInt32 message_len, SilcClientEntry sender,
-		    SilcChannelEntry channel)
+		      SilcUInt32 message_len, SilcClientEntry sender,
+		      SilcChannelEntry channel)
 {
-	char tmp[128];
+	char tmp[256];
 	SilcPurpleWbRequest req;
 	PurpleConnection *gc;
 	SilcPurple sg;
@@ -274,20 +274,24 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 		else
 			wb = silcpurple_wb_init_ch(sg, channel);
 
-		silcpurple_wb_parse(wb->proto_data, wb, (unsigned char *)message,
-				  message_len);
+		silcpurple_wb_parse(wb->proto_data, wb,
+				    (unsigned char *)message,
+				    message_len);
 		return;
 	}
 
+	/* Close any previous unaccepted requests */
+	purple_request_close_with_handle(sender);
+
 	if (!channel) {
 		g_snprintf(tmp, sizeof(tmp),
-			_("%s sent message to whiteboard. Would you like "
-			  "to open the whiteboard?"), sender->nickname);
+			   _("%s sent message to whiteboard. Would you like "
+			     "to open the whiteboard?"), sender->nickname);
 	} else {
 		g_snprintf(tmp, sizeof(tmp),
-			_("%s sent message to whiteboard on %s channel. "
-			  "Would you like to open the whiteboard?"),
-			sender->nickname, channel->channel_name);
+			   _("%s sent message to whiteboard on %s channel. "
+			     "Would you like to open the whiteboard?"),
+			   sender->nickname, channel->channel_name);
 	}
 
 	req = silc_calloc(1, sizeof(*req));

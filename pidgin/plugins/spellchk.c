@@ -2341,6 +2341,8 @@ get_config_frame(PurplePlugin *plugin)
 #endif
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
+	g_object_unref(sg2);
 	return ret;
 }
 
@@ -2368,7 +2370,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	SPELLCHECK_PLUGIN_ID,
 	N_("Text replacement"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Replaces text in outgoing messages according to user-defined rules."),
 	N_("Replaces text in outgoing messages according to user-defined rules."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",

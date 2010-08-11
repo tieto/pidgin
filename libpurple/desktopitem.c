@@ -1155,7 +1155,7 @@ purple_desktop_item_new_from_file (const char *filename)
 
 	dfile = g_fopen(filename, "r");
 	if (!dfile) {
-		printf ("Can't open %s: %s", filename, strerror(errno));
+		printf ("Can't open %s: %s", filename, g_strerror(errno));
 		return NULL;
 	}
 	

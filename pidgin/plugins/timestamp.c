@@ -200,7 +200,7 @@ static PurplePluginInfo info =
 
 	TIMESTAMP_PLUGIN_ID,                              /**< id             */
 	N_("Timestamp"),                                  /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Display iChat-style timestamps"),
 	                                                  /**  description    */

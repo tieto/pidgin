@@ -104,41 +104,59 @@ extern char *gnt_key_cright;
 #define GNT_KEY_F12        SAFE(key_f12)
 
 /**
- * This will do stuff with the terminal settings and stuff.
- */
-/**
- * 
+ * Initialize the keys.
  */
 void gnt_init_keys(void);
 
 /**
- * 
- * @param text
+ * Refine input text. This usually looks at what the terminal claims it is,
+ * and tries to change the text to work around some oft-broken terminfo entries.
+ *
+ * @param text  The input text to refine.
  */
 void gnt_keys_refine(char *text);
 
+/**
+ * Translate a user-readable representation of an input to a machine-readable representation.
+ *
+ * @param name   The user-readable representation of an input (eg.: c-t)
+ *
+ * @return  A machine-readable representation of the input.
+ */
 const char *gnt_key_translate(const char *name);
+
+/**
+ * Translate a machine-readable representation of an input to a user-readable representation.
+ *
+ * @param key  The machine-readable representation of an input.
+ *
+ * @return  A user-readable representation of the input (eg.: c-t).
+ */
 const char *gnt_key_lookup(const char *key);
 
 /**
- * 
- * @param path
- */
-void gnt_keys_add_combination(const char *path);
-
-/**
- * 
- * @param path
- */
-void gnt_keys_del_combination(const char *path);
-
-/**
- * 
- * @param path
+ * Add a key combination to the internal key-tree.
  *
- * @return
+ * @param key  The key to add
  */
-int gnt_keys_find_combination(const char *path);
+void gnt_keys_add_combination(const char *key);
+
+/**
+ * Remove a key combination from the internal key-tree.
+ *
+ * @param key The key to remove.
+ */
+void gnt_keys_del_combination(const char *key);
+
+/**
+ * Find a combination from the given string.
+ *
+ * @param key  The input string.
+ *
+ * @return The number of bytes in the combination that starts at the beginning
+ *         of key (can be 0).
+ */
+int gnt_keys_find_combination(const char *key);
 
 /* A lot of commonly used variable names are defined in <term.h>. 
  * #undef them to make life easier for everyone. */

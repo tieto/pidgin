@@ -75,6 +75,8 @@ G_BEGIN_DECLS
 
 /**
  * @return The GType for GntSlider
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GType gnt_slider_get_gtype(void);
 
@@ -89,6 +91,8 @@ GType gnt_slider_get_gtype(void);
  * @param min    The minimum value for the slider
  *
  * @return  The newly created slider
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 GntWidget * gnt_slider_new(gboolean orient, int max, int min);
 
@@ -98,6 +102,8 @@ GntWidget * gnt_slider_new(gboolean orient, int max, int min);
  * @param slider  The slider
  * @param max     The maximum value
  * @param min     The minimum value
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_range(GntSlider *slider, int max, int min);
 
@@ -106,6 +112,8 @@ void gnt_slider_set_range(GntSlider *slider, int max, int min);
  * 
  * @param slider  The slider
  * @param step    The amount for each step
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_step(GntSlider *slider, int step);
 
@@ -114,6 +122,8 @@ void gnt_slider_set_step(GntSlider *slider, int step);
  * 
  * @param slider  The slider
  * @param step    The amount for a small step (for the slider)
+ *
+ * @since 2.2.0
  */
 void gnt_slider_set_small_step(GntSlider *slider, int step);
 
@@ -122,6 +132,8 @@ void gnt_slider_set_small_step(GntSlider *slider, int step);
  * 
  * @param slider  The slider
  * @param step    The amount for a large step (for the slider)
+ *
+ * @since 2.2.0
  */
 void gnt_slider_set_large_step(GntSlider *slider, int step);
 
@@ -133,6 +145,8 @@ void gnt_slider_set_large_step(GntSlider *slider, int step);
  *                 forward, negative to change backward
  *
  * @return   The value of the slider after the change
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 int gnt_slider_advance_step(GntSlider *slider, int steps);
 
@@ -141,6 +155,8 @@ int gnt_slider_advance_step(GntSlider *slider, int steps);
  *
  * @param slider  The slider
  * @param value   The current value
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_set_value(GntSlider *slider, int value);
 
@@ -149,6 +165,8 @@ void gnt_slider_set_value(GntSlider *slider, int value);
  *
  * @param slider The slider
  *
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 int gnt_slider_get_value(GntSlider *slider);
 
@@ -157,6 +175,8 @@ int gnt_slider_get_value(GntSlider *slider);
  *
  * @param slider   The slider
  * @param label    The label to update
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_slider_reflect_label(GntSlider *slider, GntLabel *label);
 

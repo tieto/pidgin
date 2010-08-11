@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+static gboolean hascolors;
 static struct
 {
 	short r, g, b;
@@ -75,6 +76,8 @@ void gnt_init_colors()
 	init = TRUE;
 
 	start_color();
+	if (!(hascolors = has_colors()))
+		return;
 	defaults = use_default_colors();
 
 	if (can_use_custom_color())
@@ -276,3 +279,11 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 }
 
 #endif  /* GKeyFile */
+
+int gnt_color_pair(int pair)
+{
+	return (hascolors ? COLOR_PAIR(pair) :
+		((pair == GNT_COLOR_NORMAL || pair == GNT_COLOR_HIGHLIGHT_D ||
+		  pair == GNT_COLOR_TITLE_D || pair == GNT_COLOR_DISABLED) ? 0 : A_STANDOUT));
+}
+

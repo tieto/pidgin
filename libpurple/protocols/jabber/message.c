@@ -104,6 +104,7 @@ static void handle_chat(JabberMessage *jm)
 
 					g_snprintf(buf, sizeof(buf),
 					           _("%s has left the conversation."), escaped);
+					g_free(escaped);
 
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the

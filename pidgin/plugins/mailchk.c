@@ -158,7 +158,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	MAILCHK_PLUGIN_ID,
 	N_("Mail Checker"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Checks for new local mail."),
 	N_("Adds a small box to the buddy list that"
 	   " shows if you have new mail."),

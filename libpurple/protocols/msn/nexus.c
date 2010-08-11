@@ -22,8 +22,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
+#include "soap2.h"
 #include "nexus.h"
 #include "notification.h"
+
+#undef NEXUS_LOGIN_TWN
 
 /**************************************************************************
  * Main
@@ -36,6 +39,7 @@ msn_nexus_new(MsnSession *session)
 
 	nexus = g_new0(MsnNexus, 1);
 	nexus->session = session;
+
 	nexus->challenge_data = g_hash_table_new_full(g_str_hash,
 		g_str_equal, g_free, g_free);
 
@@ -45,80 +49,10 @@ msn_nexus_new(MsnSession *session)
 void
 msn_nexus_destroy(MsnNexus *nexus)
 {
-	if (nexus->gsc)
-		purple_ssl_close(nexus->gsc);
-
-	g_free(nexus->login_host);
-
-	g_free(nexus->login_path);
-
 	if (nexus->challenge_data != NULL)
 		g_hash_table_destroy(nexus->challenge_data);
 
-	if (nexus->input_handler > 0)
-		purple_input_remove(nexus->input_handler);
-	g_free(nexus->write_buf);
-	g_free(nexus->read_buf);
-
 	g_free(nexus);
-}
-
-/**************************************************************************
- * Util
- **************************************************************************/
-
-static gssize
-msn_ssl_read(MsnNexus *nexus)
-{
-	gssize len;
-	char temp_buf[4096];
-
-	if ((len = purple_ssl_read(nexus->gsc, temp_buf,
-			sizeof(temp_buf))) > 0)
-	{
-		nexus->read_buf = g_realloc(nexus->read_buf,
-			nexus->read_len + len + 1);
-		strncpy(nexus->read_buf + nexus->read_len, temp_buf, len);
-		nexus->read_len += len;
-		nexus->read_buf[nexus->read_len] = '\0';
-	}
-
-	return len;
-}
-
-static void
-nexus_write_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	MsnNexus *nexus = data;
-	int len, total_len;
-
-	total_len = strlen(nexus->write_buf);
-
-	len = purple_ssl_write(nexus->gsc,
-		nexus->write_buf + nexus->written_len,
-		total_len - nexus->written_len);
-
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len <= 0) {
-		purple_input_remove(nexus->input_handler);
-		nexus->input_handler = 0;
-		/* TODO: notify of the error */
-		return;
-	}
-	nexus->written_len += len;
-
-	if (nexus->written_len < total_len)
-		return;
-
-	purple_input_remove(nexus->input_handler);
-	nexus->input_handler = 0;
-
-	g_free(nexus->write_buf);
-	nexus->write_buf = NULL;
-	nexus->written_len = 0;
-
-	nexus->written_cb(nexus, source, 0);
 }
 
 /**************************************************************************
@@ -126,386 +60,163 @@ nexus_write_cb(gpointer data, gint source, PurpleInputCondition cond)
  **************************************************************************/
 
 static void
-login_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond);
-
-static void
-login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
-{
-	MsnNexus *nexus;
-	MsnSession *session;
-
-	nexus = data;
-	g_return_if_fail(nexus != NULL);
-
-	nexus->gsc = NULL;
-
-	session = nexus->session;
-	g_return_if_fail(session != NULL);
-
-	msn_session_set_error(session, MSN_ERROR_AUTH, _("Unable to connect"));
-	/* the above line will result in nexus being destroyed, so we don't want
-	 * to destroy it here, or we'd crash */
-}
-
-static void
-nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 {
 	MsnNexus *nexus = data;
-	MsnSession *session;
-	int len;
+	MsnSession *session = nexus->session;
+	xmlnode *node;
 
-	session = nexus->session;
-	g_return_if_fail(session != NULL);
-
-	if (nexus->input_handler == 0)
-		/* TODO: Use purple_ssl_input_add()? */
-		nexus->input_handler = purple_input_add(nexus->gsc->fd,
-			PURPLE_INPUT_READ, nexus_login_written_cb, nexus);
-
-
-	len = msn_ssl_read(nexus);
-
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len < 0) {
-		purple_input_remove(nexus->input_handler);
-		nexus->input_handler = 0;
-		g_free(nexus->read_buf);
-		nexus->read_buf = NULL;
-		nexus->read_len = 0;
-		/* TODO: error handling */
+	if (resp == NULL) {
+		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Unable to connect"));
 		return;
 	}
 
-	if (g_strstr_len(nexus->read_buf, nexus->read_len,
-			"\r\n\r\n") == NULL)
-		return;
+	node = msn_soap_xml_get(resp->xml,	"Body/"
+		"RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
 
-	purple_input_remove(nexus->input_handler);
-	nexus->input_handler = 0;
+	for (; node; node = node->next) {
+		xmlnode *token = msn_soap_xml_get(node,
+			"RequestedSecurityToken/BinarySecurityToken");
 
-	purple_ssl_close(nexus->gsc);
-	nexus->gsc = NULL;
+		if (token) {
+			char *token_str = xmlnode_get_data(token);
+			char **elems, **cur, **tokens;
+			char *msn_twn_t, *msn_twn_p, *cert_str;
 
-	purple_debug_misc("msn", "ssl buffer: {%s}\n", nexus->read_buf);
+			if (token_str == NULL) continue;
 
-	if (strstr(nexus->read_buf, "HTTP/1.1 302") != NULL)
-	{
-		/* Redirect. */
-		char *location, *c;
+			elems = g_strsplit(token_str, "&", 0);
 
-		location = strstr(nexus->read_buf, "Location: ");
-		if (location == NULL)
-		{
-			g_free(nexus->read_buf);
-			nexus->read_buf = NULL;
-			nexus->read_len = 0;
+			for (cur = elems; *cur != NULL; cur++){
+				tokens = g_strsplit(*cur, "=", 2);
+				g_hash_table_insert(nexus->challenge_data, tokens[0], tokens[1]);
+				/* Don't free each of the tokens, only the array. */
+				g_free(tokens);
+			}
+
+			g_free(token_str);
+			g_strfreev(elems);
+
+			msn_twn_t = g_hash_table_lookup(nexus->challenge_data, "t");
+			msn_twn_p = g_hash_table_lookup(nexus->challenge_data, "p");
+
+			/*setup the t and p parameter for session*/
+			if (session->passport_info.t != NULL){
+				g_free(session->passport_info.t);
+			}
+			session->passport_info.t = g_strdup(msn_twn_t);
+
+			if (session->passport_info.p != NULL)
+				g_free(session->passport_info.p);
+			session->passport_info.p = g_strdup(msn_twn_p);
+
+			cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
+			msn_got_login_params(session, cert_str);
+
+			purple_debug_info("MSN Nexus","Close nexus connection!\n");
+			g_free(cert_str);
+			msn_nexus_destroy(nexus);
+			session->nexus = NULL;
 
 			return;
 		}
-		location = strchr(location, ' ') + 1;
-
-		if ((c = strchr(location, '\r')) != NULL)
-			*c = '\0';
-
-		/* Skip the http:// */
-		if ((c = strchr(location, '/')) != NULL)
-			location = c + 2;
-
-		if ((c = strchr(location, '/')) != NULL)
-		{
-			g_free(nexus->login_path);
-			nexus->login_path = g_strdup(c);
-
-			*c = '\0';
-		}
-
-		g_free(nexus->login_host);
-		nexus->login_host = g_strdup(location);
-
-		nexus->gsc = purple_ssl_connect(session->account,
-				nexus->login_host, PURPLE_SSL_DEFAULT_PORT,
-				login_connect_cb, login_error_cb, nexus);
 	}
-	else if (strstr(nexus->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
-	{
-		const char *error;
 
-		if ((error = strstr(nexus->read_buf, "WWW-Authenticate")) != NULL)
-		{
-			if ((error = strstr(error, "cbtxt=")) != NULL)
-			{
-				const char *c;
-				char *temp;
+	/* we must have failed! */
+	msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication: cannot find authenticate token in server response"));
+}
 
-				error += strlen("cbtxt=");
-
-				if ((c = strchr(error, '\n')) == NULL)
-					c = error + strlen(error);
-
-				temp = g_strndup(error, c - error);
-				error = purple_url_decode(temp);
-				g_free(temp);
-				if ((temp = strstr(error, " Do one of the following or try again:")) != NULL)
-					*temp = '\0';
-			}
-		}
-
-		msn_session_set_error(session, MSN_ERROR_AUTH, error);
-	}
-	else if (strstr(nexus->read_buf, "HTTP/1.1 503 Service Unavailable"))
-	{
-		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
-	}
-	else if (strstr(nexus->read_buf, "HTTP/1.1 200 OK"))
-	{
-		char *base, *c;
-		char *login_params;
-
-#if 0
-		/* All your base are belong to us. */
-		base = buffer;
-
-		/* For great cookie! */
-		while ((base = strstr(base, "Set-Cookie: ")) != NULL)
-		{
-			base += strlen("Set-Cookie: ");
-
-			c = strchr(base, ';');
-
-			session->login_cookies =
-				g_list_append(session->login_cookies,
-							  g_strndup(base, c - base));
-		}
+/*when connect, do the SOAP Style windows Live ID authentication */
+void
+msn_nexus_connect(MsnNexus *nexus)
+{
+	MsnSession *session = nexus->session;
+	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
+	char *fs0,*fs;
+	char *username, *password;
+	char *tail;
+#ifdef NEXUS_LOGIN_TWN
+	char *challenge_str;
+#else
+	char *rst1_str,*rst2_str,*rst3_str;
 #endif
 
-		base  = strstr(nexus->read_buf, "Authentication-Info: ");
+	MsnSoapMessage *soap;
 
-		g_return_if_fail(base != NULL);
+	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
-		base  = strstr(base, "from-PP='");
-		base += strlen("from-PP='");
-		c     = strchr(base, '\'');
+	/*prepare the Windows Live ID authentication token*/
+	username = g_strdup(purple_account_get_username(session->account));
+	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
 
-		login_params = g_strndup(base, c - base);
+	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
+	id =	(char *)g_hash_table_lookup(nexus->challenge_data, "id");
+	tw =	(char *)g_hash_table_lookup(nexus->challenge_data, "tw");
+	fs0=	(char *)g_hash_table_lookup(nexus->challenge_data, "fs");
+	ru =	(char *)g_hash_table_lookup(nexus->challenge_data, "ru");
+	ct =	(char *)g_hash_table_lookup(nexus->challenge_data, "ct");
+	kpp=	(char *)g_hash_table_lookup(nexus->challenge_data, "kpp");
+	kv =	(char *)g_hash_table_lookup(nexus->challenge_data, "kv");
+	ver=	(char *)g_hash_table_lookup(nexus->challenge_data, "ver");
+	rn =	(char *)g_hash_table_lookup(nexus->challenge_data, "rn");
+	tpf=	(char *)g_hash_table_lookup(nexus->challenge_data, "tpf");
 
-		msn_got_login_params(session, login_params);
-
-		g_free(login_params);
-
+	/*
+	 * add some fail-safe code to avoid windows Purple Crash bug #1540454
+	 * If any of these string is NULL, will return Authentication Fail!
+	 * for when windows g_strdup_printf() implementation get NULL point,It crashed!
+	 */
+	if(!(lc && id && tw && ru && ct && kpp && kv && ver && tpf)){
+		purple_debug_error("MSN Nexus","WLM Authenticate Key Error!\n");
+		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication Failed"));
+		g_free(username);
+		g_free(password);
 		msn_nexus_destroy(nexus);
 		session->nexus = NULL;
 		return;
 	}
 
-	g_free(nexus->read_buf);
-	nexus->read_buf = NULL;
-	nexus->read_len = 0;
+	/*
+	 * in old MSN NS server's "USR TWN S" return,didn't include fs string
+	 * so we use a default "1" for fs.
+	 */
+	if(fs0){
+		fs = g_strdup(fs0);
+	}else{
+		fs = g_strdup("1");
+	}
 
-}
+#ifdef NEXUS_LOGIN_TWN
+	challenge_str = g_strdup_printf(
+		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
+		lc,id,tw,fs,ru,ct,kpp,kv,ver,rn,tpf
+		);
 
-/* this guards against missing hash entries */
-static char *
-nexus_challenge_data_lookup(GHashTable *challenge_data, const char *key)
-{
-	char *entry;
-
-	return (entry = (char *)g_hash_table_lookup(challenge_data, key)) ?
-		entry : "(null)";
-}
-
-void
-login_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
-{
-	MsnNexus *nexus;
-	MsnSession *session;
-	char *username, *password;
-	char *request_str, *head, *tail;
-	char *buffer = NULL;
-	guint32 ctint;
-
-	nexus = data;
-	g_return_if_fail(nexus != NULL);
-
-	session = nexus->session;
-	g_return_if_fail(session != NULL);
-
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
-
-	username =
-		g_strdup(purple_url_encode(purple_account_get_username(session->account)));
-
-	password =
-		g_strdup(purple_url_encode(purple_connection_get_password(session->account->gc)));
-
-	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
-
-	head = g_strdup_printf(
-		"GET %s HTTP/1.1\r\n"
-		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s",
-		nexus->login_path,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
-		username);
-
-	tail = g_strdup_printf(
-		"lc=%s,id=%s,tw=%s,fs=%s,ru=%s,ct=%" G_GUINT32_FORMAT ",kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
-		"User-Agent: MSMSGS\r\n"
-		"Host: %s\r\n"
-		"Connection: Keep-Alive\r\n"
-		"Cache-Control: no-cache\r\n",
-		nexus_challenge_data_lookup(nexus->challenge_data, "lc"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "id"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "tw"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "fs"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "ru"),
-		ctint,
-		nexus_challenge_data_lookup(nexus->challenge_data, "kpp"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "kv"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "ver"),
-		nexus_challenge_data_lookup(nexus->challenge_data, "tpf"),
-		nexus->login_host);
-
-	buffer = g_strdup_printf("%s,pwd=XXXXXXXX,%s\r\n", head, tail);
-	request_str = g_strdup_printf("%s,pwd=%s,%s\r\n", head, password, tail);
-
-	purple_debug_misc("msn", "Sending: {%s}\n", buffer);
-
-	g_free(buffer);
-	g_free(head);
-	g_free(tail);
-	g_free(username);
+	/*build the SOAP windows Live ID XML body */
+	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE, username, password, challenge_str);
+	g_free(challenge_str);
+#else
+	rst1_str = g_strdup_printf(
+		"id=%s&amp;tw=%s&amp;fs=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s",
+		id,tw,fs,kpp,kv,ver,rn
+		);
+	rst2_str = g_strdup_printf(
+		"fs=%s&amp;id=%s&amp;kv=%s&amp;rn=%s&amp;tw=%s&amp;ver=%s",
+		fs,id,kv,rn,tw,ver
+		);
+	rst3_str = g_strdup_printf("id=%s",id);
+	tail = g_strdup_printf(TWN_LIVE_ENVELOP_TEMPLATE,username,password,rst1_str,rst2_str,rst3_str);
+	g_free(rst1_str);
+	g_free(rst2_str);
+	g_free(rst3_str);
+#endif
+	g_free(fs);
 	g_free(password);
 
-	nexus->write_buf = request_str;
-	nexus->written_len = 0;
-
-	nexus->read_len = 0;
-
-	nexus->written_cb = nexus_login_written_cb;
-
-	nexus->input_handler = purple_input_add(gsc->fd, PURPLE_INPUT_WRITE,
-		nexus_write_cb, nexus);
-
-	nexus_write_cb(nexus, gsc->fd, PURPLE_INPUT_WRITE);
-
-	return;
-
-
+	soap = msn_soap_message_new(NULL, xmlnode_from_str(tail, -1));
+	g_free(tail);
+	msn_soap_message_send(nexus->session, soap, MSN_TWN_SERVER, TWN_POST_URL,
+		nexus_got_response_cb, nexus);
 }
 
-static void
-nexus_connect_written_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	MsnNexus *nexus = data;
-	int len;
-	char *da_login;
-	char *base, *c;
-
-	if (nexus->input_handler == 0)
-		/* TODO: Use purple_ssl_input_add()? */
-		nexus->input_handler = purple_input_add(nexus->gsc->fd,
-			PURPLE_INPUT_READ, nexus_connect_written_cb, nexus);
-
-	/* Get the PassportURLs line. */
-	len = msn_ssl_read(nexus);
-
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len < 0) {
-		purple_input_remove(nexus->input_handler);
-		nexus->input_handler = 0;
-		g_free(nexus->read_buf);
-		nexus->read_buf = NULL;
-		nexus->read_len = 0;
-		/* TODO: error handling */
-		return;
-	}
-
-	if (g_strstr_len(nexus->read_buf, nexus->read_len,
-			"\r\n\r\n") == NULL)
-		return;
-
-	purple_input_remove(nexus->input_handler);
-	nexus->input_handler = 0;
-
-	base = strstr(nexus->read_buf, "PassportURLs");
-
-	if (base == NULL)
-	{
-		g_free(nexus->read_buf);
-		nexus->read_buf = NULL;
-		nexus->read_len = 0;
-		return;
-	}
-
-	if ((da_login = strstr(base, "DALogin=")) != NULL)
-	{
-		/* skip over "DALogin=" */
-		da_login += 8;
-
-		if ((c = strchr(da_login, ',')) != NULL)
-			*c = '\0';
-
-		if ((c = strchr(da_login, '/')) != NULL)
-		{
-			nexus->login_path = g_strdup(c);
-			*c = '\0';
-		}
-
-		nexus->login_host = g_strdup(da_login);
-	}
-
-	g_free(nexus->read_buf);
-	nexus->read_buf = NULL;
-	nexus->read_len = 0;
-
-	purple_ssl_close(nexus->gsc);
-
-	/* Now begin the connection to the login server. */
-	nexus->gsc = purple_ssl_connect(nexus->session->account,
-			nexus->login_host, PURPLE_SSL_DEFAULT_PORT,
-			login_connect_cb, login_error_cb, nexus);
-}
-
-
-/**************************************************************************
- * Connect
- **************************************************************************/
-
-static void
-nexus_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
-{
-	MsnNexus *nexus;
-	MsnSession *session;
-
-	nexus = data;
-	g_return_if_fail(nexus != NULL);
-
-	session = nexus->session;
-	g_return_if_fail(session != NULL);
-
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
-
-	nexus->write_buf = g_strdup("GET /rdr/pprdr.asp\r\n\r\n");
-	nexus->written_len = 0;
-
-	nexus->read_len = 0;
-
-	nexus->written_cb = nexus_connect_written_cb;
-
-	nexus->input_handler = purple_input_add(gsc->fd, PURPLE_INPUT_WRITE,
-		nexus_write_cb, nexus);
-
-	nexus_write_cb(nexus, gsc->fd, PURPLE_INPUT_WRITE);
-}
-
-void
-msn_nexus_connect(MsnNexus *nexus)
-{
-	nexus->gsc = purple_ssl_connect(nexus->session->account,
-			"nexus.passport.com", PURPLE_SSL_DEFAULT_PORT,
-			nexus_connect_cb, login_error_cb, nexus);
-}

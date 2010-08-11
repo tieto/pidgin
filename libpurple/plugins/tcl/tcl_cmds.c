@@ -55,7 +55,7 @@ static PurpleAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 			return account;
 	}
 	if (interp != NULL)
-		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid account", -1);
+		Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid account", -1));
 	return NULL;
 }
 
@@ -74,7 +74,7 @@ static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *i
 			return convo;
 	}
 	if (interp != NULL)
-		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid conversation", -1);
+		Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid conversation", -1));
 	return NULL;
 }
 
@@ -97,7 +97,7 @@ static PurpleConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp)
 
 int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
+	Tcl_Obj *result, *list, *elem;
 	const char *cmds[] = { "alias", "connect", "connection", "disconnect",
 	                       "enabled", "find", "handle", "isconnected",
 	                       "list", "presence", "protocol", "status",
@@ -139,7 +139,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		alias = purple_account_get_alias(account);
-		Tcl_SetStringObj(result, alias ? (char *)alias : "", -1);
+		Tcl_SetObjResult(interp, Tcl_NewStringObj(alias ? (char *)alias : "", -1));
 		break;
 	case CMD_ACCOUNT_CONNECT:
 		if (objc != 3) {
@@ -164,7 +164,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp,
 		                 purple_tcl_ref_new(PurpleTclRefConnection,
-		                                  purple_account_get_connection(account)));
+						    purple_account_get_connection(account)));
 		break;
 	case CMD_ACCOUNT_DISCONNECT:
 		if (objc != 3) {
@@ -183,9 +183,10 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		if (objc == 3) {
-			Tcl_SetBooleanObj(result,
-					  purple_account_get_enabled(account,
-								   purple_core_get_ui()));
+			Tcl_SetObjResult(interp, 
+					 Tcl_NewBooleanObj(
+						 purple_account_get_enabled(account,
+									    purple_core_get_ui())));
 		} else {
 			if ((error = Tcl_GetBooleanFromObj(interp, objv[3], &b)) != TCL_OK)
 				return TCL_ERROR;
@@ -207,7 +208,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_accounts_get_handle());
+		Tcl_SetObjResult(interp, 
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_accounts_get_handle()));
 		break;
 	case CMD_ACCOUNT_ISCONNECTED:
 		if (objc != 3) {
@@ -216,7 +219,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_account_is_connected(account));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(
+					 purple_account_is_connected(account)));
 		break;
 	case CMD_ACCOUNT_LIST:
 		listopt = CMD_ACCOUNTLIST_ALL;
@@ -255,7 +260,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, (char *)purple_account_get_protocol_id(account), -1);
+		Tcl_SetObjResult(interp, Tcl_NewStringObj((char *)purple_account_get_protocol_id(account), -1));
 		break;
 	case CMD_ACCOUNT_STATUS:
 		if (objc < 3) {
@@ -271,19 +276,19 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		} else {
 			GList *l = NULL;
 			if (objc % 2) {
-				Tcl_SetStringObj(result, "name without value setting status", -1);
+				Tcl_SetObjResult(interp, Tcl_NewStringObj("name without value setting status", -1));
 				return TCL_ERROR;
 			}
 			status = purple_account_get_status(account, Tcl_GetString(objv[3]));
 			if (status == NULL) {
-				Tcl_SetStringObj(result, "invalid status for account", -1);
+				Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid status for account", -1));
 				return TCL_ERROR;
 			}
 			for (i = 4; i < objc; i += 2) {
 				attr_id = Tcl_GetString(objv[i]);
 				value = purple_status_get_attr_value(status, attr_id);
 				if (value == NULL) {
-					Tcl_SetStringObj(result, "invalid attribute for account", -1);
+					Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid attribute for account", -1));
 					return TCL_ERROR;
 				}
 				switch (purple_value_get_type(value)) {
@@ -306,7 +311,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 					l = g_list_append(l, Tcl_GetString(objv[i + 1]));
 					break;
 				default:
-					Tcl_SetStringObj(result, "unknown PurpleValue type", -1);
+					Tcl_SetObjResult(interp, Tcl_NewStringObj("unknown PurpleValue type", -1));
 					return TCL_ERROR;
 				}
 			}
@@ -327,10 +332,10 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		} else {
 			PurpleStatusPrimitive primitive;
 			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
-				Tcl_SetStringObj(result, "bad option \"", -1);
+				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
-				Tcl_AppendToObj(result,
-						"\": should be -primitive", -1);
+				Tcl_AppendToObj(result, "\": should be -primitive", -1);
+				Tcl_SetObjResult(interp,result);
 				return TCL_ERROR;
 			}
 			primitive = purple_primitive_get_type_from_id(Tcl_GetString(objv[4]));
@@ -338,7 +343,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 										  primitive);
 		}
 		if (status_type == NULL) {
-			Tcl_SetStringObj(result, "status type not found", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("status type not found", -1));
 			return TCL_ERROR;
 		}
 		Tcl_SetObjResult(interp,
@@ -368,7 +373,8 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, (char *)purple_account_get_username(account), -1);
+		Tcl_SetObjResult(interp, 
+				 Tcl_NewStringObj((char *)purple_account_get_username(account), -1));
 		break;
 	}
 
@@ -383,7 +389,8 @@ static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj
 	char *type;
 
 	if (count < 3) {
-		Tcl_SetStringObj(Tcl_GetObjResult(interp), "list too short", -1);
+		Tcl_SetObjResult(interp,
+                                 Tcl_NewStringObj("list too short", -1));
 		return NULL;
 	}
 
@@ -420,8 +427,6 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
 		return error;
 
-	result = Tcl_GetObjResult(interp);
-
 	switch (cmd) {
 	case CMD_BUDDY_ALIAS:
 		if (objc != 3) {
@@ -433,9 +438,11 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		if ((node = tcl_list_to_buddy(interp, count, elems)) == NULL)
 			return TCL_ERROR;
 		if (node->type == PURPLE_BLIST_CHAT_NODE)
-			Tcl_SetStringObj(result, ((PurpleChat *)node)->alias, -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj(((PurpleChat *)node)->alias, -1));
 		else if (node->type == PURPLE_BLIST_BUDDY_NODE)
-			Tcl_SetStringObj(result, (char *)purple_buddy_get_alias((PurpleBuddy *)node), -1);
+			Tcl_SetObjResult(interp,
+                                         Tcl_NewStringObj((char *)purple_buddy_get_alias((PurpleBuddy *)node), -1));
 		return TCL_OK;
 		break;
 	case CMD_BUDDY_HANDLE:
@@ -443,7 +450,9 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_blist_get_handle());
+		Tcl_SetObjResult(interp,
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_blist_get_handle()));
 		break;
 	case CMD_BUDDY_INFO:
 		if (objc != 3 && objc != 4) {
@@ -454,11 +463,13 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			if ((error = Tcl_ListObjGetElements(interp, objv[2], &count, &elems)) != TCL_OK)
 				return error;
 			if (count < 3) {
-				Tcl_SetStringObj(result, "buddy too short", -1);
+				Tcl_SetObjResult(interp,
+						 Tcl_NewStringObj("buddy too short", -1));
 				return TCL_ERROR;
 			}
 			if (strcmp("buddy", Tcl_GetString(elems[0]))) {
-				Tcl_SetStringObj(result, "invalid buddy", -1);
+				Tcl_SetObjResult(interp,
+						 Tcl_NewStringObj("invalid buddy", -1));
 				return TCL_ERROR;
 			}
 			if ((account = tcl_validate_account(elems[2], interp)) == NULL)
@@ -475,8 +486,9 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			if (!strcmp("-all", Tcl_GetString(objv[2]))) {
 				all = 1;
 			} else {
-				Tcl_SetStringObj(result, "", -1);
+				result = Tcl_NewStringObj("",-1);
 				Tcl_AppendStringsToObj(result, "unknown option: ", Tcl_GetString(objv[2]), NULL);
+				Tcl_SetObjResult(interp,result);
 				return TCL_ERROR;
 			}
 		}
@@ -547,7 +559,7 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	const char *cmds[] = { "do", "help", "list", "register", "unregister", NULL };
 	enum { CMD_CMD_DO, CMD_CMD_HELP, CMD_CMD_LIST, CMD_CMD_REGISTER, CMD_CMD_UNREGISTER } cmd;
 	struct tcl_cmd_handler *handler;
-	Tcl_Obj *list, *elem, *result = Tcl_GetObjResult(interp);
+	Tcl_Obj *list, *elem;
 	PurpleConversation *convo;
 	PurpleCmdId id;
 	PurpleCmdStatus status;
@@ -575,7 +587,8 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		status = purple_cmd_do_command(convo, Tcl_GetString(objv[3]),
 				escaped, &errstr);
 		g_free(escaped);
-		Tcl_SetStringObj(result, errstr ? (char *)errstr : "", -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(errstr ? (char *)errstr : "", -1));
 		g_free(errstr);
 		if (status != PURPLE_CMD_STATUS_OK) {
 			return TCL_ERROR;
@@ -640,10 +653,10 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		handler->interp = interp;
 		if ((id = tcl_cmd_register(handler)) == 0) {
 			tcl_cmd_handler_free(handler);
-			Tcl_SetIntObj(result, 0);
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
 		} else {
 			handler->id = id;
-			Tcl_SetIntObj(result, id);
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
 		}
 		break;
 	case CMD_CMD_UNREGISTER:
@@ -663,7 +676,7 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
+	Tcl_Obj *list, *elem;
 	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
 	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
 	int error;
@@ -697,14 +710,16 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 		}
 		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, (char *)purple_connection_get_display_name(gc), -1);
+		Tcl_SetObjResult(interp,
+                                 Tcl_NewStringObj(purple_connection_get_display_name(gc), -1));
 		break;
 	case CMD_CONN_HANDLE:
 		if (objc != 2) {
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_connections_get_handle());
+		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefHandle,
+							    purple_connections_get_handle()));
 		break;
 	case CMD_CONN_LIST:
 		if (objc != 2) {
@@ -725,7 +740,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *list, *elem, *result = Tcl_GetObjResult(interp);
+	Tcl_Obj *list, *elem;
 	const char *cmds[] = { "find", "handle", "list", "new", "write", "name", "title", "send", NULL };
 	enum { CMD_CONV_FIND, CMD_CONV_HANDLE, CMD_CONV_LIST, CMD_CONV_NEW, CMD_CONV_WRITE , CMD_CONV_NAME, CMD_CONV_TITLE, CMD_CONV_SEND } cmd;
 	const char *styles[] = { "send", "recv", "system", NULL };
@@ -766,7 +781,9 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_conversations_get_handle());
+		Tcl_SetObjResult(interp,
+		                 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_conversations_get_handle()));
 		break;
 	case CMD_CONV_LIST:
 		list = Tcl_NewListObj(0, NULL);
@@ -847,7 +864,8 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, (char *)purple_conversation_get_name(convo), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj((char *)purple_conversation_get_name(convo), -1));
 		break;
 	case CMD_CONV_TITLE:
 		if (objc != 3) {
@@ -857,7 +875,8 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, (char *)purple_conversation_get_title(convo), -1);
+		Tcl_SetObjResult(interp,
+                                 Tcl_NewStringObj((char *)purple_conversation_get_title(convo), -1));
 		break;
 	case CMD_CONV_SEND:
 		if (objc != 4) {
@@ -879,7 +898,6 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 int tcl_cmd_core(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	const char *cmds[] = { "handle", "quit", NULL };
 	enum { CMD_CORE_HANDLE, CMD_CORE_QUIT } cmd;
 	int error;
@@ -898,7 +916,9 @@ int tcl_cmd_core(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_get_core());
+		Tcl_SetObjResult(interp,
+                                 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_get_core()));
 		break;
 	case CMD_CORE_QUIT:
 		if (objc != 2) {
@@ -970,7 +990,6 @@ int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 int tcl_cmd_plugins(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	const char *cmds[] = { "handle", NULL };
 	enum { CMD_PLUGINS_HANDLE } cmd;
 	int error;
@@ -989,7 +1008,9 @@ int tcl_cmd_plugins(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_plugins_get_handle());
+		Tcl_SetObjResult(interp,
+				purple_tcl_ref_new(PurpleTclRefHandle,
+						   purple_plugins_get_handle()));
 		break;
 	}
 
@@ -998,7 +1019,7 @@ int tcl_cmd_plugins(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 
 int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result, *list, *elem, **elems;
+	Tcl_Obj *list, *elem, **elems;
 	const char *cmds[] = { "get", "set", "type", NULL };
 	enum { CMD_PREFS_GET, CMD_PREFS_SET, CMD_PREFS_TYPE } cmd;
 	/* char *types[] = { "none", "boolean", "int", "string", "stringlist", NULL }; */
@@ -1015,7 +1036,6 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
 		return error;
 
-	result = Tcl_GetObjResult(interp);
 	switch (cmd) {
 	case CMD_PREFS_GET:
 		if (objc != 3) {
@@ -1025,17 +1045,21 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
-			Tcl_SetStringObj(result, "pref type none", -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj("pref type none", -1));
 			return TCL_ERROR;
 			break;
 		case PURPLE_PREF_BOOLEAN:
-			Tcl_SetBooleanObj(result, purple_prefs_get_bool(Tcl_GetString(objv[2])));
+			Tcl_SetObjResult(interp,
+					 Tcl_NewBooleanObj(
+						 purple_prefs_get_bool(Tcl_GetString(objv[2]))));
 			break;
 		case PURPLE_PREF_INT:
-			Tcl_SetIntObj(result, purple_prefs_get_int(Tcl_GetString(objv[2])));
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(purple_prefs_get_int(Tcl_GetString(objv[2]))));
 			break;
 		case PURPLE_PREF_STRING:
-			Tcl_SetStringObj(result, (char *)purple_prefs_get_string(Tcl_GetString(objv[2])), -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj((char *)purple_prefs_get_string(Tcl_GetString(objv[2])), -1));
 			break;
 		case PURPLE_PREF_STRING_LIST:
 			cur = purple_prefs_get_string_list(Tcl_GetString(objv[2]));
@@ -1049,7 +1073,8 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "tcl does not know about pref type %d\n", preftype);
-			Tcl_SetStringObj(result, "unknown pref type", -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj("unknown pref type", -1));
 			return TCL_ERROR;
 		}
 		break;
@@ -1061,7 +1086,8 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
-			Tcl_SetStringObj(result, "bad path or pref type none", -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj("bad path or pref type none", -1));
 			return TCL_ERROR;
 			break;
 		case PURPLE_PREF_BOOLEAN:
@@ -1100,23 +1126,23 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		preftype = purple_prefs_get_type(Tcl_GetString(objv[2]));
 		switch (preftype) {
 		case PURPLE_PREF_NONE:
-			Tcl_SetStringObj(result, "none", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("none", -1));
 			break;
 		case PURPLE_PREF_BOOLEAN:
-			Tcl_SetStringObj(result, "boolean", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("boolean", -1));
 			break;
 		case PURPLE_PREF_INT:
-			Tcl_SetStringObj(result, "int", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("int", -1));
 			break;
 		case PURPLE_PREF_STRING:
-			Tcl_SetStringObj(result, "string", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("string", -1));
 			break;
 		case PURPLE_PREF_STRING_LIST:
-			Tcl_SetStringObj(result, "stringlist", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("stringlist", -1));
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "tcl does not know about pref type %d\n", preftype);
-			Tcl_SetStringObj(result, "unknown", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("unknown", -1));
 		}
 		break;
 	}
@@ -1134,7 +1160,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	       CMD_PRESENCE_CONTEXT, CMD_PRESENCE_CONVERSATION,
 	       CMD_PRESENCE_IDLE, CMD_PRESENCE_LOGIN, CMD_PRESENCE_ONLINE,
 	       CMD_PRESENCE_STATUS, CMD_PRESENCE_STATUSES } cmd;
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	Tcl_Obj *result;
 	Tcl_Obj *list, *elem;
 	PurplePresence *presence;
 	GList *cur;
@@ -1171,25 +1197,30 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 					 purple_tcl_ref_new(PurpleTclRefStatus,
 							  purple_presence_get_active_status(presence)));
 		} else if (objc == 4) {
-			Tcl_SetBooleanObj(result,
-					  purple_presence_is_status_active(presence,
-									 Tcl_GetString(objv[3])));
+			Tcl_SetObjResult(interp,
+                                         Tcl_NewBooleanObj(
+						 purple_presence_is_status_active(presence,
+										  Tcl_GetString(objv[3]))));
 		} else {
 			PurpleStatusPrimitive primitive;
 			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
-				Tcl_SetStringObj(result, "bad option \"", -1);
+				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
 				Tcl_AppendToObj(result,
 						"\": should be -primitive", -1);
+				Tcl_SetObjResult(interp,result);
 				return TCL_ERROR;
 			}
 			primitive = purple_primitive_get_type_from_id(Tcl_GetString(objv[4]));
 			if (primitive == PURPLE_STATUS_UNSET) {
-				Tcl_SetStringObj(result, "invalid primitive ", -1);
+				result = Tcl_NewStringObj("invalid primitive ", -1);
 				Tcl_AppendObjToObj(result, objv[4]);
+				Tcl_SetObjResult(interp,result);
 				return TCL_ERROR;
 			}
-			Tcl_SetBooleanObj(result, purple_presence_is_status_primitive_active(presence, primitive));
+			Tcl_SetObjResult(interp,
+                                         Tcl_NewBooleanObj(
+						 purple_presence_is_status_primitive_active(presence, primitive)));
 			break;
 		}
 		break;
@@ -1200,7 +1231,8 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		}
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_presence_is_available(presence));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(purple_presence_is_available(presence)));
 		break;
 	case CMD_PRESENCE_CHAT_USER:
 		if (objc != 3) {
@@ -1209,7 +1241,8 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		}
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_presence_get_chat_user(presence), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_presence_get_chat_user(presence), -1));
 		break;
 	case CMD_PRESENCE_CONTEXT:
 		if (objc != 3) {
@@ -1220,16 +1253,16 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 			return TCL_ERROR;
 		switch (purple_presence_get_context(presence)) {
 		case PURPLE_PRESENCE_CONTEXT_UNSET:
-			Tcl_SetStringObj(result, "unset", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("unset", -1));
 			break;
 		case PURPLE_PRESENCE_CONTEXT_ACCOUNT:
-			Tcl_SetStringObj(result, "account", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("account", -1));
 			break;
 		case PURPLE_PRESENCE_CONTEXT_CONV:
-			Tcl_SetStringObj(result, "conversation", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("conversation", -1));
 			break;
 		case PURPLE_PRESENCE_CONTEXT_BUDDY:
-			Tcl_SetStringObj(result, "buddy", -1);
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("buddy", -1));
 			break;
 		}
 		break;
@@ -1253,7 +1286,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		if (objc == 3) {
 			if (purple_presence_is_idle(presence)) {
 				idle_time = purple_presence_get_idle_time (presence);
-				Tcl_SetIntObj(result, idle_time);
+				Tcl_SetObjResult(interp, Tcl_NewIntObj(idle_time));
 			} else {
 				result = Tcl_NewListObj(0, NULL);
 				Tcl_SetObjResult(interp, result);
@@ -1280,7 +1313,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
 		if (objc == 3) {
-			Tcl_SetIntObj(result, purple_presence_get_login_time(presence));
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(purple_presence_get_login_time(presence)));
 		} else {
 			if ((error == Tcl_GetIntFromObj(interp,
 			                                objv[3],
@@ -1296,7 +1329,9 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 		}
 		if ((presence = purple_tcl_ref_get(interp, objv[2], PurpleTclRefPresence)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_presence_is_online(presence));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(
+					 purple_presence_is_online(presence)));
 		break;
 	case CMD_PRESENCE_STATUS:
 		if (objc != 4) {
@@ -1332,7 +1367,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	Tcl_Obj *result;
 	const char *cmds[] = { "current", "handle", NULL };
 	enum { CMD_SAVEDSTATUS_CURRENT, CMD_SAVEDSTATUS_HANDLE } cmd;
 	int error;
@@ -1354,16 +1389,20 @@ int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((saved_status = purple_savedstatus_get_current()) == NULL)
 			return TCL_ERROR;
+		result = Tcl_NewListObj(0, NULL);
 		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(purple_savedstatus_get_title(saved_status), -1));
 		Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(purple_savedstatus_get_type(saved_status)));
 		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(purple_savedstatus_get_message(saved_status), -1));
+		Tcl_SetObjResult(interp,result);
 		break;
 	case CMD_SAVEDSTATUS_HANDLE:
 		if (objc != 2) {
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_savedstatuses_get_handle());
+		Tcl_SetObjResult(interp, 
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_savedstatuses_get_handle()));
 		break;
 	}
 
@@ -1396,7 +1435,6 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	const char *cmds[] = { "connect", "disconnect", NULL };
 	enum { CMD_SIGNAL_CONNECT, CMD_SIGNAL_DISCONNECT } cmd;
 	struct tcl_signal_handler *handler;
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	void *instance;
 	int error;
 
@@ -1415,7 +1453,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			return TCL_ERROR;
 		}
 		handler = g_new0(struct tcl_signal_handler, 1);
-		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&handler->instance)) != TCL_OK) {
+		if ((handler->instance = purple_tcl_ref_get(interp, objv[2],PurpleTclRefHandle)) == NULL) {
 			g_free(handler);
 			return error;
 		}
@@ -1426,9 +1464,9 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		handler->interp = interp;
 		if (!tcl_signal_connect(handler)) {
 			tcl_signal_handler_free(handler);
-			Tcl_SetIntObj(result, 1);
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(1));
 		} else {
-			Tcl_SetIntObj(result, 0);
+			Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
 		}
 		break;
 	case CMD_SIGNAL_DISCONNECT:
@@ -1436,7 +1474,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			Tcl_WrongNumArgs(interp, 2, objv, "instance signal");
 			return TCL_ERROR;
 		}
-		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&instance)) != TCL_OK)
+		if ((instance = purple_tcl_ref_get(interp, objv[2],PurpleTclRefHandle)) == NULL)
 			return error;
 		tcl_signal_disconnect(instance, Tcl_GetString(objv[3]), interp);
 		break;
@@ -1449,7 +1487,6 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 {
 	const char *cmds[] = { "attr", "type", NULL };
 	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
 	PurpleValue *value;
@@ -1475,13 +1512,15 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		attr = Tcl_GetString(objv[3]);
 		value = purple_status_get_attr_value(status, attr);
 		if (value == NULL) {
-			Tcl_SetStringObj(result, "no such attribute", -1);
+			Tcl_SetObjResult(interp,
+					 Tcl_NewStringObj("no such attribute", -1));
 			return TCL_ERROR;
 		}
 		switch (purple_value_get_type(value)) {
 		case PURPLE_TYPE_BOOLEAN:
 			if (objc == 4) {
-				Tcl_SetBooleanObj(result, purple_value_get_boolean(value));
+				Tcl_SetObjResult(interp,
+						 Tcl_NewBooleanObj(purple_value_get_boolean(value)));
 			} else {
 				if ((error = Tcl_GetBooleanFromObj(interp, objv[4], &v)) != TCL_OK)
 					return error;
@@ -1490,7 +1529,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			break;
 		case PURPLE_TYPE_INT:
 			if (objc == 4) {
-				Tcl_SetIntObj(result, purple_value_get_int(value));
+				Tcl_SetObjResult(interp, Tcl_NewIntObj(purple_value_get_int(value)));
 			} else {
 				if ((error = Tcl_GetIntFromObj(interp, objv[4], &v)) != TCL_OK)
 					return error;
@@ -1499,12 +1538,14 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			break;
 		case PURPLE_TYPE_STRING:
 			if (objc == 4)
-				Tcl_SetStringObj(result, purple_value_get_string(value), -1);
+				Tcl_SetObjResult(interp,
+						 Tcl_NewStringObj(purple_value_get_string(value), -1));
 			else
 				purple_status_set_attr_string(status, attr, Tcl_GetString(objv[4]));
 			break;
 		default:
-			Tcl_SetStringObj(result, "attribute has unknown type", -1);
+			Tcl_SetObjResult(interp,
+                                         Tcl_NewStringObj("attribute has unknown type", -1));
 			return TCL_ERROR;
 		}
 		break;
@@ -1528,7 +1569,6 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 {
 	const char *cmds[] = { "id", "name", NULL };
 	enum { CMD_STATUS_ATTR_ID, CMD_STATUS_ATTR_NAME } cmd;
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	PurpleStatusAttr *attr;
 	int error;
 
@@ -1548,7 +1588,8 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((attr = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusAttr)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_status_attr_get_id(attr), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_status_attr_get_id(attr), -1));
 		break;
 	case CMD_STATUS_ATTR_NAME:
 		if (objc != 3) {
@@ -1557,7 +1598,8 @@ int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((attr = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusAttr)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_status_attr_get_name(attr), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_status_attr_get_name(attr), -1));
 		break;
 	}
 
@@ -1576,7 +1618,6 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 	       CMD_STATUS_TYPE_NAME, CMD_STATUS_TYPE_PRIMARY_ATTR,
 	       CMD_STATUS_TYPE_PRIMITIVE, CMD_STATUS_TYPE_SAVEABLE,
 	       CMD_STATUS_TYPE_USER_SETTABLE } cmd;
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	PurpleStatusType *status_type;
 	Tcl_Obj *list, *elem;
 	GList *cur;
@@ -1598,7 +1639,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_status_type_is_available(status_type));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(purple_status_type_is_available(status_type)));
 		break;
 	case CMD_STATUS_TYPE_ATTR:
 		if (objc != 4) {
@@ -1634,7 +1676,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_status_type_is_exclusive(status_type));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(purple_status_type_is_exclusive(status_type)));
 		break;
 	case CMD_STATUS_TYPE_ID:
 		if (objc != 3) {
@@ -1643,7 +1686,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_status_type_get_id(status_type), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_status_type_get_id(status_type), -1));
 		break;
 	case CMD_STATUS_TYPE_INDEPENDENT:
 		if (objc != 3) {
@@ -1652,7 +1696,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_status_type_is_independent(status_type));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(purple_status_type_is_independent(status_type)));
 		break;
 	case CMD_STATUS_TYPE_NAME:
 		if (objc != 3) {
@@ -1661,7 +1706,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_status_type_get_name(status_type), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_status_type_get_name(status_type), -1));
 		break;
 	case CMD_STATUS_TYPE_PRIMITIVE:
 		if (objc != 3) {
@@ -1670,7 +1716,9 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_primitive_get_id_from_type(purple_status_type_get_primitive(status_type)), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_primitive_get_id_from_type
+						  (purple_status_type_get_primitive(status_type)), -1));
 		break;
 	case CMD_STATUS_TYPE_PRIMARY_ATTR:
 		if (objc != 3) {
@@ -1679,7 +1727,8 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetStringObj(result, purple_status_type_get_primary_attr(status_type), -1);
+		Tcl_SetObjResult(interp,
+				 Tcl_NewStringObj(purple_status_type_get_primary_attr(status_type), -1));
 		break;
 	case CMD_STATUS_TYPE_SAVEABLE:
 		if (objc != 3) {
@@ -1688,7 +1737,9 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_status_type_is_saveable(status_type));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(
+					 purple_status_type_is_saveable(status_type)));
 		break;
 	case CMD_STATUS_TYPE_USER_SETTABLE:
 		if (objc != 3) {
@@ -1697,7 +1748,9 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 		}
 		if ((status_type = purple_tcl_ref_get(interp, objv[2], PurpleTclRefStatusType)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetBooleanObj(result, purple_status_type_is_user_settable(status_type));
+		Tcl_SetObjResult(interp,
+				 Tcl_NewBooleanObj(
+					 purple_status_type_is_user_settable(status_type)));
 		break;
 	}
 

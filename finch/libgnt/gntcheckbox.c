@@ -43,13 +43,13 @@ gnt_check_box_draw(GntWidget *widget)
 	else
 		type = GNT_COLOR_NORMAL;
 	
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
+	wbkgdset(widget->window, '\0' | gnt_color_pair(type));
 
 	text = g_strdup_printf("[%c]", cb->checked ? 'X' : ' ');
 	mvwaddstr(widget->window, 0, 0, text);
 	g_free(text);
 
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_NORMAL));
 	mvwaddstr(widget->window, 0, 4, GNT_BUTTON(cb)->priv->text);
 	
 	GNTDEBUG;

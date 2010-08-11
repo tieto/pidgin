@@ -68,9 +68,10 @@ struct artist {
 };
 
 /* Order: Lead Developer, then Alphabetical by Last Name */
-static struct developer developers[] = {
+static const struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
+	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
@@ -94,8 +95,7 @@ static struct developer developers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer patch_writers[] = {
-	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
+static const struct developer patch_writers[] = {
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
@@ -104,7 +104,7 @@ static struct developer patch_writers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer retired_developers[] = {
+static const struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
@@ -119,7 +119,7 @@ static struct developer retired_developers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer retired_patch_writers[] = {
+static const struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
@@ -129,7 +129,7 @@ static struct developer retired_patch_writers[] = {
 };
 
 /* Order: Code, then Alphabetical by Last Name */
-static struct translator current_translators[] = {
+static const struct translator current_translators[] = {
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
@@ -147,7 +147,7 @@ static struct translator current_translators[] = {
 	{N_("Danish"),              "da", "Morten Brix Pedersen", "morten@wtf.dk"},
 	{N_("Danish"),              "da", "Peter Bach", "bach.peter@gmail.com"},
 	{N_("German"),              "de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
-	{N_("German"),              "de", "Jochen Kemnade", "kemnade@gmail.com"},
+	{N_("German"),              "de", "Jochen Kemnade", "jochenkemnade@web.de"},
 	{N_("Dzongkha"),            "dz", "Norbu", "nor_den@hotmail.com"},
 	{N_("Dzongkha"),            "dz", "Jurmey Rabgay", "jur_gay@yahoo.com"},
 	{N_("Dzongkha"),            "dz", "Wangmo Sherpa", "rinwanshe@yahoo.com"},
@@ -191,6 +191,7 @@ static struct translator current_translators[] = {
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
@@ -210,6 +211,7 @@ static struct translator current_translators[] = {
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
 	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
+	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
@@ -221,7 +223,7 @@ static struct translator current_translators[] = {
 };
 
 
-static struct translator past_translators[] = {
+static const struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
@@ -271,7 +273,7 @@ static struct translator past_translators[] = {
 	{NULL, NULL, NULL, NULL}
 };
 
-static struct artist artists[] = {
+static const struct artist artists[] = {
 	{"Hylke Bons",	"h.bons@student.rug.nl"},
 	{NULL, NULL}
 };
@@ -315,7 +317,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", DISPLAY_VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -382,7 +384,7 @@ void pidgin_dialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	tmp = g_strconcat(PIDGIN_NAME, " " VERSION, NULL);
+	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
 	atk_object_set_description(obj, tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
@@ -394,7 +396,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, VERSION);
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, DISPLAY_VERSION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "

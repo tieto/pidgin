@@ -1,5 +1,3 @@
-SUBDIRS = scalable
-
 SMILEYS = 	act-up.png \
     airplane.png \
     alien.png \

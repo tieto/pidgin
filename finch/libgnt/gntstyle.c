@@ -227,6 +227,65 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 #endif
 }
 
+gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	char *kname;
+	GError *error = NULL;
+	gboolean ret = FALSE;
+
+	kname = g_strdup_printf("%s::menu", name);
+
+	if (g_key_file_has_group(gkfile, kname))
+	{
+		gsize len = 0;
+		char **keys;
+		
+		keys = g_key_file_get_keys(gkfile, kname, &len, &error);
+		if (error)
+		{
+			g_printerr("GntStyle: %s\n", error->message);
+			g_error_free(error);
+			g_free(kname);
+			return ret;
+		}
+
+		while (len--)
+		{
+			char *key, *menuid;
+
+			key = g_strdup(keys[len]);
+			menuid = g_key_file_get_string(gkfile, kname, keys[len], &error);
+
+			if (error)
+			{
+				g_printerr("GntStyle: %s\n", error->message);
+				g_error_free(error);
+				error = NULL;
+			}
+			else
+			{
+				const char *keycode = parse_key(key);
+				if (keycode == NULL) {
+					g_printerr("GntStyle: Invalid key-binding %s\n", key);
+				} else {
+					ret = TRUE;
+					g_hash_table_replace(table, g_strdup(keycode), menuid);
+					menuid = NULL;
+				}
+			}
+			g_free(key);
+			g_free(menuid);
+		}
+		g_strfreev(keys);
+	}
+
+	g_free(kname);
+	return ret;
+#endif
+	return FALSE;
+}
+
 void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -354,11 +413,14 @@ void gnt_init_styles()
 void gnt_uninit_styles()
 {
 	int i;
-	for (i = 0; i < GNT_STYLES; i++)
+	for (i = 0; i < GNT_STYLES; i++) {
 		g_free(str_styles[i]);
+		str_styles[i] = NULL;
+	}
 
 #if GLIB_CHECK_VERSION(2,6,0)
 	g_key_file_free(gkfile);
+	gkfile = NULL;
 #endif
 }
 

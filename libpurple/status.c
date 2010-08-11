@@ -157,7 +157,8 @@ static struct PurpleStatusPrimitiveMap
 	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
 	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
 	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
-	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          },
+	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music") }
 };
 
 const char *
@@ -601,7 +602,7 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 	{
 		time_t current_time = time(NULL);
 		const char *buddy_alias = purple_buddy_get_alias(buddy);
-		char *tmp;
+		char *tmp, *logtmp;
 		PurpleLog *log;
 
 		if (old_status != NULL)
@@ -609,6 +610,10 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 			tmp = g_strdup_printf(_("%s changed status from %s to %s"), buddy_alias,
 			                      purple_status_get_name(old_status),
 			                      purple_status_get_name(new_status));
+			logtmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias, buddy->name,
+			                      purple_status_get_name(old_status),
+			                      purple_status_get_name(new_status));
+
 		}
 		else
 		{
@@ -618,10 +623,15 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 			{
 				tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
 				                      purple_status_get_name(new_status));
+				logtmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias, buddy->name,
+				                      purple_status_get_name(new_status));
+
 			}
 			else
 			{
 				tmp = g_strdup_printf(_("%s is no longer %s"), buddy_alias,
+				                      purple_status_get_name(new_status));
+				logtmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias, buddy->name,
 				                      purple_status_get_name(new_status));
 			}
 		}
@@ -630,10 +640,11 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		if (log != NULL)
 		{
 			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp);
+			               current_time, logtmp);
 		}
 
 		g_free(tmp);
+		g_free(logtmp);
 	}
 }
 
@@ -893,6 +904,8 @@ purple_status_set_attr_string(PurpleStatus *status, const char *id,
 	}
 	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_STRING);
 
+	/* XXX: Check if the value has actually changed. If it has, and the status
+	 * is active, should this trigger 'status_has_changed'? */
 	purple_value_set_string(attr_value, value);
 }
 

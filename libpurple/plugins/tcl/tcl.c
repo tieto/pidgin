@@ -60,6 +60,7 @@ PurpleStringref *PurpleTclRefStatus;
 PurpleStringref *PurpleTclRefStatusAttr;
 PurpleStringref *PurpleTclRefStatusType;
 PurpleStringref *PurpleTclRefXfer;
+PurpleStringref *PurpleTclRefHandle;
 
 static GHashTable *tcl_plugins = NULL;
 
@@ -197,7 +198,7 @@ static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 	}
 
 	if (ferror(fp)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, strerror(errno));
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, g_strerror(errno));
 		g_free(buf);
 		fclose(fp);
 		return FALSE;
@@ -363,6 +364,7 @@ static gboolean tcl_load(PurplePlugin *plugin)
 	PurpleTclRefStatusAttr = purple_stringref_new("StatusAttr");
 	PurpleTclRefStatusType = purple_stringref_new("StatusType");
 	PurpleTclRefXfer = purple_stringref_new("Xfer");
+	PurpleTclRefHandle = purple_stringref_new("Handle");
 
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
 
@@ -419,7 +421,7 @@ static PurplePluginInfo tcl_info =
 	PURPLE_PRIORITY_DEFAULT,
 	"core-tcl",
 	N_("Tcl Plugin Loader"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Provides support for loading Tcl plugins"),
 	N_("Provides support for loading Tcl plugins"),
 	"Ethan Blanton <eblanton@cs.purdue.edu>",

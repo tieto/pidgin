@@ -487,3 +487,21 @@ not :)
             established that
 19:03 <user> its functioning just fine
 
+--
+
+17:12 <a_user> I think I foundage a bug
+17:13 <a_user> I don't think blocking works correctly for the AIM protocol
+17:13 <a_user> because a girl attempted to block me in pidgin and I can still
+               talk to her
+17:14 <a_user> [screen name expunged]: I already told you yesterday. You don't
+               need me to ease your mind, you want me to change MY mind. Well,
+               you're out of luck. I don't know how you're still messaging me,
+               because I already blocked you, but I demand you stop immediately.
+               For now on, I will save every message that you send me as
+               evidence for the next time I decide to call the police. I did
+               call them yesterday, but I didn't have evidence. The more you
+               message me now, the more you're digging you're own grave, so I
+               advice you to stop.
+17:14 <a_user> see?
+17:16 <sadrul> I think blocking in pidgin not working is not your biggest
+               problem here.

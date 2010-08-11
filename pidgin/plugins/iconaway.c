@@ -80,7 +80,7 @@ static PurplePluginInfo info =
 
 	ICONAWAY_PLUGIN_ID,                               /**< id             */
 	N_("Iconify on Away"),                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Iconifies the buddy list and your conversations when you go away."),
 	                                                  /**  description    */

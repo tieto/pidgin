@@ -32,6 +32,8 @@
   @signal conversation-extended-menu
  @endsignals
 
+ @see conversation.h
+
  @signaldef writing-im-msg
   @signalproto
 gboolean (*writing_im_msg)(PurpleAccount *account, const char *who,
@@ -427,6 +429,7 @@ void (*conversation_extended_menu)(PurpleConversation *conv, GList **list);
    conversation.
   @param conv   The conversation.
   @param list   A pointer to the list of actions.
+  @since 2.1.0
  @endsignaldef
 */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et
