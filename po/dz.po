@@ -13959,7 +13959,7 @@ msgid "Active which ID?"
 msgstr "ཨའི་ཌི་ག་འདི་ཤུགས་ལྡན་སྨོ?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3220
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "ག་ ཁ་སླབ་ཀྱི་གྲངས་སུ་འཛུལ་ཡི?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3230

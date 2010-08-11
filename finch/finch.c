@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
 
@@ -360,9 +360,7 @@ init_libpurple(int argc, char **argv)
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
 
-	/* TODO: Move prefs loading into purple_prefs_init() */
-	purple_prefs_load();
-	purple_prefs_update_old();
+	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
 
 	/* load plugins we had when we quit */
@@ -411,6 +409,8 @@ static gboolean gnt_start(int *argc, char ***argv)
 int main(int argc, char *argv[])
 {
 	signal(SIGPIPE, SIG_IGN);
+
+	g_thread_init(NULL);
 
 	g_set_prgname("Finch");
 #if GLIB_CHECK_VERSION(2,2,0)

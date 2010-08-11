@@ -15,8 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02111-1301, USA.
  */
 #include "internal.h"
 #include "gtkblist.h"
@@ -68,7 +68,7 @@ new_person_cb(GtkWidget *w, GevoAddBuddyDialog *dialog)
 	const char *group_name;
 
 	group_name =
-		gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(dialog->group_combo)->entry));
+		pidgin_text_combo_box_entry_get_text(dialog->group_combo);
 
 	gevo_new_person_dialog_show(dialog->book, NULL, dialog->account, dialog->username,
 								(*group_name ? group_name : NULL),
@@ -105,7 +105,7 @@ select_buddy_cb(GtkWidget *w, GevoAddBuddyDialog *dialog)
 					   -1);
 
 	group_name =
-		gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(dialog->group_combo)->entry));
+		pidgin_text_combo_box_entry_get_text(dialog->group_combo);
 
 	if (username == NULL || *username == '\0')
 	{
@@ -553,9 +553,8 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	dialog->group_combo = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(dialog->group_combo),
-								  gevo_get_groups());
+	dialog->group_combo =
+		pidgin_text_combo_box_entry_new(NULL, gevo_get_groups());
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->group_combo, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->group_combo);
 

@@ -29,6 +29,7 @@ EXTRA_DIST = \
 		win32/nsis/langmacros.nsh \
 		win32/nsis/translations/afrikaans.nsh \
 		win32/nsis/translations/albanian.nsh \
+		win32/nsis/translations/basque.nsh \
 		win32/nsis/translations/bulgarian.nsh \
 		win32/nsis/translations/catalan.nsh \
 		win32/nsis/translations/czech.nsh \
@@ -81,6 +82,7 @@ pidgin_SOURCES = \
 	gtkcellrendererprogress.c \
 	gtkcellview.c \
 	gtkcellviewmenuitem.c \
+	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
 	gtkdebug.c \
@@ -128,6 +130,7 @@ pidgin_headers = \
 	gtkcellviewmenuitem.h \
 	gtkcellview.h \
 	gtkcellviewmenuitem.h \
+	gtkcertmgr.h \
 	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \

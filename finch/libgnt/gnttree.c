@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "gntmarshal.h"
@@ -985,11 +985,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			g_param_spec_int("columns", "Columns",
 				"Number of columns in the tree.",
 				1, G_MAXINT, 1,
-#if GLIB_CHECK_VERSION(2,8,0)
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
-#else
-				G_PARAM_READWRITE|G_PARAM_PRIVATE
-#endif
 			)
 		);
 

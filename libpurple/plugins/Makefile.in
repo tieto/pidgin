@@ -86,6 +86,16 @@ am__dbus_example_la_SOURCES_DIST = dbus-example.c
 dbus_example_la_OBJECTS = $(am_dbus_example_la_OBJECTS)
 @ENABLE_DBUS_TRUE@@PLUGINS_TRUE@am_dbus_example_la_rpath = -rpath \
 @ENABLE_DBUS_TRUE@@PLUGINS_TRUE@	$(plugindir)
+debug_example_la_LIBADD =
+am__debug_example_la_SOURCES_DIST = debug_example.c
+@PLUGINS_TRUE@am_debug_example_la_OBJECTS = debug_example.lo
+debug_example_la_OBJECTS = $(am_debug_example_la_OBJECTS)
+@PLUGINS_TRUE@am_debug_example_la_rpath =
+helloworld_la_LIBADD =
+am__helloworld_la_SOURCES_DIST = helloworld.c
+@PLUGINS_TRUE@am_helloworld_la_OBJECTS = helloworld.lo
+helloworld_la_OBJECTS = $(am_helloworld_la_OBJECTS)
+@PLUGINS_TRUE@am_helloworld_la_rpath =
 @PLUGINS_TRUE@idle_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__idle_la_SOURCES_DIST = idle.c
 @PLUGINS_TRUE@am_idle_la_OBJECTS = idle.lo
@@ -106,6 +116,11 @@ am__newline_la_SOURCES_DIST = newline.c
 @PLUGINS_TRUE@am_newline_la_OBJECTS = newline.lo
 newline_la_OBJECTS = $(am_newline_la_OBJECTS)
 @PLUGINS_TRUE@am_newline_la_rpath = -rpath $(plugindir)
+@PLUGINS_TRUE@notify_example_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__notify_example_la_SOURCES_DIST = notify_example.c
+@PLUGINS_TRUE@am_notify_example_la_OBJECTS = notify_example.lo
+notify_example_la_OBJECTS = $(am_notify_example_la_OBJECTS)
+@PLUGINS_TRUE@am_notify_example_la_rpath =
 @PLUGINS_TRUE@offlinemsg_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__offlinemsg_la_SOURCES_DIST = offlinemsg.c
 @PLUGINS_TRUE@am_offlinemsg_la_OBJECTS = offlinemsg.lo
@@ -151,20 +166,24 @@ LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(autoaccept_la_SOURCES) $(buddynote_la_SOURCES) \
 	$(ciphertest_la_SOURCES) $(codeinline_la_SOURCES) \
-	$(dbus_example_la_SOURCES) $(idle_la_SOURCES) \
+	$(dbus_example_la_SOURCES) $(debug_example_la_SOURCES) \
+	$(helloworld_la_SOURCES) $(idle_la_SOURCES) \
 	$(joinpart_la_SOURCES) $(log_reader_la_SOURCES) \
-	$(newline_la_SOURCES) $(offlinemsg_la_SOURCES) \
-	$(pluginpref_example_la_SOURCES) $(psychic_la_SOURCES) \
-	$(signals_test_la_SOURCES) $(simple_la_SOURCES) \
-	$(statenotify_la_SOURCES)
+	$(newline_la_SOURCES) $(notify_example_la_SOURCES) \
+	$(offlinemsg_la_SOURCES) $(pluginpref_example_la_SOURCES) \
+	$(psychic_la_SOURCES) $(signals_test_la_SOURCES) \
+	$(simple_la_SOURCES) $(statenotify_la_SOURCES)
 DIST_SOURCES = $(am__autoaccept_la_SOURCES_DIST) \
 	$(am__buddynote_la_SOURCES_DIST) \
 	$(am__ciphertest_la_SOURCES_DIST) \
 	$(am__codeinline_la_SOURCES_DIST) \
 	$(am__dbus_example_la_SOURCES_DIST) \
-	$(am__idle_la_SOURCES_DIST) $(am__joinpart_la_SOURCES_DIST) \
+	$(am__debug_example_la_SOURCES_DIST) \
+	$(am__helloworld_la_SOURCES_DIST) $(am__idle_la_SOURCES_DIST) \
+	$(am__joinpart_la_SOURCES_DIST) \
 	$(am__log_reader_la_SOURCES_DIST) \
 	$(am__newline_la_SOURCES_DIST) \
+	$(am__notify_example_la_SOURCES_DIST) \
 	$(am__offlinemsg_la_SOURCES_DIST) \
 	$(am__pluginpref_example_la_SOURCES_DIST) \
 	$(am__psychic_la_SOURCES_DIST) \
@@ -230,6 +249,8 @@ DYNAMIC_JABBER_FALSE = @DYNAMIC_JABBER_FALSE@
 DYNAMIC_JABBER_TRUE = @DYNAMIC_JABBER_TRUE@
 DYNAMIC_MSN_FALSE = @DYNAMIC_MSN_FALSE@
 DYNAMIC_MSN_TRUE = @DYNAMIC_MSN_TRUE@
+DYNAMIC_MYSPACE_FALSE = @DYNAMIC_MYSPACE_FALSE@
+DYNAMIC_MYSPACE_TRUE = @DYNAMIC_MYSPACE_TRUE@
 DYNAMIC_NOVELL_FALSE = @DYNAMIC_NOVELL_FALSE@
 DYNAMIC_NOVELL_TRUE = @DYNAMIC_NOVELL_TRUE@
 DYNAMIC_OSCAR_FALSE = @DYNAMIC_OSCAR_FALSE@
@@ -258,6 +279,8 @@ ENABLE_CAP_FALSE = @ENABLE_CAP_FALSE@
 ENABLE_CAP_TRUE = @ENABLE_CAP_TRUE@
 ENABLE_DBUS_FALSE = @ENABLE_DBUS_FALSE@
 ENABLE_DBUS_TRUE = @ENABLE_DBUS_TRUE@
+ENABLE_GESTURES_FALSE = @ENABLE_GESTURES_FALSE@
+ENABLE_GESTURES_TRUE = @ENABLE_GESTURES_TRUE@
 ENABLE_GNT_FALSE = @ENABLE_GNT_FALSE@
 ENABLE_GNT_TRUE = @ENABLE_GNT_TRUE@
 ENABLE_GTK_FALSE = @ENABLE_GTK_FALSE@
@@ -313,14 +336,12 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
-INTLTOOL_ICONV = @INTLTOOL_ICONV@
 INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
-INTLTOOL_MSGFMT = @INTLTOOL_MSGFMT@
-INTLTOOL_MSGMERGE = @INTLTOOL_MSGMERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
 INTLTOOL_PERL = @INTLTOOL_PERL@
+INTLTOOL_POLICY_RULE = @INTLTOOL_POLICY_RULE@
 INTLTOOL_PONG_RULE = @INTLTOOL_PONG_RULE@
 INTLTOOL_PROP_RULE = @INTLTOOL_PROP_RULE@
 INTLTOOL_SCHEMAS_RULE = @INTLTOOL_SCHEMAS_RULE@
@@ -332,7 +353,6 @@ INTLTOOL_THEME_RULE = @INTLTOOL_THEME_RULE@
 INTLTOOL_UI_RULE = @INTLTOOL_UI_RULE@
 INTLTOOL_UPDATE = @INTLTOOL_UPDATE@
 INTLTOOL_XAM_RULE = @INTLTOOL_XAM_RULE@
-INTLTOOL_XGETTEXT = @INTLTOOL_XGETTEXT@
 INTLTOOL_XML_NOMERGE_RULE = @INTLTOOL_XML_NOMERGE_RULE@
 INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
@@ -393,6 +413,7 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -413,6 +434,8 @@ STATIC_JABBER_TRUE = @STATIC_JABBER_TRUE@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
 STATIC_MSN_FALSE = @STATIC_MSN_FALSE@
 STATIC_MSN_TRUE = @STATIC_MSN_TRUE@
+STATIC_MYSPACE_FALSE = @STATIC_MYSPACE_FALSE@
+STATIC_MYSPACE_TRUE = @STATIC_MYSPACE_TRUE@
 STATIC_NOVELL_FALSE = @STATIC_NOVELL_FALSE@
 STATIC_NOVELL_TRUE = @STATIC_NOVELL_TRUE@
 STATIC_OSCAR_FALSE = @STATIC_OSCAR_FALSE@
@@ -541,10 +564,13 @@ autoaccept_la_LDFLAGS = -module -avoid-version
 buddynote_la_LDFLAGS = -module -avoid-version
 ciphertest_la_LDFLAGS = -module -avoid-version
 codeinline_la_LDFLAGS = -module -avoid-version
+debug_example_la_LDFLAGS = -module -avoid-version
+helloworld_la_LDFLAGS = -module -avoid-version
 idle_la_LDFLAGS = -module -avoid-version
 joinpart_la_LDFLAGS = -module -avoid-version
 log_reader_la_LDFLAGS = -module -avoid-version
 newline_la_LDFLAGS = -module -avoid-version
+notify_example_la_LDFLAGS = -module -avoid-version
 offlinemsg_la_LDFLAGS = -module -avoid-version
 pluginpref_example_la_LDFLAGS = -module -avoid-version
 psychic_la_LDFLAGS = -module -avoid-version
@@ -569,6 +595,9 @@ dbus_example_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@noinst_LTLIBRARIES = \
 @PLUGINS_TRUE@	ciphertest.la \
 @PLUGINS_TRUE@	codeinline.la \
+@PLUGINS_TRUE@	debug_example.la \
+@PLUGINS_TRUE@	helloworld.la \
+@PLUGINS_TRUE@	notify_example.la \
 @PLUGINS_TRUE@	pluginpref_example.la \
 @PLUGINS_TRUE@	signals_test.la \
 @PLUGINS_TRUE@	simple.la
@@ -577,10 +606,13 @@ dbus_example_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@buddynote_la_SOURCES = buddynote.c
 @PLUGINS_TRUE@ciphertest_la_SOURCES = ciphertest.c
 @PLUGINS_TRUE@codeinline_la_SOURCES = codeinline.c
+@PLUGINS_TRUE@debug_example_la_SOURCES = debug_example.c
+@PLUGINS_TRUE@helloworld_la_SOURCES = helloworld.c
 @PLUGINS_TRUE@idle_la_SOURCES = idle.c
 @PLUGINS_TRUE@joinpart_la_SOURCES = joinpart.c
 @PLUGINS_TRUE@log_reader_la_SOURCES = log_reader.c
 @PLUGINS_TRUE@newline_la_SOURCES = newline.c
+@PLUGINS_TRUE@notify_example_la_SOURCES = notify_example.c
 @PLUGINS_TRUE@offlinemsg_la_SOURCES = offlinemsg.c
 @PLUGINS_TRUE@pluginpref_example_la_SOURCES = pluginpref_example.c
 @PLUGINS_TRUE@psychic_la_SOURCES = psychic.c
@@ -595,6 +627,7 @@ dbus_example_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@joinpart_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@log_reader_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@newline_la_LIBADD = $(GLIB_LIBS)
+@PLUGINS_TRUE@notify_example_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@offlinemsg_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@pluginpref_example_la_LIBADD = $(GLIB_LIBS)
 @PLUGINS_TRUE@psychic_la_LIBADD = $(GLIB_LIBS)
@@ -707,6 +740,10 @@ codeinline.la: $(codeinline_la_OBJECTS) $(codeinline_la_DEPENDENCIES)
 	$(LINK) $(am_codeinline_la_rpath) $(codeinline_la_LDFLAGS) $(codeinline_la_OBJECTS) $(codeinline_la_LIBADD) $(LIBS)
 dbus-example.la: $(dbus_example_la_OBJECTS) $(dbus_example_la_DEPENDENCIES) 
 	$(LINK) $(am_dbus_example_la_rpath) $(dbus_example_la_LDFLAGS) $(dbus_example_la_OBJECTS) $(dbus_example_la_LIBADD) $(LIBS)
+debug_example.la: $(debug_example_la_OBJECTS) $(debug_example_la_DEPENDENCIES) 
+	$(LINK) $(am_debug_example_la_rpath) $(debug_example_la_LDFLAGS) $(debug_example_la_OBJECTS) $(debug_example_la_LIBADD) $(LIBS)
+helloworld.la: $(helloworld_la_OBJECTS) $(helloworld_la_DEPENDENCIES) 
+	$(LINK) $(am_helloworld_la_rpath) $(helloworld_la_LDFLAGS) $(helloworld_la_OBJECTS) $(helloworld_la_LIBADD) $(LIBS)
 idle.la: $(idle_la_OBJECTS) $(idle_la_DEPENDENCIES) 
 	$(LINK) $(am_idle_la_rpath) $(idle_la_LDFLAGS) $(idle_la_OBJECTS) $(idle_la_LIBADD) $(LIBS)
 joinpart.la: $(joinpart_la_OBJECTS) $(joinpart_la_DEPENDENCIES) 
@@ -715,6 +752,8 @@ log_reader.la: $(log_reader_la_OBJECTS) $(log_reader_la_DEPENDENCIES)
 	$(LINK) $(am_log_reader_la_rpath) $(log_reader_la_LDFLAGS) $(log_reader_la_OBJECTS) $(log_reader_la_LIBADD) $(LIBS)
 newline.la: $(newline_la_OBJECTS) $(newline_la_DEPENDENCIES) 
 	$(LINK) $(am_newline_la_rpath) $(newline_la_LDFLAGS) $(newline_la_OBJECTS) $(newline_la_LIBADD) $(LIBS)
+notify_example.la: $(notify_example_la_OBJECTS) $(notify_example_la_DEPENDENCIES) 
+	$(LINK) $(am_notify_example_la_rpath) $(notify_example_la_LDFLAGS) $(notify_example_la_OBJECTS) $(notify_example_la_LIBADD) $(LIBS)
 offlinemsg.la: $(offlinemsg_la_OBJECTS) $(offlinemsg_la_DEPENDENCIES) 
 	$(LINK) $(am_offlinemsg_la_rpath) $(offlinemsg_la_LDFLAGS) $(offlinemsg_la_OBJECTS) $(offlinemsg_la_LIBADD) $(LIBS)
 pluginpref_example.la: $(pluginpref_example_la_OBJECTS) $(pluginpref_example_la_DEPENDENCIES) 
@@ -739,10 +778,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ciphertest.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/codeinline.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbus-example.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug_example.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/helloworld.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/idle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/joinpart.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log_reader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/newline.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/notify_example.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/offlinemsg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pluginpref_example.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psychic.Plo@am__quote@

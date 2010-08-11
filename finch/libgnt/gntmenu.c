@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "gntmenu.h"
@@ -221,8 +221,13 @@ check_for_trigger(GntMenu *menu, char trigger)
 {
 	/* check for a trigger key */
 	GList *iter;
+	GList *find;
 	GList *nth = g_list_find(menu->list, gnt_tree_get_selection_data(GNT_TREE(menu)));
-	GList *find = find_item_with_trigger(nth->next, NULL, trigger);
+
+	if (nth == NULL)
+		return FALSE;
+		
+	find = find_item_with_trigger(nth->next, NULL, trigger);
 	if (!find)
 		find = find_item_with_trigger(menu->list, nth->next, trigger);
 	if (!find)

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _YAHOO_H_
@@ -66,6 +66,9 @@
 #define YAHOO_STATUS_TYPE_AWAY "away"
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
+
+/* Index into attention types list. */
+#define YAHOO_BUZZ 0
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
@@ -123,6 +126,10 @@ struct yahoo_data {
 	gboolean chat_online;
 	gboolean in_chat;
 	char *chat_name;
+	char *pending_chat_room;
+	char *pending_chat_id;
+	char *pending_chat_topic;
+	char *pending_chat_goto;
 	char *auth;
 	gsize auth_written;
 	char *cookie_y;
@@ -212,5 +219,8 @@ void yahoo_get_info(PurpleConnection *gc, const char *name);
 */
 gboolean yahoo_privacy_check
 	(PurpleConnection *gc, const char *who);
+
+gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
+GList *yahoo_attention_types(PurpleAccount *account);
 
 #endif /* _YAHOO_H_ */

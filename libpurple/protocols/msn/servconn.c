@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "servconn.h"
@@ -51,7 +51,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	servconn->num = session->servconns_count++;
 
 	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
-	servconn->tx_handler = -1;
+	servconn->tx_handler = 0;
 
 	return servconn;
 }
@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 
 		if (!servconn->httpconn->connected)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
-				return FALSE;;
+				return FALSE;
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;
@@ -303,7 +303,7 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (writelen == 0) {
 		purple_input_remove(servconn->tx_handler);
-		servconn->tx_handler = -1;
+		servconn->tx_handler = 0;
 		return;
 	}
 
@@ -328,7 +328,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	if (!servconn->session->http_method)
 	{
-		if (servconn->tx_handler == -1) {
+		if (servconn->tx_handler == 0) {
 			switch (servconn->type)
 			{
 				case MSN_SERVCONN_NS:
@@ -353,7 +353,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 		if (ret < 0 && errno == EAGAIN)
 			ret = 0;
 		if (ret >= 0 && ret < len) {
-			if (servconn->tx_handler == -1)
+			if (servconn->tx_handler == 0)
 				servconn->tx_handler = purple_input_add(
 					servconn->fd, PURPLE_INPUT_WRITE,
 					servconn_write_cb, servconn);

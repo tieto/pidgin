@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -35,6 +35,7 @@
 #define QQ_CLIENT_0B35 0x0b35	/* GB QQ2003iii build 0304 (offical release) */
 #define QQ_CLIENT_0B37 0x0b37	/* GB QQ2003iii build 0304 (April 05 updates) */
 #define QQ_CLIENT_0E1B 0x0e1b	/* QQ2005? QQ2006? */
+#define QQ_CLIENT_0E35 0x0e35	/* EN QQ2005 V05.0.200.020 */
 #define QQ_CLIENT_0F15 0x0f15	/* QQ2006 Spring Festival build */
 #define QQ_CLIENT_0F5F 0x0f5f	/* QQ2006 final build */
 
@@ -115,6 +116,8 @@ const gchar *qq_get_source_str(gint source)
 		return "GB QQ2003iii build 0304 (April 5 update)";
 	case QQ_CLIENT_0E1B:
 		return "QQ2005 or QQ2006";
+	case QQ_CLIENT_0E35:
+		return "En QQ2005 V05.0.200.020";
 	case QQ_CLIENT_0F15:
 		return "QQ2006 Spring Festival build";
 	case QQ_CLIENT_0F5F:

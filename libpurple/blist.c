@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -1190,6 +1190,12 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 			group = purple_group_new(_("Chats"));
 			purple_blist_add_group(group,
 					purple_blist_get_last_sibling(purplebuddylist->root));
+		} else {
+			/* Add group to blist if isn't already on it. Fixes #2752. */
+			if (!purple_find_group(group->name)) {
+				purple_blist_add_group(group,
+						purple_blist_get_last_sibling(purplebuddylist->root));
+			}
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -1284,6 +1290,12 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		g = (PurpleGroup *)((PurpleBlistNode *)c)->parent;
 	} else {
 		if (group) {
+			/* Add chat to blist if isn't already on it. Fixes #2752. */
+			if (!purple_find_group(group->name)) {
+				purple_blist_add_group(group,
+						purple_blist_get_last_sibling(purplebuddylist->root));
+			}
+
 			g = group;
 		} else {
 			g = purple_group_new(_("Buddies"));

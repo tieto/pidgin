@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  * @see @ref connection-signals
  */
@@ -169,6 +169,18 @@ extern "C" {
  */
 void purple_connection_new(PurpleAccount *account, gboolean regist,
 									const char *password);
+
+/**
+ * This function should only be called by purple_account_unregister()
+ * in account.c.
+ *
+ * Tries to unregister the account on the server. If the account is not
+ * connected, also creates a new connection.
+ *
+ * @param account  The account to unregister
+ * @param password The password to use.
+ */
+void purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data);
 
 /**
  * Disconnects and destroys a PurpleConnection.

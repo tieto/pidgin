@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _MSN_H_
 #define _MSN_H_
@@ -59,6 +59,7 @@
 
 #define USEROPT_MSNSERVER 3
 #define MSN_SERVER "messenger.hotmail.com"
+#define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
 #define USEROPT_MSNPORT 4
 #define MSN_PORT 1863
 
@@ -79,6 +80,8 @@
 	"Client-Name: Purple/" VERSION "\r\n" \
 	"Chat-Logging: Y\r\n"
 
+/* Index into attention_types */
+#define MSN_NUDGE 0
 
 typedef enum
 {

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "nexus.h"
@@ -188,7 +188,7 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_ssl_close(nexus->gsc);
 	nexus->gsc = NULL;
 
-	purple_debug_misc("msn", "ssl buffer: {%s}", nexus->read_buf);
+	purple_debug_misc("msn", "ssl buffer: {%s}\n", nexus->read_buf);
 
 	if (strstr(nexus->read_buf, "HTTP/1.1 302") != NULL)
 	{

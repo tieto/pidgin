@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PIDGINBLIST_H_
 #define _PIDGINBLIST_H_
@@ -43,6 +43,8 @@ enum {
 	CONTACT_EXPANDER_VISIBLE_COLUMN,
 	EMBLEM_COLUMN,
 	EMBLEM_VISIBLE_COLUMN,
+	PROTOCOL_ICON_COLUMN,
+	PROTOCOL_ICON_VISIBLE_COLUMN,
 	BLIST_COLUMNS
 
 };
@@ -376,7 +378,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gbool
  * This tooltip will be destroyed the next time this function is called, or when XXXX
  * is called
  *
- * @param buddy The buddy to show a tooltip for
+ * @param node The buddy list node to show a tooltip for
  * @param widget The widget to draw the tooltip on
  */
 void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);

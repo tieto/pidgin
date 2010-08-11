@@ -20,10 +20,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "cipher.h"
+#include "certificate.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -141,6 +142,7 @@ purple_core_init(const char *ui)
 	purple_accounts_init();
 	purple_savedstatuses_init();
 	purple_notify_init();
+	purple_certificate_init();
 	purple_connections_init();
 	purple_conversations_init();
 	purple_blist_init();
@@ -159,9 +161,8 @@ purple_core_init(const char *ui)
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
-	 * TODO: do this here after purple_prefs_load() has been moved into purple_prefs_init()
 	 */
-	/*purple_network_get_my_ip(-1);*/
+	purple_network_get_my_ip(-1);
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
@@ -192,6 +193,7 @@ purple_core_quit(void)
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_connections_uninit();
+	purple_certificate_uninit();
 	purple_buddy_icons_uninit();
 	purple_accounts_uninit();
 	purple_savedstatuses_uninit();

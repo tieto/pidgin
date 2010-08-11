@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "account.h"
@@ -913,6 +913,15 @@ purple_account_destroy(PurpleAccount *account)
 }
 
 void
+purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
+{
+	g_return_if_fail(account != NULL);
+	
+	account->registration_cb = cb;
+	account->registration_cb_user_data = user_data;
+}
+
+void
 purple_account_register(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
@@ -921,6 +930,17 @@ purple_account_register(PurpleAccount *account)
 					purple_account_get_username(account));
 
 	purple_connection_new(account, TRUE, purple_account_get_password(account));
+}
+
+void
+purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
+{
+	g_return_if_fail(account != NULL);
+	
+	purple_debug_info("account", "Unregistering account %s\n",
+					  purple_account_get_username(account));
+	
+	purple_connection_new_unregister(account, purple_account_get_password(account), cb, user_data);
 }
 
 static void
@@ -1720,15 +1740,6 @@ const char *
 purple_account_get_protocol_id(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-	/*
-	 * HACK by Seanegan
-	 */
-	if (!strcmp(account->protocol_id, "prpl-oscar")) {
-		if (isdigit(account->username[0]))
-			return "prpl-icq";
-		else
-			return "prpl-aim";
-	}
 	return account->protocol_id;
 }
 

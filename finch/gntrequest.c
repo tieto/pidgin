@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gnt.h>
 #include <gntbox.h>
@@ -198,7 +198,7 @@ request_choice_cb(GntWidget *button, GntComboBox *combo)
 
 static void *
 finch_request_choice(const char *title, const char *primary,
-		const char *secondary, unsigned int default_value,
+		const char *secondary, int default_value,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -244,7 +244,7 @@ request_action_cb(GntWidget *button, GntWidget *window)
 
 static void*
 finch_request_action(const char *title, const char *primary,
-		const char *secondary, unsigned int default_value,
+		const char *secondary, int default_value,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, size_t actioncount,
 		va_list actions)
@@ -368,6 +368,22 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 	purple_request_close(PURPLE_REQUEST_FIELDS, button);
 }
 
+static void
+update_selected_account(GntEntry *screenname, const char *start, const char *end,
+		GntComboBox *accountlist)
+{
+	GList *accounts = gnt_tree_get_rows(GNT_TREE(accountlist->dropdown));
+	const char *name = gnt_entry_get_text(screenname);
+	while (accounts) {
+		if (purple_find_buddy(accounts->data, name)) {
+			gnt_combo_box_set_selected(accountlist, accounts->data);
+			gnt_widget_draw(GNT_WIDGET(accountlist));
+			break;
+		}
+		accounts = accounts->next;
+	}
+}
+
 static void *
 finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
@@ -378,6 +394,7 @@ finch_request_fields(const char *title, const char *primary,
 {
 	GntWidget *window, *box;
 	GList *grlist;
+	GntWidget *screenname = NULL, *accountlist = NULL;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_FIELDS);
 
@@ -439,6 +456,7 @@ finch_request_fields(const char *title, const char *primary,
 						gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 					}
 					gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
+					screenname = entry;
 				} else if (hint && !strcmp(hint, "group")) {
 					PurpleBlistNode *node;
 					for (node = purple_blist_get_root(); node; node = node->next) {
@@ -556,6 +574,7 @@ finch_request_fields(const char *title, const char *primary,
 						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), account);
 				}
 				gnt_widget_set_size(combo, 20, 3); /* ew */
+				accountlist = combo;
 			}
 			else
 			{
@@ -575,6 +594,10 @@ finch_request_fields(const char *title, const char *primary,
 
 	setup_default_callback(window, cancel_cb, userdata);
 	gnt_widget_show(window);
+
+	if (screenname && accountlist) {
+		g_signal_connect(screenname, "completion", G_CALLBACK(update_selected_account), accountlist);
+	}
 
 	g_object_set_data(G_OBJECT(window), "fields", allfields);
 	

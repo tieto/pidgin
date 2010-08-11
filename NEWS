@@ -1,5 +1,24 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.2.0 (9/13/2007):
+	Sean: 2.2.0 contains the results of several major Google Summer
+	of Code branches bringing some new, extraordinary features. We
+	have a new protocol, MySpaceIM, a bunch of new features for an
+	existing protocol, XMPP, and nifty new certificate management
+	to make sure your IM server is who it says it is.
+
+	Ka-Hing: A number of you noticed crashes when dragging windows
+	around when certain options are enabled. Well, that was my fault,
+	and Sadrul fixed it. So Props to him and poos to me. I haven't
+	done much for this release, but the next one should contain
+	something that I helped work on. Hint: students are cheap slave
+	coders!
+
+	Kevin: I haven't really been coding much in Pidgin, and this
+	release is no exception, but I will be working on getting our
+	wonderful web site to be a little more functional by next
+	release.  I promise!
+
 2.1.1 (8/20/2007):
 	Sean: Continuing our schedule of frequent releases, Pidgin 2.1.1
 	is out. In it, we've addressed a lot of UI issues from our

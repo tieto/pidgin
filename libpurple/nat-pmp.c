@@ -175,20 +175,20 @@ default_gw()
 	/* Determine the buffer side needed to get the full routing table */
     if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) 
 	{
-		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate");
+		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate\n");
 		return NULL;
     }
 
     if (!(buf = malloc(needed)))
 	{
-		purple_debug_warning("nat-pmp", "malloc");
+		purple_debug_warning("nat-pmp", "malloc\n");
 		return NULL;
     }
 
 	/* Read the routing table into buf */
     if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0) 
 	{
-		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump");
+		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump\n");
 		return NULL;
     }
 
@@ -231,7 +231,7 @@ default_gw()
 						sin->sin_addr.s_addr = rti_sin->sin_addr.s_addr;
 						memcpy(sin, rti_info[RTAX_GATEWAY], sizeof(struct sockaddr_in));
 
-						purple_debug_info("nat-pmp", "found a default gateway");
+						purple_debug_info("nat-pmp", "found a default gateway\n");
 						found = TRUE;
 						break;
 					}
@@ -266,7 +266,7 @@ purple_pmp_get_public_ip()
 	if ((pmp_info.status == PURPLE_PMP_STATUS_DISCOVERED) && (pmp_info.publicip != NULL))
 	{
 #ifdef PMP_DEBUG
-		purple_debug_info("nat-pmp", "Returning cached publicip %s",pmp_info.publicip);
+		purple_debug_info("nat-pmp", "Returning cached publicip %s\n",pmp_info.publicip);
 #endif
 		return pmp_info.publicip;
 	}

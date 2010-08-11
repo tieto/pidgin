@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "blist.h"
@@ -111,17 +111,17 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	/* Always linkfy the text for display, unless we're
 	 * explicitly asked to do otheriwse*/
-	if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
-		displayed = g_strdup(message);
-	else
-		displayed = purple_markup_linkify(message);
-
-	if ((conv->features & PURPLE_CONNECTION_HTML) &&
-		!(msgflags & PURPLE_MESSAGE_RAW))
-	{
-		sent = g_strdup(displayed);
+	if (!(msgflags & PURPLE_MESSAGE_INVISIBLE)) {
+		if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
+			displayed = g_strdup(message);
+		else
+			displayed = purple_markup_linkify(message);
 	}
-	else
+
+	if (displayed && (conv->features & PURPLE_CONNECTION_HTML) &&
+		!(msgflags & PURPLE_MESSAGE_RAW)) {
+		sent = g_strdup(displayed);
+	} else
 		sent = g_strdup(message);
 
 	msgflags |= PURPLE_MESSAGE_SEND;
@@ -202,6 +202,48 @@ open_log(PurpleConversation *conv)
 							   conv, time(NULL), NULL));
 }
 
+/* Functions that deal with PurpleConvMessage */
+
+static void
+add_message_to_history(PurpleConversation *conv, const char *who, const char *message,
+		PurpleMessageFlags flags, time_t when)
+{
+	PurpleConvMessage *msg;
+
+	if (flags & PURPLE_MESSAGE_SEND) {
+		const char *me = NULL;
+		if (conv->account->gc)
+			me = conv->account->gc->display_name;
+		if (!me)
+			me = conv->account->username;
+		who = me;
+	}
+	
+	msg = g_new0(PurpleConvMessage, 1);
+	PURPLE_DBUS_REGISTER_POINTER(msg, PurpleConvMessage);
+	msg->who = g_strdup(who);
+	msg->flags = flags;
+	msg->what = g_strdup(message);
+	msg->when = when;
+
+	conv->message_history = g_list_prepend(conv->message_history, msg);
+}
+
+static void
+free_conv_message(PurpleConvMessage *msg)
+{
+	g_free(msg->who);
+	g_free(msg->what);
+	PURPLE_DBUS_UNREGISTER_POINTER(msg);
+	g_free(msg);
+}
+
+static void
+message_history_free(GList *list)
+{
+	g_list_foreach(list, (GFunc)free_conv_message, NULL);
+	g_list_free(list);
+}
 
 /**************************************************************************
  * Conversation API
@@ -472,6 +514,8 @@ purple_conversation_destroy(PurpleConversation *conv)
 		ops->destroy_conversation(conv);
 
 	purple_conversation_close_logs(conv);
+
+	purple_conversation_clear_message_history(conv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(conv);
 	g_free(conv);
@@ -805,9 +849,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	ops = purple_conversation_get_ui_ops(conv);
 
-	if (ops == NULL || ops->write_conv == NULL)
-		return;
-
 	account = purple_conversation_get_account(conv);
 	type = purple_conversation_get_type(conv);
 
@@ -824,6 +865,10 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	displayed = g_strdup(message);
 
+	if (who == NULL || *who == '\0')
+		who = purple_conversation_get_name(conv);
+	alias = who;
+
 	plugin_return =
 		GPOINTER_TO_INT(purple_signal_emit_return_1(
 			purple_conversations_get_handle(),
@@ -837,11 +882,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		g_free(displayed);
 		return;
 	}
-
-	if (who == NULL || *who == '\0')
-		who = purple_conversation_get_name(conv);
-
-	alias = who;
 
 	if (account != NULL) {
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
@@ -891,7 +931,9 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
-	ops->write_conv(conv, who, alias, displayed, flags, mtime);
+	if (ops && ops->write_conv)
+		ops->write_conv(conv, who, alias, displayed, flags, mtime);
+	add_message_to_history(conv, who, message, flags, mtime);
 
 	purple_signal_emit(purple_conversations_get_handle(),
 		(type == PURPLE_CONV_TYPE_IM ? "wrote-im-msg" : "wrote-chat-msg"),
@@ -2020,6 +2062,42 @@ purple_conversation_get_extended_menu(PurpleConversation *conv)
 	return menu;
 }
 
+void purple_conversation_clear_message_history(PurpleConversation *conv)
+{
+	GList *list = conv->message_history;
+	message_history_free(list);
+	conv->message_history = NULL;
+}
+
+GList *purple_conversation_get_message_history(PurpleConversation *conv)
+{
+	return conv->message_history;
+}
+
+const char *purple_conversation_message_get_sender(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->who;
+}
+
+const char *purple_conversation_message_get_message(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->what;
+}
+
+PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, 0);
+	return msg->flags;
+}
+
+time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, 0);
+	return msg->when;
+}
+
 gboolean
 purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 				const gchar *markup, gchar **error)
@@ -2309,3 +2387,4 @@ purple_conversations_uninit(void)
 		purple_conversation_destroy((PurpleConversation*)conversations->data);
 	purple_signals_unregister_by_instance(purple_conversations_get_handle());
 }
+

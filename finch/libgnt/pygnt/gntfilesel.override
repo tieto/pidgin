@@ -1,0 +1,33 @@
+/**
+ * pygnt- Python bindings for the GNT toolkit.
+ * Copyright (C) 2007 Sadrul Habib Chowdhury <sadrul@pidgin.im>
+ *
+ *   gntfilesel.override: overrides for the file selector.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301
+ * USA
+ */
+%%
+headrs
+#include "common.h"
+%%
+override gnt_file_sel_get_selected_multi_files noargs
+static PyObject *
+_wrap_gnt_file_sel_get_selected_multi_files(PyGObject *self)
+{
+	GList *list = gnt_file_sel_get_selected_multi_files(GNT_FILE_SEL(self->obj));
+	return create_pyobject_from_string_list(list);
+}
+

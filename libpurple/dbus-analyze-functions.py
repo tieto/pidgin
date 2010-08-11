@@ -26,6 +26,11 @@ excluded = [\
     "purple_conv_placement_get_current_func",
     "purple_conv_placement_set_current_func",
 
+    # Similar to the above:
+    "purple_account_set_register_callback",
+    "purple_account_unregister",
+    "purple_connection_new_unregister",
+
     # This is excluded because this script treats PurpleLogReadFlags*
     # as pointer to a struct, instead of a pointer to an enum.  This
     # causes a compilation error. Someone should fix this script.
@@ -66,6 +71,7 @@ constlists = [
     "purple_savedstatuses_get_all",
     "purple_status_type_get_attrs",
     "purple_presence_get_statuses",
+    "purple_conversation_get_message_history",
 ]
 
 pointer = "#pointer#"

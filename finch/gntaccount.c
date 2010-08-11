@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gnt.h>
 #include <gntbox.h>
@@ -169,7 +169,7 @@ save_account_cb(AccountEditDialog *dialog)
 	purple_account_set_remember_password(account,
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->remember)));
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->password));
-	if (value && *value && purple_account_get_remember_password(account))
+	if (value && *value)
 		purple_account_set_password(account, value);
 	else
 		purple_account_set_password(account, NULL);
@@ -221,6 +221,11 @@ save_account_cb(AccountEditDialog *dialog)
 	}
 
 	/* XXX: Proxy options */
+
+	if (accounts.window && accounts.tree) {
+		gnt_tree_set_selected(GNT_TREE(accounts.tree), account);
+		gnt_box_give_focus_to_child(GNT_BOX(accounts.window), accounts.tree);
+	}
 
 	gnt_widget_destroy(dialog->window);
 }
@@ -708,6 +713,11 @@ void finch_accounts_show_all()
 	g_signal_connect(G_OBJECT(accounts.window), "destroy", G_CALLBACK(reset_accounts_win), NULL);
 	
 	gnt_widget_show(accounts.window);
+}
+
+void finch_account_dialog_show(PurpleAccount *account)
+{
+	edit_account(account);
 }
 
 static gpointer

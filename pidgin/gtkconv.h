@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PIDGIN_CONVERSATION_H_
 #define _PIDGIN_CONVERSATION_H_
@@ -162,6 +162,13 @@ struct _PidginConversation
 	GtkWidget *infopane;
 	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
+
+	/* Used when attaching a PidginConversation to a PurpleConversation
+	 * with message history */
+	struct {
+		int timer;
+		GList *current;
+	} attach;
 };
 
 /*@}*/
@@ -237,6 +244,15 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  * @param conv The conversation.
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
+
+/**
+ * Reattach Pidgin UI to a conversation.
+ *
+ * @param conv  The conversation.
+ *
+ * @return  Wheter Pidgin UI was successfully attached.
+ */
+gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
 GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);

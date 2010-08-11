@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -82,8 +82,8 @@ bonjour_jabber_conv_new() {
 	BonjourJabberConversation *bconv = g_new0(BonjourJabberConversation, 1);
 	bconv->socket = -1;
 	bconv->tx_buf = purple_circ_buffer_new(512);
-	bconv->tx_handler = -1;
-	bconv->rx_handler = -1;
+	bconv->tx_handler = 0;
+	bconv->rx_handler = 0;
 
 	return bconv;
 }
@@ -234,7 +234,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (writelen == 0) {
 		purple_input_remove(bconv->tx_handler);
-		bconv->tx_handler = -1;
+		bconv->tx_handler = 0;
 		return;
 	}
 
@@ -272,7 +272,7 @@ _send_data(PurpleBuddy *pb, char *message)
 	BonjourJabberConversation *bconv = bb->conversation;
 
 	/* If we're not ready to actually send, append it to the buffer */
-	if (bconv->tx_handler != -1
+	if (bconv->tx_handler != 0
 			|| bconv->connect_data != NULL
 			|| !bconv->sent_stream_start
 			|| !bconv->recv_stream_start
@@ -304,7 +304,7 @@ _send_data(PurpleBuddy *pb, char *message)
 	}
 
 	if (ret < len) {
-		if (bconv->tx_handler == -1)
+		if (bconv->tx_handler == 0)
 			bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 				_send_data_write_cb, pb);
 		purple_circ_buffer_append(bconv->tx_buf, message + ret, len - ret);
@@ -373,17 +373,19 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 
 	g_return_if_fail(bb != NULL);
 
-	/* Close the socket, clear the watcher and free memory */
-	bonjour_jabber_close_conversation(bb->conversation);
-	bb->conversation = NULL;
-
 	/* Inform the user that the conversation has been closed */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, pb->account);
-	if (conv != NULL) {
-		char *tmp = g_strdup_printf(_("%s has closed the conversation."), pb->name);
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
-		g_free(tmp);
+	if (bb->conversation != NULL) {
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, pb->account);
+		if (conv != NULL) {
+			char *tmp = g_strdup_printf(_("%s has closed the conversation."), pb->name);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+		/* Close the socket, clear the watcher and free memory */
+		bonjour_jabber_close_conversation(bb->conversation);
+		bb->conversation = NULL;
 	}
+
 }
 
 void bonjour_jabber_stream_started(PurpleBuddy *pb) {
@@ -455,7 +457,7 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 
 	/* Stream started; process the send buffer if there is one */
 	purple_input_remove(bconv->tx_handler);
-	bconv->tx_handler= -1;
+	bconv->tx_handler= 0;
 	bconv->sent_stream_start = TRUE;
 
 	bonjour_jabber_stream_started(pb);
@@ -535,7 +537,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
-	purple_debug_info("bonjour", "Received incoming connection from %s\n.", address_text);
+	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->pb = &pb;
@@ -779,7 +781,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 			/* TODO: We're really supposed to wait for "</stream:stream>" before closing the socket */
 			close(bconv->socket);
 		}
-		if (bconv->rx_handler != -1)
+		if (bconv->rx_handler != 0)
 			purple_input_remove(bconv->rx_handler);
 		if (bconv->tx_handler > 0)
 			purple_input_remove(bconv->tx_handler);

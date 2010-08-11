@@ -8,8 +8,8 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libsilc
-NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
-			$(SILC_TOOLKIT)/lib/silcclient.dll
+NEEDED_DLLS =		$(SILC_TOOLKIT)/bin/libsilc-1-1-2.dll \
+			$(SILC_TOOLKIT)/bin/libsilcclient-1-1-2.dll
 TYPE = PLUGIN
 
 # Static or Plugin...

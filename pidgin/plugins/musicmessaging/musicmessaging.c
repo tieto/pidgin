@@ -15,8 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02111-1301, USA.
  */
 
 #include "internal.h"
@@ -71,10 +71,10 @@ static void session_end (MMConversation *mmconv);
 
 /* Globals */
 /* List of sessions */
-GList *conversations;
+static GList *conversations;
 
 /* Pointer to this plugin */
-PurplePlugin *plugin_pointer;
+static PurplePlugin *plugin_pointer;
 
 /* Define types needed for DBus */
 DBusGConnection *connection;
@@ -113,7 +113,7 @@ void music_messaging_change_request(const int session, const char *command, cons
 			
 			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 			
-			purple_debug_misc("Sent request: %s\n", to_send->str);
+			purple_debug_misc("musicmessaging", "Sent request: %s\n", to_send->str);
 		}
 	}
 			
@@ -311,7 +311,9 @@ plugin_unload(PurplePlugin *plugin) {
 static gboolean
 intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData)
 {
-	
+	if (message == NULL || *message == NULL || **message == '\0')
+		return FALSE;
+
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
 		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", *message);
@@ -350,7 +352,16 @@ intercept_sent(PurpleAccount *account, const char *who, char **message, void* pD
 static gboolean
 intercept_received(PurpleAccount *account, char **sender, char **message, PurpleConversation *conv, int *flags)
 {
-	MMConversation *mmconv = mmconv_from_conv(conv);
+	MMConversation *mmconv;
+	
+	if (conv == NULL) {
+		/* XXX: This is just to avoid a crash (#2726).
+		 *      We may want to create the conversation instead of returning from here
+		 */
+		return FALSE;
+	}
+
+	mmconv = mmconv_from_conv(conv);
 	
 	purple_debug_misc("purple-musicmessaging", "Intercepted: %s\n", *message);
 	if (strstr(*message, MUSICMESSAGING_PREFIX))

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "slplink.h"
@@ -49,7 +49,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	tf = g_fopen(tmp, "wb");
 	if (tf == NULL)
 	{
-		purple_debug_error("msn", "could not open debug file");
+		purple_debug_error("msn", "could not open debug file\n");
 		return;
 	}
 	pload = msn_message_gen_payload(msg, &pload_size);

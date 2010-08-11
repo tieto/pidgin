@@ -42,8 +42,11 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =			auth.c \
+C_SRC =	\
+			adhoccommands.c \
+			auth.c \
 			buddy.c \
+			caps.c \
 			chat.c \
 			disco.c \
 			google.c \
@@ -53,9 +56,14 @@ C_SRC =			auth.c \
 			message.c \
 			oob.c \
 			parser.c \
+			pep.c \
+			ping.c \
 			presence.c \
 			roster.c \
 			si.c \
+			usermood.c \
+			usernick.c \
+			usertune.c \
 			xdata.c \
 			win32/posix.uname.c
 
@@ -73,6 +81,14 @@ LIBS = \
 			-lws2_32 \
 			-lintl \
 			-lpurple
+
+ifeq ($(CYRUS_SASL), 1)
+CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.22
+CFLAGS += -DHAVE_CYRUS_SASL
+INCLUDE_PATHS += -I$(CYRUS_SASL_TOP)/include
+LIB_PATHS += -L$(CYRUS_SASL_TOP)/lib
+LIBS += -llibsasl
+endif
 
 include $(PIDGIN_COMMON_RULES)
 

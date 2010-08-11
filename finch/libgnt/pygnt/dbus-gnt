@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+
+# This script requires Python 2.4 and pygnt bindings
+#
+# Note that all function names are resolved dynamically, no
+# purple-specific library is needed.
+
+import dbus
+import dbus.glib
+import dbus.decorators
+import gobject
+import os
+import gnt
+import sys
+
+import time
+
+convwins = {}
+
+def buddysignedon(buddy):
+    pass
+
+def conv_closed(conv):
+    key = get_dict_key(conv)
+    stuff = convwins[key]
+    stuff[0].destroy()
+    # if a conv window is closed, then reopened, this thing crashes
+    convwins[key] = None
+
+def add_message(conv, who, msg, flags, timestamp):
+    stuff = show_conversation(conv, False)
+    tv = stuff[1]
+    tv.append_text_with_flags("\n", 0)
+    if timestamp:
+        tv.append_text_with_flags(time.strftime("(%X) ", time.localtime(timestamp)), 8)
+    else:
+        tv.append_text_with_flags(time.strftime("(%X) "), 8)
+    if flags & 3:
+        tv.append_text_with_flags(who + ": ", 1)
+        msg = purple.PurpleMarkupStripHtml(msg)
+        tv.append_text_with_flags(msg, 0)
+        stuff[0].set_urgent()
+    else:
+        tv.append_text_with_flags(msg, 8)
+    tv.scroll(0)
+
+def wrote_msg(account, who, msg, conv, flags):
+    add_message(conv, who, msg, flags, None)
+
+bus = dbus.SessionBus()
+obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
+
+bus.add_signal_receiver(buddysignedon,
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
+                        signal_name = "BuddySignedOn")
+
+bus.add_signal_receiver(wrote_msg,
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
+                        signal_name = "WroteImMsg")
+
+bus.add_signal_receiver(wrote_msg,
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
+                        signal_name = "WroteChatMsg")
+
+bus.add_signal_receiver(conv_closed,
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
+                        signal_name = "DeletingConversation")
+
+def get_dict_key(conv):
+    val = purple.PurpleConversationGetName(conv)
+    return val
+
+def send_im_cb(entry, key, conv):
+    if key[0] == '\r':
+        # XXX: do something about the / commands
+        type = purple.PurpleConversationGetType(conv)
+        if type == 1:
+            imdata = purple.PurpleConversationGetImData(conv)
+            purple.PurpleConvImSend(imdata, entry.get_text())
+        else:
+            chatdata = purple.PurpleConversationGetChatData(conv)
+            purple.PurpleConvChatSend(chatdata, entry.get_text())
+        entry.clear()
+
+def conv_window_destroyed(win, key):
+    del convwins[key]
+
+def show_conversation(conv, history):
+    key = get_dict_key(conv)
+    if key in convwins:
+        return convwins[key]
+    win = gnt.Window()
+    vbox = gnt.Box(0, 1)
+    win.add_widget(vbox)
+    win.set_title(purple.PurpleConversationGetName(conv))
+    win.set_pad(0)
+    vbox.set_pad(0)
+    tv = gnt.TextView()
+    entry = gnt.Entry("")
+    vbox.add_widget(tv)
+    entry.set_size(40, 1)
+    vbox.add_widget(entry)
+    entry.connect("key_pressed", send_im_cb, conv)
+    tv.clear()
+    tv.attach_scroll_widget(entry)
+    win.show()
+    convwins[key] = [win, tv, entry]
+    win.connect("destroy", conv_window_destroyed, key)
+    
+    if history:
+        msgs = purple.PurpleConversationGetMessageHistory(conv)
+        msgs.reverse()
+        for msg in msgs:
+            who = purple.PurpleConversationMessageGetSender(msg)
+            what = purple.PurpleConversationMessageGetMessage(msg)
+            flags = purple.PurpleConversationMessageGetFlags(msg)
+            when = purple.PurpleConversationMessageGetTimestamp(msg)
+            add_message(conv, who, what, flags, when)
+
+    return convwins[key]
+
+def show_buddylist():
+    win = gnt.Window()
+    tree = gnt.Tree()
+    tree.set_property("columns", 1)
+    win.add_widget(tree)
+    node = purple.PurpleBlistGetRoot()
+    while node:
+        if purple.PurpleBlistNodeIsGroup(node):
+            sys.stderr.write(str(node) + "\n")
+            tree.add_row_after(str(node), ["asd", ""], None, None)
+            #tree.add_row_after(node, [str(purple.PurpleGroupGetName(node)), ""], None, None)
+            #tree.add_row_after(node, ["aasd", ""], None, None)
+        elif purple.PurpleBlistNodeIsContact(node):
+            buddy = purple.PurpleContactGetPriorityBuddy(node)
+            group = purple.PurpleBuddyGetGroup(buddy)
+            #tree.add_row_after(node, [str(purple.PurpleBuddyGetName(buddy)), ""], group, None)
+
+        node = purple.PurpleBlistNodeNext(node, False)
+    win.show()
+
+gnt.gnt_init()
+
+# show_buddylist()
+
+convs = purple.PurpleGetConversations()
+for conv in convs:
+    show_conversation(conv, True)
+
+gnt.gnt_main()
+
+gnt.gnt_quit()
+

@@ -10983,7 +10983,7 @@ msgid "Active which ID?"
 msgstr "ఏ  IDని యాక్టివ్ చేద్దాం?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "ఎవరితో మాట్లాడుదాం ?"
 
 #: src/protocols/yahoo/yahoo.c:2982

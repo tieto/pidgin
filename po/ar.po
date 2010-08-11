@@ -13172,7 +13172,7 @@ msgid "Active which ID?"
 msgstr "وضعية رقم الانترنت النشطة"
 
 #: ../src/protocols/yahoo/yahoo.c:3094
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr ""
 
 #: ../src/protocols/yahoo/yahoo.c:3104

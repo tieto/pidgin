@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #define _GNU_SOURCE
@@ -738,7 +738,7 @@ dump_screen(GntBindable *bindable, GList *null)
 			print = ch;
 #ifndef NO_WIDECHAR
 			if (wch.chars[0] > 255) {
-				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
+				snprintf(unicode, sizeof(unicode), "&#x%x;", (unsigned int)wch.chars[0]);
 				print = unicode;
 			}
 #endif

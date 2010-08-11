@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -329,9 +329,13 @@ prefs_start_element_handler (GMarkupParseContext *context,
 				purple_prefs_set_string_list(pref_name_full->str, NULL);
 				break;
 			case PURPLE_PREF_PATH:
-				decoded = g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL);
-				purple_prefs_set_path(pref_name_full->str, decoded);
-				g_free(decoded);
+				if (pref_value) {
+					decoded = g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL);
+					purple_prefs_set_path(pref_name_full->str, decoded);
+					g_free(decoded);
+				} else {
+					purple_prefs_set_path(pref_name_full->str, NULL);
+				}
 				break;
 			case PURPLE_PREF_PATH_LIST:
 				purple_prefs_set_path_list(pref_name_full->str, NULL);
@@ -1446,6 +1450,9 @@ purple_prefs_init(void)
 	purple_prefs_remove("/purple/contact/offline_score");
 	purple_prefs_remove("/purple/contact/away_score");
 	purple_prefs_remove("/purple/contact/idle_score");
+
+	purple_prefs_load();
+	purple_prefs_update_old();
 }
 
 void

@@ -11263,7 +11263,7 @@ msgid "Active which ID?"
 msgstr "Quin ID voleu activar?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3256
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "A qui vos voleu unir al xat?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3268

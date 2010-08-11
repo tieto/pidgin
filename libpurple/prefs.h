@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #ifndef _PURPLE_PREFS_H_
@@ -55,7 +55,9 @@ extern "C" {
 #endif
 
 /**************************************************************************/
-/** @name Prefs API                                                       */
+/** @name Prefs API                                                       
+    Preferences are named according to a directory-like structure.        
+    Example: "/plugins/core/potato/is_from_idaho" (probably a boolean)    */
 /**************************************************************************/
 /*@{*/
 

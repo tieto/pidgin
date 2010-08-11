@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "account.h"
@@ -155,6 +155,62 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 		purple_signal_emit(purple_accounts_get_handle(), "account-connecting", account);
 		prpl_info->login(account);
 	}
+}
+
+void
+purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
+{
+	/* Lots of copy/pasted code to avoid API changes. You might want to integrate that into the previous function when posssible. */
+	PurpleConnection *gc;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+	
+	g_return_if_fail(account != NULL);
+		
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	else {
+		gchar *message;
+		
+		message = g_strdup_printf(_("Missing protocol plugin for %s"),
+								  purple_account_get_username(account));
+		purple_notify_error(NULL, _("Unregistration Error"), message, NULL);
+		g_free(message);
+		return;
+	}
+
+	if (!purple_account_is_disconnected(account)) {
+		prpl_info->unregister_user(account, cb, user_data);
+		return;
+	}
+	
+	if (((password == NULL) || (*password == '\0')) &&
+		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	{
+		purple_debug_error("connection", "Can not connect to account %s without "
+						   "a password.\n", purple_account_get_username(account));
+		return;
+	}
+	
+	gc = g_new0(PurpleConnection, 1);
+	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
+	
+	gc->prpl = prpl;
+	if ((password != NULL) && (*password != '\0'))
+		gc->password = g_strdup(password);
+	purple_connection_set_account(gc, account);
+	purple_connection_set_state(gc, PURPLE_CONNECTING);
+	connections = g_list_append(connections, gc);
+	purple_account_set_connection(account, gc);
+	
+	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
+	
+	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
+	
+	prpl_info->unregister_user(account, cb, user_data);
 }
 
 void
@@ -436,7 +492,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 
 	if (text == NULL) {
-		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed");
+		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed\n");
 		text = _("Unknown error");
 	}
 

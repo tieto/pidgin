@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _PURPLE_SIMPLE_H
@@ -37,6 +37,11 @@
 #include "sipmsg.h"
 
 #define SIMPLE_BUF_INC 1024
+#define SIMPLE_REGISTER_RETRY_MAX 2
+
+#define SIMPLE_REGISTER_SENT 1
+#define SIMPLE_REGISTER_RETRY 2
+#define SIMPLE_REGISTER_COMPLETE 3
 
 struct sip_dialog {
 	gchar *ourtag;

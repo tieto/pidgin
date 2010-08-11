@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -1147,19 +1147,12 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 void
 pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 {
-	AtkObject *acc, *label;
-	AtkObject *rel_obj[1];
-	AtkRelationSet *set;
-	AtkRelation *relation;
+	AtkObject *acc;
 	const gchar *label_text;
 	const gchar *existing_name;
 
 	acc = gtk_widget_get_accessible (w);
-	label = gtk_widget_get_accessible (l);
 
-	/* Make sure mnemonics work */
-        gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
-	
 	/* If this object has no name, set it's name with the label text */
 	existing_name = atk_object_get_name (acc);
 	if (!existing_name) {
@@ -1168,6 +1161,23 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 			atk_object_set_name (acc, label_text);
 	}
 
+	pidgin_set_accessible_relations(w, l);
+}
+
+void
+pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
+{
+	AtkObject *acc, *label;
+	AtkObject *rel_obj[1];
+	AtkRelationSet *set;
+	AtkRelation *relation;
+
+	acc = gtk_widget_get_accessible (w);
+	label = gtk_widget_get_accessible (l);
+
+	/* Make sure mnemonics work */
+        gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
+	
 	/* Create the labeled-by relation */
 	set = atk_object_ref_relation_set (acc);
 	rel_obj[0] = label;
@@ -3204,4 +3214,57 @@ gtk_tree_path_new_from_indices (gint first_index, ...)
 	return path;
 }
 #endif
+
+static void
+combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
+{
+	char *text = gtk_combo_box_get_active_text(combo_box);
+	gtk_entry_set_text(entry, text ? text : "");
+	g_free(text);
+}
+
+static gboolean
+entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBox *combo)
+{
+	if (key->keyval == GDK_Down || key->keyval == GDK_Up) {
+		gtk_combo_box_popup(combo);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+GtkWidget *
+pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
+{
+	GtkComboBox *ret = NULL;
+	GtkWidget *the_entry = NULL;
+
+	ret = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	the_entry = gtk_entry_new();
+	gtk_container_add(GTK_CONTAINER(ret), the_entry);
+
+	if (default_item)
+		gtk_entry_set_text(GTK_ENTRY(the_entry), default_item);
+
+	for (; items != NULL ; items = items->next) {
+		char *text = items->data;
+		if (text && *text)
+			gtk_combo_box_append_text(ret, text);
+	}
+
+	g_signal_connect(G_OBJECT(ret), "changed", (GCallback)combo_box_changed_cb, the_entry);
+	g_signal_connect_after(G_OBJECT(the_entry), "key-press-event", G_CALLBACK(entry_key_pressed_cb), ret);
+
+	return GTK_WIDGET(ret);
+}
+
+const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
+{
+	return gtk_entry_get_text(GTK_ENTRY(GTK_BIN((widget))->child));
+}
+
+void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
+{
+	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
+}
 

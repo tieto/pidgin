@@ -13709,7 +13709,7 @@ msgid "Active which ID?"
 msgstr ""
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3174
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "ಮಾತುಕತೆಯಲ್ಲಿ ಯಾರೊಡನೆ ಸೇರಬೇಕು?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3184

@@ -167,6 +167,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
 
   !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Albanian"
+  !insertmacro MUI_LANGUAGE "Basque"
   !insertmacro MUI_LANGUAGE "Bulgarian"
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Czech"
@@ -206,6 +207,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
 
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "AFRIKAANS"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\afrikaans.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BASQUE"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\basque.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BULGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CATALAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CZECH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\czech.nsh"
@@ -503,8 +505,8 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
       Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\silcclient.dll"
-      Delete "$INSTDIR\silc.dll"
+      Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+      Delete "$INSTDIR\libsilc-1-1-2.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -552,6 +554,10 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   SectionEnd
   Section /o "msnim:" SecURI_MSNIM
     Push "msnim"
+    Call RegisterURIHandler
+  SectionEnd
+  Section /o "myim:" SecURI_MYIM
+    Push "myim"
     Call RegisterURIHandler
   SectionEnd
   Section /o "ymsgr:" SecURI_YMSGR
@@ -688,6 +694,12 @@ Section Uninstall
     DeleteRegValue HKLM "${STARTUP_RUN_KEY}" "Pidgin"
     ; Remove Language preference info (TODO: check if NSIS removes this)
 
+    Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
+    Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
+    Delete "$INSTDIR\ca-certs\Verisign_Class3_Extended_Validation_CA.pem"
+    Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
+    Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
+    RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
@@ -695,7 +707,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\buddynote.dll"
     Delete "$INSTDIR\plugins\convcolors.dll"
     Delete "$INSTDIR\plugins\extplacement.dll"
-    Delete "$INSTDIR\plugins\pidginrc.dll"
+    Delete "$INSTDIR\plugins\gtkbuddynote.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
@@ -706,6 +718,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
+    Delete "$INSTDIR\plugins\libmyspace.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\libqq.dll"
@@ -721,6 +734,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\notify.dll"
     Delete "$INSTDIR\plugins\offlinemsg.dll"
     Delete "$INSTDIR\plugins\perl.dll"
+    Delete "$INSTDIR\plugins\pidginrc.dll"
     Delete "$INSTDIR\plugins\psychic.dll"
     Delete "$INSTDIR\plugins\relnot.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
@@ -734,12 +748,12 @@ Section Uninstall
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
     RMDir "$INSTDIR\plugins"
-    Delete "$INSTDIR\sounds\pidgin\alert.wav"
-    Delete "$INSTDIR\sounds\pidgin\login.wav"
-    Delete "$INSTDIR\sounds\pidgin\logout.wav"
-    Delete "$INSTDIR\sounds\pidgin\receive.wav"
-    Delete "$INSTDIR\sounds\pidgin\send.wav"
-    RMDir "$INSTDIR\sounds\pidgin"
+    Delete "$INSTDIR\sounds\purple\alert.wav"
+    Delete "$INSTDIR\sounds\purple\login.wav"
+    Delete "$INSTDIR\sounds\purple\logout.wav"
+    Delete "$INSTDIR\sounds\purple\receive.wav"
+    Delete "$INSTDIR\sounds\purple\send.wav"
+    RMDir "$INSTDIR\sounds\purple"
     RMDir "$INSTDIR\sounds"
     Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\idletrack.dll"
@@ -756,8 +770,9 @@ Section Uninstall
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\plc4.dll"
     Delete "$INSTDIR\plds4.dll"
-    Delete "$INSTDIR\silc.dll"
-    Delete "$INSTDIR\silcclient.dll"
+    Delete "$INSTDIR\libsilc-1-1-2.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+    Delete "$INSTDIR\smime3.dll"
     Delete "$INSTDIR\softokn3.dll"
     Delete "$INSTDIR\ssl3.dll"
     Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"

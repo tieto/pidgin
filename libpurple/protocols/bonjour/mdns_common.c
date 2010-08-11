@@ -11,7 +11,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
  */
 
 #include <string.h>
@@ -207,7 +207,7 @@ gboolean bonjour_dns_sd_start(BonjourDnsSd *data) {
 
 	/* Advise the daemon that we are waiting for connections */
 	if (!_mdns_browse(data)) {
-		purple_debug_error("bonjour", "Unable to get service.");
+		purple_debug_error("bonjour", "Unable to get service.\n");
 		return FALSE;
 	}
 

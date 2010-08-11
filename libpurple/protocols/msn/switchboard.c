@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "prefs.h"
@@ -771,7 +771,8 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msg->ack_cb(msg, msg->ack_data);
 
 	swboard = cmdproc->data;
-	swboard->ack_list = g_list_remove(swboard->ack_list, msg);
+	if (swboard)
+		swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
 }
 
@@ -951,6 +952,8 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	PurpleBuddy *buddy;
 	const char *user;
 
+	str = NULL;
+
 	swboard = cmdproc->data;
 	account = cmdproc->session->account;
 	user = msg->remote_user;
@@ -960,9 +963,8 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	else
 		username = g_markup_escape_text(user, -1);
 
-	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
+	serv_got_attention(account->gc, buddy->name, MSN_NUDGE);
 	g_free(username);
-	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, str);
 	g_free(str);
 }
 

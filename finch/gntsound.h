@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _GNT_SOUND_H
 #define _GNT_SOUND_H
@@ -53,6 +53,14 @@ void finch_sound_set_active_profile(const char *name);
  *         Caller must free the list (but not the data).
  */
 GList *finch_sound_get_profiles(void);
+
+/**
+ * Determine whether any sound will be played or not.
+ *
+ * @return Returns FALSE if preference is set to 'No sound', or if volume is
+ *         set to zero.
+ */
+gboolean finch_sound_is_enabled(void);
 
 /**
  * Gets GNT sound UI ops.

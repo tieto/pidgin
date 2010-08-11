@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -351,12 +351,13 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->retry = TRUE;
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
+	listen_data->socket_type = socket_type;
 
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
 							  actual_port, actual_port, PURPLE_PMP_LIFETIME))
 	{
-		purple_debug_info("network", "Created NAT-PMP mapping on port %i",actual_port);
+		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n",actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
 		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
@@ -436,7 +437,7 @@ purple_network_get_port_from_fd(int fd)
 static gint
 wpurple_get_connected_network_count(void)
 {
-	guint net_cnt = 0;
+	gint net_cnt = 0;
 
 	WSAQUERYSET qs;
 	HANDLE h;
@@ -521,7 +522,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
 		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
 		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
- 
+
 	if (!(MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
 		g_thread_exit(NULL);
 		return NULL;
@@ -636,7 +637,7 @@ void *
 purple_network_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 
@@ -675,7 +676,7 @@ purple_network_init(void)
 
 	purple_signal_register(purple_network_get_handle(), "network-configuration-changed",
 						   purple_marshal_VOID, NULL, 0);
-	
+
 	purple_pmp_init();
 	purple_upnp_init();
 }

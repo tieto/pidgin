@@ -43,18 +43,18 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [1])
+m4_define([purple_lt_current], [2])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [1])
-m4_define([purple_micro_version], [1])
+m4_define([purple_minor_version], [2])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [1])
+m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [1])
+m4_define([gnt_minor_version], [2])
 m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
@@ -136,7 +136,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -275,6 +275,8 @@ You must have the GLib 2.0 development headers installed to build.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+AC_ARG_WITH(x, [],
+	with_x="$withval", with_x="yes")
 AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
@@ -309,7 +311,10 @@ AC_ARG_ENABLE(cap,
 	[AC_HELP_STRING([--disable-cap],
 		[compile without Contact Availability Prediction plugin])],
 	enable_cap="$enableval", enable_cap="yes")
-
+AC_ARG_ENABLE(gestures,
+	[AC_HELP_STRING([--disable-gestures],
+		[compile without the gestures plugin])],
+	enable_gestures="$enableval", enable_gestures="yes")
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -343,31 +348,47 @@ If you only want to build Finch then specify --disable-gtkui when running config
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	dnl #######################################################################
+	dnl # Check if we should compile with X support
+	dnl #######################################################################
+	if test "x$with_x" = "xyes" ; then
+		PKG_CHECK_MODULES(X11, x11,
+			[AC_DEFINE(HAVE_X, 1, [Define to 1 if you have X11])],
+			[AC_MSG_RESULT(no)
+			with_x=no])
+		AC_SUBST(X11_LIBS)
+		AC_SUBST(X11_CFLAGS)
+	fi
+	
+	dnl #######################################################################
 	dnl # Check for XScreenSaver
 	dnl #######################################################################
 	if test "x$enable_screensaver" = "xyes" ; then
-		old_LIBS="$LIBS"
-		LIBS="$LIBS $GTK_LIBS $x_libpath_add"
-		XSS_LIBS=""
-		XSS_HEADERS=""
-		AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
-		AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
-		if test "x$XSS_LIBS" != "x"; then
-			oldCPPFLAGS="$CPPFLAGS"
-			CPPFLAGS="$CPPFLAGS $x_incpath_add"
-			AC_TRY_COMPILE([
+		if test "x$with_x" = "xyes" ; then
+			old_LIBS="$LIBS"
+			LIBS="$LIBS $GTK_LIBS $x_libpath_add"
+			XSS_LIBS=""
+			XSS_HEADERS=""
+			AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
+			AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
+			if test "x$XSS_LIBS" != "x"; then
+				oldCPPFLAGS="$CPPFLAGS"
+				CPPFLAGS="$CPPFLAGS $x_incpath_add"
+				AC_TRY_COMPILE([
 					#include <X11/Xlib.h>
 					#include <X11/extensions/scrnsaver.h>
-				], [], [], [enable_screensaver=no])
-			CPPFLAGS="$oldCPPFLAGS"
+					], [], [], [enable_screensaver=no])
+				CPPFLAGS="$oldCPPFLAGS"
+			else
+				enable_screensaver=no
+			fi
+			LIBS="$old_LIBS"
+
+			if test "x$enable_screensaver" = "xyes" ; then
+				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
+				AC_SUBST(XSS_LIBS)
+			fi
 		else
 			enable_screensaver=no
-		fi
-		LIBS="$old_LIBS"
-
-		if test "x$enable_screensaver" = "xyes" ; then
-			AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-			AC_SUBST(XSS_LIBS)
 		fi
 	fi
 
@@ -375,18 +396,31 @@ If you only want to build Finch then specify --disable-gtkui when running config
 	dnl # Check for X session management libs
 	dnl #######################################################################
 	if test "x$enable_sm" = "xyes"; then
-		enable_sm=no
-		AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
-		if test "x$found_sm_lib" = "xtrue"; then
-			oldCPPFLAGS="$CPPFLAGS"
-			CPPFLAGS="$CPPFLAGS $x_incpath_add"
-			AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
-			CPPFLAGS="$oldCPPFLAGS"
-		fi
+		if test "x$with_x" = "xyes" ; then
+			enable_sm=no
+			AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
+			if test "x$found_sm_lib" = "xtrue"; then
+				oldCPPFLAGS="$CPPFLAGS"
+				CPPFLAGS="$CPPFLAGS $x_incpath_add"
+				AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
+				CPPFLAGS="$oldCPPFLAGS"
+			fi
 
-		if test "x$enable_sm" = "xyes"; then
-			AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
-			AC_SUBST(SM_LIBS)
+			if test "x$enable_sm" = "xyes"; then
+				AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
+				AC_SUBST(SM_LIBS)
+			fi
+		else
+			enable_sm=no
+		fi
+	fi
+
+	dnl #######################################################################
+	dnl # Check for X11 to allow the gestures plugin
+	dnl #######################################################################
+	if test "x$enable_gestures" = "xyes"; then
+		if test "x$with_x" = "xno" ; then
+			enable_gestures=no
 		fi
 	fi
 
@@ -450,10 +484,11 @@ If you only want to build Finch then specify --disable-gtkui when running config
 	dnl #######################################################################
 	if test "x$enable_cap" = "xyes"; then
 		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3,,[
-													AC_MSG_RESULT(no)
-													enable_cap="no"
-													])
+			AC_MSG_RESULT(no)
+			enable_cap="no"
+			])
 	fi
+        
 
 else # GTK
 	enable_cap=no
@@ -467,6 +502,8 @@ fi	# GTK
 AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$enable_gevolution" = "xyes")
 AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
+AM_CONDITIONAL(ENABLE_GESTURES, test "x$enable_gestures" = "xyes")
+
 
 dnl #######################################################################
 dnl # Check for ncurses and other things used by the console UI
@@ -531,11 +568,6 @@ if test "x$enable_consoleui" = "xyes"; then
 			fi
 		fi
 	fi
-
-	PKG_CHECK_MODULES(X11, x11,
-		[AC_DEFINE(HAVE_X11, 1, [Define to 1 if you have X11])], [AC_MSG_RESULT(no)])
-	AC_SUBST(X11_LIBS)
-	AC_SUBST(X11_CFLAGS)
 fi
 
 AC_SUBST(GNT_LIBS)
@@ -858,7 +890,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn novell oscar qq sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -904,6 +936,7 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
+		myspace)	static_myspace=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -924,6 +957,7 @@ AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
+AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
@@ -939,7 +973,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -963,6 +997,7 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
+		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
@@ -983,6 +1018,7 @@ AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
+AM_CONDITIONAL(DYNAMIC_MYSPACE, test "x$dynamic_myspace" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
@@ -1151,7 +1187,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
-	if test x"$python" = x"no" ; then
+	if test x"$PYTHON" = x"no" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
@@ -2137,6 +2173,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/status/Makefile
 		   pidgin/pixmaps/status/11/Makefile
 		   pidgin/pixmaps/status/11/scalable/Makefile
+		   pidgin/pixmaps/status/11/rtl/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/rtl/Makefile
 		   pidgin/pixmaps/status/16/scalable/Makefile
@@ -2187,6 +2224,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
+		   libpurple/protocols/myspace/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
@@ -2202,6 +2240,7 @@ AC_OUTPUT([Makefile
 		   libpurple/version.h
 		   share/Makefile
 		   share/sounds/Makefile
+		   share/ca-certs/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
@@ -2217,7 +2256,9 @@ echo $PACKAGE $VERSION
 echo
 echo Build GTK+ 2.x UI............. : $enable_gtkui
 echo Build console UI.............. : $enable_consoleui
+echo Build for X11................. : $with_x
 echo
+echo Enable Gestures............... : $enable_gestures
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo

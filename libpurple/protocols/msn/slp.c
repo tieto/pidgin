@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "slp.h"
@@ -343,7 +343,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (xfer)
 		{
 			bin = (char *)purple_base64_decode(context, &bin_len);
-			file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
+			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 2));
 
 			uni_name = (gunichar2 *)(bin + 20);
 			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {

@@ -17,12 +17,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "debug.h"
+#include "certificate.h"
 #include "plugin.h"
 #include "sslconn.h"
+#include "util.h"
 #include "version.h"
 
 #define SSL_NSS_PLUGIN_ID "ssl-nss"
@@ -33,6 +35,7 @@
 
 #include <nspr.h>
 #include <nss.h>
+#include <nssb64.h>
 #include <pk11func.h>
 #include <prio.h>
 #include <secerr.h>
@@ -104,6 +107,20 @@ set_errno(int code)
 		errno = EIO;
 		break;
 	}
+}
+
+static gchar *get_error_text()
+{
+	PRInt32 len = PR_GetErrorTextLength();
+	gchar *ret = NULL;
+
+	if (len > 0) {
+		ret = g_malloc(len + 1);
+		len = PR_GetErrorText(ret);
+		ret[len] = '\0';
+	}
+
+	return ret;
 }
 
 static void
@@ -219,11 +236,14 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 	 * It seems to work because it'll eventually use the cached value
 	 */
 	if(SSL_ForceHandshake(nss_data->in) != SECSuccess) {
+		gchar *error_txt;
 		set_errno(PR_GetError());
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 
-		purple_debug_error("nss", "Handshake failed %d\n", PR_GetError());
+		error_txt = get_error_text();
+		purple_debug_error("nss", "Handshake failed %s (%d)\n", error_txt ? error_txt : "", PR_GetError());
+		g_free(error_txt);
 
 		if (gsc->error_cb != NULL)
 			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
@@ -264,8 +284,11 @@ ssl_nss_connect(PurpleSslConnection *gsc)
 	socket_opt.option = PR_SockOpt_Nonblocking;
 	socket_opt.value.non_blocking = PR_TRUE;
 
-	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS)
-		purple_debug_warning("nss", "unable to set socket into non-blocking mode: %d\n", PR_GetError());
+	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS) {
+		gchar *error_txt = get_error_text();
+		purple_debug_warning("nss", "unable to set socket into non-blocking mode: %s (%d)\n", error_txt ? error_txt : "", PR_GetError());
+		g_free(error_txt);
+	}
 
 	nss_data->in = SSL_ImportFD(NULL, nss_data->fd);
 
@@ -360,6 +383,364 @@ ssl_nss_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	return ret;
 }
 
+static GList *
+ssl_nss_peer_certs(PurpleSslConnection *gsc)
+{
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
+	CERTCertificate *cert;
+/*
+	GList *chain = NULL;
+	void *pinArg;
+	SECStatus status;
+*/
+
+	/* TODO: this is a blind guess */
+	cert = SSL_PeerCertificate(nss_data->fd);
+
+	
+
+	return NULL;
+}
+
+/************************************************************************/
+/* X.509 functionality                                                  */
+/************************************************************************/
+static PurpleCertificateScheme x509_nss;
+
+/** Helpr macro to retrieve the NSS certdata from a PurpleCertificate */
+#define X509_NSS_DATA(pcrt) ( (CERTCertificate * ) (pcrt->data) )
+
+/** Imports a PEM-formatted X.509 certificate from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static PurpleCertificate *
+x509_import_from_file(const gchar *filename)
+{
+	gchar *rawcert;
+	gsize len = 0;
+	CERTCertificate *crt_dat;
+	PurpleCertificate *crt;
+
+	g_return_val_if_fail(filename, NULL);
+
+	purple_debug_info("nss/x509",
+			  "Loading certificate from %s\n",
+			  filename);
+	
+	/* Load the raw data up */
+	g_return_val_if_fail(
+		g_file_get_contents(filename,
+				    &rawcert, &len,
+				    NULL ),
+		NULL);
+
+	/* Decode the certificate */
+	crt_dat = CERT_DecodeCertFromPackage(rawcert, len);
+	g_free(rawcert);
+
+	g_return_val_if_fail(crt_dat, NULL);
+	
+	crt = g_new0(PurpleCertificate, 1);
+	crt->scheme = &x509_nss;
+	crt->data = crt_dat;
+	
+	return crt;
+}
+
+/**
+ * Exports a PEM-formatted X.509 certificate to the specified file.
+ * @param filename Filename to export to. Format will be PEM
+ * @param crt      Certificate to export
+ *
+ * @return TRUE if success, otherwise FALSE
+ */
+/* This function should not be so complicated, but NSS doesn't seem to have a
+   "convert yon certificate to PEM format" function. */
+static gboolean
+x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	SECItem *dercrt;
+	gchar *b64crt;
+	gchar *pemcrt;
+	gboolean ret = FALSE;
+
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	purple_debug_info("nss/x509",
+			  "Exporting certificate to %s\n", filename);
+	
+	/* First, use NSS voodoo to create a DER-formatted certificate */
+	dercrt = SEC_ASN1EncodeItem(NULL, NULL, crt_dat,
+				    SEC_ASN1_GET(SEC_SignedCertificateTemplate));
+	g_return_val_if_fail(dercrt != NULL, FALSE);
+
+	/* Now encode it to b64 */
+	b64crt = NSSBase64_EncodeItem(NULL, NULL, 0, dercrt);
+	SECITEM_FreeItem(dercrt, PR_TRUE);
+	g_return_val_if_fail(b64crt, FALSE);
+
+	/* Wrap it in nice PEM header things */
+	pemcrt = g_strdup_printf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----\n", b64crt);
+	PORT_Free(b64crt); /* Notice that b64crt was allocated by an NSS
+			      function; hence, we'll let NSPR free it. */
+
+	/* Finally, dump the silly thing to a file. */
+	ret =  purple_util_write_data_to_file_absolute(filename, pemcrt, -1);
+
+	g_free(pemcrt);
+	
+	return ret;
+}
+
+static PurpleCertificate *
+x509_copy_certificate(PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	PurpleCertificate *newcrt;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	/* Create the certificate copy */
+	newcrt = g_new0(PurpleCertificate, 1);
+	newcrt->scheme = &x509_nss;
+	/* NSS does refcounting automatically */
+	newcrt->data = CERT_DupCertificate(crt_dat);
+	
+	return newcrt;
+}
+
+/** Frees a Certificate
+ *
+ *  Destroys a Certificate's internal data structures and frees the pointer
+ *  given.
+ *  @param crt  Certificate instance to be destroyed. It WILL NOT be destroyed
+ *              if it is not of the correct CertificateScheme. Can be NULL
+ *
+ */
+static void
+x509_destroy_certificate(PurpleCertificate * crt)
+{
+	CERTCertificate *crt_dat;
+
+	g_return_if_fail(crt);
+	g_return_if_fail(crt->scheme == &x509_nss);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_if_fail(crt_dat);
+
+	/* Finally we have the certificate. So let's kill it */
+	/* NSS does refcounting automatically */
+	CERT_DestroyCertificate(crt_dat);
+
+	/* Delete the PurpleCertificate as well */
+	g_free(crt);
+}
+
+/** Determines whether one certificate has been issued and signed by another
+ *
+ * @param crt       Certificate to check the signature of
+ * @param issuer    Issuer's certificate
+ *
+ * @return TRUE if crt was signed and issued by issuer, otherwise FALSE
+ * @TODO  Modify this function to return a reason for invalidity?
+ */
+static gboolean
+x509_signed_by(PurpleCertificate * crt,
+	       PurpleCertificate * issuer)
+{
+	return TRUE;
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	size_t hashlen = 20; /* Size of an sha1sum */
+	GByteArray *sha1sum;
+	SECItem *derCert; /* DER representation of the cert */
+	SECStatus st;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	/* Get the certificate DER representation */
+	derCert = &(crt_dat->derCert);
+
+	/* Make a hash! */
+	sha1sum = g_byte_array_sized_new(hashlen);
+	/* glib leaves the size as 0 by default */
+	sha1sum->len = hashlen;
+	
+	st = PK11_HashBuf(SEC_OID_SHA1, sha1sum->data,
+			  derCert->data, derCert->len);
+
+	/* Check for errors */
+	if (st != SECSuccess) {
+		g_byte_array_free(sha1sum, TRUE);
+		purple_debug_error("nss/x509",
+				   "Error: hashing failed!\n");
+		return NULL;
+	}
+
+	return sha1sum;
+}
+
+static gchar *
+x509_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
+}
+
+static gchar *
+x509_issuer_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
+}
+
+static gchar *
+x509_common_name (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	char *nss_cn;
+	gchar *ret_cn;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	/* Q:
+	   Why get a newly allocated string out of NSS, strdup it, and then
+	   return the new copy?
+
+	   A:
+	   The NSS LXR docs state that I should use the NSPR free functions on
+	   the strings that the NSS cert functions return. Since the libpurple
+	   API expects a g_free()-able string, we make our own copy and return
+	   that.
+
+	   NSPR is something of a prima donna. */
+
+	nss_cn = CERT_GetCommonName( &(crt_dat->subject) );
+	ret_cn = g_strdup(nss_cn);
+	PORT_Free(nss_cn);
+
+	return ret_cn;
+}
+
+static gboolean
+x509_check_name (PurpleCertificate *crt, const gchar *name)
+{
+	CERTCertificate *crt_dat;
+	SECStatus st;
+	
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	st = CERT_VerifyCertName(crt_dat, name);
+
+	if (st == SECSuccess) {
+		return TRUE;
+	}
+	else if (st == SECFailure) {
+		return FALSE;
+	}
+	
+	/* If we get here...bad things! */
+	purple_debug_error("nss/x509",
+			   "x509_check_name fell through where it shouldn't "
+			   "have.\n");
+	return FALSE;
+}
+
+static gboolean
+x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
+{
+	CERTCertificate *crt_dat;
+	PRTime nss_activ, nss_expir;
+	
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	/* Extract the times into ugly PRTime thingies */
+	/* TODO: Maybe this shouldn't throw an error? */
+	g_return_val_if_fail(
+		SECSuccess == CERT_GetCertTimes(crt_dat,
+						&nss_activ, &nss_expir),
+		FALSE);
+
+	/* NSS's native PRTime type *almost* corresponds to time_t; however,
+	   it measures *microseconds* since the epoch, not seconds. Hence
+	   the funny conversion. */
+	if (activation) {
+		*activation = nss_activ / 1000000;
+	}
+	if (expiration) {
+		*expiration = nss_expir / 1000000;
+	}
+	
+	return TRUE;
+}
+
+static PurpleCertificateScheme x509_nss = {
+	"x509",                          /* Scheme name */
+	N_("X.509 Certificates"),        /* User-visible scheme name */
+	x509_import_from_file,           /* Certificate import function */
+	x509_export_certificate,         /* Certificate export function */
+	x509_copy_certificate,           /* Copy */
+	x509_destroy_certificate,        /* Destroy cert */
+	x509_signed_by,                  /* Signed-by */
+	x509_sha1sum,                    /* SHA1 fingerprint */
+	x509_dn,                         /* Unique ID */
+	x509_issuer_dn,                  /* Issuer Unique ID */
+	x509_common_name,                /* Subject name */
+	x509_check_name,                 /* Check subject name */
+	x509_times,                      /* Activation/Expiration time */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
 static PurpleSslOps ssl_ops =
 {
 	ssl_nss_init,
@@ -368,9 +749,9 @@ static PurpleSslOps ssl_ops =
 	ssl_nss_close,
 	ssl_nss_read,
 	ssl_nss_write,
+	ssl_nss_peer_certs,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -390,6 +771,9 @@ plugin_load(PurplePlugin *plugin)
 	/* Init NSS now, so others can use it even if sslconn never does */
 	ssl_nss_init_nss();
 
+	/* Register the X.509 functions we provide */
+	purple_certificate_register_scheme(&x509_nss);
+
 	return TRUE;
 #else
 	return FALSE;
@@ -403,6 +787,9 @@ plugin_unload(PurplePlugin *plugin)
 	if (purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
+
+	/* Unregister our X.509 functions */
+	purple_certificate_unregister_scheme(&x509_nss);
 #endif
 
 	return TRUE;
