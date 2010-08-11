@@ -1,0 +1,289 @@
+version 2.0.0 (5/3/2007):
+	* URI Handler support added via `pidgin.exe --protocolhandler=`
+	* Running a second instance will popup the Buddy List, if possible.
+	* Updated GTK+ to 2.10.11 (rev.a) (Win98/ME will need to use 2.6.10)
+	* The transparency plugin has been rewritten and enhanced.
+	* MSN open email bug fixed.
+	* Update SILC to use the 1.0.2 toolkit
+	* Lots of other things that I can't remember right now.
+
+version 1.5.0 (8/11/2005):
+	* The installer now supports downloading and installing
+	  spellchecking support.
+	* Environmental proxy settings will now default to the Internet Explorer
+	  http proxy, if one is present.
+	* Updated to GTK+ 2.6.9 (rev a).  This includes:
+	  GTK+ 2.6.9, Glib 2.6.6, Pango 1.8.2 and zlib 1.2.3
+	  Upgrading is recommended as zlib 1.2.3 contains security fixes
+
+version 1.4.0 (7/7/2005):
+	* On Windows XP or newer, the non-debug version of gaim will attempt
+	  to use the existing console, if one is present, for debug output.
+	* Updated to GTK+ 2.6.8 (rev a).  This partially fixes the famed "No
+	  Disk" error among other things.
+
+version 1.3.1 (6/9/2005):
+	* Installer allows you to choose whether or not to put shortcuts on
+	  the Desktop and Start Menu.  Uninstall icon is no longer placed
+	  in the Start Menu.
+	* Fixed logging where the gaim home directory path is a UNC path.
+
+version 1.3.0 (5/10/2005):
+	* Updated to GTK+ 2.6.7 (rev a).  This restores functionality on Windows
+	  98/ME/NT4.
+
+version 1.2.1 (4/3/2005):
+	* No changes
+
+version 1.2.0 (3/17/2005):
+	* No changes
+
+version 1.1.4 (2/24/2005):
+	* No changes
+
+version 1.1.3 (2/17/2005):
+	* SILC is currently no longer installed on Windows NT 4 systems.  There
+	  is an outstanding bug that causes no account to be able to connect.
+	  Thanks to Lorne Nicol for helping track the issue down.
+	* Updated GTK+ to 2.6.2 (rev a)
+	  GLib 2.6 introduces wrappers for stdio functions (fix to handle
+	  non-ascii paths).
+
+version 1.1.2 (01/20/2005):
+	* Updated GTK+ to 2.4.14 (rev a)
+	* Much prettier System Tray icons for Windows XP and greater.
+	  (Thanks JÃ©rÃ´me Poulin and Alex Converse)
+	* Docking now works with multiple monitors.
+
+version 1.1.1 (12/28/2004):
+
+version 1.1.0 (12/02/2004):
+	* SILC protocol plugin added.
+	* Now checking GAIMLANG and GAIMHOME instead of LANG and HOME env
+	  variables, to avoid conflicts with other apps that use them and
+	  to avoid HOME env variables intended for cygwin (using unix style
+	  path).
+	* Both the installer and gaim now perform checks to see if an instance
+	  of gaim is already running. Definition of GAIM_MULTI_INST env
+	  variable turns this check off.
+	* Asynchronous host name resolution (Fixes unresponsive UI during slow
+	  or unresponsive host name resolution).
+
+version 1.0.3 (11/11/2004):
+	* Updated GTK+ to 2.4.13 (rev a)
+	  Includes fix for pango bug affecting some character sets, such as
+	  Chinese.
+
+
+version 1.0.2 (10/20/2004):
+	* Updated GTK+ to 2.4.10 (rev b)
+	  This revision updates glib to 2.4.7 and pango to 1.6.0, fixing the
+	  dreaded 'UDP port pollution' and 'crash on symbol font' bugs
+	  respectively.
+	* Installer translations for: Albanian
+
+version 1.0.1 (10/07/2004):
+
+version 1.0.0 (09/17/2004):
+	* The "Start Gaim on Windows startup" setting is preserved
+	  when Gaim is reinstalled (Daniel Atallah)
+	* Pasting HTML no longer adds linewrapping where it shouldn't
+
+version 0.82.1 (08/27/2004):
+	* Update version of gtk checked by the installer
+
+version 0.82 (08/26/2004):
+	* Selecting away messages using the system tray icon works
+	  (Thanks François Gagné)
+	* Transparency plugin will save your settings again (Kevin Stange)
+	* Updated gtk-wimp to 0.6.2
+	* Updated libpng to 1.2.6 (major security update)
+	* Updated GTK+ to 2.4.7 (rev a)
+		- GTK+ 2.4.7
+		- GLib 2.4.5
+		- Pango 1.4.1
+
+version 0.81 (08/05/2004):
+	* Napster joins binary release (Thanks Kevin)
+	* Gaim's gtkspell build now makes use of pango's squigly underline
+		(Thanks Nathan Fredrickson and Daniel Atallah)
+
+version 0.80 (07/15/2004):
+	* idletrack.dll now unloads properly when you quit Gaim in Windows
+	  2000 or later, so the installer will no longer report an error
+	  replacing or removing the file. (Andrew Whewell)
+	* Fixed a bug in the transparency plugin causing buddy list settings
+	  to also apply to all conversation windows. (Kevin Stange)
+	* Only attempt to execute URIs with the schemas http, https,
+	  ftp, or mailto
+	* Updated gtk-wimp to 0.6.1
+	* Updated GTK+ to 2.4.3 (rev a)
+	* Installer translations for: Slovak
+	* Updated gtkspell to 2.0.6
+
+version 0.79 (06/24/2004):
+
+version 0.78 (05/30/2004):
+	* Win32 transparency plugin now preserves transparency when dragging
+	  conversation tabs (Kevin Stange).
+	* Installer translations for: Slovenian.
+	* Updated GTK+ 2.2.4 build (rev d): Now supports Gimp 2
+
+version 0.77 (04/22/2004):
+
+version 0.76 (04/01/2004):
+	* Ability to open files directly from file transfer window.
+	* Installer translations for: Russian, Polish, Finnish, Japanese
+	  Hebrew and Norwegian.
+	* Updated GTK+ 2.2.4 build (rev c): glib updated to export needed
+	  symbol.
+
+version 0.75 (01/09/2004):
+	* TCL plugin loader now working. Thanks Daniel Atallah.
+	* Installer translations for: Danish.
+	* Updated GTK+ 2.2.4 build (rev b): Fixes Clipboard bug, and includes
+	  official move/size fix (Sizing responsiveness is a little slow).
+
+version 0.74 (11/25/2003):
+	* Installer translations for: Czech.
+
+version 0.73 (11/21/2003):
+	* Fix the close button on the first tab in each window.
+	* Fix for carriage return pileups in userinfo.
+	* Window flashing is back.
+	* Fix for gaim settings move bug (#838621).
+	* Update to NSIS v2.0 b4 final release.
+	* Ability to perform unattended installations.
+	* Installer translations for: Spanish.
+
+version 0.72 (10/31/2003):
+	* Fix for bug #808562 - LANG needs to be set before gtk_init, when 
+	  setting text widgets to RTL or LTR.
+	* New dll hell avoidance policies.. hopefully this time as many bases
+	  are covered as can be.
+	* Gtk-wimp is back (version 0.5.1). This version is supposed to be a
+	  lot more stable.
+	* Compatibility issues with dropline gtk installers are resolved.
+
+version 0.71 (10/09/2003):
+	* Gtk-wimp theme removed.
+	* Installer translations for: Portuguese.
+
+version 0.70 (09/28/2003):
+	* Fixed an icon caching bug which showed up after gaim's data dir was
+	  moved in 0.69. Cached aim buddy icons were not showing up.
+
+version 0.69 (09/24/2003):
+	* Perl plugin loader is back (now using perl58).
+	* Gaim now performs 'dll hell' check on startup.
+	* Using SHGetFolderPath to determine Gaim's app data directory.
+	* Installer translations for: Korean and Romanian.
+	* WinME installer bug fixed.
+	* Moving to GTK 2.2.4: Dead keysyms handled on the US-International
+	  keyboard. Caps Lock bug fixed. Option to disable move/resize patch
+	  (This is known to be buggy on XP).
+	* Gtk-wimp updated to 0.4.3
+
+version 0.68 (09/01/2003):
+	* Installer translations for: Bulgarian and Traditional Chinese.
+	* No Perl plugin support, due to the re-write. (It should be back in 
+	  the next release).
+	* Executable pounces now working (Thanks to Kevin Stange).
+
+version 0.67 (08/14/2003):
+	* Installer translations for: Dutch, French, German, Hungarian,
+	  Italian, Portuguese (Brazilian), Serbian (Latin) and
+	  Simplified Chineese. Thanks to all of you who provided translations.
+	* The Buddy List can now be docked using Windows appbar features.
+	* Option to turn off Conversation Window flashing added.
+	* Gtk-wimp updated to 2.0 (improved XP support). Thanks to Raymond
+	  Penners.
+	* Moving to GTK 2.2.2: Floating tooltips fixed, move/resize bug fixed,
+	  multi-monitor support added. This is a build of cvs gtk-2-2 branch
+	  on 8/8/03 which includes my move/resize patch.
+
+version 0.66 (07/18/2003):
+	* Windows files join the source distribution.
+
+version 0.65 (07/16/2003):
+	* WinGaim plugins can now be built with gcc stabs debugging info, 
+          allowing for more informative crash dumps.
+	* Buddy List DnD bug fixed.
+	* The systray code is now integrated into the docklet plugin, bringing
+	  those nice docklet features to WinGaim.
+
+version 0.64 (05/30/3003)
+	* Perl plugin support is back.. after the plugin api rewrite
+	* File transfer fixed for win32
+
+version 0.63 (05/16/2003)
+	* Gaim installer re-written. Our own GTK+ installer is now bundled 
+	  with the Gaim installer (installs to the same location as the 
+	  dropline version).  Installer gives user the choice to install one
+	  of three GTK+ theme engines, including GTK-Wimp.  Installations
+	  should now work for all users on multi-user machines (including
+	  guest accounts).  No more DLL Hell. Sexier installer look (Thanks
+	  Phroggie).
+	* Language translations in the systray menu should now be displayed
+	  properly.
+	* Fixed some bugs (Thanks Phroggie for debugging help).
+
+version 0.60 (4/5/03)
+	* Fixed oscar protocol high cpu usage bug.
+	* Separated aspell from Gaim, and switched to aspell.net windows
+	  installer.  Gaim will function with or without aspell installation.
+	* Gaim installer no longer installs GTK+ runtime dlls. Gaim now
+ 	  requires gtk-win installation (http://www.sf.net/projects/gtk-win)
+	* Updated Gaim installer to use modern UI.
+	* Drag and Drop Smiley theme installation works now.
+	* Fixed bug where TOC buddies where not showing up in the list.
+
+version 0.60 alpha 5 (2/8/03)
+	* Buddy Icons no longer corrupted.
+	* Buddy & login window drift fixed.
+	* No more console window.
+	* File path related bugs fixed.
+	* Fixed disapearing systray icon bug, w/ failed signon.
+	* Fixed performance issue on some win machines due to Pango uniscribe
+	* Autoreconnect plugin works once more.
+	* Fixed windows idle reporting.
+	* Fixed MSN mail open.
+
+version 0.60 alpha 4.1: (1/22/03)
+	* This was a bug fix release for the smiley redraw bug.
+
+version 0.60 alpha 4: (12/29/02)
+	* Feature improvements for transparency plugin.
+	* Font properly set in gtkrc
+	* Gaim systray icon permanantly parked in systray, with different
+	  icons for connected, disconnected and away.
+	* Right clickable menu for systray.
+	* Flashing conversation window on receiving an IM.
+	* Aspell installer allows user to set install path.
+
+version 0.60 alpha 3: (11/8/02)
+	* Improved UI
+	* Plugin for transparent conversation windows
+	* Gtkspell/aspell working
+	* IdleTracker added for Windows idle reporting.
+	* Nativewin gtk theme (using native windows fonts)
+	* New gaim and gaim-installer icons (Thanks Tux Racer)
+
+version 0.60 alpha 2 (10/9/02):
+	* Perl functionality added
+	* PNGs work
+	* Path issues fixed for Win9x
+	* Added g command line flag for logging of GTK and GLIB debugging.
+	* No more console in Win9x for glib logging (when not debugging).
+	* URL links now work.
+	* Plugins: autorecon, iconaway, spellchk and ticker now work.
+	* Language translations are working.
+	* Using GTK 2.0.6 (Some GTK bugs fixed since 2.0.3)
+	* Gadu-Gadu works
+	* gtkimhtml copying to clipboard works. Selecting text copies it to
+	  the clipboard.
+	* Gaim now minimizes to the system tray.
+	* Various other feature updates from the Gaim crew. Read ChangeLog :)
+
+version 0.60 alpha 1 (9/13/2002):
+	* Initial alpha release

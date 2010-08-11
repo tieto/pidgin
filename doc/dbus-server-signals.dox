@@ -1,0 +1,32 @@
+/** @page dbus-server-signals DBus Server Signals
+
+ @signals
+  @signal dbus-method-called
+  @signal dbus-introspect
+ @endsignals
+
+ <hr>
+
+ @signaldef dbus-method-called
+  @signalproto
+gboolean (*dbus_method_called)(DBusConnection *connection,
+                               DBusMessage *message);
+  @endsignalproto
+  @signaldesc
+   Emitted when a dbus method is going to be called.
+  @param connection The DBus connection.
+  @param message The DBus message.
+  @return TRUE if signal handler handled the method. ???
+ @endsignaldef
+
+ @signaldef dbus-introspect
+  @signalproto
+void (*dbus_introspect)(GList **bidings_list);
+  @endsignalproto
+  @signaldesc
+   ???
+  @param bindings_list ???
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et

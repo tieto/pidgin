@@ -1,0 +1,39 @@
+;;
+;;  hebrew.nsh
+;;
+;;  Hebrew language strings for the Windows Pidgin NSIS installer.
+;;  Windows Code page: 1255
+;;
+;;  Author: Eugene Shcherbina <eugene@websterworlds.com>
+;;  Version 2
+;;
+
+; Startup GTK+ check
+!define GTK_INSTALLER_NEEDED			".לא נמצאת או צריכה שידרוג GTK+ סביבת$\rבבקשה התקן v${GTK_MIN_VERSION} .GTK+ או גבוהה יותר של סביבת"
+
+; License Page
+!define PIDGIN_LICENSE_BUTTON			"הבא >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
+
+; Components Page
+!define PIDGIN_SECTION_TITLE			"(חובה) .Pidgin תוכנת"
+!define GTK_SECTION_TITLE			"(חובה) .GTK+ סביבת"
+!define PIDGIN_SECTION_DESCRIPTION		".בסיססים DLL-ו Pidgin קבצי"
+!define GTK_SECTION_DESCRIPTION		".מולטי-פלטפורמיים GUI כלי"
+
+; GTK+ Directory Page
+!define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא $(^Name)"
+
+; Installer Finish Page
+!define PIDGIN_FINISH_VISIT_WEB_SITE		".Pidginבקרו באתר של"
+
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (מחיקה בלבד)"
+
+; GTK+ Section Prompts
+!define GTK_INSTALL_ERROR			".GTK+ שגיאה בהתקנת סביבת"
+!define GTK_BAD_INSTALL_PATH			".המסלול שציינת לא יכול להיווצר"
+
+; Uninstall Section Prompts
+!define un.PIDGIN_UNINSTALL_ERROR_1		".GTK+ ההתקנה לא מצאה את הרישומים של$\r.יכול להיות שמשמתמש אחר התקין את התוכנה הזאת"
+!define un.PIDGIN_UNINSTALL_ERROR_2		".אין לך זכות למחוק תוכנה זאת"

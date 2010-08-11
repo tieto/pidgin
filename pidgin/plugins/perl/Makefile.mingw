@@ -1,0 +1,25 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for perl plugin loader plugin.
+#
+
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+##
+## TARGET DEFINITIONS
+##
+.PHONY: all install clean
+
+all:
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE)
+
+install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
+
+##
+## CLEAN RULES
+##
+clean:
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean

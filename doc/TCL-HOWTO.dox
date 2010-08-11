@@ -1,0 +1,357 @@
+/** @page tcl-howto Tcl Scripting HOWTO
+
+@section Intoduction
+
+NOTA BENE: This documentation is badly out of date for 2.x.
+
+The Gaim Tcl interface provides a Tcl API for many useful gaim
+functions.  Like the perl API, the Tcl API does not provide
+access to every corner of gaim exposed by the @e C interface.  It does,
+however, provide a very powerful interface to many of Gaim's functions
+through a simple to learn and extend scripting language.
+
+If you are not familiar with Tcl, you will probably find it somewhat
+different from what you are used to.  Despite being somewhat unique
+(more akin to shell programming than other traditional scripting
+languages such as @e perl or @e python), it is simple to learn for
+beginners and experienced programmers alike.  There are numerous books
+on the subject; we will not discuss it any further here.
+
+@section start Getting Started
+
+The only requirement placed on a Gaim Tcl script by Gaim is the
+existence of a procedure called @c plugin_init.  This procedure has
+some limitations placed upon it; it will be parsed and evaluated before
+the rest of the Tcl script, so it cannot reference any other variables
+or procedures declared in the script.  In practice this is not a
+problem, as the only thing this procedure should do is return a simple
+list containing five items: the @b name of the script, its @b version
+number, a @b summary (just a few words) of its function, a short (longer
+than the summary, but no more than a couple of sentences if possible)
+@b description, the @b author, and a @b URL to web page.  For example:
+
+@code
+proc plugin_init { } {
+  return [ list "Example Plugin" \
+                "1.0" \
+		"Example plugin registration" \
+		"Example of how to register a plugin for the Tcl HOWTO" \
+		"Ethan Blanton <eblanton@cs.purdue.edu>" \
+		"http://pidgin.im/" ]
+}
+@endcode
+
+The rest of the script will generally be registration to recieve
+notification of various Gaim signals (more about this below) and
+definitions of procedures to be executed when those signals occur.
+
+@section details Interpreter Details
+
+Gaim initializes and drives the Tcl event loop (similar to Tk),
+meaning that commands like @c fileevent and @c after are available and
+do not require @c vwait etc.  The @c vwait actually seems to be somewhat
+broken due to a bug somewhere in the Tcl/Glib event loop glue, and it
+should not be used for now.
+
+The gaim-specific functions are provided in a statically-linked
+package called @c gaim; this means that if you spawn a child
+interpreter and wish to use the gaim-specific functions, you will need
+to execute <tt>load {} gaim</tt> in that interpreter.
+
+@section internals Gaim Internal Procedures and Variables
+
+All of the information provided for your use by Gaim will be in the @c
+::gaim namespace.  This means that in order to access it you will either
+have to import the gaim namespace (e.g. via the command <tt>namespace
+import gaim::*</tt>) or reference it explicitly.  The following
+descriptions will reference it explicitly for clarity.
+
+@li Variables
+
+@code
+gaim::version
+@endcode
+
+  This contains the version of the gaim process which loaded the
+  script.
+
+@li Commands
+
+@code
+gaim::account alias account
+gaim::account connect account
+gaim::account connection account
+gaim::account disconnect account
+gaim::account find username protocol
+gaim::account handle
+gaim::account isconnected account
+gaim::account list ?option?
+gaim::account protocol account
+gaim::account username account
+@endcode
+
+  The @c gaim::account command consists of a set of subcommands
+  pertaining to gaim accounts.
+
+  @c alias returns the alias for the account @c account.  If there is no
+  alias for the given account, it returns the empty string.
+
+  The subcommand @c connect connects the named account if it is not
+  connected, and does nothing if it is.  In either case, it returns
+  the @c gc for the account.
+
+  @c connection returns the @c gc of the given account if it is connected,
+  or 0 if it is not.  This @c gc is the gc used by gaim::connection and
+  other functions.
+
+  @c disconnect disconnects the given @c account if it is connected, or
+  does nothing if it is.
+
+  @c find finds an account by its @c username and @c protocol (as returned by
+  <tt>gaim::account username</tt> and <tt>gaim::account protocol</tt>) and 
+  returns the account if found, or 0 otherwise.
+
+  @c handle returns the instance handle required to connect to account
+  signals.  (See <tt>gaim::signal connect</tt>).
+
+  The @c isconnected query returns true if the given account is
+  connected and false otherwise.
+
+  The @c list subcommand returns a list of all of the accounts known to
+  Gaim.  The elements of this lists are accounts appropriate for the
+  @c account argument of the other subcommands.  The @c -all option
+  (default) returns all accounts, while the @c -online option returns
+  only those accounts which are online.
+
+  The @c protocol subcommand returns the protocol ID (e.g. "prpl-msn")
+  for the given account.
+
+  The @c username subcommand returns the username for the account
+  @c account.
+
+@code
+gaim::buddy alias buddy
+gaim::buddy handle
+gaim::buddy info ( buddy | account username )
+gaim::buddy list
+@endcode
+
+  @c gaim::buddy is a set of commands for retrieving information about
+  buddies and manipulating the buddy list.  For the purposes of Tcl,
+  a "buddy" is currently a list of several elements, the first of
+  which being the type.  The currently recognized types are "group",
+  "buddy", and "chat".  A group node looks like:
+@code
+	{ group name { buddies } }
+@endcode
+  A buddy node is:
+@code
+	{ buddy name account }
+@endcode
+  And a chat node is:
+@code
+	{ chat alias account }
+@endcode
+
+  The @c alias subcommand returns the alias for the given buddy if it
+  exists, or the empty string if it does not.
+
+  @c handle returns the blist handle for the purposes of connecting
+  signals to buddy list events.  (See <tt>gaim::signal connect</tt>).
+
+  @c info causes gaim to display the info dialog for the given buddy.
+  Since it is possible to request user info for a buddy not in your
+  buddy list, you may also specify a buddy by his or her username and
+  the account through which you wish to retrieve info.
+
+  @c list returns a list of @c group structures, filled out with buddies
+  and chats as described above.
+
+@code
+gaim::connection account gc
+gaim::connection displayname gc
+gaim::connection handle
+gaim::connection list
+@endcode
+
+  @c gaim::connection is a collection of subcommands pertaining to
+  account connections.
+
+  @c account returns the Gaim account associated with @c gc.  This
+  account is the same account used by @c gaim::account and other
+  commands.
+
+  @c displayname returns the display name (duh) of @c gc as reported by
+  <tt>gaim_connection_get_display_name(gc)</tt>.
+
+  @c handle returns the gaim connections instance handle.  (See
+  <tt>gaim::signal connect</tt>).
+
+  @c list returns a list of all known connections.  The elements of
+  this list are appropriate as @c gc arguments to the other
+  @c gaim::connection subcommands or other commands requiring a gc.
+
+@code
+gaim::conv_send account who text
+@endcode
+
+  @c gaim::conv is simply a convenience wrapper for @c gaim::send_im and
+  <tt>gaim::conversation write</tt>.  It sends the IM, determines the from
+  and to arguments for <tt>gaim::conversation write</tt>, and prints the text
+  sent to the conversation as one would expect.  For the curious, you
+  may view the source for it by typing <tt>info body gaim::conv_send</tt> at
+  a Gaim Commander prompt.
+
+  Note that an error in either @c gaim::send_im or <tt>gaim::conversation
+  write</tt> will not be caught by this procedure, and will be propagated
+  to the caller.
+
+@code
+gaim::conversation find ?-account account? name
+gaim::conversation handle
+gaim::conversation list
+gaim::conversation new ?-chat? ?-im? account name
+gaim::conversation write conversation style from to text
+@endcode
+
+  @c gaim::conversation provides an API for dealing with conversations.
+  Given that Gaim is an instant messenger program, you'll probably
+  spend a lot of time here.
+
+  The command @c find attempts to find an existing conversation with
+  username @c name.  If the @c -account option is given, it refines its
+  search to include only conversations on that account.
+
+  @c handle returns the conversations instance handle for the purposes
+  of signal connection.  (See <tt>gaim::signal connect</tt>).
+
+  @c list returns a list of all currently open conversations.
+
+  The @c new subcommand can be used to create a new conversation with
+  a specified user on a specified account if one does not exist, or
+  retrieve the existing conversation if it does.  The @c -chat and
+  @c -im options specify whether the created conversation should be a
+  chat or a standard IM, respectively.
+
+  @c write is used to write to the specified conversation.  The @c style
+  argument specifies how the text should be printed -- as text coming
+  from the gaim user (style @c send), being sent to the gaim user
+  (style @c recv), or as a system message (such as "so-and-so has
+  signed off", style @c system).  From is the name to whom the text
+  should be attributed -- you probably want to check for aliases here,
+  lest you confuse the user.  @c text is the text to print.
+
+@code
+gaim::core handle
+gaim::core quit
+@endcode
+
+  This command exposes functionality provided by the gaim core API.
+
+  <tt>gaim::core handle</tt> returns a handle to the gaim core for signal
+  connection.  (See <tt>gaim::signal connect</tt>).
+
+  @c quit exits gaim cleanly, and should be used in preference to the
+  tcl @c exit command.  (Note that @c exit has not been removed,
+  however.)
+
+@code
+gaim::debug level category message
+@endcode
+
+  Equivalent to the C gaim_debug function, this command outputs
+  debugging information to the gaim debug window (or stdout if gaim is
+  invoked with -d|--debug).  The valid levels are, in increasing level
+  of severity, @c -misc, @c -info, @c -warning, and, or @c -error.  @c
+  category is a short (a few characters ... for instance, "tcl" or "tcl
+  plugin") "topic" type name for this message, and @c message is the text
+  of the message. In the style of Tcl @e puts (and differing from
+  @e gaim_debug), no trailing \\n is required.  (However, embedded newlines
+  may be generated with \\n).
+
+@code
+gaim::notify ?type? title primary secondary
+@endcode
+
+  Also a direct equivalent to a C function, gaim_notify, this command
+  causes gaim to present the provided notification information to the
+  user via some appropriate UI method.  The @c type argument, if
+  present, must be one of @c -error, @c -warning, or @c -info. The following
+  three arguments' absolute meanings may vary with the Gaim UI being
+  used (presently only a Gtk2 UI is available), but @c title should
+  generally be the title of the window, and @c primary and @c secondary
+  text within that window; in the Gtk2 UI, @c primary is slightly
+  larger than @c secondary and displayed in a @b boldface font.
+
+@code
+gaim::send_im gc who text
+@endcode
+
+  This sends an IM in the fashion of serv_send_im.  @c gc is the GC of
+  the connection on which you wish to send (as returned by most event
+  handlers), @c who is the nick of the buddy to which you wish to send,
+  and @c text is the text of the message.
+
+@code
+gaim::signal connect instance signal args proc
+gaim::signal disconnect instance signal
+@endcode
+
+  @c gaim::signal is a set of subcommands for dealing with gaim signals
+  (known as "events" prior to gaim 0.68).
+
+  The @c connect subcommand registers the procedure @c proc as a handler
+  for the signal @c signal on the instance @c instance.  @c instance
+  should be an instance handle as returned by one of the @c handle
+  commands from the various parts of gaim. @c args and @ proc are as in
+  the Tcl @e proc command; note that the number of arguments in @c args
+  must match the number of arguments emitted by the signal exactly,
+  although you need not use them all.  The procedure @c proc may be
+  either a simple command or a procedure in curly brackets.  Note that
+  only one procedure may be associated with each signal; an attempt to
+  connect a second procedure to the same signal will remove the
+  existing binding and replace it with the new procedure.
+  <tt>gaim::signal connect</tt> returns 0 on success and 1 on failure.
+
+  @c disconnect removes any existing signal handler for the named
+  signal and instance.
+
+@code
+gaim::unload
+@endcode
+
+  This unloads the current plugin.  Note that preferences will not be
+  updated (yet).
+
+@section Signals
+
+Check the signals documentation for the meaning of these signals; this is
+intended to be a list only of their arguments.  Signal callbacks will
+be made in their own namespace, and arguments to those signal
+callbacks will live in the namespace @c event underneath that
+namespace.  To briefly illustrate, the signal @c receiving-im-msg is
+provided with three arguments; the account on which the IM was
+received, the screen name of the user sending the IM, and the text of
+the IM.  These arguments live in the variables @c event::account,
+@c event::sender, and @c event::buffer, respectively.  Therefore a callback
+which notifies the user of an incoming IM containing the word 'shizzle'
+might look like this:
+
+@code
+gaim::signal connect [gaim::conversation handle] receiving-im-msg {
+	if {[ string match "*shizzle*" $event::buffer ]} {
+		gaim::notify -info "tcl plugin" "Fo' shizzle" \
+			"$event::sender is down with the shizzle"
+	}
+}
+@endcode
+
+Note that for some signals (notably @c receiving-im-msg, @c sending-im-msg,
+and their chat counterparts), changes to the event arguments will
+change the message itself from Gaim's vantage.  For those signals
+whose return value is meaningful, returning a value from the Tcl event
+will return that value as it would in C.
+
+*/
+
+// vim: syntax=c tw=72 et

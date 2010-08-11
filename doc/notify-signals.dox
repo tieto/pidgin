@@ -1,0 +1,22 @@
+/** @page conversation-signals Notification Signals
+
+ @signals
+  @signal displaying-userinfo
+ @endsignals
+
+ @signaldef displaying-userinfo
+  @signalproto
+void (*displaying_userinfo)(PurpleAccount *account, const char *who, PurpleNotifyUserInfo *user_info);
+  @endsignalproto
+  @signaldesc
+   Emitted before userinfo is handed to the UI to display.
+   @a user_info can be manipulated via the PurpleNotifyUserInfo API in notify.c.
+  @note
+    If adding a PurpleNotifyUserInfoEntry, be sure not to free it -- PurpleNotifyUserInfo assumes responsibility for its objects.
+  @param account   The account on which the info was obtained.
+  @param who       The screen name of the user whose info is to be displayed.
+  @param user_info The information to be displayed, as PurpleNotifyUserInfoEntry objects
+ @endsignaldef
+
+*/
+// vim: syntax=c tw=75 et

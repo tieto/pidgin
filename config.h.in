@@ -1,0 +1,407 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* configure arguments */
+#undef CONFIG_ARGS
+
+/* Define if debugging is enabled. */
+#undef DEBUG
+
+/* Define if mono enabled. */
+#undef ENABLE_MONO
+
+/* always defined to indicate that i18n is enabled */
+#undef ENABLE_NLS
+
+/* Define if you have the external 'altzone' variable. */
+#undef HAVE_ALTZONE
+
+/* Define to 1 if you have the <arpa/nameser_compat.h> header file. */
+#undef HAVE_ARPA_NAMESER_COMPAT_H
+
+/* Define to 1 if you have the `atexit' function. */
+#undef HAVE_ATEXIT
+
+/* Define to 1 if you have the `bind_textdomain_codeset' function. */
+#undef HAVE_BIND_TEXTDOMAIN_CODESET
+
+/* Define to 1 if you have the `connect' function. */
+#undef HAVE_CONNECT
+
+/* Define to 1 if Cyrus SASL is present */
+#undef HAVE_CYRUS_SASL
+
+/* Define if you have the external 'daylight' variable. */
+#undef HAVE_DAYLIGHT
+
+/* Define if we are using D-Bus. */
+#undef HAVE_DBUS
+
+/* Define to 1 if you have the `dcgettext' function. */
+#undef HAVE_DCGETTEXT
+
+/* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
+   */
+#undef HAVE_DECL_TZNAME
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* whether or not we have dot */
+#undef HAVE_DOT
+
+/* whether or not we have doxygen */
+#undef HAVE_DOXYGEN
+
+/* Define if we're using evolution addressbook. */
+#undef HAVE_EVOLUTION_ADDRESSBOOK
+
+/* Define to 1 if you have the <EXTERN.h> header file. */
+#undef HAVE_EXTERN_H
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the getaddrinfo function. */
+#undef HAVE_GETADDRINFO
+
+/* Define to 1 if you have the `gethostid' function. */
+#undef HAVE_GETHOSTID
+
+/* Define to 1 if you have the `getopt_long' function. */
+#undef HAVE_GETOPT_LONG
+
+/* Define if the GNU gettext() function is already present or preinstalled. */
+#undef HAVE_GETTEXT
+
+/* Define if you have GnuTLS */
+#undef HAVE_GNUTLS
+
+/* Define to 1 if you have the <gnutls/gnutls.h> header file. */
+#undef HAVE_GNUTLS_GNUTLS_H
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define if we have IOKit */
+#undef HAVE_IOKIT
+
+/* Define to 1 if you have the `krb_get_err_text' function. */
+#undef HAVE_KRB_GET_ERR_TEXT
+
+/* Define to 1 if you have the `krb_get_lrealm' function. */
+#undef HAVE_KRB_GET_LREALM
+
+/* Define to 1 if you have the `krb_log' function. */
+#undef HAVE_KRB_LOG
+
+/* Define to 1 if you have the `krb_rd_req' function. */
+#undef HAVE_KRB_RD_REQ
+
+/* Define to 1 if you have the `krb_set_key' function. */
+#undef HAVE_KRB_SET_KEY
+
+/* Define if your <locale.h> file defines LC_MESSAGES. */
+#undef HAVE_LC_MESSAGES
+
+/* Define to 1 if you have libgadu. */
+#undef HAVE_LIBGADU
+
+/* Define if you have NetworkManager */
+#undef HAVE_LIBNM
+
+/* Define to 1 if you have the `nsl' library (-lnsl). */
+#undef HAVE_LIBNSL
+
+/* Define to 1 if you have the `resolv' library (-lresolv). */
+#undef HAVE_LIBRESOLV
+
+/* Define to 1 if you have the `socket' library (-lsocket). */
+#undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
+/* Define to 1 if you have the `lrand48' function. */
+#undef HAVE_LRAND48
+
+/* Define to 1 if you have the <malloc.h> header file. */
+#undef HAVE_MALLOC_H
+
+/* Define to 1 if you have the `memcpy' function. */
+#undef HAVE_MEMCPY
+
+/* Define to 1 if you have the `memmove' function. */
+#undef HAVE_MEMMOVE
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `mono_jit_init' function. */
+#undef HAVE_MONO_JIT_INIT
+
+/* Define to 1 if you have the <mono/jit/jit.h> header file. */
+#undef HAVE_MONO_JIT_JIT_H
+
+/* Define to 1 if you have the <mono/metadata/object.h> header file. */
+#undef HAVE_MONO_METADATA_OBJECT_H
+
+/* Define to 1 if you have the <nspr.h> header file. */
+#undef HAVE_NSPR_H
+
+/* Define if you have Mozilla NSS */
+#undef HAVE_NSS
+
+/* Define to 1 if you have the <nss.h> header file. */
+#undef HAVE_NSS_H
+
+/* Define if we have Pango 1.4 or newer. */
+#undef HAVE_PANGO14
+
+/* Define to 1 if you have the <paths.h> header file. */
+#undef HAVE_PATHS_H
+
+/* Compile with support for perl */
+#undef HAVE_PERL
+
+/* Define to 1 if you have the `Perl_eval_pv' function. */
+#undef HAVE_PERL_EVAL_PV
+
+/* Define to 1 if you have the <perl.h> header file. */
+#undef HAVE_PERL_H
+
+/* Define to 1 if you have the `perl_run' function. */
+#undef HAVE_PERL_RUN
+
+/* Define to 1 if you have the <prio.h> header file. */
+#undef HAVE_PRIO_H
+
+/* Define to 1 if you have the `random' function. */
+#undef HAVE_RANDOM
+
+/* Define to 1 if you have the <regex.h> header file. */
+#undef HAVE_REGEX_H
+
+/* Define to 1 if you have the `setlocale' function. */
+#undef HAVE_SETLOCALE
+
+/* Define to 1 if you have the <sgtty.h> header file. */
+#undef HAVE_SGTTY_H
+
+/* Define to 1 if you have the <signal.h> header file. */
+#undef HAVE_SIGNAL_H
+
+/* Define if we have silcmime.h */
+#undef HAVE_SILCMIME_H
+
+/* Define to 1 if you have the <smime.h> header file. */
+#undef HAVE_SMIME_H
+
+/* Define to 1 if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
+
+/* Define if you have SSL */
+#undef HAVE_SSL
+
+/* Define to 1 if you have the <ssl.h> header file. */
+#undef HAVE_SSL_H
+
+/* Define if we're using libstartup-notification. */
+#undef HAVE_STARTUP_NOTIFICATION
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#undef HAVE_STDARG_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strchr' function. */
+#undef HAVE_STRCHR
+
+/* Define to 1 if you have the `strdup' function. */
+#undef HAVE_STRDUP
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
+
+/* Define to 1 if you have the `strftime' function. */
+#undef HAVE_STRFTIME
+
+/* Define to 1 if you have a strftime() that supports the %z format string. */
+#undef HAVE_STRFTIME_Z_FORMAT
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strstr' function. */
+#undef HAVE_STRSTR
+
+/* Define to 1 if `tm_zone' is member of `struct tm'. */
+#undef HAVE_STRUCT_TM_TM_ZONE
+
+/* Define to 1 if you have the <sys/cdefs.h> header file. */
+#undef HAVE_SYS_CDEFS_H
+
+/* Define to 1 if you have the <sys/file.h> header file. */
+#undef HAVE_SYS_FILE_H
+
+/* Define to 1 if you have the <sys/filio.h> header file. */
+#undef HAVE_SYS_FILIO_H
+
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#undef HAVE_SYS_IOCTL_H
+
+/* Define to 1 if you have the <sys/msgbuf.h> header file. */
+#undef HAVE_SYS_MSGBUF_H
+
+/* Define to 1 if you have the <sys/select.h> header file. */
+#undef HAVE_SYS_SELECT_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/uio.h> header file. */
+#undef HAVE_SYS_UIO_H
+
+/* Define to 1 if you have the <sys/utsname.h> header file. */
+#undef HAVE_SYS_UTSNAME_H
+
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#undef HAVE_SYS_WAIT_H
+
+/* Compile with support for the Tcl toolkit */
+#undef HAVE_TCL
+
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
+
+/* Define if you have the external 'timezone' variable. */
+#undef HAVE_TIMEZONE
+
+/* Compile with support for the Tk toolkit */
+#undef HAVE_TK
+
+/* Define if you have a tm_gmtoff member in struct tm */
+#undef HAVE_TM_GMTOFF
+
+/* Define to 1 if your `struct tm' has `tm_zone'. Deprecated, use
+   `HAVE_STRUCT_TM_TM_ZONE' instead. */
+#undef HAVE_TM_ZONE
+
+/* Define to 1 if you don't have `tm_zone' but do have the external array
+   `tzname'. */
+#undef HAVE_TZNAME
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `vprintf' function. */
+#undef HAVE_VPRINTF
+
+/* Define to 1 if you have X11 */
+#undef HAVE_X11
+
+/* Define to 1 if you have the <X11/SM/SMlib.h> header file. */
+#undef HAVE_X11_SM_SMLIB_H
+
+/* Define if external libzephyr should be used. */
+#undef LIBZEPHYR_EXT
+
+/* Define to 1 if you don't have wide-character support. */
+#undef NO_WIDECHAR
+
+/* Define if old perl is installed. */
+#undef OLD_PERL
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* The user-visible application name */
+#undef PIDGIN_NAME
+
+/* Define to make assertions fatal (useful for debugging). */
+#undef PURPLE_FATAL_ASSERTS
+
+/* Define if plugins are enabled. */
+#undef PURPLE_PLUGINS
+
+/* Define as the return type of signal handlers (`int' or `void'). */
+#undef RETSIGTYPE
+
+/* The size of `time_t', as computed by sizeof. */
+#undef SIZEOF_TIME_T
+
+/* Loads static protocol plugin module initialization functions. */
+#undef STATIC_PROTO_INIT
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define to 1 if your <sys/time.h> declares `struct tm'. */
+#undef TM_IN_SYS_TIME
+
+/* Use GStreamer for playing sounds */
+#undef USE_GSTREAMER
+
+/* Define if we're using GtkSpell */
+#undef USE_GTKSPELL
+
+/* Define if we're using XScreenSaver. */
+#undef USE_SCREENSAVER
+
+/* Define if we're using X Session Management. */
+#undef USE_SM
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
+#undef WORDS_BIGENDIAN
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
+
+/* Size of an int32. */
+#undef ZEPHYR_INT32
+
+/* Define if kerberos should be used in Zephyr. */
+#undef ZEPHYR_USES_KERBEROS
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
+
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* socklen_t size */
+#undef socklen_t

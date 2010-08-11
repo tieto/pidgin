@@ -1,0 +1,64 @@
+The Penguin
+
+by Rob Flynn <rob@marko.net>
+   and
+   Jeramey Crawford <jacrawf@marko.net>
+
+
+Once upon a term'nal dreary, while I hack'ed, weak and weary,
+Over many a quaint and curious volume of forgotten code--
+While I nodded, nearly napping, suddenly there came a beeping,
+As of some one gently feeping, feeping using damn talk mode.
+"'Tis some hacker," I muttered, "beeping using damn talk mode--
+                          Only this. I hate talk mode."
+
+Ah, distinctly I remember it was in the bleak semester,
+And college life wrought its terror as the school year became a bore.
+Eagerly I wished for privledges;--higher access I sought to borrow
+For my term'nal, unceasing sorrow--sorrow for a file called core--
+For the rare and radiant files of .c  the coders call the core--
+                           Access Denied.  Chown me more.
+
+"Open Source," did all mutter, when, with very little flirt and flutter,
+In there stepped a stately Penguin of the saintly days of yore.
+Quite a bit obese was he; having eaten lots of fish had he,
+But, by deign of Finnish programmer, he sat in the middle of my floor--
+Looking upon my dusty term'nal in the middle of my floor--
+                           Came, and sat, and nothing more.
+
+Then the tubby bird beguiling my sad code into shining,
+By the free and open decorum of the message that it bore,
+"Though thy term'nal be dusty and slow," he said, "Linux be not craven!"
+And thus I installed a new OS far from the proprietary shore--
+The kernel code open but documentation lacking on this shore.
+                           Quoth the Penguin, "pipe grep more!"
+
+Much I marvelled this rotund fowl to hear discourse so plainly,
+Though its answer little meaning--little relevancy bore;
+For we cannot help believing that no living human being
+Ever yet was blessed with seeing bird in the middle of his floor--
+Bird or beast sitting in the middle of his cluttered floor,
+                           With such instructions as "pipe grep more."
+
+But the Penguin, sitting lonely in that cluttered floor, spoke only
+Those words, as if its soul in that instruction he did outpour.
+Nothing more did he need utter; understood did I among that clutter--
+Understood his command as I could scarcely do a few moments before--
+I typed as furious as was willed me, understanding just a minute before.
+                           Again the bird said "pipe grep more!"
+
+"Amazing!" said I, "Penguin we will conquor the world if you will!
+By the Network that interconnects us--by that Finn we both adore--
+We'll take this very world by storm!" For now grasped I what he'd meant,
+The thing I do while searching /usr/doc/* for that wond'rous lore--
+Those compendiums of plaintext documentation and descriptive lore.
+                           Quoth the Penguin, "pipe grep more!"
+
+And the Penguin, never waddling, still is sitting, still is sitting
+In the middle of my room and still very cluttered floor;
+And his eyes have all the seeming of the free beer I am drinking
+And the term'nal-light o'er him glowing throws his shadows on the floor;
+And this OS from out the shadows that is pow'ring my term'nal on the floor
+                            Shall be dominating--"Pipe grep more!"
+
+

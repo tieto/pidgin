@@ -1,0 +1,2149 @@
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
+
+2.0.0 (5/3/2007):
+	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
+	really proud of all the work we've all done. I'm pumped. And, while
+	I could go on about all the amazing thing that have been added since
+	1.5.0, what I'm really excited about is getting back to a regular,
+	rapid, release cycle of active, open development, unhindered by legal
+	quandries. Huge thanks to everyone involved.
+
+	Luke: We have finally managed to get 2.0.0 out the door, after nearly
+	but not quite 2 years of effort and fustration.  No one regrets more
+	than I that we were unable to make any of betas 3-6 the actual release.
+	But at long last, it is out, and life can return to a more normal
+	state.  There were many tough calls to be made in the last 2 years.
+	Not everyone has agreed with the resulting decisions, that is un-
+	fortunate, but unavoidable.  Suffice it to say that despite what
+	some users appear to think, a ton of thought, argument, discussion,
+	and experimentation has gone into this release.  This release
+	builds on many years of experience, both as developers writing the
+	code, users using it, and in supporting other users.  I hope that
+	those who download and install this will give it a fair shot, and
+	attempt to avoid knee-jerk reactions.
+
+	Evan: One small step for bird, one giant leap for birdkind... except
+	this is hardly one small step. A lot more has changed from Gaim 1.5.0
+	than just the name. Pidgin has a *very* attractive new look, a whole
+	new member of the family (Finch, formerly gaim-console) has been born,
+	and libpurple has come into its own as a solid, full-featured library
+	powering the greatest IM clients around. Bugs were fixed and
+	features were added by the hundreds (thousands?) since the last
+	major release, all while improving performance and resisting feature
+	creep. As Luke said, a ton of thought and effort has gone into
+	Pidgin 2.0.0; I'm proud to have played a part.
+
+	Stu: We did it! finally, we have 2.0.0. It's been a long time coming,
+	but there's a great deal of goodness here. When I say a long time, I'm
+	not kidding - it's been 972 days since we branched off "oldstatus"
+	(aka 1.x). The early Greeks were uncertain as to whether 2 was a
+	number at all (or if we'd ever make this release) - it has a beginning
+	and an end but no middle (much like our unfortunately quiet development
+	period). 2 is the first prime number and the only even prime. 2 is also
+	the first deficient number (oh well). There are only 10 types of people
+	in the world - those who like our new names and those who do not.
+	Enjoy!
+
+	Richard: I'm very glad that we've finally gotten 2.0.0 released and
+	I look forward to returning to a more normal development schedule.
+	Again, a big thanks to everyone who helped in any way to get things
+	where they are today.  Congratulations everyone!
+
+	Sadrul: My first NEWS, and on what an occasion! Pidgin 2.0.0 is finally
+	released!! And it's *really* very good!!! Give your soul a break ...
+	Use Pidgin!
+
+	Daniel: There has been a fair amount of weeping and gnashing of teeth
+	due to the delays in getting this beast out.  I'm really happy that it
+	is done.  I'm also very happy with what we're releasing - I think it is
+	far more stable, packed with useful features and, dare I say, prettier
+	than any previous release.
+
+2.0.0beta7 (4/29/2007):
+	Sean: Beta 7. The final beta. A few major changes from beta6. For
+	starters, we have some new names. That's pretty cool. We have a new
+	logo, to go along with it. And a lot of great icons! As Nathan mentions
+	below, we're totally back in the open now, having a signed agreement
+	from AOL that puts us in the clear. We all really regret having to go
+	completely dark for so long. Anyway, unlike betas1-6, which were of
+	normal release quality, this one is actually beta quality. There are
+	a few significant known issues, and a lot of changes that need a lot
+	of real-world testing. So, if you'd like to help us out, give it a
+	whirl, and let us know if you run into any major issues.
+
+	Nathan:  So, the secret is out now.  We renamed to Pidgin.  I'd just
+	like to apologize to everyone we've had to keep in the dark for the
+	last however-many months.  I know it looked like development slowed
+	to a crawl, but in reality we've been working pretty hard to get 
+	2.0.0 out the door, without getting into any legal trouble.  I
+	realize that if we were some big corporation, we'd be getting flamed
+	about this secrecy for months.  Please try to remember that we're
+	just a bunch of geeks who were scared of legal stuff (well, at least
+	I was.  Scared, that is).  The bottom line is that we're out in the
+	open again, and fully plan to stay that way.  We're also opening up
+	the mail archives from the secretive past few months.  You can scan
+	through them if you want, or I can summarize.  "Are the lawyers done
+	yet?  No.  Now?  No.  How about now?  No."  All lawyer jokes aside,
+	I'm grateful to our legal team for crossing all the 't's and dotting
+	all the lowercase 'j's to get us the deal we got.  Anyways, thanks
+	for your patience, and on to 2.0.1!
+
+	Gary: Well my silence, and our silence has ended.  Finally the name
+	change is over and done with and we can go back to a normal dev
+	cycle.  Now if I can just get myself back onto a normal dev cycle,
+	but that's another story all together.
+
+	Ethan: Not to be too "me-too", but I have to say that I'm really
+	excited about the project's new name and identity, and glad to be
+	out of the legal mess.  We're pushing beta 7 with all of the
+	branding and organizational changes that have been going on for
+	the last few months, so there are likely to be some snags --
+	please help us out by trying beta 7, searching for any bugs you
+	find in the bug tracker at http://developer.pidgin.im/, and
+	documenting them if they are unknown or you can provide new
+	information.  Help us make 2.0.0 final a release to be remembered
+	(in a good way)!  I'd like to give huge thanks to all of the
+	developers, our steadfast supporters, the crazy patch writers, and
+	everyone else who has made this transition to Pidgin possible, and
+	the improvements that go along with it.  I'd like to extend a
+	special thanks to Sean, for leading us through the legal issues
+	and taking care of all of the paperwork and overhead that no one
+	wants to deal with.
+
+2.0.0beta6 (1/17/2007):
+	Sean: Barring any seriously major new issues, we expect this to be
+	the final beta release before 2.0.0. This has a bunch of cool UI
+	changes, some Google Talk features, a bunch new plugins, and other
+	goodness.
+
+	Nathan: Beta6 rocks.  That is all.
+
+	Gary: Long time no news.  My silence will end soon ;)
+
+	Evan: My first news! I knocked out a nice collection of crashes,
+	thanks in part to my ever-patient Adium beta testers. Gaim 2.0.0
+	is going to be delicious. :)
+
+2.0.0beta5 (11/9/2006):
+	Sean: Another release in our endless stream in betas. This one's
+	pretty awesome; and it fixes major bugs introduced in previous
+	ones.
+
+2.0.0beta4 (10/17/2006)
+	Sean: Still beta. Maybe the next one should be a gamma.. :)
+
+	Daniel: I'm super chuffed to announce that this will work with newer
+	(i.e. >= 2.8.0) versions of GTK+ on Windows.
+
+	Luke: Several significant changes in this one, including no longer
+	using libao for sound!  There are no doubt bugs here, but hopefully
+	nothing major.
+
+	Nathan: I don't have much to say, but yay for another beta!
+
+	Etan: I did a bunch of perl work for this beta again, there is now
+	some support for perl scripts to call functions in the gtk ui, it
+	still needs work.
+
+2.0.0beta3 (03/25/2006):
+	Mark: Yeah, I know, another beta.  Don't worry, we'll get this
+	puppy out the door eventually.
+
+2.0.0beta2 (01/24/2006):
+	Mark: So this is the new year, and I don't feel any different, but
+	Gaim is getting better.  We hope this will be our last beta before
+	we release the final version of 2.0.0.  As before, please shower us
+	in feedback!
+
+	Richard: I'm proud to say a lot of bugs have been squashed in this
+	version.  If you filed a bug against beta1, please test to see if
+	it's fixed now and update your bug report accordingly (by either
+	closing it or setting the version to 2.0.0beta2).  I'm also looking
+	for someone who uses Gaim on MacOS X to test a patch for me before
+	I can commit it.  See http://gaim.sf.net/contactinfo.php for my
+	contact information.
+
+	Etan: So I did a bunch of work on the perl plugin since beta1, so
+	anyone who uses perl plugins would do well to expect some things to
+	need updating (I'm not certain everything works yet, so please send me
+	any reports of things that don't). Most of the work was correcting
+	some namespace issues, but I also improved the support for perl
+	plugins having plugin_pref frames, and plugin actions. Multiple perl
+	plugins can now have plugin_pref frames at the same time, and every
+	perl plugin can have multiple plugin actions now. Like Mark said
+	above, let us know how this beta works out.
+
+2.0.0beta1 (12/17/2005):
+	Sean: I think Nathan sums everything up really well below. There's still
+	a bunch we want to add (and remove) before the official release, but we
+	really want to start getting feedback about what's good and what's not.
+	So, please, be vocal about this beta!
+
+	Nathan: 15 months since we branched oldstatus, and started working on
+	the behemoth that is 2.0.0.  In that time, we've added a couple new
+	protocols, we had a few crazy patch writers become developers, and
+	had a few more people step up to be crazy patch writers.  Sean wrote
+	a book, and we arbitrarily decided to make a version 1.0.0, and a
+	new versioning scheme.  We got new artwork, and added almost 200 lines
+	to the ChangeLog.  We've watched 2 major GTK+ releases, and added all
+	kinds of features using them.  OK, I've wasted enough bits here.  This
+	beta rocks, but it is a beta.  Treat it as such, and enjoy!
+
+	Gary: Finally we have a beta.  There are a lot of new goodies, including
+	quite a few summer of code projects that couldn't get added into the
+	oldstatus branch because API changes.  We also have a new mono plugin
+	loader for even more plugin fun.
+
+	Richard: Thanks to all who wrote patches (big or small) for this beta.
+
+	Tim: Well here it is, the first beta. There's a lot of cool things in
+	here, but not all of them are finished or debugged. But then that's
+	why it's called a beta. Conversations are now contact-aware, and
+	there's a new status selector. There's smooth scrolling on incoming
+	messages as well. Our Crazy Patch Writers have been doing a good
+	job too, it seems like we're never lacking some patches in the
+	tracker to review.
+
+	Etan: I know I'm not going to be able to think of all the things I should
+	talk about here so I'll just go with the stuff I remember. Adding buddies
+	on ejabberd jabber servers should work more correctly now (it's possible
+	adding buddies on other servers is a bit broken currently I'm still
+	looking into it). There are still other jabber issues I'm looking into
+	with handling of buddies.
+	In other topics, I finally brought my Accounts menu into gaim, though the
+	current example of it isn't exactly what I had in mind, anyone with any
+	suggestions/comments/etc about it please speak up.
+	Other than the stuff I'm sure I'm forgetting to mention this beta should
+	be awesome as gaim 2.0.0 is going to be awesome. Have fun with it.
+
+	Luke: pretty much everything important has been said, so this is going to
+	be rather repetative.  This is a beta folks, so it will have bugs.  It
+	will crash unexpectedly.  Perhaps even frequently.  Use it at your peril.
+	But do use it (though you might want to back up ~/.gaim first), and let us
+	know what needs to be fixed.
+
+	Mark: Yay.
+
+	Stu: Wow!
+
+	Siege: Sametime accounts created with gaim-meanwhile should merge over
+	for use in the beta just fine. Some of the familiar settings regarding
+	the buddy list are gone, so I recommend backing up your Sametime blist
+	before getting down and crazy. Have fun, and happy early Decemberween!
+
+	Daniel: Enjoy! In the hopes that this prevents someone pain... do not use
+	Glib/GTK+ 2.8.x with Wingaim - it will not work.  We're looking into the
+	problem and hope to have it resolved before the final release.
+	"Happy Holidays!"
+
+1.5.0 (8/11/2005):
+	Mark: No super crazy major changes here.  Just the usual bug
+	fixes and some pretty important security updates.
+
+	Stu: Buy Sean's book. He obviously needs the money. Other than that
+	we fixed some bugs with this release (I don't think we did much else).
+	SoC students are doing lots of cool stuff which we'll hopefully be
+	able to bring you in a future release.
+
+	Nathan: I've continued my streak of doing nothing useful lately.
+	However, I've now got a brand-spanking-new DSL line, so I might
+	actually get to contribute soon.  One way or another I'd like
+	to get HEAD into a more useable state in the next month or two.
+	Also, like Stu said, buy Sean's book.  I've been reading and
+	fixing it for the last umpteen months, so you had better enjoy
+	it.
+
+1.4.0 (7/7/2005):
+	Mark: The last month or four we've promoted a bunch of the Gaim
+	Crazy Patch Writers to developers, so there is now an even larger
+	team of brilliant and amazingly sexy committers working around
+	the globe for your instant messaging pleasure.  Also, we have
+	what I believe to be our first contribution from a Summer of Code
+	student in this release: Jonathan Clark enabled the sending of
+	files to certain ICQ users.  Support is still a bit rough, but
+	he'll be working on it throughout the summer.
+
+	Luke: Exciting times this summer as our Summer of Code interns
+	start their projects.  This is mostly a bug fix release, with the
+	ICQ file transfer that Mark mentioned and some buddy icon work
+	being the only real new code.  Hence the extra week delay.  A
+	big thanks to our translators who keep churning out updates even
+	when we give them short notice as well.  Enjoy!
+
+1.3.1 (6/9/2005):
+	Sean: It's been a while since I've done one of these. Welcome to
+	Gaim 1.3.1, "New Hyde Park." This is, again, another bugfix release
+	but it comes with two keen announcements. First, I'd like to welcome
+	Christopher O'Brien to the Gaim team. He has integrated his work on
+	the Meanwhile project into Gaim, ensuring that Gaim 2.0.0 will include
+	Sametime support. Also, we're participating in Google's Summer of
+	Code, which you all should check out at 
+	http://gaim.sourceforge.net/summerofcode/
+
+1.3.0 (5/10/2005):
+	Luke: This release fixes SILC for multiple accounts.  HOWEVER, you
+	may lose your buddy list (for SILC only) upgrading.  This is
+	rather unavoidable as the previous code did not keep track of
+	which account each buddy belonged to.
+
+	Stu: I'm glad we're finally getting this out, if fixes a number of bugs
+	ranging from minor to not so minor. I'd also like to welcome Gary to
+	the team - he's done a great job with Guifications, I'm sure he'll do
+	good stuff here too.
+
+	Gary: Well I got pretty much nothing done for this release.  Although I
+	do have quite a few things in the works that will come to fruition when
+	I find some more free time.
+
+1.2.1 (4/3/2005):
+	Luke:  Several important fixes this time around.  Big thanks to 
+	Robert McQueen, Stu, Nathan, Ethan, and everyone else who has helped 
+	with this effort.  Maybe next time we can get a decent chance to fix the 
+	problems *before* they go public to have a normal release process.
+
+	Nathan: Jabber got some updates this release (finally).  I've got
+	more planned, but simply haven't had the time to anything about it.
+
+1.2.0 (3/17/2005):
+	Luke: Happy St. Patrick's Day all.  Sean scheduled a release for
+	today, we'll see if we can pull it off. :-)  This release
+	features somewhat more than just bug fixes, some improvements
+	have been made to the conversation API which may affect plugin
+	developers.  Yahoo users should also thank Tim and Bleeter for
+	their efforts.
+	
+	Etan: I'm going to NEWS since I actually did something this time.
+	Jabber will allow you to unsubscribe to someone's presence
+	without logging out and in again, this does break seeing yourself
+	on your buddy list, but hopefully we'll fix that again for the
+	next release. 
+	
+	Stu: Happy St. Guinness^wPatrick's day.
+	
+1.1.4 (2/24/2005):
+	Sean: Another bug fix release. A big thanks to Rob McQueen, Ari
+	Pollak, Don Seiler, and Warren Togami: some packagers who helped
+	debug a nasty glib 2.6 problem. Also thanks to our own Stu who
+	found and destroyed an MSN crash and an HTML parsing error
+
+	Luke: Early release to handle the MSN and HTML crashes, as well
+	as the glib crash.  Maybe that makes up for having had a 4 week
+	period before the last release.  This one should be the nice
+	stable release we meant 1.1.3 to be. Enjoy!
+
+	Stu: I cleaned up the whitespace in this NEWS, it was bugging me.
+
+1.1.3 (2/17/2005):
+	Luke: Yet another bug fix release, many thanks to everyone who has
+	helped to make gaim more stable!
+
+	Stu: I fixed too many Yahoo HTTP proxy bugs, I should just go and
+	write some core HTTP support that works better. A good all round
+	bug fix release otherwise.
+
+1.1.2 (1/20/2005):
+	Luke: Another Bug fix release. This one featuring a fix to the HTTP
+	Method for MSN users and other MSN fixes. A big thanks to Stu and
+	Felipe Contreras for those. Stu also spent a long time in valgrind
+	and so this brings you a Gaim release with fewer memory leaks. This
+	release is on time primarily because I want to see the MSN fixes
+	make it into Debian and Fedora before freezes. Expect further bug
+	fix only releases to come at longer intervals, at Mark's request.
+
+	Daniel: This is my first NEWS! (YaY) I didn't really do too much for
+	this release.  There are a few bugfixes, mostly wingaim stuff. Oh, and
+	I like the new XP System Tray icons.
+
+	Sean: I'm down here today. I haven't really been paying too much
+	attention to these boring bugfix releases, but I'd like to thank
+	David and welcome him to the team. I'd also like to thank Steven
+	and Nathan from Silverorange who redid the webpage.
+
+	Tim: Another bug fix release. I didn't really fix any bugs, so
+	I didn't exactly do much for this one. The autopackage will now
+	work with mozilla-nss, if anyone has that, and not gnutls11. (It
+	works with either gnutls11 or mozilla-nss, but not gnutls10)
+	I started working on Gaim-vv again though, and I merged someone's
+	custom msn smiley patch into the 2.0.0 tree, so expect good things
+	whenever that's released (no, don't try it now, you won't like it).
+	Oh and welcome to the team Daniel. Of course, he was already on my
+	Gaim-vv team.
+
+	Stu: Welcome Daniel! you've done some good stuff already. Felipe did some
+	good work on MSN yet again, so you can all use the HTTP method now. I
+	didn't do all that much, other than let valgrind tell me what to fix, and
+	a couple of easy bug fixes from the bug tracker. Hopefully Ethan will get
+	well soon, so he can get back to merging patches and fixing things.
+
+	Nathan: I think I made some Jabber fixes, at least one of which is
+	ChangeLog'd.  I will continue to make empty promises about new features,
+	especially for 2.0.0.  Until then, welcome Daniel!
+
+1.1.1 (12/28/2004):
+	Luke: This bug fix release features msn improvements, drag and drop
+	improvements, and some translation stuff. Thanks for everone who has
+	helped with it, and hopefully we can get 2.0.0 out soon. On a side
+	note, i'm still looking for someone to look at the perl plugin loader.
+
+1.1.0 (12/02/2004):
+	Luke: Another in our series of bug fix releases, with a slight twist.
+	Everyone thank Ethan for implementing a fall back encoding for IRC,
+	it has been much requested and should make a number of users very
+	happy. See the ChangeLog for details on other fixes.
+
+	Stu: Much thanks to Miah Gregory and Felipe Contreras, a bunch of
+	memory leaks have been fixed. Felipe also fixed a good number of
+	other MSN bugs. I didn't do much except apply these guys fixes. It's
+	good to see fixes from Gary coming in again too ;-). I like the
+	docklet adjustments Christian made. Btw, we have a new MSN protocol
+	icon, and I think you'll love it.
+
+	Tim: I made Gaim binary relocatable this release, so Gaim can find
+	itself if it gets lost, and I'm going to try to make autopackages
+	for this release, if the autopackage guys release their new version
+	soon like they're talking. I also "fixed" a scrolling bug, by
+	realizing it was all Gentoo's fault. The IRC encoding thing Ethan
+	did is pretty nice, no more encoding error messages!
+
+	Ethan: Rumor has it that I did some work this release, but it's just
+	that, a rumor.  I think Luke started it.  I did lay the hammer  down
+	on  bogus  word  wrapping in the NEWS, so you can thank me for that.
+	Keep your powder dry.
+
+1.0.3 (11/11/2004):
+	Luke: Not much to see here, some bug fixes that you all will enjoy as
+	the semester draws to a close and everyone still in school gets bogged
+	down with projects, papers, and exams. Enjoy! Oh, and if you are interested
+	in the perl or gadu-gadu functionality, please step up to help write
+	patches, as both of these code blocks are currently unmaintained.
+
+	Tim: I fixed a couple bugs this time. In other news, Kim wants to get
+	a pet cockatiel or two.
+
+	Nathan: I was gonna put a new feature in this release, but decided
+	not to because I found a bug in it today, and I'm tired.  Also, I haven't
+	consulted the powers-that-be about putting new features into oldstatus.
+
+	Stu: I'm writing this at 11:11:11pm on 11/11. Eleven. It's 3 really. Or B.
+	It's the 5th smallest prime number. Himalia is the 11th moon of Jupiter.
+	Hendecagon. There are 1011 players on a football team. XI. 16 hours. Eleven
+	is the smallest positive integer requiring three syllables in English. This
+	entry is my 11th lie for today.
+
+1.0.2 (10/19/2004):
+	Stu: I'm new around here. I tried to reduce the number of bugs in the bug
+	tracker, but it turns out that the only way to achieve that is to actually
+	_fix_ the bugs. So I fixed a couple, and then sneaked some patches out of
+	the patch tracker to fix some others. Sadly the bug tracker was not
+	significantly affected, maybe if I learn C I'll be able to make more of an
+	impact.
+
+	Luke: Don't let Stu fool you, he has done a marvelous job on this release,
+	and deserves a lot of credit for it. And a number of those bug fixes are
+	critical ones that he discovered and fixed himself. So go update. Now.
+
+	Nathan: On the other hand, Nathan has done nothing for this release.  Why
+	do we keep him around again?
+
+	Tim: So, I'm married now, and in Huntsville. I don't remember if I did
+	anything for this release or not, probably not. Bleeter has been more
+	active lately though, perhaps we'll see lots of cool things from him
+	soon.
+
+	Sean: I'm down here with the "didn't do anything" guys.
+
+1.0.1 (10/07/2004):
+	Congratulations to Tim & Kim on their wedding!
+
+	Sean: So, if you're playing along at home, you're aware that
+	incrementing the micro version number means that the API has
+	not changed at all.  Although that itself is insignificant to
+	most everyone but plugin developers, but users won't find too
+	many significant changes.  Consult ChangeLog.  We're currently
+	branched for some major changes, so expect a really great 2.0.0
+	sometime relatively soon.
+
+	Luke: Nothing much to see here, some bug fixes. Most of the work
+	is going towards the 2.0.0 release. We aren't quite sure when
+	that will be, and will keep the bug fix releases coming untill
+	all is ready.
+
+	Christian: I would call this a ground-breaking release, but it isn't.
+	It seems like a good one, though. I dunno. I've been too busy at VMware,
+	unfortunately, but have some work that's just waiting to be finished up
+	for Gaim. Gaim 2.0.0 is going to rock. Gaim 3.0.0 will rock more.
+	Do you see a pattern? Thanks go out to Henry Jen for fixing up parts of
+	the gevolution plugin to support multiple addressbooks, and to all our
+	moms, for believing in us. Or something.
+
+	Nathan: I got a new computer.  It's fast.  And has twice the bits!
+
+1.0.0 (09/17/2004):
+	Nathan: Hah!  Bet you weren't expecting this!  OK, if you were
+	paying any attention to the flame^H^H^H^H^Hthread on gaim-devel,
+	you might have been expecting this.  But here it is, 1.0.0.  Our
+	new versioning scheme has slightly more meaning than the older
+	one (expecially for plugin authors), but our 1.0(.0) release is
+	just as meaningless as we could have hoped.  Enjoy!
+
+	Luke: We've changed our pattern for version numbers with this
+	release, we are no longer simply counting versions. This release
+	then marks, not something traditionally "1.0" but the current
+	version of the api.  When backwards compatability with that breaks
+	you'll see 2.0, more details in the faq.  As a side note, if you
+	are reading this and are good with proxy code or with perl's XS C
+	bindings, please get in touch with me, my contact info is on the
+	website.  Gaim could use your help.
+
+	Mark: I love a circus.
+
+0.82 (08/25/2004):
+	Rob: Woah, where did I come from? 
+
+	Mark: Lately I've been doing a lot more code maintenance/patch
+	accepting/bug fixing type of work.  And I think that's a really
+	good thing.  I feel like Gaim is becoming more stable.  It
+	seems like we're lacking fewer features.  It makes me warm.
+	Quick Robin!  To the traverse wall!
+
+	Nathan: Well, it looks like we stuck to the schedule again.  Had
+	we taken our dear sweet time, I might have had a chance to do
+	something cool for this release, but instead I stuck to the minor
+	stuff.  <insert empty promises for the cool stuff i'll code for
+	next time here>
+
+	Tim: Lately I've been doing a lot more patch accepting, and a
+	lot less actual coding. Unfortunately it has more to do with my
+	laziness than Gaim's progress. Like Nathan, I'm going to blame
+	our on time release schedule. But that didn't stop our Crazy
+	Patch Writers, or cpw's as grim now calls them, from writing
+	some good patches. So, instead of promising to code something
+	cool for next release, I'm going to promise that the cpw's will
+	code cool things for next release, and I might apply some of them.
+
+	Luke: I've been doing what I always do, committing patches, some
+	better than others, and bugging other people to code stuff. Oh
+	and closing some bugs. Thanks to Dave West for joining the cpws
+	in helping to handle triage. This is mostly a bug fix release,
+	so PLEASE upgrade to it before submitting new bugs.
+
+	Kevin: Herman's been away, so Daniel Atallah and myself were given
+	the task of preparing 0.82's Windows packages. After some feverish
+	plotting, we decided to update GTK and Daniel prepped an update to
+	libpng to address recent security advisories. Besides plotting and
+	a little bit of testing, this NEWS is all I really did. Oh, I also
+	rerefixed the transparency plugin... again! Our beloved Hermanator
+	should be back next time around, for 0.83.
+
+0.81 (08/05/2004):
+	Sean: Three weeks again!  Sticking to schedules is awesome!  Just
+	like Gaim v0.81.  This is what we in the industry call a "bugfix
+	release."  We closed over TWO HUNDRED bugs since 0.80.  That's
+	awesome.  Thanks to everyone who helped report, triage, fix, and
+	test.
+
+	Christian: Yay for three weeks working so well. Boo for me not
+	doing much of anything this release, aside from a small memory
+	leak fix. I'm starting a new job and leaving my current one, so
+	when the dust settles and my schedule is a bit better, the very
+	cool status rewrite will be finished up. Especially now that I have
+	some help! I'd like to second Sean's thanks to all the people who
+	helped with this bug fix release. Gaim should be a bit more stable
+	for a lot of you. For those experiencing MSN problems still, we'll
+	get that nailed for you soon, promise.
+
+	Mark: I was going to point out that we closed an insane amount of
+	bugs for this release, but Sean already did that.  I feel like 
+	we've had some really talented new contributors contributing 
+	recently.  I won't say names... but watch your backs.  Or something.
+
+	Nathan: I did next to nothing for this release.   I am however
+	settled in to my new job, and in a couple days, I should be settled
+	into my new domicile.  If the DSL gods are in a good mood, I'll
+	have a connection there shortly, and can start being useful again.
+
+0.80 (07/15/2004):
+	Sean: Three weeks!  Hooray for timeliness!  I didn't do much here
+	but drag-and-droppable file transfers.  Drag something into a
+	conversation window, and it will be sent.  Kinda neat.
+
+	Mark: We have a small ant problem here.  I can't help but think
+	I somehow brought this upon myself.
+
+	Tim: I don't really have any news, but at least I don't have an
+	ant problem either. You might think I've been hard at work on
+	Gaim-vv, but I haven't, I've just been lazy. I plan on doing
+	some cool things "soon" though, both with Gaim and Gaim-vv.
+	Bleeter sent me some nice dumps I need to implement yet.
+
+	Luke: We have a nice timely release, with a Changelog that seems
+	small, but remember, this is summer, and people have lives. SILC
+	and Zephyr are making good progress from our Crazy Patch Writters,
+	and everyone begging to send files to people not on their buddy
+	list will be happy. good stuff. No, the msn buddy icon scalling
+	problem isn't fixed yet, maybe next release
+
+0.79 (06/24/2004):
+	Sean: We've moved to a three-week release cycle which we'll
+	hopefully be able to keep up more realistically than a two-week
+	cycle.  Yahoo! went and broke last night, but it's fixed now thanks
+	to a quick fix sent in by Cerulean Studios this morning. Reports say
+	they'll continue to try to break us, though, so don't be surprised
+	if your Yahoo cuts out again.
+
+	Luke: I was really distracted this cycle, I want to thank my co-
+	developers and our crazy patch writers for keeping things going.
+	We have a fairly long changelog for you this release, including some
+	nice bug fixes and some much-requested new features, the ChangeLog
+	has all the details there of course. Enjoy!
+
+	Christian: Great release! MSN buddy icons and file transfer. A big round
+	of applause to Felipe! Too bad about the Yahoo thing, but.. eep! I have
+	to go! Movie with the girls and Farmer's Market.
+
+	Tim: This release brings us /commands in the core, which hopefully
+	works better, and Yahoo! buddy icons. Thanks to all the people I
+	bugged for packet captures, like Simguy, Bleeter, and odl. Yahoo!
+	broke again, so I did a little last minute work on the web
+	messenger stuff, but then Cerulean Studios was cool and fixed the
+	problem already, so all that code's disabled. I also finally added
+	the Yahoo! Japan support, for those of you with Yahoo! Japan
+	accounts.
+
+	Mark: I fixed that icon animation thing that caused Gaim to lock-up.
+	I also stepped on something at the beach and I think there might be
+	a little rock or something in my foot now.
+
+	Nathan: I've been really busy, what with having a new job and all.
+	I didn't think I had done anything, but apparently I fixed some
+	Jabber stuff, and some IPv6 stuff.  I must have been sleepcoding
+	or something, because I haven't had time for such things.  Ah well,
+	enjoy this release.  We'll see what I can get to in the next 3 weeks.
+
+0.78 (05/30/2004):
+	Luke: A very long time, once again, since the last release. I think
+	its mostly worth it. A few of you will still have trouble with msn
+	but we've worked out a number of bugs even there.  Thanks to heroic
+	efforts on the part of Mark, we closed 400 some odd reports this
+	month.  We are also welcoming Tim to the project, a very active
+	crazy patch writer who has brought massive improvements to WYSIWYG
+	and direct im this release. Again, it still won't work for every
+	one, but it will work for more people than it used to. Most
+	noticably, this release brings a LARGE simplicfication of the
+	preferences available. Please don't complain if your favorite
+	preference is no longer there. Take some time to think about
+	how and if it could be useful to a majority of people who use
+	Gaim in ways nothing like you. You'll find that the answer will
+	usually be that the preference isn't all that important.
+
+	Tim: I continued with the other crazy patch writers in fixing those
+	WYSIWYG bugs. Then they went and made me a developer. Which is cool.
+	They told me I could commit WYSIWYG and Yahoo! changes. So I went
+	and fixed IM Image and Direct Connect in AIM for some reason. I also
+	added some new Yahoo! smileys at least. Also you change your link
+	color in your ~/.gtkrc-2.0 file now. I might work on some of those
+	new Yahoo! features for next release, like buddy icons. But don't
+	count on it. Thanks to everyone who congratulated me. And thanks
+	to all our Crazy Patch Writers, who now expect me to apply all their
+	Crazy Patches.
+
+	Christian: First of all, congrats to Tim! He's our latest Gaim
+	developer, and we're all glad to have him on board. He's been a
+	valuable contributor for awhile now. Thanks again to Felipe Contreras
+	for all his MSN work this release. He has some exciting stuff that
+	we'll be seeing in 0.79. And last, but not least, thanks to all our
+	crazy and not-so-crazy patch writers. There's been a lot done this
+	release.  I've been taking a small break, first due to school and now
+	work, but I'll be coming back strong in the next couple of releases. In
+	the meantime, enjoy.
+
+	Gary: Congrats to Tim, no more competing for most ChangeLog entries.
+	This means you _should_ be winning every release.  Anyways, I didn't
+	finish nearly as much as I wanted to for this release but all of that
+	and then some should appear in 0.79.
+
+	Sean: I'll write my entry down here tonight.  Removing preferences
+	was my big crusade this week, and the team did a great job at it,
+	but I still have a nagging feeling that our preferences are still
+	overwhelming.  Everyone's been doing a real great job; it's entirely
+	my fault we keep failing to meet our three-week schedule.  Send your
+	complaints this way.
+
+	Nathan: I really didn't do much thanks to exams, and graduation, and all
+	of that fun stuff.  For next release, I'll have all new excuses, like my
+	new job, or maybe something I haven't even thought of yet.  Oh yeah, and
+	a big warm welcome to Tim!
+
+0.77 (04/22/2004):
+	Sean: We're back to a somewhat regular release cycle now.  Hooray!
+	WYSIWYG is much improved in this release, and you can now copy and
+	paste rich text to and from Gaim and other applications (see: Mozilla,
+	Evolution OpenOffice).  Also, Novell has released their first release
+	of their GroupWise plugin, included in this release.  Good stuff all
+	around.
+
+	Luke: Only a week "late" this time around, much nicer than the delay
+	before the last release.  Anyway, this release sees a HUGE number of
+	improvements to the WYSIWYG support, much thanks to all involved. If
+	you weren't impressed before, you should be now!  This release also
+	sees the end of our TOC support, no one has been working on this in
+	some time and its causing problems. DON'T USE IT!.  Also plugin
+	authors will want to take note of the fact that the plugin api version
+	changed. A nice solid release for you all :-)
+
+	Ethan:  Once  again  I  thought  about doing some things and committed
+	things that other people did.  This development model is  awesome.   I
+	helped  Mark  refactor  some  stuff  and our collective code ownership
+	helped us utilize a coherent system metaphor during our pair  program-
+	ming  sessions.   It was extremely extreme.  Look for some hard crypto
+	lovin' from yet another crazy contributor in the near future...
+
+	Ka-Hing: I actually did something for this release... or rather, the
+	previous release, but LSchiere2 didn't commit that until this release.
+	So blame him. System logging is back, so you can log people's signon/
+	off/away/idle-ness again. There may be bugs with it, I don't know, not
+	like I use it. I will try to work on something that I will actually use
+	for the next release.
+
+	Etan: Looking for someone to pair program with.
+
+	Christian: A round of applause to our crazy patch writers! Their
+	contributions this release is impressive. WYSIWYG has come a long way
+	since 0.76 thanks to them. Also, thanks to Felipe Contreras for his
+	MSN contributions. We should see some good stuff going into there soon.
+	I myself didn't do a huge amount, aside from breaking everybody's
+	plugins, although I have some work going on in the background that will
+	hopefully make it into release soon.
+
+0.76 (04/01/2004):
+	Sean: Yeah, it's been a long time since the last release, and despite
+	what others may tell you, we were just really lazy.  This is pretty
+	much just 0.75 again, but, like, someone changed the "Info" icon and
+	I think, like, the Chinese translation may have been updated.  We did
+	nothing interesting on it at all.  Others may tell you "we haven't just
+	been lazy," or "you guys will find that we've managed to do some neat
+	stuf in this one."  They lie.  All of them.
+
+	Luke: Okay, normally I wait for Sean to go first, but he said to commit.
+	Its been a few months since the last release, but we haven't just been
+	lazy. A very long ChangeLog for you all. Most notably of course is the
+	addition of WYSIWYG input for chats and conversations. Many thanks to
+	DAYS of long work by Sean, Gary Kramlich, Kevin Stange, Tim Ringenbach,
+	and Stu Tomlinson for their efforts writting, fixing, and testing
+	this.  Without the dedicated support of our crazy patch writters, this
+	release would have taken yet longer. Sean also has yahoo working again,
+	with some assistance from our friends over at Trillian, you may all
+	officially rejoice. We also have a large number of bug fixes, closing
+	more than 200 bug reports this month alone.
+
+	Christian: It's been a long time between the last release, but I think
+	you guys will find that we've managed to do some neat stuff in this one.
+	So many bug fixes and new features. It's enough to drive a wombat mad!
+	The new WYSIWYG input is cool stuff. You'll either love it or hate it,
+	I guess. I'm working on some stuff that some of you are going to love,
+	but I'm not promising it for a few more versions. It's a secret!
+
+	Mark: Our crazy patch writers rock.  Gary Kramlich, Tim Ringenbach,
+	Kevin Stange, and Stu Tomlinson did an amazing job of tying up
+	loose ends and helping get this release out the door.  Thanks guys!
+
+	Rob: My birthday is in a few days.  I like cool stuff.  Buy me something
+	grand!!
+
+	Tim: Luke said write a NEWS, so I thought I would.  There's a room
+	list dialog now. And Nathan and I doubled the number of protocols that
+	can transfer files.  After that I got lazy/busy and let Gary, Kevin,
+	and Stu fix all the bugs.
+
+	Nathan: Rob happens to share a birthday with my sister.  So far she's
+	been very vague about what she wants.  She's not an easy person to shop
+	for.  As for things you probably care more about, this release has so
+	much in it that I've forgotten about most of it.  The stupidest of the
+	bugs from 0.75 are fixed.  Jabber has a first pass at file transfer
+	support (no proxy support yet).  SOCKS 5 proxy support may have gotten
+	a little better as a side-effect.  Twinkies and penguin points to all
+	of the crazy patch writers, who did more than their fair share this
+	release.
+
+	Ethan:   My   birthday  was  yesterday, and not on the same day as Rob
+	and Nathan's sister.  And I don't mean that Rob and  Nathan  have  the
+	same  sister.   For this release, I thought about making IRC better, I
+	thought about making Tcl better, and I committed patches from  several
+	others  who  actually   did  these  things.   And  probably some other
+	things, too.  Let's hear it for crazy patch writers, and for the  open
+	source philosophy that lets them get so CRAZY.
+
+0.75 (01/09/2004):
+	Rob: Woah, what's this? Me? Making a NEWS post!? Say it ain't so!
+	That's right, kiddos, I'm finally coming out of my reclusiveness.
+	I had a pretty shitty few months, and also just needed a break from
+	things.  But, I'm back, and that's good.  Right?  Yes.  And now,
+	a little word from Eric Warmenhoven.. :P
+
+	Eric: Ah, Rob and Eric.  Just like the good ol' days.  Now, if
+	you'll excuse me, I have to go make some commits with Led Zeppelin
+	lyrics as my commit logs.  heh.  What do you mean, I look a lot 
+	like Sean Egan?  I'm... oh fine, you got me.  It's really just Sean
+	in an Eric Warmenhoven costume.
+
+	So, Yahoo! works again, and that's good.  And 0.76 is going to have
+	something _very_ neat.
+
+	Nathan: You're running out of excuses to not use Jabber.  Our chat
+	support is now bar-some, quickly approaching bar-none!  Everything
+	else in Jabber got neat improvements too.  I'll leave it up to you
+	to figure out what they were.
+
+	<boilerplate promises for cool features in $version++>
+
+	Christian: I've been a bit absent this release, due to life stuff
+	and working on some other projects. Some MSN goodies are going to be
+	available in an upcoming version, and I have some neat Gaim-related
+	stuff I'm working on that will hopefully see the light of day. I'd
+	like to say good job to the other developers. Good release. (Of course,
+	every time I say that, something breaks horribly right after we
+	release it.)
+
+	Luke: Okay, so Sean rocks and got Yahoo working again in 12 minutes.
+	Unfortunately, he took out the chat support in doing so. So use
+	conferences for now if you use yahoo. Users begging for file
+	transfer support should thank Tim 'marv' Ringenbach for Yahoo ft,
+	and everyone should be happy to note that 0.75 leaks far less than
+	0.74. Also, a lot of other bug fixes happened that escape my notice
+	right now.
+
+	Ethan: I just want to say that now logging really doesn't eat
+	memory 'till the cows come home.  We don't think.
+
+	I would like to thank each and every one of these people, and
+	I think you should, too:
+
+	Paul A, Daniel Atallah, Patrick Aussems, Brian Bernas,
+	Jonas Birmé, Ethan Blanton (hi Mom), Joshua Blanton, Herman
+	Bloggs, Jason Boerner, Graham Booker, Craig Boston, Chris
+	Boyle, Jeremy Brooks, Sean Burke, Cerulean Studios LLC,
+	Ka-Hing Cheung, Arturo Cisneros Jr., Vincas Ciziunas, Joe
+	Clarke, Todd Cohen, Felipe Contreras, Jeramey Crawford, Mark
+	Doliner, Nuno Donato, Jim Duchek, Tom Dyas, Andrew Echols,
+	Sean Egan, Brian Enigma, Stefan Esser, Larry Ewing, Jesse
+	Farmer, Gavan Fantom, Rob Flynn, Nathan Fredrickson, Free
+	Software Foundation, Decklin Foster, Adam Fritzler, Michael
+	Golden, Ryan C. Gordon, Christian Hammond, Andy Harrison, G.
+	Sumner Hayes, Mike Heffner, Iain Holmes, Karsten Huneycutt,
+	Akuke Kok, Tero Kuusela, Dennis Lambe Jr., Ho-seok Lee, Moses
+	Lei, Ambrose C. Li, Nicolas Lichtmaier, Artem Litvinovich, Syd
+	Logan, Matthew Luckie, Brian Macke, Paolo Maggi, Willian T.
+	Mahan, John Matthews, Ryan McCabe, Robert McQueen, Robert
+	Mibus, Benjamin Miller, Kevin Miller, Paul Miller, Arkadiusz
+	Miskiewicz, Andrew Molloy, Matt Pandina, Ricardo Fernandez
+	Pascual, Havoc Pennington, Ari Pollak, Robey Pointer, Nathan
+	Poznick, Brent Priddy, Federicco Mena Quintero, David Raeman,
+	Etan Reisner, Kristian Rietveld, Tim Ringenbach, Andrew
+	Rodland, Neil Sanchala, Carsten Schaar, Luke Schierer, Torrey
+	Searle, Jim Seymour, John Silvestri, David Smock, Mark
+	Spencer, Lex Spoon, Kevin Stange, David Stoddard, Stu
+	Tomlinson, Brian Tarricone, Peter Teichman, Arun A. Tharuvai,
+	Philip Tellis, Bill Tompkins, Tom Tromey, Junichi Uekawa,
+	Bjoern Voigt, Nathan Walp, Eric Warmenhoven, Jason Willis,
+	Matt Wilson, Ximian, Jaroen Zwartepoorte.
+
+	Thanks, all.
+
+0.74 (11/25/2003):
+	Sean: Christian and Nathan were wrong.
+
+	Ethan: I don't know how solid or good this release will be, but
+	hopefully it's better than 0.73!  Not that 0.73 didn't rock or
+	anything, but for those users bit by its peculiar little bugs
+	it wasn't as nice as this will be.
+
+	Nathan: Jabber got some good tweaks, and logging doesn't eat
+	memory until the cows come home.  Which is good, because they
+	said they'll be out until late.
+
+	Luke: Always nice when directories get created correctly ;-)
+
+0.73 (11/21/2003):
+	Nathan: This should be a really solid release.  I fixed most if not
+	all of the idiotic Jabber bugs from 0.72, and re-enabled the SASL
+	login stuff, now that it is finalized in the XMPP drafts.  Oh, and
+	we now have a release notification plugin, so you can find out when
+	the latest and greatest version of Gaim is out without breaking that
+	reload button in your browser.  There's other fun new stuff, but I
+	forget what it is.
+
+	Christian: This is a good release, as Nathan said. For all those who
+	hated all the disconnect dialogs, we now have a {dis,re}connect{ed,}
+	dialog that replaces all of them and shows every account that became
+	disconnected. Also, there were some MSN fixes thrown in, such as
+	the problem with unblocking users. My personal favorite, since it's
+	really been bugging me for awhile, is the bug with the border on the
+	close buttons is fixed.  Oh yes, and let's not forget the new logging.
+	It simply rocks.  This is a pretty stable release, so get it.  0.74 is
+	going to have some niceties that people have been waiting for.
+
+0.72 (10/30/2003):
+	Sean: I think I'll go as the Gaim logo guy for Halloween.  That
+	would be a cool costume.
+
+	Luke: We've had a record month for number of bugs submitted (395 as
+	of now) this month, but the total number of bugs open has grown by
+	less than 20, so while it might be fustrating for those of you out
+	there who think your bug report is being ignored, know that we are
+	doing our best to look at them all :-). This release fixes a goodly
+	number of bugs including the troubles with signing on icq (thanks
+	to Mark). Enjoy!
+
+	Christian: Last release brought forward a lot of bug reports, such
+	as the ICQ bug, and also trouble with installing SSL. I can't count
+	how many people were confused as to why their MSN plugin wasn't
+	loading. Now, it'll load regardless, and when you try to connect,
+	it'll give you an error dialog saying to install SSL (if you don't
+	have it installed, of course). I didn't do a whole lot this release,
+	but that'll change with the next. There are some fun things coming.
+
+	Ethan: In complete defiance of history, I did something this
+	release.  It had to do with IRC.  If I type here for long
+	enough, I'm sure I'll remember what it was...  Oh yeah, all of
+	you paranoid people can hide your local username by changing
+	your IRC account settings.  I also want to note that we are
+	aware that building Gaim is Harder than it Should Be on
+	Solaris, and I am seeking solutions to some of the issues
+	there.  Everyone remember to give some love to the developers
+	who actually did something of note this release (i.e. not me)!
+
+	Nathan: Jabber got a ton better this release, as I fixed most of the
+	bugs introduced in the last release.  Registration works again, and
+	the next person to break it is going to suffer.  I also fixed a
+	handfull of other little things that I can't remember.  This should
+	be a good release.
+
+0.71 (10/09/2003):
+	Rob: It's been a while since I've commited some news.  I've had a
+	very hectic few weeks/months.  Thing are finally coming together
+	again for me.  This release features much copying and pasting. Yeah.
+
+	Sean: I can't wait for everything to be core/ui split!
+
+	Christian: This is a good release, and I don't think people will have
+	too many problems. There are a lot of little nice feature additions,
+	and much progress has been made on the core/UI split. We should be done
+	in a couple of releases, assuming we can get the remaining two or three
+	parts core/UI-split. Oh, and plugin authors are going to hate me again,
+	as a lot of code (specifically, the conversations code and utility
+	functions) changed names. This is a Good Thing (TM), as always, but may
+	require modifications to some plugins. Not all, fortunately, but some
+	:) Many SSL problems were fixed, though we still have some to go.  If
+	you don't have SSL, you now need it for MSN. MSN won't even load without
+	it. Starting October 15th, the old protocol won't be supported
+	anymore, so there's no reason to support the old one anymore.
+
+	Herman: I bet some plugin authors have resorted to making voodoo dolls
+	of Christian.  Nothing new for Win Gaim users other than a fix for
+	missing aim buddy icons, and removal of gtk-wimp (until it matures).
+
+	Mark: People are going to make a voodoo doll of me and shower it with
+	kisses and chocolate women: When an AIM user is away, you can now view
+	the person's away message in their tooltip.  This is very similar to
+	what iChat does, only our tooltip will wrap lines rather than displaying
+	off your screen :-)
+
+	Nathan: Chocolate women are cool, but I'm a bigger fan of the real kind.
+	I re-wrote the Jabber support from scratch, so now there's at least one
+	person who knows what's going on with it.  I got lost in the old code,
+	even in the parts I wrote.  It now supports the SASL login stuff from
+	the XMPP protocol specs, and will automagically upgrade the conncetion
+	to SSL if it's supported.  If anything doesn't work like it did before,
+	it's probably better, and you should be thankful for it.
+
+	Ethan: I'm sure I'll be showered with all kinds of wonderful things,
+	but I doubt it's because I did anything.  The reason being that I
+	really don't think I did anything.  I meant to do some gaim_
+	prepension and documentation for IRC and Tcl, and handle IRC errors
+	more responsibly, but I've been meaning to do that for months.
+	Except the Tcl part, the Tcl plugin hasn't even existed for months.
+	I figure if I write enough NEWS no one will notice I didn't do
+	anything during the release cycle.  Oh, I did close some bugs.  I
+	didn't fix them, mind you, I just closed them.  With abandon.
+	Don't tell Luke.
+
+	Luke: Mmmm, I probly did even less than Ethan, except I closed rather
+	more bugs for other reasons. Lots of you submitting duplicate bugs.
+	This should be a pretty good release. We still have a couple crashes
+	in ssl stuff, but we fixed a number of the bugs in the tracker, and
+	the code cleaning helps alot as well. Enjoy!
+
+0.70 (9/28/2003):
+	Sean: Yahoo! works (for now).  That's good NEWS if I've ever heard it.  
+	Huge thanks to our dear friends over at Cerulean Studios, creators of
+	Trillian, for helping us out.
+
+	Nathan: This release also works out most of the kinks in the new
+	contact support.  The Jabber goodies I promised will have to wait
+	for now.
+
+	Christian: I didn't really do anything except fix a couple of issues
+	loading protocol plugins that had plugin dependencies and getting perl
+	to install where we tell it to. I had hoped that 0.70 would include
+	a finished libgaim, but Yahoo kind of wrecked that dream. We'll see it
+	within the next few releases. Life has been busy in a good way :)
+
+0.69 (9/24/2003):
+	Sean: MSN and Yahoo! work.  That's good NEWS if I've ever heard it.
+
+	Herman: Win Gaim has been around for more than a year now.. Time Flies.
+
+	Nathan: {{Meta,}{Contact,Buddy},Person} support for all!  Also, SSL
+	support for Jabber makes its debut.  More Jabber goodies next release.
+
+	Christian: It's a good release. The main highlight really is
+	Nathan's Contact support, which is just beautiful. My buddy list
+	shrunk considerably. As Sean stated, MSN and Yahoo! work.  MSN
+	does not support the new MSN buddy icons and stuff, unfortunately,
+	but we'll see about 0.70.  There were a whole bunch of Perl fixes,
+	so hopefully there will be less complaints directed to my code in
+	that area ;) Among other new additions of mine are SSL support
+	(both Mozilla NSS and GNUTLS), Plugin IPC (letting plugins talk to
+	each other), and some visual niceties in the Accounts window.
+	Ka-Hing Cheung put in animated smileys, which should please many.
+	Yeah, good release. Just you wait until 0.70 though.
+
+	Robot101: Hi mom. My patch isn't in this release. Watch for the next
+	one.
+
+	Mark: Metacontact support, yeah.  Right click on a dude and 
+	select "Expand."
+
+	Ethan: God bless the USA.
+
+0.68 (09/01/2003):
+	Rob: Wow. I am so incredibly tired.
+
+	Sean: School starts tomorrow!  How fun!  I'll have more time to hack 
+	gaim (isn't that supposed to be the reverse?)*
+
+	*Some NEWS recycled from v0.10.0
+	
+	Nathan: I didn't do much for this release, except make Jabber
+	registration work, and put in a slight tweak to make Gaim work a
+	little better with jabberd2.  Next release you'll all see what I've
+	been spending my time on, but for now enjoy the fruits of everyone
+	else's labor.
+
+	Mark: I've been really busy with other stuff, but I've spent my 
+	Gaim-time on working towards a more formal translation process.  
+	Hopefully this will result in Gaim shipping with more complete 
+	translation files.  Also, all our awesome translators are mentioned 
+	in the about window now.
+
+	Christian: I've been really busy with this stuff. Gaim got a new
+	signal architecture, which is just really cool. The old events system
+	is gone. Now you connect a signal from a handle (which can be
+	a plugin or whatever) to a function, and plugins can register their
+	own functions, and other neat things. Oh yeah, and perl was rewritten.
+	There's a new HOWTO in the Doxygen docs (make docs), but no API
+	reference yet. Developers, look at the plugins/perl/common/*.xs files
+	for now. I also wrote plugin dependencies, which will be more useful
+	down the road. Gaim v0.69 is going to have the new MSN plugin that
+	works with the latest MSN protocol. Please be patient for that, as
+	we're getting a lot of MSN questions we answer over and over.
+
+	Luke: Wow, I actually did something for this release besides commit
+	translations! Well, sorta. I got permission to commit some patches 
+	so gaim now has color support for yahoo, and you can fetch some 
+	basic info on yahoo and msn users. Yay for people submitting patches!
+
+0.67 (08/14/2003):
+
+	Rob: I live in Georgia.  I don't care about blackouts.  We only
+	have to deal with floods and tornadoes.
+
+	Sean: Fortunately me for me, I live in the only place in New York
+	that still has power tonight!  New features in 0.6@%f)*2.{\
+	NO CARRIER
+
+	Christian: I guess Sean couldn't be here to tell you about all the
+	great new things. New stuff was done! It's simply amazing. Yeah. So,
+	new IRC protocol plugin, tab text is greyed on events (like "So and
+	so has signed off!"), protocol icons on tabs (thanks to Etan Reisner),
+	some dialog rewrites.. Great stuff. Gaim's looking more teh perrty.
+	My big "wow" thing is that the core and UI were split enough for me
+	to remove the remaining UI code and make a patch, and libgaim was born,
+	for experimental purposes. However, using it, I was able to make the
+	second UI ever for Gaim - Gaim for Qtopia (Zaurus and iPaq PDAs).
+	This is viewable at http://qpe-gaim.sf.net/ (shameless plug?). More
+	UIs to come I hope! :) Exciting time in Gaim.
+
+0.66 (07/18/2003):
+	Rob: Oops!!!!  This reminds me of other silly things that we've
+	done. I agree with what Herman is going to say. ;-)
+
+	Sean: Man, 0.65 was so super lame and boring.  But 0.66?  WOW!
+	This is the most incredible thing EVER.  We've done tons of work
+	since 0.65, and I'm really proud of what we came out with.  Thanks
+	to everyone who helped!
+
+	Christian: Wow, I can't even begin to describe how long we've worked
+	on this one. Monstrous release. Best ever! You won't even recognize
+	it. If you've had account import problems, delete your accounts.xml
+	and upgrade to 0.66. Just, wow.
+
+	Herman: This is to make up for slipping off the two week release cycle.
+
+	Luke: Okay, people, yes we did test 0.65 for bugs, but hey, some things
+	slip through. This release makes up for that. This should fix the bugs 
+	0.65 introduced, at least the ones that most of you would otherwise hit.
+
+	Nathan: We are so smart.  S-M-R-T...I mean S-M-A-R-T.
+
+0.65 (07/16/2003):
+	Rob: Wooo! We're finally ready for 0.65.  Are you guys excited?  I
+	haven't worked on anything in this release, either.  I've been
+	working offline on a MacOSX UI.  No, you're not allowed to ask
+	me when it will be ready.  If you ask me then I won't answer 
+	you.  You've been warned! :-D
+
+	Sean: Although I tend to go right here in the two slot in NEWS,
+	we don't always commit in this order.  This is the third time I've
+	rewritten this because the jerks below me keep commiting while I'm
+	writing causing mass conflictination.  Grrr.  Stupid jerks.  Anyway,
+	this is Gaim 0.65.  Like other Gaim releases, this allows you to 
+	converse with people far away over the "Internet."  That's about it.
+	It's really not that interesting.  In fact, I wouldn't even bother
+	reading the other people's NEWS.  It's all boring.  There's some 
+	crap about forest fires and fangs and claws.  It's really boring.
+	Great, now Luke just committed NEWS causing more conflictination.
+	I wouldn't bother reading his either.  Oh, and I don't want to thank
+	Megan (Cae) or Kevin (SimGuy).  They're stupid jerks too.  Grrr...
+
+	Mark: I actually did stuff for this release.  Go me.  I probably 
+	shouldn't speak for all of us, but I'm going to anyway: We feel that 
+	this release is one of Gaim's best.  It should be relatively bug 
+	free, and the code is cleaner than ever, thanks to lots of work by 
+	Christian and Nathan.  We had some help from a few civilians 
+	finding and fixing bugs.  Thanks to Megan (Cae), Ka-Hing Cheung 
+	(javabsp), and Kevin Stange (SimGuy) for their work.  Man, I was just 
+	looking at Sean's NEWS entry for 0.64--that's talent.  Also, stay 
+	in school.  Just say no.  Only you can prevent forest fires.
+
+	Christian: This has been a great release. faceprint rocks, as he got
+	things moving in the core/UI split by redoing preferences, which forced
+	us to think about how things would be split. We now have XML
+	preferences, accounts, pounces, and away messages. No more .gaimrc
+	ugliness. The accounts and connection code now have new core/UI split
+	APIs, and there is very little to do before our split is ready to be
+	used. Rob and I are working off an experimental tarball of what will
+	eventually be libgaim. He's working on a MacOS X UI (don't ask him
+	about it, he'll ignore you) and I'm doing a Qtopia UI (you can ask
+	about that, it's usable!). We added a new protocol, Trepia.
+	Information about it can be found at http://www.trepia.com/. It's not
+	complete, so don't send in bug reports about it not finding people in
+	your local area, please. Oh, and lots of MSN bugs were fixed.
+	Practically all the known ones. I feared 0.65 would be unstable due to
+	our rewrites, I believe this is going to be one of the most stable
+	releases we've had in awhile (knock on wood), thanks to Megan (Cae),
+	who has done an amazing job at locating, categorizing and documenting
+	the various bugs she has run into, and kevin (SimGuy). Stay tuned for
+	upcoming releases. Neat things are coming, but if it has fangs and
+	claws, curl into a ball. Or yell at it. I can't remember which is
+	correct.
+
+	Luke: Wow! Finally releasing 0.65! Christian, Nathan, and Mark have
+	worked really hard for this release, all the credit goes to them.
+	The new preferences are awesome, and there are more bugs fixed for 
+	this release than in the last 3 or 4 releases. Your MSN should work
+	reliably again, your preferences saved, your accounts resort, the 
+	list goes on and on. A couple preferences, most notably your buddy
+	list sorting preference won't be imported, but almost all of them 
+	will be	and its probly a good idea for you to take a second look 
+	through preferences again anyway, alot of you are starting to 
+	forget that things are optional again. :-)
+
+	Nathan: I think I did something for this release a while ago.  I've
+	got a mailbox full of commit emails, and some have my name on them,
+	so I must have done something, right?  Probably some minor jabber stuff,
+	and lots of crazy bugfixes.  It was a team effort, I'd like to thank the
+	academy, our producer Rob Flynn, and of course all the fans. You rock.
+
+	Herman: I was told to write something.. so here it goes.  Windows users
+	will be happy to know that they can now rearrange their Buddy Lists.  
+	I finally got stuck into GTK+ code and fixed the bug in question (this 
+	release will include a patched version of GTK+ 2.2.1).  I integrated 
+	the WinGaim systray code into the docklet plugin bringing those nice 
+	docklet features (i.e. Message queuing) to WinGaim.  Another major
+	WinGaim change of note is that debug versions of all dlls can now be
+	built, providing useful backtraces not only for gaim.dll but for the
+	plugins as well.
+
+0.64 (05/29/2003):
+	Rob: I didn't do anything this release either.  We're under a crunch
+	week at work.  Friday is the end of the crunch. Hooray!! Thanks for
+	all of your hard work, guys :).
+
+	Sean: Unlike every other time we say, "the next release will be loaded
+	with cool new features, this time, we really mean it. In fact, they're
+	already in CVS (don't use CVS).  The only obvious new feature for 0.64
+	is buddy list sorting.  This has been much requested and can be set in
+	the buddy list preferences.  You can sort by name, by status, and even
+	by log file size--putting people you talk to most at the top.  Plugins
+	can even easily add their own sorting methods.  It's all very cool.  I
+	want to thank Luke and Ka-Hing for their initial work on it.  And yes,
+	I did make my entire NEWS entry justified on purpose.
+
+	Christian: I have a few new goodies in 0.64, but they're mostly
+	back-end stuff that people like us care about. The things that most
+	of you will like the most is that almost all of the reported MSN
+	bugs were fixed. Users with an empty contact list can now login again.
+	The friendly name bug is gone. E-mail notifications work again. Yay!
+	We have some big changes in store for 0.65. Careful if you use CVS...
+	Things will break. :)
+
+	Mark: I never really have anything important to add.  I'd just like to 
+	thank Jack Daniels for his exquisite bug reports.  And whiskey.
+
+	Nathan: I don't think I did anything for this release.  I'm a bum.
+
+0.63 (05/16/2003)
+	Rob: Wow, so, what can I say? I've been rather AWOL for the past few
+	releases.  However, that's okay.  Work has been pretty friggin hec-
+	tic, so, that's my excuse.  Work is finally going to be slowing down
+	some. I plan to be doing more Gaim work.  That makes me happy. That
+	makes you happy.  That makes us all happy.  Now, I just need to
+	finish rebuilding my car's engine.  Engine rebuilds put the FU in
+	fun!
+
+	Sean: Yay!  School is finally over.  I have to give tons of cherry-
+	flavored props to everyone whose been helping out while I stayed away
+	from Gaim to keep myself from failing again, especially Christian and
+	Nathan.
+
+	Luke: Okay, this is NOT a bug fix release, at least for those of you
+	who use MSN. Christian put in a TON of effort rewritting the MSN prpl,
+	mega props to him on this release. In other news, we have alot of bugs
+	fixed, and a goodly number of the translations are more up to date 
+	than they were in earlier releases. There are some other significant
+	changes, but they are mostly backend stuff, yay for core/ui splits ;-)
+
+	Christian: As Sean and Luke said, I did a tiny bit of work in this
+	release. The MSN prpl was rewritten, and should now work better. It's
+	compatible with the MSNP7 protocol that MSN v4.x uses. Unfortunately,
+	MSNP9 is being worked on. Bah. Also, it has MSN Mobile support, so you
+	can register your MSN account with http://mobile.msn.com/ and people
+	can page your mobile device. You can also page other MSN Mobile users.
+	Groups are now stored on server. Oh, and due to the nature of MSNP7,
+	conversations are timed out after 5 minutes, so you'll unfortunately
+	see a message indicating that. Sorry! I wrote experimental support
+	for my own implementation of MSN buddy icons. You can set them in your
+	account settings much like with AIM, and when you talk to other gaim
+	users, they'll get your buddy icon. This will last for a few releases,
+	until the buddy icon implementation in the upcoming MSNP9 protocol is
+	figured out, and we have support for that. That'll be a couple months
+	away at least. Also, we have a rewrite of the plugin interface, so
+	rewrite your plugins! Things are going to get very cool from it. The
+	debug API was core/UI split, and some enhancements were made to the
+	debug window. I think that's all from me.  It's been a fun release.
+	Stay tuned, I have some great things coming up!
+
+	Nathan: It seems like 0.62 was forever and a day ago.  I had to look
+	at the ChangeLog to remember what I did.  Apparently I made it so you
+	can put chats in your buddy list.  And then I tweaked a bunch of stuff
+	and fixed a bunch of crashes.  Then exams came, and then I went home
+	for a week and left my laptop's power cable here at school, so I didn't
+	get anything done.  Jabber will get all sorts of fun new stuff for
+	the next release.  Really.  ;-)
+
+0.62 (04/23/2003):
+	Sean: This is just another standard bi-weekly Gaim release.  Nothing
+	really interesting, but it has some good bugfixes.  Personally, I've
+	been a bit removed from Gaim development lately what with school getting
+	tough and stuff, but the rest of the guys have really been doing great
+	work without me.  Thanks, guys.
+
+	Christian: I can't remember what I did here.. Think I'll take a quick
+	look at the ChangeLog.... Okay, guess I was useless. That's okay,
+	though, because I have some really cool stuff going into 0.63. Plugin
+	authors will hate me for it. A rewrite of the plugins interface! This is
+	actually a Good Thing (TM). Anyhow, upgrade to this release, and tell
+	your friends.  33 Gaim users can't be wrong!
+
+	Luke: I didn't do much here besides the odd translation patch and a
+	couple bug fix patches. This is primarily a bug fix release, and much
+	needed at that. Didn't get a chance to write sorting code, work has been
+	busy.  Hopeefully it will happen for 0.63.
+
+	Mark: Gaim is coming along quite beautimously.  I'm going to eat 
+	my Pop-tarts now.
+
+	Nathan: oh dot sixty two.  There are a lot of bugs fixed in this
+	release, and one major new feature.  Our Jabber plugin now supports
+	XHTML-IM.  In plain english, this means that you can now format your
+	jabber messages, and other people will see the formatting.  GtkIMHTML
+	still needs some work to get it to parse valid XHTML-IM better, but that
+	will come in time.  That time would come sooner if my CS prof accepted
+	"I was hacking on Gaim" as a valid excuse for an extension ;-)
+
+0.61 (04/07/2003):
+	Rob: Nathan commited his news first.  However, I'm cooler so I'm putting
+	my entry above his.  Yeah, so, there were some DnD issues with 0.60. I 
+	blame it on the rain. It was falling, falling.  I blame it on the
+	faucet. It drips all night.
+
+	Sean: I committed my news after Rob.  I'm cooler than Nathan (by far)
+	but not as cool as Rob.  So I go here.  Actually, I didn't do anything
+	since 0.60 other than commit some other peoples patches.  The one from
+	Dave Camp is cool.  How 'bout this snow?  Isn't that crazy?  Oh, and
+	thanks to everyone who wished me a happy birthday.
+
+	Nathan: You want frequent releases?  You got 'em ;-)  Chip wrote some
+	cool new pounce stuff, and things shouldn't get weird when you drag
+	groups and buddies around.  It's bad enough having 1 of some of my
+	buddies on my list, I definitely don't need duplicates.  Being that I
+	have class in the morning, I'll just raise my juice glass for this one.
+
+	Christian: I'm not as cool as Rob, Sean, or Nathan, so I go down here.
+	Well, among some of the fixes is my new buddy pounce code! This adds new
+	buddy pounce types, core/ui splitifies the code, and makes the dialog
+	box spiffy. Yay frequent releases! Erm, I can't think of anything else
+	cool to say here. Have fun, everyone!
+
+	Luke: Okay, i'm probly the least cool, so I'll go last. I committed a
+	few patches from other people here, nothing earth shattering though. The
+	biggest thing in this release is the group re-ordering bug fix, having
+	that fixed will make for fewwer questions. Get used to using releases
+	people, we want to use cvs for actual development :-).
+
+	Mark: I didn't want to write any news without actually having done 
+	anything, so I fixed a meaningless compile warning.  Boo-yeah.
+
+	Sean: Luke can't spell "fewer".  How un-cool is that?
+
+0.60 (04/04/2003):
+	Rob: Wow. So, it has been a really long time since we started the
+	gtk2 fork. It's finally ready for public consumption. Sean is about
+	to go out and buy a case of beer.  My roommate is downstairs right
+	now pouring me a shot of his choice.  Everyone, raise your beers if
+	you've got them.  It's been a cool almost 10-months of development.
+	I hope you all enjoy. Drink'em if you got'em!
+
+	Sean: I'm writing this 3 minutes before my 21st birthday.  Nobody can
+	believe we're finally ready to relase 0.60.  Many thanks to everyone
+	who helped out; I'm convinced that Gaim 0.60 is the best IM client to
+	date (only to be bested by 0.61).  There's WAY too much stuff to mention.
+	Even the ChangeLog is somewhat incomplete.  Yay, I'm 21 now!  Everyone
+	enjoy! :)
+
+	Nathan:  Happy birthday Sean!  Rob decided to let me start cleaning up
+	after everyone, so here I am.  "sexy" is the only word that can be used
+	to describe 0.60.  Prepare to be shocked and amazed.  /me raises his
+	(shot) glass ;-)
+
+	Christian: Geeeeeze this took a long time. Worth it though! Personally,
+	I thought we'd all just give up on releases altogether and tell
+	everybody just to grab CVS. I'm pretty happy with this release. I was
+	able to contribute quite a bit to it. Makes me feel proud to be a gaim
+	developer!  I'm really looking forward to the future releases. I have
+	some neat stuff planned. Yay, I'm still 19! Mmmm, Sierra Mist. Make me a
+	sammich!
+
+	Mark: Whoops, I started drinking a little earlier than I was supposed 
+	to.  I guess I missed the memo.  Hmm, I ate at a restaurant somewhere, 
+	I think it was at Snowshoe, and the menu had "sammiches" on it.  It was 
+	pretty sweet.  I'd like to give a shout out to all the Gaim 
+	devizelopers for rizocking the hizzy the past few months.  Word.
+
+
+0.59 (06/24/2002):
+	Rob: I guess Sean is busy at home or something and Jim is asleep.
+	I'm very tired but it's time for a release.  Enjoy.  :)
+	SORRY FOR THE DELAY. :(
+
+	Sean: It's been a long time since our last release, and for no 
+	good reason either.  Rob and I just haven't been able to get together 
+	to do it.  But now we have.  Aside from some Jabber changes and some 
+	crucial MSN fixes, most of this release's changes are transparent, 
+	but none-the-less important.  Well get some better changes when my 
+	computer works again, you have my word*
+
+	*My word is worthless.
+
+
+0.58 (05/13/2002):
+	Rob: Yeah, so, my computer has been bad which is why the release
+	didn't go out on time. Oh well.  I would like to welcome
+	Jim Seymour aboard the development team.  He's going to be taking
+	over the work on our Jabber code as well as doing various other
+	nit picking. He likes to pick nits, nats, and umm, knots, I think.
+
+	Sean: This release has a long ChangeLog.  Higlights include an
+	important security fix for MSN and a few nice new features.
+	Not *much* cooler than 0.57--but we're making progress ;)
+
+	Jim: Hmmm... Rob said I have to say *something*, so here it is:
+	Rob's a mango.
+
+0.57 (04/25/2002):
+	Rob: Not too much in this release, as Sean said below. (This is
+	what happens when the bottom person goes first.) New translation,
+	a few fixes, secure msn hotmail logins, blah blah blah. As Sean
+	said, the next release will be cooler. If only you could read
+	our minds ;-).
+
+	Sean: Nothing too special here, but a critical Yahoo fix that
+	ensures Yahoo! will work when they discontinue the old protocol
+	all the other 3rd party clients are using.  Next release will be
+	cooler, I promise.
+
+0.56 (04/11/2002):
+	Rob: Well, what do you know. I have another headache. I always have
+	these damned headaches. I got pissed off with the way GtkTree looks.
+	I wanted to move to using GtkCTree. I think they're pretty.
+	Unfortunately, GtkCTree sucks. After a little digging through
+	the code, I managed to molest GtkTree into looking like
+	GtkCTree. Thanks to everyone that helped track down that one
+	annoying style problem.
+
+	Sean: Hello.  This is another minor release while Rob and I finish 
+	up on some bigger projects.  We're reworking a lot of the UI to make 
+	it easier to use, nicer looking, and more compatible with gtk2.  
+	I've also been trying to bring the Yahoo plugin up to date, so it 
+	will work for Indian users and avoid a potential problem in the near 
+	future.
+
+0.55 (03/29/2002):
+	Rob: 0.55 is here. I've been away for a few days on business. Sean
+	has been on Spring Break. Therefore, this release is mostly a patch
+	release. It does fix some bugs and makes a few thing slightly cooler,
+	so it's better in that aspect, I suppose.  Enjoy.
+
+	Sean: This is mostly a bugfix release.  I'm on Spring Break, not
+	doing any coding at all.  But lots of people sent in great patches
+	anyway.  Thanks guys!
+
+0.54 (03/14/2002):
+	Rob: Well, here we are. 0.54. We got a lot of fun things in this
+	release. Better working SSI, Image sending, protocol specific
+	smiley faces, and a whole lot of triscuits. *gobble*
+
+	Sean: We fixed a lot of bugs in this one, and probably introduced
+	a bunch too. ;)  We were both really busy, and did all the coding
+	late at night when we were tired, so if something isn't working, 
+	it's probably just tired code.  Enjoy the triscuits!
+
+0.53 (02/28/2002):
+	Rob: Well, we missed yesterday's release. That's Okay, I head a
+	nasty headache. You can all just deal. ;-)
+
+
+	Sean: Neat Goodies!  Whee!!  Oscar got a lot of great additions.
+	It can do Screen Name formatting, it can save and store your buddy
+	list on the server, it can do typing notifications in Direct
+	Connections, and yes, it can receive IM Images!  Sending images will
+	be added in the next release.  MSN and Yahoo! can do typing 
+	notification too.  Hooray!
+
+
+0.52 (02/17/2002):
+	Rob: Well, after a long delay we're finally ready for another release. 
+	I finally got settled into my new apartment, the new job is going 
+	well, and I finally have internet connectivity again. You can expect 
+	us to be back on our usually bi-monthly schedule.  Enjoy these fixen, 
+	as they resolve a few connectivity issues. :-)
+
+	Sean: It looks like things are back on track now.  Eric left which is 
+	sad.  He's done so much for Gaim, and I know we're all thankful.  
+	Thanks Eric!  I'll be stepping in and do more development, but I can 
+	never replace Eric.  This release fixes a long-standing problem in 
+	MSN.  If you've gotten errors when trying to connect to MSN, you want 
+	this release.  If you've suddenly found yourself unable to connect to 
+	Yahoo!, you want this release too.  The "neat goodies" will be in the 
+	next release ;)
+
+	Rob: Operation Evil does not exist! ;-)
+
+
+0.51 (01/24/2002):
+	Rob: Well, here we go. I FINALLY got around to making a release
+	after over a month, Sorry for the delay, all. Things got really
+	hectic around the gaim house hold.  This release isn't as complete
+	as I had hoped, but I promised to get something out. There's some
+	neat goodies in mind for the next release, right Sean? :-)
+
+
+0.50 (12/13/2001):
+	Rob: I am tired. Tonight was weird. Bleh!!!!
+
+	Eric: I second that.
+
+0.49 (11/29/2001):
+	Rob: *still mamboing*
+	
+	Whew! That was a bad little mambo.  I hope everyone had a nice
+	little Holiday, if you celebrate. If not, then I hope you had
+	a sucky weekend. :-D. 
+
+	Oh, lots of cheese for everyone!! (Beware the duffle)
+
+	It's getting cloudy. I think it's going to storm somethin'
+	fierce. That's my southern talk. Do you like it? 
+
+	Eric: I want to be like you.
+
+	Do the cha cha cha!
+
+0.48 (11/18/2001):
+	Rob: Hi! It's 4:12am! I'm watching The Simpsons. :). 
+	Oh boy, sleep! That's where I'm a viking! :) There's not
+	too much for me to say in this release. I'd just like to
+	thank Eric for his hard work. :)
+
+	Eric: Everybody mambo!
+
+0.47 (11/01/2001):
+	Rob: Hi. Gaim v0.47 has been released, as you should already
+	know. I hope all of you had a nice little halloween. There are
+	quite a number of changes in this release. There are a few too
+	many to list here, so I will redirect you to ye olde ChangeLog.
+
+	Eric: Remember back in the day when TOC was the only protocol
+	Gaim could use? Remember the login window from back then? Back
+	before Gaim had perl or plugins or multiple connections or
+	10 different protocols. Things have changed so much since then.
+	Many more changes in this release as well. All good things.
+	Don't forget to talk to SmarterChild.
+	
+0.46 (10/18/2001):
+	Rob: Hey guys! The smores were great! I really enjoyed meeting
+	up with all of you guys and singing campfire songs. It was 
+	really awesome.  Thanks for the beer, too. Next time, it's on me.
+	
+	This release has quite the number of bug fixes. I won't bother
+	going into detail here. Just ust it, love it, live it - SEGA!
+
+	Eric: Lots of fixes. Things compile well now. ICQ has stopped
+	crashing on PPC and Sparc. If you know someone who isn't using
+	Gaim because it was unstable, please get them to try this
+	version. It's much better, I promise.
+
+0.45 (10/04/2001):
+	Eric: Well, it seems that the time has come for yet another
+	release. There are several yummy additions in this release, and
+	quite a few useful bugfixes as well. Unfortunately it seems that
+	Rob is currently unavailable; he joins us in spirit. He'll be
+	joining us later for a group sing-along and smores by the
+	campfire. But for now, you'll need to keep yourselves occupied
+	with 0.45. And remember, a happy hacker is a pimpin' penguin.
+
+0.44 (09/20/2001):
+	Rob: Another release has come upon us. There were actually quite
+	a number of things in ye old ChangeLog for this release. I don't
+	feel like talking about them here, so you can read about them
+	in ... you guessed it .. the ChangeLog.  Oh, and if you're 
+	wondering about setting buddy icons, wait til 0.45 or 
+	use CVS shortly after this release. ;-)
+
+	Eric: You should all be using CVS anyway. This has become the
+	slogan in our IRC room, #gaim on irc.openprojects.net. The IRC
+	plugin got lots of updates (mostly because I felt bad about using
+	X-Chat for IRC when gaim supposedly had an IRC plugin), so you
+	should load the plugin and join us. :)
+
+0.43 (09/06/2001):
+
+	Rob: Well, I knew that the day would eventually come. I just didn't
+	expect it to be so soon. ;-).  Yes, that's right, Eric and I finally
+	got sick of all of the pre releases.  We didn't want to make this
+	release an official 0.11.0. We thought that it would cause a lot
+	of confusion. We didn't want to continue our trend of prereleases
+	either. So, since gaim was first released officially, there
+	have been 42 releases.  This is number 43, hence the 0.43 version
+	number.  We're going to stick with this trend from now on. :-).
+
+	Eric: We're also going to be starting a release early, release
+	often trend, that hopefully we'll stick to this time. Hopefully
+	we'll be putting out a new release every two weeks or so. You
+	should all be using CVS anyway :) And as always, don't forget to
+	report bugs! Anyway, since there's only been 9 days since the
+	last release not much has changed. A bug-fix release and a version
+	change mostly :)
+
+0.11.0-pre15 (08/28/2001):
+	Eric: This isn't a real release. Really. It's just a quick thing
+	because pre14 doesn't cut it for some people. Also not counting
+	the month break that I took it's been a month since the last
+	release, so it's about time. You should all be using CVS anyway.
+	Instructions are at http://gaim.sourceforge.net/cvs.shmtl. And
+	don't forget to report bugs! http://gaim.sourceforge.net/bug.php3.
+
+	Rob: Hey guys.  I've been rather inactive as well. It's a long
+	story, but essentially, my company layed off a bunch of people,
+	myself included, due to poor management.  I've taken a new
+	job which required moving across the country.  I'm finally back
+	online.  Once I manage to actually get a desk at home I'll be
+	able to code with out infliciting intense pain upon my lower
+	back and neck.  So, basically, we were inactive, but not dead.
+
+	Also, just to keep you all updated, the AOL battle is still
+	in progress.  Our lawyers are still in negotiation with thiers.
+	We'll keep you updated with what happens.
+
+0.11.0-pre14 (06/17/2001):
+	Eric: Wee. Lots of fun things. BIG bug fix release. I did a lot of
+	stupid things in the last one, hehe. You all forgive me though,
+	right?
+
+	Reality is always controlled by the people who are most insane.
+	Remember that. It's a great Scott Adams quote.
+
+	Rob: I feel naughty. I should have released this a lot earlier
+	in the day.  I have a problem though. I started cooking, invited
+	a couple friends over for dinner and then took a walk to a
+	24hr doughnut shop where I sat outside and talked about
+	random stuff.  Oh well, at least it's still before the 18th.
+
+	Enjoy this release guys! :-)
+
+
+0.11.0-pre13 (06/06/2001):
+	Rob: \O.  Howdy doodie!  This release isn't coming too far behind
+	the previous release but hey, what can ya say, there were a couple
+	of good fixes in this one.  Jabber & IRC can set / view the topics
+	of chat rooms now, napster doesnt crash on bad login names and
+	passwords, and the man page got a big update.  
+
+	Well, that's about all, folks.  Next release, I hope to try to get
+	group MSN chat support added as well as DCC support in the IRC 
+	plugin. 
+
+	Peace!
+
+	Eric: I apologize if any of you had to restart your X server because
+	of me. This release won't make you have to do that, I promise. There
+	were a couple other minor fixes with the buddy icon stuff, it still
+	has a way to go but at least it's better than it was before. Oh yeah,
+	and Oscar is able to sign on again.
+
+0.11.0-pre12 (05/29/2001):
+	Rob: Hi!  O/.  My girlfriend was visiting me so I've been busy being
+	unavailable online.  Hooray.
+
+	There have been a lot of good changes in this release.  Some improved
+	dialogs, some updates to IRC and MSN, as well as a nifty little thing
+	that Eric did that I'll let him tell you about.  
+
+	Oh yeah, I also got food poisoned by bad eggs.  Ugh!
+
+	Eric: Every protocol except TOC has been improved since the last
+	release. All of them except Zephyr and ICQ now use the same proxy
+	options, which you can set in the preferences. ICQ can use them if
+	you set it to Socks5 though.
+
+	There are a bunch of other good additions and fixes for each
+	protocol which you can read about in the ChangeLog. And, there's one
+	super cool feature that everyone seems to be asking for: Buddy Icons.
+	Right now you can only receive them and only in Oscar, but hey, they're
+	there.
+
+	So that's it. Have fun with it :)
+
+0.11.0-pre11 (04/30/2001):
+	Rob: I bought a big carton of juice today.  It is now 50% empty.
+	A lot of the plugins got some new options and/or improvements. I
+	have a headache right now, though, so I won't say much.  I'll let
+	Eric talk :)
+
+	Eric: I uh. I bought 72 cans of soda yesterday. It only cost $15
+	or so. I figure I'll be through it in less than two weeks. A
+	dollar a day on soda isn't so bad. For the fourth release in a row,
+	Oscar is fixed. Isn't that exciting. Judging from history I'd say
+	that it won't stay fixed long; but judging from what I know has
+	changed, we shouldn't have any more troubles.
+
+	Rob: --. .- .. -- /  .. ... /  --. .-. . .- - --..-- /  --. .- .. -- /  
+	     .. ... / --. --- --- -.. .-.-.-  
+
+	I don't have a headache anymore!  Hooray! Eric got a good deal on those
+	drinks.  I bought some bananas.  They're very green.  Oh, and I cooked
+	a steak last night.  It was 16 oz.  It was good.  
+
+0.11.0-pre10 (04/13/2001):
+	Rob: EEP! It's Friday the 13th!!!  I think I fixed a few buggies
+	in MSN and then added some new features to IRC.  I have a headache
+	right now, though, so I won't talk much.  I think I'm going to go
+	to sleep.  Next release, I should have a good bit more done on
+	IRC and will have made Napster more stable.  Have fun!!
+
+	Eric: There's a new protocol plugin, Zephyr. Don't use it! unless
+	you know what Zephyr is, and have zhm set up correctly. Also there
+	were a lot of other good bugfixes (like registering for Jabber
+	accounts!) and a few neat features. In this release, Oscar is also
+	working, but we'll see how long that lasts, eh?
+
+0.11.0-pre9 (03/26/2001):
+	Rob: Well, looks AOL was doing something naughty earlier this
+	morning.  Thanks to a very nice guy named Adam Fritzler (you
+	all know him from libfaim) we're now back online.  Thanks,
+	Adam.  I'll buy you a drink sometime :-).  
+
+0.11.0-pre8 (03/23/2001):
+	Eric: Oo wow :) So I guess the big news is that this release should
+	help you avoid the battle between Jabber and AOL. Most protocols
+	got a few good bugfixes; thanks to people who pointed them out :).
+	Hopefully for the next release I'll make it so you can register a
+	jabber.org account, and then you can support Jabber using Gaim.
+	I think (I *think*) Oscar blocking is working now. Haha, get it?
+	Oscar blocking? It took me a while to get it, too. But no, really,
+	I think that the permit/deny list in Oscar might be working.
+
+	Rob: MSN got some fixes and should be really stable now.  It had 
+	a little 100% CPU eating bug but that's taken care of now.  Next
+	on my list of repairs is the napster plugin.  It works -- sorta --
+	sometimes.  Heh.   As all of you probably know already, our Oscar
+	support was broken yesterday.  There's a little battle going on
+	between AOL and Jabber and we caught a bullet during the crossfire.
+	I think I just won the award for the most cliches used in one
+	paragraph, as a matter of fact. ;-). 
+
+	** Good luck to the Jabber guys in getting this resolved **
+
+
+0.11.0-pre7 (03/16/2001):
+	Rob: Hey! I finally rewrote the MSN plugin.  Sorry, I'm just 
+	a lazy code whore sometimes, heheh.  It pretty much has the same
+	functionality as before with the exception of instability.  I
+	didn't really like that feature very much so I removed it.  I hope
+	you guys don't mind too terribly much ;-). 
+
+	Eric: In this week's installment of gaim you'll find a new Yahoo!
+	library and an option to have all conversations in one window,
+	in addition to numerous bug fixes and other improvements. Don't
+	forget to send us your feedback. If there's something you want
+	added, changed, or fixed, head over to our SourceForge page at
+	http://sourceforge.net/projects/gaim/ and tells us about it.
+
+
+0.11.0-pre6 (03/06/2001):
+	Eric: Yay! I get to go first!
+
+	The biggest change in this release is the TODO file. Lots of things
+	got added. There's going to be a lot of prereleases. Please help.
+	Other than that it's mostly just a lot of bugfixes. Oscar got a few
+	new features. Head on over to http://sourceforge.net/projects/gaim
+	and tell us what you'd like to see in gaim. We've gotten a lot of
+	great requests so far, thanks.
+
+	I think I like releasing every week.
+
+	Rob: I've been bad so Eric got to go first.  The biggest change
+	In this release is the NEWS file.  It's the only thing I contributed
+	to!  heh, just kidding.  This is a bug fix release, as Eric said.
+	Next release will contain my newly rewritten MSN plugin.  You guys
+	should be happy with it :).  
+
+	Oh yeah, TUCAN rocks :)  Oh yeah, Eric rocks too. 
+
+
+0.11.0-pre5 (02/26/2001):
+	Rob: Yeah, I promise this is the last pre-release :-D.  That seems
+	to be a pretty common saying around here, huh?  Well, I must first
+	appologize.  The protocols that I was working on really should be
+	much more developed at this point -- they should be completed,
+	actually.  Unfortunately, my real life job (yes, I have one hehe) got
+	a little too busy and ate up all of my free time.  I promise that
+	things will get better now :).  
+
+	Eric: I don't promise that this is the last pre-release. :) But
+	hopefully releases can start coming more often than once every two
+	months. I don't really have much else to say. It's been a slow
+	couple of months.
+
+	Rob: I promise to hack gaim again.  Please don't hate me.
+
+0.11.0-pre4:
+	Rob: HOORAY FOR DISNEYLAND!
+
+	Eric: One more prerelease. I'm actually starting to think these
+	prereleases are a good idea; a lot of people reported a lot of
+	bugs in pre3 and most of them are fixed now. Also, it helps with
+	the whole release early-release often philosophy.
+
+	The big news in this prerelease is two more protocols: Jabber and
+	Napster. Both of them don't have any of the features that make
+	these services cool, yet. You can't use the transports in Jabber
+	and you can't download file in Napster. But you will be able to,
+	soon :)
+
+	Rob and I are going on vacation starting today until after New
+	Year's, which is a lot of the reason we wanted to get this release
+	out; it's much improved over pre3. Happy Holidays everyone.
+
+0.11.0-pre3 (12/15/2000):
+	Rob: Well, I hadn't initially planned on an 0.11.0pre3 but it 
+	looks like it was needed.  That's not necessarially a bad thing,
+	mind you.  It just means you get to see more goodies!  
+	
+	This release includes some other fun features.  See the ChangeLog
+	for more information.  Also found in this wonderful release is
+	an MSN plugin.  For all of you who have been holding onto Windows
+	simply because you have friends on MSN Messenger that you don't want
+	to leave, this plugin is for you! :) 
+
+	Guys, make sure you send us bug reports; preferably on the 
+	SourceForge bug report forum at 
+	http://www.sourceforge.net/projects/gaim/.  This will allow both
+	Eric and I to handle the bugs and will prevent either one of us
+	from losing the bug reports that are sent via AIM :-)
+
+	Eric: Hey everybody, Rob and I really want to hear what you guys want
+	to see in gaim. Head over to http://sourceforge.net/projects/gaim and
+	leave a message in the Open Discussion forum. We've gotten a lot of
+	good ideas so far (most of them didn't make it into this release,
+	unfortunately).
+
+	If any of you want to test out your mad coding skills, I can think of
+	a few projects that would be incredibly useful. Send me or Rob an IM
+	and we'll let you know how you can help. And don't forget to read the
+	HACKING file to see how gaim's put together.
+
+	This is hopefully going to be the last prerelease; now that all the
+	protocols that we're going to be doing for 0.11.0 are available it's
+	mostly just going to be hacking on them and getting them in usable
+	condition before the final release. Don't forget to send us bug
+	reports ;)
+
+0.11.0-pre2 (12/04/2000):
+	Rob: I messed up.  Oh well, it's fixed.
+
+0.11.0-pre1 (12/03/2000):
+	Rob: Hey guys!  Guess what!?  Yup, you're correct!  It's the pre1 
+	release  of 0.11.0. We have all sorts of goodies in this release!  
+	Check out the  ChangeLog file.  As always if you find any bugs, 
+	please report them on www.sourceforge.net/projects/gaim/
+	
+	You may find several small bugs as this is still a prerelease.  
+
+	You may want to note that my IRC plugin does not have full 
+	functionality as of yet.  All of the important / commands will be 
+	added before the final release. Also, if someone could send me 
+	some good buddylist pixmaps for the irc plugin then I'd much 
+	appreciate it.  Thanks to everyone who made this new release possible!
+
+	If you have any ideas, comments, or suggestions, please let us know 
+	either by e-mail or via the source forge message board at the URL 
+	above. :)
+
+
+	Eric: So what was Yay! For Gaim!? Yay was the codename for the 
+	Yahoo plugin. The whole point of all of these changes was I wanted to 
+	make a proof-of-concept plugin that would let Gaim sign into Yahoo. It 
+	turned out to be pretty much impossible with the old code. So,
+	Rob and I hacked gaim so we could do just that. There's now a whole new 
+	class of plugins, Protocol Plugins, that let users dynamically add new 
+	protocols to Gaim. Just load the plugin, and create a new account that 
+	uses that protocol, and you're set! Yay! (Oscar and TOC are both still 
+	static. Gaim is, after all, primarily an AIM client.)
+
+	Lots of people have been very generous and contributed a lot of 
+	time and  effort to writing some really nice patches for gaim since 
+	the last release. To all of you, a big thanks.
+
+0.10.3 (10/09/2000):
+	Rob: I am dumb.
+	Eric: I am not dumb.
+	
+0.10.2 (10/07/2000):
+	Rob: What do you want me to say for yours?
+	Eric: What happened since the last release?
+	Rob: You got DSL.
+	Eric: Oh yeah, I'm more available now.
+	Rob: On a more serious note, this is just a quick release
+	to hold everyone over.  Look for some very awesome things
+	coming in the next version.  I can't say what, just yet,
+	but what I can say is, Yay! For Gaim!
+
+0.10.1 (09/15/2000):
+
+	Rob: Hi Hi Hi!  Yet another gaim release pushed out the door
+	for you guys.  I hope you all enjoy it.  There was a few minor
+	issues cleared up in this version as well as the repair of
+	OSCAR support.  Hopefully we won't run into the same problem
+	as before.  Oh well ;-).  There's also a few small extra goodies
+	in here for you guys just check out the Change Log.  I hope you all
+	enjoy and take care! 
+
+	Eric: Wanna know what the Oscar problem was? You'll laugh. 2 bytes.
+	The fix was changing 0x07da to 0x0686. Anyway, aside from the fix
+	for that, there are a couple other good things. Beware of DSL nazis.
+	They won't give you service until 6 weeks after you order it. So um,
+	yeah.
+
+0.10.0 (09/11/2000):
+	Rob: Well peoples, I know that it's been a while since our
+	last release.  Here we go.  Some brand spankin' new interfaces
+	for you guys to oogle at.  I hope you all enjoy it.  Hopefully
+	our next release won't take as long to finish up.  Real life
+	kind of crept up on Eric and I and took up a lot of our times.
+	Life sucks that way sometimes.  Anyways, we're back and all
+	is well.  Thanks for hanging in there guys and we hope
+	you enjoy it! 
+
+	Eric: LWE was so cool. Rob and I met up there, we had a blast. But I
+	only got to go for one day and Rob got to go for three. Lucky bastard.
+	It's been so long since the last release that I don't even remember
+	what's changed. But all of it is good :) Like Rob said, all kinds of
+	new UI stuff. I think there are some new features in there too. Now
+	I'm headed back to school so I'll have more time to hack gaim (isn't
+	that supposed to be the reverse?), just as soon as I get my internet
+	connection back >:-/ .
+
+	Rob: Oh yeah, some of our pixmaps may need a little work.  We took
+	a lot of them from the Gnome Stock icons.  If anyone could do some
+	custom ones that stay within the 24x24 boundary and keep the same
+	idea and feel as the gnome icons then we would be more than happy
+	to use them.  Thanks much!! Viva la LWE.
+ 
+
+0.9.20 (07/14/2000):
+	Rob: Well, guys, I hope you enjoy this version.  I've done quite a bit
+	of work to the user interface.  It's still not in the state that I
+	would like it to be, though.  Over the next few versions you will
+	notice a few more interface changes as we try to bring a more
+	professional look to Gaim.  As always, we will stay true to our
+	pimpin' penguin atittude. 
+
+	Eric: While Rob's been busy making things pretty, I've been busy
+	making things work :). The chat and IM windows got merged, which
+	means that they both have the same features (notably, IM has /me
+	and chat has font/color dialogs and smileys). Also smileys should
+	work better in general now (thanks fflew).
+	
+	Rob: By the way, what Eric is saying is that he's smart and I'm
+	not and that he does all of the work and I sit on my butt all
+	day and claim to do work.  WOOO!  Just kidding, brother :-P
+
+
+0.9.19 (06/09/2000):
+	Rob: PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA 
+	PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA 
+	PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA  
+
+	All of that nonsense aside, there are a few things that DIDN'T happen
+	in this version of gaim.  The user interface changes will wait until
+	the 0.9.20 release.  We've decided to turn 0.9.19 into a "new feature
+	and major bug fix" release.  All/Most major bugs should be worked out
+	now.  We're sorry about the problem of segfaulting when your buddylist
+	stored on the server was null.  Oops! We won't let it happen again,
+	we promise.
+
+	Eric: Lots of good changes in this one, including locale support. Chat
+	had a lot of things done to it, but it's still not finished. The UI
+	didn't get the overhaul we were planning, but we wanted to get a few
+	bugfixes out.
+
+	Lemme say something about reporting bugs. Please do. Please try to give
+	as much information as you can. But regardless of how much information
+	you give, please be POLITE. If you tell us our software is crap then
+	we're probably not going to respond well.
+	
+	Rob: Before I close up and say goodnight, I'd like to say that I 
+	agree with Eric.  Reporting problems and/or helpful criticism in
+	a polite manner always yields the best results.  Peace all, and 
+	happy hacking.
+
+0.9.18 (06/02/2000):
+	Rob: Talk about release early, release often - sheesh!  We're going
+	insane.  Ya know, I'm not too happy with the Gaim UI.  I dont know
+	how the rest of you feel but it's time for a nice overhaul.  In the
+	next few days I'll be sitting down with some of my friends and coming
+	up with an improved interface.  I hope you all enjoy it.  It'll
+	include better looking dialogs, icons, sounds (hopefully lol), etc.
+
+	And -- for your random silly message of the day --
+
+	"Beans and Franks, Beans and Franks, Wine And Beer, Have No Fear!
+	I can sing! I can dance! I have a penguin in my pants!"
+
+	- Rob Flynn after not having enough sleep.
+
+	Eric: I've had less sleep than Rob, I can guarantee you that. There's
+	actually a lot going on in this release, despite 2 releases 2 days ago.
+	Don't ask me how; I think the elves had something to do with it.
+
+	Oscar support is almost to the point where I'm considering removing
+	the 'experimental' label from configure. For those of you brave enough
+	to try it, I'd like feedback. (And if you happen to write a patch to
+	fix some of the stuff that would be really cool too.) Hopefully for the
+	next release, in addition to the cool new UI, Gaim/Faim will be able to
+	do nearly everything Gaim/TOC can do. (Big things coming in 0.9.19, I
+	can feel it....)
+
+	And just remember, you *can* have too many gummi candies. Especially if
+	you eat nearly a whole kilo of them. Believe me. I know. But the gummi
+	cherries are damn good.
+
+0.9.17 (05/31/2000):
+	Rob: I am an e-mail fiend!
+	(after receiving 60 emails within a 5 minute period about a problem
+	and responding to all of them immediately)
+
+	I am stupid.
+
+	Eric: Heh heh. 2 releases in one day. I'm impressed. Maybe one of these
+times we'll actually get some of it right ;) Anyway, yeah. Just bug fixes in
+this one.
+
+	Rob: Yeah, we wouldn't be ourselves if we released it once and got it
+	right, would we? :-)
+
+0.9.16:
+	Rob: Blah Blah Blah.
+
+	Eric: Looks like Rob didn't have much to say, so I'll write something
+instead :)
+
+	There's a few good things in this release, the most important of them
+being: Better proxy support, of course. Oh yeah, and you can sign on now,
+so that's a good thing too. There's a few more good things going on in this
+release, so check out the ChangeLog. 
+
+	Play nicely, and we'll keep hacking away at it.
+
+	Rob: Go Watch `Road Trip'. 
+
+0.9.15:
+	Hey boy's and girls.  There's not much to say here this time.
+We're loving Southern California, the new job's going great.  We just
+got our company website up and the product development is going pretty
+smooth.  Life's pretty sweet now.  
+
+	We've hacked up all kinds of goodies for you in 0.9.15.  There's
+some file transfer (receive) support for those of you who have been
+wanting it for a while. There's some other misc. goodies tossed in as
+well.  Enjoy!! Oh yeah, we need a new website.  Come up with a sweet
+design and get in touch with me.  The current site is at:
+http://www.marko.net/gaim
+
+Thanks much!
+
+
+0.9.14:
+	Well, there's a few random hacks and fixes in here, along with
+a little suprise.  You guessed it, kiddos, support for plugins!  Happy
+hacking!
+
+0.9.13:
+	Not much to say for this release.  Bug fixes, That's all.  Look
+for the goodies I promised in 0.9.13 to appear in 0.9.14 which should be
+released very soon now.  
+
+	By the way, our CVS is now hosted over at source forge.  Go check
+it out at http://www.sourceforge.net.  Please check there before submitting
+any bug reports (You can read our CVS comments to see if we have fixed any
+problems).
+
+0.9.12:
+	Well guys, looks like we got some nifty things in this version.
+TrueType Fonts are supported for those XFSTT buffs out there (or whatever
+else you use).  A crap load of those plaguing memory leaks have FINALLY been
+fixed.  My brother, Jeramey, and a new friend Peter Teichan helped stomp
+those babies out.  A rad guy by the name of Eric Warmenhoven has been
+really sweet lately and has all but rewritten the Gnome Applet support :).
+He submitted patch after patch.  I finally got annoyed with him (just kidding bud)
+and gave him CVS access.  Look for Gnome Applet support in Gaim to start improving.
+That's about all for now.  I wanted to get this release out there.  File Receive
+support will be in 0.9.13 which is due out soon.
+	
+0.9.11:
+	Jeramey got a new Comfy Chair! Its very very comfy!  Whee!
+Jim also had a little hyper-drunken moment and started hacking away at
+a new configuration format for Gaim.  Looks like we're running .gaimrc
+version 1 now.  Gotta love it.  I got bored and hacked in a couple font
+properties that will, in time, contain more features.  That's about it
+for this version -- cept for that memory leak we fixed.  Shush! We're
+not plumbers! -- rob
+
+** Extra special update **
+
+Well guys, it looks like we all stopped working on gaim, moved to California,
+and took up a new job.  Don't worry though, those beach bums out here havent
+worn off on us yet.  I've decided to pick up the Gaim torch myself and continue
+development ont he prohect.  Hopefully we wont have any more five month braks in
+the project.  Sorry about that, guys :)
+
+0.9.10: 
+	Umm.  Dont ask.  Silly memory leak.  For those of you who
+wondered, you were losing about 256 bytes every 25 seconds for each
+person you have on your contact list.  Make fun of us.  Better yet ..
+Send us beer.  We'll do better :)
+
+0.9.9:
+	Welp, All of you boys and girls who run Mandrake and have some
+problems with Gaim working properly, please check out the FAQ file.  It 
+contains a nice fix submitted by one of our users.  I hope this works for
+you guys!
+	Jim appears to have intoxicated himself.  This is, as always, a
+Good Thing (tm).  His late-night adventure with the liquid-bread food group
+lead to the birth of a nice little feature called `The Lag-O-Meter'.  Dont
+ask, just try it out :).  It is pretty pointless if you have a super-fast
+connection but if you are a modem user, like many of us are, then try it out.
+	There's also some idle preferences and some other little random
+bug fixes.  Check'em out yo :)
+
+0.9.8:
+	Get Along Lil' Doggies.  Heh.  Looks like we have yet another new
+version of gaim for you guys to play with.  Be gentle now, it has a few
+new fetures.  The HTML widget is now more robust and we have *da da da* 
+HTTP proxy support.  
+	Oh By The Way, Do not pay too much attention to what we are doing
+with this release.  We are all a little bit happy tonight.  You must love
+life.  This is a special release of gaim.  We will be releasing some wonderful
+photographs soon .. or perhaps if we get the bloody webcam working then we
+will take a couple of quick snapshots.
+	Looks like the Gaim developers convention (cool name huh) that we
+had this weekend in Auburn, AL went wonderfully :).  yum yum yum. Hahahah. Oh
+by the way.  Beware of insecure rednecks in the deli.  Bad things.
+	In (non)related news, Jeramey could not successfully slaughter the
+one pound hamburger that he ordered.  (I think he could have done it but he
+wasn't feeling very well at the time).
+	Oh Yes, New Logo Too :) You likes? Thanks, Naru!
+	Just a little side-note: it looks like we didnt make the release that
+we had expected during the Gaim Convention.  Maybe we partied too much? I am
+not sure.  I remember watching the sun rise before I went to bed, though.
+Oh well.  Here's your release!  Enjoy!
+	By The Way, we have uploaded our party pictures to a website.
+http://www.dorky.net/gaim/party/  They are nothing spectacular but I hope you
+enjoy them! :).
+
+0.9.7:
+	Well, boys and girls, it's that time again!  Yup, time for the good
+release fairy to come bless us with her infinite wisdom and divine presence.
+Umm, yeah, something like that.  Anyways, this release has several little
+"bad" network fixes (as Jim likes to say) and a couple touch-ups to a few
+other features.  It also features preliminary oscar support.  Thanks to Jim
+and Adam ("the libfaim guy")  hehe :)  We have also corrected a problem with
+gaim not wainting to correctly save your password if you have an underscore
+in it.  Thanks to w1za7d for pointing out the underscore problem.  ' and \
+have also been fixed in passwords. :o) 
+
+0.9.6:
+	Sorry about the little segfaulting bugs in the past release.  Rob
+is stupid. :).  Anyways, they have been patched up and a couple new features
+have been added.  I hope you guys enjoy.
+
+0.9.5:
+	Well we added a myriad of new features to this release. (A lot of
+small buggie fixes too.)  If you need a detailed list just check out the
+ChangeLog.  We now have a new webpage design and have added a FAQ to the
+distribution.  Before coming to us with any problems please take a quick
+look through the FAQ to make sure we havent already covered your question.
+	Also, thanks to our beloved Web Monkey, FlynOrange, we have all
+learned the true power of foam weapons, slinkies, and whoopie cushions.  Hmm
+gotta love those pranks, eh?
+
+0.8.0:
+	Well, just starting the NEWS file.  I'll try to remember what's new
+from the last version.  Hmmm.  BIG code reorg.  Import/export, buddy pounce
+among the major new features.  Autoconf script too, which is a big win.
+Apologies to those who submitted patches which haven't made it in.. I
+promise, the next version!  This code reorg took up a lot of my time, and I
+want to get it out there.  
+

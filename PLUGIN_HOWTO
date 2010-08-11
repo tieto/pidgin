@@ -1,0 +1,7 @@
+For information on writing a plugin for Purple, Pidgin or Finch, go
+http://developer.pidgin.im and click on API.  From there, see the HOWTOs in the
+"Related Pages" section.
+
+You can also generate this documentation locally by installing
+doxygen and graphviz dot, then running "make docs" in the
+source tree.  The documentation will be in the docs/html directory.

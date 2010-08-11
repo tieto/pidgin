@@ -1,0 +1,69 @@
+# -*-shell-script-*-
+
+[Meta]
+RootName: @pidgin.im/pidgin:$SOFTWAREVERSION
+DisplayName: Pidgin Internet Messenger
+ShortName: Pidgin
+Maintainer: The Pidgin Developers
+URL: http://pidgin.im/
+Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
+Summary: A GTK+ based multiprotocol instant messaging client
+SoftwareVersion: @VERSION@
+InterfaceVersion: 2.0
+PackageVersion: 1
+
+[Description]
+Pidgin allows you to talk to anyone using a variety of messaging protocols,
+including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, MSN Messenger, Jabber,
+Gadu-Gadu, and Zephyr. These protocols are implemented using a
+modular, easy to use design. To use a protocol, just add an account using the
+account editor.
+
+Pidgin supports many common features of other clients, as well as many unique
+features, such as perl scripting, TCL scripting and C plugins.
+
+Pidgin is NOT affiliated with or endorsed by America Online, Inc., Microsoft
+Corporation, Yahoo! Inc., or ICQ Inc.
+
+[BuildPrepare]
+APBUILD_STATIC="Xss startup-notification-1" prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest --disable-glibtest --disable-vv  --disable-fortify
+#APBUILD_STATIC="Xss startup-notification-1" prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-vv
+
+
+[BuildUnprepare]
+unprepareBuild
+
+[Imports]
+rm -rf include
+rm -rf lib/pkgconfig
+find -name '*.la' | xargs rm
+echo '*' | import
+
+[Prepare]
+# Dependency checking
+require @gtk.org/gtk 2.2
+require @68k.org/libaudiofile 0.0
+require @xiph.org/libao 2.0
+require @gtkspell.sourceforge.net/gtkspell 0.0
+require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @mozilla.org/nss 3; }
+
+[Install]
+# Put your installation script here
+installExe ./bin/*
+installLib ./lib/libpurple-remote.so.0.0.0
+# do the plugins
+copyFiles ./lib/pidgin "$PREFIX/lib"
+installMan 1 ./man/man1/pidgin.1
+installDesktop "Networking/Instant Messaging" ./share/applications/pidgin.desktop
+installLocale ./share/locale
+copyFiles ./share/pixmaps "$PREFIX/share"
+copyFiles ./share/sounds "$PREFIX/share"
+installIcon ./share/pixmaps/pidgin.png
+# install and fix the .pc file
+# move this to the -devel package when I make one
+# copyFile ./lib/pkgconfig/pidgin.pc "$PREFIX/lib/pkgconfig/pidgin.pc"
+# safeSed "$PREFIX/lib/pkgconfig/pidgin.pc" "s|prefix=/usr/local|prefix=$PREFIX|"
+
+[Uninstall]
+# Usually just the following line is enough to uninstall everything
+uninstallFromLog

@@ -1,0 +1,2057 @@
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
+
+version 2.0.0 (5/3/2007):
+	* The project has new names - libpurple for the core, Pidgin for the
+	  GTK+ UI and Finch for the ncurses based console UI (AOL LLC)
+
+	Build Changes:
+	* With the Core/UI split complete, it is now possible to build
+	  libpurple without any UIs, creating a library upon which other
+	  UIs may be constructed
+	* A new ncurses-based console UI called Finch is now available
+	  (Sadrul Habib Chowdhury, Google Summer of Code)
+	* Reorganized the source tree to split apart the code for the UI
+	  changes and libpurple targets
+	* libxml2 is now required.  We switched from gmarkup to libxml2 for
+	  more correct XML parsing.
+
+	Status System:
+	* The code dealing with buddy and account status, away messages,
+	  away states, online/offline, etc has been completely rewritten.
+	  Huge thanks to Christian Hammond, Dave West, Daniel Atallah and
+	  Sadrul Habib Chowdhury.
+	* Your status can now be set from inside the buddy list using the
+	  selector at the bottom of the window.
+	* To see messages when a buddy signs on or off, goes away, or
+	  becomes idle, load the "Buddy State Notification" plugin
+
+	Buddy List:
+	* Performance when manipulating and displaying the buddy list has
+	  been significantly improved (Aaron Sheldon, Google Summer of Code)
+	* Buddy icons are now shown in tooltips (Felipe Contreras)
+	* Tooltips now contain additional information about a "Person" that
+	  contains multiple online buddies
+	* Added a "Last Seen" field to buddy tooltips
+	* Contacts will auto-expand when buddies are dragged around
+	* If Pidgin is exited with the buddy list hidden in the docklet, it
+	  will remain hidden when Pidgin is started again (Scott Shedden)
+	* Improved buddy list searching with CTRL+F
+	* Ability to set a buddy icon for all of your accounts at once via
+	  the buddy list (You can still set per-account icons via the
+	  account editor)
+	* The space wasted by the group expanders has been eliminated and
+	  the expander setting in .gtkrc-2.0 is no longer needed
+	* Authorization requests don't popup new dialogs anymore. They are
+	  displayed at the bottom of the buddy list instead.
+	* New mail notifications don't popup new dialogs anymore. They are
+	  displayed at the top of the buddy list instead.
+
+	Conversations and Chats:
+	* Timestamps honor the locale.  To use the traditional style,
+	  enable the "Message Timestamp Formats" plugin.  The plugin
+	  also provides options to show dates in timestamps.
+	* Messages from buddies in the same "Person" will automatically
+	  use the same conversation window.
+	* The "Send As" menu has been replaced with a more appropriate
+	  "Send To" menu based on "Persons" on your buddy list
+	* Message formatting persists between messages (Igor Belyi)
+	* Full message background colors are now supported
+	* Smooth scrolling when receiving a new message
+	* Screenname colors in chats now chosen intelligently
+	* Conversation buffer scrollback limited to avoid large memory
+	  usage in active conversations
+	* Control-Shift-Tab will reverse cycle through the conversation tabs
+	  (James Vega)
+	* Many problems related to having an IM conversation and a chat open
+	  with the same name are fixed (Andrew Hart)
+	* Warning dialog when closing a window with unread IM messages
+	* In chats right-click on names in the conversation window to
+	  IM/Send File/Get info/ignore the user
+	* Added tab management options to the tab right-click menu (Sadrul
+	  Habib Chowdhury)
+	* Brand new message queueing system.  Sounds are played when a
+	  message is queued rather than when the message is dequeued
+	  (Casey Harkins)
+	* Ability to find the last message from a user in a chat (Levi Bard
+	  and Sadrul Habib Chowdhury)
+	* Formatting is preserved across messages
+	  (There are known issues with pasting formatted text.  Either use
+	   "Paste as Plain Text", hit Ctrl-R after pasting, or use the Clear
+	   Formatting button on the toolbar.)
+	* Performance while joining large chat rooms has been significantly
+	  improved (Aaron Sheldon, Google Summer of Code)
+	* Bi-Directional text support improvements for GtkIMHtml (Shlomi Loubaton)
+
+	Sounds:
+	* Beautiful new default sounds (Brad Turcotte)
+	* Use GStreamer for playing sounds, instead of libao
+	* A volume control in the preferences (Casey Harkins)
+
+	Log Viewer:
+	* Log viewer aggregates logs from the same "Person"
+	* When opening the log viewer, show the most recent log by default
+	  (Peter McCurdy)
+	* Logs are now saved with the current timezone, which is displayed
+	  in the log viewer
+	* Text logs are linkified, so URLs are clickable
+	* The old logger now caches file offsets, so opening the log viewer
+	  for buddies with old logs should be much faster now if you have large
+	  log files (except the first time for a log, when the cache is built)
+
+	Plugins:
+	* Plugins are now accessed through a separate dialog from the Tools
+	  menu of the Buddy List
+	* Newly installed plugins can now be activated without restarting
+	  Pidgin (Sadrul Habib Chowdhury)
+	* Overhauled the system tray/docklet plugin (Casey Harkins)
+	* Text Replacement Plugin rewritten, works in real time and far more
+	  intuitively (Benjamin Kahn)
+	* Entries in the text replacement plugin are now sorted
+	  alphabetically
+	* The text replacement plugin allows non-whole-word replacement rules
+	  (Levi Bard)
+	* The text replacement plugin offers both case sensitive matching and
+	  automatic case handling
+	* I'dle Ma'ker plugin now has an easier method to unidle accounts, a
+	  way to idle all accounts at once, and a way to unidle all accounts
+	  idled via the plugin (John Bailey, Sadrul Habib Chowdhury)
+	* The Evolution Integration plugin now supports Groupwise contacts
+	* Mono plugin loader (Eoin Coffey)
+	* Perl plugin loader has been rewritten (John Kelm, Google Summer
+	  of Code)
+	* New music messaging plugin (Christian Muise, Google Summer of Code)
+	* gaim-remote has been superceded by new DBUS bindings within libpurple
+	  (Piotr Zielinski, Google Summer of Code)
+	* The purple-url-handler program has been added to provide a way to
+	  automatically launch IM links via Pidgin or Finch.
+	* The functionality of the auto-reconnect plugin has been
+	  moved into the core, and the plugin itself has been removed.
+	* 'Highlight when nick said' option added to Message Notification
+	  plugin.
+	* The system tray icon is now properly transparent (Dan Winship)
+	* New Log Reader plugin that can read and display logs from Adium,
+	  MSN Messenger, and Trillian in the log viewer
+	* New Contact Availability plugin that attempts to predict the
+	  times when people in your buddylist will most likely respond
+	  to you, based on times in the past when they have responded
+	  (Geoffrey Foster, Google Summer of Code)
+	* A few new plugins: Autoaccept, Autoreply, Buddy Notes, New Line,
+	  Offline Message Emulation, Conversation Colors and Markerline
+
+	MSN Features:
+	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
+	* Added support for sending (with the /nudge command) and receiving
+	  "nudges" (Julien Cegarra, Martin Bayard)
+	* Added an account action to open your Hotmail inbox from MSN
+	* Bi-directional text is correctly handled now (Shlomi Loubaton)
+
+	Yahoo Features:
+	* Stealth Settings have been implemented
+	* Doodle is now supported (Andrew Dieffenbach, Google Summer of Code)
+	* Buddies' requests to add you to their lists now prompt for
+	  authorization
+	* Account option to ignore chat and conference invitations (Peter
+	  Lawler)
+	* Added a /list command to bring up the room list (Peter Lawler)
+
+	AIM/ICQ Features:
+	* ICQ file transfer support with newer ICQ clients (Jonathan Clark,
+	  Google Summer of Code)
+	* Many overall improvements to AIM and ICQ file transfers (Jonathan
+	  Clark, Google Summer of Code)
+	* Support for pausing and resuming AIM and ICQ file transfers
+	  (Graham Booker)
+	* Ability to set ICQ "require authorization" and "web aware"
+	  setting (Ettore Simone)
+	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
+
+	IRC Features:
+	* SSL support for IRC connections (Daniel Atallah)
+	* Show an error message when temporarily unable to join an IRC
+	  channel or change your nick
+	* Added /nickserv, /memoserv, /chanserv and /operserv
+	  commands (Joao Luís Marques Pinto)
+	* Added CTCP VERSION via /version (Andrej Krivulčík)
+	* Added /whowas command (achris)
+
+	Jabber Features:
+	* Support for SRV lookups
+	* Support for buddy icons
+	* Jabber User Directory searching
+
+	SILC Features:
+	* Whiteboard support (Pekka Riikonen)
+	* Sending/receiving images in IMs (Pekka Riikonen)
+	* Cipher and HMAC selection support (Pekka Riikonen)
+	* Buddy Icon support (Pekka Riikonen)
+
+	Other Protocol Changes:
+	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google
+	  Summer of Code)
+	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
+	  Code).  This requires the libgadu library.  See
+	  http://pidgin.im/faq.php#libgadu for more information.
+	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
+	* Sametime protocol support
+	  Requires the meanwhile library: http://meanwhile.sourceforge.net
+	* QQ protocol support (Mark Huetsch, Google Summer of Code, and the
+	  developers of the OpenQ project)
+	* Removed the Napster and TOC protocols plugins
+
+	Other Noteworthy Changes:
+	* NAT traversal support via UPnP (Adam J. Warrington, Google Summer of
+	  Code)
+	* NAT traversal support via NAT-PMP (Evan Schoenberg and R. Tyler Ballance)
+	* The modify account dialog now contains two tabs, which should display
+	  better at lower resolutions (Sadrul Habib Chowdhury)
+	* New "find buddy" results dialog (Alex Converse)
+	* People using input methods can now use Enter again
+	* Mouse-over hyperlink coloring is now themeable
+	* Buddy Pounces now have a proper management window. (Kevin Stange)
+	* Buddy icons maintain aspect ratio when resized
+	* The last used directory is remembered for opening or saving files and
+	  buddy icons
+	* Add an SVG version of our desktop icon, pidgin.svg (John Oyler)
+	* If a given protocol doesn't support privacy, we now handle blocking
+	  in the core. (Jean-Yves Lefort)
+	* Smiley themes can now include spaces in the smiley definitions.
+	  The spaces (and now backslashes) must be backslash-escaped.
+	  (Sadrul Habib Chowdhury)
+	* New e-mail notices are now grouped into one dialog.
+	  (Sadrul Habib Chowdhury, Chris Stafford)
+	* "Open" in the File Transfer window integrates with GNOME, KDE, and
+	  Windows and falls back to the browser in other environments.
+	* On Mac OS X, the keyboard/mouse idle time pref now uses system idle
+	  time instead of X11 idle time (Michael Culbertson)
+	* Autocomplete in the buddy pounce dialog (Sadrul Habib Chowdhury)
+	* Non-blocking socket I/O is used in most protocol plugins
+	* All-new icons all over the place (Hylke Bons)
+
+	Preference Changes:
+	* Preferences have been substantially reorganized and cleaned up
+	* Smiley theme descriptions are now shown correctly for the highlighted
+	  smiley theme (Levi Bard)
+	* All Buddy List preferences have been moved to the Buddies menu of
+	  the buddy list window.
+	* Proxy settings will be taken from Gnome if it is running.  These may
+	  still be overridden on a per-account basis.
+	* Removed "Dim idle buddies;" behavior is now always enabled
+	* Removed keyboard shortcut preferences for ctrl-B/I/U; enabled by
+	  default, but won't interfere with bindings set by the GTK theme
+	* Removed keyboard shortcuts preferences for ctrl-# to insert a smiley;
+	  behavior removed from Pidgin
+	* Removed "Enter" vs. "Ctrl-Enter" to send; "Enter" sends by default,
+	  but it is now possible to change this binding in your GTK theme
+	* Removed "Show multi-colored screennames in chats;" behavior is now
+	  always enabled and screenname colors automatically adjust themselves
+	  to compensate for background color.
+	* Removed "Raise Buddy List Window on Events" and the related behavior
+	* Removed "Display remote nicknames if no alias is set"
+	* Removed "Show idle times" and "Show warning levels" on the buddy
+	  list; behavior is now always enabled
+	* Removed "Auto-expand contacts;" contacts expand only when dragging
+	  buddies around the buddy list
+	* Removed conversation and buddy list buttons and related preferences
+	* Removed "Raise conversation window" preferences; moved feature to
+	  the notify plugin
+	* Removed "Show alias in tabs/titles;" behavior is now always enabled
+	* Removed "Show formatting toolbars;" the setting in conversations'
+	  "Options" menu now affects the global preference
+	* Removed "Show timestamps;" behavior is now enabled, but is overridden
+	  by the timestamp plugin
+	* Removed all protocol options pages
+	* Removed "Escape closes windows;" default key binding is now Ctrl-W
+	* Removed "Log when buddies sign on/sign off/become idle/become
+	  un-idle/go away/come back" and "Log your own actions;" all of these
+	  will be logged when the system log is enabled
+	* Removed the separate ignore formatting preferences; behavior has been
+	  consolidated into a single preference
+
+version 1.5.0 (8/11/2005):
+	* Ability to set IRC quit message (Lalo Martins)
+	* OSCAR file transfers now work for 2 users behind the same NAT
+	  (Jonathan Clark)
+	* Yahoo! buddy requests to add you to their buddy list now prompt for
+	  authorization
+	* Added a /clear command for conversations/chats
+	* Fixed ICQ encoding for messages with offline ICQ users
+	  (Ilya Konstantinov, SF Bug #1179452)
+	* Default Yahoo! chat roomlist locale to 'us'
+
+version 1.4.0 (7/7/2005):
+	* Fix system log start times for some protocols
+	* SILC compiles with newer SILC toolkit versions (Pekka Riikonen)
+	* Fixed a bug where buddy icon cache files were left in the icon
+	  cache directory after they were no longer in use.
+	* Attempt to detect the file type of a buddy icon when saving.
+	* Additional Yahoo! boot protection (Peter Lawler)
+	* A few Yahoo! memory leaks plugged (Peter Lawler)
+	* Fixed handling of the new Yahoo! profile page. (Joshua Honeycutt,
+	  Peter Lawler)
+	* Fixed localized Yahoo! room lists.  Please refer to the Yahoo!
+	  section of the Gaim FAQ for details. (Peter Lawler)
+	* Enabled sending files to ICQ users using ICQ 5.02 and newer
+	  (Jonathan Clark)
+
+version 1.3.1 (6/9/2005):
+	* The file transfer details section now also displays the full path to
+	  the local file sent/received.
+	* Yahoo! has the following new "/" commands:  /join, /buzz
+	* Fix Yahoo! privacy bug
+	* Fix Jabber Get Info crash on busted servers
+	* Updated our gaim.desktop file, thanks to all our terrific translators
+	  for sending in translations of the changes
+	* Improvements to how Gaim handles new message notification
+	* Fix Jabber registration on XMPP servers (including jabber.org)
+
+version 1.3.0 (5/10/2005):
+	* Removed parts of the font selection dialog that were not respected
+	* Fix being invited to a multi user chat on MSN
+	* Multiple SILC accounts should work now (Pekka Riikonen)
+	* Fix times on jabber chat backlogs
+	* Fix gevolution plugin to compile with e-d-s 1.0 or 1.2
+	* Fix gevolution plugin to remember buddy name when someone added you
+	  and you then add them
+	* Formatting in jabber chats works
+	* Fix to prevent MSN disconnecting if you change status while connecting
+	* Fixes for two remotely exploitable crash bugs.  See
+	  http://gaim.sourceforge.net/security/ for more information.
+	* Change to correctly handle adding jabber buddies on ejabberd servers
+
+version 1.2.1 (4/3/2005):
+	* URL escaping now works with UTF-8 text. This may break some old log
+	 files.
+	* Revert to XOR auth for ICQ as the md5 is not fully functional
+	* Fix bug with going away while in a jabber chat
+	* MSN bug fixes (Felipe Contreras)
+	* Escape things properly in IRC
+	* Docklet fixes: fix the "1 pixel-wide icon" bug, fix problems with Gaim
+	  crashing when the tray manager dies, and work correctly with multi-headed
+	  displays where the tray isn't on the primary screen (Robert McQueen)
+
+version 1.2.0 (3/17/2005):
+	* Yahoo file receiving and buddy icon receiving work again.
+	* Limit animated buddy icon frame rates to 10 frames per second
+	  (Nathan Conrad)
+	* Fix a bug where portions of your account configuration would
+	  fail to be read correctly if you set a proxy user name or
+	  password containing invalid XML characters such as < and >
+	  (Bastien Durel)
+	* Yahoo! privacy improvements (Bleeter)
+	* Fix receiving Jabber formatting (broken in 1.1.3)
+
+version 1.1.4 (2/24/2005):
+	* Fixed a bug where Yahoo! would lose messages (and any other packet
+	  really)
+	* Correctly show the time when incoming Gadu-Gadu messages were sent
+	  (Carl-Daniel Hailfinger)
+	* Fixed crashes with glib 2.6
+	* Fixed MSN crash when conversations time out after the conversation
+	  window was closed
+	* Fixed an html parsing bug, CAN-2005-0208
+
+version 1.1.3 (2/17/2005):
+	* CHAP authentication support for SOCKS5 proxies (Malcolm Smith)
+	* ICQ offline messages are sent using your specified character
+	  set instead of Unicode (Magnus Hult)
+	* MSN HTTP method works with proxies using authentication (Bastien Durel)
+	* Really fix the bug where buddies show as logged in for 49 thousand days
+	* Buddy pounces containing '&' are saved correctly
+	* Improved MSN error handling when the servers are unavailable
+	* More MSN bug fixes
+	* Fix some leaks
+	* Fix "Find" in the log viewer so that it finds in all logs
+	* Smileys not appearing at the end of lines has been fixed
+	* Closing conversation windows no longer cancels active file transfers on
+	  MSN (Felipe Contreras)
+
+version 1.1.2 (1/20/2005):
+	* MSN 'HTTP Method' fixed (Felipe Contreras)
+	* Better handling of MSN's Individuals group and buddy status updates
+	  (Felipe Contreras)
+	* Fix a crash inviting MSN user to a chat when they're already there
+	* AIM SecurID login support
+	* Fix configuration of Jabber chat rooms on some servers
+	* More MSN bug fixes (Felipe Contreras)
+	* Fix queue messages to Docklet when not globally away (Robert McQueen)
+	* Fix some leaks
+	* The Autopackage now builds both the mozilla-nss and the gnutls
+	  ssl plugins, and requires at least one of those libraries.
+
+version 1.1.1 (12/28/2004):
+	* Allow SILC authentication via public key if your key is password
+	  protected (Michele Baldessari)
+	* More MSN bug fixes (Felipe Contreras)
+	* Drag-and-drop to conversation window file transfers work again
+	* Disable the delete button on pounces that aren't saved yet anyway
+	  (Kevin Stange)
+
+version 1.1.0 (12/02/2004):
+	New Features:
+	* Binary relocable. Gaim will find its files even if it's installed
+	  in a location other than the --prefix it was ./configured with.
+	  Pass --disable-binreloc to ./configure to disable.
+	* IRC now has fallback encodings, and tries harder to display
+	  something useful during an encoding error.
+	* New MSN protocol icon (Felipe Contreras)
+
+	Bug Fixes:
+	* Fix some leaks (Miah Gregory, Felipe Contreras)
+	* Fix crashes when removing buddies in certain situations (Andrew Hart)
+	* Eliminate MSN switchboard errors (Felipe Contreras)
+	* Fix MSN buddy icon synchronization (Felipe Contreras)
+	* Correctly display file transfer dialogs for filenames containing &, < or >
+	* Correctly display MSN authorization dialogs for friendly names containing
+	  &, < or >
+	* Properly align the right-click docklet menu with the docklet icon in
+	  *nix.
+	* Fix a crash if the MSN buddy list is not available
+	* Fix a bug in the request api (Gary Kramlich)
+
+version 1.0.3 (11/11/2004):
+	Bug Fixes:
+	* Jabber authentication fixes (Michael Plump)
+	* Yahoo buddy idle reporting is more accurate (Evan Schoenberg)
+	* "Allow All" privacy setting works on Yahoo (Peter Lawler)
+	* Fix a crash when dragging a buddy to the conversation entry area
+	* Fix a crash removing chats from the buddy list
+	* Correctly display buddy pounces for aliases with &, < or > in them
+	* Correctly follow the per-conversation logging option
+
+version 1.0.2 (10/19/2004):
+	Bug Fixes:
+	* MSN file transfers work on big endian machines (Jean-Francois Roy and
+	  Evan Schoenberg)
+	* Fixed the MSN signon crash with Miranda users in the buddy list
+	* Fixed sending messages to MSN Web Messenger users (Damien Ayers)
+	* Fixed some memory leaks in the MSN plugin (Evan Schoenberg)
+	* Fixed a crash viewing certain MSN user profiles (Evan Schoenberg)
+	* Fixed a crash sending a file on MSN when the file is unreadable
+	* Fixed a crash deleting accounts (Andrew Hart)
+	* Fixed a crash inviting to chats (Andrew Hart)
+	* Fixed a bug in Yahoo privacy handling (Peter Lawler)
+	* Fixed a crash trying to join a chat from the docklet when not signed in
+	  to a chat-capable account (Daniel Atallah)
+
+version 1.0.1 (10/07/2004):
+	New Features:
+	* Use the GNOME default browser when opening links if you're running GNOME
+	  (Alex Duggan)
+	* Added support for multiple addressbooks in the gevolution plugin
+	  (Henry Jen).
+
+	Bug Fixes:
+	* Send-As menu duplicates less work (Dave West)
+	* Can now see your own MSN buddy icon (Felipe Contreras)
+	* Jabber roomlist fetches work again
+	* Close buttons on tabs in existing conversations correctly reflect the
+	  "show close buttons on tabs" preference (Nathan Fredrickson)
+	* Fix to make the get_signon(buddy) perl plugin function work (Gregory C.
+	  Harfst)
+	* Fixed crashes when reloading the gevolution plugin (Henry Jen)
+	* Fixed some memory leaks in the gevolution plugin.
+	* Wrap at character boundaries if there is not enough space for a full word
+	* 64 bit compile warning fixes
+
+version 1.0.0 (09/17/2004):
+	New Features:
+	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
+	* Drag-and-drop buddy support for the Pounce dialog (Stu Tomlinson)
+	* View Chat log available from the interface (Daniel Atallah)
+	* Ability to receive offline messages in character encodings
+	  other than ASCII (thanks to Nick Sukharev)
+	* File transfer status messages printed to conversation
+	  windows (Dave West)
+	* Display file transfer messages when someone sends you a file
+	  over AIM (Dave West)
+	* Handle MSN buddy lists more sanely (Felipe Contreras)
+	* Zephyr can use tzc to run from behind a firewall (Arun A Tharuvai)
+
+	Bug Fixes:
+	* Work around window manager stupidity with new dialog windows (Dave West)
+	* Compile with gtk 2.5.x (Gary Kramlich)
+	* Escape invalid characters in log names (Daniel Atallah)
+	* Fix for clicking add in an msn chat with 2 or more people in your buddy
+	  list (Daniel Atallah)
+
+version 0.82.1 (08/27/2004):
+	Bug Fixes:
+	* Fix a crash when changing the preference for how to display buttons
+	  on conversation windows
+	* Remove a stray printf() when beginning new conversations and logging
+	  is enabled
+
+version 0.82 (08/26/2004):
+	New Features:
+	* Ability to set available messages for AIM
+	  (Tools->Account Actions->Set Available Message...)
+	* Ability to specify a custom character set for messages sent to ICQ
+	  users and messages received from ICQ users
+	* Ability to edit your current away message (Rhett Robinson)
+	* Topics in the conversation window (not the topic field at the
+	  top) with URLs will now appear as links (Stu Tomlinson)
+	* File transfers appear in the file transfer window when they
+	  are initiated rather than when they begin transferring (Dave West)
+	* Instead of toggling slash commands on/off, you can now toggle
+	  passing through unknown slash commands on/off.
+
+	Bug Fixes:
+	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)
+	* Selecting a buddy icon for a brand new account no longer
+	  causes a crash
+	* Better file transfer error messages (Dave West)
+	* Remotely canceled file transfers in MSN are now noticed, so that we
+	  don't accidentally cancel the file transfer and crash Gaim
+	  (Felipe Contreras)
+	* Protocols that don't support joining chat rooms by name no longer
+	  allow chat rooms to be added to the buddy list (Felipe Contreras)
+	* Delayed messages and system messages no longer cause
+	  sound events to be triggered (Nathan Fredrickson)
+	* The chat invite button has a correct label (Stu Tomlinson)
+	* The system log should leak fewer file descriptors (Ka-Hing Cheung)
+	* Buddy list tooltips display in more appropriate positions when
+	  using multiple monitors (Dave West)
+	* Better parsing of URLs containing special characters
+	* All users are shown when joining a Yahoo! conference (Bleeter Yaluser)
+	* You now leave all Yahoo! conferences when you log out of Yahoo!
+	* Buddy Icon updating bug fixed (Felipe Contreras)
+
+version 0.81 (08/05/2004):
+	New Features:
+	* The autorecon plugin will somewhat remember state information(Yosef
+	  Radchenko)
+	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
+	* Tab completion of slash commands in Chats (Stu Tomlinson)
+	* gaim-remote can now manipulate status (István Váradi)
+	* The text messages of Yahoo Audibles are now displayed, although
+	  the audio and graphics are not.
+	* Yahoo! away messages can be 255 characters long now
+
+	Bug Fixes:
+	* Gadu-Gadu should connect again (Andrew Wellington)
+	* Novell fixes (Mike Stoddard of Novell):
+		* Fixed reconnect crash
+		* Fixed duplicate root folder bug
+		* Fixed bug with folder ordering (on a first time login
+		  folders were being added in reverse order).
+	* Use ISO date format for the system log (Eduardo Pérez)
+	* Long buddy lists with irc should cause flooding disconnects less
+	  (Stu Tomlinson)
+	* Better smiley substitution
+	* Fix a crash related to auto-expanding contacts at the bottom of
+	  buddy lists
+	* Fix a crash on Solaris when changing or viewing information for
+	  your AIM account (Format Screen Name, Change Email Address, etc.)
+	* HTML in OSCAR buddy comments is now escaped (and not rendered)
+	* Fix a crash when dragging a screen name to a conversation window
+	  for that screen name
+	* User-requested new conversation windows are now always given focus
+	* Pasting HTML into Gaim from certain sources no longer results in
+	  the spaces between some words being removed
+	* The alias of a contact is now displayed in more places when the
+	  alias of a buddy is not set
+	* .gaimrc is no longer imported
+	* Prevent a crash if you sign off and try to dequeue messages from
+	  the away dialog (Kevin Stange)
+	* Prevent a possible crash if gaim_gtkconv_write_conv is called
+	  with who as NULL (Kevin Stange)
+	* Prevent (null) or an empty string from being logged as the sender's
+	  name if the sender no longer has an alias because the account is
+	  signed off (Kevin Stange)
+	* The auto-reconnect plugin will no longer attempt to reconnect an
+	  MSN account if you were disconnected because you signed on from
+	  another location (Stu Tomlinson)
+	* On Solaris, chatting in IRC using the UTF-8 charset no longer gives
+	  a "conversion failed" error for every message (Arvind Samptur)
+	* ICQ offline messages should have the correct timestamp (Dave West)
+
+version 0.80 (07/15/2004):
+	New Features:
+	* Ability to send files from the conversation window (Daniel Atallah)
+	* Drag a file into the buddy list or a conversation to send it to that
+	  buddy
+	* Yet more new commands and features for SILC (Stu Tomlinson)
+	* Gaim uses the new file chooser when compiled for GTK+ 2.4
+	  (Fernando Herrera)
+	* Support for the Epiphany web browser (Leonardo Serra)
+	* Status messages in Gadu-Gadu (Andrew (proton) Wellington)
+	* Parentheses are now displayed around the title and tabs of
+	  conversations from offline accounts or parted chats.
+	* Zephyr typing notification (Arun A Tharuvai)
+	* Account dialog's columns are resizable (Eduardo Pérez)
+
+	Bug Fixes:
+	* The firefox browser option now works with firefox 0.9
+	* Buddy icons in conversations no longer depend on the
+	  buddy list
+	* Fix for the bug where some buddies seemed logged in 4
+	  thousand some odd days (Alan Ford)
+
+version 0.79 (06/24/2004):
+	New Features:
+	* Display name changes are now shown in the conversation windows.
+	  (Robert Mibus)
+	* Get Info on Yahoo! now works for nonenglish profiles.
+	  (Ambrose Li)
+	* General "Get Info" improvements on Yahoo! and MSN (Ambrose Li)
+	* Yahoo! Japan support. Click More Options and check Yahoo Japan
+	  in the account editor, to use your Yahoo! Japan account
+	* Gtk themes can now theme the Gaim buddy list independently of
+	  other things (Stu Tomlinson)
+	* Show timestamps now has a per-conversation option in addition
+	  to the global one, bringing it in line with the other conver-
+	  sation options (Stu Tomlinson)
+	* Added MSN buddy icons (Felipe Contreras)
+	* Added MSN file transfer (Felipe Contreras)
+	* MSN's idle state now actually sets a buddy idle
+	* Buddy pounce defaults are now more sane, and apply to the state the
+	  buddy is currently in. For example, if the buddy is idle, set
+	  "Return from idle" by default. The last action(s) used are the
+	  defaults for the next pounce
+	* Yahoo buddy icon support
+	* Selected buddy icons will automatically convert to the appropriate
+	  format for the protocol. (GTK 2.2 and higher only)
+	* Dragging an image file into the Modify Account dialog will set that
+	  as a buddy icon.
+	* Development headers for compiling third-party plugins are now
+	  installed. (Stu Tomlinson)
+	* Headers for gaim-remote now reside in gaim/ instead of
+	  gaim-include/.
+	* Basic YCHT support, which allows joining Yahoo! Chats when
+	  logged in using the web messenger method
+
+	Bug Fixes:
+	* Fixed Yahoo! authentication problems.  (Cerulean Studios)
+	* Non-looping animated icons no longer cause Gaim to freeze
+	* Flashing windows should work again for unix in window managers that
+	  support the URGENT hint (Etan Reisner)
+	* Better handling of character sets in RTF for Novell (Mike Stoddard of
+	  Novell)
+	* Contact list sync problems in Novell fixed (Mike Stoddard of Novell)
+	* Fixed a crash in SILC that sometimes happened when resolving
+	  the buddy list (Pekka Riikonen)
+	* Parallel compiles of the perl plugin should work better
+	  (Stu Tomlinson)
+	* The disconnected UI op was called twice on connection errors. Now
+	  it is only called once. (Evan Schoenberg)
+	* Dragging into conversation windows works better
+	* Protocol-specific settings for accounts were being removed whenever
+	  the account was modified. Now they're only removed when the protocol
+	  type changes, as it should be.
+	* Zephyr bug fixes and memory leak plugs (Arun A Tharuvai)
+	* Rewrite of MSN buddylist support, which fixed a known syncronization
+	  bug and some others (Felipe Contreras)
+
+version 0.78 (05/30/2004):
+	New Features:
+	* Support for the SILC protocol (http://www.silcnet.org/)
+	  (Pekka Riikonen)
+	* Option to suppress disconnect notification when using
+	  the autoreconnect plugin (Christopher (siege) O'Brien)
+	* Added support for dragging buddies from the buddy list into the
+	  Add Buddy Pounce dialog
+	* Pounce notification now includes time (Mike Lundy)
+	* The history plugin now shows history for chats in addition to IMs
+	* Menu item to view conversation logs (Tom Samstag)
+	* Conversation and chat sizes automatically saved (Stu Tomlinson)
+	* Added support for Novell privacy settings (Mike Stoddard of Novell)
+	* Added ability to initiate multi-user conferences (chats) in Novell
+	  (Mike Stoddard of Novell)
+	* Find and Save buttons on the debug window (Stu Tomlinson)
+	* Plugin Actions menu (Christopher (siege) O'Brien)
+	* Plugins can now add entries to the right-click menu of a group or chat
+	  (Stu Tomlinson and Christopher (siege) O'Brien)
+	* Hyperlink colors are now themeable via your ~/.gtkrc-2.0 file
+
+	Bug Fixes:
+	* Compiles again with gcc 2.96 (Ignacio J. Elia)
+	* Gtk2.0 compatibility fixes (Tim Ringenbach)
+	* Many documentation updates (Jonathan Champ, Gary Kramlich,
+	  Stu Tomlinson, and Kevin Stange)
+	* Yahoo works on 64 bit machines (Gary Kramlich)
+	* Zephyr works on 64 bit machines (Arun A Tharuvai)
+	* Novell 64bit fixes, better error messages, and buddy list sync fixes
+	  (Mike Stoddard of Novell)
+	* Novell protocol works on big endian machines (Novell)
+	* Massive rewrite of MSN support, which should fix a number of issues
+	  and make errors easier to interpret (Felipe Contreras)
+	* Fixed a privacy-related bug in MSN that affected blocking/permitting,
+	  which was due to case-sensitive string comparisons (Gudmundur
+	  Olafsson)
+	* Fixed an MSN HTTP method bug where MSN would queue data indefinitely.
+	  (Andrew Wellington)
+	* All known MSN formatting bugs were fixed.
+	* Overly long messages and paging cell phones in MSN no longer cause
+	  disconnects (Felipe Contreras)
+	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay
+	  Dobbie)
+	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
+	* New tabs should scroll correctly again (Tim Ringenbach)
+	* Dialogs opened from a conversation window are now closed when
+	  the conversation window is closed, preventing a crash (Kevin Stange)
+	* Copy/paste encoding fixes (Joe Marcus Clarke)
+	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
+	* Ampersands in links should work correctly (Tim Ringenbach)
+	* DirectIM and IM Image support for AIM are greatly improved
+	  (Tim Ringenbach)
+	* Gadu-Gadu updates (Andrew Wellington)
+	* Print Gadu-Gadu messages to the debug window instead of the console
+	* Updated and standardized blist signals (Gary Kramlich)
+	* Made the recieve-*-msg signals match the sending ones (Stu Tomlinson)
+	* The idle time for the buddy-idle and buddy-unidle signals should
+	  be correct again.
+
+	Preference Changes:
+	* Added "Conversation placement - By conversation count"
+	* Added a "none" smiley theme to replace the "Show graphical
+	  smileys" option
+	* Replace default formatting preferences with a dialog to set a
+	  default formatting in a WYSIWYG manner.
+	* Removed "Show logins in window," default to yes
+	* Removed "Send URLs as links," default to yes (in protocols that
+	  support HTML)
+	* Removed "Show URLs as links," default to yes
+	* Removed New window height & width and Entry field height for Chats &
+	  IMs, sizes are now saved automatically
+	* Removed "Tab-complete nicks" default to yes
+	* Removed "Old-style tab completion", no longer supported
+	* Removed "Sending message removes away status", default to no
+	* Removed "Show numbers in groups", default to yes
+	* Removed "Icons on tabs", default to yes
+	* Removed "Sounds when you log in", default to no
+	* Removed "Seconds before resending autoresponse", default to 600
+	  seconds
+	* Removed "Send autoresponse in active conversations", default to no
+	* Removed "Show people joining in window", default to yes
+	* Removed "Show people leaving in window", default to yes
+
+version 0.77 (04/22/2004):
+	New Features:
+	* The System Log returns (Ka-Hing Cheung)
+	* Added a conversation-drag-ended signal (Etan Reisner)
+	* Reorganized and cleaned up the MSN protocol plugin (Felipe Contreras)
+	* Added the -c option to specify location of the .gaim directory,
+	  removed the outdated -f option that no longer had any effect (Daniel
+	  Atallah)
+	* Novell GroupWise protocol support added (Novell)
+	* WYSIWYG improvements (Tim Ringenbach)
+	* WYSIWYG editing for user info (Jon Oberheide)
+	* Rich-text copy and paste
+	* Plugins can now add menu items to the buddy context menu
+	  (Christopher O'Brien)
+	* Plugins can now add preferences (Gary Kramlich)
+	* The TOC protocol is no longer built by default. The plugin is not
+	  being properly tested and is no longer officially supported.
+	* Bumped up the plugin API version number, and added version numbers
+	  for loader plugins and protocol plugins. Authors will want to
+	  update their plugins, and possibly use GAIM_PLUGIN_API_VERSION,
+	  GAIM_PRPL_API_VERSION, and GAIM_LOADER_API_VERSION constants.
+	* Zephyr error reporting works (Arun A. Tharuvai)
+	* Zephyr deals with non-utf8 characters (Arun A. Tharuvai)
+
+	Bug Fixes:
+	* Formatting in the Log viewer is fixed (Kevin Stange)
+	* Save Conversation works again (Kevin Stange)
+	* The Clear button in privacy works (Robert Mibus)
+	* MSN error reporting works again (Stu Tomlinson)
+	* MSN e-mail notifications should no longer cause Gaim to crash
+	  (Felipe Contreras)
+	* Fixed an infinite loop bug that would sometimes cause MSN to lock
+	  up (Nickolai Zeldovich)
+	* All away messages should now show up in tooltips
+	* Removing zephyr buddies no longer crashes (Arun A. Tharuvai)
+
+version 0.76 (04/01/2004):
+	New Features:
+	* WYSIWYG text input (with much help from Gary Kramlich and Kevin
+	  Stange)
+	* Ability to be invisible on AIM
+	* Chatroom list support (Tim Ringenbach)
+	* Added auto-completion for screen names to the New Instant Message and
+	  Get User Info dialogs.
+	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
+	* Vastly improved browser opening, with tab support! (Nathan
+	  Fredrickson)
+	* Added support for connecting to MSN using the port 80 method.
+	* Support for Mozilla Firefox (Chris Friesen and Nathan Fredrickson)
+	* Added protocol-specific preferences (Gary Kramlich)
+	* Local IP address information can be changed in Preferences
+	  (Tim Ringenbach)
+	* Improved local IP address detection (Tim Ringenbach)
+	* Offline accounts in account drop-down lists are now greyed (Etan
+	  Reisner)
+	* Improved accessibility support for screen readers and other
+	  accessibility tools (Marc Mulcahy)
+	* Improved accessibility in conversation windows (Nathan Fredrickson)
+	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
+	* Core/UI split event loop code. (Scott Lamb)
+	* Added improvements to the multi-field request code, including
+	  required fields and account fields.
+	* Moved more dialogs to the request API for interface consistency
+	  (Send Message, Get User Info, and Insert Link dialogs)
+	* Jabber file transfer
+	* IRC file transfer (Tim Ringenbach)
+	* Added a hidden preference for disabling buddy list tooltips or
+	  changing the pop-up delay in prefs.xml.
+	* Moved translation news to po/ChangeLog
+
+	Bug Fixes:
+	* Changes in AIM/ICQ server-side buddy lists take
+	  precedence over the local buddy list
+	* Significant work on the Zephyr plugin (Arun A. Tharuvai)
+	* You can now use :/ as a smiley safely (Nathan Owens)
+	* Various buffer overflow fixes (Stefan Esser)
+	* Tabs now stay green when they are supposed to (Etan Reisner)
+	* Fixed a bug where only the first user in a chat room list was removed
+	  sometimes when trying to remove a group of users (Tim Ringenbach)
+	* Clearing an AIM buddy icon actually removes it from the server,
+	  icons changes in the account editor do not take effect if the
+	  cancel button is used (Stu Tomlinson)
+	* Improved chat parting logic (Tim Ringenbach)
+	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
+	* Deleting an account while modifying it will no longer crash gaim.
+	* Only one account preference window will now appear per account when
+	  clicking Modify.
+	* Aliases are now shown alongside the screen name in the message
+	  queue window. (Kevin Stange).
+	* TCL Plugin API changed
+	* The mobile icon on MSN users is now removed when the person disables
+	  mobile paging (Stu Tomlinson)
+	* Removing invalid buddies in MSN with a space in their name no longer
+	  causes a disconnect (Stu Tomlinson)
+	* Multiple MSN chats should now work (Robert Mibus)
+	* Added new MSN error codes and fixed an incorrect one (Stu Tomlinson)
+	* Incoming colors are now processed correctly in MSN.
+	* Conversation placement by account now works correctly with both
+	  chats and IMs, and takes the Combine Chats and IMs option into
+	  consideration.
+	* Minor tweaks to the list box in the multi-field request dialogs
+	  so they work without a label and scrollbar (Pekka Riikonen)
+	* Hitting enter in a multi-field request dialog when a textfield has
+	  the focus no longer ignores the changed text in the textfield
+	  (Gary Kramlich)
+	* The Disconnect dialog no longer raises and gains focus each time
+	  a disconnected account is added (Ka-Hing Cheung)
+	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
+	* Buddy pounces for an account are removed when the account is
+	  deleted (Gary Kramlich)
+	* Various bug and memory leak fixes (Gary Kramlich)
+	* Assorted SSL crashfixes
+	* --enable-debug no longer breaks compilation when using gtk 2.4,
+	  which also broke garnome.
+	* Tooltips shouldn't crash now (Daniel Atallah)
+
+version 0.75 (01/09/2004):
+	* New Yahoo! auth method
+	* Yahoo! file transfer (Tim Ringenbach)
+	* Yahoo! chat joining fixes (Tim Ringenbach)
+	* Persons can auto-expand when hovering your mouse over it
+	* Improved i18n support for MSN email notification (Felipe Contreras)
+	* Jabber SASL PLAIN support
+	* Improved Jabber MUC (Chat) support
+	* Fixed an MSN login bug some people likely experienced (Felipe
+	  Contreras)
+	* Touch-up various dialogs to follow the Gnome Human Interface
+	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
+	  Ka-Hing Cheung)
+	* Works better with all-black gtk themes (Etan Reisner)
+	* Mozilla Firebird support (Chris (darth_sebulba04))
+
+version 0.74 (11/25/2003):
+	* Sort-by-size log sorting fix
+	* Log directory umask fix for users of gaim-remote
+	* Fix Jabber room creation on MUC servers.
+
+version 0.73 (11/21/2003):
+	* New Logging format and code:
+		* fixes i18n issues with logs
+		* compatible with old logs
+		* hopefully fixes segfault in viewing logs
+	* New disconnected account dialog (Thanks, Daniel Atallah)
+	* Fixes several Jabber bugs
+	* Fixes the bug where some dialogs would crash when spell checking was
+	  enabled. Closes #827930.
+	* Fixed unblocking of users in MSN (Robert Mibus)
+	* Fixes outgoing mobile pages on MSN.
+	* The border on the close buttons on inactive tabs are no longer shown,
+	  thanks to a fix used by Galeon.
+	* Compatible with autoconf 2.58.
+	* Cleaned up gtkspell-related code (Robert McQueen)
+	* Changed the parameters for the received-chat-msg signal.
+	* Added a Release Notification plugin
+
+version 0.72 (10/31/2003):
+	* Added a search feature to conversations.
+	* Added an option to remove the formatting toolbar, both globally and
+	  on a per-window basis (Nathan Fredrickson)
+	* Added a drop shadow to the buddy list tooltip
+	* Smileys are copyable
+	* Fixed the ICQ login crash
+	* Fixed a crash in the Add Chat dialog when selecting an
+	  account that doesn't support chats. Closes bug #821606.
+	* Fixed a bug where new MSN accounts without buddies added wouldn't
+	  connect.
+	* Fixed a crash when deleting an account that has IMs or chats open.
+	  Closes bug #821630.
+	* Smileys have background colors
+	* If SSL is not enabled, MSN will load, but error on connect.
+	* Disable Jabber SASL auth until the standard stabilizes
+
+version 0.71 (10/09/2003):
+	* The right-click menu for e-mail links now presents a "Copy E-Mail
+	  Address" item
+	* Fix sort by idle to behave as it did pre-contact support (David
+	  Smock)
+	* Display AIM away messages in the tooltip for buddies when
+	  they are away
+	* Support for Buddy Comments for AIM and ICQ buddies
+	* Window icons are now set as buddy icons or status icons
+	* Get User Info in MSN and Yahoo now return an error indicating that
+	  the information doesn't exist if the profile is empty (parts by
+	  Nathan Poznick)
+	* Added startup notification support for window managers that support it
+	* The protocol icon for an account in the accounts window will now
+	  "pulse" when signing the account on.
+	* Zephyr formatting fixes (Arun A. Tharuvai)
+	* Zephyr can connect to chats (Karsten Huneycutt)
+	* SSL support can now be provided by third party plugins.
+	* Multiple copies of gaim installed at different locations no
+	  longer attempt to load the same, possibly incompatible plugins
+	  (Robert McQueen)
+	* Implemented another new Yahoo! authentication method
+	* Fixed a bug displaying Chinese MSN messages (Ambrose C. LI).
+	* Additional fixes and checks for the perl build process (Sean Burke).
+	* Massive core/UI splitting.
+	* Re-write of Jabber protocol plugin
+	* Conversation API changes.
+	* Some plugins must be updated due to code variable changes,
+	  function name changes, and change of behavior for certain
+	  functions.
+
+version 0.70 (09/28/2003):
+	* Implemented Yahoo's new authentication method (Cerulean Studios)
+	* Protocol plugins that have plugin dependencies now load correctly.
+	* Perl installs where it's told to a bit more correctly.
+	* Robert "Robot101" McQueen cleaned and core/UI split IM
+	  image support.
+
+version 0.69 (09/24/2003):
+	* Added Contact (aka Person, aka Meta-Contact, aka Buddy Merging, etc)
+	  support
+	* Added MSN 6 smileys.
+	* Added animated smiley support (Ka-Hing Cheung)
+	* Added SSL support, compatible with GNUTLS and Mozilla NSS.
+	* Added plugin IPC.
+	* Added support for gettext 0.12.x.
+	* Updated MSN support to the MSN Protocol version 9.
+	* Jabber now supports SSL
+	* Yahoo now shows people using the java chat client (Tim Ringenbach)
+	* Yahoo chat and conference (Tim Ringenbach)
+	* Yahoo ignore support (Jesse Farmer (farmerje))
+	* Yahoo idle times displayed, long buddy lists work, sms users,
+	  and other improvements (Tim Ringenbach)
+	* The accounts window now shows offline accounts as greyed out, and
+	  online accounts as colored.
+	* Fixed the text replacement plugin.
+	* Fixed all known signal problems in perl.
+	* The right-click menu for conversation tabs now shows the tab icon
+	  and status, if tab icons are enabled. (Jesse Farmer)
+
+version 0.68 (09/01/2003):
+	* Removed the old event system and replaced it with a much better
+	  signal system.
+	* Added plugin dependency support.
+	* Rewrote the Perl plugin. All old scripts will break, but it offers
+	  a much better API for new scripts.
+	* Yahoo color support (Tim Ringenbach (marv_sf))
+	* Yahoo and MSN get info support (Nathan Poznick)
+	* Fixed Jabber registrations.
+	* Fixed a problem where pouncing two users with the same name
+	  appeared in the same conversation window, and other related
+	  problems. (Robot101)
+	* Corrected problems with proxy preferences.
+	* Mailchk.c and simple.c compile again (Paul A (darkrain))
+
+version 0.67 (08/14/2003):
+	* Brought back the message notification plugin (Brian Tarricone)
+	  You'll need to reconfigure your settings for this plugin
+	* IRC protocol plugin rewritten (Ethan Blanton)
+	* New IRC protocol icon (Nuno Donato)
+	* Protocol and status icons now optionally appear on tabs.
+	  (Etan Reisner)
+	* Various dialog rewrites (Jabber vCard, Add Group, Alias Chat,
+	  Rename Group, Privacy)
+	* Shows "hiptop" icon for AIM buddies using hiptop
+	  devices (Robey Pointer)
+	* Privacy core/UI split.
+	* Conversation placement by group now applies to chats in the buddy
+	  list as well.
+	* Events in a conversation (user logged in, logged out, window closed,
+	  etc.) now grey the tab.
+	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern
+	  Voigt, Paul A (darkrain))
+
+version 0.66 (07/18/2003):
+	* Freebsd compile fix (Matthew Luckie)
+	* .spec file improvements (Ethan Blanton)
+	* Added a gaim-remote man page (Robert McQueen)
+	* The Remote Control plugin no longer adds duplicate groups to your
+	  buddy list.
+	* Servers and ports are now imported correctly in MSN.
+	* Core/UI split the core initialization and shutdown.
+	* MSN messages with newlines are now sent correctly to MSN clients.
+	* Fix some sound initialization stuff
+	* Fix saving and import of default away message
+
+version 0.65 (07/16/2003):
+	* Massive internal core/ui splitting
+	* New account dialog
+	* Preferences moved to ~/.gaim/prefs.xml
+	* Account information moved to ~/.gaim/accounts.xml
+	* Pounces moved to ~/.gaim/pounces.xml
+	* Added protocol icons to various drop-down boxes
+	* New Send IM buddy icon merged from Ximian Desktop 2
+	* Fixed "Sort by Status" crash
+	* Fixed the MSN signon crash
+	* Fixed the MSN add buddy crash
+	* Fixed the MSN empty buddy list bug
+	* Fixed all known MSN chat bugs
+	* Fixed HTTP redirect handling in smiley retrieval. This fixes the
+	  problems with some smiley themes.
+	* Chats in MSN can now be initiated by right-clicking a buddy and
+	  choosing Initiate Chat.
+	* MSN Alerts and incoming MSN pages no longer pop up several error
+	  dialogs
+	* Ability to view iChat "Available" messages for AIM
+	* Stores your buddy icon on the server for AIM
+	* Support for non-ascii characters with Yahoo! Messenger
+	* Focus returns to the input box when you click elsewhere, like it used
+	  to
+	* New typing notification icons from Ximian
+
+version 0.64 (05/29/2003):
+	* Buddy list sorting in buddy list preferences.
+	* Improved debug window with timestamps and pause buttons.
+	* New core/ui split notification and request APIs.
+	* New mail notification dialog.
+	* Several bug fixes in MSN.
+	* Conversation window buddy icon bugs were fixed.
+
+version 0.63 (05/16/2003):
+	* A rewrite of the plugin API. Plugin authors will need to change their
+	  code based off the changes found in other plugins.
+	* Perl script support is now provided in the perl plugin.
+	* Debugging is core/ui split, and has a new API with support for
+	  debug levels and categories.
+	* Support for adding chats to your buddy list.
+	* MSN protocol plugin was rewritten, has experimental buddy icon
+	  support, and MSN Mobile support.
+	* Buddy list speed enhancements (Thanks Ethan Blanton).
+	* Napster protocol updates (Thanks Auke Kok).
+
+version 0.62 (04/23/2003):
+	* Keyboard shortcuts in the buddy list work again (Thanks Joe
+	  Clarke).
+	* Support for Jabber XHTML messages
+	* Ability to re-request authorization from ICQ and Jabber users by right
+	  clicking on them in your buddy list.
+	* Improved Zephyr internationalization.
+	* Bug causing 'Hide on Send' windows to be lost forever fixed.
+	* Iconified windows are now raised properly.
+	* Dates printed for old/offline messages.
+	* Some assorted crash bugs fixed.
+
+version 0.61 (04/07/2003):
+	* Split the buddy pounce core and UI, and rewrote the UI for it.
+	* Removed folder icons and excess space from the buddy list (Thanks
+	  Dave Camp)
+	* Fixed a bug involving dragging buddies and groups
+	* Re-implemented the logout icons.
+	* New icons for "away" and "aol" (Thanks, Moses Lei)
+
+version 0.60 (04/04/2003):
+	Core:
+	* Auto-loading protocol plugins.
+	* Plugins dialog and perl script menu merged into preferences.
+	* Don't auto-login if an existing Gaim session is already
+	  running.
+	* Moved "privacy preferences" to Tools menu.
+	* -n, --loginwin option to disable autologins.
+	* Added support for gettext 0.11.x.
+	* Added support for automake 1.6.
+	* aim:// URI's supported with gaim-remote command.
+	* Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
+	* Added rudimentary support for X11R6 session management. (Thanks,
+	  Robert McQueen)
+	* Conversation backend and UI are now separated. (Thanks,
+	  Christian Hammond)
+	* Asynchronous, non-blocking, DNS function (Thanks, Nicolas
+	  Lichtmaier)
+	* As a side effect of the above: IPv6 support. Tested only with IRC
+	  (you can receive ipv6 chat requests from irssi!).
+
+	Plugins:
+	* Tray icon plugin--replaces the old GNOME applet. You'll need
+	  the panel Notification Area applet (aka system-tray-applet)
+	  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert
+	  McQueen, Nicolás Lichtmaier, Kristian Rietveld, Ari Pollak &
+	  Patrick Aussems)
+	* Added GAIM::remove_event_handler and made set_info short
+	  circuitable in perl. (Thanks, Ryan McCabe)
+	* event_del_conversation for plugins. (Thanks, Bill Tompkins)
+	* Notify.c plugin rewritten; check its configure dialog. (Thanks,
+	  Etan Reisner)
+	* Buddy Ticker made a plugin.
+	* Idle Maker added to source.
+	* Fortune profile added to source.
+
+	AIM/ICQ:
+	* TOC no longer compiles statically by default--use OSCAR.
+	* ICQ plugin no longer gets built--use OSCAR.
+	* Server-stored buddy lists for ICQ with full support for
+	  authorization (Thanks, Mark Doliner)
+	* File send/receive support for Aim over Oscar (Thanks, William T.
+	  Mahan and Mark Doliner)
+	* Non-direct connect typing notification for AIM over OSCAR.
+	  (Thanks, Mark Doliner)
+	* Allow only people in buddy list privacy option added for AIM.
+	* Full ICQ info reading support. (Thanks, Vincas Ciziunas)
+	* Support for synchronizing group renames on server.  Group
+	  rename server synchronization for AIM.  Server-side
+	  synchronization for moving individual AIM buddy to new
+	  group improved. (Thanks, Mark Doliner)
+	* Ability to add screenname@mac.com people to AIM buddy lists.
+	  (Thanks, Graham Booker)
+	* Ability to change ICQ password. (Thanks, Mark Doliner)
+	* Option to have AIM notify you if you have
+	  unread mail. (Thanks, Mark Doliner)
+	* Parse URL messages, Contact Sending and Pager Messages
+	  in ICQ. (Thanks, Mark Doliner)
+	* use snprintf instead of sprintf. (Thanks, William T. Mahan)
+	* Fixed crashbug on empty rvous requests. (Thanks Brandon Scott
+	  (Xeon) for pointing this out, and Matt Pandina for the patch)
+	* Nice Oscar changes--mostly internal. (Thanks, Mark Doliner)
+
+	IRC:
+	* Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff,
+	  -- and other cool IRC enhancments. (Thanks, Jonas Birmé)
+	* IRC's /topic with no argument displays the current topic (Thanks,
+	  Mark Doliner)
+	* DCC File Receive support for IRC.
+	* Optional password on IRC accounts. (Thanks, Christian Hammond)
+	* Added half-op support.
+
+	Jabber:
+	* Jabber invisibility and permanently cancel sending on-
+	  line status to Jabber buddies.
+	* Jabber roster updated on group renames.
+	* Fixed a possible segfault when signing off Jabber. (Thanks,
+	  Craig Boston)
+	* Improved typing notification support for Jabber and
+	  Yahoo! (Thanks, Nathan Walp)
+	* File receive support for Jabber. (Thanks, Nathan Walp)
+
+	MSN:
+	* MSN users are notified when the other party closes the conversation
+	  window. (Thanks, Christian Hammond)
+	* File receive support for MSN. (Thanks, Christian Hammond)
+
+	Internationalization:
+	* Now using libiconv for better i18n support (Thanks, Junichi
+	  Uekawa)
+	* Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
+	* Correct i18n handling for many parts of AIM/ICQ, including
+	  instant messages, away messages, and profiles (Thanks,
+	  Ethan Blanton)
+	* Improved MSN internationalization (Thanks, A Lee)
+
+	Other:
+	* Optionally uniquely colorize nicks in chats
+	* Add / Remove buddy menu item added to the chat users list
+	  (Thanks, Jonas Birmé)
+	* View log button in conversation toolbar (Thanks, Etan Reisner)
+	* Option to log IMs and Chats seperately. (Thanks, Etan
+	  Reisner)
+	* Removed Ctrl-C binding for color
+	* Fix first message in tab not displaying bug (Thanks, Etan Reisner)
+	* Changed some default options
+	* Updated desktop and window icons (Thanks, Robert McQueen)
+	* Switch the .desktop file to the new KDE/GNOME common vfolder
+	  format (Thanks, Robert McQueen)
+	* Removed all deprecated GTK calls.  Now 100% GTK 2. (Thanks Nathan
+	  Walp, Christian Hammond, Ari Pollak, Ethan Blanton, Robert McQueen)
+	* Read proxy environment variables. (Thanks, Christian Hammond)
+	* Fixed security vulnerability with manual browser option (Thanks,
+	  Robert McQueen)
+	* Can get info for ICQ and Jabber users from the "Edit
+	  Buddies" tab (Thanks, Brian Bernas)
+	* Code cleanups and fixes (Thanks, Federico Mena Quintero and
+	  Ka-Hing Cheung)
+	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+	* Generic File Transfer PRPL interface (Thanks, Christian Hammond)
+	* Better supression of auto-responses (Thanks, Joshua Blanton)
+	* Drag-and-drop tabs in conversations, and multiple windows with tabs
+	  in each (Thanks, Christian Hammond)
+
+version 0.59.9 (03/01/2003):
+	* Updated zh_TW.po file (Thanks breeze833)
+	* Fix an oscar bug that caused some messages from
+	  AOL 8.0 to be dropped (Thanks Mark Doliner)
+	* Changed "openprojects" to "freenode" in irc.c
+	* Fixed charset conversion on systems which use a BOM for UCS-4
+	  (Thanks, Alfredo Pen~a, Ethan Blanton)
+	* Fixed a typo in the man page (Thanks Eric S. Raymond)
+
+version 0.59.8 (01/06/2003):
+	* Ripped out all gtk2 support (Thanks Nathan Walp).
+	* Fixed smiley related segfault (Thanks Robert McQueen)
+	* Yahoo! can connect again
+
+version 0.59.7 (12/21/2002):
+	* Yahoo i18n fix (Thanks Ethan Blanton).
+	* Fixed a bug in escaping saved passwords (Thanks
+	  Eric Timme)
+	* Fixed an overflow bug in perl script autoloading
+	  (Thanks David Kaelbling)
+	* Some build fixes for those using stricter compilers,
+	  notably MIPSpro (Thanks David Kaelbling)
+	* Fixed a bad argument to accept() calls (Thanks David
+	  Kaelbling)
+	* Fixed crashbug on empty rvous requests (Thanks Brandon Scott (Xeon))
+	  for being the first to point this out.
+
+version 0.59.6 (11/07/2002):
+	* Fixed a segfault introduced in 0.59.5 when gtk
+	  fails to read the ~/.gtkrc or reads it but fails
+	  to create a style from it.
+	* Jabber conference timestamps are no longer gigantic
+
+version 0.59.5 (10/14/2002):
+	* Fixed a Yahoo! segfault (Thanks, Craig Metz)
+
+version 0.59.4 (10/06/2002):
+	* Removed color keybinnding altogether.
+	* Added a horizontal scrollbar to Edit page of
+	   buddy list. (Thanks, David Fallon)
+	* Various bug fixes ((Thanks to (in no particular order)
+	  Ethan Blanton, Mark Doliner, Luke Schierer)
+	* i18n fixes (thanks, A Lee)
+
+version 0.59.3 (09/14/2002):
+	* Reversed patch that accidentally caused Yahoo
+	  not to connect--for implementation reasons
+	* Changed "color" binding to Ctrl-K.
+	* Unaliaising a person in the "Online" tab will show up
+	  in the "Edit" tab as well (Thanks, Jason Willis)
+	* Internationalization fixes, esp. with UTF-8 locales
+	  (Thanks Matt Wilson and Ethan Blanton)
+
+version 0.59.2 (09/09/2002):
+	* Japanese translation updated (Thanks, Junichi Uekawa)
+	* Won't crash when you set your MSN Friendly name to an
+	  empty string.
+	* Default manual browser command changed to reflect the
+	  fix in 0.59.1
+	* Fixed the non-manual browser settings which were broke in
+	  0.59.1 (Thanks, Chris Blizzard)
+	* Improved MSN internationalization (Thanks A Lee)
+	* Smiley lookup will search for longest match for smilies
+	  like :-(( (Thanks Eric Melski)
+	* When an IM image is clicked, don't open the browser (Thanks
+	  Ari Pollak)
+	* Prevent a possible crash in unhide_buddy_list() (Thanks Ari
+	  Pollak)
+	* Fixed a compilation problem on systems without iconv.
+	* GtkIMHtml can be set to render font sizes as point size
+	  or AIMish relative sizes -- no more huge Yahoo fonts. (Thanks
+	  Ka-Hing Cheung)
+	* Fixed a bug with regard to Jabber resources (Thanks Nathan
+	  Walp)
+	* Fixed a possible segfault when signing off Jabber (Thanks
+	  Craig Boston)
+	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+	* Strip trailing and leading spaces from MSN/Yahoo names (Thanks,
+	  Arun Tharuvai)
+
+version 0.59.1 (08/25/2002):
+	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.
+	  Development will continue in our main branch in GTK+ 2 only.
+	* Fixed a security bug in the manual browser setting (Thanks
+	  Robert McQueen)
+	* Now using libiconv for better i18n support (Thanks Junichi
+	  Uekawa)
+	* Will work with Perl 5.8 (thanks, Timothy Lee and Dan
+	  Colascione)
+	* Fix for HTTP proxies (thanks, Ethan Blanton)
+	* Read proxy environment variables. (thanks, Christian Hammond)
+	* Use the pretty gaim.png for our menu entry.
+	* Added support for gettext 0.11.x.
+
+version 0.59 (06/24/2002):
+	* Squashed a bug in buddy right-click menu handling
+	  that crashed Gaim.  In the process: found and
+	  eliminated some memory leaks.
+	* Fixed a significant applet leak
+	* Can now change Jabber password on server (Thanks,
+	  Nathan Walp)
+	* Certain types of Jabber presence errors no longer
+	  falsely show a buddy on-line.  Instead now a "broken
+	  light-bulb" icon is shown and the error status is
+	  available via "Get Away Msg"  (Thanks and a tip o'
+	  the hat to Christian Hammond for the graphic)
+	* Conversation struct has pointer to toolbar (thanks Brent
+	  Priddy and Paul Miller)
+	* Zephyr fixes (thanks, Arun A. Tharuvai)
+	* Aliases in buddy ticker
+	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
+	* Internal sounds can be played by commands (thanks Lex Spoon)
+	* Auto-login item in applet menu (thanks Chris Boyle)
+	* Fixed MSN "Unkown Error Code", "Already there", and
+	  "Already in opposite list" errors
+	* Changed "Play sound" button to "Mute" button
+	* You can now have "reserved" chars in IM and proxy passwords
+	* Jabber now has typing notification  (Thanks, Nathan Walp)
+	* Improved support for Jabber resources  (Thanks, Nathan Walp)
+	* Fixed problem with Gaim crashing on non-ASCII Jabber buddy
+	  aliases (Jabber "name" attribute) chars  (Thanks, Ho-seok Lee)
+	* Plugged memory leaks in Jabber plug-in
+	* Fixed problem with Jabber away status not being propagated to
+	  conference rooms for jabberd (server) v1.4.2 and above
+	* Chat room buddy lists are now sorted independent of case
+	* Added capability for protocol-specific edit buddy menu entries
+	* Can now remove a Jabber buddy roster item from the server
+	  entirely
+	* Gaim can now handle messages from Mac ICQ and Miranda ICQ
+	  (Thanks, Mark Doliner)
+	* Added Mozilla to browser options and changed KFM to
+	  Konqueror.
+	* Can now set the server and port for MSN and Napster
+	* MSN Internationalization (Thanks Felipe Contreras and
+	  countless, countless others)
+	* E-mail addresses are no longer truncated when there is a '.' at
+	  the end.
+
+version 0.58 (05/13/2002):
+	* Better applet transparency
+	* Option to raise buddy list on signons/signoffs
+	* Formatting of incoming MSN messages
+	* Get Info from menu multiple-account-aware (thanks
+	  Brian Bernas)
+	* Hide and unhide functions for the filectl plugin.
+	  (Thanks, Ari Pollak)
+	* Added helpful stuff to the Help menu.
+	* Self-aliasing from the account editor.
+	* Better selection in GtkIMHtml (Thanks Ben Miller)
+	* A warning when your OSCAR buddy list is too long
+	  (Thanks, Mark Doliner)
+	* ICQ status messages in OSCAR (Thanks, Mark Doliner)
+	* Play sound when your name is said in a chat
+	* Approval dialog for Jabber when somebody wants to
+	  subscribe to user's presence. Also gives user the
+	  opportunity to add that buddy if not already on the
+	  user's buddy list.
+	* Jabber "Change buddy group" roster synchronization now
+	  works again.  (This was unknowingly broken when the
+	  "out-sourced" Jabber libs were upgraded in 0.56)
+	* Invalid Jabber I.D.'s no longer crash Gaim.  User now
+	  notified with pop-up's.
+	* Jabber Buddy sign-on time support, added in 0.57,
+	  removed until and unless and inconsistency can be
+	  resolved. (Thanks, Nathan Walp)
+	* Bug-fix for potential buffer overflow in Jabber
+	  plugin. (Thanks, rwscott)
+	* Tempfiles used for secure MSN/HotMail login (added in
+	  0.57) are now themselves created securely.
+	* Secure MSN logins (added in 0.57) no longer blow up
+	  on Solaris.
+	* Timezone support improved.
+
+version 0.57 (04/25/2002):
+	* New authorization method for Yahoo!
+	* Jabber will tell you when your buddies signed on (Thanks
+	  Nathan Walp)
+	* Jabber improvements (Thanks, Nathan Walp)
+	* More keyboard shortcuts
+	* event_chat_recv takes char**'s, and event_im_recv takes
+	  a *guint32 for flags
+	* Secure hotmail login for MSN (thanks for the tips,
+	  Scott Werndorfer)
+
+version 0.56 (04/11/2002):
+	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
+	* libjabber upgraded to most recent stable version
+	* Buddylist looks a little better
+	* Fixed MSN privacy settings
+	* Group deletion fix (Thanks Mark Doliner)
+	* Alias/Group syncronization for Jabber (Thanks JSeymour)
+	* Fixed broken signal handling in gdm-started GNOME sessions
+	  (Thanks Jim Seymour, Vann, Robert McQueen)
+	* Oscar group syncronization (Thanks, Mark Doliner)
+	* ICQ Authorization via Oscar (Thanks, Mark Doliner)
+
+version 0.55 (03/29/2002):
+	* Jabber improvements (Thanks Jim Seymour)
+	* Various sound cleanups (Thanks Robert McQueen)
+	* Login process shown in single window (Thanks Michael
+	  Golden)
+	* Can reorder your accounts in the account editor (Thanks
+	  Luke Schierer)
+	* Shows "mobile" icon for Oscar buddies using mobile
+	  devices (Thanks Mark Doliner)
+	* Fixed bug in MSN smilies that crashed PPC (and other?) platforms
+	* HTTP Proxy settings now HTTP compliant (Thanks Robert McQueen)
+	* Speling corections (Thanks Tero Kuusela)
+	* Oscar list icon fixes (Thanks Mark Doliner)
+	* Oscar idle times work again (Thanks Mark Doliner)
+	* Protocol icons on Edit Buddies tab (Thanks Christian Hammond)
+
+version 0.54 (03/14/2002):
+	* Compiles without GdkPixbuf again
+	* GtkIMHtml will refresh when you set a new GTK+ theme
+	* Improved Yahoo! typing notification (thanks Brian Macke)
+	* Prompt to authorize MSN buddies who added you while you
+	  were offline (Thanks Jason Willis)
+	* Option to globally disable Buddy Icon animation (Thanks
+	  Luke Schierer)
+	* Numerous bugfixes
+	* Yahoo! will tell you when your buddies are playing Yahoo!
+	  games and give you the ability to join them
+	* Yahoo! can receive offline messages
+	* IRC can do DCC chat.
+	* IRC will convert HTML formatting to mIRC formatting.
+	* Buddylist tab placement option (Thanks Jason Willis)
+	* Protocol specific smiley faces
+	* IM Image sending
+
+version 0.53 (02/28/2002):
+	* Minor bug fixes re: queued away messages
+	* Better buddy icon transparency (for real this time ;-))
+	* Ability to change formatting of Oscar screen name
+	* Better selection in HTML widget (Thanks BMiller)
+	* New icons for ICQ (Thanks Kevin Miller)
+	* Editable buddy pounces (Thanks Jason Willis)
+	* Server side buddy lists in Oscar (Thanks Mark Doliner :-))
+	* Fix for the chatlist plugin
+	* Typing Notification (AIM Direct Connect, Yahoo, MSN)
+	* IM Images (Receive Only)
+	* Prettier GtkImHtml selection
+	* Better buddy icon transparency (for real this time ;-) )
+
+version 0.52 (02/17/2002):
+	* Better buddy icon transparency (thanks SeanEgan)
+	* Fixed a little bug with connecting via proxy (thanks
+	  for reminding me of this, Manish Singh)
+	* Yahoo! Messenger works again
+	* MSN Works again
+	* Can register a new user with a Jabber Server (JSeymour)
+	* Can now set Jabber vCards (JSeymour)
+	* Jabber vCards are now shown in their entirety (JSeymour)
+	* Various jabber bug fixes/enhancements (JSeymour)
+
+version 0.51 (01/24/2002):
+	* Arrow buttons in log viewer and some other dialogs
+	  work (thanks Ben Miller)
+	* Option to only send auto-response while idle (thanks
+	  Sean Egan)
+	* Control time between sending auto-responses (thanks
+	  Mark Doliner)
+	* Should be able to sign on to Oscar using Mac OS X
+	  (thanks Fingolfin, Vincas Ciziunas, et al.)
+
+version 0.50 (12/14/2001):
+	* Able to import GnomeICU contact lists
+	* Galeon as browser option (Thanks Rob McQueen)
+	* IRC /list, /invite (Thanks Sean Egan)
+	* Option to have IMs and Chats tabbed in same window
+	* Finally put the lagmeter plugin out of its misery and
+	  removed it. (/me dances on its grave.)
+
+version 0.49 (11/29/2001):
+	* Can compile against GTK+ 2.0 (version 1.3.10/1.3.11)
+	* Confirm before removing buddies
+	* Yahoo updates (thanks Brian Macke)
+	* Jabber updates
+	* Zephyr updates (thanks Arun A Tharuvai)
+	* Gadu-Gadu updates (thanks Arkadiusz Miskiewicz)
+	* Option to show aliases in conversation tabs
+	* Option to hide windows after sending messages
+	* licq2gaim.pl conversion script (thanks Arturo Cisneros, Jr.)
+
+version 0.48 (11/18/2001):
+	* Right-click on links to open/copy URL
+	* Yahoo changes
+	* Oscar can send/receive offline messages in ICQ. Since the "real"
+	  ICQ protocol isn't working too well it's recommended that you
+	  use Oscar for ICQ.
+
+version 0.47 (11/01/2001):
+	* Better font loading (pays attention to charset now)
+	  (thanks Arkadiusz Miskiewicz)
+	* Better recoding in Gadu-Gadu (thanks Arkadiusz Miskiewicz)
+	* Open Mail button for when you get new mail (Yahoo and MSN)
+	* New buddy pounce option: Popup Notification
+	* When adding a buddy, the groups list now updates when you switch
+	  accounts.
+	* When creating a new buddy pounce, gaim now automagically
+	  selects "on away" or "on idle", if the user is away
+	  or idle.
+	* Add Opera to the available browsers (thanks Brian Enigma)
+	* Improved log viewer (thanks to Ben Miller)
+	* When you are queueing away messages, double clicking on
+	  a buddy's name will cause the messages for that name to be
+	  dequeued.
+	* You can choose which sound player you use at run-time
+	  (thanks Ben Miller)
+	* When someone adds you to their buddy list, it asks if you want
+	  to add them as well (Yahoo, ICQ, and MSN) (thanks Nathan Walp)
+	* Option to grey idle buddies (thanks Nathan Walp)
+	* MSN Privacy Options
+	* In MSN you can set a person's alias to their "friendly name" by
+	  right-click on their name while they're online.
+	* IRC can do /WHOIS
+	* The usual bug fixes and memory leak plugs
+
+version 0.46 (10/18/2001):
+	* New applet icons (courtesy David Raeman)
+	* ICQ works on big-endian platforms, e.g. sparc and ppc
+	  (thanks to Nathan Walp and Ben Miller)
+	* Better applet icon drawing (thanks to Ari Pollak)
+	* An extraordinary number of bug fixes
+	* Ability to stop animation on buddy icons, restart animation,
+	  hide certain buddy icons, and save people's buddy icons, all
+	  through a right-click menu
+	* Event handlers in perl passed arguments as elements of
+	  an array rather than all concatenated as a string, making
+	  perl much easier to use (thanks Dennis Lambe Jr.)
+	* Can pass an argument to timeout_handlers in perl
+	  (thanks Artem Litvinovich)
+	* Redesigned Modify Account window (thanks Sean Egan)
+	* Add buddy dialog now lets you select which protocol
+	  to add the buddy to
+	* Pressing 'signon' on the first screen for accounts that
+	  do not require passwords no longer incorrectly displays
+	  an error message.
+
+version 0.45 (10/04/2001):
+	* New plugin event: event_chat_send_invite
+	* Major updates to the perl system (reread PERL-HOWTO and
+	  SIGNALS)
+	* Major updates to event_chat_* events for plugins (reread
+	  SIGNALS)
+	* Some GtkIMHtml improvements
+	* Various bugfixes
+	* Nick Highlighting in chat
+	* Tab-completion for nicks in chat (thanks to Sean Egan)
+	* Large internal reworkings
+	* New Protocol: Gadu-Gadu, written by Arkadiusz Miskiewicz
+	* Can choose buddy icon to send (for Oscar)
+
+version 0.44 (09/20/2001):
+	* More sane scaling of buddy icons (intelligently scale to
+	  either 48x48 or 50x50 depending on icon)
+	* Have you ever had it happen where you cancel a login and
+	  Gaim starts using all the available processing power? I
+	  think I fixed that.
+	* Temporarily removed Jabber user registration, which wasn't
+	  working anyway.
+	* Added a spiffy Help button
+	* Wrote a plugin for all those people who miss having the
+	  chat rooms in their buddy lists (chatlist.so)
+	* Updated libfaim
+	* Added drop down selection to chat invitation
+	* Improved the look of the chat invitation dialog
+	* Improved the look of the proxy preferences
+	* event_im_recv and event_im_display_rcvd passed whether
+	  the message received was auto-response (see SIGNALS)
+	* IRC fixes (largly copied from X-Chat)
+	* Internal change to how preferences are stored
+	* Other bug fixes
+	* Option to hide buddy icons
+
+version 0.43 (09/06/2001):
+	* Can change friendly name in MSN again
+	* Bug fixes
+	* Auto-reconnect plugin has exponential timeout (i.e. it
+	  tries after 8 seconds, then 16, then 32, etc. up to 17
+	  minutes)
+	* Removed file transfer things from Napster. It didn't work
+	  well anyway. It'll be back eventually. (Does anyone even
+	  use napster anymore?)
+
+version 0.11.0-pre15 (08/28/2001):
+	* MSN works again
+	* Fixed a little segfault when images are links
+	* Redid the about box again.
+	* Fixed a nice little bug with the manual browser command
+	* Oscar Unicode fix (Thanks John Matthews)
+	* Can select which protocols are compiled statically
+	  (e.g.: ./configure --with-static-prpls=oscar,jabber)
+	* New plugin events: event_im_displayed_sent and
+	  event_im_displayed_rcvd. Use these to change messages after
+	  they're displayed (e.g. encrypt sent messages, or send
+	  auto-responses and have them display locally properly)
+	* Can use Arts for sound (thanks Tom Dyas)
+
+version 0.11.0-pre14 (06/17/2001):
+	* Fixed a segfault with Oscar's account confirmation
+	  (Thanks, Adam)
+	* Some MSN changes
+	* Some HTML widget changes
+	* Can specify hosts/ports for Yahoo (thanks Jeremy Brooks)
+	* Many many bugfixes
+
+version 0.11.0-pre13 (06/06/2001):
+	* Can view/set chat topic in Jabber (thanks faceprint)
+	* The napster plugin no longer segfaults on invalid names
+	  and/or passwords.
+	* HTML is properly stripped from away messages in protocols that
+	  do not use HTML.  (thanks, faceprint)
+	* Can view/set chat topic in IRC
+	* MSN properly escapes outgoing messages
+	* Much needed updates to the gaim man page (thanks, Sean Egan)
+
+version 0.11.0-pre12 (05/29/2001):
+	* Fixed a funny bug with auto responses when queued messages
+	  are enabled.
+	* Redesigned the Font Options preference page
+	* Improved Jabber chat support (it whispers now, too)
+	* Zephyr can do Subscriptions now (thanks to nsanch)
+	* Auto-recon plugin got reworked
+	* Lots of clean-ups
+	* Some new pixmaps (Thanks, DennisR).
+	* Fixed a segfault in IRC (Thanks Sean Egan)
+	* MSN can now change your 'friendly name' (Thanks for the
+	  packet logs, aechols)
+	* More IRC improvements [colors, etc] (Thanks Sean Egan)
+	* Improved proxy options
+	* Fixed a small issue with HTML not being stripped from
+	  log files properly (Thanks, faceprint and David Stoddard)
+	* Can turn on/off Yahoo! Mail announcements
+	* Can force messages through the server for ICQ (use this if
+	  you have problems sending)
+	* Can receive buddy icons in Oscar (requires gdk_pixbuf,
+	  which GNOME depends on. If you --disable-pixbuf, it will
+	  disable this.)
+	* Redesigned plugins dialog (thanks Mike Heffner)
+
+version 0.11.0-pre11 (04/30/2001):
+	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
+	* Jabber can send/accept chat invites (due to mid)
+	* MSN has the option to notify you of new hotmail
+	  messages
+	* Fixed a problem with ADD requests in MSN
+	* Fixed a small memory leak with MSN
+	* Moved MSN's spammy debug output into debug_printf's
+	* Can rename groups/buddies in the Edit Buddies pane
+	  (thanks Neil Sanchala)
+	* Some perl updates (thanks to Sean Egan)
+	* IRC got the following slash commands:
+	  op, deop, voice, devoice, mode, raw, quote, and kick (thanks
+	  to Sean Egan)
+	* MSN Properly handles URL decoding of 'friendly' names
+	* Redesigned Preferences pages (design by DennisR)
+	* Can select where tabs are for tabbed IM/Chat windows
+	* Option to queue away messages while away
+	* Jabber got good updates (from faceprint)
+	* Oh yes, and Oscar works, yet again. (gee... that's what, 4
+	  releases that have "fixed" it now?)
+
+version 0.11.0-pre10 (04/13/2001):
+	* Many, many bug fixes
+	* Can choose to not send away auto-response (thanks phzzzt)
+	* Uh... Oscar works? For now?
+	* IRC Plugin can do whois (right click and info)
+	* IRC Plugin got away message support
+	* Gaim blist to WinAIM blt perl script (courtesy Andy Harrison)
+	* Sound on buddy pounce (Thanks Andrew Echols)
+	* Can view all group chats in one tabbed window (same keybindings
+	  as for tabbed normal conversations)
+	* More Protocol plugins:
+		Zephyr (plugins/zephyr) (DON'T USE THIS unless you know
+			what it is and why you'd want to use it)
+
+version 0.11.0-pre9 (03/26/2001):
+	* Can register Jabber accounts (load the Jabber plugin and click
+	  Register on the login window)
+	* GtkIMHtml handles themes (no background pixmaps though) (thanks
+	  decklin, mishan)
+	* URLS Linkify properly in Buddy chats
+	* Jabber compiles better on Solaris?
+	* Gaim works with Oscar Again (Huge thanks to Adam Fritzler of
+	  libfaim)
+
+version 0.11.0-pre8 (03/23/2001):
+	* Fixed a problem with MSN not detecting signoffs and buddy updates.
+	* Implemented away options in MSN
+	* Alt-[1-9] to go to [1-9]th pane in tabbed convo window
+	* Jabber fixes, Oscar fixes (!), Yahoo fixes, TOC fixes
+	* Can use Alt to access menu, and Ctl-char for certain actions
+	  (thanks baldnik)
+	* Oscar blocking works (?)
+	* MSN can see status of other users
+
+version 0.11.0-pre7 (03/16/2001):
+	* Can build RPMs as non-root
+	* New yahoo library (can use HTTP proxy)
+	* Command-line arg to specify config file (thanks Jason Boerner)
+	* Can view all conversations in one tabbed window (Control-[ and
+	  Control-] move left and right respectively; Control-Tab moves
+	  to the next unread, or the next tab if there are no unread tabs)
+	* Tooltips on links work again
+	* Can log system notices: signons/signoffs, awayness and idleness
+	  (thanks Andrew Echols)
+	* MSN fixes
+	* Applet fixes
+
+version 0.11.0-pre6 (03/06/2001):
+	* Fixed bug with NAS support
+	* Napster plugin is included again
+	  (Thanks for pointing out that it was missing,
+	  (Yan V. Bulgak)
+	* Oscar can: search by email, request confirmation, change password
+	* TOC fixes
+	* ICQ fixes
+	* Faster HTML parsing/rendering
+
+version 0.11.0-pre5 (02/26/2001):
+	* Minor GUI changes
+	* ICQ Alias problem fixed
+	* Negative times fixed
+	* Cannot create blank away messages/messages with blank titles
+	* Can right-click Edit Buddies list to alias/add pounce/etc.
+	* Ability to independently set accounts as away
+	* Can use all away states for ICQ, Yahoo (N/A, Be Right Back, etc.)
+	* Fixed hanging trees
+	* Can close windows by hitting 'Esc' (optional)
+	* Better HTML Widget
+	* Can toggle timestamps by hitting F2 (optional)
+	* Rewritten file transfer for TOC
+	* Jabber got chat
+	* Log Viewer (courtesy BMiller)
+	* Can save conversation history
+	* Napster can kinda sorta download files sometimes :)
+	* You can activate IDs in Yahoo
+	* ICQ upgraded to use icqlib 1.1.5
+
+version 0.11.0-pre4:
+	* ICQ upgraded to use icqlib 1.1.0
+	* An enormous amount of bug fixes
+	* Even More Protocol Plugins:
+		Jabber (plugins/jabber)
+		Napster (plugins/napster.c)
+	* Fixed a segfault with 'Ignore new conversations while away'
+
+version 0.11.0-pre3 (12/15/2000):
+	* Away messages arranged alphabetically (Thanks Justin)
+	* More GUI adjustments
+	* Can optionally run command to play sound files
+	* Icons for ICQ plugin (blatently stolen from GnomeICU)
+	* Icons for Yahoo plugin (not-so-blatently stolen from GTKYahoo)
+	* Optionally display warning level next to name in buddy list
+	* Optionally ignore fonts on incoming messages
+	* Command-line option to automatically set yourself as
+	  away upon signon (thanks bmiller)
+	* Buddy list backups now stored in ~/.gaim/SN.protocol.blist (gaim will
+	  move the old file for you). Needed for when you have the same name on
+	  two different protocols. (Oscar and TOC share the same file.)
+	* More Protocol plugins:
+		MSN (plugins/msn)
+
+version 0.11.0-pre2 (12/04/2000):
+	* Fixed a segfault with a bad util.c
+
+version 0.11.0-pre1 (12/03/2000):
+	* Multiple connections
+	* Protocol plugins:
+		IRC (plugins/irc.c)
+		Yahoo (plugins/yay)
+		ICQ (plugins/icq)
+	* Logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
+	* User configurable sounds
+	* Scroll bar now functions properly in chat room user lists
+	* X-Idle support added (thanks bmiller and bryner)
+	* small change in the way away messages are displayed
+	  (Thanks Ryan C. Gordon)
+	* Plugin system uses GModule now (improves portability, adds features)
+	  (Requires recompile and probably modifications of most plugins)
+	* Perl got updates (reread plugins/PERL-HOWTO)
+	* Spell checker now uses gtkspell
+	* Auto-Away (thanks, yet again, to bmiller ;)
+	* More buddy pounce options
+	* Various GUI improvements
+
+version 0.10.3 (10/09/2000):
+	* Segfault when viewing user info fixed
+	* libdb problem fixed
+
+version 0.10.2 (10/07/2000):
+	* A few fixes to the URL parser.
+	* Better placement of smiley dialog
+	* Improved log file readibility
+	* Code cleanups (thanks kylev)
+	* Fixed problem when closing away message box (thanks bmiller)
+	* sprintf() problem on some systems
+	* Various small bug fixes
+
+version 0.10.1 (09/15/2000):
+	* Better chatroom logging
+	* Oscar works again. Pay no attention to Slashdot.
+	* gtkhtml handles background colours better.
+	* A third conversation window display preference.
+	* Better support for things like Sawfish
+
+version 0.10.0 (09/11/2000):
+	* New Smiley Faces and Pixmaps added.
+	* Smiley faces now properly wrap in the conversation windows.
+	* Smiley dialog
+	* Fixed 0-byte file segfault.
+	* Borderless buttons (for that cool pop-up look)
+	* Fixed some resizing bugs
+	* Added Ctrl+{B/I/U/S} hotkeys to conversation windows.
+	* Added Ctrl+(number) hotkeys to insert smileys in conversation windows.
+	* Support for %n, %d, and %t in away messages.  Thanks bmiller!
+	* Background colors
+	* Redesigned preferences dialog
+	* Redesigned conversation dialog
+	* Removed the Lag-O-Meter (Lag-O-Meter is now a plugin)
+	* SOCKS 4/5 proxy works
+	* Buddy Pounces are now saved in .gaimrc
+	* Buddy Chats are now saved in .gaimrc
+	* Ability to merge gaim, aim2, aim4 buddylists. Thanks again bmiller!
+	* ICQ-style aliases. This lets you change the name you see your buddy
+	  as. For example, if your buddy's SN is 'CouldntGetMyName', you can
+	  alias him as 'Loser'.
+	* Compile with GNOME bits if available
+	* Added GNOME Url Handler as an available web-browser
+	* Added the S html tag.
+	* Optionally Ignore TiK's Automated Messages
+	* Option to beep instead of play sound
+	* New icons for panel (depends on some GNOME pixmaps)
+	* Perl scripting. See plugins/PERL-HOWTO for how to write perl scripts.
+	  All .pl files in ~/.gaim are autoloaded when gaim starts.
+	* HTML widget is faster, more stable
+
+version 0.9.20 (07/14/2000):
+	* More plugin events, more plugin features
+	* Run-time OSCAR support
+	* Added buddy list ticker (See prefs/Appearance). Clicking on a
+	  name will cause a new or previous IM window to display for
+	  that screenname
+	* "You are sending messages too quickly" error is now fixed
+	   when you have a large buddylist.
+	* Fixed the LC_ALL compile problem on Solaris boxes
+	* Fixed PPC and ARM compile problem with oscar.c
+	* Smileys work better, and don't cause font attributes to drop
+	* Dialog windows are now prettier
+	* /me in IM window; font/color dialogs and smileys in chat window
+
+version 0.9.19 (06/09/2000):
+	* Graphical Smiley Faces
+	* Applet got a bit of a makeover (inside & out)
+	* Compile-time options affect Preferences dialog
+	* Whispering in chat works (does anyone even use this?)
+	* HTML-tag buttons in chat
+	* Chat got all kinds of new features (like IRC-sytle /me)
+	* Chat in oscar works much better
+	* Locale support
+	* Fixed the segfault when your server-side config is null
+	* Many many bugfixes
+
+version 0.9.18 (06/02/2000):
+	* Logging in works better for oscar
+	* Double error bug when sending message to an offline user is
+	  fixed.
+	* Pressing enter once again sends a message in buddy chatrooms (oops)
+	* More fixes for the change on the AOL sign-on process.
+	* Fixed bug where Gaim sometimes doesn't find a font to use.
+	* Per-conversation font and color dialogs (thanks fflewddur)
+	* Chat in oscar works (somewhat)
+	* Even more fixes for the sign-on process, and now you don't flash when
+	  setting permit/deny lists.
+
+version 0.9.17 (05/31/2000):
+	* Automagic feature to check for new versions has been removed
+	* Infinite loop bug fixed
+
+version 0.9.16 (05/31/2000):
+	* Paned buddy chat window (Thanks Syd)
+	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
+	  where <sn> is your screen name. If for some reason, you log
+	  into the AOL server and the buddy list comes back empty, we
+	  check for a cache file, and, if we find one, read it in. This
+	  essentially implements recovery from a server crash at AOL
+	  (AOL does not back up machines that contain TOC-based buddy
+	  lists, unfortunately).  (Thanks Syd)
+	* Font selection dialog
+	* Small changes to the Oscar/libfaim stuff (see libfaim/README.gaim)
+	* SOCKS 4 proxy support
+	* Better proxy support overall (you can get people's info now! :) )
+	* Two-way file transfer (you can get and send files, but you still
+	  can't initiate either)
+	* Fixed font problem with Misconfigured X-Servers.  Thanks Decklin!
+	* Fixed the No Configuration problem that came about today (5/31)
+
+version 0.9.15 (05/06/2000):
+	* Plugin support enabled by default (oops)
+	* Some plugins built/installed by default
+	* Option to automagically check for new releases
+	* Ability to receive files (one-way file transfer)
+	* In-line spell checker (thanks to Torrey Searle of the
+	  Everybuddy Devel team for this one)
+
+version 0.9.14 (04/24/2000):
+	* Numerous Fixes by G. Sumner Hayes (buffer over flow patches,
+	  etc)
+	* Paned Conversation Windows (Thanks Syd)
+	* Raise Window On Message Received, Fixed (Thanks Syd)
+	* When multiple screen names, Gaim now correctly remembers the name
+	  that was used last.
+	* FONT sizes now work correctly.
+	* PLUGIN SUPPORT!! (Lots of cool goodies here)
+	* Fixed another leak or two
+	* Added ability to change your screenname password
+	* Devil pixmaps
+
+version 0.9.13 (03/27/2000):
+	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)
+	* Double Log-Out Message Fixed
+	* GNOME compile error fixed
+	* Away Message Problem Fixed
+	* Fixed URL Right Click Menus
+	* Conversation Loggin now shows Full Date and Time
+	* Internal Change to Buddy List
+
+version 0.9.12 (03/25/2000):
+	* Segfault fix for PPC/Alpha/etc machines with log(0)
+	  Thanks to Todd Cohen for this one.
+	* Small internal change to the way prefs work
+	* GNOME Applet support works better
+	  (thanks to Eric Warmenhoven for the patch)
+	* Support for displaying true type fonts
+	* Lag-O-Meter does not send lag-test if not selected
+	* Fixed problem with saving away messages which contain spaces
+	  and numbers.
+	* Various GNOME Applet Enhancements (thanks AGAIN to
+	  Eric.  Someone needs to stop this boy :-) )
+	* A lot of random, obscure bugs fixed
+	* All of the major and I believe all of the minor memory leaks are
+	  now fixed
+	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me)
+
+version 0.9.11 (03/22/2000):
+	* <STRIKE>Strike Tag Support</STRIKE> :-)
+	* Another memory leak fix
+	* New .gaimrc format
+	* Better support for multiple screen names
+	* Font Properties
+	* Saving of buddylist window position
+	* Fixed a problem with Gaim and the Netscape-branded version
+	  of Mozilla
+	* New Sound Properties
+	* More General Properties
+	* Bigger Text-Entry field (Thanks to CrazyDavy for this one)
+	* Various Random Bug fixes
+
+version 0.9.10 (11/03/1999):
+	* Fixed a nasty memory leak.  No more 40M Gaim processes. LOL
+	* IDLE Times are displayed in a neater fashion.
+
+version 0.9.9  (10/31/1999):
+	* A little selection bug has been squished
+	* Small memory leak fixed
+	* Small network fix (problem with HTTP Proxy fixed?)
+	* Proxy stuff should work now :)
+	* Widget table support, dir info looks nicer
+	* Info box looks nicer (thanks to Decklin Foster)
+	* Client now 'corrects' time values from the server for accurate
+	  login times.
+	* Lag-O-Meter (ala Drunken Jim)
+	* IDLE Preferences
+
+version 0.9.8  (10/04/1999):
+	* HTTP Proxy Support (No SOCKS yet)
+	* HTML Widget more robust
+	* Graphical Debug Window
+	* Buddylist bug fixed
+	* Some logging fixes and improvements
+	* configurable host/port selection
+	* Clickable Links in buddy chat
+	* New Gaim Logo
+	* Display Signon/Signoff messages in conversation windows
+	* Option to strip HTML from logged messages
+	* GNOME cleanups (It might work now haha)
+	* When viewing user info, URLS are converted to clickable links
+	* Tooltips on URLS
+
+version 0.9.7  (08/08/1999):
+	* Preliminary Oscar Support
+	* Fixed bad network bug
+	* Fixed some bad text rendering bugs in the HTML widget
+	* log all conversation names are now normalized.
+	* Fixed another bad network bug :)
+	* Multiple browser support, some Netscape buggies fixed.
+	* Permit/Deny preferences moved to 'Permit' pane on buddylist.
+	* Fixed problem with _, ', and \ in passwords
+
+version 0.9.6  (08/01/1999):
+	* Fixed 'log all conversation' segfault
+	* Added NAS support
+	* Removed Xmu dependancies.
+	* Restructured network code
+	* ESD detection more robust.
+	* Sound fallbacks are MUCH more robust!
+
+version 0.9.5  (07/25/1999):
+	* Fixed About Box SegFault
+	* Autologin Works with Applet
+	* Option to Show Buddy List after Signon with Applet
+	* 2048 character messages
+	* Away-Detection (shows a different icon on the buddy list)
+	* Fixed Segfault with messages > allowed size
+	* Added option to log all conversations
+	* Changed g_new to g_new0
+	* Buddy List: Right Click Menus
+	* Find Buddy By Email
+	* Find Buddy By Info
+	* New HTML widget (Underline/Links/HRs)
+	* Updated Toolbar with 'Underline' Icon
+	* More Buddy Pounce Options
+	* Option to auto-change urls into clickable links (Under Prefs)
+	* Better Buddy Chat functionality
+	* Away Prefs
+	* Registration Information (Let Us Know Who You Are)
+	* Buddy Chat Prefs (Update Chatroom Lists)
+	* Set User Info
+	* FAQ added to the distribution
+	* Sound problem with some systems fixed
+	* Set Dir Info
+	* Autostart of Netscape on URL Click
+	* DnD Rearranging of Groups
+	* Better Netscape Functionality
+	* Right Click `URL' Menus
+	* DnD Rearranging of Buddies
+	* Script to convert win95 buddylist to gaim buddylist
+	* Added `Link/URL' button to conversation window
+	* ESD is now autodetected
+	* Not too important but we GNU-ified the source tree :)
+
+version 0.8.0  (04/31/1999):
+	* Code clean-up
+	* Updated Prefs
+	* Buddy Pouncing
+	* Pixmaps for buttons
+	* Buddylist import/export
+	* Autoconf/Automake
+	* Conversation Logging
+	* Coloured Text Selection
+	* Updated Preferences
+	* ESD Support
+	* Minor Bug Fixes
+	* `Warning' support
+	* `Blocking' on conversation window
+	* Add/Remove buddy from conversation window
+	* Scroll-Wheel Mice work in Conversation Window
+	* Fixed WindowMaker Appicon
+	* Version Number in About Box
+	* Gaim Slogan in about box :)
+	* Created Changelog File :)

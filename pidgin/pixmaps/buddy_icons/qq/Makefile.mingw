@@ -1,0 +1,18 @@
+#
+## Makefile.mingw
+#
+## Description: Makefile for win32 (mingw) version of Pidgin QQ buddy icons
+#
+#
+
+PIDGIN_TREE_TOP = ../../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+datadir = $(PIDGIN_INSTALL_DIR)
+include ./Makefile.am
+
+install:
+	if test '$(qqbuddyiconspix_DATA)'; then \
+	  mkdir -p $(qqbuddyiconspixdir); \
+	  cp $(qqbuddyiconspix_DATA) $(qqbuddyiconspixdir); \
+	fi;

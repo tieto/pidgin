@@ -1,0 +1,47 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for idletrack
+#
+
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+TARGET = idletrack
+
+##
+##  SOURCES, OBJECTS
+##
+
+C_SRC =	idletrack.c
+
+OBJECTS = $(C_SRC:%.c=%.o)
+
+include $(PIDGIN_COMMON_RULES)
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all install clean
+
+all: $(TARGET).dll
+
+install: $(PIDGIN_INSTALL_DIR)
+	cp $(TARGET).dll $(PIDGIN_INSTALL_DIR)
+
+##
+## BUILD DLL
+##
+
+$(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
+
+include $(PIDGIN_COMMON_TARGETS)

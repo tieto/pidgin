@@ -1,0 +1,49 @@
+/** @page connection-signals Connection Signals
+
+ @signals
+  @signal signing-on
+  @signal signed-on
+  @signal signing-off
+  @signal signed-off
+ @endsignals
+
+ <hr>
+
+ @signaldef signing-on
+  @signalproto
+void (*signing_on)(PurpleConnection *gc);
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection is about to sign on.
+  @param gc The connection that is about to sign on.
+ @endsignaldef
+
+ @signaldef signed-on
+  @signalproto
+void (*signed_on)(PurpleConnection *gc);
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection has signed on.
+  @param gc The connection that has signed on.
+ @endsignaldef
+
+ @signaldef signing-off
+  @signalproto
+void (*signing_off)(PurpleConnection *gc);
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection is about to sign off.
+  @param gc The connection that is about to sign off.
+ @endsignaldef
+
+ @signaldef signed-off
+  @signalproto
+void (*signed_off)(PurpleConnection *gc);
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection has signed off.
+  @param gc The connection that has signed off.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et

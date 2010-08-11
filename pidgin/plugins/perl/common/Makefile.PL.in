@@ -1,0 +1,16 @@
+use 5.006;
+use ExtUtils::MakeMaker;
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence the contents
+# of the Makefile that is written.
+WriteMakefile(
+    'NAME'             => 'Pidgin',
+    'VERSION_FROM'     => '@srcdir@/Pidgin.pm', # finds $VERSION
+    ($] >= 5.005 ? ## Add these new keywords supported since 5.005
+      ('ABSTRACT_FROM' => '@srcdir@/Pidgin.pm', # finds $ABSTRACT
+       'AUTHOR'        => 'Pidgin <http://pidgin.im/>') :  ()),
+    'DEFINE'        => '@DEBUG_CFLAGS@',
+    'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@',
+    'OBJECT'        => '$(O_FILES)', # link all the C files too
+    'TYPEMAPS'      => ["@top_srcdir@/libpurple/plugins/perl/common/typemap"],
+#    'OPTIMIZE'      => '-g', # For debugging.
+);

@@ -1,0 +1,841 @@
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
+
+version 2.0.0 (5/3/2007):
+	* Afrikaans translation added (Friedel Wolff)
+	* Afrikaans win32 translation added (Friedel Wolff)
+	* Albanian translation updated (Besnik Bleta)
+	* Arabic translation added (Mohamed Magdy)
+	* Bengali translation added (Indranil Das Gupta, Samia Nimatullah,
+	  Tisa Nafisa and Jamil Ahmed)
+	* Bosnian translation added (Lejla Hadzialic)
+	* Bulgarian translation updated (Vladimir "Kaladan" Petkov)
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Hong Kong) translation added (Paladin R. Liu, Ambrose C. Li)
+	* Chinese (Traditional) translation updated (Paladin R. Liu, Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen,
+	  Peter Bach)
+	* Dutch translation updated (Roy Spliet, Vincent van Adrighem)
+	* Dzongkha translation added (Wangmo Sherpa, Norbu, Jurmey Rabgay)
+	* English (British) translation updated (Stu Tomlinson and Luke Ross)
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Esperanto translation added (Stéphane Fillod)
+	* Estonian translation updated (Ivar Smolin)
+	* Euskera (Basque) translation added (Hizkuntza Politikarako
+	  Sailburuordetza and Iñaki Larrañaga Murgoitio)
+	* Finnish translation updated (Timo Jyrinki)
+	* French translation updated (Éric Boumaour)
+	* Galician translation updated (Ignacio Casal Quinteiro)
+	* Galician win32 installer translation updated (Ignacio Casal Quinteiro)
+	* Georgian translation updated (Ubuntu Georgian Translators Team)
+	* German translation updated (Bjoern Voigt,Jochen Kemnade)
+	* German win32 translation updated (Bjoern Voigt)
+	* Greek translation added (Bouklis Panos)
+	* Gujarati translation updated (Ankit Patel)
+	* Hebrew translation updated (Shalom Craimer)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Hungarian win32 installer updated (Gabor Kelemen)
+	* Italian translation updated (Claudio Satriano)
+	* Indonesian translation updated (Rai S. Regawa)
+	* Japanese translation updated (Takeshi Aihana)
+	* Kannada translation added (H P Nadig, Kannada Translation team)
+	* Kurdish translation added (Erdal Ronahi and Amed Ç. Jiyan)
+	* Kurdish win32 installer translation added (Erdal Ronahi)
+	* Lithuanian translation updated (Andrius Štikonas, Laurynas Biveinis)
+	* Lithuanian win32 translation added (Laurynas Biveinis)
+	* Macedonian translation updated (Арангел Ангов)
+	* Nepali translation added (Shyam Krishna Bal)
+	* Norwegian Bokmål translation updated (Hallvard Glad)
+	* Pashto translation added (Kashif Masood)
+	* Persian translation added (Elnaz Sarbar, Meelad Zakaria, Roozbeh
+	  Pournader)
+	* Polish translation updated (Emil Nowak, and Paweł Godlewski)
+	* Portuguese translation updated (Duarte Henriques)
+	* Portuguese (Brazilian) translation updated (Rodrigo Torres,  Mauricio de
+	  L R Collares Neto)
+	* Punjabi translation updated (Amanpreet Singh Alam)
+	* Romanian translation updated (Mişu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Nikola Kotur)
+	* Slovak translation updated (Richard Golier, helix84,loptosko,Jozef Káčer)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Spanish gaim.desktop translation updated (Javier Fernandez-Sanguino Peña)	
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Tamil translation updated (Viveka Nathan K)
+	* Telugu translation added (Mr. Subbaramaih)
+	* Thai translation added (Isriya Paireepairit)
+	* Turkish translation updated (Ahmet Alp BALKAN)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+	* Valencian-Catalan translation added (Toni Hermoso Pulido,
+	  Josep Puigdemont)
+
+version 1.5.1:
+	* Catalan win32 installer translation updated (Bernat López)
+	* Galician translation added (Ignacio Casal Quinteiro)
+	* Gujarati translation added (Ankit Patel)
+	* Japanese win32 installer translation updated (KUROSAWA Takeshi)
+
+version 1.5.0 (8/11/2005):
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Chinese (Traditional) win32 installer translation updated
+	  (Encoding fixed) (Paladin R. Liu)
+	* Chinese (Simplified) win32 installer translation updated
+	  (Funda Wang)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* Dutch win32 installer translation updated
+	  (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Éric Boumaour)
+	* French win32 installer translation updated (Eric Boumaour)
+	* German translation updated (Björn Voigt)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Hungarian win32 installer translation updated (Gabor Kelemen)
+	* Norwegian win32 installer translation updated
+	  (Jørgen Vinne Iversen)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Russian gaim.desktop translation updated (Dmitry Beloglazov)
+	* Slovenian Translation updated (Martin Srebotnjak)
+	* Slovenian win32 installer Translation updated (Martin Srebotnjak)
+	* Slovak win32 installer translation updated (Dominik Balogh)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Xhosa translation added (Canonical Ltd)
+
+version 1.4.0 (7/7/2005):
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Chinese (Traditional) win32 installer translation updated
+	  (Paladin R. Liu)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Éric Boumaour)
+	* French win32 installer translation updated (Éric Boumaour)
+	* German translation updated (Björn Voigt)
+	* German win32 installer translation updated (Björn Voigt)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Hungarian win32 installer translation updated (Gabor Kelemen)
+	* Italian translation updated (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Japanese gaim.desktop translation updated (Takeshi Aihana)
+	* Norwegian (Nynorsk) translation added (Kurt-Rune Bergset)
+	* Portuguese translation updated (Duarte Henriques)
+	* Portuguese win32 installer translation updated (Duarte Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Portuguese (Brazilian) win32 installer translation updated
+	  (Mauricio de Lemos Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Romanian win32 installer translation updated (Misu Moldovan)
+	* Romanian gaim.desktop translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 installer translation updated (Martin Srebotnjak)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Swedish win32 installer translation updated (Peter Hjalmarsson)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+
+version 1.3.1 (6/9/2005):
+	* Albanian gaim.desktop translation updated (Programe Shqip)
+	* Catalan translation updated (Josep Puigdemont)
+	* Catalan gaim.desktop translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Simplified) gaim.desktop translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Chinese (Traditional) gaim.desktop translation updated (Paladin R. Liu)
+	* Czech translation updated (Miloslav Trmac)
+	* Czech gaim.desktop translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Danish gaim.desktop translation updated (Morten Brix Pedersen)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* Estonian translation updated (Ivar Smolin)
+	* French gaim.desktop translation updated (Éric Boumaour)
+	* Hindi translation updated under new translator (Akash Mahajan)
+	* Japanese gaim.desktop translation updated (Takeshi Aihana)
+	* Norwegian Bokm<e5>l translation updated (Kyrre Ness Sjøbæk)
+	* Portuguese gaim.desktop translation updated (Duarte Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Portuguese (Brazilian) gaim.desktop translation updated (Mauricio de
+	  Lemos Rodrigues Collares Neto)
+	* Punjabi translation added (Amanpreet Singh Alam)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Spanish gaim.desktop translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Swedish gaim.desktop translation updated (Peter Hjalmarsson)
+
+version 1.3.0 (5/10/2005):
+	* Albanian translation updated (Programe Shqip)
+	* Azerbaijani translation added (Metin Amiroff)
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* Estonian translation updated. this was added last release but missed in
+	  the changelog (Ivar Smolin)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* Georgian translation added (Temuri Doghonadze)
+	* German Translation updated (Bjoern Voigt)
+	* Hungarian translation for gaim.desktop file added (Laszlo Dvornik)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Norwegian translation updated (Kyrre Ness Sjøbæk)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+
+version 1.2.1 (4/3/2005):
+	* Bulgarian translation updated (Vladimir Petkov and Alexander Shopov)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Norwegian translation updated under new translator. Moved from no.po to
+	  nb.po (Kyrre Ness Sjøbæk)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 installer translation updated (Martin Srebotnjak)
+
+version 1.2.0 (3/17/2005):
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* English (Canadian) translation updated (Adam Weinberger)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+	* Dutch win32 installer translation updated (Vincent van Adrighem)
+	* Slovenian win32 installer translation updated (Martin Srebotnjak)
+
+version 1.1.4 (2/24/2005):
+	* No changes
+
+version 1.1.3 (2/17/2005):
+	* Albanian translation updated (Programe Shqip)
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Lithuanian translation updated (Gediminas Čičinskas)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+	* German win32 installer translation updated (Bjoern Voigt)
+
+version 1.1.2 (1/20/2005):
+	* Albanian translation updated (Programe Shqip)
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation for gaim.desktop file (Vincent van Adrighem)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (Australian) transation updated (Peter (Bleeter) Lawler)
+	* English (British) translation updated
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Korean translation for gaim.desktop updated (Kyeong-uk Son)
+	* Korean translation updated (Kyeong-uk Son)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Swedish win32 installer translation updated (Peter Hjalmarsson)
+
+version 1.1.1 (12/28/2004):
+	* Albanian translation added (Programe Shqip)
+	* Burmese translation added (Minn Myat Soe)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation under new translator, and updated (Peter Hjalmarsson)
+	* Turkish translation added (Onur Kucuktunc)
+	* Ukrainian translation added (Maxim V. Dziumanenko)
+
+version 1.1.0 (12/02/2004):
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li & Paladin Liu)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Japanese translation updated (Takeshi Aihana)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Swedish translation under new translator, and updated (Peter Hjalmarsson)
+	* Turkish translation added (Onur Kucuktunc)
+
+version 1.0.2 (10/19/2004):
+	* Dutch translation updated (Vincent van Adrighem)
+
+version 1.0.1 (10/07/2004):
+	* Catalan translation under new translator, and updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Dutch translation updated (Vincent van Adrighem)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Romanian translation updated (Misu Moldovan)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+
+version 1.0.0 (09/17/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (Australian) transation added (Peter (Bleeter) Lawler)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+
+version 0.82.1 (08/27/2004):
+	* Finnish translation updated (Arto Alakulju)
+
+version 0.82 (08/26/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* English (British) translation updated (Luke Ross (lukeross))
+	* English (Canadian) translation updated (Adam Weinberger)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Lithuanian translation updated (Gediminas #i#inskas)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
+	* gaim.desktop updated for Danish translation (Morten Brix Pedersen)
+	* gaim.desktop updated for Slovenian translation (Martin Srebotnjak)
+
+version 0.81 (08/05/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* English (British) translation updated (Luke Ross (lukeross))
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
+
+version 0.80 (07/15/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke Ross (lukeross))
+	* English (Canadian) translation updated (Adam Weinberger)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Lithuanian translation added (Gediminas Čičinskas)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
+
+version 0.79 (06/24/2004)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
+	  Liu)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* English (British) translation updated (Luke Ross (lukeross))
+	* English (Canadian) translation updated (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* gaim.desktop updated for Danish translation (Morten Brix Pedersen
+	  (mbrix))
+	* gaim.desktop updated for French translation (Eric Boumaour)
+	* gaim.desktop updated for German translation (Bjoern Voigt)
+	* gaim.desktop updated for Italian translation (Claudio Satriano)
+	* gaim.desktop updated for Polish translation (Emil Nowak)
+	* gaim.desktop updated for Portuguese translation (Duarte Serrano
+	  Goncalves Henriques)
+	* gaim.desktop updated for Portuguese (Brazilian) translation (Mauricio
+	  de Lemos Rodrigues Collares Neto)
+
+version 0.78 (05/30/2004):
+	* Bulgarian translation updated (Alexander Shopov)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* English (British) translation updated (Luke Ross (lukeross))
+	* English (Canadian) translation added (Adam Weinberger)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation update (Claudio Satriano)
+	* Korean translation updated (Kyung-uk)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Slovenian translation added (Matjaz Horvat)
+
+version 0.77 (04/22/2004):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
+	  Liu)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke Ross (lukeross))
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German Translation updated (Bjoern Voigt)
+	* Italian translation updated (Claudio Satriano)
+	* Macedonian translation added (Tomislav Markovski)
+	* Polish translation updated (Emil Nowak)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Hebrew translation updated (Pavel (cyberkm) Bibergal)
+	* Hindi translation updated (Ravi Shrivastava)
+
+version 0.76 (04/01/2004):
+	* Catalan translation updated (Xan (DXpublica))
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke Ross (lukeross))
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour and Sebastien Francois)
+	* German Translation updated (Bjoern Voigt)
+	* Hebrew translation had 1 character removed (Ambrose C. LI)
+	* Italian translation updated (Claudio Satriano)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Alexandre Prokoudine)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena and
+	  Francisco Javier F. Serrador)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.75 (01/09/2004):
+	* Catalan translation updated (Xan (DXpublica))
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* English (British) translation re-added (Luke Ross (lukeross))
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* Italian translation updated (Claudio Satriano)
+	* Japanese translation updated (Ambrose Li)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan (dumol))
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+	* Vietnamese translation updated (T.M.Thanh)
+
+version 0.74 (11/25/2003):
+	* Vietnamese translation added (T.M.Thanh)
+
+version 0.73 (11/21/2003):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* Hindi trnaslation updated (Ravi (raviratlami))
+	* Italian translation updated (Claudio Satriano)
+	* Norwegian translation updated (Petter Johan Olsen)
+	* Polish translation updated (Emil Nowak)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.72 (10/31/2003):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Dutch translation updated (Vincent van Adrighem)
+	* Finnish translation updated (Arto Alakulju)
+	* French translation updated (Eric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* Italian translation updated (Claudio Satriano)
+	* Korean translation updated (Kyung-uk)
+	* Portuguese (Portugal) updated (Duarte Henriques)
+	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Alexandre Prokoudine)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.71 (10/09/2003):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Finnish translation updated (Ambrose C. LI (acli))
+	* French translation updated (Eric Boumaour)
+	* Italian translation updated (Claudio Satriano)
+	* German translation updated (Christian Weyer, Bjoern Voigt)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.70 (09/28/2003):
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Portuguese (Portugal) translation updated (Duarte Henriques)
+
+version 0.69 (09/24/2003):
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
+	  Liu (prliu))
+	* Czech translation updated (Miloslav Trmac)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Dutch translation updated (Vincent van Adrighem)
+	* Finnish translation updated (Ambrose C. LI (acli))
+	* French translation updated (Eric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* Italian translation updated (Luca Beltrame, Claudio Satriano)
+	* Korean translation updated (Kyung-uk Son)
+	* Polish translation updated (Przemysław Sułek, Krzysztof, and Emil)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Portuguese (Portugal) added (Duarte Henriques)
+	* Romanian translation updated (Misu Moldovan (dumol))
+	* Russian translation updated (Alexandre Prokoudine)
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Spanish translation updated (Javier Fern?ndez-Sanguino Pe?a)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.68 (09/01/2003):
+	* Catalan translation updated (Robert Millan)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
+	* Finnish translation updated (Ambrose C. LI (acli))
+	* German translation updated (Bjoern Voigt)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Norwegian translation updated (Petter Johan Olsen)
+	* Romanian translation updated (Misu Moldovan (dumol))
+	* Serbian translation updated (Danilo Segan)
+	* Serbian Latin translation updated (Danilo Segan)
+	* Swedish translation updated (Tore Lundqvist (luntor))
+
+version 0.67 (08/14/2003):
+	* British English "translation" updated (Sam Halliday)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* French translation updated (Eric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* Hindi translation added (Guntupalli Karunakar)
+	* Hungarian translation updated (Zoltan Sutto)
+	* Italian translation updated (Luca Beltrame, Claudio Satriano)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
+	* Romanian translation updated (Misu Moldovan (dumol))
+	* Serbian translation updated (Danilo Segan)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
+
+version 0.66 (07/18/2003):
+	* Italian translation updated (Claudio Satriano)
+	* British English "translation" added (Sam Halliday)
+	* Updated  Portuguese (Brazilian) translation
+	  (Mauricio de Lemos Rodrigues Collares Neto)
+	* Updated Czech translation (Miloslav Trmac)
+
+version 0.65 (07/16/2003):
+	* French translation updated (Eric (Zongo) Boumaour)
+	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues
+	  Collares Neto)
+	* Korean translation updated (Kyung-uk Son)
+	* Japanese translation updated (Junichi Uekawa)
+	* Hebrew translation added (Pavel Bibergal)
+	* Russian translation updated (Dzmitry Chekmarou)
+	* Danish translation updated (Morten Brix Pedersen)
+	* Hungarian translation updated (Zoltan Sutto)
+	* Italian translation updated (Claudio Satriano)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+
+version 0.64 (05/29/2003):
+
+version 0.63 (05/16/2003):
+
+version 0.62 (04/23/2003):
+	* Updated a number of translations. Thanks to everyone who submitted
+	  a translation update.
+
+version 0.61 (04/07/2003):
+
+version 0.60 (04/04/2003): 
+	* French translation updated. (Thanks, Stephane Wirtel,
+	  Sebastian Carpe, and David Odin)
+	* Polish translation updated. (Thanks, Przemyslaw Sulek)
+	* Finnish translation updated. (Thanks, Tero Kuusela)
+	* Spanish translation updated. (Thanks, Lars Goldschlager,
+	  Nicolas Lichtmaier) 
+	* Traditional Chinese translation updated. (Thanks, Paladin Liu)
+	* Japanese translation updated. (Thanks, Junichi Uekawa)
+	* Korean translation updated. (Thanks, A Lee)
+	* Romanian translation added. (Thanks, Misu Moldovan)
+	* Many other translation patches from many people merged in.
+
+version 0.59 (06/24/2002):
+	* Hungarian translation added (Thanks, Sutto Zoltan)
+	* Swedish translation updated (Thanks, Christian Rose)
+	* Spanish translation updated (Thanks, Alex)
+	* Traditional Chinese translation updated (Thanks, Paladin Liu)
+	* Czech translation added (Thanks, Honza)
+	* Polish translation updated (Thanks Przemyslaw Sulek)
+
+version 0.58 (05/13/2002):
+	* Bulgarian translation added (Thanks, Igel Itzo)
+	* Traditional Chinese  translation added (Thanks, Paladin Liu)
+
+version 0.57 (04/25/2002):
+	* Polish translation updated (Thanks Przemyslaw Sulek)
+	* Danish translation added (Thanks, Sarauw Hansen)
+	* Finnish translation update (Thanks, Tero Kuusela)
+	* Japanese translation added (Thanks, Ryosuke Kutsuna)
+	* Jabber improvements (Thanks, Nathan Walp)
+
+version 0.56 (04/11/2002):
+	* German translation update (Thanks Karsten Weiss)
+	* Russian Translation Updated (thanks Grigory Bakunov)
+
+version 0.55 (03/29/2002):
+	* Updated Dutch translation
+	* Updated Polish Translation (Thanks Przemyslaw Sulek)
+	* Updated Spanish Translation (Thanks Amaya)
+	* Updated French translation
+	* Updated Finnish translation (Thanks Tero Kuusela)
+
+version 0.54 (03/14/2002):
+	* Italian translation added
+
+version 0.53 (02/28/2002):
+	* Updated Polish Translation (thanks Przemyslaw Sulek)
+	* Slovak translation added (Thanks Daniel Rezny)
+
+version 0.52 (02/17/2002):
+	* Updated Polish Translation (thanks Przemyslaw Sulek)
+	* Updated Simplified Chinese Translation (Thanks Rocky S. Lee)
+	* Updated German Translation (Thanks Karsten Weiss)
+
+version 0.51 (01/24/2002):
+	* Finnish translation added (Thanks Tero Kuusela)
+	* Updated French Translation (Thanks sebfrance)
+
+version 0.50 (12/14/2001):
+	* Updated polish translation (Thanks Przemyslaw Sulek)
+	* Added swedish translation (Thanks Christian Rose)
+
+version 0.49 (11/29/2001):
+	* Updated Russian translation (thanks Grigory Bakunov)
+	* Updated Korean translation (thanks Ho-seok Lee, also for
+	  resized ICQ icons)
+	* Updated Dutch translation (thanks Floris Eshuis)
+
+version 0.48 (11/18/2001):
+
+version 0.47 (11/01/2001):
+	* Added Dutch translation
+	* Updated Korean translation
+
+version 0.46 (10/18/2001):
+	* Updated Korean translation
+
+version 0.45 (10/04/2001):
+	* New Translation: Polish translation by Przemysaw Suek
+
+version 0.44 (09/20/2001):
+
+version 0.43 (09/06/2001):
+	* Updated German Translation (thanks Daniel Seifert)
+
+version 0.11.0-pre15 (08/28/2001):
+	* Added Russian Translation
+	* Updated French Translation (thanks sebfrance)
+
+version 0.11.0-pre14 (06/17/2001):
+	* Updated the German translation (Thanks, Dominik)
+
+version 0.11.0-pre13 (06/06/2001):
+
+version 0.11.0-pre12 (05/29/2001):
+
+version 0.11.0-pre11 (04/30/2001):
+
+version 0.11.0-pre10 (04/13/2001):
+
+version 0.11.0-pre9 (03/26/2001):
+
+version 0.11.0-pre8 (03/23/2001):
+
+version 0.11.0-pre7 (03/16/2001):
+
+version 0.11.0-pre6 (03/06/2001):
+
+version 0.11.0-pre5 (02/26/2001):
+
+version 0.11.0-pre4:
+
+version 0.11.0-pre3 (12/15/2000):
+
+version 0.11.0-pre2 (12/04/2000):
+
+version 0.11.0-pre1 (12/03/2000):
+
+version 0.10.3 (10/09/2000):
+
+version 0.10.2 (10/07/2000):
+
+version 0.10.1 (09/15/2000):
+
+version 0.10.0 (09/11/2000): 
+
+version 0.9.20 (07/14/2000):
+	* French (fr), Spanish (es), Simplified Chinese (zh_CN), Korean (kr)
+	  translations added 
+
+version 0.9.19 (06/09/2000):
+
+version 0.9.18 (06/02/2000):
+
+version 0.9.17 (05/31/2000):
+
+version 0.9.16 (05/31/2000):
+
+version 0.9.15 (05/06/2000):
+
+version 0.9.14 (04/24/2000):
+
+version 0.9.13 (03/27/2000):
+
+version 0.9.12 (03/25/2000):
+
+version 0.9.11 (03/22/2000):
+
+version 0.9.10 (11/03/1999):
+
+version 0.9.9  (10/31/1999):
+
+version 0.9.8  (10/04/1999):
+
+version 0.9.7  (08/08/1999):
+
+version 0.9.6  (08/01/1999):
+
+version 0.9.5  (07/25/1999):
+
+version 0.8.0  (04/31/1999):

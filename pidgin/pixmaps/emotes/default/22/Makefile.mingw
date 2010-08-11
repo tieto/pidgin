@@ -1,0 +1,20 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Pidgin pixmaps
+#
+
+PIDGIN_TREE_TOP := ../../../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+datadir = $(PIDGIN_INSTALL_DIR)
+include ./Makefile.am
+
+.PHONY: install
+
+install:
+	if test '$(pidginsmileypix_DATA)'; then \
+	  mkdir -p $(pidginsmileypixdir); \
+	  cp $(pidginsmileypix_DATA) $(pidginsmileypixdir); \
+	fi;
+
