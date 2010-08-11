@@ -1231,7 +1231,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	guint16 reason;
 	char *bn;
 
-	if (!(snac2 = aim_remsnac(od, snac->id))) {
+	snac2 = aim_remsnac(od, snac->id);
+	if (!snac2) {
 		purple_debug_misc("oscar", "locate error: received response from unknown request!\n");
 		return 0;
 	}
@@ -1243,7 +1244,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		return 0;
 	}
 
-	if (!(bn = snac2->data)) {
+	bn = snac2->data;
+	if (!bn) {
 		purple_debug_misc("oscar", "locate error: received response from request without a buddy name!\n");
 		g_free(snac2);
 		return 0;
@@ -1255,8 +1257,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, reason, bn);
 
-	if (snac2)
-		g_free(snac2->data);
+	g_free(snac2->data);
 	g_free(snac2);
 
 	return ret;

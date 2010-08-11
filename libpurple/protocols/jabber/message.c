@@ -75,12 +75,8 @@ static void handle_chat(JabberMessage *jm)
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
 	if(!jm->xhtml && !jm->body) {
-		if (jbr) {
-			if (jm->chat_state != JM_STATE_NONE)
-				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
-			else
-				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
-		}
+		if (jbr && jm->chat_state != JM_STATE_NONE)
+			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
@@ -142,10 +138,13 @@ static void handle_chat(JabberMessage *jm)
 		}
 
 		if(jbr) {
-			if (jm->chat_state != JM_STATE_NONE)
-				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
-			else
-				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+			/* Treat SUPPORTED as a terminal with no escape :) */
+			if (jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED) {
+				if (jm->chat_state != JM_STATE_NONE)
+					jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+				else
+					jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+			}
 
 			if(jbr->thread_id)
 				g_free(jbr->thread_id);
@@ -1250,7 +1249,14 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	g_free(resource);
 
-	if (!jbr || (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED))
+	/* We know this entity doesn't support chat states */
+	if (jbr && jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED)
+		return 0;
+
+	/* *If* we don't have presence /and/ the buddy can't see our
+	 * presence, don't send typing notifications.
+	 */
+	if (!jbr && !(jb->subscription & JABBER_SUB_FROM))
 		return 0;
 
 	/* TODO: figure out threading */

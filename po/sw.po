@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2009-04-16 22:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
@@ -1347,8 +1347,6 @@ msgstr "Futa mwenyeji"
 msgid "Saved Statuses"
 msgstr ""
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Jina"
 
@@ -1642,6 +1640,12 @@ msgid "Change user information for %s"
 msgstr ""
 
 msgid "Set User Info"
+msgstr ""
+
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
 msgstr ""
 
 msgid "Unknown"
@@ -3704,12 +3708,6 @@ msgstr ""
 msgid "execute"
 msgstr ""
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3747,6 +3745,43 @@ msgstr "Uthibitisho unatakiwa"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SSL Seva"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Jina la profaili ni batili"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Kivunge kisichokubaliwa"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Faili %S halipo"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Kivunge kisichokubaliwa"
+
+#, fuzzy
+msgid "User not found"
+msgstr "Seva haipatikani"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Jina batili la moduli."
+
+msgid "Resource Constraint"
+msgstr ""
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3837,6 +3872,12 @@ msgstr "Jumuiya(J)"
 #, fuzzy
 msgid "Organization Unit"
 msgstr "Jumuiya(J)"
+
+#. title
+#. optional information
+#, fuzzy
+msgid "Job Title"
+msgstr "Cheo cha &kazi:"
 
 msgid "Role"
 msgstr ""
@@ -4076,6 +4117,12 @@ msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 msgid "Roles:"
 msgstr ""
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 #, fuzzy
 msgid "Ping timed out"
 msgstr "Muunganiko umepita muda"
@@ -4083,6 +4130,9 @@ msgstr "Muunganiko umepita muda"
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "Kizuizi batili"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4188,7 +4238,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4212,7 +4261,6 @@ msgstr "Kwa:"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr "Bila"
 
@@ -4234,6 +4282,12 @@ msgstr "Jina la Moduli:"
 msgid "Mood Comment"
 msgstr ""
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4425,9 +4479,6 @@ msgstr ""
 #, fuzzy
 msgid "Remote Connection Failed"
 msgstr "Muunganiko salama umeshindikana"
-
-msgid "Resource Constraint"
-msgstr ""
 
 msgid "Restricted XML"
 msgstr ""
@@ -4769,7 +4820,6 @@ msgstr "Kiassame"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr ""
 
@@ -4864,7 +4914,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr ""
 
@@ -4882,7 +4931,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Hakuna Mpangilio"
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Kusanya kwa:"
@@ -4890,14 +4938,12 @@ msgstr "Kusanya kwa:"
 msgid "Guilty"
 msgstr ""
 
-#. 4
 msgid "Happy"
 msgstr ""
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "Mwenyeji:"
@@ -4935,7 +4981,6 @@ msgstr ""
 msgid "Intoxicated"
 msgstr "Kizuizi batili"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -4998,7 +5043,6 @@ msgstr "Ondoa"
 msgid "Restless"
 msgstr "Mwandishi wa habari"
 
-#. 7
 #, fuzzy
 msgid "Sad"
 msgstr "Jm"
@@ -5019,12 +5063,10 @@ msgstr "Imezuiliwa"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Bofya"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5435,18 +5477,6 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr ""
-
-msgid "Album"
-msgstr ""
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Mada Fupi"
@@ -5599,10 +5629,6 @@ msgstr "Universal"
 #. Business
 msgid "Work"
 msgstr ""
-
-#, fuzzy
-msgid "Job Title"
-msgstr "Cheo cha &kazi:"
 
 msgid "Company"
 msgstr ""
@@ -5866,27 +5892,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr "Nambari mstari iliyoingizwa ni batili."
 
-#. 5
-msgid "In Love"
-msgstr ""
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Nywila ya sasa hivi:"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Tabo mpya"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Badil &Nywila"
-
-msgid "How do you feel right now?"
-msgstr ""
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Nambari mstari iliyoingizwa ni batili."
@@ -5961,11 +5966,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Kuhusu %S"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Badil &Nywila"
 
 #. display / change profile
 #, fuzzy
@@ -6227,6 +6227,9 @@ msgstr ""
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
 msgstr ""
 
 #, fuzzy
@@ -6632,10 +6635,6 @@ msgstr "Nywila inatakiwa"
 msgid "Incorrect password"
 msgstr "Nywila ya sasa hivi:"
 
-#, fuzzy
-msgid "User not found"
-msgstr "Seva haipatikani"
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6875,6 +6874,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Hitilafu katika kuhifadhi %S"
 
 msgid "Could not join chat room"
 msgstr ""
@@ -8211,6 +8214,11 @@ msgstr ""
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Cheo cha &kazi:"
 
 msgid "Notice"
 msgstr ""
@@ -10084,9 +10092,6 @@ msgstr ""
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! Barua"
 
-msgid "Pager server"
-msgstr ""
-
 #, fuzzy
 msgid "Pager port"
 msgstr "Page Down"
@@ -10107,12 +10112,6 @@ msgid "Use account proxy for SSL connections"
 msgstr ""
 
 msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-msgid "Yahoo Chat port"
 msgstr ""
 
 #, fuzzy
@@ -10173,6 +10172,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -10243,6 +10248,15 @@ msgstr "Haikuweza kuunganishwa"
 #, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Imeshindwa kuipata seva wakala"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr ""
@@ -10618,6 +10632,10 @@ msgstr "Hapana"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr ""
 
@@ -10853,13 +10871,6 @@ msgid "Internet Messenger"
 msgstr "Internet Explorer"
 
 msgid "Pidgin Internet Messenger"
-msgstr ""
-
-#, fuzzy
-msgid "Orientation"
-msgstr "Mkao:"
-
-msgid "The orientation of the tray."
 msgstr ""
 
 #. Build the login options frame.
@@ -12063,6 +12074,10 @@ msgid "Arabic"
 msgstr "Kiarabu"
 
 #, fuzzy
+msgid "Assamese"
+msgstr "Kiassame"
+
+#, fuzzy
 msgid "Belarusian Latin"
 msgstr "Kibelarusi"
 
@@ -12070,6 +12085,10 @@ msgid "Bulgarian"
 msgstr "Kibulgaria"
 
 msgid "Bengali"
+msgstr "Kibengalia"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Kibengalia"
 
 msgid "Bosnian"
@@ -12186,6 +12205,10 @@ msgstr "Lao"
 
 msgid "Macedonian"
 msgstr "Kimacedonia"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Mali"
 
 msgid "Mongolian"
 msgstr "Kimongolia"
@@ -14928,7 +14951,17 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Rejesha Misingi"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -15131,6 +15164,140 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Rejesha Misingi"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Mahali"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr ""
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Uwekaji wa Mikato"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Kila unapoanzisha"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Nywila ya sasa hivi:"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Tabo mpya"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Badil &Nywila"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Badil &Nywila"
+
+#, fuzzy
+#~ msgid "Orientation"
+#~ msgstr "Mkao:"
 
 #, fuzzy
 #~ msgid "Error creating conference."

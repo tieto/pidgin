@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2005-06-17 23:22-0800\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1321,8 +1321,6 @@ msgstr "Төлөвийг Усгах"
 msgid "Saved Statuses"
 msgstr "Хадгалагдсан Төлөвүүд"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Гарчиг"
 
@@ -1603,6 +1601,14 @@ msgstr "%s ийн мэдээллийг өөрчлөх"
 
 msgid "Set User Info"
 msgstr "Харилцагчийн мэдээллийг тохируулах"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Энэ протокол чат өрөөг дэмжихгүй байна."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Энэ протокол чат өрөөг дэмжихгүй байна."
 
 msgid "Unknown"
 msgstr "Үл мэдэгдэх"
@@ -3648,14 +3654,6 @@ msgstr "Ad-Hoc Команд Биелэгдээгүй"
 msgid "execute"
 msgstr "гүйцэтгэх"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Кодчилол шаардлагатай, гэхдээ ямар ч TLS/SSL дэмжлэг олдсонгүй."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Кодчилол шаардлагатай, гэхдээ ямар ч TLS/SSL дэмжлэг олдсонгүй."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3692,6 +3690,42 @@ msgstr "SSL Холболт амжилтгүй болсон"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL алдаа"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Буруу хоч нэр"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Дэмжигдэхгүй хувилбар"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Харилцагч үүсээгүй байна"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Дэмжигдэхгүй кодчилол"
+
+msgid "User not found"
+msgstr "Хэрэглэгч олдсонгүй"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Хэрэглэгчийн нэр буруу"
+
+msgid "Resource Constraint"
+msgstr "Нөөцын хязгаарлалт"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3780,6 +3814,11 @@ msgstr "Байгууллагын нэр"
 
 msgid "Organization Unit"
 msgstr "Байгуулагын нэгж"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Ажлын нэр"
 
 msgid "Role"
 msgstr "Үүрэг"
@@ -4004,11 +4043,23 @@ msgid "Roles:"
 msgstr "Үүрэг"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Кодчилол шаардлагатай, гэхдээ ямар ч TLS/SSL дэмжлэг олдсонгүй."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Кодчилол шаардлагатай, гэхдээ ямар ч TLS/SSL дэмжлэг олдсонгүй."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Холболтын хугацаа дууссан."
 
 msgid "Invalid XMPP ID"
 msgstr "Буруу  XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Буруу XMPP ID. Домэйныг тохируулах хэрэгтэй."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Буруу XMPP ID. Домэйныг тохируулах хэрэгтэй."
@@ -4107,7 +4158,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4129,7 +4179,6 @@ msgstr "Рүү"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr ""
 
@@ -4151,6 +4200,12 @@ msgstr "Бүлгийн нэр"
 msgid "Mood Comment"
 msgstr "Харилцагчийн Тайлбар"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Ая зохиогч"
 
@@ -4320,9 +4375,6 @@ msgstr ""
 
 msgid "Remote Connection Failed"
 msgstr "Алсын холболт тасарсан"
-
-msgid "Resource Constraint"
-msgstr "Нөөцын хязгаарлалт"
 
 msgid "Restricted XML"
 msgstr ""
@@ -4672,7 +4724,6 @@ msgstr "Ичсэн"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr "Ууртай"
 
@@ -4769,7 +4820,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Санаа зовоосон"
 
-#. 2
 msgid "Excited"
 msgstr "Баярлуулах"
 
@@ -4787,7 +4837,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Хайж байна..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Бүлэг"
@@ -4796,14 +4845,12 @@ msgstr "Бүлэг"
 msgid "Guilty"
 msgstr "Хот"
 
-#. 4
 msgid "Happy"
 msgstr "Аж жаргалтай"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "Хост:"
@@ -4844,7 +4891,6 @@ msgstr "Сонирхол"
 msgid "Intoxicated"
 msgstr "Урих"
 
-#. 6
 msgid "Invincible"
 msgstr "Дийлдэшгүй"
 
@@ -4907,7 +4953,6 @@ msgstr "Устгах"
 msgid "Restless"
 msgstr "Бүртгүүлэх"
 
-#. 7
 msgid "Sad"
 msgstr "Уйтгартай"
 
@@ -4928,11 +4973,9 @@ msgstr "Хаагдсан"
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr ""
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Нойрмог"
@@ -5328,18 +5371,6 @@ msgstr "Утасаар ярьж байна"
 msgid "Out to Lunch"
 msgstr "Үдийн цайндаа явсан"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Уран бүтээлч"
-
-msgid "Album"
-msgstr "Цомог"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Аяны нэр"
@@ -5489,9 +5520,6 @@ msgstr "Төрсөн өдөр"
 #. Business
 msgid "Work"
 msgstr "Ажил"
-
-msgid "Job Title"
-msgstr "Ажлын нэр"
 
 msgid "Company"
 msgstr "Компани"
@@ -5758,28 +5786,6 @@ msgstr "Харилцагчийн жагсаалтанд энэ харилцаг�
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr "Хайртай"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Одоогийн нууц үг"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Төлөвийг Тохируулах..."
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Нууц үгийг өөрчлөх"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Би одоогоор энд байхгүй байна"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Оруулсан SecurID түлхүүр буруу байна."
@@ -5853,11 +5859,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "%s ийн талаар"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Нууц үгийг солих..."
 
 #. display / change profile
 #, fuzzy
@@ -6131,6 +6132,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Хайртай"
 
 #, fuzzy
 msgid "Pending"
@@ -6522,9 +6526,6 @@ msgstr "Нууц үгийн хугацаа дууссан"
 msgid "Incorrect password"
 msgstr "Буруу нууц үг"
 
-msgid "User not found"
-msgstr "Хэрэглэгч олдсонгүй"
-
 msgid "Account has been disabled"
 msgstr "Бүртгэлийг идэвхгүй болгосон"
 
@@ -6767,6 +6768,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s ажилуулахад алдаа гарлаа"
 
 msgid "Could not join chat room"
 msgstr "Чат өрөөнд холбогдох боломжгүй"
@@ -8114,6 +8119,11 @@ msgstr "Буруу хүсэлт"
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Өрөөний Жагсаалт"
 
 #, fuzzy
 msgid "Notice"
@@ -9975,9 +9985,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo Портокол Нэмэлт програм"
 
-msgid "Pager server"
-msgstr "Пежер сервер"
-
 msgid "Pager port"
 msgstr "Пежер порт"
 
@@ -9998,12 +10005,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo Чат сервер"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo Чат порт"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10065,6 +10066,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -10139,6 +10146,15 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Сервертэй холбогдож чадсангүй:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Хаахыг хүсэж байгаа харилцагчийн нэрийг оруул."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Гэртээ байхгүй байна"
@@ -10511,6 +10527,10 @@ msgstr "Үгүй"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "Зөвшөөрөх"
 
@@ -10743,12 +10763,6 @@ msgstr "Интернет Мессенжер"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Пизин Интернет Мессенжер"
-
-msgid "Orientation"
-msgstr "Чиглэл"
-
-msgid "The orientation of the tray."
-msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11936,6 +11950,10 @@ msgstr "Өмнөд Африкийн хэл"
 msgid "Arabic"
 msgstr "Араб хэл"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Ичсэн"
+
 msgid "Belarusian Latin"
 msgstr "Беларусын Латин хэл"
 
@@ -11943,6 +11961,10 @@ msgid "Bulgarian"
 msgstr "Болгари хэл"
 
 msgid "Bengali"
+msgstr "Бенгали хэл"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Бенгали хэл"
 
 msgid "Bosnian"
@@ -12060,6 +12082,10 @@ msgstr "Лаос хэл"
 
 msgid "Macedonian"
 msgstr "Македони хэл"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "эр"
 
 #, fuzzy
 msgid "Mongolian"
@@ -14761,8 +14787,17 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr ""
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "Мессежийн хугацааны формат"
+
+msgid "Use system default"
+msgstr ""
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -14964,6 +14999,159 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+msgid "Desktop"
+msgstr ""
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Байршил"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Пизин Интернет Мессенжер"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Товчны хослол"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Систем эхлүүлэлт"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Энэ чатын нэрийг ашиглаж байна"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Уран бүтээлч"
+
+#~ msgid "Album"
+#~ msgstr "Цомог"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Одоогийн нууц үг"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Төлөвийг Тохируулах..."
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Нууц үгийг өөрчлөх"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Би одоогоор энд байхгүй байна"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Нууц үгийг солих..."
+
+#~ msgid "Pager server"
+#~ msgstr "Пежер сервер"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo Чат сервер"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo Чат порт"
+
+#~ msgid "Orientation"
+#~ msgstr "Чиглэл"
 
 #, fuzzy
 #~ msgid "Error creating conference."

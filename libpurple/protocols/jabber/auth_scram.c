@@ -517,13 +517,24 @@ scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
 	gsize len;
 
 	enc_in = xmlnode_get_data(packet);
-	g_return_val_if_fail(enc_in != NULL && *enc_in != '\0', FALSE);
+	if (data->step != 3 && (!enc_in || *enc_in == '\0')) {
+		*error = g_strdup(_("Invalid challenge from server"));
+		g_free(enc_in);
+		return JABBER_SASL_STATE_FAIL;
+	}
 
-	if (data->step == 3)
+	if (data->step == 3) {
+		/*
+		 * If the server took the slow approach (sending the verifier
+		 * as a challenge/response pair), we get here.
+		 */
+		g_free(enc_in);
 		return JABBER_SASL_STATE_OK;
+	}
 
 	if (data->step != 2) {
 		*error = g_strdup(_("Unexpected response from server"));
+		g_free(enc_in);
 		return JABBER_SASL_STATE_FAIL;
 	}
 
@@ -532,7 +543,7 @@ scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		g_free(dec_in);
-		*error = g_strdup(_("Invalid challenge from server"));
+		*error = g_strdup(_("Malicious challenge from server"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 

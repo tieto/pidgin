@@ -757,8 +757,7 @@ void aim_ads_requestads(OscarData *od, FlapConnection *conn);
  * HTML messages, then the oscar servers will merrily strip the HTML
  * for us.
  *
- * When we receive an IM we look at the features on the ICBM to
- * determine if the message is HTML or plaintext.
+ * All incoming IMs are treated as HTML.
  */
 #define AIM_IMPARAM_FLAG_USE_HTML_FOR_ICQ       0x00000400
 
@@ -1560,6 +1559,7 @@ void aim_tlvlist_remove(GSList **list, const guint16 type);
 		(((*((buf)+2)) << 16) & 0x00ff0000) + \
 		(((*((buf)+3)) << 24) & 0xff000000))
 
+const char *oscar_get_msgerr_reason(size_t reason);
 int oscar_get_ui_info_int(const char *str, int default_value);
 const char *oscar_get_ui_info_string(const char *str, const char *default_value);
 gchar *oscar_get_clientstring(void);

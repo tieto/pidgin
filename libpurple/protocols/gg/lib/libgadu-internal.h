@@ -26,5 +26,6 @@
 char *gg_cp_to_utf8(const char *b);
 char *gg_utf8_to_cp(const char *b);
 int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, const char *packet, int length);
+void gg_debug_common(struct gg_session *sess, int level, const char *format, va_list ap);
 
 #endif /* LIBGADU_INTERNAL_H */

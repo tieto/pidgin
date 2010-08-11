@@ -260,7 +260,7 @@ msn_change_status(MsnSession *session)
 
 	if (msnobj == NULL)
 	{
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text, caps);
+		msn_cmdproc_send(cmdproc, "CHG", "%s %u", state_text, caps);
 	}
 	else
 	{
@@ -268,7 +268,7 @@ msn_change_status(MsnSession *session)
 
 		msnobj_str = msn_object_to_string(msnobj);
 
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
+		msn_cmdproc_send(cmdproc, "CHG", "%s %u %s", state_text,
 						 caps, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);

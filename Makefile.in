@@ -269,6 +269,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -406,7 +408,7 @@ noinst_HEADERS = config.h package_revision.h
 @ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@appsdir = $(datadir)/applications
 @ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@apps_in_files = pidgin.desktop.in
 @ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@apps_DATA = $(apps_in_files:.desktop.in=.desktop)
-@ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@GTK_DIR = pidgin
+@ENABLE_GTK_TRUE@GTK_DIR = pidgin
 @ENABLE_GNT_TRUE@GNT_DIR = finch
 
 # This is a magic directive copy-and-pasted, then modified, from the

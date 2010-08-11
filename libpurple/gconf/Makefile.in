@@ -206,6 +206,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -314,8 +316,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 schemadir = @GCONF_SCHEMA_FILE_DIR@
 EXTRA_DIST = purple.schemas.in
-@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@schema_in_files = purple.schemas.in
-@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@schema_DATA = $(schema_in_files:.schemas.in=.schemas)
+@INSTALL_I18N_TRUE@schema_in_files = purple.schemas.in
+@INSTALL_I18N_TRUE@schema_DATA = $(schema_in_files:.schemas.in=.schemas)
 all: all-am
 
 .SUFFIXES:
@@ -444,6 +446,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@INSTALL_I18N_FALSE@install-data-local:
 clean: clean-am
 
 clean-am: clean-generic clean-libtool mostlyclean-am
@@ -524,12 +527,12 @@ uninstall-am: uninstall-schemaDATA
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am uninstall uninstall-am uninstall-schemaDATA
 
-@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@@INTLTOOL_SCHEMAS_RULE@
+@INSTALL_I18N_TRUE@@INTLTOOL_SCHEMAS_RULE@
 
-@GCONF_SCHEMAS_INSTALL_TRUE@install-data-local:
-@GCONF_SCHEMAS_INSTALL_TRUE@	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(schema_DATA) 2>&1 | \
-@GCONF_SCHEMAS_INSTALL_TRUE@		grep -v "^WARNING: failed to install schema" | grep -v "^Attached schema" 1>&2
-@GCONF_SCHEMAS_INSTALL_FALSE@install-data-local:
+@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@install-data-local:
+@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(schema_DATA) 2>&1 | \
+@GCONF_SCHEMAS_INSTALL_TRUE@@INSTALL_I18N_TRUE@		grep -v "^WARNING: failed to install schema" | grep -v "^Attached schema" 1>&2
+@GCONF_SCHEMAS_INSTALL_FALSE@@INSTALL_I18N_TRUE@install-data-local:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

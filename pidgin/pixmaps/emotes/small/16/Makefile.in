@@ -206,6 +206,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -320,7 +322,10 @@ MOODS = \
     cinema.png \
     disappointed.png \
     embarrassed.png \
+    grumpy.png \
+    hot.png \
     internet.png \
+    invincible.png \
     music.png \
     restroom.png \
     search.png \

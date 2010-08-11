@@ -34,8 +34,20 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+
+# Install in the "correct" locations
+@ENABLE_TRAYCOMPAT_FALSE@@INSTALL_PIXMAPS_TRUE@am__append_1 = \
+@ENABLE_TRAYCOMPAT_FALSE@@INSTALL_PIXMAPS_TRUE@		$(TRAY_16) \
+@ENABLE_TRAYCOMPAT_FALSE@@INSTALL_PIXMAPS_TRUE@		$(TRAY_22) \
+@ENABLE_TRAYCOMPAT_FALSE@@INSTALL_PIXMAPS_TRUE@		$(TRAY_32) \
+@ENABLE_TRAYCOMPAT_FALSE@@INSTALL_PIXMAPS_TRUE@		$(TRAY_48)
+
 subdir = pidgin/pixmaps
-DIST_COMMON = $(am__nobase_dist_pidginicons_DATA_DIST) \
+DIST_COMMON = $(am__dist_pidginpixmaptray16_DATA_DIST) \
+	$(am__dist_pidginpixmaptray22_DATA_DIST) \
+	$(am__dist_pidginpixmaptray32_DATA_DIST) \
+	$(am__dist_pidginpixmaptray48_DATA_DIST) \
+	$(am__nobase_dist_pidginicons_DATA_DIST) \
 	$(am__nobase_dist_pidginpixmap_DATA_DIST) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -56,13 +68,16 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
-am__nobase_dist_pidginicons_DATA_DIST =  \
-	icons/hicolor/16x16/apps/pidgin.png \
-	icons/hicolor/22x22/apps/pidgin.png \
-	icons/hicolor/24x24/apps/pidgin.png \
-	icons/hicolor/32x32/apps/pidgin.png \
-	icons/hicolor/48x48/apps/pidgin.png \
-	icons/hicolor/scalable/apps/pidgin.svg
+am__dist_pidginpixmaptray16_DATA_DIST =  \
+	tray/hicolor/16x16/status/pidgin-tray-away.png \
+	tray/hicolor/16x16/status/pidgin-tray-busy.png \
+	tray/hicolor/16x16/status/pidgin-tray-invisible.png \
+	tray/hicolor/16x16/status/pidgin-tray-connect.png \
+	tray/hicolor/16x16/status/pidgin-tray-xa.png \
+	tray/hicolor/16x16/status/pidgin-tray-email.png \
+	tray/hicolor/16x16/status/pidgin-tray-pending.png \
+	tray/hicolor/16x16/status/pidgin-tray-offline.png \
+	tray/hicolor/16x16/status/pidgin-tray-available.png
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -84,10 +99,50 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(pidginiconsdir)" \
-	"$(DESTDIR)$(pidginpixmapdir)" \
+am__installdirs = "$(DESTDIR)$(pidginpixmaptray16dir)" \
+	"$(DESTDIR)$(pidginpixmaptray22dir)" \
+	"$(DESTDIR)$(pidginpixmaptray32dir)" \
+	"$(DESTDIR)$(pidginpixmaptray48dir)" \
+	"$(DESTDIR)$(pidginiconsdir)" "$(DESTDIR)$(pidginpixmapdir)" \
 	"$(DESTDIR)$(pidginbuttonpixdir)" \
 	"$(DESTDIR)$(pidgindistpixdir)"
+am__dist_pidginpixmaptray22_DATA_DIST =  \
+	tray/hicolor/22x22/status/pidgin-tray-away.png \
+	tray/hicolor/22x22/status/pidgin-tray-busy.png \
+	tray/hicolor/22x22/status/pidgin-tray-connect.png \
+	tray/hicolor/22x22/status/pidgin-tray-xa.png \
+	tray/hicolor/22x22/status/pidgin-tray-invisible.png \
+	tray/hicolor/22x22/status/pidgin-tray-email.png \
+	tray/hicolor/22x22/status/pidgin-tray-pending.png \
+	tray/hicolor/22x22/status/pidgin-tray-offline.png \
+	tray/hicolor/22x22/status/pidgin-tray-available.png
+am__dist_pidginpixmaptray32_DATA_DIST =  \
+	tray/hicolor/32x32/status/pidgin-tray-away.png \
+	tray/hicolor/32x32/status/pidgin-tray-busy.png \
+	tray/hicolor/32x32/status/pidgin-tray-connect.png \
+	tray/hicolor/32x32/status/pidgin-tray-xa.png \
+	tray/hicolor/32x32/status/pidgin-tray-invisible.png \
+	tray/hicolor/32x32/status/pidgin-tray-email.png \
+	tray/hicolor/32x32/status/pidgin-tray-pending.png \
+	tray/hicolor/32x32/status/pidgin-tray-offline.png \
+	tray/hicolor/32x32/status/pidgin-tray-available.png
+am__dist_pidginpixmaptray48_DATA_DIST =  \
+	tray/hicolor/48x48/status/pidgin-tray-away.png \
+	tray/hicolor/48x48/status/pidgin-tray-busy.png \
+	tray/hicolor/48x48/status/pidgin-tray-connect.png \
+	tray/hicolor/48x48/status/pidgin-tray-xa.png \
+	tray/hicolor/48x48/status/pidgin-tray-invisible.png \
+	tray/hicolor/48x48/status/pidgin-tray-email.png \
+	tray/hicolor/48x48/status/pidgin-tray-pending.png \
+	tray/hicolor/48x48/status/pidgin-tray-offline.png \
+	tray/hicolor/48x48/status/pidgin-tray-available.png
+am__nobase_dist_pidginicons_DATA_DIST =  \
+	icons/hicolor/16x16/apps/pidgin.png \
+	icons/hicolor/22x22/apps/pidgin.png \
+	icons/hicolor/24x24/apps/pidgin.png \
+	icons/hicolor/32x32/apps/pidgin.png \
+	icons/hicolor/48x48/apps/pidgin.png \
+	icons/hicolor/scalable/apps/pidgin.svg
 am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	animations/16/connect1.png animations/16/connect2.png \
 	animations/16/connect3.png animations/16/connect4.png \
@@ -228,7 +283,11 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	toolbar/22/select-avatar.png toolbar/22/video-call.png \
 	toolbar/22/audio-call.png toolbar/32/video-call.png \
 	toolbar/32/audio-call.png toolbar/48/video-call.png \
-	toolbar/48/audio-call.png \
+	toolbar/48/audio-call.png tray/hicolor/index.theme \
+	tray/16/available_4bit.ico tray/16/away_4bit.ico \
+	tray/16/busy_4bit.ico tray/16/connecting_4bit.ico \
+	tray/16/extended-away_4bit.ico tray/16/invisible_4bit.ico \
+	tray/16/message_4bit.ico tray/16/offline_4bit.ico \
 	tray/hicolor/16x16/status/pidgin-tray-away.png \
 	tray/hicolor/16x16/status/pidgin-tray-busy.png \
 	tray/hicolor/16x16/status/pidgin-tray-invisible.png \
@@ -238,10 +297,6 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	tray/hicolor/16x16/status/pidgin-tray-pending.png \
 	tray/hicolor/16x16/status/pidgin-tray-offline.png \
 	tray/hicolor/16x16/status/pidgin-tray-available.png \
-	tray/16/available_4bit.ico tray/16/away_4bit.ico \
-	tray/16/busy_4bit.ico tray/16/connecting_4bit.ico \
-	tray/16/extended-away_4bit.ico tray/16/invisible_4bit.ico \
-	tray/16/message_4bit.ico tray/16/offline_4bit.ico \
 	tray/hicolor/22x22/status/pidgin-tray-away.png \
 	tray/hicolor/22x22/status/pidgin-tray-busy.png \
 	tray/hicolor/22x22/status/pidgin-tray-connect.png \
@@ -269,7 +324,10 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	tray/hicolor/48x48/status/pidgin-tray-pending.png \
 	tray/hicolor/48x48/status/pidgin-tray-offline.png \
 	tray/hicolor/48x48/status/pidgin-tray-available.png
-DATA = $(nobase_dist_pidginicons_DATA) \
+DATA = $(dist_pidginpixmaptray16_DATA) $(dist_pidginpixmaptray22_DATA) \
+	$(dist_pidginpixmaptray32_DATA) \
+	$(dist_pidginpixmaptray48_DATA) \
+	$(nobase_dist_pidginicons_DATA) \
 	$(nobase_dist_pidginpixmap_DATA) $(pidginbuttonpix_DATA) \
 	$(pidgindistpix_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -441,6 +499,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -1022,6 +1082,7 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		tray/16/message_4bit.ico \
 @INSTALL_PIXMAPS_TRUE@		tray/16/offline_4bit.ico
 
+@INSTALL_PIXMAPS_TRUE@TRAY_THEME = tray/hicolor/index.theme
 @INSTALL_PIXMAPS_TRUE@TRAY_16 = \
 @INSTALL_PIXMAPS_TRUE@		tray/hicolor/16x16/status/pidgin-tray-away.png \
 @INSTALL_PIXMAPS_TRUE@		tray/hicolor/16x16/status/pidgin-tray-busy.png \
@@ -1096,38 +1157,30 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@pidginbuttonpix_DATA = edit.png pause.png info.png
 @INSTALL_PIXMAPS_TRUE@pidgindistpixdir = $(datadir)/pixmaps/pidgin
 @INSTALL_PIXMAPS_TRUE@pidgindistpix_DATA = logo.png arrow-down.xpm arrow-left.xpm arrow-right.xpm arrow-up.xpm
-@INSTALL_PIXMAPS_TRUE@nobase_dist_pidginpixmap_DATA = \
-@INSTALL_PIXMAPS_TRUE@		$(ANIMATIONS_16) \
-@INSTALL_PIXMAPS_TRUE@		$(DIALOGS_16) \
-@INSTALL_PIXMAPS_TRUE@		$(DIALOGS_64) \
-@INSTALL_PIXMAPS_TRUE@		$(DIALOGS_SCALABLE)	\
-@INSTALL_PIXMAPS_TRUE@		$(EMBLEMS_16) \
-@INSTALL_PIXMAPS_TRUE@		$(EMBLEMS_SCALABLE)	\
-@INSTALL_PIXMAPS_TRUE@		$(PROTOCOLS_16) \
-@INSTALL_PIXMAPS_TRUE@		$(PROTOCOLS_22) \
-@INSTALL_PIXMAPS_TRUE@		$(PROTOCOLS_48) \
-@INSTALL_PIXMAPS_TRUE@		$(PROTOCOLS_SCALABLE)	\
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_11) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_11_RTL) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_16) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_16_RTL) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_22) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_22_RTL) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_32) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_32_RTL) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_48) \
-@INSTALL_PIXMAPS_TRUE@		$(STATUS_48_RTL) \
-@INSTALL_PIXMAPS_TRUE@		$(TOOLBAR_11) \
-@INSTALL_PIXMAPS_TRUE@		$(TOOLBAR_16) \
-@INSTALL_PIXMAPS_TRUE@		$(TOOLBAR_22) \
-@INSTALL_PIXMAPS_TRUE@		$(TOOLBAR_32) \
-@INSTALL_PIXMAPS_TRUE@		$(TOOLBAR_48) \
-@INSTALL_PIXMAPS_TRUE@		$(TRAY_16) \
-@INSTALL_PIXMAPS_TRUE@		$(TRAY_16_ICO) \
-@INSTALL_PIXMAPS_TRUE@		$(TRAY_22) \
-@INSTALL_PIXMAPS_TRUE@		$(TRAY_32) \
-@INSTALL_PIXMAPS_TRUE@		$(TRAY_48)
-
+@INSTALL_PIXMAPS_TRUE@nobase_dist_pidginpixmap_DATA =  \
+@INSTALL_PIXMAPS_TRUE@	$(ANIMATIONS_16) $(DIALOGS_16) \
+@INSTALL_PIXMAPS_TRUE@	$(DIALOGS_64) $(DIALOGS_SCALABLE) \
+@INSTALL_PIXMAPS_TRUE@	$(EMBLEMS_16) $(EMBLEMS_SCALABLE) \
+@INSTALL_PIXMAPS_TRUE@	$(PROTOCOLS_16) $(PROTOCOLS_22) \
+@INSTALL_PIXMAPS_TRUE@	$(PROTOCOLS_48) $(PROTOCOLS_SCALABLE) \
+@INSTALL_PIXMAPS_TRUE@	$(STATUS_11) $(STATUS_11_RTL) \
+@INSTALL_PIXMAPS_TRUE@	$(STATUS_16) $(STATUS_16_RTL) \
+@INSTALL_PIXMAPS_TRUE@	$(STATUS_22) $(STATUS_22_RTL) \
+@INSTALL_PIXMAPS_TRUE@	$(STATUS_32) $(STATUS_32_RTL) \
+@INSTALL_PIXMAPS_TRUE@	$(STATUS_48) $(STATUS_48_RTL) \
+@INSTALL_PIXMAPS_TRUE@	$(TOOLBAR_11) $(TOOLBAR_16) \
+@INSTALL_PIXMAPS_TRUE@	$(TOOLBAR_22) $(TOOLBAR_32) \
+@INSTALL_PIXMAPS_TRUE@	$(TOOLBAR_48) $(TRAY_THEME) \
+@INSTALL_PIXMAPS_TRUE@	$(TRAY_16_ICO) $(am__append_1)
+# Install in a location compatible with hicolor-icon-theme 0.9
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@pidginpixmaptray16dir = $(datadir)/pixmaps/pidgin/tray/hicolor/16x16/actions
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@dist_pidginpixmaptray16_DATA = $(TRAY_16)
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@pidginpixmaptray22dir = $(datadir)/pixmaps/pidgin/tray/hicolor/22x22/actions
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@dist_pidginpixmaptray22_DATA = $(TRAY_22)
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@pidginpixmaptray32dir = $(datadir)/pixmaps/pidgin/tray/hicolor/32x32/actions
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@dist_pidginpixmaptray32_DATA = $(TRAY_32)
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@pidginpixmaptray48dir = $(datadir)/pixmaps/pidgin/tray/hicolor/48x48/actions
+@ENABLE_TRAYCOMPAT_TRUE@@INSTALL_PIXMAPS_TRUE@dist_pidginpixmaptray48_DATA = $(TRAY_48)
 @INSTALL_PIXMAPS_TRUE@nobase_dist_pidginicons_DATA = \
 @INSTALL_PIXMAPS_TRUE@		$(ICONS_16) \
 @INSTALL_PIXMAPS_TRUE@		$(ICONS_22) \
@@ -1175,6 +1228,86 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+install-dist_pidginpixmaptray16DATA: $(dist_pidginpixmaptray16_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pidginpixmaptray16dir)" || $(MKDIR_P) "$(DESTDIR)$(pidginpixmaptray16dir)"
+	@list='$(dist_pidginpixmaptray16_DATA)'; test -n "$(pidginpixmaptray16dir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pidginpixmaptray16dir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pidginpixmaptray16dir)" || exit $$?; \
+	done
+
+uninstall-dist_pidginpixmaptray16DATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pidginpixmaptray16_DATA)'; test -n "$(pidginpixmaptray16dir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(pidginpixmaptray16dir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(pidginpixmaptray16dir)" && rm -f $$files
+install-dist_pidginpixmaptray22DATA: $(dist_pidginpixmaptray22_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pidginpixmaptray22dir)" || $(MKDIR_P) "$(DESTDIR)$(pidginpixmaptray22dir)"
+	@list='$(dist_pidginpixmaptray22_DATA)'; test -n "$(pidginpixmaptray22dir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pidginpixmaptray22dir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pidginpixmaptray22dir)" || exit $$?; \
+	done
+
+uninstall-dist_pidginpixmaptray22DATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pidginpixmaptray22_DATA)'; test -n "$(pidginpixmaptray22dir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(pidginpixmaptray22dir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(pidginpixmaptray22dir)" && rm -f $$files
+install-dist_pidginpixmaptray32DATA: $(dist_pidginpixmaptray32_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pidginpixmaptray32dir)" || $(MKDIR_P) "$(DESTDIR)$(pidginpixmaptray32dir)"
+	@list='$(dist_pidginpixmaptray32_DATA)'; test -n "$(pidginpixmaptray32dir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pidginpixmaptray32dir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pidginpixmaptray32dir)" || exit $$?; \
+	done
+
+uninstall-dist_pidginpixmaptray32DATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pidginpixmaptray32_DATA)'; test -n "$(pidginpixmaptray32dir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(pidginpixmaptray32dir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(pidginpixmaptray32dir)" && rm -f $$files
+install-dist_pidginpixmaptray48DATA: $(dist_pidginpixmaptray48_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pidginpixmaptray48dir)" || $(MKDIR_P) "$(DESTDIR)$(pidginpixmaptray48dir)"
+	@list='$(dist_pidginpixmaptray48_DATA)'; test -n "$(pidginpixmaptray48dir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pidginpixmaptray48dir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pidginpixmaptray48dir)" || exit $$?; \
+	done
+
+uninstall-dist_pidginpixmaptray48DATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pidginpixmaptray48_DATA)'; test -n "$(pidginpixmaptray48dir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(pidginpixmaptray48dir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(pidginpixmaptray48dir)" && rm -f $$files
 install-nobase_dist_pidginiconsDATA: $(nobase_dist_pidginicons_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pidginiconsdir)" || $(MKDIR_P) "$(DESTDIR)$(pidginiconsdir)"
@@ -1460,7 +1593,7 @@ check: check-recursive
 all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(pidginiconsdir)" "$(DESTDIR)$(pidginpixmapdir)" "$(DESTDIR)$(pidginbuttonpixdir)" "$(DESTDIR)$(pidgindistpixdir)"; do \
+	for dir in "$(DESTDIR)$(pidginpixmaptray16dir)" "$(DESTDIR)$(pidginpixmaptray22dir)" "$(DESTDIR)$(pidginpixmaptray32dir)" "$(DESTDIR)$(pidginpixmaptray48dir)" "$(DESTDIR)$(pidginiconsdir)" "$(DESTDIR)$(pidginpixmapdir)" "$(DESTDIR)$(pidginbuttonpixdir)" "$(DESTDIR)$(pidgindistpixdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1508,7 +1641,11 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-nobase_dist_pidginiconsDATA \
+install-data-am: install-dist_pidginpixmaptray16DATA \
+	install-dist_pidginpixmaptray22DATA \
+	install-dist_pidginpixmaptray32DATA \
+	install-dist_pidginpixmaptray48DATA \
+	install-nobase_dist_pidginiconsDATA \
 	install-nobase_dist_pidginpixmapDATA \
 	install-pidginbuttonpixDATA install-pidgindistpixDATA
 
@@ -1554,7 +1691,11 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-nobase_dist_pidginiconsDATA \
+uninstall-am: uninstall-dist_pidginpixmaptray16DATA \
+	uninstall-dist_pidginpixmaptray22DATA \
+	uninstall-dist_pidginpixmaptray32DATA \
+	uninstall-dist_pidginpixmaptray48DATA \
+	uninstall-nobase_dist_pidginiconsDATA \
 	uninstall-nobase_dist_pidginpixmapDATA \
 	uninstall-pidginbuttonpixDATA uninstall-pidgindistpixDATA
 
@@ -1566,9 +1707,12 @@ uninstall-am: uninstall-nobase_dist_pidginiconsDATA \
 	ctags ctags-recursive distclean distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man \
+	install-data-am install-dist_pidginpixmaptray16DATA \
+	install-dist_pidginpixmaptray22DATA \
+	install-dist_pidginpixmaptray32DATA \
+	install-dist_pidginpixmaptray48DATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man \
 	install-nobase_dist_pidginiconsDATA \
 	install-nobase_dist_pidginpixmapDATA install-pdf \
 	install-pdf-am install-pidginbuttonpixDATA \
@@ -1577,6 +1721,10 @@ uninstall-am: uninstall-nobase_dist_pidginiconsDATA \
 	installdirs-am maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-dist_pidginpixmaptray16DATA \
+	uninstall-dist_pidginpixmaptray22DATA \
+	uninstall-dist_pidginpixmaptray32DATA \
+	uninstall-dist_pidginpixmaptray48DATA \
 	uninstall-nobase_dist_pidginiconsDATA \
 	uninstall-nobase_dist_pidginpixmapDATA \
 	uninstall-pidginbuttonpixDATA uninstall-pidgindistpixDATA

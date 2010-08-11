@@ -71,26 +71,27 @@ LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_MSN_FALSE@libmsn_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libmsn_la_SOURCES_DIST = cmdproc.c cmdproc.h command.c command.h \
-	contact.c contact.h dialog.c dialog.h error.c error.h group.c \
-	group.h history.c history.h httpconn.c httpconn.h msg.c msg.h \
-	msn.c msn.h nexus.c nexus.h notification.c notification.h \
-	object.c object.h oim.c oim.h page.c page.h servconn.c \
-	servconn.h session.c session.h slp.c slp.h slpcall.c slpcall.h \
-	slplink.c slplink.h slpmsg.c slpmsg.h soap.c soap.h state.c \
-	state.h switchboard.c switchboard.h sync.c sync.h table.c \
-	table.h transaction.c transaction.h user.c user.h userlist.c \
+	contact.c contact.h dialog.c dialog.h directconn.c \
+	directconn.h error.c error.h group.c group.h history.c \
+	history.h httpconn.c httpconn.h msg.c msg.h msn.c msn.h \
+	nexus.c nexus.h notification.c notification.h object.c \
+	object.h oim.c oim.h page.c page.h servconn.c servconn.h \
+	session.c session.h slp.c slp.h slpcall.c slpcall.h slplink.c \
+	slplink.h slpmsg.c slpmsg.h soap.c soap.h state.c state.h \
+	switchboard.c switchboard.h sync.c sync.h table.c table.h \
+	transaction.c transaction.h user.c user.h userlist.c \
 	userlist.h msnutils.c msnutils.h
 am__objects_1 = libmsn_la-cmdproc.lo libmsn_la-command.lo \
-	libmsn_la-contact.lo libmsn_la-dialog.lo libmsn_la-error.lo \
-	libmsn_la-group.lo libmsn_la-history.lo libmsn_la-httpconn.lo \
-	libmsn_la-msg.lo libmsn_la-msn.lo libmsn_la-nexus.lo \
-	libmsn_la-notification.lo libmsn_la-object.lo libmsn_la-oim.lo \
-	libmsn_la-page.lo libmsn_la-servconn.lo libmsn_la-session.lo \
-	libmsn_la-slp.lo libmsn_la-slpcall.lo libmsn_la-slplink.lo \
-	libmsn_la-slpmsg.lo libmsn_la-soap.lo libmsn_la-state.lo \
-	libmsn_la-switchboard.lo libmsn_la-sync.lo libmsn_la-table.lo \
-	libmsn_la-transaction.lo libmsn_la-user.lo \
-	libmsn_la-userlist.lo libmsn_la-msnutils.lo
+	libmsn_la-contact.lo libmsn_la-dialog.lo \
+	libmsn_la-directconn.lo libmsn_la-error.lo libmsn_la-group.lo \
+	libmsn_la-history.lo libmsn_la-httpconn.lo libmsn_la-msg.lo \
+	libmsn_la-msn.lo libmsn_la-nexus.lo libmsn_la-notification.lo \
+	libmsn_la-object.lo libmsn_la-oim.lo libmsn_la-page.lo \
+	libmsn_la-servconn.lo libmsn_la-session.lo libmsn_la-slp.lo \
+	libmsn_la-slpcall.lo libmsn_la-slplink.lo libmsn_la-slpmsg.lo \
+	libmsn_la-soap.lo libmsn_la-state.lo libmsn_la-switchboard.lo \
+	libmsn_la-sync.lo libmsn_la-table.lo libmsn_la-transaction.lo \
+	libmsn_la-user.lo libmsn_la-userlist.lo libmsn_la-msnutils.lo
 @STATIC_MSN_FALSE@am_libmsn_la_OBJECTS = $(am__objects_1)
 @STATIC_MSN_TRUE@am_libmsn_la_OBJECTS = $(am__objects_1)
 libmsn_la_OBJECTS = $(am_libmsn_la_OBJECTS)
@@ -252,6 +253,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -373,6 +376,8 @@ MSNSOURCES = \
 	contact.h\
 	dialog.c \
 	dialog.h \
+	directconn.c \
+	directconn.h \
 	error.c \
 	error.h \
 	group.c \
@@ -529,6 +534,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-command.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-contact.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-dialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-directconn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-group.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-history.Plo@am__quote@
@@ -604,6 +610,13 @@ libmsn_la-dialog.lo: dialog.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dialog.c' object='libmsn_la-dialog.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -c -o libmsn_la-dialog.lo `test -f 'dialog.c' || echo '$(srcdir)/'`dialog.c
+
+libmsn_la-directconn.lo: directconn.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -MT libmsn_la-directconn.lo -MD -MP -MF $(DEPDIR)/libmsn_la-directconn.Tpo -c -o libmsn_la-directconn.lo `test -f 'directconn.c' || echo '$(srcdir)/'`directconn.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmsn_la-directconn.Tpo $(DEPDIR)/libmsn_la-directconn.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='directconn.c' object='libmsn_la-directconn.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -c -o libmsn_la-directconn.lo `test -f 'directconn.c' || echo '$(srcdir)/'`directconn.c
 
 libmsn_la-error.lo: error.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -MT libmsn_la-error.lo -MD -MP -MF $(DEPDIR)/libmsn_la-error.Tpo -c -o libmsn_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
