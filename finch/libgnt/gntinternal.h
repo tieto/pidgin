@@ -32,6 +32,14 @@
 # define gnt_warning g_warning
 #endif
 
+#ifndef G_GNUC_NULL_TERMINATED
+#	if defined(__GNUC__) && __GNUC__ >= 4
+#		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+#	else
+#		define G_GNUC_NULL_TERMINATED
+#	endif
+#endif
+
 extern int gnt_need_conversation_to_locale;
 extern const char *C_(const char *x);
 

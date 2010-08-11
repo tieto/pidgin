@@ -1341,7 +1341,8 @@ request_auth_cb(void *data)
 
 	handles = g_list_remove(handles, info);
 
-	info->auth_cb(info->userdata);
+	if (info->auth_cb != NULL)
+		info->auth_cb(info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-granted", info->account, info->user);
@@ -1356,7 +1357,8 @@ request_deny_cb(void *data)
 
 	handles = g_list_remove(handles, info);
 
-	info->deny_cb(info->userdata);
+	if (info->deny_cb != NULL)
+		info->deny_cb(info->userdata);
 
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-denied", info->account, info->user);
@@ -1383,10 +1385,12 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 				"account-authorization-requested", account, remote_user));
 
 	if (plugin_return > 0) {
-		auth_cb(user_data);
+		if (auth_cb != NULL)
+			auth_cb(user_data);
 		return NULL;
 	} else if (plugin_return < 0) {
-		deny_cb(user_data);
+		if (deny_cb != NULL)
+			deny_cb(user_data);
 		return NULL;
 	}
 
