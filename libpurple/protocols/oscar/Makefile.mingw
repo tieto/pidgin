@@ -41,10 +41,11 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 C_SRC = \
+	authorization.c		\
 	bstream.c		\
 	clientlogin.c		\
+	encoding.c		\
 	family_admin.c		\
-	family_advert.c		\
 	family_alert.c		\
 	family_auth.c		\
 	family_bart.c		\
@@ -52,16 +53,13 @@ C_SRC = \
 	family_buddy.c		\
 	family_chat.c		\
 	family_chatnav.c	\
-	family_icq.c		\
-	family_icbm.c		\
-	family_invite.c		\
-	family_locate.c		\
-	family_odir.c		\
-	family_popup.c		\
-	family_oservice.c	\
 	family_feedbag.c	\
+	family_icbm.c		\
+	family_icq.c		\
+	family_locate.c		\
+	family_oservice.c	\
+	family_popup.c		\
 	family_stats.c		\
-	family_translate.c	\
 	family_userlookup.c	\
 	flap_connection.c	\
 	misc.c			\
@@ -75,7 +73,9 @@ C_SRC = \
 	rxhandlers.c		\
 	snac.c			\
 	tlv.c			\
-	util.c
+	userinfo.c		\
+	util.c			\
+	visibility.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
