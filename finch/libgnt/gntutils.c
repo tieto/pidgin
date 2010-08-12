@@ -385,7 +385,6 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 	const char *name;
 	char *content;
 	xmlNode *ch;
-	gboolean processed = FALSE;
 	char *url = NULL;
 	gboolean insert_nl_s = FALSE, insert_nl_e = FALSE;
 
@@ -426,15 +425,12 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 
 	for (ch = node->children; ch; ch = ch->next) {
 		if (ch->type == XML_ELEMENT_NODE) {
-			processed = TRUE;
 			util_parse_html_to_tv(ch, tv, flag);
+		} else if (ch->type == XML_TEXT_NODE) {
+			content = (char*)xmlNodeGetContent(ch);
+			gnt_text_view_append_text_with_flags(tv, content, flag);
+			xmlFree(content);
 		}
-	}
-
-	if (!processed) {
-		content = (char*)xmlNodeGetContent(node);
-		gnt_text_view_append_text_with_flags(tv, content, flag);
-		xmlFree(content);
 	}
 
 	if (url) {

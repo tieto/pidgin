@@ -187,9 +187,6 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	}
 	g_free(buf);
 
-
-
-
 	g_free(snac2->data);
 	g_free(snac2);
 
@@ -1664,10 +1661,9 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	guchar *cookie;
 	guint8 bnlen;
 	char *xml = NULL;
-	int hdrlen;
+	guint16 hdrlen;
 	int curpos;
-	int num1,num2;
-	char *desc, *title, *temp;
+	guint16 num1, num2;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	PurplePresence *presence;
@@ -1681,54 +1677,64 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 	if (channel == 0x0002)
 	{
-	 	hdrlen = byte_stream_getle16(bs);
-	 	if ( ((hdrlen == 27 ) && (bs->len > (27 + 51)))) {
-	 		byte_stream_advance(bs, 51);
-	 		num1 = byte_stream_getle16(bs); 
-	 		num2 = byte_stream_getle16(bs);
-	 		purple_debug_misc("oscar", "X-Status: Num1 %i, num2 %i\n",num1, num2);
-	 		
-	 		if(((num1 == 0x4f00)&&(num2 == 0x3b00))) {
-		 		byte_stream_advance(bs, 86);	
-		 		curpos = byte_stream_curpos(bs);
-		 		xml = byte_stream_getstr(bs, bs->len - curpos);
-		 		purple_debug_misc("oscar", "X-Status: Received XML reply\n");
-		 		if(xml) {
- 				/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", (const char*) xml); */
- 					if ((desc=strstr(xml,"&lt;desc&gt;")) != NULL) {
- 						temp=strstr(xml,"&lt;/desc&gt;");
- 						temp[0]=0;
- 						desc=desc+12;
- 					}
- 					if ((title=strstr(xml,"&lt;title&gt;")) != NULL) {
- 						temp=strstr(xml,"&lt;/title&gt;");
- 						temp[0]=0;
- 						title=title+13;
- 					} else {
- 						title="";
- 					}
- 					strcpy(xml,title);
-					if (desc) {
- 						strcat(xml, " - ");
- 						strcat(xml, desc);
+		hdrlen = byte_stream_getle16(bs);
+		if (hdrlen == 27 && bs->len > (27 + 51)) {
+			byte_stream_advance(bs, 51);
+			num1 = byte_stream_getle16(bs);
+			num2 = byte_stream_getle16(bs);
+			purple_debug_misc("oscar", "X-Status: num1 %hu, num2 %hu\n", num1, num2);
+
+			if (num1 == 0x4f00 && num2 == 0x3b00) {
+				byte_stream_advance(bs, 86);
+				curpos = byte_stream_curpos(bs);
+				xml = byte_stream_getstr(bs, bs->len - curpos);
+				purple_debug_misc("oscar", "X-Status: Received XML reply\n");
+				if (xml) {
+					GString *xstatus;
+					char *tmp1, *tmp2;
+
+					/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", xml); */
+
+					xstatus = g_string_new(NULL);
+
+					tmp1 = strstr(xml, "&lt;title&gt;");
+					if (tmp1 != NULL) {
+						tmp1 += 13;
+						tmp2 = strstr(tmp1, "&lt;/title&gt;");
+						if (tmp2 != NULL)
+							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
 					}
- 					purple_debug_misc("oscar", "X-Status reply: %s\n", (const char*)xml);
- 					account = purple_connection_get_account(od->gc);
- 					buddy = purple_find_buddy(account, bn);
- 					presence = purple_buddy_get_presence(buddy);
- 					status = purple_presence_get_active_status(presence);
- 					purple_prpl_got_user_status(account, bn,
-  					    purple_status_get_id(status), "message", xml, NULL);
-		   		} else {
-			 		purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");
+					tmp1 = strstr(xml, "&lt;desc&gt;");
+					if (tmp1 != NULL) {
+						tmp1 += 12;
+						tmp2 = strstr(tmp1, "&lt;/desc&gt;");
+						if (tmp2 != NULL) {
+							if (xstatus->len > 0)
+								g_string_append(xstatus, " - ");
+							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
+						}
+					}
+					if (xstatus->len > 0) {
+						purple_debug_misc("oscar", "X-Status reply: %s\n", xstatus->str);
+						account = purple_connection_get_account(od->gc);
+						buddy = purple_find_buddy(account, bn);
+						presence = purple_buddy_get_presence(buddy);
+						status = purple_presence_get_active_status(presence);
+						purple_prpl_got_user_status(account, bn,
+								purple_status_get_id(status),
+								"message", xstatus->str, NULL);
+					}
+					g_string_free(xstatus, TRUE);
+				} else {
+					purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");
 				}
-	 		} else {
-		 		purple_debug_misc("oscar", "X-Status: 0x0004, 0x000b not an xstatus reply\n" );
-		 /*		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		 		ret = userfunc(od, conn, frame, channel, sn, reason); */
+			} else {
+				purple_debug_misc("oscar", "X-Status: 0x0004, 0x000b not an xstatus reply\n");
+				/* if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+					ret = userfunc(od, conn, frame, channel, sn, reason); */
 			}
-		
-	 	}
+
+		}
 
 	} else if (channel == 0x0004) { /* ICQ message */
 		switch (reason) {
@@ -1857,7 +1863,7 @@ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event
 	if (!bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 11+strlen(bn)+2);
+	byte_stream_new(&bs, 11 + strlen(bn) + 2);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0014, 0x0000, NULL, 0);
 
@@ -1881,7 +1887,7 @@ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event
 	 */
 	byte_stream_put16(&bs, event);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1903,38 +1909,36 @@ int icq_im_xstatus_request(OscarData *od, const char *sn)
 	char *statxml;
 	int xmllen;
 
-	static const guint8 pluginid[] = 
-	{
-	0x09, 0x46, 0x13, 0x49, 0x4C, 0x7F, 0x11, 0xD1, 
-	0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00
+	static const guint8 pluginid[] = {
+		0x09, 0x46, 0x13, 0x49, 0x4C, 0x7F, 0x11, 0xD1,
+		0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00
 	};
-	
-	static const guint8 c_plugindata[] =
-	{
-	0x1B, 0x00, 0x0A,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0xF9, 0xD1, 0x0E, 0x00, 0xF9, 0xD1, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x01, 0x00,
-	0x01, 0x00, 0x00, 0x4F, 0x00, 0x3B, 0x60, 0xB3, 0xEF, 0xD8, 0x2A, 0x6C, 0x45, 0xA4, 0xE0, 0x9C,
-	0x5A, 0x5E, 0x67, 0xE8, 0x65, 0x08, 0x00, 0x2A, 0x00, 0x00, 0x00, 0x53, 0x63, 0x72, 0x69, 0x70,
-	0x74, 0x20, 0x50, 0x6C, 0x75, 0x67, 0x2D, 0x69, 0x6E, 0x3A, 0x20, 0x52, 0x65, 0x6D, 0x6F, 0x74,
-	0x65, 0x20, 0x4E, 0x6F, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x41,
-	0x72, 0x72, 0x69, 0x76, 0x65, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x14, 0x01, 0x00, 0x00, 0x10, 0x01, 0x00, 0x00
+
+	static const guint8 c_plugindata[] = {
+		0x1B, 0x00, 0x0A,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0xF9, 0xD1, 0x0E, 0x00, 0xF9, 0xD1, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x01, 0x00,
+		0x01, 0x00, 0x00, 0x4F, 0x00, 0x3B, 0x60, 0xB3, 0xEF, 0xD8, 0x2A, 0x6C, 0x45, 0xA4, 0xE0, 0x9C,
+		0x5A, 0x5E, 0x67, 0xE8, 0x65, 0x08, 0x00, 0x2A, 0x00, 0x00, 0x00, 0x53, 0x63, 0x72, 0x69, 0x70,
+		0x74, 0x20, 0x50, 0x6C, 0x75, 0x67, 0x2D, 0x69, 0x6E, 0x3A, 0x20, 0x52, 0x65, 0x6D, 0x6F, 0x74,
+		0x65, 0x20, 0x4E, 0x6F, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x20, 0x41,
+		0x72, 0x72, 0x69, 0x76, 0x65, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x14, 0x01, 0x00, 0x00, 0x10, 0x01, 0x00, 0x00
 	};
-	
+
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
 		return -EINVAL;
 
 	if (!sn)
 		return -EINVAL;
 
-	fmt =  "<N><QUERY>&lt;Q&gt;&lt;PluginID&gt;srvMng&lt;/PluginID&gt;&lt;/Q&gt;</QUERY><NOTIFY>&lt;srv&gt;&lt;id&gt;cAwaySrv&lt;/id&gt;&lt;req&gt;&lt;id&gt;AwayStat&lt;/id&gt;&lt;trans&gt;2&lt;/trans&gt;&lt;senderId&gt;%s&lt;/senderId&gt;&lt;/req&gt;&lt;/srv&gt;</NOTIFY></N>\r\n";	
+	fmt = "<N><QUERY>&lt;Q&gt;&lt;PluginID&gt;srvMng&lt;/PluginID&gt;&lt;/Q&gt;</QUERY><NOTIFY>&lt;srv&gt;&lt;id&gt;cAwaySrv&lt;/id&gt;&lt;req&gt;&lt;id&gt;AwayStat&lt;/id&gt;&lt;trans&gt;2&lt;/trans&gt;&lt;senderId&gt;%s&lt;/senderId&gt;&lt;/req&gt;&lt;/srv&gt;</NOTIFY></N>\r\n";
 
 	account = purple_connection_get_account(od->gc);
 	xmllen = strlen(fmt) - 2 + strlen(account->username);
 
-	statxml = (char*) g_malloc(xmllen);
+	statxml = g_malloc(xmllen);
 	snprintf(statxml, xmllen, fmt, account->username);
 
 	aim_icbm_makecookie(cookie);
@@ -1943,38 +1947,36 @@ int icq_im_xstatus_request(OscarData *od, const char *sn)
 					  + 2 + 2 + 8 + 16 + 2 + 2 + 2 + 2 + 2
 					  + 2 + 2 + sizeof(c_plugindata) + xmllen
 					  + 2 + 2);
- 
+
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
 	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	byte_stream_new(&header, (7*2) + 16 + 8 + 2 + sizeof(c_plugindata) + xmllen); /* TLV 0x0005 Stream + Size */
-	byte_stream_new(&plugindata, (sizeof(c_plugindata) + xmllen));
-
 	byte_stream_put16(&header, 0x0000); /* Message Type: Request */
 	byte_stream_putraw(&header, cookie, sizeof(cookie)); /* Message ID */
 	byte_stream_putraw(&header, pluginid, sizeof(pluginid)); /* Plugin ID */
-	
+
 	aim_tlvlist_add_16(&inner_tlvlist, 0x000a, 0x0001);
 	aim_tlvlist_add_noval(&inner_tlvlist, 0x000f);
-	
+
 	/* Add Plugin Specific Data */
+	byte_stream_new(&plugindata, (sizeof(c_plugindata) + xmllen));
 	byte_stream_putraw(&plugindata, c_plugindata, sizeof(c_plugindata)); /* Content of TLV 0x2711 */
 	byte_stream_putstr(&plugindata, statxml);
 
 	aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, (sizeof(c_plugindata) + xmllen), plugindata.data);
-	
+
 	aim_tlvlist_write(&header, &inner_tlvlist);
-	
-	
+	aim_tlvlist_free(inner_tlvlist);
+
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&header), header.data);
-	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);		/* Empty TLV 0x0003 */
-	
+	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003); /* Empty TLV 0x0003 */
+
 	aim_tlvlist_write(&bs, &outer_tlvlist);
-	
+
 	purple_debug_misc("oscar", "X-Status Request\n");
 	flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, snacid, &bs, TRUE);
 
-	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 	byte_stream_destroy(&header);
 	byte_stream_destroy(&plugindata);
@@ -1991,58 +1993,65 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	aim_snacid_t snacid;
 	PurpleAccount *account;
 	PurpleStatus *status;
-   const char *fmt;
-   const char *formatted_msg;
-   char *msg;
-   char *statxml;
+	const char *fmt;
+	const char *formatted_msg;
+	char *msg;
+	char *statxml;
 	const char *title;
 	int len;
-	
+
 	static const guint8 plugindata[] = {
-	0x1B, 0x00,
-	0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-	0x01, 0x00, 0x00, 0x00, 0x00, 0xF9, 0xD1, 0x0E, 0x00, 0xF9, 0xD1,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x4F, 
-	0x00, 0x3B, 0x60, 0xB3, 0xEF, 0xD8, 0x2A, 0x6C, 0x45, 0xA4, 0xE0, 
-	0x9C, 0x5A, 0x5E, 0x67, 0xE8, 0x65, 0x08, 0x00, 0x2A, 0x00, 0x00, 
-	0x00, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x20, 0x50, 0x6C, 0x75, 
-	0x67, 0x2D, 0x69, 0x6E, 0x3A, 0x20, 0x52, 0x65, 0x6D, 0x6F, 0x74, 
-	0x65, 0x20, 0x4E, 0x6F, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74,
-	0x69, 0x6F, 0x6E, 0x20, 0x41, 0x72, 0x72, 0x69, 0x76, 0x65, 0x00,
-	0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0xF3, 0x01, 0x00, 0x00, 0xEF, 0x01, 0x00, 0x00
-	};	
+		0x1B, 0x00,
+		0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x01, 0x00, 0x00, 0x00, 0x00, 0xF9, 0xD1, 0x0E, 0x00, 0xF9, 0xD1,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x4F,
+		0x00, 0x3B, 0x60, 0xB3, 0xEF, 0xD8, 0x2A, 0x6C, 0x45, 0xA4, 0xE0,
+		0x9C, 0x5A, 0x5E, 0x67, 0xE8, 0x65, 0x08, 0x00, 0x2A, 0x00, 0x00,
+		0x00, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74, 0x20, 0x50, 0x6C, 0x75,
+		0x67, 0x2D, 0x69, 0x6E, 0x3A, 0x20, 0x52, 0x65, 0x6D, 0x6F, 0x74,
+		0x65, 0x20, 0x4E, 0x6F, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74,
+		0x69, 0x6F, 0x6E, 0x20, 0x41, 0x72, 0x72, 0x69, 0x76, 0x65, 0x00,
+		0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0xF3, 0x01, 0x00, 0x00, 0xEF, 0x01, 0x00, 0x00
+	};
 
 	fmt = "<NR><RES>&lt;ret event='OnRemoteNotification'&gt;&lt;srv&gt;&lt;id&gt;cAwaySrv&lt;/id&gt;&lt;val srv_id='cAwaySrv'&gt;&lt;Root&gt;&lt;CASXtraSetAwayMessage&gt;&lt;/CASXtraSetAwayMessage&gt;&l t;uin&gt;%s&lt;/uin&gt;&lt;index&gt;1&lt;/index&gt;&lt;title&gt;%s&lt;/title&gt;&lt;desc&gt;%s&lt;/desc&gt;&lt;/Root&gt;&lt;/val&gt;&lt;/srv&gt;&lt;srv&gt;&lt;id&gt;cRandomizerSrv&lt;/id&gt;&lt;val srv_id='cRandomizerSrv'&gt;undefined&lt;/val&gt;&lt;/srv&gt;&lt;/ret&gt;</RES></NR>\r\n";
-	
-	
+
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
 		return -EINVAL;
 
 	if (!sn)
 		return -EINVAL;
-		
-	account = purple_connection_get_account(od->gc);
-	if(!account) return -EINVAL;
-	
-/*	if (!strcmp(account->username, sn))
-		icq_im_xstatus_request(od, sn); */
-	
-	status  = purple_presence_get_active_status(account->presence);
-	if (!status) return -EINVAL;
-   title = purple_status_get_name(status);
-   if (!title) return -EINVAL;
-	formatted_msg = purple_status_get_attr_string(status, "message");
-	if (!formatted_msg) return -EINVAL;
-   msg = purple_markup_strip_html(formatted_msg);
-	if (!msg) return -EINVAL;
-	len = strlen(fmt)-6+strlen(account->username)+strlen(title)+strlen(msg);
-	statxml = (char*) g_malloc(len);
 
-	snprintf(statxml, len, fmt, 
-		account->username, title, msg);
+	account = purple_connection_get_account(od->gc);
+	if (!account)
+		return -EINVAL;
+
+	/* if (!strcmp(account->username, sn))
+		icq_im_xstatus_request(od, sn); */
+
+	status = purple_presence_get_active_status(account->presence);
+	if (!status)
+		return -EINVAL;
+
+	title = purple_status_get_name(status);
+	if (!title)
+		return -EINVAL;
+
+	formatted_msg = purple_status_get_attr_string(status, "message");
+	if (!formatted_msg)
+		return -EINVAL;
+
+	msg = purple_markup_strip_html(formatted_msg);
+	if (!msg)
+		return -EINVAL;
+
+	len = strlen(fmt) - 6 + strlen(account->username) + strlen(title) + strlen(msg);
+	statxml = g_malloc(len);
+
+	snprintf(statxml, len, fmt, account->username, title, msg);
 
 	purple_debug_misc("oscar", "X-Status AutoReply: %s, %s\n", formatted_msg, msg);
 
@@ -2053,7 +2062,7 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	byte_stream_put16(&bs, 0x0003);
 	byte_stream_putraw(&bs, plugindata, sizeof(plugindata));
 	byte_stream_putraw(&bs, (const guint8*)statxml, strlen(statxml));
-	
+
 	flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x000b, snacid, &bs, TRUE);
 
 	g_free(statxml);

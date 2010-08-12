@@ -170,13 +170,11 @@ purple_mediaheaders = \
 purple_builtheaders = purple.h version.h marshallers.h
 
 marshallers.h: marshallers.list
-	@echo "Generating marshallers.h"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
 
 marshallers.c: marshallers.list marshallers.h
-	@echo "Generating marshallers.c"
-	echo "#include \"marshallers.h\"" > marshallers.c
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
+	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
+	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
 if ENABLE_DBUS
 
@@ -212,16 +210,16 @@ dbus_signals = $(addprefix $(srcdir)/, $(purple_coresources)) \
 	$(srcdir)/protocols/jabber/libxmpp.c
 
 dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
-	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
+	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
 
 dbus-types.h: dbus-analyze-types.py $(purple_build_coreheaders)
-	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
+	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
+	$(AM_V_GEN)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
 
 dbus-signals.c: dbus-analyze-signals.py $(dbus_signals)
-	cat $(dbus_signals) | $(PYTHON) $(srcdir)/dbus-analyze-signals.py > $@
+	$(AM_V_GEN)cat $(dbus_signals) | $(PYTHON) $(srcdir)/dbus-analyze-signals.py > $@
 
 dbus-server.$(OBJEXT): dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
 dbus-server.lo: dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
@@ -236,11 +234,11 @@ libpurple_client_la_LDFLAGS = -version-info $(PURPLE_LT_VERSION_INFO) -no-undefi
 libpurple_client_la_LIBADD = $(DBUS_LIBS)
 
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
+	$(AM_V_GEN)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
 purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
-	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
-	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
+	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
+	$(AM_V_at)cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
 $(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
 

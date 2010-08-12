@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:16-0400\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2010-02-25 15:29+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -61,11 +61,23 @@ msgstr ""
 msgid "Error"
 msgstr "កំហុស"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "គណនី​មិន​ត្រូវ​បាន​បន្ថែម​ទេ"
+
 msgid "Account was not added"
 msgstr "គណនី​មិន​ត្រូវ​បាន​បន្ថែម​ទេ"
 
 msgid "Username of an account must be non-empty."
 msgstr "ឈ្មោះអ្នក​ប្រើ​របស់​គណនី​​មិនអាច​ទទេ​​នោះទេ ។"
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "ការ​ជូនដំណឹង​សំបុត្រ​ថ្មី"
@@ -1229,6 +1241,10 @@ msgstr "អ្នកផ្សេង​និយាយ​នៅ​ក្នុង
 msgid "Someone says your username in chat"
 msgstr "មាន​មនុស្ស​ម្នាក់​និយាយ​អំពី​ឈ្មោះអ្នកប្រើ​របស់​អ្នក​នៅ​ក្នុង​ការជជែក"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "ត្រូវការ​ធ្វើ​ឲ្យ​សកម្ម"
+
 msgid "GStreamer Failure"
 msgstr "ភាព​បរាជ័យ​របស់ GStreamer"
 
@@ -1517,7 +1533,7 @@ msgstr "នៅពេល​ទទួល​សារ​ដែល​មាន URL(s
 msgid "Online"
 msgstr "លើ​បណ្ដាញ"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ក្រៅ​បណ្តាញ"
 
@@ -1638,8 +1654,10 @@ msgstr ""
 "វិញ្ញាបនបត្រ​មិន​ត្រូវ​បានជឿទុក​ចិត្តទេ ដោយ​សារ​តែ​មិន​មាន​វិញ្ញាបនបត្រ ​ដែល​​អាច​ផ្ទៀងផ្ទាត់ថា ​វា​​ត្រូវ​បាន​"
 "ជឿទុក​ចិត្ត​ពេល ​បច្ចុប្បន្ន ។"
 
-msgid "The certificate is not valid yet."
-msgstr "​វិញ្ញាបនបត្រ​មិន​ត្រឹម​ត្រូវ​នៅ​ឡើយទេ ។"
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "វិញ្ញាបនបត្រ​បានផុត​កំណត់ ហើយ​​មិនគួរ​​ត្រូវ​បាន​ចាក់ទុកថា​ត្រឹមត្រូវ​នោះ​ទេ ។"
@@ -3747,6 +3765,18 @@ msgstr "ការ​ប្រខិតខំ​មិនត្រឹមត្រ
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "ម៉ាស៊ីន​បម្រើ​គិត​ថា ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ចប់​ហើយ ប៉ុន្តែ​ម៉ាស៊ីន​ភ្ញៀវ​មិន​គិត​ដូច្នេះ​ទេ"
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "ម៉ាស៊ីន​បម្រើ​ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ជា​អត្ថបទ​ធម្មតា​លើ​ស្ទ្រីម​ដែល​មិនបានអ៊ិនគ្រីប"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ធម្មតា​លើកា​រតភ្ជាប់​ដែល​មិនបានអ៊ិនគ្រីប ។ អនុញ្ញាត​វា​ ហើយ​បន្ត​"
+"ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ?"
 
 msgid "SASL authentication failed"
 msgstr "បាន​បរាជ័យ​ក្នុង​​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​របស់​ SASL"
@@ -5859,7 +5889,7 @@ msgstr "ទម្រង់"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "ទម្រង់​ព័ត៌មាន​របស់​អ្នក​មិន​ត្រូវបាន​​ទៅយក​នៅ​​ឡើយ​ទេ ។ សូម​ព្យាយាម​​ម្តងទៀត នៅ​ពេល​ក្រោយ ។"
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -5871,6 +5901,7 @@ msgid "Verify PIN"
 msgstr "ផ្ទៀងផ្ទាត់ PIN"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "បង្ហាញ​ឈ្មោះ​"
 
@@ -5927,19 +5958,16 @@ msgstr "មិន​អាច​តភ្ជាប់​ទៅ​កាន់​
 msgid "Connecting..."
 msgstr "កំពុង​តភ្ជាប់..."
 
-msgid "The nick name you entered is invalid."
-msgstr "សម្មតិនាម​ ដែល​អ្នក​បាន​បញ្ចូលមិន​ត្រឹមត្រូវ​ទេ ។"
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "ឈ្មោះ​ដែល​អ្នក​​បាន​បញ្ចូល​មិនត្រឹមត្រូវ​ទេ ។"
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​​មាន​ប្រវែង​មិន​ត្រឹមត្រូវ [៧-១០] ។"
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "ឈ្មោះ​ចូល​របស់ MXit"
-
-#. nick name (required)
-msgid "Nick Name"
-msgstr "សម្មតិនាម"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5967,10 +5995,12 @@ msgstr "សម័យ​របស់​អ្នក​ផុត​កំណត់
 msgid "Invalid country selected. Please try again."
 msgstr "ប្រទេស​ដែល​បាន​ជ្រើសមិន​ត្រឹមត្រូវទេ ។ សូម​ព្យាយាម​ម្តង​ទៀត ។"
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "ឈ្មោះ​អ្នក​ប្រើ​​មិន​ត្រូវ​បាន​ចុះឈ្មោះ​នៅ​​ឡើយ​ទេ ។ ដំបូង ​សូម​ចុះ​ឈ្មោះ​សិន​ ។"
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr "ឈ្មោះ​អ្នក​ប្រើ ត្រូវ​បាន​ចុះឈ្មោះ​រួច​ហើយ ។ សូម​ជ្រើស​ឈ្មោះ​អ្នក​ប្រើ​ផ្សេង​ពី​នេះ ។"
 
 msgid "Internal error. Please try again later."
@@ -6016,8 +6046,9 @@ msgstr "សារ​បានទទួល"
 msgid "Hidden Number"
 msgstr "លេខ​ដែល​លាក់​"
 
-msgid "Your Mobile Number..."
-msgstr "លេខ​ទូរស័ព្ទ​ចល័ត​របស់​អ្នក..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "លេខ​សម្គាល់​របស់​យ៉ាហ៊ូ..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6042,6 +6073,15 @@ msgstr "សំបុត្រ​មិន​ល្អ"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "បន្ទប់ ៖"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "អ្នកមាន​សំបុត្រ !"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "លើ​បណ្ដាញ"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7765,11 +7805,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "SNAC មិន​ត្រឹមត្រូវ"
 
-msgid "Rate to host"
-msgstr "វាយតម្លៃ​ម៉ាស៊ីន"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "វាយតម្លៃ​ម៉ាស៊ីន​ភ្ញៀវ"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "សេវា​មិនអាច​ប្រើបាន"
@@ -10004,7 +10044,8 @@ msgstr "បន្ទប់​ជជែក​មូលដ្ឋាន"
 msgid "Ignore conference and chatroom invitations"
 msgstr "មិនអើពើ​សន្និសីទ និង​ការ​អញ្ជើញ​របស់​បន្ទប់​ជជែក"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "ប្រើ​ប្រូកស៊ី​គណនី​សម្រាប់​ការ​តភ្ជាប់ SSL"
 
 msgid "Chat room list URL"
@@ -12814,11 +12855,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "ចេញ ដោយ​សារ​តែ​ម៉ាស៊ីន​ភ្ញើ libpurple ផ្សេង​ទៀត​កំពុង​រត់​រួច​ហើយ ។\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/មេឌៀ"
 
-msgid "/Media/_Hangup"
-msgstr "/មេឌៀ/រង់ចាំ"
+#, fuzzy
+msgid "_Hangup"
+msgstr "រង់ចាំ"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13608,10 +13651,6 @@ msgstr "អត្ថបទ​ផ្លូវកាត់"
 
 msgid "Custom Smiley Manager"
 msgstr "កម្មវិធី​គ្រប់គ្រង​សញ្ញាអារម្មណ៍​ផ្ទាល់ខ្លួន"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "ត្រូវការ​ធ្វើ​ឲ្យ​សកម្ម"
 
 msgid "Select Buddy Icon"
 msgstr "ជ្រើស​រូបតំណាង​មិត្តភក្ដិ"
@@ -15060,6 +15099,30 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "​វិញ្ញាបនបត្រ​មិន​ត្រឹម​ត្រូវ​នៅ​ឡើយទេ ។"
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "សម្មតិនាម​ ដែល​អ្នក​បាន​បញ្ចូលមិន​ត្រឹមត្រូវ​ទេ ។"
+
+#~ msgid "MXit Login Name"
+#~ msgstr "ឈ្មោះ​ចូល​របស់ MXit"
+
+#~ msgid "Nick Name"
+#~ msgstr "សម្មតិនាម"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "លេខ​ទូរស័ព្ទ​ចល័ត​របស់​អ្នក..."
+
+#~ msgid "Rate to host"
+#~ msgstr "វាយតម្លៃ​ម៉ាស៊ីន"
+
+#~ msgid "Rate to client"
+#~ msgstr "វាយតម្លៃ​ម៉ាស៊ីន​ភ្ញៀវ"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/មេឌៀ/រង់ចាំ"
 
 #~ msgid "Unknown reason."
 #~ msgstr "មិន​ស្គាល់​ហេតុផល ។"

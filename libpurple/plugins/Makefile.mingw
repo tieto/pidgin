@@ -55,7 +55,7 @@ install: all $(PURPLE_INSTALL_PLUGINS_DIR)
 	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
-.c.dll:
+%.dll: %.c $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 

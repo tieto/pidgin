@@ -230,3 +230,46 @@ wink.png	    ;-)     ;)
 sad.png		    :[
 kiss.png            :x
 
+# MXit standard emoticons
+[MXit]
+happy.png           :-)     :)
+sad.png             :-(     :(
+wink.png            ;-)     ;)
+excited.png         :-D     :D     :->      :>
+neutral.png         :-|     :|
+shocked.png         :-O     :O
+tongue.png          :-P     :P
+embarrassed.png     :-$     :$
+cool.png            8-)
+in_love.png         (H)
+rose.png            (F)
+### Added in v3.0
+boy.png             (m)
+girl.png            (f)
+star.png            (*)
+chilli.png          (c)
+kiss.png            (x)
+lamp.png            (i)
+pissed-off.png      :e      :-e
+shut-mouth.png      :-x     :x
+grumpy.png          (z)
+coffee.png          (U)
+mrgreen.png         (G)
+### Added in v5.0
+sick.png            :o(
+excruciating.png    :-{     :{
+amorous.png         :-}     :}
+eyeroll.png         8-o     8o
+crying.png          :'(
+thinking.png        :-?     :?
+drool.png           :-~     :~
+sleeping.png        :-z     :z
+lying.png           :L)
+nerdy.png           8-|     8|
+pirate.png          P-)
+### Added in v5.9.7
+bored.png           :-[     :[
+cold.png            :-<     :<
+confused.png        :-,     :,
+hungry.png          :-C     :C
+stressed.png        :-s     :s

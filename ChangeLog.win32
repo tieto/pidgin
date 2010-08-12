@@ -1,6 +1,9 @@
 Starting with Pidgin version 2.7.1, this ChangeLog file will no longer be
 updated.  It will be kept in the source tree for historical reasons only.
 
+version 2.7.1 (05/29/2010):
+	* No changes
+
 version 2.7.0 (05/12/2010):
 	* Updated GTK+ to 2.16.6
 	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)

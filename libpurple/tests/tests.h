@@ -9,6 +9,7 @@
 /* remember to add the suite to the runner in check_libpurple.c */
 Suite * master_suite(void);
 Suite * cipher_suite(void);
+Suite * jabber_caps_suite(void);
 Suite * jabber_jutil_suite(void);
 Suite * jabber_scram_suite(void);
 Suite * qq_suite(void);
