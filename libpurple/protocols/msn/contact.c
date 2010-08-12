@@ -536,7 +536,7 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
-			"dynamicItemLastChange", NULL);
+			"DynamicItemLastChanged", NULL);
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
