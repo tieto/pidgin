@@ -1887,7 +1887,7 @@ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event
 	 */
 	byte_stream_put16(&bs, event);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
