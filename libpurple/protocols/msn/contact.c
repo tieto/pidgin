@@ -885,7 +885,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		msn_parse_addressbook_groups(session, groups);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add an "Other Contacts" group for buddies who aren't in a group */
 	msn_group_new(session->userlist, MSN_INDIVIDUALS_GROUP_ID,
 				  MSN_INDIVIDUALS_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n",
@@ -895,7 +895,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		purple_blist_add_group(g, NULL);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add a "Non-IM Contacts" group */
 	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
