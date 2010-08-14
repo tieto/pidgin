@@ -37,7 +37,7 @@
 
 /* convert a string from from_charset to to_charset, using g_convert */
 /* Warning: do not return NULL */
-static gchar *do_convert(const gchar *str, gssize len, const gchar *to_charset, const gchar *from_charset)
+static gchar *do_convert(const gchar *str, gssize len, guint8 *out_len, const gchar *to_charset, const gchar *from_charset)
 {
 	GError *error = NULL;
 	gchar *ret;
@@ -48,6 +48,8 @@ static gchar *do_convert(const gchar *str, gssize len, const gchar *to_charset, 
 	ret = g_convert(str, len, to_charset, from_charset, &byte_read, &byte_write, &error);
 
 	if (error == NULL) {
+		if (out_len)
+			*out_len = byte_write;
 		return ret;	/* convert is OK */
 	}
 
@@ -67,7 +69,8 @@ static gchar *do_convert(const gchar *str, gssize len, const gchar *to_charset, 
  */
 gint qq_get_vstr(gchar **ret, const gchar *from_charset, guint8 *data)
 {
-	guint8 len;
+	gssize len;
+	guint8 out_len;
 
 	g_return_val_if_fail(data != NULL && from_charset != NULL, -1);
 
@@ -76,9 +79,9 @@ gint qq_get_vstr(gchar **ret, const gchar *from_charset, guint8 *data)
 		*ret = g_strdup("");
 		return 1;
 	}
-	*ret = do_convert((gchar *) (data + 1), (gssize) len, UTF8, from_charset);
+	*ret = do_convert((gchar *) (data + 1), len, &out_len, UTF8, from_charset);
 
-	return len + 1;
+	return out_len + 1;
 }
 
 gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset)
@@ -86,12 +89,11 @@ gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset)
 	gchar *str;
 	guint8 len;
 
-	if (str_utf8 == NULL || (len = strlen(str_utf8)) == 0) {
+	if (str_utf8 == NULL || str_utf8[0] == '\0') {
 		buf[0] = 0;
 		return 1;
 	}
-	str = do_convert(str_utf8, -1, to_charset, UTF8);
-	len = strlen(str_utf8);
+	str = do_convert(str_utf8, -1, &len, to_charset, UTF8);
 	buf[0] = len;
 	if (len > 0) {
 		memcpy(buf + 1, str, len);
@@ -102,12 +104,12 @@ gint qq_put_vstr(guint8 *buf, const gchar *str_utf8, const gchar *to_charset)
 /* Warning: do not return NULL */
 gchar *utf8_to_qq(const gchar *str, const gchar *to_charset)
 {
-	return do_convert(str, -1, to_charset, UTF8);
+	return do_convert(str, -1, NULL, to_charset, UTF8);
 }
 
 /* Warning: do not return NULL */
 gchar *qq_to_utf8(const gchar *str, const gchar *from_charset)
 {
-	return do_convert(str, -1, UTF8, from_charset);
+	return do_convert(str, -1, NULL, UTF8, from_charset);
 }
 

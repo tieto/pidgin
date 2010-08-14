@@ -684,19 +684,19 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *annotation;
 		MsnUser *user;
 
+		g_free(passport);
+		g_free(Name);
+		g_free(uid);
+		g_free(type);
+		g_free(mobile_number);
+		g_free(alias);
+		passport = Name = uid = type = mobile_number = alias = NULL;
+		mobile = FALSE;
+
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
 				|| !(contactType = xmlnode_get_child(contactInfo, "contactType")))
 			continue;
-
-		g_free(passport);
-		g_free(Name);
-		g_free(alias);
-		g_free(uid);
-		g_free(type);
-		g_free(mobile_number);
-		passport = Name = uid = type = mobile_number = alias = NULL;
-		mobile = FALSE;
 
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
@@ -836,6 +836,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 	g_free(uid);
 	g_free(type);
 	g_free(mobile_number);
+	g_free(alias);
 }
 
 static gboolean

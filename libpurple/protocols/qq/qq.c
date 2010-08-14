@@ -382,12 +382,10 @@ static const char *qq_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	qq_data *qd;
 	qq_buddy_data *buddy;
 
 	if (!b || !(account = purple_buddy_get_account(b)) ||
-		!(gc = purple_account_get_connection(account)) ||
-		!(qd = purple_connection_get_protocol_data(gc)))
+		!(gc = purple_account_get_connection(account)))
 		return NULL;
 
 	buddy = purple_buddy_get_protocol_data(b);
