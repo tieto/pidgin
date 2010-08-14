@@ -1036,7 +1036,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 	char *username = NULL;
 	char *alias    = NULL;
 	char *str;
-	char *c, *s;
+	char *s;
 	gboolean valid;
 
 	g_return_val_if_fail(msg          != NULL, FALSE);
@@ -1078,7 +1078,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		if (*s == '\r') *s++ = '\0';
 		if (*s == '\n') *s++ = '\0';
 
-		if ((c = strchr(key, ':')) != NULL)
+		if (strchr(key, ':') != NULL)
 		{
 			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
 				username = g_strdup(value);

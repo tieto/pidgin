@@ -3168,7 +3168,6 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
 		PurpleBuddy *b = purple_contact_get_priority_buddy((PurpleContact *)node);
-		width = height = 0;
 
 		for(child = node->child; child; child = child->next)
 		{
