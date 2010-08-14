@@ -3493,7 +3493,7 @@ jabber_cmd_mood(PurpleConversation *conv,
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */
-		if (!args | !args[0]) {
+		if (!args || !args[0]) {
 			jabber_mood_set(js, NULL, NULL);
 		} else if (!args[1]) {
 			jabber_mood_set(js, args[0], NULL);
