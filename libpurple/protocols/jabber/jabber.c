@@ -205,7 +205,7 @@ static char *jabber_prep_resource(char *input) {
 	 * resource string from being unreasonably long on systems which stuff the
 	 * whole FQDN in the hostname */
 	if((dot = strchr(hostname, '.')))
-			dot = '\0';
+		*dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
