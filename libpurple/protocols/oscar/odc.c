@@ -90,7 +90,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	ByteStream bs;
 
 	purple_debug_info("oscar", "Outgoing ODC frame to %s with "
-		"type=0x%04x, flags=0x%04x, payload length=%u\n",
+		"type=0x%04x, flags=0x%04x, payload length=%" G_GSIZE_FORMAT "\n",
 		conn->bn, frame->type, frame->flags, frame->payload.len);
 
 	account = purple_connection_get_account(conn->od->gc);
@@ -505,7 +505,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	byte_stream_getrawbuf(bs, frame->bn, 32);
 
 	purple_debug_info("oscar", "Incoming ODC frame from %s with "
-			"type=0x%04x, flags=0x%04x, payload length=%u\n",
+			"type=0x%04x, flags=0x%04x, payload length=%" G_GSIZE_FORMAT "\n",
 			frame->bn, frame->type, frame->flags, frame->payload.len);
 
 	if (!conn->ready)

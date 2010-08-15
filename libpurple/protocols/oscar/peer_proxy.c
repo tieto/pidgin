@@ -32,8 +32,8 @@ peer_proxy_send(PeerConnection *conn, ProxyFrame *frame)
 	ByteStream bs;
 
 	purple_debug_info("oscar", "Outgoing peer proxy frame with "
-			"type=0x%04hx, unknown=0x%08x, "
-			"flags=0x%04hx, and payload length=%hd\n",
+			"type=0x%04hx, unknown=0x%08x, flags=0x%04hx, and "
+			"payload length=%" G_GSIZE_FORMAT "\n",
 			frame->type, frame->unknown,
 			frame->flags, frame->payload.len);
 
@@ -129,8 +129,8 @@ static void
 peer_proxy_recv_frame(PeerConnection *conn, ProxyFrame *frame)
 {
 	purple_debug_info("oscar", "Incoming peer proxy frame with "
-			"type=0x%04hx, unknown=0x%08x, "
-			"flags=0x%04hx, and payload length=%hd\n", frame->type,
+			"type=0x%04hx, unknown=0x%08x, flags=0x%04hx, and "
+			"payload length=%" G_GSIZE_FORMAT "\n", frame->type,
 			frame->unknown, frame->flags, frame->payload.len);
 
 	if (frame->type == PEER_PROXY_TYPE_CREATED)

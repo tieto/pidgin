@@ -238,8 +238,8 @@ typedef enum
 struct _ByteStream
 {
 	guint8 *data;
-	guint32 len;
-	guint32 offset;
+	size_t len;
+	size_t offset;
 };
 
 struct _QueuedSnac
@@ -1209,12 +1209,12 @@ void aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family
 void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *);
 
 /* bstream.c */
-int byte_stream_new(ByteStream *bs, guint32 len);
-int byte_stream_init(ByteStream *bs, guint8 *data, int len);
+int byte_stream_new(ByteStream *bs, size_t len);
+int byte_stream_init(ByteStream *bs, guint8 *data, size_t len);
 void byte_stream_destroy(ByteStream *bs);
 int byte_stream_bytes_left(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
-int byte_stream_setpos(ByteStream *bs, unsigned int off);
+int byte_stream_setpos(ByteStream *bs, size_t off);
 void byte_stream_rewind(ByteStream *bs);
 int byte_stream_advance(ByteStream *bs, int n);
 guint8 byte_stream_get8(ByteStream *bs);
@@ -1223,18 +1223,18 @@ guint32 byte_stream_get32(ByteStream *bs);
 guint8 byte_stream_getle8(ByteStream *bs);
 guint16 byte_stream_getle16(ByteStream *bs);
 guint32 byte_stream_getle32(ByteStream *bs);
-int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len);
-guint8 *byte_stream_getraw(ByteStream *bs, int len);
-char *byte_stream_getstr(ByteStream *bs, int len);
+int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, size_t len);
+guint8 *byte_stream_getraw(ByteStream *bs, size_t len);
+char *byte_stream_getstr(ByteStream *bs, size_t len);
 int byte_stream_put8(ByteStream *bs, guint8 v);
 int byte_stream_put16(ByteStream *bs, guint16 v);
 int byte_stream_put32(ByteStream *bs, guint32 v);
 int byte_stream_putle8(ByteStream *bs, guint8 v);
 int byte_stream_putle16(ByteStream *bs, guint16 v);
 int byte_stream_putle32(ByteStream *bs, guint32 v);
-int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len);
+int byte_stream_putraw(ByteStream *bs, const guint8 *v, size_t len);
 int byte_stream_putstr(ByteStream *bs, const char *str);
-int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
+int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, size_t len);
 int byte_stream_putuid(ByteStream *bs, OscarData *od);
 int byte_stream_putcaps(ByteStream *bs, guint64 caps);
 

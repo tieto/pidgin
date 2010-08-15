@@ -24,7 +24,7 @@
 
 #include "oscar.h"
 
-int byte_stream_new(ByteStream *bs, guint32 len)
+int byte_stream_new(ByteStream *bs, size_t len)
 {
 	if (bs == NULL)
 		return -1;
@@ -32,7 +32,7 @@ int byte_stream_new(ByteStream *bs, guint32 len)
 	return byte_stream_init(bs, g_malloc(len), len);
 }
 
-int byte_stream_init(ByteStream *bs, guint8 *data, int len)
+int byte_stream_init(ByteStream *bs, guint8 *data, size_t len)
 {
 	if (bs == NULL)
 		return -1;
@@ -59,7 +59,7 @@ int byte_stream_curpos(ByteStream *bs)
 	return bs->offset;
 }
 
-int byte_stream_setpos(ByteStream *bs, unsigned int off)
+int byte_stream_setpos(ByteStream *bs, size_t off)
 {
 	g_return_val_if_fail(off <= bs->len, -1);
 
@@ -133,13 +133,13 @@ guint32 byte_stream_getle32(ByteStream *bs)
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
-static void byte_stream_getrawbuf_nocheck(ByteStream *bs, guint8 *buf, int len)
+static void byte_stream_getrawbuf_nocheck(ByteStream *bs, guint8 *buf, size_t len)
 {
 	memcpy(buf, bs->data + bs->offset, len);
 	bs->offset += len;
 }
 
-int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len)
+int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, size_t len)
 {
 	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
 
@@ -147,7 +147,7 @@ int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 	return len;
 }
 
-guint8 *byte_stream_getraw(ByteStream *bs, int len)
+guint8 *byte_stream_getraw(ByteStream *bs, size_t len)
 {
 	guint8 *ob;
 
@@ -158,7 +158,7 @@ guint8 *byte_stream_getraw(ByteStream *bs, int len)
 	return ob;
 }
 
-char *byte_stream_getstr(ByteStream *bs, int len)
+char *byte_stream_getstr(ByteStream *bs, size_t len)
 {
 	char *ob;
 
@@ -219,7 +219,7 @@ int byte_stream_putle32(ByteStream *bs, guint32 v)
 }
 
 
-int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len)
+int byte_stream_putraw(ByteStream *bs, const guint8 *v, size_t len)
 {
 	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
 
@@ -233,7 +233,7 @@ int byte_stream_putstr(ByteStream *bs, const char *str)
 	return byte_stream_putraw(bs, (guint8 *)str, strlen(str));
 }
 
-int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len)
+int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, size_t len)
 {
 	g_return_val_if_fail(byte_stream_bytes_left(srcbs) >= len, 0);
 	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
