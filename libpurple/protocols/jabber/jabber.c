@@ -205,7 +205,7 @@ static char *jabber_prep_resource(char *input) {
 	 * resource string from being unreasonably long on systems which stuff the
 	 * whole FQDN in the hostname */
 	if((dot = strchr(hostname, '.')))
-			dot = '\0';
+		*dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
@@ -3493,7 +3493,7 @@ jabber_cmd_mood(PurpleConversation *conv,
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */
-		if (!args | !args[0]) {
+		if (!args || !args[0]) {
 			jabber_mood_set(js, NULL, NULL);
 		} else if (!args[1]) {
 			jabber_mood_set(js, args[0], NULL);

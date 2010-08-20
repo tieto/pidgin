@@ -1791,7 +1791,7 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 		const gchar *sess_id)
 {
 	PurpleMediaBackendFs2Private *priv;
-	gboolean ret;
+	gboolean ret = FALSE;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
 

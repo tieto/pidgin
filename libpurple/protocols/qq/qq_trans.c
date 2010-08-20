@@ -138,10 +138,11 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 /* Remove a packet with seq from send trans */
 static void trans_remove(PurpleConnection *gc, qq_transaction *trans)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	g_return_if_fail(gc != NULL);
 	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(qd != NULL);
 
 	g_return_if_fail(trans != NULL);
 #if 0
