@@ -353,8 +353,8 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
-
 	GdkPixmap *pixmap = gtkwb->pixmap;
+	cairo_t *cr;
 
 	if(pixmap)
 		g_object_unref(pixmap);
@@ -363,15 +363,15 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 							widget->allocation.width,
 							widget->allocation.height,
 							-1);
-
 	gtkwb->pixmap = pixmap;
 
-	gdk_draw_rectangle(pixmap,
-					   widget->style->white_gc,
-					   TRUE,
-					   0, 0,
-					   widget->allocation.width,
-					   widget->allocation.height);
+	cr = gdk_cairo_create(GDK_DRAWABLE(pixmap));
+	gdk_cairo_set_source_color(cr, &widget->style->white);
+	cairo_rectangle(cr,
+	                0, 0,
+	                widget->allocation.width, widget->allocation.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	return TRUE;
 }
@@ -380,13 +380,15 @@ static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 	GdkPixmap *pixmap = gtkwb->pixmap;
+	cairo_t *cr;
 
-	gdk_draw_drawable(widget->window,
-					  widget->style->fg_gc[GTK_WIDGET_STATE(widget)],
-					  pixmap,
-					  event->area.x, event->area.y,
-					  event->area.x, event->area.y,
-					  event->area.width, event->area.height);
+	cr = gdk_cairo_create(GDK_DRAWABLE(widget->window));
+	gdk_cairo_set_source_pixmap(cr, pixmap, 0, 0);
+	cairo_rectangle(cr,
+	                event->area.x, event->area.y,
+	                event->area.width, event->area.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	return FALSE;
 }
@@ -586,50 +588,26 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 	GtkWidget *widget = gtkwb->drawing_area;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
-	GdkRectangle update_rect;
-
-	GdkGC *gfx_con = gdk_gc_new(pixmap);
+	cairo_t *gfx_con = gdk_cairo_create(GDK_DRAWABLE(pixmap));
 	GdkColor col;
-
-	update_rect.x      = x - size / 2;
-	update_rect.y      = y - size / 2;
-	update_rect.width  = size;
-	update_rect.height = size;
 
 	/* Interpret and convert color */
 	pidgin_whiteboard_rgb24_to_rgb48(color, &col);
 
-	gdk_gc_set_rgb_fg_color(gfx_con, &col);
-	/* gdk_gc_set_rgb_bg_color(gfx_con, &col); */
+	gdk_cairo_set_source_color(gfx_con, &col);
 
-	/* NOTE 5 is a size constant for now... this is because of how poorly the
-	 * gdk_draw_arc draws small circles
-	 */
-	if(size < 5)
-	{
-		/* Draw a rectangle/square */
-		gdk_draw_rectangle(pixmap,
-						   gfx_con,
-						   TRUE,
-						   update_rect.x, update_rect.y,
-						   update_rect.width, update_rect.height);
-	}
-	else
-	{
-		/* Draw a circle */
-		gdk_draw_arc(pixmap,
-					 gfx_con,
-					 TRUE,
-					 update_rect.x, update_rect.y,
-					 update_rect.width, update_rect.height,
-					 0, FULL_CIRCLE_DEGREES);
-	}
+	/* Draw a circle */
+	cairo_arc(gfx_con,
+	          x, y,
+	          size / 2.0,
+	          0.0, 2.0 * M_PI);
+	cairo_fill(gfx_con);
 
 	gtk_widget_queue_draw_area(widget,
-							   update_rect.x, update_rect.y,
-							   update_rect.width, update_rect.height);
+							   x - size / 2, y - size / 2,
+							   size, size);
 
-	g_object_unref(G_OBJECT(gfx_con));
+	cairo_destroy(gfx_con);
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
@@ -720,13 +698,15 @@ static void pidgin_whiteboard_clear(PurpleWhiteboard *wb)
 	PidginWhiteboard *gtkwb = wb->ui_data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 	GtkWidget *drawing_area = gtkwb->drawing_area;
+	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(pixmap));
 
-	gdk_draw_rectangle(pixmap,
-					   drawing_area->style->white_gc,
-					   TRUE,
-					   0, 0,
-					   drawing_area->allocation.width,
-					   drawing_area->allocation.height);
+	gdk_cairo_set_source_color(cr, &drawing_area->style->white);
+	cairo_rectangle(cr,
+	                0, 0,
+	                drawing_area->allocation.width,
+	                drawing_area->allocation.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	gtk_widget_queue_draw_area(drawing_area,
 							   0, 0,
