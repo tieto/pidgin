@@ -1898,7 +1898,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if ((type_s = g_hash_table_lookup(table, "Type")) != NULL)
 	{
 		int type = atoi(type_s);
-		char buf[MSN_BUF_LEN];
+		char buf[MSN_BUF_LEN] = "";
 		int minutes;
 
 		switch (type)
