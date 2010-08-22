@@ -4,6 +4,12 @@ version 2.7.4 (MM/DD/YYYY):
 	General:
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
 
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections.
+
 version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose
