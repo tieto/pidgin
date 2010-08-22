@@ -381,11 +381,10 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 static const char *qq_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	qq_buddy_data *buddy;
 
 	if (!b || !(account = purple_buddy_get_account(b)) ||
-		!(gc = purple_account_get_connection(account)))
+		!purple_account_get_connection(account))
 		return NULL;
 
 	buddy = purple_buddy_get_protocol_data(b);

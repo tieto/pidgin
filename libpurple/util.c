@@ -3115,7 +3115,7 @@ purple_str_strip_char(char *text, char thechar)
 		if (text[i] != thechar)
 			text[j++] = text[i];
 
-	text[j++] = '\0';
+	text[j] = '\0';
 }
 
 void
