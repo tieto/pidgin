@@ -1565,7 +1565,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		if (user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
 			                         user->member_id_on_pending_list);
