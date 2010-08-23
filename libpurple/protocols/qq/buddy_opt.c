@@ -321,7 +321,7 @@ static void add_buddy_question_input(PurpleConnection *gc, guint32 uid, gchar *q
 	add_req->auth_len = 0;
 
 	who = uid_to_purple_name(uid);
-	msg = g_strdup_printf(_("%u requires verification"), uid);
+	msg = g_strdup_printf(_("%u requires verification: %s"), uid, question);
 	purple_request_input(gc, _("Add buddy question"), msg,
 			_("Enter answer here"),
 			NULL,
