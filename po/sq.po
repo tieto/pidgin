@@ -814,7 +814,7 @@ msgstr "Ndal"
 msgid "Waiting for transfer to begin"
 msgstr "Po pritet të fillojë shpërngulja"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Anuluar"
 
 msgid "Failed"

@@ -812,7 +812,7 @@ msgstr "Ustavi"
 msgid "Waiting for transfer to begin"
 msgstr "Čakanje na začetek prenosa"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Preklicano"
 
 msgid "Failed"

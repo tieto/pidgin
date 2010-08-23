@@ -795,7 +795,7 @@ msgstr "நிறுத்து"
 msgid "Waiting for transfer to begin"
 msgstr "பரிமாற்றம் ஆரம்பமாவதற்காக காத்திருக்கிறது"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "தவிர்க்கப்பட்டது"
 
 msgid "Failed"
@@ -16101,7 +16101,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s யை எழுதுவதற்காக திறக்கமுடியவில்லை!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "கோப்பு அனுப்புதலில் பிழை; ஒருவேளை மறுபக்கத்தில் தவிர்த்திருக்கலாம்."
 
 #~ msgid "Could not connect for transfer."

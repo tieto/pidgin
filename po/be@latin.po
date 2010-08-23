@@ -801,7 +801,7 @@ msgstr "Spyni"
 msgid "Waiting for transfer to begin"
 msgstr "Čakańnie pačatku pieradačy"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Anulavanaja"
 
 msgid "Failed"
@@ -16704,7 +16704,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Niemahčyma adčynić %s dziela zapisu!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Pamyłka pieradačy fajłu; aperacyja, mabyć, anulavanaja z taho boku."
 
 #~ msgid "Could not connect for transfer."

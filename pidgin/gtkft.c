@@ -156,7 +156,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 			*time_remaining = g_strdup(_("Finished"));
 		}
 		else if (purple_xfer_is_canceled(xfer)) {
-			*time_remaining = g_strdup(_("Canceled"));
+			*time_remaining = g_strdup(_("Cancelled"));
 		}
 		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
 			*time_remaining = g_strdup(_("Unknown"));
@@ -992,7 +992,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									GTK_ICON_SIZE_MENU, NULL);
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Canceled");
+		status = _("Cancelled");
 	else
 		status = _("Failed");
 

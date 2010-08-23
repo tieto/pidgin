@@ -372,7 +372,7 @@ void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from)
 
 	/* TODO Ask if user wants to save picture before the session is closed */
 
-	wb->state = DOODLE_STATE_CANCELED;
+	wb->state = DOODLE_STATE_CANCELLED;
 	purple_whiteboard_destroy(wb);
 }
 
@@ -460,7 +460,7 @@ void yahoo_doodle_end(PurpleWhiteboard *wb)
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
-	if (gc && wb->state != DOODLE_STATE_CANCELED)
+	if (gc && wb->state != DOODLE_STATE_CANCELLED)
 		yahoo_doodle_command_send_shutdown(gc, wb->who);
 
 	g_free(ds->imv_key);

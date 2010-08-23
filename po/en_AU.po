@@ -834,8 +834,8 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "Waiting for transfer to begin"
 
-msgid "Canceled"
-msgstr "Canceled"
+msgid "Cancelled"
+msgstr "Cancelled"
 
 msgid "Failed"
 msgstr "Failed"
@@ -2128,14 +2128,14 @@ msgstr "File transfer complete"
 
 #, fuzzy, c-format
 msgid "You cancelled the transfer of %s"
-msgstr "You canceled the transfer of %s"
+msgstr "You cancelled the transfer of %s"
 
 msgid "File transfer cancelled"
 msgstr "File transfer cancelled"
 
 #, fuzzy, c-format
 msgid "%s cancelled the transfer of %s"
-msgstr "%s canceled the transfer of %s"
+msgstr "%s cancelled the transfer of %s"
 
 #, fuzzy, c-format
 msgid "%s cancelled the file transfer"
@@ -9265,7 +9265,7 @@ msgstr "File Send Failed"
 
 #, fuzzy, c-format
 msgid "%d cancelled the transfer of %s"
-msgstr "%s canceled the transfer of %s"
+msgstr "%s cancelled the transfer of %s"
 
 #, fuzzy, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9346,7 +9346,7 @@ msgstr "Unable to send message to %s:"
 
 #, fuzzy
 msgid "Place Closed"
-msgstr "Canceled"
+msgstr "Cancelled"
 
 msgid "Microphone"
 msgstr ""
@@ -17062,8 +17062,8 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Could not open %s for writing!"
 
-#~ msgid "File transfer failed; other side probably canceled."
-#~ msgstr "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
+#~ msgstr "File transfer failed; other side probably cancelled."
 
 #~ msgid "Could not connect for transfer."
 #~ msgstr "Could not connect for transfer."

@@ -789,7 +789,7 @@ msgstr "અટકાવો"
 msgid "Waiting for transfer to begin"
 msgstr "પરિવહન શરૂ થવા માટે રાહ જોઈ રહ્યા છીએ"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "રદ થયેલ"
 
 msgid "Failed"

@@ -803,7 +803,7 @@ msgstr "Stopp"
 msgid "Waiting for transfer to begin"
 msgstr "Venter på at overføringen skal starte"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Avbrutt"
 
 msgid "Failed"
@@ -16208,7 +16208,7 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Klarte ikke åpne %s for skriving!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Filoverføringen mislyktes - sannsynligvis avbrutt på den andre siden."
 

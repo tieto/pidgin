@@ -813,7 +813,7 @@ msgstr "Stopp"
 msgid "Waiting for transfer to begin"
 msgstr "Warte auf den Beginn der Dateiübertragung"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Abgebrochen"
 
 msgid "Failed"

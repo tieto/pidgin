@@ -386,7 +386,7 @@ finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 	update_title_progress();
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Canceled");
+		status = _("Cancelled");
 	else
 		status = _("Failed");
 

@@ -802,7 +802,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Wag vir oordrag om te begin"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Gekanselleer"
 
 msgid "Failed"
@@ -15698,13 +15698,13 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 #~ "afkomstig te wees.  Dit kan beteken dat u nie tans aan die diens gekoppel "
 #~ "is wat u dink nie."
 
-#~ msgid "You canceled the transfer of %s"
+#~ msgid "You cancelled the transfer of %s"
 #~ msgstr "U het die oordrag van %s gekanselleer"
 
-#~ msgid "%s canceled the transfer of %s"
+#~ msgid "%s cancelled the transfer of %s"
 #~ msgstr "%s het die oordrag van %s gekanselleer"
 
-#~ msgid "%s canceled the file transfer"
+#~ msgid "%s cancelled the file transfer"
 #~ msgstr "%s het die lêeroordrag gekanselleer"
 
 #~ msgid "Join/Part Hiding Configuration"
@@ -16292,7 +16292,7 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Kon nie %s vir skryf open nie!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Lêeroordrag het misluk; ander kant het waarskynlik gekanselleer."
 
 #~ msgid "Could not connect for transfer."

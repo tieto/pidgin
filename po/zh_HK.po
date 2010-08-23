@@ -868,7 +868,7 @@ msgstr "中止"
 msgid "Waiting for transfer to begin"
 msgstr "等待開始傳輸檔案中..."
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "已取消"
 
 msgid "Failed"

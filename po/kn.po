@@ -802,7 +802,7 @@ msgstr "ನಿಲ್ಲಿಸು"
 msgid "Waiting for transfer to begin"
 msgstr "ವರ್ಗಾವಣೆಯ ಪ್ರಾರಂಭಕ್ಕಾಗಿ ನಿರೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "ರದ್ದಾಗಿದೆ"
 
 msgid "Failed"
@@ -15930,7 +15930,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "ಬರೆಯುವದಕ್ಕಾಗಿ  %s ತೆರೆಯಲು ಆಗಲಿಲ್ಲ"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "ಕಡತ ವರ್ಗಾವಣೆ ವಿಫಲ ; ಬಹುಶ: ಆಚೆಯವರು ರದ್ದು ಮಾಡಿದರು"
 
 #~ msgid "Could not connect for transfer."

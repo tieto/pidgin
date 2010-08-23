@@ -822,7 +822,7 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "Cekanje na pocetak transfera"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Otkazano"
 
 msgid "Failed"
@@ -17049,7 +17049,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Nije bilo moguce otvoriti %s za pisanje!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Transfer datoteke je neuspio; druga strana je vjerovatno odustala."
 
 #~ msgid "Could not connect for transfer."
