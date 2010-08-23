@@ -268,7 +268,7 @@ Section $(GTKSECTIONTITLE) SecGtk
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
-  StrCmp $R0 "cancel" done
+  ;StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
     MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
