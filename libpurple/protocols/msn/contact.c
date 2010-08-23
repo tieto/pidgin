@@ -527,16 +527,20 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 
 	if (resp != NULL) {
+#ifdef MSN_PARTIAL_LISTS
 		const char *abLastChange;
 		const char *dynamicItemLastChange;
+#endif
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
 		msn_parse_contact_list(session, resp->xml);
+#ifdef MSN_PARTIAL_LISTS
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
 			"DynamicItemLastChanged", NULL);
+#endif
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS

@@ -1288,7 +1288,7 @@ pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 
 	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
 	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
-	purple_account_remove_buddy(buddy->account, buddy, group);
+	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
 	g_free(name);

@@ -680,7 +680,6 @@ static AopMenu *
 create_protocols_menu(const char *default_proto_id)
 {
 	AopMenu *aop_menu = NULL;
-	PurplePluginProtocolInfo *prpl_info;
 	PurplePlugin *plugin;
 	GdkPixbuf *pixbuf = NULL;
 	GtkSizeGroup *sg;
@@ -702,7 +701,6 @@ create_protocols_menu(const char *default_proto_id)
 		 p = p->next, i++) {
 
 		plugin = (PurplePlugin *)p->data;
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0) {
 			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
@@ -784,8 +782,6 @@ create_account_menu(PurpleAccount *default_account,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
-		PurplePlugin *plugin;
-
 		if (show_all)
 			account = (PurpleAccount *)p->data;
 		else {
@@ -798,8 +794,6 @@ create_account_menu(PurpleAccount *default_account,
 			i--;
 			continue;
 		}
-
-		plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -2790,14 +2784,13 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 
 
 gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
-	int width, height, rowstride, i;
+	int height, rowstride, i;
 	unsigned char *pixels;
 	unsigned char *row;
 
 	if (!gdk_pixbuf_get_has_alpha(pixbuf))
 		return TRUE;
 
-	width = gdk_pixbuf_get_width (pixbuf);
 	height = gdk_pixbuf_get_height (pixbuf);
 	rowstride = gdk_pixbuf_get_rowstride (pixbuf);
 	pixels = gdk_pixbuf_get_pixels (pixbuf);

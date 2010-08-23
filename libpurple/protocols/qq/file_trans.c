@@ -238,11 +238,8 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	gint bytes = 0;
 	guint32 file_key;
 	qq_data *qd;
-	ft_info *info;
 
 	qd = (qq_data *) gc->proto_data;
-
-	info = (ft_info *) qd->xfer->data;
 
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE);
 	file_key = _gen_file_key();
@@ -805,9 +802,6 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes;
 	guint8 tag;
-	qq_data *qd;
-
-	qd = (qq_data *) gc->proto_data;
 
 	bytes = 0;
 	bytes += qq_get8(&tag, data + bytes);

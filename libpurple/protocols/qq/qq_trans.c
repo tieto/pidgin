@@ -109,11 +109,9 @@ guint32 qq_trans_get_ship(qq_transaction *trans)
 static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 	guint16 cmd, guint16 seq, guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
 {
-	qq_data *qd;
 	qq_transaction *trans;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, NULL);
 
 	trans = g_new0(qq_transaction, 1);
 

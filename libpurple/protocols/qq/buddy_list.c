@@ -55,11 +55,9 @@ typedef struct _qq_buddy_online {
 /* get a list of online_buddies */
 void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, guint32 update_class)
 {
-	qq_data *qd;
 	guint8 *raw_data;
 	gint bytes = 0;
 
-	qd = (qq_data *) gc->proto_data;
 	raw_data = g_newa(guint8, 5);
 
 	/* 000-000 get online friends cmd
@@ -360,7 +358,6 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 
 guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc)
 {
-	qq_data *qd;
 	gint i, j;
 	gint bytes;
 	guint8 sub_cmd, reply_code;
@@ -370,8 +367,6 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 	qq_room_data *rmd;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, -1);
-
-	qd = (qq_data *) gc->proto_data;
 
 	bytes = 0;
 	bytes += qq_get8(&sub_cmd, data + bytes);
@@ -468,11 +463,6 @@ void qq_request_change_status(PurpleConnection *gc, guint32 update_class)
 	guint8 away_cmd;
 	guint32 misc_status;
 	gboolean fake_video;
-	PurpleAccount *account;
-	PurplePresence *presence;
-
-	account = purple_connection_get_account(gc);
-	presence = purple_account_get_presence(account);
 
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->is_login)
@@ -596,14 +586,13 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag)
 {
 	gchar *who;
-	gchar *status_id;
+	const gchar *status_id;
 
 	g_return_if_fail(uid != 0);
 
 	/* purple supports signon and idle time
 	 * but it is not much use for QQ, I do not use them */
 	/* serv_got_update(gc, name, online, 0, q_bud->signon, q_bud->idle, bud->uc); */
-	status_id = "available";
 	switch(status) {
 	case QQ_BUDDY_OFFLINE:
 		status_id = "offline";
@@ -677,12 +666,9 @@ void qq_update_buddyies_status(PurpleConnection *gc)
 
 void qq_buddy_data_free_all(PurpleConnection *gc)
 {
-	qq_data *qd;
 	PurpleBuddy *buddy;
 	GSList *buddies, *it;
 	gint count = 0;
-
-	qd = (qq_data *)purple_connection_get_protocol_data(gc);
 
 	buddies = purple_find_buddies(purple_connection_get_account(gc), NULL);
 	for (it = buddies; it; it = it->next) {

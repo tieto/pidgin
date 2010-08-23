@@ -92,7 +92,6 @@ connect_cb(MsnServConn *servconn)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
-	PurpleAccount *account;
 	GString *vers;
 	const char *ver_str;
 	int i;
@@ -101,7 +100,6 @@ connect_cb(MsnServConn *servconn)
 
 	cmdproc = servconn->cmdproc;
 	session = servconn->session;
-	account = session->account;
 
 	vers = g_string_new("");
 
@@ -178,10 +176,8 @@ static void
 usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
 
 	session = cmdproc->session;
-	account = session->account;
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
@@ -1000,7 +996,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj = NULL;
 	unsigned long clientid;
@@ -1010,7 +1005,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
@@ -1203,7 +1197,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid;
@@ -1212,7 +1205,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
@@ -1387,11 +1379,13 @@ rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 	const char *session_id;
+	const char *auth_key;
 	char *host;
 	int port;
 
 	session = cmdproc->session;
 	session_id = cmd->params[0];
+	auth_key = cmd->params[3];
 
 	msn_parse_socket(cmd->params[1], &host, &port);
 
@@ -1401,8 +1395,8 @@ rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = msn_switchboard_new(session);
 
 	msn_switchboard_set_invited(swboard, TRUE);
-	msn_switchboard_set_session_id(swboard, cmd->params[0]);
-	msn_switchboard_set_auth_key(swboard, cmd->params[3]);
+	msn_switchboard_set_session_id(swboard, session_id);
+	msn_switchboard_set_auth_key(swboard, auth_key);
 	swboard->im_user = g_strdup(cmd->params[4]);
 	/* msn_switchboard_add_user(swboard, cmd->params[4]); */
 
@@ -1571,13 +1565,11 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
 	MsnSession *session;
-	PurpleAccount *account;
 	MsnUser *user;
 	const char *passport;
 	char *str;
 
 	session = cmdproc->session;
-	account = session->account;
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1649,7 +1641,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	const char *value;
+#ifdef MSN_PARTIAL_LISTS
 	const char *clLastChange;
+#endif
 
 	session = cmdproc->session;
 
@@ -1692,9 +1686,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if ((value = msn_message_get_attr(msg, "EmailEnabled")) != NULL)
 		session->passport_info.email_enabled = (gboolean)atol(value);
 
+#ifdef MSN_PARTIAL_LISTS
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
-#ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
 	msn_get_contact_list(session, MSN_PS_INITIAL, clLastChange);

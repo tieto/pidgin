@@ -657,7 +657,6 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 static void
 pidgin_status_box_refresh(PidginStatusBox *status_box)
 {
-	GtkIconSize icon_size;
 	GtkStyle *style;
 	char aa_color[8];
 	PurpleSavedStatus *saved_status;
@@ -667,8 +666,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
 	PurpleAccount *acct = (status_box->account) ? status_box->account : status_box->token_status_account;
-
-	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
@@ -969,11 +966,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		PurpleSavedStatus *saved = cur->data;
 		const gchar *message;
 		gchar *stripped = NULL;
-		PurpleStatusPrimitive prim;
 		PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
-
-		/* Get an appropriate status icon */
-		prim = purple_savedstatus_get_type(saved);
 
 		if (purple_savedstatus_is_transient(saved))
 		{
@@ -1074,17 +1067,13 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 					PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, NULL,
 					purple_status_type_get_name(status_type),
 					NULL,
-					GINT_TO_POINTER(purple_status_type_get_primitive(status_type)));
+					GINT_TO_POINTER(prim));
 	}
 }
 
 static void
 pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed)
 {
-	GtkIconSize icon_size;
-
-	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-
 	/* Unset the model while clearing it */
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), NULL);
 	gtk_list_store_clear(status_box->dropdown_store);
