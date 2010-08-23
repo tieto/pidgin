@@ -8,7 +8,7 @@ version 2.7.4 (MM/DD/YYYY):
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
 	  (>500 buddies) list and may improve login speed for those on slow
-	  connections.
+	  connections. (#12532)
 
 	Pidgin:
 	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
