@@ -966,7 +966,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		PurpleSavedStatus *saved = cur->data;
 		const gchar *message;
 		gchar *stripped = NULL;
-		PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
+		PidginStatusBoxItemType type;
 
 		if (purple_savedstatus_is_transient(saved))
 		{
@@ -975,16 +975,18 @@ add_popular_statuses(PidginStatusBox *statusbox)
 			 * API returns the message when purple_savedstatus_get_title() is
 			 * called, so we don't need to get the message a second time.
 			 */
+			type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 		}
 		else
 		{
+			type = PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR;
+
 			message = purple_savedstatus_get_message(saved);
 			if (message != NULL)
 			{
 				stripped = purple_markup_strip_html(message);
 				purple_util_chrreplace(stripped, '\n', ' ');
 			}
-			type = PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR;
 		}
 
 		pidgin_status_box_add(statusbox, type,
