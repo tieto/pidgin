@@ -289,7 +289,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 	{
 		EContact *contact = E_CONTACT(c->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells, *ggs;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -299,9 +299,11 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
 		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
+		ggs     = e_contact_get(contact, E_CONTACT_IM_GADUGADU);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL && novells == NULL)
+			msns == NULL && icqs == NULL && novells == NULL &&
+			ggs == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -320,6 +322,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
+			add_ims(dialog, contact, name, ggs,     "prpl-gg");
 		}
 	}
 
@@ -365,7 +368,7 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 	{
 		EContact *contact = E_CONTACT(l->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells, *ggs;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -381,9 +384,11 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
 		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
+		ggs     = e_contact_get(contact, E_CONTACT_IM_GADUGADU);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL && novells == NULL)
+			msns == NULL && icqs == NULL && novells == NULL &&
+			ggs == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -402,6 +407,7 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
+			add_ims(dialog, contact, name, ggs,     "prpl-gg");
 		}
 	}
 }

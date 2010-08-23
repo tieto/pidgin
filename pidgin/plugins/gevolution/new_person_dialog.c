@@ -153,6 +153,8 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 			field = E_CONTACT_IM_MSN;
 		else if (!strcmp(im_service, "prpl-novell"))
 			field = E_CONTACT_IM_GROUPWISE;
+		else if (!strcmp(im_service, "prpl-gg"))
+			field = E_CONTACT_IM_GADUGADU;
 
 		if (field > 0)
 		{
