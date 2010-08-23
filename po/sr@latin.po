@@ -792,7 +792,7 @@ msgstr "Zaustavi"
 msgid "Waiting for transfer to begin"
 msgstr "Čekam da prenos počne"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Otkaži"
 
 msgid "Failed"
@@ -16471,7 +16471,7 @@ msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Ne mogu da otvorim %s za upis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Neuspešan prenos datoteke; druga strana je verovatno otkazala."
 
 #~ msgid "Could not connect for transfer."

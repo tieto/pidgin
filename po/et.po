@@ -795,7 +795,7 @@ msgstr "Seiska"
 msgid "Waiting for transfer to begin"
 msgstr "Oodatakse ülekande algust"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Tühistatud"
 
 msgid "Failed"
@@ -16081,7 +16081,7 @@ msgstr ""
 #~ msgid "Password Change Successful"
 #~ msgstr "Paroolimuutmine õnnestus"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Tõrge ülekandmisel, ilmselt tühistas teine pool ülekande."
 
 #~ msgid "Could not connect for transfer."

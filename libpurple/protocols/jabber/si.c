@@ -1666,11 +1666,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
-	JabberStream *js;
-
 	PurpleXfer *xfer;
-
-	js = gc->proto_data;
 
 	xfer = jabber_si_new_xfer(gc, who);
 

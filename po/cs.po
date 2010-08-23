@@ -793,7 +793,7 @@ msgstr "Zastavit"
 msgid "Waiting for transfer to begin"
 msgstr "Čekám na začátek přenosu"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Zrušeno"
 
 msgid "Failed"
@@ -16042,7 +16042,7 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Nemohu otevřít %s pro zápis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Přenos souboru selhal; druhá strana jej pravděpodobně přerušila."
 
 #~ msgid "Could not connect for transfer."

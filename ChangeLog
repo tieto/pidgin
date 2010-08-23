@@ -10,6 +10,10 @@ version 2.7.4 (MM/DD/YYYY):
 	  (>500 buddies) list and may improve login speed for those on slow
 	  connections.
 
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+
 version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose

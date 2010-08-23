@@ -826,7 +826,7 @@ msgstr "Sustabdyti"
 msgid "Waiting for transfer to begin"
 msgstr "Laukiama perdavimo pradžios"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Atšaukta"
 
 msgid "Failed"

@@ -816,7 +816,7 @@ msgstr "입력"
 msgid "Waiting for transfer to begin"
 msgstr "전송 시작을 기다리고 있습니다."
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "취소되었습니다."
 
 msgid "Failed"
@@ -16691,7 +16691,7 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "쓰기 모드에서 %s 을(를) 열 수 없습니다!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "파일 전송에 실패했습니다. 아마도 상대측에서 취소한 것 같습니다."
 
 #~ msgid "Could not connect for transfer."

@@ -784,7 +784,7 @@ msgstr "ਰੋਕੋ"
 msgid "Waiting for transfer to begin"
 msgstr "ਭੇਜਣ ਸ਼ੁਰੂ ਕਰਨ ਦੀ ਉਡੀਕ ਜਾਰੀ"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "ਰੱਦ ਹੈ"
 
 msgid "Failed"
@@ -15891,7 +15891,7 @@ msgstr "ਤੁਹਾਨੂੰ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇੰਸਟਾ
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s ਨੂੰ ਲਿਖਣ ਲਈ ਖੋਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "ਫਾਇਲ ਸੰਚਾਰ ਅਸਫਲ ਹੈ; ਦੂਜੇ ਪਾਸੇ ਤੋਂ ਰੱਦ ਕੀਤਾ ਗਿਆ ਹੈ।"
 
 #~ msgid "Could not connect for transfer."

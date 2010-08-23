@@ -799,7 +799,7 @@ msgstr "ବନ୍ଦକର"
 msgid "Waiting for transfer to begin"
 msgstr "ସ୍ଥାନାନ୍ତରଣ ଆରମ୍ଭ ହେବାକୁ ଅପେକ୍ଷା କରୁଛି"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "ବାତିଲ କରାଗଲା"
 
 msgid "Failed"

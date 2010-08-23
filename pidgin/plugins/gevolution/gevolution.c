@@ -125,6 +125,7 @@ update_buddies_from_contact(EContact *contact)
 	update_ims_from_contact(contact, name, "prpl-msn",    E_CONTACT_IM_MSN);
 	update_ims_from_contact(contact, name, "prpl-icq",    E_CONTACT_IM_ICQ);
 	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
+	update_ims_from_contact(contact, name, "prpl-gg",     E_CONTACT_IM_GADUGADU);
 }
 
 static void

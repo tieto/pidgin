@@ -797,7 +797,7 @@ msgstr "Stopp"
 msgid "Waiting for transfer to begin"
 msgstr "Ventar på at overføringa skal begynna"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Avbroten"
 
 msgid "Failed"

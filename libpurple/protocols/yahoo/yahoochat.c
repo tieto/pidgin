@@ -617,9 +617,6 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *who = NULL;
 	char *room = NULL;
 	GSList *l;
-	YahooData *yd;
-
-	yd = gc->proto_data;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -638,8 +635,7 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 
 	}
-	if (room)
-		g_free(room);
+	g_free(room);
 }
 
 void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)

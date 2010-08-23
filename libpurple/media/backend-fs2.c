@@ -1837,14 +1837,11 @@ static GList *
 purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id)
 {
-	PurpleMediaBackendFs2Private *priv;
 	PurpleMediaBackendFs2Session *session;
 	GList *fscodecs;
 	GList *codecs;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
-
-	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
 	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
 
@@ -2014,12 +2011,9 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who, double level)
 {
 #ifdef USE_VV
-	PurpleMediaBackendFs2Private *priv;
 	GList *streams;
 
 	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
-
-	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
 	purple_prefs_set_int("/purple/media/audio/volume/output", level);
 

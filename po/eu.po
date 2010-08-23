@@ -801,7 +801,7 @@ msgstr "Gelditu"
 msgid "Waiting for transfer to begin"
 msgstr "Transferentzia hasteko zain"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Bertan behera utzi da"
 
 msgid "Failed"
@@ -16340,7 +16340,7 @@ msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Ezin izan da %s ireki idazteko!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Fitxategi-transferentziak huts egin du; beste aldekoak beharbada bertan "
 #~ "behera utziko zuen."

@@ -134,12 +134,10 @@ void qq_group_modify_members(PurpleConnection *gc, qq_room_data *rmd, guint32 *n
 {
 	guint32 *old_members, *del_members, *add_members;
 	qq_buddy_data *bd;
-	qq_data *qd;
 	gint i = 0, old = 0, new = 0, del = 0, add = 0;
 	GList *list;
 
 	g_return_if_fail(rmd != NULL);
-	qd = (qq_data *) gc->proto_data;
 	if (new_members[0] == 0xffffffff)
 		return;
 

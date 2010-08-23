@@ -330,7 +330,7 @@ my_fgets (char *buf, gsize bufsize, FILE *df)
 	if (c == EOF && pos == 0)
 		return NULL;
 
-	buf[pos++] = '\0';
+	buf[pos] = '\0';
 
 	return buf;
 }

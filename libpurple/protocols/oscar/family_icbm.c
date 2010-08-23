@@ -1320,7 +1320,7 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 	/*
 	 * Terminate connection/error code.  0x0001 means the other user
-	 * canceled the connection.
+	 * cancelled the connection.
 	 */
 	if (aim_tlv_gettlv(list2, 0x000b, 1))
 		args.errorcode = aim_tlv_get16(list2, 0x000b, 1);

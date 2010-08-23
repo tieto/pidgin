@@ -843,7 +843,7 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "Esperando que a transferência comece"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelado"
 
 msgid "Failed"
@@ -17029,7 +17029,7 @@ msgstr "Não tem permissão para desinstalar este programa."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Não foi possível abrir %s para escrita!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Tranferência de ficheiro falhou; o outro lado provavelmente cancelou-a."
 

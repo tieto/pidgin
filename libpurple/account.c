@@ -1129,7 +1129,7 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 static void
 request_password_cancel_cb(PurpleAccount *account, PurpleRequestFields *fields)
 {
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 
