@@ -83,9 +83,11 @@ purple_media_codec_finalize(GObject *info)
 			PURPLE_MEDIA_CODEC_GET_PRIVATE(info);
 	g_free(priv->encoding_name);
 	for (; priv->optional_params; priv->optional_params =
-			g_list_delete_link(priv->optional_params,
-			priv->optional_params)) {
-		g_free(priv->optional_params->data);
+			g_list_delete_link(priv->optional_params, priv->optional_params)) {
+		PurpleKeyValuePair *param = priv->optional_params->data;
+		g_free(param->key);
+		g_free(param->value);
+		g_free(param);
 	}
 }
 
@@ -302,10 +304,10 @@ purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
 
 	g_free(param->key);
 	g_free(param->value);
-	g_free(param);
 
 	priv->optional_params =
 			g_list_remove(priv->optional_params, param);
+	g_free(param);
 }
 
 PurpleKeyValuePair *

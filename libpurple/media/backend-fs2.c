@@ -208,11 +208,7 @@ purple_media_backend_fs2_dispose(GObject *obj)
 	}
 
 	if (priv->participants) {
-		GList *participants =
-				g_hash_table_get_values(priv->participants);
-		for (; participants; participants = g_list_delete_link(
-				participants, participants))
-			g_object_unref(participants->data);
+		g_hash_table_destroy(priv->participants);
 		priv->participants = NULL;
 	}
 
@@ -1425,7 +1421,8 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	if (!priv->sessions) {
 		purple_debug_info("backend-fs2",
 				"Creating hash table for sessions\n");
-		priv->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+		priv->sessions = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                       g_free, NULL);
 	}
 
 	g_hash_table_insert(priv->sessions, g_strdup(session->id), session);
@@ -1461,7 +1458,7 @@ create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 		purple_debug_info("backend-fs2",
 				"Creating hash table for participants\n");
 		priv->participants = g_hash_table_new_full(g_str_hash,
-				g_str_equal, g_free, NULL);
+				g_str_equal, g_free, g_object_unref);
 	}
 
 	g_hash_table_insert(priv->participants, g_strdup(name), participant);
