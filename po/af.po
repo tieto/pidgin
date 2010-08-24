@@ -15698,15 +15698,6 @@ msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
 #~ "afkomstig te wees.  Dit kan beteken dat u nie tans aan die diens gekoppel "
 #~ "is wat u dink nie."
 
-#~ msgid "You cancelled the transfer of %s"
-#~ msgstr "U het die oordrag van %s gekanselleer"
-
-#~ msgid "%s cancelled the transfer of %s"
-#~ msgstr "%s het die oordrag van %s gekanselleer"
-
-#~ msgid "%s cancelled the file transfer"
-#~ msgstr "%s het die lêeroordrag gekanselleer"
-
 #~ msgid "Join/Part Hiding Configuration"
 #~ msgstr "Opstelling vir in- en uitgaanversteking"
 
