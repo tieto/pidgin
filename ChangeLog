@@ -3,6 +3,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.4 (MM/DD/YYYY):
 	General:
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+	
+	libpurple:
+	* Added ability to use TURN relaying via TCP and TLS (including preference
+	  settings for these).
+
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This

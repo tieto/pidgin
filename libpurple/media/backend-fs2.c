@@ -1561,6 +1561,30 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			(GSourceFunc)src_pad_added_cb_cb, stream);
 }
 
+static GValueArray *
+append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
+	const gchar *username, const gchar *password, const gchar *type)
+{
+	GValue value;
+	GstStructure *turn_setup = gst_structure_new("relay-info",
+				"ip", G_TYPE_STRING, ip, 
+				"port", G_TYPE_UINT, port,
+				"username", G_TYPE_STRING, username,
+				"password", G_TYPE_STRING, password,
+	            "relay-type", G_TYPE_STRING, type,
+				NULL);
+
+	if (turn_setup) {
+		memset(&value, 0, sizeof(GValue));
+		g_value_init(&value, GST_TYPE_STRUCTURE);
+		gst_value_set_structure(&value, turn_setup);
+		relay_info = g_value_array_append(relay_info, &value);
+		gst_structure_free(turn_setup);
+	}
+
+	return relay_info;
+}
+                        
 static gboolean
 create_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who,
@@ -1602,31 +1626,32 @@ create_stream(PurpleMediaBackendFs2 *self,
 
 	if (turn_ip && !strcmp("nice", transmitter)) {
 		GValueArray *relay_info = g_value_array_new(0);
-		GValue value;
-		gint turn_port = purple_prefs_get_int(
-				"/purple/network/turn_port");
+		gint port;
 		const gchar *username =	purple_prefs_get_string(
 				"/purple/network/turn_username");
 		const gchar *password = purple_prefs_get_string(
 				"/purple/network/turn_password");
-		GstStructure *turn_setup = gst_structure_new("relay-info",
-				"ip", G_TYPE_STRING, turn_ip, 
-				"port", G_TYPE_UINT, turn_port,
-				"username", G_TYPE_STRING, username,
-				"password", G_TYPE_STRING, password,
-				NULL);
 
-		if (!turn_setup) {
-			purple_debug_error("backend-fs2",
-					"Error creating relay info structure");
-			return FALSE;
+		/* UDP */
+		port = purple_prefs_get_int("/purple/network/turn_port");
+		if (port > 0) {
+			relay_info = append_relay_info(relay_info, turn_ip, port, username,
+				password, "udp");
 		}
 
-		memset(&value, 0, sizeof(GValue));
-		g_value_init(&value, GST_TYPE_STRUCTURE);
-		gst_value_set_structure(&value, turn_setup);
-		relay_info = g_value_array_append(relay_info, &value);
-		gst_structure_free(turn_setup);
+		/* TCP */
+		port = purple_prefs_get_int("/purple/network/turn_port_tcp");
+		if (port > 0) {
+			relay_info = append_relay_info(relay_info, turn_ip, port, username,
+				password, "tcp");
+		}
+
+		/* TLS */
+		port = purple_prefs_get_int("/purple/network/turn_port_tls");
+		if (port > 0) {
+			relay_info = append_relay_info(relay_info, turn_ip, port, username,
+				password, "tls");
+		}
 
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
