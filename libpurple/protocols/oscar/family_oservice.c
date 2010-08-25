@@ -73,7 +73,7 @@ aim_srv_clientready(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -97,7 +97,7 @@ hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 {
 	int group;
 
-	while (byte_stream_empty(bs))
+	while (byte_stream_bytes_left(bs))
 	{
 		group = byte_stream_get16(bs);
 		conn->groups = g_slist_prepend(conn->groups, GUINT_TO_POINTER(group));
@@ -141,7 +141,7 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -187,7 +187,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, &csi, sizeof(csi));
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -444,30 +444,7 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-}
-
-/* Subtype 0x0009 - Delete Rate Parameter */
-void
-aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tmp;
-
-	byte_stream_new(&bs, 502);
-
-	for (tmp = conn->rateclasses; tmp != NULL; tmp = tmp->next)
-	{
-		struct rateclass *rateclass;
-		rateclass = tmp->data;
-		byte_stream_put16(&bs, rateclass->classid);
-	}
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -558,40 +535,6 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	return ret;
 }
 
-/*
- * Subtype 0x000c - Service Pause Acknowledgement
- *
- * It is rather important that aim_srv_sendpauseack() gets called for the exact
- * same connection that the Server Pause callback was called for, since
- * libfaim extracts the data for the SNAC from the connection structure.
- *
- * Of course, if you don't do that, more bad things happen than just what
- * libfaim can cause.
- *
- */
-void
-aim_srv_sendpauseack(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *cur;
-
-	byte_stream_new(&bs, 1014);
-
-	/*
-	 * This list should have all the groups that the original
-	 * Host Online / Server Ready said this host supports.  And
-	 * we want them all back after the migration.
-	 */
-	for (cur = conn->groups; cur != NULL; cur = cur->next)
-		byte_stream_put16(&bs, GPOINTER_TO_UINT(cur->data));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-}
-
 /* Subtype 0x000d - Service Resume */
 static int
 serverresume(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -643,7 +586,7 @@ evilnotify(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 	newevil = byte_stream_get16(bs);
 
-	if (byte_stream_empty(bs))
+	if (byte_stream_bytes_left(bs))
 		aim_info_extract(od, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
@@ -770,36 +713,6 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 }
 
 /*
- * Subtype 0x0014 - Set privacy flags
- *
- * Normally 0x03.
- *
- *  Bit 1:  Allows other AIM users to see how long you've been idle.
- *  Bit 2:  Allows other AIM users to see how long you've been a member.
- *
- */
-void
-aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
-{
-	aim_genericreq_l(od, conn, SNAC_FAMILY_OSERVICE, 0x0014, &flags);
-}
-
-/*
- * Subtype 0x0016 - No-op
- *
- * WinAIM sends these every 4min or so to keep the connection alive.  Its not
- * really necessary.
- *
- * Wha?  No?  Since when?  I think WinAIM sends an empty channel 5
- * FLAP as a no-op...
- */
-void
-aim_srv_nop(OscarData *od, FlapConnection *conn)
-{
-	aim_genericreq_n(od, conn, SNAC_FAMILY_OSERVICE, 0x0016);
-}
-
-/*
  * Subtype 0x0017 - Set client versions
  *
  * If you've seen the clientonline/clientready SNAC you're probably
@@ -837,7 +750,7 @@ aim_srv_setversions(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -850,8 +763,8 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	guint8 *versions;
 
 	/* This is frivolous. (Thank you SmarterChild.) */
-	vercount = byte_stream_empty(bs)/4;
-	versions = byte_stream_getraw(bs, byte_stream_empty(bs));
+	vercount = byte_stream_bytes_left(bs)/4;
+	versions = byte_stream_getraw(bs, byte_stream_bytes_left(bs));
 	g_free(versions);
 
 	/*
@@ -899,16 +812,6 @@ aim_srv_setextrainfo(OscarData *od,
 				AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH);
 	}
 
-#if 0
-	if (other_stuff_that_isnt_implemented)
-	{
-		aim_tlvlist_add_raw(&tlvlist, 0x000c, 0x0025,
-				chunk_of_x25_bytes_with_ip_address_etc);
-		aim_tlvlist_add_raw(&tlvlist, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
-		aim_tlvlist_add_16(&tlvlist, 0x0012, unknown 0x00 00);
-	}
-#endif
-
 	if (setstatusmsg)
 	{
 		size_t statusmsglen, itmsurllen;
@@ -932,11 +835,55 @@ aim_srv_setextrainfo(OscarData *od,
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
 	return 0;
+}
+
+/* Send dummy DC (direct connect) information to the server.
+ * Direct connect is ICQ's counterpart for AIM's DirectIM,
+ * as far as I can tell. Anyway, we don't support it;
+ * the reason to send this packet is that some clients
+ * (Miranda, QIP) won't send us channel 2 ICBM messages
+ * unless we specify DC version >= 8.
+ *
+ * See #12044 for more information.
+ */
+void
+aim_srv_set_dc_info(OscarData *od)
+{
+	ByteStream bs, tlv0c;
+	aim_snacid_t snacid;
+	GSList *tlvlist = NULL;
+
+	/* http://iserverd.khstu.ru/oscar/snac_01_1e.html has a nice analysis of what goes in 0xc tlv.
+	 * Kopete sends a dummy DC info, too, so I just copied the values from them.
+	 */
+	byte_stream_new(&tlv0c, 4*2 + 1 + 2 + 4*6 + 2);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put8(&tlv0c, 0x0); /* We don't support DC */
+	byte_stream_put16(&tlv0c, 8); /* DC version */
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x50);
+	byte_stream_put32(&tlv0c, 0x3);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put16(&tlv0c, 0x0);
+	aim_tlvlist_add_raw(&tlvlist, 0x000c, byte_stream_curpos(&tlv0c), tlv0c.data);
+	byte_stream_destroy(&tlv0c);
+
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
+	aim_tlvlist_write(&bs, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -1077,7 +1024,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

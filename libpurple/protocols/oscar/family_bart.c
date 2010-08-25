@@ -56,7 +56,7 @@ aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 	byte_stream_putraw(&bs, icon, iconlen);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_BART, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -121,7 +121,7 @@ aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const guint
 	byte_stream_putraw(&bs, iconcsum, iconcsumlen);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_BART, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

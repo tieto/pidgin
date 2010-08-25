@@ -711,7 +711,7 @@ int gnt_text_view_get_lines_below(GntTextView *view)
 int gnt_text_view_get_lines_above(GntTextView *view)
 {
 	int above = 0;
-	GList *list = view->list;
+	GList *list;
 	list = g_list_nth(view->list, GNT_WIDGET(view)->priv.height);
 	if (!list)
 		return 0;

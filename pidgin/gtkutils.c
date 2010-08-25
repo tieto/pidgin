@@ -1036,7 +1036,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 	char *username = NULL;
 	char *alias    = NULL;
 	char *str;
-	char *c, *s;
+	char *s;
 	gboolean valid;
 
 	g_return_val_if_fail(msg          != NULL, FALSE);
@@ -1078,7 +1078,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		if (*s == '\r') *s++ = '\0';
 		if (*s == '\n') *s++ = '\0';
 
-		if ((c = strchr(key, ':')) != NULL)
+		if (strchr(key, ':') != NULL)
 		{
 			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
 				username = g_strdup(value);
@@ -2611,18 +2611,11 @@ old_mini_dialog_destroy_cb(GtkWidget *dialog,
 	}
 }
 
-GtkWidget *
-pidgin_make_mini_dialog(PurpleConnection *gc,
-                        const char *icon_name,
-                        const char *primary,
-                        const char *secondary,
-                        void *user_data,
-                        ...)
+static void
+mini_dialog_init(PidginMiniDialog *mini_dialog, PurpleConnection *gc, void *user_data, va_list args)
 {
-	PidginMiniDialog *mini_dialog;
 	const char *button_text;
 	GList *cb_datas = NULL;
-	va_list args;
 	static gboolean first_call = TRUE;
 
 	if (first_call) {
@@ -2632,12 +2625,10 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 		                      PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
-	mini_dialog = pidgin_mini_dialog_new(primary, secondary, icon_name);
 	g_object_set_data(G_OBJECT(mini_dialog), "gc" ,gc);
 	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
 		G_CALLBACK(alert_killed_cb), NULL);
 
-	va_start(args, user_data);
 	while ((button_text = va_arg(args, char*))) {
 		struct _old_button_clicked_cb_data *data = NULL;
 		PidginMiniDialogCallback wrapper_cb = NULL;
@@ -2654,12 +2645,40 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 			wrapper_cb, data);
 		cb_datas = g_list_append(cb_datas, data);
 	}
-	va_end(args);
 
 	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
 		G_CALLBACK(old_mini_dialog_destroy_cb), cb_datas);
+}
 
+#define INIT_AND_RETURN_MINI_DIALOG(mini_dialog) \
+	va_list args; \
+	va_start(args, user_data); \
+	mini_dialog_init(mini_dialog, gc, user_data, args); \
+	va_end(args); \
 	return GTK_WIDGET(mini_dialog);
+
+GtkWidget *
+pidgin_make_mini_dialog(PurpleConnection *gc,
+                        const char *icon_name,
+                        const char *primary,
+                        const char *secondary,
+                        void *user_data,
+                        ...)
+{
+	PidginMiniDialog *mini_dialog = pidgin_mini_dialog_new(primary, secondary, icon_name);
+	INIT_AND_RETURN_MINI_DIALOG(mini_dialog);
+}
+
+GtkWidget *
+pidgin_make_mini_dialog_with_custom_icon(PurpleConnection *gc,
+					GdkPixbuf *custom_icon,
+					const char *primary,
+					const char *secondary,
+					void *user_data,
+					...)
+{
+	PidginMiniDialog *mini_dialog = pidgin_mini_dialog_new_with_custom_icon(primary, secondary, custom_icon);
+	INIT_AND_RETURN_MINI_DIALOG(mini_dialog);
 }
 
 /*

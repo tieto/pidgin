@@ -103,6 +103,7 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 		return SASL_BADPARAM;
 
 	len = strlen(pw);
+	/* Not an off-by-one because sasl_secret_t defines char data[1] */
 	x = (sasl_secret_t *) realloc(x, sizeof(sasl_secret_t) + len);
 
 	if (!x)
