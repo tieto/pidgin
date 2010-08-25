@@ -8,7 +8,6 @@ version 2.7.4 (MM/DD/YYYY):
 	* Added ability to use TURN relaying via TCP and TLS (including preference
 	  settings for these).
 
-
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
