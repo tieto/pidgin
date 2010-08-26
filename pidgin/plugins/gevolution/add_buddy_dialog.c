@@ -54,8 +54,7 @@ delete_win_cb(GtkWidget *w, GdkEvent *event, GevoAddBuddyDialog *dialog)
 
 	gevo_addrbooks_model_unref(dialog->addrbooks);
 
-	if (dialog->username != NULL)
-		g_free(dialog->username);
+	g_free(dialog->username);
 
 	g_free(dialog);
 
