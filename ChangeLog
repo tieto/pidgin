@@ -12,6 +12,10 @@ version 2.7.4 (MM/DD/YYYY):
 	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
 	  provide Evolution integration with contacts with GG IDs. (#10709)
 
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
 	XMPP:
 	* Fix a crash when multiple accounts are simultaneously performing
 	  SASL authentication when built with Cyrus SASL support.  (thanks
