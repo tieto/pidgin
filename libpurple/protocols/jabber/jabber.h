@@ -206,6 +206,7 @@ struct _JabberStream
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
+	sasl_secret_t *sasl_secret;
 	const char *current_mech;
 	int auth_fail_count;
 
