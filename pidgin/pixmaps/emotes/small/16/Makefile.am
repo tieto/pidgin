@@ -75,6 +75,7 @@ SMILEYS = \
     star.png \
     stressed.png \
     thinking.png \
+    thunder.png \
     tongue.png \
     tv.png \
     uhm-yeah.png \
