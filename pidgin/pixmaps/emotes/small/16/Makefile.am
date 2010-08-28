@@ -34,7 +34,6 @@ SMILEYS = \
     confused.png \
     console.png \
     cold.png \
-    cool.png \
     cross.png \
     crying.png \
     devil.png \
@@ -44,7 +43,6 @@ SMILEYS = \
     excruciating.png \
     eyeroll.png \
     girl.png \
-    grin.png \
     happy.png \
     hug-left.png \
     hug-right.png \
