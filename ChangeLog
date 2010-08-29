@@ -11,6 +11,11 @@ version 2.7.4 (MM/DD/YYYY):
 	  request with an icon.  Fixes receiving MSN file transfer requests
 	  including a thumbnail in Finch.
 
+	Pidgin:
+	* Remap the "Set User Mood" shortcut to Control+D which does not
+	  conflict with the previous shortcut to Get Buddy Info on the
+	  selected buddy.
+
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
