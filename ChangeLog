@@ -7,21 +7,9 @@ version 2.7.4 (MM/DD/YYYY):
 	libpurple:
 	* Added ability to use TURN relaying via TCP and TLS (including preference
 	  settings for these).
-
-	Pidgin:
-	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
-	  provide Evolution integration with contacts with GG IDs. (#10709)
-
-	Finch:
-	* Add support for drop-down account options (like the SILC cipher
-	  and HMAC options or the QQ protocol version).
-
-	XMPP:
-	* Fix a crash when multiple accounts are simultaneously performing
-	  SASL authentication when built with Cyrus SASL support.  (thanks
-	  to Jan Kaluza) (#11560)
-	* Restore the ability to connect to XMPP servers that do not offer
-	  Stream ID. (#12331)
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests including
+	  a thumbnail in Finch.
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
