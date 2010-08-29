@@ -3653,6 +3653,9 @@ set_mood_show(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by 
+   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
+
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
