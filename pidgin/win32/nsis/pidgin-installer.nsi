@@ -621,7 +621,6 @@ Section Uninstall
     RMDir "$INSTDIR\spellcheck\lib"
     RMDir "$INSTDIR\spellcheck"
     Delete "$INSTDIR\freebl3.dll"
-    Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\libnspr4.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
