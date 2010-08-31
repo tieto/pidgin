@@ -102,11 +102,14 @@ jabber_parser_element_start_libxml(void *user_data,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 					_("XMPP stream missing ID"));
 #else
-			/* Instead, let's make up a fancy-schmancy stream ID, which
-			 * we need to do because we flag on js->stream_id == NULL being
-			 * a special case in this function.
+			/* Instead, let's make up a placeholder stream ID, which we need
+			 * to do because we flag on it being NULL as a special case
+			 * in this parsing code.
 			 */
-			js->stream_id = purple_uuid_random();
+			js->stream_id = g_strdup("");
+			purple_debug_info("jabber", "Server failed to specify a stream "
+			                  "ID (underspecified in rfc3920, but intended "
+			                  "to be a MUST; digest legacy auth may fail."); 
 #endif
 		}
 	} else {

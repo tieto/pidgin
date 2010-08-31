@@ -251,7 +251,8 @@ static void auth_old_cb(JabberStream *js, const char *from,
 		g_free(msg);
 	} else if (type == JABBER_IQ_RESULT) {
 		query = xmlnode_get_child(packet, "query");
-		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+		if (js->stream_id && *js->stream_id &&
+				xmlnode_get_child(query, "digest")) {
 			char *s, *hash;
 
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -269,8 +270,10 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			g_free(s);
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
-
-		} else if(js->stream_id && (x = xmlnode_get_child(query, "crammd5"))) {
+		} else if ((x = xmlnode_get_child(query, "crammd5"))) {
+			/* For future reference, this appears to be a custom OS X extension
+			 * to non-SASL authentication.
+			 */
 			const char *challenge;
 			gchar digest[33];
 			PurpleCipherContext *hmac;
