@@ -1791,12 +1791,9 @@ network_page(void)
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
 	
-	pidgin_prefs_labeled_spin_button(hbox, _("_UDP:"),
+	pidgin_prefs_labeled_spin_button(hbox, _("_UDP Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	pidgin_prefs_labeled_spin_button(hbox, _("_TCP:"),
-		"/purple/network/turn_port_tcp", 0, 65535, NULL);
-	pidgin_prefs_labeled_spin_button(hbox, _("_TLS:"),
-		"/purple/network/turn_port_tls", 0, 65535, NULL);
+
 	hbox = pidgin_prefs_labeled_entry(vbox, _("Use_rname:"),
 		"/purple/network/turn_username", sg);
 	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),

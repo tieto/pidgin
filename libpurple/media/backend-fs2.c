@@ -1639,20 +1639,9 @@ create_stream(PurpleMediaBackendFs2 *self,
 				password, "udp");
 		}
 
-		/* TCP */
-		port = purple_prefs_get_int("/purple/network/turn_port_tcp");
-		if (port > 0) {
-			relay_info = append_relay_info(relay_info, turn_ip, port, username,
-				password, "tcp");
-		}
-
-		/* TLS */
-		port = purple_prefs_get_int("/purple/network/turn_port_tls");
-		if (port > 0) {
-			relay_info = append_relay_info(relay_info, turn_ip, port, username,
-				password, "tls");
-		}
-
+		/* should add TCP and perhaps TLS relaying options when these are
+		 supported by libnice using non-google mode */
+		
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";

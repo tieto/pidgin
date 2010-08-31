@@ -5,8 +5,6 @@ version 2.7.4 (MM/DD/YYYY):
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
 
 	libpurple:
-	* Added ability to use TURN relaying via TCP and TLS (as well as the
-	  preference settings for these).
 	* Fall back to an ordinary request if a UI does not support showing a
 	  request with an icon.  Fixes receiving MSN file transfer requests
 	  including a thumbnail in Finch.
