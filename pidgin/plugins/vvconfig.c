@@ -28,6 +28,9 @@
 
 #include <gst/interfaces/propertyprobe.h>
 
+/* container window for showing a stand-alone configurator */
+static GtkWidget *window = NULL;
+
 static PurpleMediaElementInfo *old_video_src = NULL, *old_video_sink = NULL,
 		*old_audio_src = NULL, *old_audio_sink = NULL;
 
@@ -502,6 +505,41 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
+static void
+config_destroy(GtkObject *w, gpointer nul)
+{
+	purple_debug_info("vvconfig", "closing vv configuration window\n");
+	window = NULL;
+}
+
+static void
+show_config(PurplePluginAction *action)
+{
+	if (!window) {
+		GtkWidget *config_frame = get_plugin_config_frame(NULL);
+		window = pidgin_create_window(_("Voice and Video Settings"),
+			PIDGIN_HIG_BORDER, NULL, TRUE);
+		g_signal_connect(G_OBJECT(window), "destroy", 
+			G_CALLBACK(config_destroy), NULL);
+		gtk_container_add(GTK_CONTAINER(window), config_frame);
+	}
+	gtk_window_present(window);
+}
+		
+		
+static GList *
+actions(PurplePlugin *plugin, gpointer context)
+{
+	GList *l = NULL;
+	PurplePluginAction *act = NULL;
+
+	act = purple_plugin_action_new(_("Voice and Video Settings"),
+		show_config);
+	l = g_list_append(l, act);
+
+	return l;
+}
+
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
@@ -550,7 +588,7 @@ static PurplePluginInfo info =
 	&ui_info,				/**< ui_info		*/
 	NULL,					/**< extra_info		*/
 	NULL,					/**< prefs_info		*/
-	NULL,					/**< actions		*/
+	actions,					/**< actions		*/
 
 	/* padding */
 	NULL,
