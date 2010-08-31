@@ -386,7 +386,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 	BonjourBuddy *bb = NULL;
 	const gchar *name = bconv->pb ? purple_buddy_get_name(bconv->pb) : "(unknown)";
 
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name);
+	purple_debug_info("bonjour", "Received conversation close notification from %s.\n", name);
 
 	if(bconv->pb != NULL)
 		bb = purple_buddy_get_protocol_data(bconv->pb);
@@ -582,7 +582,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 }
 
 /* This gets called when we've successfully sent our <stream:stream />
- * AND when we've recieved a <stream:stream /> */
+ * AND when we've received a <stream:stream /> */
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 	if (bconv->sent_stream_start == NOT_SENT && !bonjour_jabber_send_stream_init(bconv, bconv->socket)) {
@@ -683,7 +683,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	g_slist_free(buddies);
 
 	if (mbba->matched_buddies == NULL) {
-		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
+		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheroes comic\n");
 		g_free(mbba);
 		close(client_socket);
 		return;
@@ -1184,7 +1184,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
-			if (bb != NULL) {
+			if (bb && bb->conversation) {
 				/* Any ongoing connection attempt is cancelled
 				 * by _purple_connection_destroy */
 				bb->conversation->connect_data = NULL;
@@ -1273,7 +1273,6 @@ check_if_blocked(PurpleBuddy *pb)
 static void
 xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 {
-	xmlnode *child;
 	PurpleAccount *account;
 	PurpleConnection *gc;
 
@@ -1283,7 +1282,7 @@ xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 		account = purple_buddy_get_account(pb);
 		gc = purple_account_get_connection(account);
 
-	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "error")))
+	if (xmlnode_get_child(packet, "si") != NULL || xmlnode_get_child(packet, "error") != NULL)
 		xep_si_parse(gc, packet, pb);
 	else
 		xep_bytestreams_parse(gc, packet, pb);

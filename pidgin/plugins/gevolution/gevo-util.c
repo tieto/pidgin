@@ -111,6 +111,8 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 		protocol_field = E_CONTACT_IM_JABBER;
 	else if (!strcmp(protocol_id, "prpl-novell"))
 		protocol_field = E_CONTACT_IM_GROUPWISE;
+	else if (!strcmp(protocol_id, "prpl-gg"))
+		protocol_field = E_CONTACT_IM_GADUGADU;
 
 	return protocol_field;
 }

@@ -1417,7 +1417,7 @@ PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 	if (sg->roomlist)
 		purple_roomlist_unref(sg->roomlist);
 
-	sg->roomlist_canceled = FALSE;
+	sg->roomlist_cancelled = FALSE;
 
 	sg->roomlist = purple_roomlist_new(purple_connection_get_account(gc));
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
@@ -1451,6 +1451,6 @@ void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 	if (sg->roomlist == list) {
 		purple_roomlist_unref(sg->roomlist);
 		sg->roomlist = NULL;
-		sg->roomlist_canceled = TRUE;
+		sg->roomlist_cancelled = TRUE;
 	}
 }

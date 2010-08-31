@@ -20,7 +20,7 @@
  *
  */
 
-/* libicq is the ICQ protocol plugin. It is linked against liboscarcommon,
+/* libicq is the ICQ protocol plugin. It is linked against liboscar,
  * which contains all the shared implementation code with libaim
  */
 
@@ -63,11 +63,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
-	oscar_add_permit,		/* add_permit */
+	NULL,		/* add_permit */
 	oscar_add_deny,			/* add_deny */
-	oscar_rem_permit,		/* rem_permit */
+	NULL,		/* rem_permit */
 	oscar_rem_deny,			/* rem_deny */
-	oscar_set_permit_deny,	/* set_permit_deny */
+	NULL,	/* set_permit_deny */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	oscar_get_chat_name,	/* get_chat_name */
@@ -109,6 +109,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* initiate_media */
 	NULL,					/* can_do_media */
 	oscar_get_purple_moods, /* get_moods */
+	NULL,					/* set_public_alias */
+	NULL					/* get_public_alias */
 };
 
 static PurplePluginInfo info =

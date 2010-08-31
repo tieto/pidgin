@@ -606,7 +606,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 
 		/* we don't actually care about the specific nodes,
 		 * so we won't query them */
-		if((node = xmlnode_get_attrib(child, "node")))
+		if(xmlnode_get_attrib(child, "node") != NULL)
 			continue;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_INFO);

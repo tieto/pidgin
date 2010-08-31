@@ -29,7 +29,7 @@
 #else
 # ifdef USE_SCREENSAVER
 #  ifdef _WIN32
-#   include "idletrack.h"
+#   include "gtkwin32dep.h"
 #  else
     /* We're on X11 and not MacOS X with IOKit. */
 #   include <X11/Xlib.h>

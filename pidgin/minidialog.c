@@ -75,6 +75,7 @@ enum
 	PROP_TITLE = 1,
 	PROP_DESCRIPTION,
 	PROP_ICON_NAME,
+	PROP_CUSTOM_ICON,
 
 	LAST_PROPERTY
 } HazeConnectionProperties;
@@ -93,17 +94,32 @@ typedef struct _PidginMiniDialogPrivate
 #define PIDGIN_MINI_DIALOG_GET_PRIVATE(dialog) \
 	((PidginMiniDialogPrivate *) ((dialog)->priv))
 
+static PidginMiniDialog *
+mini_dialog_new(const gchar *title, const gchar *description)
+{
+	return g_object_new(PIDGIN_TYPE_MINI_DIALOG,
+		"title", title,
+		"description", description,
+		NULL);
+}
+
 PidginMiniDialog *
 pidgin_mini_dialog_new(const gchar *title,
                        const gchar *description,
                        const gchar *icon_name)
 {
-	PidginMiniDialog *mini_dialog = g_object_new(PIDGIN_TYPE_MINI_DIALOG,
-		"title", title,
-		"description", description,
-		"icon-name", icon_name,
-		NULL);
+	PidginMiniDialog *mini_dialog = mini_dialog_new(title, description);
+	pidgin_mini_dialog_set_icon_name(mini_dialog, icon_name);
+	return mini_dialog;
+}
 
+PidginMiniDialog *
+pidgin_mini_dialog_new_with_custom_icon(const gchar *title,
+					const gchar *description,
+					GdkPixbuf *custom_icon)
+{
+	PidginMiniDialog *mini_dialog = mini_dialog_new(title, description);
+	pidgin_mini_dialog_set_custom_icon(mini_dialog, custom_icon);
 	return mini_dialog;
 }
 
@@ -125,7 +141,13 @@ void
 pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
                                  const char *icon_name)
 {
-	g_object_set(G_OBJECT(mini_dialog), "icon_name", icon_name, NULL);
+	g_object_set(G_OBJECT(mini_dialog), "icon-name", icon_name, NULL);
+}
+
+void
+pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog, GdkPixbuf *custom_icon)
+{
+	g_object_set(G_OBJECT(mini_dialog), "custom-icon", custom_icon, NULL);
 }
 
 struct _mini_dialog_button_clicked_cb_data
@@ -233,6 +255,9 @@ pidgin_mini_dialog_get_property(GObject *object,
 			g_value_set_string(value, icon_name);
 			break;
 		}
+		case PROP_CUSTOM_ICON:
+			g_value_set_object(value, gtk_image_get_pixbuf(priv->icon));
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 	}
@@ -305,6 +330,8 @@ pidgin_mini_dialog_set_property(GObject *object,
 			gtk_image_set_from_stock(priv->icon, g_value_get_string(value),
 				gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 			break;
+		case PROP_CUSTOM_ICON:
+			gtk_image_set_from_pixbuf(priv->icon, g_value_get_object(value));
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 	}
@@ -355,6 +382,13 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
+	
+	param_spec = g_param_spec_object("custom-icon", "custom-icon",
+		"Pixbuf to use as the dialog's icon",
+		GDK_TYPE_PIXBUF,
+		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
+		G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_CUSTOM_ICON, param_spec);
 }
 
 /* 16 is the width of the icon, due to PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL */

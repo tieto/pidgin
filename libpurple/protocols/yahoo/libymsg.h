@@ -30,6 +30,7 @@
 #include "prpl.h"
 
 #define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
+#define YAHOO_PAGER_HOST_FALLBACK "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"

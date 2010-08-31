@@ -43,6 +43,9 @@ struct MXitProfile {
 	char		lastname[64];						/* user's last name (aka 'surname') */
 	char		email[64];							/* user's email address */
 	char		mobilenr[21];						/* user's mobile number */
+	char		regcountry[3];						/* user's registered country code */
+	gint64		flags;								/* user's profile flags */
+	gint64		lastonline;							/* user's last-online timestamp */
 
 	gboolean	hidden;								/* set if the user's msisdn should remain hidden */
 };

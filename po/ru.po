@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 19:19-0700\n"
+"POT-Creation-Date: 2010-07-27 02:16-0400\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -63,11 +64,24 @@ msgstr ""
 msgid "Error"
 msgstr "Ошибка"
 
+msgid "Account was not modified"
+msgstr "Учётная запись не была изменена"
+
 msgid "Account was not added"
 msgstr "Учётная запись не была добавлена"
 
 msgid "Username of an account must be non-empty."
 msgstr "Имя учётной записи должно быть непустым."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr "Протокол учётной записи нельзя изменить, пока вы соединены с сервером."
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
+"Имя пользователя учётной записи нельзя изменить, пока вы соединены с "
+"сервером."
 
 msgid "New mail notifications"
 msgstr "Уведомления о новой почте"
@@ -793,7 +807,7 @@ msgstr "Остановить"
 msgid "Waiting for transfer to begin"
 msgstr "Ожидание начала передачи"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Отменено"
 
 msgid "Failed"
@@ -1264,6 +1278,10 @@ msgstr "Другие говорят в чате"
 msgid "Someone says your username in chat"
 msgstr "Кто-то произносит ваше имя пользователя в чате"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Требуется активация"
+
 msgid "GStreamer Failure"
 msgstr "Ошибка GStreamer"
 
@@ -1356,6 +1374,7 @@ msgstr "Удалить статус"
 msgid "Saved Statuses"
 msgstr "Сохранённые статусы"
 
+#. title
 msgid "Title"
 msgstr "Название"
 
@@ -1556,7 +1575,7 @@ msgstr ""
 msgid "Online"
 msgstr "В сети"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Не в сети"
 
@@ -1649,6 +1668,14 @@ msgstr "Изменить пользовательскую информацию �
 msgid "Set User Info"
 msgstr "Установить пользовательскую информацию"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Этот протокол не поддерживает чаты."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Этот протокол не поддерживает чаты."
+
 msgid "Unknown"
 msgstr "Неизвестно"
 
@@ -1669,8 +1696,12 @@ msgstr ""
 "Сертификат не является доверенным, потому что сейчас нет других доверенных "
 "сертификатов, которые могли бы подтвердить этот"
 
-msgid "The certificate is not valid yet."
-msgstr "Сертификат ещё не заверен."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
+"Сертификат ещё не подтверждён.  Проверьте правильность даты и времени на "
+"вашем компьютере."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr ""
@@ -1908,7 +1939,6 @@ msgstr "Ошибка конвертирования %s в punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Ошибка создания нити: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Причина неизвестна"
 
@@ -3189,6 +3219,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Имя"
 
@@ -3798,12 +3831,6 @@ msgstr "Команда Ad-Hoc не удалась"
 msgid "execute"
 msgstr "выполнить"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Сервер требует TLS/SSL, но поддержка TLS/SSL не была найдена."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Вы требуете шифрования, но поддержка TLS/SSL не найдена."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер требует аутентификацию простым текстом через нешифрованный поток"
@@ -3835,12 +3862,59 @@ msgstr "Неверный запрос с сервера"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Сервер думает, что аутентификация завершена, но клиент так не считает"
 
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Сервер требует аутентификацию простым текстом через нешифрованный поток"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s требует аутентификацию простым текстом через нешифрованное соединение. "
+"Позволить это и продолжить аутентификацию?"
+
 msgid "SASL authentication failed"
 msgstr "Аутентификация SASL провалилась"
 
 #, c-format
 msgid "SASL error: %s"
 msgstr "Ошибка SASL: %s"
+
+msgid "Invalid Encoding"
+msgstr "Неверная кодировка"
+
+msgid "Unsupported Extension"
+msgstr "Неподдерживаемое расширение"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr "Неожиданный ответ от сервера.  Это может говорить об MITM атаке"
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Сервер не поддерживает блокировку"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Неподдерживаемая кодировка"
+
+msgid "User not found"
+msgstr "Пользователь не найден"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Неверное имя пользователя"
+
+msgid "Resource Constraint"
+msgstr "Недостаток ресурсов"
 
 msgid "Unable to canonicalize username"
 msgstr "Не удаётся утвердить это имя пользователя"
@@ -3905,6 +3979,7 @@ msgstr "Регион"
 msgid "Postal Code"
 msgstr "Почтовый код"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Страна"
 
@@ -3919,8 +3994,6 @@ msgstr "Название организации"
 msgid "Organization Unit"
 msgstr "Отдел"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Название работы"
 
@@ -3928,6 +4001,7 @@ msgid "Role"
 msgstr "Должность"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Дата рождения"
 
@@ -4145,11 +4219,21 @@ msgstr "Пользователей не найдено"
 msgid "Roles:"
 msgstr "Роли:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Сервер требует TLS/SSL, но поддержка TLS/SSL не была найдена."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Вы требуете шифрования, но поддержка TLS/SSL не найдена."
+
 msgid "Ping timed out"
 msgstr "Время ожидания истекло"
 
 msgid "Invalid XMPP ID"
 msgstr "Неверный XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Неверный XMPP ID. Должен быть задан домен."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Неверный XMPP ID. Должен быть задан домен."
@@ -4248,7 +4332,6 @@ msgstr "Сервер не поддерживает блокировку"
 msgid "Not Authorized"
 msgstr "Не авторизован"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Настроение"
 
@@ -4270,7 +4353,6 @@ msgstr "Для"
 msgid "None (To pending)"
 msgstr "Нет (Ожидать)"
 
-#. 0
 msgid "None"
 msgstr "Нет"
 
@@ -4468,9 +4550,6 @@ msgstr "Нарушение правил"
 msgid "Remote Connection Failed"
 msgstr "Не удалось установить удалённое соединение"
 
-msgid "Resource Constraint"
-msgstr "Недостаток ресурсов"
-
 msgid "Restricted XML"
 msgstr "Ограниченный XML"
 
@@ -4528,32 +4607,32 @@ msgstr "Не могу прозвонить пользователя %s"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about %s."
-msgstr "Не могу сплетничать, потому что про %s ничего неизвестно."
+msgstr "Не могу позвать, потому что про %s ничего неизвестно."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because %s might be offline."
-msgstr "Не могу сплетничать, потому что %s, возможно, не в сети."
+msgstr "Не могу позвать, потому что %s может быть не в сети."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to buzz, because %s does not support it or does not wish to receive "
 "buzzes now."
 msgstr ""
-"Не могу сплетничать, потому что %s не поддерживает это или не желает сейчас "
-"сплетничать."
+"Не могу позвать, потому что %s не поддерживает это или не желает сейчас "
+"принимать вызовы."
 
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
-msgstr "Сплетни"
+msgstr "Звать"
 
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s натрепал про вас!"
+msgstr "%s позвал вас!"
 
 #, c-format
 msgid "Buzzing %s..."
-msgstr "Треплю про %s..."
+msgstr "Зову %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4667,21 +4746,6 @@ msgstr "Модуль протокола XMPP"
 msgid "Domain"
 msgstr "Домен"
 
-#, fuzzy
-msgid "Require STARTTLS"
-msgstr "Требовать SSL/TLS"
-
-#, fuzzy
-msgid "Require old (port 5223) SSL"
-msgstr "Принудительно использовать старый (порт 5223) SSL"
-
-msgid "Use STARTTLS (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "SSL/TLS"
-msgstr "Требовать SSL/TLS"
-
 msgid "Require SSL/TLS"
 msgstr "Требовать SSL/TLS"
 
@@ -4738,18 +4802,17 @@ msgstr "Ошибка сообщения XMPP"
 msgid "(Code %s)"
 msgstr "(Код %s)"
 
-#, fuzzy
 msgid "A custom smiley in the message is too large to send."
-msgstr "Не удаётся отправить сообщение: Сообщение слишком велико."
+msgstr "Ваш смайлик в сообщении очень большой для отправки."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "Пропущен заголовок потока XMPP"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "Несовпадение версии XMPP"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "ID пропуска потока XMPP"
 
 msgid "XML Parse error"
 msgstr "Ошибка разбора XML"
@@ -4839,7 +4902,6 @@ msgstr "Стыдящийся"
 msgid "Amorous"
 msgstr "Великолепный"
 
-#. 1
 msgid "Angry"
 msgstr "Рассерженный"
 
@@ -4937,220 +4999,177 @@ msgstr ""
 msgid "Envious"
 msgstr "Озабоченный"
 
-#. 2
 msgid "Excited"
 msgstr "Возбуждённый"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "Великолепный"
+msgstr "Кокетливый"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "Имя"
+msgstr "Разочарованный"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Признательный"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "Загрузка..."
+msgstr "Скорбящий"
 
-#. 3
-#, fuzzy
 msgid "Grumpy"
-msgstr "Группа"
+msgstr "Сварливый"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "Город"
+msgstr "Повинный"
 
-#. 4
 msgid "Happy"
 msgstr "Счастливый"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Надеящийся"
 
-#. 8
-#, fuzzy
 msgid "Hot"
-msgstr "_Узел:"
+msgstr "Горячий"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Приниженный"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Униженный"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "Рассерженный"
+msgstr "Голодный"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "Юмор"
+msgstr "Раненый"
 
 msgid "Impressed"
-msgstr ""
+msgstr "Впечатлённый"
 
-#, fuzzy
 msgid "In awe"
-msgstr "Влюблённый"
+msgstr "В страхе"
 
 msgid "In love"
 msgstr "Влюблённый"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "Индонезийский"
+msgstr "Возмущённый"
 
-#, fuzzy
 msgid "Interested"
-msgstr "Интересы"
+msgstr "Интересующийся"
 
-#, fuzzy
 msgid "Intoxicated"
-msgstr "Приглашено"
+msgstr "Пьяный"
 
-#. 6
 msgid "Invincible"
 msgstr "Непобедимый"
 
 msgid "Jealous"
 msgstr "Ревнующий"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "Обезьяна"
+msgstr "Одинокий"
 
-#, fuzzy
 msgid "Lost"
-msgstr "Очень громко"
+msgstr "Потерянный"
 
 msgid "Lucky"
-msgstr ""
+msgstr "Удачливый"
 
-#, fuzzy
 msgid "Mean"
-msgstr "Немецкий"
+msgstr "Скромный"
 
-#, fuzzy
 msgid "Moody"
-msgstr "Настроение"
+msgstr "Угрюмый"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Нервный"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "Подробности"
+msgstr "Нейтральный"
 
-#, fuzzy
 msgid "Offended"
-msgstr "Не в сети"
+msgstr "Обиженный"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Возмущённый"
 
-#, fuzzy
 msgid "Playful"
-msgstr "Воспроизводить"
+msgstr "Игривый"
 
-#, fuzzy
 msgid "Proud"
-msgstr "Выше среднего"
+msgstr "Гордый"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "Настоящее имя"
+msgstr "Расслабленный"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Получено"
+msgstr "Облегчённый"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "Удалить"
+msgstr "Угрызаемый совестью"
 
-#, fuzzy
 msgid "Restless"
-msgstr "Зарегистрировать"
+msgstr "Беспокойный"
 
-#. 7
 msgid "Sad"
 msgstr "Печальный"
 
-#, fuzzy
 msgid "Sarcastic"
-msgstr "Маратхи"
+msgstr "Саркастический"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Удовлетворённый"
 
-#, fuzzy
 msgid "Serious"
-msgstr "Великолепный"
+msgstr "Серьёзный"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "Заблокирован"
+msgstr "Шокированный"
 
 msgid "Shy"
-msgstr ""
+msgstr "Застенчивый"
 
-#. 9
-#, fuzzy
 msgid "Sick"
 msgstr "Больной"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Сонный"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Спонтанный"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "Успешно:"
+msgstr "В стрессе"
 
-#, fuzzy
 msgid "Strong"
-msgstr "Песня"
+msgstr "Сильный"
 
 msgid "Surprised"
-msgstr ""
+msgstr "Удивлённый"
 
 msgid "Thankful"
-msgstr ""
+msgstr "Благодарный"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Жаждущий"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "Усталый"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "Подчёркнутый"
+msgstr "Неопределённый"
 
-#, fuzzy
 msgid "Weak"
-msgstr "Тюкнуть по бошке"
+msgstr "Слабый"
 
-#, fuzzy
 msgid "Worried"
-msgstr "Скучающий"
+msgstr "Волнующийся"
 
 msgid "Set User Nickname"
 msgstr "Установить псевдоним пользователя"
 
-#, fuzzy
 msgid "Please specify a new nickname for you."
-msgstr "Введите новое имя для %s"
+msgstr "Пожалуйста, укажите для себя новый псевдоним."
 
 msgid ""
 "This information is visible to all contacts on your contact list, so choose "
@@ -5399,14 +5418,14 @@ msgstr ""
 "%s послал голосовую запись. <a href='audio://%s'>Щёлкните здесь для "
 "воспроизведения</a>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s послал вам голосовую запись, но его нельзя сохранить"
+msgstr "%s послал вам голосовую запись, но её не удалось сохранить"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr ""
-"%s прислал вам приглашение к голосовому общению, что ещё не поддерживается."
+"%s послал вам приглашение к голосовому общению, что ещё не поддерживается."
 
 msgid "Nudge"
 msgstr "Подтолкнуть"
@@ -5419,14 +5438,13 @@ msgstr "%s подтолкнул вас!"
 msgid "Nudging %s..."
 msgstr "Подталкивание %s..."
 
-#, fuzzy
 msgid "Email Address..."
 msgstr "Адрес эл.почты..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ваше новое дружеское имя MSN слишком велико."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Set friendly name for %s."
 msgstr "Установите дружеское имя для %s."
 
@@ -5512,7 +5530,6 @@ msgstr "Разговариваю по телефону"
 msgid "Out to Lunch"
 msgstr "Пошёл перекусить"
 
-#, fuzzy
 msgid "Game Title"
 msgstr "Название игры"
 
@@ -5550,12 +5567,12 @@ msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Поддержка SSL необходима для MSN. Установите поддерживаемую библиотеку SSL."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
 msgstr ""
-"Не могу добавить собеседника %s, потому что имя пользователя некорректрое.  "
+"Не могу добавить собеседника %s, потому что имя пользователя некорректное.  "
 "Имена пользователей должны быть действительными адресами эл.почты."
 
 msgid "Unable to Add"
@@ -5748,6 +5765,10 @@ msgstr "Сервер методов HTTP"
 
 msgid "Show custom smileys"
 msgstr "Показать свои смайлики"
+
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Не удаётся создать соединение"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "подталкивание: подтолкнуть пользователя, чтобы привлечь его внимание"
@@ -5961,24 +5982,6 @@ msgstr "Вы хотите удалить также и этого собесед
 msgid "The username specified is invalid."
 msgstr "Указанное имя пользователя некорректно."
 
-#. 5
-msgid "In Love"
-msgstr "Влюблённый"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Настроение сейчас"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Новое настроение"
-
-msgid "Change your Mood"
-msgstr "Изменить ваше настроение"
-
-msgid "How do you feel right now?"
-msgstr "Как вы сейчас?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Введённый PIN-код неправильный."
 
@@ -6011,7 +6014,11 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Информация о вашем профиле ещё не получена. Пожалуйста, попробуйте позже."
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6019,6 +6026,7 @@ msgid "Verify PIN"
 msgstr "Проверьте PIN"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "Показать имя"
 
@@ -6044,10 +6052,6 @@ msgstr "Сейчас нет доступных экранов-заставок"
 
 msgid "About"
 msgstr "Про"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Изменить настроение..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6085,20 +6089,16 @@ msgid "Connecting..."
 msgstr "Соединение..."
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
-msgstr "Введённый вами псевдоним некорректен."
+msgid "The Display Name you entered is invalid."
+msgstr "Введённое имя неправильное."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Введённый ключ SecurID неверный."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "Имя входа MXit"
-
-#. nick name
-msgid "Nick Name"
-msgstr "Псевдоним"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6127,11 +6127,13 @@ msgstr "Ваш сеанс истёк. Пожалуйста, попробуйте
 msgid "Invalid country selected. Please try again."
 msgstr "Выбрана неправильная страна. Пожалуйста, попробуйте ещё раз."
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 "Имя пользователя не зарегистрировано. Пожалуйста, сначала зарегистрируйтесь."
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 "Имя пользователя уже зарегистрировано. Пожалуйста, выберите другое имя."
 
@@ -6144,7 +6146,7 @@ msgstr "Вы не ввели код безопасности"
 msgid "Security Code"
 msgstr "Код безопасности"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Введите код безопасности"
 
@@ -6170,11 +6172,17 @@ msgstr "Загрузка меню..."
 msgid "Status Message"
 msgstr "Сообщения состояния"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Полученные сообщения"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Скрытый номер"
 
-msgid "Your Mobile Number..."
-msgstr "Номер мобильного телефона..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "Yahoo ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6186,6 +6194,28 @@ msgstr "Соединение через HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Включить контекстное меню экрана-заставки"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Вас выгнали: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Неверный билет"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Комната:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Вам пришла почта!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "В сети"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6301,6 +6331,9 @@ msgstr "Возникла ошибка соединения с MXit. (этап ч
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x06)"
+
+msgid "In Love"
+msgstr "Влюблённый"
 
 #, fuzzy
 msgid "Pending"
@@ -6706,9 +6739,6 @@ msgstr "Срок действия пароля истёк"
 msgid "Incorrect password"
 msgstr "Неправильный пароль"
 
-msgid "User not found"
-msgstr "Пользователь не найден"
-
 msgid "Account has been disabled"
 msgstr "Учётная запись была отключена"
 
@@ -6966,15 +6996,80 @@ msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
 msgstr ""
+"Сервер запросил заполнить код CAPTCHA для того, чтобы войти, но этот клиент "
+"на данный момент не поддерживает коды CAPTCHA."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не позволяет вашему экранному имени аутентифицироваться здесь"
+
+#, c-format
+msgid "Error requesting %s"
+msgstr "Ошибка запроса %s"
 
 msgid "Could not join chat room"
 msgstr "Не удалось присоединиться к комнате чата"
 
 msgid "Invalid chat room name"
 msgstr "Неверное имя комнаты чата"
+
+msgid "Invalid error"
+msgstr "Неверная ошибка"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Не могу принять сообщение из-за родительского контроля"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Не могу отправить SMS без принятия условий"
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Не могу отправить SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Не могу отправить SMS в эту страну"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Не могу отправить SMS в неизвестную страну"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Учётные записи-боты не могут порождать сообщения"
+
+msgid "Bot account cannot IM this user"
+msgstr "Учётная запись-бот не может слать сообщения этому пользователю"
+
+msgid "Bot account reached IM limit"
+msgstr "Учётная запись-бот достигла предела сообщений"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Учётная запись-бот достигла дневной предел сообщений"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Учётная запись-бот достигла месячный предел сообщений"
+
+msgid "Unable to receive offline messages"
+msgstr "Не удаётся получить оффлайн-сообщения"
+
+msgid "Offline message store full"
+msgstr "Хранилище оффлайн-сообщений заполнено"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Не удаётся отправить сообщение %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Не удаётся отправить сообщение: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Не удаётся отправить сообщение %s: %s (%s)"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Не удаётся отправить сообщение %s: %s"
 
 msgid "Thinking"
 msgstr "Думаю"
@@ -7127,118 +7222,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Файл %s - %s, который больше, чем максимальный размер %s."
 
-msgid "Invalid error"
-msgstr "Недопустимая ошибка"
-
-msgid "Invalid SNAC"
-msgstr "Неверный SNAC"
-
-msgid "Rate to host"
-msgstr "Оценить узел"
-
-msgid "Rate to client"
-msgstr "Оценить клиент"
-
-msgid "Service unavailable"
-msgstr "Служба недоступна"
-
-msgid "Service not defined"
-msgstr "Служба не определена"
-
-msgid "Obsolete SNAC"
-msgstr "Устаревший SNAC"
-
-msgid "Not supported by host"
-msgstr "Не поддерживается узлом"
-
-msgid "Not supported by client"
-msgstr "Не поддерживается клиентом"
-
-msgid "Refused by client"
-msgstr "Отвергнуто клиентом"
-
-msgid "Reply too big"
-msgstr "Ответ слишком велик"
-
-msgid "Responses lost"
-msgstr "Отклики потеряны"
-
-msgid "Request denied"
-msgstr "Запрос отвергнут"
-
-msgid "Busted SNAC payload"
-msgstr "Сломана полезная нагрузка SNAC"
-
-msgid "Insufficient rights"
-msgstr "Недостаточные права"
-
-msgid "In local permit/deny"
-msgstr "В местном разрешении/запрете"
-
-msgid "Warning level too high (sender)"
-msgstr "Уровень предупреждения слишком высок (отправитель)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Уровень предупреждения слишком высок (получатель)"
-
-msgid "User temporarily unavailable"
-msgstr "Пользователь временно недоступен"
-
-msgid "No match"
-msgstr "Нет совпадения"
-
-msgid "List overflow"
-msgstr "Переполнение списка"
-
-msgid "Request ambiguous"
-msgstr "Неясный запрос"
-
-msgid "Queue full"
-msgstr "Очередь полна"
-
-msgid "Not while on AOL"
-msgstr "Не в AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Не могу принять сообщение из-за родительского контроля"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Не могу отправить SMS без принятия условий"
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Не могу отправить SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Не могу отправить SMS в эту страну"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Не могу отправить SMS в неизвестную страну"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Учётные записи-боты не могут порождать сообщения"
-
-msgid "Bot account cannot IM this user"
-msgstr "Учётная запись-бот не может слать сообщения этому пользователю"
-
-msgid "Bot account reached IM limit"
-msgstr "Учётная запись-бот достигла предела сообщений"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Учётная запись-бот достигла дневной предел сообщений"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Учётная запись-бот достигла месячный предел сообщений"
-
-msgid "Unable to receive offline messages"
-msgstr "Не удаётся получить оффлайн-сообщения"
-
-msgid "Offline message store full"
-msgstr "Хранилище оффлайн-сообщений заполнено"
-
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
 "is probably using a different encoding than expected.  If you know what "
@@ -7275,7 +7258,7 @@ msgid "Games"
 msgstr "Игры"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "Дополнения"
@@ -7608,28 +7591,9 @@ msgstr[0] "Вы не получили %hu сообщение от %s по неи
 msgstr[1] "Вы не получили %hu сообщения от %s по неизвестной причине."
 msgstr[2] "Вы не получили %hu сообщений от %s по неизвестной причине."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Не удаётся отправить сообщение %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Не удаётся отправить сообщение: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Не удаётся отправить сообщение %s: %s (%s)"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Не удаётся отправить сообщение %s: %s"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Пользовательская информация недоступна: %s"
-
-msgid "Unknown reason."
-msgstr "Причина неизвестна."
 
 msgid "Online Since"
 msgstr "В сети с"
@@ -8068,6 +8032,75 @@ msgstr ""
 "Это требует прямого соединения между двумя компьютерами и необходимо для "
 "Картинок IM. Поскольку ваш IP-адрес будет открыт, это может повлечь угрозу "
 "конфиденциальности."
+
+msgid "Invalid SNAC"
+msgstr "Неверный SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Превышен предел скорости сервера"
+
+msgid "Client rate limit exceeded"
+msgstr "Превышен предел скорости клиента"
+
+msgid "Service unavailable"
+msgstr "Служба недоступна"
+
+msgid "Service not defined"
+msgstr "Служба не определена"
+
+msgid "Obsolete SNAC"
+msgstr "Устаревший SNAC"
+
+msgid "Not supported by host"
+msgstr "Не поддерживается узлом"
+
+msgid "Not supported by client"
+msgstr "Не поддерживается клиентом"
+
+msgid "Refused by client"
+msgstr "Отвергнуто клиентом"
+
+msgid "Reply too big"
+msgstr "Ответ слишком велик"
+
+msgid "Responses lost"
+msgstr "Отклики потеряны"
+
+msgid "Request denied"
+msgstr "Запрос отвергнут"
+
+msgid "Busted SNAC payload"
+msgstr "Сломана полезная нагрузка SNAC"
+
+msgid "Insufficient rights"
+msgstr "Недостаточные права"
+
+msgid "In local permit/deny"
+msgstr "В местном разрешении/запрете"
+
+msgid "Warning level too high (sender)"
+msgstr "Уровень предупреждения слишком высок (отправитель)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Уровень предупреждения слишком высок (получатель)"
+
+msgid "User temporarily unavailable"
+msgstr "Пользователь временно недоступен"
+
+msgid "No match"
+msgstr "Нет совпадения"
+
+msgid "List overflow"
+msgstr "Переполнение списка"
+
+msgid "Request ambiguous"
+msgstr "Неясный запрос"
+
+msgid "Queue full"
+msgstr "Очередь полна"
+
+msgid "Not while on AOL"
+msgstr "Не в AOL"
 
 msgid "Aquarius"
 msgstr "Водолей"
@@ -8968,8 +9001,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю %"
-"s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
+"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю "
+"%s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
 "пользователя в новую конференцию."
 
 msgid "Invite to Conference"
@@ -10349,7 +10382,8 @@ msgstr "Языковой формат чата"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Игнорировать приглашения в конференции и чаты"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Используйте прокси учётной записи для SSL-соединений"
 
 msgid "Chat room list URL"
@@ -10505,28 +10539,24 @@ msgstr "Не удалось добавить собеседника в спис�
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Слышимый %s/%s/%s.swf ] %s"
 
-#, fuzzy
 msgid "Received unexpected HTTP response from server"
-msgstr "Получен непредвиденный HTTP-ответ от сервера"
+msgstr "Получен неожиданный HTTP ответ от сервера"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost connection with %s: %s"
 msgstr "Соединение с %s потеряно: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Не удаётся установить соединение с %s: %s"
 
-#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-"Не удаётся соединиться с сервером MXit. Пожалуйста, проверьте ваши настройки "
-"сервера."
+msgstr "Не удаётся соединиться: сервер вернул пустой ответ."
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
-msgstr ""
+msgstr "Не удаётся соединиться: в ответе сервера нет нужной информации"
 
 msgid "Not at Home"
 msgstr "Не дома"
@@ -10915,6 +10945,10 @@ msgstr "_Нет"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Принять"
 
@@ -11159,12 +11193,6 @@ msgstr "Клиент обмена мгновенными сообщениями"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Клиент обмена мгновенными сообщениями Pidgin"
-
-msgid "Orientation"
-msgstr "Ориентация"
-
-msgid "The orientation of the tray."
-msgstr "Ориентация лотка."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12024,7 +12052,7 @@ msgid "/Conversation/Se_nd File..."
 msgstr "/Беседа/Отправить _файл..."
 
 msgid "/Conversation/Get _Attention"
-msgstr "/Беседа/Обрести _внимание"
+msgstr "/Беседа/Привлечь _внимание"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Беседа/Добавить п_равило..."
@@ -12107,9 +12135,8 @@ msgstr "/Беседа/Медиа/Аудио\\/Видеозвонок"
 msgid "/Conversation/Send File..."
 msgstr "/Беседа/Отправить файл..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Беседа/Получить информацию"
+msgstr "/Беседа/Привлечь внимание"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Беседа/Добавить правило..."
@@ -12345,6 +12372,10 @@ msgstr "Африкаанс"
 msgid "Arabic"
 msgstr "Арабский"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Стыдящийся"
+
 msgid "Belarusian Latin"
 msgstr "Белорусская латиница"
 
@@ -12472,6 +12503,10 @@ msgstr "Лаосский"
 msgid "Macedonian"
 msgstr "Македонский"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "Малайский"
+
 msgid "Mongolian"
 msgstr "Монгольский"
 
@@ -12587,8 +12622,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s - графический модульный клиент обмена сообщениями, основывающийся на "
 "библиотеке libpurple, позволяющей использовать AIM, MSN, Yahoo!, XMPP, ICQ, "
@@ -13128,7 +13163,7 @@ msgid "_Smile!"
 msgstr "_Смайлик!"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "_Внимание!"
 
 msgid "Log Deletion Failed"
 msgstr "Удаление журнала не удалось"
@@ -13141,21 +13176,21 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Вы действительно хотите безвозвратно удалить системный журнал, начатый в %s?"
 
@@ -13259,11 +13294,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Выхожу, потому что уже запущен другой клиент libpurple.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_Медиа"
 
-msgid "/Media/_Hangup"
-msgstr "/Медиа/_Повесить трубку"
+#, fuzzy
+msgid "_Hangup"
+msgstr "Приостановить разговор"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14067,10 +14104,6 @@ msgstr "Текст сочетания клавиш"
 
 msgid "Custom Smiley Manager"
 msgstr "Управление своими смайликами"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Требуется активация"
 
 msgid "Select Buddy Icon"
 msgstr "Выбрать иконку собеседника"
@@ -15230,8 +15263,20 @@ msgstr "Выводит отметки времени в стиле iChat каж�
 msgid "Timestamp Format Options"
 msgstr "Параметры формата времени"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Принудительно использовать 24-часовой формат времени"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Используемый по умолчанию"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Принудительно использовать 24-часовой формат времени"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Принудительно использовать 24-часовой формат времени"
 
 msgid "Show dates in..."
@@ -15281,22 +15326,18 @@ msgstr "Видео"
 msgid "Output"
 msgstr "Вывод"
 
-#, fuzzy
 msgid "_Plugin"
-msgstr "_Модули"
+msgstr "_Модуль"
 
-#, fuzzy
 msgid "_Device"
 msgstr "_Устройство"
 
 msgid "Input"
 msgstr "Ввод"
 
-#, fuzzy
 msgid "P_lugin"
-msgstr "М_одули"
+msgstr "М_одуль"
 
-#, fuzzy
 msgid "D_evice"
 msgstr "У_стройство"
 
@@ -15309,9 +15350,8 @@ msgstr "У_стройство"
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Голосовые/видео настройки"
+msgstr "Голосовые/Видео настройки"
 
 #. *< name
 #. *< version
@@ -15398,7 +15438,7 @@ msgstr "Держать окно списка собеседников _наве�
 
 #. XXX: Did this ever work?
 msgid "Only when docked"
-msgstr "Только тогда, когда закреплено"
+msgstr "Только когда закреплено"
 
 msgid "Windows Pidgin Options"
 msgstr "Параметры Pidgin для Windows"
@@ -15406,12 +15446,11 @@ msgstr "Параметры Pidgin для Windows"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Параметры, специфичные для Pidgin для Windows."
 
-#, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
-"Параметры, специфичные для Pidgin для Windows, такие как закрепление списка "
-"собеседников."
+"Реализует особенности, специфичные для Pidgin в Windows, такие как "
+"прирепление списка собеседников."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Вышел из сети.</font>"
@@ -15438,9 +15477,207 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Отправлять и получать прямые XMPP строфы."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) выпущен под лицензией GPL. Лицензия приведена здесь сугубо для "
+"ознакомительных целей. $_CLICK"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Мультиплатформенный графический инструментарий, используемый Pidgin."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin уже запущен.  Пожалуйста, закройте Pidgin и попробуйте снова."
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Основные файлы Pidgin и библиотеки"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Создать ярлык на Pidgin в меню кнопки ''Пуск''"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Создать ярлык на Pidgin на рабочем столе"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr "Отладочные символы (для отчётов об ошибках)"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Рабочий стол"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Ошибка при загрузке среды GTK+ ($R2).$\\rОно нужно, чтобы Pidgin работал; "
+"если снова не будет получаться, попробуйте использовать 'Автономный "
+"установщик', доступный по ссылке http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Ошибка при установке отладочных символов ($R2).$\\rЕсли снова не "
+"будетполучаться, попробуйте использовать 'Автономный установщик', доступный "
+"по ссылке http://pidgin.im/download/windows/ ."
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+"Ошибка при установке проверки орфографии ($R3).$\\rЕсли снова не будет "
+"получаться, инструкции по ручной установке здесь: http://developer.pidgin.im/"
+"wiki/Installing%20Pidgin#manual_win32_spellcheck_installation"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Среда GTK+ (необходима, если отсутствует)"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Локализации"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Далее >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin - Клиент для мгновенного обмена сообщениями (обязательно)"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin требует совместимой среды GTK+ (которая, по-видимому, не установлена)."
+"$\\rВы уверены, что хотите пропустить установку среды GTK+?"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Ярлыки"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "Ярлыки для запуска Pidgin"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Поддержка проверки орфографии"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Меню кнопки ''Пуск''"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+"Поддержка проверки орфографии.  (Для установки требуется Интернет-соединение)"
+
+msgid "The installer is already running."
+msgstr "Установщик уже запущен."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Программа удаления не может найти данные Pidgin в реестре.$\\rПохоже, это "
+"приложение установил другой пользователь."
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr "Обработчики URI"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Не удается удалить текущую установленную версию Pidgin. Новая версия будет "
+"установлена без удаления текущей."
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Посетите веб-страницу Pidgin"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "У Вас нет прав на удаление этого приложения."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Введённый вами псевдоним некорректен."
+
+#~ msgid "MXit Login Name"
+#~ msgstr "Имя входа MXit"
+
+#~ msgid "Nick Name"
+#~ msgstr "Псевдоним"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Номер мобильного телефона..."
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Медиа/_Повесить трубку"
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Сертификат ещё не заверен."
+
+#~ msgid "Rate to host"
+#~ msgstr "Оценить узел"
+
+#~ msgid "Rate to client"
+#~ msgstr "Оценить клиент"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Причина неизвестна."
+
+#~ msgid "Require STARTTLS"
+#~ msgstr "Требуется STARTTLS"
+
+#~ msgid "Require old (port 5223) SSL"
+#~ msgstr "Требуется старый (порт 5223) SSL"
+
+#~ msgid "SSL/TLS"
+#~ msgstr "SSL/TLS"
+
+#~ msgid "Current Mood"
+#~ msgstr "Настроение сейчас"
+
+#~ msgid "New Mood"
+#~ msgstr "Новое настроение"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Изменить ваше настроение"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Как вы сейчас?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Изменить настроение..."
+
+#~ msgid "Orientation"
+#~ msgstr "Ориентация"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Ориентация лотка."
 
 #~ msgid "Artist"
 #~ msgstr "Художник"
@@ -15635,9 +15872,6 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 #~ msgid "_User:"
 #~ msgstr "_Пользователь:"
 
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Версия GTK+"
-
 #~ msgid "Calling ... "
 #~ msgstr "Идёт вызов ... "
 
@@ -15758,8 +15992,8 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 #~ msgid ""
 #~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
 #~ msgstr ""
-#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что \"%"
-#~ "s\"."
+#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что "
+#~ "\"%s\"."
 
 #~ msgid "Invitation Rejected"
 #~ msgstr "Приглашение отвергнуто"
@@ -16212,7 +16446,7 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Не удалось открыть %s для записи!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Не удалось произвести передачу файлов; вероятно, отменили на той стороне."
 

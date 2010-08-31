@@ -725,7 +725,6 @@ void qq_got_message(PurpleConnection *gc, const gchar *msg)
 /* process received normal text IM */
 static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_header *im_header)
 {
-	qq_data *qd;
 	guint16 purple_msg_type;
 	gchar *who;
 	gchar *msg_smiley, *msg_fmt, *msg_utf8;
@@ -749,10 +748,9 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 		gchar *msg;		/* no fixed length, ends with 0x00 */
 	} im_text;
 
-	g_return_if_fail (data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 	g_return_if_fail(im_header != NULL);
 
-	qd = (qq_data *) gc->proto_data;
 	memset(&im_text, 0, sizeof(im_text));
 
 	/* qq_show_packet("IM text", data, len); */
@@ -823,7 +821,6 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 /* process received extended (2007) text IM */
 static void process_extend_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_header *im_header)
 {
-	qq_data *qd;
 	guint16 purple_msg_type;
 	gchar *who;
 	gchar *msg_smiley, *msg_fmt, *msg_utf8;
@@ -848,10 +845,9 @@ static void process_extend_im_text(PurpleConnection *gc, guint8 *data, gint len,
 		guint8 fromMobileQQ;
 	} im_text;
 
-	g_return_if_fail (data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 	g_return_if_fail(im_header != NULL);
 
-	qd = (qq_data *) gc->proto_data;
 	memset(&im_text, 0, sizeof(im_text));
 
 	/* qq_show_packet("Extend IM text", data, len); */
@@ -1043,12 +1039,10 @@ static void request_send_im(PurpleConnection *gc, guint32 uid_to, gint type,
 {
 	qq_data *qd;
 	guint8 raw_data[MAX_PACKET_SIZE - 16];
-	guint16 im_type;
 	gint bytes;
 	time_t now;
 
 	qd = (qq_data *) gc->proto_data;
-	im_type = QQ_NORMAL_IM_TEXT;
 
 	/* purple_debug_info("QQ", "Send IM %d-%d\n", frag_count, frag_index); */
 	bytes = 0;
@@ -1118,13 +1112,12 @@ GSList *qq_im_get_segments(gchar *msg_stripped, gboolean is_smiley_none)
 	GString *new_string;
 	GString *append_utf8;
 	gchar *start, *p;
-	gint count, len;
+	gint len;
 	qq_emoticon *emoticon;
 
 	g_return_val_if_fail(msg_stripped != NULL, NULL);
 
 	start = msg_stripped;
-	count = 0;
 	new_string = g_string_new("");
 	append_utf8 = g_string_new("");
 	while (*start) {

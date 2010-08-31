@@ -143,6 +143,7 @@ static const struct translator translators[] = {
 	{N_("Afrikaans"),           "af", "Samuel Murray", "afrikaans@gmail.com"},
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
+	{N_("Assamese"),            "as", "Amitakhya Phukan", "aphukan@fedoraproject.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
@@ -199,13 +200,14 @@ static const struct translator translators[] = {
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
 	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
 	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},
+	{N_("Malayalam"),           "ml", "Ani Peter", "apeter@redhat.com"},
 	{N_("Mongolian"),           "mn", "gooyo", NULL},
 	{N_("Marathi"),             "mr", "Sandeep Shedmake", "sandeep.shedmake@gmail.com"},
 	{N_("Malay"),               "ms_MY", "Muhammad Najmi bin Ahmad Zabidi", "najmi.zabidi@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", "hans@nordhaug.priv.no"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
-	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
-	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{N_("Dutch, Flemish"),      "nl", "Gideon van Melle", "translations@gvmelle.com"},
+	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "l10n@landro.net"},
 	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
@@ -214,7 +216,7 @@ static const struct translator translators[] = {
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
-	{N_("Romanian"),            "ro", "Mişu Moldovan", "dumol@gnome.ro"},
+	{N_("Romanian"),            "ro", "Mișu Moldovan", "dumol@gnome.org"},
 	{N_("Romanian"),            "ro", "Andrei Popescu", "andreimpopescu@gmail.com"},
 	{N_("Russian"),             "ru", "Антон Самохвалов", "samant.ua@mail.ru"},
 	{N_("Slovak"),              "sk", "Jozef Káčer", "quickparser@gmail.com"},
@@ -286,6 +288,7 @@ static const struct translator past_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Petter Johan Olsen", NULL},
 	{N_("Bokmål Norwegian"),    "nb", "Espen Stefansen", "espenas@gmail.com"},
+	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
@@ -428,7 +431,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 
 	/* Insert the logo */
 	logo = gtk_image_new_from_pixbuf(pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+	if (pixbuf)
+		g_object_unref(G_OBJECT(pixbuf));
 	obj = gtk_widget_get_accessible(logo);
 	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
 	atk_object_set_description(obj, tmp);
@@ -1284,7 +1288,7 @@ pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 
 	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
 	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
-	purple_account_remove_buddy(buddy->account, buddy, group);
+	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
 	g_free(name);

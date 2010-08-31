@@ -42,18 +42,22 @@ struct _MsnSlpLink
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	MsnDirectConn *dc;
+
+	int refs;
 
 	char *remote_user;
 
 	int slp_seq_id;
-
-	MsnDirectConn *directconn;
 
 	GList *slp_calls;
 	GList *slp_msgs;
 
 	GQueue *slp_msg_queue;
 };
+
+MsnSlpLink *msn_slplink_ref(MsnSlpLink *slplink);
+void msn_slplink_unref(MsnSlpLink *slplink);
 
 void msn_slplink_destroy(MsnSlpLink *slplink);
 
@@ -79,9 +83,10 @@ void msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 							 MsnSlpMessage *slpmsg);
 void msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink);
-void msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg);
+void msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *data, gsize len);
 void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
 
+void msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg);
 /* Only exported for msn_xfer_write */
 void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 

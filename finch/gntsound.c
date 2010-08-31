@@ -104,7 +104,8 @@ static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
 	{PURPLE_SOUND_CHAT_YOU_SAY, N_("You talk in chat"), "send_chat_msg", "send.wav", NULL},
 	{PURPLE_SOUND_CHAT_SAY,     N_("Others talk in chat"), "chat_msg_recv", "receive.wav", NULL},
 	{PURPLE_SOUND_POUNCE_DEFAULT, NULL, "pounce_default", "alert.wav", NULL},
-	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your username in chat"), "nick_said", "alert.wav", NULL}
+	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your username in chat"), "nick_said", "alert.wav", NULL},
+	{PURPLE_SOUND_GOT_ATTENTION, N_("Attention received"), "got_attention", "alert.wav", NULL}
 };
 
 const char *
@@ -273,6 +274,14 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 		play_conv_event(conv, event);
 }
 
+static void
+got_attention_cb(PurpleAccount *account, const char *who,
+	PurpleConversation *conv, guint type, PurpleSoundEventID event)
+{
+	play_conv_event(conv, event);
+}
+
+
 /*
  * We mute sounds for the 10 seconds after you log in so that
  * you don't get flooded with sounds when the blist shows all
@@ -300,39 +309,46 @@ finch_sound_get_handle(void)
 static void
 initialize_profile(const char *name, PurplePrefType type, gconstpointer val, gpointer null)
 {
+	FinchSoundEvent *event;
 	if (purple_prefs_exists(make_pref("")))
 		return;
 
 	purple_prefs_add_none(make_pref(""));
 	purple_prefs_add_none(make_pref("/enabled"));
 	purple_prefs_add_none(make_pref("/file"));
-	purple_prefs_add_bool(make_pref("/enabled/login"), FALSE);
-	purple_prefs_add_path(make_pref("/file/login"), "");
-	purple_prefs_add_bool(make_pref("/enabled/logout"), FALSE);
-	purple_prefs_add_path(make_pref("/file/logout"), "");
-	purple_prefs_add_bool(make_pref("/enabled/im_recv"), FALSE);
-	purple_prefs_add_path(make_pref("/file/im_recv"), "");
-	purple_prefs_add_bool(make_pref("/enabled/first_im_recv"), FALSE);
-	purple_prefs_add_path(make_pref("/file/first_im_recv"), "");
-	purple_prefs_add_bool(make_pref("/enabled/send_im"), FALSE);
-	purple_prefs_add_path(make_pref("/file/send_im"), "");
-	purple_prefs_add_bool(make_pref("/enabled/join_chat"), FALSE);
-	purple_prefs_add_path(make_pref("/file/join_chat"), "");
-	purple_prefs_add_bool(make_pref("/enabled/left_chat"), FALSE);
-	purple_prefs_add_path(make_pref("/file/left_chat"), "");
-	purple_prefs_add_bool(make_pref("/enabled/send_chat_msg"), FALSE);
-	purple_prefs_add_path(make_pref("/file/send_chat_msg"), "");
-	purple_prefs_add_bool(make_pref("/enabled/chat_msg_recv"), FALSE);
-	purple_prefs_add_path(make_pref("/file/chat_msg_recv"), "");
-	purple_prefs_add_bool(make_pref("/enabled/nick_said"), FALSE);
-	purple_prefs_add_path(make_pref("/file/nick_said"), "");
-	purple_prefs_add_bool(make_pref("/enabled/pounce_default"), FALSE);
-	purple_prefs_add_path(make_pref("/file/pounce_default"), "");
+
+	for (event = sounds; event - sounds < PURPLE_NUM_SOUNDS; event++) {
+		char pref[512];
+		g_snprintf(pref, sizeof(pref), "/enabled/%s", event->pref);
+		purple_prefs_add_bool(make_pref(pref), FALSE);
+		g_snprintf(pref, sizeof(pref), "/file/%s", event->pref);
+		purple_prefs_add_path(make_pref(pref), "");
+	}
+
 	purple_prefs_add_bool(make_pref("/conv_focus"), FALSE);
 	purple_prefs_add_bool(make_pref("/mute"), FALSE);
 	purple_prefs_add_path(make_pref("/command"), "");
 	purple_prefs_add_string(make_pref("/method"), "automatic");
 	purple_prefs_add_int(make_pref("/volume"), 50);
+}
+
+static void
+update_profiles(void)
+{
+	GList *list = finch_sound_get_profiles();
+	for (; list; list = g_list_delete_link(list, list)) {
+		char pname[512];
+
+		/* got_attention was added in libpurple 2.7.0 */
+		g_snprintf(pname, sizeof(pname), FINCH_PREFS_ROOT "/sound/profiles/%s%s",
+				(char *)list->data, "/enabled/got_attention");
+		purple_prefs_add_bool(pname, FALSE);
+		g_snprintf(pname, sizeof(pname), FINCH_PREFS_ROOT "/sound/profiles/%s%s",
+				(char *)list->data, "/file/got_attention");
+		purple_prefs_add_path(pname, "");
+
+		g_free(list->data);
+	}
 }
 
 static void
@@ -356,7 +372,7 @@ finch_sound_init(void)
 	purple_prefs_connect_callback(gnt_sound_handle, FINCH_PREFS_ROOT "/sound/actprofile", initialize_profile, NULL);
 	purple_prefs_trigger_callback(FINCH_PREFS_ROOT "/sound/actprofile");
 
-	
+
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
 #if (GST_VERSION_MAJOR > 0 || \
@@ -399,6 +415,11 @@ finch_sound_init(void)
 	purple_signal_connect(conv_handle, "received-chat-msg",
 						gnt_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
+	purple_signal_connect(conv_handle, "got-attention",
+						gnt_sound_handle, PURPLE_CALLBACK(got_attention_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_GOT_ATTENTION));
+
+	update_profiles();
 }
 
 static void
@@ -577,7 +598,8 @@ finch_sound_play_event(PurpleSoundEventID event)
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
 
-	if (event >= PURPLE_NUM_SOUNDS) {
+	if (event >= PURPLE_NUM_SOUNDS ||
+			event >= G_N_ELEMENTS(sounds)) {
 		purple_debug_error("sound", "got request for unknown sound: %d\n", event);
 		return;
 	}

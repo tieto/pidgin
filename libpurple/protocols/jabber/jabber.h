@@ -80,7 +80,7 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/"
 
-#define JABBER_DEFAULT_REQUIRE_TLS    TRUE
+#define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
 
 /* Index into attention_types list */
@@ -112,7 +112,7 @@ struct _JabberStream
 
 	JabberSaslMech *auth_mech;
 	gpointer auth_mech_data;
-	
+
 	/**
 	 * The header from the opening <stream/> tag.  This being NULL is treated
 	 * as a special condition in the parsing code (signifying the next
@@ -121,9 +121,6 @@ struct _JabberStream
 	 */
 	char *stream_id;
 	JabberStreamState state;
-
-	/* SASL authentication */
-	char *expected_rspauth;
 
 	GHashTable *buddies;
 
@@ -209,6 +206,7 @@ struct _JabberStream
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
+	sasl_secret_t *sasl_secret;
 	const char *current_mech;
 	int auth_fail_count;
 
@@ -255,6 +253,8 @@ struct _JabberStream
 
 	/* A purple timeout tag for the keepalive */
 	guint keepalive_timeout;
+	guint max_inactivity;
+	guint inactivity_timer;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
@@ -304,6 +304,9 @@ typedef struct _JabberBytestreamsStreamhost {
 
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;
+/* A sorted list of identities advertised.  Use jabber_add_identity to add
+ * so it remains sorted.
+ */
 extern GList *jabber_identities;
 
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet);
@@ -343,11 +346,23 @@ void jabber_remove_feature(const gchar *namespace);
 void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name);
 
 /**
+ * GCompareFunc for JabberIdentity structs.
+ */
+gint jabber_identity_compare(gconstpointer a, gconstpointer b);
+
+/**
  * Returns true if this connection is over a secure (SSL) stream. Use this
  * instead of checking js->gsc because BOSH stores its PurpleSslConnection
  * members in its own data structure.
  */
 gboolean jabber_stream_is_ssl(JabberStream *js);
+
+/**
+ * Restart the "we haven't sent anything in a while and should send
+ * something or the server will kick us off" timer (obviously
+ * called when sending something.  It's exposed for BOSH.)
+ */
+void jabber_stream_restart_inactivity_timer(JabberStream *js);
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);

@@ -161,7 +161,9 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoojp_get_account_text_table,    /* get_account_text_table */
 	NULL, /* initiate_media */
 	NULL, /* get_media_caps */
-	NULL  /* get_moods */
+	NULL, /* get_moods */
+	NULL, /* set_public_alias */
+	NULL  /* get_public_alias */
 };
 
 static PurplePluginInfo info =
@@ -221,7 +223,7 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use account proxy for SSL connections"), "proxy_ssl", FALSE);
+	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 #if 0

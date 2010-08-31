@@ -1,4 +1,6 @@
 /*
+ * purple - Jabber Service Discovery
+ *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -11,11 +13,12 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
 
 #include "internal.h"
@@ -36,11 +39,18 @@ static GHashTable *remote_data_by_cid = NULL;
 
 JabberData *
 jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type,
-	JabberStream *js)
+	gboolean ephemeral, JabberStream *js)
 {
-	JabberData *data = g_new0(JabberData, 1);
-	gchar *checksum = jabber_calculate_data_hash(rawdata, size, "sha1");
-	gchar cid[256];
+	JabberData *data;
+	gchar *checksum;
+	gchar cid[256]; /* "Big enough" for a SHA1 hex hash value */
+
+	g_return_val_if_fail(rawdata != NULL, NULL);
+	g_return_val_if_fail(size > 0, NULL);
+	g_return_val_if_fail(type != NULL, NULL);
+
+	data = g_new0(JabberData, 1);
+	checksum = jabber_calculate_data_hash(rawdata, size, "sha1");
 
 	g_snprintf(cid, sizeof(cid), "sha1+%s@bob.xmpp.org", checksum);
 	g_free(checksum);
@@ -48,6 +58,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	data->cid = g_strdup(cid);
 	data->type = g_strdup(type);
 	data->size = size;
+	data->ephemeral = ephemeral;
 
 	data->data = g_memdup(rawdata, size);
 
@@ -58,6 +69,7 @@ static void
 jabber_data_delete(gpointer cbdata)
 {
 	JabberData *data = cbdata;
+
 	g_free(data->cid);
 	g_free(data->type);
 	g_free(data->data);
@@ -71,6 +83,8 @@ jabber_data_create_from_xml(xmlnode *tag)
 	JabberData *data;
 	gchar *raw_data = NULL;
 	const gchar *cid, *type;
+
+	g_return_val_if_fail(tag != NULL, NULL);
 
 	/* check if this is a "data" tag */
 	if (strcmp(tag->name, "data") != 0) {
@@ -110,9 +124,19 @@ jabber_data_create_from_xml(xmlnode *tag)
 	return data;
 }
 
+void
+jabber_data_destroy(JabberData *data)
+{
+	g_return_if_fail(data != NULL);
+
+	jabber_data_delete(data);
+}
+
 const char *
 jabber_data_get_cid(const JabberData *data)
 {
+	g_return_val_if_fail(data != NULL, NULL);
+
 	return data->cid;
 }
 
@@ -120,26 +144,37 @@ jabber_data_get_cid(const JabberData *data)
 const char *
 jabber_data_get_type(const JabberData *data)
 {
+	g_return_val_if_fail(data != NULL, NULL);
+
 	return data->type;
 }
 
 gsize
 jabber_data_get_size(const JabberData *data)
 {
+	g_return_val_if_fail(data != NULL, 0);
+
 	return data->size;
 }
 
 gpointer
 jabber_data_get_data(const JabberData *data)
 {
+	g_return_val_if_fail(data != NULL, NULL);
+
 	return data->data;
 }
 
 xmlnode *
 jabber_data_get_xml_definition(const JabberData *data)
 {
-	xmlnode *tag = xmlnode_new("data");
-	char *base64data = purple_base64_encode(data->data, data->size);
+	xmlnode *tag;
+	char *base64data;
+
+	g_return_val_if_fail(data != NULL, NULL);
+
+	tag = xmlnode_new("data");
+	base64data = purple_base64_encode(data->data, data->size);
 
 	xmlnode_set_namespace(tag, NS_BOB);
 	xmlnode_set_attrib(tag, "cid", data->cid);
@@ -155,12 +190,18 @@ jabber_data_get_xml_definition(const JabberData *data)
 xmlnode *
 jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt)
 {
-	xmlnode *img = xmlnode_new("img");
-	char src[128];
+	xmlnode *img;
+	char *src;
 
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(alt != NULL, NULL);
+
+	img = xmlnode_new("img");
 	xmlnode_set_attrib(img, "alt", alt);
-	g_snprintf(src, sizeof(src), "cid:%s", data->cid);
+
+	src = g_strconcat("cid:", data->cid, NULL);
 	xmlnode_set_attrib(img, "src", src);
+	g_free(src);
 
 	return img;
 }
@@ -250,7 +291,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 	if (data_element && type == JABBER_IQ_RESULT) {
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
-		if (!ephemeral) {
+		if (data && !ephemeral) {
 			jabber_data_associate_remote(js, from, data);
 		}
 		cb(data, alt, userdata);
@@ -259,7 +300,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 			"Responder didn't recognize requested data\n");
 		cb(NULL, alt, userdata);
 	} else {
-		purple_debug_error("jabber", "Unknown response to data request\n");
+		purple_debug_warning("jabber", "Unknown response to data request\n");
 		cb(NULL, alt, userdata);
 	}
 
@@ -271,9 +312,17 @@ jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
     gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
     gpointer userdata)
 {
-	JabberIq *request = jabber_iq_new(js, JABBER_IQ_GET);
-	xmlnode *data_request = jabber_data_get_xml_request(cid);
-	JabberDataRequestData *data = g_new0(JabberDataRequestData, 1);
+	JabberIq *request;
+	xmlnode *data_request;
+	JabberDataRequestData *data;
+
+	g_return_if_fail(cid != NULL);
+	g_return_if_fail(who != NULL);
+	g_return_if_fail(alt != NULL);
+
+	request = jabber_iq_new(js, JABBER_IQ_GET);
+	data_request = jabber_data_get_xml_request(cid);
+	data = g_new0(JabberDataRequestData, 1);
 
 	data->userdata = userdata;
 	data->alt = alt;
@@ -289,14 +338,14 @@ jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
 const JabberData *
 jabber_data_find_local_by_alt(const gchar *alt)
 {
-	purple_debug_info("jabber", "looking up local smiley with alt = %s\n", alt);
+	purple_debug_info("jabber", "looking up local data object with alt = %s\n", alt);
 	return g_hash_table_lookup(local_data_by_alt, alt);
 }
 
 const JabberData *
 jabber_data_find_local_by_cid(const gchar *cid)
 {
-	purple_debug_info("jabber", "lookup local smiley with cid = %s\n", cid);
+	purple_debug_info("jabber", "lookup local data object with cid = %s\n", cid);
 	return g_hash_table_lookup(local_data_by_cid, cid);
 }
 
@@ -305,7 +354,7 @@ jabber_data_find_remote_by_cid(JabberStream *js, const gchar *who,
     const gchar *cid)
 {
 	const JabberData *data = g_hash_table_lookup(remote_data_by_cid, cid);
-	purple_debug_info("jabber", "lookup remote smiley with cid = %s\n", cid);
+	purple_debug_info("jabber", "lookup remote data object with cid = %s\n", cid);
 
 	if (data == NULL) {
 		gchar *jid_cid =
@@ -323,9 +372,12 @@ jabber_data_find_remote_by_cid(JabberStream *js, const gchar *who,
 void
 jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
-	purple_debug_info("jabber", "associating local smiley\n alt = %s, cid = %s\n",
-		alt, jabber_data_get_cid(data));
-	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
+	g_return_if_fail(data != NULL);
+
+	purple_debug_info("jabber", "associating local data object\n alt = %s, cid = %s\n",
+		alt , jabber_data_get_cid(data));
+	if (alt)
+		g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
 	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)),
 		data);
 }
@@ -334,7 +386,9 @@ void
 jabber_data_associate_remote(JabberStream *js, const gchar *who, JabberData *data)
 {
 	gchar *cid;
-	
+
+	g_return_if_fail(data != NULL);
+
 	if (jabber_data_has_valid_hash(data)) {
 		cid = g_strdup(jabber_data_get_cid(data));
 	} else {
@@ -371,6 +425,11 @@ jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
+		/* if the data object is temporary, destroy it and remove the references
+		 to it */
+		if (data->ephemeral) {
+			g_hash_table_remove(local_data_by_cid, cid);
+		}
 	}
 	jabber_iq_send(result);
 }

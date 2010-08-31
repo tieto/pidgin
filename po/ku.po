@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2007-02-26 09:48+0000\n"
 "Last-Translator: Erdal Ronahi <erdal.ronahi@gmail.com>\n"
 "Language-Team: Kurdish <gnu-ku-wergerandin@lists.sourceforge.net>\n"
+"Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -54,10 +55,22 @@ msgid "Error"
 msgstr "Çewtî"
 
 #, fuzzy
+msgid "Account was not modified"
+msgstr "Hesab hatiye girtin"
+
+#, fuzzy
 msgid "Account was not added"
 msgstr "Hesab hatiye girtin"
 
 msgid "Username of an account must be non-empty."
+msgstr ""
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
 msgstr ""
 
 msgid "New mail notifications"
@@ -815,7 +828,7 @@ msgstr ""
 msgid "Waiting for transfer to begin"
 msgstr "Li benda destpêkirina transferê ye"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Hate Betalkirin"
 
 msgid "Failed"
@@ -1326,6 +1339,10 @@ msgid "Someone says your username in chat"
 msgstr "Hin kes di chatê de navê tê dibêjin"
 
 #, fuzzy
+msgid "Attention received"
+msgstr "Tomarbûn Divê"
+
+#, fuzzy
 msgid "GStreamer Failure"
 msgstr "Pelgehê Tomar Bike"
 
@@ -1431,7 +1448,6 @@ msgid "Saved Statuses"
 msgstr "Rewşên Hatine Tomarkirin"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Sernivîs"
 
@@ -1645,7 +1661,7 @@ msgstr ""
 msgid "Online"
 msgstr "Girêdayî"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Negirêdayî"
 
@@ -1743,6 +1759,14 @@ msgstr "Ji bo %s agahiyên bikarhêneran biguherîne"
 msgid "Set User Info"
 msgstr "Agahiyên Bikarhêner Têkevê"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Ev pêşwazî piştgiriyê nade odeyên axaftinê."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Ev pêşwazî piştgiriyê nade odeyên axaftinê."
+
 msgid "Unknown"
 msgstr "Nenas"
 
@@ -1760,9 +1784,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr ""
@@ -1998,7 +2023,6 @@ msgstr ""
 msgid "Thread creation failure: %s"
 msgstr "Biserneketina pelgekirinê"
 
-#. Data is assumed to be the destination bn
 #, fuzzy
 msgid "Unknown reason"
 msgstr "Sedema nenas."
@@ -3262,6 +3286,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nav"
 
@@ -3871,18 +3898,6 @@ msgstr "Fermana nederbasdar"
 msgid "execute"
 msgstr "Ya ne li bendê"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Daxwaza TLS/SSL a pêşkêşkar ji bo têketinê. Tu piştgiriyeke TLS/SSL nehat "
-"dîtin."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Daxwaza TLS/SSL a pêşkêşkar ji bo têketinê. Tu piştgiriyeke TLS/SSL nehat "
-"dîtin."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Pêwistiya pêşkêşker bi pelgekirina nivîseke zelal heye li ser herikandina "
@@ -3917,12 +3932,62 @@ msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 
 #, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Pêwistiya pêşkêşker bi pelgekirina nivîseke zelal heye li ser herikandina "
+"neşifrekirî."
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"Pêwistiya pêşkêşker bi pelgekirina nivîseke zelal heye li ser têkiliyeke "
+"neşifrekirî . Vê çalak bike û here pelgekirineke din?"
+
+#, fuzzy
 msgid "SASL authentication failed"
 msgstr "Têketin serneket"
 
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "Çewtiya SASL"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "GirÊdan qut bû."
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Guhertoya Nederbasdar"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Pêşkêşker ti şêwazê pelgekirinê nade bikaranîn"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Kodkirina Nederbasdar"
+
+msgid "User not found"
+msgstr "Bikarhêner nehat dîtin"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Nicka nederbasdar"
+
+msgid "Resource Constraint"
+msgstr "Bisînorkirina çavkanî"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3995,6 +4060,7 @@ msgstr "Herêm"
 msgid "Postal Code"
 msgstr "Koda Posteyê"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Welat"
 
@@ -4009,10 +4075,14 @@ msgstr "Navê Organîzasyonê"
 msgid "Organization Unit"
 msgstr "Beşa Organîzasyonê"
 
+msgid "Job Title"
+msgstr "Sernavê Kar"
+
 msgid "Role"
 msgstr "Rol"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Roja dayîkbûnê"
 
@@ -4240,12 +4310,27 @@ msgid "Roles:"
 msgstr "Rol"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Daxwaza TLS/SSL a pêşkêşkar ji bo têketinê. Tu piştgiriyeke TLS/SSL nehat "
+"dîtin."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Daxwaza TLS/SSL a pêşkêşkar ji bo têketinê. Tu piştgiriyeke TLS/SSL nehat "
+"dîtin."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Deqa rast"
 
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "ID'a nederbasdar"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4352,7 +4437,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Destûr Nehat Dayîn"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Baş"
 
@@ -4374,7 +4458,6 @@ msgstr "Bo"
 msgid "None (To pending)"
 msgstr "Ne yek jî (ji bo hilandinê)"
 
-#. 0
 msgid "None"
 msgstr "Ne yek jî"
 
@@ -4398,6 +4481,12 @@ msgstr "Navê navîn"
 msgid "Mood Comment"
 msgstr "Raveya Hevalan"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4572,9 +4661,6 @@ msgstr "Ziyandana peymanê"
 
 msgid "Remote Connection Failed"
 msgstr "Girêdana Dûr Bi Ser Neket"
-
-msgid "Resource Constraint"
-msgstr "Bisînorkirina çavkanî"
 
 msgid "Restricted XML"
 msgstr "Bisînorkirina XML"
@@ -4940,7 +5026,6 @@ msgstr "Şermdar"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr "Aciz"
 
@@ -5038,7 +5123,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Bêzar"
 
-#. 2
 msgid "Excited"
 msgstr "Heyecanbûyî"
 
@@ -5056,7 +5140,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Tê Girêdan..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Kom:"
@@ -5065,14 +5148,12 @@ msgstr "Kom:"
 msgid "Guilty"
 msgstr "Bajar"
 
-#. 4
 msgid "Happy"
 msgstr "Dilşad"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Host:"
@@ -5112,7 +5193,6 @@ msgstr "Têxê"
 msgid "Intoxicated"
 msgstr "Vexwîne"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -5176,7 +5256,6 @@ msgstr "Rake"
 msgid "Restless"
 msgstr "Tomarkirin"
 
-#. 7
 msgid "Sad"
 msgstr "Xemgîn"
 
@@ -5197,12 +5276,10 @@ msgstr "(Hat qedexekirin)"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Leqeb"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Xilmaş"
@@ -5625,19 +5702,6 @@ msgstr "Bi telefonê mijûle"
 msgid "Out to Lunch"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "Navnîşan"
-
-msgid "Album"
-msgstr ""
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Sernivîs"
@@ -5802,9 +5866,6 @@ msgstr ""
 msgid "Work"
 msgstr "Faqsa Kar"
 
-msgid "Job Title"
-msgstr "Sernavê Kar"
-
 msgid "Company"
 msgstr "Şirket"
 
@@ -5900,6 +5961,10 @@ msgstr "Pêşkêşkara IPC Test"
 
 msgid "Show custom smileys"
 msgstr ""
+
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Li makekompîturê nehate girêdan."
 
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
@@ -6099,27 +6164,6 @@ msgstr "Tu dixwazî vî/ê li lîsteya xwe ya hevalan zêde bikî?"
 msgid "The username specified is invalid."
 msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
 
-#. 5
-msgid "In Love"
-msgstr "Evîndar"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Vêga vekirî ye"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Modên Bikarhêner"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Şîfreyê Biguherîne"
-
-msgid "How do you feel right now?"
-msgstr ""
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
@@ -6156,7 +6200,11 @@ msgstr "Profîl"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6165,6 +6213,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Dîmen"
@@ -6195,11 +6244,6 @@ msgstr "Sohbet bi awayekî derbasdar xizmetê nake"
 #, fuzzy
 msgid "About"
 msgstr "Derbarê Pidginê de"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Şîfreyê biguherîne..."
 
 #. display / change profile
 #, fuzzy
@@ -6244,7 +6288,7 @@ msgid "Connecting..."
 msgstr "Girêdide"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
 
 #, fuzzy
@@ -6252,13 +6296,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name
-#, fuzzy
-msgid "Nick Name"
-msgstr "Leqeb"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6297,10 +6336,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -6314,7 +6353,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Ewlekarî çalake"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Şîfreyê Binivîse"
@@ -6348,12 +6387,17 @@ msgid "Status Message"
 msgstr "Peyamê Bişîne"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Peyamê Bişîne"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Navê navîn"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "Hejmara Telefona Destan Mîheng Bike"
+msgid "Your MXit ID..."
+msgstr "ID ya Yahoo!"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6367,6 +6411,28 @@ msgstr "Girêdide"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Ji hêla %s ve hatî dakirin: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Xeletî"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Ode:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Ji hêla %s ve hatî dakirin: (%s)"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Girêdayî"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6486,6 +6552,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Evîndar"
 
 #, fuzzy
 msgid "Pending"
@@ -6909,9 +6978,6 @@ msgstr "Dema şîfreyê derbas bûye"
 msgid "Incorrect password"
 msgstr "Şîfre şaş e."
 
-msgid "User not found"
-msgstr "Bikarhêner nehat dîtin"
-
 msgid "Account has been disabled"
 msgstr "Hesab hatiye girtin"
 
@@ -7166,6 +7232,10 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Çewtiya pêkanîna girêdanan"
+
 #, fuzzy
 msgid "Could not join chat room"
 msgstr "Nekarî girêbide"
@@ -7173,6 +7243,67 @@ msgstr "Nekarî girêbide"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "Navê Nederbasdar ê Odeyan"
+
+msgid "Invalid error"
+msgstr "Xeletiya nederbasdar"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Pelgeh nayê şandin"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Nikarî cilbendekê bişînî."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Peyam nehat şandin."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Negirêdayî "
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Peyam nehat şandin (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Peyam nehat şandin: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Peyam ji %s re nehate şandin:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Peyam ji %s re nehate şandin:"
 
 msgid "Thinking"
 msgstr ""
@@ -7344,120 +7475,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
-
-msgid "Invalid error"
-msgstr "Xeletiya nederbasdar"
-
-msgid "Invalid SNAC"
-msgstr "SNACa nederbasdar"
-
-msgid "Rate to host"
-msgstr ""
-
-msgid "Rate to client"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Ev servîs heta wexteke derbasdar wê bi kêrî tiştekî neyê"
-
-msgid "Service not defined"
-msgstr "Servîs nehate diyarkirin"
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr "Ji aliyê pêşkêşker nayê destekirin"
-
-msgid "Not supported by client"
-msgstr "Ji hêla daxwazkar ve nayê destekirin"
-
-msgid "Refused by client"
-msgstr "Daxwazkar red kir"
-
-msgid "Reply too big"
-msgstr "Bersîv zor dirêj e"
-
-msgid "Responses lost"
-msgstr "Bersiv winda ne"
-
-msgid "Request denied"
-msgstr "Daxwaz hat redkirin"
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr "Mafên kêm"
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Bikarhêner heta wextekê ne çalak e"
-
-msgid "No match"
-msgstr "Ne li gorê ye"
-
-msgid "List overflow"
-msgstr "Serçûyîna lîsteyê"
-
-msgid "Request ambiguous"
-msgstr "Bibiryarî pêwiste"
-
-msgid "Queue full"
-msgstr "Lîste tije ye"
-
-msgid "Not while on AOL"
-msgstr "Ne li ser AOL'ê"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Pelgeh nayê şandin"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Nikarî cilbendekê bişînî."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Peyam nehat şandin."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Negirêdayî "
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7804,28 +7821,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Peyama %hu a ji %s ji ber sedemeke nayê zanîn, nehat ber destê te."
 msgstr[1] "Peyama %hu a ji %s ji ber sedemeke nayê zanîn, nehat ber destê te."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Peyam nehat şandin (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Peyam nehat şandin: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Peyam ji %s re nehate şandin:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Peyam ji %s re nehate şandin:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr ""
-
-msgid "Unknown reason."
-msgstr "Sedema nenas."
 
 #, fuzzy
 msgid "Online Since"
@@ -8230,6 +8228,75 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
+msgid "Invalid SNAC"
+msgstr "SNACa nederbasdar"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Ev servîs heta wexteke derbasdar wê bi kêrî tiştekî neyê"
+
+msgid "Service not defined"
+msgstr "Servîs nehate diyarkirin"
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr "Ji aliyê pêşkêşker nayê destekirin"
+
+msgid "Not supported by client"
+msgstr "Ji hêla daxwazkar ve nayê destekirin"
+
+msgid "Refused by client"
+msgstr "Daxwazkar red kir"
+
+msgid "Reply too big"
+msgstr "Bersîv zor dirêj e"
+
+msgid "Responses lost"
+msgstr "Bersiv winda ne"
+
+msgid "Request denied"
+msgstr "Daxwaz hat redkirin"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr "Mafên kêm"
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Bikarhêner heta wextekê ne çalak e"
+
+msgid "No match"
+msgstr "Ne li gorê ye"
+
+msgid "List overflow"
+msgstr "Serçûyîna lîsteyê"
+
+msgid "Request ambiguous"
+msgstr "Bibiryarî pêwiste"
+
+msgid "Queue full"
+msgstr "Lîste tije ye"
+
+msgid "Not while on AOL"
+msgstr "Ne li ser AOL'ê"
+
 msgid "Aquarius"
 msgstr ""
 
@@ -8570,6 +8637,11 @@ msgstr "Diyaloga Daxwazan"
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Lîsteya odê"
 
 #, fuzzy
 msgid "Notice"
@@ -10466,10 +10538,6 @@ msgstr "ID ya Yahoo!"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Pêveka Protokola Yahooyê"
 
-#, fuzzy
-msgid "Pager server"
-msgstr "Pêşkêşkara Proxyê"
-
 msgid "Pager port"
 msgstr "Porta Bangkirinê"
 
@@ -10486,18 +10554,11 @@ msgstr ""
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
 msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo Chat port"
-msgstr "Yahoo Japon"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10563,6 +10624,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"Hesabê te yê bikarhêneriyê hate quflekirin, ji kerema xwe re têkeve malpera "
+"Yahoo!"
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "Hesabê te yê bikarhêneriyê hate quflekirin, ji kerema xwe re têkeve malpera "
 "Yahoo!"
@@ -10639,6 +10709,17 @@ msgstr "Bi %s 'ê re axaftin"
 #, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Girêdana SSL li pêşkêşkerê nayê kirin."
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Li pêşkêşker nehate girêdan. Ji kerema xwe re navnîşana ku tu dixwazî lê "
+"were girêdan binivîse."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr ""
@@ -11003,6 +11084,10 @@ msgstr "Na"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Bipejirîne"
 
@@ -11248,12 +11333,6 @@ msgstr "Peyamnêra înternetê"
 #, fuzzy
 msgid "Pidgin Internet Messenger"
 msgstr "Peyamnêra înternetê"
-
-msgid "Orientation"
-msgstr "Beralîkirin"
-
-msgid "The orientation of the tray."
-msgstr "Beralîkirina sêniyê"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12508,6 +12587,10 @@ msgstr ""
 msgid "Arabic"
 msgstr "Amharî"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Şermdar"
+
 msgid "Belarusian Latin"
 msgstr ""
 
@@ -12515,6 +12598,10 @@ msgid "Bulgarian"
 msgstr "Bulgarî"
 
 msgid "Bengali"
+msgstr "Bengalî"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengalî"
 
 msgid "Bosnian"
@@ -12636,6 +12723,10 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "Makedonî"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Nêr"
 
 #, fuzzy
 msgid "Mongolian"
@@ -12761,8 +12852,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 
 #, c-format
@@ -13332,14 +13423,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 
 #, fuzzy, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Tu li xwe bawer î ku tu dixwazî peyama li derve \"%s\" rakî?"
 
 #, fuzzy
@@ -13429,10 +13520,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14314,10 +14405,6 @@ msgstr "Kurterê"
 
 msgid "Custom Smiley Manager"
 msgstr ""
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Tomarbûn Divê"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -15528,7 +15615,17 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Yê Heyî Bipejirîne"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -15738,6 +15835,188 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) bin lîsansa Lîsansa Gelempera Gistî ya GNU (GPL) hatiye weşandin. "
+"Ji bo agahî, ev lîsans li vir tê xwendin. $_CLICK"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Paketa amûrên GUI ji bo gelek platforman, ji hêla Pidgin tê bikaranîn."
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin niha jixwe dimeşe. Ji Pidgin ê derkeve û careke din biceribîne."
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Dosiyên cevherî ya Pidgin û dll"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Pidgin ê binivîse menuya destpêk"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "rêya kin a Pidgin di sermasêyê de çêke"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Sermasê"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Environment (pêwîst)"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Cih"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Pêş >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Client (pêwîst)"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Riyên kin"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "rêya kin a ji bo destpêkirina Pidgin"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Desteka kontrola rastnivîsê"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Menuya destpêkê"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr "Desteka kontrola rastnivîsê.  (Ji bo sazkirinê înternet pêwîst e)"
+
+msgid "The installer is already running."
+msgstr "Sazker jixwe dimeşe."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Raker têketiyên registry yên Pidgin nedît. $\\rQey bikarhênereke din vê "
+"bername saz kir."
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Were Malpera Pidgin"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "Destûra te ji bo rakirina vê bernameyê tune."
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Navê dîmenê yê hatiye diyarkirin ne derbasdar e."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Leqeb"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Hejmara Telefona Destan Mîheng Bike"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Sedema nenas."
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "Navnîşan"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Vêga vekirî ye"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Modên Bikarhêner"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Şîfreyê Biguherîne"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Şîfreyê biguherîne..."
+
+#, fuzzy
+#~ msgid "Pager server"
+#~ msgstr "Pêşkêşkara Proxyê"
+
+#, fuzzy
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo Japon"
+
+#~ msgid "Orientation"
+#~ msgstr "Beralîkirin"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Beralîkirina sêniyê"
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "Çewtiya pêkanîna girêdanan"
@@ -15859,9 +16138,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "_Bikarhêner:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Guhertoya GTK+Runtime"
 
 #, fuzzy
 #~ msgid "Calling ... "
@@ -17524,9 +17800,6 @@ msgstr ""
 
 #~ msgid "Show _buttons as:"
 #~ msgstr "Bişkojan nîşan bide"
-
-#~ msgid "Text"
-#~ msgstr "Deq"
 
 #~ msgid "Pictures and text"
 #~ msgstr "Wêne û nivîs"

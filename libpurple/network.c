@@ -98,6 +98,7 @@ struct _PurpleNetworkListenData {
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
+	int timer;
 };
 
 #ifdef HAVE_NETWORKMANAGER
@@ -373,6 +374,7 @@ purple_network_finish_pmp_map_cb(gpointer data)
 	gint *value = g_new(gint, 1);
 
 	listen_data = data;
+	listen_data->timer = 0;
 
 	/* add port mapping to hash table */
 	*key = purple_network_get_port_from_fd(listen_data->listenfd);
@@ -394,7 +396,7 @@ void purple_network_listen_map_external(gboolean map_external)
 }
 
 static PurpleNetworkListenData *
-purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_do_listen(unsigned short port, int socket_family, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
 	int flags;
@@ -412,7 +414,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	g_snprintf(serv, sizeof(serv), "%hu", port);
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = socket_family;
 	hints.ai_socktype = socket_type;
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
@@ -436,7 +438,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-			purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
+			purple_debug_warning("network", "setsockopt(SO_REUSEADDR): %s\n", g_strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		/* XXX - It is unclear to me (datallah) whether we need to be
@@ -450,6 +452,13 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		return NULL;
 #else
 	struct sockaddr_in sockin;
+
+	if (socket_family != AF_INET && socket_family != AF_UNSPEC) {
+		purple_debug_warning("network", "Address family %d only "
+		                     "supported when built with getaddrinfo() "
+		                     "support\n", socket_family);
+		return NULL;
+	}
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
 		purple_debug_warning("network", "socket: %s\n", g_strerror(errno));
@@ -492,11 +501,12 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->cb_data = cb_data;
 	listen_data->socket_type = socket_type;
 
-	if (!listen_map_external || !purple_prefs_get_bool("/purple/network/map_ports"))
+	if (!purple_socket_speaks_ipv4(listenfd) || !listen_map_external ||
+			!purple_prefs_get_bool("/purple/network/map_ports"))
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
 		/* The pmp_map_cb does what we want to do */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	else if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
@@ -504,7 +514,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	{
 		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n", actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	else
 	{
@@ -519,17 +529,29 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 }
 
 PurpleNetworkListenData *
-purple_network_listen(unsigned short port, int socket_type,
-		PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_listen_family(unsigned short port, int socket_family,
+                             int socket_type, PurpleNetworkListenCallback cb,
+                             gpointer cb_data)
 {
 	g_return_val_if_fail(port != 0, NULL);
 
-	return purple_network_do_listen(port, socket_type, cb, cb_data);
+	return purple_network_do_listen(port, socket_family, socket_type,
+	                                cb, cb_data);
 }
 
 PurpleNetworkListenData *
-purple_network_listen_range(unsigned short start, unsigned short end,
-		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_listen(unsigned short port, int socket_type,
+		PurpleNetworkListenCallback cb, gpointer cb_data)
+{
+	return purple_network_listen_family(port, AF_UNSPEC, socket_type,
+	                                    cb, cb_data);
+}
+
+PurpleNetworkListenData *
+purple_network_listen_range_family(unsigned short start, unsigned short end,
+                                   int socket_family, int socket_type,
+                                   PurpleNetworkListenCallback cb,
+                                   gpointer cb_data)
 {
 	PurpleNetworkListenData *ret = NULL;
 
@@ -542,7 +564,7 @@ purple_network_listen_range(unsigned short start, unsigned short end,
 	}
 
 	for (; start <= end; start++) {
-		ret = purple_network_do_listen(start, socket_type, cb, cb_data);
+		ret = purple_network_do_listen(start, AF_UNSPEC, socket_type, cb, cb_data);
 		if (ret != NULL)
 			break;
 	}
@@ -550,10 +572,22 @@ purple_network_listen_range(unsigned short start, unsigned short end,
 	return ret;
 }
 
+PurpleNetworkListenData *
+purple_network_listen_range(unsigned short start, unsigned short end,
+                            int socket_type, PurpleNetworkListenCallback cb,
+                            gpointer cb_data)
+{
+	return purple_network_listen_range_family(start, end, AF_UNSPEC,
+	                                          socket_type, cb, cb_data);
+}
+
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
 		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
+
+	if (listen_data->timer > 0)
+		purple_timeout_remove(listen_data->timer);
 
 	g_free(listen_data);
 }

@@ -238,16 +238,16 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 		if (!args[0] && irc_ischannel(target))
 			buf = irc_format(irc, "vc", "MODE", target);
 		else if (args[0] && (*args[0] == '+' || *args[0] == '-'))
-			buf = irc_format(irc, "vcv", "MODE", target, args[0]);
+			buf = irc_format(irc, "vcn", "MODE", target, args[0]);
 		else if (args[0])
-			buf = irc_format(irc, "vv", "MODE", args[0]);
+			buf = irc_format(irc, "vn", "MODE", args[0]);
 		else
 			return 0;
 	} else if (!strcmp(cmd, "umode")) {
 		if (!args[0])
 			return 0;
 		gc = purple_account_get_connection(irc->account);
-		buf = irc_format(irc, "vnv", "MODE", purple_connection_get_display_name(gc), args[0]);
+		buf = irc_format(irc, "vnc", "MODE", purple_connection_get_display_name(gc), args[0]);
 	} else {
 		return 0;
 	}
@@ -437,7 +437,7 @@ int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	buf = irc_format(irc, "v", args[0]);
+	buf = irc_format(irc, "n", args[0]);
 	irc_send(irc, buf);
 	g_free(buf);
 

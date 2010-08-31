@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
-"PO-Revision-Date: 2010-02-10 11:52+0300\n"
+"POT-Creation-Date: 2010-08-09 21:57-0700\n"
+"PO-Revision-Date: 2010-08-09 00:28+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Language: uk_UA\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -63,11 +63,26 @@ msgstr ""
 msgid "Error"
 msgstr "Помилка"
 
+msgid "Account was not modified"
+msgstr "Обліковий запис не був змінений"
+
 msgid "Account was not added"
 msgstr "Обліковий запис не був доданий"
 
 msgid "Username of an account must be non-empty."
 msgstr "Ім'я користувача облікового запису не має бути порожнім."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+"Протокол облікового запису не може бути змінений коли він підключений до "
+"сервера."
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
+"Ім'я користувача облікового запису не може бути змінене коли він підключений "
+"до сервера."
 
 msgid "New mail notifications"
 msgstr "Сповіщення про нову пошту"
@@ -79,7 +94,7 @@ msgid "There are no protocol plugins installed."
 msgstr "Не встановлений жодний з додатків протоколів."
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Можливо, ви забули зробити 'make install'.)"
+msgstr "(Можливо, ви забули виконати \"make install\".)"
 
 msgid "Modify Account"
 msgstr "Змінити обліковий запис"
@@ -430,13 +445,13 @@ msgid "By Status"
 msgstr "За станом"
 
 msgid "Alphabetically"
-msgstr "За алфавітом"
+msgstr "За абеткою"
 
 msgid "By Log Size"
 msgstr "За розміром журналу"
 
 msgid "Buddy"
-msgstr "Приятель"
+msgstr "Контакт"
 
 msgid "Chat"
 msgstr "Балачка"
@@ -448,10 +463,10 @@ msgid "Certificate Import"
 msgstr "Імпорт сертифікату"
 
 msgid "Specify a hostname"
-msgstr "Визначити назву вузла"
+msgstr "Вказати назву вузла"
 
 msgid "Type the host name this certificate is for."
-msgstr "Напишіть назву вузла, кому належить цей сертифікат."
+msgstr "Напишіть назву вузла, якому належить цей сертифікат."
 
 #, c-format
 msgid ""
@@ -465,7 +480,7 @@ msgid "Certificate Import Error"
 msgstr "Помилка імпортування сертифікату"
 
 msgid "X.509 certificate import failed"
-msgstr "Помилка імпорту сертифікату X.509"
+msgstr "Помилка імпортування сертифікату X.509"
 
 msgid "Select a PEM certificate"
 msgstr "Вибрати сертифікат PEM"
@@ -485,7 +500,7 @@ msgid "X.509 certificate export failed"
 msgstr "Помилка експорту сертифікату X.509"
 
 msgid "PEM X.509 Certificate Export"
-msgstr "Експорт сертифікату PEM X.509"
+msgstr "Експортування сертифікату PEM X.509"
 
 #, c-format
 msgid "Certificate for %s"
@@ -794,7 +809,7 @@ msgstr "Зупинити"
 msgid "Waiting for transfer to begin"
 msgstr "Очікування початку передачі"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Скасовано"
 
 msgid "Failed"
@@ -1264,6 +1279,9 @@ msgstr "Інші розмовляють у балачці"
 msgid "Someone says your username in chat"
 msgstr "Хтось назвав ваше ім'я у балачці"
 
+msgid "Attention received"
+msgstr "Отриманий сигнал уваги"
+
 msgid "GStreamer Failure"
 msgstr "Помилка GStreamer"
 
@@ -1357,7 +1375,6 @@ msgid "Saved Statuses"
 msgstr "Збережені стани"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Назва"
 
@@ -1383,7 +1400,7 @@ msgid "Invalid title"
 msgstr "Невірний заголовок"
 
 msgid "Please enter a non-empty title for the status."
-msgstr "Будь ласка, введіть назву для стану."
+msgstr "Будь ласка, введіть непорожню назву для стану."
 
 msgid "Duplicate title"
 msgstr "Подвоїти назву"
@@ -1557,7 +1574,7 @@ msgstr ""
 msgid "Online"
 msgstr "У мережі"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Поза мережею"
 
@@ -1650,6 +1667,12 @@ msgstr "Зміна відомостей користувача про %s"
 msgid "Set User Info"
 msgstr "Встановити відомості про користувача"
 
+msgid "This protocol does not support setting a public alias."
+msgstr "Цей протокол не підтримує встановлення загальнодоступних псевдонімів."
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "Цей протокол не підтримує отримання загальнодоступних псевдонімів."
+
 msgid "Unknown"
 msgstr "Невідомо"
 
@@ -1670,8 +1693,12 @@ msgstr ""
 "Сертифікат не є довіреним, тому що немає жодного довіреного сертифікату, "
 "який може перевірити його."
 
-msgid "The certificate is not valid yet."
-msgstr "Сертифікат ще не дійсний."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
+"Сертифікат ще не дійсний. Перевірте, чи дата та час вашого комп'ютера "
+"правильні."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Термін дії сертифікату закінчився і його не слід вважати дійсним."
@@ -1908,7 +1935,6 @@ msgstr "Помилка перетворення %s у punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Помилка створення потоку : %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Невідома причина"
 
@@ -3189,6 +3215,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Ім'я"
 
@@ -3796,12 +3825,6 @@ msgstr "Помилка команди Ad-Hoc"
 msgid "execute"
 msgstr "виконати"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Сервер потребує TLS/SSL, але підтримка TLS/SSL не знайдена."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Ви потребуєте шифрування, але підтримка TLS/SSL не знайдена."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер вимагає автентифікацію звичайним текстом через нешифрований потік"
@@ -3833,12 +3856,59 @@ msgstr "Неправильний запит з серверу"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Сервер вважає, що автентифікація завершена, але клієнт ні"
 
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Сервер може потребувати автентифікацію звичайним текстом через нешифрований "
+"потік"
+
+#, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s може потребувати автентифікації відкритим текстом через нешифроване "
+"з'єднання. Дозволити це та продовжити автентифікацію?"
+
 msgid "SASL authentication failed"
 msgstr "Помилка автентифікації SASL"
 
 #, c-format
 msgid "SASL error: %s"
 msgstr "Помилка SASL: %s"
+
+msgid "Invalid Encoding"
+msgstr "Неправильне кодування"
+
+msgid "Unsupported Extension"
+msgstr "Непідтримуване розширення"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+"Неочікувана відповідь вд сервера. Це може свідчити про можливу атаку MITM"
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"Сервер не підтримує зв'язування каналів, але не заявив про це. Це свідчить "
+"про можливу атаку MITM"
+
+msgid "Server does not support channel binding"
+msgstr "Сервер не підтримує зв'язування каналів"
+
+msgid "Unsupported channel binding method"
+msgstr "Непідтримуваний спосіб зв'язування каналів"
+
+msgid "User not found"
+msgstr "Користувач не знайдений"
+
+msgid "Invalid Username Encoding"
+msgstr "Неправильне кодування імені користувача"
+
+msgid "Resource Constraint"
+msgstr "Брак ресурсів"
 
 msgid "Unable to canonicalize username"
 msgstr "Не вдається привести ім'я користувача до правильного вигляду"
@@ -3903,6 +3973,7 @@ msgstr "Регіон"
 msgid "Postal Code"
 msgstr "Поштовий індекс"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Країна"
 
@@ -3917,10 +3988,14 @@ msgstr "Назва організації"
 msgid "Organization Unit"
 msgstr "Відділок"
 
+msgid "Job Title"
+msgstr "Назва роботи"
+
 msgid "Role"
 msgstr "Посада"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "День народження"
 
@@ -4134,11 +4209,21 @@ msgstr "Не знайдено жодного користувача"
 msgid "Roles:"
 msgstr "Ролі:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Сервер потребує TLS/SSL, але підтримка TLS/SSL не знайдена."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Ви потребуєте шифрування, але підтримка TLS/SSL не знайдена."
+
 msgid "Ping timed out"
 msgstr "Вийшов час очікування луни (ping)"
 
 msgid "Invalid XMPP ID"
 msgstr "Невірний XMPP ID"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
+"Неправильний XMPP ID. Має бути встановлена частина з іменем користувача."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Невірний XMPP ID. Має бути вказаний домен."
@@ -4238,7 +4323,6 @@ msgstr "Сервер не підтримує блокування"
 msgid "Not Authorized"
 msgstr "Не авторизований"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Настрій"
 
@@ -4260,7 +4344,6 @@ msgstr "Для"
 msgid "None (To pending)"
 msgstr "Немає (для очікування)"
 
-#. 0
 msgid "None"
 msgstr "Немає"
 
@@ -4274,40 +4357,44 @@ msgstr "Настрій"
 msgid "Allow Buzz"
 msgstr "Дозволити плітки"
 
-#, fuzzy
 msgid "Mood Name"
-msgstr "Прізвище"
+msgstr "Назва настрою"
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "Коментар користувача"
+msgstr "Примітка настрою"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
-msgstr "Налаштувати виконавця"
+msgstr "Виконавець"
 
 msgid "Tune Title"
-msgstr "Налаштувати назву"
+msgstr "Назва"
 
 msgid "Tune Album"
-msgstr "Налаштувати альбом"
+msgstr "Альбом"
 
 msgid "Tune Genre"
-msgstr "Налаштувати жанр"
+msgstr "Жанр"
 
 msgid "Tune Comment"
-msgstr "Налаштувати примітку"
+msgstr "Примітка"
 
 msgid "Tune Track"
-msgstr "Налаштувати доріжку"
+msgstr "Доріжка"
 
 msgid "Tune Time"
-msgstr "Налаштувати час "
+msgstr "Час "
 
 msgid "Tune Year"
-msgstr "Налаштувати рік"
+msgstr "Рік"
 
 msgid "Tune URL"
-msgstr "Налаштувати посилання URL"
+msgstr "Посилання URL"
 
 msgid "Password Changed"
 msgstr "Пароль змінено"
@@ -4452,9 +4539,6 @@ msgstr "Порушення правил"
 msgid "Remote Connection Failed"
 msgstr "Помилка встановлення віддаленого з'єднання"
 
-msgid "Resource Constraint"
-msgstr "Брак ресурсів"
-
 msgid "Restricted XML"
 msgstr "Обмежений XML"
 
@@ -4471,7 +4555,7 @@ msgid "Unsupported Encoding"
 msgstr "Непідтримуване кодування"
 
 msgid "Unsupported Stanza Type"
-msgstr "Непідтримуваний тип строфи"
+msgstr "Непідтримуваний тип рядка"
 
 msgid "Unsupported Version"
 msgstr "Непідтримувана версія"
@@ -4568,9 +4652,8 @@ msgstr "Виберіть ресурс"
 msgid "Initiate Media"
 msgstr "Розпочати медіа"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "Цей протокол не підтримує кімнати балачок."
+msgstr "Обліковий запис не підтримує PEP, неможливо встановити настрій"
 
 msgid "config:  Configure a chat room."
 msgstr "config: Налаштувати кімнату балачки."
@@ -4628,9 +4711,8 @@ msgstr "ping &lt;jid&gt;:\tПінг користувача, компонента
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: пліткувати про користувача, щоб привернути його увагу"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "Виберіть коректного користувача"
+msgstr "mood: встановити поточний настрій користувача"
 
 msgid "Extended Away"
 msgstr "Розширений стан \"Відійшов\""
@@ -4712,13 +4794,13 @@ msgid "A custom smiley in the message is too large to send."
 msgstr "Нетипова усмішка у повідомленні завелика, щоб її надіслати."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "Бракує заголовка потоку XMPP"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "Версія XMPP не збігається"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "Бракує ID потоку XMPP"
 
 msgid "XML Parse error"
 msgstr "Помилка аналізу XML"
@@ -4796,32 +4878,26 @@ msgstr "Не вдалося надіслати файл до %s, не підпи
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Будь ласка, виберіть ресурс %s, до якого ви хочете надіслати файл"
 
-#, fuzzy
 msgid "Afraid"
-msgstr "Арабська"
+msgstr "Боюся"
 
-#, fuzzy
 msgid "Amazed"
-msgstr "Присоромлений"
+msgstr "Вражений"
 
-#, fuzzy
 msgid "Amorous"
-msgstr "Чудовий"
+msgstr "Закоханий"
 
-#. 1
 msgid "Angry"
 msgstr "Розлючений"
 
-#, fuzzy
 msgid "Annoyed"
-msgstr "Заборонено"
+msgstr "Роздратований"
 
 msgid "Anxious"
 msgstr "Стурбований"
 
-#, fuzzy
 msgid "Aroused"
-msgstr "Надсилається"
+msgstr "Збуджений"
 
 msgid "Ashamed"
 msgstr "Присоромлений"
@@ -4829,287 +4905,231 @@ msgstr "Присоромлений"
 msgid "Bored"
 msgstr "Нудьгуючий"
 
-#, fuzzy
 msgid "Brave"
-msgstr "Зберегти"
+msgstr "Хоробрий"
 
-#, fuzzy
 msgid "Calm"
-msgstr "Сфера"
+msgstr "Спокійний"
 
-#, fuzzy
 msgid "Cautious"
-msgstr "Балачки"
+msgstr "Обережний"
 
-#, fuzzy
 msgid "Cold"
-msgstr "Жирний"
+msgstr "Холодно"
 
-#, fuzzy
 msgid "Confident"
-msgstr "Конфлікт"
+msgstr "Довірливий"
 
-#, fuzzy
 msgid "Confused"
-msgstr "Продовжити"
+msgstr "Збитий з пантелику"
 
-#, fuzzy
 msgid "Contemplative"
-msgstr "Контакт"
+msgstr "Споглядаю"
 
-#, fuzzy
 msgid "Contented"
-msgstr "З'єднаний"
+msgstr "Задоволений"
 
-#, fuzzy
 msgid "Cranky"
-msgstr "Компанія"
+msgstr "Слабкий"
 
 msgid "Crazy"
-msgstr ""
+msgstr "Божевільний"
 
-#, fuzzy
 msgid "Creative"
-msgstr "Створити"
+msgstr "Творчий"
 
-#, fuzzy
 msgid "Curious"
-msgstr "Чудовий"
+msgstr "Допитливий"
 
-#, fuzzy
 msgid "Dejected"
-msgstr "Відхилений"
+msgstr "Засмучений"
 
-#, fuzzy
 msgid "Depressed"
-msgstr "Видалений"
+msgstr "Пригнічений"
 
-#, fuzzy
 msgid "Disappointed"
-msgstr "Від'єднано."
+msgstr "Розчарований"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "Огидно"
 
-#, fuzzy
 msgid "Dismayed"
-msgstr "Вимкнений"
+msgstr "Збентежений"
 
-#, fuzzy
 msgid "Distracted"
-msgstr "Незалежний"
+msgstr "Спантеличений"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "Соромно"
 
-#, fuzzy
 msgid "Envious"
-msgstr "Стурбований"
+msgstr "Заздрісний"
 
-#. 2
 msgid "Excited"
 msgstr "Схвильований"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "Чудовий"
+msgstr "Фліртую"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "Ім'я"
+msgstr "Розчарований у собі"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Вдячний"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "Отримання..."
+msgstr "Сумую"
 
-#. 3
 msgid "Grumpy"
 msgstr "Сердитий"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "Місто"
+msgstr "Винуватий"
 
-#. 4
 msgid "Happy"
 msgstr "Щасливий"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Маю надію"
 
-#. 8
 msgid "Hot"
 msgstr "Гарячий"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Скромний"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Ображений"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "Розлючений"
+msgstr "Голодний"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "Гумор"
+msgstr "Ображений"
 
 msgid "Impressed"
-msgstr ""
+msgstr "Вражений"
 
-#, fuzzy
 msgid "In awe"
-msgstr "Закоханий"
+msgstr "Наляканий"
 
 msgid "In love"
 msgstr "Закоханий"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "Індонезійська"
+msgstr "Обурений"
 
-#, fuzzy
 msgid "Interested"
-msgstr "Зацікавленості"
+msgstr "Зацікавлений"
 
-#, fuzzy
 msgid "Intoxicated"
-msgstr "Запрошений"
+msgstr "П'яний"
 
-#. 6
 msgid "Invincible"
 msgstr "Непереможний"
 
 msgid "Jealous"
 msgstr "Ревнивий"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "Мавпа"
+msgstr "Одинокий"
 
-#, fuzzy
 msgid "Lost"
-msgstr "Найгучніше"
+msgstr "Загублений"
 
 msgid "Lucky"
-msgstr ""
+msgstr "Щасливий"
 
-#, fuzzy
 msgid "Mean"
-msgstr "Німецька"
+msgstr "Скромний"
 
-#, fuzzy
 msgid "Moody"
-msgstr "Настрій"
+msgstr "У гуморі"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Нервовий"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "Подробиці"
+msgstr "Нейтральний"
 
-#, fuzzy
 msgid "Offended"
-msgstr "Поза мережею"
+msgstr "Скривджений"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Обурений"
 
-#, fuzzy
 msgid "Playful"
-msgstr "Відтворення"
+msgstr "Грайливий"
 
-#, fuzzy
 msgid "Proud"
-msgstr "Гучно"
+msgstr "Пишаюся"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "Справжнє ім'я"
+msgstr "Розслаблений"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Отримані"
+msgstr "Заспокоєний"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "Видалити"
+msgstr "Жалісливий"
 
-#, fuzzy
 msgid "Restless"
-msgstr "Зареєструвати"
+msgstr "Невгамовний"
 
-#. 7
 msgid "Sad"
 msgstr "Сумний"
 
-#, fuzzy
 msgid "Sarcastic"
-msgstr "Мараті"
+msgstr "Саркастичний"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Задоволений"
 
-#, fuzzy
 msgid "Serious"
-msgstr "Чудовий"
+msgstr "Серйозний"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "Заблокований"
+msgstr "Вражений"
 
 msgid "Shy"
-msgstr ""
+msgstr "Сором'язливий"
 
-#. 9
 msgid "Sick"
 msgstr "Хворий"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Сонливий"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Мимовільний"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "Швидкість"
+msgstr "Напружений"
 
-#, fuzzy
 msgid "Strong"
-msgstr "Пісня"
+msgstr "Сильний"
 
 msgid "Surprised"
-msgstr ""
+msgstr "Здивований"
 
 msgid "Thankful"
-msgstr ""
+msgstr "Вдячний"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Спраглий"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "Втомлений"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "Підкреслений"
+msgstr "Невизначений"
 
-#, fuzzy
 msgid "Weak"
-msgstr "Стукнути"
+msgstr "Слабкий"
 
-#, fuzzy
 msgid "Worried"
-msgstr "Нудьгуючий"
+msgstr "Занепокоєний"
 
 msgid "Set User Nickname"
 msgstr "Встановити прізвисько користувача"
@@ -5474,18 +5494,6 @@ msgstr "Розмовляю по телефону"
 msgid "Out to Lunch"
 msgstr "Відійшов на обід"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Виконавець"
-
-msgid "Album"
-msgstr "Альбом"
-
 msgid "Game Title"
 msgstr "Назва гри"
 
@@ -5635,9 +5643,6 @@ msgstr "Річниця"
 msgid "Work"
 msgstr "Робота"
 
-msgid "Job Title"
-msgstr "Назва роботи"
-
 msgid "Company"
 msgstr "Компанія"
 
@@ -5725,6 +5730,9 @@ msgstr "Спосіб сервера HTTP"
 
 msgid "Show custom smileys"
 msgstr "Показати нетипові усмішки"
+
+msgid "Allow direct connections"
+msgstr "Дозволити прямі з'єднання"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: штовхнути користувача, щоб привернути його увагу"
@@ -5922,24 +5930,6 @@ msgstr "Хочете також видалити цей контакт з адр
 msgid "The username specified is invalid."
 msgstr "Вказане ім'я користувача неправильне."
 
-#. 5
-msgid "In Love"
-msgstr "Закоханий"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Поточний настрій"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Новий настрій"
-
-msgid "Change your Mood"
-msgstr "Змінити ваш настрій"
-
-msgid "How do you feel right now?"
-msgstr "Як ви зараз себе почуваєте?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Введений PIN неправильний."
 
@@ -5952,8 +5942,8 @@ msgstr "PIN неправильний. Він може складатися ті�
 msgid "The two PINs you entered do not match."
 msgstr "Введені два PIN'и не збігаються."
 
-msgid "The name you entered is invalid."
-msgstr "Введене ім'я неправильне."
+msgid "The Display Name you entered is invalid."
+msgstr "Введене відображуване ім'я неправильне."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5972,7 +5962,11 @@ msgstr "Профіль"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Відомості про профіль ще не отримані. Будь ласка, спробуйте пізніше."
 
+msgid "Your UID"
+msgstr "Ваш UID"
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5980,6 +5974,7 @@ msgid "Verify PIN"
 msgstr "Перевірити PIN"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "Відображуване ім'я"
 
@@ -6005,10 +6000,6 @@ msgstr "Немає наявних заставок на цей час"
 
 msgid "About"
 msgstr "Про"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Змінити настрій..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6044,19 +6035,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "З'єднання..."
 
-msgid "The nick name you entered is invalid."
-msgstr "Введене прізвисько неправильне."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Введений PIN має неправильну довжину [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "Ім'я входу MXit"
-
-#. nick name
-msgid "Nick Name"
-msgstr "Прізвисько"
+msgid "MXit ID"
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6084,11 +6068,11 @@ msgstr "Термін дії сеансу добіг кінця. Будь лас�
 msgid "Invalid country selected. Please try again."
 msgstr "Вибрана неправильна країна. Будь ласка, спробуйте ще раз."
 
-msgid "Username is not registered. Please register first."
-msgstr "Ім'я користувача не зареєстроване. Будь ласка, спершу зареєструйтеся."
+msgid "The MXit ID you entered is not registered. Please register first."
+msgstr "Введений MXit ID не зареєстрований. Будь ласка, спершу зареєструйтеся."
 
-msgid "Username is already registered. Please choose another username."
-msgstr "Ім'я користувача вже зареєстроване. Будь ласка, виберіть інше."
+msgid "The MXit ID you entered is already registered. Please choose another."
+msgstr "Введений MXit ID вже зареєстроване. Будь ласка, виберіть інший."
 
 msgid "Internal error. Please try again later."
 msgstr "Внутрішня помилка. Будь ласка, спробуйте пізніше."
@@ -6099,7 +6083,7 @@ msgstr "Ви не ввели код безпеки"
 msgid "Security Code"
 msgstr "Код безпеки"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Введіть код безпеки"
 
@@ -6125,11 +6109,15 @@ msgstr "Завантаження меню..."
 msgid "Status Message"
 msgstr "Повідомлення стану"
 
+msgid "Rejection Message"
+msgstr "Повідомлення відмови"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Схований номер"
 
-msgid "Your Mobile Number..."
-msgstr "Номер мобільного телефону..."
+msgid "Your MXit ID..."
+msgstr "Ваш MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6141,6 +6129,23 @@ msgstr "З'єднання через HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Увімкнути виринаючу екранну заставку"
+
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Вас викинули з цього MultiMX."
+
+msgid "was kicked"
+msgstr "був викинутий"
+
+msgid "_Room Name:"
+msgstr "_Назва кімнати:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Вас запросили"
+
+msgid "Last Online"
+msgstr "Востаннє в мережі"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6245,6 +6250,9 @@ msgstr "Трапилась помилка з'єднання з MXit. (read stage
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Трапилась помилка з'єднання з MXit. (read stage 0x06)"
+
+msgid "In Love"
+msgstr "Закоханий"
 
 msgid "Pending"
 msgstr "Очікує"
@@ -6646,9 +6654,6 @@ msgstr "Термін дії паролю вийшов"
 msgid "Incorrect password"
 msgstr "Неправильний пароль"
 
-msgid "User not found"
-msgstr "Користувач не знайдений"
-
 msgid "Account has been disabled"
 msgstr "Обліковий запис була вимкнена"
 
@@ -6798,7 +6803,7 @@ msgid "Telephone Number"
 msgstr "Номер телефон"
 
 msgid "Personal Title"
-msgstr "Особиста сторінка тенет"
+msgstr "Особиста назва"
 
 msgid "Mailstop"
 msgstr "Пошта"
@@ -6913,111 +6918,160 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не дозволяє автентифікуватись тут з відображуваним ім'ям"
 
+#, c-format
+msgid "Error requesting %s"
+msgstr "Помилка запиту %s"
+
 msgid "Could not join chat room"
 msgstr "Не вдалося приєднатися до кімнати балачки"
 
 msgid "Invalid chat room name"
 msgstr "Неправильна назва кімнати балачки"
 
-msgid "Thinking"
+msgid "Invalid error"
+msgstr "Недопустима помилка"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Неможливо прийняти миттєве повідомлення із-за нагляду батьків"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Неможливо надіслати SMS без прийняття умов"
+
+msgid "Cannot send SMS"
+msgstr "Не вдається надіслати SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Не вдається надіслати SMS до цієї країни"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Неможливо надіслати SMS до невідомої країни"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Обліковий запис робота не може розпочати миттєве повідомлення"
+
+msgid "Bot account cannot IM this user"
 msgstr ""
+"Обліковий запис робота не може надіслати миттєве повідомлення цьому "
+"користувачу"
 
-#, fuzzy
+msgid "Bot account reached IM limit"
+msgstr "Обліковий запис робота досягнув обмеження миттєвих повідомлень"
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+"Обліковий запис робота досягнув добового обмеження миттєвих повідомлень"
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+"Обліковий запис робота досягнув місячного обмеження миттєвих повідомлень"
+
+msgid "Unable to receive offline messages"
+msgstr "Не вдалося отримати повідомлення \"поза мережею\""
+
+msgid "Offline message store full"
+msgstr "Сховище повідомлень \"поза мережею\" заповнене"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Не вдається надіслати повідомлення: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Не вдається відправити повідомлення: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Не вдається надіслати повідомлення до %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Не вдається надіслати повідомлення до %s: %s"
+
+msgid "Thinking"
+msgstr "Думаю"
+
 msgid "Shopping"
-msgstr "Закінчив писати"
+msgstr "Роблю покупки"
 
-#, fuzzy
 msgid "Questioning"
-msgstr "Діалог запитання"
+msgstr "Допитливий"
 
-#, fuzzy
 msgid "Eating"
-msgstr "Пейджер"
+msgstr "Їм"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "Граю у гру"
+msgstr "Дивлюсь кіно"
 
 msgid "Typing"
 msgstr "Пише"
 
-#, fuzzy
 msgid "At the office"
-msgstr "Не в офісі"
+msgstr "В офісі"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "Миюся"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "Дивлюсь телевізор"
 
-#, fuzzy
 msgid "Having fun"
-msgstr "Завершити"
+msgstr "Дурію"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "Сонливий"
+msgstr "Сплю"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "Використовую КПК"
 
-#, fuzzy
 msgid "Meeting friends"
-msgstr "Друзі по балачкам миттєвими повідомленнями"
+msgstr "Зустрічаюсь з друзями"
 
-#, fuzzy
 msgid "On the phone"
 msgstr "Розмовляю по телефону"
 
-#, fuzzy
 msgid "Surfing"
-msgstr "Періодичний"
+msgstr "Серфінг"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "Мобільний"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "Шукаю в тенетах"
 
 msgid "At a party"
-msgstr ""
+msgstr "На вечірці"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "П'ю каву"
 
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "Близнюки"
+msgstr "Граю гру"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "Переглядаю тенета"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "Пісня"
+msgstr "Палю"
 
-#, fuzzy
 msgid "Writing"
-msgstr "Працюю"
+msgstr "Пишу"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "Працюю"
+msgstr "П'ю"
 
 msgid "Listening to music"
 msgstr "Слухаю музику"
 
-#, fuzzy
 msgid "Studying"
-msgstr "Надсилання"
+msgstr "Вчуся"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "Зацікавленості"
+msgstr "У вбиральній"
 
 msgid "Received invalid data on connection with server"
 msgstr "Отримані неправильні дані під час з'єдання з сервером"
@@ -7086,120 +7140,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Файл %s має довжину %s, що більше ніж найбільший розмір %s."
 
-msgid "Invalid error"
-msgstr "Недопустима помилка"
-
-msgid "Invalid SNAC"
-msgstr "Неправильний SNAC"
-
-msgid "Rate to host"
-msgstr "Оцінити вузол"
-
-msgid "Rate to client"
-msgstr "Оцінити клієнта"
-
-msgid "Service unavailable"
-msgstr "Служба недоступна"
-
-msgid "Service not defined"
-msgstr "Служба не визначена"
-
-msgid "Obsolete SNAC"
-msgstr "Застарілий SNAC"
-
-msgid "Not supported by host"
-msgstr "Не підтримується вузлом"
-
-msgid "Not supported by client"
-msgstr "Не підтримується клієнтом"
-
-msgid "Refused by client"
-msgstr "Відкинуто клієнтом"
-
-msgid "Reply too big"
-msgstr "Відповідь завелика"
-
-msgid "Responses lost"
-msgstr "Відповіді загублені"
-
-msgid "Request denied"
-msgstr "Запит заборонено"
-
-msgid "Busted SNAC payload"
-msgstr "Помилкове завантаження SNAC"
-
-msgid "Insufficient rights"
-msgstr "Недостатньо прав"
-
-msgid "In local permit/deny"
-msgstr "У локальному дозволено/заборонено"
-
-msgid "Warning level too high (sender)"
-msgstr "Рівень небезпеки занадто високий (відправник)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Рівень небезпеки занадто високий (отримувач)"
-
-msgid "User temporarily unavailable"
-msgstr "Користувач тимчасово недоступний"
-
-msgid "No match"
-msgstr "Немає збігів"
-
-msgid "List overflow"
-msgstr "Переповнення переліку"
-
-msgid "Request ambiguous"
-msgstr "Неоднозначний запит"
-
-msgid "Queue full"
-msgstr "Черга повна"
-
-msgid "Not while on AOL"
-msgstr "Не у AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Неможливо прийняти миттєве повідомлення із-за нагляду батьків"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Неможливо надіслати SMS без прийняття умов"
-
-msgid "Cannot send SMS"
-msgstr "Не вдається надіслати SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Не вдається надіслати SMS до цієї країни"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Неможливо надіслати SMS до невідомої країни"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Обліковий запис робота не може розпочати миттєве повідомлення"
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-"Обліковий запис робота не може надіслати миттєве повідомлення цьому "
-"користувачу"
-
-msgid "Bot account reached IM limit"
-msgstr "Обліковий запис робота досягнув обмеження миттєвих повідомлень"
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-"Обліковий запис робота досягнув добового обмеження миттєвих повідомлень"
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-"Обліковий запис робота досягнув місячного обмеження миттєвих повідомлень"
-
-msgid "Unable to receive offline messages"
-msgstr "Не вдалося отримати повідомлення \"поза мережею\""
-
-msgid "Offline message store full"
-msgstr "Сховище повідомлень \"поза мережею\" заповнене"
-
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
 "is probably using a different encoding than expected.  If you know what "
@@ -7236,7 +7176,7 @@ msgid "Games"
 msgstr "Ігри"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "Доповнення"
@@ -7304,25 +7244,20 @@ msgstr "Підтримується Web"
 msgid "Invisible"
 msgstr "Невидимий"
 
-#, fuzzy
 msgid "Evil"
-msgstr "Ел.пошта"
+msgstr "Злий"
 
-#, fuzzy
 msgid "Depression"
-msgstr "Фах"
+msgstr "Пригнічення"
 
-#, fuzzy
 msgid "At home"
-msgstr "Про мене"
+msgstr "Вдома"
 
-#, fuzzy
 msgid "At work"
-msgstr "Мережа"
+msgstr "На роботі"
 
-#, fuzzy
 msgid "At lunch"
-msgstr "Відійшов на обід"
+msgstr "Обідаю"
 
 msgid "IP Address"
 msgstr "IP Адреса"
@@ -7577,27 +7512,8 @@ msgstr[1] "Ви не отримали %hu повідомлення від %s, з
 msgstr[2] "Ви не отримали %hu повідомлень від %s, з невідомої причини."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Не вдається надіслати повідомлення: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Не вдається відправити повідомлення: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Не вдається надіслати повідомлення до %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Не вдається надіслати повідомлення до %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Відомості про користувача недоступні: %s"
-
-msgid "Unknown reason."
-msgstr "Помилка невідома."
 
 msgid "Online Since"
 msgstr "У мережі з"
@@ -7624,7 +7540,7 @@ msgid "You have been disconnected from chat room %s."
 msgstr "Вас було від'єднано від кімнати балачки %s."
 
 msgid "Mobile Phone"
-msgstr "Мобільний Телефон"
+msgstr "Мобільний телефон"
 
 msgid "Personal Web Page"
 msgstr "Особиста сторінка тенет"
@@ -7638,7 +7554,7 @@ msgid "Zip Code"
 msgstr "Поштовий індекс"
 
 msgid "Work Information"
-msgstr "Дані про роботу"
+msgstr "Відомості про роботу"
 
 msgid "Division"
 msgstr "Відділ"
@@ -7862,9 +7778,8 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "Посилання до музичної крамниці iTunes"
 
-#, fuzzy
 msgid "Lunch"
-msgstr "Finch"
+msgstr "Обід"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7897,15 +7812,14 @@ msgstr "Отримати відомості AIM"
 msgid "Edit Buddy Comment"
 msgstr "Змінити коментар користувача"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "Отримати повідомлення про стан"
+msgstr "Отримати повідомлення X-Status"
 
 msgid "End Direct IM Session"
 msgstr "Закінчити прямий сеанс миттєвих повідомлень"
 
 msgid "Direct IM"
-msgstr "Пряме з'єднання"
+msgstr "Пряме миттєве повідомлення"
 
 msgid "Re-request Authorization"
 msgstr "Повторний запит авторизації"
@@ -8025,6 +7939,75 @@ msgstr ""
 "Це вимагає встановлення безпосереднього підключення між двома комп'ютерами, "
 "та є необхідним для передавання зображень. Так як ваша ІР адреса буде "
 "розкрита, це може вважатись загрозою безпеці."
+
+msgid "Invalid SNAC"
+msgstr "Неправильний SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Досягнуто обмеження швидкості сервера"
+
+msgid "Client rate limit exceeded"
+msgstr "Досягнуто обмеження швидкості клієнта"
+
+msgid "Service unavailable"
+msgstr "Послуга недоступна"
+
+msgid "Service not defined"
+msgstr "Послуга не визначена"
+
+msgid "Obsolete SNAC"
+msgstr "Застарілий SNAC"
+
+msgid "Not supported by host"
+msgstr "Не підтримується вузлом"
+
+msgid "Not supported by client"
+msgstr "Не підтримується клієнтом"
+
+msgid "Refused by client"
+msgstr "Відкинута клієнтом"
+
+msgid "Reply too big"
+msgstr "Відповідь завелика"
+
+msgid "Responses lost"
+msgstr "Відповіді втрачені"
+
+msgid "Request denied"
+msgstr "Запит відхилений"
+
+msgid "Busted SNAC payload"
+msgstr "Зіпсовані дані SNAC"
+
+msgid "Insufficient rights"
+msgstr "Недостатньо прав"
+
+msgid "In local permit/deny"
+msgstr "В місцевому переліку дозволених/заборонених"
+
+msgid "Warning level too high (sender)"
+msgstr "Рівень попередження дуже високий (відправник)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Рівень попередження дуже високий (отримувач)"
+
+msgid "User temporarily unavailable"
+msgstr "Користувач тимчасово недоступний"
+
+msgid "No match"
+msgstr "Немає збігів"
+
+msgid "List overflow"
+msgstr "Перелік переповнений"
+
+msgid "Request ambiguous"
+msgstr "Запит незрозумілий"
+
+msgid "Queue full"
+msgstr "Черга переповнена"
+
+msgid "Not while on AOL"
+msgstr "Не тоді, коли у AOL"
 
 msgid "Aquarius"
 msgstr "Водолій"
@@ -8307,6 +8290,10 @@ msgstr "Запитується"
 
 msgid "Admin"
 msgstr "Адміністратор"
+
+#. XXX: Should this be "Topic"?
+msgid "Room Title"
+msgstr "Назва кімнати"
 
 msgid "Notice"
 msgstr "Примітки"
@@ -10215,9 +10202,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Додаток протоколу Yahoo!"
 
-msgid "Pager server"
-msgstr "Сервер пейджера"
-
 msgid "Pager port"
 msgstr "Порт пейджера"
 
@@ -10233,17 +10217,11 @@ msgstr "Локаль кімнати балачки"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Нехтувати запрошеннями у конференції та кімнати балачок"
 
-msgid "Use account proxy for SSL connections"
-msgstr "Використовувати проксі облікового запису для з'єднань SSL"
+msgid "Use account proxy for HTTP and HTTPS connections"
+msgstr "Використовувати проксі облікового запису для з'єднань HTTP та HTTPS"
 
 msgid "Chat room list URL"
 msgstr "URL переліку балачок"
-
-msgid "Yahoo Chat server"
-msgstr "Сервер Yahoo Chat"
-
-msgid "Yahoo Chat port"
-msgstr "Порт Yahoo Chat"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN ID..."
@@ -10309,6 +10287,15 @@ msgid ""
 msgstr ""
 "Обліковий запис заблокований: Невідома причина. Вхід на сайт Yahoo! може "
 "виправити це."
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Обліковий запис заблокований: ви входили занадто швидко. Зачекайте декілька "
+"хвилин перед тим як спробувати увійти знову. Вхід на сторінку Yahoo! може "
+"допомогти."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10390,6 +10377,15 @@ msgstr "Втрата з'єднання з %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Не вдалося встановити з'єднання з %s: %s"
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Не вдається з'єднатися. Сервер повертає порожню відповідь."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+"Не вдається з'єднатися: відповідь сервера не містить необхідних відомостей"
 
 msgid "Not at Home"
 msgstr "Не вдома"
@@ -10777,6 +10773,10 @@ msgstr "_Ні"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Прийняти"
 
@@ -10843,9 +10843,8 @@ msgstr "Не турбувати"
 msgid "Extended away"
 msgstr "Розширений стан \"Відійшов\""
 
-#, fuzzy
 msgid "Feeling"
-msgstr "Отримання"
+msgstr "Почуття"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11021,12 +11020,6 @@ msgstr "Спілкування миттєвими повідомленнями"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Клієнт обміну миттєвими повідомленнями Pidgin"
-
-msgid "Orientation"
-msgstr "Орієнтація"
-
-msgid "The orientation of the tray."
-msgstr "Орієнтація лотка."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11398,13 +11391,11 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Невідомий тип вузла"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "Будь ласка, виберіть ваш настрій з переліку."
+msgstr "Будь ласка, виберіть ваш настрій з переліку"
 
-#, fuzzy
 msgid "Message (optional)"
-msgstr "Прізвисько (не обов'язково)"
+msgstr "Повідомлення (не обов'язково)"
 
 msgid "Edit User Mood"
 msgstr "Редагувати настрій користувача"
@@ -11487,9 +11478,8 @@ msgstr "/Засоби/_Налаштування"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Засоби/_Конфіденційність"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/Засоби/Системний _журнал"
+msgstr "/Засоби/Встановити _настрій"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Засоби/Передавання _файлів"
@@ -11510,20 +11500,17 @@ msgstr "/_Довідка"
 msgid "/Help/Online _Help"
 msgstr "/Довідка/Довідка у _мережі"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "Відомості про користувача"
+msgstr "Довідка/Відомості про _збірку"
 
 msgid "/Help/_Debug Window"
 msgstr "/Довідка/Вікно _зневадження"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "Відомості про сервер"
+msgstr "Довідка/Відомості про _розробників"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "Особисті відомості"
+msgstr "Довідка/Відомості про _перекладачів"
 
 msgid "/Help/_About"
 msgstr "/Довідка/_Про програму"
@@ -11755,9 +11742,8 @@ msgstr "<PurpleMain>/Обл. записи/"
 msgid "_Edit Account"
 msgstr "_Редагувати обліковий запис"
 
-#, fuzzy
 msgid "Set _Mood..."
-msgstr "Встановити настрій..."
+msgstr "Встановити _настрій..."
 
 msgid "No actions available"
 msgstr "Немає доступних дій"
@@ -11879,9 +11865,8 @@ msgstr "/Розмова/Медіа/_Аудіо\\/Відеовиклик"
 msgid "/Conversation/Se_nd File..."
 msgstr "/Розмова/Наді_слати файл..."
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/Розмова/Отримати відомості"
+msgstr "/Розмова/Отримати сигнал _уваги"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Розмова/Додати _правило стеження..."
@@ -11964,9 +11949,8 @@ msgstr "/Розмова/Аудіо та відеовиклик"
 msgid "/Conversation/Send File..."
 msgstr "/Розмова/Надіслати файл..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Розмова/Отримати відомості"
+msgstr "/Розмова/Отримати сигнал уваги"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Розмова/Додати правило стеження..."
@@ -12032,13 +12016,11 @@ msgstr "_Надіслати"
 msgid "0 people in room"
 msgstr "0 користувачів у кімнаті"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "Закрити цю вкладку"
+msgstr "Закрити панель пошуку"
 
-#, fuzzy
 msgid "Find:"
-msgstr "Знайти"
+msgstr "Знайти:"
 
 #, c-format
 msgid "%d person in room"
@@ -12126,7 +12108,7 @@ msgid "Filter"
 msgstr "Фільтр"
 
 msgid "Right click for more options."
-msgstr "Права кнопка миші для більших опцій."
+msgstr "Права кнопка миші для ще опцій."
 
 msgid "Level "
 msgstr "Рівень"
@@ -12178,7 +12160,7 @@ msgid "maintainer"
 msgstr "особа, що підтримує"
 
 msgid "libfaim maintainer"
-msgstr "Особа, що підтримує libfaim"
+msgstr "особа, що підтримує libfaim"
 
 #. If "lazy bum" translates literally into a serious insult, use something else or omit it.
 msgid "hacker and designated driver [lazy bum]"
@@ -12202,6 +12184,9 @@ msgstr "Афріканс"
 msgid "Arabic"
 msgstr "Арабська"
 
+msgid "Assamese"
+msgstr "Асамська"
+
 msgid "Belarusian Latin"
 msgstr "Білоруська (латиниця)"
 
@@ -12210,6 +12195,9 @@ msgstr "Болгарська"
 
 msgid "Bengali"
 msgstr "Бенгальська"
+
+msgid "Bengali-India"
+msgstr "Бенгальська Індія"
 
 msgid "Bosnian"
 msgstr "Боснійська"
@@ -12325,6 +12313,9 @@ msgstr "Лао"
 msgid "Macedonian"
 msgstr "Македонська"
 
+msgid "Malayalam"
+msgstr "Малаялам"
+
 msgid "Mongolian"
 msgstr "Монгольська"
 
@@ -12433,7 +12424,7 @@ msgstr "Амхарська"
 msgid "Lithuanian"
 msgstr "Литовська"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12442,15 +12433,13 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s - це графічний модульний клієнт обміну миттєвими повідомленнями, який "
-"оснований на бібліотеці libpurple, що здатна з'єднуватись з AIM, MSN, "
-"Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
-"Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, та QQ одночасно.  Він написаний "
-"використовуючи GTK+.<BR><BR>Ви можете змінювати та розповсюджувати цю "
-"програму у відповідності з ліцензією GPL (версія 2 або новіша).  Копія GPL "
-"міститься у файлі \"COPYING\", що постачається з %s.  Авторське право на %s "
-"належить його розробникам. Дивіться файл \"COPYRIGHT\", щоб отримати повний "
-"перелік розробників. Ми не даємо гарантій на цю програму.<BR><BR>"
+"%s - це клієнт обміну миттєвими повідомленнями, який оснований на libpurple, "
+"що здатна з'єднуватись з багатьма послугами миттєвих повідомлень одночасно. %"
+"s написаний на C, застосовуючи GTK+. %s виданий та може змінюватися і "
+"розповсюджуватися у відповідності з ліцензією GPL версії 2 (або новіша).  "
+"Копія GPL постачається з %s.  Авторське право на %s належить його "
+"розробникам, перелік яких теж постачається з %s. Будь-які гарантії на %s не "
+"надаються.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12459,8 +12448,11 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>Корисні ресурси</B></FONT><BR>\t<A HREF=\"%s\">Сторінка "
+"тенет</A><BR>\t<A HREF=\"%s\">Часті питання</A><BR>\tКанал IRC: #pidgin на "
+"irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12470,25 +12462,25 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">Допомога від інших користувачів Pidgin:</font> <a href="
-"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Це "
-"<b>загальнодоступна</b> розсилка! (<a href=\"http://pidgin.im/pipermail/"
-"support/\">архів</a>)<br/>Ми не можемо допомогти з протоколами та додатками "
-"від третіх сторін!<br/>Основною мовою розсилки є <b>англійська</b>. Можете "
-"писати іншою мовою, але відповіді можуть бути не такими корисними.<br/><br/>"
+"<font size=\"4\"><b>Допомога від інших користувачів Pidgin</b></font> може "
+"бути отримана листуванням на <a href=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</a><br/>Це <b>загальнодоступна</b> розсилка! (<a href="
+"\"http://pidgin.im/pipermail/support/\">архів</a>)<br/>Ми не можемо "
+"допомогти з протоколами та додатками від третіх сторін!<br/>Основною мовою "
+"розсилки є <b>англійська</b>. Можете писати іншою мовою, але відповіді "
+"можуть бути не такими корисними.<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "Про %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "Відомості про користувача"
+msgstr "Відомості про збірку"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "Відомості про користувача"
+msgstr "Відомості про збірку %s"
 
 msgid "Current Developers"
 msgstr "Поточні розробники"
@@ -12502,9 +12494,9 @@ msgstr "Колишні розробники"
 msgid "Retired Crazy Patch Writers"
 msgstr "Одержимі автори латок"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "Відомості про сервер"
+msgstr "Відомості про розробників %s"
 
 msgid "Current Translators"
 msgstr "Поточні перекладачі"
@@ -12512,9 +12504,9 @@ msgstr "Поточні перекладачі"
 msgid "Past Translators"
 msgstr "Попередні перекладачі"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "Більше відомостей"
+msgstr "Відомості про перекладачів %s"
 
 msgid "_Name"
 msgstr "_Ім'я"
@@ -12920,9 +12912,8 @@ msgstr "Вставити зображення"
 msgid "Insert Smiley"
 msgstr "Вставити усмішку"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "Кнопка \"Надіслати\""
+msgstr "Надіслати сигнал уваги"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>_Жирний</b>"
@@ -12970,7 +12961,7 @@ msgid "_Smile!"
 msgstr "_Усмішка!"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "_Увага!"
 
 msgid "Log Deletion Failed"
 msgstr "Помилка видалення журналу"
@@ -13101,11 +13092,11 @@ msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 "Вихід, тому що вже запущений інший клієнт, який використовує libpurple.\n"
 
-msgid "/_Media"
-msgstr "/_Медіа"
+msgid "_Media"
+msgstr "_Медіа"
 
-msgid "/Media/_Hangup"
-msgstr "/Медіа/_Завершити"
+msgid "_Hangup"
+msgstr "_Завершити"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13453,7 +13444,7 @@ msgid "_Notify buddies that you are typing to them"
 msgstr "_Сповіщати користувачів, що ви їм пишете"
 
 msgid "Highlight _misspelled words"
-msgstr "Підсвітити _слова з орфографічними помилками"
+msgstr "Підсвітити _слова з помилками правопису"
 
 msgid "Use smooth-scrolling"
 msgstr "Використати плавне прокручування"
@@ -13906,10 +13897,6 @@ msgstr "Текст скорочення"
 
 msgid "Custom Smiley Manager"
 msgstr "Керування нетиповими усмішками"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Необхідна активація"
 
 msgid "Select Buddy Icon"
 msgstr "Виберіть значок контакту"
@@ -15044,8 +15031,17 @@ msgid "Timestamp Format Options"
 msgstr "Опції формату дати та часу"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr "_Примусово 24-годинний формат часу"
+msgid "_Force timestamp format:"
+msgstr "_Примусово формат часу:"
+
+msgid "Use system default"
+msgstr "Використовувати типовий системи"
+
+msgid "12 hour time format"
+msgstr "12-годинний формат часу"
+
+msgid "24 hour time format"
+msgstr "24-годинний формат часу"
 
 msgid "Show dates in..."
 msgstr "Показувати дати у..."
@@ -15243,147 +15239,151 @@ msgstr "<font color='#777777'>Не з'єднаний з XMPP</font>"
 #. *< version
 #. *  summary
 msgid "Send and receive raw XMPP stanzas."
-msgstr "Надіслати та отримати сирі строфи XMPP."
+msgstr "Надіслати та отримати сирі рядки XMPP."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Додаток корисний для зневадження серверів або клієнтів XMPP."
 
-#~ msgid "Error creating conference."
-#~ msgstr "Помилка створенні конференції."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) випущений під ліцензією GNU General Public License (GPL). Ліцензія "
+"подана тут тільки з метою ознайомлення. $_CLICK"
 
-#~ msgid "Unable to bind socket to port: %s"
-#~ msgstr "Не вдалося зв'язати сокет з портом: %s"
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Багатоплатформена графічна бібліотека, що використовується Pidgin"
 
-#~ msgid "Unable to listen on socket: %s"
-#~ msgstr "Не вдалося слухати сокет: %s"
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+"Запущений екземпляр Pidgin. Будь ласка, вийдіть з Pidgin та спробуйте знову."
 
-#~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s щойно підштовхнув вас!"
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Основні файли Pidgin та dll"
 
-#~ msgid "Friendly name changes too rapidly"
-#~ msgstr "Дружнє ім'я змінюється занадто швидко"
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Створити запис у меню \"Пуск\" для Pidgin"
 
-#~ msgid "This Hotmail account may not be active."
-#~ msgstr "Обліковий запис Hotmail може бути неактивним."
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Створити значок Pidgin на стільниці"
 
-#~ msgid "Profile URL"
-#~ msgstr "URL профілю"
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr "Debug Symbols (для звітування вад)"
 
-#~ msgid "MSN Protocol Plugin"
-#~ msgstr "Додаток протоколу MSN"
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Стільниця"
 
-#~ msgid "%s is not a valid group."
-#~ msgstr "%s не є правильною назвою групи."
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Помилка звантаження the GTK+ Runtime ($R2).$\\rЦе необхідно для роботи "
+"Pidgin; якщо спроби будуть марними, можливо, необхідно буде скористатися "
+"встановлювачем 'Offline Installer' з http://pidgin.im/download/windows/ ."
 
-#~ msgid "Unknown error."
-#~ msgstr "Невідома помилка."
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Помилка встановлення Debug Symbols ($R2).$\\rЯкщо спроби будуть марними, "
+"можливо, потрібний буде встановлювач 'Offline Installer' з http://pidgin.im/"
+"download/windows/ ."
 
-#~ msgid "%s on %s (%s)"
-#~ msgstr "%s на %s (%s)"
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+"Помилка встановлення перевірки правопису ($R3).$\\rЯкщо спроби будуть "
+"марними, дивіться довідку по ручному встановленню на http://developer.pidgin."
+"im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation"
 
-#~ msgid "Unable to add user on %s (%s)"
-#~ msgstr "Не вдається додати користувача %s (%s)"
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Бібліотека GTK+ (необхідна, якщо не вcтановлена)"
 
-#~ msgid "Unable to block user on %s (%s)"
-#~ msgstr "Не вдається заблокувати користувача %s (%s)"
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Локалізації"
 
-#~ msgid "Unable to permit user on %s (%s)"
-#~ msgstr "Не вдається дозволити користувача %s (%s)"
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Наступне >"
 
-#~ msgid "%s could not be added because your buddy list is full."
-#~ msgstr "Не вдається додати %s, тому що перелік контактів повний."
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Клієнт обміну миттєвими повідомленнями Pidgin (необхідно)"
 
-#~ msgid "%s is not a valid passport account."
-#~ msgstr "%s не є допустимим паспортним обліковим записом."
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin потребує сумісну бібліотеку GTK+ (яка, схоже, ще не встановлена).$"
+"\\rВИ впевнені, що хочете пропустити встановлення бібліотеки GTK+?"
 
-#~ msgid "Service Temporarily Unavailable."
-#~ msgstr "Сервіс тимчасово недоступний."
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Комбінації клавіш"
 
-#~ msgid "Unable to rename group"
-#~ msgstr "Не вдається змінити назву групи"
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "Значки для запуску Pidgin"
 
-#~ msgid "Unable to delete group"
-#~ msgstr "Не вдається видалити групу"
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Підтримка перевірки правопису"
 
-#~ msgid "%s has added you to his or her buddy list."
-#~ msgstr "%s додав вас до своєї адресної книги."
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Меню 'Пуск'"
 
-#~ msgid "%s has removed you from his or her buddy list."
-#~ msgstr "%s вилучив вас зі своєї адресної книги."
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+"Підтримка перевірки правопису. (Необхідне з'єднання з Інтернетом для "
+"встановлення)"
 
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+msgid "The installer is already running."
+msgstr "Встановлювач вже запущений."
 
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">Канал IRC:</FONT> #pidgin на irc.freenode.net<BR><BR>"
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Видаляч не може знайти записів для Pidgin у реєстрі.$\\rСхоже, що цю "
+"програму встановив інший користувач."
 
-#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr "Обробники посилань URI"
 
-#~ msgid "Debugging Information"
-#~ msgstr "Відомості зневадження"
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Неможливо видалити версію Pidgin, що зараз встановлена. Нова версія буде "
+"встановлена без видалення поточної."
 
-#~ msgid ""
-#~ "Unrecognized file type\n"
-#~ "\n"
-#~ "Defaulting to PNG."
-#~ msgstr ""
-#~ "Невідомий тип файлу\n"
-#~ "\n"
-#~ "Вважається, що PNG."
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Відвідати сторінку тенет Pidgin"
 
-#~ msgid ""
-#~ "Error saving image\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Помилка збереження зображення\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid "Failed to open file '%s': %s"
-#~ msgstr "Не вдається відкрити файл '%s': %s"
-
-#~ msgid ""
-#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
-#~ msgstr ""
-#~ "Помилка завантаження зображення '%s': причина невідома, можливо, "
-#~ "пошкоджений файл зображення"
-
-#~ msgid "Insert an <iq/> stanza."
-#~ msgstr "Вставити строфу <iq/>."
-
-#~ msgid "Insert a <presence/> stanza."
-#~ msgstr "Вставити строфу <presence/>."
-
-#~ msgid "Insert a <message/> stanza."
-#~ msgstr "Вставити строфу <message/>."
-
-#~ msgid ""
-#~ "The last action you attempted could not be performed because you are over "
-#~ "the rate limit. Please wait 10 seconds and try again.\n"
-#~ msgstr ""
-#~ "Остання дія, яку ви намагалися зробити, не могла бути виконана, тому що "
-#~ "ви перевищили поріг. Будь ласка, зачекайте 10 секунд та спробуйте знову.\n"
-
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#~ msgid ""
-#~ "Unable to find alternative XMPP connection methods after failing to "
-#~ "connect directly."
-#~ msgstr ""
-#~ "Не вдалося знайти додатковий спосіб з'єднання XMPP після невдачі з'єдання "
-#~ "безпосередньо."
-
-#~ msgid "CAPTCHA requested. Logging into the AIM/ICQ website may fix this."
-#~ msgstr "Запитана CAPTCHA. Вхід на сторінку тенет AIM/ICQ може виправити це."
+msgid "You do not have permission to uninstall this application."
+msgstr "Ви не маєте права на видалення цієї програми."

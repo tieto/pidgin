@@ -166,7 +166,7 @@ static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 	ret[j++] = g_strdup("--display");
 	ret[j++] = g_strdup((gchar *)gdk_display_get_name(gdk_display_get_default()));
 
-	ret[j++] = NULL;
+	ret[j] = NULL;
 
 	return ret;
 }
@@ -346,7 +346,7 @@ pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 	purple_debug(PURPLE_DEBUG_INFO, "Session Management",
 			   "Connected to manager (%s) with client ID %s\n",
 			   tmp, client_id);
-	g_free(tmp);
+	free(tmp);
 
 	session_managed = TRUE;
 	gdk_set_sm_client_id(client_id);

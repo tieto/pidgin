@@ -386,15 +386,12 @@ static const guint8 login_53_68[16] = {
 /* process the login reply packet */
 guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 {
-	qq_data *qd;
 	guint8 ret = data[0];
 	gchar *msg, *msg_utf8;
 	gchar *error;
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR);
-
-	qd = (qq_data *) gc->proto_data;
 
 	switch (ret) {
 		case QQ_LOGIN_REPLY_OK:
@@ -588,9 +585,14 @@ gboolean qq_process_keep_alive_2008(guint8 *data, gint data_len, PurpleConnectio
 		inet_ntoa(qd->my_ip), qd->my_port);
 
 	tm_local = localtime(&server_time);
-	purple_debug_info("QQ", "Server time: %d-%d-%d, %d:%d:%d\n",
-			(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
-			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
+
+	if (tm_local != NULL)
+		purple_debug_info("QQ", "Server time: %d-%d-%d, %d:%d:%d\n",
+				(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
+				tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
+	else
+		purple_debug_error("QQ", "Server time could not be parsed\n");
+
 	return TRUE;
 }
 
@@ -811,11 +813,11 @@ static void captcha_request_destory(qq_captcha_request *captcha_req)
 static void captcha_input_cancel_cb(qq_captcha_request *captcha_req,
 		PurpleRequestFields *fields)
 {
-	captcha_request_destory(captcha_req);
-
 	purple_connection_error_reason(captcha_req->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 			_("Failed captcha verification"));
+
+	captcha_request_destory(captcha_req);
 }
 
 static void captcha_input_ok_cb(qq_captcha_request *captcha_req,

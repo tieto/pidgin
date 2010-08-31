@@ -35,89 +35,6 @@
 #include	"profile.h"
 
 
-/* MXit Moods */
-static const char*	moods[] = {
-	/* 0 */		N_("None"),
-	/* 1 */		N_("Angry"),
-	/* 2 */		N_("Excited"),
-	/* 3 */		N_("Grumpy"),
-	/* 4 */		N_("Happy"),
-	/* 5 */		N_("In Love"),
-	/* 6 */		N_("Invincible"),
-	/* 7 */		N_("Sad"),
-	/* 8 */		N_("Hot"),
-	/* 9 */		N_("Sick"),
-	/* 10 */	N_("Sleepy")
-};
-
-
-/*------------------------------------------------------------------------
- * The user has selected to change their current mood.
- *
- *  @param gc		The connection object
- *  @param fields	The fields from the request pop-up
- */
-static void mxit_cb_set_mood( PurpleConnection* gc, PurpleRequestFields* fields )
-{
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
-	int						mood	= purple_request_fields_get_choice( fields, "mood" );
-
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_set_mood (%i)\n", mood );
-
-	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Unable to set mood; account offline.\n" );
-		return;
-	}
-
-	/* Save the new mood in session */
-	session->mood = mood;
-
-	/* now send the update to MXit */
-	mxit_send_mood( session, mood );
-}
-
-
-/*------------------------------------------------------------------------
- * Create and display the mood selection window to the user.
- *
- *  @param action	The action object
- */
-static void mxit_cb_action_mood( PurplePluginAction* action )
-{
-	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
-
-	PurpleRequestFields*		fields	= NULL;
-	PurpleRequestFieldGroup*	group	= NULL;
-	PurpleRequestField*			field	= NULL;
-	unsigned int				i		= 0;
-
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_action_mood\n" );
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new( NULL );
-	purple_request_fields_add_group( fields, group );
-
-	/* show current mood */
-	field = purple_request_field_string_new( "current", _( "Current Mood" ), _( moods[session->mood] ), FALSE );
-	purple_request_field_string_set_editable( field, FALSE );	/* current mood field is not editable */
-	purple_request_field_group_add_field( group, field );
-
-	/* add all moods to list */
-	field = purple_request_field_choice_new( "mood", _( "New Mood" ), 0 );
-	for ( i = 0; i < ARRAY_SIZE( moods ); i++ ) {
-		purple_request_field_choice_add( field, _( moods[i] ) );
-	}
-	purple_request_field_set_required( field, TRUE );
-	purple_request_field_choice_set_default_value( field, session->mood );
-	purple_request_field_group_add_field( group, field );
-
-	/* (reference: "libpurple/request.h") */
-	purple_request_fields( gc, _( "Mood" ), _( "Change your Mood" ), _( "How do you feel right now?" ), fields, _( "Set" ),
-			G_CALLBACK( mxit_cb_set_mood ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
-}
-
-
 /*------------------------------------------------------------------------
  * The user has selected to change their profile.
  *
@@ -169,7 +86,7 @@ static void mxit_cb_set_profile( PurpleConnection* gc, PurpleRequestFields* fiel
 	/* validate name */
 	name = purple_request_fields_get_string( fields, "name" );
 	if ( ( !name ) || ( strlen( name ) < 3 ) ) {
-		err = _( "The name you entered is invalid." );
+		err = _( "The Display Name you entered is invalid." );
 		goto out;
 	}
 
@@ -196,26 +113,26 @@ out:
 
 		/* update name */
 		g_strlcpy( profile->nickname, name, sizeof( profile->nickname ) );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROF_TYPE_UTF8, profile->nickname );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROFILE_TYPE_UTF8, profile->nickname );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update hidden */
 		field = purple_request_fields_get_field( fields, "hidden" );
 		profile->hidden = purple_request_field_bool_get_value( field );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROF_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update birthday */
-		strcpy( profile->birthday, bday );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROF_TYPE_UTF8, profile->birthday );
+		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROFILE_TYPE_UTF8, profile->birthday );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update gender */
 		profile->male = ( purple_request_fields_get_choice( fields, "male" ) != 0 );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROF_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROFILE_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -224,8 +141,8 @@ out:
 		if ( !name )
 			profile->title[0] = '\0';
 		else
-			strcpy( profile->title, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROF_TYPE_UTF8, profile->title );
+			g_strlcpy( profile->title, name, sizeof( profile->title ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROFILE_TYPE_UTF8, profile->title );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -234,8 +151,8 @@ out:
 		if ( !name )
 			profile->firstname[0] = '\0';
 		else
-			strcpy( profile->firstname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROF_TYPE_UTF8, profile->firstname );
+			g_strlcpy( profile->firstname, name, sizeof( profile->firstname ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROFILE_TYPE_UTF8, profile->firstname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -244,8 +161,8 @@ out:
 		if ( !name )
 			profile->lastname[0] = '\0';
 		else
-			strcpy( profile->lastname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROF_TYPE_UTF8, profile->lastname );
+			g_strlcpy( profile->lastname, name, sizeof( profile->lastname ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROFILE_TYPE_UTF8, profile->lastname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -254,8 +171,8 @@ out:
 		if ( !name )
 			profile->email[0] = '\0';
 		else
-			strcpy( profile->email, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROF_TYPE_UTF8, profile->email );
+			g_strlcpy( profile->email, name, sizeof( profile->email ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROFILE_TYPE_UTF8, profile->email );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -264,8 +181,8 @@ out:
 		if ( !name )
 			profile->mobilenr[0] = '\0';
 		else
-			strcpy( profile->mobilenr, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROF_TYPE_UTF8, profile->mobilenr );
+			g_strlcpy( profile->mobilenr, name, sizeof( profile->mobilenr ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROFILE_TYPE_UTF8, profile->mobilenr );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -308,6 +225,15 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	group = purple_request_field_group_new( NULL );
 	purple_request_fields_add_group( fields, group );
 
+#if	0
+	/* UID (read-only) */
+	if ( session->uid ) {
+		field = purple_request_field_string_new( "mxitid", _( "Your UID" ), session->uid, FALSE );
+		purple_request_field_string_set_editable( field, FALSE );
+		purple_request_field_group_add_field( group, field );
+	}
+#endif
+
 	/* pin */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
@@ -323,6 +249,8 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	/* birthday */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_group_add_field( group, field );
+	if ( profile->flags & CP_PROF_DOBLOCKED )
+		purple_request_field_string_set_editable( field, FALSE );
 
 	/* gender */
 	field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );
@@ -335,7 +263,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	purple_request_field_group_add_field( group, field );
 
 	/* title */
-	field = purple_request_field_string_new( "title", _( "Job Title" ), profile->title, FALSE );
+	field = purple_request_field_string_new( "title", _( "Title" ), profile->title, FALSE );
 	purple_request_field_group_add_field( group, field );
 
 	/* first name */
@@ -387,11 +315,12 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 	char	version[256];
 
 	g_snprintf( version, sizeof( version ), "MXit libPurple Plugin v%s\n"
-											"MXit Client Protocol v%s\n\n"
+											"MXit Client Protocol v%i.%i\n\n"
 											"Author:\nPieter Loubser\n\n"
 											"Contributors:\nAndrew Victor\n\n"
 											"Testers:\nBraeme Le Roux\n\n",
-											MXIT_PLUGIN_VERSION, MXIT_CP_RELEASE );
+											MXIT_PLUGIN_VERSION,
+											( MXIT_CP_PROTO_VESION / 10 ), ( MXIT_CP_PROTO_VESION % 10 ) );
 
 	mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "About" ), version );
 }
@@ -408,10 +337,6 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 {
 	PurplePluginAction*		action	= NULL;
 	GList*					m		= NULL;
-
-	/* display / change mood */
-	action = purple_plugin_action_new( _( "Change Mood..." ), mxit_cb_action_mood );
-	m = g_list_append( m, action );
 
 	/* display / change profile */
 	action = purple_plugin_action_new( _( "Change Profile..." ), mxit_cb_action_profile );

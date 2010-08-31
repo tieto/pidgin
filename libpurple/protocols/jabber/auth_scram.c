@@ -47,6 +47,32 @@ static const JabberScramHash *mech_to_hash(const char *mech)
 	g_return_val_if_reached(NULL);
 }
 
+static const struct {
+	const char *error;
+	const char *meaning;
+} server_errors[] = {
+	{ "invalid-encoding",
+		N_("Invalid Encoding")},
+	{ "extensions-not-supported",
+		N_("Unsupported Extension") },
+	{ "channel-bindings-dont-match",
+		N_("Unexpected response from the server.  This may indicate a possible MITM attack") },
+	{ "server-does-support-channel-binding",
+		N_("The server does support channel binding, but did not appear to advertise it.  This indicates a likely MITM attack") },
+	{ "channel-binding-not-supported",
+		N_("Server does not support channel binding") },
+	{ "unsupported-channel-binding-type",
+		N_("Unsupported channel binding method") },
+	{ "unknown-user",
+		N_("User not found") },
+	{ "invalid-username-encoding",
+		N_("Invalid Username Encoding") },
+	{ "no-resources",
+		N_("Resource Constraint") },
+	{ "other-error",
+		N_("Unknown Error") }
+};
+
 guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations)
 {
@@ -301,11 +327,17 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 #endif
 
 		ret = jabber_scram_calc_proofs(data, salt, iterations);
-		if (!ret)
+
+		g_string_free(salt, TRUE);
+		salt = NULL;
+		if (!ret) {
+			g_free(nonce);
 			return FALSE;
+		}
 
 		proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
 		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biws", nonce, proof);
+		g_free(nonce);
 		g_free(proof);
 	} else if (data->step == 2) {
 		gchar *server_sig, *enc_server_sig;
@@ -419,7 +451,7 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 {
 	JabberScramData *data = js->auth_mech_data;
 	xmlnode *reply;
-	gchar *enc_in, *dec_in;
+	gchar *enc_in, *dec_in = NULL;
 	gchar *enc_out = NULL, *dec_out = NULL;
 	gsize len;
 	JabberSaslState state = JABBER_SASL_STATE_FAIL;
@@ -434,7 +466,6 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	}
 
 	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
-	g_free(enc_in);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		reply = xmlnode_new("abort");
@@ -468,6 +499,8 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	state = JABBER_SASL_STATE_CONTINUE;
 
 out:
+	g_free(enc_in);
+	g_free(dec_in);
 	g_free(enc_out);
 	g_free(dec_out);
 
@@ -484,13 +517,24 @@ scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
 	gsize len;
 
 	enc_in = xmlnode_get_data(packet);
-	g_return_val_if_fail(enc_in != NULL && *enc_in != '\0', FALSE);
+	if (data->step != 3 && (!enc_in || *enc_in == '\0')) {
+		*error = g_strdup(_("Invalid challenge from server"));
+		g_free(enc_in);
+		return JABBER_SASL_STATE_FAIL;
+	}
 
-	if (data->step == 3)
+	if (data->step == 3) {
+		/*
+		 * If the server took the slow approach (sending the verifier
+		 * as a challenge/response pair), we get here.
+		 */
+		g_free(enc_in);
 		return JABBER_SASL_STATE_OK;
+	}
 
 	if (data->step != 2) {
 		*error = g_strdup(_("Unexpected response from server"));
+		g_free(enc_in);
 		return JABBER_SASL_STATE_FAIL;
 	}
 
@@ -499,18 +543,20 @@ scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		g_free(dec_in);
-		*error = g_strdup(_("Invalid challenge from server"));
+		*error = g_strdup(_("Malicious challenge from server"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 
 	purple_debug_misc("jabber", "decoded success: %s\n", dec_in);
 
 	if (!jabber_scram_feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
+		g_free(dec_in);
 		g_free(dec_out);
 		*error = g_strdup(_("Invalid challenge from server"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 
+	g_free(dec_in);
 	/* Hooray */
 	return JABBER_SASL_STATE_OK;
 }

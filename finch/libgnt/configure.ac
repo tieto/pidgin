@@ -24,9 +24,9 @@ AC_PREREQ([2.50])
 # Make sure to update ../../configure.ac with libgnt version changes.
 #
 
-m4_define([gnt_lt_current], [7])
+m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [7])
+m4_define([gnt_minor_version], [8])
 m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
@@ -265,6 +265,10 @@ else
 	for location in $ac_ncurses_includes /usr/include/ncursesw /usr/include
 	do
 		f="$location/ncurses.h"
+		orig_CFLAGS="$CFLAGS"
+		orig_CPPFLAGS="$CPPFLAGS"
+		CFLAGS="$CFLAGS -I$location"
+		CPPFLAGS="$CPPFLAGS -I$location"
 		AC_CHECK_HEADER($f,[
 			AC_MSG_CHECKING([if $f supports wide characters])
 			AC_TRY_COMPILE([
@@ -283,9 +287,13 @@ else
 				fi
 
 				found_ncurses_h=yes
+				CFLAGS="$orig_CFLAGS"
+				CPPFLAGS="$orig_CPPFLAGS"
 				AC_MSG_RESULT([yes])
 				break
 			], [
+				CFLAGS="$orig_CFLAGS"
+				CPPFLAGS="$orig_CPPFLAGS"
 				AC_MSG_RESULT([no])
 			])
 		])

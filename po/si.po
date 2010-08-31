@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: si\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2008-05-17 11:08+0530\n"
 "Last-Translator: Yajith Ajantha Dayarathna <yajith@gmail.com>\n"
 "Language-Team: Sinhala <sinhala@linux.lk>\n"
+"Language: si\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -50,10 +51,22 @@ msgstr ""
 msgid "Error"
 msgstr "දෝෂය"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "ගිණුම එක් නොවුනි"
+
 msgid "Account was not added"
 msgstr "ගිණුම එක් නොවුනි"
 
 msgid "Username of an account must be non-empty."
+msgstr ""
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
 msgstr ""
 
 msgid "New mail notifications"
@@ -744,7 +757,7 @@ msgstr "නවතන්න"
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "අහෝසි කරන්න"
 
 msgid "Failed"
@@ -1213,6 +1226,10 @@ msgstr ""
 msgid "Someone says your username in chat"
 msgstr ""
 
+#, fuzzy
+msgid "Attention received"
+msgstr "සත්‍යාපනය අසමත් විය"
+
 msgid "GStreamer Failure"
 msgstr ""
 
@@ -1304,7 +1321,6 @@ msgid "Saved Statuses"
 msgstr ""
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "සිරස්තලය"
 
@@ -1493,7 +1509,7 @@ msgstr ""
 msgid "Online"
 msgstr ""
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "නොබැඳි"
 
@@ -1590,6 +1606,12 @@ msgstr ""
 msgid "Set User Info"
 msgstr ""
 
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
+msgstr ""
+
 msgid "Unknown"
 msgstr "නොදන්නා"
 
@@ -1607,7 +1629,9 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-msgid "The certificate is not valid yet."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
 msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
@@ -1829,7 +1853,6 @@ msgstr "%s ආරම්භ කිරීමේ දෝශයක්: %s"
 msgid "Thread creation failure: %s"
 msgstr ""
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "නොදන්නා හේතුවක්"
 
@@ -3027,6 +3050,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "පළමු නම"
 
@@ -3593,12 +3619,6 @@ msgstr ""
 msgid "execute"
 msgstr ""
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3628,12 +3648,53 @@ msgstr ""
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+
 #, fuzzy
 msgid "SASL authentication failed"
 msgstr "සත්‍යාපනය අසමත් විය"
 
 #, c-format
 msgid "SASL error: %s"
+msgstr ""
+
+msgid "Invalid Encoding"
+msgstr ""
+
+msgid "Unsupported Extension"
+msgstr ""
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+msgid "Server does not support channel binding"
+msgstr ""
+
+msgid "Unsupported channel binding method"
+msgstr ""
+
+msgid "User not found"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "සාවද්‍ය රහස්පදයකී."
+
+msgid "Resource Constraint"
 msgstr ""
 
 #, fuzzy
@@ -3703,6 +3764,7 @@ msgstr "කළාපය"
 msgid "Postal Code"
 msgstr "තැපැල් අංකය"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "රට"
 
@@ -3717,10 +3779,14 @@ msgstr "ආයතන නම"
 msgid "Organization Unit"
 msgstr "ආයතන ඒකකය"
 
+msgid "Job Title"
+msgstr "රැකියා තනතුර"
+
 msgid "Role"
 msgstr "කාර්‍යය"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "උපන්දිනය"
 
@@ -3939,10 +4005,19 @@ msgstr ""
 msgid "Roles:"
 msgstr "කාර්‍යය"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 msgid "Ping timed out"
 msgstr ""
 
 msgid "Invalid XMPP ID"
+msgstr ""
+
+msgid "Invalid XMPP ID. Username portion must be set."
 msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
@@ -4041,7 +4116,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4063,7 +4137,6 @@ msgstr "වෙත"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr "කිසිවක් නැත"
 
@@ -4085,6 +4158,12 @@ msgstr "නමක් නැත"
 msgid "Mood Comment"
 msgstr "ගිණුම වෙනස් කරන්න"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4253,9 +4332,6 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
-
-msgid "Resource Constraint"
 msgstr ""
 
 msgid "Restricted XML"
@@ -4593,7 +4669,6 @@ msgstr "සජිවිකරණය"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr ""
 
@@ -4687,7 +4762,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr ""
 
@@ -4705,7 +4779,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "ලබාගනිමින්"
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "සමුහය"
@@ -4714,14 +4787,12 @@ msgstr "සමුහය"
 msgid "Guilty"
 msgstr "නගරය"
 
-#. 4
 msgid "Happy"
 msgstr ""
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 msgid "Hot"
 msgstr ""
 
@@ -4759,7 +4830,6 @@ msgstr "අතුරු මූණත"
 msgid "Intoxicated"
 msgstr "ඇරයුම"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -4823,7 +4893,6 @@ msgstr "ඉවත් කරන්න"
 msgid "Restless"
 msgstr "මුල්ම තත්වයට සකසන්න"
 
-#. 7
 msgid "Sad"
 msgstr ""
 
@@ -4842,11 +4911,9 @@ msgstr ""
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr ""
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5240,18 +5307,6 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "ශිල්පියා"
-
-msgid "Album"
-msgstr ""
-
 #, fuzzy
 msgid "Game Title"
 msgstr "සිරස්තලය"
@@ -5400,9 +5455,6 @@ msgstr "සාංවත්සරික"
 msgid "Work"
 msgstr "වැඩ"
 
-msgid "Job Title"
-msgstr "රැකියා තනතුර"
-
 msgid "Company"
 msgstr "සේවාස්ථානය"
 
@@ -5485,6 +5537,9 @@ msgid "HTTP Method Server"
 msgstr ""
 
 msgid "Show custom smileys"
+msgstr ""
+
+msgid "Allow direct connections"
 msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
@@ -5658,27 +5713,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr ""
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "වර්තමාන කේත රචකයන්"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "නව පණිවිඩය"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "රහස්පදය වෙනස් කරන්න"
-
-msgid "How do you feel right now?"
-msgstr ""
-
 msgid "The PIN you entered is invalid."
 msgstr ""
 
@@ -5711,7 +5745,11 @@ msgstr ""
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -5720,6 +5758,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "පෙලපත් නාමය"
@@ -5748,11 +5787,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "%s සම්බන්ධව"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "රහස්පදය වෙනස් කරන්න"
 
 #. display / change profile
 #, fuzzy
@@ -5789,20 +5823,15 @@ msgstr ""
 msgid "Connecting..."
 msgstr "සම්බන්ධ (_o)"
 
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr ""
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name
-#, fuzzy
-msgid "Nick Name"
-msgstr "අනුර්ත නම"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -5831,10 +5860,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 msgid "Internal error. Please try again later."
@@ -5846,7 +5875,7 @@ msgstr ""
 msgid "Security Code"
 msgstr ""
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "රහස්පදය ඇතුළත් කරන්න"
@@ -5880,12 +5909,17 @@ msgid "Status Message"
 msgstr "පණිවිඩයක් යවන ලදි"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "නව ක්‍ෂණික පණිවිඩය"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "ගෘහස්ථ දුරකථනය 2"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "ජංගම දුරකථනය"
+msgid "Your MXit ID..."
+msgstr "තෝරන්න..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5899,6 +5933,27 @@ msgstr "සම්බන්ධ (_o)"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "%s අභාවිත විය (%s)"
+
+msgid "was kicked"
+msgstr ""
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "කාමරය (_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "ඔබට තැපෑලක් ඇත!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "අවසන් නම"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6012,6 +6067,9 @@ msgstr ""
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
 msgstr ""
 
 #, fuzzy
@@ -6403,9 +6461,6 @@ msgstr ""
 msgid "Incorrect password"
 msgstr ""
 
-msgid "User not found"
-msgstr ""
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6644,11 +6699,73 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s ධාවනය කිරීමේ දෝශයක්."
+
 msgid "Could not join chat room"
 msgstr ""
 
 msgid "Invalid chat room name"
 msgstr ""
+
+msgid "Invalid error"
+msgstr ""
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+msgid "Cannot send SMS"
+msgstr ""
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr ""
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+msgid "Offline message store full"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 
 msgid "Thinking"
 msgstr ""
@@ -6807,117 +6924,6 @@ msgstr ""
 
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
-msgstr ""
-
-msgid "Invalid error"
-msgstr ""
-
-msgid "Invalid SNAC"
-msgstr ""
-
-msgid "Rate to host"
-msgstr ""
-
-msgid "Rate to client"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr ""
-
-msgid "Service not defined"
-msgstr ""
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr ""
-
-msgid "Not supported by client"
-msgstr ""
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-msgid "Responses lost"
-msgstr ""
-
-msgid "Request denied"
-msgstr ""
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr ""
-
-msgid "No match"
-msgstr ""
-
-msgid "List overflow"
-msgstr ""
-
-msgid "Request ambiguous"
-msgstr ""
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
-msgstr ""
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-msgid "Cannot send SMS"
-msgstr ""
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr ""
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-msgid "Offline message store full"
 msgstr ""
 
 msgid ""
@@ -7235,27 +7241,8 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
 #, c-format
 msgid "User information not available: %s"
-msgstr ""
-
-msgid "Unknown reason."
 msgstr ""
 
 msgid "Online Since"
@@ -7636,6 +7623,75 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 
+msgid "Invalid SNAC"
+msgstr ""
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr ""
+
+msgid "Service not defined"
+msgstr ""
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr ""
+
+msgid "Not supported by client"
+msgstr ""
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+msgid "Responses lost"
+msgstr ""
+
+msgid "Request denied"
+msgstr ""
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr ""
+
+msgid "No match"
+msgstr ""
+
+msgid "List overflow"
+msgstr ""
+
+msgid "Request ambiguous"
+msgstr ""
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
+msgstr ""
+
 msgid "Aquarius"
 msgstr ""
 
@@ -7943,6 +7999,11 @@ msgstr "ඉතිරිය"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "කාමර ලැයිස්තුව"
 
 #, fuzzy
 msgid "Notice"
@@ -9777,9 +9838,6 @@ msgstr "තෝරන්න..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "නියමාවලිය"
 
-msgid "Pager server"
-msgstr ""
-
 msgid "Pager port"
 msgstr ""
 
@@ -9795,16 +9853,10 @@ msgstr ""
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-msgid "Yahoo Chat port"
 msgstr ""
 
 #, fuzzy
@@ -9866,6 +9918,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -9935,6 +9993,14 @@ msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙම�
 
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
+msgstr ""
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
 msgstr ""
 
 msgid "Not at Home"
@@ -10294,6 +10360,10 @@ msgstr "නැත (_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr ""
 
@@ -10526,12 +10596,6 @@ msgstr "අන්තර්ජාල පණිවිඩකරු"
 
 msgid "Pidgin Internet Messenger"
 msgstr ""
-
-msgid "Orientation"
-msgstr "දිශානතිය"
-
-msgid "The orientation of the tray."
-msgstr "තැටියේ දිශානතිය."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11687,6 +11751,10 @@ msgstr ""
 msgid "Arabic"
 msgstr "අරාබී"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "ක්‍රිඩා"
+
 msgid "Belarusian Latin"
 msgstr "බෙලරුසියානු ලතින්"
 
@@ -11694,6 +11762,10 @@ msgid "Bulgarian"
 msgstr "බල්ගේරියානු"
 
 msgid "Bengali"
+msgstr "බෙන්ගාලි"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "බෙන්ගාලි"
 
 msgid "Bosnian"
@@ -11814,6 +11886,10 @@ msgid "Macedonian"
 msgstr "මැසඩෝනියානු"
 
 #, fuzzy
+msgid "Malayalam"
+msgstr "පුරුෂ"
+
+#, fuzzy
 msgid "Mongolian"
 msgstr "මැසඩෝනියානු"
 
@@ -11932,8 +12008,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 
 #, c-format
@@ -12468,14 +12544,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 
 #, fuzzy
@@ -12564,10 +12640,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -13393,10 +13469,6 @@ msgstr "වර්‍ග කිරීම"
 
 msgid "Custom Smiley Manager"
 msgstr ""
-
-#, fuzzy
-msgid "Attention received"
-msgstr "සත්‍යාපනය අසමත් විය"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -14518,7 +14590,17 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+#, fuzzy
+msgid "Use system default"
+msgstr "ප්‍රකෘතිය"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -14726,6 +14808,167 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "මෙම ඈඳුතුව XMPP සේවා දායකයන්හි නිරවද්‍යකරනයන් කිරීමට ප්‍රයෝජනවත් වේ."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "ප්‍රකෘතිය"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ ධාවනකාල අනුවාදය"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "පිහිටීම"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr ""
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "වර්‍ග කිරීම"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "පණගැන්වුම"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "අනුර්ත නම"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "ජංගම දුරකථනය"
+
+#~ msgid "Artist"
+#~ msgstr "ශිල්පියා"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "වර්තමාන කේත රචකයන්"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "නව පණිවිඩය"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "රහස්පදය වෙනස් කරන්න"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "රහස්පදය වෙනස් කරන්න"
+
+#~ msgid "Orientation"
+#~ msgstr "දිශානතිය"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "තැටියේ දිශානතිය."
+
 #, fuzzy
 #~ msgid "Unable to bind socket to port: %s"
 #~ msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
@@ -14763,9 +15006,6 @@ msgstr "මෙම ඈඳුතුව XMPP සේවා දායකයන්හ�
 
 #~ msgid "_User:"
 #~ msgstr "පරිශීලක (_U):"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ ධාවනකාල අනුවාදය"
 
 #, fuzzy
 #~ msgid "Calling ... "

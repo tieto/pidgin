@@ -40,6 +40,9 @@
 #define PIDGINXFER(xfer) \
 	(PidginXferUiData *)(xfer)->ui_data
 
+/* the maximum size of files we will try to make a thumbnail for */
+#define PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL 10 * 1024 * 1024
+
 struct _PidginXferDialog
 {
 	gboolean keep_open;
@@ -109,12 +112,9 @@ static void
 get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 					  char **time_remaining)
 {
-	PidginXferUiData *data;
 	double kb_sent, kb_rem;
 	double kbps = 0.0;
 	time_t elapsed, now;
-
-	data = PIDGINXFER(xfer);
 
 	if (xfer->end_time != 0)
 		now = xfer->end_time;
@@ -156,7 +156,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 			*time_remaining = g_strdup(_("Finished"));
 		}
 		else if (purple_xfer_is_canceled(xfer)) {
-			*time_remaining = g_strdup(_("Canceled"));
+			*time_remaining = g_strdup(_("Cancelled"));
 		}
 		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
 			*time_remaining = g_strdup(_("Unknown"));
@@ -992,7 +992,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									GTK_ICON_SIZE_MENU, NULL);
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Canceled");
+		status = _("Cancelled");
 	else
 		status = _("Failed");
 
@@ -1012,7 +1012,6 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 {
 	PidginXferUiData *data;
 	char *size_str, *remaining_str;
-	GtkTreeSelection *selection;
 	time_t current_time;
 	GtkTreeIter iter;
 	gboolean valid;
@@ -1062,8 +1061,6 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 
 		g_object_unref(pixbuf);
 	}
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 
 	update_title_progress(dialog);
 	if (xfer == dialog->selected_xfer)
@@ -1157,6 +1154,67 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 		pidgin_xfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
+static void
+pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
+{	
+	purple_debug_info("ft", "creating thumbnail for transfer\n");
+
+	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
+		GdkPixbuf *thumbnail = 
+			gdk_pixbuf_new_from_file_at_size(
+				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
+
+		if (thumbnail) {
+			gchar **formats_split = g_strsplit(formats, ",", 0);
+			gchar *buffer = NULL;
+			gsize size;
+			char *option_keys[2] = {NULL, NULL};
+			char *option_values[2] = {NULL, NULL};
+			int i;
+			gchar *format = NULL;
+			
+			for (i = 0; formats_split[i]; i++) {
+				if (purple_strequal(formats_split[i], "jpeg")) {
+					purple_debug_info("ft", "creating JPEG thumbnail\n");
+					option_keys[0] = "quality";
+					option_values[0] = "90";
+					format = "jpeg";
+					break;
+				} else if (purple_strequal(formats_split[i], "png")) {
+					purple_debug_info("ft", "creating PNG thumbnail\n");
+					option_keys[0] = "compression";
+					option_values[0] = "9";
+					format = "png";
+					break;
+				}
+			}
+
+			/* Try the first format given by the PRPL without options */
+			if (format == NULL) {
+				purple_debug_info("ft",
+				    "creating thumbnail of format %s as demanded by PRPL\n",
+				    formats_split[0]);
+				format = formats_split[0];
+			}
+
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format, 
+				option_keys, option_values, NULL);
+
+			if (buffer) {
+				gchar *mimetype = g_strdup_printf("image/%s", format);				
+				purple_debug_info("ft",
+				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
+					size);
+				purple_xfer_set_thumbnail(xfer, buffer, size, mimetype);
+				g_free(buffer);
+				g_free(mimetype);
+			}
+			g_object_unref(thumbnail);
+			g_strfreev(formats_split);
+		}
+	}
+}
+
 static PurpleXferUiOps ops =
 {
 	pidgin_xfer_new_xfer,
@@ -1168,7 +1226,7 @@ static PurpleXferUiOps ops =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	pidgin_xfer_add_thumbnail
 };
 
 /**************************************************************************

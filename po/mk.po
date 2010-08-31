@@ -11,10 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2008-05-07 12:24+0200\n"
 "Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
+"Language: mk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -64,11 +65,23 @@ msgstr ""
 msgid "Error"
 msgstr "Грешка"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "Сметката не е додадена"
+
 msgid "Account was not added"
 msgstr "Сметката не е додадена"
 
 msgid "Username of an account must be non-empty."
 msgstr "Корисничкото име не смее да биде празно."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Известувања за нова пошта"
@@ -151,8 +164,8 @@ msgstr "Да го додадам пријателот во листата?"
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
 msgstr ""
-"%s%s%s%s сака да го додаде %s на неговата или нејзината листа на пријатели%s%"
-"s"
+"%s%s%s%s сака да го додаде %s на неговата или нејзината листа на пријатели%s"
+"%s"
 
 msgid "Authorize buddy?"
 msgstr "Да го авторизирам пријателот?"
@@ -793,7 +806,7 @@ msgstr "Стопирај"
 msgid "Waiting for transfer to begin"
 msgstr "Чекам да започне преносот"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Откажано"
 
 msgid "Failed"
@@ -1266,6 +1279,10 @@ msgstr "Другите зборуваат во разговор"
 msgid "Someone says your username in chat"
 msgstr "Некој го напишал Вашето име во разговорот"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Потребна е регистрација"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer не успеа"
 
@@ -1359,7 +1376,6 @@ msgid "Saved Statuses"
 msgstr "Зачувани статуси"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Наслов"
 
@@ -1557,7 +1573,7 @@ msgstr ""
 msgid "Online"
 msgstr "Поврзано"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Офлајн"
 
@@ -1650,6 +1666,14 @@ msgstr "Промени корисничко инфо за %s"
 msgid "Set User Info"
 msgstr "Постави ги информациите за корисникот"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Овој протокол не поддржува соби за разговор."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Овој протокол не поддржува соби за разговор."
+
 msgid "Unknown"
 msgstr "Непознато"
 
@@ -1670,9 +1694,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "Ланецот за сертификатот презентиран за %s не е валиден."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 #, fuzzy
 msgid "The certificate has expired and should not be considered valid."
@@ -1909,7 +1934,6 @@ msgstr "Грешка при преведување на %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Креирањето на нишката не успеа: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Непозната причина"
 
@@ -3201,6 +3225,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Име"
 
@@ -3813,14 +3840,6 @@ msgstr "Ад-хок командата не успеа"
 msgid "execute"
 msgstr "изврши"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Серверот бара TLS/SSL за најавување.  Не пронајдов TLS/SSL поддршка."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Серверот бара TLS/SSL за најавување, но не пронајдов поддршка за тоа."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Серверот бара проверка на автентичност со чист текст преку неенкриптиран тек"
@@ -3854,12 +3873,61 @@ msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 
 #, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Серверот бара проверка на автентичност со чист текст преку неенкриптиран тек"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s има потреба од проверка со обичен текст преку некодирана врска.  Да го "
+"дозволам ова и да продолжам со проверката?"
+
+#, fuzzy
 msgid "SASL authentication failed"
 msgstr "Проверката не успеа"
 
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL грешка"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Невалиден влезен услов"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Неподдржана верзија"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Серверот не користи поддржан метод за проверка"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Неподдржан енкодинг"
+
+msgid "User not found"
+msgstr "Корисникот не е пронајден"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Невалидно корисничко име."
+
+msgid "Resource Constraint"
+msgstr "Задржување на ресурси"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3936,6 +4004,7 @@ msgstr "Регион"
 msgid "Postal Code"
 msgstr "Поштенски број"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Држава"
 
@@ -3950,10 +4019,14 @@ msgstr "Име на организација"
 msgid "Organization Unit"
 msgstr "Организациона единица"
 
+msgid "Job Title"
+msgstr "Наслов на работака"
+
 msgid "Role"
 msgstr "Улога"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Роденден"
 
@@ -4180,11 +4253,23 @@ msgid "Roles:"
 msgstr "Улога"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Серверот бара TLS/SSL за најавување.  Не пронајдов TLS/SSL поддршка."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Серверот бара TLS/SSL за најавување, но не пронајдов поддршка за тоа."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Времето за ping истече"
 
 msgid "Invalid XMPP ID"
 msgstr "Невалидно XMPP ID."
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Невалиден XMPP ид. Мора да поставите домен."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Невалиден XMPP ид. Мора да поставите домен."
@@ -4287,7 +4372,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Не сте авторизирани"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Расположение"
 
@@ -4309,7 +4393,6 @@ msgstr "До"
 msgid "None (To pending)"
 msgstr "Ништо (се чека)"
 
-#. 0
 msgid "None"
 msgstr "Ништо"
 
@@ -4331,6 +4414,12 @@ msgstr "Средно име"
 msgid "Mood Comment"
 msgstr "Коментар за пријател"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Артист за песната"
 
@@ -4500,9 +4589,6 @@ msgstr "Прекршување на правилата"
 
 msgid "Remote Connection Failed"
 msgstr "Далечната врска не успеа"
-
-msgid "Resource Constraint"
-msgstr "Задржување на ресурси"
 
 msgid "Restricted XML"
 msgstr "Забранет XML"
@@ -4860,7 +4946,6 @@ msgstr "Засрамен"
 msgid "Amorous"
 msgstr "Сјајно"
 
-#. 1
 msgid "Angry"
 msgstr "Лут"
 
@@ -4958,7 +5043,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Вознемирен"
 
-#. 2
 msgid "Excited"
 msgstr "Возбуден"
 
@@ -4977,7 +5061,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Земам..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Група"
@@ -4986,14 +5069,12 @@ msgstr "Група"
 msgid "Guilty"
 msgstr "Град"
 
-#. 4
 msgid "Happy"
 msgstr "Среќен"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Хост:"
@@ -5034,7 +5115,6 @@ msgstr "Интереси"
 msgid "Intoxicated"
 msgstr "Покани"
 
-#. 6
 msgid "Invincible"
 msgstr "Непобедлив"
 
@@ -5098,7 +5178,6 @@ msgstr "Отстрани"
 msgid "Restless"
 msgstr "Регистрирај"
 
-#. 7
 msgid "Sad"
 msgstr "Тажен"
 
@@ -5119,12 +5198,10 @@ msgstr "Блокирано"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Прекар"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Сонлив"
@@ -5530,18 +5607,6 @@ msgstr "На телефон"
 msgid "Out to Lunch"
 msgstr "На ручек"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Артист"
-
-msgid "Album"
-msgstr "Албум"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Наслов на песната"
@@ -5696,9 +5761,6 @@ msgstr "Годишнина"
 msgid "Work"
 msgstr "Работа"
 
-msgid "Job Title"
-msgstr "Наслов на работака"
-
 msgid "Company"
 msgstr "Компанија"
 
@@ -5787,6 +5849,10 @@ msgstr "HTTP метод за сервер"
 
 msgid "Show custom smileys"
 msgstr "Прикажи посебни емоции"
+
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Не можам да креирам врска"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: испратете nudge на корисник за да го привлечете вниманието"
@@ -5995,28 +6061,6 @@ msgstr "Дали сакате да го додадете овој пријате
 msgid "The username specified is invalid."
 msgstr "Името за екранот е невалидно."
 
-#. 5
-msgid "In Love"
-msgstr "Заљубен"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Вашето моментално расположение"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Расположение на корисникот"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Промени ја лозинката"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Не сум тука моментално"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "SecurID клучот кој го внесовте е невалиден."
@@ -6053,7 +6097,11 @@ msgstr "Профил"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6062,6 +6110,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Презиме"
@@ -6091,11 +6140,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "За %s"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Промени ја лозинката..."
 
 #. display / change profile
 #, fuzzy
@@ -6140,7 +6184,7 @@ msgid "Connecting..."
 msgstr "Поврзување"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "SecurID клучот кој го внесовте е невалиден."
 
 #, fuzzy
@@ -6148,13 +6192,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "SecurID клучот кој го внесовте е невалиден."
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name
-#, fuzzy
-msgid "Nick Name"
-msgstr "Прекар"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6184,10 +6223,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -6201,7 +6240,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Безбедноста е овозможена"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Внесете лозинка:"
@@ -6235,12 +6274,17 @@ msgid "Status Message"
 msgstr "Испратени пораки"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Примени пораки"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Средно име"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "Постави мобилен број..."
+msgid "Your MXit ID..."
+msgstr "Yahoo! Ид."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6254,6 +6298,28 @@ msgstr "Се поврзувам преку TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Бевте исфрлени од %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Лош тикет"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Соба:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Имате пошта!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Поврзано"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6373,6 +6439,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Заљубен"
 
 #, fuzzy
 msgid "Pending"
@@ -6765,9 +6834,6 @@ msgstr "Рокот на лозинката истече"
 msgid "Incorrect password"
 msgstr "Грешна лозинка"
 
-msgid "User not found"
-msgstr "Корисникот не е пронајден"
-
 msgid "Account has been disabled"
 msgstr "Сметката е оневозможена"
 
@@ -6855,8 +6921,8 @@ msgstr "Не можам да го поканам корисникот (%s)."
 #, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
-"Не успеав да испратам порака до %s. Не можам да ја креирам конференцијата (%"
-"s)."
+"Не успеав да испратам порака до %s. Не можам да ја креирам конференцијата "
+"(%s)."
 
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
@@ -6902,8 +6968,8 @@ msgstr "Не можам да го отстранам %s од листата за
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
 msgstr ""
-"Не успеав да ги сменам поставувањата за приватност на страна на серверот (%"
-"s)."
+"Не успеав да ги сменам поставувањата за приватност на страна на серверот "
+"(%s)."
 
 #, c-format
 msgid "Unable to create conference (%s)."
@@ -7028,11 +7094,76 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Грешка при барањето на токенот за најава"
+
 msgid "Could not join chat room"
 msgstr "Не можам да се приклучам на собата за чет"
 
 msgid "Invalid chat room name"
 msgstr "Невалидно име на соба за чет"
+
+msgid "Invalid error"
+msgstr "Невалидна грешка"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Не можам да ја испратам датотеката"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Не можам да испратам директориум."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Не можам да испратам порака."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Офлајн порака"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Не можам да испратам порака (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Не можам да ја испратам пораката: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Не успеав да ја испратам пораката до %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Не успеав да ја испратам пораката до %s:"
 
 msgid "Thinking"
 msgstr ""
@@ -7197,120 +7328,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Датотеката %s е %s, што е поголемо од максималната големина на %s."
-
-msgid "Invalid error"
-msgstr "Невалидна грешка"
-
-msgid "Invalid SNAC"
-msgstr "Невалиден SNAC"
-
-msgid "Rate to host"
-msgstr "Брзина до хостот"
-
-msgid "Rate to client"
-msgstr "Брзина до клиентот"
-
-msgid "Service unavailable"
-msgstr "Сервисот е недостапен "
-
-msgid "Service not defined"
-msgstr "Сервисот не е дефиниран"
-
-msgid "Obsolete SNAC"
-msgstr "Застарен SNAC"
-
-msgid "Not supported by host"
-msgstr "Не е поддржано од хостот"
-
-msgid "Not supported by client"
-msgstr "Не е поддржано од клиентот"
-
-msgid "Refused by client"
-msgstr "Одбиено од клиентот"
-
-msgid "Reply too big"
-msgstr "Одговорот е преголем"
-
-msgid "Responses lost"
-msgstr "Одговорите се загубени"
-
-msgid "Request denied"
-msgstr "Барањето е одбиено"
-
-msgid "Busted SNAC payload"
-msgstr "Скршена SNAC пратка"
-
-msgid "Insufficient rights"
-msgstr "Немам доволно права"
-
-msgid "In local permit/deny"
-msgstr "Локално дозволи/одбиј"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Корисник е привремено недостапен"
-
-msgid "No match"
-msgstr "Нема пронајдени резултати"
-
-msgid "List overflow"
-msgstr "Преполнување на листата"
-
-msgid "Request ambiguous"
-msgstr "Барањето е двосмислено"
-
-msgid "Queue full"
-msgstr "Редот е полн"
-
-msgid "Not while on AOL"
-msgstr "Не додека сум на AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Не можам да ја испратам датотеката"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Не можам да испратам директориум."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Не можам да испратам порака."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Офлајн порака"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7678,28 +7695,9 @@ msgstr[0] "Пропуштивте %hu порака од %s поради непо
 msgstr[1] "Пропуштивте %hu пораки од %s поради непозната причина."
 msgstr[2] "Пропуштивте %hu пораки од %s поради непозната причина."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Не можам да испратам порака (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Не можам да ја испратам пораката: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Не успеав да ја испратам пораката до %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Не успеав да ја испратам пораката до %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Информациите за корисникот не се достапни: %s"
-
-msgid "Unknown reason."
-msgstr "Непозната причина."
 
 msgid "Online Since"
 msgstr "Поврзан од"
@@ -8145,6 +8143,75 @@ msgstr ""
 "инстант пораки.  Бидејќи Вашата IP адреса ќе биде откриена, ова може да се "
 "смета како ризик за приватноста."
 
+msgid "Invalid SNAC"
+msgstr "Невалиден SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Сервисот е недостапен "
+
+msgid "Service not defined"
+msgstr "Сервисот не е дефиниран"
+
+msgid "Obsolete SNAC"
+msgstr "Застарен SNAC"
+
+msgid "Not supported by host"
+msgstr "Не е поддржано од хостот"
+
+msgid "Not supported by client"
+msgstr "Не е поддржано од клиентот"
+
+msgid "Refused by client"
+msgstr "Одбиено од клиентот"
+
+msgid "Reply too big"
+msgstr "Одговорот е преголем"
+
+msgid "Responses lost"
+msgstr "Одговорите се загубени"
+
+msgid "Request denied"
+msgstr "Барањето е одбиено"
+
+msgid "Busted SNAC payload"
+msgstr "Скршена SNAC пратка"
+
+msgid "Insufficient rights"
+msgstr "Немам доволно права"
+
+msgid "In local permit/deny"
+msgstr "Локално дозволи/одбиј"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Корисник е привремено недостапен"
+
+msgid "No match"
+msgstr "Нема пронајдени резултати"
+
+msgid "List overflow"
+msgstr "Преполнување на листата"
+
+msgid "Request ambiguous"
+msgstr "Барањето е двосмислено"
+
+msgid "Queue full"
+msgstr "Редот е полн"
+
+msgid "Not while on AOL"
+msgstr "Не додека сум на AOL"
+
 msgid "Aquarius"
 msgstr "Водолија"
 
@@ -8465,6 +8532,11 @@ msgstr "Дијалог со барање"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Листа со соби"
 
 #, fuzzy
 msgid "Notice"
@@ -10423,9 +10495,6 @@ msgstr "Yahoo! Ид."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Приклучок за Yahoo протоколот"
 
-msgid "Pager server"
-msgstr "Пејџер сервер"
-
 msgid "Pager port"
 msgstr "Порта на пејџер"
 
@@ -10441,17 +10510,11 @@ msgstr "Locale на собата за разговор"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Игнорирај покани за разговори и конференции"
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
 msgstr "Url на листата со соби"
-
-msgid "Yahoo Chat server"
-msgstr "Сервер за разговор на Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Порта за разговор на Yahoo"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10519,6 +10582,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"Непозната грешка со број %d. Најавувањет на страницата на Yahoo! може да го "
+"поправи ова."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "Непозната грешка со број %d. Најавувањет на страницата на Yahoo! може да го "
 "поправи ова."
@@ -10608,6 +10680,17 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Не можам да воспоставам врска со серверот:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Не можам да се врзам на серверот. Ве молам внесете ја адресата на серверот "
+"на кој што сакате да се врзете."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Не сум дома"
@@ -10997,6 +11080,10 @@ msgstr "_Не"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Прифати"
 
@@ -11242,12 +11329,6 @@ msgstr "Инстант пораки"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin инстант пораки"
-
-msgid "Orientation"
-msgstr "Ориентација"
-
-msgid "The orientation of the tray."
-msgstr "Ориентацијата на местото за извезтување."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12455,6 +12536,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabic"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Засрамен"
+
 msgid "Belarusian Latin"
 msgstr "Belarusian Latin"
 
@@ -12462,6 +12547,10 @@ msgid "Bulgarian"
 msgstr "Bulgarian"
 
 msgid "Bengali"
+msgstr "Bengali"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengali"
 
 msgid "Bosnian"
@@ -12582,6 +12671,10 @@ msgid "Macedonian"
 msgstr "Македонски"
 
 #, fuzzy
+msgid "Malayalam"
+msgstr "Машко"
+
+#, fuzzy
 msgid "Mongolian"
 msgstr "Македонски"
 
@@ -12700,8 +12793,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s е графички модуларен клиент за испраќање на пораки базиран на libpurple  "
 "кој што е способен да се врзува на AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, "
@@ -13261,24 +13354,24 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Дали сте сигурни дека сакате трајно да го избришете логот од разговорот со %"
-"s кој започна на %s?"
+"Дали сте сигурни дека сакате трајно да го избришете логот од разговорот со "
+"%s кој започна на %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
-"Дали сте сигурни дека сакате трајно да го избришете логот од разговорот во %"
-"s кој започна на %s?"
+"Дали сте сигурни дека сакате трајно да го избришете логот од разговорот во "
+"%s кој започна на %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
-"Дали сте сигурни дека сакате д а го исчистите системскиот лог со почеток од %"
-"s?"
+"Дали сте сигурни дека сакате д а го исчистите системскиот лог со почеток од "
+"%s?"
 
 msgid "Delete Log?"
 msgstr "Да го избришам логот?"
@@ -13381,10 +13474,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14242,10 +14335,6 @@ msgstr "Подреди"
 #, fuzzy
 msgid "Custom Smiley Manager"
 msgstr "Менаџер за сертификати"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Потребна е регистрација"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -15436,8 +15525,20 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr "Опции за временските ознаки"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Присили 24-часовен формат на времето"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Стандардно"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Присили 24-часовен формат на времето"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Присили 24-часовен формат на времето"
 
 msgid "Show dates in..."
@@ -15650,6 +15751,203 @@ msgstr "Испрати и прими чисти XMPP делови."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Овој приклучок е корисен за дебагирање на XMPP сервери или клиенти."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Стандардно"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Верзија на GTK+ Runtime"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Локација"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin инстант пораки"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Подреди"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Подигнување"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Ова име на разговор веќе постои"
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim справувач за URL"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Ланецот за сертификатот презентиран за %s не е валиден."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "SecurID клучот кој го внесовте е невалиден."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Прекар"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Постави мобилен број..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Брзина до хостот"
+
+#~ msgid "Rate to client"
+#~ msgstr "Брзина до клиентот"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Непозната причина."
+
+#~ msgid "Artist"
+#~ msgstr "Артист"
+
+#~ msgid "Album"
+#~ msgstr "Албум"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Вашето моментално расположение"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Расположение на корисникот"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Промени ја лозинката"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Не сум тука моментално"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Промени ја лозинката..."
+
+#~ msgid "Pager server"
+#~ msgstr "Пејџер сервер"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Сервер за разговор на Yahoo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Порта за разговор на Yahoo"
+
+#~ msgid "Orientation"
+#~ msgstr "Ориентација"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Ориентацијата на местото за извезтување."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "Грешка во креирањето на врска"
@@ -15808,9 +16106,6 @@ msgstr "Овој приклучок е корисен за дебагирање 
 
 #~ msgid "_User:"
 #~ msgstr "_Корисник:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Верзија на GTK+ Runtime"
 
 #, fuzzy
 #~ msgid "Calling ... "
@@ -16372,7 +16667,7 @@ msgstr "Овој приклучок е корисен за дебагирање 
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Не можам да ја отворам %s за запишување!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Размената на датотека не успеа. Другата страна веројатно откажа."
 
 #~ msgid "Could not connect for transfer."

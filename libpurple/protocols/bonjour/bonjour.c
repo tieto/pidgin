@@ -70,7 +70,6 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -172,7 +171,9 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Delete the bonjour group */
+	/* Delete the bonjour group
+	 * (purple_blist_remove_group will bail out if the group isn't empty)
+	 */
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
@@ -205,18 +206,12 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	BonjourData *bd;
-	gboolean disconnected;
-	PurpleStatusType *type;
-	int primitive;
 	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
 	bd = gc->proto_data;
-	disconnected = purple_account_is_disconnected(account);
-	type = purple_status_get_type(status);
-	primitive = purple_status_type_get_primitive(type);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");
@@ -528,7 +523,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* get_account_text_table */
 	NULL,                                                    /* initiate_media */
 	NULL,                                                    /* get_media_caps */
-	NULL                                                     /* get_moods */
+	NULL,                                                    /* get_moods */
+	NULL,                                                    /* set_public_alias */
+	NULL                                                     /* get_public_alias */
 };
 
 static PurplePluginInfo info =

@@ -6,10 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin.gu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 19:18-0700\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2010-04-07 12:00+0530\n"
 "Last-Translator: Sweta Kothari <swkothar@redhat.com>\n"
 "Language-Team: Gujarati\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -62,11 +63,23 @@ msgstr ""
 msgid "Error"
 msgstr "ક્ષતિ"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "ખાતું ઉમેરાયેલ ન હતુ"
+
 msgid "Account was not added"
 msgstr "ખાતું ઉમેરાયેલ ન હતુ"
 
 msgid "Username of an account must be non-empty."
 msgstr "ખાતાનું વપરાશકર્તાનામ ખાલી ન જ હોવુ જોઇએ."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "નવા મેઈલ સૂચનો"
@@ -776,7 +789,7 @@ msgstr "અટકાવો"
 msgid "Waiting for transfer to begin"
 msgstr "પરિવહન શરૂ થવા માટે રાહ જોઈ રહ્યા છીએ"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "રદ થયેલ"
 
 msgid "Failed"
@@ -1244,6 +1257,9 @@ msgstr "બીજા સંવાદમાં વાત કરે છે"
 msgid "Someone says your username in chat"
 msgstr "કોઈ તમારું વપરાશકર્તાનામ વાતચીતમાં કહે છે"
 
+msgid "Attention received"
+msgstr "ધ્યાન મળ્યુ"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer નિષ્ફળતા"
 
@@ -1336,6 +1352,7 @@ msgstr "પરિસ્થિતિને કાઢી નાંખો"
 msgid "Saved Statuses"
 msgstr "સંગ્રહાયેલ પરિસ્થિતિઓ"
 
+#. title
 msgid "Title"
 msgstr "શીર્ષક"
 
@@ -1533,7 +1550,7 @@ msgstr ""
 msgid "Online"
 msgstr "ઓનલાઈન"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ઓફલાઈન"
 
@@ -1626,6 +1643,14 @@ msgstr "%s માટે વપરાશકર્તા જાણકારી બ
 msgid "Set User Info"
 msgstr "વપરાશકર્તા જાણકારી સુયોજિત કરો"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "આ પ્રોટોકોલ સંવાદ કક્ષોને આધાર આપતું નથી."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "આ પ્રોટોકોલ સંવાદ કક્ષોને આધાર આપતું નથી."
+
 msgid "Unknown"
 msgstr "અજ્ઞાત"
 
@@ -1645,8 +1670,10 @@ msgstr ""
 "પ્રમાણપત્ર વિશ્ર્વાસપાત્ર નથી કારણ કે તે હાલમાં વિશ્ર્વાસુ છે તેવું કોઇ પ્રમાણપત્ર નથી કે "
 "ચકાસી શકાય."
 
-msgid "The certificate is not valid yet."
-msgstr "હજુ પ્રમાણપત્ર યોગ્ય નથી."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "પ્રમાણપત્રની તારીખ જતી રહી છે અને પ્રમાણિત નક્કી કરવુ જોઇએ નહિં."
@@ -1881,7 +1908,6 @@ msgstr "પુનીકોડ માટે %s ને રૂપાંતર ક�
 msgid "Thread creation failure: %s"
 msgstr "થ્રેડ બનાવવાનું નિષ્ફળ: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "અજ્ઞાત કારણ"
 
@@ -3126,6 +3152,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "પ્રથમ નામ"
 
@@ -3725,12 +3754,6 @@ msgstr "Ad-Hoc આદેશ નિષ્ફળ"
 msgid "execute"
 msgstr "ચલાવો"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "માટે સર્વરને TLS/SSL જરૂરી છે. પરંતુ કોઈ TLS/SSL આધાર મળ્યો નહિં."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "એનક્રિપ્શન જરૂરી છે. પરંતુ કોઈ TLS/SSL આધાર મળ્યો નહિં."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "એનક્રિપ્ટ નહિં એવી સ્ટ્રીમ પર સર્વર માટે સાદુલખાણ સત્તાધિકરણ જરૂરી છે"
 
@@ -3761,12 +3784,60 @@ msgstr "સર્વરમાંથી અયોગ્ય શરત"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "સર્વર વિચારે છે કે સત્તાધિકરણ સમાપ્ત છે, પરંતુ ક્લાયન્ટ નથી વિચારતુ"
 
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "એનક્રિપ્ટ નહિં એવી સ્ટ્રીમ પર સર્વર માટે સાદુલખાણ સત્તાધિકરણ જરૂરી છે"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s માટે એનક્રિપ્ટ નહિં એવા જોડાણ પર સાદું લખાણ સત્તાધિકરણ જરૂરી છે.  શું આને પરવાનગી "
+"આપવી છે અને સત્તાધિકરણ ચાલુ રાખવું છે?"
+
 msgid "SASL authentication failed"
 msgstr "SASL સત્તાધિકરણ નિષ્ફળ"
 
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL ભૂલ: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "અયોગ્ય ઇનપુટ શરત"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "બિનઆધારભૂત આવૃત્તિ"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "સર્વર એ બ્લોકીંગ ને આધાર આપતુ નથી"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "બિનઆધારભૂત સંગ્રહપદ્ધતિ"
+
+msgid "User not found"
+msgstr "વપરાશકર્તા મળ્યો નથી"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "અયોગ્ય વપરાશકર્તા નામ"
+
+msgid "Resource Constraint"
+msgstr "સ્રોત પરિમાણ"
 
 msgid "Unable to canonicalize username"
 msgstr "વપરાશકર્તાને કૅનોનિકેલાઇઝ કરવામાં અસમર્થ"
@@ -3831,6 +3902,7 @@ msgstr "વિસ્તાર"
 msgid "Postal Code"
 msgstr "પોસ્ટલ કોડ"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "દેશ"
 
@@ -3845,8 +3917,6 @@ msgstr "સંસ્થા નામ"
 msgid "Organization Unit"
 msgstr "સંસ્થા એકમ"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "નોકરી શીર્ષક"
 
@@ -3854,6 +3924,7 @@ msgid "Role"
 msgstr "ભૂમિકા"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "જન્મદિવસ"
 
@@ -4071,11 +4142,21 @@ msgstr "વપરાશકર્તાઓ મળ્યા નથી"
 msgid "Roles:"
 msgstr "ભૂમિકાઓ:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "માટે સર્વરને TLS/SSL જરૂરી છે. પરંતુ કોઈ TLS/SSL આધાર મળ્યો નહિં."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "એનક્રિપ્શન જરૂરી છે. પરંતુ કોઈ TLS/SSL આધાર મળ્યો નહિં."
+
 msgid "Ping timed out"
 msgstr "પિંગ કરવાનો સમય સમાપ્ત થયેલ"
 
 msgid "Invalid XMPP ID"
 msgstr "અયોગ્ય XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "અયોગ્ય XMPP ID. ડોમેઇનને સુયોજિત કરવુ જ જોઇએ."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "અયોગ્ય XMPP ID. ડોમેઇનને સુયોજિત કરવુ જ જોઇએ."
@@ -4173,7 +4254,6 @@ msgstr "સર્વર એ બ્લોકીંગ ને આધાર આપ�
 msgid "Not Authorized"
 msgstr "સત્તાધિકારીત નથી"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "સ્વભાવ"
 
@@ -4195,7 +4275,6 @@ msgstr "પ્રતિ"
 msgid "None (To pending)"
 msgstr "કંઈ નહિં (બાકી રહેલ પ્રતિ)"
 
-#. 0
 msgid "None"
 msgstr "કંઇ નહી"
 
@@ -4391,9 +4470,6 @@ msgstr "પોલિસી ભંગ"
 msgid "Remote Connection Failed"
 msgstr "દૂરસ્થ જોડાણ નિષ્ફળ"
 
-msgid "Resource Constraint"
-msgstr "સ્રોત પરિમાણ"
-
 msgid "Restricted XML"
 msgstr "આરક્ષિત XML"
 
@@ -4584,21 +4660,6 @@ msgstr "XMPP પ્રોટોકોલ પ્લગઇન"
 msgid "Domain"
 msgstr "ડોમેઇન"
 
-#, fuzzy
-msgid "Require STARTTLS"
-msgstr "SSL/TLS જરૂરી છે"
-
-#, fuzzy
-msgid "Require old (port 5223) SSL"
-msgstr "જૂના SSL (port 5223)ને દબાણ કરો"
-
-msgid "Use STARTTLS (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "SSL/TLS"
-msgstr "SSL/TLS જરૂરી છે"
-
 msgid "Require SSL/TLS"
 msgstr "SSL/TLS જરૂરી છે"
 
@@ -4749,7 +4810,6 @@ msgstr "આશ્ચર્યચકિત"
 msgid "Amorous"
 msgstr "પ્રણયશીલ"
 
-#. 1
 msgid "Angry"
 msgstr "ક્રોધી"
 
@@ -4828,7 +4888,6 @@ msgstr "શરમિંદગી"
 msgid "Envious"
 msgstr "ઇર્ષાળુ"
 
-#. 2
 msgid "Excited"
 msgstr "ઉત્તેજિત"
 
@@ -4844,21 +4903,18 @@ msgstr "મહાન"
 msgid "Grieving"
 msgstr "દુ:ખ આપવુ"
 
-#. 3
 msgid "Grumpy"
 msgstr "મિજાજી"
 
 msgid "Guilty"
 msgstr "દોષી"
 
-#. 4
 msgid "Happy"
 msgstr "ખુશ"
 
 msgid "Hopeful"
 msgstr "આશાસ્પદ"
 
-#. 8
 msgid "Hot"
 msgstr "ગરમ"
 
@@ -4892,7 +4948,6 @@ msgstr "રસપ્રદ"
 msgid "Intoxicated"
 msgstr "પીધેલુ"
 
-#. 6
 msgid "Invincible"
 msgstr "અદૃશ્ય"
 
@@ -4944,7 +4999,6 @@ msgstr "પશ્ચાતાપી"
 msgid "Restless"
 msgstr "અસ્વસ્થ"
 
-#. 7
 msgid "Sad"
 msgstr "નિરાશ"
 
@@ -4963,11 +5017,9 @@ msgstr "આઘાત"
 msgid "Shy"
 msgstr "શરમાળ"
 
-#. 9
 msgid "Sick"
 msgstr "બિમાર"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "ઊંઘમાં"
@@ -5594,6 +5646,10 @@ msgstr "HTTP પદ્દતિ સર્વર"
 msgid "Show custom smileys"
 msgstr "વૈવિધ્યપૂર્ણ હસતા ચહેરાઓને બતાવો"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "જોડાણને બનાવવામાં અસમર્થ"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "ટહુકો: ધ્યાન ખેંચવા માટે વપરાશકર્તાને ટહુકો કરો"
 
@@ -5779,24 +5835,6 @@ msgstr "શું તમારી સરનામાં ચોપડી મા�
 msgid "The username specified is invalid."
 msgstr "સ્પષ્ટ થયેલ વપરાશકર્તાનામ અયોગ્ય છે."
 
-#. 5
-msgid "In Love"
-msgstr "પ્રેમમાં"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "હાલનો મિજાજ"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "નવો મિજાજ"
-
-msgid "Change your Mood"
-msgstr "તમારા મિજાજને બદલો"
-
-msgid "How do you feel right now?"
-msgstr "અત્યારે તમને કેવું લાગે છે?"
-
 msgid "The PIN you entered is invalid."
 msgstr "PIN તમે દાખલ થયેલ છે તે અયોગ્ય છે."
 
@@ -5828,7 +5866,11 @@ msgstr "રુપરેખા"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "તમારી રૂપરેખા જાણકારી ને પુન:પ્રાપ્ત થયેલ નથી. મહેરબાની કરીને પછીથી પ્રયત્ન કરો."
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5836,6 +5878,7 @@ msgid "Verify PIN"
 msgstr "PIN ને ચકાસો"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "દર્શાવ નામ"
 
@@ -5861,10 +5904,6 @@ msgstr "ત્યાં હાલમાં સ્પ્લેશ-સ્ક્ર
 
 msgid "About"
 msgstr "વિશે"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "મિજાજને બદલો..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -5897,19 +5936,16 @@ msgstr "MXit સર્વર સાથે જોડાવામાં અસમ�
 msgid "Connecting..."
 msgstr "જોડાઈ રહ્યા છીએ..."
 
-msgid "The nick name you entered is invalid."
-msgstr "લાડકું નામ જે તમે દાખલ કરેલ છે તે અયોગ્ય છે."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "તમે દાખલ થયેલ નામ એ અયોગ્ય છે."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "તમે દાખલ કરેલ છે તે PIN પાસે અયોગ્ય લંબાઇ છે [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "MXit પ્રવેશ નામ"
-
-#. nick name
-msgid "Nick Name"
-msgstr "લાડકું નામ"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5939,10 +5975,12 @@ msgstr "તમારું સત્ર નિવૃત્ત થયેલ છ�
 msgid "Invalid country selected. Please try again."
 msgstr "અયોગ્ય દેશ પસંદ થયેલ. મહેરબાની કરીને ફરીથી પ્રયત્ન કરો."
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "વપરાશકર્તા રજીસ્ટર થયેલ નથી. મહેરબાની કરીને પહેલાં રજીસ્ટર કરો."
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 "વપરાશકર્તા પહેલેથી જ રજીસ્ટર થયેલ છે. મહેરબાની કરીને બીજો વપરાશકર્તાનામ પસંદ કરો."
 
@@ -5955,7 +5993,7 @@ msgstr "તમે સુરક્ષા કોડને દાખલ કર્�
 msgid "Security Code"
 msgstr "સુરક્ષા કોડ"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "સુરક્ષા કોડને દાખલ કરો"
 
@@ -5981,11 +6019,17 @@ msgstr "મેનુને લાવી રહ્યા છે..."
 msgid "Status Message"
 msgstr "સ્થિતિ સંદેશ"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "મેળવેલ સંદેશા"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "છુપાયેલ નંબર"
 
-msgid "Your Mobile Number..."
-msgstr "તમારો મોબાઇલ નંબર..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "Yahoo ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5997,6 +6041,28 @@ msgstr "HTTP મારફતે જોડાવ"
 
 msgid "Enable splash-screen popup"
 msgstr "સ્પ્લૅશ-સ્ક્રીન પોપઅપ ને સક્રિય કરો"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "(%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "ખરાબ ટિકીટ"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "કક્ષ (_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "તમારી પાસે મેલ છે!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "ઓનલાઈન"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6099,6 +6165,9 @@ msgstr "MXit માં જોડાણ ભૂલ ઉદ્ભવી. (રીડ 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "MXit માં જોડાણ ભૂલ ઉદ્ભવી. (રીડ સ્ટેજ 0x06)"
+
+msgid "In Love"
+msgstr "પ્રેમમાં"
 
 msgid "Pending"
 msgstr "અટકેલ"
@@ -6494,9 +6563,6 @@ msgstr "પાસવર્ડની સમયમર્યાદા સમાપ�
 msgid "Incorrect password"
 msgstr "અયોગ્ય પાસવર્ડ"
 
-msgid "User not found"
-msgstr "વપરાશકર્તા મળ્યો નથી"
-
 msgid "Account has been disabled"
 msgstr "ખાતું નિષ્ક્રિય કરાઈ ગયેલ છે"
 
@@ -6599,8 +6665,8 @@ msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
-"%s ને તમારી મિત્ર યાદીમાં ઉમેરવામાં અસમર્થ. સર્વર બાજુ યાદી માં ફોલ્ડર બનાવવામાં ક્ષતિ (%"
-"s)."
+"%s ને તમારી મિત્ર યાદીમાં ઉમેરવામાં અસમર્થ. સર્વર બાજુ યાદી માં ફોલ્ડર બનાવવામાં ક્ષતિ "
+"(%s)."
 
 #, c-format
 msgid "Could not get details for user %s (%s)."
@@ -6749,11 +6815,72 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "અહિંયા સત્તાધિકરણ કરવા માટે તમારી સ્ક્રીન નામને AOL પરવાનગી આપતુ નથી"
 
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s ની માંગણી કરવામાં ભૂલ: %s"
+
 msgid "Could not join chat room"
 msgstr "સંવાદ રુમમાં જોડાઇ શક્યા નહિં"
 
 msgid "Invalid chat room name"
 msgstr "અયોગ્ય સંવાદ રુમ નામ"
+
+msgid "Invalid error"
+msgstr "અયોગ્ય ક્ષતિ"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "મુખ્ય નિયંત્રણો દરમ્યાન IM ને મેળવી શકાતુ નથી"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "મર્યાદાઓને સ્વીકાર્યા વગર SMS ને મોકલી શકતા નથી"
+
+msgid "Cannot send SMS"
+msgstr "SMS ને મોકલી શકાતુ નથી"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "આ દેશ માટે SMS મોકલી શકાતો નથી"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "અજ્ઞાત દેશ માટે SMS ને મોકલી શકાતુ નથી"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "બોટ ખાતુ એ IMs ને પ્રારંભ કરી શકતુ નથી"
+
+msgid "Bot account cannot IM this user"
+msgstr "બોટ ખાતુ એ આ વપરાશકર્તાને IM કરી શકતુ નથી"
+
+msgid "Bot account reached IM limit"
+msgstr "બોટ ખાતુ એ IM મર્યાદા સુધી પહોંચી ગયુ"
+
+msgid "Bot account reached daily IM limit"
+msgstr "બોટ ખાતુ દરરોજ IM સીમા સુધી પહોંચેલ છે"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "બોટ ખાતુ એ માસિક IM સીમા સુધી પહોંચેલ છે"
+
+msgid "Unable to receive offline messages"
+msgstr "ઓફલાઇન સંદેશાને મેળવવાનું અસમર્થ"
+
+msgid "Offline message store full"
+msgstr "ઓફલાઈન સંદેશ સંગ્રહ સંપૂર્ણ"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "સંદેશો મોકલવામાં અસમર્થ: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "સંદેશો મોકલવામાં અસમર્થ: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s માં સંદેશાને મોકલવામાં અસમર્થ: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s માં સંદેશાને મોકલવામાં અસમર્થ: %s"
 
 msgid "Thinking"
 msgstr "વિચારી રહ્યા છે"
@@ -6904,116 +7031,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ફાઇલ %s એ %s છે. કે જે %s નાં મહત્તમ માપ કરતા વધારે છે."
-
-msgid "Invalid error"
-msgstr "અયોગ્ય ક્ષતિ"
-
-msgid "Invalid SNAC"
-msgstr "અયોગ્ય SNAC"
-
-msgid "Rate to host"
-msgstr "યજમાનનો ક્રમ"
-
-msgid "Rate to client"
-msgstr "ક્લાઈન્ટનો ક્રમ"
-
-msgid "Service unavailable"
-msgstr "સેવા ઉપલબ્ધ નથી"
-
-msgid "Service not defined"
-msgstr "સેવા વ્યાખ્યાયિત નથી"
-
-msgid "Obsolete SNAC"
-msgstr "લુપ્ત થઈ ગયેલ SNAC"
-
-msgid "Not supported by host"
-msgstr "યજમાન દ્વારા આધારભૂત નથી"
-
-msgid "Not supported by client"
-msgstr "ક્લાઈન્ટ દ્વારા આધારભૂત નથી"
-
-msgid "Refused by client"
-msgstr "ક્લાઈન્ટ દ્વારા રદ થઈ ગયેલ"
-
-msgid "Reply too big"
-msgstr "પ્રત્યુત્તર ખૂબ મોટો"
-
-msgid "Responses lost"
-msgstr "પ્રત્યુત્તરો ગુમ થઈ ગયેલ છે"
-
-msgid "Request denied"
-msgstr "માંગણી રદ થઈ ગયેલ"
-
-msgid "Busted SNAC payload"
-msgstr "બસ્ટેડ SNAC પેલોડ"
-
-msgid "Insufficient rights"
-msgstr "અપૂરતા હકો"
-
-msgid "In local permit/deny"
-msgstr "સ્થાનિક મંજૂરી/નામંજૂરી માં"
-
-msgid "Warning level too high (sender)"
-msgstr "ચેતવણી સ્તર ઘણું વધારે છે (મોકલનાર)"
-
-msgid "Warning level too high (receiver)"
-msgstr "ચેતવણી સ્તર ઘણું ઊંચુ છે (સ્વીકારનાર)"
-
-msgid "User temporarily unavailable"
-msgstr "વપરાશકર્તા કામચલાઉ રીતે ઉપલબ્ધ નથી"
-
-msgid "No match"
-msgstr "કોઈ જોડણી નથી"
-
-msgid "List overflow"
-msgstr "યાદી ભરાઈ ગઈ"
-
-msgid "Request ambiguous"
-msgstr "માંગણી અણગમી છે"
-
-msgid "Queue full"
-msgstr "કતાર ભરેલી છે"
-
-msgid "Not while on AOL"
-msgstr "AOL પર નથી"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "મુખ્ય નિયંત્રણો દરમ્યાન IM ને મેળવી શકાતુ નથી"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "મર્યાદાઓને સ્વીકાર્યા વગર SMS ને મોકલી શકતા નથી"
-
-msgid "Cannot send SMS"
-msgstr "SMS ને મોકલી શકાતુ નથી"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "આ દેશ માટે SMS મોકલી શકાતો નથી"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "અજ્ઞાત દેશ માટે SMS ને મોકલી શકાતુ નથી"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "બોટ ખાતુ એ IMs ને પ્રારંભ કરી શકતુ નથી"
-
-msgid "Bot account cannot IM this user"
-msgstr "બોટ ખાતુ એ આ વપરાશકર્તાને IM કરી શકતુ નથી"
-
-msgid "Bot account reached IM limit"
-msgstr "બોટ ખાતુ એ IM મર્યાદા સુધી પહોંચી ગયુ"
-
-msgid "Bot account reached daily IM limit"
-msgstr "બોટ ખાતુ દરરોજ IM સીમા સુધી પહોંચેલ છે"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "બોટ ખાતુ એ માસિક IM સીમા સુધી પહોંચેલ છે"
-
-msgid "Unable to receive offline messages"
-msgstr "ઓફલાઇન સંદેશાને મેળવવાનું અસમર્થ"
-
-msgid "Offline message store full"
-msgstr "ઓફલાઈન સંદેશ સંગ્રહ સંપૂર્ણ"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7356,27 +7373,8 @@ msgstr[0] "તમે %hu સંદેશો %s માંથી ચૂકી ગ�
 msgstr[1] "તમે %hu સંદેશાઓ %s માંથી ચૂકી ગયેલ છો કોઈ અજ્ઞાત કારણોસર."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "સંદેશો મોકલવામાં અસમર્થ: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "સંદેશો મોકલવામાં અસમર્થ: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s માં સંદેશાને મોકલવામાં અસમર્થ: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s માં સંદેશાને મોકલવામાં અસમર્થ: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "વપરાશકર્તા જાણકારી ઉપલબ્ધ નથી: %s"
-
-msgid "Unknown reason."
-msgstr "અજ્ઞાત કારણ."
 
 msgid "Online Since"
 msgstr "ત્યારથી ઓનલાઈન"
@@ -7784,6 +7782,75 @@ msgid ""
 msgstr ""
 "આ બે કમ્પ્યૂટરો વચ્ચે સીધું જોડાણ જરૂરી છે અને તે IM ઈમેજો માટે જરૂરી છે.  તમારું IP સરનામું "
 "ચકાસાયેલ હશે, તો આ ખાનગીપણાનું જોખમ તરીકે ધ્યાનમાં લેવાશે."
+
+msgid "Invalid SNAC"
+msgstr "અયોગ્ય SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "સેવા ઉપલબ્ધ નથી"
+
+msgid "Service not defined"
+msgstr "સેવા વ્યાખ્યાયિત નથી"
+
+msgid "Obsolete SNAC"
+msgstr "લુપ્ત થઈ ગયેલ SNAC"
+
+msgid "Not supported by host"
+msgstr "યજમાન દ્વારા આધારભૂત નથી"
+
+msgid "Not supported by client"
+msgstr "ક્લાઈન્ટ દ્વારા આધારભૂત નથી"
+
+msgid "Refused by client"
+msgstr "ક્લાઈન્ટ દ્વારા રદ થઈ ગયેલ"
+
+msgid "Reply too big"
+msgstr "પ્રત્યુત્તર ખૂબ મોટો"
+
+msgid "Responses lost"
+msgstr "પ્રત્યુત્તરો ગુમ થઈ ગયેલ છે"
+
+msgid "Request denied"
+msgstr "માંગણી રદ થઈ ગયેલ"
+
+msgid "Busted SNAC payload"
+msgstr "બસ્ટેડ SNAC પેલોડ"
+
+msgid "Insufficient rights"
+msgstr "અપૂરતા હકો"
+
+msgid "In local permit/deny"
+msgstr "સ્થાનિક મંજૂરી/નામંજૂરી માં"
+
+msgid "Warning level too high (sender)"
+msgstr "ચેતવણી સ્તર ઘણું વધારે છે (મોકલનાર)"
+
+msgid "Warning level too high (receiver)"
+msgstr "ચેતવણી સ્તર ઘણું ઊંચુ છે (સ્વીકારનાર)"
+
+msgid "User temporarily unavailable"
+msgstr "વપરાશકર્તા કામચલાઉ રીતે ઉપલબ્ધ નથી"
+
+msgid "No match"
+msgstr "કોઈ જોડણી નથી"
+
+msgid "List overflow"
+msgstr "યાદી ભરાઈ ગઈ"
+
+msgid "Request ambiguous"
+msgstr "માંગણી અણગમી છે"
+
+msgid "Queue full"
+msgstr "કતાર ભરેલી છે"
+
+msgid "Not while on AOL"
+msgstr "AOL પર નથી"
 
 msgid "Aquarius"
 msgstr "કુંભ રાશિ"
@@ -9967,7 +10034,8 @@ msgstr "સંવાદ કક્ષ લોકેલ"
 msgid "Ignore conference and chatroom invitations"
 msgstr "કૉન્ફરન્સ અને વાતચીત રુમ આમંત્રણોને અવગણો"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "SSL જોડાણો માટે ખાતાની પ્રોક્સીને વાપરો"
 
 msgid "Chat room list URL"
@@ -10499,6 +10567,10 @@ msgstr "ના (_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "સ્વીકારો (_A)"
 
@@ -10735,12 +10807,6 @@ msgstr "Internet Messenger"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
-
-msgid "Orientation"
-msgstr "દિશા"
-
-msgid "The orientation of the tray."
-msgstr "ટ્રેની દિશા."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11889,6 +11955,10 @@ msgstr "આફ્રિકન"
 msgid "Arabic"
 msgstr "અરૅબિક"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "શરમાળ"
+
 msgid "Belarusian Latin"
 msgstr "બેલારુસિયન લેટિન"
 
@@ -12015,6 +12085,10 @@ msgstr "લાઓ"
 msgid "Macedonian"
 msgstr "મેકડોનિયન"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "મલય"
+
 msgid "Mongolian"
 msgstr "મોન્ગોલિયન"
 
@@ -12129,8 +12203,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s એ libpurple પર આધારિત મેસેજિંગ ક્લાઇન્ટ છે કે જે એકવાર ઘણાબધા મેસેજિંગ સેવાઓને "
 "જોડાવવામાં સક્ષમ છે.  %s એ GTK+ ની મદદથી C માં લખાયેલ છે.  %s એ પ્રકાશિત થયેલ છે, અને "
@@ -12675,16 +12749,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "શું તમે ખરેખર %s સાથે વાર્તાલાપોનો લોગ કાયમ માટે કાઢી નાંખવા માંગો છો કે જે %s પર શરૂ "
 "થયેલ છે?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "શું તમે ખરેખર સિસ્ટમ લોગ ને કાયમ માટે કાઢી નાંખવા માંગો છો કે જે %s પર શરૂ થયેલ છે?"
 
 msgid "Delete Log?"
@@ -12788,11 +12862,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "ઉત્સાહી થઇ રહ્યા છે કારણ કે બીજા libpurple ક્લાયન્ટ એ પહેલેથી જ ચાલી રહ્યા છે.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/મીડિયા (_M)"
 
-msgid "/Media/_Hangup"
-msgstr "/મીડિયા/હેંગઅપ (_H)"
+#, fuzzy
+msgid "_Hangup"
+msgstr "સ્તબ્ધ"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13587,9 +13663,6 @@ msgstr "ટુંકાણ લખાણ"
 
 msgid "Custom Smiley Manager"
 msgstr "વૈવિધ્યપૂર્ણ હસ્તો ચહેરો સંચાલક"
-
-msgid "Attention received"
-msgstr "ધ્યાન મળ્યુ"
 
 msgid "Select Buddy Icon"
 msgstr "મિત્ર આઇકનને પસંદ કરો"
@@ -14706,8 +14779,20 @@ msgstr "દરેક N મિનિટે iChat-style ટાઇમસ્ટે�
 msgid "Timestamp Format Options"
 msgstr "ટાઇમસ્ટેમ્પ માળખા વિકલ્પો"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "24-કલાક સમય માળખાં માટે દબાણ કરો (_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "ડેસ્કટોપ મૂળભૂત"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "24-કલાક સમય માળખાં માટે દબાણ કરો (_F)"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "24-કલાક સમય માળખાં માટે દબાણ કરો (_F)"
 
 msgid "Show dates in..."
@@ -14907,3 +14992,193 @@ msgstr "કાચો XMPP સ્ટેન્ઝાને મોકલો અન�
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "ડિબગીંગ XMPP સર્વરો અથવા ક્લાયન્ટો માટે આ પ્લગઇન ઉપયોગી છે."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "ડેસ્કટોપ મૂળભૂત"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "સ્થળ"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Internet Messenger"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "ટુંકાણ"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "શરૂઆત"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "ઉપનામ \"%s\" પહેલેથી જ વપરાયેલ છે."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL સંભાળનાર"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "હજુ પ્રમાણપત્ર યોગ્ય નથી."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "લાડકું નામ જે તમે દાખલ કરેલ છે તે અયોગ્ય છે."
+
+#~ msgid "MXit Login Name"
+#~ msgstr "MXit પ્રવેશ નામ"
+
+#~ msgid "Nick Name"
+#~ msgstr "લાડકું નામ"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "તમારો મોબાઇલ નંબર..."
+
+#~ msgid "Rate to host"
+#~ msgstr "યજમાનનો ક્રમ"
+
+#~ msgid "Rate to client"
+#~ msgstr "ક્લાઈન્ટનો ક્રમ"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/મીડિયા/હેંગઅપ (_H)"
+
+#~ msgid "Unknown reason."
+#~ msgstr "અજ્ઞાત કારણ."
+
+#, fuzzy
+#~ msgid "Require STARTTLS"
+#~ msgstr "SSL/TLS જરૂરી છે"
+
+#, fuzzy
+#~ msgid "Require old (port 5223) SSL"
+#~ msgstr "જૂના SSL (port 5223)ને દબાણ કરો"
+
+#, fuzzy
+#~ msgid "SSL/TLS"
+#~ msgstr "SSL/TLS જરૂરી છે"
+
+#~ msgid "Current Mood"
+#~ msgstr "હાલનો મિજાજ"
+
+#~ msgid "New Mood"
+#~ msgstr "નવો મિજાજ"
+
+#~ msgid "Change your Mood"
+#~ msgstr "તમારા મિજાજને બદલો"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "અત્યારે તમને કેવું લાગે છે?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "મિજાજને બદલો..."
+
+#~ msgid "Orientation"
+#~ msgstr "દિશા"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "ટ્રેની દિશા."

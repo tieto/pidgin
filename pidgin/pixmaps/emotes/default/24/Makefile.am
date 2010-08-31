@@ -14,6 +14,7 @@ SMILEYS = \
     beer.png \
     blowkiss.png \
     bomb.png \
+    bored.png \
     bowl.png \
     boy.png \
     brb.png \
@@ -27,6 +28,7 @@ SMILEYS = \
     car.png \
     cat.png \
     chicken.png \
+    chilli.png \
     cigarette.png \
     clap.png \
     clock.png \
@@ -35,6 +37,7 @@ SMILEYS = \
     clown.png \
     coffee.png \
     coins.png \
+    cold.png \
     computer.png \
     confused.png \
     console.png \
@@ -109,6 +112,7 @@ SMILEYS = \
     moneymouth.png \
     monkey.png \
     moon.png \
+    mrgreen.png \
     msn-away.png \
     msn-busy.png \
     msn_online.png \
@@ -166,6 +170,7 @@ SMILEYS = \
     star.png \
     starving.png \
     stop.png \
+    stressed.png \
     struggle.png \
     sun.png \
     hot.png \

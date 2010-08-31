@@ -61,6 +61,9 @@
 #define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
 #define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
+/* XEP-0096 SI File Transfer */
+#define NS_SI_FILE_TRANSFER 	"http://jabber.org/protocol/si/profile/file-transfer"
+
 /* XEP-0124 Bidirectional-streams Over Synchronous HTTP (BOSH) */
 #define NS_BOSH "http://jabber.org/protocol/httpbind"
 
@@ -88,6 +91,9 @@
 
 /* XEP-0237 Roster Versioning */
 #define NS_ROSTER_VERSIONING "urn:xmpp:features:rosterver"
+
+/* XEP-0264 File Transfer Thumbnails (Thumbs) */
+#define NS_THUMBS "urn:xmpp:thumbs:0"
 
 /* Google extensions */
 #define NS_GOOGLE_CAMERA "http://www.google.com/xmpp/protocol/camera/v1"

@@ -55,6 +55,7 @@ typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
  */
 GType purple_media_backend_fs2_get_type(void);
 
+#ifdef USE_GSTREAMER
 /*
  * Temporary function in order to be able to test while
  * integrating with PurpleMedia
@@ -71,6 +72,7 @@ void purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
 void purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who, double level);
 /* end tmp */
+#endif /* USE_GSTREAMER */
 
 G_END_DECLS
 

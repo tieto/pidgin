@@ -222,6 +222,61 @@ char * gnt_tree_get_selection_text(GntTree *tree);
 GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
 
 /**
+ * Get the key of a row.
+ *
+ * @param tree   The tree
+ * @param row    The GntTreeRow object
+ *
+ * @return The key of the row.
+ * @since 2.8.0 (gnt), 2.7.2 (pidgin)
+ */
+gpointer gnt_tree_row_get_key(GntTree *tree, GntTreeRow *row);
+
+/**
+ * Get the next row.
+ *
+ * @param tree The tree
+ * @param row  The GntTreeRow object
+ *
+ * @return The next row.
+ * @since 2.8.0 (gnt), 2.7.2 (pidgin)
+ */
+GntTreeRow * gnt_tree_row_get_next(GntTree *tree, GntTreeRow *row);
+
+/**
+ * Get the previous row.
+ *
+ * @param tree The tree
+ * @param row  The GntTreeRow object
+ *
+ * @return The previous row.
+ * @since 2.8.0 (gnt), 2.7.2 (pidgin)
+ */
+GntTreeRow * gnt_tree_row_get_prev(GntTree *tree, GntTreeRow *row);
+
+/**
+ * Get the child row.
+ *
+ * @param tree The tree
+ * @param row  The GntTreeRow object
+ *
+ * @return The child row.
+ * @since 2.8.0 (gnt), 2.7.2 (pidgin)
+ */
+GntTreeRow * gnt_tree_row_get_child(GntTree *tree, GntTreeRow *row);
+
+/**
+ * Get the parent row.
+ *
+ * @param tree The tree
+ * @param row  The GntTreeRow object
+ *
+ * @return The parent row.
+ * @since 2.8.0 (gnt), 2.7.2 (pidgin)
+ */
+GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row);
+
+/**
  * Get a list of text of the current row.
  *
  * @param tree  The tree

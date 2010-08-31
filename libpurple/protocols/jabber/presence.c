@@ -824,6 +824,7 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 		if (presence->jb != js->user_jb) {
 			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
 					buddy_name, purple_account_get_username(account), account);
+			g_free(buddy_name);
 			return FALSE;
 		} else {
 			/* this is a different resource of our own account. Resume even when this account isn't on our blist */
@@ -924,8 +925,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		goto out;
 	}
 
-	presence.chat = jabber_chat_find(js, presence.jid_from->node,
-	                                 presence.jid_from->domain);
+	if (presence.jid_from->node)
+		presence.chat = jabber_chat_find(js, presence.jid_from->node,
+		                                 presence.jid_from->domain);
 	if(presence.jb->error_msg) {
 		g_free(presence.jb->error_msg);
 		presence.jb->error_msg = NULL;

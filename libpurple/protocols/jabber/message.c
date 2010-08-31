@@ -75,12 +75,8 @@ static void handle_chat(JabberMessage *jm)
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
 	if(!jm->xhtml && !jm->body) {
-		if (jbr) {
-			if (jm->chat_state != JM_STATE_NONE)
-				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
-			else
-				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
-		}
+		if (jbr && jm->chat_state != JM_STATE_NONE)
+			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
@@ -142,10 +138,13 @@ static void handle_chat(JabberMessage *jm)
 		}
 
 		if(jbr) {
-			if (jm->chat_state != JM_STATE_NONE)
-				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
-			else
-				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+			/* Treat SUPPORTED as a terminal with no escape :) */
+			if (jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED) {
+				if (jm->chat_state != JM_STATE_NONE)
+					jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+				else
+					jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+			}
 
 			if(jbr->thread_id)
 				g_free(jbr->thread_id);
@@ -297,7 +296,6 @@ static void handle_error(JabberMessage *jm)
 }
 
 static void handle_buzz(JabberMessage *jm) {
-	PurpleBuddy *buddy;
 	PurpleAccount *account;
 
 	/* Delayed buzz MUST NOT be accepted */
@@ -310,7 +308,7 @@ static void handle_buzz(JabberMessage *jm) {
 
 	account = purple_connection_get_account(jm->js->gc);
 
-	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
+	if (purple_find_buddy(account, jm->from) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
 	/* xmpp only has 1 attention type, so index is 0 */
@@ -588,8 +586,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->thread_id = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
-				char *msg = xmlnode_to_str(child, NULL);
-				jm->body = purple_strdup_withhtml(msg);
+				char *msg = xmlnode_get_data(child);
+				char *escaped = purple_markup_escape_text(msg, -1);
+				jm->body = purple_strdup_withhtml(escaped);
+				g_free(escaped);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
@@ -963,7 +963,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 						JabberData *new_data =
 							jabber_data_create_from_data(purple_imgstore_get_data(image),
 								purple_imgstore_get_size(image),
-								jabber_message_get_mimetype_from_ext(ext), js);
+								jabber_message_get_mimetype_from_ext(ext), FALSE, js);
 						purple_debug_info("jabber",
 							"cache local smiley alt = %s, cid = %s\n",
 							shortcut, jabber_data_get_cid(new_data));
@@ -1240,22 +1240,34 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
+	JabberStream *js;
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *resource = jabber_get_resource(who);
+	char *resource;	
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	js = purple_connection_get_protocol_data(gc);
+	jb = jabber_buddy_find(js, who, TRUE);
+	if (!jb)
+		return 0;
+
+	resource = jabber_get_resource(who);
 	jbr = jabber_buddy_find_resource(jb, resource);
-
 	g_free(resource);
 
-	if (!jbr || (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED))
+	/* We know this entity doesn't support chat states */
+	if (jbr && jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED)
+		return 0;
+
+	/* *If* we don't have presence /and/ the buddy can't see our
+	 * presence, don't send typing notifications.
+	 */
+	if (!jbr && !(jb->subscription & JABBER_SUB_FROM))
 		return 0;
 
 	/* TODO: figure out threading */
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = js;
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);

@@ -1185,8 +1185,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		printf("\n");
 		}
 #endif
-		text = g_malloc(selection_data->length);
+
+		text = g_malloc(selection_data->length + 1);
 		memcpy(text, selection_data->data, selection_data->length);
+		/* Make sure the paste data is null-terminated.  Given that
+		 * we're passed length (but assume later that it is
+		 * null-terminated), this seems sensible to me.
+		 */
+		text[selection_data->length] = '\0';
 	}
 
 #ifdef _WIN32
@@ -1256,7 +1262,7 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml)) {
+	if (!clipboard_paste_html_win32(imhtml) && gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml))) {
 		GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
 
@@ -1347,6 +1353,9 @@ static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 static void
 imhtml_paste_cb(GtkIMHtml *imhtml, const char *str)
 {
+	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
+		return;
+
 	if (!str || !*str || !strcmp(str, "html"))
 		g_signal_emit_by_name(imhtml, "paste_clipboard");
 	else if (!strcmp(str, "text"))
@@ -1467,10 +1476,8 @@ imhtml_url_clicked(GtkIMHtml *imhtml, const char *url)
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
-	GtkObjectClass *object_class;
 	GtkBindingSet *binding_set;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) klass;
 	gobject_class = (GObjectClass*) klass;
 	parent_class = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
 	signals[URL_CLICKED] = g_signal_new("url_clicked",

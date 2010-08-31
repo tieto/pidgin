@@ -87,8 +87,17 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 		purple_timeout_remove(swboard->reconn_timeout_h);
 
 	/* If it linked us is because its looking for trouble */
-	while (swboard->slplinks != NULL)
-		msn_slplink_destroy(swboard->slplinks->data);
+	while (swboard->slplinks != NULL) {
+		MsnSlpLink *slplink = swboard->slplinks->data;
+
+		/* Destroy only those slplinks which use the switchboard */
+		if (slplink->dc == NULL)
+			msn_slplink_destroy(slplink);
+		else {
+			swboard->slplinks = g_list_remove(swboard->slplinks, slplink);
+			slplink->swboard = NULL;
+		}
+	}
 
 	/* Destroy the message queue */
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)
@@ -731,8 +740,13 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if ((swboard->current_users > 1) ||
 			 (purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
+		GList *passport;
 		/* This is a switchboard used for a chat */
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
+
+		passport = g_list_find_custom(swboard->users, user, (GCompareFunc)strcmp);
+		g_free(passport->data);
+		swboard->users = g_list_delete_link(swboard->users, passport);
 		swboard->current_users--;
 		if (swboard->current_users == 0)
 			msn_switchboard_destroy(swboard);
@@ -747,12 +761,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 
-	account = cmdproc->session->account;
-	gc = account->gc;
 	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
@@ -764,16 +774,12 @@ static void
 joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 	const char *passport;
 
 	passport = cmd->params[0];
 
 	session = cmdproc->session;
-	account = session->account;
-	gc = account->gc;
 	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);
@@ -937,7 +943,7 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	}
 
 	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
-	image_msg = g_strdup_printf("<IMG ID='%d'/>", imgid);
+	image_msg = g_strdup_printf("<IMG ID='%d'>", imgid);
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&

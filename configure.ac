@@ -46,16 +46,16 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [7])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [7])
-m4_define([purple_micro_version], [0])
+m4_define([purple_micro_version], [4])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [7])
+m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [7])
-m4_define([gnt_micro_version], [0])
+m4_define([gnt_minor_version], [8])
+m4_define([gnt_micro_version], [1])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -75,6 +75,8 @@ fi
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
+dnl TODO: Always use AM_SILENT_RULES when we depend on automake >= 1.11
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -114,6 +116,9 @@ LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
 AC_FUNC_ALLOCA
+
+dnl Check for Sun compiler
+AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -183,6 +188,12 @@ AC_CHECK_MEMBER([struct sockaddr.sa_len],
 	[AC_DEFINE([HAVE_STRUCT_SOCKADDR_SA_LEN],[1],
 	[Define if struct sockaddr has an sa_len member])],[:],
 	[#include <sys/socket.h>])
+
+dnl Check for v6-only sockets
+AC_CHECK_DECL([IPV6_V6ONLY],
+	[AC_DEFINE([HAVE_IPV6_V6ONLY],[1],
+	[Define if the IPV6_V6ONLY setsockopt option exists])],
+	[], [#include <netinet/in.h>])
 
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
@@ -312,6 +323,8 @@ MSGFMT=/path/to/msgfmt ./configure ...
 	])
 	fi
 fi #enable_i18n
+
+AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
@@ -649,6 +662,10 @@ if test "x$enable_consoleui" = "xyes"; then
 		for location in $ac_ncurses_includes $NCURSES_HEADERS /usr/include/ncursesw /usr/include
 		do
 			f="$location/ncurses.h"
+			orig_CFLAGS="$CFLAGS"
+			orig_CPPFLAGS="$CPPFLAGS"
+			CFLAGS="$CFLAGS -I$location"
+			CPPFLAGS="$CPPFLAGS -I$location"
 			AC_CHECK_HEADER($f,[
 				AC_MSG_CHECKING([if $f supports wide characters])
 				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -667,9 +684,13 @@ if test "x$enable_consoleui" = "xyes"; then
 					fi
 
 					found_ncurses_h=yes
+					CFLAGS="$orig_CFLAGS"
+					CPPFLAGS="$orig_CPPFLAGS"
 					AC_MSG_RESULT([yes])
 					break
 				], [
+					CFLAGS="$orig_CFLAGS"
+					CPPFLAGS="$orig_CPPFLAGS"
 					AC_MSG_RESULT([no])
 				])
 			])
@@ -1331,6 +1352,10 @@ if test "x$GCC" = "xyes"; then
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
+
+if test "x$SUNCC" = "xyes"; then
+        CFLAGS="$CFLAGS -features=extensions" 
+fi
 AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
@@ -1791,13 +1816,13 @@ AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
 
 if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for gnutls_priority_set_direct)
+	AC_MSG_CHECKING(for gnutls_priority_set_direct and gnutls_priority_set)
 	LIBS_save="$LIBS"
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL); gnutls_priority_set(s, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
@@ -2223,6 +2248,7 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	TKCONFIG=no
 	TKCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tk8.5 \
 			/usr/lib/tk8.4 \
 			/usr/lib/tk8.3 \
 			/usr/lib/tk8.2 \
@@ -2451,7 +2477,12 @@ AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disa
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
 
-AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
+dnl #######################################################################
+dnl # Tweak status tray icon installation directory
+dnl #######################################################################
+AC_ARG_ENABLE(trayicon-compat, AC_HELP_STRING([--enable-trayicon-compat], [install tray icons in location compatible with older releases of hicolor-icon-theme]), enable_traycompat="$enableval", enable_traycompat=no)
+
+AM_CONDITIONAL(ENABLE_TRAYCOMPAT, test "x$enable_traycompat" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
@@ -2622,6 +2653,7 @@ echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
 echo Use external libgadu.......... : $gadu_libs
 echo Install pixmaps............... : $enable_pixmaps
+echo Old tray icon compatibility... : $enable_traycompat
 echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
@@ -2649,7 +2681,7 @@ if test "x$enable_pixmaps" = "xno" ; then
 fi
 if test "x$enable_i18n" = "xno" ; then
 	echo
-	echo Warning: You have disabled the building and intallation of translation
+	echo Warning: You have disabled the building and installation of translation
 	echo data.  This will prevent building pidgin.desktop and the GConf schemas.
 	echo Be sure you know what you are doing.
 fi

@@ -32,6 +32,7 @@
 #include "notify.h"
 
 #include "buddy.h"
+#include "data.h"
 #include "disco.h"
 #include "jabber.h"
 #include "ibb.h"
@@ -39,6 +40,7 @@
 #include "si.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
+#define ENABLE_FT_THUMBNAILS 0
 
 typedef struct _JabberSIXfer {
 	JabberStream *js;
@@ -1246,26 +1248,46 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	JabberIq *iq;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	char buf[32];
+#if ENABLE_FT_THUMBNAILS
+	gconstpointer thumb;
+	gsize thumb_size;
 
+	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
+#endif
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-
+	
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
 	xmlnode_set_namespace(si, "http://jabber.org/protocol/si");
 	jsx->stream_id = jabber_get_next_id(jsx->js);
 	xmlnode_set_attrib(si, "id", jsx->stream_id);
-	xmlnode_set_attrib(si, "profile",
-			"http://jabber.org/protocol/si/profile/file-transfer");
+	xmlnode_set_attrib(si, "profile", NS_SI_FILE_TRANSFER);
 
 	file = xmlnode_new_child(si, "file");
-	xmlnode_set_namespace(file,
-			"http://jabber.org/protocol/si/profile/file-transfer");
+	xmlnode_set_namespace(file, NS_SI_FILE_TRANSFER);
 	xmlnode_set_attrib(file, "name", xfer->filename);
 	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
+#if ENABLE_FT_THUMBNAILS
+	/* add thumbnail, if appropriate */
+	if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
+		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
+		JabberData *thumbnail_data =
+			jabber_data_create_from_data(thumb, thumb_size,
+				mimetype, TRUE, jsx->js);
+		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
+		xmlnode_set_namespace(thumbnail, NS_THUMBS);
+		xmlnode_set_attrib(thumbnail, "cid", 
+			jabber_data_get_cid(thumbnail_data));
+		xmlnode_set_attrib(thumbnail, "mime-type", mimetype);
+		/* cache data */
+		jabber_data_associate_local(thumbnail_data, NULL);
+	}
+#endif
+						  
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
@@ -1464,7 +1486,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 
 		if (jabber_resource_has_capability(jbr, NS_IBB))
 			jsx->stream_method |= STREAM_METHOD_IBB;
-		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
+		if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)) {
 			jabber_si_xfer_send_request(xfer);
 			return;
 		}
@@ -1499,7 +1521,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr = NULL;
 		char *resource;
-
+		GList *resources = NULL;
+		
 		if(NULL != (resource = jabber_get_resource(xfer->who))) {
 			/* they've specified a resource, no need to ask or
 			 * default or anything, just do it */
@@ -1511,7 +1534,22 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
 
-		if(!jb || !jb->resources) {
+		if (jb) {
+			GList *l;
+
+			for (l = jb->resources ; l ; l = g_list_next(l)) {
+				jbr = l->data;
+
+				if (!jabber_resource_know_capabilities(jbr) ||
+				    (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)
+				     && (jabber_resource_has_capability(jbr, NS_BYTESTREAMS)
+				         || jabber_resource_has_capability(jbr, NS_IBB)))) {
+					resources = g_list_append(resources, jbr);
+				}
+			}
+		}
+		
+		if (!resources) {
 			/* no resources online, we're trying to send to someone
 			 * whose presence we're not subscribed to, or
 			 * someone who is offline.  Let's inform the user */
@@ -1527,13 +1565,11 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
 			g_free(msg);
-		} else if(!jb->resources->next) {
+		} else if (g_list_length(resources) == 1) {
 			/* only 1 resource online (probably our most common case)
 			 * so no need to ask who to send to */
-			jbr = jb->resources->data;
-
+			jbr = resources->data;
 			do_transfer_send(xfer, jbr->name);
-
 		} else {
 			/* we've got multiple resources, we need to pick one to send to */
 			GList *l;
@@ -1541,11 +1577,9 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 			PurpleRequestFields *fields = purple_request_fields_new();
 			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
 			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
-
-			for(l = jb->resources; l; l = l->next)
-			{
+			
+			for(l = resources; l; l = l->next) {
 				jbr = l->data;
-
 				purple_request_field_choice_add(field, jbr->name);
 			}
 
@@ -1559,6 +1593,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			g_free(msg);
 		}
+
+		g_list_free(resources);
 	} else {
 		xmlnode *si, *feature, *x, *field, *value;
 
@@ -1630,11 +1666,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
-	JabberStream *js;
-
 	PurpleXfer *xfer;
-
-	js = gc->proto_data;
 
 	xfer = jabber_si_new_xfer(gc, who);
 
@@ -1644,17 +1676,34 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
+#if ENABLE_FT_THUMBNAILS
+static void
+jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
+{
+	PurpleXfer *xfer = (PurpleXfer *) userdata;
+
+	if (data) {
+		purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
+			jabber_data_get_size(data), jabber_data_get_type(data));
+		/* data is ephemeral, get rid of now (the xfer re-owned the thumbnail */
+		jabber_data_destroy(data);
+	}
+
+	purple_xfer_request(xfer);
+}
+#endif
+
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value;
+	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
 	const char *stream_id, *filename, *filesize_c, *profile;
 	size_t filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
-			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
+			strcmp(profile, NS_SI_FILE_TRANSFER))
 		return;
 
 	if(!(stream_id = xmlnode_get_attrib(si, "id")))
@@ -1681,7 +1730,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	/* if they've already sent us this file transfer with the same damn id
 	 * then we're gonna ignore it, until I think of something better to do
 	 * with it */
-	if((xfer = jabber_si_xfer_find(js, stream_id, from)))
+	if(jabber_si_xfer_find(js, stream_id, from) != NULL)
 		return;
 
 	jsx = g_new0(JabberSIXfer, 1);
@@ -1731,10 +1780,27 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
+				   
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
+#if ENABLE_FT_THUMBNAILS
+	/* if there is a thumbnail, we should request it... */
+	if ((thumbnail = xmlnode_get_child_with_namespace(file, "thumbnail",
+		NS_THUMBS))) {
+		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
+		if (cid) {
+			jabber_data_request(js, cid, purple_xfer_get_remote_user(xfer),
+			    NULL, TRUE, jabber_si_thumbnail_cb, xfer);
+		} else {
+			purple_xfer_request(xfer);
+		}
+	} else {
+		purple_xfer_request(xfer);
+	}
+#else
+	thumbnail = NULL; /* Silence warning */
 	purple_xfer_request(xfer);
+#endif
 }
 
 void

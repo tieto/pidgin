@@ -77,7 +77,6 @@ void oscar_add_permit(PurpleConnection *gc, const char *who);
 void oscar_add_deny(PurpleConnection *gc, const char *who);
 void oscar_rem_permit(PurpleConnection *gc, const char *who);
 void oscar_rem_deny(PurpleConnection *gc, const char *who);
-void oscar_set_permit_deny(PurpleConnection *gc);
 void oscar_join_chat(PurpleConnection *gc, GHashTable *data);
 char *oscar_get_chat_name(GHashTable *data);
 void oscar_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name);

@@ -520,9 +520,6 @@ static void delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 		GtkTreeIter *iter, gpointer data)
 {
 	PurpleSmiley *smiley = NULL;
-	SmileyManager *dialog;
-
-	dialog = (SmileyManager*)data;
 
 	gtk_tree_model_get(model, iter,
 			SMILEY, &smiley,

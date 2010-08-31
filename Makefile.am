@@ -80,10 +80,13 @@ appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
-GTK_DIR=pidgin
 endif #ENABLE_GTK
 
 endif #INSTALL_I18N
+
+if ENABLE_GTK
+GTK_DIR=pidgin
+endif
 
 if ENABLE_GNT
 GNT_DIR=finch
@@ -97,18 +100,18 @@ endif
 # creates, and also make sure that the shell command exits
 # successfully; the rm -f ensures both
 package_revision_raw.txt:
-	REAL_BLDDIR=$$PWD/$(top_builddir); \
+	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
 	(cd $(srcdir) && $$REAL_BLDDIR/mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
-	if test -f $<; then \
+	$(AM_V_GEN)if test -f $<; then \
 	  echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
-	if test ! -f $@ -a -f $(srcdir)/$@; then \
+	$(AM_V_at)if test ! -f $@ -a -f $(srcdir)/$@; then \
 	  cp $(srcdir)/$@ $@; \
 	fi
-	test -f $@ || echo "#define REVISION \"unknown\"" > $@
+	$(AM_V_at)test -f $@ || echo "#define REVISION \"unknown\"" > $@
 
 # This is a magic directive copy-and-pasted, then modified, from the
 # automake 1.9 manual, section 13.4, "Checking the distribution".
@@ -133,7 +136,7 @@ if HAVE_DOXYGEN
 if HAVE_XSLTPROC
 	@echo "Generating devhelp index..."
 	@xsltproc $(top_srcdir)/doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
-	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
+	@echo "(Symlink $$(pwd)/doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
 else
 	@echo "Not generating devhelp index: xsltproc was not found by configure"
 endif

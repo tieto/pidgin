@@ -942,6 +942,9 @@ chat_account_filter_func(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
+	if (gc == NULL)
+		return FALSE;
+
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	return (prpl_info->chat_info != NULL);
@@ -3165,7 +3168,6 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
 		PurpleBuddy *b = purple_contact_get_priority_buddy((PurpleContact *)node);
-		width = height = 0;
 
 		for(child = node->child; child; child = child->next)
 		{
@@ -3452,7 +3454,7 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				PurpleAccount *account = (PurpleAccount *) accounts->data;
 				PurpleConnection *gc = purple_account_get_connection(account);
 
-				if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+				if (gc && gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
 					update_status_with_mood(account, mood, NULL);
 				}
 			}
@@ -3484,29 +3486,31 @@ get_global_moods(void)
 	
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
-		PurpleConnection *gc = purple_account_get_connection(account);
+		if (purple_account_is_connected(account)) {
+			PurpleConnection *gc = purple_account_get_connection(account);
 
-		if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
-			PurplePluginProtocolInfo *prpl_info =
-				PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-			PurpleMood *mood = NULL;
+			if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+				PurplePluginProtocolInfo *prpl_info =
+					PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				PurpleMood *mood = NULL;
 
-			/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
-			 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
-			 * here */
-			for (mood = prpl_info->get_moods(account) ;
-			    mood->mood != NULL ; mood++) {
-				int mood_count =
-						GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
+				/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
+				 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
+				 * here */
+				for (mood = prpl_info->get_moods(account) ;
+				    mood->mood != NULL ; mood++) {
+					int mood_count =
+							GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
-				if (!g_hash_table_lookup(global_moods, mood->mood)) {
-					g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
+					if (!g_hash_table_lookup(global_moods, mood->mood)) {
+						g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
+					}
+					g_hash_table_insert(mood_counts, (gpointer)mood->mood,
+					    GINT_TO_POINTER(mood_count + 1));
 				}
-				g_hash_table_insert(mood_counts, (gpointer)mood->mood,
-				    GINT_TO_POINTER(mood_count + 1));
-			}
 
-			num_accounts++;
+				num_accounts++;
+			}
 		}
 	}
 
@@ -3544,8 +3548,9 @@ get_global_mood_status(void)
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 
-		if (purple_account_get_connection(account)->flags &
-		    PURPLE_CONNECTION_SUPPORT_MOODS) {
+		if (purple_account_is_connected(account) &&
+		    (purple_account_get_connection(account)->flags &
+		     PURPLE_CONNECTION_SUPPORT_MOODS)) {
 			PurplePresence *presence = purple_account_get_presence(account);
 			PurpleStatus *status = purple_presence_get_status(presence, "mood");
 			const gchar *curr_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
@@ -3595,11 +3600,12 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	/* TODO: rlaager wants this sorted. */
-	/* The connection is checked for PURPLE_CONNECTION_SUPPORT_MOODS flag before
-	 * this function is called for a non-null account. So using
-	 * PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary here */
-	for (mood = account ? prpl_info->get_moods(account) : global_moods;
-	     mood->mood != NULL ; mood++) {
+	/* TODO: darkrain wants it sorted post-translation */
+	if (account && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
+		mood = prpl_info->get_moods(account);
+	else
+		mood = global_moods;
+	for ( ; mood->mood != NULL ; mood++) {
 		char *path;
 
 		if (mood->mood == NULL || mood->description == NULL)
@@ -3647,6 +3653,9 @@ set_mood_show(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by 
+   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
+
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
@@ -3680,7 +3689,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Set _Mood"), "<CTL>M", set_mood_show, 0, "<Item>", NULL },
+	{ N_("/Tools/Set _Mood"), "<CTL>D", set_mood_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
@@ -3959,7 +3968,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			                                 tmp);
 			g_free(tmp);
 		}
-		count = 0;
 
 		count = purple_blist_get_group_size(group, FALSE);
 		if (count != 0) {
@@ -3970,7 +3978,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			                                 tmp);
 			g_free(tmp);
 		}
-		count = 0;
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
@@ -4017,7 +4024,6 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 {
 	PurpleBuddy *buddy = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
-	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
@@ -4028,11 +4034,9 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-			gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
 		}
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
-		gtkbuddynode = node->ui_data;
 		p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 			/* This emblem comes from the small emoticon set now,
@@ -4125,7 +4129,6 @@ GdkPixbuf *
 pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 {
 	GdkPixbuf *ret;
-	const char *protoname = NULL;
 	const char *icon = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
@@ -4152,7 +4155,6 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	if(buddy || chat) {
 		PurpleAccount *account;
 		PurplePlugin *prpl;
-		PurplePluginProtocolInfo *prpl_info;
 
 		if(buddy)
 			account = buddy->account;
@@ -4162,12 +4164,6 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 		if(!prpl)
 			return NULL;
-
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-		if(prpl_info && prpl_info->list_icon) {
-			protoname = prpl_info->list_icon(account, buddy);
-		}
 	}
 
 	if(buddy) {
@@ -4584,7 +4580,7 @@ sign_on_off_cb(PurpleConnection *gc, PurpleBuddyList *blist)
 }
 
 static void
-plugin_changed_cb(PurplePlugin *p, gpointer *data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	pidgin_blist_update_plugin_actions();
 }
@@ -7461,7 +7457,7 @@ PidginBuddyList *pidgin_blist_get_default_gtk_blist()
 	return gtkblist;
 }
 
-static void account_signon_cb(PurpleConnection *gc, gpointer z)
+static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBlistNode *gnode, *cnode;
@@ -7487,6 +7483,9 @@ static void account_signon_cb(PurpleConnection *gc, gpointer z)
 				serv_join_chat(gc, chat->components);
 		}
 	}
+
+	/* Stop processing; we handled the autojoins. */
+	return TRUE;
 }
 
 void *
@@ -7563,10 +7562,6 @@ void pidgin_blist_init(void)
 
 	cached_emblems = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						gtk_blist_handle, PURPLE_CALLBACK(account_signon_cb),
-						NULL);
-
 	/* Initialize prefs */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/blist");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons", TRUE);
@@ -7625,6 +7620,9 @@ void pidgin_blist_init(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed",
 			gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
 
+	purple_signal_connect_priority(purple_connections_get_handle(), "autojoin",
+	                               gtk_blist_handle, PURPLE_CALLBACK(autojoin_cb),
+	                               NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 }
 
 void
@@ -7739,7 +7737,6 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 		sort_method_none(node, blist, groupiter, cur, iter);
 		return;
 	}
-
 
 	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
 		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);

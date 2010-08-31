@@ -73,6 +73,10 @@
 #include "jingle/rtp.h"
 
 #define PING_TIMEOUT 60
+/* Send a whitespace keepalive to the server if we haven't sent
+ * anything in the last 120 seconds
+ */
+#define DEFAULT_INACTIVITY_TIME 120
 
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
@@ -168,6 +172,8 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
+
+		return;
 	}
 
 	jabber_session_init(js);
@@ -201,19 +207,55 @@ static char *jabber_prep_resource(char *input) {
 	 * resource string from being unreasonably long on systems which stuff the
 	 * whole FQDN in the hostname */
 	if((dot = strchr(hostname, '.')))
-			dot = '\0';
+		*dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
 
+static gboolean
+jabber_process_starttls(JabberStream *js, xmlnode *packet)
+{
+	PurpleAccount *account;
+	xmlnode *starttls;
+
+	account = purple_connection_get_account(js->gc);
+
+	if(purple_ssl_is_supported()) {
+		jabber_send_raw(js,
+				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+		return TRUE;
+	}
+
+	starttls = xmlnode_get_child(packet, "starttls");
+	if(xmlnode_get_child(starttls, "required")) {
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
+		return TRUE;
+	}
+
+	if (g_str_equal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You require encryption, but no TLS/SSL support was found."));
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
-	if(xmlnode_get_child(packet, "starttls")) {
-		if(jabber_process_starttls(js, packet)) {
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+	const char *connection_security =
+		purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
+
+	if (xmlnode_get_child(packet, "starttls")) {
+		if (jabber_process_starttls(js, packet)) {
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
 		}
-	} else if(purple_account_get_bool(js->gc->account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS) && !jabber_stream_is_ssl(js)) {
+	} else if (g_str_equal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -360,8 +402,10 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 	int ret;
 	gboolean success = TRUE;
 
-	if (len == -1)
-		len = strlen(data);
+	g_return_val_if_fail(len > 0, FALSE);
+
+	if (js->state == JABBER_STREAM_CONNECTED)
+		jabber_stream_restart_inactivity_timer(js);
 
 	if (js->writeh == 0)
 		ret = jabber_do_send(js, data, len);
@@ -402,6 +446,12 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 
 void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
+	PurpleConnection *gc;
+	PurpleAccount *account;
+
+	gc = js->gc;
+	account = purple_connection_get_account(gc);
+
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
 		const char *username;
@@ -429,9 +479,9 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			*data_start = '\0';
 		}
 
-		username = purple_connection_get_display_name(js->gc);
+		username = purple_connection_get_display_name(gc);
 		if (!username)
-			username = purple_account_get_username(purple_connection_get_account(js->gc));
+			username = purple_account_get_username(account);
 
 		purple_debug_misc("jabber", "Sending%s (%s): %s%s%s\n",
 				jabber_stream_is_ssl(js) ? " (ssl)" : "", username,
@@ -442,9 +492,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(purple_connection_get_prpl(gc), "jabber-sending-text", gc, &data);
 	if (data == NULL)
 		return;
+
+	if (len == -1)
+		len = strlen(data);
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
@@ -453,30 +506,42 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		int pos = 0;
 
 		if (!js->gsc && js->fd<0)
-			return;
-
-		if (len == -1)
-			len = strlen(data);
+			g_return_if_reached();
 
 		while (pos < len) {
 			int towrite;
 			const char *out;
 			unsigned olen;
+			int rc;
 
 			towrite = MIN((len - pos), js->sasl_maxbuf);
 
-			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
+			rc = sasl_encode(js->sasl, &data[pos], towrite,
+			                 &out, &olen);
+			if (rc != SASL_OK) {
+				gchar *error =
+					g_strdup_printf(_("SASL error: %s"),
+						sasl_errdetail(js->sasl));
+				purple_debug_error("jabber",
+					"sasl_encode error %d: %s\n", rc,
+					sasl_errdetail(js->sasl));
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					error);
+				g_free(error);
+				return;
+			}
 			pos += towrite;
 
+			/* do_jabber_send_raw returns FALSE when it throws a
+			 * connection error.
+			 */
 			if (!do_jabber_send_raw(js, out, olen))
 				break;
 		}
 		return;
 	}
 #endif
-
-	if (len == -1)
-		len = strlen(data);
 
 	if (js->bosh)
 		jabber_bosh_connection_send_raw(js->bosh, data);
@@ -486,7 +551,14 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
-	JabberStream *js = (JabberStream*)gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
+
+	g_return_val_if_fail(js != NULL, -1);
+	/* TODO: It's probably worthwhile to restrict this to when the account
+	 * state is CONNECTED, but I can /almost/ envision reasons for wanting
+	 * to do things during the connection process.
+	 */
+
 	jabber_send_raw(js, buf, len);
 	return len;
 }
@@ -501,8 +573,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 	if (NULL == packet)
 		return;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(pc));
 
 	js = purple_connection_get_protocol_data(pc);
 
@@ -559,7 +630,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
@@ -590,24 +661,35 @@ static void
 jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 {
 	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	int len;
 	static char buf[4096];
 
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
 #ifdef HAVE_CYRUS_SASL
-		if (js->sasl_maxbuf>0) {
+		if (js->sasl_maxbuf > 0) {
 			const char *out;
 			unsigned int olen;
-			sasl_decode(js->sasl, buf, len, &out, &olen);
-			if (olen>0) {
+			int rc;
+
+			rc = sasl_decode(js->sasl, buf, len, &out, &olen);
+			if (rc != SASL_OK) {
+				gchar *error =
+					g_strdup_printf(_("SASL error: %s"),
+						sasl_errdetail(js->sasl));
+				purple_debug_error("jabber",
+					"sasl_decode_error %d: %s\n", rc,
+					sasl_errdetail(js->sasl));
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					error);
+			} else if (olen > 0) {
 				purple_debug_info("jabber", "RecvSASL (%u): %s\n", olen, out);
-				jabber_parser_process(js,out,olen);
-				if(js->reinit)
+				jabber_parser_process(js, out, olen);
+				if (js->reinit)
 					jabber_stream_init(js);
 			}
 			return;
@@ -643,7 +725,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	js = gc->proto_data;
@@ -738,8 +820,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	JabberStream *js;
 
 	/* If the connection is already disconnected, we don't need to do anything else */
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	js = gc->proto_data;
 	js->gsc = NULL;
@@ -842,6 +923,16 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
+		g_free(user);
+		/* Destroying the connection will free the JabberStream */
+		return NULL;
+	}
+
+	if (!js->user->node || *(js->user->node) == '\0') {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID. Username portion must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -850,6 +941,7 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -878,6 +970,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = 0;
+	js->max_inactivity = DEFAULT_INACTIVITY_TIME;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
 	js->protocol_version.major = 1;
 	js->protocol_version.minor = 0;
@@ -927,7 +1020,7 @@ jabber_stream_connect(JabberStream *js)
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
+	if (g_str_equal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),
@@ -1532,7 +1625,8 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->avatar_hash);
 	g_free(js->caps_hash);
 
-	purple_circ_buffer_destroy(js->write_buffer);
+	if (js->write_buffer)
+		purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
 	if (js->auth_mech && js->auth_mech->dispose)
@@ -1543,6 +1637,8 @@ void jabber_close(PurpleConnection *gc)
 	if(js->sasl_mechs)
 		g_string_free(js->sasl_mechs, TRUE);
 	g_free(js->sasl_cb);
+	/* Note: _not_ g_free.  See auth_cyrus.c:jabber_sasl_cb_secret */
+	free(js->sasl_secret);
 #endif
 	g_free(js->serverFQDN);
 	while(js->commands) {
@@ -1564,13 +1660,14 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_source);
 	g_free(js->old_uri);
 	g_free(js->old_track);
-	g_free(js->expected_rspauth);
 
 	if (js->vcard_timer != 0)
 		purple_timeout_remove(js->vcard_timer);
 
 	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
+	if (js->inactivity_timer != 0)
+		purple_timeout_remove(js->inactivity_timer);
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
@@ -1622,6 +1719,9 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_CONNECTED:
 			/* Send initial presence */
 			jabber_presence_send(js, TRUE);
+			/* Start up the inactivity timer */
+			jabber_stream_restart_inactivity_timer(js);
+
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
@@ -1867,20 +1967,53 @@ static void jabber_features_destroy(void)
 	}
 }
 
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
+gint
+jabber_identity_compare(gconstpointer a, gconstpointer b)
+{
+	const JabberIdentity *ac;
+	const JabberIdentity *bc;
+	gint cat_cmp;
+	gint typ_cmp;
+
+	ac = a;
+	bc = b;
+
+	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
+		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
+			if (!ac->lang && !bc->lang) {
+				return 0;
+			} else if (ac->lang && !bc->lang) {
+				return 1;
+			} else if (!ac->lang && bc->lang) {
+				return -1;
+			} else {
+				return strcmp(ac->lang, bc->lang);
+			}
+		} else {
+			return typ_cmp;
+		}
+	} else {
+		return cat_cmp;
+	}
+}
+
+void jabber_add_identity(const gchar *category, const gchar *type,
+                         const gchar *lang, const gchar *name)
+{
 	GList *identity;
 	JabberIdentity *ident;
+
 	/* both required according to XEP-0030 */
 	g_return_if_fail(category != NULL);
 	g_return_if_fail(type != NULL);
 
-	for(identity = jabber_identities; identity; identity = identity->next) {
-		JabberIdentity *ident = (JabberIdentity*)identity->data;
-		if (!strcmp(ident->category, category) &&
-		    !strcmp(ident->type, type) &&
-		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
+	/* Check if this identity is already there... */
+	for (identity = jabber_identities; identity; identity = identity->next) {
+		JabberIdentity *id = identity->data;
+		if (g_str_equal(id->category, category) &&
+			g_str_equal(id->type, type) &&
+			purple_strequal(id->lang, lang))
 			return;
-		}
 	}
 
 	ident = g_new0(JabberIdentity, 1);
@@ -1888,7 +2021,8 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	ident->type = g_strdup(type);
 	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
-	jabber_identities = g_list_prepend(jabber_identities, ident);
+	jabber_identities = g_list_insert_sorted(jabber_identities, ident,
+	                                         jabber_identity_compare);
 }
 
 static void jabber_identities_destroy(void)
@@ -1908,6 +2042,38 @@ gboolean jabber_stream_is_ssl(JabberStream *js)
 {
 	return (js->bosh && jabber_bosh_connection_is_ssl(js->bosh)) ||
 	       (!js->bosh && js->gsc);
+}
+
+static gboolean
+inactivity_cb(gpointer data)
+{
+	JabberStream *js = data;
+
+	/* We want whatever is sent to set this.  It's okay because
+	 * the eventloop unsets it via the return FALSE.
+	 */
+	js->inactivity_timer = 0;
+
+	if (js->bosh)
+		jabber_bosh_connection_send_keepalive(js->bosh);
+	else
+		jabber_send_raw(js, "\t", 1);
+
+	return FALSE;
+}
+
+void jabber_stream_restart_inactivity_timer(JabberStream *js)
+{
+	if (js->inactivity_timer != 0) {
+		purple_timeout_remove(js->inactivity_timer);
+		js->inactivity_timer = 0;
+	}
+
+	g_return_if_fail(js->max_inactivity > 0);
+
+	js->inactivity_timer =
+		purple_timeout_add_seconds(js->max_inactivity,
+		                           inactivity_cb, js);
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -3313,8 +3479,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 			for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
 				JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
 
-				if (jabber_resource_has_capability(jbr,
-						"http://jabber.org/protocol/si/profile/file-transfer")
+				if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)
 			    	&& (jabber_resource_has_capability(jbr,
 			    			NS_BYTESTREAMS)
 			        	|| jabber_resource_has_capability(jbr, NS_IBB))) {
@@ -3336,7 +3501,7 @@ jabber_cmd_mood(PurpleConversation *conv,
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */
-		if (!args | !args[0]) {
+		if (!args || !args[0]) {
 			jabber_mood_set(js, NULL, NULL);
 		} else if (!args[1]) {
 			jabber_mood_set(js, args[0], NULL);
@@ -3616,7 +3781,7 @@ jabber_do_init(void)
 	jabber_add_feature("http://jabber.org/protocol/muc", 0);
 	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
 	jabber_add_feature("http://jabber.org/protocol/si", 0);
-	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
+	jabber_add_feature(NS_SI_FILE_TRANSFER, 0);
 	jabber_add_feature(NS_XHTML_IM, 0);
 	jabber_add_feature(NS_PING, 0);
 
@@ -3674,6 +3839,11 @@ jabber_do_uninit(void)
 	jabber_caps_uninit();
 	jabber_presence_uninit();
 	jabber_iq_uninit();
+
+#ifdef USE_VV
+	g_signal_handlers_disconnect_by_func(G_OBJECT(purple_media_manager_get()),
+			G_CALLBACK(jabber_caps_broadcast_change), NULL);
+#endif
 
 	jabber_auth_uninit();
 	jabber_features_destroy();

@@ -18,6 +18,7 @@ control system to see from where it came and who has modified it.
 Copyright (C) 1998-2009 by the following:
 
 Saleem Abdulrasool
+Jakub Adam
 Dave Ahlswede
 Manuel Amador
 Matt Amato
@@ -118,10 +119,12 @@ Palmer Cox
 Jeramey Crawford
 Michael Culbertson
 Steven Danna
+Simon Danner
 Chris Davies
 Josh Davis
 Martijn Dekker
 Florian Delizy
+Jiri Denemark
 Vinicius Depizzol
 Philip Derrin
 Taso N. Devetzis
@@ -245,9 +248,11 @@ John Kelm
 Jochen Kemnade
 Yann Kerherve
 Gordian Klein
+Marten Klencke
 Krzysztof Klinikowski
 Akuke Kok
 Kir Kolyshkin
+Ivan Komarov
 F.W. Kong
 Konstantin Korikov
 Cole Kowalski
@@ -294,6 +299,7 @@ Brian Macke
 Paolo Maggi
 Sulabh Mahajan
 Willian T. Mahan
+Jonathan Maltz
 Tobias Markmann
 Kris Marsh
 Fidel Martinez
@@ -328,6 +334,7 @@ Sergio Moretto
 Andrei Mozzhuhin
 Christian Muise
 MXit Lifestyle (Pty) Ltd.
+Alexander Nartov
 Richard Nelson
 Dennis Nezic
 Matthew A. Nicholson
@@ -359,11 +366,13 @@ Havoc Pennington
 Ted Percival
 Eduardo Pérez
 Matt Perry
+Ani Peter
 Luke Petre
 Diego Petten
 Nathan Peterson
 Dmitry Petroff
 Sebastián E. Peyrott
+Amitakhya Phukan
 Andrea Piccinelli
 Celso Pinto
 Joao Luís Marques Pinto
@@ -474,6 +483,7 @@ Sun Microsystems
 Marcus Sundberg
 Mårten Svantesson (fursten)
 Amir Szekely (kichik)
+Gábor Szuromi (kukkerman)
 Robert T.
 Greg Taeger
 Rob Taft
@@ -503,9 +513,11 @@ Brad Turcotte
 Kyle Turman
 Jon Turney
 Junichi Uekawa
+Max Ulidtko
 Igor Vlasenko
 István Váradi
 Martijn van Beers
+Gideon van Melle
 Arjan van de Ven
 Philip Van Hoof
 Kristof Vansant
@@ -530,6 +542,7 @@ Dave West
 Zac West
 Daniel Westermann-Clark
 Andrew Whewell
+Stephen Whitmore
 Simon Wilkinson
 Dan Willemsen
 Justin Williams (Jaywalker)
@@ -546,6 +559,7 @@ Pui Lam Wong
 Justin Wood
 Ximian
 Ma Xuan
+Yonas Yanfa
 Jared Yanovich
 Timmy Yee
 Li Yuan

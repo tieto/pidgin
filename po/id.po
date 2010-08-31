@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -62,12 +63,24 @@ msgstr ""
 msgid "Error"
 msgstr "Kesalahan"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "Akun tidak ditambahkan"
+
 msgid "Account was not added"
 msgstr "Akun tidak ditambahkan"
 
 #, fuzzy
 msgid "Username of an account must be non-empty."
 msgstr "Nama layar dari sebuah akun tidak boleh kosong."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Pemberitahuan email baru"
@@ -802,7 +815,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Menunggu transfer untuk mulai"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Dibatalkan"
 
 msgid "Failed"
@@ -1287,6 +1300,10 @@ msgstr "Yang lain berbicara dalam percakapan"
 msgid "Someone says your username in chat"
 msgstr "Seseorang menyebut nama anda dalam percakapan"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Disyaratkan Pendaftaran"
+
 msgid "GStreamer Failure"
 msgstr "Kegagalan GStreamer"
 
@@ -1380,7 +1397,6 @@ msgid "Saved Statuses"
 msgstr "Status Penyimpanan"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Judul"
 
@@ -1577,7 +1593,7 @@ msgstr ""
 msgid "Online"
 msgstr "Online"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Offline"
 
@@ -1675,6 +1691,14 @@ msgstr "Rubah informasi pengguna untuk %s"
 msgid "Set User Info"
 msgstr "Atur Info Pengguna"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Protokol ini tidak mendukung kamar percakapan."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Protokol ini tidak mendukung kamar percakapan."
+
 msgid "Unknown"
 msgstr "Tidak Diketahui"
 
@@ -1695,9 +1719,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 #, fuzzy
 msgid "The certificate has expired and should not be considered valid."
@@ -1941,7 +1966,6 @@ msgstr "Kesalahan penanganan %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Kegagalan pembuatan thread: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Alasan tidak jelas"
 
@@ -3222,6 +3246,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nama Depan"
 
@@ -3841,16 +3868,6 @@ msgstr "Perintah Ad-Hoc Gagal"
 msgid "execute"
 msgstr "laksanakan"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Server memerlukan otentifikasi teks biasa melalui aliran yang tidak "
@@ -3885,12 +3902,62 @@ msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 
 #, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"Server memerlukan otentifikasi teks biasa melalui aliran yang tidak "
+"dienkripsi"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s memerlukan otentifikasi teks biasa melalui sambungan yang tidak "
+"dienkripsi.  Ijinkan ini dan lanjutkan otentifikasi?"
+
+#, fuzzy
 msgid "SASL authentication failed"
 msgstr "Otentikasi gagal"
 
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "kesalahan SASL"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Kondisi input tidak valid"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Versi Tidak Didukung"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Server tidak menggunakan metode otentifikasi yang didukung"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Pengkodean Tidak Didukung"
+
+msgid "User not found"
+msgstr "Pengguna tidak ditemukan"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Nama tidak valid"
+
+msgid "Resource Constraint"
+msgstr "Konstrain Suber Daya"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3967,6 +4034,7 @@ msgstr "Daerah"
 msgid "Postal Code"
 msgstr "Kode Pos"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Negara"
 
@@ -3981,10 +4049,14 @@ msgstr "Nama Organisasi"
 msgid "Organization Unit"
 msgstr "Unit Organisasi"
 
+msgid "Job Title"
+msgstr "Jabatan"
+
 msgid "Role"
 msgstr "Peranan"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Ulang Tahun"
 
@@ -4210,11 +4282,25 @@ msgid "Roles:"
 msgstr "Peranan"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Server memerlukan TLS/SSL untuk login.  Dukungan TLS/SSL tidak ditemukan."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Teks biasa"
 
 msgid "Invalid XMPP ID"
 msgstr "ID XMPP Tidak Valid"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "ID XMPP Tidak Valid. Domain harus diset."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "ID XMPP Tidak Valid. Domain harus diset."
@@ -4315,7 +4401,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Tidak Diijinkan"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Mood"
 
@@ -4337,7 +4422,6 @@ msgstr "Kepada"
 msgid "None (To pending)"
 msgstr "Tidak ada (Ke pending)"
 
-#. 0
 msgid "None"
 msgstr "Tidak Ada"
 
@@ -4359,6 +4443,12 @@ msgstr "Nama Tengah"
 msgid "Mood Comment"
 msgstr "Komentar Teman"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Artis Nada"
 
@@ -4528,9 +4618,6 @@ msgstr "Pelanggaran Kebijakan"
 
 msgid "Remote Connection Failed"
 msgstr "Sambungan Jarak Jauh Gagal"
-
-msgid "Resource Constraint"
-msgstr "Konstrain Suber Daya"
 
 msgid "Restricted XML"
 msgstr "XML Terbatas"
@@ -4891,7 +4978,6 @@ msgstr "Malu"
 msgid "Amorous"
 msgstr "Berjaya"
 
-#. 1
 msgid "Angry"
 msgstr "Marah"
 
@@ -4989,7 +5075,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Tidak Sabar Lagi"
 
-#. 2
 msgid "Excited"
 msgstr "Bersemangant"
 
@@ -5008,7 +5093,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Mengambil..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Kelompok"
@@ -5017,14 +5101,12 @@ msgstr "Kelompok"
 msgid "Guilty"
 msgstr "Kota"
 
-#. 4
 msgid "Happy"
 msgstr "Senang"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Host:"
@@ -5065,7 +5147,6 @@ msgstr "Minat"
 msgid "Intoxicated"
 msgstr "Undang"
 
-#. 6
 msgid "Invincible"
 msgstr "Tak Terkalahkan"
 
@@ -5129,7 +5210,6 @@ msgstr "Hilangkan"
 msgid "Restless"
 msgstr "Mendaftar"
 
-#. 7
 msgid "Sad"
 msgstr "Sedih"
 
@@ -5150,12 +5230,10 @@ msgstr "Diblokir"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Nama Panggilan"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Mengantuk"
@@ -5567,20 +5645,6 @@ msgstr "Pada telepon"
 msgid "Out to Lunch"
 msgstr "Sedang Makan Siang"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "Artis-artis"
-
-#, fuzzy
-msgid "Album"
-msgstr "Album Nada"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Judul Nada"
@@ -5733,9 +5797,6 @@ msgstr "Ulang Tahun"
 msgid "Work"
 msgstr "Pekerjaan"
 
-msgid "Job Title"
-msgstr "Jabatan"
-
 msgid "Company"
 msgstr "Perusahaan"
 
@@ -5823,6 +5884,10 @@ msgstr "Sever Method HTTP"
 
 msgid "Show custom smileys"
 msgstr "Tampilkan senyuman kustom"
+
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Tidak dapat membuat sambungan"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "sikut: sikut pengguna untuk mendapatkan perhatiannya"
@@ -6022,28 +6087,6 @@ msgstr "Apakah anda ingin menambahkan teman ini ke daftar teman anda?"
 msgid "The username specified is invalid."
 msgstr "Nama layar yang ditentukan tidak valid."
 
-#. 5
-msgid "In Love"
-msgstr "Jatuh Cinta"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Mood Anda Sekarang"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Mood Pengguna"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Rubah Kata Sandi"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Saya tidak ada di sini sekarang"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
@@ -6080,7 +6123,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6089,6 +6136,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Nama Keluarga"
@@ -6118,11 +6166,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Tentang %s"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Ganti kata sandi..."
 
 #. display / change profile
 #, fuzzy
@@ -6167,7 +6210,7 @@ msgid "Connecting..."
 msgstr "Menyambungkan"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 #, fuzzy
@@ -6175,13 +6218,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name
-#, fuzzy
-msgid "Nick Name"
-msgstr "Nama Panggilan"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6211,10 +6249,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -6228,7 +6266,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Keamanan Diaktifkan"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Masukkan kata sandi"
@@ -6262,12 +6300,17 @@ msgid "Status Message"
 msgstr "Pesan status"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Pesan-pesan Diterima"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Nama Tengah"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "Atur Nomor Telepon Seluler..."
+msgid "Your MXit ID..."
+msgstr "ID Yahoo!"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6281,6 +6324,28 @@ msgstr "Menyambung menggunakan TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Anda telah ditendang oleh %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Tiket buruk"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Kamar:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Anda mendapatkan email"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Online"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6400,6 +6465,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Jatuh Cinta"
 
 #, fuzzy
 msgid "Pending"
@@ -6806,9 +6874,6 @@ msgstr "Kata sandi telah habis masa berlakunya"
 msgid "Incorrect password"
 msgstr "Kata sandi salah"
 
-msgid "User not found"
-msgstr "Pengguna tidak ditemukan"
-
 msgid "Account has been disabled"
 msgstr "Akun telah dinonaktifkan"
 
@@ -6881,8 +6946,8 @@ msgstr "Tidak dapat mem-ping pengguna %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Tidak dapat mengirim pesan. TIdak dapat mendapatkan rincian untuk pengguna (%"
-"s)."
+"Tidak dapat mengirim pesan. TIdak dapat mendapatkan rincian untuk pengguna "
+"(%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -7070,6 +7135,10 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Kesalahan dalam memohon token login"
+
 #, fuzzy
 msgid "Could not join chat room"
 msgstr "Tidak dapat menyambung"
@@ -7077,6 +7146,67 @@ msgstr "Tidak dapat menyambung"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "Nama Kamar Tidak Valid"
+
+msgid "Invalid error"
+msgstr "Kesalahan tidak valid"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Tidak dapat mengirim file"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Tidak dapat mengirim direktori."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Tidak dapat mengirim pesan."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Pesan Offlinee"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Tidak dapat mengirim pesan (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Tidak dapat mengirim pesan: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Tidak dapat mengirim pesan kepada %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Tidak dapat mengirim pesan kepada %s:"
 
 msgid "Thinking"
 msgstr ""
@@ -7241,120 +7371,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "File %s adalah %s, yang lebih besar dari ukuran maksimal dari %s."
-
-msgid "Invalid error"
-msgstr "Kesalahan tidak valid"
-
-msgid "Invalid SNAC"
-msgstr "SNAC tidak valid"
-
-msgid "Rate to host"
-msgstr "Nilai pada host"
-
-msgid "Rate to client"
-msgstr "Nilai pada client"
-
-msgid "Service unavailable"
-msgstr "Layanan tidak tersedia"
-
-msgid "Service not defined"
-msgstr "Layanan tidak didefinisikan"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC yang Usang"
-
-msgid "Not supported by host"
-msgstr "Tidak didukung oleh host"
-
-msgid "Not supported by client"
-msgstr "Tidak didukung oleh klien"
-
-msgid "Refused by client"
-msgstr "Ditolak oleh klien"
-
-msgid "Reply too big"
-msgstr "Jawaban terlalu besar"
-
-msgid "Responses lost"
-msgstr "Tanggapan hilang"
-
-msgid "Request denied"
-msgstr "Permintaan ditolak"
-
-msgid "Busted SNAC payload"
-msgstr "Muatan SNAC rusak"
-
-msgid "Insufficient rights"
-msgstr "Hak tidak cukup"
-
-msgid "In local permit/deny"
-msgstr "Ijinkan/tolak dalam lokal"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Pengguna sementara tidak ada"
-
-msgid "No match"
-msgstr "Tidak ada yang cocok"
-
-msgid "List overflow"
-msgstr "Overflow Daftar"
-
-msgid "Request ambiguous"
-msgstr "Permintaan tidak jelas"
-
-msgid "Queue full"
-msgstr "Antrian penuh"
-
-msgid "Not while on AOL"
-msgstr "Tidak sementara pada AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Tidak dapat mengirim file"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Tidak dapat mengirim direktori."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Tidak dapat mengirim pesan."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Pesan Offlinee"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7718,28 +7734,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Anda melewatkan %hu pesan dari %s karena alasan tidak jelas."
 msgstr[1] "Anda melewatkan %hu pesan-pesan dari %s karena alasan tidak jelas."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Tidak dapat mengirim pesan (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Tidak dapat mengirim pesan: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Tidak dapat mengirim pesan kepada %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Tidak dapat mengirim pesan kepada %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Informasi pengguna tidak tersedia: %s"
-
-msgid "Unknown reason."
-msgstr "Alasan tidak jelas."
 
 msgid "Online Since"
 msgstr "Online Sejak"
@@ -8177,6 +8174,75 @@ msgstr ""
 "PI.  Karena alamat IP anda akan terungkap, ini dianggap sebagai resiko "
 "privasi."
 
+msgid "Invalid SNAC"
+msgstr "SNAC tidak valid"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Layanan tidak tersedia"
+
+msgid "Service not defined"
+msgstr "Layanan tidak didefinisikan"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC yang Usang"
+
+msgid "Not supported by host"
+msgstr "Tidak didukung oleh host"
+
+msgid "Not supported by client"
+msgstr "Tidak didukung oleh klien"
+
+msgid "Refused by client"
+msgstr "Ditolak oleh klien"
+
+msgid "Reply too big"
+msgstr "Jawaban terlalu besar"
+
+msgid "Responses lost"
+msgstr "Tanggapan hilang"
+
+msgid "Request denied"
+msgstr "Permintaan ditolak"
+
+msgid "Busted SNAC payload"
+msgstr "Muatan SNAC rusak"
+
+msgid "Insufficient rights"
+msgstr "Hak tidak cukup"
+
+msgid "In local permit/deny"
+msgstr "Ijinkan/tolak dalam lokal"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Pengguna sementara tidak ada"
+
+msgid "No match"
+msgstr "Tidak ada yang cocok"
+
+msgid "List overflow"
+msgstr "Overflow Daftar"
+
+msgid "Request ambiguous"
+msgstr "Permintaan tidak jelas"
+
+msgid "Queue full"
+msgstr "Antrian penuh"
+
+msgid "Not while on AOL"
+msgstr "Tidak sementara pada AOL"
+
 msgid "Aquarius"
 msgstr "Aquarius"
 
@@ -8497,6 +8563,11 @@ msgstr "Dialog Pengajuan"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Daftar Kamar"
 
 #, fuzzy
 msgid "Notice"
@@ -9087,8 +9158,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Pilih konferensi dari daftar di bawah untuk mengirim undangan ke pengguna %"
-"s. Pilih \"Buat Konferensi Baru\" jika andan ingin membaut konferensi baru "
+"Pilih konferensi dari daftar di bawah untuk mengirim undangan ke pengguna "
+"%s. Pilih \"Buat Konferensi Baru\" jika andan ingin membaut konferensi baru "
 "untuk megundang pengguna ini ke sana."
 
 msgid "Invite to Conference"
@@ -10450,9 +10521,6 @@ msgstr "ID Yahoo!"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Protokol Plugin Yahoo"
 
-msgid "Pager server"
-msgstr "Server Penyeranta"
-
 msgid "Pager port"
 msgstr "Port Penyeranta"
 
@@ -10468,17 +10536,11 @@ msgstr "Kamar Pengguna Lokal"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Abaikan undangan konferensi dan kamar percakapan"
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
 msgstr "Daftar URL kamar percakapan"
-
-msgid "Yahoo Chat server"
-msgstr "Server Percakapan Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Port Percakapan Yahoo"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10548,6 +10610,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
+"ini."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
 "ini."
@@ -10637,6 +10708,17 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Tidak dapat membuat sambungan dengan server:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Tidak dapat menyambung ke server. Mohon masukkan alamat server ke mana anda "
+"ingin menyambung."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Tidak ada di Rumah"
@@ -11020,6 +11102,10 @@ msgstr "_Tidak"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Terima"
 
@@ -11259,12 +11345,6 @@ msgstr "Pengirim Pesan Internet"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pesan Internet Pidgin"
-
-msgid "Orientation"
-msgstr "Orientasi"
-
-msgid "The orientation of the tray."
-msgstr "Orientasi dari baki."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12491,6 +12571,10 @@ msgstr "Bahasa Afrika"
 msgid "Arabic"
 msgstr "Arab"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Malu"
+
 msgid "Belarusian Latin"
 msgstr "Latin Belorusia"
 
@@ -12498,6 +12582,10 @@ msgid "Bulgarian"
 msgstr "Bulgaria"
 
 msgid "Bengali"
+msgstr "Bengal"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengal"
 
 msgid "Bosnian"
@@ -12616,6 +12704,10 @@ msgstr "Lao"
 
 msgid "Macedonian"
 msgstr "Makedonia"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Pria"
 
 #, fuzzy
 msgid "Mongolian"
@@ -12737,8 +12829,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s adalah klien pengiriman pesan modular berdasarkan libpurple yang dapat "
 "menghubungkan AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell "
@@ -13302,16 +13394,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Apakah anda yakin anda ingin menghapus catatan percakapan dalam %s yang "
 "dimulai pada %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Apakah anda yakin anda ingin menghapus catatan sistem yang dimulai pada %s?"
 
@@ -13418,10 +13510,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14281,10 +14373,6 @@ msgstr "Urut"
 #, fuzzy
 msgid "Custom Smiley Manager"
 msgstr "Manajer Sertifikat"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Disyaratkan Pendaftaran"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -15486,8 +15574,20 @@ msgstr "Tampilkan Penanda Waktu bergaya iChat setiap N menit."
 msgid "Timestamp Format Options"
 msgstr "Pilihan Pemformatan Penanda Waktu"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Paksa format waktu 24 jam"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "_Terima Standar"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Paksa format waktu 24 jam"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Paksa format waktu 24 jam"
 
 msgid "Show dates in..."
@@ -15700,6 +15800,205 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "_Terima Standar"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Versi Runtime GTK+"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Lokasi"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pesan Internet Pidgin"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Urut"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Start Menu"
+msgstr "Awalan"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Nama percakapan ini telah digunakan"
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "URI Handlers"
+msgstr "pengatur myim URL"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Kunci SecurID yang dimasukkan tidak valid."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Nama Panggilan"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Atur Nomor Telepon Seluler..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Nilai pada host"
+
+#~ msgid "Rate to client"
+#~ msgstr "Nilai pada client"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Alasan tidak jelas."
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "Artis-artis"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "Album Nada"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Mood Anda Sekarang"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Mood Pengguna"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Rubah Kata Sandi"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Saya tidak ada di sini sekarang"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Ganti kata sandi..."
+
+#~ msgid "Pager server"
+#~ msgstr "Server Penyeranta"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Server Percakapan Yahoo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Port Percakapan Yahoo"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientasi"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Orientasi dari baki."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "Kesalahan membuat sambungan"
@@ -15865,9 +16164,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "_User:"
 #~ msgstr "_Pengguna:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Versi Runtime GTK+"
 
 #, fuzzy
 #~ msgid "Calling ... "
@@ -16473,7 +16769,7 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s tidak dapat dibuka untuk penulisan!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Transfer file gagal; sisi lainnya kemungkinan membatalkan."
 
 #~ msgid "Could not connect for transfer."
@@ -16535,8 +16831,8 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ "Setting custom faces is not currently supported. Please choose an image "
 #~ "from %s."
 #~ msgstr ""
-#~ "Pengaturan muka kustom saat ini tidak didukung. Mohon pilih gambar dari %"
-#~ "s. "
+#~ "Pengaturan muka kustom saat ini tidak didukung. Mohon pilih gambar dari "
+#~ "%s. "
 
 #~ msgid "Invalid QQ Face"
 #~ msgstr "Mukaa QQ Tidak Valid"

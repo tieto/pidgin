@@ -64,6 +64,8 @@ struct _MsnSlpCall
 	gboolean started; /**< A flag that states if this slpcall's session has
 						been initiated. */
 
+	gboolean wait_for_socket;
+
 	void (*progress_cb)(MsnSlpCall *slpcall,
 						gsize total_length, gsize len, gsize offset);
 	void (*session_init_cb)(MsnSlpCall *slpcall);
