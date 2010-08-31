@@ -35,7 +35,7 @@
 static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
-static HINSTANCE libpurpledll_hInstance = 0;
+static HINSTANCE libpurpledll_hInstance = NULL;
 
 /*
  *  PUBLIC CODE
@@ -130,7 +130,7 @@ const char *wpurple_install_dir(void) {
 	if (!initialized) {
 		char *tmp = NULL;
 		wchar_t winstall_dir[MAXPATHLEN];
-		if (GetModuleFileNameW(NULL, winstall_dir,
+		if (GetModuleFileNameW(libpurpledll_hInstance, winstall_dir,
 				MAXPATHLEN) > 0) {
 			tmp = g_utf16_to_utf8(winstall_dir, -1,
 				NULL, NULL, NULL);
