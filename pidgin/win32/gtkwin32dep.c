@@ -376,12 +376,16 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 
 void winpidgin_init(HINSTANCE hint) {
 	FARPROC proc;
+	gchar *exchndl_dll_path;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
 	exe_hInstance = hint;
 
-	proc = wpurple_find_and_loadproc("exchndl.dll", "SetLogFile");
+	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	proc = wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
+	g_free(exchndl_dll_path);
+	exchndl_dll_path = NULL;
 	if (proc) {
 		gchar *debug_dir, *locale_debug_dir;
 
