@@ -28,6 +28,9 @@
 
 #include <gst/interfaces/propertyprobe.h>
 
+/* container window for showing a stand-alone configurator */
+static GtkWidget *window = NULL;
+
 static PurpleMediaElementInfo *old_video_src = NULL, *old_video_sink = NULL,
 		*old_audio_src = NULL, *old_audio_sink = NULL;
 
@@ -502,6 +505,59 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
+static void
+config_destroy(GtkObject *w, gpointer nul)
+{
+	purple_debug_info("vvconfig", "closing vv configuration window\n");
+	window = NULL;
+}
+
+static void
+config_close(GtkObject *w, gpointer nul)
+{
+	gtk_widget_destroy(GTK_WIDGET(window));
+}
+
+static void
+show_config(PurplePluginAction *action)
+{
+	if (!window) {
+		GtkWidget *vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+		GtkWidget *hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+		GtkWidget *config_frame = get_plugin_config_frame(NULL);
+		GtkWidget *close = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+		
+		gtk_container_add(GTK_CONTAINER(vbox), config_frame);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		window = pidgin_create_window(_("Voice/Video Settings"),
+			PIDGIN_HIG_BORDER, NULL, TRUE);
+		g_signal_connect(G_OBJECT(window), "destroy", 
+			G_CALLBACK(config_destroy), NULL);
+		g_signal_connect(G_OBJECT(close), "clicked",
+		    G_CALLBACK(config_close), NULL);
+		gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, PIDGIN_HIG_BORDER);
+		gtk_container_add(GTK_CONTAINER(window), vbox);
+		gtk_widget_show(GTK_WIDGET(close));
+		gtk_widget_show(GTK_WIDGET(vbox));
+		gtk_widget_show(GTK_WIDGET(hbox));
+	}
+	gtk_window_present(GTK_WINDOW(window));
+}
+		
+		
+static GList *
+actions(PurplePlugin *plugin, gpointer context)
+{
+	GList *l = NULL;
+	PurplePluginAction *act = NULL;
+
+	act = purple_plugin_action_new(_("Voice and Video Settings"),
+		show_config);
+	l = g_list_append(l, act);
+
+	return l;
+}
+
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
@@ -550,7 +606,7 @@ static PurplePluginInfo info =
 	&ui_info,				/**< ui_info		*/
 	NULL,					/**< extra_info		*/
 	NULL,					/**< prefs_info		*/
-	NULL,					/**< actions		*/
+	actions,					/**< actions		*/
 
 	/* padding */
 	NULL,
