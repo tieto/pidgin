@@ -253,6 +253,7 @@ init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
+	GList *encryption_values = NULL;
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), NULL, '@');
@@ -263,13 +264,26 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", JABBER_DEFAULT_REQUIRE_TLS);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
+#define ADD_VALUE(list, desc, v) { \
+	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup((desc)); \
+	kvp->value = g_strdup((v)); \
+	list = g_list_prepend(list, kvp); \
+}
 
-	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
+	ADD_VALUE(encryption_values, _("Require encryption"), "require_tls");
+	ADD_VALUE(encryption_values, _("Use encryption if available"), "opportunistic_tls");
+	ADD_VALUE(encryption_values, _("Use old-style SSL"), "old_ssl");
+#if 0
+	ADD_VALUE(encryption_values, "None", "none");
+#endif
+	encryption_values = g_list_reverse(encryption_values);
+
+#undef ADD_VALUE
+
+	option = purple_account_option_list_new(_("Connection security"), "connection_security", encryption_values);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
+						   option);
 
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),

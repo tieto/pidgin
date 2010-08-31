@@ -232,7 +232,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 		return TRUE;
 	}
 
-	if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
+	if (g_str_equal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
@@ -244,12 +244,16 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
-	if(xmlnode_get_child(packet, "starttls")) {
-		if(jabber_process_starttls(js, packet)) {
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+	const char *connection_security =
+		purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
+
+	if (xmlnode_get_child(packet, "starttls")) {
+		if (jabber_process_starttls(js, packet)) {
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
 		}
-	} else if(purple_account_get_bool(js->gc->account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS) && !jabber_stream_is_ssl(js)) {
+	} else if (g_str_equal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -1014,7 +1018,7 @@ jabber_stream_connect(JabberStream *js)
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
+	if (g_str_equal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),

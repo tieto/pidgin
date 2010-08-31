@@ -513,6 +513,25 @@ migrate_yahoo_japan(PurpleAccount *account)
 }
 
 static void
+migrate_xmpp_encryption(PurpleAccount *account)
+{
+	/* When this is removed, nuke the "old_ssl" and "require_tls" settings */
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-jabber")) {
+		const char *sec = purple_account_get_string(account, "connection_security", "");
+
+		if (g_str_equal("", sec)) {
+			const char *val = "require_tls";
+			if (purple_account_get_bool(account, "old_ssl", FALSE))
+				val = "old_ssl";
+			else if (!purple_account_get_bool(account, "require_tls", TRUE))
+				val = "opportunistic_tls";
+
+			purple_account_set_string(account, "connection_security", val);
+		}
+	}
+}
+
+static void
 parse_settings(xmlnode *node, PurpleAccount *account)
 {
 	const char *ui;
@@ -579,6 +598,9 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 	/* we do this here because we need access to account settings to determine
 	 * if we can/should migrate an old Yahoo! JAPAN account */
 	migrate_yahoo_japan(account);
+	/* we do this here because we need to do it before the user views the
+	 * Edit Account dialog. */
+	migrate_xmpp_encryption(account);
 }
 
 static GList *

@@ -17,6 +17,7 @@ version 2.7.4 (MM/DD/YYYY):
 	  and HMAC options or the QQ protocol version).
 
 	XMPP:
+	* Unify the connection security-related settings into one dropdown.
 	* Fix a crash when multiple accounts are simultaneously performing
 	  SASL authentication when built with Cyrus SASL support.  (thanks
 	  to Jan Kaluza) (#11560)
