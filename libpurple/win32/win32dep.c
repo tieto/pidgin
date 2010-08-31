@@ -82,7 +82,8 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 	if(!(hmod = GetModuleHandleW(wc_dllname))) {
 		purple_debug_warning("wpurple", "%s not already loaded; loading it...\n", dllname);
 		if(!(hmod = LoadLibraryW(wc_dllname))) {
-			purple_debug_error("wpurple", "Could not load: %s\n", dllname);
+			purple_debug_error("wpurple", "Could not load: %s (%s)\n", dllname,
+				g_win32_error_message(GetLastError()));
 			g_free(wc_dllname);
 			return NULL;
 		}
