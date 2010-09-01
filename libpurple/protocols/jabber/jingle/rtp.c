@@ -611,7 +611,8 @@ jingle_rtp_init_media(JingleContent *content)
 				: PURPLE_MEDIA_RECV_VIDEO;
 
 	params = 
-		jingle_get_params(jingle_session_get_js(session), &num_params);
+		jingle_get_params(jingle_session_get_js(session), NULL, 0, 0, 0,
+			NULL, NULL, &num_params);
 
 	creator = jingle_content_get_creator(content);
 	if (!strcmp(creator, "initiator"))

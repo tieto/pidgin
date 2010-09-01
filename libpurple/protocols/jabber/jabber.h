@@ -276,7 +276,12 @@ struct _JabberStream
 	gchar *stun_ip;
 	int stun_port;
 	PurpleDnsQueryData *stun_query;
-	/* later add stuff to handle TURN relays... */
+
+	/* stuff for Google's relay handling */
+	gchar *google_relay_token;
+	gchar *google_relay_host;
+	GList *google_relay_requests; /* the HTTP requests to get */
+												/* relay info */
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
