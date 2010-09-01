@@ -15,8 +15,8 @@ version 2.7.4 (MM/DD/YYYY):
 	* Remap the "Set User Mood" shortcut to Control-D, which does not
 	  conflict with the previous shortcut for Get Buddy Info on the
 	  selected buddy.
-	* Add a plugin action menu (unter Tools) for the Voice and Video Settings
-	  plugin.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher

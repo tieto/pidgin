@@ -543,8 +543,8 @@ show_config(PurplePluginAction *action)
 	}
 	gtk_window_present(GTK_WINDOW(window));
 }
-		
-		
+
+
 static GList *
 actions(PurplePlugin *plugin, gpointer context)
 {
@@ -581,32 +581,32 @@ static PidginPluginUiInfo ui_info = {
 
 static PurplePluginInfo info =
 {
-	PURPLE_PLUGIN_MAGIC,			/**< magic		*/
-	PURPLE_MAJOR_VERSION,			/**< major version	*/
-	PURPLE_MINOR_VERSION,			/**< minor version	*/
-	PURPLE_PLUGIN_STANDARD,			/**< type		*/
-	PIDGIN_PLUGIN_TYPE,			/**< ui_requirement	*/
-	0,					/**< flags		*/
-	NULL,					/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,		/**< priority		*/
+	PURPLE_PLUGIN_MAGIC,                         /**< magic          */
+	PURPLE_MAJOR_VERSION,                        /**< major version  */
+	PURPLE_MINOR_VERSION,                        /**< minor version  */
+	PURPLE_PLUGIN_STANDARD,                      /**< type           */
+	PIDGIN_PLUGIN_TYPE,                          /**< ui_requirement */
+	0,                                           /**< flags          */
+	NULL,                                        /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                     /**< priority       */
 
-	"gtk-maiku-vvconfig",			/**< id			*/
-	N_("Voice/Video Settings"),		/**< name		*/
-	DISPLAY_VERSION,			/**< version		*/
-	N_("Configure your microphone and webcam."), /**< summary	*/
+	"gtk-maiku-vvconfig",                        /**< id             */
+	N_("Voice/Video Settings"),                  /**< name           */
+	DISPLAY_VERSION,                             /**< version        */
+	N_("Configure your microphone and webcam."), /**< summary        */
 	N_("Configure microphone and webcam "
-	   "settings for voice/video calls."),	/**< description	*/
-	"Mike Ruprecht <cmaiku@gmail.com>",	/**< author		*/
-	PURPLE_WEBSITE,				/**< homepage		*/
+	   "settings for voice/video calls."),       /**< description    */
+	"Mike Ruprecht <cmaiku@gmail.com>",          /**< author         */
+	PURPLE_WEBSITE,                              /**< homepage       */
 
-	plugin_load,				/**< load		*/
-	plugin_unload,				/**< unload		*/
-	NULL,					/**< destroy		*/
+	plugin_load,                                 /**< load           */
+	plugin_unload,                               /**< unload         */
+	NULL,                                        /**< destroy        */
 
-	&ui_info,				/**< ui_info		*/
-	NULL,					/**< extra_info		*/
-	NULL,					/**< prefs_info		*/
-	actions,					/**< actions		*/
+	&ui_info,                                    /**< ui_info        */
+	NULL,                                        /**< extra_info     */
+	NULL,                                        /**< prefs_info     */
+	actions,                                     /**< actions        */
 
 	/* padding */
 	NULL,
