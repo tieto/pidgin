@@ -41,6 +41,7 @@ typedef struct {
 	GoogleSessionState state;
 	JabberStream *js;
 	char *remote_jid;
+	char *iq_id;
 	gpointer session_data;
 } GoogleSession;
 

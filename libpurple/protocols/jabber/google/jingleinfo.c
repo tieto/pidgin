@@ -76,6 +76,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
                                  JabberIqType type, xmlnode *query)
 {
 	const xmlnode *stun = xmlnode_get_child(query, "stun");
+	const xmlnode *relay = xmlnode_get_child(query, "relay");
 	gchar *my_bare_jid;
 
 	/*
@@ -119,8 +120,23 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 			}
 		}
 	}
-	/* should perhaps handle relays later on, or maybe wait until
-	 Google supports a common standard... */
+
+	if (relay) {
+		xmlnode *token = xmlnode_get_child(relay, "token");
+		xmlnode *server = xmlnode_get_child(relay, "server");
+		
+		if (token) {
+			gchar *relay_token = xmlnode_get_data(token);
+
+			/* we let js own the string returned from xmlnode_get_data */
+			js->google_relay_token = relay_token;
+		}
+
+		if (server) {
+			js->google_relay_host = 
+				g_strdup(xmlnode_get_attrib(server, "host"));
+		}
+	}
 }
 
 static void
