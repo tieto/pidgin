@@ -29,6 +29,10 @@
 typedef struct {
 	PurpleMedia *media;
 	gboolean video;
+	GList *remote_audio_candidates; /* list of PurpleMediaCandidate */
+	GList *remote_video_candidates; /* list of PurpleMediaCandidate */
+	gboolean added_streams;		/* this indicates if the streams have been
+	 							   to media (ie. after getting relay credentials */
 } GoogleAVSessionData;
 
 static gboolean
@@ -43,9 +47,18 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 static void
 google_session_destroy(GoogleSession *session)
 {
+	GoogleAVSessionData *session_data =
+		(GoogleAVSessionData *) session->session_data;
 	g_free(session->id.id);
 	g_free(session->id.initiator);
 	g_free(session->remote_jid);
+
+	if (session_data->remote_audio_candidates)
+		purple_media_candidate_list_free(session_data->remote_audio_candidates);
+
+	if (session_data->remote_video_candidates)
+		purple_media_candidate_list_free(session_data->remote_video_candidates);
+
 	g_free(session->session_data);
 	g_free(session);
 }
@@ -436,6 +449,8 @@ jabber_google_relay_response_session_initiate_cb(PurpleUtilFetchUrlData *url_dat
 		purple_media_error(session_data->media, "Error adding stream.");
 		purple_media_end(session_data->media, NULL, NULL);
 		g_free(params);
+	} else {
+		session_data->added_streams = TRUE;
 	}
 
 	g_free(params);	
@@ -576,9 +591,26 @@ jabber_google_relay_response_session_handle_initiate_cb(
 		purple_media_error(session_data->media, "Error adding stream.");
 		purple_media_stream_info(session_data->media,
 				PURPLE_MEDIA_INFO_REJECT, NULL, NULL, TRUE);
-		g_free(params);
-	}
+	} else {
+		/* successfully added stream(s) */
+		session_data->added_streams = TRUE;
 
+		if (session_data->remote_audio_candidates) {
+			purple_media_add_remote_candidates(session_data->media,
+				"google-voice", session->remote_jid, 
+			    session_data->remote_audio_candidates);
+			purple_media_candidate_list_free(session_data->remote_audio_candidates);
+			session_data->remote_audio_candidates = NULL;
+		}
+		if (session_data->remote_video_candidates) {
+			purple_media_add_remote_candidates(session_data->media,
+				"google-video", session->remote_jid, 
+			    session_data->remote_video_candidates);
+			purple_media_candidate_list_free(session_data->remote_video_candidates);
+			session_data->remote_video_candidates = NULL;
+		}
+	}
+		
 	g_free(params);
 
 	for (codec_element = xmlnode_get_child(desc_element, "payload-type");
@@ -744,23 +776,36 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 					atoi(port));
 			g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
 					"password", xmlnode_get_attrib(cand, "password"), NULL);
-			if (!strncmp(cname, "video_", 6))
-				video_list = g_list_append(video_list, info);
-			else
-				list = g_list_append(list, info);
+			if (!strncmp(cname, "video_", 6)) {
+				if (session_data->added_streams) {
+					video_list = g_list_append(video_list, info);
+				} else {
+					session_data->remote_video_candidates =
+						g_list_append(session_data->remote_video_candidates,
+							info);
+				}
+			} else {
+				if (session_data->added_streams) {
+					list = g_list_append(list, info);
+				} else {
+					session_data->remote_audio_candidates =
+						g_list_append(session_data->remote_audio_candidates,
+							info);
+				}
+			}
 		}
 	}
 
-	if (list)
-		purple_media_add_remote_candidates(
-				session_data->media, "google-voice",
-				session->remote_jid, list);
-	if (video_list)
-		purple_media_add_remote_candidates(
-				session_data->media, "google-video",
-				session->remote_jid, video_list);
-	purple_media_candidate_list_free(list);
-	purple_media_candidate_list_free(video_list);
+	if (list) {
+		purple_media_add_remote_candidates(session_data->media, "google-voice",
+			session->remote_jid, list);
+		purple_media_candidate_list_free(list);
+	}
+	if (video_list) {
+		purple_media_add_remote_candidates(session_data->media, "google-video",
+			session->remote_jid, video_list);
+		purple_media_candidate_list_free(video_list);
+	}
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, iq_id);
