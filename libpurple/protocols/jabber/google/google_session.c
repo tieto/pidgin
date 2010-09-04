@@ -543,13 +543,15 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		const gchar *protocol = xmlnode_get_attrib(cand, "protocol");
 		const gchar *address = xmlnode_get_attrib(cand, "address");
 		const gchar *port = xmlnode_get_attrib(cand, "port");
+		const gchar *priority = xmlnode_get_attrib(cand, "priority");
 		guint component_id;
 
 		if (cname && type && address && port) {
 			PurpleMediaCandidateType candidate_type;
-
+			guint prio = priority ? atof(priority) * 1000 : 0;
+			
 			g_snprintf(n, sizeof(n), "S%d", name++);
-
+			
 			if (g_str_equal(type, "local"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
 			else if (g_str_equal(type, "stun"))
@@ -573,7 +575,8 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 					address,
 					atoi(port));
 			g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
-					"password", xmlnode_get_attrib(cand, "password"), NULL);
+					"password", xmlnode_get_attrib(cand, "password"),
+			        "priority", prio, NULL);
 			if (!strncmp(cname, "video_", 6))
 				video_list = g_list_append(video_list, info);
 			else
