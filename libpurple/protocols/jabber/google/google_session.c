@@ -745,12 +745,12 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		const gchar *protocol = xmlnode_get_attrib(cand, "protocol");
 		const gchar *address = xmlnode_get_attrib(cand, "address");
 		const gchar *port = xmlnode_get_attrib(cand, "port");
-		const gchar *priority = xmlnode_get_attrib(cand, "priority");
+		const gchar *preference = xmlnode_get_attrib(cand, "preference");
 		guint component_id;
 
 		if (cname && type && address && port) {
 			PurpleMediaCandidateType candidate_type;
-			guint prio = priority ? atof(priority) * 1000 : 0;
+			guint prio = preference ? atof(preference) * 1000 : 0;
 			
 			g_snprintf(n, sizeof(n), "S%d", name++);
 			
