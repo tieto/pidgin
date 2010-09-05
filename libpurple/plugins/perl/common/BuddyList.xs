@@ -345,14 +345,14 @@ INIT:
 	char *t_key, *t_value;
 CODE:
 	t_HV =  (HV *)SvRV(components);
-	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
+	t_GHash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
 		t_SV = *hv_fetch(t_HV, t_key, len, 0);
 		t_value = SvPVutf8_nolen(t_SV);
 
-		g_hash_table_insert(t_GHash, t_key, t_value);
+		g_hash_table_insert(t_GHash, g_strdup(t_key), g_strdup(t_value));
 	}
 
 	RETVAL = purple_chat_new(account, alias, t_GHash);

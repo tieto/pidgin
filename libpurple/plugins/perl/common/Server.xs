@@ -144,6 +144,7 @@ CODE:
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
 	serv_join_chat(conn, t_GHash);
+	g_hash_table_destroy(t_GHash);
 
 void 
 serv_move_buddy(buddy, group1, group2)

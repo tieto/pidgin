@@ -1,6 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.4 (MM/DD/YYYY):
+	Perl:
+		Changed:
+		* Purple::BuddyList::Chat::new now works properly.  Thanks
+		  to Rafael in devel@conference.pidgin.im for reporting and
+		  testing.
 
 version 2.7.3 (08/10/2010):
 	libpurple:
