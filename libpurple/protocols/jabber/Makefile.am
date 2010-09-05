@@ -38,6 +38,8 @@ JABBERSOURCES = \
 			  google/google_session.h \
 			  google/jingleinfo.c \
 			  google/jingleinfo.h \
+			  google/relay.c \
+			  google/relay.h \
 			  ibb.c \
 			  ibb.h \
 			  iq.c \
