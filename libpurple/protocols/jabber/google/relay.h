@@ -18,37 +18,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef PURPLE_JABBER_GOOGLE_SESSION_H_
-#define PURPLE_JABBER_GOOGLE_SESSION_H_
+#ifndef JABBER_GOOGLE_RELAY
+#define JABBER_GOOGLE_RELAY
 
-#include "jabber.h"
+#include "google_session.h"
 
-typedef struct {
-	char *id;
-	char *initiator;
-} GoogleSessionId;
+typedef void (JabberGoogleRelayCallback)(GoogleSession *session, const gchar *ip,
+    guint udp_port, guint tcp_port, guint tls_port,
+    const gchar *username, const gchar *password);
 
-typedef enum {
-	UNINIT,
-	SENT_INITIATE,
-	RECEIVED_INITIATE,
-	IN_PRORESS,
-	TERMINATED
-} GoogleSessionState;
+void jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
+	JabberGoogleRelayCallback cb);
 
-typedef struct {
-	GoogleSessionId id;
-	GoogleSessionState state;
-	JabberStream *js;
-	char *remote_jid;
-	char *iq_id;
-	gpointer session_data;
-} GoogleSession;
-
-gboolean jabber_google_session_initiate(JabberStream *js, const gchar *who,
-    PurpleMediaSessionType type);
-
-void jabber_google_session_parse(JabberStream *js, const char *from,
-    JabberIqType type, const char *iq, xmlnode *session);
-
-#endif /* PURPLE_JABBER_GOOGLE_SESSION_H_ */
+#endif /* JABBER_GOOGLE_RELAY */

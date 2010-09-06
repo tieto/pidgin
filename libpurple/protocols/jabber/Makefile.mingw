@@ -61,6 +61,7 @@ C_SRC =	\
 			google/google_roster.c \
 			google/google_session.c \
 			google/jingleinfo.c \
+			google/relay.c \
 			ibb.c \
 			iq.c \
 			jabber.c \
