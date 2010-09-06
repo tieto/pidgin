@@ -2,6 +2,13 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
+static void
+chat_components_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	HV *hv = user_data;
+	hv_store(hv, key, strlen(key), newSVpv(value, 0), 0);
+}
+
 MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
@@ -330,6 +337,19 @@ purple_chat_get_group(chat)
 const char *
 purple_chat_get_name(chat)
 	Purple::BuddyList::Chat chat
+
+HV *
+purple_chat_get_components(chat)
+	Purple::BuddyList::Chat chat
+INIT:
+	HV * t_HV;
+	GHashTable * t_GHash;
+CODE:
+	t_GHash = purple_chat_get_components(chat);
+	RETVAL = t_HV = newHV();
+	g_hash_table_foreach(t_GHash, chat_components_foreach, t_HV);
+OUTPUT:
+	RETVAL
 
 Purple::BuddyList::Chat
 purple_chat_new(account, alias, components)
