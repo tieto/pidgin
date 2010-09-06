@@ -122,6 +122,8 @@ jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 {
 	PurpleUtilFetchUrlData *url_data = NULL;
 	gchar *url = g_strdup_printf("http://%s", js->google_relay_host);
+	/* yes, the relay token is included twice as different request headers,
+	   this is apparently needed to make Google's relay servers work... */
 	gchar *request =
 		g_strdup_printf("GET /create_session HTTP/1.0\r\n"
 			            "Host: %s\r\n"
