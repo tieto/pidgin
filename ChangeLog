@@ -29,6 +29,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  to Jan Kaluza) (#11560)
 	* Restore the ability to connect to XMPP servers that do not offer
 	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
