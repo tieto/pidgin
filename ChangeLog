@@ -15,8 +15,8 @@ version 2.7.4 (MM/DD/YYYY):
 	* Remap the "Set User Mood" shortcut to Control-D, which does not
 	  conflict with the previous shortcut for Get Buddy Info on the
 	  selected buddy.
-	* Add a plugin action menu (unter Tools) for the Voice and Video Settings
-	  plugin.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
@@ -29,6 +29,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  to Jan Kaluza) (#11560)
 	* Restore the ability to connect to XMPP servers that do not offer
 	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This

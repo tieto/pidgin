@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "google_session.h"
+#include "relay.h"
 
 #include "jingle/jingle.h"
 
@@ -29,6 +30,10 @@
 typedef struct {
 	PurpleMedia *media;
 	gboolean video;
+	GList *remote_audio_candidates; /* list of PurpleMediaCandidate */
+	GList *remote_video_candidates; /* list of PurpleMediaCandidate */
+	gboolean added_streams;		/* this indicates if the streams have been
+	 							   to media (ie. after getting relay credentials */
 } GoogleAVSessionData;
 
 static gboolean
@@ -43,9 +48,18 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 static void
 google_session_destroy(GoogleSession *session)
 {
+	GoogleAVSessionData *session_data =
+		(GoogleAVSessionData *) session->session_data;
 	g_free(session->id.id);
 	g_free(session->id.initiator);
 	g_free(session->remote_jid);
+
+	if (session_data->remote_audio_candidates)
+		purple_media_candidate_list_free(session_data->remote_audio_candidates);
+
+	if (session_data->remote_video_candidates)
+		purple_media_candidate_list_free(session_data->remote_video_candidates);
+
 	g_free(session->session_data);
 	g_free(session);
 }
@@ -301,10 +315,14 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 }
 
 static GParameter *
-jabber_google_session_get_params(JabberStream *js, guint *num)
+jabber_google_session_get_params(JabberStream *js, const gchar *relay_ip,
+	guint16 relay_udp, guint16 relay_tcp, guint16 relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password, guint *num)
 {
 	guint num_params;
-	GParameter *params = jingle_get_params(js, &num_params);
+	GParameter *params =
+		jingle_get_params(js, relay_ip, relay_udp, relay_tcp, relay_ssltcp,
+	    	relay_username, relay_password, &num_params);
 	GParameter *new_params = g_new0(GParameter, num_params + 1);
 
 	memcpy(new_params, params, sizeof(GParameter) * num_params);
@@ -320,6 +338,56 @@ jabber_google_session_get_params(JabberStream *js, guint *num)
 }
 
 
+static void
+jabber_google_relay_response_session_initiate_cb(GoogleSession *session,
+    const gchar *relay_ip, guint relay_udp, guint relay_tcp, guint relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password)
+{
+	GParameter *params;
+	guint num_params;
+	JabberStream *js = session->js;
+	GoogleAVSessionData *session_data =
+		(GoogleAVSessionData *) session->session_data;
+
+	session_data->media = purple_media_manager_create_media(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc),
+			"fsrtpconference", session->remote_jid, TRUE);
+
+	purple_media_set_prpl_data(session_data->media, session);
+
+	g_signal_connect_swapped(G_OBJECT(session_data->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session_data->media), "codecs-changed",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect(G_OBJECT(session_data->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session_data->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
+
+	params =
+		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp,
+			relay_ssltcp, relay_username, relay_password, &num_params);
+	
+	if (purple_media_add_stream(session_data->media, "google-voice",
+			session->remote_jid, PURPLE_MEDIA_AUDIO,
+			TRUE, "nice", num_params, params) == FALSE ||
+			(session_data->video && purple_media_add_stream(
+			session_data->media, "google-video",
+			session->remote_jid, PURPLE_MEDIA_VIDEO,
+			TRUE, "nice", num_params, params) == FALSE)) {
+		purple_media_error(session_data->media, "Error adding stream.");
+		purple_media_end(session_data->media, NULL, NULL);
+		g_free(params);
+	} else {
+		session_data->added_streams = TRUE;
+	}
+
+	g_free(params);	
+}
+
+
 gboolean
 jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
 {
@@ -327,10 +395,8 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	gchar *jid;
-	GParameter *params;
-	guint num_params;
-	GoogleAVSessionData *session_data;
-	
+	GoogleAVSessionData *session_data = NULL;
+
 	/* construct JID to send to */
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (!jb) {
@@ -363,92 +429,42 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	if (type & PURPLE_MEDIA_VIDEO)
 		session_data->video = TRUE;
 
-	session_data->media = purple_media_manager_create_media(
-			purple_media_manager_get(),
-			purple_connection_get_account(js->gc),
-			"fsrtpconference", session->remote_jid, TRUE);
-
-	purple_media_set_prpl_data(session_data->media, session);
-
-	g_signal_connect_swapped(G_OBJECT(session_data->media),
-			"candidates-prepared",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session_data->media), "codecs-changed",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect(G_OBJECT(session_data->media), "state-changed",
-			G_CALLBACK(google_session_state_changed_cb), session);
-	g_signal_connect(G_OBJECT(session_data->media), "stream-info",
-			G_CALLBACK(google_session_stream_info_cb), session);
-
-	params = jabber_google_session_get_params(js, &num_params);
-
-	if (purple_media_add_stream(session_data->media, "google-voice",
-			session->remote_jid, PURPLE_MEDIA_AUDIO,
-			TRUE, "nice", num_params, params) == FALSE ||
-			(session_data->video && purple_media_add_stream(
-			session_data->media, "google-video",
-			session->remote_jid, PURPLE_MEDIA_VIDEO,
-			TRUE, "nice", num_params, params) == FALSE)) {
-		purple_media_error(session_data->media, "Error adding stream.");
-		purple_media_end(session_data->media, NULL, NULL);
-		g_free(params);
-		return FALSE;
+	/* if we got a relay token and relay host in google:jingleinfo, issue an
+	 HTTP request to get that data */
+	if (js->google_relay_host && js->google_relay_token) {
+		jabber_google_do_relay_request(js, session,
+			jabber_google_relay_response_session_initiate_cb);
+	} else {
+		jabber_google_relay_response_session_initiate_cb(session, NULL, 0, 0, 0,
+			NULL, NULL);
 	}
-
-	g_free(params);
-
-	return (session_data->media != NULL) ? TRUE : FALSE;
+	
+	/* we don't actually know yet wether it succeeded... maybe this is very
+	 wrong... */
+	return TRUE;
 }
 
-static gboolean
-google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
+static void
+jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
+    const gchar *relay_ip, guint relay_udp, guint relay_tcp, guint relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password)
 {
-	JabberIq *result;
-	GList *codecs = NULL, *video_codecs = NULL;
-	xmlnode *desc_element, *codec_element;
-	PurpleMediaCodec *codec;
-	const char *xmlns;
 	GParameter *params;
 	guint num_params;
+	JabberStream *js = session->js;
+	xmlnode *codec_element;
+	xmlnode *desc_element;
+	const gchar *xmlns;
+	PurpleMediaCodec *codec;
+	GList *video_codecs = NULL;
+	GList *codecs = NULL;
+	JabberIq *result;
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
-	
-	if (session->state != UNINIT) {
-		purple_debug_error("jabber", "Received initiate for active session.\n");
-		return FALSE;
-	}
 
-	desc_element = xmlnode_get_child(sess, "description");
-	xmlns = xmlnode_get_namespace(desc_element);
-
-	if (purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
-		session_data->video = FALSE;
-	else if (purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO))
-		session_data->video = TRUE;
-	else {
-		purple_debug_error("jabber", "Received initiate with "
-				"invalid namespace %s.\n", xmlns);
-		return FALSE;
-	}
-
-	session_data->media = purple_media_manager_create_media(
-			purple_media_manager_get(),
-			purple_connection_get_account(js->gc),
-			"fsrtpconference", session->remote_jid, FALSE);
-
-	purple_media_set_prpl_data(session_data->media, session);
-
-	g_signal_connect_swapped(G_OBJECT(session_data->media),
-			"candidates-prepared",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session_data->media), "codecs-changed",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect(G_OBJECT(session_data->media), "state-changed",
-			G_CALLBACK(google_session_state_changed_cb), session);
-	g_signal_connect(G_OBJECT(session_data->media), "stream-info",
-			G_CALLBACK(google_session_stream_info_cb), session);
-
-	params = jabber_google_session_get_params(js, &num_params);
+	params =
+		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp, 
+	    	relay_ssltcp, relay_username, relay_password, &num_params);
 
 	if (purple_media_add_stream(session_data->media, "google-voice",
 			session->remote_jid, PURPLE_MEDIA_AUDIO, FALSE,
@@ -460,10 +476,26 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		purple_media_error(session_data->media, "Error adding stream.");
 		purple_media_stream_info(session_data->media,
 				PURPLE_MEDIA_INFO_REJECT, NULL, NULL, TRUE);
-		g_free(params);
-		return FALSE;
-	}
+	} else {
+		/* successfully added stream(s) */
+		session_data->added_streams = TRUE;
 
+		if (session_data->remote_audio_candidates) {
+			purple_media_add_remote_candidates(session_data->media,
+				"google-voice", session->remote_jid, 
+			    session_data->remote_audio_candidates);
+			purple_media_candidate_list_free(session_data->remote_audio_candidates);
+			session_data->remote_audio_candidates = NULL;
+		}
+		if (session_data->remote_video_candidates) {
+			purple_media_add_remote_candidates(session_data->media,
+				"google-video", session->remote_jid, 
+			    session_data->remote_video_candidates);
+			purple_media_candidate_list_free(session_data->remote_video_candidates);
+			session_data->remote_video_candidates = NULL;
+		}
+	}
+		
 	g_free(params);
 
 	for (codec_element = xmlnode_get_child(desc_element, "payload-type");
@@ -517,12 +549,67 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	purple_media_codec_list_free(video_codecs);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, iq_id);
+	jabber_iq_set_id(result, session->iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
+}
+
+static gboolean
+google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
+{
+	xmlnode *desc_element;
+	const gchar *xmlns;
+	GoogleAVSessionData *session_data =
+		(GoogleAVSessionData *) session->session_data;
+	
+	if (session->state != UNINIT) {
+		purple_debug_error("jabber", "Received initiate for active session.\n");
+		return FALSE;
+	}
+
+	desc_element = xmlnode_get_child(sess, "description");
+	xmlns = xmlnode_get_namespace(desc_element);
+
+	if (purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
+		session_data->video = FALSE;
+	else if (purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO))
+		session_data->video = TRUE;
+	else {
+		purple_debug_error("jabber", "Received initiate with "
+				"invalid namespace %s.\n", xmlns);
+		return FALSE;
+	}
+
+	session_data->media = purple_media_manager_create_media(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc),
+			"fsrtpconference", session->remote_jid, FALSE);
+
+	purple_media_set_prpl_data(session_data->media, session);
+
+	g_signal_connect_swapped(G_OBJECT(session_data->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session_data->media), "codecs-changed",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect(G_OBJECT(session_data->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session_data->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
+
+	session->iq_id = g_strdup(iq_id);
+	
+	if (js->google_relay_host && js->google_relay_token) {
+		jabber_google_do_relay_request(js, session, 
+			jabber_google_relay_response_session_handle_initiate_cb);
+	} else {
+		jabber_google_relay_response_session_handle_initiate_cb(session, NULL,
+			0, 0, 0, NULL, NULL);
+	}
 
 	return TRUE;
 }
+
 
 static void
 google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
@@ -543,13 +630,15 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		const gchar *protocol = xmlnode_get_attrib(cand, "protocol");
 		const gchar *address = xmlnode_get_attrib(cand, "address");
 		const gchar *port = xmlnode_get_attrib(cand, "port");
+		const gchar *preference = xmlnode_get_attrib(cand, "preference");
 		guint component_id;
 
 		if (cname && type && address && port) {
 			PurpleMediaCandidateType candidate_type;
-
+			guint prio = preference ? atof(preference) * 1000 : 0;
+			
 			g_snprintf(n, sizeof(n), "S%d", name++);
-
+			
 			if (g_str_equal(type, "local"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
 			else if (g_str_equal(type, "stun"))
@@ -573,24 +662,38 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 					address,
 					atoi(port));
 			g_object_set(info, "username", xmlnode_get_attrib(cand, "username"),
-					"password", xmlnode_get_attrib(cand, "password"), NULL);
-			if (!strncmp(cname, "video_", 6))
-				video_list = g_list_append(video_list, info);
-			else
-				list = g_list_append(list, info);
+					"password", xmlnode_get_attrib(cand, "password"),
+			        "priority", prio, NULL);
+			if (!strncmp(cname, "video_", 6)) {
+				if (session_data->added_streams) {
+					video_list = g_list_append(video_list, info);
+				} else {
+					session_data->remote_video_candidates =
+						g_list_append(session_data->remote_video_candidates,
+							info);
+				}
+			} else {
+				if (session_data->added_streams) {
+					list = g_list_append(list, info);
+				} else {
+					session_data->remote_audio_candidates =
+						g_list_append(session_data->remote_audio_candidates,
+							info);
+				}
+			}
 		}
 	}
 
-	if (list)
-		purple_media_add_remote_candidates(
-				session_data->media, "google-voice",
-				session->remote_jid, list);
-	if (video_list)
-		purple_media_add_remote_candidates(
-				session_data->media, "google-video",
-				session->remote_jid, video_list);
-	purple_media_candidate_list_free(list);
-	purple_media_candidate_list_free(video_list);
+	if (list) {
+		purple_media_add_remote_candidates(session_data->media, "google-voice",
+			session->remote_jid, list);
+		purple_media_candidate_list_free(list);
+	}
+	if (video_list) {
+		purple_media_add_remote_candidates(session_data->media, "google-video",
+			session->remote_jid, video_list);
+		purple_media_candidate_list_free(video_list);
+	}
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, iq_id);
@@ -754,6 +857,7 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	session->state = UNINIT;
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
+	session->session_data = g_new0(GoogleAVSessionData, 1);
 
 	google_session_handle_initiate(js, session, session_node, iq_id);
 }
