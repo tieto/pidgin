@@ -1,3 +1,9 @@
+pidgin (2.7.3-2) unstable; urgency=low
+
+  * Apply upstream patch to fix random crashes in MSN (Closes: #594893)
+
+ -- Ari Pollak <ari@debian.org>  Sat, 11 Sep 2010 00:21:02 -0400
+
 pidgin (2.7.3-1) unstable; urgency=low
 
   * Imported Upstream version 2.7.3
