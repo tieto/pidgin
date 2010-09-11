@@ -2418,35 +2418,38 @@ pidgin_accounts_request_add(PurpleAccount *account, const char *remote_user,
 	g_free(buffer);
 }
 
-struct auth_and_add {
+struct auth_request
+{
 	PurpleAccountRequestAuthorizationCb auth_cb;
 	PurpleAccountRequestAuthorizationCb deny_cb;
 	void *data;
 	char *username;
 	char *alias;
 	PurpleAccount *account;
+	gboolean add_buddy_after_auth;
 };
 
 static void
-free_auth_and_add(struct auth_and_add *aa)
+free_auth_request(struct auth_request *ar)
 {
-	g_free(aa->username);
-	g_free(aa->alias);
-	g_free(aa);
+	g_free(ar->username);
+	g_free(ar->alias);
+	g_free(ar);
 }
 
 static void
-authorize_and_add_cb(struct auth_and_add *aa)
+authorize_and_add_cb(struct auth_request *ar)
 {
-	aa->auth_cb(aa->data);
-	purple_blist_request_add_buddy(aa->account, aa->username,
-	 	                    NULL, aa->alias);
+	ar->auth_cb(ar->data);
+	if (ar->add_buddy_after_auth) {
+		purple_blist_request_add_buddy(ar->account, ar->username, NULL, ar->alias);
+	}
 }
 
 static void
-deny_no_add_cb(struct auth_and_add *aa)
+deny_no_add_cb(struct auth_request *ar)
 {
-	aa->deny_cb(aa->data);
+	ar->deny_cb(ar->data);
 }
 
 static void *
@@ -2463,49 +2466,48 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	char *buffer;
 	PurpleConnection *gc;
 	GtkWidget *alert;
+	GdkPixbuf *prpl_icon;
+	struct auth_request *aa;
 
 	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
-	buffer = g_strdup_printf(_("%s%s%s%s wants to add %s to his or her buddy list%s%s"),
+	buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
 				remote_user,
-	 	                (alias != NULL ? " ("  : ""),
-		                (alias != NULL ? alias : ""),
-		                (alias != NULL ? ")"   : ""),
-		                (id != NULL
-		                ? id
-		                : (purple_connection_get_display_name(gc) != NULL
-		                ? purple_connection_get_display_name(gc)
-		                : purple_account_get_username(account))),
-		                (message != NULL ? ": " : "."),
-		                (message != NULL ? message  : ""));
+				(alias != NULL ? " ("  : ""),
+				(alias != NULL ? alias : ""),
+				(alias != NULL ? ")"   : ""),
+				(id != NULL
+				? id
+				: (purple_connection_get_display_name(gc) != NULL
+				? purple_connection_get_display_name(gc)
+				: purple_account_get_username(account))),
+				(message != NULL ? ": " : "."),
+				(message != NULL ? message  : ""));
 
 
-	if (!on_list) {
-		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
-		aa->auth_cb = auth_cb;
-		aa->deny_cb = deny_cb;
-		aa->data = user_data;
-		aa->username = g_strdup(remote_user);
-		aa->alias = g_strdup(alias);
-		aa->account = account;
-		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
-						  _("Authorize buddy?"), buffer, aa,
-						  _("Authorize"), authorize_and_add_cb,
-						  _("Deny"), deny_no_add_cb,
-						  NULL);
-		g_signal_connect_swapped(G_OBJECT(alert), "destroy", G_CALLBACK(free_auth_and_add), aa);
-	} else {
-		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
-						  _("Authorize buddy?"), buffer, user_data,
-						  _("Authorize"), auth_cb,
-						  _("Deny"), deny_cb,
-						  NULL);
-	}
+	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	
+	aa = g_new0(struct auth_request, 1);
+	aa->auth_cb = auth_cb;
+	aa->deny_cb = deny_cb;
+	aa->data = user_data;
+	aa->username = g_strdup(remote_user);
+	aa->alias = g_strdup(alias);
+	aa->account = account;
+	aa->add_buddy_after_auth = !on_list;
+	
+	alert = pidgin_make_mini_dialog_with_custom_icon(
+		gc, prpl_icon,
+		_("Authorize buddy?"), buffer, aa,
+		_("Authorize"), authorize_and_add_cb,
+		_("Deny"), deny_no_add_cb,
+		NULL);
+	
+	g_signal_connect_swapped(G_OBJECT(alert), "destroy", G_CALLBACK(free_auth_request), aa);
+	g_signal_connect(G_OBJECT(alert), "destroy", G_CALLBACK(purple_account_request_close), NULL);
 	pidgin_blist_add_alert(alert);
-	g_signal_connect(G_OBJECT(alert), "destroy",
-		G_CALLBACK(purple_account_request_close), NULL);
 
 	g_free(buffer);
 

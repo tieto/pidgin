@@ -791,7 +791,7 @@ msgstr "قف"
 msgid "Waiting for transfer to begin"
 msgstr "في انتظار بدء النقل"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "أُلغِيَ"
 
 msgid "Failed"
@@ -16584,7 +16584,7 @@ msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "لايمكن فتح %s للكتابة!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "فشل ارسال الملف: من المحتمل أن المستقبِل ألغى العملية."
 
 #~ msgid "Could not connect for transfer."

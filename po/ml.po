@@ -788,7 +788,7 @@ msgstr "നിര്‍ത്തുക"
 msgid "Waiting for transfer to begin"
 msgstr "ഇടപാടു് ആരംഭിക്കുന്നതിനായി കാത്തിരിക്കുന്നു"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "റദ്ദാക്കിയിരിക്കുന്നു"
 
 msgid "Failed"

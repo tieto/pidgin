@@ -808,7 +808,7 @@ msgstr "停止する"
 msgid "Waiting for transfer to begin"
 msgstr "転送開始を待っています"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "キャンセルしました"
 
 msgid "Failed"
@@ -16759,7 +16759,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "書き込みモードで %s を開けません！"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "ファイル転送が失敗しました。おそらく向こう側がキャンセルしたのでしょう。"
 

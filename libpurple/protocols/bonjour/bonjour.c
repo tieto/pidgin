@@ -206,18 +206,12 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	BonjourData *bd;
-	gboolean disconnected;
-	PurpleStatusType *type;
-	int primitive;
 	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
 	bd = gc->proto_data;
-	disconnected = purple_account_is_disconnected(account);
-	type = purple_status_get_type(status);
-	primitive = purple_status_type_get_primitive(type);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");

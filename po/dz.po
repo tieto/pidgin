@@ -818,7 +818,7 @@ msgstr "གཞི་སྒྲིག"
 msgid "Waiting for transfer to begin"
 msgstr "གནས་སོར་འགོ་བཙུགས་ནིའི་དོན་ལུ་བསྒུག་དོ།"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "ཆ་མེད་བཏང་ཡི།"
 
 msgid "Failed"
@@ -16889,7 +16889,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "བྲིས་ནིའི་དོན་ལུ %s ཁ་ཕྱེ་མ་ཚུགས།"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "ཡིག་སྣོད་གནས་སོར་འཐུས་ཤོར་བྱུང་ནུག ཕྱོགས་གཞན་མི་འདི་ཆ་མེད་བཏང་ཡི།"
 
 #~ msgid "Could not connect for transfer."

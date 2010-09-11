@@ -480,8 +480,7 @@ history_search(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	GList *iter;
-	const char *current , *pos;
-	int len;
+	const char *current;
 	
 	if (entry->history->prev && entry->search->needle)
 		current = entry->search->needle;
@@ -491,13 +490,11 @@ history_search(GntBindable *bind, GList *null)
 	if (!entry->histlength || !entry->history->next || !*current)
 		return FALSE;
 
-	len = g_utf8_strlen(current, -1);
-
 	for (iter = entry->history->next; iter; iter = iter->next) {
 		const char *str = iter->data;
 		/* A more utf8-friendly version of strstr would have been better, but
 		 * for now, this will have to do. */
-		if ((pos = strstr(str, current)))
+		if (strstr(str, current) != NULL)
 			break;
 	}
 

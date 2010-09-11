@@ -1,11 +1,12 @@
 #
 # Yngve Spjeld Landro <l10n@landro.net>, 2010.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 02:06-0400\n"
-"PO-Revision-Date: 2010-07-21 23:06+0100\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-01 22:11+0200\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
 "Language: nn\n"
@@ -796,7 +797,7 @@ msgstr "Stopp"
 msgid "Waiting for transfer to begin"
 msgstr "Ventar på at overføringa skal begynna"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Avbroten"
 
 msgid "Failed"
@@ -5924,8 +5925,8 @@ msgstr "PIN er ugyldig - kan berre innehalda tala [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "Dei to PIN-ane du skreiv inn samsvarer ikkje."
 
-msgid "The name you entered is invalid."
-msgstr "Namnet du skreiv er ugyldig."
+msgid "The Display Name you entered is invalid."
+msgstr "Visingsnamnet du skreiv er ugyldig."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5944,9 +5945,8 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Profilopplysningane dine er ikkje henta enno. Prøv igjen seinare."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "MXit-ID-en din"
+msgstr "UID-en din"
 
 #. pin
 #. pin (required)
@@ -6017,16 +6017,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Koplar til…"
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Namnet du skreiv er ugyldig."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN-en du skreiv nyttar ei ulovleg lengd [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit-ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6054,13 +6050,11 @@ msgstr "Økta di har gått ut. Prøv igjen seinare."
 msgid "Invalid country selected. Please try again."
 msgstr "Du valde eit ugyldig land. Prøv igjen seinare."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Brukarnamnet er ikkje registrert. Registrer deg først."
+msgstr "MXit-id-en du brukte er ikkje registrert. Registrer deg først."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Brukarnamnet er allereie registrert. Vel eit anna brukarnamn."
+msgstr "MXit-id-en er allereie registrert. Vel ein annan ein."
 
 msgid "Internal error. Please try again later."
 msgstr "Intern feil. Prøv igjen seinare."
@@ -6104,9 +6098,8 @@ msgstr "Avvisingsmelding"
 msgid "Hidden Number"
 msgstr "Skjult nummer"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "MXit-ID-en din"
+msgstr "MXit-id-en din…"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6131,13 +6124,11 @@ msgid "_Room Name:"
 msgstr "Rom_namn:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Du har fått e-post."
+msgstr "Du har invitert "
 
-#, fuzzy
 msgid "Last Online"
-msgstr "Tilkopla"
+msgstr "Sist tilkopla"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -13035,13 +13026,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Avsluttar sidan en annan libpurple-klient allereie kjører.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Media"
+msgstr "_Media"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Legg på"
+msgstr "_Legg på"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."

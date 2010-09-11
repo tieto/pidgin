@@ -115,7 +115,6 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	AvahiStringList *l;
 	size_t size;
 	char *key, *value;
-	int ret;
 	char ip[AVAHI_ADDRESS_STR_MAX];
 	AvahiBuddyImplData *b_impl;
 	AvahiSvcResolverData *rd;
@@ -202,7 +201,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			/* Obtain the parameters from the text_record */
 			clear_bonjour_buddy_values(bb);
 			for(l = txt; l != NULL; l = l->next) {
-				if ((ret = avahi_string_list_get_pair(l, &key, &value, &size)) < 0)
+				if (avahi_string_list_get_pair(l, &key, &value, &size) < 0)
 					continue;
 				set_bonjour_buddy_value(bb, key, value, size);
 				/* TODO: Since we're using the glib allocator, I think we

@@ -1273,7 +1273,6 @@ check_if_blocked(PurpleBuddy *pb)
 static void
 xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 {
-	xmlnode *child;
 	PurpleAccount *account;
 	PurpleConnection *gc;
 
@@ -1283,7 +1282,7 @@ xep_iq_parse(xmlnode *packet, PurpleBuddy *pb)
 		account = purple_buddy_get_account(pb);
 		gc = purple_account_get_connection(account);
 
-	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "error")))
+	if (xmlnode_get_child(packet, "si") != NULL || xmlnode_get_child(packet, "error") != NULL)
 		xep_si_parse(gc, packet, pb);
 	else
 		xep_bytestreams_parse(gc, packet, pb);

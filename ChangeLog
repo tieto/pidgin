@@ -1,6 +1,44 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.3 (??/??/????):
+version 2.7.4 (MM/DD/YYYY):
+	General:
+	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch.
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
+
+version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose
 	  builds with the --disable-silent-rules configure option, or using
@@ -25,6 +63,8 @@ version 2.7.3 (??/??/????):
 	MSN:
 	* Support for web-based buddy icons, used when a buddy logs in to the
 	  messenger on the Live website.
+	* Fix file transfers with some clients that don't support direct
+	  connections (e.g., papyon, telepathy-butterfly, etc.) (#12150)
 
 	MXit:
 	* Fix filename for the Shocked emoticon. (#12364)
@@ -38,7 +78,9 @@ version 2.7.3 (??/??/????):
 	* If a buddy is offline and we see from their profile that they have
 	  updated their avatar, request the new avatar image from the server.
 	* Fix a possible crash if a link is clicked while disconnected.
-	* New MXit Moods and Emoticons.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
 
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
@@ -67,7 +109,7 @@ version 2.7.3 (??/??/????):
 version 2.7.2 (07/21/2010):
 	AIM and ICQ:
 	* Fix a crash bug related to X-Status messages that can be triggered by
-	  remove users.  This is CVE-2010-2528.
+	  remote users.  This is CVE-2010-2528.
 	* Fix a rare crash bug caused by certain incoming SMS messages
 	  (discovered by Jan Kaluza--thanks Jan!).
 	* Change HTML sent from ICQ accounts so that official ICQ clients

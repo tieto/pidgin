@@ -807,7 +807,7 @@ msgstr "Остановить"
 msgid "Waiting for transfer to begin"
 msgstr "Ожидание начала передачи"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Отменено"
 
 msgid "Failed"
@@ -15600,7 +15600,7 @@ msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
-"Программа удаления не может найти данные Pidgin в реестре.$\\Похоже, это "
+"Программа удаления не может найти данные Pidgin в реестре.$\\rПохоже, это "
 "приложение установил другой пользователь."
 
 #. Installer Subsection Text
@@ -16446,7 +16446,7 @@ msgstr "У Вас нет прав на удаление этого прилож�
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Не удалось открыть %s для записи!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Не удалось произвести передачу файлов; вероятно, отменили на той стороне."
 

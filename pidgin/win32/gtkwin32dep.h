@@ -39,6 +39,7 @@ void winpidgin_shell_execute(const char *target, const char *verb, const char *c
 void winpidgin_ensure_onscreen(GtkWidget *win);
 void winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags);
 void winpidgin_window_flash(GtkWindow *window, gboolean flash);
+DWORD winpidgin_get_lastactive(void);
 
 /* init / cleanup */
 void winpidgin_init(HINSTANCE);

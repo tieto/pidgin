@@ -119,13 +119,11 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 /* free roomlist space, I have no idea when this one is called... */
 void qq_roomlist_cancel(PurpleRoomlist *list)
 {
-	qq_data *qd;
 	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
 	gc = purple_account_get_connection(list->account);
 
-	qd = (qq_data *) gc->proto_data;
 	purple_roomlist_set_in_progress(list, FALSE);
 	purple_roomlist_unref(list);
 }

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
-"PO-Revision-Date: 2010-05-26 18:44+0100\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-01 18:18+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
@@ -63,9 +63,8 @@ msgstr ""
 msgid "Error"
 msgstr "Chyba"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Účet nebyl přidán"
+msgstr "Účet nebyl upraven"
 
 msgid "Account was not added"
 msgstr "Účet nebyl přidán"
@@ -75,11 +74,11 @@ msgstr "Jméno uživatele účtu nesmí být prázdné."
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "Protokol účtu nemůže být změněn, když je připojen k serveru."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "Jméno uživatele účtu nemůže být změněno, když je připojen k serveru."
 
 msgid "New mail notifications"
 msgstr "Upozornění na nové zprávy"
@@ -794,7 +793,7 @@ msgstr "Zastavit"
 msgid "Waiting for transfer to begin"
 msgstr "Čekám na začátek přenosu"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Zrušeno"
 
 msgid "Failed"
@@ -1680,7 +1679,7 @@ msgstr ""
 msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
-msgstr ""
+msgstr "Certifikát je neplatný. Zkontrolujte datum a čas počítače."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Certifikát vypršel a neměl by být považován za platný."
@@ -3818,17 +3817,16 @@ msgstr "Neplatná výzva od serveru"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Server považuje ověření za kompletní, ale klient ne"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "Server vyžaduje textovou autentizaci v nešifrovaném proudu"
+msgstr "Server může vyžadovat textovou autentizaci v nešifrovaném proudu"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s vyžaduje textovou autentizaci přes nešifrované spojení. Povolit to a "
-"pokračovat v autentizaci?"
+"%s může vyžadovat textovou autentizaci přes nešifrované spojení. Povolit to "
+"a pokračovat v autentizaci?"
 
 msgid "SASL authentication failed"
 msgstr "SASL autentizace selhala"
@@ -5882,8 +5880,8 @@ msgstr "PIN není platný. Může obsahovat jen čísla [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "PINy nesouhlasí."
 
-msgid "The name you entered is invalid."
-msgstr "Zadaný jméno není platné"
+msgid "The Display Name you entered is invalid."
+msgstr "Zadaný jméno pro zobrazení není platné"
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5901,9 +5899,8 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Informace z profilu nebyly získány, zkuste to prosím později."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "Tvoje MXitId"
+msgstr "Tvoje UID"
 
 #. pin
 #. pin (required)
@@ -5971,16 +5968,12 @@ msgstr "Nemohu se připojit k MXit serveru. Zkontrolujte nastavení."
 msgid "Connecting..."
 msgstr "Připojování..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Zadaný jméno není platné"
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Zadaný PIN má neplatnou délku [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6008,13 +6001,11 @@ msgstr "Sezení vypršelo, zkuste to prosím později."
 msgid "Invalid country selected. Please try again."
 msgstr "Vybrána neplatná země, zkuste to prosím později."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Uživatelské jméno není registrováno. Nejdřív se registrujte."
+msgstr "MXit ID není registrováno. Nejdřív se registrujte."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Uživatelské jméno už je registrované, zkuste jiné."
+msgstr "MXit ID už je registrované, zkuste jiné."
 
 msgid "Internal error. Please try again later."
 msgstr "Chyba. Zkuste to prosím později"
@@ -6058,9 +6049,8 @@ msgstr "Zamítnutí zprávy"
 msgid "Hidden Number"
 msgstr "Skryté číslo"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Tvoje MXitId"
+msgstr "Tvoje MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6074,26 +6064,21 @@ msgid "Enable splash-screen popup"
 msgstr "Povolit zobrazení spouštěcí obrazovky"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Byl jste vykopnut: (%s)"
+msgstr "Byl jste vykopnut z MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Špatný lístek"
+msgstr "byl vykopnut"
 
-#, fuzzy
 msgid "_Room Name:"
 msgstr "_Místnost:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Přišla vám pošta!"
+msgstr "Přišlo vám pozvání"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "Připojen"
+msgstr "Naposledy připojen"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7865,10 +7850,10 @@ msgid "Invalid SNAC"
 msgstr "Neplatné SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Překročen limit poměru serveru"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Překročen limit poměru klienta"
 
 msgid "Service unavailable"
 msgstr "Služba nedostupná"
@@ -10123,9 +10108,8 @@ msgstr "Locale místnosti chatu"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorovat pozvání do konferencí a místností chatu"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Použít proxy pro SSL připojení"
+msgstr "Použít proxy účtu pro HTTP a HTTPS připojení"
 
 msgid "Chat room list URL"
 msgstr "URL seznamu místností chatu"
@@ -12746,7 +12730,7 @@ msgstr ""
 " %s"
 
 msgid "Smile!"
-msgstr "Úsměv!"
+msgstr "Smajlík!"
 
 msgid "_Manage custom smileys"
 msgstr "_Spravovat uživatelské smajlíky"
@@ -12845,7 +12829,7 @@ msgid "_Smile!"
 msgstr "Ú_směv!"
 
 msgid "_Attention!"
-msgstr "Vaše pozornost!"
+msgstr "Vyžádat pozornost!"
 
 msgid "Log Deletion Failed"
 msgstr "Selhalo mazání záznamu"
@@ -12976,13 +12960,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Exiting because another libpurple client is already running.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Multimédia"
+msgstr "_Média"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Zavěsit"
+msgstr "_Zavěsit"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13043,7 +13025,7 @@ msgid "Dismiss"
 msgstr "Odmítnout"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Jste sledován!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Sledování</span>"
 
 msgid "The following plugins will be unloaded."
 msgstr "Následující zásuvné moduly budou odebrány."
@@ -15256,6 +15238,9 @@ msgstr "Navštívit Pidgin Web Page"
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Zadaný jméno není platné"
+
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "Certifikát je neplatný."
 
@@ -16057,7 +16042,7 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Nemohu otevřít %s pro zápis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Přenos souboru selhal; druhá strana jej pravděpodobně přerušila."
 
 #~ msgid "Could not connect for transfer."

@@ -1666,11 +1666,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
-	JabberStream *js;
-
 	PurpleXfer *xfer;
-
-	js = gc->proto_data;
 
 	xfer = jabber_si_new_xfer(gc, who);
 
@@ -1734,7 +1730,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	/* if they've already sent us this file transfer with the same damn id
 	 * then we're gonna ignore it, until I think of something better to do
 	 * with it */
-	if((xfer = jabber_si_xfer_find(js, stream_id, from)))
+	if(jabber_si_xfer_find(js, stream_id, from) != NULL)
 		return;
 
 	jsx = g_new0(JabberSIXfer, 1);

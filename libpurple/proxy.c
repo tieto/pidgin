@@ -1023,7 +1023,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 				g_free(response);
 
-			} else if((header = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic"))) {
+			} else if (g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic") != NULL) {
 				gchar *t1, *t2;
 				const char *username, *password;
 

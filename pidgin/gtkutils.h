@@ -718,6 +718,17 @@ GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
 	void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
+ * Does exactly what pidgin_make_mini_dialog() does, except you can specify
+ * a custom icon for the dialog.
+ */
+GtkWidget *pidgin_make_mini_dialog_with_custom_icon(PurpleConnection *gc,
+	GdkPixbuf *custom_icon,
+	const char *primary,
+	const char *secondary,
+	void *user_data,
+	...) G_GNUC_NULL_TERMINATED;
+
+/**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
  * Sample Use:
  * 		gtk_tree_view_set_search_equal_func(treeview,

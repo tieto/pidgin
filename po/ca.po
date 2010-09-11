@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
-"PO-Revision-Date: 2010-05-30 16:10+0200\n"
+"POT-Creation-Date: 2010-08-01 08:49+0200\n"
+"PO-Revision-Date: 2010-08-01 08:46+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "Language: ca\n"
@@ -87,9 +87,8 @@ msgstr ""
 msgid "Error"
 msgstr "Error"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "No s'ha afegit el compte"
+msgstr "No s'ha modificat el compte"
 
 msgid "Account was not added"
 msgstr "No s'ha afegit el compte"
@@ -100,10 +99,12 @@ msgstr "El nom d'usuari d'un compte no pot ser buit."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"No es pot canviar el protocol del compte si s'està connectat al servidor."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"No es pot canviar el nom d'usuari del compte si s'està connectat al servidor."
 
 msgid "New mail notifications"
 msgstr "Notifica si hi ha correu nou"
@@ -833,7 +834,7 @@ msgstr "Atura"
 msgid "Waiting for transfer to begin"
 msgstr "S'està esperant a iniciar la transferència"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "S'ha cancel·lat"
 
 msgid "Failed"
@@ -1724,6 +1725,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"El certificat encara no és vàlid. Comproveu que la data i l'hora de "
+"l'ordinador siguin correctes."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "El certificat ha expirat i no s'hauria de considerar vàlid."
@@ -2293,7 +2296,7 @@ msgid "You are using %s, but this plugin requires %s."
 msgstr "Esteu emprant %s, però aquest connector requereix %s."
 
 msgid "This plugin has not defined an ID."
-msgstr "Aquest connector no ha definit cap ID."
+msgstr "Aquest connector no ha definit cap identificador."
 
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
@@ -3880,17 +3883,18 @@ msgstr "Repte del servidor invàlid"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "El servidor creu que s'ha completat l'autenticació, però el client no"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "El servidor requereix autenticació de text sobre un flux no xifrat"
+msgstr ""
+"Podria ser que el servidor requerís autenticació de text sobre un flux no "
+"xifrat"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s requereix autenticació de text sobre un flux no xifrat. Voleu permetre-ho "
-"i continuar amb l'autenticació?"
+"Podria ser que %s requerís autenticació de text sobre un flux no xifrat. "
+"Voleu permetre-ho i continuar amb l'autenticació?"
 
 msgid "SASL authentication failed"
 msgstr "Ha fallat l'autenticació SASL"
@@ -3953,7 +3957,7 @@ msgid "The BOSH connection manager terminated your session."
 msgstr "El gestor de connexions BOSH ha tancat la connexió."
 
 msgid "No session ID given"
-msgstr "No s'ha indicat cap ID"
+msgstr "No s'ha indicat cap identificador"
 
 msgid "Unsupported version of BOSH protocol"
 msgstr "Aquesta versió del protocol BOSH no està implementada"
@@ -4254,13 +4258,13 @@ msgid "Ping timed out"
 msgstr "S'ha esgitat el temps d'espera (ping)"
 
 msgid "Invalid XMPP ID"
-msgstr "ID de l'XMPP invàlid"
+msgstr "L'identificador XMPP no és vàlid"
 
 msgid "Invalid XMPP ID. Username portion must be set."
-msgstr "L'ID de l'XMPP no és vàlid. Cal especificar el nom d'usuari."
+msgstr "L'identificador XMPP no és vàlid. Cal especificar el nom d'usuari."
 
 msgid "Invalid XMPP ID. Domain must be set."
-msgstr "L'ID de l'XMPP no és vàlid. Cal especificar un domini."
+msgstr "L'identificador XMPP no és vàlid. Cal especificar un domini."
 
 # FIXME
 msgid "Malformed BOSH URL"
@@ -4479,7 +4483,7 @@ msgstr "No s'ha trobat l'element"
 
 # FIX
 msgid "Malformed XMPP ID"
-msgstr "L'ID de l'XMPP està malmès"
+msgstr "L'identificador XMPP està malmès"
 
 msgid "Not Acceptable"
 msgstr "No és acceptable"
@@ -4557,7 +4561,7 @@ msgid "Improper Addressing"
 msgstr "Adreçament incorrecte"
 
 msgid "Invalid ID"
-msgstr "ID invàlid"
+msgstr "L'identificador no és vàlid"
 
 msgid "Invalid Namespace"
 msgstr "Espai de noms invàlid"
@@ -4838,7 +4842,7 @@ msgid "XMPP Version Mismatch"
 msgstr "Les versions del XMPP no coincideixen"
 
 msgid "XMPP stream missing ID"
-msgstr "Manca l'ID del fluxe XMPP"
+msgstr "Manca l'identificador del fluxe XMPP"
 
 msgid "XML Parse error"
 msgstr "Error en l'anàlisi de l'XML"
@@ -5989,8 +5993,8 @@ msgstr "El PIN no és vàlid. Només pot contenir dígits [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "Els dos PIN que heu introduït no coincideixen."
 
-msgid "The name you entered is invalid."
-msgstr "El nom que heu introduït no és vàlid."
+msgid "The Display Name you entered is invalid."
+msgstr "El nom d'usuari que heu introduït no és vàlid."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -6012,9 +6016,8 @@ msgstr ""
 "Encara no s'ha pogut recuperar la informació del vostre perfil. Torneu-ho a "
 "intentar més tard."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "El vostre MXitID"
+msgstr "El vostre UID"
 
 #. pin
 #. pin (required)
@@ -6084,16 +6087,12 @@ msgstr "No s'ha pogut connectar al servidor MXit. Comproveu la configuració."
 msgid "Connecting..."
 msgstr "S'està connectant..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "El nom que heu introduït no és vàlid."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "La llargada del PIN que heu introduït no és vàlida [4-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "Identificador MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6125,13 +6124,13 @@ msgstr "La vostra sessió ha expirat. Torneu-ho a intentar més tard."
 msgid "Invalid country selected. Please try again."
 msgstr "El país seleccionat no és vàlid. Intenteu-ho de nou."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "El nom d'usuari no està registrat, cal que primer el registreu."
+msgstr ""
+"L'identificador MXit que heu entrat no està registrat, cal que primer el "
+"registreu."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Aquest nom d'usuari ja està registrat, escolliu-ne un altre."
+msgstr "Aquest identificador MXit ja està registrat, escolliu-ne un altre."
 
 msgid "Internal error. Please try again later."
 msgstr "S'ha produït un error intern. Torneu-ho a provar més tard."
@@ -6176,9 +6175,8 @@ msgstr "Missatge de rebuig"
 msgid "Hidden Number"
 msgstr "Nombre ocult"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "El vostre MXitID"
+msgstr "El vostre identificador MXit..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6202,13 +6200,11 @@ msgid "_Room Name:"
 msgstr "Nom de la _Sala:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Teniu correu!"
+msgstr "Heu convidat"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "En línia"
+msgstr "Darrer cop en línia"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6880,7 +6876,7 @@ msgid "Mailstop"
 msgstr "Oficina de correu electrònic"
 
 msgid "User ID"
-msgstr "ID de l'usuari"
+msgstr "Identificador de l'usuari"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
@@ -7531,8 +7527,8 @@ msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "S'ha perdut %hu missatge de %s perquè no era vàlid."
-msgstr[1] "S'han perdut %hu missatges de %s perquè no eren vàlids."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè s'ha excedit el límit."
+msgstr[1] "S'han perdut %hu missatges de %s perquè s'ha excedit el límit."
 
 #, c-format
 msgid ""
@@ -7992,10 +7988,10 @@ msgid "Invalid SNAC"
 msgstr "SNAC invàlid"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "S'ha excedit el límit de velocitat del servidor"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "S'ha excedit el límit de velocitat del client"
 
 msgid "Service unavailable"
 msgstr "Servei no disponible"
@@ -8313,10 +8309,10 @@ msgid "Message: %s"
 msgstr "Missatge: %s"
 
 msgid "ID: "
-msgstr "ID: "
+msgstr "Identificador: "
 
 msgid "Group ID"
-msgstr "ID del Grup"
+msgstr "Identificador del Grup"
 
 msgid "QQ Qun"
 msgstr "QQ Qun"
@@ -8784,7 +8780,7 @@ msgstr "<b>Títol del grup:</b> %s<br>"
 
 #, c-format
 msgid "<b>Notes Group ID:</b> %s<br>"
-msgstr "<b>ID del grup Notes:</b> %s<br>"
+msgstr "<b>Identificador del grup Notes:</b> %s<br>"
 
 #, c-format
 msgid "Info for Group %s"
@@ -8946,10 +8942,10 @@ msgid "User Name"
 msgstr "Nom d'usuari"
 
 msgid "Sametime ID"
-msgstr "ID de Sametime"
+msgstr "Identificador de Sametime"
 
 msgid "An ambiguous user ID was entered"
-msgstr "S'ha introduït un ID d'usuari ambigu"
+msgstr "S'ha introduït un identificador d'usuari ambigu"
 
 #, c-format
 msgid ""
@@ -10245,7 +10241,7 @@ msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: fa una petició a l'usuari per iniciar una sessió Doodle"
 
 msgid "Yahoo ID..."
-msgstr "ID de Yahoo..."
+msgstr "Identificador del Yahoo..."
 
 #. *< type
 #. *< ui_requirement
@@ -10277,15 +10273,15 @@ msgstr "Característiques locals de la sala de xat"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Bloca invitacions a conferències i sales de xat"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Empra un compte per al servidor intermediari per a connexions SSL"
+msgstr ""
+"Empra un compte per al servidor intermediari per a connexions HTTP i HTTPS"
 
 msgid "Chat room list URL"
 msgstr "URL de la llista de sales de xat"
 
 msgid "Yahoo JAPAN ID..."
-msgstr "ID de Yahoo del Japó..."
+msgstr "Identificador de Yahoo del Japó..."
 
 #. *< type
 #. *< ui_requirement
@@ -10497,13 +10493,13 @@ msgid "Start Doodling"
 msgstr "Comença a dibuixar"
 
 msgid "Select the ID you want to activate"
-msgstr "Seleccioneu l'ID que vulgueu activar"
+msgstr "Seleccioneu l'identificador que vulgueu activar"
 
 msgid "Join whom in chat?"
 msgstr "A qui us voleu unir al xat?"
 
 msgid "Activate ID..."
-msgstr "Activa l'ID..."
+msgstr "Activa l'identificador..."
 
 msgid "Join User in Chat..."
 msgstr "Entra a un xat d'un usuari..."
@@ -10561,7 +10557,7 @@ msgstr ""
 "navegador:"
 
 msgid "Yahoo! ID"
-msgstr "ID de Yahoo!"
+msgstr "Identificador de Yahoo!"
 
 msgid "Hobbies"
 msgstr "Aficions"
@@ -13180,13 +13176,11 @@ msgstr ""
 "Ara se sortirà atès que ja hi ha un altre client del libpurple executant-"
 "se.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Medi"
+msgstr "_Medi"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Penja"
+msgstr "_Penja"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15512,6 +15506,9 @@ msgstr "Visita la pàgina web de Pidgin per Windows"
 msgid "You do not have permission to uninstall this application."
 msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
+#~ msgid "The name you entered is invalid."
+#~ msgstr "El nom que heu introduït no és vàlid."
+
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "El certificat encara no és vàlid."
 
@@ -16329,7 +16326,7 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "No s'ha pogut obrir %s per a escriure-hi."
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Ha fallat la transferència de fitxers. Probablement s'ha cancel·lat a "
 #~ "l'altra banda."

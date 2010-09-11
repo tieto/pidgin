@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.1\n"
+"Project-Id-Version: Pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
-"PO-Revision-Date: 2010-05-22 11:26+0100\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-07-30 14:57+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -65,9 +65,8 @@ msgstr ""
 msgid "Error"
 msgstr "Napaka"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Račun ni bil dodan"
+msgstr "Račun ni bil spremenjen"
 
 msgid "Account was not added"
 msgstr "Račun ni bil dodan"
@@ -78,10 +77,13 @@ msgstr "Uporabniško ime računa ne sme biti prazno."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Protokola računa ni mogoče spremeniti, medtem ko je povezan s strežnikom."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Uporabniškega imena računa ni mogoče spremeniti, medtem ko je povezan s "
+"strežnikom."
 
 msgid "New mail notifications"
 msgstr "Obveščanje o prispeli pošti"
@@ -810,7 +812,7 @@ msgstr "Ustavi"
 msgid "Waiting for transfer to begin"
 msgstr "Čakanje na začetek prenosa"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Preklicano"
 
 msgid "Failed"
@@ -1698,6 +1700,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Potrdilo še ni veljavno. Preverite, da sta datum in čas vašega sistema "
+"pravilno nastavljena."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr ""
@@ -3870,18 +3874,18 @@ msgstr "Neveljaven izziv strežnika"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Strežnik meni, da je overovitev dokončana, odjemalec pa ne"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
-"Strežnik zahteva overovitev z navadnim besedilom preko nešifriranega toka"
+"Strežnik lahko zahteva overovitev z navadnim besedilom preko nešifriranega "
+"toka"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s zahteva overovitev z navadnim besedilom preko nešifrirane povezave. Se "
-"strinjate s tem in želite nadaljevati z overovitvijo?"
+"%s lahko zahteva overovitev z navadnim besedilom preko nešifrirane povezave. "
+"Se strinjate s tem in želite nadaljevati z overovitvijo?"
 
 msgid "SASL authentication failed"
 msgstr "Overovitev SASL ni uspela"
@@ -5961,8 +5965,8 @@ msgstr "PIN ni veljaven. Sestavljen mora biti iz števk [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "Vnesena PIN-a se ne ujemata."
 
-msgid "The name you entered is invalid."
-msgstr "Vneseno ime ni veljavno."
+msgid "The Display Name you entered is invalid."
+msgstr "Vneseno pojavno ime ni veljavno."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5980,9 +5984,8 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Podatki o vašem profilu še niso pridobljen. Poskusite znova kasneje."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "Vaš MXitId"
+msgstr "Vaš UID"
 
 #. pin
 #. pin (required)
@@ -6054,16 +6057,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Povezovanje ..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Vneseno ime ni veljavno."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Vneseni PIN ni veljavne dolžine [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6092,13 +6091,12 @@ msgstr "Vaša seja je potekla. Poskusite znova kasneje."
 msgid "Invalid country selected. Please try again."
 msgstr "Izbrana neveljavna država. Poskusite znova kasneje."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Uporabniško ime ni registrirano. Najprej se registrirajte."
+msgstr ""
+"ID za MXit, ki ste ga vnesli, ni registriran. Najprej se registrirajte."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Uporabniško ime je že registrirano. Izberite drugo ime."
+msgstr "ID za MXit, ki ste ga vnesli, je že registriran. Izberite drugo ime."
 
 msgid "Internal error. Please try again later."
 msgstr "Notranja napaka. Poskusite znova pozneje."
@@ -6142,9 +6140,8 @@ msgstr "Sporočilo zavrnitve"
 msgid "Hidden Number"
 msgstr "Skrita številka"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Vaš MXitId"
+msgstr "Vaš MXit ID ..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6158,26 +6155,21 @@ msgid "Enable splash-screen popup"
 msgstr "Omogoči pozdravno okno ob zagonu"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Brcnjeni ste bili: (%s)"
+msgstr "Brcnjeni ste bili s tega MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Napačna vstopnica"
+msgstr "je bil brcnjen"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_Soba:"
+msgstr "_Ime sobe:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Dobili ste pošto!"
+msgstr "Povabili ste uporabnika"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "Prisoten"
+msgstr "Nazadnje povezan"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7970,85 +7962,74 @@ msgstr ""
 "za sporočanje s slikami. Ker bo razkrit naslov IP, sodi ta povezava med "
 "tveganja zasebnosti."
 
-#, fuzzy
 msgid "Invalid SNAC"
-msgstr "Neveljaven ID"
+msgstr "Neveljaven SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Prekoračena omejitev hitrosti strežnika"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Prekoračena omejitev hitrosti odjemalca"
 
-#, fuzzy
 msgid "Service unavailable"
 msgstr "Storitev ni dostopna"
 
-#, fuzzy
 msgid "Service not defined"
-msgstr "Konference ni mogoče najti"
+msgstr "Storitev ni definirana"
 
 msgid "Obsolete SNAC"
-msgstr ""
+msgstr "Zastarel SNAC"
 
-#, fuzzy
 msgid "Not supported by host"
-msgstr "Ni podprto"
+msgstr "Ni podprto s strani gostitelja"
 
-#, fuzzy
 msgid "Not supported by client"
-msgstr "Ni podprto"
+msgstr "Ni podprto s strani odjemalca"
 
 msgid "Refused by client"
-msgstr ""
+msgstr "Zavrnjeno s strani odjemalca"
 
 msgid "Reply too big"
-msgstr ""
+msgstr "Odgovor preobsežen"
 
-#, fuzzy
 msgid "Responses lost"
-msgstr "Verjetnost odgovora:"
+msgstr "Odgovori izgubljeni"
 
-#, fuzzy
 msgid "Request denied"
-msgstr "Zahteva v teku"
+msgstr "Zahteva zavrnjena"
 
 msgid "Busted SNAC payload"
-msgstr ""
+msgstr "Razkrinkana obremenitev SNAC"
 
 msgid "Insufficient rights"
-msgstr ""
+msgstr "Nezadostne pravice"
 
 msgid "In local permit/deny"
-msgstr ""
+msgstr "V krajevnem dovoli/prepovej"
 
 msgid "Warning level too high (sender)"
-msgstr ""
+msgstr "Raven opozoril previsoka (oddajnik)"
 
 msgid "Warning level too high (receiver)"
-msgstr ""
+msgstr "Raven opozoril previsoka (sprejemnik)"
 
-#, fuzzy
 msgid "User temporarily unavailable"
-msgstr "Storitev trenutno ni na voljo"
+msgstr "Uporabnik trenutno ni na voljo"
 
-#, fuzzy
 msgid "No match"
 msgstr "Ni zadetkov"
 
-#, fuzzy
 msgid "List overflow"
 msgstr "Seznam poln"
 
-#, fuzzy
 msgid "Request ambiguous"
-msgstr "Zahteva v teku"
+msgstr "Zahteva je dvoumna"
 
 msgid "Queue full"
-msgstr ""
+msgstr "Vrsta polna"
 
 msgid "Not while on AOL"
-msgstr ""
+msgstr "Ne medtem ko na AOL"
 
 msgid "Aquarius"
 msgstr "Vodnar"
@@ -10241,9 +10222,8 @@ msgstr "Razpored tipk sobe pomenkov"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Prezri povabila na konference in v klepetalnice"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Pri povezavah SSL uporabi posredovalni strežnik za račune"
+msgstr "Pri povezavah HTTP in HTTPS uporabi posredovalni strežnik za račune"
 
 msgid "Chat room list URL"
 msgstr "URL seznama sob pomenkov"
@@ -13126,13 +13106,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Program se bo zaprl, ker je že zagnan drug odjemalec libpurple.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Mediji"
+msgstr "_Mediji"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Odloži"
+msgstr "Odlo_ži"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15300,7 +15278,7 @@ msgstr ""
 
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Več-platformsko orodje za vmesnike, ki ga uporablja Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15432,6 +15410,9 @@ msgstr "Obiščite spletno stran Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Za odstranitev programa nimate ustreznih pravic."
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Vneseno ime ni veljavno."
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "Digitalno potrdilo še ni veljavno."

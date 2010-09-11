@@ -30,10 +30,10 @@ char *ZGetVariable(var)
 	if ((varfile = get_localvarfile()) == NULL)
 		return ((char *)0);
 
-	if ((ret = get_varval(varfile, var)) != ZERR_NONE) {
-		g_free(varfile);
+	ret = get_varval(varfile, var);
+	g_free(varfile);
+	if (ret != ZERR_NONE)
 		return ret;
-	}
 
 #ifdef WIN32
 	varfile = g_strdup("C:\\zephyr\\zephyr.var");

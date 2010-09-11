@@ -166,7 +166,7 @@ static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 	ret[j++] = g_strdup("--display");
 	ret[j++] = g_strdup((gchar *)gdk_display_get_name(gdk_display_get_default()));
 
-	ret[j++] = NULL;
+	ret[j] = NULL;
 
 	return ret;
 }

@@ -1476,10 +1476,8 @@ imhtml_url_clicked(GtkIMHtml *imhtml, const char *url)
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
-	GtkObjectClass *object_class;
 	GtkBindingSet *binding_set;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) klass;
 	gobject_class = (GObjectClass*) klass;
 	parent_class = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
 	signals[URL_CLICKED] = g_signal_new("url_clicked",

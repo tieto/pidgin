@@ -777,7 +777,7 @@ msgstr "停止"
 msgid "Waiting for transfer to begin"
 msgstr "正在等待传送开始"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "已取消"
 
 msgid "Failed"
@@ -15530,7 +15530,7 @@ msgstr "您没有权限卸载此程序。"
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "无法打开 %s 写入！"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "文件传送失败；可能其中一端取消了传送。"
 
 #~ msgid "Could not connect for transfer."

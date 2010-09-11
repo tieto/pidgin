@@ -121,7 +121,6 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 	char *msg = NULL;
 	GString *members = NULL;
 	GHashTable *components;
-	PurpleConversation *c = NULL;
 
 	if ( (pkt->status == 2) || (pkt->status == 11) )
 		return; /* Status is 11 when we are being notified about invitation being sent to someone else */
@@ -133,7 +132,7 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		if (pair->key == 57)
 		{
 			room = yahoo_string_decode(gc, pair->value, FALSE);
-			if((c = yahoo_find_conference(gc, room)))
+			if (yahoo_find_conference(gc, room) != NULL)
 			{
 				/* Looks like we got invited to an already open conference. */
 				/* Laters: Should we accept this conference rather than ignoring the invitation ? */
@@ -618,9 +617,6 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *who = NULL;
 	char *room = NULL;
 	GSList *l;
-	YahooData *yd;
-
-	yd = gc->proto_data;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -639,8 +635,7 @@ void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 
 	}
-	if (room)
-		g_free(room);
+	g_free(room);
 }
 
 void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -880,7 +875,6 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 {
 	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	PurpleConversation *c;
 
 	char *eroom;
 	gboolean utf8 = 1;
@@ -905,7 +899,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 		yd->chat_name = NULL;
 	}
 
-	if ((c = purple_find_chat(gc, YAHOO_CHAT_ID)))
+	if (purple_find_chat(gc, YAHOO_CHAT_ID) != NULL)
 		serv_got_chat_left(gc, YAHOO_CHAT_ID);
 
 	if (!logout)

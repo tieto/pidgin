@@ -21,14 +21,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
-"PO-Revision-Date: 2010-02-22 17:08+0200\n"
+"POT-Creation-Date: 2010-08-03 18:32+0200\n"
+"PO-Revision-Date: 2010-08-03 18:31+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #. Translators may want to transliterate the name.
@@ -75,9 +75,8 @@ msgstr ""
 msgid "Error"
 msgstr "Erreur"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Le compte n'a pas été ajouté."
+msgstr "Le compte n'a pas été modifié."
 
 msgid "Account was not added"
 msgstr "Le compte n'a pas été ajouté."
@@ -88,10 +87,14 @@ msgstr "Le nom d'utilisateur d'un compte ne doit pas être vide."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Le protocole du compte ne peut pas être changé pendant que celui-ci est "
+"connecté."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Le nom d'utilisateur du compte ne peut pas être changé pendant que celui-ci "
+"est connecté."
 
 msgid "New mail notifications"
 msgstr "Avertir des nouveaux courriers"
@@ -818,7 +821,7 @@ msgstr "Arrêter"
 msgid "Waiting for transfer to begin"
 msgstr "En attente de début de transfert"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Annulé"
 
 msgid "Failed"
@@ -862,8 +865,8 @@ msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
 msgstr ""
-"Les événements système ne seront archivés que si l'option « Archiver tous "
-"les changements d'état dans les archives système » est activée."
+"Les événements système ne seront archivés que si l'option « Archiver tous les "
+"changements d'état dans les archives système » est activée."
 
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
@@ -1705,6 +1708,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Ce certificat n'est pas encore valide. Veuillez vérifier que la date et "
+"l'heure sur cette machine sont bien réglées."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Le certificat a expiré et ne devrait pas être considéré valide."
@@ -2759,8 +2764,7 @@ msgid "Offline Message"
 msgstr "Message déconnecté"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
-msgstr ""
-"Vous pouvez modifier ou supprimer l'alerte dans la fenêtre « Alertes »."
+msgstr "Vous pouvez modifier ou supprimer l'alerte dans la fenêtre « Alertes »."
 
 msgid "Yes"
 msgstr "Oui"
@@ -3880,19 +3884,19 @@ msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 "Le serveur pense que l'authentification est terminée, et le client non."
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
-"Le serveur demande une authentification en texte non chiffré au travers d'un "
-"flux crypté."
+"Le serveur peut demander une authentification en texte non chiffré au "
+"travers d'un flux non crypté."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s demande une authentification en texte clair au travers d'une connexion "
-"non cryptée. Voulez-vous autoriser ceci et continuer l'authentification ?"
+"%s peut demander une authentification en texte clair au travers d'une "
+"connexion non cryptée. Voulez-vous autoriser ceci et continuer "
+"l'authentification ?"
 
 msgid "SASL authentication failed"
 msgstr "Échec de l'authentification SASL"
@@ -5984,8 +5988,8 @@ msgstr ""
 msgid "The two PINs you entered do not match."
 msgstr "Les nouveaux codes d'accès diffèrent."
 
-msgid "The name you entered is invalid."
-msgstr "Le nom saisi est non valide."
+msgid "The Display Name you entered is invalid."
+msgstr "Le nom à afficher saisi est non valide."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -6006,9 +6010,8 @@ msgstr ""
 "Les informations de votre profil n'ont pu être récupérées. Veuillez "
 "réessayer plus tard."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "Votre MXitId"
+msgstr "Votre UID"
 
 #. pin
 #. pin (required)
@@ -6080,16 +6083,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Connexion..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Le nom saisi est non valide."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Le code d'accès saisi n'a pas la bonne taille [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "Identifiant MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6120,15 +6119,14 @@ msgstr "Votre session a expirée. Veuillez réessayer plus tard."
 msgid "Invalid country selected. Please try again."
 msgstr "Pays choisi non valide. Veuillez réessayer plus tard."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
-"Le nom d'utilisateur n'est pas enregistré. Veuillez l'enregistrer d'abord."
+"L'identifiant MXit saisi n'est pas enregistré. Veuillez l'enregistrer "
+"d'abord."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
-"Le nom d'utilisateur est déjà enregistré. Veuillez en choisir un autre."
+"L'identifiant MXit saisi est déjà enregistré. Veuillez en choisir un autre."
 
 msgid "Internal error. Please try again later."
 msgstr "Erreur interne. Veuillez réessayer plus tard."
@@ -6172,9 +6170,8 @@ msgstr "Message de refus"
 msgid "Hidden Number"
 msgstr "Numéro caché"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Votre MXitId"
+msgstr "Votre identifiant MXitId..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6188,26 +6185,21 @@ msgid "Enable splash-screen popup"
 msgstr "Activer l'affichage de la bannière"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Vous avez été expulsé : (%s)"
+msgstr "Vous avez été expulsé de ce MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Mauvais ticket"
+msgstr "a été expulsé"
 
-#, fuzzy
 msgid "_Room Name:"
 msgstr "_Salon :"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Vous avez du courrier !"
+msgstr "Vous avez été invité"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "En ligne"
+msgstr "En ligne dernièrement"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7983,15 +7975,14 @@ msgstr ""
 "d'images. Votre adresse IP sera révélée et ceci peut être considéré comme "
 "une faille de sécurité."
 
-#, fuzzy
 msgid "Invalid SNAC"
-msgstr "Identifiant non valide"
+msgstr "SNAC non valide"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Vitesse du serveur dépassée"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Vitesse du client dépassée"
 
 msgid "Service unavailable"
 msgstr "Service non disponible"
@@ -10260,9 +10251,8 @@ msgstr "Langue du salon de discussions"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorer les invitations aux conférences et salons de discussions"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Utiliser le proxy du compte pour les connexions SSL"
+msgstr "Utiliser le proxy du compte pour les connexions HTTP et HTTPS"
 
 msgid "Chat room list URL"
 msgstr "URL de liste des salons de discussions"
@@ -10356,8 +10346,8 @@ msgid ""
 msgstr ""
 "Le serveur Yahoo! a demandé une méthode d'authentification non reconnue. "
 "Cette version de l'application n'arrivera probablement pas à se connecter au "
-"service Yahoo!. Vous pouvez vérifier qu'une mise à jour est disponible sur "
-"%s."
+"service Yahoo!. Vous pouvez vérifier qu'une mise à jour est disponible sur %"
+"s."
 
 msgid "Failed Yahoo! Authentication"
 msgstr "Échec de l'authentification Yahoo!"
@@ -12472,8 +12462,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with "
-"%s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s est un client de messagerie basé sur libpurple capable de se connecter à "
 "de multiples services de messageries instantanées. %s est écrit en C et "
@@ -13028,16 +13018,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in "
-"%s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in %"
+"s which started at %s?"
 msgstr ""
 "Êtes-vous sûr de vouloir supprimer les archives de la conversation dans %s "
 "datée du %s ?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at "
-"%s?"
+"Are you sure you want to permanently delete the system log which started at %"
+"s?"
 msgstr "Êtes-vous sûr de vouloir supprimer les archives système datées du %s ?"
 
 msgid "Delete Log?"
@@ -13143,13 +13133,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Arrêt à cause d'un autre client libpurple existant.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Média"
+msgstr "_Média"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Raccrocher"
+msgstr "_Raccrocher"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14852,8 +14840,8 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Permet d'envoyer des données brutes aux protocoles en mode texte (XMPP, MSN, "
-"IRC, TOC). Tapez « Entrée » dans la boîte de saisie pour envoyer. Observez "
-"le résultat dans la fenêtre de debug."
+"IRC, TOC). Tapez « Entrée » dans la boîte de saisie pour envoyer. Observez le "
+"résultat dans la fenêtre de debug."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -15378,13 +15366,13 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
-"%20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Erreur lors de l'installation du correcteur orthographique ($R3).$\\rSi une "
 "nouvelle tentative échoue, veuillez suivre les instructions sur http://"
-"developer.pidgin.im/wiki/Installing"
-"%20Pidgin#manual_win32_spellcheck_installation"
+"developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
@@ -15462,6 +15450,9 @@ msgstr "Visitez la page web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Vous n'avez pas les permissions pour supprimer cette application."
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Le nom saisi est non valide."
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "Le certificat n'est pas encore valide."
@@ -16018,7 +16009,7 @@ msgstr "Vous n'avez pas les permissions pour supprimer cette application."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Impossible d'ouvrir %s pour l'écriture"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Échec du transfert de fichier. Annulation probable du correspondant."
 

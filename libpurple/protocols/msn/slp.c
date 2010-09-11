@@ -941,7 +941,8 @@ got_error(MsnSlpCall *slpcall,
 	purple_debug_error("msn", "Received non-OK result: %s\n",
 	                   error ? error : "Unknown");
 
-	if (type && !strcmp(type, "application/x-msnmsgr-transreqbody")) {
+	if (type && (!strcmp(type, "application/x-msnmsgr-transreqbody")
+	          || !strcmp(type, "application/x-msnmsgr-transrespbody"))) {
 		MsnDirectConn *dc = slpcall->slplink->dc;
 		if (dc) {
 			msn_dc_fallback_to_sb(dc);
@@ -1265,8 +1266,6 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 	if (userlist->buddy_icon_window > 0)
 	{
 		GQueue *queue;
-		PurpleAccount *account;
-		const char *username;
 
 		queue = userlist->buddy_icon_requests;
 
@@ -1274,9 +1273,6 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 			return;
 
 		user = g_queue_pop_head(queue);
-
-		account  = userlist->session->account;
-		username = user->passport;
 
 		userlist->buddy_icon_window--;
 		request_user_display(user);
@@ -1349,31 +1345,21 @@ static void
 got_user_display(MsnSlpCall *slpcall,
 				 const guchar *data, gsize size)
 {
-	MsnUserList *userlist;
+	MsnSlpLink *slplink;
 	const char *info;
 	PurpleAccount *account;
 
 	g_return_if_fail(slpcall != NULL);
+	slplink = slpcall->slplink;
 
 	info = slpcall->data_info;
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "Got User Display: %s\n", slpcall->slplink->remote_user);
+		purple_debug_info("msn", "Got User Display: %s\n", slplink->remote_user);
 
-	userlist = slpcall->slplink->session->userlist;
-	account = slpcall->slplink->session->account;
+	account = slplink->session->account;
 
-	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
+	purple_buddy_icons_set_for_user(account, slplink->remote_user,
 								  g_memdup(data, size), size, info);
-
-#if 0
-	/* Free one window slot */
-	userlist->buddy_icon_window++;
-
-	purple_debug_info("msn", "got_user_display(): buddy_icon_window++ yields =%d\n",
-					userlist->buddy_icon_window);
-
-	msn_release_buddy_icon_request(userlist);
-#endif
 }
 
 static void
