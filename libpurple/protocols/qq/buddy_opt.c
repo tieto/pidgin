@@ -262,7 +262,6 @@ void qq_request_auth_code(PurpleConnection *gc, guint8 cmd, guint16 sub_cmd, gui
 
 void qq_process_auth_code(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid)
 {
-	qq_data *qd;
 	gint bytes;
 	guint8 cmd, reply;
 	guint16 sub_cmd;
@@ -271,8 +270,6 @@ void qq_process_auth_code(PurpleConnection *gc, guint8 *data, gint data_len, gui
 
 	g_return_if_fail(data != NULL && data_len != 0);
 	g_return_if_fail(uid != 0);
-
-	qd = (qq_data *) gc->proto_data;
 
 	qq_show_packet("qq_process_auth_code", data, data_len);
 	bytes = 0;
@@ -324,7 +321,7 @@ static void add_buddy_question_input(PurpleConnection *gc, guint32 uid, gchar *q
 	add_req->auth_len = 0;
 
 	who = uid_to_purple_name(uid);
-	msg = g_strdup_printf(_("%u requires verification"), uid);
+	msg = g_strdup_printf(_("%u requires verification: %s"), uid, question);
 	purple_request_input(gc, _("Add buddy question"), msg,
 			_("Enter answer here"),
 			NULL,
@@ -400,7 +397,6 @@ static void request_add_buddy_by_question(PurpleConnection *gc, guint32 uid,
 
 void qq_process_question(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid)
 {
-	qq_data *qd;
 	gint bytes;
 	guint8 cmd, reply;
 	gchar *question, *answer;
@@ -408,8 +404,6 @@ void qq_process_question(PurpleConnection *gc, guint8 *data, gint data_len, guin
 	guint8 *code;
 
 	g_return_if_fail(data != NULL && data_len != 0);
-
-	qd = (qq_data *) gc->proto_data;
 
 	qq_show_packet("qq_process_question", data, data_len);
 	bytes = 0;
@@ -720,12 +714,9 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 /*  process reply to add_buddy_auth request */
 void qq_process_add_buddy_auth(guint8 *data, gint data_len, PurpleConnection *gc)
 {
-	qq_data *qd;
 	gchar **segments, *msg_utf8;
 
 	g_return_if_fail(data != NULL && data_len != 0);
-
-	qd = (qq_data *) gc->proto_data;
 
 	if (data[0] == '0') {
 		purple_debug_info("QQ", "Reply OK for sending authorize\n");
@@ -767,11 +758,9 @@ void qq_process_remove_buddy(PurpleConnection *gc, guint8 *data, gint data_len, 
 /* process the server reply for my request to remove myself from a buddy */
 void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid)
 {
-	qq_data *qd;
 	gchar *msg;
 
 	g_return_if_fail(data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
 
 	if (data[0] == 0) {
 		purple_debug_info("QQ", "Reply OK for removing me from %u's buddy list\n", uid);
@@ -1004,7 +993,6 @@ static void server_buddy_add_request(PurpleConnection *gc, gchar *from, gchar *t
 
 void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_len)
 {
-	qq_data *qd;
 	gint bytes;
 	guint8 cmd;
 	guint8 reply;
@@ -1012,8 +1000,6 @@ void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_l
 	guint16 flag1, flag2;
 
 	g_return_if_fail(data != NULL && data_len >= 5);
-
-	qd = (qq_data *) gc->proto_data;
 
 	qq_show_packet("buddy_check_code", data, data_len);
 

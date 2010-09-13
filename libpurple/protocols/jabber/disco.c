@@ -30,7 +30,9 @@
 #include "adhoccommands.h"
 #include "buddy.h"
 #include "disco.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/gmail.h"
+#include "google/jingleinfo.h"
 #include "iq.h"
 #include "jabber.h"
 #include "jingle/jingle.h"
@@ -597,7 +599,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 	for(child = xmlnode_get_child(query, "item"); child;
 			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
-		const char *jid, *node;
+		const char *jid;
 
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
 			continue;

@@ -808,7 +808,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "In attesa dell'inizio del trasferimento"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Annullato"
 
 msgid "Failed"

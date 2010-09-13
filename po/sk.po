@@ -803,7 +803,7 @@ msgstr "Zastaviť"
 msgid "Waiting for transfer to begin"
 msgstr "Čaká sa na začiatok prenosu"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Zrušené"
 
 msgid "Failed"
@@ -16124,7 +16124,7 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Nepodarilo sa otvoriť %s pre zápis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Prenos súboru zlyhal; druhá strana ho asi zrušila."
 
 #~ msgid "Could not connect for transfer."

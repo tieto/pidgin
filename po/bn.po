@@ -843,7 +843,7 @@ msgstr "স্থগিত"
 msgid "Waiting for transfer to begin"
 msgstr "স্থানান্তর শুরু করার জন্য অপেক্ষা করা হচ্ছে"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "বাতিল করা হয়েছে"
 
 # mark6

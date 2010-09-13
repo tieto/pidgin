@@ -506,7 +506,6 @@ pref_full_name(struct purple_pref *pref)
 		return g_strdup("/");
 
 	name = g_string_new(pref->name);
-	parent = pref->parent;
 
 	for(parent = pref->parent; parent && parent->name; parent = parent->parent) {
 		name = g_string_prepend_c(name, '/');

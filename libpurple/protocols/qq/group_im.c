@@ -48,12 +48,10 @@
 PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd)
 {
 	PurpleConversation *conv;
-	qq_data *qd;
 	gchar *topic_utf8;
 
 	g_return_val_if_fail(rmd != NULL, NULL);
 	g_return_val_if_fail(rmd->title_utf8, NULL);
-	qd = (qq_data *) gc->proto_data;
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			rmd->title_utf8, purple_connection_get_account(gc));
@@ -207,7 +205,6 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 /* recv an IM from a group chat */
 void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type)
 {
-	qq_data *qd;
 	gchar *msg_smiley, *msg_fmt, *msg_utf8;
 	gint bytes, tail_len;
 	struct {
@@ -229,7 +226,6 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 
 	/* at least include im_text.msg_len */
 	g_return_if_fail(data != NULL && data_len > 23);
-	qd = (qq_data *) gc->proto_data;
 
 	/* qq_show_packet("ROOM_IM", data, data_len); */
 	memset(&im_text, 0, sizeof(im_text));
@@ -376,7 +372,6 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	gint msg_len;
 	const gchar *start_invalid;
 	gboolean is_smiley_none;
-	guint8 frag_count, frag_index;
 
 	g_return_val_if_fail(NULL != gc && NULL != gc->proto_data, -1);
 	g_return_val_if_fail(id != 0 && what != NULL, -1);
@@ -385,9 +380,6 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	purple_debug_info("QQ", "Send chat IM to %u, len %" G_GSIZE_FORMAT ":\n%s\n", id, strlen(what), what);
 
 	/* qq_show_packet("chat IM UTF8", (guint8 *)what, strlen(what)); */
-
-	fmt = qq_im_fmt_new_by_purple(what);
-	is_smiley_none = qq_im_smiley_none(what);
 
 	msg_stripped = purple_markup_strip_html(what);
 	g_return_val_if_fail(msg_stripped != NULL, -1);
@@ -417,26 +409,10 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 
 	qd->send_im_id++;
 	fmt = qq_im_fmt_new_by_purple(what);
-	frag_count = g_slist_length(segments);
-	frag_index = 0;
-/*
-	if (frag_count <= 1) {
-*/
-		for (it = segments; it; it = it->next) {
-			request_room_send_im(gc, id, fmt, (gchar *)it->data);
-			g_free(it->data);
-		}
-/*
-	} else {
-		for (it = segments; it; it = it->next) {
-			request_room_send_im_ex(gc, id, fmt, (gchar *)it->data,
-					qd->send_im_id, frag_count, frag_index);
-			g_free(it->data);
-			frag_index++;
-		}
+	for (it = segments; it; it = g_slist_delete_link(it, it)) {
+		request_room_send_im(gc, id, fmt, (gchar *)it->data);
+		g_free(it->data);
 	}
-*/
 	qq_im_fmt_free(fmt);
-	g_slist_free(segments);
 	return 1;
 }

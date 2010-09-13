@@ -1042,11 +1042,40 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 }
 
 static GtkWidget *
+add_theme_prefs_combo(GtkWidget *vbox,
+                      GtkSizeGroup *combo_sg, GtkSizeGroup *label_sg,
+                      GtkListStore *theme_store,
+                      GCallback combo_box_cb, gpointer combo_box_cb_user_data, 
+                      const char *label_str, const char *prefs_path,
+                      const char *theme_type)
+{
+	GtkWidget *label;
+	GtkWidget *combo_box = NULL;
+	GtkWidget *themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	label = gtk_label_new(label_str);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_size_group_add_widget(label_sg, label);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
+
+	combo_box = prefs_build_theme_combo_box(theme_store,
+						purple_prefs_get_string(prefs_path),
+						theme_type);
+	g_signal_connect(G_OBJECT(combo_box), "changed",
+						(GCallback)combo_box_cb, combo_box_cb_user_data);
+	gtk_size_group_add_widget(combo_sg, combo_box);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), combo_box, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+
+	return combo_box;
+}
+
+static GtkWidget *
 theme_page(void)
 {
-	GtkWidget *ret, *vbox;
 	GtkWidget *label;
-	GtkWidget *themesel_hbox;
+	GtkWidget *ret, *vbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1067,76 +1096,28 @@ theme_page(void)
 	gtk_widget_show(label);
 
 	/* Buddy List Themes */
-	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-
-	label = gtk_label_new(_("Buddy List Theme:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(label_sg, label);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
-
-	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"),
-						"blist");
-	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed",
-						(GCallback)prefs_set_blist_theme_cb, NULL);
-	gtk_size_group_add_widget(combo_sg, prefs_blist_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+	prefs_blist_themes_combo_box = add_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_blist_themes,
+		(GCallback)prefs_set_blist_theme_cb, NULL, 
+		_("Buddy List Theme:"), PIDGIN_PREFS_ROOT "/blist/theme", "blist");
 
 	/* Status Icon Themes */
-	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-
-	label = gtk_label_new(_("Status Icon Theme:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(label_sg, label);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
-
-	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"),
-						"icon");
-	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed",
-						(GCallback)prefs_set_status_icon_theme_cb, NULL);
-	gtk_size_group_add_widget(combo_sg, prefs_status_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+	prefs_status_themes_combo_box = add_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_status_icon_themes,
+		(GCallback)prefs_set_status_icon_theme_cb, NULL,
+		_("Status Icon Theme:"), PIDGIN_PREFS_ROOT "/status/icon-theme", "icon");
 
 	/* Sound Themes */
-	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-
-	label = gtk_label_new(_("Sound Theme:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(label_sg, label);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
-
-	prefs_sound_themes_combo_box = prefs_build_theme_combo_box(prefs_sound_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"),
-						"sound");
-	g_signal_connect(G_OBJECT(prefs_sound_themes_combo_box), "changed",
-						(GCallback)prefs_set_sound_theme_cb, NULL);
-	gtk_size_group_add_widget(combo_sg, prefs_sound_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+	prefs_sound_themes_combo_box = add_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_sound_themes,
+		(GCallback)prefs_set_sound_theme_cb, NULL,
+		_("Sound Theme:"), PIDGIN_PREFS_ROOT "/sound/theme", "sound");
 
 	/* Smiley Themes */
-	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-
-	label = gtk_label_new(_("Smiley Theme:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(label_sg, label);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
-
-	prefs_smiley_themes_combo_box = prefs_build_theme_combo_box(prefs_smiley_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme"),
-						"smiley");
-	g_signal_connect(G_OBJECT(prefs_smiley_themes_combo_box), "changed",
-						(GCallback)prefs_set_smiley_theme_cb, NULL);
-	gtk_size_group_add_widget(combo_sg, prefs_smiley_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+	prefs_smiley_themes_combo_box = add_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_smiley_themes,
+		(GCallback)prefs_set_smiley_theme_cb, NULL,
+		_("Smiley Theme:"), PIDGIN_PREFS_ROOT "/smileys/theme", "smiley");
 
 	/* Custom sort so "none" theme is at top of list */
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(prefs_smiley_themes),
@@ -1809,9 +1790,10 @@ network_page(void)
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
-
-	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
+	
+	pidgin_prefs_labeled_spin_button(hbox, _("_UDP Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
+
 	hbox = pidgin_prefs_labeled_entry(vbox, _("Use_rname:"),
 		"/purple/network/turn_username", sg);
 	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),

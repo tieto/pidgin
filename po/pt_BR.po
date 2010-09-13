@@ -804,7 +804,7 @@ msgstr "Parar"
 msgid "Waiting for transfer to begin"
 msgstr "Esperando o começo da transferência"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelada"
 
 msgid "Failed"
@@ -16432,7 +16432,7 @@ msgstr "Você não tem permissão para desinstalar essa aplicação."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Não foi possível abrir %s para escrita!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Transferência de arquivo falhou; o outro lado provavelmente cancelou-a."
 

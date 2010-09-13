@@ -3653,6 +3653,9 @@ set_mood_show(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by 
+   gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
+
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
@@ -3686,7 +3689,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Set _Mood"), "<CTL>O", set_mood_show, 0, "<Item>", NULL },
+	{ N_("/Tools/Set _Mood"), "<CTL>D", set_mood_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
@@ -3965,7 +3968,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			                                 tmp);
 			g_free(tmp);
 		}
-		count = 0;
 
 		count = purple_blist_get_group_size(group, FALSE);
 		if (count != 0) {
@@ -3976,7 +3978,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			                                 tmp);
 			g_free(tmp);
 		}
-		count = 0;
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
@@ -4023,7 +4024,6 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 {
 	PurpleBuddy *buddy = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
-	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
@@ -4034,11 +4034,9 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-			gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
 		}
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
-		gtkbuddynode = node->ui_data;
 		p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 			/* This emblem comes from the small emoticon set now,
@@ -4131,7 +4129,6 @@ GdkPixbuf *
 pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 {
 	GdkPixbuf *ret;
-	const char *protoname = NULL;
 	const char *icon = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
@@ -4158,7 +4155,6 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	if(buddy || chat) {
 		PurpleAccount *account;
 		PurplePlugin *prpl;
-		PurplePluginProtocolInfo *prpl_info;
 
 		if(buddy)
 			account = buddy->account;
@@ -4168,12 +4164,6 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 		if(!prpl)
 			return NULL;
-
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-		if(prpl_info && prpl_info->list_icon) {
-			protoname = prpl_info->list_icon(account, buddy);
-		}
 	}
 
 	if(buddy) {

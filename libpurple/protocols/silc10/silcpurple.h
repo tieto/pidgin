@@ -80,7 +80,7 @@ typedef struct SilcPurpleStruct {
 #endif
 	unsigned int detaching            : 1;
 	unsigned int resuming             : 1;
-	unsigned int roomlist_canceled    : 1;
+	unsigned int roomlist_cancelled   : 1;
 	unsigned int chpk                 : 1;
 } *SilcPurple;
 

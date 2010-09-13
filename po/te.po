@@ -787,7 +787,7 @@ msgstr "ఆపుము"
 msgid "Waiting for transfer to begin"
 msgstr "ప్రారంభించడానికి బదిలీ కోసం నిరీక్షణ "
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "రద్దుచేయి"
 
 msgid "Failed"

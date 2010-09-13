@@ -239,7 +239,7 @@ PurpleNetworkListenData *purple_network_listen_range_family(
  * by passing in the return value from either purple_network_listen()
  * or purple_network_listen_range().
  *
- * @param listen_data This listener attempt will be canceled and
+ * @param listen_data This listener attempt will be cancelled and
  *        the struct will be freed.
  */
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);

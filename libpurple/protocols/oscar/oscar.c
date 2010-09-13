@@ -1699,7 +1699,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		}
 		else if (args->status == AIM_RENDEZVOUS_CANCEL)
 		{
-			/* The other user canceled a peer request */
+			/* The other user cancelled a peer request */
 			PeerConnection *conn;
 
 			conn = peer_connection_find_by_cookie(od, userinfo->bn, args->cookie);
@@ -4953,7 +4953,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 
 		/* OSCAR_DISCONNECT_LOCAL_CLOSED doesn't write anything to the convo
-		 * window. Let the user know that we canceled the Direct IM. */
+		 * window. Let the user know that we cancelled the Direct IM. */
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 		purple_conversation_write(conv, NULL, _("You closed the connection."),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));

@@ -789,7 +789,7 @@ msgstr "ৰখক"
 msgid "Waiting for transfer to begin"
 msgstr "বিনিময়ৰ আৰম্ভত অপেক্ষা কৰা হৈছে"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "বাতিল কৰা হৈছে"
 
 msgid "Failed"

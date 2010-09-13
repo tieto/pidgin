@@ -637,10 +637,8 @@ static void _qq_xfer_cancel(PurpleXfer *xfer)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	guint16 *seq;
 
 	g_return_if_fail (xfer != NULL);
-	seq = (guint16 *) xfer->data;
 	account = purple_xfer_get_account(xfer);
 	gc = purple_account_get_connection(account);
 
@@ -670,10 +668,8 @@ static void _qq_xfer_recv_init(PurpleXfer *xfer)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	ft_info *info;
 
-	g_return_if_fail (xfer != NULL && xfer->data != NULL);
-	info = (ft_info *) xfer->data;
+	g_return_if_fail(xfer != NULL);
 	account = purple_xfer_get_account(xfer);
 	gc = purple_account_get_connection(account);
 
@@ -752,7 +748,7 @@ void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 	xfer = qd->xfer;
-	info = (ft_info *) qd->xfer->data;
+	info = (ft_info *) xfer->data;
 
 	if (data_len <= 30 + QQ_CONN_INFO_LEN) {
 		purple_debug_warning("QQ", "Received file reject message is empty\n");
@@ -761,7 +757,7 @@ void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid
 
 	bytes = 18 + 12;	/* skip 30 bytes */
 	qq_get_conn_info(info, data + bytes);
-	_qq_xfer_init_socket(qd->xfer);
+	_qq_xfer_init_socket(xfer);
 
 	_qq_xfer_init_udp_channel(info);
 	_qq_send_packet_file_notifyip(gc, sender_uid);

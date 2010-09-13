@@ -35,7 +35,7 @@
 static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
-static HINSTANCE libpurpledll_hInstance = 0;
+static HINSTANCE libpurpledll_hInstance = NULL;
 
 /*
  *  PUBLIC CODE
@@ -77,15 +77,22 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 	BOOL did_load = FALSE;
 	FARPROC proc = 0;
 
-	if(!(hmod = GetModuleHandle(dllname))) {
+	wchar_t *wc_dllname = g_utf8_to_utf16(dllname, -1, NULL, NULL, NULL);
+
+	if(!(hmod = GetModuleHandleW(wc_dllname))) {
 		purple_debug_warning("wpurple", "%s not already loaded; loading it...\n", dllname);
-		if(!(hmod = LoadLibrary(dllname))) {
-			purple_debug_error("wpurple", "Could not load: %s\n", dllname);
+		if(!(hmod = LoadLibraryW(wc_dllname))) {
+			purple_debug_error("wpurple", "Could not load: %s (%s)\n", dllname,
+				g_win32_error_message(GetLastError()));
+			g_free(wc_dllname);
 			return NULL;
 		}
 		else
 			did_load = TRUE;
 	}
+
+	g_free(wc_dllname);
+	wc_dllname = NULL;
 
 	if((proc = GetProcAddress(hmod, procedure))) {
 		purple_debug_info("wpurple", "This version of %s contains %s\n",
@@ -124,7 +131,7 @@ const char *wpurple_install_dir(void) {
 	if (!initialized) {
 		char *tmp = NULL;
 		wchar_t winstall_dir[MAXPATHLEN];
-		if (GetModuleFileNameW(NULL, winstall_dir,
+		if (GetModuleFileNameW(libpurpledll_hInstance, winstall_dir,
 				MAXPATHLEN) > 0) {
 			tmp = g_utf16_to_utf8(winstall_dir, -1,
 				NULL, NULL, NULL);

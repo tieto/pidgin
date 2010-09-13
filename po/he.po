@@ -781,7 +781,7 @@ msgstr "עצור"
 msgid "Waiting for transfer to begin"
 msgstr "ממתין להעברה להתחיל"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "בוטל"
 
 msgid "Failed"
