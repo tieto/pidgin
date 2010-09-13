@@ -42,6 +42,8 @@ typedef struct {
 	JabberStream *js;
 	char *remote_jid;
 	char *iq_id;
+	xmlnode *description;		/* store incoming description through
+	 								relay credential fetching */
 	gpointer session_data;
 } GoogleSession;
 
