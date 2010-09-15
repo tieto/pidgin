@@ -4723,7 +4723,7 @@ msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;owner|admin|member|outcast|none&gt; [Spitzname1] [Spitzname2] ...: "
+"role &lt;moderator|participant|visitor|none&gt; [Spitzname1] [Spitzname2] ...: "
 "Benutzer mit einer Rolle für den Raum erfragen oder Benutzern eine Rolle "
 "zuweisen."
 
