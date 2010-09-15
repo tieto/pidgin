@@ -805,7 +805,7 @@ msgstr "Dur"
 msgid "Waiting for transfer to begin"
 msgstr "Aktarımın başlaması bekleniyor"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "İptal Edildi"
 
 msgid "Failed"
@@ -16367,7 +16367,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s yazma için açılamıyor!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Dosya transferi gerçekleştirilemedi; karşı taraf iptal etmiş olabilir."
 

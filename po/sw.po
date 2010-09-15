@@ -784,7 +784,7 @@ msgstr "&Simama"
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Imeghairishwa"
 
 msgid "Failed"

@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-01 00:18+0200\n"
-"PO-Revision-Date: 2010-08-01 00:16+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2010-09-02 19:45+0200\n"
+"PO-Revision-Date: 2010-09-06 10:01+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -813,7 +813,7 @@ msgstr "Stopp"
 msgid "Waiting for transfer to begin"
 msgstr "Warte auf den Beginn der Dateiübertragung"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Abgebrochen"
 
 msgid "Failed"
@@ -4772,11 +4772,17 @@ msgstr "XMPP-Protokoll-Plugin"
 msgid "Domain"
 msgstr "Domain"
 
-msgid "Require SSL/TLS"
-msgstr "SSL/TLS voraussetzen"
+msgid "Require encryption"
+msgstr "Verschlüsselung fordern"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Erzwinge altes SSL (Port 5223)"
+msgid "Use encryption if available"
+msgstr "Verschlüsselung benutzen, wenn verfügbar"
+
+msgid "Use old-style SSL"
+msgstr "Alte SSL-Methode verwenden"
+
+msgid "Connection security"
+msgstr "Verbindungssicherheit"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Erlaube Klartext-Authentifikation über einen unverschlüsselten Kanal"
@@ -7218,96 +7224,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Datei %s (%s) ist größer als die maximale Größe von %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Es gab einen Fehler beim Empfangen dieser Nachricht.  Der Buddy, mit dem "
-"Sie sich unterhalten benutzt wahrscheinlich eine andere Kodierung als "
-"erwartet.  Wenn Sie wissen, welche Kodierung er benutzt, können Sie diese in "
-"den erweiterten Konto-Optionen Ihres AIM/ICQ-Kontos angeben.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Es gab einen Fehler beim Empfang dieser Nachricht.  Entweder haben Sie und %"
-"s unterschiedliche Kodierungen gesetzt oder %s hat einen fehlerhaften "
-"Client.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Buddy-Icon"
-
-msgid "Voice"
-msgstr "Stimme"
-
-msgid "AIM Direct IM"
-msgstr "AIM direkte Nachricht"
-
-msgid "Get File"
-msgstr "Datei abrufen"
-
-msgid "Games"
-msgstr "Spiele"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "Zusätze"
-
-msgid "Send Buddy List"
-msgstr "Buddy-Liste senden"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ direkte Verbindung"
-
-msgid "AP User"
-msgstr "AP Benutzer"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ Server Relay"
-
-msgid "Old ICQ UTF8"
-msgstr "Altes ICQ UTF-8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian-Verschlüsselung"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF-8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Sicherheit aktiviert"
-
-msgid "Video Chat"
-msgstr "Video-Chat"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live-Video"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Gemeinsamer Bildschirm"
-
 msgid "Free For Chat"
 msgstr "Bereit zum Chatten"
 
@@ -7337,15 +7253,6 @@ msgstr "Bei der Arbeit"
 
 msgid "At lunch"
 msgstr "Zur Mittagspause"
-
-msgid "IP Address"
-msgstr "IP-Adresse"
-
-msgid "Warning Level"
-msgstr "Warnstufe"
-
-msgid "Buddy Comment"
-msgstr "Buddy-Kommentar"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7446,17 +7353,6 @@ msgstr "Passwort gesendet"
 msgid "Unable to initialize connection"
 msgstr "Kann Verbindung nicht erstellen"
 
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Bitte autorisieren Sie mich, sodass ich Sie in meine Buddy-Liste aufnehmen "
-"kann."
-
-msgid "No reason given."
-msgstr "Kein Grund angegeben."
-
-msgid "Authorization Denied Message:"
-msgstr "Nachricht für die Ablehnung der Autorisierung:"
-
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -7466,6 +7362,9 @@ msgstr ""
 "Der Benutzer %u hat Ihre Anfrage abgelehnt, ihn bzw. sie zu Ihrer Buddy-"
 "Liste hinzufügen zu dürfen, und zwar aus folgendem Grund:\n"
 "%s"
+
+msgid "No reason given."
+msgstr "Kein Grund angegeben."
 
 msgid "ICQ authorization denied."
 msgstr "ICQ-Autorisierung verweigert."
@@ -7582,59 +7481,12 @@ msgstr[0] ""
 msgstr[1] ""
 "Sie haben %hu Nachrichten von %s aus unbekannten Gründen nicht erhalten."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Benutzerinformation nicht verfügbar: %s"
-
-msgid "Online Since"
-msgstr "Online seit"
-
-msgid "Member Since"
-msgstr "Mitglied seit"
-
-msgid "Capabilities"
-msgstr "Fähigkeiten"
-
 msgid "Your AIM connection may be lost."
 msgstr "Ihre AIM-Verbindung könnte unterbrochen sein."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Kann die Nachricht von diesem Benutzer nicht anzeigen, da sie ungültige "
-"Zeichen enthält.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Die Verbindung zum Raum %s wurde unterbrochen."
-
-msgid "Mobile Phone"
-msgstr "Handynummer"
-
-msgid "Personal Web Page"
-msgstr "Persönliche Webseite"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Zusätzliche Informationen"
-
-msgid "Zip Code"
-msgstr "PLZ"
-
-msgid "Work Information"
-msgstr "Information (Arbeit)"
-
-msgid "Division"
-msgstr "Abteilung"
-
-msgid "Position"
-msgstr "Position"
-
-msgid "Web Page"
-msgstr "Webseite"
 
 msgid "Pop-Up Message"
 msgstr "Pop-Up Nachricht"
@@ -7922,8 +7774,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Ändere die Adresse zu:"
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>Sie warten derzeit auf keine Autorisierungen</i>"
+msgid "you are not waiting for authorization"
+msgstr "Sie warten derzeit auf keine Autorisierungen"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Sie warten auf Autorisierung von den folgenden Buddys"
@@ -7977,9 +7829,6 @@ msgstr "Zeige Buddys, von denen Sie Autorisierung erwarten"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Suche Buddys nach E-Mail-Adresse..."
-
-msgid "Search for Buddy by Information"
-msgstr "Suche Buddy nach Information"
 
 msgid "Use clientLogin"
 msgstr "clientLogin benutzen"
@@ -8268,8 +8117,8 @@ msgid "Your request was rejected."
 msgstr "Ihre Anfrage wurde abgelehnt."
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u erfordert Autorisierung"
+msgid "%u requires verification: %s"
+msgstr "%u erfordert Überprüfung: %s"
 
 msgid "Add buddy question"
 msgstr "Buddy-Frage hinzufügen"
@@ -10146,6 +9995,9 @@ msgstr "Videokonferenz"
 msgid "Computer"
 msgstr "Computer"
 
+msgid "Mobile Phone"
+msgstr "Handynummer"
+
 msgid "PDA"
 msgstr "PDA"
 
@@ -10580,6 +10432,9 @@ msgstr "%s versucht, Ihnen eine Gruppe von %d Dateien zu senden.\n"
 msgid "Write Error"
 msgstr "Schreibfehler"
 
+msgid "IP Address"
+msgstr "IP-Adresse"
+
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo!-Japan-Profil"
 
@@ -10620,6 +10475,9 @@ msgstr "Cooler Link 2"
 
 msgid "Cool Link 3"
 msgstr "Cooler Link 3"
+
+msgid "Member Since"
+msgstr "Mitglied seit"
 
 msgid "Last Update"
 msgstr "Letzte Aktualisierung"
@@ -11247,6 +11105,11 @@ msgstr ""
 "Listenfenster zu diesem Dialog zurückkehren und Konten hinzufügen, "
 "bearbeiten oder löschen"
 
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr ""
+"%s%s%s%s möchte Sie (%s) zu seiner oder ihrer Buddy-Liste hinzufügen%s%s"
+
 #. Buddy List
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
@@ -11506,6 +11369,8 @@ msgstr "Nachricht (optional)"
 msgid "Edit User Mood"
 msgstr "Benutzerstimmung ändern"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Buddys"
@@ -13648,6 +13513,9 @@ msgstr "Relay-Server (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN-Server:"
 
+msgid "_UDP Port:"
+msgstr "_UDP-Port:"
+
 msgid "Use_rname:"
 msgstr "_Benutzername:"
 
@@ -14143,6 +14011,10 @@ msgstr ""
 "<b>Dateigröße:</b> %s\n"
 "<b>Bildgröße:</b> %dx%d"
 
+#. Label
+msgid "Buddy Icon"
+msgstr "Buddy-Icon"
+
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr ""
@@ -14228,7 +14100,7 @@ msgstr "keine"
 msgid "Small"
 msgstr "Klein"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "Kleinere Versionen der Default-Smileys"
 
 msgid "Response Probability:"
@@ -15079,6 +14951,9 @@ msgstr "Operator"
 msgid "Half Operator"
 msgstr "Half-Operator"
 
+msgid "Voice"
+msgstr "Stimme"
+
 msgid "Authorization dialog"
 msgstr "Autorisierungsdialog"
 
@@ -15268,6 +15143,9 @@ msgstr "G_erät"
 msgid "Voice/Video Settings"
 msgstr "Sprach-/Video-Einstellungen"
 
+msgid "Voice and Video Settings"
+msgstr "Sprach- und Video-Einstellungen"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15397,7 +15275,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"

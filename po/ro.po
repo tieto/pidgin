@@ -807,7 +807,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Se așteaptă începerea transferului"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Oprit"
 
 msgid "Failed"

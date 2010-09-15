@@ -233,7 +233,7 @@
 2008.08.06 - ccpaging <ccpaging(at)gmail.com>
 	* Rename names of variables, Group, to Room
 	* Functions of group_network merged into qq_network and qq_process
-	* Canceled managing glist of group packet, add sub_cmdd and room_id  to transaction
+	* Cancelled managing glist of group packet, add sub_cmdd and room_id  to transaction
 	* Fixed error of demo group:
 		If 'room list' and 'room infor' are not setup, response received from server will emits 'room_id = 0' packet.
 

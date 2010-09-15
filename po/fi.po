@@ -802,7 +802,7 @@ msgstr "Pysäytä"
 msgid "Waiting for transfer to begin"
 msgstr "Odotetaan lähetyksen alkamista"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Peruutettu"
 
 msgid "Failed"
@@ -16262,7 +16262,7 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s:n avaaminen kirjoitusta varten epäonnistui!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Tiedostonsiirto epäonnistui. Toinen osapuoli luultavasti katkaisi siirron."
 
@@ -17459,7 +17459,7 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Your request to send file[%s] has been rejected by buddy[%d]"
 #~ msgstr "Pyyntösi lähettää tiedosto (%s) one evätty tuttavan (%d) toimesta"
 
-#~ msgid "The sending process of file[%s] has been canceled by buddy[%d]"
+#~ msgid "The sending process of file[%s] has been cancelled by buddy[%d]"
 #~ msgstr "Tiedoston (%s) lähetys on peruutettu tuttavan (%d) toimesta"
 
 #~ msgid "Blink tray icon for unread..."

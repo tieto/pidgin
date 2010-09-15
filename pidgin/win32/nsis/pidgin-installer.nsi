@@ -268,7 +268,7 @@ Section $(GTKSECTIONTITLE) SecGtk
   DetailPrint "Downloading GTK+ Runtime ... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
-  StrCmp $R0 "cancel" done
+  ;StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
     MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
@@ -304,6 +304,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$INSTDIR\Gtk\bin"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\pidgin.exe"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
@@ -317,6 +318,7 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
   pidgin_hkcu:
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\pidgin.exe"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
@@ -619,7 +621,6 @@ Section Uninstall
     RMDir "$INSTDIR\spellcheck\lib"
     RMDir "$INSTDIR\spellcheck"
     Delete "$INSTDIR\freebl3.dll"
-    Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\libnspr4.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"

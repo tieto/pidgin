@@ -239,6 +239,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 		else
 		{
+			/* I'll be honest, I don't fully understand all this, but this
+			 * causes crashes, Stu. */
+#if 0
 			MsnServConn *servconn;
 
 			/* It's going to die. */
@@ -246,10 +249,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 			servconn = httpconn->servconn;
 
-			/* I'll be honest, I don't fully understand all this, but this
-			 * causes crashes, Stu. */
-			/* if (servconn != NULL)
-				servconn->wasted = TRUE; */
+			if (servconn != NULL)
+				servconn->wasted = TRUE;
+#endif
 
 			g_free(full_session_id);
 			g_free(session_id);

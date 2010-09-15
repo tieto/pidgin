@@ -777,7 +777,7 @@ msgstr "បញ្ឈប់"
 msgid "Waiting for transfer to begin"
 msgstr "រង់ចាំ​ការ​ផ្ទេរ​ចាប់ផ្ដើម"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "បានបោះបង់"
 
 msgid "Failed"

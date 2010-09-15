@@ -185,7 +185,7 @@ static void jabber_oob_xfer_recv_denied(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "406");
 }
 
-static void jabber_oob_xfer_recv_canceled(PurpleXfer *xfer) {
+static void jabber_oob_xfer_recv_cancelled(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
@@ -233,7 +233,7 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 		purple_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
 		purple_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
 		purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
+		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_cancelled);
 		purple_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 		purple_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 

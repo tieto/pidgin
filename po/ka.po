@@ -807,7 +807,7 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "ველოდები გადატანის დაწყებას"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "გაუქმებულია"
 
 #, fuzzy

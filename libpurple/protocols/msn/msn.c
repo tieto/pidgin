@@ -622,7 +622,6 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
-	MsnSession *session;
 	MsnMobileData *data;
 	PurpleAccount *account;
 	const char *name;
@@ -633,8 +632,6 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 	name = purple_buddy_get_name(buddy);
-
-	session = gc->proto_data;
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
@@ -2084,11 +2081,9 @@ static void
 msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
 	const char *gname;
 
 	session = gc->proto_data;
-	cmdproc = session->notification->cmdproc;
 	gname = purple_group_get_name(group);
 
 	purple_debug_info("msn", "Remove group %s\n", gname);

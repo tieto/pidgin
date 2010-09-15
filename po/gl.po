@@ -807,7 +807,7 @@ msgstr "Deter"
 msgid "Waiting for transfer to begin"
 msgstr "Agardando o comezo da transferencia"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelado"
 
 msgid "Failed"

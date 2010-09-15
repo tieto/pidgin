@@ -795,7 +795,7 @@ msgstr "বন্ধ"
 msgid "Waiting for transfer to begin"
 msgstr "পরিবহণ আরম্ভে অপেক্ষা চলছে"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "বাতিল করা হয়েছে"
 
 msgid "Failed"

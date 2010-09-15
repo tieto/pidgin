@@ -754,7 +754,7 @@ msgstr "Arrestar"
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Anullat"
 
 msgid "Failed"
