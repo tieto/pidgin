@@ -605,9 +605,9 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		char *lpszCmdLine, int nCmdShow) {
 	wchar_t errbuf[512];
 	wchar_t pidgin_dir[MAX_PATH];
+	wchar_t *pidgin_dir_start = NULL;
 	wchar_t exe_name[MAX_PATH];
 	HMODULE hmod;
-	wchar_t *tmp;
 	wchar_t *wtmp;
 	int pidgin_argc;
 	char **pidgin_argv; /* This is in utf-8 */
@@ -672,14 +672,14 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	if (GetModuleFileNameW(NULL, pidgin_dir, MAX_PATH) != 0) {
 
 		/* primitive dirname() */
-		tmp = wcsrchr(pidgin_dir, L'\\');
+		pidgin_dir_start = wcsrchr(pidgin_dir, L'\\');
 
-		if (tmp) {
+		if (pidgin_dir_start) {
 			HMODULE hmod;
-			tmp[0] = L'\0';
+			pidgin_dir_start[0] = L'\0';
 
 			/* tmp++ will now point to the executable file name */
-			wcscpy(exe_name, tmp + 1);
+			wcscpy(exe_name, pidgin_dir_start + 1);
 
 			wcscat(pidgin_dir, L"\\exchndl.dll");
 			if ((hmod = LoadLibraryW(pidgin_dir))) {
@@ -702,7 +702,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 				proc = GetProcAddress(hmod, "SetDebugInfoDir");
 				if (proc) {
 					char *pidgin_dir_ansi = NULL;
-					tmp[0] = L'\0';
+					/* Restore pidgin_dir to point to where the executable is */
+					pidgin_dir_start[0] = L'\0';
 					i = WideCharToMultiByte(CP_ACP, 0, pidgin_dir,
 						-1, NULL, 0, NULL, NULL);
 					if (i != 0) {
@@ -728,7 +729,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 			}
 
-			tmp[0] = L'\0';
+			/* Restore pidgin_dir to point to where the executable is */
+			pidgin_dir_start[0] = L'\0';
 		}
 	} else {
 		DWORD dw = GetLastError();
@@ -763,8 +765,13 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			return 0;
 
 	/* Now we are ready for Pidgin .. */
-	if ((hmod = LoadLibraryW(L"pidgin.dll")))
+	wcscat(pidgin_dir, L"\\pidgin.dll");
+	if ((hmod = LoadLibraryW(pidgin_dir)))
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
+
+	/* Restore pidgin_dir to point to where the executable is */
+	if (pidgin_dir_start)
+		pidgin_dir_start[0] = L'\0';
 
 	if (!pidgin_main) {
 		DWORD dw = GetLastError();

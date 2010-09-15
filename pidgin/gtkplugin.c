@@ -800,5 +800,8 @@ void pidgin_plugin_dialog_show()
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);
 	g_signal_connect(G_OBJECT(plugin_dialog), "response", G_CALLBACK(plugin_dialog_response_cb), sel);
 	gtk_window_set_default_size(GTK_WINDOW(plugin_dialog), 430, 530);
+
+	pidgin_auto_parent_window(GTK_WINDOW(plugin_dialog));
+
 	gtk_widget_show_all(plugin_dialog);
 }

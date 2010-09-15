@@ -710,7 +710,6 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
-	MsnSession *session;
 	MsnMobileData *data;
 	PurpleAccount *account;
 	const char *name;
@@ -721,8 +720,6 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 	name = purple_buddy_get_name(buddy);
-
-	session = gc->proto_data;
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
@@ -2188,11 +2185,9 @@ static void
 msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
 	const char *gname;
 
 	session = gc->proto_data;
-	cmdproc = session->notification->cmdproc;
 	gname = purple_group_get_name(group);
 
 	purple_debug_info("msn", "Remove group %s\n", gname);
@@ -2308,6 +2303,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	MsnGetInfoData *info_data = (MsnGetInfoData *)data;
+	MsnSession *session;
 	PurpleNotifyUserInfo *user_info;
 	char *stripped, *p, *q, *tmp;
 	char *user_url = NULL;
@@ -2325,15 +2321,8 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
 
-	/* Make sure the connection is still valid */
-	/* TODO: Instead of this, we should be canceling this when we disconnect */
-	if (g_list_find(purple_connections_get_all(), info_data->gc) == NULL)
-	{
-		purple_debug_warning("msn", "invalid connection. ignoring buddy info.\n");
-		g_free(info_data->name);
-		g_free(info_data);
-		return;
-	}
+	session = purple_connection_get_protocol_data(info_data->gc);
+	session->url_datas = g_slist_remove(session->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
 	has_tooltip_text = msn_tooltip_extract_info_text(user_info, info_data);
@@ -2718,13 +2707,14 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text)
 	{
-		purple_util_fetch_url_len(photo_url_text, FALSE, NULL, FALSE, MAX_HTTP_BUDDYICON_BYTES, msn_got_photo,
-					   info2_data);
+		url_data = purple_util_fetch_url_len(photo_url_text, FALSE, NULL, FALSE,
+		                                     MAX_HTTP_BUDDYICON_BYTES,
+		                                     msn_got_photo, info2_data);
+		session->url_datas = g_slist_prepend(session->url_datas, url_data);
 	}
 	else
 	{
-		/* Emulate a callback */
-		/* TODO: Huh? */
+		/* Finish the Get Info and show the user something */
 		msn_got_photo(NULL, info2_data, NULL, 0, NULL);
 	}
 }
@@ -2743,10 +2733,12 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	PurpleNotifyUserInfo *user_info = info2_data->user_info;
 	char *photo_url_text = info2_data->photo_url_text;
 
-	/* Make sure the connection is still valid if we got here by fetching a photo url */
-	/* TODO: Instead of this, we should be canceling this when we disconnect */
-	if (url_text && (error_message != NULL ||
-					 g_list_find(purple_connections_get_all(), info_data->gc) == NULL))
+	if (url_data) {
+		MsnSession *session = purple_connection_get_protocol_data(info_data->gc);
+		session->url_datas = g_slist_remove(session->url_datas, url_data);
+	}
+
+	if (url_text && error_message)
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
@@ -2801,8 +2793,10 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 static void
 msn_get_info(PurpleConnection *gc, const char *name)
 {
+	MsnSession *session = purple_connection_get_protocol_data(gc);
 	MsnGetInfoData *data;
 	char *url;
+	PurpleUtilFetchUrlData *url_data;
 
 	data       = g_new0(MsnGetInfoData, 1);
 	data->gc   = gc;
@@ -2810,9 +2804,10 @@ msn_get_info(PurpleConnection *gc, const char *name)
 
 	url = g_strdup_printf("%s%s", PROFILE_URL, name);
 
-	purple_util_fetch_url(url, FALSE,
-				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
-				   TRUE, msn_got_info, data);
+	url_data = purple_util_fetch_url(url, FALSE,
+	                                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
+	                                 TRUE, msn_got_info, data);
+	session->url_datas = g_slist_prepend(session->url_datas, url_data);
 
 	g_free(url);
 }

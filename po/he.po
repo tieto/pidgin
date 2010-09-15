@@ -1,5 +1,5 @@
 # Pidgin Hebrew translation
-# Copyright (C) 2005-2009, Shalom Craimer <scraimer at gmail dot com>
+# Copyright (C) 2005-2010, Shalom Craimer <scraimer at gmail dot com>
 # Copyright (C) 2003, Pavel Bibergal cyberkm@barak-online.net
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:15-0400\n"
-"PO-Revision-Date: 2010-05-24 15:59+0200\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-01 09:55+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -60,11 +60,22 @@ msgstr ""
 msgid "Error"
 msgstr "שגיאה"
 
+msgid "Account was not modified"
+msgstr "החשבון לא עודכן"
+
 msgid "Account was not added"
 msgstr "החשבון לא נוסף"
 
 msgid "Username of an account must be non-empty."
 msgstr "שם המשתמש של החשבון חייב להיות לא-ריק."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr "לא ניתן לשנות את הפרוטוקול של החשבון בעודו מחובר."
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr "לא ניתן לשנות את שם המשתמש בעודו מחובר לשרת."
 
 msgid "New mail notifications"
 msgstr "הודעה על דואר חדש"
@@ -770,7 +781,7 @@ msgstr "עצור"
 msgid "Waiting for transfer to begin"
 msgstr "ממתין להעברה להתחיל"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "בוטל"
 
 msgid "Failed"
@@ -1233,6 +1244,9 @@ msgstr "אחרים מדברים בשיחה"
 msgid "Someone says your username in chat"
 msgstr "מישהו מזכיר את שם המשתמש שלך בשיחה"
 
+msgid "Attention received"
+msgstr "תשומת-לב התקבלה"
+
 msgid "GStreamer Failure"
 msgstr "תקלת GStreamer"
 
@@ -1518,7 +1532,7 @@ msgstr "בעת קבלת הודעה עם כתובת, השתמש ב-TinyURL להע
 msgid "Online"
 msgstr "מחובר"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "מנותק"
 
@@ -1634,8 +1648,10 @@ msgid ""
 "currently trusted."
 msgstr "לא ניתן לבטוח בתעודה כיוון שאין תעודה מאושרת שיכולה לאמת אותה."
 
-msgid "The certificate is not valid yet."
-msgstr "התעודה עדיין אינה תקפה."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr "התעודה עוד לא בתוקף.  יש לוודא כי השעה והתאריך של מחשבך מדוייקים."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "תוקף התעודה פג, ולכן אין להחשיבה כתקפה."
@@ -3730,6 +3746,17 @@ msgstr "תשובת אימות לא תקפה מהשרת"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "השרת סבור שהאימות הסתיים בהצלחה, אבל תוכנת הלקוח לא מסכימה"
 
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "ייתכן והשרת דורש אימות לא מוצפן מעל תקשורת לא מוצפנת"
+
+#, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"ייתכן והשרת %s דורש אימות לא מוצפן מעל תקשורת לא מוצפנת. לאפשר ולהמשיך בכל "
+"זאת?"
+
 msgid "SASL authentication failed"
 msgstr "אימות SASL נכשל"
 
@@ -5759,8 +5786,8 @@ msgstr "ה-PIN אינו חוקי. על הקוד להכיל רק ספרות [0-9]
 msgid "The two PINs you entered do not match."
 msgstr "שני ה-PIN שהזנת אינם זהים."
 
-msgid "The name you entered is invalid."
-msgstr "השם שהזנת אינו חוקי."
+msgid "The Display Name you entered is invalid."
+msgstr "הזנת שם-תצוגה לא תקף."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5778,8 +5805,8 @@ msgstr "פרופיל"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "פרטי הפרופיל שלך עוד לא התקבלו. יש לנסות שנית מאוחר יותר."
 
-msgid "Your MXitId"
-msgstr "מזהה MXit שלך"
+msgid "Your UID"
+msgstr "ה-UID שלך"
 
 #. pin
 #. pin (required)
@@ -5790,6 +5817,7 @@ msgid "Verify PIN"
 msgstr "וידוא מספר מזהה"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "שם תצוגה"
 
@@ -5846,19 +5874,12 @@ msgstr "לא ניתן להתחבר לשרת ה-MXit. יש לוודא את הגד
 msgid "Connecting..."
 msgstr "מתחבר..."
 
-msgid "The nick name you entered is invalid."
-msgstr "שם-הכינוי שהזנת אינו חוקי."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [7-10[."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "שם משתמש MXit"
-
-#. nick name (required)
-msgid "Nick Name"
-msgstr "כינוי"
+msgid "MXit ID"
+msgstr "מזהה MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5886,11 +5907,11 @@ msgstr "פג תוקפו של החיבור. יש לנסות בשנית מאוחר
 msgid "Invalid country selected. Please try again."
 msgstr "נבחרה ארץ לא-חוקית. יש לנסות שנית."
 
-msgid "Username is not registered. Please register first."
-msgstr "שם המשתמש אינו רשום. חובה להירשם קודם."
+msgid "The MXit ID you entered is not registered. Please register first."
+msgstr "מזהה ה- Mxit שהוזן אינו רשום. חובה להירשם קודם."
 
-msgid "Username is already registered. Please choose another username."
-msgstr "שם המשתמש כבר רשום. יש לבחור שם משתמש אחר."
+msgid "The MXit ID you entered is already registered. Please choose another."
+msgstr "מזהה MXit זה כבר רשום. יש לבחור שם משתמש אחר."
 
 msgid "Internal error. Please try again later."
 msgstr "שגיאה פנימית. יש לנסות מאוחר יותר."
@@ -5934,8 +5955,8 @@ msgstr "הודעת דחייה"
 msgid "Hidden Number"
 msgstr "מספר סמוי"
 
-msgid "Your Mobile Number..."
-msgstr "מספר הנייד שלך..."
+msgid "Your MXit ID..."
+msgstr "מזהה MXit שלך.."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5949,17 +5970,21 @@ msgid "Enable splash-screen popup"
 msgstr "אפשר פתיחת חלון-הקדמה"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "נבעטת: (%s)"
+msgstr "נבעטת מתוך MultiMX זה."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "כרטיס לא תקין"
+msgstr "נבעט/ה"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_חדר:"
+msgstr "שם _חדר:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "הוזמנת"
+
+msgid "Last Online"
+msgstr "חיבור אחרון"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7669,11 +7694,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "SNAC לא תקף"
 
-msgid "Rate to host"
-msgstr "דירוג למארח"
+msgid "Server rate limit exceeded"
+msgstr "הפרזת מעבר למגבלת השרת"
 
-msgid "Rate to client"
-msgstr "דירוג ללקוח"
+msgid "Client rate limit exceeded"
+msgstr "הפרזת מעבר למגבלת הלקוח"
 
 msgid "Service unavailable"
 msgstr "השירות אינו זמין"
@@ -9907,8 +9932,8 @@ msgstr "הגדרה איזורית לחדר צ'אט"
 msgid "Ignore conference and chatroom invitations"
 msgstr "התעלם מהזמנות לשיחות-ועידה ולחדרי-צ'אט"
 
-msgid "Use account proxy for SSL connections"
-msgstr "השתמש בחשבון שרת-תיווך עבור חיבורי SSL"
+msgid "Use account proxy for HTTP and HTTPS connections"
+msgstr "התשמש במתווך עבור החשבון בשביל חיבורי HTTP ו-HTTPS"
 
 msgid "Chat room list URL"
 msgstr "מיקום של רשימת חדרי הצ'אט"
@@ -12710,11 +12735,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "מסיים מכיוון שכבר רצה תוכנה אחרת שהמשתמש בספריית libpurple.\n"
 
-msgid "/_Media"
-msgstr "/_מדיה"
+msgid "_Media"
+msgstr "_מדיה"
 
-msgid "/Media/_Hangup"
-msgstr "/מדיה/_ניתוק"
+msgid "_Hangup"
+msgstr "הת_נתק"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13507,9 +13532,6 @@ msgstr "טקסט לקיצור-דרך"
 
 msgid "Custom Smiley Manager"
 msgstr "מנהל החייכנים שלך"
-
-msgid "Attention received"
-msgstr "תשומת-לב התקבלה"
 
 msgid "Select Buddy Icon"
 msgstr "בחירת תמונה עבור חבר"
@@ -14969,6 +14991,33 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "השם שהזנת אינו חוקי."
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "התעודה עדיין אינה תקפה."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "שם-הכינוי שהזנת אינו חוקי."
+
+#~ msgid "MXit Login Name"
+#~ msgstr "שם משתמש MXit"
+
+#~ msgid "Nick Name"
+#~ msgstr "כינוי"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "מספר הנייד שלך..."
+
+#~ msgid "Rate to host"
+#~ msgstr "דירוג למארח"
+
+#~ msgid "Rate to client"
+#~ msgstr "דירוג ללקוח"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/מדיה/_ניתוק"
 
 #~ msgid "Current Mood"
 #~ msgstr "מצב הרוח הנוכחי"

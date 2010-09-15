@@ -6,7 +6,7 @@ _PIDGINISRUNNING=An instance of Pidgin is currently running.  Please exit Pidgin
 
 # "Next >" appears on a button on the License Page of the Installer
 _PIDGINLICENSEBUTTON=Next >
-# $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+# $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 _PIDGINLICENSEBOTTOMTEXT=$(^Name) is released under the GNU General Public License (GPL). The license is provided here for information purposes only. $_CLICK
 
 #Installer Subsection Text

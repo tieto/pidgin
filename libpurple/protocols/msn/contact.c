@@ -531,16 +531,20 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 
 	if (resp != NULL) {
+#ifdef MSN_PARTIAL_LISTS
 		const char *abLastChange;
 		const char *dynamicItemLastChange;
+#endif
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
 		msn_parse_contact_list(session, resp->xml);
+#ifdef MSN_PARTIAL_LISTS
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
-			"dynamicItemLastChange", NULL);
+			"DynamicItemLastChanged", NULL);
+#endif
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
@@ -688,19 +692,19 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *annotation;
 		MsnUser *user;
 
+		g_free(passport);
+		g_free(Name);
+		g_free(uid);
+		g_free(type);
+		g_free(mobile_number);
+		g_free(alias);
+		passport = Name = uid = type = mobile_number = alias = NULL;
+		mobile = FALSE;
+
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
 				|| !(contactType = xmlnode_get_child(contactInfo, "contactType")))
 			continue;
-
-		g_free(passport);
-		g_free(Name);
-		g_free(alias);
-		g_free(uid);
-		g_free(type);
-		g_free(mobile_number);
-		passport = Name = uid = type = mobile_number = alias = NULL;
-		mobile = FALSE;
 
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
@@ -840,6 +844,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 	g_free(uid);
 	g_free(type);
 	g_free(mobile_number);
+	g_free(alias);
 }
 
 static gboolean
@@ -889,7 +894,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		msn_parse_addressbook_groups(session, groups);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add an "Other Contacts" group for buddies who aren't in a group */
 	msn_group_new(session->userlist, MSN_INDIVIDUALS_GROUP_ID,
 				  MSN_INDIVIDUALS_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n",
@@ -899,7 +904,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		purple_blist_add_group(g, NULL);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add a "Non-IM Contacts" group */
 	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
@@ -1568,7 +1573,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		if (user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
 			                         user->member_id_on_pending_list);

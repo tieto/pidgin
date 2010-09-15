@@ -565,7 +565,7 @@ msn_handle_chl(char *input, char *output)
 	chlStringParts = (unsigned int *)buf;
 
 	/* this is magic */
-	for (i = 0; i < (strlen(buf) / 4); i += 2) {
+	for (i = 0; i < (len / 4); i += 2) {
 		long long temp;
 
 		chlStringParts[i] = GUINT_TO_LE(chlStringParts[i]);

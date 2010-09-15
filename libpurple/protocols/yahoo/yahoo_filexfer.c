@@ -1235,14 +1235,14 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xd;
 	PurpleAccount *account;
-	YahooData* yd;
+	PurpleConnection *gc;
 
 	if (!(xfer = data))
 		return;
 	if (!(xd = xfer->data))
 		return;
-	yd = xd->gc->proto_data;
-	account = purple_connection_get_account(xd->gc);
+	gc = xd->gc;
+	account = purple_connection_get_account(gc);
 	if ((source < 0) || (xd->path == NULL) || (xd->host == NULL)) {
 		purple_xfer_error(PURPLE_XFER_RECEIVE, purple_xfer_get_account(xfer),
 			xfer->who, _("Unable to connect."));
@@ -1253,7 +1253,14 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 	if (xd->txbuflen == 0)
 	{
 		gchar* cookies;
-		cookies = yahoo_get_cookies(xd->gc);
+		YahooData *yd = gc->proto_data;
+
+		/* cookies = yahoo_get_cookies(gc);
+		 * This doesn't seem to be working. The function is returning NULL, which yahoo servers don't like
+		 * For now let us not use this function */
+
+		cookies = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
+
 		if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && xd->status_15 == ACCEPTED)
 		{
 			if(xd->info_val_249 == 2)

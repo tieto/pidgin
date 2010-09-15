@@ -206,8 +206,8 @@ static const struct translator translators[] = {
 	{N_("Malay"),               "ms_MY", "Muhammad Najmi bin Ahmad Zabidi", "najmi.zabidi@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Hans Fredrik Nordhaug", "hans@nordhaug.priv.no"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
-	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
-	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{N_("Dutch, Flemish"),      "nl", "Gideon van Melle", "translations@gvmelle.com"},
+	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "l10n@landro.net"},
 	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
@@ -288,6 +288,7 @@ static const struct translator past_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Petter Johan Olsen", NULL},
 	{N_("Bokmål Norwegian"),    "nb", "Espen Stefansen", "espenas@gmail.com"},
+	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
@@ -430,7 +431,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 
 	/* Insert the logo */
 	logo = gtk_image_new_from_pixbuf(pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+	if (pixbuf)
+		g_object_unref(G_OBJECT(pixbuf));
 	obj = gtk_widget_get_accessible(logo);
 	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
 	atk_object_set_description(obj, tmp);
@@ -1286,7 +1288,7 @@ pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 
 	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
 	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
-	purple_account_remove_buddy(buddy->account, buddy, group);
+	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
 	g_free(name);

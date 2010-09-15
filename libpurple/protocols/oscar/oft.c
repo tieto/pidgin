@@ -240,7 +240,7 @@ void
 peer_oft_close(PeerConnection *conn)
 {
 	/*
-	 * If canceled by local user, and we're receiving a file, and
+	 * If cancelled by local user, and we're receiving a file, and
 	 * we're not connected/ready then send an ICBM cancel message.
 	 */
 	if ((purple_xfer_get_status(conn->xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) &&

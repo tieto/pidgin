@@ -138,7 +138,7 @@ msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part);
  * Creates, initializes, and returns a new MsnDirectConn structure.
  */
 MsnDirectConn *
-msn_dc_new(MsnSlpCall *slplink);
+msn_dc_new(MsnSlpCall *slpcall);
 
 /*
  * Destroys an MsnDirectConn structure. Frees every buffer allocated earlier

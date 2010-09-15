@@ -264,6 +264,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		g_free(passport);
 		return;
 	}
+
+	/* Don't add ourselves either... */
+	if (g_str_equal(passport, purple_account_get_username(account))) {
+		g_free(passport);
+		return;
+	}
 	
 	if (!msnuser) {
 		purple_debug_info("msn","User %s is not on our list.\n", passport);

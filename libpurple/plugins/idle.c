@@ -110,9 +110,6 @@ idle_all_action_ok(void *ignored, PurpleRequestFields *fields)
 	for(iter = list; iter; iter = iter->next) {
 		acct = (PurpleAccount *)(iter->data);
 
-		if(acct)
-			prpl_id = purple_account_get_protocol_id(acct);
-
 		if(acct && idleable_filter(acct)) {
 			purple_debug_misc("idle", "Idling %s.\n",
 					purple_account_get_username(acct));

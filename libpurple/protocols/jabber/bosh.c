@@ -711,11 +711,10 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		/* Make sure Content-Length is in headers, not body */
 		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
 			const char *sep;
-			const char *eol;
 			int len;
 
 			if ((sep = strstr(content_length, ": ")) == NULL ||
-					(eol = strstr(sep, "\r\n")) == NULL)
+					strstr(sep, "\r\n") == NULL)
 				/*
 				 * The packet ends in the middle of the Content-Length line.
 				 * We'll try again later when we have more.

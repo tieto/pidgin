@@ -1948,7 +1948,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	const char *value;
+#ifdef MSN_PARTIAL_LISTS
 	const char *clLastChange;
+#endif
 
 	session = cmdproc->session;
 
@@ -1991,9 +1993,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if ((value = msn_message_get_header_value(msg, "EmailEnabled")) != NULL)
 		session->passport_info.email_enabled = (gboolean)atol(value);
 
+#ifdef MSN_PARTIAL_LISTS
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
-#ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
 	msn_get_contact_list(session, MSN_PS_INITIAL, clLastChange);
@@ -2197,7 +2199,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if ((type_s = g_hash_table_lookup(table, "Type")) != NULL)
 	{
 		int type = atoi(type_s);
-		char buf[MSN_BUF_LEN];
+		char buf[MSN_BUF_LEN] = "";
 		int minutes;
 
 		switch (type)

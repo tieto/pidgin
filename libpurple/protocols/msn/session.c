@@ -62,6 +62,11 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
+	while (session->url_datas) {
+		purple_util_fetch_url_cancel(session->url_datas->data);
+		session->url_datas = g_slist_delete_link(session->url_datas, session->url_datas);
+	}
+
 	if (session->connected)
 		msn_session_disconnect(session);
 
@@ -281,7 +286,7 @@ msn_login_timeout_cb(gpointer data)
 void
 msn_session_activate_login_timeout(MsnSession *session)
 {
-	if (!session->logged_in) {
+	if (!session->logged_in && session->connected) {
 		session->login_timeout =
 			purple_timeout_add_seconds(MSN_LOGIN_FQY_TIMEOUT,
 			                           msn_login_timeout_cb, session);

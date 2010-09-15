@@ -596,7 +596,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 		slpmsg = msn_slplink_message_find(slplink, header->session_id, header->id);
 		if (slpmsg == NULL)
 		{
-			/* Probably the transfer was canceled */
+			/* Probably the transfer was cancelled */
 			purple_debug_error("msn", "Couldn't find slpmsg\n");
 			return;
 		}

@@ -118,7 +118,7 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		/* read bytes from the socket */
 		len = read( session->fd, buf + buflen, sizeof( buf ) - buflen );
 		if ( len <= 0 ) {
-			/* connection has been terminated, or error occured */
+			/* connection has been terminated, or error occurred */
 			goto done;
 		}
 
@@ -139,7 +139,7 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		}
 		buflen += len;
 
-		/* we have the header's end now skip over the http seperator to get the body offset */
+		/* we have the header's end now skip over the http separator to get the body offset */
 		ch += strlen( HTTP_11_SEPERATOR );
 		*(ch - 1) = '\0';
 		body = ch;
@@ -206,7 +206,7 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 		/* read bytes from the socket */
 		len = read( session->fd, &session->rx_dbuf[session->rx_i], session->rx_res );
 		if ( len <= 0 ) {
-			/* connection has been terminated, or error occured */
+			/* connection has been terminated, or error occurred */
 			goto done;
 		}
 

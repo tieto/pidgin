@@ -61,6 +61,8 @@ typedef enum
 
 #define MSN_LOGIN_FQY_TIMEOUT 30
 
+#define MSN_LOGIN_FQY_TIMEOUT 30
+
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
@@ -117,6 +119,8 @@ struct _MsnSession
 	GHashTable *soap_table;
 	guint soap_cleanup_handle;
 	char *guid;
+
+	GSList *url_datas; /**< PurpleUtilFetchUrlData to be cancelled on exit */
 };
 
 /**

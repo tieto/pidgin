@@ -25,6 +25,7 @@
  */
 
 #include "oscarcommon.h"
+#include "oscar.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -57,7 +58,7 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_add_deny,			/* add_deny */
 	oscar_rem_permit,		/* rem_permit */
 	oscar_rem_deny,			/* rem_deny */
-	oscar_set_permit_deny,	/* set_permit_deny */
+	oscar_set_aim_permdeny,	/* set_permit_deny */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	oscar_get_chat_name,	/* get_chat_name */

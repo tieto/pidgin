@@ -1444,7 +1444,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			int usercount;
 			PurpleRoomlistRoom *room;
 
-			if (sg->roomlist_canceled)
+			if (sg->roomlist_cancelled)
 				break;
 
 			if (!success) {

@@ -94,7 +94,6 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 	PurpleAccount *account;
 	const char *pw;
 	size_t len;
-	static sasl_secret_t *x = NULL;
 
 	account = purple_connection_get_account(js->gc);
 	pw = purple_account_get_password(account);
@@ -103,15 +102,16 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 		return SASL_BADPARAM;
 
 	len = strlen(pw);
-	x = (sasl_secret_t *) realloc(x, sizeof(sasl_secret_t) + len);
-
-	if (!x)
+	/* Not an off-by-one because sasl_secret_t defines char data[1] */
+	/* TODO: This can probably be moved to glib's allocator */
+	js->sasl_secret = malloc(sizeof(sasl_secret_t) + len);
+	if (!js->sasl_secret)
 		return SASL_NOMEM;
 
-	x->len = len;
-	strcpy((char*)x->data, pw);
+	js->sasl_secret->len = len;
+	strcpy((char*)js->sasl_secret->data, pw);
 
-	*secret = x;
+	*secret = js->sasl_secret;
 	return SASL_OK;
 }
 
@@ -176,7 +176,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
 
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 

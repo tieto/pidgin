@@ -40,6 +40,13 @@
 /* seconds to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20
 
+static void request_user_display(MsnUser *user);
+
+typedef struct {
+	MsnSession *session;
+	const char *remote_user;
+	const char *sha1;
+} MsnFetchUserDisplayData;
 
 /**************************************************************************
  * SLP Control
@@ -177,6 +184,26 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 }
 
 static void
+fetched_user_display(PurpleUtilFetchUrlData *url_data, gpointer user_data,
+	const gchar *url_text, gsize len, const gchar *error_message)
+{
+	MsnFetchUserDisplayData *data = user_data;
+	MsnSession *session = data->session;
+
+	session->url_datas = g_slist_remove(session->url_datas, url_data);
+
+	if (url_text) {
+		purple_buddy_icons_set_for_user(session->account, data->remote_user,
+		                                g_memdup(url_text, len), len,
+		                                data->sha1);
+	}
+
+	end_user_display(NULL, session);
+
+	g_free(user_data);
+}
+
+static void
 request_own_user_display(MsnUser *user)
 {
 	PurpleAccount *account;
@@ -231,9 +258,23 @@ msn_request_user_display(MsnUser *user)
 	info = msn_object_get_sha1(obj);
 
 	if (g_ascii_strcasecmp(user->passport,
-				purple_account_get_username(account)))
-		msn_slplink_request_object(slplink, info, got_user_display,
-				end_user_display, obj);
+						   purple_account_get_username(account)))
+	{
+		const char *url = msn_object_get_url1(obj);
+		if (url) {
+			MsnFetchUserDisplayData *data = g_new0(MsnFetchUserDisplayData, 1);
+			PurpleUtilFetchUrlData *url_data;
+			data->session = session;
+			data->remote_user = user->passport;
+			data->sha1 = info;
+			url_data = purple_util_fetch_url_len(url, TRUE, NULL, TRUE, 200*1024,
+			                                     fetched_user_display, data);
+			session->url_datas = g_slist_prepend(session->url_datas, url_data);
+		} else {
+			msn_slplink_request_object(slplink, info, got_user_display,
+			                           end_user_display, obj);
+		}
+	}
 	else
 		request_own_user_display(user);
 }
