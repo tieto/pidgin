@@ -22,6 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#ifdef USE_GTKSPELL
 #include <windows.h>
 #include <string.h>
 #include <stdlib.h>
@@ -102,3 +103,4 @@ static void load_gtkspell() {
 void winpidgin_spell_init() {
 	load_gtkspell();
 }
+#endif
