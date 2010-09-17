@@ -534,7 +534,7 @@ res_main_thread_cb(gpointer data)
 	PurpleSrvResponse *srvres = NULL;
 	PurpleSrvQueryData *query_data = data;
 	if(query_data->error_message != NULL) {
-		purple_debug_error("dnssrv", query_data->error_message);
+		purple_debug_error("dnssrv", "%s", query_data->error_message);
 		if (query_data->type == DNS_TYPE_SRV) {
 			if (query_data->cb.srv)
 				query_data->cb.srv(srvres, 0, query_data->extradata);
