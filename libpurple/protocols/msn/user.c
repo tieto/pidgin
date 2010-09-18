@@ -737,7 +737,7 @@ msn_user_passport_cmp(MsnUser *user, const char *passport)
 {
 	const char *pass;
 
-	pass = msn_user_get_passport(user);
+	pass = purple_normalize_nocase(NULL, msn_user_get_passport(user));
 
 	return strcmp(pass, purple_normalize_nocase(NULL, passport));
 }
