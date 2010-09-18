@@ -1832,12 +1832,19 @@ get_available_browsers(void)
 		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Konqueror"), "kfmclient"},
+		{N_("Google Chrome"), "google-chrome"},
+		/* Do not move the line below.  Code below expects gnome-open to be in
+		 * this list immediately after xdg-open! */
 		{N_("Desktop Default"), "xdg-open"},
 		{N_("GNOME Default"), "gnome-open"},
 		{N_("Galeon"), "galeon"},
 		{N_("Firefox"), "firefox"},
 		{N_("Firebird"), "mozilla-firebird"},
-		{N_("Epiphany"), "epiphany"}
+		{N_("Epiphany"), "epiphany"},
+		/* Translators: please do not translate "chromium-browser" here! */
+		{N_("Chromium (chromium-browser)"), "chromium-browser"},
+		/* Translators: please do not translate "chrome" here! */
+		{N_("Chromium (chrome)"), "chrome"}
 	};
 	static const int num_possible_browsers = G_N_ELEMENTS(possible_browsers);
 
