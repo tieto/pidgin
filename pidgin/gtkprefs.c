@@ -1811,7 +1811,7 @@ manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data)
 {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/browsers/command", program);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1968,7 +1968,7 @@ browser_page(void)
 
 		entry = gtk_entry_new();
 		gtk_entry_set_text(GTK_ENTRY(entry),
-						   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
+						   purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/command"));
 		g_signal_connect(G_OBJECT(entry), "focus-out-event",
 						 G_CALLBACK(manual_browser_set), NULL);
 		hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
@@ -2828,7 +2828,7 @@ pidgin_prefs_init(void)
 	/* Browsers */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/browsers");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/browsers/place", PIDGIN_BROWSER_DEFAULT);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/browsers/command", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/command", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "mozilla");
 #endif
 
