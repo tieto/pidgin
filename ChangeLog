@@ -25,6 +25,8 @@ version 2.7.4 (MM/DD/YYYY):
 	* The "Manual" browser option is now stored as a string.  It is no longer
 	  necessary to specify a full path to the browser command. (rtobar)
 	  (#12024)
+	* The Send To menu can now be used if the active account in the
+	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
