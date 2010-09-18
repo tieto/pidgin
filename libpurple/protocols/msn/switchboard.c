@@ -658,7 +658,10 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
 
 		passport = g_list_find_custom(swboard->users, user, (GCompareFunc)strcmp);
-		g_free(passport->data);
+		if (passport)
+			g_free(passport->data);
+		else
+			purple_debug_warning("msn", "Can't find user %s in the switchboard\n", user);
 		swboard->users = g_list_delete_link(swboard->users, passport);
 		swboard->current_users--;
 		if (swboard->current_users == 0)
