@@ -3,6 +3,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.4 (MM/DD/YYYY):
 	General:
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
+	  (#12049)
 
 	libpurple:
 	* Fall back to an ordinary request if a UI does not support showing a
