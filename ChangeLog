@@ -22,6 +22,9 @@ version 2.7.4 (MM/DD/YYYY):
 	* Add Google Chrome to the list of possible browsers on non-Windows
 	  systems.
 	* Add Chromium to the list of possible browsers on non-Windows systems.
+	* The "Manual" browser option is now stored as a string.  It is no longer
+	  necessary to specify a full path to the browser command. (rtobar)
+	  (#12024)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
