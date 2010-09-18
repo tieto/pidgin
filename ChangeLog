@@ -17,6 +17,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  selected buddy.
 	* Add a plugin action menu (under Tools) for the Voice and Video
 	  Settings plugin.
+	* Use GRegex for the debug window where available. This brings regex
+	  filtering to the debug window on Windows. (Eion Robb) (#12601)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
