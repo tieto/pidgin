@@ -40,7 +40,6 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 C_SRC =			cmdproc.c \
 			command.c \
 			contact.c\
-			dialog.c \
 			directconn.c \
 			error.c \
 			group.c \
@@ -65,7 +64,6 @@ C_SRC =			cmdproc.c \
 			state.c \
 			sbconn.c \
 			switchboard.c \
-			sync.c \
 			table.c \
 			transaction.c \
 			user.c \
