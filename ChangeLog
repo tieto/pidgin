@@ -24,9 +24,9 @@ version 2.7.4 (MM/DD/YYYY):
 	* Add Google Chrome to the list of possible browsers on non-Windows
 	  systems.
 	* Add Chromium to the list of possible browsers on non-Windows systems.
-	* The "Manual" browser option is now stored as a string.  It is no longer
-	  necessary to specify a full path to the browser command. (rtobar)
-	  (#12024)
+	* The "Manual" browser option is now stored as a string.  It is no
+	  longer necessary to specify a full path to the browser command.
+	  (rtobar) (#12024)
 	* The Send To menu can now be used if the active account in the
 	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
 
@@ -44,6 +44,11 @@ version 2.7.4 (MM/DD/YYYY):
 	* Added support for using Google's relay servers when making voice and
 	  video calls to Google clients.
 	* Fix detecting file transfer proxies advertised by the server.
+	* Advertise support for Google Talk's JID Domain Discovery extension
+	  in all cases again (changed in 2.7.0), not just when the domain
+	  is "gmail.com" or "googlemail.com" (it's also needed for Google
+	  Talk used for accounts on arbitrary domains not using Google Apps
+	  for Your Domain). (#a14153)
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
