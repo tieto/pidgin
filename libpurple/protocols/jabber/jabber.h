@@ -338,11 +338,25 @@ char *jabber_get_next_id(JabberStream *js);
  */
 char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
 
-void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
+/**
+ * Add a feature to the list of features advertised via disco#info.  If you
+ * call this while accounts are connected, Bad Things(TM) will happen because
+ * the Entity Caps hash will be out-of-date (which should be fixed :/)
+ *
+ * @param namespace The namespace of the feature
+ * @param cb        A callback determining whether or not this feature
+ *                  will advertised; may be NULL.
+ */
+void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb);
 void jabber_remove_feature(const gchar *namespace);
 
-/** Adds an identity to this jabber library instance. For list of valid values visit the
- *	website of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
+/** Adds an identity to this jabber library instance. For list of valid values
+ * visit the website of the XMPP Registrar
+ * (http://www.xmpp.org/registrar/disco-categories.html#client).
+ *
+ * Like with jabber_add_feature, if you call this while accounts are connected,
+ * Bad Things will happen.
+ *
  *  @param category the category of the identity.
  *  @param type the type of the identity.
  *  @param language the language localization of the name. Can be NULL.
