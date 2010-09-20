@@ -2828,7 +2828,7 @@ pidgin_prefs_init(void)
 	/* Browsers */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/browsers");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/browsers/place", PIDGIN_BROWSER_DEFAULT);
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/command", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "mozilla");
 #endif
 
@@ -2859,7 +2859,7 @@ pidgin_prefs_init(void)
 void
 pidgin_prefs_update_old(void)
 {
-	const char *str;
+	const char *str = NULL;
 
 	purple_prefs_rename("/gaim/gtk", PIDGIN_PREFS_ROOT);
 
@@ -2874,6 +2874,17 @@ pidgin_prefs_update_old(void)
 
 	purple_prefs_rename_boolean_toggle(PIDGIN_PREFS_ROOT "/conversations/ignore_colors",
 									 PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting");
+
+	/*
+	 * this path pref changed to a string, so migrate.  I know this will break
+	 * things for and confuse users that use multiple versions with the same
+	 * config directory, but I'm not inclined to want to deal with that at the
+	 * moment. -- rekkanoryo
+	 */
+	if((str = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command")) != NULL) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", str);
+		purple_prefs_remove(PIDGIN_PREFS_ROOT "/browsers/command");
+	}
 
 	/* this string pref moved into the core, try to be friendly */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
