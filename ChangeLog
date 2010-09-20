@@ -26,7 +26,7 @@ version 2.7.4 (MM/DD/YYYY):
 	* Add Chromium to the list of possible browsers on non-Windows systems.
 	* The "Manual" browser option is now stored as a string.  It is no
 	  longer necessary to specify a full path to the browser command.
-	  (rtobar) (#12024)
+	  (Rodrigo Tobar Carrizo) (#12024)
 	* The Send To menu can now be used if the active account in the
 	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
 
