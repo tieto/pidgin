@@ -1392,7 +1392,7 @@ pidgin_notify_uri(const char *uri)
 	{
 		const char *web_command;
 
-		web_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/command");
+		web_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{

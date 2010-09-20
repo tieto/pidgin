@@ -1811,7 +1811,7 @@ manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data)
 {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/command", program);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1968,7 +1968,7 @@ browser_page(void)
 
 		entry = gtk_entry_new();
 		gtk_entry_set_text(GTK_ENTRY(entry),
-						   purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/command"));
+						   purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command"));
 		g_signal_connect(G_OBJECT(entry), "focus-out-event",
 						 G_CALLBACK(manual_browser_set), NULL);
 		hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
