@@ -636,7 +636,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 
 		if (cname && type && address && port) {
 			PurpleMediaCandidateType candidate_type;
-			guint prio = preference ? atof(preference) * 1000 : 0;
+			guint prio = preference ? g_ascii_strtod(preference, NULL) * 1000 : 0;
 			
 			g_snprintf(n, sizeof(n), "S%d", name++);
 			
