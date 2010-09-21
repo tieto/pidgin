@@ -10,6 +10,9 @@ version 2.7.4 (MM/DD/YYYY):
 	* Fall back to an ordinary request if a UI does not support showing a
 	  request with an icon.  Fixes receiving MSN file transfer requests
 	  including a thumbnail in Finch.
+	* Fix an invalid memory access when removing UPnP mappings that could
+	  cause sporadic crashes, most notably when MSN Direct Connections are
+	  enabled. (#12387)
 
 	Pidgin:
 	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
