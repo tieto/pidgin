@@ -13,6 +13,8 @@ version 2.7.4 (MM/DD/YYYY):
 	* Fix an invalid memory access when removing UPnP mappings that could
 	  cause sporadic crashes, most notably when MSN Direct Connections are
 	  enabled. (#12387)
+	* Add a sentence to the certificate warning for expired certificates
+	  suggesting the user check their computer's date and time. (#12654)
 
 	Pidgin:
 	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
