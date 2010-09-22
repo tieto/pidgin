@@ -735,11 +735,17 @@ msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extca
 int
 msn_user_passport_cmp(MsnUser *user, const char *passport)
 {
-	const char *pass;
+	const char *str;
+	char *pass;
+	int result;
 
-	pass = purple_normalize_nocase(NULL, msn_user_get_passport(user));
+	str = purple_normalize_nocase(NULL, msn_user_get_passport(user));
+	pass = g_strdup(str);
 
-	return strcmp(pass, purple_normalize_nocase(NULL, passport));
+	result = g_strcmp0(pass, purple_normalize_nocase(NULL, passport));
+	g_free(pass);
+
+	return result;
 }
 
 gboolean
