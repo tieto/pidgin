@@ -2641,13 +2641,19 @@ char *jabber_parse_error(JabberStream *js,
 	if(reason != NULL) { *reason = x; }
 
 	if((error = xmlnode_get_child(packet, "error"))) {
+		xmlnode *t = xmlnode_get_child_with_namespace(error, "text", NS_XMPP_STANZAS);
+		if (t)
+			cdata = xmlnode_get_data(t);
+#if 0
 		cdata = xmlnode_get_data(error);
+#endif
 		code = xmlnode_get_attrib(error, "code");
 
 		/* Stanza errors */
 		if(xmlnode_get_child(error, "bad-request")) {
 			text = _("Bad Request");
 		} else if(xmlnode_get_child(error, "conflict")) {
+			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Conflict");
 		} else if(xmlnode_get_child(error, "feature-not-implemented")) {
 			text = _("Feature Not Implemented");
