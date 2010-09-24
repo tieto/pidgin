@@ -34,6 +34,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  (Rodrigo Tobar Carrizo) (#12024)
 	* The Send To menu can now be used if the active account in the
 	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
+	* xdg-open is now the default browser for new users on non-Windows
+	  platforms. (Stanislav Brabec) (#12505)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
