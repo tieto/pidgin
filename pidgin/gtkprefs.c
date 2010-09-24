@@ -2829,7 +2829,7 @@ pidgin_prefs_init(void)
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/browsers");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/browsers/place", PIDGIN_BROWSER_DEFAULT);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", "");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "mozilla");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "xdg-open");
 #endif
 
 	/* Plugins */
