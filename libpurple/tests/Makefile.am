@@ -10,6 +10,7 @@ check_libpurple_SOURCES=\
         check_libpurple.c \
 	    tests.h \
 		test_cipher.c \
+		test_jabber_caps.c \
 		test_jabber_jutil.c \
 		test_jabber_scram.c \
 		test_qq.c \

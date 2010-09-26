@@ -214,11 +214,16 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 		slplink->swboard = NULL;
 	}
 
-	/* The slplink has no slpcalls in it, release it from the DC. */
-	if (slplink->slp_calls == NULL && slplink->dc != NULL) {
-		slplink->dc->slplink = NULL;
-		msn_dc_destroy(slplink->dc);
-		slplink->dc = NULL;
+	if (slplink->dc != NULL) {
+		if ((slplink->dc->state != DC_STATE_ESTABLISHED && slplink->dc->slpcall == slpcall)
+		 || (slplink->slp_calls == NULL)) {
+			/* The DC is not established and its corresponding slpcall is dead,
+			 * or the slplink has no slpcalls in it and no longer needs the DC.
+			 */
+			slplink->dc->slplink = NULL;
+			msn_dc_destroy(slplink->dc);
+			slplink->dc = NULL;
+		}
 	}
 }
 
@@ -627,7 +632,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 		slpmsg = msn_slplink_message_find(slplink, header->session_id, header->id);
 		if (slpmsg == NULL)
 		{
-			/* Probably the transfer was canceled */
+			/* Probably the transfer was cancelled */
 			purple_debug_error("msn", "Couldn't find slpmsg\n");
 			return;
 		}

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:15-0400\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2010-02-19 15:12+0530\n"
 "Last-Translator: Rajesh Ranjan <rajeshkajha@yahoo.com>\n"
 "Language-Team: Hindi <Indlinux>\n"
@@ -61,11 +61,23 @@ msgstr ""
 msgid "Error"
 msgstr "त्रुटि"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "खाता जोड़ा हुआ नहीं था"
+
 msgid "Account was not added"
 msgstr "खाता जोड़ा हुआ नहीं था"
 
 msgid "Username of an account must be non-empty."
 msgstr "किसी खाता का उपयोक्तानाम जरूर गैर रिक्त होना चाहिए."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "नयी डाक सूचना"
@@ -768,7 +780,7 @@ msgstr "रूकें"
 msgid "Waiting for transfer to begin"
 msgstr "हस्तांतरण के शुरु होने की प्रतीक्षा करता है."
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "रद्द"
 
 msgid "Failed"
@@ -1231,6 +1243,10 @@ msgstr "दूसरे बात-चीत में बोले"
 msgid "Someone says your username in chat"
 msgstr "किसी ने चैट में आपका नाम पुकारा"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "सक्रियन आवशयक"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer विफलता"
 
@@ -1522,7 +1538,7 @@ msgstr ""
 msgid "Online"
 msgstr "ऑनलाइन"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ऑफ़लाइन"
 
@@ -1642,8 +1658,10 @@ msgstr ""
 "प्रमाणपत्र भरोसेमंद नहीं है क्योंकि कोई प्रमाणपत्र जो कि इसे जाँच सकता है अभी भरोसा किया "
 "जा सकता है."
 
-msgid "The certificate is not valid yet."
-msgstr "प्रमाणपत्र अबतक वैध नहीं है."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "प्रमाणपत्र समाप्त हो गया है और इसे वैध नहीं माना जा सकता है."
@@ -3762,6 +3780,18 @@ msgstr "सर्वर द्वारा अवैध चुनौती"
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "सर्वर सोचता है कि सत्यापन पूर्ण है, लेकिन क्लाइंट नहीं"
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "विगोपित स्ट्रीम पर सादा पाठ प्रमाणीकरण सर्वर के लिए जरूरी है "
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"एक विगोपित संबंधन पर सादा पाठ प्रमाणीकरण को %s सर्वर के लिए आवश्यक है. आप इसे अनुमति "
+"दें और प्रमाणीकरण जारी रखें?"
 
 msgid "SASL authentication failed"
 msgstr "SASL प्रमाणीकरण असफल"
@@ -5882,7 +5912,7 @@ msgstr "प्रोफाइल"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "आपकी प्रोफ़ाइल अभी तक नहीं पाई गई. कृपया फिर कोशिश करें."
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -5894,6 +5924,7 @@ msgid "Verify PIN"
 msgstr "पिन जाँचें"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "नाम प्रदर्शित करें"
 
@@ -5950,19 +5981,16 @@ msgstr "MXit सर्वर से कनेक्ट करने में �
 msgid "Connecting..."
 msgstr "जुड़ रहा है..."
 
-msgid "The nick name you entered is invalid."
-msgstr "डाली गयी उपनाम अवैध है।"
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "दर्ज़ नाम अवैध है।"
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "दर्ज़ किया गया आपके पिन की लंबाई अवैध है [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "MXit लॉगिन नाम"
-
-#. nick name (required)
-msgid "Nick Name"
-msgstr "उप नाम"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5990,10 +6018,12 @@ msgstr "आपका सत्र समाप्त हो गया. कृप
 msgid "Invalid country selected. Please try again."
 msgstr "अवैध देश चुना गया. फिर कोशिश करें."
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "उपयोक्तानाम पंजीकृत नहीं है. पहले पंजीकृत करें."
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr "उपयोक्तानाम पहले से पंजीकृत है. दूसरा उपयोक्तानाम चुनें."
 
 msgid "Internal error. Please try again later."
@@ -6039,8 +6069,9 @@ msgstr "प्राप्त संदेश"
 msgid "Hidden Number"
 msgstr "छिपी संख्या"
 
-msgid "Your Mobile Number..."
-msgstr "आपका मोबाइल नंबर..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "याहू! आइ डी"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6065,6 +6096,15 @@ msgstr "खराब टिकट"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "कक्ष (_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "आपके लिए मेल है!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "ऑनलाइन"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7805,11 +7845,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "अवैध SNAC"
 
-msgid "Rate to host"
-msgstr "मेजबान तक दर"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "क्लायंट तक दर"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "सेवा अनुपलब्ध"
@@ -10046,7 +10086,8 @@ msgstr "बात-चीत कक्ष लोकेल"
 msgid "Ignore conference and chatroom invitations"
 msgstr "कॉन्फेरेंस व बातचीत कक्ष आमंत्रण अनदेखा करें"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "SSL कनेक्शन के लिए खाता प्रॉक्सी उपयोग करें"
 
 msgid "Chat room list URL"
@@ -12884,11 +12925,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "बाहर निकल रहा है क्योंकि libpurple क्लाइंट पहले से चल रहा है.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_Media"
 
-msgid "/Media/_Hangup"
-msgstr "/Media/_Hangup"
+#, fuzzy
+msgid "_Hangup"
+msgstr "हैंगअप"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13681,10 +13724,6 @@ msgstr "शोर्टकट पाठ"
 
 msgid "Custom Smiley Manager"
 msgstr "पसंदीदा स्माइली प्रबंधक"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "सक्रियन आवशयक"
 
 msgid "Select Buddy Icon"
 msgstr "दोस्त प्रतीक चुनें"
@@ -15147,6 +15186,30 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "प्रमाणपत्र अबतक वैध नहीं है."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "डाली गयी उपनाम अवैध है।"
+
+#~ msgid "MXit Login Name"
+#~ msgstr "MXit लॉगिन नाम"
+
+#~ msgid "Nick Name"
+#~ msgstr "उप नाम"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "आपका मोबाइल नंबर..."
+
+#~ msgid "Rate to host"
+#~ msgstr "मेजबान तक दर"
+
+#~ msgid "Rate to client"
+#~ msgstr "क्लायंट तक दर"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Media/_Hangup"
 
 #~ msgid "Unknown reason."
 #~ msgstr "अनजान कारण"

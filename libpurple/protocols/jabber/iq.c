@@ -28,7 +28,10 @@
 
 #include "buddy.h"
 #include "disco.h"
-#include "google.h"
+#include "google/gmail.h"
+#include "google/google.h"
+#include "google/jingleinfo.h"
+#include "google/google_session.h"
 #include "iq.h"
 #include "jingle/jingle.h"
 #include "oob.h"

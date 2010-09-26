@@ -680,7 +680,6 @@ static AopMenu *
 create_protocols_menu(const char *default_proto_id)
 {
 	AopMenu *aop_menu = NULL;
-	PurplePluginProtocolInfo *prpl_info;
 	PurplePlugin *plugin;
 	GdkPixbuf *pixbuf = NULL;
 	GtkSizeGroup *sg;
@@ -702,7 +701,6 @@ create_protocols_menu(const char *default_proto_id)
 		 p = p->next, i++) {
 
 		plugin = (PurplePlugin *)p->data;
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0) {
 			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
@@ -784,8 +782,6 @@ create_account_menu(PurpleAccount *default_account,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
-		PurplePlugin *plugin;
-
 		if (show_all)
 			account = (PurpleAccount *)p->data;
 		else {
@@ -798,8 +794,6 @@ create_account_menu(PurpleAccount *default_account,
 			i--;
 			continue;
 		}
-
-		plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -1036,7 +1030,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 	char *username = NULL;
 	char *alias    = NULL;
 	char *str;
-	char *c, *s;
+	char *s;
 	gboolean valid;
 
 	g_return_val_if_fail(msg          != NULL, FALSE);
@@ -1078,7 +1072,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		if (*s == '\r') *s++ = '\0';
 		if (*s == '\n') *s++ = '\0';
 
-		if ((c = strchr(key, ':')) != NULL)
+		if (strchr(key, ':') != NULL)
 		{
 			if (!g_ascii_strcasecmp(key, "X-IM-Username:"))
 				username = g_strdup(value);
@@ -2790,79 +2784,78 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 
 
 gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
-        int width, height, rowstride, i;
-        unsigned char *pixels;
-        unsigned char *row;
+	int height, rowstride, i;
+	unsigned char *pixels;
+	unsigned char *row;
 
-        if (!gdk_pixbuf_get_has_alpha(pixbuf))
-                return TRUE;
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
+		return TRUE;
 
-        width = gdk_pixbuf_get_width (pixbuf);
-        height = gdk_pixbuf_get_height (pixbuf);
-        rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-        pixels = gdk_pixbuf_get_pixels (pixbuf);
+	height = gdk_pixbuf_get_height (pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+	pixels = gdk_pixbuf_get_pixels (pixbuf);
 
-        row = pixels;
-        for (i = 3; i < rowstride; i+=4) {
-                if (row[i] < 0xfe)
-                        return FALSE;
-        }
+	row = pixels;
+	for (i = 3; i < rowstride; i+=4) {
+		if (row[i] < 0xfe)
+			return FALSE;
+	}
 
-        for (i = 1; i < height - 1; i++) {
-                row = pixels + (i*rowstride);
-                if (row[3] < 0xfe || row[rowstride-1] < 0xfe) {
-                        return FALSE;
-            }
-        }
+	for (i = 1; i < height - 1; i++) {
+		row = pixels + (i * rowstride);
+		if (row[3] < 0xfe || row[rowstride - 1] < 0xfe) {
+			return FALSE;
+	    }
+	}
 
-        row = pixels + ((height-1) * rowstride);
-        for (i = 3; i < rowstride; i+=4) {
-                if (row[i] < 0xfe)
-                        return FALSE;
-        }
+	row = pixels + ((height - 1) * rowstride);
+	for (i = 3; i < rowstride; i += 4) {
+		if (row[i] < 0xfe)
+			return FALSE;
+	}
 
-        return TRUE;
+	return TRUE;
 }
 
 void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf) {
 	int width, height, rowstride;
-        guchar *pixels;
-        if (!gdk_pixbuf_get_has_alpha(pixbuf))
-                return;
-        width = gdk_pixbuf_get_width(pixbuf);
-        height = gdk_pixbuf_get_height(pixbuf);
-        rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-        pixels = gdk_pixbuf_get_pixels(pixbuf);
+	guchar *pixels;
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
+		return;
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
 
-        if (width < 6 || height < 6)
-                return;
-        /* Top left */
-        pixels[3] = 0;
-        pixels[7] = 0x80;
-        pixels[11] = 0xC0;
-        pixels[rowstride + 3] = 0x80;
-        pixels[rowstride * 2 + 3] = 0xC0;
+	if (width < 6 || height < 6)
+		return;
+	/* Top left */
+	pixels[3] = 0;
+	pixels[7] = 0x80;
+	pixels[11] = 0xC0;
+	pixels[rowstride + 3] = 0x80;
+	pixels[rowstride * 2 + 3] = 0xC0;
 
-        /* Top right */
-        pixels[width * 4 - 1] = 0;
-        pixels[width * 4 - 5] = 0x80;
-        pixels[width * 4 - 9] = 0xC0;
-        pixels[rowstride + (width * 4) - 1] = 0x80;
-        pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
+	/* Top right */
+	pixels[width * 4 - 1] = 0;
+	pixels[width * 4 - 5] = 0x80;
+	pixels[width * 4 - 9] = 0xC0;
+	pixels[rowstride + (width * 4) - 1] = 0x80;
+	pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
 
-        /* Bottom left */
-        pixels[(height - 1) * rowstride + 3] = 0;
-        pixels[(height - 1) * rowstride + 7] = 0x80;
-        pixels[(height - 1) * rowstride + 11] = 0xC0;
-        pixels[(height - 2) * rowstride + 3] = 0x80;
-        pixels[(height - 3) * rowstride + 3] = 0xC0;
+	/* Bottom left */
+	pixels[(height - 1) * rowstride + 3] = 0;
+	pixels[(height - 1) * rowstride + 7] = 0x80;
+	pixels[(height - 1) * rowstride + 11] = 0xC0;
+	pixels[(height - 2) * rowstride + 3] = 0x80;
+	pixels[(height - 3) * rowstride + 3] = 0xC0;
 
-        /* Bottom right */
-        pixels[height * rowstride - 1] = 0;
-        pixels[(height - 1) * rowstride - 1] = 0x80;
-        pixels[(height - 2) * rowstride - 1] = 0xC0;
-        pixels[height * rowstride - 5] = 0x80;
-        pixels[height * rowstride - 9] = 0xC0;
+	/* Bottom right */
+	pixels[height * rowstride - 1] = 0;
+	pixels[(height - 1) * rowstride - 1] = 0x80;
+	pixels[(height - 2) * rowstride - 1] = 0xC0;
+	pixels[height * rowstride - 5] = 0x80;
+	pixels[height * rowstride - 9] = 0xC0;
 }
 
 const char *pidgin_get_dim_grey_string(GtkWidget *widget) {

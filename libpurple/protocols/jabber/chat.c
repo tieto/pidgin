@@ -173,8 +173,10 @@ void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		xmlnode_set_namespace(x, "http://jabber.org/protocol/muc#user");
 		invite = xmlnode_new_child(x, "invite");
 		xmlnode_set_attrib(invite, "to", name);
-		body = xmlnode_new_child(invite, "reason");
-		xmlnode_insert_data(body, msg, -1);
+		if (msg) {
+			body = xmlnode_new_child(invite, "reason");
+			xmlnode_insert_data(body, msg, -1);
+		}
 	} else {
 		xmlnode_set_attrib(message, "to", name);
 		/*
@@ -184,14 +186,17 @@ void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		 *
 		 * Left here for compatibility.
 		 */
-		body = xmlnode_new_child(message, "body");
-		xmlnode_insert_data(body, msg, -1);
+		if (msg) {
+			body = xmlnode_new_child(message, "body");
+			xmlnode_insert_data(body, msg, -1);
+		}
 
 		x = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(x, "jid", room_jid);
 
 		/* The better place for it! XEP-0249 style. */
-		xmlnode_set_attrib(x, "reason", msg);
+		if (msg)
+			xmlnode_set_attrib(x, "reason", msg);
 		xmlnode_set_namespace(x, "jabber:x:conference");
 	}
 

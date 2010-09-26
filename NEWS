@@ -2,6 +2,21 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.3 (08/10/2010):
+	Mark: Lots of little incremental[1] bug fixes and enhancements in this
+	release.
+
+	[1] No whales were harmed[2] during the creation of this release.
+	[2] Probably.
+
+	John: Finally got some fixes out there for you Yahoo users behind some
+	particularly annoying firewalls and proxies, among other fixes.  Enjoy!
+
+2.7.2 (07/21/2010):
+	Mark: We discovered a security issue in Pidgin 2.7.0 and 2.7.1 and
+	decided to release a patched version quickly.  This release contains
+	the fix for that crash, and a few other minor fixes.
+
 2.7.1 (05/29/2010):
 	Elliott: Hey, I'm first!  How did that happen?!  Maybe because of the
 	interesting changes in this release.  Sure there were quite a few bug
@@ -12,7 +27,7 @@ Our development blog is available at: http://planet.pidgin.im
 	previous release!  This fixes a number of bugs that you've all been
 	reporting a ton of duplicate tickets about and even gives you the new
 	direct connection file transfer support for MSN.  Enjoy!
-	
+
 	Marcus: Quite a bit quicker to get this release out, compared with the
 	previous one :).  Fixes a number of bugs, and I'm sure the MSN direct
 	connections will please many users.  Enjoy!

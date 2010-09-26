@@ -51,7 +51,9 @@
 #include "chat.h"
 #include "data.h"
 #include "disco.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/google_roster.h"
+#include "google/google_session.h"
 #include "ibb.h"
 #include "iq.h"
 #include "jutil.h"
@@ -205,7 +207,7 @@ static char *jabber_prep_resource(char *input) {
 	 * resource string from being unreasonably long on systems which stuff the
 	 * whole FQDN in the hostname */
 	if((dot = strchr(hostname, '.')))
-			dot = '\0';
+		*dot = '\0';
 
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
@@ -218,22 +220,25 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 	account = purple_connection_get_account(js->gc);
 
-	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(purple_ssl_is_supported()) {
-			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return TRUE;
-		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason(js->gc,
+	if(purple_ssl_is_supported()) {
+		jabber_send_raw(js,
+				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+		return TRUE;
+	}
+
+	starttls = xmlnode_get_child(packet, "starttls");
+	if(xmlnode_get_child(starttls, "required")) {
+		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
-			return TRUE;
-		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
-			purple_connection_error_reason(js->gc,
-				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+		return TRUE;
+	}
+
+	if (g_str_equal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
-			return TRUE;
-		}
+		return TRUE;
 	}
 
 	return FALSE;
@@ -241,12 +246,16 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
-	if(xmlnode_get_child(packet, "starttls")) {
-		if(jabber_process_starttls(js, packet)) {
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+	const char *connection_security =
+		purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
+
+	if (xmlnode_get_child(packet, "starttls")) {
+		if (jabber_process_starttls(js, packet)) {
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
 		}
-	} else if(purple_account_get_bool(js->gc->account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS) && !jabber_stream_is_ssl(js)) {
+	} else if (g_str_equal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -543,6 +552,13 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
+
+	g_return_val_if_fail(js != NULL, -1);
+	/* TODO: It's probably worthwhile to restrict this to when the account
+	 * state is CONNECTED, but I can /almost/ envision reasons for wanting
+	 * to do things during the connection process.
+	 */
+
 	jabber_send_raw(js, buf, len);
 	return len;
 }
@@ -557,8 +573,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 	if (NULL == packet)
 		return;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(pc));
 
 	js = purple_connection_get_protocol_data(pc);
 
@@ -615,7 +630,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
@@ -650,8 +665,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	int len;
 	static char buf[4096];
 
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
@@ -711,7 +725,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	js = gc->proto_data;
@@ -806,8 +820,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	JabberStream *js;
 
 	/* If the connection is already disconnected, we don't need to do anything else */
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	js = gc->proto_data;
 	js->gsc = NULL;
@@ -965,6 +978,9 @@ jabber_stream_new(PurpleAccount *account)
 	js->stun_ip = NULL;
 	js->stun_port = 0;
 	js->stun_query = NULL;
+	js->google_relay_token = NULL;
+	js->google_relay_host = NULL;
+	js->google_relay_requests = NULL;
 
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
@@ -1007,7 +1023,7 @@ jabber_stream_connect(JabberStream *js)
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
+	if (g_str_equal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),
@@ -1624,6 +1640,8 @@ void jabber_close(PurpleConnection *gc)
 	if(js->sasl_mechs)
 		g_string_free(js->sasl_mechs, TRUE);
 	g_free(js->sasl_cb);
+	/* Note: _not_ g_free.  See auth_cyrus.c:jabber_sasl_cb_secret */
+	free(js->sasl_secret);
 #endif
 	g_free(js->serverFQDN);
 	while(js->commands) {
@@ -1664,6 +1682,21 @@ void jabber_close(PurpleConnection *gc)
 	if (js->stun_query) {
 		purple_dnsquery_destroy(js->stun_query);
 		js->stun_query = NULL;
+	}
+
+	/* remove Google relay-related stuff */
+	g_free(js->google_relay_token);
+	g_free(js->google_relay_host);
+	if (js->google_relay_requests) {
+		while (js->google_relay_requests) {
+			PurpleUtilFetchUrlData *url_data =
+				(PurpleUtilFetchUrlData *) js->google_relay_requests->data;
+			purple_util_fetch_url_cancel(url_data);
+			g_free(url_data);
+			js->google_relay_requests = 
+				g_list_delete_link(js->google_relay_requests, 
+					js->google_relay_requests);
+		}
 	}
 
 	g_free(js);
@@ -1952,20 +1985,53 @@ static void jabber_features_destroy(void)
 	}
 }
 
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
+gint
+jabber_identity_compare(gconstpointer a, gconstpointer b)
+{
+	const JabberIdentity *ac;
+	const JabberIdentity *bc;
+	gint cat_cmp;
+	gint typ_cmp;
+
+	ac = a;
+	bc = b;
+
+	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
+		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
+			if (!ac->lang && !bc->lang) {
+				return 0;
+			} else if (ac->lang && !bc->lang) {
+				return 1;
+			} else if (!ac->lang && bc->lang) {
+				return -1;
+			} else {
+				return strcmp(ac->lang, bc->lang);
+			}
+		} else {
+			return typ_cmp;
+		}
+	} else {
+		return cat_cmp;
+	}
+}
+
+void jabber_add_identity(const gchar *category, const gchar *type,
+                         const gchar *lang, const gchar *name)
+{
 	GList *identity;
 	JabberIdentity *ident;
+
 	/* both required according to XEP-0030 */
 	g_return_if_fail(category != NULL);
 	g_return_if_fail(type != NULL);
 
-	for(identity = jabber_identities; identity; identity = identity->next) {
-		JabberIdentity *ident = (JabberIdentity*)identity->data;
-		if (!strcmp(ident->category, category) &&
-		    !strcmp(ident->type, type) &&
-		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
+	/* Check if this identity is already there... */
+	for (identity = jabber_identities; identity; identity = identity->next) {
+		JabberIdentity *id = identity->data;
+		if (g_str_equal(id->category, category) &&
+			g_str_equal(id->type, type) &&
+			purple_strequal(id->lang, lang))
 			return;
-		}
 	}
 
 	ident = g_new0(JabberIdentity, 1);
@@ -1973,7 +2039,8 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	ident->type = g_strdup(type);
 	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
-	jabber_identities = g_list_prepend(jabber_identities, ident);
+	jabber_identities = g_list_insert_sorted(jabber_identities, ident,
+	                                         jabber_identity_compare);
 }
 
 static void jabber_identities_destroy(void)
@@ -2574,13 +2641,19 @@ char *jabber_parse_error(JabberStream *js,
 	if(reason != NULL) { *reason = x; }
 
 	if((error = xmlnode_get_child(packet, "error"))) {
+		xmlnode *t = xmlnode_get_child_with_namespace(error, "text", NS_XMPP_STANZAS);
+		if (t)
+			cdata = xmlnode_get_data(t);
+#if 0
 		cdata = xmlnode_get_data(error);
+#endif
 		code = xmlnode_get_attrib(error, "code");
 
 		/* Stanza errors */
 		if(xmlnode_get_child(error, "bad-request")) {
 			text = _("Bad Request");
 		} else if(xmlnode_get_child(error, "conflict")) {
+			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Conflict");
 		} else if(xmlnode_get_child(error, "feature-not-implemented")) {
 			text = _("Feature Not Implemented");
@@ -3188,9 +3261,9 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		g_free(resource);
 
 		if (type & PURPLE_MEDIA_AUDIO &&
-				!jabber_resource_has_capability(jbr,
-				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-				jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
+			!jabber_resource_has_capability(jbr,
+			JINGLE_APP_RTP_SUPPORT_AUDIO) &&
+			jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
 			return jabber_google_session_initiate(js, who, type);
 		else
 			return jingle_rtp_initiate_media(js, who, type);
@@ -3430,8 +3503,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 			for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
 				JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
 
-				if (jabber_resource_has_capability(jbr,
-						"http://jabber.org/protocol/si/profile/file-transfer")
+				if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)
 			    	&& (jabber_resource_has_capability(jbr,
 			    			NS_BYTESTREAMS)
 			        	|| jabber_resource_has_capability(jbr, NS_IBB))) {
@@ -3453,7 +3525,7 @@ jabber_cmd_mood(PurpleConversation *conv,
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */
-		if (!args | !args[0]) {
+		if (!args || !args[0]) {
 			jabber_mood_set(js, NULL, NULL);
 		} else if (!args[1]) {
 			jabber_mood_set(js, args[0], NULL);
@@ -3733,7 +3805,7 @@ jabber_do_init(void)
 	jabber_add_feature("http://jabber.org/protocol/muc", 0);
 	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
 	jabber_add_feature("http://jabber.org/protocol/si", 0);
-	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
+	jabber_add_feature(NS_SI_FILE_TRANSFER, 0);
 	jabber_add_feature(NS_XHTML_IM, 0);
 	jabber_add_feature(NS_PING, 0);
 

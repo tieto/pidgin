@@ -208,11 +208,7 @@ purple_media_backend_fs2_dispose(GObject *obj)
 	}
 
 	if (priv->participants) {
-		GList *participants =
-				g_hash_table_get_values(priv->participants);
-		for (; participants; participants = g_list_delete_link(
-				participants, participants))
-			g_object_unref(participants->data);
+		g_hash_table_destroy(priv->participants);
 		priv->participants = NULL;
 	}
 
@@ -1425,7 +1421,8 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	if (!priv->sessions) {
 		purple_debug_info("backend-fs2",
 				"Creating hash table for sessions\n");
-		priv->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+		priv->sessions = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                       g_free, NULL);
 	}
 
 	g_hash_table_insert(priv->sessions, g_strdup(session->id), session);
@@ -1461,7 +1458,7 @@ create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 		purple_debug_info("backend-fs2",
 				"Creating hash table for participants\n");
 		priv->participants = g_hash_table_new_full(g_str_hash,
-				g_str_equal, g_free, NULL);
+				g_str_equal, g_free, g_object_unref);
 	}
 
 	g_hash_table_insert(priv->participants, g_strdup(name), participant);
@@ -1564,6 +1561,30 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			(GSourceFunc)src_pad_added_cb_cb, stream);
 }
 
+static GValueArray *
+append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
+	const gchar *username, const gchar *password, const gchar *type)
+{
+	GValue value;
+	GstStructure *turn_setup = gst_structure_new("relay-info",
+				"ip", G_TYPE_STRING, ip, 
+				"port", G_TYPE_UINT, port,
+				"username", G_TYPE_STRING, username,
+				"password", G_TYPE_STRING, password,
+	            "relay-type", G_TYPE_STRING, type,
+				NULL);
+
+	if (turn_setup) {
+		memset(&value, 0, sizeof(GValue));
+		g_value_init(&value, GST_TYPE_STRUCTURE);
+		gst_value_set_structure(&value, turn_setup);
+		relay_info = g_value_array_append(relay_info, &value);
+		gst_structure_free(turn_setup);
+	}
+
+	return relay_info;
+}
+                        
 static gboolean
 create_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who,
@@ -1584,6 +1605,18 @@ create_stream(PurpleMediaBackendFs2 *self,
 	PurpleMediaBackendFs2Session *session;
 	PurpleMediaBackendFs2Stream *stream;
 	FsParticipant *participant;
+	/* check if the prpl has already specified a relay-info
+	  we need to do this to allow them to override when using non-standard
+	  TURN modes, like Google f.ex. */
+	gboolean got_turn_from_prpl = FALSE;
+	int i;
+
+	for (i = 0 ; i < num_params ; i++) {
+		if (purple_strequal(params[i].name, "relay-info")) {
+			got_turn_from_prpl = TRUE;
+			break;
+		}
+	}
 
 	memcpy(_params, params, sizeof(GParameter) * num_params);
 
@@ -1603,34 +1636,24 @@ create_stream(PurpleMediaBackendFs2 *self,
 		++_num_params;
 	}
 
-	if (turn_ip && !strcmp("nice", transmitter)) {
+	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
 		GValueArray *relay_info = g_value_array_new(0);
-		GValue value;
-		gint turn_port = purple_prefs_get_int(
-				"/purple/network/turn_port");
+		gint port;
 		const gchar *username =	purple_prefs_get_string(
 				"/purple/network/turn_username");
 		const gchar *password = purple_prefs_get_string(
 				"/purple/network/turn_password");
-		GstStructure *turn_setup = gst_structure_new("relay-info",
-				"ip", G_TYPE_STRING, turn_ip, 
-				"port", G_TYPE_UINT, turn_port,
-				"username", G_TYPE_STRING, username,
-				"password", G_TYPE_STRING, password,
-				NULL);
 
-		if (!turn_setup) {
-			purple_debug_error("backend-fs2",
-					"Error creating relay info structure");
-			return FALSE;
+		/* UDP */
+		port = purple_prefs_get_int("/purple/network/turn_port");
+		if (port > 0) {
+			relay_info = append_relay_info(relay_info, turn_ip, port, username,
+				password, "udp");
 		}
 
-		memset(&value, 0, sizeof(GValue));
-		g_value_init(&value, GST_TYPE_STRUCTURE);
-		gst_value_set_structure(&value, turn_setup);
-		relay_info = g_value_array_append(relay_info, &value);
-		gst_structure_free(turn_setup);
-
+		/* should add TCP and perhaps TLS relaying options when these are
+		 supported by libnice using non-google mode */
+		
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";
@@ -1639,6 +1662,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		g_value_set_boxed(&_params[_num_params].value,
 			relay_info);
 		g_value_array_free(relay_info);
+		_num_params++;
 	}
 
 	session = get_session(self, sess_id);
@@ -1790,7 +1814,7 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 		const gchar *sess_id)
 {
 	PurpleMediaBackendFs2Private *priv;
-	gboolean ret;
+	gboolean ret = FALSE;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
 
@@ -1836,14 +1860,11 @@ static GList *
 purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id)
 {
-	PurpleMediaBackendFs2Private *priv;
 	PurpleMediaBackendFs2Session *session;
 	GList *fscodecs;
 	GList *codecs;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
-
-	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
 	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
 
@@ -2013,12 +2034,9 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who, double level)
 {
 #ifdef USE_VV
-	PurpleMediaBackendFs2Private *priv;
 	GList *streams;
 
 	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
-
-	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
 	purple_prefs_set_int("/purple/media/audio/volume/output", level);
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin-1.30\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:15-0400\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2007-02-12 00:46+0200\n"
 "Last-Translator: Vladimir \"Kaladan\" Petkov <kaladan@gmail.com>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -51,10 +51,22 @@ msgid "Error"
 msgstr "Грешка"
 
 #, fuzzy
+msgid "Account was not modified"
+msgstr "Акаунтът е деактивиран"
+
+#, fuzzy
 msgid "Account was not added"
 msgstr "Акаунтът е деактивиран"
 
 msgid "Username of an account must be non-empty."
+msgstr ""
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
 msgstr ""
 
 msgid "New mail notifications"
@@ -808,7 +820,7 @@ msgstr "Зареждане при стартиране"
 msgid "Waiting for transfer to begin"
 msgstr "Изчакване пренасянето да започне"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Отказан"
 
 msgid "Failed"
@@ -1320,6 +1332,10 @@ msgstr "Други говорят в чата"
 msgid "Someone says your username in chat"
 msgstr "Някой споменава името ви в чат"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Изисква се регистрация"
+
 msgid "GStreamer Failure"
 msgstr ""
 
@@ -1628,7 +1644,7 @@ msgstr ""
 msgid "Online"
 msgstr "Включен"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Изключен"
 
@@ -1750,9 +1766,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "Новото форматиране е неправилно."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr ""
@@ -3860,6 +3877,18 @@ msgstr ""
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "Сървърът изисква парола в чист текст през некодирана връзка"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"Този сървър изисква парола в чист текст през некриптирана връзка. Да се "
+"разреши ли това и да се продължи с влизането?"
 
 #, fuzzy
 msgid "SASL authentication failed"
@@ -6075,7 +6104,7 @@ msgstr "Профил в MSN"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -6088,6 +6117,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Фамилия"
@@ -6159,7 +6189,7 @@ msgid "Connecting..."
 msgstr "Свързване"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Новото форматиране е неправилно."
 
 #, fuzzy
@@ -6167,13 +6197,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Новото форматиране е неправилно."
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name (required)
-#, fuzzy
-msgid "Nick Name"
-msgstr "Псевдоним"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6203,10 +6228,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 msgid "Internal error. Please try again later."
@@ -6262,8 +6287,8 @@ msgid "Hidden Number"
 msgstr "Второ име"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "Задаване номер на мобилен телефон..."
+msgid "Your MXit ID..."
+msgstr "Име в Yahoo!"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6290,6 +6315,15 @@ msgstr "Лош билет"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "_Стая:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "%s ви изрита: (%s)"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Включен"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8109,10 +8143,10 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr ""
 
-msgid "Rate to host"
+msgid "Server rate limit exceeded"
 msgstr ""
 
-msgid "Rate to client"
+msgid "Client rate limit exceeded"
 msgstr ""
 
 msgid "Service unavailable"
@@ -10468,7 +10502,7 @@ msgstr ""
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 #, fuzzy
@@ -13485,10 +13519,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14365,10 +14399,6 @@ msgstr "Порт"
 
 msgid "Custom Smiley Manager"
 msgstr ""
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Изисква се регистрация"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -15934,6 +15964,22 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr "Нямате права да деинсталирате тази програма."
 
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Новото форматиране е неправилно."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Новото форматиране е неправилно."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Псевдоним"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Задаване номер на мобилен телефон..."
+
 #~ msgid "Unknown reason."
 #~ msgstr "Причината е неизвестна."
 
@@ -16528,7 +16574,7 @@ msgstr "Нямате права да деинсталирате тази про�
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s не може да бъде отворен за запис!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Неуспешен пренос на файла. Получателят вероятно е отказал получаването."
 

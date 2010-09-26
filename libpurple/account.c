@@ -513,6 +513,25 @@ migrate_yahoo_japan(PurpleAccount *account)
 }
 
 static void
+migrate_xmpp_encryption(PurpleAccount *account)
+{
+	/* When this is removed, nuke the "old_ssl" and "require_tls" settings */
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-jabber")) {
+		const char *sec = purple_account_get_string(account, "connection_security", "");
+
+		if (g_str_equal("", sec)) {
+			const char *val = "require_tls";
+			if (purple_account_get_bool(account, "old_ssl", FALSE))
+				val = "old_ssl";
+			else if (!purple_account_get_bool(account, "require_tls", TRUE))
+				val = "opportunistic_tls";
+
+			purple_account_set_string(account, "connection_security", val);
+		}
+	}
+}
+
+static void
 parse_settings(xmlnode *node, PurpleAccount *account)
 {
 	const char *ui;
@@ -579,6 +598,9 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 	/* we do this here because we need access to account settings to determine
 	 * if we can/should migrate an old Yahoo! JAPAN account */
 	migrate_yahoo_japan(account);
+	/* we do this here because we need to do it before the user views the
+	 * Edit Account dialog. */
+	migrate_xmpp_encryption(account);
 }
 
 static GList *
@@ -1129,7 +1151,7 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 static void
 request_password_cancel_cb(PurpleAccount *account, PurpleRequestFields *fields)
 {
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 
@@ -1819,7 +1841,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, set_public_alias))
 		prpl_info->set_public_alias(gc, alias, success_cb, failure_cb);
-	else {
+	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
 		closure->account = account;
@@ -1859,7 +1881,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_public_alias))
 		prpl_info->get_public_alias(gc, success_cb, failure_cb);
-	else {
+	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
 		closure->account = account;

@@ -37,4 +37,19 @@ typedef void (*jabber_x_data_action_cb)(JabberStream *js, xmlnode *result, const
 void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
 void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data);
 
+/*
+ * Return the form type (the CDATA of the value child of the FORM_TYPE
+ * field entry.
+ * E.g., for the following, "http://jabber.org/protocol/muc#roominfo".
+ * <x xmlns='jabber:x:data' type='result'>
+ *  <field var='FORM_TYPE' type='hidden'>
+ *    <value>http://jabber.org/protocol/muc#roominfo</value>
+ *  </field>
+ * </x>
+ *
+ * @param form The xmlnode for the form (the 'x' element)
+ * @returns The FORM_TYPE.  Must be freed by caller.
+ */
+gchar *jabber_x_data_get_formtype(const xmlnode *form);
+
 #endif /* PURPLE_JABBER_XDATA_H_ */

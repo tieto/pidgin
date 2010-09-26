@@ -2133,7 +2133,7 @@ static struct mwServiceConference *mw_srvc_conf_new(struct mwSession *s) {
 
 
 static void ft_incoming_cancel(PurpleXfer *xfer) {
-  /* incoming transfer rejected or canceled in-progress */
+  /* incoming transfer rejected or cancelled in-progress */
   struct mwFileTransfer *ft = xfer->data;
   if(ft) mwFileTransfer_reject(ft);
 }

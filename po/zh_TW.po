@@ -60,7 +60,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:16-0400\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2010-05-29 02:50+0800\n"
 "Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -115,11 +115,24 @@ msgid "Error"
 msgstr "錯誤"
 
 # FIXME 譯文有待改進 - 20061028
+#, fuzzy
+msgid "Account was not modified"
+msgstr "帳號未被新增"
+
+# FIXME 譯文有待改進 - 20061028
 msgid "Account was not added"
 msgstr "帳號未被新增"
 
 msgid "Username of an account must be non-empty."
 msgstr "帳號不可留空。"
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "新郵件通知"
@@ -853,7 +866,7 @@ msgstr "中止"
 msgid "Waiting for transfer to begin"
 msgstr "等待開始傳輸檔案中..."
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "已取消"
 
 msgid "Failed"
@@ -1331,6 +1344,10 @@ msgstr "其他人在聊天室說話"
 msgid "Someone says your username in chat"
 msgstr "有人在聊天室中提到您的帳號"
 
+# XXX 譯文有待改進 acli 20100509
+msgid "Attention received"
+msgstr "對方要求注意"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer 錯誤"
 
@@ -1631,7 +1648,7 @@ msgstr "當接收到含有網址的訊息時，使用 TinyURL 縮短網址，好
 msgid "Online"
 msgstr "上線"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "離線"
 
@@ -1760,8 +1777,10 @@ msgid ""
 "currently trusted."
 msgstr "無法信賴這張憑證，因為目前沒有可信賴的憑證可以驗證這張憑證。"
 
-msgid "The certificate is not valid yet."
-msgstr "這張憑證尚未生效。"
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "這張憑證已逾期，應視作無效。"
@@ -3924,6 +3943,16 @@ msgstr "伺服器送來了無效的驗證挑戰"
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "伺服器認為驗證程序已經完畢，但用戶端不認同"
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "伺服器需要經由未經加密的串流進行明文認證"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr "%s 需要經由未經加密的串流進行明文認證。允許並繼續進行認證？"
 
 msgid "SASL authentication failed"
 msgstr "SASL 認證失敗"
@@ -6226,7 +6255,7 @@ msgstr "個人資料"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "未能讀取您的個人資料，請稍後重試。"
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -6239,6 +6268,7 @@ msgstr "確認密碼"
 
 # NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "暱稱"
 
@@ -6296,20 +6326,16 @@ msgstr "無法連線至 MXit 伺服器，請檢查伺服器設定。"
 msgid "Connecting..."
 msgstr "連線中..."
 
-msgid "The nick name you entered is invalid."
-msgstr "您所輸入的暱稱無效。"
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "您所輸入的名稱無效。"
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "您所輸入的密碼過短或過長（長度應為 7 至 10 個數字）。"
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "MXit 帳號"
-
-# NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
-#. nick name (required)
-msgid "Nick Name"
-msgstr "暱稱"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6337,10 +6363,12 @@ msgstr "您的工作階段已逾時，請稍後重試。"
 msgid "Invalid country selected. Please try again."
 msgstr "指定的國家是無效的，請重試。"
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "帳號未有註冊，請先註冊。"
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr "帳號已註冊，請選擇另一個帳號。"
 
 msgid "Internal error. Please try again later."
@@ -6386,8 +6414,9 @@ msgstr "拒絕訊息"
 msgid "Hidden Number"
 msgstr "隱藏電話號碼"
 
-msgid "Your Mobile Number..."
-msgstr "行動電話號碼..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "Yahoo 帳號"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6415,6 +6444,16 @@ msgstr "無效的 ticket"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "聊天室(_R)："
+
+# XXX 要覆查
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "您收到郵件！"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "上線"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8191,11 +8230,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "無效的 SNAC"
 
-msgid "Rate to host"
-msgstr "到伺服器速率"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "到用戶端速率"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 #  NOTE Jabber 錯誤 <service-unavailable/>，表示伺服器收到一個意義不明的指令
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
@@ -10538,7 +10577,8 @@ msgstr "聊天室區域 (Locale)"
 msgid "Ignore conference and chatroom invitations"
 msgstr "忽略會議室與聊天室邀請"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "使用 SSL 連線時，使用帳號的代理伺服器"
 
 msgid "Chat room list URL"
@@ -13522,12 +13562,14 @@ msgid "Exiting because another libpurple client is already running.\n"
 msgstr "因為已有其他 libpurple 用戶端正在執行，本程式現在結束。\n"
 
 # XXX 媒體? - acli 20090730
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/媒體(_M)"
 
-# XXX 暫譯 - acli 20090730
-msgid "/Media/_Hangup"
-msgstr "/媒體/掛斷(_H)"
+# NOTE 這是按鈕上的標籤
+#, fuzzy
+msgid "_Hangup"
+msgstr "掛斷"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14336,10 +14378,6 @@ msgstr "捷徑文字"
 
 msgid "Custom Smiley Manager"
 msgstr "自訂表情管理"
-
-# XXX 譯文有待改進 acli 20100509
-msgid "Attention received"
-msgstr "對方要求注意"
 
 msgid "Select Buddy Icon"
 msgstr "選擇好友圖示"
@@ -15877,6 +15915,32 @@ msgstr "瀏覽 Pidgin 官方網站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您沒有權限移除程式。"
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "這張憑證尚未生效。"
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "您所輸入的暱稱無效。"
+
+#~ msgid "MXit Login Name"
+#~ msgstr "MXit 帳號"
+
+# NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
+#~ msgid "Nick Name"
+#~ msgstr "暱稱"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "行動電話號碼..."
+
+#~ msgid "Rate to host"
+#~ msgstr "到伺服器速率"
+
+#~ msgid "Rate to client"
+#~ msgstr "到用戶端速率"
+
+# XXX 暫譯 - acli 20090730
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/媒體/掛斷(_H)"
 
 #~ msgid "Current Mood"
 #~ msgstr "目前的心情"

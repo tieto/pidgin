@@ -46,16 +46,16 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [7])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [7])
-m4_define([purple_micro_version], [2])
+m4_define([purple_micro_version], [4])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [7])
+m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [7])
-m4_define([gnt_micro_version], [2])
+m4_define([gnt_minor_version], [8])
+m4_define([gnt_micro_version], [1])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -75,6 +75,8 @@ fi
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
+dnl TODO: Always use AM_SILENT_RULES when we depend on automake >= 1.11
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -660,6 +662,10 @@ if test "x$enable_consoleui" = "xyes"; then
 		for location in $ac_ncurses_includes $NCURSES_HEADERS /usr/include/ncursesw /usr/include
 		do
 			f="$location/ncurses.h"
+			orig_CFLAGS="$CFLAGS"
+			orig_CPPFLAGS="$CPPFLAGS"
+			CFLAGS="$CFLAGS -I$location"
+			CPPFLAGS="$CPPFLAGS -I$location"
 			AC_CHECK_HEADER($f,[
 				AC_MSG_CHECKING([if $f supports wide characters])
 				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -678,9 +684,13 @@ if test "x$enable_consoleui" = "xyes"; then
 					fi
 
 					found_ncurses_h=yes
+					CFLAGS="$orig_CFLAGS"
+					CPPFLAGS="$orig_CPPFLAGS"
 					AC_MSG_RESULT([yes])
 					break
 				], [
+					CFLAGS="$orig_CFLAGS"
+					CPPFLAGS="$orig_CPPFLAGS"
 					AC_MSG_RESULT([no])
 				])
 			])
@@ -2238,6 +2248,7 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	TKCONFIG=no
 	TKCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tk8.5 \
 			/usr/lib/tk8.4 \
 			/usr/lib/tk8.3 \
 			/usr/lib/tk8.2 \

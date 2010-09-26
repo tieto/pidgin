@@ -1,6 +1,147 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.2 (??/??/????):
+version 2.7.4 (MM/DD/YYYY):
+	General:
+	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
+	  (#12049)
+
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch.
+	* Fix an invalid memory access when removing UPnP mappings that could
+	  cause sporadic crashes, most notably when MSN Direct Connections are
+	  enabled. (#12387)
+	* Add a sentence to the certificate warning for expired certificates
+	  suggesting the user check their computer's date and time. (#12654)
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+	* Use GRegex for the debug window where available. This brings regex
+	  filtering to the debug window on Windows. (Eion Robb) (#12601)
+	* Add Google Chrome to the list of possible browsers on non-Windows
+	  systems.
+	* Add Chromium to the list of possible browsers on non-Windows systems.
+	* The "Manual" browser option is now stored as a string.  It is no
+	  longer necessary to specify a full path to the browser command.
+	  (Rodrigo Tobar Carrizo) (#12024)
+	* The Send To menu can now be used if the active account in the
+	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
+	* xdg-open is now the default browser for new users on non-Windows
+	  platforms. (Stanislav Brabec) (#12505)
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+	* Fix detecting file transfer proxies advertised by the server.
+	* Advertise support for Google Talk's JID Domain Discovery extension
+	  in all cases again (changed in 2.7.0), not just when the domain
+	  is "gmail.com" or "googlemail.com" (it's also needed for Google
+	  Talk used for accounts on arbitrary domains not using Google Apps
+	  for Your Domain). (#a14153)
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
+
+version 2.7.3 (08/10/2010):
+	General:
+	* Use silent build rules for automake >1.11. You can enable verbose
+	  builds with the --disable-silent-rules configure option, or using
+	  make V=1.
+
+	libpurple:
+	* Fix the TURN server settings (broken in 2.7.0).
+
+	Pidgin:
+	* Re-focus the input area after clicking the attention toolbar button.
+	* Re-arrange media window to make it more netbook-friendly.
+
+	Finch:
+	* Rebindable 'suggest-next-page' and 'suggest-prev-page' actions for
+	  textboxes (GntEntry) to scroll through list of suggestions.
+	* Rebindable 'dropdown' action for comboboxes (GntComboBox) to show the
+	  dropdown list of options.
+
+	IRC:
+	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
+
+	MSN:
+	* Support for web-based buddy icons, used when a buddy logs in to the
+	  messenger on the Live website.
+	* Fix file transfers with some clients that don't support direct
+	  connections (e.g., papyon, telepathy-butterfly, etc.) (#12150)
+
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
+
+	XMPP:
+	* Allow connecting to servers that only advertise GSSAPI and expect
+	  a fallback to legacy IQ authentication (broken in 2.7.0).
+	* Fix a crash when receiving custom emoticons that don't adhere to
+	  the specification.
+	* When initiating a file transfer, don't show resources that are certain
+	  to not support file transfers in the resource selection dialog.
+	* Fix connecting to servers using BOSH and authenticating with
+	  DIGEST-MD5 when libpurple was built with Cyrus SASL support.
+
+	Yahoo/Yahoo JAPAN:
+	* Renamed "Use account proxy for SSL connections" to "Use account proxy
+	  for HTTP and HTTPS requests" and tied the option to HTTP requests too.
+	* Properly detect HTTP proxy server use when the HTTP proxy is the
+	  global proxy server, an account-level non-HTTP proxy server is
+	  configured, and the "Use account proxy for HTTP and HTTPS requests"
+	  account option is turned off.  This fixes connecting for some HTTP
+	  proxy servers.
+	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if
+	  the HTTP-based connect server lookup fails.  This does not work for
+	  Yahoo JAPAN accounts.
+	* Fix file transfers that get stuck with "Waiting for transfer to
+	  begin".
+
+version 2.7.2 (07/21/2010):
+	AIM and ICQ:
+	* Fix a crash bug related to X-Status messages that can be triggered by
+	  remote users.  This is CVE-2010-2528.
+	* Fix a rare crash bug caused by certain incoming SMS messages
+	  (discovered by Jan Kaluza--thanks Jan!).
+	* Change HTML sent from ICQ accounts so that official ICQ clients
+	  hopefully display it correctly.
+
+	MSN:
+	* Fix a crash related to fast buddy icon transfers.
 
 version 2.7.1 (05/29/2010):
 	General:

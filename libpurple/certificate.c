@@ -99,11 +99,13 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "that can verify it is currently trusted.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
-			return _("The certificate is not valid yet.");
+			return _("The certificate is not valid yet.  Check that your "
+			         "computer's date and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_EXPIRED:
 			return _("The certificate has expired and should not be "
-			         "considered valid.");
+			         "considered valid.  Check that your computer's date "
+			         "and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_NAME_MISMATCH:
 			/* Translators: "domain" refers to a DNS domain (e.g. talk.google.com) */

@@ -194,15 +194,12 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 {
 	GtkTreeIter iter;
 	PurpleAccount *account;
-	PurplePounceEvent events;
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf;
 
 	account = purple_pounce_get_pouncer(pounce);
-
-	events = purple_pounce_get_events(pounce);
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 

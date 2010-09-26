@@ -36,7 +36,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 {
 	purple_connection_error_reason(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-		_("Server requires plaintext authentication over an unencrypted stream"));
+		_("Server may require plaintext authentication over an unencrypted stream"));
 }
 
 static void start_cyrus_wrapper(JabberStream *js)
@@ -94,7 +94,6 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 	PurpleAccount *account;
 	const char *pw;
 	size_t len;
-	static sasl_secret_t *x = NULL;
 
 	account = purple_connection_get_account(js->gc);
 	pw = purple_account_get_password(account);
@@ -103,15 +102,16 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 		return SASL_BADPARAM;
 
 	len = strlen(pw);
-	x = (sasl_secret_t *) realloc(x, sizeof(sasl_secret_t) + len);
-
-	if (!x)
+	/* Not an off-by-one because sasl_secret_t defines char data[1] */
+	/* TODO: This can probably be moved to glib's allocator */
+	js->sasl_secret = malloc(sizeof(sasl_secret_t) + len);
+	if (!js->sasl_secret)
 		return SASL_NOMEM;
 
-	x->len = len;
-	strcpy((char*)x->data, pw);
+	js->sasl_secret->len = len;
+	strcpy((char*)js->sasl_secret->data, pw);
 
-	*secret = x;
+	*secret = js->sasl_secret;
 	return SASL_OK;
 }
 
@@ -176,7 +176,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
 
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 
@@ -240,8 +240,9 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				 * it in plaintext, see if we can turn on
 				 * plaintext auth
 				 */
+				/* XXX Should we just check for PLAIN/LOGIN being offered mechanisms? */
 				} else if (!plaintext) {
-					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+					char *msg = g_strdup_printf(_("%s may require plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
@@ -320,11 +321,8 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 		xmlnode_set_namespace(auth, NS_XMPP_SASL);
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
 
-		if (g_str_equal(js->user->domain, "gmail.com") ||
-				g_str_equal(js->user->domain, "googlemail.com")) {
-			xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
-			xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
-		}
+		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
+		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
 
 		if (clientout) {
 			if (coutlen == 0) {
@@ -408,6 +406,12 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 
+		/* Ignore blank mechanisms and EXTERNAL.  External isn't
+		 * supported, and Cyrus SASL's mechanism returns
+		 * SASL_NOMECH when the caller (us) doesn't configure it.
+		 * Except SASL_NOMECH is supposed to mean "no concordant
+		 * mechanisms"...  Easiest just to blacklist it (for now).
+		 */
 		if (!mech_name || !*mech_name ||
 				g_str_equal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
@@ -418,6 +422,10 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 		g_string_append_c(js->sasl_mechs, ' ');
 		g_free(mech_name);
 	}
+
+	/* Strip off the trailing ' ' */
+	if (js->sasl_mechs->len > 1)
+		g_string_truncate(js->sasl_mechs, js->sasl_mechs->len - 1);
 
 	jabber_sasl_build_callbacks(js);
 	ret = jabber_auth_start_cyrus(js, reply, error);

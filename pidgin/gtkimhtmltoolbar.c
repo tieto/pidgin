@@ -911,6 +911,7 @@ static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
 	purple_prpl_send_attention(gc, who, 0);
+	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
@@ -1204,9 +1205,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 /* Boring GTK+ stuff */
 static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 {
-	GtkObjectClass *object_class;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
 	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
@@ -1243,8 +1242,6 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-		/*{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, 
-			g_object_get_data(G_OBJECT(toolbar->imhtml), "attention"), _("Send Attention")},*/
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1274,6 +1271,15 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
+}
+
+static void
+button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
+{
+	if (GTK_WIDGET_VISIBLE(button))
+		gtk_widget_hide(item);
+	else
+		gtk_widget_show(item);
 }
 
 static void
@@ -1324,6 +1330,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
 	GtkWidget *sep;
+	GObject *wide_attention_button;
 	int i;
 	struct {
 		const char *label;
@@ -1394,6 +1401,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), menuitem);
 		g_signal_connect(G_OBJECT(old), "notify::sensitive",
 				G_CALLBACK(button_sensitiveness_changed), menuitem);
+		g_signal_connect(G_OBJECT(old), "notify::visible",
+				G_CALLBACK(button_visibility_changed), menuitem);
 		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
@@ -1426,12 +1435,16 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->image), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->link), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
 	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
@@ -1468,29 +1481,30 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(sep);
 
 	/* Attention */
+	wide_attention_button = g_object_get_data(G_OBJECT(toolbar), "attention");
+
 	attention_button = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
 	bbox = gtk_hbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(attention_button), bbox);
-	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, 
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION,
 		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
 	label = gtk_label_new_with_mnemonic(_("_Attention!"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
-	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked", 
-		G_CALLBACK(gtk_button_clicked),
-	    g_object_get_data(G_OBJECT(toolbar), "attention"));
+	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked",
+		G_CALLBACK(gtk_button_clicked), wide_attention_button);
 	gtk_widget_show_all(attention_button);
-	
-	g_signal_connect(G_OBJECT(g_object_get_data(G_OBJECT(toolbar), "attention")),
-	        "notify::sensitive",
+
+	g_signal_connect(wide_attention_button, "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
+	g_signal_connect(wide_attention_button, "notify::visible",
+			G_CALLBACK(button_visibility_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
-	gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(toolbar), "attention"),
-		FALSE);
-	
+	gtk_widget_set_sensitive(GTK_WIDGET(wide_attention_button), FALSE);
+
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
 	gtk_widget_show(box);

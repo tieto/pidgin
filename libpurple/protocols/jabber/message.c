@@ -30,7 +30,7 @@
 #include "buddy.h"
 #include "chat.h"
 #include "data.h"
-#include "google.h"
+#include "google/google.h"
 #include "message.h"
 #include "xmlnode.h"
 #include "pep.h"
@@ -296,7 +296,6 @@ static void handle_error(JabberMessage *jm)
 }
 
 static void handle_buzz(JabberMessage *jm) {
-	PurpleBuddy *buddy;
 	PurpleAccount *account;
 
 	/* Delayed buzz MUST NOT be accepted */
@@ -309,7 +308,7 @@ static void handle_buzz(JabberMessage *jm) {
 
 	account = purple_connection_get_account(jm->js->gc);
 
-	if ((buddy = purple_find_buddy(account, jm->from)) == NULL)
+	if (purple_find_buddy(account, jm->from) == NULL)
 		return; /* Do not accept buzzes from unknown people */
 
 	/* xmpp only has 1 attention type, so index is 0 */
@@ -587,8 +586,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->thread_id = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
-				char *msg = xmlnode_to_str(child, NULL);
-				jm->body = purple_strdup_withhtml(msg);
+				char *msg = xmlnode_get_data(child);
+				char *escaped = purple_markup_escape_text(msg, -1);
+				jm->body = purple_strdup_withhtml(escaped);
+				g_free(escaped);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
@@ -1239,14 +1240,19 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
+	JabberStream *js;
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *resource = jabber_get_resource(who);
+	char *resource;	
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	js = purple_connection_get_protocol_data(gc);
+	jb = jabber_buddy_find(js, who, TRUE);
+	if (!jb)
+		return 0;
+
+	resource = jabber_get_resource(who);
 	jbr = jabber_buddy_find_resource(jb, resource);
-
 	g_free(resource);
 
 	/* We know this entity doesn't support chat states */
@@ -1261,7 +1267,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	/* TODO: figure out threading */
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = js;
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);

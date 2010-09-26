@@ -25,6 +25,7 @@
 #include "gntcombobox.h"
 #include "gnttree.h"
 #include "gntmarshal.h"
+#include "gntstyle.h"
 #include "gntutils.h"
 
 #include <string.h>
@@ -149,12 +150,11 @@ static gboolean
 gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
-	if (GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED))
-	{
-		if (text[1] == 0)
-		{
-			switch (text[0])
-			{
+	gboolean showing = !!GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED);
+
+	if (showing) {
+		if (text[1] == 0) {
+			switch (text[0]) {
 				case '\r':
 				case '\t':
 				case '\n':
@@ -165,20 +165,42 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 					return TRUE;
 			}
 		}
-		if (gnt_widget_key_pressed(box->dropdown, text))
-			return TRUE;
 	}
-	else
+
+	if (gnt_widget_key_pressed(box->dropdown, text)) {
+		if (!showing)
+			popup_dropdown(box);
+		return TRUE;
+	}
+
 	{
-		if (text[0] == 27)
-		{
-			if (strcmp(text, GNT_KEY_UP) == 0 ||
-					strcmp(text, GNT_KEY_DOWN) == 0)
-			{
-				popup_dropdown(box);
-				return TRUE;
-			}
-		}
+#define SEARCH_IN_RANGE(start, end) do { \
+		GntTreeRow *row; \
+		for (row = start; row != end; \
+				row = gnt_tree_row_get_next(tree, row)) { \
+			gpointer key = gnt_tree_row_get_key(tree, row); \
+			GList *list = gnt_tree_get_row_text_list(tree, key); \
+			gboolean found = FALSE; \
+			found = (list->data && g_ascii_strncasecmp(text, list->data, len) == 0); \
+			g_list_foreach(list, (GFunc)g_free, NULL); \
+			g_list_free(list); \
+			if (found) { \
+				if (!showing) \
+					popup_dropdown(box); \
+				gnt_tree_set_selected(tree, key); \
+				return TRUE; \
+			} \
+		} \
+} while (0)
+
+		int len = strlen(text);
+		GntTree *tree = GNT_TREE(box->dropdown);
+		GntTreeRow *current = tree->current;
+
+		SEARCH_IN_RANGE(gnt_tree_row_get_next(tree, current), NULL);
+		SEARCH_IN_RANGE(tree->top, current);
+
+#undef SEARCH_IN_RANGE
 	}
 
 	return FALSE;
@@ -229,9 +251,20 @@ gnt_combo_box_size_changed(GntWidget *widget, int oldw, int oldh)
 	gnt_widget_set_size(box->dropdown, widget->priv.width - 1, box->dropdown->priv.height);
 }
 
+static gboolean
+dropdown_menu(GntBindable *b, GList *null)
+{
+	if (GNT_WIDGET_IS_FLAG_SET(GNT_COMBO_BOX(b)->dropdown->parent, GNT_WIDGET_MAPPED))
+		return FALSE;
+	popup_dropdown(GNT_COMBO_BOX(b));
+	return TRUE;
+}
+
 static void
 gnt_combo_box_class_init(GntComboBoxClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
+
 	parent_class = GNT_WIDGET_CLASS(klass);
 
 	parent_class->destroy = gnt_combo_box_destroy;
@@ -245,7 +278,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 	widget_lost_focus = parent_class->lost_focus;
 	parent_class->lost_focus = gnt_combo_box_lost_focus;
 
-	signals[SIG_SELECTION_CHANGED] = 
+	signals[SIG_SELECTION_CHANGED] =
 		g_signal_new("selection-changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -253,6 +286,12 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
+
+	gnt_bindable_class_register_action(bindable, "dropdown", dropdown_menu,
+			GNT_KEY_DOWN, NULL);
+	gnt_bindable_register_binding(bindable, "dropdown", GNT_KEY_UP, NULL);
+
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 
 	GNTDEBUG;
 }
@@ -272,7 +311,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER | GNT_WIDGET_TRANSIENT);
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), combo->dropdown);
-	
+
 	widget->priv.minw = 4;
 	widget->priv.minh = 3;
 	GNTDEBUG;

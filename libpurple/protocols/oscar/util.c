@@ -107,91 +107,6 @@ gchar *oscar_get_clientstring(void)
 	return g_strdup_printf("%s/%s", name, version);;
 }
 
-/*
- * Tokenizing functions.  Used to portably replace strtok/sep.
- *   -- DMP.
- *
- */
-/* TODO: Get rid of this and use glib functions */
-int
-aimutil_tokslen(char *toSearch, int theindex, char dl)
-{
-	int curCount = 1;
-	char *next;
-	char *last;
-	int toReturn;
-
-	last = toSearch;
-	next = strchr(toSearch, dl);
-
-	while(curCount < theindex && next != NULL) {
-		curCount++;
-		last = next + 1;
-		next = strchr(last, dl);
-	}
-
-	if ((curCount < theindex) || (next == NULL))
-		toReturn = strlen(toSearch) - (curCount - 1);
-	else
-		toReturn = next - toSearch - (curCount - 1);
-
-	return toReturn;
-}
-
-int
-aimutil_itemcnt(char *toSearch, char dl)
-{
-	int curCount;
-	char *next;
-
-	curCount = 1;
-
-	next = strchr(toSearch, dl);
-
-	while(next != NULL) {
-		curCount++;
-		next = strchr(next + 1, dl);
-	}
-
-	return curCount;
-}
-
-char *
-aimutil_itemindex(char *toSearch, int theindex, char dl)
-{
-	int curCount;
-	char *next;
-	char *last;
-	char *toReturn;
-
-	curCount = 0;
-
-	last = toSearch;
-	next = strchr(toSearch, dl);
-
-	while (curCount < theindex && next != NULL) {
-		curCount++;
-		last = next + 1;
-		next = strchr(last, dl);
-	}
-	next = strchr(last, dl);
-
-	if (curCount < theindex) {
-		toReturn = g_malloc(sizeof(char));
-		*toReturn = '\0';
-	} else {
-		if (next == NULL) {
-			toReturn = g_malloc((strlen(last) + 1) * sizeof(char));
-			strcpy(toReturn, last);
-		} else {
-			toReturn = g_malloc((next - last + 1) * sizeof(char));
-			memcpy(toReturn, last, (next - last));
-			toReturn[next - last] = '\0';
-		}
-	}
-	return toReturn;
-}
-
 /**
  * Calculate the checksum of a given icon.
  */
@@ -392,22 +307,20 @@ gchar *
 oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message)
 {
 	GSList *cur;
-	gchar *result, *tmp;
+	GString *result;
 	if (!buddies) {
 		return g_strdup_printf("<i>%s</i>", no_buddies_message);
 	}
-	result = g_strdup("");
+	result = g_string_new("");
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy = cur->data;
 		const gchar *bname = purple_buddy_get_name(buddy);
 		const gchar *alias = purple_buddy_get_alias_only(buddy);
+		g_string_append(result, bname);
 		if (alias) {
-			tmp = g_strdup_printf("%s%s (%s)<br>", result, bname, alias);
-		} else {
-			tmp = g_strdup_printf("%s%s<br>", result, bname);
+			g_string_append_printf(result, " (%s)", alias);
 		}
-		g_free(result);
-		result = tmp;
+		g_string_append(result, "<br>");
 	}
-	return result;
+	return g_string_free(result, FALSE);
 }

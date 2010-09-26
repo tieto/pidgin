@@ -43,7 +43,6 @@
 #include "network.h"
 
 #include "resource.h"
-#include "idletrack.h"
 #include "zlib.h"
 #include "untar.h"
 
@@ -52,7 +51,9 @@
 #include "gtkconv.h"
 #include "gtkconn.h"
 #include "util.h"
+#ifdef USE_GTKSPELL
 #include "wspell.h"
+#endif
 
 /*
  *  GLOBALS
@@ -377,15 +378,19 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 
 void winpidgin_init(HINSTANCE hint) {
 	FARPROC proc;
+	gchar *exchndl_dll_path;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
 	exe_hInstance = hint;
 
-	proc = wpurple_find_and_loadproc("exchndl.dll", "SetLogFile");
+	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	proc = wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
+	g_free(exchndl_dll_path);
+	exchndl_dll_path = NULL;
 	if (proc) {
 		gchar *debug_dir, *locale_debug_dir;
-		
+
 		debug_dir = g_build_filename(purple_user_dir(), "pidgin.RPT", NULL);
 		locale_debug_dir = g_locale_from_utf8(debug_dir, -1, NULL, NULL, NULL);
 
@@ -397,11 +402,9 @@ void winpidgin_init(HINSTANCE hint) {
 		g_free(locale_debug_dir);
 	}
 
-	/* IdleTracker Initialization */
-	if(!winpidgin_set_idlehooks())
-		purple_debug_error("winpidgin", "Failed to initialize idle tracker\n");
-
+#ifdef USE_GTKSPELL
 	winpidgin_spell_init();
+#endif
 	purple_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
@@ -428,9 +431,6 @@ void winpidgin_cleanup(void) {
 
 	if(messagewin_hwnd)
 		DestroyWindow(messagewin_hwnd);
-
-	/* Idle tracker cleanup */
-	winpidgin_remove_idlehooks();
 
 }
 
@@ -535,5 +535,18 @@ void winpidgin_ensure_onscreen(GtkWidget *win) {
 				   (winR.right - winR.left),
 				   (winR.bottom - winR.top), TRUE);
 	}
+
+}
+
+DWORD winpidgin_get_lastactive() {
+	DWORD result = 0;
+
+	LASTINPUTINFO lii;
+	memset(&lii, 0, sizeof(lii));
+	lii.cbSize = sizeof(lii);
+	if (GetLastInputInfo(&lii))
+		result = lii.dwTime;
+
+	return result;
 }
 

@@ -145,7 +145,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 					if (alias != NULL) {
 						serv_got_alias(gc, yid, alias);
 						purple_debug_info("yahoo", "Fetched alias '%s' (%s)\n", alias, id);
-					} else if (buddy_alias != NULL && strcmp(buddy_alias, "") != 0) {
+					} else if (buddy_alias && *buddy_alias && !g_str_equal(buddy_alias, yid)) {
 					/* Or if we have an alias that Yahoo doesn't, send it up */
 						yahoo_update_alias(gc, yid, buddy_alias);
 						purple_debug_info("yahoo", "Sent updated alias '%s'\n", buddy_alias);

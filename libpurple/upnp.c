@@ -403,6 +403,11 @@ upnp_parse_description_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		lookup_internal_ip();
 	}
 
+	if (dd->inpa > 0)
+		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
+
 	g_free(dd);
 }
 
@@ -506,6 +511,8 @@ purple_upnp_discover_timeout(gpointer data)
 
 	if (dd->inpa)
 		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
 	dd->inpa = 0;
 	dd->tima = 0;
 
@@ -610,7 +617,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 
 	/* We have already done all our retries. Make sure that the callback
 	 * doesn't get called before the original function returns */
-	purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+	dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 }
 
 void
@@ -647,7 +654,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In sock creation\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -659,7 +666,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In gethostbyname\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 

@@ -115,7 +115,6 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	AvahiStringList *l;
 	size_t size;
 	char *key, *value;
-	int ret;
 	char ip[AVAHI_ADDRESS_STR_MAX];
 	AvahiBuddyImplData *b_impl;
 	AvahiSvcResolverData *rd;
@@ -189,12 +188,14 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 					bb->ips = g_slist_remove(bb->ips, rd->ip);
 					g_free((gchar *) rd->ip);
 				}
-				rd->ip = g_strdup(ip);
 				/* IPv6 goes at the front of the list and IPv4 at the end so that we "prefer" IPv6, if present */
-				if (protocol == AVAHI_PROTO_INET6)
+				if (protocol == AVAHI_PROTO_INET6) {
+					rd->ip = g_strdup_printf("%s%%%d", ip, interface);
 					bb->ips = g_slist_prepend(bb->ips, (gchar *) rd->ip);
-				else
+				} else {
+					rd->ip = g_strdup(ip);
 					bb->ips = g_slist_append(bb->ips, (gchar *) rd->ip);
+				}
 			}
 
 			bb->port_p2pj = port;
@@ -202,7 +203,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			/* Obtain the parameters from the text_record */
 			clear_bonjour_buddy_values(bb);
 			for(l = txt; l != NULL; l = l->next) {
-				if ((ret = avahi_string_list_get_pair(l, &key, &value, &size)) < 0)
+				if (avahi_string_list_get_pair(l, &key, &value, &size) < 0)
 					continue;
 				set_bonjour_buddy_value(bb, key, value, size);
 				/* TODO: Since we're using the glib allocator, I think we

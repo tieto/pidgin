@@ -98,6 +98,7 @@ struct _PurpleNetworkListenData {
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
+	int timer;
 };
 
 #ifdef HAVE_NETWORKMANAGER
@@ -373,6 +374,7 @@ purple_network_finish_pmp_map_cb(gpointer data)
 	gint *value = g_new(gint, 1);
 
 	listen_data = data;
+	listen_data->timer = 0;
 
 	/* add port mapping to hash table */
 	*key = purple_network_get_port_from_fd(listen_data->listenfd);
@@ -504,7 +506,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
 		/* The pmp_map_cb does what we want to do */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	else if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
@@ -512,7 +514,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	{
 		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n", actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	else
 	{
@@ -583,6 +585,9 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
 		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
+
+	if (listen_data->timer > 0)
+		purple_timeout_remove(listen_data->timer);
 
 	g_free(listen_data);
 }
@@ -688,7 +693,7 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 
 static gboolean _print_debug_msg(gpointer data) {
 	gchar *msg = data;
-	purple_debug_warning("network", msg);
+	purple_debug_warning("network", "%s", msg);
 	g_free(msg);
 	return FALSE;
 }
@@ -1072,12 +1077,10 @@ purple_network_remove_port_mapping(gint fd)
 
 	if (protocol) {
 		purple_network_upnp_mapping_remove(&port, protocol, NULL);
-		g_hash_table_remove(upnp_port_mappings, protocol);
 	} else {
 		protocol = g_hash_table_lookup(nat_pmp_port_mappings, &port);
 		if (protocol) {
 			purple_network_nat_pmp_mapping_remove(&port, protocol, NULL);
-			g_hash_table_remove(nat_pmp_port_mappings, protocol);
 		}
 	}
 }
