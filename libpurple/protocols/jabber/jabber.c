@@ -241,7 +241,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 		return TRUE;
 	} else { 
-		purple_debug_warning("jabber", "No TLS/SSL support found.");
+		purple_debug_warning("jabber", "No libpurple TLS/SSL support found.");
 	}
 #endif
 
