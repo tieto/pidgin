@@ -220,11 +220,30 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 	account = purple_connection_get_account(js->gc);
 
+#if 0
+	/*
+	 * This code DOES NOT EXIST, will never be enabled by default, and
+	 * will never ever be supported (by me).
+	 * It's literally *only* for developer testing.
+	 */
+	{
+		const gchar *connection_security = purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
+		if (!g_str_equal(connection_security, "none") &&
+				purple_ssl_is_supported()) {
+			jabber_send_raw(js,
+					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+			return TRUE;
+		}
+	}
+#else
 	if(purple_ssl_is_supported()) {
 		jabber_send_raw(js,
 				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 		return TRUE;
+	} else { 
+		purple_debug_warning("jabber", "No TLS/SSL support found.");
 	}
+#endif
 
 	starttls = xmlnode_get_child(packet, "starttls");
 	if(xmlnode_get_child(starttls, "required")) {
