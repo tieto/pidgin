@@ -9,7 +9,7 @@ version 2.7.4 (MM/DD/YYYY):
 	libpurple:
 	* Fall back to an ordinary request if a UI does not support showing a
 	  request with an icon.  Fixes receiving MSN file transfer requests
-	  including a thumbnail in Finch.
+	  including a thumbnail in Finch. (#12561)
 	* Fix an invalid memory access when removing UPnP mappings that could
 	  cause sporadic crashes, most notably when MSN Direct Connections are
 	  enabled. (#12387)
