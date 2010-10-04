@@ -265,8 +265,8 @@ bonjour_dns_sd_set_jid(PurpleAccount *account, const char *hostname)
 	 * That is what this is intended to deal with.
 	 */
 	if ((tmp = strchr(account_name, '@'))
-	    && strstr(account_name, hostname) == ++tmp
-	    && *(tmp + strlen(hostname)) == '\0')
+	    && strstr(tmp, hostname) == (tmp + 1)
+	    && *((tmp + 1) + strlen(hostname)) == '\0')
 		bd->jid = g_strdup(account_name);
 	else {
 		const char *tmp2;
