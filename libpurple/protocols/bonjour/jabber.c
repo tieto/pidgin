@@ -774,6 +774,10 @@ bonjour_jabber_start(BonjourJabber *jdata)
 #ifdef PF_INET6
 	if (jdata->socket6 != -1) {
 		struct sockaddr_in6 addr6;
+#ifdef IPV6_V6ONLY
+		int on = 1;
+		setsockopt(jdata->socket6, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on));
+#endif
 	        memset(&addr6, 0, sizeof(addr6));
 		addr6.sin6_family = AF_INET6;
 		addr6.sin6_port = htons(jdata->port);
