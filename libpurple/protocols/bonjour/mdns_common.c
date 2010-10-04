@@ -252,3 +252,36 @@ gboolean bonjour_dns_sd_start(BonjourDnsSd *data) {
 void bonjour_dns_sd_stop(BonjourDnsSd *data) {
 	_mdns_stop(data);
 }
+
+void
+bonjour_dns_sd_set_jid(PurpleAccount *account, const char *hostname)
+{
+	PurpleConnection *conn = purple_account_get_connection(account);
+	BonjourData *bd = conn->proto_data;
+	const char *tmp, *account_name = purple_account_get_username(account);
+
+	/* Previously we allowed the hostname part of the jid to be set
+	 * explicitly when it should always be the current hostname.
+	 * That is what this is intended to deal with.
+	 */
+	if ((tmp = strchr(account_name, '@'))
+	    && strstr(account_name, hostname) == ++tmp
+	    && *(tmp + strlen(hostname)) == '\0')
+		bd->jid = g_strdup(account_name);
+	else {
+		const char *tmp2;
+		GString *str = g_string_new("");
+		/* Escape an '@' in the account name */
+		tmp = account_name;
+		while ((tmp2 = strchr(tmp, '@')) != NULL) {
+			g_string_append_len(str, tmp, tmp2 - tmp);
+			g_string_append(str, "\\40");
+			tmp = tmp2 + 1;
+		}
+		g_string_append(str, tmp);
+		g_string_append_c(str, '@');
+		g_string_append(str, hostname);
+
+		bd->jid = g_string_free(str, FALSE);
+	}
+}

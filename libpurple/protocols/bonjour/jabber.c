@@ -425,7 +425,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 			bonjour_jabber_close_conversation(bconv);
 			if (bconv->pb != NULL) {
 				BonjourBuddy *bb = purple_buddy_get_protocol_data(bconv->pb);
-				
+
 				if(bb != NULL)
 					bb->conversation = NULL;
 			}
@@ -534,7 +534,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 	if (bname == NULL)
 		bname = "";
 
-	stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(bconv->account), bname);
+	stream_start = g_strdup_printf(DOCTYPE, bonjour_get_jid(bconv->account), bname);
 	len = strlen(stream_start);
 
 	bconv->sent_stream_start = PARTIALLY_SENT;
@@ -1044,7 +1044,7 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 
 	message_node = xmlnode_new("message");
 	xmlnode_set_attrib(message_node, "to", bb->name);
-	xmlnode_set_attrib(message_node, "from", purple_account_get_username(jdata->account));
+	xmlnode_set_attrib(message_node, "from", bonjour_get_jid(jdata->account));
 	xmlnode_set_attrib(message_node, "type", "chat");
 
 	/* Enclose the message from the UI within a "font" node */
@@ -1259,7 +1259,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		const gchar *name = purple_buddy_get_name(pb);
-		const gchar *username = purple_account_get_username(acc);
+		const gchar *username = bonjour_get_jid(acc);
 
 		if(!purple_utf8_strcasecmp(name, (char *)l->data)) {
 			purple_debug_info("bonjour", "%s has been blocked by %s.\n", name, username);

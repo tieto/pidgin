@@ -26,6 +26,7 @@
 #include "mdns_interface.h"
 #include "dns_sd_proxy.h"
 #include "mdns_common.h"
+#include "bonjour.h"
 
 static GSList *pending_buddies = NULL;
 
@@ -326,7 +327,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		purple_debug_error("bonjour", "service browser - callback error (%d)\n", errorCode);
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
+		if (purple_utf8_strcasecmp(serviceName, bonjour_get_jid(account)) != 0) {
 			DNSServiceErrorType resErrorCode;
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
@@ -454,6 +455,9 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 gboolean _mdns_init_session(BonjourDnsSd *data) {
 	data->mdns_impl_data = g_new0(Win32SessionImplData, 1);
+
+	bonjour_dns_sd_set_jid(data->account, purple_get_host_name());
+
 	return TRUE;
 }
 
@@ -486,7 +490,7 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 			case PUBLISH_START:
 				purple_debug_info("bonjour", "Registering presence on port %d\n", data->port_p2pj);
 				errorCode = DNSServiceRegister(&presence_sr, kDNSServiceInterfaceIndexAny,
-					0, purple_account_get_username(data->account), LINK_LOCAL_RECORD_NAME,
+					0, bonjour_get_jid(data->account), LINK_LOCAL_RECORD_NAME,
 					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
