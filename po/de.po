@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-02 19:45+0200\n"
-"PO-Revision-Date: 2010-09-06 10:01+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
-"Language-Team: Deutsch <de@li.org>\n"
+"POT-Creation-Date: 2010-10-04 20:42+0200\n"
+"PO-Revision-Date: 2010-10-04 20:42+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
@@ -534,7 +534,6 @@ msgstr "Bestätigung des Löschens des Zertifikats"
 msgid "Certificate Manager"
 msgstr "Zertifikat-Manager"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Rechnername"
 
@@ -1710,9 +1709,12 @@ msgstr ""
 "Das Zertifikat ist nicht mehr gültig.  Überprüfen Sie, ob Datum und Zeit "
 "Ihres Computers stimmen."
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
-"Das Zertifikat ist abgelaufen und sollte nicht als gültig angesehen werden."
+"Das Zertifikat ist abgelaufen und sollte nicht mehr als gültig betrachtet "
+"werden.  Überprüfen Sie, ob Datum und Zeit Ihres Computers stimmen."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4723,9 +4725,9 @@ msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|participant|visitor|none&gt; [Spitzname1] [Spitzname2] ...: "
-"Benutzer mit einer Rolle für den Raum erfragen oder Benutzern eine Rolle "
-"zuweisen."
+"role &lt;moderator|participant|visitor|none&gt; [Spitzname1] "
+"[Spitzname2] ...: Benutzer mit einer Rolle für den Raum erfragen oder "
+"Benutzern eine Rolle zuweisen."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
@@ -6807,8 +6809,8 @@ msgstr "Anmeldung nicht möglich: %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Kann die Nachricht nicht senden. Kann die Details vom Benutzer nicht holen (%"
-"s)."
+"Kann die Nachricht nicht senden. Kann die Details vom Benutzer nicht holen "
+"(%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -6826,8 +6828,8 @@ msgstr "Kann den Benutzer nicht einladen (%s)."
 #, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
-"Kann die Nachricht nicht an %s senden. Kann die Konferenz nicht erstellen (%"
-"s)."
+"Kann die Nachricht nicht an %s senden. Kann die Konferenz nicht erstellen "
+"(%s)."
 
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
@@ -8311,8 +8313,8 @@ msgstr "Dem Qun %u, moderiert von admin %u, konnte nicht beigetreten werden"
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
 msgstr ""
-"<b>Das Betreten des Qun %u wurde vom Admin bestätigt wegen by admin %u for %"
-"s</b>"
+"<b>Das Betreten des Qun %u wurde vom Admin bestätigt wegen by admin %u for "
+"%s</b>"
 
 #, c-format
 msgid "<b>Removed buddy %u.</b>"
@@ -10932,29 +10934,24 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 "Die Verbindung wurde von einer anderen Software auf Ihrem Computer "
 "unterbrochen."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Der entfernte Host hat die Verbindung beendet."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Verbindungsabbruch wegen Zeitüberschreitung."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Verbindung abgelehnt."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adresse wird bereits benutzt."
 
@@ -12400,8 +12397,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s ist ein Nachrichtendienst, basierend auf libpurple, der die Verbindung zu "
 "mehreren Nachrichtendiensten gleichzeitig unterstützt.  %s wird in C "
@@ -12973,16 +12970,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Wollen Sie wirklich den Mitschnitt der Unterhaltung in %s, gestartet am %s, "
 "permanent löschen?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Wollen Sie wirklich den Systemmitschnitt, gestartet am %s, permanent löschen?"
 
@@ -13537,6 +13534,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Desktop-Standard"
 
@@ -13554,6 +13556,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Manuell"
@@ -15338,13 +15348,13 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Fehler beim Installieren der Rechtschreibkontrolle ($R3).$\\rFalls ein "
 "erneuter Versuch fehlschlägt, finden Sie Anweisungen zur manuellen "
-"Installation unter: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"Installation unter: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
