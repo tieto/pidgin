@@ -62,6 +62,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  solves deadlocks when a given Yahoo account has a ridiculously large
 	  (>500 buddies) list and may improve login speed for those on slow
 	  connections. (#12532)
+	* Fix sending SMS messages.  The lookup host changed on us.  (Thanks to
+	  todo) (#12688).
 
 version 2.7.3 (08/10/2010):
 	General:
