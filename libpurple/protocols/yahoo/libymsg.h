@@ -64,7 +64,7 @@
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
-#define YAHOO_SMS_CARRIER_URL "http://lookup.msg.vip.mud.yahoo.com"
+#define YAHOO_SMS_CARRIER_URL "http://validate.msg.yahoo.com"
 
 #define YAHOO_USERINFO_URL "http://address.yahoo.com/yab/us?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
 #define YAHOOJP_USERINFO_URL "http://address.yahoo.co.jp/yab/jp?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
