@@ -84,7 +84,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	if (filelen > QQ_MAX_FILE_MD5_LENGTH)
 		filelen = QQ_MAX_FILE_MD5_LENGTH;
 
-	fp = fopen(filename, "rb");
+	fp = g_fopen(filename, "rb");
 	g_return_if_fail(fp != NULL);
 
 	buffer = g_newa(guint8, filelen);
@@ -202,7 +202,7 @@ void qq_xfer_close_file(PurpleXfer *xfer)
 static int _qq_xfer_open_file(const gchar *filename, const gchar *method, PurpleXfer *xfer)
 {
 	ft_info *info = xfer->data;
-	info->dest_fp = fopen(purple_xfer_get_local_filename(xfer), method);
+	info->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), method);
 	if (info->dest_fp == NULL) {
 		return -1;
 	}
