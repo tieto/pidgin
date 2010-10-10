@@ -5,6 +5,7 @@ CERTIFICATES = \
 		Entrust.net_Secure_Server_CA.pem \
 		Equifax_Secure_CA.pem \
 		Equifax_Secure_Global_eBusiness_CA-1.pem \
+		Go_Daddy_Class_2_CA.pem \
 		GTE_CyberTrust_Global_Root.pem \
 		StartCom_Certification_Authority.pem \
 		StartCom_Free_SSL_CA.pem \

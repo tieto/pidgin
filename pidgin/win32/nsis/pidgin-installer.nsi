@@ -537,6 +537,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\Entrust.net_Secure_Server_CA.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_Global_eBusiness_CA-1.pem"
+    Delete "$INSTDIR\ca-certs\Go_Daddy_Class_2_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Internet_Authority.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
