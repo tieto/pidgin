@@ -968,6 +968,11 @@ jabber_stream_new(PurpleAccount *account)
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 
+	/* This is overridden during binding, but we need it here
+	 * in case the server only does legacy non-sasl auth!.
+	 */
+	purple_connection_set_display_name(gc, user);
+
 	js->user_jb = jabber_buddy_find(js, user, TRUE);
 	g_free(user);
 	if (!js->user_jb) {
