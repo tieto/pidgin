@@ -58,6 +58,8 @@ version 2.7.4 (MM/DD/YYYY):
 	  is "gmail.com" or "googlemail.com" (it's also needed for Google
 	  Talk used for accounts on arbitrary domains not using Google Apps
 	  for Your Domain). (#a14153)
+	* Improved handling of adding oneself to your buddy list when using
+	  Non-SASL (legacy) authentication. (#12499)
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
