@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-15 21:49+0200\n"
-"PO-Revision-Date: 2010-08-15 21:48+0200\n"
+"POT-Creation-Date: 2010-10-10 12:41+0200\n"
+"PO-Revision-Date: 2010-10-10 12:33+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
@@ -531,7 +531,6 @@ msgstr "Tanúsítványtörlés megerősítése"
 msgid "Certificate Manager"
 msgstr "Tanúsítványkezelő"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Gépnév"
 
@@ -1694,8 +1693,12 @@ msgstr ""
 "A tanúsítvány még nem érvényes. Ellenőrizze a számítógép dátumának és "
 "idejének pontosságát."
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "A tanúsítvány lejárt és nem tekinthető érvényesnek."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr ""
+"A tanúsítvány lejárt és nem tekinthető érvényesnek. Ellenőrizze a számítógép "
+"dátumának és idejének pontosságát."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4736,11 +4739,17 @@ msgstr "XMPP protokollbővítmény"
 msgid "Domain"
 msgstr "Tartomány"
 
-msgid "Require SSL/TLS"
-msgstr "SSL/TLS megkövetelése"
+msgid "Require encryption"
+msgstr "Titkosítás megkövetelése"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Régi (5223 port) SSL kényszerítése"
+msgid "Use encryption if available"
+msgstr "Titkosítás használata, ha elérhető"
+
+msgid "Use old-style SSL"
+msgstr "Régi stílusú SSL használata"
+
+msgid "Connection security"
+msgstr "Kapcsolat biztonsága"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Egyszerű szöveges hitelesítés engedélyezése nem titkosított folyamokon"
@@ -8015,8 +8024,8 @@ msgid "Your request was rejected."
 msgstr "A kérés visszautasítva."
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u ellenőrzést igényel"
+msgid "%u requires verification: %s"
+msgstr "%u ellenőrzést igényel: %s"
 
 msgid "Add buddy question"
 msgstr "Partnerkérdés felvétele"
@@ -10818,27 +10827,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "A kapcsolódást megszakította a számítógép egy másik szoftvere."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "A távoli gép lezárta a kapcsolatot."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "A kapcsolat túllépte az időkorlátot."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Kapcsolat visszautasítva."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "A cím már használatban van."
 
@@ -11249,6 +11253,8 @@ msgstr "Üzenet (elhagyható)"
 msgid "Edit User Mood"
 msgstr "Felhasználói hangulat szerkesztése"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Partnerek"
@@ -13364,6 +13370,9 @@ msgstr "Továbbító kiszolgáló (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN kiszolgáló:"
 
+msgid "_UDP Port:"
+msgstr "_UDP port:"
+
 msgid "Use_rname:"
 msgstr "_Felhasználónév:"
 
@@ -13385,6 +13394,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Asztali környezet alapértelmezése"
 
@@ -13402,6 +13416,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Egyéni"
@@ -13942,7 +13964,7 @@ msgstr "nincs"
 msgid "Small"
 msgstr "Kicsi"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "Az alapértelmezett hangulatjelek kisebb változatai"
 
 msgid "Response Probability:"
@@ -14980,6 +15002,9 @@ msgstr "_Eszköz"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "Hang/videobeállítások"
+
+msgid "Voice and Video Settings"
+msgstr "Hang- és videobeállítások"
 
 #. *< name
 #. *< version
