@@ -5,6 +5,8 @@ version 2.7.4 (MM/DD/YYYY):
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
 	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
 	  (#12049)
+	* Add Deutsche Telekom, Thawte Primary, and Go Daddy Class 2 root CAs
+	  (#12667, #12668, and #12594)
 
 	libpurple:
 	* Fall back to an ordinary request if a UI does not support showing a
