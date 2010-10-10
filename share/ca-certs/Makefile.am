@@ -2,6 +2,7 @@ CERTIFICATES = \
 		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
+		Deutsche_Telekom_Root_CA_2.pem \
 		Entrust.net_Secure_Server_CA.pem \
 		Equifax_Secure_CA.pem \
 		Equifax_Secure_Global_eBusiness_CA-1.pem \
@@ -10,6 +11,7 @@ CERTIFICATES = \
 		StartCom_Certification_Authority.pem \
 		StartCom_Free_SSL_CA.pem \
 		Thawte_Premium_Server_CA.pem \
+		Thawte_Primary_Root_CA.pem \
 		ValiCert_Class_2_VA.pem \
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem \
