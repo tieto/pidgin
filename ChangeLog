@@ -69,6 +69,10 @@ version 2.7.4 (MM/DD/YYYY):
 	* Fix sending SMS messages.  The lookup host changed on us.  (Thanks to
 	  todo) (#12688).
 
+	Windows:
+	* Bonjour support now requires Apple Bonjour Print Services version
+	  2.0.0 or newer (http://support.apple.com/kb/dl999).
+
 version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose
