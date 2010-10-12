@@ -104,7 +104,6 @@ idle_all_action_ok(void *ignored, PurpleRequestFields *fields)
 	PurpleAccount *acct = NULL;
 	GList *list, *iter;
 	int tm = purple_request_fields_get_integer(fields, "mins");
-	const char *prpl_id = NULL;
 
 	list = purple_accounts_get_all_active();
 	for(iter = list; iter; iter = iter->next) {
