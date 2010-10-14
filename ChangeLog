@@ -60,6 +60,9 @@ version 2.7.4 (MM/DD/YYYY):
 	  for Your Domain). (#a14153)
 	* Improved handling of adding oneself to your buddy list when using
 	  Non-SASL (legacy) authentication. (#12499)
+	* Generate a connection error instead of just stalling when the
+	  _xmppconnect TXT record returns results, but none of them result
+	  in a valid BOSH URI. (#a14367, #12744)
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This

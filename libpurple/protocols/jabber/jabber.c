@@ -762,17 +762,9 @@ static void
 txt_resolved_cb(GList *responses, gpointer data)
 {
 	JabberStream *js = data;
+	gboolean found = FALSE;
 
 	js->srv_query_data = NULL;
-
-	if (responses == NULL) {
-		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
-				  "methods after failing to connect directly.\n");
-		purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to connect"));
-		return;
-	}
 
 	while (responses) {
 		PurpleTxtResponse *resp = responses->data;
@@ -790,9 +782,17 @@ txt_resolved_cb(GList *responses, gpointer data)
 	}
 
 	if (js->bosh) {
+		found = TRUE;
 		jabber_bosh_connection_connect(js->bosh);
-	} else {
-		purple_debug_info("jabber","Didn't find an alternative connection method.\n");
+	}
+
+	if (!found) {
+		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
+				  "methods after failing to connect directly.\n");
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to connect"));
+		return;
 	}
 
 	if (responses) {
