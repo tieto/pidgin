@@ -30,6 +30,7 @@ $lang{'be@latin'} = "Belarusian (Latin)";
 $lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
+$lang{mai} = "Maithili";
 $lang{ms_MY} = "Malay";
 $lang{my_MM} = "Burmese (Myanmar)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
