@@ -317,7 +317,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 			if (pair->value) {
 				decoded = purple_base64_decode(pair->value, &len);
-				if (len) {
+				if (decoded && len > 0) {
 					tmp = purple_str_binary_to_ascii(decoded, len);
 					purple_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
 					g_free(tmp);
@@ -2863,15 +2863,17 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (base64) {
 		guint32 ip;
 		YahooFriend *f;
-		char *host_ip;
+		char *host_ip, *tmp;
 		struct yahoo_p2p_data *p2p_data;
 
 		decoded = purple_base64_decode(base64, &len);
-		if (len) {
-			char *tmp = purple_str_binary_to_ascii(decoded, len);
-			purple_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
-			g_free(tmp);
+		if (decoded == NULL) {
+			purple_debug_info("yahoo","p2p: Unable to decode base64 IP (%s) \n", base64);
+			return;
 		}
+		tmp = purple_str_binary_to_ascii(decoded, len);
+		purple_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
+		g_free(tmp);
 
 		ip = strtol((gchar *)decoded, NULL, 10);
 		g_free(decoded);

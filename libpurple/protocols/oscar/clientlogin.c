@@ -272,7 +272,7 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 	char *tls_certname = NULL;
 	unsigned short port;
 	guint8 *cookiedata;
-	gsize cookiedata_len;
+	gsize cookiedata_len = 0;
 
 	od = user_data;
 	gc = od->gc;
