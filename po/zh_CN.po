@@ -1,5 +1,5 @@
 # Pidgin 软件包的简体中文翻译。
-# Copyright (C) 2009, 2010 pidgin team.
+# Copyright (C) 2009, 2010 Free Software Foundation, Inc.
 # This file is distributed under the same license as the pidgin package.
 # Funda Wang <fundawang@linux.net.cn>, 2003, 2004.
 # Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 02:13-0400\n"
-"PO-Revision-Date: 2010-07-19 19:31+0800\n"
+"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"PO-Revision-Date: 2010-10-10 16:18+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -519,7 +519,6 @@ msgstr "确认删除证书"
 msgid "Certificate Manager"
 msgstr "证书管理器"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "主机名"
 
@@ -1647,8 +1646,10 @@ msgid ""
 "are accurate."
 msgstr "证书无效，请检查您计算机的日期和时间。"
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "此证书已过期，故不被认为有效。"
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr "证书已过期，故被视作无效，请检查您计算机的日期和时间。"
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -1870,7 +1871,7 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "解析器进程在应答请求前退出"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error converting %s to punycode: %d"
 msgstr "转换 %s 为微代码时出错：%d"
 
@@ -4151,7 +4152,7 @@ msgid "Re-initializing Stream"
 msgstr "重新初始化流"
 
 msgid "Server doesn't support blocking"
-msgstr ""
+msgstr "服务器不支持屏蔽"
 
 msgid "Not Authorized"
 msgstr "未认证"
@@ -4444,7 +4445,7 @@ msgstr ""
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
-msgstr ""
+msgstr "屏幕震动"
 
 #, c-format
 msgid "%s has buzzed you!"
@@ -4556,11 +4557,17 @@ msgstr "XMPP 协议插件"
 msgid "Domain"
 msgstr "域"
 
-msgid "Require SSL/TLS"
-msgstr "需要 SSL/TLS"
+msgid "Require encryption"
+msgstr "需要加密"
 
-msgid "Force old (port 5223) SSL"
-msgstr "强制旧 SSL(5223 端口)"
+msgid "Use encryption if available"
+msgstr "可能时使用加密"
+
+msgid "Use old-style SSL"
+msgstr "使用老式 SSL"
+
+msgid "Connection security"
+msgstr "连接安全性"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "允许在不加密流上的纯文本验证"
@@ -5269,7 +5276,7 @@ msgid "Send a mobile message."
 msgstr "发送移动消息。"
 
 msgid "Page"
-msgstr ""
+msgstr "页面"
 
 msgid "Playing a game"
 msgstr "正在玩游戏"
@@ -5326,7 +5333,7 @@ msgid "Allow/Disallow Mobile Pages..."
 msgstr "允许/禁止移动寻呼..."
 
 msgid "View Blocked Text..."
-msgstr ""
+msgstr "查看被屏蔽文本..."
 
 msgid "Open Hotmail Inbox"
 msgstr "打开 Hotmail 收件箱"
@@ -5719,8 +5726,8 @@ msgstr "PIN 无效，它应当只包含数字 [0-9]。"
 msgid "The two PINs you entered do not match."
 msgstr "两次输入的 PIN 不相同。"
 
-msgid "The name you entered is invalid."
-msgstr "您输入的姓名密钥无效。"
+msgid "The Display Name you entered is invalid."
+msgstr "您输入的姓名无效。"
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5740,9 +5747,8 @@ msgstr "个人资料"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "尚未检索到您的个人资料信息，请稍后重试。"
 
-#, fuzzy
 msgid "Your UID"
-msgstr "您的 MXitID"
+msgstr "您的 UID"
 
 #. pin
 #. pin (required)
@@ -5810,16 +5816,12 @@ msgstr "无法连接到 MXit 服务器。请检查您的服务器设置。"
 msgid "Connecting..."
 msgstr "正在连接..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "您输入的姓名密钥无效。"
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "您输入的 PIN 长度无效 [7-10]。"
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5897,9 +5899,8 @@ msgstr "拒绝消息"
 msgid "Hidden Number"
 msgstr "隐藏号码"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "您的 MXitID"
+msgstr "您的 MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5923,13 +5924,11 @@ msgid "_Room Name:"
 msgstr "聊天室名称(_R)："
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "来邮件了！"
+msgstr "您已邀请"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "在线"
+msgstr "最后在线"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6693,19 +6692,19 @@ msgid "Cannot send SMS to unknown country"
 msgstr "无法向未知国家发送短信息"
 
 msgid "Bot accounts cannot initiate IMs"
-msgstr ""
+msgstr "机器人帐号无法初始化聊天"
 
 msgid "Bot account cannot IM this user"
-msgstr ""
+msgstr "机器人帐号无法与此用户聊天"
 
 msgid "Bot account reached IM limit"
-msgstr ""
+msgstr "机器人帐号达到了聊天限制"
 
 msgid "Bot account reached daily IM limit"
-msgstr ""
+msgstr "机器人帐号达到了每日聊天限制"
 
 msgid "Bot account reached monthly IM limit"
-msgstr ""
+msgstr "机器人帐号达到了每月聊天限制"
 
 msgid "Unable to receive offline messages"
 msgstr "无法接收离线消息"
@@ -6877,91 +6876,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(接收此信息出错。可能是您与 %s 设置了不同的编码，或者 %s 的客户端有程序错"
-"误。)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "用户头像"
-
-msgid "Voice"
-msgstr "语音"
-
-msgid "AIM Direct IM"
-msgstr "AIM 二人世界"
-
-msgid "Get File"
-msgstr "获取文件"
-
-msgid "Games"
-msgstr "游戏"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "插件"
-
-msgid "Send Buddy List"
-msgstr "发送好友列表"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ 直接连接"
-
-msgid "AP User"
-msgstr "AP 用户"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ 服务器转发"
-
-msgid "Old ICQ UTF8"
-msgstr "旧的 ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian 加密"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "安全已启用"
-
-msgid "Video Chat"
-msgstr "可视聊天"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "实时视频"
-
-msgid "Camera"
-msgstr "相机"
-
-msgid "Screen Sharing"
-msgstr "屏幕共享"
-
 msgid "Free For Chat"
 msgstr "无事闲聊"
 
@@ -6991,15 +6905,6 @@ msgstr "在上班"
 
 msgid "At lunch"
 msgstr "吃午餐"
-
-msgid "IP Address"
-msgstr "IP 地址"
-
-msgid "Warning Level"
-msgstr "警告级别"
-
-msgid "Buddy Comment"
-msgstr "好友注释"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7095,15 +7000,6 @@ msgstr "密码已送出"
 msgid "Unable to initialize connection"
 msgstr "无法初始化连接"
 
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "请同意我将您加入好友。"
-
-msgid "No reason given."
-msgstr "没有给出理由。"
-
-msgid "Authorization Denied Message:"
-msgstr "认证拒绝消息："
-
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -7112,6 +7008,9 @@ msgid ""
 msgstr ""
 "用户 %u 拒绝了您将他/她加为好友的请求，原因如下：\n"
 "%s"
+
+msgid "No reason given."
+msgstr "没有给出理由。"
 
 msgid "ICQ authorization denied."
 msgstr "ICQ 请求认证被拒绝。"
@@ -7205,57 +7104,12 @@ msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "用户信息不可用：%s"
-
-msgid "Online Since"
-msgstr "上线时间"
-
-msgid "Member Since"
-msgstr "注册时间"
-
-msgid "Capabilities"
-msgstr "容量"
-
 msgid "Your AIM connection may be lost."
 msgstr "您的 AIM 连接可能已丢失。"
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr "[无法显示来自此用户的信息，原因是其中包含了无效的字符。"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "您已经断开与聊天室 %s 的连接。"
-
-msgid "Mobile Phone"
-msgstr "移动电话"
-
-msgid "Personal Web Page"
-msgstr "个人主页"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "额外信息"
-
-msgid "Zip Code"
-msgstr "邮政编码"
-
-msgid "Work Information"
-msgstr "工作信息"
-
-msgid "Division"
-msgstr "部门"
-
-msgid "Position"
-msgstr "职务"
-
-msgid "Web Page"
-msgstr "网页"
 
 msgid "Pop-Up Message"
 msgstr "弹出消息"
@@ -7439,7 +7293,7 @@ msgid "iTunes Music Store Link"
 msgstr "iTunes 音乐商店链接"
 
 msgid "Lunch"
-msgstr ""
+msgstr "午餐"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7501,8 +7355,8 @@ msgstr "用户名格式化只更改大写和空格。"
 msgid "Change Address To:"
 msgstr "将地址更改为："
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>您并不在等候认证</i>"
+msgid "you are not waiting for authorization"
+msgstr "您并不在等候认证"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "您正在等待下列好友的认证"
@@ -7555,9 +7409,6 @@ msgstr "显示正在等候认证的好友"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "按电子邮件搜索好友..."
-
-msgid "Search for Buddy by Information"
-msgstr "按信息搜索好友"
 
 msgid "Use clientLogin"
 msgstr "使用客户端登录"
@@ -7845,8 +7696,8 @@ msgid "Your request was rejected."
 msgstr "您的请求被拒绝。"
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u 请求验证"
+msgid "%u requires verification: %s"
+msgstr "%u 请求验证：%s"
 
 msgid "Add buddy question"
 msgstr "添加好友问题"
@@ -9647,6 +9498,9 @@ msgstr "视频会议"
 msgid "Computer"
 msgstr "计算机"
 
+msgid "Mobile Phone"
+msgstr "移动电话"
+
 msgid "PDA"
 msgstr "PDA"
 
@@ -9953,9 +9807,8 @@ msgstr ""
 msgid "Unable to establish a connection with %s: %s"
 msgstr "无法与 %s 建立连接：%s"
 
-#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr "无法连接到 MXit 服务器。请检查您的服务器设置。"
+msgstr "无法连接：服务器返回空回应。"
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
@@ -10050,6 +9903,9 @@ msgstr "%s 正要给你发送 %d 个文件。\n"
 msgid "Write Error"
 msgstr "写错误"
 
+msgid "IP Address"
+msgstr "IP 地址"
+
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo! 日本资料"
 
@@ -10086,6 +9942,9 @@ msgstr "酷链接 2"
 
 msgid "Cool Link 3"
 msgstr "酷链接 3"
+
+msgid "Member Since"
+msgstr "注册时间"
 
 msgid "Last Update"
 msgstr "上次更新"
@@ -10513,27 +10372,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "连接被您计算机上的其他软件中断。"
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "远程主机关闭了连接。"
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "连接超时。"
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "连接被拒绝。"
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "此地址已被使用。"
 
@@ -10676,6 +10530,10 @@ msgstr ""
 "\n"
 "如果您想要回到此窗口以便添加、编辑或删除帐号，可以从好友列表中窗口中选择<b>帐"
 "号->管理帐号</b>"
+
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s 想要将您(%s)添加为好友%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -10925,6 +10783,8 @@ msgstr "消息(可选)"
 msgid "Edit User Mood"
 msgstr "编辑用户心情"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/好友(_B)"
@@ -11660,9 +11520,6 @@ msgstr "支持"
 msgid "webmaster"
 msgstr "网络管理员"
 
-msgid "Senior Contributor/QA"
-msgstr "其他贡献者/质量保证"
-
 msgid "win32 port"
 msgstr "Win32 移植"
 
@@ -11687,6 +11544,9 @@ msgstr "原作者"
 
 msgid "lead developer"
 msgstr "开发领导者"
+
+msgid "Senior Contributor/QA"
+msgstr "其他贡献者/质量保证"
 
 msgid "Afrikaans"
 msgstr "南非荷兰语"
@@ -12559,24 +12419,22 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "退出，因为另一个 libpurple 客户端已运行。\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/媒体(_M)"
+msgstr "媒体(_M)"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "挂断"
+msgstr "挂断(_H)"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
-msgstr "%s 希望于您进行音频/视频聊天。"
+msgstr "%s 希望与您进行音频/视频聊天。"
 
 #, c-format
 msgid "%s wishes to start a video session with you."
-msgstr "%s 希望于您进行视频聊天。"
+msgstr "%s 希望与您进行视频聊天。"
 
 msgid "Incoming Call"
-msgstr ""
+msgstr "来电"
 
 msgid "_Pause"
 msgstr "暂停(_P)"
@@ -12975,6 +12833,9 @@ msgstr "中继服务器(TURN)"
 msgid "_TURN server:"
 msgstr "_TURN 服务器："
 
+msgid "_UDP Port:"
+msgstr "_UDP 端口："
+
 msgid "Use_rname:"
 msgstr "用户名(_R)："
 
@@ -12996,6 +12857,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "桌面默认值"
 
@@ -13013,6 +12879,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "手工设置"
@@ -13453,6 +13327,10 @@ msgstr ""
 "<b>文件大小:</b> %s\n"
 "<b>图像大小:</b> %dx%d"
 
+#. Label
+msgid "Buddy Icon"
+msgstr "用户头像"
+
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "文件“%s”对于 %s 来说太大，请试用较小的图像。\n"
@@ -13537,7 +13415,7 @@ msgstr "无"
 msgid "Small"
 msgstr "小"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "默认表情的小图像版本"
 
 msgid "Response Probability:"
@@ -14348,6 +14226,9 @@ msgstr "管理员"
 msgid "Half Operator"
 msgstr "半管理员"
 
+msgid "Voice"
+msgstr "语音"
+
 msgid "Authorization dialog"
 msgstr "认证对话框"
 
@@ -14535,6 +14416,9 @@ msgstr "设备(_E)"
 msgid "Voice/Video Settings"
 msgstr "音视频设置"
 
+msgid "Voice and Video Settings"
+msgstr "音视频设置"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -14659,7 +14543,7 @@ msgstr "发送和接受原始 XMPP 节。"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -14781,6 +14665,138 @@ msgstr "浏览 Pidgin 网页"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
+
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr "此证书已过期，故不被认为有效。"
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "需要 SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "强制旧 SSL(5223 端口)"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "您输入的姓名密钥无效。"
+
+#~ msgid ""
+#~ "(There was an error receiving this message.  Either you and %s have "
+#~ "different encodings selected, or %s has a buggy client.)"
+#~ msgstr ""
+#~ "(接收此信息出错。可能是您与 %s 设置了不同的编码，或者 %s 的客户端有程序错"
+#~ "误。)"
+
+#~ msgid "AIM Direct IM"
+#~ msgstr "AIM 二人世界"
+
+#~ msgid "Get File"
+#~ msgstr "获取文件"
+
+#~ msgid "Games"
+#~ msgstr "游戏"
+
+#~ msgid "ICQ Xtraz"
+#~ msgstr "ICQ Xtraz"
+
+#~ msgid "Add-Ins"
+#~ msgstr "插件"
+
+#~ msgid "Send Buddy List"
+#~ msgstr "发送好友列表"
+
+#~ msgid "ICQ Direct Connect"
+#~ msgstr "ICQ 直接连接"
+
+#~ msgid "AP User"
+#~ msgstr "AP 用户"
+
+#~ msgid "ICQ RTF"
+#~ msgstr "ICQ RTF"
+
+#~ msgid "Nihilist"
+#~ msgstr "Nihilist"
+
+#~ msgid "ICQ Server Relay"
+#~ msgstr "ICQ 服务器转发"
+
+#~ msgid "Old ICQ UTF8"
+#~ msgstr "旧的 ICQ UTF8"
+
+#~ msgid "Trillian Encryption"
+#~ msgstr "Trillian 加密"
+
+#~ msgid "ICQ UTF8"
+#~ msgstr "ICQ UTF8"
+
+#~ msgid "Hiptop"
+#~ msgstr "Hiptop"
+
+#~ msgid "Security Enabled"
+#~ msgstr "安全已启用"
+
+#~ msgid "Video Chat"
+#~ msgstr "可视聊天"
+
+#~ msgid "iChat AV"
+#~ msgstr "iChat AV"
+
+#~ msgid "Live Video"
+#~ msgstr "实时视频"
+
+#~ msgid "Camera"
+#~ msgstr "相机"
+
+#~ msgid "Screen Sharing"
+#~ msgstr "屏幕共享"
+
+#~ msgid "Warning Level"
+#~ msgstr "警告级别"
+
+#~ msgid "Buddy Comment"
+#~ msgstr "好友注释"
+
+#~ msgid "Please authorize me so I can add you to my buddy list."
+#~ msgstr "请同意我将您加入好友。"
+
+#~ msgid "Authorization Denied Message:"
+#~ msgstr "认证拒绝消息："
+
+#~ msgid "User information not available: %s"
+#~ msgstr "用户信息不可用：%s"
+
+#~ msgid "Online Since"
+#~ msgstr "上线时间"
+
+#~ msgid "Capabilities"
+#~ msgstr "容量"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr "[无法显示来自此用户的信息，原因是其中包含了无效的字符。"
+
+#~ msgid "Personal Web Page"
+#~ msgstr "个人主页"
+
+#~ msgid "Additional Information"
+#~ msgstr "额外信息"
+
+#~ msgid "Zip Code"
+#~ msgstr "邮政编码"
+
+#~ msgid "Work Information"
+#~ msgstr "工作信息"
+
+#~ msgid "Division"
+#~ msgstr "部门"
+
+#~ msgid "Position"
+#~ msgstr "职务"
+
+#~ msgid "Web Page"
+#~ msgstr "网页"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "按信息搜索好友"
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "您输入的昵称无效。"
@@ -15282,9 +15298,6 @@ msgstr "您没有权限卸载此程序。"
 #~ msgid "Connection closed (writing)"
 #~ msgstr "连接已关闭(写入)"
 
-#~ msgid "Connection reset"
-#~ msgstr "连接重置"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "从套接字读取时出错：%s"
 
@@ -15551,9 +15564,6 @@ msgstr "您没有权限卸载此程序。"
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC 协议插件"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s 的用户信息不可用"
 
 #~ msgid "%s Options"
 #~ msgstr "%s 选项"
