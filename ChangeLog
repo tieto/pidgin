@@ -7,6 +7,10 @@ version 2.7.4 (MM/DD/YYYY):
 	  (#12049)
 	* Add Deutsche Telekom, Thawte Primary, and Go Daddy Class 2 root CAs
 	  (#12667, #12668, and #12594)
+	* Fix CVE-2010-3711 by properly validating return values from the
+	  purple_base64_decode() function before using them.
+	* Fix two local crash bugs by properly validating return values from the
+	  purple_base16_decode() function before using them.
 
 	libpurple:
 	* Fall back to an ordinary request if a UI does not support showing a

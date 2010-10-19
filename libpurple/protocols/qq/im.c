@@ -547,7 +547,6 @@ qq_im_format *qq_im_fmt_new_by_purple(const gchar *msg)
 	const gchar *start, *end, *last;
 	GData *attribs;
 	gchar *tmp;
-	unsigned char *rgb;
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
@@ -570,8 +569,11 @@ qq_im_format *qq_im_fmt_new_by_purple(const gchar *msg)
 
 		tmp = g_datalist_get_data(&attribs, "color");
 		if (tmp && strlen(tmp) > 1) {
-			rgb = purple_base16_decode(tmp + 1, NULL);
-			g_memmove(fmt->rgb, rgb, 3);
+			unsigned char *rgb;
+			gsize rgb_len;
+			rgb = purple_base16_decode(tmp + 1, &rgb_len);
+			if (rgb != NULL && rgb_len >= 3)
+				g_memmove(fmt->rgb, rgb, 3);
 			g_free(rgb);
 		}
 
