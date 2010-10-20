@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-20 19:05+0200\n"
-"PO-Revision-Date: 2010-10-20 19:04+0200\n"
+"POT-Creation-Date: 2010-10-20 20:59+0200\n"
+"PO-Revision-Date: 2010-10-20 21:02+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
-"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
@@ -8109,13 +8109,13 @@ msgstr ""
 "einem Rechtsklick anklicken und „%s“ auswählen."
 
 msgid "Visible List"
-msgstr "Visible List"
+msgstr "Liste Sichtbar"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr "Diese Buddys werden Ihren Status sehen wenn Sie „unsichtbar“ sind"
 
 msgid "Invisible List"
-msgstr "Invisible List"
+msgstr "Liste Unsichtbar"
 
 msgid "These buddies will always see you as offline"
 msgstr "Für diese Buddys werden Sie immer als offline angezeigt"
