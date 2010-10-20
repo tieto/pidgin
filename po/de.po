@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-20 20:59+0200\n"
-"PO-Revision-Date: 2010-10-20 21:02+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2010-10-20 21:28+0200\n"
+"PO-Revision-Date: 2010-10-20 21:23+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7842,6 +7842,12 @@ msgstr "Konfiguriere IM-Weiterleitung (Web)"
 msgid "Set Privacy Options..."
 msgstr "Privatsphärenoptionen setzen..."
 
+msgid "Show Visible List"
+msgstr "Zeige Liste „Sichtbar“"
+
+msgid "Show Invisible List"
+msgstr "Zeige Liste „Unsichtbar“"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Konto bestätigen"
@@ -8098,7 +8104,7 @@ msgid "Don't Appear Offline"
 msgstr "Nicht offline erscheinen"
 
 msgid "you have no buddies on this list"
-msgstr "Sie haben keine Buddys auf dieser Liste"
+msgstr "Sie haben keine Buddys in dieser Liste"
 
 #, c-format
 msgid ""
