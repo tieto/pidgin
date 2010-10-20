@@ -824,7 +824,7 @@ msgstr "हिपटप"
 msgid "Waiting for transfer to begin"
 msgstr "स्थानान्तरण सुरू गर्नकोलागि पर्खिरहेको"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "रद्द गरियो"
 
 msgid "Failed"
@@ -17025,7 +17025,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "लेख्नका लागि %s खोल्न सकिदैन!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "फाइल स्थान्तरणमा असफल; अन्य साइड सम्भवत: रद्द गरियो ।"
 
 #~ msgid "Could not connect for transfer."

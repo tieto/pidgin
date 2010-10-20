@@ -793,7 +793,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Waiting for transfer to begin"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelled"
 
 msgid "Failed"

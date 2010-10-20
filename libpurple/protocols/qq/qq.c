@@ -89,14 +89,11 @@ static void server_list_create(PurpleAccount *account)
 {
 	PurpleConnection *gc;
 	qq_data *qd;
-	PurpleProxyInfo *gpi;
 	const gchar *custom_server;
 
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
 	qd = gc->proto_data;
-
-	gpi = purple_proxy_get_setup(account);
 
 	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 
@@ -381,13 +378,10 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 static const char *qq_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
-	PurpleConnection *gc;
-	qq_data *qd;
 	qq_buddy_data *buddy;
 
 	if (!b || !(account = purple_buddy_get_account(b)) ||
-		!(gc = purple_account_get_connection(account)) ||
-		!(qd = purple_connection_get_protocol_data(gc)))
+		!purple_account_get_connection(account))
 		return NULL;
 
 	buddy = purple_buddy_get_protocol_data(b);
@@ -620,12 +614,10 @@ static void action_show_account_info(PurplePluginAction *action)
 static void action_about_openq(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	qq_data *qd;
 	GString *info;
 	gchar *title;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(NULL != gc);
 
 	info = g_string_new("<html><body>");
 	g_string_append(info, _("<p><b>Original Author</b>:<br>\n"));

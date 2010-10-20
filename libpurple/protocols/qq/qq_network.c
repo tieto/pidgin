@@ -482,13 +482,11 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = NULL;
-	qq_data *qd;
 	guint8 *buf;
 	gint buf_len;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc,
@@ -748,14 +746,12 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc;
 	qq_data *qd;
-	PurpleAccount *account ;
 	qq_connection *conn;
 
 	gc = (PurpleConnection *) data;
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
-	account = purple_connection_get_account(gc);
 
 	/* conn_data will be destoryed */
 	qd->conn_data = NULL;

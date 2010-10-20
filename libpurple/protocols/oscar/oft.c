@@ -207,7 +207,7 @@ peer_oft_checksum_file(PeerConnection *conn, PurpleXfer *xfer, GSourceFunc callb
 	checksum_data->callback = callback;
 	checksum_data->size = size;
 	checksum_data->checksum = 0xffff0000;
-	checksum_data->file = fopen(purple_xfer_get_local_filename(xfer), "rb");
+	checksum_data->file = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
 
 	if (checksum_data->file == NULL)
 	{
@@ -240,7 +240,7 @@ void
 peer_oft_close(PeerConnection *conn)
 {
 	/*
-	 * If canceled by local user, and we're receiving a file, and
+	 * If cancelled by local user, and we're receiving a file, and
 	 * we're not connected/ready then send an ICBM cancel message.
 	 */
 	if ((purple_xfer_get_status(conn->xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) &&

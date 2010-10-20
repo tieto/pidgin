@@ -828,7 +828,7 @@ msgstr ""
 msgid "Waiting for transfer to begin"
 msgstr "Li benda destpêkirina transferê ye"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Hate Betalkirin"
 
 msgid "Failed"

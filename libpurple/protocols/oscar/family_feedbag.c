@@ -660,10 +660,8 @@ int aim_ssi_cleanlist(OscarData *od)
 		if (!cur->name) {
 			if (cur->type == AIM_SSI_TYPE_BUDDY)
 				aim_ssi_delbuddy(od, NULL, NULL);
-			else if (cur->type == AIM_SSI_TYPE_PERMIT)
-				aim_ssi_delpermit(od, NULL);
-			else if (cur->type == AIM_SSI_TYPE_DENY)
-				aim_ssi_deldeny(od, NULL);
+			else if (cur->type == AIM_SSI_TYPE_PERMIT || cur->type == AIM_SSI_TYPE_DENY || cur->type == AIM_SSI_TYPE_ICQDENY)
+				aim_ssi_del_from_private_list(od, NULL, cur->type);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(od->ssi.local, cur->gid, 0x0000)))) {
 			char *alias = aim_ssi_getalias(od->ssi.local, NULL, cur->name);
 			aim_ssi_addbuddy(od, cur->name, "orphans", NULL, alias, NULL, NULL, FALSE);
@@ -748,51 +746,31 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList 
 	return aim_ssi_sync(od);
 }
 
-/**
- * Add a permit buddy to the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item..
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_addpermit(OscarData *od, const char *name)
+int
+aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_type)
 {
-
 	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
 	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, list_type, NULL);
 
-	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
-
-	/* Sync our local list with the server list */
+	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, list_type, NULL);
 	return aim_ssi_sync(od);
 }
 
-/**
- * Add a deny buddy to the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item..
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_adddeny(OscarData *od, const char *name)
+int
+aim_ssi_del_from_private_list(OscarData* od, const char* name, guint16 list_type)
 {
+	struct aim_ssi_item *del;
 
-	if (!od || !name || !od->ssi.received_data)
+	if (!od)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
-	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, list_type)))
+		return -EINVAL;
 
-	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
-
-	/* Sync our local list with the server list */
+	aim_ssi_itemlist_del(&od->ssi.local, del);
 	return aim_ssi_sync(od);
 }
 
@@ -854,56 +832,6 @@ int aim_ssi_delgroup(OscarData *od, const char *group)
 
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
-
-	/* Sync our local list with the server list */
-	return aim_ssi_sync(od);
-}
-
-/**
- * Deletes a permit buddy from the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item, or NULL.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_delpermit(OscarData *od, const char *name)
-{
-	struct aim_ssi_item *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, AIM_SSI_TYPE_PERMIT)))
-		return -EINVAL;
-
-	/* Remove the item from the list */
-	aim_ssi_itemlist_del(&od->ssi.local, del);
-
-	/* Sync our local list with the server list */
-	return aim_ssi_sync(od);
-}
-
-/**
- * Deletes a deny buddy from the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item, or NULL.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_deldeny(OscarData *od, const char *name)
-{
-	struct aim_ssi_item *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, AIM_SSI_TYPE_DENY)))
-		return -EINVAL;
-
-	/* Remove the item from the list */
-	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);
@@ -1030,17 +958,16 @@ int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn)
  * Stores your permit/deny setting on the server, and starts using it.
  *
  * @param od The oscar odion.
- * @param permdeny Your permit/deny setting.  Can be one of the following:
+ * @param permdeny Your permit/deny setting. For ICQ accounts, it actually affects your visibility
+ *        and has nothing to do with blocking. Can be one of the following:
  *        1 - Allow all users
  *        2 - Block all users
  *        3 - Allow only the users below
  *        4 - Block only the users below
  *        5 - Allow only users on my buddy list
- * @param vismask A bitmask of the class of users to whom you want to be
- *        visible.  See the AIM_FLAG_BLEH #defines in oscar.h
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
+int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1058,9 +985,6 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 
 	/* Need to add the 0x00ca TLV to the TLV chain */
 	aim_tlvlist_replace_8(&tmp->data, 0x00ca, permdeny);
-
-	/* Need to add the 0x00cb TLV to the TLV chain */
-	aim_tlvlist_replace_32(&tmp->data, 0x00cb, vismask);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);
@@ -1231,41 +1155,6 @@ int aim_ssi_reqdata(OscarData *od)
 }
 
 /*
- * Subtype 0x0005 - Request SSI Data when you have a timestamp and revision
- * number.
- *
- * The data will only be sent if it is newer than the posted local
- * timestamp and revision.
- *
- * Note that the client should never increment the revision, only the server.
- *
- */
-int aim_ssi_reqifchanged(OscarData *od, time_t timestamp, guint16 numitems)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
-		return -EINVAL;
-
-	byte_stream_new(&bs, 4+2);
-
-	byte_stream_put32(&bs, timestamp);
-	byte_stream_put16(&bs, numitems);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	/* Free any current data, just in case */
-	aim_ssi_freelist(od);
-
-	return 0;
-}
-
-/*
  * Subtype 0x0006 - SSI Data.
  */
 static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -1281,7 +1170,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 	od->ssi.numitems += byte_stream_get16(bs); /* # of items in this SSI SNAC */
 
 	/* Read in the list */
-	while (byte_stream_empty(bs) > 4) { /* last four bytes are timestamp */
+	while (byte_stream_bytes_left(bs) > 4) { /* last four bytes are timestamp */
 		if ((namelen = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, namelen);
 		else
@@ -1378,7 +1267,7 @@ static int aim_ssi_addmoddel(OscarData *od)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1399,7 +1288,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	guint16 len, gid, bid, type;
 	GSList *data;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		if ((len = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, len);
 		else
@@ -1437,7 +1326,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	GSList *data;
 	struct aim_ssi_item *item;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		if ((len = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, len);
 		else
@@ -1489,7 +1378,7 @@ static int parsedel(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	guint16 gid, bid;
 	struct aim_ssi_item *del;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		byte_stream_advance(bs, byte_stream_get16(bs));
 		gid = byte_stream_get16(bs);
 		bid = byte_stream_get16(bs);
@@ -1522,7 +1411,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 	/* Read in the success/failure flags from the ack SNAC */
 	cur = od->ssi.pending;
-	while (cur && (byte_stream_empty(bs)>0)) {
+	while (cur && (byte_stream_bytes_left(bs)>0)) {
 		cur->ack = byte_stream_get16(bs);
 		cur = cur->next;
 	}
@@ -1678,45 +1567,6 @@ int aim_ssi_modend(OscarData *od)
 }
 
 /*
- * Subtype 0x0014 - Grant authorization
- *
- * Authorizes a contact so they can add you to their contact list.
- *
- */
-int aim_ssi_sendauth(OscarData *od, char *bn, char *msg)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1+strlen(bn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
-
-	/* Username */
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	/* Message (null terminated) */
-	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
-	if (msg) {
-		byte_stream_putstr(&bs, msg);
-		byte_stream_put8(&bs, 0x00);
-	}
-
-	/* Unknown */
-	byte_stream_put16(&bs, 0x0000);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
  * Subtype 0x0015 - Receive an authorization grant
  */
 static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -1783,7 +1633,7 @@ int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg)
 	byte_stream_put16(&bs, 0x0000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1863,7 +1713,7 @@ int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg
 	byte_stream_put16(&bs, 0x0000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1933,6 +1783,16 @@ static int receiveadded(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	g_free(bn);
 
 	return ret;
+}
+
+/*
+ * If we're on ICQ, then AIM_SSI_TYPE_DENY is used for the "permanently invisible" list.
+ * AIM_SSI_TYPE_ICQDENY is used for blocking users instead.
+ */
+guint16
+aim_ssi_getdenyentrytype(OscarData* od)
+{
+	return od->icq ? AIM_SSI_TYPE_ICQDENY : AIM_SSI_TYPE_DENY;
 }
 
 static int

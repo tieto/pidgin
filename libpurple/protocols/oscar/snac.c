@@ -151,12 +151,12 @@ void aim_cleansnacs(OscarData *od, int maxage)
 	return;
 }
 
-int aim_putsnac(ByteStream *bs, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid)
+int aim_putsnac(ByteStream *bs, guint16 family, guint16 subtype, aim_snacid_t snacid)
 {
 
 	byte_stream_put16(bs, family);
 	byte_stream_put16(bs, subtype);
-	byte_stream_put16(bs, flags);
+	byte_stream_put16(bs, 0x0000);
 	byte_stream_put32(bs, snacid);
 
 	return 10;

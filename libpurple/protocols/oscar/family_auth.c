@@ -56,17 +56,10 @@ static int
 aim_encode_password(const char *password, guint8 *encoded)
 {
 	guint8 encoding_table[] = {
-#if 0 /* old v1 table */
-		0xf3, 0xb3, 0x6c, 0x99,
-		0x95, 0x3f, 0xac, 0xb6,
-		0xc5, 0xfa, 0x6b, 0x63,
-		0x69, 0x6c, 0xc3, 0x9f
-#else /* v2.1 table, also works for ICQ */
 		0xf3, 0x26, 0x81, 0xc4,
 		0x39, 0x86, 0xdb, 0x92,
 		0x71, 0xa3, 0xb9, 0xe6,
 		0x53, 0x7a, 0x95, 0x7c
-#endif
 	};
 	unsigned int i;
 
@@ -234,7 +227,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	frame = flap_frame_new(od, 0x02, 1152);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, 0x0000, snacid);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -385,12 +378,6 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if (aim_tlv_gettlv(tlvlist, 0x0043, 1))
 		info->latestbeta.name = aim_tlv_getstr(tlvlist, 0x0043, 1);
 
-#if 0
-	if (aim_tlv_gettlv(tlvlist, 0x0048, 1)) {
-		/* beta serial */
-	}
-#endif
-
 	if (aim_tlv_gettlv(tlvlist, 0x0044, 1))
 		info->latestrelease.build = aim_tlv_get32(tlvlist, 0x0044, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0045, 1))
@@ -400,26 +387,11 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if (aim_tlv_gettlv(tlvlist, 0x0047, 1))
 		info->latestrelease.name = aim_tlv_getstr(tlvlist, 0x0047, 1);
 
-#if 0
-	if (aim_tlv_gettlv(tlvlist, 0x0049, 1)) {
-		/* lastest release serial */
-	}
-#endif
-
 	/*
 	 * URL to change password.
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0054, 1))
 		info->chpassurl = aim_tlv_getstr(tlvlist, 0x0054, 1);
-
-#if 0
-	/*
-	 * Unknown.  Seen on an @mac.com username with value of 0x003f
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0055, 1)) {
-		/* Unhandled */
-	}
-#endif
 
 	od->authinfo = info;
 
@@ -504,7 +476,7 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 	frame = flap_frame_new(od, 0x02, 10+2+2+strlen(sn)+8);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, 0x0000, snacid);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -602,7 +574,7 @@ aim_auth_securid_send(OscarData *od, const char *securid)
 	frame = flap_frame_new(od, 0x02, 10+2+len);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0);
 
 	byte_stream_put16(&frame->data, len);
 	byte_stream_putstr(&frame->data, securid);

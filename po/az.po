@@ -809,7 +809,7 @@ msgstr ""
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr ""
 
 msgid "Failed"
@@ -16008,7 +16008,7 @@ msgstr ""
 #~ msgid "Invalid Groupname"
 #~ msgstr "Səhv istifadəçi adı."
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Fayl transferi bacarılmadı, güman ki digər tərəfdən ləğv edildi."
 
 #~ msgid "Could not connect for transfer."

@@ -808,7 +808,7 @@ msgstr "توقف"
 msgid "Waiting for transfer to begin"
 msgstr "در حال انتظار برای آغاز انتقال"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "صرف نظر شد"
 
 msgid "Failed"
@@ -16683,7 +16683,7 @@ msgstr "شما اجازه لازم براى حذف اين برنامه را ند
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "نمی‌توان %s را برای نوشتن باز کرد!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "انتقال پرونده شکست خورد؛ احتمالاً طرف دیگر انصراف داده است."
 
 #~ msgid "Could not connect for transfer."

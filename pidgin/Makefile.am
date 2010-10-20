@@ -5,9 +5,6 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		pidgin.pc.in \
 		pidgin-uninstalled.pc.in \
-		win32/IdleTracker/Makefile.mingw \
-		win32/IdleTracker/idletrack.c \
-		win32/IdleTracker/idletrack.h \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \

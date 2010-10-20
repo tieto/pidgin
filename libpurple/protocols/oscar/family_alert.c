@@ -73,7 +73,7 @@ aim_email_sendcookies(OscarData *od)
 	byte_stream_put16(&bs, 0x0631);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0006, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -189,7 +189,7 @@ aim_email_activate(OscarData *od)
 	byte_stream_put32(&bs, 0x00000000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0016, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

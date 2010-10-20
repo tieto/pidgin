@@ -104,14 +104,10 @@ idle_all_action_ok(void *ignored, PurpleRequestFields *fields)
 	PurpleAccount *acct = NULL;
 	GList *list, *iter;
 	int tm = purple_request_fields_get_integer(fields, "mins");
-	const char *prpl_id = NULL;
 
 	list = purple_accounts_get_all_active();
 	for(iter = list; iter; iter = iter->next) {
 		acct = (PurpleAccount *)(iter->data);
-
-		if(acct)
-			prpl_id = purple_account_get_protocol_id(acct);
 
 		if(acct && idleable_filter(acct)) {
 			purple_debug_misc("idle", "Idling %s.\n",

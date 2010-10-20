@@ -834,7 +834,7 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "Waiting for transfer to begin"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelled"
 
 msgid "Failed"
@@ -17057,7 +17057,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Could not open %s for writing!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "File transfer failed; other side probably cancelled."
 
 #~ msgid "Could not connect for transfer."

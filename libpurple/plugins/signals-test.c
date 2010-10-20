@@ -592,12 +592,12 @@ ft_send_start_cb(PurpleXfer *xfer, gpointer data) {
 
 static void
 ft_recv_cancel_cb(PurpleXfer *xfer, gpointer data) {
-	purple_debug_misc("signals test", "file receive canceled\n");
+	purple_debug_misc("signals test", "file receive cancelled\n");
 }
 
 static void
 ft_send_cancel_cb(PurpleXfer *xfer, gpointer data) {
-	purple_debug_misc("signals test", "file send canceled\n");
+	purple_debug_misc("signals test", "file send cancelled\n");
 }
 
 static void

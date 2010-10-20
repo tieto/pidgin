@@ -693,7 +693,7 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 
 static gboolean _print_debug_msg(gpointer data) {
 	gchar *msg = data;
-	purple_debug_warning("network", msg);
+	purple_debug_warning("network", "%s", msg);
 	g_free(msg);
 	return FALSE;
 }
@@ -1077,12 +1077,10 @@ purple_network_remove_port_mapping(gint fd)
 
 	if (protocol) {
 		purple_network_upnp_mapping_remove(&port, protocol, NULL);
-		g_hash_table_remove(upnp_port_mappings, protocol);
 	} else {
 		protocol = g_hash_table_lookup(nat_pmp_port_mappings, &port);
 		if (protocol) {
 			purple_network_nat_pmp_mapping_remove(&port, protocol, NULL);
-			g_hash_table_remove(nat_pmp_port_mappings, protocol);
 		}
 	}
 }

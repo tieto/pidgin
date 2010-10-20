@@ -1205,9 +1205,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 /* Boring GTK+ stuff */
 static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 {
-	GtkObjectClass *object_class;
 	GObjectClass   *gobject_class;
-	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
 	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;

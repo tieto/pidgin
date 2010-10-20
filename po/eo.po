@@ -766,7 +766,7 @@ msgstr "Haltu"
 msgid "Waiting for transfer to begin"
 msgstr "Atendante la alŝutoeko"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Rezignita"
 
 msgid "Failed"

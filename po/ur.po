@@ -815,7 +815,7 @@ msgstr "سیٹ اپ "
 msgid "Waiting for transfer to begin"
 msgstr "ٹرانسفر ہونے کے لئے انتظار کررہا ہے"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr " منسوخ کیا گیا"
 
 msgid "Failed"
@@ -16800,7 +16800,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "لکھنے کے لئے %s کھول نہیں سکا!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "فائل ٹرانسفر ناکام ہوا؛یا ممکن ہے دوسری حانب منسوخ ہوا ہے۔"
 
 #~ msgid "Could not connect for transfer."
