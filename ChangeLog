@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.4 (MM/DD/YYYY):
+version 2.7.4 (10/20/2010):
 	General:
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
 	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
@@ -75,6 +75,7 @@ version 2.7.4 (MM/DD/YYYY):
 	  connections. (#12532)
 	* Fix sending SMS messages.  The lookup host changed on us.  (Thanks to
 	  todo) (#12688).
+	* Improvements for some file transfer scenarios, but not all.
 
 	Windows:
 	* Bonjour support now requires Apple Bonjour Print Services version
