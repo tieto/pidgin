@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
-"PO-Revision-Date: 2010-10-11 11:38+0200\n"
+"POT-Creation-Date: 2010-10-20 11:31-0400\n"
+"PO-Revision-Date: 2010-10-20 12:58+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -6928,6 +6928,15 @@ msgstr "Adres serwera"
 msgid "Server port"
 msgstr "Port serwera"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Proszę o upoważnienie, aby dodać użytkownika do listy znajomych."
+
+msgid "No reason given."
+msgstr "Nie podano powodu."
+
+msgid "Authorization Denied Message:"
+msgstr "Wiadomość odmowy upoważnienia:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Odebrano nieoczekiwaną odpowiedź z %s: %s"
@@ -6963,6 +6972,25 @@ msgstr "AOL nie umożliwia uwierzytelnienia nazwy użytkownika w tym miejscu"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Błąd podczas żądania %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Prawdopodobnie wystąpił błąd podczas pobierania tej wiadomości. Znajomy "
+"prawdopodobnie używa innego kodowania, niż jest oczekiwane. Jeśli wiadomo, "
+"jakiego kodowania używa, można je podać w zaawansowanych opcjach konta AIM/"
+"ICQ)."
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Wystąpił błąd podczas pobierania tej wiadomości. Użytkownik i znajomy %s "
+"posiadają ustawione inne kodowania lub klient znajomego %s posiada błędy)."
 
 msgid "Could not join chat room"
 msgstr "Nie można dołączyć do pokoju konferencji"
@@ -7315,9 +7343,6 @@ msgstr ""
 "Użytkownik %u odrzucił prośbę o pozwolenie na dodanie go do listy znajomych "
 "z następującego powodu:\n"
 "%s"
-
-msgid "No reason given."
-msgstr "Nie podano powodu."
 
 msgid "ICQ authorization denied."
 msgstr "Odmowa upoważnienia ICQ."
@@ -7902,6 +7927,162 @@ msgstr "Kolejka jest pełna"
 
 msgid "Not while on AOL"
 msgstr "Nie podczas używania AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Ikona znajomego"
+
+msgid "Voice"
+msgstr "Głos"
+
+msgid "AIM Direct IM"
+msgstr "Komunikator bezpośredni AIM"
+
+msgid "Get File"
+msgstr "Pobierz plik"
+
+msgid "Games"
+msgstr "Gry"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Dodatki"
+
+msgid "Send Buddy List"
+msgstr "Wyślij listę znajomych"
+
+msgid "ICQ Direct Connect"
+msgstr "Bezpośrednie połączenia ICQ"
+
+msgid "AP User"
+msgstr "Użytkownik AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilista"
+
+msgid "ICQ Server Relay"
+msgstr "Odpowiedź serwera ICQ"
+
+msgid "Old ICQ UTF8"
+msgstr "Poprzednie kodowanie UTF-8 protokołu ICQ"
+
+msgid "Trillian Encryption"
+msgstr "Szyfrowanie programu Trillian"
+
+msgid "ICQ UTF8"
+msgstr "Kodowanie UTF-8 protokołu ICQ"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Zabezpieczenia są włączone"
+
+msgid "Video Chat"
+msgstr "Rozmowa wideo"
+
+msgid "iChat AV"
+msgstr "Konferencja iChat"
+
+msgid "Live Video"
+msgstr "Wideo na żywo"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Współdzielenie ekranu"
+
+msgid "IP Address"
+msgstr "Adres IP"
+
+msgid "Warning Level"
+msgstr "Poziom ostrzeżenia"
+
+msgid "Buddy Comment"
+msgstr "Komentarz o znajomym"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Informacje o użytkownicy są niedostępne: %s"
+
+msgid "Mobile Phone"
+msgstr "Telefon komórkowy"
+
+msgid "Personal Web Page"
+msgstr "Osobista strona WWW"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Dodatkowe informacje"
+
+msgid "Zip Code"
+msgstr "Kod pocztowy"
+
+msgid "Work Information"
+msgstr "Informacje o pracy"
+
+msgid "Division"
+msgstr "Wydział"
+
+msgid "Position"
+msgstr "Zawód"
+
+msgid "Web Page"
+msgstr "Strona WWW"
+
+msgid "Online Since"
+msgstr "W trybie online od"
+
+msgid "Member Since"
+msgstr "Członek od"
+
+msgid "Capabilities"
+msgstr "Możliwości"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Wygląda na tryb online"
+
+msgid "Don't Appear Online"
+msgstr "Nie wygląda na tryb online"
+
+msgid "Appear Offline"
+msgstr "Wygląda na tryb offline"
+
+msgid "Don't Appear Offline"
+msgstr "Nie wygląda na tryb offline"
+
+msgid "you have no buddies on this list"
+msgstr "brak znajomych na tej liście"
+
+#, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Można dodać znajomych do tej listy naciskają ma nich prawym przyciskiem "
+"myszy i wybierając \"%s\""
+
+msgid "Visible List"
+msgstr "Lista widocznych"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+"Znajomi na tej liście będą widzieli stan użytkownika po przełączeniu na "
+"\"Niewidoczny\""
+
+msgid "Invisible List"
+msgstr "Lista niewidocznych"
+
+msgid "These buddies will always see you as offline"
+msgstr "Znajomi na tej liście będą widzieli stan użytkownika jako tryb offline"
 
 msgid "Aquarius"
 msgstr "Wodnik"
@@ -9943,9 +10124,6 @@ msgstr "Konferencje wideo"
 msgid "Computer"
 msgstr "Komputer"
 
-msgid "Mobile Phone"
-msgstr "Telefon komórkowy"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -10294,17 +10472,11 @@ msgstr "Wyszedł na chwilę"
 msgid "Not on server list"
 msgstr "Brak na liście serwera"
 
-msgid "Appear Online"
-msgstr "Wygląda na tryb online"
-
 msgid "Appear Permanently Offline"
 msgstr "Wygląda na trwały tryb offline"
 
 msgid "Presence"
 msgstr "Obecność"
-
-msgid "Appear Offline"
-msgstr "Wygląda na tryb offline"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Nie wygląda na rwały tryb offline"
@@ -10366,9 +10538,6 @@ msgstr "Użytkownik %s próbuje wysłać grupę %d plików.\n"
 msgid "Write Error"
 msgstr "Błąd zapisu"
 
-msgid "IP Address"
-msgstr "Adres IP"
-
 msgid "Yahoo! Japan Profile"
 msgstr "Profil Yahoo! Japan"
 
@@ -10408,9 +10577,6 @@ msgstr "Fajny odnośnik 2"
 
 msgid "Cool Link 3"
 msgstr "Fajny odnośnik 3"
-
-msgid "Member Since"
-msgstr "Członek od"
 
 msgid "Last Update"
 msgstr "Ostatnia aktualizacja"
@@ -13922,10 +14088,6 @@ msgstr ""
 "<b>Rozmiar pliku:</b> %s\n"
 "<b>Rozmiar obrazu:</b> %dx%d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "Ikona znajomego"
-
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "Plik \"%s\" jest za duży dla %s. Proszę spróbować mniejszego obrazu.\n"
@@ -14856,9 +15018,6 @@ msgstr "Operator"
 #. that an operator has.
 msgid "Half Operator"
 msgstr "Zastępca operatora"
-
-msgid "Voice"
-msgstr "Głos"
 
 msgid "Authorization dialog"
 msgstr "Okno dialogowe upoważnienia"
