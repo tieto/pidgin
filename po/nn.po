@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-10-11 01:26+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
@@ -6865,6 +6865,15 @@ msgstr "Tenaradresse"
 msgid "Server port"
 msgstr "Tenarport"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Om du godtek meg, kan eg leggja deg til i vennelista mi."
+
+msgid "No reason given."
+msgstr "Ingen årsak oppgjeven."
+
+msgid "Authorization Denied Message:"
+msgstr "Avvist godkjenning:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Fekk uventa svar frå %s: %s"
@@ -6899,6 +6908,24 @@ msgstr "AOL tillèt ikkje at brukarnamnet ditt kan autentiserast her"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Klarte ikkje å spørja etter %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Det oppstod ein feil under mottaket av meldinga. Truleg nyttar vennen du "
+"pratar med ei anna teiknkoding enn rekna med. Om du veit kva teiknkoding han "
+"nyttar, kan du oppgje det i dei avanserte kontovala for AIM/ICQ-kontoen din.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Det oppstod ein feil under mottaket av meldinga. Anten har du og %s vald "
+"ulike teiknkodingar, eller så nyttar %s ein klient med feil i.)"
 
 msgid "Could not join chat room"
 msgstr "Klarte ikkje å bli med i praterommet"
@@ -7248,9 +7275,6 @@ msgstr ""
 "Brukaren %u har avvist førespurnaden din om å leggja dei til vennelista di. "
 "Årsak:\n"
 "%s"
-
-msgid "No reason given."
-msgstr "Ingen årsak oppgjeven."
 
 msgid "ICQ authorization denied."
 msgstr "ICQ-godkjenning avvist."
@@ -7680,6 +7704,14 @@ msgstr "Innstillingar for vidaresending (nett)"
 msgid "Set Privacy Options..."
 msgstr "Personvernval…"
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Vis venne_liste"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Invitasjonsliste"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Stadfest konto"
@@ -7803,6 +7835,166 @@ msgstr "Køen er full"
 
 msgid "Not while on AOL"
 msgstr "Ikkje når pålogga AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Venneikon"
+
+msgid "Voice"
+msgstr "Stemme"
+
+msgid "AIM Direct IM"
+msgstr "AIM direktelynmelding"
+
+msgid "Get File"
+msgstr "Hent fil"
+
+msgid "Games"
+msgstr "Spel"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Tillegg"
+
+msgid "Send Buddy List"
+msgstr "Send vennelista"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ direktetilkopling"
+
+msgid "AP User"
+msgstr "AP-brukar"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ tenarvidaresending"
+
+msgid "Old ICQ UTF8"
+msgstr "Gammal ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian-kryptiering"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Tryggleik er slått på"
+
+msgid "Video Chat"
+msgstr "Videoprat"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Sanntidsvideo"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Skjermdeling"
+
+msgid "IP Address"
+msgstr "IP-adresse"
+
+msgid "Warning Level"
+msgstr "Åtvaringsnivå"
+
+msgid "Buddy Comment"
+msgstr "Vennenotat"
+
+# 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "Bruk kryptering om mogleg"
+
+msgid "Mobile Phone"
+msgstr "Mobiltelefon"
+
+msgid "Personal Web Page"
+msgstr "Personelg nettside"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Tilleggsinformasjon"
+
+msgid "Zip Code"
+msgstr "Postnummer"
+
+msgid "Work Information"
+msgstr "Arbeidsinformasjon"
+
+msgid "Division"
+msgstr "Avdeling"
+
+msgid "Position"
+msgstr "Stilling"
+
+msgid "Web Page"
+msgstr "Nettside"
+
+msgid "Online Since"
+msgstr "Tilkopla sidan"
+
+msgid "Member Since"
+msgstr "Medlem sidan"
+
+msgid "Capabilities"
+msgstr "Evner"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Framstå som tilkopla"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Framstå som tilkopla"
+
+msgid "Appear Offline"
+msgstr "Verkar vera fråkopla"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Verkar vera fråkopla"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Du er blitt sparka ut frå denne MultiMX-en."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Du kan be om godkjenning frå desse vennene igjen ved å høgreklikka dei og "
+"velja \"Spør om ny godkjenning.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Synleg"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Invitasjonsliste"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vassmannen"
@@ -9843,9 +10035,6 @@ msgstr "Videokonferering"
 msgid "Computer"
 msgstr "Datamaskin"
 
-msgid "Mobile Phone"
-msgstr "Mobiltelefon"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -10207,17 +10396,11 @@ msgstr "Ute eit bel"
 msgid "Not on server list"
 msgstr "Ikkje på tenarlista"
 
-msgid "Appear Online"
-msgstr "Framstå som tilkopla"
-
 msgid "Appear Permanently Offline"
 msgstr "Verkar alltid vera fråkopla"
 
 msgid "Presence"
 msgstr "Nærvær"
-
-msgid "Appear Offline"
-msgstr "Verkar vera fråkopla"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Ikkje verka vera alltid fråkopla"
@@ -10278,9 +10461,6 @@ msgstr "%s prøver å senda deg ei gruppe med %d-filer.\n"
 msgid "Write Error"
 msgstr "Skrivefeil"
 
-msgid "IP Address"
-msgstr "IP-adresse"
-
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo! Japan-profil"
 
@@ -10319,9 +10499,6 @@ msgstr "Tøff lenkje 2"
 
 msgid "Cool Link 3"
 msgstr "Tøff lenkje 3"
-
-msgid "Member Since"
-msgstr "Medlem sidan"
 
 msgid "Last Update"
 msgstr "Siste oppdatering"
@@ -13823,10 +14000,6 @@ msgstr ""
 "<b>Filstorleik:</b> %s\n"
 "<b>Biletstorleik:</b> %dx%d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "Venneikon"
-
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "Fila '%s' er for stor for %s. Prøv eit mindre bilete.\n"
@@ -14746,9 +14919,6 @@ msgstr "Operatør"
 msgid "Half Operator"
 msgstr "Halv-operatør"
 
-msgid "Voice"
-msgstr "Stemme"
-
 msgid "Authorization dialog"
 msgstr "Godkjenningsvindauge"
 
@@ -15226,131 +15396,11 @@ msgstr "Du har ikkje rettar til å avinstallera dette programmet."
 #~ msgstr "Overstyr med gammal SSL (port 5223)"
 
 #~ msgid ""
-#~ "(There was an error receiving this message.  The buddy you are speaking "
-#~ "with is probably using a different encoding than expected.  If you know "
-#~ "what encoding he is using, you can specify it in the advanced account "
-#~ "options for your AIM/ICQ account.)"
-#~ msgstr ""
-#~ "(Det oppstod ein feil under mottaket av meldinga. Truleg nyttar vennen du "
-#~ "pratar med ei anna teiknkoding enn rekna med. Om du veit kva teiknkoding "
-#~ "han nyttar, kan du oppgje det i dei avanserte kontovala for AIM/ICQ-"
-#~ "kontoen din.)"
-
-#~ msgid ""
-#~ "(There was an error receiving this message.  Either you and %s have "
-#~ "different encodings selected, or %s has a buggy client.)"
-#~ msgstr ""
-#~ "(Det oppstod ein feil under mottaket av meldinga. Anten har du og %s vald "
-#~ "ulike teiknkodingar, eller så nyttar %s ein klient med feil i.)"
-
-#~ msgid "AIM Direct IM"
-#~ msgstr "AIM direktelynmelding"
-
-#~ msgid "Get File"
-#~ msgstr "Hent fil"
-
-#~ msgid "Games"
-#~ msgstr "Spel"
-
-#~ msgid "ICQ Xtraz"
-#~ msgstr "ICQ Xtraz"
-
-#~ msgid "Add-Ins"
-#~ msgstr "Tillegg"
-
-#~ msgid "Send Buddy List"
-#~ msgstr "Send vennelista"
-
-#~ msgid "ICQ Direct Connect"
-#~ msgstr "ICQ direktetilkopling"
-
-#~ msgid "AP User"
-#~ msgstr "AP-brukar"
-
-#~ msgid "ICQ RTF"
-#~ msgstr "ICQ RTF"
-
-#~ msgid "Nihilist"
-#~ msgstr "Nihilist"
-
-#~ msgid "ICQ Server Relay"
-#~ msgstr "ICQ tenarvidaresending"
-
-#~ msgid "Old ICQ UTF8"
-#~ msgstr "Gammal ICQ UTF8"
-
-#~ msgid "Trillian Encryption"
-#~ msgstr "Trillian-kryptiering"
-
-#~ msgid "ICQ UTF8"
-#~ msgstr "ICQ UTF8"
-
-#~ msgid "Hiptop"
-#~ msgstr "Hiptop"
-
-#~ msgid "Security Enabled"
-#~ msgstr "Tryggleik er slått på"
-
-#~ msgid "Video Chat"
-#~ msgstr "Videoprat"
-
-#~ msgid "iChat AV"
-#~ msgstr "iChat AV"
-
-#~ msgid "Live Video"
-#~ msgstr "Sanntidsvideo"
-
-#~ msgid "Camera"
-#~ msgstr "Kamera"
-
-#~ msgid "Screen Sharing"
-#~ msgstr "Skjermdeling"
-
-#~ msgid "Warning Level"
-#~ msgstr "Åtvaringsnivå"
-
-#~ msgid "Buddy Comment"
-#~ msgstr "Vennenotat"
-
-#~ msgid "Please authorize me so I can add you to my buddy list."
-#~ msgstr "Om du godtek meg, kan eg leggja deg til i vennelista mi."
-
-#~ msgid "Authorization Denied Message:"
-#~ msgstr "Avvist godkjenning:"
-
-#~ msgid "Online Since"
-#~ msgstr "Tilkopla sidan"
-
-#~ msgid "Capabilities"
-#~ msgstr "Evner"
-
-#~ msgid ""
 #~ "[Unable to display a message from this user because it contained invalid "
 #~ "characters.]"
 #~ msgstr ""
 #~ "Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
 #~ "teikn.]"
-
-#~ msgid "Personal Web Page"
-#~ msgstr "Personelg nettside"
-
-#~ msgid "Additional Information"
-#~ msgstr "Tilleggsinformasjon"
-
-#~ msgid "Zip Code"
-#~ msgstr "Postnummer"
-
-#~ msgid "Work Information"
-#~ msgstr "Arbeidsinformasjon"
-
-#~ msgid "Division"
-#~ msgstr "Avdeling"
-
-#~ msgid "Position"
-#~ msgstr "Stilling"
-
-#~ msgid "Web Page"
-#~ msgstr "Nettside"
 
 #~ msgid "Search for Buddy by Information"
 #~ msgstr "Søk etter venn utfrå opplysningar"

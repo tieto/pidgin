@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2010-08-17 13:37+0600\n"
 "Last-Translator: israt <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -7453,6 +7453,18 @@ msgstr "সার্ভারের ঠিকানা"
 msgid "Server port"
 msgstr "সার্ভারের পোর্ট"
 
+# tithi
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"অনুগ্রহ করে আমাকে অনুমোদন দিন যেন আমি আপনাকে আমার বন্ধু তালিকায় যুক্ত করতে পারি।"
+
+msgid "No reason given."
+msgstr "কোনো কারণ দর্শানো হয়নি।"
+
+# tithi
+msgid "Authorization Denied Message:"
+msgstr "অনুমোদন প্রত্যাখ্যান:"
+
 # Translated by sadia
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -7493,6 +7505,26 @@ msgstr "AOL এখানে আপনার স্ক্রিন নামে�
 #, c-format
 msgid "Error requesting %s"
 msgstr "%s অনুরোধে ত্রুটি"
+
+# tithi
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(এই বার্তাটি গ্রহণে ত্রুটি হয়েছে। আপনি যে বন্ধুর সঙ্গে কথা বলছেন তিনি সম্ভবত ভিন্ন "
+"একটি এনকোডিং ব্যবহার করছেন। যদি আপনি জানেন তিনি কি এনকোডিং ব্যবহার করছেন, আপনি "
+"আপনার AIM/ICQ অ্যাকাউন্টের উচ্চপর্যায়ের অপশনে তা উল্লেখ করতে পারেন।)"
+
+# tithi
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(এই বার্তাটি গ্রহণে একটি ত্রুটি হয়েছে। হয় আপনার এবং %s এর পৃথক এনকোডিং নির্বাচিত "
+"আছে, বা %s এর ক্লায়েন্টটি ত্রুটিপূর্ণ।)"
 
 msgid "Could not join chat room"
 msgstr "আড্ডার আসরে যুক্ত হওয়া সম্ভব হয়নি"
@@ -7922,9 +7954,6 @@ msgstr ""
 "ব্যবহারকারী %1$u নিম্নলিখিত কারণে আপনার বন্ধু তালিকাতে তাদেরকে যোগ করার অনুরোধ "
 "প্রত্যাখ্যান করেছে: \n"
 "%2$s"
-
-msgid "No reason given."
-msgstr "কোনো কারণ দর্শানো হয়নি।"
 
 # tithi
 msgid "ICQ authorization denied."
@@ -8401,6 +8430,14 @@ msgstr "IM ফরওয়ার্ডিং কনফিগারেশন (ওয
 msgid "Set Privacy Options..."
 msgstr "গোপনীয়তার অপশন নির্ধারণ ..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "বন্ধু তালিকা প্রদর্শন (_L)"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "আমন্ত্রন তালিকা"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "অ্যাকাউন্ট নিশ্চিতকরণ"
@@ -8549,6 +8586,188 @@ msgstr "কিউ পরিপূর্ণ"
 
 msgid "Not while on AOL"
 msgstr "AOL এ থাকা অবস্থায় নয়"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "বন্ধু আইকন"
+
+# tithi
+msgid "Voice"
+msgstr "কন্ঠ"
+
+# tithi
+msgid "AIM Direct IM"
+msgstr "AIM সরাসরি IM"
+
+msgid "Get File"
+msgstr "ফাইল সংগ্রহ"
+
+msgid "Games"
+msgstr "খেলা"
+
+# snigdha
+#
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "এ্যাড-ইন"
+
+msgid "Send Buddy List"
+msgstr "বন্ধু তালিকা প্রেরণ করা হবে"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ সরাসরি সংযোগ"
+
+msgid "AP User"
+msgstr "AP ব্যবহারকারী"
+
+# tithi
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "নাস্তিবাদী"
+
+# tithi
+msgid "ICQ Server Relay"
+msgstr "ICQ সার্ভার রিলে"
+
+# tithi
+msgid "Old ICQ UTF8"
+msgstr "পুরাতন ICQ UTF8"
+
+# tithi
+msgid "Trillian Encryption"
+msgstr "Trillian এনক্রিপশন"
+
+# tithi
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "হিপটপ"
+
+msgid "Security Enabled"
+msgstr "নিরাপত্তা সক্রিয়"
+
+msgid "Video Chat"
+msgstr "ভিডিও আড্ডা"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+# tithi
+msgid "Live Video"
+msgstr "সরাসরি ভিডিও"
+
+msgid "Camera"
+msgstr "ক্যামেরা"
+
+msgid "Screen Sharing"
+msgstr "স্ক্রীন শেয়ারকরণ"
+
+msgid "IP Address"
+msgstr "IP ঠিকানা"
+
+# tithi
+msgid "Warning Level"
+msgstr "সতর্কতা স্তর"
+
+msgid "Buddy Comment"
+msgstr "বন্ধুর মন্তব্য"
+
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "ব্যবহারকারীর তথ্য পাওয়া যাচ্ছে না: %s"
+
+# tithi
+msgid "Mobile Phone"
+msgstr "মোবাইল ফোন"
+
+# tithi
+msgid "Personal Web Page"
+msgstr "ব্যক্তিগত ওয়েব পেইজ"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "অতিরিক্ত তথ্য"
+
+# tithi
+msgid "Zip Code"
+msgstr "জিপ কোড"
+
+msgid "Work Information"
+msgstr "কাজের তথ্য"
+
+# tithi
+msgid "Division"
+msgstr "বিভাগ"
+
+msgid "Position"
+msgstr "অবস্থান"
+
+# tithi
+msgid "Web Page"
+msgstr "ওয়েব পেইজ"
+
+msgid "Online Since"
+msgstr "যখন থেকে অনলাইনে"
+
+# tithi
+msgid "Member Since"
+msgstr "যখন থেকে সদস্য"
+
+# tithi
+msgid "Capabilities"
+msgstr "ক্ষমতা"
+
+# tithi
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "অনলাইনে দেখান"
+
+# tithi
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "অনলাইনে দেখান"
+
+msgid "Appear Offline"
+msgstr "অফলাইনে দেখান"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "অফলাইনে দেখান"
+
+# Kick =  তিরস্কার
+# OR  পদাঘাত
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "MultiMX হতে আপনাকে তিরস্কার করা হয়েছে।"
+
+# tithi
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"আপনি বন্ধু তলিকায় ডান ক্লিক করে এবং‌ \"অনুমোদনের জন্য পুনরায় অনুরোধ\" নির্বাচন করে "
+"তাদের থেকে আবার অনুমোদন চাইতে পারেন।"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "দৃশ্যমান"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "আমন্ত্রন তালিকা"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 # tithi
 msgid "Aquarius"
@@ -10857,10 +11076,6 @@ msgstr "ভিডিও অধিবেশন"
 msgid "Computer"
 msgstr "কম্পিউটার"
 
-# tithi
-msgid "Mobile Phone"
-msgstr "মোবাইল ফোন"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -11249,18 +11464,11 @@ msgid "Not on server list"
 msgstr "সার্ভার তালিকায় নেই"
 
 # tithi
-msgid "Appear Online"
-msgstr "অনলাইনে দেখান"
-
-# tithi
 msgid "Appear Permanently Offline"
 msgstr "স্থায়ীভাবে অফলাইনে দেখান"
 
 msgid "Presence"
 msgstr "উপস্থিতি"
-
-msgid "Appear Offline"
-msgstr "অফলাইনে দেখান"
 
 # tithi
 msgid "Don't Appear Permanently Offline"
@@ -11325,9 +11533,6 @@ msgstr "%s আপনাকে %d টি ফাইল একসাথে পা�
 msgid "Write Error"
 msgstr "লিখতে ত্রুটি"
 
-msgid "IP Address"
-msgstr "IP ঠিকানা"
-
 msgid "Yahoo! Japan Profile"
 msgstr "ইয়াহু! জাপান প্রোফাইল"
 
@@ -11368,10 +11573,6 @@ msgstr "দারুন লিংক ২"
 
 msgid "Cool Link 3"
 msgstr "দারুন লিংক ৩"
-
-# tithi
-msgid "Member Since"
-msgstr "যখন থেকে সদস্য"
 
 msgid "Last Update"
 msgstr "সর্বশেষ হালনাগাদ"
@@ -15075,10 +15276,6 @@ msgstr ""
 "<b>ফাইলের আকার:</b> %2$s\n"
 "<b>চিত্রের আকার:</b> %3$dx%4$d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "বন্ধু আইকন"
-
 # tithi
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
@@ -16035,10 +16232,6 @@ msgid "Half Operator"
 msgstr "আংশিক অপারেটর"
 
 # tithi
-msgid "Voice"
-msgstr "কন্ঠ"
-
-# tithi
 msgid "Authorization dialog"
 msgstr "অনুমোদন ডায়ালগ"
 
@@ -16584,150 +16777,11 @@ msgstr "আপনার এই অ্যাপ্লিকেশনটি আন
 
 # tithi
 #~ msgid ""
-#~ "(There was an error receiving this message.  The buddy you are speaking "
-#~ "with is probably using a different encoding than expected.  If you know "
-#~ "what encoding he is using, you can specify it in the advanced account "
-#~ "options for your AIM/ICQ account.)"
-#~ msgstr ""
-#~ "(এই বার্তাটি গ্রহণে ত্রুটি হয়েছে। আপনি যে বন্ধুর সঙ্গে কথা বলছেন তিনি সম্ভবত ভিন্ন "
-#~ "একটি এনকোডিং ব্যবহার করছেন। যদি আপনি জানেন তিনি কি এনকোডিং ব্যবহার করছেন, "
-#~ "আপনি আপনার AIM/ICQ অ্যাকাউন্টের উচ্চপর্যায়ের অপশনে তা উল্লেখ করতে পারেন।)"
-
-# tithi
-#~ msgid ""
-#~ "(There was an error receiving this message.  Either you and %s have "
-#~ "different encodings selected, or %s has a buggy client.)"
-#~ msgstr ""
-#~ "(এই বার্তাটি গ্রহণে একটি ত্রুটি হয়েছে। হয় আপনার এবং %s এর পৃথক এনকোডিং "
-#~ "নির্বাচিত আছে, বা %s এর ক্লায়েন্টটি ত্রুটিপূর্ণ।)"
-
-# tithi
-#~ msgid "AIM Direct IM"
-#~ msgstr "AIM সরাসরি IM"
-
-#~ msgid "Get File"
-#~ msgstr "ফাইল সংগ্রহ"
-
-#~ msgid "Games"
-#~ msgstr "খেলা"
-
-# snigdha
-#
-#~ msgid "ICQ Xtraz"
-#~ msgstr "ICQ Xtraz"
-
-#~ msgid "Add-Ins"
-#~ msgstr "এ্যাড-ইন"
-
-#~ msgid "Send Buddy List"
-#~ msgstr "বন্ধু তালিকা প্রেরণ করা হবে"
-
-#~ msgid "ICQ Direct Connect"
-#~ msgstr "ICQ সরাসরি সংযোগ"
-
-#~ msgid "AP User"
-#~ msgstr "AP ব্যবহারকারী"
-
-# tithi
-#~ msgid "ICQ RTF"
-#~ msgstr "ICQ RTF"
-
-#~ msgid "Nihilist"
-#~ msgstr "নাস্তিবাদী"
-
-# tithi
-#~ msgid "ICQ Server Relay"
-#~ msgstr "ICQ সার্ভার রিলে"
-
-# tithi
-#~ msgid "Old ICQ UTF8"
-#~ msgstr "পুরাতন ICQ UTF8"
-
-# tithi
-#~ msgid "Trillian Encryption"
-#~ msgstr "Trillian এনক্রিপশন"
-
-# tithi
-#~ msgid "ICQ UTF8"
-#~ msgstr "ICQ UTF8"
-
-#~ msgid "Hiptop"
-#~ msgstr "হিপটপ"
-
-#~ msgid "Security Enabled"
-#~ msgstr "নিরাপত্তা সক্রিয়"
-
-#~ msgid "Video Chat"
-#~ msgstr "ভিডিও আড্ডা"
-
-#~ msgid "iChat AV"
-#~ msgstr "iChat AV"
-
-# tithi
-#~ msgid "Live Video"
-#~ msgstr "সরাসরি ভিডিও"
-
-#~ msgid "Camera"
-#~ msgstr "ক্যামেরা"
-
-#~ msgid "Screen Sharing"
-#~ msgstr "স্ক্রীন শেয়ারকরণ"
-
-# tithi
-#~ msgid "Warning Level"
-#~ msgstr "সতর্কতা স্তর"
-
-#~ msgid "Buddy Comment"
-#~ msgstr "বন্ধুর মন্তব্য"
-
-# tithi
-#~ msgid "Please authorize me so I can add you to my buddy list."
-#~ msgstr ""
-#~ "অনুগ্রহ করে আমাকে অনুমোদন দিন যেন আমি আপনাকে আমার বন্ধু তালিকায় যুক্ত করতে পারি।"
-
-# tithi
-#~ msgid "Authorization Denied Message:"
-#~ msgstr "অনুমোদন প্রত্যাখ্যান:"
-
-#~ msgid "Online Since"
-#~ msgstr "যখন থেকে অনলাইনে"
-
-# tithi
-#~ msgid "Capabilities"
-#~ msgstr "ক্ষমতা"
-
-# tithi
-#~ msgid ""
 #~ "[Unable to display a message from this user because it contained invalid "
 #~ "characters.]"
 #~ msgstr ""
 #~ "[এই ব্যবহারকারী থেকে একটি বার্তা প্রদর্শন করতে ব্যর্থ কারণ এটি অকার্যকর বর্ণচিহ্ন "
 #~ "ধারণ করেছিল।]"
-
-# tithi
-#~ msgid "Personal Web Page"
-#~ msgstr "ব্যক্তিগত ওয়েব পেইজ"
-
-#~ msgid "Additional Information"
-#~ msgstr "অতিরিক্ত তথ্য"
-
-# tithi
-#~ msgid "Zip Code"
-#~ msgstr "জিপ কোড"
-
-#~ msgid "Work Information"
-#~ msgstr "কাজের তথ্য"
-
-# tithi
-#~ msgid "Division"
-#~ msgstr "বিভাগ"
-
-#~ msgid "Position"
-#~ msgstr "অবস্থান"
-
-# tithi
-#~ msgid "Web Page"
-#~ msgstr "ওয়েব পেইজ"
 
 # tithi
 #~ msgid "Search for Buddy by Information"

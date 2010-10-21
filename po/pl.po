@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-20 11:31-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-10-20 12:58+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -7801,6 +7801,14 @@ msgstr "Skonfiguruj przekierowanie komunikatora (WWW)"
 #. ICQ actions
 msgid "Set Privacy Options..."
 msgstr "Ustaw opcje prywatności..."
+
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Lista widocznych"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Lista niewidocznych"
 
 #. AIM actions
 msgid "Confirm Account"
