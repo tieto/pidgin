@@ -5459,10 +5459,10 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 				oscar_show_icq_privacy_opts);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new("Show Visible List", oscar_show_visible_list);
+		act = purple_plugin_action_new(_("Show Visible List"), oscar_show_visible_list);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new("Show Invisible List", oscar_show_invisible_list);
+		act = purple_plugin_action_new(_("Show Invisible List"), oscar_show_invisible_list);
 		menu = g_list_prepend(menu, act);
 	}
 	else
