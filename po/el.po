@@ -804,7 +804,7 @@ msgstr "Σταμάτημα"
 msgid "Waiting for transfer to begin"
 msgstr "Αναμονή έναρξης μεταφοράς"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Ακυρώθηκε"
 
 msgid "Failed"
@@ -16284,7 +16284,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Αδύνατο το άνοιγμα του %s για εγγραφή!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Αποτυχία μεταφοράς αρχείου. Πιθανώς να ακυρώθηκε από την άλλη πλευρά."
 

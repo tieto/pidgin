@@ -515,7 +515,8 @@ purple_media_add_session(PurpleMedia *media, PurpleMediaSession *session)
 
 	if (!media->priv->sessions) {
 		purple_debug_info("media", "Creating hash table for sessions\n");
-		media->priv->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+		media->priv->sessions = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                              g_free, NULL);
 	}
 	g_hash_table_insert(media->priv->sessions, g_strdup(session->id), session);
 }

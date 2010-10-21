@@ -757,7 +757,7 @@ msgstr "නවතන්න"
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "අහෝසි කරන්න"
 
 msgid "Failed"

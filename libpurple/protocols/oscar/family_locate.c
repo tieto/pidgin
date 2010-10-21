@@ -245,6 +245,10 @@ static const struct {
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
+	{OSCAR_CAPABILITY_HTML_MSGS,
+	 {0x01, 0x38, 0xca, 0x7b, 0x76, 0x9a, 0x49, 0x15,
+	  0x88, 0xf2, 0x13, 0xfc, 0x00, 0x97, 0x9e, 0xa8}},
+
 	{OSCAR_CAPABILITY_LAST,
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
@@ -583,7 +587,7 @@ aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
 		guint8 *cap;
 		int i, identified;
 
@@ -617,7 +621,7 @@ aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
 	int offset;
 	const char *result = NULL;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
 		/* check wheather this capability is a custom user icon */
 		guint8 *cap;
 		int i;
@@ -643,7 +647,7 @@ aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x02) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x02) {
 		guint8 *cap;
 		int i, identified;
 
@@ -674,16 +678,13 @@ byte_stream_putcaps(ByteStream *bs, guint64 caps)
 	if (!bs)
 		return -EINVAL;
 
-	for (i = 0; byte_stream_empty(bs); i++) {
-
+	for (i = 0; byte_stream_bytes_left(bs); i++) {
 		if (aim_caps[i].flag == OSCAR_CAPABILITY_LAST)
 			break;
 
 		if (caps & aim_caps[i].flag)
 			byte_stream_putraw(bs, aim_caps[i].data, 0x10);
-
 	}
-
 	return 0;
 }
 
@@ -804,7 +805,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 		type = byte_stream_get16(bs);
 		length = byte_stream_get16(bs);
 		curpos = byte_stream_curpos(bs);
-		endpos = curpos + MIN(length, byte_stream_empty(bs));
+		endpos = curpos + MIN(length, byte_stream_bytes_left(bs));
 
 		if (type == 0x0001) {
 			/*
@@ -1010,7 +1011,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 				number2 = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
 
-				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_empty(bs));
+				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_bytes_left(bs));
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
@@ -1165,68 +1166,12 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	return 0;
 }
 
-/* Apparently, this is never called.
- * If you activate it, figure out a way to know what mood to pass to
- * aim_tlvlist_add_caps() below. --rlaager */
-#if 0
-/*
- * Inverse of aim_info_extract()
- */
-int
-aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
-{
-	GSList *tlvlist = NULL;
-
-	if (!bs || !info)
-		return -EINVAL;
-
-	byte_stream_put8(bs, strlen(info->bn));
-	byte_stream_putstr(bs, info->bn);
-
-	byte_stream_put16(bs, info->warnlevel);
-
-	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
-		aim_tlvlist_add_16(&tlvlist, 0x0001, info->flags);
-	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0002, info->membersince);
-	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0003, info->onlinesince);
-	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		aim_tlvlist_add_16(&tlvlist, 0x0004, info->idletime);
-
-/* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
-#ifdef ICQ_OSCAR_SUPPORT
-	if (atoi(info->bn) != 0) {
-		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
-			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
-		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
-			aim_tlvlist_add_32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
-	}
-#endif
-
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES) {
-		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities, NULL);
-	}
-
-	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
-
-	byte_stream_put16(bs, aim_tlvlist_count(tlvlist));
-	aim_tlvlist_write(bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	return 0;
-}
-#endif
-
 /*
  * Subtype 0x0001
  */
 static int
 error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 	guint16 reason;
 	char *bn;
@@ -1253,14 +1198,12 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	reason = byte_stream_get16(bs);
 
-	/* Notify the user that we do not have info for this buddy */
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, reason, bn);
+	oscar_user_info_display_error(od, reason, bn);
 
 	g_free(snac2->data);
 	g_free(snac2);
 
-	return ret;
+	return 1;
 }
 
 /*
@@ -1390,7 +1333,7 @@ aim_locate_setprofile(OscarData *od,
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1424,41 +1367,7 @@ aim_locate_setcaps(OscarData *od, guint64 caps)
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x0005 - Request info of another AIM user.
- *
- * @param bn The buddy name whose info you wish to request.
- * @param infotype The type of info you wish to request.
- *        0x0001 - Info/profile
- *        0x0003 - Away message
- *        0x0004 - Capabilities
- */
-int
-aim_locate_getinfo(OscarData *od, const char *bn, guint16 infotype)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 2+1+strlen(bn));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, NULL, 0);
-
-	byte_stream_put16(&bs, infotype);
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1470,7 +1379,6 @@ static int
 userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_userinfo_t *userinfo, *userinfo2;
 	GSList *tlvlist;
 	aim_tlv_t *tlv = NULL;
@@ -1522,137 +1430,9 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	g_free(userinfo);
 
 	/* Show the info to the user */
-	if (userinfo2 != NULL && ((userfunc = aim_callhandler(od, snac->family, snac->subtype))))
-		ret = userfunc(od, conn, frame, userinfo2);
+	oscar_user_info_display_aim(od, userinfo2);
 
 	return ret;
-}
-
-/*
- * Subtype 0x0009 - Set directory profile data.
- *
- * This is not the same as aim_location_setprofile!
- * privacy: 1 to allow searching, 0 to disallow.
- *
- */
-int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tlvlist = NULL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
-		return -EINVAL;
-
-	aim_tlvlist_add_16(&tlvlist, 0x000a, privacy);
-
-	if (first)
-		aim_tlvlist_add_str(&tlvlist, 0x0001, first);
-	if (last)
-		aim_tlvlist_add_str(&tlvlist, 0x0002, last);
-	if (middle)
-		aim_tlvlist_add_str(&tlvlist, 0x0003, middle);
-	if (maiden)
-		aim_tlvlist_add_str(&tlvlist, 0x0004, maiden);
-
-	if (state)
-		aim_tlvlist_add_str(&tlvlist, 0x0007, state);
-	if (city)
-		aim_tlvlist_add_str(&tlvlist, 0x0008, city);
-
-	if (nickname)
-		aim_tlvlist_add_str(&tlvlist, 0x000c, nickname);
-	if (zip)
-		aim_tlvlist_add_str(&tlvlist, 0x000d, zip);
-
-	if (street)
-		aim_tlvlist_add_str(&tlvlist, 0x0021, street);
-
-	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, NULL, 0);
-
-	aim_tlvlist_write(&bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0009, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x000b - Huh? What is this?
- */
-int aim_locate_000b(OscarData *od, const char *bn)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1+strlen(bn));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, NULL, 0);
-
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x000f
- *
- * XXX pass these in better
- *
- */
-int
-aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tlvlist = NULL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
-		return -EINVAL;
-
-	/* ?? privacy ?? */
-	aim_tlvlist_add_16(&tlvlist, 0x000a, privacy);
-
-	if (interest1)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest1);
-	if (interest2)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest2);
-	if (interest3)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest3);
-	if (interest4)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest4);
-	if (interest5)
-		aim_tlvlist_add_str(&tlvlist, 0x0000b, interest5);
-
-	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, NULL, 0);
-
-	aim_tlvlist_write(&bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000f, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-	return 0;
 }
 
 /*
@@ -1683,7 +1463,7 @@ aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags)
 	byte_stream_putstr(&bs, bn);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, bn, strlen(bn)+1);
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -1730,15 +1510,6 @@ locate_modfirst(OscarData *od, aim_module_t *mod)
 
 	return 0;
 }
-
-#if 0 //rlaager
-const char* aim_get_custom_icon_mood(gint32 no)
-{
-	if (no >= G_N_ELEMENTS(aim_custom_icons) || no < 1)
-		return NULL;
-	return aim_custom_icons[no].mood.mood;
-}
-#endif
 
 const char*
 icq_get_custom_icon_description(const char *mood)

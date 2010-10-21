@@ -53,11 +53,12 @@ xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *er
 	g_return_if_fail(error_code != NULL);
 	g_return_if_fail(error_type != NULL);
 
-	if(!to || !id)
+	if(!to || !id) {
+		purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
 		return;
+	}
 
-	purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
-	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, purple_account_get_username(bd->jabber_data->account), id);
+	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, bonjour_get_jid(bd->jabber_data->account), id);
 	if(iq == NULL)
 		return;
 
@@ -195,7 +196,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	/* Assign stream id. */
 	g_free(xf->iq_id);
 	xf->iq_id = g_strdup_printf("%u", next_id++);
-	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -255,7 +256,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	bd = xf->data;
 
 	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -763,7 +764,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	bd = xf->data;
 
-	iq = xep_iq_new(bd, XEP_IQ_SET, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->sid);
+	iq = xep_iq_new(bd, XEP_IQ_SET, xfer->who, bonjour_get_jid(bd->jabber_data->account), xf->sid);
 
 	query = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(query, "http://jabber.org/protocol/bytestreams");
@@ -835,7 +836,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	/* Here, start the file transfer.*/
 
 	/* Notify Initiator of Connection */
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, xfer->who, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	q_node = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(q_node, "http://jabber.org/protocol/bytestreams");
 	tmp_node = xmlnode_new_child(q_node, "streamhost-used");
@@ -868,7 +869,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	name = purple_buddy_get_name(pb);
 	account = purple_buddy_get_account(pb);
 
-	p = g_strdup_printf("%s%s%s", xf->sid, name, purple_account_get_username(account));
+	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);

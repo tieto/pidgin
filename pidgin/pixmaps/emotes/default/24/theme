@@ -419,6 +419,98 @@ male-fighter2.png   o=>     O=>
 female-fighter.png  o-+     O-+
 yin-yang.png        (%)
 
+# Following Yahoo! Messenger 8.1
+[Yahoo JAPAN]
+happy.png           :)      :-)
+question.png        :-/     :-\\
+shocked.png         :-O     :O      :-o     :o 
+devil.png           >:)
+angel.png           O:-)    o:-)    0:-)
+sick.png            :-&
+sleepy.png          (:|
+hypnotized.png      @-)
+on-the-phone.png    :)]
+sad.png             :(      :-(
+amorous.png         :x      :-x     :X      :-X
+angry.png           X-(     x-(     X(      x(
+crying.png          :((
+glasses-nerdy.png   :-B     :-b
+quiet.png           :-$
+drool.png           =P~     =p~
+lying.png           :^O     :^o
+call-me.png         :-c
+wink.png            ;)      ;-)
+embarrassed.png     :">
+mean.png            :->     :>
+laugh.png           :))     :-))
+bye.png             =;
+arrogant.png        [-(
+thinking.png        :-?
+waiting.png         :-w     :-W
+at-wits-end.png     ~x(     ~X(
+excited.png         :D      :-D     :d      :-d
+tongue.png          :-P     :P      :-p     :p
+glasses-cool.png    B-)     b-)
+neutral.png         :|      :-|
+sleeping.png        I-)     i-)     |-)
+clown.png           :o)     :O)
+doh.png             #-o     #-O
+weep.png            :-<
+go-away.png         :-h
+lashes.png          ;;)
+kiss.png            :-*     :*
+confused.png        :-S     :-s
+sarcastic.png       /:)
+eyeroll.png         8-|
+silly.png           8-}
+clap.png            =D>     =d>
+mad-tongue.png      >:P     >:p
+time-out.png        :-t     :-T
+hug-left.png        >:D<    >:d<
+love-over.png       =((
+hot.png             #:-S    #:-s
+rotfl.png           =)) :-j :-J 
+loser.png           L-)     l-)
+party.png           <:-P    <:-p
+nervous.png         :-SS       :-Ss    :-sS    :-ss
+cowboy.png          <):)
+desire.png          8->
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)  :(|)
+
+# Hidden Yahoo emotes
+alien.png           =:)     >-)
+beat-up.png         b-(     B-(
+chicken.png         ~:>
+coffee.png          ~o)     ~O)
+cow.png             3:-O    3:-o
+dance.png           \\:D/   \\:d/
+rose.png            @};-
+dont-know.png       :-L     :-l
+skeleton.png        8-X     8-x
+lamp.png            *-:)
+monkey.png          :(|)
+coins.png           $-)
+peace.png           :)>-
+pig.png             :@)
+pray.png            [-o<    [-O<
+pumpkin.png         (~~)
+shame.png           [-X     [-x
+flag.png            **==
+clover.png          %%-
+musical-note.png    :-"
+giggle.png          ;))
+worship.png         ^:)^
+star.png            (*)
+waving.png          >:/
+talktohand.png      :-@
+
+# Only available after activating the Yahoo! Fighter IMVironment
+male-fighter1.png   o->     O->
+male-fighter2.png   o=>     O=>
+female-fighter.png  o-+     O-+
+yin-yang.png        (%)
+
 
 # Following MySpaceIM Beta 1.0.697.0
 [MySpaceIM]
@@ -428,7 +520,7 @@ confused.png	    :Z
 glasses-nerdy.png   B)
 bulgy-eyes.png	    %)
 freaked-out.png	    :E
-smile.png	    :)      :-)
+happy.png	    :)      :-)
 amorous.png	    :X
 laugh.png	    :))
 mohawk.png	    -:

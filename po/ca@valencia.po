@@ -834,7 +834,7 @@ msgstr "Atura"
 msgid "Waiting for transfer to begin"
 msgstr "S'està esperant a iniciar la transferència"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "S'ha cancel·lat"
 
 msgid "Failed"
@@ -16324,7 +16324,7 @@ msgstr "No tens permís per desinstal.lar esta aplicació."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "No s'ha pogut obrir %s per a escriure-hi."
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Ha fallat la transferència de fitxers. Probablement s'ha cancel·lat a "
 #~ "l'altra banda."

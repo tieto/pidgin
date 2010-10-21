@@ -183,7 +183,7 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 {
 	GtkTextIter start, end;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = console->gc;
+	PurpleConnection *gc;
 	GtkTextBuffer *buffer;
 	char *text;
 

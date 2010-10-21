@@ -779,7 +779,7 @@ msgstr "थांबा"
 msgid "Waiting for transfer to begin"
 msgstr "स्थानांतर सुरू करण्याची प्रतिक्षा करत आहे"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "रद्द केले"
 
 msgid "Failed"

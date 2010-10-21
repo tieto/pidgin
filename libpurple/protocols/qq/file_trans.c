@@ -84,7 +84,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	if (filelen > QQ_MAX_FILE_MD5_LENGTH)
 		filelen = QQ_MAX_FILE_MD5_LENGTH;
 
-	fp = fopen(filename, "rb");
+	fp = g_fopen(filename, "rb");
 	g_return_if_fail(fp != NULL);
 
 	buffer = g_newa(guint8, filelen);
@@ -202,7 +202,7 @@ void qq_xfer_close_file(PurpleXfer *xfer)
 static int _qq_xfer_open_file(const gchar *filename, const gchar *method, PurpleXfer *xfer)
 {
 	ft_info *info = xfer->data;
-	info->dest_fp = fopen(purple_xfer_get_local_filename(xfer), method);
+	info->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), method);
 	if (info->dest_fp == NULL) {
 		return -1;
 	}
@@ -238,11 +238,8 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	gint bytes = 0;
 	guint32 file_key;
 	qq_data *qd;
-	ft_info *info;
 
 	qd = (qq_data *) gc->proto_data;
-
-	info = (ft_info *) qd->xfer->data;
 
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE);
 	file_key = _gen_file_key();
@@ -805,9 +802,6 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes;
 	guint8 tag;
-	qq_data *qd;
-
-	qd = (qq_data *) gc->proto_data;
 
 	bytes = 0;
 	bytes += qq_get8(&tag, data + bytes);

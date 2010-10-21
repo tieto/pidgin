@@ -18,29 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 */
 
-/*
- * Family 0x000c - Translation.
- *
- * I have no idea why this group was issued.  I have never seen anything
- * that uses it.  From what I remember, the last time I tried to poke at
- * the server with this group, it whined about not supporting it.
- *
- * But we advertise it anyway, because its fun.
- *
- */
+#ifndef _VISIBILITY_H_
+#define _VISIBILITY_H_
 
 #include "oscar.h"
+#include "plugin.h"
+#include "util.h"
 
-int translate_modfirst(OscarData *od, aim_module_t *mod)
-{
+PurpleMenuAction * create_visibility_menu_item(OscarData *od, const char *bname);
+void oscar_show_visible_list(PurplePluginAction *action);
+void oscar_show_invisible_list(PurplePluginAction *action);
 
-	mod->family = SNAC_FAMILY_TRANSLATE;
-	mod->version = 0x0001;
-	mod->toolid = 0x0104;
-	mod->toolversion = 0x0001;
-	mod->flags = 0;
-	strncpy(mod->name, "translate", sizeof(mod->name));
-	mod->snachandler = NULL;
-
-	return 0;
-}
+#endif

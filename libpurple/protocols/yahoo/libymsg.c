@@ -317,7 +317,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 			if (pair->value) {
 				decoded = purple_base64_decode(pair->value, &len);
-				if (len) {
+				if (decoded && len > 0) {
 					tmp = purple_str_binary_to_ascii(decoded, len);
 					purple_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
 					g_free(tmp);
@@ -502,8 +502,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	char *temp = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
-	PurpleBuddy *b;
-	PurpleGroup *g;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
 	int stealth = 0;
 
@@ -549,7 +547,9 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				if (yd->current_list15_grp) {
 					/* This buddy is in a group */
 					f = yahoo_friend_find_or_new(gc, norm_bud);
-					if (!(b = purple_find_buddy(account, norm_bud))) {
+					if (!purple_find_buddy(account, norm_bud)) {
+						PurpleBuddy *b;
+						PurpleGroup *g;
 						if (!(g = purple_find_group(yd->current_list15_grp))) {
 							g = purple_group_new(yd->current_list15_grp);
 							purple_blist_add_group(g, NULL);
@@ -636,8 +636,6 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
 	gboolean got_serv_list = FALSE;
-	PurpleBuddy *b;
-	PurpleGroup *g;
 	YahooFriend *f = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = gc->proto_data;
@@ -705,7 +703,9 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 				norm_bud = g_strdup(purple_normalize(account, *bud));
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 
-				if (!(b = purple_find_buddy(account, norm_bud))) {
+				if (!purple_find_buddy(account, norm_bud)) {
+					PurpleBuddy *b;
+					PurpleGroup *g;
 					if (!(g = purple_find_group(grp))) {
 						g = purple_group_new(grp);
 						purple_blist_add_group(g, NULL);
@@ -2863,15 +2863,17 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (base64) {
 		guint32 ip;
 		YahooFriend *f;
-		char *host_ip;
+		char *host_ip, *tmp;
 		struct yahoo_p2p_data *p2p_data;
 
 		decoded = purple_base64_decode(base64, &len);
-		if (len) {
-			char *tmp = purple_str_binary_to_ascii(decoded, len);
-			purple_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
-			g_free(tmp);
+		if (decoded == NULL) {
+			purple_debug_info("yahoo","p2p: Unable to decode base64 IP (%s) \n", base64);
+			return;
 		}
+		tmp = purple_str_binary_to_ascii(decoded, len);
+		purple_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
+		g_free(tmp);
 
 		ip = strtol((gchar *)decoded, NULL, 10);
 		g_free(decoded);
@@ -3806,13 +3808,12 @@ const char *yahoo_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	YahooData *yd;
 	YahooFriend *f;
 	PurplePresence *presence;
 
 	if (!b || !(account = purple_buddy_get_account(b)) ||
 			!(gc = purple_account_get_connection(account)) ||
-			!(yd = gc->proto_data))
+			!gc->proto_data)
 		return NULL;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(b));
@@ -3907,7 +3908,6 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	YahooData *yd;
 	const char *game;
 	char *game2;
 	char *t;
@@ -3918,7 +3918,6 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	yd = (YahooData *) gc->proto_data;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 	if (!f)
@@ -4942,7 +4941,6 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 	struct yahoo_packet *pkt;
 	const char *group = NULL;
 	char *group2;
-	YahooFriend *f;
 	const char *bname;
 	const char *fed_bname;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
@@ -4954,7 +4952,6 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 	if (!purple_privacy_check(purple_connection_get_account(gc), bname))
 		return;
 
-	f = yahoo_friend_find(gc, bname);
 	fed = yahoo_get_federation_from_name(bname);
 	if (fed != YAHOO_FEDERATION_NONE)
 		fed_bname += 4;
@@ -5217,15 +5214,11 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 {
 	GHashTable *comp;
 	PurpleConnection *gc;
-	YahooData *yd;
-	int id;
 
 	if (!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	gc = purple_conversation_get_gc(conv);
-	yd = gc->proto_data;
-	id = yd->conf_id;
 	purple_debug_info("yahoo", "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);

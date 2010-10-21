@@ -160,7 +160,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 {
 	GString *name, *val;
 	PurpleBlistNode *node;
-	int error, i;
+	int i;
 	void *retval = NULL;
 	Tcl_Obj *cmd, *arg, *result;
 	void **vals; /* Used for inout parameters */
@@ -335,7 +335,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	}
 
 	/* Call the friggin' procedure already */
-	if ((error = Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL)) != TCL_OK) {
+	if (Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL) != TCL_OK) {
 		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
 			   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 	} else {
@@ -345,7 +345,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			if (purple_value_get_type(handler->returntype) == PURPLE_TYPE_STRING) {
 				retval = (void *)g_strdup(Tcl_GetString(result));
 			} else {
-				if ((error = Tcl_GetIntFromObj(handler->interp, result, (int *)&retval)) != TCL_OK) {
+				if (Tcl_GetIntFromObj(handler->interp, result, (int *)&retval) != TCL_OK) {
 					purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Error retrieving procedure result: %s\n",
 						   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 					retval = NULL;

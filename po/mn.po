@@ -774,7 +774,7 @@ msgstr "Зогсоох"
 msgid "Waiting for transfer to begin"
 msgstr "Файл шилжүүлэлт эхлүүлэхийг хүлээж байна"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Цуцлагдсан"
 
 msgid "Failed"
@@ -15602,7 +15602,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Завсар хийхээр %sийг нээж чадсангүй!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Файл дамжуулалт амжилттгүй боллоо."
 
 #~ msgid "Could not connect for transfer."

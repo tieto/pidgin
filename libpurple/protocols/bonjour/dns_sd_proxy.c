@@ -28,6 +28,8 @@ static DNSServiceErrorType (DNSSD_API* _DNSServiceAddRecord)(DNSServiceRef sdRef
 static DNSServiceErrorType (DNSSD_API* _DNSServiceBrowse)(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
 	const char *regtype, const char *domain, DNSServiceBrowseReply callBack, void *context);
 static int (DNSSD_API* _DNSServiceConstructFullName)(char *fullName, const char *service, const char *regtype, const char *domain);
+static DNSServiceErrorType (DNSSD_API* _DNSServiceGetAddrInfo)(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
+	DNSServiceProtocol protocol, const char *hostname, DNSServiceGetAddrInfoReply callBack, void *context);
 static DNSServiceErrorType (DNSSD_API* _DNSServiceProcessResult)(DNSServiceRef sdRef);
 static DNSServiceErrorType (DNSSD_API* _DNSServiceQueryRecord)(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
 	const char *fullname, uint16_t rrtype, uint16_t rrclass, DNSServiceQueryRecordReply callBack, void *context);
@@ -47,6 +49,7 @@ static const void * (DNSSD_API* _TXTRecordGetBytesPtr)(const TXTRecordRef *txtRe
 static int16_t (DNSSD_API* _TXTRecordGetLength)(const TXTRecordRef *txtRecord);
 static const void * (DNSSD_API* _TXTRecordGetValuePtr)(uint16_t txtLen, const void *txtRecord, const char *key, uint8_t *valueLen);
 static DNSServiceErrorType (DNSSD_API* _TXTRecordSetValue)(TXTRecordRef *txtRecord, const char *key, uint8_t valueSize, const void *value);
+
 #endif
 
 gboolean dns_sd_available(void) {
@@ -59,6 +62,7 @@ gboolean dns_sd_available(void) {
 		if ((_DNSServiceAddRecord = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceAddRecord"))
 				&& (_DNSServiceBrowse = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceBrowse"))
 				&& (_DNSServiceConstructFullName = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceConstructFullName"))
+				&& (_DNSServiceGetAddrInfo = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceGetAddrInfo"))
 				&& (_DNSServiceProcessResult = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceProcessResult"))
 				&& (_DNSServiceQueryRecord = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceQueryRecord"))
 				&& (_DNSServiceRefDeallocate = (void *) wpurple_find_and_loadproc("dnssd.dll", "DNSServiceRefDeallocate"))
@@ -99,6 +103,12 @@ DNSServiceErrorType _wpurple_DNSServiceBrowse(DNSServiceRef *sdRef, DNSServiceFl
 int _wpurple_DNSServiceConstructFullName(char *fullName, const char *service, const char *regtype, const char *domain) {
 	g_return_val_if_fail(_DNSServiceConstructFullName != NULL, 0);
 	return (_DNSServiceConstructFullName)(fullName, service, regtype, domain);
+}
+
+DNSServiceErrorType _wpurple_DNSServiceGetAddrInfo(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
+		DNSServiceProtocol protocol, const char *hostname, DNSServiceGetAddrInfoReply callBack, void *context) {
+	g_return_val_if_fail(_DNSServiceGetAddrInfo != NULL, 0);
+	return (_DNSServiceGetAddrInfo)(sdRef, flags, interfaceIndex, protocol, hostname, callBack, context);
 }
 
 DNSServiceErrorType _wpurple_DNSServiceProcessResult(DNSServiceRef sdRef) {

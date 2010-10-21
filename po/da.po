@@ -812,7 +812,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Venter på at overførsel skal starte"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Annulleret"
 
 msgid "Failed"
@@ -16489,7 +16489,7 @@ msgstr "Du har ikke tilladelse til at afinstallere dette program."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Kunne ikke åbne %s til skrivning!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Filoverførsel fejlede - den anden side har sikkert afbrudt."
 
 #~ msgid "Could not connect for transfer."

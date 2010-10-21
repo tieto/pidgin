@@ -2,6 +2,12 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.4 (10/20/2010):
+	John: This release came at this particular time due to some security
+	issues Daniel discovered for us when investigating a bug.  There are
+	a ton of other changes, including some partial Yahoo file transfer
+	fixes and a bunch of other little things.  Enjoy!
+
 2.7.3 (08/10/2010):
 	Mark: Lots of little incremental[1] bug fixes and enhancements in this
 	release.

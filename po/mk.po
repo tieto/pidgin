@@ -806,7 +806,7 @@ msgstr "Стопирај"
 msgid "Waiting for transfer to begin"
 msgstr "Чекам да започне преносот"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Откажано"
 
 msgid "Failed"
@@ -16667,7 +16667,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Не можам да ја отворам %s за запишување!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Размената на датотека не успеа. Другата страна веројатно откажа."
 
 #~ msgid "Could not connect for transfer."

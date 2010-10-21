@@ -820,7 +820,7 @@ msgstr "Зареждане при стартиране"
 msgid "Waiting for transfer to begin"
 msgstr "Изчакване пренасянето да започне"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Отказан"
 
 msgid "Failed"
@@ -16574,7 +16574,7 @@ msgstr "Нямате права да деинсталирате тази про�
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s не може да бъде отворен за запис!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Неуспешен пренос на файла. Получателят вероятно е отказал получаването."
 

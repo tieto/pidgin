@@ -362,8 +362,6 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 
 	style = grl->tipwindow->style;
 
-	max_text_width = 0;
-
 	max_text_width = MAX(grl->tip_width, grl->tip_name_width);
 	max_width = TOOLTIP_BORDER + SMALL_SPACE + max_text_width + TOOLTIP_BORDER;
 

@@ -916,7 +916,7 @@ msgstr "Parar"
 msgid "Waiting for transfer to begin"
 msgstr "Esperando el comienzo de la transferencia"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Cancelado"
 
 msgid "Failed"
