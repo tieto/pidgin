@@ -1,3 +1,12 @@
+pidgin (2.7.4-1) unstable; urgency=high
+
+  * Imported Upstream version 2.7.4
+    - Fixes multiple remotely-triggered DoSes (CVE-2010-3711)
+  * Remove obsolete msn_crash.patch
+  * Fix doc-base section
+
+ -- Ari Pollak <ari@debian.org>  Wed, 20 Oct 2010 22:04:38 -0400
+
 pidgin (2.7.3-2) unstable; urgency=low
 
   * Apply upstream patch to fix random crashes in MSN (Closes: #594893)
