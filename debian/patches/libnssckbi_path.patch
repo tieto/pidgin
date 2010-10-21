@@ -1,7 +1,7 @@
-Description: Fix path to libnssckbi.so
-Author: Mike Hommey <mh+reportbug@glandium.org>
+From: Mike Hommey <mh+reportbug@glandium.org>
 Bug-Debian: http://bugs.debian.org/564711
 Forwarded: no
+Description: Fix path to libnssckbi.so
 Index: pidgin-2.7.1/libpurple/plugins/ssl/ssl-nss.c
 ===================================================================
 --- pidgin-2.7.1.orig/libpurple/plugins/ssl/ssl-nss.c

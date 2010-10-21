@@ -1,5 +1,5 @@
-Description: don't raise a string, since that's incompatible with python 2.6
 Forwarded: http://developer.pidgin.im/ticket/12151
+Description: don't raise a string, since that's incompatible with python 2.6
 Index: pidgin-2.7.1/libpurple/purple-remote
 ===================================================================
 --- pidgin-2.7.1.orig/libpurple/purple-remote
