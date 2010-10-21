@@ -2,7 +2,7 @@ Document: pidgin-dev
 Title: Pidgin/libpurple API Manual
 Abstract: This manual describes the Pidgin programming interface
  for use by Pidgin/libpurple plugins and scripts.
-Section: Applications/Network/Communication
+Section: Network/Communication
 
 Format: HTML
 Index: /usr/share/doc/pidgin-dev/html/index.html
