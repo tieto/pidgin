@@ -1,2 +1,3 @@
 python26.patch
 libnssckbi_path.patch
+libgadu_version.patch

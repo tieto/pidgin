@@ -1,0 +1,72 @@
+From: Ari Pollak <ari@debian.org>
+Bug: http://developer.pidgin.im/ticket/12789
+Debian-Bug: http://bugs.debian.org/600969
+Description: changes libgadu minimum version to 1.9.0
+ so the version in Debian will be found
+
+Index: pidgin/configure
+===================================================================
+--- pidgin.orig/configure
++++ pidgin/configure
+@@ -18086,12 +18086,12 @@ if test -n "$GADU_CFLAGS"; then
+     pkg_cv_GADU_CFLAGS="$GADU_CFLAGS"
+  elif test -n "$PKG_CONFIG"; then
+     if test -n "$PKG_CONFIG" && \
+-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgadu >= 1.9.0-rc2\""; } >&5
+-  ($PKG_CONFIG --exists --print-errors "libgadu >= 1.9.0-rc2") 2>&5
++    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgadu >= 1.9.0\""; } >&5
++  ($PKG_CONFIG --exists --print-errors "libgadu >= 1.9.0") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+   test $ac_status = 0; }; then
+-  pkg_cv_GADU_CFLAGS=`$PKG_CONFIG --cflags "libgadu >= 1.9.0-rc2" 2>/dev/null`
++  pkg_cv_GADU_CFLAGS=`$PKG_CONFIG --cflags "libgadu >= 1.9.0" 2>/dev/null`
+ else
+   pkg_failed=yes
+ fi
+@@ -18102,12 +18102,12 @@ if test -n "$GADU_LIBS"; then
+     pkg_cv_GADU_LIBS="$GADU_LIBS"
+  elif test -n "$PKG_CONFIG"; then
+     if test -n "$PKG_CONFIG" && \
+-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgadu >= 1.9.0-rc2\""; } >&5
+-  ($PKG_CONFIG --exists --print-errors "libgadu >= 1.9.0-rc2") 2>&5
++    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgadu >= 1.9.0\""; } >&5
++  ($PKG_CONFIG --exists --print-errors "libgadu >= 1.9.0") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+   test $ac_status = 0; }; then
+-  pkg_cv_GADU_LIBS=`$PKG_CONFIG --libs "libgadu >= 1.9.0-rc2" 2>/dev/null`
++  pkg_cv_GADU_LIBS=`$PKG_CONFIG --libs "libgadu >= 1.9.0" 2>/dev/null`
+ else
+   pkg_failed=yes
+ fi
+@@ -18127,9 +18127,9 @@ else
+         _pkg_short_errors_supported=no
+ fi
+         if test $_pkg_short_errors_supported = yes; then
+-	        GADU_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libgadu >= 1.9.0-rc2" 2>&1`
++	        GADU_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libgadu >= 1.9.0" 2>&1`
+         else
+-	        GADU_PKG_ERRORS=`$PKG_CONFIG --print-errors "libgadu >= 1.9.0-rc2" 2>&1`
++	        GADU_PKG_ERRORS=`$PKG_CONFIG --print-errors "libgadu >= 1.9.0" 2>&1`
+         fi
+ 	# Put the nasty error message in config.log where it belongs
+ 	echo "$GADU_PKG_ERRORS" >&5
+@@ -18244,7 +18244,7 @@ main ()
+ {
+ 
+ #if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
+-#error "Your libgadu version is too old. libpurple requires 1.9.0-rc2 or higher."
++#error "Your libgadu version is too old. libpurple requires 1.9.0 or higher."
+ #endif
+ 
+   ;
+@@ -18266,7 +18266,7 @@ $as_echo "no" >&6; }
+ 			echo
+ 			echo
+ 			echo "Your supplied copy of libgadu is too old."
+-			echo "Install version 1.9.0-rc2 or newer."
++			echo "Install version 1.9.0 or newer."
+ 			echo "Then rerun this ./configure"
+ 			echo
+ 			echo "Falling back to using our own copy of libgadu"
