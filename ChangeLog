@@ -44,6 +44,9 @@ version 2.7.4 (10/20/2010):
 	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
 	* xdg-open is now the default browser for new users on non-Windows
 	  platforms. (Stanislav Brabec) (#12505)
+	* The "Authorize buddy?" mini-dialog now shows the nickname of
+	  the buddy requesting authorization as well as the icon of
+	  the IM protocol he is using. (#5038)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
@@ -70,6 +73,16 @@ version 2.7.4 (10/20/2010):
 	  _xmppconnect TXT record returns results, but none of them result
 	  in a valid BOSH URI. (#a14367, #12744)
 
+	AIM and ICQ:
+	* Add support for managing Visible/Invisible lists. (#10967)
+	* Fix a problem with receiving HTML messages from
+	  QIP/Miranda/Trillian. (#12044)
+	* Hopefully fixed all encoding-related problems, both
+	  for sending and receiving messages. (#10833 and the like)
+	* Fix a problem with receiving messages from pyicqt. (#12284)
+	* Don't set a custom status text when going Invisible to avoid
+	  being detected as Invisible. (#10633)
+	
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
