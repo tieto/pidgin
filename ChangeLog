@@ -82,7 +82,7 @@ version 2.7.4 (10/20/2010):
 	* Fix a problem with receiving messages from pyicqt. (#12284)
 	* Don't set a custom status text when going Invisible to avoid
 	  being detected as Invisible. (#10633)
-	
+
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
