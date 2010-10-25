@@ -88,7 +88,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 		return 1;
 	}
 
-	byte_stream_get16(bs); // skip the TLV count
+	byte_stream_get16(bs); /* skip the TLV count */
 
 	/*
 	 * Everything else are TLVs.
