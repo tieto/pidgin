@@ -193,7 +193,7 @@ winprefs_set_autostart(GtkWidget *w) {
 	char *runval = NULL;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "pidgin.exe", wpurple_install_dir());
+		runval = g_strdup_printf("\"%s" G_DIR_SEPARATOR_S "pidgin.exe\"", wpurple_install_dir());
 
 	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin", runval)
 		/* For Win98 */
@@ -267,14 +267,15 @@ static gboolean plugin_unload(PurplePlugin *plugin) {
 }
 
 static GtkWidget* get_config_frame(PurplePlugin *plugin) {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	GtkWidget *button;
+	GtkWidget *ret, *vbox, *button, *language_sel;
 	char *run_key_val;
 	char *tmp;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+
+	vbox = pidgin_make_frame(ret, _("Language"));
+	language_sel = gtk_option_menu_new();
 
 	/* Autostart */
 	vbox = pidgin_make_frame(ret, _("Startup"));
