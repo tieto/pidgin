@@ -332,6 +332,7 @@ pidgin_mini_dialog_set_property(GObject *object,
 			break;
 		case PROP_CUSTOM_ICON:
 			gtk_image_set_from_pixbuf(priv->icon, g_value_get_object(value));
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 	}
