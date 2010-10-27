@@ -408,27 +408,27 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	return 0;
 }
 
-static int
+static void
 gotalias(OscarData *od, struct aim_icq_info *info)
 {
 	PurpleConnection *gc = od->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar who[16], *utf8;
 	PurpleBuddy *b;
+	gchar *utf8 = oscar_utf8_try_convert(account, od, info->nick);
 
-	if (info->nick[0] && (utf8 = oscar_utf8_try_convert(account, od, info->nick))) {
-		if (info->for_auth_request) {
-			oscar_auth_recvrequest(gc, g_strdup_printf("%u", info->uin), utf8, info->auth_request_reason);
-		} else {
+	if (info->for_auth_request) {
+		oscar_auth_recvrequest(gc, g_strdup_printf("%u", info->uin), utf8, info->auth_request_reason);
+	} else {
+		if (utf8 && *utf8) {
+			gchar who[16];
 			g_snprintf(who, sizeof(who), "%u", info->uin);
 			serv_got_alias(gc, who, utf8);
 			if ((b = purple_find_buddy(account, who))) {
 				purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
 			}
-			g_free(utf8);
 		}
+		g_free(utf8);
 	}
-	return 1;
 }
 
 /**
