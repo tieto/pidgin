@@ -267,15 +267,14 @@ static gboolean plugin_unload(PurplePlugin *plugin) {
 }
 
 static GtkWidget* get_config_frame(PurplePlugin *plugin) {
-	GtkWidget *ret, *vbox, *button, *language_sel;
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkWidget *button;
 	char *run_key_val;
 	char *tmp;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
-
-	vbox = pidgin_make_frame(ret, _("Language"));
-	language_sel = gtk_option_menu_new();
 
 	/* Autostart */
 	vbox = pidgin_make_frame(ret, _("Startup"));
