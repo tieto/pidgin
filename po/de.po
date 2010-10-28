@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-28 18:12+0200\n"
-"PO-Revision-Date: 2010-10-28 18:12+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2010-10-28 19:57+0200\n"
+"PO-Revision-Date: 2010-10-28 19:50+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -7843,10 +7843,10 @@ msgid "Set Privacy Options..."
 msgstr "Privatsphärenoptionen setzen..."
 
 msgid "Show Visible List"
-msgstr "Zeige Liste „Sichtbar“"
+msgstr "Zeige Liste „Immer sichtbar“"
 
 msgid "Show Invisible List"
-msgstr "Zeige Liste „Unsichtbar“"
+msgstr "Zeige Liste „Immer unsichtbar“"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -8115,13 +8115,13 @@ msgstr ""
 "einem Rechtsklick anklicken und „%s“ auswählen."
 
 msgid "Visible List"
-msgstr "Liste Sichtbar"
+msgstr "Liste \"Immer sichtbar\""
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr "Diese Buddys werden Ihren Status sehen wenn Sie „unsichtbar“ sind"
+msgstr "Diese Buddys werden Ihren Status sehen, wenn Sie „unsichtbar“ sind"
 
 msgid "Invisible List"
-msgstr "Liste Unsichtbar"
+msgstr "Liste \"Immer unsichtbar\""
 
 msgid "These buddies will always see you as offline"
 msgstr "Für diese Buddys werden Sie immer als offline angezeigt"
