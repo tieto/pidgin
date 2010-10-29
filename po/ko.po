@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -544,7 +544,6 @@ msgstr "인증 삭제 확인"
 msgid "Certificate Manager"
 msgstr "인증 관리자"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "호스트명"
 
@@ -1754,7 +1753,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4847,11 +4848,20 @@ msgstr "MSN 프로토콜 플러그인"
 msgid "Domain"
 msgstr "루마니아어"
 
-msgid "Require SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "승인이 필요합니다."
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "%s 의 사용자 정보는 사용할 수 없습니다."
+
+msgid "Use old-style SSL"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
-msgstr "구 SSL (포트 번호: 5223) 을 강제적으로 사용"
+#, fuzzy
+msgid "Connection security"
+msgstr "접속 초기화"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "암호화 되어 있지 않은 스트림을 통한 문자열 인증 허가"
@@ -6137,7 +6147,7 @@ msgid "The two PINs you entered do not match."
 msgstr "새 비밀번호가 일치하지 않습니다."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "입력한 보안 ID 키는 잘못되었습니다."
 
 msgid ""
@@ -6238,10 +6248,6 @@ msgstr "서버에 접속할 수 없습니다. 접속할 서버의 주소를 입�
 #, fuzzy
 msgid "Connecting..."
 msgstr "접속 중입니다."
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "입력한 보안 ID 키는 잘못되었습니다."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7142,6 +7148,15 @@ msgstr "서버 주소"
 msgid "Server port"
 msgstr "서버 포트"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "제가 당신을 친구 목록에 추가할 수 있도록 승인해 주십시오."
+
+msgid "No reason given."
+msgstr "이유를 알 수 없습니다."
+
+msgid "Authorization Denied Message:"
+msgstr "승인 거부 메시지:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "서버로부터 예상치 못한 HTTP 응답을 받았습니다."
@@ -7174,6 +7189,24 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "%s 을(를) 해석하는 중 오류"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(이 메시지를 받을 때 오류가 발생했습니다. 대화 중인 친구는 아마도 다른 인코딩"
+"을 사용하고 있는 것 같습니다. 상대가 사용하고 있는 인코딩을 알고 있으면, 계"
+"정 창의 고급 설정에서 이를 지정해 주십시오.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(이 메시지를 받을 때 오류가 발생했습니다. %s 님과는 상이한 인코딩으로 대화하"
+"고 있거나 혹은 %s 님이 비정상 클라이언트를 사용하고 있는 것 같습니다.)"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7409,95 +7442,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "파일 %s 은(는) %s 입니다. (%s 의 최대 크기를 초과했습니다.)"
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(이 메시지를 받을 때 오류가 발생했습니다. 대화 중인 친구는 아마도 다른 인코딩"
-"을 사용하고 있는 것 같습니다. 상대가 사용하고 있는 인코딩을 알고 있으면, 계"
-"정 창의 고급 설정에서 이를 지정해 주십시오.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(이 메시지를 받을 때 오류가 발생했습니다. %s 님과는 상이한 인코딩으로 대화하"
-"고 있거나 혹은 %s 님이 비정상 클라이언트를 사용하고 있는 것 같습니다.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "친구 아이콘"
-
-msgid "Voice"
-msgstr "음성"
-
-msgid "AIM Direct IM"
-msgstr "AIM Direct IM"
-
-msgid "Get File"
-msgstr "파일 가져오기"
-
-msgid "Games"
-msgstr "게임"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "추가"
-
-msgid "Send Buddy List"
-msgstr "친구 목록 보내기"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Direct 접속"
-
-msgid "AP User"
-msgstr "AP 사용자"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ 서버 중계"
-
-msgid "Old ICQ UTF8"
-msgstr "구형 ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian 암호화"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "보안 사용"
-
-msgid "Video Chat"
-msgstr "영상 대화"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "라이브 영상"
-
-msgid "Camera"
-msgstr "카메라"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "아이디"
-
 msgid "Free For Chat"
 msgstr "대화할 수 있습니다."
 
@@ -7532,15 +7476,6 @@ msgstr "네트워크"
 #, fuzzy
 msgid "At lunch"
 msgstr "점심 식사 중입니다."
-
-msgid "IP Address"
-msgstr "IP 주소"
-
-msgid "Warning Level"
-msgstr "경고 수준"
-
-msgid "Buddy Comment"
-msgstr "친구의 코멘트"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7641,15 +7576,6 @@ msgstr "비밀번호 전송 중"
 
 msgid "Unable to initialize connection"
 msgstr "새로운 접속을 열 수 없습니다."
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "제가 당신을 친구 목록에 추가할 수 있도록 승인해 주십시오."
-
-msgid "No reason given."
-msgstr "이유를 알 수 없습니다."
-
-msgid "Authorization Denied Message:"
-msgstr "승인 거부 메시지:"
 
 #, c-format
 msgid ""
@@ -7761,59 +7687,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "사용자 정보를 이용할 수 없습니다: %s"
-
-msgid "Online Since"
-msgstr "접속한 일시"
-
-msgid "Member Since"
-msgstr "멤버가 된 일시"
-
-msgid "Capabilities"
-msgstr "기능"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM 으로의 접속이 끊어진 것 같습니다."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[메시지에 잘못된 문자가 포함되어 있기 때문에, 이 사용자로부터의 메시지를 표시"
-"할 수 없습니다.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "대화실 %s (으)로부터 접속이 끊어졌습니다."
-
-msgid "Mobile Phone"
-msgstr "휴대 전화"
-
-msgid "Personal Web Page"
-msgstr "개인 웹페이지"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "추가 정보"
-
-msgid "Zip Code"
-msgstr "우편 번호"
-
-msgid "Work Information"
-msgstr "직업"
-
-msgid "Division"
-msgstr "소속"
-
-msgid "Position"
-msgstr "직위"
-
-msgid "Web Page"
-msgstr "웹페이지"
 
 msgid "Pop-Up Message"
 msgstr "팝업 메시지"
@@ -8083,7 +7962,8 @@ msgstr "아이디의 서식은 대문자와 공백 문자만 변경할 수 있�
 msgid "Change Address To:"
 msgstr "변경할 주소:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>승인을 기다리고 있지 않습니다.</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8125,6 +8005,14 @@ msgstr "IM 포워딩 (URL) 설정"
 msgid "Set Privacy Options..."
 msgstr "개인 설정 추가..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "친구 목록 열기..."
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "초대 목록"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "계정 확인"
@@ -8140,9 +8028,6 @@ msgstr "승인을 기다리는 친구 표시"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "이메일로 친구 검색..."
-
-msgid "Search for Buddy by Information"
-msgstr "정보로 친구 검색..."
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8252,6 +8137,166 @@ msgstr "큐가 다 찼습니다."
 
 msgid "Not while on AOL"
 msgstr "AOL 사용 중에는 불가능합니다."
+
+#. Label
+msgid "Buddy Icon"
+msgstr "친구 아이콘"
+
+msgid "Voice"
+msgstr "음성"
+
+msgid "AIM Direct IM"
+msgstr "AIM Direct IM"
+
+msgid "Get File"
+msgstr "파일 가져오기"
+
+msgid "Games"
+msgstr "게임"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "추가"
+
+msgid "Send Buddy List"
+msgstr "친구 목록 보내기"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ Direct 접속"
+
+msgid "AP User"
+msgstr "AP 사용자"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ 서버 중계"
+
+msgid "Old ICQ UTF8"
+msgstr "구형 ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian 암호화"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "보안 사용"
+
+msgid "Video Chat"
+msgstr "영상 대화"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "라이브 영상"
+
+msgid "Camera"
+msgstr "카메라"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "아이디"
+
+msgid "IP Address"
+msgstr "IP 주소"
+
+msgid "Warning Level"
+msgstr "경고 수준"
+
+msgid "Buddy Comment"
+msgstr "친구의 코멘트"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "사용자 정보를 이용할 수 없습니다: %s"
+
+msgid "Mobile Phone"
+msgstr "휴대 전화"
+
+msgid "Personal Web Page"
+msgstr "개인 웹페이지"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "추가 정보"
+
+msgid "Zip Code"
+msgstr "우편 번호"
+
+msgid "Work Information"
+msgstr "직업"
+
+msgid "Division"
+msgstr "소속"
+
+msgid "Position"
+msgstr "직위"
+
+msgid "Web Page"
+msgstr "웹페이지"
+
+msgid "Online Since"
+msgstr "접속한 일시"
+
+msgid "Member Since"
+msgstr "멤버가 된 일시"
+
+msgid "Capabilities"
+msgstr "기능"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "온라인으로 표시"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "온라인으로 표시"
+
+msgid "Appear Offline"
+msgstr "오프라인으로 표시"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "오프라인으로 표시"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "%s 에게 차였습니다: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"오른쪽 클릭하여 \"승인 재요청\" 을 선택하면, 이들의 친구로부터 인증을 재요청"
+"할 수 있습니다."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "숨김 상태"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "초대 목록"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "물병자리"
@@ -8453,7 +8498,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "승인이 필요합니다."
 
 #, fuzzy
@@ -10749,17 +10794,11 @@ msgstr "잠시 외출"
 msgid "Not on server list"
 msgstr "서버 목록에 없습니다."
 
-msgid "Appear Online"
-msgstr "온라인으로 표시"
-
 msgid "Appear Permanently Offline"
 msgstr "일시적으로 오프라인으로 표시"
 
 msgid "Presence"
 msgstr "자리에 있음"
-
-msgid "Appear Offline"
-msgstr "오프라인으로 표시"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "일시적으로 오프라인으로 표시 안 함"
@@ -11317,27 +11356,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "리모트 사용자가 접속을 끊었습니다."
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "접속 시간이 초과되었습니다."
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "접속이 거부되었습니다."
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "이 대화명은 이미 사용 중입니다."
 
@@ -11486,6 +11524,10 @@ msgstr ""
 "\n"
 "친구 목록 창에 있는 <b>계정 -> 추가/편집</b> 메뉴에서도 이 창을 열 수 있습니"
 "다."
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s 님이 %s 님을 친구 목록 %s%s에 추가하고 싶어 합니다."
 
 #. Buddy List
 msgid "Background Color"
@@ -11766,6 +11808,8 @@ msgstr "연락처 별칭"
 msgid "Edit User Mood"
 msgstr "사용자 모드"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/친구(_B)"
@@ -12551,9 +12595,6 @@ msgstr "지원"
 msgid "webmaster"
 msgstr "개발자/웹마스터"
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr "Win32 포팅"
 
@@ -12578,6 +12619,9 @@ msgstr "초기 제작자"
 
 msgid "lead developer"
 msgstr "수석 개발자"
+
+msgid "Senior Contributor/QA"
+msgstr ""
 
 msgid "Afrikaans"
 msgstr ""
@@ -13981,6 +14025,10 @@ msgid "_TURN server:"
 msgstr "STUN 서버(_U):"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "포트 번호(_P):"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "사용자명(_U):"
 
@@ -14003,6 +14051,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "기본값 적용(_A)"
@@ -14021,6 +14074,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "수동 설정"
@@ -14594,7 +14655,7 @@ msgstr "(없음)"
 msgid "Small"
 msgstr "이메일"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15666,6 +15727,10 @@ msgstr "장치"
 msgid "Voice/Video Settings"
 msgstr "설정 편집"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "설정 편집"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15793,7 +15858,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15922,6 +15987,23 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "구 SSL (포트 번호: 5223) 을 강제적으로 사용"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "입력한 보안 ID 키는 잘못되었습니다."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[메시지에 잘못된 문자가 포함되어 있기 때문에, 이 사용자로부터의 메시지를 "
+#~ "표시할 수 없습니다.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "정보로 친구 검색..."
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16449,9 +16531,6 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 #~ msgid "Connection closed (writing)"
 #~ msgstr "쓰기 연결을 닫았습니다."
 
-#~ msgid "Connection reset"
-#~ msgstr "접속 초기화"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "소켓으로부터 읽는 중 오류: %s"
 
@@ -16713,9 +16792,6 @@ msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC 프로토콜 플러그인"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s 의 사용자 정보는 사용할 수 없습니다."
 
 #~ msgid "%s Options"
 #~ msgstr "%s 설정"

@@ -133,16 +133,6 @@ got_user_display(MsnSlpCall *slpcall,
 
 	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
 								  g_memdup(data, size), size, info);
-
-#if 0
-	/* Free one window slot */
-	userlist->buddy_icon_window++;
-
-	purple_debug_info("msn", "got_user_display(): buddy_icon_window++ yields =%d\n",
-					userlist->buddy_icon_window);
-
-	msn_release_buddy_icon_request(userlist);
-#endif
 }
 
 static void

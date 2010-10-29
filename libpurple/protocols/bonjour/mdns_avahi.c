@@ -188,12 +188,14 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 					bb->ips = g_slist_remove(bb->ips, rd->ip);
 					g_free((gchar *) rd->ip);
 				}
-				rd->ip = g_strdup(ip);
 				/* IPv6 goes at the front of the list and IPv4 at the end so that we "prefer" IPv6, if present */
-				if (protocol == AVAHI_PROTO_INET6)
+				if (protocol == AVAHI_PROTO_INET6) {
+					rd->ip = g_strdup_printf("%s%%%d", ip, interface);
 					bb->ips = g_slist_prepend(bb->ips, (gchar *) rd->ip);
-				else
+				} else {
+					rd->ip = g_strdup(ip);
 					bb->ips = g_slist_append(bb->ips, (gchar *) rd->ip);
+				}
 			}
 
 			bb->port_p2pj = port;
@@ -250,7 +252,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			/* A new peer has joined the network and uses iChat bonjour */
 			purple_debug_info("bonjour", "_browser_callback - new service\n");
 			/* Make sure it isn't us */
-			if (purple_utf8_strcasecmp(name, account->username) != 0) {
+			if (purple_utf8_strcasecmp(name, bonjour_get_jid(account)) != 0) {
 				if (!avahi_service_resolver_new(avahi_service_browser_get_client(b),
 						interface, protocol, name, type, domain, protocol,
 						0, _resolver_callback, account)) {
@@ -419,6 +421,8 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 
 	data->mdns_impl_data = idata;
 
+	bonjour_dns_sd_set_jid(data->account, avahi_client_get_host_name(idata->client));
+
 	return TRUE;
 }
 
@@ -452,14 +456,14 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 			publish_result = avahi_entry_group_add_service_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
 				AVAHI_PROTO_UNSPEC, 0,
-				purple_account_get_username(data->account),
+				bonjour_get_jid(data->account),
 				LINK_LOCAL_RECORD_NAME, NULL, NULL, data->port_p2pj, lst);
 			break;
 		case PUBLISH_UPDATE:
 			publish_result = avahi_entry_group_update_service_txt_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
 				AVAHI_PROTO_UNSPEC, 0,
-				purple_account_get_username(data->account),
+				bonjour_get_jid(data->account),
 				LINK_LOCAL_RECORD_NAME, NULL, lst);
 			break;
 	}
@@ -533,7 +537,7 @@ gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data
 		}
 
 		svc_name = g_strdup_printf("%s." LINK_LOCAL_RECORD_NAME "local",
-				purple_account_get_username(data->account));
+				bonjour_get_jid(data->account));
 
 		ret = avahi_entry_group_add_record(idata->buddy_icon_group, AVAHI_IF_UNSPEC,
 			AVAHI_PROTO_UNSPEC, flags, svc_name,

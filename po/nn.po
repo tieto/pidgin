@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-07 13:11-0400\n"
-"PO-Revision-Date: 2010-08-01 22:11+0200\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"PO-Revision-Date: 2010-10-11 01:26+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
 "Language: nn\n"
@@ -523,7 +523,6 @@ msgstr "Stadfest sertifikatslettinga"
 msgid "Certificate Manager"
 msgstr "Sertifikatbehandling"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Vertsnamn"
 
@@ -1700,8 +1699,12 @@ msgstr ""
 "Sertifikatet er enno ikkje gyldig. Sjå til at tenaren nyttar rette dato- og "
 "tidsinnstillingar."
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "Sertifikatet har gått ut og kan ikkje reknast for å vera gyldig."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr ""
+"Sertifikatet er utgått og bør ikkje reknast for å vera gyldig. Sjå til at "
+"datamaskina di nyttar rett dato- og tid."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4722,11 +4725,18 @@ msgstr "XMPP-protokolltillegg"
 msgid "Domain"
 msgstr "Domene"
 
-msgid "Require SSL/TLS"
-msgstr "Krev SSL/TLS"
+msgid "Require encryption"
+msgstr "Krev kryptering"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Overstyr med gammal SSL (port 5223)"
+# 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
+msgid "Use encryption if available"
+msgstr "Bruk kryptering om mogleg"
+
+msgid "Use old-style SSL"
+msgstr "Bruk gammal SSL-stil"
+
+msgid "Connection security"
+msgstr "Sambandstryggleik"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Tillat autentisering i klartekst over ukrypterte samband"
@@ -6855,6 +6865,15 @@ msgstr "Tenaradresse"
 msgid "Server port"
 msgstr "Tenarport"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Om du godtek meg, kan eg leggja deg til i vennelista mi."
+
+msgid "No reason given."
+msgstr "Ingen årsak oppgjeven."
+
+msgid "Authorization Denied Message:"
+msgstr "Avvist godkjenning:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Fekk uventa svar frå %s: %s"
@@ -6889,6 +6908,24 @@ msgstr "AOL tillèt ikkje at brukarnamnet ditt kan autentiserast her"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Klarte ikkje å spørja etter %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Det oppstod ein feil under mottaket av meldinga. Truleg nyttar vennen du "
+"pratar med ei anna teiknkoding enn rekna med. Om du veit kva teiknkoding han "
+"nyttar, kan du oppgje det i dei avanserte kontovala for AIM/ICQ-kontoen din.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Det oppstod ein feil under mottaket av meldinga. Anten har du og %s vald "
+"ulike teiknkodingar, eller så nyttar %s ein klient med feil i.)"
 
 msgid "Could not join chat room"
 msgstr "Klarte ikkje å bli med i praterommet"
@@ -7105,94 +7142,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Fila %s er %s, noko som er større enn høgste storleik av %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Det oppstod ein feil under mottaket av meldinga. Truleg nyttar vennen du "
-"pratar med ei anna teiknkoding enn rekna med. Om du veit kva teiknkoding han "
-"nyttar, kan du oppgje det i dei avanserte kontovala for AIM/ICQ-kontoen din.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Det oppstod ein feil under mottaket av meldinga. Anten har du og %s vald "
-"ulike teiknkodingar, eller så nyttar %s ein klient med feil i.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Venneikon"
-
-msgid "Voice"
-msgstr "Stemme"
-
-msgid "AIM Direct IM"
-msgstr "AIM direktelynmelding"
-
-msgid "Get File"
-msgstr "Hent fil"
-
-msgid "Games"
-msgstr "Spel"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "Tillegg"
-
-msgid "Send Buddy List"
-msgstr "Send vennelista"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ direktetilkopling"
-
-msgid "AP User"
-msgstr "AP-brukar"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ tenarvidaresending"
-
-msgid "Old ICQ UTF8"
-msgstr "Gammal ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian-kryptiering"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Tryggleik er slått på"
-
-msgid "Video Chat"
-msgstr "Videoprat"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Sanntidsvideo"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Skjermdeling"
-
 msgid "Free For Chat"
 msgstr "Ledig for prat"
 
@@ -7222,15 +7171,6 @@ msgstr "På arbeid"
 
 msgid "At lunch"
 msgstr "Er til lunsj"
-
-msgid "IP Address"
-msgstr "IP-adresse"
-
-msgid "Warning Level"
-msgstr "Åtvaringsnivå"
-
-msgid "Buddy Comment"
-msgstr "Vennenotat"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7325,15 +7265,6 @@ msgstr "Passordet er sendt"
 
 msgid "Unable to initialize connection"
 msgstr "Klarte ikkje å setja i gang sambandet"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Om du godtek meg, kan eg leggja deg til i vennelista mi."
-
-msgid "No reason given."
-msgstr "Ingen årsak oppgjeven."
-
-msgid "Authorization Denied Message:"
-msgstr "Avvist godkjenning:"
 
 #, c-format
 msgid ""
@@ -7450,59 +7381,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Du fekk ikkje %hu melding frå %s av uviss årsak."
 msgstr[1] "Du fekk ikkje %hu meldingar frå %s av uviss årsak."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Brukarinformasjon er ikkje tilgjengeleg: %s"
-
-msgid "Online Since"
-msgstr "Tilkopla sidan"
-
-msgid "Member Since"
-msgstr "Medlem sidan"
-
-msgid "Capabilities"
-msgstr "Evner"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM-sambandet kan vera tapt."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
-"teikn.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Du er blitt fråkopla praterommet %s."
-
-msgid "Mobile Phone"
-msgstr "Mobiltelefon"
-
-msgid "Personal Web Page"
-msgstr "Personelg nettside"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Tilleggsinformasjon"
-
-msgid "Zip Code"
-msgstr "Postnummer"
-
-msgid "Work Information"
-msgstr "Arbeidsinformasjon"
-
-msgid "Division"
-msgstr "Avdeling"
-
-msgid "Position"
-msgstr "Stilling"
-
-msgid "Web Page"
-msgstr "Nettside"
 
 msgid "Pop-Up Message"
 msgstr "Sprettoppmelding"
@@ -7781,8 +7665,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Endra adressa til:"
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>du ventar ikkje på godkjenning</i>"
+msgid "you are not waiting for authorization"
+msgstr "du ventar ikkje på godkjenning"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Du ventar på godkjenning frå desse vennene"
@@ -7820,6 +7704,14 @@ msgstr "Innstillingar for vidaresending (nett)"
 msgid "Set Privacy Options..."
 msgstr "Personvernval…"
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Vis venne_liste"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Invitasjonsliste"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Stadfest konto"
@@ -7835,9 +7727,6 @@ msgstr "Vis venner som ventar på godkjenning"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Finn venn utfrå e-postadressa…"
-
-msgid "Search for Buddy by Information"
-msgstr "Søk etter venn utfrå opplysningar"
 
 msgid "Use clientLogin"
 msgstr "Bruk klientpålogging"
@@ -7946,6 +7835,166 @@ msgstr "Køen er full"
 
 msgid "Not while on AOL"
 msgstr "Ikkje når pålogga AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Venneikon"
+
+msgid "Voice"
+msgstr "Stemme"
+
+msgid "AIM Direct IM"
+msgstr "AIM direktelynmelding"
+
+msgid "Get File"
+msgstr "Hent fil"
+
+msgid "Games"
+msgstr "Spel"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Tillegg"
+
+msgid "Send Buddy List"
+msgstr "Send vennelista"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ direktetilkopling"
+
+msgid "AP User"
+msgstr "AP-brukar"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ tenarvidaresending"
+
+msgid "Old ICQ UTF8"
+msgstr "Gammal ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian-kryptiering"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Tryggleik er slått på"
+
+msgid "Video Chat"
+msgstr "Videoprat"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Sanntidsvideo"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Skjermdeling"
+
+msgid "IP Address"
+msgstr "IP-adresse"
+
+msgid "Warning Level"
+msgstr "Åtvaringsnivå"
+
+msgid "Buddy Comment"
+msgstr "Vennenotat"
+
+# 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "Bruk kryptering om mogleg"
+
+msgid "Mobile Phone"
+msgstr "Mobiltelefon"
+
+msgid "Personal Web Page"
+msgstr "Personelg nettside"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Tilleggsinformasjon"
+
+msgid "Zip Code"
+msgstr "Postnummer"
+
+msgid "Work Information"
+msgstr "Arbeidsinformasjon"
+
+msgid "Division"
+msgstr "Avdeling"
+
+msgid "Position"
+msgstr "Stilling"
+
+msgid "Web Page"
+msgstr "Nettside"
+
+msgid "Online Since"
+msgstr "Tilkopla sidan"
+
+msgid "Member Since"
+msgstr "Medlem sidan"
+
+msgid "Capabilities"
+msgstr "Evner"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Framstå som tilkopla"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Framstå som tilkopla"
+
+msgid "Appear Offline"
+msgstr "Verkar vera fråkopla"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Verkar vera fråkopla"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Du er blitt sparka ut frå denne MultiMX-en."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Du kan be om godkjenning frå desse vennene igjen ved å høgreklikka dei og "
+"velja \"Spør om ny godkjenning.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Synleg"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Invitasjonsliste"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vassmannen"
@@ -8126,8 +8175,8 @@ msgid "Your request was rejected."
 msgstr "Førespurnaden din blei avvist."
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u krev stadfesting"
+msgid "%u requires verification: %s"
+msgstr "%u krev stadfesting: %s"
 
 msgid "Add buddy question"
 msgstr "Legg til vennespørsmål"
@@ -10347,17 +10396,11 @@ msgstr "Ute eit bel"
 msgid "Not on server list"
 msgstr "Ikkje på tenarlista"
 
-msgid "Appear Online"
-msgstr "Framstå som tilkopla"
-
 msgid "Appear Permanently Offline"
 msgstr "Verkar alltid vera fråkopla"
 
 msgid "Presence"
 msgstr "Nærvær"
-
-msgid "Appear Offline"
-msgstr "Verkar vera fråkopla"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Ikkje verka vera alltid fråkopla"
@@ -10903,27 +10946,22 @@ msgid " (%s)"
 msgstr "(%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Sambandet avbrote av annan programvare på datamaskina di."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Fjerntenaren kopla ned sambandet."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Tidsavbrot på sambandet."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Tilkoplinga blei avvist."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adressa er allereie i bruk."
 
@@ -11072,6 +11110,10 @@ msgstr ""
 "\n"
 "Du kan koma attende til dette vindauget for å leggja til, endra eller fjerna "
 "kontoar frå <b>Kontoar->Kontobehandling</b> i vennelistevindauget"
+
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s ønskjer å leggja deg (%s) til i vennelista si %s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11328,6 +11370,8 @@ msgstr "Melding (valfri)"
 msgid "Edit User Mood"
 msgstr "Endra brukarsinnsstemninga"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Venner"
@@ -12075,9 +12119,6 @@ msgstr "brukarstøtte"
 msgid "webmaster"
 msgstr "nettansvarleg"
 
-msgid "Senior Contributor/QA"
-msgstr "Senior bidragsytar/KS"
-
 msgid "win32 port"
 msgstr "win32-port"
 
@@ -12102,6 +12143,9 @@ msgstr "opprinneleg laga av"
 
 msgid "lead developer"
 msgstr "sjefsutviklar"
+
+msgid "Senior Contributor/QA"
+msgstr "Senior bidragsytar/KS"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -13453,6 +13497,9 @@ msgstr "Vidaresendingstenar (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN-tenar:"
 
+msgid "_UDP Port:"
+msgstr "_UDP-port:"
+
 msgid "Use_rname:"
 msgstr "_Brukarnamn:"
 
@@ -13474,6 +13521,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Skrivebordsstandard"
 
@@ -13491,6 +13543,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Sjølvvald"
@@ -14024,7 +14084,7 @@ msgstr "ingen"
 msgid "Small"
 msgstr "Liten"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "Mindre utgåver av standard smilefjes"
 
 msgid "Response Probability:"
@@ -15052,6 +15112,9 @@ msgstr "_Eining"
 msgid "Voice/Video Settings"
 msgstr "Lyd-/videoinnstillingar"
 
+msgid "Voice and Video Settings"
+msgstr "Lyd- og videoinnstillingar"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15180,7 +15243,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15322,6 +15385,25 @@ msgstr "Besøk Pidgin sin nettstad"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
+
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr "Sertifikatet har gått ut og kan ikkje reknast for å vera gyldig."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Krev SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Overstyr med gammal SSL (port 5223)"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
+#~ "teikn.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Søk etter venn utfrå opplysningar"
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Kallenamnet du skreiv er ugyldig."

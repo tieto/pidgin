@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2008-11-01 17:41+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -525,7 +525,6 @@ msgstr "أكّد حذف الشهادة"
 msgid "Certificate Manager"
 msgstr "مدير الشّهادات"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "اسم المضيف"
 
@@ -1676,7 +1675,9 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "سلسلة الشهادة المقدّمة ل‍ %s غير صحيحة."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4772,11 +4773,20 @@ msgstr "ملحقة بروتوكول XMPP"
 msgid "Domain"
 msgstr "النطاق"
 
-msgid "Require SSL/TLS"
-msgstr "يتطلب SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "اشترط التصريح"
 
-msgid "Force old (port 5223) SSL"
-msgstr "افرض استخدام SSL القديم (منفذ 5223)"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "معلومات المستخدم %s غير متاحة"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "صُفِّر الاتصال"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "اسمح بالاستيثاق بالنص الصريح عبر تيارات غير مُعمّاة"
@@ -6048,7 +6058,7 @@ msgid "The two PINs you entered do not match."
 msgstr "كلمات السر الجديدة غير مطابقة."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "مفتاح SecurID المدخل غير صالح."
 
 msgid ""
@@ -6149,10 +6159,6 @@ msgstr "تعذّر الاتصال بالخادوم. من فضلك أدخل عن�
 #, fuzzy
 msgid "Connecting..."
 msgstr "يتّصل"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "مفتاح SecurID المدخل غير صالح."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7037,6 +7043,15 @@ msgstr "عنوان الخادوم"
 msgid "Server port"
 msgstr "منفذ الخادوم"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "من فضلك صرّح لي بإضافتك إلى قائمة أصدقائي."
+
+msgid "No reason given."
+msgstr "لا سبب معطى."
+
+msgid "Authorization Denied Message:"
+msgstr "رسالة منع التصريح:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "تلقيت استجابة غير متوقّعة من خادوم HTTP."
@@ -7069,6 +7084,24 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "خطأ أثناء استجلاء %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(حدث عطل في تلقي هذه الرسالة. مراسلك على الأغلب يستخدم ترميزا غير المتوقع. "
+"إن كنت تعرف الترميز الذي يستخدمه فبوسعك تحديده في الخيارات المتقدمة لحساب "
+"AIM/ICQ)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(حدث عطل في استقبال هذه الرسالة. إما أنك و%s تستخدمان ترميزين مختلفين أو أن "
+"%s يستخدم عميلا به علات.)"
 
 msgid "Could not join chat room"
 msgstr "تعذّر الانضمام لقناة الدردشة"
@@ -7303,94 +7336,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "الملف %s حجمه %s و هو ما يزيد على الحجم الأقصى %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(حدث عطل في تلقي هذه الرسالة. مراسلك على الأغلب يستخدم ترميزا غير المتوقع. "
-"إن كنت تعرف الترميز الذي يستخدمه فبوسعك تحديده في الخيارات المتقدمة لحساب "
-"AIM/ICQ)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(حدث عطل في استقبال هذه الرسالة. إما أنك و%s تستخدمان ترميزين مختلفين أو أن "
-"%s يستخدم عميلا به علات.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "أيقونة الصديق"
-
-msgid "Voice"
-msgstr "صوت"
-
-msgid "AIM Direct IM"
-msgstr "تراسل AIM فوري مباشر"
-
-msgid "Get File"
-msgstr "اجلب ملفا"
-
-msgid "Games"
-msgstr "ألعاب"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "إضافات"
-
-msgid "Send Buddy List"
-msgstr "أرسل قائمة الأصدقاء"
-
-msgid "ICQ Direct Connect"
-msgstr "اتصال ICQ مباشر"
-
-msgid "AP User"
-msgstr "مستخدم AP"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr ""
-
-msgid "ICQ Server Relay"
-msgstr "ممر خادوم ICQ"
-
-msgid "Old ICQ UTF8"
-msgstr "ICQ UTF8 القديم"
-
-msgid "Trillian Encryption"
-msgstr "تعمية Trillian "
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr ""
-
-msgid "Security Enabled"
-msgstr "الأمن مُفعّل"
-
-msgid "Video Chat"
-msgstr "دردشة بالفيديو"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "فيديو مباشر"
-
-msgid "Camera"
-msgstr "كاميرا"
-
-msgid "Screen Sharing"
-msgstr "مشاركة الشاشة"
-
 msgid "Free For Chat"
 msgstr "متاح للدردشة"
 
@@ -7425,15 +7370,6 @@ msgstr "الشبكة"
 #, fuzzy
 msgid "At lunch"
 msgstr "خرجت للغداء"
-
-msgid "IP Address"
-msgstr "عنوان IP"
-
-msgid "Warning Level"
-msgstr "مستوى التحذير"
-
-msgid "Buddy Comment"
-msgstr "تعليق الصديق"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7534,15 +7470,6 @@ msgstr "أُرسِلت كلمة السر"
 
 msgid "Unable to initialize connection"
 msgstr "تعذّر استبداء الاتصال"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "من فضلك صرّح لي بإضافتك إلى قائمة أصدقائي."
-
-msgid "No reason given."
-msgstr "لا سبب معطى."
-
-msgid "Authorization Denied Message:"
-msgstr "رسالة منع التصريح:"
 
 #, c-format
 msgid ""
@@ -7675,57 +7602,12 @@ msgstr[3] "فقدت %hu رسائل من %s لسبب مجهول."
 msgstr[4] "فقدت %hu رسالة من %s لسبب مجهول."
 msgstr[5] "فقدت %hu رسالة من %s لسبب مجهول."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "معلومات المستخدم غير متوفرة: %s"
-
-msgid "Online Since"
-msgstr "متصل منذ"
-
-msgid "Member Since"
-msgstr "عضو منذ"
-
-msgid "Capabilities"
-msgstr "الإمكانات"
-
 msgid "Your AIM connection may be lost."
 msgstr "قد ينقطع اتصالك مع AIM."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr "[تعذّر عرض رسالة من هذا المستخدم لأنها تحوي حروفا غير صالحة.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "تمّ فصلك عن غرفة الدردشة %s."
-
-msgid "Mobile Phone"
-msgstr "الهاتف المحمول"
-
-msgid "Personal Web Page"
-msgstr "صفحة وِب الشخصية"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "معلومات إضافية"
-
-msgid "Zip Code"
-msgstr "الرمز البريدي"
-
-msgid "Work Information"
-msgstr "معلومات العمل"
-
-msgid "Division"
-msgstr "القسم"
-
-msgid "Position"
-msgstr "الموضع"
-
-msgid "Web Page"
-msgstr "صفحة الوِب"
 
 msgid "Pop-Up Message"
 msgstr "رسالة منبثقة"
@@ -8000,7 +7882,8 @@ msgstr "تنسيق اسم المستخدم يمكنه فقط تغيير حالة
 msgid "Change Address To:"
 msgstr "غيّر العنوان إلى:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>لست في انتظار تصريحات</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8039,6 +7922,14 @@ msgstr "اضبط تمرير التراسل الفوري  (وِب)"
 msgid "Set Privacy Options..."
 msgstr "حدد خيارات الخصوصية..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "اعرض _قائمة الأصدقاء"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "قائمة الدعوة"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "أكّد الحساب"
@@ -8054,9 +7945,6 @@ msgstr "اعرض الأصدقاء الذين ينتظرون تصريحات"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "ابحث عن صديق بواسطة عنوان البريد الإلكتروني..."
-
-msgid "Search for Buddy by Information"
-msgstr "ابحث عن صديق بواسطة المعلومات"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8165,6 +8053,165 @@ msgstr "الطابور ممتليء"
 
 msgid "Not while on AOL"
 msgstr "غير ممكن أثناء التواجد على AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "أيقونة الصديق"
+
+msgid "Voice"
+msgstr "صوت"
+
+msgid "AIM Direct IM"
+msgstr "تراسل AIM فوري مباشر"
+
+msgid "Get File"
+msgstr "اجلب ملفا"
+
+msgid "Games"
+msgstr "ألعاب"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "إضافات"
+
+msgid "Send Buddy List"
+msgstr "أرسل قائمة الأصدقاء"
+
+msgid "ICQ Direct Connect"
+msgstr "اتصال ICQ مباشر"
+
+msgid "AP User"
+msgstr "مستخدم AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr ""
+
+msgid "ICQ Server Relay"
+msgstr "ممر خادوم ICQ"
+
+msgid "Old ICQ UTF8"
+msgstr "ICQ UTF8 القديم"
+
+msgid "Trillian Encryption"
+msgstr "تعمية Trillian "
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr ""
+
+msgid "Security Enabled"
+msgstr "الأمن مُفعّل"
+
+msgid "Video Chat"
+msgstr "دردشة بالفيديو"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "فيديو مباشر"
+
+msgid "Camera"
+msgstr "كاميرا"
+
+msgid "Screen Sharing"
+msgstr "مشاركة الشاشة"
+
+msgid "IP Address"
+msgstr "عنوان IP"
+
+msgid "Warning Level"
+msgstr "مستوى التحذير"
+
+msgid "Buddy Comment"
+msgstr "تعليق الصديق"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "معلومات المستخدم غير متوفرة: %s"
+
+msgid "Mobile Phone"
+msgstr "الهاتف المحمول"
+
+msgid "Personal Web Page"
+msgstr "صفحة وِب الشخصية"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "معلومات إضافية"
+
+msgid "Zip Code"
+msgstr "الرمز البريدي"
+
+msgid "Work Information"
+msgstr "معلومات العمل"
+
+msgid "Division"
+msgstr "القسم"
+
+msgid "Position"
+msgstr "الموضع"
+
+msgid "Web Page"
+msgstr "صفحة الوِب"
+
+msgid "Online Since"
+msgstr "متصل منذ"
+
+msgid "Member Since"
+msgstr "عضو منذ"
+
+msgid "Capabilities"
+msgstr "الإمكانات"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "ابد متصلا"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "ابد متصلا"
+
+msgid "Appear Offline"
+msgstr "أظهر غير متصل"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "أظهر غير متصل"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "لقد طردك %s: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"يمكنك إعادة طلب التصريح من هؤلاء الأصدقاء عن طريق النقر باليمين عليهم و "
+"اختيار \"أعِد طلب التصريح.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "مرئي"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "قائمة الدعوة"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "الدّلو"
@@ -8350,7 +8397,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "اشترط التصريح"
 
 #, fuzzy
@@ -10620,17 +10667,11 @@ msgstr "خرج"
 msgid "Not on server list"
 msgstr "ليس على قائمة الخادوم"
 
-msgid "Appear Online"
-msgstr "ابد متصلا"
-
 msgid "Appear Permanently Offline"
 msgstr "ابد غير متصل للأبد"
 
 msgid "Presence"
 msgstr "التواجد"
-
-msgid "Appear Offline"
-msgstr "أظهر غير متصل"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "لا تظهر غير متصل للأبد"
@@ -11206,27 +11247,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "قُوطع الاتصال من برمجيات على حاسوبك."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "المستضيف البعيد أغلق الاتصال."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "انتهت مهلة الاتصال."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "رُفِض الاتصال."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "العنوان مستخدم بالفعل."
 
@@ -11371,6 +11407,10 @@ msgstr ""
 "\n"
 "يمكنك دائما الرجوع إلى هذه النافذة لإضافة أو تحرير أو إزالة الحسابات عن طريق "
 "<b>حسابات⇦أدِر الحسابات</b> في نافذة قائمة الأصدقاء"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s يود إضافة %s إلى قائمة أصدقاءه%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11646,6 +11686,8 @@ msgstr "الكُنية (اختياري)"
 msgid "Edit User Mood"
 msgstr "حرر مزاج المستخدم"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/الأ_صدقاء"
@@ -12421,9 +12463,6 @@ msgstr "دعم"
 msgid "webmaster"
 msgstr "مشرف الموقع"
 
-msgid "Senior Contributor/QA"
-msgstr "مُساهم متقدم/التحقق من الجودة"
-
 msgid "win32 port"
 msgstr "نسخة ويندوز"
 
@@ -12448,6 +12487,9 @@ msgstr "المؤلف الأصلي"
 
 msgid "lead developer"
 msgstr "المطوّر الرئيسي"
+
+msgid "Senior Contributor/QA"
+msgstr "مُساهم متقدم/التحقق من الجودة"
 
 msgid "Afrikaans"
 msgstr "أفريكانية"
@@ -13832,6 +13874,10 @@ msgid "_TURN server:"
 msgstr "خادوم ST_UN:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_منفذ:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "اسم المستخدم:"
 
@@ -13854,6 +13900,11 @@ msgstr "موزيلا"
 msgid "Konqueror"
 msgstr "كونكرر"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "مبدئي سطح المكتب"
 
@@ -13871,6 +13922,14 @@ msgstr "فَيَربِرد"
 
 msgid "Epiphany"
 msgstr "إبِفَني"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "يدوي"
@@ -14427,7 +14486,7 @@ msgstr "بدون"
 msgid "Small"
 msgstr "البريد الإلكتروني"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15487,6 +15546,10 @@ msgstr "الجهاز"
 msgid "Voice/Video Settings"
 msgstr "حرّر الخصائص"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "حرّر الخصائص"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15615,7 +15678,7 @@ msgstr "أرسِل و استقبل أبيات XMPP خام."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملاء XMPXMPPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15745,6 +15808,24 @@ msgstr "قم بزيارة صفحة بدجن على الوِب"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "يتطلب SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "افرض استخدام SSL القديم (منفذ 5223)"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "مفتاح SecurID المدخل غير صالح."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr "[تعذّر عرض رسالة من هذا المستخدم لأنها تحوي حروفا غير صالحة.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "ابحث عن صديق بواسطة المعلومات"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16321,9 +16402,6 @@ msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
 #~ msgid "Connection closed (writing)"
 #~ msgstr "أُغلِق الاتصال (تدري الكتابة)"
 
-#~ msgid "Connection reset"
-#~ msgstr "صُفِّر الاتصال"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "عطل في القراءة من المقبس: %s"
 
@@ -16610,9 +16688,6 @@ msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "ملحقة بروتوكول TOC"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "معلومات المستخدم %s غير متاحة"
 
 #~ msgid "%s Options"
 #~ msgstr "خيارات %s"

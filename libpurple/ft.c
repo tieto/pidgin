@@ -1291,6 +1291,11 @@ begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 	PurpleXferType type = purple_xfer_get_type(xfer);
 	PurpleXferUiOps *ui_ops = purple_xfer_get_ui_ops(xfer);
 
+	if (xfer->start_time != 0) {
+		purple_debug_error("xfer", "Transfer is being started multiple times\n");
+		g_return_if_reached();
+	}
+
 	if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
 		xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
 		                        type == PURPLE_XFER_RECEIVE ? "wb" : "rb");

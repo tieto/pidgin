@@ -51,6 +51,11 @@ int _wpurple_DNSServiceConstructFullName(char *fullName, const char *service, co
 #define DNSServiceConstructFullName(fullName, service, regtype, domain) \
 	_wpurple_DNSServiceConstructFullName(fullName, service, regtype, domain)
 
+DNSServiceErrorType _wpurple_DNSServiceGetAddrInfo(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
+	DNSServiceProtocol protocol, const char *hostname, DNSServiceGetAddrInfoReply callBack, void *context);
+#define DNSServiceGetAddrInfo(sdRef, flags, interfaceIndex, protocol, hostname, callBack, context) \
+	_wpurple_DNSServiceGetAddrInfo(sdRef, flags, interfaceIndex, protocol, hostname, callBack, context)
+
 DNSServiceErrorType _wpurple_DNSServiceProcessResult(DNSServiceRef sdRef);
 #define DNSServiceProcessResult(sdRef) \
 	_wpurple_DNSServiceProcessResult(sdRef);

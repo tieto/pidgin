@@ -2812,6 +2812,10 @@ purple_program_is_valid(const char *program)
 	progname = g_find_program_in_path(argv[0]);
 	is_valid = (progname != NULL);
 
+	if(purple_debug_is_verbose())
+		purple_debug_info("program_is_valid", "Tested program %s.  %s.\n", program,
+				is_valid ? "Valid" : "Invalid");
+
 	g_strfreev(argv);
 	g_free(progname);
 

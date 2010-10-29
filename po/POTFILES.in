@@ -134,7 +134,9 @@ libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
+libpurple/protocols/oscar/authorization.c
 libpurple/protocols/oscar/clientlogin.c
+libpurple/protocols/oscar/encoding.c
 libpurple/protocols/oscar/family_chatnav.c
 libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
@@ -146,6 +148,8 @@ libpurple/protocols/oscar/oft.c
 libpurple/protocols/oscar/oscar.c
 libpurple/protocols/oscar/peer.c
 libpurple/protocols/oscar/util.c
+libpurple/protocols/oscar/userinfo.c
+libpurple/protocols/oscar/visibility.c
 libpurple/protocols/qq/buddy_info.c
 libpurple/protocols/qq/buddy_list.c
 libpurple/protocols/qq/buddy_memo.c

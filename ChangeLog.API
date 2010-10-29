@@ -1,6 +1,8 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.4 (MM/DD/YYYY):
+version 2.7.5 (MM/DD/YYYY):
+
+version 2.7.4 (10/20/2010):
 	Perl:
 		Added:
 		* Purple::BuddyList::Chat::get_components

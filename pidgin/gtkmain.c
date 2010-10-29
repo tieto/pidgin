@@ -551,7 +551,7 @@ int main(int argc, char *argv[])
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
 		{"debug",        no_argument,       NULL, 'd'},
-		{"force-online", no_argument,       NULL, 'd'},
+		{"force-online", no_argument,       NULL, 'f'},
 		{"help",         no_argument,       NULL, 'h'},
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},

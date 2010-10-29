@@ -182,7 +182,9 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 
 	dec_in = (char *)purple_base64_decode(enc_in, NULL);
 	purple_debug_misc("jabber", "decoded challenge (%"
-			G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
+			G_GSIZE_FORMAT "): %s\n",
+			dec_in != NULL ? strlen(dec_in) : 0,
+			dec_in != NULL  ? dec_in : "(null)");
 
 	parts = parse_challenge(dec_in);
 

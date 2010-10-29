@@ -258,7 +258,7 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 				} else if(!strcmp(category, "directory") && !strcmp(type, "user")) {
 					/* we found a JUD */
 					js->user_directories = g_list_prepend(js->user_directories, g_strdup(from));
-				} else if(!strcmp(category, "proxy") && !strcmp(type, NS_BYTESTREAMS)) {
+				} else if(!strcmp(category, "proxy") && !strcmp(type, "bytestreams")) {
 					/* This is a bytestream proxy */
 					JabberIq *iq;
 					JabberBytestreamsStreamhost *sh;
@@ -599,7 +599,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 	for(child = xmlnode_get_child(query, "item"); child;
 			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
-		const char *jid, *node;
+		const char *jid;
 
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
 			continue;

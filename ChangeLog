@@ -1,13 +1,28 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.4 (MM/DD/YYYY):
+version 2.7.5 (MM/DD/YYYY):
+
+version 2.7.4 (10/20/2010):
 	General:
 	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
+	  (#12049)
+	* Add Deutsche Telekom, Thawte Primary, and Go Daddy Class 2 root CAs
+	  (#12667, #12668, and #12594)
+	* Fix CVE-2010-3711 by properly validating return values from the
+	  purple_base64_decode() function before using them.
+	* Fix two local crash bugs by properly validating return values from the
+	  purple_base16_decode() function before using them.
 
 	libpurple:
 	* Fall back to an ordinary request if a UI does not support showing a
 	  request with an icon.  Fixes receiving MSN file transfer requests
-	  including a thumbnail in Finch.
+	  including a thumbnail in Finch. (#12561)
+	* Fix an invalid memory access when removing UPnP mappings that could
+	  cause sporadic crashes, most notably when MSN Direct Connections are
+	  enabled. (#12387)
+	* Add a sentence to the certificate warning for expired certificates
+	  suggesting the user check their computer's date and time. (#12654)
 
 	Pidgin:
 	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
@@ -17,6 +32,21 @@ version 2.7.4 (MM/DD/YYYY):
 	  selected buddy.
 	* Add a plugin action menu (under Tools) for the Voice and Video
 	  Settings plugin.
+	* Use GRegex for the debug window where available. This brings regex
+	  filtering to the debug window on Windows. (Eion Robb) (#12601)
+	* Add Google Chrome to the list of possible browsers on non-Windows
+	  systems.
+	* Add Chromium to the list of possible browsers on non-Windows systems.
+	* The "Manual" browser option is now stored as a string.  It is no
+	  longer necessary to specify a full path to the browser command.
+	  (Rodrigo Tobar Carrizo) (#12024)
+	* The Send To menu can now be used if the active account in the
+	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
+	* xdg-open is now the default browser for new users on non-Windows
+	  platforms. (Stanislav Brabec) (#12505)
+	* The "Authorize buddy?" mini-dialog now shows the nickname of
+	  the buddy requesting authorization as well as the icon of
+	  the IM protocol he is using. (#5038)
 
 	Finch:
 	* Add support for drop-down account options (like the SILC cipher
@@ -31,12 +61,40 @@ version 2.7.4 (MM/DD/YYYY):
 	  Stream ID. (#12331)
 	* Added support for using Google's relay servers when making voice and
 	  video calls to Google clients.
+	* Fix detecting file transfer proxies advertised by the server.
+	* Advertise support for Google Talk's JID Domain Discovery extension
+	  in all cases again (changed in 2.7.0), not just when the domain
+	  is "gmail.com" or "googlemail.com" (it's also needed for Google
+	  Talk used for accounts on arbitrary domains not using Google Apps
+	  for Your Domain). (#a14153)
+	* Improved handling of adding oneself to your buddy list when using
+	  Non-SASL (legacy) authentication. (#12499)
+	* Generate a connection error instead of just stalling when the
+	  _xmppconnect TXT record returns results, but none of them result
+	  in a valid BOSH URI. (#a14367, #12744)
+
+	AIM and ICQ:
+	* Add support for managing Visible/Invisible lists. (#10967)
+	* Fix a problem with receiving HTML messages from
+	  QIP/Miranda/Trillian. (#12044)
+	* Hopefully fixed all encoding-related problems, both
+	  for sending and receiving messages. (#10833 and the like)
+	* Fix a problem with receiving messages from pyicqt. (#12284)
+	* Don't set a custom status text when going Invisible to avoid
+	  being detected as Invisible. (#10633)
 
 	Yahoo/Yahoo JAPAN:
 	* Stop doing unnecessary lookups of certain alias information.  This
 	  solves deadlocks when a given Yahoo account has a ridiculously large
 	  (>500 buddies) list and may improve login speed for those on slow
 	  connections. (#12532)
+	* Fix sending SMS messages.  The lookup host changed on us.  (Thanks to
+	  todo) (#12688).
+	* Improvements for some file transfer scenarios, but not all.
+
+	Windows:
+	* Bonjour support now requires Apple Bonjour Print Services version
+	  2.0.0 or newer (http://support.apple.com/kb/dl999).
 
 version 2.7.3 (08/10/2010):
 	General:

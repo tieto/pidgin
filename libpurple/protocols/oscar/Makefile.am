@@ -10,6 +10,7 @@ OSCARSOURCES = \
 	bstream.c           \
 	clientlogin.c       \
 	encoding.c          \
+	encoding.h          \
 	family_admin.c      \
 	family_alert.c      \
 	family_auth.c       \
@@ -44,7 +45,8 @@ OSCARSOURCES = \
 	tlv.c               \
 	userinfo.c          \
 	util.c              \
-	visibility.c
+	visibility.c	    \
+	visibility.h
 
 AM_CFLAGS = $(st)
 

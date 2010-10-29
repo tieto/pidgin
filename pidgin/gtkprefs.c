@@ -1811,7 +1811,7 @@ manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data)
 {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/browsers/command", program);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1832,12 +1832,19 @@ get_available_browsers(void)
 		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Konqueror"), "kfmclient"},
+		{N_("Google Chrome"), "google-chrome"},
+		/* Do not move the line below.  Code below expects gnome-open to be in
+		 * this list immediately after xdg-open! */
 		{N_("Desktop Default"), "xdg-open"},
 		{N_("GNOME Default"), "gnome-open"},
 		{N_("Galeon"), "galeon"},
 		{N_("Firefox"), "firefox"},
 		{N_("Firebird"), "mozilla-firebird"},
-		{N_("Epiphany"), "epiphany"}
+		{N_("Epiphany"), "epiphany"},
+		/* Translators: please do not translate "chromium-browser" here! */
+		{N_("Chromium (chromium-browser)"), "chromium-browser"},
+		/* Translators: please do not translate "chrome" here! */
+		{N_("Chromium (chrome)"), "chrome"}
 	};
 	static const int num_possible_browsers = G_N_ELEMENTS(possible_browsers);
 
@@ -1961,7 +1968,7 @@ browser_page(void)
 
 		entry = gtk_entry_new();
 		gtk_entry_set_text(GTK_ENTRY(entry),
-						   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
+						   purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command"));
 		g_signal_connect(G_OBJECT(entry), "focus-out-event",
 						 G_CALLBACK(manual_browser_set), NULL);
 		hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
@@ -2821,8 +2828,8 @@ pidgin_prefs_init(void)
 	/* Browsers */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/browsers");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/browsers/place", PIDGIN_BROWSER_DEFAULT);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/browsers/command", "");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "mozilla");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "xdg-open");
 #endif
 
 	/* Plugins */
@@ -2852,7 +2859,7 @@ pidgin_prefs_init(void)
 void
 pidgin_prefs_update_old(void)
 {
-	const char *str;
+	const char *str = NULL;
 
 	purple_prefs_rename("/gaim/gtk", PIDGIN_PREFS_ROOT);
 
@@ -2867,6 +2874,17 @@ pidgin_prefs_update_old(void)
 
 	purple_prefs_rename_boolean_toggle(PIDGIN_PREFS_ROOT "/conversations/ignore_colors",
 									 PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting");
+
+	/*
+	 * this path pref changed to a string, so migrate.  I know this will break
+	 * things for and confuse users that use multiple versions with the same
+	 * config directory, but I'm not inclined to want to deal with that at the
+	 * moment. -- rekkanoryo
+	 */
+	if((str = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command")) != NULL) {
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", str);
+		purple_prefs_remove(PIDGIN_PREFS_ROOT "/browsers/command");
+	}
 
 	/* this string pref moved into the core, try to be friendly */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
