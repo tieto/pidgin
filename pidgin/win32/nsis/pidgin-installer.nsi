@@ -549,6 +549,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\ValiCert_Class_2_VA.crt"
     Delete "$INSTDIR\ca-certs\VeriSign_Class3_Extended_Validation_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G2.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_International_Server_Class_3_CA.pem"
