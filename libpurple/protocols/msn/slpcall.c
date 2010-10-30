@@ -527,7 +527,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 							 slpcall->slplink->remote_user);
 
 		header = (MsnFileContext *)purple_base64_decode(context, &bin_len);
-		if (bin_len >= sizeof(MsnFileContext) - 1 &&
+		if (header != NULL && bin_len >= sizeof(MsnFileContext) - 1 &&
 			(header->version == 2 ||
 			 (header->version == 3 && header->length == sizeof(MsnFileContext) + 63))) {
 			file_size = GUINT64_FROM_LE(header->file_size);
