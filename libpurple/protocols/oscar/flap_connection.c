@@ -435,11 +435,16 @@ flap_connection_destroy_cb(gpointer data)
 	aim_rxcallback_t userfunc;
 
 	conn = data;
+	/* Explicitly added for debugging #5927.  Don't re-order this, only
+	 * consider removing it.
+	 */
+	purple_debug_info("oscar", "Destroying FLAP connection %p\n", conn);
+
 	od = conn->od;
 	account = purple_connection_get_account(od->gc);
 
-	purple_debug_info("oscar", "Destroying oscar connection of "
-			"type 0x%04hx.  Disconnect reason is %d\n",
+	purple_debug_info("oscar", "Destroying oscar connection (%p) of "
+			"type 0x%04hx.  Disconnect reason is %d\n", conn,
 			conn->type, conn->disconnect_reason);
 
 	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
@@ -575,7 +580,7 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 		return;
 
 	purple_debug_info("oscar", "Scheduling destruction of FLAP "
-			"connection of type 0x%04hx\n", conn->type);
+			"connection %p of type 0x%04hx\n", conn, conn->type);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
