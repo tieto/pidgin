@@ -612,6 +612,18 @@ recent_buddies_pref_cb(const char *name, PurplePrefType type,
 		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
 }
 
+static const gchar *login_servers[] = {
+	AIM_DEFAULT_LOGIN_SERVER,
+	AIM_DEFAULT_SSL_LOGIN_SERVER,
+	ICQ_DEFAULT_LOGIN_SERVER,
+	ICQ_DEFAULT_SSL_LOGIN_SERVER,
+};
+
+static const gchar *get_login_server(gboolean is_icq, gboolean use_ssl)
+{
+	return login_servers[is_icq*2 + use_ssl];
+}
+
 void
 oscar_login(PurpleAccount *account)
 {
@@ -725,7 +737,7 @@ oscar_login(PurpleAccount *account)
 				return;
 			}
 
-			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+			server = purple_account_get_string(account, "server", get_login_server(od->icq, TRUE));
 
 			/*
 			 * If the account's server is what the oscar prpl has offered as
@@ -734,27 +746,27 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, OSCAR_DEFAULT_LOGIN_SERVER) || !strcmp(server, OSCAR_OLD_LOGIN_SERVER)) {
+			if (!strcmp(server, get_login_server(od->icq, FALSE))) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
-				purple_account_set_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
-				server = OSCAR_DEFAULT_SSL_LOGIN_SERVER;
+				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
+				server = get_login_server(od->icq, TRUE);
 			}
 
 			newconn->gsc = purple_ssl_connect(account, server,
 					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
 		} else {
-			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+			server = purple_account_get_string(account, "server", get_login_server(od->icq, FALSE));
 
 			/*
 			 * See the comment above. We do the reverse here. If they don't want
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
+			if (!strcmp(server, get_login_server(od->icq, TRUE))) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
-				purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
-				server = OSCAR_DEFAULT_LOGIN_SERVER;
+				purple_account_set_string(account, "server", get_login_server(od->icq, FALSE));
+				server = get_login_server(od->icq, FALSE);
 			}
 
 			newconn->connect_data = purple_proxy_connect(NULL, account, server,
@@ -969,8 +981,8 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * tls_certname is only set (and must be set if we get this far) if
-	 * SSL is enabled.
+	 * Use SSL only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
 	{
@@ -5666,13 +5678,13 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurplePlugin *plugin)
+void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 {
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
 
-	option = purple_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
+	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, FALSE));
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);

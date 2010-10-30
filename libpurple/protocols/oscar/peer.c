@@ -879,7 +879,9 @@ peer_connection_trynext(PeerConnection *conn)
 		}
 
 		conn->verified_connect_data = purple_proxy_connect(NULL, account,
-				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
+				(conn->proxyip != NULL)
+					? conn->proxyip
+					: (conn->od->icq ? ICQ_PEER_PROXY_SERVER : AIM_PEER_PROXY_SERVER),
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
 		if (conn->verified_connect_data != NULL)
