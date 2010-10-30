@@ -1691,7 +1691,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				purple_debug_misc("oscar", "X-Status: Received XML reply\n");
 				if (xml) {
 					GString *xstatus;
-					char *tmp1, *tmp2;
+					char *tmp1, *tmp2, *unescaped_xstatus;
 
 					/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", xml); */
 
@@ -1709,29 +1709,32 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 						tmp1 += 12;
 						tmp2 = strstr(tmp1, "&lt;/desc&gt;");
 						if (tmp2 != NULL) {
-							if (xstatus->len > 0)
+							if (xstatus->len > 0 && tmp2 > tmp1)
 								g_string_append(xstatus, " - ");
 							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
 						}
 					}
-					if (xstatus->len > 0) {
-						purple_debug_misc("oscar", "X-Status reply: %s\n", xstatus->str);
+					unescaped_xstatus = purple_unescape_text(xstatus->str);
+					g_string_free(xstatus, TRUE);
+					if (*unescaped_xstatus) {
+						purple_debug_misc("oscar", "X-Status reply: %s\n", unescaped_xstatus);
 						account = purple_connection_get_account(od->gc);
 						buddy = purple_find_buddy(account, bn);
 						presence = purple_buddy_get_presence(buddy);
-						status = purple_presence_get_active_status(presence);
-						purple_prpl_got_user_status(account, bn,
-								purple_status_get_id(status),
-								"message", xstatus->str, NULL);
+						status = purple_presence_get_status(presence, "mood");
+						if (status) {
+							purple_prpl_got_user_status(account, bn,
+									"mood",
+									PURPLE_MOOD_NAME, purple_status_get_attr_string(status, PURPLE_MOOD_NAME),
+									PURPLE_MOOD_COMMENT, unescaped_xstatus, NULL);
+						}
 					}
-					g_string_free(xstatus, TRUE);
+					g_free(unescaped_xstatus);
 				} else {
 					purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");
 				}
 			} else {
 				purple_debug_misc("oscar", "X-Status: 0x0004, 0x000b not an xstatus reply\n");
-				/* if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-					ret = userfunc(od, conn, frame, channel, sn, reason); */
 			}
 
 		}

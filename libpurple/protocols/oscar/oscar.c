@@ -1304,6 +1304,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
+	PurpleBuddy *buddy = NULL;
+	PurpleStatus *previous_status = NULL;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
@@ -1313,8 +1315,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	aim_userinfo_t *info;
 	char *message = NULL;
 	char *itmsurl = NULL;
-	char *tmp;
-	const char *tmp2;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
@@ -1325,6 +1325,11 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->bn != NULL, 1);
+
+	buddy = purple_find_buddy(account, info->bn);
+	if (buddy) {
+		previous_status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
+	}
 
 	/*
 	 * If this is an AIM buddy and their name has formatting, set their
@@ -1389,40 +1394,33 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	if (info->flags & AIM_FLAG_WIRELESS)
-	{
+	if (info->flags & AIM_FLAG_WIRELESS) {
 		purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_MOBILE, NULL);
 	} else {
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (info->status != NULL && info->status[0] != '\0') {
-		/* Grab the available message */
-		message = oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len);
+	/* Empty status means we should unset the status message. NULL status means we should keep it from the previous active status.
+	 * Same goes for itmsurl (which is available only for the "available" status).
+	 */
+	if (info->status != NULL) {
+		message = (info->status_len > 0) ? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len) : NULL;
+	} else if (previous_status != NULL) {
+		message = g_strdup(purple_status_get_attr_string(previous_status, "message"));
 	}
-
-	tmp2 = tmp = (message ? purple_markup_escape_text(message, -1) : NULL);
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
-		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len) {
-			/* Grab the iTunes Music Store URL */
-			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len);
+		if (info->itmsurl != NULL) {
+			itmsurl = (info->itmsurl_len > 0) ? oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len) : NULL;
+		} else if (previous_status != NULL && purple_status_is_available(previous_status)) {
+			itmsurl = g_strdup(purple_status_get_attr_string(previous_status, "itmsurl"));
 		}
-
-		if (tmp2 == NULL && itmsurl != NULL)
-			/*
-			 * The message can't be NULL because NULL means it was the
-			 * last attribute, so the itmsurl would get ignored below.
-			 */
-			tmp2 = "";
-
-		purple_prpl_got_user_status(account, info->bn, status_id,
-									"message", tmp2, "itmsurl", itmsurl, NULL);
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message, itmsurl);
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
+	} else {
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message);
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, NULL);
 	}
-	else
-		purple_prpl_got_user_status(account, info->bn, status_id, "message", tmp2, NULL);
-
-	g_free(tmp);
 
 	g_free(message);
 	g_free(itmsurl);
@@ -4581,7 +4579,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	od = purple_connection_get_protocol_data(gc);
 	userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
-	oscar_user_info_append_status(gc, user_info, b, userinfo, /* strip_html_tags */ TRUE);
+	oscar_user_info_append_status(gc, user_info, b, userinfo, /* use_html_status */ FALSE);
 
 	if (full)
 		oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
@@ -4619,13 +4617,9 @@ char *oscar_status_text(PurpleBuddy *b)
 		message = purple_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
-			gchar *tmp1, *tmp2;
-			tmp1 = purple_markup_strip_html(message);
-			purple_util_chrreplace(tmp1, '\n', ' ');
-			tmp2 = g_markup_escape_text(tmp1, -1);
-			ret = oscar_util_format_string(tmp2, purple_account_get_username(account));
-			g_free(tmp1);
-			g_free(tmp2);
+			gchar *tmp = oscar_util_format_string(message, purple_account_get_username(account));
+			ret = purple_markup_escape_text(tmp, -1);
+			g_free(tmp);
 		}
 		else if (purple_status_is_available(status))
 		{
