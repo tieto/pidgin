@@ -520,7 +520,7 @@ migrate_icq_server(PurpleAccount *account)
 	 * for details on the change. */
 
 	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-icq")) {
-		char *tmp = purple_account_get_string(account, "server", NULL);
+		const char *tmp = purple_account_get_string(account, "server", NULL);
 
 		/* Non-secure server */
 		if(purple_strequal(tmp,	"login.messaging.aol.com") ||
