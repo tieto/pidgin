@@ -520,14 +520,15 @@ migrate_icq_server(PurpleAccount *account)
 	 * for details on the change. */
 
 	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-icq")) {
+		char *tmp = purple_account_get_string(account, "server", NULL);
+
 		/* Non-secure server */
-		if(purple_strequal(purple_account_get_string(account, "server", NULL),
-				"login.messaging.aol.com"))
+		if(purple_strequal(tmp,	"login.messaging.aol.com") ||
+				purple_strequal(tmp, "login.oscar.aol.com"))
 			purple_account_set_string(account, "server", "login.icq.com");
 
 		/* Secure server */
-		if(purple_strequal(purple_account_get_string(account, "server", NULL),
-				"slogin.messaging.aol.com"))
+		if(purple_strequal(tmp, "slogin.oscar.aol.com"))
 			purple_account_set_string(account, "server", "slogin.icq.com");
 	}
 
