@@ -1,6 +1,32 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.5 (MM/DD/YYYY):
+	General:
+	* Added Verisign Class 3 Public CA - G2 root CA.
+
+	Pidgin:
+	* Properly differentiate between bn and bn_IN in the Translation
+	  Information dialog.
+
+	AIM and/or ICQ:
+	* Display the "Authorize buddy?" minidialog when the requestor has an
+	  empty nickname. (#12810)
+	* New ICQ accounts default to proper ICQ servers.  Old accounts using one
+	  of the old default servers will be silently migrated to use the proper
+	  servers.
+	* ICQ accounts using clientLogin now use the correct ICQ servers.  This is
+	  separate from the server settings mentioned above.
+	* '<' should no longer cause ICQ status messages to be truncated in some
+	  locations. (#11964, #12593)
+	* Fix sending messages to chat rooms. (#12768)
+
+	Bonjour:
+	* Don't crash when attempting to log into a Bonjour account and init
+	  failed.
+
+	Windows-Specific Changes:
+	* Quote the path stored in the registry when the "run at startup" option
+	  in the Windows Pidgin Options plugin is used. (#12781)
 
 version 2.7.4 (10/20/2010):
 	General:
