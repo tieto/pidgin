@@ -2,7 +2,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.7.5 (MM/DD/YYYY):
+2.7.5 (10/31/2010):
+	John: A bugfix release for all of you!  This time we fixed a bunch of
+	bugs ranging from annoying regressions to long-standing bugs we didn't
+	realize until now were bugs.  Enjoy!
 
 2.7.4 (10/20/2010):
 	John: This release came at this particular time due to some security
