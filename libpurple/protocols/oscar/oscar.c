@@ -621,7 +621,7 @@ static const gchar *login_servers[] = {
 
 static const gchar *get_login_server(gboolean is_icq, gboolean use_ssl)
 {
-	return login_servers[is_icq*2 + use_ssl];
+	return login_servers[(is_icq ? 2 : 0) + (use_ssl ? 1 : 0)];
 }
 
 void
