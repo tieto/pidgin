@@ -65,12 +65,12 @@ static const gchar *start_oscar_session_urls[] = {
 
 static const gchar *get_client_login_url(OscarData *od)
 {
-	return client_login_urls[od->icq];
+	return client_login_urls[od->icq ? 1 : 0];
 }
 
 static const gchar *get_start_oscar_session_url(OscarData *od)
 {
-	return start_oscar_session_urls[od->icq];
+	return start_oscar_session_urls[od->icq ? 1 : 0];
 }
 
 /*
