@@ -269,6 +269,8 @@ const char *msn_object_get_url(const MsnObject *obj);
  */
 const char *msn_object_get_url1(const MsnObject *obj);
 
+MsnObject * msn_object_find_local(const char *sha1);
+
 void msn_object_set_local(MsnObject *obj);
 
 #endif /* MSN_OBJECT_H */

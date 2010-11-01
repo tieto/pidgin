@@ -25,10 +25,12 @@
 #define MSN_SLP_H
 
 #include "internal.h"
-
 #include "ft.h"
+
 #include "session.h"
 #include "slpcall.h"
+#include "slplink.h"
+#include "user.h"
 
 #define MAX_FILE_NAME_LEN 260 /* MAX_PATH in Windows */
 
@@ -49,8 +51,6 @@ typedef struct
 } MsnFileContext;
 #pragma pack(pop)
 
-MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
-							  const char *body);
 void
 msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
 		const char *type, const char *content);
@@ -62,15 +62,9 @@ msn_slp_send_decline(MsnSlpCall *slpcall, const char *branch,
 
 void send_bye(MsnSlpCall *slpcall, const char *type);
 
-void msn_xfer_completed_cb(MsnSlpCall *slpcall,
-						   const guchar *body, gsize size);
 
-void msn_xfer_cancel(PurpleXfer *xfer);
-gssize msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer);
-gssize msn_xfer_read(guchar **data, PurpleXfer *xfer);
+void msn_request_user_display(MsnUser *user);
 
-void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
-
-void msn_queue_buddy_icon_request(MsnUser *user);
+void msn_request_ft(PurpleXfer *xfer);
 
 #endif /* MSN_SLP_H */

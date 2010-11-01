@@ -1,6 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.6 (??/??/????):
+	MSN:
+	* Added support for MSNP16:
+	* Added support for "Multi Points of Presence" (MPOP), which let users
+	  to sign on multiple places at the same time.
+	* Added extended capabilities support (no one implemented).
+	* Merged the work done on the Google SoC:
+	* A major rewrite of SLP code:
+	* Reworked the data transfer architecture.
+	  (http://developer.pidgin.im/wiki/SlpArchitecture)
+	* A lot of love to MSN prpl.
 
 version 2.7.5 (10/31/2010):
 	General:
