@@ -207,7 +207,7 @@ peer_oft_checksum_file(PeerConnection *conn, PurpleXfer *xfer, GSourceFunc callb
 	checksum_data->callback = callback;
 	checksum_data->size = size;
 	checksum_data->checksum = 0xffff0000;
-	checksum_data->file = fopen(purple_xfer_get_local_filename(xfer), "rb");
+	checksum_data->file = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
 
 	if (checksum_data->file == NULL)
 	{

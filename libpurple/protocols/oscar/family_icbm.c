@@ -1691,7 +1691,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				purple_debug_misc("oscar", "X-Status: Received XML reply\n");
 				if (xml) {
 					GString *xstatus;
-					char *tmp1, *tmp2;
+					char *tmp1, *tmp2, *unescaped_xstatus;
 
 					/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", xml); */
 
@@ -1709,29 +1709,32 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 						tmp1 += 12;
 						tmp2 = strstr(tmp1, "&lt;/desc&gt;");
 						if (tmp2 != NULL) {
-							if (xstatus->len > 0)
+							if (xstatus->len > 0 && tmp2 > tmp1)
 								g_string_append(xstatus, " - ");
 							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
 						}
 					}
-					if (xstatus->len > 0) {
-						purple_debug_misc("oscar", "X-Status reply: %s\n", xstatus->str);
+					unescaped_xstatus = purple_unescape_text(xstatus->str);
+					g_string_free(xstatus, TRUE);
+					if (*unescaped_xstatus) {
+						purple_debug_misc("oscar", "X-Status reply: %s\n", unescaped_xstatus);
 						account = purple_connection_get_account(od->gc);
 						buddy = purple_find_buddy(account, bn);
 						presence = purple_buddy_get_presence(buddy);
-						status = purple_presence_get_active_status(presence);
-						purple_prpl_got_user_status(account, bn,
-								purple_status_get_id(status),
-								"message", xstatus->str, NULL);
+						status = purple_presence_get_status(presence, "mood");
+						if (status) {
+							purple_prpl_got_user_status(account, bn,
+									"mood",
+									PURPLE_MOOD_NAME, purple_status_get_attr_string(status, PURPLE_MOOD_NAME),
+									PURPLE_MOOD_COMMENT, unescaped_xstatus, NULL);
+						}
 					}
-					g_string_free(xstatus, TRUE);
+					g_free(unescaped_xstatus);
 				} else {
 					purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");
 				}
 			} else {
 				purple_debug_misc("oscar", "X-Status: 0x0004, 0x000b not an xstatus reply\n");
-				/* if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-					ret = userfunc(od, conn, frame, channel, sn, reason); */
 			}
 
 		}
@@ -1936,10 +1939,9 @@ int icq_im_xstatus_request(OscarData *od, const char *sn)
 	fmt = "<N><QUERY>&lt;Q&gt;&lt;PluginID&gt;srvMng&lt;/PluginID&gt;&lt;/Q&gt;</QUERY><NOTIFY>&lt;srv&gt;&lt;id&gt;cAwaySrv&lt;/id&gt;&lt;req&gt;&lt;id&gt;AwayStat&lt;/id&gt;&lt;trans&gt;2&lt;/trans&gt;&lt;senderId&gt;%s&lt;/senderId&gt;&lt;/req&gt;&lt;/srv&gt;</NOTIFY></N>\r\n";
 
 	account = purple_connection_get_account(od->gc);
-	xmllen = strlen(fmt) - 2 + strlen(account->username);
 
-	statxml = g_malloc(xmllen);
-	snprintf(statxml, xmllen, fmt, account->username);
+	statxml = g_strdup_printf(fmt, account->username);
+	xmllen = strlen(statxml);
 
 	aim_icbm_makecookie(cookie);
 
@@ -1962,7 +1964,7 @@ int icq_im_xstatus_request(OscarData *od, const char *sn)
 	/* Add Plugin Specific Data */
 	byte_stream_new(&plugindata, (sizeof(c_plugindata) + xmllen));
 	byte_stream_putraw(&plugindata, c_plugindata, sizeof(c_plugindata)); /* Content of TLV 0x2711 */
-	byte_stream_putstr(&plugindata, statxml);
+	byte_stream_putraw(&plugindata, (const guint8*)statxml, xmllen);
 
 	aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, (sizeof(c_plugindata) + xmllen), plugindata.data);
 
@@ -2048,20 +2050,18 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	if (!msg)
 		return -EINVAL;
 
-	len = strlen(fmt) - 6 + strlen(account->username) + strlen(title) + strlen(msg);
-	statxml = g_malloc(len);
-
-	snprintf(statxml, len, fmt, account->username, title, msg);
+	statxml = g_strdup_printf(fmt, account->username, title, msg);
+	len = strlen(statxml);
 
 	purple_debug_misc("oscar", "X-Status AutoReply: %s, %s\n", formatted_msg, msg);
 
-	byte_stream_new(&bs, 10 + 8 + 2 + 1 + strlen(sn) + 2 + sizeof(plugindata) + strlen(statxml)); /* 16 extra */
+	byte_stream_new(&bs, 10 + 8 + 2 + 1 + strlen(sn) + 2 + sizeof(plugindata) + len); /* 16 extra */
 
 	snacid = aim_cachesnac(od, 0x0004, 0x000b, 0x0000, NULL, 0);
 	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 	byte_stream_put16(&bs, 0x0003);
 	byte_stream_putraw(&bs, plugindata, sizeof(plugindata));
-	byte_stream_putraw(&bs, (const guint8*)statxml, strlen(statxml));
+	byte_stream_putraw(&bs, (const guint8*)statxml, len);
 
 	flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x000b, snacid, &bs, TRUE);
 

@@ -80,14 +80,14 @@ static const struct developer developers[] = {
 	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
 	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
-	{"Sean Egan",                          NULL,                  "sean.egan@gmail.com"},
 	{"Casey Harkins",                      NULL,                  NULL},
+	{"Ivan Komarov",                       NULL,                  "ivan.komarov@pidgin.im"},
 	{"Gary 'grim' Kramlich",               NULL,                  "grim@pidgin.im"},
 	{"Richard 'rlaager' Laager",           NULL,                  "rlaager@pidgin.im"},
+	{"Marcus 'malu' Lundblad",             NULL,                  NULL},
 	{"Sulabh 'sulabh_m' Mahajan",          NULL,                  NULL},
 	{"Richard 'wabz' Nelson",              NULL,                  NULL},
 	{"Etan 'deryni' Reisner",              NULL,                  NULL},
-	{"Tim 'marv' Ringenbach",              NULL,                  NULL},
 	{"Michael 'Maiku' Ruprecht",           N_("voice and video"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade", NULL,                  NULL},
 	{"Luke 'LSchiere' Schierer",           N_("support"),         "lschiere@users.sf.net"},
@@ -95,16 +95,14 @@ static const struct developer developers[] = {
 	{"Kevin 'SimGuy' Stange",              N_("webmaster"),       NULL},
 	{"Will 'resiak' Thompson",             NULL,                  NULL},
 	{"Stu 'nosnilmot' Tomlinson",          NULL,                  NULL},
+	{"Jorge 'Masca' Villaseñor",           NULL,                  NULL},
 	{NULL, NULL, NULL}
 };
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Marcus 'malu' Lundblad",         NULL,                        NULL},
-	{"Dennis 'EvilDennisR' Ristuccia", N_("Senior Contributor/QA"), NULL},
 	{"Peter 'Fmoo' Ruibal",            NULL,                        NULL},
 	{"Gabriel 'Nix' Schulhof",         NULL,                        NULL},
-	{"Jorge 'Masca' Villaseñor",       NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -113,6 +111,7 @@ static const struct developer retired_developers[] = {
 	{"Herman Bloggs",               N_("win32 port"),          "herman@bluedigits.com"},
 	{"Thomas Butter",               NULL,                      NULL},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
+	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
 	{"Adam Fritzler",               N_("libfaim maintainer"),  NULL},
 	{"Christian 'ChipX86' Hammond", N_("webmaster"),           NULL},
@@ -120,6 +119,7 @@ static const struct developer retired_developers[] = {
 	{"Syd Logan",                   N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Christopher 'siege' O'Brien", NULL,                      "taliesein@users.sf.net"},
 	{"Bartosz Oler",                NULL,                      NULL},
+	{"Tim 'marv' Ringenbach",       NULL,                      NULL},
 	{"Megan 'Cae' Schneider",       N_("support/QA"),          NULL},
 	{"Jim Seymour",                 N_("XMPP"),                NULL},
 	{"Mark Spencer",                N_("original author"),     "markster@marko.net"},
@@ -132,6 +132,7 @@ static const struct developer retired_developers[] = {
 static const struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",    NULL, NULL},
 	{"Decklin Foster",            NULL, NULL},
+	{"Dennis 'EvilDennisR' Ristuccia", N_("Senior Contributor/QA"), NULL},
 	{"Peter 'Bleeter' Lawler",    NULL, NULL},
 	{"Robert 'Robot101' McQueen", NULL, NULL},
 	{"Benjamin Miller",           NULL, NULL},
@@ -150,7 +151,7 @@ static const struct translator translators[] = {
 	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
 	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
-	{N_("Bengali-India"),       "bn", "Runa Bhattacharjee", "runab@fedoraproject.org"},
+	{N_("Bengali-India"),       "bn_IN", "Runa Bhattacharjee", "runab@fedoraproject.org"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "josep.puigdemont@gmail.com"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
@@ -197,6 +198,7 @@ static const struct translator translators[] = {
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
 	{N_("Kurdish"),             "ku", "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
 	{N_("Lao"),                 "lo", "Anousak Souphavah", "anousak@gmail.com"},
+	{N_("Maithili"),            "mai", "Sangeeta Kumari", "sangeeta_0975@yahoo.com"},
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
 	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
 	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},

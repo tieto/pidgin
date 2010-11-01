@@ -1041,63 +1041,45 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 static int
 aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	guint16 type;
-	guint8 flags, length;
+	guint16 type = byte_stream_get16(bs);
+	if (type == 0x0000 || type == 0x0001) {
+		/* buddy icon checksum */
+		/* not sure what the difference between 1 and 0 is */
+		guint8 flags = byte_stream_get8(bs);
+		guint8 length = byte_stream_get8(bs);
+		guint8 *md5 = byte_stream_getraw(bs, length);
 
-	type = byte_stream_get16(bs);
-	flags = byte_stream_get8(bs);
-	length = byte_stream_get8(bs);
-
-	/*
-	 * A flag of 0x01 could mean "this is the checksum we have for you"
-	 * A flag of 0x40 could mean "I don't have your icon, upload it"
-	 */
-
-	switch (type) {
-		case 0x0000:
-		case 0x0001: { /* buddy icon checksum */
-			/* not sure what the difference between 1 and 0 is */
-			guint8 *md5 = byte_stream_getraw(bs, length);
-
-			if ((flags == 0x00) || (flags == 0x41)) {
-				if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
-					od->iconconnecting = TRUE;
-					od->set_icon = TRUE;
-					aim_srv_requestnew(od, SNAC_FAMILY_BART);
-				} else {
-					PurpleAccount *account = purple_connection_get_account(od->gc);
-					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
-					if (img == NULL) {
-						aim_ssi_delicon(od);
-					} else {
-
-						purple_debug_info("oscar",
-										"Uploading icon to icon server\n");
-						aim_bart_upload(od, purple_imgstore_get_data(img),
-						                purple_imgstore_get_size(img));
-						purple_imgstore_unref(img);
-					}
-				}
-			} else if (flags == 0x81) {
+		if ((flags == 0x00) || (flags == 0x41)) {
+			if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
+				od->iconconnecting = TRUE;
+				od->set_icon = TRUE;
+				aim_srv_requestnew(od, SNAC_FAMILY_BART);
+			} else {
 				PurpleAccount *account = purple_connection_get_account(od->gc);
 				PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
-				if (img == NULL)
+				if (img == NULL) {
 					aim_ssi_delicon(od);
-				else {
-					aim_ssi_seticon(od, md5, length);
+				} else {
+
+					purple_debug_info("oscar",
+									"Uploading icon to icon server\n");
+					aim_bart_upload(od, purple_imgstore_get_data(img),
+							purple_imgstore_get_size(img));
 					purple_imgstore_unref(img);
 				}
 			}
+		} else if (flags == 0x81) {
+			PurpleAccount *account = purple_connection_get_account(od->gc);
+			PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+			if (img == NULL)
+				aim_ssi_delicon(od);
+			else {
+				aim_ssi_seticon(od, md5, length);
+				purple_imgstore_unref(img);
+			}
+		}
 
-			g_free(md5);
-		} break;
-
-		case 0x0002: {
-			/* We just set an available message? */
-			/* there is a second length that is just for the message */
-			char *msg = byte_stream_getstr(bs, byte_stream_get16(bs));
-			g_free(msg);
-		} break;
+		g_free(md5);
 	}
 
 	return 0;

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin.gu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2010-04-07 12:00+0530\n"
 "Last-Translator: Sweta Kothari <swkothar@redhat.com>\n"
 "Language-Team: Gujarati\n"
@@ -526,7 +526,6 @@ msgstr "પ્રમાણપત્રને કાઢવા માટે ખા
 msgid "Certificate Manager"
 msgstr "પ્રમાણપત્ર સંચાલન"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "યજમાન નામ"
 
@@ -1675,7 +1674,10 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "પ્રમાણપત્રની તારીખ જતી રહી છે અને પ્રમાણિત નક્કી કરવુ જોઇએ નહિં."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4660,11 +4662,20 @@ msgstr "XMPP પ્રોટોકોલ પ્લગઇન"
 msgid "Domain"
 msgstr "ડોમેઇન"
 
-msgid "Require SSL/TLS"
-msgstr "SSL/TLS જરૂરી છે"
+#, fuzzy
+msgid "Require encryption"
+msgstr "સત્તાધિકરણ જરૂરી"
 
-msgid "Force old (port 5223) SSL"
-msgstr "જૂના SSL (port 5223)ને દબાણ કરો"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "વપરાશકર્તા જાણકારી ઉપલબ્ધ નથી: %s"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "જોડાણ સમયસમાપ્તિ"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "એનક્રિપ્ટ નહિં થયેલ સ્ટ્રીમો ઉપર સાદા લખાણ સત્તાધિકરણને પરવાનગી આપો"
@@ -5847,7 +5858,8 @@ msgstr "PIN એ અયોગ્ય છે. તે ફક્ત આંકડા [
 msgid "The two PINs you entered do not match."
 msgstr "તમે દાખલ થયેલ બે PINs એ બંધબેસતુ નથી."
 
-msgid "The name you entered is invalid."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
 msgstr "તમે દાખલ થયેલ નામ એ અયોગ્ય છે."
 
 msgid ""
@@ -5935,10 +5947,6 @@ msgstr "MXit સર્વર સાથે જોડાવામાં અસમ�
 
 msgid "Connecting..."
 msgstr "જોડાઈ રહ્યા છીએ..."
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "તમે દાખલ થયેલ નામ એ અયોગ્ય છે."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "તમે દાખલ કરેલ છે તે PIN પાસે અયોગ્ય લંબાઇ છે [7-10]."
@@ -6784,6 +6792,15 @@ msgstr "સર્વર સરનામું"
 msgid "Server port"
 msgstr "સર્વર પોર્ટ"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "મહેરબાની કરીને મને સત્તાધિકારીત કરો કે જેથી હું તમને મારી મિત્ર યાદીમાં ઉમેરી શકું."
+
+msgid "No reason given."
+msgstr "કોઈ કારણ આપેલ નથી."
+
+msgid "Authorization Denied Message:"
+msgstr "સત્તાધિકરણ નામંજૂરી સંદેશો:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "%s માંથી અનિચ્છનીય જવાબ મળેલ છે: %s"
@@ -6818,6 +6835,24 @@ msgstr "અહિંયા સત્તાધિકરણ કરવા માટ
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "%s ની માંગણી કરવામાં ભૂલ: %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(ત્યાં આ સંદેશને મેળવવામાં ભૂલ હતી.  મિત્ર કે જેની સાથે વાત કરી રહ્યા છો તે કદાચ ઇચ્છિત "
+"કરતા વિવિધ એનકોડિંગને વાપરી રહ્યા હોય.  જો તમે જાણો છો કે તે ક્યુ એનકોડિંગ વાપરી રહ્યુ "
+"છે, તમે તમારા AIM/ICQ ખાતા માટે ઉન્નત ખાતા વિકલ્પોમાં તેને સ્પષ્ટ કરી શકો છો.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(આ સંદેશો મેળવતી ક્ષતિ હતી.  ક્યાંતો તમારી અને %s પાસે વિવિધ એનકોડિંગ પસંદ થયેલ છે, અથવા "
+"%s એ ક્ષતિભરેલ ક્લાઈન્ટ છે.)"
 
 msgid "Could not join chat room"
 msgstr "સંવાદ રુમમાં જોડાઇ શક્યા નહિં"
@@ -7032,94 +7067,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ફાઇલ %s એ %s છે. કે જે %s નાં મહત્તમ માપ કરતા વધારે છે."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(ત્યાં આ સંદેશને મેળવવામાં ભૂલ હતી.  મિત્ર કે જેની સાથે વાત કરી રહ્યા છો તે કદાચ ઇચ્છિત "
-"કરતા વિવિધ એનકોડિંગને વાપરી રહ્યા હોય.  જો તમે જાણો છો કે તે ક્યુ એનકોડિંગ વાપરી રહ્યુ "
-"છે, તમે તમારા AIM/ICQ ખાતા માટે ઉન્નત ખાતા વિકલ્પોમાં તેને સ્પષ્ટ કરી શકો છો.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(આ સંદેશો મેળવતી ક્ષતિ હતી.  ક્યાંતો તમારી અને %s પાસે વિવિધ એનકોડિંગ પસંદ થયેલ છે, અથવા "
-"%s એ ક્ષતિભરેલ ક્લાઈન્ટ છે.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "મિત્ર ચિહ્ન"
-
-msgid "Voice"
-msgstr "અવાજ"
-
-msgid "AIM Direct IM"
-msgstr "AIM સીધું IM"
-
-msgid "Get File"
-msgstr "ફાઈલ મેળવો"
-
-msgid "Games"
-msgstr "રમતો"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "ઉમેરાઓ"
-
-msgid "Send Buddy List"
-msgstr "મિત્ર યાદી મોકલો"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ સીધું જોડાણ"
-
-msgid "AP User"
-msgstr "AP વપરાશકર્તા"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ સર્વર રીલે"
-
-msgid "Old ICQ UTF8"
-msgstr "જૂનું ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "ટ્રીલીયન એનક્રિપ્શન"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "સુરક્ષા સક્રિયકૃત"
-
-msgid "Video Chat"
-msgstr "વીડિયો સંવાદ"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "જીવંત વીડિયો"
-
-msgid "Camera"
-msgstr "કેમેરો"
-
-msgid "Screen Sharing"
-msgstr "સ્ક્રીન વહેંચણી"
-
 msgid "Free For Chat"
 msgstr "સંવાદથી મુક્ત"
 
@@ -7149,15 +7096,6 @@ msgstr "કામ પર"
 
 msgid "At lunch"
 msgstr "બપોરનું જમવા માટે બહાર"
-
-msgid "IP Address"
-msgstr "IP સરનામું"
-
-msgid "Warning Level"
-msgstr "ચેતવણી સ્તર"
-
-msgid "Buddy Comment"
-msgstr "મિત્ર ટિપ્પણી"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7253,15 +7191,6 @@ msgstr "પાસવર્ડ મોકલાઈ ગયો"
 
 msgid "Unable to initialize connection"
 msgstr "જોડાણને પ્રારંભ કરવાનું અસમર્થ"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "મહેરબાની કરીને મને સત્તાધિકારીત કરો કે જેથી હું તમને મારી મિત્ર યાદીમાં ઉમેરી શકું."
-
-msgid "No reason given."
-msgstr "કોઈ કારણ આપેલ નથી."
-
-msgid "Authorization Denied Message:"
-msgstr "સત્તાધિકરણ નામંજૂરી સંદેશો:"
 
 #, c-format
 msgid ""
@@ -7372,57 +7301,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "તમે %hu સંદેશો %s માંથી ચૂકી ગયેલ છો કોઈ અજ્ઞાત કારણોસર."
 msgstr[1] "તમે %hu સંદેશાઓ %s માંથી ચૂકી ગયેલ છો કોઈ અજ્ઞાત કારણોસર."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "વપરાશકર્તા જાણકારી ઉપલબ્ધ નથી: %s"
-
-msgid "Online Since"
-msgstr "ત્યારથી ઓનલાઈન"
-
-msgid "Member Since"
-msgstr "ત્યારથી સભ્ય"
-
-msgid "Capabilities"
-msgstr "ક્ષમતાઓ"
-
 msgid "Your AIM connection may be lost."
 msgstr "તમારું AIM જોડાણ ખોવાઈ જશે."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr "[આ વપરાશકર્તામાંથી સંદેશો દર્શાવવામાં અસમર્થ કારણ કે તે અયોગ્ય અક્ષરો સમાવે છે.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "તમારું જોડાણ સંવાદ કક્ષ %s માંથી તૂટી ગયેલ છે."
-
-msgid "Mobile Phone"
-msgstr "મોબાઈલ ફોન"
-
-msgid "Personal Web Page"
-msgstr "મિત્રગત વેબ પાનું"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "વધારાની જાણકારી"
-
-msgid "Zip Code"
-msgstr "ઝીપ કોડ"
-
-msgid "Work Information"
-msgstr "કાર્ય જાણકારી"
-
-msgid "Division"
-msgstr "વિભાગ"
-
-msgid "Position"
-msgstr "જગ્યા"
-
-msgid "Web Page"
-msgstr "વેબ પાનું"
 
 msgid "Pop-Up Message"
 msgstr "પોપ-અપ સંદેશો"
@@ -7687,7 +7571,8 @@ msgstr "વપરાશકર્તાનામ બંધારણ માત્�
 msgid "Change Address To:"
 msgstr "સરનામાને આમાં બદલો:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>તમે સત્તાધિકરણ માટે રાહ જોઈ રહ્યા છો</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7726,6 +7611,14 @@ msgstr "IM ફોરવર્ડીંગ રૂપરેખાંકિત ક�
 msgid "Set Privacy Options..."
 msgstr "અંગતતા વિકલ્પોને સુયોજિત કરો..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "મિત્ર યાદીને બતાવો (_L)"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "યાદી આમંત્રિત કરો"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "ખાતાની ખાતરી"
@@ -7741,9 +7634,6 @@ msgstr "સત્તાધિકરણ માટે રાહ જોઈ રહ�
 
 msgid "Search for Buddy by Email Address..."
 msgstr "ઇમેલ સરનામાં પ્રમાણે મિત્ર માટે શોધો..."
-
-msgid "Search for Buddy by Information"
-msgstr "જાણકારી દ્વારા મિત્ર માટે શોધ કરો"
 
 msgid "Use clientLogin"
 msgstr "ક્લાયન્ટ પ્રવેશને વાપરો"
@@ -7851,6 +7741,165 @@ msgstr "કતાર ભરેલી છે"
 
 msgid "Not while on AOL"
 msgstr "AOL પર નથી"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "મિત્ર ચિહ્ન"
+
+msgid "Voice"
+msgstr "અવાજ"
+
+msgid "AIM Direct IM"
+msgstr "AIM સીધું IM"
+
+msgid "Get File"
+msgstr "ફાઈલ મેળવો"
+
+msgid "Games"
+msgstr "રમતો"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "ઉમેરાઓ"
+
+msgid "Send Buddy List"
+msgstr "મિત્ર યાદી મોકલો"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ સીધું જોડાણ"
+
+msgid "AP User"
+msgstr "AP વપરાશકર્તા"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ સર્વર રીલે"
+
+msgid "Old ICQ UTF8"
+msgstr "જૂનું ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "ટ્રીલીયન એનક્રિપ્શન"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "સુરક્ષા સક્રિયકૃત"
+
+msgid "Video Chat"
+msgstr "વીડિયો સંવાદ"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "જીવંત વીડિયો"
+
+msgid "Camera"
+msgstr "કેમેરો"
+
+msgid "Screen Sharing"
+msgstr "સ્ક્રીન વહેંચણી"
+
+msgid "IP Address"
+msgstr "IP સરનામું"
+
+msgid "Warning Level"
+msgstr "ચેતવણી સ્તર"
+
+msgid "Buddy Comment"
+msgstr "મિત્ર ટિપ્પણી"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "વપરાશકર્તા જાણકારી ઉપલબ્ધ નથી: %s"
+
+msgid "Mobile Phone"
+msgstr "મોબાઈલ ફોન"
+
+msgid "Personal Web Page"
+msgstr "મિત્રગત વેબ પાનું"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "વધારાની જાણકારી"
+
+msgid "Zip Code"
+msgstr "ઝીપ કોડ"
+
+msgid "Work Information"
+msgstr "કાર્ય જાણકારી"
+
+msgid "Division"
+msgstr "વિભાગ"
+
+msgid "Position"
+msgstr "જગ્યા"
+
+msgid "Web Page"
+msgstr "વેબ પાનું"
+
+msgid "Online Since"
+msgstr "ત્યારથી ઓનલાઈન"
+
+msgid "Member Since"
+msgstr "ત્યારથી સભ્ય"
+
+msgid "Capabilities"
+msgstr "ક્ષમતાઓ"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "ઓફલાઈન દેખાઓ "
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "ઓફલાઈન દેખાઓ "
+
+msgid "Appear Offline"
+msgstr "ઓફલાઈન દેખાય છે"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "ઓફલાઈન દેખાય છે"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "(%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"તમે આ મિત્રઓમાંથી પુનઃ-અરજી કરી શકો છો તેમના પર જમણું-ક્લિક કરીને અને \"સત્તાધિકરણની "
+"પુનઃ-અરજી કરો\" પસંદ કરીને"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "દેખીતું"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "યાદી આમંત્રિત કરો"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "કુંભ રાશિ"
@@ -8030,8 +8079,8 @@ msgstr "તમારી માંગણીને સ્વીકારેલ હ
 msgid "Your request was rejected."
 msgstr "તમારી માંગણીને રદ કરેલ હતી."
 
-#, c-format
-msgid "%u requires verification"
+#, fuzzy, c-format
+msgid "%u requires verification: %s"
 msgstr "%u ને ચકાસણીની જરૂર છે"
 
 msgid "Add buddy question"
@@ -10212,17 +10261,11 @@ msgstr "ચાલી ગયેલ છે"
 msgid "Not on server list"
 msgstr "સર્વર યાદી પર નથી"
 
-msgid "Appear Online"
-msgstr "ઓફલાઈન દેખાઓ "
-
 msgid "Appear Permanently Offline"
 msgstr "હંમેશ માટે ઓફલાઈન દેખાઓ "
 
 msgid "Presence"
 msgstr "ઉપસ્થિતિ"
-
-msgid "Appear Offline"
-msgstr "ઓફલાઈન દેખાય છે"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "હંમેશ માટે ઓફલાઈન દેખાઓ નહિ"
@@ -10761,27 +10804,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "તમારાં કમ્પ્યૂટર પર બીજા સોફ્ટવેર પ્રમાણે રોકેલ જોડાણ."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "દૂરસ્થ યજમાન એ જોડાણને બંધ કરેલ છે."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "જોડાણ સમયસમાપ્તિ."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "જોડાણ બંધ થઈ ગયું."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "સરનામું પહેલેથી વપરાશમાં છે."
 
@@ -10928,6 +10966,10 @@ msgstr ""
 "\n"
 "તમે મિત્ર યાદી વિન્ડો માં <b>ખાતાઓ->ખાતાઓને સંચાલિત કરો</b> માંથી આ ખાતાઓને ઉમેરવા, "
 "સુધારવા, અથવા દૂર કરવા માટે પાછા આવી શકો છો"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s એ %s ને તેની અથવા તેણીની મિત્ર યાદી%s%s માં ઉમેરવા માંગે છે"
 
 #. Buddy List
 msgid "Background Color"
@@ -11180,6 +11222,8 @@ msgstr "સંદેશ (વૈકલ્પિક)"
 msgid "Edit User Mood"
 msgstr "વપરાશકર્તાનાં મિજાજને સુધારો"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/મિત્રઓ (_B)"
@@ -11921,9 +11965,6 @@ msgstr "આધાર"
 msgid "webmaster"
 msgstr "તા & વેબસંચાલક"
 
-msgid "Senior Contributor/QA"
-msgstr "અનુભવી ફાળક/QA"
-
 msgid "win32 port"
 msgstr "win32 પોર્ટ"
 
@@ -11948,6 +11989,9 @@ msgstr "મૂળ લેખક"
 
 msgid "lead developer"
 msgstr "અગ્રણી વિકાસકર્તા"
+
+msgid "Senior Contributor/QA"
+msgstr "અનુભવી ફાળક/QA"
 
 msgid "Afrikaans"
 msgstr "આફ્રિકન"
@@ -13282,6 +13326,10 @@ msgstr "Relay Server (TURN)"
 msgid "_TURN server:"
 msgstr "TURN સર્વર (_T):"
 
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "પોર્ટ (_P):"
+
 msgid "Use_rname:"
 msgstr "વપરાશકર્તા નામ (_r):"
 
@@ -13303,6 +13351,11 @@ msgstr "મોઝીલા"
 msgid "Konqueror"
 msgstr "કોન્કરર"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "ડેસ્કટોપ મૂળભૂત"
 
@@ -13320,6 +13373,14 @@ msgstr "ફાયરબર્ડ"
 
 msgid "Epiphany"
 msgstr "એપિફની"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "જાતે"
@@ -13853,7 +13914,8 @@ msgstr "કંઇ નહિં"
 msgid "Small"
 msgstr "નાનું"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "મૂળભૂત હસતા ચહેરાઓની નાનામાં નાની આવૃત્તિઓ"
 
 msgid "Response Probability:"
@@ -14869,6 +14931,10 @@ msgstr "ઉપકરણ (_e)"
 msgid "Voice/Video Settings"
 msgstr "અવાજ/વિડિયો સુયોજનો"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "અવાજ/વિડિયો સુયોજનો"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -14993,7 +15059,7 @@ msgstr "કાચો XMPP સ્ટેન્ઝાને મોકલો અન�
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "ડિબગીંગ XMPP સર્વરો અથવા ક્લાયન્ટો માટે આ પ્લગઇન ઉપયોગી છે."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15122,6 +15188,23 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "SSL/TLS જરૂરી છે"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "જૂના SSL (port 5223)ને દબાણ કરો"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "તમે દાખલ થયેલ નામ એ અયોગ્ય છે."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr "[આ વપરાશકર્તામાંથી સંદેશો દર્શાવવામાં અસમર્થ કારણ કે તે અયોગ્ય અક્ષરો સમાવે છે.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "જાણકારી દ્વારા મિત્ર માટે શોધ કરો"
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "હજુ પ્રમાણપત્ર યોગ્ય નથી."

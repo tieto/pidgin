@@ -58,7 +58,8 @@ typedef struct _PeerConnection        PeerConnection;
 /*
  * For peer proxying
  */
-#define PEER_PROXY_SERVER         "ars.oscar.aol.com"
+#define AIM_PEER_PROXY_SERVER         "ars.oscar.aol.com"
+#define ICQ_PEER_PROXY_SERVER         "ars.icq.com"
 #define PEER_PROXY_PORT           5190   /* The port we should always connect to */
 #define PEER_PROXY_PACKET_VERSION 0x044a
 

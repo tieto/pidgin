@@ -24,6 +24,8 @@
 #ifndef MSN_NEXUS_H
 #define MSN_NEXUS_H
 
+#include "internal.h"
+
 typedef struct _MsnNexus MsnNexus;
 typedef struct _MsnTicketToken MsnTicketToken;
 typedef struct _MsnUsrKey MsnUsrKey;

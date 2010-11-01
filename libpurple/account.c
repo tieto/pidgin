@@ -513,6 +513,29 @@ migrate_yahoo_japan(PurpleAccount *account)
 }
 
 static void
+migrate_icq_server(PurpleAccount *account)
+{
+	/* Migrate the login server setting for ICQ accounts.  See
+	 * 'mtn log --last 1 --no-graph --from b6d7712e90b68610df3bd2d8cbaf46d94c8b3794'
+	 * for details on the change. */
+
+	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-icq")) {
+		const char *tmp = purple_account_get_string(account, "server", NULL);
+
+		/* Non-secure server */
+		if(purple_strequal(tmp,	"login.messaging.aol.com") ||
+				purple_strequal(tmp, "login.oscar.aol.com"))
+			purple_account_set_string(account, "server", "login.icq.com");
+
+		/* Secure server */
+		if(purple_strequal(tmp, "slogin.oscar.aol.com"))
+			purple_account_set_string(account, "server", "slogin.icq.com");
+	}
+
+	return;
+}
+
+static void
 migrate_xmpp_encryption(PurpleAccount *account)
 {
 	/* When this is removed, nuke the "old_ssl" and "require_tls" settings */
@@ -598,6 +621,9 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 	/* we do this here because we need access to account settings to determine
 	 * if we can/should migrate an old Yahoo! JAPAN account */
 	migrate_yahoo_japan(account);
+	/* we do this here because we need access to account settings to determine
+	 * if we can/should migrate an ICQ account's server setting */
+	migrate_icq_server(account);
 	/* we do this here because we need to do it before the user views the
 	 * Edit Account dialog. */
 	migrate_xmpp_encryption(account);

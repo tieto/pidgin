@@ -258,7 +258,7 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 				} else if(!strcmp(category, "directory") && !strcmp(type, "user")) {
 					/* we found a JUD */
 					js->user_directories = g_list_prepend(js->user_directories, g_strdup(from));
-				} else if(!strcmp(category, "proxy") && !strcmp(type, NS_BYTESTREAMS)) {
+				} else if(!strcmp(category, "proxy") && !strcmp(type, "bytestreams")) {
 					/* This is a bytestream proxy */
 					JabberIq *iq;
 					JabberBytestreamsStreamhost *sh;

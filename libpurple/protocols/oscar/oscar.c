@@ -612,6 +612,18 @@ recent_buddies_pref_cb(const char *name, PurplePrefType type,
 		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
 }
 
+static const gchar *login_servers[] = {
+	AIM_DEFAULT_LOGIN_SERVER,
+	AIM_DEFAULT_SSL_LOGIN_SERVER,
+	ICQ_DEFAULT_LOGIN_SERVER,
+	ICQ_DEFAULT_SSL_LOGIN_SERVER,
+};
+
+static const gchar *get_login_server(gboolean is_icq, gboolean use_ssl)
+{
+	return login_servers[is_icq*2 + use_ssl];
+}
+
 void
 oscar_login(PurpleAccount *account)
 {
@@ -725,7 +737,7 @@ oscar_login(PurpleAccount *account)
 				return;
 			}
 
-			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
+			server = purple_account_get_string(account, "server", get_login_server(od->icq, TRUE));
 
 			/*
 			 * If the account's server is what the oscar prpl has offered as
@@ -734,27 +746,27 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, OSCAR_DEFAULT_LOGIN_SERVER) || !strcmp(server, OSCAR_OLD_LOGIN_SERVER)) {
+			if (!strcmp(server, get_login_server(od->icq, FALSE))) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
-				purple_account_set_string(account, "server", OSCAR_DEFAULT_SSL_LOGIN_SERVER);
-				server = OSCAR_DEFAULT_SSL_LOGIN_SERVER;
+				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
+				server = get_login_server(od->icq, TRUE);
 			}
 
 			newconn->gsc = purple_ssl_connect(account, server,
 					purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 					ssl_connection_established_cb, ssl_connection_error_cb, newconn);
 		} else {
-			server = purple_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
+			server = purple_account_get_string(account, "server", get_login_server(od->icq, FALSE));
 
 			/*
 			 * See the comment above. We do the reverse here. If they don't want
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, OSCAR_DEFAULT_SSL_LOGIN_SERVER)) {
+			if (!strcmp(server, get_login_server(od->icq, TRUE))) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
-				purple_account_set_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER);
-				server = OSCAR_DEFAULT_LOGIN_SERVER;
+				purple_account_set_string(account, "server", get_login_server(od->icq, FALSE));
+				server = get_login_server(od->icq, FALSE);
 			}
 
 			newconn->connect_data = purple_proxy_connect(NULL, account, server,
@@ -969,8 +981,8 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * tls_certname is only set (and must be set if we get this far) if
-	 * SSL is enabled.
+	 * Use SSL only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
 	{
@@ -1292,6 +1304,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
+	PurpleBuddy *buddy = NULL;
+	PurpleStatus *previous_status = NULL;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
@@ -1301,8 +1315,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	aim_userinfo_t *info;
 	char *message = NULL;
 	char *itmsurl = NULL;
-	char *tmp;
-	const char *tmp2;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
@@ -1313,6 +1325,11 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->bn != NULL, 1);
+
+	buddy = purple_find_buddy(account, info->bn);
+	if (buddy) {
+		previous_status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
+	}
 
 	/*
 	 * If this is an AIM buddy and their name has formatting, set their
@@ -1377,40 +1394,33 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	if (info->flags & AIM_FLAG_WIRELESS)
-	{
+	if (info->flags & AIM_FLAG_WIRELESS) {
 		purple_prpl_got_user_status(account, info->bn, OSCAR_STATUS_ID_MOBILE, NULL);
 	} else {
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (info->status != NULL && info->status[0] != '\0') {
-		/* Grab the available message */
-		message = oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len);
+	/* Empty status means we should unset the status message. NULL status means we should keep it from the previous active status.
+	 * Same goes for itmsurl (which is available only for the "available" status).
+	 */
+	if (info->status != NULL) {
+		message = (info->status_len > 0) ? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len) : NULL;
+	} else if (previous_status != NULL) {
+		message = g_strdup(purple_status_get_attr_string(previous_status, "message"));
 	}
-
-	tmp2 = tmp = (message ? purple_markup_escape_text(message, -1) : NULL);
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
-		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len) {
-			/* Grab the iTunes Music Store URL */
-			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len);
+		if (info->itmsurl != NULL) {
+			itmsurl = (info->itmsurl_len > 0) ? oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len) : NULL;
+		} else if (previous_status != NULL && purple_status_is_available(previous_status)) {
+			itmsurl = g_strdup(purple_status_get_attr_string(previous_status, "itmsurl"));
 		}
-
-		if (tmp2 == NULL && itmsurl != NULL)
-			/*
-			 * The message can't be NULL because NULL means it was the
-			 * last attribute, so the itmsurl would get ignored below.
-			 */
-			tmp2 = "";
-
-		purple_prpl_got_user_status(account, info->bn, status_id,
-									"message", tmp2, "itmsurl", itmsurl, NULL);
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message, itmsurl);
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
+	} else {
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message);
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, NULL);
 	}
-	else
-		purple_prpl_got_user_status(account, info->bn, status_id, "message", tmp2, NULL);
-
-	g_free(tmp);
 
 	g_free(message);
 	g_free(itmsurl);
@@ -4569,7 +4579,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	od = purple_connection_get_protocol_data(gc);
 	userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
-	oscar_user_info_append_status(gc, user_info, b, userinfo, /* strip_html_tags */ TRUE);
+	oscar_user_info_append_status(gc, user_info, b, userinfo, /* use_html_status */ FALSE);
 
 	if (full)
 		oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
@@ -4607,13 +4617,9 @@ char *oscar_status_text(PurpleBuddy *b)
 		message = purple_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
-			gchar *tmp1, *tmp2;
-			tmp1 = purple_markup_strip_html(message);
-			purple_util_chrreplace(tmp1, '\n', ' ');
-			tmp2 = g_markup_escape_text(tmp1, -1);
-			ret = oscar_util_format_string(tmp2, purple_account_get_username(account));
-			g_free(tmp1);
-			g_free(tmp2);
+			gchar *tmp = oscar_util_format_string(message, purple_account_get_username(account));
+			ret = purple_markup_escape_text(tmp, -1);
+			g_free(tmp);
 		}
 		else if (purple_status_is_available(status))
 		{
@@ -5459,10 +5465,10 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 				oscar_show_icq_privacy_opts);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new("Show Visible List", oscar_show_visible_list);
+		act = purple_plugin_action_new(_("Show Visible List"), oscar_show_visible_list);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new("Show Invisible List", oscar_show_invisible_list);
+		act = purple_plugin_action_new(_("Show Invisible List"), oscar_show_invisible_list);
 		menu = g_list_prepend(menu, act);
 	}
 	else
@@ -5666,13 +5672,13 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurplePlugin *plugin)
+void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 {
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
 
-	option = purple_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
+	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, OSCAR_DEFAULT_USE_SSL));
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);

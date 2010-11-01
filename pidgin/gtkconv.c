@@ -3903,7 +3903,7 @@ generate_send_to_items(PidginWindow *win)
 						continue;
 
 					account = purple_buddy_get_account(buddy);
-					if (purple_account_is_connected(account))
+					if (purple_account_is_connected(account) || account == gtkconv->active_conv->account)
 					{
 						/* Use the PurplePresence to get unique buddies. */
 						PurplePresence *presence = purple_buddy_get_presence(buddy);

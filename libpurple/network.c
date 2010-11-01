@@ -693,7 +693,7 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 
 static gboolean _print_debug_msg(gpointer data) {
 	gchar *msg = data;
-	purple_debug_warning("network", msg);
+	purple_debug_warning("network", "%s", msg);
 	g_free(msg);
 	return FALSE;
 }

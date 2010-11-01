@@ -220,11 +220,30 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 	account = purple_connection_get_account(js->gc);
 
+#if 0
+	/*
+	 * This code DOES NOT EXIST, will never be enabled by default, and
+	 * will never ever be supported (by me).
+	 * It's literally *only* for developer testing.
+	 */
+	{
+		const gchar *connection_security = purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
+		if (!g_str_equal(connection_security, "none") &&
+				purple_ssl_is_supported()) {
+			jabber_send_raw(js,
+					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+			return TRUE;
+		}
+	}
+#else
 	if(purple_ssl_is_supported()) {
 		jabber_send_raw(js,
 				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 		return TRUE;
+	} else { 
+		purple_debug_warning("jabber", "No libpurple TLS/SSL support found.");
 	}
+#endif
 
 	starttls = xmlnode_get_child(packet, "starttls");
 	if(xmlnode_get_child(starttls, "required")) {
@@ -743,17 +762,9 @@ static void
 txt_resolved_cb(GList *responses, gpointer data)
 {
 	JabberStream *js = data;
+	gboolean found = FALSE;
 
 	js->srv_query_data = NULL;
-
-	if (responses == NULL) {
-		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
-				  "methods after failing to connect directly.\n");
-		purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to connect"));
-		return;
-	}
 
 	while (responses) {
 		PurpleTxtResponse *resp = responses->data;
@@ -771,9 +782,17 @@ txt_resolved_cb(GList *responses, gpointer data)
 	}
 
 	if (js->bosh) {
+		found = TRUE;
 		jabber_bosh_connection_connect(js->bosh);
-	} else {
-		purple_debug_info("jabber","Didn't find an alternative connection method.\n");
+	}
+
+	if (!found) {
+		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
+				  "methods after failing to connect directly.\n");
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to connect"));
+		return;
 	}
 
 	if (responses) {
@@ -948,6 +967,11 @@ jabber_stream_new(PurpleAccount *account)
 
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
+
+	/* This is overridden during binding, but we need it here
+	 * in case the server only does legacy non-sasl auth!.
+	 */
+	purple_connection_set_display_name(gc, user);
 
 	js->user_jb = jabber_buddy_find(js, user, TRUE);
 	g_free(user);
@@ -2641,13 +2665,19 @@ char *jabber_parse_error(JabberStream *js,
 	if(reason != NULL) { *reason = x; }
 
 	if((error = xmlnode_get_child(packet, "error"))) {
+		xmlnode *t = xmlnode_get_child_with_namespace(error, "text", NS_XMPP_STANZAS);
+		if (t)
+			cdata = xmlnode_get_data(t);
+#if 0
 		cdata = xmlnode_get_data(error);
+#endif
 		code = xmlnode_get_attrib(error, "code");
 
 		/* Stanza errors */
 		if(xmlnode_get_child(error, "bad-request")) {
 			text = _("Bad Request");
 		} else if(xmlnode_get_child(error, "conflict")) {
+			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Conflict");
 		} else if(xmlnode_get_child(error, "feature-not-implemented")) {
 			text = _("Feature Not Implemented");

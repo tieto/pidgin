@@ -104,7 +104,8 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			break;
 		case PURPLE_CERTIFICATE_EXPIRED:
 			return _("The certificate has expired and should not be "
-			         "considered valid.");
+			         "considered valid.  Check that your computer's date "
+			         "and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_NAME_MISMATCH:
 			/* Translators: "domain" refers to a DNS domain (e.g. talk.google.com) */
