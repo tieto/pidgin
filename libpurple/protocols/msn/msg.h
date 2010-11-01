@@ -58,6 +58,8 @@ typedef enum
 #include "session.h"
 #include "transaction.h"
 #include "user.h"
+#include "slpmsg.h"
+#include "slpmsg_part.h"
 
 typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
@@ -66,24 +68,6 @@ typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
 #define MSG_OIM_BODY_DEM	"\n\n"
 #define MSG_OIM_LINE_DEM	"\n"
-
-typedef struct
-{
-	guint32 session_id;
-	guint32 id;
-	guint64 offset;
-	guint64 total_size;
-	guint32 length;
-	guint32 flags;
-	guint32 ack_id;
-	guint32 ack_sub_id;
-	guint64 ack_size;
-} MsnSlpHeader;
-
-typedef struct
-{
-	guint32 value;
-} MsnSlpFooter;
 
 /**
  * A message.
@@ -95,6 +79,8 @@ struct _MsnMessage
 	MsnMsgType type;
 
 	gboolean msnslp_message;
+	MsnSlpMessage *slpmsg;
+	MsnSlpMessagePart *part;
 
 	char *remote_user;
 	char flag;
@@ -106,11 +92,8 @@ struct _MsnMessage
 	guint total_chunks;   /**< How many chunks in this multi-part message */
 	guint received_chunks; /**< How many chunks we've received so far */
 
-	MsnSlpHeader msnslp_header;
-	MsnSlpFooter msnslp_footer;
-
-	GHashTable *attr_table;
-	GList *attr_list;
+	GHashTable *header_table;
+	GList *header_list;
 
 	gboolean ack_ref;           /**< A flag that states if this message has
 								  been ref'ed for using it in a callback. */
@@ -295,24 +278,24 @@ void msn_message_set_charset(MsnMessage *msg, const char *charset);
 const char *msn_message_get_charset(const MsnMessage *msg);
 
 /**
- * Sets an attribute in a message.
+ * Sets a header in a message.
  *
- * @param msg   The message.
- * @param attr  The attribute name.
- * @param value The attribute value.
+ * @param msg    The message.
+ * @param header The header name.
+ * @param value  The header value.
  */
-void msn_message_set_attr(MsnMessage *msg, const char *attr,
+void msn_message_set_header(MsnMessage *msg, const char *name,
 						  const char *value);
 
 /**
- * Returns an attribute from a message.
+ * Returns the value of a header from a message.
  *
- * @param msg  The message.
- * @param attr The attribute.
+ * @param msg    The message.
+ * @param header The header value.
  *
  * @return The value, or @c NULL if not found.
  */
-const char *msn_message_get_attr(const MsnMessage *msg, const char *attr);
+const char *msn_message_get_header_value(const MsnMessage *msg, const char *name);
 
 /**
  * Parses the body and returns it in the form of a hashtable.
@@ -326,9 +309,6 @@ GHashTable *msn_message_get_hashtable_from_body(const MsnMessage *msg);
 void msn_message_show_readable(MsnMessage *msg, const char *info,
 							   gboolean text_body);
 
-void msn_message_parse_slp_body(MsnMessage *msg, const char *body,
-								size_t len);
-
 char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
 
 char *msn_message_to_string(MsnMessage *msg);
@@ -337,7 +317,31 @@ void msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
+/**
+ * Processes peer to peer messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
+void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
+ * Processes emoticon messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
+void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
 void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
+ * Processes INVITE messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
+void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 

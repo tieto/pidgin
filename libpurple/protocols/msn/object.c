@@ -400,7 +400,7 @@ msn_object_get_url1(const MsnObject *obj)
 	return obj->url1;
 }
 
-static MsnObject *
+MsnObject *
 msn_object_find_local(const char *sha1)
 {
 	GList *l;
