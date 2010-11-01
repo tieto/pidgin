@@ -15363,7 +15363,7 @@ msgid ""
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Eroare la descărcarea GTK+ ($R2).$\\rAceastă componentă este necesară pentru "
-"funcționarea Pidgin. Dacă reîncercarea eșuează, încercați varianta „Offline "
+"funcţionarea Pidgin. Dacă reîncercarea eşuează, încercaţi varianta „Offline "
 "Installer” de la http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
@@ -15372,7 +15372,7 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Eroare la instalarea simbolurilor de depanare ($R2).$\\rDacă reîncercarea "
-"eșuează, încercați varianta 'Offline Installer' from http://pidgin.im/"
+"eşuează, încercaţi varianta 'Offline Installer' from http://pidgin.im/"
 "download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from
@@ -15383,7 +15383,7 @@ msgid ""
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Eroare la instalarea verificării ortografice ($R3).$\\rDacă reîncercarea "
-"eșuează, găsiți instrucțiuni de instalare manuală la: http://developer."
+"eşuează, găsiţi instrucţiuni de instalare manuală la: http://developer."
 "pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
@@ -15408,7 +15408,7 @@ msgid ""
 "Runtime?"
 msgstr ""
 "Pidgin necesită o instalare GTK+ compatibilă (care nu pare să fie prezentă "
-"deja).$\\rSigur doriți să omiteți instalarea bibliotecilor GTK+?"
+"deja).$\\rSigur doriţi să omiteţi instalarea bibliotecilor GTK+?"
 
 #. Installer Subsection Text
 msgid "Shortcuts"
