@@ -508,8 +508,6 @@ migrate_yahoo_japan(PurpleAccount *account)
 		purple_account_remove_setting(account, "xferjp_host");
 
 	}
-
-	return;
 }
 
 static void
@@ -531,8 +529,6 @@ migrate_icq_server(PurpleAccount *account)
 		if(purple_strequal(tmp, "slogin.oscar.aol.com"))
 			purple_account_set_string(account, "server", "slogin.icq.com");
 	}
-
-	return;
 }
 
 static void
