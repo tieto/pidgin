@@ -73,7 +73,6 @@ static guint64 purple_caps =
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01};
-static guint8 ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 struct create_room {
 	char *name;
@@ -376,12 +375,10 @@ connection_common_established_cb(FlapConnection *conn)
 		aim_request_login(od, conn, purple_account_get_username(account));
 		purple_debug_info("oscar", "Username sent, waiting for response\n");
 		purple_connection_update_progress(gc, _("Username sent"), 1, OSCAR_CONNECT_STEPS);
-		ck[1] = 0x65;
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
 	{
 		purple_connection_update_progress(gc, _("Connection established, cookie sent"), 4, OSCAR_CONNECT_STEPS);
-		ck[4] = 0x61;
 	}
 	else if (conn->type == SNAC_FAMILY_CHAT)
 	{
@@ -782,7 +779,6 @@ oscar_login(PurpleAccount *account)
 	}
 
 	purple_connection_update_progress(gc, _("Connecting"), 0, OSCAR_CONNECT_STEPS);
-	ck[0] = 0x5a;
 }
 
 void
@@ -1006,7 +1002,6 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	od->default_port = port;
 
 	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
-	ck[3] = 0x64;
 
 	return 1;
 }
@@ -1126,7 +1121,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 
 	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
-	ck[3] = 0x64;
 
 	return 1;
 }
@@ -1210,7 +1204,6 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
-	ck[2] = 0x6c;
 
 	return 1;
 }
@@ -1479,13 +1472,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 
 	return 1;
-}
-
-static void purple_check_comment(OscarData *od, const char *str) {
-	if ((str == NULL) || strcmp(str, (const char *)ck))
-		aim_locate_setcaps(od, purple_caps);
-	else
-		aim_locate_setcaps(od, purple_caps | OSCAR_CAPABILITY_SECUREIM);
 }
 
 static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
@@ -3927,14 +3913,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
-					if (!oscar_util_name_compare(curitem->name, purple_account_get_username(account))) {
-						char *comment = aim_ssi_getcomment(od->ssi.local, gname, curitem->name);
-						if (comment != NULL)
-						{
-							purple_check_comment(od, comment);
-							g_free(comment);
-						}
-					}
 
 					/* Mobile users should always be online */
 					if (curitem->name[0] == '+') {
@@ -4803,7 +4781,6 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	OscarData *od;
 	PurpleBuddy *b;
 	PurpleGroup *g;
-	const char *username;
 
 	gc = data->gc;
 	od = purple_connection_get_protocol_data(gc);
@@ -4822,11 +4799,6 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	}
 
 	aim_ssi_editcomment(od, purple_group_get_name(g), data->name, text);
-
-	username = purple_account_get_username(account);
-	if (!oscar_util_name_compare(data->name, username))
-		purple_check_comment(od, text);
-
 	oscar_free_name_data(data);
 }
 
