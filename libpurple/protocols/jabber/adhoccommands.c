@@ -125,7 +125,8 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	xmlnode_set_attrib(command,"node",actionInfo->node);
 
 	/* cancel is handled differently on ad-hoc commands than regular forms */
-	if(!strcmp(xmlnode_get_namespace(result),"jabber:x:data") && !strcmp(xmlnode_get_attrib(result, "type"),"cancel")) {
+	if (purple_strequal(xmlnode_get_namespace(result), "jabber:x:data") &&
+			purple_strequal(xmlnode_get_attrib(result, "type"), "cancel")) {
 		xmlnode_set_attrib(command,"action","cancel");
 	} else {
 		if(actionhandle)
