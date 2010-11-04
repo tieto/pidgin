@@ -325,9 +325,8 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 			for (l = swboard->users; l != NULL; l = l->next)
 			{
 				const char *tmp_user;
-				user = l->data;
 
-				tmp_user = msnuser->passport;
+				tmp_user = ((MsnUser*)l->data)->passport;
 
 				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
