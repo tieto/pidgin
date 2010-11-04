@@ -93,10 +93,22 @@ static const char *get_client_key(OscarData *od)
 static gchar *generate_error_message(xmlnode *resp, const char *url)
 {
 	xmlnode *text;
+	xmlnode *status_code_node;
+	gchar *status_code;
+	gboolean have_error_code = TRUE;
 	gchar *err = NULL;
 	gchar *details = NULL;
 
-	if (resp && (text = xmlnode_get_child(resp, "statusText"))) {
+	status_code_node = xmlnode_get_child(resp, "statusCode");
+	if (status_code_node) {
+		/* We can get 200 OK here if the server omitted something we think it shouldn't have (see #12783).
+		 * No point in showing the "Ok" string to the user.
+		 */
+		if ((status_code = xmlnode_get_data_unescaped(status_code_node)) && strcmp(status_code, "200") == 0) {
+			have_error_code = FALSE;
+		}
+	}
+	if (have_error_code && resp && (text = xmlnode_get_child(resp, "statusText"))) {
 		details = xmlnode_get_data(text);
 	}
 
