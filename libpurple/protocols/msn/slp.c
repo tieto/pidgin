@@ -196,7 +196,7 @@ request_own_user_display(MsnUser *user)
 	MsnSession *session;
 	MsnObject *my_obj = NULL;
 	gconstpointer data = NULL;
-	const char *info;
+	const char *info = NULL;
 	size_t len = 0;
 
 	if (purple_debug_is_verbose())
