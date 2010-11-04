@@ -168,11 +168,9 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	xmlnode *response_node, *tmp_node, *data_node;
 	xmlnode *host_node = NULL, *port_node = NULL, *cookie_node = NULL, *tls_node = NULL;
-	gboolean use_tls;
 	char *tmp;
 	guint code;
-
-	use_tls = purple_account_get_bool(purple_connection_get_account(gc), "use_ssl", OSCAR_DEFAULT_USE_SSL);
+	const gchar *encryption_type = purple_account_get_string(purple_connection_get_account(gc), "encryption", OSCAR_DEFAULT_ENCRYPTION);
 
 	/* Parse the response as XML */
 	response_node = xmlnode_from_str(response, response_len);
@@ -197,7 +195,6 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		host_node = xmlnode_get_child(data_node, "host");
 		port_node = xmlnode_get_child(data_node, "port");
 		cookie_node = xmlnode_get_child(data_node, "cookie");
-		tls_node = xmlnode_get_child(data_node, "tlsCertName");
 	}
 
 	/* Make sure we have a status code */
@@ -271,18 +268,29 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		return FALSE;
 	}
 
+	if (strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0) {
+		tls_node = xmlnode_get_child(data_node, "tlsCertName");
+		if (tls_node != NULL) {
+			*tls_certname = xmlnode_get_data_unescaped(tls_node);
+		} else {
+			if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+				purple_debug_warning("oscar", "We haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
+			} else {
+				purple_debug_error("oscar", "startOSCARSession was missing tlsCertName: %s\n", response);
+				purple_connection_error_reason(
+					gc,
+					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+					_("You required encryption in your account settings, but one of the servers doesn't support it."));
+				xmlnode_free(response_node);
+				return FALSE;
+			}
+		}
+	}
+
 	/* Extract data from the XML */
 	*host = xmlnode_get_data_unescaped(host_node);
 	tmp = xmlnode_get_data_unescaped(port_node);
 	*cookie = xmlnode_get_data_unescaped(cookie_node);
-
-	if (use_tls) {
-		if (tls_node != NULL) {
-			*tls_certname = xmlnode_get_data_unescaped(tls_node);
-		} else {
-			purple_debug_warning("oscar", "useTls was 1, but we haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
-		}
-	}
 
 	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || *cookie == NULL || **cookie == '\0')
 	{
@@ -349,11 +357,8 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 static void send_start_oscar_session(OscarData *od, const char *token, const char *session_key, time_t hosttime)
 {
 	char *query_string, *signature, *url;
-	PurpleAccount *account;
-	gboolean use_tls;
-
-	account = purple_connection_get_account(od->gc);
-	use_tls = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
+	PurpleAccount *account = purple_connection_get_account(od->gc);
+	const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 
 	/*
 	 * Construct the GET parameters.  0x00000611 is the distid given to
@@ -366,9 +371,10 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=%d",
 			purple_url_encode(token),
-			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid"
-					: "prpl-aim-distid", 0x00000611),
-			get_client_key(od), hosttime, use_tls);
+			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid" : "prpl-aim-distid", 0x00000611),
+			get_client_key(od),
+			hosttime,
+			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
 	url = g_strdup_printf("%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),

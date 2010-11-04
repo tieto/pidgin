@@ -626,6 +626,7 @@ oscar_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
 	OscarData *od;
+	const gchar *encryption_type;
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -703,7 +704,16 @@ oscar_login(PurpleAccount *account)
 	}
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
-	od->use_ssl = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
+
+	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
+	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+		purple_connection_error_reason(
+			gc,
+			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+			_("You required encryption in your account settings, but encryption is not supported by your system."));
+		return;
+	}
+	od->use_ssl = purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
@@ -728,12 +738,6 @@ oscar_login(PurpleAccount *account)
 		newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 
 		if (od->use_ssl) {
-			if (!purple_ssl_is_supported()) {
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-						_("SSL support unavailable"));
-				return;
-			}
-
 			server = purple_account_get_string(account, "server", get_login_server(od->icq, TRUE));
 
 			/*
@@ -977,7 +981,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * Use SSL only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
 	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
@@ -1233,6 +1237,20 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	else
 		host = g_strdup(redir->ip);
 
+	if (!redir->use_ssl) {
+		const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
+		if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
+		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
+			purple_connection_error_reason(
+				gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You required encryption in your account settings, but one of the servers doesn't support it."));
+			return 0;
+		} 
+	}
+
 	/*
 	 * These FLAP servers advertise SSL (type "0x02"), but SSL connections to these hosts
 	 * die a painful death. iChat and Miranda, when using SSL, still do these in plaintext.
@@ -1240,14 +1258,11 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (redir->use_ssl && (redir->group == SNAC_FAMILY_ADMIN ||
 	                       redir->group == SNAC_FAMILY_BART))
 	{
-		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n",
-						redir->group);
+		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n", redir->group);
 		redir->use_ssl = 0;
 	}
 
-	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx%s\n",
-					host, port, redir->group,
-					od->use_ssl && !redir->use_ssl ? " without SSL, despite main stream encryption" : "");
+	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx\n", host, port, redir->group);
 
 	newconn = flap_connection_new(od, redir->group);
 	newconn->cookielen = redir->cookielen;
@@ -5649,15 +5664,34 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
+	static const gchar *encryption_keys[] = {
+		N_("Use encryption if available"),
+		N_("Require encryption"),
+		N_("Don't use encryption"),
+		NULL
+	};
+	static const gchar *encryption_values[] = {
+		OSCAR_OPPORTUNISTIC_ENCRYPTION,
+		OSCAR_REQUIRE_ENCRYPTION,
+		OSCAR_NO_ENCRYPTION,
+		NULL
+	};
+	GList *encryption_options = NULL;
+	int i;
 
-	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, OSCAR_DEFAULT_USE_SSL));
+	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, TRUE));
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use SSL"), "use_ssl",
-			OSCAR_DEFAULT_USE_SSL);
+	for (i = 0; encryption_keys[i]; i++) {
+		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(encryption_keys[i]);
+		kvp->value = g_strdup(encryption_values[i]);
+		encryption_options = g_list_append(encryption_options, kvp);
+	}
+	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
