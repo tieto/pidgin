@@ -916,8 +916,6 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	MsnSlpLink *slplink;
-	const char *data;
-	gsize len;
 
 	session = cmdproc->servconn->session;
 	slplink = msn_session_get_slplink(session, msg->remote_user);
@@ -939,8 +937,6 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
 		}
 	}
-
-	data = msn_message_get_bin_data(msg, &len);
 
 	if (msg->part) {
 		msn_slplink_process_msg(slplink, msg->part);
