@@ -60,7 +60,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-17 16:51-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-10-17 10:55-0400\n"
 "Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -8024,6 +8024,14 @@ msgstr "設定即時訊息的轉送 (透過網頁)"
 #. ICQ actions
 msgid "Set Privacy Options..."
 msgstr "設定隱私選項..."
+
+#, fuzzy
+msgid "Show Visible List"
+msgstr "公開"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "邀請清單"
 
 #. AIM actions
 msgid "Confirm Account"

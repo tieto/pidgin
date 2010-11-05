@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-10-10 16:18+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -6632,6 +6632,15 @@ msgstr "服务器地址"
 msgid "Server port"
 msgstr "服务器端口"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "请同意我将您加入好友。"
+
+msgid "No reason given."
+msgstr "没有给出理由。"
+
+msgid "Authorization Denied Message:"
+msgstr "认证拒绝消息："
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "从 %s 收到了意外的响应：%s"
@@ -6664,6 +6673,21 @@ msgstr "AOL 不允许通过此站点认证您的屏幕名称。"
 #, c-format
 msgid "Error requesting %s"
 msgstr "请求 %s 时出错"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(接收此信息出错。可能是您与 %s 设置了不同的编码，或者 %s 的客户端有程序错"
+"误。)"
 
 msgid "Could not join chat room"
 msgstr "无法进入聊天室"
@@ -7008,9 +7032,6 @@ msgid ""
 msgstr ""
 "用户 %u 拒绝了您将他/她加为好友的请求，原因如下：\n"
 "%s"
-
-msgid "No reason given."
-msgstr "没有给出理由。"
 
 msgid "ICQ authorization denied."
 msgstr "ICQ 请求认证被拒绝。"
@@ -7394,6 +7415,14 @@ msgstr "配置聊天转发(web)"
 msgid "Set Privacy Options..."
 msgstr "设置隐私选项..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "显示好友列表(_L)"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "邀请列表"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "确认帐号"
@@ -7516,6 +7545,165 @@ msgstr "队列满"
 
 msgid "Not while on AOL"
 msgstr "不位于 AOL 上"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "用户头像"
+
+msgid "Voice"
+msgstr "语音"
+
+msgid "AIM Direct IM"
+msgstr "AIM 二人世界"
+
+msgid "Get File"
+msgstr "获取文件"
+
+msgid "Games"
+msgstr "游戏"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "插件"
+
+msgid "Send Buddy List"
+msgstr "发送好友列表"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ 直接连接"
+
+msgid "AP User"
+msgstr "AP 用户"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ 服务器转发"
+
+msgid "Old ICQ UTF8"
+msgstr "旧的 ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian 加密"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "安全已启用"
+
+msgid "Video Chat"
+msgstr "可视聊天"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "实时视频"
+
+msgid "Camera"
+msgstr "相机"
+
+msgid "Screen Sharing"
+msgstr "屏幕共享"
+
+msgid "IP Address"
+msgstr "IP 地址"
+
+msgid "Warning Level"
+msgstr "警告级别"
+
+msgid "Buddy Comment"
+msgstr "好友注释"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "用户信息不可用：%s"
+
+msgid "Mobile Phone"
+msgstr "移动电话"
+
+msgid "Personal Web Page"
+msgstr "个人主页"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "额外信息"
+
+msgid "Zip Code"
+msgstr "邮政编码"
+
+msgid "Work Information"
+msgstr "工作信息"
+
+msgid "Division"
+msgstr "部门"
+
+msgid "Position"
+msgstr "职务"
+
+msgid "Web Page"
+msgstr "网页"
+
+msgid "Online Since"
+msgstr "上线时间"
+
+msgid "Member Since"
+msgstr "注册时间"
+
+msgid "Capabilities"
+msgstr "容量"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "显示为在线"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "显示为在线"
+
+msgid "Appear Offline"
+msgstr "显示为离线"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "显示为离线"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "您已被踢出此 MultiMX。"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"如果您想要向这些好友重新请求认证，只需用鼠标右键单击这些好友，然后单击“重新请"
+"求认证”。"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "可见"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "邀请列表"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "水瓶座"
@@ -9498,9 +9686,6 @@ msgstr "视频会议"
 msgid "Computer"
 msgstr "计算机"
 
-msgid "Mobile Phone"
-msgstr "移动电话"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -9833,17 +10018,11 @@ msgstr "郊游"
 msgid "Not on server list"
 msgstr "不在服务器列表中"
 
-msgid "Appear Online"
-msgstr "显示为在线"
-
 msgid "Appear Permanently Offline"
 msgstr "显示为临时离线"
 
 msgid "Presence"
 msgstr ""
-
-msgid "Appear Offline"
-msgstr "显示为离线"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "不显示永久离线"
@@ -9903,9 +10082,6 @@ msgstr "%s 正要给你发送 %d 个文件。\n"
 msgid "Write Error"
 msgstr "写错误"
 
-msgid "IP Address"
-msgstr "IP 地址"
-
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo! 日本资料"
 
@@ -9942,9 +10118,6 @@ msgstr "酷链接 2"
 
 msgid "Cool Link 3"
 msgstr "酷链接 3"
-
-msgid "Member Since"
-msgstr "注册时间"
 
 msgid "Last Update"
 msgstr "上次更新"
@@ -13327,10 +13500,6 @@ msgstr ""
 "<b>文件大小:</b> %s\n"
 "<b>图像大小:</b> %dx%d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "用户头像"
-
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "文件“%s”对于 %s 来说太大，请试用较小的图像。\n"
@@ -14226,9 +14395,6 @@ msgstr "管理员"
 msgid "Half Operator"
 msgstr "半管理员"
 
-msgid "Voice"
-msgstr "语音"
-
 msgid "Authorization dialog"
 msgstr "认证对话框"
 
@@ -14679,121 +14845,9 @@ msgstr "您没有权限卸载此程序。"
 #~ msgstr "您输入的姓名密钥无效。"
 
 #~ msgid ""
-#~ "(There was an error receiving this message.  Either you and %s have "
-#~ "different encodings selected, or %s has a buggy client.)"
-#~ msgstr ""
-#~ "(接收此信息出错。可能是您与 %s 设置了不同的编码，或者 %s 的客户端有程序错"
-#~ "误。)"
-
-#~ msgid "AIM Direct IM"
-#~ msgstr "AIM 二人世界"
-
-#~ msgid "Get File"
-#~ msgstr "获取文件"
-
-#~ msgid "Games"
-#~ msgstr "游戏"
-
-#~ msgid "ICQ Xtraz"
-#~ msgstr "ICQ Xtraz"
-
-#~ msgid "Add-Ins"
-#~ msgstr "插件"
-
-#~ msgid "Send Buddy List"
-#~ msgstr "发送好友列表"
-
-#~ msgid "ICQ Direct Connect"
-#~ msgstr "ICQ 直接连接"
-
-#~ msgid "AP User"
-#~ msgstr "AP 用户"
-
-#~ msgid "ICQ RTF"
-#~ msgstr "ICQ RTF"
-
-#~ msgid "Nihilist"
-#~ msgstr "Nihilist"
-
-#~ msgid "ICQ Server Relay"
-#~ msgstr "ICQ 服务器转发"
-
-#~ msgid "Old ICQ UTF8"
-#~ msgstr "旧的 ICQ UTF8"
-
-#~ msgid "Trillian Encryption"
-#~ msgstr "Trillian 加密"
-
-#~ msgid "ICQ UTF8"
-#~ msgstr "ICQ UTF8"
-
-#~ msgid "Hiptop"
-#~ msgstr "Hiptop"
-
-#~ msgid "Security Enabled"
-#~ msgstr "安全已启用"
-
-#~ msgid "Video Chat"
-#~ msgstr "可视聊天"
-
-#~ msgid "iChat AV"
-#~ msgstr "iChat AV"
-
-#~ msgid "Live Video"
-#~ msgstr "实时视频"
-
-#~ msgid "Camera"
-#~ msgstr "相机"
-
-#~ msgid "Screen Sharing"
-#~ msgstr "屏幕共享"
-
-#~ msgid "Warning Level"
-#~ msgstr "警告级别"
-
-#~ msgid "Buddy Comment"
-#~ msgstr "好友注释"
-
-#~ msgid "Please authorize me so I can add you to my buddy list."
-#~ msgstr "请同意我将您加入好友。"
-
-#~ msgid "Authorization Denied Message:"
-#~ msgstr "认证拒绝消息："
-
-#~ msgid "User information not available: %s"
-#~ msgstr "用户信息不可用：%s"
-
-#~ msgid "Online Since"
-#~ msgstr "上线时间"
-
-#~ msgid "Capabilities"
-#~ msgstr "容量"
-
-#~ msgid ""
 #~ "[Unable to display a message from this user because it contained invalid "
 #~ "characters.]"
 #~ msgstr "[无法显示来自此用户的信息，原因是其中包含了无效的字符。"
-
-#~ msgid "Personal Web Page"
-#~ msgstr "个人主页"
-
-#~ msgid "Additional Information"
-#~ msgstr "额外信息"
-
-#~ msgid "Zip Code"
-#~ msgstr "邮政编码"
-
-#~ msgid "Work Information"
-#~ msgstr "工作信息"
-
-#~ msgid "Division"
-#~ msgstr "部门"
-
-#~ msgid "Position"
-#~ msgstr "职务"
-
-#~ msgid "Web Page"
-#~ msgstr "网页"
 
 #~ msgid "Search for Buddy by Information"
 #~ msgstr "按信息搜索好友"

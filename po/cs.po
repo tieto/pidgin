@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2010-10-15 17:26+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -6815,6 +6815,16 @@ msgstr "Adresa serveru"
 msgid "Server port"
 msgstr "Port serveru"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Autorizujte mě prosím, abych vás mohl přidat do svého seznamu kamarádů."
+
+msgid "No reason given."
+msgstr "Neudán žádný důvod."
+
+msgid "Authorization Denied Message:"
+msgstr "Zpráva odmítnutí autorizace:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Přijata neočekávaná odpověď od %s: %s"
@@ -6849,6 +6859,24 @@ msgstr "AOL neumožňuje ověřit jméno tady"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Chyba žádosti %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Při přijímání této zprávy došlo k chybě. Kamarád, se kterým mluvíte, "
+"pravděpodobně používá neočekávané kódování. Pokud víte, které kódování "
+"používá, můžete to zadat v pokročilých možnostech svého účtu AIM/ICQ.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Při přijímání této zprávy došlo k chybě. Buď máte vy a %s zvolena jiná "
+"kódování, nebo má %s klienta s chybami.)"
 
 msgid "Could not join chat room"
 msgstr "Nemohu se připojit k chatu"
@@ -7197,9 +7225,6 @@ msgstr ""
 "Uživatel %u odmítl váš požadavek přidat jej do vašeho seznamu kamarádů z "
 "následujícího důvodu:\n"
 "%s"
-
-msgid "No reason given."
-msgstr "Neudán žádný důvod."
 
 msgid "ICQ authorization denied."
 msgstr "Autorizace ICQ odepřena."
@@ -7646,6 +7671,14 @@ msgstr "Nastavit předávání IM (web)"
 msgid "Set Privacy Options..."
 msgstr "Nastavit možnosti soukromí..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Zobrazit seznam _kamarádů"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Seznam pozvaných"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Potvrdit účet"
@@ -7769,6 +7802,165 @@ msgstr "Fronta plná"
 
 msgid "Not while on AOL"
 msgstr "Ne když na AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Ikona kamaráda"
+
+msgid "Voice"
+msgstr "Hlas"
+
+msgid "AIM Direct IM"
+msgstr "AIM Přímé IM"
+
+msgid "Get File"
+msgstr "Získat soubor"
+
+msgid "Games"
+msgstr "Hry"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Přídavky"
+
+msgid "Send Buddy List"
+msgstr "Odeslat seznam kamarádů"
+
+msgid "ICQ Direct Connect"
+msgstr "Přímé spojení ICQ"
+
+msgid "AP User"
+msgstr "Uživatel AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "Relay ICQ serveru"
+
+msgid "Old ICQ UTF8"
+msgstr "Staré ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Šifrování Trillian"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Zabezpečení povoleno"
+
+msgid "Video Chat"
+msgstr "Video Chat"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Živé video"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Sdílení obrazovky"
+
+msgid "IP Address"
+msgstr "IP adresa"
+
+msgid "Warning Level"
+msgstr "Úroveň varování"
+
+msgid "Buddy Comment"
+msgstr "Poznámka o kamarádovi"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Informace o uživateli nejsou k dispozici: %s"
+
+msgid "Mobile Phone"
+msgstr "Mobilní telefon"
+
+msgid "Personal Web Page"
+msgstr "Osobní WWW stránka"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Přídavné informace"
+
+msgid "Zip Code"
+msgstr "PSČ"
+
+msgid "Work Information"
+msgstr "Pracovní informace"
+
+msgid "Division"
+msgstr "Oddělení"
+
+msgid "Position"
+msgstr "Pozice"
+
+msgid "Web Page"
+msgstr "WWW stránka"
+
+msgid "Online Since"
+msgstr "Odpojen od"
+
+msgid "Member Since"
+msgstr "Člen od"
+
+msgid "Capabilities"
+msgstr "Schopnosti"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Vypadat připojen"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Vypadat připojen"
+
+msgid "Appear Offline"
+msgstr "Vypadat odpojen"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Vypadat odpojen"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Byl jste vykopnut z MultiMX."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Můžete znovu požádat o autorizaci od těchto kamarádů kliknutím na ně pravým "
+"tlačítkem a zvolením \"Znovu požádat o autorizaci.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Viditelný"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Seznam pozvaných"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vodnář"
@@ -9800,9 +9992,6 @@ msgstr "Videokonference"
 msgid "Computer"
 msgstr "Počítač"
 
-msgid "Mobile Phone"
-msgstr "Mobilní telefon"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -10145,17 +10334,11 @@ msgstr "Šel jsem ven"
 msgid "Not on server list"
 msgstr "Není na seznamu serveru"
 
-msgid "Appear Online"
-msgstr "Vypadat připojen"
-
 msgid "Appear Permanently Offline"
 msgstr "Vypadat vždy odpojen"
 
 msgid "Presence"
 msgstr "Přítomnost"
-
-msgid "Appear Offline"
-msgstr "Vypadat odpojen"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Nevypadat vždy odpojen"
@@ -10215,9 +10398,6 @@ msgstr "%s zkouší vám poslat %d souborů.\n"
 msgid "Write Error"
 msgstr "Chyba při zápisu"
 
-msgid "IP Address"
-msgstr "IP adresa"
-
 msgid "Yahoo! Japan Profile"
 msgstr "Profil Yahoo! Japonsko"
 
@@ -10258,9 +10438,6 @@ msgstr "Skvělý odkaz 2"
 
 msgid "Cool Link 3"
 msgstr "Skvělý odkaz 3"
-
-msgid "Member Since"
-msgstr "Člen od"
 
 msgid "Last Update"
 msgstr "Poslední aktualizace"
@@ -13749,10 +13926,6 @@ msgstr ""
 "<b>Velikost souboru:</b> %s\n"
 "<b>Velikost obrázku:</b> %d×%d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "Ikona kamaráda"
-
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "Soubor '%s' je pro %s příliš velký. Zkuste prosím menší obrázek.\n"
@@ -14666,9 +14839,6 @@ msgstr "Operátor"
 msgid "Half Operator"
 msgstr "Poloviční operátor"
 
-msgid "Voice"
-msgstr "Hlas"
-
 msgid "Authorization dialog"
 msgstr "Autorizační dialog"
 
@@ -15139,134 +15309,11 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 #~ msgstr "Vnutit staré SSL (port 5223)"
 
 #~ msgid ""
-#~ "(There was an error receiving this message.  The buddy you are speaking "
-#~ "with is probably using a different encoding than expected.  If you know "
-#~ "what encoding he is using, you can specify it in the advanced account "
-#~ "options for your AIM/ICQ account.)"
-#~ msgstr ""
-#~ "(Při přijímání této zprávy došlo k chybě. Kamarád, se kterým mluvíte, "
-#~ "pravděpodobně používá neočekávané kódování. Pokud víte, které kódování "
-#~ "používá, můžete to zadat v pokročilých možnostech svého účtu AIM/ICQ.)"
-
-#~ msgid ""
-#~ "(There was an error receiving this message.  Either you and %s have "
-#~ "different encodings selected, or %s has a buggy client.)"
-#~ msgstr ""
-#~ "(Při přijímání této zprávy došlo k chybě. Buď máte vy a %s zvolena jiná "
-#~ "kódování, nebo má %s klienta s chybami.)"
-
-#~ msgid "AIM Direct IM"
-#~ msgstr "AIM Přímé IM"
-
-#~ msgid "Get File"
-#~ msgstr "Získat soubor"
-
-#~ msgid "Games"
-#~ msgstr "Hry"
-
-#~ msgid "ICQ Xtraz"
-#~ msgstr "ICQ Xtraz"
-
-#~ msgid "Add-Ins"
-#~ msgstr "Přídavky"
-
-#~ msgid "Send Buddy List"
-#~ msgstr "Odeslat seznam kamarádů"
-
-#~ msgid "ICQ Direct Connect"
-#~ msgstr "Přímé spojení ICQ"
-
-#~ msgid "AP User"
-#~ msgstr "Uživatel AP"
-
-#~ msgid "ICQ RTF"
-#~ msgstr "ICQ RTF"
-
-#~ msgid "Nihilist"
-#~ msgstr "Nihilist"
-
-#~ msgid "ICQ Server Relay"
-#~ msgstr "Relay ICQ serveru"
-
-#~ msgid "Old ICQ UTF8"
-#~ msgstr "Staré ICQ UTF8"
-
-#~ msgid "Trillian Encryption"
-#~ msgstr "Šifrování Trillian"
-
-#~ msgid "ICQ UTF8"
-#~ msgstr "ICQ UTF8"
-
-#~ msgid "Hiptop"
-#~ msgstr "Hiptop"
-
-#~ msgid "Security Enabled"
-#~ msgstr "Zabezpečení povoleno"
-
-#~ msgid "Video Chat"
-#~ msgstr "Video Chat"
-
-#~ msgid "iChat AV"
-#~ msgstr "iChat AV"
-
-#~ msgid "Live Video"
-#~ msgstr "Živé video"
-
-#~ msgid "Camera"
-#~ msgstr "Kamera"
-
-#~ msgid "Screen Sharing"
-#~ msgstr "Sdílení obrazovky"
-
-#~ msgid "Warning Level"
-#~ msgstr "Úroveň varování"
-
-#~ msgid "Buddy Comment"
-#~ msgstr "Poznámka o kamarádovi"
-
-#~ msgid "Please authorize me so I can add you to my buddy list."
-#~ msgstr ""
-#~ "Autorizujte mě prosím, abych vás mohl přidat do svého seznamu kamarádů."
-
-#~ msgid "Authorization Denied Message:"
-#~ msgstr "Zpráva odmítnutí autorizace:"
-
-#~ msgid "User information not available: %s"
-#~ msgstr "Informace o uživateli nejsou k dispozici: %s"
-
-#~ msgid "Online Since"
-#~ msgstr "Odpojen od"
-
-#~ msgid "Capabilities"
-#~ msgstr "Schopnosti"
-
-#~ msgid ""
 #~ "[Unable to display a message from this user because it contained invalid "
 #~ "characters.]"
 #~ msgstr ""
 #~ "[Nemohu zobrazit zprávu od tohoto uživatele, protože obsahovala neplatné "
 #~ "znaky.]"
-
-#~ msgid "Personal Web Page"
-#~ msgstr "Osobní WWW stránka"
-
-#~ msgid "Additional Information"
-#~ msgstr "Přídavné informace"
-
-#~ msgid "Zip Code"
-#~ msgstr "PSČ"
-
-#~ msgid "Work Information"
-#~ msgstr "Pracovní informace"
-
-#~ msgid "Division"
-#~ msgstr "Oddělení"
-
-#~ msgid "Position"
-#~ msgstr "Pozice"
-
-#~ msgid "Web Page"
-#~ msgstr "WWW stránka"
 
 #~ msgid "Search for Buddy by Information"
 #~ msgstr "Hledat kamaráda podle informací"

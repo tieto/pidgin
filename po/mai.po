@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin_mai\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-16 23:21-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-09-02 18:48+0530\n"
 "Last-Translator: sangeeta_0975@yahoo.com>\n"
 "Language-Team: Maithili <http://code.google.com/p/bhashaghar>\n"
@@ -6674,6 +6674,16 @@ msgstr "सर्वर पता"
 msgid "Server port"
 msgstr "सर्वर पोर्ट"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+
+msgid "No reason given."
+msgstr "कोनो कारण नहि देल अछि"
+
+#, fuzzy
+msgid "Authorization Denied Message:"
+msgstr "प्रमाणीकरणक मनाही संदेश:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr ""
@@ -6705,6 +6715,19 @@ msgstr ""
 
 #, c-format
 msgid "Error requesting %s"
+msgstr ""
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -7044,9 +7067,6 @@ msgid ""
 msgstr ""
 "प्रयोक्ता %u  अहाँक मीत सूचीमे डालएके अनुरोधकेँ ठुकरा देल छल ई निम्नलिखित कारणसभ सँ:\n"
 "%s"
-
-msgid "No reason given."
-msgstr "कोनो कारण नहि देल अछि"
 
 msgid "ICQ authorization denied."
 msgstr "ICQ प्रमाणीकरण मनाही।"
@@ -7439,6 +7459,13 @@ msgstr "IM फौरवार्डिंग (वेब) केँ बिन्�
 msgid "Set Privacy Options..."
 msgstr "गुप्तता विकल्प सेट अप करू..."
 
+msgid "Show Visible List"
+msgstr ""
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "निमंत्रण सूची"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "खाता संपुष्ट करू"
@@ -7561,6 +7588,183 @@ msgstr "कतार भरल"
 
 msgid "Not while on AOL"
 msgstr "AOL दौरान नहि"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "मीत प्रतीक"
+
+msgid "Voice"
+msgstr "आवाज"
+
+#, fuzzy
+msgid "AIM Direct IM"
+msgstr "सीधा IM"
+
+#, fuzzy
+msgid "Get File"
+msgstr "फाइल पठाउ"
+
+#, fuzzy
+msgid "Games"
+msgstr "असामी"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr ""
+
+#, fuzzy
+msgid "Send Buddy List"
+msgstr "मीत सूची"
+
+msgid "ICQ Direct Connect"
+msgstr ""
+
+#, fuzzy
+msgid "AP User"
+msgstr "औथ प्रयोक्ता"
+
+msgid "ICQ RTF"
+msgstr ""
+
+msgid "Nihilist"
+msgstr ""
+
+#, fuzzy
+msgid "ICQ Server Relay"
+msgstr "सर्वर बड़ लादल अछि"
+
+msgid "Old ICQ UTF8"
+msgstr ""
+
+msgid "Trillian Encryption"
+msgstr ""
+
+msgid "ICQ UTF8"
+msgstr ""
+
+msgid "Hiptop"
+msgstr ""
+
+#, fuzzy
+msgid "Security Enabled"
+msgstr "सक्षम"
+
+#, fuzzy
+msgid "Video Chat"
+msgstr "विडियो कैमरा"
+
+#, fuzzy
+msgid "iChat AV"
+msgstr "गप्प-सप्प"
+
+#, fuzzy
+msgid "Live Video"
+msgstr "वीडियो"
+
+#, fuzzy
+msgid "Camera"
+msgstr "विडियो कैमरा"
+
+msgid "Screen Sharing"
+msgstr ""
+
+msgid "IP Address"
+msgstr "आइपी पता"
+
+#, fuzzy
+msgid "Warning Level"
+msgstr "चेतावनी"
+
+#, fuzzy
+msgid "Buddy Comment"
+msgstr "मीत टिप्पणी"
+
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "प्रयोक्ता अस्थाइ रूप सँ उपलब्ध नहि अछि."
+
+msgid "Mobile Phone"
+msgstr "मोबाइल फोन"
+
+#, fuzzy
+msgid "Personal Web Page"
+msgstr "निजी मोबाइल"
+
+#. aim_userinfo_t
+#. strip_html_tags
+#, fuzzy
+msgid "Additional Information"
+msgstr "वैकल्पिक सूचना"
+
+msgid "Zip Code"
+msgstr ""
+
+#, fuzzy
+msgid "Work Information"
+msgstr "बेसी सूचना"
+
+msgid "Division"
+msgstr ""
+
+#, fuzzy
+msgid "Position"
+msgstr "विवरण"
+
+#, fuzzy
+msgid "Web Page"
+msgstr "पहिल पन्ना"
+
+#, fuzzy
+msgid "Online Since"
+msgstr "सँ औनलाइन"
+
+msgid "Member Since"
+msgstr "सँ सदस्य"
+
+msgid "Capabilities"
+msgstr ""
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "औनलाइन रहू"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "औनलाइन रहू"
+
+msgid "Appear Offline"
+msgstr "आफलाइन देखाउ"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "आफलाइन देखाउ"
+
+msgid "you have no buddies on this list"
+msgstr ""
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"अहाँ दहिन्ना क्लिक कए आओर \"पुनः प्रमाणीकरण लेल आग्रह करू\" चुनिकै पुनः प्रमाणीकरण लेल "
+"अनुरोध कए सकै छी."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "दृष्टिगोचर"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "निमंत्रण सूची"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "एक्वेरियस"
@@ -9561,9 +9765,6 @@ msgstr "विडियो सम्मेलन"
 msgid "Computer"
 msgstr "कम्प्यूटर"
 
-msgid "Mobile Phone"
-msgstr "मोबाइल फोन"
-
 msgid "PDA"
 msgstr "PDA"
 
@@ -9894,17 +10095,11 @@ msgstr "बाहर निकलल छलाह"
 msgid "Not on server list"
 msgstr "सर्वर सूचीमे नहि"
 
-msgid "Appear Online"
-msgstr "औनलाइन रहू"
-
 msgid "Appear Permanently Offline"
 msgstr "स्थायी आफलाइन रहू"
 
 msgid "Presence"
 msgstr "उपस्थिति"
-
-msgid "Appear Offline"
-msgstr "आफलाइन देखाउ"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "स्थायी आफलाइन नहि होउ"
@@ -9964,9 +10159,6 @@ msgstr "%s अहाँक %d फाइलकेँ पठाबैक कओस
 msgid "Write Error"
 msgstr "लेखन त्रुटि"
 
-msgid "IP Address"
-msgstr "आइपी पता"
-
 msgid "Yahoo! Japan Profile"
 msgstr "याहू जापान प्रोफाइल"
 
@@ -10004,9 +10196,6 @@ msgstr "नीक कड़ी 2"
 
 msgid "Cool Link 3"
 msgstr "नीक कड़ी 3"
-
-msgid "Member Since"
-msgstr "सँ सदस्य"
 
 msgid "Last Update"
 msgstr "अंतिम अद्यतन"
@@ -13401,10 +13590,6 @@ msgstr ""
 "<b>फाइल आकार:</b> %s\n"
 "<b>छवि आकार:</b> %dx%d"
 
-#. Label
-msgid "Buddy Icon"
-msgstr "मीत प्रतीक"
-
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr "'%s' फाइल %s क' लेल बहुत पैघ अछि.  कृप्या एकटा छोट चित्र क' लेल कओसिस करू.\n"
@@ -14295,9 +14480,6 @@ msgstr "आपरेटर"
 #. that an operator has.
 msgid "Half Operator"
 msgstr ""
-
-msgid "Voice"
-msgstr "आवाज"
 
 msgid "Authorization dialog"
 msgstr ""
