@@ -616,9 +616,25 @@ static const gchar *login_servers[] = {
 	ICQ_DEFAULT_SSL_LOGIN_SERVER,
 };
 
-static const gchar *get_login_server(gboolean is_icq, gboolean use_ssl)
+static const gchar *
+get_login_server(gboolean is_icq, gboolean use_ssl)
 {
 	return login_servers[(is_icq ? 2 : 0) + (use_ssl ? 1 : 0)];
+}
+
+static gint
+compare_handlers(gconstpointer a, gconstpointer b)
+{
+	guint aa = GPOINTER_TO_UINT(a);
+	guint bb = GPOINTER_TO_UINT(b);
+	guint family1 = aa >> 16;
+	guint family2 = bb >> 16;
+	guint subtype1 = aa & 0xFFFF;
+	guint subtype2 = bb & 0xFFFF;
+	if (family1 != family2) {
+		return family1 - family2;
+	}
+	return subtype1 - subtype2;
 }
 
 void
@@ -627,6 +643,10 @@ oscar_login(PurpleAccount *account)
 	PurpleConnection *gc;
 	OscarData *od;
 	const gchar *encryption_type;
+	GList *handlers;
+	GList *sorted_handlers;
+	GList *cur;
+	GString *msg = g_string_new("");
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -684,6 +704,18 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_POPUP, 0x0002, purple_popup, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, SNAC_SUBTYPE_USERLOOKUP_ERROR, purple_parse_searcherror, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, 0x0003, purple_parse_searchreply, 0);
+
+	g_string_append(msg, "Registered handlers: ");
+	handlers = g_hash_table_get_keys(od->handlerlist);
+	sorted_handlers = g_list_sort(g_list_copy(handlers), compare_handlers);
+	for (cur = sorted_handlers; cur; cur = cur->next) {
+		guint x = GPOINTER_TO_UINT(cur->data);
+		g_string_append_printf(msg, "%04x/%04x, ", x >> 16, x & 0xFFFF);
+	}
+	g_list_free(sorted_handlers);
+	g_list_free(handlers);
+	purple_debug_misc("oscar", "%s\n", msg->str);
+	g_string_free(msg, TRUE);
 
 	purple_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
 
@@ -2387,6 +2419,7 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	switch(type) {
 		case 0x0002: {
+			GString *msg = g_string_new("");
 			guint8 maxrooms;
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i;
@@ -2395,15 +2428,17 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
-			purple_debug_misc("oscar", "chat info: Chat Rights:\n");
-			purple_debug_misc("oscar",
-					   "chat info: \tMax Concurrent Rooms: %hhd\n", maxrooms);
-			purple_debug_misc("oscar",
-					   "chat info: \tExchange List: (%d total)\n", exchangecount);
-			for (i = 0; i < exchangecount; i++)
-				purple_debug_misc("oscar",
-						   "chat info: \t\t%hu    %s\n",
-						   exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
+			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %hhd, Exchange List (%d total): ", maxrooms, exchangecount);
+			for (i = 0; i < exchangecount; i++) {
+				g_string_append_printf(msg, "%hu", exchanges[i].number);
+				if (exchanges[i].name) {
+					g_string_append_printf(msg, " %s", exchanges[i].name);
+				}
+				g_string_append(msg, ", ");
+			}
+			purple_debug_misc("oscar", "%s\n", msg->str);
+			g_string_free(msg, TRUE);
+
 			while (od->create_rooms) {
 				struct create_room *cr = od->create_rooms->data;
 				purple_debug_info("oscar",
