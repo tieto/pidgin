@@ -189,7 +189,8 @@ bonjour_close(PurpleConnection *connection)
 		purple_xfer_cancel_local(bd->xfer_lists->data);
 	}
 
-	g_free(bd->jid);
+	if (bd != NULL)
+		g_free(bd->jid);
 	g_free(bd);
 	connection->proto_data = NULL;
 }

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 02:16-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -531,7 +531,6 @@ msgstr "Подтвердить удаление сертификата"
 msgid "Certificate Manager"
 msgstr "Менеджер сертификатов"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Имя узла"
 
@@ -1703,9 +1702,13 @@ msgstr ""
 "Сертификат ещё не подтверждён.  Проверьте правильность даты и времени на "
 "вашем компьютере."
 
-msgid "The certificate has expired and should not be considered valid."
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
-"Срок действия сертификата истёк и его больше не следует считать доверенным."
+"Сертификат ещё не подтверждён.  Проверьте правильность даты и времени на "
+"вашем компьютере."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4746,11 +4749,20 @@ msgstr "Модуль протокола XMPP"
 msgid "Domain"
 msgstr "Домен"
 
-msgid "Require SSL/TLS"
-msgstr "Требовать SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Требовать авторизацию"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Принудительно использовать старый (порт 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Пользовательская информация для %s недоступна"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Сброс соединения"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Разрешить идентификацию простым текстом через нешифрованные потоки"
@@ -5994,7 +6006,8 @@ msgstr "PIN-код неправильный. Он должен содержат�
 msgid "The two PINs you entered do not match."
 msgstr "Два введённых PIN-кода не совпадают."
 
-msgid "The name you entered is invalid."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
 msgstr "Введённое имя неправильное."
 
 msgid ""
@@ -6087,10 +6100,6 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Соединение..."
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Введённое имя неправильное."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6971,6 +6980,17 @@ msgstr "Адрес сервера"
 msgid "Server port"
 msgstr "Порт сервера"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Пожалуйста, авторизируйте меня, чтобы я мог добавить вас в свой список "
+"собеседников"
+
+msgid "No reason given."
+msgstr "Причина не указана."
+
+msgid "Authorization Denied Message:"
+msgstr "Сообщение отказа в авторизации:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "От %s получен неожиданный ответ: %s"
@@ -7005,6 +7025,25 @@ msgstr "AOL не позволяет вашему экранному имени �
 #, c-format
 msgid "Error requesting %s"
 msgstr "Ошибка запроса %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Тут произошла ошибка получения сообщения.  Собеседник, с которым вы "
+"общаетесь возможно использует кодировку, не ту, которая указана.  Если вы "
+"знаете, какую кодировку он использует, вы можете указать её в расширенных "
+"настройках для своей учётной записи AIM/ICQ.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Произошла ошибка при получении этого сообщения. Либо у вас и %s выбраны "
+"разные кодировки, либо клиент %s содержит ошибки.)"
 
 msgid "Could not join chat room"
 msgstr "Не удалось присоединиться к комнате чата"
@@ -7222,95 +7261,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Файл %s - %s, который больше, чем максимальный размер %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Тут произошла ошибка получения сообщения.  Собеседник, с которым вы "
-"общаетесь возможно использует кодировку, не ту, которая указана.  Если вы "
-"знаете, какую кодировку он использует, вы можете указать её в расширенных "
-"настройках для своей учётной записи AIM/ICQ.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Произошла ошибка при получении этого сообщения. Либо у вас и %s выбраны "
-"разные кодировки, либо клиент %s содержит ошибки.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Значок собеседника"
-
-msgid "Voice"
-msgstr "Голос"
-
-msgid "AIM Direct IM"
-msgstr "Прямое соединение AIM"
-
-msgid "Get File"
-msgstr "Получить файл"
-
-msgid "Games"
-msgstr "Игры"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "Дополнения"
-
-msgid "Send Buddy List"
-msgstr "Отправить список собеседников"
-
-msgid "ICQ Direct Connect"
-msgstr "Прямое соединение ICQ"
-
-msgid "AP User"
-msgstr "Пользователь AP"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Нигилист"
-
-msgid "ICQ Server Relay"
-msgstr "Релейный сервер ICQ"
-
-msgid "Old ICQ UTF8"
-msgstr "Старый ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Шифрование Trillian"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Верх"
-
-msgid "Security Enabled"
-msgstr "Безопасность включена"
-
-msgid "Video Chat"
-msgstr "Видеочат"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Живое видео"
-
-msgid "Camera"
-msgstr "Камера"
-
-msgid "Screen Sharing"
-msgstr "Совместное пользование экраном"
-
 msgid "Free For Chat"
 msgstr "Готов пообщаться"
 
@@ -7340,15 +7290,6 @@ msgstr "На работе"
 
 msgid "At lunch"
 msgstr "Перекус"
-
-msgid "IP Address"
-msgstr "IP-адрес"
-
-msgid "Warning Level"
-msgstr "Уровень предупреждения"
-
-msgid "Buddy Comment"
-msgstr "Комментарий собеседника"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7446,17 +7387,6 @@ msgstr "Пароль отправлен"
 
 msgid "Unable to initialize connection"
 msgstr "Не удаётся инициализировать соединение"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Пожалуйста, авторизируйте меня, чтобы я мог добавить вас в свой список "
-"собеседников"
-
-msgid "No reason given."
-msgstr "Причина не указана."
-
-msgid "Authorization Denied Message:"
-msgstr "Сообщение отказа в авторизации:"
 
 #, c-format
 msgid ""
@@ -7591,59 +7521,12 @@ msgstr[0] "Вы не получили %hu сообщение от %s по неи
 msgstr[1] "Вы не получили %hu сообщения от %s по неизвестной причине."
 msgstr[2] "Вы не получили %hu сообщений от %s по неизвестной причине."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Пользовательская информация недоступна: %s"
-
-msgid "Online Since"
-msgstr "В сети с"
-
-msgid "Member Since"
-msgstr "Член с"
-
-msgid "Capabilities"
-msgstr "Возможности"
-
 msgid "Your AIM connection may be lost."
 msgstr "Ваше соединение AIM может быть потеряно."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Не удаётся отобразить сообщение от этого пользователя, так как оно содержит "
-"недопустимые символы.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Вы были отсоединены от чата %s."
-
-msgid "Mobile Phone"
-msgstr "Мобильный телефон"
-
-msgid "Personal Web Page"
-msgstr "Персональная web-страница"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Дополнительная информация"
-
-msgid "Zip Code"
-msgstr "Индекс"
-
-msgid "Work Information"
-msgstr "Информация о работе"
-
-msgid "Division"
-msgstr "Отдел"
-
-msgid "Position"
-msgstr "Должность"
-
-msgid "Web Page"
-msgstr "Web-страница"
 
 msgid "Pop-Up Message"
 msgstr "Всплывающее сообщение"
@@ -7935,7 +7818,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Изменить адрес на:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>вы не ожидаете авторизацию</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7974,6 +7858,14 @@ msgstr "Настроить переадресацию мгновенных со�
 msgid "Set Privacy Options..."
 msgstr "Установить параметры конфиденциальности..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Показать список _собеседников"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Список приглашённых"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Подтвердить учётную запись"
@@ -7989,9 +7881,6 @@ msgstr "Показать собеседников без авторизации"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Искать собеседника по адресу email..."
-
-msgid "Search for Buddy by Information"
-msgstr "Искать собеседника по информации"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8101,6 +7990,165 @@ msgstr "Очередь полна"
 
 msgid "Not while on AOL"
 msgstr "Не в AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Значок собеседника"
+
+msgid "Voice"
+msgstr "Голос"
+
+msgid "AIM Direct IM"
+msgstr "Прямое соединение AIM"
+
+msgid "Get File"
+msgstr "Получить файл"
+
+msgid "Games"
+msgstr "Игры"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Дополнения"
+
+msgid "Send Buddy List"
+msgstr "Отправить список собеседников"
+
+msgid "ICQ Direct Connect"
+msgstr "Прямое соединение ICQ"
+
+msgid "AP User"
+msgstr "Пользователь AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Нигилист"
+
+msgid "ICQ Server Relay"
+msgstr "Релейный сервер ICQ"
+
+msgid "Old ICQ UTF8"
+msgstr "Старый ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Шифрование Trillian"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Верх"
+
+msgid "Security Enabled"
+msgstr "Безопасность включена"
+
+msgid "Video Chat"
+msgstr "Видеочат"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Живое видео"
+
+msgid "Camera"
+msgstr "Камера"
+
+msgid "Screen Sharing"
+msgstr "Совместное пользование экраном"
+
+msgid "IP Address"
+msgstr "IP-адрес"
+
+msgid "Warning Level"
+msgstr "Уровень предупреждения"
+
+msgid "Buddy Comment"
+msgstr "Комментарий собеседника"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Пользовательская информация недоступна: %s"
+
+msgid "Mobile Phone"
+msgstr "Мобильный телефон"
+
+msgid "Personal Web Page"
+msgstr "Персональная web-страница"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Дополнительная информация"
+
+msgid "Zip Code"
+msgstr "Индекс"
+
+msgid "Work Information"
+msgstr "Информация о работе"
+
+msgid "Division"
+msgstr "Отдел"
+
+msgid "Position"
+msgstr "Должность"
+
+msgid "Web Page"
+msgstr "Web-страница"
+
+msgid "Online Since"
+msgstr "В сети с"
+
+msgid "Member Since"
+msgstr "Член с"
+
+msgid "Capabilities"
+msgstr "Возможности"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Появляется в сети"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Появляется в сети"
+
+msgid "Appear Offline"
+msgstr "Вероятно не в сети"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Вероятно не в сети"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Вас выгнали: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Вы можете запросить авторизацию от этих собеседников повторно, щёлкнув на "
+"них правой кнопкой мыши и выбрав \"Повторный запрос авторизации\"."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Видимый"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Список приглашённых"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Водолей"
@@ -8299,7 +8347,7 @@ msgid "Your request was rejected."
 msgstr "Ваш запрос был отклонён."
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "%u требует подтверждения"
 
 #, fuzzy
@@ -10576,17 +10624,11 @@ msgstr "Вышел"
 msgid "Not on server list"
 msgstr "Не в списке на сервере"
 
-msgid "Appear Online"
-msgstr "Появляется в сети"
-
 msgid "Appear Permanently Offline"
 msgstr "Постоянно появляется не в сети"
 
 msgid "Presence"
 msgstr "Присутствие"
-
-msgid "Appear Offline"
-msgstr "Вероятно не в сети"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Не всегда не в сети"
@@ -11146,27 +11188,23 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Соединение прервано другой программой на вашем компьютере."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Удалённый узел разорвал соединение."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Истекло время ожидания соединения."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Соединение отвергнуто."
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "Адрес уже используется."
 
@@ -11316,6 +11354,10 @@ msgstr ""
 "Вы можете вернуться к этому окну для добавления, изменения или удаления "
 "учётных записей позже через меню <b>Уч.записи->Управление учётными записями</"
 "b> в окне списка собеседников."
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s хочет добавить %s в свой список собеседников%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11583,6 +11625,8 @@ msgstr "Сообщение (не обязательно)"
 msgid "Edit User Mood"
 msgstr "Изменить настроение пользователя"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Собеседники"
@@ -12338,9 +12382,6 @@ msgstr "поддержка"
 msgid "webmaster"
 msgstr "веб-мастер"
 
-msgid "Senior Contributor/QA"
-msgstr "Старший сотрудник/контроль качества"
-
 msgid "win32 port"
 msgstr "порт win32"
 
@@ -12365,6 +12406,9 @@ msgstr "оригинальный автор"
 
 msgid "lead developer"
 msgstr "ведущий разработчик"
+
+msgid "Senior Contributor/QA"
+msgstr "Старший сотрудник/контроль качества"
 
 msgid "Afrikaans"
 msgstr "Африкаанс"
@@ -13723,6 +13767,10 @@ msgstr "Реле сервер (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN сервер:"
 
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "П_орт:"
+
 msgid "Use_rname:"
 msgstr "Им_я пользователя:"
 
@@ -13744,6 +13792,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Используемый по умолчанию"
 
@@ -13761,6 +13814,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Другой"
@@ -14307,7 +14368,8 @@ msgstr "нет"
 msgid "Small"
 msgstr "Маленький"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Меньшие версии смайликов по умолчанию"
 
 msgid "Response Probability:"
@@ -15353,6 +15415,10 @@ msgstr "У_стройство"
 msgid "Voice/Video Settings"
 msgstr "Голосовые/Видео настройки"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Голосовые/Видео настройки"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15480,7 +15546,7 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15620,6 +15686,30 @@ msgstr "Посетите веб-страницу Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
+
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr ""
+#~ "Срок действия сертификата истёк и его больше не следует считать "
+#~ "доверенным."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Требовать SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Принудительно использовать старый (порт 5223) SSL"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Введённое имя неправильное."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Не удаётся отобразить сообщение от этого пользователя, так как оно "
+#~ "содержит недопустимые символы.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Искать собеседника по информации"
 
 #, fuzzy
 #~ msgid "The nick name you entered is invalid."
@@ -16237,9 +16327,6 @@ msgstr "У Вас нет прав на удаление этого прилож�
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Соединение разорвано (запись)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Сброс соединения"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Ошибка при чтении из сокета: %s"
 
@@ -16521,9 +16608,6 @@ msgstr "У Вас нет прав на удаление этого прилож�
 
 #~ msgid "Failed to send IM."
 #~ msgstr "Не удалось отправить мгновенное сообщение."
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Пользовательская информация для %s недоступна"
 
 #~ msgid "A group with the name already exists."
 #~ msgstr "Группа с таким именем уже существует."

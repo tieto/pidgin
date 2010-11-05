@@ -2468,6 +2468,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	GtkWidget *alert;
 	GdkPixbuf *prpl_icon;
 	struct auth_request *aa;
+	gboolean have_valid_alias = alias && *alias;
 
 	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
@@ -2475,9 +2476,9 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 	buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
 				remote_user,
-				(alias != NULL ? " ("  : ""),
-				(alias != NULL ? alias : ""),
-				(alias != NULL ? ")"   : ""),
+				(have_valid_alias ? " ("  : ""),
+				(have_valid_alias ? alias : ""),
+				(have_valid_alias ? ")"   : ""),
 				(id != NULL
 				? id
 				: (purple_connection_get_display_name(gc) != NULL

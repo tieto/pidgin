@@ -42,8 +42,36 @@
 #include "cipher.h"
 #include "core.h"
 
-#define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
-#define URL_START_OSCAR_SESSION "https://api.oscar.aol.com/aim/startOSCARSession"
+#define AIM_LOGIN_HOST "api.screenname.aol.com"
+#define ICQ_LOGIN_HOST "api.login.icq.net"
+
+#define AIM_API_HOST "api.oscar.aol.com"
+#define ICQ_API_HOST "api.icq.net"
+
+#define CLIENT_LOGIN_PAGE "/auth/clientLogin"
+#define START_OSCAR_SESSION_PAGE "/aim/startOSCARSession"
+
+#define HTTPS_FORMAT_URL(host, page) "https://" host page
+
+static const gchar *client_login_urls[] = {
+	HTTPS_FORMAT_URL(AIM_LOGIN_HOST, CLIENT_LOGIN_PAGE),
+	HTTPS_FORMAT_URL(ICQ_LOGIN_HOST, CLIENT_LOGIN_PAGE),
+};
+
+static const gchar *start_oscar_session_urls[] = {
+	HTTPS_FORMAT_URL(AIM_API_HOST, START_OSCAR_SESSION_PAGE),
+	HTTPS_FORMAT_URL(ICQ_API_HOST, START_OSCAR_SESSION_PAGE),
+};
+
+static const gchar *get_client_login_url(OscarData *od)
+{
+	return client_login_urls[od->icq];
+}
+
+static const gchar *get_start_oscar_session_url(OscarData *od)
+{
+	return start_oscar_session_urls[od->icq];
+}
 
 /*
  * Using clientLogin requires a developer ID.  This key is for libpurple.
@@ -125,6 +153,7 @@ static gchar *generate_signature(const char *method, const char *url, const char
 
 static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **host, unsigned short *port, char **cookie, char **tls_certname)
 {
+	OscarData *od = purple_connection_get_protocol_data(gc);
 	xmlnode *response_node, *tmp_node, *data_node;
 	xmlnode *host_node = NULL, *port_node = NULL, *cookie_node = NULL, *tls_node = NULL;
 	gboolean use_tls;
@@ -142,7 +171,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 				"response as XML: %s\n", response);
 		/* Note to translators: %s in this string is a URL */
 		msg = generate_error_message(response_node,
-				URL_START_OSCAR_SESSION);
+				get_start_oscar_session_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -165,7 +194,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		purple_debug_error("oscar", "startOSCARSession response was "
 				"missing statusCode: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_START_OSCAR_SESSION);
+				get_start_oscar_session_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -203,7 +232,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		else {
 			char *msg;
 			msg = generate_error_message(response_node,
-					URL_START_OSCAR_SESSION);
+					get_start_oscar_session_url(od));
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
 			g_free(msg);
@@ -216,15 +245,13 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	g_free(tmp);
 
 	/* Make sure we have everything else */
-	if (data_node == NULL || host_node == NULL ||
-		port_node == NULL || cookie_node == NULL ||
-		(use_tls && tls_node == NULL))
+	if (data_node == NULL || host_node == NULL || port_node == NULL || cookie_node == NULL)
 	{
 		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was missing "
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_START_OSCAR_SESSION);
+				get_start_oscar_session_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -237,17 +264,21 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	tmp = xmlnode_get_data_unescaped(port_node);
 	*cookie = xmlnode_get_data_unescaped(cookie_node);
 
-	if (use_tls)
-		*tls_certname = xmlnode_get_data_unescaped(tls_node);
+	if (use_tls) {
+		if (tls_node != NULL) {
+			*tls_certname = xmlnode_get_data_unescaped(tls_node);
+		} else {
+			purple_debug_warning("oscar", "useTls was 1, but we haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
+		}
+	}
 
-	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || *cookie == NULL || **cookie == '\0' ||
-			(use_tls && (*tls_certname == NULL || **tls_certname == '\0')))
+	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || *cookie == NULL || **cookie == '\0')
 	{
 		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was missing "
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_START_OSCAR_SESSION);
+				get_start_oscar_session_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -284,7 +315,7 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		/* Note to translators: The first %s is a URL, the second is an
 		   error message. */
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				URL_START_OSCAR_SESSION, error_message);
+				get_start_oscar_session_url(od), error_message);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -326,9 +357,9 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid"
 					: "prpl-aim-distid", 0x00000611),
 			get_client_key(od), hosttime, use_tls);
-	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
+	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
-	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
+	url = g_strdup_printf("%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),
 			query_string, signature);
 	g_free(query_string);
 	g_free(signature);
@@ -367,6 +398,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
  */
 static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *response, gsize response_len, char **token, char **secret, time_t *hosttime)
 {
+	OscarData *od = purple_connection_get_protocol_data(gc);
 	xmlnode *response_node, *tmp_node, *data_node;
 	xmlnode *secret_node = NULL, *hosttime_node = NULL, *token_node = NULL, *tokena_node = NULL;
 	char *tmp;
@@ -379,7 +411,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_debug_error("oscar", "clientLogin could not parse "
 				"response as XML: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_CLIENT_LOGIN);
+				get_client_login_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -403,7 +435,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_debug_error("oscar", "clientLogin response was "
 				"missing statusCode: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_CLIENT_LOGIN);
+				get_client_login_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -446,7 +478,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		} else {
 			char *msg;
 			msg = generate_error_message(response_node,
-					URL_CLIENT_LOGIN);
+					get_client_login_url(od));
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
 			g_free(msg);
@@ -465,7 +497,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_debug_error("oscar", "clientLogin response was missing "
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_CLIENT_LOGIN);
+				get_client_login_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -483,7 +515,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		purple_debug_error("oscar", "clientLogin response was missing "
 				"something: %s\n", response);
 		msg = generate_error_message(response_node,
-				URL_CLIENT_LOGIN);
+				get_client_login_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -520,10 +552,10 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 		gchar *tmp;
 		if (error_message != NULL)
 			tmp = g_strdup_printf(_("Error requesting %s: %s"),
-					URL_CLIENT_LOGIN, error_message);
+					get_client_login_url(od), error_message);
 		else
 			tmp = g_strdup_printf(_("Error requesting %s"),
-					URL_CLIENT_LOGIN);
+					get_client_login_url(od));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -599,7 +631,7 @@ void send_client_login(OscarData *od, const char *username)
 
 	/* Send the POST request  */
 	od->url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), URL_CLIENT_LOGIN,
+			purple_connection_get_account(gc), get_client_login_url(od),
 			TRUE, NULL, FALSE, request->str, FALSE, -1,
 			client_login_cb, od);
 	g_string_free(request, TRUE);

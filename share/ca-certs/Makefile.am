@@ -15,6 +15,7 @@ CERTIFICATES = \
 		ValiCert_Class_2_VA.pem \
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem \
+		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G2.pem \
 		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem \
 		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem
 
