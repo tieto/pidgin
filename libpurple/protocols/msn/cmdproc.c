@@ -211,37 +211,39 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, message_id);
 				chunk = strtol(chunk_text, NULL, 10);
-				if (first == NULL) {
+				if (first != NULL) {
+					if (first->received_chunks != chunk) {
+						/*
+						 * We received an out of order chunk number (i.e. not the
+						 * next one in the sequence).  Not sure if this can happen
+						 * legitimately, but we definitely don't handle it right
+						 * now.
+						 */
+						g_hash_table_remove(cmdproc->multiparts, message_id);
+						return;
+					}
+
+					/* Chunk is from 1 to total-1 (doesn't count first one) */
+					purple_debug_info("msn", "Received chunk %d of %d, message_id: '%s'\n",
+							chunk + 1, first->total_chunks, message_id);
+					first->body = g_realloc(first->body, first->body_len + msg->body_len);
+					memcpy(first->body + first->body_len, msg->body, msg->body_len);
+					first->body_len += msg->body_len;
+					first->received_chunks++;
+					if (first->received_chunks != first->total_chunks)
+						/* We're waiting for more chunks */
+						return;
+
+					/*
+					 * We have all the chunks for this message, great!  Send
+					 * it along... The caller takes care of freeing the old one.
+					 */
+					msg = first;
+				} else {
 					purple_debug_error("msn",
 					                   "Unable to find first chunk of message_id '%s' to correspond with chunk %d.\n",
 					                   message_id, chunk + 1);
-				} else if (first->received_chunks != chunk) {
-					/*
-					 * We received an out of order chunk number (i.e. not the
-					 * next one in the sequence).  Not sure if this can happen
-					 * legitimately, but we definitely don't handle it right
-					 * now.
-					 */
-					g_hash_table_remove(cmdproc->multiparts, message_id);
-					return;
 				}
-
-				/* Chunk is from 1 to total-1 (doesn't count first one) */
-				purple_debug_info("msn", "Received chunk %d of %d, message_id: '%s'\n",
-						chunk + 1, first->total_chunks, message_id);
-				first->body = g_realloc(first->body, first->body_len + msg->body_len);
-				memcpy(first->body + first->body_len, msg->body, msg->body_len);
-				first->body_len += msg->body_len;
-				first->received_chunks++;
-				if (first->received_chunks != first->total_chunks)
-					/* We're waiting for more chunks */
-					return;
-
-				/*
-				 * We have all the chunks for this message, great!  Send
-				 * it along... The caller takes care of freeing the old one.
-				 */
-				msg = first;
 			} else {
 				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", message_id);
 			}

@@ -677,11 +677,9 @@ static void
 iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 
 	account = cmdproc->session->account;
-	gc = account->gc;
 	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
@@ -694,7 +692,6 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 	const char *passport;
 
@@ -702,7 +699,6 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = account->gc;
 	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);

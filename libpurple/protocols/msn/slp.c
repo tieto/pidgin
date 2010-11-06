@@ -118,7 +118,6 @@ static void
 got_user_display(MsnSlpCall *slpcall,
 				 const guchar *data, gsize size)
 {
-	MsnUserList *userlist;
 	const char *info;
 	PurpleAccount *account;
 
@@ -128,7 +127,6 @@ got_user_display(MsnSlpCall *slpcall,
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "Got User Display: %s\n", slpcall->slplink->remote_user);
 
-	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
 
 	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
@@ -198,7 +196,7 @@ request_own_user_display(MsnUser *user)
 	MsnSession *session;
 	MsnObject *my_obj = NULL;
 	gconstpointer data = NULL;
-	const char *info;
+	const char *info = NULL;
 	size_t len = 0;
 
 	if (purple_debug_is_verbose())
