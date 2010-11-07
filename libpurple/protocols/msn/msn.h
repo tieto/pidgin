@@ -21,72 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_H_
-#define _MSN_H_
-
-#include "internal.h"
-
-#include "account.h"
-#include "accountopt.h"
-#include "blist.h"
-#include "connection.h"
-#include "conversation.h"
-#include "debug.h"
-#include "cipher.h"
-#include "notify.h"
-#include "privacy.h"
-#include "proxy.h"
-#include "prpl.h"
-#include "request.h"
-#include "servconn.h"
-#include "sslconn.h"
-#include "util.h"
-
-#include "ft.h"
-
-#include "msg.h"
-
-#define MSN_BUF_LEN 8192
-
-/* Windows Live Messenger Server*/
-#define MSN_SERVER "messenger.hotmail.com"
-#define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
-#define MSN_PORT 1863
-#define WLM_PROT_VER		15
-
-#define WLM_MAX_PROTOCOL	15
-#define WLM_MIN_PROTOCOL	15
-
-#define MSN_TYPING_RECV_TIMEOUT 6
-#define MSN_TYPING_SEND_TIMEOUT	4
-
-#define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
-#define PHOTO_URL	" contactparams:photopreauthurl=\""
-
-#define BUDDY_ALIAS_MAXLEN 387
-
-#define MSN_CAM_GUID "4BD96FC0-AB17-4425-A14A-439185962DC8"
-#define MSN_CAM_REQUEST_GUID "1C9AA97E-9C05-4583-A3BD-908A196F1E92"
-#define MSN_FT_GUID "5D3E02AB-6190-11D3-BBBB-00C04F795683"
-#define MSN_OBJ_GUID "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"
-
-#define MSN_CLIENTINFO \
-	"Client-Name: Purple/" VERSION "\r\n" \
-	"Chat-Logging: Y\r\n"
-
-/* Index into attention_types */
-#define MSN_NUDGE 0
-
-typedef enum
-{
-	MSN_LIST_FL_OP = 0x01,
-	MSN_LIST_AL_OP = 0x02,
-	MSN_LIST_BL_OP = 0x04,
-	MSN_LIST_RL_OP = 0x08,
-	MSN_LIST_PL_OP = 0x10
-
-} MsnListOp;
-#define MSN_LIST_OP_MASK	0x07
+#ifndef MSN_H
+#define MSN_H
 
 typedef enum
 {
@@ -112,7 +48,6 @@ typedef enum
 	MSN_CLIENT_CAP_ONECARE    = 0x1000000,
 	MSN_CLIENT_CAP_P2P_TURN   = 0x2000000,
 	MSN_CLIENT_CAP_P2P_BOOTSTRAP_VIA_UUN = 0x4000000,
-
 } MsnClientCaps;
 
 typedef enum
@@ -134,21 +69,58 @@ typedef enum
 	MSN_CLIENT_VER_8_5  = 0x80,	/* MSNC8 */
 	MSN_CLIENT_VER_9_0  = 0x90,	/* MSNC9 */
 	MSN_CLIENT_VER_14_0 = 0xA0	/* MSNC10 */
-
 } MsnClientVerId;
 
-#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_7_0
+#include "internal.h"
+
+#include "session.h"
+
+#include "msg.h"
+
+#define MSN_BUF_LEN 8192
+
+/* Windows Live Messenger Server*/
+#define MSN_SERVER "messenger.hotmail.com"
+#define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
+#define MSN_PORT 1863
+#define WLM_PROT_VER		16
+
+#define WLM_MAX_PROTOCOL	16
+#define WLM_MIN_PROTOCOL	15
+
+#define MSN_TYPING_RECV_TIMEOUT 6
+#define MSN_TYPING_SEND_TIMEOUT	4
+
+#define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
+#define PHOTO_URL	" contactparams:photopreauthurl=\""
+
+#define BUDDY_ALIAS_MAXLEN 387
+
+#define MSN_CAM_GUID "4BD96FC0-AB17-4425-A14A-439185962DC8"
+#define MSN_CAM_REQUEST_GUID "1C9AA97E-9C05-4583-A3BD-908A196F1E92"
+#define MSN_FT_GUID "5D3E02AB-6190-11D3-BBBB-00C04F795683"
+#define MSN_OBJ_GUID "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"
+
+#define MSN_CLIENTINFO \
+	"Client-Name: Purple/" VERSION "\r\n" \
+	"Chat-Logging: Y\r\n"
+
+/* Index into attention_types */
+#define MSN_NUDGE 0
+
+#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_9_0
 #define MSN_CLIENT_ID_CAPABILITIES (MSN_CLIENT_CAP_PACKET|MSN_CLIENT_CAP_INK_GIF|MSN_CLIENT_CAP_VOICEIM)
+#define MSN_CLIENT_ID_EXT_CAPS     (0)
 
 #define MSN_CLIENT_ID \
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-#define MSN_CLIENT_EXT_ID 0
-
-gboolean msn_email_is_valid(const char *passport);
-void msn_act_id(PurpleConnection *gc, const char *entry);
+void
+msn_set_public_alias(PurpleConnection *gc, const char *alias,
+                     PurpleSetPublicAliasSuccessCallback success_cb,
+                     PurpleSetPublicAliasFailureCallback failure_cb);
 void msn_send_privacy(PurpleConnection *gc);
 void msn_send_im_message(MsnSession *session, MsnMessage *msg);
 
-#endif /* _MSN_H_ */
+#endif /* MSN_H */

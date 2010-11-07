@@ -302,7 +302,7 @@ gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleA
 			}
 		}
 
-		score = (gint)score_double;
+		score = (gint) ceil(score_double);
 		g_hash_table_replace(logsize_users_decayed, lu, GINT_TO_POINTER(score));
 	}
 	return score;
@@ -1681,7 +1681,6 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	struct tm tm;
 	char month[4];
 	struct old_logger_data *data = NULL;
-	char *newlog;
 	int logfound = 0;
 	int lastoff = 0;
 	int newlen;
@@ -1783,7 +1782,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	}
 
 	while (fgets(buf, BUF_LONG, file)) {
-		if ((newlog = strstr(buf, "---- New C"))) {
+		if (strstr(buf, "---- New C") != NULL) {
 			int length;
 			int offset;
 			char convostart[32];

@@ -73,9 +73,18 @@ install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PIDGIN_INSTALL_PLUGINS_DIR)
 
-.c.dll:
+THEMEEDIT_SRC = themeedit.c themeedit-icon.c
+THEMEEDIT_OBJECTS = $(THEMEEDIT_SRC:%.c=%.o)
+
+themeedit.dll: $(THEMEEDIT_OBJECTS)
+	$(CC) -shared $(THEMEEDIT_OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
+
+%.dll: %.c $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
+
+
+include $(PIDGIN_COMMON_RULES)
 
 plugins: \
 		convcolors.dll \
@@ -89,6 +98,7 @@ plugins: \
 		relnot.dll \
 		sendbutton.dll \
 		spellchk.dll \
+		themeedit.dll \
 		timestamp_format.dll \
 		timestamp.dll \
 		xmppconsole.dll

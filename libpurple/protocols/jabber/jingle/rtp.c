@@ -468,13 +468,22 @@ jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 
 	g_return_if_fail(JINGLE_IS_SESSION(session));
 
-	if (type == PURPLE_MEDIA_INFO_HANGUP) {
+	if (type == PURPLE_MEDIA_INFO_HANGUP ||
+			type == PURPLE_MEDIA_INFO_REJECT) {
 		jabber_iq_send(jingle_session_terminate_packet(
-				session, "success"));
-		g_object_unref(session);
-	} else if (type == PURPLE_MEDIA_INFO_REJECT) {
-		jabber_iq_send(jingle_session_terminate_packet(
-				session, "decline"));
+				session, type == PURPLE_MEDIA_INFO_HANGUP ?
+				"success" : "decline"));
+
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_state_changed_cb),
+				session);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_stream_info_cb),
+				session);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(media),
+				G_CALLBACK(jingle_rtp_new_candidate_cb),
+				session);
+
 		g_object_unref(session);
 	} else if (type == PURPLE_MEDIA_INFO_ACCEPT &&
 			jingle_session_is_initiator(session) == FALSE) {
@@ -602,7 +611,8 @@ jingle_rtp_init_media(JingleContent *content)
 				: PURPLE_MEDIA_RECV_VIDEO;
 
 	params = 
-		jingle_get_params(jingle_session_get_js(session), &num_params);
+		jingle_get_params(jingle_session_get_js(session), NULL, 0, 0, 0,
+			NULL, NULL, &num_params);
 
 	creator = jingle_content_get_creator(content);
 	if (!strcmp(creator, "initiator"))

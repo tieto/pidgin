@@ -103,16 +103,6 @@ extern "C" {
 #define AIM_ICONIDENT "AVT1picture.id"
 
 /*
- * Current Maximum Length for Chat Room Messages
- *
- * This is actually defined by the protocol to be
- * dynamic, but I have yet to see due cause to
- * define it dynamically here.  Maybe later.
- *
- */
-#define MAXCHATMSGLEN 512
-
-/*
  * Found by trial and error.
  */
 #define MAXAVAILMSGLEN 251
@@ -143,167 +133,6 @@ struct _ClientInfo
 	const char *lang; /* two-letter abbrev */
 };
 
-/* Needs to be checked */
-#define CLIENTINFO_AIM_3_5_1670 { \
-	"AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
-	0x0004, \
-	0x0003, 0x0005, \
-	0x0000, 0x0686, \
-	0x0000002a, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-/* Latest winaim without ssi */
-#define CLIENTINFO_AIM_4_1_2010 { \
-	"AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
-	0x0004, \
-	0x0004, 0x0001, \
-	0x0000, 0x07da, \
-	0x0000004b, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_4_3_2188 { \
-	"AOL Instant Messenger (SM), version 4.3.2188/WIN32", \
-	0x0109, \
-	0x0400, 0x0003, \
-	0x0000, 0x088c, \
-	0x00000086, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_4_8_2540 { \
-	"AOL Instant Messenger (SM), version 4.8.2540/WIN32", \
-	0x0109, \
-	0x0004, 0x0008, \
-	0x0000, 0x09ec, \
-	0x000000af, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_5_0_2938 { \
-	"AOL Instant Messenger, version 5.0.2938/WIN32", \
-	0x0109, \
-	0x0005, 0x0000, \
-	0x0000, 0x0b7a, \
-	0x00000000, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_1_3036 { \
-	"AOL Instant Messenger, version 5.1.3036/WIN32", \
-	0x0109, \
-	0x0005, 0x0001, \
-	0x0000, 0x0bdc, \
-	0x000000d2, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_5_3415 { \
-	"AOL Instant Messenger, version 5.5.3415/WIN32", \
-	0x0109, \
-	0x0005, 0x0005, \
-	0x0000, 0x0057, \
-	0x000000ef, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_9_3702 { \
-	"AOL Instant Messenger, version 5.9.3702/WIN32", \
-	0x0109, \
-	0x0005, 0x0009, \
-	0x0000, 0x0e76, \
-	0x00000111, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICHAT_1_0 { \
-	"Apple iChat", \
-	0x311a, \
-	0x0001, 0x0000, \
-	0x0000, 0x003c, \
-	0x000000c6, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_ICQ_4_65_3281 { \
-	"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85", \
-	0x010a, \
-	0x0004, 0x0041, \
-	0x0001, 0x0cd1, \
-	0x00000055, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_ICQ_5_34_3728 { \
-	"ICQ Inc. - Product of ICQ (TM).2002a.5.34.1.3728.85", \
-	0x010a, \
-	0x0005, 0x0022, \
-	0x0001, 0x0e8f, \
-	0x00000055, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQ_5_45_3777 { \
-	"ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85", \
-	0x010a, \
-	0x0005, 0x002d, \
-	0x0001, 0x0ec1, \
-	0x00000055, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQ6_6_0_6059 { \
-	"ICQ Client", \
-	0x010a, \
-	0x0006, 0x0000, \
-	0x0000, 0x17ab, \
-	0x00007535, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_3_1068 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0003, \
-	0x0000, 0x042c, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_34_3000 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0bb8, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_34_3096 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0c18, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_NETSCAPE_7_0_1 { \
-	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
-	0x1d0d, \
-	0x0007, 0x0000, \
-	0x0001, 0x0000, \
-	0x00000058, \
-	"us", "en", \
-}
-
 /*
  * We need to use the major-minor-micro versions from the official
  * AIM and ICQ programs here or AOL won't let us use certain features.
@@ -329,9 +158,6 @@ struct _ClientInfo
 	"us", "en", \
 }
 
-#define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3096
-
 typedef enum
 {
 	OSCAR_DISCONNECT_DONE, /* not considered an error */
@@ -344,40 +170,56 @@ typedef enum
 	OSCAR_DISCONNECT_RETRYING /* peer connections only */
 } OscarDisconnectReason;
 
-typedef enum
-{
-	OSCAR_CAPABILITY_BUDDYICON            = 0x00000001,
-	OSCAR_CAPABILITY_TALK                 = 0x00000002,
-	OSCAR_CAPABILITY_DIRECTIM             = 0x00000004,
-	OSCAR_CAPABILITY_CHAT                 = 0x00000008,
-	OSCAR_CAPABILITY_GETFILE              = 0x00000010,
-	OSCAR_CAPABILITY_SENDFILE             = 0x00000020,
-	OSCAR_CAPABILITY_GAMES                = 0x00000040,
-	OSCAR_CAPABILITY_ADDINS               = 0x00000080,
-	OSCAR_CAPABILITY_SENDBUDDYLIST        = 0x00000100,
-	OSCAR_CAPABILITY_GAMES2               = 0x00000200,
-	OSCAR_CAPABILITY_ICQ_DIRECT           = 0x00000400,
-	OSCAR_CAPABILITY_APINFO               = 0x00000800,
-	OSCAR_CAPABILITY_ICQRTF               = 0x00001000,
-	OSCAR_CAPABILITY_EMPTY                = 0x00002000,
-	OSCAR_CAPABILITY_ICQSERVERRELAY       = 0x00004000,
-	OSCAR_CAPABILITY_UNICODEOLD           = 0x00008000,
-	OSCAR_CAPABILITY_TRILLIANCRYPT        = 0x00010000,
-	OSCAR_CAPABILITY_UNICODE              = 0x00020000,
-	OSCAR_CAPABILITY_INTEROPERATE         = 0x00040000,
-	OSCAR_CAPABILITY_SHORTCAPS            = 0x00080000,
-	OSCAR_CAPABILITY_HIPTOP               = 0x00100000,
-	OSCAR_CAPABILITY_SECUREIM             = 0x00200000,
-	OSCAR_CAPABILITY_SMS                  = 0x00400000,
-	OSCAR_CAPABILITY_VIDEO                = 0x00800000,
-	OSCAR_CAPABILITY_ICHATAV              = 0x01000000,
-	OSCAR_CAPABILITY_LIVEVIDEO            = 0x02000000,
-	OSCAR_CAPABILITY_CAMERA               = 0x04000000,
-	OSCAR_CAPABILITY_ICHAT_SCREENSHARE    = 0x08000000,
-	OSCAR_CAPABILITY_TYPING               = 0x10000000,
-	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x20000000,
-	OSCAR_CAPABILITY_LAST                 = 0x40000000
-} OscarCapability;
+#define OSCAR_CAPABILITY_BUDDYICON             0x0000000000000001LL
+#define OSCAR_CAPABILITY_TALK                  0x0000000000000002LL
+#define OSCAR_CAPABILITY_DIRECTIM              0x0000000000000004LL
+#define OSCAR_CAPABILITY_CHAT                  0x0000000000000008LL
+#define OSCAR_CAPABILITY_GETFILE               0x0000000000000010LL
+#define OSCAR_CAPABILITY_SENDFILE              0x0000000000000020LL
+#define OSCAR_CAPABILITY_GAMES                 0x0000000000000040LL
+#define OSCAR_CAPABILITY_ADDINS                0x0000000000000080LL
+#define OSCAR_CAPABILITY_SENDBUDDYLIST         0x0000000000000100LL
+#define OSCAR_CAPABILITY_GAMES2                0x0000000000000200LL
+#define OSCAR_CAPABILITY_ICQ_DIRECT            0x0000000000000400LL
+#define OSCAR_CAPABILITY_APINFO                0x0000000000000800LL
+#define OSCAR_CAPABILITY_ICQRTF                0x0000000000001000LL
+#define OSCAR_CAPABILITY_EMPTY                 0x0000000000002000LL
+#define OSCAR_CAPABILITY_ICQSERVERRELAY        0x0000000000004000LL
+#define OSCAR_CAPABILITY_UNICODEOLD            0x0000000000008000LL
+#define OSCAR_CAPABILITY_TRILLIANCRYPT         0x0000000000010000LL
+#define OSCAR_CAPABILITY_UNICODE               0x0000000000020000LL
+#define OSCAR_CAPABILITY_INTEROPERATE          0x0000000000040000LL
+#define OSCAR_CAPABILITY_SHORTCAPS             0x0000000000080000LL
+#define OSCAR_CAPABILITY_HIPTOP                0x0000000000100000LL
+#define OSCAR_CAPABILITY_SECUREIM              0x0000000000200000LL
+#define OSCAR_CAPABILITY_SMS                   0x0000000000400000LL
+#define OSCAR_CAPABILITY_VIDEO                 0x0000000000800000LL
+#define OSCAR_CAPABILITY_ICHATAV               0x0000000001000000LL
+#define OSCAR_CAPABILITY_LIVEVIDEO             0x0000000002000000LL
+#define OSCAR_CAPABILITY_CAMERA                0x0000000004000000LL
+#define OSCAR_CAPABILITY_ICHAT_SCREENSHARE     0x0000000008000000LL
+#define OSCAR_CAPABILITY_TYPING                0x0000000010000000LL
+#define OSCAR_CAPABILITY_NEWCAPS               0x0000000020000000LL
+#define OSCAR_CAPABILITY_XTRAZ                 0x0000000040000000LL
+#define OSCAR_CAPABILITY_GENERICUNKNOWN        0x0000000080000000LL
+#define OSCAR_CAPABILITY_HTML_MSGS             0x0000000100000000LL
+#define OSCAR_CAPABILITY_LAST                  0x0000000200000000LL
+
+#define OSCAR_STATUS_ID_INVISIBLE   "invisible"
+#define OSCAR_STATUS_ID_OFFLINE     "offline"
+#define OSCAR_STATUS_ID_AVAILABLE   "available"
+#define OSCAR_STATUS_ID_AWAY        "away"
+#define OSCAR_STATUS_ID_DND         "dnd"
+#define OSCAR_STATUS_ID_NA          "na"
+#define OSCAR_STATUS_ID_OCCUPIED    "occupied"
+#define OSCAR_STATUS_ID_FREE4CHAT   "free4chat"
+#define OSCAR_STATUS_ID_CUSTOM      "custom"
+#define OSCAR_STATUS_ID_MOBILE	    "mobile"
+#define OSCAR_STATUS_ID_EVIL        "evil"
+#define OSCAR_STATUS_ID_DEPRESSION	 "depression"
+#define OSCAR_STATUS_ID_ATHOME      "athome"
+#define OSCAR_STATUS_ID_ATWORK      "atwork"
+#define OSCAR_STATUS_ID_LUNCH       "lunch"
 
 /*
  * Byte Stream type. Sort of.
@@ -396,8 +238,8 @@ typedef enum
 struct _ByteStream
 {
 	guint8 *data;
-	guint32 len;
-	guint32 offset;
+	size_t len;
+	size_t offset;
 };
 
 struct _QueuedSnac
@@ -445,6 +287,8 @@ struct _FlapConnection
 	guint16 seqnum_in; /**< The sequence number of most recently received packet. */
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
+	struct rateclass *default_rateclass;
+	GHashTable *rateclass_members; /* Key is family and subtype, value is pointer to the rateclass struct to use. */
 
 	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
 	GQueue *queued_lowpriority_snacs; /**< Contains QueuedSnacs to send only once queued_snacs is empty */
@@ -525,7 +369,7 @@ struct _OscarData
 	 */
 
 	IcbmCookie *msgcookies;
-	struct aim_icq_info *icq_info;
+	GSList *icq_info;
 
 	/** Only used when connecting with the old-style BUCP login. */
 	struct aim_authresp_info *authinfo;
@@ -570,13 +414,17 @@ struct _OscarData
 #define AIM_ICQ_STATE_BUSY              0x00000010
 #define AIM_ICQ_STATE_CHAT              0x00000020
 #define AIM_ICQ_STATE_INVISIBLE         0x00000100
+#define AIM_ICQ_STATE_EVIL              0x00003000
+#define AIM_ICQ_STATE_DEPRESSION        0x00004000
+#define AIM_ICQ_STATE_ATHOME            0x00005000
+#define AIM_ICQ_STATE_ATWORK            0x00006000
+#define AIM_ICQ_STATE_LUNCH             0x00002001
+#define AIM_ICQ_STATE_EVIL              0x00003000
 #define AIM_ICQ_STATE_WEBAWARE          0x00010000
 #define AIM_ICQ_STATE_HIDEIP            0x00020000
 #define AIM_ICQ_STATE_BIRTHDAY          0x00080000
-#define AIM_ICQ_STATE_DIRECTDISABLED    0x00100000
 #define AIM_ICQ_STATE_ICQHOMEPAGE       0x00200000
 #define AIM_ICQ_STATE_DIRECTREQUIREAUTH 0x10000000
-#define AIM_ICQ_STATE_DIRECTCONTACTLIST 0x20000000
 
 /**
  * Only used when connecting with the old-style BUCP login.
@@ -662,8 +510,8 @@ void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
 void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_login);
-void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
-void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
+void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data);
+void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
 FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 
@@ -675,64 +523,26 @@ void oscar_data_destroy(OscarData *);
 void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
 aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
 
-/* misc.c */
-#define AIM_VISIBILITYCHANGE_PERMITADD    0x05
-#define AIM_VISIBILITYCHANGE_PERMITREMOVE 0x06
-#define AIM_VISIBILITYCHANGE_DENYADD      0x07
-#define AIM_VISIBILITYCHANGE_DENYREMOVE   0x08
-
-#define AIM_PRIVFLAGS_ALLOWIDLE           0x01
-#define AIM_PRIVFLAGS_ALLOWMEMBERSINCE    0x02
-
-#define AIM_WARN_ANON                     0x01
-
-
-
 /* 0x0001 - family_oservice.c */
 /* 0x0002 */ void aim_srv_clientready(OscarData *od, FlapConnection *conn);
 /* 0x0004 */ void aim_srv_requestnew(OscarData *od, guint16 serviceid);
 /* 0x0006 */ void aim_srv_reqrates(OscarData *od, FlapConnection *conn);
 /* 0x0008 */ void aim_srv_rates_addparam(OscarData *od, FlapConnection *conn);
-/* 0x0009 */ void aim_srv_rates_delparam(OscarData *od, FlapConnection *conn);
-/* 0x000c */ void aim_srv_sendpauseack(OscarData *od, FlapConnection *conn);
 /* 0x000e */ void aim_srv_reqpersonalinfo(OscarData *od, FlapConnection *conn);
 /* 0x0011 */ void aim_srv_setidle(OscarData *od, guint32 idletime);
-/* 0x0014 */ void aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32);
-/* 0x0016 */ void aim_srv_nop(OscarData *od, FlapConnection *conn);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
 /* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg, const char *itmsurl);
+void aim_srv_set_dc_info(OscarData *od);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
-int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int, const char *);
-void aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask);
 
-
-
-#define AIM_CLIENTTYPE_UNKNOWN  0x0000
-#define AIM_CLIENTTYPE_MC       0x0001
-#define AIM_CLIENTTYPE_WINAIM   0x0002
-#define AIM_CLIENTTYPE_WINAIM41 0x0003
-#define AIM_CLIENTTYPE_AOL_TOC  0x0004
-guint16 aim_im_fingerprint(const guint8 *msghdr, int len);
-
-#define AIM_RATE_CODE_CHANGE     0x0001
-#define AIM_RATE_CODE_WARNING    0x0002
 #define AIM_RATE_CODE_LIMIT      0x0003
-#define AIM_RATE_CODE_CLEARLIMIT 0x0004
-void aim_ads_requestads(OscarData *od, FlapConnection *conn);
-
-
 
 /* family_icbm.c */
-#define AIM_OFT_SUBTYPE_SEND_FILE	0x0001
 #define AIM_OFT_SUBTYPE_SEND_DIR	0x0002
-#define AIM_OFT_SUBTYPE_GET_FILE	0x0011
-#define AIM_OFT_SUBTYPE_GET_LIST	0x0012
 
-#define AIM_TRANSFER_DENY_NOTSUPPORTED	0x0000
 #define AIM_TRANSFER_DENY_DECLINE	0x0001
-#define AIM_TRANSFER_DENY_NOTACCEPTING	0x0002
 
 #define AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED   0x00000001
 #define AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED   0x00000002
@@ -740,25 +550,19 @@ void aim_ads_requestads(OscarData *od, FlapConnection *conn);
 #define AIM_IMPARAM_FLAG_SMS_SUPPORTED          0x00000010
 #define AIM_IMPARAM_FLAG_OFFLINE_MSGS_ALLOWED   0x00000100
 
-/* This is what the server will give you if you don't set them yourself. */
-/* This is probably out of date. */
-#define AIM_IMPARAM_DEFAULTS { \
-	0, \
-	AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED, \
-	512, /* !! Note how small this is. */ \
-	(99.9)*10, (99.9)*10, \
-	1000 /* !! And how large this is. */ \
-}
-
-/* This is what most AIM versions use. */
-/* This is probably out of date. */
-#define AIM_IMPARAM_REASONABLE { \
-	0, \
-	AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED, \
-	8000, \
-	(99.9)*10, (99.9)*10, \
-	0 \
-}
+/**
+ * This flag tells the server that we always send HTML in messages
+ * sent from an ICQ account to an ICQ account.  (If this flag is
+ * not sent then plaintext is sent ICQ<-->ICQ (HTML is sent in all
+ * other cases)).
+ *
+ * If we send an HTML message to an old client that doesn't support
+ * HTML messages, then the oscar servers will merrily strip the HTML
+ * for us.
+ *
+ * All incoming IMs are treated as HTML.
+ */
+#define AIM_IMPARAM_FLAG_USE_HTML_FOR_ICQ       0x00000400
 
 struct aim_icbmparameters
 {
@@ -806,39 +610,12 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_HASICON				0x0020 /* already has icon */
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
 #define AIM_IMFLAGS_CUSTOMFEATURES		0x0080 /* features field present */
-#define AIM_IMFLAGS_EXTDATA				0x0100
-#define AIM_IMFLAGS_X					0x0200
-#define AIM_IMFLAGS_MULTIPART			0x0400 /* ->mpmsg section valid */
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
 #define AIM_CHARSET_ASCII   0x0000 /* ISO 646 */
 #define AIM_CHARSET_UNICODE 0x0002 /* ISO 10646 (UTF-16/UCS-2BE) */
 #define AIM_CHARSET_LATIN_1 0x0003 /* ISO 8859-1 */
-
-/*
- * Multipart message structures.
- */
-typedef struct aim_mpmsg_section_s
-{
-	guint16 charset;
-	guint16 charsubset;
-	gchar *data;
-	guint16 datalen;
-	struct aim_mpmsg_section_s *next;
-} aim_mpmsg_section_t;
-
-typedef struct aim_mpmsg_s
-{
-	unsigned int numparts;
-	aim_mpmsg_section_t *parts;
-} aim_mpmsg_t;
-
-int aim_mpmsg_init(OscarData *od, aim_mpmsg_t *mpm);
-int aim_mpmsg_addraw(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
-int aim_mpmsg_addascii(OscarData *od, aim_mpmsg_t *mpm, const char *ascii);
-int aim_mpmsg_addunicode(OscarData *od, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
-void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
 
 /*
  * Arguments to aim_send_im_ext().
@@ -848,84 +625,39 @@ void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
  */
 struct aim_sendimext_args
 {
-
 	/* These are _required_ */
 	const char *destbn;
 	guint32 flags; /* often 0 */
 
-	/* Only required if not using multipart messages */
 	const char *msg;
-	int msglen;
-
-	/* Required if ->msg is not provided */
-	aim_mpmsg_t *mpmsg;
+	gsize msglen;
 
 	/* Only used if AIM_IMFLAGS_HASICON is set */
 	guint32 iconlen;
 	time_t iconstamp;
 	guint32 iconsum;
 
-	/* Only used if AIM_IMFLAGS_CUSTOMFEATURES is set */
 	guint16 featureslen;
 	guint8 *features;
 
-	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set and mpmsg not used */
 	guint16 charset;
-	guint16 charsubset;
-};
-
-/*
- * Arguments to aim_send_rtfmsg().
- */
-struct aim_sendrtfmsg_args
-{
-	const char *destbn;
-	guint32 fgcolor;
-	guint32 bgcolor;
-	const char *rtfmsg; /* must be in RTF */
 };
 
 /*
  * This information is provided in the Incoming ICBM callback for
  * Channel 1 ICBM's.
- *
- * Note that although CUSTOMFEATURES and CUSTOMCHARSET say they
- * are optional, both are always set by the current libfaim code.
- * That may or may not change in the future.  It is mainly for
- * consistency with aim_sendimext_args.
- *
- * Multipart messages require some explanation. If you want to use them,
- * I suggest you read all the comments in family_icbm.c.
- *
  */
 struct aim_incomingim_ch1_args
 {
-
-	/* Always provided */
-	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */
 	time_t timestamp; /* Only set for offline messages */
 
-	/* Only provided if message has a human-readable section */
 	gchar *msg;
-	int msglen;
 
 	/* Only provided if AIM_IMFLAGS_HASICON is set */
 	time_t iconstamp;
 	guint32 iconlen;
 	guint16 iconsum;
-
-	/* Only provided if AIM_IMFLAGS_CUSTOMFEATURES is set */
-	guint8 *features;
-	guint8 featureslen;
-
-	/* Only provided if AIM_IMFLAGS_EXTDATA is set */
-	guint8 extdatalen;
-	guint8 *extdata;
-
-	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set */
-	guint16 charset;
-	guint16 charsubset;
 };
 
 /* Valid values for channel 2 args->status */
@@ -937,7 +669,7 @@ struct _IcbmArgsCh2
 {
 	guint16 status;
 	guchar cookie[8];
-	int type; /* One of the OSCAR_CAPABILITY_ constants */
+	guint64 type; /* One of the OSCAR_CAPABILITY_ constants */
 	const char *proxyip;
 	const char *clientip;
 	const char *verifiedip;
@@ -960,10 +692,8 @@ struct _IcbmArgsCh2
 			struct aim_chat_roominfo roominfo;
 		} chat;
 		struct {
-			guint16 msgtype;
-			guint32 fgcolor;
-			guint32 bgcolor;
-			const char *rtfmsg;
+			guint8 msgtype;
+			const char *msg;
 		} rtfmsg;
 		struct {
 			guint16 subtype;
@@ -974,11 +704,6 @@ struct _IcbmArgsCh2
 	} info;
 	void *destructor; /* used internally only */
 };
-
-/* Valid values for channel 4 args->type */
-#define AIM_ICQMSG_AUTHREQUEST	0x0006
-#define AIM_ICQMSG_AUTHDENIED	0x0007
-#define AIM_ICQMSG_AUTHGRANTED	0x0008
 
 struct aim_incomingim_ch4_args
 {
@@ -996,7 +721,6 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ int aim_im_sendch1(OscarData *, const char *destbn, guint16 flags, const char *msg);
 /* 0x0006 */ int aim_im_sendch2_chatinvite(OscarData *od, const char *bn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
 /* 0x0006 */ int aim_im_sendch2_icon(OscarData *od, const char *bn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
-/* 0x0006 */ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args);
 
 /* 0x0006 */ void aim_im_sendch2_cancel(PeerConnection *peer_conn);
 /* 0x0006 */ void aim_im_sendch2_connected(PeerConnection *peer_conn);
@@ -1005,37 +729,23 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ void aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
 /* 0x0006 */ void aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
 
-/* 0x0006 */ int aim_im_sendch2_geticqaway(OscarData *od, const char *bn, int type);
-/* 0x0006 */ int aim_im_sendch4(OscarData *od, const char *bn, guint16 type, const char *message);
-/* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destbn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code);
 /* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
-/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event);
+/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
+/* 0x000b */ int icq_relay_xstatus (OscarData *od, const char *sn, const guchar* cookie);
 void aim_icbm_makecookie(guchar* cookie);
-gchar *oscar_encoding_extract(const char *encoding);
-gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
-gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
-
+void aim_im_send_icq_confirmation(OscarData *od, const char *bn, const guchar *cookie);
 
 /* 0x0002 - family_locate.c */
 /*
  * AIM User Info, Standard Form.
  */
-#define AIM_FLAG_UNCONFIRMED     0x0001 /* "damned transients" */
 #define AIM_FLAG_ADMINISTRATOR   0x0002
 #define AIM_FLAG_AOL             0x0004
-#define AIM_FLAG_OSCAR_PAY       0x0008
-#define AIM_FLAG_FREE            0x0010
 #define AIM_FLAG_AWAY            0x0020
-#define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_WIRELESS        0x0080
-#define AIM_FLAG_UNKNOWN100      0x0100
-#define AIM_FLAG_IMFORWARDING    0x0200
+#define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_ACTIVEBUDDY     0x0400
-#define AIM_FLAG_UNKNOWN800      0x0800
-#define AIM_FLAG_ONEWAYWIRELESS  0x1000
-#define AIM_FLAG_NOKNOCKKNOCK    0x00040000
-#define AIM_FLAG_FORWARD_MOBILE  0x00080000
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
@@ -1064,7 +774,7 @@ typedef struct aim_userinfo_s
 	guint32 membersince; /* time_t */
 	guint32 onlinesince; /* time_t */
 	guint32 sessionlen;  /* in seconds */
-	guint32 capabilities;
+	guint64 capabilities;
 	struct {
 		guint32 status;
 		guint32 ipaddr;
@@ -1108,63 +818,33 @@ struct aim_invite_priv
 	guint16 instance;
 };
 
-#define AIM_COOKIETYPE_UNKNOWN  0x00
-#define AIM_COOKIETYPE_ICBM     0x01
-#define AIM_COOKIETYPE_ADS      0x02
-#define AIM_COOKIETYPE_BOS      0x03
-#define AIM_COOKIETYPE_IM       0x04
-#define AIM_COOKIETYPE_CHAT     0x05
-#define AIM_COOKIETYPE_CHATNAV  0x06
-#define AIM_COOKIETYPE_INVITE   0x07
-/* we'll move OFT up a bit to give breathing room.  not like it really
- * matters. */
-#define AIM_COOKIETYPE_OFTIM    0x10
-#define AIM_COOKIETYPE_OFTGET   0x11
-#define AIM_COOKIETYPE_OFTSEND  0x12
-#define AIM_COOKIETYPE_OFTVOICE 0x13
-#define AIM_COOKIETYPE_OFTIMAGE 0x14
-#define AIM_COOKIETYPE_OFTICON  0x15
+#define AIM_COOKIETYPE_CHAT     0x01
+#define AIM_COOKIETYPE_INVITE   0x02
 
 aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn);
 void aim_locate_dorequest(OscarData *od);
 
 /* 0x0002 */ int aim_locate_reqrights(OscarData *od);
-/* 0x0004 */ int aim_locate_setcaps(OscarData *od, guint32 caps);
+/* 0x0004 */ int aim_locate_setcaps(OscarData *od, guint64 caps);
 /* 0x0004 */ int aim_locate_setprofile(OscarData *od, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
-/* 0x0005 */ int aim_locate_getinfo(OscarData *od, const char *, guint16);
-/* 0x0009 */ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
-/* 0x000b */ int aim_locate_000b(OscarData *od, const char *bn);
-/* 0x000f */ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
 /* 0x0015 */ int aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags);
 
-guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
-guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
+guint64 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
+guint64 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);
 int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
 int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
-
-
+PurpleMood* icq_get_purple_moods(PurpleAccount *account);
+const char* icq_get_custom_icon_description(const char *mood);
+guint8* icq_get_custom_icon_data(const char *mood);
+int icq_im_xstatus_request(OscarData *od, const char *sn);
 
 /* 0x0003 - family_buddy.c */
 /* 0x0002 */ void aim_buddylist_reqrights(OscarData *, FlapConnection *);
-/* 0x0004 */ int aim_buddylist_set(OscarData *, FlapConnection *, const char *);
-/* 0x0004 */ int aim_buddylist_addbuddy(OscarData *, FlapConnection *, const char *);
-/* 0x0005 */ int aim_buddylist_removebuddy(OscarData *, FlapConnection *, const char *);
-
 
 
 /* 0x000a - family_userlookup.c */
 int aim_search_address(OscarData *, const char *);
-
-
-
-/* 0x000d - family_chatnav.c */
-/* 0x000e - family_chat.c */
-/* These apply to exchanges as well. */
-#define AIM_CHATROOM_FLAG_EVILABLE 0x0001
-#define AIM_CHATROOM_FLAG_NAV_ONLY 0x0002
-#define AIM_CHATROOM_FLAG_INSTANCING_ALLOWED 0x0004
-#define AIM_CHATROOM_FLAG_OCCUPANT_PEEK_ALLOWED 0x0008
 
 struct aim_chat_exchangeinfo
 {
@@ -1181,41 +861,10 @@ struct aim_chat_exchangeinfo
 #define AIM_CHATFLAGS_AWAY      0x0002
 int aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
 int aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 instance);
-int aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
-char *aim_chat_getname(FlapConnection *conn);
-FlapConnection *aim_chat_getconn(OscarData *, const char *name);
 
 void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
 
 int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name, guint16 exchange);
-int aim_chat_leaveroom(OscarData *od, const char *name);
-
-
-
-/* 0x000f - family_odir.c */
-struct aim_odir
-{
-	char *first;
-	char *last;
-	char *middle;
-	char *maiden;
-	char *email;
-	char *country;
-	char *state;
-	char *city;
-	char *bn;
-	char *interest;
-	char *nick;
-	char *zip;
-	char *region;
-	char *address;
-	struct aim_odir *next;
-};
-
-int aim_odir_email(OscarData *, const char *, const char *);
-int aim_odir_name(OscarData *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-int aim_odir_interest(OscarData *, const char *, const char *);
-
 
 
 /* 0x0010 - family_bart.c */
@@ -1231,14 +880,8 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_TYPE_DENY		0x0003
 #define AIM_SSI_TYPE_PDINFO		0x0004
 #define AIM_SSI_TYPE_PRESENCEPREFS	0x0005
+#define AIM_SSI_TYPE_ICQDENY		0x000e
 #define AIM_SSI_TYPE_ICONINFO		0x0014
-
-#define AIM_SSI_ACK_SUCCESS		0x0000
-#define AIM_SSI_ACK_ITEMNOTFOUND	0x0002
-#define AIM_SSI_ACK_IDNUMINUSE		0x000a
-#define AIM_SSI_ACK_ATMAX		0x000c
-#define AIM_SSI_ACK_INVALIDNAME		0x000d
-#define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
 /* These flags are set in the 0x00c9 TLV of SSI type 0x0005 */
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
@@ -1266,11 +909,9 @@ struct aim_ssi_tmp
 /* These build the actual SNACs and queue them to be sent */
 /* 0x0002 */ int aim_ssi_reqrights(OscarData *od);
 /* 0x0004 */ int aim_ssi_reqdata(OscarData *od);
-/* 0x0005 */ int aim_ssi_reqifchanged(OscarData *od, time_t localstamp, guint16 localrev);
 /* 0x0007 */ int aim_ssi_enable(OscarData *od);
 /* 0x0011 */ int aim_ssi_modbegin(OscarData *od);
 /* 0x0012 */ int aim_ssi_modend(OscarData *od);
-/* 0x0014 */ int aim_ssi_sendauth(OscarData *od, char *bn, char *msg);
 /* 0x0018 */ int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg);
 /* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg);
 
@@ -1287,49 +928,22 @@ gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const
 
 /* Client functions for changing SSI data */
 int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *tlvlist, const char *alias, const char *comment, const char *smsnum, gboolean needauth);
-int aim_ssi_addpermit(OscarData *od, const char *name);
-int aim_ssi_adddeny(OscarData *od, const char *name);
 int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);
 int aim_ssi_delgroup(OscarData *od, const char *group);
-int aim_ssi_delpermit(OscarData *od, const char *name);
-int aim_ssi_deldeny(OscarData *od, const char *name);
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *bn);
 int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn);
 int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
-int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask);
+int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
 int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen);
 int aim_ssi_delicon(OscarData *od);
+int aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_type);
+int aim_ssi_del_from_private_list(OscarData* od, const char* name, guint16 list_type);
 
-
-
-/* 0x0015 - family_icq.c */
-#define AIM_ICQ_INFO_SIMPLE	0x001
-#define AIM_ICQ_INFO_SUMMARY	0x002
-#define AIM_ICQ_INFO_EMAIL	0x004
-#define AIM_ICQ_INFO_PERSONAL	0x008
-#define AIM_ICQ_INFO_ADDITIONAL	0x010
-#define AIM_ICQ_INFO_WORK	0x020
-#define AIM_ICQ_INFO_INTERESTS	0x040
-#define AIM_ICQ_INFO_ORGS	0x080
-#define AIM_ICQ_INFO_UNKNOWN	0x100
-#define AIM_ICQ_INFO_HAVEALL	0x1ff
-
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-struct aim_icq_offlinemsg
-{
-	guint32 sender;
-	guint16 year;
-	guint8 month, day, hour, minute;
-	guint8 type;
-	guint8 flags;
-	char *msg;
-	int msglen;
-};
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
+guint16 aim_ssi_getdenyentrytype(OscarData* od);
 
 struct aim_icq_info
 {
@@ -1386,22 +1000,17 @@ struct aim_icq_info
 	guint16 numaddresses;
 	char **email2;
 
-	/* we keep track of these in a linked list because we're 1337 */
-	struct aim_icq_info *next;
-
 	/* status note info */
 	guint8 icbm_cookie[8];
 	char *status_note_title;
+
+	gboolean for_auth_request;
+	char *auth_request_reason;
 };
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-int aim_icq_reqofflinemsgs(OscarData *od);
-int aim_icq_ackofflinemsgs(OscarData *od);
-#endif
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
-int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
-int aim_icq_getalias(OscarData *od, const char *uin);
+int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, char *auth_request_reason);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
 
@@ -1472,7 +1081,7 @@ int aim_tlvlist_add_8(GSList **list, const guint16 type, const guint8 value);
 int aim_tlvlist_add_16(GSList **list, const guint16 type, const guint16 value);
 int aim_tlvlist_add_32(GSList **list, const guint16 type, const guint32 value);
 int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value);
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps);
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, const char *mood);
 int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo);
 int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
 int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tl);
@@ -1535,22 +1144,19 @@ void aim_tlvlist_remove(GSList **list, const guint16 type);
 		(((*((buf)+2)) << 16) & 0x00ff0000) + \
 		(((*((buf)+3)) << 24) & 0xff000000))
 
+const char *oscar_get_msgerr_reason(size_t reason);
 int oscar_get_ui_info_int(const char *str, int default_value);
 const char *oscar_get_ui_info_string(const char *str, const char *default_value);
 gchar *oscar_get_clientstring(void);
 
 guint16 aimutil_iconsum(const guint8 *buf, int buflen);
-int aimutil_tokslen(char *toSearch, int theindex, char dl);
-int aimutil_itemcnt(char *toSearch, char dl);
-char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
 gboolean oscar_util_valid_name(const char *bn);
 gboolean oscar_util_valid_name_icq(const char *bn);
 gboolean oscar_util_valid_name_sms(const char *bn);
 int oscar_util_name_compare(const char *bn1, const char *bn2);
-
-
-
+gchar *oscar_util_format_string(const char *str, const char *name);
+gchar *oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message);
 
 typedef struct {
 	guint16 family;
@@ -1592,11 +1198,7 @@ int chatnav_modfirst(OscarData *od, aim_module_t *mod);
 int chat_modfirst(OscarData *od, aim_module_t *mod);
 int locate_modfirst(OscarData *od, aim_module_t *mod);
 int service_modfirst(OscarData *od, aim_module_t *mod);
-int invite_modfirst(OscarData *od, aim_module_t *mod);
-int translate_modfirst(OscarData *od, aim_module_t *mod);
 int popups_modfirst(OscarData *od, aim_module_t *mod);
-int adverts_modfirst(OscarData *od, aim_module_t *mod);
-int odir_modfirst(OscarData *od, aim_module_t *mod);
 int bart_modfirst(OscarData *od, aim_module_t *mod);
 int ssi_modfirst(OscarData *od, aim_module_t *mod);
 int icq_modfirst(OscarData *od, aim_module_t *mod);
@@ -1605,15 +1207,14 @@ int email_modfirst(OscarData *od, aim_module_t *mod);
 void aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype);
 void aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype);
 void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *);
-void aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
 /* bstream.c */
-int byte_stream_new(ByteStream *bs, guint32 len);
-int byte_stream_init(ByteStream *bs, guint8 *data, int len);
+int byte_stream_new(ByteStream *bs, size_t len);
+int byte_stream_init(ByteStream *bs, guint8 *data, size_t len);
 void byte_stream_destroy(ByteStream *bs);
-int byte_stream_empty(ByteStream *bs);
+int byte_stream_bytes_left(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
-int byte_stream_setpos(ByteStream *bs, unsigned int off);
+int byte_stream_setpos(ByteStream *bs, size_t off);
 void byte_stream_rewind(ByteStream *bs);
 int byte_stream_advance(ByteStream *bs, int n);
 guint8 byte_stream_get8(ByteStream *bs);
@@ -1622,20 +1223,20 @@ guint32 byte_stream_get32(ByteStream *bs);
 guint8 byte_stream_getle8(ByteStream *bs);
 guint16 byte_stream_getle16(ByteStream *bs);
 guint32 byte_stream_getle32(ByteStream *bs);
-int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len);
-guint8 *byte_stream_getraw(ByteStream *bs, int len);
-char *byte_stream_getstr(ByteStream *bs, int len);
+int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, size_t len);
+guint8 *byte_stream_getraw(ByteStream *bs, size_t len);
+char *byte_stream_getstr(ByteStream *bs, size_t len);
 int byte_stream_put8(ByteStream *bs, guint8 v);
 int byte_stream_put16(ByteStream *bs, guint16 v);
 int byte_stream_put32(ByteStream *bs, guint32 v);
 int byte_stream_putle8(ByteStream *bs, guint8 v);
 int byte_stream_putle16(ByteStream *bs, guint16 v);
 int byte_stream_putle32(ByteStream *bs, guint32 v);
-int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len);
+int byte_stream_putraw(ByteStream *bs, const guint8 *v, size_t len);
 int byte_stream_putstr(ByteStream *bs, const char *str);
-int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
+int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, size_t len);
 int byte_stream_putuid(ByteStream *bs, OscarData *od);
-int byte_stream_putcaps(ByteStream *bs, guint32 caps);
+int byte_stream_putcaps(ByteStream *bs, guint64 caps);
 
 /**
  * Inserts a BART asset block into the given byte stream.  The flags
@@ -1668,7 +1269,7 @@ aim_snacid_t aim_newsnac(OscarData *, aim_snac_t *newsnac);
 aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
 aim_snac_t *aim_remsnac(OscarData *, aim_snacid_t id);
 void aim_cleansnacs(OscarData *, int maxage);
-int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
+int aim_putsnac(ByteStream *, guint16 family, guint16 type, aim_snacid_t id);
 
 struct chatsnacinfo {
 	guint16 exchange;
@@ -1685,9 +1286,7 @@ struct rateclass {
 	guint32 disconnect;
 	guint32 current;
 	guint32 max;
-	guint32 delta;
 	guint8 dropping_snacs;
-	GHashTable *members; /* Key is family and subtype, value is TRUE. */
 
 	struct timeval last; /**< The time when we last sent a SNAC of this rate class. */
 };
@@ -1697,12 +1296,52 @@ IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type);
 IcbmCookie *aim_mkcookie(guint8 *, int, void *);
 IcbmCookie *aim_checkcookie(OscarData *, const unsigned char *, const int);
 int aim_freecookie(OscarData *od, IcbmCookie *cookie);
-int aim_msgcookie_gettype(int type);
 int aim_cookie_free(OscarData *od, IcbmCookie *cookie);
 
 int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
 
 void flap_connection_destroy_chat(OscarData *od, FlapConnection *conn);
+
+/* userinfo.c - displaying user information */
+
+void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo, gboolean use_html_status);
+void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo);
+void oscar_user_info_display_error(OscarData *od, guint16 error_reason, char *buddy);
+void oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info);
+void oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo);
+
+/* authorization.c - OSCAR authorization requests */
+void oscar_auth_sendrequest(PurpleConnection *gc, const char *name);
+void oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored);
+void oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *reason);
+
+void oscar_set_aim_permdeny(PurpleConnection *gc);
+
+struct buddyinfo
+{
+	gboolean typingnot;
+	guint32 ipaddr;
+
+	unsigned long ico_me_len;
+	unsigned long ico_me_csum;
+	time_t ico_me_time;
+	gboolean ico_informed;
+
+	unsigned long ico_len;
+	unsigned long ico_csum;
+	time_t ico_time;
+	gboolean ico_need;
+	gboolean ico_sent;
+};
+
+struct name_data
+{
+	PurpleConnection *gc;
+	gchar *name;
+	gchar *nick;
+};
+
+void oscar_free_name_data(struct name_data *data);
 
 #ifdef __cplusplus
 }

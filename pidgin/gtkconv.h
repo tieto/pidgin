@@ -177,6 +177,12 @@ struct _PidginConversation
 		int timer;
 		GList *current;
 	} attach;
+
+	/* Quick Find (since 2.7.0) */
+	struct {
+		GtkWidget *entry;
+		GtkWidget *container;
+	} quickfind;
 };
 
 /*@}*/

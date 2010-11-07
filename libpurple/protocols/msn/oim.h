@@ -22,8 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
-#ifndef _MSN_OIM_H_
-#define _MSN_OIM_H_
+#ifndef MSN_OIM_H
+#define MSN_OIM_H
+
+typedef struct _MsnOim MsnOim;
 
 /* OIM Retrieval Info */
 #define MSN_OIM_RETRIEVE_HOST	"rsi.hotmail.com"
@@ -131,8 +133,6 @@
 	"</soap:Body>"\
 "</soap:Envelope>"
 
-typedef struct _MsnOim MsnOim;
-
 struct _MsnOim
 {
 	MsnSession *session;
@@ -160,4 +160,4 @@ void msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 
 void msn_oim_send_msg(MsnOim *oim);
 
-#endif/* _MSN_OIM_H_*/
+#endif/* MSN_OIM_H*/

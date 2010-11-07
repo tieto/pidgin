@@ -670,15 +670,11 @@ create_details()
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	website_button = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(website_button), FALSE);
-#endif
 
 	plugin_website = GTK_LABEL(gtk_label_new(NULL));
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(G_OBJECT(plugin_website),
 		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
-#endif
 	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
 	gtk_container_add(GTK_CONTAINER(website_button),
 		GTK_WIDGET(plugin_website));
@@ -778,10 +774,8 @@ void pidgin_plugin_dialog_show()
 							"markup", 1,
 							"foreground-set", 3,
 							NULL);
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (col, TRUE);
 	g_object_set(rendt, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
@@ -806,5 +800,8 @@ void pidgin_plugin_dialog_show()
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);
 	g_signal_connect(G_OBJECT(plugin_dialog), "response", G_CALLBACK(plugin_dialog_response_cb), sel);
 	gtk_window_set_default_size(GTK_WINDOW(plugin_dialog), 430, 530);
+
+	pidgin_auto_parent_window(plugin_dialog);
+
 	gtk_widget_show_all(plugin_dialog);
 }

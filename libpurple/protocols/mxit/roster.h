@@ -66,6 +66,11 @@
 #define		MXIT_MOOD_HOT				0x08
 #define		MXIT_MOOD_SICK				0x09
 #define		MXIT_MOOD_SLEEPY			0x0A
+#define		MXIT_MOOD_BORED				0x0B
+#define		MXIT_MOOD_COLD				0x0C
+#define		MXIT_MOOD_CONFUSED			0x0D
+#define		MXIT_MOOD_HUNGRY			0x0E
+#define		MXIT_MOOD_STRESSED			0x0F
 
 
 /* MXit contact flags */
@@ -105,7 +110,7 @@ struct contact {
 	short		presence;							/* presence state */
 	short		subtype;							/* subscription type */
 
-	char*		msg;								/* invite message */
+	char*		msg;								/* invite/rejection message */
 
 	char		customMood[16];						/* custom mood */
 	char*		statusMsg;							/* status message */
@@ -119,11 +124,13 @@ const char* mxit_convert_presence_to_name( short no );
 const char* mxit_convert_subtype_to_name( short subtype );
 
 /* Moods */
+int mxit_convert_mood( const char* id );
 const char* mxit_convert_mood_to_name( short id );
 
 /* MXit Protocol callbacks */
 void mxit_update_contact( struct MXitSession* session, struct contact* contact );
-void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg, const char* avatarId );
+void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg );
+void mxit_update_buddy_avatar( struct MXitSession* session, const char* username, const char* avatarId );
 void mxit_new_subscription( struct MXitSession* session, struct contact* contact );
 void mxit_update_blist( struct MXitSession* session );
 gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* username );
@@ -134,6 +141,7 @@ void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* g
 void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias );
 void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_group, const char* new_group );
 void mxit_rename_group( PurpleConnection* gc, const char* old_name, PurpleGroup* group, GList* moved_buddies );
+PurpleMood* mxit_get_moods(PurpleAccount *account);
 
 
 #endif		/* _MXIT_ROSTER_H_ */

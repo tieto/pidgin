@@ -627,12 +627,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						PIDGIN_MAIL_DATA, &data, -1);
 				if (data && data->account == account) {
 					if (clear) {
-#if GTK_CHECK_VERSION(2,2,0)
 						advanced = gtk_tree_store_remove(treemodel, &iter);
-#else
-						gtk_tree_store_remove(treemodel, &iter);
-						advanced = (iter.stamp == 0) ? FALSE : TRUE;
-#endif
 						mail_dialog->total_count -= data->count;
 
 						if (data->purple_has_handle)
@@ -1372,11 +1367,32 @@ pidgin_notify_uri(const char *uri)
 			command = g_strdup_printf("opera %s", escaped);
 
 	}
+	else if (!strcmp(web_browser, "google-chrome"))
+	{
+		/* Google Chrome doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Google Chrome. */
+		command = g_strdup_printf("google-chrome %s", escaped);
+	}
+	else if (!strcmp(web_browser, "chrome"))
+	{
+		/* Chromium doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Chromium. */
+		command = g_strdup_printf("chrome %s", escaped);
+	}
+	else if (!strcmp(web_browser, "chromium-browser"))
+	{
+		/* Chromium doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Chromium. */
+		command = g_strdup_printf("chromium-browser %s", escaped);
+	}
 	else if (!strcmp(web_browser, "custom"))
 	{
 		const char *web_command;
 
-		web_command = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command");
+		web_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{

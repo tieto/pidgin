@@ -27,7 +27,8 @@
 
 #include "buddy.h"
 #include "chat.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/google_roster.h"
 #include "presence.h"
 #include "roster.h"
 #include "iq.h"
@@ -76,11 +77,8 @@ static void roster_request_cb(JabberStream *js, const char *from,
 
 void jabber_roster_request(JabberStream *js)
 {
-	PurpleAccount *account;
 	JabberIq *iq;
 	xmlnode *query;
-
-	account = purple_connection_get_account(js->gc);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
 	query = xmlnode_get_child(iq->node, "query");
@@ -259,7 +257,16 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 					seen_empty = TRUE;
 				}
 
-				groups = g_slist_prepend(groups, group_name);
+				/*
+				 * See the note in add_purple_buddy_to_groups; the core handles
+				 * names case-insensitively and this is required to not
+				 * end up with duplicates if a buddy is in, e.g.,
+				 * 'XMPP' and 'xmpp'
+				 */
+				if (g_slist_find_custom(groups, group_name, (GCompareFunc)purple_utf8_strcasecmp))
+					g_free(group_name);
+				else
+					groups = g_slist_prepend(groups, group_name);
 			}
 
 			add_purple_buddy_to_groups(js, jid, name, groups);
@@ -275,6 +282,12 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		 purple_account_set_string(account, "roster_ver", ver);
 	}
 #endif
+
+	if (type == JABBER_IQ_SET) {
+		JabberIq *ack = jabber_iq_new(js, JABBER_IQ_RESULT);
+		jabber_iq_set_id(ack, id);
+		jabber_iq_send(ack);
+	}
 
 	js->currently_parsing_roster_push = FALSE;
 }

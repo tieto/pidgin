@@ -24,12 +24,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 
-#include "msn.h"
+#include "internal.h"
+#include "debug.h"
+
 #include "contact.h"
 #include "xmlnode.h"
 #include "group.h"
+#include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
+#include "user.h"
 
 const char *MsnSoapPartnerScenarioText[] =
 {
@@ -406,8 +410,8 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	msn_user_set_network(user, nid);
 	msn_user_set_invite_message(user, invite);
 
-	if (member_id) {
-		user->membership_id[list] = atoi(member_id);
+	if (list == MSN_LIST_PL && member_id) {
+		user->member_id_on_pending_list = atoi(member_id);
 	}
 
 	msn_got_lst_user(session, user, 1 << list, NULL);
@@ -527,16 +531,20 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 
 	if (resp != NULL) {
+#ifdef MSN_PARTIAL_LISTS
 		const char *abLastChange;
 		const char *dynamicItemLastChange;
+#endif
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
 		msn_parse_contact_list(session, resp->xml);
+#ifdef MSN_PARTIAL_LISTS
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
-			"dynamicItemLastChange", NULL);
+			"DynamicItemLastChanged", NULL);
+#endif
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
@@ -684,19 +692,19 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *annotation;
 		MsnUser *user;
 
+		g_free(passport);
+		g_free(Name);
+		g_free(uid);
+		g_free(type);
+		g_free(mobile_number);
+		g_free(alias);
+		passport = Name = uid = type = mobile_number = alias = NULL;
+		mobile = FALSE;
+
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
 				|| !(contactType = xmlnode_get_child(contactInfo, "contactType")))
 			continue;
-
-		g_free(passport);
-		g_free(Name);
-		g_free(alias);
-		g_free(uid);
-		g_free(type);
-		g_free(mobile_number);
-		passport = Name = uid = type = mobile_number = alias = NULL;
-		mobile = FALSE;
 
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
@@ -836,6 +844,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 	g_free(uid);
 	g_free(type);
 	g_free(mobile_number);
+	g_free(alias);
 }
 
 static gboolean
@@ -885,7 +894,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		msn_parse_addressbook_groups(session, groups);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add an "Other Contacts" group for buddies who aren't in a group */
 	msn_group_new(session->userlist, MSN_INDIVIDUALS_GROUP_ID,
 				  MSN_INDIVIDUALS_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n",
@@ -895,7 +904,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		purple_blist_add_group(g, NULL);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add a "Non-IM Contacts" group */
 	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
@@ -1167,7 +1176,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
+		if (msn_user_is_in_list(user, MSN_LIST_PL)) {
 			msn_del_contact_from_list(state->session, NULL, state->who, MSN_LIST_PL);
 			return;
 		}
@@ -1564,14 +1573,14 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		if (user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 		else
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "PassportMember", "Passport",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;

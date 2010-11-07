@@ -957,6 +957,45 @@ end_search_action(GntBindable *bindable, GList *list)
 	return TRUE;
 }
 
+static gboolean
+move_first_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *row = tree->root;
+	GntTreeRow *old = tree->current;
+	if (row && !row_matches_search(row))
+		row = get_next(row);
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+move_last_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *old = tree->current;
+	GntTreeRow *row = tree->bottom;
+	GntTreeRow *next;
+
+	while ((next = get_next(row)))
+		row = next;
+
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
 static void
 gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
 		GParamSpec *spec)
@@ -1076,6 +1115,10 @@ gnt_tree_class_init(GntTreeClass *klass)
 				"/", NULL);
 	gnt_bindable_class_register_action(bindable, "end-search", end_search_action,
 				"\033", NULL);
+	gnt_bindable_class_register_action(bindable, "move-first", move_first_action,
+			GNT_KEY_HOME, NULL);
+	gnt_bindable_class_register_action(bindable, "move-last", move_last_action,
+			GNT_KEY_END, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 	GNTDEBUG;
@@ -1302,6 +1345,10 @@ void gnt_tree_sort_row(GntTree *tree, gpointer key)
 GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro)
 {
 	GntTreeRow *pr = NULL;
+
+	if (g_hash_table_lookup(tree->hash, key)) {
+		gnt_tree_remove(tree, key);
+	}
 
 	row->tree = tree;
 	row->key = key;
@@ -1838,7 +1885,7 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
 {
 	g_return_if_fail(col < tree->ncol);
-	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_BINARY_DATA, bin);
 }
 
 void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right)
@@ -1877,5 +1924,35 @@ gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
 	return (row && row->parent) ? row->parent->key : NULL;
+}
+
+gpointer gnt_tree_row_get_key(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->key;
+}
+
+GntTreeRow * gnt_tree_row_get_next(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->next;
+}
+
+GntTreeRow * gnt_tree_row_get_prev(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->prev;
+}
+
+GntTreeRow * gnt_tree_row_get_child(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->child;
+}
+
+GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->parent;
 }
 

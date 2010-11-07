@@ -851,7 +851,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	if (!convo) {
-		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Recieved a KICK for unknown channel %s\n", args[0]);
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Received a KICK for unknown channel %s\n", args[0]);
 		g_free(nick);
 		return;
 	}
@@ -1069,7 +1069,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 
 	nick = irc_mask_nick(from);
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
-		char *escaped = g_markup_escape_text(args[1], -1);
+		char *escaped = args[1] ? g_markup_escape_text(args[1], -1) : NULL;
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
 		                      (args[1] && *args[1]) ? ": " : "",
 		                      (escaped && *escaped) ? escaped : "");

@@ -97,7 +97,6 @@ static SnDisplay *sn_display = NULL;
  */
 static const int catch_sig_list[] = {
 	SIGSEGV,
-	SIGHUP,
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
@@ -167,7 +166,7 @@ clean_pid(void)
 
 	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
 		char errmsg[BUFSIZ];
-		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
+		snprintf(errmsg, sizeof(errmsg), "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
 }
@@ -223,9 +222,6 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	switch (sig) {
-	case SIGHUP:
-		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-		break;
 #if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
 /* By default, gstreamer forks when you initialize it, and waitpids for the
  * child.  But if libpurple reaps the child rather than leaving it to
@@ -539,21 +535,23 @@ int main(int argc, char *argv[])
 	char errmsg[BUFSIZ];
 	GIOChannel *signal_channel;
 	GIOStatus signal_status;
+	guint signal_channel_watcher;
 #ifndef DEBUG
 	char *segfault_message_tmp;
 #endif
-	GError *error = NULL;
+	GError *error;
 #endif
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
 	GList *active_accounts;
+	struct stat st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
 		{"debug",        no_argument,       NULL, 'd'},
-		{"force-online", no_argument,       NULL, 'd'},
+		{"force-online", no_argument,       NULL, 'f'},
 		{"help",         no_argument,       NULL, 'h'},
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},
@@ -608,6 +606,7 @@ int main(int argc, char *argv[])
 		/* we have to convert the message (UTF-8 to console
 		   charset) early because after a segmentation fault
 		   it's not a good practice to allocate memory */
+		error = NULL;
 		segfault_message = g_locale_from_utf8(segfault_message_tmp,
 						      -1, NULL, NULL, &error);
 		if (segfault_message != NULL) {
@@ -652,7 +651,8 @@ int main(int argc, char *argv[])
 				"binary: %s", error->message);
 		exit(1);
 	}
-	g_io_add_watch(signal_channel, G_IO_IN, mainloop_sighandler, NULL);
+	signal_channel_watcher = g_io_add_watch(signal_channel, G_IO_IN, mainloop_sighandler, NULL);
+	g_io_channel_unref(signal_channel);
 
 	/* Let's not violate any PLA's!!!! */
 	/* jseymour: whatever the fsck that means */
@@ -660,31 +660,31 @@ int main(int argc, char *argv[])
 	 * useful signals like SIGCHLD, so we unblock all the ones we  *
 	 * declare a handler for. thanks JSeymour and Vann.            */
 	if (sigemptyset(&sigset)) {
-		snprintf(errmsg, BUFSIZ, "Warning: couldn't initialise empty signal set");
+		snprintf(errmsg, sizeof(errmsg), "Warning: couldn't initialise empty signal set");
 		perror(errmsg);
 	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d for catching",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d for catching",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 		if(sigaddset(&sigset, catch_sig_list[sig_indx])) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't include signal %d for unblocking",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't include signal %d for unblocking",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 	}
 	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d to ignore",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d to ignore",
 				ignore_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 	}
 
 	if (sigprocmask(SIG_UNBLOCK, &sigset, NULL)) {
-		snprintf(errmsg, BUFSIZ, "Warning: couldn't unblock signals");
+		snprintf(errmsg, sizeof(errmsg), "Warning: couldn't unblock signals");
 		perror(errmsg);
 	}
 #endif
@@ -805,9 +805,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(PIDGIN_NAME);
-#endif /* glib-2.0 >= 2.2.0 */
 
 #ifdef _WIN32
 	winpidgin_init(hint);
@@ -852,6 +850,8 @@ int main(int argc, char *argv[])
 	 * in user's home directory.
 	 */
 	search_path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(search_path, &st))
+		g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
 	purple_plugins_add_search_path(LIBDIR);
@@ -979,6 +979,9 @@ int main(int argc, char *argv[])
 
 #ifdef HAVE_SIGNAL_H
 	g_free(segfault_message);
+	g_source_remove(signal_channel_watcher);
+	close(signal_sockets[0]);
+	close(signal_sockets[1]);
 #endif
 
 #ifdef _WIN32

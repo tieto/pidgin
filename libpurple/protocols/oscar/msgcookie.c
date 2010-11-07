@@ -177,18 +177,3 @@ int aim_cookie_free(OscarData *od, IcbmCookie *cookie)
 
 	return 0;
 }
-
-/* XXX I hate switch */
-int aim_msgcookie_gettype(int type)
-{
-	/* XXX: hokey-assed. needs fixed. */
-	switch(type) {
-	case OSCAR_CAPABILITY_BUDDYICON: return AIM_COOKIETYPE_OFTICON;
-	case OSCAR_CAPABILITY_TALK: return AIM_COOKIETYPE_OFTVOICE;
-	case OSCAR_CAPABILITY_DIRECTIM: return AIM_COOKIETYPE_OFTIMAGE;
-	case OSCAR_CAPABILITY_CHAT: return AIM_COOKIETYPE_CHAT;
-	case OSCAR_CAPABILITY_GETFILE: return AIM_COOKIETYPE_OFTGET;
-	case OSCAR_CAPABILITY_SENDFILE: return AIM_COOKIETYPE_OFTSEND;
-	default: return AIM_COOKIETYPE_UNKNOWN;
-	}
-}

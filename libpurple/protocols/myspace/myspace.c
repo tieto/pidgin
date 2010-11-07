@@ -251,7 +251,6 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	MsimMessage *msg;
 	const gchar *from_username;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
 
@@ -344,8 +343,6 @@ msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb,
 {
 	guint rid;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
-
 	rid = session->next_rid++;
 
 	g_hash_table_insert(session->user_lookup_cb, GUINT_TO_POINTER(rid), cb);
@@ -394,8 +391,6 @@ msim_status_text(PurpleBuddy *buddy)
 	gc = purple_account_get_connection(account);
 	session = (MsimSession *)gc->proto_data;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
-
 	display_name = headline = NULL;
 
 	/* Retrieve display name and/or headline, depending on user preference. */
@@ -442,10 +437,8 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 		MsimSession *session;
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		PurpleConnection *gc = purple_account_get_connection(account);
- 
-		session = (MsimSession *)gc->proto_data;
 
-		g_return_if_fail(MSIM_SESSION_VALID(session));
+		session = (MsimSession *)gc->proto_data;
 
 		/* TODO: if (full), do something different? */
 
@@ -510,8 +503,8 @@ msim_status_types(PurpleAccount *acct)
 			TRUE,                   /* should be user_settable some day */
 			TRUE,                   /* independent */
 
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 
 	types = g_list_append(types, status);
@@ -694,7 +687,6 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	gsize nc_len;
 	gboolean ret;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	g_return_val_if_fail(msim_msg_get_binary(msg, "nc", &nc, &nc_len), FALSE);
@@ -783,7 +775,6 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 static gboolean
 msim_is_username_set(MsimSession *session, MsimMessage *msg)
 {
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 	g_return_val_if_fail(session->gc != NULL, FALSE);
 
@@ -841,8 +832,6 @@ msim_check_alive(gpointer data)
 	time_t delta;
 
 	session = (MsimSession *)data;
-
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 
 	delta = time(NULL) - session->last_comm;
 
@@ -969,11 +958,6 @@ msim_check_inbox(gpointer data)
 	MsimSession *session;
 
 	session = (MsimSession *)data;
-
-	if (!MSIM_SESSION_VALID(session)) {
-		purple_debug_info("msim", "msim_check_inbox: session invalid, stopping the mail check.\n");
-		return FALSE;
-	}
 
 	purple_debug_info("msim", "msim_check_inbox: checking mail\n");
 	g_return_val_if_fail(msim_send(session,
@@ -1215,8 +1199,6 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 {
 	MsimMessage *body;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
-
 	/* Set display name to username (otherwise will show email address) */
 	purple_connection_set_display_name(session->gc, session->username);
 
@@ -1382,7 +1364,6 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	gchar *username;
 	gchar *unrecognized_msg;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	/* Helpfully looked up by msim_incoming_resolve() for us. */
@@ -1577,7 +1558,6 @@ msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 	gchar *msg_text, *username;
 	gboolean rc;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	msg_text = msim_msg_get_string(msg, "msg");
@@ -1797,7 +1777,6 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 	gpointer data;
 	guint rid, cmd, dsn, lid;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	msim_store_user_info(session, msg, NULL);
@@ -1848,7 +1827,6 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	gchar *errmsg, *full_errmsg;
 	guint err;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	err = msim_msg_get_integer(msg, "err");
@@ -1962,7 +1940,6 @@ msim_incoming_resolved(MsimSession *session, const MsimMessage *userinfo,
 	gchar *username;
 	MsimMessage *msg, *body;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(userinfo != NULL);
 
 	body = msim_msg_get_dictionary(userinfo, "body");
@@ -1998,7 +1975,6 @@ msim_incoming_resolved(MsimSession *session, const MsimMessage *userinfo,
 static gboolean
 msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 {
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	if (msim_msg_get(msg, "bm") && msim_msg_get(msg, "f")) {
@@ -2071,7 +2047,6 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	}
 
 	g_return_if_fail(cond == PURPLE_INPUT_READ);
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Mark down that we got data, so we don't timeout. */
 	session->last_comm = time(NULL);
@@ -2264,6 +2239,13 @@ msim_login(PurpleAccount *acct)
 	}
 }
 
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(purple_buddy_get_protocol_data(buddy));
+	purple_buddy_set_protocol_data(buddy, NULL);
+}
+
 /**
  * Close the connection.
  *
@@ -2272,10 +2254,22 @@ msim_login(PurpleAccount *acct)
 static void
 msim_close(PurpleConnection *gc)
 {
+	GSList *buddies;
 	MsimSession *session;
 
 	if (gc == NULL) {
 		return;
+	}
+
+	/*
+	 * Free our protocol-specific buddy data.  It almost seems like libpurple
+	 * should call our buddy_free prpl callback so that we don't need to do
+	 * this... but it doesn't, so we do.
+	 */
+	buddies = purple_find_buddies(purple_connection_get_account(gc), NULL);
+	while (buddies != NULL) {
+		msim_buddy_free(buddies->data);
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
 	session = (MsimSession *)gc->proto_data;
@@ -2283,10 +2277,6 @@ msim_close(PurpleConnection *gc)
 		return;
 
 	gc->proto_data = NULL;
-
-	if (!MSIM_SESSION_VALID(session)) {
-		return;
-	}
 
 	if (session->gc->inpa) {
 		purple_input_remove(session->gc->inpa);
@@ -2329,8 +2319,6 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
 	session = (MsimSession *)gc->proto_data;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
-
 	message_msim = html_to_msim_markup(session, message);
 
 	if (msim_send_bm(session, who, message_msim, MSIM_BM_ACTION_OR_IM_DELAYABLE)) {
@@ -2371,8 +2359,6 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 
 	session = (MsimSession *)gc->proto_data;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-
 	switch (state) {
 		case PURPLE_TYPING:
 			typing_str = "%typing%";
@@ -2401,8 +2387,6 @@ msim_get_info_cb(MsimSession *session, const MsimMessage *user_info_msg,
 	gchar *username;
 	PurpleNotifyUserInfo *user_info;
 	MsimUser *user;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Get user{name,id} from msim_get_info, passed as an MsimMessage for
 	   orthogonality. */
@@ -2439,16 +2423,8 @@ msim_get_info_cb(MsimSession *session, const MsimMessage *user_info_msg,
 
 	purple_notify_user_info_destroy(user_info);
 
-	if (user->temporary_user) {
-		g_free(user->client_info);
-		g_free(user->gender);
-		g_free(user->location);
-		g_free(user->headline);
-		g_free(user->display_name);
-		g_free(user->username);
-		g_free(user->image_url);
-		g_free(user);
-	}
+	if (user->temporary_user)
+		msim_user_free(user);
 	g_free(username);
 }
 
@@ -2468,8 +2444,6 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 	g_return_if_fail(username != NULL);
 
 	session = (MsimSession *)gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Obtain uid of buddy. */
 	user = msim_find_user(session, username);
@@ -2504,7 +2478,6 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 static void
 msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 {
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(statstring != NULL);
 
 	purple_debug_info("msim", "msim_set_status_code: going to set status to code=%d,str=%s\n",
@@ -2536,8 +2509,6 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	gchar *unrecognized_msg;
 
 	session = (MsimSession *)account->gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	type = purple_status_get_type(status);
 	pres = purple_status_get_presence(status);
@@ -2601,8 +2572,6 @@ msim_set_idle(PurpleConnection *gc, int time)
 	g_return_if_fail(gc != NULL);
 
 	session = (MsimSession *)gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	status = purple_account_get_active_status(session->account);
 
@@ -2740,13 +2709,6 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	/* Add to allow list, remove from block list */
 	msim_update_blocklist_for_buddy(session, name, TRUE, FALSE);
-}
-
-static void
-msim_buddy_free(PurpleBuddy *buddy)
-{
-	msim_user_free(purple_buddy_get_protocol_data(buddy));
-	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 /**
@@ -3001,8 +2963,6 @@ msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 
 	session = (MsimSession *)gc->proto_data;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
-
 	/* Loop until all data is sent, or a failure occurs. */
 	total_bytes_sent = 0;
 	do {
@@ -3037,7 +2997,6 @@ msim_send_raw(MsimSession *session, const gchar *msg)
 {
 	size_t len;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
@@ -3134,7 +3093,10 @@ static PurplePluginProtocolInfo prpl_info = {
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	msim_get_account_text_table,              /* get_account_text_table */
 	NULL,                   /* initiate_media */
-	NULL                    /* can_do_media */
+	NULL,                   /* get_media_caps */
+	NULL,                   /* get_moods */
+	NULL,                   /* set_public_alias */
+	NULL                    /* get_public_alias */
 };
 
 /**

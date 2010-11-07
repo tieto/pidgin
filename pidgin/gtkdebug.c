@@ -39,6 +39,11 @@
 
 #ifdef HAVE_REGEX_H
 # include <regex.h>
+#	define USE_REGEX 1
+#else
+#if GLIB_CHECK_VERSION(2,14,0)
+#	define USE_REGEX 1
+#endif
 #endif /* HAVE_REGEX_H */
 
 #include <gdk/gdkkeysyms.h>
@@ -52,7 +57,7 @@ typedef struct
 
 	gboolean paused;
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	GtkWidget *filter;
 	GtkWidget *expression;
 
@@ -60,11 +65,14 @@ typedef struct
 	gboolean highlight;
 
 	guint timer;
-
+#	ifdef HAVE_REGEX_H
 	regex_t regex;
+#	else
+	GRegex *regex;
+#	endif /* HAVE_REGEX_H */
 #else
 	GtkWidget *find;
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 	GtkWidget *filterlevel;
 } DebugWindow;
 
@@ -80,17 +88,17 @@ static const char debug_fg_colors[][8] = {
 static DebugWindow *debug_win = NULL;
 static guint debug_enabled_timer = 0;
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 static void regex_filter_all(DebugWindow *win);
 static void regex_show_all(DebugWindow *win);
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
 	purple_prefs_disconnect_by_handle(pidgin_debug_get_handle());
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	if(debug_win->timer != 0) {
 		const gchar *text;
 
@@ -99,9 +107,12 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 	}
-
+#ifdef HAVE_REGEX_H
 	regfree(&debug_win->regex);
-#endif
+#else
+	g_regex_unref(debug_win->regex);
+#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 	/* If the "Save Log" dialog is open then close it */
 	purple_request_close_with_handle(debug_win);
@@ -125,7 +136,7 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 	return FALSE;
 }
 
-#ifndef HAVE_REGEX_H
+#ifndef USE_REGEX
 struct _find {
 	DebugWindow *window;
 	GtkWidget *entry;
@@ -206,7 +217,7 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	gtk_widget_show_all(win->find);
 	gtk_widget_grab_focus(f->entry);
 }
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 static void
 save_writefile_cb(void *user_data, const char *filename)
@@ -242,30 +253,30 @@ clear_cb(GtkWidget *w, DebugWindow *win)
 {
 	gtk_imhtml_clear(GTK_IMHTML(win->text));
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	gtk_list_store_clear(win->store);
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 }
 
 static void
 pause_cb(GtkWidget *w, DebugWindow *win)
 {
-	win->paused = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+	win->paused = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w));
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	if(!win->paused) {
-		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 			regex_filter_all(win);
 		else
 			regex_show_all(win);
 	}
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 }
 
 /******************************************************************************
  * regex stuff
  *****************************************************************************/
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 static void
 regex_clear_color(GtkWidget *w) {
 	gtk_widget_modify_base(w, GTK_STATE_NORMAL, NULL);
@@ -295,15 +306,17 @@ regex_highlight_clear(DebugWindow *win) {
 static void
 regex_match(DebugWindow *win, const gchar *text) {
 	GtkIMHtml *imhtml = GTK_IMHTML(win->text);
+#ifdef HAVE_REGEX_H
 	regmatch_t matches[4]; /* adjust if necessary */
 	size_t n_matches = sizeof(matches) / sizeof(matches[0]);
-	gchar *plaintext;
 	gint inverted;
+#else
+	GMatchInfo *match_info;
+#endif /* HAVE_REGEX_H */
+	gchar *plaintext;
 
 	if(!text)
 		return;
-
-	inverted = (win->invert) ? REG_NOMATCH : 0;
 
 	/* I don't like having to do this, but we need it for highlighting.  Plus
 	 * it makes the ^ and $ operators work :)
@@ -313,9 +326,14 @@ regex_match(DebugWindow *win, const gchar *text) {
 	/* we do a first pass to see if it matches at all.  If it does we append
 	 * it, and work out the offsets to highlight.
 	 */
+#ifdef HAVE_REGEX_H
+	inverted = (win->invert) ? REG_NOMATCH : 0;
 	if(regexec(&win->regex, plaintext, n_matches, matches, 0) == inverted) {
-		GtkTextIter ins;
+#else
+	if(g_regex_match(win->regex, plaintext, 0, &match_info) != win->invert) {
+#endif /* HAVE_REGEX_H */
 		gchar *p = plaintext;
+		GtkTextIter ins;
 		gint i, offset = 0;
 
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &ins,
@@ -327,14 +345,18 @@ regex_match(DebugWindow *win, const gchar *text) {
 		/* If we're not highlighting or the expression is inverted, we're
 		 * done and move on.
 		 */
-		if(!win->highlight || inverted == REG_NOMATCH) {
+		if(!win->highlight || win->invert) {
 			g_free(plaintext);
+#ifndef HAVE_REGEX_H
+			g_match_info_free(match_info);
+#endif
 			return;
 		}
 
 		/* we use a do-while to highlight the first match, and then continue
 		 * if necessary...
 		 */
+#ifdef HAVE_REGEX_H
 		do {
 			size_t m;
 
@@ -357,6 +379,41 @@ regex_match(DebugWindow *win, const gchar *text) {
 
 			p += offset;
 		} while(regexec(&win->regex, p, n_matches, matches, REG_NOTBOL) == inverted);
+#else
+		do
+		{
+			gint m;
+			gint start_pos, end_pos;
+			GtkTextIter ms, me;
+			
+			if (!g_match_info_matches(match_info))
+				break;
+			
+			for (m = 0; m < g_match_info_get_match_count(match_info); m++)
+			{
+				if (m == 1)
+					continue;
+				
+				g_match_info_fetch_pos(match_info, m, &start_pos, &end_pos);
+				
+				if (end_pos == -1)
+					break;
+				
+				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &ms,
+													i + start_pos);
+				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &me,
+													i + end_pos);
+				gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "regex",
+												  &ms, &me);
+				offset = end_pos;
+			}
+			
+			g_match_info_free(match_info);
+			p += offset;
+			i += offset;
+		} while (g_regex_match(win->regex, p, G_REGEX_MATCH_NOTBOL, &match_info) != win->invert);
+		g_match_info_free(match_info);
+#endif /* HAVE_REGEX_H */
 	}
 
 	g_free(plaintext);
@@ -430,9 +487,15 @@ regex_compile(DebugWindow *win) {
 		return;
 	}
 
+#ifdef HAVE_REGEX_H
 	regfree(&win->regex);
-
 	if(regcomp(&win->regex, text, REG_EXTENDED | REG_ICASE) != 0) {
+#else
+	if (win->regex)
+		g_regex_unref(win->regex);
+	win->regex = g_regex_new(text, G_REGEX_EXTENDED | G_REGEX_CASELESS, 0, NULL);
+	if(win->regex == NULL) {
+#endif
 		/* failed to compile */
 		regex_change_color(win->expression, 0xFFFF, 0xAFFF, 0xAFFF);
 		gtk_widget_set_sensitive(win->filter, FALSE);
@@ -445,7 +508,7 @@ regex_compile(DebugWindow *win) {
 	/* we check if the filter is on in case it was only of the options that
 	 * got changed, and not the expression.
 	 */
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -459,9 +522,9 @@ regex_pref_filter_cb(const gchar *name, PurplePrefType type,
 	if(!win || !win->window)
 		return;
 
-	current = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter));
+	current = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter));
 	if(active != current)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), active);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), active);
 }
 
 static void
@@ -483,7 +546,7 @@ regex_pref_invert_cb(const gchar *name, PurplePrefType type,
 
 	win->invert = active;
 
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -496,7 +559,7 @@ regex_pref_highlight_cb(const gchar *name, PurplePrefType type,
 
 	win->highlight = active;
 
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -522,7 +585,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, 0, &text, 1, &level, -1);
 
 	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel")) {
-		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
 			regex_match(win, text);
 		} else {
 			gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
@@ -546,8 +609,8 @@ regex_timer_cb(DebugWindow *win) {
 
 static void
 regex_changed_cb(GtkWidget *w, DebugWindow *win) {
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter),
 									 FALSE);
 	}
 
@@ -561,9 +624,9 @@ static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
 	if(e->keyval == GDK_Return &&
 	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
-	   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), TRUE);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);
 	}
 }
 
@@ -588,10 +651,10 @@ regex_popup_cb(GtkEntry *entry, GtkWidget *menu, DebugWindow *win) {
 }
 
 static void
-regex_filter_toggled_cb(GtkToggleButton *button, DebugWindow *win) {
+regex_filter_toggled_cb(GtkToggleToolButton *button, DebugWindow *win) {
 	gboolean active;
 
-	active = gtk_toggle_button_get_active(button);
+	active = gtk_toggle_tool_button_get_active(button);
 
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/filter", active);
 
@@ -611,12 +674,12 @@ filter_level_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 
 	if (GPOINTER_TO_INT(value) != gtk_combo_box_get_active(GTK_COMBO_BOX(win->filterlevel)))
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel), GPOINTER_TO_INT(value));
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 	else
 		regex_show_all(win);
 }
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 static void
 filter_level_changed_cb(GtkWidget *combo, gpointer null)
@@ -677,16 +740,19 @@ debug_window_new(void)
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
-	GtkWidget *image;
 	gint width, height;
 	void *handle;
+	GtkToolItem *item;
+#if !GTK_CHECK_VERSION(2,12,0)
+	GtkTooltips *tooltips;
+#endif
 
 	win = g_new0(DebugWindow, 1);
 
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/height");
 
-	win->window = pidgin_create_dialog(_("Debug Window"), 0, "debug", TRUE);
+	win->window = pidgin_create_window(_("Debug Window"), 0, "debug", TRUE);
 	purple_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 					width, height);
 
@@ -699,7 +765,7 @@ debug_window_new(void)
 
 	handle = pidgin_debug_get_handle();
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	/* the list store for all the messages */
 	win->store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 
@@ -711,18 +777,22 @@ debug_window_new(void)
 	g_signal_connect(G_OBJECT(win->store), "row-changed",
 					 G_CALLBACK(regex_row_changed_cb), win);
 
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 	/* Setup the vbox */
-	vbox = pidgin_dialog_get_vbox(GTK_DIALOG(win->window));
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(win->window), vbox);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
-		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
-#if GTK_CHECK_VERSION(2,4,0)
-		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
+#if !GTK_CHECK_VERSION(2,12,0)
+		tooltips = gtk_tooltips_new();
 #endif
+#if !GTK_CHECK_VERSION(2,14,0)
+		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
+#endif
+		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),
@@ -734,62 +804,95 @@ debug_window_new(void)
 
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-#ifndef HAVE_REGEX_H
+#ifndef USE_REGEX
 		/* Find button */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-		                         _("Find"), NULL, G_CALLBACK(find_cb),
-		                         win, -1);
-#endif /* HAVE_REGEX_H */
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Find"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Find"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(find_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+#endif /* USE_REGEX */
 
 		/* Save */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-		                         _("Save"), NULL, G_CALLBACK(save_cb),
-		                         win, -1);
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Save"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Save"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(save_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* Clear button */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-		                         _("Clear"), NULL, G_CALLBACK(clear_cb),
-		                         win, -1);
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_CLEAR);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Clear"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Clear"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(clear_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* Pause */
-		image = gtk_image_new_from_stock(PIDGIN_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-		                                    NULL, _("Pause"), _("Pause"),
-		                                    NULL, image,
-		                                    G_CALLBACK(pause_cb), win);
+		item = gtk_toggle_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Pause"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Pause"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(pause_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 		/* regex stuff */
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* regex toggle button */
-		win->filter =
-			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-									   NULL, _("Filter"), _("Filter"),
-									   NULL, NULL,
-									   G_CALLBACK(regex_filter_toggled_cb),
-									   win);
+		item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
+		win->filter = GTK_WIDGET(item);
+		gtk_tool_button_set_label(GTK_TOOL_BUTTON(win->filter), _("Filter"));
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(win->filter), _("Filter"));
+#else
+		gtk_tooltips_set_tip(tooltips, win->filter, _("Filter"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(win->filter), "clicked", G_CALLBACK(regex_filter_toggled_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(win->filter));
+
 		/* we purposely disable the toggle button here in case
 		 * /purple/gtk/debug/expression has an empty string.  If it does not have
 		 * an empty string, the change signal will get called and make the
 		 * toggle button sensitive.
 		 */
 		gtk_widget_set_sensitive(win->filter, FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter),
 									 purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/filter"));
 		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/filter",
 									regex_pref_filter_cb, win);
 
 		/* regex entry */
 		win->expression = gtk_entry_new();
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-								   GTK_TOOLBAR_CHILD_WIDGET, win->expression,
-								   NULL, _("Right click for more options."),
-								   NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(win->expression, _("Right click for more options."));
+#else
+		gtk_tooltips_set_tip(tooltips, win->expression, _("Right click for more options."), NULL);
+#endif
+		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+
 		/* this needs to be before the text is set from the pref if we want it
 		 * to colorize a stored expression.
 		 */
@@ -813,20 +916,25 @@ debug_window_new(void)
 		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/highlight",
 									regex_pref_highlight_cb, win);
 
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                           GTK_TOOLBAR_CHILD_WIDGET, gtk_label_new(_("Level ")),
-		                           NULL, _("Select the debug filter level."),
-		                           NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(item), gtk_label_new(_("Level ")));
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		win->filterlevel = gtk_combo_box_new_text();
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                           GTK_TOOLBAR_CHILD_WIDGET, win->filterlevel,
-		                           NULL, _("Select the debug filter level."),
-		                           NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(win->filterlevel, _("Select the debug filter level."));
+#else
+		gtk_tooltips_set_tip(tooltips, win->filterlevel, _("Select the debug filter level."), NULL);
+#endif
+		gtk_container_add(GTK_CONTAINER(item), win->filterlevel);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("All"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Misc"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Info"));
@@ -835,7 +943,7 @@ debug_window_new(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Fatal Error"));
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel),
 					purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"));
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/filterlevel",
 						filter_level_pref_changed, win);
 #endif
@@ -850,13 +958,13 @@ debug_window_new(void)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	/* add the tag for regex highlighting */
 	gtk_text_buffer_create_tag(GTK_IMHTML(win->text)->text_buffer, "regex",
 							   "background", "#FFAFAF",
 							   "weight", "bold",
 							   NULL);
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 	gtk_widget_show_all(win->window);
 
@@ -957,13 +1065,13 @@ pidgin_debug_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/width",  450);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/height", 250);
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/debug/regex", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/filter", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/invert", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/case_insensitive", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/highlight", FALSE);
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 
 	purple_prefs_connect_callback(NULL, PIDGIN_PREFS_ROOT "/debug/enabled",
 								debug_enabled_cb, NULL);
@@ -1025,9 +1133,9 @@ static void
 pidgin_debug_print(PurpleDebugLevel level, const char *category,
 					 const char *arg_s)
 {
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	GtkTreeIter iter;
-#endif /* HAVE_REGEX_H */
+#endif /* USE_REGEX */
 	gchar *ts_s;
 	gchar *esc_s, *cat_s, *tmp, *s;
 	const char *mdate;
@@ -1066,14 +1174,14 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 		s = tmp;
 	}
 
-#ifdef HAVE_REGEX_H
+#ifdef USE_REGEX
 	/* add the text to the list store */
 	gtk_list_store_append(debug_win->store, &iter);
 	gtk_list_store_set(debug_win->store, &iter, 0, s, 1, level, -1);
-#else /* HAVE_REGEX_H */
+#else /* USE_REGEX */
 	if(!debug_win->paused && level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
-#endif /* !HAVE_REGEX_H */
+#endif /* !USE_REGEX */
 
 	g_free(s);
 }

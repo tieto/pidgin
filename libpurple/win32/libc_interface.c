@@ -33,6 +33,7 @@
 #include "libc_internal.h"
 #include <glib/gstdio.h>
 
+/** This is redefined here because we can't include internal.h */
 #ifdef ENABLE_NLS
 #  include <locale.h>
 #  include <libintl.h>
@@ -61,7 +62,7 @@ static char errbuf[1024];
 /* helpers */
 static int wpurple_is_socket( int fd ) {
 	int optval;
-	unsigned int optlen = sizeof(int);
+	int optlen = sizeof(int);
 
 	if( (getsockopt(fd, SOL_SOCKET, SO_TYPE, (void*)&optval, &optlen)) == SOCKET_ERROR ) {
 		int error = WSAGetLastError();
@@ -316,26 +317,26 @@ char* wpurple_strerror(int errornum) {
 	if (errornum > WSABASEERR) {
 		switch(errornum) {
 			case WSAECONNABORTED: /* 10053 */
-				g_snprintf(errbuf, sizeof(errbuf), _("Connection interrupted by other software on your computer."));
+				g_snprintf(errbuf, sizeof(errbuf), "%s", _("Connection interrupted by other software on your computer."));
 				break;
 			case WSAECONNRESET: /* 10054 */
-				g_snprintf(errbuf, sizeof(errbuf), _("Remote host closed connection."));
+				g_snprintf(errbuf, sizeof(errbuf), "%s", _("Remote host closed connection."));
 				break;
 			case WSAETIMEDOUT: /* 10060 */
-				g_snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
+				g_snprintf(errbuf, sizeof(errbuf), "%s", _("Connection timed out."));
 				break;
 			case WSAECONNREFUSED: /* 10061 */
-				g_snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
+				g_snprintf(errbuf, sizeof(errbuf), "%s", _("Connection refused."));
 				break;
 			case WSAEADDRINUSE: /* 10048 */
-				g_snprintf(errbuf, sizeof(errbuf), _("Address already in use."));
+				g_snprintf(errbuf, sizeof(errbuf), "%s", _("Address already in use."));
 				break;
 			default:
 				g_snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
 		}
 	} else {
 		const char *tmp = g_strerror(errornum);
-		g_snprintf(errbuf, sizeof(errbuf), tmp);
+		g_snprintf(errbuf, sizeof(errbuf), "%s", tmp);
 	}
 	return errbuf;
 }
@@ -469,65 +470,7 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 /* stdio.h */
 
 int wpurple_rename (const char *oldname, const char *newname) {
-
-#if GLIB_CHECK_VERSION(2,8,5)
-
 	return g_rename(oldname, newname);
-
-#else
-
-	/* This is a ugly, but we still compile with 2.6.10 but use newer runtimes */
-	struct stat oldstat, newstat;
-
-	/* As of Glib 2.8.5, g_rename() uses MoveFileEx() with MOVEFILE_REPLACE_EXISTING to behave more sanely */
-	if (glib_check_version(2, 8, 5) == NULL) {
-		return g_rename(oldname, newname);
-	}
-
-	if(g_stat(oldname, &oldstat) == 0) {
-		/* newname exists */
-		if(g_stat(newname, &newstat) == 0) {
-			/* oldname is a dir */
-			if(S_ISDIR(oldstat.st_mode)) {
-				if(!S_ISDIR(newstat.st_mode)) {
-					return g_rename(oldname, newname);
-				}
-				/* newname is a dir */
-				else {
-					/* This is not quite right.. If newname is empty and
-					   is not a sub dir of oldname, newname should be
-					   deleted and oldname should be renamed.
-					*/
-					purple_debug(PURPLE_DEBUG_WARNING, "wpurple", "wpurple_rename does not behave here as it should\n");
-					return g_rename(oldname, newname);
-				}
-			}
-			/* oldname is not a dir */
-			else {
-				/* newname is a dir */
-				if(S_ISDIR(newstat.st_mode)) {
-					errno = EISDIR;
-					return -1;
-				}
-				/* newname is not a dir */
-				else {
-					g_remove(newname);
-					return g_rename(oldname, newname);
-				}
-			}
-		}
-		/* newname doesn't exist */
-		else
-			return g_rename(oldname, newname);
-	}
-	else {
-		/* oldname doesn't exist */
-		errno = ENOENT;
-		return -1;
-	}
-
-#endif
-
 }
 
 /* time.h */
@@ -1030,7 +973,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'std' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
@@ -1045,7 +988,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 		}
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'dlt' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
@@ -1105,78 +1048,14 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 	return "";
 }
 
+int wpurple_g_access (const gchar *filename, int mode);
 /**
- * g_access:
- * @filename: a pathname in the GLib file name encoding (UTF-8 on Windows)
- * @mode: as in access()
- *
- * A wrapper for the POSIX access() function. This function is used to
- * test a pathname for one or several of read, write or execute
- * permissions, or just existence. On Windows, the underlying access()
- * function in the C library only checks the READONLY attribute, and
- * does not look at the ACL at all. Software that needs to handle file
- * permissions on Windows more exactly should use the Win32 API.
- *
- * See the C library manual for more details about access().
- *
- * Returns: zero if the pathname refers to an existing file system
- * object that has all the tested permissions, or -1 otherwise or on
- * error.
- *
- * Since: 2.8
+ * @deprecated - remove for 3.0.0
  */
 int
-wpurple_g_access (const gchar *filename,
-	  int          mode)
+wpurple_g_access (const gchar *filename, int mode)
 {
-#if GLIB_CHECK_VERSION(2,8,0)
-
 	return g_access(filename, mode);
-
-#else
-
-  if (G_WIN32_HAVE_WIDECHAR_API ())
-    {
-      wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
-      int retval;
-      int save_errno;
-
-      if (wfilename == NULL)
-	{
-	  errno = EINVAL;
-	  return -1;
-	}
-
-      retval = _waccess (wfilename, mode);
-      save_errno = errno;
-
-      g_free (wfilename);
-
-      errno = save_errno;
-      return retval;
-    }
-  else
-    {
-      gchar *cp_filename = g_locale_from_utf8 (filename, -1, NULL, NULL, NULL);
-      int retval;
-      int save_errno;
-
-      if (cp_filename == NULL)
-	{
-	  errno = EINVAL;
-	  return -1;
-	}
-
-      retval = access (cp_filename, mode);
-      save_errno = errno;
-
-      g_free (cp_filename);
-
-      errno = save_errno;
-      return retval;
-    }
-
-#endif
 }
 
 

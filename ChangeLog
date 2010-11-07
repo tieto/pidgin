@@ -1,25 +1,510 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.6 (??/??/20??):
+version 2.7.6 (??/??/????):
+	MSN:
+	* Added support for MSNP16, including Multiple Points of Presence (MPOP)
+	  which allows multiple simultaneous sign-ins.
+	* Added extended capabilities support (none implemented).
+	* Merged the work done on the Google SoC (major rewrite of SLP code)
+	* Reworked the data transfer architecture.
+	  (http://developer.pidgin.im/wiki/SlpArchitecture)
+	* Lots of little changes.
+
+version 2.7.5 (10/31/2010):
+	General:
+	* Added Verisign Class 3 Public CA - G2 root CA.
+
+	Pidgin:
+	* Properly differentiate between bn and bn_IN in the Translation
+	  Information dialog.
+
+	AIM and/or ICQ:
+	* Display the "Authorize buddy?" minidialog when the requestor has an
+	  empty nickname. (#12810)
+	* New ICQ accounts default to proper ICQ servers.  Old accounts using one
+	  of the old default servers will be silently migrated to use the proper
+	  servers.
+	* ICQ accounts using clientLogin now use the correct ICQ servers.  This is
+	  separate from the server settings mentioned above.
+	* '<' should no longer cause ICQ status messages to be truncated in some
+	  locations. (#11964, #12593)
+	* Fix sending messages to chat rooms. (#12768)
+
+	Bonjour:
+	* Don't crash when attempting to log into a Bonjour account and init
+	  failed.
+
+	Windows-Specific Changes:
+	* Quote the path stored in the registry when the "run at startup" option
+	  in the Windows Pidgin Options plugin is used. (#12781)
+
+version 2.7.4 (10/20/2010):
+	General:
+	* Fix search path for Tk when compiling on Debian Squeeze. (#12465)
+	* purple-remote now expects and produces UTF-8. (Guillaume Brunerie)
+	  (#12049)
+	* Add Deutsche Telekom, Thawte Primary, and Go Daddy Class 2 root CAs
+	  (#12667, #12668, and #12594)
+	* Fix CVE-2010-3711 by properly validating return values from the
+	  purple_base64_decode() function before using them.
+	* Fix two local crash bugs by properly validating return values from the
+	  purple_base16_decode() function before using them.
+
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch. (#12561)
+	* Fix an invalid memory access when removing UPnP mappings that could
+	  cause sporadic crashes, most notably when MSN Direct Connections are
+	  enabled. (#12387)
+	* Add a sentence to the certificate warning for expired certificates
+	  suggesting the user check their computer's date and time. (#12654)
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+	* Use GRegex for the debug window where available. This brings regex
+	  filtering to the debug window on Windows. (Eion Robb) (#12601)
+	* Add Google Chrome to the list of possible browsers on non-Windows
+	  systems.
+	* Add Chromium to the list of possible browsers on non-Windows systems.
+	* The "Manual" browser option is now stored as a string.  It is no
+	  longer necessary to specify a full path to the browser command.
+	  (Rodrigo Tobar Carrizo) (#12024)
+	* The Send To menu can now be used if the active account in the
+	  conversation becomes disabled or inactive. (Keith Moyer) (#12471)
+	* xdg-open is now the default browser for new users on non-Windows
+	  platforms. (Stanislav Brabec) (#12505)
+	* The "Authorize buddy?" mini-dialog now shows the nickname of
+	  the buddy requesting authorization as well as the icon of
+	  the IM protocol he is using. (#5038)
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+	* Fix detecting file transfer proxies advertised by the server.
+	* Advertise support for Google Talk's JID Domain Discovery extension
+	  in all cases again (changed in 2.7.0), not just when the domain
+	  is "gmail.com" or "googlemail.com" (it's also needed for Google
+	  Talk used for accounts on arbitrary domains not using Google Apps
+	  for Your Domain). (#a14153)
+	* Improved handling of adding oneself to your buddy list when using
+	  Non-SASL (legacy) authentication. (#12499)
+	* Generate a connection error instead of just stalling when the
+	  _xmppconnect TXT record returns results, but none of them result
+	  in a valid BOSH URI. (#a14367, #12744)
+
+	AIM and ICQ:
+	* Add support for managing Visible/Invisible lists. (#10967)
+	* Fix a problem with receiving HTML messages from
+	  QIP/Miranda/Trillian. (#12044)
+	* Hopefully fixed all encoding-related problems, both
+	  for sending and receiving messages. (#10833 and the like)
+	* Fix a problem with receiving messages from pyicqt. (#12284)
+	* Don't set a custom status text when going Invisible to avoid
+	  being detected as Invisible. (#10633)
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
+	* Fix sending SMS messages.  The lookup host changed on us.  (Thanks to
+	  todo) (#12688).
+	* Improvements for some file transfer scenarios, but not all.
+
+	Windows:
+	* Bonjour support now requires Apple Bonjour Print Services version
+	  2.0.0 or newer (http://support.apple.com/kb/dl999).
+
+version 2.7.3 (08/10/2010):
+	General:
+	* Use silent build rules for automake >1.11. You can enable verbose
+	  builds with the --disable-silent-rules configure option, or using
+	  make V=1.
+
+	libpurple:
+	* Fix the TURN server settings (broken in 2.7.0).
+
+	Pidgin:
+	* Re-focus the input area after clicking the attention toolbar button.
+	* Re-arrange media window to make it more netbook-friendly.
+
+	Finch:
+	* Rebindable 'suggest-next-page' and 'suggest-prev-page' actions for
+	  textboxes (GntEntry) to scroll through list of suggestions.
+	* Rebindable 'dropdown' action for comboboxes (GntComboBox) to show the
+	  dropdown list of options.
+
+	IRC:
+	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
+
+	MSN:
+	* Support for web-based buddy icons, used when a buddy logs in to the
+	  messenger on the Live website.
+	* Fix file transfers with some clients that don't support direct
+	  connections (e.g., papyon, telepathy-butterfly, etc.) (#12150)
+
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
+
+	XMPP:
+	* Allow connecting to servers that only advertise GSSAPI and expect
+	  a fallback to legacy IQ authentication (broken in 2.7.0).
+	* Fix a crash when receiving custom emoticons that don't adhere to
+	  the specification.
+	* When initiating a file transfer, don't show resources that are certain
+	  to not support file transfers in the resource selection dialog.
+	* Fix connecting to servers using BOSH and authenticating with
+	  DIGEST-MD5 when libpurple was built with Cyrus SASL support.
+
+	Yahoo/Yahoo JAPAN:
+	* Renamed "Use account proxy for SSL connections" to "Use account proxy
+	  for HTTP and HTTPS requests" and tied the option to HTTP requests too.
+	* Properly detect HTTP proxy server use when the HTTP proxy is the
+	  global proxy server, an account-level non-HTTP proxy server is
+	  configured, and the "Use account proxy for HTTP and HTTPS requests"
+	  account option is turned off.  This fixes connecting for some HTTP
+	  proxy servers.
+	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if
+	  the HTTP-based connect server lookup fails.  This does not work for
+	  Yahoo JAPAN accounts.
+	* Fix file transfers that get stuck with "Waiting for transfer to
+	  begin".
+
+version 2.7.2 (07/21/2010):
+	AIM and ICQ:
+	* Fix a crash bug related to X-Status messages that can be triggered by
+	  remote users.  This is CVE-2010-2528.
+	* Fix a rare crash bug caused by certain incoming SMS messages
+	  (discovered by Jan Kaluza--thanks Jan!).
+	* Change HTML sent from ICQ accounts so that official ICQ clients
+	  hopefully display it correctly.
+
+	MSN:
+	* Fix a crash related to fast buddy icon transfers.
+
+version 2.7.1 (05/29/2010):
+	General:
+	* Build fixes on OpenSolaris.  (Brian Lu)
+	* Add configure option --enable-trayicon-compat which installs tray
+	  icons into directories that are compatible with older versions of
+	  hicolor-icon-theme (0.9).
+
+	Pidgin:
+	* Restore the tray icon's blinking functionality.
+	* Fix a crash setting moods when an account is disconnected.
+
+	Bonjour:
+	* Fix a crash on disconnect.
+
+	ICQ:
+	* Fix bug that caused HTML to be displayed in incoming messages.
+
+	MSN:
+	* Fix unnecessary bandwidth consumption for buddy icon requests when
+	  buddies have capital letters in their passport addresses.
+	* Support for direct connections, enabling faster file transfers,
+	  smiley and buddy icon loading.  (Gábor Szuromi)
+
+	XMPP:
+	* Allow connecting to servers that advertise EXTERNAL (broken in
+	  2.7.0)
+
+	MXit:
+	* Replace the MXit-specific mood management with the new standard Moods
+	  API.
+	* Add the standard MXit emoticons.
+	* Improve the handling of users being kicked from MultiMX rooms.
+	* MXit doesn't allow you to see your buddy's Email Address or Title,
+	  so remove those two fields from the "Buddy Information" page.
+	* Show buddy's Registration Country in their profile.
+	* Increment protocol version to v6.0
+	* If an invite you sent was rejected with a reason, display that
+	  message in the buddy tooltip.
+	* CAPTCHA value is a required field during account activation.
+	  (Resolves issue on Maemo)
+	* When your avatar image is changed, don't forget the user's profile
+	  information.
+
+	Windows-Specific Changes:
+	* Fix a regression introduced in 2.7.0 that caused Window Flashing not
+	  to work.
+
+version 2.7.0 (05/12/2010):
+	General:
+	* Changed GTK+ minimum version requirement to 2.10.0.
+	* Changed GLib minimum version requirement to 2.12.0.
+	* Using the --disable-nls argument to configure now works properly.
+	  You will no longer be forced to have intltool to configure and build.
+	* Fix two related crashes in the GnuTLS and NSS plugins when they
+	  suffer internal errors immediately upon attempting to establish
+	  an SSL connection.
+	* Fix NSS to work when reinitialized after being used.  (Thanks to
+	  Ludovico Cavedon for the testcase)
+	* Added support for PURPLE_GNUTLS_PRIORITIES environment variable.
+	  This can be used to specify GnuTLS priorities on a per-host basis.
+	  The format is "host=priority;host2=priority;...".  The default
+	  priority can be overridden by using "*" as the host.  See the
+	  GnuTLS manual for documentation on the format of the priority
+	  strings.
+	* Fix autoconf detection of Python.  (Brad Smith)
+	* Fix a crash when a Windows proxy (from IE) does not have a port.
+	  (Marten Klencke)
+
+	Pidgin:
+	* Moved the "Debugging Information" section of the About box to a
+	  "Build Information" dialog accessible on the Help menu.
+	* Moved the Developer and Crazy Patch Writer information from the About
+	  box to a "Developer Information" dialog accessible on the Help menu.
+	* Moved the Translator information from the About box to a "Translator
+	  Information" dialog accessible on the Help menu.
+	* Use GtkStatusIcon for the docklet, providing better integration in
+	  notification area.
+	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
+	* Make the search dialog unobtrusive in the conversation window (by
+	  making it look and behave like the search dialog in Firefox)
+	* The Recent Log Activity sort method for the Buddy List now
+	  distinguishes between no activity and a small amount of activity
+	  in the distant past.  (Greg McNew)
+	* Added a menu set mood globally for all mood-supporting accounts
+	  (currently XMPP and ICQ).
+	* Default binding of Ctrl+Shift+v to 'Paste as Plain Text' in
+	  conversation windows. This can be changed in .gtkrc-2.0. For example,
+	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
+	* Plugins can now handle markup in buddy names by attaching to the
+	  "drawing-buddy" signal. (Daniele Ricci, Andrea Piccinelli)
+	* Be more accommodating when scaling down large images for use as
+	  buddy icons.
+	* The 'Message Timestamp Formats' plugin allows changing the timestamp
+	  format from the timestamps' context menu in conversation log.
+	* The 'Message Timestamp Formats' plugin allows forcing 12-hour
+	  timestamps.  (Jonathan Maltz)
+	* Fix pastes from Chrome (rich-text pastes and probably URLs
+	  having garbage appended to them).
+	* Show file transfer thumbnails for images on supporting protocols
+	  (currently only supported on MSN).
+
+	Bonjour:
+	* Added support for IPv6. (Thanks to T_X for testing)
+
+	Gadu-Gadu:
+	* Updated our bundled libgadu to 1.9.0-rc2 (many thanks to Krzysztof
+	  Klinikowski for the work and testing put in here!)
+	* Minimum requirement for external libgadu is now also 1.9.0-rc2.
+
+	AIM and ICQ:
+	* X-Status (Custom ICQ status icon) support.  Since most of the icons
+	  available reflect moods, this is labeled "Set Mood" on the
+	  Accounts->ICQ Account menu. (Andrew Ivanov, Tomáš Kebert,
+	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels for
+	  ICQ.  Previously only icons between 48x48 and 52x64 were allowed.
+	* When using the clientLogin authentication method, prompt for a
+	  password on reconnect when "Remember Password" is not checked and
+	  authentication fails due to an incorrect password.  (This is the same
+	  behavior as the legacy authentication method)
+	* Support sending and receiving HTML-formatted messages for ICQ.
+	* Use the proper URL for "View web profile" link for ICQ buddies.
+	  (Alexander Nartov)
+
+	MSN:
+	* Support for version 9 of the MSN protocol has been removed.  This
+	  version is no longer supported on the servers.
+	* Support file transfer thumbnails (previews) for images.
+	* Fix CVE-2010-1624 (custom emoticon remote crash).
+
+	XMPP:
+	* Direct messages to a specific resource only upon receipt of a message
+	  with content (as opposed to a typing notification, etc).  (Thanks to
+	  rjoly for testing)
+	* Present a better error message when authentication fails while trying
+	  to connect to Facebook.  (David Reiss, Facebook)
+	* When sending data using in-band-bytestreams, interpret the block-size
+	  attribute as the size of the BASE64-encoded representation of the
+	  data.
+	* Validate the hash on incoming BoB data objects (for custom smileys
+	  etc.), cache based per JID when the CID is not a valid hash (as
+	  specified by the BoB XEP).
+	* Send whitespace keepalives if we haven't sent data in a while (2
+	  minutes).  This fixes an issue with Openfire disconnecting a
+	  libpurple-baesd client that has just been quiet for about 6
+	  minutes.
+	* Only support Google Talk's JID Domain Discovery extension
+	  (allowing a user to log in with "@gmail.com" or "@googlemail.com"
+	  interchangeably) for those two domains.  This change was made
+	  due to interoperability issues with some BOSH Connection Managers
+	  and namespaced attributes.
+
+	Yahoo/Yahoo JAPAN:
+	* Attempt to better handle transparent proxies interfering with
+	  HTTP-based login.
+	* Fix handling of P2P packets, thus fixing the loss of some messages.
+	* Retrieve the pager server address from Yahoo!'s servers directly.
+	* Removed the "Pager server" account option, as it is no longer needed.
+	* The authentication code is now less order-sensitive with the
+	  components of the server's response.
+	* The authentication process now acts more like the official client.
+
+	Finch:
+	* New action 'history-search', with default binding ctrl+r, to search
+	  the entered string in the input history.
+
+	Windows-Specific Changes
+	* Updated GTK+ to 2.16.6
+	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
+	* Minimum required GTK+ version increased to 2.14.7
+	* Windows 95, Windows 98, Windows 98 Second Edition, Windows ME
+	  (Millennium Edition), and Windows NT 4.0 longer supported due to GTK+
+	  requirements changes.
+	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
+	  directory instead of the installation directory.
+	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
+	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
+	  enchant.  This means that myspell and hunspell (OpenOffice)
+	  dictionaries can be used (previous versions' aspell dictionaries
+	  will not work).
+
+version 2.6.6 (02/18/2010):
+	libpurple:
+	* Fix 'make check' on OS X. (David Fang)
+	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
+	  to be improperly converted to XHTML.
+	* Set "controlling-mode" correctly when initializing a media session.
+	  Fixes receiving voice calls from Psi.
+	* When looking up DNS records, use the type of record returned by the
+	  server (instead of the type we asked for) to determine how to process
+	  the record.
+	* Fix an issue with parsing XML attributes that contain "&lt;br&gt;".
+	  See ChangeLog.API for more details.
+
+	General:
+	* Correctly disable all missing dependencies when using the
+	  --disable-missing-dependencies option.  (Gabriel Schulhof)
+
 	Gadu-Gadu:
 	* Fix display of avatars after a server-side change. (Krzysztof
 	  Klinikowski)
 
+	AIM:
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
+	  Previously only icons between 48x48 and 50x50 were allowed.
+
 	MSN:
+	* Fix CVE-2010-0277, a possible remote crash when parsing an incoming
+	  SLP message.  (Discovered by Fabian Yamaguchi)
 	* File transfer requests will no longer cause a crash if you delete the
 	  file before the other side accepts.
-	* Recieved files will no longer hold an extra lock after completion,
+	* Received files will no longer hold an extra lock after completion,
 	  meaning they can be moved or deleted without complaints from your OS.
 	* Buddies who sign in from a second location will no longer cause an
 	  unnecessary chat window to open.
 	* Support setting an animated GIF as a buddy icon.
+	* Numerous code cleanups and memory savings.
+
+	MySpace:
+	* Fix a leak and crash when retrieving buddy icons.
 
 	XMPP:
+	* Less likely to send messages to a contact's idle/inactive resource.
+	  Previously, if a message was received from a specific resource,
+	  responses would be sent to that resource until either it went offline
+	  or a message is received from another resource.  Now, messages are
+	  sent to the bare JID upon receipt of any presence change from the
+	  contact.
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
 	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
-	  (when given by the result of the "last query") and don't show status as
-	  offline.
+	  (when given by the result of the "last query") and don't show status
+	  as offline.
+	* Fix getting info on your own JID.
+	* Wrap XHTML messages in <p>, as described in XEP-0071, for
+	  compatibility with some clients.
+	* Don't do an SRV lookup for a STUN server associated with the account
+	  if one is already set globally in prefs.
+	* Don't send custom smileys larger than the recommended maximum object
+	  size specified in the BoB XEP.   This prevents a client from being
+	  disconnected by servers that dislike overly-large stanzas.
+	* Fix receiving messages without markup over an Openfire BOSH
+	  connection (forcibly put the stanzas in the jabber:client namespace).
+	* The default value for the file transfer proxies is automatically
+	  updated when an account connects, if it is still the old (broken)
+	  default (from 'proxy.jabber.org' to 'proxy.eu.jabber.org').
+	* Fix an issue where libpurple created duplicate buddies if the roster
+	  contains a buddy in two groups that differ only by case
+	  (e.g. "XMPP" and "xmpp") (or not at all).
+
+	Yahoo:
+	* Don't send <span> and </span> tags.  (Fartash Faghri)
+	* Support PingBox.  PingBoxes will appear as pbx/PingBoxName.  (Kartik
+	  Mohta)
+
+	Pidgin:
+	* Fix CVE-2010-0423, a denial of service attack due to the parsing
+	  of large numbers of smileys.  (Discovered by Antti Hayrynen)
+	* Correctly size conversation and status box entries when the
+	  interior-focus style property is diabled. (Gabriel Schulhof)
+	* Correctly handle a multiline text field being required in a
+	  request form.  (Thanks to Florian Zeitz for finding this problem)
+	* Search friends by email-addresses in the buddy list. (Luoh Ren-Shan)
+	* Allow dropping an image on Custom Smiley window to add a new one.
+	* Prompt for confirmation when clearing a whiteboard (doodle) session.
+	  (Kartik Mohta)
+	* Use the "hand" cursor when hovering over usernames in chat history to
+	  indicate that the username is an actionable item.
+	* Double-clicking usernames in chat history will open an IM with that
+	  user.
+	* Put an icon on the "Filter" button in the debug window.
+	* Don't treat "/messages/like/this " as commands.
+	* Explicitly mark user interaction when inserting smilies from the
+	  toolbar so "Undo" correctly removes these smilies.
+	* Clicking "New" or "Saved" in the status selector menu while typing a
+	  status message no longer keeps the status entry area stuck in "typing"
+	  mode forever.
+	* Show tooltips for ellipsized conversation tabs.  On older systems,
+	  tooltips will show for all tabs.
+	* The File Transfers and Debug Window windows are no longer created as
+	  dialogs.  These windows should now have minimize buttons in many
+	  environments in which they were previously missing
+	  (including Windows).
+	* Smiley themes with Windows line endings no longer cause theme
+	  descriptions not to be displayed in the theme selector.
+
+	Finch:
+	* Fix CVE-2010-0420, a possible remote crash when handling chat room
+	  buddy names.
+	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
+	  it is possible to jump to the first or last entry in the buddy list
+	  (and other such lists) by pressing home or end key (defaults)
+	  respectively.
 
 version 2.6.5 (01/08/2010):
 	libpurple:
@@ -47,11 +532,11 @@ version 2.6.4 (11/29/2009):
 	* Actually emit the hold signal for media calls.
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
-	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
-	  received a "407 Proxy Authentication Required" response from the server.
-	  (thecrux)
-	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
-	  themselves (MXit Lifestyle (Pty) Ltd.)
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until
+	  we've received a "407 Proxy Authentication Required" response from
+	  the server.  (thecrux)
+	* Added "MXit" protocol plugin, supported and maintained by the MXit
+	  folks themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
@@ -82,14 +567,14 @@ version 2.6.4 (11/29/2009):
 	  as it has probably been reset.
 
 	XMPP:
-	* Users connecting to Google Talk now have an "Initiate Chat" context menu
-	  option for their buddies.  (Eion Robb)
+	* Users connecting to Google Talk now have an "Initiate Chat" context
+	  menu option for their buddies.  (Eion Robb)
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
 	* Try to automatically find a STUN server by using an SRV lookup on the
-	  account's domain, and use that for voice and video if found and the user
-	  didn't set one manually in prefs.
+	  account's domain, and use that for voice and video if found and the
+	  user didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
 	* Don't show the option to send a file to a buddy if we know for certain
 	  they don't support any file transfer method supported by libpurple.
@@ -113,23 +598,23 @@ version 2.6.4 (11/29/2009):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
-	* Fix a bug where the conversation backlog stops scrolling in a very busy
-	  chat room.
+	* Fix a bug where the conversation backlog stops scrolling in a very
+	  busy chat room.
 	* In the Conversation "Send To" menu, offline buddies appear grayed
 	  out (but are still selectable).  Previously, only offline buddies on
 	  accounts that do not support offline messaging appeared grayed out.
 
 	Pidgin Preference and Preference Window Changes:
 	* Removed the "Use font from theme" and "Conversation Font" preferences
-	  for everyone except Windows users.  The font can be controlled from the
-	  Pidgin GTK+ Theme Control plugin.
+	  for everyone except Windows users.  The font can be controlled from
+	  the Pidgin GTK+ Theme Control plugin.
 	* Tabs in the Preferences window are now on the left side.
 	* The Browser tab is now visible for GNOME users.
 	* Added a Proxy tab shown no matter what environment Pidgin runs in.
-	* The Browser and Proxy tabs show appropriate GNOME-specific messages and
-	  allow launching the correct applications to change the relevant GNOME
-	  preferences if found.  These were previously together on the Network
-	  tab.
+	* The Browser and Proxy tabs show appropriate GNOME-specific messages
+	  and allow launching the correct applications to change the relevant
+	  GNOME preferences if found.  These were previously together on the
+	  Network tab.
 	* Moved the port range spin buttons on the Network tab to be beside the
 	  checkbox that enables/disables them.
 	* Reorganized preferences on the Status/Idle tab to have one less
@@ -139,10 +624,10 @@ version 2.6.4 (11/29/2009):
 	* Moved Buddy List Theme and Status Icon Theme selectors from Interface
 	  tab to Themes tab.
 	* Moved Sound Theme selector from Sounds tab to Themes tab.
-	* Changed the Smiley Theme selector to be consistent with the other theme
-	  selectors.
-	* Rearranged tabs such that Interface is first and all remaining tabs are
-	  alphabetized in English.
+	* Changed the Smiley Theme selector to be consistent with the other
+	  theme selectors.
+	* Rearranged tabs such that Interface is first and all remaining tabs
+	  are alphabetized in English.
 
 version 2.6.3 (10/16/2009):
 	General:
@@ -182,16 +667,17 @@ version 2.6.2 (09/05/2009):
 	  properly.  In addition, it is no longer possible to add buddies of
 	  the form "room@conference.example.net/User", where
 	  room@conference.example.net is a MUC.
-	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
-	  support bits of binary (ie. when getting an empty <data/> in return)
+	* Don't crash when receiving "smileyfied" XHTML-IM from clients that
+	  don't support bits of binary (ie. when getting an empty <data/> in
+	  return)
 	* Fix bug where SSL/TLS was not required even though the
 	  "require SSL/TLS" preference checked when connecting to servers
 	  that use the older iq-based authentication.  (CVE-2009-3026)
 
 	Yahoo!/Yahoo! JAPAN:
-	* Accounts now have "Use account proxy for SSL connections" option.  This
-	  option force-overrides the account specific proxy settings for SSL
-	  connections only and instead uses the global proxy configuration.
+	* Accounts now have "Use account proxy for SSL connections" option.
+	  This option force-overrides the account specific proxy settings for
+	  SSL connections only and instead uses the global proxy configuration.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
@@ -233,8 +719,8 @@ version 2.6.0 (08/18/2009):
 	* Various memory leaks fixed as reported by Josh Mueller.
 	* Properly handle an IRC buddy appearing in multiple groups.
 	* Escape HTML entities in usernames when written with the HTML logger.
-	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
-	  Justin Williams)
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner
+	  and Justin Williams)
 
 	DNS:
 	* DNS servers are re-read when DNS queries fail in case the system has
@@ -245,32 +731,34 @@ version 2.6.0 (08/18/2009):
 	  address configured.
 	* Fix a leak when the UI provides its own DNS resolving UI op.
 	  (Aman Gupta)
-	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
-	* Internationalized Domain Names are supported when libpurple is compiled
-	  against the GNU IDN library.
+	* Don't fork a DNS resolver process to resolve IP addresses.
+	  (Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is
+	  compiled against the GNU IDN library.
 
 	Environment Variables:
 	* GnuTLS logging (disabled by default) can be controlled through the
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
-	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on" or
-	  "off" variable.  Set it to any value to turn it on and unset it to turn
-	  it off.  This will optionally be used to only show less useful debug
-	  information on an as-needed basis.
-	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an "on"
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on"
 	  or "off" variable.  Set it to any value to turn it on and unset it to
-	  turn it off.  This will be used to perform various actions that are
-	  useful when running libpurple inside of Valgrind or similar programs.
-	  Currently, it keeps plugins in memory, allowing Valgrind to perform
-	  symbol resolution of leak traces at shutdown.
+	  turn it off.  This will optionally be used to only show less useful
+	  debug information on an as-needed basis.
+	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an
+	  "on" or "off" variable.  Set it to any value to turn it on and unset
+	  it to turn it off.  This will be used to perform various actions
+	  that are useful when running libpurple inside of Valgrind or similar
+	  programs.  Currently, it keeps plugins in memory, allowing Valgrind
+	  to perform symbol resolution of leak traces at shutdown.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
 	  "clientLogin."
 	* Fixed a bug where your away message sometimes would not get set when
 	  you first sign on.
-	* Make sure links in your away messages show up as links to other people.
+	* Make sure links in your away messages show up as links to other
+	  people.
 	* For ICQ, Never change the privacy setting specified by the user.
 
 	Gadu-Gadu:
@@ -289,15 +777,16 @@ version 2.6.0 (08/18/2009):
 	  Topper, and Elliott Sales de Andrade)
 	* Show the invite message for buddies that requested authorization
 	  from you on MSN.
-	* Support sending an invite message to buddies when requesting authorization
-	  from them on MSN.
+	* Support sending an invite message to buddies when requesting
+	  authorization from them on MSN.
 	* Timeout switchboard connections aggressively (60 seconds).
 
 	XMPP:
-	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
-	  support with GTalk and voice and video support with the GMail web
-	  client. (Mike "Maiku" Ruprecht)
-	* Added a Service Discovery Browser plugin for Pidgin. (Andrei Mozzhuhin)
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177),
+	  voice support with GTalk and voice and video support with the GMail
+	  web client. (Mike "Maiku" Ruprecht)
+	* Added a Service Discovery Browser plugin for Pidgin.
+	  (Andrei Mozzhuhin)
 	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
 	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
@@ -314,28 +803,30 @@ version 2.6.0 (08/18/2009):
 	* Better support for receiving remote users' nicknames.
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
-	* Put section breaks between resources in "Get Info" to improve readability.
-	* Silently remove invalid XML 1.0 entities (e.g. ASCII control characters)
-	  from sent messages.
+	* Put section breaks between resources in "Get Info" to improve
+	  readability.
+	* Silently remove invalid XML 1.0 entities (e.g. ASCII control
+	  characters) from sent messages.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
-	* Show when the user was last logged in when doing "Get Info" on an offline
-	  buddy, provided the server supports it.
+	* Show when the user was last logged in when doing "Get Info" on an
+	  offline buddy, provided the server supports it.
 	* Support custom smileys in MUCs (only when all participants support the
-	  "Bits of Binary" extension, and a maximum of 10 participants are in the
-	  chat to avoid getting too many fetch requests).
+	  "Bits of Binary" extension, and a maximum of 10 participants are in
+	  the chat to avoid getting too many fetch requests).
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
 	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
 	  the username, password, or realm (the JID domain) contain non-ASCII
 	  characters.
-	* Show emblem for mobile, handheld, and web clients and bots (if the other
-	  client supports it).
-	* Google Talk mail notifications should now work for people for whom they
-	  inexplicably did not.  (Thanks to yukam for determining the reason)
+	* Show emblem for mobile, handheld, and web clients and bots (if the
+	  other client supports it).
+	* Google Talk mail notifications should now work for people for whom
+	  they inexplicably did not.  (Thanks to yukam for determining the
+	  reason)
 	* New XMPP and Google Talk accounts require SSL by default.
-	* Display kicks (and the reasons given) in chat rooms when an occupant is
-	  kicked.
+	* Display kicks (and the reasons given) in chat rooms when an occupant
+	  is kicked.
 	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
 	  Purple groups.
 	* For contacts who advertise Entity Capabilities, only send rich text

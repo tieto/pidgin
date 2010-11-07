@@ -225,12 +225,10 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 		guint32 update_class, int action)
 {
-	qq_data *qd;
 	gchar raw_data[16] = {0};
 
 	g_return_if_fail(uid != 0);
 
-	qd = (qq_data *) gc->proto_data;
 	g_snprintf(raw_data, sizeof(raw_data), "%u", uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) raw_data, strlen(raw_data),
 			update_class, action);
@@ -272,7 +270,6 @@ static void info_modify_cancel_cb(modify_info_request *info_request)
 static void info_modify_ok_cb(modify_info_request *info_request, PurpleRequestFields *fields)
 {
 	PurpleConnection *gc;
-	qq_data *qd;
 	gchar **segments;
 	int index;
 	const char *utf8_str;
@@ -280,8 +277,7 @@ static void info_modify_ok_cb(modify_info_request *info_request, PurpleRequestFi
 	int choice_num;
 
 	gc = info_request->gc;
-	g_return_if_fail(gc != NULL && info_request->gc);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
 	segments = info_request->segments;
 	g_return_if_fail(segments != NULL);
 
@@ -391,14 +387,12 @@ static void field_request_new(PurpleRequestFieldGroup *group, gint index, gchar 
 
 static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int iclass)
 {
-	qq_data *qd;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestFields *fields;
 	modify_info_request *info_request;
 	gchar *utf8_title, *utf8_prim;
 	int index;
 
-	qd = (qq_data *) gc->proto_data;
 	/* Keep one dialog once a time */
 	purple_request_close_with_handle(gc);
 
@@ -417,9 +411,11 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 		case QQ_FIELD_CONTACT:
 			utf8_title = g_strdup(_("Modify Contact"));
 			utf8_prim = g_strdup_printf("%s for %s", _("Modify Contact"), segments[0]);
+			break;
 		case QQ_FIELD_ADDR:
 			utf8_title = g_strdup(_("Modify Address"));
 			utf8_prim = g_strdup_printf("%s for %s", _("Modify Address"), segments[0]);
+			break;
 		case QQ_FIELD_EXT:
 			utf8_title = g_strdup(_("Modify Extended Information"));
 			utf8_prim = g_strdup_printf("%s for %s", _("Modify Extended Information"), segments[0]);
@@ -428,6 +424,7 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 		default:
 			utf8_title = g_strdup(_("Modify Information"));
 			utf8_prim = g_strdup_printf("%s for %s", _("Modify Information"), segments[0]);
+			break;
 	}
 
 	info_request = g_new0(modify_info_request, 1);

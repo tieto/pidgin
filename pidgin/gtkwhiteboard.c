@@ -738,12 +738,24 @@ static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer dat
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 
-	pidgin_whiteboard_clear(gtkwb->wb);
+	/* Confirm whether the user really wants to clear */
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(gtkwb->window),
+											   GTK_DIALOG_DESTROY_WITH_PARENT,
+											   GTK_MESSAGE_QUESTION,
+											   GTK_BUTTONS_YES_NO,
+											   _("Do you really want to clear?"));
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
 
-	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
+	if (response == GTK_RESPONSE_YES)
+	{
+		pidgin_whiteboard_clear(gtkwb->wb);
 
-	/* Do protocol specific clearing procedures */
-	purple_whiteboard_send_clear(gtkwb->wb);
+		pidgin_whiteboard_set_canvas_as_icon(gtkwb);
+
+		/* Do protocol specific clearing procedures */
+		purple_whiteboard_send_clear(gtkwb->wb);
+	}
 }
 
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
@@ -755,7 +767,6 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 
 	int result;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 										  GTK_WINDOW(gtkwb->window),
 										  GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -774,21 +785,15 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 	else
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
 	*/
-#else
-	dialog = gtk_file_selection_new(_("Save File"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog), "whiteboard.jpg");
-#endif
+
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	if(result == GTK_RESPONSE_ACCEPT)
 	{
 		char *filename;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-#else
-		filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog)));
-#endif
+
 		gtk_widget_destroy(dialog);
 
 		/* Makes an icon from the whiteboard's canvas 'image' */

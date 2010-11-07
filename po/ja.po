@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:34-0500\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-06-30 14:57+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -62,12 +63,24 @@ msgstr ""
 msgid "Error"
 msgstr "エラー"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "アカウントが追加されませんでした"
+
 msgid "Account was not added"
 msgstr "アカウントが追加されませんでした"
 
 #, fuzzy
 msgid "Username of an account must be non-empty."
 msgstr "アカウントのスクリーン名は空にしないで下さい。"
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "新着メールを通知する"
@@ -527,7 +540,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "ホスト名"
 
@@ -795,7 +807,7 @@ msgstr "停止する"
 msgid "Waiting for transfer to begin"
 msgstr "転送開始を待っています"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "キャンセルしました"
 
 msgid "Failed"
@@ -1287,6 +1299,10 @@ msgstr "他の人がチャットで話しました"
 msgid "Someone says your username in chat"
 msgstr "チャットで誰かがあなたの名前を入力した時"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "登録が必要です"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer のエラー"
 
@@ -1389,7 +1405,6 @@ msgid "Saved Statuses"
 msgstr "保存した状態"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "題名"
 
@@ -1587,6 +1602,7 @@ msgstr ""
 msgid "Online"
 msgstr "オンライン"
 
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "オフライン"
 
@@ -1684,6 +1700,14 @@ msgstr "%s のユーザ情報の変更"
 msgid "Set User Info"
 msgstr "ユーザ情報のセット"
 
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "このプロトコルではチャット・ルームをサポートしていません。"
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "このプロトコルではチャット・ルームをサポートしていません。"
+
 msgid "Unknown"
 msgstr "不明"
 
@@ -1701,11 +1725,14 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "選択したアカウントはオフラインです"
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -1933,7 +1960,6 @@ msgstr "%s を解決する際にエラー: %d"
 msgid "Thread creation failure: %s"
 msgstr "スレッドの生成に失敗しました: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "原因は不明です"
 
@@ -1973,6 +1999,10 @@ msgstr "フォルダは送信できません。"
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s は妥当なファイルではありません。上書きを拒否することにします。\n"
+
+#, fuzzy
+msgid "File is not readable."
+msgstr "ディレクトリに書き込む権限がありません"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2245,22 +2275,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "原因不明のサイン・オン・エラーが起こりました: %s"
 
-#, fuzzy
-msgid "Conference error"
-msgstr "会議を閉会しました"
-
 msgid "Error with your microphone"
 msgstr ""
 
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
+msgid "Conference error"
+msgstr "会議を閉会しました"
+
 #, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr "接続を開始する際にエラー"
-
-#, fuzzy
-msgid "Error creating conference."
 msgstr "接続を開始する際にエラー"
 
 #, c-format
@@ -3036,22 +3062,6 @@ msgstr "%s さんが会話ウインドウを閉じました"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "メッセージを送信できません (会話を開始できませんでした)"
 
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr ""
-"ソケットを生成できません:\n"
-"%s"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "ポートにソケットを割り当てられませんでした"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr ""
-"ソケットを生成できません:\n"
-"%s"
-
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
 msgstr "サーバと通信する際にエラーが発生しました"
@@ -3204,10 +3214,20 @@ msgstr "チャットの選択: %s"
 msgid "Add to chat..."
 msgstr "チャットの追加..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "在席しています"
 
+#. 2
+msgid "Chatty"
+msgstr "チャッティー"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "邪魔しないでね"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3218,6 +3238,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -3836,20 +3859,16 @@ msgstr "コマンドが無効です"
 msgid "execute"
 msgstr "予想していないデータ"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"ログインするためにサーバが TLS/SSL を要求してきましたが、TLS/SSL はサポートし"
-"ていません。"
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"ログインするためにサーバが TLS/SSL を要求してきましたが、TLS/SSL はサポートし"
-"ていません。"
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "暗号化されていないストリームを介したプレーンテキスト認証が必要です"
+
+#. This should never happen!
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "サーバからの応答が不正です。"
+
+msgid "Server does not use any supported authentication method"
+msgstr "サーバはサポートしている認証手法を利用しません"
 
 #, c-format
 msgid ""
@@ -3862,26 +3881,86 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "プレーンテキスト認証"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "認証に失敗しました"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "サーバからの応答が不正です。"
-
-msgid "Server does not use any supported authentication method"
-msgstr "サーバはサポートしている認証手法を利用しません"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
 msgid "Invalid challenge from server"
 msgstr "サーバからの不正な challenge です"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "暗号化されていないストリームを介したプレーンテキスト認証が必要です"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s が暗号化されていないストリーム接続を介したプレーンテキスト認証を要求してい"
+"ます。これを許可し認証を続行しますか？"
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "認証に失敗しました"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL のエラー"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "接続の最終調整中"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "サポートしていないバージョン"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "サーバはサポートしている認証手法を利用しません"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "サポートしていないエンコーディング"
+
+msgid "User not found"
+msgstr "ユーザが見つかりません"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "名前が間違っています"
+
+msgid "Resource Constraint"
+msgstr "リソース制限"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "設定できません"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "監視するポートを開けませんでした"
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "サーバからの不正な challenge です"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "サーバから想定外の HTTP 応答を受け取りました"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3942,6 +4021,7 @@ msgstr "州"
 msgid "Postal Code"
 msgstr "郵便番号"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "国"
 
@@ -3956,10 +4036,14 @@ msgstr "組織名"
 msgid "Organization Unit"
 msgstr "担当部署"
 
+msgid "Job Title"
+msgstr "肩書"
+
 msgid "Role"
 msgstr "役職"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "誕生日"
 
@@ -3992,13 +4076,17 @@ msgstr "優先順位"
 msgid "Resource"
 msgstr "リソース"
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "最終更新日"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "既にログインしています"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr "ミドル・ネーム"
@@ -4048,15 +4136,6 @@ msgstr "既にログインしています"
 #, fuzzy
 msgid "Log Out"
 msgstr "チャットをログに記録する"
-
-msgid "Chatty"
-msgstr "チャッティー"
-
-msgid "Extended Away"
-msgstr "逃走中"
-
-msgid "Do Not Disturb"
-msgstr "邪魔しないでね"
 
 msgid "JID"
 msgstr "JID"
@@ -4189,16 +4268,27 @@ msgid "Roles:"
 msgstr "役職"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"ログインするためにサーバが TLS/SSL を要求してきましたが、TLS/SSL はサポートし"
+"ていません。"
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"ログインするためにサーバが TLS/SSL を要求してきましたが、TLS/SSL はサポートし"
+"ていません。"
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "通常のテキスト"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 msgid "Invalid XMPP ID"
 msgstr "不正な XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "XMPP ID が間違っています (ドメインを指定して下さい)"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "XMPP ID が間違っています (ドメインを指定して下さい)"
@@ -4305,7 +4395,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "承認されていません"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "不機嫌"
 
@@ -4342,6 +4431,20 @@ msgstr "血液型"
 msgid "Allow Buzz"
 msgstr "許可する"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "ミドル・ネーム"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "仲間のコメント"
+
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 #, fuzzy
 msgid "Tune Artist"
 msgstr "アーティスト"
@@ -4515,9 +4618,6 @@ msgstr "ポリシー違反"
 msgid "Remote Connection Failed"
 msgstr "リモート接続に失敗しました"
 
-msgid "Resource Constraint"
-msgstr "リソース制限"
-
 msgid "Restricted XML"
 msgstr "制限付き XML"
 
@@ -4593,10 +4693,6 @@ msgstr ""
 "%s さんへファイルを送信できません (ユーザはファイル転送をサポートしていませ"
 "ん)"
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr ""
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4605,6 +4701,10 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s has buzzed you!"
 msgstr "%s さんがあなた [%s] を追加しました"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4635,6 +4735,10 @@ msgstr "リソースの選択"
 #, fuzzy
 msgid "Initiate Media"
 msgstr "チャットの開始(_C)"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "このプロトコルではチャット・ルームをサポートしていません。"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  チャット・ルームを設定します"
@@ -4699,6 +4803,13 @@ msgstr ""
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: ユーザ宛に警告音を鳴らす"
 
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "妥当なユーザの選択"
+
+msgid "Extended Away"
+msgstr "逃走中"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -4716,11 +4827,20 @@ msgstr "XMPP プロトコルのプラグイン"
 msgid "Domain"
 msgstr "ドメイン名"
 
-msgid "Require SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "承認が必要です"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "%s のユーザ情報は有効ではありません"
+
+msgid "Use old-style SSL"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
-msgstr "古い SSL (ポート番号:5223) を強制的に使用する"
+#, fuzzy
+msgid "Connection security"
+msgstr "接続のリセット"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "暗号化されていないストリームを介したプレーンテキスト認証を許可する"
@@ -4774,11 +4894,21 @@ msgstr "XMPP メッセージ・エラー"
 msgid "(Code %s)"
 msgstr " (コード %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "メッセージの送信に失敗: メッセージが長すぎます"
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XML 解析エラー"
-
-msgid "Unknown Error in presence"
-msgstr "不明なエラーが起きています"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4815,6 +4945,9 @@ msgstr "あなたは %s に蹴られました: (%s)"
 #, fuzzy, c-format
 msgid "Kicked (%s)"
 msgstr "%s (%s) に蹴られました"
+
+msgid "Unknown Error in presence"
+msgstr "不明なエラーが起きています"
 
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
@@ -4854,19 +4987,311 @@ msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "ファイルとして送信する %s のリソースを選択して下さい"
 
 #, fuzzy
-msgid "Edit User Mood"
-msgstr "ユーザ・モード"
+msgid "Afraid"
+msgstr "アラビア語"
 
-msgid "Please select your mood from the list."
+#, fuzzy
+msgid "Amazed"
+msgstr "恥じる"
+
+#, fuzzy
+msgid "Amorous"
+msgstr "Glorious"
+
+msgid "Angry"
+msgstr "怒る"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "締め出されました"
+
+msgid "Anxious"
+msgstr "心配"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "実際に送信する文字列"
+
+msgid "Ashamed"
+msgstr "恥じる"
+
+msgid "Bored"
+msgstr "うんざり"
+
+#, fuzzy
+msgid "Brave"
+msgstr "保存する"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Realm"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "チャット"
+
+#, fuzzy
+msgid "Cold"
+msgstr "太字にする"
+
+#, fuzzy
+msgid "Confident"
+msgstr "衝突してます"
+
+#, fuzzy
+msgid "Confused"
+msgstr "続行する"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "連絡先の情報"
+
+#, fuzzy
+msgid "Contented"
+msgstr "接続しました"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "勤務先"
+
+msgid "Crazy"
 msgstr ""
 
 #, fuzzy
-msgid "Set"
-msgstr "設定(_S)"
+msgid "Creative"
+msgstr "開催する"
 
 #, fuzzy
-msgid "Set Mood..."
-msgstr "IM の送信..."
+msgid "Curious"
+msgstr "Glorious"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "拒否する"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "削除する"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "切断されました"
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "無効にする(_D)"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "切り離し済"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "心配"
+
+msgid "Excited"
+msgstr "興奮"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Glorious"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "名"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "取得中..."
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "グループ"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "町"
+
+msgid "Happy"
+msgstr "ハッピー"
+
+msgid "Hopeful"
+msgstr ""
+
+#, fuzzy
+msgid "Hot"
+msgstr "ホスト名(_H):"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "怒る"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "ユーモア"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "恋愛中"
+
+msgid "In love"
+msgstr "恋愛中"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "インドネシア語"
+
+#, fuzzy
+msgid "Interested"
+msgstr "趣味"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "招待する"
+
+msgid "Invincible"
+msgstr "無敵"
+
+msgid "Jealous"
+msgstr "やきもち"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "申"
+
+#, fuzzy
+msgid "Lost"
+msgstr "一番大きい"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "ドイツ語"
+
+#, fuzzy
+msgid "Moody"
+msgstr "不機嫌"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "デフォルト"
+
+#, fuzzy
+msgid "Offended"
+msgstr "オフライン"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "演奏"
+
+#, fuzzy
+msgid "Proud"
+msgstr "大きい"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "氏名"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "受信したメッセージ"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "削除"
+
+#, fuzzy
+msgid "Restless"
+msgstr "登録"
+
+msgid "Sad"
+msgstr "悲しむ"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Glorious"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "拒否しているか"
+
+msgid "Shy"
+msgstr ""
+
+#, fuzzy
+msgid "Sick"
+msgstr "あだ名"
+
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "眠いよ"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "速度:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "サウンド"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Fire"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "下線を付ける"
+
+msgid "Weak"
+msgstr ""
+
+#, fuzzy
+msgid "Worried"
+msgstr "うんざり"
 
 #, fuzzy
 msgid "Set User Nickname"
@@ -4880,6 +5305,10 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
+
+#, fuzzy
+msgid "Set"
+msgstr "設定(_S)"
 
 #, fuzzy
 msgid "Set Nickname..."
@@ -4928,183 +5357,139 @@ msgstr ""
 "ローカルの仲間リストに記述されている %s さんはサーバ上のリストに存在しませ"
 "ん。サーバ上のリストで、この仲間を追加してもよろしいですか？"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "メッセージを解読できません"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "文法エラー (おそらくクライアント側のバグ)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "E-メール・アドレスが間違っています"
 
-#, c-format
 msgid "User does not exist"
 msgstr "ユーザがいません"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "FQDN (完全修飾ドメイン名) がありません"
 
-#, c-format
 msgid "Already logged in"
 msgstr "既にサインインしています"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Invalid username"
 msgstr "名前が間違っています"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "無効な公開名です"
 
-#, c-format
 msgid "List full"
 msgstr "リストがいっぱいです"
 
-#, c-format
 msgid "Already there"
 msgstr "既にそこにいます"
 
-#, c-format
 msgid "Not on list"
 msgstr "リストにありません"
 
-#, c-format
 msgid "User is offline"
 msgstr "ユーザはオフラインです"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "既にそのモードにいます"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "既にリストの反対にいます"
 
-#, c-format
 msgid "Too many groups"
 msgstr "グループが多すぎます"
 
-#, c-format
 msgid "Invalid group"
 msgstr "無効なグループ名"
 
-#, c-format
 msgid "User not in group"
 msgstr "ユーザがグループにありません"
 
-#, c-format
 msgid "Group name too long"
 msgstr "グループ名が長すぎます"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "グループ 0 は削除できません"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "存在しないグループにユーザを追加しようとしました"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "スイッチボードに失敗しました"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "通知の転送に失敗しました"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "必要なフィールドがありません"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "FND にヒットしすぎです"
 
-#, c-format
 msgid "Not logged in"
 msgstr "ログインしていません"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "一時的にサービスを利用できません"
 
-#, c-format
 msgid "Database server error"
 msgstr "データベース・サーバのエラー"
 
-#, c-format
 msgid "Command disabled"
 msgstr "コマンドが無効です"
 
-#, c-format
 msgid "File operation error"
 msgstr "ファイル操作のエラー"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "メモリ確保のエラー"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "間違った CHL 値がサーバに送信されました"
 
-#, c-format
 msgid "Server busy"
 msgstr "サーバがビジーです"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "サーバを利用できません"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "ピア通知サーバがダウンしています"
 
-#, c-format
 msgid "Database connect error"
 msgstr "データベース接続エラーです"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "サーバがダウンしています (見捨てましょう)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "接続を開始する際にエラー"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR パラメータが不明または許可されていません"
 
-#, c-format
 msgid "Unable to write"
 msgstr "書き込めません"
 
-#, c-format
 msgid "Session overload"
 msgstr "セッションの負荷が過剰です"
 
-#, c-format
 msgid "User is too active"
 msgstr "ユーザがアクティブすぎます"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "セッションが多すぎです"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "パスポートは確認されていません"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "おかしな仲間ファイル"
 
-#, c-format
 msgid "Not expected"
 msgstr "予想していないデータ"
 
@@ -5112,27 +5497,21 @@ msgstr "予想していないデータ"
 msgid "Friendly name is changing too rapidly"
 msgstr "公開する名前が短すぎます"
 
-#, c-format
 msgid "Server too busy"
 msgstr "サーバがとてもビジーです"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "認証に失敗しました"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "オフラインの時は許可できません"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "新しいユーザを受け入れていません"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "親の承諾がない Kids パスポートです"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "まだパスポートのアカウントは確認されていません"
 
@@ -5140,7 +5519,6 @@ msgstr "まだパスポートのアカウントは確認されていません"
 msgid "Passport account suspended"
 msgstr "まだパスポートのアカウントは確認されていません"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "おかしなチケットです"
 
@@ -5197,6 +5575,10 @@ msgstr "E-メール・アドレス"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "新しい MSN の公開名が長すぎます"
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "公開する名前をセットして下さい"
 
 msgid "Set your friendly name."
 msgstr "公開する名前をセットして下さい"
@@ -5285,20 +5667,6 @@ msgstr "電話中です"
 
 msgid "Out to Lunch"
 msgstr "食事に出かけています"
-
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "アーティスト"
-
-#, fuzzy
-msgid "Album"
-msgstr "Adium"
 
 #, fuzzy
 msgid "Game Title"
@@ -5452,9 +5820,6 @@ msgstr "記念日"
 msgid "Work"
 msgstr "職種"
 
-msgid "Job Title"
-msgstr "肩書"
-
 msgid "Company"
 msgstr "勤務先"
 
@@ -5546,6 +5911,10 @@ msgstr "IPC のテスト用サーバ"
 msgid "Show custom smileys"
 msgstr "独自のスマイリーを表示する"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "新しい接続を開けません"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "合図: ユーザに向けて警告音を鳴らす"
 
@@ -5556,10 +5925,6 @@ msgstr "失敗: 認証に失敗しました"
 #, fuzzy
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "失敗: 認証に失敗しました"
-
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s さんが合図を送りたがっています！"
 
 #, fuzzy
 msgid "The following users are missing from your addressbook"
@@ -5750,94 +6115,28 @@ msgstr "この相手を仲間リストに追加しますか？"
 msgid "The username specified is invalid."
 msgstr "指定したスクリーン名が間違っています"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "公開する名前が短すぎます"
-
-msgid "This Hotmail account may not be active."
-msgstr "この Hotmail のアカウントは有効でないようです。"
-
-msgid "Profile URL"
-msgstr "プロフィールの URL"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN プロトコルのプラグイン"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s は正しいグループではありません"
-
-msgid "Unknown error."
-msgstr "原因不明のエラーです"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%2$s (%3$s) の %1$s"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s (%s) のユーザを追加できません"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s (%s) のユーザをブロックできません"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s (%s) のユーザを許可できません"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "仲間リストが満杯なので、%s さんを追加できませんでした"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s さんのパスポート・アカウントは正しくありません"
-
-msgid "Service Temporarily Unavailable."
-msgstr "サービスを一時的に利用できません"
-
-msgid "Unable to rename group"
-msgstr "グループ名を変更できません"
-
-msgid "Unable to delete group"
-msgstr "グループを削除できません"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s さんはあなたを仲間リストに追加しています"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s さんはあなたを仲間リストから削除しています"
-
-#. show current mood
 #, fuzzy
-msgid "Current Mood"
-msgstr "現在の Mood"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "ユーザ・モード"
+msgid "The PIN you entered is invalid."
+msgstr "入力したセキュア ID 鍵は不正です。"
 
 #, fuzzy
-msgid "Change your Mood"
-msgstr "パスワードの変更"
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "入力したセキュア ID 鍵は不正です。"
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
 
 #, fuzzy
-msgid "How do you feel right now?"
-msgstr "今は離席中です"
+msgid "The two PINs you entered do not match."
+msgstr "新しいパスワードが一致しません。"
+
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "入力したセキュア ID 鍵は不正です。"
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
 #. show error to user
 #, fuzzy
@@ -5852,7 +6151,11 @@ msgstr "プロフィール"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -5861,6 +6164,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "苗字"
@@ -5891,11 +6195,6 @@ msgstr ""
 msgid "About"
 msgstr "%s について"
 
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "パスワードの変更..."
-
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
@@ -5916,10 +6215,10 @@ msgstr "%s について"
 msgid "The file you are trying to send is too large!"
 msgstr "メッセージが長すぎます"
 
+#, fuzzy
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
-msgstr ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr "サーバへ接続できません。接続するサーバのアドレスを入力して下さい。"
 
 #, fuzzy
 msgid "Logging In..."
@@ -5927,22 +6226,20 @@ msgstr "ログの記録"
 
 #, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr "サーバへ接続できません。接続するサーバのアドレスを入力して下さい。"
 
 #, fuzzy
 msgid "Connecting..."
 msgstr "接続中です"
 
-#. mxit login name
-msgid "MXit Login Name"
-msgstr ""
-
-#. nick name
 #, fuzzy
-msgid "Nick Name"
-msgstr "ニックネーム"
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "入力したセキュア ID 鍵は不正です。"
+
+#. mxit login name
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 #, fuzzy
@@ -5972,10 +6269,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -5989,7 +6286,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "セキュリティは有効"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "パスワードの入力"
@@ -6015,16 +6312,25 @@ msgid "Retrieving User Information..."
 msgstr "サーバの情報"
 
 #, fuzzy
+msgid "Loading menu..."
+msgstr "ログの記録"
+
+#, fuzzy
 msgid "Status Message"
 msgstr "送信したメッセージ"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "受信したメッセージ"
+
+#. hidden number
 #, fuzzy
 msgid "Hidden Number"
 msgstr "ミドル・ネーム"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "携帯の電話番号の設定..."
+msgid "Your MXit ID..."
+msgstr "Yahoo! ID"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6038,6 +6344,28 @@ msgstr "接続中です"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "あなたは %s に蹴られました: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "おかしなチケットです"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "ルーム(_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "メールが届きました！"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "オンライン"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6059,12 +6387,29 @@ msgstr ""
 msgid "Successfully Logged In..."
 msgstr "Qun メンバの変更が完了しました"
 
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP メッセージ・エラー"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
+
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "原因不明のサイン・オン・エラーが起こりました: %s"
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL のエラー"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL のエラー"
 
 #, fuzzy
 msgid "Contact Error"
@@ -6141,38 +6486,8 @@ msgstr ""
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
 
-msgid "Angry"
-msgstr "怒る"
-
-msgid "Excited"
-msgstr "興奮"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "グループ"
-
-msgid "Happy"
-msgstr "ハッピー"
-
 msgid "In Love"
 msgstr "恋愛中"
-
-msgid "Invincible"
-msgstr "無敵"
-
-msgid "Sad"
-msgstr "悲しむ"
-
-#, fuzzy
-msgid "Hot"
-msgstr "ホスト名(_H):"
-
-#, fuzzy
-msgid "Sick"
-msgstr "あだ名"
-
-msgid "Sleepy"
-msgstr "眠いよ"
 
 #, fuzzy
 msgid "Pending"
@@ -6598,9 +6913,6 @@ msgstr "パスワードの有効期限が切れています"
 msgid "Incorrect password"
 msgstr "パスワードが間違っています"
 
-msgid "User not found"
-msgstr "ユーザが見つかりません"
-
 msgid "Account has been disabled"
 msgstr "アカウントが無効になっています"
 
@@ -6825,7 +7137,19 @@ msgstr "サーバのアドレス"
 msgid "Server port"
 msgstr "サーバのポート"
 
-#. Note to translators: %s in this string is a URL
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "私があなたを仲間リストに追加できるように承認して下さい。"
+
+msgid "No reason given."
+msgstr "理由はわかりません。"
+
+msgid "Authorization Denied Message:"
+msgstr "承認拒否メッセージ:"
+
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "サーバから想定外の HTTP 応答を受け取りました"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s"
 msgstr "サーバから想定外の HTTP 応答を受け取りました"
@@ -6843,8 +7167,37 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "接続を開始する際にエラー"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "接続を開始する際にエラー"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(このメッセージを受信する際にエラーが発生しました。会話している仲間はおそらく"
+"別のエンコーディングを使用していると思われます。相手が使用しているエンコー"
+"ディングがわかるのであれば、アカウント・ダイアログの拡張オプションで指定して"
+"みて下さい。)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(このメッセージを受信する際にエラーが発生しました。%s さんとは異なるエンコー"
+"ディングで会話しているか、あるいは %s さんがおかしなクライアントを使っている"
+"と思われます。)"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -6853,6 +7206,165 @@ msgstr "接続できませんでした"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "不正なルーム名"
+
+msgid "Invalid error"
+msgstr "不正なエラー"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ファイルを送信できません"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "フォルダは送信できません。"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "メッセージを送信できません"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "オフラインのメッセージ"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "メッセージ (%s) を送信できません"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "メッセージを送信できません: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s さんへメッセージを送信できません"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s さんへメッセージを送信できません"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "入力を止めた時"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "質問ダイアログの文字"
+
+#, fuzzy
+msgid "Eating"
+msgstr "ページング"
+
+msgid "Watching a movie"
+msgstr ""
+
+msgid "Typing"
+msgstr "入力中です"
+
+#, fuzzy
+msgid "At the office"
+msgstr "オフィスに居ません"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "眠いよ"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "IM ウィンドウ(_I)"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "電話中です"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "繰り返す"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "移動中"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "ユーザ名"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "サウンド"
+
+#, fuzzy
+msgid "Writing"
+msgstr "職種"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "職種"
+
+msgid "Listening to music"
+msgstr ""
+
+#, fuzzy
+msgid "Studying"
+msgstr "送信する"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "趣味"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -6920,208 +7432,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ファイル %s は %s です (%s の最大サイズを超えています)"
 
-msgid "Invalid error"
-msgstr "不正なエラー"
-
-msgid "Invalid SNAC"
-msgstr "不正な SNAC"
-
-msgid "Rate to host"
-msgstr "ホストの速度"
-
-msgid "Rate to client"
-msgstr "クライアントの速度"
-
-msgid "Service unavailable"
-msgstr "サービスが利用できません"
-
-msgid "Service not defined"
-msgstr "サービスが定義されていません"
-
-msgid "Obsolete SNAC"
-msgstr "旧式の SNAC"
-
-msgid "Not supported by host"
-msgstr "ホストではサポートしていません"
-
-msgid "Not supported by client"
-msgstr "クライアントではサポートしていません"
-
-msgid "Refused by client"
-msgstr "クライアントに拒否されました"
-
-msgid "Reply too big"
-msgstr "返信が大きすぎます"
-
-msgid "Responses lost"
-msgstr "応答がありません"
-
-msgid "Request denied"
-msgstr "リクエストが拒否されました"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC 格納エリアが壊れました"
-
-msgid "Insufficient rights"
-msgstr "不十分な要求です"
-
-msgid "In local permit/deny"
-msgstr "局所的な許可/不許可"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "ユーザが一時的に無効です"
-
-msgid "No match"
-msgstr "マッチしません"
-
-msgid "List overflow"
-msgstr "リスト溢れ"
-
-msgid "Request ambiguous"
-msgstr "要求が曖昧です"
-
-msgid "Queue full"
-msgstr "キューが一杯です"
-
-msgid "Not while on AOL"
-msgstr "AOL に居る時はできません"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "ファイルを送信できません"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "フォルダは送信できません。"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "メッセージを送信できません"
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "オフラインのメッセージ"
-
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(このメッセージを受信する際にエラーが発生しました。会話している仲間はおそらく"
-"別のエンコーディングを使用していると思われます。相手が使用しているエンコー"
-"ディングがわかるのであれば、アカウント・ダイアログの拡張オプションで指定して"
-"みて下さい。)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(このメッセージを受信する際にエラーが発生しました。%s さんとは異なるエンコー"
-"ディングで会話しているか、あるいは %s さんがおかしなクライアントを使っている"
-"と思われます。)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "仲間アイコン"
-
-msgid "Voice"
-msgstr "音声"
-
-msgid "AIM Direct IM"
-msgstr "AIM Direct IM"
-
-msgid "Get File"
-msgstr "ファイルの取得"
-
-msgid "Games"
-msgstr "ゲーム"
-
-msgid "Add-Ins"
-msgstr "追加"
-
-msgid "Send Buddy List"
-msgstr "仲間リストの送信"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Direct 接続"
-
-msgid "AP User"
-msgstr "AP ユーザ"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "ニヒリスト"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ サーバ中継"
-
-msgid "Old ICQ UTF8"
-msgstr "古い ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian 暗号化"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "ヒップトップ"
-
-msgid "Security Enabled"
-msgstr "セキュリティは有効"
-
-msgid "Video Chat"
-msgstr "ビデオ・チャット"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "ライブ・ビデオ"
-
-msgid "Camera"
-msgstr "カメラ"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "スクリーン名"
-
 msgid "Free For Chat"
 msgstr "チャットできます"
 
@@ -7137,14 +7447,25 @@ msgstr "ウェブは見てます"
 msgid "Invisible"
 msgstr "隠れています"
 
-msgid "IP Address"
-msgstr "IP-アドレス"
+#, fuzzy
+msgid "Evil"
+msgstr "E-メール"
 
-msgid "Warning Level"
-msgstr "警告レベル"
+#, fuzzy
+msgid "Depression"
+msgstr "職業"
 
-msgid "Buddy Comment"
-msgstr "仲間のコメント"
+#, fuzzy
+msgid "At home"
+msgstr "%s について"
+
+#, fuzzy
+msgid "At work"
+msgstr "ネットワーク"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "食事に出かけています"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7246,15 +7567,6 @@ msgstr "パスワードの送信中"
 
 msgid "Unable to initialize connection"
 msgstr "新しい接続を開けません"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "私があなたを仲間リストに追加できるように承認して下さい。"
-
-msgid "No reason given."
-msgstr "理由はわかりません。"
-
-msgid "Authorization Denied Message:"
-msgstr "承認拒否メッセージ:"
 
 #, c-format
 msgid ""
@@ -7383,86 +7695,12 @@ msgstr[1] ""
 "原因は不明ですが、%2$s さんからの %1$hu 個のメッセージを受け取れませんでし"
 "た。"
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "メッセージ (%s) を送信できません"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "メッセージを送信できません: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s さんへメッセージを送信できません"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s さんへメッセージを送信できません"
-
-#, c-format
-msgid "User information not available: %s"
-msgstr "ユーザ情報は有効ではありません: %s"
-
-msgid "Unknown reason."
-msgstr "原因は不明です"
-
-msgid "Online Since"
-msgstr "サイン・インした日時"
-
-msgid "Member Since"
-msgstr "メンバになった日時"
-
-msgid "Capabilities"
-msgstr "機能"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM への接続が切れたようです"
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[メッセージに不正な文字が含まれているため、このユーザからのメッセージを表示で"
-"きません]"
-
-#, fuzzy
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"速度制限を越えているため最後の操作は実行されませんでした。10 秒間ほど待ってか"
-"ら再度試みて下さい。"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "チャット・ルーム %s から切断されました"
-
-msgid "Mobile Phone"
-msgstr "携帯電話"
-
-msgid "Personal Web Page"
-msgstr "個人的なウェブページ"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "追加情報"
-
-msgid "Zip Code"
-msgstr "郵便番号"
-
-msgid "Work Information"
-msgstr "職業"
-
-msgid "Division"
-msgstr "所属"
-
-msgid "Position"
-msgstr "役職"
-
-msgid "Web Page"
-msgstr "ウェブページ"
 
 msgid "Pop-Up Message"
 msgstr "ポップアップ・メッセージ"
@@ -7666,6 +7904,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "iTunes 楽曲ストアのリンク"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s さんに対する仲間のコメント"
@@ -7698,7 +7940,8 @@ msgstr "AIM 情報の取得"
 msgid "Edit Buddy Comment"
 msgstr "仲間のコメントの編集"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "状態メッセージの取得"
 
 #, fuzzy
@@ -7731,7 +7974,8 @@ msgstr "スクリーン名の書式は大文字と空白文字しか変更でき
 msgid "Change Address To:"
 msgstr "変更するアドレス:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>あなたは承認を待っていません</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7773,6 +8017,14 @@ msgstr "IM フォワーディング (URL) の設定"
 msgid "Set Privacy Options..."
 msgstr "プライバシー・オプションの追加..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "仲間リストの表示"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "招待リスト"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "アカウントの確認"
@@ -7788,9 +8040,6 @@ msgstr "承認を待っている仲間を表示"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "E-メールで仲間の検索..."
-
-msgid "Search for Buddy by Information"
-msgstr "情報で仲間の検索..."
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -7831,6 +8080,235 @@ msgstr ""
 "これを行うには 2 台のコンピュータを直接接続しなければならず、IM 画像に必要で"
 "す。IP アドレスが明らかになるので、プライバシーに対するリスクが発生するかもし"
 "れません。"
+
+msgid "Invalid SNAC"
+msgstr "不正な SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "サービスが利用できません"
+
+msgid "Service not defined"
+msgstr "サービスが定義されていません"
+
+msgid "Obsolete SNAC"
+msgstr "旧式の SNAC"
+
+msgid "Not supported by host"
+msgstr "ホストではサポートしていません"
+
+msgid "Not supported by client"
+msgstr "クライアントではサポートしていません"
+
+msgid "Refused by client"
+msgstr "クライアントに拒否されました"
+
+msgid "Reply too big"
+msgstr "返信が大きすぎます"
+
+msgid "Responses lost"
+msgstr "応答がありません"
+
+msgid "Request denied"
+msgstr "リクエストが拒否されました"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC 格納エリアが壊れました"
+
+msgid "Insufficient rights"
+msgstr "不十分な要求です"
+
+msgid "In local permit/deny"
+msgstr "局所的な許可/不許可"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "ユーザが一時的に無効です"
+
+msgid "No match"
+msgstr "マッチしません"
+
+msgid "List overflow"
+msgstr "リスト溢れ"
+
+msgid "Request ambiguous"
+msgstr "要求が曖昧です"
+
+msgid "Queue full"
+msgstr "キューが一杯です"
+
+msgid "Not while on AOL"
+msgstr "AOL に居る時はできません"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "仲間アイコン"
+
+msgid "Voice"
+msgstr "音声"
+
+msgid "AIM Direct IM"
+msgstr "AIM Direct IM"
+
+msgid "Get File"
+msgstr "ファイルの取得"
+
+msgid "Games"
+msgstr "ゲーム"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "追加"
+
+msgid "Send Buddy List"
+msgstr "仲間リストの送信"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ Direct 接続"
+
+msgid "AP User"
+msgstr "AP ユーザ"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "ニヒリスト"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ サーバ中継"
+
+msgid "Old ICQ UTF8"
+msgstr "古い ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian 暗号化"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "ヒップトップ"
+
+msgid "Security Enabled"
+msgstr "セキュリティは有効"
+
+msgid "Video Chat"
+msgstr "ビデオ・チャット"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "ライブ・ビデオ"
+
+msgid "Camera"
+msgstr "カメラ"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "スクリーン名"
+
+msgid "IP Address"
+msgstr "IP-アドレス"
+
+msgid "Warning Level"
+msgstr "警告レベル"
+
+msgid "Buddy Comment"
+msgstr "仲間のコメント"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "ユーザ情報は有効ではありません: %s"
+
+msgid "Mobile Phone"
+msgstr "携帯電話"
+
+msgid "Personal Web Page"
+msgstr "個人的なウェブページ"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "追加情報"
+
+msgid "Zip Code"
+msgstr "郵便番号"
+
+msgid "Work Information"
+msgstr "職業"
+
+msgid "Division"
+msgstr "所属"
+
+msgid "Position"
+msgstr "役職"
+
+msgid "Web Page"
+msgstr "ウェブページ"
+
+msgid "Online Since"
+msgstr "サイン・インした日時"
+
+msgid "Member Since"
+msgstr "メンバになった日時"
+
+msgid "Capabilities"
+msgstr "機能"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "オンラインのようです"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "オンラインのようです"
+
+msgid "Appear Offline"
+msgstr "オフラインのようです"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "オフラインのようです"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "あなたは %s に蹴られました: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"右クリックして \"承認の再要求\" を選択することで、これらの仲間からの承認をも"
+"う一度要求できます。"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "隠れています"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "招待リスト"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "水瓶座"
@@ -8002,9 +8480,6 @@ msgstr "最終更新日"
 msgid "Could not change buddy information."
 msgstr "仲間の情報を入力して下さい:"
 
-msgid "Mobile"
-msgstr "移動中"
-
 msgid "Note"
 msgstr "備考"
 
@@ -8035,7 +8510,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "承認が必要です"
 
 #, fuzzy
@@ -8155,6 +8630,11 @@ msgstr "質問ダイアログの文字"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "ルームの一覧"
 
 #, fuzzy
 msgid "Notice"
@@ -9096,18 +9576,6 @@ msgstr "ハイパー・アクティブ"
 msgid "Robot"
 msgstr "ロボット"
 
-msgid "Jealous"
-msgstr "やきもち"
-
-msgid "Ashamed"
-msgstr "恥じる"
-
-msgid "Bored"
-msgstr "うんざり"
-
-msgid "Anxious"
-msgstr "心配"
-
 msgid "User Modes"
 msgstr "ユーザ・モード"
 
@@ -9605,9 +10073,6 @@ msgstr "現在の Mood"
 #, c-format
 msgid "Normal"
 msgstr "標準"
-
-msgid "In love"
-msgstr "恋愛中"
 
 msgid ""
 "\n"
@@ -10123,9 +10588,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! プロトコル・プラグイン"
 
-msgid "Pager server"
-msgstr "ページャのサーバ"
-
 msgid "Pager port"
 msgstr "ページャのポート番号"
 
@@ -10141,17 +10603,11 @@ msgstr "チャット・ルームの場所"
 msgid "Ignore conference and chatroom invitations"
 msgstr "会議とチャットルームの招待を無視する"
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
 msgstr "チャット・ルームの URL リスト"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo チャット・サーバ"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo チャットのポート番号"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10220,6 +10676,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"不明なエラー番号 %d です。Yahoo! ウェブサイトへログインすると修正されるかもし"
+"れません。"
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "不明なエラー番号 %d です。Yahoo! ウェブサイトへログインすると修正されるかもし"
 "れません。"
@@ -10310,6 +10775,15 @@ msgstr ""
 "サーバとの接続を確立できませんでした:\n"
 "%s"
 
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "サーバへ接続できません。接続するサーバのアドレスを入力して下さい。"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+
 msgid "Not at Home"
 msgstr "家に居ません"
 
@@ -10328,17 +10802,11 @@ msgstr "ちょっとそこまで"
 msgid "Not on server list"
 msgstr "サーバ・リストにありません"
 
-msgid "Appear Online"
-msgstr "オンラインのようです"
-
 msgid "Appear Permanently Offline"
 msgstr "一時的にオフラインのようです"
 
 msgid "Presence"
 msgstr "在席"
-
-msgid "Appear Offline"
-msgstr "オフラインのようです"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Don't Appear Permanently Offline"
@@ -10660,6 +11128,12 @@ msgid "Exposure"
 msgstr "Exposure"
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"ソケットを生成できません:\n"
+"%s"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP プロキシからの応答を解析できません: %s\n"
 
@@ -10696,6 +11170,10 @@ msgstr "いいえ(_N)"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "許可する(_A)"
@@ -10770,8 +11248,9 @@ msgstr "邪魔しないでね"
 msgid "Extended away"
 msgstr "逃走中"
 
-msgid "Listening to music"
-msgstr ""
+#, fuzzy
+msgid "Feeling"
+msgstr "残り"
 
 #, fuzzy, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10894,27 +11373,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "リモート・ユーザが接続を閉じました"
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "接続がタイムアウトしました"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "接続が拒否されました"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "そのチャット名は既に使用されています。"
 
@@ -10939,12 +11417,6 @@ msgstr "インターネット・メッセンジャー"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin インターネット・メッセンジャー"
-
-msgid "Orientation"
-msgstr "向き"
-
-msgid "The orientation of the tray."
-msgstr "トレイの向きです"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11069,6 +11541,10 @@ msgstr ""
 "\n"
 "仲間リストのウィンドウにある <b>アカウント->追加/編集</b> メニューからも、こ"
 "の画面を開くことができます。"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s さんが %s さんを仲間リスト%s%s に追加したがっています"
 
 #. Buddy List
 #, fuzzy
@@ -11339,6 +11815,20 @@ msgstr "現在、仲間の追加が可能なアカウントでサイン・イン
 msgid "Unknown node type"
 msgstr "不明なエラー・コード %d"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "%s さんの新しい名前を入力して下さい"
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "コンタクトの別名"
+
+#, fuzzy
+msgid "Edit User Mood"
+msgstr "ユーザ・モード"
+
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/仲間(_B)"
@@ -11426,6 +11916,10 @@ msgstr "/ツール/設定(_E)"
 msgid "/Tools/Pr_ivacy"
 msgstr "/ツール/個人情報(_I)"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/ツール/システム・ログ(_L)"
+
 msgid "/Tools/_File Transfers"
 msgstr "/ツール/ファイルの転送(_F)"
 
@@ -11445,8 +11939,20 @@ msgstr "/ヘルプ(_H)"
 msgid "/Help/Online _Help"
 msgstr "/ヘルプ/オンライン・ヘルプ(_H)"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "仲間の情報"
+
 msgid "/Help/_Debug Window"
 msgstr "/ヘルプ/デバッグ・ウィンドウ(_D)"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "サーバの情報"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "個人情報"
 
 msgid "/Help/_About"
 msgstr "/ヘルプ/情報(_A)"
@@ -11686,6 +12192,10 @@ msgstr "<PurpleMain>/アカウント/"
 msgid "_Edit Account"
 msgstr "アカウントの編集(_E)"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "IM の送信..."
+
 msgid "No actions available"
 msgstr "利用可能なアクションはありません"
 
@@ -11732,12 +12242,6 @@ msgstr "<h1>%s さんとの会話</h1>\n"
 
 msgid "Save Conversation"
 msgstr "会話の保存"
-
-msgid "Find"
-msgstr "検索"
-
-msgid "_Search for:"
-msgstr "検索する単語(_S):"
 
 msgid "Un-Ignore"
 msgstr "無視しない"
@@ -11818,6 +12322,10 @@ msgstr "/会話/ログの表示(_L)"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/会話/ファイルの送信(_N)..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/会話/情報の取得"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/会話/つかむ仲間に追加する(_P)..."
@@ -11904,6 +12412,10 @@ msgstr "/会話/その他(_O)"
 msgid "/Conversation/Send File..."
 msgstr "/会話/ファイルの送信..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/会話/情報の取得"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/会話/つかむ仲間に追加する..."
 
@@ -11967,14 +12479,19 @@ msgstr "送信する(_S)"
 msgid "0 people in room"
 msgstr "誰もいません"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "このタブを閉じる"
+
+#, fuzzy
+msgid "Find:"
+msgstr "検索"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "チャットルームに %d人にいます"
 msgstr[1] "チャットルームに %d人にいます"
-
-msgid "Typing"
-msgstr "入力中です"
 
 msgid "Stopped Typing"
 msgstr "入力を止めたようです"
@@ -12028,6 +12545,12 @@ msgstr "グループ毎に共有する"
 
 msgid "By account"
 msgstr "アカウント毎に共有する"
+
+msgid "Find"
+msgstr "検索"
+
+msgid "_Search for:"
+msgstr "検索する単語(_S):"
 
 msgid "Save Debug Log"
 msgstr "デバッグ・ログの保存"
@@ -12095,9 +12618,6 @@ msgstr "サポート"
 msgid "webmaster"
 msgstr "開発者/ウェブマスタ"
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr "Win32 のポーティング"
 
@@ -12123,11 +12643,18 @@ msgstr "オリジナルの作者"
 msgid "lead developer"
 msgstr "メインの開発者"
 
+msgid "Senior Contributor/QA"
+msgstr ""
+
 msgid "Afrikaans"
 msgstr "アフリカーンズ語"
 
 msgid "Arabic"
 msgstr "アラビア語"
+
+#, fuzzy
+msgid "Assamese"
+msgstr "恥じる"
 
 msgid "Belarusian Latin"
 msgstr ""
@@ -12136,6 +12663,10 @@ msgid "Bulgarian"
 msgstr "ブルガリア語"
 
 msgid "Bengali"
+msgstr "ベンガル語"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "ベンガル語"
 
 msgid "Bosnian"
@@ -12254,15 +12785,24 @@ msgstr "クルド語"
 msgid "Lao"
 msgstr "獅子座"
 
-msgid "Lithuanian"
-msgstr "リトアニア語"
-
 msgid "Macedonian"
 msgstr "マケドニア語"
 
 #, fuzzy
+msgid "Malayalam"
+msgstr "男性"
+
+#, fuzzy
 msgid "Mongolian"
 msgstr "マケドニア語"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "グジャラート語"
+
+#, fuzzy
+msgid "Malay"
+msgstr "男性"
 
 msgid "Bokmål Norwegian"
 msgstr "ボックマル・ノルウェー語"
@@ -12279,6 +12819,10 @@ msgstr "ノルウェー語"
 
 msgid "Occitan"
 msgstr ""
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr ""
@@ -12335,6 +12879,10 @@ msgstr "タイ語"
 msgid "Turkish"
 msgstr "トルコ語"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "ルーマニア語"
+
 msgid "Urdu"
 msgstr ""
 
@@ -12356,21 +12904,17 @@ msgstr "繁体字中国語"
 msgid "Amharic"
 msgstr "アムハラ語"
 
-#, c-format
-msgid "About %s"
-msgstr "%s について"
+msgid "Lithuanian"
+msgstr "リトアニア語"
 
 #, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s は AIM、MSN、Yahoo!、XMPP、ICQ、IRC、SILC、SIP/SIMPLE、Novell GroupWise、"
 "Lotus Sametime、Bonjour、Zephyr、Gadu-Gadu、QQ といったプロトコルを全て同時に"
@@ -12383,30 +12927,35 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 
 #, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 
-#, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #pidgin チャンネル<BR><BR>"
+#, c-format
+msgid "About %s"
+msgstr "%s について"
 
+#, fuzzy
+msgid "Build Information"
+msgstr "仲間の情報"
+
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #pidgin チャンネル<BR><BR>"
+msgid "%s Build Information"
+msgstr "仲間の情報"
 
 msgid "Current Developers"
 msgstr "現在の開発者"
@@ -12421,14 +12970,19 @@ msgstr "開発者 (旧バージョン)"
 msgid "Retired Crazy Patch Writers"
 msgstr "Crazy なパッチの作者"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "サーバの情報"
+
 msgid "Current Translators"
 msgstr "翻訳者 (最新バージョン)"
 
 msgid "Past Translators"
 msgstr "翻訳者 (旧バージョン)"
 
-msgid "Debugging Information"
-msgstr "デバッグする際の参考情報"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "職業"
 
 msgid "_Name"
 msgstr "名前(_N)"
@@ -12738,15 +13292,6 @@ msgstr ""
 "\n"
 "デフォルトの PNG 画像として扱います。"
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"ファイルの種類が不明です。\n"
-"\n"
-"デフォルトの PNG 画像として扱います。"
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12754,16 +13299,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>画像を保存する際にエラー</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"画像を保存する際にエラー\n"
 "\n"
 "%s"
 
@@ -12880,6 +13415,10 @@ msgid "Insert Smiley"
 msgstr "スマイリー (顔文字) を挿入します"
 
 #, fuzzy
+msgid "Send Attention"
+msgstr "送信先"
+
+#, fuzzy
 msgid "<b>_Bold</b>"
 msgstr "<b>パスワード</b>:"
 
@@ -12938,6 +13477,9 @@ msgstr ""
 msgid "_Smile!"
 msgstr "スマイリー (顔文字) ！"
 
+msgid "_Attention!"
+msgstr ""
+
 #, fuzzy
 msgid "Log Deletion Failed"
 msgstr "接続に失敗しました"
@@ -12954,14 +13496,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "%s で %s から記録し始めた会話ログを完全に削除してもよろしいですか？"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "%s から記録し始めたシステム・ログを完全に削除してもよろしいですか？"
 
 #, fuzzy
@@ -13069,10 +13611,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -13315,9 +13857,8 @@ msgstr "不明な \"つかみ\" イベントです。ぜひバグ報告して下
 msgid "(Custom)"
 msgstr ""
 
-#, fuzzy
-msgid "(Default)"
-msgstr "(デフォルト)"
+msgid "Penguin Pimps"
+msgstr "ペンギン Pimps"
 
 msgid "The default Pidgin sound theme"
 msgstr ""
@@ -13341,18 +13882,34 @@ msgstr "スマイリーのテーマを展開できませんでした"
 msgid "Theme failed to copy."
 msgstr "スマイリーのテーマを展開できませんでした"
 
-msgid "Install Theme"
-msgstr ""
+#, fuzzy
+msgid "Theme Selections"
+msgstr "ブラウザの選択"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "下の一覧から使用するスマイリー (顔文字) のテーマを選択して下さい。この一覧の"
 "中へ新しいテーマをドラッグ＆ドロップするとインストールすることができます。"
 
-msgid "Icon"
-msgstr "アイコン"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "仲間リスト"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "%s の状態"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "顔文字のテーマ"
 
 msgid "Keyboard Shortcuts"
 msgstr ""
@@ -13360,11 +13917,6 @@ msgstr ""
 #, fuzzy
 msgid "Cl_ose conversations with the Escape key"
 msgstr "%s さんとの会話"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "仲間リスト"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13455,9 +14007,6 @@ msgstr ""
 msgid "Font"
 msgstr "フォント"
 
-msgid "Use document font from _theme"
-msgstr "テーマ指定のドキュメント用フォントを利用する(_T)"
-
 msgid "Use font from _theme"
 msgstr "テーマ指定のフォントを利用する(_T)"
 
@@ -13527,57 +14076,16 @@ msgid "_TURN server:"
 msgstr "STUN サーバ(_U):"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "ポート番号(_P):"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "ユーザ名(_U):"
 
 #, fuzzy
 msgid "Pass_word:"
 msgstr "パスワード:"
-
-#, fuzzy
-msgid "Proxy Server &amp; Browser"
-msgstr "プロキシ・サーバ"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr ""
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-
-#, fuzzy
-msgid "Configure _Proxy"
-msgstr "ルームの設定(_C)"
-
-#, fuzzy
-msgid "Configure _Browser"
-msgstr "ルームの設定(_C)"
-
-msgid "Proxy Server"
-msgstr "プロキシ・サーバ"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr ""
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "プロキシの種類(_T):"
-
-msgid "No proxy"
-msgstr "プロキシなし"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "ポート番号(_P):"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "ユーザ名(_U):"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13594,6 +14102,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "デフォルト値を適用する(_A)"
@@ -13613,11 +14126,29 @@ msgstr "Firebird"
 msgid "Epiphany"
 msgstr "Epiphany"
 
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
+
 msgid "Manual"
 msgstr "手動設定"
 
 msgid "Browser Selection"
 msgstr "ブラウザの選択"
+
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Browser"
+msgstr "ルームの設定(_C)"
 
 msgid "_Browser:"
 msgstr "ブラウザ(_B):"
@@ -13641,6 +14172,39 @@ msgid ""
 msgstr ""
 "手動設定(_M):\n"
 "(URL は %s で指定)"
+
+msgid "Proxy Server"
+msgstr "プロキシ・サーバ"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Proxy"
+msgstr "ルームの設定(_C)"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "プロキシの種類(_T):"
+
+msgid "No proxy"
+msgstr "プロキシなし"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "ポート番号(_P):"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "ユーザ名(_U):"
 
 msgid "Log _format:"
 msgstr "ログの書式(_F):"
@@ -13730,25 +14294,19 @@ msgstr "いつ待機時間を報告するか...(_R):"
 msgid "Based on keyboard or mouse use"
 msgstr "キーボードやマウスを操作し始めた時"
 
+#, fuzzy
+msgid "_Minutes before becoming idle:"
+msgstr "状態を変更するまでの時間(分)(_M):"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "待機中になったら状態を変更する(_I)"
+
 msgid "_Auto-reply:"
 msgstr "自動応答(_A):"
 
 msgid "When both away and idle"
 msgstr "離席中で待機中の時"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "自動離席"
-
-#, fuzzy
-msgid "_Minutes before becoming idle:"
-msgstr "状態を変更するまでの時間(分)(_M):"
-
-msgid "Change status when _idle"
-msgstr "待機中になったら状態を変更する(_I)"
-
-msgid "Change _status to:"
-msgstr "次の状態に変更する(_S):"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13763,14 +14321,15 @@ msgstr "起動時に適用する状態(_P):"
 msgid "Interface"
 msgstr "インタフェース"
 
-msgid "Smiley Themes"
-msgstr "顔文字のテーマ"
-
 msgid "Browser"
 msgstr "ブラウザ"
 
 msgid "Status / Idle"
 msgstr "状態/待機"
+
+#, fuzzy
+msgid "Themes"
+msgstr "顔文字のテーマ"
 
 msgid "Allow all users to contact me"
 msgstr "全てのユーザからのコンタクトを許可する"
@@ -14020,10 +14579,13 @@ msgstr ""
 "この画像をメッセージの中に埋め込んだり、このユーザの仲間アイコンに利用できま"
 "す"
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "ランチャは転送できません"
@@ -14058,17 +14620,6 @@ msgstr "アイコンのエラー"
 msgid "Could not set icon"
 msgstr "アイコンを送信できませんでした"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "ファイル '%s' を開けませんでした: %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"画像 '%s' の読み込みに失敗しました: 原因は不明ですが、おそらく画像ファイルが"
-"壊れているようです"
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "リンクを開く方法(_O):"
@@ -14097,6 +14648,10 @@ msgstr "サウンドを演奏する"
 #, fuzzy
 msgid "_Save File"
 msgstr "ファイルの保存"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "本当に %s を削除してもよろしいですか？"
 
 msgid "Select color"
 msgstr "色の選択"
@@ -14140,9 +14695,6 @@ msgstr "Pidgin"
 msgid "Pidgin smileys"
 msgstr "Pidgin スマイリー"
 
-msgid "Penguin Pimps"
-msgstr "ペンギン Pimps"
-
 msgid "Selecting this disables graphical emoticons."
 msgstr "グラフィカルな顔文字を無効にします"
 
@@ -14153,7 +14705,7 @@ msgstr "なし"
 msgid "Small"
 msgstr "E-メール"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -14791,6 +15343,9 @@ msgstr "GtkTreeView の水平方向のセパレータ"
 msgid "Conversation Entry"
 msgstr "メッセージの文字"
 
+msgid "Conversation History"
+msgstr "会話履歴の文字"
+
 msgid "Request Dialog"
 msgstr "質問ダイアログの文字"
 
@@ -15123,8 +15678,20 @@ msgstr "iChat 形式のタイムスタンプを N分おきに会話の中に挿�
 msgid "Timestamp Format Options"
 msgstr "タイムスタンプの書式オプション"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "強制的に 24時間制にする(_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "デフォルト値を適用する(_A)"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "強制的に 24時間制にする(_F)"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "強制的に 24時間制にする(_F)"
 
 msgid "Show dates in..."
@@ -15206,6 +15773,10 @@ msgstr "デバイス"
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
+msgstr "設定の編集"
+
+#, fuzzy
+msgid "Voice and Video Settings"
 msgstr "設定の編集"
 
 #. *< name
@@ -15326,15 +15897,6 @@ msgstr "アカウント: "
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>XMPP に接続していません</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "<iq/> スタンザを挿入します"
-
-msgid "Insert a <presence/> stanza."
-msgstr "<presence/> スタンザを挿入します"
-
-msgid "Insert a <message/> stanza."
-msgstr "<message/> スタンザを挿入します"
-
 #. *< name
 #. *< version
 #. *  summary
@@ -15342,9 +15904,373 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "低レベルの XMPP スタンザを送信したり受信します"
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "これは XMPP サービスやクライアントをデバッグする際に便利なプラグインです。"
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name)はGPLライセンスの元でリリースされています。ライセンスはここに参考のた"
+"めだけに提供されています。 $_CLICK"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Pidginの使っているマルチプラットフォームGUIツールキット"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin が実行されています。Pidgin を終了してから再度実行してください"
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Pidginの核となるファイルとdll"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "スタートメニューに Pidgin の項目を作成する"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "デスクトップに Pidgin のショートカットを作成する"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "デスクトップ"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Environment (必須)"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "場所"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "次へ >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidginインスタントメッセンジャ (必須)"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "ショートカット"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "Pidgin を実行するためのショートカット"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "スペルチェックのサポート"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "スタートアップ"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr "スペルチェックのサポート  (インターネット接続がインストールに必要です)"
+
+msgid "The installer is already running."
+msgstr "インストーラが既に実行されています"
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"アンインストーラはPidginのレジストリエントリを発見できませんでした。$\\rおそ"
+"らく別のユーザにインストールされたでしょう。"
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "PidginのWebページを訪れてください。"
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+"あなたはこのアプリケーションをアンインストールする権限を持っていません。"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "古い SSL (ポート番号:5223) を強制的に使用する"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "入力したセキュア ID 鍵は不正です。"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[メッセージに不正な文字が含まれているため、このユーザからのメッセージを表"
+#~ "示できません]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "情報で仲間の検索..."
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "選択したアカウントはオフラインです"
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "入力したセキュア ID 鍵は不正です。"
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "ニックネーム"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "携帯の電話番号の設定..."
+
+#~ msgid "Rate to host"
+#~ msgstr "ホストの速度"
+
+#~ msgid "Rate to client"
+#~ msgstr "クライアントの速度"
+
+#~ msgid "Unknown reason."
+#~ msgstr "原因は不明です"
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "アーティスト"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "現在の Mood"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "ユーザ・モード"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "パスワードの変更"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "今は離席中です"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "パスワードの変更..."
+
+#~ msgid "Pager server"
+#~ msgstr "ページャのサーバ"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo チャット・サーバ"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo チャットのポート番号"
+
+#~ msgid "Orientation"
+#~ msgstr "向き"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "トレイの向きです"
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "接続を開始する際にエラー"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "ポートにソケットを割り当てられませんでした"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr ""
+#~ "ソケットを生成できません:\n"
+#~ "%s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s さんが合図を送りたがっています！"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "公開する名前が短すぎます"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "この Hotmail のアカウントは有効でないようです。"
+
+#~ msgid "Profile URL"
+#~ msgstr "プロフィールの URL"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN プロトコルのプラグイン"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s は正しいグループではありません"
+
+#~ msgid "Unknown error."
+#~ msgstr "原因不明のエラーです"
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%2$s (%3$s) の %1$s"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "%s (%s) のユーザを追加できません"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "%s (%s) のユーザをブロックできません"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "%s (%s) のユーザを許可できません"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "仲間リストが満杯なので、%s さんを追加できませんでした"
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s さんのパスポート・アカウントは正しくありません"
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "サービスを一時的に利用できません"
+
+#~ msgid "Unable to rename group"
+#~ msgstr "グループ名を変更できません"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "グループを削除できません"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s さんはあなたを仲間リストに追加しています"
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s さんはあなたを仲間リストから削除しています"
+
+#, fuzzy
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "速度制限を越えているため最後の操作は実行されませんでした。10 秒間ほど待っ"
+#~ "てから再度試みて下さい。"
+
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #pidgin チャンネル"
+#~ "<BR><BR>"
+
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #pidgin チャンネル"
+#~ "<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "デバッグする際の参考情報"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "ファイルの種類が不明です。\n"
+#~ "\n"
+#~ "デフォルトの PNG 画像として扱います。"
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "画像を保存する際にエラー\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "(デフォルト)"
+
+#~ msgid "Icon"
+#~ msgstr "アイコン"
+
+#~ msgid "Use document font from _theme"
+#~ msgstr "テーマ指定のドキュメント用フォントを利用する(_T)"
+
+#, fuzzy
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "プロキシ・サーバ"
+
+#~ msgid "Auto-away"
+#~ msgstr "自動離席"
+
+#~ msgid "Change _status to:"
+#~ msgstr "次の状態に変更する(_S):"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "ファイル '%s' を開けませんでした: %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "画像 '%s' の読み込みに失敗しました: 原因は不明ですが、おそらく画像ファイル"
+#~ "が壊れているようです"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "<iq/> スタンザを挿入します"
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "<presence/> スタンザを挿入します"
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "<message/> スタンザを挿入します"
 
 #~ msgid "Send instant messages over multiple protocols"
 #~ msgstr "複数のプロトコルを介してインスタント・メッセージを送信します"
@@ -15357,9 +16283,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "ユーザ名(_U):"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ ラインタイムのバージョン"
 
 #, fuzzy
 #~ msgid "Calling ... "
@@ -15606,10 +16529,6 @@ msgstr ""
 #~ msgstr "ユーザ・モード"
 
 #, fuzzy
-#~ msgid "User Gaming"
-#~ msgstr "ユーザ名"
-
-#, fuzzy
 #~ msgid "User Viewing"
 #~ msgstr "ユーザの制限"
 
@@ -15683,9 +16602,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "書き込み用の接続を閉じました"
 
-#~ msgid "Connection reset"
-#~ msgstr "接続のリセット"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "ソケットから読み込む際にエラー: %s"
 
@@ -15741,10 +16657,6 @@ msgstr ""
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "会話ウィンドウを隠す"
-
-#, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "%s さんの新しい名前を入力して下さい"
 
 #, fuzzy
 #~ msgid "Activate which ID?"
@@ -15926,7 +16838,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "書き込みモードで %s を開けません！"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "ファイル転送が失敗しました。おそらく向こう側がキャンセルしたのでしょう。"
 
@@ -15949,9 +16861,6 @@ msgstr ""
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC プロトコル・プラグイン"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s のユーザ情報は有効ではありません"
 
 #~ msgid "%s Options"
 #~ msgstr "%s のオプション"
@@ -15984,10 +16893,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Update information"
 #~ msgstr "情報の更新"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "速度:"
 
 #~ msgid ""
 #~ "Setting custom faces is not currently supported. Please choose an image "
@@ -16403,9 +17308,6 @@ msgstr ""
 #~ msgstr ""
 #~ "コンタクトの可能性を予測するプラグイン (CAP) を使って仲間と会話した統計情"
 #~ "報から経験値を表示します。"
-
-#~ msgid "Conversation History"
-#~ msgstr "会話履歴の文字"
 
 #~ msgid "Log Viewer"
 #~ msgstr "ログ・ビューアの文字"

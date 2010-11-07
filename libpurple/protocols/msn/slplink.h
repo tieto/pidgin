@@ -21,20 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLPLINK_H_
-#define _MSN_SLPLINK_H_
+#ifndef MSN_SLPLINK_H
+#define MSN_SLPLINK_H
 
 typedef struct _MsnSlpLink MsnSlpLink;
 
 #include "directconn.h"
+#include "session.h"
 #include "slpcall.h"
 #include "slpmsg.h"
-
 #include "switchboard.h"
-
-#include "ft.h"
-
-#include "session.h"
 
 typedef void (*MsnSlpCb)(MsnSlpCall *slpcall,
 						 const guchar *data, gsize size);
@@ -44,12 +40,13 @@ struct _MsnSlpLink
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	MsnDirectConn *dc;
+
+	int refs;
 
 	char *remote_user;
 
 	int slp_seq_id;
-
-	MsnDirectConn *directconn;
 
 	GList *slp_calls;
 	GList *slp_msgs;
@@ -57,7 +54,8 @@ struct _MsnSlpLink
 	GQueue *slp_msg_queue;
 };
 
-void msn_slplink_destroy(MsnSlpLink *slplink);
+MsnSlpLink *msn_slplink_ref(MsnSlpLink *slplink);
+void msn_slplink_unref(MsnSlpLink *slplink);
 
 /**
  * @return An MsnSlpLink for the given user, or NULL if there is no
@@ -81,8 +79,7 @@ void msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 							 MsnSlpMessage *slpmsg);
 void msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink);
-void msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg);
-void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
+void msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part);
 
 /* Only exported for msn_xfer_write */
 void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
@@ -95,4 +92,4 @@ void msn_slplink_request_object(MsnSlpLink *slplink,
 
 MsnSlpCall *msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 
-#endif /* _MSN_SLPLINK_H_ */
+#endif /* MSN_SLPLINK_H */

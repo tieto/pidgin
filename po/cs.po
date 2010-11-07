@@ -9,15 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-11-29 21:18+0100\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
+"PO-Revision-Date: 2010-10-15 17:26+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -62,11 +63,22 @@ msgstr ""
 msgid "Error"
 msgstr "Chyba"
 
+msgid "Account was not modified"
+msgstr "Účet nebyl upraven"
+
 msgid "Account was not added"
 msgstr "Účet nebyl přidán"
 
 msgid "Username of an account must be non-empty."
 msgstr "Jméno uživatele účtu nesmí být prázdné."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr "Protokol účtu nemůže být změněn, když je připojen k serveru."
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr "Jméno uživatele účtu nemůže být změněno, když je připojen k serveru."
 
 msgid "New mail notifications"
 msgstr "Upozornění na nové zprávy"
@@ -512,7 +524,6 @@ msgstr "Potvrzení smazání certifikátu"
 msgid "Certificate Manager"
 msgstr "Správce certifikátů"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Název počítače"
 
@@ -781,7 +792,7 @@ msgstr "Zastavit"
 msgid "Waiting for transfer to begin"
 msgstr "Čekám na začátek přenosu"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Zrušeno"
 
 msgid "Failed"
@@ -1251,6 +1262,9 @@ msgstr "Jiní mluví v chatu"
 msgid "Someone says your username in chat"
 msgstr "Někdo v chatu řekne vaše jméno"
 
+msgid "Attention received"
+msgstr "Požadavek na pozornost"
+
 msgid "GStreamer Failure"
 msgstr "Selhání GStreameru"
 
@@ -1344,7 +1358,6 @@ msgid "Saved Statuses"
 msgstr "Uložené stavy"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Titul"
 
@@ -1542,7 +1555,7 @@ msgstr "Při zprávě s URL, použít TinyURL pro snadnější kopírování"
 msgid "Online"
 msgstr "Připojen"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Odpojen"
 
@@ -1635,6 +1648,12 @@ msgstr "Změnit informace o uživateli %s"
 msgid "Set User Info"
 msgstr "Nastavit informace o uživateli"
 
+msgid "This protocol does not support setting a public alias."
+msgstr "Tento protokol nepodporuje nastavení veřejných aliasů."
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "Tento protokol nepodporuje získávání veřejných aliasů."
+
 msgid "Unknown"
 msgstr "Neznámé"
 
@@ -1653,14 +1672,20 @@ msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
 msgstr ""
-"Certifikát není důvěryhodný, protože certifikát, který to může ověřit je "
-"momentálně důvěryhodný."
+"Certifikát není důvěryhodný, protože v současnosti není k dispozici "
+"důvěryhodný certifikát pro jeho ověření."
 
-msgid "The certificate is not valid yet."
-msgstr "Certifikát je neplatný."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr "Certifikát je neplatný. Zkontrolujte datum a čas počítače."
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "Certifikát vypršel a neměl by být považován za platný."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr ""
+"Platnost certifikátu vypršela a neměl by být považován za platný. "
+"Zkontrolujte datum a čas počítače."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -1892,7 +1917,6 @@ msgstr "Chyba při konverzi %s na \"maličký\" kód: %d"
 msgid "Thread creation failure: %s"
 msgstr "Chyba při vytváření vlákna: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Neznámý důvod"
 
@@ -1932,6 +1956,9 @@ msgstr "Nemohu odeslat adresář."
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s není obyčejný soubor. Zbaběle odmítám jej přepsat.\n"
+
+msgid "File is not readable."
+msgstr "Soubor není pro čtení."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2198,21 +2225,18 @@ msgstr "Nezanechán kodek. Preference v fs-codecs.conf jsou příliš přísné.
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Nastala neobnovitelná Farsight2 chyba."
 
-msgid "Conference error"
-msgstr "Chyba konference"
-
 msgid "Error with your microphone"
 msgstr "Chyba mikrofonu"
 
 msgid "Error with your webcam"
 msgstr "Chyba webové kamery"
 
+msgid "Conference error"
+msgstr "Chyba konference"
+
 #, c-format
 msgid "Error creating session: %s"
 msgstr "Chyba vytváření sezení: %s"
-
-msgid "Error creating conference."
-msgstr "Chyba při vytváření konference."
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2983,18 +3007,6 @@ msgstr "%s zavřel konverzaci."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Nemohu odeslat zprávu, konverzaci nelze spustit."
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "Nemohu vytvořit socket: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Nemohu připojit socket k portu: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "Nemohu poslouchat na soketu: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "Chyba při komunikaci s lokálním mDNSResponderem."
 
@@ -3149,6 +3161,14 @@ msgstr "Přidat k chatu..."
 msgid "Available"
 msgstr "Přítomen"
 
+#. 2
+msgid "Chatty"
+msgstr "Chatty"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Nerušit"
+
 #. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
@@ -3160,6 +3180,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Křestní jméno"
 
@@ -3767,14 +3790,15 @@ msgstr "Selhal příkaz Ad-Hoc"
 msgid "execute"
 msgstr "spustit"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Server vyžaduje TLS/SSL, ale podpora TLS/SSL nebyla nalezena."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Požadujete šifrování, ale nebyla nalezena podpora TLS/SSL."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje textovou autentizaci v nešifrovaném proudu"
+
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Neplatná odpověď od serveru"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Server nepoužívá žádnou podporovanou metodu autentizace"
 
 #, c-format
 msgid ""
@@ -3787,24 +3811,77 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Textová autentizace"
 
-msgid "SASL authentication failed"
-msgstr "SASL autentizace selhala"
-
-msgid "Invalid response from server"
-msgstr "Neplatná odpověď od serveru"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Server nepoužívá žádnou podporovanou metodu autentizace"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Vyžadujete šifrování, ale to není na serveru dostupné."
 
 msgid "Invalid challenge from server"
 msgstr "Neplatná výzva od serveru"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "Server považuje ověření za kompletní, ale klient ne"
+
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "Server může vyžadovat textovou autentizaci v nešifrovaném proudu"
+
+#, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s může vyžadovat textovou autentizaci přes nešifrované spojení. Povolit to "
+"a pokračovat v autentizaci?"
+
+msgid "SASL authentication failed"
+msgstr "SASL autentizace selhala"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "Chyba SASL: %s"
+
+msgid "Invalid Encoding"
+msgstr "Neplatné kódování"
+
+msgid "Unsupported Extension"
+msgstr "Nepodporovaná rozšíření"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr "Neočekávaná odpověď ze serveru. Toto může znamenat možný MITM útok"
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"Server nepodporuje spojování kanálů, ale vypadá to, že to neoznamuje. Toto "
+"znamená něco jako MITM útok"
+
+msgid "Server does not support channel binding"
+msgstr "Server nepodporuje spojování kanálů"
+
+msgid "Unsupported channel binding method"
+msgstr "Nepodporované metoda spojování kanálů"
+
+msgid "User not found"
+msgstr "Uživatel nenalezen"
+
+msgid "Invalid Username Encoding"
+msgstr "Neplatné kódování jména uživatele"
+
+msgid "Resource Constraint"
+msgstr "Omezení zdrojů"
+
+msgid "Unable to canonicalize username"
+msgstr "Nemohu posvětit uživatelské jméno"
+
+msgid "Unable to canonicalize password"
+msgstr "Nemohu posvětit heslo"
+
+msgid "Malicious challenge from server"
+msgstr "Zlomyslná výzva od serveru"
+
+msgid "Unexpected response from server"
+msgstr "Neočekávaná odpověď od serveru"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Správce připojení BOSH ukončil sezení."
@@ -3857,6 +3934,7 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "PSČ"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Země"
 
@@ -3871,10 +3949,14 @@ msgstr "Název organizace"
 msgid "Organization Unit"
 msgstr "Jednotka organizace"
 
+msgid "Job Title"
+msgstr "Název zaměstnání"
+
 msgid "Role"
 msgstr "Role"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Datum narození"
 
@@ -3905,12 +3987,15 @@ msgstr "Priorita"
 msgid "Resource"
 msgstr "Zdroj"
 
-#, c-format
-msgid "%s ago"
-msgstr "před %s"
+msgid "Uptime"
+msgstr "Uptime"
 
 msgid "Logged Off"
 msgstr "Odhlášen"
+
+#, c-format
+msgid "%s ago"
+msgstr "před %s"
 
 msgid "Middle Name"
 msgstr "Prostřední jméno"
@@ -3958,17 +4043,6 @@ msgstr "Přihlášení"
 
 msgid "Log Out"
 msgstr "Odhlášení"
-
-#. 2
-msgid "Chatty"
-msgstr "Chatty"
-
-msgid "Extended Away"
-msgstr "Pryč na dlouho"
-
-#. 3
-msgid "Do Not Disturb"
-msgstr "Nerušit"
 
 msgid "JID"
 msgstr "JID"
@@ -4097,16 +4171,20 @@ msgstr "Uživatelé nebyli nalezeni"
 msgid "Roles:"
 msgstr "Role:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Server vyžaduje TLS/SSL, ale podpora TLS/SSL nebyla nalezena."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Požadujete šifrování, ale nebyla nalezena podpora TLS/SSL."
+
 msgid "Ping timed out"
 msgstr "Ping timeout"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr "Nemohu najít alternativní XMPP připojení po selhání přímého spojení."
-
 msgid "Invalid XMPP ID"
 msgstr "Neplatné ID XMPP"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Neplatné ID XMPP. Musí být nastaveno uživatelské jméno."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Neplatné ID XMPP. Musí být nastavena doména."
@@ -4204,7 +4282,6 @@ msgstr "Server nepodporuje blokování"
 msgid "Not Authorized"
 msgstr "Neautorizován"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Nálada"
 
@@ -4226,7 +4303,6 @@ msgstr "Do"
 msgid "None (To pending)"
 msgstr "Žádné (do čeká)"
 
-#. 0
 msgid "None"
 msgstr "Žádné"
 
@@ -4240,6 +4316,18 @@ msgstr "Text nálady"
 msgid "Allow Buzz"
 msgstr "Povolit buzení"
 
+msgid "Mood Name"
+msgstr "Jméno nálady"
+
+msgid "Mood Comment"
+msgstr "Komentář k náladě"
+
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Poslouchaný umělec"
 
@@ -4410,9 +4498,6 @@ msgstr "Porušení pravidel"
 msgid "Remote Connection Failed"
 msgstr "Selhalo vzdálené připojení"
 
-msgid "Resource Constraint"
-msgstr "Omezení zdrojů"
-
 msgid "Restricted XML"
 msgstr "Omezené XML"
 
@@ -4484,10 +4569,6 @@ msgstr ""
 "Nemohu vzbudit, protože %s to nepodporuje nebo si buzení teď nepřeje "
 "dostávat."
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "Buzení %s..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4496,6 +4577,10 @@ msgstr "Buzení"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s vás budí!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "Buzení %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4524,6 +4609,9 @@ msgstr "Zvolte zdroj"
 
 msgid "Initiate Media"
 msgstr "Inicializovat multimédia"
+
+msgid "Account does not support PEP, can't set mood"
+msgstr "Nemohu nastavit náladu. Účet nepodporuje PEP."
 
 msgid "config:  Configure a chat room."
 msgstr "config: Nastavit místnost chatu."
@@ -4579,6 +4667,12 @@ msgstr "ping &lt;jid&gt;:\tPing uživatele/komponenty/serveru."
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Získat pozornost uživatele zabzučením"
 
+msgid "mood: Set current user mood"
+msgstr "nálada: Nastavit náladu"
+
+msgid "Extended Away"
+msgstr "Pryč na dlouho"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -4596,11 +4690,17 @@ msgstr "Zásuvný modul protokolu XMPP"
 msgid "Domain"
 msgstr "Doména"
 
-msgid "Require SSL/TLS"
-msgstr "Vyžadovat SSL/TLS"
+msgid "Require encryption"
+msgstr "Vyžadovat šifrování"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Vnutit staré SSL (port 5223)"
+msgid "Use encryption if available"
+msgstr "Používat šifrování, pokud je k dispozici"
+
+msgid "Use old-style SSL"
+msgstr "Použít SSL (starý styl)"
+
+msgid "Connection security"
+msgstr "Bezpečnost spojení"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Povolit textovou autentizaci po nešifrovaných proudech"
@@ -4652,11 +4752,20 @@ msgstr "Chyba zprávy XMPP"
 msgid "(Code %s)"
 msgstr "(Kód %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "Vlastní smajlík ve zprávě je pro poslání příliš velký."
+
+msgid "XMPP stream header missing"
+msgstr "Hlavička XMPP přenosu chybí"
+
+msgid "XMPP Version Mismatch"
+msgstr "Nesoulad verzí XMPP"
+
+msgid "XMPP stream missing ID"
+msgstr "Chybějící ID XMPP přenosu"
+
 msgid "XML Parse error"
 msgstr "Chyba zpracování XML"
-
-msgid "Unknown Error in presence"
-msgstr "Neznámá chyba v přítomnosti"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4693,6 +4802,9 @@ msgstr "Byl jste vykopnut: (%s)"
 msgid "Kicked (%s)"
 msgstr "Vykopnut (%s)"
 
+msgid "Unknown Error in presence"
+msgstr "Neznámá chyba v přítomnosti"
+
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Chyba při in-band bytestream přenosu\n"
 
@@ -4725,17 +4837,258 @@ msgstr "Nemohu odeslat soubor %s, nepřihlášen k přítomnosti uživatele"
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Zvolte prosím zdroj %s, kterému chcete odeslat soubor"
 
-msgid "Edit User Mood"
-msgstr "Upravit náladu uživatele"
+msgid "Afraid"
+msgstr "Vylekaný"
 
-msgid "Please select your mood from the list."
-msgstr "Prosím vyberte náladu ze seznamu"
+msgid "Amazed"
+msgstr "Ohromený"
 
-msgid "Set"
-msgstr "Nastavit"
+msgid "Amorous"
+msgstr "Vášnivý"
 
-msgid "Set Mood..."
-msgstr "Nastavit náladu..."
+msgid "Angry"
+msgstr "Rozzlobený"
+
+msgid "Annoyed"
+msgstr "Podrážděný"
+
+msgid "Anxious"
+msgstr "Nedočkavý"
+
+msgid "Aroused"
+msgstr "Vzrušený"
+
+msgid "Ashamed"
+msgstr "Hanbící se"
+
+msgid "Bored"
+msgstr "Znuděný"
+
+msgid "Brave"
+msgstr "Statečný"
+
+msgid "Calm"
+msgstr "Klidný"
+
+msgid "Cautious"
+msgstr "Obezřetný"
+
+msgid "Cold"
+msgstr "Prochladlý"
+
+msgid "Confident"
+msgstr "Sebejistý"
+
+msgid "Confused"
+msgstr "Zmatený"
+
+msgid "Contemplative"
+msgstr "Rozjímavý"
+
+msgid "Contented"
+msgstr "Spokojený"
+
+msgid "Cranky"
+msgstr "Nevrlý"
+
+msgid "Crazy"
+msgstr "Potrhlý"
+
+msgid "Creative"
+msgstr "Tvůrčí"
+
+msgid "Curious"
+msgstr "Zvídavý"
+
+msgid "Dejected"
+msgstr "Skleslý"
+
+msgid "Depressed"
+msgstr "Deprimovaný"
+
+msgid "Disappointed"
+msgstr "Zklamaný"
+
+msgid "Disgusted"
+msgstr "Znechucený"
+
+msgid "Dismayed"
+msgstr "Zděšený"
+
+msgid "Distracted"
+msgstr "Rozptýlený"
+
+msgid "Embarrassed"
+msgstr "Rozpačitý"
+
+msgid "Envious"
+msgstr "Závistivý"
+
+msgid "Excited"
+msgstr "Vzrušený"
+
+msgid "Flirtatious"
+msgstr "Koketní"
+
+msgid "Frustrated"
+msgstr "Rozčarovaný"
+
+msgid "Grateful"
+msgstr "Vděčný"
+
+msgid "Grieving"
+msgstr "Truchlící"
+
+msgid "Grumpy"
+msgstr "Mrzutý"
+
+msgid "Guilty"
+msgstr "Provinilý"
+
+msgid "Happy"
+msgstr "Šťastný"
+
+msgid "Hopeful"
+msgstr "Plný naděje"
+
+msgid "Hot"
+msgstr "Žhavý"
+
+msgid "Humbled"
+msgstr "Pokorný"
+
+msgid "Humiliated"
+msgstr "Pokorný"
+
+msgid "Hungry"
+msgstr "Hladový"
+
+msgid "Hurt"
+msgstr "Zraněný"
+
+msgid "Impressed"
+msgstr "Ohromený"
+
+msgid "In awe"
+msgstr "Užaslý"
+
+msgid "In love"
+msgstr "Zamilovaný"
+
+msgid "Indignant"
+msgstr "Rozhořčený"
+
+msgid "Interested"
+msgstr "Zaujat"
+
+msgid "Intoxicated"
+msgstr "Opilý"
+
+msgid "Invincible"
+msgstr "Neporazitelný"
+
+msgid "Jealous"
+msgstr "Žárlivý"
+
+msgid "Lonely"
+msgstr "Osamělý"
+
+msgid "Lost"
+msgstr "Ztracený"
+
+msgid "Lucky"
+msgstr "Mající štěstí"
+
+msgid "Mean"
+msgstr "Protivný"
+
+msgid "Moody"
+msgstr "Náladový"
+
+msgid "Nervous"
+msgstr "Nervozní"
+
+msgid "Neutral"
+msgstr "Neutrální"
+
+msgid "Offended"
+msgstr "Uražený"
+
+msgid "Outraged"
+msgstr "Pobouřený"
+
+msgid "Playful"
+msgstr "Hravý"
+
+msgid "Proud"
+msgstr "Hrdý"
+
+msgid "Relaxed"
+msgstr "V pohodě"
+
+msgid "Relieved"
+msgstr "Uvolněný"
+
+msgid "Remorseful"
+msgstr "Kajícný"
+
+msgid "Restless"
+msgstr "Neposedný"
+
+msgid "Sad"
+msgstr "Smutný"
+
+msgid "Sarcastic"
+msgstr "Jízlivý"
+
+msgid "Satisfied"
+msgstr "Uspokojený"
+
+msgid "Serious"
+msgstr "Vážný"
+
+msgid "Shocked"
+msgstr "Šokovaný"
+
+msgid "Shy"
+msgstr "Plachý"
+
+msgid "Sick"
+msgstr "Nemocný"
+
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Ospalý"
+
+msgid "Spontaneous"
+msgstr "Spontánní"
+
+msgid "Stressed"
+msgstr "Stresovaný"
+
+msgid "Strong"
+msgstr "Silný"
+
+msgid "Surprised"
+msgstr "Překvapený"
+
+msgid "Thankful"
+msgstr "Vděčný"
+
+msgid "Thirsty"
+msgstr "Žíznivý"
+
+msgid "Tired"
+msgstr "Unavený"
+
+msgid "Undefined"
+msgstr "..."
+
+msgid "Weak"
+msgstr "Slabý"
+
+msgid "Worried"
+msgstr "Ustaraný"
 
 msgid "Set User Nickname"
 msgstr "Nastavit přezdívku"
@@ -4748,6 +5101,9 @@ msgid ""
 "something appropriate."
 msgstr ""
 "Tato informace je viditelná všem kontaktům, takže vyberte něco vhodnějšího."
+
+msgid "Set"
+msgstr "Nastavit"
 
 msgid "Set Nickname..."
 msgstr "Nastavit přezdívku..."
@@ -4791,217 +5147,165 @@ msgstr ""
 "%s je na místním seznamu, ale ne v seznamu na serveru. Chcete přidat tohoto "
 "kamaráda?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Nemohu zpracovat zprávu"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaktická chyba (pravděpodobně chyba v klientovi)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Neplatná emailová adresa"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Uživatel neexistuje"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Chybí plně kvalifikovaný název domény"
 
-#, c-format
 msgid "Already logged in"
 msgstr "Již přihlášen"
 
-#, c-format
 msgid "Invalid username"
 msgstr "Neplatné jméno uživatele"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Neplatné přátelské jméno"
 
-#, c-format
 msgid "List full"
 msgstr "Seznam plný"
 
-#, c-format
 msgid "Already there"
 msgstr "Již tam"
 
-#, c-format
 msgid "Not on list"
 msgstr "Ne na seznamu"
 
-#, c-format
 msgid "User is offline"
 msgstr "Uživatel je odpojen"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Již v daném režimu"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Již v opačném seznamu"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Příliš mnoho skupin"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Neplatná skupina"
 
-#, c-format
 msgid "User not in group"
 msgstr "Uživatel není ve skupině"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Název skupiny příliš dlouhý"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Nemohu odstranit skupinu nula"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Pokus přidat uživatele do skupiny, která neexistuje"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "Ústředna selhala"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Přenos upozornění selhal"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Vyžadovaná pole chybí"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "Příliš mnoho výsledků FND"
 
-#, c-format
 msgid "Not logged in"
 msgstr "Nepřihlášen."
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Služba momentálně není k dispozici"
 
-#, c-format
 msgid "Database server error"
 msgstr "Chyba databázového serveru"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Příkaz zakázán"
 
-#, c-format
 msgid "File operation error"
 msgstr "Chyba práce se soubory"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Chyba alokace paměti"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Serveru odeslána špatná hodnota CHL"
 
-#, c-format
 msgid "Server busy"
 msgstr "Server zaneprázdněn"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Server nedostupný"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "Server upozornění na partnera nedostupný"
 
-#, c-format
 msgid "Database connect error"
 msgstr "Chyba připojení k databázi"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Server se vypíná (opusťte loď)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Chyba vytváření spojení"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parametry CVR nejsou známy nebo nejsou povoleny"
 
-#, c-format
 msgid "Unable to write"
 msgstr "Nemohu zapisovat"
 
-#, c-format
 msgid "Session overload"
 msgstr "Sezení přetíženo"
 
-#, c-format
 msgid "User is too active"
 msgstr "Uživatel je příliš aktivní"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Příliš mnoho sezení"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Passport nebyl ověřen"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Špatný soubor přátel"
 
-#, c-format
 msgid "Not expected"
 msgstr "Neočekáváno"
 
 msgid "Friendly name is changing too rapidly"
 msgstr "Přátelské jméno se mění příliš rychle"
 
-#, c-format
 msgid "Server too busy"
 msgstr "Server je příliš zaneprázdněn"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Autentizace selhala"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Nedovoleno při odpojení"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Nepřijímám nové uživatele"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Passport dítěte bez souhlasu rodiče"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "Účet passport ještě nebyl ověřen"
 
 msgid "Passport account suspended"
 msgstr "Passport účet pozastaven"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Špatný lístek"
 
@@ -5055,6 +5359,10 @@ msgstr "Emailová adresa..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Vaše nové přátelské jméno MSN je příliš dlouhé."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Nastavit přátelské jméno pro %s."
 
 msgid "Set your friendly name."
 msgstr "Nastavit vaše přátelské jméno"
@@ -5137,18 +5445,6 @@ msgstr "Telefonuji"
 
 msgid "Out to Lunch"
 msgstr "Na obědě"
-
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Umělec"
-
-msgid "Album"
-msgstr "Album"
 
 msgid "Game Title"
 msgstr "Hra"
@@ -5299,9 +5595,6 @@ msgstr "Výročí"
 msgid "Work"
 msgstr "Práce"
 
-msgid "Job Title"
-msgstr "Název zaměstnání"
-
 msgid "Company"
 msgstr "Společnost"
 
@@ -5389,6 +5682,9 @@ msgstr "Server pro metodu HTTP"
 msgid "Show custom smileys"
 msgstr "Zobrazovat systémové smajlíky"
 
+msgid "Allow direct connections"
+msgstr "Povolit přímé připojení"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: získat pozornost uživatele šťouchnutím"
 
@@ -5397,10 +5693,6 @@ msgstr "Windows Live ID autentizace: Nemohu se připojit"
 
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID autentizace: Neplatná odpověď"
-
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s vám právě poslal šťouchnutí!"
 
 msgid "The following users are missing from your addressbook"
 msgstr "Následující uživatelé chybí v adresáři"
@@ -5585,131 +5877,6 @@ msgstr "Chcete vymazat tohoto kamaráda ze svého adresáře?"
 msgid "The username specified is invalid."
 msgstr "Zadané jméno uživatele není platné."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Přátelské jméno se mění příliš rychle"
-
-msgid "This Hotmail account may not be active."
-msgstr "Tento účet Hotmail možná není aktivní."
-
-msgid "Profile URL"
-msgstr "URL profilu"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "Zásuvný modul protokolu MSN"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s není platná skupina."
-
-msgid "Unknown error."
-msgstr "Neznámá chyba."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s na %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Nemohu přidat uživatele do %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Nemohu zablokovat uživatele na %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Nemohu povolit uživatele na %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s nelze přidat, protože váš seznam kamarádů je plný."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s není platný účet passport."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Služba dočasně není k dispozici."
-
-msgid "Unable to rename group"
-msgstr "Nemohu přejmenovat skupinu"
-
-msgid "Unable to delete group"
-msgstr "Nemohu odstranit skupinu"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s vás přidal do svého seznamu kamarádů."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s vás odstranil ze svého seznamu kamarádů."
-
-#. 1
-msgid "Angry"
-msgstr "Rozzlobený"
-
-#. 2
-msgid "Excited"
-msgstr "Vzrušený"
-
-#. 3
-msgid "Grumpy"
-msgstr "Mrzutý"
-
-#. 4
-msgid "Happy"
-msgstr "Šťastný"
-
-#. 5
-msgid "In Love"
-msgstr "Zamilovaný"
-
-#. 6
-msgid "Invincible"
-msgstr "Neporazitelný"
-
-#. 7
-msgid "Sad"
-msgstr "Smutný"
-
-#. 8
-msgid "Hot"
-msgstr "Žhavý"
-
-#. 9
-msgid "Sick"
-msgstr "Nemocný"
-
-#. 10
-msgid "Sleepy"
-msgstr "Ospalý"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Momentální nálada"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Nová nálada uživatele"
-
-msgid "Change your Mood"
-msgstr "Změnit vaši náladu"
-
-msgid "How do you feel right now?"
-msgstr "Jak se cítíte?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Zadaný PIN není platný."
 
@@ -5722,8 +5889,8 @@ msgstr "PIN není platný. Může obsahovat jen čísla [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "PINy nesouhlasí."
 
-msgid "The name you entered is invalid."
-msgstr "Zadaný jméno není platné"
+msgid "The Display Name you entered is invalid."
+msgstr "Zadaný jméno pro zobrazení není platné"
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5741,7 +5908,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Informace z profilu nebyly získány, zkuste to prosím později."
 
+msgid "Your UID"
+msgstr "Tvoje UID"
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5749,6 +5920,7 @@ msgid "Verify PIN"
 msgstr "Ověření PIN"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "Zobrazované jméno"
 
@@ -5774,10 +5946,6 @@ msgstr "Spouštěcí obrazovka je momentálně nedostupná"
 
 msgid "About"
 msgstr "O"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Změnit náladu..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -5809,19 +5977,12 @@ msgstr "Nemohu se připojit k MXit serveru. Zkontrolujte nastavení."
 msgid "Connecting..."
 msgstr "Připojování..."
 
-msgid "The nick name you entered is invalid."
-msgstr "Zadaná přezdívka není platná"
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Zadaný PIN má neplatnou délku [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "Přihlašovací jméno MXit"
-
-#. nick name
-msgid "Nick Name"
-msgstr "Přezdívka"
+msgid "MXit ID"
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5849,11 +6010,11 @@ msgstr "Sezení vypršelo, zkuste to prosím později."
 msgid "Invalid country selected. Please try again."
 msgstr "Vybrána neplatná země, zkuste to prosím později."
 
-msgid "Username is not registered. Please register first."
-msgstr "Uživatelské jméno není registrováno. Nejdřív se registrujte."
+msgid "The MXit ID you entered is not registered. Please register first."
+msgstr "MXit ID není registrováno. Nejdřív se registrujte."
 
-msgid "Username is already registered. Please choose another username."
-msgstr "Uživatelské jméno už je registrované, zkuste jiné."
+msgid "The MXit ID you entered is already registered. Please choose another."
+msgstr "MXit ID už je registrované, zkuste jiné."
 
 msgid "Internal error. Please try again later."
 msgstr "Chyba. Zkuste to prosím později"
@@ -5864,7 +6025,7 @@ msgstr "Nevložil jste bezpečnostní kód"
 msgid "Security Code"
 msgstr "Bezpečnostní kód"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Vložte bezpečnostní kód"
 
@@ -5890,11 +6051,15 @@ msgstr "Načítám menu..."
 msgid "Status Message"
 msgstr "Stavová zpráva"
 
+msgid "Rejection Message"
+msgstr "Zamítnutí zprávy"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Skryté číslo"
 
-msgid "Your Mobile Number..."
-msgstr "Vaše mobilní telefonní číslo..."
+msgid "Your MXit ID..."
+msgstr "Tvoje MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5906,6 +6071,23 @@ msgstr "Připojit se pomocí HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Povolit zobrazení spouštěcí obrazovky"
+
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Byl jste vykopnut z MultiMX."
+
+msgid "was kicked"
+msgstr "byl vykopnut"
+
+msgid "_Room Name:"
+msgstr "_Místnost:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Přišlo vám pozvání"
+
+msgid "Last Online"
+msgstr "Naposledy připojen"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6009,6 +6191,9 @@ msgstr "Nastala chyba při připojení k MXit. (read stage 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Nastala chyba při připojení k MXit. (read stage 0x06)"
+
+msgid "In Love"
+msgstr "Zamilovaný"
 
 msgid "Pending"
 msgstr "Čekající"
@@ -6409,9 +6594,6 @@ msgstr "Heslo vypršelo"
 msgid "Incorrect password"
 msgstr "Nesprávné heslo"
 
-msgid "User not found"
-msgstr "Uživatel nenalezen"
-
 msgid "Account has been disabled"
 msgstr "Účet byl zakázán"
 
@@ -6633,7 +6815,20 @@ msgstr "Adresa serveru"
 msgid "Server port"
 msgstr "Port serveru"
 
-#. Note to translators: %s in this string is a URL
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Autorizujte mě prosím, abych vás mohl přidat do svého seznamu kamarádů."
+
+msgid "No reason given."
+msgstr "Neudán žádný důvod."
+
+msgid "Authorization Denied Message:"
+msgstr "Zpráva odmítnutí autorizace:"
+
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Přijata neočekávaná odpověď od %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Přijata neočekávaná odpověď od %s"
@@ -6651,14 +6846,184 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Chyba žádosti %s: %s"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Server požádal o vyplnění CAPTCHA pro přihlášení, ale klient v současné době "
+"CAPTCHA nepodporuje."
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL neumožňuje ověřit jméno tady"
+
+#, c-format
+msgid "Error requesting %s"
+msgstr "Chyba žádosti %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Při přijímání této zprávy došlo k chybě. Kamarád, se kterým mluvíte, "
+"pravděpodobně používá neočekávané kódování. Pokud víte, které kódování "
+"používá, můžete to zadat v pokročilých možnostech svého účtu AIM/ICQ.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Při přijímání této zprávy došlo k chybě. Buď máte vy a %s zvolena jiná "
+"kódování, nebo má %s klienta s chybami.)"
 
 msgid "Could not join chat room"
 msgstr "Nemohu se připojit k chatu"
 
 msgid "Invalid chat room name"
 msgstr "Neplatný název místnosti"
+
+msgid "Invalid error"
+msgstr "Neplatná chyba"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Nemohu získat IM z důvodu rodičovské ochrany"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Nemohu poslat SMS bez přijmutí podmínek"
+
+msgid "Cannot send SMS"
+msgstr "Nemohu odeslat SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Nemohu odeslat SMS do této země"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Nemohu poslat SMS do neznámé země"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Bot účet nemůže zahájit IM "
+
+msgid "Bot account cannot IM this user"
+msgstr "Bot účet nemůže IM tohoto uživatele"
+
+msgid "Bot account reached IM limit"
+msgstr "Bot účet dosáhl IM limit"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Bot účet dosáhl denní IM limit"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Bot účet dosáhl měsíční IM limit"
+
+msgid "Unable to receive offline messages"
+msgstr "Nemohu přijmout offline zprávy"
+
+msgid "Offline message store full"
+msgstr "Úložiště offline zpráv je plné"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Nemohu odeslat zprávu: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Nemohu odeslat zprávu: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Nemohu odeslat zprávu pro %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Nemohu odeslat zprávu pro %s: %s"
+
+msgid "Thinking"
+msgstr "Zamyšlený"
+
+msgid "Shopping"
+msgstr "Nakupující"
+
+msgid "Questioning"
+msgstr "Zvídavý"
+
+msgid "Eating"
+msgstr "Jím"
+
+msgid "Watching a movie"
+msgstr "Sledující film"
+
+msgid "Typing"
+msgstr "Píše"
+
+msgid "At the office"
+msgstr "V kanceláři"
+
+msgid "Taking a bath"
+msgstr "V koupelně"
+
+msgid "Watching TV"
+msgstr "Sledující TV"
+
+msgid "Having fun"
+msgstr "V pohodě"
+
+msgid "Sleeping"
+msgstr "Spící"
+
+msgid "Using a PDA"
+msgstr "Používající PDA"
+
+msgid "Meeting friends"
+msgstr "Schůzka s přáteli"
+
+msgid "On the phone"
+msgstr "Na telefonu"
+
+msgid "Surfing"
+msgstr "Surfující"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Mobilní"
+
+msgid "Searching the web"
+msgstr "Hledám na webu"
+
+msgid "At a party"
+msgstr "Na párty"
+
+msgid "Having Coffee"
+msgstr "Na kávě"
+
+#. Playing video games
+msgid "Gaming"
+msgstr "Hrající hry"
+
+msgid "Browsing the web"
+msgstr "Procházím web"
+
+msgid "Smoking"
+msgstr "Kouřící"
+
+msgid "Writing"
+msgstr "Píšící"
+
+#. Drinking [Alcohol]
+msgid "Drinking"
+msgstr "Pijící"
+
+msgid "Listening to music"
+msgstr "Poslouchá muziku"
+
+msgid "Studying"
+msgstr "Studující"
+
+msgid "In the restroom"
+msgstr "Odpočívající"
 
 msgid "Received invalid data on connection with server"
 msgstr "Na spojení se serverem přijata neplatná data"
@@ -6726,201 +7091,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Soubor %s je %s, což je větší než maximální velikost %s."
 
-msgid "Invalid error"
-msgstr "Neplatná chyba"
-
-msgid "Invalid SNAC"
-msgstr "Neplatné SNAC"
-
-msgid "Rate to host"
-msgstr "Rychlost k hostiteli"
-
-msgid "Rate to client"
-msgstr "Rychlost ke klientovi"
-
-msgid "Service unavailable"
-msgstr "Služba nedostupná"
-
-msgid "Service not defined"
-msgstr "Služba nedefinována"
-
-msgid "Obsolete SNAC"
-msgstr "Zastaralé SNAC"
-
-msgid "Not supported by host"
-msgstr "Nepodporováno hostitelem"
-
-msgid "Not supported by client"
-msgstr "Nepodporováno klientem"
-
-msgid "Refused by client"
-msgstr "Odmítnuto klientem"
-
-msgid "Reply too big"
-msgstr "Odpověď příliš velká"
-
-msgid "Responses lost"
-msgstr "Odpovědi ztraceny"
-
-msgid "Request denied"
-msgstr "Požadavek zamítnut"
-
-msgid "Busted SNAC payload"
-msgstr "Poškozená data SNAC"
-
-msgid "Insufficient rights"
-msgstr "Nedostatečná oprávnění"
-
-msgid "In local permit/deny"
-msgstr "V místním povolit/zakázat"
-
-msgid "Warning level too high (sender)"
-msgstr "Hladina varování příliš vysoká (odeslání)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Hladina varování příliš vysoká (příjem)"
-
-msgid "User temporarily unavailable"
-msgstr "Uživatel dočasně nedostupný"
-
-msgid "No match"
-msgstr "Žádná shoda"
-
-msgid "List overflow"
-msgstr "Přetečení seznamu"
-
-msgid "Request ambiguous"
-msgstr "Požadavek nejednoznačný"
-
-msgid "Queue full"
-msgstr "Fronta plná"
-
-msgid "Not while on AOL"
-msgstr "Ne když na AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Nemohu získat IM z důvodu rodičovské ochrany"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Nemohu poslat SMS bez přijmutí podmínek"
-
-msgid "Cannot send SMS"
-msgstr "Nemohu odeslat SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Nemohu odeslat SMS do této země"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Nemohu poslat SMS do neznámé země"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Bot účet nemůže zahájit IM "
-
-msgid "Bot account cannot IM this user"
-msgstr "Bot účet nemůže IM tohoto uživatele"
-
-msgid "Bot account reached IM limit"
-msgstr "Bot účet dosáhl IM limit"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Bot účet dosáhl denní IM limit"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Bot účet dosáhl měsíční IM limit"
-
-msgid "Unable to receive offline messages"
-msgstr "Nemohu přijmout offline zprávy"
-
-msgid "Offline message store full"
-msgstr "Úložiště offline zpráv je plné"
-
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Při přijímání této zprávy došlo k chybě. Kamarád, se kterým mluvíte, "
-"pravděpodobně používá neočekávané kódování. Pokud víte, které kódování "
-"používá, můžete to zadat v pokročilých možnostech svého účtu AIM/ICQ.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Při přijímání této zprávy došlo k chybě. Buď máte vy a %s zvolena jiná "
-"kódování, nebo má %s klienta s chybami.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Ikona kamaráda"
-
-msgid "Voice"
-msgstr "Hlas"
-
-msgid "AIM Direct IM"
-msgstr "AIM Přímé IM"
-
-msgid "Get File"
-msgstr "Získat soubor"
-
-msgid "Games"
-msgstr "Hry"
-
-msgid "Add-Ins"
-msgstr "Přídavky"
-
-msgid "Send Buddy List"
-msgstr "Odeslat seznam kamarádů"
-
-msgid "ICQ Direct Connect"
-msgstr "Přímé spojení ICQ"
-
-msgid "AP User"
-msgstr "Uživatel AP"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "Relay ICQ serveru"
-
-msgid "Old ICQ UTF8"
-msgstr "Staré ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Šifrování Trillian"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Zabezpečení povoleno"
-
-msgid "Video Chat"
-msgstr "Video Chat"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Živé video"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Sdílení obrazovky"
-
 msgid "Free For Chat"
 msgstr "Volný pro chat"
 
@@ -6936,14 +7106,20 @@ msgstr "Ví o WWW"
 msgid "Invisible"
 msgstr "Neviditelný"
 
-msgid "IP Address"
-msgstr "IP adresa"
+msgid "Evil"
+msgstr "Ďábel"
 
-msgid "Warning Level"
-msgstr "Úroveň varování"
+msgid "Depression"
+msgstr "Deprese"
 
-msgid "Buddy Comment"
-msgstr "Poznámka o kamarádovi"
+msgid "At home"
+msgstr "Doma"
+
+msgid "At work"
+msgstr "V práci"
+
+msgid "At lunch"
+msgstr "Na obědě"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7039,16 +7215,6 @@ msgstr "Heslo odesláno"
 
 msgid "Unable to initialize connection"
 msgstr "Nemohu inicializovat spojení"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Autorizujte mě prosím, abych vás mohl přidat do svého seznamu kamarádů."
-
-msgid "No reason given."
-msgstr "Neudán žádný důvod."
-
-msgid "Authorization Denied Message:"
-msgstr "Zpráva odmítnutí autorizace:"
 
 #, c-format
 msgid ""
@@ -7180,86 +7346,12 @@ msgstr[0] "Přišli jste o %hu zprávu od %s z neznámého důvodu."
 msgstr[1] "Přišli jste o %hu zprávy od %s z neznámého důvodu."
 msgstr[2] "Přišli jste o %hu zpráv od %s z neznámého důvodu."
 
-#, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Nemohu odeslat zprávu: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Nemohu odeslat zprávu: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Nemohu odeslat zprávu pro %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Nemohu odeslat zprávu pro %s: %s"
-
-#, c-format
-msgid "User information not available: %s"
-msgstr "Informace o uživateli nejsou k dispozici: %s"
-
-msgid "Unknown reason."
-msgstr "Neznámý důvod."
-
-msgid "Online Since"
-msgstr "Odpojen od"
-
-msgid "Member Since"
-msgstr "Člen od"
-
-msgid "Capabilities"
-msgstr "Schopnosti"
-
 msgid "Your AIM connection may be lost."
 msgstr "Vaše spojení AIM může být přerušeno."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Nemohu zobrazit zprávu od tohoto uživatele, protože obsahovala neplatné "
-"znaky.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Poslední akce, o kterou jste se pokusili, nemohla být provedena, protože "
-"jste překročili limit rychlosti. Počkejte prosím 10 sekund a zkuste to "
-"znovu.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Byl jste odpojen z místnosti chatu %s."
-
-msgid "Mobile Phone"
-msgstr "Mobilní telefon"
-
-msgid "Personal Web Page"
-msgstr "Osobní WWW stránka"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Přídavné informace"
-
-msgid "Zip Code"
-msgstr "PSČ"
-
-msgid "Work Information"
-msgstr "Pracovní informace"
-
-msgid "Division"
-msgstr "Oddělení"
-
-msgid "Position"
-msgstr "Pozice"
-
-msgid "Web Page"
-msgstr "WWW stránka"
 
 msgid "Pop-Up Message"
 msgstr "Vyskakovací zpráva"
@@ -7476,6 +7568,9 @@ msgstr "Váš IM Image nebyl odeslán. Nemůžete odesílat IM Image v chatech A
 msgid "iTunes Music Store Link"
 msgstr "Odkaz na iTunes Music Store"
 
+msgid "Lunch"
+msgstr "Oběd"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Poznámka o kamarádovi %s"
@@ -7507,8 +7602,8 @@ msgstr "Získat informace AIM"
 msgid "Edit Buddy Comment"
 msgstr "Upravit poznámku o kamarádovi"
 
-msgid "Get Status Msg"
-msgstr "Získat zprávu o stavu"
+msgid "Get X-Status Msg"
+msgstr "Získat zprávu o X-stavu"
 
 msgid "End Direct IM Session"
 msgstr "Přímé IM ukončeno"
@@ -7537,8 +7632,8 @@ msgstr "Formátování jména uživatele může změnit jen velikost písmen a m
 msgid "Change Address To:"
 msgstr "Změnit adresu na:"
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>nečekáte na autorizaci</i>"
+msgid "you are not waiting for authorization"
+msgstr "nečekáte na autorizaci"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Čekáte na autorizaci od následujících kamarádů:"
@@ -7576,6 +7671,14 @@ msgstr "Nastavit předávání IM (web)"
 msgid "Set Privacy Options..."
 msgstr "Nastavit možnosti soukromí..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Zobrazit seznam _kamarádů"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Seznam pozvaných"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Potvrdit účet"
@@ -7591,9 +7694,6 @@ msgstr "Zobrazit kamarády čekající na autorizaci"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Hledat kamaráda podle emailové adresy..."
-
-msgid "Search for Buddy by Information"
-msgstr "Hledat kamaráda podle informací"
 
 msgid "Use clientLogin"
 msgstr "Použít clientLogin"
@@ -7633,6 +7733,234 @@ msgstr ""
 "To vyžaduje přímé spojení mezi danými dvěma počítači a je potřeba pro IM "
 "Images. Protože bude odkryta vaše IP adresa, dá se to považovat za riziko "
 "pro soukromí."
+
+msgid "Invalid SNAC"
+msgstr "Neplatné SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Překročen limit poměru serveru"
+
+msgid "Client rate limit exceeded"
+msgstr "Překročen limit poměru klienta"
+
+msgid "Service unavailable"
+msgstr "Služba nedostupná"
+
+msgid "Service not defined"
+msgstr "Služba nedefinována"
+
+msgid "Obsolete SNAC"
+msgstr "Zastaralé SNAC"
+
+msgid "Not supported by host"
+msgstr "Nepodporováno hostitelem"
+
+msgid "Not supported by client"
+msgstr "Nepodporováno klientem"
+
+msgid "Refused by client"
+msgstr "Odmítnuto klientem"
+
+msgid "Reply too big"
+msgstr "Odpověď příliš velká"
+
+msgid "Responses lost"
+msgstr "Odpovědi ztraceny"
+
+msgid "Request denied"
+msgstr "Požadavek zamítnut"
+
+msgid "Busted SNAC payload"
+msgstr "Poškozená data SNAC"
+
+msgid "Insufficient rights"
+msgstr "Nedostatečná oprávnění"
+
+msgid "In local permit/deny"
+msgstr "V místním povolit/zakázat"
+
+msgid "Warning level too high (sender)"
+msgstr "Hladina varování příliš vysoká (odeslání)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Hladina varování příliš vysoká (příjem)"
+
+msgid "User temporarily unavailable"
+msgstr "Uživatel dočasně nedostupný"
+
+msgid "No match"
+msgstr "Žádná shoda"
+
+msgid "List overflow"
+msgstr "Přetečení seznamu"
+
+msgid "Request ambiguous"
+msgstr "Požadavek nejednoznačný"
+
+msgid "Queue full"
+msgstr "Fronta plná"
+
+msgid "Not while on AOL"
+msgstr "Ne když na AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Ikona kamaráda"
+
+msgid "Voice"
+msgstr "Hlas"
+
+msgid "AIM Direct IM"
+msgstr "AIM Přímé IM"
+
+msgid "Get File"
+msgstr "Získat soubor"
+
+msgid "Games"
+msgstr "Hry"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Přídavky"
+
+msgid "Send Buddy List"
+msgstr "Odeslat seznam kamarádů"
+
+msgid "ICQ Direct Connect"
+msgstr "Přímé spojení ICQ"
+
+msgid "AP User"
+msgstr "Uživatel AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "Relay ICQ serveru"
+
+msgid "Old ICQ UTF8"
+msgstr "Staré ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Šifrování Trillian"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Zabezpečení povoleno"
+
+msgid "Video Chat"
+msgstr "Video Chat"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Živé video"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Sdílení obrazovky"
+
+msgid "IP Address"
+msgstr "IP adresa"
+
+msgid "Warning Level"
+msgstr "Úroveň varování"
+
+msgid "Buddy Comment"
+msgstr "Poznámka o kamarádovi"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Informace o uživateli nejsou k dispozici: %s"
+
+msgid "Mobile Phone"
+msgstr "Mobilní telefon"
+
+msgid "Personal Web Page"
+msgstr "Osobní WWW stránka"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Přídavné informace"
+
+msgid "Zip Code"
+msgstr "PSČ"
+
+msgid "Work Information"
+msgstr "Pracovní informace"
+
+msgid "Division"
+msgstr "Oddělení"
+
+msgid "Position"
+msgstr "Pozice"
+
+msgid "Web Page"
+msgstr "WWW stránka"
+
+msgid "Online Since"
+msgstr "Odpojen od"
+
+msgid "Member Since"
+msgstr "Člen od"
+
+msgid "Capabilities"
+msgstr "Schopnosti"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Vypadat připojen"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Vypadat připojen"
+
+msgid "Appear Offline"
+msgstr "Vypadat odpojen"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Vypadat odpojen"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Byl jste vykopnut z MultiMX."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Můžete znovu požádat o autorizaci od těchto kamarádů kliknutím na ně pravým "
+"tlačítkem a zvolením \"Znovu požádat o autorizaci.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Viditelný"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Seznam pozvaných"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vodnář"
@@ -7787,9 +8115,6 @@ msgstr "Update"
 msgid "Could not change buddy information."
 msgstr "Nemohu změnit informace o kamarádovi."
 
-msgid "Mobile"
-msgstr "Mobilní"
-
 msgid "Note"
 msgstr "Poznámka"
 
@@ -7816,8 +8141,8 @@ msgid "Your request was rejected."
 msgstr "Požadavek byl odmítnut."
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u vyžaduje ověření"
+msgid "%u requires verification: %s"
+msgstr "%u vyžaduje ověření: %s"
 
 msgid "Add buddy question"
 msgstr "Přidat otázku kamaráda"
@@ -7918,6 +8243,10 @@ msgstr "Požadavek"
 
 msgid "Admin"
 msgstr "Administrátor"
+
+#. XXX: Should this be "Topic"?
+msgid "Room Title"
+msgstr "Jméno místnosti"
 
 msgid "Notice"
 msgstr "Poznámka"
@@ -8820,18 +9149,6 @@ msgstr "Hyperaktivní"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Jealous"
-msgstr "Žárlivý"
-
-msgid "Ashamed"
-msgstr "Hanbící se"
-
-msgid "Bored"
-msgstr "Znuděný"
-
-msgid "Anxious"
-msgstr "Nedočkavý"
-
 msgid "User Modes"
 msgstr "Režimy uživatele"
 
@@ -9329,9 +9646,6 @@ msgstr "Vaše momentální nálada"
 msgid "Normal"
 msgstr "Normální"
 
-msgid "In love"
-msgstr "Zamilovaný"
-
 msgid ""
 "\n"
 "Your Preferred Contact Methods"
@@ -9826,9 +10140,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Zásuvný modul protokolu Yahoo!"
 
-msgid "Pager server"
-msgstr "Server pageru"
-
 msgid "Pager port"
 msgstr "Port pageru"
 
@@ -9844,17 +10155,11 @@ msgstr "Locale místnosti chatu"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorovat pozvání do konferencí a místností chatu"
 
-msgid "Use account proxy for SSL connections"
-msgstr "Použít proxy pro SSL připojení"
+msgid "Use account proxy for HTTP and HTTPS connections"
+msgstr "Použít proxy účtu pro HTTP a HTTPS připojení"
 
 msgid "Chat room list URL"
 msgstr "URL seznamu místností chatu"
-
-msgid "Yahoo Chat server"
-msgstr "Server Yahoo Chat"
-
-msgid "Yahoo Chat port"
-msgstr "Port Yahoo Chat"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN ID..."
@@ -9920,6 +10225,14 @@ msgid ""
 "this."
 msgstr ""
 "Účet uzamčen: Neznámý důvod. Přihlášení na Yahoo! stránku to může vyřešit."
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Účet uzamčen: Příliš mnoho pokusů o přihlášení. Počkejte několik minut, než "
+"se znovu pokusíte přihlásit. Přihlášení na Yahoo! stránku to může vyřešit."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -9995,6 +10308,14 @@ msgstr "Ztraceno spojení s %s: %s"
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Nemohu navázat spojení s %s: %s"
 
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Nemohu se připojit: server vrací prázdnou odpověď"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr "Nemohu se připojit: Odpověď serveru neobsahuje potřebné informace"
+
 msgid "Not at Home"
 msgstr "Nejsem doma"
 
@@ -10013,17 +10334,11 @@ msgstr "Šel jsem ven"
 msgid "Not on server list"
 msgstr "Není na seznamu serveru"
 
-msgid "Appear Online"
-msgstr "Vypadat připojen"
-
 msgid "Appear Permanently Offline"
 msgstr "Vypadat vždy odpojen"
 
 msgid "Presence"
 msgstr "Přítomnost"
-
-msgid "Appear Offline"
-msgstr "Vypadat odpojen"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Nevypadat vždy odpojen"
@@ -10338,6 +10653,10 @@ msgid "Exposure"
 msgstr "Vystavení"
 
 #, c-format
+msgid "Unable to create socket: %s"
+msgstr "Nemohu vytvořit socket: %s"
+
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Nemohu zpracovat odpověď od HTTP proxy: %s"
 
@@ -10372,6 +10691,10 @@ msgstr "_Ne"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "_Přijmout"
@@ -10439,8 +10762,8 @@ msgstr "Nerušit"
 msgid "Extended away"
 msgstr "Pryč na dlouho"
 
-msgid "Listening to music"
-msgstr "Poslouchá muziku"
+msgid "Feeling"
+msgstr "Citlivý"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10569,27 +10892,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Připojení porušeno jiným softwarem na počítači."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Vzdálený počítač ukončil připojení."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Spojení vypršel čas."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Spojení odmítnuto."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adresa se již používá"
 
@@ -10615,12 +10933,6 @@ msgstr "Internet Messenger"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
-
-msgid "Orientation"
-msgstr "Orientace"
-
-msgid "The orientation of the tray."
-msgstr "Orientace oznamovací oblasti."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -10742,6 +11054,10 @@ msgstr ""
 "\n"
 "Můžete se do tohoto okna vrátit a přidávat, upravovat nebo odstraňovat účty "
 "přes <b>Účty->Spravovat</b> v okně seznamu kamarádů."
+
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s chce tě (%s) přidat do svého seznamu kamarádů%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -10988,6 +11304,17 @@ msgstr "Nejste momentálně připojen s účtem, který může přidat tohoto ka
 msgid "Unknown node type"
 msgstr "Neznámý typ nódu"
 
+msgid "Please select your mood from the list"
+msgstr "Prosím vyberte náladu ze seznamu"
+
+msgid "Message (optional)"
+msgstr "Zpráva (nepovinná)"
+
+msgid "Edit User Mood"
+msgstr "Upravit náladu uživatele"
+
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Kamarádi"
@@ -11066,6 +11393,9 @@ msgstr "/Nástroje/_Nastavení"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Nástroje/_Soukromí"
 
+msgid "/Tools/Set _Mood"
+msgstr "/Nástroje/Nastavit ná_ladu"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Nástroje/_Přenosy souborů"
 
@@ -11085,8 +11415,17 @@ msgstr "/Nápo_věda"
 msgid "/Help/Online _Help"
 msgstr "/Nápověda/_Nápověda online"
 
+msgid "/Help/_Build Information"
+msgstr "/Nápověda/Informace o sestavení"
+
 msgid "/Help/_Debug Window"
 msgstr "/Nápověda/_Ladicí okno"
+
+msgid "/Help/De_veloper Information"
+msgstr "/Nápověda/Informace o vývojářích"
+
+msgid "/Help/_Translator Information"
+msgstr "/Nápověda/Informace o _překladatelích"
 
 msgid "/Help/_About"
 msgstr "/Nápověda/O _aplikaci"
@@ -11315,6 +11654,9 @@ msgstr "<PurpleMain>/Účty/"
 msgid "_Edit Account"
 msgstr "_Upravit účet"
 
+msgid "Set _Mood..."
+msgstr "Nastavit ná_ladu..."
+
 msgid "No actions available"
 msgstr "Žádné akce nejsou k dispozici"
 
@@ -11359,12 +11701,6 @@ msgstr "<h1>Konverzace s %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Uložit konverzaci"
-
-msgid "Find"
-msgstr "Hledat"
-
-msgid "_Search for:"
-msgstr "_Hledat:"
 
 msgid "Un-Ignore"
 msgstr "Přestat ignorovat"
@@ -11438,6 +11774,9 @@ msgstr "/Konverzace/Multimédia/Audio\\/Video _hovor"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Konverzace/Odeslat _soubor..."
+
+msgid "/Conversation/Get _Attention"
+msgstr "/Konverzace/Získat _pozornost"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Konverzace/Přidat _sledování kamaráda..."
@@ -11520,6 +11859,9 @@ msgstr "/Konverzace/Multimédia\\/Video hovor"
 msgid "/Conversation/Send File..."
 msgstr "/Konverzace/Odeslat soubor..."
 
+msgid "/Conversation/Get Attention"
+msgstr "/Konverzace/Získat pozornost"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Konverzace/Přidat sledování kamaráda..."
 
@@ -11584,15 +11926,18 @@ msgstr "_Odeslat"
 msgid "0 people in room"
 msgstr "0 lidí v místnosti"
 
+msgid "Close Find bar"
+msgstr "Zavřít vyhledávací řádek"
+
+msgid "Find:"
+msgstr "Hledat:"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d osoba v místnosti"
 msgstr[1] "%d osoby v místnosti"
 msgstr[2] "%d osob v místnosti"
-
-msgid "Typing"
-msgstr "Píše"
 
 msgid "Stopped Typing"
 msgstr "Přestane psát"
@@ -11644,6 +11989,12 @@ msgstr "Podle skupiny"
 
 msgid "By account"
 msgstr "Podle účtu"
+
+msgid "Find"
+msgstr "Hledat"
+
+msgid "_Search for:"
+msgstr "_Hledat:"
 
 msgid "Save Debug Log"
 msgstr "Uložit ladicí záznam"
@@ -11709,9 +12060,6 @@ msgstr "podpora"
 msgid "webmaster"
 msgstr "webmaster"
 
-msgid "Senior Contributor/QA"
-msgstr "Senior přispěvatel/QA"
-
 msgid "win32 port"
 msgstr "port na win32"
 
@@ -11737,11 +12085,17 @@ msgstr "původní autor"
 msgid "lead developer"
 msgstr "vedoucí vývojář"
 
+msgid "Senior Contributor/QA"
+msgstr "Senior přispěvatel/QA"
+
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
 msgid "Arabic"
 msgstr "Arabština"
+
+msgid "Assamese"
+msgstr "Ásámština"
 
 msgid "Belarusian Latin"
 msgstr "Běloruština (latinka)"
@@ -11751,6 +12105,9 @@ msgstr "Bulharština"
 
 msgid "Bengali"
 msgstr "Bengálština"
+
+msgid "Bengali-India"
+msgstr "Bengálština (Indie)"
 
 msgid "Bosnian"
 msgstr "Bosenština"
@@ -11863,14 +12220,17 @@ msgstr "Kurdština"
 msgid "Lao"
 msgstr "Laonština"
 
-msgid "Lithuanian"
-msgstr "Litevština"
-
 msgid "Macedonian"
 msgstr "Makedonština"
 
+msgid "Malayalam"
+msgstr "Malayalam"
+
 msgid "Mongolian"
 msgstr "Mongolština"
+
+msgid "Marathi"
+msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malajština"
@@ -11889,6 +12249,9 @@ msgstr "Norština Nynorsk"
 
 msgid "Occitan"
 msgstr "Occitan"
+
+msgid "Oriya"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -11968,48 +12331,47 @@ msgstr "Tradiční čínština"
 msgid "Amharic"
 msgstr "Amharština"
 
-#, c-format
-msgid "About %s"
-msgstr "O %s"
+msgid "Lithuanian"
+msgstr "Litevština"
 
 #, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s je modulární klient IM založený na libpurple, schopný zároveň používat "
-"AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
-"Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu a QQ. Je napsán pomocí GTK"
-"+<BR><BR>Program můžete upravovat a dále šířit pod podmínkami GPL (verze 2 "
-"nebo novější). Kopie GPL je obsažena v souboru 'COPYING' dodávaném s %s. "
-"Copyright %s vlastní jeho spoluautoři. Pro úplný seznam spoluautorů viz "
-"soubor 'COPYRIGHT'. Pro tento program neposkytujeme žádnou záruku.<BR><BR>"
+"několik služeb pro přenos zpráv.  %s je napsán v C pomocí GTK+. %s můžete "
+"vydávat, upravovat a dále šířit pod podmínkami GPL (verze 2 nebo novější). "
+"Kopie GPL je distribuována s %s. Copyright %s vlastní jeho spoluautoři, "
+"úplný seznam spoluautorů je distribuován s %s. Pro %s neposkytujeme žádnou "
+"záruku.<BR><BR>"
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Užitečné zdroje</B></FONT><BR>\t<A HREF=\"%s\">Webová "
+"stránka</A><BR>\t<A HREF=\"%s\">Často kladené otázky</A><BR>\tIRC kanál: "
+"#pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
 #, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
-"<font size=\"4\">Nápověda od jiných uživatelů Pidgin:</font> <a href="
+"<font size=\"4\"><b>Nápověda od jiných uživatelů Pidgin:</b></font> <a href="
 "\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Je to <b>veřejná</b> "
 "mailová konference! (<a href=\"http://pidgin.im/pipermail/support/\">archív</"
 "a>)<br/>Nemůžeme pomoct s protokoly a zásuvnými moduly třetích stran!<br/"
@@ -12017,13 +12379,16 @@ msgstr ""
 "jazycích, ale odpvědi mohou být méně nápomocné.<br/><br/>"
 
 #, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC kanál:</FONT> #pidgin na irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "O %s"
 
+msgid "Build Information"
+msgstr "Informace o sestavení"
+
+#. End of not to be translated section
 #, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+msgid "%s Build Information"
+msgstr "Informace o sestavení %s"
 
 msgid "Current Developers"
 msgstr "Současní vývojáři"
@@ -12037,14 +12402,19 @@ msgstr "Vývojáři na odpočinku"
 msgid "Retired Crazy Patch Writers"
 msgstr "Šílení autoři patchů na odpočinku"
 
+#, c-format
+msgid "%s Developer Information"
+msgstr "Informace o vývojářích %s"
+
 msgid "Current Translators"
 msgstr "Současní překladatelé"
 
 msgid "Past Translators"
 msgstr "Dřívější překladatelé"
 
-msgid "Debugging Information"
-msgstr "Ladicí informace"
+#, c-format
+msgid "%s Translator Information"
+msgstr "Informace o překladatelích %s"
 
 msgid "_Name"
 msgstr "_Název"
@@ -12336,15 +12706,6 @@ msgstr ""
 "\n"
 "Používám PNG."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Nerozpoznaný typ souboru\n"
-"\n"
-"Používám PNG."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12352,16 +12713,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>Chyba při ukládání obrázku</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Chyba při ukládání obrázku\n"
 "\n"
 "%s"
 
@@ -12421,7 +12772,7 @@ msgstr ""
 " %s"
 
 msgid "Smile!"
-msgstr "Úsměv!"
+msgstr "Smajlík!"
 
 msgid "_Manage custom smileys"
 msgstr "_Spravovat uživatelské smajlíky"
@@ -12471,6 +12822,9 @@ msgstr "Vložit obrázek IM"
 msgid "Insert Smiley"
 msgstr "Vložit smajlík"
 
+msgid "Send Attention"
+msgstr "Poslat požadavek na pozornost"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>_Tučné</b>"
 
@@ -12514,7 +12868,10 @@ msgid "_Horizontal rule"
 msgstr "_Vodorovná čára"
 
 msgid "_Smile!"
-msgstr "Ú_směv!"
+msgstr "_Smajlík!"
+
+msgid "_Attention!"
+msgstr "Vyžádat pozornost!"
 
 msgid "Log Deletion Failed"
 msgstr "Selhalo mazání záznamu"
@@ -12527,21 +12884,21 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Opravdu že chcete natrvalo odstranit záznam konverzace s %s, který začal v %"
-"s?"
+"Opravdu že chcete natrvalo odstranit záznam konverzace s %s, který začal v "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
-"Opravdu že chcete natrvalo odstranit záznam konverzace v %s, který začal v %"
-"s?"
+"Opravdu že chcete natrvalo odstranit záznam konverzace v %s, který začal v "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Opravdu chcete natrvalo odstranit systémový záznam, který začal v %s?"
 
 msgid "Delete Log?"
@@ -12645,11 +13002,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Exiting because another libpurple client is already running.\n"
 
-msgid "/_Media"
-msgstr "/_Multimédia"
+msgid "_Media"
+msgstr "_Média"
 
-msgid "/Media/_Hangup"
-msgstr "/Multimédia/_Zavěsit"
+msgid "_Hangup"
+msgstr "_Zavěsit"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12710,7 +13067,7 @@ msgid "Dismiss"
 msgstr "Odmítnout"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Jste sledován!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Sledování</span>"
 
 msgid "The following plugins will be unloaded."
 msgstr "Následující zásuvné moduly budou odebrány."
@@ -13067,6 +13424,9 @@ msgstr "Server pro přenos (TURN)"
 msgid "_TURN server:"
 msgstr "Server _TURN:"
 
+msgid "_UDP Port:"
+msgstr "_UDP Port:"
+
 msgid "Use_rname:"
 msgstr "Jméno _uživatele:"
 
@@ -13088,6 +13448,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Výchozí prostředí"
 
@@ -13105,6 +13470,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Ruční"
@@ -13525,10 +13898,13 @@ msgstr ""
 "Můžete tento obrázek vložit do této zprávy nebo jej používat jako ikonu "
 "kamaráda pro tohoto uživatele."
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Nemohu odeslat spouštěč"
@@ -13560,17 +13936,6 @@ msgstr "Chyba ikony"
 msgid "Could not set icon"
 msgstr "Nemohu nastavit ikonu"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Nemohu otevřít soubor '%s': %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"Nemohu načíst obrázek '%s': důvod není znám, pravděpodobně poškozený soubor "
-"obrázku"
-
 msgid "_Open Link"
 msgstr "_Otevřít odkaz"
 
@@ -13594,6 +13959,9 @@ msgstr "_Přehrát zvuk"
 
 msgid "_Save File"
 msgstr "_Uložit soubor"
+
+msgid "Do you really want to clear?"
+msgstr "Opravdu chcete vymazat?"
 
 msgid "Select color"
 msgstr "Zvolte barvu"
@@ -13642,7 +14010,7 @@ msgstr "žádné"
 msgid "Small"
 msgstr "Malý"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "Menší verze výchozích smajlíků"
 
 msgid "Response Probability:"
@@ -14574,8 +14942,17 @@ msgid "Timestamp Format Options"
 msgstr "Možnosti formátu časové značky"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr "_Vnutit 24-hodinový formát času"
+msgid "_Force timestamp format:"
+msgstr "_Vnutit formát času:"
+
+msgid "Use system default"
+msgstr "Použít výchozí prostředí"
+
+msgid "12 hour time format"
+msgstr "12-hodinový formát času"
+
+msgid "24 hour time format"
+msgstr "24-hodinový formát času"
 
 msgid "Show dates in..."
 msgstr "Zobrazovat data v..."
@@ -14650,6 +15027,9 @@ msgstr "Z_ařízení"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "Nastavení Hlasu/Videa"
+
+msgid "Voice and Video Settings"
+msgstr "Nastavení Hlasu a Videa"
 
 #. *< name
 #. *< version
@@ -14769,15 +15149,6 @@ msgstr "Účet: "
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>Nepřipojen k XMPP</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "Vložte sekci <iq/>."
-
-msgid "Insert a <presence/> stanza."
-msgstr "Vložte sekci <presence/>."
-
-msgid "Insert a <message/> stanza."
-msgstr "Vložte sekci <message/>."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14785,8 +15156,365 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Přijímat a odesílat přímo sekce XMPP."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů XMPP."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"K použití $(^Name) se vztahuje GPL licence. Licence je zde uvedena pouze pro "
+"Vaší informaci. $_CLICK"
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Multi-platform GUI toolkit používaný Pidginem"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin je aktuálně spuštěn. Prosím ukončete Pidgin a zkuste to znovu."
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Základní soubory a DLL pro Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Vytvořit položku v menu Start pro Pidgin"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Vytvořit zástupce na ploše pro Pidgin"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr "Debug symboly (potřebné pro reportování chyb)"
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "Plocha"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Chyba stahování GTK+ Runtime z ($R2).$\\rRuntime je potřeba pro správnou "
+"funkci Pidgin. Jestliže jeho stažení selže, použijte 'Offline instalační "
+"program' z http://pidgin.im/download/windows/ ."
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+"Chyba instalace Debug symbolů: ($R2).$\\rJestliže jeho stažení selže, "
+"použijte 'Offline instalační program' z http://pidgin.im/download/windows/ ."
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+"Chyba instalace Kontroly pravopisu z ($R3).$\\rJestliže jeho stažení selže, "
+"postupujte podle instrukcí na: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime (nutné)"
+
+#. Installer Subsection Text
+msgid "Localizations"
+msgstr "Lokalizace"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Další >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Client (nutné)"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+"Pidgin potřebuje kompatabilní GTK+ Runtime (vypadá to, že momentálně chybí).$"
+"\\rJste si jistí přeskočením instalace GTK+ Runtime?"
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "Zástupci"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "Zástupce pro spuštění Pidgin"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Podpora kontroly pravopisu"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "Start menu"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+"Podpora kontroly pravopisu. (Internetové připojení je potřeba pro instalaci)"
+
+msgid "The installer is already running."
+msgstr "Instalační program již běží."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Odinstalční proces nemůže najít záznamy pro Pidgin v registrech.$"
+"\\rPravděpodobně instalaci této aplikace provedl jiný uživatel."
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr "Obsluha URI"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Nemohu odinstalovat aktuálně nainstalovanou verzi Pidgin. Nová verze bude "
+"nainstalována bez odstranění aktuálně nainstalované verze."
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Navštívit Pidgin Web Page"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "Nemáte oprávnění k odinstalaci této aplikace."
+
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr "Certifikát vypršel a neměl by být považován za platný."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Vyžadovat SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Vnutit staré SSL (port 5223)"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Nemohu zobrazit zprávu od tohoto uživatele, protože obsahovala neplatné "
+#~ "znaky.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Hledat kamaráda podle informací"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Zadaný jméno není platné"
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Certifikát je neplatný."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Zadaná přezdívka není platná"
+
+#~ msgid "MXit Login Name"
+#~ msgstr "Přihlašovací jméno MXit"
+
+#~ msgid "Nick Name"
+#~ msgstr "Přezdívka"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Vaše mobilní telefonní číslo..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Rychlost k hostiteli"
+
+#~ msgid "Rate to client"
+#~ msgstr "Rychlost ke klientovi"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Multimédia/_Zavěsit"
+
+#~ msgid "Unknown reason."
+#~ msgstr "Neznámý důvod."
+
+#~ msgid "Current Mood"
+#~ msgstr "Momentální nálada"
+
+#~ msgid "New Mood"
+#~ msgstr "Nová nálada uživatele"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Změnit vaši náladu"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Jak se cítíte?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Změnit náladu..."
+
+#~ msgid "Artist"
+#~ msgstr "Umělec"
+
+#~ msgid "Album"
+#~ msgstr "Album"
+
+#~ msgid "Pager server"
+#~ msgstr "Server pageru"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Server Yahoo Chat"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Port Yahoo Chat"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientace"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Orientace oznamovací oblasti."
+
+#~ msgid "Error creating conference."
+#~ msgstr "Chyba při vytváření konference."
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Nemohu připojit socket k portu: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Nemohu poslouchat na soketu: %s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s vám právě poslal šťouchnutí!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Přátelské jméno se mění příliš rychle"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Tento účet Hotmail možná není aktivní."
+
+#~ msgid "Profile URL"
+#~ msgstr "URL profilu"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "Zásuvný modul protokolu MSN"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s není platná skupina."
+
+#~ msgid "Unknown error."
+#~ msgstr "Neznámá chyba."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s na %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Nemohu přidat uživatele do %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Nemohu zablokovat uživatele na %s (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Nemohu povolit uživatele na %s (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%s nelze přidat, protože váš seznam kamarádů je plný."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s není platný účet passport."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Služba dočasně není k dispozici."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Nemohu přejmenovat skupinu"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Nemohu odstranit skupinu"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s vás přidal do svého seznamu kamarádů."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s vás odstranil ze svého seznamu kamarádů."
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC kanál:</FONT> #pidgin na irc.freenode.net<BR><BR>"
+
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Ladicí informace"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Nerozpoznaný typ souboru\n"
+#~ "\n"
+#~ "Používám PNG."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Chyba při ukládání obrázku\n"
+#~ "\n"
+#~ "%s"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Nemohu otevřít soubor '%s': %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "Nemohu načíst obrázek '%s': důvod není znám, pravděpodobně poškozený "
+#~ "soubor obrázku"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "Vložte sekci <iq/>."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "Vložte sekci <presence/>."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Vložte sekci <message/>."
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Poslední akce, o kterou jste se pokusili, nemohla být provedena, protože "
+#~ "jste překročili limit rychlosti. Počkejte prosím 10 sekund a zkuste to "
+#~ "znovu.\n"
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Nemohu najít alternativní XMPP připojení po selhání přímého spojení."
 
 #, fuzzy
 #~ msgid "(Default)"
@@ -14825,9 +15553,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "_User:"
 #~ msgstr "_Uživatel:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Verze runtime GTK+"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Jenom první účet bude povolen bez tohoto)."
@@ -15103,9 +15828,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 #~ msgid "User Browsing"
 #~ msgstr "Uživatel brouzdá"
 
-#~ msgid "User Gaming"
-#~ msgstr "Uživatel hraje"
-
 #~ msgid "User Viewing"
 #~ msgstr "Uživatel prohlíží"
 
@@ -15192,9 +15914,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Spojení uzavřeno (zápis)"
-
-#~ msgid "Connection reset"
-#~ msgstr "Spojení přerušeno"
 
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Chyba při čtení ze socketu: %s"
@@ -15400,7 +16119,7 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Nemohu otevřít %s pro zápis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Přenos souboru selhal; druhá strana jej pravděpodobně přerušila."
 
 #~ msgid "Could not connect for transfer."
@@ -15505,9 +16224,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "Update information"
 #~ msgstr "Aktualizovat informace"
-
-#~ msgid "Successed:"
-#~ msgstr "Úspěch:"
 
 #~ msgid ""
 #~ "Setting custom faces is not currently supported. Please choose an image "
@@ -15965,14 +16681,8 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 #~ msgid "Attention! %s %s."
 #~ msgstr "Pozor! %s %s."
 
-#~ msgid "Attention!"
-#~ msgstr "Pozor!"
-
 #~ msgid "Attention! You have been %s."
 #~ msgstr "Pozor! Byli jste %s."
-
-#~ msgid "Crazychat"
-#~ msgstr "Crazychat"
 
 #~ msgid "Plugin to establish a Crazychat session."
 #~ msgstr "Zásuvný modul pro vytvoření sezení Crazychat."
@@ -15982,9 +16692,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "TCP port"
 #~ msgstr "Port TCP"
-
-#~ msgid "UDP port"
-#~ msgstr "Port UDP"
 
 #~ msgid "Feature Calibration"
 #~ msgstr "Kalibrace funkcí"
@@ -16183,9 +16890,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 #~ msgid "<b>%s:</b> %s"
 #~ msgstr "<b>%s:</b> %s"
 
-#~ msgid "Realname"
-#~ msgstr "Skutečné jméno"
-
 #~ msgid ""
 #~ "Server requires TLS/SSL for login.  Select \"Use TLS if available\" in "
 #~ "account properties"
@@ -16195,9 +16899,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "Server couldn't authenticate you without a password"
 #~ msgstr "Server vás nemohl bez hesla autentizovat"
-
-#~ msgid "Use TLS if available"
-#~ msgstr "Používat TLS, pokud je k dispozici"
 
 #~ msgid "The user %s wants to add %s to his or her buddy list."
 #~ msgstr "Uživatel %s chce přidat %s do svého seznamu kamarádů."
@@ -16331,9 +17032,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "Auth host"
 #~ msgstr "Počítač autentizace"
-
-#~ msgid "Auth port"
-#~ msgstr "Port autentizace"
 
 #~ msgid ""
 #~ "Use AIM/ICQ proxy server\n"

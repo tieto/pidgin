@@ -84,7 +84,7 @@ struct _PidginMediaPrivate
 	gchar *screenname;
 	gulong level_handler_id;
 
-	GtkItemFactory *item_factory;
+	GtkUIManager *ui;
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
@@ -260,50 +260,60 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 #endif
 
 static void
-menu_hangup(gpointer data, guint action, GtkWidget *item)
+menu_hangup(GtkAction *action, gpointer data)
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(data);
 	purple_media_stream_info(gtkmedia->priv->media,
 			PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
 }
 
-static GtkItemFactoryEntry menu_items[] = {
-	{ N_("/_Media"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Media/_Hangup"), NULL, menu_hangup, 0, "<Item>", NULL },
+static const GtkActionEntry menu_entries[] = {
+	{ "MediaMenu", NULL, N_("_Media"), NULL, NULL, NULL },
+	{ "Hangup", NULL, N_("_Hangup"), NULL, NULL, G_CALLBACK(menu_hangup) },
 };
 
-static gint menu_item_count = sizeof(menu_items) / sizeof(menu_items[0]);
-
-static const char *
-item_factory_translate_func (const char *path, gpointer func_data)
-{
-	return _(path);
-}
+static const char *media_menu =
+"<ui>"
+	"<menubar name='Media'>"
+		"<menu action='MediaMenu'>"
+			"<menuitem action='Hangup'/>"
+		"</menu>"
+	"</menubar>"
+"</ui>";
 
 static GtkWidget *
 setup_menubar(PidginMedia *window)
 {
+	GtkActionGroup *action_group;
+	GError *error;
 	GtkAccelGroup *accel_group;
 	GtkWidget *menu;
 
-	accel_group = gtk_accel_group_new ();
+	action_group = gtk_action_group_new("MediaActions");
+	gtk_action_group_add_actions(action_group,
+	                             menu_entries,
+	                             G_N_ELEMENTS(menu_entries),
+	                             GTK_WINDOW(window));
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(action_group,
+	                                        PACKAGE);
+#endif
+
+	window->priv->ui = gtk_ui_manager_new();
+	gtk_ui_manager_insert_action_group(window->priv->ui, action_group, 0);
+
+	accel_group = gtk_ui_manager_get_accel_group(window->priv->ui);
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
-	g_object_unref(accel_group);
 
-	window->priv->item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
-			"<main>", accel_group);
+	error = NULL;
+	if (!gtk_ui_manager_add_ui_from_string(window->priv->ui, media_menu, -1, &error))
+	{
+		g_message("building menus failed: %s", error->message);
+		g_error_free(error);
+		exit(EXIT_FAILURE);
+	}
 
-	gtk_item_factory_set_translate_func(window->priv->item_factory,
-			(GtkTranslateFunc)item_factory_translate_func,
-			NULL, NULL);
-
-	gtk_item_factory_create_items(window->priv->item_factory,
-			menu_item_count, menu_items, window);
-	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
-			G_CALLBACK(pidgin_save_accels_cb), NULL);
-
-	menu = gtk_item_factory_get_widget(
-			window->priv->item_factory, "<main>");
+	menu = gtk_ui_manager_get_widget(window->priv->ui, "/Media");
 
 	gtk_widget_show(menu);
 	return menu;
@@ -333,7 +343,7 @@ pidgin_media_init (PidginMedia *media)
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->menubar,
 			FALSE, TRUE, 0);
 
-	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	media->priv->display = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(media->priv->display),
 			PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), media->priv->display,
@@ -384,9 +394,9 @@ pidgin_media_dispose(GObject *media)
 		gtkmedia->priv->media = NULL;
 	}
 
-	if (gtkmedia->priv->item_factory) {
-		g_object_unref(gtkmedia->priv->item_factory);
-		gtkmedia->priv->item_factory = NULL;
+	if (gtkmedia->priv->ui) {
+		g_object_unref(gtkmedia->priv->ui);
+		gtkmedia->priv->ui = NULL;
 	}
 
 	G_OBJECT_CLASS(parent_class)->dispose(media);
@@ -629,29 +639,29 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				recv_widget, TRUE, TRUE, 0);
 		gtk_widget_show(recv_widget);
-	} else
+	} else {
 		recv_widget = gtkmedia->priv->recv_widget;
+	}
 	if (gtkmedia->priv->send_widget == NULL
 			&& type & (PURPLE_MEDIA_SEND_VIDEO |
 			PURPLE_MEDIA_SEND_AUDIO)) {
 		send_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
-				send_widget, TRUE, TRUE, 0);
+				send_widget, FALSE, TRUE, 0);
 		button_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_box_pack_end(GTK_BOX(send_widget), button_widget,
-				FALSE, FALSE, 0);
-		gtk_widget_show(GTK_WIDGET(button_widget));
+		gtk_box_pack_end(GTK_BOX(recv_widget), button_widget,
+				FALSE, TRUE, 0);
 		gtk_widget_show(send_widget);
 
 		/* Hold button */
 		gtkmedia->priv->hold =
 				gtk_toggle_button_new_with_mnemonic("_Hold");
-		g_signal_connect(gtkmedia->priv->hold, "toggled",
-				G_CALLBACK(pidgin_media_hold_toggled),
-				gtkmedia);
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->hold);
+		g_signal_connect(gtkmedia->priv->hold, "toggled",
+				G_CALLBACK(pidgin_media_hold_toggled),
+				gtkmedia);
 	} else {
 		send_widget = gtkmedia->priv->send_widget;
 		button_widget = gtkmedia->priv->button_widget;
@@ -663,7 +673,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		GtkWidget *remote_video;
 		GdkColor color = {0, 0, 0, 0};
 
-		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
+		aspect = gtk_aspect_frame_new(NULL, 0, 0, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
 
@@ -683,15 +693,16 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		gtkmedia->priv->remote_video = remote_video;
 	}
+
 	if (type & PURPLE_MEDIA_SEND_VIDEO) {
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
 		GdkColor color = {0, 0, 0, 0};
 
-		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
+		aspect = gtk_aspect_frame_new(NULL, 0, 0, 4.0/3.0, TRUE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(send_widget), aspect, FALSE, TRUE, 0);
 
 		data = g_new0(PidginMediaRealizeData, 1);
 		data->gtkmedia = gtkmedia;
@@ -703,43 +714,42 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		g_signal_connect(G_OBJECT(local_video), "realize",
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);
-		gtk_widget_set_size_request (GTK_WIDGET(local_video), 160, 120);
+		gtk_widget_set_size_request (GTK_WIDGET(local_video), 80, 60);
 
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
 
 		gtkmedia->priv->pause =
 				gtk_toggle_button_new_with_mnemonic(_("_Pause"));
-		g_signal_connect(gtkmedia->priv->pause, "toggled",
-				G_CALLBACK(pidgin_media_pause_toggled),
-				gtkmedia);
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->pause,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->pause);
+		g_signal_connect(gtkmedia->priv->pause, "toggled",
+				G_CALLBACK(pidgin_media_pause_toggled),
+				gtkmedia);
 
 		gtkmedia->priv->local_video = local_video;
 	}
-
 	if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
 				PURPLE_MEDIA_RECV_AUDIO), FALSE, FALSE, 0);
 	}
+
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		gtkmedia->priv->mute =
 				gtk_toggle_button_new_with_mnemonic("_Mute");
-		g_signal_connect(gtkmedia->priv->mute, "toggled",
-				G_CALLBACK(pidgin_media_mute_toggled),
-				gtkmedia);
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
+		g_signal_connect(gtkmedia->priv->mute, "toggled",
+				G_CALLBACK(pidgin_media_mute_toggled),
+				gtkmedia);
 
-		gtk_box_pack_end(GTK_BOX(send_widget),
+		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
 				PURPLE_MEDIA_SEND_AUDIO), FALSE, FALSE, 0);
 	}
-
 
 	if (type & PURPLE_MEDIA_AUDIO &&
 			gtkmedia->priv->level_handler_id == 0) {
@@ -752,8 +762,10 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtkmedia->priv->send_widget = send_widget;
 	if (recv_widget != NULL)
 		gtkmedia->priv->recv_widget = recv_widget;
-	if (button_widget != NULL)
+	if (button_widget != NULL) {
 		gtkmedia->priv->button_widget = button_widget;
+		gtk_widget_show(GTK_WIDGET(button_widget));
+	}
 
 	if (purple_media_is_initiator(media, sid, NULL) == FALSE) {
 		if (gtkmedia->priv->timeout_id != 0)

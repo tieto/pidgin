@@ -21,16 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_UTILS_H_
-#define _MSN_UTILS_H_
+#ifndef MSN_UTILS_H
+#define MSN_UTILS_H
 
 /*encode the str to RFC2047 style*/
-char * msn_encode_mime(const char *str);
+char *msn_encode_mime(const char *str);
 
 /**
  * Generate the Random GUID
  */
-char * rand_guid(void);
+char *rand_guid(void);
 
 /**
  * Parses the MSN message formatting into a format compatible with Purple.
@@ -54,7 +54,32 @@ void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
  */
 void msn_import_html(const char *html, char **attributes, char **message);
 
+/**
+ * Parses a socket string.
+ *
+ * @param str		A host:port string.
+ * @param ret_host 	Return string value of the host.
+ * @param ret_port	Return integer value of the port.
+ */
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
+
+/**
+ * Verify if the email is a vaild passport.
+ *
+ * @param passport 	The email
+ *
+ * @return True if it is a valid passport, else FALSE
+ */
+gboolean msn_email_is_valid(const char *passport);
+
+/**
+ * Handle MSN Challenge Computation
+ * This algorithm references
+ * http://imfreedom.org/wiki/index.php/MSN:NS/Challenges
+ *
+ * @param input 	Challenge input.
+ * @param output 	Callenge output.
+ */
 void msn_handle_chl(char *input, char *output);
 
-#endif /* _MSN_UTILS_H_ */
+#endif /* MSN_UTILS_H */

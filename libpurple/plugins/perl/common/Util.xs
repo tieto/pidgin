@@ -238,7 +238,7 @@ purple_base16_decode(str)
 	guchar *ret;
 	CODE:
 		ret = purple_base16_decode(str, &len);
-		if(len) {
+		if(ret && len > 0) {
 			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
@@ -256,7 +256,7 @@ purple_base64_decode(str)
 	guchar *ret;
 	CODE:
 		ret = purple_base64_decode(str, &len);
-		if(len) {
+		if(ret && len > 0) {
 			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);

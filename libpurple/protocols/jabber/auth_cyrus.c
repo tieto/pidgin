@@ -36,7 +36,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 {
 	purple_connection_error_reason(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-		_("Server requires plaintext authentication over an unencrypted stream"));
+		_("Server may require plaintext authentication over an unencrypted stream"));
 }
 
 static void start_cyrus_wrapper(JabberStream *js)
@@ -94,7 +94,6 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 	PurpleAccount *account;
 	const char *pw;
 	size_t len;
-	static sasl_secret_t *x = NULL;
 
 	account = purple_connection_get_account(js->gc);
 	pw = purple_account_get_password(account);
@@ -103,15 +102,16 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 		return SASL_BADPARAM;
 
 	len = strlen(pw);
-	x = (sasl_secret_t *) realloc(x, sizeof(sasl_secret_t) + len);
-
-	if (!x)
+	/* Not an off-by-one because sasl_secret_t defines char data[1] */
+	/* TODO: This can probably be moved to glib's allocator */
+	js->sasl_secret = malloc(sizeof(sasl_secret_t) + len);
+	if (!js->sasl_secret)
 		return SASL_NOMEM;
 
-	x->len = len;
-	strcpy((char*)x->data, pw);
+	js->sasl_secret->len = len;
+	strcpy((char*)js->sasl_secret->data, pw);
 
-	*secret = x;
+	*secret = js->sasl_secret;
 	return SASL_OK;
 }
 
@@ -176,7 +176,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	account = purple_connection_get_account(gc);
 	js = purple_connection_get_protocol_data(gc);
 
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 
@@ -240,8 +240,9 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				 * it in plaintext, see if we can turn on
 				 * plaintext auth
 				 */
+				/* XXX Should we just check for PLAIN/LOGIN being offered mechanisms? */
 				} else if (!plaintext) {
-					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+					char *msg = g_strdup_printf(_("%s may require plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
@@ -252,12 +253,15 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					g_free(msg);
 					return JABBER_SASL_STATE_CONTINUE;
 
-				} else {
-					/* We have no mechs which can work.
-					 * Try falling back on the old jabber:iq:auth method. We get here if the server supports
-					 * one or more sasl mechs, we are compiled with cyrus-sasl support, but we support or can connect with none of
-					 * the offerred mechs. jabberd 2.0 w/ SASL and Apple's iChat Server 10.5 both handle and expect
-					 * jabber:iq:auth in this situation.  iChat Server in particular offers SASL GSSAPI by default, which is often
+				} else
+					js->auth_fail_count++;
+
+				if (js->auth_fail_count == 1 &&
+					(js->sasl_mechs->str && g_str_equal(js->sasl_mechs->str, "GSSAPI"))) {
+					/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
+					 * for compatibility with iChat 10.5 Server and other jabberd based servers.
+					 *
+					 * iChat Server 10.5 and certain other corporate servers offer SASL GSSAPI by default, which is often
 					 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
 					 *
 					 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
@@ -269,17 +273,20 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					jabber_auth_start_old(js);
 					return JABBER_SASL_STATE_CONTINUE;
 				}
-				/* not reached */
+
 				break;
 
 				/* Fatal errors. Give up and go home */
 			case SASL_BADPARAM:
 			case SASL_NOMEM:
+				*error = g_strdup(_("SASL authentication failed"));
 				break;
 
 				/* For everything else, fail the mechanism and try again */
 			default:
 				purple_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
+
+				js->auth_fail_count++;
 
 				/*
 				 * DAA: is this right?
@@ -330,7 +337,6 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 		*reply = auth;
 		return JABBER_SASL_STATE_CONTINUE;
 	} else {
-		*error = g_strdup(_("SASL authentication failed"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 }
@@ -391,6 +397,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
                    xmlnode **reply, char **error)
 {
 	xmlnode *mechnode;
+	JabberSaslState ret;
 
 	js->sasl_mechs = g_string_new("");
 
@@ -399,16 +406,14 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 
-		if (!mech_name || !*mech_name) {
-			g_free(mech_name);
-			continue;
-		}
-
-		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism, as we will not
-		 * support it and including it gives a false fall-back to other mechs offerred,
-		 * leading to incorrect error handling.
+		/* Ignore blank mechanisms and EXTERNAL.  External isn't
+		 * supported, and Cyrus SASL's mechanism returns
+		 * SASL_NOMECH when the caller (us) doesn't configure it.
+		 * Except SASL_NOMECH is supposed to mean "no concordant
+		 * mechanisms"...  Easiest just to blacklist it (for now).
 		 */
-		if (g_str_equal(mech_name, "X-GOOGLE-TOKEN")) {
+		if (!mech_name || !*mech_name ||
+				g_str_equal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
 			continue;
 		}
@@ -418,8 +423,21 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 		g_free(mech_name);
 	}
 
+	/* Strip off the trailing ' ' */
+	if (js->sasl_mechs->len > 1)
+		g_string_truncate(js->sasl_mechs, js->sasl_mechs->len - 1);
+
 	jabber_sasl_build_callbacks(js);
-	return jabber_auth_start_cyrus(js, reply, error);
+	ret = jabber_auth_start_cyrus(js, reply, error);
+
+	/*
+	 * Triggered if no overlap between server and client
+	 * supported mechanisms.
+	 */
+	if (ret == JABBER_SASL_STATE_FAIL && *error == NULL)
+		*error = g_strdup(_("Server does not use any supported authentication method"));
+
+	return ret;
 }
 
 static JabberSaslState
@@ -540,6 +558,25 @@ jabber_cyrus_handle_failure(JabberStream *js, xmlnode *packet,
 			sasl_dispose(&js->sasl);
 
 			return jabber_auth_start_cyrus(js, reply, error);
+
+		} else if ((js->auth_fail_count == 1) &&
+				   (js->current_mech && g_str_equal(js->current_mech, "GSSAPI"))) {
+			/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
+			 * for compatibility with iChat 10.5 Server and other jabberd based servers.
+			 *
+			 * iChat Server 10.5 and certain other corporate servers offer SASL GSSAPI by default, which is often
+			 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
+			 *
+			 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
+			 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
+			 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
+			 * which would connect without issue otherwise. -evands
+			 */
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+			js->auth_mech = NULL;
+			jabber_auth_start_old(js);
+			return JABBER_SASL_STATE_CONTINUE;
 		}
 	}
 

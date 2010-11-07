@@ -80,14 +80,7 @@
 #include "untar.h"
 #include <glib.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#define mkdir(a,b) _mkdir((a))
-#define g_mkdir mkdir
-#define g_fopen fopen
-#define g_unlink unlink
-#endif
+#include <glib/gstdio.h>
 
 #define untar_error( error, args... )      purple_debug(PURPLE_DEBUG_ERROR, "untar", error, ## args )
 #define untar_warning( warning, args... )  purple_debug(PURPLE_DEBUG_WARNING, "untar", warning, ## args )

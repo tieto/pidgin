@@ -54,11 +54,13 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 	user = purple_buddy_get_protocol_data(buddy);
 	if (create && !user) {
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(buddy);
+
 		/* No MsimUser for this buddy; make one. */
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
+		user->id = purple_blist_node_get_int(node, "UserID");
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
@@ -92,16 +94,13 @@ MsimUser *
 msim_find_user(MsimSession *session, const gchar *username)
 {
 	PurpleBuddy *buddy;
-	MsimUser *user;
 
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy, TRUE);
-
-	return user;
+	return msim_get_user_from_buddy(buddy, TRUE);
 }
 
 /**
@@ -355,14 +354,6 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 			return;
 		}
 
-		if (user->temporary_user) {
-			/* This user will be destroyed soon; don't try to look up its image or avatar,
-			 * since that won't return immediately and we will end up accessing freed data.
-			 */
-			g_free(value_str);
-			return;
-		}
-
 		g_free(user->image_url);
 
 		user->image_url = value_str;
@@ -425,7 +416,6 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 	gchar *username;
 	MsimMessage *body, *body_node;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
 	body = msim_msg_get_dictionary(msg, "body");
@@ -577,7 +567,6 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	gchar *field_name;
 	guint rid, cmd, dsn, lid;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(user != NULL);
 	/* Callback can be null to not call anything, just lookup & store information. */
 	/*g_return_if_fail(cb != NULL);*/
@@ -636,8 +625,6 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	/* \persistr\\cmd\258\dsn\9\uid\204084363\lid\14\rid\369\body\UserName=TheAlbinoRhino1.Code=0\final\ */
 
 	purple_debug_info("msim","username_is_set made\n");
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	cmd = msim_msg_get_integer(userinfo, "cmd");
 	dsn = msim_msg_get_integer(userinfo, "dsn");
@@ -718,7 +705,6 @@ msim_set_username(MsimSession *session, const gchar *username,
 	MsimMessage *body;
 	guint rid;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(username != NULL);
 	g_return_if_fail(cb != NULL);
 
@@ -765,9 +751,6 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	session = (MsimSession *)gc->proto_data;
 
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-
-
 	user_msg = msim_msg_new(
 			"user", MSIM_TYPE_STRING, g_strdup(msim_username_to_set),
 			NULL);
@@ -794,7 +777,6 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 	purple_debug_info("msim_username_is_available_cb", "Look up username callback made\n");
 
 	msg = (MsimMessage *)data;
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(msg != NULL);
 
 	username = msim_msg_get_string(msg, "user");
@@ -861,8 +843,6 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 	g_return_if_fail(gc != NULL);
 
 	session = (MsimSession *)gc->proto_data;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	purple_debug_info("msim_check_username_availability_cb", "Checking username: %s\n", username_to_check);
 

@@ -963,7 +963,7 @@ gtk_source_undo_manager_check_list_size (GtkSourceUndoManager *um)
  * the stack with a new undo action. So when we undo for example
  * typing, we can undo the whole word and not each letter by itself.
  *
- * Return Value: %TRUE is merge was successful, %FALSE otherwise.²
+ * Return Value: %TRUE is merge was successful, %FALSE otherwise.
  **/
 static gboolean
 gtk_source_undo_manager_merge_action (GtkSourceUndoManager 	*um,

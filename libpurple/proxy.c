@@ -379,11 +379,16 @@ _proxy_fill_hostinfo(PurpleProxyInfo *info, char *host, int default_port)
 	char *d;
 
 	d = g_strrstr(host, ":");
-	if (d)
+	if (d) {
 		*d = '\0';
-	d++;
-	if (*d)
-		sscanf(d, "%d", &port);
+
+		d++;
+		if (*d)
+			sscanf(d, "%d", &port);
+
+		if (port == 0)
+			port = default_port;
+	}
 
 	purple_proxy_info_set_host(info, host);
 	purple_proxy_info_set_port(info, port);
@@ -1018,7 +1023,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 				g_free(response);
 
-			} else if((header = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic"))) {
+			} else if (g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: Basic") != NULL) {
 				gchar *t1, *t2;
 				const char *username, *password;
 
@@ -2100,8 +2105,12 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	addr = connect_data->hosts->data;
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 #ifdef HAVE_INET_NTOP
-	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
-			ipaddr, sizeof(ipaddr));
+	if (addr->sa_family == AF_INET)
+		inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+				ipaddr, sizeof(ipaddr));
+	else if (addr->sa_family == AF_INET6)
+		inet_ntop(addr->sa_family, &((struct sockaddr_in6 *)addr)->sin6_addr,
+				ipaddr, sizeof(ipaddr));
 #else
 	memcpy(ipaddr, inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
 			sizeof(ipaddr));

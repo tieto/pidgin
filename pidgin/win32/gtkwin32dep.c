@@ -43,18 +43,17 @@
 #include "network.h"
 
 #include "resource.h"
-#include "idletrack.h"
 #include "zlib.h"
 #include "untar.h"
-
-#include <libintl.h>
 
 #include "gtkwin32dep.h"
 #include "win32dep.h"
 #include "gtkconv.h"
 #include "gtkconn.h"
 #include "util.h"
+#ifdef USE_GTKSPELL
 #include "wspell.h"
+#endif
 
 /*
  *  GLOBALS
@@ -64,8 +63,6 @@ HINSTANCE dll_hInstance = 0;
 HWND messagewin_hwnd;
 static int gtkwin32_handle;
 
-typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
-static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
 static gboolean pwm_handles_connections = TRUE;
 
 
@@ -142,56 +139,34 @@ int winpidgin_gz_untar(const char* filename, const char* destdir) {
 
 void winpidgin_shell_execute(const char *target, const char *verb, const char *clazz) {
 
+	SHELLEXECUTEINFOW wsinfo;
+	wchar_t *w_uri, *w_verb, *w_clazz = NULL;
+
 	g_return_if_fail(target != NULL);
 	g_return_if_fail(verb != NULL);
 
-	if (G_WIN32_HAVE_WIDECHAR_API()) {
-		SHELLEXECUTEINFOW wsinfo;
-		wchar_t *w_uri, *w_verb, *w_clazz = NULL;
+	w_uri = g_utf8_to_utf16(target, -1, NULL, NULL, NULL);
+	w_verb = g_utf8_to_utf16(verb, -1, NULL, NULL, NULL);
 
-		w_uri = g_utf8_to_utf16(target, -1, NULL, NULL, NULL);
-		w_verb = g_utf8_to_utf16(verb, -1, NULL, NULL, NULL);
-
-		memset(&wsinfo, 0, sizeof(wsinfo));
-		wsinfo.cbSize = sizeof(wsinfo);
-		wsinfo.lpVerb = w_verb;
-		wsinfo.lpFile = w_uri;
-		wsinfo.nShow = SW_SHOWNORMAL;
-		if (clazz != NULL) {
-			w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
-			wsinfo.fMask |= SEE_MASK_CLASSNAME;
-			wsinfo.lpClass = w_clazz;
-		}
-
-		if(!ShellExecuteExW(&wsinfo))
-			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
-				target, (int) wsinfo.hInstApp);
-
-		g_free(w_uri);
-		g_free(w_verb);
-		g_free(w_clazz);
-	} else {
-		SHELLEXECUTEINFOA sinfo;
-		gchar *locale_uri;
-
-		locale_uri = g_locale_from_utf8(target, -1, NULL, NULL, NULL);
-
-		memset(&sinfo, 0, sizeof(sinfo));
-		sinfo.cbSize = sizeof(sinfo);
-		sinfo.lpVerb = verb;
-		sinfo.lpFile = locale_uri;
-		sinfo.nShow = SW_SHOWNORMAL;
-		if (clazz != NULL) {
-			sinfo.fMask |= SEE_MASK_CLASSNAME;
-			sinfo.lpClass = clazz;
-		}
-
-		if(!ShellExecuteExA(&sinfo))
-			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
-				target, (int) sinfo.hInstApp);
-
-		g_free(locale_uri);
+	memset(&wsinfo, 0, sizeof(wsinfo));
+	wsinfo.cbSize = sizeof(wsinfo);
+	wsinfo.lpVerb = w_verb;
+	wsinfo.lpFile = w_uri;
+	wsinfo.nShow = SW_SHOWNORMAL;
+	wsinfo.fMask |= SEE_MASK_FLAG_NO_UI;
+	if (clazz != NULL) {
+		w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
+		wsinfo.fMask |= SEE_MASK_CLASSNAME;
+		wsinfo.lpClass = w_clazz;
 	}
+
+	if(!ShellExecuteExW(&wsinfo))
+		purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
+			target, (int) wsinfo.hInstApp);
+
+	g_free(w_uri);
+	g_free(w_verb);
+	g_free(w_clazz);
 
 }
 
@@ -330,6 +305,7 @@ static gboolean stop_flashing(GtkWidget *widget, GdkEventFocus *event, gpointer 
 void
 winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	GdkWindow * gdkwin;
+	FLASHWINFO info;
 
 	g_return_if_fail(window != NULL);
 
@@ -341,25 +317,20 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	if(GDK_WINDOW_DESTROYED(gdkwin))
 		return;
 
-	if(MyFlashWindowEx) {
-		FLASHWINFO info;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = GDK_WINDOW_HWND(gdkwin);
-		if (flash) {
-			DWORD flashCount;
-			info.uCount = 3;
-			if (SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashCount, 0))
-				info.uCount = flashCount;
-			info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
-		} else
-			info.dwFlags = FLASHW_STOP;
-		info.dwTimeout = 0;
-
-		MyFlashWindowEx(&info);
+	memset(&info, 0, sizeof(FLASHWINFO));
+	info.cbSize = sizeof(FLASHWINFO);
+	info.hwnd = GDK_WINDOW_HWND(gdkwin);
+	if (flash) {
+		DWORD flashCount;
+		info.uCount = 3;
+		if (SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashCount, 0))
+			info.uCount = flashCount;
+		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 	} else
-		FlashWindow(GDK_WINDOW_HWND(gdkwin), flash);
+		info.dwFlags = FLASHW_STOP;
+	FlashWindowEx(&info);
+	info.dwTimeout = 0;
+
 }
 
 void
@@ -406,22 +377,38 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 }
 
 void winpidgin_init(HINSTANCE hint) {
+	FARPROC proc;
+	gchar *exchndl_dll_path;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
 	exe_hInstance = hint;
 
-	/* IdleTracker Initialization */
-	if(!winpidgin_set_idlehooks())
-		purple_debug_error("winpidgin", "Failed to initialize idle tracker\n");
+	exchndl_dll_path = g_build_filename(wpurple_install_dir(), "exchndl.dll", NULL);
+	proc = wpurple_find_and_loadproc(exchndl_dll_path, "SetLogFile");
+	g_free(exchndl_dll_path);
+	exchndl_dll_path = NULL;
+	if (proc) {
+		gchar *debug_dir, *locale_debug_dir;
 
+		debug_dir = g_build_filename(purple_user_dir(), "pidgin.RPT", NULL);
+		locale_debug_dir = g_locale_from_utf8(debug_dir, -1, NULL, NULL, NULL);
+
+		purple_debug_info("winpidgin", "Setting exchndl.dll LogFile to %s\n", debug_dir);
+
+		(proc)(locale_debug_dir);
+
+		g_free(debug_dir);
+		g_free(locale_debug_dir);
+	}
+
+#ifdef USE_GTKSPELL
 	winpidgin_spell_init();
+#endif
 	purple_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
 	messagewin_hwnd = winpidgin_message_window_init();
-
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wpurple_find_and_loadproc("user32.dll", "FlashWindowEx");
 
 	purple_debug_info("winpidgin", "winpidgin_init end\n");
 }
@@ -445,9 +432,6 @@ void winpidgin_cleanup(void) {
 	if(messagewin_hwnd)
 		DestroyWindow(messagewin_hwnd);
 
-	/* Idle tracker cleanup */
-	winpidgin_remove_idlehooks();
-
 }
 
 /* DLL initializer */
@@ -458,36 +442,16 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	return TRUE;
 }
 
-typedef HMONITOR WINAPI _MonitorFromWindow(HWND, DWORD);
-typedef BOOL WINAPI _GetMonitorInfo(HMONITOR, LPMONITORINFO);
-
 static gboolean
 get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
-	static _MonitorFromWindow *the_MonitorFromWindow;
-	static _GetMonitorInfo *the_GetMonitorInfo;
-	static gboolean initialized = FALSE;
 
 	HMONITOR monitor;
 	MONITORINFO info;
 
-	if(!initialized) {
-		the_MonitorFromWindow = (_MonitorFromWindow*)
-			wpurple_find_and_loadproc("user32", "MonitorFromWindow");
-		the_GetMonitorInfo = (_GetMonitorInfo*)
-			wpurple_find_and_loadproc("user32", "GetMonitorInfoA");
-		initialized = TRUE;
-	}
-
-	if(!the_MonitorFromWindow)
-		return FALSE;
-
-	if(!the_GetMonitorInfo)
-		return FALSE;
-
-	monitor = the_MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+	monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
 
 	info.cbSize = sizeof(info);
-	if(!the_GetMonitorInfo(monitor, &info))
+	if(!GetMonitorInfo(monitor, &info))
 		return FALSE;
 
 	CopyRect(workingAreaRc, &(info.rcWork));
@@ -571,5 +535,18 @@ void winpidgin_ensure_onscreen(GtkWidget *win) {
 				   (winR.right - winR.left),
 				   (winR.bottom - winR.top), TRUE);
 	}
+
+}
+
+DWORD winpidgin_get_lastactive() {
+	DWORD result = 0;
+
+	LASTINPUTINFO lii;
+	memset(&lii, 0, sizeof(lii));
+	lii.cbSize = sizeof(lii);
+	if (GetLastInputInfo(&lii))
+		result = lii.dwTime;
+
+	return result;
 }
 

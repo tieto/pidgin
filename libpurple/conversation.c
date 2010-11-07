@@ -1124,7 +1124,6 @@ void
 purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout)
 {
 	PurpleConversation *conv;
-	const char *name;
 
 	g_return_if_fail(im != NULL);
 
@@ -1132,7 +1131,6 @@ purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout)
 		purple_conv_im_stop_typing_timeout(im);
 
 	conv = purple_conv_im_get_conversation(im);
-	name = purple_conversation_get_name(conv);
 
 	im->typing_timeout = purple_timeout_add_seconds(timeout, reset_typing_cb, conv);
 }
@@ -1520,7 +1518,6 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	PurpleAccount *account;
 	PurpleConversation *conv;
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(who != NULL);
@@ -1529,7 +1526,6 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	conv      = purple_conv_chat_get_conversation(chat);
 	gc        = purple_conversation_get_gc(conv);
 	account   = purple_connection_get_account(gc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (purple_conv_chat_is_user_ignored(chat, who))
@@ -2302,7 +2298,27 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
-
+	
+	purple_signal_register(handle, "sent-attention",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_UINT));
+	
+	purple_signal_register(handle, "got-attention",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_UINT));
+	
 	purple_signal_register(handle, "sending-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
 						 NULL, 3,

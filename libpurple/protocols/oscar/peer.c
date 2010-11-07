@@ -69,7 +69,7 @@
 #endif
 
 PeerConnection *
-peer_connection_find_by_type(OscarData *od, const char *bn, OscarCapability type)
+peer_connection_find_by_type(OscarData *od, const char *bn, guint64 type)
 {
 	GSList *cur;
 	PeerConnection *conn;
@@ -104,7 +104,7 @@ peer_connection_find_by_cookie(OscarData *od, const char *bn, const guchar *cook
 }
 
 PeerConnection *
-peer_connection_new(OscarData *od, OscarCapability type, const char *bn)
+peer_connection_new(OscarData *od, guint64 type, const char *bn)
 {
 	PeerConnection *conn;
 	PurpleAccount *account;
@@ -879,7 +879,9 @@ peer_connection_trynext(PeerConnection *conn)
 		}
 
 		conn->verified_connect_data = purple_proxy_connect(NULL, account,
-				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
+				(conn->proxyip != NULL)
+					? conn->proxyip
+					: (conn->od->icq ? ICQ_PEER_PROXY_SERVER : AIM_PEER_PROXY_SERVER),
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
 		if (conn->verified_connect_data != NULL)
@@ -897,7 +899,7 @@ peer_connection_trynext(PeerConnection *conn)
  * Initiate a peer connection with someone.
  */
 void
-peer_connection_propose(OscarData *od, OscarCapability type, const char *bn)
+peer_connection_propose(OscarData *od, guint64 type, const char *bn)
 {
 	PeerConnection *conn;
 

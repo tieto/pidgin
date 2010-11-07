@@ -254,11 +254,7 @@ purple_plugin_probe(const char *filename)
 		 *
 		 * G_MODULE_BIND_LOCAL was added in glib 2.3.3.
 		 */
-#if GLIB_CHECK_VERSION(2,3,3)
 		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
-#else
-		plugin->handle = g_module_open(filename, 0);
-#endif
 
 		if (plugin->handle == NULL)
 		{
@@ -287,11 +283,7 @@ purple_plugin_probe(const char *filename)
 				purple_debug_error("plugins", "%s is not loadable: %s\n",
 						 plugin->path, plugin->error);
 			}
-#if GLIB_CHECK_VERSION(2,3,3)
 			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-#else
-			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY);
-#endif
 
 			if (plugin->handle == NULL)
 			{

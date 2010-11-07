@@ -23,7 +23,7 @@ $(PIDGIN_REVISION_RAW_TXT):
 
 $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
 	if [ -f $< ]; then \
-		sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+		sed 's/^\(.\{1,\}\)$$/#define REVISION "\1"/' $< > $@; \
 	fi
 	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
 
@@ -35,9 +35,6 @@ $(PURPLE_PERL_DLL) $(PURPLE_PERL_DLL).a:
 
 $(PIDGIN_DLL) $(PIDGIN_DLL).a:
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) pidgin.dll
-
-$(PIDGIN_IDLETRACK_DLL) $(PIDGIN_IDLETRACK_DLL).a:
-	$(MAKE) -C $(PIDGIN_IDLETRACK_TOP) -f $(MINGW_MAKEFILE) idletrack.dll
 
 $(PIDGIN_EXE):
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) pidgin.exe

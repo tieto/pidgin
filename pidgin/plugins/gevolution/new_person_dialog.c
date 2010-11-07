@@ -141,14 +141,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		if (*email)
 			e_contact_set(contact, E_CONTACT_EMAIL_1, (gpointer)email);
 
-		if (!strcmp(im_service, "prpl-oscar"))
-		{
-			if (isdigit(*username))
-				field = E_CONTACT_IM_ICQ;
-			else
-				field = E_CONTACT_IM_AIM;
-		}
-		else if (!strcmp(im_service, "prpl-aim"))
+		if (!strcmp(im_service, "prpl-aim"))
 			field = E_CONTACT_IM_AIM;
 		else if (!strcmp(im_service, "prpl-icq"))
 			field = E_CONTACT_IM_ICQ;
@@ -160,6 +153,8 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 			field = E_CONTACT_IM_MSN;
 		else if (!strcmp(im_service, "prpl-novell"))
 			field = E_CONTACT_IM_GROUPWISE;
+		else if (!strcmp(im_service, "prpl-gg"))
+			field = E_CONTACT_IM_GADUGADU;
 
 		if (field > 0)
 		{
@@ -209,8 +204,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 	if (name != NULL)
 		e_contact_name_free(name);
 
-	if (full_name != NULL)
-		g_free(full_name);
+	g_free(full_name);
 
 	delete_win_cb(NULL, NULL, dialog);
 }
@@ -300,9 +294,10 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 						 G_CALLBACK(username_changed_cb), dialog);
 
 		/* Group */
-		dialog->group_combo = pidgin_text_combo_box_entry_new(NULL,
+		dialog->group_combo = pidgin_text_combo_box_entry_new(group,
 			gevo_get_groups());
 		add_pref_box(sg, vbox, _("Group:"), dialog->group_combo);
+		gtk_widget_show_all(dialog->group_combo);
 
 		/* Separator */
 		sep = gtk_hseparator_new();

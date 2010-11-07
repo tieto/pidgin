@@ -28,7 +28,10 @@
 
 #include "buddy.h"
 #include "disco.h"
-#include "google.h"
+#include "google/gmail.h"
+#include "google/google.h"
+#include "google/jingleinfo.h"
+#include "google/google_session.h"
 #include "iq.h"
 #include "jingle/jingle.h"
 #include "oob.h"
@@ -43,8 +46,8 @@
 #include "utsname.h"
 #endif
 
-GHashTable *iq_handlers = NULL;
-GHashTable *signal_iq_handlers = NULL;
+static GHashTable *iq_handlers = NULL;
+static GHashTable *signal_iq_handlers = NULL;
 
 JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type)
 {
@@ -379,7 +382,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	purple_debug_info("jabber", "jabber_iq_parse\n");
+	purple_debug_misc("jabber", "Unhandled IQ with id %s\n", id);
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(type == JABBER_IQ_SET || type == JABBER_IQ_GET) {

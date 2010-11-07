@@ -99,11 +99,13 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "that can verify it is currently trusted.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
-			return _("The certificate is not valid yet.");
+			return _("The certificate is not valid yet.  Check that your "
+			         "computer's date and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_EXPIRED:
 			return _("The certificate has expired and should not be "
-			         "considered valid.");
+			         "considered valid.  Check that your computer's date "
+			         "and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_NAME_MISMATCH:
 			/* Translators: "domain" refers to a DNS domain (e.g. talk.google.com) */
@@ -375,6 +377,16 @@ purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename
 	g_return_val_if_fail(filename, NULL);
 
 	return (scheme->import_certificate)(filename);
+}
+
+GSList *
+purple_certificates_import(PurpleCertificateScheme *scheme, const gchar *filename)
+{
+	g_return_val_if_fail(scheme, NULL);
+	g_return_val_if_fail(scheme->import_certificates, NULL);
+	g_return_val_if_fail(filename, NULL);
+
+	return (scheme->import_certificates)(filename);
 }
 
 gboolean
@@ -704,6 +716,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		x509_singleuse_verify_cb );
 
 	/* Cleanup */
+	g_free(cn);
 	g_free(primary);
 	g_free(secondary);
 	g_free(sha_asc);
@@ -800,8 +813,9 @@ x509_ca_lazy_init(void)
 	PurpleCertificateScheme *x509;
 	GDir *certdir;
 	const gchar *entry;
-	GPatternSpec *pempat;
+	GPatternSpec *pempat, *crtpat;
 	GList *iter = NULL;
+	GSList *crts = NULL;
 
 	if (x509_ca_initialized) return TRUE;
 
@@ -817,6 +831,7 @@ x509_ca_lazy_init(void)
 
 	/* Use a glob to only read .pem files */
 	pempat = g_pattern_spec_new("*.pem");
+	crtpat = g_pattern_spec_new("*.crt");
 
 	/* Populate the certificates pool from the search path(s) */
 	for (iter = x509_ca_paths; iter; iter = iter->next) {
@@ -830,32 +845,40 @@ x509_ca_lazy_init(void)
 			gchar *fullpath;
 			PurpleCertificate *crt;
 
-			if ( !g_pattern_match_string(pempat, entry) ) {
+			if (!g_pattern_match_string(pempat, entry) && !g_pattern_match_string(crtpat, entry)) {
 				continue;
 			}
 
 			fullpath = g_build_filename(iter->data, entry, NULL);
 
 			/* TODO: Respond to a failure in the following? */
-			crt = purple_certificate_import(x509, fullpath);
+			crts = purple_certificates_import(x509, fullpath);
 
-			if (x509_ca_quiet_put_cert(crt)) {
-				purple_debug_info("certificate/x509/ca",
-						  "Loaded %s\n",
-						  fullpath);
-			} else {
-				purple_debug_error("certificate/x509/ca",
-						  "Failed to load %s\n",
-						  fullpath);
+			while (crts && crts->data) {
+				crt = crts->data;
+				if (x509_ca_quiet_put_cert(crt)) {
+					gchar *name;
+					name = purple_certificate_get_subject_name(crt);
+					purple_debug_info("certificate/x509/ca",
+							  "Loaded %s from %s\n",
+							  name ? name : "(unknown)", fullpath);
+					g_free(name);
+				} else {
+					purple_debug_error("certificate/x509/ca",
+							  "Failed to load certificate from %s\n",
+							  fullpath);
+				}
+				purple_certificate_destroy(crt);
+				crts = g_slist_delete_link(crts, crts);
 			}
 
-			purple_certificate_destroy(crt);
 			g_free(fullpath);
 		}
 		g_dir_close(certdir);
 	}
 
 	g_pattern_spec_free(pempat);
+	g_pattern_spec_free(crtpat);
 
 	purple_debug_info("certificate/x509/ca",
 			  "Lazy init completed.\n");
@@ -874,7 +897,6 @@ x509_ca_init(void)
 #else
 # ifdef SSL_CERTIFICATES_DIR
 		x509_ca_paths = g_list_append(NULL, g_strdup(SSL_CERTIFICATES_DIR));
-# else
 # endif
 		x509_ca_paths = g_list_append(x509_ca_paths,
 			g_build_filename(DATADIR, "purple", "ca-certs", NULL));
@@ -1517,6 +1539,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
+		g_free(sn);
 	}
 
 	x509_tls_cached_complete(vrq, flags);

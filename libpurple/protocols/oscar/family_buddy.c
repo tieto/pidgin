@@ -88,117 +88,6 @@ rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame,
 }
 
 /*
- * Subtype 0x0004 (SNAC_SUBTYPE_BUDDY_ADDBUDDY) - Add buddy to list.
- *
- * Adds a single buddy to your buddy list after login.
- * XXX This should just be an extension of setbuddylist()
- *
- */
-int
-aim_buddylist_addbuddy(OscarData *od, FlapConnection *conn, const char *sn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!sn || !strlen(sn))
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1+strlen(sn));
-
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
- * Subtype 0x0004 (SNAC_SUBTYPE_BUDDY_ADDBUDDY) - Add multiple buddies to your buddy list.
- *
- * This just builds the "set buddy list" command then queues it.
- *
- * buddy_list = "Buddy Name One&BuddyNameTwo&";
- *
- * XXX Clean this up.
- *
- */
-int
-aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int len = 0;
-	char *localcpy = NULL;
-	char *tmpptr = NULL;
-
-	if (!buddy_list || !(localcpy = g_strdup(buddy_list)))
-		return -EINVAL;
-
-	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
-		purple_debug_misc("oscar", "---adding: %s (%" G_GSIZE_FORMAT
-				")\n", tmpptr, strlen(tmpptr));
-		len += 1 + strlen(tmpptr);
-		tmpptr = strtok(NULL, "&");
-	}
-
-	byte_stream_new(&bs, len);
-
-	strncpy(localcpy, buddy_list, strlen(buddy_list) + 1);
-
-	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
-
-		purple_debug_misc("oscar", "---adding: %s (%" G_GSIZE_FORMAT
-				")\n", tmpptr, strlen(tmpptr));
-
-		byte_stream_put8(&bs, strlen(tmpptr));
-		byte_stream_putstr(&bs, tmpptr);
-		tmpptr = strtok(NULL, "&");
-	}
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	g_free(localcpy);
-
-	return 0;
-}
-
-/*
- * Subtype 0x0005 (SNAC_SUBTYPE_BUDDY_REMBUDDY) - Remove buddy from list.
- *
- * XXX generalise to support removing multiple buddies (basically, its
- * the same as setbuddylist() but with a different snac subtype).
- *
- */
-int
-aim_buddylist_removebuddy(OscarData *od, FlapConnection *conn, const char *sn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!sn || !strlen(sn))
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1 + strlen(sn));
-
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0005, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0005, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/*
  * Subtypes 0x000b (SNAC_SUBTYPE_BUDDY_ONCOMING) and 0x000c (SNAC_SUBTYPE_BUDDY_OFFGOING) - Change in buddy status
  *
  * Oncoming Buddy notifications contain a subset of the
@@ -221,6 +110,18 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, &userinfo);
 
+	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING &&
+	    userinfo.capabilities & OSCAR_CAPABILITY_XTRAZ) {
+		PurpleAccount *account = purple_connection_get_account(od->gc);
+		PurpleBuddy *buddy = purple_find_buddy(account, userinfo.bn);
+
+		if (buddy) {
+			PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+				icq_im_xstatus_request(od, userinfo.bn);
+		}
+	}
 	aim_info_free(&userinfo);
 
 	return ret;

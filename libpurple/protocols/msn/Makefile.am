@@ -12,8 +12,8 @@ MSNSOURCES = \
 	command.h \
 	contact.c\
 	contact.h\
-	dialog.c \
-	dialog.h \
+	directconn.c \
+	directconn.h \
 	error.c \
 	error.h \
 	group.c \
@@ -34,6 +34,8 @@ MSNSOURCES = \
 	object.h \
 	oim.c\
 	oim.h\
+	p2p.c \
+	p2p.h \
 	page.c \
 	page.h \
 	servconn.c \
@@ -48,14 +50,16 @@ MSNSOURCES = \
 	slplink.h \
 	slpmsg.c \
 	slpmsg.h \
+	slpmsg_part.c \
+	slpmsg_part.h \
 	soap.c \
 	soap.h \
 	state.c \
 	state.h \
+	sbconn.c \
+	sbconn.h \
 	switchboard.c \
 	switchboard.h \
-	sync.c \
-	sync.h \
 	table.c \
 	table.h \
 	transaction.c \
@@ -64,6 +68,8 @@ MSNSOURCES = \
 	user.h \
 	userlist.c \
 	userlist.h \
+	xfer.c \
+	xfer.h \
 	msnutils.c \
 	msnutils.h
 

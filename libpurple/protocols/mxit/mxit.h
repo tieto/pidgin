@@ -37,7 +37,9 @@
 #endif
 #elif defined( _WIN32 )
 /* windows architecture */
+#ifndef HOST_NAME_MAX
 #define		HOST_NAME_MAX				512
+#endif
 #include	"libc_interface.h"
 #elif defined( __linux__ )
 /* linux architecture */
@@ -61,7 +63,7 @@
 /* Plugin details */
 #define		MXIT_PLUGIN_ID				"prpl-loubserp-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit"
-#define		MXIT_PLUGIN_VERSION			"2.3.0"
+#define		MXIT_PLUGIN_VERSION			"2.4.0"
 #define		MXIT_PLUGIN_EMAIL			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
@@ -103,7 +105,7 @@
 /* Client session flags */
 #define		MXIT_FLAG_CONNECTED			0x01		/* established connection to the server */
 #define		MXIT_FLAG_LOGGEDIN			0x02		/* user currently logged in */
-#define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been recevied and processed */
+#define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been received and processed */
 
 
 /* define this to enable the link clicking support */
@@ -149,7 +151,7 @@ struct MXitSession {
 
 	/* personal (profile) */
 	struct MXitProfile*	profile;					/* user's profile information */
-	int					mood;						/* user's current mood */
+	char*				uid;						/* the user's UID */
 
 	/* libpurple */
 	PurpleAccount*		acc;						/* pointer to the libpurple internal account struct */

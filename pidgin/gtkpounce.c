@@ -194,15 +194,12 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 {
 	GtkTreeIter iter;
 	PurpleAccount *account;
-	PurplePounceEvent events;
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf;
 
 	account = purple_pounce_get_pouncer(pounce);
-
-	events = purple_pounce_get_events(pounce);
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
@@ -1063,15 +1060,6 @@ pounces_manager_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_dat
 	return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	(*(gint *)user_data)++;
-}
-#endif
-
 static void
 pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 {
@@ -1163,11 +1151,7 @@ pounce_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 	PouncesManager *dialog = user_data;
 	int num_selected = 0;
 
-#if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(sel);
-#else
-	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
-#endif
 
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
 	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
@@ -1546,53 +1530,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 				g_free(localecmd);
 			}
 #else /* !_WIN32 */
-			PROCESS_INFORMATION pi;
-			BOOL retval;
-			gchar *message = NULL;
-
-			memset(&pi, 0, sizeof(pi));
-
-			if (G_WIN32_HAVE_WIDECHAR_API ()) {
-				STARTUPINFOW si;
-				wchar_t *wc_cmd = g_utf8_to_utf16(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessW(NULL, wc_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(wc_cmd);
-			} else {
-				STARTUPINFOA si;
-				char *l_cmd = g_locale_from_utf8(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessA(NULL, l_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(l_cmd);
-			}
-
-			if (retval) {
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
-			} else {
-				message = g_win32_error_message(GetLastError());
-			}
-
-			purple_debug_info("pounce",
-					"Pounce execute command called for: "
-					"%s\n%s%s%s",
-						command,
-						retval ? "" : "Error: ",
-						retval ? "" : message,
-						retval ? "" : "\n");
-			g_free(message);
+			winpidgin_shell_execute(command, "open", NULL);
 #endif /* !_WIN32 */
 		}
 	}

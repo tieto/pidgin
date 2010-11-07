@@ -530,6 +530,17 @@ not :)
 
 --
 
+(14:30:09) linux_user: i have a ?
+(14:31:03) linux_user: when i install this on wine and run it it come up as
+           boxes on the screen
+(14:31:26) nosnilmot: why on earth would you install Pidgin under wine?
+(14:31:41) Err: heh
+(14:31:48) Err: I think my brain just segfaulted on that
+(14:31:58) linux_user: well i am on linux
+(14:32:10) linux_user: linux mint and thay is the only way i can run it
+
+--
+
 14:39 <rrobbertt> Does anyone know a way to get text to speech with pidgin?
 14:41 <elb> do you want to be rooted sooner, or later?
 14:42 <seanegan> good question"; rm -rf ~

@@ -67,7 +67,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	/* configure the connection (reference: "libpurple/connection.h") */
 	con = purple_account_get_connection( account );
 	con->proto_data = session;
-	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML;
+	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_SUPPORT_MOODS;
 	session->con = con;
 
 	/* add account */
@@ -238,7 +238,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	/* nickname */
 	str = purple_request_fields_get_string( fields, "nickname" );
 	if ( ( !str ) || ( strlen( str ) < 3 ) ) {
-		err = _( "The nick name you entered is invalid." );
+		err = _( "The Display Name you entered is invalid." );
 		goto out;
 	}
 	g_strlcpy( profile->nickname, str, sizeof( profile->nickname ) );
@@ -329,17 +329,19 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_fields_add_group( fields, group );
 
 	/* mxit login name */
-	field = purple_request_field_string_new( "loginname", _( "MXit Login Name" ), purple_account_get_username( session->acc ), FALSE );
+	field = purple_request_field_string_new( "loginname", _( "MXit ID" ), purple_account_get_username( session->acc ), FALSE );
 	purple_request_field_string_set_editable( field, FALSE );
 	purple_request_field_group_add_field( group, field );
 
-	/* nick name */
-	field = purple_request_field_string_new( "nickname", _( "Nick Name" ), profile->nickname, FALSE );
+	/* nick name (required) */
+	field = purple_request_field_string_new( "nickname", _( "Display Name" ), profile->nickname, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
-	/* birthday */
+	/* birthday (required) */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_string_set_default_value( field, "YYYY-MM-DD" );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* gender */
@@ -348,12 +350,14 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
 	purple_request_field_group_add_field( group, field );
 
-	/* pin */
+	/* pin (required) */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), profile->pin, FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), "", FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* show the form to the user to complete */
@@ -414,10 +418,10 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 				purple_connection_error( session->con, _( "Invalid country selected. Please try again." ) );
 				return;
 			case '6' :
-				purple_connection_error( session->con, _( "Username is not registered. Please register first." ) );
+				purple_connection_error( session->con, _( "The MXit ID you entered is not registered. Please register first." ) );
 				return;
 			case '7' :
-				purple_connection_error( session->con, _( "Username is already registered. Please choose another username." ) );
+				purple_connection_error( session->con, _( "The MXit ID you entered is already registered. Please choose another." ) );
 				/* this user's account already exists, so we need to change the registration login flag to be login */
 				purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 				return;
@@ -633,11 +637,12 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	/* add the captcha */
 	logindata->captcha = purple_base64_decode( parts[3], &logindata->captcha_size );
-	field = purple_request_field_image_new( "capcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
+	field = purple_request_field_image_new( "captcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
 	purple_request_field_group_add_field( group, field );
 
-	/* ask for input */
+	/* ask for input (required) */
 	field = purple_request_field_string_new( "code", _( "Enter Security Code" ), NULL, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* choose your country, but be careful, we already know your IP! ;-) */
@@ -654,7 +659,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 		}
 		purple_request_field_list_add( field, country[1], g_strdup( country[0] ) );
 		if ( strcmp( country[1], parts[6] ) == 0 ) {
-			/* based on the user's ip, this is his current country code, so we default to it */
+			/* based on the user's IP, this is his current country code, so we default to it */
 			purple_request_field_list_add_selected( field, country[1] );
 		}
 		g_strfreev( country );

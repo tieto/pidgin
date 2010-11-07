@@ -57,7 +57,7 @@ typedef enum
 } PurpleRoomlistFieldType;
 
 #include "account.h"
-#include "glib.h"
+#include <glib.h>
 
 /**************************************************************************/
 /** Data Structures                                                       */
