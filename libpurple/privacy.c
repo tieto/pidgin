@@ -35,7 +35,6 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	GSList *l;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -43,14 +42,12 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	name = g_strdup(purple_normalize(account, who));
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (g_str_equal(name, l->data))
-			/* This buddy already exists */
+		if (!purple_utf8_strcasecmp(name, (char *)l->data))
 			break;
 	}
 
 	if (l != NULL)
 	{
-		/* This buddy already exists, so bail out */
 		g_free(name);
 		return FALSE;
 	}
@@ -63,9 +60,7 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	if (privacy_ops != NULL && privacy_ops->permit_added != NULL)
 		privacy_ops->permit_added(account, who);
 
-	blist_ops = purple_blist_get_ui_ops();
-	if (blist_ops != NULL && blist_ops->save_account != NULL)
-		blist_ops->save_account(account);
+	purple_blist_schedule_save();
 
 	/* This lets the UI know a buddy has had its privacy setting changed */
 	buddy = purple_find_buddy(account, name);
@@ -84,7 +79,6 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
 	const char *name;
 	PurpleBuddy *buddy;
 	char *del;
-	PurpleBlistUiOps *blist_ops;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -92,13 +86,11 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
 	name = purple_normalize(account, who);
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (g_str_equal(name, l->data))
-			/* We found the buddy we were looking for */
+		if (!purple_utf8_strcasecmp(name, (char *)l->data))
 			break;
 	}
 
 	if (l == NULL)
-		/* We didn't find the buddy we were looking for, so bail out */
 		return FALSE;
 
 	/* We should not free l->data just yet. There can be occasions where
@@ -113,9 +105,7 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
 	if (privacy_ops != NULL && privacy_ops->permit_removed != NULL)
 		privacy_ops->permit_removed(account, who);
 
-	blist_ops = purple_blist_get_ui_ops();
-	if (blist_ops != NULL && blist_ops->save_account != NULL)
-		blist_ops->save_account(account);
+	purple_blist_schedule_save();
 
 	buddy = purple_find_buddy(account, name);
 	if (buddy != NULL) {
@@ -133,7 +123,6 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	GSList *l;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -141,14 +130,12 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	name = g_strdup(purple_normalize(account, who));
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (g_str_equal(name, l->data))
-			/* This buddy already exists */
+		if (!purple_utf8_strcasecmp(name, purple_normalize(account, (char *)l->data)))
 			break;
 	}
 
 	if (l != NULL)
 	{
-		/* This buddy already exists, so bail out */
 		g_free(name);
 		return FALSE;
 	}
@@ -161,9 +148,7 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
 		privacy_ops->deny_added(account, who);
 
-	blist_ops = purple_blist_get_ui_ops();
-	if (blist_ops != NULL && blist_ops->save_account != NULL)
-		blist_ops->save_account(account);
+	purple_blist_schedule_save();
 
 	buddy = purple_find_buddy(account, name);
 	if (buddy != NULL) {
@@ -181,7 +166,6 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	const char *normalized;
 	char *name;
 	PurpleBuddy *buddy;
-	PurpleBlistUiOps *blist_ops;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -189,16 +173,14 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	normalized = purple_normalize(account, who);
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (g_str_equal(normalized, l->data))
-			/* We found the buddy we were looking for */
+		if (!purple_utf8_strcasecmp(normalized, (char *)l->data))
 			break;
 	}
 
-	if (l == NULL)
-		/* We didn't find the buddy we were looking for, so bail out */
-		return FALSE;
-
 	buddy = purple_find_buddy(account, normalized);
+
+	if (l == NULL)
+		return FALSE;
 
 	name = l->data;
 	account->deny = g_slist_delete_link(account->deny, l);
@@ -215,10 +197,7 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	}
 
 	g_free(name);
-
-	blist_ops = purple_blist_get_ui_ops();
-	if (blist_ops != NULL && blist_ops->save_account != NULL)
-		blist_ops->save_account(account);
+	purple_blist_schedule_save();
 
 	return TRUE;
 }
@@ -245,10 +224,8 @@ add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 	while (list != NULL)
 	{
 		PurpleBuddy *buddy = list->data;
-		const gchar *name = purple_buddy_get_name(buddy);
-
-		if (!g_slist_find_custom(account->permit, name, (GCompareFunc)g_utf8_collate))
-			purple_privacy_permit_add(account, name, local);
+		if (!g_slist_find_custom(account->permit, buddy->name, (GCompareFunc)g_utf8_collate))
+			purple_privacy_permit_add(account, buddy->name, local);
 		list = g_slist_delete_link(list, list);
 	}
 }
@@ -264,7 +241,6 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore)
 {
 	GSList *list;
-	PurplePrivacyType type = account->perm_deny;
 
 	switch (account->perm_deny) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
@@ -278,12 +254,10 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 		case PURPLE_PRIVACY_DENY_ALL:
 			if (!restore) {
 				/* Empty the allow-list. */
-				const char *norm = purple_normalize(account, who);
 				for (list = account->permit; list != NULL;) {
-					char *person = list->data;
+					char *who = list->data;
 					list = list->next;
-					if (!purple_strequal(norm, person))
-						purple_privacy_permit_remove(account, person, local);
+					purple_privacy_permit_remove(account, who, local);
 				}
 			}
 			purple_privacy_permit_add(account, who, local);
@@ -299,10 +273,6 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 		default:
 			g_return_if_reached();
 	}
-
-	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 /*
@@ -316,18 +286,15 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 					gboolean restore)
 {
 	GSList *list;
-	PurplePrivacyType type = account->perm_deny;
 
 	switch (account->perm_deny) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			if (!restore) {
 				/* Empty the deny-list. */
-				const char *norm = purple_normalize(account, who);
 				for (list = account->deny; list != NULL; ) {
 					char *person = list->data;
 					list = list->next;
-					if (!purple_strequal(norm, person))
-						purple_privacy_deny_remove(account, person, local);
+					purple_privacy_deny_remove(account, person, local);
 				}
 			}
 			purple_privacy_deny_add(account, who, local);
@@ -351,10 +318,6 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 		default:
 			g_return_if_reached();
 	}
-
-	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 gboolean
@@ -372,7 +335,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_ALLOW_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->permit; list!=NULL; list=list->next) {
-				if (g_str_equal(who, list->data))
+				if (!purple_utf8_strcasecmp(who, (char *)list->data))
 					return TRUE;
 			}
 			return FALSE;
@@ -380,7 +343,7 @@ purple_privacy_check(PurpleAccount *account, const char *who)
 		case PURPLE_PRIVACY_DENY_USERS:
 			who = purple_normalize(account, who);
 			for (list=account->deny; list!=NULL; list=list->next) {
-				if (g_str_equal(who, list->data))
+				if (!purple_utf8_strcasecmp(who, (char *)list->data ))
 					return FALSE;
 			}
 			return TRUE;

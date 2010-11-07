@@ -65,13 +65,11 @@
 #include <idle.h>
 #include <imgstore.h>
 #include <log.h>
-#include <media.h>
-#include <mediamanager.h>
 #include <mime.h>
 #include <nat-pmp.h>
 #include <network.h>
-#include <notify.h>
 #include <ntlm.h>
+#include <notify.h>
 #include <plugin.h>
 #include <pluginpref.h>
 #include <pounce.h>
@@ -84,22 +82,16 @@
 #include <savedstatuses.h>
 #include <server.h>
 #include <signals.h>
-#include <smiley.h>
-#include <sound.h>
-#include <sound-theme.h>
-#include <sound-theme-loader.h>
-#include <sslconn.h>
 #include <status.h>
 #include <stringref.h>
 #include <stun.h>
-#include <theme.h>
-#include <theme-loader.h>
-#include <theme-manager.h>
+#include <sound.h>
+#include <sslconn.h>
 #include <upnp.h>
 #include <util.h>
 #include <value.h>
 #include <version.h>
-#include <whiteboard.h>
 #include <xmlnode.h>
+#include <whiteboard.h>
 
 #endif

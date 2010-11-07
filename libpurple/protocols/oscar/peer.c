@@ -69,7 +69,7 @@
 #endif
 
 PeerConnection *
-peer_connection_find_by_type(OscarData *od, const char *bn, guint64 type)
+peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type)
 {
 	GSList *cur;
 	PeerConnection *conn;
@@ -77,7 +77,7 @@ peer_connection_find_by_type(OscarData *od, const char *bn, guint64 type)
 	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
 	{
 		conn = cur->data;
-		if ((conn->type == type) && !oscar_util_name_compare(conn->bn, bn))
+		if ((conn->type == type) && !aim_sncmp(conn->sn, sn))
 			return conn;
 	}
 
@@ -88,7 +88,7 @@ peer_connection_find_by_type(OscarData *od, const char *bn, guint64 type)
  * @param cookie This must be exactly 8 characters.
  */
 PeerConnection *
-peer_connection_find_by_cookie(OscarData *od, const char *bn, const guchar *cookie)
+peer_connection_find_by_cookie(OscarData *od, const char *sn, const guchar *cookie)
 {
 	GSList *cur;
 	PeerConnection *conn;
@@ -96,7 +96,7 @@ peer_connection_find_by_cookie(OscarData *od, const char *bn, const guchar *cook
 	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
 	{
 		conn = cur->data;
-		if (!memcmp(conn->cookie, cookie, 8) && !oscar_util_name_compare(conn->bn, bn))
+		if (!memcmp(conn->cookie, cookie, 8) && !aim_sncmp(conn->sn, sn))
 			return conn;
 	}
 
@@ -104,7 +104,7 @@ peer_connection_find_by_cookie(OscarData *od, const char *bn, const guchar *cook
 }
 
 PeerConnection *
-peer_connection_new(OscarData *od, guint64 type, const char *bn)
+peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 {
 	PeerConnection *conn;
 	PurpleAccount *account;
@@ -114,7 +114,7 @@ peer_connection_new(OscarData *od, guint64 type, const char *bn)
 	conn = g_new0(PeerConnection, 1);
 	conn->od = od;
 	conn->type = type;
-	conn->bn = g_strdup(bn);
+	conn->sn = g_strdup(sn);
 	conn->buffer_outgoing = purple_circ_buffer_new(0);
 	conn->listenerfd = -1;
 	conn->fd = -1;
@@ -228,7 +228,7 @@ peer_connection_destroy_cb(gpointer data)
 		conn->xfer = NULL;
 	}
 
-	g_free(conn->bn);
+	g_free(conn->sn);
 	g_free(conn->error_message);
 	g_free(conn->proxyip);
 	g_free(conn->clientip);
@@ -636,10 +636,6 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	flags = fcntl(conn->fd, F_GETFL);
 	fcntl(conn->fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	fcntl(conn->fd, F_SETFD, FD_CLOEXEC);
-#endif
-
 	purple_input_remove(conn->watcher_incoming);
 
 	peer_connection_finalize_connection(conn);
@@ -690,38 +686,26 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 		return;
 	}
 
-	if (bos_conn->gsc)
-		listener_ip = purple_network_get_my_ip(bos_conn->gsc->fd);
-	else
-		listener_ip = purple_network_get_my_ip(bos_conn->fd);
+	listener_ip = purple_network_get_my_ip(bos_conn->fd);
 	listener_port = purple_network_get_port_from_fd(conn->listenerfd);
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		aim_im_sendch2_odc_requestdirect(od,
-				conn->cookie, conn->bn, purple_network_ip_atoi(listener_ip),
+				conn->cookie, conn->sn, purple_network_ip_atoi(listener_ip),
 				listener_port, ++conn->lastrequestnumber);
 
 		/* Print a message to a local conversation window */
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for "
-				"Direct IM."), conn->bn, listener_ip, listener_port);
+				"Direct IM."), conn->sn, listener_ip, listener_port);
 		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
-		const guchar *ip_atoi = purple_network_ip_atoi(listener_ip);
-		if (ip_atoi == NULL) {
-			purple_debug_error("oscar", "Cannot send file. atoi(%s) failed.\n"
-					"Other possibly useful information: fd = %d, port = %d\n",
-					listener_ip ? listener_ip : "(null!)", conn->listenerfd,
-					listener_port);
-			purple_xfer_cancel_local(conn->xfer);
-			return;
-		}
 		aim_im_sendch2_sendfile_requestdirect(od,
-				conn->cookie, conn->bn,
-				ip_atoi,
+				conn->cookie, conn->sn,
+				purple_network_ip_atoi(listener_ip),
 				listener_port, ++conn->lastrequestnumber,
 				(const gchar *)conn->xferdata.name,
 				conn->xferdata.size, conn->xferdata.totfiles);
@@ -799,7 +783,7 @@ peer_connection_trynext(PeerConnection *conn)
 			PurpleConversation *conv;
 			tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
 					conn->verifiedip, conn->port);
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
@@ -821,7 +805,7 @@ peer_connection_trynext(PeerConnection *conn)
 			(conn->client_connect_data != NULL))
 		{
 			/* Connecting... */
-			conn->connect_timeout_timer = purple_timeout_add_seconds(5,
+			conn->connect_timeout_timer = purple_timeout_add(5000,
 					peer_connection_tooktoolong, conn);
 			return;
 		}
@@ -871,17 +855,15 @@ peer_connection_trynext(PeerConnection *conn)
 		{
 			gchar *tmp;
 			PurpleConversation *conv;
-			tmp = g_strdup(_("Attempting to connect via proxy server."));
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
+			tmp = g_strdup_printf(_("Attempting to connect via proxy server."));
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
 
 		conn->verified_connect_data = purple_proxy_connect(NULL, account,
-				(conn->proxyip != NULL)
-					? conn->proxyip
-					: (conn->od->icq ? ICQ_PEER_PROXY_SERVER : AIM_PEER_PROXY_SERVER),
+				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
 		if (conn->verified_connect_data != NULL)
@@ -899,13 +881,13 @@ peer_connection_trynext(PeerConnection *conn)
  * Initiate a peer connection with someone.
  */
 void
-peer_connection_propose(OscarData *od, guint64 type, const char *bn)
+peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 {
 	PeerConnection *conn;
 
 	if (type == OSCAR_CAPABILITY_DIRECTIM)
 	{
-		conn = peer_connection_find_by_type(od, bn, type);
+		conn = peer_connection_find_by_type(od, sn, type);
 		if (conn != NULL)
 		{
 			if (conn->ready)
@@ -914,10 +896,10 @@ peer_connection_propose(OscarData *od, guint64 type, const char *bn)
 				PurpleConversation *conv;
 
 				purple_debug_info("oscar", "Already have a direct IM "
-						"session with %s.\n", bn);
+						"session with %s.\n", sn);
 				account = purple_connection_get_account(od->gc);
 				conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-						bn, account);
+						sn, account);
 				if (conv != NULL)
 					purple_conversation_present(conv);
 				return;
@@ -928,7 +910,7 @@ peer_connection_propose(OscarData *od, guint64 type, const char *bn)
 		}
 	}
 
-	conn = peer_connection_new(od, type, bn);
+	conn = peer_connection_new(od, type, sn);
 	conn->flags |= PEER_CONNECTION_FLAG_INITIATED_BY_ME;
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 	aim_icbm_makecookie(conn->cookie);
@@ -965,7 +947,7 @@ peer_connection_got_proposition_no_cb(gpointer data, gint id)
 
 	conn = data;
 
-	aim_im_denytransfer(conn->od, conn->bn, conn->cookie,
+	aim_im_denytransfer(conn->od, conn->sn, conn->cookie,
 			AIM_TRANSFER_DENY_DECLINE);
 	peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 }
@@ -974,7 +956,7 @@ peer_connection_got_proposition_no_cb(gpointer data, gint id)
  * Someone else wants to establish a peer connection with us.
  */
 void
-peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *message, IcbmArgsCh2 *args)
+peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *message, IcbmArgsCh2 *args)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
@@ -990,7 +972,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 	 * and we should try connecting to them, instead.  Or they want
 	 * to go through a proxy.
 	 */
-	conn = peer_connection_find_by_cookie(od, bn, args->cookie);
+	conn = peer_connection_find_by_cookie(od, sn, args->cookie);
 	if ((conn != NULL) && (conn->type == args->type))
 	{
 		purple_debug_info("oscar", "Remote user wants to try a "
@@ -1014,12 +996,12 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 	/* If this is a direct IM, then close any existing session */
 	if (args->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
-		conn = peer_connection_find_by_type(od, bn, args->type);
+		conn = peer_connection_find_by_type(od, sn, args->type);
 		if (conn != NULL)
 		{
 			/* Close the old direct IM and start a new one */
 			purple_debug_info("oscar", "Received new direct IM request "
-				"from %s.  Destroying old connection.\n", bn);
+				"from %s.  Destroying old connection.\n", sn);
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 		}
 	}
@@ -1033,12 +1015,12 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 		{
 			purple_debug_warning("oscar",
 					"%s tried to send you a file with incomplete "
-					"information.\n", bn);
+					"information.\n", sn);
 			return;
 		}
 	}
 
-	conn = peer_connection_new(od, args->type, bn);
+	conn = peer_connection_new(od, args->type, sn);
 	memcpy(conn->cookie, args->cookie, 8);
 	if (args->use_proxy)
 		conn->proxyip = g_strdup(args->proxyip);
@@ -1051,7 +1033,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 	if (args->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		buf = g_strdup_printf(_("%s has just asked to directly connect to %s"),
-				bn, purple_account_get_username(account));
+				sn, purple_account_get_username(account));
 
 		purple_request_action(conn, NULL, buf,
 						_("This requires a direct connection between "
@@ -1059,8 +1041,8 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 						  "Images.  Because your IP address will be "
 						  "revealed, this may be considered a privacy "
 						  "risk."),
-						PURPLE_DEFAULT_ACTION_NONE,
-						account, bn, NULL,
+						0, /* Default action is "connect" */
+						account, sn, NULL,
 						conn, 2,
 						_("C_onnect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
@@ -1069,7 +1051,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 	{
 		gchar *filename;
 
-		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, bn);
+		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, sn);
 		if (conn->xfer)
 		{
 			conn->xfer->data = conn;

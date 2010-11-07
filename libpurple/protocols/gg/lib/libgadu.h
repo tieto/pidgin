@@ -1,13 +1,12 @@
-/* $Id: libgadu.h.in 878 2009-11-16 23:48:19Z wojtekka $ */
+/* $Id: libgadu.h 16856 2006-08-19 01:13:25Z evands $ */
 
 /*
- *  (C) Copyright 2001-2009 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. WoÅºny <speedy@ziew.org>
- *                          Arkadiusz MiÅ›kiewicz <arekm@pld-linux.org>
- *                          Tomasz ChiliÅ„ski <chilek@chilan.com>
+ *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
+ *                          Robert J. Wo¼ny <speedy@ziew.org>
+ *                          Arkadiusz Mi¶kiewicz <arekm@pld-linux.org>
+ *                          Tomasz Chiliñski <chilek@chilan.com>
  *                          Piotr Wysocki <wysek@linux.bydg.org>
  *                          Dawid Jarosz <dawjar@poczta.onet.pl>
- *                          Jakub Zawadzki <darkjames@darkjames.ath.cx>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -20,568 +19,338 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301,
  *  USA.
- */
-
-/**
- * \file libgadu.h
- *
- * \brief GÅ‚Ã³wny plik nagÅ‚Ã³wkowy biblioteki
  */
 
 #ifndef __GG_LIBGADU_H
 #define __GG_LIBGADU_H
 
 #ifdef __cplusplus
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma pack(push, 1)
 #endif
 extern "C" {
 #endif
 
+#include <libgadu-config.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-/** \cond ignore */
-
-/* Defined if libgadu was compiled for bigendian machine. */
-#undef GG_CONFIG_BIGENDIAN
-
-/* Defined if this machine has gethostbyname_r(). */
-#undef GG_CONFIG_HAVE_GETHOSTBYNAME_R
-
-/* Defined if libgadu was compiled and linked with pthread support. */
-#undef GG_CONFIG_HAVE_PTHREAD
-
-/* Defined if pthread resolver is the default one. */
-#undef GG_CONFIG_PTHREAD_DEFAULT 
-
-/* Defined if this machine has C99-compiliant vsnprintf(). */
-#undef GG_CONFIG_HAVE_C99_VSNPRINTF
-
-/* Defined if this machine has va_copy(). */
-#undef GG_CONFIG_HAVE_VA_COPY
-
-/* Defined if this machine has __va_copy(). */
-#undef GG_CONFIG_HAVE___VA_COPY
-
-/* Defined if this machine supports long long. */
-#undef GG_CONFIG_HAVE_LONG_LONG
-
-/* Defined if libgadu was compiled and linked with TLS support. */
-#undef GG_CONFIG_HAVE_OPENSSL
-
-/* Defined if uintX_t types are defined in <stdint.h>. */
-#undef GG_CONFIG_HAVE_STDINT_H
-
-/* Defined if uintX_t types are defined in <inttypes.h>. */
-#undef GG_CONFIG_HAVE_INTTYPES_H
-
-/* Defined if uintX_t types are defined in <sys/inttypes.h>. */
-#undef GG_CONFIG_HAVE_SYS_INTTYPES_H
-
-/* Defined if uintX_t types are defined in <sys/int_types.h>. */
-#undef GG_CONFIG_HAVE_SYS_INT_TYPES_H
-
-/* Defined if uintX_t types are defined in <sys/types.h>. */
-#undef GG_CONFIG_HAVE_SYS_TYPES_H
-
-#ifdef GG_CONFIG_HAVE_OPENSSL
+#ifdef __GG_LIBGADU_HAVE_OPENSSL
 #include <openssl/ssl.h>
 #endif
 
-#ifdef GG_CONFIG_HAVE_STDINT_H
-#include <stdint.h>
-#else
-#  ifdef GG_CONFIG_HAVE_INTTYPES_H
-#  include <inttypes.h>
-#  else
-#    ifdef GG_CONFIG_HAVE_SYS_INTTYPES_H
-#    include <sys/inttypes.h>
-#    else
-#      ifdef GG_CONFIG_HAVE_SYS_INT_TYPES_H
-#      include <sys/int_types.h>
-#      else
-#        ifdef GG_CONFIG_HAVE_SYS_TYPES_H
-#        include <sys/types.h>
-#        else
-
-#ifndef __AC_STDINT_H
-#define __AC_STDINT_H
-
-/* ISO C 9X: 7.18 Integer types <stdint.h> */
-
-typedef unsigned char   uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int   uint32_t;
-
-#if !defined(__CYGWIN__) && !defined(__SunOS)
-#define __int8_t_defined
-typedef   signed char    int8_t;
-typedef   signed short  int16_t;
-typedef   signed int    int32_t;
-#endif
-
-#endif /* __AC_STDINT_H */
-
-#        endif
-#      endif
-#    endif
-#  endif
-#endif
-
-/** \endcond */
-
-/**
- * Numer Gadu-Gadu.
+/*
+ * typedef uin_t
+ *
+ * typ reprezentuj±cy numer osoby.
  */
 typedef uint32_t uin_t;
 
-/**
- * Identyfikator poÅ‚Ä…czenia bezpoÅ›redniego Gadu-Gadu 7.x.
- */
-typedef struct {
-	uint8_t id[8];
-} gg_dcc7_id_t;
-
-/**
- * Makro deklarujÄ…ce pola wspÃ³lne dla struktur sesji.
+/*
+ * ogólna struktura opisuj±ca ró¿ne sesje. przydatna w klientach.
  */
 #define gg_common_head(x) \
-	int fd;			/**< Obserwowany deskryptor */ \
-	int check;		/**< Informacja o Å¼Ä…daniu odczytu/zapisu (patrz \ref gg_check_t) */ \
-	int state;		/**< Aktualny stan poÅ‚Ä…czenia (patrz \ref gg_state_t) */ \
-	int error;		/**< Kod bÅ‚Ä™du dla \c GG_STATE_ERROR (patrz \ref gg_error_t) */ \
-	int type;		/**< Rodzaj sesji (patrz \ref gg_session_t) */ \
-	int id;			/**< Identyfikator sesji */ \
-	int timeout;		/**< Czas pozostaÅ‚y do zakoÅ„czenia stanu */ \
-	int (*callback)(x*); 	/**< Funkcja zwrotna */ \
-	void (*destroy)(x*); 	/**< Funkcja zwalniania zasobÃ³w */
+	int fd;			/* podgl±dany deskryptor */ \
+	int check;		/* sprawdzamy zapis czy odczyt */ \
+	int state;		/* aktualny stan maszynki */ \
+	int error;		/* kod b³êdu dla GG_STATE_ERROR */ \
+	int type;		/* rodzaj sesji */ \
+	int id;			/* identyfikator */ \
+	int timeout;		/* sugerowany timeout w sekundach */ \
+	int (*callback)(x*); 	/* callback przy zmianach */ \
+	void (*destroy)(x*); 	/* funkcja niszczenia */
 
-/**
- * Struktura wspÃ³lna dla wszystkich sesji i poÅ‚Ä…czeÅ„. Pozwala na proste
- * rzutowanie niezaleÅ¼ne od rodzaju poÅ‚Ä…czenia.
- */
 struct gg_common {
 	gg_common_head(struct gg_common)
 };
 
 struct gg_image_queue;
 
-struct gg_dcc7;
-
-/**
- * SposÃ³b rozwiÄ…zywania nazw serwerÃ³w.
- */
-typedef enum {
-	GG_RESOLVER_DEFAULT = 0,	/**< DomyÅ›lny sposÃ³b rozwiÄ…zywania nazw (jeden z poniÅ¼szych) */
-	GG_RESOLVER_FORK,		/**< RozwiÄ…zywanie nazw bazujÄ…ce na procesach */
-	GG_RESOLVER_PTHREAD,		/**< RozwiÄ…zywanie nazw bazujÄ…ce na wÄ…tkach */
-	GG_RESOLVER_WIN32,
-	GG_RESOLVER_CUSTOM,		/**< Funkcje rozwiÄ…zywania nazw dostarczone przed aplikacjÄ™ */
-	GG_RESOLVER_INVALID = -1	/**< NieprawidÅ‚owy sposÃ³b rozwiÄ…zywania nazw (wynik \c gg_session_get_resolver) */
-} gg_resolver_t;
-
-/**
- * Rodzaj kodowania znakÃ³w.
- */
-typedef enum {
-	GG_ENCODING_CP1250 = 0,		/**< Kodowanie CP1250 */
-	GG_ENCODING_UTF8,		/**< Kodowanie UTF-8 */
-	GG_ENCODING_INVALID = -1	/**< NieprawidÅ‚owe kodowanie */
-} gg_encoding_t;
-
-/**
- * Sesja Gadu-Gadu.
+/*
+ * struct gg_session
  *
- * Tworzona przez funkcjÄ™ \c gg_login(), zwalniana przez \c gg_free_session().
- *
- * \ingroup login
+ * struktura opisuj±ca dan± sesjê. tworzona przez gg_login(), zwalniana
+ * przez gg_free_session().
  */
 struct gg_session {
 	gg_common_head(struct gg_session)
 
-	int async;      	/**< Flaga poÅ‚Ä…czenia asynchronicznego */
-	int pid;        	/**< Numer procesu rozwiÄ…zujÄ…cego nazwÄ™ serwera */
-	int port;       	/**< Port serwera */
-	int seq;        	/**< Numer sekwencyjny ostatniej wiadomoÅ›ci */
-	int last_pong;  	/**< Czas otrzymania ostatniej ramki utrzymaniowej */
-	int last_event;		/**< Czas otrzymania ostatniego pakietu */
+	int async;      	/* czy po³±czenie jest asynchroniczne */
+	int pid;        	/* pid procesu resolvera */
+	int port;       	/* port, z którym siê ³±czymy */
+	int seq;        	/* numer sekwencyjny ostatniej wiadomo¶ci */
+	int last_pong;  	/* czas otrzymania ostatniego ping/pong */
+	int last_event;		/* czas otrzymania ostatniego pakietu */
 
-	struct gg_event *event;	/**< Zdarzenie po wywoÅ‚aniu \c callback */
+	struct gg_event *event;	/* zdarzenie po ->callback() */
 
-	uint32_t proxy_addr;	/**< Adres serwera poÅ›redniczÄ…cego */
-	uint16_t proxy_port;	/**< Port serwera poÅ›redniczÄ…cego */
+	uint32_t proxy_addr;	/* adres proxy, keszowany */
+	uint16_t proxy_port;	/* port proxy */
 
-	uint32_t hub_addr;	/**< Adres huba po rozwiÄ…zaniu nazwy */
-	uint32_t server_addr;	/**< Adres serwera otrzymany od huba */
+	uint32_t hub_addr;	/* adres huba po resolvniêciu */
+	uint32_t server_addr;	/* adres serwera, od huba */
 
-	uint32_t client_addr;	/**< Adres gniazda dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich do wersji Gadu-Gadu 6.x */
-	uint16_t client_port;	/**< Port gniazda dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich do wersji Gadu-Gadu 6.x */
+	uint32_t client_addr;	/* adres klienta */
+	uint16_t client_port;	/* port, na którym klient s³ucha */
 
-	uint32_t external_addr;	/**< Publiczny adres dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich do wersji Gadu-Gadu 6.x */
-	uint16_t external_port;	/**< Publiczny port dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich do wersji Gadu-Gadu 6.x */
+	uint32_t external_addr;	/* adres zewnetrzny klienta */
+	uint16_t external_port;	/* port zewnetrzny klienta */
 
-	uin_t uin;		/**< WÅ‚asny numer Gadu-Gadu */
-	char *password;		/**< HasÅ‚o (zwalniane po uÅ¼yciu) */
+	uin_t uin;		/* numerek klienta */
+	char *password;		/* i jego has³o. zwalniane automagicznie */
 
-	int initial_status;	/**< PoczÄ…tkowy status */
-	int status;		/**< Aktualny status */
+	int initial_status;	/* pocz±tkowy stan klienta */
+	int status;		/* aktualny stan klienta */
 
-	char *recv_buf;		/**< Bufor na odbierany pakiety */
-	int recv_done;		/**< Liczba wczytanych bajtÃ³w pakietu */
-	int recv_left;		/**< Liczba pozostaÅ‚ych do wczytania bajtÃ³w pakietu */
+	char *recv_buf;		/* bufor na otrzymywane pakiety */
+	int recv_done;		/* ile ju¿ wczytano do bufora */
+	int recv_left;		/* i ile jeszcze trzeba wczytaæ */
 
-	int protocol_version;	/**< Wersja protokoÅ‚u (bez flag) */
-	char *client_version;	/**< Wersja klienta */
-	int last_sysmsg;	/**< Numer ostatniej wiadomoÅ›ci systemowej */
+	int protocol_version;	/* wersja u¿ywanego protoko³u */
+	char *client_version;	/* wersja u¿ywanego klienta */
+	int last_sysmsg;	/* ostatnia wiadomo¶æ systemowa */
 
-	char *initial_descr;	/**< PoczÄ…tkowy opis statusu */
+	char *initial_descr;	/* pocz±tkowy opis stanu klienta */
 
-	void *resolver;		/**< Dane prywatne procesu lub wÄ…tku rozwiÄ…zujÄ…cego nazwÄ™ serwera */
+	void *resolver;		/* wska¼nik na informacje resolvera */
 
-	char *header_buf;	/**< Bufor na poczÄ…tek nagÅ‚Ã³wka pakietu */
-	unsigned int header_done;	/**< Liczba wczytanych bajtÃ³w nagÅ‚Ã³wka pakietu */
+	char *header_buf;	/* bufor na pocz±tek nag³ówka */
+	unsigned int header_done;/* ile ju¿ mamy */
 
-#ifdef GG_CONFIG_HAVE_OPENSSL
-	SSL *ssl;		/**< Struktura TLS */
-	SSL_CTX *ssl_ctx;	/**< Kontekst sesji TLS */
+#ifdef __GG_LIBGADU_HAVE_OPENSSL
+	SSL *ssl;		/* sesja TLS */
+	SSL_CTX *ssl_ctx;	/* kontekst sesji? */
 #else
-	void *ssl;		/**< Struktura TLS */
-	void *ssl_ctx;		/**< Kontekst sesji TLS */
+	void *ssl;		/* zachowujemy ABI */
+	void *ssl_ctx;
 #endif
 
-	int image_size;		/**< Maksymalny rozmiar obsÅ‚ugiwanych obrazkÃ³w w KiB */
+	int image_size;		/* maksymalny rozmiar obrazków w KiB */
 
-	char *userlist_reply;	/**< Bufor z odbieranÄ… listÄ… kontaktÃ³w */
+	char *userlist_reply;	/* fragment odpowiedzi listy kontaktów */
 
-	int userlist_blocks;	/**< Liczba czÄ™Å›ci listy kontaktÃ³w */
+	int userlist_blocks;	/* na ile kawa³ków podzielono listê kontaktów */
 
-	struct gg_image_queue *images;	/**< Lista wczytywanych obrazkÃ³w */
-
-	int hash_type;		/**< Rodzaj funkcji skrÃ³tu hasÅ‚a (\c GG_LOGIN_HASH_GG32 lub \c GG_LOGIN_HASH_SHA1) */
-
-	char *send_buf;		/**< Bufor z danymi do wysÅ‚ania */
-	int send_left;		/**< Liczba bajtÃ³w do wysÅ‚ania */
-
-	struct gg_dcc7 *dcc7_list;	/**< Lista poÅ‚Ä…czeÅ„ bezpoÅ›rednich skojarzonych z sesjÄ… */
-	
-	int soft_timeout;	/**< Flaga mÃ³wiÄ…ca, Å¼e po przekroczeniu \c timeout naleÅ¼y wywoÅ‚aÄ‡ \c gg_watch_fd() */
-
-	int protocol_flags;	/**< Flagi protokoÅ‚u */
-
-	gg_encoding_t encoding;		/**< Rodzaj kodowania znakÃ³w */
-
-	gg_resolver_t resolver_type;	/**< SposÃ³b rozwiÄ…zywania nazw serwerÃ³w */
-	int (*resolver_start)(int *fd, void **private_data, const char *hostname);	/**< Funkcja rozpoczynajÄ…ca rozwiÄ…zywanie nazwy */
-	void (*resolver_cleanup)(void **private_data, int force);	/**< Funkcja zwalniajÄ…ca zasoby po rozwiÄ…zaniu nazwy */
-
-	int protocol_features;	/**< Opcje protokoÅ‚u */
+	struct gg_image_queue *images;	/* aktualnie wczytywane obrazki */
 };
 
-/**
- * PoÅ‚Ä…czenie HTTP.
+/*
+ * struct gg_http
  *
- * Tworzone przez \c gg_http_connect(), zwalniane przez \c gg_http_free().
- *
- * \ingroup http
+ * ogólna struktura opisuj±ca stan wszystkich operacji HTTP. tworzona
+ * przez gg_http_connect(), zwalniana przez gg_http_free().
  */
 struct gg_http {
 	gg_common_head(struct gg_http)
 
-	int async;              /**< Flaga poÅ‚Ä…czenia asynchronicznego */
-	int pid;                /**< Identyfikator procesu rozwiÄ…zujÄ…cego nazwÄ™ serwera */
-	int port;               /**< Port */
+	int async;              /* czy po³±czenie asynchroniczne */
+	int pid;                /* pid procesu resolvera */
+	int port;               /* port, z którym siê ³±czymy */
 
-	char *query;            /**< Zapytanie HTTP */
-	char *header;           /**< Odebrany nagÅ‚Ã³wek */
-	int header_size;        /**< Rozmiar wczytanego nagÅ‚Ã³wka */
-	char *body;             /**< Odebrana strona */
-	unsigned int body_size; /**< Rozmiar strony */
+	char *query;            /* bufor zapytania http */
+	char *header;           /* bufor nag³ówka */
+	int header_size;        /* rozmiar wczytanego nag³ówka */
+	char *body;             /* bufor otrzymanych informacji */
+	unsigned int body_size; /* oczekiwana ilo¶æ informacji */
 
-	void *data;             /**< Dane prywatne usÅ‚ugi HTTP */
+	void *data;             /* dane danej operacji http */
 
-	char *user_data;	/**< Dane prywatne uÅ¼ytkownika (nie sÄ… zwalniane) */
+	char *user_data;	/* dane u¿ytkownika, nie s± zwalniane przez gg_http_free() */
 
-	void *resolver;		/**< Dane prywatne procesu lub wÄ…tku rozwiÄ…zujÄ…cego nazwÄ™ */
+	void *resolver;		/* wska¼nik na informacje resolvera */
 
-	unsigned int body_done;	/**< Liczba odebranych bajtÃ³w strony */
-
-	gg_resolver_t resolver_type;	/**< SposÃ³b rozwiÄ…zywania nazw serwerÃ³w */
-	int (*resolver_start)(int *fd, void **private_data, const char *hostname);	/**< Funkcja rozpoczynajÄ…ca rozwiÄ…zywanie nazwy */
-	void (*resolver_cleanup)(void **private_data, int force);	/**< Funkcja zwalniajÄ…ca zasoby po rozwiÄ…zaniu nazwy */
+	unsigned int body_done;	/* ile ju¿ tre¶ci odebrano? */
 };
-
-/** \cond ignore */
 
 #ifdef __GNUC__
 #define GG_PACKED __attribute__ ((packed))
-#ifndef GG_IGNORE_DEPRECATED
-#define GG_DEPRECATED __attribute__ ((deprecated))
-#else
-#define GG_DEPRECATED
-#endif
 #else
 #define GG_PACKED
-#define GG_DEPRECATED
 #endif
 
-/** \endcond */
+#define GG_MAX_PATH 276
 
-#define GG_MAX_PATH 276		/**< Maksymalny rozmiar nazwy pliku w strukturze \c gg_file_info */
-
-/**
- * Odpowiednik struktury WIN32_FIND_DATA z API WIN32.
+/*
+ * struct gg_file_info
  *
- * Wykorzystywana przy poÅ‚Ä…czeniach bezpoÅ›rednich do wersji Gadu-Gadu 6.x.
+ * odpowiednik windowsowej struktury WIN32_FIND_DATA niezbêdnej przy
+ * wysy³aniu plików.
  */
 struct gg_file_info {
-	uint32_t mode;			/**< dwFileAttributes */
-	uint32_t ctime[2];		/**< ftCreationTime */
-	uint32_t atime[2];		/**< ftLastAccessTime */
-	uint32_t mtime[2];		/**< ftLastWriteTime */
-	uint32_t size_hi;		/**< nFileSizeHigh */
-	uint32_t size;			/**< nFileSizeLow */
-	uint32_t reserved0;		/**< dwReserved0 */
-	uint32_t reserved1;		/**< dwReserved1 */
-	unsigned char filename[GG_MAX_PATH - 14];	/**< cFileName */
-	unsigned char short_filename[14];		/**< cAlternateFileName */
-} /** \cond ignore */ GG_PACKED /** \endcond */;
+	uint32_t mode;			/* dwFileAttributes */
+	uint32_t ctime[2];		/* ftCreationTime */
+	uint32_t atime[2];		/* ftLastAccessTime */
+	uint32_t mtime[2];		/* ftLastWriteTime */
+	uint32_t size_hi;		/* nFileSizeHigh */
+	uint32_t size;			/* nFileSizeLow */
+	uint32_t reserved0;		/* dwReserved0 */
+	uint32_t reserved1;		/* dwReserved1 */
+	unsigned char filename[GG_MAX_PATH - 14];	/* cFileName */
+	unsigned char short_filename[14];		/* cAlternateFileName */
+} GG_PACKED;
 
-/**
- * PoÅ‚Ä…czenie bezpoÅ›rednie do wersji Gadu-Gadu 6.x.
+/*
+ * struct gg_dcc
  *
- * Tworzone przez \c gg_dcc_socket_create(), \c gg_dcc_get_file(),
- * \c gg_dcc_send_file() lub \c gg_dcc_voice_chat(), zwalniane przez
- * \c gg_dcc_free().
- *
- * \ingroup dcc6
+ * struktura opisuj±ca nas³uchuj±ce gniazdo po³±czeñ miêdzy klientami.
+ * tworzona przez gg_dcc_socket_create(), zwalniana przez gg_dcc_free().
  */
 struct gg_dcc {
 	gg_common_head(struct gg_dcc)
 
-	struct gg_event *event;	/**< Zdarzenie po wywoÅ‚aniu \c callback */
+	struct gg_event *event;	/* opis zdarzenia */
 
-	int active;		/**< Flaga poÅ‚Ä…czenia aktywnego (nieuÅ¼ywana) */
-	int port;		/**< Port gniazda nasÅ‚uchujÄ…cego */
-	uin_t uin;		/**< WÅ‚asny numer Gadu-Gadu */
-	uin_t peer_uin;		/**< Numer Gadu-Gadu drugiej strony poÅ‚Ä…czenia */
-	int file_fd;		/**< deskryptor pliku */
-	unsigned int offset;	/**< PoÅ‚oÅ¼enie w pliku */
-	unsigned int chunk_size;
-				/**< Rozmiar kawaÅ‚ka pliku */
-	unsigned int chunk_offset;
-				/**< PoÅ‚oÅ¼enie w aktualnym kawaÅ‚ku pliku */
+	int active;		/* czy to my siê ³±czymy? */
+	int port;		/* port, na którym siedzi */
+	uin_t uin;		/* uin klienta */
+	uin_t peer_uin;		/* uin drugiej strony */
+	int file_fd;		/* deskryptor pliku */
+	unsigned int offset;	/* offset w pliku */
+	unsigned int chunk_size;/* rozmiar kawa³ka */
+	unsigned int chunk_offset;/* offset w aktualnym kawa³ku */
 	struct gg_file_info file_info;
-				/**< Informacje o pliku */
-	int established;	/**< Flaga ustanowienia poÅ‚Ä…czenia */
-	char *voice_buf;	/**< Bufor na pakiet poÅ‚Ä…czenia gÅ‚osowego */
-	int incoming;		/**< Flaga poÅ‚Ä…czenia przychodzÄ…cego */
-	char *chunk_buf;	/**< Bufor na fragment danych */
-	uint32_t remote_addr;	/**< Adres drugiej strony */
-	uint16_t remote_port;	/**< Port drugiej strony */
+				/* informacje o pliku */
+	int established;	/* po³±czenie ustanowione */
+	uint8_t *voice_buf;	/* bufor na pakiet po³±czenia g³osowego */
+	int incoming;		/* po³±czenie przychodz±ce */
+	char *chunk_buf;	/* bufor na kawa³ek danych */
+	uint32_t remote_addr;	/* adres drugiej strony */
+	uint16_t remote_port;	/* port drugiej strony */
 };
 
-#define GG_DCC7_HASH_LEN	20	/**< Maksymalny rozmiar skrÃ³tu pliku w poÅ‚Ä…czeniach bezpoÅ›renich */
-#define GG_DCC7_FILENAME_LEN	255	/**< Maksymalny rozmiar nazwy pliku w poÅ‚Ä…czeniach bezpoÅ›rednich */
-#define GG_DCC7_INFO_LEN	64	/**< Maksymalny rozmiar informacji o poÅ‚Ä…czeniach bezpoÅ›rednich */
-
-/**
- * PoÅ‚Ä…czenie bezpoÅ›rednie od wersji Gadu-Gadu 7.x.
+/*
+ * enum gg_session_t
  *
- * \ingroup dcc7
- */
-struct gg_dcc7 {
-	gg_common_head(struct gg_dcc7)
-
-	gg_dcc7_id_t cid;	/**< Identyfikator poÅ‚Ä…czenia */
-
-	struct gg_event *event;	/**< Struktura zdarzenia */
-
-	uin_t uin;		/**< WÅ‚asny numer Gadu-Gadu */
-	uin_t peer_uin;		/**< Numer Gadu-Gadu drugiej strony poÅ‚Ä…czenia */
-
-	int file_fd;		/**< Deskryptor przesyÅ‚anego pliku */
-	unsigned int offset;	/**< Aktualne poÅ‚oÅ¼enie w przesyÅ‚anym pliku */
-	unsigned int size;	/**< Rozmiar przesyÅ‚anego pliku */
-	unsigned char filename[GG_DCC7_FILENAME_LEN + 1];
-				/**< Nazwa przesyÅ‚anego pliku */
-	unsigned char hash[GG_DCC7_HASH_LEN];
-				/**< SkrÃ³t SHA1 przesyÅ‚anego pliku */
-
-	int dcc_type;		/**< Rodzaj poÅ‚Ä…czenia bezpoÅ›redniego */
-	int established;	/**< Flaga ustanowienia poÅ‚Ä…czenia */
-	int incoming;		/**< Flaga poÅ‚Ä…czenia przychodzÄ…cego */
-	int reverse;		/**< Flaga poÅ‚Ä…czenia zwrotnego */
-
-	uint32_t local_addr;	/**< Adres lokalny */
-	uint16_t local_port;	/**< Port lokalny */
-
-	uint32_t remote_addr;	/**< Adres drugiej strony */
-	uint16_t remote_port;	/**< Port drugiej strony */
-
-	struct gg_session *sess;
-				/**< Sesja do ktÃ³rej przypisano poÅ‚Ä…czenie */
-	struct gg_dcc7 *next;	/**< NastÄ™pne poÅ‚Ä…czenie w liÅ›cie */
-
-	int soft_timeout;	/**< Flaga mÃ³wiÄ…ca, Å¼e po przekroczeniu \c timeout naleÅ¼y wywoÅ‚aÄ‡ \c gg_dcc7_watch_fd() */
-	int seek;		/**< Flaga mÃ³wiÄ…ca, Å¼e moÅ¼na zmieniaÄ‡ poÅ‚oÅ¼enie w wysyÅ‚anym pliku */
-};
-
-/**
- * Rodzaj sesji.
+ * rodzaje sesji.
  */
 enum gg_session_t {
-	GG_SESSION_GG = 1,	/**< PoÅ‚Ä…czenie z serwerem Gadu-Gadu */
-	GG_SESSION_HTTP,	/**< PoÅ‚Ä…czenie HTTP */
-	GG_SESSION_SEARCH,	/**< Wyszukiwanie w katalogu publicznym (nieaktualne) */
-	GG_SESSION_REGISTER,	/**< Rejestracja nowego konta */
-	GG_SESSION_REMIND,	/**< Przypominanie hasÅ‚a */
-	GG_SESSION_PASSWD,	/**< Zmiana hasÅ‚a */
-	GG_SESSION_CHANGE,	/**< Zmiana informacji w katalogu publicznym (nieaktualne) */
-	GG_SESSION_DCC,		/**< PoÅ‚Ä…czenie bezpoÅ›rednie (do wersji 6.x) */
-	GG_SESSION_DCC_SOCKET,	/**< Gniazdo nasÅ‚uchujÄ…ce (do wersji 6.x) */
-	GG_SESSION_DCC_SEND,	/**< WysyÅ‚anie pliku (do wersji 6.x) */
-	GG_SESSION_DCC_GET,	/**< Odbieranie pliku (do wersji 6.x) */
-	GG_SESSION_DCC_VOICE,	/**< Rozmowa gÅ‚osowa (do wersji 6.x) */
-	GG_SESSION_USERLIST_GET,	/**< Import listy kontaktÃ³w z serwera (nieaktualne) */
-	GG_SESSION_USERLIST_PUT,	/**< Eksport listy kontaktÃ³w do serwera (nieaktualne) */
-	GG_SESSION_UNREGISTER,	/**< Usuwanie konta */
-	GG_SESSION_USERLIST_REMOVE,	/**< Usuwanie listy kontaktÃ³w z serwera (nieaktualne) */
-	GG_SESSION_TOKEN,	/**< Pobieranie tokenu */
-	GG_SESSION_DCC7_SOCKET,	/**< Gniazdo nasÅ‚uchujÄ…ce (od wersji 7.x) */
-	GG_SESSION_DCC7_SEND,	/**< WysyÅ‚anie pliku (od wersji 7.x) */
-	GG_SESSION_DCC7_GET,	/**< Odbieranie pliku (od wersji 7.x) */
-	GG_SESSION_DCC7_VOICE,	/**< Rozmowa gÅ‚osowa (od wersji 7.x) */
+	GG_SESSION_GG = 1,	/* po³±czenie z serwerem gg */
+	GG_SESSION_HTTP,	/* ogólna sesja http */
+	GG_SESSION_SEARCH,	/* szukanie */
+	GG_SESSION_REGISTER,	/* rejestrowanie */
+	GG_SESSION_REMIND,	/* przypominanie has³a */
+	GG_SESSION_PASSWD,	/* zmiana has³a */
+	GG_SESSION_CHANGE,	/* zmiana informacji o sobie */
+	GG_SESSION_DCC,		/* ogólne po³±czenie DCC */
+	GG_SESSION_DCC_SOCKET,	/* nas³uchuj±cy socket */
+	GG_SESSION_DCC_SEND,	/* wysy³anie pliku */
+	GG_SESSION_DCC_GET,	/* odbieranie pliku */
+	GG_SESSION_DCC_VOICE,	/* rozmowa g³osowa */
+	GG_SESSION_USERLIST_GET,	/* pobieranie userlisty */
+	GG_SESSION_USERLIST_PUT,	/* wysy³anie userlisty */
+	GG_SESSION_UNREGISTER,	/* usuwanie konta */
+	GG_SESSION_USERLIST_REMOVE,	/* usuwanie userlisty */
+	GG_SESSION_TOKEN,	/* pobieranie tokenu */
 
-	GG_SESSION_USER0 = 256,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER1,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER2,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER3,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER4,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER5,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER6,	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
-	GG_SESSION_USER7	/**< Rodzaj zadeklarowany dla uÅ¼ytkownika */
+	GG_SESSION_USER0 = 256,	/* zdefiniowana dla u¿ytkownika */
+	GG_SESSION_USER1,	/* j.w. */
+	GG_SESSION_USER2,	/* j.w. */
+	GG_SESSION_USER3,	/* j.w. */
+	GG_SESSION_USER4,	/* j.w. */
+	GG_SESSION_USER5,	/* j.w. */
+	GG_SESSION_USER6,	/* j.w. */
+	GG_SESSION_USER7	/* j.w. */
 };
 
-/**
- * Aktualny stan sesji.
+/*
+ * enum gg_state_t
+ *
+ * opisuje stan asynchronicznej maszyny.
  */
 enum gg_state_t {
-	/* wspÃ³lne */
-	GG_STATE_IDLE = 0,		/**< Nie dzieje siÄ™ nic */
-	GG_STATE_RESOLVING,             /**< Oczekiwanie na rozwiÄ…zanie nazwy serwera */
-	GG_STATE_CONNECTING,            /**< Oczekiwanie na poÅ‚Ä…czenie */
-	GG_STATE_READING_DATA,		/**< Oczekiwanie na dane */
-	GG_STATE_ERROR,			/**< Kod bÅ‚Ä™du w polu \c error */
+		/* wspólne */
+	GG_STATE_IDLE = 0,		/* nie powinno wyst±piæ. */
+	GG_STATE_RESOLVING,             /* wywo³a³ gethostbyname() */
+	GG_STATE_CONNECTING,            /* wywo³a³ connect() */
+	GG_STATE_READING_DATA,		/* czeka na dane http */
+	GG_STATE_ERROR,			/* wyst±pi³ b³±d. kod w x->error */
 
-	/* gg_session */
-	GG_STATE_CONNECTING_HUB,	/**< Oczekiwanie na poÅ‚Ä…czenie z hubem */
-	GG_STATE_CONNECTING_GG,         /**< Oczekiwanie na poÅ‚Ä…czenie z serwerem */
-	GG_STATE_READING_KEY,           /**< Oczekiwanie na klucz */
-	GG_STATE_READING_REPLY,         /**< Oczekiwanie na odpowiedÅº serwera */
-	GG_STATE_CONNECTED,             /**< PoÅ‚Ä…czono z serwerem */
+		/* gg_session */
+	GG_STATE_CONNECTING_HUB,	/* wywo³a³ connect() na huba */
+	GG_STATE_CONNECTING_GG,         /* wywo³a³ connect() na serwer */
+	GG_STATE_READING_KEY,           /* czeka na klucz */
+	GG_STATE_READING_REPLY,         /* czeka na odpowied¼ */
+	GG_STATE_CONNECTED,             /* po³±czy³ siê */
 
-	/* gg_http */
-	GG_STATE_SENDING_QUERY,		/**< WysÅ‚ano zapytanie HTTP */
-	GG_STATE_READING_HEADER,	/**< Oczekiwanie na nagÅ‚Ã³wek HTTP */
-	GG_STATE_PARSING,               /**< Przetwarzanie danych */
-	GG_STATE_DONE,                  /**< PoÅ‚Ä…czenie zakoÅ„czone */
+		/* gg_http */
+	GG_STATE_SENDING_QUERY,		/* wysy³a zapytanie http */
+	GG_STATE_READING_HEADER,	/* czeka na nag³ówek http */
+	GG_STATE_PARSING,               /* przetwarza dane */
+	GG_STATE_DONE,                  /* skoñczy³ */
 
-	/* gg_dcc */
-	GG_STATE_LISTENING,		/* czeka na poÅ‚Ä…czenia */
+		/* gg_dcc */
+	GG_STATE_LISTENING,		/* czeka na po³±czenia */
 	GG_STATE_READING_UIN_1,		/* czeka na uin peera */
-	GG_STATE_READING_UIN_2,		/* czeka na swÃ³j uin */
-	GG_STATE_SENDING_ACK,		/* wysyÅ‚a potwierdzenie dcc */
+	GG_STATE_READING_UIN_2,		/* czeka na swój uin */
+	GG_STATE_SENDING_ACK,		/* wysy³a potwierdzenie dcc */
 	GG_STATE_READING_ACK,		/* czeka na potwierdzenie dcc */
-	GG_STATE_READING_REQUEST,	/* czeka na komendÄ™ */
-	GG_STATE_SENDING_REQUEST,	/* wysyÅ‚a komendÄ™ */
-	GG_STATE_SENDING_FILE_INFO,	/* wysyÅ‚a informacje o pliku */
+	GG_STATE_READING_REQUEST,	/* czeka na komendê */
+	GG_STATE_SENDING_REQUEST,	/* wysy³a komendê */
+	GG_STATE_SENDING_FILE_INFO,	/* wysy³a informacje o pliku */
 	GG_STATE_READING_PRE_FILE_INFO,	/* czeka na pakiet przed file_info */
 	GG_STATE_READING_FILE_INFO,	/* czeka na informacje o pliku */
-	GG_STATE_SENDING_FILE_ACK,	/* wysyÅ‚a potwierdzenie pliku */
+	GG_STATE_SENDING_FILE_ACK,	/* wysy³a potwierdzenie pliku */
 	GG_STATE_READING_FILE_ACK,	/* czeka na potwierdzenie pliku */
-	GG_STATE_SENDING_FILE_HEADER,	/* wysyÅ‚a nagÅ‚Ã³wek pliku */
-	GG_STATE_READING_FILE_HEADER,	/* czeka na nagÅ‚Ã³wek */
+	GG_STATE_SENDING_FILE_HEADER,	/* wysy³a nag³ówek pliku */
+	GG_STATE_READING_FILE_HEADER,	/* czeka na nag³ówek */
 	GG_STATE_GETTING_FILE,		/* odbiera plik */
-	GG_STATE_SENDING_FILE,		/* wysyÅ‚a plik */
+	GG_STATE_SENDING_FILE,		/* wysy³a plik */
 	GG_STATE_READING_VOICE_ACK,	/* czeka na potwierdzenie voip */
 	GG_STATE_READING_VOICE_HEADER,	/* czeka na rodzaj bloku voip */
 	GG_STATE_READING_VOICE_SIZE,	/* czeka na rozmiar bloku voip */
 	GG_STATE_READING_VOICE_DATA,	/* czeka na dane voip */
-	GG_STATE_SENDING_VOICE_ACK,	/* wysyÅ‚a potwierdzenie voip */
-	GG_STATE_SENDING_VOICE_REQUEST,	/* wysyÅ‚a Å¼Ä…danie voip */
-	GG_STATE_READING_TYPE,		/* czeka na typ poÅ‚Ä…czenia */
+	GG_STATE_SENDING_VOICE_ACK,	/* wysy³a potwierdzenie voip */
+	GG_STATE_SENDING_VOICE_REQUEST,	/* wysy³a ¿±danie voip */
+	GG_STATE_READING_TYPE,		/* czeka na typ po³±czenia */
 
 	/* nowe. bez sensu jest to API. */
-	GG_STATE_TLS_NEGOTIATION,	/**< Negocjacja poÅ‚Ä…czenia szyfrowanego */
-
-	GG_STATE_REQUESTING_ID,		/**< Oczekiwanie na nadanie identyfikatora poÅ‚Ä…czenia bezpoÅ›redniego */
-	GG_STATE_WAITING_FOR_ACCEPT,	/**< Oczekiwanie na potwierdzenie lub odrzucenie poÅ‚Ä…czenia bezpoÅ›redniego */
-	GG_STATE_WAITING_FOR_INFO,	/**< Oczekiwanie na informacje o poÅ‚Ä…czeniu bezpoÅ›rednim */
-
-	GG_STATE_READING_ID,		/**< Odebranie identyfikatora poÅ‚Ä…czenia bezpoÅ›redniego */
-	GG_STATE_SENDING_ID		/**< WysÅ‚ano identyfikatora poÅ‚Ä…czenia bezpoÅ›redniego */
+	GG_STATE_TLS_NEGOTIATION	/* negocjuje po³±czenie TLS */
 };
 
-/**
- * Informacja o tym, czy biblioteka chce zapisywaÄ‡ i/lub czytaÄ‡
- * z deskryptora. Maska bitowa.
+/*
+ * enum gg_check_t
  *
- * \ingroup events
+ * informuje, co proces klienta powinien sprawdziæ na deskryptorze danego
+ * po³±czenia.
  */
 enum gg_check_t {
-	GG_CHECK_NONE = 0,		/**< Nie sprawdzaj niczego */
-	GG_CHECK_WRITE = 1,		/**< SprawdÅº moÅ¼liwoÅ›Ä‡ zapisu */
-	GG_CHECK_READ = 2		/**< SprawdÅº moÅ¼liwoÅ›Ä‡ odczytu */
+	GG_CHECK_NONE = 0,		/* nic. nie powinno wyst±piæ */
+	GG_CHECK_WRITE = 1,		/* sprawdzamy mo¿liwo¶æ zapisu */
+	GG_CHECK_READ = 2		/* sprawdzamy mo¿liwo¶æ odczytu */
 };
 
-/**
- * Parametry poÅ‚Ä…czenia z serwerem Gadu-Gadu. Parametry zostaÅ‚y przeniesione
- * do struktury, by uniknÄ…Ä‡ zmian API po rozszerzeniu protokoÅ‚u i dodaniu
- * kolejnych opcji poÅ‚Ä…czenia. CzÄ™Å›Ä‡ parametrÃ³w, ktÃ³re nie sÄ… juÅ¼ aktualne
- * lub nie majÄ… znaczenia, zostaÅ‚a usuniÄ™ta z dokumentacji.
+/*
+ * struct gg_login_params
  *
- * \ingroup login
+ * parametry gg_login(). przeniesiono do struktury, ¿eby unikn±æ problemów
+ * z ci±g³ymi zmianami API, gdy dodano co¶ nowego do protoko³u.
  */
 struct gg_login_params {
-	uin_t uin;			/**< Numer Gadu-Gadu */
-	char *password;			/**< HasÅ‚o */
-	int async;			/**< Flaga asynchronicznego poÅ‚Ä…czenia (domyÅ›lnie nie) */
-	int status;			/**< PoczÄ…tkowy status uÅ¼ytkownika (domyÅ›lnie \c GG_STATUS_AVAIL) */
-	char *status_descr;		/**< PoczÄ…tkowy opis uÅ¼ytkownika (domyÅ›lnie brak) */
-	uint32_t server_addr;		/**< Adres serwera Gadu-Gadu (domyÅ›lnie pobierany automatycznie) */
-	uint16_t server_port;		/**< Port serwera Gadu-Gadu (domyÅ›lnie pobierany automatycznie) */
-#ifndef DOXYGEN
-	uint32_t client_addr;		/**< Adres poÅ‚Ä…czeÅ„ bezpoÅ›rednich (nieaktualne) */
-	uint16_t client_port;		/**< Port poÅ‚Ä…czeÅ„ bezpoÅ›rednich (nieaktualne) */
-#endif
-	int protocol_version;		/**< Wersja protokoÅ‚u wysyÅ‚ana do serwera (domyÅ›lnie najnowsza obsÅ‚ugiwana) */
-	char *client_version;		/**< Wersja klienta wysyÅ‚ana do serwera (domyÅ›lnie najnowsza znana) */
-	int has_audio;			/**< Flaga obsÅ‚ugi poÅ‚Ä…czeÅ„ gÅ‚osowych */
-	int last_sysmsg;		/**< Numer ostatnio odebranej wiadomoÅ›ci systemowej */
-	uint32_t external_addr;		/**< Adres publiczny dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich (6.x) */
-	uint16_t external_port;		/**< Port publiczny dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich (6.x) */
-#ifndef DOXYGEN
-	int tls;			/**< Flaga poÅ‚Ä…czenia szyfrowanego (nieaktualna) */
-#endif
-	int image_size;			/**< Maksymalny rozmiar obsÅ‚ugiwanych obrazkÃ³w w kilobajtach */
-#ifndef DOXYGEN
-	int era_omnix;			/**< Flaga udawania klienta Era Omnix (nieaktualna) */
-#endif
-	int hash_type;			/**< Rodzaj skrÃ³tu hasÅ‚a (\c GG_LOGIN_HASH_GG32 lub \c GG_LOGIN_HASH_SHA1, domyÅ›lnie SHA1) */
-	gg_encoding_t encoding;		/**< Rodzaj kodowania uÅ¼ywanego w sesji (domyÅ›lnie CP1250) */
-	gg_resolver_t resolver;		/**< SposÃ³b rozwiÄ…zywania nazw (patrz \ref build-resolver) */
-	int protocol_features;		/**< Opcje protokoÅ‚u (flagi GG_FEATURE_*). */
+	uin_t uin;			/* numerek */
+	char *password;			/* has³o */
+	int async;			/* asynchroniczne sockety? */
+	int status;			/* pocz±tkowy status klienta */
+	char *status_descr;		/* opis statusu */
+	uint32_t server_addr;		/* adres serwera gg */
+	uint16_t server_port;		/* port serwera gg */
+	uint32_t client_addr;		/* adres dcc klienta */
+	uint16_t client_port;		/* port dcc klienta */
+	int protocol_version;		/* wersja protoko³u */
+	char *client_version;		/* wersja klienta */
+	int has_audio;			/* czy ma d¼wiêk? */
+	int last_sysmsg;		/* ostatnia wiadomo¶æ systemowa */
+	uint32_t external_addr;		/* adres widziany na zewnatrz */
+	uint16_t external_port;		/* port widziany na zewnatrz */
+	int tls;			/* czy ³±czymy po TLS? */
+	int image_size;			/* maksymalny rozmiar obrazka w KiB */
+	int era_omnix;			/* czy udawaæ klienta era omnix? */
 
-#ifndef DOXYGEN
-	char dummy[2 * sizeof(int)];	/**< \internal Miejsce na kilka kolejnych
-					  parametrÃ³w, Å¼eby wraz z dodawaniem kolejnych
-					  parametrÃ³w nie zmieniaÅ‚ siÄ™ rozmiar struktury */
-#endif
-
+	char dummy[6 * sizeof(int)];	/* miejsce na kolejnych 6 zmiennych,
+					 * ¿eby z dodaniem parametru nie
+					 * zmienia³ siê rozmiar struktury */
 };
 
 struct gg_session *gg_login(const struct gg_login_params *p);
@@ -598,337 +367,232 @@ int gg_send_message_ctcp(struct gg_session *sess, int msgclass, uin_t recipient,
 int gg_ping(struct gg_session *sess);
 int gg_userlist_request(struct gg_session *sess, char type, const char *request);
 int gg_image_request(struct gg_session *sess, uin_t recipient, int size, uint32_t crc32);
-int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const char *image, int size);
+int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const unsigned char *image, int size);
 
 uint32_t gg_crc32(uint32_t crc, const unsigned char *buf, int len);
 
-int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type);
-gg_resolver_t gg_session_get_resolver(struct gg_session *gs);
-int gg_session_set_custom_resolver(struct gg_session *gs, int (*resolver_start)(int*, void**, const char*), void (*resolver_cleanup)(void**, int));
+struct gg_image_queue {
+	uin_t sender;			/* nadawca obrazka */
+	uint32_t size;			/* rozmiar */
+	uint32_t crc32;			/* suma kontrolna */
+	char *filename;			/* nazwa pliku */
+	char *image;			/* bufor z obrazem */
+	uint32_t done;			/* ile ju¿ wczytano */
 
-int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type);
-gg_resolver_t gg_http_get_resolver(struct gg_http *gh);
-int gg_http_set_custom_resolver(struct gg_http *gh, int (*resolver_start)(int*, void**, const char*), void (*resolver_cleanup)(void**, int));
+	struct gg_image_queue *next;	/* nastêpny na li¶cie */
+};
 
-int gg_global_set_resolver(gg_resolver_t type);
-gg_resolver_t gg_global_get_resolver(void);
-int gg_global_set_custom_resolver(int (*resolver_start)(int*, void**, const char*), void (*resolver_cleanup)(void**, int));
-
-/**
- * Rodzaj zdarzenia.
+/*
+ * enum gg_event_t
  *
- * \ingroup events
+ * rodzaje zdarzeñ.
  */
 enum gg_event_t {
-	GG_EVENT_NONE = 0,		/**< Nie wydarzyÅ‚o siÄ™ nic wartego uwagi */
-	GG_EVENT_MSG,			/**< \brief Otrzymano wiadomoÅ›Ä‡. Przekazuje rÃ³wnieÅ¼ wiadomoÅ›ci systemowe od numeru 0. */
-	GG_EVENT_NOTIFY,		/**< \brief Informacja o statusach osÃ³b z listy kontaktÃ³w (przed 6.0). Zdarzenie naleÅ¼y obsÅ‚ugiwaÄ‡, jeÅ›li planuje siÄ™ uÅ¼ywaÄ‡ protokoÅ‚u w wersji starszej niÅ¼ domyÅ›lna. */
-	GG_EVENT_NOTIFY_DESCR,		/**< \brief Informacja o statusie opisowym osoby z listy kontaktÃ³w (przed 6.0). Zdarzenie naleÅ¼y obsÅ‚ugiwaÄ‡, jeÅ›li planuje siÄ™ uÅ¼ywaÄ‡ protokoÅ‚u w wersji starszej niÅ¼ domyÅ›lna. */
-	GG_EVENT_STATUS,		/**< \brief Zmiana statusu osoby z listy kontaktÃ³w (przed 6.0). Zdarzenie naleÅ¼y obsÅ‚ugiwaÄ‡, jeÅ›li planuje siÄ™ uÅ¼ywaÄ‡ protokoÅ‚u w wersji starszej niÅ¼ domyÅ›lna. */
-	GG_EVENT_ACK,			/**< Potwierdzenie dorÄ™czenia wiadomoÅ›ci */
-	GG_EVENT_PONG,			/**< \brief Utrzymanie poÅ‚Ä…czenia. Obecnie serwer nie wysyÅ‚a juÅ¼ do klienta ramek utrzymania poÅ‚Ä…czenia, polega wyÅ‚Ä…cznie na wysyÅ‚aniu ramek przez klienta. */
-	GG_EVENT_CONN_FAILED,		/**< \brief Nie udaÅ‚o siÄ™ poÅ‚Ä…czyÄ‡ */
-	GG_EVENT_CONN_SUCCESS,		/**< \brief PoÅ‚Ä…czono z serwerem. PierwszÄ… rzeczÄ…, jakÄ… naleÅ¼y zrobiÄ‡ jest wysÅ‚anie listy kontaktÃ³w. */
-	GG_EVENT_DISCONNECT,		/**< \brief Serwer zrywa poÅ‚Ä…czenie. Zdarza siÄ™, gdy rÃ³wnolegle do serwera podÅ‚Ä…czy siÄ™ druga sesja i trzeba zerwaÄ‡ poÅ‚Ä…czenie z pierwszÄ…. */
+	GG_EVENT_NONE = 0,		/* nic siê nie wydarzy³o */
+	GG_EVENT_MSG,			/* otrzymano wiadomo¶æ */
+	GG_EVENT_NOTIFY,		/* kto¶ siê pojawi³ */
+	GG_EVENT_NOTIFY_DESCR,		/* kto¶ siê pojawi³ z opisem */
+	GG_EVENT_STATUS,		/* kto¶ zmieni³ stan */
+	GG_EVENT_ACK,			/* potwierdzenie wys³ania wiadomo¶ci */
+	GG_EVENT_PONG,			/* pakiet pong */
+	GG_EVENT_CONN_FAILED,		/* po³±czenie siê nie uda³o */
+	GG_EVENT_CONN_SUCCESS,		/* po³±czenie siê powiod³o */
+	GG_EVENT_DISCONNECT,		/* serwer zrywa po³±czenie */
 
-	GG_EVENT_DCC_NEW,		/**< Nowe poÅ‚Ä…czenie bezpoÅ›rednie (6.x) */
-	GG_EVENT_DCC_ERROR,		/**< BÅ‚Ä…d poÅ‚Ä…czenia bezpoÅ›redniego (6.x) */
-	GG_EVENT_DCC_DONE,		/**< ZakoÅ„czono poÅ‚Ä…czenie bezpoÅ›rednie (6.x) */
-	GG_EVENT_DCC_CLIENT_ACCEPT,	/**< Moment akceptacji klienta w poÅ‚Ä…czeniu bezpoÅ›rednim (6.x) */
-	GG_EVENT_DCC_CALLBACK,		/**< Zwrotne poÅ‚Ä…czenie bezpoÅ›rednie (6.x) */
-	GG_EVENT_DCC_NEED_FILE_INFO,	/**< NaleÅ¼y wypeÅ‚niÄ‡ \c file_info dla poÅ‚Ä…czenia bezpoÅ›redniego (6.x) */
-	GG_EVENT_DCC_NEED_FILE_ACK,	/**< Czeka na potwierdzenie pliku w poÅ‚Ä…czeniu bezpoÅ›rednim (6.x) */
-	GG_EVENT_DCC_NEED_VOICE_ACK,	/**< Czeka na potwierdzenie rozmowy w poÅ‚Ä…czeniu bezpoÅ›rednim (6.x) */
-	GG_EVENT_DCC_VOICE_DATA, 	/**< Dane bezpoÅ›redniego poÅ‚Ä…czenia gÅ‚osowego (6.x) */
+	GG_EVENT_DCC_NEW,		/* nowe po³±czenie miêdzy klientami */
+	GG_EVENT_DCC_ERROR,		/* b³±d po³±czenia miêdzy klientami */
+	GG_EVENT_DCC_DONE,		/* zakoñczono po³±czenie */
+	GG_EVENT_DCC_CLIENT_ACCEPT,	/* moment akceptacji klienta */
+	GG_EVENT_DCC_CALLBACK,		/* klient siê po³±czy³ na ¿±danie */
+	GG_EVENT_DCC_NEED_FILE_INFO,	/* nale¿y wype³niæ file_info */
+	GG_EVENT_DCC_NEED_FILE_ACK,	/* czeka na potwierdzenie pliku */
+	GG_EVENT_DCC_NEED_VOICE_ACK,	/* czeka na potwierdzenie rozmowy */
+	GG_EVENT_DCC_VOICE_DATA, 	/* ramka danych rozmowy g³osowej */
 
-	GG_EVENT_PUBDIR50_SEARCH_REPLY,	/**< OdpowiedÅº katalogu publicznego */
-	GG_EVENT_PUBDIR50_READ,		/**< Odczytano wÅ‚asne dane z katalogu publicznego */
-	GG_EVENT_PUBDIR50_WRITE,	/**< Zmieniono wÅ‚asne dane w katalogu publicznym */
+	GG_EVENT_PUBDIR50_SEARCH_REPLY,	/* odpowiedz wyszukiwania */
+	GG_EVENT_PUBDIR50_READ,		/* odczytano w³asne dane z katalogu */
+	GG_EVENT_PUBDIR50_WRITE,	/* wpisano w³asne dane do katalogu */
 
-	GG_EVENT_STATUS60,		/**< Zmiana statusu osoby z listy kontaktÃ³w */
-	GG_EVENT_NOTIFY60,		/**< Informacja o statusach osÃ³b z listy kontaktÃ³w */
-	GG_EVENT_USERLIST,		/**< Wynik importu lub eksportu listy kontaktÃ³w */
-	GG_EVENT_IMAGE_REQUEST,		/**< Å»Ä…danie przesÅ‚ania obrazka z wiadommoÅ›ci */
-	GG_EVENT_IMAGE_REPLY,		/**< PrzysÅ‚ano obrazek z wiadomoÅ›ci */
-	GG_EVENT_DCC_ACK,		/**< Potwierdzenie transmisji w poÅ‚Ä…czeniu bezpoÅ›rednim (6.x) */
-
-	GG_EVENT_DCC7_NEW,		/**< Nowe poÅ‚Ä…czenie bezpoÅ›rednie (7.x) */
-	GG_EVENT_DCC7_ACCEPT,		/**< Zaakceptowano poÅ‚Ä…czenie bezpoÅ›rednie (7.x), nowy deskryptor */
-	GG_EVENT_DCC7_REJECT,		/**< Odrzucono poÅ‚Ä…czenie bezpoÅ›rednie (7.x) */
-	GG_EVENT_DCC7_CONNECTED,	/**< Zestawiono poÅ‚Ä…czenie bezpoÅ›rednie (7.x), nowy deskryptor */
-	GG_EVENT_DCC7_ERROR,		/**< BÅ‚Ä…d poÅ‚Ä…czenia bezpoÅ›redniego (7.x) */
-	GG_EVENT_DCC7_DONE,		/**< ZakoÅ„czono poÅ‚Ä…czenie bezpoÅ›rednie (7.x) */
-	GG_EVENT_DCC7_PENDING,		/**< Trwa prÃ³ba poÅ‚Ä…czenia bezpoÅ›redniego (7.x), nowy deskryptor */
-
-	GG_EVENT_XML_EVENT,		/**< Otrzymano komunikat systemowy (7.7) */
-	GG_EVENT_DISCONNECT_ACK,	/**< \brief Potwierdzenie zakoÅ„czenia sesji. Informuje o tym, Å¼e zmiana stanu na niedostÄ™pny z opisem dotarÅ‚a do serwera i moÅ¼na zakoÅ„czyÄ‡ poÅ‚Ä…czenie TCP. */
+	GG_EVENT_STATUS60,		/* kto¶ zmieni³ stan w GG 6.0 */
+	GG_EVENT_NOTIFY60,		/* kto¶ siê pojawi³ w GG 6.0 */
+	GG_EVENT_USERLIST,		/* odpowied¼ listy kontaktów w GG 6.0 */
+	GG_EVENT_IMAGE_REQUEST,		/* pro¶ba o wys³anie obrazka GG 6.0 */
+	GG_EVENT_IMAGE_REPLY,		/* podes³any obrazek GG 6.0 */
+	GG_EVENT_DCC_ACK		/* potwierdzenie transmisji */
 };
 
 #define GG_EVENT_SEARCH50_REPLY GG_EVENT_PUBDIR50_SEARCH_REPLY
 
-/**
- * PowÃ³d nieudanego poÅ‚Ä…czenia.
+/*
+ * enum gg_failure_t
+ *
+ * okre¶la powód nieudanego po³±czenia.
  */
 enum gg_failure_t {
-	GG_FAILURE_RESOLVING = 1,	/**< Nie znaleziono serwera */
-	GG_FAILURE_CONNECTING,		/**< BÅ‚Ä…d poÅ‚Ä…czenia */
-	GG_FAILURE_INVALID,		/**< Serwer zwrÃ³ciÅ‚ nieprawidÅ‚owe dane */
-	GG_FAILURE_READING,		/**< Zerwano poÅ‚Ä…czenie podczas odczytu */
-	GG_FAILURE_WRITING,		/**< Zerwano poÅ‚Ä…czenie podczas zapisu */
-	GG_FAILURE_PASSWORD,		/**< NieprawidÅ‚owe hasÅ‚o */
-	GG_FAILURE_404, 		/**< NieuÅ¼ywane */
-	GG_FAILURE_TLS,			/**< BÅ‚Ä…d negocjacji szyfrowanego poÅ‚Ä…czenia */
-	GG_FAILURE_NEED_EMAIL, 		/**< Serwer rozÅ‚Ä…czyÅ‚ nas z proÅ›bÄ… o zmianÄ™ adresu e-mail */
-	GG_FAILURE_INTRUDER,		/**< Zbyt wiele prÃ³b poÅ‚Ä…czenia z nieprawidÅ‚owym hasÅ‚em */
-	GG_FAILURE_UNAVAILABLE		/**< Serwery sÄ… wyÅ‚Ä…czone */
+	GG_FAILURE_RESOLVING = 1,	/* nie znaleziono serwera */
+	GG_FAILURE_CONNECTING,		/* nie mo¿na siê po³±czyæ */
+	GG_FAILURE_INVALID,		/* serwer zwróci³ nieprawid³owe dane */
+	GG_FAILURE_READING,		/* zerwano po³±czenie podczas odczytu */
+	GG_FAILURE_WRITING,		/* zerwano po³±czenie podczas zapisu */
+	GG_FAILURE_PASSWORD,		/* nieprawid³owe has³o */
+	GG_FAILURE_404, 		/* XXX nieu¿ywane */
+	GG_FAILURE_TLS,			/* b³±d negocjacji TLS */
+	GG_FAILURE_NEED_EMAIL 		/* serwer roz³±czy³ nas z pro¶b± o zmianê emaila */
 };
 
-/**
- * Kod bÅ‚Ä™du danej operacji.
+/*
+ * enum gg_error_t
  *
- * Nie zawiera przesadnie szczegÃ³Å‚owych informacji o powodach bÅ‚Ä™dÃ³w, by nie
- * komplikowaÄ‡ ich obsÅ‚ugi. JeÅ›li wymagana jest wiÄ™ksza dokÅ‚adnoÅ›Ä‡, naleÅ¼y
- * sprawdziÄ‡ zawartoÅ›Ä‡ zmiennej systemowej \c errno.
+ * okre¶la rodzaj b³êdu wywo³anego przez dan± operacjê. nie zawiera
+ * przesadnie szczegó³owych informacji o powodzie b³êdu, by nie komplikowaæ
+ * obs³ugi b³êdów. je¶li wymagana jest wiêksza dok³adno¶æ, nale¿y sprawdziæ
+ * zawarto¶æ zmiennej errno.
  */
 enum gg_error_t {
-	GG_ERROR_RESOLVING = 1,		/**< Nie znaleziono hosta */
-	GG_ERROR_CONNECTING,		/**< BÅ‚Ä…d poÅ‚Ä…czenia */
-	GG_ERROR_READING,		/**< BÅ‚Ä…d odczytu/odbierania */
-	GG_ERROR_WRITING,		/**< BÅ‚Ä…d zapisu/wysyÅ‚ania */
+	GG_ERROR_RESOLVING = 1,		/* b³±d znajdowania hosta */
+	GG_ERROR_CONNECTING,		/* b³±d ³aczenia siê */
+	GG_ERROR_READING,		/* b³±d odczytu */
+	GG_ERROR_WRITING,		/* b³±d wysy³ania */
 
-	GG_ERROR_DCC_HANDSHAKE,		/**< BÅ‚Ä…d negocjacji */
-	GG_ERROR_DCC_FILE,		/**< BÅ‚Ä…d odczytu/zapisu pliku */
-	GG_ERROR_DCC_EOF,		/**< Przedwczesny koniec pliku */
-	GG_ERROR_DCC_NET,		/**< BÅ‚Ä…d wysyÅ‚ania/odbierania */
-	GG_ERROR_DCC_REFUSED, 		/**< PoÅ‚Ä…czenie odrzucone */
-
-	GG_ERROR_DCC7_HANDSHAKE,	/**< BÅ‚Ä…d negocjacji */
-	GG_ERROR_DCC7_FILE,		/**< BÅ‚Ä…d odczytu/zapisu pliku */
-	GG_ERROR_DCC7_EOF,		/**< Przedwczesny koniec pliku */
-	GG_ERROR_DCC7_NET,		/**< BÅ‚Ä…d wysyÅ‚ania/odbierania */
-	GG_ERROR_DCC7_REFUSED 		/**< PoÅ‚Ä…czenie odrzucone */
+	GG_ERROR_DCC_HANDSHAKE,		/* b³±d negocjacji */
+	GG_ERROR_DCC_FILE,		/* b³±d odczytu/zapisu pliku */
+	GG_ERROR_DCC_EOF,		/* plik siê skoñczy³? */
+	GG_ERROR_DCC_NET,		/* b³±d wysy³ania/odbierania */
+	GG_ERROR_DCC_REFUSED 		/* po³±czenie odrzucone przez usera */
 };
 
-/**
- * Pole zapytania lub odpowiedzi katalogu publicznego.
+/*
+ * struktury dotycz±ce wyszukiwania w GG 5.0. NIE NALE¯Y SIÊ DO NICH
+ * ODWO£YWAÆ BEZPO¦REDNIO! do dostêpu do nich s³u¿± funkcje gg_pubdir50_*()
  */
 struct gg_pubdir50_entry {
-	int num;	/**< Numer wyniku */
-	char *field;	/**< Nazwa pola */
-	char *value;	/**< WartoÅ›Ä‡ pola */
-} /* GG_DEPRECATED */;
+	int num;
+	char *field;
+	char *value;
+};
 
-/**
- * Zapytanie lub odpowiedÅº katalogu publicznego.
- *
- * Patrz \c gg_pubdir50_t.
- */
 struct gg_pubdir50_s {
-	int count;	/**< Liczba wynikÃ³w odpowiedzi */
-	uin_t next;	/**< Numer poczÄ…tkowy nastÄ™pnego zapytania */
-	int type;	/**< Rodzaj zapytania */
-	uint32_t seq;	/**< Numer sekwencyjny */
-	struct gg_pubdir50_entry *entries;	/**< Pola zapytania lub odpowiedzi */
-	int entries_count;	/**< Liczba pÃ³l */
-} /* GG_DEPRECATED */;
+	int count;
+	uin_t next;
+	int type;
+	uint32_t seq;
+	struct gg_pubdir50_entry *entries;
+	int entries_count;
+};
 
-/**
- * Zapytanie lub odpowiedÅº katalogu publicznego.
+/*
+ * typedef gg_pubdir_50_t
  *
- * Do pÃ³l nie naleÅ¼y siÄ™ odwoÅ‚ywaÄ‡ bezpoÅ›rednio -- wszystkie niezbÄ™dne
- * informacje sÄ… dostÄ™pne za pomocÄ… funkcji \c gg_pubdir50_*
+ * typ opisuj±cy zapytanie lub wynik zapytania katalogu publicznego
+ * z protoko³u GG 5.0. nie nale¿y siê odwo³ywaæ bezpo¶rednio do jego
+ * pól -- s³u¿± do tego funkcje gg_pubdir50_*()
  */
 typedef struct gg_pubdir50_s *gg_pubdir50_t;
 
-/**
- * Opis zdarzenia \c GG_EVENT_MSG.
- */
-struct gg_event_msg {
-	uin_t sender;		/**< Numer nadawcy */
-	int msgclass;		/**< Klasa wiadomoÅ›ci */
-	time_t time;		/**< Czas nadania */
-	unsigned char *message;	/**< TreÅ›Ä‡ wiadomoÅ›ci */
-
-	int recipients_count;	/**< Liczba odbiorcÃ³w konferencji */
-	uin_t *recipients;	/**< Odbiorcy konferencji */
-
-	int formats_length;	/**< DÅ‚ugoÅ›Ä‡ informacji o formatowaniu tekstu */
-	void *formats;		/**< Informacje o formatowaniu tekstu */
-	uint32_t seq;		/**< Numer sekwencyjny wiadomoÅ›ci */
-
-	char *xhtml_message;	/**< TreÅ›Ä‡ wiadomoÅ›ci w formacie XHTML (moÅ¼e byÄ‡ rÃ³wne \c NULL, jeÅ›li wiadomoÅ›Ä‡ nie zawiera treÅ›ci XHTML) */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_NOTIFY_DESCR.
- */
-struct gg_event_notify_descr {
-	struct gg_notify_reply *notify;	/**< Informacje o liÅ›cie kontaktÃ³w */
-	char *descr;		/**< Opis status */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_STATUS.
- */
-struct gg_event_status {
-	uin_t uin;		/**< Numer Gadu-Gadu */
-	uint32_t status;	/**< Nowy status */
-	char *descr;		/**< Opis */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_STATUS60.
- */
-struct gg_event_status60 {
-	uin_t uin;		/**< Numer Gadu-Gadu */
-	int status;		/**< Nowy status */
-	uint32_t remote_ip;	/**< Adres IP dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich */
-	uint16_t remote_port;	/**< Port dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich */
-	int version;		/**< Wersja protokoÅ‚u */
-	int image_size;		/**< Maksymalny rozmiar obsÅ‚ugiwanych obrazkÃ³w w KiB */
-	char *descr;		/**< Opis statusu */
-	time_t time;		/**< Czas powrotu */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_NOTIFY_REPLY60.
- */
-struct gg_event_notify60 {
-	uin_t uin;		/**< Numer Gadu-Gadu */
-	int status;		/**< Nowy status */
-	uint32_t remote_ip;	/**< Adres IP dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich */
-	uint16_t remote_port;	/**< Port dla poÅ‚Ä…czeÅ„ bezpoÅ›rednich */
-	int version;		/**< Wersja protokoÅ‚u */
-	int image_size;		/**< Maksymalny rozmiar obsÅ‚ugiwanych obrazkÃ³w w KiB */
-	char *descr;		/**< Opis statusu */
-	time_t time;		/**< Czas powrotu */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_ACK.
- */
-struct gg_event_ack {
-	uin_t recipient;	/**< Numer odbiorcy */
-	int status;		/**< Status dorÄ™czenia */
-	int seq;		/**< Numer sekwencyjny wiadomoÅ›ci */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_USERLIST.
- */
-struct gg_event_userlist {
-	char type;		/**< Rodzaj odpowiedzi */
-	char *reply;		/**< TreÅ›Ä‡ odpowiedzi */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_DCC_VOICE_DATA.
- */
-struct gg_event_dcc_voice_data {
-	uint8_t *data;		/**< Dane dÅºwiÄ™kowe */
-	int length;		/**< Rozmiar danych dÅºwiÄ™kowych */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_IMAGE_REQUEST.
- */
-struct gg_event_image_request {
-	uin_t sender;		/**< Nadawca Å¼Ä…dania */
-	uint32_t size;		/**< Rozmiar obrazka */
-	uint32_t crc32;		/**< Suma kontrolna CRC32 */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_IMAGE_REPLY.
- */
-struct gg_event_image_reply {
-	uin_t sender;		/**< Nadawca obrazka */
-	uint32_t size;		/**< Rozmiar obrazka */
-	uint32_t crc32;		/**< Suma kontrolna CRC32 */
-	char *filename;		/**< Nazwa pliku */
-	char *image;		/**< Bufor z obrazkiem */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_XML_EVENT.
- */
-struct gg_event_xml_event {
-	char *data;		/**< Bufor z komunikatem */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_DCC7_CONNECTED.
- */
-struct gg_event_dcc7_connected {
-	struct gg_dcc7 *dcc7;	/**< Struktura poÅ‚Ä…czenia */
-	// XXX czy coÅ› siÄ™ przyda?
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_DCC7_REJECT.
- */
-struct gg_event_dcc7_reject {
-	struct gg_dcc7 *dcc7;	/**< Struktura poÅ‚Ä…czenia */
-	int reason;		/**< powÃ³d odrzucenia */
-};
-
-/**
- * Opis zdarzenia \c GG_EVENT_DCC7_ACCEPT.
- */
-struct gg_event_dcc7_accept {
-	struct gg_dcc7 *dcc7;	/**< Struktura poÅ‚Ä…czenia */
-	int type;		/**< SposÃ³b poÅ‚Ä…czenia (P2P, przez serwer) */
-	uint32_t remote_ip;	/**< Adres zdalnego klienta */
-	uint16_t remote_port;	/**< Port zdalnego klienta */
-};
-
-/**
- * Unia wszystkich zdarzeÅ„ zwracanych przez funkcje \c gg_watch_fd(), 
- * \c gg_dcc_watch_fd() i \c gg_dcc7_watch_fd().
+/*
+ * struct gg_event
  *
- * \ingroup events
- */
-union gg_event_union {
-	enum gg_failure_t failure;	/**< BÅ‚Ä…d poÅ‚Ä…czenia (\c GG_EVENT_CONN_FAILED) */
-	struct gg_notify_reply *notify;	/**< Zmiana statusu kontaktÃ³w (\c GG_EVENT_NOTIFY) */
-	struct gg_event_notify_descr notify_descr;	/**< Zmiana statusu kontaktÃ³w (\c GG_EVENT_NOTIFY_DESCR) */
-	struct gg_event_status status;	/**< Zmiana statusu kontaktÃ³w (\c GG_EVENT_STATUS) */
-	struct gg_event_status60 status60;	/**< Zmiana statusu kontaktÃ³w (\c GG_EVENT_STATUS60) */
-	struct gg_event_notify60 *notify60;	/**< Zmiana statusu kontaktÃ³w (\c GG_EVENT_NOTIFY60) */
-	struct gg_event_msg msg;	/**< Otrzymano wiadomoÅ›Ä‡ (\c GG_EVENT_MSG) */
-	struct gg_event_ack ack;	/**< Potwierdzenie wiadomoÅ›ci (\c GG_EVENT_ACK) */
-	struct gg_event_image_request image_request;	/**< Å»Ä…danie wysÅ‚ania obrazka (\c GG_EVENT_IMAGE_REQUEST) */
-	struct gg_event_image_reply image_reply;	/**< OdpowiedÅº z obrazkiem (\c GG_EVENT_IMAGE_REPLY) */
-	struct gg_event_userlist userlist;	/**< OdpowiedÅº listy kontaktÃ³w (\c GG_EVENT_USERLIST) */
-	gg_pubdir50_t pubdir50;	/**< OdpowiedÅº katalogu publicznego (\c GG_EVENT_PUBDIR50_*) */
-	struct gg_event_xml_event xml_event;	/**< Zdarzenie systemowe (\c GG_EVENT_XML_EVENT) */
-	struct gg_dcc *dcc_new;	/**< Nowe poÅ‚Ä…czenie bezpoÅ›rednie (\c GG_EVENT_DCC_NEW) */
-	enum gg_error_t dcc_error;	/**< BÅ‚Ä…d poÅ‚Ä…czenia bezpoÅ›redniego (\c GG_EVENT_DCC_ERROR) */
-	struct gg_event_dcc_voice_data dcc_voice_data;	/**< Dane poÅ‚Ä…czenia gÅ‚osowego (\c GG_EVENT_DCC_VOICE_DATA) */
-	struct gg_dcc7 *dcc7_new;	/**< Nowe poÅ‚Ä…czenie bezpoÅ›rednie (\c GG_EVENT_DCC7_NEW) */
-	enum gg_error_t dcc7_error;	/**< BÅ‚Ä…d poÅ‚Ä…czenia bezpoÅ›redniego (\c GG_EVENT_DCC7_ERROR) */
-	struct gg_event_dcc7_connected dcc7_connected;	/**< Informacja o zestawieniu poÅ‚Ä…czenia bezpoÅ›redniego (\c GG_EVENT_DCC7_CONNECTED) */
-	struct gg_event_dcc7_reject dcc7_reject;	/**< Odrzucono poÅ‚Ä…czenia bezpoÅ›redniego (\c GG_EVENT_DCC7_REJECT) */
-	struct gg_event_dcc7_accept dcc7_accept;	/**< Zaakceptowano poÅ‚Ä…czenie bezpoÅ›rednie (\c GG_EVENT_DCC7_ACCEPT) */
-};
-
-/**
- * Opis zdarzenia.
- *
- * Zwracany przez funkcje \c gg_watch_fd(), \c gg_dcc_watch_fd()
- * i \c gg_dcc7_watch_fd(). Po przeanalizowaniu naleÅ¼y zwolniÄ‡
- * za pomocÄ… \c gg_event_free().
- *
- * \ingroup events
+ * struktura opisuj±ca rodzaj zdarzenia. wychodzi z gg_watch_fd() lub
+ * z gg_dcc_watch_fd()
  */
 struct gg_event {
-	int type;			/**< Rodzaj zdarzenia */
-	union gg_event_union event;	/**< Informacja o zdarzeniu */
+	int type;	/* rodzaj zdarzenia -- gg_event_t */
+	union {		/* @event */
+		struct gg_notify_reply *notify;	/* informacje o li¶cie kontaktów -- GG_EVENT_NOTIFY */
+
+		enum gg_failure_t failure;	/* b³±d po³±czenia -- GG_EVENT_FAILURE */
+
+		struct gg_dcc *dcc_new;		/* nowe po³±czenie bezpo¶rednie -- GG_EVENT_DCC_NEW */
+
+		int dcc_error;			/* b³±d po³±czenia bezpo¶redniego -- GG_EVENT_DCC_ERROR */
+
+		gg_pubdir50_t pubdir50;		/* wynik operacji zwi±zanej z katalogiem publicznym -- GG_EVENT_PUBDIR50_* */
+
+		struct {			/* @msg odebrano wiadomo¶æ -- GG_EVENT_MSG */
+			uin_t sender;		/* numer nadawcy */
+			int msgclass;		/* klasa wiadomo¶ci */
+			time_t time;		/* czas nadania */
+			unsigned char *message;	/* tre¶æ wiadomo¶ci */
+
+			int recipients_count;	/* ilo¶æ odbiorców konferencji */
+			uin_t *recipients;	/* odbiorcy konferencji */
+
+			int formats_length;	/* d³ugo¶æ informacji o formatowaniu tekstu */
+			void *formats;		/* informacje o formatowaniu tekstu */
+		} msg;
+
+		struct {			/* @notify_descr informacje o li¶cie kontaktów z opisami stanu -- GG_EVENT_NOTIFY_DESCR */
+			struct gg_notify_reply *notify;	/* informacje o li¶cie kontaktów */
+			char *descr;		/* opis stanu */
+		} notify_descr;
+
+		struct {			/* @status zmiana stanu -- GG_EVENT_STATUS */
+			uin_t uin;		/* numer */
+			uint32_t status;	/* nowy stan */
+			char *descr;		/* opis stanu */
+		} status;
+
+		struct {			/* @status60 zmiana stanu -- GG_EVENT_STATUS60 */
+			uin_t uin;		/* numer */
+			int status;	/* nowy stan */
+			uint32_t remote_ip;	/* adres ip */
+			uint16_t remote_port;	/* port */
+			int version;	/* wersja klienta */
+			int image_size;	/* maksymalny rozmiar grafiki w KiB */
+			char *descr;		/* opis stanu */
+			time_t time;		/* czas powrotu */
+		} status60;
+
+		struct {			/* @notify60 informacja o li¶cie kontaktów -- GG_EVENT_NOTIFY60 */
+			uin_t uin;		/* numer */
+			int status;	/* stan */
+			uint32_t remote_ip;	/* adres ip */
+			uint16_t remote_port;	/* port */
+			int version;	/* wersja klienta */
+			int image_size;	/* maksymalny rozmiar grafiki w KiB */
+			char *descr;		/* opis stanu */
+			time_t time;		/* czas powrotu */
+		} *notify60;
+
+		struct {			/* @ack potwierdzenie wiadomo¶ci -- GG_EVENT_ACK */
+			uin_t recipient;	/* numer odbiorcy */
+			int status;		/* stan dorêczenia wiadomo¶ci */
+			int seq;		/* numer sekwencyjny wiadomo¶ci */
+		} ack;
+
+		struct {			/* @dcc_voice_data otrzymano dane d¼wiêkowe -- GG_EVENT_DCC_VOICE_DATA */
+			uint8_t *data;		/* dane d¼wiêkowe */
+			int length;		/* ilo¶æ danych d¼wiêkowych */
+		} dcc_voice_data;
+
+		struct {			/* @userlist odpowied¼ listy kontaktów serwera */
+			char type;		/* rodzaj odpowiedzi */
+			char *reply;		/* tre¶æ odpowiedzi */
+		} userlist;
+
+		struct {			/* @image_request pro¶ba o obrazek */
+			uin_t sender;		/* nadawca pro¶by */
+			uint32_t size;		/* rozmiar obrazka */
+			uint32_t crc32;		/* suma kontrolna */
+		} image_request;
+
+		struct {			/* @image_reply odpowied¼ z obrazkiem */
+			uin_t sender;		/* nadawca odpowiedzi */
+			uint32_t size;		/* rozmiar obrazka */
+			uint32_t crc32;		/* suma kontrolna */
+			char *filename;		/* nazwa pliku */
+			char *image;		/* bufor z obrazkiem */
+		} image_reply;
+	} event;
 };
 
 struct gg_event *gg_watch_fd(struct gg_session *sess);
 void gg_event_free(struct gg_event *e);
+#define gg_free_event gg_event_free
 
+/*
+ * funkcje obs³ugi listy kontaktów.
+ */
 int gg_notify_ex(struct gg_session *sess, uin_t *userlist, char *types, int count);
 int gg_notify(struct gg_session *sess, uin_t *userlist, int count);
 int gg_add_notify_ex(struct gg_session *sess, uin_t uin, char type);
@@ -936,11 +600,76 @@ int gg_add_notify(struct gg_session *sess, uin_t uin);
 int gg_remove_notify_ex(struct gg_session *sess, uin_t uin, char type);
 int gg_remove_notify(struct gg_session *sess, uin_t uin);
 
+/*
+ * funkcje obs³ugi http.
+ */
 struct gg_http *gg_http_connect(const char *hostname, int port, int async, const char *method, const char *path, const char *header);
 int gg_http_watch_fd(struct gg_http *h);
 void gg_http_stop(struct gg_http *h);
 void gg_http_free(struct gg_http *h);
+void gg_http_free_fields(struct gg_http *h);
+#define gg_free_http gg_http_free
 
+/*
+ * struktury opisuj±ca kryteria wyszukiwania dla gg_search(). nieaktualne,
+ * zast±pione przez gg_pubdir50_t. pozostawiono je dla zachowania ABI.
+ */
+struct gg_search_request {
+	int active;
+	unsigned int start;
+	char *nickname;
+	char *first_name;
+	char *last_name;
+	char *city;
+	int gender;
+	int min_birth;
+	int max_birth;
+	char *email;
+	char *phone;
+	uin_t uin;
+};
+
+struct gg_search {
+	int count;
+	struct gg_search_result *results;
+};
+
+struct gg_search_result {
+	uin_t uin;
+	char *first_name;
+	char *last_name;
+	char *nickname;
+	int born;
+	int gender;
+	char *city;
+	int active;
+};
+
+#define GG_GENDER_NONE 0
+#define GG_GENDER_FEMALE 1
+#define GG_GENDER_MALE 2
+
+/*
+ * funkcje wyszukiwania.
+ */
+struct gg_http *gg_search(const struct gg_search_request *r, int async);
+int gg_search_watch_fd(struct gg_http *f);
+void gg_free_search(struct gg_http *f);
+#define gg_search_free gg_free_search
+
+const struct gg_search_request *gg_search_request_mode_0(char *nickname, char *first_name, char *last_name, char *city, int gender, int min_birth, int max_birth, int active, int start);
+const struct gg_search_request *gg_search_request_mode_1(char *email, int active, int start);
+const struct gg_search_request *gg_search_request_mode_2(char *phone, int active, int start);
+const struct gg_search_request *gg_search_request_mode_3(uin_t uin, int active, int start);
+void gg_search_request_free(struct gg_search_request *r);
+
+/*
+ * funkcje obs³ugi katalogu publicznego zgodne z GG 5.0. tym razem funkcje
+ * zachowuj± pewien poziom abstrakcji, ¿eby unikn±æ zmian ABI przy zmianach
+ * w protokole.
+ *
+ * NIE NALE¯Y SIÊ ODWO£YWAÆ DO PÓL gg_pubdir50_t BEZPO¦REDNIO!
+ */
 uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req);
 gg_pubdir50_t gg_pubdir50_new(int type);
 int gg_pubdir50_add(gg_pubdir50_t req, const char *field, const char *value);
@@ -951,8 +680,6 @@ int gg_pubdir50_count(gg_pubdir50_t res);
 uin_t gg_pubdir50_next(gg_pubdir50_t res);
 uint32_t gg_pubdir50_seq(gg_pubdir50_t res);
 void gg_pubdir50_free(gg_pubdir50_t res);
-
-#ifndef DOXYGEN
 
 #define GG_PUBDIR50_UIN "FmNumber"
 #define GG_PUBDIR50_STATUS "FmStatus"
@@ -972,114 +699,110 @@ void gg_pubdir50_free(gg_pubdir50_t res);
 #define GG_PUBDIR50_FAMILYNAME "familyname"
 #define GG_PUBDIR50_FAMILYCITY "familycity"
 
-#else
+int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length);
 
-/** 
- * \ingroup pubdir50
+/*
+ * struct gg_pubdir
  *
- * Rodzaj pola zapytania.
- */
-enum {
-	GG_PUBDIR50_UIN,	/**< Numer Gadu-Gadu */
-	GG_PUBDIR50_STATUS,	/**< Status (tylko wynik wyszukiwania) */
-	GG_PUBDIR50_FIRSTNAME,	/**< ImiÄ™ */
-	GG_PUBDIR50_LASTNAME,	/**< Nazwisko */
-	GG_PUBDIR50_NICKNAME,	/**< Pseudonim */
-	GG_PUBDIR50_BIRTHYEAR,	/**< Rok urodzenia lub przedziaÅ‚ lat oddzielony spacjÄ… */
-	GG_PUBDIR50_CITY,	/**< MiejscowoÅ›Ä‡ */
-	GG_PUBDIR50_GENDER,	/**< PÅ‚eÄ‡ */
-	GG_PUBDIR50_ACTIVE,	/**< Osoba dostÄ™pna (tylko wyszukiwanie) */
-	GG_PUBDIR50_START,	/**< Numer poczÄ…tkowy wyszukiwania (tylko wyszukiwanie) */
-	GG_PUBDIR50_FAMILYNAME,	/**< Nazwisko rodowe (tylko wysyÅ‚anie informacji o sobie) */
-	GG_PUBDIR50_FAMILYCITY,	/**< MiejscowoÅ›Ä‡ pochodzenia (tylko wysyÅ‚anie informacji o sobie) */
-};
-
-/**
- * \ingroup pubdir50
- *
- * WartoÅ›Ä‡ pola GG_PUBDIR50_GENDER przy wyszukiwaniu. Brak pola oznacza dowolnÄ… pÅ‚eÄ‡.
- */
-enum {
-	GG_PUBDIR50_GENDER_FEMALE,	/**< Kobieta */
-	GG_PUBDIR50_GENDER_MALE,	/**< MÄ™Å¼czyzna */
-};
-
-/**
- * \ingroup pubdir50
- *
- * WartoÅ›Ä‡ pola GG_PUBDIR50_GENDER przy wysyÅ‚aniu informacji o sobie.
- */
-enum {
-	GG_PUBDIR50_GENDER_SET_FEMALE,	/**< Kobieta */
-	GG_PUBDIR50_GENDER_SET_MALE,	/**< MÄ™Å¼czyzna */
-};
-
-/**
- * \ingroup pubdir50
- *
- * WartoÅ›Ä‡ pola GG_PUBDIR50_ACTIVE.
- */
-enum {
-	GG_PUBDIR50_ACTIVE_TRUE,	/**< Wyszukaj tylko osoby dostÄ™pne */
-};
-
-#endif	/* DOXYGEN */
-
-/**
- * Wynik operacji na katalogu publicznym.
- *
- * \ingroup http
+ * operacje na katalogu publicznym.
  */
 struct gg_pubdir {
-	int success;		/**< Flaga powodzenia operacji */
-	uin_t uin;		/**< Otrzymany numer lub 0 w przypadku bÅ‚Ä™du */
+	int success;		/* czy siê uda³o */
+	uin_t uin;		/* otrzymany numerek. 0 je¶li b³±d */
 };
 
+/* ogólne funkcje, nie powinny byæ u¿ywane */
 int gg_pubdir_watch_fd(struct gg_http *f);
 void gg_pubdir_free(struct gg_http *f);
+#define gg_free_pubdir gg_pubdir_free
 
-/**
- * Token autoryzacji niektÃ³rych operacji HTTP.
- * 
- * \ingroup token
- */
 struct gg_token {
-	int width;		/**< SzerokoÅ›Ä‡ obrazka */
-	int height;		/**< WysokoÅ›Ä‡ obrazka */
-	int length;		/**< Liczba znakÃ³w w tokenie */
-	char *tokenid;		/**< Identyfikator tokenu */
+	int width;		/* szeroko¶æ obrazka */
+	int height;		/* wysoko¶æ obrazka */
+	int length;		/* ilo¶æ znaków w tokenie */
+	char *tokenid;		/* id tokenu */
 };
 
+/* funkcje dotycz±ce tokenów */
 struct gg_http *gg_token(int async);
 int gg_token_watch_fd(struct gg_http *h);
 void gg_token_free(struct gg_http *h);
 
+/* rejestracja nowego numerka */
+struct gg_http *gg_register(const char *email, const char *password, int async);
+struct gg_http *gg_register2(const char *email, const char *password, const char *qa, int async);
 struct gg_http *gg_register3(const char *email, const char *password, const char *tokenid, const char *tokenval, int async);
-#ifndef DOXYGEN
 #define gg_register_watch_fd gg_pubdir_watch_fd
 #define gg_register_free gg_pubdir_free
-#endif
+#define gg_free_register gg_pubdir_free
 
+struct gg_http *gg_unregister(uin_t uin, const char *password, const char *email, int async);
+struct gg_http *gg_unregister2(uin_t uin, const char *password, const char *qa, int async);
 struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *tokenid, const char *tokenval, int async);
-#ifndef DOXYGEN
 #define gg_unregister_watch_fd gg_pubdir_watch_fd
 #define gg_unregister_free gg_pubdir_free
-#endif
 
+/* przypomnienie has³a e-mailem */
+struct gg_http *gg_remind_passwd(uin_t uin, int async);
+struct gg_http *gg_remind_passwd2(uin_t uin, const char *tokenid, const char *tokenval, int async);
 struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *tokenid, const char *tokenval, int async);
-#ifndef DOXYGEN
 #define gg_remind_passwd_watch_fd gg_pubdir_watch_fd
 #define gg_remind_passwd_free gg_pubdir_free
-#endif
+#define gg_free_remind_passwd gg_pubdir_free
 
+/* zmiana has³a */
+struct gg_http *gg_change_passwd(uin_t uin, const char *passwd, const char *newpasswd, const char *newemail, int async);
+struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd, const char *newpasswd, const char *email, const char *newemail, int async);
+struct gg_http *gg_change_passwd3(uin_t uin, const char *passwd, const char *newpasswd, const char *qa, int async);
 struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *passwd, const char *newpasswd, const char *tokenid, const char *tokenval, int async);
-#ifndef DOXYGEN
-#define gg_change_passwd_watch_fd gg_pubdir_watch_fd
 #define gg_change_passwd_free gg_pubdir_free
-#endif
+#define gg_free_change_passwd gg_pubdir_free
 
-extern int gg_dcc_port;
-extern unsigned long gg_dcc_ip;
+/*
+ * struct gg_change_info_request
+ *
+ * opis ¿±dania zmiany informacji w katalogu publicznym.
+ */
+struct gg_change_info_request {
+	char *first_name;	/* imiê */
+	char *last_name;	/* nazwisko */
+	char *nickname;		/* pseudonim */
+	char *email;		/* email */
+	int born;		/* rok urodzenia */
+	int gender;		/* p³eæ */
+	char *city;		/* miasto */
+};
+
+struct gg_change_info_request *gg_change_info_request_new(const char *first_name, const char *last_name, const char *nickname, const char *email, int born, int gender, const char *city);
+void gg_change_info_request_free(struct gg_change_info_request *r);
+
+struct gg_http *gg_change_info(uin_t uin, const char *passwd, const struct gg_change_info_request *request, int async);
+#define gg_change_pubdir_watch_fd gg_pubdir_watch_fd
+#define gg_change_pubdir_free gg_pubdir_free
+#define gg_free_change_pubdir gg_pubdir_free
+
+/*
+ * funkcje dotycz±ce listy kontaktów na serwerze.
+ */
+struct gg_http *gg_userlist_get(uin_t uin, const char *password, int async);
+int gg_userlist_get_watch_fd(struct gg_http *f);
+void gg_userlist_get_free(struct gg_http *f);
+
+struct gg_http *gg_userlist_put(uin_t uin, const char *password, const char *contacts, int async);
+int gg_userlist_put_watch_fd(struct gg_http *f);
+void gg_userlist_put_free(struct gg_http *f);
+
+struct gg_http *gg_userlist_remove(uin_t uin, const char *password, int async);
+int gg_userlist_remove_watch_fd(struct gg_http *f);
+void gg_userlist_remove_free(struct gg_http *f);
+
+
+
+/*
+ * funkcje dotycz±ce komunikacji miêdzy klientami.
+ */
+extern int gg_dcc_port;			/* port, na którym nas³uchuje klient */
+extern unsigned long gg_dcc_ip;		/* adres, na którym nas³uchuje klient */
 
 int gg_dcc_request(struct gg_session *sess, uin_t uin);
 
@@ -1091,252 +814,119 @@ int gg_dcc_fill_file_info(struct gg_dcc *d, const char *filename);
 int gg_dcc_fill_file_info2(struct gg_dcc *d, const char *filename, const char *local_filename);
 int gg_dcc_voice_send(struct gg_dcc *d, char *buf, int length);
 
-#define GG_DCC_VOICE_FRAME_LENGTH 195		/**< Rozmiar pakietu gÅ‚osowego przed wersjÄ… Gadu-Gadu 5.0.5 */
-#define GG_DCC_VOICE_FRAME_LENGTH_505 326	/**< Rozmiar pakietu gÅ‚osowego od wersji Gadu-Gadu 5.0.5 */
+#define GG_DCC_VOICE_FRAME_LENGTH 195
+#define GG_DCC_VOICE_FRAME_LENGTH_505 326
 
 struct gg_dcc *gg_dcc_socket_create(uin_t uin, uint16_t port);
-#ifndef DOXYGEN
-#define gg_dcc_socket_free gg_dcc_free
+#define gg_dcc_socket_free gg_free_dcc
 #define gg_dcc_socket_watch_fd gg_dcc_watch_fd
-#endif
 
 struct gg_event *gg_dcc_watch_fd(struct gg_dcc *d);
 
 void gg_dcc_free(struct gg_dcc *c);
+#define gg_free_dcc gg_dcc_free
 
-struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *d);
-struct gg_dcc7 *gg_dcc7_send_file(struct gg_session *sess, uin_t rcpt, const char *filename, const char *filename1250, const char *hash);
-struct gg_dcc7 *gg_dcc7_send_file_fd(struct gg_session *sess, uin_t rcpt, int fd, size_t size, const char *filename1250, const char *hash);
-int gg_dcc7_accept(struct gg_dcc7 *dcc, unsigned int offset);
-int gg_dcc7_reject(struct gg_dcc7 *dcc, int reason);
-void gg_dcc7_free(struct gg_dcc7 *d);
+/*
+ * je¶li chcemy sobie podebugowaæ, wystarczy ustawiæ `gg_debug_level'.
+ * niestety w miarê przybywania wpisów `gg_debug(...)' nie chcia³o mi
+ * siê ustawiaæ odpowiednich leveli, wiêc wiêkszo¶æ sz³a do _MISC.
+ */
+extern int gg_debug_level;	/* poziom debugowania. mapa bitowa sta³ych GG_DEBUG_* */
 
-extern int gg_debug_level;
-
+/*
+ * mo¿na podaæ wska¼nik do funkcji obs³uguj±cej wywo³ania gg_debug().
+ * nieoficjalne, nieudokumentowane, mo¿e siê zmieniæ. je¶li kto¶ jest
+ * zainteresowany, niech da znaæ na ekg-devel.
+ */
 extern void (*gg_debug_handler)(int level, const char *format, va_list ap);
-extern void (*gg_debug_handler_session)(struct gg_session *sess, int level, const char *format, va_list ap);
 
+/*
+ * mo¿na podaæ plik, do którego bêd± zapisywane teksty z gg_debug().
+ */
 extern FILE *gg_debug_file;
 
-/**
- * \ingroup debug
- * @{
- */
-#define GG_DEBUG_NET 1		/**< Rejestracja zdarzeÅ„ zwiÄ…zanych z sieciÄ… */
-#define GG_DEBUG_TRAFFIC 2	/**< Rejestracja ruchu sieciowego */
-#define GG_DEBUG_DUMP 4		/**< Rejestracja zawartoÅ›ci pakietÃ³w */
-#define GG_DEBUG_FUNCTION 8	/**< Rejestracja wywoÅ‚aÅ„ funkcji */
-#define GG_DEBUG_MISC 16	/**< Rejestracja rÃ³Å¼nych informacji */
-/** @} */
+#define GG_DEBUG_NET 1
+#define GG_DEBUG_TRAFFIC 2
+#define GG_DEBUG_DUMP 4
+#define GG_DEBUG_FUNCTION 8
+#define GG_DEBUG_MISC 16
 
 #ifdef GG_DEBUG_DISABLE
 #define gg_debug(x, y...) do { } while(0)
-#define gg_debug_session(z, x, y...) do { } while(0)
 #else
 void gg_debug(int level, const char *format, ...);
-void gg_debug_session(struct gg_session *sess, int level, const char *format, ...);
 #endif
 
 const char *gg_libgadu_version(void);
 
-extern int gg_proxy_enabled;
-extern char *gg_proxy_host;
-extern int gg_proxy_port;
-extern char *gg_proxy_username;
-extern char *gg_proxy_password;
-extern int gg_proxy_http_only;
-
-extern unsigned long gg_local_ip;
-
-#define GG_LOGIN_HASH_GG32 0x01	/**< Algorytm Gadu-Gadu */
-#define GG_LOGIN_HASH_SHA1 0x02	/**< Algorytm SHA1 */
-
-#ifndef DOXYGEN
-
-#define GG_PUBDIR50_WRITE 0x01
-#define GG_PUBDIR50_READ 0x02
-#define GG_PUBDIR50_SEARCH 0x03
-#define GG_PUBDIR50_SEARCH_REQUEST GG_PUBDIR50_SEARCH
-#define GG_PUBDIR50_SEARCH_REPLY 0x05
-
-#else
-
-/**
- * \ingroup pubdir50
- * 
- * Rodzaj zapytania lub odpowiedzi katalogu publicznego.
+/*
+ * konfiguracja http proxy.
  */
-enum {
-	GG_PUBDIR50_WRITE,	/**< WysÅ‚anie do serwera informacji o sobie */
-	GG_PUBDIR50_READ,	/**< Pobranie z serwera informacji o sobie */
-	GG_PUBDIR50_SEARCH,	/**< Wyszukiwanie w katalogu publicznym */
-	GG_PUBDIR50_SEARCH_REPLY,	/**< Wynik wyszukiwania w katalogu publicznym */
-};
+extern int gg_proxy_enabled;		/* w³±cza obs³ugê proxy */
+extern char *gg_proxy_host;		/* okre¶la adres serwera proxy */
+extern int gg_proxy_port;		/* okre¶la port serwera proxy */
+extern char *gg_proxy_username;		/* okre¶la nazwê u¿ytkownika przy autoryzacji serwera proxy */
+extern char *gg_proxy_password;		/* okre¶la has³o u¿ytkownika przy autoryzacji serwera proxy */
+extern int gg_proxy_http_only;		/* w³±cza obs³ugê proxy wy³±cznie dla us³ug HTTP */
 
-#endif	/* DOXYGEN */
 
-/** \cond obsolete */
+/*
+ * adres, z którego ¶lemy pakiety (np ³±czymy siê z serwerem)
+ * u¿ywany przy gg_connect()
+ */
+extern unsigned long gg_local_ip;
+/*
+ * -------------------------------------------------------------------------
+ * poni¿ej znajduj± siê wewnêtrzne sprawy biblioteki. zwyk³y klient nie
+ * powinien ich w ogóle ruszaæ, bo i nie ma po co. wszystko mo¿na za³atwiæ
+ * procedurami wy¿szego poziomu, których definicje znajduj± siê na pocz±tku
+ * tego pliku.
+ * -------------------------------------------------------------------------
+ */
 
-#define gg_free_event gg_event_free
-#define gg_free_http gg_http_free
-#define gg_free_pubdir gg_pubdir_free
-#define gg_free_register gg_pubdir_free
-#define gg_free_remind_passwd gg_pubdir_free
-#define gg_free_dcc gg_dcc_free
-#define gg_free_change_passwd gg_pubdir_free
-
-struct gg_search_request {
-	int active;
-	unsigned int start;
-	char *nickname;
-	char *first_name;
-	char *last_name;
-	char *city;
-	int gender;
-	int min_birth;
-	int max_birth;
-	char *email;
-	char *phone;
-	uin_t uin;
-} /* GG_DEPRECATED */;
-
-struct gg_search {
-	int count;
-	struct gg_search_result *results;
-} GG_DEPRECATED;
-
-struct gg_search_result {
-	uin_t uin;
-	char *first_name;
-	char *last_name;
-	char *nickname;
-	int born;
-	int gender;
-	char *city;
-	int active;
-} GG_DEPRECATED;
-
-#define GG_GENDER_NONE 0
-#define GG_GENDER_FEMALE 1
-#define GG_GENDER_MALE 2
-
-struct gg_http *gg_search(const struct gg_search_request *r, int async) GG_DEPRECATED;
-int gg_search_watch_fd(struct gg_http *f) GG_DEPRECATED;
-void gg_free_search(struct gg_http *f) GG_DEPRECATED;
-#define gg_search_free gg_free_search
-
-const struct gg_search_request *gg_search_request_mode_0(char *nickname, char *first_name, char *last_name, char *city, int gender, int min_birth, int max_birth, int active, int start) GG_DEPRECATED;
-const struct gg_search_request *gg_search_request_mode_1(char *email, int active, int start) GG_DEPRECATED;
-const struct gg_search_request *gg_search_request_mode_2(char *phone, int active, int start) GG_DEPRECATED;
-const struct gg_search_request *gg_search_request_mode_3(uin_t uin, int active, int start) GG_DEPRECATED;
-void gg_search_request_free(struct gg_search_request *r) GG_DEPRECATED;
-
-struct gg_http *gg_register(const char *email, const char *password, int async) GG_DEPRECATED;
-struct gg_http *gg_register2(const char *email, const char *password, const char *qa, int async) GG_DEPRECATED;
-
-struct gg_http *gg_unregister(uin_t uin, const char *password, const char *email, int async) GG_DEPRECATED;
-struct gg_http *gg_unregister2(uin_t uin, const char *password, const char *qa, int async) GG_DEPRECATED;
-
-struct gg_http *gg_remind_passwd(uin_t uin, int async) GG_DEPRECATED;
-struct gg_http *gg_remind_passwd2(uin_t uin, const char *tokenid, const char *tokenval, int async) GG_DEPRECATED;
-
-struct gg_http *gg_change_passwd(uin_t uin, const char *passwd, const char *newpasswd, const char *newemail, int async) GG_DEPRECATED;
-struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd, const char *newpasswd, const char *email, const char *newemail, int async) GG_DEPRECATED;
-struct gg_http *gg_change_passwd3(uin_t uin, const char *passwd, const char *newpasswd, const char *qa, int async) GG_DEPRECATED;
-
-int gg_resolve(int *fd, int *pid, const char *hostname) GG_DEPRECATED;
-int gg_resolve_pthread(int *fd, void **resolver, const char *hostname) GG_DEPRECATED;
-void gg_resolve_pthread_cleanup(void *arg, int kill) GG_DEPRECATED;
-
-struct gg_change_info_request {
-	char *first_name;
-	char *last_name;
-	char *nickname;
-	char *email;
-	int born;
-	int gender;
-	char *city;
-} /* GG_DEPRECATED */;
-
-struct gg_change_info_request *gg_change_info_request_new(const char *first_name, const char *last_name, const char *nickname, const char *email, int born, int gender, const char *city) GG_DEPRECATED;
-void gg_change_info_request_free(struct gg_change_info_request *r) GG_DEPRECATED;
-
-struct gg_http *gg_change_info(uin_t uin, const char *passwd, const struct gg_change_info_request *request, int async) GG_DEPRECATED;
-#define gg_change_pubdir_watch_fd gg_pubdir_watch_fd
-#define gg_change_pubdir_free gg_pubdir_free
-#define gg_free_change_pubdir gg_pubdir_free
-
-struct gg_http *gg_userlist_get(uin_t uin, const char *password, int async) GG_DEPRECATED;
-int gg_userlist_get_watch_fd(struct gg_http *f) GG_DEPRECATED;
-void gg_userlist_get_free(struct gg_http *f) GG_DEPRECATED;
-
-struct gg_http *gg_userlist_put(uin_t uin, const char *password, const char *contacts, int async) GG_DEPRECATED;
-int gg_userlist_put_watch_fd(struct gg_http *f) GG_DEPRECATED;
-void gg_userlist_put_free(struct gg_http *f) GG_DEPRECATED;
-
-struct gg_http *gg_userlist_remove(uin_t uin, const char *password, int async) GG_DEPRECATED;
-int gg_userlist_remove_watch_fd(struct gg_http *f) GG_DEPRECATED;
-void gg_userlist_remove_free(struct gg_http *f) GG_DEPRECATED;
-
-int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length) GG_DEPRECATED;
-
-/** \endcond */
-
-int gg_file_hash_sha1(int fd, uint8_t *result) GG_DEPRECATED;
-
-#ifdef __GNUC__
-char *gg_saprintf(const char *format, ...) __attribute__ ((format (printf, 1, 2))) GG_DEPRECATED;
-#else
-char *gg_saprintf(const char *format, ...) GG_DEPRECATED;
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
+int gg_resolve_pthread(int *fd, void **resolver, const char *hostname);
+#elif defined _WIN32
+int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname);
 #endif
 
-char *gg_vsaprintf(const char *format, va_list ap) GG_DEPRECATED;
+#ifdef _WIN32
+int gg_thread_socket(int thread_id, int socket);
+#endif
+
+int gg_resolve(int *fd, int *pid, const char *hostname);
+
+#if defined __GNUC__ && !defined _WIN32
+char *gg_saprintf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
+#else
+char *gg_saprintf(const char *format, ...);
+#endif
+
+char *gg_vsaprintf(const char *format, va_list ap);
 
 #define gg_alloc_sprintf gg_saprintf
 
-char *gg_get_line(char **ptr) GG_DEPRECATED;
+char *gg_get_line(char **ptr);
 
-int gg_connect(void *addr, int port, int async) GG_DEPRECATED;
-struct in_addr *gg_gethostbyname(const char *hostname) GG_DEPRECATED;
-char *gg_read_line(int sock, char *buf, int length) GG_DEPRECATED;
-void gg_chomp(char *line) GG_DEPRECATED;
-char *gg_urlencode(const char *str) GG_DEPRECATED;
-int gg_http_hash(const char *format, ...) GG_DEPRECATED;
-void gg_http_free_fields(struct gg_http *h) GG_DEPRECATED;
-int gg_read(struct gg_session *sess, char *buf, int length) GG_DEPRECATED;
-int gg_write(struct gg_session *sess, const char *buf, int length) GG_DEPRECATED;
-void *gg_recv_packet(struct gg_session *sess) GG_DEPRECATED;
-int gg_send_packet(struct gg_session *sess, int type, ...) GG_DEPRECATED;
-unsigned int gg_login_hash(const unsigned char *password, unsigned int seed) GG_DEPRECATED;
-void gg_login_hash_sha1(const char *password, uint32_t seed, uint8_t *result) GG_DEPRECATED;
-uint32_t gg_fix32(uint32_t x) GG_DEPRECATED;
-uint16_t gg_fix16(uint16_t x) GG_DEPRECATED;
+int gg_connect(void *addr, int port, int async);
+struct in_addr *gg_gethostbyname(const char *hostname);
+char *gg_read_line(int sock, char *buf, int length);
+void gg_chomp(char *line);
+char *gg_urlencode(const char *str);
+int gg_http_hash(const char *format, ...);
+int gg_read(struct gg_session *sess, char *buf, int length);
+int gg_write(struct gg_session *sess, const char *buf, int length);
+void *gg_recv_packet(struct gg_session *sess);
+int gg_send_packet(struct gg_session *sess, int type, ...);
+unsigned int gg_login_hash(const unsigned char *password, unsigned int seed);
+uint32_t gg_fix32(uint32_t x);
+uint16_t gg_fix16(uint16_t x);
 #define fix16 gg_fix16
 #define fix32 gg_fix32
-char *gg_proxy_auth(void) GG_DEPRECATED;
-char *gg_base64_encode(const char *buf) GG_DEPRECATED;
-char *gg_base64_decode(const char *buf) GG_DEPRECATED;
-int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int freeq) GG_DEPRECATED;
-
-/**
- * Kolejka odbieranych obrazkÃ³w.
- */
-struct gg_image_queue {
-	uin_t sender;			/**< Nadawca obrazka */
-	uint32_t size;			/**< Rozmiar obrazka */
-	uint32_t crc32;			/**< Suma kontrolna CRC32 */
-	char *filename;			/**< Nazwa pliku */
-	char *image;			/**< Bufor z odebranymi danymi */
-	uint32_t done;			/**< Rozmiar odebranych danych */
-
-	struct gg_image_queue *next;	/**< Kolejny element listy */
-} GG_DEPRECATED;
-
-int gg_dcc7_handle_id(struct gg_session *sess, struct gg_event *e, void *payload, int len) GG_DEPRECATED;
-int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, void *payload, int len) GG_DEPRECATED;
-int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, void *payload, int len) GG_DEPRECATED;
-int gg_dcc7_handle_accept(struct gg_session *sess, struct gg_event *e, void *payload, int len) GG_DEPRECATED;
-int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, void *payload, int len) GG_DEPRECATED;
+char *gg_proxy_auth(void);
+char *gg_base64_encode(const char *buf);
+char *gg_base64_decode(const char *buf);
+int gg_image_queue_remove(struct gg_session *s, struct gg_image_queue *q, int freeq);
 
 #define GG_APPMSG_HOST "appmsg.gadu-gadu.pl"
 #define GG_APPMSG_PORT 80
@@ -1351,111 +941,63 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, void *pay
 #define GG_HTTPS_PORT 443
 #define GG_HTTP_USERAGENT "Mozilla/4.7 [en] (Win98; I)"
 
-#define GG_DEFAULT_CLIENT_VERSION "8.0.0.7669"
-#define GG_DEFAULT_PROTOCOL_VERSION 0x2e
+#define GG_DEFAULT_CLIENT_VERSION "6, 1, 0, 158"
+#define GG_DEFAULT_PROTOCOL_VERSION 0x24
 #define GG_DEFAULT_TIMEOUT 30
 #define GG_HAS_AUDIO_MASK 0x40000000
-#define GG_HAS_AUDIO7_MASK 0x20000000
 #define GG_ERA_OMNIX_MASK 0x04000000
-#undef GG_LIBGADU_VERSION
-
-#ifndef DOXYGEN
-
-#define GG_FEATURE_MSG77		0x01
-#define GG_FEATURE_STATUS77		0x02
-#define GG_FEATURE_DND_FFC		0x10
-#define GG_FEATURE_IMAGE_DESCR		0x20
-
-/* PoniÅ¼sze makra zostaÅ‚y zachowane dla zgodnoÅ›ci API */
-#define GG_FEATURE_MSG80		0
-#define GG_FEATURE_STATUS80		0
-#define GG_FEATURE_STATUS80BETA		0
-#define GG_FEATURE_ALL			(GG_FEATURE_DND_FFC | GG_FEATURE_IMAGE_DESCR)
-
-#else
-
-/** 
- * \ingroup login
- *
- * Flagi opcji protokoÅ‚u.
- */
-enum {
-	GG_FEATURE_MSG77,	/**< Klient Å¼yczy sobie otrzymywaÄ‡ wiadomoÅ›ci zgodnie z protokoÅ‚em 7.7 */
-	GG_FEATURE_STATUS77,	/**< Klient Å¼yczy sobie otrzymywaÄ‡ zmiany stanu zgodnie z protokoÅ‚em 7.7 */
-	GG_FEATURE_DND_FFC,	/**< Klient obsÅ‚uguje statusy "nie przeszkadzaÄ‡" i "poGGadaj ze mnÄ…" */
-	GG_FEATURE_IMAGE_DESCR,	/**< Klient obsÅ‚uguje opisy graficzne oraz flagÄ™ \c GG_STATUS80_DESCR_MASK */
-};
-
-
-#endif
+#define GG_LIBGADU_VERSION "1.5.20050718"
 
 #define GG_DEFAULT_DCC_PORT 1550
 
 struct gg_header {
 	uint32_t type;			/* typ pakietu */
-	uint32_t length;		/* dÅ‚ugoÅ›Ä‡ reszty pakietu */
+	uint32_t length;		/* d³ugo¶æ reszty pakietu */
 } GG_PACKED;
 
 #define GG_WELCOME 0x0001
 #define GG_NEED_EMAIL 0x0014
 
 struct gg_welcome {
-	uint32_t key;			/* klucz szyfrowania hasÅ‚a */
+	uint32_t key;			/* klucz szyfrowania has³a */
 } GG_PACKED;
 
 #define GG_LOGIN 0x000c
 
 struct gg_login {
-	uint32_t uin;			/* mÃ³j numerek */
-	uint32_t hash;			/* hash hasÅ‚a */
-	uint32_t status;		/* status na dzieÅ„ dobry */
+	uint32_t uin;			/* mój numerek */
+	uint32_t hash;			/* hash has³a */
+	uint32_t status;		/* status na dzieñ dobry */
 	uint32_t version;		/* moja wersja klienta */
-	uint32_t local_ip;		/* mÃ³j adres ip */
-	uint16_t local_port;		/* port, na ktÃ³rym sÅ‚ucham */
+	uint32_t local_ip;		/* mój adres ip */
+	uint16_t local_port;		/* port, na którym s³ucham */
 } GG_PACKED;
 
 #define GG_LOGIN_EXT 0x0013
 
 struct gg_login_ext {
-	uint32_t uin;			/* mÃ³j numerek */
-	uint32_t hash;			/* hash hasÅ‚a */
-	uint32_t status;		/* status na dzieÅ„ dobry */
+	uint32_t uin;			/* mój numerek */
+	uint32_t hash;			/* hash has³a */
+	uint32_t status;		/* status na dzieñ dobry */
 	uint32_t version;		/* moja wersja klienta */
-	uint32_t local_ip;		/* mÃ³j adres ip */
-	uint16_t local_port;		/* port, na ktÃ³rym sÅ‚ucham */
-	uint32_t external_ip;		/* zewnÄ™trzny adres ip */
-	uint16_t external_port;		/* zewnÄ™trzny port */
+	uint32_t local_ip;		/* mój adres ip */
+	uint16_t local_port;		/* port, na którym s³ucham */
+	uint32_t external_ip;		/* zewnêtrzny adres ip */
+	uint16_t external_port;		/* zewnêtrzny port */
 } GG_PACKED;
 
 #define GG_LOGIN60 0x0015
 
 struct gg_login60 {
-	uint32_t uin;			/* mÃ³j numerek */
-	uint32_t hash;			/* hash hasÅ‚a */
-	uint32_t status;		/* status na dzieÅ„ dobry */
+	uint32_t uin;			/* mój numerek */
+	uint32_t hash;			/* hash has³a */
+	uint32_t status;		/* status na dzieñ dobry */
 	uint32_t version;		/* moja wersja klienta */
 	uint8_t dunno1;			/* 0x00 */
-	uint32_t local_ip;		/* mÃ³j adres ip */
-	uint16_t local_port;		/* port, na ktÃ³rym sÅ‚ucham */
-	uint32_t external_ip;		/* zewnÄ™trzny adres ip */
-	uint16_t external_port;		/* zewnÄ™trzny port */
-	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
-	uint8_t dunno2;			/* 0xbe */
-} GG_PACKED;
-
-#define GG_LOGIN70 0x0019
-
-struct gg_login70 {
-	uint32_t uin;			/* mÃ³j numerek */
-	uint8_t hash_type;		/* rodzaj hashowania hasÅ‚a */
-	uint8_t hash[64];		/* hash hasÅ‚a dopeÅ‚niony zerami */
-	uint32_t status;		/* status na dzieÅ„ dobry */
-	uint32_t version;		/* moja wersja klienta */
-	uint8_t dunno1;			/* 0x00 */
-	uint32_t local_ip;		/* mÃ³j adres ip */
-	uint16_t local_port;		/* port, na ktÃ³rym sÅ‚ucham */
-	uint32_t external_ip;		/* zewnÄ™trzny adres ip (???) */
-	uint16_t external_port;		/* zewnÄ™trzny port (???) */
+	uint32_t local_ip;		/* mój adres ip */
+	uint16_t local_port;		/* port, na którym s³ucham */
+	uint32_t external_ip;		/* zewnêtrzny adres ip */
+	uint16_t external_port;		/* zewnêtrzny port */
 	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
 	uint8_t dunno2;			/* 0xbe */
 } GG_PACKED;
@@ -1466,135 +1008,70 @@ struct gg_login70 {
 
 #define GG_PUBDIR50_REQUEST 0x0014
 
+#define GG_PUBDIR50_WRITE 0x01
+#define GG_PUBDIR50_READ 0x02
+#define GG_PUBDIR50_SEARCH 0x03
+#define GG_PUBDIR50_SEARCH_REQUEST GG_PUBDIR50_SEARCH
+#define GG_PUBDIR50_SEARCH_REPLY 0x05
+
 struct gg_pubdir50_request {
 	uint8_t type;			/* GG_PUBDIR50_* */
-	uint32_t seq;			/* czas wysÅ‚ania zapytania */
+	uint32_t seq;			/* czas wys³ania zapytania */
 } GG_PACKED;
 
 #define GG_PUBDIR50_REPLY 0x000e
 
 struct gg_pubdir50_reply {
 	uint8_t type;			/* GG_PUBDIR50_* */
-	uint32_t seq;			/* czas wysÅ‚ania zapytania */
+	uint32_t seq;			/* czas wys³ania zapytania */
 } GG_PACKED;
 
 #define GG_NEW_STATUS 0x0002
 
-#ifndef DOXYGEN
+#define GG_STATUS_NOT_AVAIL 0x0001		/* niedostêpny */
+#define GG_STATUS_NOT_AVAIL_DESCR 0x0015	/* niedostêpny z opisem (4.8) */
+#define GG_STATUS_AVAIL 0x0002			/* dostêpny */
+#define GG_STATUS_AVAIL_DESCR 0x0004		/* dostêpny z opisem (4.9) */
+#define GG_STATUS_BUSY 0x0003			/* zajêty */
+#define GG_STATUS_BUSY_DESCR 0x0005		/* zajêty z opisem (4.8) */
+#define GG_STATUS_INVISIBLE 0x0014		/* niewidoczny (4.6) */
+#define GG_STATUS_INVISIBLE_DESCR 0x0016	/* niewidoczny z opisem (4.9) */
+#define GG_STATUS_BLOCKED 0x0006		/* zablokowany */
 
-#define GG_STATUS_NOT_AVAIL 0x0001
-#define GG_STATUS_NOT_AVAIL_DESCR 0x0015
-#define GG_STATUS_FFC 0x0017
-#define GG_STATUS_FFC_DESCR 0x0018
-#define GG_STATUS_AVAIL 0x0002
-#define GG_STATUS_AVAIL_DESCR 0x0004
-#define GG_STATUS_BUSY 0x0003
-#define GG_STATUS_BUSY_DESCR 0x0005
-#define GG_STATUS_DND 0x0021
-#define GG_STATUS_DND_DESCR 0x0022
-#define GG_STATUS_INVISIBLE 0x0014
-#define GG_STATUS_INVISIBLE_DESCR 0x0016
-#define GG_STATUS_BLOCKED 0x0006
+#define GG_STATUS_FRIENDS_MASK 0x8000		/* tylko dla znajomych (4.6) */
 
-#define GG_STATUS_IMAGE_MASK 0x0100
-#define GG_STATUS_DESCR_MASK 0x4000
-#define GG_STATUS_FRIENDS_MASK 0x8000
+#define GG_STATUS_DESCR_MAXSIZE 70
 
-#else
-
-/**
- * Rodzaje statusÃ³w uÅ¼ytkownika.
- *
- * \ingroup status
+/*
+ * makra do ³atwego i szybkiego sprawdzania stanu.
  */
-enum {
-	GG_STATUS_NOT_AVAIL,		/**< NiedostÄ™pny */
-	GG_STATUS_NOT_AVAIL_DESCR,	/**< NiedostÄ™pny z opisem */
-	GG_STATUS_FFC,			/**< PoGGadaj ze mnÄ… */
-	GG_STATUS_FFC_DESCR,		/**< PoGGadaj ze mnÄ… z opisem */
-	GG_STATUS_AVAIL,		/**< DostÄ™pny */
-	GG_STATUS_AVAIL_DESCR,		/**< DostÄ™pny z opisem */
-	GG_STATUS_BUSY,			/**< ZajÄ™ty */
-	GG_STATUS_BUSY_DESCR,		/**< ZajÄ™ty z opisem */
-	GG_STATUS_DND,			/**< Nie przeszkadzaÄ‡ */
-	GG_STATUS_DND_DESCR,		/**< Nie przeszakdzaÄ‡ z opisem */
-	GG_STATUS_INVISIBLE,		/**< Niewidoczny (tylko wÅ‚asny status) */
-	GG_STATUS_INVISIBLE_DESCR,	/**< Niewidoczny z opisem (tylko wÅ‚asny status) */
-	GG_STATUS_BLOCKED,		/**< Zablokowany (tylko status innych) */
-	GG_STATUS_IMAGE_MASK,		/**< Flaga bitowa oznaczajÄ…ca opis graficzny (tylko jeÅ›li wybrano \c GG_FEATURE_IMAGE_DESCR) */
-	GG_STATUS_DESCR_MASK,		/**< Flaga bitowa oznaczajÄ…ca status z opisem (tylko jeÅ›li wybrano \c GG_FEATURE_IMAGE_DESCR) */
-	GG_STATUS_FRIENDS_MASK,		/**< Flaga bitowa dostÄ™pnoÅ›ci tylko dla znajomych */
-};
-
-#endif	/* DOXYGEN */
-
-/**
- * \ingroup status
- *
- * Flaga bitowa dostepnosci informujaca ze mozemy voipowac
- */
-
-#define GG_STATUS_VOICE_MASK 0x20000	/**< czy ma wlaczone audio (7.7) */
-
-/**
- * \ingroup status
- *
- * Maksymalna dÅ‚ugoÅ›c opisu.
- */
-#define GG_STATUS_DESCR_MAXSIZE 255
-#define GG_STATUS_DESCR_MAXSIZE_PRE_8_0 70
-
-#define GG_STATUS_MASK 0xff
 
 /* GG_S_F() tryb tylko dla znajomych */
 #define GG_S_F(x) (((x) & GG_STATUS_FRIENDS_MASK) != 0)
 
-/* GG_S() stan bez uwzglÄ™dnienia dodatkowych flag */
-#define GG_S(x) ((x) & GG_STATUS_MASK)
+/* GG_S() stan bez uwzglêdnienia trybu tylko dla znajomych */
+#define GG_S(x) ((x) & ~GG_STATUS_FRIENDS_MASK)
 
+/* GG_S_A() dostêpny */
+#define GG_S_A(x) (GG_S(x) == GG_STATUS_AVAIL || GG_S(x) == GG_STATUS_AVAIL_DESCR)
 
-/* GG_S_FF() chÄ™tny do rozmowy */
-#define GG_S_FF(x) (GG_S(x) == GG_STATUS_FFC || GG_S(x) == GG_STATUS_FFC_DESCR)
-
-/* GG_S_AV() dostÄ™pny */
-#define GG_S_AV(x) (GG_S(x) == GG_STATUS_AVAIL || GG_S(x) == GG_STATUS_AVAIL_DESCR)
-
-/* GG_S_AW() zaraz wracam */
-#define GG_S_AW(x) (GG_S(x) == GG_STATUS_BUSY || GG_S(x) == GG_STATUS_BUSY_DESCR)
-
-/* GG_S_DD() nie przeszkadzaÄ‡ */
-#define GG_S_DD(x) (GG_S(x) == GG_STATUS_DND || GG_S(x) == GG_STATUS_DND_DESCR)
-
-/* GG_S_NA() niedostÄ™pny */
+/* GG_S_NA() niedostêpny */
 #define GG_S_NA(x) (GG_S(x) == GG_STATUS_NOT_AVAIL || GG_S(x) == GG_STATUS_NOT_AVAIL_DESCR)
+
+/* GG_S_B() zajêty */
+#define GG_S_B(x) (GG_S(x) == GG_STATUS_BUSY || GG_S(x) == GG_STATUS_BUSY_DESCR)
 
 /* GG_S_I() niewidoczny */
 #define GG_S_I(x) (GG_S(x) == GG_STATUS_INVISIBLE || GG_S(x) == GG_STATUS_INVISIBLE_DESCR)
 
-
-/* GG_S_A() dostÄ™pny lub chÄ™tny do rozmowy */
-#define GG_S_A(x) (GG_S_FF(x) || GG_S_AV(x))
-
-/* GG_S_B() zajÄ™ty lub nie przeszkadzaÄ‡ */
-#define GG_S_B(x) (GG_S_AW(x) || GG_S_DD(x))
-
-
 /* GG_S_D() stan opisowy */
-#define GG_S_D(x) (GG_S(x) == GG_STATUS_NOT_AVAIL_DESCR || \
-		   GG_S(x) == GG_STATUS_FFC_DESCR || \
-		   GG_S(x) == GG_STATUS_AVAIL_DESCR || \
-		   GG_S(x) == GG_STATUS_BUSY_DESCR || \
-		   GG_S(x) == GG_STATUS_DND_DESCR || \
-		   GG_S(x) == GG_STATUS_INVISIBLE_DESCR)
+#define GG_S_D(x) (GG_S(x) == GG_STATUS_NOT_AVAIL_DESCR || GG_S(x) == GG_STATUS_AVAIL_DESCR || GG_S(x) == GG_STATUS_BUSY_DESCR || GG_S(x) == GG_STATUS_INVISIBLE_DESCR)
 
-/* GG_S_BL() blokowany lub blokujÄ…cy */
+/* GG_S_BL() blokowany lub blokuj±cy */
 #define GG_S_BL(x) (GG_S(x) == GG_STATUS_BLOCKED)
 
-/**
- * Zmiana statusu (pakiet \c GG_NEW_STATUS i \c GG_NEW_STATUS80BETA)
- */
 struct gg_new_status {
-	uint32_t status;			/**< Nowy status */
+	uint32_t status;			/* na jaki zmieniæ? */
 } GG_PACKED;
 
 #define GG_NOTIFY_FIRST 0x000f
@@ -1604,29 +1081,12 @@ struct gg_new_status {
 
 struct gg_notify {
 	uint32_t uin;				/* numerek danej osoby */
-	uint8_t dunno1;				/* rodzaj wpisu w liÅ›cie */
+	uint8_t dunno1;				/* rodzaj wpisu w li¶cie */
 } GG_PACKED;
 
-#ifndef DOXYGEN
-
-#define GG_USER_OFFLINE 0x01
-#define GG_USER_NORMAL 0x03
-#define GG_USER_BLOCKED 0x04
-
-#else
-
-/**
- * \ingroup contacts
- *
- * Rodzaj kontaktu.
- */
-enum {
-	GG_USER_NORMAL,		/**< ZwykÅ‚y kontakt */
-	GG_USER_BLOCKED,	/**< Zablokowany */
-	GG_USER_OFFLINE,	/**< Niewidoczny dla kontaktu */
-};
-
-#endif	/* DOXYGEN */
+#define GG_USER_OFFLINE 0x01	/* bêdziemy niewidoczni dla u¿ytkownika */
+#define GG_USER_NORMAL 0x03	/* zwyk³y u¿ytkownik */
+#define GG_USER_BLOCKED 0x04	/* zablokowany u¿ytkownik */
 
 #define GG_LIST_EMPTY 0x0012
 
@@ -1636,7 +1096,7 @@ struct gg_notify_reply {
 	uint32_t uin;			/* numerek */
 	uint32_t status;		/* status danej osoby */
 	uint32_t remote_ip;		/* adres ip delikwenta */
-	uint16_t remote_port;		/* port, na ktÃ³rym sÅ‚ucha klient */
+	uint16_t remote_port;		/* port, na którym s³ucha klient */
 	uint32_t version;		/* wersja klienta */
 	uint16_t dunno2;		/* znowu port? */
 } GG_PACKED;
@@ -1647,7 +1107,7 @@ struct gg_notify_reply60 {
 	uint32_t uin;			/* numerek plus flagi w MSB */
 	uint8_t status;			/* status danej osoby */
 	uint32_t remote_ip;		/* adres ip delikwenta */
-	uint16_t remote_port;		/* port, na ktÃ³rym sÅ‚ucha klient */
+	uint16_t remote_port;		/* port, na którym s³ucha klient */
 	uint8_t version;		/* wersja klienta */
 	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
 	uint8_t dunno1;			/* 0x00 */
@@ -1659,36 +1119,10 @@ struct gg_status60 {
 	uint32_t uin;			/* numerek plus flagi w MSB */
 	uint8_t status;			/* status danej osoby */
 	uint32_t remote_ip;		/* adres ip delikwenta */
-	uint16_t remote_port;		/* port, na ktÃ³rym sÅ‚ucha klient */
+	uint16_t remote_port;		/* port, na którym s³ucha klient */
 	uint8_t version;		/* wersja klienta */
 	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
 	uint8_t dunno1;			/* 0x00 */
-} GG_PACKED;
-
-#define GG_NOTIFY_REPLY77 0x0018
-
-struct gg_notify_reply77 {
-	uint32_t uin;			/* numerek plus flagi w MSB */
-	uint8_t status;			/* status danej osoby */
-	uint32_t remote_ip;		/* adres ip delikwenta */
-	uint16_t remote_port;		/* port, na ktÃ³rym sÅ‚ucha klient */
-	uint8_t version;		/* wersja klienta */
-	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
-	uint8_t dunno1;			/* 0x00 */
-	uint32_t dunno2;		/* ? */
-} GG_PACKED;
-
-#define GG_STATUS77 0x0017
-
-struct gg_status77 {
-	uint32_t uin;			/* numerek plus flagi w MSB */
-	uint8_t status;			/* status danej osoby */
-	uint32_t remote_ip;		/* adres ip delikwenta */
-	uint16_t remote_port;		/* port, na ktÃ³rym sÅ‚ucha klient */
-	uint8_t version;		/* wersja klienta */
-	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
-	uint8_t dunno1;			/* 0x00 */
-	uint32_t dunno2;		/* ? */
 } GG_PACKED;
 
 #define GG_ADD_NOTIFY 0x000d
@@ -1708,41 +1142,15 @@ struct gg_status {
 
 #define GG_SEND_MSG 0x000b
 
-#ifndef DOXYGEN
-
 #define GG_CLASS_QUEUED 0x0001
 #define GG_CLASS_OFFLINE GG_CLASS_QUEUED
 #define GG_CLASS_MSG 0x0004
 #define GG_CLASS_CHAT 0x0008
 #define GG_CLASS_CTCP 0x0010
 #define GG_CLASS_ACK 0x0020
-#define GG_CLASS_EXT GG_CLASS_ACK	/**< Dla kompatybilnoÅ›ci wstecz */
+#define GG_CLASS_EXT GG_CLASS_ACK	/* kompatybilno¶æ wstecz */
 
-#else
-
-/**
- * Klasy wiadomoÅ›ci. WartoÅ›ci sÄ… maskami bitowymi, ktÃ³re w wiÄ™kszoÅ›ci
- * przypadkÃ³w moÅ¼na Å‚Ä…czyÄ‡ (poÅ‚Ä…czenie \c GG_CLASS_MSG i \c GG_CLASS_CHAT
- * nie ma sensu).
- *
- * \ingroup messages
- */
-enum {
-	GG_CLASS_MSG,		/**< WiadomoÅ›Ä‡ ma pojawiÄ‡ siÄ™ w osobnym oknie */
-	GG_CLASS_CHAT,		/**< WiadomoÅ›Ä‡ ma pojawiÄ‡ siÄ™ w oknie rozmowy */
-	GG_CLASS_CTCP,		/**< WiadomoÅ›Ä‡ przeznaczona dla klienta Gadu-Gadu */
-	GG_CLASS_ACK,		/**< Klient nie Å¼yczy sobie potwierdzenia */
-	GG_CLASS_QUEUED,	/**< WiadomoÅ›Ä‡ zakolejkowana na serwerze (tylko przy odbieraniu) */
-};
-
-#endif	/* DOXYGEN */
-
-/**
- * Maksymalna dÅ‚ugoÅ›Ä‡ wiadomoÅ›ci.
- *
- * \ingroup messages
- */
-#define GG_MSG_MAXSIZE 1989
+#define GG_MSG_MAXSIZE 2000
 
 struct gg_send_msg {
 	uint32_t recipient;
@@ -1755,19 +1163,16 @@ struct gg_msg_richtext {
 	uint16_t length;
 } GG_PACKED;
 
-/**
- * Struktura opisujÄ…ca formatowanie tekstu. W zaleÅ¼noÅ›ci od wartoÅ›ci pola
- * \c font, zaraz za tÄ… strukturÄ… moÅ¼e wystÄ…piÄ‡ \c gg_msg_richtext_color
- * lub \c gg_msg_richtext_image.
- *
- * \ingroup messages
- */
 struct gg_msg_richtext_format {
-	uint16_t position;	/**< PoczÄ…tkowy znak formatowania (liczony od 0) */
-	uint8_t font;		/**< Atrybuty formatowania */
+	uint16_t position;
+	uint8_t font;
 } GG_PACKED;
 
-#ifndef DOXYGEN
+struct gg_msg_richtext_image {
+	uint16_t unknown1;
+	uint32_t size;
+	uint32_t crc32;
+} GG_PACKED;
 
 #define GG_FONT_BOLD 0x01
 #define GG_FONT_ITALIC 0x02
@@ -1775,44 +1180,10 @@ struct gg_msg_richtext_format {
 #define GG_FONT_COLOR 0x08
 #define GG_FONT_IMAGE 0x80
 
-#else
-
-/**
- * Atrybuty formatowania wiadomoÅ›ci.
- *
- * \ingroup messages
- */
-enum {
-	GG_FONT_BOLD,
-	GG_FONT_ITALIC,
-	GG_FONT_UNDERLINE,
-	GG_FONT_COLOR,
-	GG_FONT_IMAGE
-};
-
-#endif	/* DOXYGEN */
-
-/**
- * Struktura opisujÄ…cÄ… kolor tekstu dla atrybutu \c GG_FONT_COLOR.
- *
- * \ingroup messages
- */
 struct gg_msg_richtext_color {
-	uint8_t red;		/**< SkÅ‚adowa czerwona koloru */
-	uint8_t green;		/**< SkÅ‚adowa zielona koloru */
-	uint8_t blue;		/**< SkÅ‚adowa niebieska koloru */
-} GG_PACKED;
-
-/**
- * Strukturya opisujÄ…ca obrazek wstawiony do wiadomoÅ›ci dla atrubutu
- * \c GG_FONT_IMAGE.
- *
- * \ingroup messages
- */
-struct gg_msg_richtext_image {
-	uint16_t unknown1;	/**< Nieznane pole o wartoÅ›ci 0x0109 */
-	uint32_t size;		/**< Rozmiar obrazka */
-	uint32_t crc32;		/**< Suma kontrolna CRC32 obrazka */
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
 } GG_PACKED;
 
 struct gg_msg_recipients {
@@ -1836,31 +1207,11 @@ struct gg_msg_image_reply {
 
 #define GG_SEND_MSG_ACK 0x0005
 
-#ifndef DOXYGEN
-
 #define GG_ACK_BLOCKED 0x0001
 #define GG_ACK_DELIVERED 0x0002
 #define GG_ACK_QUEUED 0x0003
 #define GG_ACK_MBOXFULL 0x0004
 #define GG_ACK_NOT_DELIVERED 0x0006
-
-#else
-
-/**
- * Status dorÄ™czenia wiadomoÅ›ci.
- *
- * \ingroup messages
- */
-enum
-{
-	GG_ACK_DELIVERED,	/**< WiadomoÅ›Ä‡ dostarczono. */
-	GG_ACK_QUEUED,		/**< WiadomoÅ›Ä‡ zakolejkowano z powodu niedostÄ™pnoÅ›ci odbiorcy. */
-	GG_ACK_BLOCKED,		/**< WiadomoÅ›Ä‡ zablokowana przez serwer (spam, Å›wiÄ…teczne ograniczenia itd.) */
-	GG_ACK_MBOXFULL,	/**< WiadomoÅ›ci nie dostarczono z powodu zapeÅ‚nionej kolejki wiadomoÅ›ci odbiorcy. */
-	GG_ACK_NOT_DELIVERED	/**< WiadomoÅ›ci nie dostarczono (tylko dla \c GG_CLASS_CTCP). */
-};
-
-#endif	/* DOXYGEN */
 
 struct gg_send_msg_ack {
 	uint32_t status;
@@ -1885,27 +1236,9 @@ struct gg_recv_msg {
 
 #define GG_USERLIST_REQUEST 0x0016
 
-#define GG_XML_EVENT 0x0027
-
-#ifndef DOXYGEN
-
 #define GG_USERLIST_PUT 0x00
 #define GG_USERLIST_PUT_MORE 0x01
 #define GG_USERLIST_GET 0x02
-
-#else
-
-/**
- * \ingroup importexport
- *
- * Rodzaj zapytania.
- */
-enum {
-	GG_USERLIST_PUT,	/**< Eksport listy kontaktÃ³w. */
-	GG_USERLIST_GET,	/**< Import listy kontaktÃ³w. */
-};
-
-#endif	/* DOXYGEN */
 
 struct gg_userlist_request {
 	uint8_t type;
@@ -1913,30 +1246,18 @@ struct gg_userlist_request {
 
 #define GG_USERLIST_REPLY 0x0010
 
-#ifndef DOXYGEN
-
 #define GG_USERLIST_PUT_REPLY 0x00
 #define GG_USERLIST_PUT_MORE_REPLY 0x02
 #define GG_USERLIST_GET_REPLY 0x06
 #define GG_USERLIST_GET_MORE_REPLY 0x04
 
-#else
-
-/**
- * \ingroup importexport
- *
- * Rodzaj odpowiedzi.
- */
-enum {
-	GG_USERLIST_PUT_REPLY,	/**< Wyeksportowano listy kontaktÃ³w. */
-	GG_USERLIST_GET_REPLY,	/**< Zaimportowano listÄ™ kontaktÃ³w. */
-};
-
-#endif	/* DOXYGEN */
-
 struct gg_userlist_reply {
 	uint8_t type;
 } GG_PACKED;
+
+/*
+ * pakiety, sta³e, struktury dla DCC
+ */
 
 struct gg_dcc_tiny_packet {
 	uint8_t type;		/* rodzaj pakietu */
@@ -1953,14 +1274,14 @@ struct gg_dcc_big_packet {
 } GG_PACKED;
 
 /*
- * pÃ³ki co, nie znamy dokÅ‚adnie protokoÅ‚u. nie wiemy, co czemu odpowiada.
- * nazwy sÄ… niepowaÅ¼ne i tymczasowe.
+ * póki co, nie znamy dok³adnie protoko³u. nie wiemy, co czemu odpowiada.
+ * nazwy s± niepowa¿ne i tymczasowe.
  */
 #define GG_DCC_WANT_FILE 0x0003		/* peer chce plik */
-#define GG_DCC_HAVE_FILE 0x0001		/* wiÄ™c mu damy */
+#define GG_DCC_HAVE_FILE 0x0001		/* wiêc mu damy */
 #define GG_DCC_HAVE_FILEINFO 0x0003	/* niech ma informacje o pliku */
 #define GG_DCC_GIMME_FILE 0x0006	/* peer jest pewny */
-#define GG_DCC_CATCH_FILE 0x0002	/* wysyÅ‚amy plik */
+#define GG_DCC_CATCH_FILE 0x0002	/* wysy³amy plik */
 
 #define GG_DCC_FILEATTR_READONLY 0x0020
 
@@ -1969,88 +1290,11 @@ struct gg_dcc_big_packet {
 #define GG_DCC_TIMEOUT_FILE_ACK 300	/* 5 minut */
 #define GG_DCC_TIMEOUT_VOICE_ACK 300	/* 5 minut */
 
-#define GG_DCC7_INFO 0x1f
-
-struct gg_dcc7_info {
-	uint32_t uin;			/* numer nadawcy */
-	uint32_t type;			/* sposÃ³b poÅ‚Ä…czenia */
-	gg_dcc7_id_t id;		/* identyfikator poÅ‚Ä…czenia */
-	char info[GG_DCC7_INFO_LEN];	/* informacje o poÅ‚Ä…czeniu "ip port" */
-} GG_PACKED;
-
-#define GG_DCC7_NEW 0x20
-
-struct gg_dcc7_new {
-	gg_dcc7_id_t id;		/* identyfikator poÅ‚Ä…czenia */
-	uint32_t uin_from;		/* numer nadawcy */
-	uint32_t uin_to;		/* numer odbiorcy */
-	uint32_t type;			/* rodzaj transmisji */
-	unsigned char filename[GG_DCC7_FILENAME_LEN];	/* nazwa pliku */
-	uint32_t size;			/* rozmiar pliku */
-	uint32_t size_hi;		/* rozmiar pliku (starsze bajty) */
-	unsigned char hash[GG_DCC7_HASH_LEN];	/* hash SHA1 */
-} GG_PACKED;
-
-#define GG_DCC7_ACCEPT 0x21
-
-struct gg_dcc7_accept {
-	uint32_t uin;			/* numer przyjmujÄ…cego poÅ‚Ä…czenie */
-	gg_dcc7_id_t id;		/* identyfikator poÅ‚Ä…czenia */
-	uint32_t offset;		/* offset przy wznawianiu transmisji */
-	uint32_t dunno1;		/* 0x00000000 */
-} GG_PACKED;
-
-// XXX API
-#define GG_DCC7_TYPE_P2P 0x00000001	/**< PoÅ‚Ä…czenie bezpoÅ›rednie */
-#define GG_DCC7_TYPE_SERVER 0x00000002	/**< PoÅ‚Ä…czenie przez serwer */
-
-#define GG_DCC7_REJECT 0x22
-
-struct gg_dcc7_reject {
-	uint32_t uin;			/**< Numer odrzucajÄ…cego poÅ‚Ä…czenie */
-	gg_dcc7_id_t id;		/**< Identyfikator poÅ‚Ä…czenia */
-	uint32_t reason;		/**< PowÃ³d rozÅ‚Ä…czenia */
-} GG_PACKED;
-
-// XXX API
-#define GG_DCC7_REJECT_BUSY 0x00000001	/**< PoÅ‚Ä…czenie bezpoÅ›rednie juÅ¼ trwa, nie umiem obsÅ‚uÅ¼yÄ‡ wiÄ™cej */
-#define GG_DCC7_REJECT_USER 0x00000002	/**< UÅ¼ytkownik odrzuciÅ‚ poÅ‚Ä…czenie */
-#define GG_DCC7_REJECT_VERSION 0x00000006	/**< Druga strona ma wersjÄ™ klienta nieobsÅ‚ugujÄ…cÄ… poÅ‚Ä…czeÅ„ bezpoÅ›rednich tego typu */
-
-#define GG_DCC7_ID_REQUEST 0x23
-
-struct gg_dcc7_id_request {
-	uint32_t type;			/**< Rodzaj tranmisji */
-} GG_PACKED;
-
-// XXX API
-#define GG_DCC7_TYPE_VOICE 0x00000001	/**< Transmisja gÅ‚osu */
-#define GG_DCC7_TYPE_FILE 0x00000004	/**< transmisja pliku */
-
-#define GG_DCC7_ID_REPLY 0x23
-
-struct gg_dcc7_id_reply {
-	uint32_t type;			/** Rodzaj transmisji */
-	gg_dcc7_id_t id;		/** Przyznany identyfikator */
-} GG_PACKED;
-
-#define GG_DCC7_DUNNO1 0x24
-
-struct gg_dcc7_dunno1 {
-	// XXX
-} GG_PACKED;
-
-#define GG_DCC7_TIMEOUT_CONNECT 10	/* 10 sekund */
-#define GG_DCC7_TIMEOUT_SEND 1800	/* 30 minut */
-#define GG_DCC7_TIMEOUT_GET 1800	/* 30 minut */
-#define GG_DCC7_TIMEOUT_FILE_ACK 300	/* 5 minut */
-#define GG_DCC7_TIMEOUT_VOICE_ACK 300	/* 5 minut */
-
 #ifdef __cplusplus
-}
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma pack(pop)
 #endif
+}
 #endif
 
 #endif /* __GG_LIBGADU_H */

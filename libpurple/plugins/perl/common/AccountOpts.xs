@@ -44,9 +44,10 @@ CODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(values));
 
-	for (i = 0; i <= t_len; i++)
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(values), i, 0)));
-
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(values), i, 0), t_sl));
+	}
 	RETVAL  = purple_account_option_list_new(text, pref_name, t_GL);
 OUTPUT:
 	RETVAL
@@ -132,9 +133,10 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(values));
 
-	for (i = 0; i <= t_len; i++)
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(values), i, 0)));
-
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(values), i, 0), t_sl));
+	}
 	purple_account_option_set_list(option, t_GL);
 
 void

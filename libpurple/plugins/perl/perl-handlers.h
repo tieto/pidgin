@@ -15,8 +15,8 @@ typedef struct
 	PurpleCmdId id;
 	SV *callback;
 	SV *data;
-	gchar *prpl_id;
-	gchar *cmd;
+	char *prpl_id;
+	char *cmd;
 	PurplePlugin *plugin;
 } PurplePerlCmdHandler;
 
@@ -31,7 +31,7 @@ typedef struct
 
 typedef struct
 {
-	gchar *signal;
+	char *signal;
 	SV *callback;
 	SV *data;
 	void *instance;
@@ -39,17 +39,8 @@ typedef struct
 
 } PurplePerlSignalHandler;
 
-typedef struct
-{
-	SV *callback;
-	SV *data;
-	PurplePlugin *plugin;
-	int iotag;
-
-} PurplePerlPrefsHandler;
-
 void purple_perl_plugin_action_cb(PurplePluginAction * gpa);
-GList *purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context);
+GList *purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context); 
 
 PurplePluginPrefFrame *purple_perl_get_plugin_frame(PurplePlugin *plugin);
 
@@ -77,9 +68,5 @@ PurpleCmdId purple_perl_cmd_register(PurplePlugin *plugin, const gchar *cmd,
                                  SV *callback, const gchar *helpstr, SV *data);
 void purple_perl_cmd_unregister(PurpleCmdId id);
 void purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin);
-
-guint purple_perl_prefs_connect_callback(PurplePlugin *plugin, const char *name, SV *callback, SV *data);
-void purple_perl_prefs_disconnect_callback(guint callback_id);
-void purple_perl_pref_cb_clear_for_plugin(PurplePlugin *plugin);
 
 #endif /* _PURPLE_PERL_HANDLERS_H_ */

@@ -88,10 +88,10 @@ void pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);
 
 /**
- * Indicate in a file transfer dialog that a transfer was cancelled.
+ * Indicate in a file transfer dialog that a transfer was canceled.
  *
  * @param dialog The file transfer dialog.
- * @param xfer   The file transfer that was cancelled.
+ * @param xfer   The file transfer that was canceled.
  */
 void pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									 PurpleXfer *xfer);

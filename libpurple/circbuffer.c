@@ -44,7 +44,7 @@ void purple_circ_buffer_destroy(PurpleCircBuffer *buf) {
 static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 	int in_offset = 0, out_offset = 0;
 	int start_buflen;
-
+	
 	g_return_if_fail(buf != NULL);
 
 	start_buflen = buf->buflen;
@@ -68,8 +68,7 @@ static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 
 	/* If the fill pointer is wrapped to before the remove
 	 * pointer, we need to shift the data */
-	if (in_offset < out_offset
-			|| (in_offset == out_offset && buf->bufused > 0)) {
+	if (in_offset < out_offset) {
 		int shift_n = MIN(buf->buflen - start_buflen,
 			in_offset);
 		memcpy(buf->buffer + start_buflen, buf->buffer,
@@ -95,7 +94,7 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
 	int len_stored;
 
 	g_return_if_fail(buf != NULL);
-
+	
 	/* Grow the buffer, if necessary */
 	if ((buf->buflen - buf->bufused) < len)
 		grow_circ_buffer(buf, len);
@@ -110,12 +109,13 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
 	else
 		len_stored = len;
 
-	if (len_stored > 0)
-		memcpy(buf->inptr, src, len_stored);
+	memcpy(buf->inptr, src, len_stored);
 
 	if (len_stored < len) {
 		memcpy(buf->buffer, (char*)src + len_stored, len - len_stored);
 		buf->inptr = buf->buffer + (len - len_stored);
+	} else if ((buf->buffer - buf->inptr) == len_stored) {
+		buf->inptr = buf->buffer;
 	} else {
 		buf->inptr += len_stored;
 	}

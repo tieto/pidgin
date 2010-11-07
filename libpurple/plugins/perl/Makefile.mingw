@@ -7,12 +7,10 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
-
 TARGET = perl
 
 # Perl headers with /* /* */ type comments.. Turn off warnings.
-GCCWARNINGS += -Wno-comment
+CFLAGS += -Wno-comment
 
 ##
 ## INCLUDE PATHS
@@ -49,7 +47,7 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lpurple \
-			-lperl510
+			-lperl58
 
 include $(PIDGIN_COMMON_RULES)
 

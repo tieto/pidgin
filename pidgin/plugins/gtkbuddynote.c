@@ -31,13 +31,11 @@ append_to_tooltip(PurpleBlistNode *node, GString *text, gboolean full)
 		const gchar *note = purple_blist_node_get_string(node, "notes");
 
 		if ((note != NULL) && (*note != '\0')) {
-			char *tmp, *esc;
+			char *tmp;
 			purple_markup_html_to_xhtml(note, NULL, &tmp);
-			esc = g_markup_escape_text(tmp, -1);
-			g_free(tmp);
 			g_string_append_printf(text, _("\n<b>Buddy Note</b>: %s"),
-			                       esc);
-			g_free(esc);
+			                       tmp);
+			g_free(tmp);
 		}
 	}
 }

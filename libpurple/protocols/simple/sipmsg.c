@@ -55,26 +55,22 @@ struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
 }
 
 struct sipmsg *sipmsg_parse_header(const gchar *header) {
-	struct sipmsg *msg;
-	gchar **parts, **lines;
-	gchar *dummy, *dummy2, *tmp;
+	struct sipmsg *msg = g_new0(struct sipmsg,1);
+	gchar **lines = g_strsplit(header,"\r\n",0);
+	gchar **parts;
+	gchar *dummy;
+	gchar *dummy2;
+	gchar *tmp;
 	const gchar *tmp2;
-	int i = 1;
-
-	lines = g_strsplit(header,"\r\n",0);
-	if(!lines[0]) {
-		g_strfreev(lines);
-		return NULL;
-	}
-
+	int i=1;
+	if(!lines[0]) return NULL;
 	parts = g_strsplit(lines[0], " ", 3);
 	if(!parts[0] || !parts[1] || !parts[2]) {
 		g_strfreev(parts);
 		g_strfreev(lines);
+		g_free(msg);
 		return NULL;
 	}
-
-	msg = g_new0(struct sipmsg,1);
 	if(strstr(parts[0],"SIP")) { /* numeric response */
 		msg->method = g_strdup(parts[2]);
 		msg->response = strtol(parts[1],NULL,10);
@@ -84,13 +80,12 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		msg->response = 0;
 	}
 	g_strfreev(parts);
-
 	for(i=1; lines[i] && strlen(lines[i])>2; i++) {
 		parts = g_strsplit(lines[i], ":", 2);
 		if(!parts[0] || !parts[1]) {
 			g_strfreev(parts);
 			g_strfreev(lines);
-			sipmsg_free(msg);
+			g_free(msg);
 			return NULL;
 		}
 		dummy = parts[1];
@@ -106,28 +101,23 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 			dummy2 = tmp;
 		}
 		sipmsg_add_header(msg, parts[0], dummy2);
-		g_free(dummy2);
 		g_strfreev(parts);
 	}
 	g_strfreev(lines);
-
 	tmp2 = sipmsg_find_header(msg, "Content-Length");
 	if (tmp2 != NULL)
 		msg->bodylen = strtol(tmp2, NULL, 10);
-
 	if(msg->response) {
 		tmp2 = sipmsg_find_header(msg, "CSeq");
-		g_free(msg->method);
 		if(!tmp2) {
 			/* SHOULD NOT HAPPEN */
-			msg->method = NULL;
+			msg->method = 0;
 		} else {
 			parts = g_strsplit(tmp2, " ", 2);
 			msg->method = g_strdup(parts[1]);
 			g_strfreev(parts);
 		}
 	}
-
 	return msg;
 }
 
@@ -170,7 +160,7 @@ char *sipmsg_to_string(const struct sipmsg *msg) {
 	return g_string_free(outstr, FALSE);
 }
 void sipmsg_add_header(struct sipmsg *msg, const gchar *name, const gchar *value) {
-	struct siphdrelement *element = g_new(struct siphdrelement,1);
+	struct siphdrelement *element = g_new0(struct siphdrelement,1);
 	element->name = g_strdup(name);
 	element->value = g_strdup(value);
 	msg->headers = g_slist_append(msg->headers, element);

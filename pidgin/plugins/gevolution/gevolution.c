@@ -36,20 +36,10 @@
 
 #include "gevolution.h"
 
-#if 0
-/* These are private headers that we probably should never have been
- * including. Maybe very early versions of e-d-s required this?
- *
- * also, bonobo has gone away as of e-d-s 2.29.1, and this plugin still
- * seems to work even on e-d-s 1.10.3 without us touching it.
- * Maybe it's not really working though. I'm sure we'll find out.
- */
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
 #include <libedata-book/e-data-book-factory.h>
-/* TODO: bonobo is going away eventually, we'll need to find an alternative */
 #include <bonobo/bonobo-main.h>
-#endif
 
 #include <glib.h>
 
@@ -62,7 +52,7 @@ enum
 {
 	COLUMN_AUTOADD,
 	COLUMN_ICON,
-	COLUMN_USERNAME,
+	COLUMN_SCREENNAME,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -120,12 +110,13 @@ update_buddies_from_contact(EContact *contact)
 	name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
 	update_ims_from_contact(contact, name, "prpl-aim",    E_CONTACT_IM_AIM);
+	update_ims_from_contact(contact, name, "prpl-oscar",  E_CONTACT_IM_AIM);
 	update_ims_from_contact(contact, name, "prpl-jabber", E_CONTACT_IM_JABBER);
 	update_ims_from_contact(contact, name, "prpl-yahoo",  E_CONTACT_IM_YAHOO);
 	update_ims_from_contact(contact, name, "prpl-msn",    E_CONTACT_IM_MSN);
 	update_ims_from_contact(contact, name, "prpl-icq",    E_CONTACT_IM_ICQ);
+	update_ims_from_contact(contact, name, "prpl-oscar",  E_CONTACT_IM_ICQ);
 	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
-	update_ims_from_contact(contact, name, "prpl-gg",     E_CONTACT_IM_GADUGADU);
 }
 
 static void
@@ -237,25 +228,25 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 		char *app = g_find_program_in_path("evolution");
 		if (app != NULL)
 		{
-			char *quoted = g_shell_quote(mail);
-			char *command_line = g_strdup_printf("%s mailto:%s", app, quoted);
+			char *command_line = g_strdup_printf("%s mailto:%s", app, mail);
+			char *quoted = g_shell_quote(command_line);
 			g_free(app);
 			g_free(mail);
 
-			g_spawn_command_line_async(command_line, NULL);
+			g_spawn_command_line_async(quoted, NULL);
 			g_free(command_line);
 			g_free(quoted);
 		}
 		else
 		{
-			purple_notify_error(NULL, NULL, _("Unable to send email"),
+			purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
 							  _("The evolution executable was not found in the PATH."));
 		}
 	}
 	else
 	{
-		purple_notify_error(NULL, NULL, _("Unable to send email"),
-						  _("An email address was not found for this buddy."));
+		purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
+						  _("An e-mail address was not found for this buddy."));
 	}
 }
 
@@ -293,7 +284,7 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 
 	if (mail != NULL)
 	{
-		act = purple_menu_action_new(_("Send Email"),
+		act = purple_menu_action_new(_("Send E-Mail"),
 			PURPLE_CALLBACK(menu_item_send_mail_activate_cb), NULL, NULL);
 		*menu = g_list_append(*menu, act);
 		g_free(mail);
@@ -306,18 +297,12 @@ load_timeout(gpointer data)
 {
 	PurplePlugin *plugin = (PurplePlugin *)data;
 	EBookQuery *query;
-	GError *err = NULL;
 
 	timer = 0;
 
 	/* Maybe this is it? */
-	if (!gevo_load_addressbook(NULL, &book, &err))
-	{
-		purple_debug_error("evolution",
-						 "Error retrieving addressbook: %s\n", err->message);
-		g_error_free(err);
+	if (!gevo_load_addressbook(NULL, &book, NULL))
 		return FALSE;
-	}
 
 	query = e_book_query_any_field_contains("");
 
@@ -336,9 +321,7 @@ load_timeout(gpointer data)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-#if 0
 	bonobo_activate();
-#endif
 
 	backup_blist_ui_ops = purple_blist_get_ui_ops();
 
@@ -384,9 +367,7 @@ plugin_unload(PurplePlugin *plugin)
 static void
 plugin_destroy(PurplePlugin *plugin)
 {
-#if 0
 	bonobo_debug_shutdown();
-#endif
 }
 
 static void
@@ -482,11 +463,11 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_tree_view_column_add_attribute(column, renderer,
 									   "pixbuf", COLUMN_ICON);
 
-	/* Username */
+	/* Screenname */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "text", COLUMN_USERNAME);
+									   "text", COLUMN_SCREENNAME);
 
 
 	/* Populate */
@@ -508,7 +489,7 @@ get_config_frame(PurplePlugin *plugin)
 						   purple_account_get_bool(account, "gevo-autoadd",
 												 FALSE),
 						   COLUMN_ICON, pixbuf,
-						   COLUMN_USERNAME,
+						   COLUMN_SCREENNAME,
 						   purple_account_get_username(account),
 						   COLUMN_DATA, account,
 						   -1);
@@ -589,20 +570,14 @@ init_plugin(PurplePlugin *plugin)
 	 *
 	 * So, in conclusion, this is an evil hack, but it doesn't harm anything
 	 * and it works.
-	 *
-	 * And for some reason it's needed even when we don't init bonobo ourselves
-	 * at all, so the above explanation is suspect. This is required even with
-	 * e-d-s >= 2.29.1 where bonobo is no longer in the picture.
 	 */
 	g_module_make_resident(plugin->handle);
 
-#if 0
 	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
 						  CORBA_OBJECT_NIL, CORBA_OBJECT_NIL))
 	{
 		purple_debug_error("evolution", "Unable to initialize bonobo.\n");
 	}
-#endif
 }
 
 PURPLE_INIT_PLUGIN(gevolution, init_plugin, info)

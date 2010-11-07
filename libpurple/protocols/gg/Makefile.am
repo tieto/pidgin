@@ -4,20 +4,14 @@ EXTRA_DIST = \
 	lib/compat.h \
 	lib/COPYING \
 	lib/dcc.c \
-	lib/dcc7.c \
 	lib/events.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
-	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
-	lib/protocol.h \
-	lib/pubdir.c \
 	lib/pubdir50.c \
-	lib/resolver.c \
-	lib/resolver.h \
-	lib/sha1.c
+	lib/pubdir.c
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -26,22 +20,16 @@ INTGGSOURCES = \
 	lib/common.c \
 	lib/compat.h \
 	lib/dcc.c \
-	lib/dcc7.c \
 	lib/events.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
-	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
-	lib/protocol.h \
-	lib/pubdir.c \
 	lib/pubdir50.c \
-	lib/resolver.c \
-	lib/resolver.h \
-	lib/sha1.c
+	lib/pubdir.c
 
-INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED
+INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib
 endif
 
 GGSOURCES = \
@@ -64,15 +52,19 @@ libgg_la_LDFLAGS = -module -avoid-version
 if STATIC_GG
 
 st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
-noinst_LTLIBRARIES = libgg.la
-libgg_la_SOURCES = $(GGSOURCES)
-libgg_la_CFLAGS  = $(AM_CFLAGS)
-libgg_la_LIBADD  = $(GADU_LIBS)
+noinst_LIBRARIES = libgg.a
+pkg_LTLIBRARIES =
+
+libgg_a_SOURCES = $(GGSOURCES)
+libgg_a_CFLAGS  = $(AM_CFLAGS)
+libgg_a_LIBADD  = $(GADU_LIBS)
 
 else
 
 st = $(GADU_CFLAGS)
 pkg_LTLIBRARIES = libgg.la
+noinst_LIBRARIES =
+
 libgg_la_SOURCES = $(GGSOURCES)
 libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 

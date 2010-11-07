@@ -21,6 +21,14 @@
  * USA.
  */
 
+#include <stdio.h>
+#include <string.h>
+
+#include <glib.h>
+#include <glib/ghash.h>
+#include <glib/glist.h>
+#include <glib/gstring.h>
+
 #include "internal.h"
 
 /* this should become "util.h" if we ever get this into purple proper */
@@ -105,7 +113,7 @@ static void
 fields_loadline(struct mime_fields *mf, const char *line, gsize len)
 {
 	/* split the line into key: value */
-	char *key, *newkey, *val;
+	char *key, *val;
 	char **tokens;
 
 	/* feh, need it to be NUL terminated */
@@ -121,18 +129,17 @@ fields_loadline(struct mime_fields *mf, const char *line, gsize len)
 
 	/* normalize whitespace (sorta) and trim on key and value */
 	tokens = g_strsplit(key, "\t\r\n", 0);
-	newkey = g_strjoinv("", tokens);
-	g_strstrip(newkey);
+	key = g_strjoinv("", tokens);
+	key = g_strstrip(key);
 	g_strfreev(tokens);
 
 	tokens = g_strsplit(val, "\t\r\n", 0);
 	val = g_strjoinv("", tokens);
-	g_strstrip(val);
+	val = g_strstrip(val);
 	g_strfreev(tokens);
 
-	fields_set(mf, newkey, val);
+	fields_set(mf, key, val);
 
-	g_free(newkey);
 	g_free(key);
 	g_free(val);
 }
@@ -398,7 +405,7 @@ doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, g
 	char *b = (char *) buf;
 	gsize n = len;
 
-	char *bnd;
+	const char *bnd;
 	gsize bl;
 
 	bnd = g_strdup_printf("--%s", boundary);
@@ -432,8 +439,6 @@ doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, g
 
 		b = tail;
 	}
-
-	g_free(bnd);
 }
 
 

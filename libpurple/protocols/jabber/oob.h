@@ -1,11 +1,9 @@
 /**
- * @file oob.h out-of-band transfer functions
+ * @file jutil.h utility functions
  *
  * purple
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_JABBER_OOB_H_
-#define PURPLE_JABBER_OOB_H_
+#ifndef _PURPLE_JABBER_OOB_H_
+#define _PURPLE_JABBER_OOB_H_
 
-#include "jabber.h"
+void jabber_oob_parse(JabberStream *js, xmlnode *packet);
 
-void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
-                      const char *id, xmlnode *querynode);
-
-#endif /* PURPLE_JABBER_OOB_H_ */
+#endif /* _PURPLE_JABBER_OOB_H_ */

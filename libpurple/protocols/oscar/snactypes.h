@@ -96,6 +96,7 @@
 #define SNAC_SUBTYPE_LOCATE_USERINFO 0x0006
 #define SNAC_SUBTYPE_LOCATE_WATCHERSUBREQ 0x0007
 #define SNAC_SUBTYPE_LOCATE_WATCHERNOT 0x0008
+#define SNAC_SUBTYPE_LOCATE_GOTINFOBLOCK 0xfffd
 #define SNAC_SUBTYPE_LOCATE_DEFAULT 0xffff
 
 /*
@@ -251,6 +252,7 @@
  * SNAC Family: Authorizer
  *
  * Used only in protocol versions three and above.
+ *
  */
 #define SNAC_SUBTYPE_AUTH_ERROR 0x0001
 #define SNAC_SUBTYPE_AUTH_LOGINREQEST 0x0002
@@ -264,7 +266,8 @@
  * SNAC Family: Email
  *
  * Used for getting information on the email address
- * associated with your username.
+ * associated with your screen name.
+ *
  */
 #define SNAC_SUBTYPE_ALERT_ERROR 0x0001
 #define SNAC_SUBTYPE_ALERT_SENDCOOKIES 0x0006
@@ -277,6 +280,7 @@
  * This isn't truly a SNAC family either, but using
  * these, we can integrated non-SNAC services into
  * the SNAC-centered libfaim callback structure.
+ *
  */
 #define AIM_CB_SPECIAL_CONNERR 0x0003
 #define AIM_CB_SPECIAL_CONNINITDONE 0x0006

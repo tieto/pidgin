@@ -37,9 +37,7 @@ typedef struct _BonjourJabber
 {
 	gint port;
 	gint socket;
-	gint socket6;
 	gint watcher_id;
-	gint watcher_id6;
 	PurpleAccount *account;
 	GSList *pending_conversations;
 } BonjourJabber;
@@ -81,6 +79,8 @@ void async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv);
 
+void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv);
+
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
@@ -107,6 +107,6 @@ typedef struct _XepIq {
 
 XepIq *xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id);
 int xep_iq_send_and_free(XepIq *iq);
-GSList * bonjour_jabber_get_local_ips(int fd);
+const char *purple_network_get_my_ip_ext2(int fd);
 
 #endif /* _BONJOUR_JABBER_H_ */

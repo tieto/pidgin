@@ -33,11 +33,7 @@
 
 #include "connection.h"
 #include "core.h"
-#include "debug.h"
-#include "gtkblist.h"
-#include "gtkutils.h"
 #include "notify.h"
-#include "pidginstock.h"
 #include "prefs.h"
 #include "util.h"
 #include "version.h"
@@ -48,54 +44,15 @@
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
 
 static void
-release_hide()
-{
-	/* No-op.  We may use this method in the future to avoid showing
-	 * the popup twice */
-}
-
-static void
-release_show()
-{
-	purple_notify_uri(NULL, PURPLE_WEBSITE);
-}
-
-static void
 version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *response, size_t len, const gchar *error_message)
+		const gchar *changelog, size_t len, const gchar *error_message)
 {
-	gchar *cur_ver;
-	const char *tmp, *changelog;
-	char response_code[4];
-	GtkWidget *release_dialog;
-
+	char *cur_ver, *formatted;
 	GString *message;
-	int i = 0;
+	int i=0;
 
-	if(error_message || !response || !len)
+	if(error_message || !changelog || !len)
 		return;
-
-	memset(response_code, '\0', sizeof(response_code));
-	/* Parse the status code - the response should be in the form of "HTTP/?.? 200 ..." */
-	if ((tmp = strstr(response, " ")) != NULL) {
-		tmp++;
-		/* Read the 3 digit status code */
-		if (len - (tmp - response) > 3) {
-			memcpy(response_code, tmp, 3);
-		}
-	}
-
-	if (strcmp(response_code, "200") != 0) {
-		purple_debug_error("relnot", "Didn't recieve a HTTP status code of 200.\n");
-		return;
-	}
-
-	/* Go to the start of the data */
-	if((changelog = strstr(response, "\r\n\r\n")) == NULL) {
-		purple_debug_error("relnot", "Unable to find start of HTTP response data.\n");
-		return;
-	}
-	changelog += 4;
 
 	while(changelog[i] && changelog[i] != '\n') i++;
 
@@ -106,21 +63,27 @@ version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		return;
 
 	cur_ver = g_strndup(changelog, i);
+	changelog += i;
+
+	while(*changelog == '\n') changelog++;
 
 	message = g_string_new("");
-	g_string_append_printf(message, _("You can upgrade to %s %s today."),
-			PIDGIN_NAME, cur_ver);
+	g_string_append_printf(message, _("You are using %s version %s.  The "
+			"current version is %s.  You can get it from "
+			"<a href=\"%s\">%s</a><hr>"),
+			PIDGIN_NAME, purple_core_get_version(), cur_ver,
+			PURPLE_WEBSITE, PURPLE_WEBSITE);
 
-	release_dialog = pidgin_make_mini_dialog(
-		NULL, PIDGIN_STOCK_DIALOG_INFO,
-		_("New Version Available"),
-		message->str,
-		NULL,
-		_("Later"), PURPLE_CALLBACK(release_hide),
-		_("Download Now"), PURPLE_CALLBACK(release_show),
-		NULL);
+	if(*changelog) {
+		formatted = purple_strdup_withhtml(changelog);
+		g_string_append_printf(message, _("<b>ChangeLog:</b><br>%s"),
+				formatted);
+		g_free(formatted);
+	}
 
-	pidgin_blist_add_alert(release_dialog);
+	purple_notify_formatted(NULL, _("New Version Available"),
+			_("New Version Available"), NULL, message->str,
+			NULL, NULL);
 
 	g_string_free(message, TRUE);
 	g_free(cur_ver);
@@ -131,35 +94,16 @@ do_check(void)
 {
 	int last_check = purple_prefs_get_int("/plugins/gtk/relnot/last_check");
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
-		gchar *url, *request;
-		const char *host = "pidgin.im";
-		
-		url = g_strdup_printf("http://%s/version.php?version=%s&build=%s",
-				host,
-				purple_core_get_version(),
+		char *url = g_strdup_printf("http://pidgin.im/version.php?version=%s&build=%s", purple_core_get_version(),
 #ifdef _WIN32
 				"purple-win32"
 #else
 				"purple"
 #endif
 		);
-
-		request = g_strdup_printf(
-				"GET %s HTTP/1.0\r\n"
-				"Connection: close\r\n"
-				"Accept: */*\r\n"
-				"Host: %s\r\n\r\n",
-				url,
-				host);
-
-		purple_util_fetch_url_request_len(url, TRUE, NULL, FALSE,
-			request, TRUE, -1, version_fetch_cb, NULL);
-
-		g_free(request);
-		g_free(url);
-
+		purple_util_fetch_url(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
 		purple_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
-
+		g_free(url);
 	}
 }
 

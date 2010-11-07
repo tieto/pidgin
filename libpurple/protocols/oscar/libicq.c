@@ -20,28 +20,20 @@
  *
  */
 
-/* libicq is the ICQ protocol plugin. It is linked against liboscar,
+/* libicq is the ICQ protocol plugin. It is linked against liboscarcommon,
  * which contains all the shared implementation code with libaim
  */
 
 
 #include "oscarcommon.h"
 
-static GHashTable *
-icq_get_account_text_table(PurpleAccount *account)
-{
-	GHashTable *table;
-	table = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(table, "login_label", (gpointer)_("ICQ UIN..."));
-	return table;
-}
-
 static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"gif,jpeg,bmp,ico", 0, 0, 100, 100, 7168, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"gif,jpeg,bmp,ico", 48, 48, 52, 64, 7168,
+		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
 	oscar_list_icon_icq,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */
@@ -63,11 +55,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
-	NULL,		/* add_permit */
+	oscar_add_permit,		/* add_permit */
 	oscar_add_deny,			/* add_deny */
-	NULL,		/* rem_permit */
+	oscar_rem_permit,		/* rem_permit */
 	oscar_rem_deny,			/* rem_deny */
-	NULL,	/* set_permit_deny */
+	oscar_set_permit_deny,	/* set_permit_deny */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	oscar_get_chat_name,	/* get_chat_name */
@@ -104,13 +96,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* send_attention */
 	NULL,					/* get_attention_types */
 
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	icq_get_account_text_table, /* get_account_text_table */
-	NULL,					/* initiate_media */
-	NULL,					/* can_do_media */
-	oscar_get_purple_moods, /* get_moods */
-	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	/* padding */
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -155,7 +142,7 @@ init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 
-	oscar_init(plugin, TRUE);
+	oscar_init(PURPLE_PLUGIN_PROTOCOL_INFO(plugin));
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

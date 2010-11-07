@@ -1,4 +1,4 @@
-Ri.\" Copyright (c) 2000, Dennis Ristuccia <dennis@dennisr.net>
+.\" Copyright (c) 2000, Dennis Ristuccia <dennis@dennisr.net>
 .\"
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -19,9 +19,9 @@ Ri.\" Copyright (c) 2000, Dennis Ristuccia <dennis@dennisr.net>
 .\" License along with this manual; if not, write to the Free
 .\" Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 .\" Boston, MA  02111-1301  USA.
-.TH pidgin 1 "" "Pidgin v@VERSION@"
+.TH pidgin 1
 .SH NAME
-pidgin \- Instant Messaging client
+Pidgin v@VERSION@ \- Instant Messaging client
 .SH SYNOPSIS
 .TP 5
 \fBpidgin \fI[options]\fR
@@ -34,9 +34,6 @@ Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once. It has
 many common features found in other clients, as well as many unique features.
 Pidgin is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
 Yahoo.
-.PP
-Pidgin can be extended by plugins written in multiple programming languages and
-controlled through DBus or \fBpurple-remote\fR.
 
 .SH OPTIONS
 The following options are provided by Pidgin using the standard GNU
@@ -48,10 +45,6 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .B \-d, \-\-debug
 Print debugging messages to stdout.  These are the same debugging messages
 that are displayed in the \fBDebug Window\fR.
-.TP
-.B \-f, \-\-force-online
-Try to be online even if the network is reported (by Windows, or NetworkManager
-on Linux) to be unavailable.
 .TP
 .B \-h, \-\-help
 Print a summary of command line options and exit.
@@ -70,31 +63,6 @@ first account in accounts.xml will be enabled.
 .TP
 .B \-v, \-\-version
 Print the current version and exit.
-
-.SH TERMS
-Pidgin uses a few terms differently from other applications.  For convenience
-they are defined here:
-.TP
-.B Buddy List
-The list of other users who the user wants to see status information for
-and have quick access to for messaging.
-.TP
-.B Buddy
-A user who has been added to the Buddy List.
-.TP
-.B Contact
-A grouping of more than one buddy who are all the same person.  A contact may
-contain buddies from any protocol and may contain as many buddies as the user
-desires.  Contact arrangements are stored locally only.
-.TP
-.B Alias
-A private "nickname" that may be set for Buddies or the user himself.  On some
-protocols, aliases are saved on the server but not visible to other users.  On
-other protocols, aliases are saved only locally.
-.TP
-.B Protocol
-A messaging service.  AIM, XMPP, MSN, Zephyr, etc. are protocols.  Others may
-call these "service types," "account types," "services," and so on.
 
 .SH BUDDY LIST
 The \fBBuddy List\fR window is Pidgin's main interface window.  Using
@@ -132,11 +100,11 @@ buddy or chat.
 .TP
 .B Alias
 Create an alias for this buddy.  This will show an editable text field where
-the buddy's name was displayed.  In this field one can give this
+the buddy's screen name was displayed.  In this field one can give this
 buddy an alternate, more friendly name to appear on the buddy list and in
 conversations.
 
-For example, if a buddy's name was jsmith1281xx and his real
+For example, if a buddy's name screen name was jsmith1281xx and his real
 name was 'John Q. Smith,' one could create an alias as to identify the
 buddy by his common name.
 .LP
@@ -154,7 +122,7 @@ them.  It can be accessed by selecting \fBManage\fR from the Accounts menu.
 Clicking \fIDelete\fR will delete the currently selected account.
 Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR
 window.  Here, the user  can add or alter account information.  When creating
-a new account, the user will submit a username and password.  The user will
+a new account, the user will submit a screen name and password.  The user will
 also choose the protocol for the account.
 
 If \fIRemember Password\fR is chosen, the password will be saved in
@@ -496,32 +464,20 @@ only if the user is set to a non-available status, such as invisible, do not
 disturb, away, etc.  If \fIRecurring\fR is checked, the pounce will remain
 until removed by the \fBDelete\fR button.
 
-.SH CUSTOM SMILIES
-Pidgin 2.5.0 introduced support for custom smilies on those protocols for which
-interested contributors have developed support.  The custom smiley manager can
-be accessed by selecting \fISmiley\fR from the \fITools\fR menu.  From here,
-custom smilies may be added, edited, or deleted by clicking the \fIAdd\fR,
-\fIEdit\fR, or \fIDelete\fR buttons, respectively.
-
-During a conversation with another user, that user's custom smileys may be
-added to the user's own custom smiley list directly from the conversation
-window by right-clicking the new custom smiley and selecting \fIAdd Custom
-Smiley...\fR
-
 .SH PLUGINS
 Pidgin allows for dynamic loading of plugins to add extra functionality
 to Pidgin.  See \fIplugins/HOWTO\fR or
 \fIhttp://developer.pidgin.im/wiki/CHowTo\fR for information on writing
 plugins.
 
-The plugins dialog can be accessed by selecting \fIPlugins\fR from the
-\fITools\fR menu. Each plugin available appears in this dialog with its name,
-version, and a short summary of its functionality. Plugins can be enabled
-with the checkbox beside the name and short description.  More information on
-the currently selected plugin is available by clicking the expander beside the
-text \fIPlugin Details\fR.  If the selected plugin has preferences or
-configuration options, the \fIConfigure Plugin\fR button will present the
-plugin's preferences dialog.
+The plugins dialog can be accessed by selecting Plugins from the Tools menu.
+Each plugin available appears in this dialog with its name, version, and a
+short summary of its functionality. Plugins can be enabled with the checkbox
+beside the name and short description.  More information on the currently
+selected plugin is available by clicking the expander beside the text
+\fIPlugin Details\fR.  If the selected plugin has preferences or configuration
+options, the \fIConfigure Plugin\fR button will present the plugin's
+preferences dialog.
 
 .SH PERL
 Pidgin allows for plugins to be written in the perl scripting language.  See
@@ -549,7 +505,7 @@ about this interaction exists.
 .br
   \fI~/.purple/status.xml\fR: stores the user's away messages.
 .br
-  \fI~/.purple/logs/PROTOCOL/ACCOUNT/BUDDYNAME/DATE.{html,txt}\fR: conversation logs.
+  \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
 
 .SH DIRECTORIES
   \fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.
@@ -563,28 +519,18 @@ about this interaction exists.
 .SH BUGS
 The bug tracker can be reached by visiting \fIhttp://developer.pidgin.im/query\fR
 
+.SH PATCHES
+If you fix a bug in Pidgin (or otherwise enhance it), please submit a
+patch (using \fImtn diff > my.diff\fR against the latest version from the
+Monotone repository) at \fIhttp://developer.pidgin.im/simpleticket\fR
+
 Before sending a bug report, please verify that you have the latest
 version of Pidgin.  Many bugs (major and minor) are fixed
 at each release, and if yours is out of date, the problem may already
 have been solved.
 
-.SH PATCHES
-If you fix a bug in Pidgin (or otherwise enhance it), please submit a
-patch (using \fBmtn diff > my.diff\fR against the latest version from the
-Monotone repository) at \fIhttp://developer.pidgin.im/simpleticket\fR
-
-You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR
-to discuss development.
-
-
 .SH SEE ALSO
 \fIhttp://pidgin.im/\fR
-.br
-\fIhttp://developer.pidgin.im/\fR
-.br
-\fBpurple-remote\fR(1)
-.br
-\fBfinch\fR(1)
 
 .SH LICENSE
 This program is free software; you can redistribute it and/or modify
@@ -604,11 +550,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 .SH AUTHORS
 Pidgin's active developers are:
 .br
+  Sean Egan (lead developer) <\fIseanegan@gmail.com\fR>
+.br
   Daniel 'datallah' Atallah (developer)
 .br
-  Paul 'darkrain42' Aurich (developer)
-.br
-  John 'rekkanoryo' Bailey (developer and bugmaster)
+  John 'rekkanoryo' Bailey (developer)
 .br
   Ethan 'Paco-Paco' Blanton (developer)
 .br
@@ -620,17 +566,11 @@ Pidgin's active developers are:
 .br
   Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
 .br
-  Sean Egan (developer) <\fIseanegan@gmail.com\fR>
-.br
   Casey Harkins (developer)
-.br
-  Ivan Komarov
 .br
   Gary 'grim' Kramlich (developer)
 .br
   Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
-.br
-  Sulabh 'sulabh_m' Mahajan (developer)
 .br
   Richard 'wabz' Nelson (developer)
 .br
@@ -641,10 +581,6 @@ Pidgin's active developers are:
   Etan 'deryni' Reisner (developer)
 .br
   Tim 'marv' Ringenbach (developer) <\fImarv_sf@users.sf.net\fR>
-.br
-  Michael 'Maiku' Ruprecht (developer, voice and video)
-.br
-  Elliott 'QuLogic' Sales de Andrade (developer)
 .br
   Luke 'LSchiere' Schierer (support)
 .br
@@ -664,15 +600,13 @@ Pidgin's active developers are:
 
 Our crazy patch writers include:
 .br
-  Marcus 'malu' Lundblad
-.br
   Dennis 'EvilDennisR' Ristuccia
 .br
   Peter 'fmoo' Ruibal
 .br
-  Gabriel 'Nix' Schulhof
+  Elliott 'QuLogic' Sales de Andrade
 .br
-  Jorge 'Masca' Villaseñor
+  Gabriel 'Nix' Schulhof
 .br
 
 

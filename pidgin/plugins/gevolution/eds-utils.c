@@ -53,7 +53,7 @@ void
 gevo_addrbooks_model_populate(GtkTreeModel *model)
 {
 	ESourceList *addressbooks;
-	GError *err = NULL;
+	GError *err;
 	GSList *groups, *g;
 	GtkTreeIter iter;
 	GtkListStore *list;
@@ -119,13 +119,11 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 	EBook *book;
 	gboolean status;
 	GList *cards;
-	GError *err = NULL;
 
-	if (!gevo_load_addressbook(uri, &book, &err))
+	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
 		purple_debug_error("evolution",
-						 "Error retrieving addressbook: %s\n", err->message);
-		g_error_free(err);
+						 "Error retrieving addressbook\n");
 		return NULL;
 	}
 
@@ -173,7 +171,7 @@ EContact *
 gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 {
 	ESourceList *addressbooks;
-	GError *err = NULL;
+	GError *err;
 	EBookQuery *full_query;
 	GSList *groups, *g;
 	EContact *result;

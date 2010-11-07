@@ -55,15 +55,13 @@ unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
 int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
 
-/** Get information about an account's attention commands, from the prpl.
- *
+/** Get information about an account's attention commands, from the prpl. 
+ * 
  * @return The attention command numbered 'code' from the prpl's attention_types, or NULL.
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
 /** Send an attention request message.
- *
- * @deprecated Use purple_prpl_send_attention() instead.
  *
  * @param gc The connection to send the message on.
  * @param who Whose attention to request.
@@ -76,14 +74,12 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
  */
 void serv_send_attention(PurpleConnection *gc, const char *who, guint type_code);
 
-/** Process an incoming attention message.
- *
- * @deprecated Use purple_prpl_got_attention() instead.
+/** Process an incoming attention message. 
  *
  * @param gc The connection that received the attention message.
  * @param who Who requested your attention.
  * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send.
+ * 	of the attention request command to send. 
  */
 void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 
@@ -108,7 +104,7 @@ void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
  * aliases are the aliases or display names that buddies set for themselves.
  *
  * @param gc The connection on which the alias was received.
- * @param who The name of the buddy whose alias was received.
+ * @param who The screen name of the buddy whose alias was received.
  * @param alias The alias that was received.
  */
 void purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char *alias);
@@ -168,45 +164,9 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
 
-/**
- * Called by a prpl when an account has joined a chat.
- *
- * @param gc   The connection on which the chat was joined. 
- * @param id   The id of the chat, assigned by the prpl.
- * @param name The name of the chat.
- * @return     The resulting conversation
- */
 PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
-/**
- * Called by a prpl when an attempt to join a chat via serv_join_chat()
- * fails.
- *
- * @param gc      The connection on which chat joining failed
- * @param data    The components passed to serv_join_chat() originally.
- *                The hash function should be g_str_hash() and the equal
- *                function should be g_str_equal().
- */
-void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
-
-/**
- * Called by a prpl when an account has left a chat.
- *
- * @param g  The connection on which the chat was left.
- * @param id The id of the chat, as assigned by the prpl.
- */
 void serv_got_chat_left(PurpleConnection *g, int id);
-
-/**
- * Called by a prpl when a message has been received in a chat.
- *
- * @param g       The connection on which the message was received.
- * @param id      The id of the chat, as assigned by the prpl.
- * @param who     The name of the user who sent the message.
- * @param flags   The flags of the message.
- * @param message The message received in the chat.
- * @param mtime   The time when the message was received.
- */
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file);

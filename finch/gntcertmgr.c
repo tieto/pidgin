@@ -25,7 +25,6 @@
  *
  */
 
-#include <internal.h>
 #include "finch.h"
 
 #include "certificate.h"

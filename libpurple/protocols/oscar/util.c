@@ -26,85 +26,95 @@
  */
 
 #include "oscar.h"
-
-#include "core.h"
-
 #include <ctype.h>
 
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
-static const char * const msgerrreason[] = {
-	N_("Invalid error"),
-	N_("Invalid SNAC"),
-	N_("Server rate limit exceeded"),
-	N_("Client rate limit exceeded"),
-	N_("Not logged in"),
-	N_("Service unavailable"),
-	N_("Service not defined"),
-	N_("Obsolete SNAC"),
-	N_("Not supported by host"),
-	N_("Not supported by client"),
-	N_("Refused by client"),
-	N_("Reply too big"),
-	N_("Responses lost"),
-	N_("Request denied"),
-	N_("Busted SNAC payload"),
-	N_("Insufficient rights"),
-	N_("In local permit/deny"),
-	N_("Warning level too high (sender)"),
-	N_("Warning level too high (receiver)"),
-	N_("User temporarily unavailable"),
-	N_("No match"),
-	N_("List overflow"),
-	N_("Request ambiguous"),
-	N_("Queue full"),
-	N_("Not while on AOL")
-};
-static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
-
-const char *oscar_get_msgerr_reason(size_t reason)
+/*
+ * Tokenizing functions.  Used to portably replace strtok/sep.
+ *   -- DMP.
+ *
+ */
+/* TODO: Get rid of this and use glib functions */
+int
+aimutil_tokslen(char *toSearch, int theindex, char dl)
 {
-	return (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason");
-}
+	int curCount = 1;
+	char *next;
+	char *last;
+	int toReturn;
 
-int oscar_get_ui_info_int(const char *str, int default_value)
-{
-	GHashTable *ui_info;
+	last = toSearch;
+	next = strchr(toSearch, dl);
 
-	ui_info = purple_core_get_ui_info();
-	if (ui_info != NULL) {
-		gpointer value;
-		if (g_hash_table_lookup_extended(ui_info, str, NULL, &value))
-			return GPOINTER_TO_INT(value);
+	while(curCount < theindex && next != NULL) {
+		curCount++;
+		last = next + 1;
+		next = strchr(last, dl);
 	}
 
-	return default_value;
+	if ((curCount < theindex) || (next == NULL))
+		toReturn = strlen(toSearch) - (curCount - 1);
+	else
+		toReturn = next - toSearch - (curCount - 1);
+
+	return toReturn;
 }
 
-const char *oscar_get_ui_info_string(const char *str, const char *default_value)
+int
+aimutil_itemcnt(char *toSearch, char dl)
 {
-	GHashTable *ui_info;
-	const char *value = NULL;
+	int curCount;
+	char *next;
 
-	ui_info = purple_core_get_ui_info();
-	if (ui_info != NULL)
-		value = g_hash_table_lookup(ui_info, str);
-	if (value == NULL)
-		value = default_value;
+	curCount = 1;
 
-	return value;
+	next = strchr(toSearch, dl);
+
+	while(next != NULL) {
+		curCount++;
+		next = strchr(next + 1, dl);
+	}
+
+	return curCount;
 }
 
-gchar *oscar_get_clientstring(void)
+char *
+aimutil_itemindex(char *toSearch, int theindex, char dl)
 {
-	const char *name, *version;
+	int curCount;
+	char *next;
+	char *last;
+	char *toReturn;
 
-	name = oscar_get_ui_info_string("name", "Purple");
-	version = oscar_get_ui_info_string("version", VERSION);
+	curCount = 0;
 
-	return g_strdup_printf("%s/%s", name, version);;
+	last = toSearch;
+	next = strchr(toSearch, dl);
+
+	while (curCount < theindex && next != NULL) {
+		curCount++;
+		last = next + 1;
+		next = strchr(last, dl);
+	}
+	next = strchr(last, dl);
+
+	if (curCount < theindex) {
+		toReturn = g_malloc(sizeof(char));
+		*toReturn = '\0';
+	} else {
+		if (next == NULL) {
+			toReturn = g_malloc((strlen(last) + 1) * sizeof(char));
+			strcpy(toReturn, last);
+		} else {
+			toReturn = g_malloc((next - last + 1) * sizeof(char));
+			memcpy(toReturn, last, (next - last));
+			toReturn[next - last] = '\0';
+		}
+	}
+	return toReturn;
 }
 
 /**
@@ -126,27 +136,27 @@ aimutil_iconsum(const guint8 *buf, int buflen)
 }
 
 /**
- * Check if the given name is a valid AIM username.
+ * Check if the given screen name is a valid AIM screen name.
  * Example: BobDole
  * Example: Henry_Ford@mac.com
  * Example: 1KrazyKat@example.com
  *
- * @return TRUE if the name is valid, FALSE if not.
+ * @return TRUE if the screen name is valid, FALSE if not.
  */
 static gboolean
-oscar_util_valid_name_aim(const char *name)
+aim_snvalid_aim(const char *sn)
 {
 	int i;
 
-	if (purple_email_is_valid(name))
+	if (purple_email_is_valid(sn))
 		return TRUE;
 
-	/* Normal AIM usernames can't start with a number */
-	if (isdigit(name[0]))
+	/* Normal AIM screen names can't start with a number */
+	if (isdigit(sn[0]))
 		return FALSE;
 
-	for (i = 0; name[i] != '\0'; i++) {
-		if (!isalnum(name[i]) && (name[i] != ' '))
+	for (i = 0; sn[i] != '\0'; i++) {
+		if (!isalnum(sn[i]) && (sn[i] != ' '))
 			return FALSE;
 	}
 
@@ -154,18 +164,18 @@ oscar_util_valid_name_aim(const char *name)
 }
 
 /**
- * Check if the given name is a valid ICQ username.
+ * Check if the given screen name is a valid ICQ screen name.
  * Example: 1234567
  *
- * @return TRUE if the name is valid, FALSE if not.
+ * @return TRUE if the screen name is valid, FALSE if not.
  */
 gboolean
-oscar_util_valid_name_icq(const char *name)
+aim_snvalid_icq(const char *sn)
 {
 	int i;
 
-	for (i = 0; name[i] != '\0'; i++) {
-		if (!isdigit(name[i]))
+	for (i = 0; sn[i] != '\0'; i++) {
+		if (!isdigit(sn[i]))
 			return FALSE;
 	}
 
@@ -173,21 +183,21 @@ oscar_util_valid_name_icq(const char *name)
 }
 
 /**
- * Check if the given name is a valid SMS username.
+ * Check if the given screen name is a valid SMS screen name.
  * Example: +19195551234
  *
- * @return TRUE if the name is valid, FALSE if not.
+ * @return TRUE if the screen name is valid, FALSE if not.
  */
 gboolean
-oscar_util_valid_name_sms(const char *name)
+aim_snvalid_sms(const char *sn)
 {
 	int i;
 
-	if (name[0] != '+')
+	if (sn[0] != '+')
 		return FALSE;
 
-	for (i = 1; name[i] != '\0'; i++) {
-		if (!isdigit(name[i]))
+	for (i = 1; sn[i] != '\0'; i++) {
+		if (!isdigit(sn[i]))
 			return FALSE;
 	}
 
@@ -195,132 +205,44 @@ oscar_util_valid_name_sms(const char *name)
 }
 
 /**
- * Check if the given name is a valid oscar username.
+ * Check if the given screen name is a valid oscar screen name.
  *
- * @return TRUE if the name is valid, FALSE if not.
+ * @return TRUE if the screen name is valid, FALSE if not.
  */
 gboolean
-oscar_util_valid_name(const char *name)
+aim_snvalid(const char *sn)
 {
-	if ((name == NULL) || (*name == '\0'))
+	if ((sn == NULL) || (*sn == '\0'))
 		return FALSE;
 
-	return oscar_util_valid_name_icq(name)
-			|| oscar_util_valid_name_sms(name)
-			|| oscar_util_valid_name_aim(name);
+	return aim_snvalid_icq(sn) || aim_snvalid_sms(sn) || aim_snvalid_aim(sn);
 }
 
 /**
- * This takes two names and compares them using the rules
- * on usernames for AIM/AOL.  Mainly, this means case and space
+ * This takes two screen names and compares them using the rules
+ * on screen names for AIM/AOL.  Mainly, this means case and space
  * insensitivity (all case differences and spacing differences are
- * ignored, with the exception that usernames can not start with
+ * ignored, with the exception that screen names can not start with
  * a space).
  *
  * @return 0 if equal, non-0 if different
  */
 /* TODO: Do something different for email addresses. */
 int
-oscar_util_name_compare(const char *name1, const char *name2)
+aim_sncmp(const char *sn1, const char *sn2)
 {
 
-	if ((name1 == NULL) || (name2 == NULL))
+	if ((sn1 == NULL) || (sn2 == NULL))
 		return -1;
 
 	do {
-		while (*name2 == ' ')
-			name2++;
-		while (*name1 == ' ')
-			name1++;
-		if (toupper(*name1) != toupper(*name2))
+		while (*sn2 == ' ')
+			sn2++;
+		while (*sn1 == ' ')
+			sn1++;
+		if (toupper(*sn1) != toupper(*sn2))
 			return 1;
-	} while ((*name1 != '\0') && name1++ && name2++);
+	} while ((*sn1 != '\0') && sn1++ && sn2++);
 
 	return 0;
-}
-
-/**
- * Looks for %n, %d, or %t in a string, and replaces them with the
- * specified name, date, and time, respectively.
- *
- * @param str  The string that may contain the special variables.
- * @param name The sender name.
- *
- * @return A newly allocated string where the special variables are
- *         expanded.  This should be g_free'd by the caller.
- */
-gchar *
-oscar_util_format_string(const char *str, const char *name)
-{
-	char *c;
-	GString *cpy;
-	time_t t;
-	struct tm *tme;
-
-	g_return_val_if_fail(str  != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-
-	/* Create an empty GString that is hopefully big enough for most messages */
-	cpy = g_string_sized_new(1024);
-
-	t = time(NULL);
-	tme = localtime(&t);
-
-	c = (char *)str;
-	while (*c) {
-		switch (*c) {
-		case '%':
-			if (*(c + 1)) {
-				switch (*(c + 1)) {
-				case 'n':
-					/* append name */
-					g_string_append(cpy, name);
-					c++;
-					break;
-				case 'd':
-					/* append date */
-					g_string_append(cpy, purple_date_format_short(tme));
-					c++;
-					break;
-				case 't':
-					/* append time */
-					g_string_append(cpy, purple_time_format(tme));
-					c++;
-					break;
-				default:
-					g_string_append_c(cpy, *c);
-				}
-			} else {
-				g_string_append_c(cpy, *c);
-			}
-			break;
-		default:
-			g_string_append_c(cpy, *c);
-		}
-		c++;
-	}
-
-	return g_string_free(cpy, FALSE);
-}
-
-gchar *
-oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message)
-{
-	GSList *cur;
-	GString *result;
-	if (!buddies) {
-		return g_strdup_printf("<i>%s</i>", no_buddies_message);
-	}
-	result = g_string_new("");
-	for (cur = buddies; cur != NULL; cur = cur->next) {
-		PurpleBuddy *buddy = cur->data;
-		const gchar *bname = purple_buddy_get_name(buddy);
-		const gchar *alias = purple_buddy_get_alias_only(buddy);
-		g_string_append(result, bname);
-		if (alias) {
-			g_string_append_printf(result, " (%s)", alias);
-		}
-		g_string_append(result, "<br>");
-	}
-	return g_string_free(result, FALSE);
 }

@@ -21,7 +21,7 @@
 
 #include "internal.h"
 
-#define PLUGIN_STATIC_NAME	GntGf
+#define PLUGIN_STATIC_NAME	"GntGf"
 
 #define PREFS_PREFIX          "/plugins/gnt/gntgf"
 #define PREFS_EVENT           PREFS_PREFIX "/events"
@@ -47,7 +47,6 @@
 #include <blist.h>
 #include <conversation.h>
 #include <debug.h>
-#include <eventloop.h>
 #include <util.h>
 
 #include <gnt.h>
@@ -76,7 +75,7 @@ destroy_toaster(GntToast *toast)
 {
 	toasters = g_list_remove(toasters, toast);
 	gnt_widget_destroy(toast->window);
-	purple_timeout_remove(toast->timer);
+	g_source_remove(toast->timer);
 	g_free(toast);
 }
 
@@ -221,7 +220,7 @@ notify(PurpleConversation *conv, const char *fmt, ...)
 	}
 	gnt_widget_draw(window);
 
-	toast->timer = purple_timeout_add_seconds(4, (GSourceFunc)remove_toaster, toast);
+	toast->timer = g_timeout_add(4000, (GSourceFunc)remove_toaster, toast);
 	toasters = g_list_prepend(toasters, toast);
 }
 

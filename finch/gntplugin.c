@@ -23,8 +23,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include <internal.h>
-
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -486,10 +484,10 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 				char *value = NULL;
 				switch(type) {
 					case PURPLE_PREF_BOOLEAN:
-						value = g_strdup_printf("%d", GPOINTER_TO_INT(list->next->data));
+						value = g_strdup_printf("%d", (int)list->next->data);
 						break;
 					case PURPLE_PREF_INT:
-						value = g_strdup_printf("%d", GPOINTER_TO_INT(list->next->data));
+						value = g_strdup_printf("%d", (int)list->next->data);
 						break;
 					case PURPLE_PREF_STRING:
 						value = g_strdup(list->next->data);
@@ -498,7 +496,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 						break;
 				}
 				stringlist = g_list_prepend(stringlist, value);
-				purple_request_field_list_add_icon(field, label, NULL, value);
+				purple_request_field_list_add(field, label, value);
 				if (strcmp(value, current_value) == 0)
 					purple_request_field_list_add_selected(field, label);
 				list = list->next->next;

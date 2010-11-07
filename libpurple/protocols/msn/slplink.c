@@ -27,6 +27,8 @@
 #include "switchboard.h"
 #include "slp.h"
 
+void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
+
 #ifdef MSN_DEBUG_SLP_FILES
 static int m_sc = 0;
 static int m_rc = 0;
@@ -46,7 +48,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	pload = msn_message_gen_payload(msg, &pload_size);
 	if (!purple_util_write_data_to_file_absolute(tmp, pload, pload_size))
 	{
-		purple_debug_error("msn", "could not save debug file\n");
+		purple_debug_error("msn", "could not save debug file");
 	}
 	g_free(tmp);
 }
@@ -56,7 +58,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
  * Main
  **************************************************************************/
 
-static MsnSlpLink *
+MsnSlpLink *
 msn_slplink_new(MsnSession *session, const char *username)
 {
 	MsnSlpLink *slplink;
@@ -65,12 +67,14 @@ msn_slplink_new(MsnSession *session, const char *username)
 
 	slplink = g_new0(MsnSlpLink, 1);
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
+#ifdef MSN_DEBUG_SLPLINK
+	purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
+#endif
 
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
+	slplink->local_user = g_strdup(msn_user_get_passport(session->user));
 	slplink->remote_user = g_strdup(username);
 
 	slplink->slp_msg_queue = g_queue_new();
@@ -78,7 +82,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	session->slplinks =
 		g_list_append(session->slplinks, slplink);
 
-	return msn_slplink_ref(slplink);
+	return slplink;
 }
 
 void
@@ -86,65 +90,34 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
+#ifdef MSN_DEBUG_SLPLINK
+	purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
+#endif
 
 	g_return_if_fail(slplink != NULL);
 
-	if (slplink->swboard != NULL) {
+	if (slplink->swboard != NULL)
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
-		slplink->swboard = NULL;
-	}
-
-	if (slplink->refs > 1) {
-		slplink->refs--;
-		return;
-	}
 
 	session = slplink->session;
 
-	if (slplink->dc != NULL) {
-		slplink->dc->slplink = NULL;
-		msn_dc_destroy(slplink->dc);
-		slplink->dc = NULL;
-	}
+	g_free(slplink->local_user);
+	g_free(slplink->remote_user);
+
+#if 0
+	if (slplink->directconn != NULL)
+		msn_directconn_destroy(slplink->directconn);
+#endif
 
 	while (slplink->slp_calls != NULL)
-		msn_slpcall_destroy(slplink->slp_calls->data);
+		msn_slp_call_destroy(slplink->slp_calls->data);
 
 	g_queue_free(slplink->slp_msg_queue);
 
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
 
-	g_free(slplink->remote_user);
-
 	g_free(slplink);
-}
-
-MsnSlpLink *
-msn_slplink_ref(MsnSlpLink *slplink)
-{
-	g_return_val_if_fail(slplink != NULL, NULL);
-
-	slplink->refs++;
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slplink ref (%p)[%d]\n", slplink, slplink->refs);
-
-	return slplink;
-}
-
-void
-msn_slplink_unref(MsnSlpLink *slplink)
-{
-	g_return_if_fail(slplink != NULL);
-
-	slplink->refs--;
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slplink unref (%p)[%d]\n", slplink, slplink->refs);
-
-	if (slplink->refs == 0)
-		msn_slplink_destroy(slplink);
 }
 
 MsnSlpLink *
@@ -181,6 +154,23 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 	return slplink;
 }
 
+MsnSlpSession *
+msn_slplink_find_slp_session(MsnSlpLink *slplink, long session_id)
+{
+	GList *l;
+	MsnSlpSession *slpsession;
+
+	for (l = slplink->slp_sessions; l != NULL; l = l->next)
+	{
+		slpsession = l->data;
+
+		if (slpsession->id == session_id)
+			return slpsession;
+	}
+
+	return NULL;
+}
+
 void
 msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
@@ -188,41 +178,24 @@ msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 		slplink->swboard->flag |= MSN_SB_FLAG_FT;
 
 	slplink->slp_calls = g_list_append(slplink->slp_calls, slpcall);
-
-	/*
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
-		msn_dc_ref(slplink->dc);
-	*/
 }
 
 void
 msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
-	/*
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
-		msn_dc_unref(slplink->dc);
-	*/
-
 	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
 
-	/* The slplink has no slpcalls in it, release it from MSN_SB_FLAG_FT.
-	 * If nothing else is using it then this might cause swboard to be
-	 * destroyed. */
-	if (slplink->slp_calls == NULL && slplink->swboard != NULL) {
-		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
-		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
-		slplink->swboard = NULL;
-	}
-
-	if (slplink->dc != NULL) {
-		if ((slplink->dc->state != DC_STATE_ESTABLISHED && slplink->dc->slpcall == slpcall)
-		 || (slplink->slp_calls == NULL)) {
-			/* The DC is not established and its corresponding slpcall is dead,
-			 * or the slplink has no slpcalls in it and no longer needs the DC.
-			 */
-			slplink->dc->slplink = NULL;
-			msn_dc_destroy(slplink->dc);
-			slplink->dc = NULL;
+	/* The slplink has no slpcalls in it. If no one is using it, we might
+	 * destroy the switchboard, but we should be careful not to use the slplink
+	 * again. */
+	if (slplink->slp_calls == NULL)
+	{
+		if (slplink->swboard != NULL)
+		{
+			if (msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT))
+				/* I'm not sure this is the best thing to do, but it's better
+				 * than nothing. */
+				slpcall->slplink = NULL;
 		}
 	}
 }
@@ -267,18 +240,21 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
+#if 0
+	if (slplink->directconn != NULL)
 	{
-		msn_dc_enqueue_msg(slplink->dc, msg);
+		msn_directconn_send_msg(slplink->directconn, msg);
 	}
 	else
+#endif
 	{
 		if (slplink->swboard == NULL)
 		{
 			slplink->swboard = msn_session_get_swboard(slplink->session,
 													   slplink->remote_user, MSN_SB_FLAG_FT);
 
-			g_return_if_fail(slplink->swboard != NULL);
+			if (slplink->swboard == NULL)
+				return;
 
 			/* If swboard is destroyed we will be too */
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
@@ -286,6 +262,53 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
 	}
+}
+
+/* We have received the message ack */
+static void
+msg_ack(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+	long long real_size;
+
+	slpmsg = data;
+
+	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
+
+	slpmsg->offset += msg->msnslp_header.length;
+
+	if (slpmsg->offset < real_size)
+	{
+		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+	}
+	else
+	{
+		/* The whole message has been sent */
+		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
+		{
+			if (slpmsg->slpcall != NULL)
+			{
+				if (slpmsg->slpcall->cb)
+					slpmsg->slpcall->cb(slpmsg->slpcall,
+						NULL, 0);
+			}
+		}
+	}
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+}
+
+/* We have received the message nak. */
+static void
+msg_nak(MsnMessage *msg, void *data)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = data;
+
+	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
 void
@@ -303,11 +326,11 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	if (slpmsg->offset < real_size)
 	{
-		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
-				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
+		if (slpmsg->fp)
 		{
-			len = MIN(1202, slpmsg->slpcall->u.outgoing.len);
-			msn_message_set_bin_data(msg, slpmsg->slpcall->u.outgoing.data, len);
+			char data[1202];
+			len = fread(data, 1, sizeof(data), slpmsg->fp);
+			msn_message_set_bin_data(msg, data, len);
 		}
 		else
 		{
@@ -323,19 +346,19 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.length = len;
 	}
 
-	if (purple_debug_is_verbose())
-		msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
+#ifdef MSN_DEBUG_SLP
+	msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
+#endif
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, TRUE);
 #endif
 
 	slpmsg->msgs =
-		g_list_append(slpmsg->msgs, msn_message_ref(msg));
+		g_list_append(slpmsg->msgs, msg);
 	msn_slplink_send_msg(slplink, msg);
 
-	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
-	     slpmsg->flags == 0x1000030) &&
+	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -350,69 +373,10 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	/* slpmsg->offset += len; */
 }
 
-/* We have received the message ack */
-static void
-msg_ack(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-	long long real_size;
-
-	slpmsg = data;
-
-	real_size = (slpmsg->flags == 0x2) ? 0 : slpmsg->size;
-
-	slpmsg->offset += msg->msnslp_header.length;
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-
-	if (slpmsg->offset < real_size)
-	{
-		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
-		{
-			slpmsg->slpcall->xfer_msg = slpmsg;
-			msn_message_ref(msg);
-			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
-		}
-		else
-			msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-	}
-	else
-	{
-		/* The whole message has been sent */
-		if (slpmsg->flags == 0x20 ||
-		    slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030)
-		{
-			if (slpmsg->slpcall != NULL)
-			{
-				if (slpmsg->slpcall->cb)
-					slpmsg->slpcall->cb(slpmsg->slpcall,
-						NULL, 0);
-			}
-		}
-	}
-
-	msn_message_unref(msg);
-}
-
-/* We have received the message nak. */
-static void
-msg_nak(MsnMessage *msg, void *data)
-{
-	MsnSlpMessage *slpmsg;
-
-	slpmsg = data;
-
-	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
-	msn_message_unref(msg);
-}
-
-static void
+void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
-	const char *passport;
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
 
@@ -428,15 +392,14 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.ack_size = slpmsg->ack_size;
 		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
 	}
-	else if (slpmsg->flags == 0x20 ||
-	         slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030)
+	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
-		MsnSlpCall *slpcall;
-		slpcall = slpmsg->slpcall;
+		MsnSlpSession *slpsession;
+		slpsession = slpmsg->slpsession;
 
-		g_return_if_fail(slpcall != NULL);
-		msg->msnslp_header.session_id = slpcall->session_id;
-		msg->msnslp_footer.value = slpcall->app_id;
+		g_return_if_fail(slpsession != NULL);
+		msg->msnslp_header.session_id = slpsession->id;
+		msg->msnslp_footer.value = slpsession->app_id;
 		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == 0x100)
@@ -451,8 +414,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msg->msnslp_header.total_size = slpmsg->size;
 
-	passport = purple_normalize(slplink->session->account, slplink->remote_user);
-	msn_message_set_attr(msg, "P2P-Dest", passport);
+	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
 
 	msg->ack_cb = msg_ack;
 	msg->nak_cb = msg_nak;
@@ -466,11 +428,9 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 void
 msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
-	g_return_if_fail(slpmsg != NULL);
-
 	slpmsg->id = slplink->slp_seq_id++;
 
-	g_queue_push_tail(slplink->slp_msg_queue, slpmsg);
+	g_queue_push_head(slplink->slp_msg_queue, slpmsg);
 }
 
 void
@@ -482,109 +442,104 @@ msn_slplink_send_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 }
 
 void
-msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
+msn_slplink_unleash(MsnSlpLink *slplink)
 {
 	MsnSlpMessage *slpmsg;
 
-	/* Send the queued msgs in the order they were created */
-	while ((slpmsg = g_queue_pop_head(slplink->slp_msg_queue)) != NULL)
+	/* Send the queued msgs in the order they came. */
+
+	while ((slpmsg = g_queue_pop_tail(slplink->slp_msg_queue)) != NULL)
 	{
 		msn_slplink_release_slpmsg(slplink, slpmsg);
 	}
 }
 
-static MsnSlpMessage *
-msn_slplink_create_ack(MsnSlpLink *slplink, MsnSlpHeader *header)
+void
+msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
 
 	slpmsg = msn_slpmsg_new(slplink);
 
-	slpmsg->session_id = header->session_id;
-	slpmsg->size       = header->total_size;
+	slpmsg->session_id = msg->msnslp_header.session_id;
+	slpmsg->size       = msg->msnslp_header.total_size;
 	slpmsg->flags      = 0x02;
-	slpmsg->ack_id     = header->id;
-	slpmsg->ack_sub_id = header->ack_id;
-	slpmsg->ack_size   = header->total_size;
+	slpmsg->ack_id     = msg->msnslp_header.id;
+	slpmsg->ack_sub_id = msg->msnslp_header.ack_id;
+	slpmsg->ack_size   = msg->msnslp_header.total_size;
+
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP ACK";
-
-	return slpmsg;
-}
-
-static void
-msn_slplink_send_ack(MsnSlpLink *slplink, MsnSlpHeader *header)
-{
-	MsnSlpMessage *slpmsg = msn_slplink_create_ack(slplink, header);
+#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
-	msn_slpmsg_destroy(slpmsg);
 }
 
 static void
-send_file_cb(MsnSlpCall *slpcall)
+send_file_cb(MsnSlpSession *slpsession)
 {
+	MsnSlpCall *slpcall;
 	MsnSlpMessage *slpmsg;
+	struct stat st;
 	PurpleXfer *xfer;
 
-	xfer = (PurpleXfer *)slpcall->xfer;
-	if (purple_xfer_get_status(xfer) >= PURPLE_XFER_STATUS_STARTED)
-		return;
-
-	purple_xfer_ref(xfer);
-	purple_xfer_start(xfer, -1, NULL, 0);
-	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
-		purple_xfer_unref(xfer);
-		return;
-	}
-	purple_xfer_unref(xfer);
-
+	slpcall = slpsession->slpcall;
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
+	slpmsg->slpsession = slpsession;
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
-	slpmsg->size = purple_xfer_get_size(xfer);
+#endif
+	xfer = (PurpleXfer *)slpcall->xfer;
+	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	slpmsg->fp = xfer->dest_fp;
+	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
+		slpmsg->size = st.st_size;
+	xfer->dest_fp = NULL; /* Disable double fclose() */
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
 
-static MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
-{
-	GList *e;
-
-	for (e = slplink->slp_msgs; e != NULL; e = e->next)
-	{
-		MsnSlpMessage *slpmsg = e->data;
-
-		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
-			return slpmsg;
-	}
-
-	return NULL;
-}
-
 void
-msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *data, gsize len)
+msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
-	guint64 offset;
-	PurpleXfer *xfer = NULL;
+	const char *data;
+	gsize offset;
+	gsize len;
 
-	if (header->total_size < header->length)
+#ifdef MSN_DEBUG_SLP
+	msn_slpmsg_show(msg);
+#endif
+
+#ifdef MSN_DEBUG_SLP_FILES
+	debug_msg_to_file(msg, FALSE);
+#endif
+
+	if (msg->msnslp_header.total_size < msg->msnslp_header.length)
 	{
 		purple_debug_error("msn", "This can't be good\n");
 		g_return_if_reached();
 	}
 
-	offset = header->offset;
+	slpmsg = NULL;
+	data = msn_message_get_bin_data(msg, &len);
+
+	/*
+		OVERHEAD!
+		if (msg->msnslp_header.length < msg->msnslp_header.total_size)
+	 */
+
+	offset = msg->msnslp_header.offset;
 
 	if (offset == 0)
 	{
 		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->id = header->id;
-		slpmsg->session_id = header->session_id;
-		slpmsg->size = header->total_size;
-		slpmsg->flags = header->flags;
+		slpmsg->id = msg->msnslp_header.id;
+		slpmsg->session_id = msg->msnslp_header.session_id;
+		slpmsg->size = msg->msnslp_header.total_size;
+		slpmsg->flags = msg->msnslp_header.flags;
 
 		if (slpmsg->session_id)
 		{
@@ -593,74 +548,63 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 
 			if (slpmsg->slpcall != NULL)
 			{
-				if (slpmsg->flags == 0x20 ||
-				    slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030)
+				if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 				{
+					PurpleXfer *xfer;
+
 					xfer = slpmsg->slpcall->xfer;
+
 					if (xfer != NULL)
 					{
-						slpmsg->ft = TRUE;
-						slpmsg->slpcall->xfer_msg = slpmsg;
-
-						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	-1, NULL, 0);
-
-						if (xfer->data == NULL) {
-							purple_xfer_unref(xfer);
-							msn_slpmsg_destroy(slpmsg);
-							g_return_if_reached();
-						} else {
-							purple_xfer_unref(xfer);
-						}
+						purple_xfer_start(slpmsg->slpcall->xfer,
+							0, NULL, 0);
+						slpmsg->fp = ((PurpleXfer *)slpmsg->slpcall->xfer)->dest_fp;
+						xfer->dest_fp = NULL; /* Disable double fclose() */
 					}
 				}
 			}
 		}
-		if (!slpmsg->ft && slpmsg->size)
+		if (!slpmsg->fp && slpmsg->size)
 		{
 			slpmsg->buffer = g_try_malloc(slpmsg->size);
 			if (slpmsg->buffer == NULL)
 			{
 				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
-				msn_slpmsg_destroy(slpmsg);
 				return;
 			}
 		}
 	}
 	else
 	{
-		slpmsg = msn_slplink_message_find(slplink, header->session_id, header->id);
-		if (slpmsg == NULL)
-		{
-			/* Probably the transfer was cancelled */
-			purple_debug_error("msn", "Couldn't find slpmsg\n");
-			return;
-		}
+		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.session_id, msg->msnslp_header.id);
 	}
 
-	if (slpmsg->ft)
+	if (slpmsg == NULL)
 	{
-		xfer = slpmsg->slpcall->xfer;
-		slpmsg->slpcall->u.incoming_data =
-				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)data, len);
-		purple_xfer_prpl_ready(xfer);
+		/* Probably the transfer was canceled */
+		purple_debug_error("msn", "Couldn't find slpmsg\n");
+		return;
 	}
-	else if (slpmsg->size && slpmsg->buffer)
+
+	if (slpmsg->fp)
 	{
-		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size || slpmsg->offset != offset)
+		/* fseek(slpmsg->fp, offset, SEEK_SET); */
+		len = fwrite(data, 1, len, slpmsg->fp);
+	}
+	else if (slpmsg->size)
+	{
+		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
 			purple_debug_error("msn",
-				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
+				"Oversized slpmsg - msgsize=%lld offset=%" G_GSIZE_FORMAT " len=%" G_GSIZE_FORMAT "\n",
 				slpmsg->size, offset, len);
 			g_return_if_reached();
-		} else {
-			memcpy(slpmsg->buffer + offset, data, len);
-			slpmsg->offset += len;
 		}
+		else
+			memcpy(slpmsg->buffer + offset, data, len);
 	}
 
-	if ((slpmsg->flags == 0x20 ||
-	     slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030) &&
+	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -677,120 +621,124 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 		return;
 #endif
 
-	if (header->offset + header->length >= header->total_size)
+	if (msg->msnslp_header.offset + msg->msnslp_header.length
+		>= msg->msnslp_header.total_size)
 	{
 		/* All the pieces of the slpmsg have been received */
 		MsnSlpCall *slpcall;
 
 		slpcall = msn_slp_process_msg(slplink, slpmsg);
 
-		if (slpcall == NULL) {
-			msn_slpmsg_destroy(slpmsg);
-			return;
-		}
-
-		purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
-
-		if (/* !slpcall->wasted && */ slpmsg->flags == 0x100)
+		if (slpmsg->flags == 0x100)
 		{
-#if 0
 			MsnDirectConn *directconn;
 
 			directconn = slplink->directconn;
+#if 0
 			if (!directconn->acked)
 				msn_directconn_send_handshake(directconn);
 #endif
 		}
-		else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||
-		         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
-		         slpmsg->flags == 0x1000030)
+		else if (slpmsg->flags == 0x0 || slpmsg->flags == 0x20 ||
+				 slpmsg->flags == 0x1000030)
 		{
 			/* Release all the messages and send the ACK */
 
-			if (slpcall->wait_for_socket) {
-				/*
-				 * Save ack for later because we have to send
-				 * a 200 OK message to the previous direct connect
-				 * invitation before ACK but the listening socket isn't
-				 * created yet.
-				 */
-				purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
-
-				slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
-			} else if (!slpcall->wasted) {
-				purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
-
-				msn_slplink_send_ack(slplink, header);
-				msn_slplink_send_queued_slpmsgs(slplink);
-			}
+			msn_slplink_send_ack(slplink, msg);
+			msn_slplink_unleash(slplink);
 		}
 
 		msn_slpmsg_destroy(slpmsg);
 
-		if (!slpcall->wait_for_socket && slpcall->wasted)
-			msn_slpcall_destroy(slpcall);
+		if (slpcall != NULL && slpcall->wasted)
+			msn_slp_call_destroy(slpcall);
 	}
 }
 
-static gchar *
-gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
+MsnSlpMessage *
+msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
 {
+	GList *e;
+
+	for (e = slplink->slp_msgs; e != NULL; e = e->next)
+	{
+		MsnSlpMessage *slpmsg = e->data;
+
+		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
+			return slpmsg;
+	}
+
+	return NULL;
+}
+
+typedef struct
+{
+	guint32 length;
+	guint32 unk1;
+	guint32 file_size;
+	guint32 unk2;
+	guint32 unk3;
+} MsnContextHeader;
+
+#define MAX_FILE_NAME_LEN 0x226
+
+static gchar *
+gen_context(const char *file_name, const char *file_path)
+{
+	struct stat st;
 	gsize size = 0;
-	MsnFileContext *header;
+	MsnContextHeader header;
 	gchar *u8 = NULL;
+	guchar *base;
+	guchar *n;
 	gchar *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
-	glong len = 0;
-	const char *preview;
-	gsize preview_len;
+	glong uni_len = 0;
+	gsize len;
 
-	size = purple_xfer_get_size(xfer);
+	if (g_stat(file_path, &st) == 0)
+		size = st.st_size;
 
-	purple_xfer_prepare_thumbnail(xfer, "png");
-
-	if (!file_name) {
-		gchar *basename = g_path_get_basename(file_path);
-		u8 = purple_utf8_try_convert(basename);
-		g_free(basename);
+	if(!file_name) {
+		u8 = purple_utf8_try_convert(g_basename(file_path));
 		file_name = u8;
 	}
 
-	uni = g_utf8_to_utf16(file_name, -1, NULL, &len, NULL);
+	uni = g_utf8_to_utf16(file_name, -1, NULL, &uni_len, NULL);
 
-	if (u8) {
+	if(u8) {
 		g_free(u8);
 		file_name = NULL;
 		u8 = NULL;
 	}
 
-	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
-	header = g_malloc(sizeof(MsnFileContext) + preview_len);
+	len = sizeof(MsnContextHeader) + MAX_FILE_NAME_LEN + 4;
 
-	header->length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
-	header->version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
-	header->file_size = GUINT64_TO_LE(size);
-	if (preview)
-		header->type = GUINT32_TO_LE(0);
-	else
-		header->type = GUINT32_TO_LE(1);
+	header.length = GUINT32_TO_LE(len);
+	header.unk1 = GUINT32_TO_LE(2);
+	header.file_size = GUINT32_TO_LE(size);
+	header.unk2 = GUINT32_TO_LE(0);
+	header.unk3 = GUINT32_TO_LE(0);
 
-	len = MIN(len, MAX_FILE_NAME_LEN);
-	for (currentChar = 0; currentChar < len; currentChar++) {
-		header->file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
+	base = g_malloc(len + 1);
+	n = base;
+
+	memcpy(n, &header, sizeof(MsnContextHeader));
+	n += sizeof(MsnContextHeader);
+
+	memset(n, 0x00, MAX_FILE_NAME_LEN);
+	for(currentChar = 0; currentChar < uni_len; currentChar++) {
+		*((gunichar2 *)n + currentChar) = GUINT16_TO_LE(uni[currentChar]);
 	}
-	memset(&header->file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
+	n += MAX_FILE_NAME_LEN;
 
-	memset(&header->unknown1, 0, sizeof(header->unknown1));
-	header->unknown2 = GUINT32_TO_LE(0xffffffff);
-	if (preview) {
-		memcpy(&header->preview, preview, preview_len);
-	}
-	header->preview[preview_len] = '\0';
+	memset(n, 0xFF, 4);
+	n += 4;
 
 	g_free(uni);
-	ret = purple_base64_encode((const guchar *)header, sizeof(MsnFileContext) + preview_len);
-	g_free(header);
+	ret = purple_base64_encode(base, len);
+	g_free(base);
 	return ret;
 }
 
@@ -808,11 +756,12 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
 
-	slpcall = msn_slpcall_new(slplink);
-	msn_slpcall_init(slpcall, MSN_SLPCALL_DC);
+	slpcall = msn_slp_call_new(slplink);
+	msn_slp_call_init(slpcall, MSN_SLPCALL_DC);
 
 	slpcall->session_init_cb = send_file_cb;
 	slpcall->end_cb = msn_xfer_end_cb;
+	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
 	purple_xfer_ref(slpcall->xfer);
@@ -820,14 +769,13 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	slpcall->pending = TRUE;
 
 	purple_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
-	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
-	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
 
 	xfer->data = slpcall;
 
-	context = gen_context(xfer, fn, fp);
+	context = gen_context(fn, fp);
 
-	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
+	msn_slp_call_invite(slpcall, "5D3E02AB-6190-11D3-BBBB-00C04F795683", 2,
+						context);
 
 	g_free(context);
 }
@@ -850,14 +798,15 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	msnobj_base64 = purple_base64_encode((const guchar *)msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
-	slpcall = msn_slpcall_new(slplink);
-	msn_slpcall_init(slpcall, MSN_SLPCALL_ANY);
+	slpcall = msn_slp_call_new(slplink);
+	msn_slp_call_init(slpcall, MSN_SLPCALL_ANY);
 
 	slpcall->data_info = g_strdup(info);
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slpcall_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
+	msn_slp_call_invite(slpcall, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6", 1,
+						msnobj_base64);
 
 	g_free(msnobj_base64);
 }

@@ -24,8 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#include <internal.h>
-
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -981,10 +979,15 @@ finch_pounces_init(void)
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }
 
+static void
+dummy_pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
+{
+}
+
 /* XXX: There's no such thing in pidgin. Perhaps there should be? */
 void finch_pounces_uninit()
 {
-	purple_pounces_unregister_handler(FINCH_UI);
+	purple_pounces_register_handler(FINCH_UI, dummy_pounce_cb, NULL, NULL);
 
 	purple_signals_disconnect_by_handle(finch_pounces_get_handle());
 }

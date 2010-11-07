@@ -26,7 +26,6 @@
 #include "error.h"
 
 static void read_cb(gpointer data, gint source, PurpleInputCondition cond);
-static void servconn_timeout_renew(MsnServConn *servconn);
 
 /**************************************************************************
  * Main
@@ -53,8 +52,6 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 
 	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	servconn->tx_handler = 0;
-	servconn->timeout_sec = 0;
-	servconn->timeout_handle = 0;
 
 	servconn->fd = -1;
 
@@ -72,7 +69,8 @@ msn_servconn_destroy(MsnServConn *servconn)
 		return;
 	}
 
-	msn_servconn_disconnect(servconn);
+	if (servconn->connected)
+		msn_servconn_disconnect(servconn);
 
 	if (servconn->destroy_cb)
 		servconn->destroy_cb(servconn);
@@ -85,8 +83,6 @@ msn_servconn_destroy(MsnServConn *servconn)
 	purple_circ_buffer_destroy(servconn->tx_buf);
 	if (servconn->tx_handler > 0)
 		purple_input_remove(servconn->tx_handler);
-	if (servconn->timeout_handle > 0)
-		purple_timeout_remove(servconn->timeout_handle);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -123,35 +119,38 @@ msn_servconn_set_destroy_cb(MsnServConn *servconn,
  **************************************************************************/
 
 void
-msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
-                       const char *reason)
+msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 {
-	MsnSession *session = servconn->session;
-	MsnServConnType type = servconn->type;
+	char *tmp;
+	const char *reason;
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
 
-	name = names[type];
+	name = names[servconn->type];
 
-	if (reason == NULL) {
-		switch (error)
-		{
-			case MSN_SERVCONN_ERROR_CONNECT:
-				reason = _("Unable to connect"); break;
-			case MSN_SERVCONN_ERROR_WRITE:
-				reason = _("Writing error"); break;
-			case MSN_SERVCONN_ERROR_READ:
-				reason = _("Reading error"); break;
-			default:
-				reason = _("Unknown error"); break;
-		}
+	switch (error)
+	{
+		case MSN_SERVCONN_ERROR_CONNECT:
+			reason = _("Unable to connect"); break;
+		case MSN_SERVCONN_ERROR_WRITE:
+			reason = _("Writing error"); break;
+		case MSN_SERVCONN_ERROR_READ:
+			reason = _("Reading error"); break;
+		default:
+			reason = _("Unknown error"); break;
 	}
 
 	purple_debug_error("msn", "Connection error from %s server (%s): %s\n",
 					 name, servconn->host, reason);
+	tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
+						  name, reason);
 
-	if (type == MSN_SERVCONN_SB)
+	if (servconn->type == MSN_SERVCONN_NS)
+	{
+		msn_session_set_error(servconn->session, MSN_ERROR_SERVCONN, tmp);
+	}
+	else if (servconn->type == MSN_SERVCONN_SB)
 	{
 		MsnSwitchBoard *swboard;
 		swboard = servconn->cmdproc->data;
@@ -159,16 +158,9 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
 			swboard->error = MSN_SB_ERROR_CONNECTION;
 	}
 
-	/* servconn->disconnect_cb may destroy servconn, so don't use it again */
 	msn_servconn_disconnect(servconn);
 
-	if (type == MSN_SERVCONN_NS)
-	{
-		char *tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
-		                            name, reason);
-		msn_session_set_error(session, MSN_ERROR_SERVCONN, tmp);
-		g_free(tmp);
-	}
+	g_free(tmp);
 }
 
 /**************************************************************************
@@ -182,6 +174,15 @@ connect_cb(gpointer data, gint source, const char *error_message)
 
 	servconn = data;
 	servconn->connect_data = NULL;
+	servconn->processing = FALSE;
+
+	if (servconn->wasted)
+	{
+		if (source >= 0)
+			close(source);
+		msn_servconn_destroy(servconn);
+		return;
+	}
 
 	servconn->fd = source;
 
@@ -193,17 +194,16 @@ connect_cb(gpointer data, gint source, const char *error_message)
 		servconn->connect_cb(servconn);
 		servconn->inpa = purple_input_add(servconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
-		servconn_timeout_renew(servconn);
 	}
 	else
 	{
 		purple_debug_error("msn", "Connection error: %s\n", error_message);
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT, error_message);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
 
 gboolean
-msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean force)
+msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
 
@@ -223,13 +223,12 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	{
 		/* HTTP Connection. */
 
-		if (!servconn->httpconn->connected || force)
+		if (!servconn->httpconn->connected)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
 				return FALSE;
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;
-		servconn_timeout_renew(servconn);
 
 		/* Someone wants to know we connected. */
 		servconn->connect_cb(servconn);
@@ -240,19 +239,21 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 	servconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, servconn);
 
-	return (servconn->connect_data != NULL);
+	if (servconn->connect_data != NULL)
+	{
+		servconn->processing = TRUE;
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
 
 void
 msn_servconn_disconnect(MsnServConn *servconn)
 {
 	g_return_if_fail(servconn != NULL);
-
-	if (servconn->connect_data != NULL)
-	{
-		purple_proxy_connect_cancel(servconn->connect_data);
-		servconn->connect_data = NULL;
-	}
 
 	if (!servconn->connected)
 	{
@@ -272,16 +273,16 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		return;
 	}
 
+	if (servconn->connect_data != NULL)
+	{
+		purple_proxy_connect_cancel(servconn->connect_data);
+		servconn->connect_data = NULL;
+	}
+
 	if (servconn->inpa > 0)
 	{
 		purple_input_remove(servconn->inpa);
 		servconn->inpa = 0;
-	}
-
-	if (servconn->timeout_handle > 0)
-	{
-		purple_timeout_remove(servconn->timeout_handle);
-		servconn->timeout_handle = 0;
 	}
 
 	close(servconn->fd);
@@ -296,42 +297,11 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		servconn->disconnect_cb(servconn);
 }
 
-static gboolean
-servconn_idle_timeout_cb(MsnServConn *servconn)
-{
-	servconn->timeout_handle = 0;
-	msn_servconn_disconnect(servconn);
-	return FALSE;
-}
-
-static void
-servconn_timeout_renew(MsnServConn *servconn)
-{
-	if (servconn->timeout_handle) {
-		purple_timeout_remove(servconn->timeout_handle);
-		servconn->timeout_handle = 0;
-	}
-
-	if (servconn->connected && servconn->timeout_sec) {
-		servconn->timeout_handle = purple_timeout_add_seconds(
-			servconn->timeout_sec, (GSourceFunc)servconn_idle_timeout_cb, servconn);
-	}
-}
-
-void
-msn_servconn_set_idle_timeout(MsnServConn *servconn, guint seconds)
-{
-	servconn->timeout_sec = seconds;
-	if (servconn->connected)
-		servconn_timeout_renew(servconn);
-}
-
 static void
 servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn = data;
-	gssize ret;
-	int writelen;
+	int ret, writelen;
 
 	writelen = purple_circ_buffer_get_max_read(servconn->tx_buf);
 
@@ -346,12 +316,11 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (ret < 0 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
 		return;
 	}
 
 	purple_circ_buffer_mark_read(servconn->tx_buf, ret);
-	servconn_timeout_renew(servconn);
 }
 
 gssize
@@ -403,10 +372,9 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	if (ret == -1)
 	{
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
 	}
 
-	servconn_timeout_renew(servconn);
 	return ret;
 }
 
@@ -414,24 +382,32 @@ static void
 read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn;
+	MsnSession *session;
 	char buf[MSN_BUF_LEN];
-	gssize len;
+	char *cur, *end, *old_rx_buf;
+	int len, cur_len;
 
 	servconn = data;
-
-	if (servconn->type == MSN_SERVCONN_NS)
-		servconn->session->account->gc->last_received = time(NULL);
+	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	if (len < 0 && errno == EAGAIN)
-		return;
-	if (len <= 0) {
-		purple_debug_error("msn", "servconn %03d read error, "
-			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
-			servconn->num, len, errno, g_strerror(errno));
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
+	servconn->session->account->gc->last_received = time(NULL);
 
-		return;
+	if (len <= 0) {
+		switch (errno) {
+
+			case 0:	
+
+			case EBADF:
+			case EAGAIN: return;
+	
+			default: purple_debug_error("msn", "servconn read error,"
+						"len: %d, errno: %d, error: %s\n",
+						len, errno, g_strerror(errno));
+				 msn_servconn_got_error(servconn, 
+						 MSN_SERVCONN_ERROR_READ);
+				 return;
+		}
 	}
 
 	buf[len] = '\0';
@@ -439,16 +415,6 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len + 1);
 	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
-
-	servconn = msn_servconn_process_data(servconn);
-	if (servconn)
-		servconn_timeout_renew(servconn);
-}
-
-MsnServConn *msn_servconn_process_data(MsnServConn *servconn)
-{
-	char *cur, *end, *old_rx_buf;
-	int cur_len;
 
 	end = old_rx_buf = servconn->rx_buf;
 
@@ -504,13 +470,10 @@ MsnServConn *msn_servconn_process_data(MsnServConn *servconn)
 
 	servconn->processing = FALSE;
 
-	if (servconn->wasted) {
+	if (servconn->wasted)
 		msn_servconn_destroy(servconn);
-		servconn = NULL;
-	}
 
 	g_free(old_rx_buf);
-	return servconn;
 }
 
 #if 0
@@ -596,9 +559,6 @@ create_listener(int port)
 
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-#ifndef _WIN32
-	fcntl(fd, F_SETFD, FD_CLOEXEC);
-#endif
 
 	return fd;
 }

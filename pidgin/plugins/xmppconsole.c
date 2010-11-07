@@ -26,6 +26,9 @@
 #include "xmlnode.h"
 
 #include "gtkimhtml.h"
+#if !GTK_CHECK_VERSION(2,4,0)
+#include "pidgincombobox.h"
+#endif
 #include "gtkutils.h"
 
 typedef struct {
@@ -59,62 +62,58 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	if (pretty && depth) {
+	if(pretty && depth) {
 		tab = g_strnfill(depth, '\t');
 		text = g_string_append(text, tab);
 	}
 
 	node_name = g_markup_escape_text(node->name, -1);
-	g_string_append_printf(text,
-	                       "<font color='" BRACKET_COLOR "'>&lt;</font>"
-	                       "<font color='" TAG_COLOR "'><b>%s</b></font>",
-	                       node_name);
+	g_string_append_printf(text, "<font color='"
+			       BRACKET_COLOR "'>&lt;</font><font color='"
+			       TAG_COLOR "'><b>%s</b></font>", node_name);
 
 	if (node->xmlns) {
-		if ((!node->parent ||
-		     !node->parent->xmlns ||
-		     strcmp(node->xmlns, node->parent->xmlns)) &&
-		    strcmp(node->xmlns, "jabber:client"))
+		if((!node->parent || 
+		    !node->parent->xmlns || 
+		    strcmp(node->xmlns, node->parent->xmlns)) &&
+		   strcmp(node->xmlns, "jabber:client"))
 		{
 			char *xmlns = g_markup_escape_text(node->xmlns, -1);
-			g_string_append_printf(text,
-			                       " <font color='" ATTR_NAME_COLOR "'><b>xmlns</b></font>="
-			                       "'<font color='" XMLNS_COLOR "'><b>%s</b></font>'",
-			                       xmlns);
+			g_string_append_printf(text, " <font color='"
+					       ATTR_NAME_COLOR "'><b>xmlns</b></font>='<font color='"
+					       XMLNS_COLOR "'><b>%s</b></font>'", xmlns);
 			g_free(xmlns);
 		}
 	}
-	for (c = node->child; c; c = c->next)
+	for(c = node->child; c; c = c->next)
 	{
-		if (c->type == XMLNODE_TYPE_ATTRIB) {
+		if(c->type == XMLNODE_TYPE_ATTRIB) {
 			esc = g_markup_escape_text(c->name, -1);
 			esc2 = g_markup_escape_text(c->data, -1);
-			g_string_append_printf(text,
-			                       " <font color='" ATTR_NAME_COLOR "'><b>%s</b></font>="
-			                       "'<font color='" ATTR_VALUE_COLOR "'>%s</font>'",
-			                       esc, esc2);
+			g_string_append_printf(text, " <font color='"
+					       ATTR_NAME_COLOR "'><b>%s</b></font>='<font color='"
+					       ATTR_VALUE_COLOR "'>%s</font>'", esc, esc2);
 			g_free(esc);
 			g_free(esc2);
-		} else if (c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
-			if (c->type == XMLNODE_TYPE_DATA)
+		} else if(c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
+			if(c->type == XMLNODE_TYPE_DATA)
 				pretty = FALSE;
 			need_end = TRUE;
 		}
 	}
 
-	if (need_end) {
-		g_string_append_printf(text,
-		                       "<font color='"BRACKET_COLOR"'>&gt;</font>%s",
-		                       pretty ? "<br>" : "");
+	if(need_end) {
+		g_string_append_printf(text, 
+			       "<font color='"BRACKET_COLOR"'>&gt;</font>%s", pretty ? "<br>" : "");
 
-		for (c = node->child; c; c = c->next)
+		for(c = node->child; c; c = c->next)
 		{
-			if (c->type == XMLNODE_TYPE_TAG) {
+			if(c->type == XMLNODE_TYPE_TAG) {
 				int esc_len;
 				esc = xmlnode_to_pretty_str(c, &esc_len, depth+1);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
-			} else if (c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
+			} else if(c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
 				text = g_string_append(text, esc);
 				g_free(esc);
@@ -123,14 +122,11 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 
 		if(tab && pretty)
 			text = g_string_append(text, tab);
-		g_string_append_printf(text,
-		                       "<font color='" BRACKET_COLOR "'>&lt;</font>/"
-		                       "<font color='" TAG_COLOR "'><b>%s</b></font>"
-		                       "<font color='" BRACKET_COLOR "'>&gt;</font><br>",
-		                       node_name);
+		g_string_append_printf(text, "<font color='"BRACKET_COLOR"'>&lt;</font>/<font color='"
+				       TAG_COLOR"'><b>%s</b></font><font color='"BRACKET_COLOR
+				       "'>&gt;</font><br>", node_name);
 	} else {
-		g_string_append_printf(text,
-		                       "/<font color='" BRACKET_COLOR "'>&gt;</font><br>");
+		g_string_append_printf(text, "/<font color='"BRACKET_COLOR"'>&gt;</font><br>");
 	}
 
 	g_free(node_name);
@@ -167,10 +163,10 @@ xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 	if (!console || console->gc != gc)
 		return;
 	node = xmlnode_from_str(*packet, -1);
-
+		
 	if (!node)
 		return;
-
+	
 	str = xmlnode_to_pretty_str(node, NULL, 0);
 	formatted = g_strdup_printf("<body bgcolor='#dcecc4'><pre>%s</pre></body>", str);
 	gtk_imhtml_append_text(GTK_IMHTML(console->imhtml), formatted, 0);
@@ -183,7 +179,7 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 {
 	GtkTextIter start, end;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc;
+	PurpleConnection *gc = console->gc;
 	GtkTextBuffer *buffer;
 	char *text;
 
@@ -208,35 +204,37 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 static void entry_changed_cb(GtkTextBuffer *buffer, void *data)
 {
 	char *xmlstr, *str;
-	GtkTextIter iter;
-	int wrapped_lines;
-	int lines;
-	GdkRectangle oneline;
-	int height;
-	int pad_top, pad_inside, pad_bottom;
+        GtkTextIter iter;
+        int wrapped_lines;
+        int lines;
+        GdkRectangle oneline;
+        int height;
+        int pad_top, pad_inside, pad_bottom;
 	GtkTextIter start, end;
 	xmlnode *node;
+	
+        wrapped_lines = 1;
+        gtk_text_buffer_get_start_iter(buffer, &iter);
+        gtk_text_view_get_iter_location(GTK_TEXT_VIEW(console->entry), &iter, &oneline);
+        while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(console->entry), &iter))
+                wrapped_lines++;
 
-	wrapped_lines = 1;
-	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(console->entry), &iter, &oneline);
-	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(console->entry), &iter))
-		wrapped_lines++;
+        lines = gtk_text_buffer_get_line_count(buffer);
 
-	lines = gtk_text_buffer_get_line_count(buffer);
+        /* Show a maximum of 64 lines */
+        lines = MIN(lines, 6);
+        wrapped_lines = MIN(wrapped_lines, 6);
 
-	/* Show a maximum of 64 lines */
-	lines = MIN(lines, 6);
-	wrapped_lines = MIN(wrapped_lines, 6);
+        pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(console->entry));
+        pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(console->entry));
+        pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(console->entry));
 
-	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(console->entry));
-	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(console->entry));
-	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(console->entry));
+        height = (oneline.height + pad_top + pad_bottom) * lines;
+        height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
-	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+        gtk_widget_set_size_request(console->sw, -1, height+6);
 
-	gtk_widget_set_size_request(console->sw, -1, height + 6);
+
 
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
@@ -258,7 +256,7 @@ static void entry_changed_cb(GtkTextBuffer *buffer, void *data)
 
 static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 {
-	GtkWidget *vbox, *hbox, *to_entry, *label, *type_combo;
+	GtkWidget *hbox, *to_entry, *label, *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkTextIter iter;
 	GtkTextBuffer *buffer;
@@ -277,14 +275,9 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
-#if GTK_CHECK_VERSION(2,14,0)
-	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-#else
-	vbox = GTK_DIALOG(dialog)->vbox;
-#endif
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -294,9 +287,9 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	to_entry = gtk_entry_new();
 	gtk_entry_set_activates_default (GTK_ENTRY (to_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
-
+	
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
@@ -309,24 +302,24 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(type_combo), "error");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(type_combo), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(vbox);
+	
+	gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 	if (result != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(dialog);
 		return;
 	}
-
+	
 	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
 
-	stanza = g_strdup_printf("<iq %s%s%s id='console%x' type='%s'></iq>",
+	stanza = g_strdup_printf("<iq %s%s%s id='console%x' type='%s'></iq>", 
 				 to && *to ? "to='" : "",
 				 to && *to ? to : "",
 				 to && *to ? "'" : "",
 				 g_random_int(),
 				 gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)));
-
+	
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_set_text(buffer, stanza, -1);
 	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</iq>") - stanza);
@@ -335,25 +328,25 @@ static void iq_clicked_cb(GtkWidget *w, gpointer nul)
 
 	gtk_widget_destroy(dialog);
 	g_object_unref(sg);
+
 }
 
 static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 {
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *to_entry;
-	GtkWidget *status_entry;
-	GtkWidget *priority_entry;
-	GtkWidget *label;
-	GtkWidget *show_combo;
-	GtkWidget *type_combo;
+	GtkWidget *hbox, 
+  		  *to_entry, 
+		  *status_entry,
+		  *priority_entry,
+		  *label,
+   		  *show_combo,
+		  *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkTextIter iter;
 	GtkTextBuffer *buffer;
 	const char *to, *type, *status, *show, *priority;
 	int result;
 	char *stanza;
-
+	
 	GtkWidget *dialog = gtk_dialog_new_with_buttons("<presence/>",
 							GTK_WINDOW(console->window),
 							GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -365,14 +358,9 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
-#if GTK_CHECK_VERSION(2,14,0)
-	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-#else
-	vbox = GTK_DIALOG(dialog)->vbox;
-#endif
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
 	gtk_size_group_add_widget(sg, label);
@@ -382,9 +370,9 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	to_entry = gtk_entry_new();
 	gtk_entry_set_activates_default (GTK_ENTRY (to_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
-
+	
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
@@ -402,7 +390,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Show:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
@@ -418,7 +406,7 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_box_pack_start(GTK_BOX(hbox), show_combo, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Status:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -429,8 +417,9 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (status_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), status_entry, FALSE, FALSE, 0);
 
+
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Priority:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -441,14 +430,15 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(priority_entry), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), priority_entry, FALSE, FALSE, 0);
 
-	gtk_widget_show_all(vbox);
+	
+	gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 	if (result != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(dialog);
 		return;
 	}
-
+	
 	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
 	type = gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo));
 	if (!strcmp(type, "default"))
@@ -461,30 +451,32 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 	if (!strcmp(priority, "0"))
 		priority = "";
 
+
+
 	stanza = g_strdup_printf("<presence %s%s%s id='console%x' %s%s%s>"
-	                         "%s%s%s%s%s%s%s%s%s"
-	                         "</presence>",
-	                         *to ? "to='" : "",
-	                         *to ? to : "",
-	                         *to ? "'" : "",
-	                         g_random_int(),
+				 "%s%s%s%s%s%s%s%s%s"
+				 "</presence>", 
+				 *to ? "to='" : "",
+				 *to ? to : "",
+				 *to ? "'" : "",
+				 g_random_int(),
+				 
+				 *type ? "type='" : "",
+				 *type ? type : "",
+				 *type ? "'" : "",
+				 
+				 *show ? "<show>" : "",
+				 *show ? show : "",
+				 *show ? "</show>" : "",
 
-	                         *type ? "type='" : "",
-	                         *type ? type : "",
-	                         *type ? "'" : "",
-
-	                         *show ? "<show>" : "",
-	                         *show ? show : "",
-	                         *show ? "</show>" : "",
-
-	                         *status ? "<status>" : "",
-	                         *status ? status : "",
-	                         *status ? "</status>" : "",
-
-	                         *priority ? "<priority>" : "",
-	                         *priority ? priority : "",
-	                         *priority ? "</priority>" : "");
-
+				 *status ? "<status>" : "",
+				 *status ? status : "",
+				 *status ? "</status>" : "",
+				       
+				 *priority ? "<priority>" : "",
+				 *priority ? priority : "",
+				 *priority ? "</priority>" : "");
+	
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_set_text(buffer, stanza, -1);
 	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</presence>") - stanza);
@@ -497,14 +489,13 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 
 static void message_clicked_cb(GtkWidget *w, gpointer nul)
 {
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *to_entry;
-	GtkWidget *body_entry;
-	GtkWidget *thread_entry;
-	GtkWidget *subject_entry;
-	GtkWidget *label;
-	GtkWidget *type_combo;
+	GtkWidget *hbox, 
+		  *to_entry, 
+		  *body_entry, 
+   		  *thread_entry,
+		  *subject_entry,
+		  *label, 
+		  *type_combo;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkTextIter iter;
 	GtkTextBuffer *buffer;
@@ -523,14 +514,9 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
-#if GTK_CHECK_VERSION(2,14,0)
-	vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-#else
-	vbox = GTK_DIALOG(dialog)->vbox;
-#endif
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("To:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -542,7 +528,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_box_pack_start(GTK_BOX(hbox), to_entry, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 	label = gtk_label_new("Type:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
@@ -557,7 +543,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_box_pack_start(GTK_BOX(hbox), type_combo, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Body:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -568,8 +554,9 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_entry_set_activates_default (GTK_ENTRY (body_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), body_entry, FALSE, FALSE, 0);
 
+
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Subject:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -581,7 +568,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	gtk_box_pack_start(GTK_BOX(hbox), subject_entry, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Thread:");
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -591,42 +578,42 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 	thread_entry = gtk_entry_new();
 	gtk_entry_set_activates_default (GTK_ENTRY (thread_entry), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), thread_entry, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(vbox);
+	
+	gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 	if (result != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(dialog);
 		return;
 	}
-
+	
 	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
 	body = gtk_entry_get_text(GTK_ENTRY(body_entry));
 	thread = gtk_entry_get_text(GTK_ENTRY(thread_entry));
 	subject = gtk_entry_get_text(GTK_ENTRY(subject_entry));
 
 	stanza = g_strdup_printf("<message %s%s%s id='console%x' type='%s'>"
-	                         "%s%s%s%s%s%s%s%s%s"
-	                         "</message>",
-
-	                         *to ? "to='" : "",
-	                         *to ? to : "",
-	                         *to ? "'" : "",
-	                         g_random_int(),
-	                         gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)),
-
-	                         *body ? "<body>" : "",
-	                         *body ? body : "",
-	                         *body ? "</body>" : "",
-
-	                         *subject ? "<subject>" : "",
-	                         *subject ? subject : "",
-	                         *subject ? "</subject>" : "",
-
-	                         *thread ? "<thread>" : "",
-	                         *thread ? thread : "",
-	                         *thread ? "</thread>" : "");
-
+				 "%s%s%s%s%s%s%s%s%s"
+				 "</message>",
+				 
+				 *to ? "to='" : "",
+				 *to ? to : "",
+				 *to ? "'" : "",
+				 g_random_int(),
+				 gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo)),
+				 
+				 *body ? "<body>" : "",
+				 *body ? body : "",
+				 *body ? "</body>" : "",
+				 
+				 *subject ? "<subject>" : "",
+				 *subject ? subject : "",
+				 *subject ? "</subject>" : "",
+				 
+				 *thread ? "<thread>" : "",
+				 *thread ? thread : "",
+				 *thread ? "</thread>" : "");
+	
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_set_text(buffer, stanza, -1);
 	gtk_text_buffer_get_iter_at_offset(buffer, &iter, strstr(stanza, "</message>") - stanza);
@@ -638,18 +625,16 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 }
 
 static void
-signing_on_cb(PurpleConnection *gc)
+signed_on_cb(PurpleConnection *gc)
 {
 	if (!console)
 		return;
-
+	
 	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(gc->account));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
-
-	if (console->count == 1)
-		console->gc = gc;
-	else
+	
+	if (console->count > 1)
 		gtk_widget_show_all(console->hbox);
 }
 
@@ -676,11 +661,12 @@ signed_off_cb(PurpleConnection *gc)
 
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(console->dropdown), i);
 	console->accounts = g_list_remove(console->accounts, gc);
+	printf("%s\n", purple_account_get_username(gc->account));
 	console->count--;
 
 	if (gc == console->gc) {
 		console->gc = NULL;
-		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
+		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml), 
 				       _("<font color='#777777'>Logged out.</font>"), 0);
 	}
 }
@@ -699,11 +685,11 @@ plugin_load(PurplePlugin *plugin)
 			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
 	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
 			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signing-on",
-			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+			    plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
-
+	
 	return TRUE;
 }
 
@@ -730,18 +716,18 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 
 	if (!console)
 		return;
-
-	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)),
+	
+	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)), 
 				    "prpl-jabber");
 	if (!account || !account->gc)
 		return;
-
+	
 	console->gc = account->gc;
 	gtk_imhtml_clear(GTK_IMHTML(console->imhtml));
 }
 
-static void
-create_console(PurplePluginAction *action)
+static void 
+create_console(PurplePluginAction *action) 
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
 	GtkWidget *sw = gtk_scrolled_window_new(NULL, NULL);
@@ -749,13 +735,15 @@ create_console(PurplePluginAction *action)
 	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
 	GList *connections;
+#if GTK_CHECK_VERSION(2,4,0)
 	GtkToolItem *button;
+#endif
 
 	if (console) {
 		gtk_window_present(GTK_WINDOW(console->window));
 		return;
 	}
-
+	
 	console = g_new0(XmppConsole, 1);
 
 	console->window = pidgin_create_window(_("XMPP Console"), PIDGIN_HIG_BORDER, NULL, TRUE);
@@ -785,36 +773,51 @@ create_console(PurplePluginAction *action)
 	g_signal_connect(G_OBJECT(console->dropdown), "changed", G_CALLBACK(dropdown_changed_cb), NULL);
 
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_ETCHED_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), 
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	console->imhtml = gtk_imhtml_new(NULL, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	if (console->count == 0)
-		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
+		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml), 
 				       _("<font color='#777777'>Not connected to XMPP</font>"), 0);
 	gtk_container_add(GTK_CONTAINER(sw), console->imhtml);
-
+	
 	toolbar = gtk_toolbar_new();
+#if GTK_CHECK_VERSION(2,4,0)	
 	button = gtk_tool_button_new(NULL, "<iq/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(iq_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<iq/>", 
+			           _("Insert an <iq/> stanza."), "foo", NULL, GTK_SIGNAL_FUNC(iq_clicked_cb), NULL);
+#endif
 
+#if GTK_CHECK_VERSION(2,4,0)	
 	button = gtk_tool_button_new(NULL, "<presence/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(presence_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<presence/>", 
+			           _("Insert a <presence/> stanza."), NULL, gtk_label_new(NULL), GTK_SIGNAL_FUNC(presence_clicked_cb), NULL);
+#endif
 
+#if GTK_CHECK_VERSION(2,4,0)
 	button = gtk_tool_button_new(NULL, "<message/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(message_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
-
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<message/>", 
+			           _("Insert a <message/> stanza."), "foo", gtk_label_new(NULL), GTK_SIGNAL_FUNC(message_clicked_cb), NULL);
+#endif
+	
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
-
+	
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_ETCHED_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), 
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
+	
 	console->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"message_send", G_CALLBACK(message_send_cb), console);
@@ -840,7 +843,7 @@ actions(PurplePlugin *plugin, gpointer context)
 
 	act = purple_plugin_action_new(_("XMPP Console"), create_console);
 	l = g_list_append(l, act);
-
+	
 	return l;
 }
 
@@ -850,28 +853,28 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                       /**< type           */
-	PIDGIN_PLUGIN_TYPE,                           /**< ui_requirement */
-	0,                                            /**< flags          */
-	NULL,                                         /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                      /**< priority       */
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
-	"gtk-xmpp",                                   /**< id             */
-	N_("XMPP Console"),                           /**< name           */
-	DISPLAY_VERSION,                              /**< version        */
-	                                              /**  summary        */
+	"gtk-xmpp",                                       /**< id             */
+	N_("XMPP Console"),                                  /**< name           */
+	DISPLAY_VERSION,                                  /**< version        */
+	                                                  /**  summary        */
 	N_("Send and receive raw XMPP stanzas."),
-	                                              /**  description    */
-	N_("This plugin is useful for debugging XMPP servers or clients."),
-	"Sean Egan <seanegan@gmail.com>",             /**< author         */
-	PURPLE_WEBSITE,                               /**< homepage       */
+	                                                  /**  description    */
+	N_("This plugin is useful for debbuging XMPP servers or clients."),
+	"Sean Egan <seanegan@gmail.com>",                 /**< author         */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
-	plugin_load,                                  /**< load           */
-	plugin_unload,                                /**< unload         */
-	NULL,                                         /**< destroy        */
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
 
 	NULL,                                         /**< ui_info        */
-	NULL,                                         /**< extra_info     */
+	NULL,                                             /**< extra_info     */
 	NULL,
 	actions,
 
@@ -887,4 +890,4 @@ init_plugin(PurplePlugin *plugin)
 {
 }
 
-PURPLE_INIT_PLUGIN(xmppconsole, init_plugin, info)
+PURPLE_INIT_PLUGIN(interval, init_plugin, info)

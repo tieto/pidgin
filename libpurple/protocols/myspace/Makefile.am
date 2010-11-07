@@ -1,5 +1,4 @@
-EXTRA_DIST = \
-	Makefile.mingw
+EXTRA_DIST = Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
@@ -24,9 +23,9 @@ libmyspace_la_LDFLAGS = -module -avoid-version
 if STATIC_MYSPACE
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LTLIBRARIES    = libmyspace.la
-libmyspace_la_SOURCES = $(MSIMSOURCES)
-libmyspace_la_CFLAGS  = $(AM_CFLAGS)
+noinst_LIBRARIES     = libmyspace.a
+libmyspace_a_SOURCES = $(MSIMSOURCES)
+libmyspace_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 

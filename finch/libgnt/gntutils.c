@@ -20,12 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "config.h"
-
-#include "gntinternal.h"
-#undef GNT_LOG_DOMAIN
-#define GNT_LOG_DOMAIN "Utils"
-
 #include "gntbutton.h"
 #include "gntcheckbox.h"
 #include "gntcombobox.h"
@@ -37,6 +31,8 @@
 #include "gntutils.h"
 #include "gntwindow.h"
 
+#include "config.h"
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +41,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #endif
+
+#include "config.h"
 
 void gnt_util_get_text_bound(const char *text, int *width, int *height)
 {
@@ -308,7 +306,7 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[], int max)
 	xmlFree(content);
 
 	if (widget == NULL) {
-		gnt_warning("Invalid widget name %s", name);
+		g_printerr("Invalid widget name %s\n", name);
 		return NULL;
 	}
 
@@ -372,7 +370,7 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 	gnt_widget_from_xmlnode(node, data, num);
 
 	xmlFreeDoc(doc);
-	xmlFreeParserCtxt(ctxt);
+	xmlCleanupParser();
 	va_end(list);
 	g_free(data);
 #endif
@@ -385,6 +383,7 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 	const char *name;
 	char *content;
 	xmlNode *ch;
+	gboolean processed = FALSE;
 	char *url = NULL;
 	gboolean insert_nl_s = FALSE, insert_nl_e = FALSE;
 
@@ -425,12 +424,15 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 
 	for (ch = node->children; ch; ch = ch->next) {
 		if (ch->type == XML_ELEMENT_NODE) {
+			processed = TRUE;
 			util_parse_html_to_tv(ch, tv, flag);
-		} else if (ch->type == XML_TEXT_NODE) {
-			content = (char*)xmlNodeGetContent(ch);
-			gnt_text_view_append_text_with_flags(tv, content, flag);
-			xmlFree(content);
 		}
+	}
+
+	if (!processed) {
+		content = (char*)xmlNodeGetContent(node);
+		gnt_text_view_append_text_with_flags(tv, content, flag);
+		xmlFree(content);
 	}
 
 	if (url) {
@@ -464,7 +466,7 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv)
 		xmlFreeDoc(doc);
 		ret = TRUE;
 	}
-	xmlFreeParserCtxt(ctxt);
+	xmlCleanupParser();
 	return ret;
 #endif
 }

@@ -18,8 +18,9 @@
  *
  */
 
-#include "internal.h"
+#include <glib.h>
 #include <string.h>
+#include "internal.h"
 #include "nmfield.h"
 #include "nmuser.h"
 #include "nmconn.h"

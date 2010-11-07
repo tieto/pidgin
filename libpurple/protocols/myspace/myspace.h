@@ -20,8 +20,6 @@
 #ifndef _MYSPACE_MYSPACE_H
 #define _MYSPACE_MYSPACE_H
 
-#include "internal.h"
-
 /* Other includes */
 #include <string.h>
 #include <errno.h>/* for EAGAIN */
@@ -38,6 +36,8 @@
 #include <sys/socket.h>
 #endif
 
+#include "internal.h"
+
 #include "notify.h"
 #include "plugin.h"
 #include "accountopt.h"
@@ -48,7 +48,6 @@
 #include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
-#include "conversation.h" /* For late normalization */
 
 /* MySpaceIM includes */
 #include "persist.h"
@@ -63,17 +62,18 @@
 /*#define MSIM_SEND_CLIENT_VERSION              */
 
 /* Debugging options */
+/*#define MSIM_DEBUG_MSG                */
 /* Low-level and rarely needed */
 /*#define MSIM_DEBUG_PARSE             */
 /*#define MSIM_DEBUG_LOGIN_CHALLENGE*/
 /*#define MSIM_DEBUG_RXBUF            */
 
-/* Encode unknown HTML tags from IM clients in messages as [tag], instead of
+/* Encode unknown HTML tags from IM clients in messages as [tag], instead of 
  * ignoring. Useful for debugging */
 /*#define MSIM_MARKUP_SHOW_UNKNOWN_TAGS  */
 
 /* Define to cause init_plugin() to run some tests and print
- * the results to the Purple debug log, then exit. Useful to
+ * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if
  * you want to actually use the plugin! */
 /*#define MSIM_SELF_TEST            */
@@ -114,11 +114,12 @@
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
 /*#define MSIM_USE_KEEPALIVE*/
 
-/* Time to check if alive (seconds) */
-#define MSIM_KEEPALIVE_INTERVAL_CHECK   30
+/* Time to check if alive (milliseconds) */
+#define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
 
 /* Time to check for new mail (milliseconds) */
-#define MSIM_MAIL_INTERVAL_CHECK    (60 * 1000)
+#define MSIM_MAIL_INTERVAL_CHECK    (60 * 1000) 
+
 
 /* Constants */
 #define HASH_SIZE                   0x14        /**< Size of SHA-1 hash for login */
@@ -127,13 +128,12 @@
 #define MSIM_FINAL_STRING           "\\final\\" /**< Message end marker */
 
 /* Messages */
-#define MSIM_BM_ACTION_OR_IM_DELAYABLE  1
-#define MSIM_BM_STATUS                  100
-#define MSIM_BM_ACTION_OR_IM_INSTANT    121
-#define MSIM_BM_MEDIA                   122
-#define MSIM_BM_PROFILE                 124
-#define MSIM_BM_STATUS_MOOD             126
-#define MSIM_BM_UNOFFICIAL_CLIENT       200
+#define MSIM_BM_INSTANT             1
+#define MSIM_BM_STATUS              100
+#define MSIM_BM_ACTION              121
+#define MSIM_BM_MEDIA               122
+#define MSIM_BM_PROFILE             124
+#define MSIM_BM_UNOFFICIAL_CLIENT   200
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM         196610
@@ -141,9 +141,8 @@
 /* Recognized challenge length */
 #define MSIM_AUTH_CHALLENGE_LENGTH  0x40
 
-#ifdef SEND_OUR_IP_ADDRESSES
 /* TODO: obtain IPs of network interfaces from user's machine, instead of
- * hardcoding these values below (used in msim_compute_login_response).
+ * hardcoding these values below (used in msim_compute_login_response). 
  * This is not immediately
  * important because you can still connect and perform basic
  * functions of the protocol. There is also a high chance that the addreses
@@ -154,7 +153,6 @@
 
 #define MSIM_LOGIN_IP_LIST  "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01"
 #define MSIM_LOGIN_IP_LIST_LEN         25
-#endif /* SEND_OUR_IP_ADDRESSES */
 
 /* Indexes into status string (0|1|2|3|..., but 0 always empty) */
 #define MSIM_STATUS_ORDINAL_EMPTY       0
@@ -174,6 +172,7 @@
 #define MSIM_STATUS_CODE_IDLE                 2
 #define MSIM_STATUS_CODE_AWAY                 5
 
+
 /* Inbox status bitfield values for MsimSession.inbox_status. */
 #define MSIM_INBOX_MAIL                 (1 << 0)
 #define MSIM_INBOX_BLOG_COMMENT         (1 << 1)
@@ -191,13 +190,49 @@
 #define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
 
 /* Functions */
+gboolean msim_load(PurplePlugin *plugin);
+GList *msim_status_types(PurpleAccount *acct);
+
+const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
+
+void msim_login(PurpleAccount *acct);
+int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags);
+unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
+
+void msim_get_info(PurpleConnection *gc, const gchar *name);
+
+void msim_set_status(PurpleAccount *account, PurpleStatus *status);
+void msim_set_idle(PurpleConnection *gc, int time);
+
+void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+
+const char *msim_normalize(const PurpleAccount *account, const char *str);
+
+gboolean msim_offline_message(const PurpleBuddy *buddy);
+
+void msim_close(PurpleConnection *gc);
+
+char *msim_status_text(PurpleBuddy *buddy);
+void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
+GList *msim_actions(PurplePlugin *plugin, gpointer context);
+
+#ifdef MSIM_SELF_TEST
+void msim_test_all(void) __attribute__((__noreturn__));
+int msim_test_msg(void);
+int msim_test_escaping(void);
+#endif
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
 
 gboolean msim_we_are_logged_on(MsimSession *session);
 
+
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
 guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data);
+
+
+void init_plugin(PurplePlugin *plugin);
 
 #endif /* !_MYSPACE_MYSPACE_H */

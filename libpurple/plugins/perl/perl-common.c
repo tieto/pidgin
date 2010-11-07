@@ -32,10 +32,7 @@ magic_free_object(pTHX_ SV *sv, MAGIC *mg)
 
 static MGVTBL vtbl_free_object =
 {
-	0, 0, 0, 0, magic_free_object, 0, 0
-#if PERL_API_REVISION > 5 || (PERL_API_REVISION == 5 && PERL_API_VERSION >= 10)
-	, 0
-#endif
+	NULL, NULL, NULL, NULL, magic_free_object, NULL, NULL
 };
 
 static SV *
@@ -176,6 +173,7 @@ execute_perl(const char *function, int argc, char **args)
 {
 	int count = 0, i, ret_value = 1;
 	SV *sv_args[argc];
+	STRLEN na;
 	dSP;
 	PERL_SET_CONTEXT(my_perl);
 	/*
@@ -206,7 +204,7 @@ execute_perl(const char *function, int argc, char **args)
 	if (SvTRUE(ERRSV)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl function %s exited abnormally: %s\n",
-				   function, SvPVutf8_nolen(ERRSV));
+				   function, SvPV(ERRSV, na));
 		(void)POPs;
 	} else if (count != 1) {
 		/*
@@ -234,7 +232,7 @@ execute_perl(const char *function, int argc, char **args)
 			 * of hackish.  I should fix it.  Look how long this comment is.
 			 * Holy crap.
 			 */
-			args[i] = g_strdup(SvPVutf8_nolen(sv_args[i]));
+			args[i] = g_strdup(SvPV(sv_args[i], na));
 		}
 	}
 
@@ -380,6 +378,7 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 void *
 purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 {
+	STRLEN na;
 
 	switch (purple_value_get_type(value)) {
 		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
@@ -389,7 +388,7 @@ purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
 		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
 		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
-		case PURPLE_TYPE_STRING:  return g_strdup(SvPVutf8_nolen(sv));
+		case PURPLE_TYPE_STRING:  return g_strdup((void *)SvPV(sv, na));
 		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
 		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
 
@@ -403,7 +402,7 @@ purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 static SV *
 purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 {
-	const char *stash = "Purple"; /* ? */
+	const char *stash = NULL;
 
 	switch (purple_value_get_subtype(value)) {
 		case PURPLE_SUBTYPE_ACCOUNT:
@@ -442,9 +441,6 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 		case PURPLE_SUBTYPE_STATUS:
 			stash = "Purple::Status";
 			break;
-		case PURPLE_SUBTYPE_SAVEDSTATUS:
-			stash = "Purple::SavedStatus";
-			break;
 		case PURPLE_SUBTYPE_LOG:
 			stash = "Purple::Log";
 			break;
@@ -454,19 +450,10 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 		case PURPLE_SUBTYPE_XMLNODE:
 			stash = "Purple::XMLNode";
 			break;
- 		case PURPLE_SUBTYPE_USERINFO:
- 			stash = "Purple::NotifyUserInfo";
- 			break;
- 		case PURPLE_SUBTYPE_STORED_IMAGE:
- 			stash = "Purple::StoredImage";
- 			break;
- 		case PURPLE_SUBTYPE_CERTIFICATEPOOL:
- 			stash = "Purple::Certificate::Pool";
- 			break;
- 		case PURPLE_SUBTYPE_UNKNOWN:
- 			stash = "Purple::Unknown";
- 			break;
-  	}
+
+		default:
+			stash = "Purple"; /* ? */
+	}
 
 	return sv_2mortal(purple_perl_bless_object(arg, stash));
 }

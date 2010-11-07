@@ -121,7 +121,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 
 	} else {
 		PurpleConnectionError reason;
-		char *err = g_strdup_printf(_("Unable to login: %s"),
+		char *err = g_strdup_printf(_("Login failed (%s)."),
 					    nm_error_to_string (ret_code));
 
 		switch (ret_code) {
@@ -140,7 +140,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		}
 
-		purple_connection_error_reason(gc, reason, err);
+		purple_connection_error_reason (gc, reason, err);
 		g_free(err);
 	}
 }
@@ -293,7 +293,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 								nm_user_record_get_display_id(user_record));
 
 		alias = purple_buddy_get_alias(buddy);
-		if (alias == NULL || *alias == '\0' || (strcmp(alias, purple_buddy_get_name(buddy)) == 0)) {
+		if (alias == NULL || *alias == '\0' || (strcmp(alias, buddy->name) == 0)) {
 			purple_blist_alias_buddy(buddy,
 								   nm_user_record_get_full_name(user_record));
 
@@ -1126,7 +1126,7 @@ _check_for_disconnect(NMUser * user, NMERR_T err)
 
 	if (_is_disconnect_error(err)) {
 
-		purple_connection_error_reason(gc,
+		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Error communicating with server. Closing connection."));
 		return TRUE;
@@ -1175,12 +1175,10 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	const char *status_id;
 	const char *text = NULL;
 	const char *dn;
-	const char *name;
 	int idle = 0;
 	gboolean loggedin = TRUE;
 
-	account = purple_buddy_get_account(buddy);
-	name = purple_buddy_get_name(buddy);
+	account = buddy->account;
 
 	switch (novellstatus) {
 		case NM_STATUS_AVAILABLE:
@@ -1207,7 +1205,7 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 	}
 
 	/* Get status text for the user */
-	dn = nm_lookup_dn(user, name);
+	dn = nm_lookup_dn(user, buddy->name);
 	if (dn) {
 		NMUserRecord *user_record = nm_find_user_record(user, dn);
 		if (user_record) {
@@ -1215,9 +1213,9 @@ _update_buddy_status(NMUser *user, PurpleBuddy * buddy, int novellstatus, int gm
 		}
 	}
 
-	purple_prpl_got_user_status(account, name, status_id,
+	purple_prpl_got_user_status(account, buddy->name, status_id,
 							  "message", text, NULL);
-	purple_prpl_got_user_idle(account, name,
+	purple_prpl_got_user_idle(account, buddy->name,
 							(novellstatus == NM_STATUS_AWAY_IDLE), idle);
 }
 
@@ -1232,46 +1230,44 @@ _remove_purple_buddies(NMUser *user)
 	PurpleBlistNode *bnode;
 	PurpleGroup *group;
 	PurpleBuddy *buddy;
+	PurpleBuddyList *blist;
 	GSList *rem_list = NULL;
 	GSList *l;
 	NMFolder *folder = NULL;
 	const char *gname = NULL;
 
-	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		group = (PurpleGroup *) gnode;
-		gname = purple_group_get_name(group);
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+	if ((blist = purple_get_blist())) {
+		for (gnode = blist->root; gnode; gnode = gnode->next) {
+			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+			group = (PurpleGroup *) gnode;
+			for (cnode = gnode->child; cnode; cnode = cnode->next) {
+				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
-				buddy = (PurpleBuddy *) bnode;
-				if (purple_buddy_get_account(buddy) == user->client_data) {
-					if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0)
-						gname = "";
-					folder = nm_find_folder(user, gname);
-					if (folder == NULL ||
-							!nm_folder_find_contact_by_display_id(folder, purple_buddy_get_name(buddy))) {
-						rem_list = g_slist_append(rem_list, buddy);
+				for (bnode = cnode->child; bnode; bnode = bnode->next) {
+					if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					buddy = (PurpleBuddy *) bnode;
+					if (buddy->account == user->client_data) {
+						gname = group->name;
+						if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0)
+							gname = "";
+						folder = nm_find_folder(user, gname);
+						if (folder == NULL ||
+							!nm_folder_find_contact_by_display_id(folder, buddy->name)) {
+							rem_list = g_slist_append(rem_list, buddy);
+						}
 					}
 				}
 			}
 		}
-	}
 
-	if (rem_list) {
-		for (l = rem_list; l; l = l->next) {
-			purple_blist_remove_buddy(l->data);
+		if (rem_list) {
+			for (l = rem_list; l; l = l->next) {
+				purple_blist_remove_buddy(l->data);
+			}
+			g_slist_free(rem_list);
 		}
-		g_slist_free(rem_list);
 	}
 }
 
@@ -1458,7 +1454,7 @@ _sync_privacy_lists(NMUser *user)
 		for (node = rem_list; node; node = node->next) {
 			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
 		}
-		g_slist_free(rem_list);
+		g_free(rem_list);
 		rem_list = NULL;
 	}
 
@@ -1494,11 +1490,11 @@ _map_property_tag(const char *tag)
 	else if (strcmp(tag, "personalTitle") == 0)
 		return _("Personal Title");
 	else if (strcmp(tag, "Title") == 0)
-		return _("Job Title");
+		return _("Title");
 	else if (strcmp(tag, "mailstop") == 0)
 		return _("Mailstop");
 	else if (strcmp(tag, "Internet EMail Address") == 0)
-		return _("Email Address");
+		return _("E-Mail Address");
 	else
 		return tag;
 }
@@ -1617,14 +1613,14 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
+	gc = purple_account_get_connection(buddy->account);
 
 	user = gc->proto_data;
 	if (user == NULL)
 		return;
 
 	/* We should already have a userrecord for the buddy */
-	user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
+	user_record = nm_find_user_record(user, buddy->name);
 	if (user_record == NULL)
 		return;
 
@@ -1701,7 +1697,7 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 
 		if (_is_disconnect_error(rc)) {
 
-			purple_connection_error_reason(gc,
+			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with server. Closing connection."));
 		} else {
@@ -1742,9 +1738,9 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 		conn->connected = TRUE;
 		purple_ssl_input_add(gsc, novell_ssl_recv_cb, gc);
 	} else {
-		purple_connection_error_reason(gc,
+		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to connect"));
+			_("Unable to connect to server."));
 	}
 
 	purple_connection_update_progress(gc, _("Waiting for response..."),
@@ -2027,9 +2023,10 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	{
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error_reason(gc,
+		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NAME_IN_USE,
-			_("You have signed on from another location"));
+			_("You have been logged out because you"
+			  " logged in at another workstation."));
 	}
 }
 
@@ -2183,10 +2180,10 @@ novell_login(PurpleAccount * account)
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		purple_connection_error_reason(gc,
+		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
-			  "address of the server to which you wish to connect."));
+			  "address of the server you wish to connect to."));
 		return;
 	}
 
@@ -2212,9 +2209,9 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
-			purple_connection_error_reason(gc,
+			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("SSL support unavailable"));
+				_("Error. SSL support is not installed."));
 		}
 	}
 }
@@ -2509,7 +2506,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 						}
 					}
 
-					serv_got_chat_in(gc, id, name, flags, text, time(NULL));
+					serv_got_chat_in(gc, id, name, 0, text, time(NULL));
 					return 0;
 				} else
 					return -1;
@@ -2522,8 +2519,8 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	/* The conference was not found, must be closed */
 	chat = purple_find_chat(gc, id);
 	if (chat) {
-		str = g_strdup(_("This conference has been closed."
-						 " No more messages can be sent."));
+		str = g_strdup_printf(_("This conference has been closed."
+								" No more messages can be sent."));
 		purple_conversation_write(chat, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(str);
 	}
@@ -2541,12 +2538,12 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	NMContact *contact;
 	NMUser *user;
 	NMERR_T rc = NM_OK;
-	const char *alias, *gname, *bname;
+	const char *alias, *gname;
 
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) purple_connection_get_protocol_data(gc);
+	user = (NMUser *) gc->proto_data;
 	if (user == NULL)
 		return;
 
@@ -2556,27 +2553,23 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (!user->clist_synched)
 		return;
 
-	/* Don't re-add a buddy that is already on our contact list */
-	if (nm_find_user_record(user, purple_buddy_get_name(buddy)) != NULL)
-		return;
-
 	contact = nm_create_contact();
-	nm_contact_set_dn(contact, purple_buddy_get_name(buddy));
+	nm_contact_set_dn(contact, buddy->name);
 
 	/* Remove the PurpleBuddy (we will add it back after adding it
 	 * to the server side list). Save the alias if there is one.
 	 */
 	alias = purple_buddy_get_alias(buddy);
-	bname = purple_buddy_get_name(buddy);
-	if (alias && strcmp(alias, bname))
+	if (alias && strcmp(alias, buddy->name))
 		nm_contact_set_display_name(contact, alias);
 
 	purple_blist_remove_buddy(buddy);
 	buddy = NULL;
 
-	gname = purple_group_get_name(group);
-	if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
+	if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
 		gname = "";
+	} else {
+		gname = group->name;
 	}
 
 	folder = nm_find_folder(user, gname);
@@ -2610,10 +2603,11 @@ novell_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 		return;
 
 	user = (NMUser *) gc->proto_data;
-	if (user && (dn = nm_lookup_dn(user, purple_buddy_get_name(buddy)))) {
-		gname = purple_group_get_name(group);
-		if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
+	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
+		if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
 			gname = "";
+		} else {
+			gname = group->name;
 		}
 		folder = nm_find_folder(user, gname);
 		if (folder) {
@@ -2643,7 +2637,7 @@ novell_remove_group(PurpleConnection * gc, PurpleGroup *group)
 
 	user = (NMUser *) gc->proto_data;
 	if (user) {
-		NMFolder *folder = nm_find_folder(user, purple_group_get_name(group));
+		NMFolder *folder = nm_find_folder(user, group->name);
 
 		if (folder) {
 			rc = nm_send_remove_folder(user, folder,
@@ -2690,11 +2684,9 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 				}
 
 				if (group) {
-					const char *balias;
 					buddy = purple_find_buddy_in_group(user->client_data,
 													 name, group);
-					balias = buddy ? purple_buddy_get_local_buddy_alias(buddy) : NULL;
-					if (balias && strcmp(balias, alias))
+					if (buddy && strcmp(buddy->alias, alias))
 						purple_blist_alias_buddy(buddy, alias);
 				}
 
@@ -2785,9 +2777,8 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 
 	user = gc->proto_data;
 	if (user) {
-		const char *gname = purple_group_get_name(group);
 		/* Does new folder exist already? */
-		if (nm_find_folder(user, gname)) {
+		if (nm_find_folder(user, group->name)) {
 			/* purple_blist_rename_group() adds the buddies
 			 * to the new group and removes the old group...
 			 * so there is nothing more to do here.
@@ -2802,7 +2793,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 
 		folder = nm_find_folder(user, old_name);
 		if (folder) {
-			rc = nm_send_rename_folder(user, folder, gname,
+			rc = nm_send_rename_folder(user, folder, group->name,
 									   _rename_folder_resp_cb, NULL);
 			_check_for_disconnect(user, rc);
 		}
@@ -2828,12 +2819,12 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 	if (buddy == NULL)
 		return;
 
-	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
+	gc = purple_account_get_connection(buddy->account);
 	if (gc == NULL || (user = gc->proto_data) == NULL)
 		return;
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-		user_record = nm_find_user_record(user, purple_buddy_get_name(buddy));
+		user_record = nm_find_user_record(user, buddy->name);
 		if (user_record) {
 			status = nm_user_record_get_status(user_record);
 			text = nm_user_record_get_status_text(user_record);
@@ -2932,16 +2923,14 @@ novell_status_text(PurpleBuddy * buddy)
 {
 	const char *text = NULL;
 	const char *dn = NULL;
-	PurpleAccount *account;
 
-	account = buddy ? purple_buddy_get_account(buddy) : NULL;
-	if (buddy && account) {
-		PurpleConnection *gc = purple_account_get_connection(account);
+	if (buddy && buddy->account) {
+		PurpleConnection *gc = purple_account_get_connection(buddy->account);
 
 		if (gc && gc->proto_data) {
 			NMUser *user = gc->proto_data;
 
-			dn = nm_lookup_dn(user, purple_buddy_get_name(buddy));
+			dn = nm_lookup_dn(user, buddy->name);
 			if (dn) {
 				NMUserRecord *user_record = nm_find_user_record(user, dn);
 
@@ -2987,7 +2976,7 @@ novell_status_types(PurpleAccount *account)
 										   NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
@@ -3523,16 +3512,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* whiteboard_prpl_ops */
 	NULL,						/* send_raw */
 	NULL,						/* roomlist_room_serialize */
-	NULL,						/* unregister_user */
-	NULL,						/* send_attention */
-	NULL,						/* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL,						/* get_account_text_table */
-	NULL,						/* initiate_media */
-	NULL,						/* get_media_caps */
-	NULL,						/* get_moods */
-	NULL,						/* set_public_alias */
-	NULL						/* get_public_alias */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {

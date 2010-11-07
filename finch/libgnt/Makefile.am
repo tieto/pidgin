@@ -6,8 +6,6 @@ pkgconfig_DATA = gnt.pc
 
 lib_LTLIBRARIES = libgnt.la
 
-noinst_HEADERS = gntinternal.h
-
 BUILT_SOURCES = gntmarshal.h
 
 libgnt_la_SOURCES = \
@@ -28,7 +26,6 @@ libgnt_la_SOURCES = \
 	gntmenu.c \
 	gntmenuitem.c \
 	gntmenuitemcheck.c \
-	gntprogressbar.c \
 	gntslider.c \
 	gntstyle.c \
 	gnttextview.c \
@@ -57,7 +54,6 @@ libgnt_la_headers = \
 	gntmenu.h \
 	gntmenuitem.h \
 	gntmenuitemcheck.h \
-	gntprogressbar.h \
 	gntslider.h \
 	gntstyle.h \
 	gnttextview.h \

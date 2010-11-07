@@ -28,11 +28,11 @@
 
 #include "oscar.h"
 
-#include <ctype.h>
-
 #include "cipher.h"
 
-/* #define USE_XOR_FOR_ICQ */
+#include <ctype.h>
+
+#define USE_XOR_FOR_ICQ
 
 #ifdef USE_XOR_FOR_ICQ
 /**
@@ -56,10 +56,17 @@ static int
 aim_encode_password(const char *password, guint8 *encoded)
 {
 	guint8 encoding_table[] = {
+#if 0 /* old v1 table */
+		0xf3, 0xb3, 0x6c, 0x99,
+		0x95, 0x3f, 0xac, 0xb6,
+		0xc5, 0xfa, 0x6b, 0x63,
+		0x69, 0x6c, 0xc3, 0x9f
+#else /* v2.1 table, also works for ICQ */
 		0xf3, 0x26, 0x81, 0xc4,
 		0x39, 0x86, 0xdb, 0x92,
 		0x71, 0xa3, 0xb9, 0xe6,
 		0x53, 0x7a, 0x95, 0x7c
+#endif
 	};
 	unsigned int i;
 
@@ -74,9 +81,12 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
+	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 
-	context = purple_cipher_context_new_by_name("md5", NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+
+	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
 	purple_cipher_context_append(context, (const guchar *)password, password_len);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
@@ -122,7 +132,6 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
-	guint32 distrib;
 
 	passwdlen = strlen(password);
 	password_encoded = (guint8 *)g_malloc(passwdlen+1);
@@ -133,27 +142,18 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
-	distrib = oscar_get_ui_info_int(
-			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
-			ci->distrib);
-
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
-	if (ci->clientstring != NULL)
+	if (ci->clientstring)
 		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
-	else {
-		gchar *clientstring = oscar_get_clientstring();
-		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
-		g_free(clientstring);
-	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib); /* distribution chan */
+	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib); /* distribution chan */
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
@@ -200,20 +200,15 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
  *        usually happens for AOL accounts.  We are told that we
  *        should truncate it if the 0x0017/0x0007 SNAC contains
  *        a TLV of type 0x0026 with data 0x0000.
- * @param allow_multiple_logins Allow multiple logins? If TRUE, the AIM
- *        server will prompt the user when multiple logins occur. If
- *        FALSE, existing connections (on other clients) will be
- *        disconnected automatically as we connect.
  */
 int
-aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins)
+aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
 {
 	FlapFrame *frame;
 	GSList *tlvlist = NULL;
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
-	guint32 distrib;
 
 	if (!ci || !sn || !password)
 		return -EINVAL;
@@ -226,23 +221,19 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, snacid);
+	snacid = aim_cachesnac(od, 0x0017, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0017, 0x0002, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
 	/* Truncate ICQ and AOL passwords, if necessary */
 	password_len = strlen(password);
-	if (oscar_util_valid_name_icq(sn) && (password_len > MAXICQPASSLEN))
+	if (aim_snvalid_icq(sn) && (password_len > MAXICQPASSLEN))
 		password_len = MAXICQPASSLEN;
 	else if (truncate_pass && password_len > 8)
 		password_len = 8;
 
 	aim_encode_password_md5(password, password_len, key, digest);
-
-	distrib = oscar_get_ui_info_int(
-			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
-			ci->distrib);
 
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 
@@ -250,19 +241,14 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
-	if (ci->clientstring != NULL)
+	if (ci->clientstring)
 		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
-	else {
-		gchar *clientstring = oscar_get_clientstring();
-		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
-		g_free(clientstring);
-	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tlvlist, 0x0014, distrib);
+	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib);
 	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
@@ -270,7 +256,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x03));
+	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 
@@ -306,11 +292,12 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	tlvlist = aim_tlvlist_read(bs);
 
 	/*
-	 * No matter what, we should have a username.
+	 * No matter what, we should have a screen name.
 	 */
+	memset(od->sn, 0, sizeof(od->sn));
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
-		info->bn = aim_tlv_getstr(tlvlist, 0x0001, 1);
-		purple_connection_set_display_name(od->gc, info->bn);
+		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
+		strncpy(od->sn, info->sn, sizeof(od->sn));
 	}
 
 	/*
@@ -378,6 +365,12 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if (aim_tlv_gettlv(tlvlist, 0x0043, 1))
 		info->latestbeta.name = aim_tlv_getstr(tlvlist, 0x0043, 1);
 
+#if 0
+	if (aim_tlv_gettlv(tlvlist, 0x0048, 1)) {
+		/* beta serial */
+	}
+#endif
+
 	if (aim_tlv_gettlv(tlvlist, 0x0044, 1))
 		info->latestrelease.build = aim_tlv_get32(tlvlist, 0x0044, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0045, 1))
@@ -387,15 +380,30 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if (aim_tlv_gettlv(tlvlist, 0x0047, 1))
 		info->latestrelease.name = aim_tlv_getstr(tlvlist, 0x0047, 1);
 
+#if 0
+	if (aim_tlv_gettlv(tlvlist, 0x0049, 1)) {
+		/* lastest release serial */
+	}
+#endif
+
 	/*
 	 * URL to change password.
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0054, 1))
 		info->chpassurl = aim_tlv_getstr(tlvlist, 0x0054, 1);
 
+#if 0
+	/*
+	 * Unknown.  Seen on an @mac.com screen name with value of 0x003f
+	 */
+	if (aim_tlv_gettlv(tlvlist, 0x0055, 1)) {
+		/* Unhandled */
+	}
+#endif
+
 	od->authinfo = info;
 
-	if ((userfunc = aim_callhandler(od, snac ? snac->family : SNAC_FAMILY_AUTH, snac ? snac->subtype : 0x0003)))
+	if ((userfunc = aim_callhandler(od, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
 		ret = userfunc(od, conn, frame, info);
 
 	aim_tlvlist_free(tlvlist);
@@ -413,7 +421,7 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
  *   - connect
  *   - server sends flap version
  *   - client sends flap version
- *   - client sends username (17/6)
+ *   - client sends screen name (17/6)
  *   - server sends hash key (17/7)
  *   - client sends auth request (17/2 -- aim_send_login)
  *   - server yells
@@ -441,7 +449,7 @@ goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)
 	FlapFrame frame;
 	aim_rxcallback_t userfunc;
 
-	if ((userfunc = aim_callhandler(od, SNAC_FAMILY_AUTH, 0x0007)))
+	if ((userfunc = aim_callhandler(od, 0x0017, 0x0007)))
 		userfunc(od, conn, &frame, "");
 
 	return 0;
@@ -452,7 +460,7 @@ goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)
  * Subtype 0x0006
  *
  * In AIM 3.5 protocol, the first stage of login is to request login from the
- * Authorizer, passing it the username for verification.  If the name is
+ * Authorizer, passing it the screen name for verification.  If the name is
  * invalid, a 0017/0003 is spit back, with the standard error contents.  If
  * valid, a 0017/0007 comes back, which is the signal to send it the main
  * login command (0017/0002).
@@ -475,8 +483,8 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 
 	frame = flap_frame_new(od, 0x02, 10+2+2+strlen(sn)+8);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, snacid);
+	snacid = aim_cachesnac(od, 0x0017, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0017, 0x0006, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -519,7 +527,7 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	/*
 	 * If the truncate_pass TLV exists then we should truncate the
 	 * user's password to 8 characters.  This flag is sent to us
-	 * when logging in with an AOL user's username.
+	 * when logging in with an AOL user's screen name.
 	 */
 	truncate_pass = aim_tlv_gettlv(tlvlist, 0x0026, 1) != NULL;
 
@@ -574,7 +582,7 @@ aim_auth_securid_send(OscarData *od, const char *securid)
 	frame = flap_frame_new(od, 0x02, 10+2+len);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
 
 	byte_stream_put16(&frame->data, len);
 	byte_stream_putstr(&frame->data, securid);
@@ -589,18 +597,18 @@ auth_shutdown(OscarData *od, aim_module_t *mod)
 {
 	if (od->authinfo != NULL)
 	{
-		g_free(od->authinfo->bn);
-		g_free(od->authinfo->bosip);
-		g_free(od->authinfo->errorurl);
-		g_free(od->authinfo->email);
-		g_free(od->authinfo->chpassurl);
-		g_free(od->authinfo->latestrelease.name);
-		g_free(od->authinfo->latestrelease.url);
-		g_free(od->authinfo->latestrelease.info);
-		g_free(od->authinfo->latestbeta.name);
-		g_free(od->authinfo->latestbeta.url);
-		g_free(od->authinfo->latestbeta.info);
-		g_free(od->authinfo);
+		free(od->authinfo->sn);
+		free(od->authinfo->bosip);
+		free(od->authinfo->errorurl);
+		free(od->authinfo->email);
+		free(od->authinfo->chpassurl);
+		free(od->authinfo->latestrelease.name);
+		free(od->authinfo->latestrelease.url);
+		free(od->authinfo->latestrelease.info);
+		free(od->authinfo->latestbeta.name);
+		free(od->authinfo->latestbeta.url);
+		free(od->authinfo->latestbeta.info);
+		free(od->authinfo);
 	}
 }
 
@@ -620,7 +628,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 auth_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = SNAC_FAMILY_AUTH;
+	mod->family = 0x0017;
 	mod->version = 0x0000;
 	mod->flags = 0;
 	strncpy(mod->name, "auth", sizeof(mod->name));

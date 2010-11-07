@@ -49,7 +49,27 @@ aim_tlv_read(GSList *list, ByteStream *bs)
 	type = byte_stream_get16(bs);
 	length = byte_stream_get16(bs);
 
-	if (length > byte_stream_bytes_left(bs)) {
+#if 0
+	/*
+	 * This code hasn't been needed in years.  It's been commented
+	 * out since 2003, at the latest.  It seems likely that it was
+	 * just a bug in their server code that has since been fixed.
+	 * In any case, here's the orignal comment, kept for historical
+	 * purposes:
+	 *
+	 * Okay, so now AOL has decided that any TLV of
+	 * type 0x0013 can only be two bytes, despite
+	 * what the actual given length is.  So here
+	 * we dump any invalid TLVs of that sort.  Hopefully
+	 * there's no special cases to this special case.
+	 *   - mid (30jun2000)
+	 */
+	if ((type == 0x0013) && (length != 0x0002)) {
+		length = 0x0002;
+		return list;
+	}
+#endif
+	if (length > byte_stream_empty(bs)) {
 		aim_tlvlist_free(list);
 		return NULL;
 	}
@@ -88,7 +108,7 @@ GSList *aim_tlvlist_read(ByteStream *bs)
 {
 	GSList *list = NULL;
 
-	while (byte_stream_bytes_left(bs) > 0) {
+	while (byte_stream_empty(bs) > 0) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -122,7 +142,7 @@ GSList *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
 {
 	GSList *list = NULL;
 
-	while ((byte_stream_bytes_left(bs) > 0) && (num != 0)) {
+	while ((byte_stream_empty(bs) > 0) && (num != 0)) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -157,7 +177,7 @@ GSList *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
 {
 	GSList *list = NULL;
 
-	while ((byte_stream_bytes_left(bs) > 0) && (len > 0)) {
+	while ((byte_stream_empty(bs) > 0) && (len > 0)) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -371,17 +391,6 @@ int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value)
 	return aim_tlvlist_add_raw(list, type, strlen(value), (guint8 *)value);
 }
 
-static int
-count_caps(guint64 caps)
-{
-	int set_bits = 0;
-	while (caps) {
-		set_bits += caps & 1;
-		caps >>= 1;
-	}
-	return set_bits;
-}
-
 /**
  * Adds a block of capability blocks to a TLV chain. The bitfield
  * passed in should be a bitwise %OR of any of the %AIM_CAPS constants:
@@ -398,26 +407,19 @@ count_caps(guint64 caps)
  * @param caps Bitfield of capability flags to send
  * @return The size of the value added.
  */
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, const char *mood)
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps)
 {
+	guint8 buf[256]; /* TODO: Don't use a fixed length buffer */
 	ByteStream bs;
-	guint32 bs_size;
-	guint8 *data;
 
 	if (caps == 0)
 		return 0; /* nothing there anyway */
 
-	data = icq_get_custom_icon_data(mood);
-	bs_size = 16*(count_caps(caps) + (data != NULL ? 1 : 0));
+	byte_stream_init(&bs, buf, sizeof(buf));
 
-	byte_stream_new(&bs, bs_size);
 	byte_stream_putcaps(&bs, caps);
 
-	/* adding of custom icon GUID */
-	if (data != NULL)
-		byte_stream_putraw(&bs, data, 16);
-
-	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
+	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 }
 
 /**
@@ -660,7 +662,7 @@ int aim_tlvlist_write(ByteStream *bs, GSList **list)
 	/* do an initial run to test total length */
 	goodbuflen = aim_tlvlist_size(*list);
 
-	if (goodbuflen > byte_stream_bytes_left(bs))
+	if (goodbuflen > byte_stream_empty(bs))
 		return 0; /* not enough buffer */
 
 	/* do the real write-out */

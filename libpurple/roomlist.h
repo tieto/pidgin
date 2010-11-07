@@ -30,7 +30,6 @@
 typedef struct _PurpleRoomlist PurpleRoomlist;
 typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
 typedef struct _PurpleRoomlistField PurpleRoomlistField;
-/** @copydoc _PurpleRoomlistUiOps */
 typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
 
 /**
@@ -57,7 +56,7 @@ typedef enum
 } PurpleRoomlistFieldType;
 
 #include "account.h"
-#include <glib.h>
+#include "glib.h"
 
 /**************************************************************************/
 /** Data Structures                                                       */

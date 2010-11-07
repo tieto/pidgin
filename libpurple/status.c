@@ -23,8 +23,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#define _PURPLE_STATUS_C_
-
 #include "internal.h"
 
 #include "blist.h"
@@ -109,14 +107,10 @@ struct _PurpleStatus
 	PurpleStatusType *type;
 	PurplePresence *presence;
 
+	const char *title;
+
 	gboolean active;
 
-	/*
-	 * The current values of the attributes for this status.  The
-	 * key is a string containing the name of the attribute.  It is
-	 * a borrowed reference from the list of attrs in the
-	 * PurpleStatusType.  The value is a PurpleValue.
-	 */
 	GHashTable *attr_values;
 };
 
@@ -137,7 +131,6 @@ static int primitive_scores[] =
 	-200,   /* extended away            */
 	-400,   /* mobile                   */
 	0,      /* tune                     */
-	0,      /* mood                     */
 	-10,    /* idle, special case.      */
 	-5,     /* idle time, special case. */
 	10      /* Offline messageable      */
@@ -158,16 +151,15 @@ static struct PurpleStatusPrimitiveMap
 
 } const status_primitive_map[] =
 {
-	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")               },
-	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")             },
-	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")           },
-	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Do not disturb")      },
-	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")           },
-	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")                },
-	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")       },
-	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")              },
-	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music"), },
-	{ PURPLE_STATUS_MOOD,            "mood",            N_("Feeling")             },
+	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")           },
+	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")         },
+	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")       },
+	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Do not disturb")     },
+	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
+	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
+	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          },
+	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music") }
 };
 
 const char *
@@ -207,7 +199,7 @@ purple_primitive_get_type_from_id(const char *id)
 
     for (i = 0; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
     {
-		if (purple_strequal(id, status_primitive_map[i].id))
+        if (!strcmp(id, status_primitive_map[i].id))
             return status_primitive_map[i].type;
     }
 
@@ -254,7 +246,7 @@ purple_status_type_new(PurpleStatusPrimitive primitive, const char *id,
 {
 	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, NULL);
 
-	return purple_status_type_new_full(primitive, id, name, TRUE,
+	return purple_status_type_new_full(primitive, id, name, FALSE,
 			user_settable, FALSE);
 }
 
@@ -455,7 +447,7 @@ purple_status_type_get_attr(const PurpleStatusType *status_type, const char *id)
 	{
 		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
 
-		if (purple_strequal(purple_status_attr_get_id(attr), id))
+		if (!strcmp(purple_status_attr_get_id(attr), id))
 			return attr;
 	}
 
@@ -481,7 +473,7 @@ purple_status_type_find_with_id(GList *status_types, const char *id)
 	{
 		status_type = status_types->data;
 
-		if (purple_strequal(id, status_type->id))
+		if (!strcmp(id, status_type->id))
 			return status_type;
 
 		status_types = status_types->next;
@@ -571,7 +563,7 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 	status->presence = presence;
 
 	status->attr_values =
-		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 		(GDestroyNotify)purple_value_destroy);
 
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
@@ -581,7 +573,7 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 		PurpleValue *new_value = purple_value_dup(value);
 
 		g_hash_table_insert(status->attr_values,
-							(char *)purple_status_attr_get_id(attr),
+							g_strdup(purple_status_attr_get_id(attr)),
 							new_value);
 	}
 
@@ -616,8 +608,7 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 		if (old_status != NULL)
 		{
-			tmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias,
-			                      purple_buddy_get_name(buddy),
+			tmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias, buddy->name,
 			                      purple_status_get_name(old_status),
 			                      purple_status_get_name(new_status));
 			logtmp = g_markup_escape_text(tmp, -1);
@@ -628,21 +619,19 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 			if (purple_status_is_active(new_status))
 			{
-				tmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias,
-				                      purple_buddy_get_name(buddy),
+				tmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias, buddy->name,
 				                      purple_status_get_name(new_status));
 				logtmp = g_markup_escape_text(tmp, -1);
 			}
 			else
 			{
-				tmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias,
-				                      purple_buddy_get_name(buddy),
+				tmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias, buddy->name,
 				                      purple_status_get_name(new_status));
 				logtmp = g_markup_escape_text(tmp, -1);
 			}
 		}
 
-		log = purple_account_get_log(purple_buddy_get_account(buddy), FALSE);
+		log = purple_account_get_log(buddy->account, FALSE);
 		if (log != NULL)
 		{
 			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
@@ -786,8 +775,12 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		{
 			const gchar *string_data = l->data;
 			l = l->next;
-			if (purple_strequal(string_data, value->data.string_data))
+			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
+				((string_data != NULL) && (value->data.string_data != NULL) &&
+				!strcmp(string_data, value->data.string_data)))
+			{
 				continue;
+			}
 			purple_status_set_attr_string(status, id, string_data);
 			changed = TRUE;
 		}
@@ -819,42 +812,28 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	/* Reset any unspecified attributes to their default value */
 	status_type = purple_status_get_type(status);
 	l = purple_status_type_get_attrs(status_type);
-	while (l != NULL) {
+	while (l != NULL)
+	{
 		PurpleStatusAttr *attr;
 
 		attr = l->data;
-		l = l->next;
-
-		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
+		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
+		{
 			PurpleValue *default_value;
 			default_value = purple_status_attr_get_value(attr);
-			if (default_value->type == PURPLE_TYPE_STRING) {
-				const char *cur = purple_status_get_attr_string(status, attr->id);
-				const char *def = purple_value_get_string(default_value);
-				if ((cur == NULL && def == NULL)
-				    || (cur != NULL && def != NULL
-					&& !strcmp(cur, def))) {
-					continue;
-				}
-
-				purple_status_set_attr_string(status, attr->id, def);
-			} else if (default_value->type == PURPLE_TYPE_INT) {
-				int cur = purple_status_get_attr_int(status, attr->id);
-				int def = purple_value_get_int(default_value);
-				if (cur == def)
-					continue;
-
-				purple_status_set_attr_int(status, attr->id, def);
-			} else if (default_value->type == PURPLE_TYPE_BOOLEAN) {
-				gboolean cur = purple_status_get_attr_boolean(status, attr->id);
-				gboolean def = purple_value_get_boolean(default_value);
-				if (cur == def)
-					continue;
-
-				purple_status_set_attr_boolean(status, attr->id, def);
-			}
+			if (default_value->type == PURPLE_TYPE_STRING)
+				purple_status_set_attr_string(status, attr->id,
+						purple_value_get_string(default_value));
+			else if (default_value->type == PURPLE_TYPE_INT)
+				purple_status_set_attr_int(status, attr->id,
+						purple_value_get_int(default_value));
+			else if (default_value->type == PURPLE_TYPE_BOOLEAN)
+				purple_status_set_attr_boolean(status, attr->id,
+						purple_value_get_boolean(default_value));
 			changed = TRUE;
 		}
+
+		l = l->next;
 	}
 	g_list_free(specified_attr_ids);
 
@@ -1149,13 +1128,13 @@ purple_presence_new_for_buddy(PurpleBuddy *buddy)
 	PurpleAccount *account;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
-	account = purple_buddy_get_account(buddy);
+	account = buddy->account;
 
 	presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_BUDDY);
 
-	presence->u.buddy.name    = g_strdup(purple_buddy_get_name(buddy));
-	presence->u.buddy.account = account;
-	presence->statuses = purple_prpl_get_statuses(account, presence);
+	presence->u.buddy.name    = g_strdup(buddy->name);
+	presence->u.buddy.account = buddy->account;
+	presence->statuses = purple_prpl_get_statuses(buddy->account, presence);
 
 	presence->u.buddy.buddy = buddy;
 
@@ -1251,13 +1230,12 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleAccount *account = purple_buddy_get_account(buddy);
 
 	if (!old_idle && idle)
 	{
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
-			PurpleLog *log = purple_account_get_log(account, FALSE);
+			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
 			if (log != NULL)
 			{
@@ -1277,7 +1255,7 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 	{
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
-			PurpleLog *log = purple_account_get_log(account, FALSE);
+			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
 			if (log != NULL)
 			{
@@ -1465,7 +1443,7 @@ purple_presence_get_status(const PurplePresence *presence, const char *status_id
 		{
 			PurpleStatus *temp_status = l->data;
 
-			if (purple_strequal(status_id, purple_status_get_id(temp_status)))
+			if (!strcmp(status_id, purple_status_get_id(temp_status)))
 				status = temp_status;
 		}
 
@@ -1535,8 +1513,7 @@ purple_presence_is_status_primitive_active(const PurplePresence *presence,
 	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, FALSE);
 
 	for (l = purple_presence_get_statuses(presence);
-	     l != NULL; l = l->next)
-	{
+	     l != NULL; l = l->next)	{
 		PurpleStatus *temp_status = l->data;
 		PurpleStatusType *type = purple_status_get_type(temp_status);
 
@@ -1662,7 +1639,7 @@ purple_status_get_handle(void) {
 void
 purple_status_init(void)
 {
-	void *handle = purple_status_get_handle();
+	void *handle = purple_status_get_handle;
 
 	purple_prefs_add_none("/purple/status");
 	purple_prefs_add_none("/purple/status/scores");
@@ -1716,5 +1693,4 @@ purple_status_init(void)
 void
 purple_status_uninit(void)
 {
-	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
 }

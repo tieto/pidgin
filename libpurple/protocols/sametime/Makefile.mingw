@@ -21,8 +21,6 @@ else
   endif
 endif
 
-CFLAGS += -DG_LOG_DOMAIN=\"sametime\"
-
 ##
 ## INCLUDE PATHS
 ##

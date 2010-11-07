@@ -1,7 +1,7 @@
 /**
  * @file oim.h			Header file for oim.c
  *	Author
- *		MaYuan<mayuan2006@gmail.com>
+ * 		MaYuan<mayuan2006@gmail.com>
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -20,48 +20,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef MSN_OIM_H
-#define MSN_OIM_H
+#ifndef _MSN_OIM_H_
+#define _MSN_OIM_H_
 
-typedef struct _MsnOim MsnOim;
-
-/* OIM Retrieval Info */
+/*OIM Retrieve SOAP Template*/
 #define MSN_OIM_RETRIEVE_HOST	"rsi.hotmail.com"
 #define MSN_OIM_RETRIEVE_URL	"/rsi/rsi.asmx"
-
-/* OIM GetMetadata SOAP Template */
-#define MSN_OIM_GET_METADATA_ACTION "http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMetadata"
-
-#define MSN_OIM_GET_METADATA_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
-"<soap:Envelope"\
-	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
-	" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""\
-	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
-	"<soap:Header>"\
-		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>EMPTY</t>"\
-			"<p>EMPTY</p>"\
-		"</PassportCookie>"\
-	"</soap:Header>"\
-	"<soap:Body>"\
-		"<GetMetadata xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\" />"\
-	"</soap:Body>"\
-"</soap:Envelope>"
-
-/*OIM GetMessage SOAP Template*/
 #define MSN_OIM_GET_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMessage"
 
 #define MSN_OIM_GET_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
-"<soap:Envelope"\
-	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
-	" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""\
-	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
+"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
 		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>EMPTY</t>"\
-			"<p>EMPTY</p>"\
+			"<t>%s</t>"\
+			"<p>%s</p>"\
 		"</PassportCookie>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -72,18 +46,15 @@ typedef struct _MsnOim MsnOim;
 	"</soap:Body>"\
 "</soap:Envelope>"
 
-/*OIM DeleteMessages SOAP Template*/
+/*OIM Delete SOAP Template*/
 #define MSN_OIM_DEL_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/DeleteMessages"
 
 #define MSN_OIM_DEL_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
-"<soap:Envelope"\
-	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
-	" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""\
-	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
+"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
 		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>EMPTY</t>"\
-			"<p>EMPTY</p>"\
+			"<t>%s</t>"\
+			" <p>%s</p>"\
 		"</PassportCookie>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -101,27 +72,18 @@ typedef struct _MsnOim MsnOim;
 	"Content-Transfer-Encoding: base64\n"\
 	"X-OIM-Message-Type: OfflineMessage\n"\
 	"X-OIM-Run-Id: {%s}\n"\
-	"X-OIM-Sequence-Num: %d\n\n"
+	"X-OIM-Sequence-Num: %d\n\n"\
+	"%s"
 
 #define MSN_OIM_SEND_HOST	"ows.messenger.msn.com"
 #define MSN_OIM_SEND_URL	"/OimWS/oim.asmx"
-#define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.live.com/ws/2006/09/oim/Store2"
+#define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.msn.com/ws/2004/09/oim/Store"
 #define MSN_OIM_SEND_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
-"<soap:Envelope"\
-	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
-	" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""\
-	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
+"<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
-		"<From"\
-			" memberName=\"%s\""\
-			" friendlyName=\"%s\""\
-			" xml:lang=\"en-US\""\
-			" proxy=\"MSNMSGR\""\
-			" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\""\
-			" msnpVer=\"MSNP15\""\
-			" buildVer=\"8.5.1288\"/>"\
+		"<From memberName=\"%s\" friendlyName=\"%s\" xml:lang=\"en-US\" proxy=\"MSNMSGR\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\" msnpVer=\"MSNP14\" buildVer=\"8.0.0792\"/>"\
 		"<To memberName=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
-		"<Ticket passport=\"EMPTY\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
+		"<Ticket passport=\"%s\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Sequence xmlns=\"http://schemas.xmlsoap.org/ws/2003/03/rm\">"\
 			"<Identifier xmlns=\"http://schemas.xmlsoap.org/ws/2002/07/utility\">http://messenger.msn.com</Identifier>"\
 			"<MessageNumber>%d</MessageNumber>"\
@@ -133,12 +95,16 @@ typedef struct _MsnOim MsnOim;
 	"</soap:Body>"\
 "</soap:Envelope>"
 
+typedef struct _MsnOim MsnOim;
+
 struct _MsnOim
 {
 	MsnSession *session;
 
+	MsnSoapConn *retrieveconn;
 	GList * oim_list;
 
+	MsnSoapConn *sendconn;
 	char *challenge;
 	char *run_id;
 	gint send_seq;
@@ -160,4 +126,5 @@ void msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 
 void msn_oim_send_msg(MsnOim *oim);
 
-#endif/* MSN_OIM_H*/
+#endif/* _MSN_OIM_H_*/
+/*endof oim.h*/

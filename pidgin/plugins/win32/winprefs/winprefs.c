@@ -55,8 +55,9 @@ static const char *PREF_DBLIST_DOCKED = "/plugins/gtk/win32/winprefs/dblist_dock
 static const char *PREF_DBLIST_HEIGHT = "/plugins/gtk/win32/winprefs/dblist_height";
 static const char *PREF_DBLIST_SIDE = "/plugins/gtk/win32/winprefs/dblist_side";
 static const char *PREF_BLIST_ON_TOP = "/plugins/gtk/win32/winprefs/blist_on_top";
-/* Deprecated */
 static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
+
+/* Deprecated */
 static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_top";
 
 static PurplePlugin *handle = NULL;
@@ -101,7 +102,10 @@ static void blist_dock_cb(gboolean val) {
 			blist_set_ontop(TRUE);
 	} else {
 		purple_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking...\n");
-		blist_set_ontop(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS);
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+			blist_set_ontop(TRUE);
+		else
+			blist_set_ontop(FALSE);
 	}
 }
 
@@ -117,7 +121,10 @@ static void blist_set_dockable(gboolean val) {
 			blist_ab = NULL;
 		}
 
-		blist_set_ontop(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS);
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+			blist_set_ontop(TRUE);
+		else
+			blist_set_ontop(FALSE);
 	}
 }
 
@@ -193,7 +200,7 @@ winprefs_set_autostart(GtkWidget *w) {
 	char *runval = NULL;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-		runval = g_strdup_printf("\"%s" G_DIR_SEPARATOR_S "pidgin.exe\"", wpurple_install_dir());
+		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "pidgin.exe", wpurple_install_dir());
 
 	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin", runval)
 		/* For Win98 */
@@ -201,12 +208,6 @@ winprefs_set_autostart(GtkWidget *w) {
 			purple_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
 
 	g_free(runval);
-}
-
-static void
-winprefs_set_multiple_instances(GtkWidget *w) {
-	wpurple_write_reg_string(HKEY_CURRENT_USER, "Environment", "PIDGIN_MULTI_INST",
-			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)) ? "1" : NULL);
 }
 
 static void
@@ -228,6 +229,17 @@ winprefs_set_blist_ontop(const char *pref, PurplePrefType type,
 		blist_set_ontop(FALSE);
 }
 
+static gboolean
+winpidgin_conv_chat_blink(PurpleAccount *account, const char *who, char **message,
+		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+{
+	if(purple_prefs_get_bool(PREF_CHAT_BLINK))
+		winpidgin_conv_blink(conv, flags);
+
+	return FALSE;
+}
+
+
 /*
  *  EXPORTED FUNCTIONS
  */
@@ -245,6 +257,10 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 	   reason, the blist is recreated, we need to set it up again. */
 	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
 		plugin, PURPLE_CALLBACK(blist_create_cb), NULL);
+
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"displaying-chat-msg", plugin, PURPLE_CALLBACK(winpidgin_conv_chat_blink),
+		NULL);
 
 	purple_signal_connect((void*)purple_get_core(), "quitting", plugin,
 		PURPLE_CALLBACK(purple_quit_cb), NULL);
@@ -270,11 +286,26 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *button;
+	char *gtk_version = NULL;
 	char *run_key_val;
 	char *tmp;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+
+	gtk_version = g_strdup_printf("GTK+\t%u.%u.%u\nGlib\t%u.%u.%u",
+		gtk_major_version, gtk_minor_version, gtk_micro_version,
+		glib_major_version, glib_minor_version, glib_micro_version);
+
+	/* Display Installed GTK+ Runtime Version */
+	if(gtk_version) {
+		GtkWidget *label;
+		vbox = pidgin_make_frame(ret, _("GTK+ Runtime Version"));
+		label = gtk_label_new(gtk_version);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
+		g_free(gtk_version);
+	}
 
 	/* Autostart */
 	vbox = pidgin_make_frame(ret, _("Startup"));
@@ -282,21 +313,13 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	button = gtk_check_button_new_with_mnemonic(tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
+
 	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin"))
 			|| (run_key_val = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Pidgin"))) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_free(run_key_val);
 	}
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(winprefs_set_autostart), NULL);
-	gtk_widget_show(button);
-
-	button = gtk_check_button_new_with_mnemonic(_("Allow multiple instances"));
-	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, "Environment", "PIDGIN_MULTI_INST"))) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-		g_free(run_key_val);
-	}
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(winprefs_set_multiple_instances), NULL);
 	gtk_widget_show(button);
 
 	/* Buddy List */
@@ -312,6 +335,11 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 		/* XXX: Did this ever work? */
 		_("Only when docked"), BLIST_TOP_DOCKED,
 		NULL);
+
+	/* Conversations */
+	vbox = pidgin_make_frame(ret, _("Conversations"));
+	pidgin_prefs_checkbox(_("_Flash window when chat messages are received"),
+							PREF_CHAT_BLINK, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -343,7 +371,7 @@ static PurplePluginInfo info =
 	N_("Windows Pidgin Options"),
 	DISPLAY_VERSION,
 	N_("Options specific to Pidgin for Windows."),
-	N_("Provides options specific to Pidgin for Windows, such as buddy list docking."),
+	N_("Provides options specific to Pidgin for Windows , such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	PURPLE_WEBSITE,
 	plugin_load,
@@ -371,6 +399,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
 	purple_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
 	purple_prefs_add_int(PREF_DBLIST_SIDE, 0);
+	purple_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
 
 	/* Convert old preferences */
 	if(purple_prefs_exists(PREF_DBLIST_ON_TOP)) {
@@ -384,7 +413,6 @@ init_plugin(PurplePlugin *plugin)
 		purple_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
 	} else
 		purple_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
-	purple_prefs_remove(PREF_CHAT_BLINK);
 }
 
 PURPLE_INIT_PLUGIN(winprefs, init_plugin, info)

@@ -164,3 +164,9 @@ PPCODE:
 
 Purple::Handle
 purple_plugins_get_handle()
+
+void
+purple_plugins_init()
+
+void
+purple_plugins_uninit()

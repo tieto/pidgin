@@ -17,7 +17,6 @@
 
 */
 
-#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -72,7 +71,7 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 		gc = client->application;
 
 	if (gc != NULL)
-		purple_connection_error_reason(gc, reason, tmp);
+		purple_connection_error_reason (gc, reason, tmp);
 	else
 		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
 }
@@ -432,7 +431,6 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	va_list va;
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = gc->proto_data;
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
 	SilcChannelEntry channel;
@@ -840,7 +838,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 
 			b = NULL;
 			if (public_key) {
-				GSList *buddies;
+				PurpleBlistNode *gnode, *cnode, *bnode;
 				const char *f;
 
 				pk = silc_pkcs_public_key_encode(public_key, &pk_len);
@@ -858,13 +856,26 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 
 				/* Find buddy by associated public key */
-				for (buddies = purple_find_buddies(account, NULL); buddies;
-						buddies = g_slist_delete_link(buddies, buddies)) {
-					b = buddies->data;
-					f = purple_blist_node_get_string(PURPLE_BLIST_NODE(b), "public-key");
-					if (purple_strequal(f, buf))
-						goto cont;
-					b = NULL;
+				for (gnode = purple_get_blist()->root; gnode;
+				     gnode = gnode->next) {
+					if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+						continue;
+					for (cnode = gnode->child; cnode; cnode = cnode->next) {
+						if( !PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+							continue;
+						for (bnode = cnode->child; bnode;
+						     bnode = bnode->next) {
+							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+								continue;
+							b = (PurpleBuddy *)bnode;
+							if (b->account != gc->account)
+								continue;
+							f = purple_blist_node_get_string(bnode, "public-key");
+							if (f && !strcmp(f, buf))
+								goto cont;
+							b = NULL;
+						}
+					}
 				}
 			}
 		cont:
@@ -878,9 +889,9 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				}
 			}
 
-			silc_free(purple_buddy_get_protocol_data(b));
-			purple_buddy_set_protocol_data(b, silc_memdup(&client_entry->id,
-						    sizeof(client_entry->id)));
+			silc_free(b->proto_data);
+			b->proto_data = silc_memdup(&client_entry->id,
+						    sizeof(client_entry->id));
 			if (notify == SILC_NOTIFY_TYPE_NICK_CHANGE) {
 				break;
 			} else if (notify == SILC_NOTIFY_TYPE_UMODE_CHANGE) {
@@ -1041,7 +1052,7 @@ silcpurple_whois_more(SilcClientEntry client_entry, gint id)
 			for (i = 0; i < vcard.num_emails; i++) {
 				if (vcard.emails[i].address)
 					g_string_append_printf(s, "%s:\t\t%s\n",
-							       _("Email"),
+							       _("E-Mail"),
 							       vcard.emails[i].address);
 			}
 			if (vcard.note)
@@ -1455,7 +1466,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			int usercount;
 			PurpleRoomlistRoom *room;
 
-			if (sg->roomlist_cancelled)
+			if (sg->roomlist_canceled)
 				break;
 
 			if (error != SILC_STATUS_OK) {

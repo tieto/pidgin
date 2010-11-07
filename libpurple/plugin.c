@@ -19,8 +19,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#define _PURPLE_PLUGIN_C_
-
 #include "internal.h"
 
 #include "accountopt.h"
@@ -33,7 +31,6 @@
 #include "request.h"
 #include "signals.h"
 #include "util.h"
-#include "valgrind.h"
 #include "version.h"
 
 typedef struct
@@ -219,11 +216,11 @@ purple_plugin_probe(const char *filename)
 	g_free(basename);
 	if (plugin != NULL)
 	{
-		if (purple_strequal(filename, plugin->path))
+		if (!strcmp(filename, plugin->path))
 			return plugin;
 		else if (!purple_plugin_is_unloadable(plugin))
 		{
-			purple_debug_warning("plugins", "Not loading %s. "
+			purple_debug_info("plugins", "Not loading %s. "
 							"Another plugin with the same name (%s) has already been loaded.\n",
 							filename, plugin->path);
 			return plugin;
@@ -254,7 +251,11 @@ purple_plugin_probe(const char *filename)
 		 *
 		 * G_MODULE_BIND_LOCAL was added in glib 2.3.3.
 		 */
+#if GLIB_CHECK_VERSION(2,3,3)
 		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
+#else
+		plugin->handle = g_module_open(filename, 0);
+#endif
 
 		if (plugin->handle == NULL)
 		{
@@ -283,7 +284,11 @@ purple_plugin_probe(const char *filename)
 				purple_debug_error("plugins", "%s is not loadable: %s\n",
 						 plugin->path, plugin->error);
 			}
+#if GLIB_CHECK_VERSION(2,3,3)
 			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+#else
+			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY);
+#endif
 
 			if (plugin->handle == NULL)
 			{
@@ -350,11 +355,11 @@ purple_plugin_probe(const char *filename)
 		return NULL;
 	}
 	else if (plugin->info->ui_requirement &&
-			!purple_strequal(plugin->info->ui_requirement, purple_core_get_ui()))
+			strcmp(plugin->info->ui_requirement, purple_core_get_ui()))
 	{
 		plugin->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),
 					purple_core_get_ui(), plugin->info->ui_requirement);
-		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met. (%s)\n", plugin->path, plugin->error);
+		purple_debug_error("plugins", "%s is not loadable: The UI requirement is not met.\n", plugin->path);
 		plugin->unloadable = TRUE;
 		return plugin;
 	}
@@ -367,7 +372,7 @@ purple_plugin_probe(const char *filename)
 	 */
 	if (plugin->info->id == NULL || *plugin->info->id == '\0')
 	{
-		plugin->error = g_strdup(_("This plugin has not defined an ID."));
+		plugin->error = g_strdup_printf(_("This plugin has not defined an ID."));
 		purple_debug_error("plugins", "%s is not loadable: info->id is not defined.\n", plugin->path);
 		plugin->unloadable = TRUE;
 		return plugin;
@@ -469,9 +474,9 @@ purple_plugin_probe(const char *filename)
 		    (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
 		    (PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL))
 		{
-			plugin->error = g_strdup(_("Plugin does not implement all required functions (list_icon, login and close)"));
-			purple_debug_error("plugins", "%s is not loadable: %s\n",
-					 plugin->path, plugin->error);
+			plugin->error = g_strdup(_("Plugin does not implement all required functions"));
+			purple_debug_error("plugins", "%s is not loadable: Plugin does not implement all required functions\n",
+					 plugin->path);
 			plugin->unloadable = TRUE;
 			return plugin;
 		}
@@ -854,7 +859,6 @@ purple_plugin_destroy(PurplePlugin *plugin)
 				}
 
 				g_list_free(loader_info->exts);
-				loader_info->exts = NULL;
 			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
@@ -863,16 +867,8 @@ purple_plugin_destroy(PurplePlugin *plugin)
 		if (plugin->info != NULL && plugin->info->destroy != NULL)
 			plugin->info->destroy(plugin);
 
-		/*
-		 * I find it extremely useful to do this when using valgrind, as
-		 * it keeps all the plugins open, meaning that valgrind is able to
-		 * resolve symbol names in leak traces from plugins.
-		 */
-		if (!g_getenv("PURPLE_LEAKCHECK_HELP") && !RUNNING_ON_VALGRIND)
-		{
-			if (plugin->handle != NULL)
-				g_module_close(plugin->handle);
-		}
+		if (plugin->handle != NULL)
+			g_module_close(plugin->handle);
 	}
 	else
 	{
@@ -1203,11 +1199,6 @@ purple_plugins_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
-
-	while (search_paths) {
-		g_free(search_paths->data);
-		search_paths = g_list_delete_link(search_paths, search_paths);
-	}
 }
 
 /**************************************************************************
@@ -1224,12 +1215,6 @@ purple_plugins_add_search_path(const char *path)
 	search_paths = g_list_append(search_paths, g_strdup(path));
 }
 
-GList *
-purple_plugins_get_search_paths()
-{
-	return search_paths;
-}
-
 void
 purple_plugins_unload_all(void)
 {
@@ -1237,21 +1222,6 @@ purple_plugins_unload_all(void)
 
 	while (loaded_plugins != NULL)
 		purple_plugin_unload(loaded_plugins->data);
-
-#endif /* PURPLE_PLUGINS */
-}
-
-void
-purple_plugins_unload(PurplePluginType type)
-{
-#ifdef PURPLE_PLUGINS
-	GList *l;
-
-	for (l = plugins; l; l = l->next) {
-		PurplePlugin *plugin = l->data;
-		if (plugin->info->type == type && purple_plugin_is_loaded(plugin))
-			purple_plugin_unload(plugin);
-	}
 
 #endif /* PURPLE_PLUGINS */
 }
@@ -1566,7 +1536,7 @@ purple_plugins_find_with_name(const char *name)
 	for (l = plugins; l != NULL; l = l->next) {
 		plugin = l->data;
 
-		if (purple_strequal(plugin->info->name, name))
+		if (!strcmp(plugin->info->name, name))
 			return plugin;
 	}
 
@@ -1582,7 +1552,7 @@ purple_plugins_find_with_filename(const char *filename)
 	for (l = plugins; l != NULL; l = l->next) {
 		plugin = l->data;
 
-		if (purple_strequal(plugin->path, filename))
+		if (plugin->path != NULL && !strcmp(plugin->path, filename))
 			return plugin;
 	}
 
@@ -1605,7 +1575,7 @@ purple_plugins_find_with_basename(const char *basename)
 
 		if (plugin->path != NULL) {
 			tmp = purple_plugin_get_basename(plugin->path);
-			if (purple_strequal(tmp, basename))
+			if (!strcmp(tmp, basename))
 			{
 				g_free(tmp);
 				return plugin;
@@ -1631,7 +1601,7 @@ purple_plugins_find_with_id(const char *id)
 	{
 		plugin = l->data;
 
-		if (purple_strequal(plugin->info->id, id))
+		if (plugin->info->id != NULL && !strcmp(plugin->info->id, id))
 			return plugin;
 	}
 

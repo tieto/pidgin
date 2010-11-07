@@ -1,14 +1,10 @@
+
 #ifndef __INTERNAL_H__
 #define __INTERNAL_H__
 
 #include <sysdep.h>
 
-#ifdef LIBZEPHYR_EXT
-#include <zephyr/zephyr.h>
-#else
-#include <zephyr_internal.h>
-#endif
-
+#include <zephyr.h>
 #ifndef WIN32
 #include <netdb.h>
 #endif
@@ -23,12 +19,6 @@
 
 #define ETIMEDOUT WSAETIMEDOUT
 #define EADDRINUSE WSAEADDRINUSE
-#else /* !WIN32 */
-
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN 4096
-#endif
-
 #endif
 
 #ifdef ZEPHYR_USES_HESIOD

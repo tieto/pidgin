@@ -39,7 +39,6 @@ typedef enum
 
 #define PURPLE_SSL_DEFAULT_PORT 443
 
-/** @copydoc _PurpleSslConnection */
 typedef struct _PurpleSslConnection PurpleSslConnection;
 
 typedef void (*PurpleSslInputFunction)(gpointer, PurpleSslConnection *,
@@ -66,9 +65,9 @@ struct _PurpleSslConnection
 
 	/** File descriptor used to refer to the socket */
 	int fd;
-	/** Glib event source ID; used to refer to the received data callback
+	/** Glib event source ID; used to refer to the received data callback 
 	 * in the glib eventloop */
-	guint inpa;
+	int inpa;
 	/** Data related to the underlying TCP connection */
 	PurpleProxyConnectData *connect_data;
 
@@ -134,7 +133,7 @@ typedef struct
 	 *              list can be guaranteed.
 	 */
 	GList * (* get_peer_certificates)(PurpleSslConnection * gsc);
-
+	
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
@@ -186,32 +185,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 									PurpleSslErrorFunction error_func,
 									void *data);
 
-/**
- * Makes a SSL connection to the specified host and port, using the separate
- * name to verify with the certificate.  The caller should keep track of the
- * returned value and use it to cancel the connection, if needed.
- *
- * @param account    The account making the connection.
- * @param host       The destination host.
- * @param port       The destination port.
- * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.  This function
- *                   should <strong>NOT</strong> call purple_ssl_close().  In
- *                   the event of an error the #PurpleSslConnection will be
- *                   destroyed for you.
- * @param ssl_host   The hostname of the other peer (to verify the CN)
- * @param data       User-defined data.
- *
- * @return The SSL connection handle.
- * @since 2.6.0
- */
-PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host,
-									int port, PurpleSslInputFunction func,
-									PurpleSslErrorFunction error_func,
-									const char *ssl_host,
-									void *data);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_SSLCONN_C_)
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Makes a SSL connection using an already open file descriptor.
  *

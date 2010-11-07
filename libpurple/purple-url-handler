@@ -6,15 +6,7 @@ import sys
 import time
 import urllib
 
-bus = dbus.SessionBus()
-obj = None
-try:
-    obj = bus.get_object("im.pidgin.purple.PurpleService",
-                         "/im/pidgin/purple/PurpleObject")
-except dbus.DBusException, e:
-    if e._dbus_error_name == "org.freedesktop.DBus.Error.ServiceUnknown":
-        print "Error: no libpurple-powered client is running. Try starting Pidgin or Finch."
-        sys.exit(1)
+obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
@@ -58,40 +50,20 @@ def convert(value):
     except:
         return value
 
-def account_not_found():
-    print "No matching account found."
-    sys.exit(1)
-
-def bring_account_online(account):
-    if not cpurple.PurpleAccountIsConnected(account):
-        # The last argument is meant to be a GList * but the D-Bus binding
-        # generator thing just wants a UInt32, which is pretty failing.
-        # Happily, passing a 0 to mean an empty list turns out to work anyway.
-        purple.PurpleAccountSetStatusList(account, "online", 1, 0)
-        purple.PurpleAccountConnect(account)
-
-def findaccount(protocolname, accountname="", matcher=None):
-    if matcher:
-        for account in cpurple.PurpleAccountsGetAll():
-            if (protocolname != cpurple.PurpleAccountGetProtocolID(account)) or \
-               (accountname != "" and accountname != cpurple.PurpleAccountGetUsername(account)):
-                continue
-            if matcher(account):
-                bring_account_online(account)
-                return account
-        account_not_found()
-
+def findaccount(protocolname, accountname=""):
     # prefer connected accounts
     account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
     if (account != 0):
-        return account
+	return account
 
     # try to get any account and connect it
     account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
     if (account == 0):
-        account_not_found()
+        print "No matching account found."
+	sys.exit(1)
 
-    bring_account_online(account)
+    purple.PurpleAccountSetStatusVargs(account, "online", 1)
+    purple.PurpleAccountConnect(account)
     return account
 
 def goim(account, screenname, message=None):
@@ -183,7 +155,7 @@ def icq(uri):
 
 def irc(uri):
     protocol = "prpl-irc"
-    match = re.match(r"^irc:(//([^/]*))?/?([^?]*)(\?(.*))?", uri)
+    match = re.match(r"^irc:(//([^/]*)/)?([^?]*)(\?(.*))?", uri)
     if not match:
         print "Invalid irc URI: %s" % uri
         return
@@ -206,16 +178,12 @@ def irc(uri):
             key, value = extendlist(param.split("=", 1), 2, "")
             params[key] = urllib.unquote_plus(value)
 
-    def correct_server(account):
-        username = cpurple.PurpleAccountGetUsername(account)
-        return ((server == "") or ("@" in username) and (server == (username.split("@"))[1]))
-
-    account = findaccount(protocol, matcher=correct_server)
+    account = findaccount(protocol)
 
     if (target != ""):
         if (isnick):
             goim(account, urllib.unquote_plus(target.split(",")[0]), params.get("msg"))
-        else:
+	else:
             channel = urllib.unquote_plus(target.split(",")[0])
             if channel[0] != "#":
                 channel = "#" + channel
@@ -245,9 +213,9 @@ def msnim(uri):
         addbuddy(account, screenname)
 
 def myim(uri):
-        protocol = "prpl-myspace"
-        print "TODO: send uri: ", uri
-        assert False, "Not implemented"
+	protocol = "prpl-myspace"
+	print "TODO: send uri: ", uri
+	assert False, "Not implemented"
 
 def sip(uri):
     protocol = "prpl-simple"
@@ -300,31 +268,6 @@ def xmpp(uri):
     else:
         goim(account, screenname)
 
-def gtalk(uri):
-    protocol = "prpl-jabber"
-    match = re.match(r"^gtalk:([^?]*)(\?(.*))", uri)
-    if not match:
-        print "Invalid gtalk URI: %s" % uri
-        return
-
-    command = urllib.unquote_plus(match.group(1))
-    paramstring = match.group(3)
-    params = {}
-    if paramstring:
-        for param in paramstring.split("&"):
-            key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
-    accountname = params.get("from_jid", "")
-    jid = params.get("jid", "")
-
-    account = findaccount(protocol, accountname)
-
-    if command.lower() == "chat":
-        goim(account, jid)
-    elif command.lower() == "call":
-        # XXX V&V prompt to establish call
-        goim(account, jid)
-
 def ymsgr(uri):
     protocol = "prpl-yahoo"
     match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
@@ -352,14 +295,10 @@ def ymsgr(uri):
 
 
 def main(argv=sys.argv):
-    if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
+    if len(argv) != 2:
         print "Usage: %s URI" % argv[0]
         print "Example: %s \"xmpp:romeo@montague.net?message\"" % argv[0]
-
-        if len(argv) != 2:
-            sys.exit(1)
-        else:
-            return 0
+        return
 
     uri = argv[1]
     type = uri.split(":")[0]
@@ -381,15 +320,13 @@ def main(argv=sys.argv):
             sip(uri)
         elif type == "xmpp":
             xmpp(uri)
-        elif type == "gtalk":
-            gtalk(uri)
         elif type == "ymsgr":
             ymsgr(uri)
         else:
             print "Unknown protocol: %s" % type
-    except dbus.DBusException, e:
-        print "Error: %s" % (e.message)
-        sys.exit(1)
+    except dbus.dbus_bindings.DBusException:
+        print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
+
 
 if __name__ == "__main__":
     main()

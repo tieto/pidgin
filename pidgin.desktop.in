@@ -1,7 +1,8 @@
 [Desktop Entry]
+Encoding=UTF-8
 _Name=Pidgin Internet Messenger
 _GenericName=Internet Messenger
-_Comment=Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more
+_Comment=Send instant messages over multiple protocols
 Exec=pidgin
 Icon=pidgin
 StartupNotify=true

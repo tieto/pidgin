@@ -45,6 +45,8 @@ msn_session_new(PurpleAccount *account)
 								 purple_account_get_username(account), NULL);
 	session->oim = msn_oim_new(session);
 
+	/*if you want to chat with Yahoo Messenger*/
+	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;
 
 	return session;
@@ -57,54 +59,53 @@ msn_session_destroy(MsnSession *session)
 
 	session->destroying = TRUE;
 
-	while (session->url_datas) {
-		purple_util_fetch_url_cancel(session->url_datas->data);
-		session->url_datas = g_slist_delete_link(session->url_datas, session->url_datas);
-	}
-
 	if (session->connected)
 		msn_session_disconnect(session);
-
-	if (session->soap_cleanup_handle)
-		purple_timeout_remove(session->soap_cleanup_handle);
-
-	if (session->soap_table != NULL)
-		g_hash_table_destroy(session->soap_table);
-
-	while (session->slplinks != NULL)
-		msn_slplink_destroy(session->slplinks->data);
-
-	while (session->switches != NULL)
-		msn_switchboard_destroy(session->switches->data);
-
-	if (session->sync != NULL)
-		msn_sync_destroy(session->sync);
-
-	if (session->oim != NULL)
-		msn_oim_destroy(session->oim);
-
-	if (session->nexus != NULL)
-		msn_nexus_destroy(session->nexus);
-
-	if (session->user != NULL)
-		msn_user_destroy(session->user);
 
 	if (session->notification != NULL)
 		msn_notification_destroy(session->notification);
 
+	while (session->switches != NULL)
+		msn_switchboard_destroy(session->switches->data);
+
+	while (session->slplinks != NULL)
+		msn_slplink_destroy(session->slplinks->data);
+
 	msn_userlist_destroy(session->userlist);
 
 	g_free(session->psm);
-	g_free(session->abch_cachekey);
-#if 0
-	g_free(session->blocked_text);
-#endif
-
+	g_free(session->passport_info.t);
+	g_free(session->passport_info.p);
 	g_free(session->passport_info.kv);
 	g_free(session->passport_info.sid);
 	g_free(session->passport_info.mspauth);
 	g_free(session->passport_info.client_ip);
-	g_free(session->passport_info.mail_url);
+
+	if (session->passport_info.file != NULL)
+	{
+		g_unlink(session->passport_info.file);
+		g_free(session->passport_info.file);
+	}
+
+	if (session->sync != NULL)
+		msn_sync_destroy(session->sync);
+
+	if (session->nexus != NULL)
+		msn_nexus_destroy(session->nexus);
+
+	if (session->contact != NULL)
+		msn_contact_destroy(session->contact);
+	if (session->oim != NULL)
+		msn_oim_destroy(session->oim);
+
+	if (session->user != NULL)
+		msn_user_destroy(session->user);
+
+	if (session->soap_table)
+		g_hash_table_destroy(session->soap_table);
+
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
 
 	g_free(session);
 }
@@ -125,7 +126,12 @@ msn_session_connect(MsnSession *session, const char *host, int port,
 		g_return_val_if_reached(FALSE);
 	}
 
-	return msn_notification_connect(session->notification, host, port);
+	if (msn_notification_connect(session->notification, host, port))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 void
@@ -135,11 +141,6 @@ msn_session_disconnect(MsnSession *session)
 
 	if (!session->connected)
 		return;
-
-	if (session->login_timeout) {
-		purple_timeout_remove(session->login_timeout);
-		session->login_timeout = 0;
-	}
 
 	session->connected = FALSE;
 
@@ -194,7 +195,7 @@ msn_session_get_conv(MsnSession *session,const char *passport)
  * 	passport - the one want to talk to you
  */
 void
-msn_session_report_user(MsnSession *session,const char *passport,const char *msg,PurpleMessageFlags flags)
+msn_session_report_user(MsnSession *session,const char *passport,char *msg,PurpleMessageFlags flags)
 {
 	PurpleConversation * conv;
 
@@ -268,34 +269,12 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 	return swboard;
 }
 
-static gboolean
-msn_login_timeout_cb(gpointer data)
-{
-	MsnSession *session = data;
-	/* This forces the login process to finish, even though we haven't heard
-	   a response for our FQY requests yet. We'll at least end up online to the
-	   people we've already added. The rest will follow later. */
-	msn_session_finish_login(session);
-	session->login_timeout = 0;
-	return FALSE;
-}
-
-void
-msn_session_activate_login_timeout(MsnSession *session)
-{
-	if (!session->logged_in && session->connected) {
-		session->login_timeout =
-			purple_timeout_add_seconds(MSN_LOGIN_FQY_TIMEOUT,
-			                           msn_login_timeout_cb, session);
-	}
-}
-
 static void
 msn_session_sync_users(MsnSession *session)
 {
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleConnection *gc = purple_account_get_connection(session->account);
 	GList *to_remove = NULL;
-	GSList *buddies;
 
 	g_return_if_fail(gc != NULL);
 
@@ -303,36 +282,55 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues.
 	 */
-	for (buddies = purple_find_buddies(session->account, NULL); buddies;
-			buddies = g_slist_delete_link(buddies, buddies)) {
-		PurpleBuddy *buddy = buddies->data;
-		const gchar *buddy_name = purple_buddy_get_name(buddy);
-		const gchar *group_name = purple_group_get_name(purple_buddy_get_group(buddy));
-		MsnUser *remote_user;
-		gboolean found = FALSE;
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+		PurpleGroup *group = (PurpleGroup *)gnode;
+		const char *group_name;
+		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		group_name = group->name;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				PurpleBuddy *b;
+				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (PurpleBuddy *)bnode;
+				if(purple_buddy_get_account(b) == purple_connection_get_account(gc)) {
+					MsnUser *remote_user;
+					gboolean found = FALSE;
 
-		remote_user = msn_userlist_find_user(session->userlist, buddy_name);
-		if (remote_user && remote_user->list_op & MSN_LIST_FL_OP) {
-			GList *l;
-			for (l = remote_user->group_ids; l; l = l->next) {
-				const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
-				if (name && !g_ascii_strcasecmp(group_name, name)) {
-					found = TRUE;
-					break;
-				}
-			}
+					remote_user = msn_userlist_find_user(session->userlist, purple_buddy_get_name(b));
 
-			/* We don't care if they're in a different group, as long as they're on the
-			 * list somewhere. If we check for the group, we cause pain, agony and
-			 * suffering for people who decide to re-arrange their buddy list elsewhere.
-			 */
-			if (!found) {
-				if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
-					/* The user is not on the server list */
-					msn_show_sync_issue(session, buddy_name, group_name);
-				} else {
-					/* The user is not in that group on the server list */
-					to_remove = g_list_prepend(to_remove, buddy);
+					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
+					{
+						GList *l;
+
+						for (l = remote_user->group_ids; l != NULL; l = l->next)
+						{
+							const char *name = msn_userlist_find_group_name(remote_user->userlist, l->data);
+							if (name && !g_strcasecmp(group_name, name))
+							{
+								found = TRUE;
+								break;
+							}
+						}
+					}
+
+					/* We don't care if they're in a different group, as long as they're on the
+					 * list somewhere. If we check for the group, we cause pain, agony and
+					 * suffering for people who decide to re-arrange their buddy list elsewhere.
+					 */
+					if (!found)
+					{
+						if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
+							/* The user is not on the server list */
+							msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
+						} else {
+							/* The user is not in that group on the server list */
+							to_remove = g_list_prepend(to_remove, b);
+						}
+					}
 				}
 			}
 		}
@@ -352,9 +350,6 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	PurpleConnectionError reason;
 	char *msg;
 
-	if (session->destroying)
-		return;
-
 	gc = purple_account_get_connection(session->account);
 
 	switch (error)
@@ -366,15 +361,15 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_UNSUPPORTED_PROTOCOL:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Our protocol is not supported by the "
-							 "server"));
+							 "server."));
 			break;
 		case MSN_ERROR_HTTP_MALFORMED:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Error parsing HTTP"));
+			msg = g_strdup(_("Error parsing HTTP."));
 			break;
 		case MSN_ERROR_SIGN_OTHER:
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			msg = g_strdup(_("You have signed on from another location"));
+			msg = g_strdup(_("You have signed on from another location."));
 			if (!purple_account_get_remember_password(session->account))
 				purple_account_set_password(session->account, NULL);
 			break;
@@ -387,16 +382,13 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SERV_DOWN:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("The MSN servers are going down "
-							 "temporarily"));
+							 "temporarily."));
 			break;
 		case MSN_ERROR_AUTH:
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			msg = g_strdup_printf(_("Unable to authenticate: %s"),
 								  (info == NULL ) ?
 								  _("Unknown error") : info);
-			/* Clear the password if it isn't being saved */
-			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
 			break;
 		case MSN_ERROR_BAD_BLIST:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
@@ -406,13 +398,13 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			break;
 		default:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Unknown error"));
+			msg = g_strdup(_("Unknown error."));
 			break;
 	}
 
 	msn_session_disconnect(session);
 
-	purple_connection_error_reason(gc, reason, msg);
+	purple_connection_error_reason (gc, reason, msg);
 
 	g_free(msg);
 }
@@ -442,7 +434,7 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 
 	/* Prevent the connection progress going backwards, eg. if we get
 	 * transferred several times during login */
-	if (session->login_step >= step)
+	if (session->login_step > step)
 		return;
 
 	/* If we're already logged in, we're probably here because of a
@@ -465,24 +457,37 @@ msn_session_finish_login(MsnSession *session)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleStoredImage *img;
+	const char *passport;
 
-	if (!session->logged_in) {
-		account = session->account;
-		gc = purple_account_get_connection(account);
+	if (session->logged_in)
+		return;
 
-		img = purple_buddy_icons_find_account_icon(session->account);
-		/* TODO: Do we really want to call this if img is NULL? */
-		msn_user_set_buddy_icon(session->user, img);
-		if (img != NULL)
-			purple_imgstore_unref(img);
+	account = session->account;
+	gc = purple_account_get_connection(account);
 
-		session->logged_in = TRUE;
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+	img = purple_buddy_icons_find_account_icon(session->account);
+	msn_user_set_buddy_icon(session->user, img);
+	purple_imgstore_unref(img);
 
-		/* Sync users */
-		msn_session_sync_users(session);
-	}
+	session->logged_in = TRUE;
 
 	msn_change_status(session);
+
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
+
+	/* Sync users */
+	msn_session_sync_users(session);
+	/* It seems that some accounts that haven't accessed hotmail for a while
+	 * and @msn.com accounts don't automatically get the initial email
+	 * notification so we always request it on login
+	 */
+
+	passport = purple_normalize(account, purple_account_get_username(account));
+
+	if ((strstr(passport, "@hotmail.") != NULL) ||
+		(strstr(passport, "@msn.com") != NULL))
+	{
+		msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
+	}
 }
 

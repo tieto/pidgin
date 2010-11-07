@@ -28,7 +28,8 @@
 #define __PIDGIN_MINI_DIALOG_H__
 
 #include <glib-object.h>
-#include <gtk/gtk.h>
+#include <gtk/gtkvbox.h>
+#include <gtk/gtklabel.h>
 
 G_BEGIN_DECLS
 
@@ -73,8 +74,6 @@ G_BEGIN_DECLS
  *   <dd>The Gtk stock id of an icon for the dialog, or @c NULL for no icon.
  *       @see pidginstock.h
  *   </dd>
- *   <dt><tt>"custom-icon"</tt> (<tt>GdkPixbuf *</tt>)</dt>
- *   <dd>The custom icon to use instead of a stock one (overrides the "icon-name" property).</dd>
  * </dl>
  */
 typedef struct {
@@ -110,19 +109,12 @@ typedef void (*PidginMiniDialogCallback)(PidginMiniDialog *mini_dialog,
 /** Get the GType of #PidginMiniDialog. */
 GType pidgin_mini_dialog_get_type (void);
 
-/** Creates a new #PidginMiniDialog with a stock icon. This is a shortcut for creating the dialog
+/** Creates a new #PidginMiniDialog.  This is a shortcut for creating the dialog
  *  with @c g_object_new() then setting each property yourself.
  *  @return a new #PidginMiniDialog.
  */
 PidginMiniDialog *pidgin_mini_dialog_new(const gchar *title,
 	const gchar *description, const gchar *icon_name);
-
-/** Creates a new #PidginMiniDialog with a custom icon. This is a shortcut for creating the dialog
- *  with @c g_object_new() then setting each property yourself.
- *  @return a new #PidginMiniDialog.
- */
-PidginMiniDialog *pidgin_mini_dialog_new_with_custom_icon(const gchar *title,
-	const gchar *description, GdkPixbuf *custom_icon);
 
 /** Shortcut for setting a mini-dialog's title via GObject properties.
  *  @param mini_dialog a mini-dialog
@@ -145,13 +137,6 @@ void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
  */
 void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 	const char *icon_name);
-
-/** Shortcut for setting a mini-dialog's custom icon via GObject properties.
- *  @param mini_dialog a mini-dialog
- *  @param icon_name   the pixbuf to use as a custom icon
- */
-void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
-	GdkPixbuf *custom_icon);
 
 /** Adds a new button to a mini-dialog, and attaches the supplied callback to
  *  its <tt>clicked</tt> signal.  After a button is clicked, the dialog is

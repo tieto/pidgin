@@ -44,11 +44,6 @@ sub conv_received_msg
 	Purple::Debug::misc("signals test in perl", "$data (" . $account->get_username() . ", $sender, $message, $flags)\n");
 }
 
-sub timeout_cb
-{
-	Purple::Debug::misc("signals test in perl", "timeout elapsed\n");
-}
-
 sub plugin_load
 {
 	my $plugin = shift;
@@ -76,9 +71,6 @@ sub plugin_load
 					\&conv_received_msg, "received im message");
 	Purple::Signal::connect($conv, "received-chat-msg", $plugin,
 					\&conv_received_msg, "received chat message");
-
-
-	Purple::timeout_add($plugin, 10, \&timeout_cb);
 }
 
 sub plugin_unload

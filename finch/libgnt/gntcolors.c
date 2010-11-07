@@ -24,16 +24,11 @@
 
 #include <ncurses.h>
 
-#include "gntinternal.h"
-#undef GNT_LOG_DOMAIN
-#define GNT_LOG_DOMAIN "Colors"
-
 #include "gntcolors.h"
 #include "gntstyle.h"
 
 #include <glib.h>
 
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -173,7 +168,7 @@ gnt_colors_get_color(char *key)
 		color = -1;
 	else {
 		g_warning("Invalid color name: %s\n", key);
-		color = -EINVAL;
+		color = -1;
 	}
 	return color;
 }
@@ -186,7 +181,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		gnt_warning("%s", error->message);
+		g_printerr("GntColors: %s\n", error->message);
 		g_error_free(error);
 		error = NULL;
 	}
@@ -208,10 +203,8 @@ void gnt_colors_parse(GKeyFile *kfile)
 				key = g_ascii_strdown(key, -1);
 				color = gnt_colors_get_color(key);
 				g_free(key);
-				if (color == -EINVAL) {
-					g_strfreev(list);
+				if (color == -1)
 					continue;
-				}
 
 				init_color(color, r, g, b);
 			}
@@ -232,7 +225,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		gnt_warning("%s", error->message);
+		g_printerr("GntColors: %s\n", error->message);
 		g_error_free(error);
 		return;
 	}
@@ -253,10 +246,8 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			int bg = gnt_colors_get_color(bgc);
 			g_free(fgc);
 			g_free(bgc);
-			if (fg == -EINVAL || bg == -EINVAL) {
-				g_strfreev(list);
+			if (fg == -1 || bg == -1)
 				continue;
-			}
 
 			key = g_ascii_strdown(key, -1);
 
@@ -279,7 +270,6 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			else if (strcmp(key, "urgent") == 0)
 				type = GNT_COLOR_URGENT;
 			else {
-				g_strfreev(list);
 				g_free(key);
 				continue;
 			}

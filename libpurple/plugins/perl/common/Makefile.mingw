@@ -7,13 +7,12 @@
 PIDGIN_TREE_TOP := ../../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-GCCWARNINGS += -Wno-comment -Wno-unused -Wno-nested-externs
-
-DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
-
 TARGET = Purple
 AUTOSPLIT = lib/auto/Purple/autosplit.ix
+EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
+
+CFLAGS += -Wno-comment -Wno-unused
 
 ##
 ## INCLUDE PATHS
@@ -41,13 +40,11 @@ XS_FILES =		Account.xs \
 				BuddyList.xs \
 				Cipher.xs \
 				Cmds.xs \
-				Certificate.xs \
 				Connection.xs \
 				Conversation.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
-				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \
 				Log.xs \
@@ -64,14 +61,12 @@ XS_FILES =		Account.xs \
 				Roomlist.xs \
 				SSLConn.xs \
 				SavedStatuses.xs \
-				Server.xs \
 				Signal.xs \
-				Smiley.xs \
+				Server.xs \
 				Sound.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
-				Whiteboard.xs \
 				XMLNode.xs
 
 #FALLBACKS =	const-c.inc const-xs.inc
@@ -81,7 +76,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl510 \
+LIBS =			-lperl58 \
 			-lperl \
 			-lpurple \
 			-lglib-2.0
@@ -99,10 +94,9 @@ include $(PIDGIN_COMMON_RULES)
 all: $(TARGET).dll $(AUTOSPLIT)
 
 install: all
-	rm -rf $(PURPLE_INSTALL_PERL_DIR)
-	mkdir -p $(PURPLE_INSTALL_PERL_DIR)
-	cp -R lib/* $(PURPLE_INSTALL_PERL_DIR)
-	cp $(TARGET).dll $(PURPLE_INSTALL_PERL_DIR)/auto/Purple
+	rm -rf $(PURPLE_INSTALL_PERLMOD_DIR)
+	cp -R lib $(PURPLE_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_PERLMOD_DIR)
 
 $(C_FILES): $(PURPLE_CONFIG_H)
 

@@ -2,6 +2,8 @@
 #include "resource.h"
 #include "version.h"
 
+#define PIXMAPDIR "pixmaps/"
+
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION PURPLE_MAJOR_VERSION,PURPLE_MINOR_VERSION,PURPLE_MICRO_VERSION,0
   PRODUCTVERSION PURPLE_MAJOR_VERSION,PURPLE_MINOR_VERSION,PURPLE_MICRO_VERSION,0
@@ -19,7 +21,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "FileDescription", "Pidgin"
         VALUE "FileVersion", "@PIDGIN_VERSION@"
         VALUE "InternalName", "pidgin"
-        VALUE "LegalCopyright", "Copyright (C) 1998-2010 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "LegalCopyright", "Copyright (C) 1998-2007 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
         VALUE "OriginalFilename", "@ORIGINAL_FILENAME@"
         VALUE "ProductName", "Pidgin"
         VALUE "ProductVersion", "@PIDGIN_VERSION@"
@@ -31,4 +33,4 @@ VS_VERSION_INFO VERSIONINFO
     END
   END
 
-PIDGIN_ICON			ICON "pixmaps/pidgin.ico"
+PIDGIN_ICON			ICON PIXMAPDIR "pidgin.ico"

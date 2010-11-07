@@ -41,11 +41,12 @@
 #include "util.h"
 #include "version.h"
 
-#include "libymsg.h"
+#include "yahoo.h"
 #include "yahoo_packet.h"
 #include "yahoo_friend.h"
 #include "yahoochat.h"
 #include "ycht.h"
+#include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
 
@@ -372,7 +373,7 @@ void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from)
 
 	/* TODO Ask if user wants to save picture before the session is closed */
 
-	wb->state = DOODLE_STATE_CANCELLED;
+	wb->state = DOODLE_STATE_CANCELED;
 	purple_whiteboard_destroy(wb);
 }
 
@@ -384,7 +385,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 											  const char *imv,
 											  const char *sixtyfour)
 {
-	YahooData *yd;
+	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
@@ -392,7 +393,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	yd = gc->proto_data;
 
 	/* Make and send an acknowledge (ready) Doodle packet */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
 	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
 	yahoo_packet_hash_str(pkt, 14,   message);
@@ -460,7 +461,7 @@ void yahoo_doodle_end(PurpleWhiteboard *wb)
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
-	if (gc && wb->state != DOODLE_STATE_CANCELLED)
+	if (gc && wb->state != DOODLE_STATE_CANCELED)
 		yahoo_doodle_command_send_shutdown(gc, wb->who);
 
 	g_free(ds->imv_key);

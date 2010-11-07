@@ -25,6 +25,7 @@
 #define _PURPLE_MIME_H
 
 #include <glib.h>
+#include <glib/glist.h>
 
 #ifdef __cplusplus
 extern "C" {

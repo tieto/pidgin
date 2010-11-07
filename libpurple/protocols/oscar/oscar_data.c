@@ -53,20 +53,23 @@ oscar_data_new(void)
 	aim__registermodule(od, locate_modfirst);
 	aim__registermodule(od, buddylist_modfirst);
 	aim__registermodule(od, msg_modfirst);
+	/* aim__registermodule(od, adverts_modfirst); */
+	/* aim__registermodule(od, invite_modfirst); */
 	aim__registermodule(od, admin_modfirst);
 	aim__registermodule(od, popups_modfirst);
 	aim__registermodule(od, bos_modfirst);
 	aim__registermodule(od, search_modfirst);
 	aim__registermodule(od, stats_modfirst);
+	/* aim__registermodule(od, translate_modfirst); */
 	aim__registermodule(od, chatnav_modfirst);
 	aim__registermodule(od, chat_modfirst);
+	aim__registermodule(od, odir_modfirst);
 	aim__registermodule(od, bart_modfirst);
 	/* missing 0x11 - 0x12 */
 	aim__registermodule(od, ssi_modfirst);
 	/* missing 0x14 */
 	aim__registermodule(od, icq_modfirst);
 	/* missing 0x16 */
-	/* auth_modfirst is only needed if we're connecting with the old-style BUCP login */
 	aim__registermodule(od, auth_modfirst);
 	aim__registermodule(od, email_modfirst);
 
@@ -83,14 +86,11 @@ oscar_data_destroy(OscarData *od)
 {
 	aim_cleansnacs(od, -1);
 
-	/* Only used when connecting with clientLogin */
-	if (od->url_data != NULL)
-		purple_util_fetch_url_cancel(od->url_data);
-
 	while (od->requesticon)
 	{
-		g_free(od->requesticon->data);
-		od->requesticon = g_slist_delete_link(od->requesticon, od->requesticon);
+		gchar *sn = od->requesticon->data;
+		od->requesticon = g_slist_remove(od->requesticon, sn);
+		g_free(sn);
 	}
 	g_free(od->email);
 	g_free(od->newp);

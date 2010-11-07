@@ -21,6 +21,8 @@
  *
  */
 
+#include <stdlib.h>
+
 #include "internal.h"
 #include "blist.h"
 #include "debug.h"
@@ -271,7 +273,6 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 static void pidgin_whiteboard_destroy(PurpleWhiteboard *wb)
 {
 	PidginWhiteboard *gtkwb;
-	GtkWidget *colour_dialog;
 
 	g_return_if_fail(wb != NULL);
 	gtkwb = wb->ui_data;
@@ -284,12 +285,6 @@ static void pidgin_whiteboard_destroy(PurpleWhiteboard *wb)
 	{
 		g_object_unref(gtkwb->pixmap);
 		gtkwb->pixmap = NULL;
-	}
-
-	colour_dialog = g_object_get_data(G_OBJECT(gtkwb->window), "colour-dialog");
-	if (colour_dialog) {
-		gtk_widget_destroy(colour_dialog);
-		g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", NULL);
 	}
 
 	if(gtkwb->window)
@@ -629,7 +624,7 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 							   update_rect.x, update_rect.y,
 							   update_rect.width, update_rect.height);
 
-	g_object_unref(G_OBJECT(gfx_con));
+	gdk_gc_unref(gfx_con);
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
@@ -738,24 +733,12 @@ static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer dat
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 
-	/* Confirm whether the user really wants to clear */
-	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(gtkwb->window),
-											   GTK_DIALOG_DESTROY_WITH_PARENT,
-											   GTK_MESSAGE_QUESTION,
-											   GTK_BUTTONS_YES_NO,
-											   _("Do you really want to clear?"));
-	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
+	pidgin_whiteboard_clear(gtkwb->wb);
 
-	if (response == GTK_RESPONSE_YES)
-	{
-		pidgin_whiteboard_clear(gtkwb->wb);
+	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
-		pidgin_whiteboard_set_canvas_as_icon(gtkwb);
-
-		/* Do protocol specific clearing procedures */
-		purple_whiteboard_send_clear(gtkwb->wb);
-	}
+	/* Do protocol specific clearing procedures */
+	purple_whiteboard_send_clear(gtkwb->wb);
 }
 
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
@@ -767,6 +750,7 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 
 	int result;
 
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 										  GTK_WINDOW(gtkwb->window),
 										  GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -785,15 +769,21 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 	else
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
 	*/
-
+#else
+	dialog = gtk_file_selection_new(_("Save File"));
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog), "whiteboard.jpg");
+#endif
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	if(result == GTK_RESPONSE_ACCEPT)
 	{
 		char *filename;
 
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-
+#else
+		filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog)));
+#endif
 		gtk_widget_destroy(dialog);
 
 		/* Makes an icon from the whiteboard's canvas 'image' */
@@ -814,7 +804,7 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 	{
 		gtk_widget_destroy(dialog);
 
-		purple_debug_info("gtkwhiteboard", "File not Saved... Cancelled\n");
+		purple_debug_info("gtkwhiteboard", "File not Saved... Canceled\n");
 	}
 }
 
@@ -858,20 +848,17 @@ change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
 	purple_whiteboard_send_brush(wb, old_size, new_color);
 }
 
-static void color_selection_dialog_destroy(GtkWidget *w, PidginWhiteboard *gtkwb)
+static void color_selection_dialog_destroy(GtkWidget *w, GtkWidget *destroy)
 {
-	GtkWidget *dialog = g_object_get_data(G_OBJECT(gtkwb->window), "colour-dialog");
-	gtk_widget_destroy(dialog);
-	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", NULL);
+	gtk_widget_destroy(destroy);
 }
 
 static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
-
+	
 	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
-	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", dialog);
 
 	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",
 					G_CALLBACK(change_color_cb), gtkwb);
@@ -880,7 +867,7 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 	gtk_widget_destroy(dialog->help_button);
 
 	g_signal_connect(G_OBJECT(dialog->ok_button), "clicked",
-					G_CALLBACK(color_selection_dialog_destroy), gtkwb);
+					G_CALLBACK(color_selection_dialog_destroy), dialog);
 
 	gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(dialog->colorsel), TRUE);
 

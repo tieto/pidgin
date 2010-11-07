@@ -1,9 +1,7 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +31,6 @@
 #include "message.h"
 #include "presence.h"
 #include "xdata.h"
-#include "data.h"
 
 GList *jabber_chat_info(PurpleConnection *gc)
 {
@@ -99,14 +96,11 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 {
 	JabberChat *chat = NULL;
 
-	g_return_val_if_fail(room != NULL, NULL);
-	g_return_val_if_fail(server != NULL, NULL);
-
 	if(NULL != js->chats)
 	{
 		char *room_jid = g_strdup_printf("%s@%s", room, server);
 
-		chat = g_hash_table_lookup(js->chats, room_jid);
+		chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
 		g_free(room_jid);
 	}
 
@@ -173,30 +167,14 @@ void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		xmlnode_set_namespace(x, "http://jabber.org/protocol/muc#user");
 		invite = xmlnode_new_child(x, "invite");
 		xmlnode_set_attrib(invite, "to", name);
-		if (msg) {
-			body = xmlnode_new_child(invite, "reason");
-			xmlnode_insert_data(body, msg, -1);
-		}
+		body = xmlnode_new_child(invite, "reason");
+		xmlnode_insert_data(body, msg, -1);
 	} else {
 		xmlnode_set_attrib(message, "to", name);
-		/*
-		 * Putting the reason into the body was an 'undocumented protocol,
-		 * ...not part of "groupchat 1.0"'.
-		 * http://xmpp.org/extensions/attic/jep-0045-1.16.html#invite
-		 *
-		 * Left here for compatibility.
-		 */
-		if (msg) {
-			body = xmlnode_new_child(message, "body");
-			xmlnode_insert_data(body, msg, -1);
-		}
-
+		body = xmlnode_new_child(message, "body");
+		xmlnode_insert_data(body, msg, -1);
 		x = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(x, "jid", room_jid);
-
-		/* The better place for it! XEP-0249 style. */
-		if (msg)
-			xmlnode_set_attrib(x, "reason", msg);
 		xmlnode_set_namespace(x, "jabber:x:conference");
 	}
 
@@ -219,103 +197,18 @@ char *jabber_get_chat_name(GHashTable *data) {
 	return chat_name;
 }
 
-static void insert_in_hash_table(gpointer key, gpointer value, gpointer user_data)
-{
-	GHashTable *hash_table = (GHashTable *)user_data;
-	g_hash_table_insert(hash_table, g_strdup(key), g_strdup(value));
-}
-
-static JabberChat *jabber_chat_new(JabberStream *js, const char *room,
-                                   const char *server, const char *handle,
-                                   const char *password, GHashTable *data)
+void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;
-	char *jid;
-
-	if (jabber_chat_find(js, room, server) != NULL)
-		return NULL;
-
-	chat = g_new0(JabberChat, 1);
-	chat->js = js;
-
-	chat->room = g_strdup(room);
-	chat->server = g_strdup(server);
-	chat->handle = g_strdup(handle);
-
-	/* Copy the data hash table to chat->components */
-	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
-	if (data == NULL) {
-		g_hash_table_insert(chat->components, g_strdup("handle"), g_strdup(handle));
-		g_hash_table_insert(chat->components, g_strdup("room"), g_strdup(room));
-		g_hash_table_insert(chat->components, g_strdup("server"), g_strdup(server));
-		/* g_hash_table_insert(chat->components, g_strdup("password"), g_strdup(server)); */
-	} else {
-		g_hash_table_foreach(data, insert_in_hash_table, chat->components);
-	}
-
-	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
-			(GDestroyNotify)jabber_chat_member_free);
-
-	jid = g_strdup_printf("%s@%s", room, server);
-	g_hash_table_insert(js->chats, jid, chat);
-
-	return chat;
-}
-
-JabberChat *jabber_join_chat(JabberStream *js, const char *room,
-                             const char *server, const char *handle,
-                             const char *password, GHashTable *data)
-{
-	JabberChat *chat;
-
-	PurpleConnection *gc;
-	PurpleAccount *account;
-	PurpleStatus *status;
-
+	char *room, *server, *handle, *passwd;
 	xmlnode *presence, *x;
+	char *tmp, *room_jid, *full_jid;
+	JabberStream *js = gc->proto_data;
+	PurplePresence *gpresence;
+	PurpleStatus *status;
 	JabberBuddyState state;
 	char *msg;
 	int priority;
-
-	char *jid;
-
-	chat = jabber_chat_new(js, room, server, handle, password, data);
-	if (chat == NULL)
-		return NULL;
-
-	gc = js->gc;
-	account = purple_connection_get_account(gc);
-	status = purple_account_get_active_status(account);
-	purple_status_to_jabber(status, &state, &msg, &priority);
-
-	presence = jabber_presence_create_js(js, state, msg, priority);
-	g_free(msg);
-
-	jid = g_strdup_printf("%s@%s/%s", room, server, handle);
-	xmlnode_set_attrib(presence, "to", jid);
-	g_free(jid);
-
-	x = xmlnode_new_child(presence, "x");
-	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
-
-	if (password && *password) {
-		xmlnode *p = xmlnode_new_child(x, "password");
-		xmlnode_insert_data(p, password, -1);
-	}
-
-	jabber_send(js, presence);
-	xmlnode_free(presence);
-
-	return chat;
-}
-
-void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
-{
-	char *room, *server, *handle, *passwd;
-	JabberID *jid;
-	JabberStream *js = gc->proto_data;
-	char *tmp;
 
 	room = g_hash_table_lookup(data, "room");
 	server = g_hash_table_lookup(data, "server");
@@ -332,42 +225,62 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
-		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
-	} else if(!jabber_domain_validate(server)) {
+	} else if(!jabber_nameprep_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
-		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
-		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	}
 
-	/* Normalize the room and server parameters */
+	if(jabber_chat_find(js, room, server))
+		return;
+
 	tmp = g_strdup_printf("%s@%s", room, server);
-	jid = jabber_id_new(tmp);
+	room_jid = g_strdup(jabber_normalize(NULL, tmp));
 	g_free(tmp);
 
-	if (jid == NULL) {
-		/* TODO: Error message */
+	chat = g_new0(JabberChat, 1);
+	chat->js = gc->proto_data;
 
-		g_return_if_reached();
+	chat->room = g_strdup(room);
+	chat->server = g_strdup(server);
+	chat->handle = g_strdup(handle);
+
+	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+			(GDestroyNotify)jabber_chat_member_free);
+
+	g_hash_table_insert(js->chats, room_jid, chat);
+
+	gpresence = purple_account_get_presence(gc->account);
+	status = purple_presence_get_active_status(gpresence);
+
+	purple_status_to_jabber(status, &state, &msg, &priority);
+
+	presence = jabber_presence_create_js(js, state, msg, priority);
+	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
+	xmlnode_set_attrib(presence, "to", full_jid);
+	g_free(full_jid);
+	g_free(msg);
+
+	x = xmlnode_new_child(presence, "x");
+	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
+
+	if(passwd && *passwd) {
+		xmlnode *password = xmlnode_new_child(x, "password");
+		xmlnode_insert_data(password, passwd, -1);
 	}
 
-	/*
-	 * Now that we've done all that nice core-interface stuff, let's join
-	 * this room!
-	 */
-	jabber_join_chat(js, jid->node, jid->domain, handle, passwd, data);
-	jabber_id_free(jid);
+	jabber_send(js, presence);
+	xmlnode_free(presence);
 }
 
 void jabber_chat_leave(PurpleConnection *gc, int id)
@@ -381,7 +294,7 @@ void jabber_chat_leave(PurpleConnection *gc, int id)
 
 	jabber_chat_part(chat, NULL);
 
-	chat->left = TRUE;
+	chat->conv = NULL;
 }
 
 void jabber_chat_destroy(JabberChat *chat)
@@ -389,7 +302,7 @@ void jabber_chat_destroy(JabberChat *chat)
 	JabberStream *js = chat->js;
 	char *room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	g_hash_table_remove(js->chats, room_jid);
+	g_hash_table_remove(js->chats, jabber_normalize(NULL, room_jid));
 	g_free(room_jid);
 }
 
@@ -402,7 +315,6 @@ void jabber_chat_free(JabberChat *chat)
 	g_free(chat->server);
 	g_free(chat->handle);
 	g_hash_table_destroy(chat->members);
-	g_hash_table_destroy(chat->components);
 	g_free(chat);
 }
 
@@ -415,17 +327,11 @@ char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat;
-	JabberChatMember *jcm;
 
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
 		return NULL;
-
-	jcm = g_hash_table_lookup(chat->members, who);
-	if (jcm != NULL && jcm->jid)
-		return g_strdup(jcm->jid);
-
 
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 }
@@ -448,19 +354,21 @@ static void jabber_chat_room_configure_x_data_cb(JabberStream *js, xmlnode *resu
 	jabber_iq_send(iq);
 }
 
-static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
-                                          JabberIqType type, const char *id,
-                                          xmlnode *packet, gpointer data)
+static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from = xmlnode_get_attrib(packet, "from");
 	char *msg;
 	JabberChat *chat;
 	JabberID *jid;
 
-	if (!from)
+	if(!type || !from)
 		return;
 
-	if (type == JABBER_IQ_RESULT) {
+
+
+	if(!strcmp(type, "result")) {
 		jid = jabber_id_new(from);
 
 		if(!jid)
@@ -486,7 +394,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
 				return;
 			}
 		}
-	} else if (type == JABBER_IQ_ERROR) {
+	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
@@ -556,12 +464,11 @@ void jabber_chat_create_instant_room(JabberChat *chat) {
 	g_free(room_jid);
 }
 
-static void
-jabber_chat_register_x_data_result_cb(JabberStream *js, const char *from,
-                                      JabberIqType type, const char *id,
-                                      xmlnode *packet, gpointer data)
+static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
-	if (type == JABBER_IQ_ERROR) {
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	if(type && !strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
@@ -592,19 +499,19 @@ static void jabber_chat_register_x_data_cb(JabberStream *js, xmlnode *result, gp
 	jabber_iq_send(iq);
 }
 
-static void jabber_chat_register_cb(JabberStream *js, const char *from,
-                                    JabberIqType type, const char *id,
-                                    xmlnode *packet, gpointer data)
+static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
+	const char *type = xmlnode_get_attrib(packet, "type");
+	const char *from = xmlnode_get_attrib(packet, "from");
 	char *msg;
 	JabberChat *chat;
 	JabberID *jid;
 
-	if (!from)
+	if(!type || !from)
 		return;
 
-	if (type == JABBER_IQ_RESULT) {
+	if(!strcmp(type, "result")) {
 		jid = jabber_id_new(from);
 
 		if(!jid)
@@ -630,7 +537,7 @@ static void jabber_chat_register_cb(JabberStream *js, const char *from,
 				return;
 			}
 		}
-	} else if (type == JABBER_IQ_ERROR) {
+	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
@@ -669,25 +576,37 @@ void jabber_chat_register(JabberChat *chat)
 /* merge this with the function below when we get everyone on the same page wrt /commands */
 void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 {
-	JabberMessage *jm;
+	if(topic && *topic) {
+		JabberMessage *jm;
+		jm = g_new0(JabberMessage, 1);
+		jm->js = chat->js;
+		jm->type = JABBER_MESSAGE_GROUPCHAT;
+		jm->subject = purple_markup_strip_html(topic);
+		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+		jabber_message_send(jm);
+		jabber_message_free(jm);
+	} else {
+		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(chat->conv));
+		char *buf, *tmp, *tmp2;
 
-	jm = g_new0(JabberMessage, 1);
-	jm->js = chat->js;
-	jm->type = JABBER_MESSAGE_GROUPCHAT;
-	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+		if(cur) {
+			tmp = g_markup_escape_text(cur, -1);
+			tmp2 = purple_markup_linkify(tmp);
+			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
+			g_free(tmp);
+			g_free(tmp2);
+		} else
+			buf = g_strdup(_("No topic is set"));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		g_free(buf);
+	}
 
-	if (topic && *topic)
-		jm->subject = g_strdup(topic);
-	else
-		jm->subject = g_strdup("");
-
-	jabber_message_send(jm);
-	jabber_message_free(jm);
 }
 
 void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 {
-	JabberStream *js = purple_connection_get_protocol_data(gc);
+	JabberStream *js = gc->proto_data;
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
@@ -697,11 +616,11 @@ void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 }
 
 
-gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
+void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 {
 	xmlnode *presence;
 	char *full_jid;
-	PurpleAccount *account;
+	PurplePresence *gpresence;
 	PurpleStatus *status;
 	JabberBuddyState state;
 	char *msg;
@@ -711,11 +630,11 @@ gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
 		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
 				_("Nick changing not supported in non-MUC chatrooms"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
-		return FALSE;
+		return;
 	}
 
-	account = purple_connection_get_account(chat->js->gc);
-	status = purple_account_get_active_status(account);
+	gpresence = purple_account_get_presence(chat->js->gc->account);
+	status = purple_presence_get_active_status(gpresence);
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
@@ -727,8 +646,6 @@ gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
 
 	jabber_send(chat->js, presence);
 	xmlnode_free(presence);
-
-	return TRUE;
 }
 
 void jabber_chat_part(JabberChat *chat, const char *msg)
@@ -746,22 +663,20 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 		xmlnode_insert_data(status, msg, -1);
 	}
 	jabber_send(chat->js, presence);
-
 	xmlnode_free(presence);
 	g_free(room_jid);
 }
 
-static void roomlist_disco_result_cb(JabberStream *js, const char *from,
-                                     JabberIqType type, const char *id,
-                                     xmlnode *packet, gpointer data)
+static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query;
 	xmlnode *item;
+	const char *type;
 
 	if(!js->roomlist)
 		return;
 
-	if (type == JABBER_IQ_ERROR) {
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
 		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
@@ -824,13 +739,12 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 	if(!server || !*server) {
 		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
-		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		return;
 	}
 
 	purple_roomlist_set_in_progress(js->roomlist, TRUE);
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_ITEMS);
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 
 	xmlnode_set_attrib(iq->node, "to", server);
 
@@ -874,7 +788,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 			FALSE, FALSE, NULL,
 			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb),
-			purple_connection_get_account(gc), NULL, NULL,
+			purple_connection_get_account(gc), NULL, NULL,			 
 			js);
 
 	return js->roomlist;
@@ -932,7 +846,7 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why
 	jcm = g_hash_table_lookup(chat->members, who);
 	if (jcm && jcm->jid)
 		jid = jcm->jid;
-	else if (strchr(who, '@') != NULL)
+	else if (g_utf8_strchr(who, -1, '@') != NULL)
 		jid = who;
 	else
 		return FALSE;
@@ -969,7 +883,7 @@ gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const cha
 	jcm = g_hash_table_lookup(chat->members, who);
 	if (jcm && jcm->jid)
 		jid = jcm->jid;
-	else if (strchr(who, '@') != NULL)
+	else if (g_utf8_strchr(who, -1, '@') != NULL)
 		jid = who;
 	else
 		return FALSE;
@@ -991,70 +905,7 @@ gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const cha
 	return TRUE;
 }
 
-static void
-jabber_chat_affiliation_list_cb(JabberStream *js, const char *from,
-                                JabberIqType type, const char *id,
-                                xmlnode *packet, gpointer data)
-{
-	JabberChat *chat;
-	xmlnode *query, *item;
-	int chat_id = GPOINTER_TO_INT(data);
-	GString *buf;
-
-	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
-		return;
-
-	if (type == JABBER_IQ_ERROR)
-		return;
-
-	if(!(query = xmlnode_get_child(packet, "query")))
-		return;
-
-	buf = g_string_new(_("Affiliations:"));
-
-	item = xmlnode_get_child(query, "item");
-	if (item) {
-		for( ; item; item = xmlnode_get_next_twin(item)) {
-			const char *jid = xmlnode_get_attrib(item, "jid");
-			const char *affiliation = xmlnode_get_attrib(item, "affiliation");
-			if (jid && affiliation)
-				g_string_append_printf(buf, "\n%s %s", jid, affiliation);
-		}
-    } else {
-		buf = g_string_append_c(buf, '\n');
-		buf = g_string_append_len(buf, _("No users found"), -1);
-	}
-
-	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
-    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
-
-	g_string_free(buf, TRUE);
-}
-
-gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation)
-{
-	JabberIq *iq;
-	char *room_jid;
-	xmlnode *query, *item;
-
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
-			"http://jabber.org/protocol/muc#admin");
-
-	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
-	xmlnode_set_attrib(iq->node, "to", room_jid);
-
-	query = xmlnode_get_child(iq->node, "query");
-	item = xmlnode_new_child(query, "item");
-	xmlnode_set_attrib(item, "affiliation", affiliation);
-
-	jabber_iq_set_callback(iq, jabber_chat_affiliation_list_cb, GINT_TO_POINTER(chat->id));
-	jabber_iq_send(iq);
-
-	return TRUE;
-}
-
-gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
-                               const char *role, const char *why)
+gboolean jabber_chat_role_user(JabberChat *chat, const char *who, const char *role)
 {
 	char *to;
 	JabberIq *iq;
@@ -1077,8 +928,35 @@ gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
 	item = xmlnode_new_child(query, "item");
 	xmlnode_set_attrib(item, "nick", jcm->handle);
 	xmlnode_set_attrib(item, "role", role);
-	if (why) {
-		xmlnode *reason = xmlnode_new_child(item, "reason");
+
+	jabber_iq_send(iq);
+
+	return TRUE;
+}
+
+gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *why)
+{
+	JabberIq *iq;
+	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
+	char *to;
+	xmlnode *query, *item, *reason;
+
+	if(!jcm || !jcm->jid)
+		return FALSE;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#admin");
+
+	to = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "role", "none");
+	if(why) {
+		reason = xmlnode_new_child(item, "reason");
 		xmlnode_insert_data(reason, why, -1);
 	}
 
@@ -1087,78 +965,13 @@ gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
 	return TRUE;
 }
 
-static void jabber_chat_role_list_cb(JabberStream *js, const char *from,
-                                     JabberIqType type, const char *id,
-                                     xmlnode *packet, gpointer data)
+static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	xmlnode *query, *item;
-	int chat_id = GPOINTER_TO_INT(data);
-	GString *buf;
+	/*xmlnode *query;*/
+	int id = GPOINTER_TO_INT(data);
 
-	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
-		return;
-
-	if (type == JABBER_IQ_ERROR)
-		return;
-
-	if(!(query = xmlnode_get_child(packet, "query")))
-		return;
-
-	buf = g_string_new(_("Roles:"));
-
-	item = xmlnode_get_child(query, "item");
-	if (item) {
-		for( ; item; item = xmlnode_get_next_twin(item)) {
-			const char *jid  = xmlnode_get_attrib(item, "jid");
-			const char *role = xmlnode_get_attrib(item, "role");
-			if (jid && role)
-				g_string_append_printf(buf, "\n%s %s", jid, role);
-	    }
-	} else {
-		buf = g_string_append_c(buf, '\n');
-		buf = g_string_append_len(buf, _("No users found"), -1);
-	}
-
-	purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf->str,
-    	PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
-
-	g_string_free(buf, TRUE);
-}
-
-gboolean jabber_chat_role_list(JabberChat *chat, const char *role)
-{
-	JabberIq *iq;
-	char *room_jid;
-	xmlnode *query, *item;
-
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
-			"http://jabber.org/protocol/muc#admin");
-
-	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
-	xmlnode_set_attrib(iq->node, "to", room_jid);
-
-	query = xmlnode_get_child(iq->node, "query");
-	item = xmlnode_new_child(query, "item");
-	xmlnode_set_attrib(item, "role", role);
-
-	jabber_iq_set_callback(iq, jabber_chat_role_list_cb, GINT_TO_POINTER(chat->id));
-	jabber_iq_send(iq);
-
-	return TRUE;
-}
-
-static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
-                                         JabberIqType type, const char *id,
-                                         xmlnode *packet, gpointer data)
-{
-	JabberChat *chat;
-#if 0
-	xmlnode *query, *x;
-#endif
-	int chat_id = GPOINTER_TO_INT(data);
-
-	if(!(chat = jabber_chat_find_by_id(js, chat_id)))
+	if(!(chat = jabber_chat_find_by_id(js, id)))
 		return;
 
 	/* defaults, in case the conference server doesn't
@@ -1166,9 +979,8 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
 	chat->xhtml = TRUE;
 
 	/* disabling this until more MUC servers support
-	 * announcing this */
-#if 0
-	if (type == JABBER_IQ_ERROR) {
+	 * announcing this
+	if(xmlnode_get_child(packet, "error")) {
 		return;
 	}
 
@@ -1180,11 +992,11 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
 		const char *var = xmlnode_get_attrib(x, "var");
 
-		if(var && !strcmp(var, NS_XHTML_IM)) {
+		if(var && !strcmp(var, "http://jabber.org/protocol/xhtml-im")) {
 			chat->xhtml = TRUE;
 		}
 	}
-#endif
+	*/
 }
 
 void jabber_chat_disco_traffic(JabberChat *chat)
@@ -1195,9 +1007,10 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET, NS_DISCO_INFO);
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
+			"http://jabber.org/protocol/disco#info");
 
-	xmlnode_set_attrib(iq->node, "to", room_jid);
+	xmlnode_set_attrib(iq->node, "to", room_jid); 
 
 	query = xmlnode_get_child(iq->node, "query");
 
@@ -1210,59 +1023,5 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 	g_free(room_jid);
 }
 
-typedef struct {
-	const gchar *cap;
-	gboolean *all_support;
-	JabberBuddy *jb;
-} JabberChatCapsData;
 
-static void
-jabber_chat_all_participants_have_capability_foreach(gpointer key,
-                                                     gpointer value,
-                                                     gpointer user_data)
-{
-	const gchar *cap = ((JabberChatCapsData *) user_data)->cap;
-	gboolean *all_support = ((JabberChatCapsData *) user_data)->all_support;
-	JabberBuddy *jb = ((JabberChatCapsData *) user_data)->jb;
-	JabberChatMember *member = (JabberChatMember *) value;
-	const gchar *resource = member->handle;
-	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
 
-	if (jbr) {
-		*all_support &= jabber_resource_has_capability(jbr, cap);
-	} else {
-		*all_support = FALSE;
-	}
-}
-
-gboolean
-jabber_chat_all_participants_have_capability(const JabberChat *chat,
-	const gchar *cap)
-{
-	gchar *chat_jid = NULL;
-	JabberBuddy *jb = NULL;
-	gboolean all_support = TRUE;
-	JabberChatCapsData data;
-
-	chat_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
-	jb = jabber_buddy_find(chat->js, chat_jid, FALSE);
-
-	if (jb) {
-		data.cap = cap;
-		data.all_support = &all_support;
-		data.jb = jb;
-
-		g_hash_table_foreach(chat->members,
-			jabber_chat_all_participants_have_capability_foreach, &data);
-	} else {
-		all_support = FALSE;
-	}
-	g_free(chat_jid);
-	return all_support;
-}
-
-guint
-jabber_chat_get_num_participants(const JabberChat *chat)
-{
-	return g_hash_table_size(chat->members);
-}

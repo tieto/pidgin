@@ -7,11 +7,10 @@
 PIDGIN_TREE_TOP := ../../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-GCCWARNINGS += -Wno-comment -Wno-unused -Wno-nested-externs
-
-DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
-
 TARGET = Pidgin
+EXTUTILS ?= C:/perl/lib/ExtUtils
+
+CFLAGS += -Wno-comment -Wno-unused
 
 ##
 ## INCLUDE PATHS
@@ -24,7 +23,6 @@ INCLUDE_PATHS =		-I. \
 			-I$(PIDGIN_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/atk-1.0 \
-			-I$(GTK_TOP)/include/cairo \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
@@ -74,7 +72,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl510 \
+LIBS =			-lperl58 \
 			-lperl \
 			-lpurple \
 			-lpidgin \
@@ -89,15 +87,14 @@ include $(PIDGIN_COMMON_RULES)
 
 all: $(TARGET).dll
 
-$(PURPLE_INSTALL_PERL_DIR)/Purple.pm:
+$(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm:
 	$(MAKE) -C $(PURPLE_PERL_TOP)/common -f $(MINGW_MAKEFILE) install
 
-install: all $(PURPLE_INSTALL_PERL_DIR)/Purple.pm
-	rm -f $(PIDGIN_INSTALL_PERL_DIR)/$(TARGET).dll $(PIDGIN_INSTALL_PERL_DIR)/auto/Pidgin/$(TARGET).pm
-	mkdir -p $(PIDGIN_INSTALL_PERL_DIR)
-	cp $(TARGET).pm $(PIDGIN_INSTALL_PERL_DIR)
-	mkdir -p $(PIDGIN_INSTALL_PERL_DIR)/auto/Pidgin
-	cp $(TARGET).dll $(PIDGIN_INSTALL_PERL_DIR)/auto/Pidgin
+install: all $(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm
+	rm -f $(PIDGIN_INSTALL_PERLMOD_DIR)/$(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/$(TARGET).pm
+	mkdir -p $(PIDGIN_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).pm $(PIDGIN_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)
 
 $(C_FILES): $(PIDGIN_CONFIG_H)
 

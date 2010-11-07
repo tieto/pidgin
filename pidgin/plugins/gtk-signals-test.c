@@ -20,10 +20,9 @@
  */
 #define GTK_SIGNAL_TEST_PLUGIN_ID "gtk-signals-test"
 
-#include "internal.h"
-
 #include <gtk/gtk.h>
 
+#include "internal.h"
 #include "debug.h"
 #include "version.h"
 

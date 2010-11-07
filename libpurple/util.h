@@ -31,33 +31,23 @@
 
 #include <stdio.h>
 
-/**
-  * An opaque structure representing a URL request. Can be used to cancel
-  * the request.
-  */
-typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
-/** @copydoc _PurpleMenuAction */
-typedef struct _PurpleMenuAction PurpleMenuAction;
-/** @copydoc _PurpleKeyValuePair */
-typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
-
 #include "account.h"
-#include "signals.h"
 #include "xmlnode.h"
 #include "notify.h"
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct _PurpleMenuAction
+typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
+
+typedef struct _PurpleMenuAction
 {
 	char *label;
 	PurpleCallback callback;
 	gpointer data;
 	GList *children;
-};
+} PurpleMenuAction;
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
@@ -67,12 +57,12 @@ typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
  * This is used by, among other things, purple_gtk_combo* functions to pass in a
  * list of key-value pairs so it can display a user-friendly value.
  */
-struct _PurpleKeyValuePair
+typedef struct _PurpleKeyValuePair
 {
 	gchar *key;
 	void *value;
 
-};
+} PurpleKeyValuePair;
 
 /**
  * Creates a new PurpleMenuAction.
@@ -114,7 +104,7 @@ void purple_util_set_current_song(const char *title, const char *artist,
  * @param album     The album of the song, can be @c NULL.
  * @param unused    Currently unused, must be @c NULL.
  *
- * @return   The formatted string. The caller must g_free the returned string.
+ * @return   The formatted string. The caller must #g_free the returned string.
  * @since 2.4.0
  */
 char * purple_util_format_song_info(const char *title, const char *artist,
@@ -239,7 +229,7 @@ guchar *purple_base64_decode(const char *str, gsize *ret_len);
  * Converts a quoted printable string back to its readable equivalent.
  * What is a quoted printable string, you ask?  It's an encoding used
  * to transmit binary data as ASCII.  It's intended purpose is to send
- * emails containing non-ASCII characters.  Wikipedia has a pretty good
+ * e-mails containing non-ASCII characters.  Wikipedia has a pretty good
  * explanation.  Also see RFC 2045.
  *
  * @param str     The quoted printable ASCII string to convert to raw data.
@@ -422,19 +412,6 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
 /*@{*/
 
 /**
- * Escapes special characters in a plain-text string so they display
- * correctly as HTML.  For example, & is replaced with &amp; and < is
- * replaced with &lt;
- *
- * This is exactly the same as g_markup_escape_text(), except that it
- * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
- * and is displayed literally in IE7.
- *
- * @since 2.6.0
- */
-gchar *purple_markup_escape_text(const gchar *text, gssize length);
-
-/**
  * Finds an HTML tag matching the given name.
  *
  * This locates an HTML tag's start and end, and stores its attributes
@@ -516,35 +493,15 @@ char *purple_markup_strip_html(const char *str);
 char *purple_markup_linkify(const char *str);
 
 /**
- * Unescapes HTML entities to their literal characters in the text.
- * For example "&amp;" is replaced by '&' and so on.  Also converts
- * numerical entities (e.g. "&#38;" is also '&').
- *
- * This function currently supports the following named entities:
- *     "&amp;", "&lt;", "&gt;", "&copy;", "&quot;", "&reg;", "&apos;"
- *
- * purple_unescape_html() is similar, but also converts "<br>" into "\n".
- *
- * @param text The string in which to unescape any HTML entities
- *
- * @return The text with HTML entities literalized.  You must g_free
- *         this string when finished with it.
- *
- * @see purple_unescape_html()
- * @since 2.7.0
- */
-char *purple_unescape_text(const char *text);
-
-/**
- * Unescapes HTML entities to their literal characters and converts
- * "<br>" to "\n".  See purple_unescape_text() for more details.
+ * Unescapes HTML entities to their literal characters.
+ * For example "&amp;" is replaced by '&' and so on.
+ * Actually only "&amp;", "&quot;", "&lt;" and "&gt;" are currently
+ * supported.
  *
  * @param html The string in which to unescape any HTML entities
  *
  * @return The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
- *
- * @see purple_unescape_text()
  */
 char *purple_unescape_html(const char *html);
 
@@ -618,16 +575,6 @@ const char * purple_markup_unescape_entity(const char *text, int *length);
  */
 char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
 
-/**
- * Check if the given HTML contains RTL text.
- *
- * @param html  The HTML text.
- *
- * @return  TRUE if the text contains RTL text, FALSE otherwise.
- *
- * @since 2.6.0
- */
-gboolean purple_markup_is_rtl(const char *html);
 
 /*@}*/
 
@@ -759,11 +706,6 @@ const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /**
- * Returns a SHA-1 hash string of the data passed in.
- */
-char *purple_util_get_image_checksum(gconstpointer image_data, size_t image_len);
-
-/**
  * @return A hex encoded version of the SHA-1 hash of the data passed
  *         in with the correct file extention appended.  The file
  *         extension is determined by calling
@@ -819,29 +761,6 @@ gboolean purple_running_osx(void);
  */
 char *purple_fd_get_ip(int fd);
 
-/**
- * Returns the address family of a socket.
- *
- * @param fd The socket file descriptor.
- *
- * @return The address family of the socket (AF_INET, AF_INET6, etc) or -1
- *         on error.
- * @since 2.7.0
- */
-int purple_socket_get_family(int fd);
-
-/**
- * Returns TRUE if a socket is capable of speaking IPv4.
- *
- * This is the case for IPv4 sockets and, on some systems, IPv6 sockets
- * (due to the IPv4-mapped address functionality).
- *
- * @param fd The socket file descriptor
- * @return TRUE if a socket can speak IPv4.
- * @since 2.7.0
- */
-gboolean purple_socket_speaks_ipv4(int fd);
-
 /*@}*/
 
 
@@ -849,21 +768,6 @@ gboolean purple_socket_speaks_ipv4(int fd);
 /** @name String Functions                                                */
 /**************************************************************************/
 /*@{*/
-
-/**
- * Tests two strings for equality.
- *
- * Unlike strcmp(), this function will not crash if one or both of the
- * strings are @c NULL.
- *
- * @param left	A string
- * @param right A string to compare with left
- *
- * @return @c TRUE if the strings are the same, else @c FALSE.
- *
- * @since 2.6.0
- */
-gboolean purple_strequal(const gchar *left, const gchar *right);
 
 /**
  * Normalizes a string, so that it is suitable for comparison.
@@ -1132,23 +1036,6 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
  *                   partial URL.
  * @param user_agent The user agent field to use, or NULL.
  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
- * @param cb         The callback function.
- * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url" and get rid of the old one
- */
-#define purple_util_fetch_url_len(url, full, user_agent, http11, max_len, cb, data) \
-	purple_util_fetch_url_request_len(url, full, user_agent, http11, NULL, \
-		FALSE, max_len, cb, data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
  * @param request    A HTTP request to send to the server instead of the
  *                   standard GET
  * @param include_headers
@@ -1159,52 +1046,6 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
 PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
 		gboolean full, const gchar *user_agent, gboolean http11,
 		const gchar *request, gboolean include_headers,
-		PurpleUtilFetchUrlCallback callback, gpointer data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param request    A HTTP request to send to the server instead of the
- *                   standard GET
- * @param include_headers
- *                   If TRUE, include the HTTP headers in the response.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
- * @param callback   The callback function.
- * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, this will go away.
- */
-PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(const gchar *url,
-		gboolean full, const gchar *user_agent, gboolean http11,
-		const gchar *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, gpointer data);
-
-/**
- * Fetches the data from a URL, and passes it to a callback function.
- *
- * @param account    The account for which the request is needed, or NULL.
- * @param url        The URL.
- * @param full       TRUE if this is the full URL, or FALSE if it's a
- *                   partial URL.
- * @param user_agent The user agent field to use, or NULL.
- * @param http11     TRUE if HTTP/1.1 should be used to download the file.
- * @param request    A HTTP request to send to the server instead of the
- *                   standard GET
- * @param include_headers
- *                   If TRUE, include the HTTP headers in the response.
- * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
- * @param callback   The callback function.
- * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
- */
-PurpleUtilFetchUrlData *purple_util_fetch_url_request_len_with_account(
-		PurpleAccount *account, const gchar *url,
-		gboolean full, const gchar *user_agent, gboolean http11,
-		const gchar *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, gpointer data);
 
 /**
@@ -1252,31 +1093,8 @@ gboolean purple_email_is_valid(const char *address);
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
- * @deprecated This function will be replaced with one that validates
- *             as either IPv4 or IPv6 in 3.0.0. If you don't want this,
- *             behavior, use one of the more specific functions.
  */
 gboolean purple_ip_address_is_valid(const char *ip);
-
-/**
- * Checks if the given IP address is a syntactically valid IPv4 address.
- *
- * @param ip The IP address to validate.
- *
- * @return True if the IP address is syntactically correct.
- * @since 2.6.0
- */
-gboolean purple_ipv4_address_is_valid(const char *ip);
-
-/**
- * Checks if the given IP address is a syntactically valid IPv6 address.
- *
- * @param ip The IP address to validate.
- *
- * @return True if the IP address is syntactically correct.
- * @since 2.6.0
- */
-gboolean purple_ipv6_address_is_valid(const char *ip);
 
 /**
  * This function extracts a list of URIs from the a "text/uri-list"
@@ -1333,20 +1151,6 @@ gchar *purple_utf8_try_convert(const char *str);
 gchar *purple_utf8_salvage(const char *str);
 
 /**
- * Removes unprintable characters from a UTF-8 string. These characters
- * (in particular low-ASCII characters) are invalid in XML 1.0 and thus
- * are not allowed in XMPP and are rejected by libxml2 by default.
- *
- * The returned string must be freed by the caller.
- *
- * @param str A valid UTF-8 string.
- *
- * @return A newly allocated UTF-8 string without the unprintable characters.
- * @since 2.6.0
- */
-gchar *purple_utf8_strip_unprintables(const gchar *str);
-
-/**
  * Return the UTF-8 version of gai_strerror().  It calls gai_strerror()
  * then converts the result to UTF-8.  This function is analogous to
  * g_strerror().
@@ -1359,7 +1163,7 @@ gchar *purple_utf8_strip_unprintables(const gchar *str);
 G_CONST_RETURN gchar *purple_gai_strerror(gint errnum);
 
 /**
- * Compares two UTF-8 strings case-insensitively.  This comparison is
+ * Compares two UTF-8 strings case-insensitively.  This string is
  * more expensive than a simple g_utf8_collate() comparison because
  * it calls g_utf8_casefold() on each string, which allocates new
  * strings.
@@ -1452,10 +1256,6 @@ const char *purple_escape_filename(const char *str);
 /**
  * This is added temporarily to assist the split of oscar into aim and icq.
  * This should not be used by plugins.
- *
- * @deprecated This function should not be used in new code and should be
- *             removed in 3.0.0.  The aim/icq prpl split happened a long
- *             time ago, and we don't need to keep migrating old data.
  */
 const char *_purple_oscar_convert(const char *act, const char *protocol);
 
@@ -1465,22 +1265,6 @@ const char *_purple_oscar_convert(const char *act, const char *protocol);
  * inherit the handlers of the parent.
  */
 void purple_restore_default_signal_handlers(void);
-
-/**
- * Gets the host name of the machine. If it not possible to determine the
- * host name, "localhost" is returned
- *
- * @constreturn The hostname
- */
-const gchar *purple_get_host_name(void);
-
-/**
- * Returns a type 4 (random) UUID
- *
- * @return A UUID, caller is responsible for freeing it
- * @since 2.7.0
- */
-gchar *purple_uuid_random(void);
 
 #ifdef __cplusplus
 }

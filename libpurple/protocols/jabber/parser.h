@@ -3,9 +3,7 @@
  *
  * purple
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_JABBER_PARSER_H_
-#define PURPLE_JABBER_PARSER_H_
+#ifndef _PURPLE_JABBER_PARSER_H_
+#define _PURPLE_JABBER_PARSER_H_
 
 #include "jabber.h"
 
@@ -30,4 +28,4 @@ void jabber_parser_setup(JabberStream *js);
 void jabber_parser_free(JabberStream *js);
 void jabber_parser_process(JabberStream *js, const char *buf, int len);
 
-#endif /* PURPLE_JABBER_PARSER_H_ */
+#endif /* _PURPLE_JABBER_PARSER_H_ */

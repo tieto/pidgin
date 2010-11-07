@@ -21,10 +21,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_MSG_H
-#define MSN_MSG_H
+#ifndef _MSN_MSG_H_
+#define _MSN_MSG_H_
 
 typedef struct _MsnMessage MsnMessage;
+
+#include "session.h"
+#include "user.h"
+
+#include "command.h"
+#include "transaction.h"
+
+typedef void (*MsnMsgCb)(MsnMessage *, void *data);
+
+#define MSG_BODY_DEM	"\r\n\r\n"
+#define MSG_LINE_DEM	"\r\n"
+
+#define MSG_OIM_BODY_DEM	"\n\n"
+#define MSG_OIM_LINE_DEM	"\n"
 
 /*
 typedef enum
@@ -32,6 +46,7 @@ typedef enum
 	MSN_MSG_NORMAL,
 	MSN_MSG_SLP_SB,
 	MSN_MSG_SLP_DC
+
 } MsnMsgType;
 */
 
@@ -43,6 +58,7 @@ typedef enum
 	MSN_MSG_CAPS,
 	MSN_MSG_SLP,
 	MSN_MSG_NUDGE
+
 } MsnMsgType;
 
 typedef enum
@@ -52,20 +68,8 @@ typedef enum
 	MSN_MSG_ERROR_NAK, /**< The message could not be sent. */
 	MSN_MSG_ERROR_SB, /**< The error comes from the switchboard. */
 	MSN_MSG_ERROR_UNKNOWN /**< An unknown error occurred. */
+
 } MsnMsgErrorType;
-
-#include "command.h"
-#include "session.h"
-#include "transaction.h"
-#include "user.h"
-
-typedef void (*MsnMsgCb)(MsnMessage *, void *data);
-
-#define MSG_BODY_DEM	"\r\n\r\n"
-#define MSG_LINE_DEM	"\r\n"
-
-#define MSG_OIM_BODY_DEM	"\n\n"
-#define MSG_OIM_LINE_DEM	"\n"
 
 typedef struct
 {
@@ -78,11 +82,13 @@ typedef struct
 	guint32 ack_id;
 	guint32 ack_sub_id;
 	guint64 ack_size;
+
 } MsnSlpHeader;
 
 typedef struct
 {
 	guint32 value;
+
 } MsnSlpFooter;
 
 /**
@@ -103,8 +109,6 @@ struct _MsnMessage
 	char *charset;
 	char *body;
 	gsize body_len;
-	guint total_chunks;   /**< How many chunks in this multi-part message */
-	guint received_chunks; /**< How many chunks we've received so far */
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
@@ -125,8 +129,6 @@ struct _MsnMessage
 	void *ack_data; /**< The data used by callbacks. */
 
 	MsnMsgErrorType error; /**< The error of the message. */
-
-	guint32 retries;
 };
 
 /**
@@ -241,6 +243,24 @@ void msn_message_set_flag(MsnMessage *msg, char flag);
  */
 char msn_message_get_flag(const MsnMessage *msg);
 
+#if 0
+/**
+ * Sets the body of a message.
+ *
+ * @param msg  The message.
+ * @param body The body of the message.
+ */
+void msn_message_set_body(MsnMessage *msg, const char *body);
+
+/**
+ * Returns the body of the message.
+ *
+ * @param msg The message.
+ *
+ * @return The body of the message.
+ */
+const char *msn_message_get_body(const MsnMessage *msg);
+#endif
 /**
  * Sets the binary content of the message.
  *
@@ -333,12 +353,4 @@ char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
 
 char *msn_message_to_string(MsnMessage *msg);
 
-void msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-void msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-void msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-#endif /* MSN_MSG_H */
+#endif /* _MSN_MSG_H_ */

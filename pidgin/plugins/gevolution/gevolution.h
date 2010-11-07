@@ -75,7 +75,7 @@ typedef struct
 
 	GtkWidget *win;
 	GtkWidget *accounts_menu;
-	GtkWidget *username;
+	GtkWidget *screenname;
 	GtkWidget *firstname;
 	GtkWidget *lastname;
 	GtkWidget *email;

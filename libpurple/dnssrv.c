@@ -25,32 +25,25 @@
 #include "util.h"
 
 #ifndef _WIN32
-#include <arpa/nameser.h>
 #include <resolv.h>
+#include <arpa/nameser.h>
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
 #endif
 #ifndef T_SRV
 #define T_SRV	33
 #endif
-#ifndef T_TXT
-#define T_TXT	16
-#endif
-#else /* WIN32 */
+#else
 #include <windns.h>
 /* Missing from the mingw headers */
 #ifndef DNS_TYPE_SRV
 # define DNS_TYPE_SRV 33
 #endif
-#ifndef DNS_TYPE_TXT
-# define DNS_TYPE_TXT 16
-#endif
 #endif
 
-#include "debug.h"
 #include "dnssrv.h"
 #include "eventloop.h"
-#include "network.h"
+#include "debug.h"
 
 #ifndef _WIN32
 typedef union {
@@ -66,46 +59,21 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
-struct _PurpleTxtResponse {
-	char *content;
-};
-
 struct _PurpleSrvQueryData {
-	union {
-		PurpleSrvCallback srv;
-		PurpleTxtCallback txt;
-	} cb;
-
+	PurpleSrvCallback cb;
 	gpointer extradata;
 	guint handle;
-	int type;
 #ifdef _WIN32
 	GThread *resolver;
 	char *query;
 	char *error_message;
-	GList *results;
+	GSList *results;
 #else
 	int fd_in, fd_out;
 	pid_t pid;
 #endif
 };
 
-typedef struct _PurpleSrvInternalQuery {
-	int type;
-	char query[256];
-} PurpleSrvInternalQuery;
-
-typedef struct _PurpleSrvResponseContainer {
-	PurpleSrvResponse *response;
-	int sum;
-} PurpleSrvResponseContainer;
-
-/**
- * Sort by priority, then by weight.  Strictly numerically--no
- * randomness.  Technically we only need to sort by pref and then
- * make sure any records with weight 0 are at the beginning of
- * their group, but it's just as easy to sort by weight.
- */
 static gint
 responsecompare(gconstpointer ar, gconstpointer br)
 {
@@ -124,227 +92,38 @@ responsecompare(gconstpointer ar, gconstpointer br)
 	return 1;
 }
 
-/**
- * Iterate over a list of PurpleSrvResponseContainer making the sum
- * the running total of the sums.  Select a random integer in the range
- * (1, sum+1), then find the first element greater than or equal to the
- * number selected.  From RFC 2782.
- *
- * @param list The list of PurpleSrvResponseContainer.  This function
- *        removes a node from this list and returns the new list.
- * @param container_ptr The PurpleSrvResponseContainer that was chosen
- *        will be returned here.
- */
-static GList *
-select_random_response(GList *list, PurpleSrvResponseContainer **container_ptr)
-{
-	GList *cur;
-	size_t runningtotal;
-	int r;
-
-	runningtotal = 0;
-	cur = list;
-
-	while (cur) {
-		PurpleSrvResponseContainer *container = cur->data;
-		runningtotal += container->response->weight;
-		container->sum = runningtotal;
-		cur = cur->next;
-	}
-
-	/*
-	 * If the running total is greater than 0, pick a number between
-	 * 1 and the runningtotal inclusive. (This is not precisely what
-	 * the RFC algorithm describes, but we wish to deal with integers
-	 * and avoid floats.  This is functionally equivalent.)
-	 * If running total is 0, then choose r = 0.
-	 */
-	r = runningtotal ? g_random_int_range(1, runningtotal + 1) : 0;
-	cur = list;
-	while (r > ((PurpleSrvResponseContainer *)cur->data)->sum) {
-		cur = cur->next;
-	}
-
-	/* Set the return parameter and remove cur from the list */
-	*container_ptr =  cur->data;
-	return g_list_delete_link(list, cur);
-}
-
-/**
- * Reorder a GList of PurpleSrvResponses that have the same priority
- * (aka "pref").
- */
-static void
-srv_reorder(GList *list, int num)
-{
-	int i;
-	GList *cur, *container_list = NULL;
-	PurpleSrvResponseContainer *container;
-
-	if (num < 2)
-		/* Nothing to sort */
-		return;
-
-	/* First build a list of container structs */
-	for (i = 0, cur = list; i < num; i++, cur = cur->next) {
-		container = g_new(PurpleSrvResponseContainer, 1);
-		container->response = cur->data;
-		container_list = g_list_prepend(container_list, container);
-	}
-	container_list = g_list_reverse(container_list);
-
-	/*
-	 * Re-order the list that was passed in as a parameter.  We leave
-	 * the list nodes in place, but replace their data pointers.
-	 */
-	cur = list;
-	while (container_list) {
-		container_list = select_random_response(container_list, &container);
-		cur->data = container->response;
-		g_free(container);
-		cur = cur->next;
-	}
-}
-
-/**
- * Sorts a GList of PurpleSrvResponses according to the
- * algorithm described in RFC 2782.
- *
- * @param response GList of PurpleSrvResponse's
- * @param The original list, resorted
- */
-static GList *
-purple_srv_sort(GList *list)
-{
-	int pref, count;
-	GList *cur, *start;
-
-	if (!list || !list->next) {
-		/* Nothing to sort */
-		return list;
-	}
-
-	list = g_list_sort(list, responsecompare);
-
-	start = cur = list;
-	count = 1;
-	while (cur) {
-		PurpleSrvResponse *next_response;
-		pref = ((PurpleSrvResponse *)cur->data)->pref;
-		next_response = cur->next ? cur->next->data : NULL;
-		if (!next_response || next_response->pref != pref) {
-			/*
-			 * The 'count' records starting at 'start' all have the same
-			 * priority.  Sort them by weight.
-			 */
-			srv_reorder(start, count);
-			start = cur->next;
-			count = 0;
-		}
-		count++;
-		cur = cur->next;
-	}
-
-	return list;
-}
-
-#ifdef USE_IDN
-static gboolean
-dns_str_is_ascii(const char *name)
-{
-	guchar *c;
-	for (c = (guchar *)name; c && *c; ++c) {
-		if (*c > 0x7f)
-			return FALSE;
-	}
-
-	return TRUE;
-}
-#endif
-
 #ifndef _WIN32
-static void
-write_to_parent(int in, int out, gconstpointer data, gsize size)
-{
-	const guchar *buf = data;
-	gssize w;
-
-	do {
-		w = write(out, buf, size);
-		if (w > 0) {
-			buf += w;
-			size -= w;
-		} else if (w < 0 && errno == EINTR) {
-			/* Let's try some more; */
-			w = 1;
-		}
-	} while (size > 0 && w > 0);
-
-	if (size != 0) {
-		/* An error occurred */
-		close(out);
-		close(in);
-		_exit(0);
-	}
-}
-
-/* Read size bytes to data. Dies if an error occurs. */
-static void
-read_from_parent(int in, int out, gpointer data, gsize size)
-{
-	guchar *buf = data;
-	gssize r;
-
-	do {
-		r = read(in, data, size);
-		if (r > 0) {
-			buf += r;
-			size -= r;
-		} else if (r < 0 && errno == EINTR) {
-			/* Let's try some more; */
-			r = 1;
-		}
-	} while (size > 0 && r > 0);
-
-	if (size != 0) {
-		/* An error occurred */
-		close(out);
-		close(in);
-		_exit(0);
-	}
-}
-
 
 G_GNUC_NORETURN static void
 resolve(int in, int out)
 {
 	GList *ret = NULL;
 	PurpleSrvResponse *srvres;
-	PurpleTxtResponse *txtres;
 	queryans answer;
-	int size, qdcount, ancount;
-	guchar *end, *cp;
+	int size;
+	int qdcount;
+	int ancount;
+	guchar *end;
+	guchar *cp;
 	gchar name[256];
 	guint16 type, dlen, pref, weight, port;
-	PurpleSrvInternalQuery query;
+	gchar query[256];
 
 #ifdef HAVE_SIGNAL_H
 	purple_restore_default_signal_handlers();
 #endif
 
-	read_from_parent(in, out, &query, sizeof(query));
-
-	size = res_query( query.query, C_IN, query.type, (u_char*)&answer, sizeof( answer));
-	if (size == -1) {
-		write_to_parent(in, out, &(query.type), sizeof(query.type));
-		write_to_parent(in, out, &size, sizeof(size));
+	if (read(in, query, 256) <= 0) {
 		close(out);
 		close(in);
 		_exit(0);
 	}
 
+	size = res_query( query, C_IN, T_SRV, (u_char*)&answer, sizeof( answer));
+
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
+
 	cp = (guchar*)&answer + sizeof(HEADER);
 	end = (guchar*)&answer + size;
 
@@ -359,13 +138,16 @@ resolve(int in, int out)
 		size = dn_expand((unsigned char*)&answer, end, cp, name, 256);
 		if(size < 0)
 			goto end;
+
 		cp += size;
+
 		GETSHORT(type,cp);
 
 		/* skip ttl and class since we already know it */
 		cp += 6;
 
 		GETSHORT(dlen,cp);
+
 		if (type == T_SRV) {
 			GETSHORT(pref,cp);
 
@@ -385,12 +167,7 @@ resolve(int in, int out)
 			srvres->port = port;
 			srvres->weight = weight;
 
-			ret = g_list_prepend(ret, srvres);
-		} else if (type == T_TXT) {
-			txtres = g_new0(PurpleTxtResponse, 1);
-			txtres->content = g_strndup((gchar*)(++cp), dlen-1);
-			ret = g_list_append(ret, txtres);
-			cp += dlen - 1;
+			ret = g_list_insert_sorted(ret, srvres, responsecompare);
 		} else {
 			cp += dlen;
 		}
@@ -398,23 +175,10 @@ resolve(int in, int out)
 
 end:
 	size = g_list_length(ret);
-
-	if (query.type == T_SRV)
-		ret = purple_srv_sort(ret);
-
-	write_to_parent(in, out, &(query.type), sizeof(query.type));
-	write_to_parent(in, out, &size, sizeof(size));
+	write(out, &size, sizeof(int));
 	while (ret != NULL)
 	{
-		if (query.type == T_SRV)
-			write_to_parent(in, out, ret->data, sizeof(PurpleSrvResponse));
-		if (query.type == T_TXT) {
-			PurpleTxtResponse *response = ret->data;
-			gsize l = strlen(response->content) + 1 /* null byte */;
-			write_to_parent(in, out, &l, sizeof(l));
-			write_to_parent(in, out, response->content, l);
-		}
-
+		write(out, ret->data, sizeof(PurpleSrvResponse));
 		g_free(ret->data);
 		ret = g_list_remove(ret, ret->data);
 	}
@@ -429,98 +193,39 @@ static void
 resolved(gpointer data, gint source, PurpleInputCondition cond)
 {
 	int size;
-	int type;
 	PurpleSrvQueryData *query_data = (PurpleSrvQueryData*)data;
+	PurpleSrvResponse *res;
+	PurpleSrvResponse *tmp;
 	int i;
+	PurpleSrvCallback cb = query_data->cb;
 	int status;
 
-	if (read(source, &type, sizeof(type)) == sizeof(type)) {
-		if (read(source, &size, sizeof(size)) == sizeof(size)) {
-			if (size == -1 || size == 0) {
-				if (size == -1) {
-					purple_debug_warning("dnssrv", "res_query returned an error\n");
-					/* Re-read resolv.conf and friends in case DNS servers have changed */
-					res_init();
-				} else
-					purple_debug_info("dnssrv", "Found 0 entries, errno is %i\n", errno);
-
-				if (type == T_SRV) {
-					PurpleSrvCallback cb = query_data->cb.srv;
-					cb(NULL, 0, query_data->extradata);
-				} else if (type == T_TXT) {
-					PurpleTxtCallback cb = query_data->cb.txt;
-					cb(NULL, query_data->extradata);
-				} else {
-					purple_debug_error("dnssrv", "type unknown of DNS result entry; errno is %i\n", errno);
-				}
-
-			} else if (size) {
-				if (type == T_SRV) {
-					PurpleSrvResponse *res;
-					PurpleSrvResponse *tmp;
-					PurpleSrvCallback cb = query_data->cb.srv;
-					ssize_t red;
-					purple_debug_info("dnssrv","found %d SRV entries\n", size);
-					tmp = res = g_new0(PurpleSrvResponse, size);
-					for (i = 0; i < size; i++) {
-						red = read(source, tmp++, sizeof(PurpleSrvResponse));
-						if (red != sizeof(PurpleSrvResponse)) {
-							purple_debug_error("dnssrv","unable to read srv "
-									"response: %s\n", g_strerror(errno));
-							size = 0;
-							g_free(res);
-							res = NULL;
-						}
-					}
-
-					cb(res, size, query_data->extradata);
-				} else if (type == T_TXT) {
-					GList *responses = NULL;
-					PurpleTxtResponse *res;
-					PurpleTxtCallback cb = query_data->cb.txt;
-					ssize_t red;
-					purple_debug_info("dnssrv","found %d TXT entries\n", size);
-					for (i = 0; i < size; i++) {
-						gsize len;
-
-						red = read(source, &len, sizeof(len));
-						if (red != sizeof(len)) {
-							purple_debug_error("dnssrv","unable to read txt "
-									"response length: %s\n", g_strerror(errno));
-							size = 0;
-							g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
-							g_list_free(responses);
-							responses = NULL;
-							break;
-						}
-
-						res = g_new0(PurpleTxtResponse, 1);
-						res->content = g_new0(gchar, len);
-
-						red = read(source, res->content, len);
-						if (red != len) {
-							purple_debug_error("dnssrv","unable to read txt "
-									"response: %s\n", g_strerror(errno));
-							size = 0;
-							purple_txt_response_destroy(res);
-							g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
-							g_list_free(responses);
-							responses = NULL;
-							break;
-						}
-						responses = g_list_prepend(responses, res);
-					}
-
-					responses = g_list_reverse(responses);
-					cb(responses, query_data->extradata);
-				} else {
-					purple_debug_error("dnssrv", "type unknown of DNS result entry; errno is %i\n", errno);
-				}
+	if (read(source, &size, sizeof(int)) == sizeof(int))
+	{
+		ssize_t red;
+		purple_debug_info("dnssrv","found %d SRV entries\n", size);
+		tmp = res = g_new0(PurpleSrvResponse, size);
+		for (i = 0; i < size; i++) {
+			red = read(source, tmp++, sizeof(PurpleSrvResponse));
+			if (red != sizeof(PurpleSrvResponse)) {
+				purple_debug_error("dnssrv","unable to read srv "
+						"response: %s\n", g_strerror(errno));
+				size = 0;
+				g_free(res);
+				res = NULL;
 			}
 		}
 	}
+	else
+	{
+		purple_debug_info("dnssrv","found 0 SRV entries; errno is %i\n", errno);
+		size = 0;
+		res = NULL;
+	}
 
+	cb(res, size, query_data->extradata);
 	waitpid(query_data->pid, &status, 0);
+
 	purple_srv_cancel(query_data);
 }
 
@@ -532,51 +237,33 @@ static gboolean
 res_main_thread_cb(gpointer data)
 {
 	PurpleSrvResponse *srvres = NULL;
+	int size = 0;
 	PurpleSrvQueryData *query_data = data;
-	if(query_data->error_message != NULL) {
-		purple_debug_error("dnssrv", "%s", query_data->error_message);
-		if (query_data->type == DNS_TYPE_SRV) {
-			if (query_data->cb.srv)
-				query_data->cb.srv(srvres, 0, query_data->extradata);
-		} else if (query_data->type == DNS_TYPE_TXT) {
-			if (query_data->cb.txt)
-				query_data->cb.txt(NULL, query_data->extradata);
+
+	if(query_data->error_message != NULL)
+		purple_debug_error("dnssrv", query_data->error_message);
+	else {
+		PurpleSrvResponse *srvres_tmp = NULL;
+		GSList *lst = query_data->results;
+
+		size = g_slist_length(lst);
+
+		if(query_data->cb && size > 0)
+			srvres_tmp = srvres = g_new0(PurpleSrvResponse, size);
+		while (lst) {
+			if(query_data->cb)
+				memcpy(srvres_tmp++, lst->data, sizeof(PurpleSrvResponse));
+			g_free(lst->data);
+			lst = g_slist_remove(lst, lst->data);
 		}
-	} else {
-		if (query_data->type == DNS_TYPE_SRV) {
-			PurpleSrvResponse *srvres_tmp = NULL;
-			GList *lst = query_data->results;
-			int size = g_list_length(lst);
 
-			if(query_data->cb.srv && size > 0)
-				srvres_tmp = srvres = g_new0(PurpleSrvResponse, size);
-			while (lst) {
-				PurpleSrvResponse *lstdata = lst->data;
-				lst = g_list_delete_link(lst, lst);
+		query_data->results = NULL;
 
-				if(query_data->cb.srv)
-					memcpy(srvres_tmp++, lstdata, sizeof(PurpleSrvResponse));
-				g_free(lstdata);
-			}
-
-			query_data->results = NULL;
-
-			purple_debug_info("dnssrv", "found %d SRV entries\n", size);
-
-			if(query_data->cb.srv) query_data->cb.srv(srvres, size, query_data->extradata);
-		} else if (query_data->type == DNS_TYPE_TXT) {
-			GList *lst = query_data->results;
-
-			purple_debug_info("dnssrv", "found %d TXT entries\n", g_list_length(lst));
-
-			if (query_data->cb.txt) {
-				query_data->results = NULL;
-				query_data->cb.txt(lst, query_data->extradata);
-			}
-		} else {
-			purple_debug_error("dnssrv", "unknown query type");
-		}
+	purple_debug_info("dnssrv", "found %d SRV entries\n", size);
 	}
+
+	if(query_data->cb)
+		query_data->cb(srvres, size, query_data->extradata);
 
 	query_data->resolver = NULL;
 	query_data->handle = 0;
@@ -590,76 +277,40 @@ static gpointer
 res_thread(gpointer data)
 {
 	PDNS_RECORD dr = NULL;
-	int type;
+	int type = DNS_TYPE_SRV;
 	DNS_STATUS ds;
 	PurpleSrvQueryData *query_data = data;
-	type = query_data->type;
+
 	ds = MyDnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		gchar *msg = g_win32_error_message(ds);
-		if (type == DNS_TYPE_SRV) {
-			query_data->error_message = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
-		} else if (type == DNS_TYPE_TXT) {
-			query_data->error_message = g_strdup_printf("Couldn't look up TXT record. %s (%lu).\n", msg, ds);
-		}
+		query_data->error_message = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
 		g_free(msg);
 	} else {
-		if (type == DNS_TYPE_SRV) {
-			PDNS_RECORD dr_tmp;
-			GList *lst = NULL;
-			DNS_SRV_DATA *srv_data;
-			PurpleSrvResponse *srvres;
+		PDNS_RECORD dr_tmp;
+		GSList *lst = NULL;
+		DNS_SRV_DATA *srv_data;
+		PurpleSrvResponse *srvres;
 
-			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
-				/* Discard any incorrect entries. I'm not sure if this is necessary */
-				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
-					continue;
-				}
-
-				srv_data = &dr_tmp->Data.SRV;
-				srvres = g_new0(PurpleSrvResponse, 1);
-				strncpy(srvres->hostname, srv_data->pNameTarget, 255);
-				srvres->hostname[255] = '\0';
-				srvres->pref = srv_data->wPriority;
-				srvres->port = srv_data->wPort;
-				srvres->weight = srv_data->wWeight;
-
-				lst = g_list_prepend(lst, srvres);
+		for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
+			/* Discard any incorrect entries. I'm not sure if this is necessary */
+			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
+				continue;
 			}
 
-			MyDnsRecordListFree(dr, DnsFreeRecordList);
-			query_data->results = purple_srv_sort(lst);
-		} else if (type == DNS_TYPE_TXT) {
-			PDNS_RECORD dr_tmp;
-			GList *lst = NULL;
-			DNS_TXT_DATA *txt_data;
-			PurpleTxtResponse *txtres;
+			srv_data = &dr_tmp->Data.SRV;
+			srvres = g_new0(PurpleSrvResponse, 1);
+			strncpy(srvres->hostname, srv_data->pNameTarget, 255);
+			srvres->hostname[255] = '\0';
+			srvres->pref = srv_data->wPriority;
+			srvres->port = srv_data->wPort;
+			srvres->weight = srv_data->wWeight;
 
-			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
-				GString *s;
-				int i;
-
-				/* Discard any incorrect entries. I'm not sure if this is necessary */
-				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
-					continue;
-				}
-
-				txt_data = &dr_tmp->Data.TXT;
-				txtres = g_new0(PurpleTxtResponse, 1);
-
-				s = g_string_new("");
-				for (i = 0; i < txt_data->dwStringCount; ++i)
-					s = g_string_append(s, txt_data->pStringArray[i]);
-				txtres->content = g_string_free(s, FALSE);
-
-				lst = g_list_append(lst, txtres);
-			}
-
-			MyDnsRecordListFree(dr, DnsFreeRecordList);
-			query_data->results = lst;
-		} else {
-
+			lst = g_slist_insert_sorted(lst, srvres, responsecompare);
 		}
+
+		MyDnsRecordListFree(dr, DnsFreeRecordList);
+		query_data->results = lst;
 	}
 
 	/* back to main thread */
@@ -676,10 +327,8 @@ PurpleSrvQueryData *
 purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata)
 {
 	char *query;
-	char *hostname;
 	PurpleSrvQueryData *query_data;
 #ifndef _WIN32
-	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
 	int pid;
 #else
@@ -687,28 +336,8 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	static gboolean initialized = FALSE;
 #endif
 
-	if (!protocol || !*protocol || !transport || !*transport || !domain || !*domain) {
-		purple_debug_error("dnssrv", "Wrong arguments\n");
-		cb(NULL, 0, extradata);
-		g_return_val_if_reached(NULL);
-	}
-
-#ifdef USE_IDN
-	if (!dns_str_is_ascii(domain)) {
-		int ret = purple_network_convert_idn_to_ascii(domain, &hostname);
-		if (ret != 0) {
-			purple_debug_error("dnssrv", "IDNA ToASCII failed\n");
-			cb(NULL, 0, extradata);
-			return NULL;
-		}
-	} else /* Fallthru is intentional */
-#endif
-	hostname = g_strdup(domain);
-
-	query = g_strdup_printf("_%s._%s.%s", protocol, transport, hostname);
-	purple_debug_info("dnssrv","querying SRV record for %s: %s\n", domain,
-			query);
-	g_free(hostname);
+	query = g_strdup_printf("_%s._%s.%s", protocol, transport, domain);
+	purple_debug_info("dnssrv","querying SRV record for %s\n", query);
 
 #ifndef _WIN32
 	if(pipe(in) || pipe(out)) {
@@ -740,16 +369,11 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	close(out[1]);
 	close(in[0]);
 
-	internal_query.type = T_SRV;
-	strncpy(internal_query.query, query, 255);
-	internal_query.query[255] = '\0';
-
-	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
+	if (write(in[1], query, strlen(query)+1) < 0)
 		purple_debug_error("dnssrv", "Could not write to SRV resolver\n");
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = T_SRV;
-	query_data->cb.srv = cb;
+	query_data->cb = cb;
 	query_data->extradata = extradata;
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
@@ -768,8 +392,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	}
 
 	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = DNS_TYPE_SRV;
-	query_data->cb.srv = cb;
+	query_data->cb = cb;
 	query_data->query = query;
 	query_data->extradata = extradata;
 
@@ -793,120 +416,6 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 #endif
 }
 
-PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata)
-{
-	char *query;
-	char *hostname;
-	PurpleSrvQueryData *query_data;
-#ifndef _WIN32
-	PurpleSrvInternalQuery internal_query;
-	int in[2], out[2];
-	int pid;
-#else
-	GError* err = NULL;
-	static gboolean initialized = FALSE;
-#endif
-
-#ifdef USE_IDN
-	if (!dns_str_is_ascii(domain)) {
-		int ret = purple_network_convert_idn_to_ascii(domain, &hostname);
-		if (ret != 0) {
-			purple_debug_error("dnssrv", "IDNA ToASCII failed\n");
-			cb(NULL, extradata);
-			return NULL;
-		}
-	} else /* fallthru is intentional */
-#endif
-	hostname = g_strdup(domain);
-
-	query = g_strdup_printf("%s.%s", owner, hostname);
-	purple_debug_info("dnssrv","querying TXT record for %s: %s\n", domain,
-			query);
-	g_free(hostname);
-
-#ifndef _WIN32
-	if(pipe(in) || pipe(out)) {
-		purple_debug_error("dnssrv", "Could not create pipe\n");
-		g_free(query);
-		cb(NULL, extradata);
-		return NULL;
-	}
-
-	pid = fork();
-	if (pid == -1) {
-		purple_debug_error("dnssrv", "Could not create process!\n");
-		cb(NULL, extradata);
-		g_free(query);
-		return NULL;
-	}
-
-	/* Child */
-	if (pid == 0)
-	{
-		g_free(query);
-
-		close(out[0]);
-		close(in[1]);
-		resolve(in[0], out[1]);
-		/* resolve() does not return */
-	}
-
-	close(out[1]);
-	close(in[0]);
-
-	internal_query.type = T_TXT;
-	strncpy(internal_query.query, query, 255);
-	internal_query.query[255] = '\0';
-
-	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
-		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
-
-	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = T_TXT;
-	query_data->cb.txt = cb;
-	query_data->extradata = extradata;
-	query_data->pid = pid;
-	query_data->fd_out = out[0];
-	query_data->fd_in = in[1];
-	query_data->handle = purple_input_add(out[0], PURPLE_INPUT_READ, resolved, query_data);
-
-	g_free(query);
-
-	return query_data;
-#else
-	if (!initialized) {
-		MyDnsQuery_UTF8 = (void*) wpurple_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF8");
-		MyDnsRecordListFree = (void*) wpurple_find_and_loadproc(
-			"dnsapi.dll", "DnsRecordListFree");
-		initialized = TRUE;
-	}
-
-	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = DNS_TYPE_TXT;
-	query_data->cb.txt = cb;
-	query_data->query = query;
-	query_data->extradata = extradata;
-
-	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
-		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
-	else {
-		query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
-		if (query_data->resolver == NULL) {
-			query_data->error_message = g_strdup_printf("TXT thread create failure: %s\n", (err && err->message) ? err->message : "");
-			g_error_free(err);
-		}
-	}
-
-	/* The query isn't going to happen, so finish the TXT lookup now.
-	 * Asynchronously call the callback since stuff may not expect
-	 * the callback to be called before this returns */
-	if (query_data->error_message != NULL)
-		query_data->handle = purple_timeout_add(0, res_main_thread_cb, query_data);
-
-	return query_data;
-#endif
-}
-
 void
 purple_srv_cancel(PurpleSrvQueryData *query_data)
 {
@@ -920,7 +429,7 @@ purple_srv_cancel(PurpleSrvQueryData *query_data)
 		 * just set the callback to NULL and let the DNS lookup
 		 * finish.
 		 */
-		query_data->cb.srv = NULL;
+		query_data->cb = NULL;
 		return;
 	}
 	g_free(query_data->query);
@@ -930,26 +439,4 @@ purple_srv_cancel(PurpleSrvQueryData *query_data)
 	close(query_data->fd_in);
 #endif
 	g_free(query_data);
-}
-
-void
-purple_txt_cancel(PurpleSrvQueryData *query_data)
-{
-	purple_srv_cancel(query_data);
-}
-
-const gchar *
-purple_txt_response_get_content(PurpleTxtResponse *resp)
-{
-	g_return_val_if_fail(resp != NULL, NULL);
-
-	return resp->content;
-}
-
-void purple_txt_response_destroy(PurpleTxtResponse *resp)
-{
-	g_return_if_fail(resp != NULL);
-
-	g_free(resp->content);
-	g_free(resp);
 }

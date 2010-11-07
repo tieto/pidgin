@@ -125,7 +125,7 @@ static PurpleCmdRet tcl_cmd_callback(PurpleConversation *conv, const gchar *cmd,
                                    gchar **args, gchar **errors,
                                    struct tcl_cmd_handler *handler)
 {
-	int retval, i;
+	int retval, error, i;
 	Tcl_Obj *command, *arg, *tclargs, *result;
 
 	command = Tcl_NewListObj(0, NULL);
@@ -153,23 +153,24 @@ static PurpleCmdRet tcl_cmd_callback(PurpleConversation *conv, const gchar *cmd,
 	}
 	Tcl_ListObjAppendElement(handler->interp, command, tclargs);
 
-	if (Tcl_EvalObjEx(handler->interp, command, TCL_EVAL_GLOBAL) != TCL_OK) {
+	if ((error = Tcl_EvalObjEx(handler->interp, command,
+	                           TCL_EVAL_GLOBAL)) != TCL_OK) {
 		gchar *errorstr;
 
 		errorstr = g_strdup_printf("error evaluating callback: %s\n",
 		                           Tcl_GetString(Tcl_GetObjResult(handler->interp)));
-		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "%s", errorstr);
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", errorstr);
 		*errors = errorstr;
 		retval = PURPLE_CMD_RET_FAILED;
 	} else {
 		result = Tcl_GetObjResult(handler->interp);
-		if (Tcl_GetIntFromObj(handler->interp, result,
-		                      &retval) != TCL_OK) {
+		if ((error = Tcl_GetIntFromObj(handler->interp, result,
+		                               &retval)) != TCL_OK) {
 			gchar *errorstr;
 
 			errorstr = g_strdup_printf("Error retreiving procedure result: %s\n",
 			                           Tcl_GetString(Tcl_GetObjResult(handler->interp)));
-			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "%s", errorstr);
+			purple_debug(PURPLE_DEBUG_ERROR, "tcl", errorstr);
 			*errors = errorstr;
 			retval = PURPLE_CMD_RET_FAILED;
 		}

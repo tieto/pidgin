@@ -23,7 +23,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include <internal.h>
 #include "finch.h"
 
 #include <gnt.h>
@@ -118,9 +117,7 @@ update_title_progress(void)
 			total_pct = 100 * total_bytes_xferred / total_file_size;
 		}
 
-		title = g_strdup_printf(ngettext("File Transfers - %d%% of %d file",
-						 "File Transfers - %d%% of %d files",
-						 num_active_xfers),
+		title = g_strdup_printf(_("File Transfers - %d%% of %d files"),
 				total_pct, num_active_xfers);
 		gnt_screen_rename_widget((xfer_dialog->window), title);
 		g_free(title);
@@ -383,10 +380,12 @@ finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 		return;
 	}
 
+	data = FINCHXFER(xfer);
+
 	update_title_progress();
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Cancelled");
+		status = _("Canceled");
 	else
 		status = _("Failed");
 
@@ -400,7 +399,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	char *size_str, *remaining_str;
 	time_t current_time;
 	char prog_str[5];
-	double kb_sent;
+	double kb_sent, kb_rem;
 	double kbps = 0.0;
 	time_t elapsed, now;
 	char *kbsec;
@@ -410,6 +409,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 		now = time(NULL);
 
 	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
+	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
 	elapsed = (purple_xfer_get_start_time(xfer) > 0 ? now - purple_xfer_get_start_time(xfer) : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 

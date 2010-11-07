@@ -24,7 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#define _PIDGIN_GTKIMHTML_C_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -33,19 +32,15 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "pidginstock.h"
-#include "gtkutils.h"
-#include "smiley.h"
-#include "imgstore.h"
 
 #include "debug.h"
 #include "util.h"
 #include "gtkimhtml.h"
-#include "gtksmiley.h"
 #include "gtksourceiter.h"
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
 #include <gtk/gtk.h>
-#include <glib.h>
+#include <glib/gerror.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <ctype.h>
@@ -63,7 +58,17 @@
 
 #include <pango/pango-font.h>
 
+/* GTK+ < 2.4.x hack, see pidgin.h for details. */
+#if (!GTK_CHECK_VERSION(2,4,0))
+#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
+#endif
+
 #define TOOLTIP_TIMEOUT 500
+
+/* GTK+ 2.0 hack */
+#if (!GTK_CHECK_VERSION(2,2,0))
+#define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
+#endif
 
 static GtkTextViewClass *parent_class = NULL;
 
@@ -72,32 +77,11 @@ struct scalable_data {
 	GtkTextMark *mark;
 };
 
-typedef struct {
-	GtkIMHtmlScalable *image;
-	gpointer data;
-	gsize datasize;
-} GtkIMHtmlImageSave;
 
 struct im_image_data {
 	int id;
 	GtkTextMark *mark;
 };
-
-struct _GtkIMHtmlLink
-{
-	GtkIMHtml *imhtml;
-	gchar *url;
-	GtkTextTag *tag;
-};
-
-typedef struct _GtkIMHtmlProtocol
-{
-	char *name;
-	int length;
-
-	gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link);
-	gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu);
-} GtkIMHtmlProtocol;
 
 static gboolean
 gtk_text_view_drag_motion (GtkWidget        *widget,
@@ -126,9 +110,6 @@ static void imhtml_toggle_underline(GtkIMHtml *imhtml);
 static void imhtml_font_grow(GtkIMHtml *imhtml);
 static void imhtml_font_shrink(GtkIMHtml *imhtml);
 static void imhtml_clear_formatting(GtkIMHtml *imhtml);
-static int gtk_imhtml_is_protocol(const char *text);
-static void gtk_imhtml_activate_tag(GtkIMHtml *imhtml, GtkTextTag *tag);
-static void gtk_imhtml_link_destroy(GtkIMHtmlLink *link);
 
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
@@ -152,7 +133,6 @@ enum {
 	MESSAGE_SEND,
 	UNDO,
 	REDO,
-	PASTE,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -192,7 +172,7 @@ clipboard_win32_to_html(char *clipboard) {
 
 	purple_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
-	fd = g_fopen("c:\\purplecb.txt", "wb");
+	fd = g_fopen("e:\\purplecb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif
@@ -364,7 +344,6 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
-
 		g_free (t);
 	}
 }
@@ -414,87 +393,6 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
-#define DEFAULT_SEND_COLOR "#204a87"
-#define DEFAULT_RECV_COLOR "#cc0000"
-#define DEFAULT_HIGHLIGHT_COLOR "#AF7F00"
-#define DEFAULT_ACTION_COLOR "#062585"
-#define DEFAULT_WHISPER_ACTION_COLOR "#6C2585"
-#define DEFAULT_WHISPER_COLOR "#00FF00"
-
-static void (*parent_style_set)(GtkWidget *widget, GtkStyle *prev_style);
-
-static void
-gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
-{
-	int i;
-	struct {
-		const char *tag;
-		const char *color;
-		const char *def;
-	} styles[] = {
-		{"send-name", "send-name-color", DEFAULT_SEND_COLOR},
-		{"receive-name", "receive-name-color", DEFAULT_RECV_COLOR},
-		{"highlight-name", "highlight-name-color", DEFAULT_HIGHLIGHT_COLOR},
-		{"action-name", "action-name-color", DEFAULT_ACTION_COLOR},
-		{"whisper-action-name", "whisper-action-name-color", DEFAULT_WHISPER_ACTION_COLOR},
-		{"whisper-name", "whisper-name-color", DEFAULT_WHISPER_COLOR},
-		{NULL, NULL, NULL}
-	};
-	GtkIMHtml *imhtml = GTK_IMHTML(widget);
-	GtkTextTagTable *table = gtk_text_buffer_get_tag_table(imhtml->text_buffer);
-
-	for (i = 0; styles[i].tag; i++) {
-		GdkColor *color = NULL;
-		GtkTextTag *tag = gtk_text_tag_table_lookup(table, styles[i].tag);
-		if (!tag) {
-			purple_debug_warning("gtkimhtml", "Cannot find tag '%s'. This should never happen. Please file a bug.\n", styles[i].tag);
-			continue;
-		}
-		gtk_widget_style_get(widget, styles[i].color, &color, NULL);
-		if (color) {
-			g_object_set(tag, "foreground-gdk", color, NULL);
-			gdk_color_free(color);
-		} else {
-			GdkColor defcolor;
-			gdk_color_parse(styles[i].def, &defcolor);
-			g_object_set(tag, "foreground-gdk", &defcolor, NULL);
-		}
-	}
-	parent_style_set(widget, prev_style);
-}
-
-static gboolean
-imhtml_get_iter_bounds(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
-{
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, start, end);
-		return TRUE;
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, start, end)) {
-			GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
-			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, start, mark);
-			*end = *start;
-		}
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-static void
-gtk_imhtml_set_link_color(GtkIMHtml *imhtml, GtkTextTag *tag)
-{
-	GdkColor *color = NULL;
-	gboolean visited = !!g_object_get_data(G_OBJECT(tag), "visited");
-	gtk_widget_style_get(GTK_WIDGET(imhtml), visited ? "hyperlink-visited-color" : "hyperlink-color", &color, NULL);
-	if (color) {
-		g_object_set(G_OBJECT(tag), "foreground-gdk", color, NULL);
-		gdk_color_free(color);
-	} else {
-		g_object_set(G_OBJECT(tag), "foreground", visited ? "#800000" : "blue", NULL);
-	}
-}
-
 static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
@@ -540,11 +438,12 @@ gtk_imhtml_tip (gpointer data)
 	imhtml->tip_timer = 0;
 	imhtml->tip_window = gtk_window_new (GTK_WINDOW_POPUP);
 	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
-	gtk_window_set_title(GTK_WINDOW(imhtml->tip_window), "GtkIMHtml");
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
+#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
 		GDK_WINDOW_TYPE_HINT_TOOLTIP);
+#endif
 	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
@@ -614,10 +513,10 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	int x, y;
 	char *tip = NULL;
 	GSList *tags = NULL, *templist = NULL;
+	GdkColor *norm, *pre;
 	GtkTextTag *tag = NULL, *oldprelit_tag;
 	GtkTextChildAnchor* anchor;
 	gboolean hand = TRUE;
-	GdkCursor *cursor = NULL;
 
 	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
 
@@ -636,15 +535,13 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 		templist = templist->next;
 	}
 
-	if (tip && (!tag || !g_object_get_data(G_OBJECT(tag), "visited"))) {
+	if (tip) {
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
 		GTK_IMHTML(imhtml)->prelit_tag = tag;
 		if (tag != oldprelit_tag) {
-			GdkColor *pre = NULL;
-			gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
-			if (pre) {
+			if (pre)
 				g_object_set(G_OBJECT(tag), "foreground-gdk", pre, NULL);
-				gdk_color_free(pre);
-			} else
+			else
 				g_object_set(G_OBJECT(tag), "foreground", "#70a0ff", NULL);
 		}
 	} else {
@@ -652,7 +549,11 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	}
 
 	if ((oldprelit_tag != NULL) && (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag)) {
-		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), oldprelit_tag);
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
+		if (norm)
+			g_object_set(G_OBJECT(oldprelit_tag), "foreground-gdk", norm, NULL);
+		else
+			g_object_set(G_OBJECT(oldprelit_tag), "foreground", "blue", NULL);
 	}
 
 	if (GTK_IMHTML(imhtml)->tip) {
@@ -666,9 +567,9 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 			GTK_IMHTML(imhtml)->tip_window = NULL;
 		}
 		if (GTK_IMHTML(imhtml)->editable)
-			cursor = GTK_IMHTML(imhtml)->text_cursor;
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->text_cursor);
 		else
-			cursor = GTK_IMHTML(imhtml)->arrow_cursor;
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
 		if (GTK_IMHTML(imhtml)->tip_timer)
 			g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 		GTK_IMHTML(imhtml)->tip_timer = 0;
@@ -682,24 +583,11 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	}
 
 	if (tip && *tip) {
+		if (!GTK_IMHTML(imhtml)->editable && hand)
+			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
 							       gtk_imhtml_tip, imhtml);
-	} else if (!tip) {
-		hand = FALSE;
-		for (templist = tags; templist; templist = templist->next) {
-			tag = templist->data;
-			if ((tip = g_object_get_data(G_OBJECT(tag), "cursor"))) {
-				hand = TRUE;
-				break;
-			}
-		}
 	}
-
-	if (hand && !(GTK_IMHTML(imhtml)->editable))
-		cursor = GTK_IMHTML(imhtml)->hand_cursor;
-
-	if (cursor)
-		gdk_window_set_cursor(win, cursor);
 
 	GTK_IMHTML(imhtml)->tip = tip;
 	g_slist_free(tags);
@@ -729,7 +617,12 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
 	if (GTK_IMHTML(imhtml)->prelit_tag) {
-		gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), GTK_IMHTML(imhtml)->prelit_tag);
+		GdkColor *norm;
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
+		if (norm)
+			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground-gdk", norm, NULL);
+		else
+			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground", "blue", NULL);
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
 	}
 
@@ -748,6 +641,32 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 	/* propagate the event normally */
 	return FALSE;
 }
+
+#if (!GTK_CHECK_VERSION(2,2,0))
+/*
+ * XXX - This should be removed eventually.
+ *
+ * This function exists to work around a gross bug in GtkTextView.
+ * Basically, we short circuit ctrl+a and ctrl+end because they make
+ * el program go boom.
+ *
+ * It's supposed to be fixed in gtk2.2.  You can view the bug report at
+ * http://bugzilla.gnome.org/show_bug.cgi?id=107939
+ */
+static gboolean
+gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
+{
+	if (event->state & GDK_CONTROL_MASK) {
+		switch (event->keyval) {
+			case 'a':
+			case GDK_Home:
+			case GDK_End:
+				return TRUE;
+		}
+	}
+	return FALSE;
+}
+#endif /* !(GTK+ >= 2.2.0) */
 
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
@@ -783,7 +702,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 				   gc,
 				   TRUE,
 				   visible_rect.x, visible_rect.y, visible_rect.width, visible_rect.height);
-		g_object_unref(G_OBJECT(gc));
+		gdk_gc_unref(gc);
 
 		if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -839,7 +758,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                                      &tag_area.x,
 			                                      &tag_area.y);
 
-
+		
 			rect.height = tag_area.y + tag_area.height - rect.y
 				+ gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))
 				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
@@ -874,7 +793,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		       !gtk_text_iter_begins_tag(&cur, NULL));
 	}
 
-	g_object_unref(G_OBJECT(gc));
+	gdk_gc_unref(gc);
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 		return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -1126,8 +1045,8 @@ static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean pl
 	GtkTextIter iter;
 	GtkIMHtmlOptions flags = plaintext ? GTK_IMHTML_NO_SMILEY : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
 
-	/* Delete any currently selected text */
-	gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
+		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
 	if (!imhtml->wbfo && !plaintext)
@@ -1185,23 +1104,9 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		printf("\n");
 		}
 #endif
-
-		text = g_malloc(selection_data->length + 1);
+		text = g_malloc(selection_data->length);
 		memcpy(text, selection_data->data, selection_data->length);
-		/* Make sure the paste data is null-terminated.  Given that
-		 * we're passed length (but assume later that it is
-		 * null-terminated), this seems sensible to me.
-		 */
-		text[selection_data->length] = '\0';
 	}
-
-#ifdef _WIN32
-	if (gtk_selection_data_get_data_type(selection_data) == gdk_atom_intern("HTML Format", FALSE)) {
-		char *tmp = clipboard_win32_to_html(text);
-		g_free(text);
-		text = tmp;
-	}
-#endif
 
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
@@ -1262,16 +1167,13 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml) && gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml))) {
-		GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
-		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
-
-	}
-#else
+	if (!clipboard_paste_html_win32(imhtml))
+#endif
+	{
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
 				       paste_received_cb, imhtml);
-#endif
+	}
 	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
@@ -1350,18 +1252,6 @@ static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 	return FALSE;
 }
 
-static void
-imhtml_paste_cb(GtkIMHtml *imhtml, const char *str)
-{
-	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
-		return;
-
-	if (!str || !*str || !strcmp(str, "html"))
-		g_signal_emit_by_name(imhtml, "paste_clipboard");
-	else if (!strcmp(str, "text"))
-		paste_unformatted_cb(NULL, imhtml);
-}
-
 static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
 {
 	/* since this function is the handler for the formatting keystrokes,
@@ -1414,7 +1304,7 @@ gtk_imhtml_finalize (GObject *object)
 		gtk_widget_destroy(imhtml->tip_window);
 	}
 	if(imhtml->tip_timer)
-		g_source_remove(imhtml->tip_timer);
+		gtk_timeout_remove(imhtml->tip_timer);
 
 	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
 		struct scalable_data *sd = scalables->data;
@@ -1440,46 +1330,16 @@ gtk_imhtml_finalize (GObject *object)
 
 }
 
-static GtkIMHtmlProtocol *
-imhtml_find_protocol(const char *url, gboolean reverse)
-{
-	GtkIMHtmlClass *klass;
-	GList *iter;
-	GtkIMHtmlProtocol *proto = NULL;
-	int length = reverse ? strlen(url) : -1;
-
-	klass = g_type_class_ref(GTK_TYPE_IMHTML);
-	for (iter = klass->protocols; iter; iter = iter->next) {
-		proto = iter->data;
-		if (g_ascii_strncasecmp(url, proto->name, reverse ? MIN(length, proto->length) : proto->length) == 0) {
-			return proto;
-		}
-	}
-	return NULL;
-}
-
-static void
-imhtml_url_clicked(GtkIMHtml *imhtml, const char *url)
-{
-	GtkIMHtmlProtocol *proto = imhtml_find_protocol(url, FALSE);
-	GtkIMHtmlLink *link;
-	if (!proto)
-		return;
-	link = g_new0(GtkIMHtmlLink, 1);
-	link->imhtml = g_object_ref(imhtml);
-	link->url = g_strdup(url);
-	proto->activate(imhtml, link);   /* XXX: Do something with the return value? */
-	gtk_imhtml_link_destroy(link);
-}
-
 /* Boring GTK+ stuff */
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
+	GtkObjectClass *object_class;
 	GtkBindingSet *binding_set;
 	GObjectClass   *gobject_class;
+	object_class = (GtkObjectClass*) klass;
 	gobject_class = (GObjectClass*) klass;
-	parent_class = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
+	parent_class = gtk_type_class(GTK_TYPE_TEXT_VIEW);
 	signals[URL_CLICKED] = g_signal_new("url_clicked",
 						G_TYPE_FROM_CLASS(gobject_class),
 						G_SIGNAL_RUN_FIRST,
@@ -1530,38 +1390,30 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					     NULL,
 					     0, g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
-	signals[PASTE] = g_signal_new("paste",
-					     G_TYPE_FROM_CLASS(gobject_class),
-					     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-						 0,
-					     NULL,
-					     0, g_cclosure_marshal_VOID__STRING,
-					     G_TYPE_NONE, 1, G_TYPE_STRING);
-	signals [UNDO] = g_signal_new ("undo",
-			G_TYPE_FROM_CLASS (klass),
-			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-			G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
-			NULL,
-			NULL,
-			gtksourceview_marshal_VOID__VOID,
-			G_TYPE_NONE,
-			0);
-	signals [REDO] = g_signal_new ("redo",
-			G_TYPE_FROM_CLASS (klass),
-			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-			G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
-			NULL,
-			NULL,
-			gtksourceview_marshal_VOID__VOID,
-			G_TYPE_NONE,
-			0);
+        signals [UNDO] = g_signal_new ("undo",
+                        		      G_TYPE_FROM_CLASS (klass),
+		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                		              G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
+		                              NULL,
+		                              NULL,
+                		              gtksourceview_marshal_VOID__VOID,
+		                              G_TYPE_NONE,
+		                              0);
+        signals [REDO] = g_signal_new ("redo",
+                        		      G_TYPE_FROM_CLASS (klass),
+		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+		                              G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
+		                              NULL,
+		                              NULL,
+		                              gtksourceview_marshal_VOID__VOID,
+		                              G_TYPE_NONE,
+		                              0);
 
 
 
 	klass->toggle_format = imhtml_toggle_format;
 	klass->message_send = imhtml_message_send;
 	klass->clear_format = imhtml_clear_formatting;
-	klass->url_clicked = imhtml_url_clicked;
 	klass->undo = gtk_imhtml_undo;
 	klass->redo = gtk_imhtml_redo;
 
@@ -1570,16 +1422,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	widget_class->expose_event = gtk_imhtml_expose_event;
 	parent_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
-	parent_style_set = widget_class->style_set;
-	widget_class->style_set = gtk_imhtml_style_set;
 
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
-	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
-	                                        _("Hyperlink visited color"),
-	                                        _("Color to draw hyperlink after it has been visited (or activated)."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
@@ -1601,14 +1447,6 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Action Message Name Color"),
 	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
-	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
-	                                        _("Action Message Name Color for Whispered Message"),
-	                                        _("Color to draw the name of a whispered action message."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
-	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
-	                                        _("Whisper Message Name Color"),
-	                                        _("Color to draw the name of a whispered message."),
-	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	/* Customizable typing notification ... sort of. Example:
 	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
@@ -1617,7 +1455,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	 */
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
 	                                        _("Typing notification color"),
-	                                        _("The color to use for the typing notification"),
+	                                        _("The color to use for the typing notification font"),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
 	                                        _("Typing notification font"),
@@ -1639,10 +1477,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
-	gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
-	gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
+        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
+
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -1670,18 +1508,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "weight", PANGO_WEIGHT_NORMAL,
 #if FALSE && GTK_CHECK_VERSION(2,10,10)
-			"invisible", FALSE,
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
 #endif
-			NULL);
-
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "send-name", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "receive-name", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "highlight-name", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "action-name", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "whisper-action-name", "weight", PANGO_WEIGHT_BOLD, NULL);
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "whisper-name", "weight", PANGO_WEIGHT_BOLD, NULL);
 
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -1697,6 +1526,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "enter-notify-event", G_CALLBACK(gtk_enter_event_notify), NULL);
+#if (!GTK_CHECK_VERSION(2,2,0))
+	/* See the comment for gtk_key_pressed_cb */
+	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
+#endif
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "delete_range", G_CALLBACK(delete_cb), imhtml);
@@ -1713,12 +1546,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
-	g_signal_connect(G_OBJECT(imhtml), "paste", G_CALLBACK(imhtml_paste_cb), NULL);
 
-#ifndef _WIN32
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
-#endif
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml),
 			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);
@@ -1774,19 +1604,37 @@ GType gtk_imhtml_get_type()
 	return imhtml_type;
 }
 
-static void gtk_imhtml_link_destroy(GtkIMHtmlLink *link)
+struct url_data {
+	GObject *object;
+	gchar *url;
+};
+
+static void url_data_destroy(gpointer mydata)
 {
-	if (link->imhtml)
-		g_object_unref(link->imhtml);
-	if (link->tag)
-		g_object_unref(link->tag);
-	g_free(link->url);
-	g_free(link);
+	struct url_data *data = mydata;
+	g_object_unref(data->object);
+	g_free(data->url);
+	g_free(data);
+}
+
+static void url_open(GtkWidget *w, struct url_data *data) {
+	if(!data) return;
+	g_signal_emit(data->object, signals[URL_CLICKED], 0, data->url);
+
+}
+
+static void url_copy(GtkWidget *w, gchar *url) {
+	GtkClipboard *clipboard;
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_PRIMARY);
+	gtk_clipboard_set_text(clipboard, url, -1);
+
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, url, -1);
 }
 
 /* The callback for an event on a link tag. */
-static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused)
-{
+static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused) {
 	GdkEventButton *event_button = (GdkEventButton *) event;
 	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
@@ -1797,16 +1645,18 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 			if (gtk_text_buffer_get_selection_bounds(
 						gtk_text_iter_get_buffer(arg2),	&start, &end))
 				return FALSE;
-			gtk_imhtml_activate_tag(GTK_IMHTML(imhtml), tag);
+
+			/* A link was clicked--we emit the "url_clicked" signal
+			 * with the URL as the argument */
+			g_object_ref(G_OBJECT(tag));
+			g_signal_emit(imhtml, signals[URL_CLICKED], 0, g_object_get_data(G_OBJECT(tag), "link_url"));
+			g_object_unref(G_OBJECT(tag));
 			return FALSE;
 		} else if(event_button->button == 3) {
-			GList *children;
-			GtkWidget *menu;
-			GtkIMHtmlProtocol *proto;
-			GtkIMHtmlLink *link = g_new(GtkIMHtmlLink, 1);
-			link->imhtml = g_object_ref(imhtml);
-			link->url = g_strdup(g_object_get_data(G_OBJECT(tag), "link_url"));
-			link->tag = g_object_ref(tag);
+			GtkWidget *img, *item, *menu;
+			struct url_data *tempdata = g_new(struct url_data, 1);
+			tempdata->object = g_object_ref(imhtml);
+			tempdata->url = g_strdup(g_object_get_data(G_OBJECT(tag), "link_url"));
 
 			/* Don't want the tooltip around if user right-clicked on link */
 			if (GTK_IMHTML(imhtml)->tip_window) {
@@ -1822,23 +1672,43 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 			else
 				gdk_window_set_cursor(event_button->window, GTK_IMHTML(imhtml)->arrow_cursor);
 			menu = gtk_menu_new();
-			g_object_set_data_full(G_OBJECT(menu), "x-imhtml-url-data", link,
-					(GDestroyNotify)gtk_imhtml_link_destroy);
+			g_object_set_data_full(G_OBJECT(menu), "x-imhtml-url-data", tempdata, url_data_destroy);
 
-			proto = imhtml_find_protocol(link->url, FALSE);
+			/* buttons and such */
 
-			if (proto && proto->context_menu) {
-				proto->context_menu(GTK_IMHTML(link->imhtml), link, menu);
-			}
-
-			children = gtk_container_get_children(GTK_CONTAINER(menu));
-			if (!children) {
-				GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
-				gtk_widget_show(item);
-				gtk_widget_set_sensitive(item, FALSE);
+			if (!strncmp(tempdata->url, "mailto:", 7))
+			{
+				/* Copy E-Mail Address */
+				img = gtk_image_new_from_stock(GTK_STOCK_COPY,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Copy E-Mail Address"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_copy), tempdata->url + 7);
 				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-			} else {
-				g_list_free(children);
+			}
+			else
+			{
+				/* Open Link in Browser */
+				img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Open Link in Browser"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_open), tempdata);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+				/* Copy Link Location */
+				img = gtk_image_new_from_stock(GTK_STOCK_COPY,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Copy Link Location"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_copy), tempdata->url);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 			}
 
 
@@ -1922,7 +1792,10 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 
 			links = g_strsplit((char *)sd->data, "\n", 0);
 			while((link = links[i]) != NULL){
-				if (gtk_imhtml_is_protocol(link)) {
+				if(purple_str_has_prefix(link, "http://") ||
+				   purple_str_has_prefix(link, "https://") ||
+				   purple_str_has_prefix(link, "ftp://"))
+				{
 					gchar *label;
 
 					if(links[i + 1])
@@ -1931,7 +1804,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 					label = links[i];
 
 					gtk_imhtml_insert_link(imhtml, mark, link, label);
-				} else if (*link == '\0') {
+				} else if (link=='\0') {
 					/* Ignore blank lines */
 				} else {
 					/* Special reasons, aka images being put in via other tag, etc. */
@@ -1995,6 +1868,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	}
 }
 
+/* this isn't used yet
 static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
@@ -2010,7 +1884,7 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [pos - t->values->str];
+			t = t->children [(int) pos - (int) t->values->str];
 		else
 			return;
 
@@ -2021,6 +1895,8 @@ static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 		t->image = NULL;
 	}
 }
+*/
+
 
 static gint
 gtk_smiley_tree_lookup (GtkSmileyTree *tree,
@@ -2080,36 +1956,6 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	return 0;
 }
 
-static void
-gtk_imhtml_disassociate_smiley_foreach(gpointer key, gpointer value,
-	gpointer user_data)
-{
-	GtkSmileyTree *tree = (GtkSmileyTree *) value;
-	GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) user_data;
-	gtk_smiley_tree_remove(tree, smiley);
-}
-
-static void
-gtk_imhtml_disconnect_smiley(GtkIMHtml *imhtml, GtkIMHtmlSmiley *smiley)
-{
-	smiley->imhtml = NULL;
-	g_signal_handlers_disconnect_matched(imhtml, G_SIGNAL_MATCH_DATA, 0, 0,
-		NULL, NULL, smiley);
-}
-
-static void
-gtk_imhtml_disassociate_smiley(GtkIMHtmlSmiley *smiley)
-{
-	if (smiley->imhtml) {
-		gtk_smiley_tree_remove(smiley->imhtml->default_smilies, smiley);
-		g_hash_table_foreach(smiley->imhtml->smiley_data,
-			gtk_imhtml_disassociate_smiley_foreach, smiley);
-		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
-			0, 0, NULL, NULL, smiley);
-		smiley->imhtml = NULL;
-	}
-}
-
 void
 gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 			     const gchar     *sml,
@@ -2126,19 +1972,9 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 		g_hash_table_insert(imhtml->smiley_data, g_strdup(sml), tree);
 	}
 
-	/* need to disconnect old imhtml, if there is one */
-	if (smiley->imhtml) {
-		g_signal_handlers_disconnect_matched(smiley->imhtml, G_SIGNAL_MATCH_DATA,
-			0, 0, NULL, NULL, smiley);
-	}
-
 	smiley->imhtml = imhtml;
 
 	gtk_smiley_tree_insert (tree, smiley);
-
-	/* connect destroy signal for the imhtml */
-	g_signal_connect(imhtml, "destroy", G_CALLBACK(gtk_imhtml_disconnect_smiley),
-		smiley);
 }
 
 static gboolean
@@ -2169,72 +2005,78 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-static GtkIMHtmlSmiley *gtk_imhtml_smiley_get_from_tree(GtkSmileyTree *t, const gchar *text)
+GtkIMHtmlSmiley *
+gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
+	const gchar *sml,
+	const gchar *text)
 {
+	GtkSmileyTree *t;
 	const gchar *x = text;
-	gchar *pos;
+	if (sml == NULL)
+		t = imhtml->default_smilies;
+	else
+		t = g_hash_table_lookup(imhtml->smiley_data, sml);
+
 
 	if (t == NULL)
-		return NULL;
+		return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
 
 	while (*x) {
-		if (!t->values)
-			return NULL;
+		gchar *pos;
 
-		pos = strchr(t->values->str, *x);
-		if (!pos)
-			return NULL;
+		if (!t->values) {
+			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
+		}
 
-		t = t->children[GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
+		pos = strchr (t->values->str, *x);
+		if (pos) {
+			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
+		} else {
+			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
+		}
 		x++;
 	}
 
 	return t->image;
 }
 
-GtkIMHtmlSmiley *
-gtk_imhtml_smiley_get(GtkIMHtml *imhtml, const gchar *sml, const gchar *text)
-{
-	GtkIMHtmlSmiley *ret;
-
-	/* Look for custom smileys first */
-	if (sml != NULL) {
-		ret = gtk_imhtml_smiley_get_from_tree(g_hash_table_lookup(imhtml->smiley_data, sml), text);
-		if (ret != NULL)
-			return ret;
-	}
-
-	/* Fall back to check for default smileys */
-	return gtk_imhtml_smiley_get_from_tree(imhtml->default_smilies, text);
-}
-
 static GdkPixbufAnimation *
 gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
 {
-	if (!smiley->icon) {
-		if (smiley->file) {
-			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
-		} else if (smiley->loader) {
-			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-			if (smiley->icon)
-				g_object_ref(G_OBJECT(smiley->icon));
-		}
+	if (!smiley->icon && smiley->file) {
+		smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+	} else if (!smiley->icon && smiley->loader) {
+		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+		if (smiley->icon)
+			g_object_ref(G_OBJECT(smiley->icon));
 	}
 
 	return smiley->icon;
 }
 
-#define VALID_TAG(x)	do { \
-			if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
-				if (tag) *tag = g_strndup (string, strlen (x));		\
-				if (len) *len = strlen (x) + 1;				\
+static GdkPixbufAnimation *
+gtk_smiley_tree_image (GtkIMHtml     *imhtml,
+		       const gchar   *sml,
+		       const gchar   *text)
+{
+	GtkIMHtmlSmiley *smiley;
+
+	smiley = gtk_imhtml_smiley_get(imhtml,sml,text);
+
+	if (!smiley)
+		return NULL;
+
+	return gtk_smiley_get_image(smiley);
+}
+
+#define VALID_TAG(x)	if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
+				*tag = g_strndup (string, strlen (x));		\
+				*len = strlen (x) + 1;				\
 				return TRUE;					\
 			}							\
-			if (type) (*type)++; \
-		} while (0)
+			(*type)++
 
-#define VALID_OPT_TAG(x)	do { \
-				if (!g_ascii_strncasecmp (string, x " ", strlen (x " "))) {	\
+#define VALID_OPT_TAG(x)	if (!g_ascii_strncasecmp (string, x " ", strlen (x " "))) {	\
 					const gchar *c = string + strlen (x " ");	\
 					gchar e = '"';					\
 					gboolean quote = FALSE;				\
@@ -2251,13 +2093,12 @@ gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
 						c++;					\
 					}						\
 					if (*c) {					\
-						if (tag) *tag = g_strndup (string, c - string);	\
-						if (len) *len = c - string + 1;			\
+						*tag = g_strndup (string, c - string);	\
+						*len = c - string + 1;			\
 						return TRUE;				\
 					}						\
 				}							\
-				if (type) (*type)++; \
-			} while (0)
+				(*type)++
 
 
 static gboolean
@@ -2267,8 +2108,8 @@ gtk_imhtml_is_tag (const gchar *string,
 		   gint        *type)
 {
 	char *close;
-	if (type)
-		*type = 1;
+	*type = 1;
+
 
 	if (!(close = strchr (string, '>')))
 		return FALSE;
@@ -2341,20 +2182,15 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			if (len)
-				*len = e - string + strlen ("-->");
-			if (tag)
-				*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
+			*len = e - string + strlen ("-->");
+			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
 			return TRUE;
 		}
 	}
 
-	if (type)
-		*type = -1;
-	if (len)
-		*len = close - string + 1;
-	if (tag)
-		*tag = g_strndup(string, *len - 1);
+	*type = -1;
+	*len = close - string + 1;
+	*tag = g_strndup(string, *len - 1);
 	return TRUE;
 }
 
@@ -2417,15 +2253,27 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	return g_string_free(ret, FALSE);
 }
 
+static const char *accepted_protocols[] = {
+	"http://",
+	"https://",
+	"ftp://"
+};
+
+static const int accepted_protocols_size = 3;
+
 /* returns if the beginning of the text is a protocol. If it is the protocol, returns the length so
    the caller knows how long the protocol string is. */
 static int gtk_imhtml_is_protocol(const char *text)
 {
-	GtkIMHtmlProtocol *proto = imhtml_find_protocol(text, FALSE);
-	return proto ? proto->length : 0;
-}
+	gint i;
 
-static gboolean smooth_scroll_cb(gpointer data);
+	for(i=0; i<accepted_protocols_size; i++){
+		if( g_ascii_strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
+			return strlen(accepted_protocols[i]);
+		}
+	}
+	return 0;
+}
 
 /*
  <KingAnt> marv: The two IM image functions in oscar are purple_odc_send_im and purple_odc_incoming
@@ -2481,14 +2329,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 
 		if (((y + height) - (rect.y + rect.height)) > height &&
 				gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
-			/* If we are in the middle of smooth-scrolling, then take a scroll step.
-			 * If we are not in the middle of smooth-scrolling, that means we were
-			 * not looking at the end of the buffer before the new text was added,
-			 * so do not scroll. */
-			if (imhtml->scroll_time)
-				smooth_scroll_cb(imhtml);
-			else
-				options |= GTK_IMHTML_NO_SCROLL;
+			options |= GTK_IMHTML_NO_SCROLL;
 		}
 	}
 
@@ -2517,7 +2358,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
  *
  * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
  */
-static gboolean smooth_scroll_cb(gpointer data)
+static gboolean scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
@@ -2531,14 +2372,19 @@ static gboolean smooth_scroll_cb(gpointer data)
 		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(imhtml->scroll_time);
 		imhtml->scroll_time = NULL;
-		g_source_remove(imhtml->scroll_src);
-		imhtml->scroll_src = 0;
 		return FALSE;
 	}
 
 	/* scroll by 1/3rd the remaining distance */
 	gtk_adjustment_set_value(adj, scroll_val);
 	return TRUE;
+}
+
+static gboolean smooth_scroll_idle_cb(gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	imhtml->scroll_src = g_timeout_add(SCROLL_DELAY, scroll_cb, imhtml);
+	return FALSE;
 }
 
 static gboolean scroll_idle_cb(gpointer data)
@@ -2560,83 +2406,11 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 		g_source_remove(imhtml->scroll_src);
 	if(smooth) {
 		imhtml->scroll_time = g_timer_new();
-		imhtml->scroll_src = g_timeout_add_full(G_PRIORITY_LOW, SCROLL_DELAY, smooth_scroll_cb, imhtml, NULL);
+		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, smooth_scroll_idle_cb, imhtml, NULL);
 	} else {
 		imhtml->scroll_time = NULL;
 		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
 	}
-}
-
-/* CSS colors are either rgb (x,y,z) or #hex
- * we need to convert to hex if it is RGB */
-static gchar*
-parse_css_color(gchar *in_color)
-{
-	char *tmp = in_color;
-
-	if (*tmp == 'r' && *(++tmp) == 'g' && *(++tmp) == 'b' && *(++tmp)) {
-		int rgbval[] = {0, 0, 0};
-		int count = 0;
-		const char *v_start;
-
-		while (*tmp && g_ascii_isspace(*tmp))
-			tmp++;
-		if (*tmp != '(') {
-			/* We don't support rgba() */
-			purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
-			return in_color;
-		}
-		tmp++;
-
-		while (count < 3) {
-			/* Skip any leading spaces */
-			while (*tmp && g_ascii_isspace(*tmp))
-				tmp++;
-
-			/* Find the subsequent contiguous digits */
-			v_start = tmp;
-			if (*v_start == '-')
-				tmp++;
-			while (*tmp && g_ascii_isdigit(*tmp))
-				tmp++;
-
-			if (tmp != v_start) {
-				char prev = *tmp;
-				*tmp = '\0';
-				rgbval[count] = atoi(v_start);
-				*tmp = prev;
-
-				/* deal with % */
-				while (*tmp && g_ascii_isspace(*tmp))
-					tmp++;
-				if (*tmp == '%') {
-					rgbval[count] = (rgbval[count] / 100.0) * 255;
-					tmp++;
-				}
-			} else {
-				purple_debug_warning("gtkimhtml", "Invalid rgb CSS color in '%s'!\n", in_color);
-				return in_color;
-			}
-
-			if (rgbval[count] > 255) {
-				rgbval[count] = 255;
-			} else if (rgbval[count] < 0) {
-				rgbval[count] = 0;
-			}
-
-			while (*tmp && g_ascii_isspace(*tmp))
-				tmp++;
-			if (*tmp == ',')
-				tmp++;
-
-			count++;
-		}
-
-		g_free(in_color);
-		return g_strdup_printf("#%02X%02X%02X", rgbval[0], rgbval[1], rgbval[2]);
-	}
-
-	return in_color;
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
@@ -2680,9 +2454,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	c = text;
 	len = strlen(text);
 	ws = g_malloc(len + 1);
-	ws[0] = '\0';
-
-	g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(0));
+	ws[0] = 0;
 
 	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
@@ -2979,7 +2751,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->size = oldfont->size;
 						else
 							font->size = 3;
-						if ((imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)) && (font->size != 3 || (oldfont && oldfont->size == 3)))
+						if ((imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)))
 							gtk_imhtml_font_set_size(imhtml, font->size);
 						g_free(size);
 						fonts = g_slist_prepend (fonts, font);
@@ -3022,21 +2794,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							break;
 
 						id = gtk_imhtml_get_html_opt(tag, "ID=");
-						if (id) {
-							gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
-							g_free(id);
-						} else {
-							char *src, *alt;
-							src = gtk_imhtml_get_html_opt(tag, "SRC=");
-							alt = gtk_imhtml_get_html_opt(tag, "ALT=");
-							if (src) {
-								gtk_imhtml_toggle_link(imhtml, src);
-								gtk_text_buffer_insert(imhtml->text_buffer, iter, alt ? alt : src, -1);
-								gtk_imhtml_toggle_link(imhtml, NULL);
-							}
-							g_free (src);
-							g_free (alt);
-						}
+						if (!id)
+							break;
+						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+						g_free(id);
 						break;
 					}
 				case 47:	/* P (opt) */
@@ -3112,7 +2873,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							oldfont = fonts->data;
 
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
-							font->fore = parse_css_color(color);
+							font->fore = color;
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
 						} else {
 							if (oldfont && oldfont->fore)
@@ -3121,7 +2882,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 
 						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
-							font->back = parse_css_color(background);
+							font->back = background;
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
 						} else {
 							if (oldfont && oldfont->back)
@@ -3155,24 +2916,18 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							else if (g_ascii_strcasecmp(size, "smaller") == 0
 								  || g_ascii_strcasecmp(size, "x-small") == 0)
 								font->size = 2;
-							else if (g_ascii_strcasecmp(size, "medium") == 0)
-								font->size = 3;
-							else if (g_ascii_strcasecmp(size, "large") == 0
-								  || g_ascii_strcasecmp(size, "larger") == 0)
+							else if (g_ascii_strcasecmp(size, "larger") == 0
+								  || g_ascii_strcasecmp(size, "medium") == 0)
 								font->size = 4;
-							else if (g_ascii_strcasecmp(size, "x-large") == 0)
+							else if (g_ascii_strcasecmp(size, "large") == 0)
 								font->size = 5;
-							else if (g_ascii_strcasecmp(size, "xx-large") == 0)
+							else if (g_ascii_strcasecmp(size, "x-large") == 0)
 								font->size = 6;
-
-							/*
-							 * TODO: Handle other values, like percentages, or
-							 * lengths specified as em, ex, px, in, cm, mm, pt
-							 * or pc.  Or even better, use an actual HTML
-							 * renderer like webkit.
-							 */
-							if (font->size > 0)
-							    gtk_imhtml_font_set_size(imhtml, font->size);
+							else if (g_ascii_strcasecmp(size, "xx-large") == 0)
+								font->size = 7;
+							else
+								font->size = 3;
+						    gtk_imhtml_font_set_size(imhtml, font->size);
 						}
 						else if (oldfont)
 						{
@@ -3296,7 +3051,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 #else
 					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS)) {
 						wpos = g_snprintf (ws, len, "%s", tag);
-						gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 					}
 #endif
 					ws[0] = '\0'; wpos = 0;
@@ -3345,7 +3100,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[wpos] = '\n';
 				wpos++;
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0'; wpos = 0;
+				ws[0] = '\0';
+				wpos = 0;
 				/* NEW_BIT (NEW_TEXT_BIT); */
 			} else if (!br) {  /* Don't insert a space immediately after an HTML break */
 				/* A newline is defined by HTML as whitespace, which means we have to replace it with a word boundary.
@@ -3356,44 +3112,19 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				ws[wpos] = ' ';
 				wpos++;
 				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0'; wpos = 0;
+				ws[0] = '\0';
+				wpos = 0;
 			}
 			c++;
 			pos++;
-		} else if ((pos == 0 || wpos == 0 || isspace(*(c - 1))) &&
-		           (len_protocol = gtk_imhtml_is_protocol(c)) > 0 &&
-				   c[len_protocol] && !isspace(c[len_protocol]) &&
-				   (c[len_protocol] != '<' || !gtk_imhtml_is_tag(c + 1, NULL, NULL, NULL))) {
+		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
 			br = FALSE;
-			if (wpos > 0) {
-				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0'; wpos = 0;
-			}
-			while (len_protocol--) {
-				/* Skip the next len_protocol characters, but
-				 * make sure they're copied into the ws array.
-				 */
-				ws [wpos++] = *c++;
-				pos++;
-			}
-			if (!imhtml->edit.link && (imhtml->format_functions & GTK_IMHTML_LINK)) {
-				while (*c && !isspace((int)*c) &&
-						(*c != '<' || !gtk_imhtml_is_tag(c + 1, NULL, NULL, NULL))) {
-					if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
-						while (*amp)
-							ws[wpos++] = *amp++;
-						c += tlen;
-						pos += tlen;
-					} else {
-						ws [wpos++] = *c++;
-						pos++;
-					}
-				}
-				ws[wpos] = '\0';
-				gtk_imhtml_toggle_link(imhtml, ws);
-				gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-				ws[0] = '\0'; wpos = 0;
-				gtk_imhtml_toggle_link(imhtml, NULL);
+			while(len_protocol--){
+				/* Skip the next len_protocol characters, but make sure they're
+				   copied into the ws array.
+				*/
+				 ws [wpos++] = *c++;
+				 pos++;
 			}
 		} else if (*c) {
 			br = FALSE;
@@ -3417,7 +3148,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		ws[wpos++]  = 0xE2;
 		ws[wpos++]  = 0x80;
 		ws[wpos++]  = 0x8F;
-
+    
 		if (!rtl_direction)
 		{
 			/* insert LRM character to set direction */
@@ -3430,7 +3161,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		ws[wpos]  = '\0';
 		gtk_text_buffer_insert(imhtml->text_buffer, &line_iter, ws, wpos);
 		gtk_text_buffer_get_end_iter(gtk_text_iter_get_buffer(&line_iter), iter);
-		ws[0] = '\0'; wpos = 0;
+		ws[0] = '\0';
+		wpos = 0;
 	}
 
 	while (fonts) {
@@ -3535,8 +3267,6 @@ gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end) {
 		sl = next;
 	}
 	gtk_text_buffer_delete(imhtml->text_buffer, start, end);
-
-	g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(0));
 
 	g_object_unref(object);
 }
@@ -3685,96 +3415,115 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 }
 
 static void
-image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
+image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 {
+	gchar *type = NULL;
 	GError *error = NULL;
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
+#if GTK_CHECK_VERSION(2,2,0)
+	GSList *formats = gdk_pixbuf_get_formats();
+#else
+	char *basename = g_path_get_basename(filename);
+	char *ext = strrchr(basename, '.');
+#endif
+	char *newfilename;
 
 	gtk_widget_destroy(image->filesel);
 	image->filesel = NULL;
 
-	if (save->data && save->datasize) {
-		g_file_set_contents(filename, save->data, save->datasize, &error);
-	} else {
-		gchar *type = NULL;
-		GSList *formats = gdk_pixbuf_get_formats();
-		char *newfilename;
+#if GTK_CHECK_VERSION(2,2,0)
+	while (formats) {
+		GdkPixbufFormat *format = formats->data;
+		gchar **extensions = gdk_pixbuf_format_get_extensions(format);
+		gpointer p = extensions;
 
-		while (formats) {
-			GdkPixbufFormat *format = formats->data;
-			gchar **extensions = gdk_pixbuf_format_get_extensions(format);
-			gpointer p = extensions;
+		while(gdk_pixbuf_format_is_writable(format) && extensions && extensions[0]){
+			gchar *fmt_ext = extensions[0];
+			const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
 
-			while(gdk_pixbuf_format_is_writable(format) && extensions && extensions[0]){
-				gchar *fmt_ext = extensions[0];
-				const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
-
-				if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
-					type = gdk_pixbuf_format_get_name(format);
-					break;
-				}
-
-				extensions++;
+			if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
+				type = gdk_pixbuf_format_get_name(format);
+				break;
 			}
 
-			g_strfreev(p);
-
-			if (type)
-				break;
-
-			formats = formats->next;
+			extensions++;
 		}
 
-		g_slist_free(formats);
+		g_strfreev(p);
 
-		/* If I can't find a valid type, I will just tell the user about it and then assume
-		   it's a png */
-		if (!type){
-			char *basename, *tmp;
-			char *dirname;
-			GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
+		if (type)
+			break;
 
-			g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
-			gtk_widget_show(dialog);
-
-			type = g_strdup("png");
-			dirname = g_path_get_dirname(filename);
-			basename = g_path_get_basename(filename);
-			tmp = strrchr(basename, '.');
-			if (tmp != NULL)
-				tmp[0] = '\0';
-			newfilename = g_strdup_printf("%s" G_DIR_SEPARATOR_S  "%s.png", dirname, basename);
-			g_free(dirname);
-			g_free(basename);
-		} else {
-			/*
-			 * We're able to save the file in it's original format, so we
-			 * can use the original file name.
-			 */
-			newfilename = g_strdup(filename);
-		}
-
-		gdk_pixbuf_save(image->pixbuf, newfilename, type, &error, NULL);
-
-		g_free(newfilename);
-		g_free(type);
+		formats = formats->next;
 	}
 
+	g_slist_free(formats);
+#else
+	/* this is really ugly code, but I think it will work */
+	if (ext) {
+		ext++;
+		if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
+			type = g_strdup("jpeg");
+		else if (!g_ascii_strcasecmp(ext, "png"))
+			type = g_strdup("png");
+	}
+
+	g_free(basename);
+#endif
+
+	/* If I can't find a valid type, I will just tell the user about it and then assume
+	   it's a png */
+	if (!type){
+		char *basename, *tmp;
+#if GTK_CHECK_VERSION(2,4,0)
+		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
+#else
+		GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("Unrecognized file type\n\nDefaulting to PNG."));
+#endif
+
+		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
+		gtk_widget_show(dialog);
+
+		type = g_strdup("png");
+		basename = g_path_get_basename(filename);
+		tmp = strrchr(basename, '.');
+		if (tmp != NULL)
+			tmp[0] = '\0';
+		newfilename = g_strdup_printf("%s.png", basename);
+		g_free(basename);
+	} else {
+		/*
+		 * We're able to save the file in it's original format, so we
+		 * can use the original file name.
+		 */
+		newfilename = g_strdup(filename);
+	}
+
+	gdk_pixbuf_save(image->pixbuf, newfilename, type, &error, NULL);
+
+	g_free(newfilename);
+	g_free(type);
+
 	if (error){
+#if GTK_CHECK_VERSION(2,4,0)
 		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("<span size='larger' weight='bold'>Error saving image</span>\n\n%s"), error->message);
+#else
+		GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("Error saving image\n\n%s"), error->message);
+#endif
 		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show(dialog);
 		g_error_free(error);
 	}
 }
 
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSave *save)
+image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImage *image)
 {
 	gchar *filename;
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		gtk_widget_destroy(widget);
@@ -3783,6 +3532,31 @@ image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSa
 	}
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+#else /* FILECHOOSER */
+static void
+image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
+{
+	gchar *filename;
+
+	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(image->filesel)));
+
+	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
+		gchar *dirname;
+		/* append a / is needed */
+		if (filename[strlen(filename) - 1] != G_DIR_SEPARATOR) {
+			dirname = g_strconcat(filename, G_DIR_SEPARATOR_S, NULL);
+		} else {
+			dirname = g_strdup(filename);
+		}
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), dirname);
+		g_free(dirname);
+		g_free(filename);
+		return;
+	}
+#endif /* FILECHOOSER */
+#if 0 /* mismatched curly braces */
+	}
+#endif
 
 	/*
 	 * XXX - We should probably prompt the user to determine if they really
@@ -3795,21 +3569,29 @@ image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSa
 		image_save_yes_cb(image, filename);
 	*/
 
-	image_save_yes_cb(save, filename);
+	image_save_yes_cb(image, filename);
 
 	g_free(filename);
 }
 
+#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
+image_save_cancel_cb(GtkIMHtmlImage *image)
 {
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
+	gtk_widget_destroy(image->filesel);
+	image->filesel = NULL;
+}
+#endif /* FILECHOOSER */
 
+static void
+gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
+{
 	if (image->filesel != NULL) {
 		gtk_window_present(GTK_WINDOW(image->filesel));
 		return;
 	}
 
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	image->filesel = gtk_file_chooser_dialog_new(_("Save Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -3820,21 +3602,20 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 	if (image->filename != NULL)
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(image->filesel), image->filename);
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(image->filesel)), "response",
-					 G_CALLBACK(image_save_check_if_exists_cb), save);
+					 G_CALLBACK(image_save_check_if_exists_cb), image);
+#else /* FILECHOOSER */
+	image->filesel = gtk_file_selection_new(_("Save Image"));
+	if (image->filename != NULL)
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), image->filename);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)), "delete_event",
+							 G_CALLBACK(image_save_cancel_cb), image);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button),
+							 "clicked", G_CALLBACK(image_save_cancel_cb), image);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
+					 G_CALLBACK(image_save_check_if_exists_cb), image);
+#endif /* FILECHOOSER */
 
 	gtk_widget_show(image->filesel);
-}
-
-static void
-gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
-{
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-	
-	/* Create an add dialog */
-	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
-	pidgin_smiley_editor_set_shortcut(editor, image->filename);
-	pidgin_smiley_editor_set_image(editor, image->pixbuf);
-	pidgin_smiley_editor_set_data(editor, save->data, save->datasize);
 }
 
 /*
@@ -3844,39 +3625,28 @@ gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
  * embedded in the conversation.  Someone should make the Purple core handle
  * all of that.
  */
-static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImageSave *save)
+static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImage *image)
 {
 	GdkEventButton *event_button = (GdkEventButton *) event;
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
 
 	if (event->type == GDK_BUTTON_RELEASE) {
 		if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
+			gchar *text = g_strdup_printf(_("_Save Image..."));
 			menu = gtk_menu_new();
 
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
-			item = gtk_image_menu_item_new_with_mnemonic(_("_Save Image..."));
+			item = gtk_image_menu_item_new_with_mnemonic(text);
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), save);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), image);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
-			/* Add menu item for adding custom smiley to local smileys */
-			/* we only add the menu if the image is of "custom smiley size"
-			  <= 96x96 pixels */
-			if (image->width <= 96 && image->height <= 96) {
-				img = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU);
-				item = gtk_image_menu_item_new_with_mnemonic(_("_Add Custom Smiley..."));
-				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-				g_signal_connect(G_OBJECT(item), "activate",
-								 G_CALLBACK(gtk_imhtml_custom_smiley_save), save);
-				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-			}
 
 			gtk_widget_show_all(menu);
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 							event_button->button, event_button->time);
 
+			g_free(text);
 			return TRUE;
 		}
 	}
@@ -3891,9 +3661,9 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlSmiley *smiley)
 {
 	GdkPixbufAnimation *anim = NULL;
-	GtkIMHtmlImageSave *save = NULL;
+	GtkIMHtmlScalable *image = NULL;
 	gboolean ret;
-
+	
 	if (event->type != GDK_BUTTON_RELEASE || ((GdkEventButton*)event)->button != 3)
 		return FALSE;
 
@@ -3901,14 +3671,9 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 	if (!anim)
 		return FALSE;
 
-	save = g_new0(GtkIMHtmlImageSave, 1);
-	save->image = (GtkIMHtmlScalable *)gtk_imhtml_animation_new(anim, smiley->smile, 0);
-	save->data = smiley->data;        /* Do not need to memdup here, since the smiley is not
-	                                     destroyed before this GtkIMHtmlImageSave */
-	save->datasize = smiley->datasize;
-	ret = gtk_imhtml_image_clicked(w, event, save);
-	g_object_set_data_full(G_OBJECT(w), "image-data", save->image, (GDestroyNotify)gtk_imhtml_animation_free);
-	g_object_set_data_full(G_OBJECT(w), "image-save-data", save, (GDestroyNotify)g_free);
+	image = gtk_imhtml_animation_new(anim, smiley->smile, 0);
+	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
+	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_animation_free);
 	return ret;
 }
 
@@ -3942,7 +3707,6 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	GtkWidget *box = gtk_event_box_new();
 	char *tag;
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-	GtkIMHtmlImageSave *save;
 
 	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
 
@@ -3957,11 +3721,7 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_plaintext", "[Image]");
 
 	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), box, anchor);
-
-	save = g_new0(GtkIMHtmlImageSave, 1);
-	save->image = scale;
-	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), save);
-	g_object_set_data_full(G_OBJECT(box), "image-save-data", save, (GDestroyNotify)g_free);
+	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), image);
 }
 
 GtkIMHtmlScalable *gtk_imhtml_hr_new()
@@ -4252,8 +4012,11 @@ imhtml_clear_formatting(GtkIMHtml *imhtml)
 	if (!imhtml->editable)
 		return;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
+	if (imhtml->wbfo)
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+	else
+		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
 
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
@@ -4409,19 +4172,15 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 	 * people can highlight stuff.
 	 */
 	/* gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), editable); */
-	if (editable && !imhtml->editable) {
+	imhtml->editable = editable;
+	imhtml->format_functions = GTK_IMHTML_ALL;
+
+	if (editable)
+	{
 		g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 				G_CALLBACK(mark_set_cb), imhtml);
 		g_signal_connect(G_OBJECT(imhtml), "backspace", G_CALLBACK(smart_backspace_cb), NULL);
-	} else if (!editable && imhtml->editable) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer),
-			mark_set_cb, imhtml);
-		g_signal_handlers_disconnect_by_func(G_OBJECT(imhtml),
-			smart_backspace_cb, NULL);
 	}
-
-	imhtml->editable = editable;
-	imhtml->format_functions = GTK_IMHTML_ALL;
 }
 
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo)
@@ -4596,13 +4355,19 @@ static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 
 	imhtml->edit.bold = !imhtml->edit.bold;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		if (imhtml->edit.bold)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.bold)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 
-	if (imhtml->edit.bold)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+	}
 }
 
 void gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
@@ -4616,13 +4381,18 @@ static void imhtml_toggle_italic(GtkIMHtml *imhtml)
 
 	imhtml->edit.italic = !imhtml->edit.italic;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-
-	if (imhtml->edit.italic)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		if (imhtml->edit.italic)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.italic)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+	}
 }
 
 void gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
@@ -4636,13 +4406,18 @@ static void imhtml_toggle_underline(GtkIMHtml *imhtml)
 
 	imhtml->edit.underline = !imhtml->edit.underline;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-
-	if (imhtml->edit.underline)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		if (imhtml->edit.underline)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.underline)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+	}
 }
 
 void gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
@@ -4656,13 +4431,18 @@ static void imhtml_toggle_strike(GtkIMHtml *imhtml)
 
 	imhtml->edit.strike = !imhtml->edit.strike;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-
-	if (imhtml->edit.strike)
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	else
-		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		if (imhtml->edit.strike)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.strike)
+			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+		else
+			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	}
 }
 
 void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
@@ -4677,12 +4457,16 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 
 	imhtml->edit.fontsize = size;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-
-	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
-	gtk_text_buffer_apply_tag(imhtml->text_buffer,
-			find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		remove_font_size(imhtml, &start, &end, TRUE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		remove_font_size(imhtml, &start, &end, FALSE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK | GTK_IMHTML_GROW);
@@ -4701,11 +4485,16 @@ static void imhtml_font_shrink(GtkIMHtml *imhtml)
 	else
 		imhtml->edit.fontsize--;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
-	gtk_text_buffer_apply_tag(imhtml->text_buffer,
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		remove_font_size(imhtml, &start, &end, TRUE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		remove_font_size(imhtml, &start, &end, FALSE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	}
 }
 
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
@@ -4725,11 +4514,16 @@ static void imhtml_font_grow(GtkIMHtml *imhtml)
 	else
 		imhtml->edit.fontsize++;
 
-	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
-		return;
-	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
-	gtk_text_buffer_apply_tag(imhtml->text_buffer,
-			find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+		remove_font_size(imhtml, &start, &end, TRUE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		remove_font_size(imhtml, &start, &end, FALSE);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
+	}
 }
 
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
@@ -4752,16 +4546,39 @@ static gboolean gtk_imhtml_toggle_str_tag(GtkIMHtml *imhtml, const char *value, 
 	{
 		*edit_field = g_strdup(value);
 
-		if (imhtml_get_iter_bounds(imhtml, &start, &end)) {
-			remove_func(imhtml, &start, &end, imhtml->wbfo);
+		if (imhtml->wbfo)
+		{
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_func(imhtml, &start, &end, TRUE);
 			gtk_text_buffer_apply_tag(imhtml->text_buffer,
-					find_func(imhtml, *edit_field), &start, &end);
+		                              find_func(imhtml, *edit_field), &start, &end);
+		}
+		else
+		{
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start,
+			                                 gtk_text_buffer_get_mark(imhtml->text_buffer, "insert"));
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+			{
+				remove_func(imhtml, &start, &end, FALSE);
+				gtk_text_buffer_apply_tag(imhtml->text_buffer,
+				                          find_func(imhtml,
+				                                    *edit_field),
+				                                    &start, &end);
+			}
 		}
 	}
 	else
 	{
-		if (imhtml_get_iter_bounds(imhtml, &start, &end))
-			remove_func(imhtml, &start, &end, TRUE);	/* 'TRUE' or 'imhtml->wbfo'? */
+		if (imhtml->wbfo)
+		{
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_func(imhtml, &start, &end, TRUE);
+		}
+		else
+		{
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+				remove_func(imhtml, &start, &end, TRUE);
+		}
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
@@ -4839,8 +4656,8 @@ void gtk_imhtml_insert_link(GtkIMHtml *imhtml, GtkTextMark *mark, const char *ur
 {
 	GtkTextIter iter;
 
-	/* Delete any currently selected text */
-	gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
+		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
 
 	gtk_imhtml_toggle_link(imhtml, url);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
@@ -4853,15 +4670,13 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GtkTextMark *mark;
 	GtkTextIter iter;
 
-	/* Delete any currently selected text */
-	gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
+		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
 
 	mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
-	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	gtk_imhtml_insert_smiley_at_iter(imhtml, sml, smiley, &iter);
-	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
 static gboolean
@@ -4894,33 +4709,12 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor = NULL;
-	char *unescaped;
-	GtkIMHtmlSmiley *imhtml_smiley;
+	char *unescaped = purple_unescape_html(smiley);
+	GtkIMHtmlSmiley *imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 	GtkWidget *ebox = NULL;
-	int numsmileys_thismsg, numsmileys_total;
-
-	/*
-	 * This GtkIMHtml has the maximum number of smileys allowed, so don't
-	 * add any more.  We do this for performance reasons, because smileys
-	 * are apparently pretty inefficient.  Hopefully we can remove this
-	 * restriction when we're using a better HTML widget.
-	 */
-	numsmileys_thismsg = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg"));
-	if (numsmileys_thismsg >= 30) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
-		return;
-	}
-	numsmileys_total = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total"));
-	if (numsmileys_total >= 300) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
-		return;
-	}
-
-	unescaped = purple_unescape_html(smiley);
-	imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
-		annipixbuf = imhtml_smiley ? gtk_smiley_get_image(imhtml_smiley) : NULL;
+		annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
 		if (annipixbuf) {
 			if (gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 				pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
@@ -4952,14 +4746,18 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 
 	if (imhtml_smiley && imhtml_smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) {
 		ebox = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 		gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
+#endif
 		gtk_widget_show(ebox);
 	}
 
 	if (icon) {
+		char *text = g_strdup(unescaped); /* Do not g_free 'text'.
+		                                     It will be destroyed when 'anchor' is destroyed. */
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
-		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_tiptext", g_strdup(unescaped), g_free);
+		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+		g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 
 		/* This catches the expose events generated by animated
@@ -4972,24 +4770,18 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		if (ebox)
 			gtk_container_add(GTK_CONTAINER(ebox), icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox ? ebox : icon, anchor);
-
-		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
-		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, g_object_ref(anchor));
+		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
 		if (ebox) {
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
+			char *text = g_strdup(unescaped);
 			gtk_container_add(GTK_CONTAINER(ebox), img);
 			gtk_widget_show(img);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_tiptext", g_strdup(unescaped), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
-
-		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
-		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else {
 		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
 	}
@@ -5107,68 +4899,7 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		g_snprintf(buf, sizeof(buf), "<font size=\"%s\">", &name[10]);
 		return buf;
 	} else {
-		char *str = buf;
-		gboolean isset;
-		int ivalue = 0;
-		GdkColor *color = NULL;
-		GObject *obj = G_OBJECT(tag);
-		gboolean empty = TRUE;
-
-		str += g_snprintf(str, sizeof(buf) - (str - buf), "<span style='");
-
-		/* Weight */
-		g_object_get(obj, "weight-set", &isset, "weight", &ivalue, NULL);
-		if (isset) {
-			const char *weight = "";
-			if (ivalue >= PANGO_WEIGHT_ULTRABOLD)
-				weight = "bolder";
-			else if (ivalue >= PANGO_WEIGHT_BOLD)
-				weight = "bold";
-			else if (ivalue >= PANGO_WEIGHT_NORMAL)
-				weight = "normal";
-			else
-				weight = "lighter";
-
-			str += g_snprintf(str, sizeof(buf) - (str - buf), "font-weight: %s;", weight);
-			empty = FALSE;
-		}
-
-		/* Foreground color */
-		g_object_get(obj, "foreground-set", &isset, "foreground-gdk", &color, NULL);
-		if (isset && color) {
-			str += g_snprintf(str, sizeof(buf) - (str - buf),
-					"color: #%02x%02x%02x;",
-					color->red >> 8, color->green >> 8, color->blue >> 8);
-			empty = FALSE;
-		}
-		gdk_color_free(color);
-
-		/* Background color */
-		g_object_get(obj, "background-set", &isset, "background-gdk", &color, NULL);
-		if (isset && color) {
-			str += g_snprintf(str, sizeof(buf) - (str - buf),
-					"background: #%02x%02x%02x;",
-					color->red >> 8, color->green >> 8, color->blue >> 8);
-			empty = FALSE;
-		}
-		gdk_color_free(color);
-
-		/* Underline */
-		g_object_get(obj, "underline-set", &isset, "underline", &ivalue, NULL);
-		if (isset) {
-			switch (ivalue) {
-				case PANGO_UNDERLINE_NONE:
-				case PANGO_UNDERLINE_ERROR:
-					break;
-				default:
-					str += g_snprintf(str, sizeof(buf) - (str - buf), "text-decoration: underline;");
-					empty = FALSE;
-			}
-		}
-
-		g_snprintf(str, sizeof(buf) - (str - buf), "'>");
-
-		return (empty ? "" : buf);
+		return "";
 	}
 }
 
@@ -5200,50 +4931,8 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
 		return "</font>";
 	} else {
-		const char *props[] = {"weight-set", "foreground-set", "background-set",
-			"size-set", "underline-set", NULL};
-		int i;
-		for (i = 0; props[i]; i++) {
-			gboolean set = FALSE;
-			g_object_get(G_OBJECT(tag), props[i], &set, NULL);
-			if (set)
-				return "</span>";
-		}
-
 		return "";
 	}
-}
-
-typedef struct {
-	GtkTextTag *tag;
-	char *end;
-	char *start;
-} PidginTextTagData;
-
-static PidginTextTagData *text_tag_data_new(GtkTextTag *tag)
-{
-	const char *start, *end;
-	PidginTextTagData *ret = NULL;
-
-	start = tag_to_html_start(tag);
-	if (!start || !*start)
-		return NULL;
-	end = tag_to_html_end(tag);
-	if (!end || !*end)
-		return NULL;
-
-	ret = g_new0(PidginTextTagData, 1);
-	ret->start = g_strdup(start);
-	ret->end = g_strdup(end);
-	ret->tag = tag;
-	return ret;
-}
-
-static void text_tag_data_destroy(PidginTextTagData *data)
-{
-	g_free(data->start);
-	g_free(data->end);
-	g_free(data);
 }
 
 static gboolean tag_ends_here(GtkTextTag *tag, GtkTextIter *iter, GtkTextIter *niter)
@@ -5266,11 +4955,12 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	gboolean is_rtl_message = FALSE;
 	GString *str = g_string_new("");
 	GSList *tags, *sl;
-	GQueue *q;
+	GQueue *q, *r;
 	GtkTextTag *tag;
-	PidginTextTagData *tagdata;
 
 	q = g_queue_new();
+	r = g_queue_new();
+
 
 	gtk_text_iter_order(start, end);
 	non_neutral_iter = next_iter = iter = *start;
@@ -5293,11 +4983,9 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	for (sl = tags; sl; sl = sl->next) {
 		tag = sl->data;
 		if (!gtk_text_iter_toggles_tag(start, GTK_TEXT_TAG(tag))) {
-			PidginTextTagData *data = text_tag_data_new(tag);
-			if (data) {
-				g_string_append(str, data->start);
-				g_queue_push_tail(q, data);
-			}
+			if (strlen(tag_to_html_end(tag)) > 0)
+				g_string_append(str, tag_to_html_start(tag));
+			g_queue_push_tail(q, tag);
 		}
 	}
 	g_slist_free(tags);
@@ -5309,13 +4997,12 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			if (gtk_text_iter_begins_tag(&iter, GTK_TEXT_TAG(tag))) {
-				PidginTextTagData *data = text_tag_data_new(tag);
-				if (data) {
-					g_string_append(str, data->start);
-					g_queue_push_tail(q, data);
-				}
+				if (strlen(tag_to_html_end(tag)) > 0)
+					g_string_append(str, tag_to_html_start(tag));
+				g_queue_push_tail(q, tag);
 			}
 		}
+
 
 		if (c == 0xFFFC) {
 			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
@@ -5342,35 +5029,28 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			/** don't worry about non-printing tags ending */
-			if (tag_ends_here(tag, &iter, &next_iter) &&
-					strlen(tag_to_html_end(tag)) > 0 &&
-					strlen(tag_to_html_start(tag)) > 0) {
+			if (tag_ends_here(tag, &iter, &next_iter) && strlen(tag_to_html_end(tag)) > 0) {
 
-				PidginTextTagData *tmp;
-				GQueue *r = g_queue_new();
+				GtkTextTag *tmp;
 
-				while ((tmp = g_queue_pop_tail(q)) && tmp->tag != tag) {
-					g_string_append(str, tmp->end);
-					if (!tag_ends_here(tmp->tag, &iter, &next_iter))
+				while ((tmp = g_queue_pop_tail(q)) != tag) {
+					if (tmp == NULL)
+						break;
+
+					if (!tag_ends_here(tmp, &iter, &next_iter) && strlen(tag_to_html_end(tmp)) > 0)
 						g_queue_push_tail(r, tmp);
-					else
-						text_tag_data_destroy(tmp);
+					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
 				}
 
-				if (tmp != NULL) {
-					g_string_append(str, tmp->end);
-					text_tag_data_destroy(tmp);
-				}
-#if 0 /* This can't be allowed to happen because it causes the iters to be invalidated in the debug window imhtml during text copying */
-				else
+				if (tmp == NULL)
 					purple_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
-#endif
+				else
+					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
 
 				while ((tmp = g_queue_pop_head(r))) {
-					g_string_append(str, tmp->start);
+					g_string_append(str, tag_to_html_start(GTK_TEXT_TAG(tmp)));
 					g_queue_push_tail(q, tmp);
 				}
-				g_queue_free(r);
 			}
 		}
 
@@ -5379,16 +5059,15 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		gtk_text_iter_forward_char(&next_iter);
 	}
 
-	while ((tagdata = g_queue_pop_tail(q))) {
-		g_string_append(str, tagdata->end);
-		text_tag_data_destroy(tagdata);
-	}
+	while ((tag = g_queue_pop_tail(q)))
+		g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
 
 	/* Bi-directional text support - close tags */
 	if (is_rtl_message)
 		g_string_append(str, "</SPAN>");
 
 	g_queue_free(q);
+	g_queue_free(r);
 	return g_string_free(str, FALSE);
 }
 
@@ -5581,288 +5260,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 	if (flags & PURPLE_CONNECTION_NO_IMAGES)
 		buttons &= ~GTK_IMHTML_IMAGE;
 
-	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
-		buttons |= GTK_IMHTML_CUSTOM_SMILEY;
-	else
-		buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
-
 	gtk_imhtml_set_format_functions(imhtml, buttons);
 }
 
-/*******
- * GtkIMHtmlSmiley functions
- *******/
-static void gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
-{
-	GtkIMHtmlSmiley *smiley;
 
-	smiley = (GtkIMHtmlSmiley *)user_data;
-	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-
-	if (smiley->icon)
-		g_object_ref(G_OBJECT(smiley->icon));
-#ifdef DEBUG_CUSTOM_SMILEY
-	purple_debug_info("custom-smiley", "gtk_custom_smiley_allocated(): got GdkPixbufAnimation %p for smiley '%s'\n", smiley->icon, smiley->smile);
-#endif
-}
-
-static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
-{
-	GtkIMHtmlSmiley *smiley;
-	GtkWidget *icon = NULL;
-	GtkTextChildAnchor *anchor = NULL;
-	GSList *current = NULL;
-
-	smiley = (GtkIMHtmlSmiley *)user_data;
-	if (!smiley->imhtml) {
-#ifdef DEBUG_CUSTOM_SMILEY
-		purple_debug_error("custom-smiley", "gtk_custom_smiley_closed(): orphan smiley found: %p\n", smiley);
-#endif
-		g_object_unref(G_OBJECT(loader));
-		smiley->loader = NULL;
-		return;
-	}
-
-	for (current = smiley->anchors; current; current = g_slist_next(current)) {
-		anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
-		if (gtk_text_child_anchor_get_deleted(anchor))
-			icon = NULL;
-		else
-			icon = gtk_image_new_from_animation(smiley->icon);
-
-#ifdef DEBUG_CUSTOM_SMILEY
-		purple_debug_info("custom-smiley", "gtk_custom_smiley_closed(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n",
-				icon, smiley->icon, smiley->smile);
-#endif
-		if (icon) {
-			GList *wids;
-			gtk_widget_show(icon);
-
-			wids = gtk_text_child_anchor_get_widgets(anchor);
-
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
-
-			if (smiley->imhtml) {
-				if (wids) {
-					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
-					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
-					g_list_free(children);
-					gtk_container_add(GTK_CONTAINER(wids->data), icon);
-				} else
-					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
-			}
-			g_list_free(wids);
-		}
-		g_object_unref(anchor);
-	}
-
-	g_slist_free(smiley->anchors);
-	smiley->anchors = NULL;
-
-	g_object_unref(G_OBJECT(loader));
-	smiley->loader = NULL;
-}
-
-static void
-gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
-{
-#define CUSTOM_SMILEY_SIZE 96	/* XXX: Should this be a theme setting? */
-	if (width <= CUSTOM_SMILEY_SIZE && height <= CUSTOM_SMILEY_SIZE)
-		return;
-
-	if (width >= height) {
-		height = height * CUSTOM_SMILEY_SIZE / width;
-		width = CUSTOM_SMILEY_SIZE;
-	} else {
-		width = width * CUSTOM_SMILEY_SIZE / height;
-		height = CUSTOM_SMILEY_SIZE;
-	}
-
-	gdk_pixbuf_loader_set_size(loader, width, height);
-}
-
-void
-gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley)
-{
-	if (smiley->icon)
-		g_object_unref(smiley->icon);
-	if (smiley->loader)
-		g_object_unref(smiley->loader);  /* XXX: does this crash? */
-
-	smiley->icon = NULL;
-	smiley->loader = NULL;
-
-	if (smiley->file) {
-		/* We do not use the pixbuf loader for a smiley that can be loaded
-		 * from a file. (e.g., local custom smileys)
-		 */
-		return;
-	}
-
-	smiley->loader = gdk_pixbuf_loader_new();
-
-	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gtk_custom_smiley_allocated), smiley);
-	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gtk_custom_smiley_closed), smiley);
-	g_signal_connect(smiley->loader, "size_prepared", G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
-}
-
-GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
-		GtkIMHtmlSmileyFlags flags)
-{
-	GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
-	smiley->file = g_strdup(file);
-	smiley->smile = g_strdup(shortcut);
-	smiley->hidden = hide;
-	smiley->flags = flags;
-	smiley->imhtml = NULL;
-	gtk_imhtml_smiley_reload(smiley);
-	return smiley;
-}
-
-void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
-{
-	gtk_imhtml_disassociate_smiley(smiley);
-	g_free(smiley->smile);
-	g_free(smiley->file);
-	if (smiley->icon)
-		g_object_unref(smiley->icon);
-	if (smiley->loader)
-		g_object_unref(smiley->loader);
-	g_free(smiley->data);
-	g_free(smiley);
-}
-
-gboolean gtk_imhtml_class_register_protocol(const char *name,
-		gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link),
-		gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu))
-{
-	GtkIMHtmlClass *klass;
-	GtkIMHtmlProtocol *proto;
-
-	g_return_val_if_fail(name, FALSE);
-
-	klass = g_type_class_ref(GTK_TYPE_IMHTML);
-	g_return_val_if_fail(klass, FALSE);
-
-	if ((proto = imhtml_find_protocol(name, TRUE))) {
-		if (activate) {
-			return FALSE;
-		}
-		klass->protocols = g_list_remove(klass->protocols, proto);
-		g_free(proto->name);
-		g_free(proto);
-		return TRUE;
-	} else if (!activate) {
-		return FALSE;
-	}
-
-	proto = g_new0(GtkIMHtmlProtocol, 1);
-	proto->name = g_strdup(name);
-	proto->length = strlen(name);
-	proto->activate = activate;
-	proto->context_menu = context_menu;
-	klass->protocols = g_list_prepend(klass->protocols, proto);
-
-	return TRUE;
-}
-
-static void
-gtk_imhtml_activate_tag(GtkIMHtml *imhtml, GtkTextTag *tag)
-{
-	/* A link was clicked--we emit the "url_clicked" signal
-	 * with the URL as the argument */
-	g_object_ref(G_OBJECT(tag));
-	g_signal_emit(imhtml, signals[URL_CLICKED], 0, g_object_get_data(G_OBJECT(tag), "link_url"));
-	g_object_unref(G_OBJECT(tag));
-	g_object_set_data(G_OBJECT(tag), "visited", GINT_TO_POINTER(TRUE));
-	gtk_imhtml_set_link_color(GTK_IMHTML(imhtml), tag);
-}
-
-gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link)
-{
-	g_return_val_if_fail(link, FALSE);
-
-	if (link->tag) {
-		gtk_imhtml_activate_tag(link->imhtml, link->tag);
-	} else if (link->url) {
-		g_signal_emit(link->imhtml, signals[URL_CLICKED], 0, link->url);
-	} else
-		return FALSE;
-	return TRUE;
-}
-
-const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link)
-{
-	return link->url;
-}
-
-const GtkTextTag * gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link)
-{
-	return link->tag;
-}
-
-static gboolean return_add_newline_cb(GtkWidget *widget, gpointer data)
-{
-	GtkTextBuffer *buffer;
-	GtkTextMark *mark;
-	GtkTextIter iter;
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
-
-	/* Delete any currently selected text */
-	gtk_text_buffer_delete_selection(buffer, TRUE, TRUE);
-
-	/* Insert a newline at the current cursor position */
-	mark = gtk_text_buffer_get_insert(buffer);
-	gtk_text_buffer_get_iter_at_mark(buffer, &iter, mark);
-	gtk_imhtml_insert_html_at_iter(GTK_IMHTML(widget), "\n", 0, &iter);
-
-	/*
-	 * If we just newlined ourselves past the end of the visible area
-	 * then scroll down so the cursor is in view.
-	 */
-	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(widget),
-			gtk_text_buffer_get_insert(buffer),
-			0, FALSE, 0.0, 0.0);
-
-	return TRUE;
-}
-
-/*
- * It's kind of a pain that we need this function and the above just
- * to reinstate the default GtkTextView behavior.  It might be better
- * if GtkIMHtml didn't intercept the enter key and just required the
- * application to deal with it--it's really not much more work than it
- * is to connect to the current "message_send" signal.
- */
-void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml)
-{
-	g_signal_connect(G_OBJECT(imhtml), "message_send",
-		G_CALLBACK(return_add_newline_cb), NULL);
-}
-
-void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate)
-{
-	gulong signal_id;
-	signal_id = g_signal_handler_find(imhtml->text_buffer,
-			G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_UNBLOCKED, 0, 0, NULL,
-			mark_set_so_update_selection_cb, NULL);
-	if (populate) {
-		if (!signal_id) {
-			/* We didn't find an unblocked signal handler, which means there
-			   is a blocked handler. Now unblock it.
-			   This is necessary to avoid a mutex-lock when the debug message
-			   saying 'no handler is blocked' is printed in the debug window.
-				-- sad
-			 */
-			g_signal_handlers_unblock_matched(imhtml->text_buffer,
-					G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
-					mark_set_so_update_selection_cb, NULL);
-		}
-	} else {
-		/* Block only if we found an unblocked handler */
-		if (signal_id)
-			g_signal_handler_block(imhtml->text_buffer, signal_id);
-	}
-}

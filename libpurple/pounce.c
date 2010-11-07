@@ -326,7 +326,7 @@ start_element_handler(GMarkupParseContext *context,
 		data->buffer = NULL;
 	}
 
-	if (purple_strequal(element_name, "pounce")) {
+	if (!strcmp(element_name, "pounce")) {
 		const char *ui = g_hash_table_lookup(atts, "ui");
 
 		if (ui == NULL) {
@@ -338,7 +338,7 @@ start_element_handler(GMarkupParseContext *context,
 
 		data->events = 0;
 	}
-	else if (purple_strequal(element_name, "account")) {
+	else if (!strcmp(element_name, "account")) {
 		const char *protocol_id = g_hash_table_lookup(atts, "protocol");
 
 		if (protocol_id == NULL) {
@@ -348,7 +348,7 @@ start_element_handler(GMarkupParseContext *context,
 		else
 			data->protocol_id = g_strdup(protocol_id);
 	}
-	else if (purple_strequal(element_name, "option")) {
+	else if (!strcmp(element_name, "option")) {
 		const char *type = g_hash_table_lookup(atts, "type");
 
 		if (type == NULL) {
@@ -358,7 +358,7 @@ start_element_handler(GMarkupParseContext *context,
 		else
 			data->option_type = g_strdup(type);
 	}
-	else if (purple_strequal(element_name, "event")) {
+	else if (!strcmp(element_name, "event")) {
 		const char *type = g_hash_table_lookup(atts, "type");
 
 		if (type == NULL) {
@@ -368,7 +368,7 @@ start_element_handler(GMarkupParseContext *context,
 		else
 			data->event_type = g_strdup(type);
 	}
-	else if (purple_strequal(element_name, "action")) {
+	else if (!strcmp(element_name, "action")) {
 		const char *type = g_hash_table_lookup(atts, "type");
 
 		if (type == NULL) {
@@ -378,7 +378,7 @@ start_element_handler(GMarkupParseContext *context,
 		else
 			data->action_name = g_strdup(type);
 	}
-	else if (purple_strequal(element_name, "param")) {
+	else if (!strcmp(element_name, "param")) {
 		const char *param_name = g_hash_table_lookup(atts, "name");
 
 		if (param_name == NULL) {
@@ -404,7 +404,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->buffer = NULL;
 	}
 
-	if (purple_strequal(element_name, "account")) {
+	if (!strcmp(element_name, "account")) {
 		char *tmp;
 		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
@@ -412,43 +412,43 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->protocol_id = g_strdup(_purple_oscar_convert(buffer, tmp));
 		g_free(tmp);
 	}
-	else if (purple_strequal(element_name, "pouncee")) {
+	else if (!strcmp(element_name, "pouncee")) {
 		g_free(data->pouncee);
 		data->pouncee = g_strdup(buffer);
 	}
-	else if (purple_strequal(element_name, "option")) {
-		if (purple_strequal(data->option_type, "on-away"))
+	else if (!strcmp(element_name, "option")) {
+		if (!strcmp(data->option_type, "on-away"))
 			data->options |= PURPLE_POUNCE_OPTION_AWAY;
 
 		g_free(data->option_type);
 		data->option_type = NULL;
 	}
-	else if (purple_strequal(element_name, "event")) {
-		if (purple_strequal(data->event_type, "sign-on"))
+	else if (!strcmp(element_name, "event")) {
+		if (!strcmp(data->event_type, "sign-on"))
 			data->events |= PURPLE_POUNCE_SIGNON;
-		else if (purple_strequal(data->event_type, "sign-off"))
+		else if (!strcmp(data->event_type, "sign-off"))
 			data->events |= PURPLE_POUNCE_SIGNOFF;
-		else if (purple_strequal(data->event_type, "away"))
+		else if (!strcmp(data->event_type, "away"))
 			data->events |= PURPLE_POUNCE_AWAY;
-		else if (purple_strequal(data->event_type, "return-from-away"))
+		else if (!strcmp(data->event_type, "return-from-away"))
 			data->events |= PURPLE_POUNCE_AWAY_RETURN;
-		else if (purple_strequal(data->event_type, "idle"))
+		else if (!strcmp(data->event_type, "idle"))
 			data->events |= PURPLE_POUNCE_IDLE;
-		else if (purple_strequal(data->event_type, "return-from-idle"))
+		else if (!strcmp(data->event_type, "return-from-idle"))
 			data->events |= PURPLE_POUNCE_IDLE_RETURN;
-		else if (purple_strequal(data->event_type, "start-typing"))
+		else if (!strcmp(data->event_type, "start-typing"))
 			data->events |= PURPLE_POUNCE_TYPING;
-		else if (purple_strequal(data->event_type, "typed"))
+		else if (!strcmp(data->event_type, "typed"))
 			data->events |= PURPLE_POUNCE_TYPED;
-		else if (purple_strequal(data->event_type, "stop-typing"))
+		else if (!strcmp(data->event_type, "stop-typing"))
 			data->events |= PURPLE_POUNCE_TYPING_STOPPED;
-		else if (purple_strequal(data->event_type, "message-received"))
+		else if (!strcmp(data->event_type, "message-received"))
 			data->events |= PURPLE_POUNCE_MESSAGE_RECEIVED;
 
 		g_free(data->event_type);
 		data->event_type = NULL;
 	}
-	else if (purple_strequal(element_name, "action")) {
+	else if (!strcmp(element_name, "action")) {
 		if (data->pounce != NULL) {
 			purple_pounce_action_register(data->pounce, data->action_name);
 			purple_pounce_action_set_enabled(data->pounce, data->action_name, TRUE);
@@ -457,7 +457,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		g_free(data->action_name);
 		data->action_name = NULL;
 	}
-	else if (purple_strequal(element_name, "param")) {
+	else if (!strcmp(element_name, "param")) {
 		if (data->pounce != NULL) {
 			purple_pounce_action_set_attribute(data->pounce, data->action_name,
 											 data->param_name, buffer);
@@ -466,7 +466,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		g_free(data->param_name);
 		data->param_name = NULL;
 	}
-	else if (purple_strequal(element_name, "events")) {
+	else if (!strcmp(element_name, "events")) {
 		PurpleAccount *account;
 
 		account = purple_accounts_find(data->account_name, data->protocol_id);
@@ -499,11 +499,11 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		g_free(data->pouncee);
 		data->pouncee = NULL;
 	}
-	else if (purple_strequal(element_name, "save")) {
+	else if (!strcmp(element_name, "save")) {
 		if (data->pounce != NULL)
 			purple_pounce_set_save(data->pounce, TRUE);
 	}
-	else if (purple_strequal(element_name, "pounce")) {
+	else if (!strcmp(element_name, "pounce")) {
 		data->pounce  = NULL;
 		data->events  = 0;
 		data->options = 0;
@@ -1023,7 +1023,7 @@ GList *purple_pounces_get_all_for_ui(const char *ui)
 
 	for (iter = pounces; iter; iter = iter->next) {
 		PurplePounce *pounce = iter->data;
-		if (purple_strequal(pounce->ui_type, ui))
+		if (pounce->ui_type && strcmp(pounce->ui_type, ui) == 0)
 			list = g_list_prepend(list, pounce);
 	}
 	list = g_list_reverse(list);
@@ -1042,39 +1042,35 @@ free_pounce_handler(gpointer user_data)
 static void
 buddy_state_cb(PurpleBuddy *buddy, PurplePounceEvent event)
 {
-	PurpleAccount *account = purple_buddy_get_account(buddy);
-	const gchar *name = purple_buddy_get_name(buddy);
-
-	purple_pounce_execute(account, name, event);
+	purple_pounce_execute(buddy->account, buddy->name, event);
 }
 
 static void
 buddy_status_changed_cb(PurpleBuddy *buddy, PurpleStatus *old_status,
                         PurpleStatus *status)
 {
-	PurpleAccount *account = purple_buddy_get_account(buddy);
-	const gchar *name = purple_buddy_get_name(buddy);
 	gboolean old_available, available;
 
 	available = purple_status_is_available(status);
 	old_available = purple_status_is_available(old_status);
 
 	if (available && !old_available)
-		purple_pounce_execute(account, name, PURPLE_POUNCE_AWAY_RETURN);
+		purple_pounce_execute(buddy->account, buddy->name,
+		                    PURPLE_POUNCE_AWAY_RETURN);
 	else if (!available && old_available)
-		purple_pounce_execute(account, name, PURPLE_POUNCE_AWAY);
+		purple_pounce_execute(buddy->account, buddy->name,
+		                    PURPLE_POUNCE_AWAY);
 }
 
 static void
 buddy_idle_changed_cb(PurpleBuddy *buddy, gboolean old_idle, gboolean idle)
 {
-	PurpleAccount *account = purple_buddy_get_account(buddy);
-	const gchar *name = purple_buddy_get_name(buddy);
-
 	if (idle && !old_idle)
-		purple_pounce_execute(account, name, PURPLE_POUNCE_IDLE);
+		purple_pounce_execute(buddy->account, buddy->name,
+		                    PURPLE_POUNCE_IDLE);
 	else if (!idle && old_idle)
-		purple_pounce_execute(account, name, PURPLE_POUNCE_IDLE_RETURN);
+		purple_pounce_execute(buddy->account, buddy->name,
+		                    PURPLE_POUNCE_IDLE_RETURN);
 }
 
 static void
@@ -1157,7 +1153,4 @@ purple_pounces_uninit()
 	}
 
 	purple_signals_disconnect_by_handle(purple_pounces_get_handle());
-
-	g_hash_table_destroy(pounce_handlers);
-	pounce_handlers = NULL;
 }

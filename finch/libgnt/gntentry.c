@@ -23,7 +23,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gntmarshal.h"
@@ -53,11 +52,6 @@ struct _GntEntryKillRing
 {
 	GString *buffer;
 	GntEntryAction last;
-};
-
-struct _GntEntrySearch
-{
-	char *needle;
 };
 
 static guint signals[SIGS] = { 0 };
@@ -277,7 +271,6 @@ gnt_entry_draw(GntWidget *widget)
 	GntEntry *entry = GNT_ENTRY(widget);
 	int stop;
 	gboolean focus;
-	int curpos;
 
 	if ((focus = gnt_widget_has_focus(widget)))
 		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TEXT_NORMAL));
@@ -290,16 +283,15 @@ gnt_entry_draw(GntWidget *widget)
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
 	else
-		mvwprintw(widget->window, 0, 0, "%s", C_(entry->scroll));
+		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
-	curpos = gnt_util_onscreen_width(entry->scroll, entry->cursor);
 	if (focus)
-		mvwchgat(widget->window, 0, curpos, 1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
-	wmove(widget->window, 0, curpos);
+		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),
+				1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
 
 	GNTDEBUG;
 }
@@ -373,7 +365,7 @@ backspace(GntBindable *bind, GList *null)
 		return TRUE;
 
 	len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
-	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, -len);
+	update_kill_ring(entry, ENTRY_DEL_BWD_CHAR, entry->cursor, -len);
 	entry->cursor -= len;
 
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
@@ -399,7 +391,7 @@ delkey(GntBindable *bind, GList *null)
 		return FALSE;
 
 	len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
-	update_kill_ring(entry, ENTRY_JAIL, entry->cursor, len);
+	update_kill_ring(entry, ENTRY_DEL_FWD_CHAR, entry->cursor, len);
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
 	entry->end -= len;
 	entry_redraw(GNT_WIDGET(entry));
@@ -476,52 +468,6 @@ history_prev(GntBindable *bind, GList *null)
 }
 
 static gboolean
-history_search(GntBindable *bind, GList *null)
-{
-	GntEntry *entry = GNT_ENTRY(bind);
-	GList *iter;
-	const char *current;
-	
-	if (entry->history->prev && entry->search->needle)
-		current = entry->search->needle;
-	else
-		current = gnt_entry_get_text(entry);
-
-	if (!entry->histlength || !entry->history->next || !*current)
-		return FALSE;
-
-	for (iter = entry->history->next; iter; iter = iter->next) {
-		const char *str = iter->data;
-		/* A more utf8-friendly version of strstr would have been better, but
-		 * for now, this will have to do. */
-		if (strstr(str, current) != NULL)
-			break;
-	}
-
-	if (!iter)
-		return TRUE;
-
-	if (entry->history->prev == NULL) {
-		/* We are doing it for the first time. Save the current contents */
-		char *text = g_strdup(gnt_entry_get_text(entry));
-
-		g_free(entry->search->needle);
-		entry->search->needle = g_strdup(current);
-
-		g_free(entry->history->data);
-		entry->history->data = text;
-	}
-
-	entry->history = iter;
-	gnt_entry_set_text_internal(entry, entry->history->data);
-	destroy_suggest(entry);
-	entry_text_changed(entry);
-
-	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
-	return TRUE;
-}
-
-static gboolean
 clipboard_paste(GntBindable *bind, GList *n)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
@@ -547,7 +493,7 @@ suggest_show(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down", NULL);
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
 		return TRUE;
 	}
 	return show_suggest_dropdown(entry);
@@ -570,28 +516,6 @@ suggest_prev(GntBindable *bind, GList *null)
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
 		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-up", NULL);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-static gboolean
-suggest_next_page(GntBindable *bind, GList *null)
-{
-	GntEntry *entry = GNT_ENTRY(bind);
-	if (entry->ddown) {
-		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "page-down", NULL);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-static gboolean
-suggest_prev_page(GntBindable *bind, GList *null)
-{
-	GntEntry *entry = GNT_ENTRY(bind);
-	if (entry->ddown) {
-		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "page-up", NULL);
 		return TRUE;
 	}
 	return FALSE;
@@ -627,10 +551,10 @@ del_to_end(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
-#define SAME(a,b)    ((g_unichar_isalnum(a) && g_unichar_isalnum(b)) || \
+#define SAME(a,b)    ((g_unichar_isalpha(a) && g_unichar_isalpha(b)) || \
+				(g_unichar_isdigit(a) && g_unichar_isdigit(b)) || \
 				(g_unichar_isspace(a) && g_unichar_isspace(b)) || \
-				(g_unichar_iswide(a) && g_unichar_iswide(b)) || \
-				(g_unichar_ispunct(a) && g_unichar_ispunct(b)))
+				(g_unichar_iswide(a) && g_unichar_iswide(b)))
 
 static const char *
 begin_word(const char *text, const char *begin)
@@ -656,13 +580,11 @@ next_begin_word(const char *text, const char *end)
 	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
 		text = g_utf8_find_next_char(text, end);
 
-	if (text) {
-		ch = g_utf8_get_char(text);
-		while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
-			gunichar cur = g_utf8_get_char(text);
-			if (!SAME(ch, cur))
-				break;
-		}
+	ch = g_utf8_get_char(text);
+	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
+		gunichar cur = g_utf8_get_char(text);
+		if (!SAME(ch, cur))
+			break;
 	}
 	return (text ? text : end);
 }
@@ -906,9 +828,6 @@ gnt_entry_destroy(GntWidget *widget)
 		gnt_widget_destroy(entry->ddown->parent);
 	}
 
-	g_free(entry->search->needle);
-	g_free(entry->search);
-
 	jail_killring(entry->killring);
 }
 
@@ -935,7 +854,7 @@ static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
-	char s[3] = {'\033', erasechar(), 0};
+	char s[2] = {erasechar(), 0};
 
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->clicked = gnt_entry_clicked;
@@ -971,7 +890,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_register_binding(bindable, "cursor-end", GNT_KEY_END, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
-	gnt_bindable_register_binding(bindable, "delete-prev", s + 1, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev", s, NULL);
 	gnt_bindable_register_binding(bindable, "delete-prev", GNT_KEY_CTRL_H, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-next", delkey,
 				GNT_KEY_DEL, NULL);
@@ -982,7 +901,6 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev-word", del_prev_word,
 				GNT_KEY_CTRL_W, NULL);
-	gnt_bindable_register_binding(bindable, "delete-prev-word", s, NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev-word", move_back_word,
 				"\033" "b", NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev", move_back,
@@ -1005,18 +923,12 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-prev", suggest_prev,
 				GNT_KEY_UP, NULL);
-	gnt_bindable_class_register_action(bindable, "suggest-next-page", suggest_next_page,
-				GNT_KEY_PGDOWN, NULL);
-	gnt_bindable_class_register_action(bindable, "suggest-prev-page", suggest_prev_page,
-				GNT_KEY_PGUP, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,
 				GNT_KEY_CTRL_UP, NULL);
 	gnt_bindable_register_binding(bindable, "history-prev", GNT_KEY_CTRL_P, NULL);
 	gnt_bindable_register_binding(bindable, "history-next", GNT_KEY_CTRL_N, NULL);
-	gnt_bindable_class_register_action(bindable, "history-search", history_search,
-				GNT_KEY_CTRL_R, NULL);
 	gnt_bindable_class_register_action(bindable, "clipboard-paste", clipboard_paste,
 				GNT_KEY_CTRL_V, NULL);
 
@@ -1048,7 +960,6 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	entry->always = FALSE;
 	entry->suggests = NULL;
 	entry->killring = new_killring();
-	entry->search = g_new0(GntEntrySearch, 1);
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
@@ -1128,11 +1039,8 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 		snprintf(entry->start, len + 1, "%s", text);
 	entry->end = entry->start + len;
 
-	if ((entry->scroll = entry->start + scroll) > entry->end)
-		entry->scroll = entry->end;
-
-	if ((entry->cursor = entry->end - cursor) > entry->end)
-		entry->cursor = entry->end;
+	entry->scroll = entry->start + scroll;
+	entry->cursor = entry->end - cursor;
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(entry), GNT_WIDGET_MAPPED))
 		entry_redraw(GNT_WIDGET(entry));

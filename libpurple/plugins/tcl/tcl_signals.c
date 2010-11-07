@@ -160,7 +160,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 {
 	GString *name, *val;
 	PurpleBlistNode *node;
-	int i;
+	int error, i;
 	void *retval = NULL;
 	Tcl_Obj *cmd, *arg, *result;
 	void **vals; /* Used for inout parameters */
@@ -292,13 +292,13 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					node = *va_arg(args, PurpleBlistNode **);
 				else
 					node = va_arg(args, PurpleBlistNode *);
-				switch (purple_blist_node_get_type(node)) {
+				switch (node->type) {
 				case PURPLE_BLIST_GROUP_NODE:
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("group", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_group_get_name((PurpleGroup *)node), -1));
+								 Tcl_NewStringObj(((PurpleGroup *)node)->name, -1));
 					break;
 				case PURPLE_BLIST_CONTACT_NODE:
 					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
@@ -309,20 +309,20 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("buddy", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_buddy_get_name((PurpleBuddy *)node), -1));
+								 Tcl_NewStringObj(((PurpleBuddy *)node)->name, -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
-										    purple_buddy_get_account((PurpleBuddy *)node)));
+										  ((PurpleBuddy *)node)->account));
 					break;
 				case PURPLE_BLIST_CHAT_NODE:
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("chat", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(purple_chat_get_name((PurpleChat *)node), -1));
+								 Tcl_NewStringObj(((PurpleChat *)node)->alias, -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 purple_tcl_ref_new(PurpleTclRefAccount,
-										  purple_chat_get_account((PurpleChat *)node)));
+										  ((PurpleChat *)node)->account));
 					break;
 				case PURPLE_BLIST_OTHER_NODE:
 					arg = Tcl_NewStringObj("other", -1);
@@ -335,7 +335,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	}
 
 	/* Call the friggin' procedure already */
-	if (Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL) != TCL_OK) {
+	if ((error = Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL)) != TCL_OK) {
 		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
 			   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 	} else {
@@ -345,7 +345,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			if (purple_value_get_type(handler->returntype) == PURPLE_TYPE_STRING) {
 				retval = (void *)g_strdup(Tcl_GetString(result));
 			} else {
-				if (Tcl_GetIntFromObj(handler->interp, result, (int *)&retval) != TCL_OK) {
+				if ((error = Tcl_GetIntFromObj(handler->interp, result, (int *)&retval)) != TCL_OK) {
 					purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Error retrieving procedure result: %s\n",
 						   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 					retval = NULL;

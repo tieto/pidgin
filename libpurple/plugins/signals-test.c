@@ -20,10 +20,9 @@
  */
 #define SIGNAL_TEST_PLUGIN_ID "core-signals-test"
 
-#include "internal.h"
-
 #include <stdio.h>
 
+#include "internal.h"
 #include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
@@ -117,9 +116,8 @@ buddy_status_changed_cb(PurpleBuddy *buddy, PurpleStatus *old_status,
                         PurpleStatus *status, void *data)
 {
 	purple_debug_misc("signals test", "buddy-status-changed (%s %s to %s)\n",
-	                  purple_buddy_get_name(buddy),
-	                  purple_status_get_id(old_status),
-	                  purple_status_get_id(status));
+	                buddy->name, purple_status_get_id(old_status),
+	                purple_status_get_id(status));
 }
 
 static void
@@ -127,58 +125,31 @@ buddy_idle_changed_cb(PurpleBuddy *buddy, gboolean old_idle, gboolean idle,
                       void *data)
 {
 	purple_debug_misc("signals test", "buddy-idle-changed (%s %s)\n",
-	                  purple_buddy_get_name(buddy),
-	                  old_idle ? "unidled" : "idled");
+	                buddy->name, old_idle ? "unidled" : "idled");
 }
 
 static void
 buddy_signed_on_cb(PurpleBuddy *buddy, void *data)
 {
-	purple_debug_misc("signals test", "buddy-signed-on (%s)\n",
-	                  purple_buddy_get_name(buddy));
+	purple_debug_misc("signals test", "buddy-signed-on (%s)\n", buddy->name);
 }
 
 static void
 buddy_signed_off_cb(PurpleBuddy *buddy, void *data)
 {
-	purple_debug_misc("signals test", "buddy-signed-off (%s)\n",
-	                  purple_buddy_get_name(buddy));
+	purple_debug_misc("signals test", "buddy-signed-off (%s)\n", buddy->name);
 }
 
 static void
-blist_node_added_cb(PurpleBlistNode *bnode, void *data)
+buddy_added_cb(PurpleBuddy *buddy, void *data)
 {
-	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
-		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
-		/* Close enough */
-		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
-	else
-		name = "(unknown)";
-
-	purple_debug_misc("signals test", "blist_node_added_cb (%s)\n",
-	                  name ? name : "(null)");
+	purple_debug_misc("signals test", "buddy_added_cb (%s)\n", purple_buddy_get_name(buddy));
 }
 
 static void
-blist_node_removed_cb(PurpleBlistNode *bnode, void *data)
+buddy_removed_cb(PurpleBuddy *buddy, void *data)
 {
-	const char *name;
-	if (PURPLE_BLIST_NODE_IS_GROUP(bnode))
-		name = purple_group_get_name(PURPLE_GROUP(bnode));
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(bnode))
-		/* Close enough */
-		name = purple_contact_get_alias(PURPLE_CONTACT(bnode));
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-		name = purple_buddy_get_name(PURPLE_BUDDY(bnode));
-	else
-		name = "(unknown)";
-
-	purple_debug_misc("signals test", "blist_node_removed_cb (%s)\n",
-	                  name ? name : "(null)");
+	purple_debug_misc("signals test", "buddy_removed_cb (%s)\n", purple_buddy_get_name(buddy));
 }
 
 static void
@@ -189,27 +160,17 @@ blist_node_aliased(PurpleBlistNode *node, const char *old_alias)
 	PurpleChat *c = (PurpleChat *)node;
 	PurpleGroup *g = (PurpleGroup *)node;
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (Contact: %s, %s)\n",
-		                  purple_contact_get_alias(p), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (Buddy: %s, %s)\n",
-		                  purple_buddy_get_name(b), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (Chat: %s, %s)\n",
-		                  purple_chat_get_name(c), old_alias);
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (Group: %s, %s)\n",
-		                  purple_group_get_name(g), old_alias);
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-aliased (UNKNOWN: %d, %s)\n",
-		                  purple_blist_node_get_type(node), old_alias);
-	}
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		purple_debug_misc("signals test", "blist-node-aliased (Contact: %s, %s)\n", p->alias, old_alias);
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		purple_debug_misc("signals test", "blist-node-aliased (Buddy: %s, %s)\n", b->name, old_alias);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		purple_debug_misc("signals test", "blist-node-aliased (Chat: %s, %s)\n", c->alias, old_alias);
+	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_debug_misc("signals test", "blist-node-aliased (Group: %s, %s)\n", g->name, old_alias);
+	else
+		purple_debug_misc("signals test", "blist-node-aliased (UNKNOWN: %d, %s)\n", node->type, old_alias);
+
 }
 
 static void
@@ -220,27 +181,17 @@ blist_node_extended_menu_cb(PurpleBlistNode *node, void *data)
 	PurpleChat *c = (PurpleChat *)node;
 	PurpleGroup *g = (PurpleGroup *)node;
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (Contact: %s)\n",
-		                  purple_contact_get_alias(p));
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (Buddy: %s)\n",
-		                  purple_buddy_get_name(b));
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (Chat: %s)\n",
-		                  purple_chat_get_name(c));
-	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (Group: %s)\n",
-		                  purple_group_get_name(g));
-	} else {
-		purple_debug_misc("signals test",
-		                  "blist-node-extended-menu (UNKNOWN: %d)\n",
-		                  purple_blist_node_get_type(node));
-	}
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		purple_debug_misc("signals test", "blist-node-extended-menu (Contact: %s)\n", p->alias);
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		purple_debug_misc("signals test", "blist-node-extended-menu (Buddy: %s)\n", b->name);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		purple_debug_misc("signals test", "blist-node-extended-menu (Chat: %s)\n", c->alias);
+	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_debug_misc("signals test", "blist-node-extended-menu (Group: %s)\n", g->name);
+	else
+		purple_debug_misc("signals test", "blist-node-extended-menu (UNKNOWN: %d)\n", node->type);
+
 }
 
 
@@ -547,26 +498,6 @@ quitting_cb(void *data)
 	purple_debug_misc("signals test", "quitting ()\n");
 }
 
-static void
-printhash(gpointer key, gpointer value, gpointer data)
-{
-	char *a = (char *)key;
-	char *b = (char *)value;
-	GString *str = (GString *)data;
-	g_string_append_printf(str, "   [%s] = [%s]\n", a, b ? b : "(null)");
-}
-
-static gboolean
-uri_handler(const char *proto, const char *cmd, GHashTable *params)
-{
-	GString *str = g_string_new("\n{\n");
-	g_hash_table_foreach(params, printhash, str);
-	g_string_append_c(str, '}');
-	purple_debug_misc("signals test", "uri handler (%s, %s, %s)\n", proto, cmd, str->str);
-	g_string_free(str, TRUE);
-	return FALSE;
-}
-
 /**************************************************************************
  * File transfer signal callbacks
  **************************************************************************/
@@ -592,12 +523,12 @@ ft_send_start_cb(PurpleXfer *xfer, gpointer data) {
 
 static void
 ft_recv_cancel_cb(PurpleXfer *xfer, gpointer data) {
-	purple_debug_misc("signals test", "file receive cancelled\n");
+	purple_debug_misc("signals test", "file receive canceled\n");
 }
 
 static void
 ft_send_cancel_cb(PurpleXfer *xfer, gpointer data) {
-	purple_debug_misc("signals test", "file send cancelled\n");
+	purple_debug_misc("signals test", "file send canceled\n");
 }
 
 static void
@@ -645,70 +576,6 @@ notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint c
 }
 
 /**************************************************************************
- * Jabber signals callbacks
- **************************************************************************/
-static gboolean
-jabber_iq_received(PurpleConnection *pc, const char *type, const char *id,
-                   const char *from, xmlnode *iq)
-{
-	purple_debug_misc("signals test", "jabber IQ (type=%s, id=%s, from=%s) %p\n",
-	                  type, id, from ? from : "(null)", iq);
-
-	/* We don't want the plugin to stop processing */
-	return FALSE;
-}
-
-static gboolean
-jabber_message_received(PurpleConnection *pc, const char *type, const char *id,
-                        const char *from, const char *to, xmlnode *message)
-{
-	purple_debug_misc("signals test", "jabber message (type=%s, id=%s, "
-	                  "from=%s to=%s) %p\n",
-	                  type ? type : "(null)", id ? id : "(null)",
-	                  from ? from : "(null)", to ? to : "(null)", message);
-
-	/* We don't want the plugin to stop processing */
-	return FALSE;
-}
-
-static gboolean
-jabber_presence_received(PurpleConnection *pc, const char *type,
-                         const char *from, xmlnode *presence)
-{
-	purple_debug_misc("signals test", "jabber presence (type=%s, from=%s) %p\n",
-	                  type ? type : "(null)", from ? from : "(null)", presence);
-
-	/* We don't want the plugin to stop processing */
-	return FALSE;
-}
-
-static gboolean
-jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
-                  const char *from, xmlnode *child)
-{
-	purple_debug_misc("signals test", "jabber watched IQ (type=%s, id=%s, from=%s)\n"
-	                  "child %p name=%s, namespace=%s\n",
-	                  type, id, from, child, child->name,
-	                  xmlnode_get_namespace(child));
-
-	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
-		/* Send the requisite reply */
-		xmlnode *iq = xmlnode_new("iq");
-		xmlnode_set_attrib(iq, "to", from);
-		xmlnode_set_attrib(iq, "id", id);
-		xmlnode_set_attrib(iq, "type", "result");
-
-		purple_signal_emit(purple_connection_get_prpl(pc),
-		                   "jabber-sending-xmlnode", pc, &iq);
-		if (iq != NULL)
-			xmlnode_free(iq);
-	}
-
-	/* Cookie monster eats IQ stanzas; the prpl shouldn't keep processing */
-	return TRUE;
-}
-
-/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -723,7 +590,6 @@ plugin_load(PurplePlugin *plugin)
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
-	void *jabber_handle   = purple_plugins_find_with_id("prpl-jabber");
 
 	/* Accounts subsystem signals */
 	purple_signal_connect(accounts_handle, "account-connecting",
@@ -752,10 +618,10 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(buddy_signed_on_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, PURPLE_CALLBACK(buddy_signed_off_cb), NULL);
-	purple_signal_connect(blist_handle, "blist-node-added",
-						plugin, PURPLE_CALLBACK(blist_node_added_cb), NULL);
-	purple_signal_connect(blist_handle, "blist-node-removed",
-						plugin, PURPLE_CALLBACK(blist_node_removed_cb), NULL);
+	purple_signal_connect(blist_handle, "buddy-added",
+						plugin, PURPLE_CALLBACK(buddy_added_cb), NULL);
+	purple_signal_connect(blist_handle, "buddy-removed",
+						plugin, PURPLE_CALLBACK(buddy_removed_cb), NULL);
 	purple_signal_connect(blist_handle, "buddy-icon-changed",
 						plugin, PURPLE_CALLBACK(buddy_icon_changed_cb), NULL);
 	purple_signal_connect(blist_handle, "blist-node-aliased",
@@ -840,8 +706,6 @@ plugin_load(PurplePlugin *plugin)
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",
 						plugin, PURPLE_CALLBACK(quitting_cb), NULL);
-	purple_signal_connect(core_handle, "uri-handler",
-						plugin,	PURPLE_CALLBACK(uri_handler), NULL);
 
 	/* File transfer signals */
 	purple_signal_connect(ft_handle, "file-recv-accept",
@@ -871,45 +735,6 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(notify_handle, "displaying-emails-notification",
 						plugin, PURPLE_CALLBACK(notify_emails_cb), NULL);
 
-	/* Jabber signals */
-	if (jabber_handle) {
-		purple_signal_connect(jabber_handle, "jabber-receiving-iq", plugin,
-		                      PURPLE_CALLBACK(jabber_iq_received), NULL);
-		purple_signal_connect(jabber_handle, "jabber-receiving-message", plugin,
-		                      PURPLE_CALLBACK(jabber_message_received), NULL);
-		purple_signal_connect(jabber_handle, "jabber-receiving-presence", plugin,
-		                      PURPLE_CALLBACK(jabber_presence_received), NULL);
-
-		/* IQ namespace signals */
-		purple_signal_emit(jabber_handle, "jabber-register-namespace-watcher",
-		                   "bogus_node", "super-duper-namespace");
-		/* The above is equivalent to doing:
-			int result = GPOINTER_TO_INT(purple_plugin_ipc_call(jabber_handle, "register_namespace_watcher", &ok, "bogus_node", "super-duper-namespace"));
-		 */
-
-		purple_signal_connect(jabber_handle, "jabber-watched-iq", plugin,
-		                      PURPLE_CALLBACK(jabber_watched_iq), NULL);
-	}
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	void *jabber_handle = purple_plugins_find_with_id("prpl-jabber");
-
-	purple_signals_disconnect_by_handle(plugin);
-
-	if (jabber_handle) {
-		/* Unregister watched namespaces */
-		purple_signal_emit(jabber_handle, "jabber-unregister-namespace-watcher",
-		                   "bogus_node", "super-duper-namespace");
-		/* The above is equivalent to doing:
-		   int result = GPOINTER_TO_INT(purple_plugin_ipc_call(jabber_handle, "unregister_namespace_watcher", &ok, "bogus_node", "super-duper-namespace"));
-		 */
-	}
-
 	return TRUE;
 }
 
@@ -935,7 +760,7 @@ static PurplePluginInfo info =
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

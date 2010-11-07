@@ -30,9 +30,6 @@
 #include <glib-object.h>
 #include <glib.h>
 
-/** @copydoc _PurpleRequestField */
-typedef struct _PurpleRequestField PurpleRequestField;
-
 #include "account.h"
 
 #define PURPLE_DEFAULT_ACTION_NONE	-1
@@ -96,11 +93,10 @@ typedef struct
 
 } PurpleRequestFieldGroup;
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_REQUEST_C_)
 /**
  * A request field.
  */
-struct _PurpleRequestField
+typedef struct
 {
 	PurpleRequestFieldType type;
 	PurpleRequestFieldGroup *group;
@@ -150,7 +146,6 @@ struct _PurpleRequestField
 		struct
 		{
 			GList *items;
-			GList *icons;
 			GHashTable *item_data;
 			GList *selected;
 			GHashTable *selected_table;
@@ -181,8 +176,7 @@ struct _PurpleRequestField
 
 	void *ui_data;
 
-};
-#endif
+} PurpleRequestField;
 
 /**
  * Request UI operations.
@@ -237,18 +231,10 @@ typedef struct
 	                        PurpleAccount *account, const char *who,
 	                        PurpleConversation *conv, void *user_data);
 
-	/** @see purple_request_action_with_icon_varg(). */
-	void *(*request_action_with_icon)(const char *title, const char *primary,
-	                        const char *secondary, int default_action,
-	                        PurpleAccount *account, const char *who,
-	                        PurpleConversation *conv, 
-	                        gconstpointer icon_data, gsize icon_size,
-	                        void *user_data,
-	                        size_t action_count, va_list actions);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleRequestUiOps;
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
@@ -535,17 +521,6 @@ void purple_request_field_set_required(PurpleRequestField *field,
 PurpleRequestFieldType purple_request_field_get_type(const PurpleRequestField *field);
 
 /**
- * Returns the group for the field.
- *
- * @param field The field.
- *
- * @return The UI data.
- *
- * @since 2.6.0
- */
-PurpleRequestFieldGroup *purple_request_field_get_group(const PurpleRequestField *field);
-
-/**
  * Returns the ID of a field.
  *
  * @param field The field.
@@ -589,30 +564,6 @@ const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
  * @return TRUE if the field is required, or FALSE.
  */
 gboolean purple_request_field_is_required(const PurpleRequestField *field);
-
-/**
- * Returns the ui_data for a field.
- *
- * @param field The field.
- *
- * @return The UI data.
- *
- * @since 2.6.0
- */
-gpointer purple_request_field_get_ui_data(const PurpleRequestField *field);
-
-/**
- * Sets the ui_data for a field.
- *
- * @param field The field.
- * @param ui_data The UI data.
- *
- * @return The UI data.
- *
- * @since 2.6.0
- */
-void purple_request_field_set_ui_data(PurpleRequestField *field,
-                                      gpointer ui_data);
 
 /*@}*/
 
@@ -962,22 +913,9 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  * @param field The list field.
  * @param item  The list item.
  * @param data  The associated data.
- *
- * @deprecated Use purple_request_field_list_add_icon() instead.
  */
 void purple_request_field_list_add(PurpleRequestField *field,
 								 const char *item, void *data);
-
-/**
- * Adds an item to a list field.
- *
- * @param field The list field.
- * @param item  The list item.
- * @param icon_path The path to icon file, or @c NULL for no icon.
- * @param data  The associated data.
- */
-void purple_request_field_list_add_icon(PurpleRequestField *field,
-								 const char *item, const char* icon_path, void* data);
 
 /**
  * Adds a selected item to the list field.
@@ -1036,18 +974,6 @@ GList *purple_request_field_list_get_selected(
  * @constreturn The list of items.
  */
 GList *purple_request_field_list_get_items(const PurpleRequestField *field);
-
-/**
- * Returns a list of icons in a list field.
- *
- * The icons will correspond with the items, in order.
- *
- * @param field The field.
- *
- * @constreturn The list of icons or @c NULL (i.e. the empty GList) if no
- *              items have icons.
- */
-GList *purple_request_field_list_get_icons(const PurpleRequestField *field);
 
 /*@}*/
 
@@ -1401,29 +1327,6 @@ void *purple_request_action_varg(void *handle, const char *title,
 	void *user_data, size_t action_count, va_list actions);
 
 /**
- * Version of purple_request_action() supplying an image for the UI to 
- * optionally display as an icon in the dialog; see its documentation
- * @since 2.7.0
- */
-void *purple_request_action_with_icon(void *handle, const char *title, 
-	const char *primary, const char *secondary, int default_action, 
-	PurpleAccount *account, const char *who, PurpleConversation *conv, 
-	gconstpointer icon_data, gsize icon_size, void *user_data, 
-	size_t action_count, ...);
-
-/**
- * <tt>va_list</tt> version of purple_request_action_with_icon(); 
- * see its documentation.
- * @since 2.7.0
- */
-void *purple_request_action_with_icon_varg(void *handle, const char *title,
-	const char *primary, const char *secondary, int default_action,
-	PurpleAccount *account, const char *who, PurpleConversation *conv,
-	gconstpointer icon_data, gsize icon_size,
-	void *user_data, size_t action_count, va_list actions);
-
-
-/**
  * Displays groups of fields for the user to fill in.
  *
  * @param handle      The plugin or connection handle.  For some things this
@@ -1505,19 +1408,6 @@ void purple_request_close_with_handle(void *handle);
 								   user_data, accept_cb, cancel_cb) \
 	purple_request_action((handle), (title), (primary), (secondary), \
 						(default_action), account, who, conv, (user_data), 2, \
-						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
-
-/**
- * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel 
- * buttons.
- */
-#define purple_request_accept_cancel_with_icon(handle, title, primary, secondary, \
-								   default_action, account, who, conv, \
-								   icon_data, icon_size, \
-								   user_data, accept_cb, cancel_cb) \
-	purple_request_action_with_icon((handle), (title), (primary), (secondary), \
-						(default_action), account, who, conv, icon_data, icon_size, \
-						(user_data), 2, \
 						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
 
 /**

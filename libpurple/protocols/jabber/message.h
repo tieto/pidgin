@@ -3,9 +3,7 @@
  *
  * purple
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_JABBER_MESSAGE_H_
-#define PURPLE_JABBER_MESSAGE_H_
+#ifndef _PURPLE_JABBER_MESSAGE_H_
+#define _PURPLE_JABBER_MESSAGE_H_
 
 #include "buddy.h"
 #include "jabber.h"
@@ -53,7 +51,11 @@ typedef struct _JabberMessage {
 	char *error;
 	char *thread_id;
 	enum {
-		JM_STATE_NONE,
+		JM_TS_NONE = 0,
+		JM_TS_JEP_0022 = 0x1,
+		JM_TS_JEP_0085 = 0x2
+	} typing_style;
+	enum {
 		JM_STATE_ACTIVE,
 		JM_STATE_COMPOSING,
 		JM_STATE_PAUSED,
@@ -74,9 +76,8 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
+void jabber_message_conv_closed(JabberStream *js, const char *who);
 
-gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace);
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace);
 
-gboolean jabber_custom_smileys_isenabled(JabberStream *js, const const gchar *namespace);
-
-#endif /* PURPLE_JABBER_MESSAGE_H_ */
+#endif /* _PURPLE_JABBER_MESSAGE_H_ */

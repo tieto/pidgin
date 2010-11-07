@@ -40,7 +40,6 @@ common_sources = \
 	common/AccountOpts.xs \
 	common/BuddyIcon.xs \
 	common/BuddyList.xs \
-	common/Certificate.xs \
 	common/Cipher.xs \
 	common/Cmds.xs \
 	common/Core.xs \
@@ -48,7 +47,6 @@ common_sources = \
 	common/Conversation.xs \
 	common/Debug.xs \
 	common/FT.xs \
-	common/Idle.xs \
 	common/ImgStore.xs \
 	common/Log.xs \
 	common/Makefile.PL.in \
@@ -69,12 +67,10 @@ common_sources = \
 	common/SavedStatuses.xs \
 	common/Server.xs \
 	common/Signal.xs \
-	common/Smiley.xs \
 	common/Sound.xs \
 	common/Status.xs \
 	common/Stringref.xs \
 	common/Util.xs \
-	common/Whiteboard.xs \
 	common/XMLNode.xs \
 	common/module.h \
 	common/typemap
@@ -99,7 +95,7 @@ common/Makefile: common/Makefile.PL
 			${LN_S} -f $$srcloc/$$f $$f; \
 		done; \
 	fi
-	@cd common && $(perlpath) Makefile.PL
+	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
 
 common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
@@ -108,7 +104,7 @@ all-local: common/Makefile
 	@for dir in $(perl_dirs); do \
 		cd $$dir && \
 		if [ ! -f Makefile ]; then \
-			$(perlpath) Makefile.PL; \
+			$(perlpath) Makefile.PL $(PERL_MM_PARAMS); \
 		fi && \
 		($(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
 		 $(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
@@ -164,7 +160,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \

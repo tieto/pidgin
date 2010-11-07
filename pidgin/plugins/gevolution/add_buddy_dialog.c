@@ -54,7 +54,8 @@ delete_win_cb(GtkWidget *w, GdkEvent *event, GevoAddBuddyDialog *dialog)
 
 	gevo_addrbooks_model_unref(dialog->addrbooks);
 
-	g_free(dialog->username);
+	if (dialog->username != NULL)
+		g_free(dialog->username);
 
 	g_free(dialog);
 
@@ -233,7 +234,6 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 	EBook *book;
 	gboolean status;
 	GList *cards, *c;
-	GError *err = NULL;
 
 	if (dialog->book != NULL)
 	{
@@ -250,11 +250,10 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	gtk_list_store_clear(dialog->model);
 
-	if (!gevo_load_addressbook(uri, &book, &err))
+	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
 		purple_debug_error("evolution",
-						 "Error retrieving default addressbook: %s\n", err->message);
-		g_error_free(err);
+						 "Error retrieving default addressbook\n");
 
 		return;
 	}
@@ -288,7 +287,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 	{
 		EContact *contact = E_CONTACT(c->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells, *ggs;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -298,11 +297,9 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
 		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
-		ggs     = e_contact_get(contact, E_CONTACT_IM_GADUGADU);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL && novells == NULL &&
-			ggs == NULL)
+			msns == NULL && icqs == NULL && novells == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -315,13 +312,14 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		}
 		else
 		{
+			add_ims(dialog, contact, name, aims,    "prpl-oscar");
 			add_ims(dialog, contact, name, aims,    "prpl-aim");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
+			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
-			add_ims(dialog, contact, name, ggs,     "prpl-gg");
 		}
 	}
 
@@ -367,7 +365,7 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 	{
 		EContact *contact = E_CONTACT(l->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells, *ggs;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -383,11 +381,9 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
 		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
-		ggs     = e_contact_get(contact, E_CONTACT_IM_GADUGADU);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL && novells == NULL &&
-			ggs == NULL)
+			msns == NULL && icqs == NULL && novells == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -401,12 +397,13 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		else
 		{
 			add_ims(dialog, contact, name, aims,    "prpl-aim");
+			add_ims(dialog, contact, name, aims,    "prpl-oscar");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
+			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
-			add_ims(dialog, contact, name, ggs,     "prpl-gg");
 		}
 	}
 }
@@ -551,11 +548,19 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
 
 	/* Group box */
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Group:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
 	dialog->group_combo =
-		pidgin_text_combo_box_entry_new(group, gevo_get_groups());
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Group:"), NULL,
-							  dialog->group_combo, TRUE, NULL);
-	gtk_widget_show_all(dialog->group_combo);
+		pidgin_text_combo_box_entry_new(NULL, gevo_get_groups());
+	gtk_box_pack_start(GTK_BOX(hbox), dialog->group_combo, TRUE, TRUE, 0);
+	gtk_widget_show(dialog->group_combo);
 
 	/* Cool. Now we only have a little left... */
 

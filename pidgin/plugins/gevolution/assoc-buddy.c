@@ -20,6 +20,7 @@
  */
 #include "internal.h"
 #include "gtkblist.h"
+#include "gtkexpander.h"
 #include "pidgin.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
@@ -137,7 +138,6 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 	const char *prpl_id;
 	gboolean status;
 	GList *cards, *c;
-	GError *err = NULL;
 
 	if (dialog->book != NULL)
 	{
@@ -154,11 +154,10 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 	gtk_list_store_clear(dialog->model);
 
-	if (!gevo_load_addressbook(uri, &book, &err))
+	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
 		purple_debug_error("evolution",
-						 "Error retrieving addressbook: %s\n", err->message);
-		g_error_free(err);
+						 "Error retrieving addressbook\n");
 
 		return;
 	}

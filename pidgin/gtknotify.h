@@ -27,20 +27,6 @@
 #define _PIDGINNOTIFY_H_
 
 #include "notify.h"
-#include "pounce.h"
-
-/**
- * Adds a buddy pounce to the buddy pounce dialog
- *
- * @param account	The account
- * @param pounce	The pounce
- * @param alias		The buddy alias
- * @param event		Event description
- * @param message	Pounce message
- * @param date		Pounce date
- */
-void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
-		const char *alias, const char *event, const char *message, const char *date);
 
 /**
  * Returns the UI operations structure for GTK+ notification functions.
@@ -48,15 +34,5 @@ void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
  * @return The GTK+ UI notify operations structure.
  */
 PurpleNotifyUiOps *pidgin_notify_get_ui_ops(void);
-
-/**
- * Initializes the GTK+ notifications subsystem.
- */
-void pidgin_notify_init(void);
-
-/**
- * Uninitialized the GTK+ notifications subsystem.
- */
-void pidgin_notify_uninit(void);
 
 #endif /* _PIDGINNOTIFY_H_ */

@@ -24,7 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
-#include <internal.h>
 
 #include <prefs.h>
 #include <savedstatuses.h>
@@ -171,7 +170,7 @@ get_pref_field(Prefs *prefs)
 				default:
 					break;
 			}
-			purple_request_field_list_add_icon(field, data, NULL, iter->data);
+			purple_request_field_list_add(field, data, iter->data);
 			if (select)
 				purple_request_field_list_add_selected(field, data);
 		}

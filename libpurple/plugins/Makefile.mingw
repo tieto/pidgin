@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of libpurple Plugins
+# Description: Makefile for win32 (mingw) version of LibPurple Plugins 
 #
 
 PIDGIN_TREE_TOP := ../..
@@ -55,7 +55,7 @@ install: all $(PURPLE_INSTALL_PLUGINS_DIR)
 	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
-%.dll: %.c $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
+.c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 

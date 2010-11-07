@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "gntinternal.h"
 #include "gntmenu.h"
 #include "gntmenuitemcheck.h"
 
@@ -93,7 +92,7 @@ gnt_menu_draw(GntWidget *widget)
 			item->priv.x = getcurx(widget->window) + widget->priv.x;
 			item->priv.y = getcury(widget->window) + widget->priv.y + 1;
 			wbkgdset(widget->window, type);
-			wprintw(widget->window, " %s   ", C_(item->text));
+			wprintw(widget->window, " %s   ", item->text);
 		}
 	} else {
 		org_draw(widget);
@@ -284,8 +283,6 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 		do sub = sub->submenu; while (sub->submenu);
 		if (gnt_widget_key_pressed(GNT_WIDGET(sub), text))
 			return TRUE;
-		if (menu->type != GNT_MENU_TOPLEVEL)
-			return FALSE;
 	}
 
 	if ((text[0] == 27 && text[1] == 0) ||
@@ -335,12 +332,10 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 				return TRUE;
 			}
 		}
-		if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), text))
-			return TRUE;
 		return org_key_pressed(widget, text);
 	}
 
-	return gnt_bindable_perform_action_key(GNT_BINDABLE(widget), text);
+	return FALSE;
 }
 
 static void
@@ -400,11 +395,9 @@ gnt_menu_hide(GntWidget *widget)
 static gboolean
 gnt_menu_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
-	if (GNT_MENU(widget)->type != GNT_MENU_POPUP)
-		return FALSE;
-
-	if (org_clicked && org_clicked(widget, event, x, y))
-		return TRUE;
+	if (!org_clicked || !org_clicked(widget, event, x, y) ||
+			!GNT_MENU(widget)->type == GNT_MENU_TOPLEVEL)
+			return FALSE;
 	gnt_widget_activate(widget);
 	return TRUE;
 }
@@ -441,7 +434,7 @@ gnt_menu_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER |
-			GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_TRANSIENT | GNT_WIDGET_DISABLE_ACTIONS);
+			GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_TRANSIENT);
 	GNTDEBUG;
 }
 

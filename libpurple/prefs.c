@@ -118,7 +118,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 {
 	xmlnode *node, *childnode;
 	struct purple_pref *child;
-	char buf[21];
+	char buf[20];
 	GList *cur;
 
 	/* Create a new node */
@@ -128,7 +128,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 	/* Set the type of this node (if type == PURPLE_PREF_NONE then do nothing) */
 	if (pref->type == PURPLE_PREF_INT) {
 		xmlnode_set_attrib(node, "type", "int");
-		g_snprintf(buf, sizeof(buf), "%d", pref->value.integer);
+		snprintf(buf, sizeof(buf), "%d", pref->value.integer);
 		xmlnode_set_attrib(node, "value", buf);
 	}
 	else if (pref->type == PURPLE_PREF_STRING) {
@@ -161,7 +161,7 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 	}
 	else if (pref->type == PURPLE_PREF_BOOLEAN) {
 		xmlnode_set_attrib(node, "type", "bool");
-		g_snprintf(buf, sizeof(buf), "%d", pref->value.boolean);
+		snprintf(buf, sizeof(buf), "%d", pref->value.boolean);
 		xmlnode_set_attrib(node, "value", buf);
 	}
 
@@ -250,34 +250,33 @@ prefs_start_element_handler (GMarkupParseContext *context,
 	GString *pref_name_full;
 	GList *tmp;
 
-	if(!purple_strequal(element_name, "pref") &&
-	   !purple_strequal(element_name, "item"))
+	if(strcmp(element_name, "pref") && strcmp(element_name, "item"))
 		return;
 
 	for(i = 0; attribute_names[i]; i++) {
-		if(purple_strequal(attribute_names[i], "name")) {
+		if(!strcmp(attribute_names[i], "name")) {
 			pref_name = attribute_values[i];
-		} else if(purple_strequal(attribute_names[i], "type")) {
-			if(purple_strequal(attribute_values[i], "bool"))
+		} else if(!strcmp(attribute_names[i], "type")) {
+			if(!strcmp(attribute_values[i], "bool"))
 				pref_type = PURPLE_PREF_BOOLEAN;
-			else if(purple_strequal(attribute_values[i], "int"))
+			else if(!strcmp(attribute_values[i], "int"))
 				pref_type = PURPLE_PREF_INT;
-			else if(purple_strequal(attribute_values[i], "string"))
+			else if(!strcmp(attribute_values[i], "string"))
 				pref_type = PURPLE_PREF_STRING;
-			else if(purple_strequal(attribute_values[i], "stringlist"))
+			else if(!strcmp(attribute_values[i], "stringlist"))
 				pref_type = PURPLE_PREF_STRING_LIST;
-			else if(purple_strequal(attribute_values[i], "path"))
+			else if(!strcmp(attribute_values[i], "path"))
 				pref_type = PURPLE_PREF_PATH;
-			else if(purple_strequal(attribute_values[i], "pathlist"))
+			else if(!strcmp(attribute_values[i], "pathlist"))
 				pref_type = PURPLE_PREF_PATH_LIST;
 			else
 				return;
-		} else if(purple_strequal(attribute_names[i], "value")) {
+		} else if(!strcmp(attribute_names[i], "value")) {
 			pref_value = attribute_values[i];
 		}
 	}
 
-	if(purple_strequal(element_name, "item")) {
+	if(!strcmp(element_name, "item")) {
 		struct purple_pref *pref;
 
 		pref_name_full = g_string_new("");
@@ -302,7 +301,7 @@ prefs_start_element_handler (GMarkupParseContext *context,
 	} else {
 		char *decoded;
 
-		if(!pref_name || purple_strequal(pref_name, "/"))
+		if(!pref_name || !strcmp(pref_name, "/"))
 			return;
 
 		pref_name_full = g_string_new(pref_name);
@@ -353,7 +352,7 @@ prefs_end_element_handler(GMarkupParseContext *context,
 						  const gchar *element_name,
 						  gpointer user_data, GError **error)
 {
-	if(prefs_stack && purple_strequal(element_name, "pref")) {
+	if(prefs_stack && !strcmp(element_name, "pref")) {
 		g_free(prefs_stack->data);
 		prefs_stack = g_list_delete_link(prefs_stack, prefs_stack);
 	}
@@ -506,6 +505,7 @@ pref_full_name(struct purple_pref *pref)
 		return g_strdup("/");
 
 	name = g_string_new(pref->name);
+	parent = pref->parent;
 
 	for(parent = pref->parent; parent && parent->name; parent = parent->parent) {
 		name = g_string_prepend_c(name, '/');
@@ -521,7 +521,7 @@ find_pref_parent(const char *name)
 	char *parent_name = get_path_dirname(name);
 	struct purple_pref *ret = &prefs;
 
-	if(!purple_strequal(parent_name, "/")) {
+	if(strcmp(parent_name, "/")) {
 		ret = find_pref(parent_name);
 	}
 
@@ -571,7 +571,7 @@ add_pref(PurplePrefType type, const char *name)
 	my_name = get_path_basename(name);
 
 	for(sibling = parent->first_child; sibling; sibling = sibling->sibling) {
-		if(purple_strequal(sibling->name, my_name)) {
+		if(!strcmp(sibling->name, my_name)) {
 			g_free(my_name);
 			return NULL;
 		}
@@ -693,14 +693,11 @@ remove_pref(struct purple_pref *pref)
 	char *name;
 	GSList *l;
 
-	if(!pref)
+	if(!pref || pref == &prefs)
 		return;
 
 	while(pref->first_child)
 		remove_pref(pref->first_child);
-
-	if(pref == &prefs)
-		return;
 
 	if(pref->parent->first_child == pref) {
 		pref->parent->first_child = pref->sibling;
@@ -714,8 +711,7 @@ remove_pref(struct purple_pref *pref)
 
 	name = pref_full_name(pref);
 
-	if (prefs_loaded)
-		purple_debug_info("prefs", "removing pref %s\n", name);
+	purple_debug_info("prefs", "removing pref %s\n", name);
 
 	g_hash_table_remove(prefs_hash, name);
 	g_free(name);
@@ -849,7 +845,10 @@ purple_prefs_set_string(const char *name, const char *value)
 			return;
 		}
 
-		if (!purple_strequal(pref->value.string, value)) {
+		if((value && !pref->value.string) ||
+				(!value && pref->value.string) ||
+				(value && pref->value.string &&
+				 strcmp(pref->value.string, value))) {
 			g_free(pref->value.string);
 			pref->value.string = g_strdup(value);
 			do_callbacks(name, pref);
@@ -906,7 +905,10 @@ purple_prefs_set_path(const char *name, const char *value)
 			return;
 		}
 
-		if (!purple_strequal(pref->value.string, value)) {
+		if((value && !pref->value.string) ||
+				(!value && pref->value.string) ||
+				(value && pref->value.string &&
+				 strcmp(pref->value.string, value))) {
 			g_free(pref->value.string);
 			pref->value.string = g_strdup(value);
 			do_callbacks(name, pref);
@@ -1100,7 +1102,7 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 		next = child->sibling;
 		for(newchild = newpref->first_child; newchild != NULL; newchild = newchild->sibling)
 		{
-			if(purple_strequal(child->name, newchild->name))
+			if(!strcmp(child->name, newchild->name))
 			{
 				purple_prefs_rename_node(child, newchild);
 				break;
@@ -1450,10 +1452,4 @@ purple_prefs_uninit()
 	}
 
 	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
-
-	prefs_loaded = FALSE;
-	purple_prefs_destroy();
-	g_hash_table_destroy(prefs_hash);
-	prefs_hash = NULL;
-
 }

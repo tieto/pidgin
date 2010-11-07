@@ -36,8 +36,9 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
+#ifdef MSN_DEBUG_SLPMSG
+	purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
+#endif
 
 	slpmsg->slplink = slplink;
 
@@ -55,10 +56,14 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	g_return_if_fail(slpmsg != NULL);
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
+#ifdef MSN_DEBUG_SLPMSG
+	purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
+#endif
 
 	slplink = slpmsg->slplink;
+
+	if (slpmsg->fp != NULL)
+		fclose(slpmsg->fp);
 
 	purple_imgstore_unref(slpmsg->img);
 
@@ -67,7 +72,14 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
-	for (cur = slpmsg->msgs; cur != NULL; cur = g_list_delete_link(cur, cur))
+#ifdef MSN_DEBUG_SLP
+	/*
+	if (slpmsg->info != NULL)
+		g_free(slpmsg->info);
+	*/
+#endif
+
+	for (cur = slpmsg->msgs; cur != NULL; cur = cur->next)
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
 		 * pointer to prevent a crash. */
@@ -75,11 +87,15 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 		MsnMessage *msg = cur->data;
 
+#ifdef MSN_DEBUG_SLPMSG
+		purple_debug_info("msn", "Unlink slpmsg callbacks.\n");
+#endif
+
 		msg->ack_cb = NULL;
 		msg->nak_cb = NULL;
 		msg->ack_data = NULL;
-		msn_message_unref(msg);
 	}
+	g_list_free(slpmsg->msgs);
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
 
@@ -93,7 +109,7 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->ft == FALSE);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
@@ -109,13 +125,30 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->ft == FALSE);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	slpmsg->img = purple_imgstore_ref(img);
 	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
+void
+msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
+{
+	struct stat st;
+
+	/* We can only have one data source at a time. */
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
+
+	slpmsg->fp = g_fopen(file_name, "rb");
+
+	if (g_stat(file_name, &st) == 0)
+		slpmsg->size = st.st_size;
+}
+
+#ifdef MSN_DEBUG_SLP
 void
 msn_slpmsg_show(MsnMessage *msg)
 {
@@ -144,6 +177,7 @@ msn_slpmsg_show(MsnMessage *msg)
 
 	msn_message_show_readable(msg, info, text);
 }
+#endif
 
 MsnSlpMessage *
 msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
@@ -151,7 +185,6 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 				   const char *content_type, const char *content)
 {
 	MsnSlpLink *slplink;
-	PurpleAccount *account;
 	MsnSlpMessage *slpmsg;
 	char *body;
 	gsize body_len;
@@ -161,7 +194,6 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	g_return_val_if_fail(header  != NULL, NULL);
 
 	slplink = slpcall->slplink;
-	account = slplink->session->account;
 
 	/* Let's remember that "content" should end with a 0x00 */
 
@@ -180,7 +212,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		"\r\n",
 		header,
 		slplink->remote_user,
-		purple_account_get_username(account),
+		slplink->local_user,
 		branch,
 		cseq,
 		slpcall->id,

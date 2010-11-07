@@ -40,8 +40,6 @@
 #include "notify.h"
 #include "prefs.h"
 #include "sound.h"
-#include "sound-theme.h"
-#include "theme-manager.h"
 #include "util.h"
 
 #include "gtkconv.h"
@@ -72,8 +70,7 @@ static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your username in chat"), "nick_said", "alert.wav"},
-	{N_("Attention received"), "got_attention", "alert.wav"}
+	{N_("Someone says your username in chat"), "nick_said", "alert.wav"}
 };
 
 static gboolean
@@ -145,7 +142,7 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 				   char *message, PurpleConversation *conv,
 				   PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
+	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
 	if (conv==NULL)
@@ -159,7 +156,7 @@ im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
 	PurpleConversation *conv = purple_find_conversation_with_account(
-		PURPLE_CONV_TYPE_IM, receiver, account);
+		PURPLE_CONV_TYPE_ANY, receiver, account);
 	play_conv_event(conv, event);
 }
 
@@ -200,7 +197,7 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 {
 	PurpleConvChat *chat;
 
-	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
+	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
 	chat = purple_conversation_get_chat_data(conv);
@@ -213,18 +210,9 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 		return;
 
 	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, chat->nick))
-		/* This isn't quite right; if you have the PURPLE_SOUND_CHAT_NICK event disabled
-		 * and the PURPLE_SOUND_CHAT_SAY event enabled, you won't get a sound at all */
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);
-}
-
-static void
-got_attention_cb(PurpleAccount *account, const char *who, 
-	PurpleConversation *conv, guint type, PurpleSoundEventID event)
-{
-	play_conv_event(conv, event);
 }
 
 /*
@@ -236,9 +224,9 @@ static void
 account_signon_cb(PurpleConnection *gc, gpointer data)
 {
 	if (mute_login_sounds_timeout != 0)
-		purple_timeout_remove(mute_login_sounds_timeout);
+		g_source_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
 }
 
 const char *
@@ -306,11 +294,6 @@ pidgin_sound_init(void)
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/nick_said", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/theme", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/sent_attention", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/sent_attention", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/got_attention", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/got_attention", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
@@ -357,12 +340,6 @@ pidgin_sound_init(void)
 	purple_signal_connect(conv_handle, "received-chat-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
-	purple_signal_connect(conv_handle, "got-attention", gtk_sound_handle,
-						PURPLE_CALLBACK(got_attention_cb),
-						  GINT_TO_POINTER(PURPLE_SOUND_GOT_ATTENTION));
-	/* for the time being, don't handle sent-attention here, since playing a
-	 sound would result induplicate sounds. And fixing that would require changing the
-	 conversation signal for msg-recv */	
 }
 
 static void
@@ -470,7 +447,7 @@ pidgin_sound_play_file(const char *filename)
 		if (!sound_cmd || *sound_cmd == '\0') {
 			purple_debug_error("gtksound",
 					 "'Command' sound method has been chosen, "
-					 "but no command has been set.\n");
+					 "but no command has been set.");
 			return;
 		}
 
@@ -511,22 +488,33 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	volume = (float)(CLAMP(purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
-		sink = gst_element_factory_make("gconfaudiosink", "sink");
+		if (purple_running_gnome()) {
+			sink = gst_element_factory_make("gconfaudiosink", "sink");
+		}
+		if (!sink)
+			sink = gst_element_factory_make("autoaudiosink", "sink");
+		if (!sink) {
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
 	}
 #ifndef _WIN32
 	else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
+		if (!sink) {
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
 	} else if (!strcmp(method, "alsa")) {
 		sink = gst_element_factory_make("alsasink", "sink");
+		if (!sink) {
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
 	}
 #endif
 	else {
 		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
-		return;
-	}
-
-	if (strcmp(method, "automatic") != 0 && !sink) {
-		purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 		return;
 	}
 
@@ -557,12 +545,18 @@ pidgin_sound_play_file(const char *filename)
 #else /* _WIN32 */
 	purple_debug_info("sound", "Playing %s\n", filename);
 
-	{
+	if (G_WIN32_HAVE_WIDECHAR_API ()) {
 		wchar_t *wc_filename = g_utf8_to_utf16(filename,
 				-1, NULL, NULL, NULL);
 		if (!PlaySoundW(wc_filename, NULL, SND_ASYNC | SND_FILENAME))
 			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
 		g_free(wc_filename);
+	} else {
+		char *l_filename = g_locale_from_utf8(filename,
+				-1, NULL, NULL, NULL);
+		if (!PlaySoundA(l_filename, NULL, SND_ASYNC | SND_FILENAME))
+			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
+		g_free(l_filename);
 	}
 #endif /* _WIN32 */
 
@@ -574,8 +568,6 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
-	const char *theme_name;
-	PurpleSoundTheme *theme;
 
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
@@ -592,57 +584,18 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
-		theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
-
-		if (theme_name && *theme_name && (!filename || !*filename)) {
-			/* Use theme */
+		if(!filename || !strlen(filename)) {
 			g_free(filename);
-
-			theme = PURPLE_SOUND_THEME(purple_theme_manager_find_theme(theme_name, "sound"));
-			filename = purple_sound_theme_get_file_full(theme, sounds[event].pref);
-
-			if(!g_file_test(filename, G_FILE_TEST_IS_REGULAR)){ /* Use Default sound in this case */
-				purple_debug_error("sound", "The file: (%s) %s\n from theme: %s, was not found or wasn't readable\n",
-							sounds[event].pref, filename, theme_name);
-				g_free(filename);
-				filename = NULL;
-			}
-		}
-
-		if (!filename || !strlen(filename)) {			    /* Use Default sounds */
-			g_free(filename);
-
 			/* XXX Consider creating a constant for "sounds/purple" to be shared with Finch */
 			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);
-
 		g_free(filename);
 	}
 
 	g_free(enable_pref);
 	g_free(file_pref);
-}
-
-gboolean
-pidgin_sound_is_customized(void)
-{
-	gint i;
-	gchar *path;
-	const char *file;
-
-	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
-		path = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[i].pref);
-		file = purple_prefs_get_path(path);
-		g_free(path);
-
-		if (file && file[0] != '\0')
-			return TRUE;
-	}
-
-	return FALSE;
-
 }
 
 static PurpleSoundUiOps sound_ui_ops =

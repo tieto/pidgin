@@ -1,9 +1,7 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2007, Andreas Monitzer <andy@monitzer.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +15,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 
-#ifndef PURPLE_JABBER_PEP_H_
-#define PURPLE_JABBER_PEP_H_
+#ifndef _PURPLE_JABBER_PEP_H_
+#define _PURPLE_JABBER_PEP_H_
 
 #include "jabber.h"
 #include "message.h"
 #include "buddy.h"
 
 void jabber_pep_init(void);
-void jabber_pep_uninit(void);
 
 void jabber_pep_init_actions(GList **m);
 
@@ -45,10 +42,11 @@ typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *ite
  * Registers a callback for PEP events. Also automatically announces this receiving capability via disco#info.
  * Don't forget to use jabber_add_feature when supporting the sending of PEP events of this type.
  *
- * @parameter xmlns			The namespace for this event
+ * @parameter shortname		A short name for this feature for XEP-0115. It has no semantic meaning, it just has to be unique.
+ * @parameter xmlns		The namespace for this event
  * @parameter handlerfunc	The callback to be used when receiving an event with this namespace
  */
-void jabber_pep_register_handler(const char *xmlns, JabberPEPHandler handlerfunc);
+void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc);
 
 /*
  * Request a specific item from another PEP node.
@@ -59,26 +57,22 @@ void jabber_pep_register_handler(const char *xmlns, JabberPEPHandler handlerfunc
  * @parameter id	The item id of the requested item (may be NULL)
  * @parameter cb	The callback to be used when this item is received
  *
- * The items element passed to the callback will be NULL if any error occurred (like a permission error, node doesn't exist etc.)
+ * The items element passed to the callback will be NULL if any error occured (like a permission error, node doesn't exist etc.)
  */
 void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb);
 
 /*
  * Default callback that can be used for namespaces which should only be enabled when PEP is supported
  *
- * @parameter js		The JabberStream struct for this connection
+ * @parameter js	The JabberStream struct for this connection
+ * @parameter shortname	The namespace's shortname (for caps), ignored.
  * @parameter namespace The namespace that's queried, ignored.
  *
  * @returns TRUE when PEP is enabled, FALSE otherwise
  */
-gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *namespace);
+gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *shortname, const gchar *namespace);
 
 void jabber_handle_event(JabberMessage *jm);
-
-/**
- * Delete the specified PEP node.
- */
-void jabber_pep_delete_node(JabberStream *js, const gchar *node);
 
 /*
  * Publishes PEP item(s)
@@ -88,4 +82,4 @@ void jabber_pep_delete_node(JabberStream *js, const gchar *node);
  */
 void jabber_pep_publish(JabberStream *js, xmlnode *publish);
 
-#endif /* PURPLE_JABBER_PEP_H_ */
+#endif /* _PURPLE_JABBER_PEP_H_ */

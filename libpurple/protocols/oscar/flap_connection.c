@@ -46,7 +46,7 @@ flap_connection_send_version(OscarData *od, FlapConnection *conn)
 	FlapFrame *frame;
 
 	frame = flap_frame_new(od, 0x01, 4);
-	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
+	byte_stream_put32(&frame->data, 0x00000001);
 	flap_connection_send(conn, frame);
 }
 
@@ -64,40 +64,9 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
-	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
+	byte_stream_put32(&frame->data, 0x00000001);
 	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
 	aim_tlvlist_write(&frame->data, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	flap_connection_send(conn, frame);
-}
-
-void
-flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_logins)
-{
-	FlapFrame *frame;
-	GSList *tlvlist = NULL;
-
-	frame = flap_frame_new(od, 0x01, 1152 + length);
-
-	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
-	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
-
-	if (ci->clientstring != NULL)
-		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
-	else {
-		gchar *clientstring = oscar_get_clientstring();
-		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
-		g_free(clientstring);
-	}
-	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
-	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
-	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
-	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x03));
-
-	aim_tlvlist_write(&frame->data, &tlvlist);
-
 	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
@@ -106,15 +75,21 @@ flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConne
 static struct rateclass *
 flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subtype)
 {
+	GSList *tmp1;
 	gconstpointer key;
-	gpointer rateclass;
 
 	key = GUINT_TO_POINTER((family << 16) + subtype);
-	rateclass = g_hash_table_lookup(conn->rateclass_members, key);
-	if (rateclass != NULL)
-		return rateclass;
 
-	return conn->default_rateclass;
+	for (tmp1 = conn->rateclasses; tmp1 != NULL; tmp1 = tmp1->next)
+	{
+		struct rateclass *rateclass;
+		rateclass = tmp1->data;
+
+		if (g_hash_table_lookup(rateclass->members, key))
+			return rateclass;
+	}
+
+	return NULL;
 }
 
 /*
@@ -125,54 +100,11 @@ static guint32
 rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, struct timeval *now)
 {
 	unsigned long timediff; /* In milliseconds */
-	guint32 current;
 
-	/* This formula is documented at http://dev.aol.com/aim/oscar/#RATELIMIT */
 	timediff = (now->tv_sec - rateclass->last.tv_sec) * 1000 + (now->tv_usec - rateclass->last.tv_usec) / 1000;
-	current = ((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize;
 
-	return MIN(current, rateclass->max);
-}
-
-/*
- * Attempt to send the contents of a given queue
- *
- * @return TRUE if the queue was completely emptied or was initially
- *         empty; FALSE if rate limiting prevented it from being
- *         emptied.
- */
-static gboolean flap_connection_send_snac_queue(FlapConnection *conn, struct timeval now, GQueue *queue)
-{
-	while (!g_queue_is_empty(queue))
-	{
-		QueuedSnac *queued_snac;
-		struct rateclass *rateclass;
-
-		queued_snac = g_queue_peek_head(queue);
-
-		rateclass = flap_connection_get_rateclass(conn, queued_snac->family, queued_snac->subtype);
-		if (rateclass != NULL)
-		{
-			guint32 new_current;
-
-			new_current = rateclass_get_new_current(conn, rateclass, &now);
-
-			if (rateclass->dropping_snacs || new_current <= rateclass->alert)
-				/* Not ready to send this SNAC yet--keep waiting. */
-				return FALSE;
-
-			rateclass->current = new_current;
-			rateclass->last.tv_sec = now.tv_sec;
-			rateclass->last.tv_usec = now.tv_usec;
-		}
-
-		flap_connection_send(conn, queued_snac->frame);
-		g_free(queued_snac);
-		g_queue_pop_head(queue);
-	}
-
-	/* We emptied the queue */
-	return TRUE;
+	/* This formula is taken from the joscar API docs. Preesh. */
+	return MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
 }
 
 static gboolean flap_connection_send_queued(gpointer data)
@@ -183,20 +115,38 @@ static gboolean flap_connection_send_queued(gpointer data)
 	conn = data;
 	gettimeofday(&now, NULL);
 
-	purple_debug_info("oscar", "Attempting to send %u queued SNACs and %u queued low-priority SNACs for %p\n",
-					  (conn->queued_snacs ? conn->queued_snacs->length : 0),
-					  (conn->queued_lowpriority_snacs ? conn->queued_lowpriority_snacs->length : 0),
-					  conn);
-	if (!conn->queued_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_snacs)) {
-		if (!conn->queued_lowpriority_snacs || flap_connection_send_snac_queue(conn, now, conn->queued_lowpriority_snacs)) {
-			/* Both queues emptied. */
-			conn->queued_timeout = 0;
-			return FALSE;
+	purple_debug_info("oscar", "Attempting to send %u queued SNACs for %p\n", g_queue_get_length(conn->queued_snacs), conn);
+	while (!g_queue_is_empty(conn->queued_snacs))
+	{
+		QueuedSnac *queued_snac;
+		struct rateclass *rateclass;
+
+		queued_snac = g_queue_peek_head(conn->queued_snacs);
+
+		rateclass = flap_connection_get_rateclass(conn, queued_snac->family, queued_snac->subtype);
+		if (rateclass != NULL)
+		{
+			guint32 new_current;
+
+			new_current = rateclass_get_new_current(conn, rateclass, &now);
+
+			/* (Add 100ms padding to account for inaccuracies in the calculation) */
+			if (new_current < rateclass->alert + 100)
+				/* Not ready to send this SNAC yet--keep waiting. */
+				return TRUE;
+
+			rateclass->current = new_current;
+			rateclass->last.tv_sec = now.tv_sec;
+			rateclass->last.tv_usec = now.tv_usec;
 		}
+
+		flap_connection_send(conn, queued_snac->frame);
+		g_free(queued_snac);
+		g_queue_pop_head(conn->queued_snacs);
 	}
 
-	/* We couldn't send all our SNACs. Keep trying */
-	return TRUE;
+	conn->queued_timeout = 0;
+	return FALSE;
 }
 
 /**
@@ -207,12 +157,9 @@ static gboolean flap_connection_send_queued(gpointer data)
  *
  * @param data The optional bytestream that makes up the data portion
  *        of this SNAC.  For empty SNACs this should be NULL.
- * @param high_priority If TRUE, the SNAC will be queued normally if
- *        needed. If FALSE, it wil be queued separately, to be sent
- *        only if all high priority SNACs have been sent.
  */
 void
-flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data, gboolean high_priority)
+flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
 {
 	FlapFrame *frame;
 	guint32 length;
@@ -222,7 +169,7 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 	length = data != NULL ? data->offset : 0;
 
 	frame = flap_frame_new(od, 0x02, 10 + length);
-	aim_putsnac(&frame->data, family, subtype, snacid);
+	aim_putsnac(&frame->data, family, subtype, flags, snacid);
 
 	if (length > 0)
 	{
@@ -240,9 +187,10 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 		gettimeofday(&now, NULL);
 		new_current = rateclass_get_new_current(conn, rateclass, &now);
 
-		if (rateclass->dropping_snacs || new_current <= rateclass->alert)
+		/* (Add 100ms padding to account for inaccuracies in the calculation) */
+		if (new_current < rateclass->alert + 100)
 		{
-			purple_debug_info("oscar", "Current rate for conn %p would be %u, but we alert at %u; enqueueing\n", conn, new_current, rateclass->alert);
+			purple_debug_info("oscar", "Current rate for conn %p would be %u, but we alert at %u; enqueueing\n", conn, new_current, (rateclass->alert + 100));
 
 			enqueue = TRUE;
 		}
@@ -252,6 +200,8 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 			rateclass->last.tv_sec = now.tv_sec;
 			rateclass->last.tv_usec = now.tv_usec;
 		}
+	} else {
+		purple_debug_warning("oscar", "No rate class found for family %hu subtype %hu\n", family, subtype);
 	}
 
 	if (enqueue)
@@ -263,16 +213,7 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 		queued_snac->family = family;
 		queued_snac->subtype = subtype;
 		queued_snac->frame = frame;
-
-		if (high_priority) {
-			if (!conn->queued_snacs)
-				conn->queued_snacs = g_queue_new();
-			g_queue_push_tail(conn->queued_snacs, queued_snac);
-		} else {
-			if (!conn->queued_lowpriority_snacs)
-				conn->queued_lowpriority_snacs = g_queue_new();
-			g_queue_push_tail(conn->queued_lowpriority_snacs, queued_snac);
-		}
+		g_queue_push_tail(conn->queued_snacs, queued_snac);
 
 		if (conn->queued_timeout == 0)
 			conn->queued_timeout = purple_timeout_add(500, flap_connection_send_queued, conn);
@@ -281,12 +222,6 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 	}
 
 	flap_connection_send(conn, frame);
-}
-
-void
-flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data)
-{
-	flap_connection_send_snac_with_priority(od, conn, family, subtype, snacid, data, TRUE);
 }
 
 /**
@@ -340,7 +275,7 @@ flap_connection_new(OscarData *od, int type)
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
-	conn->rateclass_members = g_hash_table_new(g_direct_hash, g_direct_equal);
+	conn->queued_snacs = g_queue_new();
 
 	od->oscar_connections = g_slist_prepend(od->oscar_connections, conn);
 
@@ -364,24 +299,23 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		conn->connect_data = NULL;
 	}
 
-	if (conn->gsc != NULL && conn->gsc->connect_data != NULL)
-	{
-		purple_ssl_close(conn->gsc);
-		conn->gsc = NULL;
-	}
-
-	if (conn->new_conn_data != NULL)
+	if (conn->connect_data != NULL)
 	{
 		if (conn->type == SNAC_FAMILY_CHAT)
 		{
 			oscar_chat_destroy(conn->new_conn_data);
-			conn->new_conn_data = NULL;
+			conn->connect_data = NULL;
 		}
 	}
 
-	if ((conn->fd >= 0 || conn->gsc != NULL)
-			&& conn->type == SNAC_FAMILY_LOCATE)
-		flap_connection_send_close(od, conn);
+	if (conn->fd >= 0)
+	{
+		if (conn->type == SNAC_FAMILY_LOCATE)
+			flap_connection_send_close(od, conn);
+
+		close(conn->fd);
+		conn->fd = -1;
+	}
 
 	if (conn->watcher_incoming != 0)
 	{
@@ -395,23 +329,18 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		conn->watcher_outgoing = 0;
 	}
 
-	if (conn->fd >= 0)
-	{
-		close(conn->fd);
-		conn->fd = -1;
-	}
-
-	if (conn->gsc != NULL)
-	{
-		purple_ssl_close(conn->gsc);
-		conn->gsc = NULL;
-	}
-
 	g_free(conn->buffer_incoming.data.data);
 	conn->buffer_incoming.data.data = NULL;
 
 	purple_circ_buffer_destroy(conn->buffer_outgoing);
 	conn->buffer_outgoing = NULL;
+}
+
+static void
+flap_connection_destroy_rateclass(struct rateclass *rateclass)
+{
+	g_hash_table_destroy(rateclass->members);
+	g_free(rateclass);
 }
 
 /**
@@ -435,16 +364,11 @@ flap_connection_destroy_cb(gpointer data)
 	aim_rxcallback_t userfunc;
 
 	conn = data;
-	/* Explicitly added for debugging #5927.  Don't re-order this, only
-	 * consider removing it.
-	 */
-	purple_debug_info("oscar", "Destroying FLAP connection %p\n", conn);
-
 	od = conn->od;
 	account = purple_connection_get_account(od->gc);
 
-	purple_debug_info("oscar", "Destroying oscar connection (%p) of "
-			"type 0x%04hx.  Disconnect reason is %d\n", conn,
+	purple_debug_info("oscar", "Destroying oscar connection of "
+			"type 0x%04hx.  Disconnect reason is %d\n",
 			conn->type, conn->disconnect_reason);
 
 	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
@@ -465,18 +389,18 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (conn->disconnect_code == 0x0001) {
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			tmp = g_strdup(_("You have signed on from another location"));
+			tmp = g_strdup(_("You have signed on from another location."));
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-			tmp = g_strdup(_("Server closed the connection"));
+			tmp = g_strdup(_("Server closed the connection."));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-			tmp = g_strdup_printf(_("Lost connection with server: %s"),
+			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
 					conn->error_message);
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-			tmp = g_strdup(_("Received invalid data on connection with server"));
+			tmp = g_strdup(_("Received invalid data on connection with server."));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-			tmp = g_strdup_printf(_("Unable to connect: %s"),
+			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
 					conn->error_message);
 		else
 			/*
@@ -506,34 +430,18 @@ flap_connection_destroy_cb(gpointer data)
 	g_slist_free(conn->groups);
 	while (conn->rateclasses != NULL)
 	{
-		g_free(conn->rateclasses->data);
+		flap_connection_destroy_rateclass(conn->rateclasses->data);
 		conn->rateclasses = g_slist_delete_link(conn->rateclasses, conn->rateclasses);
 	}
 
-	g_hash_table_destroy(conn->rateclass_members);
-
-	if (conn->queued_snacs) {
-		while (!g_queue_is_empty(conn->queued_snacs))
-		{
-			QueuedSnac *queued_snac;
-			queued_snac = g_queue_pop_head(conn->queued_snacs);
-			flap_frame_destroy(queued_snac->frame);
-			g_free(queued_snac);
-		}
-		g_queue_free(conn->queued_snacs);
+	while (!g_queue_is_empty(conn->queued_snacs))
+	{
+		QueuedSnac *queued_snac;
+		queued_snac = g_queue_pop_head(conn->queued_snacs);
+		flap_frame_destroy(queued_snac->frame);
+		g_free(queued_snac);
 	}
-
-	if (conn->queued_lowpriority_snacs) {
-		while (!g_queue_is_empty(conn->queued_lowpriority_snacs))
-		{
-			QueuedSnac *queued_snac;
-			queued_snac = g_queue_pop_head(conn->queued_lowpriority_snacs);
-			flap_frame_destroy(queued_snac->frame);
-			g_free(queued_snac);
-		}
-		g_queue_free(conn->queued_lowpriority_snacs);
-	}
-
+	g_queue_free(conn->queued_snacs);
 	if (conn->queued_timeout > 0)
 		purple_timeout_remove(conn->queued_timeout);
 
@@ -580,7 +488,7 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 		return;
 
 	purple_debug_info("oscar", "Scheduling destruction of FLAP "
-			"connection %p of type 0x%04hx\n", conn, conn->type);
+			"connection of type 0x%04hx\n", conn->type);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
@@ -738,7 +646,7 @@ parse_snac(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	aim_module_t *cur;
 	aim_modsnac_t snac;
 
-	if (byte_stream_bytes_left(&frame->data) < 10)
+	if (byte_stream_empty(&frame->data) < 10)
 		return;
 
 	snac.family = byte_stream_get16(&frame->data);
@@ -805,7 +713,7 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	GSList *tlvlist;
 	char *msg = NULL;
 
-	if (byte_stream_bytes_left(&frame->data) == 0) {
+	if (byte_stream_empty(&frame->data) == 0) {
 		/* XXX should do something with this */
 		return;
 	}
@@ -875,16 +783,14 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
  * All complete FLAPs handled immedate after they're received.
  * Incomplete FLAP data is stored locally and appended to the next
  * time this callback is triggered.
- *
- * This is called by flap_connection_recv_cb and
- * flap_connection_recv_cb_ssl for unencrypted/encrypted connections.
  */
-static void
-flap_connection_recv(FlapConnection *conn)
+void
+flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gpointer buf;
-	gsize buflen;
+	FlapConnection *conn;
 	gssize read;
+
+	conn = data;
 
 	/* Read data until we run out of data and break out of the loop */
 	while (TRUE)
@@ -892,14 +798,9 @@ flap_connection_recv(FlapConnection *conn)
 		/* Start reading a new FLAP */
 		if (conn->buffer_incoming.data.data == NULL)
 		{
-			buf = conn->header + conn->header_received;
-			buflen = 6 - conn->header_received;
-
 			/* Read the first 6 bytes (the FLAP header) */
-			if (conn->gsc)
-				read = purple_ssl_read(conn->gsc, buf, buflen);
-			else
-				read = recv(conn->fd, buf, buflen, 0);
+			read = recv(conn->fd, conn->header + conn->header_received,
+					6 - conn->header_received, 0);
 
 			/* Check if the FLAP server closed the connection */
 			if (read == 0)
@@ -936,6 +837,18 @@ flap_connection_recv(FlapConnection *conn)
 				break;
 			}
 
+			/* Verify the sequence number sent by the server. */
+#if 0
+			/* TODO: Need to initialize conn->seqnum_in somewhere before we can use this. */
+			if (aimutil_get16(&conn->header[1]) != conn->seqnum_in++)
+			{
+				/* Received an out-of-order FLAP! */
+				flap_connection_schedule_destroy(conn,
+						OSCAR_DISCONNECT_INVALID_DATA, NULL);
+				break;
+			}
+#endif
+
 			/* Initialize a new temporary FlapFrame for incoming data */
 			conn->buffer_incoming.channel = aimutil_get8(&conn->header[1]);
 			conn->buffer_incoming.seqnum = aimutil_get16(&conn->header[2]);
@@ -944,15 +857,13 @@ flap_connection_recv(FlapConnection *conn)
 			conn->buffer_incoming.data.offset = 0;
 		}
 
-		buflen = conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset;
-		if (buflen)
+		if (conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset)
 		{
-			buf = &conn->buffer_incoming.data.data[conn->buffer_incoming.data.offset];
 			/* Read data into the temporary FlapFrame until it is complete */
-			if (conn->gsc)
-				read = purple_ssl_read(conn->gsc, buf, buflen);
-			else
-				read = recv(conn->fd, buf, buflen, 0);
+			read = recv(conn->fd,
+						&conn->buffer_incoming.data.data[conn->buffer_incoming.data.offset],
+						conn->buffer_incoming.data.len - conn->buffer_incoming.data.offset,
+						0);
 
 			/* Check if the FLAP server closed the connection */
 			if (read == 0)
@@ -992,29 +903,6 @@ flap_connection_recv(FlapConnection *conn)
 	}
 }
 
-void
-flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	FlapConnection *conn = data;
-
-	flap_connection_recv(conn);
-}
-
-void
-flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond)
-{
-	FlapConnection *conn = data;
-
-	flap_connection_recv(conn);
-}
-
-/**
- * @param source When this function is called as a callback source is
- *        set to the fd that triggered the callback.  But this function
- *        is also called directly from flap_connection_send_byte_stream(),
- *        in which case source will be -1.  So don't use source--use
- *        conn->gsc or conn->fd instead.
- */
 static void
 send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -1031,27 +919,18 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (conn->gsc)
-		ret = purple_ssl_write(conn->gsc, conn->buffer_outgoing->outptr,
-				writelen);
-	else
-		ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
+	ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if (ret < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
 			/* No worries */
 			return;
 
 		/* Error! */
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
-		if (conn->gsc) {
-			purple_ssl_close(conn->gsc);
-			conn->gsc = NULL;
-		} else {
-			close(conn->fd);
-			conn->fd = -1;
-		}
+		close(conn->fd);
+		conn->fd = -1;
 		flap_connection_schedule_destroy(conn,
 				OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 		return;
@@ -1067,8 +946,8 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 		return;
 
 	/* Make sure we don't send past the end of the bs */
-	if (count > byte_stream_bytes_left(bs))
-		count = byte_stream_bytes_left(bs); /* truncate to remaining space */
+	if (count > byte_stream_empty(bs))
+		count = byte_stream_empty(bs); /* truncate to remaining space */
 
 	if (count == 0)
 		return;
@@ -1077,17 +956,11 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if (conn->watcher_outgoing == 0)
+	if ((conn->watcher_outgoing == 0) && (conn->fd >= 0))
 	{
-		if (conn->gsc) {
-			conn->watcher_outgoing = purple_input_add(conn->gsc->fd,
-					PURPLE_INPUT_WRITE, send_cb, conn);
-			send_cb(conn, -1, 0);
-		} else if (conn->fd >= 0) {
-			conn->watcher_outgoing = purple_input_add(conn->fd,
-					PURPLE_INPUT_WRITE, send_cb, conn);
-			send_cb(conn, -1, 0);
-		}
+		conn->watcher_outgoing = purple_input_add(conn->fd,
+				PURPLE_INPUT_WRITE, send_cb, conn);
+		send_cb(conn, conn->fd, 0);
 	}
 }
 
@@ -1125,3 +998,4 @@ flap_connection_send(FlapConnection *conn, FlapFrame *frame)
 	sendframe_flap(conn, frame);
 	flap_frame_destroy(frame);
 }
+

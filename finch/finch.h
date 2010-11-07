@@ -24,6 +24,8 @@
  */
 #include <glib.h>
 
+#include "libpurple/internal.h"
+
 #define FINCH_UI "gnt-purple"
 
 #define FINCH_PREFS_ROOT "/finch"

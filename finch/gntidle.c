@@ -21,8 +21,6 @@
  *
  */
 
-#include <internal.h>
-
 #include "finch.h"
 #include "gntidle.h"
 #include "gntwm.h"

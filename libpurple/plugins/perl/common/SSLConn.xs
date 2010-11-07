@@ -35,6 +35,9 @@ purple_ssl_close(gsc)
 Purple::Ssl::Ops
 purple_ssl_get_ops()
 
+void
+purple_ssl_init()
+
 gboolean
 purple_ssl_is_supported()
 
@@ -47,6 +50,9 @@ purple_ssl_read(gsc, buffer, len)
 void
 purple_ssl_set_ops(ops)
 	Purple::Ssl::Ops ops
+
+void
+purple_ssl_uninit()
 
 size_t
 purple_ssl_write(gsc, buffer, len)

@@ -30,6 +30,7 @@
 #include "account.h"
 #include "conversation.h"
 #include "debug.h"
+#include "notify.h"
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
@@ -40,7 +41,6 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkpounce.h"
-#include "gtknotify.h"
 #include "pidginstock.h"
 #include "gtkutils.h"
 
@@ -100,7 +100,6 @@ typedef struct
 	GtkWidget *play_sound_entry;
 	GtkWidget *play_sound_browse;
 	GtkWidget *play_sound_test;
-	GtkWidget *play_sound_reset;
 
 	GtkWidget *save_pounce;
 
@@ -167,26 +166,13 @@ static void
 pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 {
 	const char *filename;
-	gboolean temp_mute;
-
-	temp_mute = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute");
-
-	if (temp_mute) purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	if (filename != NULL && *filename != '\0' && strcmp(filename, _("(default)")))
+	if (filename != NULL && *filename != '\0')
 		purple_sound_play_file(filename, NULL);
 	else
 		purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, NULL);
-
-	if (temp_mute) purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", TRUE);
-}
-
-static void
-pounce_reset_sound(GtkWidget *w, GtkWidget *entry)
-{
-	gtk_entry_set_text(GTK_ENTRY(entry), _("(default)"));
 }
 
 static void
@@ -194,12 +180,15 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 {
 	GtkTreeIter iter;
 	PurpleAccount *account;
+	PurplePounceEvent events;
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf;
 
 	account = purple_pounce_get_pouncer(pounce);
+
+	events = purple_pounce_get_events(pounce);
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
@@ -315,7 +304,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 		message = NULL;
 	}
 	if (*command == '\0') command = NULL;
-	if (*sound   == '\0' || !strcmp(sound, _("(default)"))) sound   = NULL;
+	if (*sound   == '\0') sound   = NULL;
 
 	/* If the pounce has already been triggered, let's pretend it is a new one */
 	if (dialog->pounce != NULL
@@ -481,7 +470,7 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 
 void
 pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
-                          PurplePounce *cur_pounce)
+							PurplePounce *cur_pounce)
 {
 	PidginPounceDialog *dialog;
 	GtkWidget *window;
@@ -532,7 +521,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	/* Create the window. */
 	dialog->window = window = gtk_dialog_new();
-	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("Add Buddy Pounce") : _("Modify Buddy Pounce")));
+	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
 	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
 
@@ -634,19 +623,19 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,         1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 3, 4,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  2, 3, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,       2, 3, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->typing,       1, 2, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typed,        2, 3, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->typed,        1, 2, 3, 4,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  3, 4, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 4, 5,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
@@ -663,7 +652,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	/* Create the "Action" frame. */
 	frame = pidgin_make_frame(vbox2, _("Action"));
 
-	table = gtk_table_new(3, 6, FALSE);
+	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
 	gtk_widget_show(table);
@@ -685,11 +674,8 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->popup_entry       = gtk_entry_new();
 	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("Brows_e..."));
 	dialog->play_sound_entry  = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry), _("(default)"));
-	gtk_editable_set_editable(GTK_EDITABLE(dialog->play_sound_entry), FALSE);
 	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Br_owse..."));
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
-	dialog->play_sound_reset  = gtk_button_new_with_mnemonic(_("Reset"));
 
 	gtk_widget_set_sensitive(send_msg_imhtml,           FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,    FALSE);
@@ -698,7 +684,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_set_sensitive(dialog->play_sound_entry,  FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_browse, FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_test,   FALSE);
-	gtk_widget_set_sensitive(dialog->play_sound_reset,  FALSE);
 
 	g_object_unref(sg);
 
@@ -713,7 +698,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_size_group_add_widget(sg, dialog->play_sound_entry);
 	gtk_size_group_add_widget(sg, dialog->play_sound_browse);
 	gtk_size_group_add_widget(sg, dialog->play_sound_test);
-	gtk_size_group_add_widget(sg, dialog->play_sound_reset);
 
 	g_object_unref(sg);
 	sg = NULL;
@@ -722,11 +706,11 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->popup,            0, 1, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->popup_entry,      1, 5, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->popup_entry,      1, 4, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 5, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 4, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), send_msg_imhtml,          0, 5, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), send_msg_imhtml,          0, 4, 3, 4,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd,         0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
@@ -741,8 +725,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_browse,2, 3, 5, 6,
 					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_test,  3, 4, 5, 6,
-					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_reset, 4, 5, 5, 6,
 					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
 	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE / 2);
@@ -759,7 +741,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(dialog->play_sound_entry);
 	gtk_widget_show(dialog->play_sound_browse);
 	gtk_widget_show(dialog->play_sound_test);
-	gtk_widget_show(dialog->play_sound_reset);
 
 	g_signal_connect(G_OBJECT(dialog->message_recv), "clicked",
 					 G_CALLBACK(message_recv_toggle),
@@ -790,7 +771,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_ptr_array_add(sound_widgets,dialog->play_sound_entry);
 	g_ptr_array_add(sound_widgets,dialog->play_sound_browse);
 	g_ptr_array_add(sound_widgets,dialog->play_sound_test);
-	g_ptr_array_add(sound_widgets,dialog->play_sound_reset);
 
 	g_signal_connect(G_OBJECT(dialog->play_sound), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive_array),
@@ -800,9 +780,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 					 dialog->play_sound_entry);
 	g_signal_connect(G_OBJECT(dialog->play_sound_test), "clicked",
 					 G_CALLBACK(pounce_test_sound),
-					 dialog->play_sound_entry);
-	g_signal_connect(G_OBJECT(dialog->play_sound_reset), "clicked",
-					 G_CALLBACK(pounce_reset_sound),
 					 dialog->play_sound_entry);
 	g_object_set_data_full(G_OBJECT(dialog->window), "sound-widgets",
 				sound_widgets, (GDestroyNotify)g_ptr_array_free);
@@ -817,6 +794,8 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->popup_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_entry), "activate",
+					 G_CALLBACK(save_pounce_cb), dialog);
+	g_signal_connect(G_OBJECT(dialog->play_sound_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 
 	/* Create the "Options" frame. */
@@ -845,12 +824,10 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(cancel_cb), dialog);
 
-	/* Save/Add button */
-	dialog->save_button = button = gtk_dialog_add_button(GTK_DIALOG(window),
-	                                                     (cur_pounce == NULL ? GTK_STOCK_ADD : GTK_STOCK_SAVE),
-	                                                     GTK_RESPONSE_OK);
+	/* Save button */
+	dialog->save_button = button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_SAVE, GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(button), "clicked",
-	                 G_CALLBACK(save_pounce_cb), dialog);
+					 G_CALLBACK(save_pounce_cb), dialog);
 
 	if (*gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry)) == '\0')
 		gtk_widget_set_sensitive(button, FALSE);
@@ -947,7 +924,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 													  "play-sound",
 													  "filename")) != NULL)
 		{
-			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry), (value && *value != '\0') ? value : _("(default)"));
+			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry), value);
 		}
 	}
 	else
@@ -1060,6 +1037,15 @@ pounces_manager_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_dat
 	return FALSE;
 }
 
+#if !GTK_CHECK_VERSION(2,2,0)
+static void
+count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	(*(gint *)user_data)++;
+}
+#endif
+
 static void
 pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 {
@@ -1151,7 +1137,11 @@ pounce_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 	PouncesManager *dialog = user_data;
 	int num_selected = 0;
 
+#if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(sel);
+#else
+	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
+#endif
 
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
 	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
@@ -1259,6 +1249,8 @@ create_pounces_list(PouncesManager *dialog)
 	/* Handle double-clicking */
 	g_signal_connect(G_OBJECT(treeview), "button_press_event",
 					 G_CALLBACK(pounce_double_click_cb), dialog);
+
+
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
 
@@ -1358,7 +1350,7 @@ pidgin_pounces_manager_show(void)
 	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
 
 	/* Add button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
 	gtk_widget_set_sensitive(button, (purple_accounts_get_all() != NULL));
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
@@ -1439,29 +1431,29 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		 * Here we place the protocol name in the pounce dialog to lessen
 		 * confusion about what protocol a pounce is for.
 		 */
-		tmp = g_strdup(
+		tmp = g_strdup_printf(
 				   (events & PURPLE_POUNCE_TYPING) ?
-				   _("Started typing") :
+				   _("%s has started typing to you (%s)") :
 				   (events & PURPLE_POUNCE_TYPED) ?
-				   _("Paused while typing") :
+				   _("%s has paused while typing to you (%s)") :
 				   (events & PURPLE_POUNCE_SIGNON) ?
-				   _("Signed on") :
+				   _("%s has signed on (%s)") :
 				   (events & PURPLE_POUNCE_IDLE_RETURN) ?
-				   _("Returned from being idle") :
+				   _("%s has returned from being idle (%s)") :
 				   (events & PURPLE_POUNCE_AWAY_RETURN) ?
-				   _("Returned from being away") :
+				   _("%s has returned from being away (%s)") :
 				   (events & PURPLE_POUNCE_TYPING_STOPPED) ?
-				   _("Stopped typing") :
+				   _("%s has stopped typing to you (%s)") :
 				   (events & PURPLE_POUNCE_SIGNOFF) ?
-				   _("Signed off") :
+				   _("%s has signed off (%s)") :
 				   (events & PURPLE_POUNCE_IDLE) ?
-				   _("Became idle") :
+				   _("%s has become idle (%s)") :
 				   (events & PURPLE_POUNCE_AWAY) ?
-				   _("Went away") :
+				   _("%s has gone away. (%s)") :
 				   (events & PURPLE_POUNCE_MESSAGE_RECEIVED) ?
-				   _("Sent a message") :
-				   _("Unknown.... Please report this!")
-				   );
+				   _("%s has sent you a message. (%s)") :
+				   _("Unknown pounce event. Please report this!"),
+				   alias, purple_account_get_protocol_name(account));
 
 		/*
 		 * Ok here is where I change the second argument, title, from
@@ -1471,9 +1463,16 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		if ((name_shown = purple_account_get_alias(account)) == NULL)
 			name_shown = purple_account_get_username(account);
 
-		pidgin_notify_pounce_add(account, pounce, alias, tmp, reason,
-				purple_date_format_full(NULL));
-
+		if (reason == NULL)
+		{
+			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL));
+		}
+		else
+		{
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, purple_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, tmp2);
+			g_free(tmp2);
+		}
 		g_free(tmp);
 	}
 
@@ -1530,7 +1529,53 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 				g_free(localecmd);
 			}
 #else /* !_WIN32 */
-			winpidgin_shell_execute(command, "open", NULL);
+			PROCESS_INFORMATION pi;
+			BOOL retval;
+			gchar *message = NULL;
+
+			memset(&pi, 0, sizeof(pi));
+
+			if (G_WIN32_HAVE_WIDECHAR_API ()) {
+				STARTUPINFOW si;
+				wchar_t *wc_cmd = g_utf8_to_utf16(command,
+						-1, NULL, NULL, NULL);
+
+				memset(&si, 0 , sizeof(si));
+				si.cb = sizeof(si);
+
+				retval = CreateProcessW(NULL, wc_cmd, NULL,
+						NULL, 0, 0, NULL, NULL,
+						&si, &pi);
+				g_free(wc_cmd);
+			} else {
+				STARTUPINFOA si;
+				char *l_cmd = g_locale_from_utf8(command,
+						-1, NULL, NULL, NULL);
+
+				memset(&si, 0 , sizeof(si));
+				si.cb = sizeof(si);
+
+				retval = CreateProcessA(NULL, l_cmd, NULL,
+						NULL, 0, 0, NULL, NULL,
+						&si, &pi);
+				g_free(l_cmd);
+			}
+
+			if (retval) {
+				CloseHandle(pi.hProcess);
+				CloseHandle(pi.hThread);
+			} else {
+				message = g_win32_error_message(GetLastError());
+			}
+
+			purple_debug_info("pounce",
+					"Pounce execute command called for: "
+					"%s\n%s%s%s",
+						command,
+						retval ? "" : "Error: ",
+						retval ? "" : message,
+						retval ? "" : "\n");
+			g_free(message);
 #endif /* !_WIN32 */
 		}
 	}

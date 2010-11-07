@@ -216,6 +216,8 @@ bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 void
 msn_sync_init(void)
 {
+	/* TODO: check prp, blp, bpr */
+
 	cbs_table = msn_table_new();
 
 	/* Syncing */

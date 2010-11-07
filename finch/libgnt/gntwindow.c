@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "gntinternal.h"
 #include "gntstyle.h"
 #include "gntwindow.h"
 
@@ -50,16 +49,7 @@ show_menu(GntBindable *bind, GList *null)
 {
 	GntWindow *win = GNT_WINDOW(bind);
 	if (win->menu) {
-		GntMenu *menu = win->menu;
-
-		gnt_screen_menu_show(menu);
-		if (menu->type == GNT_MENU_TOPLEVEL) {
-			GntMenuItem *item;
-			item = g_list_nth_data(menu->list, menu->selected);
-			if (item && gnt_menuitem_get_submenu(item)) {
-				gnt_widget_activate(GNT_WIDGET(menu));
-			}
-		}
+		gnt_screen_menu_show(win->menu);
 		return TRUE;
 	}
 	return FALSE;

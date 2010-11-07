@@ -7,9 +7,9 @@ Purple::Handle
 pidgin_log_get_handle()
 
 void
-pidgin_log_show(type, buddyname, account)
+pidgin_log_show(type, screenname, account)
 	Purple::LogType type
-	const char * buddyname
+	const char * screenname
 	Purple::Account account
 
 void

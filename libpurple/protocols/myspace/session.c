@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+
 #include "myspace.h"
 
 /* Session methods */
@@ -46,9 +47,9 @@ msim_session_new(PurpleAccount *acct)
 	session->fd = -1;
 
 	/* TODO: Remove. */
-	session->user_lookup_cb = g_hash_table_new_full(g_direct_hash,
+	session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
 			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! (values) */
-	session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash,
+	session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
 			g_direct_equal, NULL, NULL);/* TODO: we don't know what the values are,
 											 they could be integers inside gpointers
 											 or strings, so I don't freed them.
@@ -64,7 +65,7 @@ msim_session_new(PurpleAccount *acct)
 	session->last_comm = time(NULL);
 	session->inbox_status = 0;
 	session->inbox_handle = 0;
-
+	
 	return session;
 }
 
@@ -73,9 +74,11 @@ msim_session_new(PurpleAccount *acct)
  *
  * @param session The session to destroy.
  */
-void
+void 
 msim_session_destroy(MsimSession *session)
 {
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+	
 	session->magic = -1;
 
 	g_free(session->rxbuf);
@@ -88,7 +91,7 @@ msim_session_destroy(MsimSession *session)
 	if (session->server_info) {
 		msim_msg_free(session->server_info);
 	}
-
+	
 	/* Stop checking the inbox at the end of the session. */
 	if (session->inbox_handle) {
 		purple_timeout_remove(session->inbox_handle);
@@ -96,3 +99,4 @@ msim_session_destroy(MsimSession *session)
 
 	g_free(session);
 }
+

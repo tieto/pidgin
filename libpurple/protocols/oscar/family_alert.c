@@ -22,10 +22,10 @@
  * Family 0x0018 - Email notification
  *
  * Used for being alerted when the email address(es) associated with
- * your username get new electronic-m.  For normal AIM accounts, you
- * get the email address username@netscape.net.  AOL accounts have
- * username@aol.com, and can also activate a netscape.net account.
- * Note: This information might be out of date.
+ * your screen name get new electronic-m.  For normal AIM accounts, you
+ * get the email address screenname@netscape.net.  AOL accounts have
+ * screenname@aol.com, and can also activate a netscape.net account.
+ *
  */
 
 #include "oscar.h"
@@ -72,8 +72,8 @@ aim_email_sendcookies(OscarData *od)
 	byte_stream_put16(&bs, 0xb0ee);
 	byte_stream_put16(&bs, 0x0631);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0006, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, snacid, &bs);
+	snacid = aim_cachesnac(od, 0x0018, 0x0006, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -88,7 +88,7 @@ aim_email_sendcookies(OscarData *od)
  * but this is coded so it will handle that, and handle it well.
  * This tells you if you have unread mail or not, the URL you
  * should use to access that mail, and the domain name for the
- * email account (username@domainname.com).  If this is the
+ * email account (screenname@domainname.com).  If this is the
  * first 0x0007 SNAC you've received since you signed on, or if
  * this is just a periodic status update, this will also contain
  * the number of unread emails that you have.
@@ -188,8 +188,8 @@ aim_email_activate(OscarData *od)
 	byte_stream_put32(&bs, 0x04000000);
 	byte_stream_put32(&bs, 0x00000000);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ALERT, 0x0016, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ALERT, 0x0006, snacid, &bs);
+	snacid = aim_cachesnac(od, 0x0018, 0x0016, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -225,7 +225,7 @@ email_shutdown(OscarData *od, aim_module_t *mod)
 int
 email_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = SNAC_FAMILY_ALERT;
+	mod->family = 0x0018;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;

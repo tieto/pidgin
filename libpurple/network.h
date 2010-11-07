@@ -88,17 +88,6 @@ const char *purple_network_get_public_ip(void);
 const char *purple_network_get_local_system_ip(int fd);
 
 /**
- * Returns all IP addresses of the local system.
- *
- * @note The caller must free this list.  If libpurple was built with
- *       support for it, this function also enumerates IPv6 addresses.
- * @since 2.7.0
- *
- * @return A list of local IP addresses.
- */
-GList *purple_network_get_all_local_system_ips(void);
-
-/**
  * Returns the IP address that should be used anywhere a
  * public IP addresses is needed (listening for an incoming
  * file transfer, etc).
@@ -117,17 +106,19 @@ GList *purple_network_get_all_local_system_ips(void);
  */
 const char *purple_network_get_my_ip(int fd);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Should calls to purple_network_listen() and purple_network_listen_range()
  * map the port externally using NAT-PMP or UPnP?
  * The default value is TRUE
  *
  * @param map_external Should the open port be mapped externally?
- * @deprecated In 3.0.0 a boolean will be added to the functions mentioned
- *             above to perform the same function.
+ * @deprecated In 3.0.0 a boolean will be added to the above functions to
+ *             perform the same function.
  * @since 2.3.0
  */
 void purple_network_listen_map_external(gboolean map_external);
+#endif
 
 /**
  * Attempts to open a listening port ONLY on the specified port number.
@@ -138,8 +129,8 @@ void purple_network_listen_map_external(gboolean map_external);
  *
  * This opens a listening port. The caller will want to set up a watcher
  * of type PURPLE_INPUT_READ on the fd returned in cb. It will probably call
- * accept in the watcher callback, and then possibly remove the watcher and
- * close the listening socket, and add a new watcher on the new socket accept
+ * accept in the watcher callback, and then possibly remove the watcher and close
+ * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
  * @param port The port number to bind to.  Must be greater than 0.
@@ -156,27 +147,6 @@ void purple_network_listen_map_external(gboolean map_external);
  */
 PurpleNetworkListenData *purple_network_listen(unsigned short port,
 		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
-
-/**
- * \copydoc purple_network_listen
- *
- * Libpurple does not currently do any port mapping (stateful firewall hole
- * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
- * addresses, a mapping is done).
- * 
- * @param socket_family The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
- * @since 2.7.0
- * @deprecated This function will be renamed to purple_network_listen in 3.0.0.
- */
-PurpleNetworkListenData *purple_network_listen_family(unsigned short port,
-	int socket_family, int socket_type, PurpleNetworkListenCallback cb,
-	gpointer cb_data);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -213,33 +183,11 @@ PurpleNetworkListenData *purple_network_listen_range(unsigned short start,
 		PurpleNetworkListenCallback cb, gpointer cb_data);
 
 /**
- * \copydoc purple_network_listen_range
- * 
- * Libpurple does not currently do any port mapping (stateful firewall hole
- * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
- * addresses, a mapping is done).
- * 
- * @param socket_family The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
- * @since 2.7.0
- * @deprecated This function will be renamed to purple_network_listen_range
- *             in 3.0.0.
- */
-PurpleNetworkListenData *purple_network_listen_range_family(
-	unsigned short start, unsigned short end, int socket_family,
-	int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
-
-/**
  * This can be used to cancel any in-progress listener connection
  * by passing in the return value from either purple_network_listen()
  * or purple_network_listen_range().
  *
- * @param listen_data This listener attempt will be cancelled and
+ * @param listen_data This listener attempt will be canceled and
  *        the struct will be freed.
  */
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
@@ -255,22 +203,13 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
 unsigned short purple_network_get_port_from_fd(int fd);
 
 /**
- * Detects if there is an available network connection.
+ * Detects if there is an available Internet connection. Note that this call
+ * could block for the amount of time specified in inet_detect_timeout, so
+ * using it in a UI thread may cause uncomfortableness
  *
- * @return TRUE if the network is available
+ * @return TRUE if the Internet is available
  */
 gboolean purple_network_is_available(void);
-
-/**
- * Makes purple_network_is_available() always return @c TRUE.
- *
- * This is what backs the --force-online command line argument in Pidgin,
- * for example.  This is useful for offline testing, especially when
- * combined with nullprpl.
- *
- * @since 2.6.0
- */
-void purple_network_force_online(void);
 
 /**
  * Get the handle for the network system
@@ -278,67 +217,6 @@ void purple_network_force_online(void);
  * @return the handle to the network system
  */
 void *purple_network_get_handle(void);
-
-/**
- * Update the STUN server IP given the host name
- * Will result in a DNS query being executed asynchronous
- *
- * @param stun_server The host name of the STUN server to set
- * @since 2.6.0
- */
-void purple_network_set_stun_server(const gchar *stun_server);
-
-/**
- * Get the IP address of the STUN server as a string representation
- *
- * @return the IP address
- * @since 2.6.0
- */
-const gchar *purple_network_get_stun_ip(void);
-
-/**
- * Update the TURN server IP given the host name
- * Will result in a DNS query being executed asynchronous
- *
- * @param turn_server The host name of the TURN server to set
- * @since 2.6.0
- */
-void purple_network_set_turn_server(const gchar *turn_server);
-
-/**
- * Get the IP address of the TURN server as a string representation
- *
- * @return the IP address
- * @since 2.6.0
- */
-const gchar *purple_network_get_turn_ip(void);
-
-/**
- * Remove a port mapping (UPnP or NAT-PMP) associated with listening socket
- *
- * @param fd Socket to remove the port mapping for
- * @since 2.6.0
- */
-void purple_network_remove_port_mapping(gint fd);
-
-/**
- * Convert a UTF-8 domain name to ASCII in accordance with the IDNA
- * specification. If libpurple is compiled without IDN support, this function
- * copies the input into the output buffer.
- *
- * Because this function is used by DNS resolver child/threads, it uses no
- * other libpurple API and is threadsafe.
- *
- * In general, a buffer of about 512 bytes is the appropriate size to use.
- *
- * @param in      The hostname to be converted.
- * @param out     The output buffer where an allocated string will be returned.
- *                The caller is responsible for freeing this.
- * @returns       0 on success, -1 if the out is NULL, or an error code
- *                that currently corresponds to the Idna_rc enum in libidn.
- * @since 2.6.0
- */
-int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out);
 
 /**
  * Initializes the network subsystem.

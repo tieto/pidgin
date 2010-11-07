@@ -41,6 +41,11 @@ typedef struct _PidginIOClosure {
 
 } PidginIOClosure;
 
+static void pidgin_io_destroy(gpointer data)
+{
+	g_free(data);
+}
+
 static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	PidginIOClosure *closure = data;
@@ -52,7 +57,7 @@ static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpo
 		purple_cond |= PURPLE_INPUT_WRITE;
 
 #if 0
-	purple_debug_misc("gtk_eventloop",
+	purple_debug(PURPLE_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE: callback for %d, fd is %d\n",
 			   closure->result, g_io_channel_unix_get_fd(source));
 #endif
@@ -60,7 +65,7 @@ static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpo
 #ifdef _WIN32
 	if(! purple_cond) {
 #ifdef DEBUG
-		purple_debug_misc("gtk_eventloop",
+		purple_debug(PURPLE_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
 			   condition, PIDGIN_READ_COND, PIDGIN_WRITE_COND);
@@ -105,10 +110,10 @@ static guint pidgin_input_add(gint fd, PurpleInputCondition condition, PurpleInp
 	channel = g_io_channel_unix_new(fd);
 
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      pidgin_io_invoke, closure, g_free);
+					      pidgin_io_invoke, closure, pidgin_io_destroy);
 
 #if 0
-	purple_debug_misc("gtk_eventloop",
+	purple_debug(PURPLE_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE: adding input watcher %d for fd %d\n",
 			   closure->result, fd);
 #endif

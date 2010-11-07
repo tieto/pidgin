@@ -38,19 +38,13 @@
 #define BONJOUR_STATUS_ID_AVAILABLE "available"
 #define BONJOUR_STATUS_ID_AWAY      "away"
 
-#define BONJOUR_DEFAULT_PORT 5298
+#define BONJOUR_DEFAULT_PORT_INT 5298
 
 typedef struct _BonjourData
 {
 	BonjourDnsSd *dns_sd_data;
 	BonjourJabber *jabber_data;
 	GSList *xfer_lists;
-	gchar *jid;
 } BonjourData;
-
-/**
- *  This will always be username@machinename
- */
-const char *bonjour_get_jid(PurpleAccount *account);
 
 #endif /* _BONJOUR_H_ */

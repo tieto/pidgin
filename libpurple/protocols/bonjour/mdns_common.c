@@ -46,30 +46,6 @@ void bonjour_dns_sd_free(BonjourDnsSd *data) {
 	g_free(data);
 }
 
-#define MAX_TXT_CONSTITUENT_LEN 255
-
-/* Make sure that the value isn't longer than it is supposed to be */
-static const char*
-get_max_txt_record_value(const char *key, const char *value)
-{
-	/* "each constituent string of a DNS TXT record is limited to 255 bytes"
-	 * This includes the key and the '='
-	 */
-	static char buffer[MAX_TXT_CONSTITUENT_LEN + 1];
-	gchar *end_valid = NULL;
-	int len = MIN(strlen(value), MAX_TXT_CONSTITUENT_LEN - (strlen(key) + 2));
-
-	strncpy(buffer, value, len);
-
-	buffer[len] = '\0';
-
-	/* If we've cut part of a utf-8 character, kill it */
-	if (!g_utf8_validate(buffer, -1, (const gchar **)&end_valid))
-		*end_valid = '\0';
-
-	return buffer;
-}
-
 static GSList *generate_presence_txt_records(BonjourDnsSd *data) {
 	GSList *ret = NULL;
 	PurpleKeyValuePair *kvp;
@@ -86,18 +62,11 @@ static GSList *generate_presence_txt_records(BonjourDnsSd *data) {
 #define _M_ADD_R(k, v) \
 	kvp = g_new0(PurpleKeyValuePair, 1); \
 	kvp->key = g_strdup(k); \
-	kvp->value = g_strdup(get_max_txt_record_value(k, v)); \
+	kvp->value = g_strdup(v); \
 	ret = g_slist_prepend(ret, kvp); \
 
 	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
 	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
-	 */
-
-	/* Large TXT records are problematic.
-	 * While it is technically possible for this to exceed a standard 512-byte
-	 * DNS message, it shouldn't happen unless we get wacky data entered for
-	 * some of the freeform fields.  It is even less likely to exceed the
-	 * recommended maximum of 1300 bytes.
 	 */
 
 	/* Needed by iChat */
@@ -251,37 +220,4 @@ gboolean bonjour_dns_sd_start(BonjourDnsSd *data) {
 
 void bonjour_dns_sd_stop(BonjourDnsSd *data) {
 	_mdns_stop(data);
-}
-
-void
-bonjour_dns_sd_set_jid(PurpleAccount *account, const char *hostname)
-{
-	PurpleConnection *conn = purple_account_get_connection(account);
-	BonjourData *bd = conn->proto_data;
-	const char *tmp, *account_name = purple_account_get_username(account);
-
-	/* Previously we allowed the hostname part of the jid to be set
-	 * explicitly when it should always be the current hostname.
-	 * That is what this is intended to deal with.
-	 */
-	if ((tmp = strchr(account_name, '@'))
-	    && strstr(tmp, hostname) == (tmp + 1)
-	    && *((tmp + 1) + strlen(hostname)) == '\0')
-		bd->jid = g_strdup(account_name);
-	else {
-		const char *tmp2;
-		GString *str = g_string_new("");
-		/* Escape an '@' in the account name */
-		tmp = account_name;
-		while ((tmp2 = strchr(tmp, '@')) != NULL) {
-			g_string_append_len(str, tmp, tmp2 - tmp);
-			g_string_append(str, "\\40");
-			tmp = tmp2 + 1;
-		}
-		g_string_append(str, tmp);
-		g_string_append_c(str, '@');
-		g_string_append(str, hostname);
-
-		bd->jid = g_string_free(str, FALSE);
-	}
 }

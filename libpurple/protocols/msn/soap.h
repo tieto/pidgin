@@ -1,7 +1,8 @@
 /**
  * @file soap.h
  * 	header file for SOAP connection related process
- *
+ *	Author
+ * 		MaYuan<mayuan2006@gmail.com>
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -20,33 +21,146 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef MSN_SOAP_H
-#define MSN_SOAP_H
+#ifndef _MSN_SOAP_H_
+#define _MSN_SOAP_H_
 
-typedef struct _MsnSoapMessage MsnSoapMessage;
+#define MSN_SOAP_READ_BUFF_SIZE		8192
 
-#include <glib.h>
+/* define this to debug the communications with the SOAP server */
+/* #define MSN_SOAP_DEBUG */
 
-#include "xmlnode.h"
+#define MSN_SOAP_READ 1
+#define MSN_SOAP_WRITE 2
 
-#include "session.h"
-#include "sslconn.h"
+typedef enum
+{
+	MSN_SOAP_UNCONNECTED,
+	MSN_SOAP_CONNECTING,
+	MSN_SOAP_CONNECTED,
+	MSN_SOAP_PROCESSING,
+	MSN_SOAP_CONNECTED_IDLE
+}MsnSoapStep;
 
-typedef void (*MsnSoapCallback)(MsnSoapMessage *request,
-	MsnSoapMessage *response, gpointer cb_data);
+/* MSN SoapRequest structure*/
+typedef struct _MsnSoapReq MsnSoapReq;
 
-struct _MsnSoapMessage {
-	char *action;
-	xmlnode *xml;
-	GSList *headers;
+/* MSN Https connection structure*/
+typedef struct _MsnSoapConn MsnSoapConn;
+
+typedef void (*MsnSoapConnectInitFunction)(MsnSoapConn *);
+typedef gboolean (*MsnSoapReadCbFunction)(MsnSoapConn *);
+typedef void (*MsnSoapWrittenCbFunction)(MsnSoapConn *);
+
+typedef gboolean (*MsnSoapSslConnectCbFunction)(MsnSoapConn *, PurpleSslConnection *);
+typedef void (*MsnSoapSslErrorCbFunction)(MsnSoapConn *, PurpleSslConnection *, PurpleSslErrorType);
+
+
+struct _MsnSoapReq{
+	/*request sequence*/
+	int	 id;
+
+	char *login_host;
+	char *login_path;
+	char *soap_action;
+
+	char *body;
+	
+	gpointer data_cb;
+	MsnSoapReadCbFunction read_cb;
+	MsnSoapWrittenCbFunction written_cb;
+	MsnSoapConnectInitFunction connect_init;
 };
 
-MsnSoapMessage *msn_soap_message_new(const char *action, xmlnode *xml);
+struct _MsnSoapConn{
+	MsnSession *session;
+	gpointer parent;
 
-void msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
-	const char *host, const char *path, gboolean secure,
-	MsnSoapCallback cb, gpointer cb_data);
+	char *login_host;
+	char *login_path;
+	char *soap_action;
 
-#endif /* MSN_SOAP_H */
+	MsnSoapStep step;
+	/*ssl connection?*/
+	gboolean ssl_conn;
+	/*normal connection*/
+	guint fd;
+	/*SSL connection*/
+	PurpleSslConnection *gsc;
+	/*ssl connection callback*/
+	MsnSoapSslConnectCbFunction connect_cb;
+	/*ssl error callback*/
+	MsnSoapSslErrorCbFunction error_cb;
+
+	/*read handler*/
+	guint input_handler;
+	/*write handler*/
+	guint output_handler;
+
+	/*Queue of SOAP request to send*/
+	int soap_id;
+	GQueue *soap_queue;
+
+	/*write buffer*/
+	char *write_buf;
+	gsize written_len;
+	MsnSoapWrittenCbFunction written_cb;
+
+	/*read buffer*/
+	char *read_buf;
+	gsize read_len;
+	gsize need_to_read;
+	MsnSoapReadCbFunction read_cb;
+
+	gpointer data_cb;
+
+	/*HTTP reply body part*/
+	char *body;
+	int body_len;
+};
+
+
+/*Function Prototype*/
+/*Soap Request Function */
+MsnSoapReq *msn_soap_request_new(const char *host, const char *post_url,
+				 const char *soap_action, const char *body,
+				 const gpointer data_cb,
+				 MsnSoapReadCbFunction read_cb,
+				 MsnSoapWrittenCbFunction written_cb,
+				 MsnSoapConnectInitFunction connect_init);
+
+void msn_soap_request_free(MsnSoapReq *request);
+void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
+void msn_soap_post_head_request(MsnSoapConn *soapconn);
+
+/*new a soap conneciton */
+MsnSoapConn *msn_soap_new(MsnSession *session, gpointer data, gboolean ssl);
+
+/*destroy */
+void msn_soap_destroy(MsnSoapConn *soapconn);
+
+/*init a soap conneciton */
+void msn_soap_init(MsnSoapConn *soapconn, char * host, gboolean ssl,
+		   MsnSoapSslConnectCbFunction connect_cb,
+		   MsnSoapSslErrorCbFunction error_cb);
+void msn_soap_connect(MsnSoapConn *soapconn);
+void msn_soap_close(MsnSoapConn *soapconn);
+
+/*write to soap*/
+void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, MsnSoapWrittenCbFunction written_cb);
+void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
+
+void msn_soap_free_read_buf(MsnSoapConn *soapconn);
+void msn_soap_free_write_buf(MsnSoapConn *soapconn);
+void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
+
+/*clean the unhandled requests*/
+void msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn);
+
+/*check if the soap connection is connected*/
+int msn_soap_connected(MsnSoapConn *soapconn);
+void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
+
+#endif/*_MSN_SOAP_H_*/
+

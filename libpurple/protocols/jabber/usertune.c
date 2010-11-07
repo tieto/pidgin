@@ -1,9 +1,7 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2007, Andreas Monitzer <andy@monitzer.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 
@@ -111,19 +109,19 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 }
 
 void jabber_tune_init(void) {
-	jabber_add_feature("http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_pep_register_handler("http://jabber.org/protocol/tune", jabber_tune_cb);
+	jabber_add_feature("tune", "http://jabber.org/protocol/tune", jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_pep_register_handler("tunen", "http://jabber.org/protocol/tune", jabber_tune_cb);
 }
 
 void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo) {
 	xmlnode *publish, *tunenode;
 	JabberStream *js = gc->proto_data;
-
+	
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/tune");
 	tunenode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "tune");
 	xmlnode_set_namespace(tunenode, "http://jabber.org/protocol/tune");
-
+	
 	if(tuneinfo) {
 		if(tuneinfo->artist && tuneinfo->artist[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "artist"),tuneinfo->artist,-1);
@@ -141,7 +139,7 @@ void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo)
 		if(tuneinfo->track && tuneinfo->track[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "track"),tuneinfo->track,-1);
 	}
-
+	
 	jabber_pep_publish(js, publish);
 	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
 	   (yay for well-defined memory management rules) */

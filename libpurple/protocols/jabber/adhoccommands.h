@@ -1,9 +1,7 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2007, Andreas Monitzer <andy@monitzer.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +15,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 
-#ifndef PURPLE_JABBER_ADHOCCOMMANDS_H_
-#define PURPLE_JABBER_ADHOCCOMMANDS_H_
+#ifndef _PURPLE_JABBER_ADHOCCOMMANDS_H_
+#define _PURPLE_JABBER_ADHOCCOMMANDS_H_
 
 #include "jabber.h"
 
 /* Implementation of XEP-0050 */
 
-void jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
-                                  JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data);
+void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data);
 
 void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
 
 void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data);
 
-void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query);
-
 void jabber_adhoc_server_get_list(JabberStream *js);
 
 void jabber_adhoc_init_server_commands(JabberStream *js, GList **m);
 
-#endif /* PURPLE_JABBER_ADHOCCOMMANDS_H_ */
+#endif /* _PURPLE_JABBER_ADHOCCOMMANDS_H_ */

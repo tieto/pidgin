@@ -85,8 +85,9 @@ PPCODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(source_list));
 
-	for (i = 0; i <= t_len; i++) {
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(source_list), i, 0)));
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(source_list), i, 0), t_sl));
 	}
 	purple_presence_add_list(presence, t_GL);
 	g_list_free(t_GL);
@@ -341,6 +342,12 @@ purple_status_set_attr_string(status, id, value)
 	const char *id
 	const char *value
 
+void
+purple_status_init()
+
+void
+purple_status_uninit()
+
 MODULE = Purple::Status  PACKAGE = Purple::StatusType  PREFIX = purple_status_type_
 PROTOTYPES: ENABLE
 
@@ -381,8 +388,9 @@ CODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(status_types));
 
-	for (i = 0; i <= t_len; i++) {
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(status_types), i, 0)));
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(status_types), i, 0), t_sl));
 	}
 	RETVAL = (PurpleStatusType *)purple_status_type_find_with_id(t_GL, id);
 	g_list_free(t_GL);

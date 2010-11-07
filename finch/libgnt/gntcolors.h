@@ -91,7 +91,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
  *
  * @param kfile The string value
  *
- * @return A color. For an unknown color name, returns -EINVAL.
+ * @return A color
  *
  * @since 2.4.0
  */

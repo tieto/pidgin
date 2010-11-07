@@ -24,36 +24,18 @@
 #include "msn.h"
 #include "msnutils.h"
 #include "slpcall.h"
+#include "slpsession.h"
 
 #include "slp.h"
+
+/* #define MSN_DEBUG_SLPCALL */
 
 /**************************************************************************
  * Main
  **************************************************************************/
 
-static gboolean
-msn_slpcall_timeout(gpointer data)
-{
-	MsnSlpCall *slpcall;
-
-	slpcall = data;
-
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
-
-	if (!slpcall->pending && !slpcall->progress)
-	{
-		msn_slpcall_destroy(slpcall);
-		return TRUE;
-	}
-
-	slpcall->progress = FALSE;
-
-	return TRUE;
-}
-
 MsnSlpCall *
-msn_slpcall_new(MsnSlpLink *slplink)
+msn_slp_call_new(MsnSlpLink *slplink)
 {
 	MsnSlpCall *slpcall;
 
@@ -61,39 +43,47 @@ msn_slpcall_new(MsnSlpLink *slplink)
 
 	slpcall = g_new0(MsnSlpCall, 1);
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
+#ifdef MSN_DEBUG_SLPCALL
+	purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
+#endif
 
 	slpcall->slplink = slplink;
 
 	msn_slplink_add_slpcall(slplink, slpcall);
 
-	slpcall->timer = purple_timeout_add_seconds(MSN_SLPCALL_TIMEOUT, msn_slpcall_timeout, slpcall);
+	slpcall->timer = purple_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
 
 	return slpcall;
 }
 
 void
-msn_slpcall_destroy(MsnSlpCall *slpcall)
+msn_slp_call_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
+	MsnSession *session;
 
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
+#ifdef MSN_DEBUG_SLPCALL
+	purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
+#endif
 
 	g_return_if_fail(slpcall != NULL);
 
 	if (slpcall->timer)
 		purple_timeout_remove(slpcall->timer);
 
+	g_free(slpcall->id);
+	g_free(slpcall->branch);
+	g_free(slpcall->data_info);
+
 	for (e = slpcall->slplink->slp_msgs; e != NULL; )
 	{
 		MsnSlpMessage *slpmsg = e->data;
 		e = e->next;
 
-		if (purple_debug_is_verbose())
-			purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
-			                  slpmsg);
+#ifdef MSN_DEBUG_SLPCALL_VERBOSE
+		purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
+						slpmsg);
+#endif
 
 		if (slpmsg->slpcall == slpcall)
 		{
@@ -101,28 +91,21 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 		}
 	}
 
-	if (slpcall->end_cb != NULL)
-		slpcall->end_cb(slpcall, slpcall->slplink->session);
-
-	if (slpcall->xfer != NULL) {
-		if (purple_xfer_get_type(slpcall->xfer) == PURPLE_XFER_RECEIVE)
-			g_byte_array_free(slpcall->u.incoming_data, TRUE);
-		slpcall->xfer->data = NULL;
-		purple_xfer_unref(slpcall->xfer);
-	}
-
+	session = slpcall->slplink->session;
 
 	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
-	g_free(slpcall->id);
-	g_free(slpcall->branch);
-	g_free(slpcall->data_info);
+	if (slpcall->end_cb != NULL)
+		slpcall->end_cb(slpcall, session);
+
+	if (slpcall->xfer != NULL)
+		purple_xfer_unref(slpcall->xfer);
 
 	g_free(slpcall);
 }
 
 void
-msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type)
+msn_slp_call_init(MsnSlpCall *slpcall, MsnSlpCallType type)
 {
 	slpcall->session_id = rand() % 0xFFFFFF00 + 4;
 	slpcall->id = rand_guid();
@@ -130,16 +113,20 @@ msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type)
 }
 
 void
-msn_slpcall_session_init(MsnSlpCall *slpcall)
+msn_slp_call_session_init(MsnSlpCall *slpcall)
 {
+	MsnSlpSession *slpsession;
+
+	slpsession = msn_slp_session_new(slpcall);
+
 	if (slpcall->session_init_cb)
-		slpcall->session_init_cb(slpcall);
+		slpcall->session_init_cb(slpsession);
 
 	slpcall->started = TRUE;
 }
 
 void
-msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
+msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 					int app_id, const char *context)
 {
 	MsnSlpLink *slplink;
@@ -170,8 +157,10 @@ msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
 
+#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
 	slpmsg->text_body = TRUE;
+#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 
@@ -180,14 +169,36 @@ msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 }
 
 void
-msn_slpcall_close(MsnSlpCall *slpcall)
+msn_slp_call_close(MsnSlpCall *slpcall)
 {
 	g_return_if_fail(slpcall != NULL);
 	g_return_if_fail(slpcall->slplink != NULL);
 
 	send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
-	msn_slplink_send_queued_slpmsgs(slpcall->slplink);
-	msn_slpcall_destroy(slpcall);
+	msn_slplink_unleash(slpcall->slplink);
+	msn_slp_call_destroy(slpcall);
+}
+
+gboolean
+msn_slp_call_timeout(gpointer data)
+{
+	MsnSlpCall *slpcall;
+
+	slpcall = data;
+
+#ifdef MSN_DEBUG_SLPCALL
+	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
+#endif
+
+	if (!slpcall->pending && !slpcall->progress)
+	{
+		msn_slp_call_destroy(slpcall);
+		return FALSE;
+	}
+
+	slpcall->progress = FALSE;
+
+	return TRUE;
 }
 
 MsnSlpCall *
@@ -199,84 +210,26 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	slpcall = NULL;
 	body = slpmsg->buffer;
-	body_len = slpmsg->offset;
+	body_len = slpmsg->size;
 
-	if (slpmsg->flags == 0x0 || slpmsg->flags == 0x1000000)
+	if (slpmsg->flags == 0x0)
 	{
 		char *body_str;
 
-		if (slpmsg->session_id == 64)
-		{
-			/* This is for handwritten messages (Ink) */
-			GError *error = NULL;
-			gsize bytes_read, bytes_written;
-
-			body_str = g_convert((const gchar *)body, body_len / 2,
-			                     "UTF-8", "UTF-16LE",
-			                     &bytes_read, &bytes_written, &error);
-			body_len -= bytes_read + 2;
-			body += bytes_read + 2;
-			if (body_str == NULL
-			 || body_len <= 0
-			 || strstr(body_str, "image/gif") == NULL)
-			{
-				if (error != NULL) {
-					purple_debug_error("msn",
-					                   "Unable to convert Ink header from UTF-16 to UTF-8: %s\n",
-					                   error->message);
-					g_error_free(error);
-				}
-				else
-					purple_debug_error("msn",
-					                   "Received Ink in unknown format\n");
-				g_free(body_str);
-				return NULL;
-			}
-			g_free(body_str);
-
-			body_str = g_convert((const gchar *)body, body_len / 2,
-			                     "UTF-8", "UTF-16LE",
-			                     &bytes_read, &bytes_written, &error);
-			if (!body_str)
-			{
-				if (error != NULL) {
-					purple_debug_error("msn",
-					                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
-					                   error->message);
-					g_error_free(error);
-				}
-				else
-					purple_debug_error("msn",
-					                   "Received Ink in unknown format\n");
-				return NULL;
-			}
-
-			msn_switchboard_show_ink(slpmsg->slplink->swboard,
-			                         slplink->remote_user,
-			                         body_str);
-		}
-		else
-		{
-			body_str = g_strndup((const char *)body, body_len);
-			slpcall = msn_slp_sip_recv(slplink, body_str);
-		}
+		body_str = g_strndup((const char *)body, body_len);
+		slpcall = msn_slp_sip_recv(slplink, body_str);
 		g_free(body_str);
 	}
-	else if (slpmsg->flags == 0x20 ||
-	         slpmsg->flags == 0x1000020 ||
-	         slpmsg->flags == 0x1000030)
+	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 
 		if (slpcall != NULL)
 		{
-			if (slpcall->timer) {
+			if (slpcall->timer)
 				purple_timeout_remove(slpcall->timer);
-				slpcall->timer = 0;
-			}
 
-			if (slpcall->cb)
-				slpcall->cb(slpcall, body, body_len);
+			slpcall->cb(slpcall, body, body_len);
 
 			slpcall->wasted = TRUE;
 		}
@@ -287,16 +240,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = slplink->directconn->initial_call;
 
 		if (slpcall != NULL)
-			msn_slpcall_session_init(slpcall);
+			msn_slp_call_session_init(slpcall);
 	}
 #endif
-	else if (slpmsg->flags == 0x2)
-	{
-		/* Acknowledgement of previous message. Don't do anything currently. */
-	}
-	else
-		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%08lx\n",
-		                     slpmsg->flags);
 
 	return slpcall;
 }

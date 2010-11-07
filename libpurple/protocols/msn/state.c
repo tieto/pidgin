@@ -21,11 +21,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
-#include "internal.h"
-
-#include "core.h"
-
 #include "msn.h"
 #include "state.h"
 
@@ -66,25 +61,87 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 
 	psmNode = xmlnode_new("PSM");
 	if(psmstr != NULL){
-		xmlnode_insert_data(psmNode, psmstr, -1);
+		xmlnode_insert_data(psmNode,psmstr,strlen(psmstr));
 	}
-	xmlnode_insert_child(dataNode, psmNode);
+	xmlnode_insert_child(dataNode,psmNode);
 
 	mediaNode = xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){
-		xmlnode_insert_data(mediaNode, mediastr, -1);
+		xmlnode_insert_data(mediaNode,mediastr,strlen(mediastr));
 	}
-	xmlnode_insert_child(dataNode, mediaNode);
+	xmlnode_insert_child(dataNode,mediaNode);
 
 	guidNode = xmlnode_new("MachineGuid");
 	if(guidstr != NULL){
-		xmlnode_insert_data(guidNode, guidstr, -1);
+		xmlnode_insert_data(guidNode,guidstr,strlen(guidstr));
 	}
-	xmlnode_insert_child(dataNode, guidNode);
+	xmlnode_insert_child(dataNode,guidNode);
 
-	result = xmlnode_to_str(dataNode, &length);
+	result = xmlnode_to_str(dataNode,&length);
 	xmlnode_free(dataNode);
 	return result;
+}
+
+/* parse CurrentMedia string */
+gboolean
+msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
+{
+	char **cmedia_array;
+	int strings = 0;
+	gboolean parsed = FALSE;
+
+	if ((cmedia == NULL) || (*cmedia == '\0')) {
+		purple_debug_info("msn", "No currentmedia string\n");
+		return FALSE;
+	}
+
+	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
+
+	cmedia_array = g_strsplit(cmedia, "\\0", 0);
+
+	/*
+	 * 0: Media Player
+	 * 1: 'Music'
+	 * 2: '1' if enabled, '0' if not
+	 * 3: Format (eg. {0} by {1})
+	 * 4: Title
+	 * 5: Artist
+	 * 6: Album
+	 * 7: ?
+	 */
+#if GLIB_CHECK_VERSION(2,6,0)
+	strings  = g_strv_length(cmedia_array);
+#else
+	while (cmedia_array[++strings] != NULL);
+#endif
+
+	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
+		parsed = TRUE;
+
+		g_free(media->title);
+		if (strings == 4) {
+			media->title = g_strdup(cmedia_array[3]);
+		} else {
+			media->title = g_strdup(cmedia_array[4]);
+		}
+
+		g_free(media->artist);
+		if (strings > 5)
+			media->artist = g_strdup(cmedia_array[5]);
+		else
+			media->artist = NULL;
+
+		g_free(media->album);
+		if (strings > 6)
+			media->album = g_strdup(cmedia_array[6]);
+		else
+			media->album = NULL;
+
+	}
+
+	g_strfreev(cmedia_array);
+
+	return parsed;
 }
 
 /* get the CurrentMedia info from the XML string */
@@ -93,16 +150,16 @@ msn_get_currentmedia(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *currentmediaNode;
 	char *currentmedia;
-
-	purple_debug_info("msn", "Get CurrentMedia\n");
+	
+	purple_debug_info("msn","msn get CurrentMedia\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
+	if (!payloadNode){
+		purple_debug_error("msn","PSM XML parse Error!\n");
 		return NULL;
 	}
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
-	if (currentmediaNode == NULL) {
-		purple_debug_info("msn", "No CurrentMedia Node\n");
+	if (currentmediaNode == NULL){
+		purple_debug_info("msn","No CurrentMedia Node");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}
@@ -119,16 +176,16 @@ msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
 	char *psm;
-
-	purple_debug_info("msn", "msn get PSM\n");
+	
+	purple_debug_info("MSNP14","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
+	if (!payloadNode){
+		purple_debug_error("MSNP14","PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
-	if (psmNode == NULL) {
-		purple_debug_info("msn", "No PSM status Node\n");
+	if (psmNode == NULL){
+		purple_debug_info("MSNP14","No PSM status Node");
 		xmlnode_free(payloadNode);
 		return NULL;
 	}
@@ -142,43 +199,31 @@ msn_get_psm(char *xml_str, gsize len)
 static char *
 create_media_string(PurplePresence *presence)
 {
-	const char *title, *game, *office;
+	const char *artist, *title, *album;
 	char *ret;
 	PurpleStatus *status = purple_presence_get_status(presence, "tune");
 	if (!status || !purple_status_is_active(status))
-		return NULL;
+		return g_strdup_printf("WMP\\0Music\\00\\0{0} - {1}\\0\\0\\0\\0\\0");
 
+	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-	game = purple_status_get_attr_string(status, "game");
-	office = purple_status_get_attr_string(status, "office");
+	album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
 
-	if (title && *title) {
-		const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
-		const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
-		ret = g_strdup_printf("WMP\\0Music\\01\\0{0}%s%s\\0%s\\0%s\\0%s\\0",
-		                      artist ? " - {1}" : "",
-		                      album ? " ({2})" : "",
-		                      title,
-		                      artist ? artist : "",
-		                      album ? album : "");
-	}
-	else if (game && *game)
-		ret = g_strdup_printf("\\0Games\\01\\0Playing {0}\\0%s\\0", game);
-	else if (office && *office)
-		ret = g_strdup_printf("\\0Office\\01\\0Editing {0}\\0%s\\0", office);
-	else
-		ret = NULL;
-
+	ret = g_strdup_printf("WMP\\0Music\\0%c\\0{0} - {1}\\0%s\\0%s\\0%s\\0\\0",
+			(title && *title) ? '1' : '0',
+			title ? title : "",
+			artist ? artist : "",
+			album ? album : "");
 	return ret;
 }
 
-/* set the MSN's PSM info,Currently Read from the status Line
+/* set the MSN's PSM info,Currently Read from the status Line 
  * Thanks for Cris Code
  */
 void
 msn_set_psm(MsnSession *session)
 {
-	PurpleAccount *account;
+	PurpleAccount *account = session->account;
 	PurplePresence *presence;
 	PurpleStatus *status;
 	MsnCmdProc *cmdproc;
@@ -190,7 +235,6 @@ msn_set_psm(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
 
-	account = session->account;
 	cmdproc = session->notification->cmdproc;
 
 	/* Get the PSM string from Purple's Status Line */
@@ -205,7 +249,7 @@ msn_set_psm(MsnSession *session)
 	session->psm = msn_build_psm(statusline_stripped, media, NULL);
 
 	payload = session->psm;
-	purple_debug_misc("msn", "Sending UUX command with payload: %s\n", payload);
+	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
 	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
@@ -222,28 +266,9 @@ msn_change_status(MsnSession *session)
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state_text;
-	GHashTable *ui_info = purple_core_get_ui_info();
-	MsnClientCaps caps = MSN_CLIENT_ID;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
-
-	/* set client caps based on what the UI tells us it is... */
-	if (ui_info) {
-		const gchar *client_type = g_hash_table_lookup(ui_info, "client_type");
-		if (client_type) {
-			if (strcmp(client_type, "phone") == 0 ||
-				strcmp(client_type, "handheld") == 0) {
-				caps |= MSN_CLIENT_CAP_WIN_MOBILE;
-			} else if (strcmp(client_type, "web") == 0) {
-				caps |= MSN_CLIENT_CAP_WEBMSGR;
-			} else if (strcmp(client_type, "bot") == 0) {
-				caps |= MSN_CLIENT_CAP_BOT;
-			}
-			/* MSN doesn't a "console" type... 
-			 What, they have no ncurses UI? :-) */
-		}
-	}
 
 	account = session->account;
 	cmdproc = session->notification->cmdproc;
@@ -260,7 +285,8 @@ msn_change_status(MsnSession *session)
 
 	if (msnobj == NULL)
 	{
-		msn_cmdproc_send(cmdproc, "CHG", "%s %u", state_text, caps);
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
+						 MSN_CLIENT_ID);
 	}
 	else
 	{
@@ -268,8 +294,8 @@ msn_change_status(MsnSession *session)
 
 		msnobj_str = msn_object_to_string(msnobj);
 
-		msn_cmdproc_send(cmdproc, "CHG", "%s %u %s", state_text,
-						 caps, purple_url_encode(msnobj_str));
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
+						 MSN_CLIENT_ID, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}

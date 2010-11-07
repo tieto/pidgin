@@ -57,6 +57,4 @@ gboolean bonjour_dns_sd_start(BonjourDnsSd *data);
  */
 void bonjour_dns_sd_stop(BonjourDnsSd *data);
 
-void bonjour_dns_sd_set_jid(PurpleAccount *account, const char *hostname);
-
 #endif

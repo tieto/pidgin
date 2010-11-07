@@ -1,13 +1,5 @@
-#undef PURPLE_DISABLE_DEPRECATED
 #include "module.h"
 #include "../perl-handlers.h"
-
-static void
-chat_components_foreach(gpointer key, gpointer value, gpointer user_data)
-{
-	HV *hv = user_data;
-	hv_store(hv, key, strlen(key), newSVpv(value, 0), 0);
-}
 
 MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
@@ -254,11 +246,24 @@ purple_blist_schedule_save()
 void
 purple_blist_request_add_group()
 
+void
+purple_blist_set_ui_ops(ops)
+	Purple::BuddyList::UiOps ops
+
+Purple::BuddyList::UiOps
+purple_blist_get_ui_ops()
+
 Purple::Handle
 purple_blist_get_handle()
 
 Purple::BuddyList::Node
 purple_blist_get_root()
+
+void
+purple_blist_init()
+
+void
+purple_blist_uninit()
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Node  PREFIX = purple_blist_node_
 PROTOTYPES: ENABLE
@@ -338,19 +343,6 @@ const char *
 purple_chat_get_name(chat)
 	Purple::BuddyList::Chat chat
 
-HV *
-purple_chat_get_components(chat)
-	Purple::BuddyList::Chat chat
-INIT:
-	HV * t_HV;
-	GHashTable * t_GHash;
-CODE:
-	t_GHash = purple_chat_get_components(chat);
-	RETVAL = t_HV = newHV();
-	g_hash_table_foreach(t_GHash, chat_components_foreach, t_HV);
-OUTPUT:
-	RETVAL
-
 Purple::BuddyList::Chat
 purple_chat_new(account, alias, components)
 	Purple::Account account
@@ -365,14 +357,14 @@ INIT:
 	char *t_key, *t_value;
 CODE:
 	t_HV =  (HV *)SvRV(components);
-	t_GHash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
 
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
 		t_SV = *hv_fetch(t_HV, t_key, len, 0);
-		t_value = SvPVutf8_nolen(t_SV);
+		t_value = SvPV(t_SV, PL_na);
 
-		g_hash_table_insert(t_GHash, g_strdup(t_key), g_strdup(t_value));
+		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
 
 	RETVAL = purple_chat_new(account, alias, t_GHash);
@@ -383,9 +375,9 @@ MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Buddy  PREFIX = purple_
 PROTOTYPES: ENABLE
 
 Purple::BuddyList::Buddy
-purple_buddy_new(account, name, alias)
+purple_buddy_new(account, screenname, alias)
 	Purple::Account account
-	const char *name
+	const char *screenname
 	const char *alias
 
 const char *

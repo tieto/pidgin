@@ -23,9 +23,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
-#include <internal.h>
-
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -45,51 +42,6 @@
 #include <string.h>
 
 #define PREF_ROOT "/finch/debug"
-
-static gboolean
-handle_fprintf_stderr_cb(GIOChannel *source, GIOCondition cond, gpointer null)
-{
-	gssize size;
-	char message[1024];
-
-	size = read(g_io_channel_unix_get_fd(source), message, sizeof(message) - 1);
-	if (size <= 0) {
-		/* Something bad probably happened elsewhere ... let's ignore */
-	} else {
-		message[size] = '\0';
-		g_log("stderr", G_LOG_LEVEL_WARNING, "%s", message);
-	}
-
-	return TRUE;
-}
-
-static void
-handle_fprintf_stderr(gboolean stop)
-{
-	GIOChannel *stderrch;
-	static int readhandle = -1;
-	int pipes[2];
-
-	if (stop) {
-		if (readhandle >= 0) {
-			g_source_remove(readhandle);
-			readhandle = -1;
-		}
-		return;
-	}
-	if (pipe(pipes)) {
-		readhandle = -1;
-		return;
-	};
-	dup2(pipes[1], STDERR_FILENO);
-
-	stderrch = g_io_channel_unix_new(pipes[0]);
-	g_io_channel_set_close_on_unref(stderrch, TRUE);
-	readhandle = g_io_add_watch_full(stderrch, G_PRIORITY_HIGH,
-			G_IO_IN | G_IO_ERR | G_IO_PRI,
-			handle_fprintf_stderr_cb, NULL, NULL);
-	g_io_channel_unref(stderrch);
-}
 
 static struct
 {
@@ -191,6 +143,10 @@ print_stderr(const char *string)
 }
 
 static void
+suppress_error_messages(const char *message)
+{}
+
+static void
 toggle_pause(GntWidget *w, gpointer n)
 {
 	debug.paused = !debug.paused;
@@ -277,7 +233,7 @@ file_save(GntFileSel *fs, const char *path, const char *file, GntTextView *tv)
 	}
 
 	fprintf(fp, "Finch Debug Log : %s\n", purple_date_format_full(NULL));
-	fprintf(fp, "%s", tv->string->str);
+	fprintf(fp, tv->string->str);
 	fclose(fp);
 	gnt_widget_destroy(GNT_WIDGET(fs));
 }
@@ -388,15 +344,13 @@ void finch_debug_init()
 	REGISTER_G_LOG_HANDLER("GModule");
 	REGISTER_G_LOG_HANDLER("GLib-GObject");
 	REGISTER_G_LOG_HANDLER("GThread");
-	REGISTER_G_LOG_HANDLER("Gnt");
 #ifdef USE_GSTREAMER
 	REGISTER_G_LOG_HANDLER("GStreamer");
 #endif
-	REGISTER_G_LOG_HANDLER("stderr");
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	if (!purple_debug_is_enabled())
-		handle_fprintf_stderr(FALSE);
+		g_set_printerr_handler(suppress_error_messages);
 
 	purple_prefs_add_none(PREF_ROOT);
 	purple_prefs_add_string(PREF_ROOT "/filter", "");
@@ -410,6 +364,5 @@ void finch_debug_init()
 
 void finch_debug_uninit()
 {
-	handle_fprintf_stderr(TRUE);
 }
 

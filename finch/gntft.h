@@ -72,9 +72,9 @@ void finch_xfer_dialog_add_xfer(PurpleXfer *xfer);
 void finch_xfer_dialog_remove_xfer(PurpleXfer *xfer);
 
 /**
- * Indicate in a file transfer dialog that a transfer was cancelled.
+ * Indicate in a file transfer dialog that a transfer was canceled.
  *
- * @param xfer   The file transfer that was cancelled.
+ * @param xfer   The file transfer that was canceled.
  */
 void finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer);
 

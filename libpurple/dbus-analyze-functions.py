@@ -31,15 +31,6 @@ excluded = [\
     "purple_account_unregister",
     "purple_connection_new_unregister",
 
-    # These functions are excluded because they involve setting arbitrary
-    # data via pointers for protocols and UIs.  This just won't work.
-    "purple_blist_get_ui_data",
-    "purple_blist_set_ui_data",
-    "purple_blist_node_get_ui_data",
-    "purple_blist_node_set_ui_data",
-    "purple_buddy_get_protocol_data",
-    "purple_buddy_set_protocol_data",
-
     # This is excluded because this script treats PurpleLogReadFlags*
     # as pointer to a struct, instead of a pointer to an enum.  This
     # causes a compilation error. Someone should fix this script.
@@ -126,7 +117,7 @@ class Binding:
             self.params.append(Parameter.fromtokens(paramtexts[i].split(), i))
 
         self.call = "%s(%s)" % (self.function.name,
-                                ", ".join(param.name for param in self.params))
+                                ", ".join([param.name for param in self.params]))
         
     
     def process(self):
@@ -169,10 +160,6 @@ class Binding:
             elif type[0].startswith("Purple") or type[0] == "xmlnode":
                 return self.inputpurplestructure(type, name)
 
-            # special case for *_get_data functions, be careful here...
-            elif (type[0] == "size_t" or type[0] == "gsize") and name == "len":
-                return self.inputgetdata(type, name)
-            
             # unknown pointers are always replaced with NULL
             else:
                 return self.inputpointer(type, name)
@@ -181,19 +168,14 @@ class Binding:
 
    
     def processoutput(self, type, name):
-        const = False
-        unsigned = False
         # the "void" type is simple ...
         if type == ["void"]:
             return self.outputvoid(type, name)
 
+        const = False
         if type[0] == "const":
             type = type[1:]
             const = True
-
-        if type[0] == "unsigned":
-            type = type[1:]
-            unsigned = True
 
         # a string
         if type == ["char", pointer] or type == ["gchar", pointer]:
@@ -202,7 +184,7 @@ class Binding:
         # simple types (ints, booleans, enums, ...)
         if (len(type) == 1) and \
                ((type[0] in simpletypes) or (type[0].startswith("Purple"))):
-            return self.outputsimple(type, name, unsigned)
+            return self.outputsimple(type, name)
 
         # pointers ...
         if (len(type) == 2) and (type[1] == pointer):
@@ -213,10 +195,6 @@ class Binding:
 
             if type[0] in ["GList", "GSList"]:
                 return self.outputlist(type, name)
-
-        # Special case for *_get_data functions
-        if type[0] == "gconstpointer":
-            return self.outputgetdata(type, name)
 
         raise myexception
     
@@ -308,13 +286,10 @@ class ClientBinding (Binding):
 #        self.returncode.append("NULLIFY(%s);" % name)
         self.returncode.append("return %s;" % name);
 
-    def outputsimple(self, type, name, us):
+    def outputsimple(self, type, name):
         self.functiontype = type[0]
         self.decls.append("%s %s = 0;" % (type[0], name))
-        if us:
-            self.outputparams.append(("G_TYPE_UINT", name))
-        else:
-            self.outputparams.append(("G_TYPE_INT", name))
+        self.outputparams.append(("G_TYPE_INT", name))
         self.returncode.append("return %s;" % name);
 
     # we could add "const" to the return type but this would probably
@@ -334,13 +309,7 @@ class ClientBinding (Binding):
         self.returncode.append("return garray_int_to_%s(%s);" %
                                (type[0].lower(), name));
 
-    # Special case for *_get_data functions, don't need client bindings,
-    #  but do need the name so it doesn't crash
-    def inputgetdata(self, type, name):
-        raise myexception
-    def outputgetdata(self, type, name):
-        raise myexception
-
+ 
 class ServerBinding (Binding):
     def __init__(self, functiontext, paramtexts):
         Binding.__init__(self, functiontext, paramtexts)
@@ -403,13 +372,13 @@ class ServerBinding (Binding):
 
     def inputsimple(self, type, name, us):
         if us:
-            self.cdecls.append("\tdbus_uint32_t %s;" % name)
-            self.cparams.append(("UINT32", name))
-            self.addintype("u", name)
-        else:
             self.cdecls.append("\tdbus_int32_t %s;" % name)
             self.cparams.append(("INT32", name))
             self.addintype("i", name)
+        else:
+            self.cdecls.append("\tdbus_uint32_t %s;" % name)
+            self.cparams.append(("UINT32", name))
+            self.addintype("u", name)
 
     def inputstring(self, type, name, us):
         if us:
@@ -463,16 +432,11 @@ class ServerBinding (Binding):
         if not const:
             self.ccodeout.append("\tg_free(%s);" % name)
 
-    def outputsimple(self, type, name, us):
-        if us:
-            self.cdecls.append("\tdbus_uint32_t %s;" % name)
-            self.cparamsout.append(("UINT32", name))
-            self.addouttype("u", name)
-        else:
-            self.cdecls.append("\tdbus_int32_t %s;" % name)
-            self.cparamsout.append(("INT32", name))
-            self.addouttype("i", name)
+    def outputsimple(self, type, name):
+        self.cdecls.append("\tdbus_int32_t %s;" % name)
         self.ccode.append("\t%s = %s;" % (name, self.call))
+        self.cparamsout.append(("INT32", name))
+        self.addouttype("i", name)
 
     def outputpurplestructure(self, type, name):
         self.cdecls.append("\tdbus_int32_t %s;" % name)
@@ -511,21 +475,6 @@ class ServerBinding (Binding):
                               % (name, name))
             self.addouttype("ai", name)
 
-    # Special case for *_get_data functions
-    def inputgetdata(self, type, name):
-        self.cdecls.append("\tsize_t %s = 0;" % name)
-        return True
-    def outputgetdata(self, type, name):
-        # This is a total hack, but self.call is set up before the parameters
-        #  are processed, so we can't tell it to pass a parameter by reference.
-        self.call = "%s(%s)" % (self.function.name,
-                                ", ".join([(param.name, "&len")[param.name == "len"] for param in self.params]))
-
-        self.cdecls.append("\tgconstpointer %s;" % name)
-        self.ccode.append("\t%s = %s;" % (name, self.call))
-        self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_BYTE, &%s, %s" \
-                               % (name, "len"))
-        self.addouttype("ay", name)
 
 class BindingSet:
     regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";
@@ -534,7 +483,6 @@ class BindingSet:
         self.inputiter = iter(inputfile)
         self.functionregexp = \
              re.compile("^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % fprefix)    
-        self.typeregexp = re.compile("^\w+\s*\*?\s*$")
 
 
                 
@@ -553,7 +501,7 @@ class BindingSet:
             # accumulate lines until the parentheses are balance or an
             # empty line has been encountered
             myline = line.strip()
-            while (myline.count("(") > myline.count(")")) or self.typeregexp.match(myline):
+            while myline.count("(") > myline.count(")"):
                 newline = self.inputiter.next().strip()
                 if len(newline) == 0:
                     break

@@ -67,7 +67,7 @@ cancel_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 }
 
 static void
-username_changed_cb(GtkEntry *entry, GevoNewPersonDialog *dialog)
+screenname_changed_cb(GtkEntry *entry, GevoNewPersonDialog *dialog)
 {
 	gtk_widget_set_sensitive(dialog->add_button,
 							 *gtk_entry_get_text(entry) != '\0');
@@ -85,7 +85,7 @@ static void
 add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 {
 	EContact *contact = NULL;
-	const char *username;
+	const char *screenname;
 	const char *firstname;
 	const char *lastname;
 	const char *email;
@@ -96,9 +96,9 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 	char *full_name = NULL;
 
 	if (dialog->person_only)
-		username = dialog->buddy->name;
+		screenname = dialog->buddy->name;
 	else
-		username = gtk_entry_get_text(GTK_ENTRY(dialog->username));
+		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname));
 
 	firstname  = gtk_entry_get_text(GTK_ENTRY(dialog->firstname));
 	lastname   = gtk_entry_get_text(GTK_ENTRY(dialog->lastname));
@@ -141,7 +141,14 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		if (*email)
 			e_contact_set(contact, E_CONTACT_EMAIL_1, (gpointer)email);
 
-		if (!strcmp(im_service, "prpl-aim"))
+		if (!strcmp(im_service, "prpl-oscar"))
+		{
+			if (isdigit(*screenname))
+				field = E_CONTACT_IM_ICQ;
+			else
+				field = E_CONTACT_IM_AIM;
+		}
+		else if (!strcmp(im_service, "prpl-aim"))
 			field = E_CONTACT_IM_AIM;
 		else if (!strcmp(im_service, "prpl-icq"))
 			field = E_CONTACT_IM_ICQ;
@@ -153,12 +160,10 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 			field = E_CONTACT_IM_MSN;
 		else if (!strcmp(im_service, "prpl-novell"))
 			field = E_CONTACT_IM_GROUPWISE;
-		else if (!strcmp(im_service, "prpl-gg"))
-			field = E_CONTACT_IM_GADUGADU;
 
 		if (field > 0)
 		{
-			GList *list = g_list_append(NULL, g_strdup(username));
+			GList *list = g_list_append(NULL, g_strdup(screenname));
 
 			e_contact_set(contact, field, list);
 
@@ -198,13 +203,14 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 
 		group_name = pidgin_text_combo_box_entry_get_text(dialog->group_combo);
 
-		gevo_add_buddy(dialog->account, group_name, username, full_name);
+		gevo_add_buddy(dialog->account, group_name, screenname, full_name);
 	}
 
 	if (name != NULL)
 		e_contact_name_free(name);
 
-	g_free(full_name);
+	if (full_name != NULL)
+		g_free(full_name);
 
 	delete_win_cb(NULL, NULL, dialog);
 }
@@ -283,21 +289,20 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 											 NULL, dialog);
 		add_pref_box(sg, vbox, _("Account type:"), dialog->accounts_menu);
 
-		/* Username */
-		dialog->username = gtk_entry_new();
-		add_pref_box(sg, vbox, _("Username:"), dialog->username);
+		/* Screen Name */
+		dialog->screenname = gtk_entry_new();
+		add_pref_box(sg, vbox, _("Username:"), dialog->screenname);
 
 		if (username != NULL)
-			gtk_entry_set_text(GTK_ENTRY(dialog->username), username);
+			gtk_entry_set_text(GTK_ENTRY(dialog->screenname), username);
 
-		g_signal_connect(G_OBJECT(dialog->username), "changed",
-						 G_CALLBACK(username_changed_cb), dialog);
+		g_signal_connect(G_OBJECT(dialog->screenname), "changed",
+						 G_CALLBACK(screenname_changed_cb), dialog);
 
 		/* Group */
-		dialog->group_combo = pidgin_text_combo_box_entry_new(group,
+		dialog->group_combo = pidgin_text_combo_box_entry_new(NULL,
 			gevo_get_groups());
 		add_pref_box(sg, vbox, _("Group:"), dialog->group_combo);
-		gtk_widget_show_all(dialog->group_combo);
 
 		/* Separator */
 		sep = gtk_hseparator_new();
@@ -370,9 +375,9 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 						 G_CALLBACK(person_info_changed_cb), dialog);
 	}
 
-	/* Email address field */
+	/* E-Mail address field */
 	dialog->email = gtk_entry_new();
-	add_pref_box(sg2, vbox2, _("Email:"), dialog->email);
+	add_pref_box(sg2, vbox2, _("E-mail:"), dialog->email);
 
 	if (contact != NULL)
 	{

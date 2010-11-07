@@ -26,7 +26,6 @@ finch_SOURCES = \
 	finch.c \
 	gntidle.c \
 	gntlog.c \
-	gntmedia.c \
 	gntnotify.c \
 	gntplugin.c \
 	gntpounce.c \
@@ -48,7 +47,6 @@ finch_headers = \
 	finch.h \
 	gntidle.h \
 	gntlog.h \
-	gntmedia.h \
 	gntnotify.h \
 	gntplugin.h \
 	gntpounce.h \
@@ -78,6 +76,7 @@ finch_LDADD = \
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
+	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/finch/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \

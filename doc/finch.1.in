@@ -40,13 +40,13 @@ Yahoo.
 The following options are provided by \fBfinch\fR using the standard GNU
 command line syntax:
 .TP
-.B \-c, \-\-config=\fIDIR\fB
-Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
-.TP
 .B \-d, \-\-debug
 Print debugging messages to stderr and start with the \fBDebug\fR window. The
 messages shown in the \fBDebug\fR window are the same as the ones printed in
 stderr.
+.TP
+.B \-c, \-\-config=\fIDIR\fB
+Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .TP
 .B \-h, \-\-help
 Print this help and exit.
@@ -59,7 +59,7 @@ Offline.
 Display the version information window.
 
 .SH GNT Shortcuts
-You can use the following shortcuts (see the "Widget Actions" section for a more complete list):
+You can use the following shortcuts:
 .TP
 .B Alt \+ a
 Bring up a list of available actions. You can use this list to access the
@@ -114,7 +114,7 @@ Jump to the previous URGENT (highlighted) window.
 .B Ctrl \+ o \fR or \fB F10
 Bring up the menu (if there is one) for a window.
 .TP
-.B F11 \fR or \fB Ctrl \+ x
+.B F11
 Popup the context menu (if there is one) for the selected widget.
 .TP
 .B Alt \+ /
@@ -296,22 +296,6 @@ You can specifiy key-bindings for specific widgets. The following entries in
 \fI~/.gntrc\fR correspond to the default keybindings for the actions:
 
 .br
-[GntBox::binding]
-.br
-tab = focus-next
-.br
-right = focus-next
-.br
-left = focus-prev
-
-.br
-[GntComboBox::binding]
-.br
-down = dropdown
-.br
-up = dropdown
-
-.br
 [GntEntry::binding]
 .br
 c-a = cursor-home
@@ -346,10 +330,6 @@ down = suggest-next
 .br
 up = suggest-prev
 .br
-page-down = suggest-next-page
-.br
-page-up = suggest-prev-page
-.br
 c-w = delete-prev-word
 .br
 a-b = cursor-prev-word
@@ -359,16 +339,6 @@ a-f = cursor-next-word
 a-d = delete-next-word
 .br
 c-v = clipboard-paste
-.br
-c-p = history-prev
-.br
-c-n = history-next
-.br
-c-r = history-search
-.br
-c-up = history-prev
-.br
-c-down = history-next
 
 .br
 [GntTree::binding]
@@ -387,10 +357,6 @@ pagedown = page-down
 .br
 backspace = move-parent
 .br
-home = move-first
-.br
-end = move-last
-.br
 # Following is the default binding for the context-menu
 .br
 menu = context-menu
@@ -403,8 +369,6 @@ menu = context-menu
 [GntWidget::binding]
 .br
 f11 = context-menu
-.br
-c-x = context-menu
 
 [GntWindow::binding]
 .br
@@ -416,12 +380,6 @@ The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
 or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
 one of \fBa-\fR, \fBalt-\fR, \fBm-\fR or \fBmeta-\fR. You can also use
 \fBhome\fR, \fBend\fR, \fBleft\fR, \fBright\fR etc. keys.
-
-To unbind a key which has a default binding, you simply bind it to the empty string.  For example, to unbind \fBAlt + q\fR from the Quit function, you would use:
-
-[GntWM::binding]
-.br
-a-q =
 
 .SH Menus
 You can also specify key-bindings to trigger specific menuitems in windows. For example, the following entry in \fI~/.gntrc\fR will bind \fBCtrl + t\fR to the 'Send IM...' item in the buddylist:
@@ -507,10 +465,6 @@ a-C = toggle-clipboard
 .br
 a-/ = help-for-widget
 .br
-a-c-j = window-scroll-down
-.br
-a-c-k = window-scroll-up
-.br
 # The following action is still incomplete, and doesn't have a default binding
 .br
 # switch-window-n
@@ -574,26 +528,23 @@ Known bugs are listed at
 \fIhttp://developer.pidgin.im/query?status=new&status=assigned&status=reopened&component=finch+%28gnt%2Fncurses%29&order=priority\fR
 
 Before sending a bug report, please verify that you have the latest
-version of \fBfinch\fR and libpurple.  Many bugs (major and minor) are
+version of \fBfinch\fR and \fBlibpurple\fR.  Many bugs (major and minor) are
 fixed at each release, and if yours is out of date, the problem may already have
 been solved.
 
+
 .SH PATCHES
 If you fix a bug in \fBfinch\fR (or otherwise enhance it), please submit a
-patch (using \fBmtn diff > my.diff\fR against the latest version from the
-Monotone repository) at \fIhttp://developer.pidgin.im/simpleticket\fR
+patch (using \fImtn diff > my.diff\fR against the latest version from the
+Monotone repository) at
+.br
+\fIhttp://developer.pidgin.im/newticket\fR
 
-You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR
-to discuss development.
+You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR to
+discuss development.
 
 .SH SEE ALSO
 \fIhttp://pidgin.im/\fR
-.br
-\fIhttp://developer.pidgin.im/\fR
-.br
-\fBpurple-remote\fR(1)
-.br
-\fBpidgin\fR(1)
 
 .SH LICENSE
 This program is free software; you can redistribute it and/or modify

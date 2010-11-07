@@ -21,10 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_SERVCONN_H
-#define MSN_SERVCONN_H
+#ifndef _MSN_SERVCONN_H_
+#define _MSN_SERVCONN_H_
 
 typedef struct _MsnServConn MsnServConn;
+
+#include "session.h"
+#include "cmdproc.h"
+
+#include "proxy.h"
+#include "httpconn.h"
 
 /**
  * Connection error types.
@@ -34,7 +40,8 @@ typedef enum
 	MSN_SERVCONN_ERROR_NONE,
 	MSN_SERVCONN_ERROR_CONNECT,
 	MSN_SERVCONN_ERROR_WRITE,
-	MSN_SERVCONN_ERROR_READ
+	MSN_SERVCONN_ERROR_READ,
+
 } MsnServConnError;
 
 /**
@@ -44,13 +51,8 @@ typedef enum
 {
 	MSN_SERVCONN_NS,
 	MSN_SERVCONN_SB
+
 } MsnServConnType;
-
-#include "proxy.h"
-
-#include "cmdproc.h"
-#include "httpconn.h"
-#include "session.h"
 
 /**
  * A Connection.
@@ -86,8 +88,6 @@ struct _MsnServConn
 
 	PurpleCircBuffer *tx_buf;
 	guint tx_handler;
-	guint timeout_sec;
-	guint timeout_handle;
 
 	void (*connect_cb)(MsnServConn *); /**< The callback to call when connecting. */
 	void (*disconnect_cb)(MsnServConn *); /**< The callback to call when disconnecting. */
@@ -115,10 +115,8 @@ void msn_servconn_destroy(MsnServConn *servconn);
  * @param servconn The connection.
  * @param host The host.
  * @param port The port.
- * @param force Force this servconn to connect to a new server.
  */
-gboolean msn_servconn_connect(MsnServConn *servconn, const char *host, int port,
-                              gboolean force);
+gboolean msn_servconn_connect(MsnServConn *servconn, const char *host, int port);
 
 /**
  * Disconnects.
@@ -168,25 +166,6 @@ gssize msn_servconn_write(MsnServConn *servconn, const char *buf,
  * @param servconn The servconn.
  * @param error The error that happened.
  */
-void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
-                            const char *reason);
+void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error);
 
-/**
- * Process the data in servconn->rx_buf.  This is called after reading
- * data from the socket.
- *
- * @param servconn The servconn.
- *
- * @return @c NULL if servconn was destroyed, 'servconn' otherwise.
- */
-MsnServConn *msn_servconn_process_data(MsnServConn *servconn);
-
-/**
- * Set a idle timeout fot this servconn
- *
- * @param servconn The servconn
- * @param seconds The idle timeout in seconds
- */
-void msn_servconn_set_idle_timeout(MsnServConn *servconn, guint seconds);
-
-#endif /* MSN_SERVCONN_H */
+#endif /* _MSN_SERVCONN_H_ */

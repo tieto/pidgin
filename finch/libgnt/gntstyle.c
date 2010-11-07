@@ -20,10 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "gntinternal.h"
-#undef GNT_LOG_DOMAIN
-#define GNT_LOG_DOMAIN "Style"
-
 #include "gntstyle.h"
 #include "gntcolors.h"
 #include "gntws.h"
@@ -230,7 +226,7 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
 		if (error)
 		{
-			gnt_warning("%s", error->message);
+			g_printerr("GntStyle: %s\n", error->message);
 			g_error_free(error);
 			g_free(name);
 			return;
@@ -245,7 +241,7 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 
 			if (error)
 			{
-				gnt_warning("%s", error->message);
+				g_printerr("GntStyle: %s\n", error->message);
 				g_error_free(error);
 				error = NULL;
 			}
@@ -253,7 +249,7 @@ void gnt_style_read_actions(GType type, GntBindableClass *klass)
 			{
 				const char *keycode = parse_key(key);
 				if (keycode == NULL) {
-					gnt_warning("Invalid key-binding %s", key);
+					g_printerr("GntStyle: Invalid key-binding %s\n", key);
 				} else {
 					gnt_bindable_register_binding(klass, action, keycode, NULL);
 				}
@@ -284,7 +280,7 @@ gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table)
 		keys = g_key_file_get_keys(gkfile, kname, &len, &error);
 		if (error)
 		{
-			gnt_warning("%s", error->message);
+			g_printerr("GntStyle: %s\n", error->message);
 			g_error_free(error);
 			g_free(kname);
 			return ret;
@@ -299,7 +295,7 @@ gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table)
 
 			if (error)
 			{
-				gnt_warning("%s", error->message);
+				g_printerr("GntStyle: %s\n", error->message);
 				g_error_free(error);
 				error = NULL;
 			}
@@ -307,7 +303,7 @@ gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table)
 			{
 				const char *keycode = parse_key(key);
 				if (keycode == NULL) {
-					gnt_warning("Invalid key-binding %s", key);
+					g_printerr("GntStyle: Invalid key-binding %s\n", key);
 				} else {
 					ret = TRUE;
 					g_hash_table_replace(table, g_strdup(keycode), menuid);
@@ -342,7 +338,7 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
 		if (error)
 		{
-			gnt_warning("%s", error->message);
+			g_printerr("GntStyle: %s\n", error->message);
 			g_error_free(error);
 			g_free(name);
 			return;
@@ -357,7 +353,7 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
 
 			if (error)
 			{
-				gnt_warning("%s", error->message);
+				g_printerr("GntStyle: %s\n", error->message);
 				g_error_free(error);
 				error = NULL;
 				g_free(key);
@@ -406,7 +402,7 @@ read_general_style(GKeyFile *kfile)
 
 	if (error)
 	{
-		gnt_warning("%s", error->message);
+		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);
 	}
 	else
@@ -430,7 +426,7 @@ void gnt_style_read_configure_file(const char *filename)
 	if (!g_key_file_load_from_file(gkfile, filename,
                 G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, &error))
 	{
-		gnt_warning("%s", error->message);
+		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);
 		return;
 	}

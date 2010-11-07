@@ -18,32 +18,27 @@
 #include <pwd.h>
 #endif
 
-static char *get_localvarfile __P((void));
+static int get_localvarfile __P((char *bfr));
 static char *get_varval __P((char *fn, char *val));
 static int varline __P((char *bfr, char *var));
 
 char *ZGetVariable(var)
     char *var;
 {
-	char *varfile, *ret;
+    char varfile[128], *ret;
 
-	if ((varfile = get_localvarfile()) == NULL)
-		return ((char *)0);
+    if (get_localvarfile(varfile))
+	return ((char *)0);
 
-	ret = get_varval(varfile, var);
-	g_free(varfile);
-	if (ret != ZERR_NONE)
-		return ret;
+    if ((ret = get_varval(varfile, var)) != ZERR_NONE)
+	return (ret);
 
 #ifdef WIN32
-	varfile = g_strdup("C:\\zephyr\\zephyr.var");
+    sprintf(varfile, "C:\\zephyr\\zephyr.var");
 #else
-	varfile = g_strdup_printf("%s/zephyr.vars", CONFDIR);
+    sprintf(varfile, "%s/zephyr.vars", CONFDIR);
 #endif
-	ret = get_varval(varfile, var);
-	g_free(varfile);
-
-	return ret;
+    return (get_varval(varfile, var));
 }
 
 Code_t ZSetVariable(var, value)
@@ -52,20 +47,18 @@ Code_t ZSetVariable(var, value)
 {
     int written;
     FILE *fpin, *fpout;
-    char *varfile, *varfilebackup, varbfr[512];
+    char varfile[128], varfilebackup[128], varbfr[512];
 
     written = 0;
 	
-    if ((varfile = get_localvarfile()) == NULL)
+    if (get_localvarfile(varfile))
 	return (ZERR_INTERNAL);
 
-    varfilebackup = g_strconcat(varfile, ".backup", NULL);
+    (void) strcpy(varfilebackup, varfile);
+    (void) strcat(varfilebackup, ".backup");
 	
-    if (!(fpout = fopen(varfilebackup, "w"))) {
-	g_free(varfile);
-	g_free(varfilebackup);
+    if (!(fpout = fopen(varfilebackup, "w")))
 	return (errno);
-    }
     if ((fpin = fopen(varfile, "r")) != NULL) {
 	while (fgets(varbfr, sizeof varbfr, fpin) != (char *) 0) {
 	    if (varbfr[strlen(varbfr)-1] < ' ')
@@ -81,18 +74,10 @@ Code_t ZSetVariable(var, value)
     } 
     if (!written)
 	fprintf(fpout, "%s = %s\n", var, value);
-    if (fclose(fpout) == EOF) {
-    	g_free(varfilebackup);
-    	g_free(varfile);
-	return(EIO);		/* can't rely on errno */
-    }
-    if (rename(varfilebackup, varfile)) {
-	g_free(varfilebackup);
-	g_free(varfile);
+    if (fclose(fpout) == EOF)
+	    return(EIO);		/* can't rely on errno */
+    if (rename(varfilebackup, varfile))
 	return (errno);
-    }
-    g_free(varfilebackup);
-    g_free(varfile);
     return (ZERR_NONE);
 }	
 
@@ -100,18 +85,16 @@ Code_t ZUnsetVariable(var)
     char *var;
 {
     FILE *fpin, *fpout;
-    char *varfile, *varfilebackup, varbfr[512];
+    char varfile[128], varfilebackup[128], varbfr[512];
 
-    if ((varfile = get_localvarfile()) == NULL)
+    if (get_localvarfile(varfile))
 	return (ZERR_INTERNAL);
 
-    varfilebackup = g_strconcat(varfile, ".backup", NULL);
+    (void) strcpy(varfilebackup, varfile);
+    (void) strcat(varfilebackup, ".backup");
 	
-    if (!(fpout = fopen(varfilebackup, "w"))) {
-	g_free(varfile);
-	g_free(varfilebackup);
+    if (!(fpout = fopen(varfilebackup, "w")))
 	return (errno);
-    }
     if ((fpin = fopen(varfile, "r")) != NULL) {
 	while (fgets(varbfr, sizeof varbfr, fpin) != (char *) 0) {
 	    if (varbfr[strlen(varbfr)-1] < ' ')
@@ -121,45 +104,42 @@ Code_t ZUnsetVariable(var)
 	}
 	(void) fclose(fpin);		/* don't care about read close errs */
     } 
-    if (fclose(fpout) == EOF) {
-	g_free(varfilebackup);
-	g_free(varfile);
-	return(EIO);		/* errno isn't reliable */
-    }
-    if (rename(varfilebackup, varfile)) {
-	g_free(varfilebackup);
-	g_free(varfile);
+    if (fclose(fpout) == EOF)
+	    return(EIO);		/* errno isn't reliable */
+    if (rename(varfilebackup, varfile))
 	return (errno);
-    }
-    g_free(varfilebackup);
-    g_free(varfile);
     return (ZERR_NONE);
 }	
 
-static char *get_localvarfile(void)
+static int get_localvarfile(bfr)
+    char *bfr;
 {
-    const char *base;
+    const char *envptr;
 #ifndef WIN32
     struct passwd *pwd;
-    base = purple_home_dir();
+    envptr = purple_home_dir();
 #else
-    base = getenv("HOME");
-    if (!base)
-        base = getenv("HOMEPATH");
-    if (!base) 
-        base = "C:\\";
+    envptr = getenv("HOME");
+    if (!envptr)
+        envptr = getenv("HOMEPATH");
+    if (!envptr) 
+        envptr = "C:\\";
 #endif
-    if (!base) {
+    if (envptr)
+	(void) strcpy(bfr, envptr);
+    else {
 #ifndef WIN32
 	if (!(pwd = getpwuid((int) getuid()))) {
 	    fprintf(stderr, "Zephyr internal failure: Can't find your entry in /etc/passwd\n");
-	    return NULL;
+	    return (1);
 	}
-	base = pwd->pw_dir;
+	(void) strcpy(bfr, pwd->pw_dir);
 #endif
     }
 
-    return g_strconcat(base, "/.zephyr.vars", NULL);
+    (void) strcat(bfr, "/");
+    (void) strcat(bfr, ".zephyr.vars");
+    return (0);
 } 
 	
 static char *get_varval(fn, var)
@@ -206,7 +186,7 @@ static int varline(bfr, var)
 #define max(a,b) ((a > b) ? (a) : (b))
 #endif
 
-    if (g_ascii_strncasecmp(bfr, var, max(strlen(var), cp - bfr)))
+    if (g_strncasecmp(bfr, var, max(strlen(var), cp - bfr)))
 	return(0);			/* var is not the var in
 					   bfr ==> no match */
 

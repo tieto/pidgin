@@ -23,13 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#define _PURPLE_SSLCONN_C_
-
 #include "internal.h"
 
 #include "certificate.h"
 #include "debug.h"
-#include "request.h"
 #include "sslconn.h"
 
 static gboolean _ssl_initialized = FALSE;
@@ -57,7 +54,7 @@ ssl_init(void)
 		return FALSE;
 	}
 
-	return (_ssl_initialized = ops->init());
+	return ops->init();
 }
 
 gboolean
@@ -100,15 +97,6 @@ purple_ssl_connect(PurpleAccount *account, const char *host, int port,
 				 PurpleSslInputFunction func, PurpleSslErrorFunction error_func,
 				 void *data)
 {
-	return purple_ssl_connect_with_ssl_cn(account, host, port, func, error_func,
-	                                  NULL, data);
-}
-
-PurpleSslConnection *
-purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int port,
-				 PurpleSslInputFunction func, PurpleSslErrorFunction error_func,
-				 const char *ssl_cn, void *data)
-{
 	PurpleSslConnection *gsc;
 
 	g_return_val_if_fail(host != NULL,            NULL);
@@ -125,7 +113,7 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	gsc = g_new0(PurpleSslConnection, 1);
 
 	gsc->fd              = -1;
-	gsc->host            = ssl_cn ? g_strdup(ssl_cn) : g_strdup(host);
+	gsc->host            = g_strdup(host);
 	gsc->port            = port;
 	gsc->connect_cb_data = data;
 	gsc->connect_cb      = func;
@@ -225,7 +213,7 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 	/* TODO: Move this elsewhere */
 	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");
 
-
+    
 	ops = purple_ssl_get_ops();
 	ops->connectfunc(gsc);
 
@@ -238,9 +226,6 @@ purple_ssl_close(PurpleSslConnection *gsc)
 	PurpleSslOps *ops;
 
 	g_return_if_fail(gsc != NULL);
-
-	purple_request_close_with_handle(gsc);
-	purple_notify_close_with_handle(gsc);
 
 	ops = purple_ssl_get_ops();
 	(ops->close)(gsc);

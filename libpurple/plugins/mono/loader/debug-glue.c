@@ -9,7 +9,7 @@ void purple_debug_glue(int type, MonoString *cat, MonoString *str)
 	ccat = mono_string_to_utf8(cat);
 	cstr = mono_string_to_utf8(str);
 	
-	purple_debug(type, ccat, "%s", cstr);
+	purple_debug(type, ccat, cstr);
 	
 	g_free(ccat);
 	g_free(cstr);

@@ -21,13 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_TRANSACTION_H
-#define MSN_TRANSACTION_H
+#ifndef _MSN_TRANSACTION_H
+#define _MSN_TRANSACTION_H
 
 typedef struct _MsnTransaction MsnTransaction;
 
-#include "cmdproc.h"
 #include "command.h"
+#include "cmdproc.h"
 
 typedef void (*MsnTransCb)(MsnCmdProc *cmdproc, MsnCommand *cmd);
 typedef void (*MsnTimeoutCb)(MsnCmdProc *cmdproc, MsnTransaction *trans);
@@ -45,11 +45,9 @@ struct _MsnTransaction
 	char *command;
 	char *params;
 
-	guint timer;
+	int timer;
 
 	void *data; /**< The data to be used on the different callbacks. */
-	GDestroyNotify data_free;  /**< The function to free 'data', or @c NULL */
-
 	GHashTable *callbacks;
 	gboolean has_custom_callbacks;
 	MsnErrorCb error_cb;
@@ -64,7 +62,7 @@ struct _MsnTransaction
 };
 
 MsnTransaction *msn_transaction_new(MsnCmdProc *cmdproc, const char *command,
-	const char *format, ...) G_GNUC_PRINTF(3, 4);
+ 	const char *format, ...) G_GNUC_PRINTF(3, 4);
 void msn_transaction_destroy(MsnTransaction *trans);
 
 char *msn_transaction_to_string(MsnTransaction *trans);
@@ -73,10 +71,9 @@ void msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc);
 void msn_transaction_set_payload(MsnTransaction *trans,
 								 const char *payload, int payload_len);
 void msn_transaction_set_data(MsnTransaction *trans, void *data);
-void msn_transaction_set_data_free(MsnTransaction *trans, GDestroyNotify fn);
 void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 							MsnTransCb cb);
 void msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb);
 void msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb);
 
-#endif /* MSN_TRANSACTION_H */
+#endif /* _MSN_TRANSACTION_H */

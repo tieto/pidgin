@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_HTTPCONN_H
-#define MSN_HTTPCONN_H
+#ifndef _MSN_HTTPCONN_H_
+#define _MSN_HTTPCONN_H_
 
 typedef struct _MsnHttpConn MsnHttpConn;
 
@@ -108,4 +108,4 @@ gboolean msn_httpconn_connect(MsnHttpConn *httpconn,
  */
 void msn_httpconn_disconnect(MsnHttpConn *httpconn);
 
-#endif /* MSN_HTTPCONN_H */
+#endif /* _MSN_HTTPCONN_H_ */

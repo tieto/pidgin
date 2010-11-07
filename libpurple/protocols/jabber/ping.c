@@ -1,9 +1,7 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
+ * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,82 +16,65 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
 #include "internal.h"
 
 #include "debug.h"
+#include "xmlnode.h"
 
 #include "jabber.h"
 #include "ping.h"
 #include "iq.h"
 
-static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
-                                     JabberIqType type, const char *id,
-                                     xmlnode *packet, gpointer data)
-{
-	if (js->keepalive_timeout != 0) {
-		purple_timeout_remove(js->keepalive_timeout);
-		js->keepalive_timeout = 0;
-	}
-}
-
 void
-jabber_ping_parse(JabberStream *js, const char *from,
-                  JabberIqType type, const char *id, xmlnode *ping)
-{
-	if (type == JABBER_IQ_GET) {
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_RESULT);
-
-		if (from)
-			xmlnode_set_attrib(iq->node, "to", from);
-		xmlnode_set_attrib(iq->node, "id", id);
-
-		jabber_iq_send(iq);
-	} else if (type == JABBER_IQ_SET) {
-		/* XXX: error */
-	}
-}
-
-static void jabber_ping_result_cb(JabberStream *js, const char *from,
-                                  JabberIqType type, const char *id,
-                                  xmlnode *packet, gpointer data)
-{
-	if (type == JABBER_IQ_RESULT)
-		purple_debug_info("jabber", "PONG!\n");
-	else
-		purple_debug_info("jabber", "ping not supported\n");
-}
-
-void jabber_keepalive_ping(JabberStream *js)
+jabber_ping_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *iq;
-	xmlnode *ping;
 
-	iq = jabber_iq_new(js, JABBER_IQ_GET);
-	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, NS_PING);
+	purple_debug_info("jabber", "jabber_ping_parse\n");
 
-	jabber_iq_set_callback(iq, jabber_keepalive_pong_cb, NULL);
+	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
+
+	xmlnode_set_attrib(iq->node, "to", xmlnode_get_attrib(packet, "from") );
+
+	jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
+
 	jabber_iq_send(iq);
 }
 
-gboolean jabber_ping_jid(JabberStream *js, const char *jid)
+static void jabber_ping_result_cb(JabberStream *js, xmlnode *packet,
+		gpointer data)
+{
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	purple_debug_info("jabber", "jabber_ping_result_cb\n");
+	if(type && !strcmp(type, "result")) {
+		purple_debug_info("jabber", "PONG!\n");
+	} else {
+		purple_debug_info("jabber", "(not supported)\n");
+	}
+}
+
+gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid)
 {
 	JabberIq *iq;
 	xmlnode *ping;
 
-	iq = jabber_iq_new(js, JABBER_IQ_GET);
-	if (jid)
-		xmlnode_set_attrib(iq->node, "to", jid);
+	purple_debug_info("jabber", "jabber_ping_jid\n");
+
+	iq = jabber_iq_new(conv->account->gc->proto_data, JABBER_IQ_GET);
+	xmlnode_set_attrib(iq->node, "to", jid);
 
 	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, NS_PING);
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
 
 	jabber_iq_set_callback(iq, jabber_ping_result_cb, NULL);
 	jabber_iq_send(iq);
+
+
 
 	return TRUE;
 }

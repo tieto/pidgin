@@ -5,7 +5,7 @@
 
 START_TEST(test_util_base16_encode)
 {
-	assert_string_equal_free("68656c6c6f2c20776f726c642100", purple_base16_encode((const unsigned char *)"hello, world!", 14));
+	assert_string_equal_free("68656c6c6f2c20776f726c642100", purple_base16_encode("hello, world!", 14));
 }
 END_TEST
 
@@ -14,13 +14,14 @@ START_TEST(test_util_base16_decode)
 	gsize sz = 0;
 	guchar *out = purple_base16_decode("21646c726f77202c6f6c6c656800", &sz);
 	fail_unless(sz == 14, NULL);
-	assert_string_equal_free("!dlrow ,olleh", (char *)out);
+	fail_unless(strcmp("!dlrow ,olleh", out) == 0, NULL);
+	g_free(out);
 }
 END_TEST
 
 START_TEST(test_util_base64_encode)
 {
-	assert_string_equal_free("Zm9ydHktdHdvAA==", purple_base64_encode((const unsigned char *)"forty-two", 10));
+	assert_string_equal_free("Zm9ydHktdHdvAA==", purple_base64_encode("forty-two", 10));
 }
 END_TEST
 
@@ -29,7 +30,8 @@ START_TEST(test_util_base64_decode)
 	gsize sz;
 	guchar *out = purple_base64_decode("b3d0LXl0cm9mAA==", &sz);
 	fail_unless(sz == 10, NULL);
-	assert_string_equal_free("owt-ytrof", (char *)out);
+	fail_unless(strcmp("owt-ytrof", out) == 0, NULL);
+	g_free(out);
 }
 END_TEST
 
@@ -66,89 +68,17 @@ START_TEST(test_util_text_strip_mnemonic)
 }
 END_TEST
 
-/*
- * Many of the valid and invalid email addresses lised below are from
- * http://fightingforalostcause.net/misc/2006/compare-email-regex.php
- */
-const char *valid_emails[] = {
-	"purple-devel@lists.sf.net",
-	"l3tt3rsAndNumb3rs@domain.com",
-	"has-dash@domain.com",
-	"hasApostrophe.o'leary@domain.org",
-	"uncommonTLD@domain.museum",
-	"uncommonTLD@domain.travel",
-	"uncommonTLD@domain.mobi",
-	"countryCodeTLD@domain.uk",
-	"countryCodeTLD@domain.rw",
-	"lettersInDomain@911.com",
-	"underscore_inLocal@domain.net",
-	"IPInsteadOfDomain@127.0.0.1",
-	/* "IPAndPort@127.0.0.1:25", */
-	"subdomain@sub.domain.com",
-	"local@dash-inDomain.com",
-	"dot.inLocal@foo.com",
-	"a@singleLetterLocal.org",
-	"singleLetterDomain@x.org",
-	"&*=?^+{}'~@validCharsInLocal.net",
-	"foor@bar.newTLD"
-};
-
-const char *invalid_emails[] = {
-	"purple-devel@@lists.sf.net",
-	"purple@devel@lists.sf.net",
-	"purple-devel@list..sf.net",
-	"purple-devel",
-	"purple-devel@",
-	"@lists.sf.net",
-	"totally bogus",
-	"missingDomain@.com",
-	"@missingLocal.org",
-	"missingatSign.net",
-	"missingDot@com",
-	"two@@signs.com",
-	"colonButNoPort@127.0.0.1:",
-	""
-	/* "someone-else@127.0.0.1.26", */
-	".localStartsWithDot@domain.com",
-	/* "localEndsWithDot.@domain.com", */ /* I don't think this is invalid -- Stu */
-	/* "two..consecutiveDots@domain.com", */ /* I don't think this is invalid -- Stu */
-	"domainStartsWithDash@-domain.com",
-	"domainEndsWithDash@domain-.com",
-	/* "numbersInTLD@domain.c0m", */
-	/* "missingTLD@domain.", */ /* This certainly isn't invalid -- Stu */
-	"! \"#$%(),/;<>[]`|@invalidCharsInLocal.org",
-	"invalidCharsInDomain@! \"#$%(),/;<>_[]`|.org",
-	/* "local@SecondLevelDomainNamesAreInvalidIfTheyAreLongerThan64Charactersss.org" */
-};
-
 START_TEST(test_util_email_is_valid)
 {
-	size_t i;
-
-	for (i = 0; i < G_N_ELEMENTS(valid_emails); i++)
-		fail_unless(purple_email_is_valid(valid_emails[i]), "Email address was: %s", valid_emails[i]);
-
-	for (i = 0; i < G_N_ELEMENTS(invalid_emails); i++)
-		fail_if(purple_email_is_valid(invalid_emails[i]), "Email address was: %s", invalid_emails[i]);
-}
-END_TEST
-
-START_TEST(test_util_ipv6_is_valid)
-{
-	fail_unless(purple_ipv6_address_is_valid("2001:0db8:85a3:0000:0000:8a2e:0370:7334"));
-	fail_unless(purple_ipv6_address_is_valid("2001:db8:85a3:0:0:8a2e:370:7334"));
-	fail_unless(purple_ipv6_address_is_valid("2001:db8:85a3::8a2e:370:7334"));
-	fail_unless(purple_ipv6_address_is_valid("2001:0db8:0:0::1428:57ab"));
-	fail_unless(purple_ipv6_address_is_valid("::1"));
-	fail_unless(purple_ipv6_address_is_valid("1::"));
-	fail_unless(purple_ipv6_address_is_valid("1::1"));
-	fail_unless(purple_ipv6_address_is_valid("::"));
-	fail_if(purple_ipv6_address_is_valid(""));
-	fail_if(purple_ipv6_address_is_valid(":"));
-	fail_if(purple_ipv6_address_is_valid("1.2.3.4"));
-	fail_if(purple_ipv6_address_is_valid("2001::FFD3::57ab"));
-	fail_if(purple_ipv6_address_is_valid("200000000::1"));
-	fail_if(purple_ipv6_address_is_valid("QWERTY::1"));
+	fail_unless(purple_email_is_valid("purple-devel@lists.sf.net"));
+	fail_if(purple_email_is_valid("purple-devel@@lists.sf.net"));
+	fail_if(purple_email_is_valid("purple@devel@lists.sf.net"));
+	fail_if(purple_email_is_valid("purple-devel@list..sf.net"));
+	fail_if(purple_email_is_valid("purple-devel"));
+	fail_if(purple_email_is_valid("purple-devel@"));
+	fail_if(purple_email_is_valid("@lists.sf.net"));
+	fail_if(purple_email_is_valid(""));
+	fail_if(purple_email_is_valid("totally bogus"));
 }
 END_TEST
 
@@ -164,51 +94,10 @@ START_TEST(test_markup_html_to_xhtml)
 	gchar *xhtml = NULL;
 	gchar *plaintext = NULL;
 	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
-	assert_string_equal_free("<a href=\"\"></a>", xhtml);
-	assert_string_equal_free("", plaintext);
-
-
-	purple_markup_html_to_xhtml("<FONT>x</FONT>", &xhtml, &plaintext);
-	assert_string_equal_free("x", xhtml);
-	assert_string_equal_free("x", plaintext);
-}
-END_TEST
-
-START_TEST(test_utf8_strip_unprintables)
-{
-	fail_unless(NULL == purple_utf8_strip_unprintables(NULL));
-	/* invalid UTF-8 */
-#if 0
-	/* disabled because make check fails on an assertion */
-	fail_unless(NULL == purple_utf8_strip_unprintables("abc\x80\x7f"));
-#endif
-	/* \t, \n, \r, space */
-	assert_string_equal_free("ab \tcd\nef\r   ", purple_utf8_strip_unprintables("ab \tcd\nef\r   "));
-	/* ASCII control characters (stripped) */
-	assert_string_equal_free(" aaaa ", purple_utf8_strip_unprintables(
-				"\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F\x10 aaaa "
-				"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"));
-	/* Basic ASCII */
-	assert_string_equal_free("Foobar", purple_utf8_strip_unprintables("Foobar"));
-	/* 0xE000 - 0xFFFD (UTF-8 encoded) */
-	/* U+F1F7 */
-	assert_string_equal_free("aaaa\xef\x87\xb7", purple_utf8_strip_unprintables("aaaa\xef\x87\xb7"));
-#if 0
-	/* disabled because make check fails on an assertion */
-	/* U+DB80 (Private Use High Surrogate, First) -- should be stripped */
-	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xed\xa0\x80"));
-	/* U+FFFE (should be stripped) */
-	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xef\xbf\xbe"));
-#endif
-	/* U+FEFF (should not be stripped) */
-	assert_string_equal_free("aaaa\xef\xbb\xbf", purple_utf8_strip_unprintables("aaaa\xef\xbb\xbf"));
-}
-END_TEST
-
-START_TEST(test_mime_decode_field)
-{
-	gchar *result = purple_mime_decode_field("=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=");
-	assert_string_equal_free("Keld Jørn Simonsen", result);
+	fail_unless(strcmp("<a href=''></a>", xhtml) == 0, NULL);
+	g_free(xhtml);
+	fail_unless(strcmp("", plaintext) == 0, NULL);
+	g_free(plaintext);
 }
 END_TEST
 
@@ -240,24 +129,12 @@ util_suite(void)
 	tcase_add_test(tc, test_util_email_is_valid);
 	suite_add_tcase(s, tc);
 
-	tc = tcase_create("IPv6");
-	tcase_add_test(tc, test_util_ipv6_is_valid);
-	suite_add_tcase(s, tc);
-
 	tc = tcase_create("Time");
 	tcase_add_test(tc, test_util_str_to_time);
 	suite_add_tcase(s, tc);
 
 	tc = tcase_create("Markup");
 	tcase_add_test(tc, test_markup_html_to_xhtml);
-	suite_add_tcase(s, tc);
-
-	tc = tcase_create("Stripping Unparseables");
-	tcase_add_test(tc, test_utf8_strip_unprintables);
-	suite_add_tcase(s, tc);
-
-	tc = tcase_create("MIME");
-	tcase_add_test(tc, test_mime_decode_field);
 	suite_add_tcase(s, tc);
 
 	return s;

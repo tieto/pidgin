@@ -31,6 +31,7 @@ void yahoo_send_picture_update(PurpleConnection *gc, int type);
 void yahoo_send_picture_update_to_user(PurpleConnection *gc, const char *who, int type);
 
 void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_picture_upload(PurpleConnection *gc, struct yahoo_packet *pkt);
 
