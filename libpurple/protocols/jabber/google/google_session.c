@@ -372,7 +372,7 @@ jabber_google_relay_response_session_initiate_cb(GoogleSession *session,
 	params =
 		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp,
 			relay_ssltcp, relay_username, relay_password, &num_params);
-	
+
 	if (purple_media_add_stream(session_data->media, "google-voice",
 			session->remote_jid, PURPLE_MEDIA_AUDIO,
 			TRUE, "nice", num_params, params) == FALSE ||
@@ -382,12 +382,11 @@ jabber_google_relay_response_session_initiate_cb(GoogleSession *session,
 			TRUE, "nice", num_params, params) == FALSE)) {
 		purple_media_error(session_data->media, "Error adding stream.");
 		purple_media_end(session_data->media, NULL, NULL);
-		g_free(params);
 	} else {
 		session_data->added_streams = TRUE;
 	}
 
-	g_free(params);	
+	g_free(params);
 }
 
 
