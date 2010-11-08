@@ -10,6 +10,9 @@ version 2.7.6 (??/??/????):
 	  (http://developer.pidgin.im/wiki/SlpArchitecture)
 	* Lots of little changes.
 
+	XMPP:
+	* Avoid a double-free in the Google Relay (V/V) code.
+
 version 2.7.5 (10/31/2010):
 	General:
 	* Added Verisign Class 3 Public CA - G2 root CA.
