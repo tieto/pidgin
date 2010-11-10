@@ -3798,12 +3798,13 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 		gfud->webdata[gfud->len] = '\0';
 
 		if(!gfud->got_headers) {
-			char *tmp;
+			char *end_of_headers;
 
 			/* See if we've reached the end of the headers yet */
-			if((tmp = strstr(gfud->webdata, "\r\n\r\n"))) {
-				char * new_data;
-				guint header_len = (tmp + 4 - gfud->webdata);
+			end_of_headers = strstr(gfud->webdata, "\r\n\r\n");
+			if (end_of_headers) {
+				char *new_data;
+				guint header_len = (end_of_headers + 4 - gfud->webdata);
 				size_t content_len;
 
 				purple_debug_misc("util", "Response headers: '%.*s'\n",
@@ -3819,7 +3820,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 				content_len = parse_content_len(gfud->webdata, header_len);
 				gfud->chunked = content_is_chunked(gfud->webdata, header_len);
 
-				if(content_len == 0) {
+				if (content_len == 0) {
 					/* We'll stick with an initial 8192 */
 					content_len = 8192;
 				} else {
@@ -3828,19 +3829,16 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 
 
 				/* If we're returning the headers too, we don't need to clean them out */
-				if(gfud->include_headers) {
+				if (gfud->include_headers) {
 					gfud->data_len = content_len + header_len;
 					gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
 				} else {
-					size_t body_len = 0;
-
-					if(gfud->len > (header_len))
-						body_len = (gfud->len - header_len);
+					size_t body_len = gfud->len - header_len;
 
 					content_len = MAX(content_len, body_len);
 
 					new_data = g_try_malloc(content_len);
-					if(new_data == NULL) {
+					if (new_data == NULL) {
 						purple_debug_error("util",
 								"Failed to allocate %" G_GSIZE_FORMAT " bytes: %s\n",
 								content_len, g_strerror(errno));
@@ -3854,9 +3852,8 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					}
 
 					/* We may have read part of the body when reading the headers, don't lose it */
-					if(body_len > 0) {
-						tmp += 4;
-						memcpy(new_data, tmp, body_len);
+					if (body_len > 0) {
+						memcpy(new_data, end_of_headers + 4, body_len);
 					}
 
 					/* Out with the old... */
