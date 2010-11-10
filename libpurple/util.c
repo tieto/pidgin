@@ -3834,7 +3834,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 				} else {
 					size_t body_len = 0;
 
-					if(gfud->len > (header_len + 1))
+					if(gfud->len > (header_len))
 						body_len = (gfud->len - header_len);
 
 					content_len = MAX(content_len, body_len);
