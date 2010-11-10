@@ -644,7 +644,7 @@ static void hash_table_get_list_of_keys(gpointer key, gpointer value, gpointer u
 
 	*handlers = g_list_prepend(*handlers, key);
 }
-#endif /* GLIB < 2.12.0 */
+#endif /* GLIB < 2.14.0 */
 
 void
 oscar_login(PurpleAccount *account)
@@ -720,7 +720,7 @@ oscar_login(PurpleAccount *account)
 #else
 	handlers = NULL;
 	g_hash_table_foreach(od->handlerlist, hash_table_get_list_of_keys, &handlers);
-#endif /* GLIB < 2.12.0 */
+#endif /* GLIB < 2.14.0 */
 	sorted_handlers = g_list_sort(g_list_copy(handlers), compare_handlers);
 	for (cur = sorted_handlers; cur; cur = cur->next) {
 		guint x = GPOINTER_TO_UINT(cur->data);
