@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-28 19:57+0200\n"
-"PO-Revision-Date: 2010-10-28 19:50+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2010-11-15 17:52+0100\n"
+"PO-Revision-Date: 2010-11-15 17:47+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -5219,26 +5219,6 @@ msgstr "Fehler beim Hinzufügen des Buddys"
 msgid "The username specified does not exist."
 msgstr "Der angegebene Benutzername existiert nicht."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Fehler bei der Buddy-Listen-Synchronisation bei %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s auf der lokalen Liste ist in der Gruppe „%s“, aber nicht auf der "
-"Serverliste. Möchten Sie, dass der Buddy hinzugefügt wird?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s ist auf der lokalen Liste, aber nicht auf der Serverliste. Möchten Sie, "
-"dass der Buddy hinzugefügt wird?"
-
 msgid "Unable to parse message"
 msgstr "Kann die Nachricht nicht parsen"
 
@@ -5410,6 +5390,26 @@ msgstr "Unbekannter Fehlercode %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN-Fehler: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Fehler bei der Buddy-Listen-Synchronisation bei %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s auf der lokalen Liste ist in der Gruppe „%s“, aber nicht auf der "
+"Serverliste. Möchten Sie, dass der Buddy hinzugefügt wird?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s ist auf der lokalen Liste, aber nicht auf der Serverliste. Möchten Sie, "
+"dass der Buddy hinzugefügt wird?"
+
 msgid "Other Contacts"
 msgstr "Andere Kontakte"
 
@@ -5464,11 +5464,24 @@ msgstr "Ihr neuer MSN-Benutzername zu lang."
 msgid "Set friendly name for %s."
 msgstr "Setze Spitznamen für %s."
 
-msgid "Set your friendly name."
-msgstr "Setze Ihren Spitznamen."
+msgid "Set Friendly Name"
+msgstr "Setze Spitznamen"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Das ist der Name, den andere MSN-Buddys von Ihren sehen."
+
+msgid "This Location"
+msgstr "Dieser Ort"
+
+msgid "This is the name that identifies this location"
+msgstr "Das ist der Name, der diesen Ort identifiziert"
+
+msgid "Other Locations"
+msgstr "Andere Orte"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Sie haben sich von einem anderen Ort angemeldet"
 
 msgid "Set your home phone number."
 msgstr "Setze Ihre private Telefonnummer."
@@ -5555,6 +5568,9 @@ msgstr "Dienststellenbezeichnung"
 
 msgid "Set Friendly Name..."
 msgstr "Setze Spitzname..."
+
+msgid "View Locations..."
+msgstr "Orte betrachten..."
 
 msgid "Set Home Phone Number..."
 msgstr "Setze private Telefonnummer..."
@@ -6999,6 +7015,11 @@ msgstr ""
 "versuchen Sie es noch einmal. Wenn Sie es weiter versuchen, müssen Sie sogar "
 "noch länger warten."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
@@ -7313,6 +7334,11 @@ msgstr ""
 "ist.  Benutzernamen müssen gültige E-Mail-Adressen sein oder mit einem "
 "Buchstaben beginnen und nur Buchstaben, Ziffern und Leerzeichen enthalten "
 "oder nur aus Ziffern bestehen."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7864,6 +7890,9 @@ msgstr "Zeige Buddys, von denen Sie Autorisierung erwarten"
 msgid "Search for Buddy by Email Address..."
 msgstr "Suche Buddys nach E-Mail-Adresse..."
 
+msgid "Don't use encryption"
+msgstr "Keine Verschlüsselung benutzen"
+
 msgid "Use clientLogin"
 msgstr "clientLogin benutzen"
 
@@ -8062,7 +8091,7 @@ msgid "Personal Web Page"
 msgstr "Persönliche Webseite"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Zusätzliche Informationen"
 
