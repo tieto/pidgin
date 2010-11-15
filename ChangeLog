@@ -12,6 +12,7 @@ version 2.7.6 (??/??/????):
 
 	XMPP:
 	* Avoid a double-free in the Google Relay (V/V) code.
+	* Avoid double error message when failing a file transfer. (#12757)
 
 version 2.7.5 (10/31/2010):
 	General:
