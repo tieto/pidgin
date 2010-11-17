@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-15 17:52+0100\n"
-"PO-Revision-Date: 2010-11-15 17:47+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2010-11-17 09:26+0100\n"
+"PO-Revision-Date: 2010-11-17 09:19+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -4891,15 +4891,6 @@ msgstr "Hinausgeworfen (%s)"
 msgid "Unknown Error in presence"
 msgstr "Unbekannter Fehlercode"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Bei der In-Band-Bytestrom-Übertragung trat ein Fehler auf\n"
-
-msgid "Transfer was closed."
-msgstr "Übertragung wurde geschlossen."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Öffnen des In-Band-Bytestroms fehlgeschlagen"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5479,9 +5470,8 @@ msgstr "Das ist der Name, der diesen Ort identifiziert"
 msgid "Other Locations"
 msgstr "Andere Orte"
 
-#, fuzzy
 msgid "You can sign out from other locations here"
-msgstr "Sie haben sich von einem anderen Ort angemeldet"
+msgstr "Sie können andere Orte von hier abmelden"
 
 msgid "Set your home phone number."
 msgstr "Setze Ihre private Telefonnummer."
@@ -7019,6 +7009,8 @@ msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
 msgstr ""
+"Sie haben Verschlüsselung in Ihren Kontoeinstellungen gefordert, aber einer "
+"der Server unterstützt keine Verschlüsselung."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -7339,6 +7331,8 @@ msgid ""
 "You required encryption in your account settings, but encryption is not "
 "supported by your system."
 msgstr ""
+"Sie haben Verschlüsselung in Ihren Kontoeinstellungen gefordert, aber Ihr "
+"System unterstützt keine Verschlüsselung."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -15629,3 +15623,12 @@ msgstr "Besuchen Sie die Pidgin-Webseite"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Bei der In-Band-Bytestrom-Übertragung trat ein Fehler auf\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Übertragung wurde geschlossen."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Öffnen des In-Band-Bytestroms fehlgeschlagen"
