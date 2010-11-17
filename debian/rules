@@ -15,7 +15,7 @@ DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution \
 	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farsight \
 	    --enable-tcl --enable-tk
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
-  DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
+  auto DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
 else
   DEB_CONFIGURE_EXTRA_FLAGS += --disable-nm
 endif 
@@ -25,7 +25,7 @@ DEB_INSTALL_DOCS_ALL := -XAUTHORS -XNEWS -XREADME
 
 DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/pidgin
 DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/cap.so -- -dSuggests debian/pidgin/usr/lib/pidgin/cap.so -dDepends
-DEB_PERL_INCLUDE_pidgin := /usr/lib/pidgin/perl
+DEB_PERL_INCLUDE_pidgin := -d /usr/lib/pidgin/perl
 
 # finch package
 DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch
@@ -34,7 +34,7 @@ DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch/gntclipboard.so -X/usr/lib/finch
 # libpurple package
 DEB_DH_MAKESHLIBS_ARGS_libpurple0 := -X/usr/lib/purple-2
 DEB_DH_SHLIBDEPS_ARGS_libpurple0 := -X/usr/lib/purple-2/tcl.so -- -dSuggests debian/libpurple0/usr/lib/purple-2/tcl.so -dDepends
-DEB_PERL_INCLUDE_libpurple0 := /usr/lib/purple-2/perl
+DEB_PERL_INCLUDE_libpurple0 := -d /usr/lib/purple-2/perl
 
 # for pidgin-dev, extra documentation is installed manually below
 DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
