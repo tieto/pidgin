@@ -5736,7 +5736,7 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 
 	for (i = 0; encryption_keys[i]; i++) {
 		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
-		kvp->key = g_strdup(encryption_keys[i]);
+		kvp->key = g_strdup(_(encryption_keys[i]));
 		kvp->value = g_strdup(encryption_values[i]);
 		encryption_options = g_list_append(encryption_options, kvp);
 	}
