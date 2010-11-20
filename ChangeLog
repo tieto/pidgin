@@ -1,5 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.8.0 (??/??/????):
+  libpurple
+  * media: Allow obtaining active local and remote candidates. (#11830)
+
 version 2.7.6 (??/??/????):
 	MSN:
 	* Added support for MSNP16, including Multiple Points of Presence (MPOP)
