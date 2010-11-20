@@ -104,9 +104,11 @@ pidgin_menu_tray_finalize(GObject *obj)
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
 #endif
 
+#if !GTK_CHECK_VERSION(2,12,0)
 	if (tray->tooltips) {
 		gtk_object_sink(GTK_OBJECT(tray->tooltips));
 	}
+#endif
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -238,13 +240,15 @@ pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const cha
 void
 pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
+#if !GTK_CHECK_VERSION(2,12,0)
 	if (!menu_tray->tooltips)
 		menu_tray->tooltips = gtk_tooltips_new();
+#endif
 
 	/* Should we check whether widget is a child of menu_tray? */
 
 	/*
-	 * If the widget does not have it's own window, then it
+	 * If the widget does not have its own window, then it
 	 * must have automatically been added to an event box
 	 * when it was added to the menu tray.  If this is the
 	 * case, we want to set the tooltip on the widget's parent,
@@ -253,6 +257,10 @@ pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const
 	if (GTK_WIDGET_NO_WINDOW(widget))
 		widget = widget->parent;
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, tooltip);
+#else
 	gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
+#endif
 }
 

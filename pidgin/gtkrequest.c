@@ -86,7 +86,9 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 {
 	GtkWidget *image;
 	GdkPixbuf *pixbuf;
+#if !GTK_CHECK_VERSION(2,12,0)
 	GtkTooltips *tips;
+#endif
 
 	if (!account)
 		return;
@@ -95,8 +97,12 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(image, purple_account_get_username(account));
+#else
 	tips = gtk_tooltips_new();
 	gtk_tooltips_set_tip(tips, image, purple_account_get_username(account), NULL);
+#endif
 
 	if (GTK_IS_DIALOG(cont)) {
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(cont)->action_area), image, FALSE, TRUE, 0);

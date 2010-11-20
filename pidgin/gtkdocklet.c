@@ -523,7 +523,7 @@ add_account_statuses(GtkWidget *menu, PurpleAccount *account)
 		new_menu_item_with_status_icon(menu,
 			purple_status_type_get_name(status_type),
 			prim, G_CALLBACK(activate_status_account_cb),
-			status_type, 0, 0, NULL);
+			GINT_TO_POINTER(status_type), 0, 0, NULL);
 	}
 }
 
