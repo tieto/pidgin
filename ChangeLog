@@ -13,6 +13,8 @@ version 2.7.6 (??/??/????):
 	XMPP:
 	* Avoid a double-free in the Google Relay (V/V) code.
 	* Avoid double error message when failing a file transfer. (#12757)
+	* Password-related information is printed out for SASL authentication
+	  when the PURPLE_UNSAFE_DEBUG environment variable is set.
 
 version 2.7.5 (10/31/2010):
 	General:
