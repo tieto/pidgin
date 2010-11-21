@@ -1147,6 +1147,7 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 		trans = msn_transaction_new(cmdproc, "OUT", NULL);
 		msn_transaction_set_saveable(trans, FALSE);
 		msn_cmdproc_send_trans(cmdproc, trans);
+		msn_transaction_destroy(trans);
 
 		msn_switchboard_destroy(swboard);
 	}

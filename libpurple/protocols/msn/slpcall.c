@@ -826,6 +826,7 @@ got_ok(MsnSlpCall *slpcall,
 
 		/* Try direct file transfer by sending a second INVITE */
 		dc = msn_dc_new(slpcall);
+		g_free(slpcall->branch);
 		slpcall->branch = rand_guid();
 
 		dc->listen_data = purple_network_listen_range(
