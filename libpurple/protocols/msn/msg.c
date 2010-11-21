@@ -368,6 +368,8 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 		memcpy(n, body, siz);
 		n += siz;
+
+		g_free(body);
 	}
 	else
 	{

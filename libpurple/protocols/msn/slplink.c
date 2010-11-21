@@ -502,7 +502,6 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 	slpcall = msn_slp_process_msg(slplink, slpmsg);
 
 	if (slpcall == NULL) {
-		msn_slpmsg_destroy(slpmsg);
 		return;
 	}
 
@@ -540,8 +539,6 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 			msn_slplink_send_queued_slpmsgs(slplink);
 		}
 	}
-
-	msn_slpmsg_destroy(slpmsg);
 
 	if (!slpcall->wait_for_socket && slpcall->wasted)
 		msn_slpcall_destroy(slpcall);
@@ -625,6 +622,8 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	/* All the pieces of the slpmsg have been received */
 	if (header->offset + header->length >= header->total_size)
 		process_complete_msg(slplink, slpmsg, header);
+
+	msn_slpmsg_destroy(slpmsg);
 }
 
 void
