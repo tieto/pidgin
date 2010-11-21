@@ -1446,7 +1446,6 @@ msn_send_im_message(MsnSession *session, MsnMessage *msg)
 	}
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
-	msn_message_destroy(msg);
 }
 
 static int
