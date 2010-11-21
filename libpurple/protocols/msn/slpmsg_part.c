@@ -154,6 +154,9 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 
 	*ret_size = tmp - base;
 
+	g_free(header);
+	g_free(footer);
+
 	return base;
 }
 /* We have received the message ack */
