@@ -399,6 +399,9 @@ pidgin_media_dispose(GObject *media)
 		gtkmedia->priv->ui = NULL;
 	}
 
+	if (gtkmedia->priv->timeout_id != 0)
+		g_source_remove(gtkmedia->priv->timeout_id);
+
 	G_OBJECT_CLASS(parent_class)->dispose(media);
 }
 

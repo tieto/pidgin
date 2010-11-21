@@ -7,6 +7,10 @@ version 2.7.6 (11/21/2010):
 	  the "Unable to validate certificate" error for omega.contacts.msn.com.
 	  (#12906)
 
+	Pidgin:
+	* Avoid a use-after-free race condition in the media code (when
+	  there's an error reported by GStreamer). (#12806, Jakub Adam)
+
 	AIM and ICQ:
 	* SSL option has been changed to a tri-state menu with choices for
 	  "Don't Use Encryption", "Use Encryption if Available", and "Require
