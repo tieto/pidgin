@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-10 12:33+0200\n"
+"POT-Creation-Date: 2010-11-21 03:11+0100\n"
+"PO-Revision-Date: 2010-11-21 03:10+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
@@ -4854,15 +4854,6 @@ msgstr "Kirúgva (%s)"
 msgid "Unknown Error in presence"
 msgstr "Ismeretlen hiba a jelenlétben"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Hiba történt a bejövő adatfolyam átvitelében\n"
-
-msgid "Transfer was closed."
-msgstr "Az átvitel lezárva."
-
-msgid "Failed to open in-band bytestream"
-msgstr "A bejövő adatfolyam megnyitása meghiúsult"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5182,26 +5173,6 @@ msgstr "Partner-hozzáadási hiba"
 msgid "The username specified does not exist."
 msgstr "A megadott felhasználónév nem létezik."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Partnerlista-szinkronizációs probléma itt: %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s a helyi listán a(z) %s csoport tagja, de a kiszolgáló listáján nem az. "
-"Szeretné ezt a partnert felvenni?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s rajta van a helyi listán, de a kiszolgáló listáján nincs. Szeretné ezt a "
-"partnert felvenni?"
-
 msgid "Unable to parse message"
 msgstr "Az üzenetet nem sikerült értelmezni"
 
@@ -5372,6 +5343,26 @@ msgstr "Ismeretlen hibakód %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN hiba: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Partnerlista-szinkronizációs probléma itt: %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s a helyi listán a(z) %s csoport tagja, de a kiszolgáló listáján nem az. "
+"Szeretné ezt a partnert felvenni?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s rajta van a helyi listán, de a kiszolgáló listáján nincs. Szeretné ezt a "
+"partnert felvenni?"
+
 msgid "Other Contacts"
 msgstr "Egyéb partnerek"
 
@@ -5423,11 +5414,23 @@ msgstr "Az új MSN beceneve túl hosszú."
 msgid "Set friendly name for %s."
 msgstr "Becenév beállítása %s számára."
 
-msgid "Set your friendly name."
-msgstr "Becenév beállítása."
+msgid "Set Friendly Name"
+msgstr "Becenév beállítása"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Ezen a néven fogják látni az MSN partnerei."
+
+msgid "This Location"
+msgstr "Ez a hely"
+
+msgid "This is the name that identifies this location"
+msgstr "A helyet azonosító név"
+
+msgid "Other Locations"
+msgstr "Egyéb helyek"
+
+msgid "You can sign out from other locations here"
+msgstr "Itt kijelentkezhet más helyekről"
 
 msgid "Set your home phone number."
 msgstr "Otthoni telefonszám beállítása."
@@ -5516,6 +5519,9 @@ msgstr "Irodai beosztás"
 
 msgid "Set Friendly Name..."
 msgstr "Becenév beállítása…"
+
+msgid "View Locations..."
+msgstr "Helyek megjelenítése…"
 
 msgid "Set Home Phone Number..."
 msgstr "Otthoni telefonszám beállítása…"
@@ -5847,8 +5853,8 @@ msgstr "Bejelentkezett egy másik helyről"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
-"Az MSN kiszolgálók átmenetileg nem érhetők el. Kérem várjon és próbálja újra "
-"később."
+"Az MSN kiszolgálók átmenetileg nem érhetők el. Kérem várjon, és próbálja "
+"újra később."
 
 msgid "The MSN servers are going down temporarily"
 msgstr "Az MSN kiszolgálók átmenetileg leállnak"
@@ -5860,8 +5866,8 @@ msgstr "Nem sikerült a hitelesítés: %s"
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
-"Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon és próbálja "
-"újra később."
+"Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon, és "
+"próbálja újra később."
 
 msgid "Handshaking"
 msgstr "Kézfogás"
@@ -6728,8 +6734,8 @@ msgstr "Nem lehet bejelentkezni: %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Az üzenetet nem lehet elküldeni. A felhasználó részletei nem kérhetőek le "
-"(%s)."
+"Az üzenetet nem lehet elküldeni. A felhasználó részletei nem kérhetőek le (%"
+"s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -6889,14 +6895,13 @@ msgid "Server port"
 msgstr "Kiszolgáló portja"
 
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
+msgstr "Engedje meg, hogy felvegyem partnerlistámra."
 
 msgid "No reason given."
 msgstr "Nincs ok megadva."
 
-#, fuzzy
 msgid "Authorization Denied Message:"
-msgstr "Hozzáférés elutasítva üzenet:"
+msgstr "Felhatalmazás elutasítva üzenet:"
 
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -6912,6 +6917,13 @@ msgid ""
 msgstr ""
 "Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
 "tovább folytatja, még többet kell majd várnia."
+
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Fiókbeállításaiban titkosítást követelt meg, de az egyik kiszolgáló nem "
+"támogatja azt."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -6939,12 +6951,17 @@ msgid ""
 "encoding he is using, you can specify it in the advanced account options for "
 "your AIM/ICQ account.)"
 msgstr ""
+"(Hiba történt ezen üzenet fogadásakor. A partner valószínűleg a várttól "
+"eltérő kódolást használ. Ha tudja, milyen kódolást használ a partner, akkor "
+"megadhatja az AIM/ICQ fiók speciális beállításai közt.)"
 
 #, c-format
 msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
+"(Hiba történt ezen üzenet fogadásakor. Ön vagy %s eltérő kódolást választott "
+"ki, vagy %s hibás klienst használ.)"
 
 msgid "Could not join chat room"
 msgstr "Nem sikerült kapcsolódni a csevegőszobához"
@@ -7152,8 +7169,8 @@ msgid ""
 "%s tried to send you a %s file, but we only allow files up to %s over Direct "
 "IM.  Try using file transfer instead.\n"
 msgstr ""
-"%s egy %s fájlt próbált küldeni, de közvetlen kapcsolatban legfeljebb csak "
-"%s méretű fájl küldhető. Próbálkozzon inkább a fájlátvitellel.\n"
+"%s egy %s fájlt próbált küldeni, de közvetlen kapcsolatban legfeljebb csak %"
+"s méretű fájl küldhető. Próbálkozzon inkább a fájlátvitellel.\n"
 
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
@@ -7217,6 +7234,12 @@ msgstr ""
 "felhasználóneveknek érvényes e-mail címnek kell lennie, vagy betűvel kell "
 "kezdődniük és betűket, számokat, szóközöket, vagy csak számokat "
 "tartalmazhatnak."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Fiókbeállításaiban titkosítást követelt meg, de rendszere nem támogatja azt."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7711,7 +7734,7 @@ msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
 msgstr ""
-"Újra kérheti engedélyezést ezektől a partnerektől a jobb egérgombbal "
+"Újra kérheti az engedélyezést ezektől a partnerektől a jobb egérgombbal "
 "kattintva a nevükön, és az „Engedélyezés újra kérése” választásával"
 
 msgid "Find Buddy by Email"
@@ -7740,13 +7763,11 @@ msgstr "Üzenettovábbítás beállítása (web)"
 msgid "Set Privacy Options..."
 msgstr "Magánszféra-beállítások…"
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "P_artnerlista megjelenítése"
+msgstr "Láthatók listája"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Meghívási lista"
+msgstr "Láthatatlanok listája"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7763,6 +7784,9 @@ msgstr "Engedélyezésre váró partnerek megjelenítése"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Partner keresése e-mail cím szerint…"
+
+msgid "Don't use encryption"
+msgstr "Ne használjon titkosítást"
 
 msgid "Use clientLogin"
 msgstr "Kliensbejelentkezés használata"
@@ -7880,128 +7904,108 @@ msgstr "Partnerikon"
 msgid "Voice"
 msgstr "Hang"
 
-#, fuzzy
 msgid "AIM Direct IM"
-msgstr "Közvetlen IM"
+msgstr "AIM közvetlen IM"
 
-#, fuzzy
 msgid "Get File"
-msgstr "Fájl küldése"
+msgstr "Fájl kérése"
 
-#, fuzzy
 msgid "Games"
-msgstr "Asszámi"
+msgstr "Játékok"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
-msgstr ""
+msgstr "Bővítmények"
 
-#, fuzzy
 msgid "Send Buddy List"
-msgstr "Partnerlista"
+msgstr "Partnerlista küldése"
 
-#, fuzzy
 msgid "ICQ Direct Connect"
-msgstr "Közvetlen kapcsolatok engedélyezése"
+msgstr "ICQ közvetlen kapcsolat"
 
-#, fuzzy
 msgid "AP User"
-msgstr "Felhasználó hitelesítése"
+msgstr "AP felhasználó"
 
 msgid "ICQ RTF"
-msgstr ""
+msgstr "ICQ RTF"
 
 msgid "Nihilist"
-msgstr ""
+msgstr "Nihilist"
 
-#, fuzzy
 msgid "ICQ Server Relay"
-msgstr "A kiszolgáló válasza:"
+msgstr "ICQ kiszolgálótovábbítás"
 
 msgid "Old ICQ UTF8"
-msgstr ""
+msgstr "Régi ICQ UTF8"
 
 msgid "Trillian Encryption"
-msgstr ""
+msgstr "Trillian titkosítás"
 
 msgid "ICQ UTF8"
-msgstr ""
+msgstr "ICQ UTF8"
 
 msgid "Hiptop"
-msgstr ""
+msgstr "Hiptop"
 
-#, fuzzy
 msgid "Security Enabled"
-msgstr "Biztonsági kód"
+msgstr "Biztonság engedélyezve"
 
-#, fuzzy
 msgid "Video Chat"
-msgstr "_Videóhívás"
+msgstr "Videocsevegés"
 
-#, fuzzy
 msgid "iChat AV"
-msgstr "Csevegés"
+msgstr "iChat AV"
 
-#, fuzzy
 msgid "Live Video"
-msgstr " Videó"
+msgstr "Élő videó"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Videokamera"
+msgstr "Kamera"
 
 msgid "Screen Sharing"
-msgstr ""
+msgstr "Képernyőmegosztás"
 
 msgid "IP Address"
 msgstr "IP cím"
 
-#, fuzzy
 msgid "Warning Level"
-msgstr "Figyelmeztetés"
+msgstr "Figyelmeztetési szint"
 
-#, fuzzy
 msgid "Buddy Comment"
-msgstr "Partnermegjegyzés:"
+msgstr "Partnermegjegyzés"
 
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
-msgstr "Titkosítás használata, ha elérhető"
+msgstr "A felhasználóinformációk nem érhetők el: %s"
 
 msgid "Mobile Phone"
 msgstr "Mobiltelefon"
 
-#, fuzzy
 msgid "Personal Web Page"
-msgstr "Személyes mobil"
+msgstr "Személyes weboldal"
 
 #. aim_userinfo_t
-#. strip_html_tags
-#, fuzzy
+#. use_html_status
 msgid "Additional Information"
-msgstr "Opcionális információk:"
-
-msgid "Zip Code"
-msgstr ""
-
-#, fuzzy
-msgid "Work Information"
 msgstr "További információk"
 
+msgid "Zip Code"
+msgstr "Irányítószám"
+
+msgid "Work Information"
+msgstr "Munkahely-információk"
+
 msgid "Division"
-msgstr ""
+msgstr "Részleg"
 
-#, fuzzy
 msgid "Position"
-msgstr "Leírás"
+msgstr "Pozíció"
 
-#, fuzzy
 msgid "Web Page"
-msgstr "Honlap"
+msgstr "Weboldal"
 
-#, fuzzy
 msgid "Online Since"
 msgstr "Kapcsolódva ezóta"
 
@@ -8009,48 +8013,43 @@ msgid "Member Since"
 msgstr "Tagság kezdete"
 
 msgid "Capabilities"
-msgstr ""
+msgstr "Képességek"
 
 #. 4 separate strings are needed in order to ease translators' job
 msgid "Appear Online"
 msgstr "Belépettként látszik"
 
-#, fuzzy
 msgid "Don't Appear Online"
-msgstr "Belépettként látszik"
+msgstr "Ne látsszon belépettként"
 
 msgid "Appear Offline"
 msgstr "Kilépettként látszik"
 
-#, fuzzy
 msgid "Don't Appear Offline"
-msgstr "Kilépettként látszik"
+msgstr "Ne látsszon kilépettként"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Kirúgták ebből a MultiMX-ből."
+msgstr "nincsenek partnerei ezen a listán"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"Újra kérheti engedélyezést ezektől a partnerektől a jobb egérgombbal "
-"kattintva a nevükön, és az „Engedélyezés újra kérése” választásával"
+"Felveheti a partnert a listára a jobb egérgombbal kattintva a nevén, és a(z) "
+"„%s” kiválasztásával"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Látható"
+msgstr "Látható számukra"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "Ezek a partnerek látni fogják állapotát amikor „Láthatatlanra” vált"
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Meghívási lista"
+msgstr "Láthatatlan számukra"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Ezek a partnerek mindig kilépettként fogják látni"
 
 msgid "Aquarius"
 msgstr "Vízöntő"
@@ -10798,8 +10797,8 @@ msgstr "%d HTTP proxy kapcsolathiba"
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
-"Hozzáférés megtagadva: a HTTP proxy kiszolgáló tiltja az alagutazást a(z) "
-"%d. porton"
+"Hozzáférés megtagadva: a HTTP proxy kiszolgáló tiltja az alagutazást a(z) %"
+"d. porton"
 
 #, c-format
 msgid "Error resolving %s"
@@ -11047,8 +11046,8 @@ msgid ""
 "An error was encountered reading your %s.  The file has not been loaded, and "
 "the old file has been renamed to %s~."
 msgstr ""
-"Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl "
-"%s~ néven lett elmentve."
+"Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl %"
+"s~ néven lett elmentve."
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -12354,6 +12353,9 @@ msgstr "kurd"
 msgid "Lao"
 msgstr "lao"
 
+msgid "Maithili"
+msgstr "Maithili"
+
 msgid "Macedonian"
 msgstr "macedón"
 
@@ -12474,8 +12476,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with "
-"%s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "A %s egy libpurple alapú moduláris üzenetküldő kliens, amely egyszerre több "
 "üzenetküldő szolgáltatáshoz is képes csatlakozni. A %s GTK+ használatával, C "
@@ -13025,16 +13027,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in "
-"%s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in %"
+"s which started at %s?"
 msgstr ""
 "Biztos, hogy törölni akarja a(z) %s csatornán folytatott, %s időpontban "
 "kezdődött beszélgetés naplóját?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at "
-"%s?"
+"Are you sure you want to permanently delete the system log which started at %"
+"s?"
 msgstr ""
 "Biztos, hogy törölni akarja a(z) %s időpontban kezdődött rendszernaplót?"
 
@@ -15382,8 +15384,8 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
-"%20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Hiba a helyesírás-ellenőrző telepítésekor. ($R3).$\\rHa az újrapróbálkozás "
 "meghiúsul, akkor saját kezűleg is telepítheti a http://developer.pidgin.im/"
