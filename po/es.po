@@ -53,8 +53,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
-"PO-Revision-Date: 2010-08-02 23:10+0200\n"
+"POT-Creation-Date: 2010-11-21 13:55-0500\n"
+"PO-Revision-Date: 2010-11-17 03:10+0100\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "Language: \n"
@@ -1808,13 +1808,12 @@ msgstr ""
 "El certificado no es válido aún. Compruebe que la fecha y hora de su "
 "ordenador son correctas."
 
-#, fuzzy
 msgid ""
 "The certificate has expired and should not be considered valid.  Check that "
 "your computer's date and time are accurate."
 msgstr ""
-"El certificado no es válido aún. Compruebe que la fecha y hora de su "
-"ordenador son correctas."
+"El certificado ha expirado y no se considera ya válido. Compruebe que la "
+"fecha y hora de su ordenador son correctas."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4870,20 +4869,17 @@ msgstr "Complemento de protocolo XMPP"
 msgid "Domain"
 msgstr "Dominio"
 
-#, fuzzy
 msgid "Require encryption"
-msgstr "Solicitar autorización"
+msgstr "Solicitar cifrado"
 
-#, fuzzy
 msgid "Use encryption if available"
-msgstr "Información de usuario de no disponible: %s"
+msgstr "Utilizar cifrado si es posible"
 
 msgid "Use old-style SSL"
-msgstr ""
+msgstr "Utilizar SSL antiguo"
 
-#, fuzzy
 msgid "Connection security"
-msgstr "Expiró la conexión"
+msgstr "Seguridad de la conexión"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Permitir autenticación en claro sobre canales no cifrados"
@@ -4988,15 +4984,6 @@ msgstr "Expulsado (%s)"
 
 msgid "Unknown Error in presence"
 msgstr "Error desconocido en presencia"
-
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Se produjo un error en la transferencia de flujos de bytes en banda\n"
-
-msgid "Transfer was closed."
-msgstr "Se cerró la transferencia."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Fallo al abrir un flujo de bytes en banda"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -5317,26 +5304,6 @@ msgstr "Error al añadir un amigo"
 msgid "The username specified does not exist."
 msgstr "El nombre de usuario especificado no existe."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problema de sincronización de la lista de amigos en %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s está en la lista local dentro del grupo «%s» pero no está en la lista del "
-"servidor. ¿Desea añadir a este amigo?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s está en la lista local pero no está en la lista del servidor. ¿Desea "
-"añadir a este amigo?"
-
 msgid "Unable to parse message"
 msgstr "No se pudo interpretar el mensaje"
 
@@ -5511,6 +5478,26 @@ msgstr "Código de error desconocido %d"
 msgid "MSN Error: %s\n"
 msgstr "Error MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problema de sincronización de la lista de amigos en %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s está en la lista local dentro del grupo «%s» pero no está en la lista del "
+"servidor. ¿Desea añadir a este amigo?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s está en la lista local pero no está en la lista del servidor. ¿Desea "
+"añadir a este amigo?"
+
 msgid "Other Contacts"
 msgstr "Otros contactos"
 
@@ -5564,11 +5551,23 @@ msgstr "El nuevo nombre de amigo MSN es demasiado largo."
 msgid "Set friendly name for %s."
 msgstr "Establecer  nombre de amigo para %s."
 
-msgid "Set your friendly name."
-msgstr "Establecer su nombre de amigo."
+msgid "Set Friendly Name"
+msgstr "Establecer nombre de amigo"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Éste es el nombre bajo el que otros amigos MSN le verán."
+
+msgid "This Location"
+msgstr "Esta ubicación"
+
+msgid "This is the name that identifies this location"
+msgstr "Éste es el nombre que identifica a esta ubicación"
+
+msgid "Other Locations"
+msgstr "Otras ubicaciones"
+
+msgid "You can sign out from other locations here"
+msgstr "Puede desconectarse de otras ubicaciones aquí"
 
 msgid "Set your home phone number."
 msgstr "Establezca el número de teléfono de su domicilio."
@@ -5656,6 +5655,9 @@ msgstr "Título de la oficina"
 
 msgid "Set Friendly Name..."
 msgstr "Establecer su nombre de amigo..."
+
+msgid "View Locations..."
+msgstr "Ver ubicaciones..."
 
 msgid "Set Home Phone Number..."
 msgstr "Establecer el número de teléfono de su domicilio..."
@@ -7073,6 +7075,13 @@ msgstr ""
 "inténtelo de nuevo. Si sigue intentándolo, necesitará esperar incluso más "
 "tiempo."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"En su configuración de cuenta indicó que era necesario utilizar cifrado, "
+"pero ninguno de los servidores lo soporta."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
@@ -7386,6 +7395,13 @@ msgstr ""
 "nombres de usuario deben ser direcciones de correo válidas, o empezar con "
 "una letra y sólo pueden contener letras, números y espacios, o contener sólo "
 "números."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Solicitó cifrado en su configuración de cuenta, pero su sistema no soporta "
+"el uso de cifrado."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7862,9 +7878,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Cambiar dirección a:"
 
-#, fuzzy
 msgid "you are not waiting for authorization"
-msgstr "<i>usted no está esperando autorización</i>"
+msgstr "usted no está esperando autorización"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "En espera de la autorización de los siguientes amigos"
@@ -7903,13 +7918,11 @@ msgstr "Configurar reenvío de MI (web)"
 msgid "Set Privacy Options..."
 msgstr "Configurar las opciones de privacidad..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Mostrar la _lista de amigos"
+msgstr "Mostrar lista visible"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Lista de invitados"
+msgstr "Mostrar lista invisible"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7926,6 +7939,9 @@ msgstr "Mostrar amigos pendientes de autorización"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Buscar un amigo por correo electrónico..."
+
+msgid "Don't use encryption"
+msgstr "No utilizar cifrado"
 
 msgid "Use clientLogin"
 msgstr "Utilizar «clientLogin»"
@@ -8126,7 +8142,7 @@ msgid "Personal Web Page"
 msgstr "Página web personal"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Información adicional"
 
@@ -8154,46 +8170,53 @@ msgstr "Miembro desde"
 msgid "Capabilities"
 msgstr "Capacidades"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Parecer conectado"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "Parecer conectado"
+msgstr "No aparecer conectado"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Parecer desconectado"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
-msgstr "Parecer desconectado"
+msgstr "No aparecer desconectado"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Ha sido expulsado de este MultiMX."
+msgstr "no tiene amigos en esta lista"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"Puede volver a pedir autorización a estos amigos apretando el botón derecho "
-"del ratón sobre ellos y escogiendo «Solicitar autorización otra vez.»"
+"Puede añadir a un amigo a esta lista pulsando con el botón derecho del ratón "
+"sobre él y escogiendo «%s»"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Visible"
+msgstr "Lista visible"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "Estos amigos verán su estado cuando pase a estado «Invisible»"
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Lista de invitados"
+msgstr "Lista invisible"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Estos amigos siempre le verán como desconectado"
 
 msgid "Aquarius"
 msgstr "Acuario"
@@ -8373,9 +8396,9 @@ msgstr "Su solicitud fué aceptada."
 msgid "Your request was rejected."
 msgstr "Su solicitud fué rechazada."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requires verification: %s"
-msgstr "%u solicita verificación"
+msgstr "%u solicita verificación: %s"
 
 msgid "Add buddy question"
 msgstr "Añadir una pregunta para el amigo"
@@ -11320,9 +11343,9 @@ msgstr ""
 "Puede volver a esta ventana para añadir, editar o eliminar cuentas desde la "
 "ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
-msgstr "%s%s%s%s quiere añadir a %s a su lista de amigos%s%s."
+msgstr "%s%s%s%s quiere añadirle (%s) a su lista de amigos%s%s."
 
 #. Buddy List
 msgid "Background Color"
@@ -12485,6 +12508,9 @@ msgstr "Kurdo"
 
 msgid "Lao"
 msgstr "Laosiano"
+
+msgid "Maithili"
+msgstr "Maithili"
 
 msgid "Macedonian"
 msgstr "Macedonio"
@@ -13708,9 +13734,8 @@ msgstr "Servidor de reenvío (TURN)"
 msgid "_TURN server:"
 msgstr "Servidor _TURN:"
 
-#, fuzzy
 msgid "_UDP Port:"
-msgstr "_Puerto:"
+msgstr "Puerto _UDP:"
 
 msgid "Use_rname:"
 msgstr "Nombre de usua_rio:"
@@ -13734,7 +13759,7 @@ msgid "Konqueror"
 msgstr "Konqueror"
 
 msgid "Google Chrome"
-msgstr ""
+msgstr "Google Chrome"
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
@@ -13758,11 +13783,11 @@ msgstr "Epiphany"
 
 #. Translators: please do not translate "chromium-browser" here!
 msgid "Chromium (chromium-browser)"
-msgstr ""
+msgstr "Chromium (chromium-browser)"
 
 #. Translators: please do not translate "chrome" here!
 msgid "Chromium (chrome)"
-msgstr ""
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Manual"
@@ -14304,7 +14329,6 @@ msgstr "ninguno"
 msgid "Small"
 msgstr "Pequeña"
 
-#, fuzzy
 msgid "Smaller versions of the default smileys"
 msgstr "Versiones más pequeñas de los emoticonos por omisión"
 
@@ -15354,9 +15378,8 @@ msgstr "Di_spositivo"
 msgid "Voice/Video Settings"
 msgstr "Configuración de voz/vídeo"
 
-#, fuzzy
 msgid "Voice and Video Settings"
-msgstr "Configuración de voz/vídeo"
+msgstr "Configuración de voz y vídeo"
 
 #. *< name
 #. *< version
@@ -15634,6 +15657,19 @@ msgstr "Visite la página Web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "No tiene permisos para desinstalar esta aplicación."
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr ""
+#~ "Se produjo un error en la transferencia de flujos de bytes en banda\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Se cerró la transferencia."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Fallo al abrir un flujo de bytes en banda"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Establecer su nombre de amigo."
 
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "El certificado ha expirado y no sería considerado válido."
