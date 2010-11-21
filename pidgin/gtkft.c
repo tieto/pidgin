@@ -112,12 +112,9 @@ static void
 get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 					  char **time_remaining)
 {
-	PidginXferUiData *data;
 	double kb_sent, kb_rem;
 	double kbps = 0.0;
 	time_t elapsed, now;
-
-	data = PIDGINXFER(xfer);
 
 	if (xfer->end_time != 0)
 		now = xfer->end_time;
@@ -159,7 +156,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 			*time_remaining = g_strdup(_("Finished"));
 		}
 		else if (purple_xfer_is_canceled(xfer)) {
-			*time_remaining = g_strdup(_("Canceled"));
+			*time_remaining = g_strdup(_("Cancelled"));
 		}
 		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
 			*time_remaining = g_strdup(_("Unknown"));
@@ -995,7 +992,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									GTK_ICON_SIZE_MENU, NULL);
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Canceled");
+		status = _("Cancelled");
 	else
 		status = _("Failed");
 
@@ -1015,7 +1012,6 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 {
 	PidginXferUiData *data;
 	char *size_str, *remaining_str;
-	GtkTreeSelection *selection;
 	time_t current_time;
 	GtkTreeIter iter;
 	gboolean valid;
@@ -1065,8 +1061,6 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 
 		g_object_unref(pixbuf);
 	}
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 
 	update_title_progress(dialog);
 	if (xfer == dialog->selected_xfer)

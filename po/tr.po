@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -546,7 +546,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr "Sertifika Yöneticisi"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Barındırıcı adı"
 
@@ -805,7 +804,7 @@ msgstr "Dur"
 msgid "Waiting for transfer to begin"
 msgstr "Aktarımın başlaması bekleniyor"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "İptal Edildi"
 
 msgid "Failed"
@@ -1703,7 +1702,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4739,11 +4740,20 @@ msgstr "XMPP Protokol Eklentisi"
 msgid "Domain"
 msgstr "Alan Adı"
 
-msgid "Require SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "İzin gereksin"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "%s adlı kullanıcının bilgisi mevcut değil"
+
+msgid "Use old-style SSL"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
-msgstr "Eski (port 5223) SSL kullan"
+#, fuzzy
+msgid "Connection security"
+msgstr "Bağlantı kesildi"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Şifrelenmemiş sistemlerden gelen düzyazılara (plain text) izin ver."
@@ -6004,7 +6014,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Yeni şifreler çelişiyor."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Girilen SecurID anahtarı geçersiz."
 
 msgid ""
@@ -6105,10 +6115,6 @@ msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi girini
 #, fuzzy
 msgid "Connecting..."
 msgstr "Bağlanılıyor"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Girilen SecurID anahtarı geçersiz."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6984,6 +6990,15 @@ msgstr "Sunucu adresi"
 msgid "Server port"
 msgstr "Sunucu portu"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Lütfen bana izin ver, bu şekilde seni arkadaş listeme ekleyebilirim."
+
+msgid "No reason given."
+msgstr "Sebep yazılmamış."
+
+msgid "Authorization Denied Message:"
+msgstr "İzin Reddetme İletisi:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Sunucudan beklenmeyen bir HTTP yanıtı alındı."
@@ -7017,6 +7032,19 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "%s çözümleme hatası"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7252,90 +7280,6 @@ msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "%s dosyasının boyutu %s, bu boyut en yüksek boyut olan %s boyutunundan büyük."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Kişi Simgesi"
-
-msgid "Voice"
-msgstr "Ses"
-
-msgid "AIM Direct IM"
-msgstr "AIM Doğrudan IM"
-
-msgid "Get File"
-msgstr "Dosyayı Al"
-
-msgid "Games"
-msgstr "Oyunlar"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Eklentiler"
-
-msgid "Send Buddy List"
-msgstr "Kişi Listesi Gönder"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Doğrudan Bağlantı"
-
-msgid "AP User"
-msgstr "AP Kullanıcısı"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ Server Relay"
-
-msgid "Old ICQ UTF8"
-msgstr "Eski ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian Şifrelemesi"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Güvenlik Aktif"
-
-msgid "Video Chat"
-msgstr "Görüntülü Sohbet"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Canlı Görüntü"
-
-msgid "Camera"
-msgstr "Kamera"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "Kayıtlı İsim"
-
 msgid "Free For Chat"
 msgstr "Sohbet için Hazır"
 
@@ -7370,15 +7314,6 @@ msgstr "Ağ"
 #, fuzzy
 msgid "At lunch"
 msgstr "Yemekte"
-
-msgid "IP Address"
-msgstr "IP Adresi"
-
-msgid "Warning Level"
-msgstr "Uyarı Seviyesi"
-
-msgid "Buddy Comment"
-msgstr "Kişi Hakkında Yorum"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7484,15 +7419,6 @@ msgstr "Parola gönderildi"
 msgid "Unable to initialize connection"
 msgstr "Bağlantı başlatılamadı"
 
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Lütfen bana izin ver, bu şekilde seni arkadaş listeme ekleyebilirim."
-
-msgid "No reason given."
-msgstr "Sebep yazılmamış."
-
-msgid "Authorization Denied Message:"
-msgstr "İzin Reddetme İletisi:"
-
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -7596,59 +7522,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 "%hu mesajı %s gönderinden bilinmeyen bir sebepten dolayı kaçırdınız."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "%s kullanıcı bilgisi mevcut değil."
-
-msgid "Online Since"
-msgstr "Bağlı olduğu süre:"
-
-msgid "Member Since"
-msgstr "Üye olduğu süre:"
-
-msgid "Capabilities"
-msgstr "Yetenekler"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM bağlantınız kaybolmuş olabilir."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[İçerdiği geçersiz karakterlerden dolayı bu kullanıcıdan gelen mesaj "
-"gösterilemiyor.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "%s sohbet odasından bağlantınız koptu."
-
-msgid "Mobile Phone"
-msgstr "Cep Telefonu"
-
-msgid "Personal Web Page"
-msgstr "Kişisel Web Sayfası"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Ek Bilgi"
-
-msgid "Zip Code"
-msgstr "Posta Kodu"
-
-msgid "Work Information"
-msgstr "İş Bilgileri"
-
-msgid "Division"
-msgstr "Bölüm"
-
-msgid "Position"
-msgstr "Pozisyon"
-
-msgid "Web Page"
-msgstr "Web Sayfası"
 
 msgid "Pop-Up Message"
 msgstr "Açılır Pencere Mesajı"
@@ -7914,7 +7793,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Adresi Şöyle Değiştir:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>izin için beklemiyorsunuz</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7956,6 +7836,14 @@ msgstr "IM Yönlendirmeyi yapılandır (URL)"
 msgid "Set Privacy Options..."
 msgstr "Gizlilik Seçeneklerini Ayarla..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Kişi Listesini Görüntüle"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Davetli Listesi"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Hesabı Doğrula"
@@ -7971,9 +7859,6 @@ msgstr "İzin Bekleyen Kişileri Göster"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "E-Posta Adresine Göre Kişi Ara..."
-
-msgid "Search for Buddy by Information"
-msgstr "Kişi Bilgilerine Göre Kişi Ara"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8084,6 +7969,166 @@ msgstr "Liste dolu"
 
 msgid "Not while on AOL"
 msgstr "AOL'de değil"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Kişi Simgesi"
+
+msgid "Voice"
+msgstr "Ses"
+
+msgid "AIM Direct IM"
+msgstr "AIM Doğrudan IM"
+
+msgid "Get File"
+msgstr "Dosyayı Al"
+
+msgid "Games"
+msgstr "Oyunlar"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Eklentiler"
+
+msgid "Send Buddy List"
+msgstr "Kişi Listesi Gönder"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ Doğrudan Bağlantı"
+
+msgid "AP User"
+msgstr "AP Kullanıcısı"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ Server Relay"
+
+msgid "Old ICQ UTF8"
+msgstr "Eski ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian Şifrelemesi"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Güvenlik Aktif"
+
+msgid "Video Chat"
+msgstr "Görüntülü Sohbet"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Canlı Görüntü"
+
+msgid "Camera"
+msgstr "Kamera"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "Kayıtlı İsim"
+
+msgid "IP Address"
+msgstr "IP Adresi"
+
+msgid "Warning Level"
+msgstr "Uyarı Seviyesi"
+
+msgid "Buddy Comment"
+msgstr "Kişi Hakkında Yorum"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "%s kullanıcı bilgisi mevcut değil."
+
+msgid "Mobile Phone"
+msgstr "Cep Telefonu"
+
+msgid "Personal Web Page"
+msgstr "Kişisel Web Sayfası"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Ek Bilgi"
+
+msgid "Zip Code"
+msgstr "Posta Kodu"
+
+msgid "Work Information"
+msgstr "İş Bilgileri"
+
+msgid "Division"
+msgstr "Bölüm"
+
+msgid "Position"
+msgstr "Pozisyon"
+
+msgid "Web Page"
+msgstr "Web Sayfası"
+
+msgid "Online Since"
+msgstr "Bağlı olduğu süre:"
+
+msgid "Member Since"
+msgstr "Üye olduğu süre:"
+
+msgid "Capabilities"
+msgstr "Yetenekler"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Çevrimiçi"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Çevrimiçi"
+
+msgid "Appear Offline"
+msgstr "Çevrimdışı Görün"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Çevrimdışı Görün"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "%s tarafından atıldınız: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Kullanıcıya sağ tıklayıp \"Yeniden İzin İste\" ye tıklayarak yeniden bu "
+"kullanıcıdan izin isteyebilirsiniz."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Görünmez"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Davetli Listesi"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Kova"
@@ -8285,7 +8330,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "İzin gereksin"
 
 #, fuzzy
@@ -10513,17 +10558,11 @@ msgstr "_Dışarı Çıktı"
 msgid "Not on server list"
 msgstr "Sunucu listesinde değil"
 
-msgid "Appear Online"
-msgstr "Çevrimiçi"
-
 msgid "Appear Permanently Offline"
 msgstr "Sürekli Çevrimdışı görün"
 
 msgid "Presence"
 msgstr "Bulunma"
-
-msgid "Appear Offline"
-msgstr "Çevrimdışı Görün"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Sürekli Çevrimdışı görünme"
@@ -11061,27 +11100,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "Uzaktaki kullanıcı bağlantıyı kapattı."
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "Bağlantı zamanaşımına uğradı"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "Bağlantı kesildi"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "Bu sohbet adı zaten kullanımda"
 
@@ -11231,6 +11269,10 @@ msgstr ""
 "\n"
 "Bu pencereye daha sonra ulaşmak isterseniz Kişi Listesi Penceresindeki "
 "<b>Hesaplar->Ekle/Düzenle</b> yolunu takip etmelisiniz."
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s kullanıcısı %s kişisini kişi listesine eklemek istiyor %s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11509,6 +11551,8 @@ msgstr "Görünen İsim"
 msgid "Edit User Mood"
 msgstr ""
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Kişiler"
@@ -12283,9 +12327,6 @@ msgstr "destek"
 msgid "webmaster"
 msgstr "geliştirici & site yöneticisi"
 
-msgid "Senior Contributor/QA"
-msgstr "Kıdemli Katılımcı/QA"
-
 msgid "win32 port"
 msgstr "win32 portu"
 
@@ -12310,6 +12351,9 @@ msgstr "asıl yazar"
 
 msgid "lead developer"
 msgstr "lider geliştirici"
+
+msgid "Senior Contributor/QA"
+msgstr "Kıdemli Katılımcı/QA"
 
 msgid "Afrikaans"
 msgstr "Afrikaanca (Hollanda Lehçesi)"
@@ -13694,6 +13738,10 @@ msgid "_TURN server:"
 msgstr "ST_UN sunucusu:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "_Kullanıcı adı:"
 
@@ -13716,6 +13764,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "Varsayılanları _Kabul Et"
@@ -13734,6 +13787,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "El ile ayarla"
@@ -14302,7 +14363,7 @@ msgstr "hiçbiri"
 msgid "Small"
 msgstr "E-Posta"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15376,6 +15437,10 @@ msgstr "Aygıt"
 msgid "Voice/Video Settings"
 msgstr "Ayarları Düzenle"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Ayarları Düzenle"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15505,7 +15570,7 @@ msgstr ""
 "Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
 "kullanışlıdır."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15635,6 +15700,23 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Eski (port 5223) SSL kullan"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Girilen SecurID anahtarı geçersiz."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[İçerdiği geçersiz karakterlerden dolayı bu kullanıcıdan gelen mesaj "
+#~ "gösterilemiyor.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Kişi Bilgilerine Göre Kişi Ara"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16123,9 +16205,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Bağlantı kapandı (yazılıyor)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Bağlantı kesildi"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Soket okuma hatası: %s"
 
@@ -16367,7 +16446,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s yazma için açılamıyor!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Dosya transferi gerçekleştirilemedi; karşı taraf iptal etmiş olabilir."
 
@@ -16389,9 +16468,6 @@ msgstr ""
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC Protokol Eklentisi"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s adlı kullanıcının bilgisi mevcut değil"
 
 #~ msgid "%s Options"
 #~ msgstr "%s Seçenekleri"

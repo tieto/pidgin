@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
@@ -547,7 +547,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "ཧོསཊི་ནེམ།"
 
@@ -818,7 +817,7 @@ msgstr "གཞི་སྒྲིག"
 msgid "Waiting for transfer to begin"
 msgstr "གནས་སོར་འགོ་བཙུགས་ནིའི་དོན་ལུ་བསྒུག་དོ།"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "ཆ་མེད་བཏང་ཡི།"
 
 msgid "Failed"
@@ -1764,7 +1763,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4883,11 +4884,20 @@ msgstr "ཨེམ་ཨེསི་ཨེན་ གནད་སྤེལ་ལ�
 msgid "Domain"
 msgstr "རོ་མ་ནི་ཡཱན"
 
-msgid "Require SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "དབང་སྤྲོད་དགོས་མཁོ་བས།"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "ཐོབ་ཚུགས་པ་ཅིན་ ཊི་ཨེལ་ཨེསི་འདི་ ལག་ལེན་འཐབ།"
+
+msgid "Use old-style SSL"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
-msgstr "ཨེསི་ཨེསི་ཨེལ་ (འདྲེན་ལམ་ ༥༢༢༣) རྙིངམ་བང་བཙོང་།"
+#, fuzzy
+msgid "Connection security"
+msgstr "མཐུད་ལམ་སླར་སྒྲིག"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "གསང་བ་མ་བཟོ་བའི་རྒྱུན་རིམ་ཚུའི་ལྟག་ལས་ ཚིག་ཡིག་ཉག་རྐྱང་གི་གནང་བ་བྱིན་བཅུག"
@@ -6186,7 +6196,7 @@ msgid "The two PINs you entered do not match."
 msgstr "ཆོག་ཡིག་གསརཔ་ཚུ་མི་མཐུན་པས།"
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
 
 msgid ""
@@ -6288,10 +6298,6 @@ msgstr "སར་བར་ལུ་ མཐུད་མ་ཚུགས། ཁྱ�
 #, fuzzy
 msgid "Connecting..."
 msgstr "མཐུད་དོ།"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7203,6 +7209,15 @@ msgstr "སར་བར་ ཁ་བྱང་།"
 msgid "Server port"
 msgstr "སར་བར་ འདྲེན་ལམ།"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "ང་ལུ་དབང་སྤྲོད་འབད་གནང་ དེ་ལས་ང་གིས་ ཁྱོད་ངེ་གི་ཆ་རོགས་ཐོ་ཡིག་ནང་ཁ་སྐོང་འབད་ཚུགས།"
+
+msgid "No reason given."
+msgstr "རྒྱུ་མཚན་མ་བཀོད་པས།"
+
+msgid "Authorization Denied Message:"
+msgstr "དབང་སྤྲོད་ཉན་མ་བཏུབ་པའི་འཕྲིན་དོན:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "སར་བར་ལས་ རེ་བ་མེད་པའི་ཨེཅ་ཊི་ཊི་པི་ ལན་ཐོབ་ཡོདཔ།"
@@ -7235,6 +7250,25 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབདཝ་ད་འཛོལ་བ།"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(འ་ནི་འཕྲིན་དོན་ལེན་པའི་སྐབས་སུ་འཛོལ་བ་གཅིག་འདུག  ཁྱོད་ཀྱིས་ ད་ལྟོ་ཁ་སླབ་ཡོད་མི་ཆ་རོགས་འདི་ རེ་བ་"
+"བསྐྱེད་ཡོད་མི་མེད་པར་སོ་སོ་ཨིན་ཀོ་ཌིང་གཅིག་ལག་ལེན་འཐབ་དོ་འོང་ནི་མས།  ཁྱོད་ཀྱིས་ ཁོ་གིས་ལག་ལེན་འཐབ་སྟེ་"
+"ཡོད་མི་ ཨིན་ཀོ་ཌིང་འདི་ཤེས་པ་ཅིན་འདི་ མཐོ་རིམ་རྩིས་ཐོ་ནང་ལུ་ ཁྱོད་རའི་ ཨེ་ཨའི་ཨེམ་/ཨའི་སི་ཀིའུ་དོན་ལུ་ "
+"གསལ་བཀོད་འབད་བཏུབ་ཨིན།)"
+
+#, fuzzy, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(འཕྲིན་དོན་འདི་ཐོབ་ད་ལུ་ འཛོལ་བ་འདུག  ཁྱོད་ཀྱིས་ཁ་སླབ་མི་ ཆ་རོགས་འདི་ལུ་ རྐྱེན་ཅན་གྱི་ཞབས་ཏོག་སྤྱོད་མི་"
+"བཟུམ་ཅིག་འདུག)"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7474,96 +7508,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ཡིག་སྣོད་ %s འདི་ %s གི་ ཚད་མང་མཐའ་ལས་སྦོམ་མའི་ %s ཨིན།"
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(འ་ནི་འཕྲིན་དོན་ལེན་པའི་སྐབས་སུ་འཛོལ་བ་གཅིག་འདུག  ཁྱོད་ཀྱིས་ ད་ལྟོ་ཁ་སླབ་ཡོད་མི་ཆ་རོགས་འདི་ རེ་བ་"
-"བསྐྱེད་ཡོད་མི་མེད་པར་སོ་སོ་ཨིན་ཀོ་ཌིང་གཅིག་ལག་ལེན་འཐབ་དོ་འོང་ནི་མས།  ཁྱོད་ཀྱིས་ ཁོ་གིས་ལག་ལེན་འཐབ་སྟེ་"
-"ཡོད་མི་ ཨིན་ཀོ་ཌིང་འདི་ཤེས་པ་ཅིན་འདི་ མཐོ་རིམ་རྩིས་ཐོ་ནང་ལུ་ ཁྱོད་རའི་ ཨེ་ཨའི་ཨེམ་/ཨའི་སི་ཀིའུ་དོན་ལུ་ "
-"གསལ་བཀོད་འབད་བཏུབ་ཨིན།)"
-
-#, fuzzy, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(འཕྲིན་དོན་འདི་ཐོབ་ད་ལུ་ འཛོལ་བ་འདུག  ཁྱོད་ཀྱིས་ཁ་སླབ་མི་ ཆ་རོགས་འདི་ལུ་ རྐྱེན་ཅན་གྱི་ཞབས་ཏོག་སྤྱོད་མི་"
-"བཟུམ་ཅིག་འདུག)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "ཆ་རོགས་ཀྱི་ངོས་དཔར།"
-
-msgid "Voice"
-msgstr "སྐད།"
-
-msgid "AIM Direct IM"
-msgstr "ཨེ་ཨའི་ཨེམ་ ཐད་ཀར་ ཨའི་ཨེམ།"
-
-msgid "Get File"
-msgstr "ཡིག་སྣོད་ལེན།"
-
-msgid "Games"
-msgstr "རྩེདམོ་ཚུ།"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "ཁ་སྐོང-་ཨའི་ཨེན་ཨེསི།"
-
-msgid "Send Buddy List"
-msgstr "ཆ་རོགས་ཀྱི་ཐོ་ཡིག་གཏང་།"
-
-msgid "ICQ Direct Connect"
-msgstr "ཨའི་སི་ཀིའུ་ ཐད་ཀར་མཐུད།"
-
-msgid "AP User"
-msgstr "ཨེ་པི་ ལག་ལེན་པ།"
-
-msgid "ICQ RTF"
-msgstr "ཨའི་སི་ཀིའུ་ ཨར་ཊི་ཨེཕ།"
-
-msgid "Nihilist"
-msgstr "ནཱི་ཧི་ལིསཊི།"
-
-msgid "ICQ Server Relay"
-msgstr "ཨའི་སི་ཀིའུ་ སར་བར་ བརྒྱུད་སྤྲོད།"
-
-msgid "Old ICQ UTF8"
-msgstr "རྙིངམ་ ཨའི་སི་ཀིའུ་ ཡུ་ཊི་ཨེཕ༨"
-
-msgid "Trillian Encryption"
-msgstr "ཊིལིཡེན་ གསང་བཟོ།"
-
-msgid "ICQ UTF8"
-msgstr "རྙིངམ་ ཨའི་སི་ཀིའུ་ ཡུ་ཊི་ཨེཕ༨"
-
-msgid "Hiptop"
-msgstr "ཧིབ་ཊོབ།"
-
-msgid "Security Enabled"
-msgstr "མཐའ་བཙན་ལྕོགས་ཅན་བཟོ་ཡི།"
-
-msgid "Video Chat"
-msgstr "ཝི་ཌིའོ་ ཁ་སླབ།"
-
-msgid "iChat AV"
-msgstr "ཨའི་ཅེཊ་ ཨེ་ཝི།"
-
-msgid "Live Video"
-msgstr "མངོན་མཐོང་ ཝི་ཌིའོ།"
-
-msgid "Camera"
-msgstr "པར་ཆས།"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "གསལ་གཞི་མིང་།"
-
 msgid "Free For Chat"
 msgstr "ཁ་སླབ་ནི་ དལཝ་ཨིན།"
 
@@ -7598,15 +7542,6 @@ msgstr "ཡོངས་འབྲེལ།"
 #, fuzzy
 msgid "At lunch"
 msgstr "དགུང་ལྟོ་བཟའ་བར།"
-
-msgid "IP Address"
-msgstr "ཨའི་པི་ཁ་བྱང་།"
-
-msgid "Warning Level"
-msgstr "ཉེན་བརྡའི་གནས་རིམ།"
-
-msgid "Buddy Comment"
-msgstr "ཆ་རོགས་ཀྱི་བསམ་བཀོད།"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7712,15 +7647,6 @@ msgstr "ཆོག་ཡིག་བཏང་ཡི།"
 #, fuzzy
 msgid "Unable to initialize connection"
 msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབད་མ་ཚུགསཔ།"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "ང་ལུ་དབང་སྤྲོད་འབད་གནང་ དེ་ལས་ང་གིས་ ཁྱོད་ངེ་གི་ཆ་རོགས་ཐོ་ཡིག་ནང་ཁ་སྐོང་འབད་ཚུགས།"
-
-msgid "No reason given."
-msgstr "རྒྱུ་མཚན་མ་བཀོད་པས།"
-
-msgid "Authorization Denied Message:"
-msgstr "དབང་སྤྲོད་ཉན་མ་བཏུབ་པའི་འཕྲིན་དོན:"
 
 #, c-format
 msgid ""
@@ -7843,58 +7769,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ་ %hu འཕྲིན་དོན་འདི་%sལས་ བྱིག་ཡར་སོ་ནུག  "
 msgstr[1] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ  ཁྱོད་ཀྱིས%huའཕྲིན་དོན་ཚུ %sལས བྱིག་ཡར་སོ་ནུག "
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "ལག་ལེན་པའི་བརྡ་དོན་%sའདི་ཐོབ་མི་ཚུགས།"
-
-msgid "Online Since"
-msgstr "ལས་ཚུར་ གློག་ཐོག"
-
-msgid "Member Since"
-msgstr "ལས་ཚུར་ འཐུས་མི།"
-
-msgid "Capabilities"
-msgstr "ལྕོགས་གྲུབ།"
-
 msgid "Your AIM connection may be lost."
 msgstr "ཁྱོད་ཀྱི་ ཨེ་ཨའི་ཨེམ་ མཐུད་ལམ་འདི་བརླག་གཏོར་ཞུགས་ཞུགསཔ་འོང་།"
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[ནང་ན་ལུ་ ནུས་མེད་ཀྱི་ཡིག་འབྲུ་ཚུ་ཡོདཔ་ལས་  ལག་ལེན་པ་འདི་ལས་ འཕྲིན་དོན་བཀྲམ་སྟོན་འབད་མ་ཚུགས།]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "ཁྱོད་  ཁ་སླབ་ཁང་མིག་%sནང་ལས་ མཐུད་ལམ་བཏོག་ད་ནུག"
-
-msgid "Mobile Phone"
-msgstr "འགྲུལ་འཕྲིན།"
-
-msgid "Personal Web Page"
-msgstr "རང་དོན་གྱི་ ཝེབ་ཤོག་ལེབ།"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "ཁ་སྐོང་ཅན་གྱི་བརྡ་དོན།"
-
-msgid "Zip Code"
-msgstr "གནས་ཡུལ་གྱི་ཨང་རྟགས།"
-
-msgid "Work Information"
-msgstr "ལཱ་གི་བརྡ་དོན།"
-
-msgid "Division"
-msgstr "སྡེ་ཚན།"
-
-msgid "Position"
-msgstr "གནས་ས།"
-
-msgid "Web Page"
-msgstr "ཝེབ་ཤོག་ལེབ།"
 
 msgid "Pop-Up Message"
 msgstr "པོཔ་-ཨཔ་ འཕྲིན་དོན།"
@@ -8180,7 +8060,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "ཁ་བྱང་ འ་ནི་ལུ བསྒྱུར་བཅོས་རྐྱབས:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>ཁྱོད་ དབང་སྤྲོད་ཀྱི་དོན་ལུ་  བསྒུག་མི་སྡོད་པས།</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8223,6 +8104,14 @@ msgstr "ཨའི་ཨེམ་ གདོང་བསྐྱོད་འབད�
 msgid "Set Privacy Options..."
 msgstr "སྒེར་གཙང་གདམ་ཁ་ཚུ་གཞི་སྒྲིག་འབད།..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "ཆ་རོགས་ཀྱི་ཐོ་ཡིགས་སྟོན།"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "ཐོ་ཡིག་མགྲོན་བརྡ་འབད།"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "རྩིས་ཐོ་ངེས་གཏན་བཟོ།"
@@ -8238,9 +8127,6 @@ msgstr "དབང་སྤྲོད་བསྒུག་བཞིན་དུའ
 
 msgid "Search for Buddy by Email Address..."
 msgstr "གློག་འཕྲིན་ཁ་བྱང་གིས་ཐོག་ལས་ ཆ་རོགས་ཀྱི་དོན་ལུ་ འཚོལ་ཞིབ་འབད།..."
-
-msgid "Search for Buddy by Information"
-msgstr "བརྡ་དོན་གྱི་ཐོག་ལས་ ཆ་རོགས་ཀྱི་དོན་ལུ་ འཚོལ་ཞིབ་འབད།"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8350,6 +8236,166 @@ msgstr "གྲལ་རིམ་གང་།"
 
 msgid "Not while on AOL"
 msgstr "ཨེ་ཨོ་ཨེལ་གྱི་སྐབས་སུ་ མེན།"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "ཆ་རོགས་ཀྱི་ངོས་དཔར།"
+
+msgid "Voice"
+msgstr "སྐད།"
+
+msgid "AIM Direct IM"
+msgstr "ཨེ་ཨའི་ཨེམ་ ཐད་ཀར་ ཨའི་ཨེམ།"
+
+msgid "Get File"
+msgstr "ཡིག་སྣོད་ལེན།"
+
+msgid "Games"
+msgstr "རྩེདམོ་ཚུ།"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "ཁ་སྐོང-་ཨའི་ཨེན་ཨེསི།"
+
+msgid "Send Buddy List"
+msgstr "ཆ་རོགས་ཀྱི་ཐོ་ཡིག་གཏང་།"
+
+msgid "ICQ Direct Connect"
+msgstr "ཨའི་སི་ཀིའུ་ ཐད་ཀར་མཐུད།"
+
+msgid "AP User"
+msgstr "ཨེ་པི་ ལག་ལེན་པ།"
+
+msgid "ICQ RTF"
+msgstr "ཨའི་སི་ཀིའུ་ ཨར་ཊི་ཨེཕ།"
+
+msgid "Nihilist"
+msgstr "ནཱི་ཧི་ལིསཊི།"
+
+msgid "ICQ Server Relay"
+msgstr "ཨའི་སི་ཀིའུ་ སར་བར་ བརྒྱུད་སྤྲོད།"
+
+msgid "Old ICQ UTF8"
+msgstr "རྙིངམ་ ཨའི་སི་ཀིའུ་ ཡུ་ཊི་ཨེཕ༨"
+
+msgid "Trillian Encryption"
+msgstr "ཊིལིཡེན་ གསང་བཟོ།"
+
+msgid "ICQ UTF8"
+msgstr "རྙིངམ་ ཨའི་སི་ཀིའུ་ ཡུ་ཊི་ཨེཕ༨"
+
+msgid "Hiptop"
+msgstr "ཧིབ་ཊོབ།"
+
+msgid "Security Enabled"
+msgstr "མཐའ་བཙན་ལྕོགས་ཅན་བཟོ་ཡི།"
+
+msgid "Video Chat"
+msgstr "ཝི་ཌིའོ་ ཁ་སླབ།"
+
+msgid "iChat AV"
+msgstr "ཨའི་ཅེཊ་ ཨེ་ཝི།"
+
+msgid "Live Video"
+msgstr "མངོན་མཐོང་ ཝི་ཌིའོ།"
+
+msgid "Camera"
+msgstr "པར་ཆས།"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "གསལ་གཞི་མིང་།"
+
+msgid "IP Address"
+msgstr "ཨའི་པི་ཁ་བྱང་།"
+
+msgid "Warning Level"
+msgstr "ཉེན་བརྡའི་གནས་རིམ།"
+
+msgid "Buddy Comment"
+msgstr "ཆ་རོགས་ཀྱི་བསམ་བཀོད།"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "ལག་ལེན་པའི་བརྡ་དོན་%sའདི་ཐོབ་མི་ཚུགས།"
+
+msgid "Mobile Phone"
+msgstr "འགྲུལ་འཕྲིན།"
+
+msgid "Personal Web Page"
+msgstr "རང་དོན་གྱི་ ཝེབ་ཤོག་ལེབ།"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "ཁ་སྐོང་ཅན་གྱི་བརྡ་དོན།"
+
+msgid "Zip Code"
+msgstr "གནས་ཡུལ་གྱི་ཨང་རྟགས།"
+
+msgid "Work Information"
+msgstr "ལཱ་གི་བརྡ་དོན།"
+
+msgid "Division"
+msgstr "སྡེ་ཚན།"
+
+msgid "Position"
+msgstr "གནས་ས།"
+
+msgid "Web Page"
+msgstr "ཝེབ་ཤོག་ལེབ།"
+
+msgid "Online Since"
+msgstr "ལས་ཚུར་ གློག་ཐོག"
+
+msgid "Member Since"
+msgstr "ལས་ཚུར་ འཐུས་མི།"
+
+msgid "Capabilities"
+msgstr "ལྕོགས་གྲུབ།"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "གློག་ཐོག་འབྱུང་།"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "གློག་ཐོག་འབྱུང་།"
+
+msgid "Appear Offline"
+msgstr "ཨོཕ་ལ་ཡིན་བྱུང་།"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "ཨོཕ་ལ་ཡིན་བྱུང་།"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "ཁྱོད་  %s: (%s)ཀྱིས་བཏོན་བཏང་ནུག"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"ཁོང་ཚུའི་གུ་ལུ་ གཡས་ཀྱི་གཡེབ་གཏང་ཨེབ་ནི་དང་\"་དབང་སྤྲོད་སླར་ཞུ་བ།\"སེལ་འཐུ་འབད་བའི་ཐོག་ལས་ ཁྱོད་"
+"ཀྱིས་ཆ་རོགས་ཚུ་ནང་ལས་ དབང་སྤྲོད་སླར་ཞུ་ཚུགས།"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "མ་མཐོངམ།"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "ཐོ་ཡིག་མགྲོན་བརྡ་འབད།"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "དུས་སྦྱོར་བུམ་པ།"
@@ -8550,7 +8596,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "དབང་སྤྲོད་དགོས་མཁོ་བས།"
 
 #, fuzzy
@@ -10847,17 +10893,11 @@ msgstr "ཕྱིར་བགོམས་པ།"
 msgid "Not on server list"
 msgstr "སར་བར་ཐོ་ཡིག་གུ་མེན།"
 
-msgid "Appear Online"
-msgstr "གློག་ཐོག་འབྱུང་།"
-
 msgid "Appear Permanently Offline"
 msgstr "རྟག་བརྟན་གློག་ལམ་མེདཔ་སྦེ་འབྱུང་།"
 
 msgid "Presence"
 msgstr "ངོ་འཛོམས།"
-
-msgid "Appear Offline"
-msgstr "ཨོཕ་ལ་ཡིན་བྱུང་།"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "རྟག་བརྟན་གློག་ལམ་མེདཔ་སྦེ་མ་འབྱུང་།"
@@ -11426,27 +11466,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "ཐག་རིང་ལག་ལེན་པ་གིས་ མཐུད་ལམ་ཁ་བསྡམས་ཡོདཔ་ཨིན།"
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "མཐུད་ལམ་ངལ་མཚམས།!"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "མཐུད་ལམ་ངོས་ལེན་མི་འབད་བས།"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "འ་ནི་ཁ་སླབ་འདི་ ཧེ་མ་ལས་རང་ལག་ལེན་འཐབ་བཞིན་ཡོད།"
 
@@ -11593,6 +11632,10 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "ལག་ལེན་པ %s གིས་ %s འདི་ ཁོ་ ཡང་ན་ མོའི་ཆ་རོགས་ཐོ་ཡིག %s%s ནང་ཁ་སྐོང་འབད་ནི་ཨིན་པས།"
 
 #. Buddy List
 #, fuzzy
@@ -11882,6 +11925,8 @@ msgstr "འཕྲིན་དོན(གདམ་ཁ་ཅན) :"
 msgid "Edit User Mood"
 msgstr "ལག་ལེན་པའི་ཐབས་ལམ་ཚུ།"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/ཆ་རོགས་ཚུ(_B)"
@@ -12679,9 +12724,6 @@ msgstr "རྒྱབ་སྐྱོར།"
 msgid "webmaster"
 msgstr "བཟོ་མི་དང་ཝེབ་ཨམ།"
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr "ཝིན་༣༢ འདྲེན་ལམ།"
 
@@ -12707,6 +12749,9 @@ msgstr "རྩམ་པ་པོ་ངོ་མ།"
 
 msgid "lead developer"
 msgstr "སྔོན་བསྐྱོད་བཟོ་མི།"
+
+msgid "Senior Contributor/QA"
+msgstr ""
 
 msgid "Afrikaans"
 msgstr ""
@@ -14146,6 +14191,10 @@ msgid "_TURN server:"
 msgstr "ཨེསི་ཊི་ཡུ་ཨེན་ སར་བར།:(_U)"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "འདྲེན་ལམ:(_P)"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "ལག་ལེན་པའི་མིང་:(_U)"
 
@@ -14168,6 +14217,11 @@ msgstr "མོ་ཛིལ་ལ།"
 msgid "Konqueror"
 msgstr "ཀོང་ཀོ་རར།"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "སྔོན་སྒྲིག་ཚུ་དང་ལེན་འབད།(_A)"
@@ -14186,6 +14240,14 @@ msgstr "ཕ་ཡེར་བཱརཌི།"
 
 msgid "Epiphany"
 msgstr "ཨི་པི་ཕ་ནི།"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "ལག་དེབ།"
@@ -14762,7 +14824,7 @@ msgstr "(ཅི་མེད།)"
 msgid "Small"
 msgstr "གློག་འཕྲིན།"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15858,6 +15920,10 @@ msgstr "ཐབས་འཕྲུལ།"
 msgid "Voice/Video Settings"
 msgstr "སྒྲིག་སྟངས་ཚུ་ཞུན་དག་འབད།"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "སྒྲིག་སྟངས་ཚུ་ཞུན་དག་འབད།"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15987,7 +16053,7 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -16118,6 +16184,22 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "ཨེསི་ཨེསི་ཨེལ་ (འདྲེན་ལམ་ ༥༢༢༣) རྙིངམ་བང་བཙོང་།"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[ནང་ན་ལུ་ ནུས་མེད་ཀྱི་ཡིག་འབྲུ་ཚུ་ཡོདཔ་ལས་  ལག་ལེན་པ་འདི་ལས་ འཕྲིན་དོན་བཀྲམ་སྟོན་འབད་མ་ཚུགས།]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "བརྡ་དོན་གྱི་ཐོག་ལས་ ཆ་རོགས་ཀྱི་དོན་ལུ་ འཚོལ་ཞིབ་འབད།"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16647,9 +16729,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "མཐུད་ལམ་ཁ་མ་བསྡམ་ཡོདཔ་(རྩོམ་སྒྲིག)།"
 
-#~ msgid "Connection reset"
-#~ msgstr "མཐུད་ལམ་སླར་སྒྲིག"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "སོ་ཀེཊི་ %s ལས་ལྷག་པའི་འཛོལ་བ།:"
 
@@ -16889,7 +16968,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "བྲིས་ནིའི་དོན་ལུ %s ཁ་ཕྱེ་མ་ཚུགས།"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "ཡིག་སྣོད་གནས་སོར་འཐུས་ཤོར་བྱུང་ནུག ཕྱོགས་གཞན་མི་འདི་ཆ་མེད་བཏང་ཡི།"
 
 #~ msgid "Could not connect for transfer."
@@ -18659,9 +18738,6 @@ msgstr ""
 
 #~ msgid "Roomlist Error"
 #~ msgstr "ཁང་མིག་ཐོ་ཡིག་གི་འཛོལ་བ།"
-
-#~ msgid "Use TLS if available"
-#~ msgstr "ཐོབ་ཚུགས་པ་ཅིན་ ཊི་ཨེལ་ཨེསི་འདི་ ལག་ལེན་འཐབ།"
 
 #~ msgid "Hidden"
 #~ msgstr "གསང་བ།"

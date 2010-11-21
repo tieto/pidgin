@@ -58,14 +58,11 @@ enum {
 /* default process, decrypt and dump */
 static void process_unknow_cmd(PurpleConnection *gc,const gchar *title, guint8 *data, gint data_len, guint16 cmd, guint16 seq)
 {
-	qq_data *qd;
 	gchar *msg;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	qq_show_packet(title, data, data_len);
-
-	qd = (qq_data *) gc->proto_data;
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 			data, data_len,
@@ -80,11 +77,7 @@ static void process_unknow_cmd(PurpleConnection *gc,const gchar *title, guint8 *
 /* parse the reply to send_im */
 static void do_im_ack(guint8 *data, gint data_len, PurpleConnection *gc)
 {
-	qq_data *qd;
-
 	g_return_if_fail(data != NULL && data_len != 0);
-
-	qd = gc->proto_data;
 
 	if (data[0] != 0) {
 		purple_debug_warning("QQ", "Failed sent IM\n");
@@ -380,14 +373,11 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 /* Send ACK if the sys message needs an ACK */
 static void request_server_ack(PurpleConnection *gc, gchar *funct_str, gchar *from, guint16 seq)
 {
-	qq_data *qd;
 	guint8 *raw_data;
 	gint bytes;
 	guint8 bar;
 
 	g_return_if_fail(funct_str != NULL && from != NULL);
-	qd = (qq_data *) gc->proto_data;
-
 
 	bar = 0x1e;
 	raw_data = g_newa(guint8, strlen(funct_str) + strlen(from) + 16);
@@ -568,11 +558,9 @@ static void process_room_cmd_notify(PurpleConnection *gc,
 
 void qq_update_room(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 {
-	qq_data *qd;
 	gint ret;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
 
 	switch (room_cmd) {
 		case 0:
@@ -599,12 +587,10 @@ void qq_update_room(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 
 void qq_update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 {
-	qq_data *qd;
 	gboolean is_new_turn = FALSE;
 	guint32 next_id;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
 
 	next_id = qq_room_get_next(gc, room_id);
 	purple_debug_info("QQ", "Update rooms, next id %u, prev id %u\n", next_id, room_id);
@@ -689,11 +675,9 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 
 static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 {
-	qq_data *qd;
 	guint32 next_id;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
 
 	next_id = qq_room_get_next_conv(gc, room_id);
 	if (next_id <= 0 && room_id <= 0) {

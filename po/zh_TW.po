@@ -6,7 +6,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.634 2010/05/27 21:29:19 acli Exp $
+# $InternalId: zh_TW.po,v 1.650 2010/10/17 14:56:33 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -58,13 +58,13 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.1\n"
+"Project-Id-Version: Pidgin 2.7.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
-"PO-Revision-Date: 2010-05-29 02:50+0800\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"PO-Revision-Date: 2010-10-17 10:55-0400\n"
 "Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
-"Language: \n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -115,9 +115,8 @@ msgid "Error"
 msgstr "錯誤"
 
 # FIXME 譯文有待改進 - 20061028
-#, fuzzy
 msgid "Account was not modified"
-msgstr "帳號未被新增"
+msgstr "帳號未被變更"
 
 # FIXME 譯文有待改進 - 20061028
 msgid "Account was not added"
@@ -128,11 +127,11 @@ msgstr "帳號不可留空。"
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "這個帳號還連線到伺服器時，無法變更所使用的通訊協定。"
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "這個帳號還連線到伺服器時，無法變更所使用的使用者名稱。"
 
 msgid "New mail notifications"
 msgstr "新郵件通知"
@@ -597,7 +596,6 @@ msgstr "確定刪除憑證"
 msgid "Certificate Manager"
 msgstr "憑證管理"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "主機名稱"
 
@@ -866,7 +864,7 @@ msgstr "中止"
 msgid "Waiting for transfer to begin"
 msgstr "等待開始傳輸檔案中..."
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "已取消"
 
 msgid "Failed"
@@ -1780,10 +1778,12 @@ msgstr "無法信賴這張憑證，因為目前沒有可信賴的憑證可以驗
 msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
-msgstr ""
+msgstr "這個憑證尚未生效，請確認您電腦上的日期及時間是正確的。"
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "這張憑證已逾期，應視作無效。"
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr "這張憑證已逾期，應視作無效，請確認您電腦上的日期及時間是正確的。"
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -3944,15 +3944,14 @@ msgstr "伺服器送來了無效的驗證挑戰"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "伺服器認為驗證程序已經完畢，但用戶端不認同"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "伺服器需要經由未經加密的串流進行明文認證"
+msgstr "伺服器可能需要經由未經加密的串流進行明文認證"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
-msgstr "%s 需要經由未經加密的串流進行明文認證。允許並繼續進行認證？"
+msgstr "%s 可能需要經由未經加密的串流進行明文認證。允許並繼續進行認證？"
 
 msgid "SASL authentication failed"
 msgstr "SASL 認證失敗"
@@ -4918,11 +4917,20 @@ msgstr "XMPP 協定模組"
 msgid "Domain"
 msgstr "域名"
 
-msgid "Require SSL/TLS"
-msgstr "需要 SSL/TLS"
+#  NOTE Connection security 選項，指強制性使用 TLS, 如伺服器不支援 TLS 即視作連線失敗
+msgid "Require encryption"
+msgstr "使用加密"
 
-msgid "Force old (port 5223) SSL"
-msgstr "強迫使用舊式 SSL (port 5223)"
+#  NOTE Connection security 選項，指在伺服器支援的情況下使用 TLS, 如伺服器不支援 TLS 則以不加密的方式繼續進行連線
+msgid "Use encryption if available"
+msgstr "當伺服器支援時，使用加密功能"
+
+#  NOTE Connection security 選項，指以舊式 SSL 方式進行加密
+msgid "Use old-style SSL"
+msgstr "以舊式的 SSL 方式加密"
+
+msgid "Connection security"
+msgstr "連線安全"
 
 #  NOTE 譯文更動 by Ambrose
 msgid "Allow plaintext auth over unencrypted streams"
@@ -6236,8 +6244,8 @@ msgstr "您所輸入的密碼無效，密碼必須由數字（0 至 9）組成�
 msgid "The two PINs you entered do not match."
 msgstr "兩個密碼並不相符。"
 
-msgid "The name you entered is invalid."
-msgstr "您所輸入的名稱無效。"
+msgid "The Display Name you entered is invalid."
+msgstr "您所輸入的暱稱無效。"
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -6255,8 +6263,9 @@ msgstr "個人資料"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "未能讀取您的個人資料，請稍後重試。"
 
+# NOTE mxitid, 即「MXit ID」，在其他地方譯「MXit 帳號」或「MXit ID」
 msgid "Your UID"
-msgstr ""
+msgstr "使用者 ID"
 
 #. pin
 #. pin (required)
@@ -6326,16 +6335,12 @@ msgstr "無法連線至 MXit 伺服器，請檢查伺服器設定。"
 msgid "Connecting..."
 msgstr "連線中..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "您所輸入的名稱無效。"
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "您所輸入的密碼過短或過長（長度應為 7 至 10 個數字）。"
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6363,13 +6368,11 @@ msgstr "您的工作階段已逾時，請稍後重試。"
 msgid "Invalid country selected. Please try again."
 msgstr "指定的國家是無效的，請重試。"
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "帳號未有註冊，請先註冊。"
+msgstr "你所輸入的MXit帳號尚未註冊，請先註冊。"
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "帳號已註冊，請選擇另一個帳號。"
+msgstr "您所輸入的MXit帳號已被註冊，請選擇另一個帳號。"
 
 msgid "Internal error. Please try again later."
 msgstr "內部錯誤，請稍後重試"
@@ -6414,9 +6417,8 @@ msgstr "拒絕訊息"
 msgid "Hidden Number"
 msgstr "隱藏電話號碼"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Yahoo 帳號"
+msgstr "您的MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6430,30 +6432,22 @@ msgid "Enable splash-screen popup"
 msgstr "啟用啟動畫面彈出視窗"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "您已被踢出：(%s)"
+msgstr "您已經從MultiMX中被踢出。"
 
-#  FIXME「ticket」暫無譯文，也許可譯「通行證」或「許可證」？
-#  NOTE MSN 錯誤代號 928
-#  NOTE 詳見 http://www.hypothetic.org/docs/msn/notification/authentication.php
-#, fuzzy
 msgid "was kicked"
-msgstr "無效的 ticket"
+msgstr "被踢出"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "聊天室(_R)："
+msgstr "聊天室名稱(_R)："
 
-# XXX 要覆查
+# NOTE 很差的原文，其實整合上下文後是「You have invited: %s」（%s 是被邀請者）
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "您收到郵件！"
+msgstr "您邀請了"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "上線"
+msgstr "最後上線"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7198,6 +7192,15 @@ msgstr "伺服器位址"
 msgid "Server port"
 msgstr "伺服器通訊埠"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "請通過我的認證要求，好讓我可以將您加入我的好友清單中。"
+
+msgid "No reason given."
+msgstr "沒有給予原因。"
+
+msgid "Authorization Denied Message:"
+msgstr "拒絕認證訊息："
+
 # NOTE 參見 http://pidgin.im/pipermail/translators/2009-July/000394.html
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -7234,6 +7237,24 @@ msgstr "AOL 不允許您的帳號在這裏登入"
 #, c-format
 msgid "Error requesting %s"
 msgstr "要求讀取 %s 途中發生了錯誤"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"（接收這個訊息時發生了錯誤。正在跟您交談的好友很可能在使用與您想像不乎的字元"
+"編碼；如果您知道那是什麼編碼，請在您的 AIM/ICQ 帳號的「進階設定」中的「編碼」"
+"欄位指定。）"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"（接收這個訊息時發生了錯誤。可能您和 %s 選用了不同的編碼，也有可能是 %s 在使"
+"用有問題的用戶端程式。）"
 
 msgid "Could not join chat room"
 msgstr "無法加入聊天室"
@@ -7455,109 +7476,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "檔案「%s」大小為 %s，超過了 %s 這個上限。"
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"（接收這個訊息時發生了錯誤。正在跟您交談的好友很可能在使用與您想像不乎的字元"
-"編碼；如果您知道那是什麼編碼，請在您的 AIM/ICQ 帳號的「進階設定」中的「編碼」"
-"欄位指定。）"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"（接收這個訊息時發生了錯誤。可能您和 %s 選用了不同的編碼，也有可能是 %s 在使"
-"用有問題的用戶端程式。）"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "好友圖示"
-
-msgid "Voice"
-msgstr "聲音"
-
-# NOTE 將「直接消息」改譯為「即時訊息」
-msgid "AIM Direct IM"
-msgstr "AIM 式即時訊息"
-
-msgid "Get File"
-msgstr "接收檔案"
-
-msgid "Games"
-msgstr "遊戲"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "模組"
-
-msgid "Send Buddy List"
-msgstr "送出好友清單"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ 式直接連線"
-
-# NOTE 據其他PO檔的譯文看，「AP」應該不是「應用程式」
-msgid "AP User"
-msgstr "AP 使用者"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-# NOTE「Nihilist」是什麼呢？連開發者都不知道
-# NOTE (18:06:07) KingAnt: "nihilist" is actually the capability of all 0s--not no capabilities
-# NOTE (18:07:23) KingAnt: Yeah, what he said
-# NOTE (18:17:08) wing: capability of all 0s?
-# NOTE (18:17:29) KingAnt: Right...
-# NOTE (18:17:36) wing: what does that mean though?
-# NOTE (18:17:48) KingAnt: I have no idea--probably nothing
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ 伺服器轉送"
-
-msgid "Old ICQ UTF8"
-msgstr "舊式 ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian 式加密"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-# NOTE 這似乎是一種掌上電腦的牌子
-msgid "Hiptop"
-msgstr "Hiptop"
-
-# FIXME flagged "有保安功能？" by c9s (http://developer.pidgin.im/ticket/7917), need to verify - 20090226 acli
-msgid "Security Enabled"
-msgstr "有保安功能"
-
-# XXX 暫譯
-msgid "Video Chat"
-msgstr "視像聊天"
-
-# XXX 暫譯
-msgid "iChat AV"
-msgstr "iChat 視像聊天"
-
-msgid "Live Video"
-msgstr "動態視訊"
-
-#  NOTE AIM_CAPS_CAMERA，即是什麼呢(^^;)
-msgid "Camera"
-msgstr "照相機"
-
-# XXX 20080810 畫面分享 (Apple) / 螢幕共享 / 螢幕分享
-msgid "Screen Sharing"
-msgstr "螢幕共享"
-
 msgid "Free For Chat"
 msgstr "我有空聊天"
 
@@ -7590,15 +7508,6 @@ msgstr "工作中"
 
 msgid "At lunch"
 msgstr "外出用餐"
-
-msgid "IP Address"
-msgstr "IP 位址"
-
-msgid "Warning Level"
-msgstr "警告等級"
-
-msgid "Buddy Comment"
-msgstr "好友備註"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7695,15 +7604,6 @@ msgstr "成功送出密碼"
 
 msgid "Unable to initialize connection"
 msgstr "無法初始化連結"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "請通過我的認證要求，好讓我可以將您加入我的好友清單中。"
-
-msgid "No reason given."
-msgstr "沒有給予原因。"
-
-msgid "Authorization Denied Message:"
-msgstr "拒絕認證訊息："
 
 #, c-format
 msgid ""
@@ -7813,58 +7713,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，原因不明。"
 msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，原因不明。"
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "無法取得個人資訊：%s"
-
-msgid "Online Since"
-msgstr "上線自"
-
-# XXX 改譯「註冊日期」會否比較通順？
-msgid "Member Since"
-msgstr "成為成員的時間"
-
-msgid "Capabilities"
-msgstr "相容性"
-
 msgid "Your AIM connection may be lost."
 msgstr "您的 AIM 可能斷線了。"
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr "（無法顯示來自這個使用者的訊息，因為它包含了無效字元。）"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "您已經由聊天室 %s 停止連線。"
-
-msgid "Mobile Phone"
-msgstr "行動電話"
-
-msgid "Personal Web Page"
-msgstr "個人網頁"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "其他資訊"
-
-msgid "Zip Code"
-msgstr "郵遞區號"
-
-msgid "Work Information"
-msgstr "工作資訊"
-
-msgid "Division"
-msgstr "部門"
-
-msgid "Position"
-msgstr "職位"
-
-msgid "Web Page"
-msgstr "網頁"
 
 # XXX 這是什麼 (情形下出現的)？ (好像是以前譯「訊息」的那個??)
 msgid "Pop-Up Message"
@@ -8130,8 +7984,8 @@ msgstr "帳號格式化只能改變大寫以及空白。"
 msgid "Change Address To:"
 msgstr "變更地址為："
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>您並沒有在等待驗證</i>"
+msgid "you are not waiting for authorization"
+msgstr "您並沒有在等待驗證"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "您目前正在等待下列好友的認證"
@@ -8171,6 +8025,14 @@ msgstr "設定即時訊息的轉送 (透過網頁)"
 msgid "Set Privacy Options..."
 msgstr "設定隱私選項..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "公開"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "邀請清單"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "確認帳號"
@@ -8186,9 +8048,6 @@ msgstr "顯示等待認證的好友"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "使用電子郵件地址搜尋好友..."
-
-msgid "Search for Buddy by Information"
-msgstr "依照資訊尋找好友"
 
 msgid "Use clientLogin"
 msgstr "使用 clientLogin"
@@ -8231,87 +8090,262 @@ msgid "Invalid SNAC"
 msgstr "無效的 SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "超出了伺服器端的速率上限"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "超出了用戶端的速率上限"
 
-#  NOTE Jabber 錯誤 <service-unavailable/>，表示伺服器收到一個意義不明的指令
-#  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
-#  NOTE 譯文更動 by Ambrose
-#, fuzzy
+# NOTE SNAC 錯誤代碼5，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE 應係指給定了一個已定義的服務 (Service, Family)，但因某種原因，伺服器暫時無法提供該服務
 msgid "Service unavailable"
-msgstr "不提供該項服務"
+msgstr "服務不存在"
 
-#, fuzzy
 msgid "Service not defined"
-msgstr "找不到該會議"
+msgstr "服務未定義"
 
+# XXX 譯文有待改進 - acli 20100809
 msgid "Obsolete SNAC"
-msgstr ""
+msgstr "已作廢的舊式 SNAC"
 
-#  XXX 這個太奇怪了 (^^;)
-#, fuzzy
 msgid "Not supported by host"
-msgstr "不支援"
+msgstr "伺服器不支援"
 
-#  XXX 這個太奇怪了 (^^;)
-#, fuzzy
 msgid "Not supported by client"
-msgstr "不支援"
+msgstr "用戶端不支援"
 
-#, fuzzy
 msgid "Refused by client"
-msgstr "到用戶端速率"
+msgstr "被用戶端拒絕"
 
+# XXX 譯文有待改進 - acli 20100809
 msgid "Reply too big"
-msgstr ""
+msgstr "回應太大"
 
-#, fuzzy
 msgid "Responses lost"
-msgstr "「回答」或然率："
+msgstr "遺失回應"
 
-#, fuzzy
 msgid "Request denied"
-msgstr "請求中"
+msgstr "請求被拒"
 
+# NOTE SNAC 錯誤代碼14 (0x0e)，見 http://iserverd.khstu.ru/oscar/errorlist.html，指 SNAC 負載內出現了格式上的錯誤
+# XXX 譯文有待改進 - acli 20100809
 msgid "Busted SNAC payload"
-msgstr ""
+msgstr "畸型的 SNAC 負載"
 
 msgid "Insufficient rights"
-msgstr ""
+msgstr "權限不夠"
 
+# NOTE SNAC 錯誤代碼16 (0x10)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# XXX 譯文有待改進 - acli 20100809
 msgid "In local permit/deny"
-msgstr ""
+msgstr "在本地端的允許／拒絕清單內"
 
+# NOTE SNAC 錯誤代碼17 (0x11)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
 msgid "Warning level too high (sender)"
-msgstr ""
+msgstr "（發送者）警告等級過高"
 
+# NOTE SNAC 錯誤代碼18 (0x12)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
 msgid "Warning level too high (receiver)"
-msgstr ""
+msgstr "（接收者）警告等級過高"
 
-#  NOTE「暫時無法使用」應該比「暫時不存在」通順
-#  NOTE 譯文更動 by Ambrose
-#, fuzzy
 msgid "User temporarily unavailable"
-msgstr "暫時無法使用服務"
+msgstr "使用者暫時不在線上"
 
-#, fuzzy
 msgid "No match"
-msgstr "沒有相符合的"
+msgstr "沒有相符的記錄"
 
-#, fuzzy
+# NOTE SNAC 錯誤代碼21 (0x15)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE OSCAR 協定至少有三種「List」，譯成「好友清單」可能不對
 msgid "List overflow"
-msgstr "好友清單已滿"
+msgstr "清單已滿"
 
-#, fuzzy
 msgid "Request ambiguous"
-msgstr "請求中"
+msgstr "不明確的請求"
 
 msgid "Queue full"
+msgstr "佇列已滿"
+
+# NOTE SNAC 錯誤代碼24 (0x18)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE 可能是指在 AOL 裏要求了一種 ICQ 的服務
+# XXX 譯文有待改進 - acli 20100809
+msgid "Not while on AOL"
+msgstr "不適合於 AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "好友圖示"
+
+msgid "Voice"
+msgstr "聲音"
+
+# NOTE 將「直接消息」改譯為「即時訊息」
+msgid "AIM Direct IM"
+msgstr "AIM 式即時訊息"
+
+msgid "Get File"
+msgstr "接收檔案"
+
+msgid "Games"
+msgstr "遊戲"
+
+msgid "ICQ Xtraz"
 msgstr ""
 
-msgid "Not while on AOL"
+msgid "Add-Ins"
+msgstr "模組"
+
+msgid "Send Buddy List"
+msgstr "送出好友清單"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ 式直接連線"
+
+# NOTE 據其他PO檔的譯文看，「AP」應該不是「應用程式」
+msgid "AP User"
+msgstr "AP 使用者"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+# NOTE「Nihilist」是什麼呢？連開發者都不知道
+# NOTE (18:06:07) KingAnt: "nihilist" is actually the capability of all 0s--not no capabilities
+# NOTE (18:07:23) KingAnt: Yeah, what he said
+# NOTE (18:17:08) wing: capability of all 0s?
+# NOTE (18:17:29) KingAnt: Right...
+# NOTE (18:17:36) wing: what does that mean though?
+# NOTE (18:17:48) KingAnt: I have no idea--probably nothing
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ 伺服器轉送"
+
+msgid "Old ICQ UTF8"
+msgstr "舊式 ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian 式加密"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+# NOTE 這似乎是一種掌上電腦的牌子
+msgid "Hiptop"
+msgstr "Hiptop"
+
+# FIXME flagged "有保安功能？" by c9s (http://developer.pidgin.im/ticket/7917), need to verify - 20090226 acli
+msgid "Security Enabled"
+msgstr "有保安功能"
+
+# XXX 暫譯
+msgid "Video Chat"
+msgstr "視像聊天"
+
+# XXX 暫譯
+msgid "iChat AV"
+msgstr "iChat 視像聊天"
+
+msgid "Live Video"
+msgstr "動態視訊"
+
+#  NOTE AIM_CAPS_CAMERA，即是什麼呢(^^;)
+msgid "Camera"
+msgstr "照相機"
+
+# XXX 20080810 畫面分享 (Apple) / 螢幕共享 / 螢幕分享
+msgid "Screen Sharing"
+msgstr "螢幕共享"
+
+msgid "IP Address"
+msgstr "IP 位址"
+
+msgid "Warning Level"
+msgstr "警告等級"
+
+msgid "Buddy Comment"
+msgstr "好友備註"
+
+#  NOTE Connection security 選項，指在伺服器支援的情況下使用 TLS, 如伺服器不支援 TLS 則以不加密的方式繼續進行連線
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "當伺服器支援時，使用加密功能"
+
+msgid "Mobile Phone"
+msgstr "行動電話"
+
+msgid "Personal Web Page"
+msgstr "個人網頁"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "其他資訊"
+
+msgid "Zip Code"
+msgstr "郵遞區號"
+
+msgid "Work Information"
+msgstr "工作資訊"
+
+msgid "Division"
+msgstr "部門"
+
+msgid "Position"
+msgstr "職位"
+
+msgid "Web Page"
+msgstr "網頁"
+
+msgid "Online Since"
+msgstr "上線自"
+
+# XXX 改譯「註冊日期」會否比較通順？
+msgid "Member Since"
+msgstr "成為成員的時間"
+
+msgid "Capabilities"
+msgstr "相容性"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "報稱上線"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "報稱上線"
+
+# NOTE 下次登入時不報稱離線，所以加「暫時」字眼
+msgid "Appear Offline"
+msgstr "暫時報稱離線"
+
+# NOTE 下次登入時不報稱離線，所以加「暫時」字眼
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "暫時報稱離線"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "您已經從MultiMX中被踢出。"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"您可以重新要求這些好友的認證，只要在好友清單中以滑鼠右鍵點擊他們，然後選擇"
+"「要求重新認證」。"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "公開"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "邀請清單"
+
+msgid "These buddies will always see you as offline"
 msgstr ""
 
 msgid "Aquarius"
@@ -8501,8 +8535,8 @@ msgid "Your request was rejected."
 msgstr "請求已被拒絶。"
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u 要求認證"
+msgid "%u requires verification: %s"
+msgstr "%u 要求認證：%s"
 
 # XXX 暫譯 - acli 20090803
 msgid "Add buddy question"
@@ -8745,7 +8779,6 @@ msgstr " VIP"
 msgid " TCP"
 msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
 msgstr " 使用行動裝置"
 
@@ -10577,9 +10610,8 @@ msgstr "聊天室區域 (Locale)"
 msgid "Ignore conference and chatroom invitations"
 msgstr "忽略會議室與聊天室邀請"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "使用 SSL 連線時，使用帳號的代理伺服器"
+msgstr "使用 HTTP 和 HTTPS 連線時，使用帳號的代理伺服器"
 
 msgid "Chat room list URL"
 msgstr "聊天室清單所在網址"
@@ -10759,19 +10791,12 @@ msgstr "走出去了"
 msgid "Not on server list"
 msgstr "不在伺服器上的清單中"
 
-msgid "Appear Online"
-msgstr "報稱上線"
-
 # NOTE Yahoo 官方譯「永遠顯示離線」，說白一點其實即是（針對某人）「長期隠身」
 msgid "Appear Permanently Offline"
 msgstr "長期報稱離線"
 
 msgid "Presence"
 msgstr "現狀"
-
-# NOTE 下次登入時不報稱離線，所以加「暫時」字眼
-msgid "Appear Offline"
-msgstr "暫時報稱離線"
 
 #  NOTE 這是清單內的一個指令
 msgid "Don't Appear Permanently Offline"
@@ -11351,28 +11376,23 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "連線被電腦上的其他軟體中斷。"
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "遠端主機關閉了連線。"
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "連線已逾時"
 
 # XXX - 20061027
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "連線被拒。"
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "位址已在使用中"
 
@@ -11526,6 +11546,12 @@ msgstr ""
 "\n"
 "您如果希望新增、修改或刪除帳號，只要透過好友清單上的「帳號->管理帳號」指令，"
 "即可返回這個畫面。"
+
+#  NOTE: 最頭的 %s%s%s%s 是對方帳號，或帳號括弧別名（第二、四個 %s 是括弧）
+#  NOTE: 最尾的 %s%s 是空白或「: 訊息」，基本上可以不理會（也不能怎樣理會）
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "使用者 %s%s%s%s 想要將您（%s）加入他（她）的好友清單%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11786,6 +11812,8 @@ msgstr "訊息（選用）"
 msgid "Edit User Mood"
 msgstr "編輯使用者情緒"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/好友(_B)"
@@ -12561,9 +12589,6 @@ msgstr "支援"
 msgid "webmaster"
 msgstr "網站管理員"
 
-msgid "Senior Contributor/QA"
-msgstr "資深貢獻者兼品管"
-
 msgid "win32 port"
 msgstr "Windows 版本移植"
 
@@ -12588,6 +12613,9 @@ msgstr "原作者"
 
 msgid "lead developer"
 msgstr "主要開發者"
+
+msgid "Senior Contributor/QA"
+msgstr "資深貢獻者兼品管"
 
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=A
 msgid "Afrikaans"
@@ -13562,14 +13590,12 @@ msgid "Exiting because another libpurple client is already running.\n"
 msgstr "因為已有其他 libpurple 用戶端正在執行，本程式現在結束。\n"
 
 # XXX 媒體? - acli 20090730
-#, fuzzy
 msgid "_Media"
-msgstr "/媒體(_M)"
+msgstr "媒體(_M)"
 
 # NOTE 這是按鈕上的標籤
-#, fuzzy
 msgid "_Hangup"
-msgstr "掛斷"
+msgstr "掛斷(_H)"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13995,6 +14021,9 @@ msgstr "中繼伺服器 (TURN)"
 msgid "_TURN server:"
 msgstr "TURN 伺服器(_U)："
 
+msgid "_UDP Port:"
+msgstr "UDP 通訊埠(_U)："
+
 msgid "Use_rname:"
 msgstr "帳號(_R)："
 
@@ -14016,6 +14045,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "桌面預設值"
 
@@ -14033,6 +14067,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "使用者自定"
@@ -14572,7 +14614,7 @@ msgstr "無"
 msgid "Small"
 msgstr "縮小版預設表情"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "縮小版的預設表情圖示"
 
 msgid "Response Probability:"
@@ -14589,9 +14631,11 @@ msgstr "好友作出回覆的時間上限："
 msgid "minutes"
 msgstr "分鐘"
 
+#  NOTE 參閱 gtk/plugins/cap/README
+#  FIXME 但這只能是暫譯，譯文絕對有待改進
 #. last_seen spinner
 msgid "Maximum last-seen difference:"
-msgstr ""
+msgstr "在線時間差異上限："
 
 #  NOTE 參閱 gtk/plugins/cap/README
 #  FIXME 但這只能是暫譯，譯文絕對有待改進
@@ -15643,6 +15687,9 @@ msgstr "裝置(_E)"
 msgid "Voice/Video Settings"
 msgstr "語音／視訊設定"
 
+msgid "Voice and Video Settings"
+msgstr "語音及視訊設定"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15771,7 +15818,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 # XXX 要覆查譯文 - acli 20100527
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15916,6 +15963,26 @@ msgstr "瀏覽 Pidgin 官方網站"
 msgid "You do not have permission to uninstall this application."
 msgstr "您沒有權限移除程式。"
 
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr "這張憑證已逾期，應視作無效。"
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "需要 SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "強迫使用舊式 SSL (port 5223)"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr "（無法顯示來自這個使用者的訊息，因為它包含了無效字元。）"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "依照資訊尋找好友"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "您所輸入的名稱無效。"
+
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "這張憑證尚未生效。"
 
@@ -15924,35 +15991,3 @@ msgstr "您沒有權限移除程式。"
 
 #~ msgid "MXit Login Name"
 #~ msgstr "MXit 帳號"
-
-# NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
-#~ msgid "Nick Name"
-#~ msgstr "暱稱"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "行動電話號碼..."
-
-#~ msgid "Rate to host"
-#~ msgstr "到伺服器速率"
-
-#~ msgid "Rate to client"
-#~ msgstr "到用戶端速率"
-
-# XXX 暫譯 - acli 20090730
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/媒體/掛斷(_H)"
-
-#~ msgid "Current Mood"
-#~ msgstr "目前的心情"
-
-#~ msgid "New Mood"
-#~ msgstr "新心情"
-
-#~ msgid "Change your Mood"
-#~ msgstr "修改心情"
-
-#~ msgid "How do you feel right now?"
-#~ msgstr "您現在覺得怎樣？"
-
-#~ msgid "Change Mood..."
-#~ msgstr "修改心情..."

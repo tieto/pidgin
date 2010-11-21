@@ -1363,7 +1363,7 @@ msim_msg_get_binary_from_element(MsimMessageElement *elem, gchar **binary_data, 
 			 *
 			 */
 			*binary_data = (gchar *)purple_base64_decode((const gchar *)elem->data, binary_length);
-			return TRUE;
+			return ((*binary_data) != NULL);
 
 		case MSIM_TYPE_BINARY:
 			gs = (GString *)elem->data;

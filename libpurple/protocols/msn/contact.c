@@ -24,12 +24,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 
-#include "msn.h"
+#include "internal.h"
+#include "debug.h"
+
 #include "contact.h"
 #include "xmlnode.h"
 #include "group.h"
+#include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
+#include "user.h"
 
 const char *MsnSoapPartnerScenarioText[] =
 {
@@ -527,16 +531,20 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 
 	if (resp != NULL) {
+#ifdef MSN_PARTIAL_LISTS
 		const char *abLastChange;
 		const char *dynamicItemLastChange;
+#endif
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
 		msn_parse_contact_list(session, resp->xml);
+#ifdef MSN_PARTIAL_LISTS
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
 			"DynamicItemLastChanged", NULL);
+#endif
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
@@ -1168,7 +1176,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
+		if (msn_user_is_in_list(user, MSN_LIST_PL)) {
 			msn_del_contact_from_list(state->session, NULL, state->who, MSN_LIST_PL);
 			return;
 		}
@@ -1565,7 +1573,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		if (user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
 			                         user->member_id_on_pending_list);

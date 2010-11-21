@@ -28,6 +28,7 @@ typedef struct _MsnHttpConn MsnHttpConn;
 
 #include "circbuffer.h"
 #include "servconn.h"
+#include "session.h"
 
 /**
  * An HTTP Connection.

@@ -152,9 +152,14 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	static guint8 nonce[8];
 
 	tmsg = (struct type2_message*)purple_base64_decode(type2, &retlen);
-	memcpy(nonce, tmsg->nonce, 8);
-	if (flags != NULL)
-		*flags = GUINT16_FROM_LE(tmsg->flags);
+	if (tmsg != NULL && retlen >= (sizeof(struct type2_message) - 1)) {
+		memcpy(nonce, tmsg->nonce, 8);
+		if (flags != NULL)
+			*flags = GUINT16_FROM_LE(tmsg->flags);
+	} else {
+		purple_debug_error("ntlm", "Unable to parse type2 message - returning empty nonce.\n");
+		memset(nonce, 0, 8);
+	}
 	g_free(tmsg);
 
 	return nonce;

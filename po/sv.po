@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2010-06-20 19:50+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@rymdraket.net>\n"
 "Language-Team: \n"
@@ -525,7 +525,6 @@ msgstr "Godkänn borttagning av certifikat"
 msgid "Certificate Manager"
 msgstr "Certifikatshanterare"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Värdnamn"
 
@@ -797,7 +796,7 @@ msgstr "Stoppa"
 msgid "Waiting for transfer to begin"
 msgstr "Väntar på att överföringen ska inledas"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Avbruten"
 
 msgid "Failed"
@@ -1687,7 +1686,10 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Certifikatet är för gammalt och bör inte anses giltigt."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4718,11 +4720,20 @@ msgstr "Insticksmodul för XMPP-Protokollet"
 msgid "Domain"
 msgstr "Domän"
 
-msgid "Require SSL/TLS"
-msgstr "Kräver SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Kräver auktorisering"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Tvinga fram användning av gammal (port 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Användarinformation om %s är inte tillgänglig"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Anslutningen nollställd"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Tillåt klartextautentisering över okrypterad ström"
@@ -5934,7 +5945,8 @@ msgstr "Ogiltigt PIN. Det får enbart bestå av nummer [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "De två PIN du angav matchar inte."
 
-msgid "The name you entered is invalid."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
 msgstr "Namnet är ogiltigt."
 
 msgid ""
@@ -6026,10 +6038,6 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Ansluter..."
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Namnet är ogiltigt."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Det PIN du uppgav har ogiltig längd [7-10]."
@@ -6883,6 +6891,15 @@ msgstr "Serveradress"
 msgid "Server port"
 msgstr "Serverport"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Snälla godkänn mig så jag kan lägga till dig till min kompislista."
+
+msgid "No reason given."
+msgstr "Ingen motivering angiven."
+
+msgid "Authorization Denied Message:"
+msgstr "Meddelande om auktorisering nekad:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Mottog oväntat svar från %s; %s"
@@ -6917,6 +6934,25 @@ msgstr "AOL tillåter inte ditt skärmnamn att autentisera här"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Fel vid efterfrågan av %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Det uppstod ett fel vid mottagandet av detta meddelandet. Kompisen du "
+"pratar med använder antagligen en annan teckenkod än den förväntade. Om du "
+"vet vilken teckenkod han använder kan du specificera den bland de avancerade "
+"inställningarna för ditt AIM/ICQ-konto.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Det uppstod ett fel vid mottagningen av detta meddelande. Antingen har du "
+"och %s olika teckenkodningar valda eller så har %s en buggig klient.)"
 
 msgid "Could not join chat room"
 msgstr "Kunde inte ansluta till chatrummet"
@@ -7132,95 +7168,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Filen %s är %s vilket är större än den maximala storleken på %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Det uppstod ett fel vid mottagandet av detta meddelandet. Kompisen du "
-"pratar med använder antagligen en annan teckenkod än den förväntade. Om du "
-"vet vilken teckenkod han använder kan du specificera den bland de avancerade "
-"inställningarna för ditt AIM/ICQ-konto.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Det uppstod ett fel vid mottagningen av detta meddelande. Antingen har du "
-"och %s olika teckenkodningar valda eller så har %s en buggig klient.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Kompisikon"
-
-msgid "Voice"
-msgstr "Röst"
-
-msgid "AIM Direct IM"
-msgstr "AIM-direktmeddelande"
-
-msgid "Get File"
-msgstr "Hämta fil"
-
-msgid "Games"
-msgstr "Spel"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "Lägg till"
-
-msgid "Send Buddy List"
-msgstr "Skicka kompislista"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ-direktanslutning"
-
-msgid "AP User"
-msgstr "AP-användare"
-
-msgid "ICQ RTF"
-msgstr "ICQ-RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ-serverrelay"
-
-msgid "Old ICQ UTF8"
-msgstr "Gamla ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillansk kryptering"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Säkerhet aktiverad"
-
-msgid "Video Chat"
-msgstr "Videochatt"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live-video"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Skärmdelning"
-
 msgid "Free For Chat"
 msgstr "Tillgänglig för chatt"
 
@@ -7250,15 +7197,6 @@ msgstr "På jobbet"
 
 msgid "At lunch"
 msgstr "På lunch"
-
-msgid "IP Address"
-msgstr "IP-adress"
-
-msgid "Warning Level"
-msgstr "Varningsnivåer"
-
-msgid "Buddy Comment"
-msgstr "Kompiskommentar"
 
 # Osäker!!!
 #, c-format
@@ -7358,15 +7296,6 @@ msgstr "Lösenord skickat"
 
 msgid "Unable to initialize connection"
 msgstr "Kan inte skapa anslutning"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Snälla godkänn mig så jag kan lägga till dig till min kompislista."
-
-msgid "No reason given."
-msgstr "Ingen motivering angiven."
-
-msgid "Authorization Denied Message:"
-msgstr "Meddelande om auktorisering nekad:"
 
 #, c-format
 msgid ""
@@ -7485,59 +7414,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Du missade %hu meddelande från %s av okända orsaker."
 msgstr[1] "Du missade %hu meddelanden från %s av okända orsaker."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Användarinformation är inte tillgänglig: %s"
-
-msgid "Online Since"
-msgstr "Ansluten sedan"
-
-msgid "Member Since"
-msgstr "Medlem sedan"
-
-msgid "Capabilities"
-msgstr "Stödjer"
-
 msgid "Your AIM connection may be lost."
 msgstr "Din anslutning kan vara borta."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Kan inte visa meddelande från denna användare eftersom det innehöll "
-"felaktiga tecken.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Du har blivit frånkopplad från chattrummet %s."
-
-msgid "Mobile Phone"
-msgstr "Mobilnummer"
-
-msgid "Personal Web Page"
-msgstr "Personlig webbsida"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Extra information"
-
-msgid "Zip Code"
-msgstr "Postnummer"
-
-msgid "Work Information"
-msgstr "Information om arbete"
-
-msgid "Division"
-msgstr "Avdelning"
-
-msgid "Position"
-msgstr "Befattning"
-
-msgid "Web Page"
-msgstr "Webbsida"
 
 msgid "Pop-Up Message"
 msgstr "Popup-meddelande"
@@ -7822,7 +7704,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Ändra adress till:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>du väntar inte på auktorisering</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7861,6 +7744,14 @@ msgstr "Konfigurera vidarebefordring av snabbmeddelanden (web)"
 msgid "Set Privacy Options..."
 msgstr "Ange sekretessinställningar..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Visa kompis_listan"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Gästlista"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Bekräfta konto"
@@ -7876,9 +7767,6 @@ msgstr "Visa kompisar som väntar på auktorisering"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Sök efter kompis på e-postadress..."
-
-msgid "Search for Buddy by Information"
-msgstr "Sök efter kompis via information"
 
 msgid "Use clientLogin"
 msgstr "Använd klientLogin"
@@ -7987,6 +7875,165 @@ msgstr "Kö full"
 
 msgid "Not while on AOL"
 msgstr "Inte på AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Kompisikon"
+
+msgid "Voice"
+msgstr "Röst"
+
+msgid "AIM Direct IM"
+msgstr "AIM-direktmeddelande"
+
+msgid "Get File"
+msgstr "Hämta fil"
+
+msgid "Games"
+msgstr "Spel"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Lägg till"
+
+msgid "Send Buddy List"
+msgstr "Skicka kompislista"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ-direktanslutning"
+
+msgid "AP User"
+msgstr "AP-användare"
+
+msgid "ICQ RTF"
+msgstr "ICQ-RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ-serverrelay"
+
+msgid "Old ICQ UTF8"
+msgstr "Gamla ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillansk kryptering"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Säkerhet aktiverad"
+
+msgid "Video Chat"
+msgstr "Videochatt"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Live-video"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Skärmdelning"
+
+msgid "IP Address"
+msgstr "IP-adress"
+
+msgid "Warning Level"
+msgstr "Varningsnivåer"
+
+msgid "Buddy Comment"
+msgstr "Kompiskommentar"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Användarinformation är inte tillgänglig: %s"
+
+msgid "Mobile Phone"
+msgstr "Mobilnummer"
+
+msgid "Personal Web Page"
+msgstr "Personlig webbsida"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Extra information"
+
+msgid "Zip Code"
+msgstr "Postnummer"
+
+msgid "Work Information"
+msgstr "Information om arbete"
+
+msgid "Division"
+msgstr "Avdelning"
+
+msgid "Position"
+msgstr "Befattning"
+
+msgid "Web Page"
+msgstr "Webbsida"
+
+msgid "Online Since"
+msgstr "Ansluten sedan"
+
+msgid "Member Since"
+msgstr "Medlem sedan"
+
+msgid "Capabilities"
+msgstr "Stödjer"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Verka vara ansluten"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Verka vara ansluten"
+
+msgid "Appear Offline"
+msgstr "Verka vara frånkopplad"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Verka vara frånkopplad"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Du har sparkats ut från denna MultiMX."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Du kan begära auktorisering igen från dessa kompisar genom att högerklicka "
+"på dem och välja \"Begär auktorisering igen.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Synlig"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Gästlista"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vattumanen"
@@ -8166,8 +8213,8 @@ msgstr "Din förfrågan accepterades."
 msgid "Your request was rejected."
 msgstr "Din förfrågan avvisades."
 
-#, c-format
-msgid "%u requires verification"
+#, fuzzy, c-format
+msgid "%u requires verification: %s"
 msgstr "%u kräver verifikation"
 
 msgid "Add buddy question"
@@ -10373,17 +10420,11 @@ msgstr "Gått ut"
 msgid "Not on server list"
 msgstr "Finns inte i listan på servern"
 
-msgid "Appear Online"
-msgstr "Verka vara ansluten"
-
 msgid "Appear Permanently Offline"
 msgstr "Verka vara permanent frånkopplad"
 
 msgid "Presence"
 msgstr "Närvaro"
-
-msgid "Appear Offline"
-msgstr "Verka vara frånkopplad"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Verka inte vara permanent frånkopplad"
@@ -10925,28 +10966,23 @@ msgid " (%s)"
 msgstr "(%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Anslutningen avbröts av annan programvara på din dator."
 
 # Osäker (And weeei!)
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Motparten har stängt anslutningen."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Anslutningen överskred tidsgränsen."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Anslutningen nekades."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adressen används redan"
 
@@ -11094,6 +11130,10 @@ msgstr ""
 "\n"
 "Du kan komma tillbaka till detta fönster för att lägga till, ändra eller ta "
 "bort konton från <b>Konton->Hantera konton</b> i kompislistans fönster"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s vill lägga till %s i sin kompislista%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11350,6 +11390,8 @@ msgstr "Meddelande (valfritt)"
 msgid "Edit User Mood"
 msgstr "Redigera användarhumör"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Kompisar"
@@ -12104,9 +12146,6 @@ msgstr "support"
 msgid "webmaster"
 msgstr "webbansvarig"
 
-msgid "Senior Contributor/QA"
-msgstr "Senior Contributor/Kvalitetsgranskning"
-
 msgid "win32 port"
 msgstr "win32-portering"
 
@@ -12137,6 +12176,9 @@ msgstr "ursprunglig upphovsman"
 
 msgid "lead developer"
 msgstr "utvecklingsledare"
+
+msgid "Senior Contributor/QA"
+msgstr "Senior Contributor/Kvalitetsgranskning"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -13487,6 +13529,10 @@ msgstr "Återsändningsserver (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN-server:"
 
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port:"
+
 msgid "Use_rname:"
 msgstr "_Användarnamn:"
 
@@ -13508,6 +13554,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Skrivbordets förval"
 
@@ -13525,6 +13576,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Manuell"
@@ -14058,7 +14117,8 @@ msgstr "ingen"
 msgid "Small"
 msgstr "Liten"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Mindre versioner av de förvalda smiliesarna."
 
 msgid "Response Probability:"
@@ -15089,6 +15149,10 @@ msgstr "_Enhet"
 msgid "Voice/Video Settings"
 msgstr "Röst/videoinställningar"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Röst/videoinställningar"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15217,7 +15281,7 @@ msgstr "Skicka och ta emot råa XMPP strofer."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Denna modul är användbar vid felsökning av XMPP serverar och klienter."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15350,6 +15414,25 @@ msgstr "Besök Pidgin hemsida"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har inte rättigheter att avinstallera den här applikationen."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Kräver SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Tvinga fram användning av gammal (port 5223) SSL"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Namnet är ogiltigt."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Kan inte visa meddelande från denna användare eftersom det innehöll "
+#~ "felaktiga tecken.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Sök efter kompis via information"
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "Certifikatet är inte giltigt än."
@@ -15928,9 +16011,6 @@ msgstr "Du har inte rättigheter att avinstallera den här applikationen."
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Anslutningen stängd (skrivande)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Anslutningen nollställd"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Fel vid läsning av från uttag %s"
 
@@ -16135,7 +16215,7 @@ msgstr "Du har inte rättigheter att avinstallera den här applikationen."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Kunde inte öppna %s för läsning!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Filöverföringen misslyckades, antagligen eftersom andra sidan avbröt."
 
@@ -16379,9 +16459,6 @@ msgstr "Du har inte rättigheter att avinstallera den här applikationen."
 #, fuzzy
 #~ msgid "QQ Server Notice"
 #~ msgstr "Serverport"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Användarinformation om %s är inte tillgänglig"
 
 #, fuzzy
 #~ msgid "Network disconnected"

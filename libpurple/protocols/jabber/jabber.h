@@ -80,7 +80,7 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/"
 
-#define JABBER_DEFAULT_REQUIRE_TLS    TRUE
+#define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
 #define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
 
 /* Index into attention_types list */
@@ -206,6 +206,7 @@ struct _JabberStream
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
+	sasl_secret_t *sasl_secret;
 	const char *current_mech;
 	int auth_fail_count;
 
@@ -275,7 +276,12 @@ struct _JabberStream
 	gchar *stun_ip;
 	int stun_port;
 	PurpleDnsQueryData *stun_query;
-	/* later add stuff to handle TURN relays... */
+
+	/* stuff for Google's relay handling */
+	gchar *google_relay_token;
+	gchar *google_relay_host;
+	GList *google_relay_requests; /* the HTTP requests to get */
+												/* relay info */
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
@@ -332,11 +338,25 @@ char *jabber_get_next_id(JabberStream *js);
  */
 char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
 
-void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
+/**
+ * Add a feature to the list of features advertised via disco#info.  If you
+ * call this while accounts are connected, Bad Things(TM) will happen because
+ * the Entity Caps hash will be out-of-date (which should be fixed :/)
+ *
+ * @param namespace The namespace of the feature
+ * @param cb        A callback determining whether or not this feature
+ *                  will advertised; may be NULL.
+ */
+void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb);
 void jabber_remove_feature(const gchar *namespace);
 
-/** Adds an identity to this jabber library instance. For list of valid values visit the
- *	website of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
+/** Adds an identity to this jabber library instance. For list of valid values
+ * visit the website of the XMPP Registrar
+ * (http://www.xmpp.org/registrar/disco-categories.html#client).
+ *
+ * Like with jabber_add_feature, if you call this while accounts are connected,
+ * Bad Things will happen.
+ *
  *  @param category the category of the identity.
  *  @param type the type of the identity.
  *  @param language the language localization of the name. Can be NULL.

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-06-30 14:57+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -540,7 +540,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "ホスト名"
 
@@ -808,7 +807,7 @@ msgstr "停止する"
 msgid "Waiting for transfer to begin"
 msgstr "転送開始を待っています"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "キャンセルしました"
 
 msgid "Failed"
@@ -1731,7 +1730,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4826,11 +4827,20 @@ msgstr "XMPP プロトコルのプラグイン"
 msgid "Domain"
 msgstr "ドメイン名"
 
-msgid "Require SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "承認が必要です"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "%s のユーザ情報は有効ではありません"
+
+msgid "Use old-style SSL"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
-msgstr "古い SSL (ポート番号:5223) を強制的に使用する"
+#, fuzzy
+msgid "Connection security"
+msgstr "接続のリセット"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "暗号化されていないストリームを介したプレーンテキスト認証を許可する"
@@ -6121,7 +6131,7 @@ msgid "The two PINs you entered do not match."
 msgstr "新しいパスワードが一致しません。"
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "入力したセキュア ID 鍵は不正です。"
 
 msgid ""
@@ -6222,10 +6232,6 @@ msgstr "サーバへ接続できません。接続するサーバのアドレス
 #, fuzzy
 msgid "Connecting..."
 msgstr "接続中です"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "入力したセキュア ID 鍵は不正です。"
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7131,6 +7137,15 @@ msgstr "サーバのアドレス"
 msgid "Server port"
 msgstr "サーバのポート"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "私があなたを仲間リストに追加できるように承認して下さい。"
+
+msgid "No reason given."
+msgstr "理由はわかりません。"
+
+msgid "Authorization Denied Message:"
+msgstr "承認拒否メッセージ:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "サーバから想定外の HTTP 応答を受け取りました"
@@ -7163,6 +7178,26 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "接続を開始する際にエラー"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(このメッセージを受信する際にエラーが発生しました。会話している仲間はおそらく"
+"別のエンコーディングを使用していると思われます。相手が使用しているエンコー"
+"ディングがわかるのであれば、アカウント・ダイアログの拡張オプションで指定して"
+"みて下さい。)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(このメッセージを受信する際にエラーが発生しました。%s さんとは異なるエンコー"
+"ディングで会話しているか、あるいは %s さんがおかしなクライアントを使っている"
+"と思われます。)"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7397,97 +7432,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ファイル %s は %s です (%s の最大サイズを超えています)"
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(このメッセージを受信する際にエラーが発生しました。会話している仲間はおそらく"
-"別のエンコーディングを使用していると思われます。相手が使用しているエンコー"
-"ディングがわかるのであれば、アカウント・ダイアログの拡張オプションで指定して"
-"みて下さい。)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(このメッセージを受信する際にエラーが発生しました。%s さんとは異なるエンコー"
-"ディングで会話しているか、あるいは %s さんがおかしなクライアントを使っている"
-"と思われます。)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "仲間アイコン"
-
-msgid "Voice"
-msgstr "音声"
-
-msgid "AIM Direct IM"
-msgstr "AIM Direct IM"
-
-msgid "Get File"
-msgstr "ファイルの取得"
-
-msgid "Games"
-msgstr "ゲーム"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "追加"
-
-msgid "Send Buddy List"
-msgstr "仲間リストの送信"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Direct 接続"
-
-msgid "AP User"
-msgstr "AP ユーザ"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "ニヒリスト"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ サーバ中継"
-
-msgid "Old ICQ UTF8"
-msgstr "古い ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian 暗号化"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "ヒップトップ"
-
-msgid "Security Enabled"
-msgstr "セキュリティは有効"
-
-msgid "Video Chat"
-msgstr "ビデオ・チャット"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "ライブ・ビデオ"
-
-msgid "Camera"
-msgstr "カメラ"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "スクリーン名"
-
 msgid "Free For Chat"
 msgstr "チャットできます"
 
@@ -7522,15 +7466,6 @@ msgstr "ネットワーク"
 #, fuzzy
 msgid "At lunch"
 msgstr "食事に出かけています"
-
-msgid "IP Address"
-msgstr "IP-アドレス"
-
-msgid "Warning Level"
-msgstr "警告レベル"
-
-msgid "Buddy Comment"
-msgstr "仲間のコメント"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7632,15 +7567,6 @@ msgstr "パスワードの送信中"
 
 msgid "Unable to initialize connection"
 msgstr "新しい接続を開けません"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "私があなたを仲間リストに追加できるように承認して下さい。"
-
-msgid "No reason given."
-msgstr "理由はわかりません。"
-
-msgid "Authorization Denied Message:"
-msgstr "承認拒否メッセージ:"
 
 #, c-format
 msgid ""
@@ -7769,59 +7695,12 @@ msgstr[1] ""
 "原因は不明ですが、%2$s さんからの %1$hu 個のメッセージを受け取れませんでし"
 "た。"
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "ユーザ情報は有効ではありません: %s"
-
-msgid "Online Since"
-msgstr "サイン・インした日時"
-
-msgid "Member Since"
-msgstr "メンバになった日時"
-
-msgid "Capabilities"
-msgstr "機能"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM への接続が切れたようです"
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[メッセージに不正な文字が含まれているため、このユーザからのメッセージを表示で"
-"きません]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "チャット・ルーム %s から切断されました"
-
-msgid "Mobile Phone"
-msgstr "携帯電話"
-
-msgid "Personal Web Page"
-msgstr "個人的なウェブページ"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "追加情報"
-
-msgid "Zip Code"
-msgstr "郵便番号"
-
-msgid "Work Information"
-msgstr "職業"
-
-msgid "Division"
-msgstr "所属"
-
-msgid "Position"
-msgstr "役職"
-
-msgid "Web Page"
-msgstr "ウェブページ"
 
 msgid "Pop-Up Message"
 msgstr "ポップアップ・メッセージ"
@@ -8095,7 +7974,8 @@ msgstr "スクリーン名の書式は大文字と空白文字しか変更でき
 msgid "Change Address To:"
 msgstr "変更するアドレス:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>あなたは承認を待っていません</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8137,6 +8017,14 @@ msgstr "IM フォワーディング (URL) の設定"
 msgid "Set Privacy Options..."
 msgstr "プライバシー・オプションの追加..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "仲間リストの表示"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "招待リスト"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "アカウントの確認"
@@ -8152,9 +8040,6 @@ msgstr "承認を待っている仲間を表示"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "E-メールで仲間の検索..."
-
-msgid "Search for Buddy by Information"
-msgstr "情報で仲間の検索..."
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8264,6 +8149,166 @@ msgstr "キューが一杯です"
 
 msgid "Not while on AOL"
 msgstr "AOL に居る時はできません"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "仲間アイコン"
+
+msgid "Voice"
+msgstr "音声"
+
+msgid "AIM Direct IM"
+msgstr "AIM Direct IM"
+
+msgid "Get File"
+msgstr "ファイルの取得"
+
+msgid "Games"
+msgstr "ゲーム"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "追加"
+
+msgid "Send Buddy List"
+msgstr "仲間リストの送信"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ Direct 接続"
+
+msgid "AP User"
+msgstr "AP ユーザ"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "ニヒリスト"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ サーバ中継"
+
+msgid "Old ICQ UTF8"
+msgstr "古い ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian 暗号化"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "ヒップトップ"
+
+msgid "Security Enabled"
+msgstr "セキュリティは有効"
+
+msgid "Video Chat"
+msgstr "ビデオ・チャット"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "ライブ・ビデオ"
+
+msgid "Camera"
+msgstr "カメラ"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "スクリーン名"
+
+msgid "IP Address"
+msgstr "IP-アドレス"
+
+msgid "Warning Level"
+msgstr "警告レベル"
+
+msgid "Buddy Comment"
+msgstr "仲間のコメント"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "ユーザ情報は有効ではありません: %s"
+
+msgid "Mobile Phone"
+msgstr "携帯電話"
+
+msgid "Personal Web Page"
+msgstr "個人的なウェブページ"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "追加情報"
+
+msgid "Zip Code"
+msgstr "郵便番号"
+
+msgid "Work Information"
+msgstr "職業"
+
+msgid "Division"
+msgstr "所属"
+
+msgid "Position"
+msgstr "役職"
+
+msgid "Web Page"
+msgstr "ウェブページ"
+
+msgid "Online Since"
+msgstr "サイン・インした日時"
+
+msgid "Member Since"
+msgstr "メンバになった日時"
+
+msgid "Capabilities"
+msgstr "機能"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "オンラインのようです"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "オンラインのようです"
+
+msgid "Appear Offline"
+msgstr "オフラインのようです"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "オフラインのようです"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "あなたは %s に蹴られました: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"右クリックして \"承認の再要求\" を選択することで、これらの仲間からの承認をも"
+"う一度要求できます。"
+
+#, fuzzy
+msgid "Visible List"
+msgstr "隠れています"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "招待リスト"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "水瓶座"
@@ -8465,7 +8510,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "承認が必要です"
 
 #, fuzzy
@@ -10757,17 +10802,11 @@ msgstr "ちょっとそこまで"
 msgid "Not on server list"
 msgstr "サーバ・リストにありません"
 
-msgid "Appear Online"
-msgstr "オンラインのようです"
-
 msgid "Appear Permanently Offline"
 msgstr "一時的にオフラインのようです"
 
 msgid "Presence"
 msgstr "在席"
-
-msgid "Appear Offline"
-msgstr "オフラインのようです"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Don't Appear Permanently Offline"
@@ -11334,27 +11373,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "リモート・ユーザが接続を閉じました"
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "接続がタイムアウトしました"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "接続が拒否されました"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "そのチャット名は既に使用されています。"
 
@@ -11503,6 +11541,10 @@ msgstr ""
 "\n"
 "仲間リストのウィンドウにある <b>アカウント->追加/編集</b> メニューからも、こ"
 "の画面を開くことができます。"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s さんが %s さんを仲間リスト%s%s に追加したがっています"
 
 #. Buddy List
 #, fuzzy
@@ -11785,6 +11827,8 @@ msgstr "コンタクトの別名"
 msgid "Edit User Mood"
 msgstr "ユーザ・モード"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/仲間(_B)"
@@ -12574,9 +12618,6 @@ msgstr "サポート"
 msgid "webmaster"
 msgstr "開発者/ウェブマスタ"
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr "Win32 のポーティング"
 
@@ -12601,6 +12642,9 @@ msgstr "オリジナルの作者"
 
 msgid "lead developer"
 msgstr "メインの開発者"
+
+msgid "Senior Contributor/QA"
+msgstr ""
 
 msgid "Afrikaans"
 msgstr "アフリカーンズ語"
@@ -14032,6 +14076,10 @@ msgid "_TURN server:"
 msgstr "STUN サーバ(_U):"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "ポート番号(_P):"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "ユーザ名(_U):"
 
@@ -14054,6 +14102,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "デフォルト値を適用する(_A)"
@@ -14072,6 +14125,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "手動設定"
@@ -14644,7 +14705,7 @@ msgstr "なし"
 msgid "Small"
 msgstr "E-メール"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15714,6 +15775,10 @@ msgstr "デバイス"
 msgid "Voice/Video Settings"
 msgstr "設定の編集"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "設定の編集"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15844,7 +15909,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "これは XMPP サービスやクライアントをデバッグする際に便利なプラグインです。"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15973,6 +16038,23 @@ msgstr "PidginのWebページを訪れてください。"
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 "あなたはこのアプリケーションをアンインストールする権限を持っていません。"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "古い SSL (ポート番号:5223) を強制的に使用する"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "入力したセキュア ID 鍵は不正です。"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[メッセージに不正な文字が含まれているため、このユーザからのメッセージを表"
+#~ "示できません]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "情報で仲間の検索..."
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16520,9 +16602,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "書き込み用の接続を閉じました"
 
-#~ msgid "Connection reset"
-#~ msgstr "接続のリセット"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "ソケットから読み込む際にエラー: %s"
 
@@ -16759,7 +16838,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "書き込みモードで %s を開けません！"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "ファイル転送が失敗しました。おそらく向こう側がキャンセルしたのでしょう。"
 
@@ -16782,9 +16861,6 @@ msgstr ""
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "TOC プロトコル・プラグイン"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "%s のユーザ情報は有効ではありません"
 
 #~ msgid "%s Options"
 #~ msgstr "%s のオプション"

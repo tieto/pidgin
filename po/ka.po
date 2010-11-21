@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0 CVS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2006-02-05 23:19+0100\n"
 "Last-Translator: Ubuntu Georgian Translators <>\n"
 "Language-Team: Georgian <ka@li.org>\n"
@@ -546,7 +546,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "ჰოსტის სახელი"
 
@@ -807,7 +806,7 @@ msgstr "Hiptop"
 msgid "Waiting for transfer to begin"
 msgstr "ველოდები გადატანის დაწყებას"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "გაუქმებულია"
 
 #, fuzzy
@@ -1741,7 +1740,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4735,11 +4736,19 @@ msgid "Domain"
 msgstr "რუმინული"
 
 #, fuzzy
-msgid "Require SSL/TLS"
-msgstr "მოითხოვე TLS"
+msgid "Require encryption"
+msgstr "დადასტურების მოთხოვნა"
 
-msgid "Force old (port 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "გამოიყენე TLS თუ·შესაძლებელია"
+
+msgid "Use old-style SSL"
 msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "კავშირის შეცდომა"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
@@ -5996,7 +6005,7 @@ msgstr ""
 msgid "The two PINs you entered do not match."
 msgstr "ახალი პაროლები არ ემთხვევა"
 
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr ""
 
 msgid ""
@@ -6096,9 +6105,6 @@ msgstr "არ ვარ დაკავშირებული სერვე
 #, fuzzy
 msgid "Connecting..."
 msgstr "დაკავშირება"
-
-msgid "The Display Name you entered is invalid."
-msgstr ""
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -6977,6 +6983,15 @@ msgstr "სერვერის მისამართი"
 msgid "Server port"
 msgstr "სერვერი-პორტი"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "გთხოვთ მომცეთ ავტორიზაცია თქვენი ჩემ მეგობრების სიაში დასამატებლად."
+
+msgid "No reason given."
+msgstr "მიზეზი მითითებული არაა"
+
+msgid "Authorization Denied Message:"
+msgstr "ავტორიზაციის უარყოფის შეტყობინება"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "სერვერის არასწორი პასუხი"
@@ -7007,6 +7022,19 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "შეცდომა პროფაილის ჩამოტანისას"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7243,90 +7271,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-
-#. Label
-msgid "Buddy Icon"
-msgstr "მეგობრის მინი-სურათი"
-
-msgid "Voice"
-msgstr "ხმა"
-
-msgid "AIM Direct IM"
-msgstr ""
-
-msgid "Get File"
-msgstr "ფილის მიღება"
-
-msgid "Games"
-msgstr "თამაში"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr ""
-
-msgid "Send Buddy List"
-msgstr ""
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ პირდაპირი კავშირი"
-
-msgid "AP User"
-msgstr "AP მომხმარებლები"
-
-msgid "ICQ RTF"
-msgstr "ICQ·RTF"
-
-msgid "Nihilist"
-msgstr "ნიჰილისტი"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ-ზე სერვერზე დაყრდნობა"
-
-msgid "Old ICQ UTF8"
-msgstr "ძველი ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian შიფრი"
-
-msgid "ICQ UTF8"
-msgstr "ICQ·UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "დაცვა ჩართულია"
-
-msgid "Video Chat"
-msgstr "ვიდეო ჩატი"
-
-msgid "iChat AV"
-msgstr ""
-
-msgid "Live Video"
-msgstr "ცოცხალი ვიდეო"
-
-msgid "Camera"
-msgstr "კამერა"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "მომხმარებელი"
-
 #, fuzzy
 msgid "Free For Chat"
 msgstr "თავისუფალი Chat-ი"
@@ -7362,15 +7306,6 @@ msgstr "ქსელი"
 #, fuzzy
 msgid "At lunch"
 msgstr "საჭმელად გასული"
-
-msgid "IP Address"
-msgstr "IP მისამართი"
-
-msgid "Warning Level"
-msgstr "შენშვნის დონე"
-
-msgid "Buddy Comment"
-msgstr ""
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7463,15 +7398,6 @@ msgstr "პაროლი გაგზავნილია"
 msgid "Unable to initialize connection"
 msgstr "ახალი კავშირის დამყარება შეუძლებელია"
 
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "გთხოვთ მომცეთ ავტორიზაცია თქვენი ჩემ მეგობრების სიაში დასამატებლად."
-
-msgid "No reason given."
-msgstr "მიზეზი მითითებული არაა"
-
-msgid "Authorization Denied Message:"
-msgstr "ავტორიზაციის უარყოფის შეტყობინება"
-
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -7559,57 +7485,12 @@ msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 
-#, c-format
-msgid "User information not available: %s"
-msgstr ""
-
-msgid "Online Since"
-msgstr ""
-
-msgid "Member Since"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "შეუძლია"
-
 msgid "Your AIM connection may be lost."
-msgstr ""
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
 msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr ""
-
-msgid "Mobile Phone"
-msgstr "მობილური ტელეფონი"
-
-msgid "Personal Web Page"
-msgstr "პირადი ვებ-გვერდი"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "დამატებითი ინფორმაცია"
-
-msgid "Zip Code"
-msgstr "საფოსტო ინდექსი"
-
-msgid "Work Information"
-msgstr "ინფორმაცია სამსახურის შესახებ"
-
-msgid "Division"
-msgstr "დანაყოფი"
-
-msgid "Position"
-msgstr "თანამდებობა"
-
-msgid "Web Page"
-msgstr "ვებ გვერდი"
 
 msgid "Pop-Up Message"
 msgstr ""
@@ -7856,7 +7737,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr ""
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>თქვენ ახლა ელოდებით ავტორიზაციას</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7896,6 +7778,14 @@ msgstr ""
 msgid "Set Privacy Options..."
 msgstr ""
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "აჩვენე მეგობრების სია"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "უხილავია"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "ანგარიშის დადასტურება"
@@ -7910,9 +7800,6 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
 msgid "Search for Buddy by Email Address..."
-msgstr ""
-
-msgid "Search for Buddy by Information"
 msgstr ""
 
 #, fuzzy
@@ -8017,6 +7904,162 @@ msgid "Queue full"
 msgstr ""
 
 msgid "Not while on AOL"
+msgstr ""
+
+#. Label
+msgid "Buddy Icon"
+msgstr "მეგობრის მინი-სურათი"
+
+msgid "Voice"
+msgstr "ხმა"
+
+msgid "AIM Direct IM"
+msgstr ""
+
+msgid "Get File"
+msgstr "ფილის მიღება"
+
+msgid "Games"
+msgstr "თამაში"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr ""
+
+msgid "Send Buddy List"
+msgstr ""
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ პირდაპირი კავშირი"
+
+msgid "AP User"
+msgstr "AP მომხმარებლები"
+
+msgid "ICQ RTF"
+msgstr "ICQ·RTF"
+
+msgid "Nihilist"
+msgstr "ნიჰილისტი"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+
+msgid "Old ICQ UTF8"
+msgstr "ძველი ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian შიფრი"
+
+msgid "ICQ UTF8"
+msgstr "ICQ·UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "დაცვა ჩართულია"
+
+msgid "Video Chat"
+msgstr "ვიდეო ჩატი"
+
+msgid "iChat AV"
+msgstr ""
+
+msgid "Live Video"
+msgstr "ცოცხალი ვიდეო"
+
+msgid "Camera"
+msgstr "კამერა"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "მომხმარებელი"
+
+msgid "IP Address"
+msgstr "IP მისამართი"
+
+msgid "Warning Level"
+msgstr "შენშვნის დონე"
+
+msgid "Buddy Comment"
+msgstr ""
+
+#, c-format
+msgid "User information not available: %s"
+msgstr ""
+
+msgid "Mobile Phone"
+msgstr "მობილური ტელეფონი"
+
+msgid "Personal Web Page"
+msgstr "პირადი ვებ-გვერდი"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "დამატებითი ინფორმაცია"
+
+msgid "Zip Code"
+msgstr "საფოსტო ინდექსი"
+
+msgid "Work Information"
+msgstr "ინფორმაცია სამსახურის შესახებ"
+
+msgid "Division"
+msgstr "დანაყოფი"
+
+msgid "Position"
+msgstr "თანამდებობა"
+
+msgid "Web Page"
+msgstr "ვებ გვერდი"
+
+msgid "Online Since"
+msgstr ""
+
+msgid "Member Since"
+msgstr ""
+
+msgid "Capabilities"
+msgstr "შეუძლია"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr ""
+
+msgid "Don't Appear Online"
+msgstr ""
+
+msgid "Appear Offline"
+msgstr ""
+
+msgid "Don't Appear Offline"
+msgstr ""
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "%s გახდა უმოქმედო (%s)"
+
+#, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "უხილავია"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "უხილავია"
+
+msgid "These buddies will always see you as offline"
 msgstr ""
 
 msgid "Aquarius"
@@ -8235,7 +8278,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "დადასტურების მოთხოვნა"
 
 #, fuzzy
@@ -10423,16 +10466,10 @@ msgstr ""
 msgid "Not on server list"
 msgstr ""
 
-msgid "Appear Online"
-msgstr ""
-
 msgid "Appear Permanently Offline"
 msgstr ""
 
 msgid "Presence"
-msgstr ""
-
-msgid "Appear Offline"
 msgstr ""
 
 msgid "Don't Appear Permanently Offline"
@@ -10966,27 +11003,25 @@ msgid " (%s)"
 msgstr ""
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "სერვერი გაითიშა"
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "კავშირი ვერ განხორცილდა"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "კავშირი ვერ განხორციელდა."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr ""
 
@@ -11130,6 +11165,10 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "მომხმარებელს %s, სურს დაამატოს %s თავის სიაში."
 
 #. Buddy List
 #, fuzzy
@@ -11408,6 +11447,8 @@ msgstr "კონტაქტის სინონიმი"
 msgid "Edit User Mood"
 msgstr ""
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_მეგობრები"
@@ -12210,9 +12251,6 @@ msgstr "სუპორტი"
 msgid "webmaster"
 msgstr ""
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr ""
 
@@ -12237,6 +12275,9 @@ msgid "original author"
 msgstr "თავდაპირველი ავტორი"
 
 msgid "lead developer"
+msgstr ""
+
+msgid "Senior Contributor/QA"
 msgstr ""
 
 msgid "Afrikaans"
@@ -13628,6 +13669,10 @@ msgid "_TURN server:"
 msgstr "ST_UN სერვერი:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "UDP პორტი"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "მომხმარებელი"
 
@@ -13650,6 +13695,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "წაშლა"
@@ -13667,6 +13717,14 @@ msgid "Firebird"
 msgstr "Firebird"
 
 msgid "Epiphany"
+msgstr ""
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
 msgstr ""
 
 msgid "Manual"
@@ -14232,7 +14290,7 @@ msgstr "არაფერი"
 msgid "Small"
 msgstr "Email"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15293,6 +15351,10 @@ msgstr "მოწყობილობა"
 msgid "Voice/Video Settings"
 msgstr "გარემოს ცვლადების გამოყენება"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "გარემოს ცვლადების გამოყენება"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15419,7 +15481,7 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15546,6 +15608,10 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Require SSL/TLS"
+#~ msgstr "მოითხოვე TLS"
 
 #, fuzzy
 #~ msgid "Nick Name"
@@ -15843,10 +15909,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Could not decrypt server reply"
 #~ msgstr "კავშირის სერვერი"
-
-#, fuzzy
-#~ msgid "Connection lost"
-#~ msgstr "კავშირის შეცდომა"
 
 #, fuzzy
 #~ msgid "Could not write"
@@ -16199,9 +16261,6 @@ msgstr ""
 #~ msgid "TCP port"
 #~ msgstr "TCP პორტი"
 
-#~ msgid "UDP port"
-#~ msgstr "UDP პორტი"
-
 #, fuzzy
 #~ msgid "Feature Calibration"
 #~ msgstr "დადასტურების მოთხოვნა"
@@ -16345,9 +16404,6 @@ msgstr ""
 
 #~ msgid "Jabber Protocol Plugin"
 #~ msgstr "Jabber პროტოკოლის პლაგინი"
-
-#~ msgid "Use TLS if available"
-#~ msgstr "გამოიყენე TLS თუ·შესაძლებელია"
 
 #~ msgid "_Authorize"
 #~ msgstr "_ავტორიზაცია"

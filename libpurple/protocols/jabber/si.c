@@ -983,14 +983,8 @@ static void
 jabber_si_xfer_ibb_error_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
-	JabberStream *js = jabber_ibb_session_get_js(sess);
-	PurpleConnection *gc = js->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
 
 	purple_debug_error("jabber", "an error occurred during IBB file transfer\n");
-	purple_xfer_error(purple_xfer_get_type(xfer), account,
-		jabber_ibb_session_get_who(sess),
-			_("An error occurred on the in-band bytestream transfer\n"));
 	purple_xfer_cancel_remote(xfer);
 }
 
@@ -998,14 +992,9 @@ static void
 jabber_si_xfer_ibb_closed_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
-	JabberStream *js = jabber_ibb_session_get_js(sess);
-	PurpleConnection *gc = js->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
 
 	purple_debug_info("jabber", "the remote user closed the transfer\n");
 	if (purple_xfer_get_bytes_remaining(xfer) > 0) {
-		purple_xfer_error(purple_xfer_get_type(xfer), account,
-			jabber_ibb_session_get_who(sess), _("Transfer was closed."));
 		purple_xfer_cancel_remote(xfer);
 	} else {
 		purple_xfer_set_completed(xfer, TRUE);
@@ -1137,18 +1126,12 @@ static void
 jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
-	JabberStream *js = jabber_ibb_session_get_js(sess);
-	PurpleConnection *gc = js->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (jabber_ibb_session_get_state(sess) == JABBER_IBB_SESSION_OPENED) {
 		purple_xfer_start(xfer, -1, NULL, 0);
 		purple_xfer_prpl_ready(xfer);
 	} else {
 		/* error */
-		purple_xfer_error(purple_xfer_get_type(xfer), account,
-			jabber_ibb_session_get_who(sess),
-			_("Failed to open in-band bytestream"));
 		purple_xfer_end(xfer);
 	}
 }
@@ -1666,11 +1649,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
-	JabberStream *js;
-
 	PurpleXfer *xfer;
-
-	js = gc->proto_data;
 
 	xfer = jabber_si_new_xfer(gc, who);
 

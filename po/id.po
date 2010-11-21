@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -550,7 +550,6 @@ msgstr "Konfirmasi penghapusan sertifikat"
 msgid "Certificate Manager"
 msgstr "Manajer Sertifikat"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Nama Host"
 
@@ -815,7 +814,7 @@ msgstr "Stop"
 msgid "Waiting for transfer to begin"
 msgstr "Menunggu transfer untuk mulai"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Dibatalkan"
 
 msgid "Failed"
@@ -1725,7 +1724,9 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4817,11 +4818,20 @@ msgstr "Plugin Protokol XMPP"
 msgid "Domain"
 msgstr "Domain"
 
-msgid "Require SSL/TLS"
-msgstr "Memerlukan SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Memerlukan Otorisasi"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Paksakan SSL lama (port 5223)"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Iformasi untuk pengguna %s tidak tersedia"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Sambungan di-reset"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Ijinkan otorisasi teks biasa melalui aliran tanpa enkripsi "
@@ -6103,7 +6113,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Kata sandi baru tidak sama."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 msgid ""
@@ -6208,10 +6218,6 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Menyambungkan"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7105,6 +7111,17 @@ msgstr "Alamat Server"
 msgid "Server port"
 msgstr "Port Server"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Mohon otorisasi saya sehingga saya dapat menambahkan anda ke daftar teman "
+"saya."
+
+msgid "No reason given."
+msgstr "Tidak diberikan alasan."
+
+msgid "Authorization Denied Message:"
+msgstr "Pesan Penolakan Otorisasi:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Menerima respon HTTP tidak terduga dari server."
@@ -7138,6 +7155,25 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "Kesalahan dalam memohon token login"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Terdapat kesalahan dalam menerima pesan ini.  Teman yang anda ajak bicara "
+"kemungkinan menggunakan pengkodean berbeda dari harapan. Apabila anda tahu "
+"pengkodean apa yang digunakan, anda dapat menjabarkannya dalam pilihan akun "
+"lanjutan untuk akun AIM/ICQ anda.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Terdapat kesalahan dalam menerima pesan ini.  Mungkin anda dan %s memiliki "
+"pengkodean berbeda terpilih, atau %s memiliki klien dengan bug.)"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7372,96 +7408,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "File %s adalah %s, yang lebih besar dari ukuran maksimal dari %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Terdapat kesalahan dalam menerima pesan ini.  Teman yang anda ajak bicara "
-"kemungkinan menggunakan pengkodean berbeda dari harapan. Apabila anda tahu "
-"pengkodean apa yang digunakan, anda dapat menjabarkannya dalam pilihan akun "
-"lanjutan untuk akun AIM/ICQ anda.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Terdapat kesalahan dalam menerima pesan ini.  Mungkin anda dan %s memiliki "
-"pengkodean berbeda terpilih, atau %s memiliki klien dengan bug.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Ikon Teman"
-
-msgid "Voice"
-msgstr "Suara"
-
-msgid "AIM Direct IM"
-msgstr "PI Langsung AIM"
-
-msgid "Get File"
-msgstr "Dapatkan File"
-
-msgid "Games"
-msgstr "Permainan"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Tambahan-tambahan"
-
-msgid "Send Buddy List"
-msgstr "Kirim Daftar Teman"
-
-msgid "ICQ Direct Connect"
-msgstr "Sambungan Langsung ICQ"
-
-msgid "AP User"
-msgstr "Pengguna AP"
-
-msgid "ICQ RTF"
-msgstr "RTF ICQ"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "Relay Server ICQ"
-
-msgid "Old ICQ UTF8"
-msgstr "UTF8 ICQ Lama"
-
-msgid "Trillian Encryption"
-msgstr "Enkripsi Trillian"
-
-msgid "ICQ UTF8"
-msgstr "UTF8 ICQ"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Keamanan Diaktifkan"
-
-msgid "Video Chat"
-msgstr "Percakapan Video"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Video Langsung"
-
-msgid "Camera"
-msgstr "Kamera"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "Nama Layar"
-
 msgid "Free For Chat"
 msgstr "Bebas Untuk Percakapan"
 
@@ -7496,15 +7442,6 @@ msgstr "Jaringan"
 #, fuzzy
 msgid "At lunch"
 msgstr "Sedang Makan Siang"
-
-msgid "IP Address"
-msgstr "Alamat IP"
-
-msgid "Warning Level"
-msgstr "Tingkat Peringatan"
-
-msgid "Buddy Comment"
-msgstr "Komentar Teman"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7610,17 +7547,6 @@ msgstr "Kata sandi terkirim"
 
 msgid "Unable to initialize connection"
 msgstr "Tidak dapat menginisialisasi sambungan"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Mohon otorisasi saya sehingga saya dapat menambahkan anda ke daftar teman "
-"saya."
-
-msgid "No reason given."
-msgstr "Tidak diberikan alasan."
-
-msgid "Authorization Denied Message:"
-msgstr "Pesan Penolakan Otorisasi:"
 
 #, c-format
 msgid ""
@@ -7734,59 +7660,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Anda melewatkan %hu pesan dari %s karena alasan tidak jelas."
 msgstr[1] "Anda melewatkan %hu pesan-pesan dari %s karena alasan tidak jelas."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Informasi pengguna tidak tersedia: %s"
-
-msgid "Online Since"
-msgstr "Online Sejak"
-
-msgid "Member Since"
-msgstr "Anggota Sejak"
-
-msgid "Capabilities"
-msgstr "Kemampuan"
-
 msgid "Your AIM connection may be lost."
 msgstr "Sambungan AIM anda mungkin hilang."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Tidak dapat menampilkan pesan dari pengguna ini karena mengandung karakter "
-"tidak valid.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Anda telah diputuskan dari kamar percakapan %s."
-
-msgid "Mobile Phone"
-msgstr "Telepon Seluler"
-
-msgid "Personal Web Page"
-msgstr "Situs Web Pribadi"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Informasi Tambahan"
-
-msgid "Zip Code"
-msgstr "Kode Pos"
-
-msgid "Work Information"
-msgstr "Informasi Pekerjaan"
-
-msgid "Division"
-msgstr "Divisi"
-
-msgid "Position"
-msgstr "Posisi"
-
-msgid "Web Page"
-msgstr "Halaman Web"
 
 msgid "Pop-Up Message"
 msgstr "Pesan Popup"
@@ -8073,7 +7952,8 @@ msgstr "Pemformatan nama layar dapar hanya merubah kapitalisasi dan sepasi."
 msgid "Change Address To:"
 msgstr "Rubah Alamat Ke:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>anda tidak menunggu otorisasi</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8115,6 +7995,14 @@ msgstr "Konfigurasi Forwarding PI (URL)"
 msgid "Set Privacy Options..."
 msgstr "Tampilkan Pilihan Privasi..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Tampilkan Daftar Teman"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Daftar Undangan"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Konfirmasi Akun"
@@ -8130,9 +8018,6 @@ msgstr "Tampilkan Teman yang Menunggu Otorisasi"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Cari Teman berdasarkan Alamat Email..."
-
-msgid "Search for Buddy by Information"
-msgstr "Cari Teman berdasarkan Informasi"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8242,6 +8127,166 @@ msgstr "Antrian penuh"
 
 msgid "Not while on AOL"
 msgstr "Tidak sementara pada AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Ikon Teman"
+
+msgid "Voice"
+msgstr "Suara"
+
+msgid "AIM Direct IM"
+msgstr "PI Langsung AIM"
+
+msgid "Get File"
+msgstr "Dapatkan File"
+
+msgid "Games"
+msgstr "Permainan"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Tambahan-tambahan"
+
+msgid "Send Buddy List"
+msgstr "Kirim Daftar Teman"
+
+msgid "ICQ Direct Connect"
+msgstr "Sambungan Langsung ICQ"
+
+msgid "AP User"
+msgstr "Pengguna AP"
+
+msgid "ICQ RTF"
+msgstr "RTF ICQ"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "Relay Server ICQ"
+
+msgid "Old ICQ UTF8"
+msgstr "UTF8 ICQ Lama"
+
+msgid "Trillian Encryption"
+msgstr "Enkripsi Trillian"
+
+msgid "ICQ UTF8"
+msgstr "UTF8 ICQ"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Keamanan Diaktifkan"
+
+msgid "Video Chat"
+msgstr "Percakapan Video"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Video Langsung"
+
+msgid "Camera"
+msgstr "Kamera"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "Nama Layar"
+
+msgid "IP Address"
+msgstr "Alamat IP"
+
+msgid "Warning Level"
+msgstr "Tingkat Peringatan"
+
+msgid "Buddy Comment"
+msgstr "Komentar Teman"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Informasi pengguna tidak tersedia: %s"
+
+msgid "Mobile Phone"
+msgstr "Telepon Seluler"
+
+msgid "Personal Web Page"
+msgstr "Situs Web Pribadi"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Informasi Tambahan"
+
+msgid "Zip Code"
+msgstr "Kode Pos"
+
+msgid "Work Information"
+msgstr "Informasi Pekerjaan"
+
+msgid "Division"
+msgstr "Divisi"
+
+msgid "Position"
+msgstr "Posisi"
+
+msgid "Web Page"
+msgstr "Halaman Web"
+
+msgid "Online Since"
+msgstr "Online Sejak"
+
+msgid "Member Since"
+msgstr "Anggota Sejak"
+
+msgid "Capabilities"
+msgstr "Kemampuan"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Tampak Online"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Tampak Online"
+
+msgid "Appear Offline"
+msgstr "Tampak Offline"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Tampak Offline"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Anda telah ditendang oleh %s: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Anda dapat mengajukan ulang otorisasi dari teman-teman ini dengan klik kanan "
+"pada mereka dan memilih \"Re-request Authorisation.\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Tak Terlihat"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Daftar Undangan"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Aquarius"
@@ -8443,7 +8488,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "Memerlukan Otorisasi"
 
 #, fuzzy
@@ -10738,17 +10783,11 @@ msgstr "Keluar"
 msgid "Not on server list"
 msgstr "Tidak ada pada daftar server"
 
-msgid "Appear Online"
-msgstr "Tampak Online"
-
 msgid "Appear Permanently Offline"
 msgstr "Tampak Offline Secara Permanen"
 
 msgid "Presence"
 msgstr "Kehadiran"
-
-msgid "Appear Offline"
-msgstr "Tampak Offline"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Jangan Tampak Offline Secara Permanen"
@@ -11300,27 +11339,26 @@ msgid " (%s)"
 msgstr "%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "Pengguna terpisah telah menutup sambungan."
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "Sambungan Timeout"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "Sambungan ditolak"
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "Nama percakapan ini telah digunakan"
 
@@ -11469,6 +11507,10 @@ msgstr ""
 "\n"
 "Anda dapat kembali ke jendela ini untuk menambahkan, merubah, atau mengahpus "
 "akun-akun dari <b>Accounts->Tambahkan/Ubah</b> pada jendela Daftar Teman"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s ingin menambahkan %s pada daftar temannya%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11755,6 +11797,8 @@ msgstr "Kontak Alias"
 msgid "Edit User Mood"
 msgstr "Rubah Mood Pengguna"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Teman-teman"
@@ -12537,9 +12581,6 @@ msgstr "dukungan"
 msgid "webmaster"
 msgstr "pengembang & webmaster"
 
-msgid "Senior Contributor/QA"
-msgstr "Kontributor Senior/QA"
-
 msgid "win32 port"
 msgstr "port ke win32"
 
@@ -12564,6 +12605,9 @@ msgstr "Penulis Asli"
 
 msgid "lead developer"
 msgstr "pengembang utama"
+
+msgid "Senior Contributor/QA"
+msgstr "Kontributor Senior/QA"
 
 msgid "Afrikaans"
 msgstr "Bahasa Afrika"
@@ -13972,6 +14016,10 @@ msgid "_TURN server:"
 msgstr "Server ST_UN:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "_Namapengguna:"
 
@@ -13994,6 +14042,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "_Terima Standar"
@@ -14012,6 +14065,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Manual"
@@ -14584,7 +14645,7 @@ msgstr "tidak ada"
 msgid "Small"
 msgstr "Email"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15671,6 +15732,10 @@ msgstr "Perangkat"
 msgid "Voice/Video Settings"
 msgstr "Rubah Pengaturan"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Rubah Pengaturan"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15800,7 +15865,7 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15930,6 +15995,26 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Memerlukan SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Paksakan SSL lama (port 5223)"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Kunci SecurID yang dimasukkan tidak valid."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Tidak dapat menampilkan pesan dari pengguna ini karena mengandung "
+#~ "karakter tidak valid.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Cari Teman berdasarkan Informasi"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16519,9 +16604,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Sambugan tertutup (menulis)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Sambungan di-reset"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Kesalahan membaca dari soket: %s"
 
@@ -16769,7 +16851,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s tidak dapat dibuka untuk penulisan!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Transfer file gagal; sisi lainnya kemungkinan membatalkan."
 
 #~ msgid "Could not connect for transfer."
@@ -16791,9 +16873,6 @@ msgstr ""
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "Plugin Protokol TOC"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Iformasi untuk pengguna %s tidak tersedia"
 
 #~ msgid "%s Options"
 #~ msgstr "%s Pilihan-pilihan"

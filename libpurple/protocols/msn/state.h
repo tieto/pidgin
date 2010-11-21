@@ -58,13 +58,11 @@ const char *msn_away_get_text(MsnAwayType type);
 
 const char *msn_state_get_text(MsnAwayType state);
 
-void msn_set_psm(MsnSession *session);
+/* Get the CurrentMedia info from the XML node */
+char *msn_get_currentmedia(xmlnode *payloadNode);
 
-/* Get the CurrentMedia info from the XML string */
-char *msn_get_currentmedia(char *xml_str, gsize len);
-
-/*get the PSM info from the XML string*/
-char *msn_get_psm(char *xml_str, gsize len);
+/* Get the PSM info from the XML node */
+char *msn_get_psm(xmlnode *payloadNode);
 
 MsnAwayType msn_state_from_account(PurpleAccount *account);
 

@@ -27,7 +27,8 @@
 
 #include "buddy.h"
 #include "chat.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/google_roster.h"
 #include "presence.h"
 #include "roster.h"
 #include "iq.h"
@@ -76,11 +77,8 @@ static void roster_request_cb(JabberStream *js, const char *from,
 
 void jabber_roster_request(JabberStream *js)
 {
-	PurpleAccount *account;
 	JabberIq *iq;
 	xmlnode *query;
-
-	account = purple_connection_get_account(js->gc);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
 	query = xmlnode_get_child(iq->node, "query");

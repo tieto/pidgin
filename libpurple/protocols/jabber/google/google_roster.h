@@ -1,8 +1,4 @@
 /**
- * @file dialog.h Dialog functions
- *
- * purple
- *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,10 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_DIALOG_H
-#define MSN_DIALOG_H
 
-void msn_show_sync_issue(MsnSession *session, const char *passport,
-						 const char *group_name);
+#ifndef PURPLE_JABBER_GOOGLE_ROSTER_H_
+#define PURPLE_JABBER_GOOGLE_ROSTER_H_
 
-#endif /* MSN_DIALOG_H */
+#include "jabber.h"
+
+void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
+
+/* Returns FALSE if this should short-circuit processing of this roster item, or TRUE
+ * if this roster item should continue to be processed
+ */
+gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
+
+void jabber_google_roster_add_deny(JabberStream *js, const char *who);
+void jabber_google_roster_rem_deny(JabberStream *js, const char *who);
+
+
+#endif /* PURPLE_JABBER_GOOGLE_ROSTER_H_ */

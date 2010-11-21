@@ -21,7 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "cipher.h"
+#include "debug.h"
+
 #include "soap.h"
 #include "nexus.h"
 #include "notification.h"

@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-07 13:11-0400\n"
-"PO-Revision-Date: 2010-08-01 09:08+0100\n"
-"Last-Translator: Dingoe <translations@gvmelle.com>\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"PO-Revision-Date: 2010-10-10 10:55+0100\n"
+"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -534,7 +534,6 @@ msgstr "Verwijderen van het certificaat bevestigen."
 msgid "Certificate Manager"
 msgstr "Certificaatbeheer"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Computernaam"
 
@@ -804,7 +803,7 @@ msgstr "Stoppen"
 msgid "Waiting for transfer to begin"
 msgstr "Wacht op starten van overdracht"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Geannuleerd"
 
 msgid "Failed"
@@ -1700,8 +1699,12 @@ msgstr ""
 "Het certificaat is niet geldig. Controleer of uw computer's datum en tijd "
 "goed is ingesteld."
 
-msgid "The certificate has expired and should not be considered valid."
-msgstr "Het certificaat is verlopen en moet niet als geldig worden beschouwd."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
+msgstr ""
+"Het certificaat is verlopen en moet als ongeldig worden beschouwd. "
+"Controleer of uw computer's datum en tijd goed staan ingesteld."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -4769,11 +4772,17 @@ msgstr "XMPP-protocol plug-in"
 msgid "Domain"
 msgstr "Domein"
 
-msgid "Require SSL/TLS"
-msgstr "SSL/TLS Vereist"
+msgid "Require encryption"
+msgstr "Vereist encryptie"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Oude SSL (poort 5223) forceren"
+msgid "Use encryption if available"
+msgstr "Gebruik encryptie indien aanwezig"
+
+msgid "Use old-style SSL"
+msgstr "Gebruik de oude stijl SSL"
+
+msgid "Connection security"
+msgstr "Verbindingsveiligheid"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Tekstaanmelding over ongecodeerde datastroom toestaan"
@@ -6920,6 +6929,15 @@ msgstr "Serveradres"
 msgid "Server port"
 msgstr "Serverpoort"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Geef mij toestemming zodat ik u kan toevoegen aan mijn vriendenlijst."
+
+msgid "No reason given."
+msgstr "Geen reden gegeven."
+
+msgid "Authorization Denied Message:"
+msgstr "Tekst van weigeringsbericht:"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Onverwacht antwoord ontvangen van %s: %s"
@@ -6954,6 +6972,25 @@ msgstr "AOL laat niet toe uw schermnaam hier te waarmerken"
 #, c-format
 msgid "Error requesting %s"
 msgstr "Fout opvragen  %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Er is een fout opgetreden bij ontvangen van het bericht. De ander gebruikt "
+"waarschijnlijk een andere tekencodering dan verwacht. Als u weet welke "
+"tekencodering er gebruikt wordt dan kunt u dit instellen bij de geavanceerde "
+"instellingen van uw AIM/ICQ-account.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Er was een fout tijdens het ontvangen van het bericht. Of jij en %s hebben "
+"verschillende coderingmethoden ingesteld, of %s heeft een instabiele cliënt.)"
 
 msgid "Could not join chat room"
 msgstr "Kon chatruimte niet binnenkomen"
@@ -7168,99 +7205,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Bestand %s is %s, welke is groter dan de maximale grootte van %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Er is een fout opgetreden bij ontvangen van het bericht. De ander gebruikt "
-"waarschijnlijk een andere tekencodering dan verwacht. Als u weet welke "
-"tekencodering er gebruikt wordt dan kunt u dit instellen bij de geavanceerde "
-"instellingen van uw AIM/ICQ-account.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Er was een fout tijdens het ontvangen van het bericht. Of jij en %s hebben "
-"verschillende coderingmethoden ingesteld, of %s heeft een instabiele cliënt.)"
-
-# msgstr ""
-# "(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
-# "hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
-# "een chatprogramma met fouten.)"
-#. Label
-msgid "Buddy Icon"
-msgstr "pictogram"
-
-msgid "Voice"
-msgstr "Stem"
-
-msgid "AIM Direct IM"
-msgstr "AIM direct bericht"
-
-msgid "Get File"
-msgstr "Bestanden ophalen"
-
-msgid "Games"
-msgstr "Spelletjes"
-
-msgid "ICQ Xtraz"
-msgstr "ICQ Xtraz"
-
-msgid "Add-Ins"
-msgstr "Extra's"
-
-msgid "Send Buddy List"
-msgstr "Vriendenlijst verzenden"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ Directe verbinding"
-
-msgid "AP User"
-msgstr "AP-gebruiker"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ Server Relay"
-
-msgid "Old ICQ UTF8"
-msgstr "Oude ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian codering"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Beveiliging ingeschakeld"
-
-msgid "Video Chat"
-msgstr "Video-chat"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live Video"
-
-msgid "Camera"
-msgstr "Camera"
-
-msgid "Screen Sharing"
-msgstr "Gedeelde schermen"
-
 msgid "Free For Chat"
 msgstr "Vrij om te chatten"
 
@@ -7290,15 +7234,6 @@ msgstr "Op het werk"
 
 msgid "At lunch"
 msgstr "Aan 't Lunchen"
-
-msgid "IP Address"
-msgstr "IP-adres"
-
-msgid "Warning Level"
-msgstr "Waarschuwingsniveau"
-
-msgid "Buddy Comment"
-msgstr "Opmerking bij Vriend"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7398,15 +7333,6 @@ msgstr "Wachtwoord verzonden"
 
 msgid "Unable to initialize connection"
 msgstr "Kan verbinding niet initialiseren"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Geef mij toestemming zodat ik u kan toevoegen aan mijn vriendenlijst."
-
-msgid "No reason given."
-msgstr "Geen reden gegeven."
-
-msgid "Authorization Denied Message:"
-msgstr "Tekst van weigeringsbericht:"
 
 #, c-format
 msgid ""
@@ -7530,57 +7456,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "%hu bericht van %s is niet overgekomen om een onbekende reden."
 msgstr[1] "%hu berichten van %s zijn niet overgekomen om een onbekende reden."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Gebruikersinformatie niet beschikbaar: %s"
-
-msgid "Online Since"
-msgstr "Online sinds"
-
-msgid "Member Since"
-msgstr "Lid sinds"
-
-msgid "Capabilities"
-msgstr "Mogelijkheden"
-
 msgid "Your AIM connection may be lost."
 msgstr "Uw AIM-verbinding is misschien verbroken."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr "[kan bericht niet weergeven omdat deze ongeldige tekens bevat.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "De verbinding met chatruimte %s is verbroken"
-
-msgid "Mobile Phone"
-msgstr "Mobiel nummer"
-
-msgid "Personal Web Page"
-msgstr "Persoonlijke webpagina"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Extra informatie"
-
-msgid "Zip Code"
-msgstr "Postcode"
-
-msgid "Work Information"
-msgstr "Werkinformatie"
-
-msgid "Division"
-msgstr "Afdeling"
-
-msgid "Position"
-msgstr "Positie"
-
-msgid "Web Page"
-msgstr "Webpagina"
 
 msgid "Pop-Up Message"
 msgstr "Pop-up bericht"
@@ -7863,8 +7744,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Adres veranderen in: "
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr "<i>u wacht niet op toestemming</i>"
+msgid "you are not waiting for authorization"
+msgstr "u wacht niet op autorisatie"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "U wacht op toestemming van de volgende vrienden"
@@ -7902,6 +7783,14 @@ msgstr "IM-doorsturen configureren (web)"
 msgid "Set Privacy Options..."
 msgstr "Privacy-opties instellen..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Vriendenlijst _weergeven"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Uitnodigingslijst"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Account bevestigen"
@@ -7917,9 +7806,6 @@ msgstr "Vrienden weergeven die op toestemming wachten"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Vriend zoeken door middel van e-mail..."
-
-msgid "Search for Buddy by Information"
-msgstr "Vriend zoeken via informatie"
 
 msgid "Use clientLogin"
 msgstr "Gebruik clientLogin"
@@ -8029,6 +7915,169 @@ msgstr "Wachtrij vol"
 
 msgid "Not while on AOL"
 msgstr "Niet tijdens AOL"
+
+# msgstr ""
+# "(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
+# "hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
+# "een chatprogramma met fouten.)"
+#. Label
+msgid "Buddy Icon"
+msgstr "pictogram"
+
+msgid "Voice"
+msgstr "Stem"
+
+msgid "AIM Direct IM"
+msgstr "AIM direct bericht"
+
+msgid "Get File"
+msgstr "Bestanden ophalen"
+
+msgid "Games"
+msgstr "Spelletjes"
+
+msgid "ICQ Xtraz"
+msgstr "ICQ Xtraz"
+
+msgid "Add-Ins"
+msgstr "Extra's"
+
+msgid "Send Buddy List"
+msgstr "Vriendenlijst verzenden"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ Directe verbinding"
+
+msgid "AP User"
+msgstr "AP-gebruiker"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ Server Relay"
+
+msgid "Old ICQ UTF8"
+msgstr "Oude ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian codering"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Beveiliging ingeschakeld"
+
+msgid "Video Chat"
+msgstr "Video-chat"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Live Video"
+
+msgid "Camera"
+msgstr "Camera"
+
+msgid "Screen Sharing"
+msgstr "Gedeelde schermen"
+
+msgid "IP Address"
+msgstr "IP-adres"
+
+msgid "Warning Level"
+msgstr "Waarschuwingsniveau"
+
+msgid "Buddy Comment"
+msgstr "Opmerking bij Vriend"
+
+#, fuzzy, c-format
+msgid "User information not available: %s"
+msgstr "Gebruik encryptie indien aanwezig"
+
+msgid "Mobile Phone"
+msgstr "Mobiel nummer"
+
+msgid "Personal Web Page"
+msgstr "Persoonlijke webpagina"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Extra informatie"
+
+msgid "Zip Code"
+msgstr "Postcode"
+
+msgid "Work Information"
+msgstr "Werkinformatie"
+
+msgid "Division"
+msgstr "Afdeling"
+
+msgid "Position"
+msgstr "Positie"
+
+msgid "Web Page"
+msgstr "Webpagina"
+
+msgid "Online Since"
+msgstr "Online sinds"
+
+msgid "Member Since"
+msgstr "Lid sinds"
+
+msgid "Capabilities"
+msgstr "Mogelijkheden"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Online weergeven"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Online weergeven"
+
+msgid "Appear Offline"
+msgstr "offline weergeven"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "offline weergeven"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "U bent uit deze MultiMX gegooid."
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"U kunt opnieuw toestemming aanvragen door met de rechter muisknop op de "
+"vrienden te klikken en de optie \"Opnieuw toestemming vragen.\" te kiezen."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Beschikbaar"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Uitnodigingslijst"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Waterman"
@@ -8209,8 +8258,8 @@ msgid "Your request was rejected."
 msgstr "De aanvraag werd afgewezen."
 
 #, c-format
-msgid "%u requires verification"
-msgstr "%u vereist identificatie"
+msgid "%u requires verification: %s"
+msgstr "%u vereist verificatie: %s"
 
 msgid "Add buddy question"
 msgstr "Vraag van Vriend toevoegen"
@@ -10438,17 +10487,11 @@ msgstr "Even weg"
 msgid "Not on server list"
 msgstr "Niet in de serverlijst"
 
-msgid "Appear Online"
-msgstr "Online weergeven"
-
 msgid "Appear Permanently Offline"
 msgstr "Altijd offline weergeven"
 
 msgid "Presence"
 msgstr "Aanwezigheid"
-
-msgid "Appear Offline"
-msgstr "offline weergeven"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Niet altijd offline weergeven"
@@ -10997,27 +11040,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Verbinding verbroken door andere software op uw computer."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "De andere gebruiker heeft de verbinding verbroken."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Verbinding verlopen."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Verbinding geweigerd."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adres al in gebruik."
 
@@ -11165,6 +11203,10 @@ msgstr ""
 "U kunt dit venster opnieuw gebruiken om accounts toe te voegen, te bewerken "
 "of te verwijderen uit <b>Accounts->Accountbeheer</b> in het Vriendennlijst "
 "venster."
+
+#, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s wil u toevoegen (%s) aan zijn of haar vriendenlijst%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11422,6 +11464,8 @@ msgstr "Bericht (optioneel)"
 msgid "Edit User Mood"
 msgstr "Stemming instellen"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Vrienden"
@@ -12178,9 +12222,6 @@ msgstr "ondersteuning"
 msgid "webmaster"
 msgstr "webmaster"
 
-msgid "Senior Contributor/QA"
-msgstr "Senior meewerker/QA"
-
 msgid "win32 port"
 msgstr "win32 versie"
 
@@ -12205,6 +12246,9 @@ msgstr "originele maker"
 
 msgid "lead developer"
 msgstr "hoofdontwikkelaar"
+
+msgid "Senior Contributor/QA"
+msgstr "Senior meewerker/QA"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -13555,6 +13599,9 @@ msgstr "Relay Server (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN server:"
 
+msgid "_UDP Port:"
+msgstr "_UDP Poort:"
+
 msgid "Use_rname:"
 msgstr "Gebruike_rsnaam:"
 
@@ -13576,6 +13623,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr "Google Chrome"
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Desktop standaard"
 
@@ -13593,6 +13645,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr "Chromium (chromium-browser)"
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Handmatig"
@@ -14128,7 +14188,7 @@ msgstr "geen"
 msgid "Small"
 msgstr "Klein"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr "Kleinere versies van de standaard emoticons"
 
 msgid "Response Probability:"
@@ -15184,6 +15244,9 @@ msgstr "A_pparaat"
 msgid "Voice/Video Settings"
 msgstr "Voice/Video Instellingen"
 
+msgid "Voice and Video Settings"
+msgstr "Voice en Video Instellingen"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15314,7 +15377,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Deze plug-in is handig voor het fouten oplossen van XMPP servers of cliënten."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15461,6 +15524,24 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "The certificate has expired and should not be considered valid."
+#~ msgstr ""
+#~ "Het certificaat is verlopen en moet niet als geldig worden beschouwd."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "SSL/TLS Vereist"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Oude SSL (poort 5223) forceren"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr "[kan bericht niet weergeven omdat deze ongeldige tekens bevat.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Vriend zoeken via informatie"
 
 #~ msgid "The name you entered is invalid."
 #~ msgstr "De naam die u invoerde is ongeldig."

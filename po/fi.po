@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2010-02-18 15:01+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -527,7 +527,6 @@ msgstr "Vahvista varmenteen poisto"
 msgid "Certificate Manager"
 msgstr "Varmennehallinta"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Isäntä"
 
@@ -802,7 +801,7 @@ msgstr "Pysäytä"
 msgid "Waiting for transfer to begin"
 msgstr "Odotetaan lähetyksen alkamista"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Peruutettu"
 
 msgid "Failed"
@@ -1693,7 +1692,10 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Varmenne on vanhentunut eikä sitä tulisi pitää kelvollisena."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4726,11 +4728,20 @@ msgstr "XMPP-yhteyskäytäntöliitännäinen"
 msgid "Domain"
 msgstr "Palvelin"
 
-msgid "Require SSL/TLS"
-msgstr "Vaadi SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Pyydä valtuutusta"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Käytä vanhaa (portti 5223) SSL:ää"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Käytä TLS:ää jos mahdollista"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Yhteys suljettu"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Salli salaamaton tunnistautuminen salaamattoman yhteyden yli"
@@ -5984,7 +5995,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Uudet salasanat eivät täsmää."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Syötetty SecurID-avain on virheellinen"
 
 msgid ""
@@ -6081,10 +6092,6 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Yhdistetään..."
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Syötetty SecurID-avain on virheellinen"
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6975,6 +6982,15 @@ msgstr "Palvelimen osoite"
 msgid "Server port"
 msgstr "Palvelimen portti"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Valtuuttaisitko minut, jotta voin lisätä sinut tuttaviini?"
+
+msgid "No reason given."
+msgstr "Syytä ei annettu."
+
+msgid "Authorization Denied Message:"
+msgstr "Valtuutuspyyntö evätty:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Odottamaton vastaus osoitteesta %s"
@@ -7008,6 +7024,26 @@ msgstr "AOL ei salli näyttönimen todentamista tätä kautta"
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "Virhe pyydettäessä %s: %s"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Viestiä vastaanotettaessa tapahtui virhe. Tuttava jonka kanssa puhut "
+"käyttää luultavasti eri merkistöä kuin mitä odotettiin. Jos tiedät mitä "
+"merkistöä hän käyttää, voit määritellä sen AIM/ICQ-käyttäjätilisi "
+"lisäasetuksissa.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Tämän viestin vastaanotossa oli virhe. Joko sinulla tai käyttäjällä %s on "
+"eri merkistöasetukset käytössä, tai hänellä (%s) on virheellinen "
+"asiakasohjelma.)"
 
 msgid "Could not join chat room"
 msgstr "Keskusteluhuoneeseen ei voi liittyä"
@@ -7244,96 +7280,6 @@ msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "Tiedosto %s on kooltaan %s, mikä on enemmän kuin suurin sallittu koko %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Viestiä vastaanotettaessa tapahtui virhe. Tuttava jonka kanssa puhut "
-"käyttää luultavasti eri merkistöä kuin mitä odotettiin. Jos tiedät mitä "
-"merkistöä hän käyttää, voit määritellä sen AIM/ICQ-käyttäjätilisi "
-"lisäasetuksissa.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Tämän viestin vastaanotossa oli virhe. Joko sinulla tai käyttäjällä %s on "
-"eri merkistöasetukset käytössä, tai hänellä (%s) on virheellinen "
-"asiakasohjelma.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Tuttavakuvake"
-
-msgid "Voice"
-msgstr "Ääni"
-
-msgid "AIM Direct IM"
-msgstr "AIM:n suora pikaviesti"
-
-msgid "Get File"
-msgstr "Vastaanota tiedosto"
-
-msgid "Games"
-msgstr "Pelit"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Lisäykset"
-
-msgid "Send Buddy List"
-msgstr "Lähetä tuttavat"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ-suorayhteys"
-
-msgid "AP User"
-msgstr "AP-käyttäjä"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilistinen"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ-palvelimen välitys"
-
-msgid "Old ICQ UTF8"
-msgstr "Vanha ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trillian-salaus"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Turvatoimet käytössä"
-
-msgid "Video Chat"
-msgstr "Videokeskustelu"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Live-video"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Näytön jakaminen"
-
 msgid "Free For Chat"
 msgstr "Vapaana keskusteluun"
 
@@ -7368,15 +7314,6 @@ msgstr "Verkko"
 #, fuzzy
 msgid "At lunch"
 msgstr "Lounaalla"
-
-msgid "IP Address"
-msgstr "IP-osoite"
-
-msgid "Warning Level"
-msgstr "Varoitustaso"
-
-msgid "Buddy Comment"
-msgstr "Tuttavakommentti"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7475,15 +7412,6 @@ msgstr "Salasana lähetetty"
 
 msgid "Unable to initialize connection"
 msgstr "Yhteyden luominen epäonnistui"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Valtuuttaisitko minut, jotta voin lisätä sinut tuttaviini?"
-
-msgid "No reason given."
-msgstr "Syytä ei annettu."
-
-msgid "Authorization Denied Message:"
-msgstr "Valtuutuspyyntö evätty:"
 
 #, c-format
 msgid ""
@@ -7594,59 +7522,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 msgstr[1] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Käyttäjätiedot eivät ole saatavilla: %s"
-
-msgid "Online Since"
-msgstr "Kirjautunut"
-
-msgid "Member Since"
-msgstr "Rekisteröitynyt"
-
-msgid "Capabilities"
-msgstr "Kyvyt"
-
 msgid "Your AIM connection may be lost."
 msgstr "AIM-yhteytesi saattaa olla katkennut."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Viestiä tältä käyttäjältä ei voi näyttää koska se sisälsi epäkelpoja "
-"merkkejä.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Yhteytesi keskusteluhuoneeseen %s on katkennut."
-
-msgid "Mobile Phone"
-msgstr "Matkapuhelin"
-
-msgid "Personal Web Page"
-msgstr "Henkilökohtainen kotisivu"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Lisätiedot"
-
-msgid "Zip Code"
-msgstr "Postinumero"
-
-msgid "Work Information"
-msgstr "Työtiedot"
-
-msgid "Division"
-msgstr "Osasto"
-
-msgid "Position"
-msgstr "Asema"
-
-msgid "Web Page"
-msgstr "Kotisivu"
 
 msgid "Pop-Up Message"
 msgstr "Ponnahdusviesti"
@@ -7928,7 +7809,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Vaihda osoite:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>Et odota valtuutusta</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7967,6 +7849,14 @@ msgstr "Aseta pikaviestien edelleenlähetys (WWW)"
 msgid "Set Privacy Options..."
 msgstr "Aseta yksityisyysvalinnat..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Näytä _tuttavat"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Kutsulista"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Vahvista tili"
@@ -7982,9 +7872,6 @@ msgstr "Näytä tuttavat jotka odottavat valtuutusta"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Etsi tuttavaa sähköpostiosoitteen perusteella..."
-
-msgid "Search for Buddy by Information"
-msgstr "Etsi tuttavaa tietojen perusteella"
 
 msgid "Use clientLogin"
 msgstr "Käytä clientLoginia"
@@ -8095,6 +7982,165 @@ msgstr "Jono täynnä"
 
 msgid "Not while on AOL"
 msgstr "Ei kun AOL on käytössä"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Tuttavakuvake"
+
+msgid "Voice"
+msgstr "Ääni"
+
+msgid "AIM Direct IM"
+msgstr "AIM:n suora pikaviesti"
+
+msgid "Get File"
+msgstr "Vastaanota tiedosto"
+
+msgid "Games"
+msgstr "Pelit"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Lisäykset"
+
+msgid "Send Buddy List"
+msgstr "Lähetä tuttavat"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ-suorayhteys"
+
+msgid "AP User"
+msgstr "AP-käyttäjä"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilistinen"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ-palvelimen välitys"
+
+msgid "Old ICQ UTF8"
+msgstr "Vanha ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trillian-salaus"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Turvatoimet käytössä"
+
+msgid "Video Chat"
+msgstr "Videokeskustelu"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Live-video"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Näytön jakaminen"
+
+msgid "IP Address"
+msgstr "IP-osoite"
+
+msgid "Warning Level"
+msgstr "Varoitustaso"
+
+msgid "Buddy Comment"
+msgstr "Tuttavakommentti"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Käyttäjätiedot eivät ole saatavilla: %s"
+
+msgid "Mobile Phone"
+msgstr "Matkapuhelin"
+
+msgid "Personal Web Page"
+msgstr "Henkilökohtainen kotisivu"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Lisätiedot"
+
+msgid "Zip Code"
+msgstr "Postinumero"
+
+msgid "Work Information"
+msgstr "Työtiedot"
+
+msgid "Division"
+msgstr "Osasto"
+
+msgid "Position"
+msgstr "Asema"
+
+msgid "Web Page"
+msgstr "Kotisivu"
+
+msgid "Online Since"
+msgstr "Kirjautunut"
+
+msgid "Member Since"
+msgstr "Rekisteröitynyt"
+
+msgid "Capabilities"
+msgstr "Kyvyt"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Näytä linjoilla olevalta"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Näytä linjoilla olevalta"
+
+msgid "Appear Offline"
+msgstr "Näytä poissa linjoilta olevalta"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Näytä poissa linjoilta olevalta"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Sinut on potkaistu kanavalta: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Voit pyytää valtuutuksen uudelleen näiltä tuttavilta napsauttamalla oikeaa "
+"nappia heihin ja valitsemalla \"Pyydä valtuutus uudelleen\"."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Näkyvissä"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Kutsulista"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "vesimies"
@@ -8274,8 +8320,8 @@ msgstr "Pyyntösi hyväksyttiin."
 msgid "Your request was rejected."
 msgstr "Pyyntösi hylättiin."
 
-#, c-format
-msgid "%u requires verification"
+#, fuzzy, c-format
+msgid "%u requires verification: %s"
 msgstr "%u pyytää valtuutusta"
 
 msgid "Add buddy question"
@@ -10481,17 +10527,11 @@ msgstr "Piipahdan ulkona"
 msgid "Not on server list"
 msgstr "Ei palvelimen tuttavissa"
 
-msgid "Appear Online"
-msgstr "Näytä linjoilla olevalta"
-
 msgid "Appear Permanently Offline"
 msgstr "Näytä pysyvästi poissa linjoilta olevalta"
 
 msgid "Presence"
 msgstr "Läsnäolo"
-
-msgid "Appear Offline"
-msgstr "Näytä poissa linjoilta olevalta"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Älä näytä pysyvästi poissa linjoilta olevalta"
@@ -11039,27 +11079,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Yhteys keskeytyi tietokoneella olevan toisen ohjelman takia."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Etäkone on katkaissut yhteyden."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Ei yhteyttä määräajassa."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Yhteys torjuttu."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Osoite on jo käytössä."
 
@@ -11205,6 +11240,10 @@ msgstr ""
 "\n"
 "Voit palata tähän ikkunaan lisäämään, muokkaamaan tai poistamaan tilejä "
 "valitsemalla <b>Käyttäjätilit->Tilien hallinta</b> Tuttavat-ikkunassa."
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s haluaa lisätä käyttäjän %s tuttavaluetteloonsa%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11462,6 +11501,8 @@ msgstr "Lempinimi (valinnainen) "
 msgid "Edit User Mood"
 msgstr "Muuta käyttäjän mielialaa"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Tuttavat"
@@ -12213,9 +12254,6 @@ msgstr "tuki"
 msgid "webmaster"
 msgstr "verkkosivujen ylläpitäjä"
 
-msgid "Senior Contributor/QA"
-msgstr "Vanhempi osallistuja/laadunvarmistus"
-
 msgid "win32 port"
 msgstr "win32-käännös"
 
@@ -12240,6 +12278,9 @@ msgstr "alkuperäinen tekijä"
 
 msgid "lead developer"
 msgstr "pääkehittäjä"
+
+msgid "Senior Contributor/QA"
+msgstr "Vanhempi osallistuja/laadunvarmistus"
 
 msgid "Afrikaans"
 msgstr "afrikaans"
@@ -13581,6 +13622,10 @@ msgstr "Edelleenvälityspalvelin (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN-palvelin:"
 
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "UDP-portti"
+
 msgid "Use_rname:"
 msgstr "Käyttäjäni_mi:"
 
@@ -13602,6 +13647,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Työpöydän oletus"
 
@@ -13619,6 +13669,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Oma komento"
@@ -14159,7 +14217,8 @@ msgstr "ei mitään"
 msgid "Small"
 msgstr "Pienet"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Pienemmät versiot oletushymiöistä"
 
 msgid "Response Probability:"
@@ -15190,6 +15249,10 @@ msgstr "Lait_e"
 msgid "Voice/Video Settings"
 msgstr "Ääni- ja videoasetukset"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Ääni- ja videoasetukset"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15327,7 +15390,7 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15456,6 +15519,26 @@ msgstr "Vieraile Pidginin WWW-sivustolla"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Vaadi SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Käytä vanhaa (portti 5223) SSL:ää"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Syötetty SecurID-avain on virheellinen"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Viestiä tältä käyttäjältä ei voi näyttää koska se sisälsi epäkelpoja "
+#~ "merkkejä.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Etsi tuttavaa tietojen perusteella"
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "Varmenne ei ole vielä kelvollinen."
@@ -16053,9 +16136,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Yhteys suljettu (kirjoitus)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Yhteys suljettu"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Virhe luettaessa socketista: %s"
 
@@ -16262,7 +16342,7 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "%s:n avaaminen kirjoitusta varten epäonnistui!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Tiedostonsiirto epäonnistui. Toinen osapuoli luultavasti katkaisi siirron."
 
@@ -17444,9 +17524,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "TCP port"
 #~ msgstr "TCP-portti"
 
-#~ msgid "UDP port"
-#~ msgstr "UDP-portti"
-
 #~ msgid "Feature Calibration"
 #~ msgstr "Piirteiden tarkistus"
 
@@ -17459,7 +17536,7 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid "Your request to send file[%s] has been rejected by buddy[%d]"
 #~ msgstr "Pyyntösi lähettää tiedosto (%s) one evätty tuttavan (%d) toimesta"
 
-#~ msgid "The sending process of file[%s] has been canceled by buddy[%d]"
+#~ msgid "The sending process of file[%s] has been cancelled by buddy[%d]"
 #~ msgstr "Tiedoston (%s) lähetys on peruutettu tuttavan (%d) toimesta"
 
 #~ msgid "Blink tray icon for unread..."
@@ -17491,9 +17568,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgstr ""
 #~ "Palvelin vaatii TLS/SSL kirjautumiseen. Valitse \"Käytä TLS jos "
 #~ "mahdollista\" käyttäjätilit-valikosta."
-
-#~ msgid "Use TLS if available"
-#~ msgstr "Käytä TLS:ää jos mahdollista"
 
 #~ msgid "A"
 #~ msgstr "A"

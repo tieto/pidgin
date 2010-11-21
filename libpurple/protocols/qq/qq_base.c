@@ -386,15 +386,12 @@ static const guint8 login_53_68[16] = {
 /* process the login reply packet */
 guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 {
-	qq_data *qd;
 	guint8 ret = data[0];
 	gchar *msg, *msg_utf8;
 	gchar *error;
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR);
-
-	qd = (qq_data *) gc->proto_data;
 
 	switch (ret) {
 		case QQ_LOGIN_REPLY_OK:

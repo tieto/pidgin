@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0beta6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-03-14 13:08+0500\n"
 "Last-Translator: Kashif Masood <masudmails@yahoo.com>\n"
 "Language-Team: Pashto\n"
@@ -523,7 +523,6 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr ""
 
@@ -779,7 +778,7 @@ msgstr ""
 msgid "Waiting for transfer to begin"
 msgstr ""
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "فسخ شوه"
 
 msgid "Failed"
@@ -1685,7 +1684,9 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr ""
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4618,11 +4619,19 @@ msgstr "د امیسین پروتوکول نښلولی"
 msgid "Domain"
 msgstr "روماني"
 
-msgid "Require SSL/TLS"
+msgid "Require encryption"
 msgstr ""
 
-msgid "Force old (port 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "د %s د کاروونکی معلومات نشته"
+
+msgid "Use old-style SSL"
 msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "رابطه قطع شوه"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
@@ -5850,7 +5859,7 @@ msgstr ""
 msgid "The two PINs you entered do not match."
 msgstr ""
 
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr ""
 
 msgid ""
@@ -5952,9 +5961,6 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "رابطه"
-
-msgid "The Display Name you entered is invalid."
-msgstr ""
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -6825,6 +6831,15 @@ msgstr "خادم پته"
 msgid "Server port"
 msgstr ""
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+
+msgid "No reason given."
+msgstr ""
+
+msgid "Authorization Denied Message:"
+msgstr ""
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr ""
@@ -6855,6 +6870,19 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "پاتی دی"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -7090,89 +7118,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-
-#. Label
-msgid "Buddy Icon"
-msgstr "ملګری تمثال"
-
-msgid "Voice"
-msgstr ""
-
-msgid "AIM Direct IM"
-msgstr "أېم نیغ فوری زیری"
-
-msgid "Get File"
-msgstr ""
-
-msgid "Games"
-msgstr "لوبې"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr ""
-
-msgid "Send Buddy List"
-msgstr ""
-
-msgid "ICQ Direct Connect"
-msgstr ""
-
-msgid "AP User"
-msgstr ""
-
-msgid "ICQ RTF"
-msgstr "ايسیکیو ارټیف"
-
-msgid "Nihilist"
-msgstr ""
-
-msgid "ICQ Server Relay"
-msgstr ""
-
-msgid "Old ICQ UTF8"
-msgstr ""
-
-msgid "Trillian Encryption"
-msgstr ""
-
-msgid "ICQ UTF8"
-msgstr "ايسیکیو یوټیف٨"
-
-msgid "Hiptop"
-msgstr ""
-
-msgid "Security Enabled"
-msgstr ""
-
-msgid "Video Chat"
-msgstr ""
-
-msgid "iChat AV"
-msgstr ""
-
-msgid "Live Video"
-msgstr ""
-
-msgid "Camera"
-msgstr ""
-
-msgid "Screen Sharing"
-msgstr ""
-
 msgid "Free For Chat"
 msgstr ""
 
@@ -7205,15 +7150,6 @@ msgid "At work"
 msgstr "شبکه"
 
 msgid "At lunch"
-msgstr ""
-
-msgid "IP Address"
-msgstr ""
-
-msgid "Warning Level"
-msgstr ""
-
-msgid "Buddy Comment"
 msgstr ""
 
 #, fuzzy, c-format
@@ -7306,15 +7242,6 @@ msgid "Password sent"
 msgstr ""
 
 msgid "Unable to initialize connection"
-msgstr ""
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-
-msgid "No reason given."
-msgstr ""
-
-msgid "Authorization Denied Message:"
 msgstr ""
 
 #, c-format
@@ -7410,57 +7337,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "کاروونکی معلومات نشته: %s"
-
-msgid "Online Since"
-msgstr "په ليکه د"
-
-msgid "Member Since"
-msgstr ""
-
-msgid "Capabilities"
-msgstr ""
-
 msgid "Your AIM connection may be lost."
 msgstr "ښایی چه د تا د أېم رابطه به ورانه شي."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "تا د ګپ شپو کوټه %s له قطع شوی."
-
-msgid "Mobile Phone"
-msgstr "ګرځنده پون"
-
-msgid "Personal Web Page"
-msgstr "شخصي ویبپاڼه"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "اضافي معلومات"
-
-msgid "Zip Code"
-msgstr "زپ رمز"
-
-msgid "Work Information"
-msgstr "د کارکولو معلومات"
-
-msgid "Division"
-msgstr "تقسیم"
-
-msgid "Position"
-msgstr "مقام"
-
-msgid "Web Page"
-msgstr "ویبپاڼه"
 
 msgid "Pop-Up Message"
 msgstr ""
@@ -7705,8 +7587,9 @@ msgstr ""
 msgid "Change Address To:"
 msgstr ""
 
-msgid "<i>you are not waiting for authorization</i>"
-msgstr ""
+#, fuzzy
+msgid "you are not waiting for authorization"
+msgstr "هغه ملګری ښکاره که چه د ته اجازه په انتظار کښی دي"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr ""
@@ -7745,6 +7628,14 @@ msgstr "د فوری زیری مخته بیول (ارل)"
 msgid "Set Privacy Options..."
 msgstr "د پرده ټاکل..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "ملګري فهرست ښکاره که"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "ناڅرګند"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "شمېرل ثابت که"
@@ -7760,9 +7651,6 @@ msgstr "هغه ملګری ښکاره که چه د ته اجازه په انتظ�
 
 msgid "Search for Buddy by Email Address..."
 msgstr "د برېشنالیک په توګه د ملګری لټون..."
-
-msgid "Search for Buddy by Information"
-msgstr "د معلومات په توګه د ماګری لټون"
 
 msgid "Use clientLogin"
 msgstr ""
@@ -7864,6 +7752,163 @@ msgid "Queue full"
 msgstr ""
 
 msgid "Not while on AOL"
+msgstr ""
+
+#. Label
+msgid "Buddy Icon"
+msgstr "ملګری تمثال"
+
+msgid "Voice"
+msgstr ""
+
+msgid "AIM Direct IM"
+msgstr "أېم نیغ فوری زیری"
+
+msgid "Get File"
+msgstr ""
+
+msgid "Games"
+msgstr "لوبې"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr ""
+
+msgid "Send Buddy List"
+msgstr ""
+
+msgid "ICQ Direct Connect"
+msgstr ""
+
+msgid "AP User"
+msgstr ""
+
+msgid "ICQ RTF"
+msgstr "ايسیکیو ارټیف"
+
+msgid "Nihilist"
+msgstr ""
+
+msgid "ICQ Server Relay"
+msgstr ""
+
+msgid "Old ICQ UTF8"
+msgstr ""
+
+msgid "Trillian Encryption"
+msgstr ""
+
+msgid "ICQ UTF8"
+msgstr "ايسیکیو یوټیف٨"
+
+msgid "Hiptop"
+msgstr ""
+
+msgid "Security Enabled"
+msgstr ""
+
+msgid "Video Chat"
+msgstr ""
+
+msgid "iChat AV"
+msgstr ""
+
+msgid "Live Video"
+msgstr ""
+
+msgid "Camera"
+msgstr ""
+
+msgid "Screen Sharing"
+msgstr ""
+
+msgid "IP Address"
+msgstr ""
+
+msgid "Warning Level"
+msgstr ""
+
+msgid "Buddy Comment"
+msgstr ""
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "کاروونکی معلومات نشته: %s"
+
+msgid "Mobile Phone"
+msgstr "ګرځنده پون"
+
+msgid "Personal Web Page"
+msgstr "شخصي ویبپاڼه"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "اضافي معلومات"
+
+msgid "Zip Code"
+msgstr "زپ رمز"
+
+msgid "Work Information"
+msgstr "د کارکولو معلومات"
+
+msgid "Division"
+msgstr "تقسیم"
+
+msgid "Position"
+msgstr "مقام"
+
+msgid "Web Page"
+msgstr "ویبپاڼه"
+
+msgid "Online Since"
+msgstr "په ليکه د"
+
+msgid "Member Since"
+msgstr ""
+
+msgid "Capabilities"
+msgstr ""
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "ځان په لیکه ښکاره که"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "ځان په لیکه ښکاره که"
+
+msgid "Appear Offline"
+msgstr "ځان لیکه نه لیری ښکاره کول"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "ځان لیکه نه لیری ښکاره کول"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "تا د ګپ شپو کوټه %s له قطع شوی."
+
+#, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "ناڅرګند"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "ناڅرګند"
+
+msgid "These buddies will always see you as offline"
 msgstr ""
 
 msgid "Aquarius"
@@ -8064,7 +8109,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr ""
 
 #, fuzzy
@@ -10218,17 +10263,11 @@ msgstr "بهر تللی"
 msgid "Not on server list"
 msgstr "د خادم په فهرست کی نشته"
 
-msgid "Appear Online"
-msgstr "ځان په لیکه ښکاره که"
-
 msgid "Appear Permanently Offline"
 msgstr "ځان دایمی لیکه نه لیری ښکاره که"
 
 msgid "Presence"
 msgstr "موجودګي"
-
-msgid "Appear Offline"
-msgstr "ځان لیکه نه لیری ښکاره کول"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "ځان دایمی لیکه نه لیری ښکاره کول پریښوه"
@@ -10756,27 +10795,25 @@ msgid " (%s)"
 msgstr "‫%s (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, fuzzy, c-format
+#, fuzzy
 msgid "Remote host closed connection."
 msgstr "خادم رابطه قطع کړه."
 
 #. 10060
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection timed out."
 msgstr "رابطه ناکامه شوه"
 
 #. 10061
-#, fuzzy, c-format
+#, fuzzy
 msgid "Connection refused."
 msgstr "رابطه ناکامه شوه."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr ""
 
@@ -10920,6 +10957,10 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
 
 #. Buddy List
 msgid "Background Color"
@@ -11194,6 +11235,8 @@ msgstr "اړیکه بل نوم"
 msgid "Edit User Mood"
 msgstr "د کاروونکی حالتونه"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "_ملګري"
@@ -11971,9 +12014,6 @@ msgstr ""
 msgid "webmaster"
 msgstr ""
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr ""
 
@@ -11997,6 +12037,9 @@ msgid "original author"
 msgstr ""
 
 msgid "lead developer"
+msgstr ""
+
+msgid "Senior Contributor/QA"
 msgstr ""
 
 msgid "Afrikaans"
@@ -13353,6 +13396,10 @@ msgid "_TURN server:"
 msgstr "د سټن خادم:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "پټ ټکی:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "کاروونکی نوم:"
 
@@ -13375,6 +13422,11 @@ msgstr "موزیله"
 msgid "Konqueror"
 msgstr "کونکرر"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 #, fuzzy
 msgid "Desktop Default"
 msgstr "اوبسه"
@@ -13393,6 +13445,14 @@ msgstr "فایربلد"
 
 msgid "Epiphany"
 msgstr "اپیفانی"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr ""
@@ -13942,7 +14002,7 @@ msgstr "(هیڅ نه)"
 msgid "Small"
 msgstr "برېښنالیک"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -14965,6 +15025,9 @@ msgstr "اله"
 msgid "Voice/Video Settings"
 msgstr ""
 
+msgid "Voice and Video Settings"
+msgstr ""
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15087,7 +15150,7 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15215,6 +15278,9 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "د معلومات په توګه د ماګری لټون"
+
 #, fuzzy
 #~ msgid "Nick Name"
 #~ msgstr "کمکی نوم"
@@ -15272,9 +15338,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "MSN Protocol Plugin"
 #~ msgstr "د أېم پروتوکول نښلولی"
-
-#~ msgid "%s has removed you from his or her buddy list."
-#~ msgstr "‫%s تا د خپل ماګری فهرست څخه خوځولی"
 
 #~ msgid "Debugging Information"
 #~ msgstr "ګونګوټې وژلو معلومات"
@@ -15443,9 +15506,6 @@ msgstr ""
 #~ msgid "Could not decrypt server reply"
 #~ msgstr "د رابطه خادم"
 
-#~ msgid "Connection lost"
-#~ msgstr "رابطه قطع شوه"
-
 #, fuzzy
 #~ msgid "Incorrect Password"
 #~ msgstr "اوسنی پټ ټکی"
@@ -15503,9 +15563,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Save As..."
 #~ msgstr "تمثال و ساته..."
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "د %s د کاروونکی معلومات نشته"
 
 #~ msgid "%s Options"
 #~ msgstr "د %s ټاکل"

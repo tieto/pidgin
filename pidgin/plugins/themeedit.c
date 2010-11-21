@@ -268,8 +268,14 @@ pidgin_blist_theme_edit(PurplePluginAction *unused)
 
 	theme = pidgin_blist_get_theme();
 	if (!theme) {
+		const char *author;
+#ifndef _WIN32
+		author = getlogin();
+#else
+		author = "user";
+#endif
 		theme = g_object_new(PIDGIN_TYPE_BLIST_THEME, "type", "blist",
-				"author", getlogin(),
+				"author", author,
 				NULL);
 		pidgin_blist_set_theme(theme);
 	}

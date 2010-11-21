@@ -24,6 +24,8 @@
 #ifndef MSN_HISTORY_H
 #define MSN_HISTORY_H
 
+#include "internal.h"
+
 typedef struct _MsnHistory MsnHistory;
 
 #include "transaction.h"

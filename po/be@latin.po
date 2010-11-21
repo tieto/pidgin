@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -529,7 +529,6 @@ msgstr "Paćvierdź vydaleńnie sertyfikatu"
 msgid "Certificate Manager"
 msgstr "Kiraŭnik sertyfikataŭ"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Nazva hostu"
 
@@ -801,7 +800,7 @@ msgstr "Spyni"
 msgid "Waiting for transfer to begin"
 msgstr "Čakańnie pačatku pieradačy"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Anulavanaja"
 
 msgid "Failed"
@@ -1695,7 +1694,9 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Łancuh sertyfikatu, padadzienaha dla %s, niapravilny."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4774,11 +4775,20 @@ msgstr "Plugin pratakołu XMPP"
 msgid "Domain"
 msgstr "Damen"
 
-msgid "Require SSL/TLS"
-msgstr "Vymahaj SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Vymahaj aŭtaryzacyi"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Prymusova ŭžyj stary (port 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Źviestki ab karystalniku %s niedastupnyja"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Pieraŭruchamleńie spałučeńnia"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Dazvol aŭtaryzacyju prostym tekstam praź niešyfravanyja kanały"
@@ -6069,7 +6079,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Novyja paroli adroźnivajucca."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Akreśleny kluč SecurID niapravilny."
 
 msgid ""
@@ -6174,10 +6184,6 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Spałučeńnie"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Akreśleny kluč SecurID niapravilny."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7070,6 +7076,16 @@ msgstr "Adras servera"
 msgid "Server port"
 msgstr "Port servera"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Kali łaska, aŭtaryzuj mianie, kab ja moh dadać ciabie ŭ svoj śpis siabroŭ."
+
+msgid "No reason given."
+msgstr "Pryčyna nie akreślenaja."
+
+msgid "Authorization Denied Message:"
+msgstr "Paviedamleńnie ab admovie aŭtaryzacyi:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Atrymany niečakany adkaz HTTP ad servera."
@@ -7102,6 +7118,25 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "Pamyłka zapytu znaku ŭvachodu"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Pry atrymańni hetaha paviedamleńnia adbyłasia pamyłka. Siabra, ź jakim ty "
+"razmaŭlaješ, mabyć, užyvaje inšaje, niečakanaje kadavańnie. Kali ty "
+"viedaješ, jakim kadavańniem jon karystajecca, možaš akreślić jaho ŭ "
+"pašyranych opcyjach dla kontu AIM/ICQ.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Pry atrymańni hetaha paviedamleńnia adbyłasia pamyłka. Albo ty j %s abrali "
+"roznyja kadavańni, albo %s karystajecca prablemnym klijentam.)"
 
 msgid "Could not join chat room"
 msgstr "Niemahčyma dałučycca da hutarki ŭ pakoi"
@@ -7337,96 +7372,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Fajł %s - heta %s, pamier katoraha pieravyšaje maksymum dla %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Pry atrymańni hetaha paviedamleńnia adbyłasia pamyłka. Siabra, ź jakim ty "
-"razmaŭlaješ, mabyć, užyvaje inšaje, niečakanaje kadavańnie. Kali ty "
-"viedaješ, jakim kadavańniem jon karystajecca, možaš akreślić jaho ŭ "
-"pašyranych opcyjach dla kontu AIM/ICQ.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Pry atrymańni hetaha paviedamleńnia adbyłasia pamyłka. Albo ty j %s abrali "
-"roznyja kadavańni, albo %s karystajecca prablemnym klijentam.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Ikona siabra"
-
-msgid "Voice"
-msgstr "Hołas"
-
-msgid "AIM Direct IM"
-msgstr "Prostaje spałučeńnie AIM"
-
-msgid "Get File"
-msgstr "Atrymaj fajł"
-
-msgid "Games"
-msgstr "Hulni"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Dadatki"
-
-msgid "Send Buddy List"
-msgstr "Dašli śpis siabroŭ"
-
-msgid "ICQ Direct Connect"
-msgstr "Prostaje spałučeńnie ICQ"
-
-msgid "AP User"
-msgstr "Karystalnik AP"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "Retranślacyja servera ICQ"
-
-msgid "Old ICQ UTF8"
-msgstr "Stary UTF8 dla ICQ"
-
-msgid "Trillian Encryption"
-msgstr "Šyfravańnie Trillian"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Biaśpieka ŭklučanaja"
-
-msgid "Video Chat"
-msgstr "Videahutarka"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Žyvoje videa"
-
-msgid "Camera"
-msgstr "Kamera"
-
-#, fuzzy
-msgid "Screen Sharing"
-msgstr "Nazva karystalnika"
-
 msgid "Free For Chat"
 msgstr "Volny dla hutarki"
 
@@ -7461,15 +7406,6 @@ msgstr "Sietka"
 #, fuzzy
 msgid "At lunch"
 msgstr "Adyjšoŭ pajeści"
-
-msgid "IP Address"
-msgstr "IP Adras"
-
-msgid "Warning Level"
-msgstr "Uzrovień aściarohi"
-
-msgid "Buddy Comment"
-msgstr "Kamentar siabra"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7571,16 +7507,6 @@ msgstr "Parol dasłany"
 
 msgid "Unable to initialize connection"
 msgstr "Niemahčyma inicyjavać spałučeńnie"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Kali łaska, aŭtaryzuj mianie, kab ja moh dadać ciabie ŭ svoj śpis siabroŭ."
-
-msgid "No reason given."
-msgstr "Pryčyna nie akreślenaja."
-
-msgid "Authorization Denied Message:"
-msgstr "Paviedamleńnie ab admovie aŭtaryzacyi:"
 
 #, c-format
 msgid ""
@@ -7699,59 +7625,12 @@ msgstr[0] "Ty zhubiŭ %hu paviedamleńnie ad %s ź nieviadomaj pryčyny."
 msgstr[1] "Ty zhubiŭ %hu paviedamleńni ad %s ź nieviadomaj pryčyny."
 msgstr[2] "Ty zhubiŭ %hu paviedamleńniaŭ ad %s ź nieviadomaj pryčyny."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Źviestki ab karystalniku niedastupnyja: %s"
-
-msgid "Online Since"
-msgstr "Spałučany ad"
-
-msgid "Member Since"
-msgstr "Udzielničaje ad"
-
-msgid "Capabilities"
-msgstr "Mahčymaści"
-
 msgid "Your AIM connection may be lost."
 msgstr "Tvajo spałučeńnie AIM moža zhubicca."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Niemahčyma pakazać paviedamleńnie ad hetaha karystalnika, bo jano ŭtrymvaje "
-"niapravilnyja znaki.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Ty adłučyŭsia ad pakoju hutarki %s."
-
-msgid "Mobile Phone"
-msgstr "Mabilny telefon"
-
-msgid "Personal Web Page"
-msgstr "Pryvatnaja sieciŭnaja staronka"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Dadatkovyja źviestki"
-
-msgid "Zip Code"
-msgstr "Zip kod"
-
-msgid "Work Information"
-msgstr "Pracoŭnyja źviestki"
-
-msgid "Division"
-msgstr "Padzieł"
-
-msgid "Position"
-msgstr "Pasada"
-
-msgid "Web Page"
-msgstr "Sieciŭnaja staronka"
 
 msgid "Pop-Up Message"
 msgstr "Vypłyŭnoje paviedamleńnie"
@@ -8046,7 +7925,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Źmiani adras na:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>ty nie čakaješ aŭtaryzacyi</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8085,6 +7965,14 @@ msgstr "Skanfihuruj pieranakiravańnie IM (u siecivie)"
 msgid "Set Privacy Options..."
 msgstr "Akreśl opcyi tajemnaści..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Pakažy śpis siabroŭ"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Śpis zaprašeńniaŭ"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Paćvierdź kont"
@@ -8100,9 +7988,6 @@ msgstr "Pakažy siabroŭ, što čakajuć aŭtaryzacyi"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Šukaj siabra pavodle adrasu email..."
-
-msgid "Search for Buddy by Information"
-msgstr "Šukaj siabra pavodle źviestak"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8211,6 +8096,166 @@ msgstr "Čarha zapoŭnienaja"
 
 msgid "Not while on AOL"
 msgstr "Nie, pakul na AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Ikona siabra"
+
+msgid "Voice"
+msgstr "Hołas"
+
+msgid "AIM Direct IM"
+msgstr "Prostaje spałučeńnie AIM"
+
+msgid "Get File"
+msgstr "Atrymaj fajł"
+
+msgid "Games"
+msgstr "Hulni"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Dadatki"
+
+msgid "Send Buddy List"
+msgstr "Dašli śpis siabroŭ"
+
+msgid "ICQ Direct Connect"
+msgstr "Prostaje spałučeńnie ICQ"
+
+msgid "AP User"
+msgstr "Karystalnik AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "Retranślacyja servera ICQ"
+
+msgid "Old ICQ UTF8"
+msgstr "Stary UTF8 dla ICQ"
+
+msgid "Trillian Encryption"
+msgstr "Šyfravańnie Trillian"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Biaśpieka ŭklučanaja"
+
+msgid "Video Chat"
+msgstr "Videahutarka"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Žyvoje videa"
+
+msgid "Camera"
+msgstr "Kamera"
+
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "Nazva karystalnika"
+
+msgid "IP Address"
+msgstr "IP Adras"
+
+msgid "Warning Level"
+msgstr "Uzrovień aściarohi"
+
+msgid "Buddy Comment"
+msgstr "Kamentar siabra"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Źviestki ab karystalniku niedastupnyja: %s"
+
+msgid "Mobile Phone"
+msgstr "Mabilny telefon"
+
+msgid "Personal Web Page"
+msgstr "Pryvatnaja sieciŭnaja staronka"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Dadatkovyja źviestki"
+
+msgid "Zip Code"
+msgstr "Zip kod"
+
+msgid "Work Information"
+msgstr "Pracoŭnyja źviestki"
+
+msgid "Division"
+msgstr "Padzieł"
+
+msgid "Position"
+msgstr "Pasada"
+
+msgid "Web Page"
+msgstr "Sieciŭnaja staronka"
+
+msgid "Online Since"
+msgstr "Spałučany ad"
+
+msgid "Member Since"
+msgstr "Udzielničaje ad"
+
+msgid "Capabilities"
+msgstr "Mahčymaści"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Źjaŭlajsia ŭ sietcy"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Źjaŭlajsia ŭ sietcy"
+
+msgid "Appear Offline"
+msgstr "Budź pa-za sietkaj"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Budź pa-za sietkaj"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Ciabie kiknuli z %s: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Ty možaš pierazapytać aŭtaryzacyi ŭ hetych siabroŭ, praz pravy klik i "
+"abraŭšy \"Pierazapytaj aŭtaryzacyi\"."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Niabačny"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Śpis zaprašeńniaŭ"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vadaliŭ"
@@ -8412,7 +8457,7 @@ msgid "Your request was rejected."
 msgstr ""
 
 #, fuzzy, c-format
-msgid "%u requires verification"
+msgid "%u requires verification: %s"
 msgstr "Vymahaj aŭtaryzacyi"
 
 #, fuzzy
@@ -10704,17 +10749,11 @@ msgstr "Hulaju"
 msgid "Not on server list"
 msgstr "Niama ŭ śpisie z servera"
 
-msgid "Appear Online"
-msgstr "Źjaŭlajsia ŭ sietcy"
-
 msgid "Appear Permanently Offline"
 msgstr "Budź stała pa-za sietkaj"
 
 msgid "Presence"
 msgstr "Prysutnaść"
-
-msgid "Appear Offline"
-msgstr "Budź pa-za sietkaj"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Nia budź stała pa-za sietkaj"
@@ -11278,27 +11317,23 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Spałučeńnie pierabitaje inšaj prahramaj z tvajho kamputara."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Addaleny kamputar začyniŭ spałučeńnie."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Termin čakańnia spałučeńnia skončyŭsia."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Admoŭlenaje spałučeńnie."
 
 #. 10048
-#, fuzzy, c-format
+#, fuzzy
 msgid "Address already in use."
 msgstr "Hetaja nazva hutarki ŭžo zaniataja"
 
@@ -11447,6 +11482,10 @@ msgstr ""
 "\n"
 "Ty zmožaš viarnucca da hetaha vakna, kab dadać, adredahavać albo vydalić "
 "konty praz <b>Konty->Dadaj/Redahuj</b> u vaknie Śpisu siabroŭ"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s choča dadać %s u svoj śpis siabroŭ%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11724,6 +11763,8 @@ msgstr "Alias (nieabaviazkovy)"
 msgid "Edit User Mood"
 msgstr "Redahuj nastroj karystalnika"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Siabry"
@@ -12498,9 +12539,6 @@ msgstr "padtrymka"
 msgid "webmaster"
 msgstr "raspracoŭščyk i webmajstar"
 
-msgid "Senior Contributor/QA"
-msgstr "Važki ŭdzielnik/QA"
-
 msgid "win32 port"
 msgstr "port na win32"
 
@@ -12525,6 +12563,9 @@ msgstr "pieršy aŭtar"
 
 msgid "lead developer"
 msgstr "hałoŭny raspracoŭščyk"
+
+msgid "Senior Contributor/QA"
+msgstr "Važki ŭdzielnik/QA"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -13920,6 +13961,10 @@ msgid "_TURN server:"
 msgstr "ST_UN server:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "Nazva karystalnika:"
 
@@ -13942,6 +13987,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Zmoŭčany ŭ asiarodździ"
 
@@ -13959,6 +14009,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Samastojna"
@@ -14527,7 +14585,7 @@ msgstr "niama"
 msgid "Small"
 msgstr "Email"
 
-msgid "Smaller versions of the default smilies"
+msgid "Smaller versions of the default smileys"
 msgstr ""
 
 msgid "Response Probability:"
@@ -15607,6 +15665,10 @@ msgstr "Pryłada"
 msgid "Voice/Video Settings"
 msgstr "Redahuj nałady"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Redahuj nałady"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15736,7 +15798,7 @@ msgstr "Dasyłaj i atrymvaj suvoryja strofy XMPP."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Hety plugin užyvajecca dziela debugavańnia serveraŭ i klijentaŭ XMPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15866,6 +15928,26 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Vymahaj SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Prymusova ŭžyj stary (port 5223) SSL"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Akreśleny kluč SecurID niapravilny."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Niemahčyma pakazać paviedamleńnie ad hetaha karystalnika, bo jano "
+#~ "ŭtrymvaje niapravilnyja znaki.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Šukaj siabra pavodle źviestak"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16450,9 +16532,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Spałučeńnie začynienaje (zapis)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Pieraŭruchamleńie spałučeńnia"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Pamyłka čytańnia z sokietu: %s"
 
@@ -16704,7 +16783,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Niemahčyma adčynić %s dziela zapisu!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Pamyłka pieradačy fajłu; aperacyja, mabyć, anulavanaja z taho boku."
 
 #~ msgid "Could not connect for transfer."
@@ -16727,9 +16806,6 @@ msgstr ""
 
 #~ msgid "TOC Protocol Plugin"
 #~ msgstr "Plugin pratakołu TOC"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Źviestki ab karystalniku %s niedastupnyja"
 
 #~ msgid "%s Options"
 #~ msgstr "Opcyi %s"

@@ -61,7 +61,6 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	} else if (!g_ascii_strcasecmp(extracted_encoding, "unicode-2-0")) {
 		glib_encoding = "UTF-16BE";
 	} else if (g_ascii_strcasecmp(extracted_encoding, "utf-8")) {
-		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", attempting to convert to UTF-8 anyway\n", extracted_encoding);
 		glib_encoding = extracted_encoding;
 	}
 

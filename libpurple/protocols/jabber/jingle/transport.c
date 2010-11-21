@@ -108,10 +108,7 @@ jingle_transport_finalize (GObject *transport)
 static void
 jingle_transport_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	JingleTransport *transport;
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
-
-	transport = JINGLE_TRANSPORT(object);
 
 	switch (prop_id) {
 		default:	
@@ -123,10 +120,7 @@ jingle_transport_set_property (GObject *object, guint prop_id, const GValue *val
 static void
 jingle_transport_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-	JingleTransport *transport;
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
-	
-	transport = JINGLE_TRANSPORT(object);
 
 	switch (prop_id) {
 		default:	

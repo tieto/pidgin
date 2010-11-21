@@ -1304,7 +1304,7 @@ void flap_connection_destroy_chat(OscarData *od, FlapConnection *conn);
 
 /* userinfo.c - displaying user information */
 
-void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo, gboolean strip_html_tags);
+void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo, gboolean use_html_status);
 void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo);
 void oscar_user_info_display_error(OscarData *od, guint16 error_reason, char *buddy);
 void oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info);

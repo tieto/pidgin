@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
+"POT-Creation-Date: 2010-10-21 00:11-0400\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -532,7 +532,6 @@ msgstr "Επιβεβαίωση διαγραφής πιστοποιητικού"
 msgid "Certificate Manager"
 msgstr "Οργάνωση πιστοποιητικών"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Όνομα υπολογιστή"
 
@@ -804,7 +803,7 @@ msgstr "Σταμάτημα"
 msgid "Waiting for transfer to begin"
 msgstr "Αναμονή έναρξης μεταφοράς"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Ακυρώθηκε"
 
 msgid "Failed"
@@ -1706,7 +1705,9 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4763,11 +4764,20 @@ msgstr "Πρόσθετο πρωτοκόλλου XMPP"
 msgid "Domain"
 msgstr ""
 
-msgid "Require SSL/TLS"
-msgstr "Απαιτείται SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Αίτηση έγκρισης"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Εξαναγκασμός παλιού (θύρα 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Πληροφορίες του χρήστη %s μη διαθέσιμες"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Επαναφορά σύνδεσης"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Επιτρέπεται η έγκριση σκέτου κειμένου μέσω μη κρυπτογραφημένων ροών"
@@ -6028,7 +6038,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Οι νέοι κωδικοί δεν ταιριάζουν."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Το SecurID που πληκτρολογήθηκε είναι λανθασμένο"
 
 msgid ""
@@ -6133,10 +6143,6 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Γίνεται σύνδεση"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Το SecurID που πληκτρολογήθηκε είναι λανθασμένο"
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7030,6 +7036,16 @@ msgstr "Διεύθυνση εξυπηρετητή"
 msgid "Server port"
 msgstr "Θύρα εξυπηρετητή"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr ""
+"Παρακαλώ δώστε μου έγκριση ώστε να μπορώ να σας προσθέσω στη λίστα φίλων μου."
+
+msgid "No reason given."
+msgstr "Δεν δόθηκε αιτία."
+
+msgid "Authorization Denied Message:"
+msgstr "Μήνυμα άρνησης έγκρισης:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Λήφθηκε αναπάντεχη ανταπόκριση από "
@@ -7063,6 +7079,26 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "Σφάλμα αίτησης "
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Υπήρξε ένα σφάλμα κατά τη λήψη αυτού του μηνύματος.  Ο φίλος με τον οποίο "
+"μιλάτε πιθανώς να χρησιμοποιεί διαφορετική κωδικοποίηση από την "
+"αναμενόμενη..  Αν γνωρίζετε τη κωδικοποίηση χρησιμοποιεί μπορείτε να το "
+"ορίσετε στις επιλογές λογαριασμού του λογαριασμού σας AIM/ICQ.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Υπήρξε ένα σφάλμα κατά τη λήψη αυτού του μηνύματος.  Είτε εσείς και ο %s "
+"έχετε επιλεγμένες διαφορετικές κωδικοποιήσεις, ή ο %s έχει ελαττωματικό "
+"μελάτη.)"
 
 msgid "Could not join chat room"
 msgstr "Δεν ήταν δυνατή η είσοδος στο δωμάτιο συζήτησης"
@@ -7299,96 +7335,6 @@ msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "Το αρχείο %s είναι %s, που είναι μεγαλύτερο από το μέγιστο μέγεθος των %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Υπήρξε ένα σφάλμα κατά τη λήψη αυτού του μηνύματος.  Ο φίλος με τον οποίο "
-"μιλάτε πιθανώς να χρησιμοποιεί διαφορετική κωδικοποίηση από την "
-"αναμενόμενη..  Αν γνωρίζετε τη κωδικοποίηση χρησιμοποιεί μπορείτε να το "
-"ορίσετε στις επιλογές λογαριασμού του λογαριασμού σας AIM/ICQ.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Υπήρξε ένα σφάλμα κατά τη λήψη αυτού του μηνύματος.  Είτε εσείς και ο %s "
-"έχετε επιλεγμένες διαφορετικές κωδικοποιήσεις, ή ο %s έχει ελαττωματικό "
-"μελάτη.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Εικονίδιο φίλου"
-
-msgid "Voice"
-msgstr "Φωνή"
-
-msgid "AIM Direct IM"
-msgstr "Απευθείας άμεσο μήνυμα AIM"
-
-msgid "Get File"
-msgstr "Λήψη αρχείου"
-
-msgid "Games"
-msgstr "Παιχνίδια"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Πρόσθετα"
-
-msgid "Send Buddy List"
-msgstr "Αποστολή λίστας φίλων"
-
-msgid "ICQ Direct Connect"
-msgstr "Απευθείας σύνδεση ICQ"
-
-msgid "AP User"
-msgstr "Χρήστης AP"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Νιχιλιστής"
-
-msgid "ICQ Server Relay"
-msgstr ""
-
-msgid "Old ICQ UTF8"
-msgstr "Παλιό ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Κρυπτογράφηση Trillian"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "Ασφάλεια ενεργοποιήθηκε"
-
-msgid "Video Chat"
-msgstr "Βιντεοσυνομιλία"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Ζωντανό βίντεο"
-
-msgid "Camera"
-msgstr "Κάμερα"
-
-msgid "Screen Sharing"
-msgstr ""
-
 msgid "Free For Chat"
 msgstr "Ελεύθερος για συζήτηση"
 
@@ -7423,15 +7369,6 @@ msgstr "Δίκτυο"
 #, fuzzy
 msgid "At lunch"
 msgstr "Είμαι για φαγητό"
-
-msgid "IP Address"
-msgstr "Διεύθυνση IP"
-
-msgid "Warning Level"
-msgstr "Επίπεδο προειδοποίησης"
-
-msgid "Buddy Comment"
-msgstr "Σχόλιο φίλου"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7534,16 +7471,6 @@ msgstr "Κωδικός στάλθηκε"
 
 msgid "Unable to initialize connection"
 msgstr "Αδυναμία δημιουργίας σύνδεσης"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Παρακαλώ δώστε μου έγκριση ώστε να μπορώ να σας προσθέσω στη λίστα φίλων μου."
-
-msgid "No reason given."
-msgstr "Δεν δόθηκε αιτία."
-
-msgid "Authorization Denied Message:"
-msgstr "Μήνυμα άρνησης έγκρισης:"
 
 #, c-format
 msgid ""
@@ -7662,59 +7589,12 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Χάσατε %hu μήνυμα από %s για άγνωστο λόγο."
 msgstr[1] "Χάσατε %hu μηνύματα από %s για άγνωστο λόγο."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Πληροφορίες χρήστη μη διαθέσιμες: %s"
-
-msgid "Online Since"
-msgstr "Συνδεδεμένος από"
-
-msgid "Member Since"
-msgstr "Μέλος από"
-
-msgid "Capabilities"
-msgstr "Δυνατότητες"
-
 msgid "Your AIM connection may be lost."
 msgstr "Η σύνδεσή σας AIM μπορεί να χαθεί."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Αδύνατη η εμφάνιση ενός μηνύματος από αυτόν το χρήστη επειδή περιείχε "
-"λανθασμένους χαρακτήρες.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Αποσυνδεθήκατε από το δωμάτιο συζήτησης %s."
-
-msgid "Mobile Phone"
-msgstr "Κινητό τηλέφωνο"
-
-msgid "Personal Web Page"
-msgstr "Προσωπική ιστοσελίδα"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Πρόσθετες πληροφορίες"
-
-msgid "Zip Code"
-msgstr "Ταχ. Κώδικας"
-
-msgid "Work Information"
-msgstr "Πληροφορίες εργασίας"
-
-msgid "Division"
-msgstr "Τμήμα"
-
-msgid "Position"
-msgstr "Θέση"
-
-msgid "Web Page"
-msgstr "Ιστοσελίδα"
 
 msgid "Pop-Up Message"
 msgstr "Αναδυόμενο μήνυμα"
@@ -8004,7 +7884,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Αλλαγή διεύθυνσης σε:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>δεν αναμένετε έγκριση</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8043,6 +7924,14 @@ msgstr "Ρύθμιση προώθησης άμεσων μηνυμάτων (δι�
 msgid "Set Privacy Options..."
 msgstr "Επιλογές εμπιστευτικότητας..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Εμφάνιση _λίστας φίλων"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Λίστα προσκλήσεων"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Επιβεβαίωση λογαριασμού"
@@ -8058,9 +7947,6 @@ msgstr "Εμφάνιση φίλων που περιμένουν έγκριση"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Αναζήτηση φίλου με email..."
-
-msgid "Search for Buddy by Information"
-msgstr "Αναζήτηση φίλου με πληροφορίες"
 
 msgid "Use clientLogin"
 msgstr ""
@@ -8170,6 +8056,165 @@ msgstr "Ουρά πλήρης"
 
 msgid "Not while on AOL"
 msgstr "Όχι όταν είστε στο AOL"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Εικονίδιο φίλου"
+
+msgid "Voice"
+msgstr "Φωνή"
+
+msgid "AIM Direct IM"
+msgstr "Απευθείας άμεσο μήνυμα AIM"
+
+msgid "Get File"
+msgstr "Λήψη αρχείου"
+
+msgid "Games"
+msgstr "Παιχνίδια"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Πρόσθετα"
+
+msgid "Send Buddy List"
+msgstr "Αποστολή λίστας φίλων"
+
+msgid "ICQ Direct Connect"
+msgstr "Απευθείας σύνδεση ICQ"
+
+msgid "AP User"
+msgstr "Χρήστης AP"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Νιχιλιστής"
+
+msgid "ICQ Server Relay"
+msgstr ""
+
+msgid "Old ICQ UTF8"
+msgstr "Παλιό ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Κρυπτογράφηση Trillian"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "Ασφάλεια ενεργοποιήθηκε"
+
+msgid "Video Chat"
+msgstr "Βιντεοσυνομιλία"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Ζωντανό βίντεο"
+
+msgid "Camera"
+msgstr "Κάμερα"
+
+msgid "Screen Sharing"
+msgstr ""
+
+msgid "IP Address"
+msgstr "Διεύθυνση IP"
+
+msgid "Warning Level"
+msgstr "Επίπεδο προειδοποίησης"
+
+msgid "Buddy Comment"
+msgstr "Σχόλιο φίλου"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Πληροφορίες χρήστη μη διαθέσιμες: %s"
+
+msgid "Mobile Phone"
+msgstr "Κινητό τηλέφωνο"
+
+msgid "Personal Web Page"
+msgstr "Προσωπική ιστοσελίδα"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Πρόσθετες πληροφορίες"
+
+msgid "Zip Code"
+msgstr "Ταχ. Κώδικας"
+
+msgid "Work Information"
+msgstr "Πληροφορίες εργασίας"
+
+msgid "Division"
+msgstr "Τμήμα"
+
+msgid "Position"
+msgstr "Θέση"
+
+msgid "Web Page"
+msgstr "Ιστοσελίδα"
+
+msgid "Online Since"
+msgstr "Συνδεδεμένος από"
+
+msgid "Member Since"
+msgstr "Μέλος από"
+
+msgid "Capabilities"
+msgstr "Δυνατότητες"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Εμφάνιση ως συνδεδεμένος"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Εμφάνιση ως συνδεδεμένος"
+
+msgid "Appear Offline"
+msgstr "Εμφάνιση ως αποσυνδεδεμένος"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Εμφάνιση ως αποσυνδεδεμένος"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Έχετε εκδιωχθεί: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Μπορείτε να ξαναζητήσετε έγκριση από αυτούς του φίλους κάνοντας δεξί κλικ "
+"επάνω τους και επιλέγοντας \"Αίτηση έγκρισης (ξανά).\""
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Ορατός"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Λίστα προσκλήσεων"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Υδροχόος"
@@ -8349,8 +8394,8 @@ msgstr ""
 msgid "Your request was rejected."
 msgstr ""
 
-#, c-format
-msgid "%u requires verification"
+#, fuzzy, c-format
+msgid "%u requires verification: %s"
 msgstr "%u απαιτεί έγκριση"
 
 msgid "Add buddy question"
@@ -10568,17 +10613,11 @@ msgstr "Έχω βγει έξω"
 msgid "Not on server list"
 msgstr "Όχι στη λίστα του εξυπηρετητή"
 
-msgid "Appear Online"
-msgstr "Εμφάνιση ως συνδεδεμένος"
-
 msgid "Appear Permanently Offline"
 msgstr "Εμφάνιση ως μόνιμα αποσυνδεδεμένος"
 
 msgid "Presence"
 msgstr "Παρουσία"
-
-msgid "Appear Offline"
-msgstr "Εμφάνιση ως αποσυνδεδεμένος"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Εμφάνιση ως όχι μόνιμα αποσυνδεδεμένος"
@@ -11118,27 +11157,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Η σύνδεση διακόπηκε από κάποιο άλλο λογισμικό του υπολογιστή σας."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Ο απομακρυσμένος υπολογιστής έκλεισε τη σύνδεση."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Τέλος χρονικού ορίου σύνδεσης."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Άρνηση σύνδεσης."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Η διεύθυνση ήδη χρησιμοποιείται."
 
@@ -11286,6 +11320,10 @@ msgstr ""
 "Μπορείτε να επιστρέψετε σε αυτό το παράθυρο για να προσθέσετε, "
 "επεξεργαστείτε ή να αφαιρέσετε λογαριασμούς μέσω του <b>Λογαριασμοί-"
 ">Διαχείριση λογαριασμών</b> στο παράθυρο της λίστας φίλων"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s θέλει να γίνει προσθήκη του %s στη λίστα φίλων του%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11546,6 +11584,8 @@ msgstr "Γνωστός ως (προαιρετικό)"
 msgid "Edit User Mood"
 msgstr "Επεξεργασία διάθεσης χρήστη"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Φίλοι"
@@ -12308,9 +12348,6 @@ msgstr "υποστήριξη"
 msgid "webmaster"
 msgstr "Διαχειριστής ιστοσελίδας"
 
-msgid "Senior Contributor/QA"
-msgstr ""
-
 msgid "win32 port"
 msgstr "Έκδοση win32"
 
@@ -12335,6 +12372,9 @@ msgstr "αρχικός συγγραφέας"
 
 msgid "lead developer"
 msgstr "κύριος υπεύθυνος ανάπτυξης"
+
+msgid "Senior Contributor/QA"
+msgstr ""
 
 msgid "Afrikaans"
 msgstr ""
@@ -13690,6 +13730,10 @@ msgid "_TURN server:"
 msgstr "Εξυπηρετητής STUN:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_Θύρα:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "Όνομα χρήστη:"
 
@@ -13712,6 +13756,11 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr ""
 
@@ -13729,6 +13778,14 @@ msgstr "Firebird"
 
 msgid "Epiphany"
 msgstr "Epiphany"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Με το χέρι"
@@ -14285,7 +14342,8 @@ msgstr "κανένα"
 msgid "Small"
 msgstr "Μικρά"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Μικρότερες εκδοχές των προεπιλεγμένων smilies"
 
 msgid "Response Probability:"
@@ -15342,6 +15400,10 @@ msgstr "Συσκευή"
 msgid "Voice/Video Settings"
 msgstr "Επεξεργασία ρυθμίσεων"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Επεξεργασία ρυθμίσεων"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15473,7 +15535,7 @@ msgstr ""
 "Αυτό το πρόσθετο είναι χρήσιμο για την αποσφαλμάτωση εξυπηρετητών και "
 "πελατών XMPP."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15601,6 +15663,26 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Απαιτείται SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Εξαναγκασμός παλιού (θύρα 5223) SSL"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Το SecurID που πληκτρολογήθηκε είναι λανθασμένο"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Αδύνατη η εμφάνιση ενός μηνύματος από αυτόν το χρήστη επειδή περιείχε "
+#~ "λανθασμένους χαρακτήρες.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Αναζήτηση φίλου με πληροφορίες"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16065,9 +16147,6 @@ msgstr ""
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Η σύνδεση έκλεισε (γίνεται εγγραφή)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Επαναφορά σύνδεσης"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Σφάλμα ανάγνωσης από τον υποδοχέα: %s"
 
@@ -16284,7 +16363,7 @@ msgstr ""
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Αδύνατο το άνοιγμα του %s για εγγραφή!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr ""
 #~ "Αποτυχία μεταφοράς αρχείου. Πιθανώς να ακυρώθηκε από την άλλη πλευρά."
 
@@ -16364,9 +16443,6 @@ msgstr ""
 
 #~ msgid "Failed to send IM."
 #~ msgstr "Αποτυχία αποστολής μηνύματος"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Πληροφορίες του χρήστη %s μη διαθέσιμες"
 
 #~ msgid "A group with the name already exists."
 #~ msgstr "Υπάρχει ήδη μία ομάδα με αυτό το όνομα."

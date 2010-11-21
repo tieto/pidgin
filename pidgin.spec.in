@@ -46,12 +46,14 @@ BuildRequires: gtk2-devel, libidn-devel
 %if "%{_vendor}" == "suse"
 # For SuSE:
 BuildRequires: gnutls-devel
+%define sslopts "--enable-gnutls=yes --enable-nss=no"
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
 Requires(pre): gconf2
 Requires(post): gconf2
 Requires(preun): gconf2
 %else
+%define sslopts "--enable-gnutls=no --enable-nss=yes"
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 Requires(pre): GConf2
@@ -230,6 +232,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
+                                    %{sslopts} \
                                     %{!?_with_vv:--disable-vv} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
@@ -471,6 +474,9 @@ fi
 %endif
 
 %changelog
+* Wed Sep 01 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Ensure predictable use of SSL libs
+
 * Wed Jun 02 2010 Stu Tomlinson <stu@nosnilmot.com>
 - add an option to build RPMs using --enable-trayicon-compat
   (--with trayiconcompat)

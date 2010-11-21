@@ -135,7 +135,7 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 			!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 		{
-			purple_debug_error("connection", "Can not connect to account %s without "
+			purple_debug_error("connection", "Cannot connect to account %s without "
 							 "a password.\n", purple_account_get_username(account));
 			return;
 		}
@@ -210,7 +210,7 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
 	{
-		purple_debug_error("connection", "Can not connect to account %s without "
+		purple_debug_error("connection", "Cannot connect to account %s without "
 						   "a password.\n", purple_account_get_username(account));
 		return;
 	}

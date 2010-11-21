@@ -1,8 +1,4 @@
 /**
- * @file sync.h MSN list synchronization functions
- *
- * purple
- *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -21,37 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef MSN_SYNC_H
-#define MSN_SYNC_H
 
-typedef struct _MsnSync MsnSync;
+#ifndef PURPLE_JABBER_GOOGLE_GMAIL_H_
+#define PURPLE_JABBER_GOOGLE_GMAIL_H_
 
-#include "session.h"
-#include "table.h"
-#include "user.h"
+#include "jabber.h"
 
-struct _MsnSync
-{
-	MsnSession *session;
-	MsnTable *cbs_table;
+void jabber_gmail_init(JabberStream *js);
+void jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
+                       const char *id, xmlnode *new_mail);
 
-	/*
-	 * TODO: What is the intended purpose of old_cbs_table?  Nothing
-	 *       sets it and it is only read in two places.
-	 */
-	MsnTable *old_cbs_table;
-
-	int num_users;
-	int total_users;
-	int num_groups;
-	int total_groups;
-	MsnUser *last_user;
-};
-
-void msn_sync_init(void);
-void msn_sync_end(void);
-
-MsnSync *msn_sync_new(MsnSession *session);
-void msn_sync_destroy(MsnSync *sync);
-
-#endif /* MSN_SYNC_H */
+#endif /* PURPLE_JABBER_GOOGLE_GMAIL_H_ */

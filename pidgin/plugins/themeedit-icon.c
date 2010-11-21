@@ -106,9 +106,16 @@ static PidginStatusIconTheme *
 create_icon_theme(GtkWidget *window)
 {
 	int s, i, j;
-	char *dirname = "/tmp";   /* FIXME */
-	PidginStatusIconTheme *theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME, "type", "status-icon",
-				"author", getlogin(),
+	const char *dirname = g_get_tmp_dir();
+	PidginStatusIconTheme *theme;
+	const char *author;
+#ifndef _WIN32
+	author = getlogin();
+#else
+	author = "user";
+#endif
+	theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME, "type", "status-icon",
+				"author", author,
 				"directory", dirname,
 				NULL);
 

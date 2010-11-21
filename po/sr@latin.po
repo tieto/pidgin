@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
+"POT-Creation-Date: 2010-10-21 00:12-0400\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -527,7 +527,6 @@ msgstr "Potvrda brisanja sertifikata"
 msgid "Certificate Manager"
 msgstr "Upravnik sertifikatima"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "Ime domaćina"
 
@@ -792,7 +791,7 @@ msgstr "Zaustavi"
 msgid "Waiting for transfer to begin"
 msgstr "Čekam da prenos počne"
 
-msgid "Canceled"
+msgid "Cancelled"
 msgstr "Otkaži"
 
 msgid "Failed"
@@ -1679,7 +1678,9 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "The certificate has expired and should not be considered valid."
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "Lanac sertifikata dao za %s nije ispravan."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -4751,11 +4752,20 @@ msgstr "Dodatak za Džaber protokol"
 msgid "Domain"
 msgstr "Domen"
 
-msgid "Require SSL/TLS"
-msgstr "Zahteva SSL/TLS"
+#, fuzzy
+msgid "Require encryption"
+msgstr "Zahtevaj ovlašćenje"
 
-msgid "Force old (port 5223) SSL"
-msgstr "Nametni stari (port 5223) SSL"
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Podaci o korisniku %s nedostupni"
+
+msgid "Use old-style SSL"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Ponavljanje veze"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Dozvoli neskrivene lozinke na nešifrovanim tokovima"
@@ -6032,7 +6042,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Nove lozinke se ne poklapaju."
 
 #, fuzzy
-msgid "The name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "Uneti SecurID ključ je neispravan."
 
 msgid ""
@@ -6137,10 +6147,6 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Uspostavljanje veze"
-
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Uneti SecurID ključ je neispravan."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -7034,6 +7040,15 @@ msgstr "Adresa servera"
 msgid "Server port"
 msgstr "Port servera"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Daj mi ovlašćenje kako bih mogao da te dodam u spisak drugara."
+
+msgid "No reason given."
+msgstr "Razlog nije naveden."
+
+msgid "Authorization Denied Message:"
+msgstr "Razlog odbijanja ovlašćenja:"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Dobijen je neočekivan odgovor HTTP servera."
@@ -7066,6 +7081,25 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Error requesting %s"
 msgstr "Greška u zahtevu tokena za prijavu"
+
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(Javila se greška u prijemu ove poruke. Drugar sa kim ste razgovarali "
+"verovatno koristi drugačije kodiranje od očekivanog. Ukoliko znate koje "
+"kodiranje on koristi, možete ga uneti u naprednim opcijama vašeg AIM/ICQ "
+"naloga.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(Došlo je do greške pri prijemu ove poruke. Ili Vi i %s koristite različito "
+"kodiranje karaktera, ili %s ima neku grešku u programu.)"
 
 msgid "Could not join chat room"
 msgstr "Ne mogu da se povežem na pričaonicu"
@@ -7299,95 +7333,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Datoteka %s je %s, što je veće od maksimalne veličine od %s."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(Javila se greška u prijemu ove poruke. Drugar sa kim ste razgovarali "
-"verovatno koristi drugačije kodiranje od očekivanog. Ukoliko znate koje "
-"kodiranje on koristi, možete ga uneti u naprednim opcijama vašeg AIM/ICQ "
-"naloga.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(Došlo je do greške pri prijemu ove poruke. Ili Vi i %s koristite različito "
-"kodiranje karaktera, ili %s ima neku grešku u programu.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "Sličica drugara"
-
-msgid "Voice"
-msgstr "Glas"
-
-msgid "AIM Direct IM"
-msgstr "Neposredna AIM poruka"
-
-msgid "Get File"
-msgstr "Pribavi datoteku"
-
-msgid "Games"
-msgstr "Igre"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "Dodaci"
-
-msgid "Send Buddy List"
-msgstr "Pošalji spisak drugara"
-
-msgid "ICQ Direct Connect"
-msgstr "Neposredna ICQ veza"
-
-msgid "AP User"
-msgstr "AP korisnik"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilista"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ preusmeravanje servera"
-
-msgid "Old ICQ UTF8"
-msgstr "Stari ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "Trilijan enkripcija"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Vrhkuka"
-
-msgid "Security Enabled"
-msgstr "Bezbednost uključena"
-
-msgid "Video Chat"
-msgstr "Video ćaskanje"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "Živa slika"
-
-msgid "Camera"
-msgstr "Kamera"
-
-msgid "Screen Sharing"
-msgstr "Deljenje ekrana"
-
 msgid "Free For Chat"
 msgstr "Dostupan za ćaskanje"
 
@@ -7422,16 +7367,6 @@ msgstr "Mreža"
 #, fuzzy
 msgid "At lunch"
 msgstr "Ručam"
-
-# Ovo je svrha ovog polja kod nas, pa neka ostane ovako
-msgid "IP Address"
-msgstr "IP adresa"
-
-msgid "Warning Level"
-msgstr "_Nivoi upozorenja"
-
-msgid "Buddy Comment"
-msgstr "Primedba za drugara:"
 
 #, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7533,15 +7468,6 @@ msgstr "Lozinka poslata"
 
 msgid "Unable to initialize connection"
 msgstr "Ne mogu da uspostavim vezu."
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Daj mi ovlašćenje kako bih mogao da te dodam u spisak drugara."
-
-msgid "No reason given."
-msgstr "Razlog nije naveden."
-
-msgid "Authorization Denied Message:"
-msgstr "Razlog odbijanja ovlašćenja:"
 
 #, c-format
 msgid ""
@@ -7667,58 +7593,12 @@ msgstr[1] "Propustili ste %hu poruke od %s iz nepoznatih razloga."
 msgstr[2] "Propustili ste %hu poruka od %s iz nepoznatih razloga."
 msgstr[3] "Propustili ste %hu poruku od %s iz nepoznatih razloga."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "Podaci o korisniku %s nedostupni:"
-
-msgid "Online Since"
-msgstr "Na vezi od"
-
-msgid "Member Since"
-msgstr "Član od"
-
-msgid "Capabilities"
-msgstr "Mogućnosti"
-
 msgid "Your AIM connection may be lost."
 msgstr "Možda AIM veza prekinuta."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[Nije moguće prikazati poruku jer sadrži znake koji se ne mogu prikazati.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Veza sa pričaonicom %s je prekinuta."
-
-msgid "Mobile Phone"
-msgstr "Mobilni telefon"
-
-msgid "Personal Web Page"
-msgstr "Lična veb stranica"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "Dodatni podaci"
-
-msgid "Zip Code"
-msgstr "Poštanski broj"
-
-msgid "Work Information"
-msgstr "Podaci o poslu"
-
-msgid "Division"
-msgstr "Odeljenje"
-
-msgid "Position"
-msgstr "Pozicija"
-
-msgid "Web Page"
-msgstr "Veb stranica"
 
 msgid "Pop-Up Message"
 msgstr "Iskačuća poruka"
@@ -8014,7 +7894,8 @@ msgstr ""
 msgid "Change Address To:"
 msgstr "Promena adrese u:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>ne čekate na ovlašćenje</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -8053,6 +7934,14 @@ msgstr "Podesi prosleđivanje brzih poruka (preko veba)"
 msgid "Set Privacy Options..."
 msgstr "Unesi opcije privatnosti..."
 
+#, fuzzy
+msgid "Show Visible List"
+msgstr "Prikaži spisak _drugara"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "Spisak pozvanih"
+
 #. AIM actions
 msgid "Confirm Account"
 msgstr "Potvrdite nalog"
@@ -8068,9 +7957,6 @@ msgstr "Prikaži drugare za koje se čeka ovlašćenje"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Pronađi drugara prema adresi e-pošte..."
-
-msgid "Search for Buddy by Information"
-msgstr "Pronađi drugara prema podacima"
 
 #, fuzzy
 msgid "Use clientLogin"
@@ -8180,6 +8066,166 @@ msgstr "Red je pun"
 
 msgid "Not while on AOL"
 msgstr "Ne dok je na AOL-u"
+
+#. Label
+msgid "Buddy Icon"
+msgstr "Sličica drugara"
+
+msgid "Voice"
+msgstr "Glas"
+
+msgid "AIM Direct IM"
+msgstr "Neposredna AIM poruka"
+
+msgid "Get File"
+msgstr "Pribavi datoteku"
+
+msgid "Games"
+msgstr "Igre"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "Dodaci"
+
+msgid "Send Buddy List"
+msgstr "Pošalji spisak drugara"
+
+msgid "ICQ Direct Connect"
+msgstr "Neposredna ICQ veza"
+
+msgid "AP User"
+msgstr "AP korisnik"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilista"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ preusmeravanje servera"
+
+msgid "Old ICQ UTF8"
+msgstr "Stari ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "Trilijan enkripcija"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Vrhkuka"
+
+msgid "Security Enabled"
+msgstr "Bezbednost uključena"
+
+msgid "Video Chat"
+msgstr "Video ćaskanje"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "Živa slika"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Screen Sharing"
+msgstr "Deljenje ekrana"
+
+# Ovo je svrha ovog polja kod nas, pa neka ostane ovako
+msgid "IP Address"
+msgstr "IP adresa"
+
+msgid "Warning Level"
+msgstr "_Nivoi upozorenja"
+
+msgid "Buddy Comment"
+msgstr "Primedba za drugara:"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "Podaci o korisniku %s nedostupni:"
+
+msgid "Mobile Phone"
+msgstr "Mobilni telefon"
+
+msgid "Personal Web Page"
+msgstr "Lična veb stranica"
+
+#. aim_userinfo_t
+#. strip_html_tags
+msgid "Additional Information"
+msgstr "Dodatni podaci"
+
+msgid "Zip Code"
+msgstr "Poštanski broj"
+
+msgid "Work Information"
+msgstr "Podaci o poslu"
+
+msgid "Division"
+msgstr "Odeljenje"
+
+msgid "Position"
+msgstr "Pozicija"
+
+msgid "Web Page"
+msgstr "Veb stranica"
+
+msgid "Online Since"
+msgstr "Na vezi od"
+
+msgid "Member Since"
+msgstr "Član od"
+
+msgid "Capabilities"
+msgstr "Mogućnosti"
+
+#. 4 separate strings are needed in order to ease translators' job
+msgid "Appear Online"
+msgstr "Pravi se povezan"
+
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "Pravi se povezan"
+
+msgid "Appear Offline"
+msgstr "Kao nepovezan"
+
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "Kao nepovezan"
+
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "Izbacio Vas je %s: (%s)"
+
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"Možete ponoviti zahtev za ovlašćenje od ovih drugara desnim klikom na njih i "
+"izborom „Ponovi zahtev za ovlašćenje“."
+
+#, fuzzy
+msgid "Visible List"
+msgstr "Vidljiv"
+
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
+
+#, fuzzy
+msgid "Invisible List"
+msgstr "Spisak pozvanih"
+
+msgid "These buddies will always see you as offline"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vodolija"
@@ -8366,8 +8412,8 @@ msgstr ""
 msgid "Your request was rejected."
 msgstr ""
 
-#, c-format
-msgid "%u requires verification"
+#, fuzzy, c-format
+msgid "%u requires verification: %s"
 msgstr "%u zahteva proveru"
 
 msgid "Add buddy question"
@@ -10586,17 +10632,11 @@ msgstr "Izašao sam na kratko"
 msgid "Not on server list"
 msgstr "Nije na spisku na serveru"
 
-msgid "Appear Online"
-msgstr "Pravi se povezan"
-
 msgid "Appear Permanently Offline"
 msgstr "Pravi se potpuno nepovezan"
 
 msgid "Presence"
 msgstr "Prisustvo"
-
-msgid "Appear Offline"
-msgstr "Kao nepovezan"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "Ne pravi se potpuno nepovezan"
@@ -11159,27 +11199,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Udaljeni domaćin za prekinuo vezu."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Vreme veze je isteklo."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Veza je odbijena."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "Adresa je već u upotebi."
 
@@ -11327,6 +11362,10 @@ msgstr ""
 "\n"
 "Možete se uvek vratiti u ovaj prozor, kako bi dodali, uredili ili uklonili "
 "naloge iz menija <b>Nalozi->Uredi naloge</b> u prozoru sa spiskom drugara."
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s želi da doda %s u svoj spisak drugara%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11602,6 +11641,8 @@ msgstr "Nadimak (neobavezno)"
 msgid "Edit User Mood"
 msgstr "Uredi korisničko raspoloženje"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Drugari"
@@ -12371,9 +12412,6 @@ msgstr "podrška"
 msgid "webmaster"
 msgstr "veb urednik"
 
-msgid "Senior Contributor/QA"
-msgstr "Stariji doprinosioci/QA"
-
 msgid "win32 port"
 msgstr "Windows izdanje"
 
@@ -12398,6 +12436,9 @@ msgstr "prvi autor"
 
 msgid "lead developer"
 msgstr "glavni programer"
+
+msgid "Senior Contributor/QA"
+msgstr "Stariji doprinosioci/QA"
 
 msgid "Afrikaans"
 msgstr "afrički"
@@ -13776,6 +13817,10 @@ msgid "_TURN server:"
 msgstr "S_TUN Server:"
 
 #, fuzzy
+msgid "_UDP Port:"
+msgstr "_Port:"
+
+#, fuzzy
 msgid "Use_rname:"
 msgstr "Korisničko ime:"
 
@@ -13798,6 +13843,11 @@ msgstr "Mozila"
 msgid "Konqueror"
 msgstr "Konkveror"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "Podrazumevano na sitemu"
 
@@ -13815,6 +13865,14 @@ msgstr "Žar-ptica"
 
 msgid "Epiphany"
 msgstr "Spoznaja"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "Ručna postavka"
@@ -14361,7 +14419,8 @@ msgstr "niko"
 msgid "Small"
 msgstr "Malo"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "Manje izdanje podrazumevanih smešaka"
 
 msgid "Response Probability:"
@@ -15429,6 +15488,10 @@ msgstr "Uređaj"
 msgid "Voice/Video Settings"
 msgstr "Izmeni postavke"
 
+#, fuzzy
+msgid "Voice and Video Settings"
+msgstr "Izmeni postavke"
+
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
@@ -15559,7 +15622,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Ovaj dodatak je koristan za uklanjanje grešaka Džaber servera ili programa"
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15689,6 +15752,25 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "Zahteva SSL/TLS"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "Nametni stari (port 5223) SSL"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Uneti SecurID ključ je neispravan."
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[Nije moguće prikazati poruku jer sadrži znake koji se ne mogu prikazati.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "Pronađi drugara prema podacima"
 
 #, fuzzy
 #~ msgid "The certificate is not valid yet."
@@ -16267,9 +16349,6 @@ msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 #~ msgid "Connection closed (writing)"
 #~ msgstr "Veza prekinuta (pišem)"
 
-#~ msgid "Connection reset"
-#~ msgstr "Ponavljanje veze"
-
 #~ msgid "Error reading from socket: %s"
 #~ msgstr "Greška pri čitanju iz utičnice: %s"
 
@@ -16471,7 +16550,7 @@ msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 #~ msgid "Could not open %s for writing!"
 #~ msgstr "Ne mogu da otvorim %s za upis!"
 
-#~ msgid "File transfer failed; other side probably canceled."
+#~ msgid "File transfer failed; other side probably cancelled."
 #~ msgstr "Neuspešan prenos datoteke; druga strana je verovatno otkazala."
 
 #~ msgid "Could not connect for transfer."
@@ -16558,9 +16637,6 @@ msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 
 #~ msgid "Failed to send IM."
 #~ msgstr "Neuspešno slanje brze poruke"
-
-#~ msgid "User information for %s unavailable"
-#~ msgstr "Podaci o korisniku %s nedostupni"
 
 #~ msgid "Error password"
 #~ msgstr "Pogrešna lozinka"

@@ -236,7 +236,8 @@ save_account_cb(AccountEditDialog *dialog)
 			}
 			else if (type == PURPLE_PREF_STRING_LIST)
 			{
-				/* TODO: */
+				gchar *value = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(entry));
+				purple_account_set_string(account, setting, value);
 			}
 			else
 			{
@@ -430,8 +431,26 @@ add_protocol_options(AccountEditDialog *dialog)
 
 			if (type == PURPLE_PREF_STRING_LIST)
 			{
-				/* TODO: Use a combobox */
-				/*       Don't forget to append the widget to prpl_entries */
+				GntWidget *combo = gnt_combo_box_new();
+				GList *opt_iter = purple_account_option_get_list(option);
+				const char *dv = purple_account_option_get_default_list_value(option);
+				const char *active = dv;
+
+				if (account)
+					active = purple_account_get_string(account,
+						purple_account_option_get_setting(option), dv);
+
+				gnt_box_add_widget(GNT_BOX(box), combo);
+				dialog->prpl_entries = g_list_append(dialog->prpl_entries, combo);
+
+				for ( ; opt_iter; opt_iter = opt_iter->next)
+				{
+					PurpleKeyValuePair *kvp = opt_iter->data;
+					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), kvp->value, kvp->key);
+
+					if (g_str_equal(kvp->value, active))
+						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), kvp->value);
+				}
 			}
 			else
 			{

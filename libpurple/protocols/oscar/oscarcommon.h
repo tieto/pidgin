@@ -32,10 +32,17 @@
 #include "notify.h"
 #include "status.h"
 
-#define OSCAR_DEFAULT_LOGIN_SERVER "login.messaging.aol.com"
+#define AIM_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define AIM_DEFAULT_SSL_LOGIN_SERVER "slogin.oscar.aol.com"
+#define ICQ_DEFAULT_LOGIN_SERVER "login.icq.com"
+#define ICQ_DEFAULT_SSL_LOGIN_SERVER "slogin.icq.com"
+
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
-#define OSCAR_DEFAULT_SSL_LOGIN_SERVER "slogin.oscar.aol.com"
-#define OSCAR_OLD_LOGIN_SERVER "login.oscar.aol.com"
+
+#define OSCAR_OPPORTUNISTIC_ENCRYPTION "opportunistic_encryption"
+#define OSCAR_REQUIRE_ENCRYPTION "require_encryption"
+#define OSCAR_NO_ENCRYPTION "no_encryption"
+
 #ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
 #else
@@ -46,8 +53,8 @@
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 #define OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS TRUE
-#define OSCAR_DEFAULT_USE_SSL TRUE
 #define OSCAR_DEFAULT_USE_CLIENTLOGIN TRUE
+#define OSCAR_DEFAULT_ENCRYPTION OSCAR_OPPORTUNISTIC_ENCRYPTION
 
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
@@ -96,4 +103,4 @@ PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
 void oscar_format_username(PurpleConnection *gc, const char *nick);
 GList *oscar_actions(PurplePlugin *plugin, gpointer context);
-void oscar_init(PurplePlugin *plugin);
+void oscar_init(PurplePlugin *plugin, gboolean is_icq);

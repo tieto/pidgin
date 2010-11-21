@@ -30,7 +30,7 @@
 #include "buddy.h"
 #include "chat.h"
 #include "data.h"
-#include "google.h"
+#include "google/google.h"
 #include "message.h"
 #include "xmlnode.h"
 #include "pep.h"

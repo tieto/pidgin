@@ -93,10 +93,25 @@ jabber_parser_element_start_libxml(void *user_data,
 			}
 		}
 
-		if (js->stream_id == NULL)
+		if (js->stream_id == NULL) {
+#if 0
+			/* This was underspecified in rfc3920 as only being a SHOULD, so
+			 * we cannot rely on it.  See #12331 and Oracle's server.
+			 */
 			purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 					_("XMPP stream missing ID"));
+#else
+			/* Instead, let's make up a placeholder stream ID, which we need
+			 * to do because we flag on it being NULL as a special case
+			 * in this parsing code.
+			 */
+			js->stream_id = g_strdup("");
+			purple_debug_info("jabber", "Server failed to specify a stream "
+			                  "ID (underspecified in rfc3920, but intended "
+			                  "to be a MUST; digest legacy auth may fail.\n"); 
+#endif
+		}
 	} else {
 
 		if(js->current)
