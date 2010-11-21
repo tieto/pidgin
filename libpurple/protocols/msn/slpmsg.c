@@ -326,6 +326,9 @@ char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
 
 	*ret_size = tmp - base;
 
+	g_free(header);
+	g_free(footer);
+
 	return base;
 }
 

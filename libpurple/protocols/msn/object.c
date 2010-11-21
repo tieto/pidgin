@@ -202,6 +202,8 @@ msn_object_destroy(MsnObject *obj)
 	g_free(obj->friendly);
 	g_free(obj->sha1d);
 	g_free(obj->sha1c);
+	g_free(obj->url);
+	g_free(obj->url1);
 
 	purple_imgstore_unref(obj->img);
 
