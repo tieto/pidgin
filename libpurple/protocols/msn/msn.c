@@ -132,7 +132,7 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	return TRUE;
 }
@@ -1393,7 +1393,7 @@ msn_send_emoticons(MsnSwitchBoard *swboard, GString *body)
 	msn_message_set_bin_data(msg, body->str, body->len);
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void msn_emoticon_destroy(MsnEmoticon *emoticon)
@@ -1582,7 +1582,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			purple_timeout_add(0, msn_send_me_im, imdata);
 		}
 
-		msn_message_destroy(msg);
+		msn_message_unref(msg);
 	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
 		char *friendname;
@@ -1646,7 +1646,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 
 	msn_switchboard_send_msg(swboard, msg, FALSE);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	return MSN_TYPING_SEND_TIMEOUT;
 }
@@ -2072,7 +2072,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	}
 
 	msn_switchboard_send_msg(swboard, msg, FALSE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	g_free(msgformat);
 	g_free(msgtext);

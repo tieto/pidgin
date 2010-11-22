@@ -225,7 +225,7 @@ send_clientcaps(MsnSwitchBoard *swboard)
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void

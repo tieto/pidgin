@@ -50,17 +50,15 @@ msn_message_new(MsnMsgType type)
 	return msg;
 }
 
-void
+/**
+ * Destroys a message.
+ *
+ * @param msg The message to destroy.
+ */
+static void
 msn_message_destroy(MsnMessage *msg)
 {
 	g_return_if_fail(msg != NULL);
-
-	if (msg->ref_count > 0)
-	{
-		msn_message_unref(msg);
-
-		return;
-	}
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "message destroy (%p)\n", msg);
@@ -1224,7 +1222,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			g_free(text);
 
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
-			msn_message_destroy(cancel);
+			msn_message_unref(cancel);
 		}
 
 	} else if (!strcmp(command, "CANCEL")) {

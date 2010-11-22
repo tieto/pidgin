@@ -332,7 +332,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -1210,7 +1210,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 					g_free(body_str);
 					g_free(body_enc);
-					msn_message_destroy(msg);
+					msn_message_unref(msg);
 					trans->data = NULL;
 				}
 			}

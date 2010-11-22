@@ -33,7 +33,7 @@ void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	}
 
 	msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 /** Called when a message times out. */
