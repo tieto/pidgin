@@ -28,12 +28,12 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	const char *tmp;
 	int body_len;
 
-	tmp = data;
-	part = msn_slpmsgpart_new(NULL, NULL);
-
 	if (data_len < sizeof(*header)) {
 		return NULL;
 	}
+
+	part = msn_slpmsgpart_new(NULL, NULL);
+	tmp = data;
 
 	/* Extract the binary SLP header */
 	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
