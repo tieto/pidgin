@@ -1,20 +1,48 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.6 (??/??/????):
+version 2.7.6 (11/21/2010):
+	General:
+	* Included Microsoft Internet Authority 2010 and Microsoft Secure Server
+	  Authority 2010 intermediate CA certificates to our bundle.  This fixes
+	  the "Unable to validate certificate" error for omega.contacts.msn.com.
+	  (#12906)
+
+	Pidgin:
+	* Avoid a use-after-free race condition in the media code (when
+	  there's an error reported by GStreamer). (#12806, Jakub Adam)
+
+	AIM and ICQ:
+	* SSL option has been changed to a tri-state menu with choices for
+	  "Don't Use Encryption", "Use Encryption if Available", and "Require
+	  Encryption".
+	* Fix some possible clientLogin URL issues introduced in version 2.7.5.
+	* Don't show a "<URL>: Ok" connection error when using clientLogin.
+	* Cleaned up some debug output for improved readability.
+
 	MSN:
 	* Added support for MSNP16, including Multiple Points of Presence (MPOP)
-	  which allows multiple simultaneous sign-ins.
+	  which allows multiple simultaneous sign-ins. (#8247)
 	* Added extended capabilities support (none implemented).
 	* Merged the work done on the Google SoC (major rewrite of SLP code)
 	* Reworked the data transfer architecture.
 	  (http://developer.pidgin.im/wiki/SlpArchitecture)
 	* Lots of little changes.
+	* Don't process zero-length DC messages. (#12660)
+	* Fixed a bunch of memory leaks.
+	* Prevent a use-after-free condition.
 
 	XMPP:
 	* Avoid a double-free in the Google Relay (V/V) code.
 	* Avoid double error message when failing a file transfer. (#12757)
 	* Password-related information is printed out for SASL authentication
 	  when the PURPLE_UNSAFE_DEBUG environment variable is set.
+	* Authentication mechanisms can now be added by UI's or other plugins
+	  with some work. This is outside the API/ABI rules! (#12715)
+	* Fixed a few printf("%s", NULL) crashes for broken OSes.
+
+	Windows-Specific Changes:
+	* Build the Pidgin Theme Editor plugin (finally).
+	* Untarring (for themes) now works for non-ASCII destination paths.
 
 version 2.7.5 (10/31/2010):
 	General:

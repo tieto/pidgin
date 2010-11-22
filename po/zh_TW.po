@@ -6,7 +6,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.650 2010/10/17 14:56:33 acli Exp $
+# $InternalId: zh_TW.po,v 1.655 2010/11/18 06:05:50 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -58,11 +58,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.4\n"
+"Project-Id-Version: Pidgin 2.7.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-17 10:55-0400\n"
-"Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
+"POT-Creation-Date: 2010-11-21 13:55-0500\n"
+"PO-Revision-Date: 2010-11-15 16:24-0500\n"
+"Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -373,10 +373,10 @@ msgid "Enter empty string to reset the name."
 msgstr "如果要重置名稱，請輸入空白字串。"
 
 msgid "Removing this contact will also remove all the buddies in the contact"
-msgstr "移除這組好友會同時移除裏面的所有好友"
+msgstr "移除這組好友會同時移除裡面的所有好友"
 
 msgid "Removing this group will also remove all the buddies in the group"
-msgstr "移除這個群組會同時移除裏面的所有好友"
+msgstr "移除這個群組會同時移除裡面的所有好友"
 
 #, c-format
 msgid "Are you sure you want to remove %s?"
@@ -728,14 +728,14 @@ msgid "Supported debug options are: plugins version"
 msgstr "支援的除錯選項有：plugins version"
 
 msgid "No such command (in this context)."
-msgstr "沒有這個指令（可在這裏使用）"
+msgstr "沒有這個指令（可在這裡使用）"
 
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
 "要獲得某一指令的說明，輸入「/help &lt;指令&gt;」即可。\n"
-"在這裏，可用的指令有：\n"
+"在這裡，可用的指令有：\n"
 
 #, c-format
 msgid ""
@@ -5034,16 +5034,6 @@ msgstr "已被踢出 (%s)"
 msgid "Unknown Error in presence"
 msgstr "不明的狀態資訊錯誤"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "帶內位元組流傳輸途中發生錯誤\n"
-
-# XXX 還是直譯「被關閉」？ 20090305 acli
-msgid "Transfer was closed."
-msgstr "傳輸已被中止。"
-
-msgid "Failed to open in-band bytestream"
-msgstr "無法開啟帶內位元組流"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "無法傳送檔案至 %s，因為對方不支援檔案傳輸"
@@ -5463,28 +5453,6 @@ msgstr "好友新增錯誤"
 msgid "The username specified does not exist."
 msgstr "您所輸入的帳號並不存在。"
 
-# XXX 暫譯
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "為 %s (%s) 的好友清單進行同步化途中出現問題"
-
-# XXX 暫譯
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s 在本地端的好友清單的「%s」群組裏，卻不在伺服器上；您要新增這個好友至伺服器"
-"的好友清單嗎？"
-
-# XXX 暫譯
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s 在本地端的好友清單，郤不在伺服器上；您要新增這個好友至伺服器的好友清單嗎？"
-
 msgid "Unable to parse message"
 msgstr "無法解析訊息"
 
@@ -5663,6 +5631,28 @@ msgstr "未知的錯誤代碼 %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN 錯誤：%s\n"
 
+# XXX 暫譯
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "為 %s (%s) 的好友清單進行同步化途中出現問題"
+
+# XXX 暫譯
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s 在本地端的好友清單的「%s」群組裡，卻不在伺服器上；您要新增這個好友至伺服器"
+"的好友清單嗎？"
+
+# XXX 暫譯
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s 在本地端的好友清單，郤不在伺服器上；您要新增這個好友至伺服器的好友清單嗎？"
+
 # XXX 暫譯，有待改進 - 20090226 acli
 # NOTE: (09時14分13秒 EST) wing: what does "Other Contacts" (msn/group.h:36) actually mean? ..
 # NOTE: (09時24分18秒 EST) khc: I'd probably just translate to 其他人, hehe
@@ -5679,7 +5669,7 @@ msgstr "非即時訊息的好友"
 
 #, c-format
 msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr "%s 對您眨眼，<a href='msn-wink://%s'>請點擊這裏播放這個動作</a>"
+msgstr "%s 對您眨眼，<a href='msn-wink://%s'>請點擊這裡播放這個動作</a>"
 
 #, c-format
 msgid "%s sent a wink, but it could not be saved"
@@ -5687,7 +5677,7 @@ msgstr "%s 對您眨眼，但無法給眨眼動作存檔"
 
 #, c-format
 msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr "%s 送來了一段語音片段，<a href='audio://%s'>請點擊這裏播放</a>"
+msgstr "%s 送來了一段語音片段，<a href='audio://%s'>請點擊這裡播放</a>"
 
 #, c-format
 msgid "%s sent a voice clip, but it could not be saved"
@@ -5718,14 +5708,26 @@ msgstr "您的新 MSN 暱稱太長。"
 msgid "Set friendly name for %s."
 msgstr "設定 %s 的暱稱。"
 
-msgid "Set your friendly name."
-msgstr "設定您的暱稱。"
+msgid "Set Friendly Name"
+msgstr "設定暱稱"
 
 # NOTE MSN的暱稱不像Yahoo；使用者可以輸入任何的新暱稱，
 # NOTE 即使和使用者的帳號毫無關係，似乎也是有效的
 # XXX 這看來是一個鈙述句，事實上是對使用者發出的請求／問題
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "別人在 MSN 查閱您的個人資料時顯示這個暱稱。"
+
+msgid "This Location"
+msgstr "目前所在位置"
+
+msgid "This is the name that identifies this location"
+msgstr "目前的所在位置將以這個名稱代表"
+
+msgid "Other Locations"
+msgstr "其他所在位置"
+
+msgid "You can sign out from other locations here"
+msgstr "您可在這裡登出其他所在位置"
 
 msgid "Set your home phone number."
 msgstr "設定您的住家電話號碼。"
@@ -5780,7 +5782,7 @@ msgid "Working"
 msgstr "正在工作"
 
 msgid "Has you"
-msgstr "你在他（她）的好友清單裏"
+msgstr "你在他（她）的好友清單裡"
 
 msgid "Home Phone Number"
 msgstr "住家電話號碼"
@@ -5812,6 +5814,9 @@ msgstr "職位"
 
 msgid "Set Friendly Name..."
 msgstr "設定暱稱..."
+
+msgid "View Locations..."
+msgstr "檢視所在位置..."
 
 msgid "Set Home Phone Number..."
 msgstr "設定住家電話號碼..."
@@ -6293,7 +6298,7 @@ msgid "Update your Profile"
 msgstr "更新個人資料"
 
 msgid "Here you can update your MXit profile"
-msgstr "您可以在這裏更新您在 MXit 的個人資料"
+msgstr "您可以在這裡更新您在 MXit 的個人資料"
 
 msgid "View Splash"
 msgstr "檢視啟動畫面"
@@ -7218,6 +7223,11 @@ msgstr ""
 "您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試。如果您依然繼續嘗試著連"
 "線，那麼您的等待時間將會更加的延長。"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr "您在帳號設定中指定了使用加密，但其中一個伺服器不支援加密功能。"
+
 # NOTE 單寫「要求 %s」好像有些怪 - acli 20090902
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -7231,7 +7241,7 @@ msgid ""
 msgstr "伺服器表示登入前必須完成圖片驗證，但這用戶端尚未支援圖片驗證。"
 
 msgid "AOL does not allow your screen name to authenticate here"
-msgstr "AOL 不允許您的帳號在這裏登入"
+msgstr "AOL 不允許您的帳號在這裡登入"
 
 # NOTE 單寫「要求 %s」好像有些怪 - acli 20090902
 #, c-format
@@ -7535,6 +7545,11 @@ msgid ""
 msgstr ""
 "無法以 %s 身份登入，因為這個帳號是無效的。帳號必須為有效電郵地址；或者以英文"
 "字母起始，並只含英文字母、數字及空白；或者只由數字組成。"
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr "您在帳號設定中指定了使用加密，但您的系統不支援加密功能。"
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8025,13 +8040,11 @@ msgstr "設定即時訊息的轉送 (透過網頁)"
 msgid "Set Privacy Options..."
 msgstr "設定隱私選項..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "公開"
+msgstr "顯示「報稱上線」清單"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "邀請清單"
+msgstr "顯示「報稱離線」清單"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -8048,6 +8061,9 @@ msgstr "顯示等待認證的好友"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "使用電子郵件地址搜尋好友..."
+
+msgid "Don't use encryption"
+msgstr "不使用加密"
 
 msgid "Use clientLogin"
 msgstr "使用 clientLogin"
@@ -8264,10 +8280,9 @@ msgstr "警告等級"
 msgid "Buddy Comment"
 msgstr "好友備註"
 
-#  NOTE Connection security 選項，指在伺服器支援的情況下使用 TLS, 如伺服器不支援 TLS 則以不加密的方式繼續進行連線
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
-msgstr "當伺服器支援時，使用加密功能"
+msgstr "找不到使用者資訊：%s"
 
 msgid "Mobile Phone"
 msgstr "行動電話"
@@ -8276,7 +8291,7 @@ msgid "Personal Web Page"
 msgstr "個人網頁"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "其他資訊"
 
@@ -8305,48 +8320,61 @@ msgstr "成為成員的時間"
 msgid "Capabilities"
 msgstr "相容性"
 
-#. 4 separate strings are needed in order to ease translators' job
+#  NOTE 這四個字串在 Oscar (ICQ) 的解釋在此：http://pidgin.im/pipermail/translators/2010-November/000554.html
+#  NOTE Oscar: 把好友新增到 Visible List 內
+#  NOTE Yahoo: 狀態為「隱身」時，對某指定的好友報稱上線
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "報稱上線"
 
-#, fuzzy
+#  NOTE 把好友從 Visible List 內移除
+#  NOTE 參閱 "Don't Appear Permanently Offline"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "報稱上線"
+msgstr "停止報稱上線"
 
-# NOTE 下次登入時不報稱離線，所以加「暫時」字眼
+#  NOTE Oscar: 把好友新增到 Invisible List 內
+#  NOTE Yahoo: 狀態為「隱身」時，對某指定的好友報稱離線
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
-msgstr "暫時報稱離線"
+msgstr "報稱離線"
 
-# NOTE 下次登入時不報稱離線，所以加「暫時」字眼
-#, fuzzy
+#  NOTE 把好友從 Invisible List 內移除
+#  NOTE 參閱 "Don't Appear Permanently Offline"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
-msgstr "暫時報稱離線"
+msgstr "停止報稱離線"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "您已經從MultiMX中被踢出。"
+msgstr "這清單內沒有好友"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"您可以重新要求這些好友的認證，只要在好友清單中以滑鼠右鍵點擊他們，然後選擇"
-"「要求重新認證」。"
+"把好友新增在這清單內，只要在好友清單中以滑鼠右鍵點擊他們，然後選擇「%s」"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "公開"
+msgstr "「報稱上線」清單"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "這些好友在您隱身時仍能看見您的上線狀態"
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "邀請清單"
+msgstr "「報稱離線」清單"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "長時間向這些好友隱身"
 
 msgid "Aquarius"
 msgstr "水秤座"
@@ -8424,7 +8452,7 @@ msgid "Other"
 msgstr "其他"
 
 msgid "Visible"
-msgstr "公開"
+msgstr "不隱身"
 
 # XXX 暫譯 - 20090226
 msgid "Friend Only"
@@ -10792,6 +10820,7 @@ msgid "Not on server list"
 msgstr "不在伺服器上的清單中"
 
 # NOTE Yahoo 官方譯「永遠顯示離線」，說白一點其實即是（針對某人）「長期隠身」
+#  NOTE 參閱 "Appear Offline"
 msgid "Appear Permanently Offline"
 msgstr "長期報稱離線"
 
@@ -10799,6 +10828,7 @@ msgid "Presence"
 msgstr "現狀"
 
 #  NOTE 這是清單內的一個指令
+#  NOTE 參閱 "Don't Appear Offline"
 msgid "Don't Appear Permanently Offline"
 msgstr "停止長期報稱離線"
 
@@ -12773,6 +12803,11 @@ msgstr "庫德文"
 msgid "Lao"
 msgstr "寮國文"
 
+#  NOTE 代碼 mai，印度的一種方言，維基百科譯「邁蒂利語」
+#  XXX 找不到正式的台灣譯文，參閱 http://zh.wikipedia.org/zh/迈蒂利语, http://tc.wangchao.net.cn/baike/detail_2071696.html
+msgid "Maithili"
+msgstr "邁蒂利文"
+
 #  NOTE「馬其頓文」是一種東歐語文，跟希臘的馬其頓並無關係
 msgid "Macedonian"
 msgstr "馬其頓文"
@@ -12951,7 +12986,7 @@ msgstr ""
 "如果希望獲得<font size=\"4\">其他 Pidgin 使用者提供的支援</font>，可電郵至<a "
 "href=\"mailto:support@pidgin.im\">support@pidgin.im</a>。<br/>這是個<b>公開的"
 "</b>郵件論壇！（<a href=\"http://pidgin.im/pipermail/support/\">論壇存檔請點"
-"擊這裏</a>）<br/>本論壇恕不為第三者開發的模組（包括通訊協定模組）提供任何支"
+"擊這裡</a>）<br/>本論壇恕不為第三者開發的模組（包括通訊協定模組）提供任何支"
 "援！<br/>發帖請以<b>英文</b>為主；以中文或其他語文發帖亦可，但收到的回覆未必"
 "有用。<br/>"
 
@@ -14685,7 +14720,7 @@ msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
 "in the contact.\n"
 msgstr ""
-"若果一個好友其實概括了好幾個好友帳號，通訊時便根據這裏\n"
+"若果一個好友其實概括了好幾個好友帳號，通訊時便根據這裡\n"
 "所給定的得分值計分，積分最多者為「優先」，成為當時實際\n"
 "使用的好友帳號。\n"
 
@@ -15962,6 +15997,19 @@ msgstr "瀏覽 Pidgin 官方網站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您沒有權限移除程式。"
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "帶內位元組流傳輸途中發生錯誤\n"
+
+# XXX 還是直譯「被關閉」？ 20090305 acli
+#~ msgid "Transfer was closed."
+#~ msgstr "傳輸已被中止。"
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "無法開啟帶內位元組流"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "設定您的暱稱。"
 
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "這張憑證已逾期，應視作無效。"
