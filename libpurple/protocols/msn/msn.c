@@ -528,6 +528,7 @@ msn_show_locations(PurplePluginAction *action)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
+	gboolean have_other_endpoints;
 	GSList *l;
 	MsnLocationData *data;
 
@@ -550,17 +551,35 @@ msn_show_locations(PurplePluginAction *action)
 
 	group = purple_request_field_group_new(_("Other Locations"));
 	purple_request_fields_add_group(fields, group);
-	field = purple_request_field_label_new("others-label", _("You can sign out from other locations here"));
-	purple_request_field_group_add_field(group, field);
 
+	have_other_endpoints = FALSE;
 	for (l = session->user->endpoints; l; l = l->next) {
 		MsnUserEndpoint *ep = l->data;
 
-		if (g_str_equal(ep->id, session->guid))
+		if (ep->id[0] != '\0' && strncasecmp(ep->id + 1, session->guid, 36) == 0)
 			/* Don't add myself to the list */
 			continue;
 
+		if (!have_other_endpoints) {
+			/* We do in fact have an endpoint other than ourselves... let's
+			   add a label */
+			field = purple_request_field_label_new("others-label",
+					_("You can sign out from other locations here"));
+			purple_request_field_group_add_field(group, field);
+		}
+
+		have_other_endpoints = TRUE;
 		field = purple_request_field_bool_new(ep->id, ep->name, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if (!have_other_endpoints) {
+		/* TODO: Due to limitations in our current request field API, the
+		   following string will show up with a trailing colon.  This should
+		   be fixed either by adding an "include_colon" boolean, or creating
+		   a separate purple_request_field_label_new_without_colon function,
+		   or by never automatically adding the colon and requiring that
+		   callers add the colon themselves. */
+		field = purple_request_field_label_new("others-label", _("You are not signed in from any other locations."));
 		purple_request_field_group_add_field(group, field);
 	}
 
