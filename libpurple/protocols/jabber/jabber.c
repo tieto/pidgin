@@ -477,7 +477,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 
 		/* Because debug logs with plaintext passwords make me sad */
-		if(js->state != JABBER_STREAM_CONNECTED &&
+		if (!purple_debug_is_unsafe() && js->state != JABBER_STREAM_CONNECTED &&
 				/* Either <auth> or <query><password>... */
 				(((tag_start = strstr(data, "<auth ")) &&
 					strstr(data, "xmlns='" NS_XMPP_SASL "'")) ||

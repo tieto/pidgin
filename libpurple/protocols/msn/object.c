@@ -202,6 +202,8 @@ msn_object_destroy(MsnObject *obj)
 	g_free(obj->friendly);
 	g_free(obj->sha1d);
 	g_free(obj->sha1c);
+	g_free(obj->url);
+	g_free(obj->url1);
 
 	purple_imgstore_unref(obj->img);
 
@@ -400,7 +402,7 @@ msn_object_get_url1(const MsnObject *obj)
 	return obj->url1;
 }
 
-static MsnObject *
+MsnObject *
 msn_object_find_local(const char *sha1)
 {
 	GList *l;

@@ -21,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+#include "debug.h"
+
 #include "msn.h"
 #include "transaction.h"
 
@@ -37,6 +41,7 @@ msn_transaction_new(MsnCmdProc *cmdproc, const char *command,
 
 	trans->cmdproc = cmdproc;
 	trans->command = g_strdup(command);
+	trans->saveable = TRUE;
 
 	if (format != NULL)
 	{
@@ -96,8 +101,10 @@ msn_transaction_to_string(MsnTransaction *trans)
 
 	if (trans->params != NULL)
 		str = g_strdup_printf("%s %u %s\r\n", trans->command, trans->trId, trans->params);
-	else
+	else if (trans->saveable)
 		str = g_strdup_printf("%s %u\r\n", trans->command, trans->trId);
+	else
+		str = g_strdup_printf("%s\r\n", trans->command);
 
 	return str;
 }
@@ -175,6 +182,14 @@ void msn_transaction_set_data_free(MsnTransaction *trans, GDestroyNotify fn)
 }
 
 void
+msn_transaction_set_saveable(MsnTransaction  *trans, gboolean saveable)
+{
+	g_return_if_fail(trans != NULL);
+
+	trans->saveable = saveable;
+}
+
+void
 msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 					   MsnTransCb cb)
 {
@@ -205,10 +220,11 @@ transaction_timeout(gpointer data)
 	purple_debug_info("msn", "timed out: %s %d %s\n", trans->command, trans->trId, trans->params);
 #endif
 
+	trans->timer = 0;
+
 	if (trans->timeout_cb != NULL)
 		trans->timeout_cb(trans->cmdproc, trans);
 
-	trans->timer = 0;
 	return FALSE;
 }
 

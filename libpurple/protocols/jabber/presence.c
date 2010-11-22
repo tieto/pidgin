@@ -995,12 +995,14 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	for (child = packet->child; child; child = child->next) {
+		const char *xmlns;
 		char *key;
 		JabberPresenceHandler *pih;
 		if (child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		key = g_strdup_printf("%s %s", child->name, xmlnode_get_namespace(child));
+		xmlns = xmlnode_get_namespace(child);
+		key = g_strdup_printf("%s %s", child->name, xmlns ? xmlns : "");
 		pih = g_hash_table_lookup(presence_handlers, key);
 		g_free(key);
 		if (pih)

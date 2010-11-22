@@ -49,6 +49,7 @@ typedef struct _MsnNotification MsnNotification;
 #include "servconn.h"
 #include "state.h"
 #include "user.h"
+#include "userlist.h"
 
 struct _MsnNotification
 {
@@ -65,6 +66,15 @@ struct _MsnNotification
 };
 
 typedef void (*MsnFqyCb)(MsnSession *session, const char *passport, MsnNetwork network, gpointer data);
+
+/* Type used for msn_notification_send_uun */
+typedef enum {
+	MSN_UNIFIED_NOTIFICATION_SHARED_FOLDERS = 1,
+	MSN_UNIFIED_NOTIFICATION_UNKNOWN1 = 2,
+	MSN_UNIFIED_NOTIFICATION_P2P = 3,
+	MSN_UNIFIED_NOTIFICATION_MPOP = 4
+
+} MsnUnifiedNotificationType;
 
 void uum_send_msg(MsnSession *session, MsnMessage *msg);
 
@@ -86,6 +96,17 @@ gboolean msn_notification_connect(MsnNotification *notification,
 				  const char *host, int port);
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
+
+void msn_notification_send_uux(MsnSession *session, const char *payload);
+
+void msn_notification_send_uux_endpointdata(MsnSession *session);
+
+void msn_notification_send_uux_private_endpointdata(MsnSession *session);
+
+void msn_notification_send_uun(MsnSession *session,
+                               const char *user,
+                               MsnUnifiedNotificationType type,
+                               const char *payload);
 
 /**
  * Closes a notification.
