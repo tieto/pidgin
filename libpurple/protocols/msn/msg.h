@@ -188,7 +188,7 @@ MsnMessage *msn_message_ref(MsnMessage *msg);
  *
  * @return @a msg, or @c NULL if the new count is 0.
  */
-MsnMessage *msn_message_unref(MsnMessage *msg);
+void msn_message_unref(MsnMessage *msg);
 
 /**
  * Generates the payload data of a message.

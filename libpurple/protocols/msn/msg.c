@@ -88,11 +88,11 @@ msn_message_ref(MsnMessage *msg)
 	return msg;
 }
 
-MsnMessage *
+void
 msn_message_unref(MsnMessage *msg)
 {
-	g_return_val_if_fail(msg != NULL, NULL);
-	g_return_val_if_fail(msg->ref_count > 0, NULL);
+	g_return_if_fail(msg != NULL);
+	g_return_if_fail(msg->ref_count > 0);
 
 	msg->ref_count--;
 
@@ -100,13 +100,7 @@ msn_message_unref(MsnMessage *msg)
 		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
-	{
 		msn_message_destroy(msg);
-
-		return NULL;
-	}
-
-	return msg;
 }
 
 MsnMessage *
