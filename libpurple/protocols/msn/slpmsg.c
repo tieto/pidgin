@@ -61,12 +61,12 @@ MsnSlpMessage *msn_slpmsg_new_from_data(const char *data, size_t data_len)
 	const char *tmp;
 	int body_len;
 
-	tmp = data;
-	slpmsg = msn_slpmsg_new(NULL);
-
 	if (data_len < sizeof(*header)) {
 		return NULL;
 	}
+
+	tmp = data;
+	slpmsg = msn_slpmsg_new(NULL);
 
 	/* Extract the binary SLP header */
 	slpmsg->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
