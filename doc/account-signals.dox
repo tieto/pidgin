@@ -1,6 +1,8 @@
 /** @page account-signals Account Signals
 
  @signals
+  @signal account-created
+  @signal account-destroying
   @signal account-added
   @signal account-connecting
   @signal account-removed
@@ -9,16 +11,40 @@
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
+  @signal account-actions-changed
   @signal account-alias-changed
   @signal account-authorization-requested
   @signal account-authorization-denied
   @signal account-authorization-granted
   @signal account-error-changed
+  @signal account-signed-on
+  @signal account-signed-off
+  @signal account-connection-error
  @endsignals
 
  @see account.h
 
  <hr>
+
+ @signaldef account-created
+  @signalproto
+void (*account_created)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is created by calling purple_account_new.
+  @param account The account.
+  @since 2.6.0
+ @endsignaldef
+
+ @signaldef account-destroying
+  @signalproto
+void (*account_destroying)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is about to be destroyed.
+  @param account The account.
+  @since 2.6.0
+ @endsignaldef
 
  @signaldef account-added
   @signalproto
@@ -27,6 +53,7 @@ void (*account_added)(PurpleAccount *account);
   @signaldesc
    Emitted when an account is added.
   @param account The account that was added.
+  @see purple_accounts_add
  @endsignaldef
 
  @signaldef account-connecting
@@ -45,6 +72,7 @@ void (*account_removed)(PurpleAccount *account);
   @signaldesc
    Emitted when an account is removed.
   @param account The account that was removed.
+  @see purple_accounts_remove
  @endsignaldef
 
  @signaldef account-disabled
@@ -97,6 +125,15 @@ void (*account_status_changed)(PurpleAccount *account, PurpleStatus *old, Purple
   @param new     The status after change.
  @endsignaldef
 
+ @signaldef account-actions-changed
+  @signalproto
+void (*account_actions_changed)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when the account actions are changed after initial connection.
+  @param account The account whose actions changed.
+ @endsignaldef
+
  @signaldef account-alias-changed
   @signalproto
 void (*account_alias_changed)(PurpleAccount *account, const char *old);
@@ -109,7 +146,7 @@ void (*account_alias_changed)(PurpleAccount *account, const char *old);
 
  @signaldef account-authorization-requested
   @signalproto
-void (*account_authorization_requested)(PurpleAccount *account, const char *user);
+int (*account_authorization_requested)(PurpleAccount *account, const char *user);
   @endsignalproto
   @signaldesc
    Emitted when a user requests authorization.
@@ -162,5 +199,36 @@ void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErro
   @since 2.3.0
  @endsignaldef
 
+ @signaldef account-signed-on
+  @signalproto
+void (*signed_on)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account has signed on.
+  @param account The account that has signed on.
+  @since 2.7.0
+ @endsignaldef
+
+ @signaldef account-signed-off
+  @signalproto
+void (*signed_off)(PurpleAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account has signed off.
+  @param account The account that has signed off.
+  @since 2.7.0
+ @endsignaldef
+
+ @signaldef account-connection-error
+  @signalproto
+void (*connection_error)(PurpleAccount *gc, PurpleConnectionError err, const gchar *desc)
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection error occurs, before @ref signed-off.
+   @param account The account on which the error has occurred
+   @param err     The error that occurred
+   @param desc    A description of the error, giving more information.
+  @since 2.7.0
+ @endsignaldef
  */
 // vim: syntax=c.doxygen tw=75 et

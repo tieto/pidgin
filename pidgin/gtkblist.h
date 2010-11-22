@@ -27,6 +27,7 @@
 #ifndef _PIDGINBLIST_H_
 #define _PIDGINBLIST_H_
 
+/** @copydoc _PidginBuddyList */
 typedef struct _PidginBuddyList PidginBuddyList;
 
 enum {
@@ -59,6 +60,7 @@ typedef enum {
 
 #include "pidgin.h"
 #include "blist.h"
+#include "gtkblist-theme.h"
 
 /**************************************************************************
  * @name Structures
@@ -117,7 +119,7 @@ struct _PidginBuddyList {
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
-	GdkPixbuf *headline_close;      /**< Close image for closing the headline without triggering the callback */
+	GdkPixbuf *headline_close;      /**< @deprecated: Close image for closing the headline without triggering the callback */ 
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
@@ -130,9 +132,9 @@ struct _PidginBuddyList {
 	gpointer priv;                   /**< Pointer to opaque private data */
 };
 
-#define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
+#define PIDGIN_BLIST(list) ((PidginBuddyList *)purple_blist_get_ui_data())
 #define PIDGIN_IS_PIDGIN_BLIST(list) \
-	((list)->ui_ops == pidgin_blist_get_ui_ops())
+	(purple_blist_get_ui_ops() == pidgin_blist_get_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Buddy List API
@@ -194,11 +196,14 @@ void pidgin_blist_update_columns(void);
 void pidgin_blist_update_refresh_timeout(void);
 
 /**
- * Returns the blist emblem
+ * Returns the blist emblem.
+ *
+ * This may be an existing pixbuf that has been given an additional ref,
+ * so it shouldn't be modified.
  *
  * @param node   The node to return an emblem for
  *
- * @return  A newly created GdkPixbuf, or NULL
+ * @return  A GdkPixbuf for the emblem to show, or NULL
  */
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node);
@@ -250,6 +255,23 @@ void pidgin_blist_visibility_manager_remove(void);
  */
 void pidgin_blist_add_alert(GtkWidget *widget);
 
+/**
+ * Sets the current theme for Pidgin to use
+ *
+ * @param theme	the new theme to use
+ *
+ * @since 2.6.0
+ */
+void pidgin_blist_set_theme(PidginBlistTheme *theme);
+
+/**
+ * Gets Pidgin's current buddy list theme
+ *
+ * @returns	the current theme
+ *
+ * @since 2.6.0
+ */
+PidginBlistTheme *pidgin_blist_get_theme(void);
 
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
@@ -381,7 +403,7 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
  *
  * @param buddy The buddy to return markup from
  * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
- * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname and status information
+ * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its username and status information
  * @return The markup for this buddy
  *
  * @since 2.1.0

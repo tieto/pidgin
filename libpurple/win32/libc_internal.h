@@ -29,6 +29,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* helper for purple_utf8_strftime() by way of purple_internal_strftime() in src/util.c */
+const char *wpurple_get_timezone_abbreviation(const struct tm *tm);
+
 /* sys/socket.h */
 int wpurple_socket(int domain, int style, int protocol);
 int wpurple_connect(int socket, struct sockaddr *addr, u_long length);
@@ -117,10 +120,14 @@ struct ifconf
 # define ifc_req ifc_ifcu.ifcu_req /* Array of structures.  */
 
 /* sys/time.h */
+#if __MINGW32_MAJOR_VERSION < 3 || (__MINGW32_MAJOR_VERSION == 3 && __MINGW32_MINOR_VERSION < 10)
 struct timezone {
 	int tz_minuteswest;
 	int tz_dsttime;
 };
+#else
+#    include <sys/time.h>
+#endif
 int wpurple_gettimeofday(struct timeval *p, struct timezone *z);
 
 /* time.h */
@@ -133,10 +140,6 @@ int wpurple_write(int fd, const void *buf, unsigned int size);
 int wpurple_close(int fd);
 int wpurple_gethostname(char *name, size_t size);
 
-
-#if !GLIB_CHECK_VERSION(2,8,0)
-int wpurple_g_access(const gchar *filename, int mode);
-#endif
 
 /* stdio.h */
 int wpurple_rename(const char *oldname, const char *newname);

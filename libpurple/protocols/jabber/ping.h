@@ -1,9 +1,11 @@
 /**
- * @file ping.h utility functions
+ * @file ping.h ping functions
  *
  * purple
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +19,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_PING_H_
-#define _PURPLE_JABBER_PING_H_
+#ifndef PURPLE_JABBER_PING_H_
+#define PURPLE_JABBER_PING_H_
 
 #include "jabber.h"
-#include "conversation.h"
+#include "iq.h"
+#include "xmlnode.h"
 
-void jabber_ping_parse(JabberStream *js,
-						xmlnode *packet);
+void jabber_ping_parse(JabberStream *js, const char *from,
+                       JabberIqType, const char *id, xmlnode *child);
+gboolean jabber_ping_jid(JabberStream *js, const char *jid);
+void jabber_keepalive_ping(JabberStream *js);
 
-
-gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid);
-
-
-#endif /* _PURPLE_JABBER_PING_H_ */
+#endif /* PURPLE_JABBER_PING_H_ */

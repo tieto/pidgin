@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "FileSel"
+
 #include "gntbutton.h"
 #include "gntentry.h"
 #include "gntfilesel.h"
@@ -172,9 +176,13 @@ process_path(const char *path)
 	splits = g_strsplit(path, G_DIR_SEPARATOR_S, -1);
 	for (i = 0, j = 0; splits[i]; i++) {
 		if (strcmp(splits[i], ".") == 0) {
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else if (strcmp(splits[i], "..") == 0) {
 			if (j)
 				j--;
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else {
 			if (i != j) {
 				g_free(splits[j]);
@@ -254,7 +262,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 		struct stat st;
 
 		if (stat(fp, &st)) {
-			g_printerr("Error stating location %s\n", fp);
+			gnt_warning("Error stating location %s", fp);
 		} else {
 			if (S_ISDIR(st.st_mode)) {
 				file = gnt_file_new_dir(str);
@@ -309,7 +317,7 @@ location_changed(GntFileSel *sel, GError **err)
 		success = local_read_fn(sel->current, &files, err);
 	
 	if (!success || *err) {
-		g_printerr("GntFileSel: error opening location %s (%s)\n",
+		gnt_warning("error opening location %s (%s)",
 			sel->current, *err ? (*err)->message : "reason unknown");
 		return FALSE;
 	}
@@ -621,6 +629,7 @@ gnt_file_sel_init(GTypeInstance *instance, gpointer class)
 
 	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
 	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
+	gnt_tree_set_hash_fns(GNT_TREE(sel->files), g_str_hash, g_str_equal, g_free);
 	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);

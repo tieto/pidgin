@@ -40,51 +40,36 @@ void ggp_buddylist_send(PurpleConnection *gc)
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
+	GSList *buddies;
+	uin_t *userlist;
+	gchar *types;
+	int i = 0, ret = 0;
+	int size;
 
-	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *buddy;
-	uin_t *userlist = NULL;
-	gchar *types = NULL;
-	int size = 0;
+	buddies = purple_find_buddies(account, NULL);
 
-	if ((blist = purple_get_blist()) == NULL)
-	    return;
+	size = g_slist_length(buddies);
+	userlist = g_new(uin_t, size);
+	types    = g_new(gchar, size);
 
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies), ++i)
+	{
+		PurpleBuddy *buddy = buddies->data;
+		const gchar *name = purple_buddy_get_name(buddy);
 
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-
-				buddy = (PurpleBuddy *)bnode;
-
-				if (buddy->account != account)
-					continue;
-
-				size++;
-				userlist = (uin_t *) g_renew(uin_t, userlist, size);
-				types    = (gchar *) g_renew(gchar, types, size);
-				userlist[size - 1] = ggp_str_to_uin(buddy->name);
-				types[size - 1]    = GG_USER_NORMAL;
-				purple_debug_info("gg", "ggp_buddylist_send: adding %d\n",
-						userlist[size - 1]);
-			}
-		}
+		userlist[i] = ggp_str_to_uin(name);
+		types[i]    = GG_USER_NORMAL;
+		purple_debug_info("gg", "ggp_buddylist_send: adding %d\n",
+		                  userlist[i]);
 	}
 
+	ret = gg_notify_ex(info->session, userlist, types, size);
+	purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
+
 	if (userlist) {
-		int ret = gg_notify_ex(info->session, userlist, types, size);
 		g_free(userlist);
 		g_free(types);
-
-		purple_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
 	}
 }
 /* }}} */
@@ -96,9 +81,10 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	PurpleGroup *group;
 	gchar **users_tbl;
 	int i;
-
+	char *utf8buddylist = charset_convert(buddylist, "CP1250", "UTF-8");
+	
 	/* Don't limit the number of records in a buddylist. */
-	users_tbl = g_strsplit(buddylist, "\r\n", -1);
+	users_tbl = g_strsplit(utf8buddylist, "\r\n", -1);
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
 		gchar **data_tbl;
@@ -115,23 +101,22 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			continue;
 		}
 
-		show = charset_convert(data_tbl[F_NICKNAME], "CP1250", "UTF-8");
+		show = data_tbl[F_NICKNAME];
 		name = data_tbl[F_UIN];
-		if ('\0' == *name) {
+		if ('\0' == *name || !atol(name)) {
 			purple_debug_warning("gg",
-				"Something is wrong on line %d of the buddylist. Skipping.\n",
+				"Identifier on line %d of the buddylist is not a number. Skipping.\n",
 				i + 1);
 			continue;
 		}
 
 		if ('\0' == *show) {
-			show = g_strdup(name);
+			show = name;
 		}
 
 		purple_debug_info("gg", "got buddy: name=%s; show=%s\n", name, show);
 
 		if (purple_find_buddy(purple_connection_get_account(gc), name)) {
-			g_free(show);
 			g_strfreev(data_tbl);
 			continue;
 		}
@@ -144,7 +129,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 			gchar **group_tbl = g_strsplit(data_tbl[F_GROUP], ",", 50);
 			if (ggp_array_size(group_tbl) > 0) {
 				g_free(g);
-				g = charset_convert(group_tbl[0], "CP1250", "UTF-8");
+				g = g_strdup(group_tbl[0]);
 			}
 			g_strfreev(group_tbl);
 		}
@@ -160,113 +145,42 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 		g_free(g);
 
-		g_free(show);
 		g_strfreev(data_tbl);
 	}
 	g_strfreev(users_tbl);
+	g_free(utf8buddylist);
 
 	ggp_buddylist_send(gc);
-}
-/* }}} */
-
-/* void ggp_buddylist_offline(PurpleConnection *gc) {{{ */
-void ggp_buddylist_offline(PurpleConnection *gc)
-{
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *buddy;
-
-	if ((blist = purple_get_blist()) == NULL)
-		return;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-
-				buddy = (PurpleBuddy *)bnode;
-
-				if (buddy->account != account)
-					continue;
-
-				purple_prpl_got_user_status(
-					account, buddy->name, "offline", NULL);
-
-				purple_debug_info("gg",
-					"ggp_buddylist_offline: gone: %s\n",
-					buddy->name);
-			}
-		}
-	}
 }
 /* }}} */
 
 /* char *ggp_buddylist_dump(PurpleAccount *account) {{{ */
 char *ggp_buddylist_dump(PurpleAccount *account)
 {
-	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleGroup *group;
-	PurpleBuddy *buddy;
-
-	char *buddylist = g_strdup("");
+	GSList *buddies;
+	GString *buddylist = g_string_sized_new(1024);
 	char *ptr;
 
-	if ((blist = purple_get_blist()) == NULL)
-		return NULL;
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *buddy = buddies->data;
+		PurpleGroup *group = purple_buddy_get_group(buddy);
+		const char *bname = purple_buddy_get_name(buddy);
+		const char *gname = purple_group_get_name(group);
+		const char *alias = purple_buddy_get_alias(buddy);
 
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
+		if (alias == NULL)
+			alias = bname;
 
-		group = (PurpleGroup *)gnode;
-
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *newdata, *name, *alias, *gname;
-				gchar *cp_alias, *cp_gname;
-
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-
-				buddy = (PurpleBuddy *)bnode;
-				if (buddy->account != account)
-					continue;
-
-				name = buddy->name;
-				alias = buddy->alias ? buddy->alias : buddy->name;
-				gname = group->name;
-
-				cp_gname = charset_convert(gname, "UTF-8", "CP1250");
-				cp_alias = charset_convert(alias, "UTF-8", "CP1250");
-				newdata = g_strdup_printf(
-						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						cp_alias, cp_alias, cp_alias, cp_alias,
-						"", cp_gname, name, "", "");
-
-				ptr = buddylist;
-				buddylist = g_strconcat(ptr, newdata, NULL);
-
-				g_free(newdata);
-				g_free(ptr);
-				g_free(cp_gname);
-				g_free(cp_alias);
-			}
-		}
+		g_string_append_printf(buddylist,
+				"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+				alias, alias, alias, alias,
+				"", gname, bname, "", "");
 	}
 
-	return buddylist;
+	ptr = charset_convert(buddylist->str, "UTF-8", "CP1250");
+	g_string_free(buddylist, TRUE);
+	return ptr;
 }
 /* }}} */
 

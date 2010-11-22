@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PURPLE_NOTIFY_C_
+
 #include "internal.h"
 #include "dbus-maybe.h"
 #include "notify.h"
@@ -442,7 +444,7 @@ PurpleNotifyUserInfoEntry *
 purple_notify_user_info_entry_new(const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *user_info_entry;
-	
+
 	user_info_entry = g_new0(PurpleNotifyUserInfoEntry, 1);
 	PURPLE_DBUS_REGISTER_POINTER(user_info_entry, PurpleNotifyUserInfoEntry);
 	user_info_entry->label = g_strdup(label);
@@ -456,7 +458,7 @@ static void
 purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_if_fail(user_info_entry != NULL);
-	
+
 	g_free(user_info_entry->label);
 	g_free(user_info_entry->value);
 	PURPLE_DBUS_UNREGISTER_POINTER(user_info_entry);
@@ -467,11 +469,11 @@ PurpleNotifyUserInfo *
 purple_notify_user_info_new()
 {
 	PurpleNotifyUserInfo *user_info;
-	
+
 	user_info = g_new0(PurpleNotifyUserInfo, 1);
 	PURPLE_DBUS_REGISTER_POINTER(user_info, PurpleNotifyUserInfo);
 	user_info->user_info_entries = NULL;
-	
+
 	return user_info;
 }
 
@@ -482,10 +484,10 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 
 	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
-		
+
 		purple_notify_user_info_entry_destroy(user_info_entry);
 	}
-	
+
 	g_list_free(user_info->user_info_entries);
 	PURPLE_DBUS_UNREGISTER_POINTER(user_info);
 	g_free(user_info);
@@ -504,7 +506,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 {
 	GList *l;
 	GString *text;
-	
+
 	text = g_string_new("");
 
 	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
@@ -530,7 +532,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 		if ((user_info_entry->type != PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK) &&
 			(l->next && ((((PurpleNotifyUserInfoEntry *)(l->next->data))->type != PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK))))
 			g_string_append(text, newline);
-		
+
 		/* Add an extra newline after a section header */
 		if (user_info_entry->type == PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
 			g_string_append(text, newline);
@@ -561,7 +563,7 @@ const gchar *
 purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);
-	
+
 	return user_info_entry->value;
 }
 
@@ -594,7 +596,7 @@ void
 purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *entry;
-	
+
 	entry = purple_notify_user_info_entry_new(label, value);
 	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
 }
@@ -621,7 +623,7 @@ void
 purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, const char *label)
 {
 	PurpleNotifyUserInfoEntry *entry;
-	
+
 	entry = purple_notify_user_info_entry_new(label, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
 
@@ -629,14 +631,36 @@ purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, cons
 }
 
 void
+purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label)
+{
+	PurpleNotifyUserInfoEntry *entry;
+
+	entry = purple_notify_user_info_entry_new(label, NULL);
+	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
+
+	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+}
+
+void
 purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 {
 	PurpleNotifyUserInfoEntry *entry;
-	
+
 	entry = purple_notify_user_info_entry_new(NULL, NULL);
 	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
 
 	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+void
+purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info)
+{
+	PurpleNotifyUserInfoEntry *entry;
+
+	entry = purple_notify_user_info_entry_new(NULL, NULL);
+	entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
+
+	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
 }
 
 void

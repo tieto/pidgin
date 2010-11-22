@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +95,7 @@ static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInput
 	if(len < 0 && errno == EAGAIN)
 		return;
 	else if(len < 0) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Write error on oob xfer!\n");
+		purple_debug_error("jabber", "Write error on oob xfer!\n");
 		purple_input_remove(jox->writeh);
 		purple_xfer_cancel_local(xfer);
 	}
@@ -148,7 +150,7 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 		}
 		return 0;
 	} else if (errno != EAGAIN) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
+		purple_debug_error("jabber", "Read error on oob xfer!\n");
 		purple_xfer_cancel_local(xfer);
 	}
 
@@ -168,11 +170,11 @@ static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
 	if(!strcmp(code, "406")) {
 		z = xmlnode_new_child(y, "not-acceptable");
 		xmlnode_set_attrib(y, "type", "modify");
-		xmlnode_set_namespace(z, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(z, NS_XMPP_STANZAS);
 	} else if(!strcmp(code, "404")) {
 		z = xmlnode_new_child(y, "not-found");
 		xmlnode_set_attrib(y, "type", "cancel");
-		xmlnode_set_namespace(z, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(z, NS_XMPP_STANZAS);
 	}
 	jabber_iq_send(iq);
 
@@ -183,22 +185,22 @@ static void jabber_oob_xfer_recv_denied(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "406");
 }
 
-static void jabber_oob_xfer_recv_canceled(PurpleXfer *xfer) {
+static void jabber_oob_xfer_recv_cancelled(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
-void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
+void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
+                      const char *id, xmlnode *querynode) {
 	JabberOOBXfer *jox;
 	PurpleXfer *xfer;
 	char *filename;
 	char *url;
-	const char *type;
-	xmlnode *querynode, *urlnode;
+	xmlnode *urlnode;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "set"))
+	if(type != JABBER_IQ_SET)
 		return;
 
-	if(!(querynode = xmlnode_get_child(packet, "query")))
+	if(!from)
 		return;
 
 	if(!(urlnode = xmlnode_get_child(querynode, "url")))
@@ -207,14 +209,16 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
+	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
+		g_free(url);
+		return;
+	}
 	g_free(url);
 	jox->js = js;
 	jox->headers = g_string_new("");
-	jox->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jox->iq_id = g_strdup(id);
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE,
-			xmlnode_get_attrib(packet, "from"));
+	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
 	if (xfer)
 	{
 		xfer->data = jox;
@@ -229,7 +233,7 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 		purple_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
 		purple_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
 		purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
+		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_cancelled);
 		purple_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
 		purple_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 

@@ -41,6 +41,8 @@
 #define HTTP_OK "200 OK"
 #define DEFAULT_HTTP_PORT 80
 #define DISCOVERY_TIMEOUT 1000
+/* limit UPnP-triggered http downloads to 128k */
+#define MAX_UPNP_DOWNLOAD (128 * 1024)
 
 /***************************************************************
 ** Discovery/Description Defines                               *
@@ -128,7 +130,7 @@ typedef struct {
 	guint tima;	/* purple_timeout_add handle */
 	int fd;
 	struct sockaddr_in server;
-	gchar service_type[25];
+	gchar service_type[20];
 	int retry_count;
 	gchar *full_url;
 } UPnPDiscoveryData;
@@ -401,6 +403,11 @@ upnp_parse_description_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		lookup_internal_ip();
 	}
 
+	if (dd->inpa > 0)
+		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
+
 	g_free(dd);
 }
 
@@ -443,8 +450,8 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 	purple_timeout_remove(dd->tima);
 	dd->tima = 0;
 
-	purple_util_fetch_url_request(descriptionURL, TRUE, NULL, TRUE, httpRequest,
-			TRUE, upnp_parse_description_cb, dd);
+	purple_util_fetch_url_request_len(descriptionURL, TRUE, NULL, TRUE, httpRequest,
+			TRUE, MAX_UPNP_DOWNLOAD, upnp_parse_description_cb, dd);
 
 	g_free(httpRequest);
 
@@ -504,6 +511,8 @@ purple_upnp_discover_timeout(gpointer data)
 
 	if (dd->inpa)
 		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
 	dd->inpa = 0;
 	dd->tima = 0;
 
@@ -540,7 +549,7 @@ purple_upnp_discover_udp_read(gpointer data, gint sock, PurpleInputCondition con
 		len = recv(dd->fd, buf,
 			sizeof(buf) - 1, 0);
 
-		if(len > 0) {
+		if(len >= 0) {
 			buf[len] = '\0';
 			break;
 		} else if(errno != EINTR) {
@@ -565,7 +574,7 @@ static void
 purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 {
 	gchar *sendMessage = NULL;
-	gsize totalSize;
+	size_t totalSize;
 	gboolean sentSuccess;
 
 	/* because we are sending over UDP, if there is a failure
@@ -608,7 +617,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 
 	/* We have already done all our retries. Make sure that the callback
 	 * doesn't get called before the original function returns */
-	purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+	dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 }
 
 void
@@ -645,7 +654,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In sock creation\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -657,7 +666,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In gethostbyname\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -691,6 +700,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 		/* XXX: This should probably be async */
 		if(cb)
 			cb(NULL, cb_data, NULL, 0, NULL);
+		return NULL;
 	}
 	if(port == 0 || port == -1) {
 		port = DEFAULT_HTTP_PORT;
@@ -708,12 +718,12 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gfud = purple_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
-				totalSendMessage, TRUE, cb, cb_data);
+	gfud = purple_util_fetch_url_request_len(control_info.control_url, FALSE, NULL, TRUE,
+				totalSendMessage, TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
-	
+
 	return gfud;
 }
 
@@ -804,7 +814,7 @@ looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 				control_info.internalip);
 		close(source);
 	} else
-		purple_debug_info("upnp", "Unable to look up local IP\n");
+		purple_debug_error("upnp", "Unable to look up local IP\n");
 
 }
 
@@ -916,16 +926,20 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
 	GSList *l;
 
 	/* Remove ar from discovery_callbacks if present; it was inserted after a cb.
-	 * The same cb may be in the list multple times, so be careful to remove the one assocaited with ar. */
-	l  = discovery_callbacks;
+	 * The same cb may be in the list multiple times, so be careful to remove
+	 * the one associated with ar. */
+	l = discovery_callbacks;
 	while (l)
 	{
-		if (l->next && (l->next->data == ar)) {
-			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l->next);
+		GSList *next = l->next;
+
+		if (next && (next->data == ar)) {
+			discovery_callbacks = g_slist_delete_link(discovery_callbacks, next);
+			next = l->next;
 			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l);
 		}
 
-		l = l->next;
+		l = next;
 	}
 
 	if (ar->tima > 0)
@@ -1046,8 +1060,8 @@ static void*
 purple_upnp_get_handle(void)
 {
 	static int handle;
-	
-	return &handle;	
+
+	return &handle;
 }
 
 void
@@ -1055,5 +1069,5 @@ purple_upnp_init()
 {
 	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
 						  purple_upnp_get_handle(), PURPLE_CALLBACK(purple_upnp_network_config_changed_cb),
-						  GINT_TO_POINTER(0));		
+						  NULL);
 }

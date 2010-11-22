@@ -84,7 +84,7 @@ purple_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
 					int              first_arg_type,
 					va_list          var_args);
 
-dbus_int32_t* purple_dbusify_GList(GList *list, gboolean free_memory, 
+dbus_int32_t* purple_dbusify_GList(GList *list, gboolean free_memory,
 				 dbus_int32_t *len);
 dbus_int32_t* purple_dbusify_GSList(GSList *list, gboolean free_memory,
 				  dbus_int32_t *len);

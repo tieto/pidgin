@@ -2,13 +2,13 @@
 #
 # Author: hermanator12002@yahoo.com
 # Date 9/11/02
-# Description: Protocols Makefile for win32 (mingw) port of LibPurple
+# Description: Protocols Makefile for win32 (mingw) port of libpurple
 #
 
 PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-SUBDIRS = gg irc jabber msnp9 novell null oscar qq sametime silc simple yahoo bonjour myspace
+SUBDIRS = gg irc jabber msn mxit novell null oscar qq sametime silc simple yahoo bonjour myspace
 
 .PHONY: all install clean
 

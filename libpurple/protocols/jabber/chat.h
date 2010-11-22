@@ -3,7 +3,9 @@
  *
  * purple
  *
- * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _PURPLE_JABBER_CHAT_H_
-#define _PURPLE_JABBER_CHAT_H_
+#ifndef PURPLE_JABBER_CHAT_H_
+#define PURPLE_JABBER_CHAT_H_
 
 #include "internal.h"
 #include "connection.h"
@@ -41,6 +43,7 @@ typedef struct _JabberChat {
 	char *room;
 	char *server;
 	char *handle;
+	GHashTable *components;
 	int id;
 	PurpleConversation *conv;
 	gboolean muc;
@@ -48,11 +51,27 @@ typedef struct _JabberChat {
 	PurpleRequestType config_dialog_type;
 	void *config_dialog_handle;
 	GHashTable *members;
+	gboolean left;
 } JabberChat;
 
 GList *jabber_chat_info(PurpleConnection *gc);
 GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_name);
 char *jabber_get_chat_name(GHashTable *data);
+
+/**
+ * in-prpl function for joining a chat room. Doesn't require sticking goop
+ * into a hash table.
+ *
+ * @param room     The room to join. This MUST be normalized already.
+ * @param server   The server the room is on. This MUST be normalized already.
+ * @param password The password (if required) to join the room. May be NULL.
+ * @param data     The chat hash table.  May be NULL (it will be generated
+ *                 for current core<>prpl API interface.)
+ */
+JabberChat *jabber_join_chat(JabberStream *js, const char *room,
+                             const char *server, const char *handle,
+                             const char *password, GHashTable *data);
+
 void jabber_chat_join(PurpleConnection *gc, GHashTable *data);
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);
@@ -70,7 +89,7 @@ void jabber_chat_create_instant_room(JabberChat *chat);
 void jabber_chat_register(JabberChat *chat);
 void jabber_chat_change_topic(JabberChat *chat, const char *topic);
 void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic);
-void jabber_chat_change_nick(JabberChat *chat, const char *nick);
+gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick);
 void jabber_chat_part(JabberChat *chat, const char *msg);
 void jabber_chat_track_handle(JabberChat *chat, const char *handle,
 		const char *jid, const char *affiliation, const char *role);
@@ -79,10 +98,10 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who,
 		const char *why);
 gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who,
 		const char *affiliation);
+gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation);
 gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
-		const char *role);
-gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
-		const char *why);
+		const char *role, const char *why);
+gboolean jabber_chat_role_list(JabberChat *chat, const char *role);
 
 PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc);
 void jabber_roomlist_cancel(PurpleRoomlist *list);
@@ -91,5 +110,8 @@ void jabber_chat_disco_traffic(JabberChat *chat);
 
 char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room);
 
+gboolean jabber_chat_all_participants_have_capability(const JabberChat *chat,
+	const gchar *cap);
+guint jabber_chat_get_num_participants(const JabberChat *chat);
 
-#endif /* _PURPLE_JABBER_CHAT_H_ */
+#endif /* PURPLE_JABBER_CHAT_H_ */

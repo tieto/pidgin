@@ -1072,7 +1072,7 @@ silcpurple_whois_more(SilcClientEntry client_entry, gint id)
 			for (i = 0; i < vcard.num_emails; i++) {
 				if (vcard.emails[i].address)
 					g_string_append_printf(s, "%s:\t\t%s\n",
-							       _("E-Mail"),
+							       _("Email"),
 							       vcard.emails[i].address);
 			}
 			if (vcard.note)
@@ -1444,7 +1444,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			int usercount;
 			PurpleRoomlistRoom *room;
 
-			if (sg->roomlist_canceled)
+			if (sg->roomlist_cancelled)
 				break;
 
 			if (!success) {
@@ -1722,7 +1722,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Connection Timeout"));
+			_("Connection timed out"));
 		break;
 	}
 

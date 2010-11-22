@@ -29,9 +29,9 @@
 #include "util.h"
 #if PHOTO_SUPPORT
 #include "imgstore.h"
-#endif
+#endif /* PHOTO_SUPPORT */
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_friend.h"
 
 typedef struct {
@@ -40,11 +40,11 @@ typedef struct {
 } YahooGetInfoData;
 
 typedef enum profile_lang_id {
-	XX, DA, DE, EL, 
-	EN, EN_GB, 
+	XX, DA, DE, EL,
+	EN, EN_GB,
 	ES_AR, ES_ES, ES_MX, ES_US,
-	FR_CA, FR_FR, 
-	IT, JA, KO, NO, PT, SV, 
+	FR_CA, FR_FR,
+	IT, JA, KO, NO, PT, SV,
 	ZH_CN, ZH_HK, ZH_TW, ZH_US, PT_BR
 } profile_lang_id_t;
 
@@ -699,9 +699,10 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 			info_data->name);
 
 	if (b) {
-		if(b->alias && b->alias[0]) {
-			char *aliastext = g_markup_escape_text(b->alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext); 
+		const char *balias = purple_buddy_get_local_buddy_alias(b);
+		if(balias && balias[0]) {
+			char *aliastext = g_markup_escape_text(balias, -1);
+			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}
 		#if 0
@@ -715,7 +716,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 		/* Add the normal tooltip pairs */
 		yahoo_tooltip_text(b, user_info, TRUE);
 
-		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
+		if ((f = yahoo_friend_find(info_data->gc, purple_buddy_get_name(b)))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
 				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
@@ -745,6 +746,7 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 				p += 1; /* skip only the ' ' */
 				q = strchr(p, ' ');
 				if (q) {
+					g_free(it);
 					it = g_strndup(p, q - p);
 				}
 			}
@@ -775,14 +777,14 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	char *stripped;
 	int stripped_len;
 	char *last_updated_utf8_string = NULL;
-#endif
+#endif /* !PHOTO_SUPPORT */
 	const char *last_updated_string = NULL;
 	char *url_buffer;
 	GString *s;
 	char *tmp;
 	char *profile_url_text = NULL;
 	int lang, strid;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const profile_strings_node_t *strings = NULL;
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
@@ -806,7 +808,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
 		g_free(profile_url_text);
@@ -840,10 +842,10 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 						 _("If you wish to view this profile, "
 						"you will need to visit this link in your web browser:"),
 						 profile_url_text, profile_url_text);
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);		
+		purple_notify_user_info_add_pair(user_info, NULL, tmp);
 		g_free(tmp);
 
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_data->gc, info_data->name,
 				user_info, NULL, NULL);
 
 		g_free(profile_url_text);
@@ -897,7 +899,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 #if PHOTO_SUPPORT
 	photo_url_text = yahoo_get_photo_url(url_text, info_data->name);
-#endif
+#endif /* PHOTO_SUPPORT */
 
 	url_buffer = g_strdup(url_text);
 
@@ -932,11 +934,8 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
 		PurpleUtilFetchUrlData *url_data;
-		gboolean use_whole_url = FALSE;
-
 		/* use whole URL if using HTTP Proxy */
-		if ((info_data->gc->account->proxy_info) && (info_data->gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
-		    use_whole_url = TRUE;
+		gboolean use_whole_url = yahoo_account_use_http_proxy(info_data->gc);
 
 		/* User-uploaded photos use a different server that requires the Host
 		 * header, but Yahoo Japan will use the "chunked" content encoding if
@@ -957,7 +956,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gboolean found = FALSE;
 	int id = -1;
 
@@ -1049,7 +1048,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT
 					" bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
-			
+
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
 			purple_notify_user_info_add_pair(user_info, NULL, tmp);
 			g_free(tmp);
@@ -1060,7 +1059,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* extract their Email address and put it in */
 	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->my_email_string, (yd->jp ? 4 : 1), " ", 0,
-			strings->private_string, _("E-Mail"), 0, NULL, NULL);
+			strings->private_string, _("Email"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
 	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
@@ -1195,17 +1194,15 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if(!found)
 	{
-		GString *str = g_string_new("");
+		const gchar *str;
 
-		g_string_append_printf(str, "<br><b>");
-		g_string_append_printf(str, _("User information for %s unavailable"),
-				info_data->name);
-		g_string_append_printf(str, "</b><br>");
+		purple_notify_user_info_add_section_break(user_info);
+		purple_notify_user_info_add_pair(user_info,
+				_("Error retrieving profile"), NULL);
 
 		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
-			g_string_append_printf(str, "%s<br><br>",
-					_("Sorry, this profile seems to be in a language "
-					  "or format that is not supported at this time."));
+			str = _("This profile is in a language "
+					  "or format that is not supported at this time.");
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
 			PurpleBuddy *b = purple_find_buddy
@@ -1217,29 +1214,30 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				 * in which case the user may or may not actually exist.
 				 * Hence this extra step.
 				 */
-				f = yahoo_friend_find(b->account->gc, b->name);
+				PurpleAccount *account = purple_buddy_get_account(b);
+				f = yahoo_friend_find(purple_account_get_connection(account),
+						purple_buddy_get_name(b));
 			}
-			g_string_append_printf(str, "%s<br><br>",
-				f?  _("Could not retrieve the user's profile. "
+			str = f ? _("Could not retrieve the user's profile. "
 					  "This most likely is a temporary server-side problem. "
-					  "Please try again later."):
+					  "Please try again later.") :
 					_("Could not retrieve the user's profile. "
 					  "This most likely means that the user does not exist; "
 					  "however, Yahoo! sometimes does fail to find a user's "
 					  "profile. If you know that the user exists, "
-					  "please try again later."));
+					  "please try again later.");
 		} else {
-			g_string_append_printf(str, "%s<br><br>",
-					_("The user's profile is empty."));
+			str = _("The user's profile is empty.");
 		}
-		
-		purple_notify_user_info_add_pair(user_info, NULL, str->str);
-		g_string_free(str, TRUE);
+
+		purple_notify_user_info_add_pair(user_info, NULL, str);
 	}
 
 	/* put a link to the actual profile URL */
-	tmp = g_strdup_printf("<a href=\"%s\">%s</a>", profile_url_text, profile_url_text);
-	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
+	purple_notify_user_info_add_section_break(user_info);
+	tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
+			profile_url_text, _("View web profile"));
+	purple_notify_user_info_add_pair(user_info, NULL, tmp);
 	g_free(tmp);
 
 	g_free(stripped);
@@ -1261,12 +1259,12 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	g_free(info2_data);
 	if (id != -1)
 		purple_imgstore_unref_by_id(id);
-#endif
+#endif /* PHOTO_SUPPORT */
 }
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;
@@ -1281,6 +1279,10 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	else {
+		g_free(data->name);
+		g_free(data);
+	}
 
 	g_free(url);
 }

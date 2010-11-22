@@ -126,14 +126,14 @@ check_idleness(void)
 	idle_reporting = purple_prefs_get_string("/purple/away/idle_reporting");
 	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
 
-	if (!strcmp(idle_reporting, "system") &&
+	if (purple_strequal(idle_reporting, "system") &&
 		(idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
 	{
 		/* Use system idle time (mouse or keyboard movement, etc.) */
 		time_idle = idle_ui_ops->get_time_idle();
 		idle_recheck_interval = 1;
 	}
-	else if (!strcmp(idle_reporting, "purple"))
+	else if (purple_strequal(idle_reporting, "purple"))
 	{
 		/* Use 'Purple idle' */
 		time_idle = time(NULL) - last_active_time;
@@ -187,9 +187,8 @@ check_idleness(void)
 		purple_savedstatus_set_idleaway(TRUE);
 		no_away = FALSE;
 	}
-	else if (!no_away && time_idle < away_seconds)
+	else if (purple_savedstatus_is_idleaway() && time_idle < away_seconds)
 	{
-		no_away = TRUE;
 		purple_savedstatus_set_idleaway(FALSE);
 		if (time_until_next_idle_event == 0 || (away_seconds - time_idle) < time_until_next_idle_event)
 			time_until_next_idle_event = away_seconds - time_idle;
@@ -214,7 +213,7 @@ check_idleness(void)
 
 
 /*
- * Check idle and set the timer to fire at the next idle-worth event 
+ * Check idle and set the timer to fire at the next idle-worth event
  */
 static gboolean
 check_idleness_timer(void)

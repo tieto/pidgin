@@ -1,3 +1,7 @@
+/* Allow the Perl code to see deprecated functions, so we can continue to
+ * export them to Perl plugins. */
+#undef PIDGIN_DISABLE_DEPRECATED
+
 typedef struct group *Pidgin__Group;
 
 #define group perl_group

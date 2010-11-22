@@ -303,7 +303,6 @@ static int
 attach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
-	PidginWindow *gtkwin = NULL;
 	GSList *imhtml_ids = NULL, *entry_ids = NULL;
 	guint id;
 
@@ -312,8 +311,6 @@ attach_signals(PurpleConversation *conv)
 		purple_debug_misc("notify", "Failed to find gtkconv\n");
 		return 0;
 	}
-
-	gtkwin  = gtkconv->win;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus")) {
 		/* TODO should really find a way to make this work no matter
@@ -358,13 +355,11 @@ static void
 detach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
-	PidginWindow *gtkwin = NULL;
 	GSList *ids = NULL, *l;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	if (!gtkconv)
 		return;
-	gtkwin  = gtkconv->win;
 
 	ids = purple_conversation_get_data(conv, "notify-imhtml-signals");
 	for (l = ids; l != NULL; l = l->next)
@@ -547,7 +542,11 @@ handle_count_xprop(PidginWindow *purplewin)
 	}
 
 	count = count_messages(purplewin);
+#if GTK_CHECK_VERSION(2,14,0)
+	gdkwin = gtk_widget_get_window(window);
+#else
 	gdkwin = window->window;
+#endif
 
 	gdk_property_change(gdkwin, _PurpleUnseenCount, _Cardinal, 32,
 	                    GDK_PROP_MODE_REPLACE, (guchar *) &count, 1);
@@ -555,11 +554,12 @@ handle_count_xprop(PidginWindow *purplewin)
 }
 
 static void
-handle_urgent(PidginWindow *win, gboolean set)
+handle_urgent(PidginWindow *purplewin, gboolean set)
 {
-#ifndef _WIN32
-	pidgin_set_urgent(GTK_WINDOW(win->window), set);
-#endif
+	g_return_if_fail(purplewin != NULL);
+	g_return_if_fail(purplewin->window != NULL);
+
+	pidgin_set_urgent(GTK_WINDOW(purplewin->window), set);
 }
 
 static void
@@ -571,6 +571,9 @@ handle_raise(PidginWindow *purplewin)
 static void
 handle_present(PurpleConversation *conv)
 {
+	if (pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)))
+		return;
+
 	purple_conversation_present(conv);
 }
 
@@ -642,7 +645,6 @@ static void
 apply_method()
 {
 	GList *convs;
-	PidginWindow *purplewin = NULL;
 
 	for (convs = purple_get_conversations(); convs != NULL;
 	     convs = convs->next) {
@@ -651,7 +653,6 @@ apply_method()
 		/* remove notifications */
 		unnotify(conv, FALSE);
 
-		purplewin = PIDGIN_CONVERSATION(conv)->win;
 		if (GPOINTER_TO_INT(purple_conversation_get_data(conv, "notify-message-count")) != 0)
 			/* reattach appropriate notifications */
 			notify(conv, FALSE);
@@ -767,12 +768,14 @@ get_config_frame(PurplePlugin *plugin)
 
 	/* Urgent method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
+#else
+	toggle = gtk_check_button_new_with_mnemonic(_("_Flash window"));
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_urgent");
-#endif
 
 	/* Raise window method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("R_aise conversation window"));

@@ -95,4 +95,4 @@ static PurplePluginInfo info =
  {
  }
 
-PURPLE_INIT_PLUGIN(urlcatcher, init_plugin, info)
+PURPLE_INIT_PLUGIN(codeinline, init_plugin, info)

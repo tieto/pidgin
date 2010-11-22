@@ -4,21 +4,24 @@ MODULE = Purple::XMLNode  PACKAGE = Purple::XMLNode  PREFIX = xmlnode_
 PROTOTYPES: ENABLE
 
 Purple::XMLNode
-xmlnode_copy(class, src)
+xmlnode_copy(src)
 	Purple::XMLNode src
-    C_ARGS:
-	src
 
 void
 xmlnode_free(node)
 	Purple::XMLNode node
 
 Purple::XMLNode
-xmlnode_from_str(class, str, size)
-	const char *str
-	gssize size
-    C_ARGS:
-	str, size
+xmlnode_from_str(const char *str, gssize length(str))
+    PROTOTYPE: $
+
+const char *
+xmlnode_get_name(node)
+	Purple::XMLNode node
+	CODE:
+	RETVAL = node->name;
+	OUTPUT:
+	RETVAL
 
 const char *
 xmlnode_get_attrib(node, attr)
@@ -29,6 +32,18 @@ Purple::XMLNode
 xmlnode_get_child(parent, name)
 	Purple::XMLNode parent
 	const char *name
+PREINIT:
+	xmlnode *tmp;
+CODE:
+	if (!name || *name == '\0') {
+		tmp = parent->child;
+		while (tmp && tmp->type != XMLNODE_TYPE_TAG)
+			tmp = tmp->next;
+		RETVAL = tmp;
+	} else
+		RETVAL = xmlnode_get_child(parent, name);
+OUTPUT:
+	RETVAL
 
 Purple::XMLNode
 xmlnode_get_child_with_namespace(parent, name, xmlns)
@@ -39,6 +54,19 @@ xmlnode_get_child_with_namespace(parent, name, xmlns)
 gchar_own *
 xmlnode_get_data(node)
 	Purple::XMLNode node
+
+Purple::XMLNode
+xmlnode_get_next(node)
+	Purple::XMLNode node
+PREINIT:
+	xmlnode *tmp;
+CODE:
+	tmp = node->next;
+	while (tmp && tmp->type != XMLNODE_TYPE_TAG)
+		tmp = tmp->next;
+	RETVAL = tmp;
+OUTPUT:
+	RETVAL
 
 Purple::XMLNode
 xmlnode_get_next_twin(node)
@@ -78,11 +106,17 @@ xmlnode_set_attrib(node, attr, value)
 	const char *value
 
 gchar_own *
-xmlnode_to_formatted_str(node, len)
+xmlnode_to_formatted_str(node)
 	Purple::XMLNode node
-	int *len
+    CODE:
+	RETVAL = xmlnode_to_formatted_str(node, NULL);
+    OUTPUT:
+	RETVAL
 
 gchar_own *
-xmlnode_to_str(node, len)
+xmlnode_to_str(node)
 	Purple::XMLNode node
-	int *len
+    CODE:
+	RETVAL = xmlnode_to_str(node, NULL);
+    OUTPUT:
+	RETVAL

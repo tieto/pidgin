@@ -72,8 +72,6 @@ static const char *OPT_WINTRANS_BL_ONFOCUS= "/plugins/gtk/win32/wintrans/bl_soli
 static const char *OPT_WINTRANS_BL_ONTOP  = "/plugins/gtk/win32/wintrans/bl_always_on_top";
 static GSList *window_list = NULL;
 
-static BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags) = NULL;
-
 /*
  *  CODE
  */
@@ -81,31 +79,31 @@ static BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlp
 /* Set window transparency level */
 static void set_wintrans(GtkWidget *window, int alpha, gboolean enabled,
 		gboolean always_on_top) {
-	if (MySetLayeredWindowAttributes) {
-		HWND hWnd = GDK_WINDOW_HWND(window->window);
-		LONG style = GetWindowLong(hWnd, GWL_EXSTYLE);
-		if (enabled) {
-			style |= WS_EX_LAYERED;
-		} else {
-			style &= ~WS_EX_LAYERED;
-		}
-		SetWindowLong(hWnd, GWL_EXSTYLE, style);
 
-
-		if (enabled) {
-			SetWindowPos(hWnd,
-				always_on_top ? HWND_TOPMOST : HWND_NOTOPMOST,
-				0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-			MySetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
-		} else {
-			/* Ask the window and its children to repaint */
-			SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
-				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
-			RedrawWindow(hWnd, NULL, NULL,
-				RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-		}
+	HWND hWnd = GDK_WINDOW_HWND(window->window);
+	LONG style = GetWindowLong(hWnd, GWL_EXSTYLE);
+	if (enabled) {
+		style |= WS_EX_LAYERED;
+	} else {
+		style &= ~WS_EX_LAYERED;
 	}
+	SetWindowLong(hWnd, GWL_EXSTYLE, style);
+
+
+	if (enabled) {
+		SetWindowPos(hWnd,
+			always_on_top ? HWND_TOPMOST : HWND_NOTOPMOST,
+			0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
+	} else {
+		/* Ask the window and its children to repaint */
+		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
+			SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		RedrawWindow(hWnd, NULL, NULL,
+			RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+	}
+
 }
 
 /* When a conv window is focused, if we're only transparent when unfocused,
@@ -182,7 +180,7 @@ static GtkWidget *wintrans_slider(GtkWidget *win) {
 
 	/* On slider val change, update window's transparency level */
 	g_signal_connect(GTK_OBJECT(slider), "value-changed",
-		GTK_SIGNAL_FUNC(change_alpha), win);
+		G_CALLBACK(change_alpha), win);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
 
@@ -491,14 +489,6 @@ static void update_existing_convs() {
  *  EXPORTED FUNCTIONS
  */
 static gboolean plugin_load(PurplePlugin *plugin) {
-	MySetLayeredWindowAttributes = (void*) wpurple_find_and_loadproc(
-		"user32.dll", "SetLayeredWindowAttributes");
-
-	if (!MySetLayeredWindowAttributes) {
-		purple_debug_error(WINTRANS_PLUGIN_ID,
-			"SetLayeredWindowAttributes API not found (Required W2K+)\n");
-		return FALSE;
-	}
 
 	purple_signal_connect(purple_conversations_get_handle(),
 		"conversation-created", plugin,
@@ -563,7 +553,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	button = pidgin_prefs_checkbox(_("_IM window transparency"),
 		OPT_WINTRANS_IM_ENABLED, imtransbox);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(update_convs_wintrans),
+		G_CALLBACK(update_convs_wintrans),
 		(gpointer) OPT_WINTRANS_IM_ENABLED);
 
 	trans_box = gtk_vbox_new(FALSE, 18);
@@ -572,12 +562,12 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	gtk_widget_show(trans_box);
 
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(pidgin_toggle_sensitive), trans_box);
+		G_CALLBACK(pidgin_toggle_sensitive), trans_box);
 
 	button = pidgin_prefs_checkbox(_("_Show slider bar in IM window"),
 		OPT_WINTRANS_IM_SLIDER, trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(update_convs_wintrans),
+		G_CALLBACK(update_convs_wintrans),
 		(gpointer) OPT_WINTRANS_IM_SLIDER);
 
 	button = pidgin_prefs_checkbox(
@@ -587,7 +577,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	button = pidgin_prefs_checkbox(_("Always on top"), OPT_WINTRANS_IM_ONTOP,
 		trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(update_convs_wintrans),
+		G_CALLBACK(update_convs_wintrans),
 		(gpointer) OPT_WINTRANS_IM_ONTOP);
 
 	gtk_box_pack_start(GTK_BOX(imtransbox), trans_box, FALSE, FALSE, 5);
@@ -604,9 +594,9 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
 
 	g_signal_connect(GTK_OBJECT(slider), "value-changed",
-		GTK_SIGNAL_FUNC(alpha_change), NULL);
+		G_CALLBACK(alpha_change), NULL);
 	g_signal_connect(GTK_OBJECT(slider), "focus-out-event",
-		GTK_SIGNAL_FUNC(alpha_pref_set_int),
+		G_CALLBACK(alpha_pref_set_int),
 		(gpointer) OPT_WINTRANS_IM_ALPHA);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
@@ -620,7 +610,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	button = pidgin_prefs_checkbox(_("_Buddy List window transparency"),
 		OPT_WINTRANS_BL_ENABLED, bltransbox);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(set_blist_trans),
+		G_CALLBACK(set_blist_trans),
 		(gpointer) OPT_WINTRANS_BL_ENABLED);
 
 	trans_box = gtk_vbox_new(FALSE, 18);
@@ -628,14 +618,14 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(pidgin_toggle_sensitive), trans_box);
+		G_CALLBACK(pidgin_toggle_sensitive), trans_box);
 	button = pidgin_prefs_checkbox(
 		_("Remove Buddy List window transparency on focus"),
 		OPT_WINTRANS_BL_ONFOCUS, trans_box);
 	button = pidgin_prefs_checkbox(_("Always on top"), OPT_WINTRANS_BL_ONTOP,
 		trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
-		GTK_SIGNAL_FUNC(set_blist_trans),
+		G_CALLBACK(set_blist_trans),
 		(gpointer) OPT_WINTRANS_BL_ONTOP);
 	gtk_box_pack_start(GTK_BOX(bltransbox), trans_box, FALSE, FALSE, 5);
 
@@ -652,9 +642,9 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
 
 	g_signal_connect(GTK_OBJECT(slider), "value-changed",
-		GTK_SIGNAL_FUNC(bl_alpha_change), NULL);
+		G_CALLBACK(bl_alpha_change), NULL);
 	g_signal_connect(GTK_OBJECT(slider), "focus-out-event",
-		GTK_SIGNAL_FUNC(alpha_pref_set_int),
+		G_CALLBACK(alpha_pref_set_int),
 		(gpointer) OPT_WINTRANS_BL_ALPHA);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);

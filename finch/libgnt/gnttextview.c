@@ -20,6 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "TextView"
+
 #include "gntstyle.h"
 #include "gnttextview.h"
 #include "gntutils.h"
@@ -63,10 +67,17 @@ static gboolean double_click;
 
 static void reset_text_view(GntTextView *view);
 
+static gboolean
+text_view_contains(GntTextView *view, const char *str)
+{
+	return (str >= view->string->str && str < view->string->str + view->string->len);
+}
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
 	GntTextView *view = GNT_TEXT_VIEW(widget);
+	int n;
 	int i = 0;
 	GList *lines;
 	int rows, scrcol;
@@ -76,10 +87,11 @@ gnt_text_view_draw(GntWidget *widget)
 	wbkgd(widget->window, gnt_color_pair(GNT_COLOR_NORMAL));
 	werase(widget->window);
 
+	n = g_list_length(view->list);
 	if ((view->flags & GNT_TEXT_VIEW_TOP_ALIGN) &&
-			g_list_length(view->list) < widget->priv.height) {
+			n < widget->priv.height) {
 		GList *now = view->list;
-		comp = widget->priv.height - g_list_length(view->list);
+		comp = widget->priv.height - n;
 		view->list = g_list_nth_prev(view->list, comp);
 		if (!view->list) {
 			view->list = g_list_first(now);
@@ -103,10 +115,10 @@ gnt_text_view_draw(GntWidget *widget)
 			char back = *end;
 			chtype fl = seg->flags;
 			*end = '\0';
-			if (select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
+			if (select_start && select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
 				fl |= A_REVERSE;
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			} else if (select_start && select_end &&
 				((select_start >= view->string->str + seg->start && select_start <= view->string->str + seg->end) ||
 				(select_end <= view->string->str + seg->end && select_start <= view->string->str + seg->start))) {
@@ -120,13 +132,13 @@ gnt_text_view_draw(GntWidget *widget)
 						fl = seg->flags;
 					str = g_strndup(cur, last - cur);
 					wattrset(widget->window, fl);
-					waddstr(widget->window, str);
+					waddstr(widget->window, C_(str));
 					g_free(str);
 					cur = g_utf8_next_char(cur);
 				}
 			} else {
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			}
 			*end = back;
 		}
@@ -171,7 +183,7 @@ gnt_text_view_draw(GntWidget *widget)
 					gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 	}
 
-	GNTDEBUG;
+	wmove(widget->window, 0, 0);
 }
 
 static void
@@ -236,6 +248,7 @@ gnt_text_view_destroy(GntWidget *widget)
 static char *
 gnt_text_view_get_p(GntTextView *view, int x, int y)
 {
+	int n;
 	int i = 0;
 	GntWidget *wid = GNT_WIDGET(view);
 	GntTextLine *line;
@@ -244,10 +257,11 @@ gnt_text_view_get_p(GntTextView *view, int x, int y)
 	GntTextSegment *seg;
 	gchar *pos;
 
+	n = g_list_length(view->list);
 	y = wid->priv.height - y;
-	if (g_list_length(view->list) < y) {
+	if (n < y) {
 		x = 0;
-		y = g_list_length(view->list) - 1;
+		y = n - 1;
 	}
 
 	lines = g_list_nth(view->list, y - 1);
@@ -318,9 +332,10 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		select_start = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
 		g_timeout_add(500, too_slow, NULL);
 	} else if (event == GNT_MOUSE_UP) {
-		if (select_start) {
+		GntTextView *view = GNT_TEXT_VIEW(widget);
+		if (text_view_contains(view, select_start)) {
 			GString *clip;
-			select_end = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
+			select_end = gnt_text_view_get_p(view, x - widget->priv.x, y - widget->priv.y);
 			if (select_end < select_start) {
 				gchar *t = select_start;
 				select_start = select_end;
@@ -328,7 +343,7 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			}
 			if (select_start == select_end) {
 				if (double_click) {
-					clip = select_word_text(GNT_TEXT_VIEW(widget), select_start);
+					clip = select_word_text(view, select_start);
 					double_click = FALSE;
 				} else {
 					double_click = TRUE;
@@ -696,7 +711,7 @@ int gnt_text_view_get_lines_below(GntTextView *view)
 int gnt_text_view_get_lines_above(GntTextView *view)
 {
 	int above = 0;
-	GList *list = view->list;
+	GList *list;
 	list = g_list_nth(view->list, GNT_WIDGET(view)->priv.height);
 	if (!list)
 		return 0;
@@ -759,6 +774,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							line->segments = g_list_delete_link(line->segments, segs);
 							if (line->segments == NULL) {
 								free_text_line(line, NULL);
+								line = NULL;
 								if (view->list == iter) {
 									if (inext)
 										view->list = inext;
@@ -772,11 +788,12 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							seg->start = tag->start;
 							seg->end = tag->end - change;
 						}
-						line->length -= change;
+						if (line)
+							line->length -= change;
 						/* XXX: Make things work if the tagged text spans over several lines. */
 					} else {
 						/* XXX: handle the rest of the conditions */
-						g_printerr("WTF! This needs to be handled properly!!\n");
+						gnt_warning("WTF! This needs to be handled properly!!%s", "");
 					}
 				}
 			}
@@ -791,6 +808,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 				break;
 		}
 	}
+	gnt_widget_draw(GNT_WIDGET(view));
 	return count;
 }
 

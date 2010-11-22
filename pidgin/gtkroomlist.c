@@ -53,7 +53,6 @@ typedef struct _PidginRoomlistDialog {
 	PurpleRoomlist *roomlist;
 
 	gboolean pg_needs_pulse;
-	gboolean pg_to_active;
 	guint pg_update_to;
 } PidginRoomlistDialog;
 
@@ -65,7 +64,6 @@ typedef struct _PidginRoomlist {
 	gint num_rooms, total_rooms;
 	GtkWidget *tipwindow;
 	GdkRectangle tip_rect;
-	guint timeout;
 	PangoLayout *tip_layout;
 	PangoLayout *tip_name_layout;
 	int tip_height;
@@ -84,34 +82,47 @@ static GList *roomlists = NULL;
 
 static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
-	PidginRoomlistDialog *dialog;
-
-	dialog = (PidginRoomlistDialog *) d;
+	PidginRoomlistDialog *dialog = d;
 
 	if (dialog->roomlist && purple_roomlist_get_in_progress(dialog->roomlist))
 		purple_roomlist_cancel_get_list(dialog->roomlist);
 
+	if (dialog->pg_update_to > 0)
+		purple_timeout_remove(dialog->pg_update_to);
+
 	if (dialog->roomlist) {
-		if (dialog->pg_to_active) {
-			purple_timeout_remove(dialog->pg_update_to);
-			dialog->pg_to_active = FALSE;
+		PidginRoomlist *rl = dialog->roomlist->ui_data;
+
+		if (dialog->pg_update_to > 0)
 			/* yes, that's right, unref it twice. */
 			purple_roomlist_unref(dialog->roomlist);
-		}
+
+		if (rl)
+			rl->dialog = NULL;
+		purple_roomlist_unref(dialog->roomlist);
 	}
 
-	/* free stuff here */
-	if (dialog->roomlist)
-		purple_roomlist_unref(dialog->roomlist);
+	dialog->progress = NULL;
 	g_free(dialog);
 
 	return FALSE;
 }
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
-                                     PidginRoomlistDialog *dialog)
+				     PidginRoomlistDialog *dialog)
 {
+	gboolean change = (account != dialog->account);
 	dialog->account = account;
+
+	if (change && dialog->roomlist) {
+		PidginRoomlist *rl = dialog->roomlist->ui_data;
+		if (rl->tree) {
+			gtk_widget_destroy(rl->tree);
+			rl->tree = NULL;
+		}
+		purple_roomlist_unref(dialog->roomlist);
+		dialog->roomlist = NULL;
+	}
 }
 
 static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
@@ -186,9 +197,7 @@ selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 	GValue val;
 	PurpleRoomlistRoom *room;
 	static struct _menu_cb_info *info;
-	PidginRoomlistDialog *dialog;
-
-	dialog = grl->dialog;
+	PidginRoomlistDialog *dialog = grl->dialog;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		val.g_type = 0;
@@ -239,9 +248,7 @@ static void add_room_to_blist_cb(GtkButton *button, PidginRoomlistDialog *dialog
 {
 	PurpleRoomlist *rl = dialog->roomlist;
 	PidginRoomlist *grl = rl->ui_data;
-	struct _menu_cb_info *info;
-
-	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
+	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "room-info");
 
 	if(info != NULL)
 		do_add_room_cb(grl->tree, info);
@@ -256,9 +263,7 @@ static void join_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	PurpleRoomlist *rl = dialog->roomlist;
 	PidginRoomlist *grl = rl->ui_data;
-	struct _menu_cb_info *info;
-
-	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
+	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "room-info");
 
 	if(info != NULL)
 		do_join_cb(grl->tree, info);
@@ -356,8 +361,6 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
 
 	style = grl->tipwindow->style;
-
-	max_text_width = 0;
 
 	max_text_width = MAX(grl->tip_width, grl->tip_name_width);
 	max_width = TOOLTIP_BORDER + SMALL_SPACE + max_text_width + TOOLTIP_BORDER;
@@ -490,12 +493,13 @@ pidgin_roomlist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 
 static gboolean account_filter_func(PurpleAccount *account)
 {
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *conn = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (conn && PURPLE_CONNECTION_IS_CONNECTED(conn))
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
 
-	return (prpl_info->roomlist_get_list != NULL);
+	return (prpl_info && prpl_info->roomlist_get_list != NULL);
 }
 
 gboolean
@@ -518,10 +522,7 @@ static PidginRoomlistDialog *
 pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 {
 	PidginRoomlistDialog *dialog;
-	GtkWidget *window;
-	GtkWidget *vbox;
-	GtkWidget *vbox2;
-	GtkWidget *bbox;
+	GtkWidget *window, *vbox, *vbox2, *bbox;
 
 	dialog = g_new0(PidginRoomlistDialog, 1);
 	dialog->account = account;
@@ -611,9 +612,8 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 
 void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account)
 {
-	PidginRoomlistDialog *dialog;
+	PidginRoomlistDialog *dialog = pidgin_roomlist_dialog_new_with_account(account);
 
-	dialog = pidgin_roomlist_dialog_new_with_account(account);
 	if (!dialog)
 		return;
 
@@ -627,9 +627,7 @@ void pidgin_roomlist_dialog_show(void)
 
 static void pidgin_roomlist_new(PurpleRoomlist *list)
 {
-	PidginRoomlist *rl;
-
-	rl = g_new0(PidginRoomlist, 1);
+	PidginRoomlist *rl = g_new0(PidginRoomlist, 1);
 
 	list->ui_data = rl;
 
@@ -802,7 +800,7 @@ static gboolean pidgin_progress_bar_pulse(gpointer data)
 
 	if (!rl || !rl->dialog || !rl->dialog->pg_needs_pulse) {
 		if (rl && rl->dialog)
-			rl->dialog->pg_to_active = FALSE;
+			rl->dialog->pg_update_to = 0;
 		purple_roomlist_unref(list);
 		return FALSE;
 	}
@@ -827,15 +825,14 @@ static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *r
 		rl->num_rooms++;
 
 	if (rl->dialog) {
-		if (!rl->dialog->pg_to_active) {
-			rl->dialog->pg_to_active = TRUE;
+		if (rl->dialog->pg_update_to == 0) {
 			purple_roomlist_ref(list);
 			rl->dialog->pg_update_to = g_timeout_add(100, pidgin_progress_bar_pulse, list);
 			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
-		} else {
+		} else
 			rl->dialog->pg_needs_pulse = TRUE;
-		}
 	}
+
 	if (room->parent) {
 		parentrr = g_hash_table_lookup(rl->cats, room->parent);
 		path = gtk_tree_row_reference_get_path(parentrr);
@@ -881,14 +878,14 @@ static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *r
 	}
 }
 
-static void pidgin_roomlist_in_progress(PurpleRoomlist *list, gboolean flag)
+static void pidgin_roomlist_in_progress(PurpleRoomlist *list, gboolean in_progress)
 {
 	PidginRoomlist *rl = list->ui_data;
 
 	if (!rl || !rl->dialog)
 		return;
 
-	if (flag) {
+	if (in_progress) {
 		if (rl->dialog->account_widget)
 			gtk_widget_set_sensitive(rl->dialog->account_widget, FALSE);
 		gtk_widget_set_sensitive(rl->dialog->stop_button, TRUE);
@@ -905,11 +902,9 @@ static void pidgin_roomlist_in_progress(PurpleRoomlist *list, gboolean flag)
 
 static void pidgin_roomlist_destroy(PurpleRoomlist *list)
 {
-	PidginRoomlist *rl;
+	PidginRoomlist *rl = list->ui_data;
 
 	roomlists = g_list_remove(roomlists, list);
-
-	rl = list->ui_data;
 
 	g_return_if_fail(rl != NULL);
 

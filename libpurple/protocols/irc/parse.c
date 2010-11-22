@@ -123,6 +123,7 @@ static struct _irc_user_cmd {
 } _irc_cmds[] = {
 	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
 	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
+	{ "ctcp", "t:", irc_cmd_ctcp, N_("ctcp <nick> <msg>: sends ctcp msg to nick.") },
 	{ "chanserv", ":", irc_cmd_service, N_("chanserv: Send a command to chanserv") },
 	{ "deop", ":", irc_cmd_op, N_("deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must be a channel operator to do this.") },
 	{ "devoice", ":", irc_cmd_op, N_("devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the channel is moderated (+m). You must be a channel operator to do this.") },
@@ -232,7 +233,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 
 	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
-		return g_strdup(string);
+		return NULL;
 	}
 
 	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
@@ -252,6 +253,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	char *utf8 = NULL;
 	const gchar *charset, *enclist;
 	gchar **encodings;
+	gboolean autodetect;
 	int i;
 
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
@@ -260,6 +262,12 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	if (encodings[0] == NULL) {
 		g_strfreev(encodings);
 		return purple_utf8_salvage(string);
+	}
+
+	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
+
+	if (autodetect && g_utf8_validate(string, -1, NULL)) {
+		return g_strdup(string);
 	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
@@ -353,7 +361,12 @@ char *irc_mirc2html(const char *string)
 	char fg[3] = "\0\0", bg[3] = "\0\0";
 	int fgnum, bgnum;
 	int font = 0, bold = 0, underline = 0, italic = 0;
-	GString *decoded = g_string_sized_new(strlen(string));
+	GString *decoded;
+
+	if (string == NULL)
+		return NULL;
+
+	decoded = g_string_sized_new(strlen(string));
 
 	cur = string;
 	do {
@@ -453,8 +466,13 @@ char *irc_mirc2html(const char *string)
 
 char *irc_mirc2txt (const char *string)
 {
-	char *result = g_strdup (string);
+	char *result;
 	int i, j;
+
+	if (string == NULL)
+		return NULL;
+
+	result = g_strdup (string);
 
 	for (i = 0, j = 0; result[i]; i++) {
 		switch (result[i]) {
@@ -486,7 +504,20 @@ char *irc_mirc2txt (const char *string)
 		}
 	}
 	result[j] = '\0';
-        return result;
+	return result;
+}
+
+const char *irc_nick_skip_mode(struct irc_conn *irc, const char *nick)
+{
+	static const char *default_modes = "@+%&";
+	const char *mode_chars;
+
+	mode_chars = irc->mode_chars ? irc->mode_chars : default_modes;
+
+	while (strchr(mode_chars, *nick) != NULL)
+		nick++;
+
+	return nick;
 }
 
 gboolean irc_ischannel(const char *string)
@@ -597,7 +628,7 @@ char *irc_format(struct irc_conn *irc, const char *format, ...)
 		case 'n':
 		case 'c':
 			tmp = irc_send_convert(irc, tok);
-			g_string_append(string, tmp);
+			g_string_append(string, tmp ? tmp : tok);
 			g_free(tmp);
 			break;
 		default:
@@ -711,9 +742,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 static void irc_parse_error_cb(struct irc_conn *irc, char *input)
 {
 	char *clean;
-        /* This really should be escaped somehow that you can tell what
-         * the junk was -- but as it is, it can crash glib. */
-        clean = purple_utf8_salvage(input);
+	/* This really should be escaped somehow that you can tell what
+	 * the junk was -- but as it is, it can crash glib. */
+	clean = purple_utf8_salvage(input);
 	purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", clean);
-        g_free(clean);
+	g_free(clean);
 }

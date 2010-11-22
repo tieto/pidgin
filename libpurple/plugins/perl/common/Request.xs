@@ -47,7 +47,7 @@ purple_perl_request_ok_cb(void * data, PurpleRequestFields *fields)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
+	XPUSHs(sv_2mortal(purple_perl_bless_object(fields, "Purple::Request::Fields")));
 	PUTBACK;
 	call_sv(gpr->ok_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
@@ -69,7 +69,7 @@ purple_perl_request_cancel_cb(void * data, PurpleRequestFields *fields)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
+	XPUSHs(sv_2mortal(purple_perl_bless_object(fields, "Purple::Request::Fields")));
 	PUTBACK;
 	call_sv(gpr->cancel_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
@@ -206,21 +206,16 @@ void
 purple_request_close_with_handle(handle)
 	void * handle
 
-Purple::Request::UiOps
-purple_request_get_ui_ops()
-
-void
-purple_request_set_ui_ops(ops)
-	Purple::Request::UiOps ops
 
 MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_request_field_
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_account_new(id, text, account = NULL)
+purple_request_field_account_new(class, id, text, account = NULL)
 	const char *id
 	const char *text
 	Purple::Account account
+	C_ARGS: id, text, account
 
 Purple::Account
 purple_request_field_account_get_default_value(field)
@@ -261,10 +256,11 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_bool_new(id, text, default_value = TRUE)
+purple_request_field_bool_new(class, id, text, default_value = TRUE)
 	const char *id
 	const char *text
 	gboolean default_value
+	C_ARGS: id, text, default_value
 
 gboolean
 purple_request_field_bool_get_default_value(field)
@@ -288,10 +284,11 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_choice_new(id, text, default_value = 0)
+purple_request_field_choice_new(class, id, text, default_value = 0)
 	const char *id
 	const char *text
 	int default_value
+	C_ARGS: id, text, default_value
 
 void
 purple_request_field_choice_add(field, label)
@@ -330,10 +327,11 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_int_new(id, text, default_value = 0)
+purple_request_field_int_new(clas, id, text, default_value = 0)
 	const char *id
 	const char *text
 	int default_value
+	C_ARGS: id, text, default_value
 
 int
 purple_request_field_int_get_default_value(field)
@@ -361,22 +359,31 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_label_new(id, text)
+purple_request_field_label_new(class, id, text)
 	const char *id
 	const char *text
+	C_ARGS: id, text
 
 MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_request_field_
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_list_new(id, text)
+purple_request_field_list_new(class, id, text)
 	const char *id
 	const char *text
+	C_ARGS: id, text
 
 void
 purple_request_field_list_add(field, item, data)
 	Purple::Request::Field field
 	const char *item
+	void * data
+
+void
+purple_request_field_list_add_icon(field, item, icon_path, data)
+	Purple::Request::Field field
+	const char *item
+	const char *icon_path
 	void * data
 
 void
@@ -431,10 +438,11 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_new(id, text, type)
+purple_request_field_new(class, id, text, type)
 	const char *id
 	const char *text
 	Purple::RequestFieldType type
+	C_ARGS: id, text, type
 
 void
 purple_request_field_set_label(field, label)
@@ -460,11 +468,12 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_requ
 PROTOTYPES: ENABLE
 
 Purple::Request::Field
-purple_request_field_string_new(id, text, default_value, multiline)
+purple_request_field_string_new(class, id, text, default_value, multiline)
 	const char *id
 	const char *text
 	const char *default_value
 	gboolean multiline
+	C_ARGS: id, text, default_value, multiline
 
 const char *
 purple_request_field_string_get_default_value(field)
@@ -533,8 +542,9 @@ purple_request_field_group_get_title(group)
 	Purple::Request::Field::Group group
 
 Purple::Request::Field::Group
-purple_request_field_group_new(title)
+purple_request_field_group_new(class, title)
 	const char *title
+	C_ARGS: title
 
 MODULE = Purple::Request  PACKAGE = Purple::Request::Field  PREFIX = purple_request_field_
 PROTOTYPES: ENABLE
@@ -567,7 +577,8 @@ MODULE = Purple::Request  PACKAGE = Purple::Request::Fields  PREFIX = purple_req
 PROTOTYPES: ENABLE
 
 Purple::Request::Fields
-purple_request_fields_new()
+purple_request_fields_new(class)
+	C_ARGS: /* void */
 
 void
 purple_request_fields_add_group(fields, group)

@@ -57,33 +57,6 @@
 #endif
 
 /*
- * This is backwards-compatibility code for older versions of GTK+ (< 2.4.x)
- * It defines the new wrap behavior (unknown in earlier versions)
- * as the old (slightly buggy) wrap behavior.
- * It also includes our back-ported GtkExpander
- */
-/** @cond */
-#if (!GTK_CHECK_VERSION(2,4,0))
-# define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-# include "gtkexpander.h"
-#endif
-/** @endcond */
-
-/*
- * We include the sources for GtkComboBox and GtkCellView because
- * they don't exist in older versions of GTK+, and we use them
- * in a few places.
- */
-#if !GTK_CHECK_VERSION(2,6,0)
-#   include "gtkcellview.h"
-#   include "gtkcellviewmenuitem.h"
-#   include "pidgincombobox.h"
-#   if !GTK_CHECK_VERSION(2,4,0)
-#       include "gtkcelllayout.h"
-#   endif /* Less than GTK+ 2.4 */
-#endif /* Less than GTK+ 2.6 */
-
-/*
  * Spacings between components, as defined by the
  * GNOME Human Interface Guidelines.
  */
@@ -91,11 +64,22 @@
 #define PIDGIN_HIG_BORDER        12
 #define PIDGIN_HIG_BOX_SPACE      6
 
+#if !GTK_CHECK_VERSION(2,16,0) || !defined(PIDGIN_DISABLE_DEPRECATED)
 /*
- * See GNOME bug #307304 for some discussion about the invisible
- * character.  0x25cf is a good choice, too.
+ * Older versions of GNOME defaulted to using an asterisk as the invisible
+ * character.  But this is ugly and we want to use something nicer.
+ *
+ * The default invisible character was changed in GNOME revision 21446
+ * (GTK+ 2.16) from an asterisk to the first available character out of
+ * 0x25cf, 0x2022, 0x2731, 0x273a.  See GNOME bugs 83935 and 307304 for
+ * discussion leading up to the change.
+ *
+ * Here's the change:
+ * http://svn.gnome.org/viewvc/gtk%2B?view=revision&revision=21446
+ *
  */
-#define PIDGIN_INVISIBLE_CHAR (gunichar)0x2022
+#define PIDGIN_INVISIBLE_CHAR (gunichar)0x25cf
+#endif /* Less than GTK+ 2.16 */
 
 #endif /* _PIDGIN_H_ */
 

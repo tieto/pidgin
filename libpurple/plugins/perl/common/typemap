@@ -18,7 +18,7 @@ gchar					T_IV
 gchar *					T_PV
 gchar_own *				T_GCHAR_OWN
 guchar					T_IV
-guchar *				T_PTR
+guchar *				T_PV
 guchar **				T_PTR
 const guchar *				T_PV
 char *					T_PV
@@ -30,7 +30,7 @@ va_list					T_PTR
 GString *				T_PTR
 GData *					T_PTR
 GData **				T_PTR
-const unsigned char *			T_PTR
+const unsigned char *			T_PV
 struct tm *				T_PTR
 const struct tm *			T_PTR
 xmlnode *				T_PTR
@@ -40,7 +40,6 @@ const void *				T_PTR
 
 Purple::Account				T_PurpleObj
 Purple::Account::Option			T_PurpleObj
-Purple::Account::UiOps			T_PurpleObj
 Purple::Account::UserSplit		T_PurpleObj
 
 Purple::Buddy::Icon			T_PurpleObj
@@ -53,7 +52,6 @@ Purple::BuddyList::Group			T_PurpleObj
 Purple::BuddyList::Node			T_PurpleObj
 Purple::BuddyList::NodeFlags		T_IV
 Purple::BuddyList::NodeType		T_IV
-Purple::BuddyList::UiOps			T_PurpleObj
 
 Purple::Cipher				T_PurpleObj
 Purple::CipherCaps			T_IV
@@ -64,14 +62,11 @@ Purple::Cmd::Id				T_IV
 Purple::Cmd::Priority			T_IV
 Purple::Cmd::Ret				T_IV
 Purple::Connection			T_PurpleObj
-Purple::Connection::UiOps			T_PurpleObj
 Purple::Conversation			T_PurpleObj
 Purple::Conversation::Chat		T_PurpleObj
 Purple::Conversation::ChatBuddy		T_PurpleObj
 Purple::Conversation::IM			T_PurpleObj
-Purple::Conversation::UiOps		T_PurpleObj
 Purple::Core				T_PurpleObj
-Purple::Core::UiOps			T_PurpleObj
 
 Purple::Desktop::Item			T_PurpleObj
 Purple::DesktopItemType			T_IV
@@ -99,7 +94,6 @@ Purple::NotifySearchResults		T_PurpleObj
 Purple::NotifySearchColumn		T_PurpleObj
 Purple::NotifySearchButton		T_PurpleObj
 Purple::NotifyType			T_IV
-Purple::NotifyUiOps			T_PurpleObj
 Purple::NotifyUserInfo			T_PurpleObj
 Purple::NotifyUserInfoEntry		T_PurpleObj
 
@@ -118,7 +112,6 @@ Purple::Pounce				T_PurpleObj
 Purple::PounceEvent			T_IV
 Purple::Presence				T_PurpleObj
 Purple::PrivacyType			T_IV
-Purple::Privacy::UiOps			T_PurpleObj
 Purple::ProtocolOptions			T_IV
 Purple::ProxyInfo				T_PurpleObj
 Purple::ProxyType				T_IV
@@ -128,12 +121,10 @@ Purple::RequestType			T_IV
 Purple::Request::Field			T_PurpleObj
 Purple::Request::Fields			T_PurpleObj
 Purple::Request::Field::Group		T_PurpleObj
-Purple::Request::UiOps			T_PurpleObj
 
 Purple::Roomlist				T_PurpleObj
 Purple::Roomlist::Room			T_PurpleObj
 Purple::Roomlist::Field			T_PurpleObj
-Purple::Roomlist::UiOps			T_PurpleObj
 Purple::RoomlistFieldType			T_IV
 Purple::RoomlistRoomType			T_IV
 
@@ -142,7 +133,6 @@ const Purple::SavedStatus			T_PurpleObj
 Purple::SavedStatus::Sub			T_PurpleObj
 const Purple::SavedStatus::Sub			T_PurpleObj
 Purple::SoundEventID			T_IV
-Purple::Sound::UiOps			T_PurpleObj
 
 Purple::Input::Condition			T_PurpleObj
 Purple::SslErrorType			T_IV
@@ -151,6 +141,7 @@ Purple::Ssl::Ops				T_PurpleObj
 
 Purple::Presence				T_PurpleObj
 Purple::PresenceContext			T_IV
+Purple::Smiley				T_PurpleObj
 Purple::Status				T_PurpleObj
 Purple::StatusAttr			T_PurpleObj
 Purple::StatusPrimitive			T_IV
@@ -167,14 +158,22 @@ Purple::Value				T_PurpleObj
 Purple::Xfer				T_PurpleObj
 Purple::XferType				T_IV
 Purple::XferStatusType			T_IV
-Purple::XferUiOps				T_IV
 
 Purple::XMLNode				T_PurpleObj
 XMLNode::Type				T_IV
 
 /* enums */
 
+/* certificate.h */
+Purple::Certificate				T_PurpleObj
+Purple::Certificate::Pool			T_PurpleObj
+Purple::Certificate::Scheme			T_PurpleObj
+Purple::Certificate::Verifier			T_PurpleObj
+Purple::Certificate::VerificationRequest	T_PurpleObj
+Purple::Certificate::VerificationStatus		T_IV
+
 /* cipher.h */
+Purple::Cipher::BatchMode	T_IV
 
 /* blist.h */
 
@@ -184,7 +183,7 @@ Purple::DebugLevel			T_IV
 /* conversation.h */
 Purple::ConvChatBuddyFlags		T_IV
 Purple::ConvUpdateType			T_IV
-Purple::ConversationType			T_IV
+Purple::ConversationType		T_IV
 Purple::MessageFlags			T_IV
 Purple::TypingState			T_IV
 Purple::UnseenState			T_IV
@@ -192,6 +191,9 @@ Purple::UnseenState			T_IV
 /* connection.h */
 Purple::ConnectionFlags			T_IV
 Purple::ConnectionState			T_IV
+
+/* whiteboard.h */
+Purple::Whiteboard			T_PurpleObj
 
 INPUT
 

@@ -148,11 +148,11 @@ set_creation_time(PurpleSavedStatus *status, time_t creation_time)
 	/* Avoid using 0 because it's an invalid hash key */
 	status->creation_time = creation_time != 0 ? creation_time : 1;
 
-	while (g_hash_table_lookup(creation_times, &status->creation_time) != NULL)
+	while (g_hash_table_lookup(creation_times, (gconstpointer)status->creation_time) != NULL)
 		status->creation_time++;
 
 	g_hash_table_insert(creation_times,
-						&status->creation_time,
+						(gpointer)status->creation_time,
 						status);
 }
 
@@ -217,7 +217,7 @@ remove_old_transient_statuses(void)
 				{
 					saved_statuses = g_list_remove(saved_statuses, saved_status);
 					creation_time = purple_savedstatus_get_creation_time(saved_status);
-					g_hash_table_remove(creation_times, &creation_time);
+					g_hash_table_remove(creation_times, (gconstpointer)creation_time);
 					free_saved_status(saved_status);
 				}
 			}
@@ -285,13 +285,13 @@ status_to_xmlnode(PurpleSavedStatus *status)
 		xmlnode_set_attrib(node, "transient", "true");
 	}
 
-	snprintf(buf, sizeof(buf), "%lu", status->creation_time);
+	g_snprintf(buf, sizeof(buf), "%lu", status->creation_time);
 	xmlnode_set_attrib(node, "created", buf);
 
-	snprintf(buf, sizeof(buf), "%lu", status->lastused);
+	g_snprintf(buf, sizeof(buf), "%lu", status->lastused);
 	xmlnode_set_attrib(node, "lastused", buf);
 
-	snprintf(buf, sizeof(buf), "%u", status->usage_count);
+	g_snprintf(buf, sizeof(buf), "%u", status->usage_count);
 	xmlnode_set_attrib(node, "usage_count", buf);
 
 	child = xmlnode_new_child(node, "state");
@@ -436,12 +436,12 @@ parse_substatus(xmlnode *substatus)
  *   And I can always make them smile
  *   From White Castle to the Nile</message>
  *       <substatus>
- *           <account protocol='prpl-oscar'>markdoliner</account>
+ *           <account protocol='prpl-aim'>markdoliner</account>
  *           <state>available</state>
  *           <message>The ladies man is here to answer your queries.</message>
  *       </substatus>
  *       <substatus>
- *           <account protocol='prpl-oscar'>giantgraypanda</account>
+ *           <account protocol='prpl-aim'>giantgraypanda</account>
  *           <state>away</state>
  *           <message>A.C. ain't in charge no more.</message>
  *       </substatus>
@@ -461,7 +461,7 @@ parse_status(xmlnode *status)
 	ret = g_new0(PurpleSavedStatus, 1);
 
 	attrib = xmlnode_get_attrib(status, "transient");
-	if ((attrib == NULL) || (strcmp(attrib, "true")))
+	if (!purple_strequal(attrib, "true"))
 	{
 		/* Read the title */
 		attrib = xmlnode_get_attrib(status, "name");
@@ -713,7 +713,7 @@ purple_savedstatus_delete_by_status(PurpleSavedStatus *status)
 
 	saved_statuses = g_list_remove(saved_statuses, status);
 	creation_time = purple_savedstatus_get_creation_time(status);
-	g_hash_table_remove(creation_times, &creation_time);
+	g_hash_table_remove(creation_times, (gconstpointer)creation_time);
 	free_saved_status(status);
 
 	schedule_save();
@@ -801,13 +801,13 @@ purple_savedstatus_get_current(void)
 PurpleSavedStatus *
 purple_savedstatus_get_default()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/default");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -828,13 +828,13 @@ purple_savedstatus_get_default()
 PurpleSavedStatus *
 purple_savedstatus_get_idleaway()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/idleaway");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -870,14 +870,14 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 		/* Don't need to do anything */
 		return;
 
-	/* Changing our status makes us un-idle */
-	if (!idleaway)
-		purple_idle_touch();
-
 	old = purple_savedstatus_get_current();
 	saved_status = idleaway ? purple_savedstatus_get_idleaway()
 			: purple_savedstatus_get_default();
 	purple_prefs_set_bool("/purple/savedstatus/isidleaway", idleaway);
+
+	/* Changing our status makes us un-idle */
+	if (!idleaway)
+		purple_idle_touch();
 
 	if (idleaway && (purple_savedstatus_get_type(old) != PURPLE_STATUS_AVAILABLE))
 		/* Our global status is already "away," so don't change anything */
@@ -907,13 +907,13 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 PurpleSavedStatus *
 purple_savedstatus_get_startup()
 {
-	int creation_time;
+	time_t creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
 	creation_time = purple_prefs_get_int("/purple/savedstatus/startup");
 
 	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+		saved_status = g_hash_table_lookup(creation_times, (gconstpointer)creation_time);
 
 	if (saved_status == NULL)
 	{
@@ -940,7 +940,7 @@ purple_savedstatus_find(const char *title)
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
 		status = (PurpleSavedStatus *)iter->data;
-		if ((status->title != NULL) && !strcmp(status->title, title))
+		if (purple_strequal(status->title, title))
 			return status;
 	}
 
@@ -975,8 +975,7 @@ purple_savedstatus_find_transient_by_type_and_message(PurpleStatusPrimitive type
 		status = (PurpleSavedStatus *)iter->data;
 		if ((status->type == type) && purple_savedstatus_is_transient(status) &&
 			!purple_savedstatus_has_substatuses(status) &&
-			(((status->message == NULL) && (message == NULL)) ||
-			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
+			purple_strequal(status->message, message))
 		{
 			return status;
 		}
@@ -1187,7 +1186,7 @@ purple_savedstatuses_init(void)
 {
 	void *handle = purple_savedstatuses_get_handle();
 
-	creation_times = g_hash_table_new(g_int_hash, g_int_equal);
+	creation_times = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	/*
 	 * Using 0 as the creation_time is a special case.
@@ -1236,6 +1235,8 @@ purple_savedstatuses_init(void)
 void
 purple_savedstatuses_uninit(void)
 {
+	gpointer handle = purple_savedstatuses_get_handle();
+
 	remove_old_transient_statuses();
 
 	if (save_timer != 0)
@@ -1254,6 +1255,7 @@ purple_savedstatuses_uninit(void)
 	g_hash_table_destroy(creation_times);
 	creation_times = NULL;
 
-	purple_signals_unregister_by_instance(purple_savedstatuses_get_handle());
+	purple_signals_unregister_by_instance(handle);
+	purple_signals_disconnect_by_handle(handle);
 }
 

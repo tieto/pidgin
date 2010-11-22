@@ -25,6 +25,7 @@
  */
 
 #include "finch.h"
+#include <internal.h>
 
 #include "gntrequest.h"
 #include "gntroomlist.h"
@@ -190,7 +191,7 @@ roomlist_selection_changed(GntWidget *widget, gpointer old, gpointer current, gp
 				label = g_strdup(iter->data ? "True" : "False");
 				break;
 			case PURPLE_ROOMLIST_FIELD_INT:
-				label = g_strdup_printf("%d", (int)iter->data);
+				label = g_strdup_printf("%d", GPOINTER_TO_INT(iter->data));
 				break;
 			case PURPLE_ROOMLIST_FIELD_STRING:
 				label = g_strdup(iter->data);
@@ -239,7 +240,8 @@ reset_account_list(PurpleAccount *account)
 		PurpleConnection *gc = list->data;
 
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-		if (prpl_info->roomlist_get_list != NULL) {
+		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
+		        prpl_info->roomlist_get_list != NULL) {
 			PurpleAccount *account = purple_connection_get_account(gc);
 			char *text = g_strdup_printf("%s (%s)",
 					purple_account_get_username(account),

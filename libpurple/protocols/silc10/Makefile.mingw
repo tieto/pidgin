@@ -7,6 +7,8 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
+
 TARGET = libsilc
 NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
 			$(SILC_TOOLKIT)/lib/silcclient.dll

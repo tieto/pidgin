@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"gtk-plugin_pack-convcolors"
 #define PLUGIN_NAME			N_("Conversation Colors")
-#define PLUGIN_STATIC_NAME	"Conversation Colors"
+#define PLUGIN_STATIC_NAME	ConversationColors
 #define PLUGIN_SUMMARY		N_("Customize colors in the conversation window")
 #define PLUGIN_DESCRIPTION	N_("Customize colors in the conversation window")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
@@ -101,6 +101,7 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	gboolean bold, italic, underline;
 	int f;
 	const char *color;
+	gboolean rtl = FALSE;
 
 	for (i = 0; formats[i].prefix; i++)
 		if (flags & formats[i].flag)
@@ -126,6 +127,7 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	bold = (f & FONT_BOLD);
 	italic = (f & FONT_ITALIC);
 	underline = (f & FONT_UNDERLINE);
+	rtl = purple_markup_is_rtl(*displaying);
 
 	if (purple_prefs_get_bool(PREF_IGNORE))
 	{
@@ -156,11 +158,13 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	}
 
 	t = *displaying;
-	*displaying = g_strdup_printf("%s%s%s%s%s%s%s",
+	*displaying = g_strdup_printf("%s%s%s%s%s%s%s%s%s",
 						bold ? "<B>" : "</B>",
 						italic ? "<I>" : "</I>",
 						underline ? "<U>" : "</U>",
-						t, 
+						rtl ? "<SPAN style=\"direction:rtl;text-align:right;\">" : "",
+						t,
+						rtl ? "</SPAN>" : "",
 						bold ? "</B>" : "<B>",
 						italic ? "</I>" : "<I>",
 						underline ? "</U>" : "<U>"
@@ -194,7 +198,12 @@ color_response(GtkDialog *color_dialog, gint response, const char *data)
 {
 	if (response == GTK_RESPONSE_OK)
 	{
+#if GTK_CHECK_VERSION(2,14,0)
+		GtkWidget *colorsel =
+			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog));
+#else
 		GtkWidget *colorsel = GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel;
+#endif
 		GdkColor color;
 		char colorstr[8];
 		char tmp[128];
@@ -228,8 +237,15 @@ set_color(GtkWidget *widget, const char *data)
 	g_snprintf(tmp, sizeof(tmp), "%s/color", data);
 	if (gdk_color_parse(purple_prefs_get_string(tmp), &color))
 	{
+#if GTK_CHECK_VERSION(2,14,0)
+		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
+			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog))),
+			&color);
+#else
 		gtk_color_selection_set_current_color(
-				GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel), &color);
+			GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel),
+			&color);
+#endif
 	}
 
 	gtk_window_present(GTK_WINDOW(color_dialog));

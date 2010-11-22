@@ -21,8 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "msn.h"
 #include "object.h"
 #include "debug.h"
+/* Sha1 stuff */
+#include "cipher.h"
+/* Base64 stuff */
+#include "util.h"
 
 #define GET_STRING_TAG(field, id) \
 	if ((tag = strstr(str, id "=\"")) != NULL) \
@@ -90,18 +96,100 @@ msn_object_new_from_string(const char *str)
 	GET_STRING_TAG(friendly, "Friendly");
 	GET_STRING_TAG(sha1d,    "SHA1D");
 	GET_STRING_TAG(sha1c,    "SHA1C");
+	GET_STRING_TAG(url,      "Url");
+	GET_STRING_TAG(url1,     "Url1");
 
 	/* If we are missing any of the required elements then discard the object */
-	/* SHA1C is not always sent anymore */
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
-			|| obj->location == NULL || obj->friendly == NULL
-			|| obj->sha1d == NULL /*|| obj->sha1c == NULL*/) {
+	 || obj->sha1d == NULL) {
 		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
 		msn_object_destroy(obj);
-		obj = NULL;
+		return NULL;
+	}
+
+	if (obj->location == NULL || obj->friendly == NULL) {
+		/* Location/friendly are required for non-buddyicon objects */
+		if (obj->type != MSN_OBJECT_USERTILE) {
+			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
+			msn_object_destroy(obj);
+			return NULL;
+		/* Buddy icon object can contain Url/Url1 instead */
+		} else if (obj->url == NULL || obj->url1 == NULL) {
+			purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
+			msn_object_destroy(obj);
+			return NULL;
+		}
 	}
 
 	return obj;
+}
+
+MsnObject*
+msn_object_new_from_image(PurpleStoredImage *img, const char *location,
+		const char *creator, MsnObjectType type)
+{
+	MsnObject *msnobj;
+
+	PurpleCipherContext *ctx;
+	char *buf;
+	gconstpointer data;
+	size_t size;
+	char *base64;
+	unsigned char digest[20];
+
+	msnobj = NULL;
+
+	if (img == NULL)
+		return msnobj;
+
+	size = purple_imgstore_get_size(img);
+	data = purple_imgstore_get_data(img);
+
+	/* New object */
+	msnobj = msn_object_new();
+	msn_object_set_local(msnobj);
+	msn_object_set_type(msnobj, type);
+	msn_object_set_location(msnobj, location);
+	msn_object_set_creator(msnobj, creator);
+
+	msn_object_set_image(msnobj, img);
+
+	/* Compute the SHA1D field. */
+	memset(digest, 0, sizeof(digest));
+
+	ctx = purple_cipher_context_new_by_name("sha1", NULL);
+	purple_cipher_context_append(ctx, data, size);
+	purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+
+	base64 = purple_base64_encode(digest, sizeof(digest));
+	msn_object_set_sha1d(msnobj, base64);
+	g_free(base64);
+
+	msn_object_set_size(msnobj, size);
+
+	/* Compute the SHA1C field. */
+	buf = g_strdup_printf(
+		"Creator%sSize%dType%dLocation%sFriendly%sSHA1D%s",
+		msn_object_get_creator(msnobj),
+		msn_object_get_size(msnobj),
+		msn_object_get_type(msnobj),
+		msn_object_get_location(msnobj),
+		msn_object_get_friendly(msnobj),
+		msn_object_get_sha1d(msnobj));
+
+	memset(digest, 0, sizeof(digest));
+
+	purple_cipher_context_reset(ctx, NULL);
+	purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
+	purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(ctx);
+	g_free(buf);
+
+	base64 = purple_base64_encode(digest, sizeof(digest));
+	msn_object_set_sha1c(msnobj, base64);
+	g_free(base64);
+
+	return msnobj;
 }
 
 void
@@ -114,6 +202,8 @@ msn_object_destroy(MsnObject *obj)
 	g_free(obj->friendly);
 	g_free(obj->sha1d);
 	g_free(obj->sha1c);
+	g_free(obj->url);
+	g_free(obj->url1);
 
 	purple_imgstore_unref(obj->img);
 
@@ -210,6 +300,24 @@ msn_object_set_sha1c(MsnObject *obj, const char *sha1c)
 	obj->sha1c = g_strdup(sha1c);
 }
 
+void
+msn_object_set_url(MsnObject *obj, const char *url)
+{
+	g_return_if_fail(obj != NULL);
+
+	g_free(obj->url);
+	obj->url = g_strdup(url);
+}
+
+void
+msn_object_set_url1(MsnObject *obj, const char *url)
+{
+	g_return_if_fail(obj != NULL);
+
+	g_free(obj->url1);
+	obj->url1 = g_strdup(url);
+}
+
 const char *
 msn_object_get_creator(const MsnObject *obj)
 {
@@ -278,7 +386,23 @@ msn_object_get_sha1(const MsnObject *obj)
 	}
 }
 
-static MsnObject *
+const char *
+msn_object_get_url(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	return obj->url;
+}
+
+const char *
+msn_object_get_url1(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	return obj->url1;
+}
+
+MsnObject *
 msn_object_find_local(const char *sha1)
 {
 	GList *l;

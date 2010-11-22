@@ -23,485 +23,18 @@
  *
  */
 
+#include "encoding.h"
 #include "oscar.h"
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-int aim_icq_reqofflinemsgs(OscarData *od)
+#define AIM_ICQ_INFO_REQUEST 0x04b2
+#define AIM_ICQ_ALIAS_REQUEST 0x04ba
+
+static
+int compare_icq_infos(gconstpointer a, gconstpointer b)
 {
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 4 + 2 + 2;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x003c); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-int aim_icq_ackofflinemsgs(OscarData *od)
-{
-	ByteStream bs;
-	FlapFrame *frame;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 4 + 2 + 2;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x003e); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
-int
-aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x0c3a); /* shrug. */
-	byte_stream_putle16(&bs, 0x030c);
-	byte_stream_putle16(&bs, 0x0001);
-	byte_stream_putle8(&bs, webaware);
-	byte_stream_putle8(&bs, 0xf8);
-	byte_stream_putle8(&bs, 0x02);
-	byte_stream_putle8(&bs, 0x01);
-	byte_stream_putle8(&bs, 0x00);
-	byte_stream_putle8(&bs, !auth_required);
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-/**
- * Change your ICQ password.
- *
- * @param od The oscar session
- * @param passwd The new password.  If this is longer than 8 characters it
- *        will be truncated.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_icq_changepasswd(OscarData *od, const char *passwd)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen, passwdlen;
-
-	if (!passwd)
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	passwdlen = strlen(passwd);
-	if (passwdlen > MAXICQPASSLEN)
-		passwdlen = MAXICQPASSLEN;
-	bslen = 2+4+2+2+2+2+passwdlen+1;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x042e); /* shrug. */
-	byte_stream_putle16(&bs, passwdlen+1);
-	byte_stream_putstr(&bs, passwd);
-	byte_stream_putle8(&bs, '\0');
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-int aim_icq_getallinfo(OscarData *od, const char *uin)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-	struct aim_icq_info *info;
-
-	if (!uin || uin[0] < '0' || uin[0] > '9')
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 4 + 2 + 2 + 2 + 4;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
-	byte_stream_putle32(&bs, atoi(uin));
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
-	info->reqid = snacid;
-	info->uin = atoi(uin);
-	info->next = od->icq_info;
-	od->icq_info = info;
-
-	return 0;
-}
-
-int aim_icq_getalias(OscarData *od, const char *uin)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-	struct aim_icq_info *info;
-
-	if (!uin || uin[0] < '0' || uin[0] > '9')
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 4 + 2 + 2 + 2 + 4;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
-	byte_stream_putle32(&bs, atoi(uin));
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
-	info->reqid = snacid;
-	info->uin = atoi(uin);
-	info->next = od->icq_info;
-	od->icq_info = info;
-
-	return 0;
-}
-
-int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!uin || uin[0] < '0' || uin[0] > '9')
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 4 + 2 + 2 + 2 + 4;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x051f); /* shrug. */
-	byte_stream_putle32(&bs, atoi(uin));
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-#if 0
-int aim_icq_sendxmlreq(OscarData *od, const char *xml)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!xml || !strlen(xml))
-		return -EINVAL;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2 + 10 + 2 + strlen(xml) + 1;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x0998); /* shrug. */
-	byte_stream_putle16(&bs, strlen(xml) + 1);
-	byte_stream_putraw(&bs, (guint8 *)xml, strlen(xml) + 1);
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-#endif
-
-/*
- * Send an SMS message.  This is the non-US way.  The US-way is to IM
- * their cell phone number (+19195551234).
- *
- * We basically construct and send an XML message.  The format is:
- * <icq_sms_message>
- *   <destination>full_phone_without_leading_+</destination>
- *   <text>message</text>
- *   <codepage>1252</codepage>
- *   <senders_UIN>self_uin</senders_UIN>
- *   <senders_name>self_name</senders_name>
- *   <delivery_receipt>Yes|No</delivery_receipt>
- *   <time>Wkd, DD Mmm YYYY HH:MM:SS TMZ</time>
- * </icq_sms_message>
- *
- * Yeah hi Peter, whaaaat's happening.  If there's any way to use
- * a codepage other than 1252 that would be great.  Thaaaanks.
- */
-int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen, xmllen;
-	char *xml;
-	const char *timestr;
-	time_t t;
-	struct tm *tm;
-	gchar *stripped;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-		return -EINVAL;
-
-	if (!name || !msg || !alias)
-		return -EINVAL;
-
-	time(&t);
-	tm = gmtime(&t);
-	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
-
-	stripped = purple_markup_strip_html(msg);
-
-	/* The length of xml included the null terminating character */
-	xmllen = 209 + strlen(name) + strlen(stripped) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
-
-	xml = g_new(char, xmllen);
-	snprintf(xml, xmllen, "<icq_sms_message>"
-		"<destination>%s</destination>"
-		"<text>%s</text>"
-		"<codepage>1252</codepage>"
-		"<senders_UIN>%s</senders_UIN>"
-		"<senders_name>%s</senders_name>"
-		"<delivery_receipt>Yes</delivery_receipt>"
-		"<time>%s</time>"
-		"</icq_sms_message>",
-		name, stripped, od->sn, alias, timestr);
-
-	bslen = 36 + xmllen;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-
-	/* From libicq200-0.3.2/src/SNAC-SRV.cpp */
-	byte_stream_putle16(&bs, 0x1482);
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, 0x0016);
-	byte_stream_put32(&bs, 0x00000000);
-	byte_stream_put32(&bs, 0x00000000);
-	byte_stream_put32(&bs, 0x00000000);
-	byte_stream_put32(&bs, 0x00000000);
-
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, xmllen);
-	byte_stream_putstr(&bs, xml);
-	byte_stream_put8(&bs, 0x00);
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	g_free(xml);
-	g_free(stripped);
-
-	return 0;
-}
-
-/*
- * getstatusnote may be a misleading name because the response
- * contains a lot of different information but currently it's only
- * used to get that.
- */
-int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	purple_debug_misc("oscar", "aim_icq_getstatusnote: requesting status note for %s.\n", uin);
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
-	{
-		purple_debug_misc("oscar", "aim_icq_getstatusnote: no connection.\n");
-		return -EINVAL;
-	}
-
-	bslen = 2 + 4 + 2 + 2 + 2 + 2 + 58 + strlen(uin);
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
-
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putle32(&bs, atoi(od->sn));
-	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x0fa0); /* shrug. */
-	byte_stream_putle16(&bs, 58 + strlen(uin));
-
-	byte_stream_put32(&bs, 0x05b90002);    /* don't ask */
-	byte_stream_put32(&bs, 0x80000000);
-	byte_stream_put32(&bs, 0x00000006);
-	byte_stream_put32(&bs, 0x00010002);
-	byte_stream_put32(&bs, 0x00020000);
-	byte_stream_put32(&bs, 0x04e30000);
-	byte_stream_put32(&bs, 0x00020002);
-	byte_stream_put32(&bs, 0x00000001);
-
-	byte_stream_put16(&bs, 24 + strlen(uin));
-	byte_stream_put32(&bs, 0x003c0010);
-	byte_stream_putraw(&bs, note_hash, 16); /* status note hash */
-	byte_stream_put16(&bs, 0x0032);        /* buddy uin */
-	byte_stream_put16(&bs, strlen(uin));
-	byte_stream_putstr(&bs, uin);
-
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
+	const struct aim_icq_info* aa = a;
+	const guint16* bb = b;
+	return aa->reqid - *bb;
 }
 
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
@@ -537,16 +70,373 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	g_free(info->workwebpage);
 	g_free(info->info);
 	g_free(info->status_note_title);
-	g_free(info);
+	g_free(info->auth_request_reason);
+}
+
+static
+int error(OscarData *od, aim_modsnac_t *error_snac, ByteStream *bs)
+{
+	aim_snac_t *original_snac = aim_remsnac(od, error_snac->id);
+	guint16 *request_type;
+	GSList *original_info_ptr;
+	struct aim_icq_info *original_info;
+	guint16 reason;
+	gchar *uin;
+
+	if (!original_snac || (original_snac->family != SNAC_FAMILY_ICQ) || !original_snac->data) {
+		purple_debug_misc("oscar", "icq: the original snac for the error packet was not found");
+		g_free(original_snac);
+		return 0;
+	}
+	
+	request_type = original_snac->data;
+	original_info_ptr = g_slist_find_custom(od->icq_info, &original_snac->id, compare_icq_infos);
+	original_info = original_info_ptr->data;
+	
+	if (!original_info_ptr) {
+		purple_debug_misc("oscar", "icq: the request info for the error packet was not found");
+		g_free(original_snac);
+		return 0;
+	}
+	
+	reason = byte_stream_get16(bs);
+	uin = g_strdup_printf("%u", original_info->uin);
+	switch (*request_type) {
+		case AIM_ICQ_INFO_REQUEST:
+			oscar_user_info_display_error(od, reason, uin);
+			break;
+		case AIM_ICQ_ALIAS_REQUEST:
+			/* Couldn't retrieve an alias for the buddy requesting authorization; have to make do with UIN only. */
+			if (original_info->for_auth_request)
+				oscar_auth_recvrequest(od->gc, uin, NULL, original_info->auth_request_reason);
+			break;
+		default:
+			purple_debug_misc("oscar", "icq: got an error packet with unknown request type %u", *request_type);
+			break;
+	}
+
+	aim_icq_freeinfo(original_info);
+	od->icq_info = g_slist_remove(od->icq_info, original_info_ptr);
+	g_free(original_snac->data);
+	g_free(original_snac);
+	return 1;
+}
+
+int
+aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
+{
+	FlapConnection *conn;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	int bslen;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
+		return -EINVAL;
+
+	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
+
+	byte_stream_new(&bs, 4 + bslen);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, bslen);
+
+	byte_stream_putle16(&bs, bslen - 2);
+	byte_stream_putuid(&bs, od);
+	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&bs, snacid); /* eh. */
+	byte_stream_putle16(&bs, 0x0c3a); /* shrug. */
+	byte_stream_putle16(&bs, 0x030c);
+	byte_stream_putle16(&bs, 0x0001);
+	byte_stream_putle8(&bs, webaware);
+	byte_stream_putle8(&bs, 0xf8);
+	byte_stream_putle8(&bs, 0x02);
+	byte_stream_putle8(&bs, 0x01);
+	byte_stream_putle8(&bs, 0x00);
+	byte_stream_putle8(&bs, !auth_required);
+
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
+
+	byte_stream_destroy(&bs);
+
+	return 0;
 }
 
 /**
- * Subtype 0x0003 - Response to 0x0015/0x002, contains an ICQesque packet.
+ * Change your ICQ password.
+ *
+ * @param od The oscar session
+ * @param passwd The new password.  If this is longer than 8 characters it
+ *        will be truncated.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+int aim_icq_changepasswd(OscarData *od, const char *passwd)
+{
+	FlapConnection *conn;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	int bslen, passwdlen;
+
+	if (!passwd)
+		return -EINVAL;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
+		return -EINVAL;
+
+	passwdlen = strlen(passwd);
+	if (passwdlen > MAXICQPASSLEN)
+		passwdlen = MAXICQPASSLEN;
+	bslen = 2+4+2+2+2+2+passwdlen+1;
+
+	byte_stream_new(&bs, 4 + bslen);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, bslen);
+
+	byte_stream_putle16(&bs, bslen - 2);
+	byte_stream_putuid(&bs, od);
+	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&bs, snacid); /* eh. */
+	byte_stream_putle16(&bs, 0x042e); /* shrug. */
+	byte_stream_putle16(&bs, passwdlen+1);
+	byte_stream_putraw(&bs, (const guint8 *)passwd, passwdlen);
+	byte_stream_putle8(&bs, '\0');
+
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
+
+	byte_stream_destroy(&bs);
+
+	return 0;
+}
+
+int aim_icq_getallinfo(OscarData *od, const char *uin)
+{
+	FlapConnection *conn;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	int bslen;
+	struct aim_icq_info *info;
+	guint16 request_type = AIM_ICQ_INFO_REQUEST;
+
+	if (!uin || uin[0] < '0' || uin[0] > '9')
+		return -EINVAL;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
+		return -EINVAL;
+
+	bslen = 2 + 4 + 2 + 2 + 2 + 4;
+
+	byte_stream_new(&bs, 4 + bslen);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, &request_type, sizeof(request_type));
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, bslen);
+
+	byte_stream_putle16(&bs, bslen - 2);
+	byte_stream_putuid(&bs, od);
+	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&bs, snacid); /* eh. */
+	byte_stream_putle16(&bs, request_type); /* shrug. */
+	byte_stream_putle32(&bs, atoi(uin));
+
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs, FALSE);
+
+	byte_stream_destroy(&bs);
+
+	/* Keep track of this request and the ICQ number and request ID */
+	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+	info->reqid = snacid;
+	info->uin = atoi(uin);
+	od->icq_info = g_slist_prepend(od->icq_info, info);
+
+	return 0;
+}
+
+int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, char *auth_request_reason)
+{
+	FlapConnection *conn;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	int bslen;
+	struct aim_icq_info *info;
+	guint16 request_type = AIM_ICQ_ALIAS_REQUEST;
+
+	if (!uin || uin[0] < '0' || uin[0] > '9')
+		return -EINVAL;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
+		return -EINVAL;
+
+	purple_debug_info("oscar", "Requesting ICQ alias for %s\n", uin);
+
+	bslen = 2 + 4 + 2 + 2 + 2 + 4;
+
+	byte_stream_new(&bs, 4 + bslen);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, &request_type, sizeof(request_type));
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, bslen);
+
+	byte_stream_putle16(&bs, bslen - 2);
+	byte_stream_putuid(&bs, od);
+	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&bs, snacid); /* eh. */
+	byte_stream_putle16(&bs, request_type); /* shrug. */
+	byte_stream_putle32(&bs, atoi(uin));
+
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs, FALSE);
+
+	byte_stream_destroy(&bs);
+
+	/* Keep track of this request and the ICQ number and request ID */
+	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+	info->reqid = snacid;
+	info->uin = atoi(uin);
+	info->for_auth_request = for_auth_request;
+	info->auth_request_reason = g_strdup(auth_request_reason);
+	od->icq_info = g_slist_prepend(od->icq_info, info);
+
+	return 0;
+}
+
+/*
+ * Send an SMS message.  This is the non-US way.  The US-way is to IM
+ * their cell phone number (+19195551234).
+ *
+ * We basically construct and send an XML message.  The format is:
+ * <icq_sms_message>
+ *   <destination>full_phone_without_leading_+</destination>
+ *   <text>message</text>
+ *   <codepage>1252</codepage>
+ *   <senders_UIN>self_uin</senders_UIN>
+ *   <senders_name>self_name</senders_name>
+ *   <delivery_receipt>Yes|No</delivery_receipt>
+ *   <time>Wkd, DD Mmm YYYY HH:MM:SS TMZ</time>
+ * </icq_sms_message>
+ *
+ * Yeah hi Peter, whaaaat's happening.  If there's any way to use
+ * a codepage other than 1252 that would be great.  Thaaaanks.
+ */
+int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias)
+{
+	FlapConnection *conn;
+	PurpleAccount *account;
+	ByteStream bs;
+	aim_snacid_t snacid;
+	int bslen, xmllen;
+	char *xml;
+	const char *timestr, *username;
+	time_t t;
+	struct tm *tm;
+	gchar *stripped;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
+		return -EINVAL;
+
+	if (!name || !msg || !alias)
+		return -EINVAL;
+
+	account = purple_connection_get_account(od->gc);
+	username = purple_account_get_username(account);
+
+	time(&t);
+	tm = gmtime(&t);
+	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
+
+	stripped = purple_markup_strip_html(msg);
+
+	/* The length of xml included the null terminating character */
+	xmllen = 209 + strlen(name) + strlen(stripped) + strlen(username) + strlen(alias) + strlen(timestr) + 1;
+
+	xml = g_new(char, xmllen);
+	snprintf(xml, xmllen, "<icq_sms_message>"
+		"<destination>%s</destination>"
+		"<text>%s</text>"
+		"<codepage>1252</codepage>"
+		"<senders_UIN>%s</senders_UIN>"
+		"<senders_name>%s</senders_name>"
+		"<delivery_receipt>Yes</delivery_receipt>"
+		"<time>%s</time>"
+		"</icq_sms_message>",
+		name, stripped, username, alias, timestr);
+
+	bslen = 36 + xmllen;
+
+	byte_stream_new(&bs, 4 + bslen);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, bslen);
+
+	byte_stream_putle16(&bs, bslen - 2);
+	byte_stream_putuid(&bs, od);
+	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&bs, snacid); /* eh. */
+
+	/* From libicq200-0.3.2/src/SNAC-SRV.cpp */
+	byte_stream_putle16(&bs, 0x1482);
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put16(&bs, 0x0016);
+	byte_stream_put32(&bs, 0x00000000);
+	byte_stream_put32(&bs, 0x00000000);
+	byte_stream_put32(&bs, 0x00000000);
+	byte_stream_put32(&bs, 0x00000000);
+
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_put16(&bs, xmllen);
+	byte_stream_putstr(&bs, xml);
+	byte_stream_put8(&bs, 0x00);
+
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
+
+	byte_stream_destroy(&bs);
+
+	g_free(xml);
+	g_free(stripped);
+
+	return 0;
+}
+
+static void
+gotalias(OscarData *od, struct aim_icq_info *info)
+{
+	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleBuddy *b;
+	gchar *utf8 = oscar_utf8_try_convert(account, od, info->nick);
+
+	if (info->for_auth_request) {
+		oscar_auth_recvrequest(gc, g_strdup_printf("%u", info->uin), utf8, info->auth_request_reason);
+	} else {
+		if (utf8 && *utf8) {
+			gchar who[16];
+			g_snprintf(who, sizeof(who), "%u", info->uin);
+			serv_got_alias(gc, who, utf8);
+			if ((b = purple_find_buddy(account, who))) {
+				purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
+			}
+		}
+		g_free(utf8);
+	}
+}
+
+/**
+ * Subtype 0x0003 - Response to SNAC_FAMILY_ICQ/0x002, contains an ICQesque packet.
  */
 static int
-icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
 	GSList *tlvlist;
 	aim_tlv_t *datatlv;
 	ByteStream qbs;
@@ -568,53 +458,23 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 	purple_debug_misc("oscar", "icq response: %d bytes, %u, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
-	if (cmd == 0x0041) { /* offline message */
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-		struct aim_icq_offlinemsg msg;
-		aim_rxcallback_t userfunc;
-
-		memset(&msg, 0, sizeof(msg));
-
-		msg.sender = byte_stream_getle32(&qbs);
-		msg.year = byte_stream_getle16(&qbs);
-		msg.month = byte_stream_getle8(&qbs);
-		msg.day = byte_stream_getle8(&qbs);
-		msg.hour = byte_stream_getle8(&qbs);
-		msg.minute = byte_stream_getle8(&qbs);
-		msg.type = byte_stream_getle8(&qbs);
-		msg.flags = byte_stream_getle8(&qbs);
-		msg.msglen = byte_stream_getle16(&qbs);
-		msg.msg = byte_stream_getstr(&qbs, msg.msglen);
-
-		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG)))
-			ret = userfunc(od, conn, frame, &msg);
-
-		g_free(msg.msg);
-
-	} else if (cmd == 0x0042) {
-		aim_rxcallback_t userfunc;
-
-		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
-			ret = userfunc(od, conn, frame);
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
-	} else if (cmd == 0x07da) { /* information */
+	if (cmd == 0x07da) { /* information */
 		guint16 subtype;
+		GSList *info_ptr;
 		struct aim_icq_info *info;
-		aim_rxcallback_t userfunc;
 
 		subtype = byte_stream_getle16(&qbs);
 		byte_stream_advance(&qbs, 1); /* 0x0a */
 
 		/* find other data from the same request */
-		for (info = od->icq_info; info && (info->reqid != reqid); info = info->next);
-		if (!info) {
-			info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
-			info->reqid = reqid;
-			info->next = od->icq_info;
-			od->icq_info = info;
+		info_ptr = g_slist_find_custom(od->icq_info, &reqid, compare_icq_infos);
+		if (!info_ptr) {
+			struct aim_icq_info *new_info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+			new_info->reqid = reqid;
+			info_ptr = od->icq_info = g_slist_prepend(od->icq_info, new_info);
 		}
 
+		info = info_ptr->data;
 		switch (subtype) {
 		case 0x00a0: { /* hide ip status */
 			/* nothing */
@@ -783,14 +643,6 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 				info = g_new0(struct aim_icq_info, 1);
 
-				if (info == NULL)
-				{
-					g_free(uin);
-					g_free(status_note_title);
-
-					break;
-				}
-
 				bslen = 13 + strlen(uin) + 30 + 6 + 4 + 55 + 85 + 4;
 				byte_stream_new(&bs, 4 + bslen);
 
@@ -874,10 +726,9 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 				memcpy(&info->icbm_cookie, cookie, 8);
 
-				info->next = od->icq_info;
-				od->icq_info = info;
+				od->icq_info = g_slist_prepend(od->icq_info, info);
 
-				flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, snacid, &bs, FALSE);
 
 				byte_stream_destroy(&bs);
 			}
@@ -890,35 +741,28 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 		if (!(snac->flags & 0x0001)) {
 			if (subtype != 0x0104)
-				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO)))
-					ret = userfunc(od, conn, frame, info);
+				oscar_user_info_display_icq(od, info);
 
 			if (info->uin && info->nick)
-				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS)))
-					ret = userfunc(od, conn, frame, info);
+				gotalias(od, info);
 
-			if (od->icq_info == info) {
-				od->icq_info = info->next;
-			} else {
-				struct aim_icq_info *cur;
-				for (cur=od->icq_info; (cur->next && (cur->next!=info)); cur=cur->next);
-				if (cur->next)
-					cur->next = cur->next->next;
-			}
 			aim_icq_freeinfo(info);
+			od->icq_info = g_slist_remove(od->icq_info, info);
 		}
 	}
 
 	aim_tlvlist_free(tlvlist);
 
-	return ret;
+	return 1;
 }
 
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0003)
-		return icqresponse(od, conn, mod, frame, snac, bs);
+	if (snac->subtype == 0x0001)
+		return error(od, snac, bs);
+	else if (snac->subtype == 0x0003)
+		return icqresponse(od, snac, bs);
 
 	return 0;
 }
@@ -926,21 +770,16 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 static void
 icq_shutdown(OscarData *od, aim_module_t *mod)
 {
-	struct aim_icq_info *del;
-
-	while (od->icq_info) {
-		del = od->icq_info;
-		od->icq_info = od->icq_info->next;
-		aim_icq_freeinfo(del);
-	}
-
-	return;
+	GSList *cur;
+	for (cur = od->icq_info; cur; cur = cur->next)
+		aim_icq_freeinfo(cur->data);
+	g_slist_free(od->icq_info);
 }
 
 int
 icq_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0015;
+	mod->family = SNAC_FAMILY_ICQ;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x047c;

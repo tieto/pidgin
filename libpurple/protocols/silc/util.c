@@ -17,6 +17,7 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -213,7 +214,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-				                             _("Cannot create SILC key pair\n"));
+				                             _("Unable to create SILC key pair"));
 				return FALSE;
 			}
 
@@ -256,7 +257,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-				                             _("Cannot create SILC key pair\n"));
+				                             _("Unable to create SILC key pair"));
 				return FALSE;
 			}
 
@@ -364,7 +365,7 @@ void silcpurple_show_public_key(SilcPurple sg,
 	if (ident->username)
 		g_string_append_printf(s, _("User Name: \t%s\n"), ident->username);
 	if (ident->email)
-		g_string_append_printf(s, _("E-Mail: \t\t%s\n"), ident->email);
+		g_string_append_printf(s, _("Email: \t\t%s\n"), ident->email);
 	if (ident->host)
 		g_string_append_printf(s, _("Host Name: \t%s\n"), ident->host);
 	if (ident->org)
@@ -558,7 +559,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 		if (contact & SILC_ATTRIBUTE_CONTACT_CHAT)
 			g_string_append_printf(s, "[%s] ", _("Chat"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_EMAIL)
-			g_string_append_printf(s, "[%s] ", _("E-Mail"));
+			g_string_append_printf(s, "[%s] ", _("Email"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_CALL)
 			g_string_append_printf(s, "[%s] ", _("Phone"));
 		if (contact & SILC_ATTRIBUTE_CONTACT_PAGE)

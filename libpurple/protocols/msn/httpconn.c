@@ -64,7 +64,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	const char *body_start;
 	char *tmp;
 	size_t body_len = 0;
-	gboolean wasted = FALSE;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(buf      != NULL, FALSE);
@@ -120,7 +119,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		/* Need to wait for the full HTTP header to arrive */
 		return FALSE;
 
-	s += 4; /* Skip \r\n */
+	s += 4; /* Skip \r\n\r\n */
 	header = g_strndup(buf, s - buf);
 	body_start = s;
 	body_len = size - (body_start - buf);
@@ -158,13 +157,13 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 	}
 
-	body = g_malloc0(body_len + 1);
+	body = g_malloc(body_len + 1);
 	memcpy(body, body_start, body_len);
+	body[body_len] = '\0';
 
-#ifdef MSN_DEBUG_HTTP
-	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
-					header);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s}\n",
+		                  header);
 
 	/* Now we should be able to process the data. */
 	if ((s = purple_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
@@ -184,6 +183,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}\n",
 							 buf);
 
+			g_free(header);
 			g_free(body);
 			return FALSE;
 		}
@@ -217,15 +217,16 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		g_free(tmp);
 
-		if ((session_action != NULL) && (strcmp(session_action, "close") == 0))
-			wasted = TRUE;
-
-		g_free(session_action);
-
 		t = strchr(full_session_id, '.');
-		session_id = g_strndup(full_session_id, t - full_session_id);
+		if (t != NULL)
+			session_id = g_strndup(full_session_id, t - full_session_id);
+		else {
+			purple_debug_error("msn", "Malformed full_session_id[%s]\n",
+					   full_session_id ? full_session_id : NULL);
+			session_id = g_strdup(full_session_id);
+		}
 
-		if (!wasted)
+		if (session_action == NULL || strcmp(session_action, "close") != 0)
 		{
 			g_free(httpconn->full_session_id);
 			httpconn->full_session_id = full_session_id;
@@ -238,6 +239,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		}
 		else
 		{
+			/* I'll be honest, I don't fully understand all this, but this
+			 * causes crashes, Stu. */
+#if 0
 			MsnServConn *servconn;
 
 			/* It's going to die. */
@@ -245,15 +249,16 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 			servconn = httpconn->servconn;
 
-			/* I'll be honest, I don't fully understand all this, but this
-			 * causes crashes, Stu. */
-			/* if (servconn != NULL)
-				servconn->wasted = TRUE; */
+			if (servconn != NULL)
+				servconn->wasted = TRUE;
+#endif
 
 			g_free(full_session_id);
 			g_free(session_id);
 			g_free(gw_ip);
 		}
+
+		g_free(session_action);
 	}
 
 	g_free(header);
@@ -271,26 +276,26 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
 	MsnServConn *servconn;
-	MsnSession *session;
 	char buf[MSN_BUF_LEN];
-	char *cur, *end, *old_rx_buf;
-	int len, cur_len;
+	gssize len;
 	char *result_msg = NULL;
 	size_t result_len = 0;
 	gboolean error = FALSE;
 
 	httpconn = data;
-	servconn = NULL;
-	session = httpconn->session;
+	servconn = httpconn->servconn;
+
+	if (servconn->type == MSN_SERVCONN_NS)
+		servconn->session->account->gc->last_received = time(NULL);
 
 	len = read(httpconn->fd, buf, sizeof(buf) - 1);
-
 	if (len < 0 && errno == EAGAIN)
 		return;
-	else if (len <= 0)
-	{
-		purple_debug_error("msn", "HTTP: Read error\n");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+	if (len <= 0) {
+		purple_debug_error("msn", "HTTP: servconn %03d read error, "
+			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
+			servconn->num, len, error, g_strerror(errno));
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
@@ -306,19 +311,15 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	{
 		/* Either we must wait for more input, or something went wrong */
 		if (error)
-			msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+			msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
 
-	httpconn->servconn->processing = FALSE;
-
-	servconn = httpconn->servconn;
-
 	if (error)
 	{
 		purple_debug_error("msn", "HTTP: Special error\n");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
@@ -341,70 +342,15 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn->rx_buf = result_msg;
 	servconn->rx_len = result_len;
 
-	end = old_rx_buf = servconn->rx_buf;
-
-	servconn->processing = TRUE;
-
-	do
-	{
-		cur = end;
-
-		if (servconn->payload_len)
-		{
-			if (servconn->payload_len > servconn->rx_len)
-				/* The payload is still not complete. */
-				break;
-
-			cur_len = servconn->payload_len;
-			end += cur_len;
-		}
-		else
-		{
-			end = strstr(cur, "\r\n");
-
-			if (end == NULL)
-				/* The command is still not complete. */
-				break;
-
-			*end = '\0';
-			end += 2;
-			cur_len = end - cur;
-		}
-
-		servconn->rx_len -= cur_len;
-
-		if (servconn->payload_len)
-		{
-			msn_cmdproc_process_payload(servconn->cmdproc, cur, cur_len);
-			servconn->payload_len = 0;
-		}
-		else
-		{
-			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
-		}
-	} while (servconn->connected && servconn->rx_len > 0);
-
-	if (servconn->connected)
-	{
-		if (servconn->rx_len > 0)
-			servconn->rx_buf = g_memdup(cur, servconn->rx_len);
-		else
-			servconn->rx_buf = NULL;
-	}
-
-	servconn->processing = FALSE;
-
-	if (servconn->wasted)
-		msn_servconn_destroy(servconn);
-
-	g_free(old_rx_buf);
+	msn_servconn_process_data(servconn);
 }
 
 static void
 httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
-	int ret, writelen;
+	gssize ret;
+	int writelen;
 
 	httpconn = data;
 	writelen = purple_circ_buffer_get_max_read(httpconn->tx_buf);
@@ -424,7 +370,7 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		/* Error! */
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 		return;
 	}
 
@@ -450,7 +396,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 
 	if ((res <= 0) && ((errno != EAGAIN) && (errno != EWOULDBLOCK)))
 	{
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 		return FALSE;
 	}
 
@@ -588,7 +534,8 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
 
 	if (httpconn->virgin)
 	{
-		host = "gateway.messenger.hotmail.com";
+		/* QuLogic: This doesn't look right to me, but it still seems to work */
+		host = MSN_HTTPCONN_SERVER;
 
 		/* The first time servconn->host is the host we should connect to. */
 		params = g_strdup_printf("Action=open&Server=%s&IP=%s",
@@ -719,14 +666,15 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 		httpconn->inpa = purple_input_add(httpconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
 
-		httpconn->timer = purple_timeout_add(2000, msn_httpconn_poll, httpconn);
+		httpconn->timer = purple_timeout_add_seconds(2, msn_httpconn_poll, httpconn);
 
 		msn_httpconn_process_queue(httpconn);
 	}
 	else
 	{
-		purple_debug_error("msn", "HTTP: Connection error\n");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
+		purple_debug_error("msn", "HTTP: Connection error: %s\n",
+		                   error_message ? error_message : "(null)");
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT, error_message);
 	}
 }
 

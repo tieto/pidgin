@@ -27,11 +27,14 @@
 #include "internal.h"
 
 #ifndef _WIN32
+#include <arpa/nameser.h>
 #include <resolv.h>
 #include <netinet/in.h>
-#include <arpa/nameser.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#ifdef HAVE_GETIFADDRS
+#include <ifaddrs.h>
+#endif
 #else
 #include <nspapi.h>
 #endif
@@ -48,6 +51,11 @@
 #include "prefs.h"
 #include "stun.h"
 #include "upnp.h"
+#include "dnsquery.h"
+
+#ifdef USE_IDN
+#include <idna.h>
+#endif
 
 /*
  * Calling sizeof(struct ifreq) isn't always correct on
@@ -66,9 +74,20 @@
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
 static DBusGProxy *dbus_proxy = NULL;
+static NMState nm_state = NM_STATE_UNKNOWN;
+static gboolean have_nm_state = FALSE;
 
 #elif defined _WIN32
 static int current_network_count;
+
+/* Mutex for the other global vars */
+static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+static gboolean network_initialized = FALSE;
+static HANDLE network_change_handle = NULL;
+static int (WSAAPI *MyWSANSPIoctl) (
+		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
+		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
+		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
 #endif
 
 struct _PurpleNetworkListenData {
@@ -79,11 +98,24 @@ struct _PurpleNetworkListenData {
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
+	int timer;
 };
 
 #ifdef HAVE_NETWORKMANAGER
 static NMState nm_get_network_state(void);
 #endif
+
+#if defined(HAVE_NETWORKMANAGER) || defined(_WIN32)
+static gboolean force_online;
+#endif
+
+/* Cached IP addresses for STUN and TURN servers (set globally in prefs) */
+static gchar *stun_ip = NULL;
+static gchar *turn_ip = NULL;
+
+/* Keep track of port mappings done with UPnP and NAT-PMP */
+static GHashTable *upnp_port_mappings = NULL;
+static GHashTable *nat_pmp_port_mappings = NULL;
 
 const unsigned char *
 purple_network_ip_atoi(const char *ip)
@@ -132,7 +164,7 @@ purple_network_get_local_system_ip(int fd)
 	struct ifconf ifc;
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
-	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
+	guint32 lhost = htonl((127 << 24) + 1); /* 127.0.0.1 */
 	long unsigned int add;
 	int source = fd;
 
@@ -170,6 +202,85 @@ purple_network_get_local_system_ip(int fd)
 	}
 
 	return "0.0.0.0";
+}
+
+GList *
+purple_network_get_all_local_system_ips(void)
+{
+#if defined(HAVE_GETIFADDRS) && defined(HAVE_INET_NTOP)
+	GList *result = NULL;
+	struct ifaddrs *start, *ifa;
+	int ret;
+
+	ret = getifaddrs(&start);
+	if (ret < 0) {
+		purple_debug_warning("network",
+				"getifaddrs() failed: %s\n", g_strerror(errno));
+		return NULL;
+	}
+
+	for (ifa = start; ifa; ifa = ifa->ifa_next) {
+		int family = ifa->ifa_addr ? ifa->ifa_addr->sa_family : AF_UNSPEC;
+		char host[INET6_ADDRSTRLEN];
+		const char *tmp = NULL;
+
+		if ((family != AF_INET && family != AF_INET6) || ifa->ifa_flags & IFF_LOOPBACK)
+			continue;
+
+		if (family == AF_INET)
+			tmp = inet_ntop(family, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, host, sizeof(host));
+		else {
+			struct sockaddr_in6 *sockaddr = (struct sockaddr_in6 *)ifa->ifa_addr;
+			/* Peer-peer link-local communication is a big TODO.  I am not sure
+			 * how communicating link-local addresses is supposed to work, and
+			 * it seems like it would require attempting the cartesian product
+			 * of the local and remote interfaces to see if any match (eww).
+			 */
+			if (!IN6_IS_ADDR_LINKLOCAL(&sockaddr->sin6_addr))
+				tmp = inet_ntop(family, &sockaddr->sin6_addr, host, sizeof(host));
+		}
+		if (tmp != NULL)
+			result = g_list_prepend(result, g_strdup(tmp));
+	}
+
+	freeifaddrs(start);
+
+	return g_list_reverse(result);
+#else /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
+	GList *result = NULL;
+	int source = socket(PF_INET,SOCK_STREAM, 0);
+	char buffer[1024];
+	char *tmp;
+	struct ifconf ifc;
+	struct ifreq *ifr;
+
+	ifc.ifc_len = sizeof(buffer);
+	ifc.ifc_req = (struct ifreq *)buffer;
+	ioctl(source, SIOCGIFCONF, &ifc);
+	close(source);
+
+	tmp = buffer;
+	while (tmp < buffer + ifc.ifc_len) {
+		char dst[INET_ADDRSTRLEN];
+
+		ifr = (struct ifreq *)tmp;
+		tmp += HX_SIZE_OF_IFREQ(*ifr);
+
+		if (ifr->ifr_addr.sa_family == AF_INET) {
+			struct sockaddr_in *sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+
+			inet_ntop(AF_INET, &sinptr->sin_addr, dst,
+				sizeof(dst));
+			purple_debug_info("network", 
+				"found local i/f with address %s on IPv4\n", dst);
+			if (!purple_strequal(dst, "127.0.0.1")) {
+				result = g_list_append(result, g_strdup(dst));
+			}
+		}
+	}
+
+	return result;
+#endif /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 }
 
 const char *
@@ -216,7 +327,7 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	/* listen_data->pnp_data = NULL; */
 
 	if (!success) {
-		purple_debug_info("network", "Couldn't create UPnP mapping\n");
+		purple_debug_warning("network", "Couldn't create UPnP mapping\n");
 		if (listen_data->retry) {
 			listen_data->retry = FALSE;
 			listen_data->adding = FALSE;
@@ -237,6 +348,15 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 		return;
 	}
 
+	if (success) {
+		/* add port mapping to hash table */
+		gint *key = g_new(gint, 1);
+		gint *value = g_new(gint, 1);
+		*key = purple_network_get_port_from_fd(listen_data->listenfd);
+		*value = listen_data->socket_type;
+		g_hash_table_insert(upnp_port_mappings, key, value);
+	}
+
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
 
@@ -250,8 +370,16 @@ static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
 	PurpleNetworkListenData *listen_data;
+	gint *key = g_new(gint, 1);
+	gint *value = g_new(gint, 1);
 
 	listen_data = data;
+	listen_data->timer = 0;
+
+	/* add port mapping to hash table */
+	*key = purple_network_get_port_from_fd(listen_data->listenfd);
+	*value = listen_data->socket_type;
+	g_hash_table_insert(nat_pmp_port_mappings, key, value);
 
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
@@ -268,7 +396,7 @@ void purple_network_listen_map_external(gboolean map_external)
 }
 
 static PurpleNetworkListenData *
-purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_do_listen(unsigned short port, int socket_family, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
 	int flags;
@@ -283,10 +411,10 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	/*
 	 * Get a list of addresses on this machine.
 	 */
-	snprintf(serv, sizeof(serv), "%hu", port);
+	g_snprintf(serv, sizeof(serv), "%hu", port);
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = socket_family;
 	hints.ai_socktype = socket_type;
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
@@ -310,7 +438,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-			purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
+			purple_debug_warning("network", "setsockopt(SO_REUSEADDR): %s\n", g_strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		/* XXX - It is unclear to me (datallah) whether we need to be
@@ -324,6 +452,13 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		return NULL;
 #else
 	struct sockaddr_in sockin;
+
+	if (socket_family != AF_INET && socket_family != AF_UNSPEC) {
+		purple_debug_warning("network", "Address family %d only "
+		                     "supported when built with getaddrinfo() "
+		                     "support\n", socket_family);
+		return NULL;
+	}
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
 		purple_debug_warning("network", "socket: %s\n", g_strerror(errno));
@@ -351,7 +486,9 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	}
 	flags = fcntl(listenfd, F_GETFL);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
-
+#ifndef _WIN32
+	fcntl(listenfd, F_SETFD, FD_CLOEXEC);
+#endif
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
 	purple_debug_info("network", "Listening on port: %hu\n", actual_port);
@@ -364,11 +501,12 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->cb_data = cb_data;
 	listen_data->socket_type = socket_type;
 
-	if (!listen_map_external || !purple_prefs_get_bool("/purple/network/map_ports"))
+	if (!purple_socket_speaks_ipv4(listenfd) || !listen_map_external ||
+			!purple_prefs_get_bool("/purple/network/map_ports"))
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
 		/* The pmp_map_cb does what we want to do */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	else if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
@@ -376,7 +514,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	{
 		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n", actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
-		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	else
 	{
@@ -391,17 +529,29 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 }
 
 PurpleNetworkListenData *
-purple_network_listen(unsigned short port, int socket_type,
-		PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_listen_family(unsigned short port, int socket_family,
+                             int socket_type, PurpleNetworkListenCallback cb,
+                             gpointer cb_data)
 {
 	g_return_val_if_fail(port != 0, NULL);
 
-	return purple_network_do_listen(port, socket_type, cb, cb_data);
+	return purple_network_do_listen(port, socket_family, socket_type,
+	                                cb, cb_data);
 }
 
 PurpleNetworkListenData *
-purple_network_listen_range(unsigned short start, unsigned short end,
-		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
+purple_network_listen(unsigned short port, int socket_type,
+		PurpleNetworkListenCallback cb, gpointer cb_data)
+{
+	return purple_network_listen_family(port, AF_UNSPEC, socket_type,
+	                                    cb, cb_data);
+}
+
+PurpleNetworkListenData *
+purple_network_listen_range_family(unsigned short start, unsigned short end,
+                                   int socket_family, int socket_type,
+                                   PurpleNetworkListenCallback cb,
+                                   gpointer cb_data)
 {
 	PurpleNetworkListenData *ret = NULL;
 
@@ -414,7 +564,7 @@ purple_network_listen_range(unsigned short start, unsigned short end,
 	}
 
 	for (; start <= end; start++) {
-		ret = purple_network_do_listen(start, socket_type, cb, cb_data);
+		ret = purple_network_do_listen(start, AF_UNSPEC, socket_type, cb, cb_data);
 		if (ret != NULL)
 			break;
 	}
@@ -422,10 +572,22 @@ purple_network_listen_range(unsigned short start, unsigned short end,
 	return ret;
 }
 
+PurpleNetworkListenData *
+purple_network_listen_range(unsigned short start, unsigned short end,
+                            int socket_type, PurpleNetworkListenCallback cb,
+                            gpointer cb_data)
+{
+	return purple_network_listen_range_family(start, end, AF_UNSPEC,
+	                                          socket_type, cb, cb_data);
+}
+
 void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
 		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
+
+	if (listen_data->timer > 0)
+		purple_timeout_remove(listen_data->timer);
 
 	g_free(listen_data);
 }
@@ -529,18 +691,29 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 	return FALSE;
 }
 
+static gboolean _print_debug_msg(gpointer data) {
+	gchar *msg = data;
+	purple_debug_warning("network", "%s", msg);
+	g_free(msg);
+	return FALSE;
+}
+
 static gpointer wpurple_network_change_thread(gpointer data)
 {
-	HANDLE h;
 	WSAQUERYSET qs;
-	time_t last_trigger = time(NULL);
+	WSAEVENT *nla_event;
+	time_t last_trigger = time(NULL) - 31;
+	char buf[4096];
+	WSAQUERYSET *res = (LPWSAQUERYSET) buf;
+	DWORD size;
 
-	int (WSAAPI *MyWSANSPIoctl) (
-		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
-		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
-		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
-
-	if (!(MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
+	if ((nla_event = WSACreateEvent()) == WSA_INVALID_EVENT) {
+		int errorid = WSAGetLastError();
+		gchar *msg = g_win32_error_message(errorid);
+		purple_timeout_add(0, _print_debug_msg,
+						   g_strdup_printf("Couldn't create WSA event. "
+										   "Message: %s (%d).\n", msg, errorid));
+		g_free(msg);
 		g_thread_exit(NULL);
 		return NULL;
 	}
@@ -548,19 +721,61 @@ static gpointer wpurple_network_change_thread(gpointer data)
 	while (TRUE) {
 		int retval;
 		DWORD retLen = 0;
+		WSACOMPLETION completion;
+		WSAOVERLAPPED overlapped;
 
-		memset(&qs, 0, sizeof(WSAQUERYSET));
-		qs.dwSize = sizeof(WSAQUERYSET);
-		qs.dwNameSpace = NS_NLA;
-		if (WSALookupServiceBegin(&qs, 0, &h) == SOCKET_ERROR) {
-			int errorid = WSAGetLastError();
-			gchar *msg = g_win32_error_message(errorid);
-			purple_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
-				"NLA service is probably not running. Message: %s (%d).\n",
-				msg, errorid);
-			g_free(msg);
+		g_static_mutex_lock(&mutex);
+		if (network_initialized == FALSE) {
+			/* purple_network_uninit has been called */
+			WSACloseEvent(nla_event);
+			g_static_mutex_unlock(&mutex);
 			g_thread_exit(NULL);
 			return NULL;
+		}
+
+		if (network_change_handle == NULL) {
+			memset(&qs, 0, sizeof(WSAQUERYSET));
+			qs.dwSize = sizeof(WSAQUERYSET);
+			qs.dwNameSpace = NS_NLA;
+			if (WSALookupServiceBegin(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
+				int errorid = WSAGetLastError();
+				gchar *msg = g_win32_error_message(errorid);
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup_printf("Couldn't retrieve NLA SP lookup handle. "
+												   "NLA service is probably not running. Message: %s (%d).\n",
+													msg, errorid));
+				g_free(msg);
+				WSACloseEvent(nla_event);
+				g_static_mutex_unlock(&mutex);
+				g_thread_exit(NULL);
+				return NULL;
+			}
+		}
+		g_static_mutex_unlock(&mutex);
+
+		memset(&completion, 0, sizeof(WSACOMPLETION));
+		completion.Type = NSP_NOTIFY_EVENT;
+		overlapped.hEvent = nla_event;
+		completion.Parameters.Event.lpOverlapped = &overlapped;
+
+		if (MyWSANSPIoctl(network_change_handle, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, &completion) == SOCKET_ERROR) {
+			int errorid = WSAGetLastError();
+			if (errorid == WSA_INVALID_HANDLE) {
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup("Invalid NLA handle; resetting.\n"));
+				g_static_mutex_lock(&mutex);
+				retval = WSALookupServiceEnd(network_change_handle);
+				network_change_handle = NULL;
+				g_static_mutex_unlock(&mutex);
+				continue;
+			/* WSA_IO_PENDING indicates successful async notification will happen */
+			} else if (errorid != WSA_IO_PENDING) {
+				gchar *msg = g_win32_error_message(errorid);
+				purple_timeout_add(0, _print_debug_msg,
+								   g_strdup_printf("Unable to wait for changes. Message: %s (%d).\n",
+												   msg, errorid));
+				g_free(msg);
+			}
 		}
 
 		/* Make sure at least 30 seconds have elapsed since the last
@@ -568,21 +783,32 @@ static gpointer wpurple_network_change_thread(gpointer data)
 		if ((time(NULL) - last_trigger) < 30)
 			Sleep(30000);
 
+		/* This will block until NLA notifies us */
+		retval = WaitForSingleObjectEx(nla_event, WSA_INFINITE, TRUE);
+
 		last_trigger = time(NULL);
 
-		/* This will block until there is a network change */
-		if (MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL) == SOCKET_ERROR) {
-			int errorid = WSAGetLastError();
-			gchar *msg = g_win32_error_message(errorid);
-			purple_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
-				msg, errorid);
-			g_free(msg);
+		g_static_mutex_lock(&mutex);
+		if (network_initialized == FALSE) {
+			/* Time to die */
+			WSACloseEvent(nla_event);
+			g_static_mutex_unlock(&mutex);
+			g_thread_exit(NULL);
+			return NULL;
 		}
 
-		retval = WSALookupServiceEnd(h);
+		size = sizeof(buf);
+		while ((retval = WSALookupServiceNext(network_change_handle, 0, &size, res)) == ERROR_SUCCESS) {
+			/*purple_timeout_add(0, _print_debug_msg,
+							   g_strdup_printf("thread found network '%s'\n",
+											   res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)"));*/
+			size = sizeof(buf);
+		}
+
+		WSAResetEvent(nla_event);
+		g_static_mutex_unlock(&mutex);
 
 		purple_timeout_add(0, wpurple_network_change_thread_cb, NULL);
-
 	}
 
 	g_thread_exit(NULL);
@@ -594,21 +820,34 @@ gboolean
 purple_network_is_available(void)
 {
 #ifdef HAVE_NETWORKMANAGER
-	NMState state = nm_get_network_state();
-	if (state == NM_STATE_UNKNOWN)
-	{
-		purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
+	if (force_online)
 		return TRUE;
+
+	if (!have_nm_state)
+	{
+		have_nm_state = TRUE;
+		nm_state = nm_get_network_state();
+		if (nm_state == NM_STATE_UNKNOWN)
+			purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
 	}
-	else if (state == NM_STATE_CONNECTED)
+
+	if (nm_state == NM_STATE_UNKNOWN || nm_state == NM_STATE_CONNECTED)
 		return TRUE;
 
 	return FALSE;
 
 #elif defined _WIN32
-	return (current_network_count > 0);
+	return (current_network_count > 0 || force_online);
 #else
 	return TRUE;
+#endif
+}
+
+void
+purple_network_force_online()
+{
+#if defined(HAVE_NETWORKMANAGER) || defined(_WIN32)
+	force_online = TRUE;
 #endif
 }
 
@@ -616,8 +855,11 @@ purple_network_is_available(void)
 static void
 nm_update_state(NMState state)
 {
-	static NMState prev = NM_STATE_UNKNOWN;
+	NMState prev = nm_state;
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
+
+	have_nm_state = TRUE;
+	nm_state = state;
 
 	purple_signal_emit(purple_network_get_handle(), "network-configuration-changed", NULL);
 
@@ -626,18 +868,24 @@ nm_update_state(NMState state)
 		case NM_STATE_CONNECTED:
 			/* Call res_init in case DNS servers have changed */
 			res_init();
+			/* update STUN IP in case we it changed (theoretically we could
+			   have gone from IPv4 to IPv6, f.ex. or we were previously
+			   offline */
+			purple_network_set_stun_server(
+				purple_prefs_get_string("/purple/network/stun_server"));
+			purple_network_set_turn_server(
+				purple_prefs_get_string("/purple/network/turn_server"));
+			
 			if (ui_ops != NULL && ui_ops->network_connected != NULL)
 				ui_ops->network_connected();
-			prev = state;
 			break;
 		case NM_STATE_ASLEEP:
 		case NM_STATE_CONNECTING:
 		case NM_STATE_DISCONNECTED:
-			if (prev != NM_STATE_CONNECTED)
+			if (prev != NM_STATE_CONNECTED && prev != NM_STATE_UNKNOWN)
 				break;
 			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
 				ui_ops->network_disconnected();
-			prev = state;
 			break;
 		case NM_STATE_UNKNOWN:
 		default:
@@ -662,7 +910,6 @@ nm_get_network_state(void)
 		return NM_STATE_UNKNOWN;
 
 	if (!dbus_g_proxy_call(nm_proxy, "state", &err, G_TYPE_INVALID, G_TYPE_UINT, &state, G_TYPE_INVALID)) {
-		/* XXX: Print an error? */
 		g_error_free(err);
 		return NM_STATE_UNKNOWN;
 	}
@@ -690,12 +937,178 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 
 #endif
 
+static void
+purple_network_ip_lookup_cb(GSList *hosts, gpointer data, 
+	const char *error_message)
+{
+	const gchar **ip = (const gchar **) data; 
+
+	if (error_message) {
+		purple_debug_error("network", "lookup of IP address failed: %s\n",
+			error_message);
+		g_slist_free(hosts);
+		return;
+	}
+
+	if (hosts && g_slist_next(hosts)) {
+		struct sockaddr *addr = g_slist_next(hosts)->data; 
+		char dst[INET6_ADDRSTRLEN];
+		
+		if (addr->sa_family == AF_INET6) {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr, 
+				dst, sizeof(dst));
+		} else {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
+				dst, sizeof(dst));
+		}
+
+		*ip = g_strdup(dst);
+		purple_debug_info("network", "set IP address: %s\n", *ip);
+	}
+
+	while (hosts != NULL) {
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
+}
+
+void
+purple_network_set_stun_server(const gchar *stun_server)
+{
+	if (stun_server && stun_server[0] != '\0') {
+		if (purple_network_is_available()) {
+			purple_debug_info("network", "running DNS query for STUN server\n");
+			purple_dnsquery_a(stun_server, 3478, purple_network_ip_lookup_cb,
+				&stun_ip);
+		} else {
+			purple_debug_info("network", 
+				"network is unavailable, don't try to update STUN IP");
+		}
+	} else if (stun_ip) {
+		g_free(stun_ip);
+		stun_ip = NULL;
+	}
+}
+
+void
+purple_network_set_turn_server(const gchar *turn_server)
+{
+	if (turn_server && turn_server[0] != '\0') {
+		if (purple_network_is_available()) {
+			purple_debug_info("network", "running DNS query for TURN server\n");
+			purple_dnsquery_a(turn_server, 
+				purple_prefs_get_int("/purple/network/turn_port"), 
+				purple_network_ip_lookup_cb, &turn_ip);
+		} else {
+			purple_debug_info("network", 
+				"network is unavailable, don't try to update TURN IP");
+		}
+	} else if (turn_ip) {
+		g_free(turn_ip);
+		turn_ip = NULL;
+	}
+}
+
+
+const gchar *
+purple_network_get_stun_ip(void)
+{
+	return stun_ip;
+}
+
+const gchar *
+purple_network_get_turn_ip(void)
+{
+	return turn_ip;
+}
+
 void *
 purple_network_get_handle(void)
 {
 	static int handle;
 
 	return &handle;
+}
+
+static void
+purple_network_upnp_mapping_remove_cb(gboolean sucess, gpointer data)
+{
+	purple_debug_info("network", "done removing UPnP port mapping\n");
+}
+
+/* the reason for these functions to have these signatures is to be able to
+ use them for g_hash_table_foreach to clean remaining port mappings, which is
+ not yet done */
+static void
+purple_network_upnp_mapping_remove(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	gint port = (gint) *((gint *) key);
+	gint protocol = (gint) *((gint *) value);
+	purple_debug_info("network", "removing UPnP port mapping for port %d\n",
+		port);
+	purple_upnp_remove_port_mapping(port, 
+		protocol == SOCK_STREAM ? "TCP" : "UDP", 
+		purple_network_upnp_mapping_remove_cb, NULL);
+	g_hash_table_remove(upnp_port_mappings, key);
+}
+
+static void
+purple_network_nat_pmp_mapping_remove(gpointer key, gpointer value,
+	gpointer user_data)
+{
+	gint port = (gint) *((gint *) key);
+	gint protocol = (gint) *((gint *) value);
+	purple_debug_info("network", "removing NAT-PMP port mapping for port %d\n",
+		port);
+	purple_pmp_destroy_map(
+		protocol == SOCK_STREAM ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP, 
+		port);
+	g_hash_table_remove(nat_pmp_port_mappings, key);
+}
+
+void
+purple_network_remove_port_mapping(gint fd)
+{
+	int port = purple_network_get_port_from_fd(fd);
+	gint *protocol = g_hash_table_lookup(upnp_port_mappings, &port);
+
+	if (protocol) {
+		purple_network_upnp_mapping_remove(&port, protocol, NULL);
+	} else {
+		protocol = g_hash_table_lookup(nat_pmp_port_mappings, &port);
+		if (protocol) {
+			purple_network_nat_pmp_mapping_remove(&port, protocol, NULL);
+		}
+	}
+}
+
+int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out)
+{
+#ifdef USE_IDN
+	char *tmp;
+	int ret;
+
+	g_return_val_if_fail(out != NULL, -1);
+
+	ret = idna_to_ascii_8z(in, &tmp, IDNA_USE_STD3_ASCII_RULES);
+	if (ret != IDNA_SUCCESS) {
+		*out = NULL;
+		return ret;
+	}
+
+	*out = g_strdup(tmp);
+	/* This *MUST* be freed with free, not g_free */
+	free(tmp);
+	return 0;
+#else
+	g_return_val_if_fail(out != NULL, -1);
+
+	*out = g_strdup(in);
+	return 0;
+#endif
 }
 
 void
@@ -708,18 +1121,25 @@ purple_network_init(void)
 	GError *err = NULL;
 	gint cnt = wpurple_get_connected_network_count();
 
+	network_initialized = TRUE;
 	if (cnt < 0) /* Assume there is a network */
 		current_network_count = 1;
 	/* Don't listen for network changes if we can't tell anyway */
-	else
-	{
+	else {
 		current_network_count = cnt;
-		if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
-			purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+		if ((MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
+			if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
+				purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+		}
 	}
 #endif
 
 	purple_prefs_add_none  ("/purple/network");
+	purple_prefs_add_string("/purple/network/stun_server", "");
+	purple_prefs_add_string("/purple/network/turn_server", "");
+	purple_prefs_add_int   ("/purple/network/turn_port", 3478);
+	purple_prefs_add_string("/purple/network/turn_username", "");
+	purple_prefs_add_string("/purple/network/turn_password", "");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);
 	purple_prefs_add_string("/purple/network/public_ip", "");
 	purple_prefs_add_bool  ("/purple/network/map_ports", TRUE);
@@ -758,7 +1178,19 @@ purple_network_init(void)
 
 	purple_pmp_init();
 	purple_upnp_init();
+	
+	purple_network_set_stun_server(
+		purple_prefs_get_string("/purple/network/stun_server"));
+	purple_network_set_turn_server(
+		purple_prefs_get_string("/purple/network/turn_server"));
+
+	upnp_port_mappings = 
+		g_hash_table_new_full(g_int_hash, g_int_equal, g_free, g_free);
+	nat_pmp_port_mappings =
+		g_hash_table_new_full(g_int_hash, g_int_equal, g_free, g_free);
 }
+
+
 
 void
 purple_network_uninit(void)
@@ -776,6 +1208,36 @@ purple_network_uninit(void)
 		dbus_g_connection_unref(nm_conn);
 #endif
 
+#ifdef _WIN32
+	g_static_mutex_lock(&mutex);
+	network_initialized = FALSE;
+	if (network_change_handle != NULL) {
+		int retval;
+		/* Trigger the NLA thread to stop waiting for network changes. Not
+		 * doing this can cause hangs on WSACleanup. */
+		purple_debug_warning("network", "Terminating the NLA thread\n");
+		if ((retval = WSALookupServiceEnd(network_change_handle)) == SOCKET_ERROR) {
+			int errorid = WSAGetLastError();
+			gchar *msg = g_win32_error_message(errorid);
+			purple_debug_warning("network", "Unable to kill NLA thread. Message: %s (%d).\n",
+				msg, errorid);
+			g_free(msg);
+		}
+		network_change_handle = NULL;
+
+	}
+	g_static_mutex_unlock(&mutex);
+
+#endif
 	purple_signal_unregister(purple_network_get_handle(),
-	                         "network-configuration-changed");
+							 "network-configuration-changed");
+	
+	if (stun_ip)
+		g_free(stun_ip);
+
+	g_hash_table_destroy(upnp_port_mappings);
+	g_hash_table_destroy(nat_pmp_port_mappings);
+
+	/* TODO: clean up remaining port mappings, note calling 
+	 purple_upnp_remove_port_mapping from here doesn't quite work... */
 }

@@ -21,54 +21,49 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_USERLIST_H_
-#define _MSN_USERLIST_H_
+#ifndef MSN_USERLIST_H
+#define MSN_USERLIST_H
 
 typedef struct _MsnUserList MsnUserList;
 
-#include "cmdproc.h"
-#include "user.h"
-#include "group.h"
+typedef enum
+{
+	MSN_LIST_FL, /**< Forward list */
+	MSN_LIST_AL, /**< Allow list */
+	MSN_LIST_BL, /**< Block list */
+	MSN_LIST_RL, /**< Reverse list */
+	MSN_LIST_PL  /**< Pending list */
+} MsnListId;
 
 typedef enum
 {
-	MSN_LIST_FL,
-	MSN_LIST_AL,
-	MSN_LIST_BL,
-	MSN_LIST_RL,
-	MSN_LIST_PL
+	MSN_LIST_FL_OP = 0x01,
+	MSN_LIST_AL_OP = 0x02,
+	MSN_LIST_BL_OP = 0x04,
+	MSN_LIST_RL_OP = 0x08,
+	MSN_LIST_PL_OP = 0x10
+} MsnListOp;
+#define MSN_LIST_OP_MASK	0x07
 
-} MsnListId;
-
+#include "group.h"
+#include "msn.h"
+#include "user.h"
 
 struct _MsnUserList
 {
 	MsnSession *session;
 
-	/* MsnUsers *users; */
-	/* MsnGroups *groups; */
-
-	GList *users;
-	GList *groups;
+	GList *users; /* Contains MsnUsers */
+	GList *groups; /* Contains MsnGroups */
 
 	GQueue *buddy_icon_requests;
 	int buddy_icon_window;
 	guint buddy_icon_request_timer;
 
-	int fl_users_count;
-
 };
 
-gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
-gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
-MsnListId msn_get_list_id(const char *list);
-
-void msn_got_add_user(MsnSession *session, MsnUser *user,
-					  MsnListId list_id, const char *group_id);
-void msn_got_rem_user(MsnSession *session, MsnUser *user,
-					  MsnListId list_id, const char *group_id);
 void msn_got_lst_user(MsnSession *session, MsnUser *user,
-					  int list_op, GSList *group_ids);
+					  MsnListOp list_op, GSList *group_ids);
 
 MsnUserList *msn_userlist_new(MsnSession *session);
 void msn_userlist_destroy(MsnUserList *userlist);
@@ -94,7 +89,7 @@ void msn_userlist_rename_group_id(MsnUserList *userlist, const char *group_id,
 void msn_userlist_remove_group_id(MsnUserList *userlist, const char *group_id);
 
 void msn_userlist_rem_buddy(MsnUserList *userlist, const char *who);
-void msn_userlist_add_buddy(MsnUserList *userlist, 
+void msn_userlist_add_buddy(MsnUserList *userlist,
 			    const char *who, const char *group_name);
 void msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 						    const char *old_group_name,
@@ -106,11 +101,12 @@ gboolean msn_userlist_rem_buddy_from_group(MsnUserList *userlist,
 					   const char *who,
 					   const char *group_name);
 
-void msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who, 
+void msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 				    MsnListId list_id);
 void msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 				      MsnListId list_id);
+void msn_release_buddy_icon_request(MsnUserList *userlist);
 
 void msn_userlist_load(MsnSession *session);
 
-#endif /* _MSN_USERLIST_H_ */
+#endif /* MSN_USERLIST_H */

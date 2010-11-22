@@ -20,10 +20,6 @@
 #include "myspace.h"
 #include "zap.h"
 
-static gboolean msim_send_zap(MsimSession *session, const gchar *username, guint code);
-static void msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr);
-
-
 /** Get zap types. */
 GList *
 msim_attention_types(PurpleAccount *acct)
@@ -100,6 +96,33 @@ msim_attention_types(PurpleAccount *acct)
 	return types;
 }
 
+/** Send a zap to a user. */
+static gboolean
+msim_send_zap(MsimSession *session, const gchar *username, guint code)
+{
+	gchar *zap_string;
+	gboolean rc;
+
+	g_return_val_if_fail(session != NULL, FALSE);
+	g_return_val_if_fail(username != NULL, FALSE);
+
+	/* Construct and send the actual zap command. */
+	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
+
+	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION_OR_IM_INSTANT)) {
+		purple_debug_info("msim_send_zap",
+				"msim_send_bm failed: zapping %s with %s\n",
+				username, zap_string);
+		rc = FALSE;
+	} else {
+		rc = TRUE;
+	}
+
+	g_free(zap_string);
+
+	return rc;
+}
+
 /** Send a zap */
 gboolean
 msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
@@ -130,33 +153,6 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 	return TRUE;
 }
 
-/** Send a zap to a user. */
-static gboolean
-msim_send_zap(MsimSession *session, const gchar *username, guint code)
-{
-	gchar *zap_string;
-	gboolean rc;
-
-	g_return_val_if_fail(session != NULL, FALSE);
-	g_return_val_if_fail(username != NULL, FALSE);
-
-	/* Construct and send the actual zap command. */
-	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
-
-	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
-		purple_debug_info("msim_send_zap_from_menu", "msim_send_bm failed: zapping %s with %s\n",
-				username, zap_string);
-		rc = FALSE;
-	} else {
-		rc = TRUE;
-	}
-	
-	g_free(zap_string);
-
-	return rc;
-
-}
-
 /** Zap someone. Callback from msim_blist_node_menu zap menu. */
 static void
 msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
@@ -177,13 +173,13 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 	buddy = (PurpleBuddy *)node;
 
 	/* Find the session */
-	account = buddy->account;
+	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 	session = (MsimSession *)gc->proto_data;
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
-	serv_send_attention(session->gc, buddy->name, zap);
+	purple_prpl_send_attention(session->gc, purple_buddy_get_name(buddy), zap);
 }
 
 /** Return menu, if any, for a buddy list node. */
@@ -241,12 +237,10 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	zap = CLAMP(zap, 0, 9);
 
-	serv_got_attention(session->gc, username, zap);
+	purple_prpl_got_attention(session->gc, username, zap);
 
 	g_free(msg_text);
 	g_free(username);
 
 	return TRUE;
 }
-
-

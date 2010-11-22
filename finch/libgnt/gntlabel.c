@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntlabel.h"
 #include "gntutils.h"
 
@@ -53,7 +54,7 @@ gnt_label_draw(GntWidget *widget)
 	chtype flag = gnt_text_format_flag_to_chtype(label->flags);
 
 	wbkgdset(widget->window, '\0' | flag);
-	mvwaddstr(widget->window, 0, 0, label->text);
+	mvwaddstr(widget->window, 0, 0, C_(label->text));
 
 	GNTDEBUG;
 }

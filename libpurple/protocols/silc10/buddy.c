@@ -1176,7 +1176,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r,
 			   clients[i]->username, clients[i]->hostname ?
 			   clients[i]->hostname : "",
 			   fingerprint ? tmp2 : "");
-		purple_request_field_list_add(f, tmp, clients[i]);
+		purple_request_field_list_add_icon(f, tmp, NULL, clients[i]);
 		silc_free(fingerprint);
 	}
 
@@ -1390,7 +1390,12 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 
 void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	silcpurple_add_buddy_i(gc, buddy, FALSE);
+	/* Don't add if the buddy is already on the list.
+	 *
+	 * SILC doesn't have groups, so we don't need to do anything
+	 * for a move. */
+	if (purple_buddy_get_protocol_data(buddy) == NULL)
+		silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
 void silcpurple_send_buddylist(PurpleConnection *gc)

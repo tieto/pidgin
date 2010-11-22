@@ -68,6 +68,31 @@ int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, cons
 	return 0;
 }
 
+int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	/* we have defined args as args[0] is target and args[1] is ctcp command */
+	char *buf;
+	GString *string;
+	
+	/* check if we have args */
+	if (!args || !args[0] || !args[1])
+		return 0;
+
+	/* TODO:strip newlines or send each line as separate ctcp or something
+	 * actually, this shouldn't be done here but somewhere else since irc should support escaping newlines */
+
+	string = g_string_new(args[1]);
+	g_string_prepend_c (string,'\001');
+	g_string_append_c (string,'\001');
+	buf = irc_format(irc, "vn:", "PRIVMSG", args[0], string->str);
+	g_string_free(string,TRUE);
+
+	irc_send(irc, buf);
+	g_free(buf);
+	
+	return 1;
+}
+
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
@@ -116,11 +141,11 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 			action[strlen(action) - 1] = '\0';
 		if (purple_conversation_get_type(convo) == PURPLE_CONV_TYPE_CHAT)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
-			         	 purple_connection_get_display_name(gc),
-				         0, action, time(NULL));
+			                 purple_connection_get_display_name(gc),
+			                 PURPLE_MESSAGE_SEND, action, time(NULL));
 		else
 			purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
-			                  action, 0, time(NULL));
+			                     action, PURPLE_MESSAGE_SEND, time(NULL));
 		g_free(action);
 	}
 
@@ -130,7 +155,6 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 int irc_cmd_ctcp_version(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;
-
 
 	if (!args || !args[0])
 		return 0;
@@ -214,16 +238,16 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 		if (!args[0] && irc_ischannel(target))
 			buf = irc_format(irc, "vc", "MODE", target);
 		else if (args[0] && (*args[0] == '+' || *args[0] == '-'))
-			buf = irc_format(irc, "vcv", "MODE", target, args[0]);
+			buf = irc_format(irc, "vcn", "MODE", target, args[0]);
 		else if (args[0])
-			buf = irc_format(irc, "vv", "MODE", args[0]);
+			buf = irc_format(irc, "vn", "MODE", args[0]);
 		else
 			return 0;
 	} else if (!strcmp(cmd, "umode")) {
 		if (!args[0])
 			return 0;
 		gc = purple_account_get_connection(irc->account);
-		buf = irc_format(irc, "vnv", "MODE", purple_connection_get_display_name(gc), args[0]);
+		buf = irc_format(irc, "vnc", "MODE", purple_connection_get_display_name(gc), args[0]);
 	} else {
 		return 0;
 	}
@@ -413,7 +437,7 @@ int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	buf = irc_format(irc, "v", args[0]);
+	buf = irc_format(irc, "n", args[0]);
 	irc_send(irc, buf);
 	g_free(buf);
 

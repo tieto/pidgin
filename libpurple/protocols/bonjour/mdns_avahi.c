@@ -115,7 +115,6 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	AvahiStringList *l;
 	size_t size;
 	char *key, *value;
-	int ret;
 	char ip[AVAHI_ADDRESS_STR_MAX];
 	AvahiBuddyImplData *b_impl;
 	AvahiSvcResolverData *rd;
@@ -124,7 +123,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	g_return_if_fail(r != NULL);
 
 	pb = purple_find_buddy(account, name);
-	bb = (pb != NULL) ? pb->proto_data : NULL;
+	bb = (pb != NULL) ? purple_buddy_get_protocol_data(pb) : NULL;
 
 	switch (event) {
 		case AVAHI_RESOLVER_FAILURE:
@@ -150,6 +149,10 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 			break;
 		case AVAHI_RESOLVER_FOUND:
+
+			purple_debug_info("bonjour", "_resolve_callback - name:%s account:%p bb:%p\n",
+				name, account, bb);
+
 			/* create a buddy record */
 			if (bb == NULL)
 				bb = bonjour_buddy_new(name, account);
@@ -173,7 +176,11 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 
 
 			/* Get the ip as a string */
+			ip[0] = '\0';
 			avahi_address_snprint(ip, AVAHI_ADDRESS_STR_MAX, a);
+
+			purple_debug_info("bonjour", "_resolve_callback - name:%s ip:%s prev_ip:%s\n",
+				name, ip, rd->ip);
 
 			if (rd->ip == NULL || strcmp(rd->ip, ip) != 0) {
 				/* We store duplicates in bb->ips, so we always remove the one */
@@ -181,8 +188,14 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 					bb->ips = g_slist_remove(bb->ips, rd->ip);
 					g_free((gchar *) rd->ip);
 				}
-				bb->ips = g_slist_prepend(bb->ips, g_strdup(ip));
-				rd->ip = bb->ips->data;
+				/* IPv6 goes at the front of the list and IPv4 at the end so that we "prefer" IPv6, if present */
+				if (protocol == AVAHI_PROTO_INET6) {
+					rd->ip = g_strdup_printf("%s%%%d", ip, interface);
+					bb->ips = g_slist_prepend(bb->ips, (gchar *) rd->ip);
+				} else {
+					rd->ip = g_strdup(ip);
+					bb->ips = g_slist_append(bb->ips, (gchar *) rd->ip);
+				}
 			}
 
 			bb->port_p2pj = port;
@@ -190,7 +203,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			/* Obtain the parameters from the text_record */
 			clear_bonjour_buddy_values(bb);
 			for(l = txt; l != NULL; l = l->next) {
-				if ((ret = avahi_string_list_get_pair(l, &key, &value, &size)) < 0)
+				if (avahi_string_list_get_pair(l, &key, &value, &size) < 0)
 					continue;
 				set_bonjour_buddy_value(bb, key, value, size);
 				/* TODO: Since we're using the glib allocator, I think we
@@ -200,8 +213,8 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 
 			if (!bonjour_buddy_check(bb)) {
-				_cleanup_resolver_data(rd);
 				b_impl->resolvers = g_slist_remove(b_impl->resolvers, rd);
+				_cleanup_resolver_data(rd);
 				/* If this was the last resolver, remove the buddy */
 				if (b_impl->resolvers == NULL) {
 					if (pb != NULL)
@@ -239,9 +252,9 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			/* A new peer has joined the network and uses iChat bonjour */
 			purple_debug_info("bonjour", "_browser_callback - new service\n");
 			/* Make sure it isn't us */
-			if (purple_utf8_strcasecmp(name, account->username) != 0) {
+			if (purple_utf8_strcasecmp(name, bonjour_get_jid(account)) != 0) {
 				if (!avahi_service_resolver_new(avahi_service_browser_get_client(b),
-						interface, protocol, name, type, domain, AVAHI_PROTO_INET,
+						interface, protocol, name, type, domain, protocol,
 						0, _resolver_callback, account)) {
 					purple_debug_warning("bonjour", "_browser_callback -- Error initiating resolver: %s\n",
 						avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
@@ -252,7 +265,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
 			pb = purple_find_buddy(account, name);
 			if (pb != NULL) {
-				BonjourBuddy *bb = pb->proto_data;
+				BonjourBuddy *bb = purple_buddy_get_protocol_data(pb);
 				AvahiBuddyImplData *b_impl;
 				GSList *l;
 				AvahiSvcResolverData *rd_search;
@@ -357,14 +370,16 @@ _buddy_icon_record_cb(AvahiRecordBrowser *b, AvahiIfIndex interface, AvahiProtoc
 	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
 
 	switch (event) {
+		case AVAHI_BROWSER_CACHE_EXHAUSTED:
+		case AVAHI_BROWSER_ALL_FOR_NOW:
+			/* Ignore these "meta" informational events */
+			return;
 		case AVAHI_BROWSER_NEW:
 			bonjour_buddy_got_buddy_icon(buddy, rdata, size);
 			break;
 		case AVAHI_BROWSER_REMOVE:
-		case AVAHI_BROWSER_CACHE_EXHAUSTED:
-		case AVAHI_BROWSER_ALL_FOR_NOW:
 		case AVAHI_BROWSER_FAILURE:
-			purple_debug_error("bonjour", "Error rerieving buddy icon record: %s\n",
+			purple_debug_error("bonjour", "Error retrieving buddy icon record: %s\n",
 				avahi_strerror(avahi_client_errno(avahi_record_browser_get_client(b))));
 			break;
 	}
@@ -406,6 +421,8 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 
 	data->mdns_impl_data = idata;
 
+	bonjour_dns_sd_set_jid(data->account, avahi_client_get_host_name(idata->client));
+
 	return TRUE;
 }
 
@@ -438,15 +455,15 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 		case PUBLISH_START:
 			publish_result = avahi_entry_group_add_service_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
-				AVAHI_PROTO_INET, 0,
-				purple_account_get_username(data->account),
+				AVAHI_PROTO_UNSPEC, 0,
+				bonjour_get_jid(data->account),
 				LINK_LOCAL_RECORD_NAME, NULL, NULL, data->port_p2pj, lst);
 			break;
 		case PUBLISH_UPDATE:
 			publish_result = avahi_entry_group_update_service_txt_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
-				AVAHI_PROTO_INET, 0,
-				purple_account_get_username(data->account),
+				AVAHI_PROTO_UNSPEC, 0,
+				bonjour_get_jid(data->account),
 				LINK_LOCAL_RECORD_NAME, NULL, lst);
 			break;
 	}
@@ -477,7 +494,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_INET, LINK_LOCAL_RECORD_NAME, NULL, 0, _browser_callback, data->account);
+	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, LINK_LOCAL_RECORD_NAME, NULL, 0, _browser_callback, data->account);
 	if (!idata->sb) {
 
 		purple_debug_error("bonjour",
@@ -520,10 +537,10 @@ gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data
 		}
 
 		svc_name = g_strdup_printf("%s." LINK_LOCAL_RECORD_NAME "local",
-				purple_account_get_username(data->account));
+				bonjour_get_jid(data->account));
 
 		ret = avahi_entry_group_add_record(idata->buddy_icon_group, AVAHI_IF_UNSPEC,
-			AVAHI_PROTO_INET, flags, svc_name,
+			AVAHI_PROTO_UNSPEC, flags, svc_name,
 			AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 120, avatar_data, avatar_len);
 
 		g_free(svc_name);
@@ -612,7 +629,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 
 	name = g_strdup_printf("%s." LINK_LOCAL_RECORD_NAME "local", buddy->name);
 	idata->buddy_icon_rec_browser = avahi_record_browser_new(session_idata->client, AVAHI_IF_UNSPEC,
-		AVAHI_PROTO_INET, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
+		AVAHI_PROTO_UNSPEC, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
 		_buddy_icon_record_cb, buddy);
 	g_free(name);
 

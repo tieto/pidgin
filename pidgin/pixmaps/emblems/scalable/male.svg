@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg1307"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh"
+   sodipodi:docname="male.svg"
+   inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/female.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs1309">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2248">
+      <stop
+         style="stop-color:#729fcf;stop-opacity:1;"
+         offset="0"
+         id="stop2250" />
+      <stop
+         style="stop-color:#729fcf;stop-opacity:0"
+         offset="1"
+         id="stop2252" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2248"
+       id="linearGradient2254"
+       x1="8.4317303"
+       y1="8.3947935"
+       x2="7.0192189"
+       y2="2.5513308"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="25.498579"
+     inkscape:cx="15.206295"
+     inkscape:cy="6.2089057"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     fill="#729fcf"
+     inkscape:window-width="1268"
+     inkscape:window-height="971"
+     inkscape:window-x="6"
+     inkscape:window-y="21"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata1312">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.59659095;fill:#ad7fa8;fill-opacity:1;stroke:#ad7fa8;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1305"
+       sodipodi:cx="5.0230198"
+       sodipodi:cy="5.3570547"
+       sodipodi:rx="3.3111386"
+       sodipodi:ry="2.6917078"
+       d="M 5.2408909,8.0429293 A 3.3111386,2.6917078 0 0 1 5.227167,8.0436417"
+       sodipodi:start="1.5049493"
+       sodipodi:end="1.5091025"
+       sodipodi:open="true" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.59659095;fill:#ad7fa8;fill-opacity:1;stroke:#ad7fa8;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path1307"
+       sodipodi:cx="2.8944306"
+       sodipodi:cy="2.8680694"
+       sodipodi:rx="1.4303218"
+       sodipodi:ry="1.4190594"
+       d="M 2.988545,4.2840535 A 1.4303218,1.4190594 0 0 1 2.9826167,4.2844291"
+       sodipodi:start="1.5049493"
+       sodipodi:end="1.5091025"
+       sodipodi:open="true" />
+    <path
+       style="opacity:1;fill:url(#linearGradient2254);fill-opacity:1.0;stroke:#3465a4;stroke-width:1.00000024;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 9.5625001,2.5052306 L 10.8125,3.730362 L 8.5312501,6.0235566 C 7.9356185,5.6694146 7.2416791,5.4581114 6.5000001,5.4581114 C 4.2922116,5.4581114 2.5,7.2595228 2.5000001,9.4790554 C 2.5000001,11.698588 4.2922117,13.5 6.5000001,13.5 C 8.7077886,13.5 10.5,11.698588 10.5,9.4790554 C 10.5,8.7334313 10.289768,8.0359696 9.9375001,7.4371697 L 12.21875,5.1439751 L 13.5,6.4005201 L 13.5,2.5052306 L 9.5625001,2.5052306 z M 6.4062501,7.5314106 C 6.4402689,7.529683 6.4655548,7.5314106 6.5000001,7.5314106 C 7.6022508,7.5314105 8.5000001,8.4387958 8.5000001,9.5418826 C 8.4999997,10.644969 7.6022508,11.552355 6.5000001,11.552355 C 5.3977495,11.552355 4.5000001,10.644969 4.5000001,9.5418826 C 4.5000001,8.4732675 5.3516684,7.5849654 6.4062501,7.5314106 z "
+       id="path1313" />
+  </g>
+</svg>

@@ -45,7 +45,7 @@ static PidginLogViewer *syslog_viewer = NULL;
 
 struct log_viewer_hash_t {
 	PurpleLogType type;
-	char *screenname;
+	char *buddyname;
 	PurpleAccount *account;
 	PurpleContact *contact;
 };
@@ -57,7 +57,7 @@ static guint log_viewer_hash(gconstpointer data)
 	if (viewer->contact != NULL)
 		return g_direct_hash(viewer->contact);
 
-	return g_str_hash(viewer->screenname) +
+	return g_str_hash(viewer->buddyname) +
 		g_str_hash(purple_account_get_username(viewer->account));
 }
 
@@ -80,9 +80,9 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 			return FALSE;
 	}
 
-	normal = g_strdup(purple_normalize(a->account, a->screenname));
+	normal = g_strdup(purple_normalize(a->account, a->buddyname));
 	ret = (a->account == b->account) &&
-		!strcmp(normal, purple_normalize(b->account, b->screenname));
+		!strcmp(normal, purple_normalize(b->account, b->buddyname));
 	g_free(normal);
 
 	return ret;
@@ -209,7 +209,7 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 		lv = g_hash_table_lookup(log_viewers, ht);
 		g_hash_table_remove(log_viewers, ht);
 
-		g_free(ht->screenname);
+		g_free(ht->buddyname);
 		g_free(ht);
 	} else
 		syslog_viewer = NULL;
@@ -252,7 +252,6 @@ static void delete_log_cb(gpointer *data)
 		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(treestore), iter);
 		gboolean first = !gtk_tree_path_prev(path);
 
-#if GTK_CHECK_VERSION(2,2,0)
 		if (!gtk_tree_store_remove(treestore, iter) && first)
 		{
 			/* iter was the last child at its level */
@@ -263,9 +262,7 @@ static void delete_log_cb(gpointer *data)
 				gtk_tree_store_remove(treestore, iter);
 			}
 		}
-#else
-		gtk_tree_store_remove(treestore, iter);
-#endif
+
 		gtk_tree_path_free(path);
 	}
 
@@ -423,6 +420,7 @@ static gboolean search_find_cb(gpointer data)
 {
 	PidginLogViewer *viewer = data;
 	gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
+	g_object_steal_data(G_OBJECT(viewer->entry), "search-find-cb");
 	return FALSE;
 }
 
@@ -475,8 +473,11 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	g_free(read);
 
 	if (viewer->search != NULL) {
+		guint source;
 		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
-		g_idle_add(search_find_cb, viewer);
+		source = g_idle_add(search_find_cb, viewer);
+		g_object_set_data_full(G_OBJECT(viewer->entry), "search-find-cb",
+		                       GINT_TO_POINTER(source), (GDestroyNotify)g_source_remove);
 	}
 
 	pidgin_clear_cursor(viewer->window);
@@ -556,7 +557,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 				if (!purple_prefs_get_bool("/purple/logging/log_chats"))
 					log_preferences = _("Chats will only be logged if the \"Log all chats\" preference is enabled.");
 			}
-			g_free(ht->screenname);
+			g_free(ht->buddyname);
 			g_free(ht);
 		}
 
@@ -681,27 +682,27 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
-void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
+void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *account) {
 	struct log_viewer_hash_t *ht;
 	PidginLogViewer *lv = NULL;
-	const char *name = screenname;
+	const char *name = buddyname;
 	char *title;
 	GdkPixbuf *prpl_icon;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(screenname != NULL);
+	g_return_if_fail(buddyname != NULL);
 
 	ht = g_new0(struct log_viewer_hash_t, 1);
 
 	ht->type = type;
-	ht->screenname = g_strdup(screenname);
+	ht->buddyname = g_strdup(buddyname);
 	ht->account = account;
 
 	if (log_viewers == NULL) {
 		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
 	} else if ((lv = g_hash_table_lookup(log_viewers, ht))) {
 		gtk_window_present(GTK_WINDOW(lv->window));
-		g_free(ht->screenname);
+		g_free(ht->buddyname);
 		g_free(ht);
 		return;
 	}
@@ -709,7 +710,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	if (type == PURPLE_LOG_CHAT) {
 		PurpleChat *chat;
 
-		chat = purple_blist_find_chat(account, screenname);
+		chat = purple_blist_find_chat(account, buddyname);
 		if (chat != NULL)
 			name = purple_chat_get_name(chat);
 
@@ -717,7 +718,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	} else {
 		PurpleBuddy *buddy;
 
-		buddy = purple_find_buddy(account, screenname);
+		buddy = purple_find_buddy(account, buddyname);
 		if (buddy != NULL)
 			name = purple_buddy_get_contact_alias(buddy);
 
@@ -726,9 +727,9 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
-	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
+	display_log_viewer(ht, purple_log_get_logs(type, buddyname, account),
 			title, gtk_image_new_from_pixbuf(prpl_icon),
-			purple_log_get_total_size(type, screenname, account));
+			purple_log_get_total_size(type, buddyname, account));
 
 	if (prpl_icon)
 		g_object_unref(prpl_icon);
@@ -760,13 +761,19 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		return;
 	}
 
-	for (child = contact->node.child ; child ; child = child->next) {
+	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact) ;
+	     child != NULL ;
+	     child = purple_blist_node_get_sibling_next(child)) {
+		const char *buddy_name;
+		PurpleAccount *account;
+
 		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
-		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name,
-						((PurpleBuddy *)child)->account), logs);
-		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, ((PurpleBuddy *)child)->account);
+		buddy_name = purple_buddy_get_name((PurpleBuddy *)child);
+		account = purple_buddy_get_account((PurpleBuddy *)child);
+		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, buddy_name, account), logs);
+		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, buddy_name, account);
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 

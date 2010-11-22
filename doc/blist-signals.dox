@@ -11,6 +11,8 @@
   @signal buddy-removed
   @signal buddy-icon-changed
   @signal blist-node-aliased
+  @signal buddy-caps-changed
+  @signal ui-caps-changed
  @endsignals
 
  @see blist.h
@@ -74,13 +76,30 @@ void (*blist_node_extended_menu)(PurpleBlistNode *node, GList **menu)
    a GList of PurpleBlistNodeAction's allowing a plugin to add menu items
  @endsignaldef
 
+ @signaldef blist-node-added
+  @signalproto
+void (*blist_node_added)(PurpleBlistNode *node)
+  @endsignalproto
+  @signaldesc
+   Emitted when a new blist node is added to the buddy list.
+ @endsignaldef
+
+ @signaldef blist-node-removed
+  @signalproto
+void (*blist_node_removed)(PurpleBlistNode *node)
+  @endsignalproto
+  @signaldesc
+   Emitted when a blist node is removed from the buddy list.
+ @endsignaldef
+
  @signaldef buddy-added
   @signalproto
 void (*buddy_added)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a new buddy is added to the buddy list.
-  @endsignaldef
+  @deprecated Use blist-node-added instead.
+ @endsignaldef
 
  @signaldef buddy-removed
   @signalproto
@@ -88,7 +107,8 @@ void (*buddy_removed)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a buddy is removed from the buddy list.
-  @endsignaldef
+  @deprecated Use blist-node-removed instead.
+ @endsignaldef
 
  @signaldef buddy-icon-changed
   @signalproto
@@ -106,5 +126,29 @@ void (*blist_node_aliased)(PurpleBlistNode *node, const char *old_alias)
    Emitted when a blist node (buddy, chat, or contact) is aliased.
   @endsignaldef
 
+ @signaldef buddy-caps-changed
+  @signalproto
+void (*buddy_caps_changed)(PurpleBuddy *buddy, PurpleMediaCaps newcaps,
+    PurpleMediaCaps oldcaps)
+  @endsignalproto
+  @signaldesc
+    Emitted when updating a buddy's media capabilities.
+  @param buddy	  The buddy
+  @param newcaps
+  @param oldcaps
+  @since 2.7.0
+ @endsignaldef
+
+ @signaldef ui-caps-changed
+  @signalproto
+void (*ui_caps_changed)(PurpleMediaCaps newcaps, PurpleMediaCaps oldcaps)
+  @endsignalproto
+  @signaldesc
+    Emitted when updating the media capabilities of the UI.
+  @param newcaps
+  @param oldcaps
+  @since 2.7.0
+ @endsignaldef
+ 
  */
 // vim: syntax=c.doxygen tw=75 et

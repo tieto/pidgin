@@ -25,7 +25,6 @@
  *
 */
 
-#include <glib.h>
 #include "internal.h"
 
 #include "dbus-maybe.h"
@@ -66,6 +65,24 @@ purple_imgstore_add(gpointer data, size_t size, const char *filename)
 	img->id = 0;
 
 	return img;
+}
+
+PurpleStoredImage *
+purple_imgstore_new_from_file(const char *path)
+{
+	gchar *data = NULL;
+	size_t len;
+	GError *err = NULL;
+
+	g_return_val_if_fail(path != NULL && *path != '\0', NULL);
+
+	if (!g_file_get_contents(path, &data, &len, &err)) {
+		purple_debug_error("imgstore", "Error reading %s: %s\n",
+				path, err->message);
+		g_error_free(err);
+		return NULL;
+	}
+	return purple_imgstore_add(data, len, path);
 }
 
 int

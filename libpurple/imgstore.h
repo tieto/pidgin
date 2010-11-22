@@ -63,6 +63,17 @@ PurpleStoredImage *
 purple_imgstore_add(gpointer data, size_t size, const char *filename);
 
 /**
+ * Create an image and add it to the store.
+ *
+ * @param path  The path to the image.
+ *
+ * @return  The stored image.
+ * @since 2.X.X
+ */
+PurpleStoredImage *
+purple_imgstore_new_from_file(const char *path);
+
+/**
  * Add an image to the store, allocating an ID.
  *
  * The caller owns a reference to the image in the store, and must dereference

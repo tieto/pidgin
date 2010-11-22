@@ -20,10 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntbox.h"
+#include "gntstyle.h"
 #include "gntutils.h"
 
 #include <string.h>
+
+#define PROP_LAST_RESIZE_S "last-resize"
+#define PROP_SIZE_QUEUED_S "size-queued"
 
 enum
 {
@@ -77,13 +82,11 @@ gnt_box_draw(GntWidget *widget)
 
 	g_list_foreach(box->list, (GFunc)gnt_widget_draw, NULL);
 
-	gnt_box_sync_children(box);
-
 	if (box->title && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 	{
 		int pos, right;
 		char *title = g_strdup(box->title);
-		
+
 		get_title_thingies(box, title, &pos, &right);
 
 		if (gnt_widget_has_focus(widget))
@@ -91,12 +94,12 @@ gnt_box_draw(GntWidget *widget)
 		else
 			wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TITLE_D));
 		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | gnt_color_pair(GNT_COLOR_NORMAL));
-		mvwaddstr(widget->window, 0, pos, title);
+		mvwaddstr(widget->window, 0, pos, C_(title));
 		mvwaddch(widget->window, 0, right, ACS_LTEE | gnt_color_pair(GNT_COLOR_NORMAL));
 		g_free(title);
 	}
-	
-	GNTDEBUG;
+
+	gnt_box_sync_children(box);
 }
 
 static void
@@ -194,7 +197,7 @@ gnt_box_size_request(GntWidget *widget)
 	GntBox *box = GNT_BOX(widget);
 	GList *iter;
 	int maxw = 0, maxh = 0;
-	
+
 	g_list_foreach(box->list, (GFunc)gnt_widget_size_request, NULL);
 
 	for (iter = box->list; iter; iter = iter->next)
@@ -272,7 +275,8 @@ find_next_focus(GntBox *box)
 			box->active = iter->next->data;
 		else if (box->focus)
 			box->active = box->focus->data;
-		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE))
+		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE) &&
+				GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_CAN_TAKE_FOCUS))
 			break;
 	} while (box->active != last);
 }
@@ -303,44 +307,56 @@ static gboolean
 gnt_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntBox *box = GNT_BOX(widget);
-	GntWidget *now;
+	gboolean ret;
+
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DISABLE_ACTIONS))
+		return FALSE;
 
 	if (box->active == NULL && !find_focusable_widget(box))
 		return FALSE;
 
 	if (gnt_widget_key_pressed(box->active, text))
 		return TRUE;
-	
+
+	/* This dance is necessary to make sure that the child widgets get a chance
+	   to trigger their bindings first */
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DISABLE_ACTIONS);
+	ret = gnt_widget_key_pressed(widget, text);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_DISABLE_ACTIONS);
+	return ret;
+}
+
+static gboolean
+box_focus_change(GntBox *box, gboolean next)
+{
+	GntWidget *now;
 	now = box->active;
 
-	if (text[0] == 27)
-	{
-		if (strcmp(text, GNT_KEY_LEFT) == 0)
-		{
-			find_prev_focus(box);
-		}
-		else if (strcmp(text, GNT_KEY_RIGHT) == 0)
-		{
-			find_next_focus(box);
-		}
-		else if (strcmp(text, GNT_KEY_BACK_TAB) == 0)
-		{
-			find_prev_focus(box);
-		}
-	}
-	else if (text[0] == '\t')
-	{
+	if (next) {
 		find_next_focus(box);
+	} else {
+		find_prev_focus(box);
 	}
 
-	if (now && now != box->active)
-	{
+	if (now && now != box->active) {
 		gnt_widget_set_focus(now, FALSE);
 		gnt_widget_set_focus(box->active, TRUE);
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+static gboolean
+action_focus_next(GntBindable *bindable, GList *null)
+{
+	return box_focus_change(GNT_BOX(bindable), TRUE);
+}
+
+static gboolean
+action_focus_prev(GntBindable *bindable, GList *null)
+{
+	return box_focus_change(GNT_BOX(bindable), FALSE);
 }
 
 static void
@@ -385,6 +401,7 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 	GList *iter;
 	GntBox *box = GNT_BOX(widget);
 	int wchange, hchange;
+	GntWidget *child, *last;
 
 	if (!box->list)
 		return TRUE;
@@ -393,67 +410,64 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 	hchange = widget->priv.height - height;
 
 	if (wchange == 0 && hchange == 0)
-		return TRUE;		/* Quit playing games */
+		return TRUE;		/* Quit playing games with my size */
 
-	/* XXX: Right now, I am trying to just apply all the changes to 
-	 * just one widget. It should be possible to distribute the
-	 * changes to all the widgets in the box. */
-	for (iter = box->list; iter; iter = iter->next)
-	{
+	child = NULL;
+	last = g_object_get_data(G_OBJECT(box), PROP_LAST_RESIZE_S);
+
+	/* First, make sure all the widgets will fit into the box after resizing. */
+	for (iter = box->list; iter; iter = iter->next) {
 		GntWidget *wid = iter->data;
 		int w, h;
 
 		gnt_widget_get_size(wid, &w, &h);
 
-		if (gnt_widget_confirm_size(wid, w - wchange, h - hchange))
-		{
-			GList *i;
-
-			for (i = box->list; i; i = i->next)
-			{
-				int tw, th;
-				if (i == iter) continue;
-				gnt_widget_get_size(GNT_WIDGET(i->data), &tw, &th);
-				if (box->vertical)
-				{
-					if (!gnt_widget_confirm_size(i->data, tw - wchange, th)) {
-						/* If we are decreasing the size and the widget is going
-						 * to be too large to fit into the box, then do not allow
-						 * resizing. */
-						if (wchange > 0 && tw >= widget->priv.width)
-							return FALSE;
-					}
-				}
-				else
-				{
-					if (!gnt_widget_confirm_size(i->data, tw, th - hchange)) {
-						if (hchange > 0 && th >= widget->priv.height)
-							return FALSE;
-						return FALSE;
-					}
-				}
-			}
-#if 0
-			gnt_widget_set_size(wid, w - wchange, h - hchange);
-			if (box->vertical)
-				hchange = 0;
-			else
-				wchange = 0;
-
-			for (i = box->list; i; i = i->next)
-			{
-				int tw, th;
-				if (i == iter) continue;
-				gnt_widget_get_size(GNT_WIDGET(i->data), &tw, &th);
-				gnt_widget_set_size(i->data, tw - wchange, th - hchange);
-			}
-#endif
-			g_object_set_data(G_OBJECT(box), "size-queued", wid);
-			return TRUE;
+		if (wid != last && !child && w > 0 && h > 0 &&
+				!GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_INVISIBLE) &&
+				gnt_widget_confirm_size(wid, w - wchange, h - hchange)) {
+			child = wid;
+			break;
 		}
 	}
 
-	return FALSE;
+	if (!child && (child = last)) {
+		int w, h;
+		gnt_widget_get_size(child, &w, &h);
+		if (!gnt_widget_confirm_size(child, w - wchange, h - hchange))
+			child = NULL;
+	}
+
+	g_object_set_data(G_OBJECT(box), PROP_SIZE_QUEUED_S, child);
+
+	if (child) {
+		for (iter = box->list; iter; iter = iter->next) {
+			GntWidget *wid = iter->data;
+			int w, h;
+
+			if (wid == child)
+				continue;
+
+			gnt_widget_get_size(wid, &w, &h);
+			if (box->vertical) {
+				/* For a vertical box, if we are changing the width, make sure the widgets
+				 * in the box will fit after resizing the width. */
+				if (wchange > 0 &&
+						w >= child->priv.width &&
+						!gnt_widget_confirm_size(wid, w - wchange, h))
+					return FALSE;
+			} else {
+				/* If we are changing the height, make sure the widgets in the box fit after
+				 * the resize. */
+				if (hchange > 0 &&
+						h >= child->priv.height &&
+						!gnt_widget_confirm_size(wid, w, h - hchange))
+					return FALSE;
+			}
+
+		}
+	}
+
+	return (child != NULL);
 }
 
 static void
@@ -464,16 +478,16 @@ gnt_box_size_changed(GntWidget *widget, int oldw, int oldh)
 	GntBox *box = GNT_BOX(widget);
 	GntWidget *wid;
 	int tw, th;
-		
+
 	wchange = widget->priv.width - oldw;
 	hchange = widget->priv.height - oldh;
-	
-	wid = g_object_get_data(G_OBJECT(box), "size-queued");
-	if (wid)
-	{
+
+	wid = g_object_get_data(G_OBJECT(box), PROP_SIZE_QUEUED_S);
+	if (wid) {
 		gnt_widget_get_size(wid, &tw, &th);
 		gnt_widget_set_size(wid, tw + wchange, th + hchange);
-		g_object_set_data(G_OBJECT(box), "size-queued", NULL);
+		g_object_set_data(G_OBJECT(box), PROP_SIZE_QUEUED_S, NULL);
+		g_object_set_data(G_OBJECT(box), PROP_LAST_RESIZE_S, wid);
 	}
 
 	if (box->vertical)
@@ -555,6 +569,7 @@ gnt_box_get_property(GObject *obj, guint prop_id, GValue *value,
 static void
 gnt_box_class_init(GntBoxClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	GObjectClass *gclass = G_OBJECT_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_box_destroy;
@@ -588,6 +603,15 @@ gnt_box_class_init(GntBoxClass *klass)
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
 			)
 		);
+
+	gnt_bindable_class_register_action(bindable, "focus-next", action_focus_next,
+			"\t", NULL);
+	gnt_bindable_register_binding(bindable, "focus-next", GNT_KEY_RIGHT, NULL);
+	gnt_bindable_class_register_action(bindable, "focus-prev", action_focus_prev,
+			GNT_KEY_BACK_TAB, NULL);
+	gnt_bindable_register_binding(bindable, "focus-prev", GNT_KEY_LEFT, NULL);
+
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 }
 
 static void
@@ -598,7 +622,7 @@ gnt_box_init(GTypeInstance *instance, gpointer class)
 	/* Initially make both the height and width resizable.
 	 * Update the flags as necessary when widgets are added to it. */
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_DISABLE_ACTIONS);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	box->pad = 1;
 	box->fill = TRUE;
@@ -665,8 +689,8 @@ void gnt_box_set_title(GntBox *b, const char *title)
 		get_title_thingies(b, prev, &pos, &right);
 		mvwhline(w->window, 0, pos - 1, ACS_HLINE | gnt_color_pair(GNT_COLOR_NORMAL),
 				right - pos + 2);
-		g_free(prev);
 	}
+	g_free(prev);
 }
 
 void gnt_box_set_pad(GntBox *box, int pad)
@@ -698,6 +722,9 @@ void gnt_box_sync_children(GntBox *box)
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		pos = 0;
+
+	if (!box->active)
+		find_focusable_widget(box);
 
 	for (iter = box->list; iter; iter = iter->next)
 	{
@@ -740,6 +767,9 @@ void gnt_box_sync_children(GntBox *box)
 		copywin(w->window, widget->window, 0, 0,
 				y, x, y + height - 1, x + width - 1, FALSE);
 		gnt_widget_set_position(w, x + widget->priv.x, y + widget->priv.y);
+		if (w == box->active) {
+			wmove(widget->window, y + getcury(w->window), x + getcurx(w->window));
+		}
 	}
 }
 

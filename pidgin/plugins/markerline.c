@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"gtk-plugin_pack-markerline"
 #define PLUGIN_NAME			N_("Markerline")
-#define PLUGIN_STATIC_NAME	"Markerline"
+#define PLUGIN_STATIC_NAME	Markerline
 #define PLUGIN_SUMMARY		N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_DESCRIPTION	N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
@@ -84,7 +84,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 		gdk_gc_set_rgb_fg_color(gc, &red);
 		gdk_draw_line(event->window, gc,
 					0, y, visible_rect.width, y);
-		gdk_gc_unref(gc);
+		g_object_unref(G_OBJECT(gc));
 	}
 	return FALSE;
 }
@@ -202,15 +202,13 @@ attach_to_all_windows(void)
 }
 
 static void
-conv_created(PurpleConversation *conv, gpointer null)
+conv_created(PidginConversation *gtkconv, gpointer null)
 {
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	PidginWindow *win;
 
-	if (!gtkconv)
-		return;
-
 	win = pidgin_conv_get_window(gtkconv);
+	if (!win)
+		return;
 
 	detach_from_pidgin_window(win, NULL);
 	attach_to_pidgin_window(win, NULL);
@@ -247,7 +245,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	attach_to_all_windows();
 
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-created",
+	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 						plugin, PURPLE_CALLBACK(conv_created), NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "conversation-extended-menu",

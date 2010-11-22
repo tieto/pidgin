@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 #include "internal.h"
 #include "util.h"
@@ -53,11 +53,12 @@ xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *er
 	g_return_if_fail(error_code != NULL);
 	g_return_if_fail(error_type != NULL);
 
-	if(!to || !id)
+	if(!to || !id) {
+		purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
 		return;
+	}
 
-	purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
-	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, purple_account_get_username(bd->jabber_data->account), id);
+	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, bonjour_get_jid(bd->jabber_data->account), id);
 	if(iq == NULL)
 		return;
 
@@ -195,7 +196,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	/* Assign stream id. */
 	g_free(xf->iq_id);
 	xf->iq_id = g_strdup_printf("%u", next_id++);
-	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -255,7 +256,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	bd = xf->data;
 
 	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -300,6 +301,8 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		}
 		if (xf->proxy_connection != NULL)
 			purple_proxy_connect_cancel(xf->proxy_connection);
+		if (xf->proxy_info != NULL)
+			purple_proxy_info_destroy(xf->proxy_info);
 		if (xf->listen_data != NULL)
 			purple_network_listen_cancel(xf->listen_data);
 		g_free(xf->iq_id);
@@ -384,10 +387,9 @@ bonjour_xfer_init(PurpleXfer *xfer)
 
 	buddy = purple_find_buddy(xfer->account, xfer->who);
 	/* this buddy is offline. */
-	if (buddy == NULL || buddy->proto_data == NULL)
+	if (buddy == NULL || (bb = purple_buddy_get_protocol_data(buddy)) == NULL)
 		return;
 
-	bb = (BonjourBuddy *)buddy->proto_data;
 	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
 	if (bb->ips)
 		xf->buddy_ip = g_strdup(bb->ips->data);
@@ -408,14 +410,19 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	const char *type, *id;
 	BonjourData *bd;
 	PurpleXfer *xfer;
+	const gchar *name = NULL;
 
-	if(pc == NULL || packet == NULL || pb == NULL)
-		return;
+	g_return_if_fail(pc != NULL);
+	g_return_if_fail(packet != NULL);
+	g_return_if_fail(pb != NULL);
+
 	bd = (BonjourData*) pc->proto_data;
 	if(bd == NULL)
 		return;
 
 	purple_debug_info("bonjour", "xep-si-parse.\n");
+
+	name = purple_buddy_get_name(pb);
 
 	type = xmlnode_get_attrib(packet, "type");
 	id = xmlnode_get_attrib(packet, "id");
@@ -444,31 +451,36 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				bonjour_xfer_receive(pc, id, sid, pb->name, filesize, filename, XEP_BYTESTREAMS);
+				if (filename) {
+					bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
 
-				parsed_receive = TRUE;
+					parsed_receive = TRUE;
+				}
 			}
 
 			if (!parsed_receive) {
+				BonjourData *bd = purple_connection_get_protocol_data(pc);
+
 				purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject(bd, id, name, "403", "cancel");
 				/*TODO: Send Cancel (501) */
 			}
 		} else if(!strcmp(type, "result")) {
 			purple_debug_info("bonjour", "si offer Message type - RESULT.\n");
 
-			xfer = bonjour_si_xfer_find(bd, id, pb->name);
+			xfer = bonjour_si_xfer_find(bd, id, name);
 
 			if(xfer == NULL) {
+				BonjourData *bd = purple_connection_get_protocol_data(pc);
 				purple_debug_info("bonjour", "xfer find fail.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject(bd, id, name, "403", "cancel");
 			} else
 				bonjour_bytestreams_init(xfer);
 
 		} else if(!strcmp(type, "error")) {
 			purple_debug_info("bonjour", "si offer Message type - ERROR.\n");
 
-			xfer = bonjour_si_xfer_find(bd, id, pb->name);
+			xfer = bonjour_si_xfer_find(bd, id, name);
 
 			if(xfer == NULL)
 				purple_debug_info("bonjour", "xfer find fail.\n");
@@ -486,8 +498,9 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	xmlnode *query;
 	BonjourData *bd;
 
-	if(pc == NULL || packet == NULL || pb == NULL)
-		return;
+	g_return_if_fail(pc != NULL);
+	g_return_if_fail(packet != NULL);
+	g_return_if_fail(pb != NULL);
 
 	bd = (BonjourData*) pc->proto_data;
 	if(bd == NULL)
@@ -496,7 +509,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	purple_debug_info("bonjour", "xep-bytestreams-parse.\n");
 
 	type = xmlnode_get_attrib(packet, "type");
-	from = pb->name;
+	from = purple_buddy_get_name(pb);
 	query = xmlnode_get_child(packet,"query");
 	if(type) {
 		if(!strcmp(type, "set")) {
@@ -631,6 +644,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 			flags = fcntl(acceptfd, F_GETFL);
 			fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 			purple_input_remove(xfer->watcher);
 			close(source);
@@ -732,8 +748,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	XepIq *iq;
 	xmlnode *query, *streamhost;
 	gchar *port;
-	const char *next_ip, *local_ip;
-	const char token [] = ";";
+	GSList *local_ips;
 	BonjourData *bd;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
@@ -749,7 +764,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	bd = xf->data;
 
-	iq = xep_iq_new(bd, XEP_IQ_SET, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->sid);
+	iq = xep_iq_new(bd, XEP_IQ_SET, xfer->who, bonjour_get_jid(bd->jabber_data->account), xf->sid);
 
 	query = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(query, "http://jabber.org/protocol/bytestreams");
@@ -758,17 +773,16 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	xfer->local_port = purple_network_get_port_from_fd(sock);
 
-	local_ip = purple_network_get_my_ip_ext2(sock);
-	/* cheat a little here - the intent of the "const" attribute is to make it clear that the string doesn't need to be freed */
-	next_ip = strtok((char *)local_ip, token);
+	local_ips = bonjour_jabber_get_local_ips(sock);
 
 	port = g_strdup_printf("%hu", xfer->local_port);
-	while(next_ip != NULL) {
+	while(local_ips) {
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", xf->sid);
-		xmlnode_set_attrib(streamhost, "host", next_ip);
+		xmlnode_set_attrib(streamhost, "host", local_ips->data);
 		xmlnode_set_attrib(streamhost, "port", port);
-		next_ip = strtok(NULL, token);
+		g_free(local_ips->data);
+		local_ips = g_slist_delete_link(local_ips, local_ips);
 	}
 	g_free(port);
 
@@ -781,15 +795,17 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 	XepXfer *xf;
 	if(xfer == NULL)
 		return;
+
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
 	xf = xfer->data;
+
 	purple_network_listen_map_external(FALSE);
 	xf->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 						      bonjour_bytestreams_listen, xfer);
 	purple_network_listen_map_external(TRUE);
-	if (xf->listen_data == NULL) {
+	if (xf->listen_data == NULL)
 		purple_xfer_cancel_local(xfer);
-	}
+
 	return;
 }
 
@@ -801,6 +817,8 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	XepIq *iq;
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
+
+	xf->proxy_connection = NULL;
 
 	if(source < 0) {
 		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
@@ -815,13 +833,10 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 
 	bd = xf->data;
 
-	purple_proxy_info_destroy(xf->proxy_info);
-	xf->proxy_connection = NULL;
-	xf->proxy_info = NULL;
 	/* Here, start the file transfer.*/
 
 	/* Notify Initiator of Connection */
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, xfer->who, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, xfer->who, bonjour_get_jid(bd->jabber_data->account), xf->iq_id);
 	q_node = xmlnode_new_child(iq->node, "query");
 	xmlnode_set_namespace(q_node, "http://jabber.org/protocol/bytestreams");
 	tmp_node = xmlnode_new_child(q_node, "streamhost-used");
@@ -834,8 +849,10 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
+	PurpleAccount *account = NULL;
 	XepXfer *xf;
 	char dstaddr[41];
+	const gchar *name = NULL;
 	unsigned char hashval[20];
 	char *p;
 	int i;
@@ -849,7 +866,10 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
+	name = purple_buddy_get_name(pb);
+	account = purple_buddy_get_account(pb);
+
+	p = g_strdup_printf("%s%s%s", xf->sid, name, bonjour_get_jid(account));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);
@@ -863,7 +883,9 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	purple_proxy_info_set_type(xf->proxy_info, PURPLE_PROXY_SOCKS5);
 	purple_proxy_info_set_host(xf->proxy_info, xf->proxy_host);
 	purple_proxy_info_set_port(xf->proxy_info, xf->proxy_port);
-	xf->proxy_connection = purple_proxy_connect_socks5(NULL, xf->proxy_info,
+	xf->proxy_connection = purple_proxy_connect_socks5(
+							   purple_account_get_connection(account),
+							   xf->proxy_info,
 							   dstaddr, 0,
 							   bonjour_bytestreams_connect_cb, xfer);
 
@@ -871,8 +893,6 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
-		/*purple_proxy_info_destroy(xf->proxy_info);
-		xf->proxy_info = NULL;*/
 	}
 }
 

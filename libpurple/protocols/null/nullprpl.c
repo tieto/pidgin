@@ -46,8 +46,12 @@
 
 #include <glib.h>
 
+/* If you're using this as the basis of a prpl that will be distributed
+ * separately from libpurple, remove the internal.h include below and replace
+ * it with code to include your own config.h or similar.  If you're going to
+ * provide for translation, you'll also need to setup the gettext macros. */
 #include "internal.h"
-#include "config.h"
+
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
@@ -156,8 +160,8 @@ static void foreach_gc_in_chat(ChatFunc fn, PurpleConnection *from,
 
 static void discover_status(PurpleConnection *from, PurpleConnection *to,
                             gpointer userdata) {
-  char *from_username = from->account->username;
-  char *to_username = to->account->username;
+  const char *from_username = from->account->username;
+  const char *to_username = to->account->username;
 
   if (purple_find_buddy(from->account, to_username)) {
     PurpleStatus *status = purple_account_get_active_status(to->account);
@@ -216,25 +220,7 @@ static GList *nullprpl_actions(PurplePlugin *plugin, gpointer context)
  */
 static const char *nullprpl_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
-  /* shamelessly steal (er, borrow) the meanwhile protocol icon. it's cute! */
-  return "meanwhile";
-}
-
-static const char *nullprpl_list_emblem(PurpleBuddy *buddy)
-{
-  const char* emblem;
-
-  if (get_nullprpl_gc(buddy->name)) {
-    PurplePresence *presence = purple_buddy_get_presence(buddy);
-    PurpleStatus *status = purple_presence_get_active_status(presence);
-    emblem = purple_status_get_name(status);
-  } else {
-    emblem = "offline";
-  }
-
-  purple_debug_info("nullprpl", "using emblem %s for %s's buddy %s\n",
-                    emblem, buddy->account->username, buddy->name);
-  return emblem;
+  return "null";
 }
 
 static char *nullprpl_status_text(PurpleBuddy *buddy) {
@@ -258,7 +244,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
 
   } else {
     purple_debug_info("nullprpl", "...but %s is not logged in\n", buddy->name);
-    return "Not logged in";
+    return g_strdup("Not logged in");
   }
 }
 
@@ -271,9 +257,10 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     /* they're logged in */
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
-    const char *msg = nullprpl_status_text(buddy);
+    char *msg = nullprpl_status_text(buddy);
     purple_notify_user_info_add_pair(info, purple_status_get_name(status),
                                      msg);
+    g_free(msg);
 
     if (full) {
       const char *user_info = purple_account_get_user_info(gc->account);
@@ -285,7 +272,7 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     /* they're not logged in */
     purple_notify_user_info_add_pair(info, _("User info"), _("not logged in"));
   }
-    
+
   purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
                     (full) ? "full" : "short", buddy->name);
 }
@@ -299,25 +286,25 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
                     acct->username,
                     NULL_STATUS_ONLINE, NULL_STATUS_AWAY, NULL_STATUS_OFFLINE);
 
-  type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, NULL_STATUS_ONLINE,
-                                NULL_STATUS_ONLINE, TRUE);
-  purple_status_type_add_attr(type, "message", _("Online"),
-                              purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
+      NULL_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
+  types = g_list_prepend(types, type);
 
-  type = purple_status_type_new(PURPLE_STATUS_AWAY, NULL_STATUS_AWAY,
-                                NULL_STATUS_AWAY, TRUE);
-  purple_status_type_add_attr(type, "message", _("Away"),
-                              purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
-  
-  type = purple_status_type_new(PURPLE_STATUS_OFFLINE, NULL_STATUS_OFFLINE,
-                                NULL_STATUS_OFFLINE, TRUE);
-  purple_status_type_add_attr(type, "message", _("Offline"),
-                              purple_value_new(PURPLE_TYPE_STRING));
-  types = g_list_append(types, type);
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+      NULL_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
+  types = g_list_prepend(types, type);
 
-  return types;
+  type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
+      NULL_STATUS_OFFLINE, NULL, TRUE, TRUE, FALSE,
+      "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+      NULL);
+  types = g_list_prepend(types, type);
+
+  return g_list_reverse(types);
 }
 
 static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
@@ -351,7 +338,7 @@ static GList *nullprpl_chat_info(PurpleConnection *gc) {
   purple_debug_info("nullprpl", "returning chat setting 'room'\n");
 
   pce = g_new0(struct proto_chat_entry, 1);
-  pce->label = _(_("Chat _room"));
+  pce->label = _("Chat _room");
   pce->identifier = "room";
   pce->required = TRUE;
 
@@ -473,7 +460,7 @@ static void nullprpl_set_info(PurpleConnection *gc, const char *info) {
                     gc->account->username, info);
 }
 
-static char *typing_state_to_string(PurpleTypingState typing) {
+static const char *typing_state_to_string(PurpleTypingState typing) {
   switch (typing) {
   case PURPLE_NOT_TYPING:  return "is not typing";
   case PURPLE_TYPING:      return "is typing";
@@ -484,8 +471,8 @@ static char *typing_state_to_string(PurpleTypingState typing) {
 
 static void notify_typing(PurpleConnection *from, PurpleConnection *to,
                           gpointer typing) {
-  char *from_username = from->account->username;
-  char *action = typing_state_to_string((PurpleTypingState)typing);
+  const char *from_username = from->account->username;
+  const char *action = typing_state_to_string((PurpleTypingState)typing);
   purple_debug_info("nullprpl", "notifying %s that %s %s\n",
                     to->account->username, from_username, action);
 
@@ -557,7 +544,7 @@ static void nullprpl_change_passwd(PurpleConnection *gc, const char *old_pass,
 static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
                                PurpleGroup *group)
 {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConnection *buddy_gc = get_nullprpl_gc(buddy->name);
 
   purple_debug_info("nullprpl", "adding %s to %s's buddy list\n", buddy->name,
@@ -675,8 +662,8 @@ static void joined_chat(PurpleConvChat *from, PurpleConvChat *to,
 }
 
 static void nullprpl_join_chat(PurpleConnection *gc, GHashTable *components) {
-  char *username = gc->account->username;
-  char *room = g_hash_table_lookup(components, "room");
+  const char *username = gc->account->username;
+  const char *room = g_hash_table_lookup(components, "room");
   int chat_id = g_str_hash(room);
   purple_debug_info("nullprpl", "%s is joining chat room %s\n", username, room);
 
@@ -686,20 +673,20 @@ static void nullprpl_join_chat(PurpleConnection *gc, GHashTable *components) {
     /* tell everyone that we joined, and add them if they're already there */
     foreach_gc_in_chat(joined_chat, gc, chat_id, NULL);
   } else {
+    char *tmp = g_strdup_printf(_("%s is already in chat room %s."),
+                                username,
+                                room);
     purple_debug_info("nullprpl", "%s is already in chat room %s\n", username,
                       room);
-    purple_notify_info(gc,
-                       _("Join chat"),
-                       _("Join chat"),
-                       g_strdup_printf("%s is already in chat room %s.",
-                                       username, room));
+    purple_notify_info(gc, _("Join chat"), _("Join chat"), tmp);
+    g_free(tmp);
   }
 }
 
 static void nullprpl_reject_chat(PurpleConnection *gc, GHashTable *components) {
-  char *invited_by = g_hash_table_lookup(components, "invited_by");
-  char *room = g_hash_table_lookup(components, "room");
-  char *username = gc->account->username;
+  const char *invited_by = g_hash_table_lookup(components, "invited_by");
+  const char *room = g_hash_table_lookup(components, "room");
+  const char *username = gc->account->username;
   PurpleConnection *invited_by_gc = get_nullprpl_gc(invited_by);
   char *message = g_strdup_printf(
     "%s %s %s.",
@@ -715,19 +702,20 @@ static void nullprpl_reject_chat(PurpleConnection *gc, GHashTable *components) {
                      _("Chat invitation rejected"),
                      _("Chat invitation rejected"),
                      message);
+  g_free(message);
 }
 
 static char *nullprpl_get_chat_name(GHashTable *components) {
-  char *room = g_hash_table_lookup(components, "room");
+  const char *room = g_hash_table_lookup(components, "room");
   purple_debug_info("nullprpl", "reporting chat room name '%s'\n", room);
-  return room;
+  return g_strdup(room);
 }
 
 static void nullprpl_chat_invite(PurpleConnection *gc, int id,
                                  const char *message, const char *who) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
-  char *room = conv->name;
+  const char *room = conv->name;
   PurpleAccount *to_acct = purple_accounts_find(who, NULLPRPL_ID);
 
   purple_debug_info("nullprpl", "%s is inviting %s to join chat room %s\n",
@@ -736,18 +724,16 @@ static void nullprpl_chat_invite(PurpleConnection *gc, int id,
   if (to_acct) {
     PurpleConversation *to_conv = purple_find_chat(to_acct->gc, id);
     if (to_conv) {
+      char *tmp = g_strdup_printf("%s is already in chat room %s.", who, room);
       purple_debug_info("nullprpl",
                         "%s is already in chat room %s; "
                         "ignoring invitation from %s\n",
                         who, room, username);
-      purple_notify_info(gc,
-                         _("Chat invitation"),
-                         _("Chat invitation"),
-                         g_strdup_printf("%s is already in chat room %s.",
-                                         who, room));
+      purple_notify_info(gc, _("Chat invitation"), _("Chat invitation"), tmp);
+      g_free(tmp);
     } else {
       GHashTable *components;
-      components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, free);
+      components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
       g_hash_table_replace(components, "room", g_strdup(room));
       g_hash_table_replace(components, "invited_by", g_strdup(username));
       serv_got_chat_invite(to_acct->gc, room, username, message, components);
@@ -829,7 +815,7 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
 
 static void nullprpl_chat_whisper(PurpleConnection *gc, int id, const char *who,
                                   const char *message) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
   purple_debug_info("nullprpl",
                     "%s receives whisper from %s in chat room %s: %s\n",
@@ -854,7 +840,7 @@ static void receive_chat_message(PurpleConvChat *from, PurpleConvChat *to,
 
 static int nullprpl_chat_send(PurpleConnection *gc, int id, const char *message,
                               PurpleMessageFlags flags) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleConversation *conv = purple_find_chat(gc, id);
 
   if (conv) {
@@ -923,7 +909,8 @@ static const char *nullprpl_normalize(const PurpleAccount *acct,
 static void nullprpl_set_buddy_icon(PurpleConnection *gc,
                                     PurpleStoredImage *img) {
  purple_debug_info("nullprpl", "setting %s's buddy icon to %s\n",
-                   gc->account->username, purple_imgstore_get_filename(img));
+                   gc->account->username,
+                   img ? purple_imgstore_get_filename(img) : "(null)");
 }
 
 static void nullprpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
@@ -977,7 +964,7 @@ static gboolean nullprpl_finish_get_roomlist(gpointer roomlist) {
 }
 
 static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
-  char *username = gc->account->username;
+  const char *username = gc->account->username;
   PurpleRoomlist *roomlist = purple_roomlist_new(gc->account);
   GList *fields = NULL;
   PurpleRoomlistField *field;
@@ -1001,14 +988,17 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
   for (chats  = purple_get_chats(); chats; chats = g_list_next(chats)) {
     PurpleConversation *conv = (PurpleConversation *)chats->data;
     PurpleRoomlistRoom *room;
-    char *name = conv->name;
+    const char *name = conv->name;
     int id = purple_conversation_get_chat_data(conv)->id;
 
     /* have we already added this room? */
     if (g_list_find_custom(seen_ids, name, (GCompareFunc)strcmp))
       continue;                                /* yes! try the next one. */
 
-    seen_ids = g_list_append(seen_ids, name);  /* no, it's new. */
+    /* This cast is OK because this list is only staying around for the life
+     * of this function and none of the conversations are being deleted
+     * in that timespan. */
+    seen_ids = g_list_prepend(seen_ids, (char *)name); /* no, it's new. */
     purple_debug_info("nullprpl", "%s (%d), ", name, id);
 
     room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, name, NULL);
@@ -1017,6 +1007,7 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
     purple_roomlist_room_add(roomlist, room);
   }
 
+  g_list_free(seen_ids);
   purple_timeout_add(1 /* ms */, nullprpl_finish_get_roomlist, roomlist);
   return roomlist;
 }
@@ -1065,7 +1056,7 @@ static PurplePluginProtocolInfo prpl_info =
       PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
   },
   nullprpl_list_icon,                  /* list_icon */
-  nullprpl_list_emblem,                /* list_emblem */
+  NULL,                                /* list_emblem */
   nullprpl_status_text,                /* status_text */
   nullprpl_tooltip_text,               /* tooltip_text */
   nullprpl_status_types,               /* status_types */
@@ -1122,23 +1113,29 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* whiteboard_prpl_ops */
   NULL,                                /* send_raw */
   NULL,                                /* roomlist_room_serialize */
-  NULL,                                /* padding... */
-  NULL,
-  NULL,
-  NULL,
+  NULL,                                /* unregister_user */
+  NULL,                                /* send_attention */
+  NULL,                                /* get_attention_types */
+  sizeof(PurplePluginProtocolInfo),    /* struct_size */
+  NULL,                                /* get_account_text_table */
+  NULL,                                /* initiate_media */
+  NULL,                                /* get_media_caps */
+  NULL,                                /* set_public_alias */
+  NULL,                                /* get_public_alias */
+  NULL                                 /* get_moods */
 };
 
 static void nullprpl_init(PurplePlugin *plugin)
 {
   /* see accountopt.h for information about user splits and protocol options */
   PurpleAccountUserSplit *split = purple_account_user_split_new(
-    _("Example user split (unused)"),  /* text shown to user */
-    "default",                         /* default value */
-    '@');                              /* field separator */
+    _("Example user split"),  /* text shown to user */
+    "default",                /* default value */
+    '@');                     /* field separator */
   PurpleAccountOption *option = purple_account_option_string_new(
-    _("Example option (unused)"),      /* text shown to user */
-    "example",                         /* pref name */
-    "default");                        /* default value */
+    _("Example option"),      /* text shown to user */
+    "example",                /* pref name */
+    "default");               /* default value */
 
   purple_debug_info("nullprpl", "starting up\n");
 
@@ -1147,13 +1144,13 @@ static void nullprpl_init(PurplePlugin *plugin)
 
   /* register whisper chat command, /msg */
   purple_cmd_register("msg",
-                    "ws",                /* args: recipient and message */
+                    "ws",                  /* args: recipient and message */
                     PURPLE_CMD_P_DEFAULT,  /* priority */
                     PURPLE_CMD_FLAG_CHAT,
                     "prpl-null",
                     send_whisper,
                     "msg &lt;username&gt; &lt;message&gt;: send a private message, aka a whisper",
-                    NULL);               /* userdata */
+                    NULL);                 /* userdata */
 
   /* get ready to store offline messages */
   goffline_messages = g_hash_table_new_full(g_str_hash,  /* hash fn */
@@ -1180,12 +1177,12 @@ static PurplePluginInfo info =
   NULL,                                                    /* dependencies */
   PURPLE_PRIORITY_DEFAULT,                                 /* priority */
   NULLPRPL_ID,                                             /* id */
-  "Nullprpl",                                              /* name */
-  "0.3",                                                   /* version */
-  "Null Protocol Plugin",                                  /* summary */
-  "Null Protocol Plugin",                                  /* description */
-  "Ryan Barrett <nullprpl@ryanb.org>",                     /* author */
-  "http://snarfed.org/space/pidgin+null+protocol+plugin",  /* homepage */
+  "Null - Testing Plugin",                                 /* name */
+  DISPLAY_VERSION,                                         /* version */
+  N_("Null Protocol Plugin"),                              /* summary */
+  N_("Null Protocol Plugin"),                              /* description */
+  NULL,                                                    /* author */
+  PURPLE_WEBSITE,                                          /* homepage */
   NULL,                                                    /* load */
   NULL,                                                    /* unload */
   nullprpl_destroy,                                        /* destroy */

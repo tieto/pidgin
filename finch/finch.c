@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <internal.h>
 #include "finch.h"
 
 #include "account.h"
@@ -47,6 +48,7 @@
 #include <getopt.h>
 
 #include "config.h"
+#include "package_revision.h"
 
 static void
 debug_init(void)
@@ -63,6 +65,28 @@ static GHashTable *finch_ui_get_info(void)
 
 		g_hash_table_insert(ui_info, "name", (char*)_("Finch"));
 		g_hash_table_insert(ui_info, "version", VERSION);
+		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
+		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "console");
+
+		/*
+		 * This is the client key for "Finch."  It is owned by the AIM
+		 * account "markdoliner."  Please don't use this key for other
+		 * applications.  You can either not specify a client key, in
+		 * which case the default "libpurple" key will be used, or you
+		 * can register for your own client key at
+		 * http://developer.aim.com/manageKeys.jsp
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma19sqWV9ymU6UYc");
+		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma19sqWV9ymU6UYc");
+
+		/*
+		 * This is the distid for Finch, given to us by AOL.  Please
+		 * don't use this for other applications.  You can just not
+		 * specify a distid and libpurple will use a default.
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1552));
+		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1552));
 	}
 
 	return ui_info;
@@ -208,7 +232,7 @@ show_usage(const char *name, gboolean terse)
 		text = g_strdup_printf(_("%s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -d, --debug         print debugging messages to stderr\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -v, --version       display the current version and exit\n"), DISPLAY_VERSION, name);
@@ -227,15 +251,14 @@ init_libpurple(int argc, char **argv)
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
-	char *opt_session_arg = NULL;
 	gboolean debug_enabled = FALSE;
+	struct stat st;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"nologin",  no_argument,       NULL, 'n'},
-		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{0, 0, 0, 0}
 	};
@@ -254,7 +277,7 @@ init_libpurple(int argc, char **argv)
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhn::s:v",
+				  "c:dhn::v",
 #else
 				  "c:dhn::v",
 #endif
@@ -272,10 +295,6 @@ init_libpurple(int argc, char **argv)
 			break;
 		case 'n':	/* no autologin */
 			opt_nologin = TRUE;
-			break;
-		case 's':	/* use existing session ID */
-			g_free(opt_session_arg);
-			opt_session_arg = g_strdup(optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
@@ -297,7 +316,7 @@ init_libpurple(int argc, char **argv)
 	if (opt_version) {
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
-		printf("%s %s\n", _("Finch"), DISPLAY_VERSION);
+		printf("%s %s (%s)\n", _("Finch"), DISPLAY_VERSION, REVISION);
 		return 0;
 	}
 
@@ -343,6 +362,8 @@ init_libpurple(int argc, char **argv)
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
 	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(path, &st))
+		g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(path);
 	g_free(path);
 
@@ -413,9 +434,7 @@ int main(int argc, char *argv[])
 	g_thread_init(NULL);
 
 	g_set_prgname("Finch");
-#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Finch"));
-#endif
 
 	if (gnt_start(&argc, &argv)) {
 		gnt_main();

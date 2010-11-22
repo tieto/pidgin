@@ -19,7 +19,7 @@ install: ./Makefile.am.mingw theme
 	fi;
 
 clean:
-	rm -f theme
+	rm -f theme ./Makefile.am.mingw
 
 ./Makefile.am.mingw: ./Makefile.am
 	sed -e 's/^if\ INSTALL_PIXMAPS/ifeq (\$$(INSTALL_PIXMAPS), 1)/' ./Makefile.am > $@

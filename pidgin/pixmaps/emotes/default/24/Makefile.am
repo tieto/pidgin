@@ -1,6 +1,8 @@
-SMILEYS = 	act-up.png \
+SMILEYS = \
+    act-up.png \
     airplane.png \
     alien.png \
+    amorous.png \
     angel.png \
     angry.png \
     arrogant.png \
@@ -12,10 +14,12 @@ SMILEYS = 	act-up.png \
     beer.png \
     blowkiss.png \
     bomb.png \
+    bored.png \
     bowl.png \
     boy.png \
     brb.png \
     bulgy-eyes.png \
+    bunny.png \
     bye.png \
     cake.png \
     call-me.png \
@@ -24,6 +28,8 @@ SMILEYS = 	act-up.png \
     car.png \
     cat.png \
     chicken.png \
+    chilli.png \
+    cigarette.png \
     clap.png \
     clock.png \
     cloudy.png \
@@ -31,6 +37,7 @@ SMILEYS = 	act-up.png \
     clown.png \
     coffee.png \
     coins.png \
+    cold.png \
     computer.png \
     confused.png \
     console.png \
@@ -45,7 +52,7 @@ SMILEYS = 	act-up.png \
     dazed.png \
     desire.png \
     devil.png \
-    disapointed.png \
+    disappointed.png \
     disdain.png \
     doctor.png \
     dog.png \
@@ -53,8 +60,9 @@ SMILEYS = 	act-up.png \
     dont-know.png \
     drink.png \
     drool.png \
-    eat.png \
+    hungry.png \
     embarrassed.png \
+    excited.png \
     excruciating.png \
     eyeroll.png \
     female-fighter.png \
@@ -78,7 +86,7 @@ SMILEYS = 	act-up.png \
     hug-left.png \
     hug-right.png \
     hypnotized.png \
-    in-love.png \
+    in_love.png \
     island.png \
     jump.png \
     kissed.png \
@@ -91,7 +99,6 @@ SMILEYS = 	act-up.png \
     liquor.png \
     loser.png \
     love-over.png \
-    love.png \
     lying.png \
     mad-tongue.png \
     mail.png \
@@ -105,13 +112,14 @@ SMILEYS = 	act-up.png \
     moneymouth.png \
     monkey.png \
     moon.png \
+    mrgreen.png \
     msn-away.png \
     msn-busy.png \
     msn_online.png \
     msn.png \
     musical-note.png \
     music.png \
-    nailbiting.png \
+    nervous.png \
     neutral.png \
     on-the-phone.png \
     party.png \
@@ -141,19 +149,18 @@ SMILEYS = 	act-up.png \
     secret.png \
     shame.png \
     sheep.png \
-    shock.png \
+    shocked.png \
     shout.png \
     shut-mouth.png \
     sick.png \
     sidefrown.png \
-    sigarette.png \
     silly.png \
     sinister.png \
     skeleton.png \
     skywalker.png \
+    sleeping.png \
     sleepy.png \
-    smile-big.png \
-    smile.png \
+    happy.png \
     smirk.png \
     snail.png \
     snicker.png \
@@ -163,9 +170,10 @@ SMILEYS = 	act-up.png \
     star.png \
     starving.png \
     stop.png \
+    stressed.png \
     struggle.png \
     sun.png \
-    sweat.png \
+    hot.png \
     talktohand.png \
     teeth.png \
     terror.png \
@@ -173,7 +181,7 @@ SMILEYS = 	act-up.png \
     thunder.png \
     time-out.png \
     tongue.png \
-    tremble.png \
+    afraid.png \
     turtle.png \
     tv.png \
     umbrella.png \
@@ -186,7 +194,6 @@ SMILEYS = 	act-up.png \
     wilt.png \
     wink.png \
     worship.png \
-    yawn.png \
     yin-yang.png
 
 

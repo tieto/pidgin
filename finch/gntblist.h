@@ -34,6 +34,10 @@
  **********************************************************************/
 /*@{*/
 
+/**
+ * Buddylist manager for finch. This decides the visility, ordering and hierarchy
+ * of the buddylist nodes. This also manages the creation of tooltips.
+ */
 typedef struct
 {
 	const char *id;                                    /**< An identifier for the manager. */

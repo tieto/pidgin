@@ -1,8 +1,30 @@
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
 /**
  * 1. Buddylist is aligned on the left.
  * 2. The rest of the screen is split into MxN grid for conversation windows.
- * 	- M = irssi-split-h in ~/.gntrc:[general]
- * 	- N = irssi-split-v in ~/.gntrc:[general]
+ * 	- M = split-h in ~/.gntrc:[irssi]
+ * 	- N = split-v in ~/.gntrc:[irssi]
  *	- Press alt-shift-k/j/l/h to move the selected window to the frame
  *	  above/below/left/right of the current frame.
  * 3. All the other windows are always centered.
@@ -10,6 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+
+#include "gntinternal.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -49,10 +73,16 @@ get_xywh_for_frame(Irssi *irssi, int hor, int vert, int *x, int *y, int *w, int 
 	width = (getmaxx(stdscr) - irssi->buddylistwidth) / irssi->horiz;
 	height = (getmaxy(stdscr) - 1) / irssi->vert;
 
-	rx = irssi->buddylistwidth;
+	if (width) {
+		rx = irssi->buddylistwidth;
+	} else {
+		rx = 0;
+		width = getmaxx(stdscr) / irssi->horiz;
+	}
 	if (hor)
 		rx += hor * width;
-	rx++;
+	if (rx)
+		rx++;
 
 	ry = 0;
 	if (vert)
@@ -135,6 +165,7 @@ irssi_new_window(GntWM *wm, GntWidget *win)
 				gnt_widget_set_position(win, x, y);
 				mvwin(win->window, y, x);
 			} else {
+				gnt_window_set_maximize(GNT_WINDOW(win), GNT_WINDOW_MAXIMIZE_Y);
 				remove_border_set_position_size(wm, win, 0, 0, -1, getmaxy(stdscr) - 1);
 				gnt_widget_get_size(win, &((Irssi*)wm)->buddylistwidth, NULL);
 				draw_line_separators((Irssi*)wm);
@@ -176,11 +207,15 @@ static gboolean
 update_conv_window_title(GntNode *node)
 {
 	char title[256];
+	int x, y;
 	snprintf(title, sizeof(title), "%d: %s",
 			GPOINTER_TO_INT(g_object_get_data(G_OBJECT(node->me), "irssi-index")) + 1,
 			GNT_BOX(node->me)->title);
+
+	getyx(node->window, y, x);
 	wbkgdset(node->window, '\0' | COLOR_PAIR(gnt_widget_has_focus(node->me) ? GNT_COLOR_TITLE : GNT_COLOR_TITLE_D));
 	mvwaddstr(node->window, 0, 0, title);
+	wmove(node->window, y, x);
 	if (!gnt_is_refugee()) {
 		update_panels();
 		doupdate();
@@ -210,7 +245,7 @@ find_window_position(Irssi *irssi, GntWidget *win, int *h, int *v)
 	height = (getmaxy(stdscr) - 1) / irssi->vert;
 
 	if (h)
-		*h = (x - irssi->buddylistwidth) / width;
+		*h = width ? (x - irssi->buddylistwidth) / width : x / (getmaxx(stdscr) / irssi->horiz);
 	if (v)
 		*v = y / height;
 }
@@ -250,9 +285,38 @@ move_direction(GntBindable *bindable, GList *list)
 }
 
 static void
+refresh_window(GntWidget *widget, GntNode *node, Irssi *irssi)
+{
+	int vert, hor;
+	int x, y, w, h;
+	const char *name;
+
+	if (!GNT_IS_WINDOW(widget))
+		return;
+
+	if (is_budddylist(widget)) {
+		return;
+	}
+
+	name = gnt_widget_get_name(widget);
+	if (name && strstr(name, "conversation-window")) {
+		int cx, cy, cw, ch;
+		gnt_widget_get_position(widget, &cx, &cy);
+		gnt_widget_get_size(widget, &cw, &ch);
+		find_window_position(irssi, widget, &hor, &vert);
+		get_xywh_for_frame(irssi, hor, vert, &x, &y, &w, &h);
+		if (x != cx || y != cy)
+			gnt_wm_move_window(GNT_WM(irssi), widget, x, y);
+		if (w != cw || h != ch)
+			gnt_wm_resize_window(GNT_WM(irssi), widget, w, h);
+	}
+}
+
+static void
 irssi_terminal_refresh(GntWM *wm)
 {
 	draw_line_separators((Irssi*)wm);
+	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_window, wm);
 }
 
 static void

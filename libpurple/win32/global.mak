@@ -10,27 +10,26 @@
 
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
-ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
-GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.11-daa1
-GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0
+GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.16
+ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.5.0-2_win32
+GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0-2.14
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
-LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.6.30
-MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa1
-NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
-NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
-PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl58
-SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.5
+LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.7.4
+MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa2
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.12.5-nspr-4.8.2
+PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.8
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
 PURPLE_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
-PIDGIN_INSTALL_PERLMOD_DIR := $(PIDGIN_INSTALL_DIR)/perlmod
 PIDGIN_INSTALL_PLUGINS_DIR := $(PIDGIN_INSTALL_DIR)/plugins
-PURPLE_INSTALL_PERLMOD_DIR := $(PURPLE_INSTALL_DIR)/perlmod
+PIDGIN_INSTALL_PERL_DIR := $(PIDGIN_INSTALL_PLUGINS_DIR)/perl
 PURPLE_INSTALL_PLUGINS_DIR := $(PURPLE_INSTALL_DIR)/plugins
+PURPLE_INSTALL_PERL_DIR := $(PURPLE_INSTALL_PLUGINS_DIR)/perl
 PURPLE_INSTALL_PO_DIR := $(PURPLE_INSTALL_DIR)/locale
 
 # Important (enough) locations in our source code
@@ -38,7 +37,6 @@ PURPLE_TOP := $(PIDGIN_TREE_TOP)/libpurple
 PURPLE_PLUGINS_TOP := $(PURPLE_TOP)/plugins
 PURPLE_PERL_TOP := $(PURPLE_PLUGINS_TOP)/perl
 PIDGIN_TOP := $(PIDGIN_TREE_TOP)/pidgin
-PIDGIN_IDLETRACK_TOP := $(PIDGIN_TOP)/win32/IdleTracker
 PIDGIN_PIXMAPS_TOP := $(PIDGIN_TOP)/pixmaps
 PIDGIN_PLUGINS_TOP := $(PIDGIN_TOP)/plugins
 PURPLE_PO_TOP := $(PIDGIN_TREE_TOP)/po
@@ -47,7 +45,8 @@ PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 # Locations of important (in-tree) build targets
 PIDGIN_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
 PURPLE_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
-PIDGIN_IDLETRACK_DLL := $(PIDGIN_IDLETRACK_TOP)/idletrack.dll
+PIDGIN_REVISION_H := $(PIDGIN_TREE_TOP)/package_revision.h
+PIDGIN_REVISION_RAW_TXT := $(PIDGIN_TREE_TOP)/package_revision_raw.txt
 PURPLE_PURPLE_H := $(PURPLE_TOP)/purple.h
 PURPLE_VERSION_H := $(PURPLE_TOP)/version.h
 PURPLE_DLL := $(PURPLE_TOP)/libpurple.dll
@@ -56,7 +55,7 @@ PIDGIN_DLL := $(PIDGIN_TOP)/pidgin.dll
 PIDGIN_EXE := $(PIDGIN_TOP)/pidgin.exe
 PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 
-GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
+GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])
@@ -83,7 +82,7 @@ ifeq ($(CYRUS_SASL), 1)
 DEFINES += -DHAVE_CYRUS_SASL
 endif
 
-DEFINES += -DHAVE_CONFIG_H
+DEFINES += -DHAVE_CONFIG_H -DWIN32_LEAN_AND_MEAN
 
 # Use -g flag when building debug version of Pidgin (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1
@@ -101,15 +100,17 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
-GMSGFMT ?= $(GTK_BIN)/msgfmt
+GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
-PERL ?= /cygdrive/c/perl/bin/perl
+MAKENSISOPT ?= /
+PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
+INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool_0.40.4-1_win32/bin/intltool-merge
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
 MINGW_MAKEFILE := Makefile.mingw
 
 INSTALL_PIXMAPS ?= 1
-
+INSTALL_SSL_CERTIFICATES ?= 1

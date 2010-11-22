@@ -17,6 +17,7 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
@@ -182,7 +183,9 @@ static void
 silcpurple_chat_getinfo_menu(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	silcpurple_chat_getinfo(chat->account->gc, chat->components);
+	PurpleAccount *account = purple_chat_get_account(chat);
+	silcpurple_chat_getinfo(purple_account_get_connection(account),
+			purple_chat_get_components(chat));
 }
 
 
@@ -472,7 +475,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
 			   ident->realname ? ident->realname : ident->username ?
 			   ident->username : "", fingerprint, babbleprint);
-		purple_request_field_list_add(f, tmp2, public_key);
+		purple_request_field_list_add_icon(f, tmp2, NULL, public_key);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
@@ -496,11 +499,11 @@ silcpurple_chat_chauth(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "+C", NULL);
 }
 
@@ -549,7 +552,7 @@ silcpurple_chat_prv_add(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 	g_hash_table_replace(comp, "passphrase", g_strdup(passphrase));
 
 	cn = purple_chat_new(sg->account, alias, comp);
-	g = (PurpleGroup *)p->c->node.parent;
+	g = purple_chat_get_group(p->c);
 	purple_blist_add_chat(cn, g, (PurpleBlistNode *)p->c);
 
 	/* Associate to a real channel */
@@ -583,7 +586,7 @@ silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	p = silc_calloc(1, sizeof(*p));
@@ -591,7 +594,7 @@ silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 		return;
 	p->sg = sg;
 
-	p->channel = g_hash_table_lookup(chat->components, "channel");
+	p->channel = g_hash_table_lookup(purple_chat_get_components(chat), "channel");
 	p->c = purple_blist_find_chat(sg->account, p->channel);
 
 	fields = purple_request_fields_new();
@@ -633,11 +636,11 @@ silcpurple_chat_permanent_reset(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "-f", NULL);
 }
 
@@ -652,7 +655,7 @@ silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	if (!sg->conn)
@@ -663,7 +666,7 @@ silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 	   (default key). */
 
 	/* Call CMODE */
-	channel = g_hash_table_lookup(chat->components, "channel");
+	channel = g_hash_table_lookup(purple_chat_get_components(chat), "channel");
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE", channel,
 				 "+f", NULL);
 }
@@ -729,13 +732,13 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	if (!sg->conn)
 		return;
 
-	ch = g_strdup(g_hash_table_lookup(chat->components, "channel"));
+	ch = g_strdup(g_hash_table_lookup(purple_chat_get_components(chat), "channel"));
 	channel = silc_client_get_channel(sg->client, sg->conn, (char *)ch);
 	if (!channel)
 		return;
@@ -764,11 +767,11 @@ silcpurple_chat_resettopic(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "-t", NULL);
 }
 
@@ -782,11 +785,11 @@ silcpurple_chat_settopic(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "+t", NULL);
 }
 
@@ -800,11 +803,11 @@ silcpurple_chat_resetprivate(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "-p", NULL);
 }
 
@@ -818,11 +821,11 @@ silcpurple_chat_setprivate(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "+p", NULL);
 }
 
@@ -836,11 +839,11 @@ silcpurple_chat_resetsecret(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "-s", NULL);
 }
 
@@ -854,11 +857,11 @@ silcpurple_chat_setsecret(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
 	chat = (PurpleChat *) node;
-	gc = purple_account_get_connection(chat->account);
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(chat->components, "channel"),
+				 g_hash_table_lookup(purple_chat_get_components(chat), "channel"),
 				 "+s", NULL);
 }
 
@@ -877,8 +880,8 @@ silcpurple_chat_wb(PurpleBlistNode *node, gpointer data)
 
 GList *silcpurple_chat_menu(PurpleChat *chat)
 {
-	GHashTable *components = chat->components;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
+	GHashTable *components = purple_chat_get_components(chat);
+	PurpleConnection *gc = purple_account_get_connection(purple_chat_get_account(chat));
 	SilcPurple sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
 	const char *chname = NULL;
@@ -1315,7 +1318,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 			g_free(tmp);
 
 			if (ret)
-				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg, time(NULL));
+				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg, time(NULL));
 			return ret;
 		}
 	}
@@ -1326,7 +1329,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 					       (unsigned char *)msg2,
 					       strlen(msg2));
 	if (ret) {
-		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg,
+		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg,
 				 time(NULL));
 	}
 	g_free(tmp);
@@ -1392,7 +1395,7 @@ PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 	if (sg->roomlist)
 		purple_roomlist_unref(sg->roomlist);
 
-	sg->roomlist_canceled = FALSE;
+	sg->roomlist_cancelled = FALSE;
 
 	sg->roomlist = purple_roomlist_new(purple_connection_get_account(gc));
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
@@ -1426,6 +1429,6 @@ void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 	if (sg->roomlist == list) {
 		purple_roomlist_unref(sg->roomlist);
 		sg->roomlist = NULL;
-		sg->roomlist_canceled = TRUE;
+		sg->roomlist_cancelled = TRUE;
 	}
 }

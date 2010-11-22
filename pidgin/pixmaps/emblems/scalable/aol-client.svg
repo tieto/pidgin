@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   id="svg1307"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docbase="/home/hbons/Desktop/Pidgin/2.1.0/emblems/16/scalable"
+   sodipodi:docname="aol-client.svg"
+   inkscape:export-filename="/home/hbons/Desktop/aol-client.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs1309" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="33.645576"
+     inkscape:cx="10.549484"
+     inkscape:cy="6.7812522"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     fill="#204a87"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:grid-points="true"
+     inkscape:window-width="1268"
+     inkscape:window-height="841"
+     inkscape:window-x="6"
+     inkscape:window-y="0" />
+  <metadata
+     id="metadata1312">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:#204a87;fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:1.00000024;stroke-miterlimit:4;stroke-opacity:1"
+       d="M 2 1 L 2 15 L 14 8 L 2 1 z M 6 4 C 8.1805207 4 10 5.7762679 10 8 C 10 10.223732 8.1805205 12 6 12 C 3.8194795 11.999999 2.0312501 10.223732 2.03125 8 C 2.03125 5.7762679 3.8194791 4.0000001 6 4 z M 6 5.125 C 4.3921597 5.125 3.1249999 6.4360487 3.125 8 C 3.125 9.5639514 4.3921593 10.84375 6 10.84375 C 7.6078403 10.84375 8.875 9.5639514 8.875 8 C 8.875 6.4360487 7.6078401 5.1249999 6 5.125 z "
+       id="rect2229" />
+  </g>
+</svg>

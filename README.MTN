@@ -26,7 +26,7 @@ conversation.h contains documentation for the entire purple_conversation_*
 API, and account.h contains documentation for the purple_account_* API.
 
 If you have questions, please feel free to contact the Pidgin, Finch, and
-libpurple developers by e-mail at devel@pidgin.im or on IRC at irc.freenode.net
+libpurple developers by email at devel@pidgin.im or on IRC at irc.freenode.net
 in #pidgin.  Please do as much homework as you can before contacting us; the
 more you know about your question, the faster and more effectively we can help!
 

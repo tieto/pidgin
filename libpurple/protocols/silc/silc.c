@@ -17,11 +17,13 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
 #include "version.h"
 #include "wb.h"
+#include "core.h"
 
 extern SilcClientOperations ops;
 static PurplePlugin *silc_plugin = NULL;
@@ -47,19 +49,19 @@ silcpurple_away_states(PurpleAccount *account)
 	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_AVAILABLE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_AVAILABLE, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_HYPER, _("Hyper Active"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_AWAY, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_AWAY, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE, SILCPURPLE_STATUS_ID_BUSY, _("Busy"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE, SILCPURPLE_STATUS_ID_BUSY, _("Busy"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_INDISPOSED, _("Indisposed"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_INDISPOSED, _("Indisposed"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_PAGE, _("Wake Me Up"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_PAGE, _("Wake Me Up"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, SILCPURPLE_STATUS_ID_OFFLINE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, SILCPURPLE_STATUS_ID_OFFLINE, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	return types;
@@ -324,7 +326,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Error during connecting to SILC Server"));
+		                             _("Error connecting to SILC Server"));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
@@ -347,7 +349,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Connection Timeout"));
+		                             _("Connection timed out"));
 		break;
 	}
 
@@ -446,7 +448,7 @@ static void silcpurple_continue_running(SilcPurple sg)
 				 silcpurple_login_connected, gc) == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Unable to create connection"));
+		                             _("Unable to connect"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -489,7 +491,7 @@ static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields
 				password,
 				&sg->public_key, &sg->private_key)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Could not load SILC key pair"));
+		                             _("Unable to load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -505,7 +507,7 @@ static void silcpurple_no_password_cb(PurpleConnection *gc, PurpleRequestFields 
 		return;
 	sg = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("Could not load SILC key pair"));
+			_("Unable to load SILC key pair"));
 	gc->proto_data = NULL;
 	silc_free(sg);
 }
@@ -534,7 +536,7 @@ static void silcpurple_running(SilcClient client, void *context)
 			return;
 		}
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Could not load SILC key pair"));
+		                             _("Unable to load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -616,7 +618,7 @@ silcpurple_login(PurpleAccount *account)
 	if (!silc_client_init(client, username, hostname, realname,
 			      silcpurple_running, sg)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Cannot initialize SILC protocol"));
+		                             _("Unable to initialize SILC protocol"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		silc_free(hostname);
@@ -669,13 +671,31 @@ silcpurple_close(PurpleConnection *gc)
 #if __SILC_TOOLKIT_VERSION >= SILC_VERSION(1,1,1)
 	SilcPurpleTask task;
 #endif /* __SILC_TOOLKIT_VERSION */
+	GHashTable *ui_info;
+	const char *ui_name = NULL, *ui_website = NULL;
+	char *quit_msg;
 
 	g_return_if_fail(sg != NULL);
 
+	ui_info = purple_core_get_ui_info();
+	
+	if(ui_info) {
+		ui_name = g_hash_table_lookup(ui_info, "name");
+		ui_website = g_hash_table_lookup(ui_info, "website");
+	}
+	
+	if(!ui_name || !ui_website) {
+		ui_name = "Pidgin";
+		ui_website = PURPLE_WEBSITE;
+	}
+	quit_msg = g_strdup_printf(_("Download %s: %s"),
+							   ui_name, ui_website);
+
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download Pidgin: " PURPLE_WEBSITE,
+				 "QUIT", quit_msg,
 				 NULL);
+	g_free(quit_msg);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
@@ -983,7 +1003,7 @@ silcpurple_attrs(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_bool_new("contact_chat", _("Chat"), cchat);
 	purple_request_field_group_add_field(g, f);
-	f = purple_request_field_bool_new("contact_email", _("E-mail"), cemail);
+	f = purple_request_field_bool_new("contact_email", _("Email"), cemail);
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_bool_new("contact_call", _("Phone"), ccall);
 	purple_request_field_group_add_field(g, f);
@@ -1224,7 +1244,7 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_string_new("rn", _("Real name"), realname ? realname : "", FALSE);
 	purple_request_field_group_add_field(g, f);
-	f = purple_request_field_string_new("e", _("E-mail"), tmp, FALSE);
+	f = purple_request_field_string_new("e", _("Email"), tmp, FALSE);
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_string_new("o", _("Organization"), "", FALSE);
 	purple_request_field_group_add_field(g, f);
@@ -1338,6 +1358,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	char tmp[256];
 	SilcClientEntry client_entry;
 	SilcDList list;
+	gboolean free_list = FALSE;
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 						      sg->account);
@@ -1354,6 +1375,8 @@ silcpurple_send_im_resolved(SilcClient client,
 							im->nick, FALSE);
 		if (!clients)
 			goto err;
+
+		free_list = TRUE;
 	}
 
 	silc_dlist_start(clients);
@@ -1394,6 +1417,9 @@ silcpurple_send_im_resolved(SilcClient client,
 	purple_conversation_write(convo, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
  out:
+	if (free_list) {
+		silc_client_list_free(client, conn, clients);
+	}
 	g_free(im->nick);
 	g_free(im->message);
 	silc_free(im);
@@ -1816,7 +1842,10 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 {
 	PurpleConnection *gc;
 	SilcPurple sg;
-
+	GHashTable *ui_info;
+	const char *ui_name = NULL, *ui_website = NULL;
+	char *quit_msg;
+								   
 	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
@@ -1827,8 +1856,23 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	if (sg == NULL)
 		return PURPLE_CMD_RET_FAILED;
 
+	ui_info = purple_core_get_ui_info();
+	
+	if(ui_info) {
+		ui_name = g_hash_table_lookup(ui_info, "name");
+		ui_website = g_hash_table_lookup(ui_info, "website");
+	}
+	
+	if(!ui_name || !ui_website) {
+		ui_name = "Pidgin";
+		ui_website = PURPLE_WEBSITE;
+	}
+	quit_msg = g_strdup_printf(_("Download %s: %s"),
+							   ui_name, ui_website);
+
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download Pidgin: " PURPLE_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : quit_msg, NULL);
+	g_free(quit_msg);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -2066,12 +2110,16 @@ static PurplePluginProtocolInfo prpl_info =
 	&silcpurple_wb_ops,			/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,				        /* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	NULL,				        /* unregister_user */
+	NULL,				        /* send_attention */
+	NULL,				        /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	NULL,				        /* get_account_text_table */
+	NULL,				        /* initiate_media */
+	NULL,				        /* get_media_caps */
+	NULL,				        /* get_moods */
+	NULL,				        /* set_public_alias */
+	NULL				        /* get_public_alias */
 };
 
 static PurplePluginInfo info =

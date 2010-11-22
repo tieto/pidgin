@@ -29,4 +29,3 @@ fi
 shift
 dbus-send --dest=im.pidgin.purple.PurpleService --print-reply --type=method_call /im/pidgin/purple/PurpleObject im.pidgin.purple.PurpleInterface.$METHOD_NAME "$@"
 
-echo 

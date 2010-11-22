@@ -32,11 +32,17 @@
 /**************************************************************************/
 
 
+/** @copydoc _PurpleConversationUiOps */
 typedef struct _PurpleConversationUiOps PurpleConversationUiOps;
+/** @copydoc _PurpleConversation */
 typedef struct _PurpleConversation      PurpleConversation;
+/** @copydoc _PurpleConvIm */
 typedef struct _PurpleConvIm            PurpleConvIm;
+/** @copydoc _PurpleConvChat */
 typedef struct _PurpleConvChat          PurpleConvChat;
+/** @copydoc _PurpleConvChatBuddy */
 typedef struct _PurpleConvChatBuddy     PurpleConvChatBuddy;
+/** @copydoc _PurpleConvMessage */
 typedef struct _PurpleConvMessage       PurpleConvMessage;
 
 /**
@@ -78,7 +84,7 @@ typedef enum
 	PURPLE_CONV_UPDATE_TITLE,
 	PURPLE_CONV_UPDATE_CHATLEFT,
 
-	PURPLE_CONV_UPDATE_FEATURES, /**< The features for a chat have changed */
+	PURPLE_CONV_UPDATE_FEATURES  /**< The features for a chat have changed */
 
 } PurpleConvUpdateType;
 
@@ -108,7 +114,7 @@ typedef enum
 	                                        which are only open for
 	                                        internal UI purposes
 	                                        (e.g. for contact-aware
-	                                         conversions).           */
+	                                         conversations).           */
 	PURPLE_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
 	PURPLE_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
 	PURPLE_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
@@ -120,7 +126,7 @@ typedef enum
 	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
 	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
 										   linkified @since 2.1.0 */
-	PURPLE_MESSAGE_INVISIBLE   = 0x8000, /**< Message should not be displayed */
+	PURPLE_MESSAGE_INVISIBLE   = 0x8000  /**< Message should not be displayed */
 } PurpleMessageFlags;
 
 /**
@@ -133,7 +139,7 @@ typedef enum
 	PURPLE_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
 	PURPLE_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	PURPLE_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
-	PURPLE_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
+	PURPLE_CBFLAGS_TYPING        = 0x0010  /**< Currently typing             */
 
 } PurpleConvChatBuddyFlags;
 
@@ -279,11 +285,21 @@ struct _PurpleConvChat
  */
 struct _PurpleConvChatBuddy
 {
-	char *name;                      /**< The name                      */
-	char *alias;					 /**< The alias 					*/
-	char *alias_key;				 /**< The alias key					*/
-	gboolean buddy;					 /**< ChatBuddy is on the blist		*/
-	PurpleConvChatBuddyFlags flags;    /**< Flags (ops, voice etc.)       */
+	char *name;                      /**< The chat participant's name in the chat. */
+	char *alias;                     /**< The chat participant's alias, if known;
+	                                  *   @a NULL otherwise.
+	                                  */
+	char *alias_key;                 /**< A string by which this buddy will be sorted,
+	                                  *   or @c NULL if the buddy should be sorted by
+	                                  *   its @c name.  (This is currently always @c
+	                                  *   NULL.)
+	                                  */
+	gboolean buddy;                  /**< @a TRUE if this chat participant is on the
+	                                  *   buddy list; @a FALSE otherwise.
+	                                  */
+	PurpleConvChatBuddyFlags flags;  /**< A bitwise OR of flags for this participant,
+	                                  *   such as whether they are a channel operator.
+	                                  */
 };
 
 /**
@@ -352,7 +368,8 @@ extern "C" {
  * @param type    The type of conversation.
  * @param account The account opening the conversation window on the purple
  *                user's end.
- * @param name    The name of the conversation.
+ * @param name    The name of the conversation.  For PURPLE_CONV_TYPE_IM,
+ *                this is the name of the buddy.
  *
  * @return The new conversation.
  */
@@ -628,7 +645,6 @@ PurpleConversation *purple_find_conversation_with_account(
 void purple_conversation_write(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags,
 		time_t mtime);
-
 
 /**
 	Set the features as supported for the given conversation.
@@ -1009,7 +1025,8 @@ PurpleConversation *purple_conv_chat_get_conversation(const PurpleConvChat *chat
 GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
 
 /**
- * Returns a list of users in the chat room.
+ * Returns a list of users in the chat room.  The members of the list
+ * are PurpleConvChatBuddy objects.
  *
  * @param chat The chat.
  *
@@ -1284,6 +1301,22 @@ PurpleConversation *purple_find_chat(const PurpleConnection *gc, int id);
 void purple_conv_chat_left(PurpleConvChat *chat);
 
 /**
+ * Invite a user to a chat.
+ * The user will be prompted to enter the user's name or a message if one is
+ * not given.
+ *
+ * @param chat     The chat.
+ * @param user     The user to invite to the chat.
+ * @param message  The message to send with the invitation.
+ * @param confirm  Prompt before sending the invitation. The user is always
+ *                 prompted if either \a user or \a message is @c NULL.
+ *
+ * @since 2.6.0
+ */
+void purple_conv_chat_invite_user(PurpleConvChat *chat, const char *user,
+		const char *message, gboolean confirm);
+
+/**
  * Returns true if we're no longer in this chat,
  * and just left the window open.
  *
@@ -1334,7 +1367,7 @@ void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
  * Retrieves the extended menu items for the conversation.
  *
  * @param conv The conversation.
- * 
+ *
  * @return  A list of PurpleMenuAction items, harvested by the
  *          chat-extended-menu signal. The list and the menuaction
  *          items should be freed by the caller.

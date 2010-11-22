@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "cipher.h"
 #include "certificate.h"
+#include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -43,10 +44,13 @@
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
+#include "smiley.h"
 #include "sound.h"
+#include "sound-theme-loader.h"
 #include "sslconn.h"
 #include "status.h"
 #include "stun.h"
+#include "theme-manager.h"
 #include "util.h"
 
 #ifdef HAVE_DBUS
@@ -129,15 +133,19 @@ purple_core_init(const char *ui)
 #endif
 
 	purple_ciphers_init();
-
-	/* Initialize all static protocols. */
-	static_proto_init();
+	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
 	 */
 	purple_plugins_init();
+
+	/* Initialize all static protocols. */
+	static_proto_init();
+
 	purple_plugins_probe(G_MODULE_SUFFIX);
+
+	purple_theme_manager_init();
 
 	/* The buddy icon code uses the imgstore, so init it early. */
 	purple_imgstore_init();
@@ -166,7 +174,7 @@ purple_core_init(const char *ui)
 	purple_stun_init();
 	purple_xfers_init();
 	purple_idle_init();
-
+	purple_smileys_init();
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
@@ -175,6 +183,9 @@ purple_core_init(const char *ui)
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
+
+	/* The UI may have registered some theme types, so refresh them */
+	purple_theme_manager_refresh();
 
 	return TRUE;
 }
@@ -193,26 +204,45 @@ purple_core_quit(void)
 	/* Transmission ends */
 	purple_connections_disconnect_all();
 
-	/* Save .xml files, remove signals, etc. */
-	purple_idle_uninit();
+	/*
+	 * Certificates must be destroyed before the SSL plugins, because
+	 * PurpleCertificates contain pointers to PurpleCertificateSchemes,
+	 * and the PurpleCertificateSchemes will be unregistered when the
+	 * SSL plugin is uninit.
+	 */
+	purple_certificate_uninit();
+
+	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
+
+	/* Unload all non-loader, non-prpl plugins before shutting down
+	 * subsystems. */
+	purple_debug_info("main", "Unloading normal plugins\n");
+	purple_plugins_unload(PURPLE_PLUGIN_STANDARD);
+
+	/* Save .xml files, remove signals, etc. */
+	purple_smileys_uninit();
+	purple_idle_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
 	purple_ciphers_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_connections_uninit();
-	purple_certificate_uninit();
 	purple_buddy_icons_uninit();
-	purple_accounts_uninit();
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
-	purple_prefs_uninit();
+	purple_accounts_uninit();
+	purple_sound_uninit();
+	purple_theme_manager_uninit();
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
+	purple_network_uninit();
 
+	/* Everything after unloading all plugins must not fail if prpls aren't
+	 * around */
 	purple_debug_info("main", "Unloading all plugins\n");
 	purple_plugins_destroy_all();
 
@@ -220,25 +250,17 @@ purple_core_quit(void)
 	if (ops != NULL && ops->quit != NULL)
 		ops->quit();
 
-	/*
-	 * purple_sound_uninit() should be called as close to
-	 * shutdown as possible.  This is because the call
-	 * to ao_shutdown() can sometimes leave our
-	 * environment variables in an unusable state, which
-	 * can cause a crash when getenv is called (by gettext
-	 * for example).  See the complete bug report at
-	 * http://trac.xiph.org/cgi-bin/trac.cgi/ticket/701
-	 *
-	 * TODO: Eventually move this call higher up with the others.
-	 */
-	purple_sound_uninit();
-
+	/* Everything after prefs_uninit must not try to read any prefs */
+	purple_prefs_uninit();
 	purple_plugins_uninit();
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
 
+	purple_cmds_uninit();
+	/* Everything after util_uninit cannot try to write things to the confdir */
 	purple_util_uninit();
+	purple_log_uninit();
 
 	purple_signals_uninit();
 
@@ -340,15 +362,7 @@ purple_core_ensure_single_instance()
 			const char *user_dir = purple_user_dir();
 			char *dbus_owner_user_dir = purple_dbus_owner_user_dir();
 
-			if (NULL == user_dir && NULL != dbus_owner_user_dir)
-				is_single_instance = TRUE;
-			else if (NULL != user_dir && NULL == dbus_owner_user_dir)
-				is_single_instance = TRUE;
-			else if (NULL == user_dir && NULL == dbus_owner_user_dir)
-				is_single_instance = FALSE;
-			else
-				is_single_instance = strcmp(dbus_owner_user_dir, user_dir);
-
+			is_single_instance = !purple_strequal(dbus_owner_user_dir, user_dir);
 			g_free(dbus_owner_user_dir);
 		}
 	}
@@ -366,7 +380,7 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 #endif
 	if (g_rename(path, new_name))
 	{
-		purple_debug_error("core", "Error renaming %s to %s: %s. Please report this at http://developer.pidgin.im\n",
+		purple_debug_error("core", "Error renaming %s to %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 		                   path, new_name, g_strerror(errno));
 		g_free(new_name);
 		return FALSE;
@@ -379,7 +393,7 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 	old_name = g_build_filename(old_base, basename, NULL);
 	if (symlink(new_name, old_name))
 	{
-		purple_debug_warning("core", "Error symlinking %s to %s: %s. Please report this at http://developer.pidgin.im\n",
+		purple_debug_warning("core", "Error symlinking %s to %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 		                     old_name, new_name, g_strerror(errno));
 	}
 	g_free(old_name);
@@ -435,7 +449,7 @@ purple_core_migrate(void)
 	{
 		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 		{
-			purple_debug_error("core", "Error creating directory %s: %s. Please report this at http://developer.pidgin.im\n",
+			purple_debug_error("core", "Error creating directory %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 			                   user_dir, g_strerror(errno));
 			g_free(status_file);
 			g_free(old_user_dir);
@@ -447,7 +461,7 @@ purple_core_migrate(void)
 	 * incomplete migrations and properly retry. */
 	if (!(fp = g_fopen(status_file, "w")))
 	{
-		purple_debug_error("core", "Error opening file %s for writing: %s. Please report this at http://developer.pidgin.im\n",
+		purple_debug_error("core", "Error opening file %s for writing: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 		                   status_file, g_strerror(errno));
 		g_free(status_file);
 		g_free(old_user_dir);
@@ -459,7 +473,7 @@ purple_core_migrate(void)
 	err = NULL;
 	if (!(dir = g_dir_open(old_user_dir, 0, &err)))
 	{
-		purple_debug_error("core", "Error opening directory %s: %s. Please report this at http://developer.pidgin.im\n",
+		purple_debug_error("core", "Error opening directory %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 		                   status_file,
 		                   (err ? err->message : "Unknown error"));
 		if (err)
@@ -479,16 +493,15 @@ purple_core_migrate(void)
 		if (g_file_test(name, G_FILE_TEST_IS_SYMLINK))
 		{
 			/* We're only going to duplicate a logs symlink. */
-			if (!strcmp(entry, "logs"))
+			if (purple_strequal(entry, "logs"))
 			{
 				char *link;
-#if GLIB_CHECK_VERSION(2,4,0)
-				GError *err = NULL;
+				err = NULL;
 
 				if ((link = g_file_read_link(name, &err)) == NULL)
 				{
 					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
+					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 					                   name_utf8 ? name_utf8 : name, err->message);
 					g_free(name_utf8);
 					g_error_free(err);
@@ -498,31 +511,11 @@ purple_core_migrate(void)
 					g_free(old_user_dir);
 					return FALSE;
 				}
-#else
-				char buf[MAXPATHLEN];
-				size_t linklen;
-
-				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
-				{
-					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
-					                   name_utf8, g_strerror(errno));
-					g_free(name_utf8);
-					g_free(name);
-					g_dir_close(dir);
-					g_free(status_file);
-					g_free(old_user_dir);
-					return FALSE;
-				}
-				buf[linklen] = '\0';
-
-				/* This way we don't have to GLIB_VERSION_CHECK every g_free(link) below. */
-				link = g_strdup(buf);
-#endif
 
 				logs_dir = g_build_filename(user_dir, "logs", NULL);
 
-				if (!strcmp(link, "../.purple/logs") || !strcmp(link, logs_dir))
+				if (purple_strequal(link, "../.purple/logs") ||
+				    purple_strequal(link, logs_dir))
 				{
 					/* If the symlink points to the new directory, we're
 					 * likely just trying again after a failed migration,
@@ -543,7 +536,7 @@ purple_core_migrate(void)
 				 * guaranteed.  Oh well. */
 				if (symlink(link, logs_dir))
 				{
-					purple_debug_error("core", "Error symlinking %s to %s: %s. Please report this at http://developer.pidgin.im\n",
+					purple_debug_error("core", "Error symlinking %s to %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 					                   logs_dir, link, g_strerror(errno));
 					g_free(link);
 					g_free(name);
@@ -567,7 +560,7 @@ purple_core_migrate(void)
 		/* Deal with directories... */
 		if (g_file_test(name, G_FILE_TEST_IS_DIR))
 		{
-			if (!strcmp(entry, "icons"))
+			if (purple_strequal(entry, "icons"))
 			{
 				/* This is a special case for the Album plugin, which
 				 * stores data in the icons folder.  We're not copying
@@ -582,7 +575,7 @@ purple_core_migrate(void)
 				err = NULL;
 				if (!(icons_dir = g_dir_open(name, 0, &err)))
 				{
-					purple_debug_error("core", "Error opening directory %s: %s. Please report this at http://developer.pidgin.im\n",
+					purple_debug_error("core", "Error opening directory %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 					                   name,
 					                   (err ? err->message : "Unknown error"));
 					if (err)
@@ -600,7 +593,7 @@ purple_core_migrate(void)
 				{
 					if (g_mkdir(new_icons_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 					{
-						purple_debug_error("core", "Error creating directory %s: %s. Please report this at http://developer.pidgin.im\n",
+						purple_debug_error("core", "Error creating directory %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 						                   new_icons_dir, g_strerror(errno));
 						g_free(new_icons_dir);
 						g_dir_close(icons_dir);
@@ -636,7 +629,7 @@ purple_core_migrate(void)
 
 				g_dir_close(icons_dir);
 			}
-			else if (!strcmp(entry, "plugins"))
+			else if (purple_strequal(entry, "plugins"))
 			{
 				/* Do nothing, because we broke plugin compatibility.
 				 * This means that the plugins directory gets left behind. */
@@ -663,7 +656,7 @@ purple_core_migrate(void)
 
 			if (!(fp = g_fopen(name, "rb")))
 			{
-				purple_debug_error("core", "Error opening file %s for reading: %s. Please report this at http://developer.pidgin.im\n",
+				purple_debug_error("core", "Error opening file %s for reading: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 				                   name, g_strerror(errno));
 				g_free(name);
 				g_dir_close(dir);
@@ -675,7 +668,7 @@ purple_core_migrate(void)
 			new_name = g_build_filename(user_dir, entry, NULL);
 			if (!(new_file = g_fopen(new_name, "wb")))
 			{
-				purple_debug_error("core", "Error opening file %s for writing: %s. Please report this at http://developer.pidgin.im\n",
+				purple_debug_error("core", "Error opening file %s for writing: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 				                   new_name, g_strerror(errno));
 				fclose(fp);
 				g_free(new_name);
@@ -694,7 +687,7 @@ purple_core_migrate(void)
 				size = fread(buf, 1, sizeof(buf), fp);
 				if (size != sizeof(buf) && !feof(fp))
 				{
-					purple_debug_error("core", "Error reading %s: %s. Please report this at http://developer.pidgin.im\n",
+					purple_debug_error("core", "Error reading %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 					                   name, g_strerror(errno));
 					fclose(new_file);
 					fclose(fp);
@@ -708,7 +701,7 @@ purple_core_migrate(void)
 
 				if (!fwrite(buf, size, 1, new_file) && ferror(new_file) != 0)
 				{
-					purple_debug_error("core", "Error writing %s: %s. Please report this at http://developer.pidgin.im\n",
+					purple_debug_error("core", "Error writing %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 					                   new_name, g_strerror(errno));
 					fclose(new_file);
 					fclose(fp);
@@ -723,7 +716,7 @@ purple_core_migrate(void)
 
 			if (fclose(new_file))
 			{
-				purple_debug_error("core", "Error writing: %s: %s. Please report this at http://developer.pidgin.im\n",
+				purple_debug_error("core", "Error writing: %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 				                   new_name, g_strerror(errno));
 			}
 			if (fclose(fp))
@@ -742,7 +735,7 @@ purple_core_migrate(void)
 	/* The migration was successful, so delete the status file. */
 	if (g_unlink(status_file))
 	{
-		purple_debug_error("core", "Error unlinking file %s: %s. Please report this at http://developer.pidgin.im\n",
+		purple_debug_error("core", "Error unlinking file %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
 		                   status_file, g_strerror(errno));
 		g_free(status_file);
 		return FALSE;

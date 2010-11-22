@@ -1,4 +1,12 @@
-man_MANS = pidgin.1 finch.1
+man_MANS =
+
+if ENABLE_GTK
+man_MANS += pidgin.1
+endif
+
+if ENABLE_GNT
+man_MANS += finch.1
+endif
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
@@ -24,6 +32,7 @@ EXTRA_DIST = \
 	gtkimhtml-signals.dox \
 	gtkrc-2.0 \
 	imgstore-signals.dox \
+	jabber-signals.dox \
 	log-signals.dox \
 	notify-signals.dox \
 	pidgin.1.in \

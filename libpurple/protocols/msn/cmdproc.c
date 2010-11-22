@@ -21,8 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "cmdproc.h"
+#include "error.h"
 
 MsnCmdProc *
 msn_cmdproc_new(MsnSession *session)
@@ -34,6 +38,9 @@ msn_cmdproc_new(MsnSession *session)
 	cmdproc->session = session;
 	cmdproc->txqueue = g_queue_new();
 	cmdproc->history = msn_history_new();
+
+	cmdproc->multiparts = g_hash_table_new_full(g_str_hash, g_str_equal,
+	                                            NULL, (GDestroyNotify)msn_message_unref);
 
 	return cmdproc;
 }
@@ -52,6 +59,8 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 
 	if (cmdproc->last_cmd != NULL)
 		msn_command_destroy(cmdproc->last_cmd);
+
+	g_hash_table_destroy(cmdproc->multiparts);
 
 	g_free(cmdproc);
 }
@@ -112,10 +121,13 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	servconn = cmdproc->servconn;
 
-	if (!servconn->connected)
+	if (!servconn->connected) {
+		/* TODO: Need to free trans */
 		return;
+	}
 
-	msn_history_add(cmdproc->history, trans);
+	if (trans->saveable)
+		msn_history_add(cmdproc->history, trans);
 
 	data = msn_transaction_to_string(trans);
 
@@ -132,79 +144,19 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		data = g_realloc(data, len + trans->payload_len);
 		memcpy(data + len, trans->payload, trans->payload_len);
 		len += trans->payload_len;
+
+		/*
+		 * We're done with trans->payload.  Free it so that the memory
+		 * doesn't sit around in cmdproc->history.
+		 */
+		g_free(trans->payload);
+		trans->payload = NULL;
+		trans->payload_len = 0;
 	}
 
 	msn_servconn_write(servconn, data, len);
 
 	g_free(data);
-}
-
-void
-msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
-					   const char *format, ...)
-{
-	MsnServConn *servconn;
-	char *data;
-	char *params = NULL;
-	va_list arg;
-	size_t len;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	servconn = cmdproc->servconn;
-
-	if (!servconn->connected)
-		return;
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	if (params != NULL)
-		data = g_strdup_printf("%s %s\r\n", command, params);
-	else
-		data = g_strdup_printf("%s\r\n", command);
-
-	g_free(params);
-
-	len = strlen(data);
-
-	show_debug_cmd(cmdproc, FALSE, data);
-
-	msn_servconn_write(servconn, data, len);
-
-	g_free(data);
-}
-
-void
-msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
-				 const char *format, ...)
-{
-	MsnTransaction *trans;
-	va_list arg;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	if (!cmdproc->servconn->connected)
-		return;
-
-	trans = g_new0(MsnTransaction, 1);
-
-	trans->command = g_strdup(command);
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		trans->params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 void
@@ -227,6 +179,76 @@ void
 msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgTypeCb cb;
+	const char *message_id = NULL;
+
+	/* Multi-part messages */
+	message_id = msn_message_get_header_value(msg, "Message-ID");
+	if (message_id != NULL) {
+		/* This is the first in a series of chunks */
+
+		const char *chunk_text = msn_message_get_header_value(msg, "Chunks");
+		guint chunk;
+		if (chunk_text != NULL) {
+			chunk = strtol(chunk_text, NULL, 10);
+			/* 1024 chunks of ~1300 bytes is ~1MB, which seems OK to prevent
+			   some random client causing pidgin to hog a ton of memory.
+			   Probably should figure out the maximum that the official client
+			   actually supports, though. */
+			if (chunk > 0 && chunk < 1024) {
+				msg->total_chunks = chunk;
+				msg->received_chunks = 1;
+				g_hash_table_insert(cmdproc->multiparts, (gpointer)message_id, msn_message_ref(msg));
+				purple_debug_info("msn", "Received chunked message, message_id: '%s', total chunks: %d\n",
+				                  message_id, chunk);
+			} else {
+				purple_debug_error("msn", "MessageId '%s' has too many chunks: %d\n", message_id, chunk);
+			}
+			return;
+		} else {
+			chunk_text = msn_message_get_header_value(msg, "Chunk");
+			if (chunk_text != NULL) {
+				/* This is one chunk in a series of chunks */
+
+				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, message_id);
+				chunk = strtol(chunk_text, NULL, 10);
+				if (first != NULL) {
+					if (first->received_chunks != chunk) {
+						/*
+						 * We received an out of order chunk number (i.e. not the
+						 * next one in the sequence).  Not sure if this can happen
+						 * legitimately, but we definitely don't handle it right
+						 * now.
+						 */
+						g_hash_table_remove(cmdproc->multiparts, message_id);
+						return;
+					}
+
+					/* Chunk is from 1 to total-1 (doesn't count first one) */
+					purple_debug_info("msn", "Received chunk %d of %d, message_id: '%s'\n",
+							chunk + 1, first->total_chunks, message_id);
+					first->body = g_realloc(first->body, first->body_len + msg->body_len);
+					memcpy(first->body + first->body_len, msg->body, msg->body_len);
+					first->body_len += msg->body_len;
+					first->received_chunks++;
+					if (first->received_chunks != first->total_chunks)
+						/* We're waiting for more chunks */
+						return;
+
+					/*
+					 * We have all the chunks for this message, great!  Send
+					 * it along... The caller takes care of freeing the old one.
+					 */
+					msg = first;
+				} else {
+					purple_debug_error("msn",
+					                   "Unable to find first chunk of message_id '%s' to correspond with chunk %d.\n",
+					                   message_id, chunk + 1);
+				}
+			} else {
+				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", message_id);
+			}
+		}
+	}
 
 	if (msn_message_get_content_type(msg) == NULL)
 	{
@@ -237,15 +259,14 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	cb = g_hash_table_lookup(cmdproc->cbs_table->msgs,
 							 msn_message_get_content_type(msg));
 
-	if (cb == NULL)
-	{
+	if (cb != NULL)
+		cb(cmdproc, msg);
+	else
 		purple_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 
-		return;
-	}
-
-	cb(cmdproc, msg);
+	if (message_id != NULL)
+		g_hash_table_remove(cmdproc->multiparts, message_id);
 }
 
 void
@@ -255,7 +276,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans = NULL;
 
 	if (cmd->trId)
-		trans = msn_history_find(cmdproc->history, cmd->trId);
+		cmd->trans = trans = msn_history_find(cmdproc->history, cmd->trId);
 
 	if (trans != NULL)
 		if (trans->timer) {
@@ -263,62 +284,38 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			trans->timer = 0;
 		}
 
-	if (g_ascii_isdigit(cmd->command[0]))
+	if (g_ascii_isdigit(cmd->command[0]) && trans != NULL)
 	{
-		if (trans != NULL)
-		{
-			MsnErrorCb error_cb = NULL;
-			int error;
+		MsnErrorCb error_cb;
+		int error;
 
-			error = atoi(cmd->command);
+		error = atoi(cmd->command);
 
-			if (trans->error_cb != NULL)
-				error_cb = trans->error_cb;
+		error_cb = trans->error_cb;
+		if (error_cb == NULL)
+			error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
 
-			if (error_cb == NULL && cmdproc->cbs_table->errors != NULL)
-				error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
+		if (error_cb != NULL)
+			error_cb(cmdproc, trans, error);
+		else
+			msn_error_handle(cmdproc->session, error);
 
-			if (error_cb != NULL)
-			{
-				error_cb(cmdproc, trans, error);
-			}
-			else
-			{
-#if 1
-				msn_error_handle(cmdproc->session, error);
-#else
-				purple_debug_warning("msn", "Unhandled error '%s'\n",
-								   cmd->command);
-#endif
-			}
-
-			return;
-		}
+		return;
 	}
 
-	if (cmdproc->cbs_table->async != NULL)
-		cb = g_hash_table_lookup(cmdproc->cbs_table->async, cmd->command);
+	cb = g_hash_table_lookup(cmdproc->cbs_table->async, cmd->command);
 
-	if (cb == NULL && trans != NULL)
-	{
-		cmd->trans = trans;
+	if (cb == NULL && trans != NULL && trans->callbacks != NULL)
+		cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 
-		if (trans->callbacks != NULL)
-			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
-	}
-
-	if (cb == NULL && cmdproc->cbs_table->fallback != NULL)
+	if (cb == NULL)
 		cb = g_hash_table_lookup(cmdproc->cbs_table->fallback, cmd->command);
 
 	if (cb != NULL)
-	{
 		cb(cmdproc, cmd);
-	}
 	else
-	{
 		purple_debug_warning("msn", "Unhandled command '%s'\n",
 						   cmd->command);
-	}
 
 	if (trans != NULL && trans->pendent_cmd != NULL)
 		msn_transaction_unqueue_cmd(trans, cmdproc);

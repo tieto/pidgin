@@ -30,10 +30,10 @@ libbonjour_la_LDFLAGS = -module -avoid-version
 if STATIC_BONJOUR
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES     = libbonjour.a
-libbonjour_a_SOURCES = $(BONJOURSOURCES)
-libbonjour_a_CFLAGS  = $(AM_CFLAGS)
-libbonjour_a_LIBADD  = $(AVAHI_LIBS)
+noinst_LTLIBRARIES    = libbonjour.la
+libbonjour_la_SOURCES = $(BONJOURSOURCES)
+libbonjour_la_CFLAGS  = $(AM_CFLAGS)
+libbonjour_la_LIBADD  = $(AVAHI_LIBS)
 
 else
 
@@ -44,7 +44,6 @@ libbonjour_la_LIBADD  = $(GLIB_LIBS) $(LIBXML_LIBS) $(AVAHI_LIBS)
 
 endif
 
-
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
@@ -52,4 +51,3 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(AVAHI_CFLAGS)
-

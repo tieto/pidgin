@@ -24,8 +24,11 @@
 #ifndef _PURPLE_VERSION_H_
 #define _PURPLE_VERSION_H_
 
+/** The major version of the running libpurple. */
 #define PURPLE_MAJOR_VERSION (@PURPLE_MAJOR_VERSION@)
+/** The minor version of the running libpurple. */
 #define PURPLE_MINOR_VERSION (@PURPLE_MINOR_VERSION@)
+/** The micro version of the running libpurple. */
 #define PURPLE_MICRO_VERSION (@PURPLE_MICRO_VERSION@)
 
 #define PURPLE_VERSION_CHECK(x,y,z) ((x) == PURPLE_MAJOR_VERSION && \

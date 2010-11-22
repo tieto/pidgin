@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,11 +155,12 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 	}
 	g_free(data);
 
-	if (hasActions) {
+	if (hasActions)
 		cb(js, result, actionhandle, user_data);
-		g_free(actionhandle);
-	} else
+	else
 		((jabber_x_data_cb)cb)(js, result, user_data);
+
+	g_free(actionhandle);
 }
 
 static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
@@ -201,7 +204,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	xmlnode *fn, *x;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
+	PurpleRequestField *field = NULL;
 
 	char *title = NULL;
 	char *instructions = NULL;
@@ -302,7 +305,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 				data->values = g_slist_prepend(data->values, value);
 
-				purple_request_field_list_add(field, lbl, value);
+				purple_request_field_list_add_icon(field, lbl, NULL, value);
 				if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
 					purple_request_field_list_add_selected(field, lbl);
 			}
@@ -372,7 +375,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		if(field && xmlnode_get_child(fn, "required"))
 			purple_request_field_set_required(field,TRUE);
 	}
-	
+
 	if(actions != NULL) {
 		PurpleRequestField *actionfield;
 		GList *action;
@@ -382,7 +385,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 		for(action = actions; action; action = g_list_next(action)) {
 			JabberXDataAction *a = action->data;
-			
+
 			purple_request_field_choice_add(actionfield, a->name);
 			data->actions = g_list_append(data->actions, g_strdup(a->handle));
 		}
@@ -408,4 +411,30 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	return handle;
 }
 
+gchar *
+jabber_x_data_get_formtype(const xmlnode *form)
+{
+	xmlnode *field;
+
+	g_return_val_if_fail(form != NULL, NULL);
+
+	for (field = xmlnode_get_child((xmlnode *)form, "field"); field;
+			field = xmlnode_get_next_twin(field)) {
+		const char *var = xmlnode_get_attrib(field, "var");
+		if (purple_strequal(var, "FORM_TYPE")) {
+			xmlnode *value = xmlnode_get_child(field, "value");
+			if (value)
+				return xmlnode_get_data(value);
+			else
+				/* An interesting corner case... Looking for a second
+				 * FORM_TYPE would be more considerate, but I'm in favor
+				 * of not helping broken clients.
+				 */
+				return NULL;
+		}
+	}
+
+	/* Erm, none found :( */
+	return NULL;
+}
 

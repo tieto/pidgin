@@ -27,7 +27,6 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib-object.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -40,9 +39,14 @@ typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
 typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
 typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
+typedef void (*PurpleSetPublicAliasSuccessCallback)(PurpleAccount *account, const char *new_alias);
+typedef void (*PurpleSetPublicAliasFailureCallback)(PurpleAccount *account, const char *error);
+typedef void (*PurpleGetPublicAliasSuccessCallback)(PurpleAccount *account, const char *alias);
+typedef void (*PurpleGetPublicAliasFailureCallback)(PurpleAccount *account, const char *error);
 
 #include "connection.h"
 #include "log.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
@@ -132,9 +136,17 @@ struct _PurpleAccount
 								/*   to NULL when the account inherits      */
 								/*   proxy settings from global prefs.      */
 
+	/*
+	 * TODO: Supplementing the next two linked lists with hash tables
+	 * should help performance a lot when these lists are long.  This
+	 * matters quite a bit for protocols like MSN, where all your
+	 * buddies are added to your permit list.  Currently we have to
+	 * iterate through the entire list if we want to check if someone
+	 * is permitted or denied.  We should do this for 3.0.0.
+	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
-	int perm_deny;              /**< The permit/deny setting.               */
+	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
 
 	GList *status_types;        /**< Status types.                          */
 
@@ -253,7 +265,7 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
  * Notifies the user that a remote user has wants to add the local user
  * to his or her buddy list and requires authorization to do so.
  *
- * This will present a dialog informing the user of this and ask if the 
+ * This will present a dialog informing the user of this and ask if the
  * user authorizes or denies the remote user from adding him.
  *
  * @param account      The account that was added
@@ -406,6 +418,16 @@ void purple_account_set_enabled(PurpleAccount *account, const char *ui,
 void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info);
 
 /**
+ * Sets the account's privacy type.
+ *
+ * @param account      The account.
+ * @param privacy_type The privacy type.
+ *
+ * @since 2.7.0
+ */
+void purple_account_set_privacy_type(PurpleAccount *account, PurplePrivacyType privacy_type);
+
+/**
  * Sets the account's status types.
  *
  * @param account      The account.
@@ -444,11 +466,57 @@ void purple_account_set_status_list(PurpleAccount *account,
 	const char *status_id, gboolean active, GList *attrs);
 
 /**
+ * Set a server-side (public) alias for this account.  The account
+ * must already be connected.
+ *
+ * Currently, the public alias is not stored locally, although this
+ * may change in a later version.
+ *
+ * @param account    The account
+ * @param alias      The new public alias for this account or NULL
+ *                   to unset the alias/nickname (or return it to
+ *                   a protocol-specific "default", like the username)
+ * @param success_cb A callback which will be called if the alias
+ *                   is successfully set on the server (or NULL).
+ * @param failure_cb A callback which will be called if the alias
+ *                   is not successfully set on the server (or NULL).
+ *
+ * @since 2.7.0
+ */
+void purple_account_set_public_alias(PurpleAccount *account,
+	const char *alias, PurpleSetPublicAliasSuccessCallback success_cb,
+	PurpleSetPublicAliasFailureCallback failure_cb);
+
+/**
+ * Fetch the server-side (public) alias for this account.  The account
+ * must already be connected.
+ *
+ * @param account    The account
+ * @param success_cb A callback which will be called with the alias
+ * @param failure_cb A callback which will be called if the prpl is
+ *                   unable to retrieve the server-side alias.
+ * @since 2.7.0
+ */
+void purple_account_get_public_alias(PurpleAccount *account,
+	PurpleGetPublicAliasSuccessCallback success_cb,
+	PurpleGetPublicAliasFailureCallback failure_cb);
+
+/**
  * Clears all protocol-specific settings on an account.
  *
  * @param account The account.
  */
 void purple_account_clear_settings(PurpleAccount *account);
+
+/**
+ * Removes an account-specific setting by name.
+ *
+ * @param account The account.
+ * @param setting The setting to remove.
+ *
+ * @since 2.6.0
+ */
+void purple_account_remove_setting(PurpleAccount *account, const char *setting);
 
 /**
  * Sets a protocol-specific integer setting for an account.
@@ -612,6 +680,20 @@ const char *purple_account_get_protocol_name(const PurpleAccount *account);
 PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
 
 /**
+ * Returns a name for this account appropriate for display to the user. In
+ * order of preference: the account's alias; the contact or buddy alias (if
+ * the account exists on its own buddy list); the connection's display name;
+ * the account's username.
+ *
+ * @param account The account.
+ *
+ * @return The name to display.
+ *
+ * @since 2.7.0
+ */
+const gchar *purple_account_get_name_for_display(const PurpleAccount *account);
+
+/**
  * Returns whether or not this account should save its password.
  *
  * @param account The account.
@@ -649,6 +731,17 @@ gboolean purple_account_get_enabled(const PurpleAccount *account,
  * @return The proxy information.
  */
 PurpleProxyInfo *purple_account_get_proxy_info(const PurpleAccount *account);
+
+/**
+ * Returns the account's privacy type.
+ *
+ * @param account   The account.
+ *
+ * @return The privacy type.
+ *
+ * @since 2.7.0
+ */
+PurplePrivacyType purple_account_get_privacy_type(const PurpleAccount *account);
 
 /**
  * Returns the active status for this account.  This looks through

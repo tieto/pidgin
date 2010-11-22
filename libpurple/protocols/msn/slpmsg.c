@@ -21,8 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "slpmsg.h"
+#include "slpmsg_part.h"
 #include "slplink.h"
 
 /**************************************************************************
@@ -36,14 +40,16 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
-#ifdef MSN_DEBUG_SLPMSG
-	purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	slpmsg->slplink = slplink;
+	if (slplink) 
+		msn_slpmsg_set_slplink(slpmsg, slplink);
+	else
+		slpmsg->slplink = NULL;
 
-	slplink->slp_msgs =
-		g_list_append(slplink->slp_msgs, slpmsg);
+	slpmsg->header = g_new0(MsnP2PHeader, 1);
+	slpmsg->footer = NULL;
 
 	return slpmsg;
 }
@@ -56,14 +62,10 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	g_return_if_fail(slpmsg != NULL);
 
-#ifdef MSN_DEBUG_SLPMSG
-	purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
 
 	slplink = slpmsg->slplink;
-
-	if (slpmsg->fp != NULL)
-		fclose(slpmsg->fp);
 
 	purple_imgstore_unref(slpmsg->img);
 
@@ -72,34 +74,38 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
-#ifdef MSN_DEBUG_SLP
-	/*
-	if (slpmsg->info != NULL)
-		g_free(slpmsg->info);
-	*/
-#endif
-
-	for (cur = slpmsg->msgs; cur != NULL; cur = cur->next)
+	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
 		 * pointer to prevent a crash. */
 		/* Ex: a user goes offline and after that we receive an ACK */
 
-		MsnMessage *msg = cur->data;
+		MsnSlpMessagePart *part = cur->data;
 
-#ifdef MSN_DEBUG_SLPMSG
-		purple_debug_info("msn", "Unlink slpmsg callbacks.\n");
-#endif
-
-		msg->ack_cb = NULL;
-		msg->nak_cb = NULL;
-		msg->ack_data = NULL;
+		part->ack_cb = NULL;
+		part->nak_cb = NULL;
+		part->ack_data = NULL;
+		msn_slpmsgpart_destroy(part);
 	}
-	g_list_free(slpmsg->msgs);
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
 
+	g_free(slpmsg->header);
+	g_free(slpmsg->footer);
+
 	g_free(slpmsg);
+}
+
+void
+msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink)
+{
+	g_return_if_fail(slplink != NULL);
+
+	slpmsg->slplink = slplink;
+
+	slplink->slp_msgs =
+		g_list_append(slplink->slp_msgs, slpmsg);
+
 }
 
 void
@@ -109,7 +115,7 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
+	g_return_if_fail(slpmsg->ft == FALSE);
 
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
@@ -125,59 +131,13 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
+	g_return_if_fail(slpmsg->ft == FALSE);
 
 	slpmsg->img = purple_imgstore_ref(img);
 	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
-void
-msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
-{
-	struct stat st;
-
-	/* We can only have one data source at a time. */
-	g_return_if_fail(slpmsg->buffer == NULL);
-	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
-
-	slpmsg->fp = g_fopen(file_name, "rb");
-
-	if (g_stat(file_name, &st) == 0)
-		slpmsg->size = st.st_size;
-}
-
-#ifdef MSN_DEBUG_SLP
-void
-msn_slpmsg_show(MsnMessage *msg)
-{
-	const char *info;
-	gboolean text;
-	guint32 flags;
-
-	text = FALSE;
-
-	flags = GUINT32_TO_LE(msg->msnslp_header.flags);
-
-	switch (flags)
-	{
-		case 0x0:
-			info = "SLP CONTROL";
-			text = TRUE;
-			break;
-		case 0x2:
-			info = "SLP ACK"; break;
-		case 0x20:
-		case 0x1000030:
-			info = "SLP DATA"; break;
-		default:
-			info = "SLP UNKNOWN"; break;
-	}
-
-	msn_message_show_readable(msg, info, text);
-}
-#endif
 
 MsnSlpMessage *
 msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
@@ -185,6 +145,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 				   const char *content_type, const char *content)
 {
 	MsnSlpLink *slplink;
+	PurpleAccount *account;
 	MsnSlpMessage *slpmsg;
 	char *body;
 	gsize body_len;
@@ -194,6 +155,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	g_return_val_if_fail(header  != NULL, NULL);
 
 	slplink = slpcall->slplink;
+	account = slplink->session->account;
 
 	/* Let's remember that "content" should end with a 0x00 */
 
@@ -212,7 +174,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		"\r\n",
 		header,
 		slplink->remote_user,
-		slplink->local_user,
+		purple_account_get_username(account),
 		branch,
 		cseq,
 		slpcall->id,
@@ -237,4 +199,132 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	g_free(body);
 
 	return slpmsg;
+}
+
+MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+
+	slpmsg->header->session_id = header->session_id;
+	slpmsg->size       = header->total_size;
+	slpmsg->header->flags      = P2P_ACK;
+	slpmsg->header->ack_id     = header->id;
+	slpmsg->header->ack_sub_id = header->ack_id;
+	slpmsg->header->ack_size   = header->total_size;
+	slpmsg->info = "SLP ACK";
+
+	return slpmsg;
+}
+
+MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg->slpcall = slpcall;
+	slpmsg->header->flags = P2P_MSN_OBJ_DATA;
+	slpmsg->info = "SLP DATA";
+
+	msn_slpmsg_set_image(slpmsg, img);
+
+	return slpmsg;
+}
+
+MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+
+	slpmsg->slpcall = slpcall;
+	slpmsg->header->session_id = slpcall->session_id;
+	msn_slpmsg_set_body(slpmsg, NULL, 4);
+	slpmsg->info = "SLP DATA PREP";
+
+	return slpmsg;
+
+}
+
+MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+
+	slpmsg->slpcall = slpcall;
+	slpmsg->header->flags = P2P_FILE_DATA;
+	slpmsg->info = "SLP FILE";
+	slpmsg->size = size;
+
+	return slpmsg;
+}
+
+char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
+{
+	MsnP2PHeader *header;
+	MsnP2PFooter *footer;
+	char *base;
+	char *tmp;
+	size_t siz;
+
+	base = g_malloc(P2P_PACKET_HEADER_SIZE + slpmsg->size + sizeof(MsnP2PFooter));
+	tmp = base;
+
+	header = msn_p2p_header_to_wire(slpmsg->header);
+	footer = msn_p2p_footer_to_wire(slpmsg->footer);
+
+	siz = sizeof(MsnP2PHeader);
+	/* Copy header */
+	memcpy(tmp, (char*)header, siz);
+	tmp += siz;
+
+	/* Copy body */
+	memcpy(tmp, slpmsg->buffer, slpmsg->size);
+	tmp += slpmsg->size;
+
+	/* Copy footer */
+	siz = sizeof(MsnP2PFooter);
+	memcpy(tmp, (char*)footer, siz);
+	tmp += siz;
+
+	*ret_size = tmp - base;
+
+	g_free(header);
+	g_free(footer);
+
+	return base;
+}
+
+void msn_slpmsg_show_readable(MsnSlpMessage *slpmsg)
+{
+	GString *str;
+
+	str = g_string_new(NULL);
+
+	g_string_append_printf(str, "Session ID: %u\r\n", slpmsg->header->session_id);
+	g_string_append_printf(str, "ID:         %u\r\n", slpmsg->header->id);
+	g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", slpmsg->header->offset);
+	g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", slpmsg->header->total_size);
+	g_string_append_printf(str, "Length:     %u\r\n", slpmsg->header->length);
+	g_string_append_printf(str, "Flags:      0x%x\r\n", slpmsg->header->flags);
+	g_string_append_printf(str, "ACK ID:     %u\r\n", slpmsg->header->ack_id);
+	g_string_append_printf(str, "SUB ID:     %u\r\n", slpmsg->header->ack_sub_id);
+	g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", slpmsg->header->ack_size);
+
+	if (purple_debug_is_verbose() && slpmsg->buffer != NULL) {
+		g_string_append_len(str, (gchar*)slpmsg->buffer, slpmsg->size);
+
+		if (slpmsg->buffer[slpmsg->size - 1] == '\0') {
+			str->len--;
+			g_string_append(str, " 0x00");
+		}
+		g_string_append(str, "\r\n");
+
+	}
+
+	g_string_append_printf(str, "Footer:     %u\r\n", slpmsg->footer->value);
+
+	purple_debug_info("msn", "SlpMessage %s:\n{%s}\n", slpmsg->info, str->str);
 }

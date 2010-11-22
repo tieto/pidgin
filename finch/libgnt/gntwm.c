@@ -26,7 +26,7 @@
 #include <Python.h>
 #else
 #define _GNU_SOURCE
-#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__)
+#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 #endif
@@ -45,6 +45,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "WM"
 
 #include "gntwm.h"
 #include "gntstyle.h"
@@ -131,6 +135,17 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 	src = widget->window;
 	dst = node->window;
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
+
+	/* Update the hardware cursor */
+	if (GNT_IS_WINDOW(widget) || GNT_IS_BOX(widget)) {
+		GntWidget *active = GNT_BOX(widget)->active;
+		if (active) {
+			int curx = active->priv.x + getcurx(active->window);
+			int cury = active->priv.y + getcury(active->window);
+			if (wmove(node->window, cury - widget->priv.y, curx - widget->priv.x) != OK)
+				wmove(node->window, 0, 0);
+		}
+	}
 }
 
 /**
@@ -201,7 +216,7 @@ update_act_msg(void)
 	GString *text = g_string_new("act: ");
 	if (message)
 		gnt_widget_destroy(message);
-	if (g_list_length(act) == 0)
+	if (!act)
 		return;
 	for (iter = act; iter; iter = iter->next) {
 		GntWS *ws = iter->data;
@@ -325,7 +340,7 @@ read_window_positions(GntWM *wm)
 	gsize nk;
 
 	if (!g_key_file_load_from_file(gfile, filename, G_KEY_FILE_NONE, &error)) {
-		g_printerr("GntWM: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		g_free(filename);
 		return;
@@ -333,7 +348,7 @@ read_window_positions(GntWM *wm)
 
 	keys = g_key_file_get_keys(gfile, "positions", &nk, &error);
 	if (error) {
-		g_printerr("GntWM: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		error = NULL;
 	} else {
@@ -349,7 +364,8 @@ read_window_positions(GntWM *wm)
 				p->y = y;
 				g_hash_table_replace(wm->positions, g_strdup(title + 1), p);
 			} else {
-				g_printerr("GntWM: Invalid number of arguments for positioing a window.\n");
+				gnt_warning("Invalid number of arguments (%" G_GSIZE_FORMAT
+						") for positioning a window.", l);
 			}
 			g_strfreev(coords);
 		}
@@ -392,7 +408,7 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 	wm->positions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE))
 		read_window_positions(wm);
-	g_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idle, NULL);
+	g_timeout_add_seconds(IDLE_CHECK_INTERVAL, check_idle, NULL);
 	time(&last_active_time);
 	gnt_wm_switch_workspace(wm, 0);
 }
@@ -873,6 +889,13 @@ shift_window(GntWM *wm, GntWidget *widget, int dir)
 	all = g_list_delete_link(all, list);
 	wm->cws->list = all;
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	if (wm->cws->ordered) {
+		GntWidget *w = wm->cws->ordered->data;
+		GntNode *node = g_hash_table_lookup(wm->nodes, w);
+		top_panel(node->panel);
+		update_panels();
+		doupdate();
+	}
 }
 
 static gboolean
@@ -927,6 +950,7 @@ list_actions(GntBindable *bindable, GList *null)
 	GntWidget *tree, *win;
 	GList *iter;
 	GntWM *wm = GNT_WM(bindable);
+	int n;
 	if (wm->_list.window || wm->menu)
 		return TRUE;
 
@@ -950,8 +974,9 @@ list_actions(GntBindable *bindable, GList *null)
 				gnt_tree_create_row(GNT_TREE(tree), action->label), NULL);
 	}
 	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(action_list_activate), wm);
-	gnt_widget_set_size(tree, 0, g_list_length(wm->acts));
-	gnt_widget_set_position(win, 0, getmaxy(stdscr) - 3 - g_list_length(wm->acts));
+	n = g_list_length(wm->acts);
+	gnt_widget_set_size(tree, 0, n);
+	gnt_widget_set_position(win, 0, getmaxy(stdscr) - 3 - n);
 
 	gnt_widget_show(win);
 	return TRUE;
@@ -1088,14 +1113,22 @@ static gboolean
 refresh_screen(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
+	GList *iter;
 
 	endwin();
 	refresh();
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, GINT_TO_POINTER(TRUE));
 	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
-	update_screen(wm);
+
+	for (iter = g_list_last(wm->cws->ordered); iter; iter = iter->prev) {
+		GntWidget *w = iter->data;
+		GntNode *node = g_hash_table_lookup(wm->nodes, w);
+		top_panel(node->panel);
+	}
+
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
+	update_screen(wm);
 	curs_set(0);   /* endwin resets the cursor to normal */
 
 	return TRUE;
@@ -1865,8 +1898,8 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 		}
 	}
 
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget)
@@ -1878,6 +1911,7 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 {
 	GntWS *s;
 	int pos;
+	gboolean transient = !!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT);
 
 	s = gnt_wm_widget_find_workspace(wm, widget);
 
@@ -1901,10 +1935,12 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 			if (s->ordered && wm->cws == s)
 				gnt_wm_raise_window(wm, s->ordered->data);
 		}
+	} else if (transient && wm->cws && wm->cws->ordered) {
+		gnt_wm_update_window(wm, wm->cws->ordered->data);
 	}
 
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 time_t gnt_wm_get_idle_time()
@@ -2093,7 +2129,7 @@ write_already(gpointer data)
 
 	file = fopen(filename, "wb");
 	if (file == NULL) {
-		g_printerr("GntWM: error opening file to save positions\n");
+		gnt_warning("error opening file (%s) to save positions", filename);
 	} else {
 		fprintf(file, "[positions]\n");
 		g_hash_table_foreach(wm->positions, write_gdi, file);
@@ -2112,7 +2148,7 @@ write_positions_to_file(GntWM *wm)
 	if (write_timeout) {
 		g_source_remove(write_timeout);
 	}
-	write_timeout = g_timeout_add(10000, write_already, wm);
+	write_timeout = g_timeout_add_seconds(10, write_already, wm);
 }
 
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y)
@@ -2174,8 +2210,8 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 		GntNode *nd = g_hash_table_lookup(wm->nodes, wm->_list.window);
 		top_panel(nd->panel);
 	}
-	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	update_screen(wm);
 }
 
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
@@ -2200,8 +2236,8 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 
 	if (ws == wm->cws || GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		gnt_wm_copy_win(widget, node);
-		update_screen(wm);
 		gnt_ws_draw_taskbar(wm->cws, FALSE);
+		update_screen(wm);
 	} else if (ws && ws != wm->cws && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_URGENT)) {
 		if (!act || (act && !g_list_find(act, ws)))
 			act = g_list_prepend(act, ws);

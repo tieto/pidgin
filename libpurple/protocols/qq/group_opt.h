@@ -31,35 +31,35 @@
 
 #define QQ_QUN_MEMBER_MAX       80	/* max number of the group */
 
-typedef struct _group_member_opt {
+typedef struct _qq_room_req {
 	PurpleConnection *gc;
-	guint32 internal_group_id;
+	guint32 id;
 	guint32 member;
-} group_member_opt;
+} qq_room_req;
 
 enum {
-	QQ_GROUP_TYPE_PERMANENT = 0x01,
-	QQ_GROUP_TYPE_TEMPORARY
+	QQ_ROOM_TYPE_PERMANENT = 0x01,
+	QQ_ROOM_TYPE_TEMPORARY
 };
 
 enum {
-	QQ_GROUP_MEMBER_ADD = 0x01,
-	QQ_GROUP_MEMBER_DEL
+	QQ_ROOM_MEMBER_ADD = 0x01,
+	QQ_ROOM_MEMBER_DEL
 };
 
-void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members);
-void qq_group_modify_info(PurpleConnection *gc, qq_group *group);
+void qq_group_modify_members(PurpleConnection *gc, qq_room_data *rmd, guint32 *new_members);
+void qq_room_change_info(PurpleConnection *gc, qq_room_data *rmd);
 
-void qq_group_approve_application_with_struct(group_member_opt *g);
-void qq_group_reject_application_with_struct(group_member_opt *g);
-void qq_group_search_application_with_struct(group_member_opt *g);
-
+void qq_create_room(PurpleConnection *gc, const gchar *name);
 void qq_group_process_modify_info_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_process_modify_members_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_manage_group(PurpleConnection *gc, GHashTable *data);
-void qq_group_create_with_name(PurpleConnection *gc, const gchar *name);
-void qq_group_activate_group(PurpleConnection *gc, guint32 internal_group_id);
 void qq_group_process_activate_group_reply(guint8 *data, gint len, PurpleConnection *gc);
 void qq_group_process_create_group_reply(guint8 *data, gint len, PurpleConnection *gc);
 
+void qq_process_room_buddy_request_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
+void qq_process_room_buddy_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
+void qq_process_room_buddy_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
+void qq_process_room_buddy_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
+void qq_process_room_buddy_joined(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 #endif

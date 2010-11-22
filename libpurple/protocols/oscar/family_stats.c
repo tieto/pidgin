@@ -52,7 +52,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 stats_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x000b;
+	mod->family = SNAC_FAMILY_STATS;
 	mod->version = 0x0001;
 	mod->toolid = 0x0104;
 	mod->toolversion = 0x0001;

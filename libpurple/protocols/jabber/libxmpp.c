@@ -28,21 +28,28 @@
 #include "internal.h"
 
 #include "accountopt.h"
+#include "core.h"
 #include "debug.h"
 #include "version.h"
 
 #include "iq.h"
 #include "jabber.h"
 #include "chat.h"
+#include "disco.h"
 #include "message.h"
 #include "roster.h"
 #include "si.h"
 #include "message.h"
 #include "presence.h"
-#include "google.h"
+#include "google/google.h"
 #include "pep.h"
+#include "usermood.h"
 #include "usertune.h"
 #include "caps.h"
+#include "data.h"
+#include "ibb.h"
+
+static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -68,7 +75,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_status */
+	jabber_set_status,				/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
@@ -76,9 +83,9 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roster_remove_buddy,		/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	jabber_google_roster_add_deny,				/* add_deny */
+	jabber_add_deny,				/* add_deny */
 	NULL,							/* rem_permit */
-	jabber_google_roster_rem_deny,				/* rem_deny */
+	jabber_rem_deny,				/* rem_deny */
 	NULL,							/* set_permit_deny */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
@@ -89,7 +96,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
-	jabber_buddy_get_info_chat,		/* get_cb_info */
+	NULL,							/* get_cb_info */
 	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
@@ -105,7 +112,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,		/* roomlist_get_list */
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
-	NULL,							/* can_receive_file */
+	jabber_can_receive_file,		/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
@@ -116,39 +123,26 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
 
-	/* padding */
-	NULL
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	NULL, /* get_account_text_table */
+	jabber_initiate_media,          /* initiate_media */
+	jabber_get_media_caps,                  /* get_media_caps */
+	jabber_get_moods,  							/* get_moods */
+	NULL, /* set_public_alias */
+	NULL  /* get_public_alias */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
 {
-	purple_signal_register(plugin, "jabber-receiving-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	purple_signal_register(plugin, "jabber-sending-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	purple_signal_register(plugin, "jabber-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
-			   
+	jabber_plugin_init(plugin);
 
 	return TRUE;
 }
 
 static gboolean unload_plugin(PurplePlugin *plugin)
 {
-	purple_signal_unregister(plugin, "jabber-receiving-xmlnode");
+	jabber_plugin_uninit(plugin);
 
-	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
-	
-	purple_signal_unregister(plugin, "jabber-sending-text");
-	
 	return TRUE;
 }
 
@@ -189,41 +183,114 @@ static PurplePluginInfo info =
 	NULL
 };
 
+static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+{
+	PurpleAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = purple_accounts_find(acct_id, prpl);
+		if (acct && !purple_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = purple_accounts_get_all();
+		while (l) {
+			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
+{
+	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
+	PurpleAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "xmpp"))
+		return FALSE;
+
+	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
+	/* params is NULL if the URI has no '?' (or anything after it) */
+	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+		char *body = g_hash_table_lookup(params, "body");
+		if (user && *user) {
+			PurpleConversation *conv =
+					purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, user);
+			purple_conversation_present(conv);
+			if (body && *body)
+				purple_conv_send_confirm(conv, body);
+		}
+	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
+		char *name = g_hash_table_lookup(params, "name");
+		if (user && *user)
+			purple_blist_request_add_buddy(acct, user, NULL, name);
+	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
+		PurpleConnection *gc = purple_account_get_connection(acct);
+		if (user && *user) {
+			GHashTable *params = jabber_chat_info_defaults(gc, user);
+			jabber_chat_join(gc, params);
+		}
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 static void
 init_plugin(PurplePlugin *plugin)
 {
-#ifdef HAVE_CYRUS_SASL
-#ifdef _WIN32
-	gchar *sasldir;
-#endif
-	int ret;
-#endif
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
-	
+	GList *encryption_values = NULL;
+
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
 	split = purple_account_user_split_new(_("Domain"), NULL, '@');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-	
-	split = purple_account_user_split_new(_("Resource"), "Home", '/');
+
+	split = purple_account_user_split_new(_("Resource"), "", '/');
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-	
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
+
+#define ADD_VALUE(list, desc, v) { \
+	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup((desc)); \
+	kvp->value = g_strdup((v)); \
+	list = g_list_prepend(list, kvp); \
+}
+
+	ADD_VALUE(encryption_values, _("Require encryption"), "require_tls");
+	ADD_VALUE(encryption_values, _("Use encryption if available"), "opportunistic_tls");
+	ADD_VALUE(encryption_values, _("Use old-style SSL"), "old_ssl");
+#if 0
+	ADD_VALUE(encryption_values, "None", "none");
+#endif
+	encryption_values = g_list_reverse(encryption_values);
+
+#undef ADD_VALUE
+
+	option = purple_account_option_list_new(_("Connection security"), "connection_security", encryption_values);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
-	
-	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
-	
+						   option);
+
 	option = purple_account_option_bool_new(
 						_("Allow plaintext auth over unencrypted streams"),
 						"auth_plain_in_clear", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
-	
+
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
@@ -235,39 +302,30 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
-						/* TODO: Is this an acceptable default? */
-						  "proxy.jabber.org:7777");
+						/* TODO: Is this an acceptable default?
+						 * Also, keep this in sync as they add more servers */
+						  JABBER_DEFAULT_FT_PROXIES);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
-	jabber_init_plugin(plugin);
+	option = purple_account_option_string_new(_("BOSH URL"),
+						  "bosh_url", NULL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+						  option);
+
+	/* this should probably be part of global smiley theme settings later on,
+	  shared with MSN */
+	option = purple_account_option_bool_new(_("Show Custom Smileys"),
+		"custom_smileys", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
+
+	my_protocol = plugin;
 
 	purple_prefs_remove("/plugins/prpl/jabber");
 
-	/* XXX - If any other plugin wants SASL this won't be good ... */
-#ifdef HAVE_CYRUS_SASL
-#ifdef _WIN32
-	sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
-	sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
-	g_free(sasldir);
-#endif
-	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
-		purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
-	}
-#endif
-	jabber_register_commands();
-	
-	jabber_iq_init();
-	jabber_pep_init();
-	
-	jabber_tune_init();
-	jabber_caps_init();
-
-	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
-	
-	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 }
 
 

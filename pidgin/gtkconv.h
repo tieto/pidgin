@@ -51,6 +51,7 @@ enum {
 	CHAT_USERS_FLAGS_COLUMN,
 	CHAT_USERS_COLOR_COLUMN,
 	CHAT_USERS_WEIGHT_COLUMN,
+	CHAT_USERS_ICON_STOCK_COLUMN,   /** @since 2.6.0 */
 	CHAT_USERS_COLUMNS
 };
 
@@ -143,7 +144,7 @@ struct _PidginConversation
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;
 	GtkWidget *menu_label;
-#ifndef PIDGIN_DISABLE_DEPRECATED
+#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKCONV_C_)
 	/** @deprecated */
 	GtkSizeGroup *sg;
 #else
@@ -176,6 +177,12 @@ struct _PidginConversation
 		int timer;
 		GList *current;
 	} attach;
+
+	/* Quick Find (since 2.7.0) */
+	struct {
+		GtkWidget *entry;
+		GtkWidget *container;
+	} quickfind;
 };
 
 /*@}*/

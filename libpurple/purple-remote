@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
+import codecs
 import dbus
 import re
 import urllib
 import sys
 
 import xml.dom.minidom 
+
+sys.stdin = codecs.getwriter('utf-8')(sys.stdin);
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout);
 
 xml.dom.minidom.Element.all   = xml.dom.minidom.Element.getElementsByTagName
 
@@ -35,7 +39,7 @@ class CheckedAttribute:
             raise "Error: " + self.attr + " " + str(args) + " returned " + str(result)
         return result
             
-def show_help():
+def show_help(requested=False):
     print """This program uses D-Bus to communicate with purple.
 
 Usage:
@@ -61,11 +65,17 @@ Examples of commands:
     jabber:addbuddy?screenname=my friend
 
     setstatus?status=away&message=don't disturb
+    getstatus
+    getstatusmessage
     quit
 
     PurpleAccountsFindConnected?name=&protocol=prpl-jabber
     PurpleAccountsFindConnected(,prpl-jabber)
 """ % sys.argv[0]
+    if (requested):
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 cpurple = CheckedObject(purple)
 
@@ -155,7 +165,6 @@ def execute(uri):
                 purple.PurpleSavedstatusSetSubstatus(current, account, type, message)
                 purple.PurpleSavedstatusActivateForAccount(current, account)
         else:
-            accounts = purple.PurpleAccountsGetAllActive()
             saved = purple.PurpleSavedstatusNew("", status_type)
             purple.PurpleSavedstatusSetMessage(saved, message)
             purple.PurpleSavedstatusActivate(saved)
@@ -167,6 +176,10 @@ def execute(uri):
         status_type = purple.PurpleSavedstatusGetType(current)
         status_id = purple.PurplePrimitiveGetIdFromType(status_type)
         return status_id
+
+    elif command == "getstatusmessage":
+        current = purple.PurpleSavedstatusGetCurrent()
+        return purple.PurpleSavedstatusGetMessage(current)
 
     elif command == "getinfo":
         account = findaccount(accountname, protocol)
@@ -213,10 +226,11 @@ def execute(uri):
                                 raise "Don't know how to handle type \"%s\"" % type
                     return purple.__getattr__(command)(*methodparams)
             show_help()
-            raise "Unknown command: %s" % command
 
 if len(sys.argv) == 1:
     show_help()
+elif (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+    show_help(True)
 elif (obj == None):
     print "No existing libpurple instance detected."
     sys.exit(1);

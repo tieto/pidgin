@@ -109,6 +109,16 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a small button
+ *
+ * @param  image   A button image.
+ *
+ * @return   A GtkButton created from the image.
+ * @since 2.7.0
+ */
+GtkWidget *pidgin_create_small_button(GtkWidget *image);
+
+/**
  * Creates a new window
  *
  * @param title        The window title, or @c NULL
@@ -136,7 +146,7 @@ GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const cha
  * Retrieves the main content box (vbox) from a pidgin dialog window
  *
  * @param dialog       The dialog window
- * @param homogeneous  TRUE if all children are to be given equal space allotments. 
+ * @param homogeneous  TRUE if all children are to be given equal space allotments.
  * @param spacing      the number of pixels to place by default between children
  *
  * @since 2.4.0
@@ -184,8 +194,8 @@ GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
 void pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
- * Checks if text has been entered into a GtkTextEntry widget.  If 
- * so, the GTK_RESPONSE_OK on the given dialog is set to TRUE.  
+ * Checks if text has been entered into a GtkTextEntry widget.  If
+ * so, the GTK_RESPONSE_OK on the given dialog is set to TRUE.
  * Otherwise GTK_RESPONSE_OK is set to FALSE.
  *
  * @param entry  The text entry widget.
@@ -233,14 +243,14 @@ GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str);
  *
  * @param menu     The menu to which to append the check menu item.
  * @param str      The title to use for the newly created menu item.
- * @param sf       A function to call when the menu item is activated.
+ * @param cb       A function to call when the menu item is activated.
  * @param data     Data to pass to the signal function.
  * @param checked  The initial state of the check item
  *
  * @return The newly created menu item.
  */
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
-		GtkSignalFunc sf, gpointer data, gboolean checked);
+		GCallback cb, gpointer data, gboolean checked);
 
 /**
  * Creates a menu item.
@@ -249,7 +259,7 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  * @param str        The title for the menu item.
  * @param icon       An icon to place to the left of the menu item,
  *                   or @c NULL for no icon.
- * @param sf         A function to call when the menu item is activated.
+ * @param cb         A function to call when the menu item is activated.
  * @param data       Data to pass to the signal function.
  * @param accel_key  Something.
  * @param accel_mods Something.
@@ -258,7 +268,7 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  * @return The newly created menu item.
  */
 GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str,
-									const char *icon, GtkSignalFunc sf,
+									const char *icon, GCallback cb,
 									gpointer data, guint accel_key,
 									guint accel_mods, char *mod);
 
@@ -355,7 +365,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  *
  * @param entry       The GtkEntry on which to setup autocomplete.
  * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
- *                    If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
+ *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @param filter_func A function for checking if an autocomplete entry
  *                    should be shown. This can be @c NULL.
@@ -364,7 +374,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
 void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
 
 /**
- * The default filter function for screenname autocomplete.
+ * The default filter function for username autocomplete.
  *
  * @param completion_entry The completion entry to filter.
  * @param all_accounts  If this is @c FALSE, only the autocompletion entries
@@ -385,9 +395,9 @@ gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompleti
  * @param entry     The GtkEntry on which to setup autocomplete.
  * @param optmenu   A menu for accounts, returned by
  *                  pidgin_account_option_menu_new().  If @a optmenu is not @c
- *                  NULL, it'll be updated when a screenname is chosen from the
+ *                  NULL, it'll be updated when a username is chosen from the
  *                  autocomplete list.
- * @param all       Whether to include screennames from disconnected accounts.
+ * @param all       Whether to include usernames from disconnected accounts.
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
@@ -400,6 +410,9 @@ void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, 
  * @param filesel The file selection window.
  *
  * @return TRUE if given path is a directory, FALSE otherwise.
+ * @deprecated Pidgin no longer uses GtkFileSelection internally. It has also
+ *             been deprecated by GTK+. Use GtkFileChooser instead and ignore
+ *             this function.
  */
 gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
 
@@ -473,7 +486,7 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 									 char **ret_alias);
 
 /**
- * Sets an ATK name for a given widget.  Also sets the labelled-by 
+ * Sets an ATK name for a given widget.  Also sets the labelled-by
  * and label-for ATK relationships.
  *
  * @param w The widget that we want to name.
@@ -509,10 +522,10 @@ void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
 
 /**
- * A valid GtkMenuPositionFunc.  This is used to determine where 
- * to draw context menus when the menu is activated with the 
- * keyboard (shift+F10).  If the menu is activated with the mouse, 
- * then you should just use GTK's built-in position function, 
+ * A valid GtkMenuPositionFunc.  This is used to determine where
+ * to draw context menus when the menu is activated with the
+ * keyboard (shift+F10).  If the menu is activated with the mouse,
+ * then you should just use GTK's built-in position function,
  * because it does a better job of positioning the menu.
  *
  * @param menu The menu we are positioning.
@@ -569,6 +582,27 @@ GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize si
  */
 GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget *w, const char *size);
 
+/**
+ * Returns an appropriate stock-id for a status primitive.
+ *
+ * @param prim   The status primitive
+ *
+ * @return The stock-id
+ *
+ * @since 2.6.0
+ */
+const char *pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim);
+
+/**
+ * Returns an appropriate stock-id for a PurplePresence.
+ *
+ * @param presence   The presence.
+ *
+ * @return The stock-id
+ *
+ * @since 2.6.0
+ */
+const char *pidgin_stock_id_from_presence(PurplePresence *presence);
 
 /**
  * Append a PurpleMenuAction to a menu.
@@ -612,13 +646,13 @@ void pidgin_clear_cursor(GtkWidget *widget);
  * @param parent      The parent window
  * @param callback    The callback to call when the window is closed. If the user chose an icon, the char* argument will point to its path
  * @param data        Data to pass to @a callback
- * @return            The file dialog 
+ * @return            The file dialog
  */
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
 
 /**
  * Converts a buddy icon to the required size and format
- * 
+ *
  * @param plugin     The prpl to convert the icon
  * @param path       The path of a file to convert
  * @param len        If not @c NULL, the length of the returned data will be set here.
@@ -627,17 +661,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  */
 gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
 
-#if !GTK_CHECK_VERSION(2,6,0)
-/**
- * Creates a new pixbuf by loading an image from a file. The image will
- * be scaled to fit in the requested size, optionally preserving the image's
- * aspect ratio.
- */
-GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
-											 gboolean preserve_aspect_ratio,
-											 GError **error);
-#endif
-
+#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKUTILS_C_)
 /**
  * Set or unset a custom buddyicon for a user.
  *
@@ -645,8 +669,10 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
  * @param who       The name of the user.
  * @param filename  The path of the custom icon. If this is @c NULL, then any
  *                  previously set custom buddy icon for the user is removed.
+ * @deprecated See purple_buddy_icons_node_set_custom_icon_from_file()
  */
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename);
+#endif
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing
@@ -689,7 +715,18 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  */
 GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
 	const char* stock_id, const char *primary, const char *secondary,
-	void *user_data, ...);
+	void *user_data, ...) G_GNUC_NULL_TERMINATED;
+
+/**
+ * Does exactly what pidgin_make_mini_dialog() does, except you can specify
+ * a custom icon for the dialog.
+ */
+GtkWidget *pidgin_make_mini_dialog_with_custom_icon(PurpleConnection *gc,
+	GdkPixbuf *custom_icon,
+	const char *primary,
+	const char *secondary,
+	void *user_data,
+	...) G_GNUC_NULL_TERMINATED;
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
@@ -703,7 +740,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 			const gchar *key, GtkTreeIter *iter, gpointer data);
 
 /**
- * Sets or resets a window to 'urgent,' by setting the URGENT hint in X 
+ * Sets or resets a window to 'urgent,' by setting the URGENT hint in X
  * or blinking in the win32 taskbar
  *
  * @param window  The window to draw attention to
@@ -735,20 +772,6 @@ void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
  * @return The dim grey string
  */
 const char *pidgin_get_dim_grey_string(GtkWidget *widget);
-
-#if !GTK_CHECK_VERSION(2,2,0)
-/**
- * This is copied from Gtk to support Gtk 2.0
- *
- * Creates a new path with @a first_index and the varargs as indices.
- *
- * @param first_index    first integer
- * @param ...            list of integers terminated by -1
- *
- * @return               A newly created GtkTreePath.
- */
-GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
-#endif
 
 /**
  * Create a simple text GtkComboBoxEntry equivalent
@@ -789,7 +812,8 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
  *
  * @param window    The window to make transient.
  *
- * @return  Whether the window was made transient or not.
+ * @return Whether the window was made transient or not.
+ *
  * @since 2.4.0
  */
 gboolean pidgin_auto_parent_window(GtkWidget *window);
@@ -808,6 +832,31 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * @since 2.4.0
  */
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
+
+/**
+ * Create a GdkPixbuf from a PurpleStoredImage.
+ *
+ * @param  image   A PurpleStoredImage.
+ *
+ * @return   A GdkPixbuf created from the stored image.
+ *
+ * @since 2.5.0
+ */
+GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+
+/**
+ * Initialize some utility functions.
+ *
+ * @since 2.6.0
+ */
+void pidgin_utils_init(void);
+
+/**
+ * Uninitialize some utility functions.
+ *
+ * @since 2.6.0
+ */
+void pidgin_utils_uninit(void);
 
 #endif /* _PIDGINUTILS_H_ */
 

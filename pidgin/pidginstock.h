@@ -8,7 +8,7 @@
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,7 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include <gtk/gtkstock.h>
+#include <gtk/gtk.h>
+#include "gtkstatus-icon-theme.h"
 
 #ifndef _PIDGIN_STOCK_H_
 #define _PIDGIN_STOCK_H_
@@ -43,12 +44,13 @@
 #define PIDGIN_STOCK_DOWNLOAD        "pidgin-download"
 #define PIDGIN_STOCK_EDIT            "pidgin-edit"
 #define PIDGIN_STOCK_FGCOLOR         "pidgin-fgcolor"
-#define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
+#define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-cancelled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
 #define PIDGIN_STOCK_INFO            "pidgin-info"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
+#define PIDGIN_STOCK_ADD             "pidgin-add"
 #define PIDGIN_STOCK_OPEN_MAIL       "pidgin-stock-open-mail"
 #define PIDGIN_STOCK_PAUSE           "pidgin-pause"
 #define PIDGIN_STOCK_POUNCE          "pidgin-pounce"
@@ -102,6 +104,28 @@
 #define PIDGIN_STOCK_ANIMATION_CONNECT6 "pidgin-anim-connect6"
 #define PIDGIN_STOCK_ANIMATION_CONNECT7 "pidgin-anim-connect7"
 #define PIDGIN_STOCK_ANIMATION_CONNECT8 "pidgin-anim-connect8"
+#define PIDGIN_STOCK_ANIMATION_CONNECT9 "pidgin-anim-connect9"
+#define PIDGIN_STOCK_ANIMATION_CONNECT10 "pidgin-anim-connect10"
+#define PIDGIN_STOCK_ANIMATION_CONNECT11 "pidgin-anim-connect11"
+#define PIDGIN_STOCK_ANIMATION_CONNECT12 "pidgin-anim-connect12"
+#define PIDGIN_STOCK_ANIMATION_CONNECT13 "pidgin-anim-connect13"
+#define PIDGIN_STOCK_ANIMATION_CONNECT14 "pidgin-anim-connect14"
+#define PIDGIN_STOCK_ANIMATION_CONNECT15 "pidgin-anim-connect15"
+#define PIDGIN_STOCK_ANIMATION_CONNECT16 "pidgin-anim-connect16"
+#define PIDGIN_STOCK_ANIMATION_CONNECT17 "pidgin-anim-connect17"
+#define PIDGIN_STOCK_ANIMATION_CONNECT18 "pidgin-anim-connect18"
+#define PIDGIN_STOCK_ANIMATION_CONNECT19 "pidgin-anim-connect19"
+#define PIDGIN_STOCK_ANIMATION_CONNECT20 "pidgin-anim-connect20"
+#define PIDGIN_STOCK_ANIMATION_CONNECT21 "pidgin-anim-connect21"
+#define PIDGIN_STOCK_ANIMATION_CONNECT22 "pidgin-anim-connect22"
+#define PIDGIN_STOCK_ANIMATION_CONNECT23 "pidgin-anim-connect23"
+#define PIDGIN_STOCK_ANIMATION_CONNECT24 "pidgin-anim-connect24"
+#define PIDGIN_STOCK_ANIMATION_CONNECT25 "pidgin-anim-connect25"
+#define PIDGIN_STOCK_ANIMATION_CONNECT26 "pidgin-anim-connect26"
+#define PIDGIN_STOCK_ANIMATION_CONNECT27 "pidgin-anim-connect27"
+#define PIDGIN_STOCK_ANIMATION_CONNECT28 "pidgin-anim-connect28"
+#define PIDGIN_STOCK_ANIMATION_CONNECT29 "pidgin-anim-connect29"
+#define PIDGIN_STOCK_ANIMATION_CONNECT30 "pidgin-anim-connect30"
 #define PIDGIN_STOCK_ANIMATION_TYPING0	"pidgin-anim-typing0"
 #define PIDGIN_STOCK_ANIMATION_TYPING1	"pidgin-anim-typing1"
 #define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
@@ -129,6 +153,13 @@
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
 #define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
 #define PIDGIN_STOCK_TOOLBAR_SEND_FILE    "pidgin-send-file"
+#define PIDGIN_STOCK_TOOLBAR_TRANSFER     "pidgin-transfer"
+#ifdef USE_VV
+#define PIDGIN_STOCK_TOOLBAR_AUDIO_CALL   "pidgin-audio-call"
+#define PIDGIN_STOCK_TOOLBAR_VIDEO_CALL   "pidgin-video-call"
+#define PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL "pidgin-audio-video-call"
+#endif
+#define PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION	"pidgin-send-attention"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
@@ -153,9 +184,56 @@
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"
 #define PIDGIN_ICON_SIZE_TANGO_LARGE          "pidgin-icon-size-tango-large"
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
+
+/**
+ * extends PidginIconTheme (gtkicon-theme.h)
+ * A pidgin stock icon theme.
+ * This object represents a Pidgin stock icon theme.
+ *
+ * PidginStockIconTheme is a PidginIconTheme Object.
+ */
+typedef struct _PidginStockIconTheme        PidginStockIconTheme;
+typedef struct _PidginStockIconThemeClass   PidginStockIconThemeClass;
+
+#define PIDGIN_TYPE_STOCK_ICON_THEME            (pidgin_stock_icon_theme_get_type ())
+#define PIDGIN_STOCK_ICON_THEME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconTheme))
+#define PIDGIN_STOCK_ICON_THEME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconThemeClass))
+#define PIDGIN_IS_STOCK_ICON_THEME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_STOCK_ICON_THEME))
+#define PIDGIN_IS_STOCK_ICON_THEME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_STOCK_ICON_THEME))
+#define PIDGIN_STOCK_ICON_THEME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_STOCK_ICON_THEME, PidginStockIconThemeClass))
+
+struct _PidginStockIconTheme
+{
+	PidginIconTheme parent;
+};
+
+struct _PidginStockIconThemeClass
+{
+	PidginIconThemeClass parent_class;
+};
+
+G_BEGIN_DECLS
+
+/**
+ * GObject foo.
+ * @internal.
+ */
+GType pidgin_stock_icon_theme_get_type(void);
+
+/**
+ * Loades all of the icons from the status icon theme into Pidgin stock
+ *
+ * @param theme		the theme to load, or null to load all the default icons
+ */
+void pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme);
+
+
+void pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme);
+
 /**
  * Sets up the purple stock repository.
  */
 void pidgin_stock_init(void);
 
+G_END_DECLS
 #endif /* _PIDGIN_STOCK_H_ */

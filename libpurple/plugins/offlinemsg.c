@@ -21,7 +21,7 @@
 
 #define PLUGIN_ID			"core-plugin_pack-offlinemsg"
 #define PLUGIN_NAME			N_("Offline Message Emulation")
-#define PLUGIN_STATIC_NAME	"offlinemsg"
+#define PLUGIN_STATIC_NAME	offlinemsg
 #define PLUGIN_SUMMARY		N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_DESCRIPTION	N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
@@ -93,7 +93,7 @@ record_pounce(OfflineMsg *offline)
 	conv = offline->conv;
 	if (!purple_conversation_get_data(conv, "plugin_pack:offlinemsg"))
 		purple_conversation_write(conv, NULL, _("The rest of the messages will be saved "
-							"as pounce. You can edit/delete the pounce from the `Buddy "
+							"as pounces. You can edit/delete the pounce from the `Buddy "
 							"Pounce' dialog."),
 							PURPLE_MESSAGE_SYSTEM, time(NULL));
 	purple_conversation_set_data(conv, "plugin_pack:offlinemsg",

@@ -5,7 +5,7 @@ PROTOTYPES: ENABLE
 
 BOOT:
 {
-	HV *stash = gv_stashpv("Purple::ProxyType::", 1);
+	HV *stash = gv_stashpv("Purple::ProxyType", 1);
 
 	static const constiv *civ, const_iv[] = {
 #define const_iv(name) {#name, (IV)PURPLE_PROXY_##name}
@@ -23,9 +23,6 @@ BOOT:
 
 Purple::Handle
 purple_proxy_get_handle()
-
-void
-purple_proxy_init()
 
 MODULE = Purple::Proxy  PACKAGE = Purple::ProxyInfo  PREFIX = purple_proxy_info_
 PROTOTYPES: ENABLE

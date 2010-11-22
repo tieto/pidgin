@@ -5,9 +5,6 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		pidgin.pc.in \
 		pidgin-uninstalled.pc.in \
-		win32/IdleTracker/Makefile.mingw \
-		win32/IdleTracker/idletrack.c \
-		win32/IdleTracker/idletrack.h \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
@@ -21,47 +18,16 @@ EXTRA_DIST = \
 		win32/winpidgin.c \
 		win32/wspell.c \
 		win32/wspell.h \
+		win32/nsis/generate_gtk_zip.sh \
+		win32/nsis/rpm2zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
+		win32/nsis/available.lst \
 		win32/nsis/pidgin-installer.nsi \
 		win32/nsis/pidgin-plugin.nsh \
-		win32/nsis/langmacros.nsh \
-		win32/nsis/translations/afrikaans.nsh \
-		win32/nsis/translations/albanian.nsh \
-		win32/nsis/translations/arabic.nsh \
-		win32/nsis/translations/basque.nsh \
-		win32/nsis/translations/bulgarian.nsh \
-		win32/nsis/translations/catalan.nsh \
-		win32/nsis/translations/czech.nsh \
-		win32/nsis/translations/danish.nsh \
-		win32/nsis/translations/dutch.nsh \
-		win32/nsis/translations/english.nsh \
-		win32/nsis/translations/finnish.nsh \
-		win32/nsis/translations/french.nsh \
-		win32/nsis/translations/german.nsh \
-		win32/nsis/translations/hebrew.nsh \
-		win32/nsis/translations/hungarian.nsh \
-		win32/nsis/translations/italian.nsh \
-		win32/nsis/translations/japanese.nsh \
-		win32/nsis/translations/korean.nsh \
-		win32/nsis/translations/kurdish.nsh \
-		win32/nsis/translations/lithuanian.nsh \
-		win32/nsis/translations/norwegian.nsh \
-		win32/nsis/translations/persian.nsh \
-		win32/nsis/translations/polish.nsh \
-		win32/nsis/translations/portuguese.nsh \
-		win32/nsis/translations/portuguese-br.nsh \
-		win32/nsis/translations/romanian.nsh \
-		win32/nsis/translations/russian.nsh \
-		win32/nsis/translations/serbian-latin.nsh \
-		win32/nsis/translations/simp-chinese.nsh \
-		win32/nsis/translations/slovak.nsh \
-		win32/nsis/translations/slovenian.nsh \
-		win32/nsis/translations/spanish.nsh \
-		win32/nsis/translations/swedish.nsh \
-		win32/nsis/translations/trad-chinese.nsh \
-		win32/nsis/translations/vietnamese.nsh
+		win32/nsis/create_nsis_translations.pl \
+		win32/nsis/nsis_translations.desktop.in
 
 if ENABLE_GTK
 
@@ -73,16 +39,12 @@ SUBDIRS = pixmaps plugins
 bin_PROGRAMS = pidgin
 
 pidgin_SOURCES = \
-	eggtrayicon.c \
-	pidgincombobox.c \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
-	gtkcelllayout.c \
+	gtkblist-theme.c \
+	gtkblist-theme-loader.c \
 	gtkcellrendererexpander.c \
-	gtkcellrendererprogress.c \
-	gtkcellview.c \
-	gtkcellviewmenuitem.c \
 	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
@@ -90,15 +52,17 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkdocklet-x11.c \
+	gtkdocklet-gtk.c \
 	gtkeventloop.c \
-	gtkexpander.c \
 	gtkft.c \
+	gtkicon-theme.c \
+	gtkicon-theme-loader.c \
 	gtkidle.c \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
 	gtkmain.c \
+	gtkmedia.c \
 	gtkmenutray.c \
 	gtknotify.c \
 	gtkplugin.c \
@@ -111,10 +75,12 @@ pidgin_SOURCES = \
 	gtksavedstatuses.c \
 	gtkscrollbook.c \
 	gtksession.c \
+	gtksmiley.c \
 	gtksound.c \
 	gtksourceiter.c \
 	gtksourceundomanager.c \
 	gtksourceview-marshal.c \
+	gtkstatus-icon-theme.c \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
@@ -123,18 +89,12 @@ pidgin_SOURCES = \
 	pidgintooltip.c
 
 pidgin_headers = \
-	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
-	gtkcelllayout.h \
+	gtkblist-theme.h \
+	gtkblist-theme-loader.h \
 	gtkcellrendererexpander.h \
-	gtkcellrendererprogress.h \
-	gtkcellview.h \
-	gtkcellviewmenuitem.h \
-	gtkcellview.h \
-	gtkcellviewmenuitem.h \
 	gtkcertmgr.h \
-	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
@@ -143,13 +103,15 @@ pidgin_headers = \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
 	gtkeventloop.h \
-	gtkexpander.h \
 	gtkft.h \
+	gtkicon-theme.h \
+	gtkicon-theme-loader.h \
 	gtkidle.h \
 	gtkgaim-compat.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
+	gtkmedia.h \
 	gtkmenutray.h \
 	gtknickcolors.h \
 	gtknotify.h \
@@ -163,10 +125,12 @@ pidgin_headers = \
 	gtksavedstatuses.h \
 	gtkscrollbook.h \
 	gtksession.h \
+	gtksmiley.h \
 	gtksound.h \
 	gtksourceiter.h \
 	gtksourceundomanager.h \
 	gtksourceview-marshal.h \
+	gtkstatus-icon-theme.h \
 	gtkstatusbox.h \
 	pidginstock.h \
 	gtkthemes.h \
@@ -185,6 +149,7 @@ pidgin_DEPENDENCIES = @LIBOBJS@
 pidgin_LDFLAGS = -export-dynamic
 pidgin_LDADD = \
 	@LIBOBJS@ \
+	$(GLIB_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(XSS_LIBS) \
@@ -201,7 +166,6 @@ INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
 endif
 
 AM_CPPFLAGS = \
-	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/pidgin/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \

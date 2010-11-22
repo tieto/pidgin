@@ -29,16 +29,21 @@
 #ifndef _PURPLE_PLUGIN_H_
 #define _PURPLE_PLUGIN_H_
 
-#include <glib/glist.h>
+#include <glib.h>
 #include <gmodule.h>
 #include "signals.h"
 #include "value.h"
 
+/** @copydoc _PurplePlugin */
 typedef struct _PurplePlugin           PurplePlugin;
+/** @copydoc _PurplePluginInfo */
 typedef struct _PurplePluginInfo       PurplePluginInfo;
+/** @copydoc _PurplePluginUiInfo */
 typedef struct _PurplePluginUiInfo     PurplePluginUiInfo;
+/** @copydoc _PurplePluginLoaderInfo */
 typedef struct _PurplePluginLoaderInfo PurplePluginLoaderInfo;
 
+/** @copydoc _PurplePluginAction */
 typedef struct _PurplePluginAction     PurplePluginAction;
 
 typedef int PurplePluginPriority; /**< Plugin priority. */
@@ -100,6 +105,20 @@ struct _PurplePluginInfo
 	void *ui_info; /**< Used only by UI-specific plugins to build a preference screen with a custom UI */
 	void *extra_info;
 	PurplePluginUiInfo *prefs_info; /**< Used by any plugin to display preferences.  If #ui_info has been specified, this will be ignored. */
+
+	/**
+	 * This callback has a different use depending on whether this
+	 * plugin type is PURPLE_PLUGIN_STANDARD or PURPLE_PLUGIN_PROTOCOL.
+	 *
+	 * If PURPLE_PLUGIN_STANDARD then the list of actions will show up
+	 * in the Tools menu, under a submenu with the name of the plugin.
+	 * context will be NULL.
+	 *
+	 * If PURPLE_PLUGIN_PROTOCOL then the list of actions will show up
+	 * in the Accounts menu, under a submenu with the name of the
+	 * account.  context will be set to the PurpleConnection for that
+	 * account.  This callback will only be called for online accounts.
+	 */
 	GList *(*actions)(PurplePlugin *plugin, gpointer context);
 
 	void (*_purple_reserved1)(void);
@@ -183,7 +202,7 @@ struct _PurplePluginAction {
 	/** NULL for plugin actions menu, set to the PurpleConnection for
 	    account actions menu */
 	gpointer context;
-	
+
 	gpointer user_data;
 };
 
@@ -199,9 +218,10 @@ struct _PurplePluginAction {
  * Handles the initialization of modules.
  */
 #if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
+# define _FUNC_NAME(x) purple_init_##x##_plugin
 # define PURPLE_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
-	gboolean purple_init_##pluginname##_plugin(void);\
-	gboolean purple_init_##pluginname##_plugin(void) { \
+	gboolean _FUNC_NAME(pluginname)(void);\
+	gboolean _FUNC_NAME(pluginname)(void) { \
 		PurplePlugin *plugin = purple_plugin_new(TRUE, NULL); \
 		plugin->info = &(plugininfo); \
 		initfunc((plugin)); \
@@ -357,7 +377,7 @@ const gchar *purple_plugin_get_id(const PurplePlugin *plugin);
  * Returns a plugin's name.
  *
  * @param plugin The plugin.
- * 
+ *
  * @return THe name of the plugin, or @c NULL.
  */
 const gchar *purple_plugin_get_name(const PurplePlugin *plugin);
@@ -492,9 +512,23 @@ void *purple_plugin_ipc_call(PurplePlugin *plugin, const char *command,
 void purple_plugins_add_search_path(const char *path);
 
 /**
+ * Returns a list of plugin search paths.
+ *
+ * @constreturn A list of searched paths.
+ *
+ * @since 2.6.0
+ */
+GList *purple_plugins_get_search_paths(void);
+
+/**
  * Unloads all loaded plugins.
  */
 void purple_plugins_unload_all(void);
+
+/**
+ * Unloads all plugins of a specific type.
+ */
+void purple_plugins_unload(PurplePluginType type);
 
 /**
  * Destroys all registered plugins.
@@ -532,7 +566,7 @@ void purple_plugins_probe(const char *ext);
  */
 gboolean purple_plugins_enabled(void);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Registers a function that will be called when probing is finished.
  *
@@ -543,7 +577,7 @@ gboolean purple_plugins_enabled(void);
 void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Unregisters a function that would be called when probing is finished.
  *
@@ -553,7 +587,7 @@ void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
 void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Registers a function that will be called when a plugin is loaded.
  *
@@ -565,7 +599,7 @@ void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *)
 										  void *data);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Unregisters a function that would be called when a plugin is loaded.
  *
@@ -575,7 +609,7 @@ void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *)
 void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *));
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Registers a function that will be called when a plugin is unloaded.
  *
@@ -587,7 +621,7 @@ void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void 
 											void *data);
 #endif
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PLUGIN_C_)
 /**
  * Unregisters a function that would be called when a plugin is unloaded.
  *

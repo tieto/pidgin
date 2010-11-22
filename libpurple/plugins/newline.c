@@ -133,4 +133,4 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_bool("/plugins/core/newline/chat", TRUE);
 }
 
-PURPLE_INIT_PLUGIN(lastseen, init_plugin, info)
+PURPLE_INIT_PLUGIN(newline, init_plugin, info)

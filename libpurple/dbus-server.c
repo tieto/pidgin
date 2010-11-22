@@ -25,6 +25,12 @@
 #define DBUS_API_SUBJECT_TO_CHANGE
 #endif
 
+/* Allow the code below to see deprecated functions, so we can continue to
+ * export them via DBus. */
+#undef PURPLE_DISABLE_DEPRECATED
+
+#include "internal.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,8 +44,8 @@
 #include "dbus-bindings.h"
 #include "debug.h"
 #include "core.h"
-#include "internal.h"
 #include "savedstatuses.h"
+#include "smiley.h"
 #include "util.h"
 #include "value.h"
 #include "xmlnode.h"
@@ -121,8 +127,10 @@ purple_dbus_pointer_to_id(gconstpointer node)
 	gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
 	if ((id == 0) && (node != NULL))
 	{
-		purple_debug_warning("dbus",
-				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore this message.)\n");
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"Need to register an object with the dbus subsystem."
+				" (If you are not a developer, please ignore this message.)\n");
 		return 0;
 	}
 	return id;
@@ -416,6 +424,7 @@ purple_dbus_get_connection(void)
 }
 
 #include "dbus-bindings.c"
+#include "dbus-signals.c"
 
 static gboolean
 purple_dbus_dispatch_cb(DBusConnection *connection,
@@ -484,6 +493,9 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 	DBusMessage *reply;
 	GString *str;
 	GList *bindings_list, *node;
+	const char *signals;
+	const char *type;
+	const char *pointer_type;
 
 	str = g_string_sized_new(0x1000); /* TODO: why this size? */
 
@@ -523,6 +535,19 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 			g_string_append(str, "</method>\n");
 		}
 	}
+
+	if (sizeof(int) == sizeof(dbus_int32_t))
+		pointer_type = "type='i'";
+	else
+		pointer_type = "type='x'";
+
+	signals = dbus_signals;
+	while ((type = strstr(signals, "type='p'")) != NULL) {
+		g_string_append_len(str, signals, type - signals);
+		g_string_append(str, pointer_type);
+		signals = type + sizeof("type='p'") - 1;
+	}
+	g_string_append(str, signals);
 
 	g_string_append(str, "</interface>\n</node>\n");
 
@@ -576,7 +601,6 @@ purple_dbus_dispatch_init(void)
 {
 	static DBusObjectPathVTable vtable = {NULL, &purple_dbus_dispatch, NULL, NULL, NULL, NULL};
 	DBusError error;
-	int result;
 
 	dbus_error_init(&error);
 	purple_dbus_connection = dbus_bus_get(DBUS_BUS_STARTER, &error);
@@ -600,16 +624,15 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
-	dbus_request_name_reply =
-	result = dbus_bus_request_name(purple_dbus_connection,
+	dbus_request_name_reply = dbus_bus_request_name(purple_dbus_connection,
 			DBUS_SERVICE_PURPLE, 0, &error);
 
 	if (dbus_error_is_set(&error))
 	{
 		dbus_connection_unref(purple_dbus_connection);
-		dbus_error_free(&error);
 		purple_dbus_connection = NULL;
 		init_error = g_strdup_printf(N_("Failed to get serv name: %s"), error.name);
+		dbus_error_free(&error);
 		return;
 	}
 
@@ -773,7 +796,11 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
-		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore this message.)\n", name);
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"The signal \"%s\" caused some dbus error."
+				" (If you are not a developer, please ignore this message.)\n",
+				name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 
@@ -798,6 +825,9 @@ purple_dbus_get_handle(void)
 void
 purple_dbus_init(void)
 {
+	if (g_thread_supported())
+		dbus_g_thread_init();
+
 	purple_dbus_init_ids();
 
 	g_free(init_error);
