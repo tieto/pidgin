@@ -46,6 +46,30 @@
 # define NEWLINE_S "\n"
 #endif
 
+#ifdef CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS
+/*
+ * The purpose of this function is to prevent us from creating XML documents
+ * that contain characters that are not allowed in XML 1.0.  However, this
+ * change is unfortunately REALLY slow.
+ */
+static gboolean is_valid_xml10(const char *str)
+{
+	gunichar ch;
+
+	for (ch = g_utf8_get_char(str); str[0] != '\0'; str = g_utf8_next_char(str))
+	{
+		/*
+		 * Valid characters in XML 1.0 are: #x9 #xA #xD
+		 * [#x20-#xD7FF] [#xE000-#xFFFD] [#x10000-#x10FFFF]
+		 */
+		if (ch < 0x09 || (ch > 0x0a && ch < 0x0d) || (ch > 0x0d && ch < 0x20))
+			return FALSE;
+	}
+
+	return TRUE;
+}
+#endif /* CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS */
+
 static xmlnode*
 new_node(const char *name, XMLNodeType type)
 {
@@ -108,6 +132,10 @@ xmlnode_insert_data(xmlnode *node, const char *data, gssize size)
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(size != 0);
+
+#ifdef CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS
+	g_return_if_fail(is_valid_xml10(data));
+#endif /* CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS */
 
 	real_size = size == -1 ? strlen(data) : size;
 
@@ -186,6 +214,11 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 void
 xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 {
+#ifdef CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS
+	g_return_if_fail(is_valid_xml10(attr));
+	g_return_if_fail(is_valid_xml10(value));
+#endif /* CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS */
+
 	xmlnode_remove_attrib(node, attr);
 	xmlnode_set_attrib_full(node, attr, NULL, NULL, value);
 }
@@ -210,6 +243,14 @@ xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, cons
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(attr != NULL);
 	g_return_if_fail(value != NULL);
+#ifdef CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS
+	g_return_if_fail(is_valid_xml10(attr));
+	if (xmlns != NULL)
+		g_return_if_fail(is_valid_xml10(xmlns));
+	if (prefix != NULL)
+		g_return_if_fail(is_valid_xml10(prefix));
+	g_return_if_fail(is_valid_xml10(value));
+#endif /* CHECKING_XML_STRINGS_FOR_VALID_CHARACTERS */
 
 	xmlnode_remove_attrib_with_namespace(node, attr, xmlns);
 	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
