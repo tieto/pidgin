@@ -283,6 +283,7 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_destroy(cc);
 }
 
@@ -4450,7 +4451,6 @@ oscar_chat_leave(PurpleConnection *gc, int id)
 			purple_conversation_get_name(conv));
 
 	cc = find_oscar_chat(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
-	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_kill(gc, cc);
 }
 
