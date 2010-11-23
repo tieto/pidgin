@@ -16,10 +16,10 @@ void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	passport = purple_normalize(slplink->session->account, slplink->remote_user);
 	msn_message_set_header(msg, "P2P-Dest", passport);
 
-	data = msn_slpmsgpart_serialize(part, &size);
 	msg->part = msn_slpmsgpart_ref(part);
-
+	data = msn_slpmsgpart_serialize(part, &size);
 	msn_message_set_bin_data(msg, data, size);
+	g_free(data);
 
 	if (slplink->swboard == NULL)
 	{
@@ -33,6 +33,7 @@ void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	}
 
 	msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
+	msn_message_unref(msg);
 }
 
 /** Called when a message times out. */

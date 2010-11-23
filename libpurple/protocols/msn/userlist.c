@@ -699,8 +699,6 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 
 	if (userlist->buddy_icon_window > 0) {
 		GQueue *queue;
-		PurpleAccount *account;
-		const char *username;
 
 		queue = userlist->buddy_icon_requests;
 
@@ -708,9 +706,6 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 			return;
 
 		user = g_queue_pop_head(queue);
-
-		account  = userlist->session->account;
-		username = user->passport;
 
 		userlist->buddy_icon_window--;
 

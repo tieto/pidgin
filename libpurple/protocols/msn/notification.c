@@ -95,7 +95,6 @@ connect_cb(MsnServConn *servconn)
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	MsnTransaction *trans;
-	PurpleAccount *account;
 	GString *vers;
 	const char *ver_str;
 	int i;
@@ -104,7 +103,6 @@ connect_cb(MsnServConn *servconn)
 
 	cmdproc = servconn->cmdproc;
 	session = servconn->session;
-	account = session->account;
 
 	vers = g_string_new("");
 
@@ -189,11 +187,7 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSession *session;
-	PurpleAccount *account;
-
-	session = cmdproc->session;
-	account = session->account;
+	MsnSession *session = cmdproc->session;
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
@@ -315,6 +309,7 @@ msn_notification_close(MsnNotification *notification)
 	trans = msn_transaction_new(notification->cmdproc, "OUT", NULL);
 	msn_transaction_set_saveable(trans, FALSE);
 	msn_cmdproc_send_trans(notification->cmdproc, trans);
+	msn_transaction_destroy(trans);
 
 	msn_notification_disconnect(notification);
 }
@@ -337,7 +332,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -732,10 +727,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	for (domain_node = xmlnode_get_child(root, "d");
 	     domain_node;
 	     domain_node = xmlnode_get_next_twin(domain_node)) {
-		const gchar * domain = NULL;
 		xmlnode *contact_node = NULL;
-
-		domain = xmlnode_get_attrib(domain_node, "n");
 
 		for (contact_node = xmlnode_get_child(domain_node, "c");
 		     contact_node;
@@ -1021,8 +1013,6 @@ static void
 iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj = NULL;
 	unsigned long clientid, extcaps;
@@ -1032,8 +1022,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char *friendly;
 
 	session = cmdproc->session;
-	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
@@ -1222,7 +1210,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 					g_free(body_str);
 					g_free(body_enc);
-					msn_message_destroy(msg);
+					msn_message_unref(msg);
 					trans->data = NULL;
 				}
 			}
@@ -1246,8 +1234,6 @@ static void
 nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid, extcaps;
@@ -1256,8 +1242,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
-	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
@@ -1455,7 +1439,7 @@ rng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = msn_switchboard_new(session);
 
 	msn_switchboard_set_invited(swboard, TRUE);
-	msn_switchboard_set_session_id(swboard, cmd->params[0]);
+	msn_switchboard_set_session_id(swboard, session_id);
 	msn_switchboard_set_auth_key(swboard, cmd->params[3]);
 	swboard->im_user = g_strdup(cmd->params[4]);
 	/* msn_switchboard_add_user(swboard, cmd->params[4]); */
@@ -1696,14 +1680,12 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
 	MsnSession *session;
-	PurpleAccount *account;
 	MsnUser *user;
 	const char *passport;
 	xmlnode *payloadNode;
 	char *psm_str, *str;
 
 	session = cmdproc->session;
-	account = session->account;
 
 	passport = cmd->params[0];
 	if (g_str_equal(passport, session->user->passport))

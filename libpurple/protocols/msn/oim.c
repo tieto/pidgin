@@ -641,10 +641,10 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 			type = msn_message_get_content_type(multipart);
 			if (type && !strcmp(type, "text/plain")) {
 				decode_msg = (char *)purple_base64_decode(multipart->body, &body_len);
-				msn_message_destroy(multipart);
+				msn_message_unref(multipart);
 				break;
 			}
-			msn_message_destroy(multipart);
+			msn_message_unref(multipart);
 		}
 
 		g_strfreev(tokens);
@@ -652,7 +652,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 		if (decode_msg == NULL) {
 			purple_debug_error("msn", "Couldn't find text/plain OIM message.\n");
-			msn_message_destroy(message);
+			msn_message_unref(message);
 			return;
 		}
 	} else {
@@ -708,7 +708,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	g_free(passport);
 	g_free(decode_msg);
-	msn_message_destroy(message);
+	msn_message_unref(message);
 }
 
 /* Parse the XML data,

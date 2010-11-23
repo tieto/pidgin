@@ -69,8 +69,6 @@ int aim__registermodule(OscarData *od, int (*modfirst)(OscarData *, aim_module_t
 	mod->next = (aim_module_t *)od->modlistv;
 	od->modlistv = mod;
 
-	purple_debug_misc("oscar", "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
-
 	return 0;
 }
 

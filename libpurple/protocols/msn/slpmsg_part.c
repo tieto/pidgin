@@ -28,12 +28,12 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	const char *tmp;
 	int body_len;
 
-	tmp = data;
-	part = msn_slpmsgpart_new(NULL, NULL);
-
 	if (data_len < sizeof(*header)) {
 		return NULL;
 	}
+
+	part = msn_slpmsgpart_new(NULL, NULL);
+	tmp = data;
 
 	/* Extract the binary SLP header */
 	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
@@ -109,8 +109,7 @@ void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size
 {
 	g_return_if_fail(part != NULL);
 
-	if (part->buffer != NULL)
-		g_free(part->buffer);
+	g_free(part->buffer);
 
 	if (data != NULL && len > 0) {
 		part->buffer = g_malloc(len + 1);
@@ -153,6 +152,9 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 	tmp += siz;
 
 	*ret_size = tmp - base;
+
+	g_free(header);
+	g_free(footer);
 
 	return base;
 }

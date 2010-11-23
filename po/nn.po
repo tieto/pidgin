@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-11 01:26+0100\n"
+"POT-Creation-Date: 2010-11-21 13:55-0500\n"
+"PO-Revision-Date: 2010-11-15 21:27+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
 "Language: nn\n"
@@ -3841,7 +3841,7 @@ msgid "Plaintext Authentication"
 msgstr "Autentisering i klartekst"
 
 msgid "You require encryption, but it is not available on this server."
-msgstr "Du krev kryptering som ikkje er tilgjengeleg på denne tenaren."
+msgstr "Du krev kryptering, men han finst ikkje på denne tenaren."
 
 msgid "Invalid challenge from server"
 msgstr "Ugyldig utfordring frå tenaren"
@@ -4843,15 +4843,6 @@ msgstr "Sparka ut (%s)"
 msgid "Unknown Error in presence"
 msgstr "Ukjend feil til stades"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Overføringa av samtidsdatastraumen feila\n"
-
-msgid "Transfer was closed."
-msgstr "Overføringa blei lukka."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Klarte ikkje å opna samtidsdatastraum"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5169,26 +5160,6 @@ msgstr "Klarte ikkje å leggja til vennen"
 msgid "The username specified does not exist."
 msgstr "Brukarnamnet finst ikkje"
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problem med synkroniseringa av vennelista i %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s på den lokale lista er med i gruppa \"%s\", men ikkje på tenarlista. "
-"Ønskjer du å leggja ho/han til?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s er i den lokale lista, men ikkje på tenarlista. Ønskjer du å leggja ho/"
-"han til?"
-
 msgid "Unable to parse message"
 msgstr "Klarte ikkje å tyda meldinga"
 
@@ -5359,6 +5330,26 @@ msgstr "Feilkoden %d er ukjend"
 msgid "MSN Error: %s\n"
 msgstr "MSN-feil: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problem med synkroniseringa av vennelista i %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s på den lokale lista er med i gruppa \"%s\", men ikkje på tenarlista. "
+"Ønskjer du å leggja ho/han til?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s er i den lokale lista, men ikkje på tenarlista. Ønskjer du å leggja ho/"
+"han til?"
+
 msgid "Other Contacts"
 msgstr "Andre kontaktar"
 
@@ -5411,11 +5402,23 @@ msgstr "Det nye MSN-visingsnamnet ditt er for langt."
 msgid "Set friendly name for %s."
 msgstr "Vel visingsnamnet til %s."
 
-msgid "Set your friendly name."
-msgstr "Vel visingsnamn."
+msgid "Set Friendly Name"
+msgstr "Vel visingsnamn"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Dette er namnet som vil synast hos andre MSN-venner."
+
+msgid "This Location"
+msgstr "Denne staden"
+
+msgid "This is the name that identifies this location"
+msgstr "Dette er namnet som identifiserer denne staden"
+
+msgid "Other Locations"
+msgstr "Andre stader"
+
+msgid "You can sign out from other locations here"
+msgstr "Du kan logga ut frå andre stader her"
 
 msgid "Set your home phone number."
 msgstr "Skriv inn heimetelefonnummeret ditt."
@@ -5501,6 +5504,9 @@ msgstr "Kontortittel"
 
 msgid "Set Friendly Name..."
 msgstr "Vel visingsnamn…"
+
+msgid "View Locations..."
+msgstr "Vel stader…"
 
 msgid "Set Home Phone Number..."
 msgstr "Skriv inn heimetelefonnummer…"
@@ -5862,17 +5868,16 @@ msgstr "Sender informasjonskapsel"
 msgid "Retrieving buddy list"
 msgstr "Hentar vennelista"
 
-# dårleg formulering?
 #, c-format
 msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
-"%s spør om å få sjå nettkameraet ditt. Denne funksjonen er enno ikkje støtta."
+"%s spør om løyve til å sjå nettkameraet ditt, men førespurnaden er enno "
+"ikkje støtta."
 
-# dårleg formulering?
 #, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
-"%s har invitert deg til å få sjå nettkameraet hans/hennar, men funksjonen er "
+"%s har gjeve deg løyve til å sjå nettkameraet sitt, men denne funksjonen er "
 "enno ikkje støtta."
 
 msgid "Away From Computer"
@@ -6889,6 +6894,13 @@ msgstr ""
 "Du har kopla til og blitt fråkopla for ofte. Vent i ti minutt og prøv igjen. "
 "Held du fram med å prøva, vil du måtta venta endå lenger."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Du krev kryptering i kontoinnstillingane dine, men ein av tenarane kan ikkje "
+"gje deg det."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
@@ -7199,6 +7211,13 @@ msgstr ""
 "Får ikkje til å logga på som %s fordi brukarnamnet er ugyldig. Brukarnamn må "
 "vera ei gyldig e-postadresse, eller begynna med ein bokstav og berre "
 "innehalda bokstavar, tal og mellomrom, eller berre innehalda tal."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Du krev kryptering i kontoinnstillingane dine, men systemet ditt kan ikkje "
+"gje deg det."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7704,13 +7723,11 @@ msgstr "Innstillingar for vidaresending (nett)"
 msgid "Set Privacy Options..."
 msgstr "Personvernval…"
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Vis venne_liste"
+msgstr "Vis synleg liste"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Invitasjonsliste"
+msgstr "Vis usynleg liste"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7727,6 +7744,9 @@ msgstr "Vis venner som ventar på godkjenning"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Finn venn utfrå e-postadressa…"
+
+msgid "Don't use encryption"
+msgstr "Bruk ikkje kryptering"
 
 msgid "Use clientLogin"
 msgstr "Bruk klientpålogging"
@@ -7916,9 +7936,9 @@ msgid "Buddy Comment"
 msgstr "Vennenotat"
 
 # 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
-msgstr "Bruk kryptering om mogleg"
+msgstr "Brukaropplysningar er ikkje tilgengelege: %s"
 
 msgid "Mobile Phone"
 msgstr "Mobiltelefon"
@@ -7927,7 +7947,7 @@ msgid "Personal Web Page"
 msgstr "Personelg nettside"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Tilleggsinformasjon"
 
@@ -7955,46 +7975,53 @@ msgstr "Medlem sidan"
 msgid "Capabilities"
 msgstr "Evner"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Framstå som tilkopla"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
+msgstr "Framstå som fråkopla"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
+msgid "Appear Offline"
+msgstr "Framstå som fråkopla"
+
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
+msgid "Don't Appear Offline"
 msgstr "Framstå som tilkopla"
 
-msgid "Appear Offline"
-msgstr "Verkar vera fråkopla"
-
-#, fuzzy
-msgid "Don't Appear Offline"
-msgstr "Verkar vera fråkopla"
-
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Du er blitt sparka ut frå denne MultiMX-en."
+msgstr "du har ingen venner på denne lista"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"Du kan be om godkjenning frå desse vennene igjen ved å høgreklikka dei og "
-"velja \"Spør om ny godkjenning.\""
+"Du kan leggja til ein venn i denne lista ved å høgreklikka han og velja \"%s"
+"\""
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Synleg"
+msgstr "Synleg liste"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "Desse vennene vil sjå statusen din om du byter til \"Usynleg\" "
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Invitasjonsliste"
+msgstr "Usynleg liste"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Desse vennene vil alltid sjå deg som fråkopla"
 
 msgid "Aquarius"
 msgstr "Vassmannen"
@@ -12280,6 +12307,9 @@ msgstr "Kurdisk"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Maithili"
+msgstr "Maithili"
+
 msgid "Macedonian"
 msgstr "Makedonsk"
 
@@ -15386,84 +15416,14 @@ msgstr "Besøk Pidgin sin nettstad"
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
 
-#~ msgid "The certificate has expired and should not be considered valid."
-#~ msgstr "Sertifikatet har gått ut og kan ikkje reknast for å vera gyldig."
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Overføringa av samtidsdatastraumen feila\n"
 
-#~ msgid "Require SSL/TLS"
-#~ msgstr "Krev SSL/TLS"
+#~ msgid "Transfer was closed."
+#~ msgstr "Overføringa blei lukka."
 
-#~ msgid "Force old (port 5223) SSL"
-#~ msgstr "Overstyr med gammal SSL (port 5223)"
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Klarte ikkje å opna samtidsdatastraum"
 
-#~ msgid ""
-#~ "[Unable to display a message from this user because it contained invalid "
-#~ "characters.]"
-#~ msgstr ""
-#~ "Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
-#~ "teikn.]"
-
-#~ msgid "Search for Buddy by Information"
-#~ msgstr "Søk etter venn utfrå opplysningar"
-
-#~ msgid "The nick name you entered is invalid."
-#~ msgstr "Kallenamnet du skreiv er ugyldig."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Påloggingsnamn MXit"
-
-#~ msgid "Nick Name"
-#~ msgstr "Kallenamn"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "Mobiltelefonnummeret ditt…"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/Media/_Legg på"
-
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "Sertifikatet er ikkje gyldig enno."
-
-#~ msgid "Rate to host"
-#~ msgstr "Fart mot vert"
-
-#~ msgid "Rate to client"
-#~ msgstr "Fart mot klient"
-
-#~ msgid "Unknown reason."
-#~ msgstr "Ukjend årsak."
-
-#~ msgid "Current Mood"
-#~ msgstr "Sinnsstemninga no"
-
-#~ msgid "New Mood"
-#~ msgstr "Ny sinnsstemning"
-
-#~ msgid "Change your Mood"
-#~ msgstr "Endra sinnsstemninga di"
-
-#~ msgid "How do you feel right now?"
-#~ msgstr "Korleis kjenner du deg nett no?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "Endra sinnsstemninga…"
-
-#~ msgid "Orientation"
-#~ msgstr "Orientering"
-
-#~ msgid "The orientation of the tray."
-#~ msgstr "Panelorienteringa."
-
-#~ msgid "Artist"
-#~ msgstr "Kunstnar"
-
-#~ msgid "Album"
-#~ msgstr "Album"
-
-#~ msgid "Pager server"
-#~ msgstr "Søkjetenestetenar"
-
-#~ msgid "Yahoo Chat server"
-#~ msgstr "Yahoo pratetenar"
-
-#~ msgid "Yahoo Chat port"
-#~ msgstr "Yahoo prateport"
+#~ msgid "Set your friendly name."
+#~ msgstr "Vel visingsnamn."

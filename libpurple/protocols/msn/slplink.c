@@ -625,6 +625,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	/* All the pieces of the slpmsg have been received */
 	if (header->offset + header->length >= header->total_size)
 		process_complete_msg(slplink, slpmsg, header);
+
+	/* NOTE: The slpmsg will be destroyed in process_complete_msg or left in
+	   the slplink until fully received. Don't free it here!
+	 */
 }
 
 void

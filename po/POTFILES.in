@@ -116,6 +116,7 @@ libpurple/protocols/msn/oim.c
 libpurple/protocols/msn/servconn.c
 libpurple/protocols/msn/session.c
 libpurple/protocols/msn/slp.c
+libpurple/protocols/msn/slpcall.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c

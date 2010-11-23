@@ -520,11 +520,18 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 /* Forward declarations are fun! */
 static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum dt, gnutls_x509_crt_fmt mode);
+/* indeed! */
+static gboolean
+x509_certificate_signed_by(PurpleCertificate * crt,
+			   PurpleCertificate * issuer);
+static void
+x509_destroy_certificate(PurpleCertificate * crt);
 
 static GList *
 ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 {
 	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+	PurpleCertificate *prvcrt = NULL;
 
 	/* List of Certificate instances to return */
 	GList * peer_certs = NULL;
@@ -550,7 +557,17 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 		/* Append is somewhat inefficient on linked lists, but is easy
 		   to read. If someone complains, I'll change it.
 		   TODO: Is anyone complaining? (Maybe elb?) */
-		peer_certs = g_list_append(peer_certs, newcrt);
+		/* only append if previous cert was actually signed by this one.
+		 * Thanks Microsoft. */
+		if ((prvcrt == NULL) || x509_certificate_signed_by(prvcrt, newcrt)) {
+			peer_certs = g_list_append(peer_certs, newcrt);
+			prvcrt = newcrt;
+		} else {
+			x509_destroy_certificate(newcrt);
+			purple_debug_error("gnutls", "Dropping further peer certificates "
+			                             "because the chain is broken!\n");
+			break;
+		}
 	}
 
 	/* cert_list doesn't need free()-ing */

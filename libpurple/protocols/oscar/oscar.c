@@ -73,7 +73,6 @@ static guint64 purple_caps =
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01};
-static guint8 ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 struct create_room {
 	char *name;
@@ -284,7 +283,6 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
-	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_destroy(cc);
 }
 
@@ -376,12 +374,10 @@ connection_common_established_cb(FlapConnection *conn)
 		aim_request_login(od, conn, purple_account_get_username(account));
 		purple_debug_info("oscar", "Username sent, waiting for response\n");
 		purple_connection_update_progress(gc, _("Username sent"), 1, OSCAR_CONNECT_STEPS);
-		ck[1] = 0x65;
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
 	{
 		purple_connection_update_progress(gc, _("Connection established, cookie sent"), 4, OSCAR_CONNECT_STEPS);
-		ck[4] = 0x61;
 	}
 	else if (conn->type == SNAC_FAMILY_CHAT)
 	{
@@ -619,16 +615,46 @@ static const gchar *login_servers[] = {
 	ICQ_DEFAULT_SSL_LOGIN_SERVER,
 };
 
-static const gchar *get_login_server(gboolean is_icq, gboolean use_ssl)
+static const gchar *
+get_login_server(gboolean is_icq, gboolean use_ssl)
 {
-	return login_servers[is_icq*2 + use_ssl];
+	return login_servers[(is_icq ? 2 : 0) + (use_ssl ? 1 : 0)];
 }
+
+static gint
+compare_handlers(gconstpointer a, gconstpointer b)
+{
+	guint aa = GPOINTER_TO_UINT(a);
+	guint bb = GPOINTER_TO_UINT(b);
+	guint family1 = aa >> 16;
+	guint family2 = bb >> 16;
+	guint subtype1 = aa & 0xFFFF;
+	guint subtype2 = bb & 0xFFFF;
+	if (family1 != family2) {
+		return family1 - family2;
+	}
+	return subtype1 - subtype2;
+}
+
+#if !GLIB_CHECK_VERSION(2,14,0)
+static void hash_table_get_list_of_keys(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **handlers = (GList **)user_data;
+
+	*handlers = g_list_prepend(*handlers, key);
+}
+#endif /* GLIB < 2.14.0 */
 
 void
 oscar_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
 	OscarData *od;
+	const gchar *encryption_type;
+	GList *handlers;
+	GList *sorted_handlers;
+	GList *cur;
+	GString *msg = g_string_new("");
 
 	gc = purple_account_get_connection(account);
 	od = oscar_data_new();
@@ -687,6 +713,23 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, SNAC_SUBTYPE_USERLOOKUP_ERROR, purple_parse_searcherror, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, 0x0003, purple_parse_searchreply, 0);
 
+	g_string_append(msg, "Registered handlers: ");
+#if GLIB_CHECK_VERSION(2,14,0)
+	handlers = g_hash_table_get_keys(od->handlerlist);
+#else
+	handlers = NULL;
+	g_hash_table_foreach(od->handlerlist, hash_table_get_list_of_keys, &handlers);
+#endif /* GLIB < 2.14.0 */
+	sorted_handlers = g_list_sort(g_list_copy(handlers), compare_handlers);
+	for (cur = sorted_handlers; cur; cur = cur->next) {
+		guint x = GPOINTER_TO_UINT(cur->data);
+		g_string_append_printf(msg, "%04x/%04x, ", x >> 16, x & 0xFFFF);
+	}
+	g_list_free(sorted_handlers);
+	g_list_free(handlers);
+	purple_debug_misc("oscar", "%s\n", msg->str);
+	g_string_free(msg, TRUE);
+
 	purple_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
 
 	if (!oscar_util_valid_name(purple_account_get_username(account))) {
@@ -706,7 +749,16 @@ oscar_login(PurpleAccount *account)
 	}
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
-	od->use_ssl = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
+
+	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
+	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+		purple_connection_error_reason(
+			gc,
+			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+			_("You required encryption in your account settings, but encryption is not supported by your system."));
+		return;
+	}
+	od->use_ssl = purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
@@ -731,12 +783,6 @@ oscar_login(PurpleAccount *account)
 		newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 
 		if (od->use_ssl) {
-			if (!purple_ssl_is_supported()) {
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-						_("SSL support unavailable"));
-				return;
-			}
-
 			server = purple_account_get_string(account, "server", get_login_server(od->icq, TRUE));
 
 			/*
@@ -746,7 +792,7 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, FALSE))) {
+			if (!strcmp(server, get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
 				server = get_login_server(od->icq, TRUE);
@@ -782,7 +828,6 @@ oscar_login(PurpleAccount *account)
 	}
 
 	purple_connection_update_progress(gc, _("Connecting"), 0, OSCAR_CONNECT_STEPS);
-	ck[0] = 0x5a;
 }
 
 void
@@ -981,7 +1026,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * Use SSL only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
 	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
@@ -1006,7 +1051,6 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	od->default_port = port;
 
 	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
-	ck[3] = 0x64;
 
 	return 1;
 }
@@ -1126,7 +1170,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 
 	purple_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
-	ck[3] = 0x64;
 
 	return 1;
 }
@@ -1210,7 +1253,6 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
-	ck[2] = 0x6c;
 
 	return 1;
 }
@@ -1240,6 +1282,20 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	else
 		host = g_strdup(redir->ip);
 
+	if (!redir->use_ssl) {
+		const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
+		if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
+		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
+			purple_connection_error_reason(
+				gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You required encryption in your account settings, but one of the servers doesn't support it."));
+			return 0;
+		} 
+	}
+
 	/*
 	 * These FLAP servers advertise SSL (type "0x02"), but SSL connections to these hosts
 	 * die a painful death. iChat and Miranda, when using SSL, still do these in plaintext.
@@ -1247,14 +1303,11 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (redir->use_ssl && (redir->group == SNAC_FAMILY_ADMIN ||
 	                       redir->group == SNAC_FAMILY_BART))
 	{
-		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n",
-						redir->group);
+		purple_debug_info("oscar", "Ignoring broken SSL for FLAP type 0x%04hx.\n", redir->group);
 		redir->use_ssl = 0;
 	}
 
-	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx%s\n",
-					host, port, redir->group,
-					od->use_ssl && !redir->use_ssl ? " without SSL, despite main stream encryption" : "");
+	purple_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx\n", host, port, redir->group);
 
 	newconn = flap_connection_new(od, redir->group);
 	newconn->cookielen = redir->cookielen;
@@ -1479,13 +1532,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 
 	return 1;
-}
-
-static void purple_check_comment(OscarData *od, const char *str) {
-	if ((str == NULL) || strcmp(str, (const char *)ck))
-		aim_locate_setcaps(od, purple_caps);
-	else
-		aim_locate_setcaps(od, purple_caps | OSCAR_CAPABILITY_SECUREIM);
 }
 
 static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
@@ -2386,6 +2432,7 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	switch(type) {
 		case 0x0002: {
+			GString *msg = g_string_new("");
 			guint8 maxrooms;
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i;
@@ -2394,15 +2441,17 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 
-			purple_debug_misc("oscar", "chat info: Chat Rights:\n");
-			purple_debug_misc("oscar",
-					   "chat info: \tMax Concurrent Rooms: %hhd\n", maxrooms);
-			purple_debug_misc("oscar",
-					   "chat info: \tExchange List: (%d total)\n", exchangecount);
-			for (i = 0; i < exchangecount; i++)
-				purple_debug_misc("oscar",
-						   "chat info: \t\t%hu    %s\n",
-						   exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
+			g_string_append_printf(msg, "chat info: Max Concurrent Rooms: %hhd, Exchange List (%d total): ", maxrooms, exchangecount);
+			for (i = 0; i < exchangecount; i++) {
+				g_string_append_printf(msg, "%hu", exchanges[i].number);
+				if (exchanges[i].name) {
+					g_string_append_printf(msg, " %s", exchanges[i].name);
+				}
+				g_string_append(msg, ", ");
+			}
+			purple_debug_misc("oscar", "%s\n", msg->str);
+			g_string_free(msg, TRUE);
+
 			while (od->create_rooms) {
 				struct create_room *cr = od->create_rooms->data;
 				purple_debug_info("oscar",
@@ -3927,14 +3976,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
-					if (!oscar_util_name_compare(curitem->name, purple_account_get_username(account))) {
-						char *comment = aim_ssi_getcomment(od->ssi.local, gname, curitem->name);
-						if (comment != NULL)
-						{
-							purple_check_comment(od, comment);
-							g_free(comment);
-						}
-					}
 
 					/* Mobile users should always be online */
 					if (curitem->name[0] == '+') {
@@ -4409,6 +4450,7 @@ oscar_chat_leave(PurpleConnection *gc, int id)
 			purple_conversation_get_name(conv));
 
 	cc = find_oscar_chat(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_kill(gc, cc);
 }
 
@@ -4803,7 +4845,6 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	OscarData *od;
 	PurpleBuddy *b;
 	PurpleGroup *g;
-	const char *username;
 
 	gc = data->gc;
 	od = purple_connection_get_protocol_data(gc);
@@ -4822,11 +4863,6 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	}
 
 	aim_ssi_editcomment(od, purple_group_get_name(g), data->name, text);
-
-	username = purple_account_get_username(account);
-	if (!oscar_util_name_compare(data->name, username))
-		purple_check_comment(od, text);
-
 	oscar_free_name_data(data);
 }
 
@@ -5677,15 +5713,34 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
+	static const gchar *encryption_keys[] = {
+		N_("Use encryption if available"),
+		N_("Require encryption"),
+		N_("Don't use encryption"),
+		NULL
+	};
+	static const gchar *encryption_values[] = {
+		OSCAR_OPPORTUNISTIC_ENCRYPTION,
+		OSCAR_REQUIRE_ENCRYPTION,
+		OSCAR_NO_ENCRYPTION,
+		NULL
+	};
+	GList *encryption_options = NULL;
+	int i;
 
-	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, OSCAR_DEFAULT_USE_SSL));
+	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, TRUE));
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use SSL"), "use_ssl",
-			OSCAR_DEFAULT_USE_SSL);
+	for (i = 0; encryption_keys[i]; i++) {
+		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(_(encryption_keys[i]));
+		kvp->value = g_strdup(encryption_values[i]);
+		encryption_options = g_list_append(encryption_options, kvp);
+	}
+	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",

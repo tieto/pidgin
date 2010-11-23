@@ -567,8 +567,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 	} else if (!strcmp(euf_guid, MSN_CAM_REQUEST_GUID)) {
 		purple_debug_info("msn", "Cam request.\n");
-		if (slpcall && slpcall->slplink &&
-				slpcall->slplink->session) {
+		if (slpcall->slplink && slpcall->slplink->session) {
 			PurpleConversation *conv;
 			gchar *from = slpcall->slplink->remote_user;
 			conv = purple_find_conversation_with_account(
@@ -590,8 +589,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 	} else if (!strcmp(euf_guid, MSN_CAM_GUID)) {
 		purple_debug_info("msn", "Cam invite.\n");
-		if (slpcall && slpcall->slplink &&
-				slpcall->slplink->session) {
+		if (slpcall->slplink && slpcall->slplink->session) {
 			PurpleConversation *conv;
 			gchar *from = slpcall->slplink->remote_user;
 			conv = purple_find_conversation_with_account(
@@ -828,6 +826,7 @@ got_ok(MsnSlpCall *slpcall,
 
 		/* Try direct file transfer by sending a second INVITE */
 		dc = msn_dc_new(slpcall);
+		g_free(slpcall->branch);
 		slpcall->branch = rand_guid();
 
 		dc->listen_data = purple_network_listen_range(
