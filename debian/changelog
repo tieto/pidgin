@@ -1,3 +1,9 @@
+pidgin (2.7.7-1) unstable; urgency=low
+
+  * Imported Upstream version 2.7.7
+
+ -- Ari Pollak <ari@debian.org>  Wed, 24 Nov 2010 10:01:07 -0500
+
 pidgin (2.7.6-1) unstable; urgency=low
 
   * Imported Upstream version 2.7.6
