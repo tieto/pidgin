@@ -46,14 +46,14 @@ BuildRequires: gtk2-devel, libidn-devel
 %if "%{_vendor}" == "suse"
 # For SuSE:
 BuildRequires: gnutls-devel
-%define sslopts "--enable-gnutls=yes --enable-nss=no"
+%define sslopts --enable-gnutls=yes --enable-nss=no
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
 Requires(pre): gconf2
 Requires(post): gconf2
 Requires(preun): gconf2
 %else
-%define sslopts "--enable-gnutls=no --enable-nss=yes"
+%define sslopts --enable-gnutls=no --enable-nss=yes
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 Requires(pre): GConf2

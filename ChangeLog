@@ -1,5 +1,21 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.7 (11/23/2010):
+	General:
+	* Allow multiple CA certificates to share the same Distinguished Name
+	  (DN).  Partially fixes remaining MSN issues from #12906.
+	* The GNUTLS SSL plugin now discards any certificate (and all subsequent
+	  certificates) in a chain if it did not sign the previous certificate.
+	  Partially fixes remaining MSN issues from #12906.
+	* Open requests related to a file transfer are now closed when the request
+	  is cancelled locally. (#11666)
+
+	AIM and ICQ:
+	* AIM should now connect if "Use clientLogin" is turned off and the
+	  "Server" field is set to anything other than "login.oscar.aol.com" or
+	  "slogin.oscar.aol.com". (#12948)
+	* Fix a crash on connection loss. (#5927)
+
 version 2.7.6 (11/21/2010):
 	General:
 	* Included Microsoft Internet Authority 2010 and Microsoft Secure Server

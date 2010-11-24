@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.7.6"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.7.7"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.7.6
+%define pidginver 2.7.7
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.7.6"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.7.7"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.7.6.tar.bz2
+Source:     %{name}-2.7.7.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -46,14 +46,14 @@ BuildRequires: gtk2-devel, libidn-devel
 %if "%{_vendor}" == "suse"
 # For SuSE:
 BuildRequires: gnutls-devel
-%define sslopts "--enable-gnutls=yes --enable-nss=no"
+%define sslopts --enable-gnutls=yes --enable-nss=no
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
 Requires(pre): gconf2
 Requires(post): gconf2
 Requires(preun): gconf2
 %else
-%define sslopts "--enable-gnutls=no --enable-nss=yes"
+%define sslopts --enable-gnutls=no --enable-nss=yes
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 Requires(pre): GConf2
@@ -221,7 +221,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.7.6
+%setup -q -n %{name}-2.7.7
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
