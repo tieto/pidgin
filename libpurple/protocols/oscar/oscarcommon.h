@@ -33,6 +33,7 @@
 #include "status.h"
 
 #define AIM_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define AIM_ALT_LOGIN_SERVER "login.messaging.aol.com"
 #define AIM_DEFAULT_SSL_LOGIN_SERVER "slogin.oscar.aol.com"
 #define ICQ_DEFAULT_LOGIN_SERVER "login.icq.com"
 #define ICQ_DEFAULT_SSL_LOGIN_SERVER "slogin.icq.com"
