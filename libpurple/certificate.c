@@ -947,6 +947,22 @@ x509_ca_locate_cert(GList *lst, const gchar *dn)
 	return NULL;
 }
 
+static GSList *
+x509_ca_locate_certs(GList *lst, const gchar *dn)
+{
+	GList *cur;
+	GSList *crts = NULL;
+
+	for (cur = lst; cur; cur = cur->next) {
+		x509_ca_element *el = cur->data;
+		if (purple_strequal(dn, el->dn)) {
+			crts = g_slist_prepend(crts, el);
+		}
+	}
+	return crts;
+}
+
+
 static gboolean
 x509_ca_cert_in_pool(const gchar *id)
 {
@@ -983,6 +999,31 @@ x509_ca_get_cert(const gchar *id)
 	}
 
 	return crt;
+}
+
+static GSList *
+x509_ca_get_certs(const gchar *id)
+{
+	GSList *crts = NULL, *els = NULL;
+
+	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
+	g_return_val_if_fail(id, NULL);
+
+	/* Search the memory-cached pool */
+	els = x509_ca_locate_certs(x509_ca_certs, id);
+
+	if (els != NULL) {
+		GSList *cur;
+		/* Make a copy of the memcached ones for the function caller
+		   to play with */
+		for (cur = els; cur; cur = cur->next) {
+			x509_ca_element *el = cur->data;
+			crts = g_slist_prepend(crts, purple_certificate_copy(el->crt));
+		}
+		g_slist_free(els);
+	}
+
+	return crts;
 }
 
 static gboolean
@@ -1558,7 +1599,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	PurpleCertificate *ca_crt, *end_crt;
 	PurpleCertificate *failing_crt;
 	GList *chain = vrq->cert_chain;
+	GSList *ca_crts, *cur;
 	GByteArray *last_fpr, *ca_fpr;
+	gboolean valid = FALSE;
 	gchar *ca_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
@@ -1646,8 +1689,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for a CA with DN=%s\n",
 			  ca_id);
-	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
-	if ( NULL == ca_crt ) {
+	ca_crts = x509_ca_get_certs(ca_id);
+	if ( NULL == ca_crts ) {
 		flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 
 		purple_debug_warning("certificate/x509/tls_cached",
@@ -1677,23 +1720,32 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	 * the list, so here we are.
 	 */
 	last_fpr = purple_certificate_get_fingerprint_sha1(end_crt);
-	ca_fpr   = purple_certificate_get_fingerprint_sha1(ca_crt);
+	for (cur = ca_crts; cur; cur = cur->next) {
+		ca_crt = cur->data;
+		ca_fpr = purple_certificate_get_fingerprint_sha1(ca_crt);
 
-	if ( !byte_arrays_equal(last_fpr, ca_fpr) &&
-			!purple_certificate_signed_by(end_crt, ca_crt) )
-	{
-		/* TODO: If signed_by ever returns a reason, maybe mention
-		   that, too. */
-		/* TODO: Also mention the CA involved. While I could do this
-		   now, a full DN is a little much with which to assault the
-		   user's poor, leaky eyes. */
-		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+		if ( byte_arrays_equal(last_fpr, ca_fpr) ||
+				purple_certificate_signed_by(end_crt, ca_crt) )
+		{
+			/* TODO: If signed_by ever returns a reason, maybe mention
+			   that, too. */
+			/* TODO: Also mention the CA involved. While I could do this
+			   now, a full DN is a little much with which to assault the
+			   user's poor, leaky eyes. */
+			valid = TRUE;
+			g_byte_array_free(ca_fpr, TRUE);
+			break;
+		}
+
+		g_byte_array_free(ca_fpr, TRUE);
 	}
 
-	g_byte_array_free(ca_fpr, TRUE);
-	g_byte_array_free(last_fpr, TRUE);
+	if (valid == FALSE)
+		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
 
-	purple_certificate_destroy(ca_crt);
+	g_slist_foreach(ca_crts, (GFunc)purple_certificate_destroy, NULL);
+	g_slist_free(ca_crts);
+	g_byte_array_free(last_fpr, TRUE);
 
 	x509_tls_cached_check_subject_name(vrq, flags);
 }
