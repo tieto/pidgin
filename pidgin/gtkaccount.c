@@ -378,9 +378,11 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	gchar *name = (gchar *)sd->data;
-
-	if ((sd->length >= 0) && (sd->format == 8)) {
+	const gchar *name = (gchar *) gtk_selection_data_get_data(sd);
+  gint length = gtk_selection_data_get_length(sd);
+  gint format = gtk_selection_data_get_format(sd);
+    
+	if (length >= 0 && format == 8) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
@@ -1050,7 +1052,7 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
 		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
-		gtk_widget_hide_all(dialog->proxy_vbox);
+		gtk_widget_hide(dialog->proxy_vbox);
 	}
 	else
 		gtk_widget_show_all(dialog->proxy_vbox);
@@ -1145,7 +1147,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		if (type == PURPLE_PROXY_USE_GLOBAL || type == PURPLE_PROXY_NONE ||
 				type == PURPLE_PROXY_USE_ENVVAR)
-			gtk_widget_hide_all(vbox2);
+			gtk_widget_hide(vbox2);
 
 
 		if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
@@ -1169,7 +1171,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		dialog->new_proxy_type = PURPLE_PROXY_USE_GLOBAL;
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
 				dialog->new_proxy_type + 1);
-		gtk_widget_hide_all(vbox2);
+		gtk_widget_hide(vbox2);
 	}
 
 	/* Connect signals. */
@@ -1709,7 +1711,10 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
+  
+  GdkAtom target = gtk_selection_data_get_target(data);
+
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
@@ -1780,13 +1785,16 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
+  GdkAtom target = gtk_selection_data_get_target(sd);
+  const guchar *data = gtk_selection_data_get_data(sd);
+    
+	if (target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && data) {
 		gint dest_index;
 		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
-		memcpy(&a, sd->data, sizeof(a));
+		memcpy(&a, data, sizeof(a));
 
 		if (gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y,
 											  &path, &position)) {

@@ -76,6 +76,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 	gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(widget), GTK_TEXT_WINDOW_TEXT,
 										0, last_y, 0, &y);
 
+  /* TODO: port this to using Cairo 
 	if (y >= event->area.y)
 	{
 		GdkColor red = {0, 0xffff, 0, 0};
@@ -88,6 +89,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 		cairo_stroke(cr);
 		cairo_destroy(cr);
 	}
+  */
 	return FALSE;
 }
 

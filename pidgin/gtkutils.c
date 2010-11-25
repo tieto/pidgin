@@ -188,7 +188,7 @@ pidgin_create_dialog(const char *title, guint border_width, const char *role, gb
 GtkWidget *
 pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing)
 {
-	GtkBox *vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+	GtkBox *vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
 	gtk_box_set_homogeneous(vbox, homogeneous);
 	gtk_box_set_spacing(vbox, spacing);
 	return GTK_WIDGET(vbox);
@@ -196,12 +196,12 @@ pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, 
 
 GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog)
 {
-	return GTK_DIALOG(dialog)->vbox;
+	return gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 }
 
 GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog)
 {
-	return GTK_DIALOG(dialog)->action_area;
+	return gtk_dialog_get_action_area(GTK_DIALOG(dialog));
 }
 
 GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
@@ -297,7 +297,7 @@ pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	if (to_toggle == NULL)
 		return;
 
-	sensitivity = GTK_WIDGET_IS_SENSITIVE(to_toggle);
+	sensitivity = gtk_widget_get_sensitive(to_toggle);
 
 	gtk_widget_set_sensitive(to_toggle, !sensitivity);
 }
@@ -314,7 +314,7 @@ pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 		if (element == NULL)
 			continue;
 
-		sensitivity = GTK_WIDGET_IS_SENSITIVE(element);
+		sensitivity = gtk_widget_get_sensitive(element);
 
 		gtk_widget_set_sensitive(element, !sensitivity);
 	}
@@ -326,7 +326,7 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 	if (to_toggle == NULL)
 		return;
 
-	if (GTK_WIDGET_VISIBLE(to_toggle))
+	if (gtk_widget_get_visible(to_toggle))
 		gtk_widget_hide(to_toggle);
 	else
 		gtk_widget_show(to_toggle);
@@ -1211,8 +1211,8 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	widget     = GTK_WIDGET(menu);
 	screen     = gtk_widget_get_screen(widget);
-	xthickness = widget->style->xthickness;
-	ythickness = widget->style->ythickness;
+	xthickness = gtk_widget_get_style(widget)->xthickness;
+	ythickness = gtk_widget_get_style(widget)->ythickness;
 	rtl        = (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL);
 
 	/*
@@ -1350,9 +1350,9 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	GtkTreePath *path;
 	GtkTreeViewColumn *col;
 	GdkRectangle rect;
-	gint ythickness = GTK_WIDGET(menu)->style->ythickness;
+	gint ythickness = gtk_widget_get_style(GTK_WIDGET(menu))->ythickness;
 
-	gdk_window_get_origin (widget->window, x, y);
+	gdk_window_get_origin (gtk_widget_get_window(widget), x, y);
 	gtk_tree_view_get_cursor (tv, &path, &col);
 	gtk_tree_view_get_cell_area (tv, path, col, &rect);
 
@@ -1466,7 +1466,7 @@ void
 pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who)
 {
 	GdkPixbuf *pb;
-	GList *files = purple_uri_list_extract_filenames((const gchar *)sd->data);
+	GList *files = purple_uri_list_extract_filenames((const gchar *) gtk_selection_data_get_data(sd));
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 #ifndef _WIN32
@@ -1784,7 +1784,9 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 
 		group = gtk_menu_get_accel_group(GTK_MENU(menu));
 		if (group) {
-			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
+			char *path = g_strdup_printf("%s/%s",
+                    gtk_menu_item_get_accel_path(GTK_MENU_ITEM(menuitem)),
+                    act->label);
 			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 			g_free(path);
 			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
@@ -2107,23 +2109,23 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 	GdkCursor *cursor;
 
 	g_return_if_fail(widget != NULL);
-	if (widget->window == NULL)
+	if (gtk_widget_get_window(widget) == NULL)
 		return;
 
 	cursor = gdk_cursor_new(cursor_type);
-	gdk_window_set_cursor(widget->window, cursor);
+	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
 	gdk_cursor_unref(cursor);
 
-	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
+	gdk_display_flush(gdk_window_get_display(gtk_widget_get_window(widget)));
 }
 
 void pidgin_clear_cursor(GtkWidget *widget)
 {
 	g_return_if_fail(widget != NULL);
-	if (widget->window == NULL)
+	if (gtk_widget_get_window(widget) == NULL)
 		return;
 
-	gdk_window_set_cursor(widget->window, NULL);
+	gdk_window_set_cursor(gtk_widget_get_window(widget), NULL);
 }
 
 struct _icon_chooser {
@@ -2810,18 +2812,18 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 }
 
 static void
-combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
+combo_box_changed_cb(GtkComboBoxText *combo_box, GtkEntry *entry)
 {
-	char *text = gtk_combo_box_get_active_text(combo_box);
+	char *text = gtk_combo_box_text_get_active_text(combo_box);
 	gtk_entry_set_text(entry, text ? text : "");
 	g_free(text);
 }
 
 static gboolean
-entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBox *combo)
+entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBoxText *combo)
 {
-	if (key->keyval == GDK_Down || key->keyval == GDK_Up) {
-		gtk_combo_box_popup(combo);
+	if (key->keyval == GDK_KEY_Down || key->keyval == GDK_KEY_Up) {
+		gtk_combo_box_popup(GTK_COMBO_BOX(combo));
 		return TRUE;
 	}
 	return FALSE;
@@ -2830,10 +2832,10 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBox *combo)
 GtkWidget *
 pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 {
-	GtkComboBox *ret = NULL;
+	GtkComboBoxText *ret = NULL;
 	GtkWidget *the_entry = NULL;
 
-	ret = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	ret = GTK_COMBO_BOX_TEXT(gtk_combo_box_text_new());
 	the_entry = gtk_entry_new();
 	gtk_container_add(GTK_CONTAINER(ret), the_entry);
 
@@ -2843,7 +2845,7 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 	for (; items != NULL ; items = items->next) {
 		char *text = items->data;
 		if (text && *text)
-			gtk_combo_box_append_text(ret, text);
+			gtk_combo_box_text_append_text(ret, text);
 	}
 
 	g_signal_connect(G_OBJECT(ret), "changed", (GCallback)combo_box_changed_cb, the_entry);
@@ -2854,12 +2856,12 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 
 const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
 {
-	return gtk_entry_get_text(GTK_ENTRY(GTK_BIN((widget))->child));
+	return gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN((widget)))));
 }
 
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
 {
-	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
+	gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN((widget)))), (text));
 }
 
 GtkWidget *
@@ -2980,12 +2982,12 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		windows = g_list_delete_link(windows, windows);
 
 		if (window == widget ||
-				!GTK_WIDGET_VISIBLE(window)) {
+				!gtk_widget_get_visible(window)) {
 			continue;
 		}
 
 		if (gtk_window_has_toplevel_focus(GTK_WINDOW(window)) ||
-				(menu && menu == window->window)) {
+				(menu && menu == gtk_widget_get_window(window))) {
 			parent = window;
 			break;
 		}

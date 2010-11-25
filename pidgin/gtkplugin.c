@@ -518,7 +518,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 			break;
 
 		dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, GTK_WINDOW(d),
-						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
 		if (plugin_pref_dialogs == NULL)
@@ -527,7 +527,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		g_hash_table_insert(plugin_pref_dialogs, plug, dialog);
 
 		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
+		gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box);
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 		gtk_window_set_title(GTK_WINDOW(dialog), _(purple_plugin_get_name(plug)));
 		gtk_widget_show_all(dialog);
@@ -562,10 +562,13 @@ static gboolean
 pidgin_plugins_paint_tooltip(GtkWidget *tipwindow, gpointer data)
 {
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
-	gtk_paint_layout(tipwindow->style, tipwindow->window, GTK_STATE_NORMAL, FALSE,
-			NULL, tipwindow, "tooltip",
+  cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(tipwindow)));
+  gtk_paint_layout(gtk_widget_get_style(tipwindow), cr, GTK_STATE_NORMAL, FALSE,
+			tipwindow, "tooltip",
 			6, 6, layout);
-	return TRUE;
+  cairo_destroy(cr);
+
+  return TRUE;
 }
 
 static gboolean
@@ -720,8 +723,9 @@ void pidgin_plugin_dialog_show()
 
 	plugin_dialog = gtk_dialog_new_with_buttons(_("Plugins"),
 						    NULL,
-						    GTK_DIALOG_NO_SEPARATOR,
+						    0,
 						    NULL);
+
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
@@ -733,7 +737,8 @@ void pidgin_plugin_dialog_show()
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
+                     sw, TRUE, TRUE, 0);
 
 	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
@@ -793,8 +798,8 @@ void pidgin_plugin_dialog_show()
 	gtk_expander_set_use_markup(GTK_EXPANDER(expander), TRUE);
 	gtk_widget_set_sensitive(expander, FALSE);
 	gtk_container_add(GTK_CONTAINER(expander), create_details());
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), expander,
-		FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
+    expander, FALSE, FALSE, 0);
 
 
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);

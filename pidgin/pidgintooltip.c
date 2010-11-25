@@ -104,9 +104,12 @@ static gboolean
 pidgin_tooltip_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if (pidgin_tooltip.paint_tooltip) {
-		gtk_paint_flat_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				NULL, widget, "tooltip", 0, 0, -1, -1);
+    cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(widget)));
+		gtk_paint_flat_box(gtk_widget_get_style(widget), cr,
+        GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				widget, "tooltip", 0, 0, -1, -1);
 		pidgin_tooltip.paint_tooltip(widget, data);
+    cairo_destroy(cr);
 	}
 	return FALSE;
 }
