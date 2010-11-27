@@ -1,5 +1,5 @@
 /**
- * @file slpmsg.h SLP Message functions
+ * @file slpmsg.c SLP Message functions
  *
  * purple
  *
