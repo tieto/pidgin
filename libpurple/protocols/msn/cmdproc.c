@@ -122,7 +122,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	servconn = cmdproc->servconn;
 
 	if (!servconn->connected) {
-		/* TODO: Need to free trans */
+		msn_transaction_destroy(trans);
 		return;
 	}
 
@@ -156,6 +156,8 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	msn_servconn_write(servconn, data, len);
 
+	if (!trans->saveable)
+		msn_transaction_destroy(trans);
 	g_free(data);
 }
 

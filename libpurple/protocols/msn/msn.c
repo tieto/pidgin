@@ -2100,7 +2100,6 @@ msn_keepalive(PurpleConnection *gc)
 		trans = msn_transaction_new(cmdproc, "PNG", NULL);
 		msn_transaction_set_saveable(trans, FALSE);
 		msn_cmdproc_send_trans(cmdproc, trans);
-		msn_transaction_destroy(trans);
 	}
 }
 
