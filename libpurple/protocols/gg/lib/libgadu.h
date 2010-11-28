@@ -865,6 +865,13 @@ struct gg_event_dcc7_connected {
 };
 
 /**
+ * Opis zdarzenia \c GG_EVENT_DCC7_PENDING.
+ */
+struct gg_event_dcc7_pending {
+	struct gg_dcc7 *dcc7;	/**< Struktura połączenia */
+};
+
+/**
  * Opis zdarzenia \c GG_EVENT_DCC7_REJECT.
  */
 struct gg_event_dcc7_reject {
@@ -908,6 +915,7 @@ union gg_event_union {
 	struct gg_dcc7 *dcc7_new;	/**< Nowe połączenie bezpośrednie (\c GG_EVENT_DCC7_NEW) */
 	enum gg_error_t dcc7_error;	/**< Błąd połączenia bezpośredniego (\c GG_EVENT_DCC7_ERROR) */
 	struct gg_event_dcc7_connected dcc7_connected;	/**< Informacja o zestawieniu połączenia bezpośredniego (\c GG_EVENT_DCC7_CONNECTED) */
+	struct gg_event_dcc7_pending dcc7_pending;	/**< Trwa próba połączenia bezpośredniego (\c GG_EVENT_DCC7_PENDING) */
 	struct gg_event_dcc7_reject dcc7_reject;	/**< Odrzucono połączenia bezpośredniego (\c GG_EVENT_DCC7_REJECT) */
 	struct gg_event_dcc7_accept dcc7_accept;	/**< Zaakceptowano połączenie bezpośrednie (\c GG_EVENT_DCC7_ACCEPT) */
 };
