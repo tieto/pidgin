@@ -6120,7 +6120,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			 G_CALLBACK(headline_style_set),
 			 NULL);
 	g_signal_connect (gtkblist->headline_hbox,
-			  "expose_event",
+			  "draw",
 			  G_CALLBACK (paint_headline_hbox),
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
