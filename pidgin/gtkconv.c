@@ -3579,6 +3579,10 @@ setup_menubar(PidginWindow *win)
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/SendFile");
 
+	g_object_set_data(G_OBJECT(win->window), "get_attention",
+		gtk_ui_manager_get_action(win->menu.ui,
+			"/Conversation/ConversationMenu/GetAttention"));
+
 	win->menu.add_pounce =
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/AddBuddyPounce");
@@ -6612,7 +6616,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Deal with menu items */
 		gtk_action_set_visible(win->menu.view_log, TRUE);
 		gtk_action_set_visible(win->menu.send_file, TRUE);
-		gtk_action_set_visible(g_object_get_data(G_OBJECT(win->window), "get_attention"), TRUE);
+		gtk_action_set_visible(GTK_ACTION(g_object_get_data(G_OBJECT(win->window), "get_attention")), TRUE);
 		gtk_action_set_visible(win->menu.add_pounce, TRUE);
 		gtk_action_set_visible(win->menu.get_info, TRUE);
 		gtk_action_set_visible(win->menu.invite, FALSE);
@@ -9748,8 +9752,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	}
 
-  g_object_set(G_OBJECT(win->notebook), "expand", !tabs_side && !angle,
-               "fill", TRUE, NULL);
+	g_object_set(G_OBJECT(win->notebook), "expand", !tabs_side && !angle, NULL);
 
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
