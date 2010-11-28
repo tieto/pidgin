@@ -250,24 +250,44 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 	MsnSession *session;
 	MsnTransaction *trans;
 	PurpleAccount *account;
-	const char *real_alias;
+	char real_alias[BUDDY_ALIAS_MAXLEN+1];
 	struct public_alias_closure *closure;
 
 	session = purple_connection_get_protocol_data(pc);
 	cmdproc = session->notification->cmdproc;
 	account = purple_connection_get_account(pc);
 
-	if (alias && *alias)
-	{
-		char *tmp = g_strdup(alias);
-		real_alias = purple_url_encode(g_strstrip(tmp));
-		g_free(tmp);
-	}
-	else
-		real_alias = "";
+	if (alias && *alias) {
+		int i = 0;
+		while (isspace(*alias))
+			alias++;
 
-	if (strlen(real_alias) > BUDDY_ALIAS_MAXLEN)
-	{
+		for (; *alias && i < BUDDY_ALIAS_MAXLEN; alias++) {
+			if (*alias == '%') {
+				if (i > BUF_LEN - 4)
+					break;
+				real_alias[i++] = '%';
+				real_alias[i++] = '2';
+				real_alias[i++] = '5';
+			} else if (*alias == ' ') {
+				if (i > BUF_LEN - 4)
+					break;
+				real_alias[i++] = '%';
+				real_alias[i++] = '2';
+				real_alias[i++] = '0';
+			} else {
+				real_alias[i++] = *alias;
+			}
+		}
+
+		while (i && isspace(real_alias[i - 1]))
+			i--;
+
+		real_alias[i] = '\0';
+	} else
+		real_alias[0] = '\0';
+
+	if (*alias) {
 		if (failure_cb) {
 			struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
@@ -282,8 +302,8 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 		return;
 	}
 
-	if (*real_alias == '\0') {
-		real_alias = purple_url_encode(purple_account_get_username(account));
+	if (real_alias[0] == '\0') {
+		strcpy(real_alias, purple_account_get_username(account));
 	}
 
 	closure = g_new0(struct public_alias_closure, 1);
