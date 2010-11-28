@@ -95,6 +95,6 @@ gboolean
 msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags)
 {
 	return (flags == P2P_MSN_OBJ_DATA ||
-	        flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
+	        flags == (P2P_WLM2009_COMP | P2P_MSN_OBJ_DATA) ||
 	        flags == P2P_FILE_DATA);
 }

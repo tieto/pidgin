@@ -1061,7 +1061,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->header->offset;
 
-	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP)
+	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP)
 	{
 		char *body_str;
 

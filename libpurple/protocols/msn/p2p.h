@@ -73,7 +73,7 @@ typedef enum
 	P2P_CLOSE           = 0x40,       /**< Close session */
 	P2P_TLP_ERROR       = 0x80,       /**< Error at transport layer protocol */
 	P2P_DC_HANDSHAKE    = 0x100,      /**< Direct Handshake */
-	P2P_WML2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
+	P2P_WLM2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
 	P2P_FILE_DATA       = 0x1000030   /**< File transfer data */
 } MsnP2PHeaderFlag;
 /* Info From:
