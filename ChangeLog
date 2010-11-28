@@ -5,6 +5,10 @@ version 2.7.8 (??/??/????):
 	* Fix the exceptions in purple-remote on Python 2.6+. (Ari Pollak)
 	  (#12151)
 
+	Gadu-Gadu:
+	* Updated our bundled libgadu and minimum requirement for external
+	  libgadu to 1.9.0. (#12789)
+
 	MSN:
 	* Don't show ourselves in the list of endpoints that can be disconnected.
 
