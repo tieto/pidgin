@@ -5,6 +5,10 @@ version 2.7.8 (??/??/????):
 	* Fix the exceptions in purple-remote on Python 2.6+. (Ari Pollak)
 	  (#12151)
 
+	libpurple:
+	* Fix multipart parsing when '=' is included in the boundary for
+	  purple_mime_document_parse. (Jakub Adam) (#11598)
+
 	Gadu-Gadu:
 	* Updated our bundled libgadu and minimum requirement for external
 	  libgadu to 1.9.0. (#12789)
