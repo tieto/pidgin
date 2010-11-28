@@ -203,6 +203,8 @@ msn_user_set_state(MsnUser *user, const char *state)
 		status = "phone";
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status = "lunch";
+	else if (!g_ascii_strcasecmp(state, "HDN"))
+		status = NULL;
 	else
 		status = "available";
 
