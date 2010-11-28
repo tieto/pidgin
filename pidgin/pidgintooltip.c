@@ -101,15 +101,17 @@ void pidgin_tooltip_destroy()
 }
 
 static gboolean
-pidgin_tooltip_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+pidgin_tooltip_draw_cb(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
+	GtkAllocation allocation;
+
+	gtk_widget_get_allocation(widget, &allocation);
+
 	if (pidgin_tooltip.paint_tooltip) {
-    cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(widget)));
 		gtk_paint_flat_box(gtk_widget_get_style(widget), cr,
-        GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-				widget, "tooltip", 0, 0, -1, -1);
+			GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+			widget, "tooltip", 0, 0, allocation.width, allocation.height);
 		pidgin_tooltip.paint_tooltip(widget, data);
-    cairo_destroy(cr);
 	}
 	return FALSE;
 }
@@ -182,8 +184,8 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 	gtk_window_move(GTK_WINDOW(tipwindow), x, y);
 	gtk_widget_show(tipwindow);
 
-	g_signal_connect(G_OBJECT(tipwindow), "expose_event",
-			G_CALLBACK(pidgin_tooltip_expose_event), data);
+	g_signal_connect(G_OBJECT(tipwindow), "draw",
+			G_CALLBACK(pidgin_tooltip_draw_cb), data);
 
 	/* Hide the tooltip when the widget is destroyed */
 	sig = g_signal_connect(G_OBJECT(pidgin_tooltip.widget), "destroy", G_CALLBACK(pidgin_tooltip_destroy), NULL);

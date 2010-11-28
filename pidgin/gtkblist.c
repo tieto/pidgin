@@ -3028,7 +3028,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-    cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtkblist->tipwindow));
+    cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
       
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
