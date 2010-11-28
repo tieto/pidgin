@@ -51,9 +51,6 @@ static void
 docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting, gboolean pending)
 {
 	const gchar *icon_name = NULL;
-  gboolean blinking;
-
-  g_object_get(G_OBJECT(docklet), "blinking", &blinking, NULL);
     
 	switch (status) {
 		case PURPLE_STATUS_OFFLINE:
@@ -83,12 +80,6 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 
 	if (icon_name) {
 		gtk_status_icon_set_from_icon_name(docklet, icon_name);
-	}
-
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
-    g_object_set(G_OBJECT(docklet), "blinking", pending && !connecting, NULL);
-	} else if (blinking) {
-		g_object_set(G_OBJECT(docklet), "blinking", FALSE, NULL);
 	}
 }
 

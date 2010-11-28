@@ -210,12 +210,6 @@ docklet_update_status(void)
 		connecting = newconnecting;
 
 		pidgin_docklet_update_icon();
-
-		/* and schedule the blinker function if messages are pending */
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")
-			&& pending && !connecting && docklet_blinking_timer == 0) {
-			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
-		}
 	}
 
 	return FALSE; /* for when we're called by the glib idle handler */
@@ -316,13 +310,6 @@ static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute",
-                        gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
-}
-
-static void
-docklet_toggle_blink(GtkWidget *toggle, void *data)
-{
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/blink",
                         gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
 }
 
@@ -734,11 +721,6 @@ docklet_menu(void)
 	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-	menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Blink on New Message"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
-	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	pidgin_separator(menu);
