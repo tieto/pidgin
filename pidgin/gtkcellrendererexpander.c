@@ -250,7 +250,7 @@ static void pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
   GtkAllocation allocation;
     
   gtk_cell_renderer_get_padding(cell, &xpad, &ypad);
-  g_object_get(G_OBJECT(cell), "expanded", &is_expanded, NULL);
+  g_object_get(G_OBJECT(cell), "is-expanded", &is_expanded, NULL);
     
 	if (!cellexpander->is_expander)
 		return;
