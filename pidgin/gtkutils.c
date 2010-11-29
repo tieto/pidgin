@@ -180,7 +180,6 @@ pidgin_create_dialog(const char *title, guint border_width, const char *role, gb
 
 	wnd = GTK_WINDOW(gtk_dialog_new());
 	pidgin_window_init(wnd, title, border_width, role, resizable);
-	g_object_set(G_OBJECT(wnd), "has-separator", FALSE, NULL);
 
 	return GTK_WIDGET(wnd);
 }
