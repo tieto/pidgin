@@ -1188,18 +1188,26 @@ msn_status_types(PurpleAccount *account)
 static GList *
 msn_actions(PurplePlugin *plugin, gpointer context)
 {
+	PurpleConnection *gc;
+	MsnSession *session;
 	GList *m = NULL;
 	PurplePluginAction *act;
+
+	gc = (PurpleConnection *) context;
+	session = gc->proto_data;
 
 	act = purple_plugin_action_new(_("Set Friendly Name..."),
 								 msn_show_set_friendly_name);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	act = purple_plugin_action_new(_("View Locations..."),
-	                               msn_show_locations);
-	m = g_list_append(m, act);
-	m = g_list_append(m, NULL);
+	if (session->protocol_ver >= 16)
+	{
+		act = purple_plugin_action_new(_("View Locations..."),
+		                               msn_show_locations);
+		m = g_list_append(m, act);
+		m = g_list_append(m, NULL);
+	}
 
 	act = purple_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
