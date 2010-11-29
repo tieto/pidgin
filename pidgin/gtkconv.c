@@ -4721,8 +4721,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	if (ABS(diff) < oneline.height / 2)
 		return FALSE;
 
-	purple_debug_info("pidgin", "resizing to %d, %d lines\n",
-	                  lower_hbox_allocation.height, min_lines);
+	purple_debug_info("pidgin", "resizing to %d, %d lines, diff %d\n",
+	                  diff + lower_hbox_allocation.height, min_lines, diff);
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 		diff + lower_hbox_allocation.height);

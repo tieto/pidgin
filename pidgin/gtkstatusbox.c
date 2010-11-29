@@ -84,7 +84,7 @@ static void pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean s
 static void pidgin_status_box_changed(PidginStatusBox *box);
 /*static void pidgin_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);*/
 static void pidgin_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
-/*static gboolean pidgin_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);*/
+static gboolean pidgin_status_box_draw (GtkWidget *widget, cairo_t *cr);
 static void pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box);
 static void pidgin_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 static void pidgin_status_box_popup(PidginStatusBox *box);
@@ -619,8 +619,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
   /* this seems to be removed in GTK+ 3...*/
 	/*widget_class->size_request = pidgin_status_box_size_request;*/
 	widget_class->size_allocate = pidgin_status_box_size_allocate;
-  /* this seems to be removed in GTK+ 3...*/
-  /*widget_class->expose_event = pidgin_status_box_expose_event;*/
+  	widget_class->draw = pidgin_status_box_draw;
 
 	container_class->child_type = pidgin_status_box_child_type;
 	container_class->forall = pidgin_status_box_forall;
@@ -1748,7 +1747,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	GtkWidget *toplevel;
 	GtkTreeSelection *sel;
 
-  gtk_widget_set_has_window(GTK_WIDGET(status_box), FALSE);
+	gtk_widget_set_has_window(GTK_WIDGET(status_box), FALSE);
 	status_box->imhtml_visible = FALSE;
 	status_box->network_available = purple_network_is_available();
 	status_box->connecting = FALSE;
@@ -2045,23 +2044,23 @@ pidgin_status_box_size_allocate(GtkWidget *widget,
   gtk_widget_set_allocation(GTK_WIDGET(status_box), allocation);
 }
 
-/* TODO: don't think this is nessesary in GTK+ 3 */
-#if 0
 static gboolean
-pidgin_status_box_expose_event(GtkWidget *widget,
-				 GdkEventExpose *event)
+pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 {
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
-	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
-	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
+	gtk_widget_draw(status_box->vbox, cr);
+	gtk_widget_draw(status_box->toggle_button, cr);
+
 	if (status_box->icon_box && status_box->icon_opaque) {
-		gtk_paint_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL,
-				status_box->icon_box, "button", status_box->icon_box->allocation.x-1, status_box->icon_box->allocation.y-1,
+		GtkAllocation allocation;
+
+		gtk_widget_get_allocation(status_box->icon_box, &allocation);
+		gtk_paint_box(gtk_widget_get_style(widget), cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				status_box->icon_box, "button", allocation.x-1, allocation.y-1,
 				34, 34);
 	}
 	return FALSE;
 }
-#endif
 
 static void
 pidgin_status_box_forall(GtkContainer *container,
