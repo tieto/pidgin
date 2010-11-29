@@ -4675,15 +4675,15 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int min_height;
 	gboolean interior_focus;
 	int focus_width;
-  GtkAllocation imhtml_allocation;
-  GtkAllocation entry_allocation;
-  GtkAllocation lower_hbox_allocation;
+	GtkAllocation imhtml_allocation;
+	GtkAllocation entry_allocation;
+	GtkAllocation lower_hbox_allocation;
     
-  gtk_widget_get_allocation(gtkconv->imhtml, &imhtml_allocation);
-  gtk_widget_get_allocation(gtkconv->entry, &entry_allocation);
-  gtk_widget_get_allocation(gtkconv->lower_hbox, &lower_hbox_allocation);
-  total_height = imhtml_allocation.height + entry_allocation.height;
-  max_height = total_height / 2;
+	gtk_widget_get_allocation(gtkconv->imhtml, &imhtml_allocation);
+	gtk_widget_get_allocation(gtkconv->entry, &entry_allocation);
+	gtk_widget_get_allocation(gtkconv->lower_hbox, &lower_hbox_allocation);
+	total_height = imhtml_allocation.height + entry_allocation.height;
+	max_height = total_height / 2;
     
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4720,6 +4720,9 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	diff = height - entry_allocation.height;
 	if (ABS(diff) < oneline.height / 2)
 		return FALSE;
+
+	purple_debug_info("pidgin", "resizing to %d, %d lines\n",
+	                  lower_hbox_allocation.height, min_lines);
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 		diff + lower_hbox_allocation.height);
@@ -7309,11 +7312,11 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(notebook));
 
 	for (i = 0; i < count; i++) {
-    GtkAllocation allocation;
+    	GtkAllocation allocation;
 
-    gtk_widget_get_allocation(tab, &allocation);
 		page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(notebook), i);
 		tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook), page);
+		gtk_widget_get_allocation(tab, &allocation);
 
 		/* Make sure the tab is not hidden beyond an arrow */
 		if (!gtk_widget_is_drawable(tab) && gtk_notebook_get_show_tabs(notebook))
