@@ -3028,7 +3028,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-    cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
+    	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
       
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
@@ -3036,7 +3036,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 						gtkblist->tipwindow, "tooltip",
 						TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2,
-            td->avatar_height + 2);
+            			td->avatar_height + 2);
 			else
 				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 						gtkblist->tipwindow, "tooltip",
@@ -3046,55 +3046,32 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 
 		if (td->status_icon) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-        gdk_cairo_set_source_pixbuf(cr, td->status_icon,
-          max_width - TOOLTIP_BORDER - status_size, current_height);
-        cairo_paint(cr);
-        /*
-				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-				                0, 0, max_width - TOOLTIP_BORDER - status_size, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-        */
-      } else {
-        gdk_cairo_set_source_pixbuf(cr, td->status_icon, TOOLTIP_BORDER, current_height);
-        cairo_paint(cr);
-        /*
-				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-				                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-        */
-      }
-    }
+        		gdk_cairo_set_source_pixbuf(cr, td->status_icon,
+          			max_width - TOOLTIP_BORDER - status_size, current_height);
+        		cairo_paint(cr);
+      		} else {
+        		gdk_cairo_set_source_pixbuf(cr, td->status_icon, TOOLTIP_BORDER, current_height);
+        		cairo_paint(cr);
+      		}
+    	}
 
-		if(td->avatar) {
+		if (td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-        gdk_cairo_set_source_pixbuf(cr, td->avatar, TOOLTIP_BORDER, current_height);
-        cairo_paint(cr);
-        /*
-				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-						td->avatar, 0, 0, TOOLTIP_BORDER, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-        */
-      } else {
-        gdk_cairo_set_source_pixbuf(cr, td->avatar,
-          max_width - (td->avatar_width + TOOLTIP_BORDER), current_height);
-        cairo_paint(cr);
-        /*
-				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-						td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
-						current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-        */
-      }
+        		gdk_cairo_set_source_pixbuf(cr, td->avatar, TOOLTIP_BORDER,
+		        	current_height);
+        		cairo_paint(cr);
+      		} else {
+        		gdk_cairo_set_source_pixbuf(cr, td->avatar,
+          			max_width - (td->avatar_width + TOOLTIP_BORDER), current_height);
+        		cairo_paint(cr);
+      		}
 		}
 
 		if (!td->avatar_is_prpl_icon && td->prpl_icon) {
-      gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
-        current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)));
-      cairo_paint(cr);
-      /*
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
-					0, 0,
-					prpl_col,
-					current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)),
-					-1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-      */
-    }
+      		gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
+        		current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)));
+      		cairo_paint(cr);
+    	}
 
 		if (td->name_layout) {
 			if (dir == GTK_TEXT_DIR_RTL) {
@@ -3123,7 +3100,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 			}
 		}
 
-    cairo_destroy(cr);
+    	cairo_destroy(cr);
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + td->padding;
 	}
 	return FALSE;
