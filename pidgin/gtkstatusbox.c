@@ -1931,38 +1931,6 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 }
 
-#if 0
-static void
-pidgin_status_box_get_preferred_size(GtkWidget *widget,
-	GtkRequisition *minimum_size, GtkRequisition *natural_size)
-{
-	GtkRequisition box_min_req;
-	GtkRequisition box_nat_req;
-	gint border_width = gtk_container_get_border_width(GTK_CONTAINER (widget));
-
-	gtk_widget_get_preferred_size(PIDGIN_STATUS_BOX(widget)->toggle_button,
-		minimum_size, natural_size);
-
-	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
-	minimum_size->height = MAX(minimum_size->height, 34);
-	minimum_size->height += border_width * 2;
-	natural_size->height = MAX(minium_size->height, 34);
-	natural_size->height += border_width * 2;
-	
-	/* If the gtkimhtml is visible, then add some additional padding */
-	gtk_widget_get_preferred_size(PIDGIN_STATUS_BOX(widget)->vbox, &box_min_req, &box_nat_req);
-
-	if (box_min_req.height > 1)
-		minimum_size->height += box_min_req.height + border_width * 2;
-
-	if (box_nat_req.height > 1)
-		natural_size->height += box_nat_req.height + border_width * 2;
-	
-	minimum_size->width = 1;
-	natural_size->width = 1;
-}
-#endif
-
 static void
 pidgin_status_box_get_preferred_height(GtkWidget *widget, gint *minimum_height,
                                        gint *natural_height)
