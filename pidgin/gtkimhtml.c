@@ -499,22 +499,20 @@ static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
 	PangoLayout *layout;
-  cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(imhtml->tip_window));
+	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(imhtml->tip_window));
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
 
-	gtk_paint_flat_box (gtk_widget_get_style(imhtml->tip_window),
-            cr,
-						GTK_STATE_NORMAL, GTK_SHADOW_OUT, imhtml->tip_window,
-						"tooltip", 0, 0, -1, -1);
+	gtk_paint_flat_box (gtk_widget_get_style(imhtml->tip_window), cr,
+		GTK_STATE_NORMAL, GTK_SHADOW_OUT, imhtml->tip_window, "tooltip",
+		0, 0, -1, -1);
 
-	gtk_paint_layout (gtk_widget_get_style(imhtml->tip_window),
-            cr,
-            GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
+	gtk_paint_layout (gtk_widget_get_style(imhtml->tip_window), cr,
+    	GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
 
-  cairo_destroy(cr);
+	cairo_destroy(cr);
 	g_object_unref(layout);
 	return FALSE;
 }
@@ -526,13 +524,13 @@ gtk_imhtml_tip (gpointer data)
 	PangoFontMetrics *font_metrics;
 	PangoLayout *layout;
 	PangoFont *font;
-  GtkStyle *style = gtk_widget_get_style(imhtml->tip_window);
-  GtkAllocation allocation;
+  	GtkStyle *style = gtk_widget_get_style(imhtml->tip_window);
+  	GtkAllocation allocation;
 	gint gap, x, y, h, w, scr_w, baseline_skip;
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
-  gtk_widget_get_allocation(GTK_WIDGET(imhtml), &allocation);
+  	gtk_widget_get_allocation(GTK_WIDGET(imhtml), &allocation);
     
 	if (!imhtml->tip || !gtk_widget_is_drawable(GTK_WIDGET(imhtml))) {
 		imhtml->tip_timer = 0;
