@@ -6067,7 +6067,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	pretty = pidgin_make_pretty_arrows(tmp);
 	g_free(tmp);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width") - 12, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.2);
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
