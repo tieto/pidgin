@@ -1883,7 +1883,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
-	
+
 	g_signal_connect(G_OBJECT(status_box), "scroll_event", G_CALLBACK(combo_box_scroll_event_cb), NULL);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
@@ -2570,11 +2570,7 @@ static void update_size(PidginStatusBox *status_box)
 	if (!interior_focus)
 		height += 2 * focus_width;
 
-	int mh, nh;
-	gtk_widget_get_preferred_height(status_box->vbox, &mh, &nh);
-	purple_debug_info("pidgin", "statusbox, set_size_request: %d %d\n", mh, nh);
-
-	gtk_widget_set_size_request(status_box->imhtml, -1, height + PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
 
 static void remove_typing_cb(PidginStatusBox *status_box)
