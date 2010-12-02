@@ -499,7 +499,7 @@ static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
 	PangoLayout *layout;
-	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(imhtml->tip_window));
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(imhtml->tip_window));
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 

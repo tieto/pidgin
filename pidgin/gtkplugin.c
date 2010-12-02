@@ -562,7 +562,7 @@ static gboolean
 pidgin_plugins_paint_tooltip(GtkWidget *tipwindow, gpointer data)
 {
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
-  cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(tipwindow)));
+  cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(tipwindow));
   gtk_paint_layout(gtk_widget_get_style(tipwindow), cr, GTK_STATE_NORMAL, FALSE,
 			tipwindow, "tooltip",
 			6, 6, layout);

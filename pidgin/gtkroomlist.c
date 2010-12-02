@@ -360,7 +360,7 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	int max_text_width;
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
   cairo_t *cr =
-        gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(grl->tipwindow)));
+        gdk_cairo_create(gtk_widget_get_window(grl->tipwindow));
     
 	style = gtk_widget_get_style(grl->tipwindow);
 

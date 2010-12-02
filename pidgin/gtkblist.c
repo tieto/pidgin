@@ -3028,7 +3028,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-    	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(gtkblist->tipwindow)));
+    	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
       
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
@@ -3254,8 +3254,8 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 		pidgin_blist_expand_contact_cb(NULL, node);
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
-    gtkblist->contact_rect.width =
-      gdk_window_get_width(GDK_DRAWABLE(gtk_widget_get_window(tv)));
+		gtkblist->contact_rect.width =
+		gdk_window_get_width(gtk_widget_get_window(tv));
 		gtkblist->mouseover_contact = node;
 		gtk_tree_path_down (path);
 		while (gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &i, path)) {
@@ -5641,22 +5641,22 @@ paint_headline_hbox  (GtkWidget      *widget,
 		      GdkEventExpose *event,
 		      gpointer user_data)
 {
-  cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(widget));
-  GtkAllocation allocation;
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
+	GtkAllocation allocation;
 
-  gtk_widget_get_allocation(widget, &allocation);
+	gtk_widget_get_allocation(widget, &allocation);
 	gtk_paint_flat_box (gtk_widget_get_style(widget),
-		      cr,
-		      GTK_STATE_NORMAL,
-		      GTK_SHADOW_OUT,
-		      widget,
-		      "tooltip",
-		      allocation.x + 1,
-		      allocation.y + 1,
-		      allocation.width - 2,
-		      allocation.height - 2);
-  cairo_destroy(cr);
-    
+		cr,
+		GTK_STATE_NORMAL,
+		GTK_SHADOW_OUT,
+		widget,
+		"tooltip",
+		allocation.x + 1,
+		allocation.y + 1,
+		allocation.width - 2,
+		allocation.height - 2);
+	cairo_destroy(cr);
+
 	return FALSE;
 }
 

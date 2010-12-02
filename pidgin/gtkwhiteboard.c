@@ -358,8 +358,8 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixbuf *pixbuf = gtkwb->pixbuf;
 	cairo_t *cr;
-  GdkWindow *window = gtk_widget_get_window(widget);
-  GtkAllocation allocation;
+	GdkWindow *window = gtk_widget_get_window(widget);
+	GtkAllocation allocation;
     
 	if (pixbuf) {
 		cr = g_object_get_data(G_OBJECT(pixbuf), "cairo-context");
@@ -368,16 +368,15 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 		g_object_unref(pixbuf);
 	}
 
-  gtk_widget_get_allocation(widget, &allocation);
+	gtk_widget_get_allocation(widget, &allocation);
     
-  pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-                          FALSE,
-                          gdk_visual_get_depth(GDK_VISUAL(window)),
-                          allocation.width, allocation.height);
+	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+    	FALSE, gdk_visual_get_depth(GDK_VISUAL(window)),
+		allocation.width, allocation.height);
                                                     
 	gtkwb->pixbuf = pixbuf;
 
-	cr = gdk_cairo_create(GDK_DRAWABLE(pixbuf));
+	cr = gdk_cairo_create(gtk_widget_get_window(widget));
 	g_object_set_data(G_OBJECT(pixbuf), "cairo-context", cr);
 	gdk_cairo_set_source_color(cr, &gtk_widget_get_style(widget)->white);
 	cairo_rectangle(cr,
@@ -394,7 +393,7 @@ static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose
 	GdkPixbuf *pixbuf = gtkwb->pixbuf;
 	cairo_t *cr;
 
-	cr = gdk_cairo_create(GDK_DRAWABLE(gtk_widget_get_window(widget)));
+	cr = gdk_cairo_create(gtk_widget_get_window(widget));
 	gdk_cairo_set_source_pixbuf(cr, pixbuf, 0, 0);
 	cairo_rectangle(cr,
 	                event->area.x, event->area.y,
