@@ -28,6 +28,8 @@ version 2.7.8 (??/??/????):
 	  disconnected.
 	* Allow full-size display names, by not escaping (most) non-English
 	  characters. (#8508)
+	* Fix receiving messages from users on Yahoo and other federated
+	  services. (#13022)
 
 version 2.7.7 (11/23/2010):
 	General:

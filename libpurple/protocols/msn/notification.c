@@ -387,7 +387,10 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = atoi(cmd->params[3]);
+		if (cmdproc->session->protocol_ver >= 16)
+			cmd->payload_len = atoi(cmd->params[5]);
+		else
+			cmd->payload_len = atoi(cmd->params[3]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
