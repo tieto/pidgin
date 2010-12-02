@@ -105,7 +105,6 @@ struct _MsnSession
 
 	struct
 	{
-		char *kv;
 		char *sid;
 		char *mspauth;
 		unsigned long sl;

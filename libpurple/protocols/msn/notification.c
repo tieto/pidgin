@@ -1942,12 +1942,6 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if ((value = msn_message_get_header_value(msg, "kv")) != NULL)
-	{
-		g_free(session->passport_info.kv);
-		session->passport_info.kv = g_strdup(value);
-	}
-
 	if ((value = msn_message_get_header_value(msg, "sid")) != NULL)
 	{
 		g_free(session->passport_info.sid);
