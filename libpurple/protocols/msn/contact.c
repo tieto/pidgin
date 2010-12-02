@@ -710,8 +710,9 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
 
-		/*setup the Display Name*/
+		/* Find out our settings */
 		if (type && !strcmp(type, "Me")) {
+			/* setup the Display Name */
 			if (purple_connection_get_display_name(pc) == NULL) {
 				char *friendly = NULL;
 				if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
@@ -720,6 +721,23 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 					friendly ? purple_url_decode(friendly) : NULL);
 				g_free(friendly);
 			}
+
+			for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
+			     annotation;
+			     annotation = xmlnode_get_next_twin(annotation)) {
+				char *name, *value;
+				name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+				if (!strcmp(name, "MSN.IM.MPOP")) {
+					if (!value || atoi(value) != 0)
+						purple_account_set_bool(session->account, "mpop", TRUE);
+					else
+						purple_account_set_bool(session->account, "mpop", FALSE);
+				}
+				g_free(name);
+				g_free(value);
+			}
+
 			continue; /* Not adding own account as buddy to buddylist */
 		}
 

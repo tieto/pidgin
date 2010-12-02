@@ -1201,7 +1201,8 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	if (session->protocol_ver >= 16)
+	if (purple_account_get_bool(session->account, "mpop", TRUE)
+	 && session->protocol_ver >= 16)
 	{
 		act = purple_plugin_action_new(_("View Locations..."),
 		                               msn_show_locations);
@@ -3082,6 +3083,11 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_bool_new(_("Allow direct connections"),
 										  "direct_connect", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
+										  "mpop", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
