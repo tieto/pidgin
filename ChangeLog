@@ -15,6 +15,10 @@ version 2.7.8 (??/??/????):
 	* Fix multipart parsing when '=' is included in the boundary for
 	  purple_mime_document_parse. (Jakub Adam) (#11598)
 
+	AIM and ICQ:
+	* Buddies who unset their status message will now be correctly shown
+	  without a message in your buddy list. (#12988)
+
 	Gadu-Gadu:
 	* Updated our bundled libgadu and minimum requirement for external
 	  libgadu to 1.9.0. (#12789)
