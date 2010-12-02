@@ -52,7 +52,8 @@ typedef enum
 	MSN_PS_SAVE_CONTACT,
 	MSN_PS_PENDING_LIST,
 	MSN_PS_CONTACT_API,
-	MSN_PS_BLOCK_UNBLOCK
+	MSN_PS_BLOCK_UNBLOCK,
+	MSN_PS_TIMER
 } MsnSoapPartnerScenario;
 
 #include "session.h"
@@ -408,7 +409,7 @@ typedef enum
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
-			"<PartnerScenario>Timer</PartnerScenario>"\
+			"<PartnerScenario></PartnerScenario>"\
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\

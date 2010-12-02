@@ -41,7 +41,8 @@ const char *MsnSoapPartnerScenarioText[] =
 	"ContactSave",
 	"MessengerPendingList",
 	"ContactMsgrAPI",
-	"BlockUnblock"
+	"BlockUnblock",
+	"Timer"
 };
 
 const char *MsnMemberRole[] =
@@ -1496,6 +1497,10 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
 	xmlnode_insert_child(contact, contact_info);
 	xmlnode_insert_child(contact, changes);
+
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
 
 	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
