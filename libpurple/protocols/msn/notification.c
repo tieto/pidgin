@@ -1558,6 +1558,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 
 	purple_debug_info("msn", "Get EndpointData\n");
 
+	msn_user_clear_endpoints(user);
 	for (epNode = xmlnode_get_child(payloadNode, "EndpointData");
 	     epNode;
 	     epNode = xmlnode_get_next_twin(epNode)) {

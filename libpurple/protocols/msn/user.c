@@ -305,6 +305,22 @@ msn_user_set_endpoint_data(MsnUser *user, const char *input, MsnUserEndpoint *ne
 }
 
 void
+msn_user_clear_endpoints(MsnUser *user)
+{
+	MsnUserEndpoint *ep;
+	GSList *l;
+
+	g_return_if_fail(user != NULL);
+
+	for (l = user->endpoints; l; l = g_slist_delete_link(l, l)) {
+		ep = l->data;
+		free_user_endpoint(ep);
+	}
+
+	user->endpoints = NULL;
+}
+
+void
 msn_user_set_op(MsnUser *user, MsnListOp list_op)
 {
 	g_return_if_fail(user != NULL);
