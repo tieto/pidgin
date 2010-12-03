@@ -416,7 +416,7 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 2.91.5], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 2.91.6], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 

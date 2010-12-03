@@ -442,9 +442,9 @@ realize_cb_cb(PidginMediaRealizeData *data)
 		window_id = GDK_WINDOW_HWND(priv->remote_video->window);
 #elif defined(HAVE_X11)
 	if (data->participant == NULL)
-		window_id = GDK_WINDOW_XWINDOW(gtk_widget_get_window(priv->local_video));
+		window_id = gdk_x11_window_get_xid(gtk_widget_get_window(priv->local_video));
 	else
-		window_id = GDK_WINDOW_XWINDOW(gtk_widget_get_window(priv->remote_video));
+		window_id = gdk_x11_window_get_xid(gtk_widget_get_window(priv->remote_video));
 #else
 #	error "Unsupported windowing system"
 #endif

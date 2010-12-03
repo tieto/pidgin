@@ -6149,7 +6149,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	gtk_widget_show(gtkblist->treeview);
 	gtk_widget_set_name(gtkblist->treeview, "pidgin_blist_treeview");
-
+	
 	g_signal_connect(gtkblist->treeview,
 			 "style-set",
 			 G_CALLBACK(treeview_style_set), list);

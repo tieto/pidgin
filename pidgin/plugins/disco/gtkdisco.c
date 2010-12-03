@@ -429,7 +429,7 @@ static gboolean account_filter_func(PurpleAccount *account)
 static gboolean
 disco_paint_tooltip(GtkWidget *tipwindow, gpointer data)
 {
-  cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(tipwindow));
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(tipwindow));
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
 	gtk_paint_layout(gtk_widget_get_style(tipwindow),
 			cr,
