@@ -264,13 +264,13 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 
 		for (; *alias && i < BUDDY_ALIAS_MAXLEN; alias++) {
 			if (*alias == '%') {
-				if (i > BUF_LEN - 4)
+				if (i > BUDDY_ALIAS_MAXLEN - 4)
 					break;
 				real_alias[i++] = '%';
 				real_alias[i++] = '2';
 				real_alias[i++] = '5';
 			} else if (*alias == ' ') {
-				if (i > BUF_LEN - 4)
+				if (i > BUDDY_ALIAS_MAXLEN - 4)
 					break;
 				real_alias[i++] = '%';
 				real_alias[i++] = '2';
