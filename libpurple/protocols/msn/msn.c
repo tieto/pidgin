@@ -250,7 +250,7 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 	MsnSession *session;
 	MsnTransaction *trans;
 	PurpleAccount *account;
-	char real_alias[BUDDY_ALIAS_MAXLEN+1];
+	char real_alias[BUDDY_ALIAS_MAXLEN + 1];
 	struct public_alias_closure *closure;
 
 	session = purple_connection_get_protocol_data(pc);
@@ -258,53 +258,25 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 	account = purple_connection_get_account(pc);
 
 	if (alias && *alias) {
-		int i = 0;
-		while (isspace(*alias))
-			alias++;
-
-		for (; *alias && i < BUDDY_ALIAS_MAXLEN; alias++) {
-			if (*alias == '%') {
-				if (i > BUDDY_ALIAS_MAXLEN - 4)
-					break;
-				real_alias[i++] = '%';
-				real_alias[i++] = '2';
-				real_alias[i++] = '5';
-			} else if (*alias == ' ') {
-				if (i > BUDDY_ALIAS_MAXLEN - 4)
-					break;
-				real_alias[i++] = '%';
-				real_alias[i++] = '2';
-				real_alias[i++] = '0';
+		if (!msn_encode_spaces(alias, real_alias, BUDDY_ALIAS_MAXLEN + 1)) {
+			if (failure_cb) {
+				struct public_alias_closure *closure =
+					g_new0(struct public_alias_closure, 1);
+				closure->account = account;
+				closure->failure_cb = failure_cb;
+				purple_timeout_add(0, set_public_alias_length_error, closure);
 			} else {
-				real_alias[i++] = *alias;
+				purple_notify_error(pc, NULL,
+				                    _("Your new MSN friendly name is too long."),
+				                    NULL);
 			}
+			return;
 		}
 
-		while (i && isspace(real_alias[i - 1]))
-			i--;
-
-		real_alias[i] = '\0';
+		if (real_alias[0] == '\0')
+			strcpy(real_alias, purple_account_get_username(account));
 	} else
-		real_alias[0] = '\0';
-
-	if (*alias) {
-		if (failure_cb) {
-			struct public_alias_closure *closure =
-				g_new0(struct public_alias_closure, 1);
-			closure->account = account;
-			closure->failure_cb = failure_cb;
-			purple_timeout_add(0, set_public_alias_length_error, closure);
-		} else {
-			purple_notify_error(pc, NULL,
-			                    _("Your new MSN friendly name is too long."),
-			                    NULL);
-		}
-		return;
-	}
-
-	if (real_alias[0] == '\0') {
 		strcpy(real_alias, purple_account_get_username(account));
-	}
 
 	closure = g_new0(struct public_alias_closure, 1);
 	closure->account = account;

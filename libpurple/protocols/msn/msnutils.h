@@ -33,6 +33,18 @@ char *msn_encode_mime(const char *str);
 char *rand_guid(void);
 
 /**
+ * Encodes the spaces in a string
+ *
+ * @param str The string to be encoded.
+ * @param buf The buffer to hold the encoded string.
+ * @param len The maximum length (including NUL) to put in @buf.
+ *
+ * @return Whether @str was able to fit in @buf.
+ */
+gboolean
+msn_encode_spaces(const char *str, char *buf, size_t len);
+
+/**
  * Parses the MSN message formatting into a format compatible with Purple.
  *
  * @param mime     The mime header with the formatting.
