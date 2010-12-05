@@ -589,6 +589,67 @@ msn_show_locations(PurplePluginAction *action)
 }
 
 static void
+enable_mpop_cb(PurpleConnection *pc)
+{
+	MsnSession *session = purple_connection_get_protocol_data(pc);
+
+	purple_debug_info("msn", "Enabling MPOP\n");
+
+	session->enable_mpop = TRUE;
+	msn_annotate_contact(session, "Me", "MSN.IM.MPOP", "1", NULL);
+
+	purple_prpl_got_account_actions(purple_connection_get_account(pc));
+}
+
+static void
+disable_mpop_cb(PurpleConnection *pc)
+{
+	PurpleAccount *account = purple_connection_get_account(pc);
+	MsnSession *session = purple_connection_get_protocol_data(pc);
+	GSList *l;
+
+	purple_debug_info("msn", "Disabling MPOP\n");
+
+	session->enable_mpop = FALSE;
+	msn_annotate_contact(session, "Me", "MSN.IM.MPOP", "0", NULL);
+
+	for (l = session->user->endpoints; l; l = l->next) {
+		MsnUserEndpoint *ep = l->data;
+		char *user;
+
+		if (ep->id[0] != '\0' && strncasecmp(ep->id + 1, session->guid, 36) == 0)
+			/* Don't kick myself */
+			continue;
+
+		purple_debug_info("msn", "Disconnecting Endpoint %s\n", ep->id);
+
+		user = g_strdup_printf("%s;%s", purple_account_get_username(account), ep->id);
+		msn_notification_send_uun(session, user, MSN_UNIFIED_NOTIFICATION_MPOP, "goawyplzthxbye");
+		g_free(user);
+	}
+
+	purple_prpl_got_account_actions(account);
+}
+
+static void
+msn_show_set_mpop(PurplePluginAction *action)
+{
+	PurpleConnection *pc;
+
+	pc = (PurpleConnection *)action->context;
+
+	purple_request_action(pc, NULL, _("Allow multiple logins?"),
+						_("Do you want to allow or disallow connecting from "
+						  "multiple locations simultaneously?"),
+						PURPLE_DEFAULT_ACTION_NONE,
+						purple_connection_get_account(pc), NULL, NULL,
+						pc, 3,
+						_("Allow"), G_CALLBACK(enable_mpop_cb),
+						_("Disallow"), G_CALLBACK(disable_mpop_cb),
+						_("Cancel"), NULL);
+}
+
+static void
 msn_show_set_home_phone(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
@@ -1199,6 +1260,10 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 			msn_show_set_mobile_support);
 	m = g_list_append(m, act);
 #endif
+
+	act = purple_plugin_action_new(_("Allow/Disallow Multiple Logins..."),
+			msn_show_set_mpop);
+	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Allow/Disallow Mobile Pages..."),
 			msn_show_set_mobile_pages);
