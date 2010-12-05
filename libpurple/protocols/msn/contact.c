@@ -1611,6 +1611,7 @@ msn_annotate_contact(MsnSession *session, const char *passport, ...)
 	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
 
 	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
+	xmlnode_insert_child(contact, contact_info);
 
 	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
