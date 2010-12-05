@@ -10,6 +10,7 @@ version 2.7.8 (??/??/????):
 	  of smileys, display the text representation of the smiley properly
 	  when it contains HTML-escapable characters (e.g. "<3" was previously
 	  displayed as "&lt;3").
+	* Drop dependency on GdkGC and use Cairo instead.
 
 	libpurple:
 	* Fix multipart parsing when '=' is included in the boundary for
