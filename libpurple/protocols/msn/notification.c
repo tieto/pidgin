@@ -331,7 +331,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -387,7 +387,10 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = atoi(cmd->params[3]);
+		if (cmdproc->session->protocol_ver >= 16)
+			cmd->payload_len = atoi(cmd->params[5]);
+		else
+			cmd->payload_len = atoi(cmd->params[3]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -1209,7 +1212,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 					g_free(body_str);
 					g_free(body_enc);
-					msn_message_destroy(msg);
+					msn_message_unref(msg);
 					trans->data = NULL;
 				}
 			}
@@ -1548,40 +1551,55 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 {
+	MsnSession *session;
 	xmlnode *epNode, *capsNode;
 	MsnUserEndpoint data;
 	const char *id;
 	char *caps, *tmp;
+	gboolean is_me;
 
 	purple_debug_info("msn", "Get EndpointData\n");
 
+	session = user->userlist->session;
+	is_me = (user == session->user);
+
+	msn_user_clear_endpoints(user);
 	for (epNode = xmlnode_get_child(payloadNode, "EndpointData");
 	     epNode;
 	     epNode = xmlnode_get_next_twin(epNode)) {
 		id = xmlnode_get_attrib(epNode, "id");
 		capsNode = xmlnode_get_child(epNode, "Capabilities");
 
-		if (capsNode != NULL) {
-			caps = xmlnode_get_data(capsNode);
+		/* Disconnect others, if MPOP is disabled */
+		if (is_me
+		 && !purple_account_get_bool(session->account, "mpop", TRUE)
+		 && strncasecmp(id + 1, session->guid, 36) != 0) {
+			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
 
-			data.clientid = strtoul(caps, &tmp, 10);
-			if (tmp && *tmp)
-				data.extcaps = strtoul(tmp + 1, NULL, 10);
-			else
-				data.extcaps = 0;
-
-			g_free(caps);
-
+			tmp = g_strdup_printf("%s;%s", user->passport, id);
+			msn_notification_send_uun(session, tmp, MSN_UNIFIED_NOTIFICATION_MPOP, "goawyplzthxbye");
+			g_free(tmp);
 		} else {
-			data.clientid = 0;
-			data.extcaps = 0;
-		}
+			if (capsNode != NULL) {
+				caps = xmlnode_get_data(capsNode);
 
-		msn_user_set_endpoint_data(user, id, &data);
+				data.clientid = strtoul(caps, &tmp, 10);
+				if (tmp && *tmp)
+					data.extcaps = strtoul(tmp + 1, NULL, 10);
+				else
+					data.extcaps = 0;
+
+				g_free(caps);
+			} else {
+				data.clientid = 0;
+				data.extcaps = 0;
+			}
+
+			msn_user_set_endpoint_data(user, id, &data);
+		}
 	}
 
-	/* Need to shortcut this check, probably... */
-	if (user == user->userlist->session->user) {
+	if (is_me && purple_account_get_bool(session->account, "mpop", TRUE)) {
 		for (epNode = xmlnode_get_child(payloadNode, "PrivateEndpointData");
 		     epNode;
 		     epNode = xmlnode_get_next_twin(epNode)) {
@@ -1938,12 +1956,6 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
 		return;
-
-	if ((value = msn_message_get_header_value(msg, "kv")) != NULL)
-	{
-		g_free(session->passport_info.kv);
-		session->passport_info.kv = g_strdup(value);
-	}
 
 	if ((value = msn_message_get_header_value(msg, "sid")) != NULL)
 	{

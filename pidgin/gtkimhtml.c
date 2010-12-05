@@ -4905,18 +4905,20 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	 * are apparently pretty inefficient.  Hopefully we can remove this
 	 * restriction when we're using a better HTML widget.
 	 */
+	unescaped = purple_unescape_html(smiley);
 	numsmileys_thismsg = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg"));
 	if (numsmileys_thismsg >= 30) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
+		g_free(unescaped);
 		return;
 	}
 	numsmileys_total = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total"));
 	if (numsmileys_total >= 300) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
+		g_free(unescaped);
 		return;
 	}
 
-	unescaped = purple_unescape_html(smiley);
 	imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
@@ -4991,7 +4993,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
 		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
 	}
 
 	if (ebox) {

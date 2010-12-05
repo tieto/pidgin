@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-10 21:42+0300\n"
+"POT-Creation-Date: 2010-11-21 13:55-0500\n"
+"PO-Revision-Date: 2010-11-17 22:25+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -4852,17 +4852,6 @@ msgstr "Викинутий (%s)"
 msgid "Unknown Error in presence"
 msgstr "Невідома помилка стану присутності"
 
-# http://xmpp.org/extensions/xep-0047.html
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Сталася помилка передавання внутрішнього потоку даних (IBB)\n"
-
-msgid "Transfer was closed."
-msgstr "Передавання було закрито."
-
-# http://xmpp.org/extensions/xep-0047.html
-msgid "Failed to open in-band bytestream"
-msgstr "Помилка відкривання внутрішнього потоку даних (IBB)"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5178,26 +5167,6 @@ msgstr "Помилка додавання контакту"
 msgid "The username specified does not exist."
 msgstr "Визначене ім'я користувача не існує."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Проблема синхронізації переліку контактів у %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s є у локальному переліку у групі \"%s\", але відсутній у переліку сервера. "
-"Хочете додати цей контакт?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s є у локальному переліку, але відсутній у переліку сервера. Хочете додати "
-"цей контакт?"
-
 msgid "Unable to parse message"
 msgstr "Не вдається розібрати повідомлення"
 
@@ -5368,6 +5337,26 @@ msgstr "Неправильний код помилки %d"
 msgid "MSN Error: %s\n"
 msgstr "Помилка MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Проблема синхронізації переліку контактів у %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s є у локальному переліку у групі \"%s\", але відсутній у переліку сервера. "
+"Хочете додати цей контакт?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s є у локальному переліку, але відсутній у переліку сервера. Хочете додати "
+"цей контакт?"
+
 msgid "Other Contacts"
 msgstr "Інші контакти"
 
@@ -5420,11 +5409,23 @@ msgstr "Ваше нове дружнє ім'я MSN занадто довге."
 msgid "Set friendly name for %s."
 msgstr "Встановити дружнє ім'я для %s."
 
-msgid "Set your friendly name."
-msgstr "Введіть ваше дружнє ім'я."
+msgid "Set Friendly Name"
+msgstr "Встановити дружнє ім'я"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Ім'я, під яким вас будуть бачити інші користувачі MSN."
+
+msgid "This Location"
+msgstr "Це місцезнаходження"
+
+msgid "This is the name that identifies this location"
+msgstr "Ця назва визначає місцезнаходження"
+
+msgid "Other Locations"
+msgstr "Інше місцезнаходження"
+
+msgid "You can sign out from other locations here"
+msgstr "Тут ви можете вийти з іншого місцезнаходження"
 
 msgid "Set your home phone number."
 msgstr "Введіть номер вашого домашнього телефону."
@@ -5511,6 +5512,9 @@ msgstr "Назва офісу"
 
 msgid "Set Friendly Name..."
 msgstr "Встановити дружнє ім'я..."
+
+msgid "View Locations..."
+msgstr "Переглянути місцезнаходження..."
 
 msgid "Set Home Phone Number..."
 msgstr "Встановити номер домашнього телефону..."
@@ -6898,13 +6902,13 @@ msgstr "Порт сервера"
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
+"Будь ласка, авторизуйте мене і я зможу додати Вас до мого переліку контактів."
 
 msgid "No reason given."
 msgstr "Причина не вказана."
 
-#, fuzzy
 msgid "Authorization Denied Message:"
-msgstr "Повідомлення відмови у авторизації:"
+msgstr "Повідомлення відмови в авторизації:"
 
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -6920,6 +6924,13 @@ msgid ""
 msgstr ""
 "Ви занадто часто з'єднуєтесь та від'єднуєтесь. Зачекайте 10 хвилин та "
 "спробуйте знову. Якщо ви продовжите спроби, вам доведеться чекати ще довше."
+
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Ви увімкнули необхідність шифрування в налаштуваннях облікового запису, але "
+"один з серверів не підтримує його."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -6947,12 +6958,18 @@ msgid ""
 "encoding he is using, you can specify it in the advanced account options for "
 "your AIM/ICQ account.)"
 msgstr ""
+"(Сталася помилка отримання цього повідомлення. Контакт, з яким ви "
+"спілкуєтесь, можливо використовує інше кодування, ніж очікується. Якщо ви "
+"знаєте, яке кодування він використовує, ви можете визначити його в "
+"розширених налаштуваннях облікового запису AIM/ICQ.) "
 
 #, c-format
 msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
+"(Сталася помилка отримання цього повідомлення. Або ви та %s обрали різні "
+"кодування, або %s користується клієнтом з помилками.)"
 
 msgid "Could not join chat room"
 msgstr "Не вдалося приєднатися до кімнати балачки"
@@ -7229,6 +7246,13 @@ msgstr ""
 "Не вдається увійти як %s, тому що ім'я користувача неправильне. Імена "
 "користувачів мають бути правильними адресами ел. пошти або починатися з "
 "літери та містити тільки літери, цифри та пробіли, або тільки цифри."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Ви увімкнули необхідність шифрування в налаштуваннях облікового запису, але "
+"шифрування не підтримується вашою системою."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7758,13 +7782,11 @@ msgstr "Налаштувати перенаправлення миттєвих �
 msgid "Set Privacy Options..."
 msgstr "Встановити опції приватності..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Показати _перелік контактів"
+msgstr "Показати перелік видимих"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Перелік запрошень"
+msgstr "Показати перелік невидимих"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7781,6 +7803,9 @@ msgstr "Показати контакти, що очікують авториз�
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Шукати користувача за адресою ел.пошти..."
+
+msgid "Don't use encryption"
+msgstr "Не використовувати шифрування"
 
 msgid "Use clientLogin"
 msgstr "Використовувати clientLogin"
@@ -7897,177 +7922,164 @@ msgstr "Значок користувача"
 msgid "Voice"
 msgstr "Голос"
 
-#, fuzzy
 msgid "AIM Direct IM"
-msgstr "Пряме миттєве повідомлення"
+msgstr "AIM Direct IM"
 
-#, fuzzy
 msgid "Get File"
-msgstr "Надсилання файлу"
+msgstr "Отримати файл"
 
-#, fuzzy
 msgid "Games"
-msgstr "Асамська"
+msgstr "Ігри"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
-msgstr ""
+msgstr "Додатки"
 
-#, fuzzy
 msgid "Send Buddy List"
-msgstr "Перелік контактів"
+msgstr "Надіслати перелік контактів"
 
-#, fuzzy
 msgid "ICQ Direct Connect"
-msgstr "Дозволити прямі з'єднання"
+msgstr "Пряме з'єднання ICQ"
 
-#, fuzzy
 msgid "AP User"
-msgstr "Користувач"
+msgstr "Користувач AP"
 
 msgid "ICQ RTF"
-msgstr ""
+msgstr "ICQ RTF"
 
 msgid "Nihilist"
-msgstr ""
+msgstr "Нігіліст"
 
-#, fuzzy
 msgid "ICQ Server Relay"
-msgstr "Сервер каже:"
+msgstr "Транзитний сервер ICQ"
 
 msgid "Old ICQ UTF8"
-msgstr ""
+msgstr "Старий ICQ UTF8"
 
 msgid "Trillian Encryption"
-msgstr ""
+msgstr "Шифрування Trillian"
 
 msgid "ICQ UTF8"
-msgstr ""
+msgstr "ICQ UTF8"
 
 msgid "Hiptop"
-msgstr ""
+msgstr "Хіп-хоп"
 
-#, fuzzy
 msgid "Security Enabled"
-msgstr "Код безпеки"
+msgstr "Безпека увімкнена"
 
-#, fuzzy
 msgid "Video Chat"
-msgstr "_Відеовиклик"
+msgstr "Відеобалачка"
 
-#, fuzzy
 msgid "iChat AV"
-msgstr "Балачка"
+msgstr "iChat AV"
 
-#, fuzzy
 msgid "Live Video"
-msgstr " Відео"
+msgstr "Відео наживо"
 
-#, fuzzy
 msgid "Camera"
-msgstr "Відеокамера"
+msgstr "Камера"
 
 msgid "Screen Sharing"
-msgstr ""
+msgstr "Спільний екран"
 
 msgid "IP Address"
 msgstr "IP Адреса"
 
-#, fuzzy
 msgid "Warning Level"
-msgstr "Застереження"
+msgstr "Рівень застереження"
 
-#, fuzzy
 msgid "Buddy Comment"
-msgstr "Коментар користувача:"
+msgstr "Коментар користувача"
 
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
-msgstr "Використовувати шифрування, коли це можливо"
+msgstr "Відомості про користувача недоступні: %s"
 
 msgid "Mobile Phone"
 msgstr "Мобільний телефон"
 
-#, fuzzy
 msgid "Personal Web Page"
-msgstr "Особистий мобільний"
+msgstr "Особиста сторінка тенет"
 
 #. aim_userinfo_t
-#. strip_html_tags
-#, fuzzy
+#. use_html_status
 msgid "Additional Information"
-msgstr "Необов'язкові відомості:"
+msgstr "Додаткові відомості"
 
 msgid "Zip Code"
-msgstr ""
+msgstr "Поштовий код"
 
-#, fuzzy
 msgid "Work Information"
-msgstr "Більше відомостей"
+msgstr "Відомості про роботу"
 
 msgid "Division"
-msgstr ""
+msgstr "Відділ"
 
-#, fuzzy
 msgid "Position"
-msgstr "Опис"
+msgstr "Посада"
 
-#, fuzzy
 msgid "Web Page"
-msgstr "Домашня сторінка"
+msgstr "Сторінка тенет"
 
-#, fuzzy
 msgid "Online Since"
-msgstr "У мережі з"
+msgstr "В мережі з"
 
 msgid "Member Since"
 msgstr "Член з"
 
 msgid "Capabilities"
-msgstr ""
+msgstr "Можливості"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "З'явився в мережі"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "З'явився в мережі"
+msgstr "Не з'являвся в мережі"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "З'явився поза мережею"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
-msgstr "З'явився поза мережею"
+msgstr "Не з'являвся поза мережею"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Вас викинули з цього MultiMX."
+msgstr "немає контактів в цьому переліку"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"Ви можете повторно запитати авторизацію від цих користувачів, клацнувши на "
-"них правою кнопкою миші та вибравши \"Повторний запит авторизації\"."
+"Ви можете додати контакт до цього переліку натиснувши на ньому правою "
+"кнопкою миші на вибравши \"%s"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Видимий"
+msgstr "Перелік видимих"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "Ці контакти бачитимуть ваш стан, коли ви перемкнетеся на \"Невидимий\""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Перелік запрошень"
+msgstr "Перелік невидимих"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Ці контакти завжди будуть бачити, що ви поза мережею"
 
 msgid "Aquarius"
 msgstr "Водолій"
@@ -12365,6 +12377,9 @@ msgstr "Курдська"
 msgid "Lao"
 msgstr "Лао"
 
+msgid "Maithili"
+msgstr "Майтхілі"
+
 msgid "Macedonian"
 msgstr "Македонська"
 
@@ -15461,21 +15476,3 @@ msgstr "Відвідати сторінку тенет Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
-
-#~ msgid "The certificate has expired and should not be considered valid."
-#~ msgstr "Термін дії сертифікату закінчився і його не слід вважати дійсним."
-
-#~ msgid "_UDP:"
-#~ msgstr "_UDP:"
-
-#~ msgid "_TCP:"
-#~ msgstr "_TCP:"
-
-#~ msgid "_TLS:"
-#~ msgstr "_TLS:"
-
-#~ msgid "Require SSL/TLS"
-#~ msgstr "Потребує SSL/TLS"
-
-#~ msgid "Force old (port 5223) SSL"
-#~ msgstr "Примусово старий (порт 5223) SSL"

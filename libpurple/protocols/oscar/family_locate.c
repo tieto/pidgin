@@ -1043,7 +1043,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 						} else {
 							byte_stream_advance(bs, length2);
 							outinfo->status_len = 0;
-							outinfo->status = g_strdup("");
+							outinfo->status = NULL;
 							outinfo->status_encoding = NULL;
 						}
 					} break;

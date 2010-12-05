@@ -826,6 +826,7 @@ got_ok(MsnSlpCall *slpcall,
 
 		/* Try direct file transfer by sending a second INVITE */
 		dc = msn_dc_new(slpcall);
+		g_free(slpcall->branch);
 		slpcall->branch = rand_guid();
 
 		dc->listen_data = purple_network_listen_range(
@@ -1060,7 +1061,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->header->offset;
 
-	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP)
+	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP)
 	{
 		char *body_str;
 

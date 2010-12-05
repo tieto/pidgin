@@ -2,7 +2,16 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.7.6 (??/??/????):
+2.7.8 (??/??/????):
+
+2.7.7 (11/23/2010):
+	John: Well, this time around, we should finally have the certificate
+	issue really and fully fixed for all of you MSN users.  Also, we have
+	a few AIM-related fixes in this release, most notably the fix for the
+	new "SSL Handshake Failure" message some of you got after upgrading.
+	That one was an oversight on our part.  Enjoy the fixes!
+
+2.7.6 (11/21/2010):
 	Jorge: In this release I have merged two branches where I have spent
 	most of my time in the last months, the MSNP16 and SLP-rewrite.  I 
 	hope you all will enjoy the hability to be connected on multiple
@@ -10,6 +19,10 @@ Our development blog is available at: http://planet.pidgin.im
 	fix a lot of old bugs that we have in the tracker. I am really 
 	happy with this rewrite because there was untoched code from almost
 	5 years ago. I hope you like this release!
+
+	John: In this release, we give you some new features and a bunch of
+	bug fixes.  This includes shipping intermediate certificates to fix
+	certificate validation for MSN's servers.  Upgrade and enjoy!
 
 2.7.5 (10/31/2010):
 	John: A bugfix release for all of you!  This time we fixed a bunch of

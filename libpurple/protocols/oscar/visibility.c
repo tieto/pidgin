@@ -20,10 +20,25 @@
 
 #include "visibility.h"
 
-/* 4 separate strings are needed in order to ease translators' job */
+/* Translators: This string is a menu option that, if selected, will cause
+   you to appear online to the chosen user even when your status is set to
+   Invisible. */
 #define APPEAR_ONLINE		N_("Appear Online")
+
+/* Translators: This string is a menu option that, if selected, will cause
+   you to appear offline to the chosen user when your status is set to
+   Invisible (this is the default). */
 #define DONT_APPEAR_ONLINE	N_("Don't Appear Online")
+
+/* Translators: This string is a menu option that, if selected, will cause
+   you to always appear offline to the chosen user (even when your status
+   isn't Invisible). */
 #define APPEAR_OFFLINE		N_("Appear Offline")
+
+/* Translators: This string is a menu option that, if selected, will cause
+   you to appear offline to the chosen user if you are invisible, and
+   appear online to the chosen user if you are not invisible (this is the
+   default). */
 #define DONT_APPEAR_OFFLINE	N_("Don't Appear Offline")
 
 static guint16

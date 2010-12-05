@@ -1,3 +1,27 @@
+/**
+ * @file p2p.h MSN P2P functions
+ *
+ * purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
 #ifndef MSN_P2P_H
 #define MSN_P2P_H
 
@@ -49,7 +73,7 @@ typedef enum
 	P2P_CLOSE           = 0x40,       /**< Close session */
 	P2P_TLP_ERROR       = 0x80,       /**< Error at transport layer protocol */
 	P2P_DC_HANDSHAKE    = 0x100,      /**< Direct Handshake */
-	P2P_WML2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
+	P2P_WLM2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
 	P2P_FILE_DATA       = 0x1000030   /**< File transfer data */
 } MsnP2PHeaderFlag;
 /* Info From:

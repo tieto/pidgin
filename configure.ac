@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [7])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [7])
-m4_define([purple_micro_version], [6])
+m4_define([purple_micro_version], [8])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [3])
+m4_define([gnt_micro_version], [5])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -1046,7 +1046,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.9.0-rc2], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= 1.9.0], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [

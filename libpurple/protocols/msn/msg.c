@@ -50,17 +50,15 @@ msn_message_new(MsnMsgType type)
 	return msg;
 }
 
-void
+/**
+ * Destroys a message.
+ *
+ * @param msg The message to destroy.
+ */
+static void
 msn_message_destroy(MsnMessage *msg)
 {
 	g_return_if_fail(msg != NULL);
-
-	if (msg->ref_count > 0)
-	{
-		msn_message_unref(msg);
-
-		return;
-	}
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "message destroy (%p)\n", msg);
@@ -90,11 +88,11 @@ msn_message_ref(MsnMessage *msg)
 	return msg;
 }
 
-MsnMessage *
+void
 msn_message_unref(MsnMessage *msg)
 {
-	g_return_val_if_fail(msg != NULL, NULL);
-	g_return_val_if_fail(msg->ref_count > 0, NULL);
+	g_return_if_fail(msg != NULL);
+	g_return_if_fail(msg->ref_count > 0);
 
 	msg->ref_count--;
 
@@ -102,13 +100,7 @@ msn_message_unref(MsnMessage *msg)
 		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
-	{
 		msn_message_destroy(msg);
-
-		return NULL;
-	}
-
-	return msg;
 }
 
 MsnMessage *
@@ -368,6 +360,8 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 		memcpy(n, body, siz);
 		n += siz;
+
+		g_free(body);
 	}
 	else
 	{
@@ -1222,7 +1216,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			g_free(text);
 
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
-			msn_message_destroy(cancel);
+			msn_message_unref(cancel);
 		}
 
 	} else if (!strcmp(command, "CANCEL")) {

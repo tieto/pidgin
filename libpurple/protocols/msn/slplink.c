@@ -518,7 +518,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 			msn_directconn_send_handshake(directconn);
 #endif
 	}
-	else if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP ||
+	else if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP ||
 			msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		/* Release all the messages and send the ACK */
@@ -625,6 +625,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	/* All the pieces of the slpmsg have been received */
 	if (header->offset + header->length >= header->total_size)
 		process_complete_msg(slplink, slpmsg, header);
+
+	/* NOTE: The slpmsg will be destroyed in process_complete_msg or left in
+	   the slplink until fully received. Don't free it here!
+	 */
 }
 
 void

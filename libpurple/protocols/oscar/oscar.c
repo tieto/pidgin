@@ -283,7 +283,6 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
-	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_destroy(cc);
 }
 
@@ -793,7 +792,7 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, FALSE))) {
+			if (!strcmp(server, get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
 				server = get_login_server(od->icq, TRUE);
@@ -1367,7 +1366,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	const char *status_id;
 	va_list ap;
 	aim_userinfo_t *info;
-	char *message = NULL;
+	char *message;
 	char *itmsurl = NULL;
 
 	gc = od->gc;
@@ -1454,16 +1453,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	/* Empty status means we should unset the status message. NULL status means we should keep it from the previous active status.
-	 * Same goes for itmsurl (which is available only for the "available" status).
-	 */
-	if (info->status != NULL) {
-		message = (info->status_len > 0) ? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len) : NULL;
-	} else if (previous_status != NULL) {
-		message = g_strdup(purple_status_get_attr_string(previous_status, "message"));
-	}
+	message = (info->status && info->status_len > 0)
+			? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len)
+			: NULL;
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
+		/* TODO: If itmsurl is NULL, does that mean the URL has been
+		   cleared?  Or does it mean the URL should remain unchanged? */
 		if (info->itmsurl != NULL) {
 			itmsurl = (info->itmsurl_len > 0) ? oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len) : NULL;
 		} else if (previous_status != NULL && purple_status_is_available(previous_status)) {
@@ -4451,6 +4447,7 @@ oscar_chat_leave(PurpleConnection *gc, int id)
 			purple_conversation_get_name(conv));
 
 	cc = find_oscar_chat(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_kill(gc, cc);
 }
 

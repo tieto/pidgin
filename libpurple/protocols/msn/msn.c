@@ -132,7 +132,7 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	return TRUE;
 }
@@ -250,41 +250,33 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 	MsnSession *session;
 	MsnTransaction *trans;
 	PurpleAccount *account;
-	const char *real_alias;
+	char real_alias[BUDDY_ALIAS_MAXLEN + 1];
 	struct public_alias_closure *closure;
 
 	session = purple_connection_get_protocol_data(pc);
 	cmdproc = session->notification->cmdproc;
 	account = purple_connection_get_account(pc);
 
-	if (alias && *alias)
-	{
-		char *tmp = g_strdup(alias);
-		real_alias = purple_url_encode(g_strstrip(tmp));
-		g_free(tmp);
-	}
-	else
-		real_alias = "";
-
-	if (strlen(real_alias) > BUDDY_ALIAS_MAXLEN)
-	{
-		if (failure_cb) {
-			struct public_alias_closure *closure =
-				g_new0(struct public_alias_closure, 1);
-			closure->account = account;
-			closure->failure_cb = failure_cb;
-			purple_timeout_add(0, set_public_alias_length_error, closure);
-		} else {
-			purple_notify_error(pc, NULL,
-			                    _("Your new MSN friendly name is too long."),
-			                    NULL);
+	if (alias && *alias) {
+		if (!msn_encode_spaces(alias, real_alias, BUDDY_ALIAS_MAXLEN + 1)) {
+			if (failure_cb) {
+				struct public_alias_closure *closure =
+					g_new0(struct public_alias_closure, 1);
+				closure->account = account;
+				closure->failure_cb = failure_cb;
+				purple_timeout_add(0, set_public_alias_length_error, closure);
+			} else {
+				purple_notify_error(pc, NULL,
+				                    _("Your new MSN friendly name is too long."),
+				                    NULL);
+			}
+			return;
 		}
-		return;
-	}
 
-	if (*real_alias == '\0') {
-		real_alias = purple_url_encode(purple_account_get_username(account));
-	}
+		if (real_alias[0] == '\0')
+			strcpy(real_alias, purple_account_get_username(account));
+	} else
+		strcpy(real_alias, purple_account_get_username(account));
 
 	closure = g_new0(struct public_alias_closure, 1);
 	closure->account = account;
@@ -528,6 +520,7 @@ msn_show_locations(PurplePluginAction *action)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
+	gboolean have_other_endpoints;
 	GSList *l;
 	MsnLocationData *data;
 
@@ -550,17 +543,35 @@ msn_show_locations(PurplePluginAction *action)
 
 	group = purple_request_field_group_new(_("Other Locations"));
 	purple_request_fields_add_group(fields, group);
-	field = purple_request_field_label_new("others-label", _("You can sign out from other locations here"));
-	purple_request_field_group_add_field(group, field);
 
+	have_other_endpoints = FALSE;
 	for (l = session->user->endpoints; l; l = l->next) {
 		MsnUserEndpoint *ep = l->data;
 
-		if (g_str_equal(ep->id, session->guid))
+		if (ep->id[0] != '\0' && strncasecmp(ep->id + 1, session->guid, 36) == 0)
 			/* Don't add myself to the list */
 			continue;
 
+		if (!have_other_endpoints) {
+			/* We do in fact have an endpoint other than ourselves... let's
+			   add a label */
+			field = purple_request_field_label_new("others-label",
+					_("You can sign out from other locations here"));
+			purple_request_field_group_add_field(group, field);
+		}
+
+		have_other_endpoints = TRUE;
 		field = purple_request_field_bool_new(ep->id, ep->name, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if (!have_other_endpoints) {
+		/* TODO: Due to limitations in our current request field API, the
+		   following string will show up with a trailing colon.  This should
+		   be fixed either by adding an "include_colon" boolean, or creating
+		   a separate purple_request_field_label_new_without_colon function,
+		   or by never automatically adding the colon and requiring that
+		   callers add the colon themselves. */
+		field = purple_request_field_label_new("others-label", _("You are not signed in from any other locations."));
 		purple_request_field_group_add_field(group, field);
 	}
 
@@ -1149,18 +1160,27 @@ msn_status_types(PurpleAccount *account)
 static GList *
 msn_actions(PurplePlugin *plugin, gpointer context)
 {
+	PurpleConnection *gc;
+	MsnSession *session;
 	GList *m = NULL;
 	PurplePluginAction *act;
+
+	gc = (PurpleConnection *) context;
+	session = gc->proto_data;
 
 	act = purple_plugin_action_new(_("Set Friendly Name..."),
 								 msn_show_set_friendly_name);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	act = purple_plugin_action_new(_("View Locations..."),
-	                               msn_show_locations);
-	m = g_list_append(m, act);
-	m = g_list_append(m, NULL);
+	if (purple_account_get_bool(session->account, "mpop", TRUE)
+	 && session->protocol_ver >= 16)
+	{
+		act = purple_plugin_action_new(_("View Locations..."),
+		                               msn_show_locations);
+		m = g_list_append(m, act);
+		m = g_list_append(m, NULL);
+	}
 
 	act = purple_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
@@ -1374,7 +1394,7 @@ msn_send_emoticons(MsnSwitchBoard *swboard, GString *body)
 	msn_message_set_bin_data(msg, body->str, body->len);
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void msn_emoticon_destroy(MsnEmoticon *emoticon)
@@ -1563,7 +1583,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			purple_timeout_add(0, msn_send_me_im, imdata);
 		}
 
-		msn_message_destroy(msg);
+		msn_message_unref(msg);
 	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
 		char *friendname;
@@ -1627,7 +1647,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 
 	msn_switchboard_send_msg(swboard, msg, FALSE);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	return MSN_TYPING_SEND_TIMEOUT;
 }
@@ -2053,7 +2073,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	}
 
 	msn_switchboard_send_msg(swboard, msg, FALSE);
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 
 	g_free(msgformat);
 	g_free(msgtext);
@@ -3035,6 +3055,11 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_bool_new(_("Allow direct connections"),
 										  "direct_connect", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
+	option = purple_account_option_bool_new(_("Allow connecting from multiple locations"),
+										  "mpop", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

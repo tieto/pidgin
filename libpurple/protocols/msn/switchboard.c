@@ -225,7 +225,7 @@ send_clientcaps(MsnSwitchBoard *swboard)
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -743,7 +743,10 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "get UBM...\n");
-	cmd->payload_len = atoi(cmd->params[3]);
+	if (cmdproc->session->protocol_ver >= 16)
+		cmd->payload_len = atoi(cmd->params[5]);
+	else
+		cmd->payload_len = atoi(cmd->params[3]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 

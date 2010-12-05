@@ -78,16 +78,6 @@ struct _MsnSlpMessage
 MsnSlpMessage *msn_slpmsg_new(MsnSlpLink *slplink);
 
 /**
- * Creates a MsnSlpMessage without a MsnSlpLink by parsing the raw data.
- *
- * @param data 		The raw data with the slp message.
- * @param data_len 	The len of the data
- *
- * @return The createed slp message.
- */
-MsnSlpMessage *msn_slpmsg_new_from_data(const char *data, size_t data_len);
-
-/**
  * Destroys a slp message
  *
  * @param slpmsg The slp message to destory.

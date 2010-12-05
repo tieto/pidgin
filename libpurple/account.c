@@ -1087,6 +1087,9 @@ purple_account_destroy(PurpleAccount *account)
 	g_hash_table_destroy(account->settings);
 	g_hash_table_destroy(account->ui_settings);
 
+	if (account->proxy_info)
+		purple_proxy_info_destroy(account->proxy_info);
+
 	purple_account_set_status_types(account, NULL);
 
 	purple_presence_destroy(account->presence);

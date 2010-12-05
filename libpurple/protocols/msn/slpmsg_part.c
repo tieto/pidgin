@@ -1,3 +1,27 @@
+/**
+ * @file slpmsg_part.c MSNSLP Parts
+ *
+ * purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
 #include "internal.h"
 #include "debug.h"
 
@@ -28,12 +52,12 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	const char *tmp;
 	int body_len;
 
-	tmp = data;
-	part = msn_slpmsgpart_new(NULL, NULL);
-
 	if (data_len < sizeof(*header)) {
 		return NULL;
 	}
+
+	part = msn_slpmsgpart_new(NULL, NULL);
+	tmp = data;
 
 	/* Extract the binary SLP header */
 	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
@@ -109,8 +133,7 @@ void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size
 {
 	g_return_if_fail(part != NULL);
 
-	if (part->buffer != NULL)
-		g_free(part->buffer);
+	g_free(part->buffer);
 
 	if (data != NULL && len > 0) {
 		part->buffer = g_malloc(len + 1);
@@ -153,6 +176,9 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 	tmp += siz;
 
 	*ret_size = tmp - base;
+
+	g_free(header);
+	g_free(footer);
 
 	return base;
 }

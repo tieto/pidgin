@@ -171,13 +171,6 @@ void msn_message_parse_payload(MsnMessage *msg, const char *payload,
 						  const char *line_dem,const char *body_dem);
 
 /**
- * Destroys a message.
- *
- * @param msg The message to destroy.
- */
-void msn_message_destroy(MsnMessage *msg);
-
-/**
  * Increments the reference count on a message.
  *
  * @param msg The message.
@@ -195,7 +188,7 @@ MsnMessage *msn_message_ref(MsnMessage *msg);
  *
  * @return @a msg, or @c NULL if the new count is 0.
  */
-MsnMessage *msn_message_unref(MsnMessage *msg);
+void msn_message_unref(MsnMessage *msg);
 
 /**
  * Generates the payload data of a message.

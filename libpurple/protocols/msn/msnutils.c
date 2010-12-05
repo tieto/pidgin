@@ -182,29 +182,40 @@ msn_encode_mime(const char *str)
  * We need this because we're only supposed to encode spaces in the font
  * names. purple_url_encode() isn't acceptable.
  */
-static const char *
-encode_spaces(const char *str)
+gboolean
+msn_encode_spaces(const char *str, char *buf, size_t len)
 {
-	static char buf[BUF_LEN];
-	const char *c;
-	char *d;
+	char *nonspace = buf;
 
-	g_return_val_if_fail(str != NULL, NULL);
+	while (isspace(*str))
+		str++;
 
-	for (c = str, d = buf; *c != '\0'; c++)
-	{
-		if (*c == ' ')
-		{
-			*d++ = '%';
-			*d++ = '2';
-			*d++ = '0';
+	for (; *str && len > 1; str++) {
+		if (*str == '%') {
+			if (len < 4)
+				break;
+			*buf++ = '%';
+			*buf++ = '2';
+			*buf++ = '5';
+			len -= 3;
+			nonspace = buf;
+		} else if (*str == ' ') {
+			if (len < 4)
+				break;
+			*buf++ = '%';
+			*buf++ = '2';
+			*buf++ = '0';
+			len -= 3;
+		} else {
+			*buf++ = *str;
+			len--;
+			nonspace = buf;
 		}
-		else
-			*d++ = *c;
 	}
-	*d = '\0';
 
-	return buf;
+	*nonspace = '\0';
+
+	return (*str == '\0');
 }
 
 /*
@@ -223,6 +234,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 	const char *c;
 	char *msg;
 	char *fontface = NULL;
+	char fontface_encoded[BUF_LEN];
 	char fonteffect[5];
 	char fontcolor[7];
 	char direction = '0';
@@ -449,8 +461,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 	if (fontface == NULL)
 		fontface = g_strdup("Segoe UI");
 
+	msn_encode_spaces(fontface, fontface_encoded, BUF_LEN);
 	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
-								  encode_spaces(fontface),
+								  fontface_encoded,
 								  fonteffect, fontcolor, direction);
 	*message = msg;
 
