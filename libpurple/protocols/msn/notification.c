@@ -1572,7 +1572,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 
 		/* Disconnect others, if MPOP is disabled */
 		if (is_me
-		 && !purple_account_get_bool(session->account, "mpop", TRUE)
+		 && !session->enable_mpop
 		 && strncasecmp(id + 1, session->guid, 36) != 0) {
 			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
 
@@ -1599,7 +1599,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 		}
 	}
 
-	if (is_me && purple_account_get_bool(session->account, "mpop", TRUE)) {
+	if (is_me && session->enable_mpop) {
 		for (epNode = xmlnode_get_child(payloadNode, "PrivateEndpointData");
 		     epNode;
 		     epNode = xmlnode_get_next_twin(epNode)) {

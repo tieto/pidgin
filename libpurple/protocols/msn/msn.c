@@ -1173,8 +1173,7 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	if (purple_account_get_bool(session->account, "mpop", TRUE)
-	 && session->protocol_ver >= 16)
+	if (session->enable_mpop && session->protocol_ver >= 16)
 	{
 		act = purple_plugin_action_new(_("View Locations..."),
 		                               msn_show_locations);

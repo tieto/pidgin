@@ -49,6 +49,7 @@ msn_session_new(PurpleAccount *account)
 	session->oim = msn_oim_new(session);
 
 	session->protocol_ver = 0;
+	session->enable_mpop = TRUE; /* Default only */
 
 	session->guid = rand_guid();
 

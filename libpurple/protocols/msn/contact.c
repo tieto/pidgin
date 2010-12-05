@@ -732,9 +732,9 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
 				if (!strcmp(name, "MSN.IM.MPOP")) {
 					if (!value || atoi(value) != 0)
-						purple_account_set_bool(session->account, "mpop", TRUE);
+						session->enable_mpop = TRUE;
 					else
-						purple_account_set_bool(session->account, "mpop", FALSE);
+						session->enable_mpop = FALSE;
 				}
 				g_free(name);
 				g_free(value);
