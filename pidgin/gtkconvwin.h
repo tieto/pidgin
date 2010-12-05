@@ -48,26 +48,27 @@ struct _PidginWindow
 	{
 		GtkWidget *menubar;
 
-		GtkWidget *view_log;
+		GtkAction *view_log;
 
-		GtkWidget *send_file;
-		GtkWidget *add_pounce;
-		GtkWidget *get_info;
-		GtkWidget *invite;
+		GtkAction *send_file;
+		GtkAction *add_pounce;
+		GtkAction *get_info;
+		GtkAction *invite;
 
-		GtkWidget *alias;
-		GtkWidget *block;
-		GtkWidget *unblock;
-		GtkWidget *add;
-		GtkWidget *remove;
+		GtkAction *alias;
+		GtkAction *block;
+		GtkAction *unblock;
+		GtkAction *add;
+		GtkAction *remove;
 
-		GtkWidget *insert_link;
-		GtkWidget *insert_image;
+		GtkAction *insert_link;
+		GtkAction *insert_image;
 
-		GtkWidget *logging;
-		GtkWidget *sounds;
-		GtkWidget *show_formatting_toolbar;
-		GtkWidget *show_timestamps;
+		GtkAction *logging;
+		GtkAction *sounds;
+		GtkAction *show_formatting_toolbar;
+		GtkAction *show_timestamps;
+
 		GtkWidget *show_icon;
 
 		GtkWidget *send_to;
@@ -76,7 +77,7 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
-		GtkItemFactory *item_factory;
+		GtkUIManager *ui;
 
 	} menu;
 
@@ -98,9 +99,9 @@ struct _PidginWindow
 	gint drag_leave_signal;
 
 	/* Media menu options. */
-	GtkWidget *audio_call;
-	GtkWidget *video_call;
-	GtkWidget *audio_video_call;
+	GtkAction *audio_call;
+	GtkAction *video_call;
+	GtkAction *audio_video_call;
 };
 
 /*@}*/

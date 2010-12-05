@@ -102,7 +102,7 @@ refresh_scroll_box(PidginScrollBook *scroll_book, int index, int count)
 
 	gtk_widget_show_all(GTK_WIDGET(scroll_book));
 	if (count < 1)
-		gtk_widget_hide_all(scroll_book->hbox);
+		gtk_widget_hide(scroll_book->hbox);
 	else {
 		gtk_widget_show_all(scroll_book->hbox);
 		if (count == 1) {
@@ -147,7 +147,7 @@ scroll_close_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 }
 
 static void
-switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, PidginScrollBook *scroll_book)
+switch_page_cb(GtkNotebook *notebook, GtkWidget *page, guint page_num, PidginScrollBook *scroll_book)
 {
 	int count;
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
@@ -160,7 +160,7 @@ pidgin_scroll_book_add(GtkContainer *container, GtkWidget *widget)
 	PidginScrollBook *scroll_book;
 
 	g_return_if_fail(GTK_IS_WIDGET (widget));
-	g_return_if_fail (widget->parent == NULL);
+	g_return_if_fail (gtk_widget_get_parent(widget) == NULL);
 
 	scroll_book = PIDGIN_SCROLL_BOOK(container);
 	scroll_book->children = g_list_append(scroll_book->children, widget);
