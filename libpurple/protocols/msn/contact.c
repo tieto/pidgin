@@ -190,6 +190,8 @@ msn_contact_operation_str(MsnCallbackAction action)
 		strcat(buf, "Renaming Group,");
 	if (action & MSN_UPDATE_INFO)
 		strcat(buf, "Updating Contact Info,");
+	if (action & MSN_ANNOTATE_USER)
+		strcat(buf, "Annotating Contact,");
 
 	return buf;
 }
@@ -1519,6 +1521,96 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode_insert_data(xmlnode_get_child(state->body,
 	                                      "Header/ABApplicationHeader/PartnerScenario"),
 	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	if (user) {
+		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
+		msn_callback_state_set_uid(state, user->uid);
+		xmlnode_insert_data(contactId, state->uid, -1);
+	} else {
+		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
+		xmlnode_insert_data(contactType, "Me", -1);
+	}
+
+	msn_contact_request(state);
+}
+
+static void
+msn_annotate_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
+	gpointer data)
+{
+	MsnCallbackState *state = (MsnCallbackState *)data;
+	xmlnode *fault;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
+
+	purple_debug_info("msn", "Contact annotated successfully\n");
+}
+
+/* Update a contact's annotations */
+void
+msn_annotate_contact(MsnSession *session, const char *passport, ...)
+{
+	va_list params;
+	MsnCallbackState *state;
+	xmlnode *contact;
+	xmlnode *contact_info;
+	xmlnode *annotations;
+	MsnUser *user = NULL;
+
+	g_return_if_fail(passport != NULL);
+
+	if (strcmp(passport, "Me") != 0) {
+		user = msn_userlist_find_user(session->userlist, passport);
+		if (!user)
+			return;
+	}
+
+	contact_info = xmlnode_new("contactInfo");
+	annotations = xmlnode_new_child(contact_info, "annotations");
+
+	va_start(params, passport);
+	while (TRUE) {
+		const char *name;
+		const char *value;
+		xmlnode *a, *n, *v;
+
+		name = va_arg(params, const char *);
+		if (!name)
+			break;
+
+		value = va_arg(params, const char *);
+		if (!value)
+			break;
+
+		a = xmlnode_new_child(annotations, "Annotation");
+		n = xmlnode_new_child(a, "Name");
+		xmlnode_insert_data(n, name, -1);
+		v = xmlnode_new_child(a, "Value");
+		xmlnode_insert_data(v, value, -1);
+	}
+	va_end(params);
+
+	state = msn_callback_state_new(session);
+
+	state->body = xmlnode_from_str(MSN_CONTACT_ANNOTATE_TEMPLATE, -1);
+	state->action = MSN_ANNOTATE_USER;
+	state->post_action = MSN_CONTACT_ANNOTATE_SOAP_ACTION;
+	state->post_url = MSN_ADDRESS_BOOK_POST_URL;
+	state->cb = msn_annotate_contact_read_cb;
+
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
 
 	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
