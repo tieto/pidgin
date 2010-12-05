@@ -510,7 +510,7 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 		0, 0, -1, -1);
 
 	gtk_paint_layout (gtk_widget_get_style(imhtml->tip_window), cr,
-    	GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
+		GTK_STATE_NORMAL, TRUE, imhtml->tip_window, NULL, 4, 4, layout);
 
 	cairo_destroy(cr);
 	g_object_unref(layout);
@@ -524,14 +524,14 @@ gtk_imhtml_tip (gpointer data)
 	PangoFontMetrics *font_metrics;
 	PangoLayout *layout;
 	PangoFont *font;
-  	GtkStyle *style = gtk_widget_get_style(imhtml->tip_window);
-  	GtkAllocation allocation;
+	GtkStyle *style = gtk_widget_get_style(imhtml->tip_window);
+	GtkAllocation allocation;
 	gint gap, x, y, h, w, scr_w, baseline_skip;
 
 	g_return_val_if_fail(GTK_IS_IMHTML(imhtml), FALSE);
 
-  	gtk_widget_get_allocation(GTK_WIDGET(imhtml), &allocation);
-    
+	gtk_widget_get_allocation(GTK_WIDGET(imhtml), &allocation);
+
 	if (!imhtml->tip || !gtk_widget_is_drawable(GTK_WIDGET(imhtml))) {
 		imhtml->tip_timer = 0;
 		return FALSE;
@@ -556,7 +556,7 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_ensure_style (imhtml->tip_window);
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
 	font = pango_context_load_font(pango_layout_get_context(layout),
-			        style->font_desc);
+	                               style->font_desc);
 
 	if (font == NULL) {
 		char *tmp = pango_font_description_to_string(style->font_desc);
@@ -753,7 +753,7 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 	return FALSE;
 }
 
-/* TODO: I think this can be removed for GTK+ 3.0... */ 
+/* TODO: I think this can be removed for GTK+ 3.0... */
 #if 0
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
@@ -783,7 +783,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			gdk_cairo_set_source_color(cr, &gcolor);
 		} else {
 			gdk_cairo_set_source_color(cr,
-          &(gtk_widget_get_style(widget)->base[gtk_widget_get_state(widget)]));
+				&(gtk_widget_get_style(widget)->base[gtk_widget_get_state(widget)]));
 		}
 
 		cairo_rectangle(cr,
@@ -1166,8 +1166,8 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 {
 	char *text;
 	GtkIMHtml *imhtml = data;
-  gint length = gtk_selection_data_get_length(selection_data);
-    
+	gint length = gtk_selection_data_get_length(selection_data);
+
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
@@ -1576,7 +1576,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
-  /* TODO: I _think_ this should be removed for GTK+ 3.0 */
+	/* TODO: I _think_ this should be removed for GTK+ 3.0 */
 	/*widget_class->expose_event = gtk_imhtml_expose_event;*/
 	parent_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
@@ -1921,18 +1921,18 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gint i = 0;
-  gint length = gtk_selection_data_get_length(sd);
+	gint length = gtk_selection_data_get_length(sd);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
 
-	if(gtk_imhtml_get_editable(imhtml) && text){
+	if (gtk_imhtml_get_editable(imhtml) && text) {
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
 			/* TODO: Is it really ok to change sd->data...? */
 			purple_str_strip_char(text, '\r');
 
 			links = g_strsplit(text, "\n", 0);
-			while((link = links[i]) != NULL){
+			while ((link = links[i]) != NULL) {
 				if (gtk_imhtml_is_protocol(link)) {
 					gchar *label;
 
@@ -2001,7 +2001,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			return;
 		}
 		gtk_drag_finish(dc, TRUE,
-        (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	} else {
 		gtk_drag_finish(dc, FALSE, FALSE, t);
 	}
@@ -2557,9 +2557,9 @@ static gboolean scroll_idle_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = gtk_text_view_get_vadjustment(GTK_TEXT_VIEW(imhtml));
-	if(adj) {
+	if (adj) {
 		gtk_adjustment_set_value(adj, gtk_adjustment_get_upper(adj) -
-                             gtk_adjustment_get_page_size(adj));
+		                              gtk_adjustment_get_page_size(adj));
 	}
 	imhtml->scroll_src = 0;
 	return FALSE;
@@ -3842,7 +3842,7 @@ static void
 gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-	
+
 	/* Create an add dialog */
 	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
 	pidgin_smiley_editor_set_shortcut(editor, image->filename);
@@ -4199,14 +4199,14 @@ static void remove_tag_by_prefix(GtkIMHtml *imhtml, const GtkTextIter *i, const 
 
 	for (l = tags; l; l = l->next) {
 		GtkTextTag *tag = l->data;
-    gchar *name;
+		gchar *name = NULL;
 
-    g_object_get(G_OBJECT(tag), "name", &name, NULL);
- 
+		g_object_get(G_OBJECT(tag), "name", &name, NULL);
+
 		if (name && !strncmp(name, prefix, len))
 			gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, i, e);
 
-    g_free(name);
+		g_free(name);
 	}
 
 	g_slist_free(tags);
@@ -4222,14 +4222,14 @@ static void remove_tag_by_prefix(GtkIMHtml *imhtml, const GtkTextIter *i, const 
 
 			for (l = tags; l; l = l->next) {
 				GtkTextTag *tag = l->data;
-        gchar *name;
+				gchar *name = NULL;
 
-        g_object_get(G_OBJECT(tag), "name", &name, NULL);
+				g_object_get(G_OBJECT(tag), "name", &name, NULL);
 
 				if (name && !strncmp(name, prefix, len))
 					gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, &iter, e);
 
-        g_free(name);
+				g_free(name);
       }
 
 			g_slist_free(tags);
@@ -4350,16 +4350,16 @@ static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *start, GtkTextIter *en
 				gtk_text_iter_begins_tag(start, tag) &&			/* the tag starts with the selection */
 				(!gtk_text_iter_has_tag(end, tag) ||			/* the tag ends within the selection */
 					gtk_text_iter_ends_tag(end, tag))) {
-      gchar *name;
+			gchar *name = NULL;
 
-      g_object_get(G_OBJECT(tag), "name", &name, NULL);
+			g_object_get(G_OBJECT(tag), "name", &name, NULL);
 			gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, start, end);
 
-      if (name && strncmp(name, "LINK ", 5) == 0 && imhtml->edit.link) {
+			if (name && strncmp(name, "LINK ", 5) == 0 && imhtml->edit.link) {
 				gtk_imhtml_toggle_link(imhtml, NULL);
 			}
 
-      g_free(name);
+			g_free(name);
 		}
 	}
 	g_slist_free(tags);
@@ -4581,10 +4581,10 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 
 	for (l = tags; l != NULL; l = l->next) {
 		GtkTextTag *tag = GTK_TEXT_TAG(l->data);
-    gchar *name;
+		gchar *name = NULL;
 
-    g_object_get(G_OBJECT(tag), "name", &name, NULL);
-      
+		g_object_get(G_OBJECT(tag), "name", &name, NULL);
+
 		if (name) {
 			if (strcmp(name, "BOLD") == 0)
 				imhtml->edit.bold = TRUE;
@@ -4606,7 +4606,7 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 				imhtml->edit.link = tag;
 		}
 
-    g_free(name);
+		g_free(name);
 	}
 
 	g_slist_free(tags);
@@ -5004,10 +5004,10 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		 * images, and ensures that they are handled by the image
 		 * itself, without propagating to the textview and causing
 		 * a complete refresh */
-    /* TODO: I think this should be removed for GTK+ 3.0?
+		/* TODO: I think this should be removed for GTK+ 3.0?
 		g_signal_connect(G_OBJECT(icon), "expose-event", G_CALLBACK(image_expose), NULL);
-    */
-    
+		*/
+
 		gtk_widget_show(icon);
 		if (ebox)
 			gtk_container_add(GTK_CONTAINER(ebox), icon);
@@ -5109,29 +5109,29 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
 	static gchar buf[1024];
-  gchar *name;
+	gchar *name = NULL;
 
-  g_object_get(G_OBJECT(tag), "name", &name, NULL);
 	g_return_val_if_fail(name != NULL, "");
+	g_object_get(G_OBJECT(tag), "name", &name, NULL);
 
 	if (strcmp(name, "BOLD") == 0) {
-    g_free(name);
+		g_free(name);
 		return "<b>";
 	} else if (strcmp(name, "ITALICS") == 0) {
-    g_free(name);
+		g_free(name);
 		return "<i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
-    g_free(name);
-    return "<u>";
+		g_free(name);
+		return "<u>";
 	} else if (strcmp(name, "STRIKE") == 0) {
-    g_free(name);
-    return "<s>";
+		g_free(name);
+		return "<s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		char *tmp = g_object_get_data(G_OBJECT(tag), "link_url");
 
-    g_free(name);
-      
-    if (tmp) {
+		g_free(name);
+
+		if (tmp) {
 			g_snprintf(buf, sizeof(buf), "<a href=\"%s\">", tmp);
 			buf[sizeof(buf)-1] = '\0';
 			return buf;
@@ -5141,29 +5141,29 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 	} else if (strncmp(name, "FORECOLOR ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font color=\"%s\">", &name[10]);
 
-    g_free(name);
+		g_free(name);
 
-    return buf;
+		return buf;
 	} else if (strncmp(name, "BACKCOLOR ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font back=\"%s\">", &name[10]);
-    g_free(name);
-      
-    return buf;
+		g_free(name);
+
+		return buf;
 	} else if (strncmp(name, "BACKGROUND ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<body bgcolor=\"%s\">", &name[11]);
-    g_free(name);
+		g_free(name);
 
-    return buf;
+		return buf;
 	} else if (strncmp(name, "FONT FACE ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font face=\"%s\">", &name[10]);
-    g_free(name);
+		g_free(name);
 
-    return buf;
+		return buf;
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
 		g_snprintf(buf, sizeof(buf), "<font size=\"%s\">", &name[10]);
-    g_free(name);
+		g_free(name);
 
-    return buf;
+		return buf;
 	} else {
 		char *str = buf;
 		gboolean isset;
@@ -5225,8 +5225,8 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		}
 
 		g_snprintf(str, sizeof(buf) - (str - buf), "'>");
-    g_free(name);
-      
+		g_free(name);
+
 		return (empty ? "" : buf);
 	}
 }
@@ -5235,39 +5235,39 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 {
 	gchar *name;
 
-  g_object_get(G_OBJECT(tag), "name", &name, NULL);
 	g_return_val_if_fail(name != NULL, "");
+	g_object_get(G_OBJECT(tag), "name", &name, NULL);
 
 	if (strcmp(name, "BOLD") == 0) {
-    g_free(name);
+		g_free(name);
 		return "</b>";
 	} else if (strcmp(name, "ITALICS") == 0) {
-    g_free(name);
-    return "</i>";
+		g_free(name);
+		return "</i>";
 	} else if (strcmp(name, "UNDERLINE") == 0) {
-    g_free(name);
-    return "</u>";
+		g_free(name);
+		return "</u>";
 	} else if (strcmp(name, "STRIKE") == 0) {
-    g_free(name);
-    return "</s>";
+		g_free(name);
+		return "</s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
-    g_free(name);
-    return "</a>";
+		g_free(name);
+		return "</a>";
 	} else if (strncmp(name, "FORECOLOR ", 10) == 0) {
-    g_free(name);
-    return "</font>";
+		g_free(name);
+		return "</font>";
 	} else if (strncmp(name, "BACKCOLOR ", 10) == 0) {
-    g_free(name);
-    return "</font>";
+		g_free(name);
+		return "</font>";
 	} else if (strncmp(name, "BACKGROUND ", 10) == 0) {
-    g_free(name);
-    return "</body>";
+		g_free(name);
+		return "</body>";
 	} else if (strncmp(name, "FONT FACE ", 10) == 0) {
-    g_free(name);
-    return "</font>";
+		g_free(name);
+		return "</font>";
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
-    g_free(name);
-    return "</font>";
+		g_free(name);
+		return "</font>";
 	} else {
 		const char *props[] = {"weight-set", "foreground-set", "background-set",
 			"size-set", "underline-set", NULL};
@@ -5279,7 +5279,7 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 				return "</span>";
 		}
 
-    g_free(name);
+		g_free(name);
 
 		return "";
 	}
