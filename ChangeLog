@@ -34,6 +34,9 @@ version 2.7.8 (??/??/????):
 	* Correctly remove old endpoints from the list when they sign out.
 	* Add option to disable connections from multiple locations. (#13017)
 
+	XMPP:
+	* Terminate Jingle sessions with unsupported content types. (#13048)
+
 version 2.7.7 (11/23/2010):
 	General:
 	* Allow multiple CA certificates to share the same Distinguished Name
