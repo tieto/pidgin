@@ -762,6 +762,12 @@ void mxit_reconnect( struct MXitSession* session )
 {
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_reconnect\n" );
 
+	/* remove the input cb function */
+	if ( session->con->inpa ) {
+		purple_input_remove( session->con->inpa );
+		session->con->inpa = 0;
+	}
+
 	/* close existing connection */
 	session->flags &= ~MXIT_FLAG_CONNECTED;
 	purple_proxy_connect_cancel_with_handle( session->con );

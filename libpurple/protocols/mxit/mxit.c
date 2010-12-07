@@ -588,7 +588,33 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 
 
 /*------------------------------------------------------------------------
- * Buddy list menu.
+ * Re-Invite was selected from the buddy-list menu.
+ *
+ *  @param node		The entry in the buddy list.
+ *  @param ignored	(not used)
+ */
+static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
+{
+	PurpleBuddy*		buddy;
+	struct contact*		contact;
+	PurpleConnection*	gc;
+	struct MXitSession*	session;
+
+	buddy = (PurpleBuddy *)node;
+	gc = purple_account_get_connection( purple_buddy_get_account( buddy ) );
+	session = gc->proto_data;
+
+	contact = purple_buddy_get_protocol_data( (PurpleBuddy*) node );
+	if ( !contact )
+		return;
+
+	/* send a new invite */
+	mxit_send_invite( session, contact->username, contact->alias, contact->groupname );
+}
+
+
+/*------------------------------------------------------------------------
+ * Buddy-list menu.
  *
  *  @param node		The entry in the buddy list.
  */
@@ -597,6 +623,7 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 	PurpleBuddy*		buddy;
 	struct contact*		contact;
 	GList*				m = NULL;
+	PurpleMenuAction*	act;
 
 	if ( !PURPLE_BLIST_NODE_IS_BUDDY( node ) )
 		return NULL;
@@ -605,6 +632,12 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 	contact = purple_buddy_get_protocol_data( buddy );
 	if ( !contact )
 		return NULL;
+
+	if ( ( contact->subtype == MXIT_SUBTYPE_DELETED ) || ( contact->subtype == MXIT_SUBTYPE_REJECTED ) || ( contact->subtype == MXIT_SUBTYPE_NONE ) ) {
+		/* contact is in Deleted, Rejected or None state */
+		act = purple_menu_action_new( _( "Re-Invite" ), PURPLE_CALLBACK( mxit_reinvite ), NULL, NULL );
+		m = g_list_append(m, act);
+	}
 
 	return m;
 }

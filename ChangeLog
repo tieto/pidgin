@@ -288,6 +288,23 @@ version 2.7.3 (08/10/2010):
 	* Fix file transfers that get stuck with "Waiting for transfer to
 	  begin".
 
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
+	* Ability to re-invite a contact in Rejected or Deleted state.
+
 version 2.7.2 (07/21/2010):
 	AIM and ICQ:
 	* Fix a crash bug related to X-Status messages that can be triggered by
