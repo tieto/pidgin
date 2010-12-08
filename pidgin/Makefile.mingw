@@ -121,6 +121,7 @@ PIDGIN_LIBS =	\
 		-lz \
 		-lgtk-win32-2.0 \
 		-latk-1.0 \
+		-lcairo \
 		-lpango-1.0 \
 		-lgdk-win32-2.0 \
 		-lgdk_pixbuf-2.0 \
