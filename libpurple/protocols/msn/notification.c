@@ -1250,10 +1250,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	networkid = atoi(cmd->params[2]);
 	friendly = purple_url_decode(cmd->params[3]);
 
-	if (g_str_equal(passport, session->user->passport))
-		user = session->user;
-	else
-		user = msn_userlist_find_user(session->userlist, passport);
+	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
 
 	if (msn_user_set_friendly_name(user, friendly) && user != session->user)
@@ -1705,10 +1702,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	session = cmdproc->session;
 
 	passport = cmd->params[0];
-	if (g_str_equal(passport, session->user->passport))
-		user = session->user;
-	else
-		user = msn_userlist_find_user(session->userlist, passport);
+	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
 		char *str = g_strndup(payload, len);
 		purple_debug_info("msn", "unknown user %s, payload is %s\n",

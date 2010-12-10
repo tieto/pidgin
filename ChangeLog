@@ -37,6 +37,7 @@ version 2.7.8 (??/??/????):
 	* Correctly update your own display name in the buddy list. (#13064) 
 	* Correctly show ourselves as offline in the buddy list when going
 	  invisible. (#12945)
+	* Correctly update your own icon in the buddy list. (#12973)
 
 	XMPP:
 	* Terminate Jingle sessions with unsupported content types. (#13048)
