@@ -230,9 +230,6 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	g_return_val_if_fail(user != NULL, FALSE);
 
-	if (user == user->userlist->session->user)
-		return FALSE;
-
 	if (user->friendly_name && name && (!strcmp(user->friendly_name, name) ||
 				!strcmp(user->passport, name)))
 		return FALSE;
@@ -600,7 +597,7 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 
 	user->msnobj = obj;
 
-	if (user != user->userlist->session->user && user->list_op & MSN_LIST_FL_OP)
+	if (user->list_op & MSN_LIST_FL_OP)
 		queue_buddy_icon_request(user);
 }
 
