@@ -1256,7 +1256,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
 
-	if (msn_user_set_friendly_name(user, friendly))
+	if (msn_user_set_friendly_name(user, friendly) && user != session->user)
 	{
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
