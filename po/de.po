@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-17 09:26+0100\n"
-"PO-Revision-Date: 2010-11-17 09:19+0100\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2010-12-12 12:28+0100\n"
+"PO-Revision-Date: 2010-12-12 12:28+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -5473,6 +5473,31 @@ msgstr "Andere Orte"
 msgid "You can sign out from other locations here"
 msgstr "Sie können andere Orte von hier abmelden"
 
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Sie sind nicht von anderen Orten aus angemeldet."
+
+msgid "Allow multiple logins?"
+msgstr "Mehrere Logins erlauben?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Möchten Sie mehrere gleichzeitige Verbindungen von verschiedenen Orten "
+"erlauben oder verbieten?"
+
+msgid "Allow"
+msgstr "Erlauben"
+
+msgid "Disallow"
+msgstr "Verbieten"
+
 msgid "Set your home phone number."
 msgstr "Setze Ihre private Telefonnummer."
 
@@ -5491,12 +5516,6 @@ msgid ""
 msgstr ""
 "Möchten Sie anderen Leuten in Ihrer Buddy-Liste erlauben oder verbieten, "
 "Ihnen Nachrichten an Ihre Handy oder an andere mobile Geräte zu senden?"
-
-msgid "Allow"
-msgstr "Erlauben"
-
-msgid "Disallow"
-msgstr "Verbieten"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5573,6 +5592,9 @@ msgstr "Setze Handynummer..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Erlaube/verbiete mobile Geräte..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Erlaube/verbiete mehrere Logins..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Erlaube/verbiete mobile Webseiten..."
@@ -5792,6 +5814,9 @@ msgstr "Zeige benutzerdefinierte Smileys"
 
 msgid "Allow direct connections"
 msgstr "Erlaube direkte Verbindungen"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Verbindungen von mehreren Orten erlauben"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Einen Kontakt anstoßen, um seine Aufmerksamkeit zu erhalten"
@@ -7018,6 +7043,9 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Fehler beim Anfordern von %s: %s"
 
+msgid "The server returned an empty response"
+msgstr "Der Server lieferte eine leere Antwort"
+
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
@@ -7027,10 +7055,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL erlaubt Ihnen nicht, sich hier mit Ihrem Benutzernamen anzumelden"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Fehler beim Anfordern von %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -8113,16 +8137,28 @@ msgstr "Mitglied seit"
 msgid "Capabilities"
 msgstr "Fähigkeiten"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Online erscheinen"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr "Nicht online erscheinen"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Offline erscheinen"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr "Nicht offline erscheinen"
 
@@ -12390,9 +12426,6 @@ msgstr "Australisches Englisch"
 msgid "Canadian English"
 msgstr "Kanadisches Englisch"
 
-msgid "British English"
-msgstr "Britisches Englisch"
-
 msgid "Esperanto"
 msgstr "Esperanto"
 
@@ -12584,6 +12617,9 @@ msgstr "Traditionelles Chinesisch"
 
 msgid "Amharic"
 msgstr "Amharisch"
+
+msgid "British English"
+msgstr "Britisches Englisch"
 
 msgid "Lithuanian"
 msgstr "Litauisch"
@@ -14136,6 +14172,9 @@ msgstr "Statusauswahl"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Beim Laden von %s ist folgender Fehler aufgetreten: %s"
@@ -15623,6 +15662,9 @@ msgstr "Besuchen Sie die Pidgin-Webseite"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Fehler beim Anfordern von %s"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Bei der In-Band-Bytestrom-Übertragung trat ein Fehler auf\n"
