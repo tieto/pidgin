@@ -12,6 +12,8 @@ version 2.7.8 (??/??/????):
 	  displayed as "&lt;3").
 	* Drop dependency on GdkGC and use Cairo instead.
 	* New UI hack to assist in first-time setup of Facebook accounts.
+	* Don't hide the buddy list if there is no notification area in which
+	  to put the icon. (#12129)
 
 	libpurple:
 	* Fix multipart parsing when '=' is included in the boundary for
