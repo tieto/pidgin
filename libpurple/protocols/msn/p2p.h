@@ -56,6 +56,37 @@ typedef struct {
 } MsnP2Pv2Header;
 #pragma pack(pop)
 
+typedef enum
+{
+	OP_NONE		= 0x00; 		/**< None, Nothing required. */
+	OP_SYN		= 0x01; 		/**< SYN, just like TCP. */
+	OP_RAK 		= 0x02; 		/**< Request for Ack. */
+} OpCode
+
+typedef enum
+{
+	TF_FIRST 	= 0x01; 	/**< The first package. */
+	TF_OBJ 		= 0x04; 	/**< Payload contains binary data for MsnObject. */
+	TF_FILE 	= 0x06; 	/**< Payload contains binary data. */
+} TF;
+
+typedef enum
+{
+	TLP_PEER_INFO 	= 0x01; 	/**< Client peer info */
+	TLP_ACK 		= 0x02; 	/**< ACK */
+	TLP_NAK 		= 0x03; 	/**< NAK */
+} TLP;
+
+typedef enum
+{
+	TLP_LEN_PEER_INFO 	= 12;
+	TLP_LEN_ACK 		= 4;
+	TLP_LEN_NAK 		= 4;
+} TLPLength;
+
+#define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
+#define DLP_REMAINING_LEN 8
+
 typedef struct
 {
 	guint32 value;
