@@ -32,7 +32,7 @@ typedef void (*MsnSlpPartCb)(MsnSlpMessagePart *part, void *data);
 
 struct _MsnSlpMessagePart
 {
-	int ref_count;
+	guint ref_count;
 
 	MsnP2PHeader *header;
 	MsnP2PFooter *footer;
@@ -53,7 +53,7 @@ void msn_slpmsgpart_destroy(MsnSlpMessagePart *part);
 
 MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part);
 
-MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part);
+void msn_slpmsgpart_unref(MsnSlpMessagePart *part);
 
 void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size_t len);
 

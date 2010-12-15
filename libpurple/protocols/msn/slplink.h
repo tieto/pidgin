@@ -42,7 +42,7 @@ struct _MsnSlpLink
 	MsnSwitchBoard *swboard;
 	MsnDirectConn *dc;
 
-	int refs;
+	guint refs;
 
 	char *remote_user;
 

@@ -83,7 +83,7 @@ msn_message_ref(MsnMessage *msg)
 	msg->ref_count++;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
+		purple_debug_info("msn", "message ref (%p)[%u]\n", msg, msg->ref_count);
 
 	return msg;
 }
@@ -97,7 +97,7 @@ msn_message_unref(MsnMessage *msg)
 	msg->ref_count--;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
+		purple_debug_info("msn", "message unref (%p)[%u]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
 		msn_message_destroy(msg);

@@ -43,7 +43,7 @@ struct _MsnCommand
 	char **params;
 	int param_count;
 
-	int ref_count;
+	guint ref_count;
 
 	MsnTransaction *trans;
 
@@ -85,8 +85,8 @@ MsnCommand *msn_command_ref(MsnCommand *cmd);
  *
  * @param cmd	The MsnCommand to be unref.
  *
- * @return 		The ref command.
  */
-MsnCommand *msn_command_unref(MsnCommand *cmd);
+void msn_command_unref(MsnCommand *cmd);
 
 #endif /* MSN_COMMAND_H */
+

@@ -107,19 +107,17 @@ msn_command_ref(MsnCommand *cmd)
 	return cmd;
 }
 
-MsnCommand *
+void
 msn_command_unref(MsnCommand *cmd)
 {
-	g_return_val_if_fail(cmd != NULL, NULL);
-	g_return_val_if_fail(cmd->ref_count > 0, NULL);
+	g_return_if_fail(cmd != NULL);
+	g_return_if_fail(cmd->ref_count > 0);
 
 	cmd->ref_count--;
 
 	if (cmd->ref_count == 0)
 	{
 		msn_command_destroy(cmd);
-		return NULL;
 	}
-
-	return cmd;
 }
+

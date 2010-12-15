@@ -102,31 +102,27 @@ void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part)
 {
 	g_return_val_if_fail(part != NULL, NULL);
-	part->ref_count ++;
+	part->ref_count++;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part ref (%p)[%d]\n", part, part->ref_count);
+		purple_debug_info("msn", "part ref (%p)[%u]\n", part, part->ref_count);
 
 	return part;
 }
 
-MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part)
+void msn_slpmsgpart_unref(MsnSlpMessagePart *part)
 {
-	g_return_val_if_fail(part != NULL, NULL);
-	g_return_val_if_fail(part->ref_count > 0, NULL);
+	g_return_if_fail(part != NULL);
+	g_return_if_fail(part->ref_count > 0);
 
 	part->ref_count--;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part unref (%p)[%d]\n", part, part->ref_count);
+		purple_debug_info("msn", "part unref (%p)[%u]\n", part, part->ref_count);
 
 	if (part->ref_count == 0) {
 		msn_slpmsgpart_destroy(part);
-
-		 return NULL;
 	}
-
-	return part;
 }
 
 void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size_t len)
@@ -234,3 +230,4 @@ msn_slpmsgpart_nak(MsnSlpMessagePart *part, void *data)
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
 }
+
