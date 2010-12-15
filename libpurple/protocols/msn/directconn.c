@@ -111,10 +111,6 @@ msn_dc_destroy_packet(MsnDirectConnPacket *p)
 {
 	g_free(p->data);
 
-#if 0
-	if (p->msg)
-		msn_message_unref(p->msg);
-#endif
 	if (p->part)
 		msn_slpmsgpart_unref(p->part);
 
@@ -542,33 +538,6 @@ msn_dc_send_packet_cb(MsnDirectConnPacket *p)
 	if (p->part != NULL && p->part->ack_cb != NULL)
 		p->part->ack_cb(p->part, p->part->ack_data);
 }
-
-#if 0
-static void
-msn_dc_send_packet_cb(MsnDirectConnPacket *p)
-{
-	if (p->msg != NULL && p->msg->ack_cb != NULL)
-		p->msg->ack_cb(p->msg, p->msg->ack_data);
-}
-
-void
-msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
-{
-	MsnDirectConnPacket *p;
-	guint32 length;
-
-	length = msg->body_len + P2P_PACKET_HEADER_SIZE;
-	p = msn_dc_new_packet(length);
-
-	memcpy(p->data, msg->slpmsg->header, P2P_PACKET_HEADER_SIZE);
-	memcpy(p->data + P2P_PACKET_HEADER_SIZE, msg->body, msg->body_len);
-
-	p->sent_cb = msn_dc_send_packet_cb;
-	p->msg = msn_message_ref(msg);
-
-	msn_dc_enqueue_packet(dc, p);
-}
-#endif
 
 void
 msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)

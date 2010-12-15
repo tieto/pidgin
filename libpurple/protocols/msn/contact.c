@@ -1093,18 +1093,6 @@ msn_add_contact(MsnSession *session, MsnCallbackState *state, const char *passpo
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
 
-#if 0
-	gchar *escaped_displayname;
-
-
-	 if (displayname != NULL) {
-		escaped_displayname = g_markup_decode_text(displayname, -1);
-	 } else {
-		escaped_displayname = passport;
-	 }
-	contact_xml = g_strdup_printf(MSN_XML_ADD_CONTACT, escaped_displayname, passport);
-#endif
-
 	purple_debug_info("msn", "Adding contact %s to contact list\n", passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);

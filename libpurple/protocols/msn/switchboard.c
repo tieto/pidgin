@@ -577,33 +577,6 @@ msg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	msg_error_helper(cmdproc, trans->data, MSN_MSG_ERROR_UNKNOWN);
 }
 
-#if 0
-/** Called when we receive an ack of a special message. */
-static void
-msg_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnMessage *msg;
-
-	msg = cmd->trans->data;
-
-	if (msg->ack_cb != NULL)
-		msg->ack_cb(msg->ack_data);
-
-	msn_message_unref(msg);
-}
-
-/** Called when we receive a nak of a special message. */
-static void
-msg_nak(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnMessage *msg;
-
-	msg = cmd->trans->data;
-
-	msn_message_unref(msg);
-}
-#endif
-
 gboolean
 msn_switchboard_can_send(MsnSwitchBoard *swboard)
 {
