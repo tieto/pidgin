@@ -49,7 +49,7 @@ debug_part_to_file(MsnSlpMessage *msg, gboolean send)
 
 	dir = send ? "send" : "recv";
 	c = send ? m_sc++ : m_rc++;
-	tmp = g_strdup_printf("%s/msntest/%s/%03d", g_get_home_dir(), dir, c);
+	tmp = g_strdup_printf("%s/msntest/%s/%03d", purple_user_dir(), dir, c);
 	data = msn_slpmsg_serialize(msg, &data_size);
 	if (!purple_util_write_data_to_file_absolute(tmp, data, data_size))
 	{
