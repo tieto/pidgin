@@ -58,7 +58,7 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 	msn_history_destroy(cmdproc->history);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	g_hash_table_destroy(cmdproc->multiparts);
 
@@ -329,7 +329,7 @@ msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command)
 	show_debug_cmd(cmdproc, TRUE, command);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	cmdproc->last_cmd = msn_command_from_string(command);
 

@@ -70,7 +70,8 @@ msn_message_destroy(MsnMessage *msg)
 
 	g_hash_table_destroy(msg->header_table);
 	g_list_free(msg->header_list);
-	msn_slpmsgpart_destroy(msg->part);
+	if (msg->part)
+		msn_slpmsgpart_unref(msg->part);
 
 	g_free(msg);
 }

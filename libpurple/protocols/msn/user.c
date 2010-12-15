@@ -57,13 +57,6 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 static void
 msn_user_destroy(MsnUser *user)
 {
-	g_return_if_fail(user != NULL);
-
-	if (user->refcount > 1) {
-		msn_user_unref(user);
-		return;
-	}
-
 	while (user->endpoints != NULL) {
 		free_user_endpoint(user->endpoints->data);
 		user->endpoints = g_slist_delete_link(user->endpoints, user->endpoints);

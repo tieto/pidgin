@@ -79,20 +79,10 @@ msn_command_from_string(const char *string)
 	return cmd;
 }
 
-void
+static void
 msn_command_destroy(MsnCommand *cmd)
 {
-	g_return_if_fail(cmd != NULL);
-
-	if (cmd->ref_count > 0)
-	{
-		msn_command_unref(cmd);
-		return;
-	}
-
-	if (cmd->payload != NULL)
-		g_free(cmd->payload);
-
+	g_free(cmd->payload);
 	g_free(cmd->command);
 	g_strfreev(cmd->params);
 	g_free(cmd);

@@ -81,17 +81,8 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	return part;
 }
 
-void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
+static void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 {
-	if (!part)
-		return;
-
-	if (part->ref_count > 0) {
-		msn_slpmsgpart_unref(part);
-		
-		return;
-	}
-
 	g_free(part->header);
 	g_free(part->footer);
 

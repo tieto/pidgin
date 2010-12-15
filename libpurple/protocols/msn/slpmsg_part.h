@@ -49,8 +49,6 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len);
 
-void msn_slpmsgpart_destroy(MsnSlpMessagePart *part);
-
 MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part);
 
 void msn_slpmsgpart_unref(MsnSlpMessagePart *part);
