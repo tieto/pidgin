@@ -293,15 +293,6 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 }
 
 char *
-msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
-{
-	char *tmp;
-
-	tmp = msn_slpmsgpart_serialize(msg->part, ret_size);
-	return tmp;
-}
-
-char *
 msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 {
 	GList *l;
