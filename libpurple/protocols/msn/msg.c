@@ -648,7 +648,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				int i;
 				int bin_len;
 				
-				if (msg->part->footer->value == P2P_APPID_SESION)
+				if (msg->part->footer->value == P2P_APPID_SESSION)
 					bin_len = P2P_PACKET_HEADER_SIZE;
 				else
 					bin_len = body_len;
