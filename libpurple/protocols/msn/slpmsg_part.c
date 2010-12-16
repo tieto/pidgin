@@ -183,6 +183,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 	slpmsg->header->offset += part->header->length;
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
+	msn_slpmsgpart_unref(part);
 
 	if (slpmsg->header->offset < real_size)
 	{
@@ -220,5 +221,6 @@ msn_slpmsgpart_nak(MsnSlpMessagePart *part, void *data)
 	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
+	msn_slpmsgpart_unref(part);
 }
 

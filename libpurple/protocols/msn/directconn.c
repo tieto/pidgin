@@ -552,7 +552,7 @@ msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
 	memcpy(p->data + P2P_PACKET_HEADER_SIZE, part->buffer, part->size);
 
 	p->sent_cb = msn_dc_send_packet_cb;
-	p->part = part;
+	p->part = msn_slpmsgpart_ref(part);
 
 	msn_dc_enqueue_packet(dc, p);
 }
