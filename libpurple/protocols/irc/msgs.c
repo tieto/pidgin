@@ -597,9 +597,6 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	if (!args || !args[0])
 		return;
 
-	if (!irc->motd)
-		irc->motd = g_string_new("");
-
 	if (!strcmp(name, "375")) {
 		if (irc->motd)
 			g_string_free(irc->motd, TRUE);
@@ -608,6 +605,15 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	} else if (!strcmp(name, "376")) {
 		/* dircproxy 1.0.5 does not send 251 on reconnection, so
 		 * finalize the connection here if it is not already done. */
+		irc_connected(irc, args[0]);
+		return;
+	} else if (!strcmp(name, "422")) {
+		/* in case there is no 251, and no MOTD set, finalize the connection.
+		 * (and clear the motd for good measure). */
+		
+		if (irc->motd)
+			g_string_free(irc->motd, TRUE);
+		
 		irc_connected(irc, args[0]);
 		return;
 	}

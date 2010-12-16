@@ -11,7 +11,8 @@ version 2.7.8 (??/??/????):
 	  when it contains HTML-escapable characters (e.g. "<3" was previously
 	  displayed as "&lt;3").
 	* Drop dependency on GdkGC and use Cairo instead.
-	* New UI hack to assist in first-time setup of Facebook accounts.
+	* New UI hack to assist in first-time setup of Facebook accounts with
+	  icon from Jakub Szypulka.
 	* Don't hide the buddy list if there is no notification area in which
 	  to put the icon. (#12129)
 
