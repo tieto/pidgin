@@ -1799,8 +1799,22 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		if (args->info.rtfmsg.msgtype == 1) {
 			if (args->info.rtfmsg.msg != NULL) {
-				char *rtfmsg = oscar_encoding_to_utf8(args->encoding, args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
+				char *rtfmsg;
+				const char *encoding = args->encoding;
+				size_t len = strlen(args->info.rtfmsg.msg);
 				char *tmp, *tmp2;
+
+				if (encoding == NULL && !g_utf8_validate(args->info.rtfmsg.msg, len, NULL)) {
+					/* Yet another wonderful Miranda-related hack. If their user disables the "Send Unicode messages" setting,
+					 * Miranda sends us ch2 messages in whatever Windows codepage is set as default on their user's system (instead of UTF-8).
+					 * Of course, they don't bother to specify that codepage. Let's just fallback to the encoding OUR users can
+					 * specify in account options as a last resort.
+					 */
+					encoding = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+					purple_debug_info("oscar", "Miranda, is that you? Using '%s' as encoding\n", encoding);
+				}
+
+				rtfmsg = oscar_encoding_to_utf8(encoding, args->info.rtfmsg.msg, len);
 
 				/* Channel 2 messages are supposed to be plain-text (never mind the name "rtfmsg", even
 				 * the official client doesn't parse them as RTF). Therefore, we should escape them before
