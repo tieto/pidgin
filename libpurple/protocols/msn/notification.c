@@ -1990,9 +1990,6 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	/* always get the full list? */
 	msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
 #endif
-#if 0
-	msn_contact_connect(session);
-#endif
 }
 
 static void

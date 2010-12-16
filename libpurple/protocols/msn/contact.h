@@ -708,7 +708,6 @@ void msn_callback_state_set_list_id(MsnCallbackState *state, MsnListId list_id);
 void msn_callback_state_set_action(MsnCallbackState *state,
 				   MsnCallbackAction action);
 
-void msn_contact_connect(MsnSession *session);
 void msn_get_contact_list(MsnSession *session,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char *update);
