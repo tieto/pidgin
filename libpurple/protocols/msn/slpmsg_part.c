@@ -48,20 +48,17 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len)
 {
 	MsnSlpMessagePart *part;
-	MsnP2PHeader *header;
-	const char *tmp;
 	int body_len;
 
-	if (data_len < sizeof(*header)) {
+	if (data_len < P2P_PACKET_HEADER_SIZE) {
 		return NULL;
 	}
 
 	part = msn_slpmsgpart_new(NULL, NULL);
-	tmp = data;
 
 	/* Extract the binary SLP header */
-	part->header = msn_p2p_header_from_wire(tmp);
-	tmp += P2P_PACKET_HEADER_SIZE;
+	part->header = msn_p2p_header_from_wire(data);
+	data += P2P_PACKET_HEADER_SIZE;
 
 	/* Extract the body */
 	body_len = data_len - P2P_PACKET_HEADER_SIZE - P2P_PACKET_FOOTER_SIZE;
@@ -70,13 +67,13 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	if (body_len > 0) {
 		part->size = body_len;
 		part->buffer = g_malloc(body_len);
-		memcpy(part->buffer, tmp, body_len);
-		tmp += body_len;
+		memcpy(part->buffer, data, body_len);
+		data += body_len;
 	}
 
 	/* Extract the footer */
 	if (body_len >= 0) 
-		part->footer = msn_p2p_footer_from_wire(tmp);
+		part->footer = msn_p2p_footer_from_wire(data);
 
 	return part;
 }
