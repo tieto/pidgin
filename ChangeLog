@@ -41,6 +41,7 @@ version 2.7.8 (??/??/????):
 	* Correctly show ourselves as offline in the buddy list when going
 	  invisible. (#12945)
 	* Correctly update your own icon in the buddy list. (#12973)
+	* Remove struct packing for better portability. (#12856)
 
 	XMPP:
 	* Terminate Jingle sessions with unsupported content types. (#13048)
