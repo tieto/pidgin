@@ -617,3 +617,87 @@ msn_handle_chl(char *input, char *output)
 	output[32] = '\0';
 }
 
+guint8
+msn_read8(const char *buf)
+{
+	return (guint8)buf[0];
+}
+
+guint16
+msn_read16le(const char *buf)
+{
+	return GUINT16_FROM_LE(*(guint16 *)buf);
+}
+
+guint16
+msn_read16be(const char *buf)
+{
+	return GUINT16_FROM_BE(*(guint16 *)buf);
+}
+
+guint32
+msn_read32le(const char *buf)
+{
+	return GUINT32_FROM_LE(*(guint32 *)buf);
+}
+
+guint32
+msn_read32be(const char *buf)
+{
+	return GUINT32_FROM_BE(*(guint32 *)buf);
+}
+
+guint64
+msn_read64le(const char *buf)
+{
+	return GUINT64_FROM_LE(*(guint64 *)buf);
+}
+
+guint64
+msn_read64be(const char *buf)
+{
+	return GUINT64_FROM_BE(*(guint64 *)buf);
+}
+
+void
+msn_write8(char *buf, guint8 data)
+{
+	*(guint8 *)buf = data;
+}
+
+void
+msn_write16le(char *buf, guint16 data)
+{
+	*(guint16 *)buf = GUINT16_TO_LE(data);
+}
+
+void
+msn_write16be(char *buf, guint16 data)
+{
+	*(guint16 *)buf = GUINT16_TO_BE(data);
+}
+
+void
+msn_write32le(char *buf, guint32 data)
+{
+	*(guint32 *)buf = GUINT32_TO_LE(data);
+}
+
+void
+msn_write32be(char *buf, guint32 data)
+{
+	*(guint32 *)buf = GUINT32_TO_BE(data);
+}
+
+void
+msn_write64le(char *buf, guint64 data)
+{
+	*(guint64 *)buf = GUINT64_TO_LE(data);
+}
+
+void
+msn_write64be(char *buf, guint64 data)
+{
+	*(guint64 *)buf = GUINT64_TO_BE(data);
+}
+
