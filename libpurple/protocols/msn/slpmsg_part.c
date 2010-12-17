@@ -60,7 +60,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	tmp = data;
 
 	/* Extract the binary SLP header */
-	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
+	part->header = msn_p2p_header_from_wire(tmp);
 	tmp += P2P_PACKET_HEADER_SIZE;
 
 	/* Extract the body */
@@ -76,7 +76,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 
 	/* Extract the footer */
 	if (body_len >= 0) 
-		part->footer = msn_p2p_footer_from_wire((MsnP2PFooter*)tmp);
+		part->footer = msn_p2p_footer_from_wire(tmp);
 
 	return part;
 }
@@ -136,21 +136,21 @@ void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size
 
 char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 {
-	MsnP2PHeader *header;
-	MsnP2PFooter *footer;
+	char *header;
+	char *footer;
 	char *base;
 	char *tmp;
 	size_t siz;
 
-	base = g_malloc(P2P_PACKET_HEADER_SIZE + part->size + sizeof(MsnP2PFooter));
+	base = g_malloc(P2P_PACKET_HEADER_SIZE + part->size + P2P_PACKET_FOOTER_SIZE);
 	tmp = base;
 
 	header = msn_p2p_header_to_wire(part->header);
 	footer = msn_p2p_footer_to_wire(part->footer);
 
-	siz = sizeof(MsnP2PHeader);
+	siz = P2P_PACKET_HEADER_SIZE;
 	/* Copy header */
-	memcpy(tmp, (char*)header, siz);
+	memcpy(tmp, header, siz);
 	tmp += siz;
 
 	/* Copy body */
@@ -158,8 +158,8 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 	tmp += part->size;
 
 	/* Copy footer */
-	siz = sizeof(MsnP2PFooter);
-	memcpy(tmp, (char*)footer, siz);
+	siz = P2P_PACKET_FOOTER_SIZE;
+	memcpy(tmp, footer, siz);
 	tmp += siz;
 
 	*ret_size = tmp - base;

@@ -25,8 +25,6 @@
 #ifndef MSN_P2P_H
 #define MSN_P2P_H
 
-
-#pragma pack(push,1)
 typedef struct {
 	guint32 session_id;
 	guint32 id;
@@ -45,21 +43,23 @@ typedef struct {
 	guint64 ack_size;
 /*	guint8  body[1]; */
 } MsnP2PHeader;
-#pragma pack(pop)
+#define P2P_PACKET_HEADER_SIZE (6 * 4 + 3 * 8)
 
-#pragma pack(push,1)
+/* Used for DCs to store nonces */
+#define P2P_HEADER_ACK_ID_OFFSET (2*4 + 2*8 + 2*4)
+
 typedef struct {
 	guint8  header_len;
 	guint8  opcode;
 	guint16 message_len;
 	guint32 base_id;
 } MsnP2Pv2Header;
-#pragma pack(pop)
 
 typedef struct
 {
 	guint32 value;
 } MsnP2PFooter;
+#define P2P_PACKET_FOOTER_SIZE (1 * 4)
 
 typedef enum
 {
@@ -91,19 +91,16 @@ typedef enum
 	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
 } MsnP2PAppId;
 
-#define P2P_PACKET_HEADER_SIZE sizeof(MsnP2PHeader)
-#define P2P_PACKET_FOOTER_SIZE sizeof(MsnP2PFooter)
-
 MsnP2PHeader *
-msn_p2p_header_from_wire(MsnP2PHeader *wire);
+msn_p2p_header_from_wire(const char *wire);
 
-MsnP2PHeader *
+char *
 msn_p2p_header_to_wire(MsnP2PHeader *header);
 
 MsnP2PFooter *
-msn_p2p_footer_from_wire(MsnP2PFooter *wire);
+msn_p2p_footer_from_wire(const char *wire);
 
-MsnP2PFooter *
+char *
 msn_p2p_footer_to_wire(MsnP2PFooter *footer);
 
 gboolean
