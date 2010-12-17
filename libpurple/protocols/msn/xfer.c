@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "debug.h"
 
+#include "msnutils.h"
 #include "sbconn.h"
 #include "xfer.h"
 
@@ -158,5 +159,74 @@ msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 
 	purple_xfer_set_completed(xfer, TRUE);
 	purple_xfer_end(xfer);
+}
+
+gchar *
+msn_file_context_to_wire(MsnFileContext *header)
+{
+	gchar *ret, *tmp;
+
+	tmp = ret = g_new(gchar, MSN_FILE_CONTEXT_SIZE + header->preview_len + 1);
+
+	msn_push32le(tmp, header->length);
+	msn_push32le(tmp, header->version);
+	msn_push64le(tmp, header->file_size);
+	msn_push32le(tmp, header->type);
+	memcpy(tmp, header->file_name, MAX_FILE_NAME_LEN * 2);
+	tmp += MAX_FILE_NAME_LEN * 2;
+	memcpy(tmp, header->unknown1, sizeof(header->unknown1));
+	tmp += sizeof(header->unknown1);
+	msn_push32le(tmp, header->unknown2);
+	if (header->preview) {
+		memcpy(tmp, header->preview, header->preview_len);
+	}
+	tmp[header->preview_len] = '\0';
+
+	return ret;
+}
+
+MsnFileContext *
+msn_file_context_from_wire(const char *buf, gsize len)
+{
+	MsnFileContext *header;
+
+	if (!buf || len < MSN_FILE_CONTEXT_SIZE)
+		return NULL;
+
+	header = g_new(MsnFileContext, 1);
+
+	header->length = msn_pop32le(buf);
+	header->version = msn_pop32le(buf);
+	if (header->version == 2) {
+		/* The length field is broken for this version. No check. */
+		header->length = MSN_FILE_CONTEXT_SIZE;
+	} else if (header->version == 3) {
+		if (header->length != MSN_FILE_CONTEXT_SIZE + 63) {
+			g_free(header);
+			return NULL;
+		} else if (len < MSN_FILE_CONTEXT_SIZE + 63) {
+			g_free(header);
+			return NULL;
+		}
+	} else {
+		purple_debug_warning("msn", "Received MsnFileContext with unknown version: %d\n", header->version);
+		g_free(header);
+		return NULL;
+	}
+
+	header->file_size = msn_pop64le(buf);
+	header->type = msn_pop32le(buf);
+	memcpy(header->file_name, buf, MAX_FILE_NAME_LEN * 2);
+	buf += MAX_FILE_NAME_LEN * 2;
+	memcpy(header->unknown1, buf, sizeof(header->unknown1));
+	buf += sizeof(header->unknown1);
+	header->unknown2 = msn_pop32le(buf);
+
+	if (header->type == 0 && len > header->length) {
+		header->preview_len = len - header->length;
+		header->preview = g_memdup(buf, header->preview_len);
+	}
+
+	return header;
 }
 
