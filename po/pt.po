@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2005-03-14 17:23+0000\n"
 "Last-Translator: Duarte Henriques <duarte.henriques@gmail.com>\n"
 "Language-Team: \n"
@@ -5043,17 +5043,6 @@ msgstr "Kickado por %s (%s)"
 msgid "Unknown Error in presence"
 msgstr "Erro desconhecido na presença"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Ocorreu um erro ao abrir o ficheiro."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Transferência de Ficheiro Falhou"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5433,26 +5422,6 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr "O nome de utilizador especificado é inválido."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problema de sincronização da lista de contactos em %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s na lista local está dentro do grupo \"%s\" mas não na lista do servidor. "
-"Quer que este contacto seja adicionado?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s está na lista local mas não na lista do servidor. Quer que este contacto "
-"seja adicionado?"
-
 msgid "Unable to parse message"
 msgstr "Impossível processar mensagem"
 
@@ -5634,6 +5603,26 @@ msgstr "Código de erro desconhecido: %d"
 msgid "MSN Error: %s\n"
 msgstr "Erro MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problema de sincronização da lista de contactos em %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s na lista local está dentro do grupo \"%s\" mas não na lista do servidor. "
+"Quer que este contacto seja adicionado?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s está na lista local mas não na lista do servidor. Quer que este contacto "
+"seja adicionado?"
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Contacto Preferido"
@@ -5684,11 +5673,52 @@ msgstr "O seu novo nome é longo demais."
 msgid "Set friendly name for %s."
 msgstr "Defina o seu nome."
 
-msgid "Set your friendly name."
-msgstr "Defina o seu nome."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Definir Nome..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Este é o nome que será visto como seu pelos outros contactos MSN."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Localização"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Este é o nome que será visto como seu pelos outros contactos MSN."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Localização"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Ligou-se de outro local."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Ligou-se de outro local."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Permitir"
+
+msgid "Disallow"
+msgstr "Não permitir"
 
 msgid "Set your home phone number."
 msgstr "Defina o seu número de telefone de casa."
@@ -5708,12 +5738,6 @@ msgid ""
 msgstr ""
 "Deseja permitir ou não permitir que pessoas na sua lista de contactos enviem "
 "pages MSN Mobile para o seu telemóvel ou outro dispositivo móvel?"
-
-msgid "Allow"
-msgstr "Permitir"
-
-msgid "Disallow"
-msgstr "Não permitir"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5782,6 +5806,10 @@ msgstr "Título"
 msgid "Set Friendly Name..."
 msgstr "Definir Nome..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Localização"
+
 msgid "Set Home Phone Number..."
 msgstr "Definir Número de Telefone de Casa"
 
@@ -5793,6 +5821,10 @@ msgstr "Definir Número de Telemóvel..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Activar/Desactivar Dispositivos Móveis..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Permitir/Não permitir Pages para Dispositivos Móveis..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Permitir/Não permitir Pages para Dispositivos Móveis..."
@@ -6040,6 +6072,9 @@ msgstr "Mostrar smileys personalizados"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Impossível criar ligação"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: nudge um contacto para atrair a sua atenção"
@@ -7309,11 +7344,22 @@ msgstr ""
 "esteve a ligar e desligar com muita frequência. Espere dez minutos e tente "
 "novamente. Se continuar a tentar, vai ter que esperar ainda mais."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Erro ao criar a ligação"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Impossível ligar ao servidor. Por favor introduza a morada do servidor a que "
+"se deseja ligar."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7322,10 +7368,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Erro ao criar a ligação"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7645,6 +7687,11 @@ msgstr ""
 "Incapaz de ligar: Não foi possível ligar-se como %s porque o nome de "
 "utilizador é inválido.  Nomes de utilizador têem que começar com uma letra e "
 "conter apenas letras, números e espaços, ou conter apenas números."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8200,6 +8247,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Procurar Contacto por Email..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Mandatar autorização"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "O utilizador está desligado"
 
@@ -8397,7 +8448,7 @@ msgid "Personal Web Page"
 msgstr "Página da web pessoal"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Informações adicionais"
 
@@ -8425,17 +8476,29 @@ msgstr "Membro Desde"
 msgid "Capabilities"
 msgstr "Recursos"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Aparecer Ligado"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Aparecer Ligado"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Parecer Desligado"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Parecer Desligado"
@@ -12916,11 +12979,11 @@ msgstr "Grego"
 msgid "Australian English"
 msgstr "Inglês da Austrália"
 
-msgid "Canadian English"
-msgstr "Inglês do Canadá"
-
 msgid "British English"
 msgstr "Inglês de Inglaterra"
+
+msgid "Canadian English"
+msgstr "Inglês do Canadá"
 
 msgid "Esperanto"
 msgstr ""
@@ -13007,6 +13070,10 @@ msgstr "Curdo"
 
 msgid "Lao"
 msgstr ""
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilista"
 
 msgid "Macedonian"
 msgstr "Macedónio"
@@ -14769,6 +14836,9 @@ msgstr "Estado Texto"
 msgid "Google Talk"
 msgstr ""
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Ocorreu o erro seguinte ao carregar %s: %s"
@@ -16339,6 +16409,21 @@ msgid "You do not have permission to uninstall this application."
 msgstr "Não tem permissão para desinstalar este programa."
 
 #, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Ocorreu um erro ao abrir o ficheiro."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Transferência de Ficheiro Falhou"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Defina o seu nome."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Erro ao criar a ligação"
+
+#, fuzzy
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Exigir TLS"
 
@@ -16734,10 +16819,6 @@ msgstr "Não tem permissão para desinstalar este programa."
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "Erro ao registar"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "Localização"
 
 #, fuzzy
 #~ msgid "User Avatar"

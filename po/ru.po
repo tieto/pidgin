@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -4867,16 +4867,6 @@ msgstr "Выгнан (%s)"
 msgid "Unknown Error in presence"
 msgstr "Имеет место неизвестная ошибка"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Произошла ошибка при передаче внутриполосного потока байт\n"
-
-msgid "Transfer was closed."
-msgstr "Передача была прекращена."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Не удалось открыть внутриполосный поток байт"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5215,26 +5205,6 @@ msgstr "Ошибка добавления собеседника"
 msgid "The username specified does not exist."
 msgstr "Указанное имя пользователя не существует."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Проблема с синхронизацией списка собеседников в %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s в локальном списке в группе \"%s\", но не в списке на сервере. Хотите "
-"добавить этого собеседника?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s в локальном списке, но не в списке на сервере. Хотите добавить этого "
-"собеседника?"
-
 msgid "Unable to parse message"
 msgstr "Не удаётся сделать разбор сообщения"
 
@@ -5407,6 +5377,26 @@ msgstr "Неизвестный код ошибки %d"
 msgid "MSN Error: %s\n"
 msgstr "Ошибка MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Проблема с синхронизацией списка собеседников в %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s в локальном списке в группе \"%s\", но не в списке на сервере. Хотите "
+"добавить этого собеседника?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s в локальном списке, но не в списке на сервере. Хотите добавить этого "
+"собеседника?"
+
 msgid "Other Contacts"
 msgstr "Другие контакты"
 
@@ -5460,11 +5450,53 @@ msgstr "Ваше новое дружеское имя MSN слишком вел�
 msgid "Set friendly name for %s."
 msgstr "Установите дружеское имя для %s."
 
-msgid "Set your friendly name."
-msgstr "Введите ваше дружеское имя."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Ввести дружеское имя..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Это имя, под которым вас будут видеть другие пользователи MSN."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Местоположение пользователя"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Это имя, под которым вас будут видеть другие пользователи MSN."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Местоположение пользователя"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Вы уже откуда-то подключены"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Вы уже откуда-то подключены"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Разрешить одновременный вход с разных мест"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Разрешить"
+
+msgid "Disallow"
+msgstr "Не разрешать"
 
 msgid "Set your home phone number."
 msgstr "Введите номер вашего домашнего телефона."
@@ -5484,12 +5516,6 @@ msgid ""
 msgstr ""
 "Вы разрешаете или нет людям из вашего списка отсылать вам страницы MSN "
 "Mobile на ваш сотовый или другое переносное устройство?"
-
-msgid "Allow"
-msgstr "Разрешить"
-
-msgid "Disallow"
-msgstr "Не разрешать"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5551,6 +5577,10 @@ msgstr "Название офиса"
 msgid "Set Friendly Name..."
 msgstr "Ввести дружеское имя..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Выбрать местоположение..."
+
 msgid "Set Home Phone Number..."
 msgstr "Ввести номер домашнего телефона..."
 
@@ -5562,6 +5592,10 @@ msgstr "Ввести номер мобильного телефона..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Разрешить/запретить мобильные устройства..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Разрешить/запретить мобильные страницы..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Разрешить/запретить мобильные страницы..."
@@ -5781,6 +5815,9 @@ msgstr "Показать свои смайлики"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Не удаётся создать соединение"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "подталкивание: подтолкнуть пользователя, чтобы привлечь его внимание"
@@ -7006,11 +7043,20 @@ msgstr ""
 "Вы соединялись и отсоединялись слишком часто. Подождите 10 минут и "
 "попытайтесь снова. Если вы продолжите попытки, вам придётся ждать ещё дольше."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Ошибка запроса %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "Не удаётся соединиться: сервер вернул пустой ответ."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7021,10 +7067,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не позволяет вашему экранному имени аутентифицироваться здесь"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Ошибка запроса %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7318,6 +7360,11 @@ msgstr ""
 "Не могу войти как %s потому, что имя пользователя неверное.  Именем "
 "пользователя должен быть правильный адрес эл.почты или начинаться с буквы и "
 "содержать только буквы, цифры и пробелы, или содержать только цифры."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7883,6 +7930,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Искать собеседника по адресу email..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Требовать авторизацию"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "Использовать clientLogin"
 
@@ -8081,7 +8132,7 @@ msgid "Personal Web Page"
 msgstr "Персональная web-страница"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Дополнительная информация"
 
@@ -8109,17 +8160,29 @@ msgstr "Член с"
 msgid "Capabilities"
 msgstr "Возможности"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Появляется в сети"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Появляется в сети"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Вероятно не в сети"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Вероятно не в сети"
@@ -12460,11 +12523,11 @@ msgstr "Греческий"
 msgid "Australian English"
 msgstr "Австралийский английский"
 
-msgid "Canadian English"
-msgstr "Канадский английский"
-
 msgid "British English"
 msgstr "Британский английский"
+
+msgid "Canadian English"
+msgstr "Канадский английский"
 
 msgid "Esperanto"
 msgstr "Эсперанто"
@@ -12543,6 +12606,10 @@ msgstr "Курдский"
 
 msgid "Lao"
 msgstr "Лаосский"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Суахили"
 
 msgid "Macedonian"
 msgstr "Македонский"
@@ -14192,6 +14259,9 @@ msgstr "Выбор состояния"
 msgid "Google Talk"
 msgstr "Google-общение"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Произошла следующая ошибка при загрузке %s: %s"
@@ -15687,6 +15757,22 @@ msgstr "Посетите веб-страницу Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
 
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Произошла ошибка при передаче внутриполосного потока байт\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Передача была прекращена."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Не удалось открыть внутриполосный поток байт"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Введите ваше дружеское имя."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Ошибка запроса %s"
+
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr ""
 #~ "Срок действия сертификата истёк и его больше не следует считать "
@@ -16169,9 +16255,6 @@ msgstr "У Вас нет прав на удаление этого прилож�
 
 #~ msgid "In-Band Registration"
 #~ msgstr "Внутриполосная регистрация"
-
-#~ msgid "User Location"
-#~ msgstr "Местоположение пользователя"
 
 #~ msgid "User Avatar"
 #~ msgstr "Аватара пользователя"

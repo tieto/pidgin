@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2009-08-29 23:23+0200\n"
 "Last-Translator: Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>\n"
 "Language-Team:  <en@li.org>\n"
@@ -4853,15 +4853,6 @@ msgstr "Kanporatua (%s)"
 msgid "Unknown Error in presence"
 msgstr "Errore Ezezaguna Presentzian"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Errorea banda barruko byte-jario transferentzian\n"
-
-msgid "Transfer was closed."
-msgstr "Transferentzia itxiarazi da."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Ezin banda barneko byte-jarioa ireki"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5234,26 +5225,6 @@ msgstr "Errorea laguna gehitzean"
 msgid "The username specified does not exist."
 msgstr "Zehaztu duzun erabiltzaile-izena ez da existitzen."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Arazoa lagun-zerrenda sinkronizatzean: %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"Zerrenda lokaleko \"%s\" taldean dago %s, baina ez zerbitzariko zerrendan. "
-"Lagun hau gehitzea nahi al duzu?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"Zerrenda lokalean dago %s, baina ez zerbitzariko zerrendan. Lagun hau "
-"gehitzea nahi al duzu?"
-
 msgid "Unable to parse message"
 msgstr "Ezin mezua analizatu"
 
@@ -5424,6 +5395,26 @@ msgstr "Errore-Kode Ezezaguna: %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN Errorea: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Arazoa lagun-zerrenda sinkronizatzean: %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"Zerrenda lokaleko \"%s\" taldean dago %s, baina ez zerbitzariko zerrendan. "
+"Lagun hau gehitzea nahi al duzu?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"Zerrenda lokalean dago %s, baina ez zerbitzariko zerrendan. Lagun hau "
+"gehitzea nahi al duzu?"
+
 msgid "Other Contacts"
 msgstr "Beste Kontaktuak"
 
@@ -5476,11 +5467,53 @@ msgstr "MSN-lagunarteko izen berria luzeegia da."
 msgid "Set friendly name for %s."
 msgstr "Zure lagunarteko izena ezarri."
 
-msgid "Set your friendly name."
-msgstr "Zure lagunarteko izena ezarri."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Lagunarteko Izena Ezarri..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "MSNko lagunek izen honekin ikusiko zaituzte."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Kokalekua"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "MSNko lagunek izen honekin ikusiko zaituzte."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Kokalekua"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Beste nonbaitetik konektatu zara"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Beste nonbaitetik konektatu zara"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "istantzia ugari onartu"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Onartu"
+
+msgid "Disallow"
+msgstr "Ez onartu"
 
 msgid "Set your home phone number."
 msgstr "Zure etxeko telefonoa ezarri."
@@ -5500,12 +5533,6 @@ msgid ""
 msgstr ""
 "Zure lagun-zerrendako jendeak zure telefono mugikorrera edo gailu "
 "mogikorretara MSN Mobile orriak bidaltzea onartu nahi al duzu?"
-
-msgid "Allow"
-msgstr "Onartu"
-
-msgid "Disallow"
-msgstr "Ez onartu"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5569,6 +5596,10 @@ msgstr "Lanpostua"
 msgid "Set Friendly Name..."
 msgstr "Lagunarteko Izena Ezarri..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Kokalekua Hautatu..."
+
 msgid "Set Home Phone Number..."
 msgstr "Etxeko Telefonoa Ezarri..."
 
@@ -5580,6 +5611,10 @@ msgstr "Telefono Mugikorra ezarri..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Gailu Mugikorrak Gaitu/Ezgaitu..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Mobile Pages Onartu/Ez-onartu..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobile Pages Onartu/Ez-onartu..."
@@ -5800,6 +5835,9 @@ msgstr "Smiley pertsonalak erakutsi"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Ezin konexio sortu"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: erabiltzaile bati ukondokada eman, bere harreta eskuratzeko"
@@ -7023,11 +7061,22 @@ msgstr ""
 "saiatu aurretik. Saiatzen jarraituz gero, agian gehiago ere itxaron beharko "
 "duzu."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Errorea %s eskatzean: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Ezin zerbitzarira konektatu. Konektatu nahi duzun zerbitzariaren helbidea "
+"sartu ezazu."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7036,10 +7085,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL-k ez du zure pantaila-izena hemen balioztatzea onartzen"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Errorea %s eskatzean: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7357,6 +7402,11 @@ msgstr ""
 "Erabiltzaile-izenek baliozko helbide elektroniko izan behar dute, edo letra "
 "batekin hasi eta letrak, zenbakiak eta zuriuneak bakarrik eduki, edo bestela "
 "zenbakiak bakarrik."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7893,6 +7943,10 @@ msgstr "Baimenaren Zain dauden Lagunak Bistaratu"
 msgid "Search for Buddy by Email Address..."
 msgstr "Helbide Elektronikoaren bidez Bilatu Laguna..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Baimena eskatu"
+
 msgid "Use clientLogin"
 msgstr ""
 
@@ -8092,7 +8146,7 @@ msgid "Personal Web Page"
 msgstr "Webgune Pertsonala"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Informazio Gehigarria"
 
@@ -8120,17 +8174,29 @@ msgstr "Noiztik Kidea"
 msgid "Capabilities"
 msgstr "Gaitasunak"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Online Agertu"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Online Agertu"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Offline Agertu"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Offline Agertu"
@@ -12365,11 +12431,11 @@ msgstr "Greziera"
 msgid "Australian English"
 msgstr "Ingelesa (Australia)"
 
-msgid "Canadian English"
-msgstr "Ingelesa (Kanada)"
-
 msgid "British English"
 msgstr "Ingelesa (Britainia)"
+
+msgid "Canadian English"
+msgstr "Ingelesa (Kanada)"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12448,6 +12514,10 @@ msgstr "Kurduera"
 
 msgid "Lao"
 msgstr "Laoera"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Swahili"
 
 msgid "Macedonian"
 msgstr "Mazedoniera"
@@ -14109,6 +14179,9 @@ msgstr "Egoera-Hautatzailea"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Ondorengo errorea gertatu da %s kargatzean: %s"
@@ -15587,6 +15660,22 @@ msgstr "Pidgin Webgunera etorri"
 msgid "You do not have permission to uninstall this application."
 msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Errorea banda barruko byte-jario transferentzian\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Transferentzia itxiarazi da."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Ezin banda barneko byte-jarioa ireki"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Zure lagunarteko izena ezarri."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Errorea %s eskatzean: %s"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "SSL/TLS Eskatu"
 
@@ -16037,10 +16126,6 @@ msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "Erregistratze-errorea"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "Kokalekua"
 
 #, fuzzy
 #~ msgid "User Avatar"

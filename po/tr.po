@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -4862,17 +4862,6 @@ msgstr "%s tarafından atıldınız (%s)"
 msgid "Unknown Error in presence"
 msgstr "Bilinmeyen Hata"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Dosyayı açarken bir hata oluştu."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Dosya aktarımı başarısız oldu"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s dosyası gönderilemedi, kullanıcı dosya aktarımlarını desteklemiyor"
@@ -5242,22 +5231,6 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr "Belirlenen görüntü adı geçersiz."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-
 msgid "Unable to parse message"
 msgstr "Mesaj ayrıştırılamıyor"
 
@@ -5431,6 +5404,22 @@ msgstr "Bilinmeyen Hata Kodu %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN Hatası: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Önerilen İrtibat"
@@ -5481,11 +5470,52 @@ msgstr "Yeni MSN arkadaşlık isminiz çok uzun."
 msgid "Set friendly name for %s."
 msgstr "Arkadaşlık adınızı ayarlayın."
 
-msgid "Set your friendly name."
-msgstr "Arkadaşlık adınızı ayarlayın."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Arkadaşlık İsmi Ayarla..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Bu isim MSN arkadaşlarınıza görünen isminizdir."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Kullanıcı Konumu"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Bu isim MSN arkadaşlarınıza görünen isminizdir."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Kullanıcı Konumu"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Başka bir programla oturum açtınız."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Başka bir programla oturum açtınız."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "İzin ver"
+
+msgid "Disallow"
+msgstr "İzin verme"
 
 msgid "Set your home phone number."
 msgstr "Ev telefon numaranızı ayarlayın."
@@ -5503,12 +5533,6 @@ msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
-
-msgid "Allow"
-msgstr "İzin ver"
-
-msgid "Disallow"
-msgstr "İzin verme"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5577,6 +5601,10 @@ msgstr ""
 msgid "Set Friendly Name..."
 msgstr "Arkadaşlık İsmi Ayarla..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Kullanıcı Konumu"
+
 msgid "Set Home Phone Number..."
 msgstr "Ev Telefonu Numarası Ayarla..."
 
@@ -5588,6 +5616,10 @@ msgstr "Cep Telefonu Numarası Ayarla..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Mobil Aygıtları Etkinleştir/Pasifleştir"
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Mobil Sayfalarına İzin Ver/Reddet"
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobil Sayfalarına İzin Ver/Reddet"
@@ -5806,6 +5838,9 @@ msgstr "Özel gülenyüzleri göster"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Bağlantı oluşturulamadı"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge : kullanıcıların sizi farketmesi için dürtme uyarısı"
@@ -7015,11 +7050,20 @@ msgstr ""
 "deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
 "kalacaksınız."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "%s çözümleme hatası"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7028,10 +7072,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "%s çözümleme hatası"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7345,6 +7385,11 @@ msgstr ""
 "Oturum açılamadı: %s olarak bağlanılamadı, çünkü görünen adınız geçerli "
 "değil. Takma adlar bir harfle başlamalı ve harfler, rakamlar, boşluk ile "
 "devam etmelidir."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7861,6 +7906,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "E-Posta Adresine Göre Kişi Ara..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "İzin gereksin"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "Kullanıcı oturum açmamış"
 
@@ -8061,7 +8110,7 @@ msgid "Personal Web Page"
 msgstr "Kişisel Web Sayfası"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Ek Bilgi"
 
@@ -8089,17 +8138,29 @@ msgstr "Üye olduğu süre:"
 msgid "Capabilities"
 msgstr "Yetenekler"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Çevrimiçi"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Çevrimiçi"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Çevrimdışı Görün"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Çevrimdışı Görün"
@@ -12405,11 +12466,11 @@ msgstr "Yunanca"
 msgid "Australian English"
 msgstr "Avusturalya İngilizcesi"
 
-msgid "Canadian English"
-msgstr "Kanada İngilizcesi"
-
 msgid "British English"
 msgstr "İngiliz İngilizcesi"
+
+msgid "Canadian English"
+msgstr "Kanada İngilizcesi"
 
 msgid "Esperanto"
 msgstr "Esperanto Dili"
@@ -12491,6 +12552,10 @@ msgstr "Kürtçe"
 
 msgid "Lao"
 msgstr "Lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilist"
 
 msgid "Macedonian"
 msgstr "Makedonca"
@@ -14186,6 +14251,9 @@ msgstr "Durum Yazısı"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s yüklenirken şu hata oluştu: %s"
@@ -15701,6 +15769,21 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Dosyayı açarken bir hata oluştu."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Dosya aktarımı başarısız oldu"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Arkadaşlık adınızı ayarlayın."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "%s çözümleme hatası"
+
 #~ msgid "Force old (port 5223) SSL"
 #~ msgstr "Eski (port 5223) SSL kullan"
 
@@ -16114,9 +16197,6 @@ msgstr ""
 
 #~ msgid "XHTML-IM"
 #~ msgstr "XHTML-IM"
-
-#~ msgid "User Location"
-#~ msgstr "Kullanıcı Konumu"
 
 #~ msgid "User Avatar"
 #~ msgstr "Kullanıcı Resmi"

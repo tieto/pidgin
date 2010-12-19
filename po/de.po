@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-12 12:28+0100\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2010-12-12 12:28+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -12423,6 +12423,9 @@ msgstr "Griechisch"
 msgid "Australian English"
 msgstr "Australisches Englisch"
 
+msgid "British English"
+msgstr "Britisches Englisch"
+
 msgid "Canadian English"
 msgstr "Kanadisches Englisch"
 
@@ -12617,9 +12620,6 @@ msgstr "Traditionelles Chinesisch"
 
 msgid "Amharic"
 msgstr "Amharisch"
-
-msgid "British English"
-msgstr "Britisches Englisch"
 
 msgid "Lithuanian"
 msgstr "Litauisch"

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -4872,17 +4872,6 @@ msgstr "Izbačeni od strane %s: (%s)"
 msgid "Unknown Error in presence"
 msgstr "Nepoznata greška u prisustvu"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Došlo je do greške pri otvaranju datoteke."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Propao prenos datoteke"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5254,26 +5243,6 @@ msgstr "Greška u dodavanju drugara"
 msgid "The username specified does not exist."
 msgstr "Uneto korisničko ime ne postoji."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Neprilike pri usklađivanju spiska drugara za %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s na lokalnom spisku je u grupi „%s“ ali nije na spisku servera. Želite li "
-"da dodate ovog drugara?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s je u lokalnom spisku ali nije na spisku servera. Želite li da dodate ovog "
-"drugara?"
-
 # Mozda "razume poruku"
 msgid "Unable to parse message"
 msgstr "Ne mogu da obradim poruku."
@@ -5446,6 +5415,26 @@ msgstr "Nepoznata greška sa kodom %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN Greška %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Neprilike pri usklađivanju spiska drugara za %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s na lokalnom spisku je u grupi „%s“ ali nije na spisku servera. Želite li "
+"da dodate ovog drugara?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s je u lokalnom spisku ali nije na spisku servera. Želite li da dodate ovog "
+"drugara?"
+
 msgid "Other Contacts"
 msgstr "Ostali kontakti"
 
@@ -5497,11 +5486,52 @@ msgstr "Vaše novo MSN prijateljsko ime je predugačko."
 msgid "Set friendly name for %s."
 msgstr "Postavite Vaše prijateljsko ime."
 
-msgid "Set your friendly name."
-msgstr "Postavite Vaše prijateljsko ime."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Postavi prijateljsko ime..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Ovo je ime pod kojim će Vas videti Vaši MSN drugari."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Korisnikova lokacija"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Ovo je ime pod kojim će Vas videti Vaši MSN drugari."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Korisnikova lokacija"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Prijavili ste se sa nekog drugog mesta."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Prijavili ste se sa nekog drugog mesta."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Dopusti"
+
+msgid "Disallow"
+msgstr "Zabrani"
 
 msgid "Set your home phone number."
 msgstr "Postavite Vaš kućni broj telefona."
@@ -5522,12 +5552,6 @@ msgstr ""
 "Da li želite da dopustite ili zabranite ljudima iz Vašeg spiska drugara da "
 "Vam šalju MSN mobilne stranice na Vaš mobilni telefon ili neki drugi "
 "prenosni uređaj?"
-
-msgid "Allow"
-msgstr "Dopusti"
-
-msgid "Disallow"
-msgstr "Zabrani"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5589,6 +5613,10 @@ msgstr "Zvaničan naziv"
 msgid "Set Friendly Name..."
 msgstr "Postavi prijateljsko ime..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Izaberite mesto..."
+
 msgid "Set Home Phone Number..."
 msgstr "Postavi broj kućnog telefona..."
 
@@ -5600,6 +5628,10 @@ msgstr "Postavi broj mobilnog telefona..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Omogući/isključi mobilne uređaje..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Dozvoli/zabrani mobilne stranice..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Dozvoli/zabrani mobilne stranice..."
@@ -5821,6 +5853,9 @@ msgstr "Prikaži proizvoljne smeške"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Ne mogu da uspostavim novu vezu."
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: potapšaj drugara da bi privukao njegovu pažnju"
@@ -7064,11 +7099,22 @@ msgstr ""
 "Uspostavljali ste i prekidali vezu suviše često. Sačekajte deset minuta pa "
 "pokušajte ponovo. Ako nastavite da pokušavate, moraćete da sačekate još duže."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Greška u zahtevu tokena za prijavu"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Ne mogu da se povežem na seerver. Unesite adresu servera na kog želite da se "
+"povežem."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7077,10 +7123,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Greška u zahtevu tokena za prijavu"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7397,6 +7439,11 @@ msgstr ""
 "Prijava nije uspela: Ne mogu da se prijavim kao %s jer je to neispravno "
 "korisničko ime. Korisnička imena moraju biti ispravne adrese e-pošte, početi "
 "slovom i sadržati samo slova, brojeve i razmake, ili sadržati samo brojeve."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 # Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
 #, c-format
@@ -7959,6 +8006,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Pronađi drugara prema adresi e-pošte..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Zahtevaj ovlašćenje"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "Korisnik nije prijavljen"
 
@@ -8158,7 +8209,7 @@ msgid "Personal Web Page"
 msgstr "Lična veb stranica"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Dodatni podaci"
 
@@ -8186,17 +8237,29 @@ msgstr "Član od"
 msgid "Capabilities"
 msgstr "Mogućnosti"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Pravi se povezan"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Pravi se povezan"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Kao nepovezan"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Kao nepovezan"
@@ -12490,11 +12553,11 @@ msgstr "grčki"
 msgid "Australian English"
 msgstr "australijski engleski"
 
-msgid "Canadian English"
-msgstr "kanadski engleski"
-
 msgid "British English"
 msgstr "britanski engleski"
+
+msgid "Canadian English"
+msgstr "kanadski engleski"
 
 msgid "Esperanto"
 msgstr "esperanto"
@@ -12575,6 +12638,10 @@ msgstr "kurdski"
 
 msgid "Lao"
 msgstr "lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilista"
 
 msgid "Macedonian"
 msgstr "makedonski"
@@ -14245,6 +14312,9 @@ msgstr "Izbornik stanja"
 msgid "Google Talk"
 msgstr "Gugl priča"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Pri učitavanju %s se desila sledeća greška: %s"
@@ -15753,6 +15823,21 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Došlo je do greške pri otvaranju datoteke."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Propao prenos datoteke"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Postavite Vaše prijateljsko ime."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Greška u zahtevu tokena za prijavu"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Zahteva SSL/TLS"
 
@@ -16198,9 +16283,6 @@ msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 
 #~ msgid "XHTML-IM"
 #~ msgstr "HHTML — brze poruke"
-
-#~ msgid "User Location"
-#~ msgstr "Korisnikova lokacija"
 
 #~ msgid "User Avatar"
 #~ msgstr "Korisnikova sličica"
