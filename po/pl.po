@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-21 13:55-0500\n"
-"PO-Revision-Date: 2010-11-16 22:28+0100\n"
+"POT-Creation-Date: 2010-12-19 13:28-0500\n"
+"PO-Revision-Date: 2010-12-14 13:40+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -5461,6 +5461,29 @@ msgstr "Inne położenia"
 msgid "You can sign out from other locations here"
 msgstr "Tutaj można wylogować się z innych położeń"
 
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Nie zalogowano z innych położeń."
+
+msgid "Allow multiple logins?"
+msgstr "Zezwolić na wiele logowań?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr "Zezwolić czy zabronić połączenia z wielu położeń jednocześnie?"
+
+msgid "Allow"
+msgstr "Zezwól"
+
+msgid "Disallow"
+msgstr "Zabroń"
+
 msgid "Set your home phone number."
 msgstr "Ustawienie numeru telefonu domowego."
 
@@ -5479,12 +5502,6 @@ msgid ""
 msgstr ""
 "Zezwolić czy zabronić osobom z listy znajomych na wysyłanie stron MSN Mobile "
 "do telefonu komórkowego lub innego przenośnego urządzenia?"
-
-msgid "Allow"
-msgstr "Zezwól"
-
-msgid "Disallow"
-msgstr "Zabroń"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5560,6 +5577,9 @@ msgstr "Ustaw numer telefonu komórkowego..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Włącz/wyłącz urządzenia przenośne..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Zezwól/zabroń na wiele logowań..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Zezwól/zabroń strony Mobile..."
@@ -5778,6 +5798,9 @@ msgstr "Wyświetlanie własnych emotikon"
 msgid "Allow direct connections"
 msgstr "Zezwalanie na bezpośrednie połączenia"
 
+msgid "Allow connecting from multiple locations"
+msgstr "Zezwalanie na łączenie z wielu położeń"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: szturcha użytkownika, aby uzyskać jego uwagę"
 
@@ -5879,7 +5902,7 @@ msgid "Error parsing HTTP"
 msgstr "Błąd podczas przetwarzania HTTP"
 
 msgid "You have signed on from another location"
-msgstr "Zalogowano się z innego położenia"
+msgstr "Zalogowano z innego położenia"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
@@ -6972,6 +6995,9 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Błąd podczas żądania adresu %s: %s"
 
+msgid "The server returned an empty response"
+msgstr "Serwer zwrócił pustą odpowiedź"
+
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
@@ -6981,10 +7007,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL nie umożliwia uwierzytelnienia nazwy użytkownika w tym miejscu"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Błąd podczas żądania %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -12325,11 +12347,11 @@ msgstr "grecki"
 msgid "Australian English"
 msgstr "australijski angielski"
 
-msgid "Canadian English"
-msgstr "kanadyjski angielski"
-
 msgid "British English"
 msgstr "brytyjski angielski"
+
+msgid "Canadian English"
+msgstr "kanadyjski angielski"
 
 msgid "Esperanto"
 msgstr "esperanto"
@@ -14049,6 +14071,9 @@ msgstr "Wybór stanu"
 
 msgid "Google Talk"
 msgstr "Google Talk"
+
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"

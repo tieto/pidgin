@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-21 13:55-0500\n"
-"PO-Revision-Date: 2010-11-18 17:03+0100\n"
-"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
+"POT-Creation-Date: 2010-12-19 13:28-0500\n"
+"PO-Revision-Date: 2010-12-14 10:45+0100\n"
+"Last-Translator: Dingoe <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -5463,6 +5463,31 @@ msgstr "andere Locaties"
 msgid "You can sign out from other locations here"
 msgstr "U kunt u hier bij andere locaties afmelden."
 
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "U bent vanaf geen enkele locatie aangemeld."
+
+msgid "Allow multiple logins?"
+msgstr "Meerdere aanmeldingen toestaan?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Wilt u het tegelijkertijd verbinden vanaf meerdere locaties toestaan of "
+"weigeren?"
+
+msgid "Allow"
+msgstr "Toestaan"
+
+msgid "Disallow"
+msgstr "Weigeren"
+
 msgid "Set your home phone number."
 msgstr "Telefoonnummer voor thuis instellen."
 
@@ -5481,12 +5506,6 @@ msgid ""
 msgstr ""
 "Wilt u dat mensen op uw vriendenlijst MSN-mobiel oproepen kunnen sturen naar "
 "uw mobiele telefoon of ander mobiel apparaat?"
-
-msgid "Allow"
-msgstr "Toestaan"
-
-msgid "Disallow"
-msgstr "Weigeren"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5563,6 +5582,9 @@ msgstr "Mobiel nummer instellen..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Mobiele apparaten inschakelen/uitschakelen..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Toestaan/Weigeren van meerdere aanmeldingen..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobiele oproepen toestaan/weigeren..."
@@ -5780,6 +5802,9 @@ msgstr "Eigen emoticon's weergeven"
 
 msgid "Allow direct connections"
 msgstr "Sta directe verbindingen toe"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Sta verbinding van meerdere locaties toe."
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Een gebruiker virtueel aanstoten om de aandacht te krijgen"
@@ -6972,6 +6997,9 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Fout opvragen %s: %s"
 
+msgid "The server returned an empty response"
+msgstr "leeg antwoord van server"
+
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
@@ -6981,10 +7009,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL laat niet toe uw schermnaam hier te waarmerken"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Fout opvragen  %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -12327,11 +12351,11 @@ msgstr "Grieks"
 msgid "Australian English"
 msgstr "Australisch Engels"
 
-msgid "Canadian English"
-msgstr "Canadees Engels"
-
 msgid "British English"
 msgstr "Brits Engels"
+
+msgid "Canadian English"
+msgstr "Canadees Engels"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -14052,6 +14076,9 @@ msgstr "Statusselector"
 msgid "Google Talk"
 msgstr "Google talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "De volgende fout is opgetreden bij laden van %s: %s"
@@ -15556,6 +15583,9 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Fout opvragen  %s"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Er is een fout op de in-band bytestream overdracht\n"

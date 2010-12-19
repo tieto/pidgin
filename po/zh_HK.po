@@ -1,4 +1,4 @@
-# NOTE: This file is generated from zh_TW.po by mkzhhk.pl,v 1.26 2010/08/09 21:40:12 acli Exp
+# NOTE: This file is generated from zh_TW.po by mkzhhk.pl,v 1.27 2010/12/17 01:08:13 acli Exp
 # ---
 # Pidgin's Traditional Chinese translation
 # Copyright (C) 2002-2010, Paladin R. Liu <paladin@ms1.hinet.net>
@@ -8,7 +8,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.655 2010/11/18 06:05:50 acli Exp $
+# $InternalId: zh_TW.po,v 1.659 2010/12/17 03:16:38 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -60,10 +60,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.6\n"
+"Project-Id-Version: Pidgin 2.7.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-21 13:55-0500\n"
-"PO-Revision-Date: 2010-11-15 16:24-0500\n"
+"POT-Creation-Date: 2010-12-19 13:28-0500\n"
+"PO-Revision-Date: 2010-12-16 19:32-0500\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: zh_HK\n"
@@ -5731,6 +5731,30 @@ msgstr "其他所在位置"
 msgid "You can sign out from other locations here"
 msgstr "你可在這裏登出其他所在位置"
 
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "你沒有在其他位置登入"
+
+#  NOTE: 官方翻譯「多重位置登入」
+msgid "Allow multiple logins?"
+msgstr "允許多重位置登入？"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr "你要允許在多個所在位置同時連線嗎？"
+
+msgid "Allow"
+msgstr "允許"
+
+msgid "Disallow"
+msgstr "不允許"
+
 msgid "Set your home phone number."
 msgstr "設定你的家用電話號碼。"
 
@@ -5749,12 +5773,6 @@ msgid ""
 msgstr ""
 "你是否允許在你好友清單中的好友傳送 Mobile Page 到你的流動電話，或是其他的流動"
 "通訊器材上呢？"
-
-msgid "Allow"
-msgstr "允許"
-
-msgid "Disallow"
-msgstr "不允許"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5831,6 +5849,9 @@ msgstr "設定流動電話號碼..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "開啟 / 關閉流動通訊器材..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "允許 / 不允許多重位置登入..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "允許 / 不允許 Mobile Page..."
@@ -6047,6 +6068,9 @@ msgstr "顯示使用者圖示"
 
 msgid "Allow direct connections"
 msgstr "允許直接連線"
+
+msgid "Allow connecting from multiple locations"
+msgstr "允許多重位置登入"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge：呼叫使用者，引起他們的注意"
@@ -7237,6 +7261,9 @@ msgstr "你在帳號設定中指定了使用加密，但其中一個伺服器不
 msgid "Error requesting %s: %s"
 msgstr "要求讀取 %s 途中發生了錯誤：%s"
 
+msgid "The server returned an empty response"
+msgstr "伺服器送出了空白的回應。"
+
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
@@ -7244,11 +7271,6 @@ msgstr "伺服器表示登入前必須完成圖片驗證，但這用戶端尚未
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL 不允許你的帳號在這裏登入"
-
-# NOTE 單寫「要求 %s」好像有些怪 - acli 20090902
-#, c-format
-msgid "Error requesting %s"
-msgstr "要求讀取 %s 途中發生了錯誤"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -12662,7 +12684,7 @@ msgstr "阿拉伯文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?keyword=Assamese&qrytype=en&x=31&y=9
 msgid "Assamese"
-msgstr "阿薩姆語"
+msgstr "阿薩姆文"
 
 #  NOTE「Latin」係指譯文以「拉丁字母」（而非西里爾字母）書寫，中譯可以省略 - acli 20070918
 msgid "Belarusian Latin"
@@ -12710,13 +12732,12 @@ msgstr "希臘文"
 msgid "Australian English"
 msgstr "澳洲式英文"
 
-msgid "Canadian English"
-msgstr "加拿大式英文"
-
 msgid "British English"
 msgstr "英式英文"
 
-#  XXX 寫下的應是文，不是語，但實在真是好像沒有人寫「世界文」的 - Ambrose
+msgid "Canadian English"
+msgstr "加拿大式英文"
+
 msgid "Esperanto"
 msgstr "世界語"
 
@@ -12820,7 +12841,7 @@ msgstr "馬其頓文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?keyword=malayalam&qrytype=en&x=26&y=11
 msgid "Malayalam"
-msgstr "馬拉亞拉姆語"
+msgstr "馬拉亞拉姆文"
 
 msgid "Mongolian"
 msgstr "蒙古文"
@@ -12843,10 +12864,9 @@ msgstr "博克莫爾文"
 msgid "Nepali"
 msgstr "尼泊爾文"
 
-# NOTE Flemish 譯法是跟了http://www.ee.tku.edu.tw/~rexchen/cdict/
-# XXX Dutch 和 Flemish 是同一種語言，是否應該只寫「荷蘭文」，刪去「法蘭德斯文」？
+# NOTE Dutch 和 Flemish 是同一種語言，中文似乎其實沒有分（http://www.ee.tku.edu.tw/~rexchen/cdict/ 譯「法蘭德斯」）
 msgid "Dutch, Flemish"
-msgstr "荷蘭文／弗蘭德斯文"
+msgstr "荷蘭文"
 
 msgid "Norwegian Nynorsk"
 msgstr "新諾爾斯克文"
@@ -14487,6 +14507,9 @@ msgstr "狀態清單"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "載入 %s 時發生以下錯誤：%s"
@@ -16013,6 +16036,10 @@ msgstr "你沒有權限移除程式。"
 
 #~ msgid "Failed to open in-band bytestream"
 #~ msgstr "無法開啟帶內位元組流"
+
+# NOTE 單寫「要求 %s」好像有些怪 - acli 20090902
+#~ msgid "Error requesting %s"
+#~ msgstr "要求讀取 %s 途中發生了錯誤"
 
 #~ msgid "Set your friendly name."
 #~ msgstr "設定您的暱稱。"
