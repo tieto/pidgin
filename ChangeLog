@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.8 (??/??/????):
+version 2.7.8 (12/19/2010):
 	General:
 	* Fix the exceptions in purple-remote on Python 2.6+. (Ari Pollak)
 	  (#12151)
