@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-11-21 03:10+0100\n"
+"POT-Creation-Date: 2010-12-21 15:20+0100\n"
+"PO-Revision-Date: 2010-12-21 15:19+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "Language: \n"
@@ -5438,18 +5438,16 @@ msgstr "Itt kijelentkezhet más helyekről"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Bejelentkezett egy másik helyről"
+msgstr "Nincs bejelentkezve másik helyről."
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Több példány engedélyezése"
+msgstr "Engedélyezi a többszörös bejelentkezést?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
-msgstr ""
+msgstr "Engedélyezi a több helyről egyszerre történő kapcsolódást?"
 
 msgid "Allow"
 msgstr "Engedélyezés"
@@ -5554,9 +5552,8 @@ msgstr "Mobiltelefonszám beállítása…"
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Mobileszközök engedélyezése/tiltása…"
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Mobiloldalak engedélyezése/tiltása…"
+msgstr "Többszörös bejelentkezés engedélyezése/tiltása…"
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobiloldalak engedélyezése/tiltása…"
@@ -5778,7 +5775,7 @@ msgid "Allow direct connections"
 msgstr "Közvetlen kapcsolatok engedélyezése"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Több helyről való kapcsolódás engedélyezése"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: felhasználó megbökése figyelemfelhívási céllal"
@@ -6957,9 +6954,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Hiba %s lekérésekor: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "Nem lehet kapcsolódni: a kiszolgáló üres választ adott vissza."
+msgstr "A kiszolgáló üres választ adott vissza"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -14025,7 +14021,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -15508,6 +15504,3 @@ msgstr "A Pidgin weboldalának felkeresése"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nincs jogosultsága az alkalmazás eltávolításához."
-
-#~ msgid "Error requesting %s"
-#~ msgstr "Hiba %s lekérésekor"
