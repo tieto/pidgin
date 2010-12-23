@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-11-20 10:19+0100\n"
+"POT-Creation-Date: 2010-12-23 07:57+0100\n"
+"PO-Revision-Date: 2010-12-23 08:04+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "Language: ca\n"
@@ -5479,19 +5479,17 @@ msgstr "Podeu desconnectar-vos d'altres ubicacions aquí"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Us heu connectat des d'un altre lloc"
+msgstr "No esteu connectat des de cap altra ubicació."
 
-# FIXME: entrades/registres?
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Permet diverses instàncies"
+msgstr "Voleu permetre connexions múltiples?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
 msgstr ""
+"Voleu permetre connectar-vos des de diferents ubicacions simultàniament?"
 
 msgid "Allow"
 msgstr "Permet"
@@ -5594,9 +5592,9 @@ msgstr "Estableix el número del telèfon mòbil..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Habilita/inhabilita dispositius mòbils..."
 
-#, fuzzy
+# FIXME
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Permet/denega pàgines de mòbil..."
+msgstr "Permet/denega múltiples connexions..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Permet/denega pàgines de mòbil..."
@@ -5816,7 +5814,7 @@ msgid "Allow direct connections"
 msgstr "Permet connexions directes"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Permet connectar des de diferents ubicacions"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: doneu un cop de colze a un usuari perquè us pari atenció"
@@ -7034,9 +7032,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "S'ha produït un error en sol·licitar %s: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "No s'ha pogut connectar: el servidor ha retornat una resposta buida."
+msgstr "El servidor ha retornat una resposta buida"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -14136,7 +14133,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
