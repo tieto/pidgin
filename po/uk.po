@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-11-17 22:25+0300\n"
+"POT-Creation-Date: 2010-12-26 22:11-0500\n"
+"PO-Revision-Date: 2010-12-19 22:07+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -5433,18 +5433,18 @@ msgstr "Тут ви можете вийти з іншого місцезнахо
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Ви увійшли з іншого місця"
+msgstr "Ви не увійшли з жодного іншого місцезнаходження."
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Дозволити декілька екземплярів"
+msgstr "Дозволити декілька входів?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
 msgstr ""
+"Ви хочете дозволити чи заборонити з'єднання з декількох місцезнаходжень "
+"одночасно?"
 
 msgid "Allow"
 msgstr "Дозволити"
@@ -5547,9 +5547,8 @@ msgstr "Встановити номер мобільного телефону...
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Увімкнути чи вимкнути мобільні пристрої..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Дозволити чи заборонити мобільні сторінки..."
+msgstr "Дозволити/Заборонити декілька входів..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Дозволити чи заборонити мобільні сторінки..."
@@ -5771,7 +5770,7 @@ msgid "Allow direct connections"
 msgstr "Дозволити прямі з'єднання"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Дозволити з'єднання з декількох місцезнаходжень"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: штовхнути користувача, щоб привернути його увагу"
@@ -6964,9 +6963,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Помилка запиту %s: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "Не вдається з'єднатися. Сервер повертає порожню відповідь."
+msgstr "Сервер повернув порожню відповідь"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -14035,7 +14033,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-11-21 11:47+0100\n"
+"POT-Creation-Date: 2010-12-26 22:11-0500\n"
+"PO-Revision-Date: 2010-12-21 09:08+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
@@ -5379,18 +5379,16 @@ msgstr "Můžete se přihlásit z jiného umístění"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Přihlásili jste se z jiného umístění"
+msgstr "Nejste přihlášen z jiného místa"
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Povolit několikanásobné současné spuštění"
+msgstr "Povolit přihlášení z více míst?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
-msgstr ""
+msgstr "Chcete povolit nebo zakázat přihlášení z několika míst současně?"
 
 msgid "Allow"
 msgstr "Povolit"
@@ -5492,9 +5490,8 @@ msgstr "Nastavit mobilní telefonní číslo..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Povolit/zakázat mobilní zařízení..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Povolit/zakázat mobilní stránky..."
+msgstr "Povolit/zakázat přihlášení z více míst..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Povolit/zakázat mobilní stránky..."
@@ -5715,7 +5712,7 @@ msgid "Allow direct connections"
 msgstr "Povolit přímé připojení"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Povolí připojení z několika míst"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: získat pozornost uživatele šťouchnutím"
@@ -6885,9 +6882,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Chyba žádosti %s: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "Nemohu se připojit: server vrací prázdnou odpověď"
+msgstr "Server vrátil prázdnou odpověď"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -13898,7 +13894,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"

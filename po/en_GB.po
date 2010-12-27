@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-11-29 13:51-0000\n"
+"POT-Creation-Date: 2010-12-26 22:11-0500\n"
+"PO-Revision-Date: 2010-12-22 08:56-0000\n"
 "Last-Translator: Philip Hannent <phil@hannent.co.uk>\n"
 "Language-Team:  <en_GB@li.org>\n"
 "Language: \n"
@@ -5387,14 +5387,15 @@ msgstr "You can sign out from other locations here"
 msgid "You are not signed in from any other locations."
 msgstr "You are not signed in from any other locations."
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Allow multiple instances"
+msgstr "Allow multiple logins?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
 msgstr ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
 
 msgid "Allow"
 msgstr "Allow"
@@ -5497,9 +5498,8 @@ msgstr "Set Mobile Phone Number..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Enable/Disable Mobile Devices..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Allow/Disallow Mobile Pages..."
+msgstr "Allow/Disallow Multiple Logins..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Allow/Disallow Mobile Pages..."
@@ -5719,7 +5719,7 @@ msgid "Allow direct connections"
 msgstr "Allow direct connections"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Allow connecting from multiple locations"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: nudge a user to get their attention"
@@ -13884,7 +13884,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
