@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.9 (??/??/????):
+version 2.7.9 (12/26/2010):
+	MSN:
+	* Fix a crash when receiving short packets related to P2Pv2. (CVE ID
+	  pending)
 
 version 2.7.8 (12/19/2010):
 	General:
