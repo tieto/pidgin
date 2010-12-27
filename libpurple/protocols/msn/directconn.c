@@ -601,8 +601,10 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 		if (dc->header.length) {
 			part = msn_slpmsgpart_new_from_data(dc->in_buffer + 4, dc->header.length);
-			msn_slplink_process_msg(dc->slplink, part);
-			msn_slpmsgpart_unref(part);
+			if (part) {
+				msn_slplink_process_msg(dc->slplink, part);
+				msn_slpmsgpart_unref(part);
+			}
 		}
 
 		/*
@@ -674,7 +676,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		if (dc->in_pos < 4 + packet_length)
 			return;
 
-		if (dc->state != DC_STATE_FOO) {
+		if (dc->state != DC_STATE_FOO && packet_length >= P2P_PACKET_HEADER_SIZE) {
 			MsnP2PHeader *context;
 			
 			/* Skip packet size */
