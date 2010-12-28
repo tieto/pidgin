@@ -3,6 +3,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.10 (??/??/????):
 	libpurple:
 	* Stop sending audio when placing a call on hold. (Jakub Adam) (#13032)
+	* Stop translating gpointers to ints in the dbus API.  This removes
+	  functions from the dbus API.  (The openSUSE Project) (#12507)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
