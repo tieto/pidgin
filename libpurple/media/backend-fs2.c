@@ -1129,6 +1129,21 @@ stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 				g_object_set(volume, "mute", active, NULL);
 			}
 		}
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_HOLD ||
+			type == PURPLE_MEDIA_INFO_UNHOLD)) {
+		gboolean active = (type == PURPLE_MEDIA_INFO_HOLD);
+		GList *streams = get_streams(self, sid, name);
+		for (; streams; streams =
+				g_list_delete_link(streams, streams)) {
+			PurpleMediaBackendFs2Stream *stream = streams->data;
+			if (stream->session->type & PURPLE_MEDIA_SEND_AUDIO) {
+				g_object_set(stream->stream, "direction",
+						session_type_to_fs_stream_direction(
+						stream->session->type & ((active) ?
+						~PURPLE_MEDIA_SEND_AUDIO :
+						PURPLE_MEDIA_AUDIO)), NULL);
+			}
+		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
 			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
 		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
