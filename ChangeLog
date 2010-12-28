@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.10 (??/??/????):
+	Pidgin:
+	* Support using the Page Up and Page Down keys on the numeric keypad in
+	  the conversation window.  (Ryan Flegel) (#13127)
 
 version 2.7.9 (12/26/2010):
 	MSN:

@@ -1919,6 +1919,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
 			case GDK_Page_Down:
+ 			case GDK_KP_Page_Down:
 			case ']':
 				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv + 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
@@ -1928,6 +1929,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				break;
 
 			case GDK_Page_Up:
+ 			case GDK_KP_Page_Up;
 			case '[':
 				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv - 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), -1);
@@ -2128,11 +2130,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			break;
 
 		case GDK_Page_Up:
+ 		case GDK_KP_Page_Up:
 			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
 
 		case GDK_Page_Down:
+ 		case GDK_KP_Page_Down:
 			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
@@ -2188,7 +2192,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
 		(event->keyval == GDK_Page_Up) ||
+ 		(event->keyval == GDK_KP_Page_Up) ||
 		(event->keyval == GDK_Page_Down) ||
+ 		(event->keyval == GDK_KP_Page_Down) ||
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
