@@ -83,6 +83,8 @@ peer_proxy_send_create_new_conn(PeerConnection *conn)
 	byte_stream_putcaps(&frame.payload, conn->type); /* Value */
 
 	peer_proxy_send(conn, &frame);
+
+	byte_stream_destroy(&frame.payload);
 }
 
 /**
@@ -120,6 +122,8 @@ peer_proxy_send_join_existing_conn(PeerConnection *conn, guint16 pin)
 	byte_stream_putcaps(&frame.payload, conn->type); /* Value */
 
 	peer_proxy_send(conn, &frame);
+
+	byte_stream_destroy(&frame.payload);
 }
 
 /**
