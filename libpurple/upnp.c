@@ -142,6 +142,7 @@ struct _UPnPMappingAddRemove
 	gboolean add;
 	PurpleUPnPCallback cb;
 	gpointer cb_data;
+	gboolean success;
 	guint tima; /* purple_timeout_add handle */
 	PurpleUtilFetchUrlData *gfud;
 };
@@ -155,6 +156,19 @@ static GSList *discovery_callbacks = NULL;
 static void purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd);
 static void lookup_public_ip(void);
 static void lookup_internal_ip(void);
+
+static gboolean
+fire_ar_cb_async_and_free(gpointer data)
+{
+	UPnPMappingAddRemove *ar = data;
+	if (ar) {
+		if (ar->cb)
+			ar->cb(ar->success, ar->cb_data);
+		g_free(ar);
+	}
+
+	return FALSE;
+}
 
 static void
 fire_discovery_callbacks(gboolean success)
@@ -863,9 +877,8 @@ done_port_mapping_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	} else
 		purple_debug_info("upnp", "Successfully completed port mapping operation\n");
 
-	if (ar->cb)
-		ar->cb(success, ar->cb_data);
-	g_free(ar);
+	ar->success = success;
+	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static void
@@ -882,10 +895,8 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 			if(!(internal_ip = purple_upnp_get_internal_ip())) {
 				purple_debug_error("upnp",
 					"purple_upnp_set_port_mapping(): couldn't get local ip\n");
-				/* UGLY */
-				if (ar->cb)
-					ar->cb(FALSE, ar->cb_data);
-				g_free(ar);
+				ar->success = FALSE;
+				ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 				return;
 			}
 			strncpy(action_name, "AddPortMapping",
@@ -908,15 +919,16 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 		return;
 	}
 
-
-	if (ar->cb)
-		ar->cb(FALSE, ar->cb_data);
-	g_free(ar);
+	ar->success = FALSE;
+	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static gboolean
 fire_port_mapping_failure_cb(gpointer data)
 {
+	UPnPMappingAddRemove *ar = data;
+
+	ar->tima = 0;
 	do_port_mapping_cb(FALSE, data);
 	return FALSE;
 }
