@@ -273,7 +273,8 @@ get_plugin_frame(GtkWidget *parent, GtkSizeGroup *sg,
 
 	/* Setup device preference */
 	devices = get_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find(devices, purple_prefs_get_string(device_pref)) == NULL)
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+			(GCompareFunc) strcmp) == NULL)
 		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(vbox, device_label,
 			PURPLE_PREF_STRING, device_pref, devices);
