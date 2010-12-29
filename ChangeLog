@@ -14,6 +14,9 @@ version 2.7.10 (??/??/????):
 	* The Voice/Video Settings plugin no longer resets selected devices to
 	  defaults. (Jakub Adam) (#13044)
 
+	QQ:
+	* QQ2008 is now the default protocol version. (Michael Terry) (#11635)
+
 version 2.7.9 (12/26/2010):
 	MSN:
 	* Fix a crash when receiving short packets related to P2Pv2. (CVE ID
