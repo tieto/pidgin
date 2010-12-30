@@ -2673,13 +2673,14 @@ static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 	if(!(p2p_data = data))
 		return ;
 
+	yd = p2p_data->gc->proto_data;
+	yd->listen_data = NULL;
+
 	if(listenfd == -1) {
 		purple_debug_warning("yahoo","p2p: error starting p2p server\n");
 		yahoo_p2p_disconnect_destroy_data(data);
 		return;
 	}
-
-	yd = p2p_data->gc->proto_data;
 
 	/* Add an Input Read event to the file descriptor */
 	yd->yahoo_local_p2p_server_fd = listenfd;
@@ -2759,8 +2760,15 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
 	p2p_data->source = -1;
 
-	/* FIXME: Shouldn't this deal with the PurpleNetworkListenData* */
-	purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
+	/* FIXME: If the port is already used, purple_network_listener returns NULL and old listener won't be canceled
+	 * in yahoo_close function. */
+	if (yd->listen_data)
+		purple_debug_warning("yahoo","p2p: Failed to create p2p server - server already exists\n");
+	else {
+		yd->listen_data = purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
+		if (yd->listen_data == NULL)
+			purple_debug_warning("yahoo","p2p: Failed to created p2p server\n");
+	}
 
 	g_free(base64_ip);
 }
@@ -3784,6 +3792,8 @@ void yahoo_close(PurpleConnection *gc) {
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)
 		ycht_connection_close(yd->ycht);
+	if (yd->listen_data != NULL)
+		purple_network_listen_cancel(yd->listen_data);
 
 	g_free(yd->pending_chat_room);
 	g_free(yd->pending_chat_id);

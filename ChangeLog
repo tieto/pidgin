@@ -24,6 +24,10 @@ version 2.7.10 (??/??/????):
 	QQ:
 	* QQ2008 is now the default protocol version. (Michael Terry) (#11635)
 
+	Yahoo!/Yahoo! JAPAN:
+	* Fix a crash when an account disconnects before a p2p session is
+	  completely set up. (Jan Kaluza) (#12432)
+
 version 2.7.9 (12/26/2010):
 	MSN:
 	* Fix a crash when receiving short packets related to P2Pv2. (CVE ID
