@@ -48,6 +48,8 @@
 #define PREF_NEWDIR     PREF_PREFIX "/newdir"
 #define PREF_ESCAPE     PREF_PREFIX "/escape"
 
+#define PREF_STRANGER_OLD PREF_PREFIX "/reject_stranger"
+
 typedef enum
 {
 	FT_ASK,
@@ -228,6 +230,12 @@ context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+	/* migrate the old pref (we should only care if the plugin is actually *used*) */
+	if(purple_prefs_get_bool(PREF_STRANGER_OLD)) {
+		purple_prefs_set_int(PREF_STRANGER, FT_REJECT);
+		purple_prefs_remove(PREF_STRANGER_OLD);
+	}
+
 	purple_signal_connect(purple_xfers_get_handle(), "file-recv-request", plugin,
 						PURPLE_CALLBACK(file_recv_request_cb), plugin);
 	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
