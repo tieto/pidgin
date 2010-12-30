@@ -761,18 +761,19 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 
 	nicks = g_strsplit(args[1], " ", -1);
-
 	for (i = 0; nicks[i]; i++) {
 		if ((ib = g_hash_table_lookup(irc->buddies, (gconstpointer)nicks[i])) == NULL) {
 			continue;
 		}
-		ib->flag = TRUE;
+		ib->new_online_status = TRUE;
 	}
-
 	g_strfreev(nicks);
 
-	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
-	irc->ison_outstanding = FALSE;
+	if (irc->ison_outstanding)
+		irc_buddy_query(irc);
+
+	if (!irc->ison_outstanding)
+		g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
 }
 
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc)
@@ -783,10 +784,10 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 	if (!gc || !buddy)
 		return;
 
-	if (ib->online && !ib->flag) {
+	if (ib->online && !ib->new_online_status) {
 		purple_prpl_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
-	} else if (!ib->online && ib->flag) {
+	} else if (!ib->online && ib->new_online_status) {
 		purple_prpl_got_user_status(irc->account, name, "available", NULL);
 		ib->online = TRUE;
 	}
@@ -837,7 +838,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo), nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
-		ib->flag = TRUE;
+		ib->new_online_status = TRUE;
 		irc_buddy_status(nick, ib, irc);
 	}
 
@@ -1233,7 +1234,7 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
-		ib->flag = FALSE;
+		ib->new_online_status = FALSE;
 		irc_buddy_status(data[0], ib, irc);
 	}
 	g_free(data[0]);

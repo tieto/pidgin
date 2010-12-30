@@ -58,6 +58,7 @@ struct irc_conn {
 	GHashTable *buddies;
 
 	gboolean ison_outstanding;
+	GList *buddies_outstanding;
 
 	char *inbuf;
 	int inbuflen;
@@ -97,6 +98,7 @@ struct irc_buddy {
 	char *name;
 	gboolean online;
 	gboolean flag;
+ 	gboolean new_online_status;
 	int ref;
 };
 
@@ -104,6 +106,7 @@ typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char
 
 int irc_send(struct irc_conn *irc, const char *buf);
 gboolean irc_blist_timeout(struct irc_conn *irc);
+void irc_buddy_query(struct irc_conn *irc);
 
 char *irc_escape_privmsg(const char *text, gssize length);
 

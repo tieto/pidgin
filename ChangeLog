@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.10 (??/??/????):
+	IRC:
+	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
+
 	libpurple:
 	* Stop sending audio when placing a call on hold. (Jakub Adam) (#13032)
 	* Stop translating gpointers to ints in the dbus API.  This removes
