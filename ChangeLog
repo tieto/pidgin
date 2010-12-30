@@ -13,6 +13,10 @@ version 2.7.10 (??/??/????):
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
 	  defaults. (Jakub Adam) (#13044)
+	* The Autoaccept plugin now allows disabling filename escaping. (Rok
+	  Mandeljc) (half of #11459)
+	* The Autoaccept plugin now allows choosing Reject/Ask/Accept for
+	  non-buddies. (Rok Mandeljc) (half of #11459)
 
 	QQ:
 	* QQ2008 is now the default protocol version. (Michael Terry) (#11635)
