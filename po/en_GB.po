@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
-"PO-Revision-Date: 2006-02-07 13:57+0000\n"
-"Last-Translator: Luke Ross <luke@lukeross.name>\n"
+"POT-Creation-Date: 2010-12-26 22:11-0500\n"
+"PO-Revision-Date: 2010-12-22 08:56-0000\n"
+"Last-Translator: Philip Hannent <phil@hannent.co.uk>\n"
 "Language-Team:  <en_GB@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -60,9 +60,8 @@ msgstr ""
 msgid "Error"
 msgstr "Error"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Account was not added"
+msgstr "Account was not modified"
 
 msgid "Account was not added"
 msgstr "Account was not added"
@@ -73,10 +72,12 @@ msgstr "Username of an account must be non-empty."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"The account's protocol cannot be changed while it is connected to the server."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"The account's username cannot be changed while it is connected to the server."
 
 msgid "New mail notifications"
 msgstr "New mail notifications"
@@ -635,9 +636,8 @@ msgstr "Enable Logging"
 msgid "Enable Sounds"
 msgstr "Enable Sounds"
 
-#, fuzzy
 msgid "You are not connected."
-msgstr "Server closed the connection"
+msgstr "You are not connected."
 
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
@@ -648,9 +648,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "List of %d user:\n"
 msgstr[1] "List of %d users:\n"
 
-#, fuzzy
 msgid "Supported debug options are: plugins version"
-msgstr "Supported debug options are:  version"
+msgstr "Supported debug options are: plugins version"
 
 msgid "No such command (in this context)."
 msgstr "No such command (in this context)."
@@ -1259,9 +1258,8 @@ msgstr "Others talk in chat"
 msgid "Someone says your username in chat"
 msgstr "Someone says your username in chat"
 
-#, fuzzy
 msgid "Attention received"
-msgstr "Activation required"
+msgstr "Attention received"
 
 msgid "GStreamer Failure"
 msgstr "GStreamer Failure"
@@ -1531,14 +1529,13 @@ msgstr ""
 
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr ""
+msgstr "TinyURL for above: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "Please wait while TinyURL fetches a shorter URL ..."
 
-#, fuzzy
 msgid "Only create TinyURL for URLs of this length or greater"
-msgstr "Only create TinyURL for urls of this length or greater"
+msgstr "Only create TinyURL for URLs of this length or greater"
 
 msgid "TinyURL (or other) address prefix"
 msgstr "TinyURL (or other) address prefix"
@@ -1549,9 +1546,8 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL plugin"
 
-#, fuzzy
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "When receiving a message with URL(s), TinyURL for easier copying"
+msgstr "When receiving a message with URL(s), use TinyURL for easier copying"
 
 msgid "Online"
 msgstr "Online"
@@ -1649,13 +1645,11 @@ msgstr "Change user information for %s"
 msgid "Set User Info"
 msgstr "Set User Info"
 
-#, fuzzy
 msgid "This protocol does not support setting a public alias."
-msgstr "This protocol does not support chat rooms."
+msgstr "This protocol does not support setting a public alias."
 
-#, fuzzy
 msgid "This protocol does not support fetching the public alias."
-msgstr "This protocol does not support chat rooms."
+msgstr "This protocol does not support fetching the public alias."
 
 msgid "Unknown"
 msgstr "Unknown"
@@ -1666,32 +1660,33 @@ msgstr "Buddies"
 msgid "buddy list"
 msgstr "buddy list"
 
-#, fuzzy
 msgid "The certificate is self-signed and cannot be automatically checked."
-msgstr ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
+msgstr "The certificate is self-signed and cannot be automatically checked."
 
 msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
 msgstr ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 
 msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
 
-#, fuzzy
 msgid ""
 "The certificate has expired and should not be considered valid.  Check that "
 "your computer's date and time are accurate."
-msgstr "The certificate chain presented for %s is not valid."
+msgstr ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
-#, fuzzy
 msgid "The certificate presented is not issued to this domain."
-msgstr "The certificate chain presented for %s is not valid."
+msgstr "The certificate presented is not issued to this domain."
 
 msgid ""
 "You have no database of root certificates, so this certificate cannot be "
@@ -1700,16 +1695,14 @@ msgstr ""
 "You have no database of root certificates, so this certificate cannot be "
 "validated."
 
-#, fuzzy
 msgid "The certificate chain presented is invalid."
-msgstr "The certificate chain presented for %s is not valid."
+msgstr "The certificate chain presented is invalid."
 
-#, fuzzy
 msgid "The certificate has been revoked."
-msgstr "The call has been terminated."
+msgstr "The certificate has been revoked."
 
 msgid "An unknown certificate error occurred."
-msgstr ""
+msgstr "An unknown certificate error occurred."
 
 msgid "(DOES NOT MATCH)"
 msgstr "(DOES NOT MATCH)"
@@ -1753,25 +1746,24 @@ msgstr "SSL Certificate Verification"
 msgid "_View Certificate..."
 msgstr "_View Certificate..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "The certificate for %s could not be validated."
-msgstr "The certificate chain presented for %s is not valid."
+msgstr "The certificate for %s could not be validated."
 
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL Certificate Error"
 
-#, fuzzy
 msgid "Unable to validate certificate"
-msgstr "Unable to authenticate: %s"
+msgstr "Unable to validate certificate"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 
 #. Make messages
 #, c-format
@@ -1916,9 +1908,9 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Resolver process exited without answering our request"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr "Error resolving %s: %d"
+msgstr "Error converting %s to punycode: %d"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -1964,9 +1956,8 @@ msgstr "Cannot send a directory."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 
-#, fuzzy
 msgid "File is not readable."
-msgstr "Directory is not writable."
+msgstr "File is not readable."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2017,18 +2008,18 @@ msgstr "Transfer of file %s complete"
 msgid "File transfer complete"
 msgstr "File transfer complete"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You cancelled the transfer of %s"
 msgstr "You cancelled the transfer of %s"
 
 msgid "File transfer cancelled"
 msgstr "File transfer cancelled"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s cancelled the transfer of %s"
 msgstr "%s cancelled the transfer of %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s cancelled the file transfer"
 msgstr "%s cancelled the file transfer"
 
@@ -2227,28 +2218,29 @@ msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
 
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 
-#, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
-msgstr "The following error has occurred:"
+msgstr "A non-recoverable Farsight2 error has occurred."
 
 msgid "Error with your microphone"
-msgstr ""
+msgstr "Error with your microphone"
 
 msgid "Error with your webcam"
-msgstr ""
+msgstr "Error with your webcam"
 
-#, fuzzy
 msgid "Conference error"
-msgstr "Conference Closed"
+msgstr "Conference error"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating session: %s"
-msgstr "Error creating connection"
+msgstr "Error creating session: %s"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2504,14 +2496,14 @@ msgstr ""
 "Test plug-in IPC support, as a server. This registers the IPC commands."
 
 msgid "Hide Joins/Parts"
-msgstr ""
+msgstr "Hide Joins/Parts"
 
 #. Translators: Followed by an input request a number of people
 msgid "For rooms with more than this many people"
-msgstr ""
+msgstr "For rooms with more than this many people"
 
 msgid "If user has not spoken in this many minutes"
-msgstr ""
+msgstr "If user has not spoken in this many minutes"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Apply hiding rules to buddies"
@@ -3824,19 +3816,18 @@ msgid "Invalid challenge from server"
 msgstr "Invalid challenge from server"
 
 msgid "Server thinks authentication is complete, but client does not"
-msgstr ""
+msgstr "Server thinks authentication is complete, but client does not"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "Server requires plaintext authentication over an unencrypted stream"
+msgstr "Server may require plaintext authentication over an unencrypted stream"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s requires plaintext authentication over an unencrypted connection.  Allow "
-"this and continue authentication?"
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
 
 msgid "SASL authentication failed"
 msgstr "SASL Authentication failed"
@@ -3845,57 +3836,52 @@ msgstr "SASL Authentication failed"
 msgid "SASL error: %s"
 msgstr "SASL error: %s"
 
-#, fuzzy
 msgid "Invalid Encoding"
-msgstr "Invalid input condition"
+msgstr "Invalid Encoding"
 
-#, fuzzy
 msgid "Unsupported Extension"
-msgstr "Unsupported Version"
+msgstr "Unsupported Extension"
 
 msgid ""
 "Unexpected response from the server.  This may indicate a possible MITM "
 "attack"
 msgstr ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
 
 msgid ""
 "The server does support channel binding, but did not appear to advertise "
 "it.  This indicates a likely MITM attack"
 msgstr ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
 
-#, fuzzy
 msgid "Server does not support channel binding"
-msgstr "Server doesn't support blocking"
+msgstr "Server does not support channel binding"
 
-#, fuzzy
 msgid "Unsupported channel binding method"
-msgstr "Unsupported Encoding"
+msgstr "Unsupported channel binding method"
 
 msgid "User not found"
 msgstr "User not found"
 
-#, fuzzy
 msgid "Invalid Username Encoding"
-msgstr "Invalid username"
+msgstr "Invalid Username Encoding"
 
 msgid "Resource Constraint"
 msgstr "Resource Constraint"
 
-#, fuzzy
 msgid "Unable to canonicalize username"
-msgstr "Unable to configure"
+msgstr "Unable to canonicalize username"
 
-#, fuzzy
 msgid "Unable to canonicalize password"
-msgstr "Unable to open a listening port."
+msgstr "Unable to canonicalize password"
 
-#, fuzzy
 msgid "Malicious challenge from server"
-msgstr "Invalid challenge from server"
+msgstr "Malicious challenge from server"
 
-#, fuzzy
 msgid "Unexpected response from server"
-msgstr "Received unexpected HTTP response from server"
+msgstr "Unexpected response from server"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "The BOSH connection manager terminated your session."
@@ -4002,9 +3988,8 @@ msgstr "Priority"
 msgid "Resource"
 msgstr "Resource"
 
-#, fuzzy
 msgid "Uptime"
-msgstr "Update"
+msgstr "Uptime"
 
 msgid "Logged Off"
 msgstr "Logged Off"
@@ -4028,12 +4013,13 @@ msgstr "Photo"
 msgid "Logo"
 msgstr "Logo"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
 msgstr ""
-"You are about to remove %s from your buddy list.  Do you want to continue?"
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
 
 msgid "Cancel Presence Notification"
 msgstr "Cancel Presence Notification"
@@ -4200,9 +4186,8 @@ msgstr "Ping timed out"
 msgid "Invalid XMPP ID"
 msgstr "Invalid XMPP ID"
 
-#, fuzzy
 msgid "Invalid XMPP ID. Username portion must be set."
-msgstr "Invalid XMPP ID. Domain must be set."
+msgstr "Invalid XMPP ID. Username portion must be set."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Invalid XMPP ID. Domain must be set."
@@ -4335,13 +4320,11 @@ msgstr "Mood Text"
 msgid "Allow Buzz"
 msgstr "Allow Buzz"
 
-#, fuzzy
 msgid "Mood Name"
-msgstr "Middle Name"
+msgstr "Mood Name"
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "Buddy Comment"
+msgstr "Mood Comment"
 
 #. primitive
 #. ID
@@ -4632,9 +4615,8 @@ msgstr "Select a Resource"
 msgid "Initiate Media"
 msgstr "Initiate Media"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "This protocol does not support chat rooms."
+msgstr "Account does not support PEP, cannot set mood"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Configure a chat room."
@@ -4642,9 +4624,8 @@ msgstr "config:  Configure a chat room."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Configure a chat room."
 
-#, fuzzy
 msgid "part [message]:  Leave the room."
-msgstr "part [room]:  Leave the room."
+msgstr "part [message]:  Leave the room."
 
 msgid "register:  Register with a chat room."
 msgstr "register:  Register with a chat room."
@@ -4662,13 +4643,12 @@ msgstr ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
 
-#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4690,9 +4670,8 @@ msgstr "ping &lt;jid&gt;:\tPing a user/component/server."
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Buzz a user to get their attention"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "Select correct user"
+msgstr "mood: Set current user mood"
 
 msgid "Extended Away"
 msgstr "Extended Away"
@@ -4714,20 +4693,17 @@ msgstr "XMPP Protocol Plug-in"
 msgid "Domain"
 msgstr "Domain"
 
-#, fuzzy
 msgid "Require encryption"
-msgstr "Require authorisation"
+msgstr "Require encryption"
 
-#, fuzzy
 msgid "Use encryption if available"
-msgstr "User information not available: %s"
+msgstr "Use encryption if available"
 
 msgid "Use old-style SSL"
-msgstr ""
+msgstr "Use old-style SSL"
 
-#, fuzzy
 msgid "Connection security"
-msgstr "Connection Timeout"
+msgstr "Connection security"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Allow plaintext auth over unencrypted streams"
@@ -4779,18 +4755,17 @@ msgstr "XMPP Message Error"
 msgid "(Code %s)"
 msgstr "(Code %s)"
 
-#, fuzzy
 msgid "A custom smiley in the message is too large to send."
-msgstr "Unable to send message: The message is too large."
+msgstr "A custom smiley in the message is too large to send."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "XMPP stream header missing"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "XMPP Version Mismatch"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "XMPP stream missing ID"
 
 msgid "XML Parse error"
 msgstr "XML Parse error"
@@ -4833,15 +4808,6 @@ msgstr "Kicked (%s)"
 msgid "Unknown Error in presence"
 msgstr "Unknown Error in presence"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "An error occurred on the in-band bytestream transfer\n"
-
-msgid "Transfer was closed."
-msgstr "Transfer was closed."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Failed to open in-band bytestream"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Unable to send file to %s, user does not support file transfers"
@@ -4866,31 +4832,26 @@ msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 "Please select the resource of %s to which you would like to send a file"
 
-#, fuzzy
 msgid "Afraid"
-msgstr "Arabic"
+msgstr "Afraid"
 
-#, fuzzy
 msgid "Amazed"
-msgstr "Ashamed"
+msgstr "Amazed"
 
-#, fuzzy
 msgid "Amorous"
-msgstr "Glorious"
+msgstr "Amorous"
 
 msgid "Angry"
 msgstr "Angry"
 
-#, fuzzy
 msgid "Annoyed"
-msgstr "Banned"
+msgstr "Annoyed"
 
 msgid "Anxious"
 msgstr "Anxious"
 
-#, fuzzy
 msgid "Aroused"
-msgstr "You send"
+msgstr "Aroused"
 
 msgid "Ashamed"
 msgstr "Ashamed"
@@ -4898,154 +4859,125 @@ msgstr "Ashamed"
 msgid "Bored"
 msgstr "Bored"
 
-#, fuzzy
 msgid "Brave"
-msgstr "Save"
+msgstr "Brave"
 
-#, fuzzy
 msgid "Calm"
-msgstr "Realm"
+msgstr "Calm"
 
-#, fuzzy
 msgid "Cautious"
-msgstr "Chats"
+msgstr "Cautious"
 
-#, fuzzy
 msgid "Cold"
-msgstr "Bold"
+msgstr "Cold"
 
-#, fuzzy
 msgid "Confident"
-msgstr "Conflict"
+msgstr "Confident"
 
-#, fuzzy
 msgid "Confused"
-msgstr "Continue"
+msgstr "Confused"
 
-#, fuzzy
 msgid "Contemplative"
-msgstr "Contact"
+msgstr "Contemplative"
 
-#, fuzzy
 msgid "Contented"
-msgstr "Connected"
+msgstr "Contented"
 
-#, fuzzy
 msgid "Cranky"
-msgstr "Company"
+msgstr "Cranky"
 
 msgid "Crazy"
-msgstr ""
+msgstr "Crazy"
 
-#, fuzzy
 msgid "Creative"
-msgstr "Create"
+msgstr "Creative"
 
-#, fuzzy
 msgid "Curious"
-msgstr "Glorious"
+msgstr "Curious"
 
-#, fuzzy
 msgid "Dejected"
-msgstr "Reject"
+msgstr "Dejected"
 
-#, fuzzy
 msgid "Depressed"
-msgstr "Delete"
+msgstr "Depressed"
 
-#, fuzzy
 msgid "Disappointed"
-msgstr "Disconnected."
+msgstr "Disappointed"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "Disgusted"
 
-#, fuzzy
 msgid "Dismayed"
-msgstr "_Disable"
+msgstr "Dismayed"
 
-#, fuzzy
 msgid "Distracted"
-msgstr "Detached"
+msgstr "Distracted"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "Embarrassed"
 
-#, fuzzy
 msgid "Envious"
-msgstr "Anxious"
+msgstr "Envious"
 
 msgid "Excited"
 msgstr "Excited"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "Glorious"
+msgstr "Flirtatious"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "Forename"
+msgstr "Frustrated"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Grateful"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "Retrieving..."
+msgstr "Grieving"
 
-#, fuzzy
 msgid "Grumpy"
-msgstr "Group"
+msgstr "Grumpy"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "City"
+msgstr "Guilty"
 
 msgid "Happy"
 msgstr "Happy"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Hopeful"
 
-#, fuzzy
 msgid "Hot"
-msgstr "_Host:"
+msgstr "Hot"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Humbled"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Humiliated"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "Angry"
+msgstr "Hungry"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "Humour"
+msgstr "Hurt"
 
 msgid "Impressed"
-msgstr ""
+msgstr "Impressed"
 
-#, fuzzy
 msgid "In awe"
-msgstr "In Love"
+msgstr "In awe"
 
 msgid "In love"
 msgstr "In love"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "Indonesian"
+msgstr "Indignant"
 
-#, fuzzy
 msgid "Interested"
-msgstr "Interests"
+msgstr "Interested"
 
-#, fuzzy
 msgid "Intoxicated"
-msgstr "Invite"
+msgstr "Intoxicated"
 
 msgid "Invincible"
 msgstr "Invincible"
@@ -5053,126 +4985,105 @@ msgstr "Invincible"
 msgid "Jealous"
 msgstr "Jealous"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "Monkey"
+msgstr "Lonely"
 
-#, fuzzy
 msgid "Lost"
-msgstr "Loudest"
+msgstr "Lost"
 
 msgid "Lucky"
-msgstr ""
+msgstr "Lucky"
 
-#, fuzzy
 msgid "Mean"
-msgstr "German"
+msgstr "Mean"
 
-#, fuzzy
 msgid "Moody"
-msgstr "Mood"
+msgstr "Moody"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Nervous"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "Detail"
+msgstr "Neutral"
 
-#, fuzzy
 msgid "Offended"
-msgstr "Offline"
+msgstr "Offended"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Outraged"
 
-#, fuzzy
 msgid "Playful"
-msgstr "Play"
+msgstr "Playful"
 
-#, fuzzy
 msgid "Proud"
-msgstr "Loud"
+msgstr "Proud"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "Real name"
+msgstr "Relaxed"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Received"
+msgstr "Relieved"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "Remove"
+msgstr "Remorseful"
 
-#, fuzzy
 msgid "Restless"
-msgstr "Register"
+msgstr "Restless"
 
 msgid "Sad"
 msgstr "Sad"
 
 msgid "Sarcastic"
-msgstr ""
+msgstr "Sarcastic"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Satisfied"
 
-#, fuzzy
 msgid "Serious"
-msgstr "Glorious"
+msgstr "Serious"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "Blocked"
+msgstr "Shocked"
 
 msgid "Shy"
-msgstr ""
+msgstr "Shy"
 
-#, fuzzy
 msgid "Sick"
-msgstr "Nick"
+msgstr "Sick"
 
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Sleepy"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Spontaneous"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "Speed"
+msgstr "Stressed"
 
-#, fuzzy
 msgid "Strong"
-msgstr "Song"
+msgstr "Strong"
 
 msgid "Surprised"
-msgstr ""
+msgstr "Surprised"
 
 msgid "Thankful"
-msgstr ""
+msgstr "Thankful"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Thirsty"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "Tired"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "Underline"
+msgstr "Undefined"
 
-#, fuzzy
 msgid "Weak"
-msgstr "Whack"
+msgstr "Weak"
 
-#, fuzzy
 msgid "Worried"
-msgstr "Bored"
+msgstr "Worried"
 
 msgid "Set User Nickname"
 msgstr "Set User Nickname"
@@ -5211,26 +5122,6 @@ msgstr "Buddy Add error"
 
 msgid "The username specified does not exist."
 msgstr "The username specified does not exist."
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Buddy list synchronisation issue in %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
 
 msgid "Unable to parse message"
 msgstr "Unable to parse message"
@@ -5367,9 +5258,8 @@ msgstr "Bad friend file"
 msgid "Not expected"
 msgstr "Not expected"
 
-#, fuzzy
 msgid "Friendly name is changing too rapidly"
-msgstr "Friendly name changes too rapidly"
+msgstr "Friendly name is changing too rapidly"
 
 msgid "Server too busy"
 msgstr "Server too busy"
@@ -5402,6 +5292,26 @@ msgstr "Unknown Error Code %d"
 #, c-format
 msgid "MSN Error: %s\n"
 msgstr "MSN Error: %s\n"
+
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Buddy list synchronisation issue in %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
 
 msgid "Other Contacts"
 msgstr "Other Contacts"
@@ -5446,15 +5356,52 @@ msgstr "Email Address..."
 msgid "Your new MSN friendly name is too long."
 msgstr "Your new MSN friendly name is too long."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Set friendly name for %s."
-msgstr "Set your friendly name."
+msgstr "Set friendly name for %s."
 
-msgid "Set your friendly name."
-msgstr "Set your friendly name."
+msgid "Set Friendly Name"
+msgstr "Set Friendly Name"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "This is the name that other MSN buddies will see you as."
+
+msgid "This Location"
+msgstr "This Location"
+
+msgid "This is the name that identifies this location"
+msgstr "This is the name that identifies this location"
+
+msgid "Other Locations"
+msgstr "Other Locations"
+
+msgid "You can sign out from other locations here"
+msgstr "You can sign out from other locations here"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "You are not signed in from any other locations."
+
+msgid "Allow multiple logins?"
+msgstr "Allow multiple logins?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+
+msgid "Allow"
+msgstr "Allow"
+
+msgid "Disallow"
+msgstr "Disallow"
 
 msgid "Set your home phone number."
 msgstr "Set your home telephone number."
@@ -5474,12 +5421,6 @@ msgid ""
 msgstr ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your mobile phone or other mobile device?"
-
-msgid "Allow"
-msgstr "Allow"
-
-msgid "Disallow"
-msgstr "Disallow"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5542,6 +5483,9 @@ msgstr "Office Title"
 msgid "Set Friendly Name..."
 msgstr "Set Friendly Name..."
 
+msgid "View Locations..."
+msgstr "View Locations..."
+
 msgid "Set Home Phone Number..."
 msgstr "Set Home Telephone Number..."
 
@@ -5553,6 +5497,9 @@ msgstr "Set Mobile Phone Number..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Enable/Disable Mobile Devices..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Allow/Disallow Multiple Logins..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Allow/Disallow Mobile Pages..."
@@ -5569,13 +5516,13 @@ msgstr "Send to Mobile"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "SSL support is needed for MSN. Please install a supported SSL library."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
 msgstr ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 
 msgid "Unable to Add"
 msgstr "Unable to Add"
@@ -5768,9 +5715,11 @@ msgstr "HTTP Method Server"
 msgid "Show custom smileys"
 msgstr "Show custom smileys"
 
-#, fuzzy
 msgid "Allow direct connections"
-msgstr "Unable to create connection"
+msgstr "Allow direct connections"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Allow connecting from multiple locations"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: nudge a user to get their attention"
@@ -5796,9 +5745,8 @@ msgstr "Unable to add user"
 msgid "Unknown error (%d)"
 msgstr "Unknown error (%d)"
 
-#, fuzzy
 msgid "Unable to remove user"
-msgstr "Unable to add user"
+msgstr "Unable to remove user"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobile message was not sent because it was too long."
@@ -5911,10 +5859,9 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 "%s requests to view your webcam, but this request is not yet supported."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s invited you to view their webcam, but this is not yet supported."
 
 msgid "Away From Computer"
 msgstr "Away From Computer"
@@ -5964,33 +5911,29 @@ msgstr "Do you want to delete this buddy from your address book as well?"
 msgid "The username specified is invalid."
 msgstr "The username specified is invalid."
 
-#, fuzzy
 msgid "The PIN you entered is invalid."
-msgstr "The SecurID key entered is invalid"
+msgstr "The PIN you entered is invalid."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "The SecurID key entered is invalid"
+msgstr "The PIN you entered has an invalid length [4-10]."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
+msgstr "The PIN is invalid. It should only consist of digits [0-9]."
 
-#, fuzzy
 msgid "The two PINs you entered do not match."
-msgstr "New passwords do not match."
+msgstr "The two PINs you entered do not match."
 
-#, fuzzy
 msgid "The Display Name you entered is invalid."
-msgstr "The SecurID key entered is invalid"
+msgstr "The Display Name you entered is invalid."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
 msgstr ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
 
 #. show error to user
-#, fuzzy
 msgid "Profile Update Error"
-msgstr "Write Error"
+msgstr "Profile Update Error"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
@@ -5998,372 +5941,315 @@ msgid "Profile"
 msgstr "Profile"
 
 msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
+msgstr "Your profile information is not yet retrieved. Please try again later."
 
 msgid "Your UID"
-msgstr ""
+msgstr "Your UID"
 
 #. pin
 #. pin (required)
-#, fuzzy
 msgid "PIN"
-msgstr "UIN"
+msgstr "PIN"
 
 msgid "Verify PIN"
-msgstr ""
+msgstr "Verify PIN"
 
 #. display name
 #. nick name (required)
-#, fuzzy
 msgid "Display Name"
-msgstr "Family Name"
+msgstr "Display Name"
 
 #. hidden
 msgid "Hide my number"
-msgstr ""
+msgstr "Hide my number"
 
 #. mobile number
-#, fuzzy
 msgid "Mobile Number"
-msgstr "Mobile Phone Number"
+msgstr "Mobile Number"
 
-#, fuzzy
 msgid "Update your Profile"
-msgstr "Yahoo! Profile"
+msgstr "Update your Profile"
 
 msgid "Here you can update your MXit profile"
-msgstr ""
+msgstr "Here you can update your MXit profile"
 
 msgid "View Splash"
-msgstr ""
+msgstr "View Splash"
 
 msgid "There is no splash-screen currently available"
-msgstr ""
+msgstr "There is no splash-screen currently available"
 
-#, fuzzy
 msgid "About"
-msgstr "About me"
+msgstr "About"
 
 #. display / change profile
-#, fuzzy
 msgid "Change Profile..."
-msgstr "Change Password..."
+msgstr "Change Profile..."
 
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "View Log..."
+msgstr "View Splash..."
 
 #. display plugin version
-#, fuzzy
 msgid "About..."
-msgstr "About me"
+msgstr "About..."
 
 #. the file is too big
-#, fuzzy
 msgid "The file you are trying to send is too large!"
-msgstr "The message is too large."
+msgstr "The file you are trying to send is too large!"
 
-#, fuzzy
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
-"Unable to connect to server. Please enter the address of the server to which "
-"you wish to connect."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 
-#, fuzzy
 msgid "Logging In..."
-msgstr "Logging in"
+msgstr "Logging In..."
 
-#, fuzzy
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
-"Unable to connect to server. Please enter the address of the server to which "
-"you wish to connect."
+"Unable to connect to the MXit server. Please check your server settings."
 
-#, fuzzy
 msgid "Connecting..."
-msgstr "Connecting"
+msgstr "Connecting..."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "The SecurID key entered is invalid"
+msgstr "The PIN you entered has an invalid length [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
-#, fuzzy
 msgid "Register New MXit Account"
-msgstr "Register New XMPP Account"
+msgstr "Register New MXit Account"
 
-#, fuzzy
 msgid "Please fill in the following fields:"
-msgstr "Please fill in the following fields"
+msgstr "Please fill in the following fields:"
 
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
+msgstr "Error contacting the MXit WAP site. Please try again later."
 
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
 msgstr ""
+"MXit is currently unable to process the request. Please try again later."
 
 msgid "Wrong security code entered. Please try again later."
-msgstr ""
+msgstr "Wrong security code entered. Please try again later."
 
 msgid "Your session has expired. Please try again later."
-msgstr ""
+msgstr "Your session has expired. Please try again later."
 
 msgid "Invalid country selected. Please try again."
-msgstr ""
+msgstr "Invalid country selected. Please try again."
 
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
+msgstr "The MXit ID you entered is not registered. Please register first."
 
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
+msgstr "The MXit ID you entered is already registered. Please choose another."
 
-#, fuzzy
 msgid "Internal error. Please try again later."
-msgstr "The server is unavailable; try again later"
+msgstr "Internal error. Please try again later."
 
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "You did not enter the security code"
 
-#, fuzzy
 msgid "Security Code"
-msgstr "Security Enabled"
+msgstr "Security Code"
 
 #. ask for input (required)
-#, fuzzy
 msgid "Enter Security Code"
-msgstr "Enter code"
+msgstr "Enter Security Code"
 
-#, fuzzy
 msgid "Your Country"
-msgstr "Country"
+msgstr "Your Country"
 
-#, fuzzy
 msgid "Your Language"
-msgstr "Preferred Language"
+msgstr "Your Language"
 
 #. display the form to the user and wait for his/her input
-#, fuzzy
 msgid "MXit Authorization"
-msgstr "Require authorisation"
+msgstr "MXit Authorisation"
 
 msgid "MXit account validation"
-msgstr ""
+msgstr "MXit account validation"
 
-#, fuzzy
 msgid "Retrieving User Information..."
-msgstr "Server Information"
+msgstr "Retrieving User Information..."
 
-#, fuzzy
 msgid "Loading menu..."
-msgstr "Logging in"
+msgstr "Loading menu..."
 
-#, fuzzy
 msgid "Status Message"
-msgstr "Sent Messages"
+msgstr "Status Message"
 
-#, fuzzy
 msgid "Rejection Message"
-msgstr "Received Messages"
+msgstr "Rejection Message"
 
 #. hidden number
-#, fuzzy
 msgid "Hidden Number"
-msgstr "Middle Name"
+msgstr "Hidden Number"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Yahoo ID..."
+msgstr "Your MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
-#, fuzzy
 msgid "WAP Server"
-msgstr "Server"
+msgstr "WAP Server"
 
-#, fuzzy
 msgid "Connect via HTTP"
-msgstr "Connect by TCP"
+msgstr "Connect via HTTP"
 
 msgid "Enable splash-screen popup"
-msgstr ""
+msgstr "Enable splash-screen popup"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "You have been kicked: (%s)"
+msgstr "You have been kicked from this MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Bad ticket"
+msgstr "was kicked"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_Room:"
+msgstr "_Room Name:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "You have email!"
+msgstr "You have invited"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "Online"
+msgstr "Last Online"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
+msgstr "We have lost the connection to MXit. Please reconnect."
 
 #. packet could not be queued for transmission
-#, fuzzy
 msgid "Message Send Error"
-msgstr "XMPP Message Error"
+msgstr "Message Send Error"
 
-#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr "Unable to resolve hostname"
+msgstr "Unable to process your request at this time"
 
 msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
+msgstr "Timeout while waiting for a response from the MXit server."
 
-#, fuzzy
 msgid "Successfully Logged In..."
-msgstr "Successfully joined Qun"
+msgstr "Successfully Logged In..."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+"%s sent you an encrypted message, but it is not supported on this client."
 
-#, fuzzy
 msgid "Message Error"
-msgstr "XMPP Message Error"
+msgstr "Message Error"
 
 msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
+msgstr "Cannot perform redirect using the specified protocol"
 
-#, fuzzy
 msgid "An internal MXit server error occurred."
-msgstr "The following error has occurred:"
+msgstr "An internal MXit server error occurred."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Login error: %s (%i)"
-msgstr "SASL error: %s"
+msgstr "Login error: %s (%i)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Logout error: %s (%i)"
-msgstr "SASL error: %s"
+msgstr "Logout error: %s (%i)"
 
-#, fuzzy
 msgid "Contact Error"
-msgstr "Connection Error"
+msgstr "Contact Error"
 
-#, fuzzy
 msgid "Message Sending Error"
-msgstr "XMPP Message Error"
+msgstr "Message Sending Error"
 
-#, fuzzy
 msgid "Status Error"
-msgstr "Stream Error"
+msgstr "Status Error"
 
-#, fuzzy
 msgid "Mood Error"
-msgstr "Icon Error"
+msgstr "Mood Error"
 
-#, fuzzy
 msgid "Invitation Error"
-msgstr "Unregistration Error"
+msgstr "Invitation Error"
 
-#, fuzzy
 msgid "Contact Removal Error"
-msgstr "Connection Error"
+msgstr "Contact Removal Error"
 
-#, fuzzy
 msgid "Subscription Error"
-msgstr "Subscription"
+msgstr "Subscription Error"
 
-#, fuzzy
 msgid "Contact Update Error"
-msgstr "Connection Error"
+msgstr "Contact Update Error"
 
-#, fuzzy
 msgid "File Transfer Error"
-msgstr "File Transfer"
+msgstr "File Transfer Error"
 
-#, fuzzy
 msgid "Cannot create MultiMx room"
-msgstr "Cannot create pounce"
+msgstr "Cannot create MultiMx room"
 
-#, fuzzy
 msgid "MultiMx Invitation Error"
-msgstr "Unregistration Error"
+msgstr "MultiMx Invitation Error"
 
-#, fuzzy
 msgid "Profile Error"
-msgstr "Write Error"
+msgstr "Profile Error"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
-msgstr ""
+msgstr "Invalid packet received from MXit."
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x01)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x02)"
 
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x03)"
 
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x04)"
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x05)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
+msgstr "A connection error occurred to MXit. (read stage 0x06)"
 
 msgid "In Love"
 msgstr "In Love"
 
-#, fuzzy
 msgid "Pending"
-msgstr "Sending"
+msgstr "Pending"
 
-#, fuzzy
 msgid "Invited"
-msgstr "Invite"
+msgstr "Invited"
 
-#, fuzzy
 msgid "Rejected"
-msgstr "Reject"
+msgstr "Rejected"
 
-#, fuzzy
 msgid "Deleted"
-msgstr "Delete"
+msgstr "Deleted"
 
 msgid "MXit Advertising"
-msgstr ""
+msgstr "MXit Advertising"
 
-#, fuzzy
 msgid "More Information"
-msgstr "Work Information"
+msgstr "More Information"
 
 #, c-format
 msgid "No such user: %s"
@@ -6976,13 +6862,13 @@ msgstr "No reason given."
 msgid "Authorization Denied Message:"
 msgstr "Authorisation Denied Message:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Received unexpected response from %s: %s"
-msgstr "Received unexpected response from "
+msgstr "Received unexpected response from %s: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Received unexpected response from %s"
-msgstr "Received unexpected response from "
+msgstr "Received unexpected response from %s"
 
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6991,23 +6877,31 @@ msgstr ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"You required encryption in your account settings, but one of the servers "
+"does not support it."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
-#, fuzzy, c-format
+#, c-format
 msgid "Error requesting %s: %s"
-msgstr "Error requesting "
+msgstr "Error requesting %s: %s"
+
+msgid "The server returned an empty response"
+msgstr "The server returned an empty response"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
 msgstr ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL does not allow your screen name to authenticate here"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Error requesting "
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7038,162 +6932,142 @@ msgid "Invalid error"
 msgstr "Invalid error"
 
 msgid "Cannot receive IM due to parental controls"
-msgstr ""
+msgstr "Cannot receive IM due to parental controls"
 
 msgid "Cannot send SMS without accepting terms"
-msgstr ""
+msgstr "Cannot send SMS without accepting terms"
 
-#, fuzzy
 msgid "Cannot send SMS"
-msgstr "Cannot send file"
+msgstr "Cannot send SMS"
 
 #. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
 msgid "Cannot send SMS to this country"
-msgstr "Cannot send a directory."
+msgstr "Cannot send SMS to this country"
 
 #. Undocumented
 msgid "Cannot send SMS to unknown country"
-msgstr ""
+msgstr "Cannot send SMS to unknown country"
 
 msgid "Bot accounts cannot initiate IMs"
-msgstr ""
+msgstr "Bot accounts cannot initiate IMs"
 
 msgid "Bot account cannot IM this user"
-msgstr ""
+msgstr "Bot account cannot IM this user"
 
 msgid "Bot account reached IM limit"
-msgstr ""
+msgstr "Bot account reached IM limit"
 
 msgid "Bot account reached daily IM limit"
-msgstr ""
+msgstr "Bot account reached daily IM limit"
 
 msgid "Bot account reached monthly IM limit"
-msgstr ""
+msgstr "Bot account reached monthly IM limit"
 
-#, fuzzy
 msgid "Unable to receive offline messages"
-msgstr "Unable to send message."
+msgstr "Unable to receive offline messages"
 
-#, fuzzy
 msgid "Offline message store full"
-msgstr "Offline Message"
+msgstr "Offline message store full"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr "Unable to send message (%s)."
+msgstr "Unable to send message: %s (%s)"
 
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Unable to send message: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr "Unable to send message to %s:"
+msgstr "Unable to send message to %s: %s (%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s: %s"
-msgstr "Unable to send message to %s:"
+msgstr "Unable to send message to %s: %s"
 
 msgid "Thinking"
-msgstr ""
+msgstr "Thinking"
 
-#, fuzzy
 msgid "Shopping"
-msgstr "Stops typing"
+msgstr "Shopping"
 
-#, fuzzy
 msgid "Questioning"
-msgstr "Question dialog"
+msgstr "Questioning"
 
-#, fuzzy
 msgid "Eating"
-msgstr "Paging"
+msgstr "Eating"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "Playing a game"
+msgstr "Watching a movie"
 
 msgid "Typing"
 msgstr "Typing"
 
-#, fuzzy
 msgid "At the office"
-msgstr "Not in Office"
+msgstr "At the office"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "Taking a bath"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "Watching TV"
 
-#, fuzzy
 msgid "Having fun"
-msgstr "Hangup"
+msgstr "Having fun"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "Sleepy"
+msgstr "Sleeping"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "Using a PDA"
 
-#, fuzzy
 msgid "Meeting friends"
-msgstr "IM Friends"
+msgstr "Meeting friends"
 
-#, fuzzy
 msgid "On the phone"
-msgstr "On the Phone"
+msgstr "On the phone"
 
-#, fuzzy
 msgid "Surfing"
-msgstr "Recurring"
+msgstr "Surfing"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "Mobile"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "Searching the web"
 
 msgid "At a party"
-msgstr ""
+msgstr "At a party"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "Having coffee"
 
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "Gemini"
+msgstr "Gaming"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "Browsing the web"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "Song"
+msgstr "Smoking"
 
-#, fuzzy
 msgid "Writing"
-msgstr "Working"
+msgstr "Writing"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "Working"
+msgstr "Drinking"
 
 msgid "Listening to music"
 msgstr "Listening to music"
 
-#, fuzzy
 msgid "Studying"
-msgstr "Sending"
+msgstr "Studying"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "Interests"
+msgstr "In the restroom"
 
 msgid "Received invalid data on connection with server"
 msgstr "Received invalid data on connection with server"
@@ -7276,25 +7150,20 @@ msgstr "Web Aware"
 msgid "Invisible"
 msgstr "Invisible"
 
-#, fuzzy
 msgid "Evil"
-msgstr "Email"
+msgstr "Evil"
 
-#, fuzzy
 msgid "Depression"
-msgstr "Profession"
+msgstr "Depression"
 
-#, fuzzy
 msgid "At home"
-msgstr "About me"
+msgstr "At home"
 
-#, fuzzy
 msgid "At work"
-msgstr "Network"
+msgstr "At work"
 
-#, fuzzy
 msgid "At lunch"
-msgstr "Out to Lunch"
+msgstr "At lunch"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7324,6 +7193,13 @@ msgstr ""
 "a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr "You may be disconnected shortly.  If so, check %s for updates."
@@ -7352,14 +7228,14 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "The AOL Instant Messenger service is temporarily unavailable."
 
 #. username connecting too frequently
-#, fuzzy
 msgid ""
 "Your username has been connecting and disconnecting too frequently. Wait ten "
 "minutes and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
 
 #. client too old
 #, c-format
@@ -7367,14 +7243,14 @@ msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "The client version you are using is too old. Please upgrade at %s"
 
 #. IP address connecting too frequently
-#, fuzzy
 msgid ""
 "Your IP address has been connecting and disconnecting too frequently. Wait a "
 "minute and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 
 msgid "The SecurID key entered is invalid"
 msgstr "The SecurID key entered is invalid"
@@ -7721,9 +7597,8 @@ msgstr "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgid "iTunes Music Store Link"
 msgstr "iTunes Music Store Link"
 
-#, fuzzy
 msgid "Lunch"
-msgstr "Finch"
+msgstr "Lunch"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7746,9 +7621,8 @@ msgstr ""
 msgid "C_onnect"
 msgstr "C_onnect"
 
-#, fuzzy
 msgid "You closed the connection."
-msgstr "Server closed the connection"
+msgstr "You closed the connection."
 
 msgid "Get AIM Info"
 msgstr "Get AIM Info"
@@ -7757,13 +7631,11 @@ msgstr "Get AIM Info"
 msgid "Edit Buddy Comment"
 msgstr "Edit Buddy Comment"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "Get Status Msg"
+msgstr "Get X-Status Msg"
 
-#, fuzzy
 msgid "End Direct IM Session"
-msgstr "Direct IM established"
+msgstr "End Direct IM Session"
 
 msgid "Direct IM"
 msgstr "Direct IM"
@@ -7789,9 +7661,8 @@ msgstr "Username formatting can change only capitalisation and whitespace."
 msgid "Change Address To:"
 msgstr "Change Address To:"
 
-#, fuzzy
 msgid "you are not waiting for authorization"
-msgstr "<i>you are not waiting for authorisation</i>"
+msgstr "you are not waiting for authorisation"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "You are awaiting authorisation from the following buddies"
@@ -7829,13 +7700,11 @@ msgstr "Configure IM Forwarding (web)"
 msgid "Set Privacy Options..."
 msgstr "Show Privacy Options..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Show Buddy _List"
+msgstr "Show Visible List"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Invite List"
+msgstr "Show Invisible List"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7852,6 +7721,9 @@ msgstr "Show Buddies Awaiting Authorisation"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Search for Buddy by Email Address..."
+
+msgid "Don't use encryption"
+msgstr "Do not use encryption"
 
 msgid "Use clientLogin"
 msgstr "Use clientLogin"
@@ -7896,10 +7768,10 @@ msgid "Invalid SNAC"
 msgstr "Invalid SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Server rate limit exceeded"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Client rate limit exceeded"
 
 msgid "Service unavailable"
 msgstr "Service unavailable"
@@ -7978,7 +7850,7 @@ msgid "Games"
 msgstr "Games"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "Add-Ins"
@@ -8051,7 +7923,7 @@ msgid "Personal Web Page"
 msgstr "Personal Web Page"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Additional Information"
 
@@ -8079,46 +7951,53 @@ msgstr "Member Since"
 msgid "Capabilities"
 msgstr "Capabilities"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Appear Online"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "Appear Online"
+msgstr "Do not Appear Online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Appear Offline"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
-msgstr "Appear Offline"
+msgstr "Do not Appear Offline"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "You have been kicked: (%s)"
+msgstr "you have no buddies on this list"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"You can re-request authorisation from these buddies by right-clicking on "
-"them and selecting \"Re-request Authorisation.\""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Visible"
+msgstr "Visible List"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "These buddies will see your status when you switch to \"Invisible\""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Invite List"
+msgstr "Invisible List"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "These buddies will always see you as offline"
 
 msgid "Aquarius"
 msgstr "Aquarius"
@@ -8298,9 +8177,9 @@ msgstr "Your request was accepted."
 msgid "Your request was rejected."
 msgstr "Your request was rejected."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requires verification: %s"
-msgstr "%u requires verification"
+msgstr "%u requires verification: %s"
 
 msgid "Add buddy question"
 msgstr "Add buddy question"
@@ -8403,9 +8282,8 @@ msgid "Admin"
 msgstr "Admin"
 
 #. XXX: Should this be "Topic"?
-#, fuzzy
 msgid "Room Title"
-msgstr "Room List"
+msgstr "Room Title"
 
 msgid "Notice"
 msgstr "Notice"
@@ -8828,7 +8706,7 @@ msgstr "%d has declined the file %s"
 msgid "File Send"
 msgstr "File Send"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d cancelled the transfer of %s"
 msgstr "%d cancelled the transfer of %s"
 
@@ -10313,7 +10191,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "Ignore conference and chatroom invitations"
 
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr ""
+msgstr "Use account proxy for HTTP and HTTPS connections"
 
 msgid "Chat room list URL"
 msgstr "Chat room list URL"
@@ -10384,13 +10262,12 @@ msgstr ""
 "this."
 
 #. indicates a lock due to logging in too frequently
-#, fuzzy
 msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10420,26 +10297,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Ignore buddy?"
 
-#, fuzzy
 msgid "Invalid username or password"
-msgstr "Incorrect username or password"
+msgstr "Invalid username or password"
 
-#, fuzzy
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
 "try logging into the Yahoo! website."
 msgstr ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
 
 #, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
+msgstr "Unknown error 52.  Reconnecting should fix this."
 
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10467,16 +10344,15 @@ msgstr "Lost connection with %s: %s"
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Unable to establish a connection with %s: %s"
 
-#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-"Unable to connect to server. Please enter the address of the server to which "
-"you wish to connect."
+msgstr "Unable to connect: The server returned an empty response."
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
 msgstr ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
 
 msgid "Not at Home"
 msgstr "Not at Home"
@@ -10533,13 +10409,13 @@ msgid "Open Inbox"
 msgstr "Open Inbox"
 
 msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr ""
+msgstr "Cannot send SMS. Unable to obtain mobile carrier."
 
 msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
+msgstr "Cannot send SMS. Unknown mobile carrier."
 
 msgid "Getting mobile carrier to send the SMS."
-msgstr ""
+msgstr "Getting mobile carrier to send the SMS."
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -10919,9 +10795,8 @@ msgstr "Do not disturb"
 msgid "Extended away"
 msgstr "Extended away"
 
-#, fuzzy
 msgid "Feeling"
-msgstr "Receiving"
+msgstr "Feeling"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11078,6 +10953,7 @@ msgstr ""
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 
 msgid "Internet Messenger"
 msgstr "Internet Messenger"
@@ -11206,9 +11082,9 @@ msgstr ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
-msgstr "%s%s%s%s wants to add %s to his or her buddy list%s%s"
+msgstr "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -11220,9 +11096,8 @@ msgstr "The background colour for the buddy list"
 msgid "Layout"
 msgstr "Layout"
 
-#, fuzzy
 msgid "The layout of icons, name, and status of the buddy list"
-msgstr "The layout of icons, name, and status of the blist"
+msgstr "The layout of icons, name, and status of the buddy list"
 
 #. Group
 #. Note to translators: These two strings refer to the background color
@@ -11276,9 +11151,8 @@ msgstr "The text information for when a contact is expanded"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
-#, fuzzy
 msgid "Online Text"
-msgstr "On-line Text"
+msgstr "Online Text"
 
 msgid "The text information for when a buddy is online"
 msgstr "The text information for when a buddy is online"
@@ -11293,13 +11167,11 @@ msgstr "The text information for when a buddy is away"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
-#, fuzzy
 msgid "Offline Text"
-msgstr "Off-line Text"
+msgstr "Offline Text"
 
-#, fuzzy
 msgid "The text information for when a buddy is offline"
-msgstr "The text information for when a buddy is off-line"
+msgstr "The text information for when a buddy is offline"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
@@ -11322,13 +11194,12 @@ msgstr "The text information for when a buddy has an unread message"
 msgid "Message (Nick Said) Text"
 msgstr "Message (Nick Said) Text"
 
-#, fuzzy
 msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nickname"
 msgstr ""
 "The text information for when a chat has an unread message that mentions "
-"your nick"
+"your nickname"
 
 msgid "The text information for a buddy's status"
 msgstr "The text information for a buddy's status"
@@ -11462,13 +11333,11 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Unknown node type"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "Please select your mood from the list."
+msgstr "Please select your mood from the list"
 
-#, fuzzy
 msgid "Message (optional)"
-msgstr "Alias (optional)"
+msgstr "Message (optional)"
 
 msgid "Edit User Mood"
 msgstr "Edit User Mood"
@@ -11553,9 +11422,8 @@ msgstr "/Tools/Pr_eferences"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Tools/Pr_ivacy"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/Tools/System _Log"
+msgstr "/Tools/Set _Mood"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Tools/_File Transfers"
@@ -11576,20 +11444,17 @@ msgstr "/_Help"
 msgid "/Help/Online _Help"
 msgstr "/Help/Online _Help"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "Buddy Information"
+msgstr "/Help/_Build Information"
 
 msgid "/Help/_Debug Window"
 msgstr "/Help/_Debug Window"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "Server Information"
+msgstr "/Help/De_veloper Information"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "Personal Information"
+msgstr "/Help/_Translator Information"
 
 msgid "/Help/_About"
 msgstr "/Help/_About"
@@ -11798,9 +11663,8 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Group:"
 
-#, fuzzy
 msgid "Auto_join when account connects."
-msgstr "Auto_join when account becomes online."
+msgstr "Auto_join when account connects."
 
 msgid "_Remain in chat after window is closed."
 msgstr "_Remain in chat after window is closed."
@@ -11820,9 +11684,8 @@ msgstr "<PurpleMain>/Accounts/"
 msgid "_Edit Account"
 msgstr "_Edit Account"
 
-#, fuzzy
 msgid "Set _Mood..."
-msgstr "Set Mood..."
+msgstr "Set _Mood..."
 
 msgid "No actions available"
 msgstr "No actions available"
@@ -11913,9 +11776,8 @@ msgstr "/_Conversation"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Conversation/New Instant _Message..."
 
-#, fuzzy
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Conversation/In_vite..."
+msgstr "/Conversation/Join a _Chat..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Conversation/_Find..."
@@ -11944,9 +11806,8 @@ msgstr "/Conversation/Media/Audio\\/Video _Call"
 msgid "/Conversation/Se_nd File..."
 msgstr "/Conversation/Se_nd File..."
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/Conversation/Get Info"
+msgstr "/Conversation/Get _Attention"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Conversation/Add Buddy _Pounce..."
@@ -12029,9 +11890,8 @@ msgstr "/Conversation/Media/Audio\\/Video Call"
 msgid "/Conversation/Send File..."
 msgstr "/Conversation/Send File..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Conversation/Get Info"
+msgstr "/Conversation/Get Attention"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Conversation/Add Buddy Pounce..."
@@ -12097,13 +11957,11 @@ msgstr "_Send"
 msgid "0 people in room"
 msgstr "0 people in room"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "Close this tab"
+msgstr "Close Find bar"
 
-#, fuzzy
 msgid "Find:"
-msgstr "Find"
+msgstr "Find:"
 
 #, c-format
 msgid "%d person in room"
@@ -12266,9 +12124,8 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabic"
 
-#, fuzzy
 msgid "Assamese"
-msgstr "Ashamed"
+msgstr "Assamese"
 
 msgid "Belarusian Latin"
 msgstr "Belarusian Latin"
@@ -12279,9 +12136,8 @@ msgstr "Bulgarian"
 msgid "Bengali"
 msgstr "Bengali"
 
-#, fuzzy
 msgid "Bengali-India"
-msgstr "Bengali"
+msgstr "Bengali-India"
 
 msgid "Bosnian"
 msgstr "Bosnian"
@@ -12310,11 +12166,11 @@ msgstr "Greek"
 msgid "Australian English"
 msgstr "Australian English"
 
-msgid "Canadian English"
-msgstr "Canadian English"
-
 msgid "British English"
 msgstr "British English"
+
+msgid "Canadian English"
+msgstr "Canadian English"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12326,7 +12182,7 @@ msgid "Estonian"
 msgstr "Estonian"
 
 msgid "Basque"
-msgstr ""
+msgstr "Basque"
 
 msgid "Persian"
 msgstr "Persian"
@@ -12394,23 +12250,23 @@ msgstr "Kurdish"
 msgid "Lao"
 msgstr "Lao"
 
+msgid "Maithili"
+msgstr "Maithili"
+
 msgid "Macedonian"
 msgstr "Macedonian"
 
-#, fuzzy
 msgid "Malayalam"
-msgstr "Male"
+msgstr "Maithili"
 
 msgid "Mongolian"
 msgstr "Mongolian"
 
-#, fuzzy
 msgid "Marathi"
-msgstr "Gujarati"
+msgstr "Marathi"
 
-#, fuzzy
 msgid "Malay"
-msgstr "Male"
+msgstr "Malay"
 
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Norwegian"
@@ -12427,9 +12283,8 @@ msgstr "Norwegian Nynorsk"
 msgid "Occitan"
 msgstr "Occitan"
 
-#, fuzzy
 msgid "Oriya"
-msgstr "Opera"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -12485,9 +12340,8 @@ msgstr "Thai"
 msgid "Turkish"
 msgstr "Turkish"
 
-#, fuzzy
 msgid "Ukranian"
-msgstr "Armenian"
+msgstr "Ukranian"
 
 msgid "Urdu"
 msgstr "Urdu"
@@ -12513,7 +12367,7 @@ msgstr "Amharic"
 msgid "Lithuanian"
 msgstr "Lithuanian"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12522,15 +12376,12 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with "
 "%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12539,6 +12390,10 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12550,19 +12405,25 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We cannot help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "About %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "Buddy Information"
+msgstr "Build Information"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "Buddy Information"
+msgstr "%s Build Information"
 
 msgid "Current Developers"
 msgstr "Current Developers"
@@ -12576,9 +12437,9 @@ msgstr "Retired Developers"
 msgid "Retired Crazy Patch Writers"
 msgstr "Retired Crazy Patch Writers"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "Server Information"
+msgstr "%s Developer Information"
 
 msgid "Current Translators"
 msgstr "Current Translators"
@@ -12586,9 +12447,9 @@ msgstr "Current Translators"
 msgid "Past Translators"
 msgstr "Past Translators"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "Work Information"
+msgstr "%s Translator Information"
 
 msgid "_Name"
 msgstr "_Name"
@@ -12997,9 +12858,8 @@ msgstr "Insert IM Image"
 msgid "Insert Smiley"
 msgstr "Insert Smiley"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "Send Button"
+msgstr "Send Attention"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>_Bold</b>"
@@ -13047,7 +12907,7 @@ msgid "_Smile!"
 msgstr "_Smile!"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "_Attention!"
 
 msgid "Log Deletion Failed"
 msgstr "Log Deletion Failed"
@@ -13106,43 +12966,47 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 msgstr ""
+"Usage: %s [OPTION]...\n"
+"\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "DIR"
 
 msgid "use DIR for config files"
-msgstr ""
+msgstr "use DIR for config files"
 
 msgid "print debugging messages to stdout"
-msgstr ""
+msgstr "print debugging messages to stdout"
 
 msgid "force online, regardless of network status"
-msgstr ""
+msgstr "force online, regardless of network status"
 
 msgid "display this help and exit"
-msgstr ""
+msgstr "display this help and exit"
 
-#, fuzzy
 msgid "allow multiple instances"
-msgstr "Allow multiple simultaneous logins"
+msgstr "allow multiple instances"
 
 msgid "don't automatically login"
-msgstr ""
+msgstr "do not automatically login"
 
 msgid "NAME"
-msgstr ""
+msgstr "NAME"
 
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 
 msgid "X display to use"
-msgstr ""
+msgstr "X display to use"
 
 msgid "display the current version and exit"
-msgstr ""
+msgstr "display the current version and exit"
 
 #, c-format
 msgid ""
@@ -13176,13 +13040,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Exiting because another libpurple client is already running.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Media"
+msgstr "_Media"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Hangup"
+msgstr "_Hangup"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13193,7 +13055,7 @@ msgid "%s wishes to start a video session with you."
 msgstr "%s wishes to start a video session with you."
 
 msgid "Incoming Call"
-msgstr ""
+msgstr "Incoming Call"
 
 msgid "_Pause"
 msgstr "_Pause"
@@ -13402,20 +13264,19 @@ msgid "Unknown.... Please report this!"
 msgstr "Unknown.... Please report this!"
 
 msgid "(Custom)"
-msgstr ""
+msgstr "(Custom)"
 
 msgid "Penguin Pimps"
 msgstr "Penguin Pimps"
 
 msgid "The default Pidgin sound theme"
-msgstr ""
+msgstr "The default Pidgin sound theme"
 
-#, fuzzy
 msgid "The default Pidgin buddy list theme"
-msgstr "Pidgin Buddylist Theme Editor"
+msgstr "The default Pidgin buddy list theme"
 
 msgid "The default Pidgin status icon theme"
-msgstr ""
+msgstr "The default Pidgin status icon theme"
 
 msgid "Theme failed to unpack."
 msgstr "Theme failed to unpack."
@@ -13426,34 +13287,30 @@ msgstr "Theme failed to load."
 msgid "Theme failed to copy."
 msgstr "Theme failed to copy."
 
-#, fuzzy
 msgid "Theme Selections"
-msgstr "Browser Selection"
+msgstr "Theme Selections"
 
 #. Instructions
-#, fuzzy
 msgid ""
 "Select a theme that you would like to use from the lists below.\n"
 "New themes can be installed by dragging and dropping them onto the theme "
 "list."
 msgstr ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 
-#, fuzzy
 msgid "Buddy List Theme:"
-msgstr "Buddy List Theme"
+msgstr "Buddy List Theme:"
 
-#, fuzzy
 msgid "Status Icon Theme:"
-msgstr "Status Icons"
+msgstr "Status Icon Theme:"
 
 msgid "Sound Theme:"
-msgstr ""
+msgstr "Sound Theme:"
 
-#, fuzzy
 msgid "Smiley Theme:"
-msgstr "Smiley Themes"
+msgstr "Smiley Theme:"
 
 msgid "Keyboard Shortcuts"
 msgstr "Keyboard Shortcuts"
@@ -13569,17 +13426,15 @@ msgstr "Cannot start proxy configuration program."
 msgid "Cannot start browser configuration program."
 msgstr "Cannot start browser configuration program."
 
-#, fuzzy
 msgid "Disabled"
-msgstr "_Disable"
+msgstr "Disabled"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Use _automatically detected IP address: %s"
 
-#, fuzzy
 msgid "ST_UN server:"
-msgstr "_Server:"
+msgstr "ST_UN server:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Example: stunserver.org</span>"
@@ -13593,37 +13448,30 @@ msgstr "Ports"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Enable automatic router port forwarding"
 
-#, fuzzy
 msgid "_Manually specify range of ports to listen on:"
-msgstr "_Manually specify range of ports to listen on"
+msgstr "_Manually specify range of ports to listen on:"
 
-#, fuzzy
 msgid "_Start:"
-msgstr "_Status:"
+msgstr "_Start:"
 
-#, fuzzy
 msgid "_End:"
-msgstr "_Expand"
+msgstr "_End:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relay Server (TURN)"
 
-#, fuzzy
 msgid "_TURN server:"
-msgstr "_Server:"
+msgstr "_TURN server:"
 
-#, fuzzy
 msgid "_UDP Port:"
-msgstr "_Port:"
+msgstr "_UDP Port:"
 
-#, fuzzy
 msgid "Use_rname:"
-msgstr "Username:"
+msgstr "Use_rname:"
 
-#, fuzzy
 msgid "Pass_word:"
-msgstr "Password:"
+msgstr "Pass_word:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13641,7 +13489,7 @@ msgid "Konqueror"
 msgstr "Konqueror"
 
 msgid "Google Chrome"
-msgstr ""
+msgstr "Google Chrome"
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
@@ -13665,11 +13513,11 @@ msgstr "Epiphany"
 
 #. Translators: please do not translate "chromium-browser" here!
 msgid "Chromium (chromium-browser)"
-msgstr ""
+msgstr "Chromium (chromium-browser)"
 
 #. Translators: please do not translate "chrome" here!
 msgid "Chromium (chrome)"
-msgstr ""
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Manual"
@@ -13677,11 +13525,8 @@ msgstr "Manual"
 msgid "Browser Selection"
 msgstr "Browser Selection"
 
-#, fuzzy
 msgid "Browser preferences are configured in GNOME preferences"
-msgstr ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
+msgstr "Browser preferences are configured in GNOME preferences"
 
 msgid "<b>Browser configuration program was not found.</b>"
 msgstr "<b>Browser configuration program was not found.</b>"
@@ -13715,11 +13560,8 @@ msgstr ""
 msgid "Proxy Server"
 msgstr "Proxy Server"
 
-#, fuzzy
 msgid "Proxy preferences are configured in GNOME preferences"
-msgstr ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
+msgstr "Proxy preferences are configured in GNOME preferences"
 
 msgid "<b>Proxy configuration program was not found.</b>"
 msgstr "<b>Proxy configuration program was not found.</b>"
@@ -13729,24 +13571,20 @@ msgstr "Configure _Proxy"
 
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
-#, fuzzy
 msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Use remote DNS with SOCKS4 proxies"
+msgstr "Use remote _DNS with SOCKS4 proxies"
 
-#, fuzzy
 msgid "Proxy t_ype:"
-msgstr "Proxy _type:"
+msgstr "Proxy t_ype:"
 
 msgid "No proxy"
 msgstr "No proxy"
 
-#, fuzzy
 msgid "P_ort:"
-msgstr "_Port:"
+msgstr "P_ort:"
 
-#, fuzzy
 msgid "User_name:"
-msgstr "Username:"
+msgstr "User_name:"
 
 msgid "Log _format:"
 msgstr "Log _format:"
@@ -13834,9 +13672,8 @@ msgstr "Based on keyboard or mouse use"
 msgid "_Minutes before becoming idle:"
 msgstr "_Minutes before becoming idle:"
 
-#, fuzzy
 msgid "Change to this status when _idle:"
-msgstr "Change status when _idle"
+msgstr "Change to this status when _idle:"
 
 msgid "_Auto-reply:"
 msgstr "_Auto-reply:"
@@ -13863,9 +13700,8 @@ msgstr "Browser"
 msgid "Status / Idle"
 msgstr "Status / Idle"
 
-#, fuzzy
 msgid "Themes"
-msgstr "Smiley Themes"
+msgstr "Themes"
 
 msgid "Allow all users to contact me"
 msgstr "Allow all users to contact me"
@@ -14047,6 +13883,9 @@ msgstr "Status Selector"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "The following error has occurred loading %s: %s"
@@ -14164,9 +14003,8 @@ msgstr "_Play Sound"
 msgid "_Save File"
 msgstr "_Save File"
 
-#, fuzzy
 msgid "Do you really want to clear?"
-msgstr "Are you sure you want to delete %s?"
+msgstr "Do you really want to clear?"
 
 msgid "Select color"
 msgstr "Select colour"
@@ -14215,9 +14053,8 @@ msgstr "none"
 msgid "Small"
 msgstr "Small"
 
-#, fuzzy
 msgid "Smaller versions of the default smileys"
-msgstr "Smaller versions of the default smilies"
+msgstr "Smaller versions of the default smileys"
 
 msgid "Response Probability:"
 msgstr "Responses Probability:"
@@ -14838,9 +14675,8 @@ msgstr "GtkTreeView Horizontal Separation"
 msgid "Conversation Entry"
 msgstr "Conversation Entry"
 
-#, fuzzy
 msgid "Conversation History"
-msgstr "Conversation Entry"
+msgstr "Conversation History"
 
 msgid "Request Dialog"
 msgstr "Request Dialog"
@@ -15151,21 +14987,18 @@ msgstr "Display iChat-style timestamps every N minutes."
 msgid "Timestamp Format Options"
 msgstr "Timestamp Format Options"
 
-#, fuzzy, c-format
+#, c-format
 msgid "_Force timestamp format:"
-msgstr "_Force 24-hour time format"
+msgstr "_Force timestamp format:"
 
-#, fuzzy
 msgid "Use system default"
-msgstr "Desktop Default"
+msgstr "Use system default"
 
-#, fuzzy
 msgid "12 hour time format"
-msgstr "_Force 24-hour time format"
+msgstr "12 hour time format"
 
-#, fuzzy
 msgid "24 hour time format"
-msgstr "_Force 24-hour time format"
+msgstr "24 hour time format"
 
 msgid "Show dates in..."
 msgstr "Show dates in..."
@@ -15205,35 +15038,29 @@ msgstr ""
 "This plug-in allows the user to customize conversation and logging message "
 "timestamp formats."
 
-#, fuzzy
 msgid "Audio"
-msgstr "Auto"
+msgstr "Audio"
 
-#, fuzzy
 msgid "Video"
-msgstr " Video"
+msgstr "Video"
 
 msgid "Output"
-msgstr ""
+msgstr "Output"
 
-#, fuzzy
 msgid "_Plugin"
-msgstr "Plug-ins"
+msgstr "_Plugin"
 
-#, fuzzy
 msgid "_Device"
-msgstr "Device"
+msgstr "_Device"
 
 msgid "Input"
-msgstr ""
+msgstr "Input"
 
-#, fuzzy
 msgid "P_lugin"
-msgstr "Plug-ins"
+msgstr "P_lugin"
 
-#, fuzzy
 msgid "D_evice"
-msgstr "Device"
+msgstr "D_evice"
 
 #. *< magic
 #. *< major version
@@ -15244,22 +15071,20 @@ msgstr "Device"
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Edit Settings"
+msgstr "Voice/Video Settings"
 
-#, fuzzy
 msgid "Voice and Video Settings"
-msgstr "Edit Settings"
+msgstr "Voice and Video Settings"
 
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr ""
+msgstr "Configure your microphone and webcam."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
-msgstr ""
+msgstr "Configure microphone and webcam settings for voice/video calls."
 
 msgid "Opacity:"
 msgstr "Opacity:"
@@ -15325,9 +15150,8 @@ msgstr "Startup"
 msgid "_Start %s on Windows startup"
 msgstr "_Start %s on Windows startup"
 
-#, fuzzy
 msgid "Allow multiple instances"
-msgstr "Allow multiple simultaneous logins"
+msgstr "Allow multiple instances"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dockable Buddy List"
@@ -15376,7 +15200,6 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Send and receive raw XMPP stanzas."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "This plugin is useful for debugging XMPP servers or clients."
 
@@ -15385,36 +15208,39 @@ msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
 
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "A multi-platform GUI toolkit, used by Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Core Pidgin files and dlls"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Create a Start Menu entry for Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Create a shortcut to Pidgin on the Desktop"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "Debug Symbols (for reporting crashes)"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Desktop"
-msgstr "Desktop Default"
+msgstr "Desktop"
 
 #. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
@@ -15422,12 +15248,17 @@ msgid ""
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -15436,80 +15267,100 @@ msgid ""
 "installation instructions are at: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"Error installing spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime Version"
+msgstr "GTK+ Runtime (required if not present)"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Localizations"
-msgstr "Location"
+msgstr "Localisations"
 
 #. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
-msgstr ""
+msgstr "Next >"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Internet Messenger"
+msgstr "Pidgin Instant Messaging Client (required)"
 
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Shortcut"
+msgstr "Shortcuts"
 
 #. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Shortcuts for starting Pidgin"
 
 #. Installer Subsection Text
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Spellchecking Support"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Start Menu"
-msgstr "Startup"
+msgstr "Start Menu"
 
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
+"Support for Spellchecking.  (Internet connection required for installation)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "The nickname \"%s\" is already being used."
+msgstr "The installer is already running."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL handler"
+msgstr "URI Handlers"
 
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
 
 #. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Visit the Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "You do not have permission to uninstall this application."
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "An error occurred on the in-band bytestream transfer\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Transfer was closed."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Failed to open in-band bytestream"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Set your friendly name."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Error requesting "
 
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Require SSL/TLS"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2006-04-04 15:35+0700\n"
 "Last-Translator: Isriya Paireepairit <markpeak@gmail.com>\n"
 "Language-Team: Thai <l10n@opentle.org>\n"
@@ -4809,16 +4809,6 @@ msgstr ""
 msgid "Unknown Error in presence"
 msgstr ""
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr ""
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "การส่งแฟ้มล้มเหลว"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5176,22 +5166,6 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr ""
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-
 msgid "Unable to parse message"
 msgstr ""
 
@@ -5367,6 +5341,22 @@ msgstr ""
 msgid "MSN Error: %s\n"
 msgstr ""
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "คนอื่นคุยในการสนทนากลุ่ม"
@@ -5416,11 +5406,52 @@ msgstr "ชื่อเรียกใน MSN ของคุณยาวเก�
 msgid "Set friendly name for %s."
 msgstr "เปลี่ยนชื่อเรียก"
 
-msgid "Set your friendly name."
-msgstr "เปลี่ยนชื่อเรียก"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "เปลี่ยนชื่อเรียก..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "นี่เป็นชื่อที่ผู้ใช้ MSN ของคุณที่ผู้อื่นมองเห็น"
+
+#, fuzzy
+msgid "This Location"
+msgstr "ตัวเลือกสำหรับผู้ใช้"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "นี่เป็นชื่อที่ผู้ใช้ MSN ของคุณที่ผู้อื่นมองเห็น"
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "ตัวเลือกสำหรับผู้ใช้"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "คุณได้เข้าระบบจากที่อื่น"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "คุณได้เข้าระบบจากที่อื่น"
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "อนุญาต"
+
+msgid "Disallow"
+msgstr "ไม่อนุญาต"
 
 msgid "Set your home phone number."
 msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
@@ -5438,12 +5469,6 @@ msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
-
-msgid "Allow"
-msgstr "อนุญาต"
-
-msgid "Disallow"
-msgstr "ไม่อนุญาต"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5511,6 +5536,10 @@ msgstr "ชื่อ"
 msgid "Set Friendly Name..."
 msgstr "เปลี่ยนชื่อเรียก..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "ตัวเลือกสำหรับผู้ใช้"
+
 msgid "Set Home Phone Number..."
 msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
 
@@ -5522,6 +5551,10 @@ msgstr "ตั้งหมายเลขโทรศัพท์มือถื
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "เปิด/ปิดการใช้งานอุปกรณ์มือถือ"
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "อนุญาต/ไม่อนุญาต Mobile Pages"
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "อนุญาต/ไม่อนุญาต Mobile Pages"
@@ -5742,6 +5775,9 @@ msgstr "แสดงหน้าแสดงอารมณ์พิเศษท
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "การเชื่อมต่อกับเซิร์ฟเวอร์ถูกตัด"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
@@ -6915,11 +6951,20 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "เกิดปัญหาในการอ่านแฟ้มประวัติ"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "ไม่สามารถติดต่อไปยังโฮสต์ได้"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6928,10 +6973,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "เกิดปัญหาในการอ่านแฟ้มประวัติ"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7240,6 +7281,11 @@ msgid ""
 "Unable to sign on as %s because the username is invalid.  Usernames must be "
 "a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
+msgstr ""
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
 msgstr ""
 
 #, fuzzy, c-format
@@ -7708,6 +7754,9 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr ""
 
+msgid "Don't use encryption"
+msgstr ""
+
 msgid "Use clientLogin"
 msgstr ""
 
@@ -7901,7 +7950,7 @@ msgid "Personal Web Page"
 msgstr ""
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr ""
 
@@ -7929,16 +7978,28 @@ msgstr ""
 msgid "Capabilities"
 msgstr ""
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr ""
 
@@ -12202,10 +12263,10 @@ msgstr ""
 msgid "Australian English"
 msgstr ""
 
-msgid "Canadian English"
+msgid "British English"
 msgstr ""
 
-msgid "British English"
+msgid "Canadian English"
 msgstr ""
 
 msgid "Esperanto"
@@ -12287,6 +12348,9 @@ msgid "Kurdish"
 msgstr ""
 
 msgid "Lao"
+msgstr ""
+
+msgid "Maithili"
 msgstr ""
 
 msgid "Macedonian"
@@ -13977,6 +14041,9 @@ msgstr "สถานะไม่อยู่ / ไม่ได้ใช้งา
 msgid "Google Talk"
 msgstr ""
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr ""
@@ -15438,6 +15505,17 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "การส่งแฟ้มล้มเหลว"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "เปลี่ยนชื่อเรียก"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "เกิดปัญหาในการอ่านแฟ้มประวัติ"
+
+#, fuzzy
 #~ msgid "Require SSL/TLS"
 #~ msgstr "บังคับใช้ TLS"
 
@@ -15584,10 +15662,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "เกิดข้อผิดพลาดในการลงทะเบียน"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "ตัวเลือกสำหรับผู้ใช้"
 
 #, fuzzy
 #~ msgid "Chat State Notifications"

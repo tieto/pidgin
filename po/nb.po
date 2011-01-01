@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-02-11 12:17+0100\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
@@ -4847,15 +4847,6 @@ msgstr "Sparket (%s)"
 msgid "Unknown Error in presence"
 msgstr "Ukjent feil i tilstedeværelse"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "En feil oppsto under in-band bytestream overføringen\n"
-
-msgid "Transfer was closed."
-msgstr "Overføring ble lukket."
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Klarte ikke sende fil til %s - brukeren støtter ikke filoverføringer"
@@ -5223,26 +5214,6 @@ msgstr "Klarte ikke legge til kontakt"
 msgid "The username specified does not exist."
 msgstr "Det oppgitte brukernavnet eksisterer ikke."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Synkronisasjonsproblem med kontaktlisten i %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s er på den lokale lista innenfor gruppa \"%s\", men ikke på tjenerlista. "
-"Ønsker du at denne kontakten skal bli lagt til?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s er på den lokale lista, men ikke på tjenerlista. Ønsker du at denne "
-"kontakten skal bli lagt til?"
-
 msgid "Unable to parse message"
 msgstr "Klarte ikke tolke beskjed"
 
@@ -5413,6 +5384,26 @@ msgstr "Ukjent feilkode %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN Feil: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Synkronisasjonsproblem med kontaktlisten i %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s er på den lokale lista innenfor gruppa \"%s\", men ikke på tjenerlista. "
+"Ønsker du at denne kontakten skal bli lagt til?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s er på den lokale lista, men ikke på tjenerlista. Ønsker du at denne "
+"kontakten skal bli lagt til?"
+
 #
 msgid "Other Contacts"
 msgstr "Andre kontakter"
@@ -5464,11 +5455,53 @@ msgstr "Det nye MSN vennlige navnet er for langt."
 msgid "Set friendly name for %s."
 msgstr "Sett vennlig navn for %s."
 
-msgid "Set your friendly name."
-msgstr "Sett ditt vennlige navn."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Sett vennlig navn ..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Dette er navnet som andre MSN-kompiser vil se deg som."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Brukerens sted"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Dette er navnet som andre MSN-kompiser vil se deg som."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Brukerens sted"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Du har logget på et annet sted"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Du har logget på et annet sted"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Tillat flere samtidige innlogginger"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Tillat"
+
+msgid "Disallow"
+msgstr "Forby"
 
 msgid "Set your home phone number."
 msgstr "Sett telefonnummer (hjemme)."
@@ -5487,12 +5520,6 @@ msgid ""
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
 "Ønsker du å tillate eller forby kontakter å sende deg tekstmeldinger via MSN?"
-
-msgid "Allow"
-msgstr "Tillat"
-
-msgid "Disallow"
-msgstr "Forby"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5554,6 +5581,10 @@ msgstr "Kontortittel"
 msgid "Set Friendly Name..."
 msgstr "Sett vennlig navn ..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Velg sted ..."
+
 msgid "Set Home Phone Number..."
 msgstr "Sett telefonnummer (hjemme)..."
 
@@ -5565,6 +5596,10 @@ msgstr "Sett telefonnummer (mobil)..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Bruk/ikke bruk mobile enheter..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Tillate/forby tekstmeldinger..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Tillate/forby tekstmeldinger..."
@@ -5784,6 +5819,9 @@ msgstr "Vis custom smileys"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Klarte ikke lage ny tilkobling"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: dytt en bruker for å få deres oppmerksomhet"
@@ -6950,11 +6988,21 @@ msgstr ""
 "Du har koblet til og koblet fra for hurtig. Vent ti minutter og prøv igjen. "
 "Hvis du fortsetter å prøve nå, vil du måtte vente enda lenger."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Feil ved forespørsel %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Klarte ikke koble til tjeneren for MXit. Sjekk tjenerinnstillingene dine."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6965,10 +7013,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillater ikke at ditt skjermnavn autentiserer her"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Feil ved forespørsel %s: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7280,6 +7324,11 @@ msgstr ""
 "Klarte ikke logge på som %s fordi brukernavnet er ugyldig. Brukernavn må "
 "være en gyldig e-postadresse, eller begynna med en bokstav og bare inneholde "
 "bokstaver, tall og mellomrom, eller bare inneholde tall."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7820,6 +7869,10 @@ msgstr "Vis kontakter som venter på godkjenning"
 msgid "Search for Buddy by Email Address..."
 msgstr "Søk etter kontakter ved hjelp av e-postadresser..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Krever godkjenning"
+
 msgid "Use clientLogin"
 msgstr "Bruk clientLogin"
 
@@ -8018,7 +8071,7 @@ msgid "Personal Web Page"
 msgstr "Personlig hjemmeside"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Tilleggsinformasjon"
 
@@ -8046,17 +8099,29 @@ msgstr "Medlem siden"
 msgid "Capabilities"
 msgstr "Evner"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Fremstå som pålogget"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Fremstå som pålogget"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Fremstå som avlogget"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Fremstå som avlogget"
@@ -12289,11 +12354,11 @@ msgstr "Gresk"
 msgid "Australian English"
 msgstr "Australsk Engelsk"
 
-msgid "Canadian English"
-msgstr "Kanadisk Engelsk"
-
 msgid "British English"
 msgstr "Britisk Engelsk"
+
+msgid "Canadian English"
+msgstr "Kanadisk Engelsk"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12372,6 +12437,10 @@ msgstr "Kurdisk"
 
 msgid "Lao"
 msgstr "Lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Swahili"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
@@ -14002,6 +14071,9 @@ msgstr "Tilstandsvelger"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Følgende feil har oppstått ved lasting av %s: %s"
@@ -15470,6 +15542,19 @@ msgstr "Besøk Pidgin for Windows' Nettside"
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "En feil oppsto under in-band bytestream overføringen\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Overføring ble lukket."
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Sett ditt vennlige navn."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Feil ved forespørsel %s: %s"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Krever SSL/TLS"
 
@@ -15924,9 +16009,6 @@ msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 # må setjast om seinare
 #~ msgid "In-Band Registration"
 #~ msgstr "Samtidsegistrering"
-
-#~ msgid "User Location"
-#~ msgstr "Brukerens sted"
 
 #~ msgid "User Avatar"
 #~ msgstr "Bruker Avatar"

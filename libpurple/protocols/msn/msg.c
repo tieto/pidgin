@@ -50,17 +50,15 @@ msn_message_new(MsnMsgType type)
 	return msg;
 }
 
-void
+/**
+ * Destroys a message.
+ *
+ * @param msg The message to destroy.
+ */
+static void
 msn_message_destroy(MsnMessage *msg)
 {
 	g_return_if_fail(msg != NULL);
-
-	if (msg->ref_count > 0)
-	{
-		msn_message_unref(msg);
-
-		return;
-	}
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "message destroy (%p)\n", msg);
@@ -72,7 +70,8 @@ msn_message_destroy(MsnMessage *msg)
 
 	g_hash_table_destroy(msg->header_table);
 	g_list_free(msg->header_list);
-	msn_slpmsgpart_destroy(msg->part);
+	if (msg->part)
+		msn_slpmsgpart_unref(msg->part);
 
 	g_free(msg);
 }
@@ -85,30 +84,24 @@ msn_message_ref(MsnMessage *msg)
 	msg->ref_count++;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
+		purple_debug_info("msn", "message ref (%p)[%u]\n", msg, msg->ref_count);
 
 	return msg;
 }
 
-MsnMessage *
+void
 msn_message_unref(MsnMessage *msg)
 {
-	g_return_val_if_fail(msg != NULL, NULL);
-	g_return_val_if_fail(msg->ref_count > 0, NULL);
+	g_return_if_fail(msg != NULL);
+	g_return_if_fail(msg->ref_count > 0);
 
 	msg->ref_count--;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
+		purple_debug_info("msn", "message unref (%p)[%u]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
-	{
 		msn_message_destroy(msg);
-
-		return NULL;
-	}
-
-	return msg;
 }
 
 MsnMessage *
@@ -298,15 +291,6 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 	msg->cmd = cmd;
 
 	return msg;
-}
-
-char *
-msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
-{
-	char *tmp;
-
-	tmp = msn_slpmsgpart_serialize(msg->part, ret_size);
-	return tmp;
 }
 
 char *
@@ -656,7 +640,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				int i;
 				int bin_len;
 				
-				if (msg->part->footer->value == P2P_APPID_SESION)
+				if (msg->part->footer->value == P2P_APPID_SESSION)
 					bin_len = P2P_PACKET_HEADER_SIZE;
 				else
 					bin_len = body_len;
@@ -1224,7 +1208,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			g_free(text);
 
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
-			msn_message_destroy(cancel);
+			msn_message_unref(cancel);
 		}
 
 	} else if (!strcmp(command, "CANCEL")) {

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-21 13:55-0500\n"
-"PO-Revision-Date: 2010-11-17 22:25+0300\n"
+"POT-Creation-Date: 2010-12-26 22:11-0500\n"
+"PO-Revision-Date: 2010-12-19 22:07+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -5427,6 +5427,31 @@ msgstr "Інше місцезнаходження"
 msgid "You can sign out from other locations here"
 msgstr "Тут ви можете вийти з іншого місцезнаходження"
 
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Ви не увійшли з жодного іншого місцезнаходження."
+
+msgid "Allow multiple logins?"
+msgstr "Дозволити декілька входів?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Ви хочете дозволити чи заборонити з'єднання з декількох місцезнаходжень "
+"одночасно?"
+
+msgid "Allow"
+msgstr "Дозволити"
+
+msgid "Disallow"
+msgstr "Заборонити"
+
 msgid "Set your home phone number."
 msgstr "Введіть номер вашого домашнього телефону."
 
@@ -5446,12 +5471,6 @@ msgstr ""
 "Хочете дозволити чи заборонити людям з вашого переліку контактів відправляти "
 "вам мобільні сторінки MSN на ваш мобільний телефон чи інший мобільний "
 "пристрій?"
-
-msgid "Allow"
-msgstr "Дозволити"
-
-msgid "Disallow"
-msgstr "Заборонити"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5527,6 +5546,9 @@ msgstr "Встановити номер мобільного телефону...
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Увімкнути чи вимкнути мобільні пристрої..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Дозволити/Заборонити декілька входів..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Дозволити чи заборонити мобільні сторінки..."
@@ -5746,6 +5768,9 @@ msgstr "Показати нетипові усмішки"
 
 msgid "Allow direct connections"
 msgstr "Дозволити прямі з'єднання"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Дозволити з'єднання з декількох місцезнаходжень"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: штовхнути користувача, щоб привернути його увагу"
@@ -6938,6 +6963,9 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Помилка запиту %s: %s"
 
+msgid "The server returned an empty response"
+msgstr "Сервер повернув порожню відповідь"
+
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
 "client does not currently support CAPTCHAs."
@@ -6947,10 +6975,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не дозволяє автентифікуватись тут з відображуваним ім'ям"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Помилка запиту %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -12293,11 +12317,11 @@ msgstr "Грецька"
 msgid "Australian English"
 msgstr "Австралійська англійська"
 
-msgid "Canadian English"
-msgstr "Канадська англійська"
-
 msgid "British English"
 msgstr "Британська англійська"
+
+msgid "Canadian English"
+msgstr "Канадська англійська"
 
 msgid "Esperanto"
 msgstr "Есперанто"
@@ -14008,6 +14032,9 @@ msgstr "Вибирач стану"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Трапилась наступна помилка при завантаженні %s: %s"
@@ -15476,3 +15503,6 @@ msgstr "Відвідати сторінку тенет Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Помилка запиту %s"

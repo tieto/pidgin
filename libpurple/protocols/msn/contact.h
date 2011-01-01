@@ -36,7 +36,8 @@ typedef enum
 	MSN_ADD_GROUP       = 0x10,
 	MSN_DEL_GROUP       = 0x20,
 	MSN_RENAME_GROUP    = 0x40,
-	MSN_UPDATE_INFO     = 0x80
+	MSN_UPDATE_INFO     = 0x80,
+	MSN_ANNOTATE_USER   = 0x100
 } MsnCallbackAction;
 
 typedef enum
@@ -52,7 +53,8 @@ typedef enum
 	MSN_PS_SAVE_CONTACT,
 	MSN_PS_PENDING_LIST,
 	MSN_PS_CONTACT_API,
-	MSN_PS_BLOCK_UNBLOCK
+	MSN_PS_BLOCK_UNBLOCK,
+	MSN_PS_TIMER
 } MsnSoapPartnerScenario;
 
 #include "session.h"
@@ -408,7 +410,7 @@ typedef enum
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
 			"<IsMigration>false</IsMigration>"\
-			"<PartnerScenario>Timer</PartnerScenario>"\
+			"<PartnerScenario></PartnerScenario>"\
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
@@ -421,6 +423,37 @@ typedef enum
 			"<contacts>"\
 				"<Contact xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 					""\
+				"</Contact>"\
+			"</contacts>"\
+		"</ABContactUpdate>"\
+	"</soap:Body>"\
+"</soap:Envelope>"
+
+/* Update Contact Annotations */
+#define MSN_CONTACT_ANNOTATE_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABContactUpdate"
+#define MSN_CONTACT_ANNOTATE_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope"\
+	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""\
+	" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""\
+	" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""\
+	" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+	"<soap:Header>"\
+		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ApplicationId>" MSN_APPLICATION_ID "</ApplicationId>"\
+			"<IsMigration>false</IsMigration>"\
+			"<PartnerScenario></PartnerScenario>"\
+		"</ABApplicationHeader>"\
+		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
+			"<TicketToken>EMPTY</TicketToken>"\
+		"</ABAuthHeader>"\
+	"</soap:Header>"\
+	"<soap:Body>"\
+		"<ABContactUpdate xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<abId>00000000-0000-0000-0000-000000000000</abId>"\
+			"<contacts>"\
+				"<Contact xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+					"<propertiesChanged>Annotation</propertiesChanged>"\
 				"</Contact>"\
 			"</contacts>"\
 		"</ABContactUpdate>"\
@@ -675,7 +708,6 @@ void msn_callback_state_set_list_id(MsnCallbackState *state, MsnListId list_id);
 void msn_callback_state_set_action(MsnCallbackState *state,
 				   MsnCallbackAction action);
 
-void msn_contact_connect(MsnSession *session);
 void msn_get_contact_list(MsnSession *session,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char *update);
@@ -685,6 +717,8 @@ void msn_get_address_book(MsnSession *session,
 
 /* contact SOAP operations */
 void msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateType type, const char* value);
+
+void msn_annotate_contact(MsnSession *session, const char *passport, ...) G_GNUC_NULL_TERMINATED;
 
 void msn_add_contact(MsnSession *session, MsnCallbackState *state,
 		     const char *passport);

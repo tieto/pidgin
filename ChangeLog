@@ -1,5 +1,56 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.9 (12/26/2010):
+	MSN:
+	* Fix a crash when receiving short packets related to P2Pv2. (CVE ID
+	  pending)
+
+version 2.7.8 (12/19/2010):
+	General:
+	* Fix the exceptions in purple-remote on Python 2.6+. (Ari Pollak)
+	  (#12151)
+
+	Pidgin:
+	* When a conversation has reached the maximum limit on the number
+	  of smileys, display the text representation of the smiley properly
+	  when it contains HTML-escapable characters (e.g. "<3" was previously
+	  displayed as "&lt;3").
+	* Drop dependency on GdkGC and use Cairo instead.
+	* New UI hack to assist in first-time setup of Facebook accounts with
+	  icon from Jakub Szypulka.
+	* Don't hide the buddy list if there is no notification area in which
+	  to put the icon. (#12129)
+
+	libpurple:
+	* Fix multipart parsing when '=' is included in the boundary for
+	  purple_mime_document_parse. (Jakub Adam) (#11598)
+
+	AIM and ICQ:
+	* Buddies who unset their status message will now be correctly shown
+	  without a message in your buddy list. (#12988)
+
+	Gadu-Gadu:
+	* Updated our bundled libgadu and minimum requirement for external
+	  libgadu to 1.9.0. (#12789)
+
+	MSN:
+	* Stop showing ourselves in the list of endpoints that can be
+	  disconnected.
+	* Allow full-size display names, by not escaping (most) non-English
+	  characters. (#8508)
+	* Fix receiving messages from users on Yahoo and other federated
+	  services. (#13022)
+	* Correctly remove old endpoints from the list when they sign out.
+	* Add option to disable connections from multiple locations. (#13017)
+	* Correctly update your own display name in the buddy list. (#13064) 
+	* Correctly show ourselves as offline in the buddy list when going
+	  invisible. (#12945)
+	* Correctly update your own icon in the buddy list. (#12973)
+	* Remove struct packing for better portability. (#12856)
+
+	XMPP:
+	* Terminate Jingle sessions with unsupported content types. (#13048)
+
 version 2.7.7 (11/23/2010):
 	General:
 	* Allow multiple CA certificates to share the same Distinguished Name

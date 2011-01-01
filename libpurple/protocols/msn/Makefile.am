@@ -62,6 +62,8 @@ MSNSOURCES = \
 	switchboard.h \
 	table.c \
 	table.h \
+	tlv.c \
+	tlv.h \
 	transaction.c \
 	transaction.h \
 	user.c \

@@ -436,6 +436,34 @@ doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, g
 	g_free(bnd);
 }
 
+#define BOUNDARY "boundary="
+static char *
+parse_boundary(const char *ct)
+{
+	char *boundary_begin = g_strstr_len(ct, -1, BOUNDARY);
+	char *boundary_end;
+
+	if (!boundary_begin)
+		return NULL;
+
+	boundary_begin += sizeof(BOUNDARY) - 1;
+
+	if (*boundary_begin == '"') {
+		boundary_end = strchr(++boundary_begin, '"');
+		if (!boundary_end)
+			return NULL;
+	} else {
+		boundary_end = strchr(boundary_begin, ' ');
+		if (!boundary_end) {
+			boundary_end = strchr(boundary_begin, ';');
+			if (!boundary_end)
+				boundary_end = boundary_begin + strlen(boundary_begin);
+		}
+	}
+
+	return g_strndup(boundary_begin, boundary_end - boundary_begin);
+}
+#undef BOUNDARY
 
 PurpleMimeDocument *
 purple_mime_document_parsen(const char *buf, gsize len)
@@ -456,10 +484,11 @@ purple_mime_document_parsen(const char *buf, gsize len)
 
 	{
 		const char *ct = fields_get(&doc->fields, "content-type");
-		if(ct && purple_str_has_prefix(ct, "multipart")) {
-			char *bd = strrchr(ct, '=');
-			if(bd++) {
+		if (ct && purple_str_has_prefix(ct, "multipart")) {
+			char *bd = parse_boundary(ct);
+			if (bd) {
 				doc_parts_load(doc, bd, b, n);
+				g_free(bd);
 			}
 		}
 	}

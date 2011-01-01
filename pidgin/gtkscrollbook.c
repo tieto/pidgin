@@ -65,9 +65,13 @@ pidgin_scroll_book_get_type (void)
 }
 
 static gboolean
-scroll_left_cb(PidginScrollBook *scroll_book)
+scroll_left_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
 	int index;
+
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
 
 	if (index > 0)
@@ -76,9 +80,13 @@ scroll_left_cb(PidginScrollBook *scroll_book)
 }
 
 static gboolean
-scroll_right_cb(PidginScrollBook *scroll_book)
+scroll_right_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
 	int index, count;
+
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
 
@@ -131,9 +139,10 @@ page_count_change_cb(PidginScrollBook *scroll_book)
 }
 
 static gboolean
-scroll_close_cb(PidginScrollBook *scroll_book)
+scroll_close_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
-	gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
+	if (event->type == GDK_BUTTON_PRESS)	
+		gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
 	return FALSE;
 }
 

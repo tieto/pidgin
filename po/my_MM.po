@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2004-01-14 12:26+0000\n"
 "Last-Translator: Minn Myat Soe <mmyatsoe@gmail.com>\n"
 "Language-Team: \n"
@@ -5065,17 +5065,6 @@ msgstr "Kicked by %s (%s)"
 msgid "Unknown Error in presence"
 msgstr "Unknown Error in presence"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "An error occurred while opening the file."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "File transfer already started"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Unable to send file to %s, user does not support file transfers"
@@ -5449,26 +5438,6 @@ msgstr "Buddy List Error"
 msgid "The username specified does not exist."
 msgstr "The new formatting is invalid."
 
-#, fuzzy, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Buddy list synchronisation issue in %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-
 msgid "Unable to parse message"
 msgstr "Unable to parse message"
 
@@ -5651,6 +5620,26 @@ msgstr "Unknown Error Code %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN Error: %s\n"
 
+#, fuzzy, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Buddy list synchronisation issue in %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Preferred Contact"
@@ -5701,11 +5690,52 @@ msgstr "Your new MSN friendly name is too long."
 msgid "Set friendly name for %s."
 msgstr "Set your friendly name."
 
-msgid "Set your friendly name."
-msgstr "Set your friendly name."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Set Friendly Name"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "This is the name that other MSN buddies will see you as."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Location"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "This is the name that other MSN buddies will see you as."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Location"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "You have signed on from another location."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "You have signed on from another location."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Allow"
+
+msgid "Disallow"
+msgstr "Disallow"
 
 msgid "Set your home phone number."
 msgstr "Set your home phone number."
@@ -5725,12 +5755,6 @@ msgid ""
 msgstr ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your mobile phone or other mobile device?"
-
-msgid "Allow"
-msgstr "Allow"
-
-msgid "Disallow"
-msgstr "Disallow"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5802,6 +5826,10 @@ msgid "Set Friendly Name..."
 msgstr "Set Friendly Name"
 
 #, fuzzy
+msgid "View Locations..."
+msgstr "Location"
+
+#, fuzzy
 msgid "Set Home Phone Number..."
 msgstr "Set Home Phone Number"
 
@@ -5816,6 +5844,10 @@ msgstr "Set Mobile Phone Number"
 #, fuzzy
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Enable/Disable Mobile Devices"
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Allow/Disallow Mobile Pages"
 
 #, fuzzy
 msgid "Allow/Disallow Mobile Pages..."
@@ -6064,6 +6096,9 @@ msgstr ""
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Unable to create new connection."
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
@@ -7326,11 +7361,22 @@ msgstr ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Error creating connection"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Unable to connect to server. Please enter the address of the server you wish "
+"to connect to."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7339,10 +7385,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Error creating connection"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7664,6 +7706,11 @@ msgstr ""
 "Unable to login: Could not sign on as %s because the screen name is "
 "invalid.  Screen names must either start with a letter and contain only "
 "letters, numbers and spaces, or contain only numbers."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8220,6 +8267,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Search for Buddy by Email..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Request Authorisation"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "User is not logged in"
 
@@ -8417,7 +8468,7 @@ msgid "Personal Web Page"
 msgstr "Personal Web Page"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Additional Information"
 
@@ -8445,18 +8496,30 @@ msgstr "Member Since"
 msgid "Capabilities"
 msgstr "Capabilities"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 #, fuzzy
 msgid "Appear Online"
 msgstr "Appear Offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Appear Offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Appear Offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Appear Offline"
@@ -13012,11 +13075,11 @@ msgstr ""
 msgid "Australian English"
 msgstr "Canadian English"
 
-msgid "Canadian English"
-msgstr "Canadian English"
-
 msgid "British English"
 msgstr "Proper English"
+
+msgid "Canadian English"
+msgstr "Canadian English"
 
 msgid "Esperanto"
 msgstr ""
@@ -13105,6 +13168,10 @@ msgstr ""
 
 msgid "Lao"
 msgstr ""
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilist"
 
 msgid "Macedonian"
 msgstr "Macedonian"
@@ -14883,6 +14950,9 @@ msgstr "Status Text"
 msgid "Google Talk"
 msgstr ""
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, fuzzy, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "An unknown signon error has occurred: %s."
@@ -16452,6 +16522,21 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "An error occurred while opening the file."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "File transfer already started"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Set your friendly name."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Error creating connection"
+
+#, fuzzy
 #~ msgid "Force old (port 5223) SSL"
 #~ msgstr "Force old SSL"
 
@@ -16764,10 +16849,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "Registration Error"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "Location"
 
 #, fuzzy
 #~ msgid "Chat State Notifications"

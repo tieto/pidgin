@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-10-10 16:18+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -4670,15 +4670,6 @@ msgstr "您亦将 %s 踢出"
 msgid "Unknown Error in presence"
 msgstr "出现未知错误"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "打开文件时发生了错误。\n"
-
-msgid "Transfer was closed."
-msgstr "文件传送连接已关闭。"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "无法给 %s 发送文件，用户不支持文件传送"
@@ -4992,23 +4983,6 @@ msgstr "添加好友出错"
 msgid "The username specified does not exist."
 msgstr "指定的用户名不存在。"
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "%s 上的好友列表同步问题(%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"本地列表中的 %s 位于组“%s”中，但未出现在服务器列表中。您是否想要添加此好友？"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr "本地列表中的 %s 未出现在服务器列表中。您是否想要添加此好友？"
-
 msgid "Unable to parse message"
 msgstr "无法解析消息"
 
@@ -5179,6 +5153,23 @@ msgstr "未知的错误代码 %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN 错误：%s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "%s 上的好友列表同步问题(%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"本地列表中的 %s 位于组“%s”中，但未出现在服务器列表中。您是否想要添加此好友？"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr "本地列表中的 %s 未出现在服务器列表中。您是否想要添加此好友？"
+
 msgid "Other Contacts"
 msgstr "其他联系人"
 
@@ -5226,11 +5217,53 @@ msgstr "新的 MSN 友好名称太长。"
 msgid "Set friendly name for %s."
 msgstr "为 %s 设置友好名称。"
 
-msgid "Set your friendly name."
-msgstr "设置您的友好名称。"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "设置友好的名称..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "这是其他的 MSN 好友看到的名字。"
+
+#, fuzzy
+msgid "This Location"
+msgstr "用户位置"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "这是其他的 MSN 好友看到的名字。"
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "用户位置"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "您在其它位置用此用户名登录了。"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "您在其它位置用此用户名登录了。"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "允许运行多个实例"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "允许"
+
+msgid "Disallow"
+msgstr "禁止"
 
 msgid "Set your home phone number."
 msgstr "设置您的家庭电话号码。"
@@ -5250,12 +5283,6 @@ msgid ""
 msgstr ""
 "在您的允许之下，您的好友可以给您的移动电话或其它移动设备发送 MSN 移动寻呼。您"
 "想要允许还是禁止这一功能？"
-
-msgid "Allow"
-msgstr "允许"
-
-msgid "Disallow"
-msgstr "禁止"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5317,6 +5344,10 @@ msgstr "办公标题"
 msgid "Set Friendly Name..."
 msgstr "设置友好的名称..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "选择位置..."
+
 msgid "Set Home Phone Number..."
 msgstr "设置家庭电话号码..."
 
@@ -5328,6 +5359,10 @@ msgstr "设置移动电话号码..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "启用/禁用移动设备..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "允许/禁止移动寻呼..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "允许/禁止移动寻呼..."
@@ -5540,6 +5575,9 @@ msgstr "显示自定义如下："
 
 msgid "Allow direct connections"
 msgstr "允许直连"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge：向用户发送闪屏振动，以便引起他的注意"
@@ -6656,11 +6694,20 @@ msgstr ""
 "您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
 "能会更长。"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "请求 %s 时出错：%s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "无法连接：服务器返回空回应。"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6669,10 +6716,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL 不允许通过此站点认证您的屏幕名称。"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "请求 %s 时出错"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6958,6 +7001,11 @@ msgid ""
 msgstr ""
 "无法登录: 无法以 %s 登录，原因是用户名无效。用户名必须是有效的电子邮件地址，"
 "或者以字母开头，且只能包含字母、数字和空格，或者只包含数字。"
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7439,6 +7487,10 @@ msgstr "显示正在等候认证的好友"
 msgid "Search for Buddy by Email Address..."
 msgstr "按电子邮件搜索好友..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "需要加密"
+
 msgid "Use clientLogin"
 msgstr "使用客户端登录"
 
@@ -7636,7 +7688,7 @@ msgid "Personal Web Page"
 msgstr "个人主页"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "额外信息"
 
@@ -7664,17 +7716,29 @@ msgstr "注册时间"
 msgid "Capabilities"
 msgstr "容量"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "显示为在线"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "显示为在线"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "显示为离线"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "显示为离线"
@@ -11769,11 +11833,11 @@ msgstr "希腊语"
 msgid "Australian English"
 msgstr "澳大利亚英语"
 
-msgid "Canadian English"
-msgstr "加拿大英语"
-
 msgid "British English"
 msgstr "英国英语"
+
+msgid "Canadian English"
+msgstr "加拿大英语"
 
 msgid "Esperanto"
 msgstr "世界语"
@@ -11852,6 +11916,10 @@ msgstr "库得语"
 
 msgid "Lao"
 msgstr "老挝语"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "斯瓦希里语"
 
 msgid "Macedonian"
 msgstr "马其顿语"
@@ -13424,6 +13492,9 @@ msgstr "状态选择器"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "载入 %s 时发生了下列错误： %s。"
@@ -14832,6 +14903,18 @@ msgstr "浏览 Pidgin 网页"
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "打开文件时发生了错误。\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "文件传送连接已关闭。"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "设置您的友好名称。"
+
+#~ msgid "Error requesting %s"
+#~ msgstr "请求 %s 时出错"
+
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "此证书已过期，故不被认为有效。"
 
@@ -15215,9 +15298,6 @@ msgstr "您没有权限卸载此程序。"
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "注册错误"
-
-#~ msgid "User Location"
-#~ msgstr "用户位置"
 
 #, fuzzy
 #~ msgid "User Avatar"

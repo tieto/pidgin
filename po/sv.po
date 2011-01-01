@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-06-20 19:50+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@rymdraket.net>\n"
 "Language-Team: \n"
@@ -4838,15 +4838,6 @@ msgstr "Utsparkad (%s)"
 msgid "Unknown Error in presence"
 msgstr "Okänt fel i närvaro"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr ""
-
-msgid "Transfer was closed."
-msgstr "Överföringen stängdes inte."
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Kan inte skicka fil till %s, användaren stödjer inte filöverföringar"
@@ -5173,26 +5164,6 @@ msgstr "Fel vid tillläggning av kompis"
 msgid "The username specified does not exist."
 msgstr "Den angivna användarnamnet finns inte."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problem med synkroniseringen av kompislistan i %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s på den lokala listan finns i gruppen \"%s\" men inte på serverns lista. "
-"Ska kompisen läggas till?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s finns på den lokala listan men inte på serverns lista. Ska kompisen "
-"läggas till?"
-
 msgid "Unable to parse message"
 msgstr "Kan inte avkoda meddelandet"
 
@@ -5366,6 +5337,26 @@ msgstr "Okänd felkod %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN-fel: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problem med synkroniseringen av kompislistan i %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s på den lokala listan finns i gruppen \"%s\" men inte på serverns lista. "
+"Ska kompisen läggas till?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s finns på den lokala listan men inte på serverns lista. Ska kompisen "
+"läggas till?"
+
 msgid "Other Contacts"
 msgstr "Andra kontakter"
 
@@ -5417,11 +5408,53 @@ msgstr "Ditt nya smeknamn för MSN är för långt."
 msgid "Set friendly name for %s."
 msgstr "Ange smeknamn för %s."
 
-msgid "Set your friendly name."
-msgstr "Ange smeknamn."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Ange smeknamn..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Detta är det namn som andra MSN-användare kommer att se."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Placering"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Detta är det namn som andra MSN-användare kommer att se."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Placering"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Du har loggat in från en annan plats"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Du har loggat in från en annan plats"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Tillåt flera instanser"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Tillåt"
+
+msgid "Disallow"
+msgstr "Tillåt ej"
 
 msgid "Set your home phone number."
 msgstr "Ange ditt hemtelefonnummer."
@@ -5441,12 +5474,6 @@ msgid ""
 msgstr ""
 "Vill du tillåta kompisar i din kompislista att skicka MSN-mobilsökningar "
 "till din mobiltelefon eller annan mobil enhet?"
-
-msgid "Allow"
-msgstr "Tillåt"
-
-msgid "Disallow"
-msgstr "Tillåt ej"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5509,6 +5536,10 @@ msgstr "Kontorstitel"
 msgid "Set Friendly Name..."
 msgstr "Ange smeknamn..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Välj placering..."
+
 msgid "Set Home Phone Number..."
 msgstr "Ange hemtelefonnummer..."
 
@@ -5520,6 +5551,10 @@ msgstr "Ange mobilnummer..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Aktivera/Avaktivera mobila enheter..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Tillåt/Hindra mobilsökningar..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Tillåt/Hindra mobilsökningar..."
@@ -5738,6 +5773,9 @@ msgstr "Visa egna smileys"
 
 msgid "Allow direct connections"
 msgstr "Tillåt direktanslutningar"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Knuffa till en kontakt för att få dennes uppmärksamhet"
@@ -6915,11 +6953,20 @@ msgstr ""
 "Du har anslutit och kopplat ifrån för många gånger. Vänta tio minuter och "
 "prova igen. Om du fortsätter att försöka kommer du att få vänta ännu längre."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Fel vid efterfrågan av %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "Kunde inte ansluta: Servern angav ett tomt svar."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6930,10 +6977,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillåter inte ditt skärmnamn att autentisera här"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Fel vid efterfrågan av %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7227,6 +7270,11 @@ msgstr ""
 "Användarnamnet måste vara en giltig epost-adress eller starta med en bokstav "
 "och får endast innehålla bokstäver, nummer och mellanslag, eller enbart "
 "innehålla nummer."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7768,6 +7816,10 @@ msgstr "Visa kompisar som väntar på auktorisering"
 msgid "Search for Buddy by Email Address..."
 msgstr "Sök efter kompis på e-postadress..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Kräver auktorisering"
+
 msgid "Use clientLogin"
 msgstr "Använd klientLogin"
 
@@ -7966,7 +8018,7 @@ msgid "Personal Web Page"
 msgstr "Personlig webbsida"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Extra information"
 
@@ -7994,17 +8046,29 @@ msgstr "Medlem sedan"
 msgid "Capabilities"
 msgstr "Stödjer"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Verka vara ansluten"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Verka vara ansluten"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Verka vara frånkopplad"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Verka vara frånkopplad"
@@ -12230,11 +12294,11 @@ msgstr "Grekiska"
 msgid "Australian English"
 msgstr "Australiensisk engelska"
 
-msgid "Canadian English"
-msgstr "Kanadensisk engelska"
-
 msgid "British English"
 msgstr "Brittisk engelska"
+
+msgid "Canadian English"
+msgstr "Kanadensisk engelska"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12313,6 +12377,10 @@ msgstr "Kurdiska"
 
 msgid "Lao"
 msgstr "Lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Swahili"
 
 msgid "Macedonian"
 msgstr "Makedonska"
@@ -13951,6 +14019,9 @@ msgstr "Statusväljare"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Följande fel skedde vis inläsning av %s: %s"
@@ -15415,6 +15486,15 @@ msgstr "Besök Pidgin hemsida"
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har inte rättigheter att avinstallera den här applikationen."
 
+#~ msgid "Transfer was closed."
+#~ msgstr "Överföringen stängdes inte."
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Ange smeknamn."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Fel vid efterfrågan av %s"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Kräver SSL/TLS"
 
@@ -15851,9 +15931,6 @@ msgstr "Du har inte rättigheter att avinstallera den här applikationen."
 # Vad menas med In-Band, när används och vad blir då lämplig översättning? Denna har antagligen något med "Out-of-Band att göra men hur hänger de ihop?
 #~ msgid "In-Band Registration"
 #~ msgstr "In-Bandsregistrering"
-
-#~ msgid "User Location"
-#~ msgstr "Placering"
 
 #~ msgid "User Avatar"
 #~ msgstr "Användar-avatar"

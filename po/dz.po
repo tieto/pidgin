@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
@@ -5007,17 +5007,6 @@ msgstr "%s (%s)ཀྱིས་ བཏོན་བཏང་ཡི།"
 msgid "Unknown Error in presence"
 msgstr "ངོ་འཛོམས་ནང་ ངོ་མ་ཤེས་པའི་འཛོལ་བ།"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "ཡིག་སྣོད་ཁ་ཕྱེཝ་ད་ འཛོལ་བ་བྱུང་ནུག"
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "ཡིག་སྣོད་གནས་སོར་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5395,26 +5384,6 @@ msgstr "ཆ་རོགས་ཐོ་ཡིག་གི་འཛོལ་བ།
 msgid "The username specified does not exist."
 msgstr "གསལ་བཀོད་འབད་འབདཝ་གི་གསལ་གཞི་མིང་འདི་ ནུས་མེད་ཨིན་པས།"
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr " %s (%s)ནང་ལུ་ ཆ་རོགས་ཐོ་ཡིག་ མཉམ་འབྱུང་སྤྲོད་ནི།"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"ཉེ་གནས་ཐོ་ཡིག་གུ་ཡོད་པའི་ %sའདི་   \"%s\" སྡེ་ཚན་ནང་ཨིན།  དེ་འབདཝ་ད་ སར་བར་ཐོ་ཡིག་གུ་མེན།   "
-"ཆ་རོགས་འདི་ཁྱོད་ཀྱིས་ ཁ་སྐོང་འབད་ནི་ཨིན་ན?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%sའདི་ ཉེ་གནས་ཐོ་ཡིག་གུ་ཡོདཔ་ཨིན་ དེ་འབདཝ་ད་ སར་བར་ཐོ་ཡིག་གུ་མེན།  ཆ་རོགས་འདི་ཁྱོད་ཀྱིས་ ཁ་སྐོང་"
-"འབད་ནི་ཨིན་ན?"
-
 msgid "Unable to parse message"
 msgstr "འཕྲིན་དོན་མིང་དཔྱད་འབད་མ་ཚུགས།"
 
@@ -5596,6 +5565,26 @@ msgstr "འཛོལ་བ་ངོ་མ་ཤེས་པའི་ཨང་ར
 msgid "MSN Error: %s\n"
 msgstr "ཨེམ་ཨེསི་ཨེན་ འཛོལ་བ: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr " %s (%s)ནང་ལུ་ ཆ་རོགས་ཐོ་ཡིག་ མཉམ་འབྱུང་སྤྲོད་ནི།"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"ཉེ་གནས་ཐོ་ཡིག་གུ་ཡོད་པའི་ %sའདི་   \"%s\" སྡེ་ཚན་ནང་ཨིན།  དེ་འབདཝ་ད་ སར་བར་ཐོ་ཡིག་གུ་མེན།   "
+"ཆ་རོགས་འདི་ཁྱོད་ཀྱིས་ ཁ་སྐོང་འབད་ནི་ཨིན་ན?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%sའདི་ ཉེ་གནས་ཐོ་ཡིག་གུ་ཡོདཔ་ཨིན་ དེ་འབདཝ་ད་ སར་བར་ཐོ་ཡིག་གུ་མེན།  ཆ་རོགས་འདི་ཁྱོད་ཀྱིས་ ཁ་སྐོང་"
+"འབད་ནི་ཨིན་ན?"
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "དགའ་མིའི་འབྲེལ་ས།"
@@ -5646,11 +5635,52 @@ msgstr "ཁྱོད་ཀྱི་ ཨེམ་ཨེསི་ཨེན་ མ�
 msgid "Set friendly name for %s."
 msgstr "ཁྱོད་ཀྱི་མཐུན་པའི་མིང་ གཞི་སྒྲིག་འབད།"
 
-msgid "Set your friendly name."
-msgstr "ཁྱོད་ཀྱི་མཐུན་པའི་མིང་ གཞི་སྒྲིག་འབད།"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "མིང་མཐུན་ཏོག་ཏོ་གཞི་སྒྲིག་འབད།..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "འ་ནི་འདི་ ཨེམ་ཨེསི་ཨེན་ཆ་རོགས་གཞན་མི་ཚུ་གིས་ ཁྱོད་ལུ་བལྟ་མི་ མིང་དེ་ཨིན།"
+
+#, fuzzy
+msgid "This Location"
+msgstr "གནས་ཁོངས།"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "འ་ནི་འདི་ ཨེམ་ཨེསི་ཨེན་ཆ་རོགས་གཞན་མི་ཚུ་གིས་ ཁྱོད་ལུ་བལྟ་མི་ མིང་དེ་ཨིན།"
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "གནས་ཁོངས།"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "ཁྱོད་ གནས་ཁོངས་གཞན་ཅིག་ཁ་ལས་ ནང་ན་འཛུལ་ནུག"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "ཁྱོད་ གནས་ཁོངས་གཞན་ཅིག་ཁ་ལས་ ནང་ན་འཛུལ་ནུག"
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "འབད་བཅུག"
+
+msgid "Disallow"
+msgstr "འབད་མ་བཅུག"
 
 msgid "Set your home phone number."
 msgstr "ཁྱོད་རའི་ཁྱིམ་ནང་གི་བརྒྱུད་འཕྲིན་ཨང་གཞི་སྒྲིག་འབད།"
@@ -5670,12 +5700,6 @@ msgid ""
 msgstr ""
 "མི་ཚུ་གིས་  ཁྱོད་ཀྱི་ཆ་རོགས་ཐོ་ཡིག་གུ་  ཁྱོད་རའི་འགྲུལ་འཕྲིན་ ཡང་ན འགྲུལ་འཕྲིན་ཐབས་འཕྲུལ་ལུ་ ཨེམ་ཨེསི་ཨེན་"
 "འགྲུལ་འཕྲིན་ཤོག་ལེབ་་ཚུ གཏང་བཅུག་ནི་སྨོ་ ཡང་ན གཏང་མ་བཅུག་ནི་སྨོ?"
-
-msgid "Allow"
-msgstr "འབད་བཅུག"
-
-msgid "Disallow"
-msgstr "འབད་མ་བཅུག"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5745,6 +5769,10 @@ msgstr "མགོ་མིང་།"
 msgid "Set Friendly Name..."
 msgstr "མིང་མཐུན་ཏོག་ཏོ་གཞི་སྒྲིག་འབད།..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "གནས་ཁོངས།"
+
 msgid "Set Home Phone Number..."
 msgstr "ཁྱིམ་གྱི་ བརྒྱུད་འཕྲིན་ཨང་གཞི་སྒྲིག་འབད།"
 
@@ -5756,6 +5784,10 @@ msgstr "འགྲུལ་འཕྲིན་ཨང་ གཞི་སྒྲི�
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "འགྲུལ་འཕྲིན་ཐབས་འཕྲུལ་ཚུ་ལྕོགས་ཅན་བཟོ་/ལྕོགས་མིན་བཟོ།..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "འགྲུལ་འཕྲིན་ཤོག་ལེབ་ཚུ་བཅུག་/མ་བཅུག..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "འགྲུལ་འཕྲིན་ཤོག་ལེབ་ཚུ་བཅུག་/མ་བཅུག..."
@@ -5986,6 +6018,9 @@ msgstr "སྲོལ་སྒྲིག་ སི་མའི་ལི་ཚུ�
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབད་མ་ཚུགསཔ།"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "ལྷོག་བཀོག: ཁོང་རའི་དྲན་བཏོན་ནིའི་དོན་ལུ་ ལག་ལེན་པ་གཅིག་ལྷོག་བཀོག"
@@ -7233,11 +7268,20 @@ msgstr ""
 "ཁྱོད་  འཕྲལ་འཕྲལ་འབད་རང་ མཐུད་ནི་དང་མཐུད་བཏོག་སྟེ་འདུག  སྐར་མ་བཅུ་ཐམ་དེ་ཅིག་བསྒུག་ཞིན་ན་ དེ་ལས་"
 "འབད་རྩོལ་བསྐྱེད།  ཁྱོད་ཀྱིས་འཕྲོ་མཐུད་དེ་རང་འབད་རྩོལ་བསྐྱེད་པ་ཅིན་ ཧེང་བཀལ་རང་བསྒུག་དགོ"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབདཝ་ད་འཛོལ་བ།"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "སར་བར་ལུ་ མཐུད་མ་ཚུགས། ཁྱོད་ཀྱིས་མཐུད་དགོ་མནོ་མི སར་བར་གྱི་ ཁ་བྱང་འདི་བཙུགས་གནང་།"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7246,10 +7290,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབདཝ་ད་འཛོལ་བ།"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7573,6 +7613,11 @@ msgstr ""
 "ནང་བསྐྱོད་འབད་མ་ཚུགས: %sབཟུམ་སྦེ་ ནང་ན་འཛུལ་མ་ཚུགས་ ག་ཅི་འབད་ཟེར་བ་ཅིན་ གསལ་གཞི་མིང་འདི་ ནུས་"
 "མེད་ཨིན་པས། གསལ་གཞི་མིང་ཚུ་ ཡི་གུ་ལས་འགོ་བཙུགས་ནི་དང་ ནང་ན་ཡི་གུ་དང་  ཨང་གྲངས་དེ་ལས་ བར་སྟོང་"
 "ཚུ་རྐྱངམ་ཅིག་ཚུད་དགོཔ་དང་  ཡང་ན་ ཨང་གྲངས་ཚུ་རྐྱངམ་ཅིག་ཚུད་དགོཔ་ཨིན།"
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8129,6 +8174,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "གློག་འཕྲིན་ཁ་བྱང་གིས་ཐོག་ལས་ ཆ་རོགས་ཀྱི་དོན་ལུ་ འཚོལ་ཞིབ་འབད།..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "དབང་སྤྲོད་དགོས་མཁོ་བས།"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "ལག་ལེན་པ་འདི་ནང་བསྐྱོད་མ་འབད་བས།"
 
@@ -8328,7 +8377,7 @@ msgid "Personal Web Page"
 msgstr "རང་དོན་གྱི་ ཝེབ་ཤོག་ལེབ།"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "ཁ་སྐོང་ཅན་གྱི་བརྡ་དོན།"
 
@@ -8356,17 +8405,29 @@ msgstr "ལས་ཚུར་ འཐུས་མི།"
 msgid "Capabilities"
 msgstr "ལྕོགས་གྲུབ།"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "གློག་ཐོག་འབྱུང་།"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "གློག་ཐོག་འབྱུང་།"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "ཨོཕ་ལ་ཡིན་བྱུང་།"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "ཨོཕ་ལ་ཡིན་བྱུང་།"
@@ -12803,11 +12864,11 @@ msgstr "གི་རིཀ།"
 msgid "Australian English"
 msgstr "ཨསི་ཊེ་ལི་ཡཱན་ ཨིང་ལིཤི"
 
-msgid "Canadian English"
-msgstr "ཀེ་ན་ཌི་ཡཱན ཨིང་ལིཤི"
-
 msgid "British English"
 msgstr "བི་རི་ཊིཤི་ ཨིང་ལིཤི"
+
+msgid "Canadian English"
+msgstr "ཀེ་ན་ཌི་ཡཱན ཨིང་ལིཤི"
 
 msgid "Esperanto"
 msgstr "ཨིསི་པེ་རེན་ཊོ།"
@@ -12893,6 +12954,10 @@ msgstr "ཀར་ཌིཤ།"
 #, fuzzy
 msgid "Lao"
 msgstr "སེང་གེ།"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "ནཱི་ཧི་ལིསཊི།"
 
 msgid "Macedonian"
 msgstr "མེ་སི་ཌོ་ནི་ཡཱན།"
@@ -14644,6 +14709,9 @@ msgstr "གནས་ཚད་ ཚིག་ཡིག"
 msgid "Google Talk"
 msgstr ""
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "འོག་ལུ་ཡོད་པའི་འཛོལ་བ་གིས་  %s: %s མངོན་གསལ་འབད་ནི་བྱུང་ཡོདཔ་ཨིན།"
@@ -16185,6 +16253,21 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "ཡིག་སྣོད་ཁ་ཕྱེཝ་ད་ འཛོལ་བ་བྱུང་ནུག"
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "ཡིག་སྣོད་གནས་སོར་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "ཁྱོད་ཀྱི་མཐུན་པའི་མིང་ གཞི་སྒྲིག་འབད།"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབདཝ་ད་འཛོལ་བ།"
+
 #~ msgid "Force old (port 5223) SSL"
 #~ msgstr "ཨེསི་ཨེསི་ཨེལ་ (འདྲེན་ལམ་ ༥༢༢༣) རྙིངམ་བང་བཙོང་།"
 
@@ -16586,10 +16669,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "ཐོ་འགོད་འབད་ནིའི་འཛོལ་བ།"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "གནས་ཁོངས།"
 
 #, fuzzy
 #~ msgid "User Avatar"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2010-02-18 15:01+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -4847,15 +4847,6 @@ msgstr "Potkaisi (%s)"
 msgid "Unknown Error in presence"
 msgstr "Tuntematon virhe tavoitettavuudessa"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
-
-msgid "Transfer was closed."
-msgstr "Siirto suljettiin."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Kaistansisäisen tavuvirran avaaminen epäonnistui"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5226,26 +5217,6 @@ msgstr "Tuttavan lisäysvirhe"
 msgid "The username specified does not exist."
 msgstr "Syötetty käyttäjänimi ei ole olemassa."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Tuttavien synkronointiongelma käyttäjätilillä %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s paikallisissa tuttavissa on ryhmässä \"%s\" mutta ei ole palvelimen "
-"tuttavissa. Haluatko että tämä tuttava lisätään?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s paikallisella tuttavissa mutta ei palvelimen. Haluatko että tämä tuttava "
-"lisätään?"
-
 msgid "Unable to parse message"
 msgstr "Viestin jäsennys epäonnistui"
 
@@ -5416,6 +5387,26 @@ msgstr "Tuntematon virhekoodi %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN-virhe: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Tuttavien synkronointiongelma käyttäjätilillä %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s paikallisissa tuttavissa on ryhmässä \"%s\" mutta ei ole palvelimen "
+"tuttavissa. Haluatko että tämä tuttava lisätään?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s paikallisella tuttavissa mutta ei palvelimen. Haluatko että tämä tuttava "
+"lisätään?"
+
 msgid "Other Contacts"
 msgstr "Muut yhteystiedot"
 
@@ -5467,11 +5458,53 @@ msgstr "Uusi MSN-tuttavanimesi on liian pitkä."
 msgid "Set friendly name for %s."
 msgstr "Aseta tuttavanimi tilille %s."
 
-msgid "Set your friendly name."
-msgstr "Aseta tuttavanimesi."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Aseta tuttavanimi..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Tämä on nimi jona MSN-tuttavasi sinut näkevät."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Käyttäjän sijainti"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Tämä on nimi jona MSN-tuttavasi sinut näkevät."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Käyttäjän sijainti"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Olet kirjautunut sisään toisesta paikasta"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Olet kirjautunut sisään toisesta paikasta"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "salli usean samanaikaisen ohjelman käynnissä olon"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Salli"
+
+msgid "Disallow"
+msgstr "Kiellä"
 
 msgid "Set your home phone number."
 msgstr "Aseta kotipuhelinnumerosi"
@@ -5491,12 +5524,6 @@ msgid ""
 msgstr ""
 "Haluatko sallia tai estää henkilöitä tuttavissasi lähettämästä MSN- "
 "mobiilihakuja matkapuhelimeesi tai muuhun mobiililaitteeseen?"
-
-msgid "Allow"
-msgstr "Salli"
-
-msgid "Disallow"
-msgstr "Kiellä"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5560,6 +5587,10 @@ msgstr "Kappaleen nimi"
 msgid "Set Friendly Name..."
 msgstr "Aseta tuttavanimi..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Valitse sijainti..."
+
 msgid "Set Home Phone Number..."
 msgstr "Aseta kotipuhelinnumero..."
 
@@ -5571,6 +5602,10 @@ msgstr "Aseta matkapuhelinnumero..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Aseta päälle/pois mobiililaitteet..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Salli/estä mobiilihaut..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Salli/estä mobiilihaut..."
@@ -5788,6 +5823,9 @@ msgstr "Näytä itse tehdyt / lisätyt hymiöt"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Yhteyden luominen epäonnistui"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: tönäise tuttavaa huomion saamiseksi"
@@ -7007,11 +7045,22 @@ msgstr ""
 "ja yritä uudelleen. Jos jatkat yrittämistä, joudut odottamaan vielä "
 "pidempään."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Virhe pyydettäessä %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Palvelimeen ei voi yhdistää. Ole hyvä, syötä palvelimen osoite jolle haluat "
+"yhdistää."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7020,10 +7069,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL ei salli näyttönimen todentamista tätä kautta"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Virhe pyydettäessä %s: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7343,6 +7388,11 @@ msgstr ""
 "Käyttäjänimen tulee olla oikea sähköpostiosoite, tai alkaa kirjaimella ja "
 "sisältää vain kirjaimia, numeroita ja välilyöntejä, tai sisältää vain "
 "numeroita."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7873,6 +7923,10 @@ msgstr "Näytä tuttavat jotka odottavat valtuutusta"
 msgid "Search for Buddy by Email Address..."
 msgstr "Etsi tuttavaa sähköpostiosoitteen perusteella..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Pyydä valtuutusta"
+
 msgid "Use clientLogin"
 msgstr "Käytä clientLoginia"
 
@@ -8073,7 +8127,7 @@ msgid "Personal Web Page"
 msgstr "Henkilökohtainen kotisivu"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Lisätiedot"
 
@@ -8101,17 +8155,29 @@ msgstr "Rekisteröitynyt"
 msgid "Capabilities"
 msgstr "Kyvyt"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Näytä linjoilla olevalta"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Näytä linjoilla olevalta"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Näytä poissa linjoilta olevalta"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Näytä poissa linjoilta olevalta"
@@ -12332,11 +12398,11 @@ msgstr "kreikka"
 msgid "Australian English"
 msgstr "australian englanti"
 
-msgid "Canadian English"
-msgstr "kanadan englanti"
-
 msgid "British English"
 msgstr "brittienglanti"
+
+msgid "Canadian English"
+msgstr "kanadan englanti"
 
 msgid "Esperanto"
 msgstr "esperanto"
@@ -12415,6 +12481,10 @@ msgstr "kurdi"
 
 msgid "Lao"
 msgstr "lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "swahili"
 
 msgid "Macedonian"
 msgstr "makedonia"
@@ -14049,6 +14119,9 @@ msgstr "Tilan valinta"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Seuraava virhe esiintyi ladattaessa komponenttia %s: %s"
@@ -15520,6 +15593,22 @@ msgstr "Vieraile Pidginin WWW-sivustolla"
 msgid "You do not have permission to uninstall this application."
 msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Siirto suljettiin."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Kaistansisäisen tavuvirran avaaminen epäonnistui"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Aseta tuttavanimesi."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Virhe pyydettäessä %s: %s"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Vaadi SSL/TLS"
 
@@ -15979,9 +16068,6 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
 #~ msgid "In-Band Registration"
 #~ msgstr "Rekisteröinti \"in-band\""
-
-#~ msgid "User Location"
-#~ msgstr "Käyttäjän sijainti"
 
 #~ msgid "User Avatar"
 #~ msgstr "Käyttäjän hahmo"
