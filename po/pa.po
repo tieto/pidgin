@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-08-08 07:23+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: testLokalize <punjabi-users@lists.sf.net>\n"
@@ -4767,15 +4767,6 @@ msgstr "ਠੁੱਡਾ ਮਾਰਿਆ (%s)"
 msgid "Unknown Error in presence"
 msgstr "ਮੌਜੂਦਗੀ ਵਿੱਚ ਅਣਜਾਣੀ ਗਲਤੀ"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "ਇਨ-ਬੈਂਡ ਬਾਈਟ-ਸਟਰੀਮ ਟਰਾਂਸਫਰ ਉੱਤੇ ਗਲਤੀ ਆਈ ਹੈ।\n"
-
-msgid "Transfer was closed."
-msgstr "ਟਰਾਂਸਫਰ ਬੰਦ ਹੋ ਗਈ।"
-
-msgid "Failed to open in-band bytestream"
-msgstr "ਇਨ-ਬੈਂਡ ਬਾਈਟਸਿਸਟਮ ਖੋਲ੍ਹਣ ਲਈ ਫੇਲ੍ਹ"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "ਫਾਇਲ %s ਨੂੰ ਭੇਜਣ ਲਈ ਅਸਮਰੱਥ ਹੈ, ਫਾਇਲ ਟਰਾਂਸਫਰ ਲਈ ਸਹਿਯੋਗੀ ਨਹੀਂ"
@@ -5091,25 +5082,6 @@ msgstr "ਬੱਡੀ ਸ਼ਾਮਲ ਗਲਤੀ"
 msgid "The username specified does not exist."
 msgstr "ਦਿੱਤਾ ਯੂਜ਼ਰ ਨਾਂ ਮੌਜੂਦ ਨਹੀਂ ਹੈ।"
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "%s (%s) ਵਿੱਚ ਬੱਡੀ ਲਿਸਟ ਸੈਕਰੋਨਾਈਜ਼ੇਸ਼ਨ ਮੁੱਦਾ"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s ਲੋਕਲ ਲਿਸਟ ਉੱਤੇ ਇੱਕ \"%s\" ਲਿਸਟ ਵਿੱਚ ਹੈ, ਪਰ ਸਰਵਰ ਲਿਸਟ ਉੱਤੇ ਨਹੀਂ ਹੈ। ਕੀ ਤੁਸੀਂ ਇਸ ਬੱਡੀ ਨੂੰ "
-"ਸ਼ਾਮਲ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s ਲੋਕਲ ਲਿਸਟ ਉੱਤੇ ਹੈ, ਪਰ ਸਰਵਰ ਲਿਸਟ ਉੱਤੇ ਨਹੀਂ। ਕੀ ਤੁਸੀਂ ਇਹ ਬੱਡੀ ਨੂੰ ਸ਼ਾਮਲ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
-
 msgid "Unable to parse message"
 msgstr "ਸੁਨੇਹਾ ਪਾਰਸ ਕਰਨ ਲਈ ਅਸਫ਼ਲ"
 
@@ -5280,6 +5252,25 @@ msgstr "ਅਣਜਾਣ ਗਲਤੀ ਕੋਡ %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN ਗਲਤੀ: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "%s (%s) ਵਿੱਚ ਬੱਡੀ ਲਿਸਟ ਸੈਕਰੋਨਾਈਜ਼ੇਸ਼ਨ ਮੁੱਦਾ"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s ਲੋਕਲ ਲਿਸਟ ਉੱਤੇ ਇੱਕ \"%s\" ਲਿਸਟ ਵਿੱਚ ਹੈ, ਪਰ ਸਰਵਰ ਲਿਸਟ ਉੱਤੇ ਨਹੀਂ ਹੈ। ਕੀ ਤੁਸੀਂ ਇਸ ਬੱਡੀ ਨੂੰ "
+"ਸ਼ਾਮਲ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s ਲੋਕਲ ਲਿਸਟ ਉੱਤੇ ਹੈ, ਪਰ ਸਰਵਰ ਲਿਸਟ ਉੱਤੇ ਨਹੀਂ। ਕੀ ਤੁਸੀਂ ਇਹ ਬੱਡੀ ਨੂੰ ਸ਼ਾਮਲ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
 msgid "Other Contacts"
 msgstr "ਹੋਰ ਸੰਪਰਕ"
 
@@ -5330,11 +5321,53 @@ msgstr "ਤੁਹਾਡਾ ਨਵਾਂ MSN ਦੋਸਤਾਨਾ ਨਾਂ ਬ�
 msgid "Set friendly name for %s."
 msgstr "%s ਲਈ ਆਪਣਾ ਦੋਸਤਾਨਾ ਨਾਂ ਦਿਓ।"
 
-msgid "Set your friendly name."
-msgstr "ਆਪਣਾ ਦੋਸਤਾਨਾ ਨਾਂ ਦਿਓ।"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "ਦੋਸਤਾਨਾ ਨਾਂ ਦਿਓ..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "ਇਹ ਉਹ ਨਾਂ ਹੈ, ਜਿਸ ਨਾਲ ਹੋਰ MSN ਬੱਡੀ ਤੁਹਾਨੂੰ ਵੇਖਣਗੇ।"
+
+#, fuzzy
+msgid "This Location"
+msgstr "ਯੂਜ਼ਰ ਟਿਕਾਣਾ"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "ਇਹ ਉਹ ਨਾਂ ਹੈ, ਜਿਸ ਨਾਲ ਹੋਰ MSN ਬੱਡੀ ਤੁਹਾਨੂੰ ਵੇਖਣਗੇ।"
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "ਯੂਜ਼ਰ ਟਿਕਾਣਾ"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਥਾਂ ਤੋਂ ਲਾਗਇਨ ਹੋਏ"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਥਾਂ ਤੋਂ ਲਾਗਇਨ ਹੋਏ"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "ਇੱਕੋ ਵਾਰ ਕਈ ਮੌਕੇ ਮਨਜ਼ੂਰ"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "ਮਨਜ਼ੂਰ"
+
+msgid "Disallow"
+msgstr "ਪਾਬੰਦੀ"
 
 msgid "Set your home phone number."
 msgstr "ਆਪਣਾ ਘਰ ਫੋਨ ਨੰਬਰ ਦਿਓ।"
@@ -5354,12 +5387,6 @@ msgid ""
 msgstr ""
 "ਕੀ ਤੁਸੀਂ ਆਪਣੀ ਬੱਡੀ ਲਿਸਟ ਉੱਤੇ ਲੋਕਾਂ ਵਲੋਂ ਤੁਹਾਨੂੰ MSN ਮੋਬਾਇਲ ਪੇਜ਼ਾਂ ਨੂੰ ਤੁਹਾਡੇ ਸੈੱਲ ਫੋਨ ਜਾਂ ਹੋਰ ਮੋਬਾਇਲ "
 "ਫੋਨਾਂ ਉੱਤੇ ਭੇਜਣ ਦੇਣਾ ਚਾਹੁੰਦੇ ਹੋ?"
-
-msgid "Allow"
-msgstr "ਮਨਜ਼ੂਰ"
-
-msgid "Disallow"
-msgstr "ਪਾਬੰਦੀ"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5421,6 +5448,10 @@ msgstr "ਆਫਿਸ ਟਾਈਟਲ"
 msgid "Set Friendly Name..."
 msgstr "ਦੋਸਤਾਨਾ ਨਾਂ ਦਿਓ..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "ਟਿਕਾਣਾ ਚੁਣੋ..."
+
 msgid "Set Home Phone Number..."
 msgstr "ਘਰ ਫੋਨ ਨੰਬਰ ਦਿਓ..."
 
@@ -5432,6 +5463,10 @@ msgstr "ਮੋਬਾਇਲ ਨੰਬਰ ਦਿਓ..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "ਮੋਬਾਇਲ ਜੰਤਰ ਯੋਗ/ਆਯੋਗ ਕਰੋ..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "ਮੋਬਾਇਲ ਸਫ਼ੇ ਮੰਨਜ਼ੂਰ/ਨਾ-ਮਨਜ਼ੂਰ..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "ਮੋਬਾਇਲ ਸਫ਼ੇ ਮੰਨਜ਼ੂਰ/ਨਾ-ਮਨਜ਼ੂਰ..."
@@ -5647,6 +5682,9 @@ msgstr "ਕਸਟਮ ਸਮਾਇਲੀ ਵੇਖੋ"
 
 msgid "Allow direct connections"
 msgstr "ਸਿੱਧਾ ਕੁਨੈਕਸ਼ਨ ਮਨਜ਼ੂਰ ਹੈ"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: ਯੂਜ਼ਰ ਦਾ ਧਿਆਨ ਖਿੱਚਣ ਵਾਸਤੇ ਸੈਨਤ (ਸੰਕੇਤ) ਮਾਰੋ"
@@ -6793,12 +6831,21 @@ msgstr ""
 "ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਬੜੀ ਛੇਤੀ ਨਾਲ ਜੁੜ ਅਤੇ ਟੁੱਟ ਰਿਹਾ ਹੈ। 10 ਮਿੰਟ ਲਈ ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ। ਜੇਕਰ "
 "ਤੁਸੀਂ ਕੋਸ਼ਿਸ ਜਾਰੀ ਰੱਖੀ ਤਾਂ ਤੁਹਾਨੂੰ ਹੋਰ ਵੀ ਉਡੀਕ ਕਰਨੀ ਪਵੇਗੀ।"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 # , c-format
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "%s ਮੰਗ ਦੌਰਾਨ ਗਲਤੀ: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "ਕੁਨੈਕਟ ਕਰਨ ਲਈ ਅਸਮਰੱਥ: ਸਰਵਰ ਨੇ ਖਾਲੀ ਜਵਾਬ ਦਿੱਤਾ ਹੈ।"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6809,11 +6856,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL ਤੁਹਾਡੇ ਸਕਰੀਨ ਨਾਂ ਨੂੰ ਇੱਥੇ ਪਰਮਾਣਿਤ ਕਰਨ ਨਹੀਂ ਦਿੰਦਾ ਹੈ।"
-
-# , c-format
-#, c-format
-msgid "Error requesting %s"
-msgstr "%s ਮੰਗ ਦੌਰਾਨ ਗਲਤੀ"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7109,6 +7151,11 @@ msgstr ""
 "%s ਵਾਂਗ ਲਾਗਇਨ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ, ਕਿਉਂਕਿ ਯੂਜ਼ਰ-ਨਾਂ ਗਲਤ ਹੈ। ਯੂਜ਼ਰ ਨਾਂ ਇੱਕ ਵੈਧ ਈਮੇਲ ਐਡਰੈੱਸ "
 "ਚਾਹੀਦਾ ਹੈ, ਜਾਂ ਇੱਕ ਅੱਖਰ ਨਾਲ ਸ਼ੁਰੂ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ, ਜਿਸ ਵਿੱਚ ਕੇਵਲ ਅੱਖਰ, ਨੰਬਰ, ਖਾਲੀ ਥਾਂ ਜਾਂ ਕੁਝ "
 "ਨੰਬਰ ਹੀ ਹੋ ਸਕਦੇ ਹਨ।"
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7620,6 +7667,10 @@ msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਦੀ ਉਡੀਕ ਵਿੱਚ ਬੱ�
 msgid "Search for Buddy by Email Address..."
 msgstr "ਈ-ਮੇਲ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਲੋੜੀਦੀ"
+
 msgid "Use clientLogin"
 msgstr "ਕਲਾਇਟਲਾਗਇਨ ਵਰਤੋਂ"
 
@@ -7816,7 +7867,7 @@ msgid "Personal Web Page"
 msgstr "ਨਿੱਜੀ ਵੈਬ ਸਫ਼ਾ"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "ਹੋਰ ਜਾਣਕਾਰੀ"
 
@@ -7844,17 +7895,29 @@ msgstr "ਮੈਂਬਰ ਹੈ"
 msgid "Capabilities"
 msgstr "ਯੋਗਤਾ"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "ਆਨਲਾਈਨ ਜਾਪਦਾ ਹੈ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "ਆਨਲਾਈਨ ਜਾਪਦਾ ਹੈ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "ਆਫਲਾਈਨ ਜਾਪਦਾ ਹੈ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "ਆਫਲਾਈਨ ਜਾਪਦਾ ਹੈ"
@@ -12022,11 +12085,11 @@ msgstr "ਗਰੀਕ"
 msgid "Australian English"
 msgstr "ਆਸਟਰੇਲੀਅਨ ਅੰਗਰੇਜ਼ੀ"
 
-msgid "Canadian English"
-msgstr "ਕੈਨੇਡੀਅਨ ਅੰਗਰੇਜ਼ੀ"
-
 msgid "British English"
 msgstr "ਬਰਤਾਨੀਵੀਂ ਅੰਗਰੇਜ਼ੀ"
+
+msgid "Canadian English"
+msgstr "ਕੈਨੇਡੀਅਨ ਅੰਗਰੇਜ਼ੀ"
 
 msgid "Esperanto"
 msgstr "ਇਸਪੀਰਨਟੋ"
@@ -12105,6 +12168,10 @@ msgstr "ਕੁਰਦ"
 
 msgid "Lao"
 msgstr "ਲਾਓ"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "ਸਵਾਹੀਲੀ"
 
 msgid "Macedonian"
 msgstr "ਮੈਕਡੋਨੀਆਈ"
@@ -13728,6 +13795,9 @@ msgstr "ਹਾਲਤ ਚੋਣਕਾਰ"
 msgid "Google Talk"
 msgstr "ਗੂਗਲ ਟਾਕ"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਅੱਗੇ ਦਿੱਤੀ ਗਲਤੀ ਆਈ: %s"
@@ -15163,6 +15233,22 @@ msgstr "ਪਿਡਗਿਨ ਵੈੱਬ ਪੇਜ਼ ਉੱਤੇ ਜਾਓ"
 msgid "You do not have permission to uninstall this application."
 msgstr "ਤੁਹਾਨੂੰ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇੰਸਟਾਲ ਕਰਨ ਲਈ ਅਧਿਕਾਰ ਨਹੀਂ ਹਨ।"
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "ਇਨ-ਬੈਂਡ ਬਾਈਟ-ਸਟਰੀਮ ਟਰਾਂਸਫਰ ਉੱਤੇ ਗਲਤੀ ਆਈ ਹੈ।\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "ਟਰਾਂਸਫਰ ਬੰਦ ਹੋ ਗਈ।"
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "ਇਨ-ਬੈਂਡ ਬਾਈਟਸਿਸਟਮ ਖੋਲ੍ਹਣ ਲਈ ਫੇਲ੍ਹ"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "ਆਪਣਾ ਦੋਸਤਾਨਾ ਨਾਂ ਦਿਓ।"
+
+# , c-format
+#~ msgid "Error requesting %s"
+#~ msgstr "%s ਮੰਗ ਦੌਰਾਨ ਗਲਤੀ"
+
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "ਸਰਟੀਫਿਕੇਟ ਦੀ ਮਿਆਦ ਪੁੱਗ ਚੁੱਕੀ ਹੈ ਅਤੇ ਜਾਇਜ਼ ਨਹੀਂ ਮੰਨਿਆ ਜਾ ਸਕਦਾ ਹੈ।"
 
@@ -15620,9 +15706,6 @@ msgstr "ਤੁਹਾਨੂੰ ਇਹ ਐਪਲੀਕੇਸ਼ਨ ਇੰਸਟਾ
 
 #~ msgid "In-Band Registration"
 #~ msgstr "ਇਨ-ਬੈਂਡ ਰਜਿਸਟਰੇਸ਼ਨ"
-
-#~ msgid "User Location"
-#~ msgstr "ਯੂਜ਼ਰ ਟਿਕਾਣਾ"
 
 #~ msgid "User Avatar"
 #~ msgstr "ਯੂਜ਼ਰ ਅਵਤਾਰ"

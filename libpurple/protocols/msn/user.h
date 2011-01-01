@@ -286,6 +286,14 @@ void
 msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint *data);
 
 /**
+ * Clears all endpoint data for a user.
+ *
+ * @param user     The user.
+ */
+void
+msn_user_clear_endpoints(MsnUser *user);
+
+/**
  * Sets the client id for a user.
  *
  * @param user     The user.

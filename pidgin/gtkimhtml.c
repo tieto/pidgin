@@ -756,7 +756,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	GtkTextIter start, end, cur;
 	int buf_x, buf_y;
 	GdkRectangle visible_rect;
-	GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
+	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(event->window));
 	GdkColor gcolor;
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &visible_rect);
@@ -774,16 +774,16 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 
 		if (GTK_IMHTML(widget)->edit.background) {
 			gdk_color_parse(GTK_IMHTML(widget)->edit.background, &gcolor);
-			gdk_gc_set_rgb_fg_color(gc, &gcolor);
+			gdk_cairo_set_source_color(cr, &gcolor);
 		} else {
-			gdk_gc_set_rgb_fg_color(gc, &(widget->style->base[GTK_WIDGET_STATE(widget)]));
+			gdk_cairo_set_source_color(cr, &(widget->style->base[GTK_WIDGET_STATE(widget)]));
 		}
 
-		gdk_draw_rectangle(event->window,
-				   gc,
-				   TRUE,
-				   visible_rect.x, visible_rect.y, visible_rect.width, visible_rect.height);
-		g_object_unref(G_OBJECT(gc));
+		cairo_rectangle(cr,
+		                visible_rect.x, visible_rect.y,
+		                visible_rect.width, visible_rect.height);
+		cairo_fill(cr);
+		cairo_destroy(cr);
 
 		if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -854,12 +854,12 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 				if (!gdk_color_parse(tmp, &gcolor))
 					gdk_color_parse("white", &gcolor);
 			}
-			gdk_gc_set_rgb_fg_color(gc, &gcolor);
+			gdk_cairo_set_source_color(cr, &gcolor);
 
-			gdk_draw_rectangle(event->window,
-			                   gc,
-			                   TRUE,
-			                   rect.x, rect.y, rect.width, rect.height);
+			cairo_rectangle(cr,
+			                rect.x, rect.y,
+			                rect.width, rect.height);
+			cairo_fill(cr);
 			gtk_text_iter_backward_char(&cur); /* go back one, in case the end is the begining is the end
 			                                    * note that above, we always moved cur ahead by at least
 			                                    * one character */
@@ -874,7 +874,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		       !gtk_text_iter_begins_tag(&cur, NULL));
 	}
 
-	g_object_unref(G_OBJECT(gc));
+	cairo_destroy(cr);
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 		return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -4905,18 +4905,20 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	 * are apparently pretty inefficient.  Hopefully we can remove this
 	 * restriction when we're using a better HTML widget.
 	 */
+	unescaped = purple_unescape_html(smiley);
 	numsmileys_thismsg = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg"));
 	if (numsmileys_thismsg >= 30) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
+		g_free(unescaped);
 		return;
 	}
 	numsmileys_total = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total"));
 	if (numsmileys_total >= 300) {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
+		g_free(unescaped);
 		return;
 	}
 
-	unescaped = purple_unescape_html(smiley);
 	imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
@@ -4991,7 +4993,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
 		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else {
-		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, unescaped, -1);
 	}
 
 	if (ebox) {

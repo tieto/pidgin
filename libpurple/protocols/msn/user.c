@@ -57,13 +57,6 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 static void
 msn_user_destroy(MsnUser *user)
 {
-	g_return_if_fail(user != NULL);
-
-	if (user->refcount > 1) {
-		msn_user_unref(user);
-		return;
-	}
-
 	while (user->endpoints != NULL) {
 		free_user_endpoint(user->endpoints->data);
 		user->endpoints = g_slist_delete_link(user->endpoints, user->endpoints);
@@ -203,6 +196,8 @@ msn_user_set_state(MsnUser *user, const char *state)
 		status = "phone";
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status = "lunch";
+	else if (!g_ascii_strcasecmp(state, "HDN"))
+		status = NULL;
 	else
 		status = "available";
 
@@ -227,9 +222,6 @@ gboolean
 msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	g_return_val_if_fail(user != NULL, FALSE);
-
-	if (user == user->userlist->session->user)
-		return FALSE;
 
 	if (user->friendly_name && name && (!strcmp(user->friendly_name, name) ||
 				!strcmp(user->passport, name)))
@@ -300,6 +292,22 @@ msn_user_set_endpoint_data(MsnUser *user, const char *input, MsnUserEndpoint *ne
 
 	ep->clientid = newep->clientid;
 	ep->extcaps = newep->extcaps;
+}
+
+void
+msn_user_clear_endpoints(MsnUser *user)
+{
+	MsnUserEndpoint *ep;
+	GSList *l;
+
+	g_return_if_fail(user != NULL);
+
+	for (l = user->endpoints; l; l = g_slist_delete_link(l, l)) {
+		ep = l->data;
+		free_user_endpoint(ep);
+	}
+
+	user->endpoints = NULL;
 }
 
 void
@@ -582,7 +590,7 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 
 	user->msnobj = obj;
 
-	if (user != user->userlist->session->user && user->list_op & MSN_LIST_FL_OP)
+	if (user->list_op & MSN_LIST_FL_OP)
 		queue_buddy_icon_request(user);
 }
 

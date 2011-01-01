@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
-"PO-Revision-Date: 2010-10-17 15:54+0200\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
+"PO-Revision-Date: 2010-12-16 23:25+0100\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: \n"
@@ -4897,15 +4897,6 @@ msgstr "Expulsé (%s)"
 msgid "Unknown Error in presence"
 msgstr "Erreur inconnue"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Erreur lors du transfert dans le flux de données in-band.\n"
-
-msgid "Transfer was closed."
-msgstr "Le transfert a été interrompu."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Impossible d'ouvrir le flux de données in-band"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5226,26 +5217,6 @@ msgstr "Erreur à l'ajout de l'utilisateur"
 msgid "The username specified does not exist."
 msgstr "Le nom d'utilisateur fourni est non valide."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problème de synchronisation de la liste de contact avec %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s est dans le groupe « %s » sur la liste locale mais pas sur le serveur. "
-"Voulez-vous ajouter ce contact ?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s est sur la liste locale mais pas sur le serveur. Voulez-vous ajouter ce "
-"contact ?"
-
 msgid "Unable to parse message"
 msgstr "Impossible d'interpréter le message"
 
@@ -5416,6 +5387,26 @@ msgstr "Code d'erreur inconnu %d"
 msgid "MSN Error: %s\n"
 msgstr "Erreur MSN : %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problème de synchronisation de la liste de contact avec %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s est dans le groupe « %s » sur la liste locale mais pas sur le serveur. "
+"Voulez-vous ajouter ce contact ?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s est sur la liste locale mais pas sur le serveur. Voulez-vous ajouter ce "
+"contact ?"
+
 msgid "Other Contacts"
 msgstr "Autres contacts"
 
@@ -5468,11 +5459,47 @@ msgstr "Le nouvel alias MSN est trop long"
 msgid "Set friendly name for %s."
 msgstr "Changer l'alias pour %s."
 
-msgid "Set your friendly name."
+msgid "Set Friendly Name"
 msgstr "Changer l'alias"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Nom sous lequel les utilisateurs MSN vous verront."
+
+msgid "This Location"
+msgstr "Cet emplacement"
+
+msgid "This is the name that identifies this location"
+msgstr "Nom qui dentifie cet emplacement"
+
+msgid "Other Locations"
+msgstr "Autres emplacements"
+
+msgid "You can sign out from other locations here"
+msgstr "Vous vous êtes connecté depuis ces autres endroits."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Vous n'êtes connecté depuis aucun autre endroit."
+
+msgid "Allow multiple logins?"
+msgstr "Autoriser les connexions simultanées ?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Voulez-vous autoriser la connexion simultanée depuis différents emplacement ?"
+
+msgid "Allow"
+msgstr "Autoriser"
+
+msgid "Disallow"
+msgstr "Interdire"
 
 msgid "Set your home phone number."
 msgstr "Numéro de téléphone"
@@ -5492,12 +5519,6 @@ msgid ""
 msgstr ""
 "Voulez-vous autorisez les contacts de votre liste à vous envoyer des "
 "messages MSN sur votre téléphone portable ?"
-
-msgid "Allow"
-msgstr "Autoriser"
-
-msgid "Disallow"
-msgstr "Interdire"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5561,6 +5582,9 @@ msgstr "Nom du travail"
 msgid "Set Friendly Name..."
 msgstr "Changer l'alias..."
 
+msgid "View Locations..."
+msgstr "Voir les emplacements..."
+
 msgid "Set Home Phone Number..."
 msgstr "Changer le numéro de téléphone..."
 
@@ -5572,6 +5596,9 @@ msgstr "Changer le numéro de téléphone portable..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Activer le service pour téléphones portables..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Autoriser les connexions simultanées..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Autoriser les messages sur téléphones portables..."
@@ -5790,6 +5817,9 @@ msgstr "Afficher les frimousses personnalisées"
 
 msgid "Allow direct connections"
 msgstr "Autoriser les connexions directes"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Autoriser les connexions de différents emplacements"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge : donner un « Nudge » à un contact pour attirer son attention."
@@ -6966,11 +6996,21 @@ msgstr ""
 "réessayez. Si vous persistez maintenant, il vous faudra attendre encore plus "
 "longtemps."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Vous demandez un chiffrement dans les paramètres du compte, mais l'un des "
+"serveurs n'en est pas capable."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Erreur à la demande de %s : %s"
+
+msgid "The server returned an empty response"
+msgstr "Le serveur a renvoyé une réponse vide"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6981,10 +7021,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL n'autorise pas votre nom d'utilisateur pour authentification ici."
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Erreur à la demande de %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7278,6 +7314,13 @@ msgstr ""
 "doivent soit être une adresse électronique valide, soit commencer par une "
 "lettre et contenir uniquement des lettres, des chiffres et des espaces, soit "
 "contenir uniquement des chiffres."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Vous demandez le chiffrement dans les paramètres du compte, mais votre "
+"système n'en est pas capable."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7801,13 +7844,11 @@ msgstr "Configurer le transfert de message (web)"
 msgid "Set Privacy Options..."
 msgstr "Changer les options de confidentialité..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Liste visible"
+msgstr "Voir la liste visible"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Liste invisible"
+msgstr "Voir la liste invisible"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7824,6 +7865,9 @@ msgstr "Afficher les demandes d'autorisation"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Chercher un contact par adresse électronique..."
+
+msgid "Don't use encryption"
+msgstr "Ne pas utiliser de chiffrement"
 
 msgid "Use clientLogin"
 msgstr "Utiliser clientLogin"
@@ -8023,7 +8067,7 @@ msgid "Personal Web Page"
 msgstr "Page web perso"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Informations supplémentaires"
 
@@ -8051,16 +8095,28 @@ msgstr "Inscrit depuis"
 msgid "Capabilities"
 msgstr "Possibilités"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Apparaître connecté"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr "Ne pas apparaître connecté"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Invisible"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr "Ne pas apparaître déconnecté"
 
@@ -12296,11 +12352,11 @@ msgstr "Grec"
 msgid "Australian English"
 msgstr "Anglais australien"
 
-msgid "Canadian English"
-msgstr "Anglais canadien"
-
 msgid "British English"
 msgstr "Anglais britannique"
+
+msgid "Canadian English"
+msgstr "Anglais canadien"
 
 msgid "Esperanto"
 msgstr "Espéranto"
@@ -12379,6 +12435,9 @@ msgstr "Kurde"
 
 msgid "Lao"
 msgstr "Lao"
+
+msgid "Maithili"
+msgstr "Maïhili"
 
 msgid "Macedonian"
 msgstr "Macédonien"
@@ -14016,6 +14075,9 @@ msgstr "Choix de l'état"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "L'erreur suivante est survenue au chargement de %s : %s"
@@ -15508,6 +15570,21 @@ msgstr "Visitez la page web de Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "Vous n'avez pas les permissions pour supprimer cette application."
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Erreur lors du transfert dans le flux de données in-band.\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Le transfert a été interrompu."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Impossible d'ouvrir le flux de données in-band"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Changer l'alias"
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Erreur à la demande de %s"
+
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "Le certificat a expiré et ne devrait pas être considéré valide."
 
@@ -15728,9 +15805,6 @@ msgstr "Vous n'avez pas les permissions pour supprimer cette application."
 
 #~ msgid "Multi-User Chat Extended Presence Information"
 #~ msgstr "Informations de présence des discussions multi-utilisateurs"
-
-#~ msgid "User Location"
-#~ msgstr "Position de l'utilisateur"
 
 #~ msgid "User Avatar"
 #~ msgstr "Avatar de l'utilisateur"

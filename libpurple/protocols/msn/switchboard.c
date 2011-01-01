@@ -225,7 +225,7 @@ send_clientcaps(MsnSwitchBoard *swboard)
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 
-	msn_message_destroy(msg);
+	msn_message_unref(msg);
 }
 
 static void
@@ -577,33 +577,6 @@ msg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	msg_error_helper(cmdproc, trans->data, MSN_MSG_ERROR_UNKNOWN);
 }
 
-#if 0
-/** Called when we receive an ack of a special message. */
-static void
-msg_ack(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnMessage *msg;
-
-	msg = cmd->trans->data;
-
-	if (msg->ack_cb != NULL)
-		msg->ack_cb(msg->ack_data);
-
-	msn_message_unref(msg);
-}
-
-/** Called when we receive a nak of a special message. */
-static void
-msg_nak(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnMessage *msg;
-
-	msg = cmd->trans->data;
-
-	msn_message_unref(msg);
-}
-#endif
-
 gboolean
 msn_switchboard_can_send(MsnSwitchBoard *swboard)
 {
@@ -743,7 +716,10 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("msn", "get UBM...\n");
-	cmd->payload_len = atoi(cmd->params[3]);
+	if (cmdproc->session->protocol_ver >= 16)
+		cmd->payload_len = atoi(cmd->params[5]);
+	else
+		cmd->payload_len = atoi(cmd->params[3]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -1147,7 +1123,6 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 		trans = msn_transaction_new(cmdproc, "OUT", NULL);
 		msn_transaction_set_saveable(trans, FALSE);
 		msn_cmdproc_send_trans(cmdproc, trans);
-		msn_transaction_destroy(trans);
 
 		msn_switchboard_destroy(swboard);
 	}

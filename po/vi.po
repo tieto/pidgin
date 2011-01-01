@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-03-12 17:32+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -4874,15 +4874,6 @@ msgstr "Bị đá (%s)"
 msgid "Unknown Error in presence"
 msgstr "Gặp lỗi không rõ trong sự có mặt"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Gặp lỗi trong khi truyền luồng byte bên trong băng\n"
-
-msgid "Transfer was closed."
-msgstr "Tiến trình truyền bị đóng."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Lỗi mở luồng byte bên trong băng"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5199,26 +5190,6 @@ msgstr "Lỗi thêm bạn chát"
 msgid "The username specified does not exist."
 msgstr "Bạn đã ghi rõ một tên người dùng không tồn tại."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Vấn đề đồng bộ hoá danh sách bạn bè trong %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s trên danh sách cục bộ nằm trong nhóm « %s » nhưng không có trong danh "
-"sách máy phục vụ. Bạn có muốn thêm bạn chát này không?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s nằm trên danh sách cục bộ nhưng không nằm trên danh sách máy phục vụ. Bạn "
-"có muốn thêm bạn chát này không?"
-
 msgid "Unable to parse message"
 msgstr "Không thể phân tích tin nhẳn"
 
@@ -5389,6 +5360,26 @@ msgstr "Mã lỗi không rõ %d"
 msgid "MSN Error: %s\n"
 msgstr "Lỗi MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Vấn đề đồng bộ hoá danh sách bạn bè trong %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s trên danh sách cục bộ nằm trong nhóm « %s » nhưng không có trong danh "
+"sách máy phục vụ. Bạn có muốn thêm bạn chát này không?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s nằm trên danh sách cục bộ nhưng không nằm trên danh sách máy phục vụ. Bạn "
+"có muốn thêm bạn chát này không?"
+
 msgid "Other Contacts"
 msgstr "Liên lạc khác"
 
@@ -5437,11 +5428,53 @@ msgstr "Tên thân mật MSN bạn đặt quá dài."
 msgid "Set friendly name for %s."
 msgstr "Đặt tên thân mật cho %s."
 
-msgid "Set your friendly name."
-msgstr "Đặt tên thân mật của bạn"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Đặt tên thân mật..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Người dùng MSN khác sẽ nhìn thấy bạn với tên này."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Nơi ở"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Người dùng MSN khác sẽ nhìn thấy bạn với tên này."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Nơi ở"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Bạn đã đăng nhập từ một địa chỉ khác"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Bạn đã đăng nhập từ một địa chỉ khác"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Cho phép nhiều thể hiện"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Cho phép"
+
+msgid "Disallow"
+msgstr "Cấm"
 
 msgid "Set your home phone number."
 msgstr "Nhập số điện thoại nhà."
@@ -5462,12 +5495,6 @@ msgstr ""
 "Bạn muốn cho phép hoặc cấm người khác (trên danh sách bạn bè) gửi tin nhắn "
 "MSN Mobile vào điện thoại di động hay thiết bị di động nào khác của bạn hay "
 "không?"
-
-msgid "Allow"
-msgstr "Cho phép"
-
-msgid "Disallow"
-msgstr "Cấm"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5530,6 +5557,10 @@ msgstr "Tên chức vụ"
 msgid "Set Friendly Name..."
 msgstr "Đặt tên thân mật..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Chọn địa chỉ..."
+
 msgid "Set Home Phone Number..."
 msgstr "Đặt số điện thoại nhà..."
 
@@ -5541,6 +5572,10 @@ msgstr "Đặt số điện thoại di động..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Bật/tắt thiết bị di động..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Cho phép/Cấm tin nhắn tới thiết bị di động..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Cho phép/Cấm tin nhắn tới thiết bị di động..."
@@ -5758,6 +5793,9 @@ msgstr "Hiển thị hình cười tự chọn"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Không thể tạo kết nối"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: làm nổi bật một liên lạc để thu hút sự chú ý"
@@ -6919,11 +6957,22 @@ msgstr ""
 "Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử "
 "lại. Nếu bạn tiếp tục kết nối, bạn sẽ phải đợi lâu hơn."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Gặp lỗi khi yêu cầu %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Không thể kết nối tới máy phục vụ MXit. Hãy kiểm tra lại thiết lập máy phục "
+"vụ."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6934,10 +6983,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL không cho phép tên màn hình xác thực ở đây"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Gặp lỗi khi yêu cầu %s: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7230,6 +7275,11 @@ msgstr ""
 "Không thể đăng nhập dưới %s vì tên người dùng không hợp lệ. Tên người dùng "
 "phải là một địa chỉ thư điện tử hợp lệ, hoặc bắt đầu với một chữ cái và chỉ "
 "chứa chữ cái, chữ số và khoảng trống, hoặc chỉ chứa chữ số."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7735,6 +7785,10 @@ msgstr "Hiển thị các bạn chát chờ sự cho phép"
 msgid "Search for Buddy by Email Address..."
 msgstr "Tìm kiếm bạn chát theo địa chỉ thư..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Cần thiết sự cho phép"
+
 msgid "Use clientLogin"
 msgstr "Dùng clientLogin"
 
@@ -7937,7 +7991,7 @@ msgid "Personal Web Page"
 msgstr "Trang web cá nhân"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Thông tin thêm"
 
@@ -7965,17 +8019,29 @@ msgstr "Là thành viên từ"
 msgid "Capabilities"
 msgstr "Khả năng"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Hình như trực tuyến"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Hình như trực tuyến"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Hình như ngoại tuyến"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Hình như ngoại tuyến"
@@ -12199,11 +12265,11 @@ msgstr "Tiếng Hy Lạp"
 msgid "Australian English"
 msgstr "Tiếng Anh (Úc)"
 
-msgid "Canadian English"
-msgstr "Tiếng Anh (Ca-na-đa)"
-
 msgid "British English"
 msgstr "Tiếng Anh (Quốc Anh)"
+
+msgid "Canadian English"
+msgstr "Tiếng Anh (Ca-na-đa)"
 
 msgid "Esperanto"
 msgstr "Tiếng Ét-pe-ran-tô"
@@ -12282,6 +12348,10 @@ msgstr "Tiếng Kuổ-đít"
 
 msgid "Lao"
 msgstr "Tiếng Lào"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Tiếng Xouă-hi-li"
 
 msgid "Macedonian"
 msgstr "Tiếng Ma-xê-đô-ni"
@@ -13919,6 +13989,9 @@ msgstr "Bộ chọn trạng thái"
 msgid "Google Talk"
 msgstr "Google Thoại"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Gặp lỗi theo đây khi nạp %s: %s"
@@ -15382,6 +15455,22 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Gặp lỗi trong khi truyền luồng byte bên trong băng\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Tiến trình truyền bị đóng."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Lỗi mở luồng byte bên trong băng"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Đặt tên thân mật của bạn"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Gặp lỗi khi yêu cầu %s: %s"
 
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Cần thiết SSL/TLS"

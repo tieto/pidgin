@@ -79,12 +79,13 @@ struct _MsnSession
 
 	MsnLoginStep login_step; /**< The current step in the login process. */
 
-	gboolean connected;
-	gboolean logged_in; /**< A temporal flag to ignore local buddy list adds. */
+	gboolean connected:1;
+	gboolean logged_in:1; /**< A temporal flag to ignore local buddy list adds. */
+	gboolean destroying:1; /**< A flag that states if the session is being destroyed. */
+	gboolean http_method:1;
+	gboolean enable_mpop:1; /**< Use Multiple Points of Presence? */
 	int      adl_fqy; /**< A count of ADL/FQY so status is only changed once. */
 	guint    login_timeout; /**< Timeout to force status change if ADL/FQY fail. */
-	gboolean destroying; /**< A flag that states if the session is being destroyed. */
-	gboolean http_method;
 
 	MsnNotification *notification;
 	MsnNexus        *nexus;
@@ -105,7 +106,6 @@ struct _MsnSession
 
 	struct
 	{
-		char *kv;
 		char *sid;
 		char *mspauth;
 		unsigned long sl;

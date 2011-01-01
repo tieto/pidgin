@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-05-05 19:21+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -4821,15 +4821,6 @@ msgstr "Vykopnutý (%s)"
 msgid "Unknown Error in presence"
 msgstr "Prítomná neznáma chyba"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Na in-band bytestream prenose sa vyskytla chyba\n"
-
-msgid "Transfer was closed."
-msgstr "Zrušil sa prenos."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Otvoriť in-band bajtový tok sa nepodarilo"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Nedá sa odoslať súbor používateľovi %s, nepodporuje prenosy súborov"
@@ -5146,26 +5137,6 @@ msgstr "Chyba pridávania priateľa"
 msgid "The username specified does not exist."
 msgstr "Dané používateľské meno neexistuje."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problém synchronizácie zoznamu priateľov v %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s v miestnom zozname je v skupine „%s“, ale nie je v zozname servera. "
-"Chcete tohto priateľa pridať?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s je v miestnom zozname, ale nie je v zozname servera. Chcete tohto "
-"priateľa pridať?"
-
 msgid "Unable to parse message"
 msgstr "Správa sa nedá spracovať"
 
@@ -5336,6 +5307,26 @@ msgstr "Neznámy chybový kód %d"
 msgid "MSN Error: %s\n"
 msgstr "Chyba MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problém synchronizácie zoznamu priateľov v %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s v miestnom zozname je v skupine „%s“, ale nie je v zozname servera. "
+"Chcete tohto priateľa pridať?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s je v miestnom zozname, ale nie je v zozname servera. Chcete tohto "
+"priateľa pridať?"
+
 msgid "Other Contacts"
 msgstr "Ostatné kontakty"
 
@@ -5384,11 +5375,53 @@ msgstr "Vaše nové MSN priateľské meno je príliš dlhé."
 msgid "Set friendly name for %s."
 msgstr "Vyplňte priateľské meno pre %s."
 
-msgid "Set your friendly name."
-msgstr "Vyplňte vaše priateľské meno."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Nastaviť priateľské meno..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Toto je názov, pod ktorým vás budú vidieť ostatní priatelia z MSN."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Lokalita"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Toto je názov, pod ktorým vás budú vidieť ostatní priatelia z MSN."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Lokalita"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Prihlásili ste sa z iného miesta"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Prihlásili ste sa z iného miesta"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Umožniť viacero spustení"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Povoliť"
+
+msgid "Disallow"
+msgstr "Nepovoliť"
 
 msgid "Set your home phone number."
 msgstr "Vyplňte vaše telefónne číslo domov."
@@ -5408,12 +5441,6 @@ msgid ""
 msgstr ""
 "Chcete povoliť alebo zakázať osobám vo vašom zozname priateľov posielať vám "
 "na váš mobilný telefón stránky MSN?"
-
-msgid "Allow"
-msgstr "Povoliť"
-
-msgid "Disallow"
-msgstr "Nepovoliť"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5475,6 +5502,10 @@ msgstr "Názov kancelárie"
 msgid "Set Friendly Name..."
 msgstr "Nastaviť priateľské meno..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Vyberte umiestnenie..."
+
 msgid "Set Home Phone Number..."
 msgstr "Nastaviť číslo telefónu domov..."
 
@@ -5486,6 +5517,10 @@ msgstr "Nastaviť číslo mobilného telefónu..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Povoliť/Zakázať mobilné zariadenia..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Povoliť/Zakázať mobilné stránky..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Povoliť/Zakázať mobilné stránky..."
@@ -5705,6 +5740,9 @@ msgstr "Zobraziť vlastných smajlíkov"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Nedá sa vytvoriť spojenie"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: postrčte používateľa pre získanie ich pozornosti"
@@ -6883,11 +6921,20 @@ msgstr ""
 "Pripájali a odpájali ste sa príliš často. Počkajte desať minút a skúste "
 "znova. Ak budete i naďalej skúšať, budete musieť čakať este dlhšie."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Chyba pri požadovaní %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "Nepodarilo sa pripojiť: Server vrátil prázdnu odpoveď."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6898,10 +6945,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL neumožňuje vášmu používateľskému menu sa tu autentifikovať"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Chyba pri požadovaní %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7192,6 +7235,11 @@ msgstr ""
 "Používateľské mená musia byť správna e-mailová adresa, alebo musí byť prvý "
 "znak písmeno a musí obsahovať len písmená, číslice a medzery, alebo len "
 "číslice."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7739,6 +7787,10 @@ msgstr "Zobraziť priateľov, ktorí čakajú na autorizáciu"
 msgid "Search for Buddy by Email Address..."
 msgstr "Hľadať priateľa podľa e-mailovej adresy..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Vyžadovať autorizáciu"
+
 msgid "Use clientLogin"
 msgstr "Použiť clientLogin"
 
@@ -7936,7 +7988,7 @@ msgid "Personal Web Page"
 msgstr "Osobná webová stránka"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Doplňujúce informácie"
 
@@ -7964,17 +8016,29 @@ msgstr "Člen od"
 msgid "Capabilities"
 msgstr "Schopnosti"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Vyzerať prihlásený"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Vyzerať prihlásený"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Vyzerať odhlásený"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Vyzerať odhlásený"
@@ -12203,11 +12267,11 @@ msgstr "gréčtina"
 msgid "Australian English"
 msgstr "austrálska angličtina"
 
-msgid "Canadian English"
-msgstr "kanadská angličtina"
-
 msgid "British English"
 msgstr "britská angličtina"
+
+msgid "Canadian English"
+msgstr "kanadská angličtina"
 
 msgid "Esperanto"
 msgstr "esperanto"
@@ -12286,6 +12350,10 @@ msgstr "kurdčina"
 
 msgid "Lao"
 msgstr "laoština"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "svahilčina"
 
 msgid "Macedonian"
 msgstr "macedónčina"
@@ -13916,6 +13984,9 @@ msgstr "Prepínač statusu"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Počas načítavania %s sa vyskytla nasledujúca chyba: %s"
@@ -15372,6 +15443,21 @@ msgstr "Navštíviť webstránku Windows Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Na in-band bytestream prenose sa vyskytla chyba\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Zrušil sa prenos."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Otvoriť in-band bajtový tok sa nepodarilo"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Vyplňte vaše priateľské meno."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Chyba pri požadovaní %s"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Vyžadovať SSL/TLS"
 
@@ -15828,9 +15914,6 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
 #~ msgid "In-Band Registration"
 #~ msgstr "In-Band Registrácia"
-
-#~ msgid "User Location"
-#~ msgstr "Lokalita"
 
 #~ msgid "User Avatar"
 #~ msgstr "Avatar používateľa"

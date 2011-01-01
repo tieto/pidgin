@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2005-03-23 12:21+0200\n"
 "Last-Translator: Canonical Ltd <translations@canonical.com>\n"
 "Language-Team: Xhosa <xh-translate@ubuntu.com>\n"
@@ -5098,17 +5098,6 @@ msgstr "Ukukhatywa nge %s (%s)"
 msgid "Unknown Error in presence"
 msgstr "Ubukho bempazamo engaziwayo"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Kwenzeke impazamo xeshikweni uvula ifayili."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Udluliso lwefayili seluqalile"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5488,26 +5477,6 @@ msgstr "Impazamo yoLuhlu lomHlobo"
 msgid "The username specified does not exist."
 msgstr "Ulungiselelo olutsha alusebenzi."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Umba wokwenza ngaxeshanye uluhlu lomhlobo kwi %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s kuluhlu lwasekhaya ingaphakathi kweqela \"%s\" kodwa kungekuko kuluhlu "
-"lweseva. Ingaba ufuna ukuba lomhlobo ongezwe?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s ukuluhlu lwasekhaya kodwa ingekuko kuluhlu lweseva. Ingaba ufuna lo "
-"mhlobo ongezwe?"
-
 msgid "Unable to parse message"
 msgstr "Akukwazeki ukwahlula umyalezo ngezijungqe"
 
@@ -5690,6 +5659,26 @@ msgstr "Ikhowudi eNgaziwayo yempazamo %d"
 msgid "MSN Error: %s\n"
 msgstr "Impazamo yeMSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Umba wokwenza ngaxeshanye uluhlu lomhlobo kwi %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s kuluhlu lwasekhaya ingaphakathi kweqela \"%s\" kodwa kungekuko kuluhlu "
+"lweseva. Ingaba ufuna ukuba lomhlobo ongezwe?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s ukuluhlu lwasekhaya kodwa ingekuko kuluhlu lweseva. Ingaba ufuna lo "
+"mhlobo ongezwe?"
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Indibano eKhethekayo"
@@ -5740,11 +5729,52 @@ msgstr "Igama lakho elitsha lobuhlobo leMSN lide kakhulu."
 msgid "Set friendly name for %s."
 msgstr "Seka igama lakho lobuhlobo."
 
-msgid "Set your friendly name."
-msgstr "Seka igama lakho lobuhlobo."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Misela iGama Lobuhlobo"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Eli ligama abahlobo abanye beMSN baya kukubona ngalo."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Indawo"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Eli ligama abahlobo abanye beMSN baya kukubona ngalo."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Indawo"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Usayine ukwenye indawo."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Usayine ukwenye indawo."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Vumela"
+
+msgid "Disallow"
+msgstr "Musa ukuvuma"
 
 msgid "Set your home phone number."
 msgstr "Misela inombolo yakho yefowuni yasekhaya."
@@ -5765,12 +5795,6 @@ msgstr ""
 "Ingaba uyavuma okanye abavumeli abantu abakuluhlu lwakho lobuhlobo "
 "ukukuthumelela amaphepha efowuni yeMSN kwifowuni yakho yeselula okanye "
 "iselfowuni?"
-
-msgid "Allow"
-msgstr "Vumela"
-
-msgid "Disallow"
-msgstr "Musa ukuvuma"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5842,6 +5866,10 @@ msgid "Set Friendly Name..."
 msgstr "Misela iGama Lobuhlobo"
 
 #, fuzzy
+msgid "View Locations..."
+msgstr "Indawo"
+
+#, fuzzy
 msgid "Set Home Phone Number..."
 msgstr "Misela iNombolo yeFowuni yaseKhaya"
 
@@ -5856,6 +5884,10 @@ msgstr "Misela iNombolo yeFowuni oHamba nayo"
 #, fuzzy
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Yenza zisebenze/Zingasebenzi iziXhobo zefowuni ohamba nayo"
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Vumela/Ulandule amaPhepha eFowuni oHamba nayo"
 
 #, fuzzy
 msgid "Allow/Disallow Mobile Pages..."
@@ -6105,6 +6137,9 @@ msgstr ""
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Akukwazeki ukuyila unxibelelwano olutsha."
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
@@ -7385,11 +7420,22 @@ msgstr ""
 "elishumi ze uzame kwakhona. Ukuba uyaqhubeka ukuzama, kuya kufuneka ulinde "
 "ixesha elidana nangakumbi."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Impazamo yokudala unxibelelwano"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Akukwazeki ukunxulumana neseva. Nceda ufake idilesi yeseva ofuna "
+"ukunxibelelana kuyo."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7398,10 +7444,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Impazamo yokudala unxibelelwano"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7723,6 +7765,11 @@ msgstr ""
 "Akukwazeki ukungena: Akwazekanga ukungena %s ngenxa yokuba igama leskrini "
 "alisebenzi.  Amagama eskrini kufuneka aqale ngoonombumba okanye abe "
 "nonobumba kuphela, amanani nezithuba, okanye amanani kuphela."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8291,6 +8338,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Zingela umHlobo nge-Imeyile..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Isicelo soGunyaziso"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "Umsebenzisi akangenanga"
 
@@ -8488,7 +8539,7 @@ msgid "Personal Web Page"
 msgstr "Iphepha leWebhu ye-intanethi lakho buqu"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Ulwazi olongezelelweyo"
 
@@ -8516,18 +8567,30 @@ msgstr "Lilungu ukusukela"
 msgid "Capabilities"
 msgstr "Izakhono"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 #, fuzzy
 msgid "Appear Online"
 msgstr "Ukubonakala kungekho nxibelelwano"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Ukubonakala kungekho nxibelelwano"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Ukubonakala kungekho nxibelelwano"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Ukubonakala kungekho nxibelelwano"
@@ -13128,11 +13191,11 @@ msgstr ""
 msgid "Australian English"
 msgstr "IsiNgesi saseAustralia"
 
-msgid "Canadian English"
-msgstr "IsiNgesi sasKhanada"
-
 msgid "British English"
 msgstr "IsiNgesi saseBritani"
+
+msgid "Canadian English"
+msgstr "IsiNgesi sasKhanada"
 
 msgid "Esperanto"
 msgstr ""
@@ -13222,6 +13285,10 @@ msgstr "IsiTurkishi"
 
 msgid "Lao"
 msgstr ""
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Umtshabalalisi"
 
 msgid "Macedonian"
 msgstr "IsiMacedonia"
@@ -15001,6 +15068,9 @@ msgstr "Imo yomBhalo"
 msgid "Google Talk"
 msgstr ""
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, fuzzy, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Kwenzeke impazamo engaziwayo yokungena: %s."
@@ -16580,6 +16650,21 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Kwenzeke impazamo xeshikweni uvula ifayili."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Udluliso lwefayili seluqalile"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Seka igama lakho lobuhlobo."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Impazamo yokudala unxibelelwano"
+
+#, fuzzy
 #~ msgid "Force old (port 5223) SSL"
 #~ msgstr "UkuNyanzela iSSL eNdala"
 
@@ -16899,10 +16984,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "Impazamo yoBhaliso"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "Indawo"
 
 #, fuzzy
 #~ msgid "Chat State Notifications"

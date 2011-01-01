@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:11-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -4883,15 +4883,6 @@ msgstr "Εκδιωγμένος (%s)"
 msgid "Unknown Error in presence"
 msgstr "Υπάρχει άγνωστο σφάλμα"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr ""
-
-msgid "Transfer was closed."
-msgstr "Η μεταφορά έκλεισε."
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5262,26 +5253,6 @@ msgstr "Σφάλμα προσθήκης φίλου"
 msgid "The username specified does not exist."
 msgstr "Το όνομα χρήστη που δόθηκε δεν υπάρχει."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Προβλήματα συγχρονισμού της λίστας φίλων στο %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s είναι στην τοπική λίστα στην ομάδα \"%s\" αλλά όχι στη λίστα του "
-"εξυπηρετητή. Επιθυμείτε την προσθήκη αυτού του φίλου;"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s είναι στην τοπική λίστα αλλά όχι στη λίστα του εξυπηρετητή. Επιθυμείτε "
-"την προσθήκη αυτού του φίλου;"
-
 msgid "Unable to parse message"
 msgstr "Αδυναμία ανάλυσης μηνύματος"
 
@@ -5453,6 +5424,26 @@ msgstr "Άγνωστος κώδικας σφάλματος %d"
 msgid "MSN Error: %s\n"
 msgstr "Σφάλμα MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Προβλήματα συγχρονισμού της λίστας φίλων στο %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s είναι στην τοπική λίστα στην ομάδα \"%s\" αλλά όχι στη λίστα του "
+"εξυπηρετητή. Επιθυμείτε την προσθήκη αυτού του φίλου;"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s είναι στην τοπική λίστα αλλά όχι στη λίστα του εξυπηρετητή. Επιθυμείτε "
+"την προσθήκη αυτού του φίλου;"
+
 msgid "Other Contacts"
 msgstr "Άλλες επαφές"
 
@@ -5502,11 +5493,53 @@ msgstr "Το νέο σας φιλικό όνομα MSN είναι πολύ με�
 msgid "Set friendly name for %s."
 msgstr "Ορισμός νέου φιλικού ονόματος."
 
-msgid "Set your friendly name."
-msgstr "Ορισμός νέου φιλικού ονόματος."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Ορισμός φιλικού ονόματος..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Αυτό είναι το όνομα με το οποίο θα σας βλέπουν οι φίλοι σας στο MSN."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Τοποθεσία χρήστη"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Αυτό είναι το όνομα με το οποίο θα σας βλέπουν οι φίλοι σας στο MSN."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Τοποθεσία χρήστη"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Έχετε συνδεθεί από άλλη τοποθεσία"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Έχετε συνδεθεί από άλλη τοποθεσία"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "Να επιτρέπονται οι πολλαπλές εισόδοι"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Επιτρέπεται"
+
+msgid "Disallow"
+msgstr "Απαγορεύεται"
 
 msgid "Set your home phone number."
 msgstr "Ορισμός τηλεφώνου οικίας."
@@ -5526,12 +5559,6 @@ msgid ""
 msgstr ""
 "Θέλετε να επιτρέπεται ή όχι στα άτομα που είναι στη λίστα φίλων σας να "
 "στέλνουν σελίδες MSN Mobile στο κινητό σας τηλέφωνο ή σε άλλη φορητή συσκευή;"
-
-msgid "Allow"
-msgstr "Επιτρέπεται"
-
-msgid "Disallow"
-msgstr "Απαγορεύεται"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5593,6 +5620,10 @@ msgstr "Τίτλος γραφείου"
 msgid "Set Friendly Name..."
 msgstr "Ορισμός φιλικού ονόματος..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Επιλέξτε τοποθεσία..."
+
 msgid "Set Home Phone Number..."
 msgstr "Ορισμός τηλεφώνου οικίας..."
 
@@ -5604,6 +5635,10 @@ msgstr "Ορισ�ός κινητού τηλεφώνου..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Ενεργοποίηση/Απενεργοποίηση φορητών συσκευών..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Επιτρέψτε/απαγορεύσετε τις σελίδες για φορητές συσκευές..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Επιτρέψτε/απαγορεύσετε τις σελίδες για φορητές συσκευές..."
@@ -5825,6 +5860,9 @@ msgstr "Εμφάνισε τις προσαρμοσμένες φατσούλες"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Αδυναμία δημιουργίας σύνδεσης"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: σκούντηγμα ενός χρήστη για να ζητήσετε την προσοχή του"
@@ -7062,11 +7100,22 @@ msgstr ""
 "ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
 "περισσότερο."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Σφάλμα αίτησης "
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Αδύνατη η σύνδεση με τον εξυπηρετητή. Παρακαλούμε εισάγετε τη διεύθυνση του "
+"εξυπηρετητή με τον οποίο επιθυμείτε να συνδεθείτε."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7075,10 +7124,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Σφάλμα αίτησης "
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7398,6 +7443,11 @@ msgstr ""
 "χρήστη πρέπει είτε να είναι μία έγκυρη διεύθυνση ηλεκτρονικού ταχυδρομείου, "
 "είτε να ξεκινούν με ένα γράμμα και να περιέχουν μόνο γράμματα, αριθμούς και "
 "κενά, είτε να περιέχουν μόνο αριθμούς."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7948,6 +7998,10 @@ msgstr "Εμφάνιση φίλων που περιμένουν έγκριση"
 msgid "Search for Buddy by Email Address..."
 msgstr "Αναζήτηση φίλου με email..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Αίτηση έγκρισης"
+
 msgid "Use clientLogin"
 msgstr ""
 
@@ -8147,7 +8201,7 @@ msgid "Personal Web Page"
 msgstr "Προσωπική ιστοσελίδα"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Πρόσθετες πληροφορίες"
 
@@ -8175,17 +8229,29 @@ msgstr "Μέλος από"
 msgid "Capabilities"
 msgstr "Δυνατότητες"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Εμφάνιση ως συνδεδεμένος"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Εμφάνιση ως συνδεδεμένος"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Εμφάνιση ως αποσυνδεδεμένος"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Εμφάνιση ως αποσυνδεδεμένος"
@@ -12425,11 +12491,11 @@ msgstr "Ελληνικά"
 msgid "Australian English"
 msgstr "Αγγλικά Αυστραλίας"
 
-msgid "Canadian English"
-msgstr "Αγγλικά Καναδά"
-
 msgid "British English"
 msgstr "Αγγλικά Βρετανίας"
+
+msgid "Canadian English"
+msgstr "Αγγλικά Καναδά"
 
 msgid "Esperanto"
 msgstr ""
@@ -12508,6 +12574,10 @@ msgstr "Κουρδικά"
 
 msgid "Lao"
 msgstr ""
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Νιχιλιστής"
 
 msgid "Macedonian"
 msgstr "Μακεδονικά (Σλαβικά)"
@@ -14172,6 +14242,9 @@ msgstr "Επιλογέας κατάστασης"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Το ακόλουθο σφάλμα συνέβη κατά το φόρτωμα του %s: %s"
@@ -15664,6 +15737,16 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Transfer was closed."
+#~ msgstr "Η μεταφορά έκλεισε."
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Ορισμός νέου φιλικού ονόματος."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Σφάλμα αίτησης "
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Απαιτείται SSL/TLS"
 
@@ -16057,9 +16140,6 @@ msgstr ""
 
 #~ msgid "XHTML-IM"
 #~ msgstr "XHTML-IM"
-
-#~ msgid "User Location"
-#~ msgstr "Τοποθεσία χρήστη"
 
 #~ msgid "User Avatar"
 #~ msgstr "Εικόνα χρήστη"

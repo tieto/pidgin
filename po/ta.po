@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-10-05 16:08+0530\n"
 "Last-Translator: I Felix <ifelix25@gmail.com>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -4824,15 +4824,6 @@ msgstr "உதைக்கப்பட்டது (%s)"
 msgid "Unknown Error in presence"
 msgstr "இருப்பில் தெரியாத பிழை"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "பிணைப்பினுள்  bytestreamஐ இடாமற்றும் போது ஒரு பிழை ஏற்பட்டுவிட்டது\n"
-
-msgid "Transfer was closed."
-msgstr "இடமாற்றம் மூடப்பட்டது."
-
-msgid "Failed to open in-band bytestream"
-msgstr "பிணைப்பு bytestream இல் திறக்க முடியவில்லை"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s ற்கு கோப்பை அனுப்ப இயலவில்லை, பயனாளர் கோப்பு பரிமாற்றத்தை ஆதரிக்கவில்லை"
@@ -5167,25 +5158,6 @@ msgstr "நண்பர் சேர்த்தல் பிழை"
 msgid "The username specified does not exist."
 msgstr "குறிப்பிட்ட பயனர்பெயர் உள்ளிருக்கவில்லை."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "நண்பர் பட்டியல் ஒத்திசைவு பிரச்சினை  %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"உள் பட்டியலில் உள்ள %s \"%s\" குழுவில் உள்ளார். ஆனால் சேவையக பட்டியலில் இல்லை. இந்த "
-"நண்பரை சேர்க்க வேண்டுமா?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"உள் பட்டியலில் %s உள்ளார். ஆனால் சேவையக பட்டியலில் இல்லை. இந்த நண்பரை சேர்க்க வேண்டுமா?"
-
 msgid "Unable to parse message"
 msgstr "தகவலை அலகிட இயலவில்லை"
 
@@ -5356,6 +5328,25 @@ msgstr "தெரியாத பிழை குறியீடு %d"
 msgid "MSN Error: %s\n"
 msgstr "எம்எஸ்என் பிழை: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "நண்பர் பட்டியல் ஒத்திசைவு பிரச்சினை  %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"உள் பட்டியலில் உள்ள %s \"%s\" குழுவில் உள்ளார். ஆனால் சேவையக பட்டியலில் இல்லை. இந்த "
+"நண்பரை சேர்க்க வேண்டுமா?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"உள் பட்டியலில் %s உள்ளார். ஆனால் சேவையக பட்டியலில் இல்லை. இந்த நண்பரை சேர்க்க வேண்டுமா?"
+
 msgid "Other Contacts"
 msgstr "மற்ற தொடர்புகள்"
 
@@ -5406,11 +5397,53 @@ msgstr "உங்களது புதிய எம்எஸ்என் நட
 msgid "Set friendly name for %s."
 msgstr "%sகான நட்பான பெயரை அமை."
 
-msgid "Set your friendly name."
-msgstr "உங்களது நட்பான பெயரை அமைக்க."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "நட்பான பெயரை அமைக்கவும்..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "மற்ற எம்எஸ்என் நண்பர்கள் உங்களை பார்க்கக்கூடிய பெயர்."
+
+#, fuzzy
+msgid "This Location"
+msgstr "இடம்"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "மற்ற எம்எஸ்என் நண்பர்கள் உங்களை பார்க்கக்கூடிய பெயர்."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "இடம்"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "நீங்கள் மற்றொரு இடத்திலிருந்து நுழைந்திருக்கிறீர்கள்"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "நீங்கள் மற்றொரு இடத்திலிருந்து நுழைந்திருக்கிறீர்கள்"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "பல எடுத்துக்காட்டுகளை அனுமதி"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "அனுமதி"
+
+msgid "Disallow"
+msgstr "அனுமதியை மறு"
 
 msgid "Set your home phone number."
 msgstr "உங்களது வீட்டு தொலைபேசி எண்ணை அமைக்கவும்."
@@ -5430,12 +5463,6 @@ msgid ""
 msgstr ""
 "உங்களது நண்பர் பட்டியலில் உள்ள  மக்கள் உங்களது மொபைல் அல்லது அலைபேசிக்கு எம்எஸ்என் மொபைல் "
 "பக்கங்களை அனுப்புவதை அனுமதிக்க அல்லது அனுமதிக்காமல் இருக்கவேண்டுமா?"
-
-msgid "Allow"
-msgstr "அனுமதி"
-
-msgid "Disallow"
-msgstr "அனுமதியை மறு"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5497,6 +5524,10 @@ msgstr "நிறுவன தலைப்பு"
 msgid "Set Friendly Name..."
 msgstr "நட்பான பெயரை அமைக்கவும்..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "இடத்தை தேர்ந்தெடு..."
+
 msgid "Set Home Phone Number..."
 msgstr "வீட்டு தொலைபேசி எண்ணை அமைக்கவும்..."
 
@@ -5508,6 +5539,10 @@ msgstr "அலை பேசி எண்ணை அமைக்கவும்...
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "அலை கருவிகளை இயலுமை/இயலாமைப்படுத்துக..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "அலை பக்கங்களை அனுமதி/அனுமதிக்காதே..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "அலை பக்கங்களை அனுமதி/அனுமதிக்காதே..."
@@ -5726,6 +5761,9 @@ msgstr "தனிப்பயன் குறு நகையிகளை கா
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "இணைப்பை உருவாக்க முடியவில்லை"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "சீண்டல்: தொடர்பாளரின் கவனத்தை பெற சீண்டுங்கள்."
@@ -6891,11 +6929,20 @@ msgstr ""
 "நீங்கள் அடிக்கடி இணைப்பை பெற்று மற்றும் துண்டித்துள்ளீர்கள். பத்து நிமிடங்கள் பொறுத்து மீண்டும் "
 "தொடங்கவும். தொடர்ந்து முயன்றால் மேலும் அதிக நேரம் காக்க வேண்டியிருக்கும்."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "பிழையை கோரும் %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "MXit சேவையகத்துடன் இணைக்க முடியவில்லை. உங்கள் சேவையக அமைவுகளை சரிபார்."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6906,10 +6953,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL ஆனது உங்கள் திரையில் பெயரை இங்கே அங்கீகரிக்க அனுமதிக்கவில்லை"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "பிழையை கோரும் %s: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7215,6 +7258,11 @@ msgstr ""
 "%s ஆக உள்நுழையமுடியவில்லை ஏனெனில் பயனர்பெயர் தவறானது.  பயனர்பெயர்கள் ஒரு சரியான "
 "மின்னஞ்சல் முகவரியை பெற்றிருக்க வேண்டும், அல்லது எழுத்துக்கள் மட்டும் உள்ள ஒரு எழுத்து, "
 "எண்கள் மற்றும் இடைவெளிகள், அல்லது எண்களை மட்டும் பெற்றுள்ளதுடன் துவக்கவும்."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7740,6 +7788,10 @@ msgstr "உறுதியாக்கலுக்கு காத்திர�
 msgid "Search for Buddy by Email Address..."
 msgstr "நண்பருக்கான மின்னஞ்சல் முகவரியின் படி தேடவும்..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "உரிமையாக்கல் தேவை"
+
 msgid "Use clientLogin"
 msgstr "பயனர் உட்புகுவை பயன்படுத்து"
 
@@ -7940,7 +7992,7 @@ msgid "Personal Web Page"
 msgstr "சொந்த வலைப் பக்கம்"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "கூடுதல் செய்தி"
 
@@ -7968,17 +8020,29 @@ msgstr "இதிலிருந்து அங்கத்தினர்."
 msgid "Capabilities"
 msgstr "செயல்திறன்"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "தொடர்புள்ள நிலையில் காட்சியளி"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "தொடர்புள்ள நிலையில் காட்சியளி"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "இணைப்பில்லாத நிலையில் இருக்கிறது"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "இணைப்பில்லாத நிலையில் இருக்கிறது"
@@ -12185,11 +12249,11 @@ msgstr "க்ரீக்"
 msgid "Australian English"
 msgstr "ஆஸ்திரேலியன் ஆங்கிலம்"
 
-msgid "Canadian English"
-msgstr "கனடியன் ஆங்கிலம்"
-
 msgid "British English"
 msgstr "பிரிட்டிஷ் ஆங்கிலம்"
+
+msgid "Canadian English"
+msgstr "கனடியன் ஆங்கிலம்"
 
 msgid "Esperanto"
 msgstr "எஸ்பெரான்டோ"
@@ -12268,6 +12332,10 @@ msgstr "குர்தீஷ்"
 
 msgid "Lao"
 msgstr "லௌ"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "சவாஹிலி"
 
 msgid "Macedonian"
 msgstr "மெர்ஸிடோனியன்"
@@ -13899,6 +13967,9 @@ msgstr "நிலை தேர்வாளர்"
 msgid "Google Talk"
 msgstr "கூகுல் டாக்"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ஐ ஏற்றும்பொழுது கீழ்க்கண்ட பிழை நேர்ந்தது: %s"
@@ -15359,6 +15430,22 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "பிணைப்பினுள்  bytestreamஐ இடாமற்றும் போது ஒரு பிழை ஏற்பட்டுவிட்டது\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "இடமாற்றம் மூடப்பட்டது."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "பிணைப்பு bytestream இல் திறக்க முடியவில்லை"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "உங்களது நட்பான பெயரை அமைக்க."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "பிழையை கோரும் %s: %s"
+
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "சான்றிதழ் இதுவரை செல்லாதது."
 
@@ -15761,10 +15848,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "In-Band Registration"
 #~ msgstr "பதிவுப் பிழை"
-
-#, fuzzy
-#~ msgid "User Location"
-#~ msgstr "இடம்"
 
 #, fuzzy
 #~ msgid "User Avatar"

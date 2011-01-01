@@ -98,7 +98,8 @@ jingle_handle_content_add(JingleSession *session, xmlnode *jingle)
 		if (pending_content == NULL) {
 			purple_debug_error("jingle",
 					"Error parsing \"content-add\" content.\n");
-			/* XXX: send error here */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_session_add_pending_content(session,
 					pending_content);
@@ -127,7 +128,8 @@ jingle_handle_content_modify(JingleSession *session, xmlnode *jingle)
 			g_free(local_senders);
 		} else {
 			purple_debug_error("jingle", "content_modify: unknown content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unknown-applications"));
 		}
 	}
 }
@@ -176,7 +178,8 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_DESCRIPTION_INFO);
@@ -206,7 +209,8 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_SESSION_ACCEPT);
@@ -230,7 +234,8 @@ jingle_handle_session_initiate(JingleSession *session, xmlnode *jingle)
 		JingleContent *parsed_content = jingle_content_parse(content);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_session_add_content(session, parsed_content);
 			jingle_content_handle_action(parsed_content, content,
@@ -281,7 +286,8 @@ jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
-			/* XXX: send error */
+			jabber_iq_send(jingle_session_terminate_packet(session,
+				"unsupported-applications"));
 		} else {
 			jingle_content_handle_action(parsed_content, content,
 					JINGLE_TRANSPORT_INFO);

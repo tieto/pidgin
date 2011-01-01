@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2010-02-25 15:29+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -4761,15 +4761,6 @@ msgstr "បាន​ធាក់​ចេញ​ដោយ (%s)"
 msgid "Unknown Error in presence"
 msgstr "មិន​ស្គាល់​កំហុស​នៅ​ក្នុងវត្តមាន"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "កំហុស​មួយ​បានកើតឡើង​នៅ​លើ​កា​រផ្ទេរ​ស្ទ្រីមបៃ​ក្នុង​ក្រុម\n"
-
-msgid "Transfer was closed."
-msgstr "កា​រផ្ទេរ​ត្រូវ​បាន​បិទ ។"
-
-msgid "Failed to open in-band bytestream"
-msgstr "បាន​បរាជ័យ​ក្នុង​ការ​បើក​នៅ​ក្នុង​ស្ទ្រីម​បៃ​ក្នុងក្រុម"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "មិនអាច​ផ្ញើសារ​ទៅ​កាន់ %s អ្នក​ប្រើ​មិន​គាំទ្រ​កា​រផ្ទេរ​ឯកសារ​ទេ"
@@ -5136,25 +5127,6 @@ msgstr "កំហុស​ក្នុងកា​របន្ថែម​មិ
 msgid "The username specified does not exist."
 msgstr "មិនមាន​ឈ្មោះ​​អ្នក​ប្រើ​ដែល​បាន​បញ្ជាក់​ទេ ។"
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "បញ្ហា​ក្នុងការ​ធ្វើ​សមកាលកម្ម​បញ្ជីមិត្តភក្ដិ​នៅ​ក្នុង %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s នៅ​​ក្នុង​បញ្ជីមូលដ្ឋាន​ គឺ​នៅ​ក្នុងក្រុម \"%s\" ប៉ុន្តែ​មិននៅ​ក្នុង​បញ្ជី​ម៉ាស៊ីន​បម្រើ​ទេ ។ តើ​អ្នក​ចង់​"
-"បន្ថែមមិត្តភក្ដិ​នេះដែរឬទេ ?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s នៅ​ក្នុង​បញ្ជីមូលដ្ឋាន ប៉ុន្តែ​មិននៅ​ក្នុងបញ្ជី​ម៉ាស៊ីនបម្រើ​ទេ ។ តើ​អ្នកចង់​បន្ថែម​មិត្តភក្ដិ​នេះដែរឬទេ ?"
-
 msgid "Unable to parse message"
 msgstr "មិន​អាច​ញែក​សារ​បានទេ"
 
@@ -5325,6 +5297,25 @@ msgstr "មិន​ស្គាល់​កូដ​កំហុស %d"
 msgid "MSN Error: %s\n"
 msgstr "កំហុស MSN ៖ %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "បញ្ហា​ក្នុងការ​ធ្វើ​សមកាលកម្ម​បញ្ជីមិត្តភក្ដិ​នៅ​ក្នុង %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s នៅ​​ក្នុង​បញ្ជីមូលដ្ឋាន​ គឺ​នៅ​ក្នុងក្រុម \"%s\" ប៉ុន្តែ​មិននៅ​ក្នុង​បញ្ជី​ម៉ាស៊ីន​បម្រើ​ទេ ។ តើ​អ្នក​ចង់​"
+"បន្ថែមមិត្តភក្ដិ​នេះដែរឬទេ ?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s នៅ​ក្នុង​បញ្ជីមូលដ្ឋាន ប៉ុន្តែ​មិននៅ​ក្នុងបញ្ជី​ម៉ាស៊ីនបម្រើ​ទេ ។ តើ​អ្នកចង់​បន្ថែម​មិត្តភក្ដិ​នេះដែរឬទេ ?"
+
 msgid "Other Contacts"
 msgstr "ទំនាក់ទំនង​ផ្សេងៗ"
 
@@ -5374,11 +5365,53 @@ msgstr "ឈ្មោះ​មិត្តភក្ដិ MSN ថ្មី​រ�
 msgid "Set friendly name for %s."
 msgstr "កំណត់​ឈ្មោះ​មិត្តភក្តិ​សម្រាប់​ %s ។"
 
-msgid "Set your friendly name."
-msgstr "កំណត់​ឈ្មោះ​មិត្តភក្ដ​របស់​អ្នក ។"
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "កំណត់​​ឈ្មោះ​មិត្តភក្តិ..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "នេះជា​ឈ្មោះ​ដែល​មិត្តភក្ដិ MSN ផ្សេង​ទៀត​នឹង​ឃើញ​អ្នក ។"
+
+#, fuzzy
+msgid "This Location"
+msgstr "ទីតាំង"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "នេះជា​ឈ្មោះ​ដែល​មិត្តភក្ដិ MSN ផ្សេង​ទៀត​នឹង​ឃើញ​អ្នក ។"
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "ទីតាំង"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "អ្នក​បាន​ចុះហត្ថលេខា​ពី​ទីតាំង​ផ្សេង ។"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "អ្នក​បាន​ចុះហត្ថលេខា​ពី​ទីតាំង​ផ្សេង ។"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "អនុញ្ញាត​ការ​ចូល​ច្រើន​នាក់​ដំណាល​គ្នា"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "អនុញ្ញាត"
+
+msgid "Disallow"
+msgstr "មិន​អនុញ្ញាត"
 
 msgid "Set your home phone number."
 msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ផ្ទះ​របស់​អ្នក ។"
@@ -5398,12 +5431,6 @@ msgid ""
 msgstr ""
 "តើអ្នក​ចង់​អនុញ្ញាត ឬ​មិន​អនុញ្ញាត​មនុស្ស​នៅ​ក្នុង​បញ្ជីមិត្តភក្ដិ​របស់​អ្នក​ផ្ញើ​ឲ្យ​អ្នក​នូវ​ទំព័រ​ចល័ត​របស់ MSN ទៅកាន់​"
 "ទូរស័ព្ទ​ចល័ត​របស់​អ្នក ឬ​ឧបករណ៍​ចល័ត​ផ្សេងៗ ?"
-
-msgid "Allow"
-msgstr "អនុញ្ញាត"
-
-msgid "Disallow"
-msgstr "មិន​អនុញ្ញាត"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5465,6 +5492,10 @@ msgstr "ចំណង​ជើង​ការិយាល័យ"
 msgid "Set Friendly Name..."
 msgstr "កំណត់​​ឈ្មោះ​មិត្តភក្តិ..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "ជ្រើស​ទីតាំង..."
+
 msgid "Set Home Phone Number..."
 msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ផ្ទះ..."
 
@@ -5476,6 +5507,10 @@ msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ចល័ត...
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "បិទ/បើក​ឧបករណ៍​ចល័ត..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "អនុញ្ញាត/មិនអនុញ្ញាត​ទំព័រ​ចល័ត..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "អនុញ្ញាត/មិនអនុញ្ញាត​ទំព័រ​ចល័ត..."
@@ -5691,6 +5726,9 @@ msgstr "បង្ហាញ​សញ្ញាណ​អារម្មណ៍​ផ
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "មិនអាច​បង្កើត​ការតភ្ជាប់​បានទេ"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "ច្រាន​ចេញ ៖ ច្រានអ្នកប្រើ​ចេញ​ដើម្បី​ទទួល​បាន​ការ​ចាបអារម្មណ៍​របស់​ពួកគេ"
@@ -6828,11 +6866,20 @@ msgstr ""
 "អ្នក​កំពុង​ត្រូវ​បានតភ្ជាប់ និង​ផ្ដាច់​ញឹក​ញាប់​ណាស់ ។ រង់ចាំ​ដប់នាទី ហើយ​ព្យាយាម​ម្ដង​ទៀត ។ ប្រសិនបើ​អ្នក​បន្ត​"
 "ដើម្បី​ព្យាយាម អ្នកនឹង​ត្រូវ​រង់ចាំ​យូរ​បន្តិច ។"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "កំហុស​ក្នុងកា​រស្នើសុំ %s: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "មិន​អាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីនបម្រើ MXit បាន​ទេ ។ សូម​ពិនិត្យ​មើល​ការ​កំណត់​ម៉ាស៊ីន​បម្រើ​របស់​អ្នក ។"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6842,10 +6889,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL មិនអនុញ្ញាត​ឲ្យ​​​ផ្ទៀងផ្ទាត់​ឈ្មោះ​អេក្រង់​របស់​អ្នក​នៅ​ទីនេះ​ទេ"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "កំហុស​ក្នុងកា​រស្នើសុំ %s: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7155,6 +7198,11 @@ msgid ""
 msgstr ""
 "មិនអាចចាប់​ផ្តើម​​​ %s បានទេ​​ពីព្រោះ​ឈ្មោះ​អ្នក​ប្រើ​មិន​ត្រឹមត្រូវ ។ អ្នក​ប្រើ​ត្រូវ​តែ​មានអាសយដ្ឋាន​"
 "អ៊ីមែលត្រឹមត្រូវ​ ឬ​ចាប់ផ្ដើម​ដោយ​អក្សរ ហើយ​​មានតែ​អក្សរ លេខ និង​ចន្លោះ​មិនឃើញ ឬ​មាន​តែ​លេខ​ប៉ុណ្ណោះ ។"
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7655,6 +7703,10 @@ msgstr "បង្ហាញ​ការ​ផ្ទៀងផ្ទាត់​រ
 msgid "Search for Buddy by Email Address..."
 msgstr "ស្វែងរក​មិត្តភក្ដិ​តាម​អាសយដ្ឋាន​អ៊ីមែល..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "តម្រូវ​ឲ្យ​មានការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
 msgid "Use clientLogin"
 msgstr "ប្រើការ​​ចូល​ម៉ាស៊ីន​ភ្ញៀវ"
 
@@ -7851,7 +7903,7 @@ msgid "Personal Web Page"
 msgstr "ទំព័រ​បណ្ដាញ​ផ្ទាល់ខ្លួន"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "ព័ត៌មាន​បន្ថែម"
 
@@ -7879,17 +7931,29 @@ msgstr "សមាជិក​តាំង​ពី"
 msgid "Capabilities"
 msgstr "សមត្ថភាព"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "បង្ហាញ​លើ​បណ្ដាញ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "បង្ហាញ​លើ​បណ្ដាញ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "បង្ហាញ​នៅ​ក្រៅ​បណ្ដាញ"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "បង្ហាញ​នៅ​ក្រៅ​បណ្ដាញ"
@@ -12049,11 +12113,11 @@ msgstr "ក្រិក"
 msgid "Australian English"
 msgstr "​​​អង់គ្លេស​អូស្ត្រាលី"
 
-msgid "Canadian English"
-msgstr "​​​អង់គ្លេស​កាណាដា"
-
 msgid "British English"
 msgstr "​​​អង់គ្លេស អង់គ្លេស"
+
+msgid "Canadian English"
+msgstr "​​​អង់គ្លេស​កាណាដា"
 
 msgid "Esperanto"
 msgstr "អេស្ពេរ៉ាន់តូ\t"
@@ -12132,6 +12196,10 @@ msgstr "ឃឺដ"
 
 msgid "Lao"
 msgstr "ឡាវ"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "ស្វាហ៊ីលី"
 
 msgid "Macedonian"
 msgstr "​ម៉ាសេដូនី"
@@ -13737,6 +13805,9 @@ msgstr "កម្មវិធី​ជ្រើស​ស្ថានភាព"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "កំហុស​ដូច​ខាងក្រោម​បានកើតឡើង​​កំឡុង​ពេល​ផ្ទុក %s ៖ %s"
@@ -15165,6 +15236,22 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "កំហុស​មួយ​បានកើតឡើង​នៅ​លើ​កា​រផ្ទេរ​ស្ទ្រីមបៃ​ក្នុង​ក្រុម\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "កា​រផ្ទេរ​ត្រូវ​បាន​បិទ ។"
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "បាន​បរាជ័យ​ក្នុង​ការ​បើក​នៅ​ក្នុង​ស្ទ្រីម​បៃ​ក្នុងក្រុម"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "កំណត់​ឈ្មោះ​មិត្តភក្ដ​របស់​អ្នក ។"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "កំហុស​ក្នុងកា​រស្នើសុំ %s: %s"
 
 #~ msgid "Require SSL/TLS"
 #~ msgstr "ត្រូវការ SSL/TLS"

@@ -684,7 +684,7 @@ create_protocols_menu(const char *default_proto_id)
 	GdkPixbuf *pixbuf = NULL;
 	GtkSizeGroup *sg;
 	GList *p;
-	const char *gtalk_name = NULL;
+	const char *gtalk_name = NULL, *facebook_name = NULL;
 	int i;
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
@@ -693,8 +693,10 @@ create_protocols_menu(const char *default_proto_id)
 	gtk_widget_show(aop_menu->menu);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (purple_find_prpl("prpl-jabber"))
+	if (purple_find_prpl("prpl-jabber")) {
 		gtalk_name = _("Google Talk");
+		facebook_name = _("Facebook (XMPP)");
+	}
 
 	for (p = purple_plugins_get_protocols(), i = 0;
 		 p != NULL;
@@ -712,12 +714,31 @@ create_protocols_menu(const char *default_proto_id)
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
 				item = aop_menu_item_new(sg, pixbuf, gtalk_name, "prpl-jabber", "protocol"));
-			g_object_set_data(G_OBJECT(item), "fake", GINT_TO_POINTER(1));
+			g_object_set_data(G_OBJECT(item), "fakegoogle", GINT_TO_POINTER(1));
 
 			if (pixbuf)
 				g_object_unref(pixbuf);
 
 			gtalk_name = NULL;
+			i++;
+		}
+
+		if (facebook_name && strcmp(facebook_name, plugin->info->name) < 0) {
+			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                                  "16", "facebook.png", NULL);
+			GtkWidget *item;
+
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
+				item = aop_menu_item_new(sg, pixbuf, facebook_name, "prpl-jabber", "protocol"));
+			g_object_set_data(G_OBJECT(item), "fakefacebook", GINT_TO_POINTER(1));
+
+			if (pixbuf)
+				g_object_unref(pixbuf);
+
+			facebook_name = NULL;
 			i++;
 		}
 

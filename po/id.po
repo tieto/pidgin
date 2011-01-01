@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -4940,17 +4940,6 @@ msgstr "Ditendang oleh %s (%s)"
 msgid "Unknown Error in presence"
 msgstr "Kesalahan tidak dikenal hadir"
 
-#, fuzzy
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Kesalahan terjadi ketika membuka file."
-
-#, fuzzy
-msgid "Transfer was closed."
-msgstr "Transfer File Gagal"
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5323,26 +5312,6 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr "Nama layar yang ditentukan tidak valid."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Isu sinkronisasi daftar teman dalam %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s pada daftar lokal ada dalam kelompok \"%s\" Tetapi tidak pada daftar "
-"server. Apakah anda ingin teman ini ditambahkan?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s ada pada daftar lokal tetapi tidak pada daftar server. Apakah anda ingin "
-"teman ini ditambahkan?"
-
 msgid "Unable to parse message"
 msgstr "Tidak dapat mem-parse pesan"
 
@@ -5516,6 +5485,26 @@ msgstr "Kesalahan Kode Tidak Dikenal %d"
 msgid "MSN Error: %s\n"
 msgstr "Kesalahan MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Isu sinkronisasi daftar teman dalam %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s pada daftar lokal ada dalam kelompok \"%s\" Tetapi tidak pada daftar "
+"server. Apakah anda ingin teman ini ditambahkan?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s ada pada daftar lokal tetapi tidak pada daftar server. Apakah anda ingin "
+"teman ini ditambahkan?"
+
 #, fuzzy
 msgid "Other Contacts"
 msgstr "Kontak Pilihan"
@@ -5566,11 +5555,52 @@ msgstr "Nama bersahabat MSN anda terlalu panjang."
 msgid "Set friendly name for %s."
 msgstr "Atur nama bersahabat anda."
 
-msgid "Set your friendly name."
-msgstr "Atur nama bersahabat anda."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Atur Nama Bersahabat..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Ini adalah nama dengan yang mana teman-teman MSN anda melihat anda."
+
+#, fuzzy
+msgid "This Location"
+msgstr "Lokasi Pengguna"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "Ini adalah nama dengan yang mana teman-teman MSN anda melihat anda."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "Lokasi Pengguna"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "Anda telah bergabung dari lokasi yang berbeda."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "Anda telah bergabung dari lokasi yang berbeda."
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "Ijinkan"
+
+msgid "Disallow"
+msgstr "Tidak Mengijinkan"
 
 msgid "Set your home phone number."
 msgstr "Atur nomor telepon rumah anda."
@@ -5591,12 +5621,6 @@ msgstr ""
 "Apakah anda ingin mengijinkan atau sebaliknya orang-orang pada daftar teman "
 "anda untuk mengirim halaman MSN Mobile ke telpon seluler atau perangkat "
 "mobile anda lainnya?"
-
-msgid "Allow"
-msgstr "Ijinkan"
-
-msgid "Disallow"
-msgstr "Tidak Mengijinkan"
 
 #, fuzzy, c-format
 msgid "Blocked Text for %s"
@@ -5666,6 +5690,10 @@ msgstr "Judul Nada"
 msgid "Set Friendly Name..."
 msgstr "Atur Nama Bersahabat..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "Lokasi Pengguna"
+
 msgid "Set Home Phone Number..."
 msgstr "Atur Nomor Telepon Rumah..."
 
@@ -5677,6 +5705,10 @@ msgstr "Atur Nomor Telepon Seluler..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Aktifkan/Matikan Perangkat Mobile..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Aktifkan/Matikan Halaman Mobile..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Aktifkan/Matikan Halaman Mobile..."
@@ -5898,6 +5930,9 @@ msgstr "Tampilkan senyuman kustom"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr "Tidak dapat membuat sambungan"
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "sikut: sikut pengguna untuk mendapatkan perhatiannya"
@@ -7138,11 +7173,22 @@ msgstr ""
 "dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
 "lebih lama"
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, fuzzy, c-format
 msgid "Error requesting %s: %s"
 msgstr "Kesalahan dalam memohon token login"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"Tidak dapat menyambung ke server. Mohon masukkan alamat server ke mana anda "
+"ingin menyambung."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7151,10 +7197,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "Kesalahan dalam memohon token login"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7474,6 +7516,11 @@ msgstr ""
 "valid.  Nama layar harus merupakan email yang valid, atau dimulai dengan "
 "huruf dan mengandung hanya huruf, angka dan sepasi, atau mengandung hanya "
 "nomor."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -8020,6 +8067,10 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Cari Teman berdasarkan Alamat Email..."
 
 #, fuzzy
+msgid "Don't use encryption"
+msgstr "Memerlukan Otorisasi"
+
+#, fuzzy
 msgid "Use clientLogin"
 msgstr "Pengguna tidak sedang login"
 
@@ -8219,7 +8270,7 @@ msgid "Personal Web Page"
 msgstr "Situs Web Pribadi"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Informasi Tambahan"
 
@@ -8247,17 +8298,29 @@ msgstr "Anggota Sejak"
 msgid "Capabilities"
 msgstr "Kemampuan"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Tampak Online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "Tampak Online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Tampak Offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "Tampak Offline"
@@ -12659,11 +12722,11 @@ msgstr "Yunani"
 msgid "Australian English"
 msgstr "Inggris Australia"
 
-msgid "Canadian English"
-msgstr "Inggris Kanada"
-
 msgid "British English"
 msgstr "Inggris Britania"
+
+msgid "Canadian English"
+msgstr "Inggris Kanada"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12745,6 +12808,10 @@ msgstr "Kurdi"
 
 msgid "Lao"
 msgstr "Lao"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "Nihilist"
 
 msgid "Macedonian"
 msgstr "Makedonia"
@@ -14465,6 +14532,9 @@ msgstr "Status Teks"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Kesalahan tersebut terjadi saat memuat %s: %s"
@@ -15996,6 +16066,21 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#, fuzzy
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Kesalahan terjadi ketika membuka file."
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "Transfer File Gagal"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Atur nama bersahabat anda."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Kesalahan dalam memohon token login"
+
 #~ msgid "Require SSL/TLS"
 #~ msgstr "Memerlukan SSL/TLS"
 
@@ -16445,9 +16530,6 @@ msgstr ""
 
 #~ msgid "In-Band Registration"
 #~ msgstr "Pendaftaran Dalam-Pita"
-
-#~ msgid "User Location"
-#~ msgstr "Lokasi Pengguna"
 
 #~ msgid "User Avatar"
 #~ msgstr "Avatar Pengguna"

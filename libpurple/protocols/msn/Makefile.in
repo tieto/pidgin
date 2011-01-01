@@ -79,8 +79,8 @@ am__libmsn_la_SOURCES_DIST = cmdproc.c cmdproc.h command.c command.h \
 	slp.h slpcall.c slpcall.h slplink.c slplink.h slpmsg.c \
 	slpmsg.h slpmsg_part.c slpmsg_part.h soap.c soap.h state.c \
 	state.h sbconn.c sbconn.h switchboard.c switchboard.h table.c \
-	table.h transaction.c transaction.h user.c user.h userlist.c \
-	userlist.h xfer.c xfer.h msnutils.c msnutils.h
+	table.h tlv.c tlv.h transaction.c transaction.h user.c user.h \
+	userlist.c userlist.h xfer.c xfer.h msnutils.c msnutils.h
 am__objects_1 = libmsn_la-cmdproc.lo libmsn_la-command.lo \
 	libmsn_la-contact.lo libmsn_la-directconn.lo \
 	libmsn_la-error.lo libmsn_la-group.lo libmsn_la-history.lo \
@@ -91,7 +91,7 @@ am__objects_1 = libmsn_la-cmdproc.lo libmsn_la-command.lo \
 	libmsn_la-slp.lo libmsn_la-slpcall.lo libmsn_la-slplink.lo \
 	libmsn_la-slpmsg.lo libmsn_la-slpmsg_part.lo libmsn_la-soap.lo \
 	libmsn_la-state.lo libmsn_la-sbconn.lo \
-	libmsn_la-switchboard.lo libmsn_la-table.lo \
+	libmsn_la-switchboard.lo libmsn_la-table.lo libmsn_la-tlv.lo \
 	libmsn_la-transaction.lo libmsn_la-user.lo \
 	libmsn_la-userlist.lo libmsn_la-xfer.lo libmsn_la-msnutils.lo
 @STATIC_MSN_FALSE@am_libmsn_la_OBJECTS = $(am__objects_1)
@@ -443,6 +443,8 @@ MSNSOURCES = \
 	switchboard.h \
 	table.c \
 	table.h \
+	tlv.c \
+	tlv.h \
 	transaction.c \
 	transaction.h \
 	user.c \
@@ -582,6 +584,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-state.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-switchboard.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-table.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-tlv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-transaction.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-user.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmsn_la-userlist.Plo@am__quote@
@@ -834,6 +837,14 @@ libmsn_la-table.lo: table.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='table.c' object='libmsn_la-table.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -c -o libmsn_la-table.lo `test -f 'table.c' || echo '$(srcdir)/'`table.c
+
+libmsn_la-tlv.lo: tlv.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -MT libmsn_la-tlv.lo -MD -MP -MF $(DEPDIR)/libmsn_la-tlv.Tpo -c -o libmsn_la-tlv.lo `test -f 'tlv.c' || echo '$(srcdir)/'`tlv.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmsn_la-tlv.Tpo $(DEPDIR)/libmsn_la-tlv.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tlv.c' object='libmsn_la-tlv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -c -o libmsn_la-tlv.lo `test -f 'tlv.c' || echo '$(srcdir)/'`tlv.c
 
 libmsn_la-transaction.lo: transaction.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmsn_la_CFLAGS) $(CFLAGS) -MT libmsn_la-transaction.lo -MD -MP -MF $(DEPDIR)/libmsn_la-transaction.Tpo -c -o libmsn_la-transaction.lo `test -f 'transaction.c' || echo '$(srcdir)/'`transaction.c

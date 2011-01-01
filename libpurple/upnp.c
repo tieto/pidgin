@@ -162,9 +162,9 @@ fire_discovery_callbacks(gboolean success)
 	while(discovery_callbacks) {
 		gpointer data;
 		PurpleUPnPCallback cb = discovery_callbacks->data;
-		discovery_callbacks = g_slist_remove(discovery_callbacks, cb);
+		discovery_callbacks = g_slist_delete_link(discovery_callbacks, discovery_callbacks);
 		data = discovery_callbacks->data;
-		discovery_callbacks = g_slist_remove(discovery_callbacks, data);
+		discovery_callbacks = g_slist_delete_link(discovery_callbacks, discovery_callbacks);
 		cb(success, data);
 	}
 }
