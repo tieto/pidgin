@@ -1,3 +1,10 @@
+pidgin (2.7.9-1) unstable; urgency=medium
+
+  * Imported Upstream version 2.7.9 (Closes: #608331)
+    - fixes a potential DoS vulnerability in MSN protocol
+
+ -- Ari Pollak <ari@debian.org>  Sat, 01 Jan 2011 16:49:39 -0500
+
 pidgin (2.7.7-1) unstable; urgency=low
 
   * Imported Upstream version 2.7.7
