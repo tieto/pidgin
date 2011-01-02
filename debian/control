@@ -23,8 +23,6 @@ Package: libpurple0
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}, libsasl2-modules
 Recommends: ca-certificates, libpurple-bin
-Replaces: pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
-Conflicts: pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
 Suggests: ${shlibs:Suggests}
 Description: multi-protocol instant messaging library
  libpurple is a library intended to be used by programmers seeking
@@ -40,8 +38,6 @@ Description: multi-protocol instant messaging library
 Package: pidgin
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
-Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.4.0-1)
-Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.4.0-1)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests: gnome-panel (>= 2.1) | kdebase-workspace-bin | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
@@ -70,8 +66,6 @@ Package: pidgin-dev
 Section: devel
 Architecture: all
 Depends: ${misc:Depends}, pidgin (>= ${source:Upstream-Version}), pidgin (<< ${source:Upstream-Version}+1~), pkg-config, libpurple-dev, libgtk2.0-dev
-Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
-Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Suggests: doc-base
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
@@ -85,8 +79,6 @@ Priority: extra
 Section: debug
 Architecture: any
 Depends: ${misc:Depends}, pidgin (= ${binary:Version}) | finch (= ${binary:Version}) | libpurple0 (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
-Conflicts: gaim-dbg (<< 1:2.0.0+beta6-3)
-Replaces: gaim-dbg (<< 1:2.0.0+beta6-3)
 Description: Debugging symbols for Pidgin 
  This package includes the debugging symbols useful for debugging Pidgin
  and its plugins, contained in the pidgin package. The debugging symbols are
@@ -129,8 +121,6 @@ Package: libpurple-bin
 Section: net
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, libpurple0, python, python-dbus
-Replaces: pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
-Conflicts: pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
 Description: multi-protocol instant messaging library - extra utilities
  This package contains the utilities not included in the main libpurple0
  package. Currently included are: purple-remote, purple-send,
