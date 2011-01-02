@@ -57,8 +57,8 @@ Package: pidgin-data
 Architecture: all
 Depends: ${misc:Depends}
 Enhances: libpurple0, finch, pidgin
-Replaces: pidgin-facebookchat (<= 1.67.1-1)
-Breaks: pidgin-facebookchat (<= 1.67.1-1)
+Replaces: pidgin-facebookchat (<< 1.69-2)
+Breaks: pidgin-facebookchat (<< 1.69-2)
 Description: multi-protocol instant messaging client - data files
  This package contains architecture-independent supporting data files
  required for use with pidgin, such as documentation, icons, translations,
