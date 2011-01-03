@@ -231,6 +231,13 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	/* migrate the old pref (we should only care if the plugin is actually *used*) */
+	/*
+	 * TODO: We should eventually call purple_prefs_remove(PREFS_STRANGER_OLD)
+	 *       to clean up after ourselves, but we don't want to do it yet
+	 *       so that we don't break users who share a .purple directory
+	 *       between old libpurple clients and new libpurple clients.
+	 *                                             --Mark Doliner, 2011-01-03
+	 */
 	if(purple_prefs_get_bool(PREF_STRANGER_OLD))
 		purple_prefs_set_int(PREF_STRANGER, FT_REJECT);
 
