@@ -55,6 +55,15 @@ typedef struct {
 	guint32 base_id;
 } MsnP2Pv2Header;
 
+typedef struct {
+	guint8 		length;
+	guint8 		TF; 			/**< Type-First combination */
+	guint16 	package_num;
+	guint32 	session;
+	GSList 		tlv;
+	char 		*data;
+} MsnP2Pv2DataHeader;
+
 typedef enum
 {
 	OP_NONE		= 0x00, 		/**< None, Nothing required. */
