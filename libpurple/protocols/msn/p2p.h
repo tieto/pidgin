@@ -53,6 +53,8 @@ typedef struct {
 	guint8  opcode;
 	guint16 message_len;
 	guint32 base_id;
+	GSList 	*tlv;
+	char 	*data;
 } MsnP2Pv2Header;
 
 typedef struct {
@@ -60,7 +62,7 @@ typedef struct {
 	guint8 		TF; 			/**< Type-First combination */
 	guint16 	package_num;
 	guint32 	session;
-	GSList 		tlv;
+	GSList 		*tlv;
 	char 		*data;
 } MsnP2Pv2DataHeader;
 
