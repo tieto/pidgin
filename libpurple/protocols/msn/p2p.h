@@ -45,9 +45,6 @@ typedef struct {
 } MsnP2PHeader;
 #define P2P_PACKET_HEADER_SIZE (6 * 4 + 3 * 8)
 
-/* Used for DCs to store nonces */
-#define P2P_HEADER_ACK_ID_OFFSET (2*4 + 2*8 + 2*4)
-
 typedef struct {
 	guint8  header_len;
 	guint8  opcode;

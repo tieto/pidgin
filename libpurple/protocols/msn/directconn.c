@@ -27,6 +27,7 @@
 #include "debug.h"
 
 #include "msn.h"
+#include "msnutils.h"
 #include "directconn.h"
 
 #include "slp.h"
@@ -442,48 +443,43 @@ msn_dc_send_foo(MsnDirectConn *dc)
 	msn_dc_enqueue_packet(dc, p);
 }
 
-static void
-msn_dc_send_handshake_with_nonce(MsnDirectConn *dc, MsnDirectConnPacket *p)
-{
-	const gchar *h;
-
-	h = msn_p2p_header_to_wire(&dc->header);
-
-	memcpy(p->data, h, P2P_PACKET_HEADER_SIZE);
-
-	memcpy(p->data + P2P_HEADER_ACK_ID_OFFSET, dc->nonce, 16);
-
-	msn_dc_enqueue_packet(dc, p);
-}
+#if 0 /* We don't actually need this */
+typedef struct {
+	guint32 null;
+	guint32 id;
+	guint32 null[5];
+	guint32 flags;
+	guint8  nonce[16];
+} MsnDirectConnNoncePacket;
+#endif
+#define DC_NONCE_PACKET_SIZE (8 * 4 + 16)
+#define DC_NONCE_PACKET_NONCE (8 * 4)
 
 static void
 msn_dc_send_handshake(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
+	gchar *h;
 
-	p = msn_dc_new_packet(P2P_PACKET_HEADER_SIZE);
+	p = msn_dc_new_packet(DC_NONCE_PACKET_SIZE);
+	h = (gchar *)p->data;
 
-	dc->header.session_id = 0;
-	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
-	dc->header.offset = 0;
-	dc->header.total_size = 0;
-	dc->header.length = 0;
-	dc->header.flags = 0x100;
+	msn_push32le(h, 0); /* NUL */
 
-	msn_dc_send_handshake_with_nonce(dc, p);
-}
+	msn_push32le(h, dc->slpcall->slplink->slp_seq_id++);
 
-static void
-msn_dc_send_handshake_reply(MsnDirectConn *dc)
-{
-	MsnDirectConnPacket *p;
+	/* More NUL stuff */
+	msn_push64le(h, 0);
+	msn_push64le(h, 0);
+	msn_push32le(h, 0);
 
-	p = msn_dc_new_packet(P2P_PACKET_HEADER_SIZE);
+	/* Flags */
+	msn_push32le(h, P2P_DC_HANDSHAKE);
 
-	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
-	dc->header.length = 0;
+	/* The real Nonce, yay! */
+	memcpy(h, dc->nonce, 16);
 
-	msn_dc_send_handshake_with_nonce(dc, p);
+	msn_dc_enqueue_packet(dc, p);
 }
 
 static gboolean
@@ -492,10 +488,10 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 	guchar nonce[16];
 	gchar  nonce_hash[37];
 
-	if (packet_length != P2P_PACKET_HEADER_SIZE)
+	if (packet_length != DC_NONCE_PACKET_SIZE)
 		return FALSE;
 
-	memcpy(nonce, dc->in_buffer + 4 + P2P_HEADER_ACK_ID_OFFSET, 16);
+	memcpy(nonce, dc->in_buffer + 4 + DC_NONCE_PACKET_NONCE, 16);
 
 	if (dc->nonce_type == DC_NONCE_PLAIN) {
 		if (memcmp(dc->nonce, nonce, 16) == 0) {
@@ -580,7 +576,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		if (!msn_dc_verify_handshake(dc, packet_length))
 			return DC_PROCESS_FALLBACK;
 
-		msn_dc_send_handshake_reply(dc);
+		msn_dc_send_handshake(dc);
 		dc->state = DC_STATE_ESTABLISHED;
 
 		msn_slpcall_session_init(dc->slpcall);
@@ -595,12 +591,12 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
+		msn_dc_send_foo(dc);
 		break;
 
 	case DC_STATE_ESTABLISHED:
-
-		if (dc->header.length) {
-			part = msn_slpmsgpart_new_from_data(dc->in_buffer + 4, dc->header.length);
+		if (packet_length) {
+			part = msn_slpmsgpart_new_from_data(dc->in_buffer + 4, packet_length);
 			if (part) {
 				msn_slplink_process_msg(dc->slplink, part);
 				msn_slpmsgpart_unref(part);
@@ -675,15 +671,6 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		/* Wait for the whole packet to arrive */
 		if (dc->in_pos < 4 + packet_length)
 			return;
-
-		if (dc->state != DC_STATE_FOO && packet_length >= P2P_PACKET_HEADER_SIZE) {
-			MsnP2PHeader *context;
-
-			/* Skip packet size */
-			context = msn_p2p_header_from_wire(dc->in_buffer + 4);
-			memcpy(&dc->header, context, P2P_PACKET_HEADER_SIZE);
-			g_free(context);
-		}
 
 		switch (msn_dc_process_packet(dc, packet_length)) {
 		case DC_PROCESS_CLOSE:
