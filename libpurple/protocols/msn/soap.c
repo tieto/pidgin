@@ -141,8 +141,7 @@ msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
 {
 	MsnSoapRequest *req = item;
 
-	if (req->cb)
-		req->cb(req->message, NULL, req->cb_data);
+	req->cb(req->message, NULL, req->cb_data);
 
 	msn_soap_request_destroy(req, FALSE);
 }
@@ -269,6 +268,7 @@ msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 	MsnSoapCallback cb, gpointer cb_data)
 {
 	g_return_if_fail(message != NULL);
+	g_return_if_fail(cb != NULL);
 
 	msn_soap_message_send_internal(session, message, host, path, secure,
 		cb, cb_data, FALSE);
