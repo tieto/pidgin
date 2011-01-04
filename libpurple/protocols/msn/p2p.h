@@ -66,6 +66,14 @@ typedef struct {
 	char 		*data;
 } MsnP2Pv2DataHeader;
 
+typedef struct {
+	guint16 	protocol_version;
+	guint16 	implementation_id;
+	guint16 	version;
+	guint16 	reserved;
+	guint32 	caps;
+} PeerInfo;
+
 typedef enum
 {
 	OP_NONE		= 0x00, 		/**< None, Nothing required. */
@@ -93,6 +101,16 @@ typedef enum
 	TLP_LEN_ACK 		= 4,
 	TLP_LEN_NAK 		= 4
 } TLPLength;
+
+typedef enum
+{
+	PI_PVER 	= 0x0200,
+	PI_IMP_ID 	= 0,
+	PI_VER 		= 0x0e00,
+	PI_RES 		= 0,
+	PI_CAPS		= 0x0000010f
+} PeerInfoVal;
+
 
 #define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
 #define DLP_REMAINING_LEN 8
