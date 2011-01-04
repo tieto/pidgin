@@ -281,12 +281,13 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 	char *path;
 
 	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
-		msn_soap_message_send_internal(conn->session, conn->current_request->message,
-			host, path, conn->current_request->secure,
-			conn->current_request->cb, conn->current_request->cb_data, TRUE);
-
-		msn_soap_request_destroy(conn->current_request, TRUE);
+		MsnSoapRequest *req = conn->current_request;
 		conn->current_request = NULL;
+
+		msn_soap_message_send_internal(conn->session, req->message, host, path,
+			req->secure, req->cb, req->cb_data, TRUE);
+
+		msn_soap_request_destroy(req, TRUE);
 
 		g_free(host);
 		g_free(path);
