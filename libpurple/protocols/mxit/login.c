@@ -111,7 +111,7 @@ static void mxit_connected( struct MXitSession* session )
 	/* encrypt the user password */
 	session->encpwd = mxit_encrypt_password( session );
 
-	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN ); 
+	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 	if ( state == MXIT_STATE_LOGIN ) {
 		/* create and send login packet */
 		mxit_send_login( session );

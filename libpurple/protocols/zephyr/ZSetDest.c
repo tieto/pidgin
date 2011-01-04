@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -16,6 +16,6 @@ Code_t ZSetDestAddr(addr)
 	__HM_addr = *addr;
 
 	__HM_set = 1;
-	
+
 	return (ZERR_NONE);
 }

@@ -43,7 +43,7 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	if (slplink) 
+	if (slplink)
 		msn_slpmsg_set_slplink(slpmsg, slplink);
 	else
 		slpmsg->slplink = NULL;

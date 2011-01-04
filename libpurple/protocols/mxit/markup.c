@@ -1011,7 +1011,7 @@ static void inline_image_add( GString* mx, int id )
 {
 	PurpleStoredImage *image;
 	gconstpointer img_data;
-	gsize img_size;	
+	gsize img_size;
 	gchar* enc;
 
 	image = purple_imgstore_find_by_id( id );
@@ -1138,7 +1138,7 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 
 				/* skip to end of tag ('>') */
 				for ( i++; ( i < len ) && ( message[i] != '>' ) ; i++ );
-			
+
 				break;
 
 			case '*' :	/* MXit bold */

@@ -32,7 +32,7 @@ static guint signals[SIGS] = { 0 };
 static void
 gnt_clipboard_class_init(GntClipboardClass *klass)
 {
-	signals[SIG_CLIPBOARD] = 
+	signals[SIG_CLIPBOARD] =
 		g_signal_new("clipboard_changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,

@@ -1026,7 +1026,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS,
 	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
@@ -1293,7 +1293,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You required encryption in your account settings, but one of the servers doesn't support it."));
 			return 0;
-		} 
+		}
 	}
 
 	/*
@@ -3215,7 +3215,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_free(data, TRUE);
 
 	purple_debug_info("oscar", "sending direct IM %s using charset %i", msg->str, charset);
-	
+
 	peer_odc_send_im(conn, msg->str, msg->len, charset,
 			imflags & PURPLE_MESSAGE_AUTO_RESP);
 	g_string_free(msg, TRUE);
@@ -3582,7 +3582,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		}
 
 		itmsurl = purple_status_get_attr_string(status, "itmsurl");
-		
+
 		aim_srv_setextrainfo(od, TRUE, oscar_get_extended_status(gc), TRUE, status_text, itmsurl);
 		g_free(status_text);
 	}

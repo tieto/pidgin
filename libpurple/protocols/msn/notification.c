@@ -2216,7 +2216,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 /**************************************************************************
- * Dispatch server list management 
+ * Dispatch server list management
  **************************************************************************/
 typedef struct MsnAddRemoveListData {
 	MsnCmdProc *cmdproc;

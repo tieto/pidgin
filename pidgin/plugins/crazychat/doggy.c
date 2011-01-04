@@ -21,7 +21,7 @@
 #define IRIS_Y 1.67*SCALE//.015
 #define IRIS_Z 7*SCALE//.08
 #define PUP_X 0*SCALE
-#define PUP_Y 0*SCALE 
+#define PUP_Y 0*SCALE
 #define PUP_Z 1.2*SCALE //.028
 #define IRIS_SCALE .12*SCALE
 #define PUP_SCALE .11*SCALE
@@ -113,7 +113,7 @@ void dog_eyes(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL right_
 	glTranslatef(0, 0, EYES_Y);
 	glTranslatef(0, -EYES_Z,0);
 	draw_left_eye(f, left_open, max_eye);
-	draw_right_eye(f, right_open, max_eye);	
+	draw_right_eye(f, right_open, max_eye);
 	glPopMatrix();
 }
 
@@ -156,8 +156,8 @@ void dog_ears(FACE f, DIRECTION dir){
 }
 
 void draw_dog(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL right_open, GLfloat open, DIRECTION dir, OUTPUT_MODE mode){
-	int next_face; 
-	struct doggy_struct* dog;	
+	int next_face;
+	struct doggy_struct* dog;
 	f->crazy_count--;
 	if(f->crazy_count==0){
 		f->my_mode = mode;
@@ -178,7 +178,7 @@ void draw_dog(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL right_
 	glRotatef(-90, 1.0, 0.0, 0.0);
 	glRotatef(-yangle, 0.0, 0.0, -1.0);
 	glRotatef(-angle, 0, 1, 0);
-	dog_eyes(f, angle, yangle, left_open, right_open, dir);	
+	dog_eyes(f, angle, yangle, left_open, right_open, dir);
 	dog_ears(f, dir);
 	glmSetMat(f->materials, f->mat_indeces[HEAD]);
 	glCallList(dog->faces[dog->curr_face]);
@@ -201,10 +201,10 @@ void init_dog(FACE f){
 	f->name = strdup("dog");
 	f->draw_func = draw_dog;
 	dog = (struct doggy_struct*)f->char_struct;
-	
+
 	printf("\nReading models: ");
 	fflush(0);
-	
+
 	//initialize the draw lists
 	init_lists(&dog->faces, &dog->m_faces, NUM_DOGS, f->name, DOG_SCALE);
 	init_lists(&dog->lids, &dog->m_lids, NUM_DOG_LIDS, "lid", LID_SCALE);
@@ -215,7 +215,7 @@ void init_dog(FACE f){
 
 	printf("\n");
 	fflush(0);
-		
+
 	dog->curr_face = 0;
 	dog->curr_ear = 1;
 	dog->curr_left_lid = 9;

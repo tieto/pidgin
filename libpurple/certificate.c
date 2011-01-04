@@ -314,7 +314,7 @@ purple_certificate_check_signature_chain_with_failing(GList *chain,
 		uid = purple_certificate_get_unique_id(issuer);
 
 		ret = purple_certificate_get_times(issuer, &activation, &expiration);
-		if (!ret || now < activation || now > expiration) { 
+		if (!ret || now < activation || now > expiration) {
 			if (!ret)
 				purple_debug_error("certificate",
 						"...Failed to get validity times for certificate %s\n"
@@ -413,7 +413,7 @@ byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
 	return (array1->len == array2->len) &&
 		(0 == memcmp(array1->data, array2->data, array1->len));
 }
-	
+
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {

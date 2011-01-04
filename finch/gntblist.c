@@ -1807,7 +1807,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 			}
 		}
 	}
-	
+
 	tmp = purple_notify_user_info_get_text_with_newline(user_info, "<BR>");
 	purple_notify_user_info_destroy(user_info);
 
@@ -2066,7 +2066,7 @@ populate_buddylist(void)
 		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
 			(GCompareFunc)blist_node_compare_log);
 	}
-	
+
 	list = purple_get_blist();
 	node = purple_blist_get_root();
 	while (node)

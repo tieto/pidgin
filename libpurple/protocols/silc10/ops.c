@@ -124,7 +124,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 
 		if (channel)
 			silc_channel_message(client, conn, sender, channel,
-					     payload, key, 
+					     payload, key,
 					     SILC_MESSAGE_FLAG_UTF8, data,
 					     data_len);
 		else
@@ -165,11 +165,11 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		if (imgid) {
 			cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
 			g_snprintf(tmp, sizeof(tmp), "<IMG ID=\"%d\">", imgid);
-		  
+
 			if (channel)
 				serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)),
 				 		 sender->nickname ?
-				 		  sender->nickname : 
+				 		  sender->nickname :
 						 "<unknown>", cflags,
 						 tmp, time(NULL));
 			else
@@ -364,7 +364,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		memset(enc, 0, sizeof(enc));
 
 		if (!silc_mime_parse(message, message_len, NULL, 0,
-		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data, 
+		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data,
 		    &data_len))
 			return;
 

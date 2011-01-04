@@ -72,7 +72,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	}
 
 	/* Extract the footer */
-	if (body_len >= 0) 
+	if (body_len >= 0)
 		part->footer = msn_p2p_footer_from_wire(data);
 
 	return part;

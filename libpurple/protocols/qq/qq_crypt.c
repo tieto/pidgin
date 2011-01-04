@@ -24,7 +24,7 @@
  *
  * QQ encryption algorithm
  * Convert from ASM code provided by PerlOICQ
- * 
+ *
  * Puzzlebird, Nov-Dec 2002
  */
 
@@ -34,8 +34,8 @@ IN : 64  bits of data in v[0] - v[1].
 OUT: 64  bits of data in w[0] - w[1].
 KEY: 128 bits of key  in k[0] - k[3].
 
-delta is chosen to be the real part of 
-the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32. 
+delta is chosen to be the real part of
+the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 
 0x61C88647 is what we can track on the ASM codes.!!
 */
@@ -53,7 +53,7 @@ void show_binary(char *psztitle, const guint8 *const buffer, gint bytes)
 	for (i = 0; i < bytes; i += 16) {
 		/* length label */
 		printf("%07x: ", i);
-		
+
 		/* dump hex value */
 		for (j = 0; j < 16; j++) {
 			if (j == 8) {
@@ -64,10 +64,10 @@ void show_binary(char *psztitle, const guint8 *const buffer, gint bytes)
 			else
 				printf("   ");
 		}
-		
+
 		printf("  ");
-		
-		
+
+
 		/* dump ascii value */
 		for (j = 0; j < 16 && (i + j) < bytes; j++) {
 			ch = buffer[i + j] & 127;
@@ -87,21 +87,21 @@ void show_binary(char *psztitle, const guint8 *const buffer, gint bytes)
 #endif
 
 /********************************************************************
- * encryption 
+ * encryption
  *******************************************************************/
 
 /* Tiny Encryption Algorithm (TEA) */
 static inline void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
 	register guint32
-		y = g_ntohl(v[0]), 
-		 z = g_ntohl(v[1]), 
-		 a = g_ntohl(k[0]), 
-		 b = g_ntohl(k[1]), 
-		 c = g_ntohl(k[2]), 
-		 d = g_ntohl(k[3]), 
-		 n = 0x10, 
-		 sum = 0, 
+		y = g_ntohl(v[0]),
+		 z = g_ntohl(v[1]),
+		 a = g_ntohl(k[0]),
+		 b = g_ntohl(k[1]),
+		 c = g_ntohl(k[2]),
+		 d = g_ntohl(k[3]),
+		 n = 0x10,
+		 sum = 0,
 		 delta = 0x9E3779B9;	/*  0x9E3779B9 - 0x100000000 = -0x61C88647 */
 
 	while (n-- > 0) {
@@ -117,8 +117,8 @@ static inline void qq_encipher(guint32 *const v, const guint32 *const k, guint32
 /* it can be the real random seed function */
 /* override with number, convenient for debug */
 #ifdef DEBUG
-static gint crypt_rand(void) {	
-	return 0xdead; 
+static gint crypt_rand(void) {
+	return 0xdead;
 }
 #else
 #include <stdlib.h>
@@ -126,7 +126,7 @@ static gint crypt_rand(void) {
 #endif
 
 /* 64-bit blocks and some kind of feedback mode of operation */
-static inline void encrypt_out(guint8 *crypted, const gint crypted_len, const guint8 *key) 
+static inline void encrypt_out(guint8 *crypted, const gint crypted_len, const guint8 *key)
 {
 	/* ships in encipher */
 	guint32 plain32[2];
@@ -134,34 +134,34 @@ static inline void encrypt_out(guint8 *crypted, const gint crypted_len, const gu
 	guint32 key32[4];
 	guint32 crypted32[2];
 	guint32 c32_prev[2];
-	
+
 	guint8 *crypted_ptr;
 	gint count64;
-	
+
 	/* prepare at first */
 	crypted_ptr = crypted;
-	
+
 	memcpy(crypted32, crypted_ptr, sizeof(crypted32));
 	c32_prev[0] = crypted32[0]; c32_prev[1] = crypted32[1];
-	
+
 	p32_prev[0] = 0; p32_prev[1] = 0;
 	plain32[0] = crypted32[0] ^ p32_prev[0]; plain32[1] = crypted32[1] ^ p32_prev[1];
-	
+
 	g_memmove(key32, key, 16);
 	count64 = crypted_len / 8;
 	while (count64-- > 0){
 		/* encrypt it */
 		qq_encipher(plain32, key32, crypted32);
-		
+
 		crypted32[0] ^= p32_prev[0]; crypted32[1] ^= p32_prev[1];
-		
+
 		/* store curr 64 bits crypted */
 		g_memmove(crypted_ptr, crypted32, sizeof(crypted32));
-		
+
 		/* set prev */
 		p32_prev[0] = plain32[0]; p32_prev[1] = plain32[1];
 		c32_prev[0] = crypted32[0]; c32_prev[1] = crypted32[1];
-		
+
 		/* set next 64 bits want to crypt*/
 		if (count64 > 0) {
 			crypted_ptr += 8;
@@ -181,7 +181,7 @@ gint qq_encrypt(guint8* crypted, const guint8* const plain, const gint plain_len
 {
 	guint8 *crypted_ptr = crypted;		/* current position of dest */
 	gint pos, padding;
-	
+
 	padding = (plain_len + 10) % 8;
 	if (padding) {
 		padding = 8 - padding;
@@ -223,20 +223,20 @@ gint qq_encrypt(guint8* crypted, const guint8* const plain, const gint plain_len
 	return pos;
 }
 
-/******************************************************************** 
- * decryption 
+/********************************************************************
+ * decryption
  ********************************************************************/
 
 static inline void qq_decipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
 	register guint32
-		y = g_ntohl(v[0]), 
-		z = g_ntohl(v[1]), 
-		a = g_ntohl(k[0]), 
-		b = g_ntohl(k[1]), 
-		c = g_ntohl(k[2]), 
-		d = g_ntohl(k[3]), 
-		n = 0x10, 
+		y = g_ntohl(v[0]),
+		z = g_ntohl(v[1]),
+		a = g_ntohl(k[0]),
+		b = g_ntohl(k[1]),
+		c = g_ntohl(k[2]),
+		d = g_ntohl(k[3]),
+		n = 0x10,
 		sum = 0xE3779B90,	/* why this ? must be related with n value */
 		delta = 0x9E3779B9;
 
@@ -251,7 +251,7 @@ static inline void qq_decipher(guint32 *const v, const guint32 *const k, guint32
 	w[1] = g_htonl(z);
 }
 
-static inline gint decrypt_out(guint8 *dest, gint crypted_len, const guint8* const key) 
+static inline gint decrypt_out(guint8 *dest, gint crypted_len, const guint8* const key)
 {
 	gint plain_len;
 	guint32 key32[4];
@@ -280,7 +280,7 @@ static inline gint decrypt_out(guint8 *dest, gint crypted_len, const guint8* con
 	if( plain_len < 0 )	{
 		return -2;
 	}
-	
+
 	count64 = crypted_len / 8;
 	while (--count64 > 0){
 		c32_prev[0] = crypted32[0]; c32_prev[1] = crypted32[1];
@@ -290,7 +290,7 @@ static inline gint decrypt_out(guint8 *dest, gint crypted_len, const guint8* con
 		p32_prev[0] ^= crypted32[0]; p32_prev[1] ^= crypted32[1];
 
 		qq_decipher(p32_prev, key32, p32_prev);
-		
+
 		plain32[0] = p32_prev[0] ^ c32_prev[0]; plain32[1] = p32_prev[1] ^ c32_prev[1];
 		memcpy(crypted_ptr, plain32, sizeof(plain32));
 	}
@@ -306,7 +306,7 @@ gint qq_decrypt(guint8 *plain, const guint8* const crypted, const gint crypted_l
 	gint pos;
 
 	/* at least 16 bytes and %8 == 0 */
-	if ((crypted_len % 8) || (crypted_len < 16)) { 
+	if ((crypted_len % 8) || (crypted_len < 16)) {
 		return -1;
 	}
 

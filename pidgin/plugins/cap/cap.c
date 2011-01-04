@@ -93,7 +93,7 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 	}
 	sqlite3_free(sql);
 
-	
+
 	if(strcmp(purple_status_get_id(get_status_for(buddy)), "offline") == 0) {
 		/* This is kind of stupid, change it. */
 		if(prediction == 1.0f)
@@ -152,7 +152,7 @@ insert_cap_msg_count_success(const char *buddy_name, const char *account, const 
 	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
-	
+
 	rc = sqlite3_step(stmt);
 
 	if(rc == SQLITE_DONE) {
@@ -189,7 +189,7 @@ insert_cap_status_count_success(const char *buddy_name, const char *account, con
 	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
-	
+
 	rc = sqlite3_step(stmt);
 
 	if(rc == SQLITE_DONE) {
@@ -226,7 +226,7 @@ insert_cap_msg_count_failed(const char *buddy_name, const char *account, const c
 	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
-	
+
 	rc = sqlite3_step(stmt);
 
 	if(rc == SQLITE_DONE) {
@@ -263,7 +263,7 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
-	
+
 	rc = sqlite3_step(stmt);
 
 	if(rc == SQLITE_DONE) {
@@ -296,7 +296,7 @@ static void insert_cap_success(CapStatistics *stats) {
 		purple_status_get_id(get_status_for(stats->buddy));
 	struct tm *current_time;
 	int minute;
-	
+
 	if(stats->last_message == -1) {
 		time_t now = time(NULL);
 		current_time = localtime(&now);
@@ -306,7 +306,7 @@ static void insert_cap_success(CapStatistics *stats) {
 	minute = current_time->tm_min + current_time->tm_hour * 60;
 
 	insert_cap_msg_count_success(buddy_name, account_id, protocol_id, minute);
-	
+
 	insert_cap_status_count_success(buddy_name, account_id, protocol_id, status_id);
 
 	stats->last_message = -1;
@@ -324,9 +324,9 @@ static void insert_cap_failure(CapStatistics *stats) {
 	int minute = current_time->tm_min + current_time->tm_hour * 60;
 
 	insert_cap_msg_count_failed(buddy_name, account_id, protocol_id, minute);
-	
+
 	insert_cap_status_count_failed(buddy_name, account_id, protocol_id, status_id);
-	
+
 	stats->last_message = -1;
 	stats->last_message_status_id = NULL;
 }
@@ -384,7 +384,7 @@ received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConve
 	stats = get_stats_for(buddy);
 
 	/* insert_word_count(sender, buddy_name, words); */
-	
+
 	/* If we are waiting for a response from a prior message
 	 * then cancel the timeout callback. */
 	if(stats->timeout_source_id != 0) {
@@ -581,7 +581,7 @@ static gboolean create_database_connection() {
 	g_free(path);
 	if(rc != SQLITE_OK)
 		return FALSE;
-	
+
 	/* Add tables here */
 	create_tables();
 	purple_debug_info("cap", "Database connection successfully made.\n");
@@ -652,7 +652,7 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 	 * and the keys are a buddies account id (PurpleBuddy.name).
 	 * keys/values are automatically deleted */
 	_buddy_stats = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, destroy_stats);
-	
+
 	/* ? - Can't remember at the moment
 	 */
 	_my_offline_times = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -668,7 +668,7 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 		return;
 
 	purple_debug_info("cap", "Adding plugin functionality.\n");
-	
+
 	/* Connect all the signals */
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg", plugin,
 			PURPLE_CALLBACK(sent_im_msg), NULL);
@@ -690,7 +690,7 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", plugin,
 			PURPLE_CALLBACK(signed_on), NULL);
-	
+
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off), NULL);
 
@@ -713,7 +713,7 @@ static void remove_plugin_functionality(PurplePlugin *plugin) {
 
 	/* If there are any timeouts waiting to be processed then cancel them */
 	g_hash_table_foreach(_buddy_stats, cancel_conversation_timeouts, NULL);
-	
+
 	/* Connect all the signals */
 	purple_signal_disconnect(purple_conversations_get_handle(), "sent-im-msg", plugin,
 			PURPLE_CALLBACK(sent_im_msg));
@@ -735,7 +735,7 @@ static void remove_plugin_functionality(PurplePlugin *plugin) {
 
 	purple_signal_disconnect(purple_connections_get_handle(), "signed-on", plugin,
 			PURPLE_CALLBACK(signed_on));
-	
+
 	purple_signal_disconnect(purple_connections_get_handle(), "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off));
 
@@ -751,13 +751,13 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 
 static gboolean plugin_unload(PurplePlugin *plugin) {
 	purple_debug_info("cap", "CAP plugin unloading\n");
-	
+
 	/* clean up memory allocations */
 	if(_buddy_stats) {
 		g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
 		g_hash_table_destroy(_buddy_stats);
 	}
-	 
+
 	 /* close database connection */
 	 destroy_database_connection();
 
@@ -856,13 +856,13 @@ static CapPrefsUI * create_cap_prefs_ui() {
 
 	g_signal_connect(G_OBJECT(ui->msg_difference_input), "value-changed",
 		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_msg_difference");
-	
+
 	g_signal_connect(G_OBJECT(ui->last_seen_input), "value-changed",
 		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_seen_difference");
-	
+
 	g_signal_connect(G_OBJECT(ui->threshold_input), "value-changed",
 		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/threshold");
-	
+
 	return ui;
 }
 

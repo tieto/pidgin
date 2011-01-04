@@ -39,7 +39,7 @@ yahoo_account_use_http_proxy(PurpleConnection *pc)
 	PurpleProxyInfo *ppi = NULL;
 	PurpleProxyType type = PURPLE_PROXY_NONE;
 	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
-	
+
 	if(proxy_ssl)
 		ppi = purple_proxy_get_setup(account);
 	else

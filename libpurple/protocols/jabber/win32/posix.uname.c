@@ -1,10 +1,10 @@
 /*
    posix.uname.c - version 1.1
-   Copyright (C) 1999, 2000 
+   Copyright (C) 1999, 2000
 	     Earnie Boyd and assigns
 
    Fills the utsname structure with the appropriate values.
-  
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
    by the Free Software Foundation; either version 2.1, or (at your option)
@@ -131,7 +131,7 @@ jabber_win32_uname( struct utsname *uts )
       strcpy( uts->machine, "unknown" );
       break;
   }
-  
+
   sLength = sizeof ( uts->nodename ) - 1;
   GetComputerNameA( uts->nodename, &sLength );
   return 1;

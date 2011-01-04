@@ -93,7 +93,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 								NULL, NULL, key, a->responder);
 			silc_ske_free_key_material(key);
 
-			
+
 			/* Open IM window */
 			convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 									client_entry->nickname, sg->account);
@@ -1739,7 +1739,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 	obj.mime = icon = silc_mime_encode(mime, &obj.mime_len);
 	if (obj.mime)
-		silc_client_attribute_add(client, conn, 
+		silc_client_attribute_add(client, conn,
 					  SILC_ATTRIBUTE_USER_ICON, &obj, sizeof(obj));
 
 	silc_free(icon);

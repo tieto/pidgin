@@ -1590,11 +1590,11 @@ void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 		g_object_get_data(G_OBJECT(toolbar), "attention");
 
 	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
-	
+
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
 	gtk_widget_set_sensitive(attention,
-		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM && 
+		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }
 

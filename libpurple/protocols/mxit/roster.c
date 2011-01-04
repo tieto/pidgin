@@ -238,7 +238,7 @@ const char* mxit_convert_mood_to_name( short id )
 /*========================================================================================================================
  * Subscription Types
  */
- 
+
 /*------------------------------------------------------------------------
  * Returns a Contact subscription type as a string.
  *
@@ -468,7 +468,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	if ( !contact )
 		return;
 
-	contact->presence = presence;	
+	contact->presence = presence;
 	contact->mood = mood;
 
 	/* validate mood */

@@ -334,12 +334,12 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	PurpleNotifyUserInfo *user_info;
 
 	if (!irc->whois.nick) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of %s for %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of %s for %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS"
 											     , args[1]);
 		return;
 	}
 	if (purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of %s for %s, expecting %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of %s for %s, expecting %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS"
 													 , args[1], irc->whois.nick);
 		return;
 	}
@@ -610,10 +610,10 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	} else if (!strcmp(name, "422")) {
 		/* in case there is no 251, and no MOTD set, finalize the connection.
 		 * (and clear the motd for good measure). */
-		
+
 		if (irc->motd)
 			g_string_free(irc->motd, TRUE);
-		
+
 		irc_connected(irc, args[0]);
 		return;
 	}

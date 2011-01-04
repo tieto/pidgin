@@ -591,7 +591,7 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
 			case CP_CHUNK_CLICK :			/* splash click */
 				{
 					struct splash_click_chunk* click = g_new0( struct splash_click_chunk, 1 );
-					
+
 					cr->resources = g_list_append( cr->resources, click );
 					break;
 				}

@@ -481,7 +481,7 @@ history_search(GntBindable *bind, GList *null)
 	GntEntry *entry = GNT_ENTRY(bind);
 	GList *iter;
 	const char *current;
-	
+
 	if (entry->history->prev && entry->search->needle)
 		current = entry->search->needle;
 	else

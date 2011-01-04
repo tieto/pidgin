@@ -3829,7 +3829,7 @@ static void
 gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-	
+
 	/* Create an add dialog */
 	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
 	pidgin_smiley_editor_set_shortcut(editor, image->filename);

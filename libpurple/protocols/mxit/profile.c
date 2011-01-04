@@ -107,7 +107,7 @@ gboolean validateDate( const char* bday )
  * @return			Date & Time in a display'able format.
  */
 static const char* datetime( gint64 msecs )
-{  
+{
     time_t secs = msecs / 1000;
 
     struct tm t;
@@ -160,7 +160,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 			purple_notify_user_info_add_pair( info, _( "Last Online" ), ( profile->lastonline == 0 ) ? _( "Unknown" ) : datetime( profile->lastonline ) );
 
 		/* mood */
-		if ( contact->mood != MXIT_MOOD_NONE )   
+		if ( contact->mood != MXIT_MOOD_NONE )
 			purple_notify_user_info_add_pair( info, _( "Mood" ), mxit_convert_mood_to_name( contact->mood ) );
 		else
 			purple_notify_user_info_add_pair( info, _( "Mood" ), _( "None" ) );

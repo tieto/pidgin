@@ -126,7 +126,7 @@ detect_mouse_action(const char *buffer)
 
 	if (!wm->cws->ordered || buffer[0] != 27)
 		return FALSE;
-	
+
 	buffer++;
 	if (strlen(buffer) < 5)
 		return FALSE;
@@ -177,7 +177,7 @@ detect_mouse_action(const char *buffer)
 
 	if (widget && gnt_wm_process_click(wm, event, x, y, widget))
 		return TRUE;
-	
+
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
 			!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		if (widget != wm->cws->ordered->data) {
@@ -438,7 +438,7 @@ init_wm(void)
 {
 	const char *name = gnt_style_get(GNT_STYLE_WM);
 	gpointer handle;
-	
+
 	if (name && *name) {
 		handle = g_module_open(name, G_MODULE_BIND_LAZY);
 		if (handle) {
@@ -459,7 +459,7 @@ void gnt_init()
 
 	if (channel)
 		return;
-	
+
 	locale = setlocale(LC_ALL, "");
 
 	setup_io();
@@ -554,7 +554,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	GntWidget *w;
 	if (!widget)
 		return FALSE;
-	
+
 	if (GNT_IS_MENU(widget))
 		return TRUE;
 

@@ -51,7 +51,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	gchar *utf8 = NULL;
 	const gchar *glib_encoding = NULL;
 	gchar *extracted_encoding = encoding_extract(encoding);
-	
+
 	if (extracted_encoding == NULL || *extracted_encoding == '\0') {
 		purple_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
 	} else if (!g_ascii_strcasecmp(extracted_encoding, "iso-8859-1")) {

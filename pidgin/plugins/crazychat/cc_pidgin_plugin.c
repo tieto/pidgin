@@ -169,7 +169,7 @@ static PurplePluginInfo info = {
 static void cc_init(struct crazychat *cc)
 {
 	/* initialize main crazychat thread */
-	
+
 	assert(cc);
 	memset(cc, 0, sizeof(*cc));
 
@@ -243,7 +243,7 @@ static gboolean receive_im_cb(PurpleAccount *account, char **sender,
 		cc_net_recv_ready(account, cc, *sender);
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -345,7 +345,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin)
 	button1 = gtk_radio_button_new_with_label(NULL, _("Enabled"));
 	gtk_box_pack_start(GTK_BOX(vbox), button1, TRUE, TRUE, 0);
 	gtk_widget_show(button1);
-	
+
 	group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button1));
 	button2 = gtk_radio_button_new_with_label(group, _("Disabled"));
 	gtk_box_pack_start(GTK_BOX(vbox), button2, TRUE, TRUE, 0);
@@ -367,9 +367,9 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin)
 	button = gtk_button_new_with_label("Calibrate");
 	gtk_box_pack_start(GTK_BOX(vbox), button, TRUE, FALSE, 0);
 	gtk_widget_show(button);
-	
+
 	gtk_widget_show(ret);
-	
+
 	return ret;
 }
 
@@ -451,7 +451,7 @@ static gboolean plugin_load(PurplePlugin *plugin)
 	}
 
 	Debug("CrazyChat plugin loaded.\n");
-	
+
 	return TRUE;
 }
 

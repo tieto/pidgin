@@ -678,7 +678,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 		if (dc->state != DC_STATE_FOO && packet_length >= P2P_PACKET_HEADER_SIZE) {
 			MsnP2PHeader *context;
-			
+
 			/* Skip packet size */
 			context = msn_p2p_header_from_wire(dc->in_buffer + 4);
 			memcpy(&dc->header, context, P2P_PACKET_HEADER_SIZE);

@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -31,12 +31,12 @@ Code_t ZFormatRawNoticeList(notice, list, nitems, buffer, ret_len)
 	size += strlen(list[i])+1;
 
     *ret_len = hdrlen+size;
-    
+
     if (!(*buffer = (char *) malloc((unsigned) *ret_len)))
 	return (ENOMEM);
 
     (void) memcpy(*buffer, header, hdrlen);
-    
+
     ptr = *buffer+hdrlen;
 
     for (;nitems;nitems--, list++) {

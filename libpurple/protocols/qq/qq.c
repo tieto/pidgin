@@ -57,7 +57,7 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_VERSION 		"0.3.2-p20" 
+#define OPENQ_VERSION 		"0.3.2-p20"
 
 static GList *server_list_build(gchar select)
 {

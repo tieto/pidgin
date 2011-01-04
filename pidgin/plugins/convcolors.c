@@ -82,7 +82,7 @@ static struct
 	PurpleMessageFlags flag;
 	char *prefix;
 	const char *text;
-} formats[] = 
+} formats[] =
 {
 	{PURPLE_MESSAGE_ERROR, PREF_ERROR, N_("Error Messages")},
 	{PURPLE_MESSAGE_NICK, PREF_NICK, N_("Highlighted Messages")},
@@ -393,7 +393,7 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info = 
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0,

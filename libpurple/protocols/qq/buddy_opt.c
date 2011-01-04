@@ -114,7 +114,7 @@ qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid)
 		purple_debug_error("QQ", "Can not find purple buddy of %u\n", uid);
 		return NULL;
 	}
-	
+
 	if ((bd = purple_buddy_get_protocol_data(buddy)) == NULL) {
 		purple_debug_error("QQ", "Can not find buddy data of %u\n", uid);
 		return NULL;

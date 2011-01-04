@@ -275,7 +275,7 @@ get_root_distance(GntTreeRow *row)
 	return get_root_distance(get_prev(row)) + 1;
 }
 
-/* Returns the distance between a and b. 
+/* Returns the distance between a and b.
  * If a is 'above' b, then the distance is positive */
 static int
 get_distance(GntTreeRow *a, GntTreeRow *b)
@@ -627,7 +627,7 @@ gnt_tree_draw(GntWidget *widget)
 	GntTree *tree = GNT_TREE(widget);
 
 	redraw_tree(tree);
-	
+
 	GNTDEBUG;
 }
 
@@ -1066,7 +1066,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			)
 		);
 
-	signals[SIG_SELECTION_CHANGED] = 
+	signals[SIG_SELECTION_CHANGED] =
 		g_signal_new("selection-changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1074,7 +1074,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
-	signals[SIG_SCROLLED] = 
+	signals[SIG_SCROLLED] =
 		g_signal_new("scrolled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1082,7 +1082,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__INT,
 					 G_TYPE_NONE, 1, G_TYPE_INT);
-	signals[SIG_TOGGLED] = 
+	signals[SIG_TOGGLED] =
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1090,7 +1090,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_COLLAPSED] = 
+	signals[SIG_COLLAPSED] =
 		g_signal_new("collapse-toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1384,7 +1384,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 			}
 		}
 
-		if (pr == NULL && parent)	
+		if (pr == NULL && parent)
 		{
 			pr = g_hash_table_lookup(tree->hash, parent);
 			if (pr)
@@ -1564,7 +1564,7 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 	GntTreeCol *col;
 
 	g_return_if_fail(colno < tree->ncol);
-	
+
 	row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
@@ -1601,7 +1601,7 @@ GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void 
 				while (r->next)
 					r = r->next;
 				bigbro = r->key;
-			} 
+			}
 		}
 	}
 	row = gnt_tree_add_row_after(tree, key, row, parent, bigbro);

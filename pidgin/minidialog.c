@@ -383,7 +383,7 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
-	
+
 	param_spec = g_param_spec_object("custom-icon", "custom-icon",
 		"Pixbuf to use as the dialog's icon",
 		GDK_TYPE_PIXBUF,

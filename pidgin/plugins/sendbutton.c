@@ -74,7 +74,7 @@ create_send_button_pidgin(PidginConversation *gtkconv)
 		                  GINT_TO_POINTER(signal_id));
 		input_buffer_changed(buf, send_button);
 	}
- 
+
 	g_object_set_data(G_OBJECT(gtkconv->lower_hbox), "send_button",
 	                  send_button);
 }
@@ -128,7 +128,7 @@ plugin_load(PurplePlugin *plugin)
 	 */
 
 	while (convs) {
-		
+
 		PurpleConversation *conv = (PurpleConversation *)convs->data;
 
 		/* Setup Send button */

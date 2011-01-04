@@ -657,7 +657,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	 * instead of a null terminated string.
 	 */
 	purple_signal_emit(_irc_plugin, "irc-receiving-text", gc, &input);
-	
+
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
 		irc_send(irc, msg);

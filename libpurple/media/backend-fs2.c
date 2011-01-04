@@ -305,7 +305,7 @@ purple_media_backend_fs2_set_property(GObject *object, guint prop_id,
 					G_CALLBACK(stream_info_cb),
 					PURPLE_MEDIA_BACKEND_FS2(object));
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -318,7 +318,7 @@ purple_media_backend_fs2_get_property(GObject *object, guint prop_id,
 {
 	PurpleMediaBackendFs2Private *priv;
 	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(object));
-	
+
 	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -328,7 +328,7 @@ purple_media_backend_fs2_get_property(GObject *object, guint prop_id,
 		case PROP_MEDIA:
 			g_value_set_object(value, priv->media);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1261,7 +1261,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 
 	if ((type_direction & FS_DIRECTION_SEND) == 0)
 		return TRUE;
- 
+
 	session_type = session_type_from_fs(
 			media_type, FS_DIRECTION_SEND);
 	src = purple_media_manager_get_element(
@@ -1329,7 +1329,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		srcpad = gst_element_get_request_pad(session->tee, "src%d");
 	}
 
-	purple_debug_info("backend-fs2", "connecting pad: %s\n", 
+	purple_debug_info("backend-fs2", "connecting pad: %s\n",
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
 			  ? "success" : "failure");
 	gst_element_set_locked_state(session->src, FALSE);
@@ -1582,7 +1582,7 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 {
 	GValue value;
 	GstStructure *turn_setup = gst_structure_new("relay-info",
-				"ip", G_TYPE_STRING, ip, 
+				"ip", G_TYPE_STRING, ip,
 				"port", G_TYPE_UINT, port,
 				"username", G_TYPE_STRING, username,
 				"password", G_TYPE_STRING, password,
@@ -1599,7 +1599,7 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 
 	return relay_info;
 }
-                        
+
 static gboolean
 create_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who,
@@ -1642,7 +1642,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	++_num_params;
 
 	if (stun_ip) {
-		purple_debug_info("backend-fs2", 
+		purple_debug_info("backend-fs2",
 			"Setting stun-ip on new stream: %s\n", stun_ip);
 
 		_params[_num_params].name = "stun-ip";
@@ -1668,11 +1668,11 @@ create_stream(PurpleMediaBackendFs2 *self,
 
 		/* should add TCP and perhaps TLS relaying options when these are
 		 supported by libnice using non-google mode */
-		
+
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";
-		g_value_init(&_params[_num_params].value, 
+		g_value_init(&_params[_num_params].value,
 			G_TYPE_VALUE_ARRAY);
 		g_value_set_boxed(&_params[_num_params].value,
 			relay_info);

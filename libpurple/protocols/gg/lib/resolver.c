@@ -356,17 +356,17 @@ static DWORD WINAPI gg_resolve_win32thread_thread(LPVOID arg)
 	struct in_addr a;
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() host: %s, fd: %i called\n", d->hostname, d->fd);
-	
+
 	if ((a.s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
 		/* W przypadku błędu gg_gethostbyname_real() zwróci -1
 					 * i nie zmieni &addr. Tam jest już INADDR_NONE,
 					 * więc nie musimy robić nic więcej. */
 		gg_gethostbyname_real(d->hostname, &a, 0);
 	}
-	
+
 	// if ((a.s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
 		// struct in_addr *hn;
-		
+
 		// if (!(hn = gg_gethostbyname(d->hostname)))
 			// a.s_addr = INADDR_NONE;
 		// else {
@@ -384,7 +384,7 @@ static DWORD WINAPI gg_resolve_win32thread_thread(LPVOID arg)
 	free(d);
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() done\n");
-	
+
 	return 0;
 }
 
@@ -397,7 +397,7 @@ static int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname
 	int pipes[2], new_errno;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_resolve_win32thread(%p, %p, \"%s\");\n", fd, resolver, hostname);
-	
+
 	if (!resolver || !fd || !hostname) {
 		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() invalid arguments\n");
 		errno = EFAULT;
@@ -438,7 +438,7 @@ static int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname
 	*fd = pipes[0];
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() done\n");
-	
+
 	return 0;
 
 cleanup:
@@ -461,7 +461,7 @@ static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
 	struct gg_resolve_win32thread_data *data;
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() force: %i called\n", force);
-	
+
 	if (priv_data == NULL || *priv_data == NULL)
 		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_cleanup() priv_data: NULL\n");
 		return;
@@ -494,7 +494,7 @@ static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
  *
  * Połączenia asynchroniczne nie mogą blokować procesu w trakcie rozwiązywania
  * nazwy serwera. W tym celu tworzony jest potok, nowy proces i dopiero w nim
- * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu 
+ * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu
  * zapisuje się w strukturze sieci i czeka na dane w postaci struktury
  * \c in_addr. Jeśli nie znaleziono nazwy, zwracana jest \c INADDR_NONE.
  *
@@ -673,7 +673,7 @@ static void *gg_resolver_pthread_thread(void *arg)
 
 	if (write(data->wfd, &addr, sizeof(addr)) == sizeof(addr))
 		pthread_exit(NULL);
-	else 
+	else
 		pthread_exit((void*) -1);
 
 	return NULL;	/* żeby kompilator nie marudził */
@@ -989,15 +989,15 @@ int gg_global_set_resolver(gg_resolver_t type)
 			gg_global_resolver_cleanup = gg_resolver_fork_cleanup;
 			return 0;
 #endif
-			
+
 #ifdef _WIN32
 		case GG_RESOLVER_WIN32:
 			gg_global_resolver_type = type;
 			gg_global_resolver_start = gg_resolve_win32thread;
 			gg_global_resolver_cleanup = gg_resolve_win32thread_cleanup;
 			return 0;
-#endif			
-		
+#endif
+
 #ifdef GG_CONFIG_HAVE_PTHREAD
 		case GG_RESOLVER_PTHREAD:
 			gg_global_resolver_type = type;
@@ -1038,7 +1038,7 @@ gg_resolver_t gg_global_get_resolver(void)
  *  - \c "int force" &mdash; flaga mówiąca o tym, że zasoby są zwalniane przed zakończeniem rozwiązywania nazwy, np. z powodu zamknięcia sesji.
  *
  * Własny kod rozwiązywania nazwy powinien stworzyć potok, parę gniazd lub
- * inny deskryptor pozwalający na co najmniej jednostronną komunikację i 
+ * inny deskryptor pozwalający na co najmniej jednostronną komunikację i
  * przekazać go w parametrze \c fd. Po zakończeniu rozwiązywania nazwy,
  * powinien wysłać otrzymany adres IP w postaci sieciowej (big-endian) do
  * deskryptora. Jeśli rozwiązywanie nazwy się nie powiedzie, należy wysłać

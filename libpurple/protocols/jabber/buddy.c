@@ -2305,17 +2305,17 @@ jabber_resource_get_identity_category_type(const JabberBuddyResource *jbr,
 	const gchar *category)
 {
 	const GList *iter = NULL;
-	
+
 	if (jbr->caps.info) {
 		for (iter = jbr->caps.info->identities ; iter ; iter = g_list_next(iter)) {
-			const JabberIdentity *identity = 
+			const JabberIdentity *identity =
 				(JabberIdentity *) iter->data;
-		
+
 			if (strcmp(identity->category, category) == 0) {
 				return identity->type;
 			}
 		}
 	}
-		
+
 	return NULL;
 }

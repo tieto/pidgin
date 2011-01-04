@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -18,13 +18,13 @@ Code_t ZGetLocations(ZLocations_t *location, int *numlocs);
 Code_t ZGetLocations(ZLocations_t *location, int *numlocs)
 {
     int i;
-	
+
     if (!__locate_list)
 	return (ZERR_NOLOCATIONS);
 
     if (__locate_next == __locate_num)
 	return (ZERR_NOMORELOCS);
-	
+
     for (i=0;i<min(*numlocs, __locate_num-__locate_next);i++)
 	location[i] = __locate_list[i+__locate_next];
 
@@ -32,6 +32,6 @@ Code_t ZGetLocations(ZLocations_t *location, int *numlocs)
 	*numlocs = __locate_num-__locate_next;
 
     __locate_next += *numlocs;
-	
+
     return (ZERR_NONE);
 }

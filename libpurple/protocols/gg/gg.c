@@ -215,7 +215,7 @@ static void ggp_action_buddylist_put(PurplePluginAction *action)
 	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
 
 	purple_debug_info("gg", "Uploading...\n");
-	
+
 	if (buddylist == NULL)
 		return;
 
@@ -1729,7 +1729,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				gc->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
 							  ggp_callback_recv, gc);
-				
+
 				ggp_buddylist_send(gc);
 				purple_connection_update_progress(gc, _("Connected"), 1, 2);
 				purple_connection_set_state(gc, PURPLE_CONNECTED);
@@ -1844,7 +1844,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 	types = g_list_append(types, type);
 
  	/*
-	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because 
+	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because
 	 * libpurple can't support Chatty status) and Nie przeszkadzac
 	 */
 	type = purple_status_type_new_with_attrs(
@@ -1852,7 +1852,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
-	
+
 	/*
 	 * This status is necessary to display guys who are blocking *us*.
 	 */
@@ -1956,7 +1956,7 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->encoding = GG_ENCODING_UTF8;
 	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC);
-	
+
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
@@ -1984,7 +1984,7 @@ static void ggp_login(PurpleAccount *account)
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
 	info->session = gg_login(glp);
-	purple_connection_update_progress(gc, _("Connecting"), 0, 2); 			
+	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
 	if (info->session == NULL) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -2131,7 +2131,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	tmp = charset_convert(plain, "UTF-8", "CP1250");
 	*/
 	tmp = g_strdup_printf("%s", plain);
-	
+
 	if (tmp && (format_length - sizeof(struct gg_msg_richtext))) {
 		if(gg_send_message_richtext(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who), (unsigned char *)tmp, format, format_length) < 0) {
 			ret = -1;

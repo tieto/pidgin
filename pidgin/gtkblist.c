@@ -968,7 +968,7 @@ pidgin_blist_joinchat_is_showable()
 
 static GtkWidget *
 make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
-	const char *title, const char *window_role, const char *label_text, 
+	const char *title, const char *window_role, const char *label_text,
 	GCallback callback_func, PurpleFilterAccountFunc filter_func,
 	GCallback response_cb)
 {
@@ -1510,7 +1510,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	}
 	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
-	
+
 #ifdef USE_VV
 	if (prpl_info && prpl_info->get_media_caps) {
 		PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -1531,9 +1531,9 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
 		}
 	}
-	
+
 #endif
-	
+
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
@@ -3461,13 +3461,13 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		}
 	}
 }
-	
+
 static void
 global_moods_for_each(gpointer key, gpointer value, gpointer user_data)
 {
 	GList **out_moods = (GList **) user_data;
 	PurpleMood *mood = (PurpleMood *) value;
-	
+
 	*out_moods = g_list_append(*out_moods, mood);
 }
 
@@ -3483,7 +3483,7 @@ get_global_moods(void)
 	GList *out_moods = NULL;
 	int i = 0;
 	int num_accounts = 0;
-	
+
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 		if (purple_account_is_connected(account)) {
@@ -3519,7 +3519,7 @@ get_global_moods(void)
 
 	while (out_moods) {
 		PurpleMood *mood = (PurpleMood *) out_moods->data;
-		int in_num_accounts = 
+		int in_num_accounts =
 			GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
 		if (in_num_accounts == num_accounts) {
@@ -3544,7 +3544,7 @@ get_global_mood_status(void)
 {
 	GList *accounts = purple_accounts_get_all_active();
 	const gchar *found_mood = NULL;
-	
+
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 
@@ -3579,7 +3579,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleMood *mood;
 	PurpleMood *global_moods = get_global_moods();
-	
+
 	if (account) {
 		PurplePresence *presence = purple_account_get_presence(account);
 		PurpleStatus *status = purple_presence_get_status(presence, "mood");
@@ -3653,7 +3653,7 @@ set_mood_show(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
-/* NOTE: Do not set any accelerator to Control+O. It is mapped by 
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by
    gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
 
 	/* Buddies menu */
@@ -4109,7 +4109,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 		status = purple_presence_get_status(p, "mood");
 		name = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
-		
+
 		if (!(name && *name))
 			return NULL;
 
@@ -4419,7 +4419,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		}
 	} else {
 		if (name_color) {
-			text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", 
+			text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
 				name_font, name_color, nametext);
 		} else {
 			text = g_strdup_printf("<span font_desc='%s'>%s</span>", name_font,
@@ -6604,7 +6604,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 					ihrs, imin);
 			} else {
 				idle = g_strdup_printf("<span font_desc='%s'>%d:%02d</span>",
-					theme_font_get_face_default(pair, ""), 
+					theme_font_get_face_default(pair, ""),
 					ihrs, imin);
 			}
 		}
@@ -6709,7 +6709,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 				tmp = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
 						font, fg_color, mark);
 			} else {
-				tmp = g_strdup_printf("<span font_desc='%s'>%s</span>", font, 
+				tmp = g_strdup_printf("<span font_desc='%s'>%s</span>", font,
 					mark);
 			}
 			g_free(mark);
@@ -8155,7 +8155,7 @@ pidgin_blist_update_accounts_menu(void)
 		gc = purple_account_get_connection(account);
 		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
 		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
-		
+
 		if (prpl_info &&
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {

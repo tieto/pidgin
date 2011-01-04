@@ -89,7 +89,7 @@ oscar_auth_dontgrant(struct name_data *data, char *msg)
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
 	aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
-	
+
 	oscar_free_name_data(data);
 }
 

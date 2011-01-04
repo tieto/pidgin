@@ -52,7 +52,7 @@ msn_p2p_header_to_wire(MsnP2PHeader *header)
 {
 	char *wire;
 	char *tmp;
-	
+
 	tmp = wire = g_new(char, P2P_PACKET_HEADER_SIZE);
 
 	msn_push32le(tmp, header->session_id);

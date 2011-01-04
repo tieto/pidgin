@@ -193,7 +193,7 @@ info_cert_cb(GntWidget *button, gpointer null)
 	subject = purple_certificate_get_subject_name(crt);
 
 	secondary = g_strdup_printf(_("Common name: %s\n\nSHA1 fingerprint:\n%s"), subject, fpr_sha1_asc);
-	
+
 	purple_notify_info(NULL,
 			   _("SSL Host Certificate"), primary, secondary);
 

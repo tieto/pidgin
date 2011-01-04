@@ -849,7 +849,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 
 		if (fed_from != from)
 			g_free(fed_from);
-	
+
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		PurpleBuddy *bud = purple_find_buddy(account, from);
 
@@ -1012,7 +1012,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 						break;
 				}
 				purple_debug_info("yahoo", "Message from federated (%d) buddy %s.\n", im->fed, im->fed_from);
-					
+
 			}
 			/* peer session id */
 			if (im && (pair->key == 11)) {
@@ -1217,7 +1217,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 						  13, 1,
 						  334, 0);
 	}
-		
+
 	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(add_req->id);
@@ -1314,7 +1314,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 	PurpleAccount *account;
 	GSList *l = pkt->hash;
 	const char *msg = NULL;
-	
+
 	account = purple_connection_get_account(gc);
 
 	/* Buddy authorized/declined our addition */
@@ -1724,7 +1724,7 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, yd->current_status, yd->session_id);
-	
+
 	if(yd->cookie_b) { /* send B cookie if we have it */
 		yahoo_packet_hash(pkt, "ssssssssss",
 					1, name,
@@ -1795,7 +1795,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
-	
+
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
@@ -1809,7 +1809,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 		int response_no = -1;
 		char *crumb = NULL;
 		char *crypt = NULL;
-		
+
 		if(g_strv_length(splits) > 1) {
 			yd->cookie_b = yahoo_auth16_get_cookie_b(splits[0]);
 			split_data = g_strsplit(splits[1], "\r\n", -1);
@@ -4701,7 +4701,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 			default:
 				break;
 		}
-		
+
 		yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
                   14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
                   5, fed_who, 1002, "1");
@@ -5106,7 +5106,7 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 		yahoo_packet_hash(pkt, "ssis", 1, purple_connection_get_display_name(gc), 7, who+4, 241, fed, 13, "2");
 	else
 		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
-	
+
 	yahoo_packet_send_and_free(pkt, yd);
 }
 

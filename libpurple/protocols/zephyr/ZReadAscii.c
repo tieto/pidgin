@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987, 1990 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -28,13 +28,13 @@ Code_t ZReadAscii(ptr, len, field, num)
 	    ptr++;
 	    if (--len < 0)
 		return ZERR_BADFIELD;
-	} 
+	}
 	if (ptr[0] == '0' && ptr[1] == 'x') {
 	    ptr += 2;
 	    len -= 2;
 	    if (len < 0)
 		return ZERR_BADFIELD;
-	} 
+	}
 	c1 = Z_cnvt_xtoi(ptr[0]);
 	if (c1 < 0)
 		return ZERR_BADFIELD;

@@ -555,7 +555,7 @@ static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
  * Request profile information for another MXit contact.
  *
  *  @param gc		The connection object
- *  @param who		The username of the contact.		
+ *  @param who		The username of the contact.
  */
 static void mxit_get_info( PurpleConnection *gc, const char *who )
 {

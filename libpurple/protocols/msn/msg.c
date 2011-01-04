@@ -347,7 +347,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	{
 		size_t siz;
 		char *body;
-		
+
 		body = msn_slpmsgpart_serialize(msg->part, &siz);
 
 		memcpy(n, body, siz);
@@ -639,7 +639,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			{
 				int i;
 				int bin_len;
-				
+
 				if (msg->part->footer->value == P2P_APPID_SESSION)
 					bin_len = P2P_PACKET_HEADER_SIZE;
 				else
@@ -822,7 +822,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 		chat = FALSE;
 
 	if (swboard->conv == NULL) {
-		if (chat) 
+		if (chat)
 			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
 		else {
 			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
@@ -845,7 +845,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 }
 
 /* TODO: Make these not be such duplicates of each other */
-static void 
+static void
 got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	FILE *f = NULL;
@@ -871,7 +871,7 @@ got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 	g_free(path);
 }
 
-static void 
+static void
 got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	FILE *f = NULL;
@@ -1133,7 +1133,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				"Unable to parse invite msg body.\n");
 		return;
 	}
-	
+
 	/*
 	 * GUID is NOT always present but Invitation-Command and Invitation-Cookie
 	 * are mandatory.
@@ -1150,7 +1150,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	} else if (!strcmp(command, "INVITE")) {
 		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
-	
+
 		if (guid == NULL) {
 			purple_debug_warning("msn",
 			                     "Invite msg missing Application-GUID.\n");
@@ -1189,7 +1189,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
 			                     guid, application ? application : "(null)");
 		}
-		
+
 		if (!accepted) {
 			MsnSwitchBoard *swboard = cmdproc->data;
 			char *text;

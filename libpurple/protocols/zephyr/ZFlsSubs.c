@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -13,7 +13,7 @@
 Code_t ZFlushSubscriptions()
 {
 	register int i;
-	
+
 	if (!__subscriptions_list)
 		return (ZERR_NONE);
 
@@ -22,7 +22,7 @@ Code_t ZFlushSubscriptions()
 		free(__subscriptions_list[i].zsub_classinst);
 		free(__subscriptions_list[i].zsub_recipient);
 	}
-	
+
 	free((char *)__subscriptions_list);
 
 	__subscriptions_list = 0;

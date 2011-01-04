@@ -140,7 +140,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = purple_media_manager_finalize;
 
 	purple_media_manager_signals[INIT_MEDIA] = g_signal_new ("init-media",
@@ -928,7 +928,7 @@ purple_media_manager_set_backend_type(PurpleMediaManager *manager,
 
 GType
 purple_media_manager_get_backend_type(PurpleMediaManager *manager)
-{	
+{
 #ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager),
 			PURPLE_MEDIA_CAPS_NONE);
@@ -1070,7 +1070,7 @@ purple_media_element_info_set_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			priv->create = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1083,7 +1083,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 {
 	PurpleMediaElementInfoPrivate *priv;
 	g_return_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(object));
-	
+
 	priv = PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -1099,7 +1099,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			g_value_set_pointer(value, priv->create);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1110,7 +1110,7 @@ static void
 purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
-	
+
 	gobject_class->finalize = purple_media_element_info_finalize;
 	gobject_class->set_property = purple_media_element_info_set_property;
 	gobject_class->get_property = purple_media_element_info_get_property;

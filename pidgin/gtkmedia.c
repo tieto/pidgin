@@ -373,7 +373,7 @@ pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 	PurpleMediaManager *manager = purple_media_get_manager(media);
 	GstElement *element = purple_media_manager_get_pipeline(manager);
 	gulong handler_id = g_signal_handler_find(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
-						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0, 
+						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0,
 						  NULL, G_CALLBACK(level_message_cb), gtkmedia);
 	if (handler_id)
 		g_signal_handler_disconnect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
@@ -638,7 +638,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	if (gtkmedia->priv->recv_widget == NULL
 			&& type & (PURPLE_MEDIA_RECV_VIDEO |
 			PURPLE_MEDIA_RECV_AUDIO)) {
-		recv_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);	
+		recv_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				recv_widget, TRUE, TRUE, 0);
 		gtk_widget_show(recv_widget);
@@ -794,7 +794,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_window_set_icon(GTK_WINDOW(gtkmedia), icon);
 		g_object_unref(icon);
 	}
-	
+
 	gtk_widget_show(gtkmedia->priv->display);
 }
 
@@ -918,8 +918,8 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(
 			pidgin_media_new(media, screenname));
 	PurpleBuddy *buddy = purple_find_buddy(account, screenname);
-	const gchar *alias = buddy ? 
-			purple_buddy_get_contact_alias(buddy) : screenname; 
+	const gchar *alias = buddy ?
+			purple_buddy_get_contact_alias(buddy) : screenname;
 	gtk_window_set_title(GTK_WINDOW(gtkmedia), alias);
 
 	if (purple_media_is_initiator(media, NULL, NULL) == TRUE)
@@ -1076,7 +1076,7 @@ pidgin_medias_init(void)
 	g_signal_connect(G_OBJECT(manager), "init-media",
 			 G_CALLBACK(pidgin_media_new_cb), NULL);
 
-	purple_media_manager_set_ui_caps(manager, 
+	purple_media_manager_set_ui_caps(manager,
 			PURPLE_MEDIA_CAPS_AUDIO |
 			PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION |
 			PURPLE_MEDIA_CAPS_VIDEO |
