@@ -68,7 +68,7 @@ xmlnode *jabber_data_get_xml_definition(const JabberData *data);
 /* returns an XHTML-IM "img" tag given a data instance */
 xmlnode *jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt);
 
-void jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who, 
+void jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
     gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
     gpointer userdata);
 

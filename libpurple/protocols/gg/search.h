@@ -141,7 +141,7 @@ ggp_search_start(PurpleConnection *gc, GGPSearchForm *form);
  * @param res    Public directory look-up result.
  * @param num    Id of the record.
  * @param fileld Name of the field.
- * 
+ *
  * @return UTF-8 encoded value of the field.
  */
 char *

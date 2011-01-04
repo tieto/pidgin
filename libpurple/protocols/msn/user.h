@@ -434,7 +434,7 @@ guint msn_user_get_extcaps(const MsnUser *user);
  *
  * @param user 		The user we are asking group membership.
  * @param group_id 	The group where the user may be in.
- * 
+ *
  * @return TRUE if user is part of the group. Otherwise, FALSE.
  */
 gboolean msn_user_is_in_group(MsnUser *user, const char * group_id);

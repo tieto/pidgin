@@ -30,7 +30,7 @@
 
 /* According to "UNIX Network Programming", all TCP/IP implementations
  * must support a minimum IP datagram size of 576 bytes, regardless of the MTU.
- * Assuming a 20 byte IP header and 8 byte UDP header, this leaves 548 bytes 
+ * Assuming a 20 byte IP header and 8 byte UDP header, this leaves 548 bytes
  * as a safe maximum size for UDP messages.
  *
  * TCP allows packet 64K

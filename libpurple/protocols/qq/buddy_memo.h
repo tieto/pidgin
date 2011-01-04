@@ -33,7 +33,7 @@
 
 /* clan command for memo */
 enum
-{ 
+{
 	QQ_BUDDY_MEMO_MODIFY = 0x01,	/* upload memo */
 	QQ_BUDDY_MEMO_REMOVE,		/* remove memo */
 	QQ_BUDDY_MEMO_GET		/* get memo */

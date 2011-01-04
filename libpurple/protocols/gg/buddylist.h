@@ -44,7 +44,7 @@ ggp_buddylist_load(PurpleConnection *gc, char *buddylist);
  * Get all the buddies in the current account.
  *
  * @param account Current account.
- * 
+ *
  * @return List of buddies.
  */
 char *

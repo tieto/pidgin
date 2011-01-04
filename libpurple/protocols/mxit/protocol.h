@@ -130,7 +130,7 @@
 #define		CP_CMD_MEDIA			0x001B					/* (27) get multimedia message */
 #define		CP_CMD_SPLASHCLICK		0x001F					/* (31) splash-screen clickthrough */
 #define		CP_CMD_STATUS			0x0020					/* (32) set shown presence & status */
-#define		CP_CMD_MSGEVENT			0x0023					/* (35) Raise message event */ 
+#define		CP_CMD_MSGEVENT			0x0023					/* (35) Raise message event */
 #define		CP_CMD_MOOD				0x0029					/* (41) set mood */
 #define		CP_CMD_KICK				0x002B					/* (43) login kick */
 #define		CP_CMD_GRPCHAT_CREATE	0x002C					/* (44) create new groupchat */

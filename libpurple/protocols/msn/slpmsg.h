@@ -125,7 +125,7 @@ MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img);
  * Create a new SLP message for data preparation.
  *
  * @param slpcall 	The slpcall that manages this message.
- * 
+ *
  * @return A new SlpMessage with data preparation info.
  */
 MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall);

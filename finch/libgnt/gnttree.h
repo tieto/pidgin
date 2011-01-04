@@ -62,9 +62,9 @@ struct _GntTree
 
 	GntTreeRow *top;        /* The topmost visible item */
 	GntTreeRow *bottom;     /* The bottommost visible item */
-	
+
 	GntTreeRow *root;       /* The root of all evil */
-	
+
 	GList *list;            /* List of GntTreeRow s */
 	GHashTable *hash;       /* We need this for quickly referencing the rows */
 	guint (*hash_func)(gconstpointer);
@@ -216,7 +216,7 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  * @return A list of texts of a row. The list and its data should be
  *         freed by the caller. The caller should make sure that if
  *         any column of the tree contains binary data, it's not freed.
- * @see gnt_tree_get_selection_text_list 
+ * @see gnt_tree_get_selection_text_list
  * @see gnt_tree_get_selection_text
  */
 GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
@@ -482,7 +482,7 @@ void gnt_tree_set_show_title(GntTree *tree, gboolean set);
  * @param func  The comparison function, which is used to compare
  *              the keys
  *
- * @see gnt_tree_sort_row 
+ * @see gnt_tree_sort_row
  */
 void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func);
 
@@ -535,7 +535,7 @@ void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer k
  * Set whether a column is visible or not.
  * This can be useful when, for example, we want to store some data
  * which we don't want/need to display.
- * 
+ *
  * @param tree  The tree
  * @param col   The index of the column
  * @param vis   If @c FALSE, the column will not be displayed
@@ -545,7 +545,7 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
 /**
  * Set whether a column can be resized to keep the same ratio when the
  * tree is resized.
- * 
+ *
  * @param tree  The tree
  * @param col   The index of the column
  * @param res   If @c FALSE, the column will not be resized when the

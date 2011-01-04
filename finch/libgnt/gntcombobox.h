@@ -91,7 +91,7 @@ void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text);
 
 /**
  * Remove an entry
- * 
+ *
  * @param box The GntComboBox
  * @param key The data to be removed
  */
