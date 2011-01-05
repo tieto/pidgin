@@ -381,7 +381,6 @@ msn_soap_process(MsnSoapConnection *conn)
 					/* something horribly wrong */
 					purple_ssl_close(conn->ssl);
 					conn->ssl = NULL;
-					msn_soap_connection_handle_next(conn);
 					handled = TRUE;
 					break;
 				} else if (conn->response_code == 503 && conn->session->login_step < MSN_LOGIN_STEP_END) {
