@@ -229,12 +229,6 @@ msn_soap_connection_handle_next(MsnSoapConnection *conn)
 	msn_soap_connection_sanitize(conn, FALSE);
 
 	conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
-
-	if (conn->current_request) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
-		msn_soap_connection_destroy_foreach_cb(req, conn);
-	}
 }
 
 static void
