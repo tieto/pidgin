@@ -591,7 +591,6 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
-		msn_dc_send_foo(dc);
 		break;
 
 	case DC_STATE_ESTABLISHED:
