@@ -418,16 +418,13 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 {
 	GtkTreeIter iter;
 	GtkTreePath *path = NULL;
-	GValue val;
 	PurpleBlistNode *node;
 	const char *text = NULL;
 
 	path = gtk_tree_path_new_from_string (path_str);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	switch (purple_blist_node_get_type(node)) {
 	case PURPLE_BLIST_CONTACT_NODE:
@@ -573,7 +570,6 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	GValue val;
 	PurpleBlistNode *node;
 	PurpleGroup *dest;
 
@@ -581,9 +577,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	path = gtk_tree_path_new_from_string (arg1);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", FALSE, NULL);
 
@@ -1160,12 +1154,8 @@ pidgin_blist_joinchat_show(void)
 static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
-
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &node, -1);
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
@@ -1186,12 +1176,8 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
-
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &node, -1);
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
@@ -1226,13 +1212,9 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	PurpleBlistNode *node;
 	GtkTreeIter iter;
-	GValue val;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy;
@@ -1595,7 +1577,6 @@ static gboolean
 gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter, parent;
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
@@ -1604,10 +1585,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
-			NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(event->state & GDK_CONTROL_MASK &&
 			(event->keyval == 'o' || event->keyval == 'O')) {
@@ -1948,7 +1926,6 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 {
 	GtkTreePath *path;
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	PurplePlugin *prpl = NULL;
@@ -1960,9 +1937,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 	gtknode = (struct _pidgin_blist_node *)node->ui_data;
 
 	/* Right click draws a context menu */
@@ -2021,7 +1996,6 @@ static gboolean
 pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	gboolean handled = FALSE;
@@ -2030,10 +2004,7 @@ pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	if (!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel),
-							 &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	/* Shift+F10 draws a context menu */
 	handled = pidgin_blist_show_context_menu(node, pidgin_treeview_popup_menu_position_func, tv, 0, GDK_CURRENT_TIME);
@@ -2274,13 +2245,10 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
 		PurpleBlistNode *node = NULL;
-		GValue val;
 		if(!sourcerow)
 			return;
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-		node = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		gtk_selection_data_set (data,
 					gdk_atom_intern ("PURPLE_BLIST_NODE", FALSE),
 					8, /* bits */
@@ -2297,7 +2265,6 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
 		PurpleConnection *gc;
-		GValue val;
 		GString *str;
 		const char *protocol;
 
@@ -2309,11 +2276,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 								sourcerow);
-		val.g_type = 0;
-		gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
-								 NODE_COLUMN, &val);
-
-		node = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		{
@@ -2387,15 +2350,12 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 			struct _pidgin_blist_node *gtknode;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 					&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-					&iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+					&iter, NODE_COLUMN, &node, -1);
 			gtknode = node->ui_data;
 
 			if (PURPLE_BLIST_NODE_IS_CONTACT(n)) {
@@ -2540,14 +2500,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		{
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-									  &iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+				&iter, NODE_COLUMN, &node, -1);
 
 			if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 			{
@@ -2602,14 +2559,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		{
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-									  &iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+				&iter, NODE_COLUMN, &node, -1);
 
 			if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 			{
@@ -2638,14 +2592,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			{
 				GtkTreeIter iter;
 				PurpleBlistNode *node;
-				GValue val;
 
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 							&iter, path);
-				val.g_type = 0;
-				gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-							  &iter, NODE_COLUMN, &val);
-				node = g_value_get_pointer(&val);
+				gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+					&iter, NODE_COLUMN, &node, -1);
 
 				if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
@@ -3210,16 +3161,13 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
-	GValue val;
 	struct _pidgin_blist_node *gtknode;
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2),
 		&path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(!PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		gtk_tree_path_free(path);
@@ -3323,7 +3271,6 @@ pidgin_blist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 {
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
-	GValue val;
 	gboolean editable = FALSE;
 
 	/* If we're editing a cell (e.g. alias editing), don't show the tooltip */
@@ -3337,9 +3284,8 @@ pidgin_blist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 	}
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
+
 	return pidgin_blist_create_tooltip_for_node(widget, node, w, h);
 }
 
@@ -7744,14 +7690,11 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		const char *this_name;
 		int cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			this_name = purple_contact_get_alias((PurpleContact*)n);
@@ -7774,7 +7717,6 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 				return;
 			}
 		}
-		g_value_unset(&val);
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
 
 	if(cur) {
@@ -7815,14 +7757,11 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		gint name_cmp;
 		gint presence_cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			this_buddy = purple_contact_get_priority_buddy((PurpleContact*)n);
@@ -7858,8 +7797,6 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 				return;
 			}
 		}
-
-		g_value_unset(&val);
 	}
 	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel),
 									&more_z));
@@ -7916,15 +7853,12 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		PurpleBlistNode *n2;
 		PurpleBuddy *buddy;
 		int cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 		this_log_activity_score = 0;
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
@@ -7952,7 +7886,6 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 				return;
 			}
 		}
-		g_value_unset(&val);
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
 
 	if (cur != NULL) {
