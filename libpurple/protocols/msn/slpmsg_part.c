@@ -82,6 +82,7 @@ static void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 {
 	g_free(part->header);
 	g_free(part->footer);
+	g_free(part->buffer);
 
 	g_free(part);
 
