@@ -501,17 +501,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 
 	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-	if (/* !slpcall->wasted && */ slpmsg->header->flags == P2P_DC_HANDSHAKE)
-	{
-#if 0
-		MsnDirectConn *directconn;
-
-		directconn = slplink->directconn;
-		if (!directconn->acked)
-			msn_directconn_send_handshake(directconn);
-#endif
-	}
-	else if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP ||
+	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP ||
 			msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		/* Release all the messages and send the ACK */
