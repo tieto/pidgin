@@ -12,6 +12,7 @@ version 2.7.10 (??/??/????):
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
 	  the conversation window.  (Ryan Flegel) (#13127)
+	* Fix a few memory leaks. (Nader Morshed) (#13162)
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
