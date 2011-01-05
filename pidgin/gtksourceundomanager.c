@@ -683,8 +683,10 @@ gtk_source_undo_action_free (GtkSourceUndoAction *action)
 		g_free (action->action.delete.text);
 	else if (action->action_type == GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR)
 		g_object_unref(action->action.insert_anchor.anchor);
-	else
+	else {
+		g_free (action);
 		g_return_if_reached ();
+	}
 
 	g_free (action);
 }
