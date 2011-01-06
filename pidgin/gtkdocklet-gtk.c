@@ -54,6 +54,7 @@ docklet_gtk_embed_timeout_cb(gpointer data)
 	 */
 	purple_debug_info("docklet", "failed to embed within timeout\n");
 	pidgin_docklet_remove();
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
 
 	embed_timeout = 0;
 	return FALSE;
@@ -255,6 +256,16 @@ void
 docklet_ui_init(void)
 {
 	pidgin_docklet_set_ui_ops(&ui_ops);
+
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/gtk");
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded")) {
+		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", TRUE);
+		purple_prefs_remove(PIDGIN_PREFS_ROOT "/docklet/x11/embedded");
+	} else {
+		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
+	}
+
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 		DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "pidgin" G_DIR_SEPARATOR_S "tray");
 }
+
