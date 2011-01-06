@@ -1142,15 +1142,6 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			slpcall->wasted = TRUE;
 		}
 	}
-#if 0
-	else if (slpmsg->header->flags == 0x100)
-	{
-		slpcall = slplink->directconn->initial_call;
-
-		if (slpcall != NULL)
-			msn_slpcall_session_init(slpcall);
-	}
-#endif
 	else if (slpmsg->header->flags == P2P_ACK)
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
