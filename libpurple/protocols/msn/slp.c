@@ -293,7 +293,7 @@ static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
 	gsize size = 0;
-	MsnFileContext header;
+	MsnFileContext context;
 	gchar *u8 = NULL;
 	gchar *ret;
 	gunichar2 *uni = NULL;
@@ -323,28 +323,28 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 
 	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
 
-	header.length = MSN_FILE_CONTEXT_SIZE;
-	header.version = 2; /* V.3 contains additional unnecessary data */
-	header.file_size = size;
+	context.length = MSN_FILE_CONTEXT_SIZE;
+	context.version = 2; /* V.3 contains additional unnecessary data */
+	context.file_size = size;
 	if (preview)
-		header.type = 0;
+		context.type = 0;
 	else
-		header.type = 1;
+		context.type = 1;
 
 	len = MIN(len, MAX_FILE_NAME_LEN);
 	for (currentChar = 0; currentChar < len; currentChar++) {
-		header.file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
+		context.file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
 	}
-	memset(&header.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
+	memset(&context.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
-	memset(&header.unknown1, 0, sizeof(header.unknown1));
-	header.unknown2 = 0xffffffff;
+	memset(&context.unknown1, 0, sizeof(context.unknown1));
+	context.unknown2 = 0xffffffff;
 
 	/* Mind the cast, as in, don't free it after! */
-	header.preview = (char *)preview;
-	header.preview_len = preview_len;
+	context.preview = (char *)preview;
+	context.preview_len = preview_len;
 
-	u8 = msn_file_context_to_wire(&header);
+	u8 = msn_file_context_to_wire(&context);
 	ret = purple_base64_encode((const guchar *)u8, MSN_FILE_CONTEXT_SIZE + preview_len);
 
 	g_free(uni);

@@ -56,7 +56,7 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 gchar *
-msn_file_context_to_wire(MsnFileContext *header);
+msn_file_context_to_wire(MsnFileContext *context);
 
 MsnFileContext *
 msn_file_context_from_wire(const char *buf, gsize len);
