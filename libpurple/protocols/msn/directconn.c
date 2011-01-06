@@ -539,13 +539,11 @@ void
 msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
 {
 	MsnDirectConnPacket *p;
-	guint32 length;
+	size_t length;
 
-	length = part->size + P2P_PACKET_HEADER_SIZE;
-	p = msn_dc_new_packet(length);
-
-	memcpy(p->data, part->header, P2P_PACKET_HEADER_SIZE);
-	memcpy(p->data + P2P_PACKET_HEADER_SIZE, part->buffer, part->size);
+	p = msn_dc_new_packet(0);
+	p->data = (guchar *)msn_slpmsgpart_serialize(part, &length);
+	p->length = length - P2P_PACKET_FOOTER_SIZE; /* DC doesn't need footer? */
 
 	p->sent_cb = msn_dc_send_packet_cb;
 	p->part = msn_slpmsgpart_ref(part);
