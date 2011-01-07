@@ -127,6 +127,7 @@
 #define		CP_CMD_TX_MSG			0x000A					/* (10) send new message */
 #define		CP_CMD_REGISTER			0x000B					/* (11) register */
 //#define	CP_CMD_PROFILE_SET		0x000C					/* (12) set profile (DEPRECATED see CP_CMD_EXTPROFILE_SET) */
+#define		CP_CMD_SUGGESTCONTACTS	0x000D					/* (13) suggest contacts */
 #define		CP_CMD_POLL				0x0011					/* (17) poll the HTTP server for an update */
 //#define	CP_CMD_PROFILE_GET		0x001A					/* (26) get profile (DEPRECATED see CP_CMD_EXTPROFILE_GET) */
 #define		CP_CMD_MEDIA			0x001B					/* (27) get multimedia message */
@@ -203,6 +204,12 @@
 
 /* profile flags */
 #define		CP_PROF_DOBLOCKED		0x40					/* date-of-birth cannot be changed */
+
+/* suggestion types */
+#define		CP_SUGGEST_ADDRESSBOOK	0						/* address book search */
+#define		CP_SUGGEST_FRIENDS		1						/* suggested friends */
+#define		CP_SUGGEST_SEARCH		2						/* free-text search */
+#define		CP_SUGGEST_MXITID		4						/* MXitId search */
 
 /* define this to enable protocol debugging (very verbose logging) */
 #define		DEBUG_PROTOCOL
@@ -294,6 +301,9 @@ void mxit_send_message( struct MXitSession* session, const char* to, const char*
 
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes );
 void mxit_send_extprofile_request( struct MXitSession* session, const char* username, unsigned int nr_attrib, const char* attribute[] );
+
+void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] );
+void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] );
 
 void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
 void mxit_send_remove( struct MXitSession* session, const char* username );

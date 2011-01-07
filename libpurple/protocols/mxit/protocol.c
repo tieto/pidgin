@@ -747,7 +747,7 @@ void mxit_send_message( struct MXitSession* session, const char* to, const char*
  *  @param session		The MXit session object
  *  @param username		Username who's profile is being requested (NULL = our own)
  *  @param nr_attribs	Number of attributes being requested
- *  @param attributes	The names of the attributes
+ *  @param attribute	The names of the attributes
  */
 void mxit_send_extprofile_request( struct MXitSession* session, const char* username, unsigned int nr_attrib, const char* attribute[] )
 {
@@ -757,7 +757,8 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%i",		/* "ms="mxitid\1nr_attributes */
-								(username ? username : ""), CP_FLD_TERM, nr_attrib);
+								( username ? username : "" ), CP_FLD_TERM, nr_attrib
+	);
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
@@ -801,6 +802,63 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 
 	/* freeup the memory */
 	g_strfreev( parts );
+}
+
+
+/*------------------------------------------------------------------------
+ * Send packet to request list of suggested friends.
+ *
+ *  @param session		The MXit session object
+ *  @param max			Maximum number of results to return
+ *  @param nr_attribs	Number of attributes being requested
+ *  @param attribute	The names of the attributes  
+ */
+void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] )
+{
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	unsigned int	i;
+
+	/* convert the packet to a byte stream */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
+								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+
+	/* add attributes */
+	for ( i = 0; i < nr_attrib; i++ )
+		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+
+	/* queue packet for transmission */
+	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
+}
+
+
+/*------------------------------------------------------------------------
+ * Send packet to perform a search for users.
+ *
+ *  @param session		The MXit session object
+ *  @param max			Maximum number of results to return
+ *  @param text			The search text
+ *  @param nr_attribs	Number of attributes being requested
+ *  @param attribute	The names of the attributes
+ */
+void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] )
+{
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	unsigned int	i;
+
+	/* convert the packet to a byte stream */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
+								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+
+	/* add attributes */
+	for ( i = 0; i < nr_attrib; i++ )
+		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+
+	/* queue packet for transmission */
+	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
 }
 
 
