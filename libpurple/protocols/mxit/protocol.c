@@ -37,6 +37,7 @@
 #include	"login.h"
 #include	"formcmds.h"
 #include	"http.h"
+#include	"voicevideo.h"
 
 
 #define		MXIT_MS_OFFSET		3
@@ -638,8 +639,15 @@ void mxit_send_register( struct MXitSession* session )
 	const char*			locale;
 	char				data[CP_MAX_PACKET];
 	int					datalen;
+	unsigned int		features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
+
+	/* Voice and Video supported */
+	if (mxit_audio_enabled() && mxit_video_enabled())
+		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
+	else if (mxit_audio_enabled())
+		features |= MXIT_CF_VOICE;
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
@@ -648,7 +656,7 @@ void mxit_send_register( struct MXitSession* session )
 								"%s%c%i%c%s%c%s",			/* dc\1features\1dialingcode\1locale */
 								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
-								session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale
+								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale
 	);
 
 	/* queue packet for transmission */
@@ -663,12 +671,19 @@ void mxit_send_register( struct MXitSession* session )
  */
 void mxit_send_login( struct MXitSession* session )
 {
-	const char*	splashId;
-	const char*	locale;
-	char		data[CP_MAX_PACKET];
-	int			datalen;
+	const char*		splashId;
+	const char*		locale;
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	unsigned int	features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
+
+	/* Voice and Video supported */
+	if (mxit_audio_enabled() && mxit_video_enabled())
+		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
+	else if (mxit_audio_enabled())
+		features |= MXIT_CF_VOICE;
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
@@ -677,7 +692,7 @@ void mxit_send_login( struct MXitSession* session )
 								"%s%c%s%c"					/* dialingcode\1locale\1 */
 								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
 								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, 1, CP_FLD_TERM,
-								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM,
+								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
 								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
@@ -1039,7 +1054,6 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
  *  @param nr_usernames	Number of users being invited
  *  @param usernames	The usernames of the users being invited
  */
-
 void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid, int nr_usernames, const char* usernames[] )
 {
 	char		data[CP_MAX_PACKET];
@@ -1322,6 +1336,10 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	if ( records[1]->fcount >= 9 )
 		session->uid = g_strdup( records[1]->fields[8]->data );
 
+	/* extract VoIP server (from protocol 6.2) */
+	if ( records[1]->fcount >= 11 )
+		g_strlcpy( session->voip_server, records[1]->fields[10]->data, sizeof( session->voip_server ) );
+
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
 		splash_display( session );
@@ -1567,13 +1585,13 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
  */
 static void mxit_parse_cmd_presence( struct MXitSession* session, struct record** records, int rcount )
 {
-	struct record*		rec;
 	int					i;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_presence (%i recs)\n", rcount );
 
 	for ( i = 0; i < rcount; i++ ) {
-		rec = records[i];
+		struct record*	rec		= records[i];
+		int				flags	= 0;
 
 		if ( rec->fcount < 6 ) {
 			purple_debug_error( MXIT_PLUGIN_ID, "BAD PRESENCE RECORD! %i fields\n", rec->fcount );
@@ -1582,12 +1600,15 @@ static void mxit_parse_cmd_presence( struct MXitSession* session, struct record*
 
 		/*
 		 * The format of the record is:
-		 * contactAddressN\1presenceN\1moodN\1customMoodN\1statusMsgN\1avatarIdN
+		 * contactAddressN \1 presenceN \1 moodN \1 customMoodN \1 statusMsgN \1 avatarIdN [ \1 flagsN ]
 		 */
 		mxit_strip_domain( rec->fields[0]->data );		/* contactAddress */
 
+		if ( rec->fcount >= 7 )		/* flags field is included */
+			flags = atoi( rec->fields[6]->data );
+
 		mxit_update_buddy_presence( session, rec->fields[0]->data, atoi( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
-				rec->fields[3]->data, rec->fields[4]->data );
+				rec->fields[3]->data, rec->fields[4]->data, flags );
 		mxit_update_buddy_avatar( session, rec->fields[0]->data, rec->fields[5]->data );
 	}
 }

@@ -37,6 +37,7 @@
 #include	"filexfer.h"
 #include	"actions.h"
 #include	"multimx.h"
+#include	"voicevideo.h"
 
 
 #ifdef	MXIT_LINK_CLICK
@@ -719,8 +720,8 @@ static PurplePluginProtocolInfo proto_info = {
 	NULL,					/* attention_types */
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
 	mxit_get_text_table,	/* get_account_text_table */
-	NULL,					/* initiate_media */
-	NULL,					/* get_media_caps */
+	mxit_media_initiate,	/* initiate_media */
+	mxit_media_caps,		/* get_media_caps */
 	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
 	NULL					/* get_public_alias */

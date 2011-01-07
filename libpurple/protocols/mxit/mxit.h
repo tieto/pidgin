@@ -111,7 +111,6 @@
 /* define this to enable the link clicking support */
 #define		MXIT_LINK_CLICK
 
-
 #ifdef		MXIT_LINK_CLICK
 #define		MXIT_LINK_PREFIX			"gopher://"
 #define		MXIT_LINK_KEY				"MXIT"
@@ -140,6 +139,9 @@ struct MXitSession {
 	time_t				http_last_poll;				/* the last time a poll has been sent */
 	guint				http_handler;				/* HTTP connection handler */
 	void*				http_out_req;				/* HTTP outstanding request */
+
+	/* other servers */
+	char				voip_server[HOST_NAME_MAX];	/* voice/video server */
 
 	/* client */
 	struct login_data*	logindata;

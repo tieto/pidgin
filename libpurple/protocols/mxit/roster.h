@@ -79,6 +79,11 @@
 #define		MXIT_CFLAG_FOCUS_SEND_BLANK	0x20000
 
 
+/* MXit presence flags */
+#define		MXIT_PFLAG_VOICE			0x1
+#define		MXIT_PFLAG_VIDEO			0x2
+
+
 /* Subscription types */
 #define		MXIT_SUBTYPE_BOTH			'B'
 #define		MXIT_SUBTYPE_PENDING		'P'
@@ -108,6 +113,7 @@ struct contact {
 	short		mood;								/* contact current mood */
 	int			flags;								/* contact flags */
 	short		presence;							/* presence state */
+	int			capabilities;						/* contact capabilities */
 	short		subtype;							/* subscription type */
 
 	char*		msg;								/* invite/rejection message */
@@ -129,7 +135,7 @@ const char* mxit_convert_mood_to_name( short id );
 
 /* MXit Protocol callbacks */
 void mxit_update_contact( struct MXitSession* session, struct contact* contact );
-void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg );
+void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg, int flags );
 void mxit_update_buddy_avatar( struct MXitSession* session, const char* username, const char* avatarId );
 void mxit_new_subscription( struct MXitSession* session, struct contact* contact );
 void mxit_update_blist( struct MXitSession* session );
