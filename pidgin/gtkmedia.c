@@ -932,10 +932,9 @@ static GstElement *
 create_default_video_src(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	GstElement *sendbin, *src, *videoscale, *capsfilter;
+	GstElement *sendbin, *src;
 	GstPad *pad;
 	GstPad *ghost;
-	GstCaps *caps;
 
 #ifdef _WIN32
 	/* autovideosrc doesn't pick ksvideosrc for some reason */
@@ -960,19 +959,10 @@ create_default_video_src(PurpleMedia *media,
 	}
 
 	sendbin = gst_bin_new("pidgindefaultvideosrc");
-	videoscale = gst_element_factory_make("videoscale", NULL);
-	capsfilter = gst_element_factory_make("capsfilter", NULL);
 
-	/* It was recommended to set the size <= 352x288 and framerate <= 20 */
-	caps = gst_caps_from_string("video/x-raw-yuv , width=[250,352] , "
-			"height=[200,288] , framerate=[1/1,20/1]");
-	g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+	gst_bin_add(GST_BIN(sendbin), src);
 
-	gst_bin_add_many(GST_BIN(sendbin), src,
-			videoscale, capsfilter, NULL);
-	gst_element_link_many(src, videoscale, capsfilter, NULL);
-
-	pad = gst_element_get_static_pad(capsfilter, "src");
+	pad = gst_element_get_static_pad(src, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_object_unref(pad);
 	gst_element_add_pad(sendbin, ghost);

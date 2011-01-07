@@ -81,6 +81,7 @@ struct _PurpleMediaManagerPrivate
 	GList *output_windows;
 	gulong next_output_window_id;
 	GType backend_type;
+	GstCaps *video_caps;
 
 	PurpleMediaElementInfo *video_src;
 	PurpleMediaElementInfo *video_sink;
@@ -191,6 +192,8 @@ purple_media_manager_finalize (GObject *media)
 			g_list_delete_link(priv->elements, priv->elements)) {
 		g_object_unref(priv->elements->data);
 	}
+	if (priv->video_caps)
+		gst_caps_unref(priv->video_caps);
 	parent_class->finalize(media);
 }
 #endif
@@ -414,6 +417,20 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 #endif
 
 #ifdef USE_GSTREAMER
+
+static GstCaps *
+purple_media_manager_get_video_caps(PurpleMediaManager *manager)
+{
+#ifdef USE_VV
+	if (manager->priv->video_caps == NULL)
+		manager->priv->video_caps = gst_caps_from_string("video/x-raw-yuv,"
+			"width=[250,352], height=[200,288], framerate=[1/1,20/1]");
+	return manager->priv->video_caps;
+#else
+	return NULL;
+#endif
+}
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -456,7 +473,21 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			bin = gst_bin_new(id);
 			tee = gst_element_factory_make("tee", "tee");
 			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
-			gst_element_link(ret, tee);
+
+			if (type & PURPLE_MEDIA_SEND_VIDEO) {
+				GstElement *videoscale;
+				GstElement *capsfilter;
+
+				videoscale = gst_element_factory_make("videoscale", NULL);
+				capsfilter = gst_element_factory_make("capsfilter", "prpl_video_caps");
+
+				g_object_set(G_OBJECT(capsfilter),
+					"caps", purple_media_manager_get_video_caps(manager), NULL);
+
+				gst_bin_add_many(GST_BIN(bin), videoscale, capsfilter, NULL);
+				gst_element_link_many(ret, videoscale, capsfilter, tee, NULL);
+			} else
+				gst_element_link(ret, tee);
 
 			/*
 			 * This shouldn't be necessary, but it stops it from
