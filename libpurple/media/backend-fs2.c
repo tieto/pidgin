@@ -126,6 +126,8 @@ struct _PurpleMediaBackendFs2Session
 	GstElement *src;
 	GstElement *tee;
 
+	GstPad *srcpad;
+
 	PurpleMediaSessionType type;
 };
 
@@ -167,6 +169,22 @@ purple_media_backend_fs2_dispose(GObject *obj)
 
 		pipeline = purple_media_manager_get_pipeline(
 				purple_media_get_manager(priv->media));
+
+		/* All connections to media sources should be blocked before confbin is
+		 * removed, to prevent freezing of any other simultaneously running
+		 * media calls. */
+		if (priv->sessions) {
+			GList *sessions = g_hash_table_get_values(priv->sessions);
+			for (; sessions; sessions =
+					g_list_delete_link(sessions, sessions)) {
+				PurpleMediaBackendFs2Session *session = sessions->data;
+				if (session->srcpad) {
+					gst_pad_set_blocked(session->srcpad, TRUE);
+					gst_object_unref(session->srcpad);
+					session->srcpad = NULL;
+				}
+			}
+		}
 
 		gst_element_set_locked_state(priv->confbin, TRUE);
 		gst_element_set_state(GST_ELEMENT(priv->confbin),
@@ -1258,6 +1276,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 			session_type_to_fs_stream_direction(type);
 	GstElement *src;
 	GstPad *sinkpad, *srcpad;
+	GstPad *ghost = NULL;
 
 	if ((type_direction & FS_DIRECTION_SEND) == 0)
 		return TRUE;
@@ -1297,7 +1316,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	if (GST_ELEMENT_PARENT(priv->confbin)
 			== GST_ELEMENT_PARENT(session->src)) {
 		GstPad *pad = gst_element_get_static_pad(session->tee, "sink");
-		GstPad *ghost = gst_ghost_pad_new(NULL, pad);
+		ghost = gst_ghost_pad_new(NULL, pad);
 		gst_object_unref(pad);
 		gst_pad_set_active(ghost, TRUE);
 		gst_element_add_pad(priv->confbin, ghost);
@@ -1305,6 +1324,8 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 
 	gst_element_set_state(session->tee, GST_STATE_PLAYING);
 	gst_element_link(session->src, priv->confbin);
+	if (ghost)
+		session->srcpad = gst_pad_get_peer(ghost);
 
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
 	if (session->type & PURPLE_MEDIA_SEND_AUDIO) {

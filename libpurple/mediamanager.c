@@ -400,6 +400,8 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 	GstIteratorResult result;
 
 	gst_element_release_request_pad(GST_ELEMENT_PARENT(pad), pad);
+	gst_pad_set_blocked(pad, FALSE);
+
 	iter = gst_element_iterate_src_pads(parent);
 
 	result = gst_iterator_next(iter, (gpointer)&remaining_pad);
