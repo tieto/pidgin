@@ -1,5 +1,5 @@
 /**
- * @file contact.c 
+ * @file contact.c
  * 	get MSN contacts via SOAP request
  *	created by MaYuan<mayuan2006@gmail.com>
  *
@@ -41,7 +41,8 @@ const char *MsnSoapPartnerScenarioText[] =
 	"ContactSave",
 	"MessengerPendingList",
 	"ContactMsgrAPI",
-	"BlockUnblock"
+	"BlockUnblock",
+	"Timer"
 };
 
 const char *MsnMemberRole[] =
@@ -189,6 +190,8 @@ msn_contact_operation_str(MsnCallbackAction action)
 		strcat(buf, "Renaming Group,");
 	if (action & MSN_UPDATE_INFO)
 		strcat(buf, "Updating Contact Info,");
+	if (action & MSN_ANNOTATE_USER)
+		strcat(buf, "Annotating Contact,");
 
 	return buf;
 }
@@ -336,7 +339,7 @@ msn_create_address_book(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->user != NULL);
 	g_return_if_fail(session->user->passport != NULL);
-	
+
 	purple_debug_info("msn", "Creating an Address Book.\n");
 
 	body = g_strdup_printf(MSN_ADD_ADDRESSBOOK_TEMPLATE,
@@ -709,8 +712,9 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
 
-		/*setup the Display Name*/
+		/* Find out our settings */
 		if (type && !strcmp(type, "Me")) {
+			/* setup the Display Name */
 			if (purple_connection_get_display_name(pc) == NULL) {
 				char *friendly = NULL;
 				if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
@@ -719,6 +723,23 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 					friendly ? purple_url_decode(friendly) : NULL);
 				g_free(friendly);
 			}
+
+			for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
+			     annotation;
+			     annotation = xmlnode_get_next_twin(annotation)) {
+				char *name, *value;
+				name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+				if (!strcmp(name, "MSN.IM.MPOP")) {
+					if (!value || atoi(value) != 0)
+						session->enable_mpop = TRUE;
+					else
+						session->enable_mpop = FALSE;
+				}
+				g_free(name);
+				g_free(value);
+			}
+
 			continue; /* Not adding own account as buddy to buddylist */
 		}
 
@@ -1071,18 +1092,6 @@ msn_add_contact(MsnSession *session, MsnCallbackState *state, const char *passpo
 	MsnUser *user;
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
-
-#if 0
-	gchar *escaped_displayname;
-
-
-	 if (displayname != NULL) {
-		escaped_displayname = g_markup_decode_text(displayname, -1);
-	 } else {
-		escaped_displayname = passport;
-	 }
-	contact_xml = g_strdup_printf(MSN_XML_ADD_CONTACT, escaped_displayname, passport);
-#endif
 
 	purple_debug_info("msn", "Adding contact %s to contact list\n", passport);
 
@@ -1497,6 +1506,101 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode_insert_child(contact, contact_info);
 	xmlnode_insert_child(contact, changes);
 
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	if (user) {
+		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
+		msn_callback_state_set_uid(state, user->uid);
+		xmlnode_insert_data(contactId, state->uid, -1);
+	} else {
+		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
+		xmlnode_insert_data(contactType, "Me", -1);
+	}
+
+	msn_contact_request(state);
+}
+
+static void
+msn_annotate_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
+	gpointer data)
+{
+	MsnCallbackState *state = (MsnCallbackState *)data;
+	xmlnode *fault;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
+
+	purple_debug_info("msn", "Contact annotated successfully\n");
+}
+
+/* Update a contact's annotations */
+void
+msn_annotate_contact(MsnSession *session, const char *passport, ...)
+{
+	va_list params;
+	MsnCallbackState *state;
+	xmlnode *contact;
+	xmlnode *contact_info;
+	xmlnode *annotations;
+	MsnUser *user = NULL;
+
+	g_return_if_fail(passport != NULL);
+
+	if (strcmp(passport, "Me") != 0) {
+		user = msn_userlist_find_user(session->userlist, passport);
+		if (!user)
+			return;
+	}
+
+	contact_info = xmlnode_new("contactInfo");
+	annotations = xmlnode_new_child(contact_info, "annotations");
+
+	va_start(params, passport);
+	while (TRUE) {
+		const char *name;
+		const char *value;
+		xmlnode *a, *n, *v;
+
+		name = va_arg(params, const char *);
+		if (!name)
+			break;
+
+		value = va_arg(params, const char *);
+		if (!value)
+			break;
+
+		a = xmlnode_new_child(annotations, "Annotation");
+		n = xmlnode_new_child(a, "Name");
+		xmlnode_insert_data(n, name, -1);
+		v = xmlnode_new_child(a, "Value");
+		xmlnode_insert_data(v, value, -1);
+	}
+	va_end(params);
+
+	state = msn_callback_state_new(session);
+
+	state->body = xmlnode_from_str(MSN_CONTACT_ANNOTATE_TEMPLATE, -1);
+	state->action = MSN_ANNOTATE_USER;
+	state->post_action = MSN_CONTACT_ANNOTATE_SOAP_ACTION;
+	state->post_url = MSN_ADDRESS_BOOK_POST_URL;
+	state->cb = msn_annotate_contact_read_cb;
+
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
+	xmlnode_insert_child(contact, contact_info);
+
 	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
 		msn_callback_state_set_uid(state, user->uid);
@@ -1570,7 +1674,7 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	
+
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
 		if (user->networkid != MSN_NETWORK_PASSPORT)
@@ -1774,7 +1878,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			} else if (state->action & MSN_MOVE_BUDDY) {
 				/* This will be freed when the add contact callback fires */
 				MsnCallbackState *new_state = msn_callback_state_dup(state);
-				msn_add_contact_to_group(session, new_state, state->who, guid); 
+				msn_add_contact_to_group(session, new_state, state->who, guid);
 				g_free(guid);
 				return;
 			}

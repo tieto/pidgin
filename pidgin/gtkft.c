@@ -1156,11 +1156,11 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 
 static void
 pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
-{	
+{
 	purple_debug_info("ft", "creating thumbnail for transfer\n");
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
-		GdkPixbuf *thumbnail = 
+		GdkPixbuf *thumbnail =
 			gdk_pixbuf_new_from_file_at_size(
 				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
 
@@ -1172,7 +1172,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 			char *option_values[2] = {NULL, NULL};
 			int i;
 			gchar *format = NULL;
-			
+
 			for (i = 0; formats_split[i]; i++) {
 				if (purple_strequal(formats_split[i], "jpeg")) {
 					purple_debug_info("ft", "creating JPEG thumbnail\n");
@@ -1197,11 +1197,11 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 				format = formats_split[0];
 			}
 
-			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format, 
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format,
 				option_keys, option_values, NULL);
 
 			if (buffer) {
-				gchar *mimetype = g_strdup_printf("image/%s", format);				
+				gchar *mimetype = g_strdup_printf("image/%s", format);
 				purple_debug_info("ft",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);

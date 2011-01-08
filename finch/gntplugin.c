@@ -64,7 +64,7 @@ free_stringlist(GList *list)
 static void
 decide_conf_button(PurplePlugin *plugin)
 {
-	if (purple_plugin_is_loaded(plugin) && 
+	if (purple_plugin_is_loaded(plugin) &&
 		((PURPLE_IS_GNT_PLUGIN(plugin) &&
 			FINCH_PLUGIN_UI_INFO(plugin) != NULL) ||
 		(plugin->info->prefs_info &&
@@ -262,7 +262,7 @@ install_selected_file_cb(gpointer handle, const char *filename)
 	PurplePlugin *plugin;
 
 	g_return_if_fail(plugins.window);
-	
+
 	plugin = purple_plugin_probe(filename);
 	if (!plugin) {
 		purple_notify_error(handle, _("Error loading plugin"),

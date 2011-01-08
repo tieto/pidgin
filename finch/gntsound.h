@@ -44,7 +44,7 @@ const char *finch_sound_get_active_profile(void);
 
 /**
  * Set the active profile.  If the profile doesn't exist, nothing is changed.
- * 
+ *
  * @param name  The name of the profile
  *
  * @since 2.1.0

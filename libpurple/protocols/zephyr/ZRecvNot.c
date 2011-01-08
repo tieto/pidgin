@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -28,18 +28,18 @@ Code_t ZReceiveNotice(notice, from)
 	    return (ENOMEM);
 
     len = nextq->packet_len;
-    
+
     if (!(buffer = (char *) malloc((unsigned) len)))
 	return (ENOMEM);
 
     if (from)
 	*from = nextq->from;
-    
+
     (void) memcpy(buffer, nextq->packet, len);
 
     auth = nextq->auth;
     Z_RemQueue(nextq);
-    
+
     if ((retval = ZParseNotice(buffer, len, notice)) != ZERR_NONE)
 	return (retval);
     notice->z_checked_auth = auth;

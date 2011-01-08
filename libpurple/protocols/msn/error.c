@@ -366,7 +366,7 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 						  purple_account_get_protocol_name(account));
 
 	if (group_name != NULL)
-	{ 
+	{
 		reason = g_strdup_printf(_("%s on the local list is "
 								   "inside the group \"%s\" but not on "
 								   "the server list. "
@@ -374,7 +374,7 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 								 passport, group_name);
 	}
 	else
-	{ 
+	{
 		reason = g_strdup_printf(_("%s is on the local list but "
 								   "not on the server list. "
 								   "Do you want this buddy to be added?"),

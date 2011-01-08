@@ -1251,7 +1251,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	for (iter = 0; buttons[iter].stock; iter++) {
 		if (buttons[iter].stock[0]) {
 			button = pidgin_pixbuf_toolbar_button_from_stock(buttons[iter].stock);
-			g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
+			g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
 			g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buttons[iter].callback), toolbar);
 			*(buttons[iter].button) = button;
@@ -1262,7 +1262,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	}
 	/* create the attention button (this is a bit hacky to not break ABI) */
 	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION);
-	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
+	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
 	g_signal_connect(G_OBJECT(button), "clicked",
 		G_CALLBACK(send_attention_cb), toolbar);
 	g_object_set_data(G_OBJECT(toolbar), "attention", button);
@@ -1471,7 +1471,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	label = gtk_label_new_with_mnemonic(_("_Smile!"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(smiley_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
+	g_signal_connect(G_OBJECT(smiley_button), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
 
@@ -1590,11 +1590,11 @@ void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 		g_object_get_data(G_OBJECT(toolbar), "attention");
 
 	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
-	
+
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
 	gtk_widget_set_sensitive(attention,
-		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM && 
+		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }
 

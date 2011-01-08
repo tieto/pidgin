@@ -335,7 +335,8 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 		/* Note to translators: The first %s is a URL, the second is an
 		   error message. */
 		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				get_start_oscar_session_url(od), error_message);
+				get_start_oscar_session_url(od), error_message ?
+				error_message : _("The server returned an empty response"));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -568,12 +569,9 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		if (error_message != NULL)
-			tmp = g_strdup_printf(_("Error requesting %s: %s"),
-					get_client_login_url(od), error_message);
-		else
-			tmp = g_strdup_printf(_("Error requesting %s"),
-					get_client_login_url(od));
+		tmp = g_strdup_printf(_("Error requesting %s: %s"),
+				get_client_login_url(od), error_message ?
+				error_message : _("The server returned an empty response"));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);

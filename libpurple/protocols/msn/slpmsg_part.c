@@ -1,3 +1,27 @@
+/**
+ * @file slpmsg_part.c MSNSLP Parts
+ *
+ * purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
 #include "internal.h"
 #include "debug.h"
 
@@ -24,20 +48,17 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len)
 {
 	MsnSlpMessagePart *part;
-	MsnP2PHeader *header;
-	const char *tmp;
 	int body_len;
 
-	tmp = data;
-	part = msn_slpmsgpart_new(NULL, NULL);
-
-	if (data_len < sizeof(*header)) {
+	if (data_len < P2P_PACKET_HEADER_SIZE) {
 		return NULL;
 	}
 
+	part = msn_slpmsgpart_new(NULL, NULL);
+
 	/* Extract the binary SLP header */
-	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
-	tmp += P2P_PACKET_HEADER_SIZE;
+	part->header = msn_p2p_header_from_wire(data);
+	data += P2P_PACKET_HEADER_SIZE;
 
 	/* Extract the body */
 	body_len = data_len - P2P_PACKET_HEADER_SIZE - P2P_PACKET_FOOTER_SIZE;
@@ -46,30 +67,22 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	if (body_len > 0) {
 		part->size = body_len;
 		part->buffer = g_malloc(body_len);
-		memcpy(part->buffer, tmp, body_len);
-		tmp += body_len;
+		memcpy(part->buffer, data, body_len);
+		data += body_len;
 	}
 
 	/* Extract the footer */
-	if (body_len >= 0) 
-		part->footer = msn_p2p_footer_from_wire((MsnP2PFooter*)tmp);
+	if (body_len >= 0)
+		part->footer = msn_p2p_footer_from_wire(data);
 
 	return part;
 }
 
-void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
+static void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 {
-	if (!part)
-		return;
-
-	if (part->ref_count > 0) {
-		msn_slpmsgpart_unref(part);
-		
-		return;
-	}
-
 	g_free(part->header);
 	g_free(part->footer);
+	g_free(part->buffer);
 
 	g_free(part);
 
@@ -78,39 +91,34 @@ void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part)
 {
 	g_return_val_if_fail(part != NULL, NULL);
-	part->ref_count ++;
+	part->ref_count++;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part ref (%p)[%d]\n", part, part->ref_count);
+		purple_debug_info("msn", "part ref (%p)[%u]\n", part, part->ref_count);
 
 	return part;
 }
 
-MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part)
+void msn_slpmsgpart_unref(MsnSlpMessagePart *part)
 {
-	g_return_val_if_fail(part != NULL, NULL);
-	g_return_val_if_fail(part->ref_count > 0, NULL);
+	g_return_if_fail(part != NULL);
+	g_return_if_fail(part->ref_count > 0);
 
 	part->ref_count--;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part unref (%p)[%d]\n", part, part->ref_count);
+		purple_debug_info("msn", "part unref (%p)[%u]\n", part, part->ref_count);
 
 	if (part->ref_count == 0) {
 		msn_slpmsgpart_destroy(part);
-
-		 return NULL;
 	}
-
-	return part;
 }
 
 void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size_t len)
 {
 	g_return_if_fail(part != NULL);
 
-	if (part->buffer != NULL)
-		g_free(part->buffer);
+	g_free(part->buffer);
 
 	if (data != NULL && len > 0) {
 		part->buffer = g_malloc(len + 1);
@@ -126,21 +134,21 @@ void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size
 
 char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 {
-	MsnP2PHeader *header;
-	MsnP2PFooter *footer;
+	char *header;
+	char *footer;
 	char *base;
 	char *tmp;
 	size_t siz;
 
-	base = g_malloc(P2P_PACKET_HEADER_SIZE + part->size + sizeof(MsnP2PFooter));
+	base = g_malloc(P2P_PACKET_HEADER_SIZE + part->size + P2P_PACKET_FOOTER_SIZE);
 	tmp = base;
 
 	header = msn_p2p_header_to_wire(part->header);
 	footer = msn_p2p_footer_to_wire(part->footer);
 
-	siz = sizeof(MsnP2PHeader);
+	siz = P2P_PACKET_HEADER_SIZE;
 	/* Copy header */
-	memcpy(tmp, (char*)header, siz);
+	memcpy(tmp, header, siz);
 	tmp += siz;
 
 	/* Copy body */
@@ -148,11 +156,14 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size)
 	tmp += part->size;
 
 	/* Copy footer */
-	siz = sizeof(MsnP2PFooter);
-	memcpy(tmp, (char*)footer, siz);
+	siz = P2P_PACKET_FOOTER_SIZE;
+	memcpy(tmp, footer, siz);
 	tmp += siz;
 
 	*ret_size = tmp - base;
+
+	g_free(header);
+	g_free(footer);
 
 	return base;
 }
@@ -170,6 +181,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 	slpmsg->header->offset += part->header->length;
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
+	msn_slpmsgpart_unref(part);
 
 	if (slpmsg->header->offset < real_size)
 	{
@@ -207,4 +219,6 @@ msn_slpmsgpart_nak(MsnSlpMessagePart *part, void *data)
 	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
+	msn_slpmsgpart_unref(part);
 }
+

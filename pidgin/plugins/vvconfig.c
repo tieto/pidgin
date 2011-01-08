@@ -124,7 +124,7 @@ get_element_devices(const gchar *element_name)
 			ret = g_list_reverse(ret);
 			return ret;
 		}
-			
+
 		for (n=0; n < array->n_values; ++n) {
 			GValue *device;
 			const gchar *name;
@@ -152,7 +152,7 @@ get_element_devices(const gchar *element_name)
 		}
 	}
 	gst_object_unref(element);
-	
+
 	ret = g_list_prepend(ret, NULL);
 	ret = g_list_reverse(ret);
 
@@ -273,7 +273,8 @@ get_plugin_frame(GtkWidget *parent, GtkSizeGroup *sg,
 
 	/* Setup device preference */
 	devices = get_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find(devices, purple_prefs_get_string(device_pref)) == NULL)
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+			(GCompareFunc) strcmp) == NULL)
 		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(vbox, device_label,
 			PURPLE_PREF_STRING, device_pref, devices);
@@ -526,12 +527,12 @@ show_config(PurplePluginAction *action)
 		GtkWidget *hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 		GtkWidget *config_frame = get_plugin_config_frame(NULL);
 		GtkWidget *close = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-		
+
 		gtk_container_add(GTK_CONTAINER(vbox), config_frame);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 		window = pidgin_create_window(_("Voice/Video Settings"),
 			PIDGIN_HIG_BORDER, NULL, TRUE);
-		g_signal_connect(G_OBJECT(window), "destroy", 
+		g_signal_connect(G_OBJECT(window), "destroy",
 			G_CALLBACK(config_destroy), NULL);
 		g_signal_connect(G_OBJECT(close), "clicked",
 		    G_CALLBACK(config_close), NULL);

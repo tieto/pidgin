@@ -220,10 +220,11 @@ transaction_timeout(gpointer data)
 	purple_debug_info("msn", "timed out: %s %d %s\n", trans->command, trans->trId, trans->params);
 #endif
 
+	trans->timer = 0;
+
 	if (trans->timeout_cb != NULL)
 		trans->timeout_cb(trans->cmdproc, trans);
 
-	trans->timer = 0;
 	return FALSE;
 }
 

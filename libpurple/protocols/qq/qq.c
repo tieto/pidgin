@@ -57,7 +57,7 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_VERSION 		"0.3.2-p20" 
+#define OPENQ_VERSION 		"0.3.2-p20"
 
 static GList *server_list_build(gchar select)
 {
@@ -157,15 +157,15 @@ static void qq_login(PurpleAccount *account)
 	purple_debug_info("QQ", "Server list has %d\n", g_list_length(qd->servers));
 
 	version_str = purple_account_get_string(account, "client_version", NULL);
-	qd->client_tag = QQ_CLIENT_0D55;	/* set default as QQ2005 */
-	qd->client_version = 2005;
+	qd->client_tag = QQ_CLIENT_115B;	/* set default as QQ2008 */
+	qd->client_version = 2008;
 	if (version_str != NULL && strlen(version_str) != 0) {
-		if (strcmp(version_str, "qq2007") == 0) {
+		if (strcmp(version_str, "qq2005") == 0) {
+			qd->client_tag = QQ_CLIENT_0D55;
+			qd->client_version = 2005;
+		} else if (strcmp(version_str, "qq2007") == 0) {
 			qd->client_tag = QQ_CLIENT_111D;
 			qd->client_version = 2007;
-		} else if (strcmp(version_str, "qq2008") == 0) {
-			qd->client_tag = QQ_CLIENT_115B;
-			qd->client_version = 2008;
 		}
 	}
 
@@ -1113,8 +1113,8 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
-	kvp->key = g_strdup(_("QQ2005"));
-	kvp->value = g_strdup("qq2005");
+	kvp->key = g_strdup(_("QQ2008"));
+	kvp->value = g_strdup("qq2008");
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
@@ -1123,8 +1123,8 @@ static void init_plugin(PurplePlugin *plugin)
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
-	kvp->key = g_strdup(_("QQ2008"));
-	kvp->value = g_strdup("qq2008");
+	kvp->key = g_strdup(_("QQ2005"));
+	kvp->value = g_strdup("qq2005");
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);

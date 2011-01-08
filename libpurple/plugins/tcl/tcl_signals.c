@@ -4,7 +4,7 @@
  * purple
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -117,7 +117,7 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 
 	for (cur = tcl_callbacks; cur != NULL; cur = g_list_next(cur)) {
 		handler = cur->data;
-		if (handler->interp == interp && handler->instance == instance 
+		if (handler->interp == interp && handler->instance == instance
 		    && !strcmp(signal, Tcl_GetString(handler->signal))) {
 			purple_signal_disconnect(instance, signal, handler->interp,
 					       PURPLE_CALLBACK(tcl_signal_callback));

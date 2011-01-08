@@ -1,5 +1,5 @@
 /**
- * @file httpmethod.c HTTP connection method
+ * @file httpconn.c HTTP connection method
  *
  * purple
  *

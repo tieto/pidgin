@@ -274,7 +274,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
-	 * to default options as strings based on chat_name. The resulting 
+	 * to default options as strings based on chat_name. The resulting
 	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
 	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
 	 * to extract a chat name from a hashtable.
@@ -366,7 +366,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a chat name based on the information in components. Use
-	 * #chat_info_defaults if you instead need to generate a hashtable 
+	 * #chat_info_defaults if you instead need to generate a hashtable
 	 * from a chat name.
 	 *
 	 * @param components A hashtable containing information about the chat.
@@ -377,7 +377,7 @@ struct _PurplePluginProtocolInfo
 	 * Invite a user to join a chat.
 	 *
 	 * @param id      The id of the chat to invite the user to.
-	 * @param message A message displayed to the user when the invitation 
+	 * @param message A message displayed to the user when the invitation
 	 *                is received.
 	 * @param who     The name of the user to send the invation to.
 	 */

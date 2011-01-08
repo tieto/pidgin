@@ -46,7 +46,7 @@ typedef struct _PurpleMediaBackendIface PurpleMediaBackendIface;
 
 struct _PurpleMediaBackendIface
 {
-	GTypeInterface parent_iface; /**< The parent iface class */ 
+	GTypeInterface parent_iface; /**< The parent iface class */
 
 	/** Implementable functions called with purple_media_backend_* */
 	gboolean (*add_stream) (PurpleMediaBackend *self,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
 "PO-Revision-Date: 2010-03-25 15:56+0530\n"
 "Last-Translator: Krishna Babu K <kkrothap@redhat.com>\n"
 "Language-Team: Telugu <en@li.org>\n"
@@ -4748,15 +4748,6 @@ msgstr "గెంటివేసిన (%s)"
 msgid "Unknown Error in presence"
 msgstr "అస్తిత్వంలో అజ్ఞాత పొరపాటు"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "ఇన్‌-బాండ్ బైట్‌స్ట్రీమ్ బదిలీకరణపై వొక దోషము యెదురైంది\n"
-
-msgid "Transfer was closed."
-msgstr "బదిలీకరణ మూయబడింది."
-
-msgid "Failed to open in-band bytestream"
-msgstr "ఇన్-బాండ్ బైట్‌స్ట్రీమ్ తెరుచుటకు విఫలమైంది"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr " %sకు ఫైలును పంపడంలో అశక్తత, ఫైలు బదిలీకి వినియోగదారు సహకారం లభించడంలేదు"
@@ -5069,23 +5060,6 @@ msgstr "మిత్రుని జతచేయుటనందు దోషమ�
 msgid "The username specified does not exist."
 msgstr "సూచించిన వినియోగదారిపేరుకు విలువలేదు."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "%s (%s)లో మిత్రుల జాబితాను సమ్మిళితం చేసే విషయం"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s  స్థానిక జాబితాపై సమూహం \"%s\"లో ఉంది కానీ సర్వర్ జాబితాలో లేదు. మీరు ఈ మిత్రుణ్ని చేర్చదల్చుకున్నారా?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr "%s స్థానిక జాబితాలో ఉన్నది కానీ సర్వర్‌ జాబితాలో లేదు. మీరు మిత్రుణ్ని  చేర్చదల్చుకున్నారా?"
-
 msgid "Unable to parse message"
 msgstr "సందేశాన్ని పద విశ్లేషణ చేయడంలో అశక్తత"
 
@@ -5256,6 +5230,23 @@ msgstr "అజ్ఞాత పొరపాటు కోడ్  %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN పొరపాటు: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "%s (%s)లో మిత్రుల జాబితాను సమ్మిళితం చేసే విషయం"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s  స్థానిక జాబితాపై సమూహం \"%s\"లో ఉంది కానీ సర్వర్ జాబితాలో లేదు. మీరు ఈ మిత్రుణ్ని చేర్చదల్చుకున్నారా?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr "%s స్థానిక జాబితాలో ఉన్నది కానీ సర్వర్‌ జాబితాలో లేదు. మీరు మిత్రుణ్ని  చేర్చదల్చుకున్నారా?"
+
 msgid "Other Contacts"
 msgstr "ఇతర పరిచయములు"
 
@@ -5304,11 +5295,53 @@ msgstr "మీ కొత్త MSN స్నేహపూర్వక పేర�
 msgid "Set friendly name for %s."
 msgstr "%s కొరకు స్నేహపూర్వక పేరును అమర్చుము"
 
-msgid "Set your friendly name."
-msgstr "మీ స్నేహ పూర్వక పేరును సెట్ చేయండి."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "ఇష్టపడే పేరు "
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "ఇతర MSN మిత్రులు మిమ్మల్ని పిలిచే పేరు ఇది."
+
+#, fuzzy
+msgid "This Location"
+msgstr "స్థానం"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "ఇతర MSN మిత్రులు మిమ్మల్ని పిలిచే పేరు ఇది."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "స్థానం"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "మీరు వేరే స్థానమునుండి సైనై వున్నారు"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "మీరు వేరే స్థానమునుండి సైనై వున్నారు"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "బహుళ యిన్‌స్టాన్సులను అనుమతించుము"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "అనుమతించు"
+
+msgid "Disallow"
+msgstr "నిషెధించు"
 
 msgid "Set your home phone number."
 msgstr "మీ ఇంటి ఫోన్ నెంబరును సెట్ చేయండి."
@@ -5328,12 +5361,6 @@ msgid ""
 msgstr ""
 "MSN Mobile పేజీలను మీ సెల్‌ఫోనుకు లేదా ఇతర మొబైల్ పరికరానికి పంపడానికి  మీ మిత్రుల జాబితాలో ఉన్నవారికి "
 "అనుమతించదలచుకున్నారా, లేదా?"
-
-msgid "Allow"
-msgstr "అనుమతించు"
-
-msgid "Disallow"
-msgstr "నిషెధించు"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5395,6 +5422,10 @@ msgstr "ఆఫీస్ శీర్షిక"
 msgid "Set Friendly Name..."
 msgstr "ఇష్టపడే పేరు "
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "స్థానమును యెంచుకొనుము..."
+
 msgid "Set Home Phone Number..."
 msgstr "ఇంటి ఫోన్ నెంబరును సెట్ చేయండి..."
 
@@ -5406,6 +5437,10 @@ msgstr "మొబైల్ ఫోన్ నెంబరును సెట్ �
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "మొబైల్ పరికరాలను పని చేయించడం/పని చేయించకపోవడం "
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "మొబైల్ పేజీలను అనుమతించడం/నిరాకరించడం"
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "మొబైల్ పేజీలను అనుమతించడం/నిరాకరించడం"
@@ -5621,6 +5656,9 @@ msgstr "కస్టమ్ స్మైలీలను చూపించు"
 #, fuzzy
 msgid "Allow direct connections"
 msgstr " కనెక్షన్ ఏర్పరచలేని స్థితి "
+
+msgid "Allow connecting from multiple locations"
+msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "పలకరించు: వినియోగదారును ఆకట్టుకోవడానికి పలకరించు"
@@ -6768,11 +6806,20 @@ msgstr ""
 "మీరు తరచుగా అనుసంధానం చేస్తున్నారు, అననుసంధానం చేస్తున్నారు. పది నిమిషాలు ఆగి మరల ప్రయత్నించండి. "
 "మీరు ప్రయత్నాన్ని కొనసాగిస్తే, మీరు ఇంకా ఎక్కువ కాలం ఆగవలసియుంటుంది."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "%sను అభ్యర్ధించుటలో దోషము: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr "MXit సేవికకు అనుసంధానము కాలేక పోయింది. దయచేసి మీ సేవిక అమరికలను పరిశీలించండి."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6783,10 +6830,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "మీ స్క్రీన్‌పేరును ఇక్కడ దృవీకరించుటకు AOL అనుమతించదు"
-
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "%sను అభ్యర్ధించుటలో దోషము: %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7076,6 +7119,11 @@ msgstr ""
 "%s వలె సైన్ఆన్ కాలేకపోయింది యెంచేతంటే వినియోగదారిపేరు చెల్లనిది.  వినియోగదారిపేరులు తప్పక చెల్లునటువంటి ఈమెయిల్ "
 "చిరునామా కావలెను, లేదా అక్షరముతో ప్రారంభమై మరియు అక్షరములను, అంకెలను మరియు ఖాళీలను మాత్రమే "
 "కలిగివుండాలి లేదా అంకెలను మాత్రమే కలిగివుండాలి."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7583,6 +7631,10 @@ msgstr "ఆథరైజేషన్‌ కోసం ఎదురుచూస్�
 msgid "Search for Buddy by Email Address..."
 msgstr "ఇ-మెయిల్ అడ్రసు ద్వారా మిత్రాన్వేషణ ..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "సాధికారిత అవసరం "
+
 msgid "Use clientLogin"
 msgstr "క్లైంట్‌లాగిన్ వుపయోగించుము"
 
@@ -7780,7 +7832,7 @@ msgid "Personal Web Page"
 msgstr "వ్యక్తిగత వెబ్ పేజీ "
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "అదనపు సమాచారము"
 
@@ -7808,17 +7860,29 @@ msgstr "నుండి సభ్యుడు."
 msgid "Capabilities"
 msgstr "సామర్ధ్యములు"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "ఆన్ లైన్ లో ఉన్నట్టు చూపండి "
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 #, fuzzy
 msgid "Don't Appear Online"
 msgstr "ఆన్ లైన్ లో ఉన్నట్టు చూపండి "
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "ఆఫ్‌లైన్ లో ఉన్నట్టు చూపండి"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 #, fuzzy
 msgid "Don't Appear Offline"
 msgstr "ఆఫ్‌లైన్ లో ఉన్నట్టు చూపండి"
@@ -11975,11 +12039,11 @@ msgstr "గ్రీక్"
 msgid "Australian English"
 msgstr "ఆస్ట్రేలియన్ ఇంగ్లీష్ "
 
-msgid "Canadian English"
-msgstr "కెనెడియన్ ఇంగ్లీష్ "
-
 msgid "British English"
 msgstr "బ్రిటిష్ ఆంగ్లం"
+
+msgid "Canadian English"
+msgstr "కెనెడియన్ ఇంగ్లీష్ "
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12058,6 +12122,10 @@ msgstr "కుర్దిష్"
 
 msgid "Lao"
 msgstr "లావో"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "స్వాహిలి"
 
 msgid "Macedonian"
 msgstr "Macedonian"
@@ -13656,6 +13724,9 @@ msgstr "స్థితి యెంపికకారి"
 msgid "Google Talk"
 msgstr "గూగుల్ టాక్"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s: %s ను లోడ్ చేస్తున్నప్పుడు ఈ కింది పొరపాట్లు జరిగాయి"
@@ -15089,6 +15160,22 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "ఇన్‌-బాండ్ బైట్‌స్ట్రీమ్ బదిలీకరణపై వొక దోషము యెదురైంది\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "బదిలీకరణ మూయబడింది."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "ఇన్-బాండ్ బైట్‌స్ట్రీమ్ తెరుచుటకు విఫలమైంది"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "మీ స్నేహ పూర్వక పేరును సెట్ చేయండి."
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "%sను అభ్యర్ధించుటలో దోషము: %s"
 
 #~ msgid "Require SSL/TLS"
 #~ msgstr "SSL/TLS అవసరము"

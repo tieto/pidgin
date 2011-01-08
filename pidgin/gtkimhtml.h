@@ -50,7 +50,9 @@ extern "C" {
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
+#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
 typedef struct _GtkIMHtmlFontDetail	GtkIMHtmlFontDetail;	/* The five elements contained in a FONT tag */
+#endif
 typedef struct _GtkSmileyTree		GtkSmileyTree;
 typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
@@ -162,6 +164,8 @@ struct _GtkIMHtmlClass {
 	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
 
+#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
+/** @deprecated as of 2.7.10 */
 struct _GtkIMHtmlFontDetail {
 	gushort size;
 	gchar *face;
@@ -172,6 +176,7 @@ struct _GtkIMHtmlFontDetail {
 	gboolean underline;
 	gshort bold;
 };
+#endif
 
 struct _GtkSmileyTree {
 	GString *values;

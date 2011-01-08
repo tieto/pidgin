@@ -8,18 +8,18 @@
  * Nullprpl is a mock protocol plugin for Pidgin and libpurple. You can create
  * accounts with it, sign on and off, add buddies, and send and receive IMs,
  * all without connecting to a server!
- * 
+ *
  * Beyond that basic functionality, nullprpl supports presence and
  * away/available messages, offline messages, user info, typing notification,
  * privacy allow/block lists, chat rooms, whispering, room lists, and protocol
  * icons and emblems. Notable missing features are file transfer and account
  * registration and authentication.
- * 
+ *
  * Nullprpl is intended as an example of how to write a libpurple protocol
  * plugin. It doesn't contain networking code or an event loop, but it does
  * demonstrate how to use the libpurple API to do pretty much everything a prpl
  * might need to do.
- * 
+ *
  * Nullprpl is also a useful tool for hacking on Pidgin, Finch, and other
  * libpurple clients. It's a full-featured protocol plugin, but doesn't depend
  * on an external server, so it's a quick and easy way to exercise test new
@@ -191,7 +191,7 @@ static void report_status_change(PurpleConnection *from, PurpleConnection *to,
 }
 
 
-/* 
+/*
  * UI callbacks
  */
 static void nullprpl_input_user_info(PurplePluginAction *action)
@@ -355,7 +355,7 @@ static GHashTable *nullprpl_chat_info_defaults(PurpleConnection *gc,
   defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
   g_hash_table_insert(defaults, "room", g_strdup("default"));
   return defaults;
-}  
+}
 
 static void nullprpl_login(PurpleAccount *acct)
 {
@@ -382,7 +382,7 @@ static void nullprpl_login(PurpleAccount *acct)
   /* fetch stored offline messages */
   purple_debug_info("nullprpl", "checking for offline messages for %s\n",
                     acct->username);
-  offline_messages = g_hash_table_lookup(goffline_messages, acct->username); 
+  offline_messages = g_hash_table_lookup(goffline_messages, acct->username);
   while (offline_messages) {
     GOfflineMessage *message = (GOfflineMessage *)offline_messages->data;
     purple_debug_info("nullprpl", "delivering offline message to %s: %s\n",

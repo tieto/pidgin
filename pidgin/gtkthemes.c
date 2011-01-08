@@ -270,7 +270,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			if (len == 0)
 				continue;
 		}
-		
+
 		i = buf;
 		while (isspace(*i))
 			i++;

@@ -81,6 +81,7 @@ struct _PurpleMediaManagerPrivate
 	GList *output_windows;
 	gulong next_output_window_id;
 	GType backend_type;
+	GstCaps *video_caps;
 
 	PurpleMediaElementInfo *video_src;
 	PurpleMediaElementInfo *video_sink;
@@ -140,7 +141,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = purple_media_manager_finalize;
 
 	purple_media_manager_signals[INIT_MEDIA] = g_signal_new ("init-media",
@@ -191,6 +192,8 @@ purple_media_manager_finalize (GObject *media)
 			g_list_delete_link(priv->elements, priv->elements)) {
 		g_object_unref(priv->elements->data);
 	}
+	if (priv->video_caps)
+		gst_caps_unref(priv->video_caps);
 	parent_class->finalize(media);
 }
 #endif
@@ -397,6 +400,8 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 	GstIteratorResult result;
 
 	gst_element_release_request_pad(GST_ELEMENT_PARENT(pad), pad);
+	gst_pad_set_blocked(pad, FALSE);
+
 	iter = gst_element_iterate_src_pads(parent);
 
 	result = gst_iterator_next(iter, (gpointer)&remaining_pad);
@@ -414,6 +419,20 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 #endif
 
 #ifdef USE_GSTREAMER
+
+static GstCaps *
+purple_media_manager_get_video_caps(PurpleMediaManager *manager)
+{
+#ifdef USE_VV
+	if (manager->priv->video_caps == NULL)
+		manager->priv->video_caps = gst_caps_from_string("video/x-raw-yuv,"
+			"width=[250,352], height=[200,288], framerate=[1/1,20/1]");
+	return manager->priv->video_caps;
+#else
+	return NULL;
+#endif
+}
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -456,7 +475,21 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			bin = gst_bin_new(id);
 			tee = gst_element_factory_make("tee", "tee");
 			gst_bin_add_many(GST_BIN(bin), ret, tee, NULL);
-			gst_element_link(ret, tee);
+
+			if (type & PURPLE_MEDIA_SEND_VIDEO) {
+				GstElement *videoscale;
+				GstElement *capsfilter;
+
+				videoscale = gst_element_factory_make("videoscale", NULL);
+				capsfilter = gst_element_factory_make("capsfilter", "prpl_video_caps");
+
+				g_object_set(G_OBJECT(capsfilter),
+					"caps", purple_media_manager_get_video_caps(manager), NULL);
+
+				gst_bin_add_many(GST_BIN(bin), videoscale, capsfilter, NULL);
+				gst_element_link_many(ret, videoscale, capsfilter, tee, NULL);
+			} else
+				gst_element_link(ret, tee);
 
 			/*
 			 * This shouldn't be necessary, but it stops it from
@@ -928,7 +961,7 @@ purple_media_manager_set_backend_type(PurpleMediaManager *manager,
 
 GType
 purple_media_manager_get_backend_type(PurpleMediaManager *manager)
-{	
+{
 #ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager),
 			PURPLE_MEDIA_CAPS_NONE);
@@ -1070,7 +1103,7 @@ purple_media_element_info_set_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			priv->create = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1083,7 +1116,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 {
 	PurpleMediaElementInfoPrivate *priv;
 	g_return_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(object));
-	
+
 	priv = PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -1099,7 +1132,7 @@ purple_media_element_info_get_property (GObject *object, guint prop_id,
 		case PROP_CREATE_CB:
 			g_value_set_pointer(value, priv->create);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -1110,7 +1143,7 @@ static void
 purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
-	
+
 	gobject_class->finalize = purple_media_element_info_finalize;
 	gobject_class->set_property = purple_media_element_info_set_property;
 	gobject_class->get_property = purple_media_element_info_get_property;

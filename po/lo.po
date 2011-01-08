@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
+"POT-Creation-Date: 2010-12-19 13:33-0500\n"
 "PO-Revision-Date: 2009-04-29 09:28+0700\n"
 "Last-Translator: Anousak Souphavanh <anousak@gmail.com>\n"
 "Language-Team: Lao <lo@li.org>\n"
@@ -4572,15 +4572,6 @@ msgstr ""
 msgid "Unknown Error in presence"
 msgstr ""
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr ""
-
-msgid "Transfer was closed."
-msgstr ""
-
-msgid "Failed to open in-band bytestream"
-msgstr ""
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -4899,22 +4890,6 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr ""
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-
 msgid "Unable to parse message"
 msgstr ""
 
@@ -5085,6 +5060,22 @@ msgstr ""
 msgid "MSN Error: %s\n"
 msgstr ""
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+
 msgid "Other Contacts"
 msgstr ""
 
@@ -5132,10 +5123,47 @@ msgstr ""
 msgid "Set friendly name for %s."
 msgstr ""
 
-msgid "Set your friendly name."
+msgid "Set Friendly Name"
 msgstr ""
 
 msgid "This is the name that other MSN buddies will see you as."
+msgstr ""
+
+#, fuzzy
+msgid "This Location"
+msgstr "ຊື່ຫລີ້ນ:"
+
+msgid "This is the name that identifies this location"
+msgstr ""
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "ຊື່ຫລີ້ນ:"
+
+msgid "You can sign out from other locations here"
+msgstr ""
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr ""
+
+msgid "Allow multiple logins?"
+msgstr ""
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr ""
+
+msgid "Disallow"
 msgstr ""
 
 msgid "Set your home phone number."
@@ -5153,12 +5181,6 @@ msgstr ""
 msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-
-msgid "Allow"
-msgstr ""
-
-msgid "Disallow"
 msgstr ""
 
 #, c-format
@@ -5221,6 +5243,10 @@ msgstr ""
 msgid "Set Friendly Name..."
 msgstr ""
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "ຊື່ຫລີ້ນ:"
+
 msgid "Set Home Phone Number..."
 msgstr ""
 
@@ -5231,6 +5257,9 @@ msgid "Set Mobile Phone Number..."
 msgstr ""
 
 msgid "Enable/Disable Mobile Devices..."
+msgstr ""
+
+msgid "Allow/Disallow Multiple Logins..."
 msgstr ""
 
 msgid "Allow/Disallow Mobile Pages..."
@@ -5441,6 +5470,9 @@ msgid "Show custom smileys"
 msgstr ""
 
 msgid "Allow direct connections"
+msgstr ""
+
+msgid "Allow connecting from multiple locations"
 msgstr ""
 
 msgid "nudge: nudge a user to get their attention"
@@ -6548,10 +6580,18 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
+msgstr ""
+
+msgid "The server returned an empty response"
 msgstr ""
 
 msgid ""
@@ -6560,10 +6600,6 @@ msgid ""
 msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
-msgstr ""
-
-#, c-format
-msgid "Error requesting %s"
 msgstr ""
 
 msgid ""
@@ -6844,6 +6880,11 @@ msgid ""
 "Unable to sign on as %s because the username is invalid.  Usernames must be "
 "a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
+msgstr ""
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
 msgstr ""
 
 #, c-format
@@ -7305,6 +7346,9 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr ""
 
+msgid "Don't use encryption"
+msgstr ""
+
 msgid "Use clientLogin"
 msgstr ""
 
@@ -7497,7 +7541,7 @@ msgid "Personal Web Page"
 msgstr ""
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr ""
 
@@ -7525,16 +7569,28 @@ msgstr ""
 msgid "Capabilities"
 msgstr ""
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr ""
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr ""
 
@@ -11546,10 +11602,10 @@ msgstr ""
 msgid "Australian English"
 msgstr ""
 
-msgid "Canadian English"
+msgid "British English"
 msgstr ""
 
-msgid "British English"
+msgid "Canadian English"
 msgstr ""
 
 msgid "Esperanto"
@@ -11628,6 +11684,9 @@ msgid "Kurdish"
 msgstr ""
 
 msgid "Lao"
+msgstr ""
+
+msgid "Maithili"
 msgstr ""
 
 msgid "Macedonian"
@@ -13183,6 +13242,9 @@ msgid "Status Selector"
 msgstr ""
 
 msgid "Google Talk"
+msgstr ""
+
+msgid "Facebook (XMPP)"
 msgstr ""
 
 #, c-format

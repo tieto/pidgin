@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -18,7 +18,7 @@ int ZGetWGPort()
 #ifdef WIN32
     long int buffsize= 128;
     char tempdir[buffsize];
-#endif	
+#endif
     envptr = getenv("WGFILE");
     if (!envptr) {
 #ifdef WIN32
@@ -28,7 +28,7 @@ int ZGetWGPort()
 	(void) sprintf(name, "/tmp/wg.%d", getuid());
 #endif
 	envptr = name;
-    } 
+    }
     if (!(fp = fopen(envptr, "r")))
 	return (-1);
 

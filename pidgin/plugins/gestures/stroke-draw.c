@@ -111,7 +111,7 @@ gstroke_timeout (gpointer data)
 	return TRUE;
 }
 
-static void gstroke_cancel(GdkEvent *event) 
+static void gstroke_cancel(GdkEvent *event)
 {
 	last_mouse_position.invalid = TRUE;
 
@@ -145,7 +145,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 			 * clicked after the middle button is clicked (but possibly
 			 * not released)
 			 */
-			gstroke_cancel(event);	
+			gstroke_cancel(event);
 			original_widget = NULL;
 			break;
 		}
@@ -299,7 +299,7 @@ gstroke_execute (GtkWidget *widget, const gchar *name)
 #if 0
   purple_debug(PURPLE_DEBUG_MISC, "gestures", "gstroke %s\n", name);
 #endif
-  
+
   if (hash_table)
     {
       struct gstroke_func_and_data *fd =

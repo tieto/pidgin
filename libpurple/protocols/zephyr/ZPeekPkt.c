@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -17,14 +17,14 @@ Code_t ZPeekPacket(buffer, ret_len, from)
 {
     Code_t retval;
     struct _Z_InputQ *nextq;
-    
+
     if ((retval = Z_WaitForComplete()) != ZERR_NONE)
 	return (retval);
 
     nextq =Z_GetFirstComplete();
 
     *ret_len = nextq->packet_len;
-    
+
     if (!(*buffer = (char *) malloc((unsigned) *ret_len)))
 	return (ENOMEM);
 
@@ -32,6 +32,6 @@ Code_t ZPeekPacket(buffer, ret_len, from)
 
     if (from)
 	*from = nextq->from;
-	
+
     return (ZERR_NONE);
 }

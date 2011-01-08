@@ -58,7 +58,7 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 	msn_history_destroy(cmdproc->history);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	g_hash_table_destroy(cmdproc->multiparts);
 
@@ -122,7 +122,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	servconn = cmdproc->servconn;
 
 	if (!servconn->connected) {
-		/* TODO: Need to free trans */
+		msn_transaction_destroy(trans);
 		return;
 	}
 
@@ -156,6 +156,8 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	msn_servconn_write(servconn, data, len);
 
+	if (!trans->saveable)
+		msn_transaction_destroy(trans);
 	g_free(data);
 }
 
@@ -327,7 +329,7 @@ msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command)
 	show_debug_cmd(cmdproc, TRUE, command);
 
 	if (cmdproc->last_cmd != NULL)
-		msn_command_destroy(cmdproc->last_cmd);
+		msn_command_unref(cmdproc->last_cmd);
 
 	cmdproc->last_cmd = msn_command_from_string(command);
 

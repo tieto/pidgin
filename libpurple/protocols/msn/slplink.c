@@ -49,7 +49,7 @@ debug_part_to_file(MsnSlpMessage *msg, gboolean send)
 
 	dir = send ? "send" : "recv";
 	c = send ? m_sc++ : m_rc++;
-	tmp = g_strdup_printf("%s/msntest/%s/%03d", g_get_home_dir(), dir, c);
+	tmp = g_strdup_printf("%s/msntest/%s/%03d", purple_user_dir(), dir, c);
 	data = msn_slpmsg_serialize(msg, &data_size);
 	if (!purple_util_write_data_to_file_absolute(tmp, data, data_size))
 	{
@@ -96,16 +96,9 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
 
-	g_return_if_fail(slplink != NULL);
-
 	if (slplink->swboard != NULL) {
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
 		slplink->swboard = NULL;
-	}
-
-	if (slplink->refs > 1) {
-		slplink->refs--;
-		return;
 	}
 
 	session = slplink->session;
@@ -508,17 +501,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 
 	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-	if (/* !slpcall->wasted && */ slpmsg->header->flags == P2P_DC_HANDSHAKE)
-	{
-#if 0
-		MsnDirectConn *directconn;
-
-		directconn = slplink->directconn;
-		if (!directconn->acked)
-			msn_directconn_send_handshake(directconn);
-#endif
-	}
-	else if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP ||
+	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WLM2009_COMP ||
 			msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		/* Release all the messages and send the ACK */
@@ -625,6 +608,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	/* All the pieces of the slpmsg have been received */
 	if (header->offset + header->length >= header->total_size)
 		process_complete_msg(slplink, slpmsg, header);
+
+	/* NOTE: The slpmsg will be destroyed in process_complete_msg or left in
+	   the slplink until fully received. Don't free it here!
+	 */
 }
 
 void

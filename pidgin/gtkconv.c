@@ -1128,7 +1128,7 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 #ifdef USE_VV
-static void 
+static void
 menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
@@ -1163,7 +1163,7 @@ menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		purple_prpl_send_attention(purple_conversation_get_gc(conv), 
+		purple_prpl_send_attention(purple_conversation_get_gc(conv),
 			purple_conversation_get_name(conv), 0);
 	}
 }
@@ -1919,6 +1919,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
 			case GDK_Page_Down:
+ 			case GDK_KP_Page_Down:
 			case ']':
 				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv + 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
@@ -1928,6 +1929,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				break;
 
 			case GDK_Page_Up:
+ 			case GDK_KP_Page_Up:
 			case '[':
 				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv - 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), -1);
@@ -2128,11 +2130,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			break;
 
 		case GDK_Page_Up:
+ 		case GDK_KP_Page_Up:
 			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
 
 		case GDK_Page_Down:
+ 		case GDK_KP_Page_Down:
 			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
@@ -2188,7 +2192,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
 		(event->keyval == GDK_Page_Up) ||
+ 		(event->keyval == GDK_KP_Page_Up) ||
 		(event->keyval == GDK_Page_Down) ||
+ 		(event->keyval == GDK_KP_Page_Down) ||
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
@@ -2226,7 +2232,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 	purple_debug_info("gtkconv", "setting active conversation on toolbar %p\n",
 		conv);
-	gtk_imhtmltoolbar_switch_active_conversation(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), 
+	gtk_imhtmltoolbar_switch_active_conversation(GTK_IMHTMLTOOLBAR(gtkconv->toolbar),
 		conv);
 
 	if (old_conv == conv)
@@ -3291,7 +3297,7 @@ regenerate_media_items(PidginWindow *win)
 		gtk_widget_set_sensitive(win->video_call,
 				caps & PURPLE_MEDIA_CAPS_VIDEO
 				? TRUE : FALSE);
-		gtk_widget_set_sensitive(win->audio_video_call, 
+		gtk_widget_set_sensitive(win->audio_video_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 				? TRUE : FALSE);
 	} else if (purple_conversation_get_type(conv)
@@ -3304,7 +3310,7 @@ regenerate_media_items(PidginWindow *win)
 		gtk_widget_set_sensitive(win->audio_call, FALSE);
 		gtk_widget_set_sensitive(win->video_call, FALSE);
 		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
-	}							
+	}
 #endif
 }
 
@@ -3461,7 +3467,7 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 					    N_("/Conversation/Media/Audio\\/Video Call"));
 #endif
-	
+
 	/* --- */
 
 	win->menu.send_file =
@@ -6555,7 +6561,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons |= GTK_IMHTML_CUSTOM_SMILEY;
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
-		
+
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
 			gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));

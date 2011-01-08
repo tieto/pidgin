@@ -4,19 +4,158 @@ version 2.8.0 (??/??/????):
   libpurple
   * media: Allow obtaining active local and remote candidates. (#11830)
 
-version 2.7.6 (??/??/????):
+version 2.7.10 (??/??/????):
+	General:
+	* Force video sources to all have the same capabilities.  This reduces the
+	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
+	  (half of #13095)
+	* Starting multiple video calls and ending one no longer causes the other
+	  calls to stop sending audio and video. (Jakub Adam) (#12758)
+	* Perl bindings now respect LDFLAGS. (Peter Volkov) (#12638)
+
+	IRC:
+	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
+
+	libpurple:
+	* Stop sending audio when placing a call on hold. (Jakub Adam) (#13032)
+	* Stop translating gpointers to ints in the dbus API.  This removes
+	  functions from the dbus API.  (The openSUSE Project) (#12507)
+
+	Pidgin:
+	* Support using the Page Up and Page Down keys on the numeric keypad in
+	  the conversation window.  (Ryan Flegel) (#13127)
+	* Fix a few memory leaks. (Nader Morshed) (#13162)
+	* Support rendering strikethrough when received as in-line CSS. (#13168)
+
+	Plugins:
+	* The Voice/Video Settings plugin no longer resets selected devices to
+	  defaults. (Jakub Adam) (#13044)
+	* The Autoaccept plugin now allows disabling filename escaping. (Rok
+	  Mandeljc) (half of #11459)
+	* The Autoaccept plugin now allows choosing Reject/Ask/Accept for
+	  non-buddies. (Rok Mandeljc) (half of #11459)
+
+	QQ:
+	* QQ2008 is now the default protocol version. (Michael Terry) (#11635)
+
+	XMPP:
+	* Don't crash when receiving an unexpected/invalid jingle transport type.
+	  (Nikita Kozlov) (#13136)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Fix a crash when an account disconnects before a p2p session is
+	  completely set up. (Jan Kaluza) (#12432)
+
+version 2.7.9 (12/26/2010):
+	MSN:
+	* Fix CVE-2010-4528, a crash when receiving short packets related to
+	  P2Pv2 messages.
+
+version 2.7.8 (12/19/2010):
+	General:
+	* Fix the exceptions in purple-remote on Python 2.6+. (Ari Pollak)
+	  (#12151)
+
+	Pidgin:
+	* When a conversation has reached the maximum limit on the number
+	  of smileys, display the text representation of the smiley properly
+	  when it contains HTML-escapable characters (e.g. "<3" was previously
+	  displayed as "&lt;3").
+	* Drop dependency on GdkGC and use Cairo instead.
+	* New UI hack to assist in first-time setup of Facebook accounts with
+	  icon from Jakub Szypulka.
+	* Don't hide the buddy list if there is no notification area in which
+	  to put the icon. (#12129)
+
+	libpurple:
+	* Fix multipart parsing when '=' is included in the boundary for
+	  purple_mime_document_parse. (Jakub Adam) (#11598)
+
+	AIM and ICQ:
+	* Buddies who unset their status message will now be correctly shown
+	  without a message in your buddy list. (#12988)
+
+	Gadu-Gadu:
+	* Updated our bundled libgadu and minimum requirement for external
+	  libgadu to 1.9.0. (#12789)
+
+	MSN:
+	* Stop showing ourselves in the list of endpoints that can be
+	  disconnected.
+	* Allow full-size display names, by not escaping (most) non-English
+	  characters. (#8508)
+	* Fix receiving messages from users on Yahoo and other federated
+	  services. (#13022)
+	* Correctly remove old endpoints from the list when they sign out.
+	* Add option to disable connections from multiple locations. (#13017)
+	* Correctly update your own display name in the buddy list. (#13064) 
+	* Correctly show ourselves as offline in the buddy list when going
+	  invisible. (#12945)
+	* Correctly update your own icon in the buddy list. (#12973)
+	* Remove struct packing for better portability. (#12856)
+
+	XMPP:
+	* Terminate Jingle sessions with unsupported content types. (#13048)
+
+version 2.7.7 (11/23/2010):
+	General:
+	* Allow multiple CA certificates to share the same Distinguished Name
+	  (DN).  Partially fixes remaining MSN issues from #12906.
+	* The GNUTLS SSL plugin now discards any certificate (and all subsequent
+	  certificates) in a chain if it did not sign the previous certificate.
+	  Partially fixes remaining MSN issues from #12906.
+	* Open requests related to a file transfer are now closed when the request
+	  is cancelled locally. (#11666)
+
+	AIM and ICQ:
+	* AIM should now connect if "Use clientLogin" is turned off and the
+	  "Server" field is set to anything other than "login.oscar.aol.com" or
+	  "slogin.oscar.aol.com". (#12948)
+	* Fix a crash on connection loss. (#5927)
+
+version 2.7.6 (11/21/2010):
+	General:
+	* Included Microsoft Internet Authority 2010 and Microsoft Secure Server
+	  Authority 2010 intermediate CA certificates to our bundle.  This fixes
+	  the "Unable to validate certificate" error for omega.contacts.msn.com.
+	  (#12906)
+
+	Pidgin:
+	* Avoid a use-after-free race condition in the media code (when
+	  there's an error reported by GStreamer). (#12806, Jakub Adam)
+
+	AIM and ICQ:
+	* SSL option has been changed to a tri-state menu with choices for
+	  "Don't Use Encryption", "Use Encryption if Available", and "Require
+	  Encryption".
+	* Fix some possible clientLogin URL issues introduced in version 2.7.5.
+	* Don't show a "<URL>: Ok" connection error when using clientLogin.
+	* Cleaned up some debug output for improved readability.
+
 	MSN:
 	* Added support for MSNP16, including Multiple Points of Presence (MPOP)
-	  which allows multiple simultaneous sign-ins.
+	  which allows multiple simultaneous sign-ins. (#8247)
 	* Added extended capabilities support (none implemented).
 	* Merged the work done on the Google SoC (major rewrite of SLP code)
 	* Reworked the data transfer architecture.
 	  (http://developer.pidgin.im/wiki/SlpArchitecture)
 	* Lots of little changes.
+	* Don't process zero-length DC messages. (#12660)
+	* Fixed a bunch of memory leaks.
+	* Prevent a use-after-free condition.
 
 	XMPP:
 	* Avoid a double-free in the Google Relay (V/V) code.
 	* Avoid double error message when failing a file transfer. (#12757)
+	* Password-related information is printed out for SASL authentication
+	  when the PURPLE_UNSAFE_DEBUG environment variable is set.
+	* Authentication mechanisms can now be added by UI's or other plugins
+	  with some work. This is outside the API/ABI rules! (#12715)
+	* Fixed a few printf("%s", NULL) crashes for broken OSes.
+
+	Windows-Specific Changes:
+	* Build the Pidgin Theme Editor plugin (finally).
+	* Untarring (for themes) now works for non-ASCII destination paths.
 
 version 2.7.5 (10/31/2010):
 	General:

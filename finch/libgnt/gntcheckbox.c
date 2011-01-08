@@ -100,7 +100,7 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 	wclass->key_pressed = gnt_check_box_key_pressed;
 	wclass->clicked = gnt_check_box_clicked;
 
-	signals[SIG_TOGGLED] = 
+	signals[SIG_TOGGLED] =
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,

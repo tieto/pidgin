@@ -163,7 +163,7 @@ purple_media_candidate_set_property (GObject *object, guint prop_id,
 		case PROP_TTL:
 			priv->ttl = g_value_get_uint(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
 					object, prop_id, pspec);
 			break;
@@ -176,7 +176,7 @@ purple_media_candidate_get_property (GObject *object, guint prop_id,
 {
 	PurpleMediaCandidatePrivate *priv;
 	g_return_if_fail(PURPLE_IS_MEDIA_CANDIDATE(object));
-	
+
 	priv = PURPLE_MEDIA_CANDIDATE_GET_PRIVATE(object);
 
 	switch (prop_id) {
@@ -227,7 +227,7 @@ static void
 purple_media_candidate_class_init(PurpleMediaCandidateClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
-	
+
 	gobject_class->finalize = purple_media_candidate_finalize;
 	gobject_class->set_property = purple_media_candidate_set_property;
 	gobject_class->get_property = purple_media_candidate_get_property;

@@ -286,6 +286,14 @@ void
 msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint *data);
 
 /**
+ * Clears all endpoint data for a user.
+ *
+ * @param user     The user.
+ */
+void
+msn_user_clear_endpoints(MsnUser *user);
+
+/**
  * Sets the client id for a user.
  *
  * @param user     The user.
@@ -426,7 +434,7 @@ guint msn_user_get_extcaps(const MsnUser *user);
  *
  * @param user 		The user we are asking group membership.
  * @param group_id 	The group where the user may be in.
- * 
+ *
  * @return TRUE if user is part of the group. Otherwise, FALSE.
  */
 gboolean msn_user_is_in_group(MsnUser *user, const char * group_id);

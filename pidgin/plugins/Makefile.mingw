@@ -48,6 +48,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lgmodule-2.0 \
 			-lgdk_pixbuf-2.0 \
 			-lpango-1.0 \
+			-lcairo \
 			-lintl \
 			-lws2_32 \
 			-lpurple \

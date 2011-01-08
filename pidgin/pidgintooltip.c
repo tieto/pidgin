@@ -138,7 +138,7 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 	GdkScreen *screen = NULL;
 	GdkRectangle mon_size;
 	GtkWidget *tipwindow = pidgin_tooltip.tipwindow;
-	
+
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
 	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
 	gdk_screen_get_monitor_geometry(screen, mon_num, &mon_size);

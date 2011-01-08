@@ -395,7 +395,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 		g_strfreev(parts);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "nonce: %s realm: %s\n",
 					 auth->nonce ? auth->nonce : "(null)",
-					 auth->realm ? auth->realm : "(null)"); 
+					 auth->realm ? auth->realm : "(null)");
 
 		if(auth->realm) {
 			auth->digest_session_key = purple_cipher_http_digest_calculate_session_key(
@@ -796,11 +796,11 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 				b->dialog->theirtag = g_strdup(theirtag);
 				b->dialog->callid = g_strdup(callid);
 
-				purple_debug_info("simple", "ourtag: %s\n", 
+				purple_debug_info("simple", "ourtag: %s\n",
 					ourtag);
-				purple_debug_info("simple", "theirtag: %s\n", 
+				purple_debug_info("simple", "theirtag: %s\n",
 					theirtag);
-				purple_debug_info("simple", "callid: %s\n", 
+				purple_debug_info("simple", "callid: %s\n",
 					callid);
 				g_free(theirtag);
 				g_free(ourtag);
@@ -982,7 +982,7 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 	}
 
 	/* publish status again if our last update is about to expire. */
-	if (sip->republish != -1 && 
+	if (sip->republish != -1 &&
 		sip->republish < curtime &&
 		purple_account_get_bool(sip->account, "dopublish", TRUE))
 	{
@@ -1272,9 +1272,9 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		isonline = TRUE;
 
 
-	if(isonline) 
+	if(isonline)
 		purple_prpl_got_user_status(sip->account, from, "available", NULL);
-	else 
+	else
 		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 
 	xmlnode_free(pidf);

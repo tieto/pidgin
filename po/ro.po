@@ -5,11 +5,11 @@
 # Contributions: 2007, Alexandru Szasz <alexxed@gmail.com>
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin-2.7.4\n"
+"Project-Id-Version: pidgin-2.7.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-20 23:11+0300\n"
-"Last-Translator: Mișu Moldovan <dumol@gnome.org>\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"PO-Revision-Date: 2010-12-17 18:47+0200\n"
+"Last-Translator: Mișu Moldovan <dumol@l10n.ro>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -4861,15 +4861,6 @@ msgstr "Dat afară (%s)"
 msgid "Unknown Error in presence"
 msgstr "Eroare necunoscută în starea de prezență"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "A apărut o eroare la transferul de octeți în-bandă\n"
-
-msgid "Transfer was closed."
-msgstr "Transferul a fost închis"
-
-msgid "Failed to open in-band bytestream"
-msgstr "Nu s-a putut deschide fluxul de octeți în-bandă"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5186,26 +5177,6 @@ msgstr "Eroare la adăugarea contactului"
 msgid "The username specified does not exist."
 msgstr "Numele de utilizator specificat nu există."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Probleme de sincronizare a liste de contacte în %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s din grupul „%s” e în lista contactelor, dar nu este în lista de pe "
-"server. Doriți să adăugați acest contact?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s este în lista contactelor, dar nu și în lista de pe server. Doriți să "
-"adăugați acest contact?"
-
 msgid "Unable to parse message"
 msgstr "Nu se poate prelucra mesajul"
 
@@ -5376,6 +5347,26 @@ msgstr "Cod de eroare necunoscut %d"
 msgid "MSN Error: %s\n"
 msgstr "Eroare MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Probleme de sincronizare a liste de contacte în %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s din grupul „%s” e în lista contactelor, dar nu este în lista de pe "
+"server. Doriți să adăugați acest contact?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s este în lista contactelor, dar nu și în lista de pe server. Doriți să "
+"adăugați acest contact?"
+
 msgid "Other Contacts"
 msgstr "Alte contacte"
 
@@ -5428,11 +5419,46 @@ msgstr "Noul pseudonim propriu MSN este prea lung."
 msgid "Set friendly name for %s."
 msgstr "Alegeți un pseudonim pentru %s."
 
-msgid "Set your friendly name."
-msgstr "Alegeți-vă un pseudonim propriu."
+msgid "Set Friendly Name"
+msgstr "Introducere pseudonim"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Acesta este numele sub care veți fi cunoscuți de contactele MSN."
+
+msgid "This Location"
+msgstr "Acest loc"
+
+msgid "This is the name that identifies this location"
+msgstr "Aceasta este denumirea pentru acest loc"
+
+msgid "Other Locations"
+msgstr "Alte locuri"
+
+msgid "You can sign out from other locations here"
+msgstr "Aici puteți să anulați alte autentificări curente"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Nu v-ați autentificat din altă parte."
+
+msgid "Allow multiple logins?"
+msgstr "Permiteți autentificări multiple?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr "Doriți sau nu să permiteți conectarea simultană din mai multe locuri?"
+
+msgid "Allow"
+msgstr "Permite"
+
+msgid "Disallow"
+msgstr "Refuză"
 
 msgid "Set your home phone number."
 msgstr "Introduceți numărul telefonului de acasă."
@@ -5452,12 +5478,6 @@ msgid ""
 msgstr ""
 "Vreți să permiteți persoanelor din lista de contacte să trimită pagini „MSN "
 "Mobile” către telefonul dumneavoastră mobil sau alte dispozitive portabile?"
-
-msgid "Allow"
-msgstr "Permite"
-
-msgid "Disallow"
-msgstr "Refuză"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5520,6 +5540,9 @@ msgstr "Numele piesei curente"
 msgid "Set Friendly Name..."
 msgstr "Introducere pseudonim..."
 
+msgid "View Locations..."
+msgstr "Vizualizare locuri..."
+
 msgid "Set Home Phone Number..."
 msgstr "Introducere număr telefon acasă..."
 
@@ -5531,6 +5554,9 @@ msgstr "Introducere număr telefon mobil..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "(Dez)Activare dispozitive mobile..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Permitere/Refuzare autentificări multiple..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Permitere/Refuzare pagini mobile..."
@@ -5749,6 +5775,9 @@ msgstr "Arată iconițe simbolice personalizate"
 
 msgid "Allow direct connections"
 msgstr "Permite conectări directe"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Permite conectarea din mai multe locuri"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge:  Sâcâiți un utilizator pentru a-i atrage atenția"
@@ -6926,11 +6955,20 @@ msgstr ""
 "V-ați conectat și deconectat prea des. Așteptați zece minute și încercați "
 "din nou. Dacă continuați să încercați, va trebui să așteptați mai mult."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Se cere criptare în opțiunile contului, dar unul dintre servere nu o suportă."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Eroare la cererea %s: %s"
+
+msgid "The server returned an empty response"
+msgstr "Serverul a returnat un răspuns gol"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6941,10 +6979,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL nu permite autentificarea acestui cont aici"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Eroare la cererea %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7237,6 +7271,13 @@ msgstr ""
 "greșit. Un nume valid trebuie să fie o adresă de mail corectă ori să înceapă "
 "cu o literă și să conțină doar litere, numere și spații sau să conțină doar "
 "numere."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Se cere criptare în opțiunile contului, dar acest sistem de operare nu o "
+"suportă."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7769,13 +7810,11 @@ msgstr "Opțiuni de înaintare a mesajelor (pe site)"
 msgid "Set Privacy Options..."
 msgstr "Opțiuni de securitate..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Listă de vizibilitate"
+msgstr "Lista celor ce vă văd"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Listă de invizibilitate"
+msgstr "Lista celor ce nu vă văd"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7792,6 +7831,9 @@ msgstr "Afișare contacte ce așteaptă autorizarea"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Căutare contact după adresa de mail..."
+
+msgid "Don't use encryption"
+msgstr "Nu utiliza criptare"
 
 msgid "Use clientLogin"
 msgstr "Utilizați clientLogin"
@@ -7992,7 +8034,7 @@ msgid "Personal Web Page"
 msgstr "Pagină personală"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Alte informații"
 
@@ -8020,16 +8062,28 @@ msgstr "Membru din"
 msgid "Capabilities"
 msgstr "Facilități"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Apar online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr "Nu apar online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Apar offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr "Nu apar offline"
 
@@ -12270,11 +12324,11 @@ msgstr "Greacă"
 msgid "Australian English"
 msgstr "Engleză Australiană"
 
-msgid "Canadian English"
-msgstr "Engleză Canadiană"
-
 msgid "British English"
 msgstr "Engleză Britanică"
+
+msgid "Canadian English"
+msgstr "Engleză Canadiană"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12353,6 +12407,9 @@ msgstr "Kurdă"
 
 msgid "Lao"
 msgstr "Lao"
+
+msgid "Maithili"
+msgstr "Maithili"
 
 msgid "Macedonian"
 msgstr "Macedoneană"
@@ -13991,6 +14048,9 @@ msgstr "Selector de status"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Următoarea eroare a apărut la încărcarea %s: %s"
@@ -15458,3 +15518,18 @@ msgstr "Vizitaţi pagina de web Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Eroare la cererea %s"
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "A apărut o eroare la transferul de octeți în-bandă\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Transferul a fost închis"
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Nu s-a putut deschide fluxul de octeți în-bandă"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Alegeți-vă un pseudonim propriu."

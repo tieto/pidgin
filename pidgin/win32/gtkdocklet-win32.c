@@ -539,7 +539,7 @@ static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
 			icon_name = PIDGIN_STOCK_TRAY_PENDING;
 		if (connecting)
 			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
-	
+
 		g_return_if_fail(icon_name != NULL);
 
 		cached_icons[icon_index] = load_hicon_from_stock(icon_name);
@@ -558,7 +558,7 @@ static void winpidgin_tray_set_tooltip(gchar *tooltip) {
 	wchar_t *w;
 	if (value == NULL) {
 		value = PIDGIN_NAME;
-	}	
+	}
 	w = g_utf8_to_utf16(value, -1, NULL, NULL, NULL);
 	wcsncpy(_nicon_data.szTip, w, sizeof(_nicon_data.szTip) / sizeof(wchar_t));
 	g_free(w);

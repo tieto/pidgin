@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-20 12:58+0200\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"PO-Revision-Date: 2010-12-14 13:40+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -4883,15 +4883,6 @@ msgstr "Wyrzucony (%s)"
 msgid "Unknown Error in presence"
 msgstr "Nieznany błąd obecności"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Wystąpił błąd przesyłania strumienia bitów w paśmie\n"
-
-msgid "Transfer was closed."
-msgstr "Przesyłanie zostało zamknięte."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Otwarcie strumienia bitów w paśmie się nie powiodło"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5209,26 +5200,6 @@ msgstr "Błąd podczas dodawania znajomego"
 msgid "The username specified does not exist."
 msgstr "Podana nazwa użytkownika nie istnieje."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problem synchronizacji listy znajomych w %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"Użytkownik %s na lokalnej liście jest w grupie \"%s\", ale nie ma go na "
-"serwerze. Dodać tego znajomego?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"Użytkownik %s znajduje się na lokalnej liście, ale nie ma go na serwerze. "
-"Dodać tego użytkownika?"
-
 msgid "Unable to parse message"
 msgstr "Nie można przetworzyć wiadomości"
 
@@ -5399,6 +5370,26 @@ msgstr "Nieznany kod błędu %d"
 msgid "MSN Error: %s\n"
 msgstr "Błąd MSN: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Problem synchronizacji listy znajomych w %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"Użytkownik %s na lokalnej liście jest w grupie \"%s\", ale nie ma go na "
+"serwerze. Dodać tego znajomego?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"Użytkownik %s znajduje się na lokalnej liście, ale nie ma go na serwerze. "
+"Dodać tego użytkownika?"
+
 msgid "Other Contacts"
 msgstr "Inne kontakty"
 
@@ -5452,11 +5443,46 @@ msgstr "Nowy pseudonim MSN jest za długi."
 msgid "Set friendly name for %s."
 msgstr "Ustawienie pseudonimu dla %s."
 
-msgid "Set your friendly name."
-msgstr "Ustawienie pseudonimu."
+msgid "Set Friendly Name"
+msgstr "Ustaw pseudonim"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Ta nazwa będzie widoczna dla innych znajomych MSN."
+
+msgid "This Location"
+msgstr "To położenie"
+
+msgid "This is the name that identifies this location"
+msgstr "Ta nazwa identyfikuje to położenie."
+
+msgid "Other Locations"
+msgstr "Inne położenia"
+
+msgid "You can sign out from other locations here"
+msgstr "Tutaj można wylogować się z innych położeń"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "Nie zalogowano z innych położeń."
+
+msgid "Allow multiple logins?"
+msgstr "Zezwolić na wiele logowań?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr "Zezwolić czy zabronić połączenia z wielu położeń jednocześnie?"
+
+msgid "Allow"
+msgstr "Zezwól"
+
+msgid "Disallow"
+msgstr "Zabroń"
 
 msgid "Set your home phone number."
 msgstr "Ustawienie numeru telefonu domowego."
@@ -5476,12 +5502,6 @@ msgid ""
 msgstr ""
 "Zezwolić czy zabronić osobom z listy znajomych na wysyłanie stron MSN Mobile "
 "do telefonu komórkowego lub innego przenośnego urządzenia?"
-
-msgid "Allow"
-msgstr "Zezwól"
-
-msgid "Disallow"
-msgstr "Zabroń"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5543,6 +5563,9 @@ msgstr "Nazwa biura"
 msgid "Set Friendly Name..."
 msgstr "Ustaw pseudonim..."
 
+msgid "View Locations..."
+msgstr "Wyświetl położenia..."
+
 msgid "Set Home Phone Number..."
 msgstr "Ustaw domowy numer telefonu..."
 
@@ -5554,6 +5577,9 @@ msgstr "Ustaw numer telefonu komórkowego..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Włącz/wyłącz urządzenia przenośne..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Zezwól/zabroń na wiele logowań..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Zezwól/zabroń strony Mobile..."
@@ -5772,6 +5798,9 @@ msgstr "Wyświetlanie własnych emotikon"
 msgid "Allow direct connections"
 msgstr "Zezwalanie na bezpośrednie połączenia"
 
+msgid "Allow connecting from multiple locations"
+msgstr "Zezwalanie na łączenie z wielu położeń"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: szturcha użytkownika, aby uzyskać jego uwagę"
 
@@ -5873,7 +5902,7 @@ msgid "Error parsing HTTP"
 msgstr "Błąd podczas przetwarzania HTTP"
 
 msgid "You have signed on from another location"
-msgstr "Zalogowano się z innego położenia"
+msgstr "Zalogowano z innego położenia"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
@@ -6953,11 +6982,21 @@ msgstr ""
 "spróbować ponownie. Jeśli próba zostanie podjęta teraz, czas oczekiwania "
 "jeszcze się wydłuży."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"Szyfrowanie jest wymagane w ustawieniach konta, ale jeden z serwerów go nie "
+"obsługuje."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Błąd podczas żądania adresu %s: %s"
+
+msgid "The server returned an empty response"
+msgstr "Serwer zwrócił pustą odpowiedź"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6968,10 +7007,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL nie umożliwia uwierzytelnienia nazwy użytkownika w tym miejscu"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Błąd podczas żądania %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7262,6 +7297,13 @@ msgstr ""
 "Nie można zalogować jako %s, ponieważ nazwa użytkownika jest nieprawidłowa. "
 "Nazwy użytkowników muszą być prawidłowymi adresami e-mail lub zaczynać się "
 "od litery i zawierać tylko litery, liczby i spacje lub zawierać tylko liczby."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"Wymagane jest szyfrowanie w ustawieniach konta, ale nie jest ono obsługiwane "
+"przez system."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7802,13 +7844,11 @@ msgstr "Skonfiguruj przekierowanie komunikatora (WWW)"
 msgid "Set Privacy Options..."
 msgstr "Ustaw opcje prywatności..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Lista widocznych"
+msgstr "Wyświetl lista widocznych"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Lista niewidocznych"
+msgstr "Wyświetl listę niewidocznych"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7825,6 +7865,9 @@ msgstr "Wyświetl znajomych oczekujących na upoważnienie"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Wyszukaj znajomych według adresu e-mail..."
+
+msgid "Don't use encryption"
+msgstr "Bez użycia szyfrowania"
 
 msgid "Use clientLogin"
 msgstr "Użycie logowania klienta"
@@ -8026,7 +8069,7 @@ msgid "Personal Web Page"
 msgstr "Osobista strona WWW"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Dodatkowe informacje"
 
@@ -8054,16 +8097,28 @@ msgstr "Członek od"
 msgid "Capabilities"
 msgstr "Możliwości"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Wygląda na tryb online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
 msgstr "Nie wygląda na tryb online"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "Wygląda na tryb offline"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
 msgstr "Nie wygląda na tryb offline"
 
@@ -12292,11 +12347,11 @@ msgstr "grecki"
 msgid "Australian English"
 msgstr "australijski angielski"
 
-msgid "Canadian English"
-msgstr "kanadyjski angielski"
-
 msgid "British English"
 msgstr "brytyjski angielski"
+
+msgid "Canadian English"
+msgstr "kanadyjski angielski"
 
 msgid "Esperanto"
 msgstr "esperanto"
@@ -12375,6 +12430,9 @@ msgstr "kurdyjski"
 
 msgid "Lao"
 msgstr "laotański"
+
+msgid "Maithili"
+msgstr "maithili"
 
 msgid "Macedonian"
 msgstr "macedoński"
@@ -14013,6 +14071,9 @@ msgstr "Wybór stanu"
 
 msgid "Google Talk"
 msgstr "Google Talk"
+
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"

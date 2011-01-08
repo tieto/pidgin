@@ -4,7 +4,7 @@
  *  (C) Copyright 2001-2008 Wojtek Kaniewski <wojtekka@irc.pl>
  *                          Tomasz Chiliński <chilek@chilan.com>
  *                          Adam Wysocki <gophi@ekg.chmurka.net>
- *  
+ *
  *  Thanks to Jakub Zawadzki <darkjames@darkjames.ath.cx>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint16_t port)
 	}
 
 	// XXX losować porty?
-	
+
 	if (!port)
 		port = GG_DEFAULT_DCC_PORT;
 
@@ -242,7 +242,7 @@ static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint16_t port)
 
 	dcc->fd = fd;
 	dcc->local_port = port;
-	
+
 	dcc->state = GG_STATE_LISTENING;
 	dcc->check = GG_CHECK_READ;
 	dcc->timeout = GG_DCC7_TIMEOUT_FILE_ACK;
@@ -264,7 +264,7 @@ static int gg_dcc7_listen_and_send_info(struct gg_dcc7 *dcc)
 	gg_debug_dcc(dcc, GG_DEBUG_FUNCTION, "** gg_dcc7_listen_and_send_info(%p)\n", dcc);
 
 	// XXX dać możliwość konfiguracji?
-	
+
 	dcc->local_addr = dcc->sess->client_addr;
 
 	if (gg_dcc7_listen(dcc, 0) == -1)
@@ -334,7 +334,7 @@ static int gg_dcc7_request_id(struct gg_session *sess, uint32_t type)
 		errno = EINVAL;
 		return -1;
 	}
-	
+
 	memset(&pkt, 0, sizeof(pkt));
 	pkt.type = gg_fix32(type);
 
@@ -595,7 +595,7 @@ int gg_dcc7_handle_id(struct gg_session *sess, struct gg_event *e, void *payload
 
 		if (tmp->state != GG_STATE_REQUESTING_ID || tmp->dcc_type != gg_fix32(p->type))
 			continue;
-		
+
 		tmp->cid = p->id;
 
 		switch (tmp->dcc_type) {
@@ -654,9 +654,9 @@ int gg_dcc7_handle_accept(struct gg_session *sess, struct gg_event *e, void *pay
 		e->event.dcc7_error = GG_ERROR_DCC7_HANDSHAKE;
 		return 0;
 	}
-	
+
 	// XXX czy dla odwrotnego połączenia powinniśmy wywołać już zdarzenie GG_DCC7_ACCEPT?
-	
+
 	dcc->offset = gg_fix32(p->offset);
 	dcc->state = GG_STATE_WAITING_FOR_INFO;
 
@@ -685,7 +685,7 @@ int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, void *paylo
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_info() unknown dcc session\n");
 		return 0;
 	}
-	
+
 	if (p->type != GG_DCC7_TYPE_P2P) {
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_info() unhandled transfer type (%d)\n", p->type);
 		e->type = GG_EVENT_DCC7_ERROR;
@@ -722,7 +722,7 @@ int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, void *paylo
 		dcc->fd = -1;
 		dcc->reverse = 1;
 	}
-	
+
 	if (dcc->type == GG_SESSION_DCC7_SEND) {
 		e->type = GG_EVENT_DCC7_ACCEPT;
 		e->event.dcc7_accept.dcc7 = dcc;
@@ -731,6 +731,7 @@ int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, void *paylo
 		e->event.dcc7_accept.remote_port = dcc->remote_port;
 	} else {
 		e->type = GG_EVENT_DCC7_PENDING;
+		e->event.dcc7_pending.dcc7 = dcc;
 	}
 
 	if (gg_dcc7_connect(sess, dcc) == -1) {
@@ -765,7 +766,7 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, void *pay
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_reject() unknown dcc session\n");
 		return 0;
 	}
-	
+
 	if (dcc->state != GG_STATE_WAITING_FOR_ACCEPT) {
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_reject() invalid state\n");
 		e->type = GG_EVENT_DCC7_ERROR;
@@ -805,7 +806,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, void *payloa
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_new() not enough memory\n");
 				return -1;
 			}
-			
+
 			memset(dcc, 0, sizeof(struct gg_dcc7));
 			dcc->type = GG_SESSION_DCC7_GET;
 			dcc->dcc_type = GG_DCC7_TYPE_FILE;
@@ -837,7 +838,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, void *payloa
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_packet() not enough memory\n");
 				return -1;
 			}
-			
+
 			memset(dcc, 0, sizeof(struct gg_dcc7));
 
 			dcc->type = GG_SESSION_DCC7_VOICE;
@@ -872,7 +873,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, void *payloa
 /**
  * \internal Ustawia odpowiednie stany wewnętrzne w zależności od rodzaju
  * połączenia.
- * 
+ *
  * \param dcc Struktura połączenia
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu.
@@ -1004,6 +1005,7 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 
 				if (gg_dcc7_reverse_connect(dcc) != -1) {
 					e->type = GG_EVENT_DCC7_PENDING;
+					e->event.dcc7_pending.dcc7 = dcc;
 				} else {
 					e->type = GG_EVENT_DCC7_ERROR;
 					e->event.dcc_error = GG_ERROR_DCC7_NET;

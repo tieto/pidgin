@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:12-0400\n"
-"PO-Revision-Date: 2010-10-10 10:55+0100\n"
-"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
+"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"PO-Revision-Date: 2010-12-14 10:45+0100\n"
+"Last-Translator: Dingoe <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1777,7 +1777,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL certificaatfout"
 
 msgid "Unable to validate certificate"
-msgstr "Kan certificaat valideren"
+msgstr "Kan certificaat niet valideren"
 
 #, c-format
 msgid ""
@@ -4887,15 +4887,6 @@ msgstr "Eruit gegooid (%s)"
 msgid "Unknown Error in presence"
 msgstr "Onbekende fout in aanwezigheid"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "Er is een fout op de in-band bytestream overdracht\n"
-
-msgid "Transfer was closed."
-msgstr "Bestandsoverdracht gesloten."
-
-msgid "Failed to open in-band bytestream"
-msgstr "Kan geen in-band bytestream openen"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
@@ -5214,25 +5205,6 @@ msgstr "Fout bij het toevoegen vriend"
 msgid "The username specified does not exist."
 msgstr "Ingevoerde gebruikersnaam bestaat niet."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Synchronisatieprobleem in vriendenlijst van %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s is op de lokale lijst in de groep \"%s\", maar niet op de serverlijst. "
-"Wilt u deze toevoegen?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s is op de lokale lijst, maar niet op de serverlijst. Wilt u deze toevoegen?"
-
 msgid "Unable to parse message"
 msgstr "Kan het bericht niet ontleden"
 
@@ -5403,6 +5375,25 @@ msgstr "Onbekende foutcode %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN-fout: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "Synchronisatieprobleem in vriendenlijst van %s (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"%s is op de lokale lijst in de groep \"%s\", maar niet op de serverlijst. "
+"Wilt u deze toevoegen?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr ""
+"%s is op de lokale lijst, maar niet op de serverlijst. Wilt u deze toevoegen?"
+
 msgid "Other Contacts"
 msgstr "Andere Contactpersonen"
 
@@ -5454,11 +5445,48 @@ msgstr "Uw nieuwe MSN-bijnaam is te lang."
 msgid "Set friendly name for %s."
 msgstr "Geef een bijnaam voor %s."
 
-msgid "Set your friendly name."
-msgstr "Bijnaam instellen."
+msgid "Set Friendly Name"
+msgstr "Geef Bijnaam"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Dit is de naam die andere MSN vrienden van u zullen zien."
+
+msgid "This Location"
+msgstr "Deze Locatie"
+
+msgid "This is the name that identifies this location"
+msgstr "Dit is de naam die deze locatie indentificeert."
+
+msgid "Other Locations"
+msgstr "andere Locaties"
+
+msgid "You can sign out from other locations here"
+msgstr "U kunt u hier bij andere locaties afmelden."
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+msgid "You are not signed in from any other locations."
+msgstr "U bent vanaf geen enkele locatie aangemeld."
+
+msgid "Allow multiple logins?"
+msgstr "Meerdere aanmeldingen toestaan?"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+"Wilt u het tegelijkertijd verbinden vanaf meerdere locaties toestaan of "
+"weigeren?"
+
+msgid "Allow"
+msgstr "Toestaan"
+
+msgid "Disallow"
+msgstr "Weigeren"
 
 msgid "Set your home phone number."
 msgstr "Telefoonnummer voor thuis instellen."
@@ -5478,12 +5506,6 @@ msgid ""
 msgstr ""
 "Wilt u dat mensen op uw vriendenlijst MSN-mobiel oproepen kunnen sturen naar "
 "uw mobiele telefoon of ander mobiel apparaat?"
-
-msgid "Allow"
-msgstr "Toestaan"
-
-msgid "Disallow"
-msgstr "Weigeren"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5546,6 +5568,9 @@ msgstr "Kantoor Titel"
 msgid "Set Friendly Name..."
 msgstr "Bijnaam instellen..."
 
+msgid "View Locations..."
+msgstr "Bekijk Locaties..."
+
 msgid "Set Home Phone Number..."
 msgstr "Telefoon thuis instellen..."
 
@@ -5557,6 +5582,9 @@ msgstr "Mobiel nummer instellen..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Mobiele apparaten inschakelen/uitschakelen..."
+
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "Toestaan/Weigeren van meerdere aanmeldingen..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Mobiele oproepen toestaan/weigeren..."
@@ -5774,6 +5802,9 @@ msgstr "Eigen emoticon's weergeven"
 
 msgid "Allow direct connections"
 msgstr "Sta directe verbindingen toe"
+
+msgid "Allow connecting from multiple locations"
+msgstr "Sta verbinding van meerdere locaties toe."
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Een gebruiker virtueel aanstoten om de aandacht te krijgen"
@@ -6953,11 +6984,21 @@ msgstr ""
 "U heeft u te snel aan en afgemeld. Wacht 10 minuten en probeer het nog een "
 "keer. Als u verder gaat moet u nog langer wachten."
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+"U heeft encryptie nodig volgens uw account instellingen, maar één van de "
+"servers ondersteunt dit niet."
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Fout opvragen %s: %s"
+
+msgid "The server returned an empty response"
+msgstr "leeg antwoord van server"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6968,10 +7009,6 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL laat niet toe uw schermnaam hier te waarmerken"
-
-#, c-format
-msgid "Error requesting %s"
-msgstr "Fout opvragen  %s"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7265,6 +7302,13 @@ msgstr ""
 "ongeldig is. Gebruikersnamen moeten een geldig e-mailadres zijn, of beginnen "
 "met een letter en slechts cijfers, letters en spaties bevatten, of slechts "
 "nummers bevatten."
+
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+"U heeft encryptie nodig volgens uw account instellingen, maar encryptie "
+"wordt niet door uw systeem ondersteund."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7783,13 +7827,11 @@ msgstr "IM-doorsturen configureren (web)"
 msgid "Set Privacy Options..."
 msgstr "Privacy-opties instellen..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Vriendenlijst _weergeven"
+msgstr "Toon Zichtbaren Lijst"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Uitnodigingslijst"
+msgstr "Toon Onzichtbaren Lijst"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7806,6 +7848,9 @@ msgstr "Vrienden weergeven die op toestemming wachten"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Vriend zoeken door middel van e-mail..."
+
+msgid "Don't use encryption"
+msgstr "Gebruik geen encryptie"
 
 msgid "Use clientLogin"
 msgstr "Gebruik clientLogin"
@@ -7999,9 +8044,9 @@ msgstr "Waarschuwingsniveau"
 msgid "Buddy Comment"
 msgstr "Opmerking bij Vriend"
 
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
-msgstr "Gebruik encryptie indien aanwezig"
+msgstr "Gebruikersinformatie niet beschikbaar: %s"
 
 msgid "Mobile Phone"
 msgstr "Mobiel nummer"
@@ -8010,7 +8055,7 @@ msgid "Personal Web Page"
 msgstr "Persoonlijke webpagina"
 
 #. aim_userinfo_t
-#. strip_html_tags
+#. use_html_status
 msgid "Additional Information"
 msgstr "Extra informatie"
 
@@ -8038,46 +8083,54 @@ msgstr "Lid sinds"
 msgid "Capabilities"
 msgstr "Mogelijkheden"
 
-#. 4 separate strings are needed in order to ease translators' job
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
 msgid "Appear Online"
 msgstr "Online weergeven"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "Online weergeven"
+msgstr "Niet Online weergeven"
 
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
 msgid "Appear Offline"
 msgstr "offline weergeven"
 
-#, fuzzy
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
 msgid "Don't Appear Offline"
-msgstr "offline weergeven"
+msgstr "Niet Offline weergeven"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "U bent uit deze MultiMX gegooid."
+msgstr "U heeft geen vrienden op deze lijst"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"U kunt opnieuw toestemming aanvragen door met de rechter muisknop op de "
-"vrienden te klikken en de optie \"Opnieuw toestemming vragen.\" te kiezen."
+"U kunt een vriend toevoegen aan deze lijst door rechts op een van hern te "
+"klikken en dan \"%s\" te selecteren"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Beschikbaar"
+msgstr "Zichtbaren Lijst"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
+"Deze vrienden kunnen uw status zien als u overschakelt naar \"Onzichtbaar\""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Uitnodigingslijst"
+msgstr "Onzichtbaren Lijst"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Deze vrienden zullen u altijd als Offline zien"
 
 msgid "Aquarius"
 msgstr "Waterman"
@@ -12298,11 +12351,11 @@ msgstr "Grieks"
 msgid "Australian English"
 msgstr "Australisch Engels"
 
-msgid "Canadian English"
-msgstr "Canadees Engels"
-
 msgid "British English"
 msgstr "Brits Engels"
+
+msgid "Canadian English"
+msgstr "Canadees Engels"
 
 msgid "Esperanto"
 msgstr "Esperanto"
@@ -12381,6 +12434,9 @@ msgstr "Koerdisch"
 
 msgid "Lao"
 msgstr "Laotiaans"
+
+msgid "Maithili"
+msgstr "Maithili"
 
 msgid "Macedonian"
 msgstr "Macedonisch"
@@ -14020,6 +14076,9 @@ msgstr "Statusselector"
 msgid "Google Talk"
 msgstr "Google talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "De volgende fout is opgetreden bij laden van %s: %s"
@@ -15524,6 +15583,21 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "Error requesting %s"
+#~ msgstr "Fout opvragen  %s"
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "Er is een fout op de in-band bytestream overdracht\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "Bestandsoverdracht gesloten."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "Kan geen in-band bytestream openen"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "Bijnaam instellen."
 
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr ""

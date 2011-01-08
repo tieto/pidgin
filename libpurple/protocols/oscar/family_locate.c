@@ -173,7 +173,7 @@ static const struct {
 
 	/* Support xtraz statuses */
 	{OSCAR_CAPABILITY_XTRAZ,
-	 {0x1a, 0x09, 0x3c, 0x6c, 0xd7, 0xFD, 0x4e, 0xc5, 
+	 {0x1a, 0x09, 0x3c, 0x6c, 0xd7, 0xFD, 0x4e, 0xc5,
 	  0x9d, 0x51, 0xa6, 0x47, 0x4e, 0x34, 0xf5, 0xa0}},
 
 	{OSCAR_CAPABILITY_SENDBUDDYLIST,
@@ -630,7 +630,7 @@ aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
 
 		for (i = 0; icq_custom_icons[i].mood; i++) {
 			if (memcmp(&icq_custom_icons[i].data, cap, 0x10) == 0) {
-				purple_debug_misc("oscar", "Custom status icon: %s\n", icq_purple_moods[i].description);		
+				purple_debug_misc("oscar", "Custom status icon: %s\n", icq_purple_moods[i].description);
 				result = icq_custom_icons[i].mood;
 				break; /* should only match once... */
 			}

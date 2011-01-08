@@ -595,7 +595,7 @@ pidgin_request_choice(const char *title, const char *primary,
 static void *
 pidgin_request_action_with_icon(const char *title, const char *primary,
 						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, 
+					    PurpleAccount *account, const char *who,
 						PurpleConversation *conv, gconstpointer icon_data,
 						gsize icon_size,
 						void *user_data, size_t action_count, va_list actions)
@@ -693,7 +693,7 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 		gdk_pixbuf_loader_close(loader, NULL);
 		g_object_unref(loader);
 	}
-	
+
 	if (!img) {
 		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));

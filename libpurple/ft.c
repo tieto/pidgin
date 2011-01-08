@@ -274,7 +274,7 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 	}
 }
 
-static void 
+static void
 purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	const char *message, gboolean is_error, gboolean print_thumbnail)
 {
@@ -302,12 +302,12 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;
-		gpointer data = g_memdup(thumbnail_data, size); 
+		gpointer data = g_memdup(thumbnail_data, size);
 		int id = purple_imgstore_add_with_id(data, size, NULL);
 
-		message_with_img = 
+		message_with_img =
 			g_strdup_printf("<img id='%d'> %s", id, escaped);
-		purple_conversation_write(conv, NULL, message_with_img, flags, 
+		purple_conversation_write(conv, NULL, message_with_img, flags,
 			time(NULL));
 		purple_imgstore_unref_by_id(id);
 		g_free(message_with_img);
@@ -530,7 +530,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 				xfer, G_CALLBACK(purple_xfer_choose_file),
 				G_CALLBACK(cancel_recv_cb));
 		}
-			
+
 		g_free(buf);
 	} else
 		purple_xfer_choose_file(xfer);
@@ -1487,6 +1487,20 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 	char *msg = NULL;
 
 	g_return_if_fail(xfer != NULL);
+
+	/* TODO: We definitely want to close any open request dialogs associated
+	   with this transfer.  However, in some cases the request dialog might
+	   own a reference on the xfer.  This happens at least with the "%s wants
+	   to send you %s" dialog from purple_xfer_ask_recv().  In these cases
+	   the ref count will not be decremented when the request dialog is
+	   closed, so the ref count will never reach 0 and the xfer will never
+	   be freed.  This is a memleak and should be fixed.  It's not clear what
+	   the correct fix is.  Probably requests should have a destroy function
+	   that is called when the request is destroyed.  But also, ref counting
+	   xfer objects makes this code REALLY complicated.  An alternate fix is
+	   to not ref count and instead just make sure the object still exists
+	   when we try to use it. */
+	purple_request_close_with_handle(xfer);
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
 	xfer->end_time = time(NULL);

@@ -283,7 +283,6 @@ oscar_chat_kill(PurpleConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
-	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_destroy(cc);
 }
 
@@ -793,7 +792,7 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, FALSE))) {
+			if (!strcmp(server, get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
 				server = get_login_server(od->icq, TRUE);
@@ -1027,7 +1026,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 	conn->cookie = g_memdup(cookie, cookielen);
 
 	/*
-	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS, 
+	 * Use TLS only if the server provided us with a tls_certname. The server might not specify a tls_certname even if we requested to use TLS,
 	 * and that is something we should be prepared to.
 	 */
 	if (tls_certname)
@@ -1294,7 +1293,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You required encryption in your account settings, but one of the servers doesn't support it."));
 			return 0;
-		} 
+		}
 	}
 
 	/*
@@ -1367,7 +1366,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	const char *status_id;
 	va_list ap;
 	aim_userinfo_t *info;
-	char *message = NULL;
+	char *message;
 	char *itmsurl = NULL;
 
 	gc = od->gc;
@@ -1454,16 +1453,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	/* Empty status means we should unset the status message. NULL status means we should keep it from the previous active status.
-	 * Same goes for itmsurl (which is available only for the "available" status).
-	 */
-	if (info->status != NULL) {
-		message = (info->status_len > 0) ? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len) : NULL;
-	} else if (previous_status != NULL) {
-		message = g_strdup(purple_status_get_attr_string(previous_status, "message"));
-	}
+	message = (info->status && info->status_len > 0)
+			? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len)
+			: NULL;
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
+		/* TODO: If itmsurl is NULL, does that mean the URL has been
+		   cleared?  Or does it mean the URL should remain unchanged? */
 		if (info->itmsurl != NULL) {
 			itmsurl = (info->itmsurl_len > 0) ? oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len) : NULL;
 		} else if (previous_status != NULL && purple_status_is_available(previous_status)) {
@@ -1803,8 +1799,22 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		if (args->info.rtfmsg.msgtype == 1) {
 			if (args->info.rtfmsg.msg != NULL) {
-				char *rtfmsg = oscar_encoding_to_utf8(args->encoding, args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
+				char *rtfmsg;
+				const char *encoding = args->encoding;
+				size_t len = strlen(args->info.rtfmsg.msg);
 				char *tmp, *tmp2;
+
+				if (encoding == NULL && !g_utf8_validate(args->info.rtfmsg.msg, len, NULL)) {
+					/* Yet another wonderful Miranda-related hack. If their user disables the "Send Unicode messages" setting,
+					 * Miranda sends us ch2 messages in whatever Windows codepage is set as default on their user's system (instead of UTF-8).
+					 * Of course, they don't bother to specify that codepage. Let's just fallback to the encoding OUR users can
+					 * specify in account options as a last resort.
+					 */
+					encoding = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+					purple_debug_info("oscar", "Miranda, is that you? Using '%s' as encoding\n", encoding);
+				}
+
+				rtfmsg = oscar_encoding_to_utf8(encoding, args->info.rtfmsg.msg, len);
 
 				/* Channel 2 messages are supposed to be plain-text (never mind the name "rtfmsg", even
 				 * the official client doesn't parse them as RTF). Therefore, we should escape them before
@@ -3205,7 +3215,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_free(data, TRUE);
 
 	purple_debug_info("oscar", "sending direct IM %s using charset %i", msg->str, charset);
-	
+
 	peer_odc_send_im(conn, msg->str, msg->len, charset,
 			imflags & PURPLE_MESSAGE_AUTO_RESP);
 	g_string_free(msg, TRUE);
@@ -3572,7 +3582,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		}
 
 		itmsurl = purple_status_get_attr_string(status, "itmsurl");
-		
+
 		aim_srv_setextrainfo(od, TRUE, oscar_get_extended_status(gc), TRUE, status_text, itmsurl);
 		g_free(status_text);
 	}
@@ -4451,6 +4461,7 @@ oscar_chat_leave(PurpleConnection *gc, int id)
 			purple_conversation_get_name(conv));
 
 	cc = find_oscar_chat(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_kill(gc, cc);
 }
 

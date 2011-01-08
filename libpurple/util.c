@@ -3949,27 +3949,27 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 			/* This chunk of code was copied from proxy.c http_start_connect_tunneling()
 			 * This is really a temporary hack - we need a more complete proxy handling solution,
 			 * so I didn't think it was worthwhile to refactor for reuse
-			 */ 
+			 */
 			char *t1, *t2, *ntlm_type1;
 			char hostname[256];
 			int ret;
-	
+
 			ret = gethostname(hostname, sizeof(hostname));
 			hostname[sizeof(hostname) - 1] = '\0';
 			if (ret < 0 || hostname[0] == '\0') {
 				purple_debug_warning("util", "proxy - gethostname() failed -- is your hostname set?");
 				strcpy(hostname, "localhost");
 			}
-	
+
 			t1 = g_strdup_printf("%s:%s",
 				purple_proxy_info_get_username(gpi),
 				purple_proxy_info_get_password(gpi) ?
 					purple_proxy_info_get_password(gpi) : "");
 			t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
 			g_free(t1);
-	
+
 			ntlm_type1 = purple_ntlm_gen_type1(hostname, "");
-	
+
 			g_string_append_printf(request_str,
 				"Proxy-Authorization: Basic %s\r\n"
 				"Proxy-Authorization: NTLM %s\r\n"

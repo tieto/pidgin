@@ -66,7 +66,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 
 		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(widget), &iter, &buf);
 		last_y = buf.y + buf.height;
-		pad = (gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget)) + 
+		pad = (gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget)) +
 				gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))) / 2;
 		last_y += pad;
 	}
@@ -79,12 +79,14 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 	if (y >= event->area.y)
 	{
 		GdkColor red = {0, 0xffff, 0, 0};
-		GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
+		cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(event->window));
 
-		gdk_gc_set_rgb_fg_color(gc, &red);
-		gdk_draw_line(event->window, gc,
-					0, y, visible_rect.width, y);
-		g_object_unref(G_OBJECT(gc));
+		gdk_cairo_set_source_color(cr, &red);
+		cairo_move_to(cr, 0.0, y + 0.5);
+		cairo_rel_line_to(cr, visible_rect.width, 0.0);
+		cairo_set_line_width(cr, 1.0);
+		cairo_stroke(cr);
+		cairo_destroy(cr);
 	}
 	return FALSE;
 }
@@ -130,7 +132,7 @@ window_resized(GtkWidget *w, GdkEventConfigure *event, PidginWindow *win)
 	GList *list;
 
 	list = pidgin_conv_window_get_gtkconvs(win);
-	
+
 	for (; list; list = list->next)
 		update_marker_for_gtkconv(list->data);
 

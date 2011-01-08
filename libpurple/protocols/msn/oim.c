@@ -166,14 +166,10 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	xmlnode *fault = NULL;
 	xmlnode *faultcode = NULL;
 
-	if (response == NULL)
-		return;
+	if (response != NULL)
+		fault = xmlnode_get_child(response->xml, "Body/Fault");
 
-	fault = xmlnode_get_child(response->xml, "Body/Fault");
-	if (fault)
-		faultcode = xmlnode_get_child(fault, "faultcode");
-
-	if (faultcode) {
+	if (fault && (faultcode = xmlnode_get_child(fault, "faultcode"))) {
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
 		gboolean need_token_update = FALSE;
 
@@ -422,8 +418,8 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						str_reason = _("Message was not sent because an unknown "
 						               "error occurred.");
 					}
-					
-					msn_session_report_user(oim->session, msg->to_member, 
+
+					msn_session_report_user(oim->session, msg->to_member,
 						str_reason, PURPLE_MESSAGE_ERROR);
 					msn_session_report_user(oim->session, msg->to_member,
 						msg->oim_msg, PURPLE_MESSAGE_RAW);
@@ -641,10 +637,10 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 			type = msn_message_get_content_type(multipart);
 			if (type && !strcmp(type, "text/plain")) {
 				decode_msg = (char *)purple_base64_decode(multipart->body, &body_len);
-				msn_message_destroy(multipart);
+				msn_message_unref(multipart);
 				break;
 			}
-			msn_message_destroy(multipart);
+			msn_message_unref(multipart);
 		}
 
 		g_strfreev(tokens);
@@ -652,7 +648,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 		if (decode_msg == NULL) {
 			purple_debug_error("msn", "Couldn't find text/plain OIM message.\n");
-			msn_message_destroy(message);
+			msn_message_unref(message);
 			return;
 		}
 	} else {
@@ -708,7 +704,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	g_free(passport);
 	g_free(decode_msg);
-	msn_message_destroy(message);
+	msn_message_unref(message);
 }
 
 /* Parse the XML data,

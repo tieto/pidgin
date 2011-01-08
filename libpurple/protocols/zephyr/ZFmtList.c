@@ -5,12 +5,12 @@
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
 
-Code_t ZFormatNoticeList(notice, list, nitems, buffer, ret_len, 
+Code_t ZFormatNoticeList(notice, list, nitems, buffer, ret_len,
 			 cert_routine)
     ZNotice_t *notice;
     register char **list;

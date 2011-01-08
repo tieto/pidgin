@@ -171,7 +171,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 /**
  * Called by a prpl when an account has joined a chat.
  *
- * @param gc   The connection on which the chat was joined. 
+ * @param gc   The connection on which the chat was joined.
  * @param id   The id of the chat, assigned by the prpl.
  * @param name The name of the chat.
  * @return     The resulting conversation

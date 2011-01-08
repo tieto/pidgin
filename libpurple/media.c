@@ -190,7 +190,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->dispose = purple_media_dispose;
 	gobject_class->finalize = purple_media_finalize;
 	gobject_class->set_property = purple_media_set_property;
@@ -416,7 +416,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_PRPL_DATA:
 			media->priv->prpl_data = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -427,7 +427,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 {
 	PurpleMedia *media;
 	g_return_if_fail(PURPLE_IS_MEDIA(object));
-	
+
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
@@ -450,8 +450,8 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_PRPL_DATA:
 			g_value_set_pointer(value, media->priv->prpl_data);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 
@@ -490,7 +490,7 @@ purple_media_get_streams(PurpleMedia *media, const gchar *session,
 {
 	GList *streams;
 	GList *ret = NULL;
-	
+
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 
 	streams = media->priv->streams;
@@ -535,7 +535,7 @@ purple_media_insert_stream(PurpleMediaSession *session,
 		const gchar *name, gboolean initiator)
 {
 	PurpleMediaStream *media_stream;
-	
+
 	g_return_val_if_fail(session != NULL, NULL);
 
 	media_stream = g_new0(PurpleMediaStream, 1);

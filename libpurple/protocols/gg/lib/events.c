@@ -254,7 +254,7 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 
 /**
  * \internal Analizuje informacje rozszerzone wiadomości.
- * 
+ *
  * \param sess Struktura sesji.
  * \param e Struktura zdarzenia.
  * \param sender Numer nadawcy.
@@ -567,7 +567,7 @@ static int gg_convert_from_html(char *dst, const char *html)
 
 	if (dst != NULL)
 		dst[len] = 0;
-	
+
 	return len;
 }
 
@@ -893,7 +893,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 						e->event.notify60[i].descr = descr;
 
 						/* XXX czas */
-							
+
 						length -= sizeof(struct gg_notify_reply77) + descr_len + 1;
 						n = (void*) ((char*) n + sizeof(struct gg_notify_reply77) + descr_len + 1);
 					} else {
@@ -1026,7 +1026,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 						e->event.notify60[i].descr[descr_len] = 0;
 
 						/* XXX czas */
-							
+
 						length -= sizeof(struct gg_notify_reply60) + descr_len + 1;
 						n = (void*) ((char*) n + sizeof(struct gg_notify_reply60) + descr_len + 1);
 					} else {
@@ -1149,6 +1149,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 			e->type = GG_EVENT_NOTIFY60;
 			e->event.notify60 = malloc(sizeof(*e->event.notify60));
+
 			if (!e->event.notify60) {
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd_connected() not enough memory for notify data\n");
 				goto fail;
@@ -1159,7 +1160,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 			while (length >= sizeof(struct gg_notify_reply80)) {
 				uint32_t descr_len;
 				char *tmp;
-				
+
 				e->event.notify60[i].uin	= gg_fix32(n->uin);
 				e->event.notify60[i].status	= gg_fix32(n->status);
 				e->event.notify60[i].remote_ip	= n->remote_ip;
@@ -1169,7 +1170,6 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				e->event.notify60[i].version	= 0x00;	/* not-supported */
 				e->event.notify60[i].time	= 0;	/* not-supported */
 
-				
 				descr_len = gg_fix32(n->descr_len);
 
 				length -= sizeof(struct gg_notify_reply80);
@@ -2077,7 +2077,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 				uint32_t tmp_version_len	= gg_fix32(strlen(GG8_VERSION));
 				uint32_t tmp_descr_len		= gg_fix32((sess->initial_descr) ? strlen(sess->initial_descr) : 0);
-				
+
 				memset(&l, 0, sizeof(l));
 				l.uin           = gg_fix32(sess->uin);
 				memcpy(l.language, GG8_LANG, sizeof(l.language));
@@ -2090,8 +2090,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				l.dunno2        = 0x64;
 
 				gg_debug_session(sess, GG_DEBUG_TRAFFIC, "// gg_watch_fd() sending GG_LOGIN80 packet\n");
-				ret = gg_send_packet(sess, GG_LOGIN80, 
-						&l, sizeof(l), 
+				ret = gg_send_packet(sess, GG_LOGIN80,
+						&l, sizeof(l),
 						&tmp_version_len, sizeof(uint32_t), GG8_VERSION, strlen(GG8_VERSION),
 						&tmp_descr_len, sizeof(uint32_t), sess->initial_descr, (sess->initial_descr) ? strlen(sess->initial_descr) : 0,
 						NULL);

@@ -1587,7 +1587,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 					if (buddy != NULL)
 						alias = purple_buddy_get_alias(buddy);
-					
+
 					if (alias != NULL)
 						g_string_append(formatted, alias);
 					else
@@ -1824,7 +1824,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE)) {
 
 				char *tmp;
-				
+
 				new_line = c;
 
 				/* find EOL */
@@ -1886,7 +1886,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			data->offset = offset;
 			offset += data->length;
 			purple_debug_info("QIP logger list",
-				"Creating log: path = (%s); length = (%d); offset = (%d)\n", 
+				"Creating log: path = (%s); length = (%d); offset = (%d)\n",
 				data->path, data->length, data->offset);
 
 			/* XXX: Look into this later... Should we pass in a struct tm? */
@@ -2323,7 +2323,7 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
-	
+
 	fseek(file, data->offset, SEEK_SET);
 	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
@@ -2417,7 +2417,7 @@ static int amsn_logger_size(PurpleLog *log)
 	g_return_val_if_fail(log != NULL, 0);
 
 	data = log->logger_data;
-	
+
 	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
 		return data ? data->length : 0;
 	}

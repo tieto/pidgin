@@ -243,7 +243,7 @@ finch_request_choice(const char *title, const char *primary,
 
 	setup_default_callback(window, cancel_cb, user_data);
 	gnt_widget_show(window);
-	
+
 	return window;
 }
 

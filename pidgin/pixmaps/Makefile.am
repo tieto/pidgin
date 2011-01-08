@@ -225,6 +225,7 @@ PROTOCOLS_16_SCALABLE = \
 PROTOCOLS_16 = \
 		protocols/16/aim.png \
 		protocols/16/bonjour.png \
+		protocols/16/facebook.png \
 		protocols/16/gadu-gadu.png \
 		protocols/16/google-talk.png \
 		protocols/16/novell.png \
@@ -281,6 +282,7 @@ PROTOCOLS_22_SCALABLE = \
 PROTOCOLS_22 = \
 		protocols/22/aim.png \
 		protocols/22/bonjour.png \
+		protocols/22/facebook.png \
 		protocols/22/gadu-gadu.png \
 		protocols/22/google-talk.png \
 		protocols/22/novell.png \
@@ -299,6 +301,7 @@ PROTOCOLS_22 = \
 PROTOCOLS_48 = \
 		protocols/48/aim.png \
 		protocols/48/bonjour.png \
+		protocols/48/facebook.png \
 		protocols/48/gadu-gadu.png \
 		protocols/48/novell.png \
 		protocols/48/icq.png \
