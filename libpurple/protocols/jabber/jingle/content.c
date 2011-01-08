@@ -384,6 +384,8 @@ jingle_content_parse_internal(xmlnode *content)
 	const gchar *name = xmlnode_get_attrib(content, "name");
 	JingleTransport *transport =
 			jingle_transport_parse(xmlnode_get_child(content, "transport"));
+	if (transport == NULL)
+		return NULL;
 
 	if (senders == NULL)
 		senders = "both";

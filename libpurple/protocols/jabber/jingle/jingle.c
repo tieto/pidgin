@@ -42,6 +42,9 @@
 GType
 jingle_get_type(const gchar *type)
 {
+	if (type == NULL)
+		return G_TYPE_NONE;
+
 	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
