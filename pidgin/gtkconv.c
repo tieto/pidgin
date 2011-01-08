@@ -4695,7 +4695,7 @@ static void
 setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 {
 	PidginChatPane *gtkchat = gtkconv->u.chat;
-	GtkWidget *lbox, *sw, *list;
+	GtkWidget *lbox, *list;
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
@@ -4715,12 +4715,6 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_widget_show(gtkchat->count);
 
 	/* Setup the list of users. */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
 
 	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT,
@@ -4790,7 +4784,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	gtkchat->list = list;
 
-	gtk_container_add(GTK_CONTAINER(sw), list);
+	gtk_box_pack_start(GTK_BOX(lbox), 
+		pidgin_make_scrollable(list, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 0);
 }
 
 static gboolean
@@ -5014,10 +5010,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
 	g_object_set_data(G_OBJECT(gtkconv->imhtml), "gtkconv", gtkconv);
 
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               &imhtml_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
+	g_object_set(G_OBJECT(imhtml_sw), "vscrollbar-policy", GTK_POLICY_ALWAYS, NULL);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);

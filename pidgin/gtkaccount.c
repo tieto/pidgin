@@ -2141,7 +2141,6 @@ static GtkWidget *
 create_accounts_list(AccountsWindow *dialog)
 {
 	GtkWidget *frame;
-	GtkWidget *sw;
 	GtkWidget *label;
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
@@ -2181,16 +2180,6 @@ create_accounts_list(AccountsWindow *dialog)
 	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook), label, NULL);
 
-	/* Create the scrolled window. */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-					GTK_SHADOW_NONE);
-	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook), sw, NULL);
-	gtk_widget_show(sw);
-
 	/* Create the list model. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 					GDK_TYPE_PIXBUF,   /* COLUMN_ICON */
@@ -2216,7 +2205,9 @@ create_accounts_list(AccountsWindow *dialog)
 	g_signal_connect(G_OBJECT(treeview), "button_press_event",
 					 G_CALLBACK(account_treeview_double_click_cb), dialog);
 
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook),
+		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
+		NULL);
 
 	add_columns(treeview, dialog);
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(treeview));

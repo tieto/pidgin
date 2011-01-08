@@ -845,6 +845,19 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
 GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
 /**
+ * Add scrollbars to a widget
+ * @param widget      The child widget
+ * @hscrollbar_policy Horizontal scrolling policy
+ * @vscrollbar_policy Vertical scrolling policy
+ * @shadow            Shadow type
+ * @width             Desired widget width, or -1 for default
+ * @height            Desired widget height, or -1 for default
+ *
+ * @since 2.8.0
+ */
+GtkWidget *pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPolicyType vscrollbar_policy, GtkShadowType shadow_type, int width, int height);
+
+/**
  * Initialize some utility functions.
  *
  * @since 2.6.0
