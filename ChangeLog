@@ -7,6 +7,7 @@ version 2.7.10 (??/??/????):
 	  (half of #13095)
 	* Starting multiple video calls and ending one no longer causes the other
 	  calls to stop sending audio and video. (Jakub Adam) (#12758)
+	* Perl bindings now respect LDFLAGS. (Peter Volkov) (#12638)
 
 	IRC:
 	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
