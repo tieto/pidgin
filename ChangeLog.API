@@ -9,6 +9,10 @@ version 2.8.0 (??/??/????):
 		* purple_media_manager_get_video_caps (Jakub Adam)
 		* purple_media_manager_set_video_caps (Jakub Adam)
 
+	Pidgin:
+		Added:
+		* pidgin_make_scrollable (Gabriel Schulhof)
+
 version 2.7.9 (??/??/????):
 	* No changes
 

@@ -1185,7 +1185,6 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *table;
 	GtkWidget *button;
 	GtkWidget *img;
-	GtkWidget *sw;
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	PurpleRequestFieldGroup *group;
