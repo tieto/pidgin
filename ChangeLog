@@ -22,6 +22,7 @@ version 2.7.10 (??/??/????):
 	  the conversation window.  (Ryan Flegel) (#13127)
 	* Fix a few memory leaks. (Nader Morshed) (#13162)
 	* Support rendering strikethrough when received as in-line CSS. (#13168)
+	* Don't show the message entry when changing to Offline Status.
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to

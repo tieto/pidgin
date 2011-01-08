@@ -2659,7 +2659,8 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		account = node->data;
 		status_type = purple_account_get_status_type_with_primitive(account, GPOINTER_TO_INT(data));
 		if ((status_type != NULL) &&
-			(purple_status_type_get_attr(status_type, "message") != NULL))
+			(purple_status_type_get_attr(status_type, "message") != NULL) &&
+			(purple_status_type_get_primitive(status_type) != PURPLE_STATUS_OFFLINE))
 		{
 			status_box->imhtml_visible = TRUE;
 			break;
