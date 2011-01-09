@@ -59,6 +59,16 @@ typedef enum
 	PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
 } PurpleAccountRequestType;
 
+/**
+ * Account request response types
+ */
+typedef enum
+{
+	PURPLE_ACCOUNT_RESPONSE_IGNORE = -2,
+	PURPLE_ACCOUNT_RESPONSE_DENY = -1,
+	PURPLE_ACCOUNT_RESPONSE_PASS = 0,
+	PURPLE_ACCOUNT_RESPONSE_ACCEPT = 1
+} PurpleAccountRequestResponse;
 
 /**  Account UI operations, used to notify the user of status changes and when
  *   buddies add this account to their buddy lists.
