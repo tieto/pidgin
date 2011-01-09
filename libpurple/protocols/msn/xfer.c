@@ -162,25 +162,25 @@ msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 }
 
 gchar *
-msn_file_context_to_wire(MsnFileContext *header)
+msn_file_context_to_wire(MsnFileContext *context)
 {
 	gchar *ret, *tmp;
 
-	tmp = ret = g_new(gchar, MSN_FILE_CONTEXT_SIZE + header->preview_len + 1);
+	tmp = ret = g_new(gchar, MSN_FILE_CONTEXT_SIZE + context->preview_len + 1);
 
-	msn_push32le(tmp, header->length);
-	msn_push32le(tmp, header->version);
-	msn_push64le(tmp, header->file_size);
-	msn_push32le(tmp, header->type);
-	memcpy(tmp, header->file_name, MAX_FILE_NAME_LEN * 2);
+	msn_push32le(tmp, context->length);
+	msn_push32le(tmp, context->version);
+	msn_push64le(tmp, context->file_size);
+	msn_push32le(tmp, context->type);
+	memcpy(tmp, context->file_name, MAX_FILE_NAME_LEN * 2);
 	tmp += MAX_FILE_NAME_LEN * 2;
-	memcpy(tmp, header->unknown1, sizeof(header->unknown1));
-	tmp += sizeof(header->unknown1);
-	msn_push32le(tmp, header->unknown2);
-	if (header->preview) {
-		memcpy(tmp, header->preview, header->preview_len);
+	memcpy(tmp, context->unknown1, sizeof(context->unknown1));
+	tmp += sizeof(context->unknown1);
+	msn_push32le(tmp, context->unknown2);
+	if (context->preview) {
+		memcpy(tmp, context->preview, context->preview_len);
 	}
-	tmp[header->preview_len] = '\0';
+	tmp[context->preview_len] = '\0';
 
 	return ret;
 }
@@ -188,48 +188,48 @@ msn_file_context_to_wire(MsnFileContext *header)
 MsnFileContext *
 msn_file_context_from_wire(const char *buf, gsize len)
 {
-	MsnFileContext *header;
+	MsnFileContext *context;
 
 	if (!buf || len < MSN_FILE_CONTEXT_SIZE)
 		return NULL;
 
-	header = g_new(MsnFileContext, 1);
+	context = g_new(MsnFileContext, 1);
 
-	header->length = msn_pop32le(buf);
-	header->version = msn_pop32le(buf);
-	if (header->version == 2) {
+	context->length = msn_pop32le(buf);
+	context->version = msn_pop32le(buf);
+	if (context->version == 2) {
 		/* The length field is broken for this version. No check. */
-		header->length = MSN_FILE_CONTEXT_SIZE;
-	} else if (header->version == 3) {
-		if (header->length != MSN_FILE_CONTEXT_SIZE + 63) {
-			g_free(header);
+		context->length = MSN_FILE_CONTEXT_SIZE;
+	} else if (context->version == 3) {
+		if (context->length != MSN_FILE_CONTEXT_SIZE + 63) {
+			g_free(context);
 			return NULL;
 		} else if (len < MSN_FILE_CONTEXT_SIZE + 63) {
-			g_free(header);
+			g_free(context);
 			return NULL;
 		}
 	} else {
-		purple_debug_warning("msn", "Received MsnFileContext with unknown version: %d\n", header->version);
-		g_free(header);
+		purple_debug_warning("msn", "Received MsnFileContext with unknown version: %d\n", context->version);
+		g_free(context);
 		return NULL;
 	}
 
-	header->file_size = msn_pop64le(buf);
-	header->type = msn_pop32le(buf);
-	memcpy(header->file_name, buf, MAX_FILE_NAME_LEN * 2);
+	context->file_size = msn_pop64le(buf);
+	context->type = msn_pop32le(buf);
+	memcpy(context->file_name, buf, MAX_FILE_NAME_LEN * 2);
 	buf += MAX_FILE_NAME_LEN * 2;
-	memcpy(header->unknown1, buf, sizeof(header->unknown1));
-	buf += sizeof(header->unknown1);
-	header->unknown2 = msn_pop32le(buf);
+	memcpy(context->unknown1, buf, sizeof(context->unknown1));
+	buf += sizeof(context->unknown1);
+	context->unknown2 = msn_pop32le(buf);
 
-	if (header->type == 0 && len > header->length) {
-		header->preview_len = len - header->length;
-		header->preview = g_memdup(buf, header->preview_len);
+	if (context->type == 0 && len > context->length) {
+		context->preview_len = len - context->length;
+		context->preview = g_memdup(buf, context->preview_len);
 	} else {
-		header->preview_len = 0;
-		header->preview = NULL;
+		context->preview_len = 0;
+		context->preview = NULL;
 	}
 
-	return header;
+	return context;
 }
 
