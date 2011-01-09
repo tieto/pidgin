@@ -73,7 +73,7 @@ struct artist {
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",          NULL,                  NULL},
 	{"Paul 'darkrain42' Aurich",           NULL,                  NULL},
-	{"John 'rekkanoryo' Bailey",           N_("bug master"),      NULL},
+	{"John 'rekkanoryo' Bailey",           NULL,                  NULL},
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
 	/* feel free to not translate this */
