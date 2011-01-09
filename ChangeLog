@@ -19,6 +19,8 @@ version 2.7.10 (??/??/????):
 	  functions from the dbus API.  (The openSUSE Project) (#12507)
 	* Fix D-Bus introspection calls that omit the interface parameter.  (Tom
 	  Samstag) (#13073)
+	* Fixed bugs in purple_str_to_time() that caused the most recent 'make
+	  check' failures.  (Nader Morshed) (#13131)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
