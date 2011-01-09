@@ -416,11 +416,11 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 2.91.6], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have GTK+ 2.10.0 or newer development headers installed to compile
+You must have GTK+ 2.91.5 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])

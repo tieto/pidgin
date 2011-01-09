@@ -402,21 +402,6 @@ gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompleti
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
 /**
- * Check if the given path is a directory or not.  If it is, then modify
- * the given GtkFileSelection dialog so that it displays the given path.
- * If the given path is not a directory, then do nothing.
- *
- * @param path    The path entered in the file selection window by the user.
- * @param filesel The file selection window.
- *
- * @return TRUE if given path is a directory, FALSE otherwise.
- * @deprecated Pidgin no longer uses GtkFileSelection internally. It has also
- *             been deprecated by GTK+. Use GtkFileChooser instead and ignore
- *             this function.
- */
-gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
-
-/**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
  * if encountered.
  *
