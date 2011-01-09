@@ -329,7 +329,7 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0 gio-2.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
@@ -2406,7 +2406,7 @@ fi
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
-AC_CHECK_FUNCS(gethostid lrand48)
+AC_CHECK_FUNCS(gethostid lrand48 timegm)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
 AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
