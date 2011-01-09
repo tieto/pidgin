@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2010, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2011, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-22 10:12+0100\n"
-"PO-Revision-Date: 2010-12-22 10:21+0100\n"
+"POT-Creation-Date: 2011-01-09 23:42+0100\n"
+"PO-Revision-Date: 2011-01-09 23:41+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1064,10 +1064,10 @@ msgid "Pounce When Buddy..."
 msgstr "Alarm, wenn Buddy..."
 
 msgid "Signs on"
-msgstr "sich angemeldet"
+msgstr "sich anmeldet"
 
 msgid "Signs off"
-msgstr "sich abgemeldet"
+msgstr "sich abmeldet"
 
 msgid "Goes away"
 msgstr "hinausgeht"
@@ -2368,8 +2368,12 @@ msgstr ""
 "Pfad in denen die Dateien gespeichert werden sollen\n"
 "(Bitte geben Sie den vollständigen Pfad an)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automatisch von Benutzern ablehnen, die nicht in der Buddy-Liste sind"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Wenn eine Dateitransferanfrage von einem Benutzer ankommt, \n"
+"der *nicht* in Ihrer Buddy-Liste ist:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2381,6 +2385,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Für jeden Benutzer ein neues Verzeichnis anlegen"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s hat die Datenübertragung abgebrochen"
 
 msgid "Notes"
 msgstr "Notizen"
@@ -8730,14 +8738,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Server wählen"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Über TCP verbinden"
@@ -12328,9 +12336,6 @@ msgstr "Fehler "
 msgid "Fatal Error"
 msgstr "Schwerer Fehler"
 
-msgid "bug master"
-msgstr "Bug-Master"
-
 msgid "artist"
 msgstr "Künstler"
 
@@ -12509,6 +12514,10 @@ msgstr "Laotisch"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Neue Mail"
 
 msgid "Macedonian"
 msgstr "Makedonisch"
@@ -13448,10 +13457,10 @@ msgid "_Buddy name:"
 msgstr "Budd_y-Name:"
 
 msgid "Si_gns on"
-msgstr "si_ch angemeldet"
+msgstr "si_ch anmeldet"
 
 msgid "Signs o_ff"
-msgstr "sich abgemel_det"
+msgstr "sich abmel_det"
 
 msgid "Goes a_way"
 msgstr "hinausgeh_t"
@@ -15662,6 +15671,13 @@ msgstr "Besuchen Sie die Pidgin-Webseite"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Automatisch von Benutzern ablehnen, die nicht in der Buddy-Liste sind"
+
+#~ msgid "bug master"
+#~ msgstr "Bug-Master"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Fehler beim Anfordern von %s"
