@@ -511,7 +511,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		/* File Transfer */
 		PurpleAccount *account;
 		PurpleXfer *xfer;
-		MsnFileContext *header;
+		MsnFileContext *file_context;
 		char *buf;
 		gsize bin_len;
 		guint32 file_size;
@@ -528,12 +528,12 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 							 slpcall->slplink->remote_user);
 
 		buf = (char *)purple_base64_decode(context, &bin_len);
-		header = msn_file_context_from_wire(buf, bin_len);
+		file_context = msn_file_context_from_wire(buf, bin_len);
 
-		if (header != NULL) {
-			file_size = header->file_size;
+		if (file_context != NULL) {
+			file_size = file_context->file_size;
 
-			file_name = g_convert((const gchar *)&header->file_name,
+			file_name = g_convert((const gchar *)&file_context->file_name,
 			                      MAX_FILE_NAME_LEN * 2,
 			                      "UTF-8", "UTF-16LE",
 			                      NULL, NULL, NULL);
@@ -554,16 +554,16 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			xfer->data = slpcall;
 
-			if (header->preview) {
-				purple_xfer_set_thumbnail(xfer, header->preview,
-				                          header->preview_len,
+			if (file_context->preview) {
+				purple_xfer_set_thumbnail(xfer, file_context->preview,
+				                          file_context->preview_len,
 				    					  "image/png");
-				g_free(header->preview);
+				g_free(file_context->preview);
 			}
 
 			purple_xfer_request(xfer);
 		}
-		g_free(header);
+		g_free(file_context);
 		g_free(buf);
 
 		accepted = TRUE;
@@ -1142,15 +1142,6 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			slpcall->wasted = TRUE;
 		}
 	}
-#if 0
-	else if (slpmsg->header->flags == 0x100)
-	{
-		slpcall = slplink->directconn->initial_call;
-
-		if (slpcall != NULL)
-			msn_slpcall_session_init(slpcall);
-	}
-#endif
 	else if (slpmsg->header->flags == P2P_ACK)
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
