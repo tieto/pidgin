@@ -870,12 +870,12 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			zephyr_triple *zt1, *zt2;
 			gchar *send_inst_utf8;
 			zephyr_account *zephyr = gc->proto_data;
-			zt1 = new_triple(gc->proto_data,notice.z_class, notice.z_class_inst, notice.z_recipient);
-			zt2 = find_sub_by_triple(gc->proto_data,zt1);
+			zt1 = new_triple(zephyr,notice.z_class, notice.z_class_inst, notice.z_recipient);
+			zt2 = find_sub_by_triple(zephyr,zt1);
 			if (!zt2) {
 				/* This is a server supplied subscription */
 				zephyr->subscrips = g_slist_append(zephyr->subscrips, new_triple(zephyr,zt1->class,zt1->instance,zt1->recipient));
-				zt2 = find_sub_by_triple(gc->proto_data,zt1);
+				zt2 = find_sub_by_triple(zephyr,zt1);
 			}
 
 			if (!zt2->open) {
@@ -1499,6 +1499,7 @@ static void process_zsubs(zephyr_account *zephyr)
 
 static void process_anyone(PurpleConnection *gc)
 {
+	zephyr_account *zephyr = purple_connection_get_protocol_data(gc);
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
 	PurpleGroup *g;
@@ -1515,7 +1516,7 @@ static void process_anyone(PurpleConnection *gc)
 			strip_comments(buff);
 			if (buff[0]) {
 				if (!(b = purple_find_buddy(gc->account, buff))) {
-					char *stripped_user = zephyr_strip_local_realm(gc->proto_data,buff);
+					char *stripped_user = zephyr_strip_local_realm(zephyr,buff);
 					purple_debug_info("zephyr","stripped_user %s\n",stripped_user);
 					if (!(b = purple_find_buddy(gc->account,stripped_user))){
 						b = purple_buddy_new(gc->account, stripped_user, NULL);
@@ -1924,13 +1925,12 @@ static void write_zsubs(zephyr_account *zephyr)
 	fclose(fd);
 }
 
-static void write_anyone(PurpleConnection *gc)
+static void write_anyone(zephyr_account *zephyr)
 {
 	GSList *buddies;
 	char *fname;
 	FILE *fd;
 	PurpleAccount *account;
-	zephyr_account* zephyr = gc->proto_data;
 	fname = g_strdup_printf("%s/.anyone", purple_home_dir());
 	fd = g_fopen(fname, "w");
 	if (!fd) {
@@ -1938,7 +1938,7 @@ static void write_anyone(PurpleConnection *gc)
 		return;
 	}
 
-	account = purple_connection_get_account(gc);
+	account = zephyr->account;
 	for (buddies = purple_find_buddies(account, NULL); buddies;
 			buddies = g_slist_delete_link(buddies, buddies)) {
 		PurpleBuddy *b = buddies->data;
@@ -1966,10 +1966,10 @@ static void zephyr_close(PurpleConnection * gc)
 	g_list_free(zephyr->pending_zloc_names);
 
 	if (purple_account_get_bool(gc->account, "write_anyone", FALSE))
-		write_anyone(gc);
+		write_anyone(zephyr);
 
 	if (purple_account_get_bool(gc->account, "write_zsubs", FALSE))
-		write_zsubs(gc->proto_data);
+		write_zsubs(zephyr);
 
 	s = zephyr->subscrips;
 	while (s) {
@@ -2032,7 +2032,7 @@ static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, Purpl
 	char *recipient;
 	zephyr_account *zephyr = gc->proto_data;
 
-	zt = find_sub_by_id(gc->proto_data,id);
+	zt = find_sub_by_id(zephyr,id);
 	if (!zt)
 		/* this should never happen. */
 		return -EINVAL;
@@ -2432,8 +2432,8 @@ static void zephyr_join_chat(PurpleConnection * gc, GHashTable * data)
 	if (!g_ascii_strcasecmp(recip, "%me%"))
 		recip = zephyr->username;
 
-	zt1 = new_triple(gc->proto_data,classname, instname, recip);
-	zt2 = find_sub_by_triple(gc->proto_data,zt1);
+	zt1 = new_triple(zephyr,classname, instname, recip);
+	zt2 = find_sub_by_triple(zephyr,zt1);
 	if (zt2) {
 		free_triple(zt1);
 		if (!zt2->open) {
@@ -2563,7 +2563,7 @@ static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *top
 	zephyr_account* zephyr = gc->proto_data;
 	char *sender = (char *)zephyr->username;
 
-	zt = find_sub_by_id(gc->proto_data,id);
+	zt = find_sub_by_id(zephyr,id);
 	/* find_sub_by_id can return NULL */
 	if (!zt)
 		return;
