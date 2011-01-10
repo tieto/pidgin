@@ -300,8 +300,9 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	/* Third loop, look for one that's NULL and create a new connection */
 	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (!conn->connections[i]) {
-			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn\n");
 			conn->connections[i] = jabber_bosh_http_connection_init(conn);
+			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn "
+			                            "(%i, %p)\n", i, conn->connections[i]);
 
 			http_connection_connect(conn->connections[i]);
 			return NULL;
@@ -675,6 +676,11 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		if (conn->bosh->connections[1] == NULL) {
 			conn->bosh->connections[1] = jabber_bosh_http_connection_init(conn->bosh);
 			http_connection_connect(conn->bosh->connections[1]);
+		} else {
+			/* Shouldn't happen; this should be the only place pipelining
+			 * is turned off.
+			 */
+			g_warn_if_reached();
 		}
 	}
 
@@ -791,10 +797,11 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read=%d, errno=%d, error=%s\n",
-			                  cnt, errno, g_strerror(errno));
+			purple_debug_info("jabber", "BOSH (%p) read=%d, errno=%d, error=%s\n",
+			                  conn, cnt, errno, g_strerror(errno));
 		else
-			purple_debug_info("jabber", "bosh server closed the connection\n");
+			purple_debug_info("jabber", "BOSH server closed the connection (%p)\n",
+			                  conn);
 
 		/*
 		 * If the socket is closed, the processing really needs to know about
@@ -911,6 +918,9 @@ http_connection_do_send(PurpleHTTPConnection *conn, const char *data, int len)
 	else
 		ret = write(conn->fd, data, len);
 
+	if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH (%p): wrote %d bytes\n", conn, ret);
+
 	return ret;
 }
 
@@ -975,7 +985,10 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 
 	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
 		/* Will contain passwords for SASL PLAIN and is verbose */
-		purple_debug_misc("jabber", "BOSH: Sending %s\n", data);
+		purple_debug_misc("jabber", "BOSH (%p): Sending %s\n", conn, data);
+	else if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH (%p): Sending request of "
+		                            "%" G_GSIZE_FORMAT "bytes.", conn, len);
 
 	if (conn->writeh == 0)
 		ret = http_connection_do_send(conn, data, len);
