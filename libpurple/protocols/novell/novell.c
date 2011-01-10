@@ -74,7 +74,7 @@ static void
 _sync_privacy_lists(NMUser *user);
 
 static void
-_show_info(PurpleConnection * gc, NMUserRecord * user_record);
+_show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name);
 
 const char *
 _get_conference_name(int id);
@@ -705,7 +705,7 @@ _get_details_resp_show_info(NMUser * user, NMERR_T ret_code,
 		user_record = (NMUserRecord *) resp_data;
 		if (user_record) {
 			_show_info(purple_account_get_connection(user->client_data),
-					   user_record);
+					   user_record, g_strdup(name));
 		}
 	} else {
 		gc = purple_account_get_connection(user->client_data);
@@ -1505,7 +1505,7 @@ _map_property_tag(const char *tag)
 
 /* Display a dialog box showing the properties for the given user record */
 static void
-_show_info(PurpleConnection * gc, NMUserRecord * user_record)
+_show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name)
 {
 	PurpleNotifyUserInfo *user_info =	purple_notify_user_info_new();
 	int count, i;
@@ -1544,9 +1544,10 @@ _show_info(PurpleConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
-	purple_notify_userinfo(gc, nm_user_record_get_userid(user_record),
-						 user_info, NULL, NULL);
+	purple_notify_userinfo(gc, name, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
+
+	g_free(name);
 }
 
 /* Send a join conference, the first item in the parms list is the
@@ -2912,11 +2913,9 @@ novell_get_info(PurpleConnection * gc, const char *name)
 
 		user_record = nm_find_user_record(user, name);
 		if (user_record) {
-
-			_show_info(gc, user_record);
+			_show_info(gc, user_record, g_strdup(name));
 
 		} else {
-
 			rc = nm_send_get_details(user, name,
 									 _get_details_resp_show_info, g_strdup(name));
 
