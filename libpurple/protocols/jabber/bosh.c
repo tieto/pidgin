@@ -108,8 +108,27 @@ struct _PurpleHTTPConnection {
 	int requests; /* number of outstanding HTTP requests */
 
 	gboolean headers_done;
-
+	gboolean close;
 };
+
+static void
+debug_dump_http_connections(PurpleBOSHConnection *conn)
+{
+	int i;
+
+	g_return_if_fail(conn != NULL);
+
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
+		PurpleHTTPConnection *httpconn = conn->connections[i];
+		if (httpconn == NULL)
+			purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
+			                  conn, i);
+		else
+			purple_debug_misc("jabber", "BOSH %p->connections[%d] = %p, state = %d"
+			                  ", requests = %d\n", conn, i, httpconn,
+			                  httpconn->state, httpconn->requests);
+	}
+}
 
 static void http_connection_connect(PurpleHTTPConnection *conn);
 static void http_connection_send_request(PurpleHTTPConnection *conn,
@@ -263,18 +282,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 {
 	int i;
 
-	if (purple_debug_is_verbose()) {
-		for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
-			PurpleHTTPConnection *httpconn = conn->connections[i];
-			if (httpconn == NULL)
-				purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
-				                  conn, i);
-			else
-				purple_debug_misc("jabber", "BOSH %p->connections[%d] = %p, state = %d"
-				                  ", requests = %d\n", conn, i, httpconn,
-				                  httpconn->state, httpconn->requests);
-		}
-	}
+	if (purple_debug_is_verbose())
+		debug_dump_http_connections(conn);
 
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
@@ -300,8 +309,9 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	/* Third loop, look for one that's NULL and create a new connection */
 	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (!conn->connections[i]) {
-			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn\n");
 			conn->connections[i] = jabber_bosh_http_connection_init(conn);
+			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn "
+			                            "(%i, %p)\n", i, conn->connections[i]);
 
 			http_connection_connect(conn->connections[i]);
 			return NULL;
@@ -442,6 +452,25 @@ jabber_bosh_connection_send_keepalive(PurpleBOSHConnection *bosh)
 
 	/* clears bosh->send_timer */
 	send_timer_cb(bosh);
+}
+
+static void
+jabber_bosh_disable_pipelining(PurpleBOSHConnection *bosh)
+{
+	/* Do nothing if it's already disabled */
+	if (!bosh->pipelining)
+		return;
+
+	bosh->pipelining = FALSE;
+	if (bosh->connections[1] == NULL) {
+		bosh->connections[1] = jabber_bosh_http_connection_init(bosh);
+		http_connection_connect(bosh->connections[1]);
+	} else {
+		/* Shouldn't happen; this should be the only place pipelining
+		 * is turned off.
+		 */
+		g_warn_if_reached();
+	}
 }
 
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -611,6 +640,8 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
 static void
 connection_common_established_cb(PurpleHTTPConnection *conn)
 {
+	purple_debug_misc("jabber", "bosh: httpconn %p re-connected\n", conn);
+
 	/* Indicate we're ready and reset some variables */
 	conn->state = HTTP_CONN_CONNECTED;
 	if (conn->requests != 0)
@@ -622,8 +653,12 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 		g_string_free(conn->read_buf, TRUE);
 		conn->read_buf = NULL;
 	}
+	conn->close = FALSE;
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
+
+	if (purple_debug_is_verbose())
+		debug_dump_http_connections(conn->bosh);
 
 	if (conn->bosh->js->reinit)
 		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
@@ -671,11 +706,7 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 
 	if (conn->bosh->pipelining) {
 		/* Hmmmm, fall back to multiple connections */
-		conn->bosh->pipelining = FALSE;
-		if (conn->bosh->connections[1] == NULL) {
-			conn->bosh->connections[1] = jabber_bosh_http_connection_init(conn->bosh);
-			http_connection_connect(conn->bosh->connections[1]);
-		}
+		jabber_bosh_disable_pipelining(conn->bosh);
 	}
 
 	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
@@ -704,28 +735,47 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	cursor = conn->read_buf->str + conn->handled_len;
 
+	if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH server sent: %s\n", cursor);
+
+	/* TODO: Chunked encoding and check response version :/ */
 	if (!conn->headers_done) {
-		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
+		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length:");
+		const char *connection = purple_strcasestr(cursor, "\r\nConnection:");
 		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
 		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
-			const char *sep;
 			int len;
 
-			if ((sep = strstr(content_length, ": ")) == NULL ||
-					strstr(sep, "\r\n") == NULL)
+			if (strstr(content_length, "\r\n") == NULL)
 				/*
 				 * The packet ends in the middle of the Content-Length line.
 				 * We'll try again later when we have more.
 				 */
 				return;
 
-			len = atoi(sep + 2);
+			len = atoi(content_length + strlen("\r\nContent-Length:"));
 			if (len == 0)
-				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
+				purple_debug_warning("jabber", "Found mangled Content-Length header, or server returned 0-length response.\n");
 
 			conn->body_len = len;
+		}
+
+		if (connection && (!end_of_headers || content_length < end_of_headers)) {
+			const char *tmp;
+			if (strstr(connection, "\r\n") == NULL)
+				return;
+
+
+			tmp = connection + strlen("\r\nConnection:");
+			while (*tmp && (*tmp == ' ' || *tmp == '\t'))
+				++tmp;
+
+			if (!g_ascii_strncasecmp(tmp, "close", strlen("close"))) {
+				conn->close = TRUE;
+				jabber_bosh_disable_pipelining(conn->bosh);
+			}
 		}
 
 		if (end_of_headers) {
@@ -751,6 +801,14 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	http_received_cb(conn->read_buf->str + conn->handled_len, conn->body_len,
 	                 conn->bosh);
+
+	/* Connection: Close? */
+	if (conn->close && conn->state == HTTP_CONN_CONNECTED) {
+		if (purple_debug_is_verbose())
+			purple_debug_misc("jabber", "bosh (%p), server sent Connection: "
+			                            "close\n", conn);
+		http_connection_disconnected(conn);
+	}
 
 	if (conn->bosh->state == BOSH_CONN_ONLINE &&
 			(conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0)) {
@@ -791,10 +849,11 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read=%d, errno=%d, error=%s\n",
-			                  cnt, errno, g_strerror(errno));
+			purple_debug_info("jabber", "BOSH (%p) read=%d, errno=%d, error=%s\n",
+			                  conn, cnt, errno, g_strerror(errno));
 		else
-			purple_debug_info("jabber", "bosh server closed the connection\n");
+			purple_debug_info("jabber", "BOSH server closed the connection (%p)\n",
+			                  conn);
 
 		/*
 		 * If the socket is closed, the processing really needs to know about
@@ -911,6 +970,9 @@ http_connection_do_send(PurpleHTTPConnection *conn, const char *data, int len)
 	else
 		ret = write(conn->fd, data, len);
 
+	if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH (%p): wrote %d bytes\n", conn, ret);
+
 	return ret;
 }
 
@@ -975,7 +1037,10 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 
 	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
 		/* Will contain passwords for SASL PLAIN and is verbose */
-		purple_debug_misc("jabber", "BOSH: Sending %s\n", data);
+		purple_debug_misc("jabber", "BOSH (%p): Sending %s\n", conn, data);
+	else if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH (%p): Sending request of "
+		                            "%" G_GSIZE_FORMAT " bytes.\n", conn, len);
 
 	if (conn->writeh == 0)
 		ret = http_connection_do_send(conn, data, len);

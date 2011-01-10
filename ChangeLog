@@ -9,6 +9,7 @@ version 2.7.10 (??/??/????):
 	  calls to stop sending audio and video. (Jakub Adam) (#12758)
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
+	* Added AddTrust External Root CA.  (#11554)
 
 	Groupwise:
 	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
@@ -46,6 +47,8 @@ version 2.7.10 (??/??/????):
 	XMPP:
 	* Don't crash when receiving an unexpected/invalid jingle transport type.
 	  (Nikita Kozlov) (#13136)
+	* Handle Connection: Close headers for BOSH, when the server does not
+	  terminate the connection itself. (#13008)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is
