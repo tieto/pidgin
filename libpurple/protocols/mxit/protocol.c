@@ -829,7 +829,7 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
-	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
+	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
 }
 
 
@@ -858,7 +858,7 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
-	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
+	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
 }
 
 
