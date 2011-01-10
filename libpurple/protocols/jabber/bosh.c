@@ -111,6 +111,25 @@ struct _PurpleHTTPConnection {
 
 };
 
+static void
+debug_dump_http_connections(PurpleBOSHConnection *conn)
+{
+	int i;
+
+	g_return_if_fail(conn != NULL);
+
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
+		PurpleHTTPConnection *httpconn = conn->connections[i];
+		if (httpconn == NULL)
+			purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
+			                  conn, i);
+		else
+			purple_debug_misc("jabber", "BOSH %p->connections[%d] = %p, state = %d"
+			                  ", requests = %d\n", conn, i, httpconn,
+			                  httpconn->state, httpconn->requests);
+	}
+}
+
 static void http_connection_connect(PurpleHTTPConnection *conn);
 static void http_connection_send_request(PurpleHTTPConnection *conn,
                                          const GString *req);
@@ -263,18 +282,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 {
 	int i;
 
-	if (purple_debug_is_verbose()) {
-		for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
-			PurpleHTTPConnection *httpconn = conn->connections[i];
-			if (httpconn == NULL)
-				purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
-				                  conn, i);
-			else
-				purple_debug_misc("jabber", "BOSH %p->connections[%d] = %p, state = %d"
-				                  ", requests = %d\n", conn, i, httpconn,
-				                  httpconn->state, httpconn->requests);
-		}
-	}
+	if (purple_debug_is_verbose())
+		debug_dump_http_connections(conn);
 
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
@@ -612,6 +621,8 @@ void jabber_bosh_connection_send_raw(PurpleBOSHConnection *conn,
 static void
 connection_common_established_cb(PurpleHTTPConnection *conn)
 {
+	purple_debug_misc("jabber", "bosh: httpconn %p re-connected\n", conn);
+
 	/* Indicate we're ready and reset some variables */
 	conn->state = HTTP_CONN_CONNECTED;
 	if (conn->requests != 0)
@@ -625,6 +636,9 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 	}
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
+
+	if (purple_debug_is_verbose())
+		debug_dump_http_connections(conn->bosh);
 
 	if (conn->bosh->js->reinit)
 		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
@@ -710,26 +724,25 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	cursor = conn->read_buf->str + conn->handled_len;
 
+	/* TODO: Chunked encoding :/ */
 	if (!conn->headers_done) {
-		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
+		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length:");
 		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
 		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
-			const char *sep;
 			int len;
 
-			if ((sep = strstr(content_length, ": ")) == NULL ||
-					strstr(sep, "\r\n") == NULL)
+			if (strstr(content_length, "\r\n") == NULL)
 				/*
 				 * The packet ends in the middle of the Content-Length line.
 				 * We'll try again later when we have more.
 				 */
 				return;
 
-			len = atoi(sep + 2);
+			len = atoi(content_length + strlen("\r\nContent-Length:"));
 			if (len == 0)
-				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
+				purple_debug_warning("jabber", "Found mangled Content-Length header, or server returned 0-length response.\n");
 
 			conn->body_len = len;
 		}
