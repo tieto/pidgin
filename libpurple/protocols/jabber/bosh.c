@@ -988,7 +988,7 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 		purple_debug_misc("jabber", "BOSH (%p): Sending %s\n", conn, data);
 	else if (purple_debug_is_verbose())
 		purple_debug_misc("jabber", "BOSH (%p): Sending request of "
-		                            "%" G_GSIZE_FORMAT "bytes.", conn, len);
+		                            "%" G_GSIZE_FORMAT " bytes.\n", conn, len);
 
 	if (conn->writeh == 0)
 		ret = http_connection_do_send(conn, data, len);
