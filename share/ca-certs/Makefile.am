@@ -1,4 +1,5 @@
 CERTIFICATES = \
+		AddTrust_External_Root.pem \
 		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \

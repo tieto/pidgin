@@ -9,6 +9,7 @@ version 2.7.10 (??/??/????):
 	  calls to stop sending audio and video. (Jakub Adam) (#12758)
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
+	* Added AddTrust External Root CA.  (#11554)
 
 	IRC:
 	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
