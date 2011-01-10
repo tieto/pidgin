@@ -43,6 +43,8 @@ version 2.7.10 (??/??/????):
 	XMPP:
 	* Don't crash when receiving an unexpected/invalid jingle transport type.
 	  (Nikita Kozlov) (#13136)
+	* Handle Connection: Close headers for BOSH, when the server does not
+	  terminate the connection itself. (#13008)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is

@@ -108,7 +108,7 @@ struct _PurpleHTTPConnection {
 	int requests; /* number of outstanding HTTP requests */
 
 	gboolean headers_done;
-
+	gboolean close;
 };
 
 static void
@@ -454,6 +454,25 @@ jabber_bosh_connection_send_keepalive(PurpleBOSHConnection *bosh)
 	send_timer_cb(bosh);
 }
 
+static void
+jabber_bosh_disable_pipelining(PurpleBOSHConnection *bosh)
+{
+	/* Do nothing if it's already disabled */
+	if (!bosh->pipelining)
+		return;
+
+	bosh->pipelining = FALSE;
+	if (bosh->connections[1] == NULL) {
+		bosh->connections[1] = jabber_bosh_http_connection_init(bosh);
+		http_connection_connect(bosh->connections[1]);
+	} else {
+		/* Shouldn't happen; this should be the only place pipelining
+		 * is turned off.
+		 */
+		g_warn_if_reached();
+	}
+}
+
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child;
 	JabberStream *js = conn->js;
@@ -634,6 +653,7 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 		g_string_free(conn->read_buf, TRUE);
 		conn->read_buf = NULL;
 	}
+	conn->close = FALSE;
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
 
@@ -686,16 +706,7 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 
 	if (conn->bosh->pipelining) {
 		/* Hmmmm, fall back to multiple connections */
-		conn->bosh->pipelining = FALSE;
-		if (conn->bosh->connections[1] == NULL) {
-			conn->bosh->connections[1] = jabber_bosh_http_connection_init(conn->bosh);
-			http_connection_connect(conn->bosh->connections[1]);
-		} else {
-			/* Shouldn't happen; this should be the only place pipelining
-			 * is turned off.
-			 */
-			g_warn_if_reached();
-		}
+		jabber_bosh_disable_pipelining(conn->bosh);
 	}
 
 	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
@@ -724,9 +735,13 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	cursor = conn->read_buf->str + conn->handled_len;
 
-	/* TODO: Chunked encoding :/ */
+	if (purple_debug_is_verbose())
+		purple_debug_misc("jabber", "BOSH server sent: %s\n", cursor);
+
+	/* TODO: Chunked encoding and check response version :/ */
 	if (!conn->headers_done) {
 		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length:");
+		const char *connection = purple_strcasestr(cursor, "\r\nConnection:");
 		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
@@ -745,6 +760,22 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 				purple_debug_warning("jabber", "Found mangled Content-Length header, or server returned 0-length response.\n");
 
 			conn->body_len = len;
+		}
+
+		if (connection && (!end_of_headers || content_length < end_of_headers)) {
+			const char *tmp;
+			if (strstr(connection, "\r\n") == NULL)
+				return;
+
+
+			tmp = connection + strlen("\r\nConnection:");
+			while (*tmp && (*tmp == ' ' || *tmp == '\t'))
+				++tmp;
+
+			if (!g_ascii_strncasecmp(tmp, "close", strlen("close"))) {
+				conn->close = TRUE;
+				jabber_bosh_disable_pipelining(conn->bosh);
+			}
 		}
 
 		if (end_of_headers) {
@@ -770,6 +801,14 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	http_received_cb(conn->read_buf->str + conn->handled_len, conn->body_len,
 	                 conn->bosh);
+
+	/* Connection: Close? */
+	if (conn->close && conn->state == HTTP_CONN_CONNECTED) {
+		if (purple_debug_is_verbose())
+			purple_debug_misc("jabber", "bosh (%p), server sent Connection: "
+			                            "close\n", conn);
+		http_connection_disconnected(conn);
+	}
 
 	if (conn->bosh->state == BOSH_CONN_ONLINE &&
 			(conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0)) {
