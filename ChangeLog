@@ -10,6 +10,10 @@ version 2.7.10 (??/??/????):
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
 
+	Groupwise:
+	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
+	  Novell, Inc.) (#13108)
+
 	IRC:
 	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
 
