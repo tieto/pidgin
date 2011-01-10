@@ -209,7 +209,7 @@
 #define		CP_SUGGEST_ADDRESSBOOK	0						/* address book search */
 #define		CP_SUGGEST_FRIENDS		1						/* suggested friends */
 #define		CP_SUGGEST_SEARCH		2						/* free-text search */
-#define		CP_SUGGEST_MXITID		4						/* MXitId search */
+#define		CP_SUGGEST_MXITID		3						/* MXitId search */
 
 /* define this to enable protocol debugging (very verbose logging) */
 #define		DEBUG_PROTOCOL
