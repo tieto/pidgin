@@ -306,7 +306,18 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 			return NULL;
 	}
 
-	/* Third loop, look for one that's NULL and create a new connection */
+	/* Third loop, is something offline that we can connect? */
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
+		if (conn->connections[i] &&
+				conn->connections[i]->state == HTTP_CONN_OFFLINE) {
+			purple_debug_info("jabber", "bosh: Reconnecting httpconn "
+			                            "(%i, %p)\n", i, conn->connections[i]);
+			http_connection_connect(conn->connections[i]);
+			return NULL;
+		}
+	}
+
+	/* Fourth loop, look for one that's NULL and create a new connection */
 	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (!conn->connections[i]) {
 			conn->connections[i] = jabber_bosh_http_connection_init(conn);
@@ -674,6 +685,7 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 
 static void http_connection_disconnected(PurpleHTTPConnection *conn)
 {
+	gboolean had_requests = FALSE;
 	/*
 	 * Well, then. Fine! I never liked you anyway, server! I was cheating on you
 	 * with AIM!
@@ -697,7 +709,8 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		conn->writeh = 0;
 	}
 
-	if (conn->requests > 0 && conn->read_buf->len == 0) {
+	had_requests = (conn->requests > 0);
+	if (had_requests && conn->read_buf->len == 0) {
 		purple_debug_error("jabber", "bosh: Adjusting BOSHconn requests (%d) to %d\n",
 		                   conn->bosh->requests, conn->bosh->requests - conn->requests);
 		conn->bosh->requests -= conn->requests;
@@ -708,6 +721,12 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		/* Hmmmm, fall back to multiple connections */
 		jabber_bosh_disable_pipelining(conn->bosh);
 	}
+
+	if (!had_requests)
+		/* If the server disconnected us without any requests, let's
+		 * just wait until we have something to send before we reconnect
+		 */
+		return;
 
 	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
 		purple_connection_error_reason(conn->bosh->js->gc,
