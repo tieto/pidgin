@@ -934,7 +934,7 @@ version 2.6.0 (08/18/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting
 	  authorization from them on MSN.
-	* Timeout switchboard connections aggressively (60 seconds).
+	* Timeout switchboard connections after 60 seconds (msn-pecan devs).
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177),

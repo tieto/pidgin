@@ -193,7 +193,6 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	slpmsg = msn_slpmsg_new(slplink);
 	msn_slpmsg_set_body(slpmsg, body, body_len);
 
-	slpmsg->sip = TRUE;
 	slpmsg->slpcall = slpcall;
 
 	g_free(body);

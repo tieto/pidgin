@@ -34,10 +34,14 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 
 	part = g_new0(MsnSlpMessagePart, 1);
 
-	if (header)
-		part->header = g_memdup(header, P2P_PACKET_HEADER_SIZE);
-	if (footer)
-		part->footer = g_memdup(footer, P2P_PACKET_FOOTER_SIZE);
+	if (header) {
+		part->header = g_new0(MsnP2PHeader, 1);
+		*part->header = *header;
+	}
+	if (footer) {
+		part->footer = g_new0(MsnP2PFooter, 1);
+		*part->footer = *footer;
+	}
 
 	part->ack_cb = msn_slpmsgpart_ack;
 	part->nak_cb = msn_slpmsgpart_nak;
