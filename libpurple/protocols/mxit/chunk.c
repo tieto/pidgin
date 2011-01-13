@@ -406,10 +406,9 @@ int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, in
  *  @param chunkdata		Chunked-data buffer
  *  @param mxitId			The username who's avatar to download
  *  @param avatarId			The Id of the avatar image (as string)
- *  @param imgsize			The resolution of the avatar image
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId, unsigned int imgsize )
+int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId )
 {
 	int			pos = 0;
 
@@ -432,7 +431,7 @@ int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const cha
 	pos += add_int16( &chunkdata[pos], 1 );
 
 	/* image size [4 bytes] */
-	pos += add_int32( &chunkdata[pos], imgsize );
+	pos += add_int32( &chunkdata[pos], MXIT_AVATAR_SIZE );
 
 	return pos;
 }

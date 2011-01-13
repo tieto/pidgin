@@ -1271,7 +1271,7 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId, MXIT_AVATAR_SIZE );
+	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating get avatar chunk (%i)\n", size );
 		return;
