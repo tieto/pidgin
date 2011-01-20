@@ -92,8 +92,6 @@ void msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink);
 void msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size);
 void msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img);
-void msn_slpmsg_open_file(MsnSlpMessage *slpmsg,
-						  const char *file_name);
 MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 								   const char *header,
 								   const char *branch,
