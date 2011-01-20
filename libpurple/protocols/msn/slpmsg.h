@@ -45,8 +45,7 @@ struct _MsnSlpMessage
 	MsnSlpLink *slplink; /**< The slplink through which this slp message is being sent. */
 	MsnSession *session;
 
-	MsnP2PHeader *header;
-	MsnP2PFooter *footer;
+	MsnP2PInfo *p2p_info;
 
 	long id;
 
@@ -105,7 +104,7 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
  *
  * @return A new SlpMessage with ACK headers
  */
-MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header);
+MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *info);
 
 /**
  * Create a new SLP message for MsnObject data.
