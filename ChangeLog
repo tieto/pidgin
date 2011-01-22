@@ -6,7 +6,7 @@ version 2.7.10 (??/??/????):
 	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
 	  (half of #13095)
 	* Starting multiple video calls and ending one no longer causes the other
-	  calls to stop sending audio and video. (Jakub Adam) (#12758)
+	  calls to stop sending audio and video. (Jakub Adam) (#12758, #13237)
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
 	* Added AddTrust External Root CA.  (#11554)
