@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-10 15:05+0100\n"
-"PO-Revision-Date: 2011-01-10 14:57+0100\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2011-01-25 20:46+0100\n"
+"PO-Revision-Date: 2011-01-25 20:46+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2387,9 +2387,8 @@ msgstr ""
 msgid "Create a new directory for each user"
 msgstr "Für jeden Benutzer ein neues Verzeichnis anlegen"
 
-#, fuzzy
 msgid "Escape the filenames"
-msgstr "%s hat die Datenübertragung abgebrochen"
+msgstr "Sonderzeichen in Dateinamen ersetzen"
 
 msgid "Notes"
 msgstr "Notizen"
@@ -3859,7 +3858,10 @@ msgstr ""
 "Der Server erfordert eine Klartext-Authentifizierung über einen "
 "unverschlüsselten Kanal"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Ungültige Serverantwort"
 
@@ -12516,9 +12518,8 @@ msgstr "Laotisch"
 msgid "Maithili"
 msgstr "Maithili"
 
-#, fuzzy
 msgid "Meadow Mari"
-msgstr "Neue Mail"
+msgstr "Wiesen-Mari"
 
 msgid "Macedonian"
 msgstr "Makedonisch"
@@ -15672,22 +15673,3 @@ msgstr "Besuchen Sie die Pidgin-Webseite"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
-
-#~ msgid "Automatically reject from users not in buddy list"
-#~ msgstr ""
-#~ "Automatisch von Benutzern ablehnen, die nicht in der Buddy-Liste sind"
-
-#~ msgid "bug master"
-#~ msgstr "Bug-Master"
-
-#~ msgid "Error requesting %s"
-#~ msgstr "Fehler beim Anfordern von %s"
-
-#~ msgid "An error occurred on the in-band bytestream transfer\n"
-#~ msgstr "Bei der In-Band-Bytestrom-Übertragung trat ein Fehler auf\n"
-
-#~ msgid "Transfer was closed."
-#~ msgstr "Übertragung wurde geschlossen."
-
-#~ msgid "Failed to open in-band bytestream"
-#~ msgstr "Öffnen des In-Band-Bytestroms fehlgeschlagen"
