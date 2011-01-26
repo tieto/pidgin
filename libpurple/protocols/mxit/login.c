@@ -239,7 +239,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	/* nickname */
 	str = purple_request_fields_get_string( fields, "nickname" );
 	if ( ( !str ) || ( strlen( str ) < 3 ) ) {
-		err = _( "The Display Name you entered is invalid." );
+		err = _( "The Display Name you entered is too short." );
 		goto out;
 	}
 	g_strlcpy( profile->nickname, str, sizeof( profile->nickname ) );
