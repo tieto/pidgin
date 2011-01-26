@@ -639,6 +639,7 @@ void mxit_send_register( struct MXitSession* session )
 	const char*			locale;
 	char				data[CP_MAX_PACKET];
 	int					datalen;
+	char*				clientVersion;
 	unsigned int		features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
@@ -649,18 +650,25 @@ void mxit_send_register( struct MXitSession* session )
 	else if (mxit_audio_enabled())
 		features |= MXIT_CF_VOICE;
 
+	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
+	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
+
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
-								"%s%c%i%c%s%c%s",			/* dc\1features\1dialingcode\1locale */
-								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
+								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
+								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */	
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
-								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale
+								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
+								CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_REGISTER );
+
+	g_free( clientVersion );
 }
 
 
@@ -675,6 +683,7 @@ void mxit_send_login( struct MXitSession* session )
 	const char*		locale;
 	char			data[CP_MAX_PACKET];
 	int				datalen;
+	char*			clientVersion;
 	unsigned int	features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
@@ -685,13 +694,16 @@ void mxit_send_login( struct MXitSession* session )
 	else if (mxit_audio_enabled())
 		features |= MXIT_CF_VOICE;
 
+	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
+	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
+
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%s%c%i%c"			/* "ms"=password\1version\1getContacts\1 */
 								"%s%c%s%c%i%c"				/* capabilities\1dc\1features\1 */
 								"%s%c%s%c"					/* dialingcode\1locale\1 */
 								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
-								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, 1, CP_FLD_TERM,
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
 								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
@@ -704,6 +716,8 @@ void mxit_send_login( struct MXitSession* session )
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_LOGIN );
+
+	g_free( clientVersion );
 }
 
 

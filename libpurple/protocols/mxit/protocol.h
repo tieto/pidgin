@@ -86,12 +86,10 @@
 #define		MXIT_ACK_TIMEOUT		( 30 )					/* timeout after waiting X seconds for an ack from the server (30 seconds) */
 
 /* MXit client version */
-#define		MXIT_CP_DISTCODE		"P"						/* client distribution code (magic, do not touch!) */
-#define		MXIT_CP_RELEASE			"5.9.0"					/* client version */
+#define		MXIT_CP_DISTCODE		'P'						/* client distribution code (magic, do not touch!) */
 #define		MXIT_CP_ARCH			"Y"						/* client architecture series (Y not for Yoda but for PC-client) */
 #define		MXIT_CLIENT_ID			"LP"					/* client ID as specified by MXit */
 #define		MXIT_CP_PLATFORM		"PURPLE"				/* client platform */
-#define		MXIT_CP_VERSION			MXIT_CP_DISTCODE"-"MXIT_CP_RELEASE"-"MXIT_CP_ARCH"-"MXIT_CP_PLATFORM
 #define		MXIT_CP_PROTO_VESION	60						/* client protocol version */
 
 /* set operating system name */
