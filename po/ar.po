@@ -11604,7 +11604,6 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "غيّر معلومات المستخدم لأجل %s"
 
-#, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
@@ -11948,7 +11947,6 @@ msgstr "/الأدوات/الخصوصيّة"
 msgid "/Tools/Room List"
 msgstr "/الأدوات/قائمة الغرف"
 
-#, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] "%0.sلا رسائل غير مقروءة من %s\n"
