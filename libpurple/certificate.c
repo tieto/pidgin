@@ -1619,7 +1619,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (self signed) */
 
-	/* Next, attempt to verify the last certificate against a CA */
 	ca = purple_certificate_find_pool(x509_tls_cached.scheme_name, "ca");
 
 	/* Next, check that the certificate chain is valid */
@@ -1669,6 +1668,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (signature chain not good) */
 
+	/* Next, attempt to verify the last certificate against a CA */
 	/* If, for whatever reason, there is no Certificate Authority pool
 	   loaded, we'll verify the subject name and then warn about thsi. */
 	if ( !ca ) {
