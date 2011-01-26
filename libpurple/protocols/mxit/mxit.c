@@ -740,7 +740,7 @@ static PurplePluginInfo plugin_info = {
 
 	MXIT_PLUGIN_ID,										/* plugin id (must be unique) */
 	MXIT_PLUGIN_NAME,									/* plugin name (this will be displayed in the UI) */
-	MXIT_PLUGIN_VERSION,								/* version of the plugin */
+	DISPLAY_VERSION,									/* version of the plugin */
 
 	MXIT_PLUGIN_SUMMARY,								/* short summary of the plugin */
 	MXIT_PLUGIN_DESC,									/* description of the plugin (can be long) */
