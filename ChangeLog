@@ -11,6 +11,10 @@ version 2.7.10 (??/??/????):
 	  (#12638)
 	* Added AddTrust External Root CA.  (#11554)
 
+	Gadu-Gadu:
+	* Don't drop whole messages when text is colored. (Jan Zachorowski)
+	  (#13259)
+
 	Groupwise:
 	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
 	  Novell, Inc.) (#13108)
