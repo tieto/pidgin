@@ -1464,6 +1464,10 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 				increased_len += 4;
 				under = FALSE;
 			}
+
+			if (actformat->font & GG_FONT_COLOR) {
+				cformats += sizeof(struct gg_msg_richtext_color);
+			}
 		}
 
 		msg = message->str;

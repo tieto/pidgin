@@ -13,6 +13,10 @@ version 2.7.10 (??/??/????):
 	* Resolve some issues validating X.509 certificates signed off the CAcert
 	  Class 3 intermediate cert when using the GnuTLS SSL/TLS plugin.
 
+	Gadu-Gadu:
+	* Don't drop whole messages when text is colored. (Jan Zachorowski)
+	  (#13259)
+
 	Groupwise:
 	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
 	  Novell, Inc.) (#13108)
