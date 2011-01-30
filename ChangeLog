@@ -10,6 +10,8 @@ version 2.7.10 (??/??/????):
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
 	* Added AddTrust External Root CA.  (#11554)
+	* Resolve some issues validating X.509 certificates signed off the CAcert
+	  Class 3 intermediate cert when using the GnuTLS SSL/TLS plugin.
 
 	Groupwise:
 	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
