@@ -3,7 +3,7 @@
 # Copyright (C) unknown, Robert Millan <zeratul2@wanadoo.es>
 # Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18),
 #               January (2004-01-07,12), Xan <dxpublica@telefonica.net>
-# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009, 2010
+# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011
 #               Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-23 07:57+0100\n"
-"PO-Revision-Date: 2010-12-23 08:04+0100\n"
+"POT-Creation-Date: 2011-01-30 11:04+0100\n"
+"PO-Revision-Date: 2011-01-30 11:11+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "Language: ca\n"
@@ -2387,9 +2387,12 @@ msgstr ""
 "Camí on desar els fitxers\n"
 "(introduïu tot el camí)"
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
-"Rebutja automàticament dels usuaris que no estiguin a la llista d'amics"
+"Quan arribi una sol·licitud de transferència d'un fitxer d'un\n"
+"usuari que *no* és a la vostra llista d'amics:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2401,6 +2404,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Crea un directori nou per a cada usuari"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s ha cancel·lat la transferència del fitxer"
 
 msgid "Notes"
 msgstr "Notes"
@@ -3859,7 +3866,10 @@ msgstr "executa"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "El servidor requereix autenticació de text sobre un flux no xifrat"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "La resposta del servidor no és vàlida"
 
@@ -6201,6 +6211,20 @@ msgstr "Validació del compte MXit"
 msgid "Retrieving User Information..."
 msgstr "S'està obtenint informació de l'usuari..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Us han fet fora d'aquest MultiMX."
+
+msgid "was kicked"
+msgstr "ha estat fet fora"
+
+msgid "_Room Name:"
+msgstr "Nom de la _Sala:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Heu convidat"
+
 msgid "Loading menu..."
 msgstr "S'està carregant el menú..."
 
@@ -6228,20 +6252,6 @@ msgstr "Connecta amb HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Habilita la pantalla de presentació emergent"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Us han fet fora d'aquest MultiMX."
-
-msgid "was kicked"
-msgstr "ha estat fet fora"
-
-msgid "_Room Name:"
-msgstr "Nom de la _Sala:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Heu convidat"
 
 msgid "Last Online"
 msgstr "Darrer cop en línia"
@@ -7917,75 +7927,6 @@ msgstr ""
 "necessari per poder enviar imatges instantànies. Atès que es revelarà la "
 "vostra adreça IP, això es pot considerar un risc de privadesa."
 
-msgid "Invalid SNAC"
-msgstr "SNAC invàlid"
-
-msgid "Server rate limit exceeded"
-msgstr "S'ha excedit el límit de velocitat del servidor"
-
-msgid "Client rate limit exceeded"
-msgstr "S'ha excedit el límit de velocitat del client"
-
-msgid "Service unavailable"
-msgstr "Servei no disponible"
-
-msgid "Service not defined"
-msgstr "Servei no definit"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC obsolet"
-
-msgid "Not supported by host"
-msgstr "El servidor no ho permet"
-
-msgid "Not supported by client"
-msgstr "El client no ho permet"
-
-msgid "Refused by client"
-msgstr "Rebutjat pel client"
-
-msgid "Reply too big"
-msgstr "Resposta massa gran"
-
-msgid "Responses lost"
-msgstr "S'han perdut respostes"
-
-msgid "Request denied"
-msgstr "Petició denegada"
-
-msgid "Busted SNAC payload"
-msgstr "Càrrega SNAC malmesa"
-
-msgid "Insufficient rights"
-msgstr "Drets insuficients"
-
-msgid "In local permit/deny"
-msgstr "En la llista de permès/denegat local"
-
-msgid "Warning level too high (sender)"
-msgstr "Nivell d'avís massa alt (remitent)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Nivell d'avís massa alt (receptor)"
-
-msgid "User temporarily unavailable"
-msgstr "Usuari no disponible temporalment"
-
-msgid "No match"
-msgstr "Cap coincidència"
-
-msgid "List overflow"
-msgstr "Sobreeiximent de la llista"
-
-msgid "Request ambiguous"
-msgstr "Petició ambigua"
-
-msgid "Queue full"
-msgstr "Cua plena"
-
-msgid "Not while on AOL"
-msgstr "No es pot fer mentre estigui a AOL"
-
 #. Label
 msgid "Buddy Icon"
 msgstr "Icona de l'amic"
@@ -8103,6 +8044,75 @@ msgstr "Membre des de"
 
 msgid "Capabilities"
 msgstr "Capacitats"
+
+msgid "Invalid SNAC"
+msgstr "SNAC invàlid"
+
+msgid "Server rate limit exceeded"
+msgstr "S'ha excedit el límit de velocitat del servidor"
+
+msgid "Client rate limit exceeded"
+msgstr "S'ha excedit el límit de velocitat del client"
+
+msgid "Service unavailable"
+msgstr "Servei no disponible"
+
+msgid "Service not defined"
+msgstr "Servei no definit"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC obsolet"
+
+msgid "Not supported by host"
+msgstr "El servidor no ho permet"
+
+msgid "Not supported by client"
+msgstr "El client no ho permet"
+
+msgid "Refused by client"
+msgstr "Rebutjat pel client"
+
+msgid "Reply too big"
+msgstr "Resposta massa gran"
+
+msgid "Responses lost"
+msgstr "S'han perdut respostes"
+
+msgid "Request denied"
+msgstr "Petició denegada"
+
+msgid "Busted SNAC payload"
+msgstr "Càrrega SNAC malmesa"
+
+msgid "Insufficient rights"
+msgstr "Drets insuficients"
+
+msgid "In local permit/deny"
+msgstr "En la llista de permès/denegat local"
+
+msgid "Warning level too high (sender)"
+msgstr "Nivell d'avís massa alt (remitent)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Nivell d'avís massa alt (receptor)"
+
+msgid "User temporarily unavailable"
+msgstr "Usuari no disponible temporalment"
+
+msgid "No match"
+msgstr "Cap coincidència"
+
+msgid "List overflow"
+msgstr "Sobreeiximent de la llista"
+
+msgid "Request ambiguous"
+msgstr "Petició ambigua"
+
+msgid "Queue full"
+msgstr "Cua plena"
+
+msgid "Not while on AOL"
+msgstr "No es pot fer mentre estigui a AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8703,14 +8713,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Seleccioneu un servidor"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Connecta amb TCP"
@@ -12284,10 +12294,6 @@ msgstr "Error"
 msgid "Fatal Error"
 msgstr "Error fatal"
 
-# Fixme
-msgid "bug master"
-msgstr "bug master"
-
 msgid "artist"
 msgstr "artista"
 
@@ -12468,6 +12474,9 @@ msgstr "Lasià"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Txeremís oriental"
 
 msgid "Macedonian"
 msgstr "Macedoni"
@@ -15625,6 +15634,14 @@ msgstr "Visita la pàgina web de Pidgin per Windows"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "No tens permís per desinstal.lar aquesta aplicació."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Rebutja automàticament dels usuaris que no estiguin a la llista d'amics"
+
+# Fixme
+#~ msgid "bug master"
+#~ msgstr "bug master"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "S'ha produït un error en sol·licitar %s"
