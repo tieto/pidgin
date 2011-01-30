@@ -44,8 +44,64 @@
  */
 
 #include "oscar.h"
+#include "debug.h"
 
 static int aim_ssi_addmoddel(OscarData *od);
+
+/**
+ * List types based on http://dev.aol.com/aim/oscar/#FEEDBAG (archive.org)
+ * and http://iserverd.khstu.ru/oscar/ssi_item.html
+ *
+ * @param type The type of a list item as integer number, as provided by an aim_ssi_item struct.
+ * @return Returns the name of the item type as a character string.
+ */
+static const gchar*
+aim_ssi_type_to_string(guint16 type)
+{
+	struct TypeStringPair
+	{
+		guint16 type;
+		const gchar *string;
+	};
+	static const struct TypeStringPair type_strings[] = {
+		{ 0x0000, "Buddy" },
+		{ 0x0001, "Group" },
+		{ 0x0002, "Permit/Visible" },
+		{ 0x0003, "Deny/Invisible" },
+		{ 0x0004, "PDInfo" },
+		{ 0x0005, "PresencePrefs" }, 
+		{ 0x0006, "Non-Buddy Info" },
+		{ 0x0009, "ClientPrefs" },
+		{ 0x000e, "ICQDeny/Ignore" },
+		{ 0x0014, "Buddy Icon" }, 
+		{ 0x0015, "Recent Buddies" },
+		{ 0x0019, "Non-Buddy" },
+		{ 0x001d, "Vanity Info" },
+		{ 0x0020, "ICQ-MDir" },
+		{ 0x0029, "Facebook" },
+	};
+	int i;
+	for (i = 0; i < G_N_ELEMENTS(type_strings); i++) {
+		if (type_strings[i].type == type) {
+			return type_strings[i].string;
+		}
+	}
+	return "unknown";
+}
+
+/** For debug log output: Appends a line containing information about a given list item to a string.
+ *
+ * @param str String to which the line will be appended.
+ * @param prefix A string which will be prepended to the line.
+ * @param item List item from which information is extracted.
+ */
+static void
+aim_ssi_item_debug_append(GString *str, char *prefix, struct aim_ssi_item *item)
+{
+	g_string_append_printf(str, 
+		"%s gid=0x%04hx, bid=0x%04hx, list_type=0x%04hx [%s], name=%s.\n",
+		prefix, item->gid, item->bid, item->type, aim_ssi_type_to_string(item->type), item->name);
+}
 
 /**
  * Locally rebuild the 0x00c8 TLV in the additional data of the given group.
@@ -478,6 +534,7 @@ static int aim_ssi_sync(OscarData *od)
 	struct aim_ssi_item *cur1, *cur2;
 	struct aim_ssi_tmp *cur, *new;
 	int n = 0;
+	GString *debugstr = g_string_new("");
 
 	/*
 	 * The variable "n" is used to limit the number of addmoddel's that
@@ -517,6 +574,7 @@ static int aim_ssi_sync(OscarData *od)
 					cur->next = new;
 				} else
 					od->ssi.pending = new;
+			       	aim_ssi_item_debug_append(debugstr, "Deleting item ", cur1);
 			}
 		}
 	}
@@ -537,6 +595,7 @@ static int aim_ssi_sync(OscarData *od)
 					cur->next = new;
 				} else
 					od->ssi.pending = new;
+			       	aim_ssi_item_debug_append(debugstr, "Adding item ", cur1);
 			}
 		}
 	}
@@ -558,9 +617,21 @@ static int aim_ssi_sync(OscarData *od)
 					cur->next = new;
 				} else
 					od->ssi.pending = new;
+			       	aim_ssi_item_debug_append(debugstr, "Modifying item ", cur1);
 			}
 		}
 	}
+	if (debugstr->len > 0) {
+		purple_debug_info("oscar", "%s", debugstr->str);
+		if (purple_debug_is_verbose()) {
+	    		g_string_truncate(debugstr, 0);
+			for (cur1 = od->ssi.local; cur1; cur1 = cur1->next) 
+				aim_ssi_item_debug_append(debugstr, "\t", cur1);
+			purple_debug_misc("oscar", "Dumping item list of account %s:\n%s",
+				purple_connection_get_account(od->gc)->username, debugstr->str);
+		}
+	}
+	g_string_free(debugstr, TRUE);
 
 	/* We're out of stuff to do, so tell the AIM servers we're done and exit */
 	if (!od->ssi.pending) {
@@ -1165,6 +1236,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 	guint16 namelen, gid, bid, type;
 	char *name;
 	GSList *data;
+	GString *debugstr = g_string_new("");
 
 	fmtver = byte_stream_get8(bs); /* Version of ssi data.  Should be 0x00 */
 	od->ssi.numitems += byte_stream_get16(bs); /* # of items in this SSI SNAC */
@@ -1179,10 +1251,13 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		bid = byte_stream_get16(bs);
 		type = byte_stream_get16(bs);
 		data = aim_tlvlist_readlen(bs, byte_stream_get16(bs));
-		aim_ssi_itemlist_add(&od->ssi.official, name, gid, bid, type, data);
+		aim_ssi_item_debug_append(debugstr, "\t", aim_ssi_itemlist_add(&od->ssi.official, name, gid, bid, type, data));
 		g_free(name);
 		aim_tlvlist_free(data);
 	}
+	purple_debug_misc("oscar", "Reading items from tlvlist for account %s:\n%s",
+		purple_connection_get_account(od->gc)->username, debugstr->str);
+	g_string_free(debugstr, TRUE);
 
 	/* Read in the timestamp */
 	od->ssi.timestamp = byte_stream_get32(bs);

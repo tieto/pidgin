@@ -15,8 +15,20 @@ version 2.7.10 (??/??/????):
 	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
 	  (half of #13095)
 	* Starting multiple video calls and ending one no longer causes the other
-	  calls to stop sending audio and video. (Jakub Adam) (#12758)
-	* Perl bindings now respect LDFLAGS. (Peter Volkov) (#12638)
+	  calls to stop sending audio and video. (Jakub Adam) (#12758, #13237)
+	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
+	  (#12638)
+	* Added AddTrust External Root CA.  (#11554)
+	* Resolve some issues validating X.509 certificates signed off the CAcert
+	  Class 3 intermediate cert when using the GnuTLS SSL/TLS plugin.
+
+	Gadu-Gadu:
+	* Don't drop whole messages when text is colored. (Jan Zachorowski)
+	  (#13259)
+
+	Groupwise:
+	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
+	  Novell, Inc.) (#13108)
 
 	IRC:
 	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
@@ -25,6 +37,10 @@ version 2.7.10 (??/??/????):
 	* Stop sending audio when placing a call on hold. (Jakub Adam) (#13032)
 	* Stop translating gpointers to ints in the dbus API.  This removes
 	  functions from the dbus API.  (The openSUSE Project) (#12507)
+	* Fix D-Bus introspection calls that omit the interface parameter.  (Tom
+	  Samstag) (#13073)
+	* Fixed bugs in purple_str_to_time() that caused the most recent 'make
+	  check' failures.  (Nader Morshed) (#13131)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
@@ -35,6 +51,9 @@ version 2.7.10 (??/??/????):
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
 	  defaults. (Jakub Adam) (#13044)
+	* The Voice/Video Settings plugin no longer crashes when a stored device
+	  name is not found in the list of available devices. (Jakub Adam)
+	  (#13238)
 	* The Autoaccept plugin now allows disabling filename escaping. (Rok
 	  Mandeljc) (half of #11459)
 	* The Autoaccept plugin now allows choosing Reject/Ask/Accept for
@@ -46,6 +65,8 @@ version 2.7.10 (??/??/????):
 	XMPP:
 	* Don't crash when receiving an unexpected/invalid jingle transport type.
 	  (Nikita Kozlov) (#13136)
+	* Handle Connection: Close headers for BOSH, when the server does not
+	  terminate the connection itself. (#13008)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is
@@ -931,7 +952,7 @@ version 2.6.0 (08/18/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting
 	  authorization from them on MSN.
-	* Timeout switchboard connections aggressively (60 seconds).
+	* Timeout switchboard connections after 60 seconds (msn-pecan devs).
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177),

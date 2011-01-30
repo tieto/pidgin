@@ -1458,6 +1458,7 @@ typedef struct {
 
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
+	const gchar *shortname;
 	gchar *filedata;
 	size_t size;
 	struct stat st;
@@ -1512,7 +1513,9 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			break;
 		}
-		id = purple_imgstore_add_with_id(filedata, size, data->filename);
+		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
+		shortname = shortname ? shortname + 1 : data->filename;
+		id = purple_imgstore_add_with_id(filedata, size, shortname);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));

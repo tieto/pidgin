@@ -58,6 +58,11 @@ typedef struct
 } MsnP2PFooter;
 #define P2P_PACKET_FOOTER_SIZE (1 * 4)
 
+typedef struct {
+	MsnP2PHeader header;
+	MsnP2PFooter footer;
+} MsnP2PInfo;
+
 typedef enum
 {
 	P2P_NO_FLAG         = 0x0,        /**< No flags specified */
@@ -88,19 +93,98 @@ typedef enum
 	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
 } MsnP2PAppId;
 
-MsnP2PHeader *
-msn_p2p_header_from_wire(const char *wire);
+MsnP2PInfo *
+msn_p2p_info_new(void);
+
+MsnP2PInfo *
+msn_p2p_info_dup(MsnP2PInfo *info);
+
+void
+msn_p2p_info_free(MsnP2PInfo *info);
+
+size_t
+msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire);
 
 char *
-msn_p2p_header_to_wire(MsnP2PHeader *header);
+msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len);
 
-MsnP2PFooter *
-msn_p2p_footer_from_wire(const char *wire);
+size_t
+msn_p2p_footer_from_wire(MsnP2PInfo *info, const char *wire);
 
 char *
-msn_p2p_footer_to_wire(MsnP2PFooter *footer);
+msn_p2p_footer_to_wire(MsnP2PInfo *info, size_t *len);
+
+void
+msn_p2p_info_to_string(MsnP2PInfo *info, GString *str);
 
 gboolean
 msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
 
+gboolean
+msn_p2p_info_is_valid(MsnP2PInfo *info);
+
+gboolean
+msn_p2p_info_is_final(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_session_id(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_id(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_offset(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_total_size(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_length(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_flags(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_ack_id(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_ack_sub_id(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_ack_size(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_app_id(MsnP2PInfo *info);
+
+void
+msn_p2p_info_set_session_id(MsnP2PInfo *info, guint32 session_id);
+
+void
+msn_p2p_info_set_id(MsnP2PInfo *info, guint32 id);
+
+void
+msn_p2p_info_set_offset(MsnP2PInfo *info, guint64 offset);
+
+void
+msn_p2p_info_set_total_size(MsnP2PInfo *info, guint64 total_size);
+
+void
+msn_p2p_info_set_length(MsnP2PInfo *info, guint32 length);
+
+void
+msn_p2p_info_set_flags(MsnP2PInfo *info, guint32 flags);
+
+void
+msn_p2p_info_set_ack_id(MsnP2PInfo *info, guint32 ack_id);
+
+void
+msn_p2p_info_set_ack_sub_id(MsnP2PInfo *info, guint32 ack_sub_id);
+
+void
+msn_p2p_info_set_ack_size(MsnP2PInfo *info, guint64 ack_size);
+
+void
+msn_p2p_info_set_app_id(MsnP2PInfo *info, guint32 app_id);
+
 #endif /* MSN_P2P_H */
+
