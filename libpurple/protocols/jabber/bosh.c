@@ -365,6 +365,8 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 	chosen = find_available_http_connection(conn);
 
 	if (!chosen) {
+		if (type == PACKET_FLUSH)
+			return;
 		/*
 		 * For non-ordinary traffic, we can't 'buffer' it, so use the
 		 * first connection.
@@ -472,6 +474,8 @@ jabber_bosh_disable_pipelining(PurpleBOSHConnection *bosh)
 	if (!bosh->pipelining)
 		return;
 
+	purple_debug_info("jabber", "BOSH: Disabling pipelining on conn %p\n",
+	                            bosh);
 	bosh->pipelining = FALSE;
 	if (bosh->connections[1] == NULL) {
 		bosh->connections[1] = jabber_bosh_http_connection_init(bosh);
