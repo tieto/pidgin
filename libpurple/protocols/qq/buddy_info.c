@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
+#include "connection.h"
 
 #include "utils.h"
 #include "packet_parse.h"
