@@ -38,6 +38,8 @@ version 2.7.10 (??/??/????):
 	  the conversation window.  (Ryan Flegel) (#13127)
 	* Fix a few memory leaks. (Nader Morshed) (#13162)
 	* Support rendering strikethrough when received as in-line CSS. (#13168)
+	* Editable comboboxes are now more friendly to some GTK+ themes. (Hugo
+	  Pereira Da Costa) (#13164).
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
