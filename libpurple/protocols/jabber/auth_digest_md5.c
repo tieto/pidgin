@@ -78,12 +78,12 @@ GHashTable* jabber_auth_digest_md5_parse(const char *challenge)
 					val_start++;
 
 				val_end = cur;
-				while (val_end != val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
+				while (val_end >= val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
 						|| *val_end == '\r' || *val_end == '\n'
 						|| *val_end == '"'  || *val_end == '\0'))
 					val_end--;
 
-				if (val_start != val_end)
+				if (val_end - val_start + 1 >= 0)
 					value = g_strndup(val_start, val_end - val_start + 1);
 			}
 
