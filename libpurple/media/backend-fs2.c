@@ -155,6 +155,44 @@ purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
 {
 }
 
+static gboolean
+event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
+{
+	if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM
+		&& gst_event_has_name(event, "purple-unlink-tee")) {
+
+		const GstStructure *s = gst_event_get_structure(event);
+
+		gst_pad_unlink(srcpad, gst_pad_get_peer(srcpad));
+
+		gst_pad_remove_event_probe(srcpad,
+			g_value_get_uint(gst_structure_get_value(s, "handler-id")));
+
+		if (g_value_get_boolean(gst_structure_get_value(s, "release-pad")))
+			gst_element_release_request_pad(GST_ELEMENT_PARENT(srcpad), srcpad);
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void
+unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
+{
+	guint id = gst_pad_add_event_probe(srcpad, G_CALLBACK(event_probe_cb), NULL);
+
+	if (GST_IS_GHOST_PAD(srcpad))
+		srcpad = gst_ghost_pad_get_target(GST_GHOST_PAD(srcpad));
+
+	gst_element_send_event(gst_pad_get_parent_element(srcpad),
+		gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM,
+			gst_structure_new("purple-unlink-tee",
+				"release-pad", G_TYPE_BOOLEAN, release_pad,
+				"handler-id", G_TYPE_UINT, id,
+				NULL)));
+}
+
 static void
 purple_media_backend_fs2_dispose(GObject *obj)
 {
@@ -179,7 +217,7 @@ purple_media_backend_fs2_dispose(GObject *obj)
 					g_list_delete_link(sessions, sessions)) {
 				PurpleMediaBackendFs2Session *session = sessions->data;
 				if (session->srcpad) {
-					gst_pad_set_blocked(session->srcpad, TRUE);
+					unlink_teepad_dynamic(session->srcpad, FALSE);
 					gst_object_unref(session->srcpad);
 					session->srcpad = NULL;
 				}

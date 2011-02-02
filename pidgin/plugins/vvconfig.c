@@ -82,20 +82,11 @@ get_element_devices(const gchar *element_name)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
 
-	if (!strcmp(element_name, "<custom>")) {
-		ret = g_list_prepend(ret, NULL);
-		ret = g_list_prepend(ret, (gpointer)_("Default"));
-		ret = g_list_prepend(ret, "");
-		return ret;
-	}
-
 	ret = g_list_prepend(ret, (gpointer)_("Default"));
 	ret = g_list_prepend(ret, "");
 
-	if (*element_name == '\0') {
-		ret = g_list_prepend(ret, NULL);
-		ret = g_list_reverse(ret);
-		return ret;
+	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
+		return g_list_reverse(ret);
 	}
 
 	element = gst_element_factory_make(element_name, "test");
@@ -120,9 +111,7 @@ get_element_devices(const gchar *element_name)
 		array = gst_property_probe_probe_and_get_values (probe, pspec);
 		if (array == NULL) {
 			purple_debug_info("vvconfig", "'%s' has no devices\n", element_name);
-			ret = g_list_prepend(ret, NULL);
-			ret = g_list_reverse(ret);
-			return ret;
+			return g_list_reverse(ret);
 		}
 
 		for (n=0; n < array->n_values; ++n) {
@@ -153,10 +142,7 @@ get_element_devices(const gchar *element_name)
 	}
 	gst_object_unref(element);
 
-	ret = g_list_prepend(ret, NULL);
-	ret = g_list_reverse(ret);
-
-	return ret;
+	return g_list_reverse(ret);
 }
 
 static GList *
@@ -173,7 +159,6 @@ get_element_plugins(const gchar **plugins)
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
 		}
 	}
-	ret = g_list_prepend(ret, NULL);
 	ret = g_list_reverse(ret);
 	return ret;
 }
@@ -236,7 +221,8 @@ device_changed_cb(const gchar *name, PurplePrefType type,
 	pref = g_strdup(name);
 	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
 	devices = get_element_devices(value);
-	if (g_list_find(devices, purple_prefs_get_string(pref)) == NULL)
+	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
+			(GCompareFunc)strcmp) == NULL)
 		purple_prefs_set_string(pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(parent,
 			label, PURPLE_PREF_STRING,

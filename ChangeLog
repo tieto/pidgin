@@ -6,9 +6,20 @@ version 2.7.10 (??/??/????):
 	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
 	  (half of #13095)
 	* Starting multiple video calls and ending one no longer causes the other
-	  calls to stop sending audio and video. (Jakub Adam) (#12758)
+	  calls to stop sending audio and video. (Jakub Adam) (#12758, #13237)
 	* Perl bindings now respect LDFLAGS. (Peter Volkov, Markos Chandras)
 	  (#12638)
+	* Added AddTrust External Root CA.  (#11554)
+	* Resolve some issues validating X.509 certificates signed off the CAcert
+	  Class 3 intermediate cert when using the GnuTLS SSL/TLS plugin.
+
+	Gadu-Gadu:
+	* Don't drop whole messages when text is colored. (Jan Zachorowski)
+	  (#13259)
+
+	Groupwise:
+	* Don't show two windows when using "Get Info" on a buddy. (Gabriel Burt;
+	  Novell, Inc.) (#13108)
 
 	IRC:
 	* Don't send ISON messages longer than 512 bytes. (Jeffrey Honig) (#9692)
@@ -27,10 +38,15 @@ version 2.7.10 (??/??/????):
 	  the conversation window.  (Ryan Flegel) (#13127)
 	* Fix a few memory leaks. (Nader Morshed) (#13162)
 	* Support rendering strikethrough when received as in-line CSS. (#13168)
+	* Editable comboboxes are now more friendly to some GTK+ themes. (Hugo
+	  Pereira Da Costa) (#13164).
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
 	  defaults. (Jakub Adam) (#13044)
+	* The Voice/Video Settings plugin no longer crashes when a stored device
+	  name is not found in the list of available devices. (Jakub Adam)
+	  (#13238)
 	* The Autoaccept plugin now allows disabling filename escaping. (Rok
 	  Mandeljc) (half of #11459)
 	* The Autoaccept plugin now allows choosing Reject/Ask/Accept for
@@ -42,6 +58,10 @@ version 2.7.10 (??/??/????):
 	XMPP:
 	* Don't crash when receiving an unexpected/invalid jingle transport type.
 	  (Nikita Kozlov) (#13136)
+	* Handle Connection: Close headers for BOSH, when the server does not
+	  terminate the connection itself. (#13008)
+	* Improved parsing for DIGEST-MD5, which should resolve issues
+	  connecting to some jabberd2 servers. (#a14514)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is
@@ -927,7 +947,7 @@ version 2.6.0 (08/18/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting
 	  authorization from them on MSN.
-	* Timeout switchboard connections aggressively (60 seconds).
+	* Timeout switchboard connections after 60 seconds (msn-pecan devs).
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177),
