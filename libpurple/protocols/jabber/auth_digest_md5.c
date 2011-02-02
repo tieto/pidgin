@@ -27,6 +27,7 @@
 #include "util.h"
 #include "xmlnode.h"
 
+#include "auth_digest_md5.h"
 #include "auth.h"
 #include "jabber.h"
 
@@ -43,7 +44,7 @@ digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
 }
 
 /* Parts of this algorithm are inspired by stuff in libgsasl */
-static GHashTable* parse_challenge(const char *challenge)
+GHashTable* jabber_auth_digest_md5_parse(const char *challenge)
 {
 	const char *token_start, *val_start, *val_end, *cur;
 	GHashTable *ret = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -186,7 +187,7 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 			dec_in != NULL ? strlen(dec_in) : 0,
 			dec_in != NULL  ? dec_in : "(null)");
 
-	parts = parse_challenge(dec_in);
+	parts = jabber_auth_digest_md5_parse(dec_in);
 
 	if (g_hash_table_lookup(parts, "rspauth")) {
 		char *rspauth = g_hash_table_lookup(parts, "rspauth");
