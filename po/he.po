@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-12-16 16:39+0200\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"PO-Revision-Date: 2011-01-26 08:34+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -2278,8 +2278,12 @@ msgstr ""
 "נתיב לשמור בו את הקבצים\n"
 "(יש לספק נתיב מלא)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "דחה אוטומטית ממשתמשים שאינם ברשימת החברים שלי"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"כאשר מגיעה בקשה להעברת-קובץ ממשתמש\n"
+"אשר *אינו* ברשימת החברים שלך:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2290,6 +2294,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "צור ספרייה חדשה עבור כל משתמש"
+
+msgid "Escape the filenames"
+msgstr "קדד אותיות בעייתיות בשמות הקבצים"
 
 msgid "Notes"
 msgstr "הערות"
@@ -3724,7 +3731,10 @@ msgstr "הפעל"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "השרת דורש אימות לא מוצפן מעל תקשורת לא מוצפנת"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "תגובה לא תקפה מהשרת"
 
@@ -5980,6 +5990,20 @@ msgstr "אימות חשבון MXit"
 msgid "Retrieving User Information..."
 msgstr "שולף מידע משתמש..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "נבעטת מתוך MultiMX זה."
+
+msgid "was kicked"
+msgstr "נבעט/ה"
+
+msgid "_Room Name:"
+msgstr "שם _חדר:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "הוזמנת"
+
 msgid "Loading menu..."
 msgstr "טוען תפריט..."
 
@@ -6006,20 +6030,6 @@ msgstr "התחבר בעזרת HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "אפשר פתיחת חלון-הקדמה"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "נבעטת מתוך MultiMX זה."
-
-msgid "was kicked"
-msgstr "נבעט/ה"
-
-msgid "_Room Name:"
-msgstr "שם _חדר:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "הוזמנת"
 
 msgid "Last Online"
 msgstr "חיבור אחרון"
@@ -7620,75 +7630,6 @@ msgstr ""
 "זה דורש חיבור ישיר בין שני המחשבים, ונחוץ עבור תמונות בהודעות. מכיוון שכתובת "
 "ה-IP שלך תיחשף, ייתכן וזה ייחשב כסיכון לפרטיותך."
 
-msgid "Invalid SNAC"
-msgstr "SNAC לא תקף"
-
-msgid "Server rate limit exceeded"
-msgstr "הפרזת מעבר למגבלת השרת"
-
-msgid "Client rate limit exceeded"
-msgstr "הפרזת מעבר למגבלת הלקוח"
-
-msgid "Service unavailable"
-msgstr "השירות אינו זמין"
-
-msgid "Service not defined"
-msgstr "שירות אינו מוגדר"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC מיושן"
-
-msgid "Not supported by host"
-msgstr "לא נתמך על-ידי השרת"
-
-msgid "Not supported by client"
-msgstr "לא נתמך על-ידי הלקוח"
-
-msgid "Refused by client"
-msgstr "החיבור נדחה על ידי הלקוח."
-
-msgid "Reply too big"
-msgstr "המענה גדול מדיי"
-
-msgid "Responses lost"
-msgstr "אבדו המשובים"
-
-msgid "Request denied"
-msgstr "הבקשה נדחית"
-
-msgid "Busted SNAC payload"
-msgstr "מידע פגום ב-SNAC"
-
-msgid "Insufficient rights"
-msgstr "אין די הרשאות"
-
-msgid "In local permit/deny"
-msgstr "באישור/שלילה מקומיים"
-
-msgid "Warning level too high (sender)"
-msgstr "רמת אזהרה גבוהה מדי (שולח("
-
-msgid "Warning level too high (receiver)"
-msgstr "רמת אזהרה גבוהה מדי (מקבל)"
-
-msgid "User temporarily unavailable"
-msgstr "המשתמש אינו זמין כרגע"
-
-msgid "No match"
-msgstr "אין התאמה"
-
-msgid "List overflow"
-msgstr "גלישת מגבולות הרשימה"
-
-msgid "Request ambiguous"
-msgstr "בקשה לא ברורה"
-
-msgid "Queue full"
-msgstr "התור מלא"
-
-msgid "Not while on AOL"
-msgstr "לא בזמן שהות ב-AOL"
-
 #. Label
 msgid "Buddy Icon"
 msgstr "סמל איש הקשר"
@@ -7806,6 +7747,75 @@ msgstr "חבר מאז"
 
 msgid "Capabilities"
 msgstr "יכולות"
+
+msgid "Invalid SNAC"
+msgstr "SNAC לא תקף"
+
+msgid "Server rate limit exceeded"
+msgstr "הפרזת מעבר למגבלת השרת"
+
+msgid "Client rate limit exceeded"
+msgstr "הפרזת מעבר למגבלת הלקוח"
+
+msgid "Service unavailable"
+msgstr "השירות אינו זמין"
+
+msgid "Service not defined"
+msgstr "שירות אינו מוגדר"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC מיושן"
+
+msgid "Not supported by host"
+msgstr "לא נתמך על-ידי השרת"
+
+msgid "Not supported by client"
+msgstr "לא נתמך על-ידי הלקוח"
+
+msgid "Refused by client"
+msgstr "החיבור נדחה על ידי הלקוח."
+
+msgid "Reply too big"
+msgstr "המענה גדול מדיי"
+
+msgid "Responses lost"
+msgstr "אבדו המשובים"
+
+msgid "Request denied"
+msgstr "הבקשה נדחית"
+
+msgid "Busted SNAC payload"
+msgstr "מידע פגום ב-SNAC"
+
+msgid "Insufficient rights"
+msgstr "אין די הרשאות"
+
+msgid "In local permit/deny"
+msgstr "באישור/שלילה מקומיים"
+
+msgid "Warning level too high (sender)"
+msgstr "רמת אזהרה גבוהה מדי (שולח("
+
+msgid "Warning level too high (receiver)"
+msgstr "רמת אזהרה גבוהה מדי (מקבל)"
+
+msgid "User temporarily unavailable"
+msgstr "המשתמש אינו זמין כרגע"
+
+msgid "No match"
+msgstr "אין התאמה"
+
+msgid "List overflow"
+msgstr "גלישת מגבולות הרשימה"
+
+msgid "Request ambiguous"
+msgstr "בקשה לא ברורה"
+
+msgid "Queue full"
+msgstr "התור מלא"
+
+msgid "Not while on AOL"
+msgstr "לא בזמן שהות ב-AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8398,14 +8408,14 @@ msgstr "אוטומטי"
 msgid "Select Server"
 msgstr "בחר שרת"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "התחבר בעזרת TCP"
@@ -11881,9 +11891,6 @@ msgstr "שגיאה "
 msgid "Fatal Error"
 msgstr "שגיאה קטלנית"
 
-msgid "bug master"
-msgstr "שר-הבאגים"
-
 msgid "artist"
 msgstr "אמן"
 
@@ -12062,6 +12069,9 @@ msgstr "לאית"
 
 msgid "Maithili"
 msgstr "מאת'ילי"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "מקדונית"
@@ -15106,6 +15116,12 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "דחה אוטומטית ממשתמשים שאינם ברשימת החברים שלי"
+
+#~ msgid "bug master"
+#~ msgstr "שר-הבאגים"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "ארעה שגיאה בעת ההעברה בזרם בתווך\n"

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-26 22:11-0500\n"
-"PO-Revision-Date: 2010-12-21 09:08+0100\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"PO-Revision-Date: 2011-02-01 21:09+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
@@ -2328,8 +2328,12 @@ msgstr ""
 "Cesta, kam ukládat soubory\n"
 "(Zadejte prosím plnou cestu)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automaticky odmítat od uživatelů, kteří nejsou na seznamu kamarádů"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Když přijde požadavek na přenos souboru od někoho,\n"
+"kdo není v seznamu kamarádů:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2341,6 +2345,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Vytvořit nový adresář pro každého uživatele"
+
+msgid "Escape the filenames"
+msgstr "Upravit jména souborů"
 
 msgid "Notes"
 msgstr "Poznámky"
@@ -3793,7 +3800,10 @@ msgstr "spustit"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje textovou autentizaci v nešifrovaném proudu"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Neplatná odpověď od serveru"
 
@@ -6074,6 +6084,20 @@ msgstr "Ověření MXit účtu"
 msgid "Retrieving User Information..."
 msgstr "Získávám informace o uživateli..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Byl jste vykopnut z MultiMX."
+
+msgid "was kicked"
+msgstr "byl vykopnut"
+
+msgid "_Room Name:"
+msgstr "_Místnost:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Přišlo vám pozvání"
+
 msgid "Loading menu..."
 msgstr "Načítám menu..."
 
@@ -6100,20 +6124,6 @@ msgstr "Připojit se pomocí HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Povolit zobrazení spouštěcí obrazovky"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Byl jste vykopnut z MultiMX."
-
-msgid "was kicked"
-msgstr "byl vykopnut"
-
-msgid "_Room Name:"
-msgstr "_Místnost:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Přišlo vám pozvání"
 
 msgid "Last Online"
 msgstr "Naposledy připojen"
@@ -7776,75 +7786,6 @@ msgstr ""
 "Images. Protože bude odkryta vaše IP adresa, dá se to považovat za riziko "
 "pro soukromí."
 
-msgid "Invalid SNAC"
-msgstr "Neplatné SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Překročen limit poměru serveru"
-
-msgid "Client rate limit exceeded"
-msgstr "Překročen limit poměru klienta"
-
-msgid "Service unavailable"
-msgstr "Služba nedostupná"
-
-msgid "Service not defined"
-msgstr "Služba nedefinována"
-
-msgid "Obsolete SNAC"
-msgstr "Zastaralé SNAC"
-
-msgid "Not supported by host"
-msgstr "Nepodporováno hostitelem"
-
-msgid "Not supported by client"
-msgstr "Nepodporováno klientem"
-
-msgid "Refused by client"
-msgstr "Odmítnuto klientem"
-
-msgid "Reply too big"
-msgstr "Odpověď příliš velká"
-
-msgid "Responses lost"
-msgstr "Odpovědi ztraceny"
-
-msgid "Request denied"
-msgstr "Požadavek zamítnut"
-
-msgid "Busted SNAC payload"
-msgstr "Poškozená data SNAC"
-
-msgid "Insufficient rights"
-msgstr "Nedostatečná oprávnění"
-
-msgid "In local permit/deny"
-msgstr "V místním povolit/zakázat"
-
-msgid "Warning level too high (sender)"
-msgstr "Hladina varování příliš vysoká (odeslání)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Hladina varování příliš vysoká (příjem)"
-
-msgid "User temporarily unavailable"
-msgstr "Uživatel dočasně nedostupný"
-
-msgid "No match"
-msgstr "Žádná shoda"
-
-msgid "List overflow"
-msgstr "Přetečení seznamu"
-
-msgid "Request ambiguous"
-msgstr "Požadavek nejednoznačný"
-
-msgid "Queue full"
-msgstr "Fronta plná"
-
-msgid "Not while on AOL"
-msgstr "Ne když na AOL"
-
 #. Label
 msgid "Buddy Icon"
 msgstr "Ikona kamaráda"
@@ -7962,6 +7903,75 @@ msgstr "Člen od"
 
 msgid "Capabilities"
 msgstr "Schopnosti"
+
+msgid "Invalid SNAC"
+msgstr "Neplatné SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Překročen limit poměru serveru"
+
+msgid "Client rate limit exceeded"
+msgstr "Překročen limit poměru klienta"
+
+msgid "Service unavailable"
+msgstr "Služba nedostupná"
+
+msgid "Service not defined"
+msgstr "Služba nedefinována"
+
+msgid "Obsolete SNAC"
+msgstr "Zastaralé SNAC"
+
+msgid "Not supported by host"
+msgstr "Nepodporováno hostitelem"
+
+msgid "Not supported by client"
+msgstr "Nepodporováno klientem"
+
+msgid "Refused by client"
+msgstr "Odmítnuto klientem"
+
+msgid "Reply too big"
+msgstr "Odpověď příliš velká"
+
+msgid "Responses lost"
+msgstr "Odpovědi ztraceny"
+
+msgid "Request denied"
+msgstr "Požadavek zamítnut"
+
+msgid "Busted SNAC payload"
+msgstr "Poškozená data SNAC"
+
+msgid "Insufficient rights"
+msgstr "Nedostatečná oprávnění"
+
+msgid "In local permit/deny"
+msgstr "V místním povolit/zakázat"
+
+msgid "Warning level too high (sender)"
+msgstr "Hladina varování příliš vysoká (odeslání)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Hladina varování příliš vysoká (příjem)"
+
+msgid "User temporarily unavailable"
+msgstr "Uživatel dočasně nedostupný"
+
+msgid "No match"
+msgstr "Žádná shoda"
+
+msgid "List overflow"
+msgstr "Přetečení seznamu"
+
+msgid "Request ambiguous"
+msgstr "Požadavek nejednoznačný"
+
+msgid "Queue full"
+msgstr "Fronta plná"
+
+msgid "Not while on AOL"
+msgstr "Ne když na AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8552,14 +8562,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Vyberte server"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Připojit se pomocí TCP"
@@ -12088,9 +12098,6 @@ msgstr "Chyba "
 msgid "Fatal Error"
 msgstr "Fatální chyba"
 
-msgid "bug master"
-msgstr "lovec chyb"
-
 msgid "artist"
 msgstr "umělec"
 
@@ -12269,6 +12276,9 @@ msgstr "Laonština"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Makedonština"
@@ -15349,6 +15359,12 @@ msgstr "Navštívit Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Automaticky odmítat od uživatelů, kteří nejsou na seznamu kamarádů"
+
+#~ msgid "bug master"
+#~ msgstr "lovec chyb"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Chyba žádosti %s"

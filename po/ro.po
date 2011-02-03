@@ -1,15 +1,16 @@
 # Pidgin Romanian translation
 # This file is distributed under the same license as the Pidgin package.
-# 2002-2010, Mișu Moldovan <dumol@gnome.org>
+# 2002-2011, Mișu Moldovan <dumol@gnome.org>
 # 2009, Andrei Popescu <andreimpopescu@gmail.com>
 # Contributions: 2007, Alexandru Szasz <alexxed@gmail.com>
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin-2.7.8\n"
+"Project-Id-Version: pidgin-2.7.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-12-17 18:47+0200\n"
-"Last-Translator: Mișu Moldovan <dumol@l10n.ro>\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"PO-Revision-Date: 2011-01-31 00:11+0200\n"
+"Last-Translator: Mișu Moldovan <dumol@gnome.org>\n"
 "Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -96,7 +97,7 @@ msgid "(You probably forgot to 'make install'.)"
 msgstr "(Probabil ați uitat să faceți „make install”.)"
 
 msgid "Modify Account"
-msgstr "Modificare cont"
+msgstr "Editare cont"
 
 msgid "New Account"
 msgstr "Cont nou"
@@ -105,7 +106,7 @@ msgid "Protocol:"
 msgstr "Protocol:"
 
 msgid "Username:"
-msgstr "Nume utilizator:"
+msgstr "Nume de utilizator:"
 
 msgid "Password:"
 msgstr "Parolă:"
@@ -212,7 +213,7 @@ msgid "Error adding buddy"
 msgstr "Eroare la adăugarea contactului"
 
 msgid "Username"
-msgstr "Nume utilizator"
+msgstr "Nume de utilizator"
 
 msgid "Alias (optional)"
 msgstr "Alias (opțional)"
@@ -285,7 +286,7 @@ msgid "Get Info"
 msgstr "Detalii"
 
 msgid "Add Buddy Pounce"
-msgstr "Adăugare întâmpinare"
+msgstr "Adăugați o întâmpinare"
 
 msgid "Send File"
 msgstr "Trimitere fișier"
@@ -637,7 +638,7 @@ msgid "Show Timestamps"
 msgstr "Arată marcaje de timp"
 
 msgid "Add Buddy Pounce..."
-msgstr "Adăugare întâmpinare..."
+msgstr "Adăugați o întâmpinare..."
 
 msgid "Invite..."
 msgstr "Invită..."
@@ -1112,7 +1113,7 @@ msgid "Pounce only when my status is not Available"
 msgstr "Întâmpinare doar în starea de indisponibilitate"
 
 msgid "Recurring"
-msgstr "Recurentă"
+msgstr "Recurență"
 
 msgid "Cannot create pounce"
 msgstr "Nu se poate crea întâmpinarea"
@@ -1128,7 +1129,7 @@ msgid "Are you sure you want to delete the pounce on %s for %s?"
 msgstr "Sigur doriți să ștergeți întâmpinarea la %s pentru %s?"
 
 msgid "Buddy Pounces"
-msgstr "Întâmpinări contacte"
+msgstr "Întâmpinări pentru contacte"
 
 #, c-format
 msgid "%s has started typing to you (%s)"
@@ -1247,7 +1248,7 @@ msgstr "Obținere"
 
 #. Create the window.
 msgid "Room List"
-msgstr "Listă camere de chat"
+msgstr "Lista camerelor de chat"
 
 msgid "Buddy logs in"
 msgstr "Un contact se autentifică"
@@ -1551,10 +1552,10 @@ msgstr ""
 
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr "TinyURL pentru linkul de mai sus: %s"
+msgstr "TinyURL pentru adresa de mai sus: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Aștepați până când TinyURL oferă un link mai scurt..."
+msgstr "Așteptați ca TinyURL să genereze o adresă mai scurtă..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Creează TinyURL doar pentru URL-uri de această lungime sau mai mari"
@@ -2322,9 +2323,7 @@ msgid "Autoaccept"
 msgstr "Auto-acceptare"
 
 msgid "Auto-accept file transfer requests from selected users."
-msgstr ""
-"Permite acceptarea automată a transferurilor de fișiere inițiate de anumiți "
-"utilizatori."
+msgstr "Acceptare automată pentru anumite transferuri de fișiere."
 
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
@@ -2367,9 +2366,12 @@ msgstr ""
 "Cale pentru salvarea fișierelor:\n"
 "(Precizați calea completă)"
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
-"Refuză automat pentru utilizatorii ce nu fac parte din lista de contacte"
+"Când se primește o cerere de transfer de fișiere de la un\n"
+"utilizator ce NU e în lista de contacte:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2380,6 +2382,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Creează un nou director pentru fiecare utilizator"
+
+msgid "Escape the filenames"
+msgstr "Evită interpretarea caracterelor speciale în nume"
 
 msgid "Notes"
 msgstr "Notițe"
@@ -2441,7 +2446,7 @@ msgstr "Exemplu de modul DBus"
 #. *  summary
 #. *  description
 msgid "DBus Plugin Example"
-msgstr "Exemplu de modul DBus"
+msgstr "Exemplu de modul DBus."
 
 #. *< type
 #. *< ui_requirement
@@ -2650,7 +2655,7 @@ msgstr "aMSN"
 
 #. Add general preferences.
 msgid "General Log Reading Configuration"
-msgstr "Opțiuni de citire a înregistrărilor"
+msgstr "Opțiuni de import a înregistrărilor"
 
 msgid "Fast size calculations"
 msgstr "Calcul rapid mărime"
@@ -2669,7 +2674,7 @@ msgstr "Director înregistrări"
 #. *< priority
 #. *< id
 msgid "Log Reader"
-msgstr "Citire înregistrări"
+msgstr "Import de înregistrări"
 
 #. *< name
 #. *< version
@@ -2728,7 +2733,7 @@ msgstr ""
 "apară dedesubtul numelui de utilizator în fereastra de discuții."
 
 msgid "Offline Message Emulation"
-msgstr "Emulare mesaje offline"
+msgstr "Emulare de mesaje offline"
 
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Salvează ca întâmpinare mesajele trimise unui utilizator offline."
@@ -2738,7 +2743,7 @@ msgid ""
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Restul de mesaje vor fi salvate ca întâmpinare. Puteți apoi edita sau șterge "
-"întâmpinarea din fereastra „Întâmpinări contacte”."
+"întâmpinarea din fereastra „Întâmpinări pentru contacte”."
 
 #, c-format
 msgid ""
@@ -2754,7 +2759,8 @@ msgstr "Mesaje offline"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
-"Puteți edita ori șterge întâmpinarea din fereastra „Întâmpinări contacte"
+"Puteți edita ori șterge întâmpinarea din fereastra „Întâmpinări pentru "
+"contacte”"
 
 msgid "Yes"
 msgstr "Da"
@@ -2962,7 +2968,7 @@ msgstr "(_De)Autentificarea unui contact"
 #. *< priority
 #. *< id
 msgid "Buddy State Notification"
-msgstr "Notificări stări contacte"
+msgstr "Notificări pentru stările contactelor"
 
 #. *< name
 #. *< version
@@ -3628,7 +3634,7 @@ msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
 msgstr ""
-"away [mesaj]:  Setați un mesaj în absență sau, dacă nu precizați un mesaj, "
+"away [mesaj]:  Definiți un mesaj în absență sau, dacă nu precizați un mesaj, "
 "reveniți din absență."
 
 msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
@@ -3700,8 +3706,8 @@ msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
-"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;pseudonim|chat&gt;:  Setați sau resetați "
-"un chat sau un mod utilizator."
+"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;pseudonim|chat&gt;:  Inițializați sau "
+"reinițializați un chat sau un mod pentru utilizator."
 
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
@@ -3782,7 +3788,8 @@ msgstr "topic [topic nou]:  Verificați sau schimbați subiectul chat-ului."
 
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
 msgstr ""
-"umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Setați sau resetați un mod utilizator."
+"umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Inițializați sau reinițializați un mod "
+"pentru utilizator."
 
 msgid "version [nick]: send CTCP VERSION request to a user"
 msgstr ""
@@ -3835,7 +3842,10 @@ msgstr "execută"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Serverul necesită autentificare în clar printr-o conexiune necriptată"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Răspuns nevalid de la server."
 
@@ -4151,7 +4161,7 @@ msgid "_Room:"
 msgstr "Ca_meră:"
 
 msgid "_Server:"
-msgstr "_Server:"
+msgstr "Ser_ver:"
 
 msgid "_Handle:"
 msgstr "A_dministrare:"
@@ -4595,7 +4605,7 @@ msgstr "Rol necunoscut: „%s”"
 
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Nu se poate seta rolul „%s” pentru utilizatorul: %s"
+msgstr "Nu se poate defini rolul „%s” pentru utilizatorul: %s"
 
 #, c-format
 msgid "Unable to kick user %s"
@@ -4682,14 +4692,15 @@ msgstr "topic [subiect nou]: Verificați sau schimbați subiectul."
 
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr ""
-"ban &lt;nume utilizator&gt; [chat]:  Blocați accesul unui utilizator în chat."
+"ban &lt;nume de utilizator&gt; [chat]:  Blocați accesul unui utilizator în "
+"chat."
 
 msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;deținător|administrator|membru|renegat|nimic&gt; [pseudonim1] "
-"[pseudonim2] ...: Aflați utilizatorii cu o afiliere sau setați afilierea "
+"[pseudonim2] ...: Aflați utilizatorii cu o afiliere sau definiți afilierea "
 "utilizatorilor față de camera de chat."
 
 msgid ""
@@ -5502,10 +5513,10 @@ msgid "Page"
 msgstr "Pagină"
 
 msgid "Playing a game"
-msgstr "Joacă ceva"
+msgstr "Mă joc"
 
 msgid "Working"
-msgstr "Lucrează"
+msgstr "Lucrez"
 
 msgid "Has you"
 msgstr "Vă are în listă"
@@ -6152,6 +6163,20 @@ msgstr "Validare cont MXit"
 msgid "Retrieving User Information..."
 msgstr "Se obțin detaliile utilizatorului..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Ați fost dat afară din acest MultiMX."
+
+msgid "was kicked"
+msgstr "a fost dat afară"
+
+msgid "_Room Name:"
+msgstr "Numele came_rei:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Ați fost invitat"
+
 msgid "Loading menu..."
 msgstr "Se încarcă meniul..."
 
@@ -6178,20 +6203,6 @@ msgstr "Conectare HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Activare popup pentru imaginea de pornire"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Ați fost dat afară din acest MultiMX."
-
-msgid "was kicked"
-msgstr "a fost dat afară"
-
-msgid "_Room Name:"
-msgstr "Nume came_ră:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Ați fost invitat"
 
 msgid "Last Online"
 msgstr "Ultima oară online"
@@ -7063,16 +7074,16 @@ msgid "Unable to send message to %s: %s"
 msgstr "Nu se poate trimite mesajul către %s: %s"
 
 msgid "Thinking"
-msgstr "Mă gândesc"
+msgstr "Pe gânduri"
 
 msgid "Shopping"
 msgstr "La cumpărături"
 
 msgid "Questioning"
-msgstr "Pun întrebări"
+msgstr "În dubiu"
 
 msgid "Eating"
-msgstr "Mănânc"
+msgstr "La masă"
 
 msgid "Watching a movie"
 msgstr "Văd un film"
@@ -7096,7 +7107,7 @@ msgid "Sleeping"
 msgstr "Dorm"
 
 msgid "Using a PDA"
-msgstr "Folosesc un PDA"
+msgstr "Sunt pe PDA"
 
 msgid "Meeting friends"
 msgstr "Cu prietenii"
@@ -7109,10 +7120,10 @@ msgstr "La surfing"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
-msgstr "Mobil"
+msgstr "Pe mobil"
 
 msgid "Searching the web"
-msgstr "Caut pe net"
+msgstr "Mă dau pe net"
 
 msgid "At a party"
 msgstr "La o petrecere"
@@ -7571,16 +7582,16 @@ msgstr ""
 "posibilă trimiterea de imagini IM."
 
 msgid "Unable to set AIM profile."
-msgstr "Nu se poate seta profilul AIM."
+msgstr "Nu se poate inițializa profilul AIM."
 
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
 "fully connected."
 msgstr ""
-"Se pare că ați cerut să setați profilul înainte de a vă autentifica. "
-"Profilul vă va rămâne la fel. Încercați să-l setați din nou după o conectare "
-"pe deplin reușită."
+"Se pare că ați cerut să vă inițializați profilul înainte de a vă "
+"autentifica. Profilul vă va rămâne neschimbat și încercați să-l "
+"reinițializați după o conectare pe deplin reușită."
 
 #, c-format
 msgid ""
@@ -7710,10 +7721,10 @@ msgstr "Prânz"
 
 #, c-format
 msgid "Buddy Comment for %s"
-msgstr "Comentariu contact pentru %s"
+msgstr "Comentariu pentru contactul %s"
 
 msgid "Buddy Comment:"
-msgstr "Comentariu contact:"
+msgstr "Comentariu pentru contact:"
 
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
@@ -7836,7 +7847,7 @@ msgid "Don't use encryption"
 msgstr "Nu utiliza criptare"
 
 msgid "Use clientLogin"
-msgstr "Utilizați clientLogin"
+msgstr "Utilizează clientLogin"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -7874,75 +7885,6 @@ msgstr ""
 "Aceasta presupune o conexiune directă între cele două calculatoare și este "
 "necesară pentru imaginile IM. Pentru că adresa IP vă va fi expusă, luați în "
 "considerare riscurile la care vă expuneți."
-
-msgid "Invalid SNAC"
-msgstr "SNAC nevalid"
-
-msgid "Server rate limit exceeded"
-msgstr "S-a depășit limitarea de server"
-
-msgid "Client rate limit exceeded"
-msgstr "S-a depășit limitarea de client"
-
-msgid "Service unavailable"
-msgstr "Serviciu indisponibil"
-
-msgid "Service not defined"
-msgstr "Serviciu nedefinit"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC învechit"
-
-msgid "Not supported by host"
-msgstr "Nesuportat de către server"
-
-msgid "Not supported by client"
-msgstr "Nesuportat de către client"
-
-msgid "Refused by client"
-msgstr "Refuzat de către client"
-
-msgid "Reply too big"
-msgstr "Răspuns supradimensionat"
-
-msgid "Responses lost"
-msgstr "Răspunsuri pierdute"
-
-msgid "Request denied"
-msgstr "Cerere respinsă"
-
-msgid "Busted SNAC payload"
-msgstr "Încărcătură SNAC nevalidă"
-
-msgid "Insufficient rights"
-msgstr "Drepturi insuficiente"
-
-msgid "In local permit/deny"
-msgstr "În lista permiși/refuzați locală"
-
-msgid "Warning level too high (sender)"
-msgstr "Nivel de avertizare prea ridicat (pentru expeditor)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Nivel de avertizare prea ridicat (pentru destinatar)"
-
-msgid "User temporarily unavailable"
-msgstr "Utilizatorul este temporar indisponibil."
-
-msgid "No match"
-msgstr "Nicio potrivire"
-
-msgid "List overflow"
-msgstr "Listă suprasaturată"
-
-msgid "Request ambiguous"
-msgstr "Cerere ambiguă"
-
-msgid "Queue full"
-msgstr "Coadă plină"
-
-msgid "Not while on AOL"
-msgstr "Nu (cât timp e pe AOL)"
 
 #. Label
 msgid "Buddy Icon"
@@ -8021,7 +7963,7 @@ msgid "Warning Level"
 msgstr "Nivel de avertizare"
 
 msgid "Buddy Comment"
-msgstr "Comentariu contact"
+msgstr "Comentariu pentru contact"
 
 #, c-format
 msgid "User information not available: %s"
@@ -8061,6 +8003,75 @@ msgstr "Membru din"
 
 msgid "Capabilities"
 msgstr "Facilități"
+
+msgid "Invalid SNAC"
+msgstr "SNAC nevalid"
+
+msgid "Server rate limit exceeded"
+msgstr "S-a depășit limitarea de server"
+
+msgid "Client rate limit exceeded"
+msgstr "S-a depășit limitarea de client"
+
+msgid "Service unavailable"
+msgstr "Serviciu indisponibil"
+
+msgid "Service not defined"
+msgstr "Serviciu nedefinit"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC învechit"
+
+msgid "Not supported by host"
+msgstr "Nesuportat de către server"
+
+msgid "Not supported by client"
+msgstr "Nesuportat de către client"
+
+msgid "Refused by client"
+msgstr "Refuzat de către client"
+
+msgid "Reply too big"
+msgstr "Răspuns supradimensionat"
+
+msgid "Responses lost"
+msgstr "Răspunsuri pierdute"
+
+msgid "Request denied"
+msgstr "Cerere respinsă"
+
+msgid "Busted SNAC payload"
+msgstr "Încărcătură SNAC nevalidă"
+
+msgid "Insufficient rights"
+msgstr "Drepturi insuficiente"
+
+msgid "In local permit/deny"
+msgstr "În lista permiși/refuzați locală"
+
+msgid "Warning level too high (sender)"
+msgstr "Nivel de avertizare prea ridicat (pentru expeditor)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Nivel de avertizare prea ridicat (pentru destinatar)"
+
+msgid "User temporarily unavailable"
+msgstr "Utilizatorul este temporar indisponibil."
+
+msgid "No match"
+msgstr "Nicio potrivire"
+
+msgid "List overflow"
+msgstr "Listă suprasaturată"
+
+msgid "Request ambiguous"
+msgstr "Cerere ambiguă"
+
+msgid "Queue full"
+msgstr "Coadă plină"
+
+msgid "Not while on AOL"
+msgstr "Nu (cât timp e pe AOL)"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8654,14 +8665,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Selectați serverul"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Conectare folosind TCP"
@@ -8986,7 +8997,7 @@ msgid "Last Known Client"
 msgstr "Ultim client cunoscut"
 
 msgid "User Name"
-msgstr "Nume utilizator"
+msgstr "Nume de utilizator"
 
 msgid "Sametime ID"
 msgstr "ID Sametime"
@@ -9217,7 +9228,7 @@ msgid "IM With Password"
 msgstr "IM parolat"
 
 msgid "Cannot set IM key"
-msgstr "Nu se poate seta cheia IM"
+msgstr "Nu se poate inițializa cheia IM"
 
 msgid "Set IM Password"
 msgstr "Introducere parolă IM"
@@ -9438,7 +9449,8 @@ msgstr "Limită utilizatori"
 
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
-"Setați numărul maxim de utilizatori în chat. Zero pentru număr nelimitat."
+"Definiți numărul maxim de utilizatori în chat. Zero pentru un număr "
+"nelimitat."
 
 msgid "Invite List"
 msgstr "Listă invitații"
@@ -9546,7 +9558,7 @@ msgstr "%s a schimbat subiectul pentru <I>%s</I> în: %s"
 
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr "<I>%s</I> a setat modurile chat-ului <I>%s</I> astfel: %s"
+msgstr "<I>%s</I> a definit modurile chat-ului <I>%s</I> astfel: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
@@ -9554,7 +9566,7 @@ msgstr "<I>%s</I> a înlăturat toate modurile chat-ului <I>%s</I>"
 
 #, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
-msgstr "<I>%s</I> a setat modurile pentru <I>%s</I> astfel: %s"
+msgstr "<I>%s</I> a definit modurile pentru <I>%s</I> astfel: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all <I>%s's</I> modes"
@@ -9906,11 +9918,11 @@ msgstr "modurile de chat pentru %s sunt: %s"
 
 #, c-format
 msgid "no channel modes are set on %s"
-msgstr "chat-ul %s nu are setat niciun mod"
+msgstr "chat-ul %s nu are niciun mod definit"
 
 #, c-format
 msgid "Failed to set cmodes for %s"
-msgstr "Nu s-au putut seta modurile chat-ului %s"
+msgstr "Nu s-au putut defini modurile chat-ului %s"
 
 #, c-format
 msgid "Unknown command: %s, (may be a client bug)"
@@ -10091,7 +10103,7 @@ msgstr "Nume real: \t%s\n"
 
 #, c-format
 msgid "User Name: \t%s\n"
-msgstr "Nume utilizator: \t%s\n"
+msgstr "Nume de utilizator: \t%s\n"
 
 #, c-format
 msgid "Email: \t\t%s\n"
@@ -10324,7 +10336,7 @@ msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Utilizează proxy-ul contului pentru conexiuni HTTP și HTTPS"
 
 msgid "Chat room list URL"
-msgstr "Adresă listă camere de chat"
+msgstr "Adresa listei camerelor de chat"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Identitate Yahoo Japonia..."
@@ -10743,13 +10755,14 @@ msgstr "zl &lt;nume ales&gt;:  Localizați un utilizator"
 
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
 msgstr ""
-"instance &lt;instanță&gt;:  Setați instanța de utilizat în această clasă"
+"instance &lt;instanță&gt;:  Definiți instanța de utilizat în această clasă"
 
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "inst &lt;instanță&gt;:  Setați instanța de utilizat în această clasă"
+msgstr "inst &lt;instanță&gt;:  Definiți instanța de utilizat în această clasă"
 
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "topic &lt;instanță&gt;:  Setați instanța de utilizat în această clasă"
+msgstr ""
+"topic &lt;instanță&gt;:  Definiți instanța de utilizat în această clasă"
 
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
 msgstr ""
@@ -10932,7 +10945,7 @@ msgid "Unknown SSL error"
 msgstr "Eroare SSL necunoscută"
 
 msgid "Unset"
-msgstr "Nesetat"
+msgstr "Nedefinit"
 
 msgid "Do not disturb"
 msgstr "Nu deranjați"
@@ -11084,7 +11097,7 @@ msgstr "Conexiunea a expirat."
 
 #. 10061
 msgid "Connection refused."
-msgstr "Conexiune resetată."
+msgstr "Conexiune refuzată."
 
 #. 10048
 msgid "Address already in use."
@@ -11124,14 +11137,14 @@ msgid "_Username:"
 msgstr "Nume _utilizator:"
 
 msgid "Remember pass_word"
-msgstr "_Salvare parolă"
+msgstr "Sal_vare parolă"
 
 #. Build the user options frame.
 msgid "User Options"
 msgstr "Opțiuni personale"
 
 msgid "_Local alias:"
-msgstr "_Alias local:"
+msgstr "Alias l_ocal:"
 
 msgid "New _mail notifications"
 msgstr "Notificare la _mail nou"
@@ -11186,7 +11199,7 @@ msgid "_Port:"
 msgstr "P_ort:"
 
 msgid "Pa_ssword:"
-msgstr "Pa_rolă:"
+msgstr "_Parolă:"
 
 msgid "Unable to save new account"
 msgstr "Nu se poate salva noul cont"
@@ -11232,8 +11245,8 @@ msgstr ""
 "<b>Adaugă...</b> de câte ori doriți.\n"
 "\n"
 "Veți putea reveni la această fereastră pentru a adăuga, edita sau șterge "
-"conturi utilizând <b>Conturi->Administrare conturi</b> în fereastra listei "
-"de contacte."
+"conturi utilizând <b>Conturi->Administrare</b> în fereastra listei de "
+"contacte."
 
 #, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
@@ -11242,7 +11255,7 @@ msgstr ""
 
 #. Buddy List
 msgid "Background Color"
-msgstr "Culoare fundal"
+msgstr "Culoarea fundalului"
 
 msgid "The background color for the buddy list"
 msgstr "Culoarea de fundal pentru lista de contacte"
@@ -11257,7 +11270,7 @@ msgstr "Dispunerea iconițelor, numelui și a statusului în lista de contacte"
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its expanded state
 msgid "Expanded Background Color"
-msgstr "Culoare fundal la desfacere"
+msgstr "Culoarea fundalului la desfacere"
 
 msgid "The background color of an expanded group"
 msgstr "Culoarea de fundal a unui grup desfăcut"
@@ -11265,15 +11278,15 @@ msgstr "Culoarea de fundal a unui grup desfăcut"
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list group when in its expanded state
 msgid "Expanded Text"
-msgstr "Text text la desfacere"
+msgstr "Culoarea textului la desfacere"
 
 msgid "The text information for when a group is expanded"
-msgstr "Informația text pentru un grup desfăcut"
+msgstr "Detaliile textului pentru un grup desfăcut"
 
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its collapsed state
 msgid "Collapsed Background Color"
-msgstr "Culoare fundal la strângere"
+msgstr "Culoarea fundalului la strângere"
 
 msgid "The background color of a collapsed group"
 msgstr "Culoarea de fundal a unui grup strâns"
@@ -11284,13 +11297,13 @@ msgid "Collapsed Text"
 msgstr "Text la strângere"
 
 msgid "The text information for when a group is collapsed"
-msgstr "Informația text pentru un grup strâns"
+msgstr "Detaliile textului pentru un grup strâns"
 
 #. Buddy
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list contact or chat room
 msgid "Contact/Chat Background Color"
-msgstr "Culoare fundal contact/chat"
+msgstr "Culoarea fundalului pentru contacte și chat-uri"
 
 msgid "The background color of a contact or chat"
 msgstr "Culoarea de fundal a unui contact sau chat"
@@ -11298,64 +11311,65 @@ msgstr "Culoarea de fundal a unui contact sau chat"
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list contact when in its expanded state
 msgid "Contact Text"
-msgstr "Text contact"
+msgstr "Textul contactului"
 
 msgid "The text information for when a contact is expanded"
-msgstr "Informația text pentru un contact strâns"
+msgstr "Detaliile textului pentru un contact desfăcut"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
 msgid "Online Text"
-msgstr "Text online"
+msgstr "Textul contactelor online"
 
 msgid "The text information for when a buddy is online"
-msgstr "Informația text pentru un contact online"
+msgstr "Detaliile textului pentru contacte online"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is away
 msgid "Away Text"
-msgstr "Text absent"
+msgstr "Textul contactelor absente"
 
 msgid "The text information for when a buddy is away"
-msgstr "Informația text pentru un contact absent"
+msgstr "Detaliile textului pentru contacte absente"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
 msgid "Offline Text"
-msgstr "Text offline"
+msgstr "Textul contactelor offline"
 
 msgid "The text information for when a buddy is offline"
-msgstr "Informația text pentru un contact offline"
+msgstr "Detaliile textului pentru contacte offline"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
 msgid "Idle Text"
-msgstr "Text inactiv"
+msgstr "Textul contactelor inactive"
 
 msgid "The text information for when a buddy is idle"
-msgstr "Informația text pentru un contact inactiv"
+msgstr "Detaliile textului pentru contacte inactive"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
 msgid "Message Text"
-msgstr "Text mesaj"
+msgstr "Textul mesajelor necitite"
 
 msgid "The text information for when a buddy has an unread message"
-msgstr "Informația text pentru un contact cu un mesaj necitit"
+msgstr "Detaliile textului pentru contacte cu mesaje necitite"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
 msgid "Message (Nick Said) Text"
-msgstr "Textul mesajului (utilizatorul a spus)"
+msgstr "Textul mesajelor noi"
 
 msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nickname"
 msgstr ""
-"Informația text pentru un chat cu un mesaj necitit ce vă menționează numele"
+"Detaliile textului pentru un chat cu un mesaj necitit ce vă menționează "
+"numele"
 
 msgid "The text information for a buddy's status"
-msgstr "Informația text pentru starea unui contact"
+msgstr "Detaliile textului pentru statusul unui contact"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -11383,8 +11397,7 @@ msgstr "_Cont"
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
-msgstr ""
-"Introduceți informațiile despre chat-ul în care doriți să participați.\n"
+msgstr "Introduceți detaliile chat-ului în care doriți intrați.\n"
 
 msgid "Room _List"
 msgstr "_Listă de camere"
@@ -11493,7 +11506,7 @@ msgid "Message (optional)"
 msgstr "Mesaj (opțional)"
 
 msgid "Edit User Mood"
-msgstr "Schimbare a propriei dispoziții"
+msgstr "Schimbați-vă dispoziția"
 
 #. NOTE: Do not set any accelerator to Control+O. It is mapped by
 #. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
@@ -11551,14 +11564,14 @@ msgid "/_Accounts"
 msgstr "/_Conturi"
 
 msgid "/Accounts/Manage Accounts"
-msgstr "/Conturi/Administrare conturi"
+msgstr "/Conturi/Administrare"
 
 #. Tools
 msgid "/_Tools"
 msgstr "/_Unelte"
 
 msgid "/Tools/Buddy _Pounces"
-msgstr "/Unelte/Î_ntâmpinări contacte"
+msgstr "/Unelte/Î_ntâmpinări pentru contacte"
 
 msgid "/Tools/_Certificates"
 msgstr "/Unelte/_Certificate"
@@ -11582,7 +11595,7 @@ msgid "/Tools/_File Transfers"
 msgstr "/Unelte/_Transfer de fișiere"
 
 msgid "/Tools/R_oom List"
-msgstr "/Unelte/_Listă camere de chat"
+msgstr "/Unelte/_Lista camerelor de chat"
 
 msgid "/Tools/System _Log"
 msgstr "/Unelte/În_registrări de sistem"
@@ -11690,7 +11703,7 @@ msgid "/Tools/Privacy"
 msgstr "/Unelte/Securitate"
 
 msgid "/Tools/Room List"
-msgstr "/Unelte/Listă camere de chat"
+msgstr "/Unelte/Lista camerelor de chat"
 
 #, c-format
 msgid "%d unread message from %s\n"
@@ -11741,7 +11754,7 @@ msgstr[2] ""
 "parte:"
 
 msgid "<b>Username:</b>"
-msgstr "<b>Nume utilizator:</b>"
+msgstr "<b>Nume de utilizator:</b>"
 
 msgid "<b>Password:</b>"
 msgstr "<b>Parolă:</b>"
@@ -11764,8 +11777,8 @@ msgstr ""
 "<span weight='bold' size='larger'>Bun venit în %s!</span>\n"
 "\n"
 "Nu aveți niciun cont activ. Activați-vă conturile de mesagerie instant în "
-"fereastra <b>Conturi</b>, accesibilă pe calea <b>Conturi->Administrare "
-"conturi</b>. Abia după activare veți putea utiliza conturile definite."
+"fereastra <b>Conturi</b>, accesibilă pe calea <b>Conturi->Administrare</b>. "
+"Abia după activare veți putea utiliza conturile definite."
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -11786,16 +11799,16 @@ msgid "/Buddies/Show/Protocol Icons"
 msgstr "/Contacte/Arată/Iconițele de protocol"
 
 msgid "Add a buddy.\n"
-msgstr "Adaugă un contact.\n"
+msgstr "Adăugați un contact.\n"
 
 msgid "Buddy's _username:"
-msgstr "Nume de _utilizator:"
+msgstr "_Nume de utilizator:"
 
 msgid "(Optional) A_lias:"
-msgstr "A_lias (opțional):"
+msgstr "_Alias (opțional):"
 
 msgid "Add buddy to _group:"
-msgstr "Adaugă contactul în _grupul:"
+msgstr "_Grup:"
 
 msgid "This protocol does not support chat rooms."
 msgstr "Acest protocol nu suportă camere de chat."
@@ -11810,20 +11823,20 @@ msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
 msgstr ""
-"Introduceți un alias și informațiile necesare pentru acel chat pe care "
-"doriți să-l adăugați în lista de contacte.\n"
+"Introduceți un alias și informațiile necesare pentru chat-ul pe care doriți "
+"să-l adăugați în lista de contacte.\n"
 
 msgid "A_lias:"
-msgstr "A_lias:"
+msgstr "_Alias:"
 
 msgid "_Group:"
 msgstr "_Grup:"
 
 msgid "Auto_join when account connects."
-msgstr "Intră a_utomat la autentificarea contului."
+msgstr "I_ntră automat la autentificarea contului."
 
 msgid "_Remain in chat after window is closed."
-msgstr "_Rămâi în chat după închiderea ferestrei."
+msgstr "Rămâi în chat _după închiderea ferestrei."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Introduceți numele grupului de adăugat."
@@ -11934,7 +11947,7 @@ msgid "/Conversation/New Instant _Message..."
 msgstr "/Discuție/_Mesaj nou..."
 
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Discuție/Intrare într-un _chat..."
+msgstr "/Discuție/Intrare într-un c_hat..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Discuție/C_aută..."
@@ -11961,10 +11974,10 @@ msgid "/Conversation/Media/Audio\\/Video _Call"
 msgstr "/Discuție/Media/Ap_el audio\\/video"
 
 msgid "/Conversation/Se_nd File..."
-msgstr "/Discuție/_Trimite un fișier..."
+msgstr "/Discuție/Trimite un _fișier..."
 
 msgid "/Conversation/Get _Attention"
-msgstr "/Discuție/Cere _atenție"
+msgstr "/Discuție/Cere a_tenție"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Discuție/Adaugă î_ntâmpinare..."
@@ -11979,7 +11992,7 @@ msgid "/Conversation/M_ore"
 msgstr "/Discuție/Mai m_ult"
 
 msgid "/Conversation/Al_ias..."
-msgstr "/Discuție/Al_ias..."
+msgstr "/Discuție/A_lias..."
 
 msgid "/Conversation/_Block..."
 msgstr "/Discuție/_Blochează..."
@@ -12170,7 +12183,7 @@ msgid "Separate IM and Chat windows"
 msgstr "Nu în fereastra chat-urilor"
 
 msgid "New window"
-msgstr "În fereastră nouă"
+msgstr "În ferestre noi"
 
 msgid "By group"
 msgstr "După grup"
@@ -12228,9 +12241,6 @@ msgstr "Erori "
 
 msgid "Fatal Error"
 msgstr "Erori fatale"
-
-msgid "bug master"
-msgstr "admin al rapoartelor de erori"
 
 msgid "artist"
 msgstr "artist"
@@ -12410,6 +12420,9 @@ msgstr "Lao"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Macedoneană"
@@ -12826,64 +12839,64 @@ msgid "Disable _smileys in selected text"
 msgstr "Fără iconițe în _selecție"
 
 msgid "Hyperlink color"
-msgstr "Culoare adresă"
+msgstr "Culoarea adreselor web"
 
 msgid "Color to draw hyperlinks."
-msgstr "Culoare pentru afișarea adreselor."
+msgstr "Culoarea pentru afișarea adreselor web."
 
 msgid "Hyperlink visited color"
-msgstr "Culoare adresă web"
+msgstr "Culoarea adreselor web vizitate"
 
 msgid "Color to draw hyperlink after it has been visited (or activated)."
-msgstr "Culoare pentru afișarea adreselor web vizitate (ori activate)."
+msgstr "Culoarea pentru afișarea adreselor web vizitate (ori activate)."
 
 msgid "Hyperlink prelight color"
-msgstr "Culoare evidențiere adresă"
+msgstr "Culoarea de evidențiere a adresei"
 
 msgid "Color to draw hyperlinks when mouse is over them."
-msgstr "Culoare pentru afișarea adreselor sub cursorul de maus."
+msgstr "Culoarea de afișare a adreselor web sub cursorul de maus."
 
 msgid "Sent Message Name Color"
-msgstr "Culoare pentru mesaje trimise"
+msgstr "Culoarea mesajelor trimise"
 
 msgid "Color to draw the name of a message you sent."
-msgstr "Culoare de utilizat pentru numele mesajelor pe care le trimiteți."
+msgstr "Culoarea de utilizat pentru numele mesajelor pe care le trimiteți."
 
 msgid "Received Message Name Color"
-msgstr "Culoare pentru mesaje primite"
+msgstr "Culoarea mesajelor primite"
 
 msgid "Color to draw the name of a message you received."
-msgstr "Culoare de utilizat pentru numele mesajelor pe care le primiți."
+msgstr "Culoarea de utilizat pentru numele mesajelor pe care le primiți."
 
 msgid "\"Attention\" Name Color"
-msgstr "Culoare de atenționare"
+msgstr "Culoarea de atenționare"
 
 msgid "Color to draw the name of a message you received containing your name."
-msgstr "Culoare de utilizat pentru numele mesajelor ce vă pomenesc numele."
+msgstr "Culoarea de utilizat pentru numele mesajelor ce vă pomenesc numele."
 
 msgid "Action Message Name Color"
-msgstr "Culoare pentru mesajele comenzi"
+msgstr "Culoarea pentru mesajele comenzi"
 
 msgid "Color to draw the name of an action message."
-msgstr "Culoare de utilizat pentru numele mesajelor de tip comandă."
+msgstr "Culoarea de utilizat pentru numele mesajelor de tip comandă."
 
 msgid "Action Message Name Color for Whispered Message"
-msgstr "Culoare pentru mesajele comenzi în mod discret"
+msgstr "Culoarea pentru mesajele comenzi în mod discret"
 
 msgid "Color to draw the name of a whispered action message."
-msgstr "Culoare de utilizat pentru numele mesajelor discrete de acțiune."
+msgstr "Culoarea de utilizat pentru numele mesajelor discrete de acțiune."
 
 msgid "Whisper Message Name Color"
-msgstr "Culoare pentru mesajele discrete"
+msgstr "Culoarea mesajelor discrete"
 
 msgid "Color to draw the name of a whispered message."
-msgstr "Culoare de utilizat pentru numele mesajelor discrete."
+msgstr "Culoarea de utilizat pentru numele mesajelor discrete."
 
 msgid "Typing notification color"
 msgstr "Culoarea mesajelor de notificare"
 
 msgid "The color to use for the typing notification"
-msgstr "Culoare de utilizat pentru notificarea tastării"
+msgstr "Culoarea de utilizat pentru notificările de tastare"
 
 msgid "Typing notification font"
 msgstr "Fontul mesajelor de notificare"
@@ -12951,7 +12964,7 @@ msgid "Insert Link"
 msgstr "Inserare adresă"
 
 msgid "_Insert"
-msgstr "Inserea_ză"
+msgstr "Ins_erare"
 
 #, c-format
 msgid "Failed to store image: %s\n"
@@ -13009,7 +13022,7 @@ msgid "Font Face"
 msgstr "Nume font"
 
 msgid "Foreground Color"
-msgstr "Culoare text"
+msgstr "Culoarea textului"
 
 msgid "Reset Formatting"
 msgstr "Fără formatare"
@@ -13051,16 +13064,16 @@ msgid "_Font face"
 msgstr "_Nume font"
 
 msgid "Foreground _color"
-msgstr "Culoare te_xt"
+msgstr "Culoarea te_xtului"
 
 msgid "Bac_kground color"
-msgstr "Culoare f_undal"
+msgstr "Culoarea f_undalului"
 
 msgid "_Image"
 msgstr "_Imagine"
 
 msgid "_Link"
-msgstr "_Link"
+msgstr "_Adresă web"
 
 msgid "_Horizontal rule"
 msgstr "Linie _orizontală"
@@ -13360,13 +13373,13 @@ msgid "Stops t_yping"
 msgstr "O_prirea din tastare"
 
 msgid "Sends a _message"
-msgstr "Trimiterea unui _mesaj"
+msgstr "Tr_imiterea unui mesaj"
 
 msgid "Ope_n an IM window"
 msgstr "Desc_hide o discuție"
 
 msgid "_Pop up a notification"
-msgstr "Deschide _o fereastră de notificare"
+msgstr "De_schide o fereastră de notificare"
 
 msgid "Send a _message"
 msgstr "Trimite un mesa_j"
@@ -13387,13 +13400,13 @@ msgid "Pre_view"
 msgstr "_Testare"
 
 msgid "P_ounce only when my status is not Available"
-msgstr "Întâmpinare doar în starea de _indisponibilitate"
+msgstr "Întâmpinare doar în starea de indisponibi_litate"
 
 msgid "_Recurring"
 msgstr "Re_curentă"
 
 msgid "Pounce Target"
-msgstr "Țintă întâmpinare"
+msgstr "Ținta întâmpinării"
 
 msgid "Started typing"
 msgstr "A început să tasteze"
@@ -13493,7 +13506,7 @@ msgid "On unread messages"
 msgstr "Pentru mesajele necitite"
 
 msgid "Conversation Window"
-msgstr "Fereastra de discuții"
+msgstr "Fereastră de discuții"
 
 msgid "_Hide new IM conversations:"
 msgstr "Ascunde discuțiile _noi:"
@@ -13515,7 +13528,7 @@ msgid "Show close b_utton on tabs"
 msgstr "Arată _butoanele de închidere a taburilor"
 
 msgid "_Placement:"
-msgstr "_Plasament:"
+msgstr "_Plasare:"
 
 msgid "Top"
 msgstr "Sus"
@@ -13536,7 +13549,7 @@ msgid "Right Vertical"
 msgstr "Vertical in dreapta"
 
 msgid "N_ew conversations:"
-msgstr "D_iscuții noi:"
+msgstr "Di_scuții noi:"
 
 msgid "Show _formatting on incoming messages"
 msgstr "_Păstrează formatarea mesajelor primite"
@@ -13554,7 +13567,7 @@ msgid "_Notify buddies that you are typing to them"
 msgstr "Notifică contactele când le scri_u"
 
 msgid "Highlight _misspelled words"
-msgstr "_Evidențiază greșelile de ortografie"
+msgstr "E_vidențiază greșelile de ortografie"
 
 msgid "Use smooth-scrolling"
 msgstr "Derulare cu efect"
@@ -13598,7 +13611,7 @@ msgid "Use _automatically detected IP address: %s"
 msgstr "Utilizează adresa IP _autodetectată: %s"
 
 msgid "ST_UN server:"
-msgstr "Server ST_UN:"
+msgstr "Ser_ver STUN:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Exemplu: stunserver.org</span>"
@@ -13610,7 +13623,7 @@ msgid "Ports"
 msgstr "Porturi"
 
 msgid "_Enable automatic router port forwarding"
-msgstr "Acti_vează automat „port forwarding” în ruter"
+msgstr "Activea_ză automat „port forwarding” în ruter"
 
 msgid "_Manually specify range of ports to listen on:"
 msgstr "_Specificați intervalul de porturi:"
@@ -13632,7 +13645,7 @@ msgid "_UDP Port:"
 msgstr "Port _UDP:"
 
 msgid "Use_rname:"
-msgstr "_Nume utilizator:"
+msgstr "_Nume de utilizator:"
 
 msgid "Pass_word:"
 msgstr "_Parolă:"
@@ -13684,7 +13697,7 @@ msgid "Chromium (chrome)"
 msgstr "Chromium (chrome)"
 
 msgid "Manual"
-msgstr "Manual"
+msgstr "Personalizat"
 
 msgid "Browser Selection"
 msgstr "Navigator preferat"
@@ -13702,23 +13715,23 @@ msgid "_Browser:"
 msgstr "_Navigator:"
 
 msgid "_Open link in:"
-msgstr "_Deschide adresa:"
+msgstr "_Deschide adresele web:"
 
 msgid "Browser default"
-msgstr "După cum e setat navigatorul"
+msgstr "Respectând opțiunile navigatorului"
 
 msgid "Existing window"
-msgstr "Într-o fereastră existentă"
+msgstr "În ferestre existente"
 
 msgid "New tab"
-msgstr "Într-un tab nou"
+msgstr "În taburi noi"
 
 #, c-format
 msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
-"_Manual:\n"
+"_Personalizat:\n"
 "(%s pentru adresă)"
 
 msgid "Proxy Server"
@@ -13748,7 +13761,7 @@ msgid "P_ort:"
 msgstr "P_ort:"
 
 msgid "User_name:"
-msgstr "_Nume utilizator:"
+msgstr "_Nume de utilizator:"
 
 msgid "Log _format:"
 msgstr "_Formatul înregistrărilor:"
@@ -13803,7 +13816,7 @@ msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
-"Comandă de _redare sunet\n"
+"Comandă de _redare audio\n"
 "(%s pentru numele fișierului)"
 
 msgid "M_ute sounds"
@@ -13853,7 +13866,7 @@ msgid "Use status from last _exit at startup"
 msgstr "Utilizează _ultimul status"
 
 msgid "Status to a_pply at startup:"
-msgstr "Status de utilizat la _pornire:"
+msgstr "Status de utili_zat la pornire:"
 
 msgid "Interface"
 msgstr "Interfață"
@@ -14006,7 +14019,7 @@ msgid "Edit Smiley"
 msgstr "Editare iconiță simbolică"
 
 msgid "Add Smiley"
-msgstr "Adăugare iconiță simbolică"
+msgstr "Adăugați o iconiță simbolică"
 
 msgid "_Image:"
 msgstr "_Imagine:"
@@ -14016,7 +14029,7 @@ msgid "S_hortcut text:"
 msgstr "_Textul combinației de semne"
 
 msgid "Smiley"
-msgstr "Iconiță simbolice"
+msgstr "Iconiță simbolică"
 
 msgid "Shortcut Text"
 msgstr "Textul combinației de semne"
@@ -14078,7 +14091,7 @@ msgid ""
 "use it as the buddy icon for this user."
 msgstr ""
 "Puteți trimite această imagine printr-un transfer de fișiere, o puteți "
-"insera în acest mesaj sau o puteți seta ca avatar pentru acest contact."
+"insera în acest mesaj sau o puteți utiliza ca avatar pentru acest contact."
 
 msgid "Set as buddy icon"
 msgstr "Utilizează ca avatar"
@@ -14090,20 +14103,20 @@ msgid "Insert in message"
 msgstr "Inserează în mesaj"
 
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr "Doriți să o setați ca avatar pentru acest contact?"
+msgstr "Doriți să o utilizați ca avatar pentru acest contact?"
 
 msgid ""
 "You can send this image as a file transfer, or use it as the buddy icon for "
 "this user."
 msgstr ""
 "Puteți trimite această imagine printr-un transfer de fișiere sau o puteți "
-"seta ca avatar pentru acest contact."
+"utiliza ca avatar pentru acest contact."
 
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
 msgstr ""
-"Puteți insera imaginea în acest mesaj sau o puteți seta ca avatar pentru "
+"Puteți insera imaginea în acest mesaj sau o puteți utiliza ca avatar pentru "
 "acest contact."
 
 #. I don't know if we really want to do anything here.  Most of
@@ -14145,7 +14158,7 @@ msgid "Could not set icon"
 msgstr "Nu s-a putut utiliza iconița"
 
 msgid "_Open Link"
-msgstr "_Deschide linkul"
+msgstr "_Deschide adresa"
 
 msgid "_Copy Link Location"
 msgstr "_Copiază adresa"
@@ -14192,7 +14205,7 @@ msgid "_Invite"
 msgstr "_Invită"
 
 msgid "_Modify..."
-msgstr "_Modifică..."
+msgstr "E_ditare..."
 
 msgid "_Add..."
 msgstr "_Adaugă..."
@@ -14254,7 +14267,7 @@ msgstr "Predicții pentru disponibilitatea contactelor"
 #. *< name
 #. *< version
 msgid "Contact Availability Prediction plugin."
-msgstr "Modul pentru disponibilitatea contactelor"
+msgstr "Modul pentru prevederea disponibilității contactelor."
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
@@ -14391,7 +14404,7 @@ msgid "Service Discovery"
 msgstr "Descoperire de servicii"
 
 msgid "_Browse"
-msgstr "_Navigare:"
+msgstr "_Navigare"
 
 msgid "Server does not exist"
 msgstr "Server inexistent"
@@ -14403,7 +14416,7 @@ msgid "XMPP Service Discovery"
 msgstr "Descoperire de servicii XMPP"
 
 msgid "Allows browsing and registering services."
-msgstr "Permite navigarea și înregistrarea serviciilor"
+msgstr "Permite navigarea și înregistrarea de servicii XMPP."
 
 msgid ""
 "This plugin is useful for registering with legacy transports or other XMPP "
@@ -14416,7 +14429,7 @@ msgid "By conversation count"
 msgstr "După numărul discuțiilor"
 
 msgid "Conversation Placement"
-msgstr "Plasament discuții"
+msgstr "Plasarea discuțiilor"
 
 #. Translators: "New conversations" should match the text in the preferences dialog and "By conversation count" should be the same text used above
 msgid ""
@@ -14440,12 +14453,12 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "ExtPlacement"
-msgstr "Ferestre extra"
+msgstr "Plasare extra"
 
 #. *< name
 #. *< version
 msgid "Extra conversation placement options."
-msgstr "Opțiuni de plasare a discuțiilor în plus."
+msgstr "Opțiuni suplimentare de plasare a discuțiilor."
 
 #. *< summary
 #. *  description
@@ -14651,7 +14664,7 @@ msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr "Adaugă o căsuță în lista de contacte care vă anunță mailurile noi."
 
 msgid "Markerline"
-msgstr "Marcaj mesaje noi"
+msgstr "Marcaj pentru mesaje noi"
 
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr "Marchează cu o linie mesajele noi dintr-o discuție."
@@ -14790,7 +14803,7 @@ msgstr "Înlătură la activarea ta_bului respectivei discuții"
 #. *< priority
 #. *< id
 msgid "Message Notification"
-msgstr "Notificări mesaje"
+msgstr "Notificări pentru mesaje"
 
 #. *< name
 #. *< version
@@ -14827,10 +14840,10 @@ msgstr ""
 "- Trimite un mesaj contactelor din listă atunci când se autentifică."
 
 msgid "Hyperlink Color"
-msgstr "Culoare adresă web"
+msgstr "Culoarea adresei web"
 
 msgid "Visited Hyperlink Color"
-msgstr "Culoare adresă web vizitată"
+msgstr "Culoarea adresei web vizitate"
 
 msgid "Highlighted Message Name Color"
 msgstr "Numele culorii pentru evidențierea mesajelor"
@@ -14845,13 +14858,13 @@ msgid "Conversation Entry"
 msgstr "Introducere text"
 
 msgid "Conversation History"
-msgstr "Istoricul discuției"
+msgstr "Înregistrări de discuții"
 
 msgid "Request Dialog"
-msgstr "Dialog cerere"
+msgstr "Fereastră de dialog"
 
 msgid "Notify Dialog"
-msgstr "Dialog notificare"
+msgstr "Fereastră de notificare"
 
 msgid "Select Color"
 msgstr "Alegeți o culoare"
@@ -14865,10 +14878,10 @@ msgid "Select Font for %s"
 msgstr "Alegeți un font pentru %s"
 
 msgid "GTK+ Interface Font"
-msgstr "Font interfață GTK+"
+msgstr "Fontul interfeței GTK+"
 
 msgid "GTK+ Text Shortcut Theme"
-msgstr "Temă combinații de taste GTK+ Text"
+msgstr "Tema de combinații de taste GTK+ Text"
 
 msgid "Disable Typing Notification Text"
 msgstr "Dezactivează textul notificării la tastare"
@@ -14896,7 +14909,7 @@ msgid "Re-read gtkrc files"
 msgstr "Recitește fișierele gtkrc"
 
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Control temă GTK+ Pidgin"
+msgstr "Modificare a temei GTK+ în Pidgin"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr "Permite accesul la cele mai uzuale opțiuni gtkrc."
@@ -14935,7 +14948,7 @@ msgstr "Descarcă acum"
 #. *< priority
 #. *< id
 msgid "Release Notification"
-msgstr "Notificări versiuni noi"
+msgstr "Notificări pentru versiuni noi"
 
 #. *< name
 #. *< version
@@ -14965,7 +14978,7 @@ msgstr "Buton de trimitere"
 #. *< name
 #. *< version
 msgid "Conversation Window Send Button."
-msgstr "Buton de trimitere în fereastra de discuții"
+msgstr "Buton de trimitere în fereastra de discuții."
 
 #. *< summary
 msgid ""
@@ -15019,10 +15032,10 @@ msgid "Enable replacement of last word on send"
 msgstr "Activează corectarea ultimului cuvânt la trimitere"
 
 msgid "Text replacement"
-msgstr "Corecturi text"
+msgstr "Corecturi de text"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr "Schimbă mesajele trimise după reguli predefinite de utilizator."
+msgstr "Schimbă mesajele trimise după reguli predefinite."
 
 msgid "Just logged in"
 msgstr "Tocmai s-a autentificat"
@@ -15148,7 +15161,7 @@ msgstr "Marcaje de timp"
 #. *< version
 #. *  summary
 msgid "Display iChat-style timestamps"
-msgstr "Marcaje de timp în stil iChat"
+msgstr "Marcaje de timp în stil iChat."
 
 #. *  description
 msgid "Display iChat-style timestamps every N minutes."
@@ -15192,7 +15205,7 @@ msgstr "M_esaje înregistrate:"
 #. *< priority
 #. *< id
 msgid "Message Timestamp Formats"
-msgstr "Formatare marcaje de timp"
+msgstr "Formatare pentru marcajele de timp"
 
 #. *< name
 #. *< version
@@ -15370,7 +15383,7 @@ msgstr "<font color='#777777'>Neconectat la XMPP</font>"
 #. *< version
 #. *  summary
 msgid "Send and receive raw XMPP stanzas."
-msgstr "Trimitere și primire blocuri XMPP brute"
+msgstr "Trimitere și primire de blocuri XMPP brute"
 
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
@@ -15518,6 +15531,13 @@ msgstr "Vizitaţi pagina de web Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Refuză automat pentru utilizatorii ce nu fac parte din lista de contacte"
+
+#~ msgid "bug master"
+#~ msgstr "admin al rapoartelor de erori"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Eroare la cererea %s"

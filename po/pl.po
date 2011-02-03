@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-12-14 13:40+0100\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"PO-Revision-Date: 2011-01-25 11:04+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -2372,8 +2372,12 @@ msgstr ""
 "Ścieżka do zapisywania plików w\n"
 "(proszę podać pełną ścieżkę)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automatyczne odrzucanie od użytkowników spoza listy znajomych"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Kiedy żądanie przesłania pliku zostaje odebrane od\n"
+"użytkownika, który *nie* jest na liście znajomych:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2384,6 +2388,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Utworzenie nowego katalogu dla każdego użytkownika"
+
+msgid "Escape the filenames"
+msgstr "Sekwencja sterująca przed nazwami plików"
 
 msgid "Notes"
 msgstr "Notatki"
@@ -3852,7 +3859,10 @@ msgstr ""
 "Serwer wymaga uwierzytelnienia w zwykłym tekście za pośrednictwem "
 "niezaszyfrowanego strumienia"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Nieprawidłowa odpowiedź z serwera"
 
@@ -6181,6 +6191,20 @@ msgstr "Sprawdzenie konta MXit"
 msgid "Retrieving User Information..."
 msgstr "Pobieranie informacji o użytkowniku..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Użytkownik został wyrzucony z tego MultiMX."
+
+msgid "was kicked"
+msgstr "został wyrzucony"
+
+msgid "_Room Name:"
+msgstr "_Nazwa pokoju:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Zaproszono"
+
 msgid "Loading menu..."
 msgstr "Wczytywanie menu..."
 
@@ -6207,20 +6231,6 @@ msgstr "Połączenie przez HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Włączenie wyskakującego ekranu powitalnego"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Użytkownik został wyrzucony z tego MultiMX."
-
-msgid "was kicked"
-msgstr "został wyrzucony"
-
-msgid "_Room Name:"
-msgstr "_Nazwa pokoju:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Zaproszono"
 
 msgid "Last Online"
 msgstr "Ostatnio online"
@@ -7910,75 +7920,6 @@ msgstr ""
 "niezbędne dla obrazów komunikatora. Ponieważ adres IP zostanie ujawniony, "
 "może się to wiązać z zagrożeniem prywatności."
 
-msgid "Invalid SNAC"
-msgstr "Nieprawidłowe SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Przekroczono ograniczenie prędkości serwera"
-
-msgid "Client rate limit exceeded"
-msgstr "Przekroczono ograniczenie prędkości klienta"
-
-msgid "Service unavailable"
-msgstr "Usługa jest niedostępna"
-
-msgid "Service not defined"
-msgstr "Nie określono usługi"
-
-msgid "Obsolete SNAC"
-msgstr "Przestarzałe SNAC"
-
-msgid "Not supported by host"
-msgstr "Nieobsługiwane przez serwer"
-
-msgid "Not supported by client"
-msgstr "Nieobsługiwane przez klienta"
-
-msgid "Refused by client"
-msgstr "Odmowa klienta"
-
-msgid "Reply too big"
-msgstr "Odpowiedź jest za duża"
-
-msgid "Responses lost"
-msgstr "Utracono odpowiedzi"
-
-msgid "Request denied"
-msgstr "Odrzucono prośby"
-
-msgid "Busted SNAC payload"
-msgstr "Uszkodzone dane SNAC"
-
-msgid "Insufficient rights"
-msgstr "Niewystarczające uprawnienia"
-
-msgid "In local permit/deny"
-msgstr "W lokalnym pozwoleniu/odmowie"
-
-msgid "Warning level too high (sender)"
-msgstr "Poziom ostrzeżenia jest za wysoki (nadawca)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Poziom ostrzeżenia jest za wysoki (odbiorca)"
-
-msgid "User temporarily unavailable"
-msgstr "Użytkownik jest tymczasowo niedostępny"
-
-msgid "No match"
-msgstr "Brak wyników"
-
-msgid "List overflow"
-msgstr "Lista jest pełna"
-
-msgid "Request ambiguous"
-msgstr "Niejednoznaczna prośba"
-
-msgid "Queue full"
-msgstr "Kolejka jest pełna"
-
-msgid "Not while on AOL"
-msgstr "Nie podczas używania AOL"
-
 #. Label
 msgid "Buddy Icon"
 msgstr "Ikona znajomego"
@@ -8096,6 +8037,75 @@ msgstr "Członek od"
 
 msgid "Capabilities"
 msgstr "Możliwości"
+
+msgid "Invalid SNAC"
+msgstr "Nieprawidłowe SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Przekroczono ograniczenie prędkości serwera"
+
+msgid "Client rate limit exceeded"
+msgstr "Przekroczono ograniczenie prędkości klienta"
+
+msgid "Service unavailable"
+msgstr "Usługa jest niedostępna"
+
+msgid "Service not defined"
+msgstr "Nie określono usługi"
+
+msgid "Obsolete SNAC"
+msgstr "Przestarzałe SNAC"
+
+msgid "Not supported by host"
+msgstr "Nieobsługiwane przez serwer"
+
+msgid "Not supported by client"
+msgstr "Nieobsługiwane przez klienta"
+
+msgid "Refused by client"
+msgstr "Odmowa klienta"
+
+msgid "Reply too big"
+msgstr "Odpowiedź jest za duża"
+
+msgid "Responses lost"
+msgstr "Utracono odpowiedzi"
+
+msgid "Request denied"
+msgstr "Odrzucono prośby"
+
+msgid "Busted SNAC payload"
+msgstr "Uszkodzone dane SNAC"
+
+msgid "Insufficient rights"
+msgstr "Niewystarczające uprawnienia"
+
+msgid "In local permit/deny"
+msgstr "W lokalnym pozwoleniu/odmowie"
+
+msgid "Warning level too high (sender)"
+msgstr "Poziom ostrzeżenia jest za wysoki (nadawca)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Poziom ostrzeżenia jest za wysoki (odbiorca)"
+
+msgid "User temporarily unavailable"
+msgstr "Użytkownik jest tymczasowo niedostępny"
+
+msgid "No match"
+msgstr "Brak wyników"
+
+msgid "List overflow"
+msgstr "Lista jest pełna"
+
+msgid "Request ambiguous"
+msgstr "Niejednoznaczna prośba"
+
+msgid "Queue full"
+msgstr "Kolejka jest pełna"
+
+msgid "Not while on AOL"
+msgstr "Nie podczas używania AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8692,14 +8702,14 @@ msgstr "Automatyczny"
 msgid "Select Server"
 msgstr "Wybór serwera"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Połączenie przez TCP"
@@ -12252,9 +12262,6 @@ msgstr "Błąd "
 msgid "Fatal Error"
 msgstr "Błąd krytyczny"
 
-msgid "bug master"
-msgstr "władca błędów"
-
 msgid "artist"
 msgstr "artysta"
 
@@ -12433,6 +12440,9 @@ msgstr "laotański"
 
 msgid "Maithili"
 msgstr "maithili"
+
+msgid "Meadow Mari"
+msgstr "maryjski"
 
 msgid "Macedonian"
 msgstr "macedoński"
