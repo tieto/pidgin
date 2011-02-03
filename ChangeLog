@@ -61,7 +61,8 @@ version 2.7.10 (??/??/????):
 	* Handle Connection: Close headers for BOSH, when the server does not
 	  terminate the connection itself. (#13008)
 	* Improved parsing for DIGEST-MD5, which should resolve issues
-	  connecting to some jabberd2 servers. (#a14514)
+	  connecting to some jabberd2 servers.  This corrects an issue parsing
+	  one-character or empty elements. (Noa Resare) (#a14514)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is
