@@ -560,6 +560,8 @@ static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
  */
 static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
+	PurpleBuddy*			buddy;
+	struct contact*			contact;
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
@@ -567,6 +569,22 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
+	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	buddy = purple_find_buddy( session->acc, who );
+	if ( !buddy ) {
+		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_get_info: unable to find the buddy '%s'\n", who );
+		return;
+	}
+
+	contact = purple_buddy_get_protocol_data( buddy );
+	if ( !contact )
+		return;
+
+	/* only MXit users have profiles */
+	if ( contact->type != MXIT_TYPE_MXIT ) {
+		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "No profile available" ), _( "This contact does not have a profile." ) );
+		return;
+	}
 
 	/* send profile request */
 	mxit_send_extprofile_request( session, who, ARRAY_SIZE( profilelist ), profilelist );
