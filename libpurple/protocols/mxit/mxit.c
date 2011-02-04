@@ -525,7 +525,7 @@ static void mxit_keepalive( PurpleConnection *gc )
 	if ( session->http )
 		return;
 
-	if ( session->last_tx <= time( NULL ) - MXIT_PING_INTERVAL ) {
+	if ( session->last_tx <= ( mxit_now_milli() - ( MXIT_PING_INTERVAL * 1000 ) ) ) {
 		/*
 		 * this connection has been idle for too long, better ping
 		 * the server before it kills our connection.

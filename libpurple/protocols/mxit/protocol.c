@@ -46,6 +46,18 @@
 #define		CP_REC_TERM			( ( session->http ) ? CP_HTTP_REC_TERM : CP_SOCK_REC_TERM )
 
 
+/*------------------------------------------------------------------------
+ * return the current timestamp in milliseconds
+ */
+gint64 mxit_now_milli( void )
+{
+	GTimeVal	now;
+
+	g_get_current_time( &now );
+
+	return ( ( now.tv_sec * 1000 ) + ( now.tv_usec / 1000 ) );
+}
+
 
 /*------------------------------------------------------------------------
  * Display a notification popup message to the user.
@@ -412,7 +424,7 @@ static void mxit_send_packet( struct MXitSession* session, struct tx_packet* pac
 	}
 
 	/* update the timestamp of the last-transmitted packet */
-	session->last_tx = time( NULL );
+	session->last_tx = mxit_now_milli();
 
 	/*
 	 * we need to remember that we are still waiting for the ACK from
@@ -475,17 +487,13 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->datalen = datalen;
 
 
-	/*
-	 * shortcut: first check if there are any commands still outstanding.
-	 * if not, then we might as well just write this packet directly and
-	 * skip the whole queueing thing
-	 */
-	if ( session->outack == 0 ) {
-		/* no outstanding ACKs, so we might as well write it directly */
+	/* shortcut */
+	if ( ( session->queue.count == 0 ) && ( session->outack == 0 ) ) {
+		/* the queue is empty and there are no outstanding acks so we can write it directly */
 		mxit_send_packet( session, packet );
 	}
 	else {
-		/* ACK still outstanding, so we need to queue this request until we have the ACK */
+		/* we need to queue this packet */
 
 		if ( ( packet->cmd == CP_CMD_PING ) || ( packet->cmd == CP_CMD_POLL ) ) {
 			/* we do NOT queue HTTP poll nor socket ping packets */
@@ -504,38 +512,85 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 
 
 /*------------------------------------------------------------------------
- * Callback to manage the packet send queue (send next packet, timeout's, etc).
+ * Manage the packet send queue (send next packet, timeout's, etc).
  *
  *  @param session		The MXit session object
  */
-gboolean mxit_manage_queue( gpointer user_data )
+static void mxit_manage_queue( struct MXitSession* session )
 {
-	struct MXitSession* session		= (struct MXitSession*) user_data;
 	struct tx_packet*	packet		= NULL;
+	gint64				now			= mxit_now_milli();
 
 	if ( !( session->flags & MXIT_FLAG_CONNECTED ) ) {
 		/* we are not connected, so ignore the queue */
-		return TRUE;
+		return;
 	}
 	else if ( session->outack > 0 ) {
 		/* we are still waiting for an outstanding ACK from the MXit server */
-		if ( session->last_tx <= time( NULL ) - MXIT_ACK_TIMEOUT ) {
+		if ( session->last_tx <= mxit_now_milli() - ( MXIT_ACK_TIMEOUT * 1000 ) ) {
 			/* ack timeout! so we close the connection here */
 			purple_debug_info( MXIT_PLUGIN_ID, "mxit_manage_queue: Timeout awaiting ACK for command '%i'\n", session->outack );
 			purple_connection_error( session->con, _( "Timeout while waiting for a response from the MXit server." ) );
 		}
-		return TRUE;
+		return;
 	}
 
-	packet = pop_tx_packet( session );
-	if ( packet != NULL ) {
-		/* there was a packet waiting to be sent to the server, now is the time to do something about it */
-
-		/* send the packet to MXit server */
-		mxit_send_packet( session, packet );
+	/* 
+	 * the mxit server has flood detection and it prevents you from sending messages to fast.
+	 * this is a self defense mechanism, a very annoying feature. so the client must ensure that
+	 * it does not send messages too fast otherwise mxit will ignore the user for 30 seconds.
+	 * this is what we are trying to avoid here..
+	 */
+	if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
+		/* we need to wait a little before sending the next packet, so schedule a wakeup call */
+		gint64 tdiff = now - ( session->last_tx );
+		guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
+		if ( delay <= 0 )
+			delay = MXIT_TX_DELAY;
+		purple_timeout_add( delay, mxit_manage_queue_fast, session );
 	}
+	else {
+		/* get the next packet from the queue to send */
+		packet = pop_tx_packet( session );
+		if ( packet != NULL ) {
+			/* there was a packet waiting to be sent to the server, now is the time to do something about it */
 
+			/* send the packet to MXit server */
+			mxit_send_packet( session, packet );
+		}
+	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Slow callback to manage the packet send queue.
+ *
+ *  @param session		The MXit session object
+ */
+gboolean mxit_manage_queue_slow( gpointer user_data )
+{
+	struct MXitSession* session		= (struct MXitSession*) user_data;
+
+	mxit_manage_queue( session );
+
+	/* continue running */
 	return TRUE;
+}
+
+
+/*------------------------------------------------------------------------
+ * Fast callback to manage the packet send queue.
+ *
+ *  @param session		The MXit session object
+ */
+gboolean mxit_manage_queue_fast( gpointer user_data )
+{
+	struct MXitSession* session		= (struct MXitSession*) user_data;
+
+	mxit_manage_queue( session );
+
+	/* stop running */
+	return FALSE;
 }
 
 
@@ -548,9 +603,9 @@ gboolean mxit_manage_polling( gpointer user_data )
 {
 	struct MXitSession* session		= (struct MXitSession*) user_data;
 	gboolean			poll		= FALSE;
-	time_t				now			= time( NULL );
+	gint64				now			= mxit_now_milli();
 	int					polldiff;
-	int					rxdiff;
+	gint64				rxdiff;
 
 	if ( !( session->flags & MXIT_FLAG_LOGGEDIN ) ) {
 		/* we only poll if we are actually logged in */
@@ -580,7 +635,7 @@ gboolean mxit_manage_polling( gpointer user_data )
 
 	if ( poll ) {
 		/* send poll request */
-		session->http_last_poll = time( NULL );
+		session->http_last_poll = mxit_now_milli();
 		mxit_send_poll( session );
 	}
 
@@ -2001,7 +2056,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 {
 	/* ignore ping/poll packets */
 	if ( ( packet->cmd != CP_CMD_PING ) && ( packet->cmd != CP_CMD_POLL ) )
-		session->last_rx = time( NULL );
+		session->last_rx = mxit_now_milli();
 
 	/*
 	 * when we pass the packet records to the next level for parsing

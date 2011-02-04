@@ -84,6 +84,7 @@
 
 #define		MXIT_PING_INTERVAL		( 5 * 60 )				/* ping the server after X seconds of being idle (5 minutes) */
 #define		MXIT_ACK_TIMEOUT		( 30 )					/* timeout after waiting X seconds for an ack from the server (30 seconds) */
+#define		MXIT_TX_DELAY			( 100 )					/* delay between sending consecutive packets (100 ms) */
 
 /* MXit client version */
 #define		MXIT_CP_DISTCODE		'P'						/* client distribution code (magic, do not touch!) */
@@ -107,7 +108,7 @@
 #define		MXIT_CP_CAP				"utf8=true;cid="MXIT_CLIENT_ID
 
 /* Client settings */
-#define		MAX_QUEUE_SIZE			( 1 << 4 )				/* tx queue size (16 packets) */
+#define		MAX_QUEUE_SIZE			( 1 << 5 )				/* tx queue size (32 packets) */
 #define		MXIT_POPUP_WIN_NAME		"MXit Notification"		/* popup window name */
 #define		MXIT_MAX_ATTRIBS		10						/* maximum profile attributes supported */
 #define		MXIT_DEFAULT_LOCALE		"en"					/* default locale setting */
@@ -284,7 +285,8 @@ void mxit_strip_domain( char* username );
 gboolean find_active_chat( const GList* chats, const char* who );
 
 void mxit_cb_rx( gpointer data, gint source, PurpleInputCondition cond );
-gboolean mxit_manage_queue( gpointer user_data );
+gboolean mxit_manage_queue_slow( gpointer user_data );
+gboolean mxit_manage_queue_fast( gpointer user_data );
 gboolean mxit_manage_polling( gpointer user_data );
 
 void mxit_send_register( struct MXitSession* session );
@@ -324,6 +326,7 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 int mxit_parse_packet( struct MXitSession* session );
 void dump_bytes( struct MXitSession* session, const char* buf, int len );
 void mxit_close_connection( struct MXitSession* session );
+gint64 mxit_now_milli( void );
 
 
 #endif		/* _MXIT_PROTO_H_ */

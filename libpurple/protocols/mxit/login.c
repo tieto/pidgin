@@ -84,7 +84,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	session->iimages = g_hash_table_new( g_str_hash, g_str_equal );
 	session->rx_state = RX_STATE_RLEN;
 	session->http_interval = MXIT_HTTP_POLL_MIN;
-	session->http_last_poll = time( NULL );
+	session->http_last_poll = mxit_now_milli();
 
 	return session;
 }
@@ -106,7 +106,7 @@ static void mxit_connected( struct MXitSession* session )
 	purple_connection_update_progress( session->con, _( "Logging In..." ), 2, 4 );
 
 	/* create a timer to send a ping packet if the connection is idle */
-	session->last_tx = time( NULL );
+	session->last_tx = mxit_now_milli();
 
 	/* encrypt the user password */
 	session->encpwd = mxit_encrypt_password( session );
@@ -143,7 +143,7 @@ static void mxit_connected( struct MXitSession* session )
 	/* This timer might already exist if we're registering a new account */
 	if ( session->q_timer == 0 ) {
 		/* start the tx queue manager timer */
-		session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue, session );
+		session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue_slow, session );
 	}
 }
 
