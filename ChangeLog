@@ -32,6 +32,8 @@ version 2.7.10 (??/??/????):
 	  Samstag) (#13073)
 	* Fixed bugs in purple_str_to_time() that caused the most recent 'make
 	  check' failures.  (Nader Morshed) (#13131)
+	* Correct an issue that caused some UIs other than Pidgin or Finch to
+	  leave a buddy in the "is typing" state.  (Jan Kaluza)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
