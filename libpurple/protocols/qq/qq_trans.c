@@ -42,25 +42,6 @@ enum {
 	QQ_TRANS_IS_REPLY = 0x08				/* server command before login*/
 };
 
-struct _qq_transaction {
-	guint8 flag;
-	guint16 seq;
-	guint16 cmd;
-
-	guint8 room_cmd;
-	guint32 room_id;
-
-	guint8 *data;
-	gint data_len;
-
-	gint fd;
-	gint send_retries;
-	gint rcved_times;
-	gint scan_times;
-
-	UPDCLS update_class;
-	guint32 ship32;
-};
 
 gboolean qq_trans_is_server(qq_transaction *trans)
 {

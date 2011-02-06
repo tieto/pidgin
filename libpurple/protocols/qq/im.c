@@ -67,15 +67,14 @@ enum
 	QQ_NORMAL_IM_FILE_EX_NOTIFY_IP = 0x87
 };
 
-typedef struct _qq_im_header qq_im_header;
-struct _qq_im_header {
+typedef struct _qq_im_header {
 	/* this is the common part of normal_text */
 	guint16 version_from;
 	UID uid_from;
 	UID uid_to;
 	guint8 session_md5[QQ_KEY_LENGTH];
 	guint16 im_type;
-};
+} qq_im_header;
 
 /* read the common parts of the normal_im,
  * returns the bytes read if succeed, or -1 if there is any error */
@@ -93,11 +92,10 @@ static gint get_im_header(qq_im_header *im_header, guint8 *data, gint len)
 	return bytes;
 }
 
-typedef struct _qq_emoticon qq_emoticon;
-struct _qq_emoticon {
+typedef struct _qq_emoticon {
 	guint8 symbol;
 	gchar *name;
-};
+} qq_emoticon;
 
 static gboolean emoticons_is_sorted = FALSE;
 /* Map for purple smiley convert to qq, need qsort */

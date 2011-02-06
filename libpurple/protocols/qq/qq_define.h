@@ -37,6 +37,7 @@
 #define QQ_CLIENT_111D 0x111D	/* QQ2007 */
 #define QQ_CLIENT_115B 0x115B	/* QQ2008 He Sui */
 #define QQ_CLIENT_1663 0x1663	/* QQ2009 Release */
+#define QQ_CLIENT_1801 0x1801	/* QQ2009 International Beta1 */
 
 const gchar *qq_get_ver_desc(gint source);
 

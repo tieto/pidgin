@@ -38,14 +38,12 @@
 #include "send_file.h"
 #include "utils.h"
 
-struct _qq_file_header {
+typedef struct _qq_file_header {
 	guint16 client_ver;
 	guint8 file_key;
 	UID sender_uid;
 	UID receiver_uid;
-};
-
-typedef struct _qq_file_header qq_file_header;
+} qq_file_header;
 
 static guint32 _get_file_key(guint8 seed)
 {
