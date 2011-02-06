@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-12-14 10:45+0100\n"
-"Last-Translator: Dingoe <translations@gvmelle.com>\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"PO-Revision-Date: 2011-01-25 10:45+0100\n"
+"Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -156,7 +156,7 @@ msgstr "Wijzigen"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
-msgstr "%s%s%s%s heeft %s in zijn/haar vriendt gemaakt%s%s"
+msgstr "%s%s%s%s heeft %s in zijn/haar vriend gemaakt%s%s"
 
 msgid "Add buddy to your list?"
 msgstr "Vriend toevoegen aan uw lijst?"
@@ -2365,8 +2365,12 @@ msgstr ""
 "Pad voor opslaan bestanden\n"
 "(Geef spv het volledige pad)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automatisch verwerpen van gebruikers die niet in vriendenlijst staan"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Als een bestandsoverdracht aanvraag komt van gebruiker die\n"
+"*niet\" op uw vriendenlijst staat:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2378,6 +2382,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Een nieuwe map voor elke gebruiker aanmaken"
+
+msgid "Escape the filenames"
+msgstr "*Escape* de bestandsnamen"
 
 msgid "Notes"
 msgstr "Notities"
@@ -3862,7 +3869,10 @@ msgstr ""
 "Server vereist een waarmerking via tekstaanmelding via een ongecodeerde "
 "datastroom"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Ongeldig antwoord van server"
 
@@ -6178,6 +6188,20 @@ msgstr "MXit account validatie"
 msgid "Retrieving User Information..."
 msgstr "Ophalen Gebruikersinformatie..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "U bent uit deze MultiMX gegooid."
+
+msgid "was kicked"
+msgstr "eruit gegooid"
+
+msgid "_Room Name:"
+msgstr "_Ruimtenaam:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "U heeft uitgenodigd"
+
 msgid "Loading menu..."
 msgstr "Menu aan 't laden..."
 
@@ -6204,20 +6228,6 @@ msgstr "Verbinden via HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "inschakelen splashscreen pop-up"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "U bent uit deze MultiMX gegooid."
-
-msgid "was kicked"
-msgstr "eruit gegooid"
-
-msgid "_Room Name:"
-msgstr "_Ruimtenaam:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "U heeft uitgenodigd"
 
 msgid "Last Online"
 msgstr "Laatste Online"
@@ -7892,75 +7902,6 @@ msgstr ""
 "afbeeldingen via chatberichten). Dit zou als een inbreuk op de privacy "
 "beschouwd kunnen worden omdat de ander dan uw IP-adres te weten komt."
 
-msgid "Invalid SNAC"
-msgstr "Ongeldige SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Server snelheidslimiet overschreden"
-
-msgid "Client rate limit exceeded"
-msgstr "Cliënt snelheidslimiet overschreden"
-
-msgid "Service unavailable"
-msgstr "Service niet beschikbaar"
-
-msgid "Service not defined"
-msgstr "Service niet gedefinieerd"
-
-msgid "Obsolete SNAC"
-msgstr "Verouderde SNAC"
-
-msgid "Not supported by host"
-msgstr "Niet ondersteund door computer"
-
-msgid "Not supported by client"
-msgstr "Niet ondersteund door cliënt"
-
-msgid "Refused by client"
-msgstr "Gewegerd door cliënt"
-
-msgid "Reply too big"
-msgstr "Antwoord te groot"
-
-msgid "Responses lost"
-msgstr "Reacties verloren"
-
-msgid "Request denied"
-msgstr "Aanvraag geweigerd"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC bagage kapot"
-
-msgid "Insufficient rights"
-msgstr "Niet genoeg rechten"
-
-msgid "In local permit/deny"
-msgstr "In lokale toestaan/weigeren"
-
-msgid "Warning level too high (sender)"
-msgstr "Waarschuwingsniveau te hoog (verzender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Waarschuwingsniveau te hoog (ontvanger)"
-
-msgid "User temporarily unavailable"
-msgstr "Gebruiker tijdelijk niet beschikbaar"
-
-msgid "No match"
-msgstr "Geen overeenkomstige resultaten"
-
-msgid "List overflow"
-msgstr "Te grote lijst"
-
-msgid "Request ambiguous"
-msgstr "Dubieuze aanvraag"
-
-msgid "Queue full"
-msgstr "Wachtrij vol"
-
-msgid "Not while on AOL"
-msgstr "Niet tijdens AOL"
-
 # msgstr ""
 # "(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
 # "hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
@@ -8082,6 +8023,75 @@ msgstr "Lid sinds"
 
 msgid "Capabilities"
 msgstr "Mogelijkheden"
+
+msgid "Invalid SNAC"
+msgstr "Ongeldige SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Server snelheidslimiet overschreden"
+
+msgid "Client rate limit exceeded"
+msgstr "Cliënt snelheidslimiet overschreden"
+
+msgid "Service unavailable"
+msgstr "Service niet beschikbaar"
+
+msgid "Service not defined"
+msgstr "Service niet gedefinieerd"
+
+msgid "Obsolete SNAC"
+msgstr "Verouderde SNAC"
+
+msgid "Not supported by host"
+msgstr "Niet ondersteund door computer"
+
+msgid "Not supported by client"
+msgstr "Niet ondersteund door cliënt"
+
+msgid "Refused by client"
+msgstr "Gewegerd door cliënt"
+
+msgid "Reply too big"
+msgstr "Antwoord te groot"
+
+msgid "Responses lost"
+msgstr "Reacties verloren"
+
+msgid "Request denied"
+msgstr "Aanvraag geweigerd"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC bagage kapot"
+
+msgid "Insufficient rights"
+msgstr "Niet genoeg rechten"
+
+msgid "In local permit/deny"
+msgstr "In lokale toestaan/weigeren"
+
+msgid "Warning level too high (sender)"
+msgstr "Waarschuwingsniveau te hoog (verzender)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Waarschuwingsniveau te hoog (ontvanger)"
+
+msgid "User temporarily unavailable"
+msgstr "Gebruiker tijdelijk niet beschikbaar"
+
+msgid "No match"
+msgstr "Geen overeenkomstige resultaten"
+
+msgid "List overflow"
+msgstr "Te grote lijst"
+
+msgid "Request ambiguous"
+msgstr "Dubieuze aanvraag"
+
+msgid "Queue full"
+msgstr "Wachtrij vol"
+
+msgid "Not while on AOL"
+msgstr "Niet tijdens AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8677,14 +8687,14 @@ msgstr "Automatisch"
 msgid "Select Server"
 msgstr "Selecteer Server"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Verbinden via TCP"
@@ -12256,9 +12266,6 @@ msgstr "Fout"
 msgid "Fatal Error"
 msgstr "Fatale fout"
 
-msgid "bug master"
-msgstr "bug master"
-
 msgid "artist"
 msgstr "artiest"
 
@@ -12437,6 +12444,9 @@ msgstr "Laotiaans"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Macedonisch"
@@ -15583,6 +15593,13 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Automatisch verwerpen van gebruikers die niet in vriendenlijst staan"
+
+#~ msgid "bug master"
+#~ msgstr "bug master"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Fout opvragen  %s"

@@ -32,12 +32,16 @@ version 2.7.10 (??/??/????):
 	  Samstag) (#13073)
 	* Fixed bugs in purple_str_to_time() that caused the most recent 'make
 	  check' failures.  (Nader Morshed) (#13131)
+	* Correct an issue that caused some UIs other than Pidgin or Finch to
+	  leave a buddy in the "is typing" state.  (Jan Kaluza)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
 	  the conversation window.  (Ryan Flegel) (#13127)
 	* Fix a few memory leaks. (Nader Morshed) (#13162)
 	* Support rendering strikethrough when received as in-line CSS. (#13168)
+	* Editable comboboxes are now more friendly to some GTK+ themes. (Hugo
+	  Pereira Da Costa) (#13164).
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
@@ -58,6 +62,9 @@ version 2.7.10 (??/??/????):
 	  (Nikita Kozlov) (#13136)
 	* Handle Connection: Close headers for BOSH, when the server does not
 	  terminate the connection itself. (#13008)
+	* Improved parsing for DIGEST-MD5, which should resolve issues
+	  connecting to some jabberd2 servers.  This corrects an issue parsing
+	  one-character or empty elements. (Noa Resare) (#a14514)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is

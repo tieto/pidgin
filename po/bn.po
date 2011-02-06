@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 20:34-0500\n"
+"POT-Creation-Date: 2011-02-02 23:34-0500\n"
 "PO-Revision-Date: 2010-12-19 13:37+0600\n"
 "Last-Translator: israt <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -2466,8 +2466,12 @@ msgstr ""
 "ফাইল সংরক্ষণের ‍‍পাথ\n"
 "(অনুগ্রহ করে সম্পূর্ণ পাথ প্রদান করুন)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "বন্ধু তালিকার বহির্ভূত ব্যবহারকারী থেকে স্বয়ংক্রিয় ভাবে বাতিল করা হবে"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"যখন একজন ব্যবহারকারী থেকে ফাইল স্থানান্তরের অনুরোধ আসে\n"
+" যা আপনার বন্ধু তালিকায় *নেই*:"
 
 # tithi
 msgid ""
@@ -2479,6 +2483,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "প্রত্যেক ব্যবহারকারীর জন্য একটি নতুন ডিরেক্টরি তৈরি করা হবে"
+
+# Translated by sadia
+msgid "Escape the filenames"
+msgstr "ফাইলনাম এড়িয়ে যাওয়া"
 
 msgid "Notes"
 msgstr "নোট"
@@ -3993,7 +4001,10 @@ msgstr "কার্যকর করুন"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "একটি এনক্রিপশনবিহীন স্ট্রীমে সার্ভারের সরল-টেক্সট প্রমাণীকরণ প্রয়োজন"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "সার্ভার থেকে অকার্যকর উত্তর"
 
@@ -6605,6 +6616,22 @@ msgstr "MXit অ্যাকাউন্টের কার্যকারীত
 msgid "Retrieving User Information..."
 msgstr "ব্যবহারকারীর তথ্য খুঁজে আনা হচ্ছে..."
 
+# Kick =  তিরস্কার
+# OR  পদাঘাত
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "MultiMX হতে আপনাকে তিরস্কার করা হয়েছে।"
+
+msgid "was kicked"
+msgstr "তিরস্কার করা হয়েছে"
+
+msgid "_Room Name:"
+msgstr "আসরের নাম (_R):"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "আপনাকে আমন্ত্রণ জানানো হয়েছে"
+
 # Translated by sadia
 msgid "Loading menu..."
 msgstr "মেনু লোড করা হচ্ছে..."
@@ -6639,22 +6666,6 @@ msgstr "HTTP-র মাধ্যমে সংযুক্ত করা হবে
 # Translated by sadia
 msgid "Enable splash-screen popup"
 msgstr "স্প্ল্যাশ স্ক্রীন পপ আপ সক্রিয় করা হবে"
-
-# Kick =  তিরস্কার
-# OR  পদাঘাত
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "MultiMX হতে আপনাকে তিরস্কার করা হয়েছে।"
-
-msgid "was kicked"
-msgstr "তিরস্কার করা হয়েছে"
-
-msgid "_Room Name:"
-msgstr "আসরের নাম (_R):"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "আপনাকে আমন্ত্রণ জানানো হয়েছে"
 
 msgid "Last Online"
 msgstr "শেষ যখন অনলাইনে"
@@ -8546,91 +8557,6 @@ msgstr ""
 "এটির জন্য দুটি কম্পিউটারের মধ্যে সরাসরি সংযোগ প্রয়োজন যা কিনা IM এর ছবির জন্য "
 "আবশ্যক। যেহেতু আপনার IP ঠিকানা প্রকাশিত হবে, তাই এতে গোপনীয়তায় ঝুঁকি থাকতে পারে।"
 
-msgid "Invalid SNAC"
-msgstr "অকার্যকর SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "সার্ভার হারের সীমা পেরিয়ে গেছে"
-
-msgid "Client rate limit exceeded"
-msgstr "ক্লায়েন্ট হারের সীমা পেরিয়ে গেছে"
-
-msgid "Service unavailable"
-msgstr "সার্ভিস বিদ্যমান নয়"
-
-# tithi
-msgid "Service not defined"
-msgstr "সেবা নির্ধারিত নয়"
-
-# tithi
-msgid "Obsolete SNAC"
-msgstr "অপ্রচলিত SNAC"
-
-# tithi
-msgid "Not supported by host"
-msgstr "হোস্ট দ্বারা সমর্থিত নয়"
-
-# tithi
-msgid "Not supported by client"
-msgstr "ক্লায়েন্ট দ্বারা সমর্থিত নয়"
-
-# tithi
-msgid "Refused by client"
-msgstr "ক্লায়েন্ট দ্বারা প্রত্যাখ্যাত"
-
-# tithi
-msgid "Reply too big"
-msgstr "অতিরিক্ত বড় উত্তর"
-
-# tithi
-msgid "Responses lost"
-msgstr "প্রতিক্রিয়া হারিয়ে গেছে"
-
-msgid "Request denied"
-msgstr "অনুরোধ প্রত্যাখ্যাত"
-
-# tithi
-msgid "Busted SNAC payload"
-msgstr "ব্যর্থ SNAC পেলোড"
-
-# tithi
-msgid "Insufficient rights"
-msgstr "অপর্যাপ্ত অধিকার"
-
-# tithi
-msgid "In local permit/deny"
-msgstr "স্থানীয় অনুমতি/অস্বীকারে"
-
-# tithi
-msgid "Warning level too high (sender)"
-msgstr "সতর্কতা স্তর খুব উচ্চ (প্রেরক)"
-
-# tithi
-msgid "Warning level too high (receiver)"
-msgstr "সতর্কতা স্তর খুব উচ্চ (গ্রাহক)"
-
-# tithi
-msgid "User temporarily unavailable"
-msgstr "ব্যবহারকারীকে সাময়িকভাবে পাওয়া যায়না"
-
-# tithi
-msgid "No match"
-msgstr "কোনো মিল নেই"
-
-# tithi
-msgid "List overflow"
-msgstr "লিস্ট ওভার‌ফ্লো"
-
-msgid "Request ambiguous"
-msgstr "অনুরোধ অস্পষ্ট"
-
-# tithi
-msgid "Queue full"
-msgstr "কিউ পরিপূর্ণ"
-
-msgid "Not while on AOL"
-msgstr "AOL এ থাকা অবস্থায় নয়"
-
 #. Label
 msgid "Buddy Icon"
 msgstr "বন্ধু আইকন"
@@ -8766,6 +8692,91 @@ msgstr "যখন থেকে সদস্য"
 # tithi
 msgid "Capabilities"
 msgstr "ক্ষমতা"
+
+msgid "Invalid SNAC"
+msgstr "অকার্যকর SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "সার্ভার হারের সীমা পেরিয়ে গেছে"
+
+msgid "Client rate limit exceeded"
+msgstr "ক্লায়েন্ট হারের সীমা পেরিয়ে গেছে"
+
+msgid "Service unavailable"
+msgstr "সার্ভিস বিদ্যমান নয়"
+
+# tithi
+msgid "Service not defined"
+msgstr "সেবা নির্ধারিত নয়"
+
+# tithi
+msgid "Obsolete SNAC"
+msgstr "অপ্রচলিত SNAC"
+
+# tithi
+msgid "Not supported by host"
+msgstr "হোস্ট দ্বারা সমর্থিত নয়"
+
+# tithi
+msgid "Not supported by client"
+msgstr "ক্লায়েন্ট দ্বারা সমর্থিত নয়"
+
+# tithi
+msgid "Refused by client"
+msgstr "ক্লায়েন্ট দ্বারা প্রত্যাখ্যাত"
+
+# tithi
+msgid "Reply too big"
+msgstr "অতিরিক্ত বড় উত্তর"
+
+# tithi
+msgid "Responses lost"
+msgstr "প্রতিক্রিয়া হারিয়ে গেছে"
+
+msgid "Request denied"
+msgstr "অনুরোধ প্রত্যাখ্যাত"
+
+# tithi
+msgid "Busted SNAC payload"
+msgstr "ব্যর্থ SNAC পেলোড"
+
+# tithi
+msgid "Insufficient rights"
+msgstr "অপর্যাপ্ত অধিকার"
+
+# tithi
+msgid "In local permit/deny"
+msgstr "স্থানীয় অনুমতি/অস্বীকারে"
+
+# tithi
+msgid "Warning level too high (sender)"
+msgstr "সতর্কতা স্তর খুব উচ্চ (প্রেরক)"
+
+# tithi
+msgid "Warning level too high (receiver)"
+msgstr "সতর্কতা স্তর খুব উচ্চ (গ্রাহক)"
+
+# tithi
+msgid "User temporarily unavailable"
+msgstr "ব্যবহারকারীকে সাময়িকভাবে পাওয়া যায়না"
+
+# tithi
+msgid "No match"
+msgstr "কোনো মিল নেই"
+
+# tithi
+msgid "List overflow"
+msgstr "লিস্ট ওভার‌ফ্লো"
+
+msgid "Request ambiguous"
+msgstr "অনুরোধ অস্পষ্ট"
+
+# tithi
+msgid "Queue full"
+msgstr "কিউ পরিপূর্ণ"
+
+msgid "Not while on AOL"
+msgstr "AOL এ থাকা অবস্থায় নয়"
 
 # tithi
 #. Translators: This string is a menu option that, if selected, will cause
@@ -9420,16 +9431,16 @@ msgid "Select Server"
 msgstr "সার্ভার নির্বাচন"
 
 # tithi
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 # tithi
 msgid "QQ2007"
 msgstr "QQ2007"
 
 # tithi
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "TCP দ্বারা সংযোগ করা হবে"
@@ -13272,10 +13283,6 @@ msgstr "ত্রুটি"
 msgid "Fatal Error"
 msgstr "মারাত্মক ত্রুটি"
 
-# tithi
-msgid "bug master"
-msgstr "বাগ মাস্টার"
-
 msgid "artist"
 msgstr "শিল্পী"
 
@@ -13471,6 +13478,9 @@ msgstr "লাও"
 
 msgid "Maithili"
 msgstr "মৈথিলি"
+
+msgid "Meadow Mari"
+msgstr "মিইডো মারি"
 
 msgid "Macedonian"
 msgstr "ম্যাসেডনিয়"
@@ -16807,6 +16817,13 @@ msgstr "পিজিনের ওয়েব পেজ দেখুন"
 # snigdha
 msgid "You do not have permission to uninstall this application."
 msgstr "আপনার এই অ্যাপ্লিকেশনটি আনইন্সটল করার অনুমতি নেই।"
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "বন্ধু তালিকার বহির্ভূত ব্যবহারকারী থেকে স্বয়ংক্রিয় ভাবে বাতিল করা হবে"
+
+# tithi
+#~ msgid "bug master"
+#~ msgstr "বাগ মাস্টার"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "ইন-ব্যান্ড বাইটস্ট্রিম বিনিময়ে ত্রুটি হয়েছে\n"
