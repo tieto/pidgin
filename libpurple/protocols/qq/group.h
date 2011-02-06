@@ -47,7 +47,7 @@ struct _qq_room_data {
 	guint32 id;
 	guint32 ext_id;
 	guint8 type8;			/* permanent or temporory */
-	guint32 creator_uid;
+	UID creator_uid;
 	guint32 category;
 	guint8 auth_type;
 	gchar *title_utf8;

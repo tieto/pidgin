@@ -30,11 +30,16 @@
 #include "conversation.h"
 #include "group.h"
 
+enum {
+	QQ_CUSTOM_USE_DEFAULT_FONT = 0x00000001,
+	QQ_CUSTOM_NONE = 0x00000000
+};
+
 PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd);
 void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd);
 
 void qq_room_got_chat_in(PurpleConnection *gc,
-		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time);
+		guint32 room_id, UID uid_from, const gchar *msg, time_t in_time);
 
 int qq_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 void qq_process_room_send_im(PurpleConnection *gc, guint8 *data, gint len);
@@ -43,3 +48,4 @@ void qq_process_room_send_im_ex(PurpleConnection *gc, guint8 *data, gint len);
 void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 msg_type);
 
 #endif
+

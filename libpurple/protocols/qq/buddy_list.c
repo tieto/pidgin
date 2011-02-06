@@ -53,7 +53,7 @@ typedef struct _qq_buddy_online {
 } qq_buddy_online;
 
 /* get a list of online_buddies */
-void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, guint32 update_class)
+void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, UPDCLS update_class)
 {
 	guint8 *raw_data;
 	gint bytes = 0;
@@ -77,7 +77,7 @@ void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, guint3
 
 /* position starts with 0x0000,
  * server may return a position tag if list is too long for one packet */
-void qq_request_get_buddies(PurpleConnection *gc, guint16 position, guint32 update_class)
+void qq_request_get_buddies(PurpleConnection *gc, guint16 position, UPDCLS update_class)
 {
 	qq_data *qd;
 	guint8 raw_data[16] = {0};
@@ -101,7 +101,7 @@ void qq_request_get_buddies(PurpleConnection *gc, guint16 position, guint32 upda
 }
 
 /* get all list, buddies & Quns with groupsid support */
-void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, guint32 update_class)
+void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, UPDCLS update_class)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
@@ -362,7 +362,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 	gint bytes;
 	guint8 sub_cmd, reply_code;
 	guint32 unknown, position;
-	guint32 uid;
+	UID uid;
 	guint8 type;
 	qq_room_data *rmd;
 
@@ -455,7 +455,7 @@ static guint8  get_status_from_purple(PurpleConnection *gc)
 }
 
 /* send a packet to change my online status */
-void qq_request_change_status(PurpleConnection *gc, guint32 update_class)
+void qq_request_change_status(PurpleConnection *gc, UPDCLS update_class)
 {
 	qq_data *qd;
 	guint8 raw_data[16] = {0};
@@ -525,7 +525,7 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 {
 	qq_data *qd;
 	gint bytes;
-	guint32 my_uid;
+	UID my_uid;
 	gchar *who;
 	PurpleBuddy *buddy;
 	qq_buddy_data *bd;
@@ -583,7 +583,7 @@ void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnectio
 }
 
 /*TODO: maybe this should be qq_update_buddy_status() ?*/
-void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag)
+void qq_update_buddy_status(PurpleConnection *gc, UID uid, guint8 status, guint8 flag)
 {
 	gchar *who;
 	const gchar *status_id;

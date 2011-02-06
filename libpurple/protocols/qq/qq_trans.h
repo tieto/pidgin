@@ -39,10 +39,10 @@ guint32 qq_trans_get_class(qq_transaction *trans);
 guint32 qq_trans_get_ship(qq_transaction *trans);
 
 void qq_trans_add_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
-		guint8 *data, gint data_len, guint32 update_class, guint32 ship32);
+		guint8 *data, gint data_len, UPDCLS update_class, guint32 ship32);
 void qq_trans_add_room_cmd(PurpleConnection *gc,
 		guint16 seq, guint8 room_cmd, guint32 room_id,
-		guint8 *data, gint data_len, guint32 update_class, guint32 ship32);
+		guint8 *data, gint data_len, UPDCLS update_class, guint32 ship32);
 void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 	guint8 *rcved, gint rcved_len);
 void qq_trans_add_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
