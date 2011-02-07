@@ -49,6 +49,10 @@ enum {
 };
 
 typedef struct {
+	/* attr:
+		bit0-4 for font size, bit5 for bold,
+		bit6 for italic, bit7 for underline
+	*/
 	guint8 attr;
 	guint8 rgb[3];
 	guint16 charset;
@@ -61,6 +65,7 @@ gint qq_get_im_tail(qq_im_format *fmt, guint8 *data, gint data_len);
 
 qq_im_format *qq_im_fmt_new(void);
 void qq_im_fmt_free(qq_im_format *fmt);
+void qq_im_fmt_reset_font(qq_im_format *fmt);
 qq_im_format *qq_im_fmt_new_by_purple(const gchar *msg);
 gchar *qq_im_fmt_to_purple(qq_im_format *fmt, gchar *text);
 gboolean qq_im_smiley_none(const gchar *msg);

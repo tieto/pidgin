@@ -1,3 +1,12 @@
+2010.01.23 - flos <lonicerae(at)gmail.com>
+	* added an option to force incoming message in chat room to use a default font instead of the font in message itself
+
+2010.01.18 - flos <lonicerae(at)gmail.com>
+	* added type 'UPDCLS' and 'UID' for implementing business logic layer
+
+2010.01.13 - ccpaging <ccpaging(at)gmail.com>
+	* qq2009-1 patch from ccpaging
+
 2009.04.23 - flos <lonicerae(at)gmail.com>
 	* Fixed a bug of updating buddy who is not in user's buddy list
 

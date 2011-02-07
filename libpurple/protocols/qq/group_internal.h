@@ -36,9 +36,9 @@ PurpleChat *qq_room_find_or_new(PurpleConnection *gc, guint32 id, guint32 ext_id
 void qq_room_remove(PurpleConnection *gc, guint32 id);
 void qq_room_update_chat_info(PurpleChat *chat, qq_room_data *rmd);
 
-qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, guint32 uid);
-void qq_room_buddy_remove(qq_room_data *rmd, guint32 uid);
-qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, guint32 member_uid);
+qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, UID uid);
+void qq_room_buddy_remove(qq_room_data *rmd, UID uid);
+qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, UID member_uid);
 
 void qq_room_data_initial(PurpleConnection *gc);
 void qq_room_data_free_all(PurpleConnection *gc);

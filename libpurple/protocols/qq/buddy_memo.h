@@ -28,6 +28,7 @@
 #include <glib.h>
 #include "connection.h"
 #include "blist.h"
+#include "qq.h"
 
 #define QQ_BUDDY_MEMO_REQUEST_SUCCESS 0x00
 
@@ -40,9 +41,9 @@ enum
 };
 
 
-void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len, guint32 update_class, guint32 action);
+void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len, UPDCLS update_class, guint32 action);
 
-void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, guint32 action);
+void qq_request_buddy_memo(PurpleConnection *gc, UID bd_uid, UPDCLS update_class, guint32 action);
 
 #endif
 

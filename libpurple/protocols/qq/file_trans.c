@@ -38,14 +38,12 @@
 #include "send_file.h"
 #include "utils.h"
 
-struct _qq_file_header {
+typedef struct _qq_file_header {
 	guint16 client_ver;
 	guint8 file_key;
-	guint32 sender_uid;
-	guint32 receiver_uid;
-};
-
-typedef struct _qq_file_header qq_file_header;
+	UID sender_uid;
+	UID receiver_uid;
+} qq_file_header;
 
 static guint32 _get_file_key(guint8 seed)
 {
@@ -62,12 +60,12 @@ static guint32 _gen_file_key(void)
 	return _get_file_key(seed);
 }
 
-static guint32 _decrypt_qq_uid(guint32 uid, guint32 key)
+static guint32 _decrypt_qq_uid(UID uid, guint32 key)
 {
 	return ~(uid ^ key);
 }
 
-static guint32 _encrypt_qq_uid(guint32 uid, guint32 key)
+static guint32 _encrypt_qq_uid(UID uid, guint32 key)
 {
 	return (~uid) ^ key;
 }
@@ -232,7 +230,7 @@ void qq_xfer_close_file(PurpleXfer *xfer)
 }
 #endif
 
-static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 packet_type, guint32 to_uid)
+static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 packet_type, UID to_uid)
 {
 	guint8 *raw_data;
 	gint bytes = 0;
@@ -259,7 +257,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 }
 
 /* send a file to udp channel with QQ_FILE_CONTROL_PACKET_TAG */
-void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte)
+void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, UID to_uid, guint8 hellobyte)
 {
 	qq_data *qd;
 	gint bytes, bytes_expected, encrypted_len;
