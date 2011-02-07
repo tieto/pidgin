@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.10 (??/??/????):
+version 2.7.10 (02/06/2011):
 	General:
 	* Force video sources to all have the same capabilities.  This reduces the
 	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
