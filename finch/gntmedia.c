@@ -252,7 +252,7 @@ finch_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 	} else if (state == PURPLE_MEDIA_STATE_CONNECTED) {
 		finch_media_connected_cb(media, gntmedia);
 	} else if (state == PURPLE_MEDIA_STATE_NEW &&
-			sid != NULL && name != NULL && 
+			sid != NULL && name != NULL &&
 			purple_media_is_initiator(media, sid, name) == FALSE) {
 		PurpleAccount *account;
 		PurpleBuddy *buddy;
@@ -360,7 +360,7 @@ finch_media_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 			g_value_set_object(value, media->priv->media);
 			break;
 		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -480,7 +480,7 @@ void finch_media_manager_init(void)
 			PURPLE_CMD_FLAG_IM, NULL,
 			call_cmd_cb, _("call: Make an audio call."), NULL);
 
-	purple_media_manager_set_ui_caps(manager, 
+	purple_media_manager_set_ui_caps(manager,
 			PURPLE_MEDIA_CAPS_AUDIO |
 			PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION);
 

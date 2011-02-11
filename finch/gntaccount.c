@@ -308,7 +308,7 @@ update_user_splits(AccountEditDialog *dialog)
 	if (!plugin)
 		return;
 	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	
+
 	username = dialog->account ? g_strdup(purple_account_get_username(dialog->account)) : NULL;
 
 	for (iter = prplinfo->user_splits; iter; iter = iter->next)

@@ -68,7 +68,7 @@ static void do_nick_set(JabberStream *js, const char *nick) {
 static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	char *oldnickname = NULL;
 	xmlnode *item = NULL;
-	
+
 	if (items)
 		item = xmlnode_get_child(items,"item");
 

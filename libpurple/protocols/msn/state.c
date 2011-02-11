@@ -223,7 +223,7 @@ msn_change_status(MsnSession *session)
 			} else if (strcmp(client_type, "bot") == 0) {
 				caps |= MSN_CLIENT_CAP_BOT;
 			}
-			/* MSN doesn't a "console" type... 
+			/* MSN doesn't a "console" type...
 			 What, they have no ncurses UI? :-) */
 		}
 	}

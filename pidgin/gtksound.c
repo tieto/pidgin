@@ -221,7 +221,7 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 }
 
 static void
-got_attention_cb(PurpleAccount *account, const char *who, 
+got_attention_cb(PurpleAccount *account, const char *who,
 	PurpleConversation *conv, guint type, PurpleSoundEventID event)
 {
 	play_conv_event(conv, event);
@@ -362,7 +362,7 @@ pidgin_sound_init(void)
 						  GINT_TO_POINTER(PURPLE_SOUND_GOT_ATTENTION));
 	/* for the time being, don't handle sent-attention here, since playing a
 	 sound would result induplicate sounds. And fixing that would require changing the
-	 conversation signal for msg-recv */	
+	 conversation signal for msg-recv */
 }
 
 static void

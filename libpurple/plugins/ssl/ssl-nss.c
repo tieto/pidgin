@@ -289,13 +289,13 @@ ssl_nss_get_peer_certificates(PRFileDesc *socket, PurpleSslConnection * gsc)
 	GList * peer_certs = NULL;
 	int count;
 	int64 now = PR_Now();
-	
+
 	curcert = SSL_PeerCertificate(socket);
 	if (curcert == NULL) {
 		purple_debug_error("nss", "could not DupCertificate\n");
 		return NULL;
 	}
-	
+
 	for (count = 0 ; count < CERT_MAX_CERT_CHAIN ; count++) {
 		purple_debug_info("nss", "subject=%s issuer=%s\n", curcert->subjectName,
 						  curcert->issuerName  ? curcert->issuerName : "(null)");
@@ -530,7 +530,7 @@ ssl_nss_peer_certs(PurpleSslConnection *gsc)
 		CERT_DestroyCertificate(cert);
 #endif
 
-	
+
 
 	return NULL;
 }
@@ -587,7 +587,7 @@ x509_import_from_file(const gchar *filename)
 	crt = g_new0(PurpleCertificate, 1);
 	crt->scheme = &x509_nss;
 	crt->data = crt_dat;
-	
+
 	return crt;
 }
 
@@ -672,7 +672,7 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 
 	purple_debug_info("nss/x509",
 			  "Exporting certificate to %s\n", filename);
-	
+
 	/* First, use NSS voodoo to create a DER-formatted certificate */
 	dercrt = SEC_ASN1EncodeItem(NULL, NULL, crt_dat,
 				    SEC_ASN1_GET(SEC_SignedCertificateTemplate));
@@ -692,7 +692,7 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 	ret =  purple_util_write_data_to_file_absolute(filename, pemcrt, -1);
 
 	g_free(pemcrt);
-	
+
 	return ret;
 }
 
@@ -713,7 +713,7 @@ x509_copy_certificate(PurpleCertificate *crt)
 	newcrt->scheme = &x509_nss;
 	/* NSS does refcounting automatically */
 	newcrt->data = CERT_DupCertificate(crt_dat);
-	
+
 	return newcrt;
 }
 
@@ -759,7 +759,7 @@ x509_signed_by(PurpleCertificate * crt,
 	CERTCertificate *subjectCert;
 	CERTCertificate *issuerCert;
 	SECStatus st;
-	
+
 	issuerCert = X509_NSS_DATA(issuer);
 	g_return_val_if_fail(issuerCert, FALSE);
 
@@ -795,7 +795,7 @@ x509_sha1sum(PurpleCertificate *crt)
 	sha1sum = g_byte_array_sized_new(hashlen);
 	/* glib leaves the size as 0 by default */
 	sha1sum->len = hashlen;
-	
+
 	st = PK11_HashBuf(SEC_OID_SHA1, sha1sum->data,
 			  derCert->data, derCert->len);
 
@@ -814,7 +814,7 @@ static gchar *
 x509_dn (PurpleCertificate *crt)
 {
 	CERTCertificate *crt_dat;
-	
+
 	g_return_val_if_fail(crt, NULL);
 	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
 
@@ -828,7 +828,7 @@ static gchar *
 x509_issuer_dn (PurpleCertificate *crt)
 {
 	CERTCertificate *crt_dat;
-	
+
 	g_return_val_if_fail(crt, NULL);
 	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
 
@@ -844,7 +844,7 @@ x509_common_name (PurpleCertificate *crt)
 	CERTCertificate *crt_dat;
 	char *nss_cn;
 	gchar *ret_cn;
-	
+
 	g_return_val_if_fail(crt, NULL);
 	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
 
@@ -875,7 +875,7 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 {
 	CERTCertificate *crt_dat;
 	SECStatus st;
-	
+
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
 
@@ -890,7 +890,7 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 	else if (st == SECFailure) {
 		return FALSE;
 	}
-	
+
 	/* If we get here...bad things! */
 	purple_debug_error("nss/x509",
 			   "x509_check_name fell through where it shouldn't "
@@ -903,7 +903,7 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 {
 	CERTCertificate *crt_dat;
 	PRTime nss_activ, nss_expir;
-	
+
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
 
@@ -926,7 +926,7 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	if (expiration) {
 		*expiration = nss_expir / 1000000;
 	}
-	
+
 	return TRUE;
 }
 

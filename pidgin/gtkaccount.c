@@ -2500,7 +2500,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-	
+
 	aa = g_new0(struct auth_request, 1);
 	aa->auth_cb = auth_cb;
 	aa->deny_cb = deny_cb;
@@ -2509,14 +2509,14 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	aa->alias = g_strdup(alias);
 	aa->account = account;
 	aa->add_buddy_after_auth = !on_list;
-	
+
 	alert = pidgin_make_mini_dialog_with_custom_icon(
 		gc, prpl_icon,
 		_("Authorize buddy?"), buffer, aa,
 		_("Authorize"), authorize_and_add_cb,
 		_("Deny"), deny_no_add_cb,
 		NULL);
-	
+
 	g_signal_connect_swapped(G_OBJECT(alert), "destroy", G_CALLBACK(free_auth_request), aa);
 	g_signal_connect(G_OBJECT(alert), "destroy", G_CALLBACK(purple_account_request_close), NULL);
 	pidgin_blist_add_alert(alert);

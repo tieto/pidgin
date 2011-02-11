@@ -32,7 +32,7 @@ for match in registerregex.finditer(sys.stdin.read()):
         continue
 
     signal = nameregex.sub(lambda x:x.group()[1].upper(), '-'+signal)
-    print "\"<signal name='%s'>\\n\""%signal
+    print "\"    <signal name='%s'>\\n\""%signal
 
     args = marshal.split('_')
     # ['purple', 'marshal', <return type>, '', args...]
@@ -52,9 +52,9 @@ for match in registerregex.finditer(sys.stdin.read()):
                 type = 't'
             elif arg == "BOOLEAN":
                 type = 'b'
-            print "\"<arg type='%s'/>\\n\""%type
+            print "\"      <arg type='%s'/>\\n\""%type
 
-    print "\"</signal>\\n\""
+    print "\"    </signal>\\n\""
 
 print ";"
 

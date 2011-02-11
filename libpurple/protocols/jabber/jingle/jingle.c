@@ -42,6 +42,9 @@
 GType
 jingle_get_type(const gchar *type)
 {
+	if (type == NULL)
+		return G_TYPE_NONE;
+
 	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
@@ -170,7 +173,7 @@ jingle_handle_description_info(JingleSession *session, xmlnode *jingle)
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -201,7 +204,7 @@ jingle_handle_session_accept(JingleSession *session, xmlnode *jingle)
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 
 	jingle_session_accept_session(session);
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -263,7 +266,7 @@ jingle_handle_transport_accept(JingleSession *session, xmlnode *jingle)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -282,7 +285,7 @@ jingle_handle_transport_info(JingleSession *session, xmlnode *jingle)
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
-		JingleContent *parsed_content = 
+		JingleContent *parsed_content =
 				jingle_session_find_content(session, name, creator);
 		if (parsed_content == NULL) {
 			purple_debug_error("jingle", "Error parsing content\n");
@@ -301,7 +304,7 @@ jingle_handle_transport_reject(JingleSession *session, xmlnode *jingle)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
-	
+
 	for (; content; content = xmlnode_get_next_twin(content)) {
 		const gchar *name = xmlnode_get_attrib(content, "name");
 		const gchar *creator = xmlnode_get_attrib(content, "creator");
@@ -447,13 +450,13 @@ jingle_create_relay_info(const gchar *ip, guint port, const gchar *username,
 {
 	GValue value;
 	GstStructure *turn_setup = gst_structure_new("relay-info",
-		"ip", G_TYPE_STRING, ip, 
+		"ip", G_TYPE_STRING, ip,
 		"port", G_TYPE_UINT, port,
 		"username", G_TYPE_STRING, username,
 		"password", G_TYPE_STRING, password,
 		"relay-type", G_TYPE_STRING, relay_type,
 		NULL);
-	purple_debug_info("jabber", "created gst_structure %" GST_PTR_FORMAT "\n", 
+	purple_debug_info("jabber", "created gst_structure %" GST_PTR_FORMAT "\n",
 		turn_setup);
 	if (turn_setup) {
 		memset(&value, 0, sizeof(GValue));
@@ -477,18 +480,18 @@ jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 		(relay_ip ? 3 : 2) : (relay_ip ? 1 : 0);
 	GParameter *params = NULL;
 	int next_index = 0;
-	
+
 	if (num_params > 0) {
 		params = g_new0(GParameter, num_params);
 
 		if (has_account_stun) {
-			purple_debug_info("jabber", 
+			purple_debug_info("jabber",
 				"setting param stun-ip for stream using Google auto-config: %s\n",
 				js->stun_ip);
 			params[next_index].name = "stun-ip";
 			g_value_init(&params[next_index].value, G_TYPE_STRING);
 			g_value_set_string(&params[next_index].value, js->stun_ip);
-			purple_debug_info("jabber", 
+			purple_debug_info("jabber",
 				"setting param stun-port for stream using Google auto-config: %d\n",
 				js->stun_port);
 			next_index++;
@@ -497,22 +500,22 @@ jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 			g_value_set_uint(&params[next_index].value, js->stun_port);
 			next_index++;
 		}
-	
+
 		if (relay_ip) {
 			GValueArray *relay_info = g_value_array_new(0);
 
 			if (relay_udp) {
-				relay_info = 
+				relay_info =
 					jingle_create_relay_info(relay_ip, relay_udp, relay_username,
 						relay_password, "udp", relay_info);
 			}
 			if (relay_tcp) {
-				relay_info = 
+				relay_info =
 					jingle_create_relay_info(relay_ip, relay_tcp, relay_username,
 						relay_password, "tcp", relay_info);
 			}
 			if (relay_ssltcp) {
-				relay_info = 
+				relay_info =
 					jingle_create_relay_info(relay_ip, relay_ssltcp, relay_username,
 						relay_password, "tls", relay_info);
 			}

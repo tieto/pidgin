@@ -11,6 +11,7 @@ check_libpurple_SOURCES=\
 	    tests.h \
 		test_cipher.c \
 		test_jabber_caps.c \
+		test_jabber_digest_md5.c \
 		test_jabber_jutil.c \
 		test_jabber_scram.c \
 		test_qq.c \

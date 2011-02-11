@@ -241,7 +241,7 @@ typedef struct
 	void *(*request_action_with_icon)(const char *title, const char *primary,
 	                        const char *secondary, int default_action,
 	                        PurpleAccount *account, const char *who,
-	                        PurpleConversation *conv, 
+	                        PurpleConversation *conv,
 	                        gconstpointer icon_data, gsize icon_size,
 	                        void *user_data,
 	                        size_t action_count, va_list actions);
@@ -1401,18 +1401,18 @@ void *purple_request_action_varg(void *handle, const char *title,
 	void *user_data, size_t action_count, va_list actions);
 
 /**
- * Version of purple_request_action() supplying an image for the UI to 
+ * Version of purple_request_action() supplying an image for the UI to
  * optionally display as an icon in the dialog; see its documentation
  * @since 2.7.0
  */
-void *purple_request_action_with_icon(void *handle, const char *title, 
-	const char *primary, const char *secondary, int default_action, 
-	PurpleAccount *account, const char *who, PurpleConversation *conv, 
-	gconstpointer icon_data, gsize icon_size, void *user_data, 
+void *purple_request_action_with_icon(void *handle, const char *title,
+	const char *primary, const char *secondary, int default_action,
+	PurpleAccount *account, const char *who, PurpleConversation *conv,
+	gconstpointer icon_data, gsize icon_size, void *user_data,
 	size_t action_count, ...);
 
 /**
- * <tt>va_list</tt> version of purple_request_action_with_icon(); 
+ * <tt>va_list</tt> version of purple_request_action_with_icon();
  * see its documentation.
  * @since 2.7.0
  */
@@ -1508,7 +1508,7 @@ void purple_request_close_with_handle(void *handle);
 						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
 
 /**
- * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel 
+ * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
  * buttons.
  */
 #define purple_request_accept_cancel_with_icon(handle, title, primary, secondary, \

@@ -10,6 +10,7 @@ WriteMakefile(
       (ABSTRACT_FROM    => '@srcdir@/Purple.pm', # finds $ABSTRACT
        AUTHOR           => 'Purple <http://pidgin.im/>') : ()),
     'DEFINE'            => '@DEBUG_CFLAGS@',
+    'dynamic_lib'       => { 'OTHERLDFLAGS' => '@LDFLAGS@' },
     'INC'               => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple @GLIB_CFLAGS@',
     'OBJECT'            => '$(O_FILES)', # link all the C files too
 #    'OPTIMIZE'          => '-g', # For debugging

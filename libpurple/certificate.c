@@ -314,7 +314,7 @@ purple_certificate_check_signature_chain_with_failing(GList *chain,
 		uid = purple_certificate_get_unique_id(issuer);
 
 		ret = purple_certificate_get_times(issuer, &activation, &expiration);
-		if (!ret || now < activation || now > expiration) { 
+		if (!ret || now < activation || now > expiration) {
 			if (!ret)
 				purple_debug_error("certificate",
 						"...Failed to get validity times for certificate %s\n"
@@ -413,7 +413,7 @@ byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
 	return (array1->len == array2->len) &&
 		(0 == memcmp(array1->data, array2->data, array1->len));
 }
-	
+
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -1602,7 +1602,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	GSList *ca_crts, *cur;
 	GByteArray *last_fpr, *ca_fpr;
 	gboolean valid = FALSE;
-	gchar *ca_id;
+	gchar *ca_id, *ca2_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
 
@@ -1619,7 +1619,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (self signed) */
 
-	/* Next, attempt to verify the last certificate against a CA */
 	ca = purple_certificate_find_pool(x509_tls_cached.scheme_name, "ca");
 
 	/* Next, check that the certificate chain is valid */
@@ -1669,6 +1668,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (signature chain not good) */
 
+	/* Next, attempt to verify the last certificate is signed by a trusted
+	 * CA, or is a trusted CA (based on fingerprint).
+	 */
 	/* If, for whatever reason, there is no Certificate Authority pool
 	   loaded, we'll verify the subject name and then warn about thsi. */
 	if ( !ca ) {
@@ -1684,26 +1686,30 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 
 	end_crt = g_list_last(chain)->data;
 
-	/* Attempt to look up the last certificate's issuer */
-	ca_id = purple_certificate_get_issuer_unique_id(end_crt);
+	/* Attempt to look up the last certificate, and the last certificate's
+	 * issuer. 
+	 */
+	ca_id  = purple_certificate_get_issuer_unique_id(end_crt);
+	ca2_id = purple_certificate_get_unique_id(end_crt);
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for a CA with DN=%s\n",
 			  ca_id);
-	ca_crts = x509_ca_get_certs(ca_id);
+	purple_debug_info("certificate/x509/tls_cached",
+			  "Also checking for a CA with DN=%s\n",
+			  ca2_id);
+	ca_crts = g_slist_concat(x509_ca_get_certs(ca_id), x509_ca_get_certs(ca2_id));
+	g_free(ca_id);
+	g_free(ca2_id);
 	if ( NULL == ca_crts ) {
 		flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 
 		purple_debug_warning("certificate/x509/tls_cached",
-				  "Certificate Authority with DN='%s' not "
-				  "found. I'll prompt the user, I guess.\n",
-				  ca_id);
-		g_free(ca_id);
+				  "No Certificate Authorities with either DN found "
+				  "found. I'll prompt the user, I guess.\n");
 
 		x509_tls_cached_check_subject_name(vrq, flags);
 		return;
 	}
-
-	g_free(ca_id);
 
 	/*
 	 * Check the fingerprints; if they match, then this certificate *is* one
@@ -1714,10 +1720,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	 *
 	 * If the fingerprints don't match, we'll fall back to checking the
 	 * signature.
-	 *
-	 * GnuTLS doesn't seem to include the final root in the verification
-	 * list, so this check will never succeed.  NSS *does* include it in
-	 * the list, so here we are.
 	 */
 	last_fpr = purple_certificate_get_fingerprint_sha1(end_crt);
 	for (cur = ca_crts; cur; cur = cur->next) {

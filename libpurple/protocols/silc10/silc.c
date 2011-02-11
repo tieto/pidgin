@@ -388,7 +388,7 @@ silcpurple_close(PurpleConnection *gc)
 	GHashTable *ui_info;
 	const char *ui_name = NULL, *ui_website = NULL;
 	char *quit_msg;
-	
+
 	g_return_if_fail(sg != NULL);
 
 	ui_info = purple_core_get_ui_info();
@@ -1557,7 +1557,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	GHashTable *ui_info;
 	const char *ui_name = NULL, *ui_website = NULL;
 	char *quit_msg;
-	
+
 	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)

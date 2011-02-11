@@ -858,7 +858,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 			purple_network_get_all_local_system_ips();
 		const char *public_ip;
 		gboolean has_public_ip = FALSE;
-		
+
 		jsx->local_streamhost_fd = sock;
 
 		jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
@@ -1238,7 +1238,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
 #endif
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-	
+
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
@@ -1263,14 +1263,14 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 				mimetype, TRUE, jsx->js);
 		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
 		xmlnode_set_namespace(thumbnail, NS_THUMBS);
-		xmlnode_set_attrib(thumbnail, "cid", 
+		xmlnode_set_attrib(thumbnail, "cid",
 			jabber_data_get_cid(thumbnail_data));
 		xmlnode_set_attrib(thumbnail, "mime-type", mimetype);
 		/* cache data */
 		jabber_data_associate_local(thumbnail_data, NULL);
 	}
 #endif
-						  
+
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
@@ -1505,7 +1505,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		JabberBuddyResource *jbr = NULL;
 		char *resource;
 		GList *resources = NULL;
-		
+
 		if(NULL != (resource = jabber_get_resource(xfer->who))) {
 			/* they've specified a resource, no need to ask or
 			 * default or anything, just do it */
@@ -1531,7 +1531,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 				}
 			}
 		}
-		
+
 		if (!resources) {
 			/* no resources online, we're trying to send to someone
 			 * whose presence we're not subscribed to, or
@@ -1560,7 +1560,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 			PurpleRequestFields *fields = purple_request_fields_new();
 			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
 			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
-			
+
 			for(l = resources; l; l = l->next) {
 				jbr = l->data;
 				purple_request_field_choice_add(field, jbr->name);
@@ -1763,7 +1763,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-				   
+
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
 #if ENABLE_FT_THUMBNAILS

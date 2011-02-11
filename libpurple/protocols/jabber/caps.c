@@ -803,7 +803,7 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 	return fields;
 }
 
-static void 
+static void
 append_escaped_string(PurpleCipherContext *context, const gchar *str)
 {
 	if (str && *str) {

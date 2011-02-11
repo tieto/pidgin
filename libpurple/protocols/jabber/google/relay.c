@@ -38,7 +38,7 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 	for (; lines[i] ; i++) {
 		gchar *line = lines[i];
 		gchar **parts = g_strsplit(line, "=", 2);
-		
+
 		if (parts[0] && parts[1]) {
 			if (purple_strequal(parts[0], "relay.ip")) {
 				*ip = g_strdup(parts[1]);
@@ -61,7 +61,7 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 }
 
 static void
-jabber_google_relay_remove_url_data(JabberStream *js, 
+jabber_google_relay_remove_url_data(JabberStream *js,
 	PurpleUtilFetchUrlData *url_data)
 {
 	GList *iter = js->google_relay_requests;
@@ -76,8 +76,8 @@ jabber_google_relay_remove_url_data(JabberStream *js,
 }
 
 static void
-jabber_google_relay_fetch_cb(PurpleUtilFetchUrlData *url_data, 
-	gpointer user_data, const gchar *url_text, gsize len, 
+jabber_google_relay_fetch_cb(PurpleUtilFetchUrlData *url_data,
+	gpointer user_data, const gchar *url_text, gsize len,
 	const gchar *error_message)
 {
 	JabberGoogleRelayCallbackData *data =
@@ -93,7 +93,7 @@ jabber_google_relay_fetch_cb(PurpleUtilFetchUrlData *url_data,
 	gchar *relay_password = NULL;
 
 	g_free(data);
-	
+
 	if (url_data) {
 		jabber_google_relay_remove_url_data(js, url_data);
 	}
@@ -128,15 +128,15 @@ jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 		g_strdup_printf("GET /create_session HTTP/1.0\r\n"
 			            "Host: %s\r\n"
 						"X-Talk-Google-Relay-Auth: %s\r\n"
-						"X-Google-Relay-Auth: %s\r\n\r\n", 
+						"X-Google-Relay-Auth: %s\r\n\r\n",
 			js->google_relay_host, js->google_relay_token, js->google_relay_token);
 	JabberGoogleRelayCallbackData *data = g_new0(JabberGoogleRelayCallbackData, 1);
 
 	data->session = session;
 	data->cb = cb;
-	purple_debug_info("jabber", 
-		"sending Google relay request %s to %s\n", request, url); 
-	url_data = 
+	purple_debug_info("jabber",
+		"sending Google relay request %s to %s\n", request, url);
+	url_data =
 		purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
 			jabber_google_relay_fetch_cb, data);
 	if (url_data) {

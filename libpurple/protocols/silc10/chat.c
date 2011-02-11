@@ -1065,7 +1065,7 @@ void silcpurple_chat_join_done(SilcClient client,
 char *silcpurple_get_chat_name(GHashTable *data)
 {
 	return g_strdup(g_hash_table_lookup(data, "channel"));
-}	
+}
 
 void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 {

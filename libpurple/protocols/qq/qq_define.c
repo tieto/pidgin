@@ -118,6 +118,8 @@ const gchar *qq_get_ver_desc(gint source)
 		return "QQMac 1.0 preview1 build 670";
 	case QQ_CLIENT_1441:
 		return "QQ2009 preview2";
+	case QQ_CLIENT_1663:
+		return "QQ2009";
 	case QQ_SERVER_0100:
 		return "QQ Server 0100";
 	default:

@@ -85,6 +85,7 @@ int main(void)
 
 	srunner_add_suite(sr, cipher_suite());
 	srunner_add_suite(sr, jabber_caps_suite());
+	srunner_add_suite(sr, jabber_digest_md5_suite());
 	srunner_add_suite(sr, jabber_jutil_suite());
 	srunner_add_suite(sr, jabber_scram_suite());
 	srunner_add_suite(sr, qq_suite());

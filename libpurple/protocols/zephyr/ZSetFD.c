@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -17,6 +17,6 @@ Code_t ZSetFD(fd)
 
 	__Zephyr_fd = fd;
 	__Zephyr_open = 0;
-	
+
 	return (ZERR_NONE);
 }

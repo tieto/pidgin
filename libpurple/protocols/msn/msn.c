@@ -200,7 +200,7 @@ prp_success_cb(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	const char *type, *friendlyname;
 	struct public_alias_closure *closure;
-	
+
 	g_return_if_fail(cmd->param_count >= 3);
 	type = cmd->params[1];
 	g_return_if_fail(!strcmp(type, "MFN"));
@@ -737,7 +737,7 @@ msn_show_blocked_text(PurplePluginAction *action)
 		char *blocked_text;
 		blocked_text = g_strdup_printf(_("MSN servers are currently blocking the following regular expressions:<br/>%s"),
 		                               session->blocked_text);
-		
+
 		purple_notify_formatted(pc, title, title, NULL, blocked_text, NULL, NULL);
 		g_free(blocked_text);
 	}
@@ -760,7 +760,7 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 		return;
 	}
 
-	/** apparently the correct value is 777, use 750 as a failsafe */ 
+	/** apparently the correct value is 777, use 750 as a failsafe */
 	if ((session->passport_info.mail_url == NULL)
 		|| (time (NULL) - session->passport_info.mail_timestamp >= 750)) {
 		MsnTransaction *trans;
@@ -1586,7 +1586,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		swboard != NULL) {
 		/*User online or have a swboard open because it's invisible
 		 * and sent us a message,then send Online Instant Message*/
- 
+
 		if (msglen + strlen(msgformat) + strlen(VERSION) > 1564)
 		{
 			g_free(msgformat);
@@ -1850,7 +1850,7 @@ cancel_auth_request(MsnAddReqData *data, char *msg)
 {
 	/* Remove from local list */
 	purple_blist_remove_buddy(data->buddy);
-	
+
 	g_free(data);
 }
 

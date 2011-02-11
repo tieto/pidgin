@@ -141,7 +141,7 @@ page_count_change_cb(PidginScrollBook *scroll_book)
 static gboolean
 scroll_close_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
-	if (event->type == GDK_BUTTON_PRESS)	
+	if (event->type == GDK_BUTTON_PRESS)
 		gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
 	return FALSE;
 }

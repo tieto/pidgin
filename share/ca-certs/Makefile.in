@@ -322,6 +322,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CERTIFICATES = \
+		AddTrust_External_Root.pem \
 		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \

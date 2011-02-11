@@ -731,7 +731,7 @@ jabber_buddy_state_get_status_id(JabberBuddyState state)
 }
 
 char *
-jabber_calculate_data_hash(gconstpointer data, size_t len, 
+jabber_calculate_data_hash(gconstpointer data, size_t len,
     const gchar *hash_algo)
 {
 	PurpleCipherContext *context;

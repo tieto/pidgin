@@ -82,7 +82,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	gchar **users_tbl;
 	int i;
 	char *utf8buddylist = charset_convert(buddylist, "CP1250", "UTF-8");
-	
+
 	/* Don't limit the number of records in a buddylist. */
 	users_tbl = g_strsplit(utf8buddylist, "\r\n", -1);
 
@@ -95,7 +95,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 
 		data_tbl = g_strsplit(users_tbl[i], ";", 8);
 		if (ggp_array_size(data_tbl) < 8) {
-			purple_debug_warning("gg", 
+			purple_debug_warning("gg",
 				"Something is wrong on line %d of the buddylist. Skipping.\n",
 				i + 1);
 			continue;

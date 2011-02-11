@@ -1155,7 +1155,7 @@ finch_conv_has_focus(PurpleConversation *conv)
 	return FALSE;
 }
 
-static PurpleConversationUiOps conv_ui_ops = 
+static PurpleConversationUiOps conv_ui_ops =
 {
 	finch_create_conversation,
 	finch_destroy_conversation,

@@ -530,6 +530,7 @@ Section Uninstall
     Push "xmpp"
     Call un.UnregisterURIHandler
 
+    Delete "$INSTDIR\ca-certs\AddTrust_External_Root.pem"
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
     Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"

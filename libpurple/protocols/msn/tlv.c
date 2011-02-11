@@ -267,7 +267,7 @@ msn_tlvlist_replace_8(GSList **list, const guint16 type, const guint8 value)
 	return msn_tlvlist_replace_raw(list, type, 1, v8);
 }
 
-int 
+int
 msn_tlvlist_replace_32(GSList **list, const guint16 type, const guint32 value)
 {
 	char v32[4];

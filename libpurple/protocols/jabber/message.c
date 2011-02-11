@@ -945,7 +945,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			const GList *iterator;
 			GList *valid_smileys = NULL;
 			gboolean has_too_large_smiley = FALSE;
-			
+
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
 				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
@@ -976,7 +976,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 							"(too large, max is %d)\n",
 							purple_smiley_get_shortcut(smiley),
 							JABBER_DATA_MAX_SIZE);
-				}				
+				}
 			}
 
 			if (has_too_large_smiley) {
@@ -1244,7 +1244,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *resource;	
+	char *resource;
 
 	js = purple_connection_get_protocol_data(gc);
 	jb = jabber_buddy_find(js, who, TRUE);

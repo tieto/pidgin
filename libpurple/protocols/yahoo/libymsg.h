@@ -28,6 +28,7 @@
 #include "circbuffer.h"
 #include "cmds.h"
 #include "prpl.h"
+#include "network.h"
 
 #define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
 #define YAHOO_PAGER_HOST_FALLBACK "scsa.msg.yahoo.com"
@@ -243,6 +244,7 @@ typedef struct {
 	GSList *url_datas;
 	GHashTable *xfer_peer_idstring_map;/* Hey, i dont know, but putting this HashTable next to friends gives a run time fault... */
 	GSList *cookies;/* contains all cookies, including _y and _t */
+	PurpleNetworkListenData *listen_data;
 
 	/**
 	 * We may receive a list15 in multiple packets with no prior warning as to how many we'll be getting;

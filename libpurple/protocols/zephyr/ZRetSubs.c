@@ -6,7 +6,7 @@
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -25,7 +25,7 @@ Code_t ZRetrieveSubscriptions(port,nsubs)
 	int retval;
 	ZNotice_t notice;
 	char asciiport[50];
-	
+
 	if (!port)			/* use default port */
 	    port = __Zephyr_port;
 
@@ -102,7 +102,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 		if (retnotice.z_kind == SERVNAK) {
 			ZFreeNotice(&retnotice);
 			return (ZERR_SERVNAK);
-		}	
+		}
 		/* non-matching protocol version numbers means the
 		   server is probably an older version--must punt */
 		if (strcmp(notice->z_version,retnotice.z_version)) {
@@ -114,7 +114,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 			ZFreeNotice(&retnotice);
 			gimmeack = 1;
 			continue;
-		} 
+		}
 
 		if (retnotice.z_kind != ACKED) {
 			ZFreeNotice(&retnotice);

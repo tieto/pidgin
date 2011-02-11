@@ -554,11 +554,11 @@ finch_sound_play_file(const char *filename)
 	}
 
 	play = gst_element_factory_make("playbin", "play");
-	
+
 	if (play == NULL) {
 		return;
 	}
-	
+
 	uri = g_strdup_printf("file://%s", filename);
 
 	g_object_set(G_OBJECT(play), "uri", uri,
@@ -688,7 +688,7 @@ file_cb(GntFileSel *w, const char *path, const char *file, gpointer data)
 
 	gnt_tree_change_text(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(event->id), 1, file);
 	gnt_tree_set_choice(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(event->id), TRUE);
-	
+
 	gnt_widget_destroy(GNT_WIDGET(w));
 }
 
@@ -731,7 +731,7 @@ static void
 reset_cb(GntWidget *button, gpointer null)
 {
 	/* Don't dereference this pointer ! */
-	gpointer key = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)); 
+	gpointer key = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
 
 	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
 	g_free(event->file);
@@ -881,7 +881,7 @@ prof_add_cb(GntButton *button, GntEntry * entry)
 		gnt_entry_set_text(entry, "");
 		gnt_tree_set_selected(GNT_TREE(pref_dialog->profiles), key);
 		finch_sound_set_active_profile(key);
-	} else 
+	} else
 		reload_pref_window(profile);
 }
 
@@ -982,13 +982,13 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox), "nosound", _("No Sound"));
 
 	label = gnt_label_new_with_format(_("Sound Method"), GNT_TEXT_FLAG_BOLD);
-	gnt_box_add_widget(GNT_BOX(box), label); 
+	gnt_box_add_widget(GNT_BOX(box), label);
 	tmpbox = gnt_hbox_new(TRUE);
 	gnt_box_set_fill(GNT_BOX(tmpbox), FALSE);
 	gnt_box_set_pad(GNT_BOX(tmpbox), 0);
 	gnt_box_add_widget(GNT_BOX(tmpbox), gnt_label_new(_("Method: ")));
 	gnt_box_add_widget(GNT_BOX(tmpbox), cmbox);
-	gnt_box_add_widget(GNT_BOX(box), tmpbox); 
+	gnt_box_add_widget(GNT_BOX(box), tmpbox);
 
 	tmpbox = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(tmpbox), 0);
@@ -1001,7 +1001,7 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(box), gnt_line_new(FALSE));
 
 	/* Sound options */
-	gnt_box_add_widget(GNT_BOX(box), gnt_label_new_with_format(_("Sound Options"), GNT_TEXT_FLAG_BOLD)); 
+	gnt_box_add_widget(GNT_BOX(box), gnt_label_new_with_format(_("Sound Options"), GNT_TEXT_FLAG_BOLD));
 	pref_dialog->conv_focus = chkbox = gnt_check_box_new(_("Sounds when conversation has focus"));
 	gnt_box_add_widget(GNT_BOX(box), chkbox);
 
@@ -1038,7 +1038,7 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win), gnt_hline_new());
 
 	/* Sound events */
-	gnt_box_add_widget(GNT_BOX(win), gnt_label_new_with_format(_("Sound Events"), GNT_TEXT_FLAG_BOLD)); 
+	gnt_box_add_widget(GNT_BOX(win), gnt_label_new_with_format(_("Sound Events"), GNT_TEXT_FLAG_BOLD));
 	pref_dialog->events = tree = gnt_tree_new_with_columns(2);
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Event"), _("File"));
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);

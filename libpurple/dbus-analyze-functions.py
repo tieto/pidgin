@@ -3,7 +3,7 @@ import string
 import sys
 
 # types translated into "int"
-simpletypes = ["int", "gint", "guint", "gboolean", "gpointer", "size_t", "gssize", "time_t"]
+simpletypes = ["int", "gint", "guint", "gboolean", "size_t", "gssize", "time_t"]
 
 # List "excluded" contains functions that shouldn't be exported via
 # DBus.  If you remove a function from this list, please make sure
