@@ -122,7 +122,7 @@
 
 
 /*
- * data structure containing all MXit session information 
+ * data structure containing all MXit session information
  */
 struct MXitSession {
 	/* socket connection */

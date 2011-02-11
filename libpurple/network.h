@@ -163,7 +163,7 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  * Libpurple does not currently do any port mapping (stateful firewall hole
  * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
  * addresses, a mapping is done).
- * 
+ *
  * @param socket_family The protocol family of the socket.  This should be
  *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
  *                      may or may not be able to accept IPv4 connections
@@ -214,11 +214,11 @@ PurpleNetworkListenData *purple_network_listen_range(unsigned short start,
 
 /**
  * \copydoc purple_network_listen_range
- * 
+ *
  * Libpurple does not currently do any port mapping (stateful firewall hole
  * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
  * addresses, a mapping is done).
- * 
+ *
  * @param socket_family The protocol family of the socket.  This should be
  *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
  *                      may or may not be able to accept IPv4 connections

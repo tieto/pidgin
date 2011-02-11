@@ -56,7 +56,7 @@ extern "C" {
 #undef GG_CONFIG_HAVE_PTHREAD
 
 /* Defined if pthread resolver is the default one. */
-#undef GG_CONFIG_PTHREAD_DEFAULT 
+#undef GG_CONFIG_PTHREAD_DEFAULT
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
 #undef GG_CONFIG_HAVE_C99_VSNPRINTF
@@ -267,7 +267,7 @@ struct gg_session {
 	int send_left;		/**< Liczba bajtów do wysłania */
 
 	struct gg_dcc7 *dcc7_list;	/**< Lista połączeń bezpośrednich skojarzonych z sesją */
-	
+
 	int soft_timeout;	/**< Flaga mówiąca, że po przekroczeniu \c timeout należy wywołać \c gg_watch_fd() */
 
 	int protocol_flags;	/**< Flagi protokołu */
@@ -890,7 +890,7 @@ struct gg_event_dcc7_accept {
 };
 
 /**
- * Unia wszystkich zdarzeń zwracanych przez funkcje \c gg_watch_fd(), 
+ * Unia wszystkich zdarzeń zwracanych przez funkcje \c gg_watch_fd(),
  * \c gg_dcc_watch_fd() i \c gg_dcc7_watch_fd().
  *
  * \ingroup events
@@ -982,7 +982,7 @@ void gg_pubdir50_free(gg_pubdir50_t res);
 
 #else
 
-/** 
+/**
  * \ingroup pubdir50
  *
  * Rodzaj pola zapytania.
@@ -1048,7 +1048,7 @@ void gg_pubdir_free(struct gg_http *f);
 
 /**
  * Token autoryzacji niektórych operacji HTTP.
- * 
+ *
  * \ingroup token
  */
 struct gg_token {
@@ -1171,7 +1171,7 @@ extern unsigned long gg_local_ip;
 
 /**
  * \ingroup pubdir50
- * 
+ *
  * Rodzaj zapytania lub odpowiedzi katalogu publicznego.
  */
 enum {
@@ -1382,7 +1382,7 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, void *pay
 
 #else
 
-/** 
+/**
  * \ingroup login
  *
  * Flagi opcji protokołu.

@@ -31,7 +31,7 @@
 
 typedef struct
 {
-	PurpleConnection *gc;
+	MsnSession *session;
 	char *who;
 	char *group;
 	gboolean add;
@@ -293,9 +293,9 @@ msn_complete_sync_issue(MsnAddRemData *data)
 		group = purple_find_group(data->group);
 
 	if (group != NULL)
-		buddy = purple_find_buddy_in_group(purple_connection_get_account(data->gc), data->who, group);
+		buddy = purple_find_buddy_in_group(data->session->account, data->who, group);
 	else
-		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
+		buddy = purple_find_buddy(data->session->account, data->who);
 
 	if (buddy != NULL)
 		purple_blist_remove_buddy(buddy);
@@ -309,14 +309,9 @@ msn_add_cb(MsnAddRemData *data)
 	/* this *should* be necessary !! */
 	msn_complete_sync_issue(data);
 #endif
+	MsnUserList *userlist = data->session->userlist;
 
-	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
-	{
-		MsnSession *session = data->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
-
-		msn_userlist_add_buddy(userlist, data->who, data->group);
-	}
+	msn_userlist_add_buddy(userlist, data->who, data->group);
 
 	g_free(data->group);
 	g_free(data->who);
@@ -326,18 +321,14 @@ msn_add_cb(MsnAddRemData *data)
 static void
 msn_rem_cb(MsnAddRemData *data)
 {
+	MsnUserList *userlist = data->session->userlist;
 	msn_complete_sync_issue(data);
 
-	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
-	{
-		MsnSession *session = data->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
 
-		if (data->group == NULL) {
-			msn_userlist_rem_buddy_from_list(userlist, data->who, MSN_LIST_FL);
-		} else {
-			g_free(data->group);
-		}
+	if (data->group == NULL) {
+		msn_userlist_rem_buddy_from_list(userlist, data->who, MSN_LIST_FL);
+	} else {
+		g_free(data->group);
 	}
 
 	g_free(data->who);
@@ -356,17 +347,17 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	data        = g_new0(MsnAddRemData, 1);
-	data->who   = g_strdup(passport);
-	data->group = g_strdup(group_name);
-	data->gc    = gc;
+	data          = g_new0(MsnAddRemData, 1);
+	data->who     = g_strdup(passport);
+	data->group   = g_strdup(group_name);
+	data->session = session;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
 						  purple_account_get_username(account),
 						  purple_account_get_protocol_name(account));
 
 	if (group_name != NULL)
-	{ 
+	{
 		reason = g_strdup_printf(_("%s on the local list is "
 								   "inside the group \"%s\" but not on "
 								   "the server list. "
@@ -374,7 +365,7 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 								 passport, group_name);
 	}
 	else
-	{ 
+	{
 		reason = g_strdup_printf(_("%s is on the local list but "
 								   "not on the server list. "
 								   "Do you want this buddy to be added?"),
@@ -382,7 +373,7 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 	}
 
 	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), data->who, NULL,
+						account, data->who, NULL,
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));
@@ -390,3 +381,4 @@ msn_error_sync_issue(MsnSession *session, const char *passport,
 	g_free(reason);
 	g_free(msg);
 }
+

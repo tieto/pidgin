@@ -67,7 +67,7 @@ struct _GntBindableClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */

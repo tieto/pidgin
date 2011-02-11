@@ -136,7 +136,7 @@ pidgin_blist_loader_build(const gchar *dir)
 	if (success) {
 		if ((success = (sub_node = xmlnode_get_child(root_node, "blist")) != NULL))
 			bgcolor = parse_color(sub_node, "color");
-		else 
+		else
 			purple_debug_warning("gtkblist-theme-loader", "Missing or problem with tags: <blist>.\n");
 	}
 

@@ -999,12 +999,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
-			purple_conv_im_set_typing_state(PURPLE_CONV_IM(conv), PURPLE_NOT_TYPING);
-		}
-	}
-
 	if (ops && ops->write_conv)
 		ops->write_conv(conv, who, alias, displayed, flags, mtime);
 
@@ -1229,6 +1223,10 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 		c->ui_ops->write_im(c, who, message, flags, mtime);
 	else
 		purple_conversation_write(c, who, message, flags, mtime);
+
+	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
+		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
+	}
 }
 
 gboolean purple_conv_present_error(const char *who, PurpleAccount *account, const char *what)
@@ -2298,7 +2296,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
-	
+
 	purple_signal_register(handle, "sent-attention",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
 						 NULL, 4,
@@ -2308,7 +2306,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
-	
+
 	purple_signal_register(handle, "got-attention",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
 						 NULL, 4,
@@ -2318,7 +2316,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
-	
+
 	purple_signal_register(handle, "sending-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
 						 NULL, 3,

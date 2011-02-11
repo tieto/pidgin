@@ -4,7 +4,7 @@
  * File: gtkappbar.h
  * Date: August 2, 2003
  * Description: Appbar functionality for Windows GTK+ applications
- * 
+ *
  * Copyright (C) 2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify

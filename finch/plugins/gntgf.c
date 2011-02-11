@@ -134,7 +134,7 @@ urgent(void)
 	ids = getenv("WINDOWID");
 	if (ids == NULL)
 		return;
-	
+
 	id = atoi(ids);
 
 	dpy = XOpenDisplay(NULL);
@@ -255,7 +255,7 @@ received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
 
 	if (flags & PURPLE_MESSAGE_WHISPER)
 		return;
-	
+
 	nick = PURPLE_CONV_CHAT(conv)->nick;
 
 	if (g_utf8_collate(sender, nick) == 0)
@@ -401,7 +401,7 @@ init_plugin(PurplePlugin *plugin)
 {
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gnt");
-	
+
 	purple_prefs_add_none("/plugins/gnt/gntgf");
 	purple_prefs_add_none(PREFS_EVENT);
 

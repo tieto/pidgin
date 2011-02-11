@@ -1,22 +1,22 @@
 # Hungarian translation of pidgin.
-# Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 # This file is distributed under the same license as the Pidgin package.
 # The Hungarian translation of Pidgin was sponsored by Novell Hungary, many thanks for it!
 #
 # Zoltan Sutto <suttozoltan@chello.hu>, 2003.
-# Gabor Kelemen <kelemeng at gnome dot hu>, 2005, 2006, 2007, 2008, 2009, 2010.
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2005, 2006, 2007, 2008, 2009, 2010, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin 2.7\n"
+"Project-Id-Version: pidgin 2.7.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-21 15:20+0100\n"
-"PO-Revision-Date: 2010-12-21 15:19+0100\n"
+"POT-Creation-Date: 2011-01-25 15:12+0100\n"
+"PO-Revision-Date: 2011-01-25 15:12+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
@@ -2350,9 +2350,12 @@ msgstr ""
 "A fájlok mentési útvonala\n"
 "(Teljes elérési utat adjon meg)"
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
-"Automatikus visszautasítás a partnerlistán nem szereplő felhasználóktól"
+"Ha fájlküldési kérés érkezik egy a partnerlistán NEM szereplő\n"
+"felhasználótól:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2364,6 +2367,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Új könyvtár létrehozása minden felhasználóhoz"
+
+msgid "Escape the filenames"
+msgstr "Fájlnevek escape-elése."
 
 msgid "Notes"
 msgstr "Megjegyzések"
@@ -3828,7 +3834,10 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "A kiszolgáló szöveges hitelesítést követel meg egy nem titkosított csatornán"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Érvénytelen válasz a kiszolgálótól"
 
@@ -6757,8 +6766,8 @@ msgstr "Nem lehet bejelentkezni: %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Az üzenetet nem lehet elküldeni. A felhasználó részletei nem kérhetőek le "
-"(%s)."
+"Az üzenetet nem lehet elküldeni. A felhasználó részletei nem kérhetőek le (%"
+"s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -7191,8 +7200,8 @@ msgid ""
 "%s tried to send you a %s file, but we only allow files up to %s over Direct "
 "IM.  Try using file transfer instead.\n"
 msgstr ""
-"%s egy %s fájlt próbált küldeni, de közvetlen kapcsolatban legfeljebb csak "
-"%s méretű fájl küldhető. Próbálkozzon inkább a fájlátvitellel.\n"
+"%s egy %s fájlt próbált küldeni, de közvetlen kapcsolatban legfeljebb csak %"
+"s méretű fájl küldhető. Próbálkozzon inkább a fájlátvitellel.\n"
 
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
@@ -8628,14 +8637,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Válassza ki a kiszolgálót"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Kapcsolódás TCP segítségével"
@@ -10831,8 +10840,8 @@ msgstr "%d HTTP proxy kapcsolathiba"
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
-"Hozzáférés megtagadva: a HTTP proxy kiszolgáló tiltja az alagutazást a(z) "
-"%d. porton"
+"Hozzáférés megtagadva: a HTTP proxy kiszolgáló tiltja az alagutazást a(z) %"
+"d. porton"
 
 #, c-format
 msgid "Error resolving %s"
@@ -11080,8 +11089,8 @@ msgid ""
 "An error was encountered reading your %s.  The file has not been loaded, and "
 "the old file has been renamed to %s~."
 msgstr ""
-"Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl "
-"%s~ néven lett elmentve."
+"Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl %"
+"s~ néven lett elmentve."
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -12207,10 +12216,6 @@ msgstr "Hiba "
 msgid "Fatal Error"
 msgstr "Végzetes hiba"
 
-# fixme: jobb ötlet?
-msgid "bug master"
-msgstr "hibaritkító"
-
 msgid "artist"
 msgstr "grafikus"
 
@@ -12390,6 +12395,9 @@ msgstr "lao"
 msgid "Maithili"
 msgstr "Maithili"
 
+msgid "Meadow Mari"
+msgstr "Mari"
+
 msgid "Macedonian"
 msgstr "macedón"
 
@@ -12510,8 +12518,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with "
-"%s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "A %s egy libpurple alapú moduláris üzenetküldő kliens, amely egyszerre több "
 "üzenetküldő szolgáltatáshoz is képes csatlakozni. A %s GTK+ használatával, C "
@@ -13061,16 +13069,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in "
-"%s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in %"
+"s which started at %s?"
 msgstr ""
 "Biztos, hogy törölni akarja a(z) %s csatornán folytatott, %s időpontban "
 "kezdődött beszélgetés naplóját?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at "
-"%s?"
+"Are you sure you want to permanently delete the system log which started at %"
+"s?"
 msgstr ""
 "Biztos, hogy törölni akarja a(z) %s időpontban kezdődött rendszernaplót?"
 
@@ -15421,8 +15429,8 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
-"%20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Hiba a helyesírás-ellenőrző telepítésekor. ($R3).$\\rHa az újrapróbálkozás "
 "meghiúsul, akkor saját kezűleg is telepítheti a http://developer.pidgin.im/"

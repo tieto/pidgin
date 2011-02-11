@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -23,11 +23,11 @@ Code_t ZCheckIfNotice(notice, from, predicate, args)
 
     if ((retval = Z_ReadEnqueue()) != ZERR_NONE)
 	return (retval);
-	
+
     qptr = Z_GetFirstComplete();
-    
+
     while (qptr) {
-	if ((retval = ZParseNotice(qptr->packet, qptr->packet_len, 
+	if ((retval = ZParseNotice(qptr->packet, qptr->packet_len,
 				   &tmpnotice)) != ZERR_NONE)
 	    return (retval);
 	if ((*predicate)(&tmpnotice, args)) {
@@ -36,14 +36,14 @@ Code_t ZCheckIfNotice(notice, from, predicate, args)
 	    (void) memcpy(buffer, qptr->packet, qptr->packet_len);
 	    if (from)
 		*from = qptr->from;
-	    if ((retval = ZParseNotice(buffer, qptr->packet_len, 
+	    if ((retval = ZParseNotice(buffer, qptr->packet_len,
 				       notice)) != ZERR_NONE) {
 		free(buffer);
 		return (retval);
 	    }
 	    Z_RemQueue(qptr);
 	    return (ZERR_NONE);
-	} 
+	}
 	qptr = Z_GetNextComplete(qptr);
     }
 

@@ -356,7 +356,7 @@ finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 
 	if (xfer_dialog->num_transfers == 0 && !xfer_dialog->keep_open)
 		finch_xfer_dialog_destroy();
-	else 
+	else
 		update_title_progress();
 	purple_xfer_unref(xfer);
 }

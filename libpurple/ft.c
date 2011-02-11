@@ -274,7 +274,7 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 	}
 }
 
-static void 
+static void
 purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	const char *message, gboolean is_error, gboolean print_thumbnail)
 {
@@ -302,12 +302,12 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;
-		gpointer data = g_memdup(thumbnail_data, size); 
+		gpointer data = g_memdup(thumbnail_data, size);
 		int id = purple_imgstore_add_with_id(data, size, NULL);
 
-		message_with_img = 
+		message_with_img =
 			g_strdup_printf("<img id='%d'> %s", id, escaped);
-		purple_conversation_write(conv, NULL, message_with_img, flags, 
+		purple_conversation_write(conv, NULL, message_with_img, flags,
 			time(NULL));
 		purple_imgstore_unref_by_id(id);
 		g_free(message_with_img);
@@ -530,7 +530,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 				xfer, G_CALLBACK(purple_xfer_choose_file),
 				G_CALLBACK(cancel_recv_cb));
 		}
-			
+
 		g_free(buf);
 	} else
 		purple_xfer_choose_file(xfer);

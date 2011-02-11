@@ -66,7 +66,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 
 		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(widget), &iter, &buf);
 		last_y = buf.y + buf.height;
-		pad = (gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget)) + 
+		pad = (gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget)) +
 				gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))) / 2;
 		last_y += pad;
 	}
@@ -132,7 +132,7 @@ window_resized(GtkWidget *w, GdkEventConfigure *event, PidginWindow *win)
 	GList *list;
 
 	list = pidgin_conv_window_get_gtkconvs(win);
-	
+
 	for (; list; list = list->next)
 		update_marker_for_gtkconv(list->data);
 

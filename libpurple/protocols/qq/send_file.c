@@ -278,7 +278,7 @@ gint qq_fill_conn_info(guint8 *raw_data, ft_info *info)
 
 /* fill in the common information of file transfer */
 static gint _qq_create_packet_file_header
-(guint8 *raw_data, guint32 to_uid, guint16 message_type, qq_data *qd, gboolean seq_ack)
+(guint8 *raw_data, UID to_uid, guint16 message_type, qq_data *qd, gboolean seq_ack)
 {
 	gint bytes;
 	time_t now;
@@ -430,7 +430,7 @@ static void _qq_xfer_init_socket(PurpleXfer *xfer)
 }
 
 /* create the QQ_FILE_TRANS_REQ packet with file infomations */
-static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, gchar *filename, gint filesize)
+static void _qq_send_packet_file_request (PurpleConnection *gc, UID to_uid, gchar *filename, gint filesize)
 {
 	qq_data *qd;
 	guint8 *raw_data;
@@ -482,7 +482,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 }
 
 /* tell the buddy we want to accept the file */
-static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_accept(PurpleConnection *gc, UID to_uid)
 {
 	qq_data *qd;
 	guint8 *raw_data;
@@ -520,7 +520,7 @@ static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 			    packet_len, bytes);
 }
 
-static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_notifyip(PurpleConnection *gc, UID to_uid)
 {
 	PurpleXfer *xfer;
 	ft_info *info;
@@ -552,7 +552,7 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 }
 
 /* tell the buddy we don't want the file */
-static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_reject (PurpleConnection *gc, UID to_uid)
 {
 	qq_data *qd;
 	guint8 *raw_data;
@@ -576,7 +576,7 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 }
 
 /* tell the buddy to cancel transfer */
-static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_cancel (PurpleConnection *gc, UID to_uid)
 {
 	qq_data *qd;
 	guint8 *raw_data;
@@ -611,7 +611,7 @@ _qq_xfer_init (PurpleXfer * xfer)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	guint32 to_uid;
+	UID to_uid;
 	const gchar *filename;
 	gchar *base_filename;
 
@@ -678,7 +678,7 @@ static void _qq_xfer_recv_init(PurpleXfer *xfer)
 
 /* process reject im for file transfer request */
 void qq_process_recv_file_reject (guint8 *data, gint data_len,
-		guint32 sender_uid, PurpleConnection *gc)
+		UID sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
 	qq_data *qd;
@@ -708,7 +708,7 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 
 /* process cancel im for file transfer request */
 void qq_process_recv_file_cancel (guint8 *data, gint data_len,
-		guint32 sender_uid, PurpleConnection *gc)
+		UID sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
 	qq_data *qd;
@@ -738,7 +738,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 }
 
 /* process accept im for file transfer request */
-void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc)
+void qq_process_recv_file_accept(guint8 *data, gint data_len, UID sender_uid, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint bytes;
@@ -764,7 +764,7 @@ void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid
 }
 
 /* process request from buddy's im for file transfer request */
-void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection * gc)
+void qq_process_recv_file_request(guint8 *data, gint data_len, UID sender_uid, PurpleConnection * gc)
 {
 	qq_data *qd;
 	PurpleXfer *xfer;
@@ -874,7 +874,7 @@ static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, PurpleInputC
 }
 
 void qq_process_recv_file_notify(guint8 *data, gint data_len,
-		guint32 sender_uid, PurpleConnection *gc)
+		UID sender_uid, PurpleConnection *gc)
 {
 	gint bytes;
 	qq_data *qd;

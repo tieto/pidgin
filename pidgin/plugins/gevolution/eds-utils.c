@@ -113,7 +113,7 @@ gevo_addrbooks_model_populate(GtkTreeModel *model)
 	g_object_unref(addressbooks);
 }
 
-static EContact * 
+static EContact *
 gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 {
 	EBook *book;
@@ -169,7 +169,7 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
  *              so callers must e_book_query_ref() it in advance (to obtain a
  *              second reference) if they want to reuse @a query.
  */
-EContact * 
+EContact *
 gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 {
 	ESourceList *addressbooks;

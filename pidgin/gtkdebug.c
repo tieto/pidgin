@@ -385,20 +385,20 @@ regex_match(DebugWindow *win, const gchar *text) {
 			gint m;
 			gint start_pos, end_pos;
 			GtkTextIter ms, me;
-			
+
 			if (!g_match_info_matches(match_info))
 				break;
-			
+
 			for (m = 0; m < g_match_info_get_match_count(match_info); m++)
 			{
 				if (m == 1)
 					continue;
-				
+
 				g_match_info_fetch_pos(match_info, m, &start_pos, &end_pos);
-				
+
 				if (end_pos == -1)
 					break;
-				
+
 				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &ms,
 													i + start_pos);
 				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &me,
@@ -407,7 +407,7 @@ regex_match(DebugWindow *win, const gchar *text) {
 												  &ms, &me);
 				offset = end_pos;
 			}
-			
+
 			g_match_info_free(match_info);
 			p += offset;
 			i += offset;

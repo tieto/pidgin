@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1990,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -85,7 +85,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
     end = notice->z_message+notice->z_message_len;
 
     __locate_num = 0;
-	
+
     for (ptr=notice->z_message;ptr<end;ptr++)
       if (!*ptr)
 	__locate_num++;

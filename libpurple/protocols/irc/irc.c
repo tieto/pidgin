@@ -39,7 +39,7 @@
 
 #define PING_TIMEOUT 60
 
-static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
+static void irc_ison_buddy_init(char *name, struct irc_buddy *ib, GList **list);
 
 static const char *irc_blist_icon(PurpleAccount *a, PurpleBuddy *b);
 static GList *irc_status_types(PurpleAccount *account);
@@ -186,43 +186,62 @@ int irc_send(struct irc_conn *irc, const char *buf)
 /* XXX I don't like messing directly with these buddies */
 gboolean irc_blist_timeout(struct irc_conn *irc)
 {
-	GString *string;
-	char *list, *buf;
-
-	if (irc->ison_outstanding)
-		return TRUE;
-
-	string = g_string_sized_new(512);
-
-	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_append, (gpointer)string);
-
-	list = g_string_free(string, FALSE);
-	if (!list || !strlen(list)) {
-		g_free(list);
+	if (irc->ison_outstanding) {
 		return TRUE;
 	}
 
-	buf = irc_format(irc, "vn", "ISON", list);
-	g_free(list);
-	irc_send(irc, buf);
-	g_free(buf);
+	g_hash_table_foreach(irc->buddies, (GHFunc)irc_ison_buddy_init,
+	                     (gpointer *)&irc->buddies_outstanding);
 
-	irc->ison_outstanding = TRUE;
+	irc_buddy_query(irc);
 
 	return TRUE;
 }
 
-static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string)
+void irc_buddy_query(struct irc_conn *irc)
 {
-	ib->flag = FALSE;
-	g_string_append_printf(string, "%s ", name);
+	GList *lp;
+	GString *string;
+	struct irc_buddy *ib;
+	char *buf;
+
+	string = g_string_sized_new(512);
+
+	while ((lp = g_list_first(irc->buddies_outstanding))) {
+		ib = (struct irc_buddy *)lp->data;
+		if (string->len + strlen(ib->name) + 1 > 450)
+			break;
+		g_string_append_printf(string, "%s ", ib->name);
+		ib->new_online_status = FALSE;
+		irc->buddies_outstanding = g_list_remove_link(irc->buddies_outstanding, lp);
+	}
+
+	if (string->len) {
+		buf = irc_format(irc, "vn", "ISON", string->str);
+		irc_send(irc, buf);
+		g_free(buf);
+		irc->ison_outstanding = TRUE;
+	} else
+		irc->ison_outstanding = FALSE;
+
+	g_string_free(string, TRUE);
+}
+
+static void irc_ison_buddy_init(char *name, struct irc_buddy *ib, GList **list)
+{
+	*list = g_list_append(*list, ib);
 }
 
 static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
 {
 	char *buf;
 
-	ib->flag = FALSE;
+	if (irc->buddies_outstanding != NULL) {
+		irc->buddies_outstanding = g_list_append(irc->buddies_outstanding, ib);
+		return;
+	}
+
+	ib->new_online_status = FALSE;
 	buf = irc_format(irc, "vn", "ISON", ib->name);
 	irc_send(irc, buf);
 	g_free(buf);

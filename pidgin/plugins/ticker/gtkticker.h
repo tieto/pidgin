@@ -18,7 +18,7 @@
  */
 
 /*
- * Copyright 2000 Syd Logan 
+ * Copyright 2000 Syd Logan
  */
 
 #ifndef __GTK_TICKER_H__

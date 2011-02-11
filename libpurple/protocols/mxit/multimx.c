@@ -73,7 +73,7 @@ static struct multimx* find_room_by_id(struct MXitSession* session, int id)
  * Find a MultiMx session based on Alias
  *
  *  @param session		The MXit session object
- *  @param roomname		The UI room-name 
+ *  @param roomname		The UI room-name
  *  @return				The MultiMX room object (or NULL if not found)
  */
 static struct multimx* find_room_by_alias(struct MXitSession* session, const char* roomname)
@@ -647,7 +647,7 @@ int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMess
 
 	/* Send packet to MXit */
 	mxit_send_message(session, multimx->roomid, message, TRUE, FALSE);
-	
+
 	/* Determine our nickname to display */
 	if (multimx->nickname)
 		nickname = multimx->nickname;

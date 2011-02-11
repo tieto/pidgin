@@ -131,9 +131,9 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 }
 
 /* convert Purple name to original QQ UID */
-guint32 purple_name_to_uid(const gchar *const name)
+UID purple_name_to_uid(const gchar *const name)
 {
-	guint32 ret;
+	UID ret;
 	g_return_val_if_fail(name != NULL, 0);
 
 	ret = strtoul(name, NULL, 10);
@@ -168,7 +168,7 @@ guint8 *str_ip_gen(gchar *str) {
 
 /* convert a QQ UID to a unique name of Purple
  * the return needs to be freed */
-gchar *uid_to_purple_name(guint32 uid)
+gchar *uid_to_purple_name(UID uid)
 {
 	return g_strdup_printf("%u", uid);
 }

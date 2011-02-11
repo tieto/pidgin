@@ -678,12 +678,12 @@ silcpurple_close(PurpleConnection *gc)
 	g_return_if_fail(sg != NULL);
 
 	ui_info = purple_core_get_ui_info();
-	
+
 	if(ui_info) {
 		ui_name = g_hash_table_lookup(ui_info, "name");
 		ui_website = g_hash_table_lookup(ui_info, "website");
 	}
-	
+
 	if(!ui_name || !ui_website) {
 		ui_name = "Pidgin";
 		ui_website = PURPLE_WEBSITE;
@@ -1845,7 +1845,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	GHashTable *ui_info;
 	const char *ui_name = NULL, *ui_website = NULL;
 	char *quit_msg;
-								   
+
 	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
@@ -1857,12 +1857,12 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	ui_info = purple_core_get_ui_info();
-	
+
 	if(ui_info) {
 		ui_name = g_hash_table_lookup(ui_info, "name");
 		ui_website = g_hash_table_lookup(ui_info, "website");
 	}
-	
+
 	if(!ui_name || !ui_website) {
 		ui_name = "Pidgin";
 		ui_website = PURPLE_WEBSITE;

@@ -400,6 +400,7 @@ count_caps(guint64 caps)
  */
 int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, const char *mood)
 {
+	int len;
 	ByteStream bs;
 	guint32 bs_size;
 	guint8 *data;
@@ -417,7 +418,11 @@ int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, 
 	if (data != NULL)
 		byte_stream_putraw(&bs, data, 16);
 
-	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
+	len = aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
+
+	byte_stream_destroy(&bs);
+
+	return len;
 }
 
 /**

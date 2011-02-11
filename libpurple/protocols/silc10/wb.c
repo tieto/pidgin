@@ -30,7 +30,7 @@
   2 bytes	height
   4 bytes	brush color
   2 bytes	brush size
-  n bytes	data 
+  n bytes	data
 
   Data:
 
@@ -253,8 +253,8 @@ silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 }
 
 static void
-silcpurple_wb_request(SilcClient client, const unsigned char *message, 
-		    SilcUInt32 message_len, SilcClientEntry sender, 
+silcpurple_wb_request(SilcClient client, const unsigned char *message,
+		    SilcUInt32 message_len, SilcClientEntry sender,
 		    SilcChannelEntry channel)
 {
 	char tmp[128];
@@ -409,8 +409,8 @@ void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 	/* Send the message */
 	if (wbs->type == 0) {
 		/* Private message */
-		silc_client_send_private_message(sg->client, sg->conn, 
-						 wbs->u.client, 
+		silc_client_send_private_message(sg->client, sg->conn,
+						 wbs->u.client,
 						 SILC_MESSAGE_FLAG_DATA,
 						 packet->head, len, TRUE);
 	} else if (wbs->type == 1) {
@@ -504,8 +504,8 @@ void silcpurple_wb_clear(PurpleWhiteboard *wb)
 	/* Send the message */
 	if (wbs->type == 0) {
 		/* Private message */
-		silc_client_send_private_message(sg->client, sg->conn, 
-						 wbs->u.client, 
+		silc_client_send_private_message(sg->client, sg->conn,
+						 wbs->u.client,
 						 SILC_MESSAGE_FLAG_DATA,
 						 packet->head, len, TRUE);
 	} else if (wbs->type == 1) {

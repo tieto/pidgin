@@ -927,6 +927,7 @@ incomingim_ch1_parsemsg(OscarData *od, aim_userinfo_t *userinfo, ByteStream *mes
 
 			msg = byte_stream_getstr(message, msglen);
 			args->msg = oscar_decode_im(account, userinfo->bn, charset, msg, msglen);
+			g_free(msg);
 		} else {
 			byte_stream_advance(message, length);
 		}

@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -33,7 +33,7 @@ Code_t ZMakeAscii(ptr, len, field, num)
 	    *ptr++ = '0';
 	    *ptr++ = 'x';
 	    len -= 2;
-	} 
+	}
 	if (len < 3)
 	    return ZERR_FIELDLEN;
 	*ptr++ = itox_chars[(int) (field[i] >> 4)];

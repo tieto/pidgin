@@ -2,7 +2,7 @@
  * System tray icon (aka docklet) plugin for Purple
  *
  * Copyright (C) 2007 Anders Hasselqvist
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -54,6 +54,7 @@ docklet_gtk_embed_timeout_cb(gpointer data)
 	 */
 	purple_debug_info("docklet", "failed to embed within timeout\n");
 	pidgin_docklet_remove();
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
 
 	embed_timeout = 0;
 	return FALSE;
@@ -98,7 +99,7 @@ docklet_gtk_destroyed_cb(GtkWidget *widget, gpointer data)
 static void
 docklet_gtk_status_activated_cb(GtkStatusIcon *status_icon, gpointer user_data)
 {
-	pidgin_docklet_clicked(1); 
+	pidgin_docklet_clicked(1);
 }
 
 static void
@@ -255,6 +256,16 @@ void
 docklet_ui_init(void)
 {
 	pidgin_docklet_set_ui_ops(&ui_ops);
+
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/gtk");
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded")) {
+		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", TRUE);
+		purple_prefs_remove(PIDGIN_PREFS_ROOT "/docklet/x11/embedded");
+	} else {
+		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
+	}
+
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 		DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "pidgin" G_DIR_SEPARATOR_S "tray");
 }
+

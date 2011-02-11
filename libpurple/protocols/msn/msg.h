@@ -79,7 +79,6 @@ struct _MsnMessage
 	MsnMsgType type;
 
 	gboolean msnslp_message;
-	MsnSlpMessage *slpmsg;
 	MsnSlpMessagePart *part;
 
 	char *remote_user;
@@ -99,15 +98,12 @@ struct _MsnMessage
 								  been ref'ed for using it in a callback. */
 
 	MsnCommand *cmd;
-	MsnTransaction *trans;
 
 	MsnMsgCb ack_cb; /**< The callback to call when we receive an ACK of this
 					   message. */
 	MsnMsgCb nak_cb; /**< The callback to call when we receive a NAK of this
 					   message. */
 	void *ack_data; /**< The data used by callbacks. */
-
-	MsnMsgErrorType error; /**< The error of the message. */
 
 	guint32 retries;
 };

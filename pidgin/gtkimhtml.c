@@ -99,6 +99,18 @@ typedef struct _GtkIMHtmlProtocol
 	gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu);
 } GtkIMHtmlProtocol;
 
+typedef struct _GtkIMHtmlFontDetail {
+	gushort size;
+	gchar *face;
+	gchar *fore;
+	gchar *back;
+	gchar *bg;
+	gchar *sml;
+	gboolean underline;
+	gboolean strike;
+	gshort bold;
+} GtkIMHtmlFontDetail;
+
 static gboolean
 gtk_text_view_drag_motion (GtkWidget        *widget,
                            GdkDragContext   *context,
@@ -3191,6 +3203,19 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						    gtk_imhtml_toggle_underline(imhtml);
 						    font->underline = 1;
 						}
+
+						if (oldfont)
+						{
+						    font->strike = oldfont->strike;
+						}
+						if (textdec && font->strike != 1
+							&& g_ascii_strcasecmp(textdec, "line-through") == 0
+							&& (imhtml->format_functions & GTK_IMHTML_STRIKE)
+							&& !(options & GTK_IMHTML_NO_FORMATTING))
+						{
+						    gtk_imhtml_toggle_strike(imhtml);
+						    font->strike = 1;
+						}
 						g_free(textdec);
 
 						if (oldfont)
@@ -3243,6 +3268,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							gtk_imhtml_font_set_size(imhtml, 3);
 							if (font->underline && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_underline(imhtml);
+							if (font->strike && !(options & GTK_IMHTML_NO_FORMATTING))
+							    gtk_imhtml_toggle_strike(imhtml);
 							if (font->bold && !(options & GTK_IMHTML_NO_FORMATTING))
 								gtk_imhtml_toggle_bold(imhtml);
 							if (!(options & GTK_IMHTML_NO_FONTS))
@@ -3255,14 +3282,17 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						else
 						{
 
-						    if ((font->size != oldfont->size) && !(options & GTK_IMHTML_NO_SIZES))
+							if ((font->size != oldfont->size) && !(options & GTK_IMHTML_NO_SIZES))
 							    gtk_imhtml_font_set_size(imhtml, oldfont->size);
 
 							if ((font->underline != oldfont->underline) && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_underline(imhtml);
 
+							if ((font->strike != oldfont->strike) && !(options & GTK_IMHTML_NO_FORMATTING))
+							    gtk_imhtml_toggle_strike(imhtml);
+
 							if (((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold)) && !(options & GTK_IMHTML_NO_FORMATTING))
-								gtk_imhtml_toggle_bold(imhtml);
+							    gtk_imhtml_toggle_bold(imhtml);
 
 							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0) && !(options & GTK_IMHTML_NO_FONTS))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
@@ -3271,7 +3301,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
 
 							if (font->back && (!oldfont->back || strcmp(font->back, oldfont->back) != 0) && !(options & GTK_IMHTML_NO_COLOURS))
-						      gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
+							    gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
 
 						g_free (font->face);
@@ -3829,7 +3859,7 @@ static void
 gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-	
+
 	/* Create an add dialog */
 	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
 	pidgin_smiley_editor_set_shortcut(editor, image->filename);

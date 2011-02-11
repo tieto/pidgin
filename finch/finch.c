@@ -422,7 +422,7 @@ static gboolean gnt_start(int *argc, char ***argv)
 	/* Initialize the libpurple stuff */
 	if (!init_libpurple(*argc, *argv))
 		return FALSE;
- 
+
 	purple_blist_show();
 	return TRUE;
 }

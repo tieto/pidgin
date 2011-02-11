@@ -39,7 +39,7 @@ ggp_confer_find_by_name(PurpleConnection *gc, const gchar *name);
 
 /**
  * Adds the specified UIN to the specified conversation.
- * 
+ *
  * @param gc        PurpleConnection.
  * @param chat_name Name of the conversation.
  */
@@ -61,7 +61,7 @@ ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 
 /**
  * Finds a conversation in which all the specified recipients participate.
- * 
+ *
  * TODO: This function should be rewritten to better handle situations when
  * somebody adds more people to the converation.
  *
@@ -81,7 +81,7 @@ ggp_confer_find_by_participants(PurpleConnection *gc, const uin_t *recipients,
  *
  * @param gc   PurpleConnection.
  * @param name Name of the conversation.
- * 
+ *
  * @return Name of the conversation.
  */
 const char*

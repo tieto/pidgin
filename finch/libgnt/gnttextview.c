@@ -165,7 +165,7 @@ gnt_text_view_draw(GntWidget *widget)
 
 		if (showing + position > rows)
 			position = rows - showing;
-		
+
 		if (showing + position == rows && view->list && view->list->prev)
 			position = MAX(1, rows - 1 - showing);
 		else if (showing + position < rows && view->list && !view->list->prev)
@@ -456,7 +456,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	GntTextLine *line = g_new0(GntTextLine, 1);
 
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | 
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW |
             GNT_WIDGET_GROW_Y | GNT_WIDGET_GROW_X);
 	widget->priv.minw = 5;
 	widget->priv.minh = 2;
@@ -636,7 +636,7 @@ void gnt_text_view_scroll(GntTextView *view, int scroll)
 			list = g_list_last(view->list);
 		view->list = list;
 	}
-		
+
 	gnt_widget_draw(GNT_WIDGET(view));
 }
 
@@ -644,7 +644,7 @@ void gnt_text_view_next_line(GntTextView *view)
 {
 	GntTextLine *line = g_new0(GntTextLine, 1);
 	GList *list = view->list;
-	
+
 	view->list = g_list_prepend(g_list_first(view->list), line);
 	view->list = list;
 	gnt_widget_draw(GNT_WIDGET(view));

@@ -73,7 +73,7 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 	/* we have defined args as args[0] is target and args[1] is ctcp command */
 	char *buf;
 	GString *string;
-	
+
 	/* check if we have args */
 	if (!args || !args[0] || !args[1])
 		return 0;
@@ -89,7 +89,7 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 	irc_send(irc, buf);
 	g_free(buf);
-	
+
 	return 1;
 }
 
@@ -600,7 +600,7 @@ int irc_cmd_whowas(struct irc_conn *irc, const char *cmd, const char *target, co
 		return 0;
 
 	buf = irc_format(irc, "vn", "WHOWAS", args[0]);
-	
+
 	irc->whois.nick = g_strdup(args[0]);
 	irc_send(irc, buf);
 	g_free(buf);

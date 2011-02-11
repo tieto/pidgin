@@ -83,7 +83,7 @@ static const gchar *memo_txt[] = {
 
 typedef struct _modify_memo_request {
 	PurpleConnection *gc;
-	guint32 bd_uid;
+	UID bd_uid;
 	gchar **segments;
 } modify_memo_request;
 
@@ -107,7 +107,7 @@ static void memo_free(gchar **segments)
 	purple_debug_info("QQ", "memo freed\n");
 }
 
-static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias)
+static void update_buddy_memo(PurpleConnection *gc, UID bd_uid, gchar *alias)
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
@@ -127,7 +127,7 @@ static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias
 	purple_blist_alias_buddy(buddy, (const char*)alias);
 }
 
-static void request_change_memo(PurpleConnection *gc, guint32 bd_uid, gchar **segments)
+static void request_change_memo(PurpleConnection *gc, UID bd_uid, gchar **segments)
 {
 	gint bytes;
 	/* Attention, length of each segment must be guint8(0~255),
@@ -170,7 +170,7 @@ static void memo_modify_cancle_cb(modify_memo_request *memo_request, PurpleReque
 static void memo_modify_ok_cb(modify_memo_request *memo_request, PurpleRequestFields *fields)
 {
 	PurpleConnection *gc;
-	guint32 bd_uid;
+	UID bd_uid;
 	gchar **segments;
 	const gchar *utf8_str;
 	gchar *value = NULL;
@@ -187,7 +187,7 @@ static void memo_modify_ok_cb(modify_memo_request *memo_request, PurpleRequestFi
 		utf8_str = purple_request_fields_get_string(fields, memo_id[index]);
 		/* update alias */
 		if (QQ_MEMO_ALIAS == index) {
-			update_buddy_memo(gc, bd_uid, segments[QQ_MEMO_ALIAS]);
+			update_buddy_memo(gc, (UID)bd_uid, segments[QQ_MEMO_ALIAS]);
 		}
 		if (NULL == utf8_str) {
 			value = g_strdup("");
@@ -213,7 +213,7 @@ static void memo_modify_ok_cb(modify_memo_request *memo_request, PurpleRequestFi
 }
 
 /* memo modify dialogue */
-static void memo_modify_dialogue(PurpleConnection *gc, guint32 bd_uid, gchar **segments, guint32 action)
+static void memo_modify_dialogue(PurpleConnection *gc, UID bd_uid, gchar **segments, guint32 action)
 {
 	modify_memo_request *memo_request;
 	PurpleRequestField *field;
@@ -272,7 +272,7 @@ static void memo_modify_dialogue(PurpleConnection *gc, guint32 bd_uid, gchar **s
 	}
 }
 
-static void qq_create_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 action)
+static void qq_create_buddy_memo(PurpleConnection *gc, UID bd_uid, guint32 action)
 {
 	gchar **segments;
 	gint index;
@@ -285,9 +285,11 @@ static void qq_create_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 a
 	memo_modify_dialogue(gc, bd_uid, segments, action);
 }
 
-/* process reply to get_memo packet */
+/* process reply to get_memo packet
+ * here, update_class will be regarded as buddy's uid. because some 
+ * memo packages returned without uid, which will make us confused */
 void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len,
-		guint32 update_class, guint32 action)
+		UPDCLS update_class, guint32 action)
 {
 	gchar **segments;
 	gint bytes;
@@ -314,7 +316,9 @@ void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len
 	if (1 == data_len) { /* only one byte */
 		purple_debug_info("QQ", "memo packet contains no buddy uid and memo...\n");
 		if (QQ_BUDDY_MEMO_MODIFY == action) {
-			qq_create_buddy_memo(gc, (guint32)update_class, QQ_BUDDY_MEMO_MODIFY);
+			UID mod_uid;
+			mod_uid = (UID)update_class;
+			qq_create_buddy_memo(gc, mod_uid, QQ_BUDDY_MEMO_MODIFY);
 			return;
 		}
 		return;
@@ -354,9 +358,9 @@ void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len
 			}
 
 			/* common action, update buddy memo */
-			update_buddy_memo(gc, rcv_uid, segments[QQ_MEMO_ALIAS]);
+			update_buddy_memo(gc, (UID)rcv_uid, segments[QQ_MEMO_ALIAS]);
 
-			/* memo is thing that we regard our buddy as, so we need one more buddy_uid */
+			/* memo is a thing that we regard our buddy as, so we need one more buddy_uid */
 			memo_modify_dialogue(gc, rcv_uid, segments, action);
 			break;
 		default:
@@ -365,8 +369,12 @@ void qq_process_get_buddy_memo(PurpleConnection *gc, guint8* data, gint data_len
 	}
 }
 
-/* request buddy memo */
-void qq_request_buddy_memo(PurpleConnection *gc, guint32 bd_uid, guint32 update_class, guint32 action)
+/* request buddy memo
+ *
+ * param: gc, uid, update_class, action
+ * here, update_class will be set to buddy's uid. because some memo 
+ * packages returned without uid, which will make us confused */
+void qq_request_buddy_memo(PurpleConnection *gc, UID bd_uid, UPDCLS update_class, guint32 action)
 {
 	guint8 raw_data[16] = {0};
 	gint bytes;

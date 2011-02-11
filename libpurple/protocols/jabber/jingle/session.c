@@ -93,7 +93,7 @@ jingle_session_class_init (JingleSessionClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = jingle_session_finalize;
 	gobject_class->set_property = jingle_session_set_property;
 	gobject_class->get_property = jingle_session_get_property;
@@ -221,7 +221,7 @@ jingle_session_set_property (GObject *object, guint prop_id, const GValue *value
 		case PROP_PENDING_CONTENTS:
 			session->priv->pending_contents = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -232,7 +232,7 @@ jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GPar
 {
 	JingleSession *session;
 	g_return_if_fail(JINGLE_IS_SESSION(object));
-	
+
 	session = JINGLE_SESSION(object);
 
 	switch (prop_id) {
@@ -260,8 +260,8 @@ jingle_session_get_property (GObject *object, guint prop_id, GValue *value, GPar
 		case PROP_PENDING_CONTENTS:
 			g_value_set_pointer(value, session->priv->pending_contents);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -395,7 +395,7 @@ jingle_session_find_by_jid(JabberStream *js, const gchar *jid)
 {
 	return js->sessions != NULL ?
 			g_hash_table_find(js->sessions,
-			find_by_jid_ghr, (gpointer)jid) : NULL; 
+			find_by_jid_ghr, (gpointer)jid) : NULL;
 }
 
 static xmlnode *
@@ -427,7 +427,7 @@ jingle_add_jingle_packet(JingleSession *session,
 	g_free(remote_jid);
 
 	xmlnode_set_attrib(jingle, "sid", jingle_session_get_sid(session));
-	
+
 	return jingle;
 }
 

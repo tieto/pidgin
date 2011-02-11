@@ -151,7 +151,7 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 /**
  * The following is a workaround for a bug in most versions of ncursesw.
  * Read about it in: http://article.gmane.org/gmane.comp.lib.ncurses.bugs/2751
- * 
+ *
  * In short, if a panel hides one cell of a multi-cell character, then the rest
  * of the characters in that line get screwed. The workaround here is to erase
  * any such character preemptively.
@@ -665,7 +665,7 @@ list_of_windows(GntWM *wm, gboolean workspace)
 	tree = wm->windows->tree;
 
 	gnt_box_set_title(GNT_BOX(win), workspace ? "Workspace List" : "Window List");
-	
+
 	populate_window_list(wm, workspace);
 
 	if (wm->cws->ordered)
@@ -762,7 +762,7 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 				{  \
 					fprintf(file, "%s", end);  \
 				}  \
-			} while (0) 
+			} while (0)
 
 			CHECK(A_BOLD, "<b>", "</b>");
 			CHECK(A_UNDERLINE, "<u>", "</u>");
@@ -800,7 +800,7 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 				ADJUST(bg.r);
 				ADJUST(bg.b);
 				ADJUST(bg.g);
-				
+
 				if (x) fprintf(file, "</span>");
 				fprintf(file, "<span style=\"background:#%02x%02x%02x;color:#%02x%02x%02x\">",
 						bg.r, bg.g, bg.b, fg.r, fg.g, fg.b);
@@ -916,7 +916,7 @@ static gboolean
 shift_right(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
-	
+
 	if (wm->_list.window)
 		return TRUE;
 
@@ -1032,7 +1032,7 @@ window_reverse(GntWidget *win, gboolean set, GntWM *wm)
 
 	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
 		return;
-	
+
 	d = win->window;
 	gnt_widget_get_size(win, &w, &h);
 
@@ -1405,8 +1405,8 @@ gnt_wm_class_init(GntWMClass *klass)
 	klass->key_pressed  = NULL;
 	klass->mouse_clicked = NULL;
 	klass->give_focus = gnt_wm_give_focus;
-	
-	signals[SIG_NEW_WIN] = 
+
+	signals[SIG_NEW_WIN] =
 		g_signal_new("new_win",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1414,7 +1414,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_DECORATE_WIN] = 
+	signals[SIG_DECORATE_WIN] =
 		g_signal_new("decorate_win",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1422,7 +1422,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_CLOSE_WIN] = 
+	signals[SIG_CLOSE_WIN] =
 		g_signal_new("close_win",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1430,7 +1430,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_CONFIRM_RESIZE] = 
+	signals[SIG_CONFIRM_RESIZE] =
 		g_signal_new("confirm_resize",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1439,7 +1439,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_POINTER);
 
-	signals[SIG_CONFIRM_MOVE] = 
+	signals[SIG_CONFIRM_MOVE] =
 		g_signal_new("confirm_move",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1448,7 +1448,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_POINTER, G_TYPE_POINTER, G_TYPE_POINTER);
 
-	signals[SIG_RESIZED] = 
+	signals[SIG_RESIZED] =
 		g_signal_new("window_resized",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1456,7 +1456,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_MOVED] = 
+	signals[SIG_MOVED] =
 		g_signal_new("window_moved",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1464,7 +1464,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-	signals[SIG_UPDATE_WIN] = 
+	signals[SIG_UPDATE_WIN] =
 		g_signal_new("window_update",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1473,7 +1473,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-	signals[SIG_GIVE_FOCUS] = 
+	signals[SIG_GIVE_FOCUS] =
 		g_signal_new("give_focus",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1482,7 +1482,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-	signals[SIG_MOUSE_CLICK] = 
+	signals[SIG_MOUSE_CLICK] =
 		g_signal_new("mouse_clicked",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -1491,7 +1491,7 @@ gnt_wm_class_init(GntWMClass *klass)
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER,
 					 G_TYPE_BOOLEAN, 4, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_POINTER);
 
-	signals[SIG_TERMINAL_REFRESH] = 
+	signals[SIG_TERMINAL_REFRESH] =
 		g_signal_new("terminal-refresh",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,

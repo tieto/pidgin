@@ -57,7 +57,7 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_VERSION 		"0.3.2-p20" 
+#define OPENQ_VERSION 		"0.3.2-p20"
 
 static GList *server_list_build(gchar select)
 {
@@ -157,21 +157,28 @@ static void qq_login(PurpleAccount *account)
 	purple_debug_info("QQ", "Server list has %d\n", g_list_length(qd->servers));
 
 	version_str = purple_account_get_string(account, "client_version", NULL);
-	qd->client_tag = QQ_CLIENT_0D55;	/* set default as QQ2005 */
-	qd->client_version = 2005;
+	qd->client_tag = QQ_CLIENT_115B;	/* set default as QQ2008 */
+	qd->client_version = 2008;
 	if (version_str != NULL && strlen(version_str) != 0) {
-		if (strcmp(version_str, "qq2007") == 0) {
+		if (strcmp(version_str, "qq2005") == 0) {
+			qd->client_tag = QQ_CLIENT_0D55;
+			qd->client_version = 2005;
+		} else if (strcmp(version_str, "qq2007") == 0) {
 			qd->client_tag = QQ_CLIENT_111D;
 			qd->client_version = 2007;
-		} else if (strcmp(version_str, "qq2008") == 0) {
-			qd->client_tag = QQ_CLIENT_115B;
-			qd->client_version = 2008;
 		}
 	}
 
 	qd->is_show_notice = purple_account_get_bool(account, "show_notice", TRUE);
 	qd->is_show_news = purple_account_get_bool(account, "show_news", TRUE);
 	qd->is_show_chat = purple_account_get_bool(account, "show_chat", TRUE);
+
+	if (purple_account_get_bool(account, "default_font", FALSE)) {
+		qd->custom = QQ_CUSTOM_USE_DEFAULT_FONT;
+	}
+	else {
+		qd->custom = QQ_CUSTOM_NONE;
+	}
 
 	qd->resend_times = purple_prefs_get_int("/plugins/prpl/qq/resend_times");
 	if (qd->resend_times <= 1) qd->itv_config.resend = 4;
@@ -443,7 +450,7 @@ static void qq_change_status(PurpleAccount *account, PurpleStatus *status)
 /* send packet to get who's detailed information */
 static void qq_show_buddy_info(PurpleConnection *gc, const gchar *who)
 {
-	guint32 uid;
+	UID uid;
 	qq_data *qd;
 
 	qd = gc->proto_data;
@@ -823,7 +830,7 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	PurpleBuddy *buddy;
 	qq_buddy_data *bd;
 	PurpleConnection *gc;
-	guint32 bd_uid;
+	UID bd_uid;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
@@ -927,7 +934,7 @@ static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gch
 {
 	qq_data *qd;
 	gchar *uid_str;
-	guint32 uid;
+	UID uid;
 
 	purple_debug_info("QQ", "Get chat buddy info of %s\n", who);
 	g_return_if_fail(who != NULL);
@@ -1113,8 +1120,8 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
-	kvp->key = g_strdup(_("QQ2005"));
-	kvp->value = g_strdup("qq2005");
+	kvp->key = g_strdup(_("QQ2008"));
+	kvp->value = g_strdup("qq2008");
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
@@ -1123,8 +1130,8 @@ static void init_plugin(PurplePlugin *plugin)
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	kvp = g_new0(PurpleKeyValuePair, 1);
-	kvp->key = g_strdup(_("QQ2008"));
-	kvp->value = g_strdup("qq2008");
+	kvp->key = g_strdup(_("QQ2005"));
+	kvp->value = g_strdup("qq2005");
 	version_kv_list = g_list_append(version_kv_list, kvp);
 
 	option = purple_account_option_list_new(_("Client Version"), "client_version", version_kv_list);
@@ -1140,6 +1147,9 @@ static void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show chat room when msg comes"), "show_chat", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Use default font"), "default_font", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Keep alive interval (seconds)"), "keep_alive_interval", 60);

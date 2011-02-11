@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -25,19 +25,19 @@ Code_t ZSendPacket(packet, len, waitforack)
     Code_t retval;
     struct sockaddr_in dest;
     ZNotice_t notice, acknotice;
-	
+
     if (!packet || len < 0)
 	return (ZERR_ILLVAL);
 
     if (len > Z_MAXPKTLEN)
 	return (ZERR_PKTLEN);
-    
+
     if (ZGetFD() < 0)
 	if ((retval = ZOpenPort((unsigned short *)0)) != ZERR_NONE)
 	    return (retval);
 
     dest = ZGetDestAddr();
-	
+
     if (sendto(ZGetFD(), packet, len, 0, (struct sockaddr *)&dest,
 	       sizeof(dest)) < 0)
 	return (errno);
@@ -47,7 +47,7 @@ Code_t ZSendPacket(packet, len, waitforack)
 
     if ((retval = ZParseNotice(packet, len, &notice)) != ZERR_NONE)
 	return (retval);
-    
+
     retval = Z_WaitForNotice (&acknotice, wait_for_hmack, &notice.z_uid,
 			      HM_TIMEOUT);
     if (retval == ETIMEDOUT)

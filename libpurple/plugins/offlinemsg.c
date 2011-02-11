@@ -89,7 +89,7 @@ record_pounce(OfflineMsg *offline)
 
 	purple_pounce_action_set_enabled(pounce, "send-message", TRUE);
 	purple_pounce_action_set_attribute(pounce, "send-message", "message", offline->message);
- 
+
 	conv = offline->conv;
 	if (!purple_conversation_get_data(conv, "plugin_pack:offlinemsg"))
 		purple_conversation_write(conv, NULL, _("The rest of the messages will be saved "
@@ -156,7 +156,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 		ask = g_strdup_printf(_("\"%s\" is currently offline. Do you want to save the "
 						"rest of the messages in a pounce and automatically send them "
 						"when \"%s\" logs back in?"), who, who);
-	
+
 		purple_request_action(handle, _("Offline Message"), ask,
 					_("You can edit/delete the pounce from the `Buddy Pounces' dialog"),
 					0,

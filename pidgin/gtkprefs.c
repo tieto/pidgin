@@ -1045,7 +1045,7 @@ static GtkWidget *
 add_theme_prefs_combo(GtkWidget *vbox,
                       GtkSizeGroup *combo_sg, GtkSizeGroup *label_sg,
                       GtkListStore *theme_store,
-                      GCallback combo_box_cb, gpointer combo_box_cb_user_data, 
+                      GCallback combo_box_cb, gpointer combo_box_cb_user_data,
                       const char *label_str, const char *prefs_path,
                       const char *theme_type)
 {
@@ -1098,7 +1098,7 @@ theme_page(void)
 	/* Buddy List Themes */
 	prefs_blist_themes_combo_box = add_theme_prefs_combo(
 		vbox, combo_sg, label_sg, prefs_blist_themes,
-		(GCallback)prefs_set_blist_theme_cb, NULL, 
+		(GCallback)prefs_set_blist_theme_cb, NULL,
 		_("Buddy List Theme:"), PIDGIN_PREFS_ROOT "/blist/theme", "blist");
 
 	/* Status Icon Themes */
@@ -1790,7 +1790,7 @@ network_page(void)
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
-	
+
 	pidgin_prefs_labeled_spin_button(hbox, _("_UDP Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
 
@@ -1938,7 +1938,7 @@ browser_page(void)
 		gtk_widget_show_all(ret);
 	} else {
 		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	
+
 		browsers = get_available_browsers();
 		if (browsers != NULL) {
 			label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), PURPLE_PREF_STRING,
@@ -1947,7 +1947,7 @@ browser_page(void)
 			g_list_free(browsers);
 			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 			gtk_size_group_add_widget(sg, label);
-	
+
 			hbox = gtk_hbox_new(FALSE, 0);
 			label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
 				PIDGIN_PREFS_ROOT "/browsers/place",
@@ -1959,7 +1959,7 @@ browser_page(void)
 			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 			gtk_size_group_add_widget(sg, label);
 			gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	
+
 			if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 				gtk_widget_set_sensitive(hbox, FALSE);
 			purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
@@ -1976,7 +1976,7 @@ browser_page(void)
 			gtk_widget_set_sensitive(hbox, FALSE);
 		purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
 				browser_changed2_cb, hbox);
-	
+
 		gtk_widget_show_all(ret);
 		g_object_unref(sg);
 	}

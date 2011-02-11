@@ -85,9 +85,9 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 
   PurplePluginPrefFrame *frame;
   PurplePluginPref *pref;
-  
+
   frame = purple_plugin_pref_frame_new();
-  
+
   pref = purple_plugin_pref_new_with_name(PREF_BUDDIES);
   purple_plugin_pref_set_label(pref, _("Only enable for users on"
 				     " the buddy list"));
@@ -118,7 +118,7 @@ plugin_load(PurplePlugin *plugin) {
 
   purple_signal_connect(convs_handle, "buddy-typing", plugin,
 		      PURPLE_CALLBACK(buddy_typing_cb), NULL);
-  
+
   return TRUE;
 }
 
@@ -127,7 +127,7 @@ static PurplePluginUiInfo prefs_info = {
   get_plugin_pref_frame,
   0,    /* page_num (Reserved) */
   NULL, /* frame (Reserved) */
-  
+
   /* padding */
   NULL,
   NULL,
@@ -145,7 +145,7 @@ static PurplePluginInfo info = {
   0,                      /**< flags */
   NULL,                   /**< dependencies */
   PURPLE_PRIORITY_DEFAULT,  /**< priority */
-  
+
   PLUGIN_ID,              /**< id */
   PLUGIN_NAME,            /**< name */
   DISPLAY_VERSION,        /**< version */
@@ -153,11 +153,11 @@ static PurplePluginInfo info = {
   PLUGIN_DESC,            /**< description */
   PLUGIN_AUTHOR,          /**< author */
   PURPLE_WEBSITE,           /**< homepage */
-  
+
   plugin_load,            /**< load */
   NULL,                   /**< unload */
   NULL,                   /**< destroy */
-  
+
   NULL,                   /**< ui_info */
   NULL,                   /**< extra_info */
   &prefs_info,            /**< prefs_info */

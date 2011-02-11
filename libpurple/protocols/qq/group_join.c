@@ -155,7 +155,7 @@ static void do_room_join_request(PurpleConnection *gc, qq_room_data *rmd)
 }
 
 void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd,
-		guint8 opt, guint32 uid, const gchar *reason_utf8)
+		guint8 opt, UID uid, const gchar *reason_utf8)
 {
 	guint8 raw_data[MAX_PACKET_SIZE - 16];
 	gint bytes;

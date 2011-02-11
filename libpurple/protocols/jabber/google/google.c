@@ -159,7 +159,7 @@ void google_buddy_node_chat(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(gc != NULL);
 	js = purple_connection_get_protocol_data(gc);
 
-	room = g_strdup_printf("private-chat-%s", uuid);	
+	room = g_strdup_printf("private-chat-%s", uuid);
 	chat = jabber_join_chat(js, room, GOOGLE_GROUPCHAT_SERVER, js->user->node,
 	                        NULL, NULL);
 	if (chat) {

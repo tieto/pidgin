@@ -1,6 +1,6 @@
 /*
  * Purple Ticker Plugin
- * The line below doesn't apply at all, does it?  It should be Syd, Sean, and 
+ * The line below doesn't apply at all, does it?  It should be Syd, Sean, and
  * maybe Nathan, I believe.
  * Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
  *

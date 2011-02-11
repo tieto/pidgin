@@ -151,7 +151,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 						purple_debug_info("yahoo", "Sent updated alias '%s'\n", buddy_alias);
 					}
 				}
-				
+
 				if (f != NULL)
 					ypd = &f->ypd;
 				else {
