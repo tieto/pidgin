@@ -30,7 +30,6 @@
 #else
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <utmp.h>
 #endif
 
 int __Zephyr_fd = -1;

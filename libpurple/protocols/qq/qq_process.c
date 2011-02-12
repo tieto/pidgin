@@ -254,8 +254,8 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 	gint bytes;
 
 	struct {
-		guint32 uid_from;
-		guint32 uid_to;
+		UID uid_from;
+		UID uid_to;
 		guint32 seq;
 		struct in_addr ip_from;
 		guint16 port_from;
@@ -725,7 +725,7 @@ void qq_update_online(PurpleConnection *gc, guint16 cmd)
 
 void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 		guint8 room_cmd, guint32 room_id, guint8 *rcved, gint rcved_len,
-		guint32 update_class, guint32 ship32)
+		UPDCLS update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *data;
@@ -861,7 +861,7 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 }
 
 guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
-		guint8 *rcved, gint rcved_len, guint32 update_class, guint32 ship32)
+		guint8 *rcved, gint rcved_len, UPDCLS update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *data = NULL;
@@ -1013,7 +1013,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 }
 
 void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
-		guint8 *rcved, gint rcved_len, guint32 update_class, guint32 ship32)
+		guint8 *rcved, gint rcved_len, UPDCLS update_class, guint32 ship32)
 {
 	qq_data *qd;
 

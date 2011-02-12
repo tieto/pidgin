@@ -520,9 +520,12 @@ jabber_cyrus_handle_success(JabberStream *js, xmlnode *packet,
 		g_free(dec_in);
 
 		if (js->sasl_state != SASL_OK) {
-			/* This should never happen! */
+			/* This happens when the server sends back jibberish
+			 * in the "additional data with success" case.
+			 * Seen with Wildfire 3.0.1.
+			 */
 			*error = g_strdup(_("Invalid response from server"));
-			g_return_val_if_reached(JABBER_SASL_STATE_FAIL);
+			return JABBER_SASL_STATE_FAIL;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /**
- * @file group_info.h
+ * @file auth_digest_md5.h Implementation of SASL DIGEST-MD5 authentication
  *
  * purple
  *
@@ -21,22 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#ifndef PURPLE_JABBER_AUTH_DIGEST_MD5_H_
+#define PURPLE_JABBER_AUTH_DIGEST_MD5_H_
 
-#ifndef _QQ_GROUP_INFO_H_
-#define _QQ_GROUP_INFO_H_
+#include "internal.h"
 
-#include <glib.h>
-#include "connection.h"
-#include "group.h"
+/*
+ * Every function in this file is ONLY exposed for tests.
+ * DO NOT USE ANYTHING HERE OR YOU WILL BE SENT TO THE PIT OF DESPAIR.
+ */
 
-enum {
-	QQ_ROOM_INFO_UPDATE_ONLY = 0,
-	QQ_ROOM_INFO_DISPLAY
-};
+/*
+ * Parse a DIGEST-MD5 challenge.
+ */
+GHashTable *jabber_auth_digest_md5_parse(const char *challenge);
 
-gint qq_request_room_get_buddies(PurpleConnection *gc, guint32 room_id, UPDCLS update_class);
-
-void qq_process_room_cmd_get_info(guint8 *data, gint len, guint32 action, PurpleConnection *gc);
-void qq_process_room_cmd_get_onlines(guint8 *data, gint len, PurpleConnection *gc);
-void qq_process_room_cmd_get_buddies(guint8 *data, gint len, PurpleConnection *gc);
-#endif
+#endif /* PURPLE_JABBER_AUTH_DIGEST_MD5_H_ */

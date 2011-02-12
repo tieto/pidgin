@@ -42,25 +42,6 @@ enum {
 	QQ_TRANS_IS_REPLY = 0x08				/* server command before login*/
 };
 
-struct _qq_transaction {
-	guint8 flag;
-	guint16 seq;
-	guint16 cmd;
-
-	guint8 room_cmd;
-	guint32 room_id;
-
-	guint8 *data;
-	gint data_len;
-
-	gint fd;
-	gint send_retries;
-	gint rcved_times;
-	gint scan_times;
-
-	guint32 update_class;
-	guint32 ship32;
-};
 
 gboolean qq_trans_is_server(qq_transaction *trans)
 {
@@ -107,7 +88,7 @@ guint32 qq_trans_get_ship(qq_transaction *trans)
 }
 
 static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
-	guint16 cmd, guint16 seq, guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
+	guint16 cmd, guint16 seq, guint8 *data, gint data_len, UPDCLS update_class, guint32 ship32)
 {
 	qq_transaction *trans;
 
@@ -178,7 +159,7 @@ static qq_transaction *trans_find(PurpleConnection *gc, guint16 cmd, guint16 seq
 }
 
 void qq_trans_add_client_cmd(PurpleConnection *gc,
-	guint16 cmd, guint16 seq, guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
+	guint16 cmd, guint16 seq, guint8 *data, gint data_len, UPDCLS update_class, guint32 ship32)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
 	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, update_class, ship32);
@@ -218,7 +199,7 @@ qq_transaction *qq_trans_find_rcved(PurpleConnection *gc, guint16 cmd, guint16 s
 
 void qq_trans_add_room_cmd(PurpleConnection *gc,
 		guint16 seq, guint8 room_cmd, guint32 room_id, guint8 *data, gint data_len,
-		guint32 update_class, guint32 ship32)
+		UPDCLS update_class, guint32 ship32)
 {
 	qq_data *qd = (qq_data *)gc->proto_data;
 	qq_transaction *trans = trans_create(gc, qd->fd, QQ_CMD_ROOM, seq, data, data_len,

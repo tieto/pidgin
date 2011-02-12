@@ -161,7 +161,7 @@ void qq_room_conv_set_onlines(PurpleConnection *gc, qq_room_data *rmd)
 }
 
 void qq_room_got_chat_in(PurpleConnection *gc,
-		guint32 room_id, guint32 uid_from, const gchar *msg, time_t in_time)
+		guint32 room_id, UID uid_from, const gchar *msg, time_t in_time)
 {
 	PurpleConversation *conv;
 	qq_data *qd;
@@ -207,10 +207,11 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 {
 	gchar *msg_smiley, *msg_fmt, *msg_utf8;
 	gint bytes, tail_len;
+	qq_data *qd;
 	struct {
 		guint32 ext_id;
 		guint8 type8;
-		guint32 member_uid;
+		UID member_uid;
 		guint16 unknown;
 		guint16 msg_seq;
 		time_t send_time;
@@ -222,10 +223,14 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 	guint16 content_type;
 	guint8 frag_count, frag_index;
 	guint16 msg_id;
+	guint32 use_default_font;
 	qq_im_format *fmt = NULL;
+	qd = (qq_data *) gc->proto_data;
 
 	/* at least include im_text.msg_len */
 	g_return_if_fail(data != NULL && data_len > 23);
+
+	use_default_font = (qd->custom) & QQ_CUSTOM_USE_DEFAULT_FONT;
 
 	/* qq_show_packet("ROOM_IM", data, data_len); */
 	memset(&im_text, 0, sizeof(im_text));
@@ -279,8 +284,14 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_smiley = qq_emoticon_to_purple(im_text.msg);
 	if (fmt != NULL) {
+		purple_debug_info("QQ", "going to use_default_font\n");
+		if (QQ_CUSTOM_USE_DEFAULT_FONT == use_default_font) {
+			qq_im_fmt_reset_font(fmt);
+			purple_debug_info("QQ", "use_default_font set\n");
+		}
 		msg_fmt = qq_im_fmt_to_purple(fmt, msg_smiley);
 		msg_utf8 =  qq_to_utf8(msg_fmt, QQ_CHARSET_DEFAULT);
+		purple_debug_info("QQ", "passed!\n");
 		g_free(msg_fmt);
 		qq_im_fmt_free(fmt);
 	} else {

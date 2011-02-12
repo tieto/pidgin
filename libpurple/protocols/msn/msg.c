@@ -613,15 +613,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		g_string_append_printf(str, "Session ID: %u\r\n", msg->part->header->session_id);
-		g_string_append_printf(str, "ID:         %u\r\n", msg->part->header->id);
-		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->part->header->offset);
-		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->part->header->total_size);
-		g_string_append_printf(str, "Length:     %u\r\n", msg->part->header->length);
-		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->part->header->flags);
-		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->part->header->ack_id);
-		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->part->header->ack_sub_id);
-		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->part->header->ack_size);
+		msn_slpmsgpart_to_string(msg->part, str);
 
 		if (purple_debug_is_verbose() && body != NULL)
 		{
@@ -638,27 +630,17 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			else
 			{
 				int i;
-				int bin_len;
 
-				if (msg->part->footer->value == P2P_APPID_SESSION)
-					bin_len = P2P_PACKET_HEADER_SIZE;
-				else
-					bin_len = body_len;
-
-				for (i = 0; i < bin_len; i++)
+				for (i = 0; i < body_len; i++)
 				{
 					g_string_append_printf(str, "%.2hhX ", body[i]);
 					if ((i % 16) == 15)
 						g_string_append(str, "\r\n");
 				}
 
-				if (bin_len == P2P_PACKET_HEADER_SIZE)
-					g_string_append_printf(str, "%s ", body + P2P_PACKET_HEADER_SIZE);
 				g_string_append(str, "\r\n");
 			}
 		}
-
-		g_string_append_printf(str, "Footer:     0x%08X\r\n", msg->part->footer->value);
 	}
 	else
 	{

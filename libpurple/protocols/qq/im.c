@@ -67,15 +67,14 @@ enum
 	QQ_NORMAL_IM_FILE_EX_NOTIFY_IP = 0x87
 };
 
-typedef struct _qq_im_header qq_im_header;
-struct _qq_im_header {
+typedef struct _qq_im_header {
 	/* this is the common part of normal_text */
 	guint16 version_from;
-	guint32 uid_from;
-	guint32 uid_to;
+	UID uid_from;
+	UID uid_to;
 	guint8 session_md5[QQ_KEY_LENGTH];
 	guint16 im_type;
-};
+} qq_im_header;
 
 /* read the common parts of the normal_im,
  * returns the bytes read if succeed, or -1 if there is any error */
@@ -93,11 +92,10 @@ static gint get_im_header(qq_im_header *im_header, guint8 *data, gint len)
 	return bytes;
 }
 
-typedef struct _qq_emoticon qq_emoticon;
-struct _qq_emoticon {
+typedef struct _qq_emoticon {
 	guint8 symbol;
 	gchar *name;
-};
+} qq_emoticon;
 
 static gboolean emoticons_is_sorted = FALSE;
 /* Map for purple smiley convert to qq, need qsort */
@@ -528,7 +526,8 @@ void qq_im_fmt_free(qq_im_format *fmt)
 qq_im_format *qq_im_fmt_new(void)
 {
 	qq_im_format *fmt;
-	const gchar simsun[] = { 0xcb, 0xce, 0xcc, 0xe5, 0};	/* simsun in Chinese */
+	/* '0xcb, 0xce, 0xcc, 0xe5' means Chinese '宋体' in utf8 */
+	const gchar simsun[] = { 0xcb, 0xce, 0xcc, 0xe5, 0};
 
 	fmt = g_new0(qq_im_format, 1);
 	memset(fmt, 0, sizeof(qq_im_format));
@@ -539,6 +538,17 @@ qq_im_format *qq_im_fmt_new(void)
 	fmt->charset = 0x8602;
 
 	return fmt;
+}
+
+void qq_im_fmt_reset_font(qq_im_format *fmt)
+{
+	const gchar simsun[] = {0xcb, 0xce, 0xcc, 0xe5, 0x00};
+	g_return_if_fail(NULL != fmt);
+
+	if (NULL != fmt->font) {
+		g_free(fmt->font);
+		fmt->font = g_strdup(simsun);
+	}
 }
 
 qq_im_format *qq_im_fmt_new_by_purple(const gchar *msg)
@@ -1036,7 +1046,7 @@ void qq_process_extend_im(PurpleConnection *gc, guint8 *data, gint len)
 }
 
 /* send an IM to uid_to */
-static void request_send_im(PurpleConnection *gc, guint32 uid_to, gint type,
+static void request_send_im(PurpleConnection *gc, UID uid_to, gint type,
 	qq_im_format *fmt, gchar *msg, guint8 id, guint8 frag_count, guint8 frag_index)
 {
 	qq_data *qd;
@@ -1241,7 +1251,7 @@ static GSList*  qq_grab_emoticons(const char *msg, const char*username)
 gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *what, PurpleMessageFlags flags)
 {
 	qq_data *qd;
-	guint32 uid_to;
+	UID uid_to;
 	gint type;
 	qq_im_format *fmt;
 	gchar *msg_stripped, *tmp;

@@ -632,11 +632,11 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			} else {
 				if (strchr(__argv[i], 'd'))
 					debug = TRUE;
-				else if (strchr(__argv[i], 'h'))
+				if (strchr(__argv[i], 'h'))
 					help = TRUE;
-				else if (strchr(__argv[i], 'v'))
+				if (strchr(__argv[i], 'v'))
 					version = TRUE;
-				else if (strchr(__argv[i], 'm'))
+				if (strchr(__argv[i], 'm'))
 					multiple = TRUE;
 			}
 		}

@@ -54,31 +54,31 @@ void qq_change_buddys_group(PurpleConnection *gc, const char *who,
 void qq_remove_buddy_and_me(PurpleBlistNode * node);
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
-void qq_process_remove_buddy(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
-void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_process_remove_buddy(PurpleConnection *gc, guint8 *data, gint data_len, UID uid);
+void qq_process_buddy_remove_me(PurpleConnection *gc, guint8 *data, gint data_len, UID uid);
 void qq_process_add_buddy_no_auth(PurpleConnection *gc,
-		guint8 *data, gint data_len, guint32 uid);
+		guint8 *data, gint data_len, UID uid);
 void qq_process_add_buddy_no_auth_ex(PurpleConnection *gc,
-		guint8 *data, gint data_len, guint32 uid);
+		guint8 *data, gint data_len, UID uid);
 void qq_process_add_buddy_auth(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_from_server(PurpleConnection *gc, int funct,
 		gchar *from, gchar *to, guint8 *data, gint data_len);
 
 void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_len);
 
-void qq_request_auth_code(PurpleConnection *gc, guint8 cmd, guint16 sub_cmd, guint32 uid);
-void qq_process_auth_code(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+void qq_request_auth_code(PurpleConnection *gc, guint8 cmd, guint16 sub_cmd, UID uid);
+void qq_process_auth_code(PurpleConnection *gc, guint8 *data, gint data_len, UID uid);
 void qq_request_question(PurpleConnection *gc,
-		guint8 cmd, guint32 uid, const gchar *question_utf8, const gchar *answer_utf8);
-void qq_process_question(PurpleConnection *gc, guint8 *data, gint data_len, guint32 uid);
+		guint8 cmd, UID uid, const gchar *question_utf8, const gchar *answer_utf8);
+void qq_process_question(PurpleConnection *gc, guint8 *data, gint data_len, UID uid);
 
 void qq_process_add_buddy_auth_ex(PurpleConnection *gc, guint8 *data, gint data_len, guint32 ship32);
 
-qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid);
+qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, UID uid);
 void qq_buddy_data_free(qq_buddy_data *bd);
 
-PurpleBuddy *qq_buddy_new(PurpleConnection *gc, guint32 uid);
-PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid);
-PurpleBuddy *qq_buddy_find(PurpleConnection *gc, guint32 uid);
+PurpleBuddy *qq_buddy_new(PurpleConnection *gc, UID uid);
+PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, UID uid);
+PurpleBuddy *qq_buddy_find(PurpleConnection *gc, UID uid);
 PurpleGroup *qq_group_find_or_new(const gchar *group_name);
 #endif

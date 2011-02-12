@@ -207,7 +207,7 @@ void qq_room_remove(PurpleConnection *gc, guint32 id)
 }
 
 /* find a qq_buddy_data by uid, called by im.c */
-qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, guint32 uid)
+qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, UID uid)
 {
 	GList *list;
 	qq_buddy_data *bd;
@@ -226,7 +226,7 @@ qq_buddy_data *qq_room_buddy_find(qq_room_data *rmd, guint32 uid)
 }
 
 /* remove a qq_buddy_data by uid, called by qq_group_opt.c */
-void qq_room_buddy_remove(qq_room_data *rmd, guint32 uid)
+void qq_room_buddy_remove(qq_room_data *rmd, UID uid)
 {
 	GList *list;
 	qq_buddy_data *bd;
@@ -244,7 +244,7 @@ void qq_room_buddy_remove(qq_room_data *rmd, guint32 uid)
 	}
 }
 
-qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, guint32 member_uid)
+qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd, UID member_uid)
 {
 	qq_buddy_data *member, *bd;
 	PurpleBuddy *buddy;

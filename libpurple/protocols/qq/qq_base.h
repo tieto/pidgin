@@ -28,12 +28,12 @@
 #include <glib.h>
 #include "connection.h"
 
-#define QQ_LOGIN_REPLY_OK							0x00
+#define QQ_LOGIN_REPLY_OK				0x00
 #define QQ_LOGIN_REPLY_REDIRECT				0x01
 /* defined by myself */
 #define QQ_LOGIN_REPLY_CAPTCHA_DLG			0xfd
-#define QQ_LOGIN_REPLY_NEXT_TOKEN_EX		0xfe
-#define QQ_LOGIN_REPLY_ERR							0xff
+#define QQ_LOGIN_REPLY_NEXT_TOKEN_EX			0xfe
+#define QQ_LOGIN_REPLY_ERR				0xff
 
 #define QQ_LOGIN_MODE_NORMAL		0x0a
 #define QQ_LOGIN_MODE_AWAY	    	0x1e
@@ -76,3 +76,4 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 void qq_request_login_2008(PurpleConnection *gc);
 guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len);
 #endif
+
