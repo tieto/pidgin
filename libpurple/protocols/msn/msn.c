@@ -931,8 +931,8 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 		if (session) {
 			MsnUser *user = msn_userlist_find_user(session->userlist, who);
 			if (user) {
-				/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
-				if ((user->clientid & MSN_CLIENT_CAP_WEBMSGR) ||
+				/* Include these too: MSN_CAP_MOBILE_ON|MSN_CAP_WEB_WATCH ? */
+				if ((user->clientid & MSN_CAP_VIA_WEBIM) ||
 						user->networkid == MSN_NETWORK_YAHOO)
 					ret = FALSE;
 				else
@@ -961,16 +961,16 @@ msn_list_emblems(PurpleBuddy *b)
 	MsnUser *user = purple_buddy_get_protocol_data(b);
 
 	if (user != NULL) {
-		if (user->clientid & MSN_CLIENT_CAP_BOT)
+		if (user->clientid & MSN_CAP_BOT)
 			return "bot";
-		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
+		if (user->clientid & MSN_CAP_VIA_MOBILE)
 			return "mobile";
 #if 0
 		/* XXX: Since we don't support this, there's no point in showing it just yet */
-		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
+		if (user->clientid & MSN_CAP_SCHANNEL)
 			return "secure";
 #endif
-		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
+		if (user->clientid & MSN_CAP_VIA_WEBIM)
 			return "external";
 		if (user->networkid == MSN_NETWORK_YAHOO)
 			return "yahoo";
