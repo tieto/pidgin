@@ -1073,7 +1073,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	}
 	if (primary) /* This was allocated here */
 		g_free(text);
- }
+}
 
 static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
 {
@@ -1342,7 +1342,7 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 				       paste_received_cb, imhtml);
 
 		return TRUE;
-        }
+	}
 
 	return FALSE;
 }
@@ -1904,10 +1904,10 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 
 	gdk_drag_status (context, suggested_action, time);
 
-  /* TRUE return means don't propagate the drag motion to parent
-   * widgets that may also be drop sites.
-   */
-  return TRUE;
+	/* TRUE return means don't propagate the drag motion to parent
+	 * widgets that may also be drop sites.
+	 */
+	return TRUE;
 }
 
 static void
@@ -1966,7 +1966,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 
 				i++;
 			}
-            g_strfreev(links);
+			g_strfreev(links);
 			break;
 		case GTK_IMHTML_DRAG_HTML:
 			{
@@ -4260,7 +4260,7 @@ static void remove_tag_by_prefix(GtkIMHtml *imhtml, const GtkTextIter *i, const 
 					gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, &iter, e);
 
 				g_free(name);
-      }
+			}
 
 			g_slist_free(tags);
 		}
@@ -5010,7 +5010,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 						}
 					}
 				} else {
- 					imhtml->num_animations++;
+					imhtml->num_animations++;
 				}
 				g_signal_connect(G_OBJECT(icon), "destroy", G_CALLBACK(animated_smiley_destroy_cb), imhtml);
 				g_queue_push_tail(imhtml->animations, icon);

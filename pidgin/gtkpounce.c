@@ -410,9 +410,9 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				GtkSelectionData *sd, guint info, guint t, gpointer data)
 {
 	PidginPounceDialog *dialog;
-  GdkAtom target = gtk_selection_data_get_target(sd);
-  const guchar *sd_data = gtk_selection_data_get_data(sd);
-    
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *sd_data = gtk_selection_data_get_data(sd);
+
 	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
 		PurpleBlistNode *node = NULL;

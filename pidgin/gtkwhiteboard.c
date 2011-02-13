@@ -360,7 +360,7 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	cairo_t *cr;
 	GdkWindow *window = gtk_widget_get_window(widget);
 	GtkAllocation allocation;
-    
+
 	if (pixbuf) {
 		cr = g_object_get_data(G_OBJECT(pixbuf), "cairo-context");
 		if (cr)
@@ -369,11 +369,11 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 	}
 
 	gtk_widget_get_allocation(widget, &allocation);
-    
+
 	pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-    	FALSE, gdk_visual_get_depth(GDK_VISUAL(window)),
-		allocation.width, allocation.height);
-                                                    
+	    	                FALSE, gdk_visual_get_depth(GDK_VISUAL(window)),
+	    	                allocation.width, allocation.height);
+
 	gtkwb->pixbuf = pixbuf;
 
 	cr = gdk_cairo_create(gtk_widget_get_window(widget));
@@ -708,10 +708,10 @@ static void pidgin_whiteboard_clear(PurpleWhiteboard *wb)
 	GdkPixbuf *pixbuf = gtkwb->pixbuf;
 	GtkWidget *drawing_area = gtkwb->drawing_area;
 	cairo_t *cr = g_object_get_data(G_OBJECT(pixbuf), "cairo-context");
-  GtkAllocation allocation;
+	GtkAllocation allocation;
 
-  gtk_widget_get_allocation(drawing_area, &allocation);
-    
+	gtk_widget_get_allocation(drawing_area, &allocation);
+
 	gdk_cairo_set_source_color(cr, &gtk_widget_get_style(drawing_area)->white);
 	cairo_rectangle(cr,
 	                0, 0,
@@ -788,15 +788,15 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 		gtk_widget_destroy(dialog);
 
 		/* Makes an icon from the whiteboard's canvas 'image' */
-    pixbuf = gtkwb->pixbuf;
-    /*
+		pixbuf = gtkwb->pixbuf;
+/*
 		pixbuf = gdk_pixbuf_get_from_drawable(NULL,
 											  (GdkDrawable*)(gtkwb->pixmap),
 											  gdk_drawable_get_colormap(gtkwb->pixmap),
 											  0, 0,
 											  0, 0,
 											  gtkwb->width, gtkwb->height);
-    */
+*/
 
 		if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
 			purple_debug_info("gtkwhiteboard", "File Saved...\n");
@@ -817,15 +817,15 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 	GdkPixbuf *pixbuf;
 
 	/* Makes an icon from the whiteboard's canvas 'image' */
-  pixbuf = gtkwb->pixbuf;
-  /*
+	pixbuf = gtkwb->pixbuf;
+/*
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
 										  (GdkDrawable*)(gtkwb->pixmap),
 										  gdk_drawable_get_colormap(gtkwb->pixmap),
 										  0, 0,
 										  0, 0,
 										  gtkwb->width, gtkwb->height);
-  */
+*/
 
 	gtk_window_set_icon((GtkWindow*)(gtkwb->window), pixbuf);
 }
@@ -866,21 +866,20 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
-  GtkWidget *ok_button;
-    
+	GtkWidget *ok_button;
+
 	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
 	g_object_set_data(G_OBJECT(gtkwb->window), "colour-dialog", dialog);
 
 	g_signal_connect(G_OBJECT(gtk_color_selection_dialog_get_color_selection(dialog)),
-          "color-changed",
-					G_CALLBACK(change_color_cb), gtkwb);
+	                 "color-changed", G_CALLBACK(change_color_cb), gtkwb);
 
-  /*
+/*
 	gtk_widget_destroy(dialog->cancel_button);
 	gtk_widget_destroy(dialog->help_button);
-  */
-  g_object_get(G_OBJECT(dialog), "ok-button", &ok_button, NULL);
-      
+*/
+	g_object_get(G_OBJECT(dialog), "ok-button", &ok_button, NULL);
+
 	g_signal_connect(G_OBJECT(ok_button), "clicked",
 					G_CALLBACK(color_selection_dialog_destroy), gtkwb);
 
@@ -888,7 +887,7 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 
 	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
 	gtk_color_selection_set_current_color(
-      GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog)), &color);
+		GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(dialog)), &color);
 
 	gtk_widget_show_all(GTK_WIDGET(dialog));
 }

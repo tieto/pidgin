@@ -562,13 +562,13 @@ static gboolean
 pidgin_plugins_paint_tooltip(GtkWidget *tipwindow, gpointer data)
 {
 	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
-  cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(tipwindow));
-  gtk_paint_layout(gtk_widget_get_style(tipwindow), cr, GTK_STATE_NORMAL, FALSE,
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(tipwindow));
+	gtk_paint_layout(gtk_widget_get_style(tipwindow), cr, GTK_STATE_NORMAL, FALSE,
 			tipwindow, "tooltip",
 			6, 6, layout);
-  cairo_destroy(cr);
+	cairo_destroy(cr);
 
-  return TRUE;
+	return TRUE;
 }
 
 static gboolean
@@ -738,7 +738,7 @@ void pidgin_plugin_dialog_show()
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
-                     sw, TRUE, TRUE, 0);
+	                   sw, TRUE, TRUE, 0);
 
 	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
@@ -799,7 +799,7 @@ void pidgin_plugin_dialog_show()
 	gtk_widget_set_sensitive(expander, FALSE);
 	gtk_container_add(GTK_CONTAINER(expander), create_details());
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
-    expander, FALSE, FALSE, 0);
+	                   expander, FALSE, FALSE, 0);
 
 
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);

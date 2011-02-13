@@ -1807,8 +1807,8 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 		group = gtk_menu_get_accel_group(GTK_MENU(menu));
 		if (group) {
 			char *path = g_strdup_printf("%s/%s",
-                    gtk_menu_item_get_accel_path(GTK_MENU_ITEM(menuitem)),
-                    act->label);
+				gtk_menu_item_get_accel_path(GTK_MENU_ITEM(menuitem)),
+				act->label);
 			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 			g_free(path);
 			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
@@ -2188,7 +2188,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 	gtk_widget_destroy(dialog->icon_filesel);
 	g_free(filename);
 	g_free(dialog);
- }
+}
 
 
 static void
@@ -2822,7 +2822,7 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 	if (!widget)
 		return "dim grey";
 
- 	style = gtk_widget_get_style(widget);
+	style = gtk_widget_get_style(widget);
 	if (!style)
 		return "dim grey";
 

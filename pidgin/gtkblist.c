@@ -461,9 +461,9 @@ gtk_blist_do_personize(GList *merges)
 	GList *tmp;
 
 	/* First, we find the contact to merge the rest of the buddies into.
- 	 * This will be the contact with the most buddies in it; ties are broken
- 	 * by which contact is higher in the list
- 	 */
+	 * This will be the contact with the most buddies in it; ties are broken
+	 * by which contact is higher in the list
+	 */
 	for (tmp = merges; tmp; tmp = tmp->next) {
 		PurpleBlistNode *node = tmp->data;
 		PurpleBlistNode *b;
@@ -984,7 +984,7 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
-  /* TODO: set no separator in gtk+ 3... */
+	/* TODO: set no separator in gtk+ 3... */
 	data->window = gtk_dialog_new_with_buttons(title,
 		blist_window, 0, NULL);
 
@@ -993,14 +993,14 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
-                      PIDGIN_HIG_BORDER);
+	                    PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
-                                 PIDGIN_HIG_BOX_SPACE);
+	                               PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), window_role);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
-                    hbox);
+	                  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
@@ -1559,7 +1559,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (node->parent && node->parent->child->next &&
-              !sub && !contact_expanded) {
+	    !sub && !contact_expanded) {
 		pidgin_separator(menu);
 		pidgin_append_blist_node_privacy_menu(menu, node);
 		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
@@ -2250,7 +2250,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 											guint time,
 											gpointer null)
 {
-  GdkAtom target = gtk_selection_data_get_target(data);
+	GdkAtom target = gtk_selection_data_get_target(data);
 
 	if (target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE)) {
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
@@ -2346,8 +2346,8 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {
-  GdkAtom target = gtk_selection_data_get_target(sd);
-  const guchar *data = gtk_selection_data_get_data(sd);
+	GdkAtom target = gtk_selection_data_get_target(sd);
+	const guchar *data = gtk_selection_data_get_data(sd);
 
 	if (gtkblist->drag_timeout) {
 		g_source_remove(gtkblist->drag_timeout);
@@ -2557,7 +2557,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			gtk_tree_path_free(path);
 
 		gtk_drag_finish(dc, TRUE,
-                    (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	}
 	else if (target == gdk_atom_intern("text/x-vcard", FALSE) && data)
 	{
@@ -2595,7 +2595,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		result = parse_vcard((const gchar *) data, group);
 
 		gtk_drag_finish(dc, result,
-                    (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
+		                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 	} else if (target == gdk_atom_intern("text/uri-list", FALSE) && data) {
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
@@ -2615,7 +2615,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
 					pidgin_dnd_file_manage(sd, b->account, b->name);
 					gtk_drag_finish(dc, TRUE,
-                          (gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE), t);
+					                gdk_drag_context_get_actions(dc) == GDK_ACTION_MOVE, t);
 				} else {
 					gtk_drag_finish(dc, FALSE, FALSE, t);
 				}
@@ -2979,56 +2979,57 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-    	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
+		cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(gtkblist->tipwindow));
 
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 		{
 			if (dir == GTK_TEXT_DIR_RTL)
 				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 						gtkblist->tipwindow, "tooltip",
-						TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2,
-            			td->avatar_height + 2);
+						TOOLTIP_BORDER - 1, current_height - 1,
+						td->avatar_width + 2, td->avatar_height + 2);
 			else
 				gtk_paint_flat_box(style, cr, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 						gtkblist->tipwindow, "tooltip",
-						max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-						current_height-1,td->avatar_width+2, td->avatar_height+2);
+						max_width - (td->avatar_width + TOOLTIP_BORDER) - 1,
+						current_height - 1,
+						td->avatar_width + 2, td->avatar_height + 2);
 		}
 
 		if (td->status_icon) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-        		gdk_cairo_set_source_pixbuf(cr, td->status_icon,
-          			max_width - TOOLTIP_BORDER - status_size, current_height);
-        		cairo_paint(cr);
-      		} else {
-        		gdk_cairo_set_source_pixbuf(cr, td->status_icon, TOOLTIP_BORDER, current_height);
-        		cairo_paint(cr);
-      		}
-    	}
+				gdk_cairo_set_source_pixbuf(cr, td->status_icon,
+					max_width - TOOLTIP_BORDER - status_size, current_height);
+				cairo_paint(cr);
+			} else {
+				gdk_cairo_set_source_pixbuf(cr, td->status_icon, TOOLTIP_BORDER, current_height);
+				cairo_paint(cr);
+			}
+		}
 
 		if (td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL) {
-        		gdk_cairo_set_source_pixbuf(cr, td->avatar, TOOLTIP_BORDER,
-		        	current_height);
-        		cairo_paint(cr);
-      		} else {
-        		gdk_cairo_set_source_pixbuf(cr, td->avatar,
-          			max_width - (td->avatar_width + TOOLTIP_BORDER), current_height);
-        		cairo_paint(cr);
-      		}
+				gdk_cairo_set_source_pixbuf(cr, td->avatar, TOOLTIP_BORDER,
+					current_height);
+				cairo_paint(cr);
+			} else {
+				gdk_cairo_set_source_pixbuf(cr, td->avatar,
+					max_width - (td->avatar_width + TOOLTIP_BORDER), current_height);
+				cairo_paint(cr);
+			}
 		}
 
 		if (!td->avatar_is_prpl_icon && td->prpl_icon) {
-      		gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
-        		current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)));
-      		cairo_paint(cr);
-    	}
+			gdk_cairo_set_source_pixbuf(cr, td->prpl_icon, prpl_col,
+				current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)));
+			cairo_paint(cr);
+		}
 
 		if (td->name_layout) {
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
 						gtkblist->tipwindow, "tooltip",
-						max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+						max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
 						current_height, td->name_layout);
 			} else {
 				gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
@@ -3051,7 +3052,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 			}
 		}
 
-    	cairo_destroy(cr);
+		cairo_destroy(cr);
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + td->padding;
 	}
 	return FALSE;
@@ -3600,11 +3601,11 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	}
 
 	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
-                              NULL, fields,
-                              _("OK"), G_CALLBACK(edit_mood_cb),
-                              _("Cancel"), NULL,
-                              gc ? purple_connection_get_account(gc) : NULL,
-                              NULL, NULL, gc);
+	                      NULL, fields,
+	                      _("OK"), G_CALLBACK(edit_mood_cb),
+	                      _("Cancel"), NULL,
+	                      gc ? purple_connection_get_account(gc) : NULL,
+	                      NULL, NULL, gc);
 
 	g_free(global_moods);
 }
@@ -5943,7 +5944,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-out-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 
-  /* TODO: how is this done in gtk+ 3.0? */
+	/* TODO: how is this done in gtk+ 3.0? */
 	/*GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;*/
 
 	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
@@ -7103,7 +7104,7 @@ static void pidgin_blist_set_visible(PurpleBuddyList *list, gboolean show)
 
 	if (show) {
 		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) &&
-        !gtk_widget_get_visible(gtkblist->window))
+		   !gtk_widget_get_visible(gtkblist->window))
 			purple_signal_emit(pidgin_blist_get_handle(), "gtkblist-unhiding", gtkblist);
 		pidgin_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
@@ -8047,7 +8048,7 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			for (n2 = n->child; n2; n2 = n2->next) {
-                        	buddy = (PurpleBuddy*)n2;
+				buddy = (PurpleBuddy*)n2;
 				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
 			}
 			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);

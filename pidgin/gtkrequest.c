@@ -106,9 +106,9 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 
 	if (GTK_IS_DIALOG(cont)) {
 		gtk_box_pack_start(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
-                       image, FALSE, TRUE, 0);
+	                       image, FALSE, TRUE, 0);
 		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
-                          image, 0);
+	                          image, 0);
 	} else if (GTK_IS_HBOX(cont)) {
 		gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
 		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
@@ -362,20 +362,21 @@ pidgin_request_input(const char *title, const char *primary,
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                                 PIDGIN_HIG_BORDER / 2);
+	                               PIDGIN_HIG_BORDER / 2);
 	if (!multiline)
 		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-  /* TODO: not sure how to do this with GTK+ 3 
+	/* TODO: not sure how to do this with GTK+ 3 */
+#if 0
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-  */
+#endif
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                      PIDGIN_HIG_BORDER);
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                    hbox);
+	                  hbox);
 
 	/* Dialog icon. */
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
@@ -544,18 +545,19 @@ pidgin_request_choice(const char *title, const char *primary,
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                                 PIDGIN_HIG_BORDER / 2);
+	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-  /* TODO: don't know if this is possible with GTK+ 3
-  gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-  */
+	/* TODO: don't know if this is possible with GTK+ 3 */
+#if 0
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                      PIDGIN_HIG_BORDER);
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                    hbox);
+	                  hbox);
 
 	/* Dialog icon. */
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
@@ -671,18 +673,19 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                                 PIDGIN_HIG_BORDER / 2);
+	                               PIDGIN_HIG_BORDER / 2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-  /* TODO: this is probably not supported by GTK+ 3
-  gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-  */
+	/* TODO: this is probably not supported by GTK+ 3 */
+#if 0
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+#endif
 	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                      PIDGIN_HIG_BORDER);
+	                    PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-                    hbox);
+	                  hbox);
 
 	/* Dialog icon. */
 	if (icon_data) {
@@ -753,8 +756,8 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 
 
 	if (default_action == PURPLE_DEFAULT_ACTION_NONE) {
-    gtk_widget_set_can_default(img, TRUE);
-    gtk_widget_set_can_focus(img, TRUE);
+		gtk_widget_set_can_default(img, TRUE);
+		gtk_widget_set_can_focus(img, TRUE);
 		gtk_widget_grab_focus(img);
 		gtk_widget_grab_default(img);
 	} else
@@ -1281,12 +1284,12 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Cancel button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
-  gtk_widget_set_can_default(button, TRUE);
+	gtk_widget_set_can_default(button, TRUE);
 
 	/* OK button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
 	data->ok_button = button;
-  gtk_widget_set_can_default(button, TRUE);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
 	pidgin_widget_decorate_account(hbox, account);

@@ -125,14 +125,14 @@ realize_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 	GtkFontSelection *sel;
 
 	sel = GTK_FONT_SELECTION(
-          gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)));
+		gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)));
 	gtk_widget_hide(gtk_widget_get_parent(
-                    gtk_font_selection_get_size_entry(sel)));
+		gtk_font_selection_get_size_entry(sel)));
 	gtk_widget_show_all(gtk_font_selection_get_family_list(sel));
 	gtk_widget_show(gtk_widget_get_parent(
-                    gtk_font_selection_get_family_list(sel)));
+		gtk_font_selection_get_family_list(sel)));
 	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(
-                    gtk_font_selection_get_family_list(sel))));
+		gtk_font_selection_get_family_list(sel))));
 }
 
 static void
@@ -196,11 +196,11 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_font), toolbar);
 			g_signal_connect(G_OBJECT(
-        gtk_font_selection_dialog_get_ok_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
-               "clicked", G_CALLBACK(apply_font), toolbar->font_dialog);
+				gtk_font_selection_dialog_get_ok_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
+				"clicked", G_CALLBACK(apply_font), toolbar->font_dialog);
 			g_signal_connect(G_OBJECT(
-        gtk_font_selection_dialog_get_cancel_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
-               "clicked", G_CALLBACK(cancel_toolbar_font), toolbar);
+				gtk_font_selection_dialog_get_cancel_button(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog))),
+				"clicked", G_CALLBACK(cancel_toolbar_font), toolbar);
 			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
@@ -259,12 +259,12 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->fgcolor_dialog) {
-      GtkWidget *ok_button;
-      GtkWidget *cancel_button;
-        
+			GtkWidget *ok_button;
+			GtkWidget *cancel_button;
+
 			toolbar->fgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 			colorsel =
-            gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
@@ -273,14 +273,13 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-      g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "ok-button", &ok_button, NULL);
-      g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "cancel-button",
-                   &cancel_button, NULL);
+			g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "ok-button", &ok_button, NULL);
+			g_object_get(G_OBJECT(toolbar->fgcolor_dialog), "cancel-button", &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
 			g_signal_connect(G_OBJECT(ok_button), "clicked", G_CALLBACK(do_fgcolor), colorsel);
 			g_signal_connect(G_OBJECT(cancel_button), "clicked",
-                       G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
+			                 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
 	} else {
@@ -344,14 +343,14 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->bgcolor_dialog) {
-      GtkWidget *ok_button;
-      GtkWidget *cancel_button;
-          
+			GtkWidget *ok_button;
+			GtkWidget *cancel_button;
+
 			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 			colorsel =
-            gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog));
 
-      if (color) {
+			if (color) {
 				gdk_color_parse(color, &bgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
 				g_free(color);
@@ -359,13 +358,13 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
-      g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "ok-button", &ok_button, NULL);
-      g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "cancel-button",
-                   &cancel_button, NULL);
+			g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "ok-button", &ok_button, NULL);
+			g_object_get(G_OBJECT(toolbar->bgcolor_dialog), "cancel-button",
+			             &cancel_button, NULL);
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
 			g_signal_connect(G_OBJECT(ok_button), "clicked",
-               G_CALLBACK(do_bgcolor), colorsel);
+			                 G_CALLBACK(do_bgcolor), colorsel);
 			g_signal_connect(G_OBJECT(cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_bgcolor), toolbar);
 
@@ -479,12 +478,12 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 
 static void insert_hr_cb(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-        GtkTextIter iter;
-        GtkTextMark *ins;
+	GtkTextIter iter;
+	GtkTextMark *ins;
 	GtkIMHtmlScalable *hr;
 
-        ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
-        gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
+	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
+	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
 	hr = gtk_imhtml_hr_new();
 	gtk_imhtml_hr_add_to(hr, GTK_IMHTML(toolbar->imhtml), &iter);
 }
@@ -1113,11 +1112,11 @@ menu_position_func (GtkMenu           *menu,
 {
 	GtkWidget *widget = GTK_WIDGET(data);
 	GtkRequisition menu_req;
-  GtkAllocation allocation;
-  gint ythickness = gtk_widget_get_style(widget)->ythickness;
+	GtkAllocation allocation;
+	gint ythickness = gtk_widget_get_style(widget)->ythickness;
 	int savy;
 
-  gtk_widget_get_allocation(widget, &allocation);    
+	gtk_widget_get_allocation(widget, &allocation);    
 	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;

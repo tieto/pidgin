@@ -867,7 +867,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	gchar *name = g_strchomp((gchar *)gtk_selection_data_get_data(sd));
 
 	if ((gtk_selection_data_get_length(sd) >= 0)
-      && (gtk_selection_data_get_format(sd) == 8)) {
+	 && (gtk_selection_data_get_format(sd) == 8)) {
 		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		gchar *temp;
@@ -2540,18 +2540,17 @@ sound_page(void)
 								sound_changed2_cb, vbox);
 #endif
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
-  parent = gtk_widget_get_parent(vbox);
-  parent_parent = gtk_widget_get_parent(parent);
-  parent_parent_parent = gtk_widget_get_parent(parent_parent);
-    
+	parent = gtk_widget_get_parent(vbox);
+	parent_parent = gtk_widget_get_parent(parent);
+	parent_parent_parent = gtk_widget_get_parent(parent_parent);
+
 	/* The following is an ugly hack to make the frame expand so the
 	 * sound events list is big enough to be usable */
 	gtk_box_set_child_packing(GTK_BOX(parent), vbox, TRUE, TRUE, 0,
 			GTK_PACK_START);
 	gtk_box_set_child_packing(GTK_BOX(parent_parent),
-      parent, TRUE, TRUE, 0, GTK_PACK_START);
-	gtk_box_set_child_packing(
-      GTK_BOX(parent_parent_parent),
+			parent, TRUE, TRUE, 0, GTK_PACK_START);
+	gtk_box_set_child_packing(GTK_BOX(parent_parent_parent),
 			parent_parent, TRUE, TRUE, 0, GTK_PACK_START);
 
 	/* SOUND SELECTION */
