@@ -7291,13 +7291,13 @@ pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y)
 {
 	gint pane_x, pane_y, x_rel;
 	PidginConversation *gtkconv;
-  GtkAllocation allocation;
+	GtkAllocation allocation;
 
-  gtk_widget_get_allocation(gtkconv->infopane, &allocation);
 	gdk_window_get_origin(gtk_widget_get_window(win->notebook),
-                        &pane_x, &pane_y);
+	                      &pane_x, &pane_y);
 	x_rel = x - pane_x;
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	gtk_widget_get_allocation(gtkconv->infopane, &allocation);
 	return (x_rel > allocation.x + allocation.width / 2);
 }
 
