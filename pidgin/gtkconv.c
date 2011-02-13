@@ -3411,14 +3411,21 @@ regenerate_media_items(PidginWindow *win)
 static void
 regenerate_options_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,6,0)
-#else
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
 	GList *list;
+#if GTK_CHECK_VERSION(2,6,0)
+	GtkWidget *more_menu;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	more_menu = gtk_ui_manager_get_widget(win->menu.ui,
+	                                      "/Conversation/ConversationMenu/MoreMenu");
+	gtk_widget_show(more_menu);
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(more_menu));
+#else
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+#endif
 
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
@@ -3436,7 +3443,6 @@ regenerate_options_items(PidginWindow *win)
 	}
 
 	gtk_widget_show_all(menu);
-#endif
 }
 
 static void
@@ -3450,8 +3456,6 @@ remove_from_list(GtkWidget *widget, PidginWindow *win)
 static void
 regenerate_plugins_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,6,0)
-#else
 	GList *action_items;
 	GtkWidget *menu;
 	GList *list;
@@ -3477,7 +3481,12 @@ regenerate_plugins_items(PidginWindow *win)
 		action_items = g_list_delete_link(action_items, action_items);
 	}
 
+#if GTK_CHECK_VERSION(2,6,0)
+	item = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/OptionsMenu");
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(item));
+#else
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Options"));
+#endif
 
 	list = purple_conversation_get_extended_menu(conv);
 	if (list) {
@@ -3493,7 +3502,6 @@ regenerate_plugins_items(PidginWindow *win)
 		g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(remove_from_list), win);
 	}
 	g_object_set_data(G_OBJECT(win->window), "plugin-actions", action_items);
-#endif
 }
 
 #if 0
