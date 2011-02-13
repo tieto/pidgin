@@ -681,8 +681,6 @@ create_protocols_menu(const char *default_proto_id)
 		if (facebook_name && strcmp(facebook_name, plugin->info->name) < 0) {
 			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
 			                                  "16", "facebook.png", NULL);
-			GtkWidget *item;
-
 			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 			g_free(filename);
 
