@@ -103,7 +103,7 @@ rc4_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 	}
 }
 
-	static size_t
+static size_t
 rc4_get_key_size (PurpleCipherContext *context)
 {
 	struct RC4Context *ctx;
@@ -132,7 +132,7 @@ rc4_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 static gint
 rc4_encrypt(PurpleCipherContext *context, const guchar data[],
-		size_t len, guchar output[], size_t *outlen) {
+            size_t len, guchar output[], size_t *outlen) {
 	struct RC4Context *ctx;
 	guchar temp_swap;
 	guchar x, y, z;
