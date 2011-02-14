@@ -5,23 +5,6 @@
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
- * Original md5
- * Copyright (C) 2001-2003  Christophe Devine <c.devine@cr0.net>
- *
- * Original md4 taken from linux kernel
- * MD4 Message Digest Algorithm (RFC1320).
- *
- * Implementation derived from Andrew Tridgell and Steve French's
- * CIFS MD4 implementation, and the cryptoapi implementation
- * originally based on the public domain implementation written
- * by Colin Plumb in 1993.
- *
- * Copyright (c) Andrew Tridgell 1997-1998.
- * Modified by Steve French (sfrench@us.ibm.com) 2002
- * Copyright (c) Cryptoapi developers.
- * Copyright (c) 2002 David S. Miller (davem@redhat.com)
- * Copyright (c) 2002 James Morris <jmorris@intercode.com.au>
- *
  * Original des taken from gpg
  *
  * des.c - DES and Triple-DES encryption/decryption Algorithm
@@ -136,198 +119,6 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 	return TRUE;
 }
 #endif
-
-/*******************************************************************************
- * HMAC
- ******************************************************************************/
-
-struct HMAC_Context {
-	PurpleCipherContext *hash;
-	char *name;
-	int blocksize;
-	guchar *opad;
-};
-
-static void
-hmac_init(PurpleCipherContext *context, gpointer extra)
-{
-	struct HMAC_Context *hctx;
-	hctx = g_new0(struct HMAC_Context, 1);
-	purple_cipher_context_set_data(context, hctx);
-	purple_cipher_context_reset(context, extra);
-}
-
-static void
-hmac_reset(PurpleCipherContext *context, gpointer extra)
-{
-	struct HMAC_Context *hctx;
-
-	hctx = purple_cipher_context_get_data(context);
-
-	g_free(hctx->name);
-	hctx->name = NULL;
-	if (hctx->hash)
-		purple_cipher_context_destroy(hctx->hash);
-	hctx->hash = NULL;
-	hctx->blocksize = 0;
-	g_free(hctx->opad);
-	hctx->opad = NULL;
-}
-
-static void
-hmac_set_opt(PurpleCipherContext *context, const gchar *name, void *value)
-{
-	struct HMAC_Context *hctx;
-
-	hctx = purple_cipher_context_get_data(context);
-
-	if (purple_strequal(name, "hash")) {
-		g_free(hctx->name);
-		if (hctx->hash)
-			purple_cipher_context_destroy(hctx->hash);
-		hctx->name = g_strdup((char*)value);
-		hctx->hash = purple_cipher_context_new_by_name((char *)value, NULL);
-		hctx->blocksize = purple_cipher_context_get_block_size(hctx->hash);
-	}
-}
-
-static void *
-hmac_get_opt(PurpleCipherContext *context, const gchar *name)
-{
-	struct HMAC_Context *hctx;
-
-	hctx = purple_cipher_context_get_data(context);
-
-	if (purple_strequal(name, "hash")) {
-		return hctx->name;
-	}
-
-	return NULL;
-}
-
-static void
-hmac_append(PurpleCipherContext *context, const guchar *data, size_t len)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-
-	g_return_if_fail(hctx->hash != NULL);
-
-	purple_cipher_context_append(hctx->hash, data, len);
-}
-
-static gboolean
-hmac_digest(PurpleCipherContext *context, size_t in_len, guchar *out, size_t *out_len)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	PurpleCipherContext *hash = hctx->hash;
-	guchar *inner_hash;
-	size_t hash_len;
-	gboolean result;
-
-	g_return_val_if_fail(hash != NULL, FALSE);
-
-	inner_hash = g_malloc(100); /* TODO: Should be enough for now... */
-	result = purple_cipher_context_digest(hash, 100, inner_hash, &hash_len);
-
-	purple_cipher_context_reset(hash, NULL);
-
-	purple_cipher_context_append(hash, hctx->opad, hctx->blocksize);
-	purple_cipher_context_append(hash, inner_hash, hash_len);
-
-	g_free(inner_hash);
-
-	result = result && purple_cipher_context_digest(hash, in_len, out, out_len);
-
-	return result;
-}
-
-static void
-hmac_uninit(PurpleCipherContext *context)
-{
-	struct HMAC_Context *hctx;
-
-	purple_cipher_context_reset(context, NULL);
-
-	hctx = purple_cipher_context_get_data(context);
-
-	g_free(hctx);
-}
-
-static void
-hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t key_len)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-	int blocksize, i;
-	guchar *ipad;
-	guchar *full_key;
-
-	g_return_if_fail(hctx->hash != NULL);
-
-	g_free(hctx->opad);
-
-	blocksize = hctx->blocksize;
-	ipad = g_malloc(blocksize);
-	hctx->opad = g_malloc(blocksize);
-
-	if (key_len > blocksize) {
-		purple_cipher_context_reset(hctx->hash, NULL);
-		purple_cipher_context_append(hctx->hash, key, key_len);
-		full_key = g_malloc(100); /* TODO: Should be enough for now... */
-		purple_cipher_context_digest(hctx->hash, 100, full_key, &key_len);
-	} else
-		full_key = g_memdup(key, key_len);
-
-    if (key_len < blocksize) {
-    	full_key = g_realloc(full_key, blocksize);
-    	memset(full_key + key_len, 0, blocksize - key_len);
-    }
-
-	for(i = 0; i < blocksize; i++) {
-		ipad[i] = 0x36 ^ full_key[i];
-		hctx->opad[i] = 0x5c ^ full_key[i];
-	}
-
-	g_free(full_key);
-
-	purple_cipher_context_reset(hctx->hash, NULL);
-	purple_cipher_context_append(hctx->hash, ipad, blocksize);
-	g_free(ipad);
-}
-
-static void
-hmac_set_key(PurpleCipherContext *context, const guchar * key)
-{
-	hmac_set_key_with_len(context, key, strlen((char *)key));
-}
-
-static size_t
-hmac_get_block_size(PurpleCipherContext *context)
-{
-	struct HMAC_Context *hctx = purple_cipher_context_get_data(context);
-
-	return hctx->blocksize;
-}
-
-static PurpleCipherOps HMACOps = {
-	hmac_set_opt,           /* Set option */
-	hmac_get_opt,           /* Get option */
-	hmac_init,               /* init */
-	hmac_reset,              /* reset */
-	hmac_uninit,             /* uninit */
-	NULL,                   /* set iv */
-	hmac_append,             /* append */
-	hmac_digest,             /* digest */
-	NULL,                   /* encrypt */
-	NULL,                   /* decrypt */
-	NULL,                   /* set salt */
-	NULL,                   /* get salt size */
-	hmac_set_key,           /* set key */
-	NULL,                   /* get key size */
-	NULL,                   /* set batch mode */
-	NULL,                   /* get batch mode */
-	hmac_get_block_size,    /* get block size */
-	hmac_set_key_with_len   /* set key with len */
-};
 
 /******************************************************************************
  * DES
@@ -2086,6 +1877,7 @@ purple_ciphers_get_handle() {
 	return &handle;
 }
 
+PurpleCipherOps *purple_hmac_cipher_get_ops();
 PurpleCipherOps *purple_md4_cipher_get_ops();
 PurpleCipherOps *purple_md5_cipher_get_ops();
 
@@ -2108,7 +1900,7 @@ purple_ciphers_init() {
 	purple_ciphers_register_cipher("sha1", &SHA1Ops);
 	purple_ciphers_register_cipher("sha256", &SHA256Ops);
 	purple_ciphers_register_cipher("md4", purple_md4_cipher_get_ops());
-	purple_ciphers_register_cipher("hmac", &HMACOps);
+	purple_ciphers_register_cipher("hmac", purple_hmac_cipher_get_ops());
 	purple_ciphers_register_cipher("des", &DESOps);
 	purple_ciphers_register_cipher("des3", &DES3Ops);
 	purple_ciphers_register_cipher("rc4", &RC4Ops);
