@@ -58,7 +58,7 @@
 #include "value.h"
 
 #if GLIB_CHECK_VERSION(2,16,0)
-static void
+void
 purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
 {
 	GChecksum *checksum;
@@ -67,7 +67,7 @@ purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
 	purple_cipher_context_set_data(context, checksum);
 }
 
-static void
+void
 purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
 {
 	GChecksum *checksum;
@@ -84,7 +84,7 @@ purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
 #endif
 }
 
-static void
+void
 purple_g_checksum_uninit(PurpleCipherContext *context)
 {
 	GChecksum *checksum;
@@ -95,7 +95,7 @@ purple_g_checksum_uninit(PurpleCipherContext *context)
 	g_checksum_free(checksum);
 }
 
-static void
+void
 purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
                          gsize len)
 {
@@ -114,7 +114,7 @@ purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
 		g_checksum_update(checksum, data, len);
 }
 
-static gboolean
+gboolean
 purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
                          gsize len, guchar *digest, gsize *out_len)
 {
@@ -136,608 +136,6 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 	return TRUE;
 }
 #endif
-
-
-/*******************************************************************************
- * MD5
- ******************************************************************************/
-#define MD5_HMAC_BLOCK_SIZE	64
-
-static size_t
-md5_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return MD5_HMAC_BLOCK_SIZE;
-}
-
-#if GLIB_CHECK_VERSION(2,16,0)
-
-static void
-md5_init(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_init(context, G_CHECKSUM_MD5);
-}
-
-static void
-md5_reset(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_reset(context, G_CHECKSUM_MD5);
-}
-
-static gboolean
-md5_digest(PurpleCipherContext *context, gsize in_len, guchar digest[16],
-           size_t *out_len)
-{
-	return purple_g_checksum_digest(context, G_CHECKSUM_MD5, in_len,
-	                                digest, out_len);
-}
-
-static PurpleCipherOps MD5Ops = {
-	NULL,			/* Set Option		*/
-	NULL,			/* Get Option		*/
-	md5_init,		/* init				*/
-	md5_reset,		/* reset			*/
-	purple_g_checksum_uninit,	/* uninit			*/
-	NULL,			/* set iv			*/
-	purple_g_checksum_append,	/* append			*/
-	md5_digest,		/* digest			*/
-	NULL,			/* encrypt			*/
-	NULL,			/* decrypt			*/
-	NULL,			/* set salt			*/
-	NULL,			/* get salt size	*/
-	NULL,			/* set key			*/
-	NULL,			/* get key size		*/
-	NULL,			/* set batch mode */
-	NULL,			/* get batch mode */
-	md5_get_block_size,	/* get block size */
-	NULL			/* set key with len */
-};
-
-#else /* GLIB_CHECK_VERSION(2,16,0) */
-
-struct MD5Context {
-	guint32 total[2];
-	guint32 state[4];
-	guchar buffer[64];
-};
-
-#define MD5_GET_GUINT32(n,b,i) {			\
-	(n) = ((guint32)(b) [(i)    ]      )	\
-		| ((guint32)(b) [(i) + 1] <<  8)	\
-		| ((guint32)(b) [(i) + 2] << 16)	\
-		| ((guint32)(b) [(i) + 3] << 24);	\
-}
-#define MD5_PUT_GUINT32(n,b,i) {			\
-	(b)[(i)    ] = (guchar)((n)      );		\
-	(b)[(i) + 1] = (guchar)((n) >>  8);		\
-	(b)[(i) + 2] = (guchar)((n) >> 16);		\
-	(b)[(i) + 3] = (guchar)((n) >> 24);		\
-}
-
-static void
-md5_init(PurpleCipherContext *context, gpointer extra) {
-	struct MD5Context *md5_context;
-
-	md5_context = g_new0(struct MD5Context, 1);
-
-	purple_cipher_context_set_data(context, md5_context);
-
-	purple_cipher_context_reset(context, extra);
-}
-
-static void
-md5_reset(PurpleCipherContext *context, gpointer extra) {
-	struct MD5Context *md5_context;
-
-	md5_context = purple_cipher_context_get_data(context);
-
-	md5_context->total[0] = 0;
-	md5_context->total[1] = 0;
-
-	md5_context->state[0] = 0x67452301;
-	md5_context->state[1] = 0xEFCDAB89;
-	md5_context->state[2] = 0x98BADCFE;
-	md5_context->state[3] = 0x10325476;
-
-	memset(md5_context->buffer, 0, sizeof(md5_context->buffer));
-}
-
-static void
-md5_uninit(PurpleCipherContext *context) {
-	struct MD5Context *md5_context;
-
-	purple_cipher_context_reset(context, NULL);
-
-	md5_context = purple_cipher_context_get_data(context);
-	memset(md5_context, 0, sizeof(*md5_context));
-
-	g_free(md5_context);
-	md5_context = NULL;
-}
-
-static void
-md5_process(struct MD5Context *md5_context, const guchar data[64]) {
-	guint32 X[16], A, B, C, D;
-
-	A = md5_context->state[0];
-	B = md5_context->state[1];
-	C = md5_context->state[2];
-	D = md5_context->state[3];
-
-	MD5_GET_GUINT32(X[ 0], data,  0);
-	MD5_GET_GUINT32(X[ 1], data,  4);
-	MD5_GET_GUINT32(X[ 2], data,  8);
-	MD5_GET_GUINT32(X[ 3], data, 12);
-	MD5_GET_GUINT32(X[ 4], data, 16);
-	MD5_GET_GUINT32(X[ 5], data, 20);
-	MD5_GET_GUINT32(X[ 6], data, 24);
-	MD5_GET_GUINT32(X[ 7], data, 28);
-	MD5_GET_GUINT32(X[ 8], data, 32);
-	MD5_GET_GUINT32(X[ 9], data, 36);
-	MD5_GET_GUINT32(X[10], data, 40);
-	MD5_GET_GUINT32(X[11], data, 44);
-	MD5_GET_GUINT32(X[12], data, 48);
-	MD5_GET_GUINT32(X[13], data, 52);
-	MD5_GET_GUINT32(X[14], data, 56);
-	MD5_GET_GUINT32(X[15], data, 60);
-
-	#define S(x,n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
-	#define P(a,b,c,d,k,s,t) {		\
-		a += F(b,c,d) + X[k] + t;	\
-		a = S(a,s) + b;				\
-	}
-
-	/* first pass */
-	#define F(x,y,z) (z ^ (x & (y ^ z)))
-	P(A, B, C, D,  0,  7, 0xD76AA478);
-	P(D, A, B, C,  1, 12, 0xE8C7B756);
-	P(C, D, A, B,  2, 17, 0x242070DB);
-	P(B, C, D, A,  3, 22, 0xC1BDCEEE);
-	P(A, B, C, D,  4,  7, 0xF57C0FAF);
-	P(D, A, B, C,  5, 12, 0x4787C62A);
-	P(C, D, A, B,  6, 17, 0xA8304613);
-	P(B, C, D, A,  7, 22, 0xFD469501);
-	P(A, B, C, D,  8,  7, 0x698098D8);
-	P(D, A, B, C,  9, 12, 0x8B44F7AF);
-	P(C, D, A, B, 10, 17, 0xFFFF5BB1);
-	P(B, C, D, A, 11, 22, 0x895CD7BE);
-	P(A, B, C, D, 12,  7, 0x6B901122);
-	P(D, A, B, C, 13, 12, 0xFD987193);
-	P(C, D, A, B, 14, 17, 0xA679438E);
-	P(B, C, D, A, 15, 22, 0x49B40821);
-	#undef F
-
-	/* second pass */
-	#define F(x,y,z) (y ^ (z & (x ^ y)))
-	P(A, B, C, D,  1,  5, 0xF61E2562);
-	P(D, A, B, C,  6,  9, 0xC040B340);
-	P(C, D, A, B, 11, 14, 0x265E5A51);
-	P(B, C, D, A,  0, 20, 0xE9B6C7AA);
-	P(A, B, C, D,  5,  5, 0xD62F105D);
-	P(D, A, B, C, 10,  9, 0x02441453);
-	P(C, D, A, B, 15, 14, 0xD8A1E681);
-	P(B, C, D, A,  4, 20, 0xE7D3FBC8);
-	P(A, B, C, D,  9,  5, 0x21E1CDE6);
-	P(D, A, B, C, 14,  9, 0xC33707D6);
-	P(C, D, A, B,  3, 14, 0xF4D50D87);
-	P(B, C, D, A,  8, 20, 0x455A14ED);
-	P(A, B, C, D, 13,  5, 0xA9E3E905);
-	P(D, A, B, C,  2,  9, 0xFCEFA3F8);
-	P(C, D, A, B,  7, 14, 0x676F02D9);
-	P(B, C, D, A, 12, 20, 0x8D2A4C8A);
-	#undef F
-
-	/* third pass */
-	#define F(x,y,z) (x ^ y ^ z)
-	P(A, B, C, D,  5,  4, 0xFFFA3942);
-	P(D, A, B, C,  8, 11, 0x8771F681);
-	P(C, D, A, B, 11, 16, 0x6D9D6122);
-	P(B, C, D, A, 14, 23, 0xFDE5380C);
-	P(A, B, C, D,  1,  4, 0xA4BEEA44);
-	P(D, A, B, C,  4, 11, 0x4BDECFA9);
-	P(C, D, A, B,  7, 16, 0xF6BB4B60);
-	P(B, C, D, A, 10, 23, 0xBEBFBC70);
-	P(A, B, C, D, 13,  4, 0x289B7EC6);
-	P(D, A, B, C,  0, 11, 0xEAA127FA);
-	P(C, D, A, B,  3, 16, 0xD4EF3085);
-	P(B, C, D, A,  6, 23, 0x04881D05);
-	P(A, B, C, D,  9,  4, 0xD9D4D039);
-	P(D, A, B, C, 12, 11, 0xE6DB99E5);
-	P(C, D, A, B, 15, 16, 0x1FA27CF8);
-	P(B, C, D, A,  2, 23, 0xC4AC5665);
-	#undef F
-
-	/* forth pass */
-	#define F(x,y,z) (y ^ (x | ~z))
-	P(A, B, C, D,  0,  6, 0xF4292244);
-	P(D, A, B, C,  7, 10, 0x432AFF97);
-	P(C, D, A, B, 14, 15, 0xAB9423A7);
-	P(B, C, D, A,  5, 21, 0xFC93A039);
-	P(A, B, C, D, 12,  6, 0x655B59C3);
-	P(D, A, B, C,  3, 10, 0x8F0CCC92);
-	P(C, D, A, B, 10, 15, 0xFFEFF47D);
-	P(B, C, D, A,  1, 21, 0x85845DD1);
-	P(A, B, C, D,  8,  6, 0x6FA87E4F);
-	P(D, A, B, C, 15, 10, 0xFE2CE6E0);
-	P(C, D, A, B,  6, 15, 0xA3014314);
-	P(B, C, D, A, 13, 21, 0x4E0811A1);
-	P(A, B, C, D,  4,  6, 0xF7537E82);
-	P(D, A, B, C, 11, 10, 0xBD3AF235);
-	P(C, D, A, B,  2, 15, 0x2AD7D2BB);
-	P(B, C, D, A,  9, 21, 0xEB86D391);
-	#undef F
-	#undef P
-	#undef S
-
-	md5_context->state[0] += A;
-	md5_context->state[1] += B;
-	md5_context->state[2] += C;
-	md5_context->state[3] += D;
-}
-
-static void
-md5_append(PurpleCipherContext *context, const guchar *data, size_t len) {
-	struct MD5Context *md5_context = NULL;
-	guint32 left = 0, fill = 0;
-
-	g_return_if_fail(context != NULL);
-
-	md5_context = purple_cipher_context_get_data(context);
-	g_return_if_fail(md5_context != NULL);
-
-	left = md5_context->total[0] & 0x3F;
-	fill = 64 - left;
-
-	md5_context->total[0] += len;
-	md5_context->total[0] &= 0xFFFFFFFF;
-
-	if(md5_context->total[0] < len)
-		md5_context->total[1]++;
-
-	if(left && len >= fill) {
-		memcpy((md5_context->buffer + left), data, fill);
-		md5_process(md5_context, md5_context->buffer);
-		len -= fill;
-		data += fill;
-		left = 0;
-	}
-
-	while(len >= 64) {
-		md5_process(md5_context, data);
-		len -= 64;
-		data += 64;
-	}
-
-	if(len) {
-		memcpy((md5_context->buffer + left), data, len);
-	}
-}
-
-static gboolean
-md5_digest(PurpleCipherContext *context, size_t in_len, guchar digest[16],
-		   size_t *out_len)
-{
-	struct MD5Context *md5_context = NULL;
-	guint32 last, pad;
-	guint32 high, low;
-	guchar message[8];
-	guchar padding[64] = {
-		0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-
-	g_return_val_if_fail(in_len >= 16, FALSE);
-
-	md5_context = purple_cipher_context_get_data(context);
-
-	high = (md5_context->total[0] >> 29)
-		 | (md5_context->total[1] << 3);
-	low = (md5_context->total[0] << 3);
-
-	MD5_PUT_GUINT32(low, message, 0);
-	MD5_PUT_GUINT32(high, message, 4);
-
-	last = md5_context->total[0] & 0x3F;
-	pad = (last < 56) ? (56 - last) : (120 - last);
-
-	md5_append(context, padding, pad);
-	md5_append(context, message, 8);
-
-	MD5_PUT_GUINT32(md5_context->state[0], digest, 0);
-	MD5_PUT_GUINT32(md5_context->state[1], digest, 4);
-	MD5_PUT_GUINT32(md5_context->state[2], digest, 8);
-	MD5_PUT_GUINT32(md5_context->state[3], digest, 12);
-
-	if(out_len)
-		*out_len = 16;
-
-	return TRUE;
-}
-
-static PurpleCipherOps MD5Ops = {
-	NULL,			/* Set option */
-	NULL,			/* Get option */
-	md5_init,		/* init */
-	md5_reset,		/* reset */
-	md5_uninit,		/* uninit */
-	NULL,			/* set iv */
-	md5_append,		/* append */
-	md5_digest,		/* digest */
-	NULL,			/* encrypt */
-	NULL,			/* decrypt */
-	NULL,			/* set salt */
-	NULL,			/* get salt size */
-	NULL,			/* set key */
-	NULL,			/* get key size */
-	NULL,			/* set batch mode */
-	NULL,			/* get batch mode */
-	md5_get_block_size,	/* get block size */
-	NULL			/* set key with len */
-};
-
-#endif /* GLIB_CHECK_VERSION(2,16,0) */
-
-/*******************************************************************************
- * MD4
- ******************************************************************************/
-#define MD4_DIGEST_SIZE		16
-#define MD4_HMAC_BLOCK_SIZE	64
-#define MD4_BLOCK_WORDS		16
-#define MD4_HASH_WORDS		4
-
-
-
-struct MD4_Context {
-	guint32 hash[MD4_HASH_WORDS];
-	guint32 block[MD4_BLOCK_WORDS];
-	guint64 byte_count;
-};
-
-static inline guint32 lshift(guint32 x, unsigned int s)
-{
-	x &= 0xFFFFFFFF;
-	return ((x << s) & 0xFFFFFFFF) | (x >> (32 - s));
-}
-
-static inline guint32 F(guint32 x, guint32 y, guint32 z)
-{
-	return (x & y) | ((~x) & z);
-}
-
-static inline guint32 G(guint32 x, guint32 y, guint32 z)
-{
-	return (x & y) | (x & z) | (y & z);
-}
-
-static inline guint32 H(guint32 x, guint32 y, guint32 z)
-{
-	return x ^ y ^ z;
-}
-
-#define ROUND1(a,b,c,d,k,s) (a = lshift(a + F(b,c,d) + k, s))
-#define ROUND2(a,b,c,d,k,s) (a = lshift(a + G(b,c,d) + k + (guint32)0x5A827999,s))
-#define ROUND3(a,b,c,d,k,s) (a = lshift(a + H(b,c,d) + k + (guint32)0x6ED9EBA1,s))
-
-static inline void le32_to_cpu_array(guint32 *buf, unsigned int words)
-{
-	while (words--) {
-		*buf=GUINT_FROM_LE(*buf);
-		buf++;
-	}
-}
-
-static inline void cpu_to_le32_array(guint32 *buf, unsigned int words)
-{
-	while (words--) {
-		*buf=GUINT_TO_LE(*buf);
-		buf++;
-	}
-}
-
-static void md4_transform(guint32 *hash, guint32 const *in)
-{
-	guint32 a, b, c, d;
-
-	a = hash[0];
-	b = hash[1];
-	c = hash[2];
-	d = hash[3];
-
-	ROUND1(a, b, c, d, in[0], 3);
-	ROUND1(d, a, b, c, in[1], 7);
-	ROUND1(c, d, a, b, in[2], 11);
-	ROUND1(b, c, d, a, in[3], 19);
-	ROUND1(a, b, c, d, in[4], 3);
-	ROUND1(d, a, b, c, in[5], 7);
-	ROUND1(c, d, a, b, in[6], 11);
-	ROUND1(b, c, d, a, in[7], 19);
-	ROUND1(a, b, c, d, in[8], 3);
-	ROUND1(d, a, b, c, in[9], 7);
-	ROUND1(c, d, a, b, in[10], 11);
-	ROUND1(b, c, d, a, in[11], 19);
-	ROUND1(a, b, c, d, in[12], 3);
-	ROUND1(d, a, b, c, in[13], 7);
-	ROUND1(c, d, a, b, in[14], 11);
-	ROUND1(b, c, d, a, in[15], 19);
-
-	ROUND2(a, b, c, d,in[ 0], 3);
-	ROUND2(d, a, b, c, in[4], 5);
-	ROUND2(c, d, a, b, in[8], 9);
-	ROUND2(b, c, d, a, in[12], 13);
-	ROUND2(a, b, c, d, in[1], 3);
-	ROUND2(d, a, b, c, in[5], 5);
-	ROUND2(c, d, a, b, in[9], 9);
-	ROUND2(b, c, d, a, in[13], 13);
-	ROUND2(a, b, c, d, in[2], 3);
-	ROUND2(d, a, b, c, in[6], 5);
-	ROUND2(c, d, a, b, in[10], 9);
-	ROUND2(b, c, d, a, in[14], 13);
-	ROUND2(a, b, c, d, in[3], 3);
-	ROUND2(d, a, b, c, in[7], 5);
-	ROUND2(c, d, a, b, in[11], 9);
-	ROUND2(b, c, d, a, in[15], 13);
-
-	ROUND3(a, b, c, d,in[ 0], 3);
-	ROUND3(d, a, b, c, in[8], 9);
-	ROUND3(c, d, a, b, in[4], 11);
-	ROUND3(b, c, d, a, in[12], 15);
-	ROUND3(a, b, c, d, in[2], 3);
-	ROUND3(d, a, b, c, in[10], 9);
-	ROUND3(c, d, a, b, in[6], 11);
-	ROUND3(b, c, d, a, in[14], 15);
-	ROUND3(a, b, c, d, in[1], 3);
-	ROUND3(d, a, b, c, in[9], 9);
-	ROUND3(c, d, a, b, in[5], 11);
-	ROUND3(b, c, d, a, in[13], 15);
-	ROUND3(a, b, c, d, in[3], 3);
-	ROUND3(d, a, b, c, in[11], 9);
-	ROUND3(c, d, a, b, in[7], 11);
-	ROUND3(b, c, d, a, in[15], 15);
-
-	hash[0] += a;
-	hash[1] += b;
-	hash[2] += c;
-	hash[3] += d;
-}
-
-static inline void md4_transform_helper(struct MD4_Context *ctx)
-{
-	le32_to_cpu_array(ctx->block, sizeof(ctx->block) / sizeof(guint32));
-	md4_transform(ctx->hash, ctx->block);
-}
-
-static void
-md4_init(PurpleCipherContext *context, gpointer extra) {
-	struct MD4_Context *mctx;
-	mctx = g_new0(struct MD4_Context, 1);
-	purple_cipher_context_set_data(context, mctx);
-	purple_cipher_context_reset(context, extra);
-
-	mctx->hash[0] = 0x67452301;
-	mctx->hash[1] = 0xefcdab89;
-	mctx->hash[2] = 0x98badcfe;
-	mctx->hash[3] = 0x10325476;
-	mctx->byte_count = 0;
-}
-
-static void
-md4_reset(PurpleCipherContext *context, gpointer extra) {
-	struct MD4_Context *mctx;
-
-	mctx = purple_cipher_context_get_data(context);
-
-	mctx->hash[0] = 0x67452301;
-	mctx->hash[1] = 0xefcdab89;
-	mctx->hash[2] = 0x98badcfe;
-	mctx->hash[3] = 0x10325476;
-	mctx->byte_count = 0;
-}
-
-static void
-md4_append(PurpleCipherContext *context, const guchar *data, size_t len)
-{
-	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
-	const guint32 avail = sizeof(mctx->block) - (mctx->byte_count & 0x3f);
-
-	mctx->byte_count += len;
-
-	if (avail > len) {
-		memcpy((char *)mctx->block + (sizeof(mctx->block) - avail),
-				data, len);
-		return;
-	}
-
-	memcpy((char *)mctx->block + (sizeof(mctx->block) - avail),
-			data, avail);
-
-	md4_transform_helper(mctx);
-	data += avail;
-	len -= avail;
-
-	while (len >= sizeof(mctx->block)) {
-		memcpy(mctx->block, data, sizeof(mctx->block));
-		md4_transform_helper(mctx);
-		data += sizeof(mctx->block);
-		len -= sizeof(mctx->block);
-	}
-
-	memcpy(mctx->block, data, len);
-}
-
-static gboolean
-md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
-		                   size_t *out_len)
-{
-	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
-	const unsigned int offset = mctx->byte_count & 0x3f;
-	char *p = (char *)mctx->block + offset;
-	int padding = 56 - (offset + 1);
-
-
-	if(in_len<16) return FALSE;
-	if(out_len) *out_len = 16;
-	*p++ = 0x80;
-	if (padding < 0) {
-		memset(p, 0x00, padding + sizeof (guint64));
-		md4_transform_helper(mctx);
-		p = (char *)mctx->block;
-		padding = 56;
-	}
-
-	memset(p, 0, padding);
-	mctx->block[14] = mctx->byte_count << 3;
-	mctx->block[15] = mctx->byte_count >> 29;
-	le32_to_cpu_array(mctx->block, (sizeof(mctx->block) -
-				sizeof(guint64)) / sizeof(guint32));
-	md4_transform(mctx->hash, mctx->block);
-	cpu_to_le32_array(mctx->hash, sizeof(mctx->hash) / sizeof(guint32));
-	memcpy(out, mctx->hash, sizeof(mctx->hash));
-	memset(mctx, 0, sizeof(*mctx));
-	return TRUE;
-}
-
-static void
-md4_uninit(PurpleCipherContext *context) {
-	struct MD4_Context *md4_context;
-
-	purple_cipher_context_reset(context, NULL);
-
-	md4_context = purple_cipher_context_get_data(context);
-	memset(md4_context, 0, sizeof(*md4_context));
-
-	g_free(md4_context);
-	md4_context = NULL;
-}
-
-static size_t
-md4_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return MD4_HMAC_BLOCK_SIZE;
-}
-
-static PurpleCipherOps MD4Ops = {
-	NULL,                   /* Set option */
-	NULL,                   /* Get option */
-	md4_init,               /* init */
-	md4_reset,              /* reset */
-	md4_uninit,             /* uninit */
-	NULL,                   /* set iv */
-	md4_append,             /* append */
-	md4_digest,             /* digest */
-	NULL,                   /* encrypt */
-	NULL,                   /* decrypt */
-	NULL,                   /* set salt */
-	NULL,                   /* get salt size */
-	NULL,                   /* set key */
-	NULL,                   /* get key size */
-	NULL,                   /* set batch mode */
-	NULL,                   /* get batch mode */
-	md4_get_block_size,     /* get block size */
-	NULL                    /* set key with len */
-};
 
 /*******************************************************************************
  * HMAC
@@ -2688,6 +2086,9 @@ purple_ciphers_get_handle() {
 	return &handle;
 }
 
+PurpleCipherOps *purple_md4_cipher_get_ops();
+PurpleCipherOps *purple_md5_cipher_get_ops();
+
 void
 purple_ciphers_init() {
 	gpointer handle;
@@ -2703,10 +2104,10 @@ purple_ciphers_init() {
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CIPHER));
 
-	purple_ciphers_register_cipher("md5", &MD5Ops);
+	purple_ciphers_register_cipher("md5", purple_md5_cipher_get_ops());
 	purple_ciphers_register_cipher("sha1", &SHA1Ops);
 	purple_ciphers_register_cipher("sha256", &SHA256Ops);
-	purple_ciphers_register_cipher("md4", &MD4Ops);
+	purple_ciphers_register_cipher("md4", purple_md4_cipher_get_ops());
 	purple_ciphers_register_cipher("hmac", &HMACOps);
 	purple_ciphers_register_cipher("des", &DESOps);
 	purple_ciphers_register_cipher("des3", &DES3Ops);

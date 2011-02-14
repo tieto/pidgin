@@ -129,9 +129,7 @@ struct _PurpleCipherOps {
 	void (*set_key_with_len)(PurpleCipherContext *context, const guchar *key, size_t len);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /*****************************************************************************/
 /** @name PurpleCipher API													 */
@@ -497,9 +495,20 @@ gchar *purple_cipher_http_digest_calculate_response(
 		const gchar *session_key);
 
 /*@}*/
+/*****************************************************************************/
+/** @name Purple Cipher GChecksum compatibility                              */
+/*****************************************************************************/
+/*@{*/
+#if GLIB_CHECK_VERSION(2,16,0)
+void purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type);
+void purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type);
+void purple_g_checksum_uninit(PurpleCipherContext *context);
+void purple_g_checksum_append(PurpleCipherContext *context, const guchar *data, gsize len);
+gboolean purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type, gsize len, guchar *digest, gsize *out_len);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+#endif /* GLIB_CHECK_VERSION(2,16,0) */
+/*@}*/
+
+G_END_DECLS
 
 #endif /* PURPLE_CIPHER_H */
