@@ -78,9 +78,9 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-typedef  enum
+typedef enum
 {
-	PIDGIN_CONV_SET_TITLE 			= 1 << 0,
+	PIDGIN_CONV_SET_TITLE			= 1 << 0,
 	PIDGIN_CONV_BUDDY_ICON			= 1 << 1,
 	PIDGIN_CONV_MENU			= 1 << 2,
 	PIDGIN_CONV_TAB_ICON			= 1 << 3,
@@ -2192,9 +2192,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
 		(event->keyval == GDK_Page_Up) ||
- 		(event->keyval == GDK_KP_Page_Up) ||
+		(event->keyval == GDK_KP_Page_Up) ||
 		(event->keyval == GDK_Page_Down) ||
- 		(event->keyval == GDK_KP_Page_Down) ||
+		(event->keyval == GDK_KP_Page_Down) ||
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
@@ -2430,8 +2430,8 @@ pidgin_conv_get_tab_icons(PurpleConversation *conv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *b = purple_find_buddy(account, name);
 		if (b != NULL) {
-                	PurplePresence *p;
-	                p = purple_buddy_get_presence(b);
+			PurplePresence *p;
+			p = purple_buddy_get_presence(b);
 			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
 				return away_list;
 			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
@@ -6127,7 +6127,7 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 
 	/* Currently GTK+ maintains our sorted list after it's in the tree.
 	 * This may change if it turns out we can manage it faster ourselves.
- 	 */
+	 */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  CHAT_USERS_ALIAS_KEY_COLUMN,
 										 GTK_SORT_ASCENDING);
 }
@@ -6479,13 +6479,13 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_show(win->menu.get_info);
 		gtk_widget_hide(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
- 		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
- 			gtk_widget_hide(win->menu.unblock);
- 			gtk_widget_show(win->menu.block);
- 		} else {
- 			gtk_widget_hide(win->menu.block);
- 			gtk_widget_show(win->menu.unblock);
- 		}
+		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
+			gtk_widget_hide(win->menu.unblock);
+			gtk_widget_show(win->menu.block);
+		} else {
+			gtk_widget_hide(win->menu.block);
+			gtk_widget_show(win->menu.unblock);
+		}
 
 		if ((account == NULL) || purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(win->menu.add);
@@ -6706,7 +6706,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		char *title;
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
-	 	PurpleBuddy *buddy = NULL;
+		PurpleBuddy *buddy = NULL;
 		char *markup = NULL;
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
