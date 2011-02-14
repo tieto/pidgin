@@ -28,6 +28,7 @@
 #define PURPLE_CIPHER_H
 
 #include <glib.h>
+#include <string.h>
 
 #define PURPLE_CIPHER(obj)			((PurpleCipher *)(obj))			/**< PurpleCipher typecast helper			*/
 #define PURPLE_CIPHER_OPS(obj)		((PurpleCipherOps *)(obj))		/**< PurpleCipherInfo typecase helper		*/
