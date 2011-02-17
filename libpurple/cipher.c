@@ -223,7 +223,7 @@ purple_ciphers_get_handle() {
 	return &handle;
 }
 
-/* This are implemented in the purple-ciphers sublibrary built in the ciphers
+/* These are implemented in the purple-ciphers sublibrary built in the ciphers
  * directory.  We could put a header file in there, but it's less hassle for
  * the developer to just add it here since they have to register it here as
  * well.
