@@ -2,7 +2,7 @@
 
 #if GLIB_CHECK_VERSION(2,16,0)
 
-void
+static void
 purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
 {
     GChecksum *checksum;
@@ -11,7 +11,7 @@ purple_g_checksum_init(PurpleCipherContext *context, GChecksumType type)
     purple_cipher_context_set_data(context, checksum);
 }
 
-void
+static void
 purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
 {
     GChecksum *checksum;
@@ -28,7 +28,7 @@ purple_g_checksum_reset(PurpleCipherContext *context, GChecksumType type)
 #endif
 }
 
-void
+static void
 purple_g_checksum_uninit(PurpleCipherContext *context)
 {
     GChecksum *checksum;
@@ -39,7 +39,7 @@ purple_g_checksum_uninit(PurpleCipherContext *context)
     g_checksum_free(checksum);
 }
 
-void
+static void
 purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
                          gsize len)
 {
@@ -58,7 +58,7 @@ purple_g_checksum_append(PurpleCipherContext *context, const guchar *data,
         g_checksum_update(checksum, data, len);
 }
 
-gboolean
+static gboolean
 purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
                          gsize len, guchar *digest, gsize *out_len)
 {
