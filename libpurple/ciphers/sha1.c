@@ -21,47 +21,7 @@
  */
 #include <cipher.h>
 
-#define SHA1_HMAC_BLOCK_SIZE    64
-
-static size_t
-sha1_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return SHA1_HMAC_BLOCK_SIZE;
-}
-
-#if GLIB_CHECK_VERSION(2,16,0)
-
-static void
-sha1_init(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_init(context, G_CHECKSUM_SHA1);
-}
-
-static void
-sha1_reset(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_reset(context, G_CHECKSUM_SHA1);
-}
-
-static gboolean
-sha1_digest(PurpleCipherContext *context, gsize in_len, guchar digest[20],
-            gsize *out_len)
-{
-	return purple_g_checksum_digest(context, G_CHECKSUM_SHA1, in_len,
-	                                digest, out_len);
-}
-
-static PurpleCipherOps SHA1Ops = {
-	.init = sha1_init,
-	.reset = sha1_reset,
-	.uninit = purple_g_checksum_uninit,
-	.append = purple_g_checksum_append,
-	.digest = sha1_digest,
-	.get_block_size = sha1_get_block_size,
-};
-
-#else /* GLIB_CHECK_VERSION(2,16,0) */
+#if !GLIB_CHECK_VERSION(2,16,0)
 
 #define SHA1_HMAC_BLOCK_SIZE    64
 #define SHA1_ROTL(X,n) ((((X) << (n)) | ((X) >> (32-(n)))) & 0xFFFFFFFF)
@@ -75,6 +35,13 @@ struct SHA1Context {
 	guint32 sizeHi;
 	guint32 sizeLo;
 };
+
+static size_t
+sha1_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return SHA1_HMAC_BLOCK_SIZE;
+}
 
 static void
 sha1_hash_block(struct SHA1Context *sha1_ctx) {
@@ -294,10 +261,10 @@ static PurpleCipherOps SHA1Ops = {
 	.get_block_size = sha1_get_block_size,
 };
 
-#endif /* GLIB_CHECK_VERSION(2,16,0) */
-
 PurpleCipherOps *
 purple_sha1_cipher_get_ops(void) {
 	return &SHA1Ops;
 }
+
+#endif /* !GLIB_CHECK_VERSION(2,16,0) */
 

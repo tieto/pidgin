@@ -24,47 +24,9 @@
  */
 #include <cipher.h>
 
+#if !GLIB_CHECK_VERSION(2,16,0)
+
 #define MD5_HMAC_BLOCK_SIZE 64
-
-static size_t
-md5_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return MD5_HMAC_BLOCK_SIZE;
-}
-
-#if GLIB_CHECK_VERSION(2,16,0)
-
-static void
-md5_init(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_init(context, G_CHECKSUM_MD5);
-}
-
-static void
-md5_reset(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_reset(context, G_CHECKSUM_MD5);
-}
-
-static gboolean
-md5_digest(PurpleCipherContext *context, gsize in_len, guchar digest[16],
-		size_t *out_len)
-{
-	return purple_g_checksum_digest(context, G_CHECKSUM_MD5, in_len,
-			digest, out_len);
-}
-
-static PurpleCipherOps MD5Ops = {
-	.init = md5_init,
-	.reset = md5_reset,
-	.uninit = purple_g_checksum_uninit,
-	.append = purple_g_checksum_append,
-	.digest = md5_digest,
-	.get_block_size = md5_get_block_size,
-};
-
-#else /* GLIB_CHECK_VERSION(2,16,0) */
 
 struct MD5Context {
 	guint32 total[2];
@@ -83,6 +45,13 @@ struct MD5Context {
 	(b)[(i) + 1] = (guchar)((n) >>  8);     \
 	(b)[(i) + 2] = (guchar)((n) >> 16);     \
 	(b)[(i) + 3] = (guchar)((n) >> 24);     \
+}
+
+static size_t
+md5_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return MD5_HMAC_BLOCK_SIZE;
 }
 
 static void
@@ -336,10 +305,10 @@ static PurpleCipherOps MD5Ops = {
 	.get_block_size = md5_get_block_size,
 };
 
-#endif /* GLIB_CHECK_VERSION(2,16,0) */
-
 PurpleCipherOps *
 purple_md5_cipher_get_ops(void) {
 	return &MD5Ops;
 }
+
+#endif /* !GLIB_CHECK_VERSION(2,16,0) */
 

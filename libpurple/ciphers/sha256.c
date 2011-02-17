@@ -21,48 +21,9 @@
  */
 #include <cipher.h>
 
+#if !GLIB_CHECK_VERSION(2,16,0)
+
 #define SHA256_HMAC_BLOCK_SIZE  64
-
-static size_t
-sha256_get_block_size(PurpleCipherContext *context)
-{
-	/* This does not change (in this case) */
-	return SHA256_HMAC_BLOCK_SIZE;
-}
-
-#if GLIB_CHECK_VERSION(2,16,0)
-
-static void
-sha256_init(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_init(context, G_CHECKSUM_SHA256);
-}
-
-static void
-sha256_reset(PurpleCipherContext *context, void *extra)
-{
-	purple_g_checksum_reset(context, G_CHECKSUM_SHA256);
-}
-
-static gboolean
-sha256_digest(PurpleCipherContext *context, gsize in_len, guchar digest[20],
-              gsize *out_len)
-{
-	return purple_g_checksum_digest(context, G_CHECKSUM_SHA256, in_len,
-	                                digest, out_len);
-}
-
-static PurpleCipherOps SHA256Ops = {
-	.init = sha256_init,
-	.reset = sha256_reset,
-	.uninit = purple_g_checksum_uninit,
-	.append = purple_g_checksum_append,
-	.digest = sha256_digest,
-	.get_block_size = sha256_get_block_size,
-};
-
-#else /* GLIB_CHECK_VERSION(2,16,0) */
-
 #define SHA256_ROTR(X,n) ((((X) >> (n)) | ((X) << (32-(n)))) & 0xFFFFFFFF)
 
 static const guint32 sha256_K[64] =
@@ -86,6 +47,13 @@ struct SHA256Context {
 	guint32 sizeHi;
 	guint32 sizeLo;
 };
+
+static size_t
+sha256_get_block_size(PurpleCipherContext *context)
+{
+	/* This does not change (in this case) */
+	return SHA256_HMAC_BLOCK_SIZE;
+}
 
 static void
 sha256_hash_block(struct SHA256Context *sha256_ctx) {
@@ -296,10 +264,10 @@ static PurpleCipherOps SHA256Ops = {
 	.get_block_size = sha256_get_block_size,
 };
 
-#endif /* GLIB_CHECK_VERSION(2,16,0) */
-
 PurpleCipherOps *
 purple_sha256_cipher_get_ops(void) {
 	return &SHA256Ops;
 }
+
+#endif /* !GLIB_CHECK_VERSION(2,16,0) */
 
