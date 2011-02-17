@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <cipher.h>
+#include <util.h>
 
 #if !GLIB_CHECK_VERSION(2,16,0)
 
