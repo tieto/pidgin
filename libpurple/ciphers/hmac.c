@@ -21,6 +21,8 @@
  */
 #include <cipher.h>
 
+#include <util.h>
+
 struct HMAC_Context {
 	PurpleCipherContext *hash;
 	char *name;
