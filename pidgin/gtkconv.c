@@ -141,8 +141,6 @@ static GList *available_list = NULL;
 static GList *away_list = NULL;
 static GList *busy_list = NULL;
 static GList *xa_list = NULL;
-static GList *login_list = NULL;
-static GList *logout_list = NULL;
 static GList *offline_list = NULL;
 static GHashTable *prpl_lists = NULL;
 
@@ -7567,33 +7565,11 @@ account_signing_off(PurpleConnection *gc)
 	}
 }
 
-struct _status_timeout_user {
-	gchar *name;
-	PurpleAccount *account;
-};
-
-static gboolean
-update_buddy_status_timeout(struct _status_timeout_user *user)
-{
-	/* To remove the signing-on/off door icon */
-	PurpleConversation *conv;
-
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, user->name, user->account);
-	if (conv)
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
-
-	g_free(user->name);
-	g_free(user);
-
-	return FALSE;
-}
-
 static void
 update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus *newstatus)
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
-	struct _status_timeout_user *user;
 
 	gtkconv = get_gtkconv_with_contact(purple_buddy_get_contact(buddy));
 	if (gtkconv)
@@ -7605,13 +7581,6 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
-
-	user = g_malloc(sizeof(struct _status_timeout_user));
-	user->name = g_strdup(buddy->name);
-	user->account = buddy->account;
-
-	/* In case a conversation is started after the buddy has signed-on/off */
-	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, user);
 }
 
 static void
@@ -9156,8 +9125,6 @@ create_icon_lists(GtkWidget *w)
 	available_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AVAILABLE, w);
 	busy_list = make_status_icon_list(PIDGIN_STOCK_STATUS_BUSY, w);
 	xa_list = make_status_icon_list(PIDGIN_STOCK_STATUS_XA, w);
-	login_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGIN, w);
-	logout_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGOUT, w);
 	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
 	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
 	prpl_lists = g_hash_table_new(g_str_hash, g_str_equal);
