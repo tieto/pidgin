@@ -588,7 +588,9 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			role = xmlnode_get_attrib(presence->chat_info.item, "role");
 		}
 
-		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)))
+		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)) ||
+				g_str_equal(presence->jid_from->resource, chat->handle) ||
+				purple_strequal(presence->to, jid))
 			is_our_resource = TRUE;
 
 		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(201))) {
