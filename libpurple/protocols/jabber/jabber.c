@@ -2619,6 +2619,7 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 			if(!(server = g_hash_table_lookup(components, "server")))
 				continue;
 
+			/* FIXME: Collate is wrong in a few cases here; this should be prepped */
 			if(jid->node && jid->domain &&
 					!g_utf8_collate(room, jid->node) && !g_utf8_collate(server, jid->domain)) {
 				jabber_id_free(jid);

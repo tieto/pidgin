@@ -661,7 +661,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			return FALSE;
 		}
 
-		is_our_resource = (0 == g_utf8_collate(presence->jid_from->resource, chat->handle));
+		is_our_resource = g_str_equal(presence->jid_from->resource, chat->handle);
 
 		jabber_buddy_remove_resource(presence->jb, presence->jid_from->resource);
 
@@ -691,6 +691,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 					if (g_str_equal(presence->jid_from->resource, chat->handle)) {
 						/* Changing our own nickname */
 						g_free(chat->handle);
+						/* TODO: This should be resourceprep'd */
 						chat->handle = g_strdup(nick);
 					}
 
