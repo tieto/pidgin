@@ -8,6 +8,7 @@ version 2.7.11 (??/??/????):
 	* Fix building on platforms with an older glib (inadvertantly broken in
 	  2.7.10).  (#13329)
 	* Don't treat the on-join status storms as 'new arrivals'.  (#a14527)
+	  (Thijs Alkemade)
 
 version 2.7.10 (02/06/2011):
 	General:
