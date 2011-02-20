@@ -639,10 +639,14 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 
 		if(!jabber_chat_find_buddy(chat->conv, presence->jid_from->resource))
 			purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
-					jid, flags, !presence->delayed);
+					jid, flags, chat->joined > 0 && ((!presence->delayed) || (presence->sent > chat->joined)));
 		else
 			purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 					flags);
+
+		if (is_our_resource && chat->joined == 0)
+			chat->joined = time(NULL);
+
 	} else if (presence->type == JABBER_PRESENCE_UNAVAILABLE) {
 		gboolean nick_change = FALSE;
 		gboolean kick = FALSE;
@@ -669,8 +673,10 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			jid = xmlnode_get_attrib(presence->chat_info.item, "jid");
 
 		if (chat->muc) {
-			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)))
+			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110))) {
 				is_our_resource = TRUE;
+				chat->joined = 0;
+			}
 
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(301))) {
 				/* XXX: We got banned.  YAY! (No GIR, that's bad) */
@@ -1159,9 +1165,6 @@ parse_status(JabberStream *js, JabberPresence *presence, xmlnode *status)
 static void
 parse_delay(JabberStream *js, JabberPresence *presence, xmlnode *delay)
 {
-	/* XXX: compare the time.  Can happen on presence stanzas that aren't
-	 * actually delayed.
-	 */
 	const char *stamp = xmlnode_get_attrib(delay, "stamp");
 	presence->delayed = TRUE;
 	presence->sent = purple_str_to_time(stamp, TRUE, NULL, NULL, NULL);

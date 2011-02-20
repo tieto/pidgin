@@ -237,6 +237,7 @@ static JabberChat *jabber_chat_new(JabberStream *js, const char *room,
 
 	chat = g_new0(JabberChat, 1);
 	chat->js = js;
+	chat->joined = 0;
 
 	chat->room = g_strdup(room);
 	chat->server = g_strdup(server);

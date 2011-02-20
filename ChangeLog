@@ -4,6 +4,11 @@ version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
 
+	XMPP:
+	* Fix building on platforms with an older glib (inadvertantly broken in
+	  2.7.10).  (#13329)
+	* Don't treat the on-join status storms as 'new arrivals'.  (#a14527)
+
 version 2.7.10 (02/06/2011):
 	General:
 	* Force video sources to all have the same capabilities.  This reduces the
