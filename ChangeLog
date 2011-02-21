@@ -4,6 +4,10 @@ version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
 
+	AIM:
+	* Fix a bug where some buddies from your buddy list might not show up.
+	  Affected non-English ICQ users the most. (#13386)
+
 	XMPP:
 	* Fix building on platforms with an older glib (inadvertantly broken in
 	  2.7.10).  (#13329)
