@@ -1984,10 +1984,6 @@ void jabber_add_feature(const char *namespace, JabberFeatureEnabled cb) {
 	jabber_remove_feature(namespace);
 
 	jabber_features = g_list_append(jabber_features, feat);
-
-	/* Our cached caps_hash, if present, is now incorrect; force recalculation next time it is needed */
-	g_free(js->caps_hash);
-	js->caps_hash = NULL;
 }
 
 void jabber_remove_feature(const char *namespace) {
@@ -2069,10 +2065,6 @@ void jabber_add_identity(const gchar *category, const gchar *type,
 	ident->name = g_strdup(name);
 	jabber_identities = g_list_insert_sorted(jabber_identities, ident,
 	                                         jabber_identity_compare);
-
-	/* Our cached caps_hash, if present, is now incorrect; force recalculation next time it is needed */
-	g_free(js->caps_hash);
-	js->caps_hash = NULL;	
 }
 
 static void jabber_identities_destroy(void)
