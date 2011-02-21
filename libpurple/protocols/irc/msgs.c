@@ -110,8 +110,6 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	irc_blist_timeout(irc);
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
-    if (!irc->who_channel_timer)
-        irc->who_channel_timer = purple_timeout_add_seconds(300, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -400,59 +398,6 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 
 	g_free(irc->whois.nick);
 	memset(&irc->whois, 0, sizeof(irc->whois));
-}
-
-void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char **args)
-{
-	if (!strcmp(name, "352")) {
-		PurpleConversation *conv;
-		PurpleConvChat *chat;
-		PurpleConvChatBuddy *cb;
-		
-		char *userhost, *realname;
-		
-		PurpleConvChatBuddyFlags flags;
-		GList *keys = NULL, *values = NULL;
-		
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
-		if (!conv) {
-			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s, which doesn't exist\n", args[1]);
-			return;
-		}
-
-		cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), args[5]);
-		if (!cb) {
-			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s who isn't a buddy.\n", args[5]);
-			return;
-		}
-
-		chat = PURPLE_CONV_CHAT(conv);
-		
-		userhost = g_strdup_printf("%s@%s", args[2], args[3]);
-		realname = g_strdup(args[8]);
-		
-		keys = g_list_prepend(keys, "userhost");
-		values = g_list_prepend(values, userhost);
-		
-		keys = g_list_prepend(keys, "realname");
-		values = g_list_prepend(values, realname);
-		
-		purple_conv_chat_cb_set_attributes(chat, cb, keys, values);
-		
-		g_list_free(keys);
-		g_list_free(values);
-		
-		g_free(userhost);
-		g_free(realname);
-		
-		flags = purple_conv_chat_user_get_flags(chat, cb->name);
-
-		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
-		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
-			purple_conv_chat_user_set_flags(chat, cb->name, flags & ~PURPLE_CBFLAGS_AWAY);
-		}
-	}
 }
 
 void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -852,10 +797,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo;
-	PurpleConvChat *chat;
-	PurpleConvChatBuddy *cb;
-
-	char *nick = irc_mask_nick(from), *userhost, *buf;
+	char *nick = irc_mask_nick(from), *userhost;
 	struct irc_buddy *ib;
 	static int id = 1;
 
@@ -878,12 +820,6 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
-		
-		// Get the real name and user host for all participants.
-		buf = irc_format(irc, "vc", "WHO", args[0]);
-		irc_send(irc, buf);
-		g_free(buf);
-		
 		/* Until purple_conversation_present does something that
 		 * one would expect in Pidgin, this call produces buggy
 		 * behavior both for the /join and auto-join cases. */
@@ -899,16 +835,8 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	chat = PURPLE_CONV_CHAT(convo);
-	
-	purple_conv_chat_add_user(chat, nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
-	
-	cb = purple_conv_chat_cb_find(chat, nick);
-	
-	if (cb) {
-		purple_conv_chat_cb_set_attribute(chat, cb, "userhost", userhost);		
-	}
-	
+	purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo), nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
+
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
 		ib->new_online_status = TRUE;
 		irc_buddy_status(nick, ib, irc);

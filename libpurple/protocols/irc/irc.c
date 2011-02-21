@@ -41,8 +41,6 @@
 
 static void irc_ison_buddy_init(char *name, struct irc_buddy *ib, GList **list);
 
-static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc);
-
 static const char *irc_blist_icon(PurpleAccount *a, PurpleBuddy *b);
 static GList *irc_status_types(PurpleAccount *account);
 static GList *irc_actions(PurplePlugin *plugin, gpointer context);
@@ -232,26 +230,6 @@ void irc_buddy_query(struct irc_conn *irc)
 static void irc_ison_buddy_init(char *name, struct irc_buddy *ib, GList **list)
 {
 	*list = g_list_append(*list, ib);
-}
-
-
-gboolean irc_who_channel_timeout(struct irc_conn *irc)
-{
-	// WHO all of our channels.
-	g_list_foreach(purple_get_conversations(), (GFunc)irc_who_channel, (gpointer)irc);
-	
-	return TRUE;
-}
-
-static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
-{
-	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
-		
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Performing periodic who on %s", purple_conversation_get_name(conv));
-		irc_send(irc, buf);
-		g_free(buf);
-	}
 }
 
 static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
@@ -539,8 +517,6 @@ static void irc_close(PurpleConnection *gc)
 	}
 	if (irc->timer)
 		purple_timeout_remove(irc->timer);
-	if (irc->who_channel_timer)
-		purple_timeout_remove(irc->who_channel_timer);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
 	g_hash_table_destroy(irc->buddies);
