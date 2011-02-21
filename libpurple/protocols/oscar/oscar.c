@@ -4051,17 +4051,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			} break;
 
 			case AIM_SSI_TYPE_GROUP: { /* Group */
-				char *gname;
-				char *gname_utf8;
-
-				gname = curitem->name;
-				gname_utf8 = oscar_utf8_try_convert(account, od, gname);
-
-				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
-					g = purple_group_new(gname_utf8);
+				if (curitem->name != NULL && purple_find_group(curitem->name) == NULL) {
+					g = purple_group_new(curitem->name);
 					purple_blist_add_group(g, NULL);
 				}
-				g_free(gname_utf8);
 			} break;
 
 			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy (unless we're on ICQ) */
