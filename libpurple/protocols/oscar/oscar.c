@@ -4000,9 +4000,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	/*** Begin code for adding from server list to local list ***/
 
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL))
+		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL)) {
 			/* Got node with invalid UTF-8 in the name.  Skip it. */
-			break;
+			purple_debug_warning("oscar", "ssi: server list contains item of "
+					"type 0x%04hhx with a non-utf8 name\n", curitem->type);
+			continue;
+		}
 
 		switch (curitem->type) {
 			case AIM_SSI_TYPE_BUDDY: { /* Buddy */
