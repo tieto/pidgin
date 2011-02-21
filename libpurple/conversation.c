@@ -1218,7 +1218,7 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 
 	c = purple_conv_im_get_conversation(im);
 
-	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
+    if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
 	}
 
