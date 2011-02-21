@@ -824,7 +824,7 @@ aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_type)
 		return -EINVAL;
 
 	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, list_type, NULL);
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, list_type, NULL);
 	return aim_ssi_sync(od);
