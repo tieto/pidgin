@@ -81,8 +81,8 @@ sha1_hash_block(struct SHA1Context *sha1_ctx) {
 	}
 
 	for(i = 40; i < 60; i++) {
-		T = (SHA1_ROTL(A, 5) + ((B & C) | (D & (B | C))) + E + sha1_ctx->W[i] + 0x8F1BBCDC) & 0xFFFFFFFF
-			E = D;
+		T = (SHA1_ROTL(A, 5) + ((B & C) | (D & (B | C))) + E + sha1_ctx->W[i] + 0x8F1BBCDC) & 0xFFFFFFFF;
+		E = D;
 		D = C;
 		C = SHA1_ROTL(B, 30);
 		B = A;
