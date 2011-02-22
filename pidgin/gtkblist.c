@@ -1740,8 +1740,7 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 	gboolean autojoin, persistent;
 
 	menu = gtk_menu_new();
-	autojoin = (purple_blist_node_get_bool(node, "gtk-autojoin") ||
-			(purple_blist_node_get_string(node, "gtk-autojoin") != NULL));
+	autojoin = purple_blist_node_get_bool(node, "gtk-autojoin");
 	persistent = purple_blist_node_get_bool(node, "gtk-persistent");
 
 	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
@@ -7423,9 +7422,7 @@ static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 			if(chat->account != account)
 				continue;
 
-			if(purple_blist_node_get_bool((PurpleBlistNode*)chat, "gtk-autojoin") ||
-					(purple_blist_node_get_string((PurpleBlistNode*)chat,
-					 "gtk-autojoin") != NULL))
+			if (purple_blist_node_get_bool((PurpleBlistNode*)chat, "gtk-autojoin"))
 				serv_join_chat(gc, chat->components);
 		}
 	}
