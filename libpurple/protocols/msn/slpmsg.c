@@ -48,7 +48,7 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	else
 		slpmsg->slplink = NULL;
 
-	slpmsg->p2p_info = msn_p2p_info_new();
+	slpmsg->p2p_info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
 
 	return slpmsg;
 }
