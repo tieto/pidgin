@@ -1765,6 +1765,7 @@ add_pending_buddy(MsnSession *session,
 			user = user2;
 		} else {
 			msn_userlist_add_user(userlist, user);
+			msn_user_unref(user);
 		}
 
 		msn_user_set_network(user, network);

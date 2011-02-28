@@ -149,7 +149,7 @@ typedef struct MsnUserEndpoint {
  * @param passport     The initial passport.
  * @param stored_name  The initial stored name.
  *
- * @return A new user structure.
+ * @return A new user structure.  It will have a reference count of 1.
  */
 MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
 					  const char *friendly_name);
@@ -164,7 +164,8 @@ MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
 MsnUser *msn_user_ref(MsnUser *user);
 
 /**
- * Decrement the reference count.
+ * Decrement the reference count.  When the count reaches 0 the object is
+ * automatically freed.
  *
  * @param user 	The user
  */
