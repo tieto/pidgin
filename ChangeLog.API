@@ -1,6 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.11 (??/??/????):
+	* Perl:
+		Added:
+		* Purple::find_conversation_with_account
+		* Purple::Conversation::Chat::send_with_flags
+		* Purple::Conversation::IM::send_with_flags
 
 version 2.7.10 (02/06/2011):
 	* No changes
