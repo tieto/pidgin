@@ -1751,39 +1751,33 @@ add_pending_buddy(MsnSession *session,
                   MsnUser *user)
 {
 	char *group;
+	MsnUserList *userlist;
+	MsnUser *user2;
 
 	g_return_if_fail(user != NULL);
 
+	if (network == MSN_NETWORK_UNKNOWN) {
+		purple_debug_error("msn", "Network in FQY response was unknown.  "
+				"Assuming %s is a passport user and adding anyway.\n", who);
+		network = MSN_NETWORK_PASSPORT;
+	}
+
 	group = msn_user_remove_pending_group(user);
 
-	if (network != MSN_NETWORK_UNKNOWN) {
-		MsnUserList *userlist = session->userlist;
-		MsnUser *user2 = msn_userlist_find_user(userlist, who);
-		if (user2 != NULL) {
-			/* User already in userlist, so just update it. */
-			msn_user_unref(user);
-			user = user2;
-		} else {
-			msn_userlist_add_user(userlist, user);
-			msn_user_unref(user);
-		}
-
-		msn_user_set_network(user, network);
-		msn_userlist_add_buddy(userlist, who, group);
-	}
-	else
-	{
-		PurpleBuddy * buddy = purple_find_buddy(session->account, who);
-		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), who);
-		if (!purple_conv_present_error(who, session->account, buf))
-			purple_notify_error(purple_account_get_connection(session->account), NULL, _("Unable to Add"), buf);
-		g_free(buf);
-
-		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
+	userlist = session->userlist;
+	user2 = msn_userlist_find_user(userlist, who);
+	if (user2 != NULL) {
+		/* User already in userlist, so just update it. */
+		msn_user_unref(user);
+		user = user2;
+	} else {
+		msn_userlist_add_user(userlist, user);
 		msn_user_unref(user);
 	}
+
+	msn_user_set_network(user, network);
+	msn_userlist_add_buddy(userlist, who, group);
+
 	g_free(group);
 }
 
@@ -1820,7 +1814,10 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
-	 * internal. */
+	 * internal.
+	 * KingAnt: But PurpleBuddys must always exist inside PurpleGroups, so
+	 * won't group always be non-NULL here?
+	 */
 	user = msn_userlist_find_user(userlist, who);
 	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
 		/* We already know this buddy and their network. This function knows
@@ -1839,6 +1836,8 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
 		                      tokens[1],
 		                      tokens[0]);
+		/* TODO: I think user will leak if we disconnect before receiving
+		         a response to this FQY request */
 		msn_notification_send_fqy(session, fqy, strlen(fqy),
 		                          (MsnFqyCb)add_pending_buddy, user);
 		g_free(fqy);
