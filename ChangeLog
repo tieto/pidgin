@@ -4,6 +4,10 @@ version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
 
+	Pidgin:
+	* Sort by Status no longer causes buddies to move around when you
+	  click them.
+
 	AIM:
 	* Fix a bug where some buddies from your buddy list might not show up.
 	  Affected non-English ICQ users the most. (#13386)
