@@ -54,7 +54,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	}
 
 	part = msn_slpmsgpart_new(NULL);
-	part->info = msn_p2p_info_new();
+	part->info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
 
 	/* Extract the binary SLP header */
 	len = msn_p2p_header_from_wire(part->info, data);

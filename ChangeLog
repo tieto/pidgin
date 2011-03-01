@@ -4,6 +4,12 @@ version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
 
+	Pidgin:
+	* Sort by Status no longer causes buddies to move around when you
+	  click them.
+	* Fix embedding in the system tray on older GTK+ releases (such as on
+	  CentOS 5.5 and older Fedora).
+
 	AIM:
 	* Fix a bug where some buddies from your buddy list might not show up.
 	  Affected non-English ICQ users the most. (#13386)

@@ -47,19 +47,37 @@ docklet_gtk_recreate_cb(gpointer data)
 static gboolean
 docklet_gtk_embed_timeout_cb(gpointer data)
 {
-	/* The docklet was not embedded within the timeout.
-	 * Remove it as a visibility manager, but leave the plugin
-	 * loaded so that it can embed automatically if/when a notification
-	 * area becomes available.
-	 */
-	purple_debug_info("docklet", "failed to embed within timeout\n");
-	pidgin_docklet_remove();
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
+#if !GTK_CHECK_VERSION(2,12,0)
+	if (gtk_status_icon_is_embedded(docklet)) {
+		/* Older GTK+ (<2.12) don't implement the embedded signal, but the
+		   information is still accessable through the above function. */
+		purple_debug_info("docklet", "embedded\n");
 
+		pidgin_docklet_embedded();
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", TRUE);
+	}
+	else
+#endif
+	{
+		/* The docklet was not embedded within the timeout.
+		 * Remove it as a visibility manager, but leave the plugin
+		 * loaded so that it can embed automatically if/when a notification
+		 * area becomes available.
+		 */
+		purple_debug_info("docklet", "failed to embed within timeout\n");
+		pidgin_docklet_remove();
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
+	}
+
+#if GTK_CHECK_VERSION(2,12,0)
 	embed_timeout = 0;
 	return FALSE;
+#else
+	return TRUE;
+#endif
 }
 
+#if GTK_CHECK_VERSION(2,12,0)
 static gboolean
 docklet_gtk_embedded_cb(GtkWidget *widget, gpointer data)
 {
@@ -82,6 +100,7 @@ docklet_gtk_embedded_cb(GtkWidget *widget, gpointer data)
 
 	return TRUE;
 }
+#endif
 
 static void
 docklet_gtk_destroyed_cb(GtkWidget *widget, gpointer data)
@@ -206,7 +225,9 @@ docklet_gtk_status_create(gboolean recreate)
 
 	g_signal_connect(G_OBJECT(docklet), "activate", G_CALLBACK(docklet_gtk_status_activated_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "popup-menu", G_CALLBACK(docklet_gtk_status_clicked_cb), NULL);
+#if GTK_CHECK_VERSION(2,12,0)
 	g_signal_connect(G_OBJECT(docklet), "notify::embedded", G_CALLBACK(docklet_gtk_embedded_cb), NULL);
+#endif
 	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_gtk_destroyed_cb), NULL);
 
 	gtk_status_icon_set_visible(docklet, TRUE);
@@ -226,11 +247,15 @@ docklet_gtk_status_create(gboolean recreate)
 	 */
 	if (!recreate) {
 		pidgin_docklet_embedded();
+#if GTK_CHECK_VERSION(2,12,0)
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded")) {
 			embed_timeout = purple_timeout_add_seconds(LONG_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
 		} else {
 			embed_timeout = purple_timeout_add_seconds(SHORT_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
 		}
+#else
+		embed_timeout = purple_timeout_add_seconds(SHORT_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
+#endif
 	}
 
 	purple_debug_info("docklet", "GTK+ created\n");
