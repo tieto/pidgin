@@ -329,6 +329,40 @@ version 2.7.4 (10/20/2010):
 	* Bonjour support now requires Apple Bonjour Print Services version
 	  2.0.0 or newer (http://support.apple.com/kb/dl999).
 
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch.
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
+
 version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose

@@ -51,7 +51,8 @@ C_SRC =			actions.c \
 			profile.c \
 			protocol.c \
 			roster.c \
-			splashscreen.c
+			splashscreen.c \
+			voicevideo.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
