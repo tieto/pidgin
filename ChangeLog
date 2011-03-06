@@ -28,6 +28,8 @@ version 2.7.11 (??/??/????):
 	  2.7.10).  (#13329)
 	* Don't treat the on-join status storms as 'new arrivals'.  (Thijs
 	  Alkemade) (#a14527)
+	* Extend the /join command to support room JIDs, enabling you to join
+	  a room on any server.  (Solarius, Matěj Cepl, wyuka) (#4526)
 
 version 2.7.10 (02/06/2011):
 	General:
