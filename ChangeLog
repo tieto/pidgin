@@ -3,6 +3,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
+	* Fix some instances of file transfers never completing. (Cristi Posoiu)
+	  (#12472)
 
 	Pidgin:
 	* Sort by Status no longer causes buddies to move around when you
@@ -21,8 +23,8 @@ version 2.7.11 (??/??/????):
 	XMPP:
 	* Fix building on platforms with an older glib (inadvertantly broken in
 	  2.7.10).  (#13329)
-	* Don't treat the on-join status storms as 'new arrivals'.  (#a14527)
-	  (Thijs Alkemade)
+	* Don't treat the on-join status storms as 'new arrivals'.  (Thijs
+	  Alkemade) (#a14527)
 
 version 2.7.10 (02/06/2011):
 	General:
