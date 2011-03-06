@@ -11,6 +11,9 @@ version 2.7.11 (??/??/????):
 	  click them.
 	* Fix embedding in the system tray on older GTK+ releases (such as on
 	  CentOS 5.5 and older Fedora).
+	* No longer require libstartup-notification for startup notification
+	  support.  GTK+ has included support for years, so use it instead. (David
+	  Benjamin) (#13245)
 
 	AIM:
 	* Fix a bug where some buddies from your buddy list might not show up.
