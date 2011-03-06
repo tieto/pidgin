@@ -1,6 +1,15 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.11 (??/??/????):
+	* libpurple:
+		Added:
+		* Four entries in the GHashTable passed when joining
+		  an XMPP chat room which allow the UI to request a limited
+		  amount of history.  See XEP-0045 7.1.16 for details; the
+		  entries are named history_maxchars, history_maxstanzas,
+		  history_seconds, and history_since.  history_since must be
+		  interpretable by purple_str_to_time, and the prpl takes care
+		  of formatting the time properly.
 	* Perl:
 		Added:
 		* Purple::find_conversation_with_account
