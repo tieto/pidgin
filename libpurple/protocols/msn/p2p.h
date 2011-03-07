@@ -58,8 +58,18 @@ typedef struct
 } MsnP2PFooter;
 #define P2P_PACKET_FOOTER_SIZE (1 * 4)
 
+typedef enum
+{
+	MSN_P2P_VERSION_ONE = 0,
+	MSN_P2P_VERSION_TWO = 1,
+} MsnP2PVersion;
+
 typedef struct {
-	MsnP2PHeader header;
+	MsnP2PVersion version;
+	union {
+		MsnP2PHeader v1;
+		MsnP2Pv2Header v2;
+	} header;
 	MsnP2PFooter footer;
 } MsnP2PInfo;
 
@@ -94,7 +104,7 @@ typedef enum
 } MsnP2PAppId;
 
 MsnP2PInfo *
-msn_p2p_info_new(void);
+msn_p2p_info_new(MsnP2PVersion version);
 
 MsnP2PInfo *
 msn_p2p_info_dup(MsnP2PInfo *info);

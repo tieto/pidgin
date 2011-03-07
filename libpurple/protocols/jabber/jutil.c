@@ -501,12 +501,9 @@ void
 jabber_id_free(JabberID *jid)
 {
 	if(jid) {
-		if(jid->node)
-			g_free(jid->node);
-		if(jid->domain)
-			g_free(jid->domain);
-		if(jid->resource)
-			g_free(jid->resource);
+		g_free(jid->node);
+		g_free(jid->domain);
+		g_free(jid->resource);
 		g_free(jid);
 	}
 }

@@ -7743,7 +7743,7 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
 		return;
 	} else {
-		sort_method_none(node, blist, groupiter, cur, iter);
+		sort_method_alphabetical(node, blist, groupiter, cur, iter);
 		return;
 	}
 

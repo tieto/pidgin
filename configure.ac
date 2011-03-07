@@ -541,27 +541,6 @@ Use --disable-sm if you do not need session management support.
 	fi
 
 	dnl #######################################################################
-	dnl # Check for startup notification
-	dnl #######################################################################
-	if test "x$enable_startup_notification" = "xyes"; then
-		PKG_CHECK_MODULES(STARTUP_NOTIFICATION, [libstartup-notification-1.0 >= 0.5], , [
-			AC_MSG_RESULT(no)
-			enable_startup_notification="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-Startup notification development headers not found.
-Use --disable-startup-notification if you do not need it.
-])
-			fi])
-
-		if test "x$enable_startup_notification" = "xyes"; then
-			AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
-			AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
-			AC_SUBST(STARTUP_NOTIFICATION_LIBS)
-		fi
-	fi
-
-	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
 	if test "x$enable_gtkspell" = "xyes" ; then
