@@ -924,25 +924,24 @@ jabber_stream_new(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
 	PurplePresence *presence;
-	gchar *user;
+	const gchar *username;
 	gchar *slash;
 
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
 
-	user = g_strdup(purple_account_get_username(account));
+	username = purple_account_get_username(account);
 	/* jabber_id_new doesn't accept "user@domain/" as valid */
-	slash = strchr(user, '/');
+	slash = strchr(username, '/');
 	if (slash && *(slash + 1) == '\0')
 		*slash = '\0';
-	js->user = jabber_id_new(user);
+	js->user = jabber_id_new(username);
 
 	if (!js->user) {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
-		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -951,7 +950,6 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Username portion must be set."));
-		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -960,7 +958,6 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
-		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -971,10 +968,9 @@ jabber_stream_new(PurpleAccount *account)
 	/* This is overridden during binding, but we need it here
 	 * in case the server only does legacy non-sasl auth!.
 	 */
-	purple_connection_set_display_name(gc, user);
+	purple_connection_set_display_name(gc, username);
 
-	js->user_jb = jabber_buddy_find(js, user, TRUE);
-	g_free(user);
+	js->user_jb = jabber_buddy_find(js, username, TRUE);
 	if (!js->user_jb) {
 		/* This basically *can't* fail, but for good measure... */
 		purple_connection_error_reason(gc,
