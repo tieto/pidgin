@@ -3,6 +3,17 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.11 (??/??/????):
 	General:
 	* Our bundled libgadu should now build on HP-UX.
+	* Fix some instances of file transfers never completing. (Cristi Posoiu)
+	  (#12472)
+
+	Pidgin:
+	* Sort by Status no longer causes buddies to move around when you
+	  click them.
+	* Fix embedding in the system tray on older GTK+ releases (such as on
+	  CentOS 5.5 and older Fedora).
+	* No longer require libstartup-notification for startup notification
+	  support.  GTK+ has included support for years, so use it instead. (David
+	  Benjamin) (#13245)
 
 	AIM:
 	* Fix a bug where some buddies from your buddy list might not show up.
@@ -15,8 +26,14 @@ version 2.7.11 (??/??/????):
 	XMPP:
 	* Fix building on platforms with an older glib (inadvertantly broken in
 	  2.7.10).  (#13329)
-	* Don't treat the on-join status storms as 'new arrivals'.  (#a14527)
-	  (Thijs Alkemade)
+	* Don't treat the on-join status storms as 'new arrivals'.  (Thijs
+	  Alkemade) (#a14527)
+	* Extend the /join command to support room JIDs, enabling you to join
+	  a room on any server.  (Solarius, Matěj Cepl, Tirtha 'wyuka'
+	  Chatterjee) (#4526)
+	* Add support for receiving a limited amount of history when joining a
+	  room (not currently supported by Pidgin and Finch).  (Thijs Alkemade)
+	  (#10986, #a14219)
 
 version 2.7.10 (02/06/2011):
 	General:
@@ -322,6 +339,40 @@ version 2.7.4 (10/20/2010):
 	Windows:
 	* Bonjour support now requires Apple Bonjour Print Services version
 	  2.0.0 or newer (http://support.apple.com/kb/dl999).
+
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch.
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
 
 version 2.7.3 (08/10/2010):
 	General:

@@ -3008,21 +3008,44 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	GHashTable *components;
+	JabberID *jid;
+	const char *room = NULL, *server = NULL, *handle = NULL;
 
-	if(!chat || !args || !args[0])
+	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
-	g_hash_table_replace(components, "room", args[0]);
-	g_hash_table_replace(components, "server", chat->server);
-	g_hash_table_replace(components, "handle", chat->handle);
-	if(args[1])
-		g_hash_table_replace(components, "password", args[1]);
+	jid = jabber_id_new(args[0]);
+	if (jid) {
+		room   = jid->node;
+		server = jid->domain;
+		handle = jid->resource ? jid->resource : chat->handle;
+	} else {
+		/* If jabber_id_new failed, the user may have just passed in
+		 * a room name.  For backward compatibility, handle that here.
+		 */
+		if (strchr(args[0], '@')) {
+			*error = g_strdup(_("Invalid XMPP ID"));
+			return PURPLE_CMD_RET_FAILED;
+		}
+
+		room   = args[0];
+		server = chat->server;
+		handle = chat->handle;
+	}
+
+	g_hash_table_insert(components, "room", (gpointer)room);
+	g_hash_table_insert(components, "server", (gpointer)server);
+	g_hash_table_insert(components, "handle", (gpointer)handle);
+
+	if (args[1])
+		g_hash_table_insert(components, "password", args[1]);
 
 	jabber_chat_join(purple_conversation_get_gc(conv), components);
 
 	g_hash_table_destroy(components);
+	jabber_id_free(jid);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -3650,6 +3673,7 @@ static void jabber_register_commands(PurplePlugin *plugin)
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
+	                  /* _("join: &lt;room[@server]&gt; [password]:  Join a chat."), */
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 

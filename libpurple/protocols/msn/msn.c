@@ -110,11 +110,9 @@ msn_normalize(const PurpleAccount *account, const char *str)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	g_snprintf(buf, sizeof(buf), "%s%s", str,
-			   (strchr(str, '@') ? "" : "@hotmail.com"));
-
-	tmp = g_utf8_strdown(buf, -1);
-	strncpy(buf, tmp, sizeof(buf));
+	tmp = g_strchomp(g_utf8_strdown(str, -1));
+	g_snprintf(buf, sizeof(buf), "%s%s", tmp,
+			   (strchr(tmp, '@') ? "" : "@hotmail.com"));
 	g_free(tmp);
 
 	return buf;

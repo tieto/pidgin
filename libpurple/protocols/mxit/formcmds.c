@@ -47,7 +47,11 @@ typedef enum
 	MXIT_CMD_REPLY,				/* Reply (reply) */
 	MXIT_CMD_PLATREQ,			/* Platform Request (platreq) */
 	MXIT_CMD_SELECTCONTACT,		/* Select Contact (selc) */
-	MXIT_CMD_IMAGE				/* Inline image (img) */
+	MXIT_CMD_IMAGE,				/* Inline image (img) */
+	MXIT_CMD_SCREENCONFIG,		/* Chat-screen config (csc) */
+	MXIT_CMD_SCREENINFO,		/* Chat-screen info (csi) */
+	MXIT_CMD_IMAGESTRIP,		/* Image Strip (is) */
+	MXIT_CMD_TABLE				/* Table (tbl) */
 } MXitCommandType;
 
 
@@ -87,7 +91,7 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 		goto done;
 	}
 
-	/* lets first see if we dont have the inline image already in cache */
+	/* lets first see if we don't have the inline image already in cache */
 	if (g_hash_table_lookup(iireq->mx->session->iimages, iireq->url)) {
 		/* inline image found in the cache, so we just ignore this reply */
 		goto done;
@@ -149,8 +153,16 @@ static MXitCommandType command_type(GHashTable* hash)
 			else if (strcmp(type, "selc") == 0)				/* select contact */
 				return MXIT_CMD_SELECTCONTACT;
 		}
-		else if (strcmp(op, "img") == 0)
-				return MXIT_CMD_IMAGE;
+		else if (strcmp(op, "img") == 0)					/* inline image */
+			return MXIT_CMD_IMAGE;
+		else if (strcmp(op, "csc") == 0)					/* chat-screen config */
+			return MXIT_CMD_SCREENCONFIG;
+		else if (strcmp(op, "csi") == 0)					/* chat-screen info */
+			return MXIT_CMD_SCREENINFO;
+		else if (strcmp(op, "is") == 0)						/* image-strip */
+			return MXIT_CMD_IMAGESTRIP;
+		else if (strcmp(op, "tbl") == 0)					/* table */
+			return MXIT_CMD_TABLE;
 	}
 
 	return MXIT_CMD_UNKNOWN;
@@ -333,7 +345,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 			g_string_append_printf(msg, "%s%s>", MXIT_II_TAG, iireq->url);
 			mx->got_img = TRUE;
 
-			/* lets first see if we dont have the inline image already in cache */
+			/* lets first see if we don't have the inline image already in cache */
 			if (g_hash_table_lookup(mx->session->iimages, iireq->url)) {
 				/* inline image found in the cache, so we do not have to request it from the web */
 				g_free(iireq);

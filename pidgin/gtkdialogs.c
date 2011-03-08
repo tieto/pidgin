@@ -650,14 +650,6 @@ if (purple_plugins_find_with_id("core-perl") != NULL)
 else
 	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
 
-#ifndef _WIN32
-#ifdef HAVE_STARTUP_NOTIFICATION
-	g_string_append(str, "    <b>Startup Notification:</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
-#endif
-#endif
-
 if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
 #ifdef HAVE_TK
