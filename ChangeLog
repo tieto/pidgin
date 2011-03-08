@@ -29,7 +29,8 @@ version 2.7.11 (??/??/????):
 	* Don't treat the on-join status storms as 'new arrivals'.  (Thijs
 	  Alkemade) (#a14527)
 	* Extend the /join command to support room JIDs, enabling you to join
-	  a room on any server.  (Solarius, Matěj Cepl, wyuka) (#4526)
+	  a room on any server.  (Solarius, Matěj Cepl, Tirtha 'wyuka'
+	  Chatterjee) (#4526)
 	* Add support for receiving a limited amount of history when joining a
 	  room (not currently supported by Pidgin and Finch).  (Thijs Alkemade)
 	  (#10986, #a14219)
