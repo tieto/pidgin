@@ -263,6 +263,31 @@ int main()
 	AC_MSG_RESULT(no)
 ])
 
+# before gettexting, in case iconv matters
+case "$host_os" in
+darwin*)
+	AC_CHECK_LIB(resolv, res_query)
+
+	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
+		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
+			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
+			LIBS="$LIBS -framework IOKit -framework CoreFoundation"
+		], [])
+	], [])
+
+	AC_MSG_CHECKING([for fink])
+	if test -d /sw; then
+		AC_MSG_RESULT([found, adding /sw to search paths])
+		CPPFLAGS="$CPPFLAGS -I/sw/include"
+		LDFLAGS="$LDFLAGS -L/sw/lib"
+	else
+		AC_MSG_RESULT([not found])
+	fi
+	;;
+*)
+	;;
+esac
+
 dnl #######################################################################
 dnl # Disable creation and installation of translation files
 dnl #######################################################################
@@ -272,32 +297,6 @@ if test x$enable_i18n = xyes; then
 	AC_PROG_INTLTOOL
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
-
-
-	# before gettexting, in case iconv matters
-	case "$host_os" in
-	darwin*)
-		AC_CHECK_LIB(resolv, res_query)
-
-		AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
-			AC_CHECK_HEADER(IOKit/IOKitLib.h, [
-				AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
-				LIBS="$LIBS -framework IOKit -framework CoreFoundation"
-			], [])
-		], [])
-
-		AC_MSG_CHECKING([for fink])
-		if test -d /sw; then
-			AC_MSG_RESULT([found, adding /sw to search paths])
-			CPPFLAGS="$CPPFLAGS -I/sw/include"
-			LDFLAGS="$LDFLAGS -L/sw/lib"
-		else
-			AC_MSG_RESULT([not found])
-		fi
-		;;
-	*)
-		;;
-	esac
 
 	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
