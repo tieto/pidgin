@@ -18,6 +18,8 @@ version 2.7.11 (??/??/????):
 	AIM:
 	* Fix a bug where some buddies from your buddy list might not show up.
 	  Affected non-English ICQ users the most. (#13386)
+	* Send keepalives for all types of network connections.  Will hopefully
+	  make chat rooms more reliable. (#1449)
 
 	MSN:
 	* Fix bug that prevented added buddies to your buddy list in certain

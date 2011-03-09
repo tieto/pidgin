@@ -3140,12 +3140,12 @@ void
 oscar_keepalive(PurpleConnection *gc)
 {
 	OscarData *od;
-	FlapConnection *conn;
+	GSList *l;
 
 	od = purple_connection_get_protocol_data(gc);
-	conn = flap_connection_getbytype(od, SNAC_FAMILY_LOCATE);
-	if (conn != NULL)
-		flap_connection_send_keepalive(od, conn);
+	for (l = od->oscar_connections; l; l = l->next) {
+		flap_connection_send_keepalive(od, l->data);
+	}
 }
 
 unsigned int
