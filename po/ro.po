@@ -3,15 +3,15 @@
 # 2002-2011, Mișu Moldovan <dumol@gnome.org>
 # 2009, Andrei Popescu <andreimpopescu@gmail.com>
 # Contributions: 2007, Alexandru Szasz <alexxed@gmail.com>
-#
+# Mișu Moldovan <dumol@gnome.org>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin-2.7.9\n"
+"Project-Id-Version: pidgin-2.7.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-01-31 00:11+0200\n"
+"POT-Creation-Date: 2011-03-10 02:30-0800\n"
+"PO-Revision-Date: 2011-03-09 23:38+0300\n"
 "Last-Translator: Mișu Moldovan <dumol@gnome.org>\n"
-"Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
+"Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -577,10 +577,10 @@ msgid "Your command failed for an unknown reason."
 msgstr "Comanda dată a eșuat din motive necunoscute."
 
 msgid "That command only works in chats, not IMs."
-msgstr "Această comandă funcționează doar în chat-uri, nu și în discuții."
+msgstr "Această comandă funcționează doar într-un chat, nu și într-o discuție."
 
 msgid "That command only works in IMs, not chats."
-msgstr "Această comandă funcționează doar în discuții, nu și în chat-uri."
+msgstr "Această comandă funcționează doar într-o discuție, nu și într-un chat."
 
 msgid "That command doesn't work on this protocol."
 msgstr "Această comandă nu funcționează în acest protocol."
@@ -1241,14 +1241,14 @@ msgid "Choose Location..."
 msgstr "Alegeți un loc..."
 
 msgid "Hit 'Enter' to find more rooms of this category."
-msgstr "Apăsați ENTER pentru a mai căuta camere în această categorie."
+msgstr "Apăsați ENTER pentru a mai căuta canale în această categorie."
 
 msgid "Get"
 msgstr "Obținere"
 
 #. Create the window.
 msgid "Room List"
-msgstr "Lista camerelor de chat"
+msgstr "Lista canalelor"
 
 msgid "Buddy logs in"
 msgstr "Un contact se autentifică"
@@ -1852,11 +1852,11 @@ msgstr "Trimite mesa_jul"
 
 #, c-format
 msgid "%s entered the room."
-msgstr "%s a intrat în chat."
+msgstr "%s a intrat în canal."
 
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
-msgstr "%s [<I>%s</I>] a intrat în chat."
+msgstr "%s [<I>%s</I>] a intrat în canal."
 
 #, c-format
 msgid "You are now known as %s"
@@ -1868,11 +1868,11 @@ msgstr "%s este acum %s"
 
 #, c-format
 msgid "%s left the room."
-msgstr "%s a ieșit din chat."
+msgstr "%s a ieșit din canal."
 
 #, c-format
 msgid "%s left the room (%s)."
-msgstr "%s a ieșit din chat (%s)."
+msgstr "%s a ieșit din canal (%s)."
 
 msgid "Invite to chat"
 msgstr "Invitație într-un chat"
@@ -2544,7 +2544,7 @@ msgstr "Ascunde intrările/ieșirile"
 
 #. Translators: Followed by an input request a number of people
 msgid "For rooms with more than this many people"
-msgstr "În camerele cu un număr mai mare de atât"
+msgstr "În canalele cu un număr mai mare de atât"
 
 msgid "If user has not spoken in this many minutes"
 msgstr "Dacă utilizatorul nu a zis nimic în acest număr de minute"
@@ -2572,7 +2572,7 @@ msgid ""
 "This plugin hides join/part messages in large rooms, except for those users "
 "actively taking part in a conversation."
 msgstr ""
-"Acest modul ascunde mesajele de intrare și ieșire din camerele mari, "
+"Acest modul ascunde mesajele de intrare și ieșire din canalele mari, "
 "afișându-le doar pentru utilizatorii activi."
 
 #. This is used in the place of a timezone abbreviation if the
@@ -2828,7 +2828,8 @@ msgid ""
 "This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 "Deschide ferestrele sau taburile de discuții înainte ca interlocutorii să vă "
-"trimită ce începuseră să scrie. Merge cu AIM, ICQ, XMPP, Sametime și Yahoo!"
+"trimită ce au început să scrie. Funcționează pentru protocoalele AIM, ICQ, "
+"XMPP, Sametime și Yahoo!."
 
 msgid "You feel a disturbance in the force..."
 msgstr "Vine, vine, calcă totul în picioare..."
@@ -3225,9 +3226,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Prenume"
 
@@ -3277,7 +3276,7 @@ msgid "Add to chat"
 msgstr "Adaugă în chat"
 
 msgid "Chat _name:"
-msgstr "_Nume chat:"
+msgstr "_Nume de chat:"
 
 #, c-format
 msgid "Unable to resolve hostname '%s': %s"
@@ -3348,7 +3347,7 @@ msgid "current topic is: %s"
 msgstr "subiectul curent este: %s"
 
 msgid "No topic is set"
-msgstr "Nu există topic"
+msgstr "Nu există un subiect"
 
 msgid "File Transfer Failed"
 msgstr "Transferul fișierului a eșuat"
@@ -3384,7 +3383,7 @@ msgid "View MOTD"
 msgstr "Afișare MOTD"
 
 msgid "_Channel:"
-msgstr "C_hat:"
+msgstr "Ca_nal:"
 
 msgid "_Password:"
 msgstr "_Parolă:"
@@ -3411,7 +3410,7 @@ msgid "Users"
 msgstr "Utilizatori"
 
 msgid "Topic"
-msgstr "Topic"
+msgstr "Subiect"
 
 #. *< type
 #. *< ui_requirement
@@ -3511,7 +3510,7 @@ msgstr "%s a șters subiectul."
 
 #, c-format
 msgid "The topic for %s is: %s"
-msgstr "Topicul pentru %s este: %s"
+msgstr "Subiectul pentru %s este: %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3534,17 +3533,17 @@ msgid "The IRC server's local time is:"
 msgstr "Ora locală a serverului IRC este:"
 
 msgid "No such channel"
-msgstr "Nu există un asemenea chat"
+msgstr "Nu există un asemenea canal"
 
 #. does this happen?
 msgid "no such channel"
-msgstr "nu există un asemenea chat"
+msgstr "nu există un asemenea canal"
 
 msgid "User is not logged in"
 msgstr "Utilizator neconectat"
 
 msgid "No such nick or channel"
-msgstr "Nu există un asemenea pseudonim sau chat"
+msgstr "Nu există un asemenea pseudonim sau canal"
 
 msgid "Could not send"
 msgstr "Nu s-a putut trimite"
@@ -3604,7 +3603,7 @@ msgstr "Nu s-a putut schimba pseudonimul"
 
 #, c-format
 msgid "You have parted the channel%s%s"
-msgstr "Ați părăsit chat-ul%s%s"
+msgstr "Ați părăsit canalul%s%s"
 
 msgid "Error: invalid PONG from server"
 msgstr "Eroare: PONG nevalid de la server"
@@ -3618,10 +3617,10 @@ msgid "Cannot join %s: Registration is required."
 msgstr "Nu s-a putut intra în %s: E nevoie de înregistrare"
 
 msgid "Cannot join channel"
-msgstr "Nu s-a putut intra în chat"
+msgstr "Nu s-a putut intra în canal"
 
 msgid "Nick or channel is temporarily unavailable."
-msgstr "Pseudonimul sau chat-ul sunt temporar indisponibile."
+msgstr "Pseudonimul sau canalul sunt temporar indisponibile."
 
 #, c-format
 msgid "Wallops from %s"
@@ -3647,8 +3646,8 @@ msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
-"deop &lt;pseudonim1&gt; [pseudonim2] ...:  Scoateți din lista operatorilor "
-"un utilizator. Pentru aceasta e nevoie să fiți operator."
+"deop &lt;pseudonim1&gt; [pseudonim2] ...:  Scoateți un utilizator din lista "
+"operatorilor canalului. Pentru aceasta e nevoie să fiți operator."
 
 msgid ""
 "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from "
@@ -3656,44 +3655,44 @@ msgid ""
 "must be a channel operator to do this."
 msgstr ""
 "devoice &lt;pseudonim1&gt;: [pseudonim2] ...:  Împiedicați anumiți "
-"utilizatori să trimită mesaje într-un chat moderat (+m). Pentru aceasta e "
-"nevoie să fiți operator."
+"utilizatori să trimită mesaje într-un canal moderat (+m). Pentru aceasta e "
+"nevoie să fiți operator al canalului."
 
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
 "channel, or the current channel."
 msgstr ""
-"invite &lt;pseudonim&gt; [chat]:  Invitați pe cineva să vi se alăture în "
-"chat-ul curent sau într-altul specificat."
+"invite &lt;pseudonim&gt; [canal]:  Invitați pe cineva să vi se alăture în "
+"canalul curent sau într-altul specificat."
 
 msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
-"j &lt;chat1&gt;[,chat2][,...] [cheie1][,cheie2][,...]:  Intrați în unul sau "
-"mai multe chat-uri, opțional precizând o cheie pentru fiecare, dacă e "
+"j &lt;canal1&gt;[,canal2][,...] [cheie1][,cheie2][,...]:  Intrați în unul "
+"sau mai multe canale, opțional precizând o cheie pentru fiecare, dacă e "
 "necesar."
 
 msgid ""
 "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
-"join &lt;chat1&gt;[,chat2][,...] [cheie1[,cheie2][,...]]:  Intrați în unul "
-"sau mai multe chat-uri, opțional precizând o cheie pentru fiecare, dacă e "
+"join &lt;canal1&gt;[,canal2][,...] [cheie1[,cheie2][,...]]:  Intrați în unul "
+"sau mai multe canale, opțional precizând o cheie pentru fiecare, dacă e "
 "necesar."
 
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
 "channel operator to do this."
 msgstr ""
-"kick &lt;pseudonim&gt; [mesaj]: Dați pe cineva afară din chat. Pentru "
-"aceasta e nevoie să fiți operator."
+"kick &lt;pseudonim&gt; [mesaj]: Dați pe cineva afară dintr-un canal. Pentru "
+"aceasta e nevoie să fiți operator al respectivului canal."
 
 msgid ""
 "list:  Display a list of chat rooms on the network. <i>Warning, some servers "
 "may disconnect you upon doing this.</i>"
 msgstr ""
-"list:  Listează camerele de chat din rețea. <i>Atenție! Anumite servere vă "
+"list:  Listează canalele de chat din rețea. <i>Atenție! Anumite servere vă "
 "vor deconecta la executarea acestei comenzi.</i>"
 
 msgid "me &lt;action to perform&gt;:  Perform an action."
@@ -3706,18 +3705,18 @@ msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
-"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;pseudonim|chat&gt;:  Inițializați sau "
-"reinițializați un chat sau un mod pentru utilizator."
+"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;pseudonim|canal&gt;:  Inițializați sau "
+"reinițializați un canal ori un mod de utilizator."
 
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
 "msg &lt;pseudonim&gt; &lt;mesaj&gt;:  Trimiteți un mesaj privat către un "
-"utilizator (nu în camera de chat)."
+"utilizator (nu unul public în canal)."
 
 msgid "names [channel]:  List the users currently in a channel."
-msgstr "names [chat]:  Listați utilizatorii din chat."
+msgstr "names [canal]:  Listați utilizatorii dintr-un canal."
 
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;pseudonim nou&gt;:  Schimbați pseudonimul propriu."
@@ -3727,14 +3726,15 @@ msgstr "nickserv:  Trimiteți o comandă către „nickserv”."
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
 msgstr ""
-"me &lt;acțiune&gt;:  Trimite o notificare către un contact sau un chat."
+"me &lt;acțiune&gt;:  Trimite o notificare către un contact sau un canal."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
 "op &lt;pseudonim1&gt; [pseudonim2] ...:  Acordați status de operator unuia "
-"sau mai multor utilizatori. Pentru aceasta e nevoie să fiți operator."
+"sau mai multor utilizatori. Pentru aceasta e nevoie să fiți operator al "
+"canalului."
 
 msgid ""
 "operwall &lt;message&gt;:  If you don't know what this is, you probably "
@@ -3750,7 +3750,7 @@ msgid ""
 "part [room] [message]:  Leave the current channel, or a specified channel, "
 "with an optional message."
 msgstr ""
-"part [chat] [mesaj]: Ieșiți din chat-ul curent (sau un altul specificat) cu "
+"part [canal] [mesaj]: Ieșiți din canalul curent (sau un altul specificat) cu "
 "un mesaj opțional."
 
 msgid ""
@@ -3765,7 +3765,7 @@ msgid ""
 "opposed to a channel)."
 msgstr ""
 "query &lt;pseudonim&gt; %lt;mesaj&gt;:  Trimiteți un mesaj privat către un "
-"utilizator (nu către un chat)."
+"utilizator (nu către un canal)."
 
 msgid "quit [message]:  Disconnect from the server, with an optional message."
 msgstr "quit [mesaj]:  Vă deconectați de la server cu un mesaj opțional."
@@ -3777,14 +3777,14 @@ msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
 "channel operator to do this."
 msgstr ""
-"remove &lt;pseudonim&gt; [mesaj]:  Scoateți un utilizator din chat. Pentru "
-"aceasta trebuie să fiți operator."
+"remove &lt;pseudonim&gt; [mesaj]:  Scoateți un utilizator dintr-un canal. "
+"Pentru aceasta trebuie să fiți operator al respectivului canal."
 
 msgid "time: Displays the current local time at the IRC server."
 msgstr "time: Arată ora locală a serverului IRC."
 
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr "topic [topic nou]:  Verificați sau schimbați subiectul chat-ului."
+msgstr "topic [subiect nou]:  Verificați sau schimbați subiectul canalului."
 
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
 msgstr ""
@@ -3800,7 +3800,8 @@ msgid ""
 "must be a channel operator to do this."
 msgstr ""
 "voice &lt;pseudonim1&gt; [pseudonim2] ...:  Acordați unui utilizator "
-"posibilitatea de a scrie ceva într-un chat moderat."
+"posibilitatea de a scrie ceva într-un canal moderat. Trebuie să fiți "
+"operator al respectivului canal."
 
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
@@ -3908,7 +3909,7 @@ msgid ""
 "it.  This indicates a likely MITM attack"
 msgstr ""
 "Acest server suportă „channel binding”, dar nu pare să anunțe acest lucru. "
-"Poate fi vorba despre un atac MITM."
+"Poate fi vorba despre un atac „man in the middle”."
 
 msgid "Server does not support channel binding"
 msgstr "Serverul nu suportă „channel binding”"
@@ -3988,7 +3989,6 @@ msgstr "Regiune"
 msgid "Postal Code"
 msgstr "Cod poștal"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Țară"
 
@@ -4092,7 +4092,7 @@ msgid "Unsubscribe"
 msgstr "Desubscrie"
 
 msgid "Initiate _Chat"
-msgstr "Inițiază o _discuție"
+msgstr "Inițiază un _chat"
 
 msgid "Log In"
 msgstr "Autentificare"
@@ -4158,7 +4158,7 @@ msgid "Search Directory"
 msgstr "Caută în acest director"
 
 msgid "_Room:"
-msgstr "Ca_meră:"
+msgstr "Ca_nal:"
 
 msgid "_Server:"
 msgstr "Ser_ver:"
@@ -4168,10 +4168,10 @@ msgstr "A_dministrare:"
 
 #, c-format
 msgid "%s is not a valid room name"
-msgstr "%s nu este un nume valid de chat"
+msgstr "%s nu este un nume valid de canal"
 
 msgid "Invalid Room Name"
-msgstr "Nume incorect de chat"
+msgstr "Nume incorect de canal"
 
 #, c-format
 msgid "%s is not a valid server name"
@@ -4182,10 +4182,10 @@ msgstr "Nume incorect de contact"
 
 #, c-format
 msgid "%s is not a valid room handle"
-msgstr "%s nu este un nume valid de chat"
+msgstr "%s nu este un nume valid de canal"
 
 msgid "Invalid Room Handle"
-msgstr "Titlu incorect de chat"
+msgstr "Titlu incorect de canal"
 
 msgid "Configuration error"
 msgstr "Eroare de configurare"
@@ -4194,19 +4194,20 @@ msgid "Unable to configure"
 msgstr "Configurare nereușită"
 
 msgid "Room Configuration Error"
-msgstr "Eroare la configurarea camerei de chat"
+msgstr "Eroare la configurarea canalului"
 
 msgid "This room is not capable of being configured"
-msgstr "Această cameră de chat nu poate fi configurată"
+msgstr "Acest canal nu poate fi configurat"
 
 msgid "Registration error"
 msgstr "Eroare la înregistrare"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
-msgstr "Schimbarea pseudonimului nu e suportată în camerele de chat non-MUC"
+msgstr ""
+"Schimbarea pseudonimului nu e suportată în canalele de chat de tip non-MUC"
 
 msgid "Error retrieving room list"
-msgstr "Eroare la obținerea listei camerelor de chat"
+msgstr "Eroare la obținerea listei canalelor"
 
 msgid "Invalid Server"
 msgstr "Server nevalid"
@@ -4218,7 +4219,7 @@ msgid "Select a conference server to query"
 msgstr "Selectați un server de conferințe pentru interogare"
 
 msgid "Find Rooms"
-msgstr "Caută camere de chat"
+msgstr "Caută canale"
 
 msgid "Affiliations:"
 msgstr "Afilieri:"
@@ -4676,24 +4677,23 @@ msgid "Account does not support PEP, can't set mood"
 msgstr "Acest protocol nu suportă PEP, nu se poate alege o stare"
 
 msgid "config:  Configure a chat room."
-msgstr "config:  Configurați o cameră de chat."
+msgstr "config:  Configurați un canal de chat."
 
 msgid "configure:  Configure a chat room."
-msgstr "configure:  Configurați o cameră de chat."
+msgstr "configure:  Configurați un canal de chat."
 
 msgid "part [message]:  Leave the room."
-msgstr "part [message]:  Ieșiți din cameră."
+msgstr "part [message]:  Ieșiți din canal."
 
 msgid "register:  Register with a chat room."
-msgstr "register:  Vă înregistrați într-un chat."
+msgstr "register:  Înregistrare într-un canal de chat."
 
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [subiect nou]: Verificați sau schimbați subiectul."
 
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr ""
-"ban &lt;nume de utilizator&gt; [chat]:  Blocați accesul unui utilizator în "
-"chat."
+"ban &lt;utilizator&gt; [motiv]:  Blocați accesul unui utilizator în canal."
 
 msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
@@ -4701,7 +4701,7 @@ msgid ""
 msgstr ""
 "affiliate &lt;deținător|administrator|membru|renegat|nimic&gt; [pseudonim1] "
 "[pseudonim2] ...: Aflați utilizatorii cu o afiliere sau definiți afilierea "
-"utilizatorilor față de camera de chat."
+"utilizatorilor față de canal."
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
@@ -4709,16 +4709,16 @@ msgid ""
 msgstr ""
 "role &lt;moderator|participant|vizitator|nimic&gt; [pseudonim1] "
 "[pseudonim2] ...: Aflați utilizatorii cu un anume rol sau schimbați rolul "
-"utilizatorilor în camera de chat."
+"utilizatorilor în canal."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
-msgstr "invite &lt;nume ales&gt; [chat]:  Invitați un utilizator într-un chat."
+msgstr "invite &lt;utilizator&gt; [mesaj]:  Invitați un utilizator în canal."
 
 msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;chat&gt; [parolă]:  Intrați într-un chat al unui server."
+msgstr "join: &lt;canal&gt; [parolă]:  Intrați într-un canal pe acest server."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
-msgstr "kick &lt;utilizator&gt; [motiv]:  Dați afară din chat un utilizator."
+msgstr "kick &lt;utilizator&gt; [motiv]:  Dați un utilizator afară din canal ."
 
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
@@ -4804,7 +4804,7 @@ msgstr "%s a schimbat subiectul în: %s"
 
 #, c-format
 msgid "The topic is: %s"
-msgstr "Topicul este: %s"
+msgstr "Subiectul este: %s"
 
 #, c-format
 msgid "Message delivery to %s failed: %s"
@@ -4836,24 +4836,24 @@ msgstr "Eroare la analiza XML"
 
 #, c-format
 msgid "Error joining chat %s"
-msgstr "Eroare la intrarea în camera de chat %s"
+msgstr "Eroare la intrarea în canalul de chat %s"
 
 #, c-format
 msgid "Error in chat %s"
-msgstr "Eroare în camera de chat %s"
+msgstr "Eroare în canalul de chat %s"
 
 msgid "Create New Room"
-msgstr "Creează o nouă cameră de chat"
+msgstr "Creare a unui nou canal"
 
 msgid ""
 "You are creating a new room.  Would you like to configure it, or accept the "
 "default settings?"
 msgstr ""
-"Sunteți pe cale să creați o nouă cameră de chat. Doriți să o configurați sau "
+"Sunteți pe cale să creați un nou canal. Doriți să îl configurați sau "
 "acceptați opțiunile implicite?"
 
 msgid "_Configure Room"
-msgstr "Opțiuni _cameră de chat"
+msgstr "Opțiuni pentru _canal"
 
 msgid "_Accept Defaults"
 msgstr "_Opțiuni implicite"
@@ -5407,7 +5407,8 @@ msgstr "%s a trimis un clip audio, dar acesta nu a putut fi salvat"
 #, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr ""
-"%s v-a trimis o invitație de chat audio, pentru care nu există încă suport."
+"%s v-a trimis o invitație pentru un apel de voce, pentru care nu există încă "
+"suport."
 
 msgid "Nudge"
 msgstr "Buzz"
@@ -6002,7 +6003,7 @@ msgid "The two PINs you entered do not match."
 msgstr "Cele două PIN-uri introduse nu se potrivesc."
 
 msgid "The Display Name you entered is invalid."
-msgstr "Aliasul introdus este nevalid."
+msgstr "Aliasul introdus nu este valid."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -6092,6 +6093,9 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Conectare..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Aliasul introdus este prea scurt."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN-ul introdus are o lungime nevalidă [7-10]."
 
@@ -6171,7 +6175,7 @@ msgid "was kicked"
 msgstr "a fost dat afară"
 
 msgid "_Room Name:"
-msgstr "Numele came_rei:"
+msgstr "Numele ca_nalului:"
 
 #. Display system message in chat window
 msgid "You have invited"
@@ -6190,8 +6194,18 @@ msgstr "Mesaj de refuz"
 msgid "Hidden Number"
 msgstr "Număr ascuns"
 
+msgid "No profile available"
+msgstr "Niciun profil disponibil"
+
+msgid "This contact does not have a profile."
+msgstr "Acest contact nu are un profil."
+
 msgid "Your MXit ID..."
 msgstr "ID propriu MXit..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Reinvită"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6276,7 +6290,7 @@ msgid "File Transfer Error"
 msgstr "Eroare la transferul de fișiere"
 
 msgid "Cannot create MultiMx room"
-msgstr "Nu se poate crea camera MultiMX"
+msgstr "Nu se poate crea canalul MultiMX"
 
 msgid "MultiMx Invitation Error"
 msgstr "Eroare de invitaţie MultiMx"
@@ -6744,7 +6758,7 @@ msgstr ""
 "greșite"
 
 msgid "You cannot add the same person twice to a conversation"
-msgstr "Nu puteți adăuga aceeași persoană de două ori într-o conversație"
+msgstr "Nu puteți adăuga aceeași persoană de două ori într-o discuție"
 
 msgid "You have reached your limit for the number of contacts allowed"
 msgstr "Ați atins numărul maxim permis de contacte"
@@ -7011,10 +7025,10 @@ msgstr ""
 "potrivește cu cea aleasă de %s sau %s utilizează un client problematic)."
 
 msgid "Could not join chat room"
-msgstr "Nu s-a putut intra în camera de chat"
+msgstr "Nu s-a putut intra în canalul de chat"
 
 msgid "Invalid chat room name"
-msgstr "Nume nevalid de cameră de chat"
+msgstr "Nume nevalid pentru canalul de chat"
 
 msgid "Invalid error"
 msgstr "Eroare nevalidă"
@@ -7217,15 +7231,15 @@ msgid ""
 "IM.  Try using file transfer instead.\n"
 msgstr ""
 "%s a încercat să vă trimită un fișier de %s, dar se permite doar trimiterea "
-"de fișiere mai mici de %s în discuțiile directe. Încercați transferul de "
-"fișiere.\n"
+"de fișiere mai mici de %s în discuțiile directe. Încercați mai bine "
+"transferul de fișiere.\n"
 
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Fișierul %s are %s, care depășește mărimea maximă de %s."
 
 msgid "Free For Chat"
-msgstr "Disponibil"
+msgstr "Disponibil pentru discuții"
 
 msgid "Not Available"
 msgstr "Indisponibil"
@@ -7492,7 +7506,15 @@ msgstr "S-ar putea să fi pierdut conexiunea AIM."
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Contul v-a fost deconectat din camera de chat %s."
+msgstr "Ați pierdut conexiunea cu canalul de chat %s."
+
+msgid "The new formatting is invalid."
+msgstr "Formatul nou este nevalid."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Formatarea numelor de utilizatori nu poate schimba decât spațiile goale și "
+"capitalizarea."
 
 msgid "Pop-Up Message"
 msgstr "Mesaj popup"
@@ -7770,14 +7792,6 @@ msgstr "Prezență pe web (activarea vă expune la spam!)"
 
 msgid "ICQ Privacy Options"
 msgstr "Opțiuni de securitate ICQ"
-
-msgid "The new formatting is invalid."
-msgstr "Formatul nou este nevalid."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Formatarea numelor de utilizatori nu poate schimba decât spațiile goale și "
-"capitalizarea."
 
 msgid "Change Address To:"
 msgstr "Schimbă adresa în:"
@@ -8406,7 +8420,7 @@ msgstr "Admin"
 
 #. XXX: Should this be "Topic"?
 msgid "Room Title"
-msgstr "Numele camerei"
+msgstr "Numele canalului"
 
 msgid "Notice"
 msgstr "Notificare"
@@ -8684,7 +8698,10 @@ msgid "Show server news"
 msgstr "Afișare știri server"
 
 msgid "Show chat room when msg comes"
-msgstr "Arată camera de chat când vine msg"
+msgstr "Arată canalul de chat la primirea unui mesaj privat"
+
+msgid "Use default font"
+msgstr "Utilizează fontul implicit"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Interval „keep alive” (secunde)"
@@ -8808,7 +8825,7 @@ msgid ""
 "Room %u, reply 0x%02X"
 msgstr ""
 "Răspuns de eroare %s(0x%02X)\n"
-"Camera %u, răspuns 0x%02X"
+"Canalul %u, răspuns 0x%02X"
 
 msgid "QQ Qun Command"
 msgstr "Comandă QQ Qun"
@@ -8929,7 +8946,7 @@ msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
 "sent to %s"
 msgstr ""
-"Introduceți un topic pentru noua conferință și un mesaj pentru invitarea "
+"Introduceți un subiect pentru noua conferință și un mesaj pentru invitarea "
 "utilizatorului %s"
 
 msgid "New Conference"
@@ -8967,7 +8984,7 @@ msgid "Send TEST Announcement"
 msgstr "Trimite un anunț TEST"
 
 msgid "Topic:"
-msgstr "Topic:"
+msgstr "Subiect:"
 
 msgid "No Sametime Community Server specified"
 msgstr "Nu s-a specificat un server de comunitate Sametime"
@@ -9353,17 +9370,17 @@ msgstr "_Frază secretă:"
 
 #, c-format
 msgid "Channel %s does not exist in the network"
-msgstr "Chat-ul %s nu există în rețea"
+msgstr "Canalul %s nu există în rețea"
 
 msgid "Channel Information"
-msgstr "Detalii chat"
+msgstr "Detaliile canalului"
 
 msgid "Cannot get channel information"
-msgstr "Nu s-au putut obține detalii despre chat"
+msgstr "Nu s-au putut obține detalii despre canal"
 
 #, c-format
 msgid "<b>Channel Name:</b> %s"
-msgstr "<b>Nume chat:</b> %s"
+msgstr "<b>Numele canalului:</b> %s"
 
 #, c-format
 msgid "<br><b>User Count:</b> %d"
@@ -9371,24 +9388,24 @@ msgstr "<br><b>Contor utilizatori:</b> %d"
 
 #, c-format
 msgid "<br><b>Channel Founder:</b> %s"
-msgstr "<br><b>Inițiator chat:</b> %s"
+msgstr "<br><b>Inițiatorul canalului:</b> %s"
 
 #, c-format
 msgid "<br><b>Channel Cipher:</b> %s"
-msgstr "<br><b>Cifru chat:</b> %s"
+msgstr "<br><b>Cifru de canal:</b> %s"
 
 #. Definition of HMAC: http://en.wikipedia.org/wiki/HMAC
 #, c-format
 msgid "<br><b>Channel HMAC:</b> %s"
-msgstr "<br><b>Chat HMAC:</b> %s"
+msgstr "<br><b>HMAC de canal:</b> %s"
 
 #, c-format
 msgid "<br><b>Channel Topic:</b><br>%s"
-msgstr "<br><b>Topic chat:</b><br>%s"
+msgstr "<br><b>Subiectul canalului:</b><br>%s"
 
 #, c-format
 msgid "<br><b>Channel Modes:</b> "
-msgstr "<br><b>Moduri chat:</b> "
+msgstr "<br><b>Modurile canalului:</b> "
 
 #, c-format
 msgid "<br><b>Founder Key Fingerprint:</b><br>%s"
@@ -9399,17 +9416,17 @@ msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
 msgstr "<br><b>Amprentă silabică a cheii fondatorului:</b><br>%s"
 
 msgid "Add Channel Public Key"
-msgstr "Adaugă cheia publică a chat-ului"
+msgstr "Adaugă cheia publică a canalului"
 
 #. Add new public key
 msgid "Open Public Key..."
 msgstr "Deschide cheia publică..."
 
 msgid "Channel Passphrase"
-msgstr "Frază secretă pentru chat"
+msgstr "Frază secretă pentru canal"
 
 msgid "Channel Public Keys List"
-msgstr "Listă chei publice chat"
+msgstr "Lista cheilor publice pentru canal"
 
 #, c-format
 msgid ""
@@ -9419,14 +9436,14 @@ msgid ""
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
 msgstr ""
-"Autentificarea în chat este utilizată pentru a bloca accesul neautorizat în "
-"chat. Autentificarea poate fi pe bază de frază secretă sau pe bază de "
-"semnături digitale. În primul caz, trebuie permis accesul inițial la chat. "
-"În cel de-al doilea, doar utilizatorii ale căror semnături digitale sunt "
-"listate pot intra în chat."
+"Autentificarea în canal este utilizată pentru a bloca accesul neautorizat. "
+"Autentificarea poate fi pe bază de frază secretă sau pe bază de semnături "
+"digitale. În primul caz, trebuie permis accesul inițial la canal. În cel de-"
+"al doilea, doar utilizatorii ale căror semnături digitale sunt listate pot "
+"intra în canal."
 
 msgid "Channel Authentication"
-msgstr "Autentificare în chat"
+msgstr "Autentificare în canal"
 
 msgid "Add / Remove"
 msgstr "Adaugă/Șterge"
@@ -9439,24 +9456,25 @@ msgstr "Frază secretă"
 
 #, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr "Introduceți numele grupului chat-ului privat %s și fraza secretă."
+msgstr ""
+"Introduceți numele grupului privat al canalului %s și fraza secretă asociată."
 
 msgid "Add Channel Private Group"
-msgstr "Adaugă grupul chat-ului privat"
+msgstr "Adaugă grupul privat al canalului"
 
 msgid "User Limit"
-msgstr "Limită utilizatori"
+msgstr "Limită de utilizatori"
 
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
-"Definiți numărul maxim de utilizatori în chat. Zero pentru un număr "
+"Definiți numărul maxim de utilizatori în canal. Zero pentru un număr "
 "nelimitat."
 
 msgid "Invite List"
-msgstr "Listă invitații"
+msgstr "Listă de invitații"
 
 msgid "Ban List"
-msgstr "Listă interdicții"
+msgstr "Listă de interdicții"
 
 msgid "Add Private Group"
 msgstr "Adaugă grupul privat"
@@ -9468,7 +9486,7 @@ msgid "Set Permanent"
 msgstr "Inițializează permanent"
 
 msgid "Set User Limit"
-msgstr "Introducere limită utilizatori"
+msgstr "Inițializează limita de utilizatori"
 
 msgid "Reset Topic Restriction"
 msgstr "Anulează blocarea subiectului"
@@ -9477,22 +9495,22 @@ msgid "Set Topic Restriction"
 msgstr "Blochează subiectul"
 
 msgid "Reset Private Channel"
-msgstr "Reinițializează chat-ul privat"
+msgstr "Reinițializează canalul privat"
 
 msgid "Set Private Channel"
-msgstr "Inițializează chat-ul privat"
+msgstr "Inițializează canalul privat"
 
 msgid "Reset Secret Channel"
-msgstr "Reinițializează chat-ul secret"
+msgstr "Reinițializează canalul secret"
 
 msgid "Set Secret Channel"
-msgstr "Inițializează chat-ul secret"
+msgstr "Inițializează canalul secret"
 
 #, c-format
 msgid ""
 "You have to join the %s channel before you are able to join the private group"
 msgstr ""
-"Trebuie să intrați în chat-ul %s înainte de a vă putea alătura grupului "
+"Trebuie să intrați în canalul %s înainte de a vă putea alătura grupului "
 "privat."
 
 msgid "Join Private Group"
@@ -9558,11 +9576,11 @@ msgstr "%s a schimbat subiectul pentru <I>%s</I> în: %s"
 
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr "<I>%s</I> a definit modurile chat-ului <I>%s</I> astfel: %s"
+msgstr "<I>%s</I> a definit modurile canalului <I>%s</I> astfel: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
-msgstr "<I>%s</I> a înlăturat toate modurile chat-ului <I>%s</I>"
+msgstr "<I>%s</I> a înlăturat toate modurile canalului <I>%s</I>"
 
 #, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
@@ -9607,11 +9625,11 @@ msgstr "Intră într-un chat"
 
 #, c-format
 msgid "You are channel founder on <I>%s</I>"
-msgstr "Sunteți inițiatorul chat-ului <I>%s</I>"
+msgstr "Sunteți inițiator de canal pentru <I>%s</I>"
 
 #, c-format
 msgid "Channel founder on <I>%s</I> is <I>%s</I>"
-msgstr "Inițiatorul chat-ului în <I>%s</I> este <I>%s</I>"
+msgstr "Inițiatorul canalului în <I>%s</I> este <I>%s</I>"
 
 msgid "Real Name"
 msgstr "Nume real"
@@ -9641,10 +9659,10 @@ msgid "Failed to change nickname"
 msgstr "Schimbarea pseudonimului a eșuat"
 
 msgid "Roomlist"
-msgstr "Listă camere de chat"
+msgstr "Listă de canale"
 
 msgid "Cannot get room list"
-msgstr "Nu se poate obține lista camerelor de chat"
+msgstr "Nu se poate obține lista canalelor"
 
 msgid "Network is empty"
 msgstr "Rețeaua este goală"
@@ -9684,19 +9702,19 @@ msgid ""
 msgstr ""
 "Ora pornirii serverului local: %s\n"
 "Uptime pentru serverul local: %s\n"
-"Clienți server local: %d\n"
-"Chat-uri server local: %d\n"
-"Operatori server local: %d\n"
-"Operatori router local: %d\n"
-"Clienți celulă locală: %d\n"
-"Chat-uri celulă locală: %d\n"
-"Servere celulă locală: %d\n"
+"Clienți pe serverul local: %d\n"
+"Canale pe serverul local: %d\n"
+"Operatori pe serverul local: %d\n"
+"Operatori pe routerul local: %d\n"
+"Clienți în celula locală: %d\n"
+"Canale în celula locală: %d\n"
+"Servere în celula locală: %d\n"
 "Total clienți: %d\n"
-"Total chat-uri: %d\n"
+"Total canale: %d\n"
 "Total servere: %d\n"
 "Total routere: %d\n"
-"Total operatori servere: %d\n"
-"Total operatori routere: %d\n"
+"Total operatori pe servere: %d\n"
+"Total operatori pe routere: %d\n"
 
 msgid "Network Statistics"
 msgstr "Statistici rețea"
@@ -9903,46 +9921,46 @@ msgid "User <I>%s</I> is not present in the network"
 msgstr "Utilizatorul <I>%s</I> nu este prezent în rețea"
 
 msgid "Topic too long"
-msgstr "Topic prea lung"
+msgstr "Subiect prea lung"
 
 msgid "You must specify a nick"
 msgstr "Trebuie să specificați un pseudonim"
 
 #, c-format
 msgid "channel %s not found"
-msgstr "chat-ul %s nu a fost găsit"
+msgstr "canalul %s nu a fost găsit"
 
 #, c-format
 msgid "channel modes for %s: %s"
-msgstr "modurile de chat pentru %s sunt: %s"
+msgstr "modurile de canal pentru %s sunt: %s"
 
 #, c-format
 msgid "no channel modes are set on %s"
-msgstr "chat-ul %s nu are niciun mod definit"
+msgstr "canalul %s nu are niciun mod definit"
 
 #, c-format
 msgid "Failed to set cmodes for %s"
-msgstr "Nu s-au putut defini modurile chat-ului %s"
+msgstr "Nu s-au putut defini modurile canalului %s"
 
 #, c-format
 msgid "Unknown command: %s, (may be a client bug)"
 msgstr "Comandă necunoscută: %s (poate fi o problemă de client)"
 
 msgid "part [channel]:  Leave the chat"
-msgstr "part [chat]:  Părăsește un chat"
+msgstr "part [canal]:  Părăsește un canal"
 
 msgid "leave [channel]:  Leave the chat"
-msgstr "leave [chat]:  Părăsește un chat"
+msgstr "leave [canal]:  Părăsește un canal"
 
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr "topic [&lt;nou topic&gt;]: Arată sau schimbă subiectul"
+msgstr "topic [&lt;nou subiect&gt;]: Arată sau schimbă subiectul"
 
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
 msgstr ""
-"join &lt;chat&gt; [&lt;parolă&gt;]:  Intră într-un chat din această rețea"
+"join &lt;canal&gt; [&lt;parolă&gt;]:  Intră într-un canal din această rețea"
 
 msgid "list:  List channels on this network"
-msgstr "list:  Listează chat-urile din această rețea"
+msgstr "list:  Listează canalele din această rețea"
 
 msgid "whois &lt;nick&gt;:  View nick's information"
 msgstr "whois &lt;pseudonim&gt;:  Arată detaliile utilizatorului"
@@ -9982,15 +10000,15 @@ msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display "
 "channel modes"
 msgstr ""
-"cmode &lt;chat&gt; [+|-&lt;moduri&gt;] [argumente]:   Schimbă sau arată "
-"modurile chat-ului."
+"cmode &lt;canal&gt; [+|-&lt;moduri&gt;] [argumente]:   Schimbă sau arată "
+"modurile canalului."
 
 msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
 msgstr ""
-"cumode &lt;chat&gt; +|-&lt;moduri&gt; &lt;pseudonim&gt;:  Schimbă modurile "
-"respectivului utilizator în chat"
+"cumode &lt;canal&gt; +|-&lt;moduri&gt; &lt;pseudonim&gt;:  Schimbă modurile "
+"respectivului utilizator în canal"
 
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
 msgstr "umode &lt:moduri_utilizator&gt;:  Alegeți-vă modurile în rețea"
@@ -10002,21 +10020,21 @@ msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
-"invite &lt;chat&gt; [-|+]&lt;pseudonim&gt;:  invită respectivul utilizator "
-"sau adaugă-l/șterge-l din lista invitaților chat-ului"
+"invite &lt;canal&gt; [-|+]&lt;pseudonim&gt;:  invită respectivul utilizator "
+"sau adaugă-l/șterge-l din lista invitaților canalului"
 
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
-"kick &lt;chat&gt; &lt;pseudonim&gt; [comentariu]: Dă afară din chat un "
-"utilizator."
+"kick &lt;canal&gt; &lt;pseudonim&gt; [comentariu]: Dă un utilizator afară "
+"din canal"
 
 msgid "info [server]:  View server administrative details"
 msgstr "info [server]:  Arată detalii administrative despre server"
 
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
 msgstr ""
-"ban [&lt;chat&gt; +|-&lt;pseudonim&gt]:  Interzice utilizatorului respectiv "
-"accesul la acest chat"
+"ban [&lt;canal&gt; +|-&lt;pseudonim&gt]:  Interzice utilizatorului respectiv "
+"accesul la acest canal"
 
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
@@ -10030,14 +10048,14 @@ msgid "ping:  Send PING to the connected server"
 msgstr "ping:  PING către serverul curent"
 
 msgid "users &lt;channel&gt;:  List users in channel"
-msgstr "user &lt;chat&gt;:  Listează utilizatorii dintr-un chat"
+msgstr "user &lt;canal&gt;:  Listează utilizatorii dintr-un canal"
 
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
 msgstr ""
-"names [-count|-ops|-halfops|-voices|-normal] &lt;chat(-uri)&gt;:  Listează "
-"anumite tipuri de utilizatori din chat-urile precizate"
+"names [-count|-ops|-halfops|-voices|-normal] &lt;canal(e)&gt;:  Listează "
+"anumite tipuri de utilizatori din canalele precizate"
 
 #. *< type
 #. *< ui_requirement
@@ -10179,7 +10197,7 @@ msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
 msgstr ""
-"%s a trimis un mesaj către „whiteboard” în chat-ul %s. Doriți să deschid un "
+"%s a trimis un mesaj către „whiteboard” în canalul %s. Doriți să deschid un "
 "whiteboard?"
 
 msgid "Whiteboard"
@@ -10293,10 +10311,10 @@ msgid "Auth Domain"
 msgstr "Autentificare domeniu"
 
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join: &lt;room&gt;:  Intrați într-un chat din rețeaua Yahoo!"
+msgstr "join: &lt;chat&gt;:  Intrați într-un canal de chat din rețeaua Yahoo!"
 
 msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Listează chat-urile din rețeaua Yahoo"
+msgstr "list:  Listează canalele de chat din rețeaua Yahoo"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle:  Cereți unui utilizator să iniție o sesiune de mâzgălituri"
@@ -10327,16 +10345,16 @@ msgid "File transfer port"
 msgstr "Port transfer de fișiere"
 
 msgid "Chat room locale"
-msgstr "Opțiuni locale chat"
+msgstr "Localizarea pentru chat"
 
 msgid "Ignore conference and chatroom invitations"
-msgstr "Ignoră invitațiile la conferințe și chat"
+msgstr "Ignoră invitațiile la conferințe și canale de chat"
 
 msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Utilizează proxy-ul contului pentru conexiuni HTTP și HTTPS"
 
 msgid "Chat room list URL"
-msgstr "Adresa listei camerelor de chat"
+msgstr "Adresa URL a listei canalelor de chat"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Identitate Yahoo Japonia..."
@@ -10357,8 +10375,8 @@ msgstr "Modul de protocol Yahoo! Japonia"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s v-a trimis o invitație de acces la camera web, invitație ce nu este încă "
-"suportată"
+"%s v-a trimis o invitație de acces la camera web, pentru care încă nu există "
+"suport."
 
 msgid "Your SMS was not delivered"
 msgstr "Mesajul SMS nu v-a fost trimis"
@@ -10665,11 +10683,11 @@ msgstr "Intrarea în chat a eșuat"
 
 #. -6
 msgid "Unknown room"
-msgstr "Cameră de chat necunoscută"
+msgstr "Canal necunoscut"
 
 #. -15
 msgid "Maybe the room is full"
-msgstr "Camera de chat e probabil plină"
+msgstr "Canalul e probabil plin"
 
 #. -35
 msgid "Not available"
@@ -10680,23 +10698,23 @@ msgid ""
 "able to rejoin a chatroom"
 msgstr ""
 "Eroare necunoscută. S-ar putea să trebuiască să vă deconectați pentru cinci "
-"minute înainte de a reintra în camera de chat."
+"minute înainte de a reintra în canalul de chat."
 
 #, c-format
 msgid "You are now chatting in %s."
-msgstr "Ați intrat în camera de chat %s."
+msgstr "Ați intrat în chat-ul %s."
 
 msgid "Failed to join buddy in chat"
 msgstr "Intrarea în chat alături de acest contact a eșuat"
 
 msgid "Maybe they're not in a chat?"
-msgstr "Poate nu e sau nu sunt în niciun chat?"
+msgstr "Poate că ei nu sunt în niciun chat?"
 
 msgid "Fetching the room list failed."
-msgstr "Obținerea listei camerelor de chat a eșuat."
+msgstr "Obținerea listei de canale a eșuat."
 
 msgid "Voices"
-msgstr "Audio"
+msgstr "Voci"
 
 msgid "Webcams"
 msgstr "Video"
@@ -10705,10 +10723,10 @@ msgid "Connection problem"
 msgstr "Probleme la conectare"
 
 msgid "Unable to fetch room list."
-msgstr "Nu se poate obține lista camerelor de chat."
+msgstr "Nu se poate obține lista canalelor."
 
 msgid "User Rooms"
-msgstr "Camere de chat utilizatori"
+msgstr "Canale de utilizatori"
 
 msgid "Connection problem with the YCHT server"
 msgstr "Probleme de conexiune cu serverul YCHT."
@@ -10908,12 +10926,12 @@ msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr ""
-"%s a invitat utilizatorul %s în camera de chat %s\n"
+"%s a invitat utilizatorul %s în canalul de chat %s\n"
 "%s"
 
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
-msgstr "%s a invitat utilizatorul %s în camera de chat %s\n"
+msgstr "%s a invitat utilizatorul %s în canalul de chat %s\n"
 
 msgid "Accept chat invitation?"
 msgstr "Acceptați invitația la chat?"
@@ -11118,7 +11136,8 @@ msgstr ""
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
-"Mesaje instant în rețelele AIM, Google Talk, Jabber/XMPP, MSN, Yahoo etc."
+"Chat prin mesaje instant. Suportă rețelele AIM, Google Talk, Jabber/XMPP, "
+"MSN, Yahoo și altele."
 
 msgid "Internet Messenger"
 msgstr "Mesagerie instant"
@@ -11385,8 +11404,8 @@ msgid ""
 "choosing 'Expand' from the contact's context menu"
 msgstr ""
 "Unirea acestor contacte le va face să apară ca o singură intrare în lista de "
-"contacte și să folosească o singură fereastră de conversație. Le puteți "
-"separa din nou alegând „Desfă” din meniul contextual al contactului."
+"contacte și să folosească o singură fereastră de discuție. Le puteți separa "
+"din nou alegând „Desfă” din meniul contextual al contactului."
 
 msgid "Please update the necessary fields."
 msgstr "Trebuie să actualizați câmpurile cerute."
@@ -11397,10 +11416,10 @@ msgstr "_Cont"
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
-msgstr "Introduceți detaliile chat-ului în care doriți intrați.\n"
+msgstr "Introduceți detaliile chat-ului în care doriți să intrați.\n"
 
 msgid "Room _List"
-msgstr "_Listă de camere"
+msgstr "_Listă de canale"
 
 msgid "_Block"
 msgstr "_Blochează"
@@ -11595,7 +11614,7 @@ msgid "/Tools/_File Transfers"
 msgstr "/Unelte/_Transfer de fișiere"
 
 msgid "/Tools/R_oom List"
-msgstr "/Unelte/_Lista camerelor de chat"
+msgstr "/Unelte/_Lista canalelor"
 
 msgid "/Tools/System _Log"
 msgstr "/Unelte/În_registrări de sistem"
@@ -11703,7 +11722,7 @@ msgid "/Tools/Privacy"
 msgstr "/Unelte/Securitate"
 
 msgid "/Tools/Room List"
-msgstr "/Unelte/Lista camerelor de chat"
+msgstr "/Unelte/Lista canalelor"
 
 #, c-format
 msgid "%d unread message from %s\n"
@@ -11811,7 +11830,7 @@ msgid "Add buddy to _group:"
 msgstr "_Grup:"
 
 msgid "This protocol does not support chat rooms."
-msgstr "Acest protocol nu suportă camere de chat."
+msgstr "Acest protocol nu suportă canale de chat."
 
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
@@ -11888,7 +11907,7 @@ msgstr ""
 "acel contact."
 
 msgid "Invite Buddy Into Chat Room"
-msgstr "Invită contactul în camera de chat"
+msgstr "Invită contactul în canalul de chat"
 
 msgid "_Buddy:"
 msgstr "_Contact:"
@@ -12125,7 +12144,7 @@ msgstr "T_rimite"
 
 #. Setup the label telling how many people are in the room.
 msgid "0 people in room"
-msgstr "Nicio persoană în chat"
+msgstr "Nicio persoană în canal"
 
 msgid "Close Find bar"
 msgstr "Închide bara de căutare"
@@ -12136,9 +12155,9 @@ msgstr "Caută:"
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "o persoană în chat"
-msgstr[1] "%d persoane în chat"
-msgstr[2] "%d de persoane în chat"
+msgstr[0] "o persoană în canal"
+msgstr[1] "%d persoane în canal"
+msgstr[2] "%d de persoane în canal"
 
 msgid "Stopped Typing"
 msgstr "M-am oprit din scris"
@@ -12655,7 +12674,7 @@ msgid "Alias Buddy"
 msgstr "Alias contact"
 
 msgid "Alias Chat"
-msgstr "Alias chat"
+msgstr "Alias pentru chat"
 
 msgid "Enter an alias for this chat."
 msgstr "Introduceți un nou alias pentru acest chat."
@@ -13095,16 +13114,16 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Sigur doriți să ștergeți definitiv înregistrarea conversației cu %s începută "
-"la %s?"
+"Sigur doriți să ștergeți definitiv înregistrarea discuției cu %s începută la "
+"%s?"
 
 #, c-format
 msgid ""
 "Are you sure you want to permanently delete the log of the conversation in "
 "%s which started at %s?"
 msgstr ""
-"Sigur doriți să ștergeți definitiv înregistrarea conversației din %s "
-"începută la %s?"
+"Sigur doriți să ștergeți definitiv înregistrarea discuției din %s începută "
+"la %s?"
 
 #, c-format
 msgid ""
@@ -13278,6 +13297,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Aveți mail nou!</span>"
 msgid "New Pounces"
 msgstr "Întâmpinare nouă"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Închide"
 
@@ -14436,7 +14462,7 @@ msgid ""
 "Note: The preference for \"New conversations\" must be set to \"By "
 "conversation count\"."
 msgstr ""
-"Notă: Opțiunea pentru „Noi conversații” trebuie să fie „După numărul "
+"Notă: Opțiunea pentru „Noi discuții” trebuie să fie „După numărul "
 "discuțiilor”."
 
 msgid "Number of conversations per window"
@@ -15093,7 +15119,7 @@ msgid "Status Icons"
 msgstr "Iconițe de status"
 
 msgid "Chatroom Emblems"
-msgstr "Embleme de camere de chat"
+msgstr "Embleme ale canalelor de chat"
 
 msgid "Dialog Icons"
 msgstr "Iconițe de dialog"
@@ -15268,7 +15294,7 @@ msgstr "Opțiuni pentru microfon și camera web."
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
 msgstr ""
-"Schimbați opțiunile pentru microfon și camera web pentru apelurile de voce "
+"Personalizați opțiunile microfonului și camerei web pentru apelurile de voce "
 "și video"
 
 msgid "Opacity:"
@@ -15473,7 +15499,7 @@ msgstr "Înainte >"
 
 #. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Client de mesagerie instant (obligatoriu)"
+msgstr "Clientul de mesagerie instant Pidgin (obligatoriu)"
 
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
@@ -15531,25 +15557,3 @@ msgstr "Vizitaţi pagina de web Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
-
-#~ msgid "Automatically reject from users not in buddy list"
-#~ msgstr ""
-#~ "Refuză automat pentru utilizatorii ce nu fac parte din lista de contacte"
-
-#~ msgid "bug master"
-#~ msgstr "admin al rapoartelor de erori"
-
-#~ msgid "Error requesting %s"
-#~ msgstr "Eroare la cererea %s"
-
-#~ msgid "An error occurred on the in-band bytestream transfer\n"
-#~ msgstr "A apărut o eroare la transferul de octeți în-bandă\n"
-
-#~ msgid "Transfer was closed."
-#~ msgstr "Transferul a fost închis"
-
-#~ msgid "Failed to open in-band bytestream"
-#~ msgstr "Nu s-a putut deschide fluxul de octeți în-bandă"
-
-#~ msgid "Set your friendly name."
-#~ msgstr "Alegeți-vă un pseudonim propriu."
