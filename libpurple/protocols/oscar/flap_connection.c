@@ -208,7 +208,7 @@ static gboolean flap_connection_send_queued(gpointer data)
  * @param data The optional bytestream that makes up the data portion
  *        of this SNAC.  For empty SNACs this should be NULL.
  * @param high_priority If TRUE, the SNAC will be queued normally if
- *        needed. If FALSE, it wil be queued separately, to be sent
+ *        needed. If FALSE, it will be queued separately, to be sent
  *        only if all high priority SNACs have been sent.
  */
 void
