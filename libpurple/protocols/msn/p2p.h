@@ -113,7 +113,7 @@ void
 msn_p2p_info_free(MsnP2PInfo *info);
 
 size_t
-msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire);
+msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len);
 
 char *
 msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len);
