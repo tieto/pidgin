@@ -1699,7 +1699,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 
 	if((filesize_c = xmlnode_get_attrib(file, "size")))
-		filesize = atoi(filesize_c);
+		filesize = strtoul(filesize_c, NULL, 10);
 
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;
