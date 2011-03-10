@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-02-01 21:09+0100\n"
+"POT-Creation-Date: 2011-03-10 01:35-0800\n"
+"PO-Revision-Date: 2011-03-06 17:30+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
@@ -3187,9 +3187,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Křestní jméno"
 
@@ -3944,7 +3942,6 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "PSČ"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Země"
 
@@ -6016,6 +6013,9 @@ msgstr "Nemohu se připojit k MXit serveru. Zkontrolujte nastavení."
 msgid "Connecting..."
 msgstr "Připojování..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Zadané jméno pro zobrazení je příliš krátké."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Zadaný PIN má neplatnou délku [7-10]."
 
@@ -6111,8 +6111,18 @@ msgstr "Zamítnutí zprávy"
 msgid "Hidden Number"
 msgstr "Skryté číslo"
 
+msgid "No profile available"
+msgstr "Není dostupný profil"
+
+msgid "This contact does not have a profile."
+msgstr "Tento kontakt nemá profil."
+
 msgid "Your MXit ID..."
 msgstr "Vaše MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Znovu pozvat"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -7404,6 +7414,12 @@ msgstr "Vaše spojení AIM může být přerušeno."
 msgid "You have been disconnected from chat room %s."
 msgstr "Byl jste odpojen z místnosti chatu %s."
 
+msgid "The new formatting is invalid."
+msgstr "Nové formátování je neplatné."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Formátování jména uživatele může změnit jen velikost písmen a mezery."
+
 msgid "Pop-Up Message"
 msgstr "Vyskakovací zpráva"
 
@@ -7673,12 +7689,6 @@ msgstr "Ví o WWW (povolení tohoto způsobí, že budete dostávat SPAM!)"
 
 msgid "ICQ Privacy Options"
 msgstr "Možnosti soukromí ICQ"
-
-msgid "The new formatting is invalid."
-msgstr "Nové formátování je neplatné."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Formátování jména uživatele může změnit jen velikost písmen a mezery."
 
 msgid "Change Address To:"
 msgstr "Změnit adresu na:"
@@ -8582,6 +8592,9 @@ msgstr "Zobrazit novinky serveru"
 
 msgid "Show chat room when msg comes"
 msgstr "Zobrazit místnost při přijetí zprávy"
+
+msgid "Use default font"
+msgstr "Použít výchozí font"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Interval udržování naživu (v sekundách)"
