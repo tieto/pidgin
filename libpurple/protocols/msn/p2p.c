@@ -90,11 +90,17 @@ msn_p2p_info_free(MsnP2PInfo *info)
 size_t
 msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len)
 {
-	size_t len;
+	size_t len = 0;
 
 	switch (info->version) {
 		case MSN_P2P_VERSION_ONE: {
 			MsnP2PHeader *header = &info->header.v1;
+
+			if (max_len < P2P_PACKET_HEADER_SIZE) {
+				/* Invalid packet length */
+				len = 0;
+				break;
+			}
 
 			header->session_id = msn_pop32le(wire);
 			header->id         = msn_pop32le(wire);
