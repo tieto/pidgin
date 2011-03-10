@@ -50,6 +50,13 @@ typedef struct {
 	guint8  opcode;
 	guint16 message_len;
 	guint32 base_id;
+	GSList *header_tlv;
+	guint8  data_header_len;
+	guint8  data_tf;
+	guint16 package_number;
+	guint32 session_id;
+	GSList *data_tlv;
+/*	guint8  body[1]; */
 } MsnP2Pv2Header;
 
 typedef struct
@@ -102,6 +109,13 @@ typedef enum
 	P2P_APPID_EMOTE     = 0xB,        /**< CustomEmoticon */
 	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
 } MsnP2PAppId;
+
+typedef enum
+{
+	P2P_OPCODE_NONE = 0x00,
+	P2P_OPCODE_SYN  = 0x01,
+	P2P_OPCODE_RAK  = 0x02
+} MsnP2Pv2OpCode;
 
 MsnP2PInfo *
 msn_p2p_info_new(MsnP2PVersion version);

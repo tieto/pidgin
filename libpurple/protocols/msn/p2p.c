@@ -26,6 +26,7 @@
 #include "debug.h"
 
 #include "p2p.h"
+#include "tlv.h"
 #include "msnutils.h"
 
 MsnP2PInfo *
@@ -58,8 +59,13 @@ msn_p2p_info_dup(MsnP2PInfo *info)
 
 	switch (info->version) {
 		case MSN_P2P_VERSION_ONE:
+			*new_info = *info;
+			break;
+
 		case MSN_P2P_VERSION_TWO:
 			*new_info = *info;
+			new_info->header.v2.header_tlv = msn_tlvlist_copy(info->header.v2.header_tlv);
+			new_info->header.v2.data_tlv = msn_tlvlist_copy(info->header.v2.data_tlv);
 			break;
 
 		default:
@@ -76,8 +82,12 @@ msn_p2p_info_free(MsnP2PInfo *info)
 {
 	switch (info->version) {
 		case MSN_P2P_VERSION_ONE:
-		case MSN_P2P_VERSION_TWO:
 			/* Nothing to do! */
+			break;
+
+		case MSN_P2P_VERSION_TWO:
+			msn_tlvlist_free(info->header.v2.header_tlv);
+			msn_tlvlist_free(info->header.v2.data_tlv);
 			break;
 
 		default:
@@ -116,8 +126,47 @@ msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len)
 			break;
 		}
 
-		case MSN_P2P_VERSION_TWO:
+		case MSN_P2P_VERSION_TWO: {
+			MsnP2Pv2Header *header = &info->header.v2;
+
+			header->header_len = msn_pop8(wire);
+			header->opcode = msn_pop8(wire);
+			header->message_len = msn_pop16be(wire);
+			header->base_id = msn_pop32be(wire);
+			if (header->header_len + header->message_len + P2P_PACKET_FOOTER_SIZE > max_len) {
+				/* Invalid header and data length */
+				len = 0;
+				break;
+			}
+
+			if (header->header_len > 8) {
+				header->header_tlv = msn_tlvlist_read(wire, header->header_len - 8);
+				wire += header->header_len - 8;
+			}
+
+			if (header->message_len > 0) {
+				/* Parse Data packet */
+
+				header->data_header_len = msn_pop8(wire);
+				if (header->data_header_len > header->message_len) {
+					/* Invalid data header length */
+					len = 0;
+					break;
+				}
+				header->data_tf = msn_pop8(wire);
+				header->package_number = msn_pop16be(wire);
+				header->session_id = msn_pop32be(wire);
+
+				if (header->data_header_len > 8) {
+					header->data_tlv = msn_tlvlist_read(wire, header->data_header_len - 8);
+					wire += header->data_header_len - 8;
+				}
+			}
+
+			len = header->header_len + header->message_len;
+
 			break;
+		}
 
 		default:
 			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
@@ -153,11 +202,46 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 			break;
 		}
 
-		case MSN_P2P_VERSION_TWO:
+		case MSN_P2P_VERSION_TWO: {
+			MsnP2Pv2Header *header = &info->header.v2;
+
+			if (header->header_tlv != NULL)
+				header->header_len = msn_tlvlist_size(header->header_tlv) + 8;
+			else
+				header->header_len = 8;
+
+			if (header->data_tlv != NULL)
+				header->data_header_len = msn_tlvlist_size(header->data_tlv) + 8;
+			else
+				header->data_header_len = 8;
+
+			tmp = wire = g_new(char, header->header_len + header->data_header_len);
+
+			msn_push8(tmp, header->header_len);
+			msn_push8(tmp, header->opcode);
+			msn_push16be(tmp, header->data_header_len + header->message_len);
+			msn_push32be(tmp, header->base_id);
+
+			if (header->header_tlv != NULL) {
+				msn_tlvlist_write(tmp, header->header_len - 8, header->header_tlv);
+				tmp += header->header_len - 8;
+			}
+
+			msn_push8(tmp, header->data_header_len);
+			msn_push8(tmp, header->data_tf);
+			msn_push16be(tmp, header->package_number);
+			msn_push32be(tmp, header->session_id);
+
+			if (header->data_tlv != NULL) {
+				msn_tlvlist_write(tmp, header->data_header_len - 8, header->data_tlv);
+				tmp += header->data_header_len - 8;
+			}
+
 			if (len)
-				*len = 0;
+				*len = header->header_len + header->data_header_len;
 
 			break;
+		}
 
 		default:
 			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);

@@ -46,13 +46,13 @@ guint16 msn_tlv_get16(GSList *list, const guint16 type, const int nth);
 guint32 msn_tlv_get32(GSList *list, const guint16 type, const int nth);
 
 /* TLV list handling functions */
-GSList *msn_tlvlist_read(char *bs, size_t bs_len);
+GSList *msn_tlvlist_read(const char *bs, size_t bs_len);
 GSList *msn_tlvlist_copy(GSList *orig);
 
 int msn_tlvlist_count(GSList *list);
 size_t msn_tlvlist_size(GSList *list);
 gboolean msn_tlvlist_equal(GSList *one, GSList *two);
-int msn_tlvlist_write(char *bs, size_t bs_len, GSList **list);
+int msn_tlvlist_write(char *bs, size_t bs_len, GSList *list);
 void msn_tlvlist_free(GSList *list);
 
 int msn_tlvlist_add_raw(GSList **list, const guint16 type, const guint16 length, const char *value);
