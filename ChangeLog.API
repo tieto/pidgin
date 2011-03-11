@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.11 (??/??/????):
+version 2.7.11 (03/10/2011):
 	* libpurple:
 		Added:
 		* Four entries in the GHashTable passed when joining

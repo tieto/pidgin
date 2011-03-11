@@ -2,7 +2,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.7.11 (??/??/????):
+2.7.11 (03/10/2011):
+	John: Yet another release.  This time around we finally fixed that
+	annoying MSN buddy adding problem and a security issue in Yahoo.  You
+	know the drill--upgrade already!
 
 2.7.10 (02/06/2011):
 	John: It's release time again.  This release contains a bunch of stuff
