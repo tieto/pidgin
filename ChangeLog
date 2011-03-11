@@ -37,6 +37,11 @@ version 2.7.11 (??/??/????):
 	  room (not currently supported by Pidgin and Finch).  (Thijs Alkemade)
 	  (#10986, #a14219)
 
+	Yahoo!/Yahoo! JAPAN:
+	* Fix CVE-2011-1091, denials of service caused by NULL pointer
+	  dereferences due to improper handling of malformed YMSG packets.  Thanks
+	  to Marius Wachtler for reporting this and reviewing the fix!
+
 version 2.7.10 (02/06/2011):
 	General:
 	* Force video sources to all have the same capabilities.  This reduces the
