@@ -1,9 +1,10 @@
-pidgin (2.7.10-1) unstable; urgency=low
+pidgin (2.7.11-1) unstable; urgency=high
 
-  * Imported Upstream version 2.7.10
+  * Imported Upstream version 2.7.11
     - fixes a crash in Voice/Video settings plugin (Closes: #611678)
+    - fixes a remote DoS in Yahoo protocol (CVE-2011-1091)
 
- -- Ari Pollak <ari@debian.org>  Fri, 11 Feb 2011 09:25:34 -0500
+ -- Ari Pollak <ari@debian.org>  Sat, 12 Mar 2011 20:58:32 -0500
 
 pidgin (2.7.9-2) unstable; urgency=low
 
