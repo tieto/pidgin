@@ -795,7 +795,7 @@ static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
 	
 	field = purple_request_field_choice_new("status_broadcasting", _("Show status to:"), 0);
 	purple_request_field_choice_add(field, _("All people"));
-	purple_request_field_choice_add(field, _("Only friends"));
+	purple_request_field_choice_add(field, _("Only buddies"));
 	purple_request_field_group_add_field(group, field);
 
 	if (info->status_broadcasting)
