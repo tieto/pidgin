@@ -1186,13 +1186,18 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	id = xmlnode_get_attrib(msg, "id");
 
-	if (id && !strcmp(id, "407")) {
+	if (id && strcmp(id, "1")) {
 		PurpleConversation *conv
 			= purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 			                                        who, gc->account);
 		if (conv != NULL) {
-			purple_conversation_write(conv, NULL,
-			                          _("Mobile message was not sent because it was too long."),
+			const char *error;
+			if (!strcmp(id, "407"))
+				error = _("Mobile message was not sent because it was too long.");
+			else
+				error = _("Mobile message was not sent because an unknown error occurred.");
+
+			purple_conversation_write(conv, NULL, error,
 			                          PURPLE_MESSAGE_ERROR, time(NULL));
 
 			if ((id = xmlnode_get_attrib(payloadNode, "id")) != NULL) {
