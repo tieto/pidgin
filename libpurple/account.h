@@ -513,6 +513,24 @@ void purple_account_get_public_alias(PurpleAccount *account,
 	PurpleGetPublicAliasFailureCallback failure_cb);
 
 /**
+ * Return whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if suppression is used, or @c FALSE if not.
+ */
+gboolean purple_account_get_silence_suppression(const PurpleAccount *account);
+
+/**
+ * Sets whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ * @param value   @c TRUE if suppression should be used.
+ */
+void purple_account_set_silence_suppression(PurpleAccount *account,
+											gboolean value);
+
+/**
  * Clears all protocol-specific settings on an account.
  *
  * @param account The account.

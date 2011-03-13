@@ -1936,6 +1936,20 @@ purple_account_get_public_alias(PurpleAccount *account,
 	}
 }
 
+gboolean
+purple_account_get_silence_suppression(const PurpleAccount *account)
+{
+	return purple_account_get_bool(account, "silence-suppression", FALSE);
+}
+
+void
+purple_account_set_silence_suppression(PurpleAccount *account, gboolean value)
+{
+	g_return_if_fail(account != NULL);
+
+	purple_account_set_bool(account, "silence-suppression", value);
+}
+
 void
 purple_account_clear_settings(PurpleAccount *account)
 {

@@ -155,13 +155,7 @@ enum {
 
 static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
-{
-	PurpleMediaBackendFs2Private *priv =
-			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
-
-	priv->silence_threshold = purple_prefs_get_int(
-			"/purple/media/audio/silence_threshold") / 100.0;
-}
+{}
 
 static gboolean
 event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
@@ -817,9 +811,11 @@ gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 		if (!strncmp(name, "sendlevel_", 10)) {
 			session = get_session(self, name+10);
-			percent = gst_msg_db_to_percent(msg, "decay");
-			g_object_set(session->srcvalve,
-					"drop", (percent < priv->silence_threshold), NULL);
+			if (priv->silence_threshold > 0) {
+				percent = gst_msg_db_to_percent(msg, "decay");
+				g_object_set(session->srcvalve,
+						"drop", (percent < priv->silence_threshold), NULL);
+			}
 		}
 
 		g_free(name);
@@ -1254,6 +1250,13 @@ init_conference(PurpleMediaBackendFs2 *self)
 		purple_debug_error("backend-fs2", "Conference == NULL\n");
 		return FALSE;
 	}
+
+	if (purple_account_get_silence_suppression(
+				purple_media_get_account(priv->media)))
+		priv->silence_threshold = purple_prefs_get_int(
+				"/purple/media/audio/silence_threshold") / 100.0;
+	else
+		priv->silence_threshold = 0;
 
 	pipeline = purple_media_manager_get_pipeline(
 			purple_media_get_manager(priv->media));
