@@ -33,6 +33,15 @@ version 2.7.11 (03/10/2011):
 	* Fix bug that prevented added buddies to your buddy list in certain
 	  circumstances.  (#13298)
 
+	MXit:
+	* MXit plugin and reported client version now follow the libpurple
+	  version.
+	* Don't try to request profile information for non-user contacts.
+	* Allow Re-Invite for contacts in Deleted or Rejected state.
+	* Ensure we don't send packets too fast to the MXit server and trigger
+	  its flood-detection mechanism.  Also increased the internal packet queue
+	  to 32 packets.
+
 	XMPP:
 	* Fix building on platforms with an older glib (inadvertantly broken in
 	  2.7.10).  (#13329)
