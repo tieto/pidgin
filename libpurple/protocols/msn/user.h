@@ -28,13 +28,18 @@ typedef struct _MsnUser  MsnUser;
 
 typedef enum
 {
-	MSN_NETWORK_UNKNOWN      = 0x00,
-	MSN_NETWORK_PASSPORT     = 0x01,
-	MSN_NETWORK_COMMUNICATOR = 0x02,
-	MSN_NETWORK_MOBILE       = 0x04,
-	MSN_NETWORK_MNI          = 0x08,
-	MSN_NETWORK_SMTP         = 0x10,
-	MSN_NETWORK_YAHOO        = 0x20
+	MSN_NETWORK_UNKNOWN      = 0,
+	MSN_NETWORK_PASSPORT     = 1,
+	MSN_NETWORK_COMMUNICATOR = 2,
+	MSN_NETWORK_MOBILE       = 4,
+	MSN_NETWORK_MNI          = 8,
+	MSN_NETWORK_CIRCLE       = 9,
+	MSN_NETWORK_TEMP_GROUP   = 10,
+	MSN_NETWORK_CID          = 11,
+	MSN_NETWORK_CONNECT      = 13,
+	MSN_NETWORK_REMOTE       = 14,
+	MSN_NETWORK_SMTP         = 16,
+	MSN_NETWORK_YAHOO        = 32
 } MsnNetwork;
 
 /**
@@ -144,7 +149,7 @@ typedef struct MsnUserEndpoint {
  * @param passport     The initial passport.
  * @param stored_name  The initial stored name.
  *
- * @return A new user structure.
+ * @return A new user structure.  It will have a reference count of 1.
  */
 MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
 					  const char *friendly_name);
@@ -159,7 +164,8 @@ MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
 MsnUser *msn_user_ref(MsnUser *user);
 
 /**
- * Decrement the reference count.
+ * Decrement the reference count.  When the count reaches 0 the object is
+ * automatically freed.
  *
  * @param user 	The user
  */

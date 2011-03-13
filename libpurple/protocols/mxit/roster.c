@@ -443,8 +443,9 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
  *  @param mood			The new mood for the contact
  *  @param customMood	The custom mood identifier
  *  @param statusMsg	This is the contact's status message
+ *  @param flags		The contact's presence flags.
  */
-void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg )
+void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg, int flags )
 {
 	PurpleBuddy*		buddy	= NULL;
 	struct contact*		contact	= NULL;
@@ -470,6 +471,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 
 	contact->presence = presence;
 	contact->mood = mood;
+	contact->capabilities = flags;
 
 	/* validate mood */
 	if (( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_STRESSED ))

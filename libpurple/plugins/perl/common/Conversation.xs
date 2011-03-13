@@ -118,6 +118,12 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
 	}
 
+Purple::Conversation
+purple_find_conversation_with_account(type, name, account)
+	Purple::ConversationType type
+	const char *name
+	Purple::Account account
+
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversations  PREFIX = purple_conversations_
 PROTOTYPES: ENABLE
 
@@ -297,6 +303,12 @@ purple_conv_im_send(im, message)
 	const char *message
 
 void
+purple_conv_im_send_with_flags(im, message, flags)
+	Purple::Conversation::IM im
+	const char *message
+	Purple::MessageFlags flags
+
+void
 purple_conv_im_write(im, who, message, flags, mtime)
 	Purple::Conversation::IM im
 	const char *who
@@ -408,6 +420,12 @@ void
 purple_conv_chat_send(chat, message)
 	Purple::Conversation::Chat chat
 	const char * message
+
+void
+purple_conv_chat_send_with_flags(chat, message, flags)
+	Purple::Conversation::Chat chat
+	const char * message
+	Purple::MessageFlags flags
 
 void
 purple_conv_chat_write(chat, who, message, flags, mtime)

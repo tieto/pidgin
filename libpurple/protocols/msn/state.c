@@ -217,11 +217,11 @@ msn_change_status(MsnSession *session)
 		if (client_type) {
 			if (strcmp(client_type, "phone") == 0 ||
 				strcmp(client_type, "handheld") == 0) {
-				caps |= MSN_CLIENT_CAP_WIN_MOBILE;
+				caps |= MSN_CAP_VIA_MOBILE;
 			} else if (strcmp(client_type, "web") == 0) {
-				caps |= MSN_CLIENT_CAP_WEBMSGR;
+				caps |= MSN_CAP_VIA_WEBIM;
 			} else if (strcmp(client_type, "bot") == 0) {
-				caps |= MSN_CLIENT_CAP_BOT;
+				caps |= MSN_CAP_BOT;
 			}
 			/* MSN doesn't a "console" type...
 			 What, they have no ncurses UI? :-) */

@@ -7,14 +7,14 @@
 # Samia Niamatullah <samia@ankur.org.bd>, 2009.
 # Sadia Afroz <sadia@ankur.org.bd>, 2010.
 # Ummey Salma <snigdha@ankur.org.bd>, 2010.
-# Israt Jahan <israt@ankur.org.bd>, 2008-2009, 2010.
+# Israt Jahan <israt@ankur.org.bd>, 2008-2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2010-12-19 13:37+0600\n"
+"POT-Creation-Date: 2011-03-10 01:22-0800\n"
+"PO-Revision-Date: 2011-03-06 13:37+0600\n"
 "Last-Translator: israt <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
 "Language: bn\n"
@@ -3365,9 +3365,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "প্রথম নাম"
 
@@ -4156,7 +4154,6 @@ msgstr "এলাকা"
 msgid "Postal Code"
 msgstr "পোস্টাল কোড"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "দেশ"
 
@@ -6516,6 +6513,14 @@ msgstr "সংযুক্ত করা হচ্ছে..."
 # tithi
 #
 #
+# Translated by sadia
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "আপনি যে নাম প্রবেশ করেছেন তা অকার্যকর।"
+
+# tithi
+#
+#
 #
 #
 # Translated by sadia
@@ -6649,9 +6654,23 @@ msgstr "প্রত্যাখ্যান বার্তা"
 msgid "Hidden Number"
 msgstr "লুকানো সংখ্যা"
 
+#, fuzzy
+msgid "No profile available"
+msgstr "অনুপস্থিত"
+
+# tithi
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "এই অ্যাকাউন্টটির কোন ইমেইল সক্রিয় নেই।"
+
 # snigdha
 msgid "Your MXit ID..."
 msgstr "আপনার MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "আমন্ত্রণ জানান"
 
 # Translated by sadia
 #. Configuration options
@@ -8127,6 +8146,13 @@ msgstr "আপনার AIM সংযোগ হয়তো বিচ্ছি�
 msgid "You have been disconnected from chat room %s."
 msgstr "আপনাকে %s আড্ডার আসর থেকে বিচ্ছিন্ন করা হয়েছে।"
 
+msgid "The new formatting is invalid."
+msgstr "নতুন বিন্যাসটি অকার্যকর।"
+
+# tithi
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "ব্যবহারকারীর নামের শুধুমাত্র অক্ষরের ছাঁদ এবং ফাঁকা জায়গা পরিবর্তন করা যাবে।"
+
 msgid "Pop-Up Message"
 msgstr "পপ-আপ বার্তা"
 
@@ -8426,13 +8452,6 @@ msgstr "ওয়েব সচেতন (এটি সক্রিয় কর�
 # গোপনতার এর জায়গায় গোপনীয়তা হবে
 msgid "ICQ Privacy Options"
 msgstr "ICQ গোপনীয়তার অপশন"
-
-msgid "The new formatting is invalid."
-msgstr "নতুন বিন্যাসটি অকার্যকর।"
-
-# tithi
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "ব্যবহারকারীর নামের শুধুমাত্র অক্ষরের ছাঁদ এবং ফাঁকা জায়গা পরিবর্তন করা যাবে।"
 
 # tithi
 msgid "Change Address To:"
@@ -9453,6 +9472,9 @@ msgstr "সার্ভারের খবর প্রদর্শন করা
 
 msgid "Show chat room when msg comes"
 msgstr "বার্তা আসলে আড্ডার আসর প্রদর্শিত হবে "
+
+msgid "Use default font"
+msgstr "পূর্বনির্ধারিত ফন্টের ব্যবহার"
 
 # fix me tithi
 msgid "Keep alive interval (seconds)"

@@ -73,7 +73,7 @@ void msn_userlist_remove_user(MsnUserList *userlist, MsnUser *user);
 
 MsnUser * msn_userlist_find_user(MsnUserList *userlist, const char *passport);
 MsnUser * msn_userlist_find_add_user(MsnUserList *userlist,
-				const char *passport, const char *userName);
+				const char *passport, const char *friendly_name);
 MsnUser * msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid);
 MsnUser * msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *number);
 

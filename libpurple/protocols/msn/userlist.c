@@ -236,17 +236,18 @@ msn_userlist_destroy(MsnUserList *userlist)
 }
 
 MsnUser *
-msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char *userName)
+msn_userlist_find_add_user(MsnUserList *userlist, const char *passport, const char *friendly_name)
 {
 	MsnUser *user;
 
 	user = msn_userlist_find_user(userlist, passport);
 	if (user == NULL)
 	{
-		user = msn_user_new(userlist, passport, userName);
+		user = msn_user_new(userlist, passport, friendly_name);
 		msn_userlist_add_user(userlist, user);
+		msn_user_unref(user);
 	} else {
-		msn_user_set_friendly_name(user, userName);
+		msn_user_set_friendly_name(user, friendly_name);
 	}
 	return user;
 }
@@ -254,6 +255,7 @@ msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char
 void
 msn_userlist_add_user(MsnUserList *userlist, MsnUser *user)
 {
+	msn_user_ref(user);
 	userlist->users = g_list_prepend(userlist->users, user);
 }
 
@@ -261,6 +263,7 @@ void
 msn_userlist_remove_user(MsnUserList *userlist, MsnUser *user)
 {
 	userlist->users = g_list_remove(userlist->users, user);
+	msn_user_unref(user);
 }
 
 MsnUser *
@@ -287,7 +290,7 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 MsnUser *
 msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 {
- 	GList *l;
+	GList *l;
 
 	g_return_val_if_fail(uid != NULL, NULL);
 

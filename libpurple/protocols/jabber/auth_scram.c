@@ -375,7 +375,7 @@ static gchar *escape_username(const gchar *in)
 	gchar *tmp, *tmp2;
 
 	tmp = purple_strreplace(in, "=", "=3D");
-	tmp2 = purple_strreplace(tmp, ",", "=2D");
+	tmp2 = purple_strreplace(tmp, ",", "=2C");
 	g_free(tmp);
 	return tmp2;
 }
