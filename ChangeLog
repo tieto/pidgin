@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.12 (??/??/????):
+	General:
+	* Implement simple silence suppression for voice calls, preventing wasted
+	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
 
