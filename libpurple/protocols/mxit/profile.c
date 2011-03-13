@@ -108,10 +108,10 @@ gboolean validateDate( const char* bday )
  */
 static const char* datetime( gint64 msecs )
 {
-    time_t secs = msecs / 1000;
+	time_t secs = msecs / 1000;
 
-    struct tm t;
-    localtime_r( &secs, &t );
+	struct tm t;
+	localtime_r( &secs, &t );
 
 	return purple_utf8_strftime( "%d-%m-%Y %H:%M:%S", &t );
 }
@@ -140,13 +140,10 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
 	purple_notify_user_info_add_pair( info, _( "Birthday" ), profile->birthday );
 	purple_notify_user_info_add_pair( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
-//	purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 
 	/* optional information */
-//	purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 	purple_notify_user_info_add_pair( info, _( "First Name" ), profile->firstname );
 	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
-//	purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 	purple_notify_user_info_add_pair( info, _( "Country" ), profile->regcountry );
 
 	purple_notify_user_info_add_section_break( info );

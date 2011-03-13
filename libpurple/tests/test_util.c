@@ -90,7 +90,9 @@ const char *valid_emails[] = {
 	"a@singleLetterLocal.org",
 	"singleLetterDomain@x.org",
 	"&*=?^+{}'~@validCharsInLocal.net",
-	"foor@bar.newTLD"
+	"foor@bar.newTLD",
+	"HenryTheGreatWhiteCricket@live.ca",
+	"HenryThe__WhiteCricket@hotmail.com"
 };
 
 const char *invalid_emails[] = {

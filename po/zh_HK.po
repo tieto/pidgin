@@ -1,14 +1,14 @@
 # NOTE: This file is generated from zh_TW.po by mkzhhk.pl,v 1.27 2010/12/17 01:08:13 acli Exp
 # ---
 # Pidgin's Traditional Chinese translation
-# Copyright (C) 2002-2010, Paladin R. Liu <paladin@ms1.hinet.net>
-# Copyright (C) 2003-2010, Ambrose C. Li <ambrose.li@gmail.com>
+# Copyright (C) 2002-2011, Paladin R. Liu <paladin@ms1.hinet.net>
+# Copyright (C) 2003-2011, Ambrose C. Li <ambrose.li@gmail.com>
 #
 # PLEASE DO NOT ATTEMPT TO UPDATE THIS FILE IF THERE ARE NO
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.659 2010/12/17 03:16:38 acli Exp $
+# $InternalId: zh_TW.po,v 1.665 2011/03/09 21:33:34 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -60,10 +60,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.8\n"
+"Project-Id-Version: Pidgin 2.7.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-12-16 19:32-0500\n"
+"POT-Creation-Date: 2011-03-10 01:17-0800\n"
+"PO-Revision-Date: 2011-03-09 16:19-0500\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: zh_HK\n"
@@ -2439,8 +2439,10 @@ msgstr ""
 "檔案儲存路徑\n"
 "（請提供完整路徑）"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "自動拒絕非來自好友清單中的使用者"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "當一個不在你好友清單內的使用者要求檔案傳輸時"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2452,6 +2454,9 @@ msgstr ""
 # XXX 20080810 acli
 msgid "Create a new directory for each user"
 msgstr "給每個使用者建立該使用者專用的目綠"
+
+msgid "Escape the filenames"
+msgstr "逸出檔案名稱中的特別字符"
 
 msgid "Notes"
 msgstr "備註"
@@ -3300,9 +3305,7 @@ msgid "UIN"
 msgstr "帳號"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -3920,7 +3923,10 @@ msgstr "執行"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "伺服器需要經由未經加密的串流進行明文認證"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "伺服器送來了無效的回應"
 
@@ -4062,7 +4068,6 @@ msgstr "省／州"
 msgid "Postal Code"
 msgstr "郵遞編號"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "國家"
 
@@ -6366,6 +6371,9 @@ msgstr "無法連線至 MXit 伺服器，請檢查伺服器設定。"
 msgid "Connecting..."
 msgstr "連線中..."
 
+msgid "The Display Name you entered is too short."
+msgstr "你所輸入的網名太短。"
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "你所輸入的密碼過短或過長（長度應為 7 至 10 個數字）。"
 
@@ -6434,34 +6442,6 @@ msgstr "MXit 帳號驗核"
 msgid "Retrieving User Information..."
 msgstr "讀取使用者資訊中..."
 
-msgid "Loading menu..."
-msgstr "載入清單中..."
-
-msgid "Status Message"
-msgstr "狀態訊息"
-
-msgid "Rejection Message"
-msgstr "拒絕訊息"
-
-# NOTE 這是「是否隱藏電話號碼？」之意 - acli 20091127
-#. hidden number
-msgid "Hidden Number"
-msgstr "隱藏電話號碼"
-
-msgid "Your MXit ID..."
-msgstr "你的MXit ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP 伺服器"
-
-msgid "Connect via HTTP"
-msgstr "使用 HTTP 連線"
-
-msgid "Enable splash-screen popup"
-msgstr "啟用啟動畫面彈出視窗"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "你已經從MultiMX中被踢出。"
@@ -6476,6 +6456,46 @@ msgstr "聊天室名稱(_R)："
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "你邀請了"
+
+msgid "Loading menu..."
+msgstr "載入清單中..."
+
+msgid "Status Message"
+msgstr "狀態訊息"
+
+msgid "Rejection Message"
+msgstr "拒絕訊息"
+
+# NOTE 這是「是否隱藏電話號碼？」之意 - acli 20091127
+#. hidden number
+msgid "Hidden Number"
+msgstr "隱藏電話號碼"
+
+# NOTE "Only MXit users have profiles" - 視窗標題 - acli 20110309
+msgid "No profile available"
+msgstr "個人資料不存在"
+
+# NOTE "Only MXit users have profiles" - 錯誤訊息 - acli 20110309
+msgid "This contact does not have a profile."
+msgstr "這個帳號不存在相關的個人資料。"
+
+msgid "Your MXit ID..."
+msgstr "你的MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "重新邀請"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP 伺服器"
+
+msgid "Connect via HTTP"
+msgstr "使用 HTTP 連線"
+
+msgid "Enable splash-screen popup"
+msgstr "啟用啟動畫面彈出視窗"
 
 msgid "Last Online"
 msgstr "最近上線"
@@ -7759,6 +7779,12 @@ msgstr "你的 AIM 可能斷線了。"
 msgid "You have been disconnected from chat room %s."
 msgstr "你已經由聊天室 %s 停止連線。"
 
+msgid "The new formatting is invalid."
+msgstr "新的格式是無效的。"
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "帳號格式化只能改變大寫以及空白。"
+
 # XXX 這是什麼 (情形下出現的)？ (好像是以前譯「訊息」的那個??)
 msgid "Pop-Up Message"
 msgstr "彈出訊息"
@@ -8014,12 +8040,6 @@ msgstr "允許在網絡上檢視你目前的狀態（會導致你收到垃圾訊
 msgid "ICQ Privacy Options"
 msgstr "ICQ 私隱選頊"
 
-msgid "The new formatting is invalid."
-msgstr "新的格式是無效的。"
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "帳號格式化只能改變大寫以及空白。"
-
 msgid "Change Address To:"
 msgstr "更改地址為："
 
@@ -8125,90 +8145,6 @@ msgid ""
 msgstr ""
 "這個要求將會在兩部電腦間建立起直接連線，而這是在傳送即時訊息圖像時所必須的。"
 "這樣將會曝露你的 IP 位址，因此可能會有私隱方面的風險。"
-
-msgid "Invalid SNAC"
-msgstr "無效的 SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "超出了伺服器端的速率上限"
-
-msgid "Client rate limit exceeded"
-msgstr "超出了用戶端的速率上限"
-
-# NOTE SNAC 錯誤代碼5，見 http://iserverd.khstu.ru/oscar/errorlist.html
-# NOTE 應係指給定了一個已定義的服務 (Service, Family)，但因某種原因，伺服器暫時無法提供該服務
-msgid "Service unavailable"
-msgstr "服務不存在"
-
-msgid "Service not defined"
-msgstr "服務未定義"
-
-# XXX 譯文有待改進 - acli 20100809
-msgid "Obsolete SNAC"
-msgstr "已作廢的舊式 SNAC"
-
-msgid "Not supported by host"
-msgstr "伺服器不支援"
-
-msgid "Not supported by client"
-msgstr "用戶端不支援"
-
-msgid "Refused by client"
-msgstr "被用戶端拒絕"
-
-# XXX 譯文有待改進 - acli 20100809
-msgid "Reply too big"
-msgstr "回應太大"
-
-msgid "Responses lost"
-msgstr "遺失回應"
-
-msgid "Request denied"
-msgstr "請求被拒"
-
-# NOTE SNAC 錯誤代碼14 (0x0e)，見 http://iserverd.khstu.ru/oscar/errorlist.html，指 SNAC 負載內出現了格式上的錯誤
-# XXX 譯文有待改進 - acli 20100809
-msgid "Busted SNAC payload"
-msgstr "畸型的 SNAC 負載"
-
-msgid "Insufficient rights"
-msgstr "權限不夠"
-
-# NOTE SNAC 錯誤代碼16 (0x10)，見 http://iserverd.khstu.ru/oscar/errorlist.html
-# XXX 譯文有待改進 - acli 20100809
-msgid "In local permit/deny"
-msgstr "在本地端的允許／拒絕清單內"
-
-# NOTE SNAC 錯誤代碼17 (0x11)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
-msgid "Warning level too high (sender)"
-msgstr "（發送者）警告等級過高"
-
-# NOTE SNAC 錯誤代碼18 (0x12)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
-msgid "Warning level too high (receiver)"
-msgstr "（接收者）警告等級過高"
-
-msgid "User temporarily unavailable"
-msgstr "使用者暫時不在線上"
-
-msgid "No match"
-msgstr "沒有相符的記錄"
-
-# NOTE SNAC 錯誤代碼21 (0x15)，見 http://iserverd.khstu.ru/oscar/errorlist.html
-# NOTE OSCAR 協定至少有三種「List」，譯成「好友清單」可能不對
-msgid "List overflow"
-msgstr "清單已滿"
-
-msgid "Request ambiguous"
-msgstr "不明確的請求"
-
-msgid "Queue full"
-msgstr "佇列已滿"
-
-# NOTE SNAC 錯誤代碼24 (0x18)，見 http://iserverd.khstu.ru/oscar/errorlist.html
-# NOTE 可能是指在 AOL 裏要求了一種 ICQ 的服務
-# XXX 譯文有待改進 - acli 20100809
-msgid "Not while on AOL"
-msgstr "不適合於 AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -8343,6 +8279,90 @@ msgstr "成為成員的時間"
 
 msgid "Capabilities"
 msgstr "兼容性"
+
+msgid "Invalid SNAC"
+msgstr "無效的 SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "超出了伺服器端的速率上限"
+
+msgid "Client rate limit exceeded"
+msgstr "超出了用戶端的速率上限"
+
+# NOTE SNAC 錯誤代碼5，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE 應係指給定了一個已定義的服務 (Service, Family)，但因某種原因，伺服器暫時無法提供該服務
+msgid "Service unavailable"
+msgstr "服務不存在"
+
+msgid "Service not defined"
+msgstr "服務未定義"
+
+# XXX 譯文有待改進 - acli 20100809
+msgid "Obsolete SNAC"
+msgstr "已作廢的舊式 SNAC"
+
+msgid "Not supported by host"
+msgstr "伺服器不支援"
+
+msgid "Not supported by client"
+msgstr "用戶端不支援"
+
+msgid "Refused by client"
+msgstr "被用戶端拒絕"
+
+# XXX 譯文有待改進 - acli 20100809
+msgid "Reply too big"
+msgstr "回應太大"
+
+msgid "Responses lost"
+msgstr "遺失回應"
+
+msgid "Request denied"
+msgstr "請求被拒"
+
+# NOTE SNAC 錯誤代碼14 (0x0e)，見 http://iserverd.khstu.ru/oscar/errorlist.html，指 SNAC 負載內出現了格式上的錯誤
+# XXX 譯文有待改進 - acli 20100809
+msgid "Busted SNAC payload"
+msgstr "畸型的 SNAC 負載"
+
+msgid "Insufficient rights"
+msgstr "權限不夠"
+
+# NOTE SNAC 錯誤代碼16 (0x10)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# XXX 譯文有待改進 - acli 20100809
+msgid "In local permit/deny"
+msgstr "在本地端的允許／拒絕清單內"
+
+# NOTE SNAC 錯誤代碼17 (0x11)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
+msgid "Warning level too high (sender)"
+msgstr "（發送者）警告等級過高"
+
+# NOTE SNAC 錯誤代碼18 (0x12)，見 http://iserverd.khstu.ru/oscar/errorlist.html，參見其他涉及「warning level」的譯文
+msgid "Warning level too high (receiver)"
+msgstr "（接收者）警告等級過高"
+
+msgid "User temporarily unavailable"
+msgstr "使用者暫時不在線上"
+
+msgid "No match"
+msgstr "沒有相符的記錄"
+
+# NOTE SNAC 錯誤代碼21 (0x15)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE OSCAR 協定至少有三種「List」，譯成「好友清單」可能不對
+msgid "List overflow"
+msgstr "清單已滿"
+
+msgid "Request ambiguous"
+msgstr "不明確的請求"
+
+msgid "Queue full"
+msgstr "佇列已滿"
+
+# NOTE SNAC 錯誤代碼24 (0x18)，見 http://iserverd.khstu.ru/oscar/errorlist.html
+# NOTE 可能是指在 AOL 裏要求了一種 ICQ 的服務
+# XXX 譯文有待改進 - acli 20100809
+msgid "Not while on AOL"
+msgstr "不適合於 AOL"
 
 #  NOTE 這四個字串在 Oscar (ICQ) 的解釋在此：http://pidgin.im/pipermail/translators/2010-November/000554.html
 #  NOTE Oscar: 把好友新增到 Visible List 內
@@ -8988,14 +9008,14 @@ msgstr "自動"
 msgid "Select Server"
 msgstr "選擇伺服器"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "使用 TCP 連線"
@@ -9010,6 +9030,9 @@ msgstr "顯示伺服器是日訊息"
 
 msgid "Show chat room when msg comes"
 msgstr "收到聊天室訊息時自動顯示聊天室"
+
+msgid "Use default font"
+msgstr "使用預設字型"
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
 msgid "Keep alive interval (seconds)"
@@ -12626,10 +12649,6 @@ msgstr "錯誤訊息"
 msgid "Fatal Error"
 msgstr "嚴重錯誤訊息"
 
-# XXX 暫譯 - 20090226 acli
-msgid "bug master"
-msgstr "除錯主管"
-
 # NOTE 這個「artist」（有別於其他的「Artist」字串）係指設計pidgin圖示的「graphic designer」，絕對不可譯成「藝人」
 msgid "artist"
 msgstr "平面設計"
@@ -12834,6 +12853,11 @@ msgstr "寮國文"
 #  XXX 找不到正式的台灣譯文，參閱 http://zh.wikipedia.org/zh/迈蒂利语, http://tc.wangchao.net.cn/baike/detail_2071696.html
 msgid "Maithili"
 msgstr "邁蒂利文"
+
+#  NOTE 代碼 mhr，一種芬蘭語系的東歐語文，維基百科譯「平地馬里語」
+#  XXX 找不到正式的台灣譯文，參閱 http://zh.wikipedia.org/zh/马里语
+msgid "Meadow Mari"
+msgstr "平地馬里文"
 
 #  NOTE「馬其頓文」是一種東歐語文，跟希臘的馬其頓並無關係
 msgid "Macedonian"
@@ -16026,6 +16050,13 @@ msgstr "瀏覽 Pidgin 官方網站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "你沒有權限移除程式。"
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "自動拒絕非來自好友清單中的使用者"
+
+# XXX 暫譯 - 20090226 acli
+#~ msgid "bug master"
+#~ msgstr "除錯主管"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "帶內位元組流傳輸途中發生錯誤\n"

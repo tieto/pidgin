@@ -34,8 +34,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PInfo *info)
 
 	part = g_new0(MsnSlpMessagePart, 1);
 
-	if (info)
-		part->info = msn_p2p_info_dup(info);
+	part->info = info;
 
 	part->ack_cb = msn_slpmsgpart_ack;
 	part->nak_cb = msn_slpmsgpart_nak;
@@ -46,19 +45,20 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PInfo *info)
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len)
 {
 	MsnSlpMessagePart *part;
+	MsnP2PInfo *info;
 	size_t len;
 	int body_len;
 
-	if (data_len < P2P_PACKET_HEADER_SIZE) {
-		return NULL;
-	}
-
-	part = msn_slpmsgpart_new(NULL);
-	part->info = msn_p2p_info_new();
+	info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
 
 	/* Extract the binary SLP header */
-	len = msn_p2p_header_from_wire(part->info, data);
+	len = msn_p2p_header_from_wire(info, data, data_len);
+	if (len == 0) {
+		msn_p2p_info_free(info);
+		return NULL;
+	}
 	data += len;
+	part = msn_slpmsgpart_new(info);
 
 	/* Extract the body */
 	body_len = data_len - len - P2P_PACKET_FOOTER_SIZE;

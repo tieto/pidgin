@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-26 22:11-0500\n"
-"PO-Revision-Date: 2010-12-21 09:08+0100\n"
+"POT-Creation-Date: 2011-03-10 01:35-0800\n"
+"PO-Revision-Date: 2011-03-06 17:30+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "Language: cs\n"
@@ -2328,8 +2328,12 @@ msgstr ""
 "Cesta, kam ukládat soubory\n"
 "(Zadejte prosím plnou cestu)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automaticky odmítat od uživatelů, kteří nejsou na seznamu kamarádů"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Když přijde požadavek na přenos souboru od někoho,\n"
+"kdo není v seznamu kamarádů:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2341,6 +2345,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Vytvořit nový adresář pro každého uživatele"
+
+msgid "Escape the filenames"
+msgstr "Upravit jména souborů"
 
 msgid "Notes"
 msgstr "Poznámky"
@@ -3180,9 +3187,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Křestní jméno"
 
@@ -3793,7 +3798,10 @@ msgstr "spustit"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje textovou autentizaci v nešifrovaném proudu"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Neplatná odpověď od serveru"
 
@@ -3934,7 +3942,6 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "PSČ"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Země"
 
@@ -6006,6 +6013,9 @@ msgstr "Nemohu se připojit k MXit serveru. Zkontrolujte nastavení."
 msgid "Connecting..."
 msgstr "Připojování..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Zadané jméno pro zobrazení je příliš krátké."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Zadaný PIN má neplatnou délku [7-10]."
 
@@ -6074,33 +6084,6 @@ msgstr "Ověření MXit účtu"
 msgid "Retrieving User Information..."
 msgstr "Získávám informace o uživateli..."
 
-msgid "Loading menu..."
-msgstr "Načítám menu..."
-
-msgid "Status Message"
-msgstr "Stavová zpráva"
-
-msgid "Rejection Message"
-msgstr "Zamítnutí zprávy"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "Skryté číslo"
-
-msgid "Your MXit ID..."
-msgstr "Vaše MXit ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP Server"
-
-msgid "Connect via HTTP"
-msgstr "Připojit se pomocí HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Povolit zobrazení spouštěcí obrazovky"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "Byl jste vykopnut z MultiMX."
@@ -6114,6 +6097,43 @@ msgstr "_Místnost:"
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "Přišlo vám pozvání"
+
+msgid "Loading menu..."
+msgstr "Načítám menu..."
+
+msgid "Status Message"
+msgstr "Stavová zpráva"
+
+msgid "Rejection Message"
+msgstr "Zamítnutí zprávy"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Skryté číslo"
+
+msgid "No profile available"
+msgstr "Není dostupný profil"
+
+msgid "This contact does not have a profile."
+msgstr "Tento kontakt nemá profil."
+
+msgid "Your MXit ID..."
+msgstr "Vaše MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Znovu pozvat"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP Server"
+
+msgid "Connect via HTTP"
+msgstr "Připojit se pomocí HTTP"
+
+msgid "Enable splash-screen popup"
+msgstr "Povolit zobrazení spouštěcí obrazovky"
 
 msgid "Last Online"
 msgstr "Naposledy připojen"
@@ -7394,6 +7414,12 @@ msgstr "Vaše spojení AIM může být přerušeno."
 msgid "You have been disconnected from chat room %s."
 msgstr "Byl jste odpojen z místnosti chatu %s."
 
+msgid "The new formatting is invalid."
+msgstr "Nové formátování je neplatné."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Formátování jména uživatele může změnit jen velikost písmen a mezery."
+
 msgid "Pop-Up Message"
 msgstr "Vyskakovací zpráva"
 
@@ -7664,12 +7690,6 @@ msgstr "Ví o WWW (povolení tohoto způsobí, že budete dostávat SPAM!)"
 msgid "ICQ Privacy Options"
 msgstr "Možnosti soukromí ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Nové formátování je neplatné."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Formátování jména uživatele může změnit jen velikost písmen a mezery."
-
 msgid "Change Address To:"
 msgstr "Změnit adresu na:"
 
@@ -7775,75 +7795,6 @@ msgstr ""
 "To vyžaduje přímé spojení mezi danými dvěma počítači a je potřeba pro IM "
 "Images. Protože bude odkryta vaše IP adresa, dá se to považovat za riziko "
 "pro soukromí."
-
-msgid "Invalid SNAC"
-msgstr "Neplatné SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Překročen limit poměru serveru"
-
-msgid "Client rate limit exceeded"
-msgstr "Překročen limit poměru klienta"
-
-msgid "Service unavailable"
-msgstr "Služba nedostupná"
-
-msgid "Service not defined"
-msgstr "Služba nedefinována"
-
-msgid "Obsolete SNAC"
-msgstr "Zastaralé SNAC"
-
-msgid "Not supported by host"
-msgstr "Nepodporováno hostitelem"
-
-msgid "Not supported by client"
-msgstr "Nepodporováno klientem"
-
-msgid "Refused by client"
-msgstr "Odmítnuto klientem"
-
-msgid "Reply too big"
-msgstr "Odpověď příliš velká"
-
-msgid "Responses lost"
-msgstr "Odpovědi ztraceny"
-
-msgid "Request denied"
-msgstr "Požadavek zamítnut"
-
-msgid "Busted SNAC payload"
-msgstr "Poškozená data SNAC"
-
-msgid "Insufficient rights"
-msgstr "Nedostatečná oprávnění"
-
-msgid "In local permit/deny"
-msgstr "V místním povolit/zakázat"
-
-msgid "Warning level too high (sender)"
-msgstr "Hladina varování příliš vysoká (odeslání)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Hladina varování příliš vysoká (příjem)"
-
-msgid "User temporarily unavailable"
-msgstr "Uživatel dočasně nedostupný"
-
-msgid "No match"
-msgstr "Žádná shoda"
-
-msgid "List overflow"
-msgstr "Přetečení seznamu"
-
-msgid "Request ambiguous"
-msgstr "Požadavek nejednoznačný"
-
-msgid "Queue full"
-msgstr "Fronta plná"
-
-msgid "Not while on AOL"
-msgstr "Ne když na AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -7962,6 +7913,75 @@ msgstr "Člen od"
 
 msgid "Capabilities"
 msgstr "Schopnosti"
+
+msgid "Invalid SNAC"
+msgstr "Neplatné SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Překročen limit poměru serveru"
+
+msgid "Client rate limit exceeded"
+msgstr "Překročen limit poměru klienta"
+
+msgid "Service unavailable"
+msgstr "Služba nedostupná"
+
+msgid "Service not defined"
+msgstr "Služba nedefinována"
+
+msgid "Obsolete SNAC"
+msgstr "Zastaralé SNAC"
+
+msgid "Not supported by host"
+msgstr "Nepodporováno hostitelem"
+
+msgid "Not supported by client"
+msgstr "Nepodporováno klientem"
+
+msgid "Refused by client"
+msgstr "Odmítnuto klientem"
+
+msgid "Reply too big"
+msgstr "Odpověď příliš velká"
+
+msgid "Responses lost"
+msgstr "Odpovědi ztraceny"
+
+msgid "Request denied"
+msgstr "Požadavek zamítnut"
+
+msgid "Busted SNAC payload"
+msgstr "Poškozená data SNAC"
+
+msgid "Insufficient rights"
+msgstr "Nedostatečná oprávnění"
+
+msgid "In local permit/deny"
+msgstr "V místním povolit/zakázat"
+
+msgid "Warning level too high (sender)"
+msgstr "Hladina varování příliš vysoká (odeslání)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Hladina varování příliš vysoká (příjem)"
+
+msgid "User temporarily unavailable"
+msgstr "Uživatel dočasně nedostupný"
+
+msgid "No match"
+msgstr "Žádná shoda"
+
+msgid "List overflow"
+msgstr "Přetečení seznamu"
+
+msgid "Request ambiguous"
+msgstr "Požadavek nejednoznačný"
+
+msgid "Queue full"
+msgstr "Fronta plná"
+
+msgid "Not while on AOL"
+msgstr "Ne když na AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8552,14 +8572,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Vyberte server"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Připojit se pomocí TCP"
@@ -8572,6 +8592,9 @@ msgstr "Zobrazit novinky serveru"
 
 msgid "Show chat room when msg comes"
 msgstr "Zobrazit místnost při přijetí zprávy"
+
+msgid "Use default font"
+msgstr "Použít výchozí font"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Interval udržování naživu (v sekundách)"
@@ -12088,9 +12111,6 @@ msgstr "Chyba "
 msgid "Fatal Error"
 msgstr "Fatální chyba"
 
-msgid "bug master"
-msgstr "lovec chyb"
-
 msgid "artist"
 msgstr "umělec"
 
@@ -12269,6 +12289,9 @@ msgstr "Laonština"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Makedonština"
@@ -15349,6 +15372,12 @@ msgstr "Navštívit Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Automaticky odmítat od uživatelů, kteří nejsou na seznamu kamarádů"
+
+#~ msgid "bug master"
+#~ msgstr "lovec chyb"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Chyba žádosti %s"

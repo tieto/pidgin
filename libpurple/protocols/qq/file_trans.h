@@ -26,6 +26,7 @@
 #define _QQ_QQ_FILE_TRANS_H_
 
 #include "server.h"
+#include "qq.h"
 
 enum {
 	QQ_FILE_CMD_SENDER_SAY_HELLO = 0x31,
@@ -59,7 +60,7 @@ enum {
 #define QQ_FILE_AGENT_PACKET_TAG 0x04
 /* #define QQ_PACKET_TAIL          0x03 */   /* all QQ text packets end with it */
 
-void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte);
+void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, UID to_uid, guint8 hellobyte);
 void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len);
 /* void qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type, guint8 sub_type, guint32 fragment_index, guint16 seq, guint8 *data, gint len); */
 void qq_xfer_close_file(PurpleXfer *xfer);

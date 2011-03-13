@@ -30,7 +30,7 @@
 
 #include "qq.h"
 typedef struct _qq_buddy_status {
-	guint32 uid;
+	UID uid;
 	guint8 unknown1;
 	struct in_addr ip;
 	guint16 port;
@@ -40,20 +40,20 @@ typedef struct _qq_buddy_status {
 	guint8 unknown_key[QQ_KEY_LENGTH];
 } qq_buddy_status;
 
-void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, guint32 update_class);
+void qq_request_get_buddies_online(PurpleConnection *gc, guint8 position, UPDCLS update_class);
 guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_request_get_buddies(PurpleConnection *gc, guint16 position, guint32 update_class);
+void qq_request_get_buddies(PurpleConnection *gc, guint16 position, UPDCLS update_class);
 guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, guint32 update_class);
+void qq_request_get_buddies_and_rooms(PurpleConnection *gc, guint32 position, UPDCLS update_class);
 guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConnection *gc);
 
-void qq_request_change_status(PurpleConnection *gc, guint32 update_class);
+void qq_request_change_status(PurpleConnection *gc, UPDCLS update_class);
 void qq_process_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_process_buddy_change_status(guint8 *data, gint data_len, PurpleConnection *gc);
 
 void qq_update_buddyies_status(PurpleConnection *gc);
-void qq_update_buddy_status(PurpleConnection *gc, guint32 uid, guint8 status, guint8 flag);
+void qq_update_buddy_status(PurpleConnection *gc, UID uid, guint8 status, guint8 flag);
 void qq_buddy_data_free_all(PurpleConnection *gc);
 #endif

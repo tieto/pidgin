@@ -49,7 +49,7 @@ enum {
 void qq_request_room_search(PurpleConnection *gc, guint32 ext_id, int action);
 void qq_process_room_search(PurpleConnection *gc, guint8 *data, gint len, guint32 ship32);
 
-void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd, guint8 opt, guint32 uid, const gchar *reason_utf8);
+void qq_send_cmd_group_auth(PurpleConnection *gc, qq_room_data *rmd, guint8 opt, UID uid, const gchar *reason_utf8);
 void qq_group_join(PurpleConnection *gc, GHashTable *data);
 void qq_request_room_join(PurpleConnection *gc, qq_room_data *rmd);
 void qq_room_quit(PurpleConnection *gc, guint32 room_id);
@@ -57,3 +57,4 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnection *gc);
 void qq_process_group_cmd_join_group(guint8 *data, gint len, PurpleConnection *gc);
 #endif
+

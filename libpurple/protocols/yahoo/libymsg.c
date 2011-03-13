@@ -842,7 +842,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 				break;
 		}
 
-		if (*stat == '1')
+		if (stat && *stat == '1')
 			serv_got_typing(gc, fed_from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
@@ -864,7 +864,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 
 		yahoo_friend_set_game(f, NULL);
 
-		if (*stat == '1') {
+		if (stat && *stat == '1') {
 			yahoo_friend_set_game(f, game);
 			if (bud)
 				yahoo_update_status(gc, from, f);
@@ -920,6 +920,11 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 		if (pair->key == 16)
 			server_msg = pair->value;
 		l = l->next;
+	}
+
+	if(!sms) {
+		purple_debug_info("yahoo", "Received a malformed SMS packet!\n");
+		return;
 	}
 
 	if( (pkt->status == -1) || (pkt->status == YAHOO_STATUS_DISCONNECTED) ) {

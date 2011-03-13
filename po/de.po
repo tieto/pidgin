@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-25 20:46+0100\n"
-"PO-Revision-Date: 2011-01-25 20:46+0100\n"
+"POT-Creation-Date: 2011-03-06 12:25+0100\n"
+"PO-Revision-Date: 2011-03-06 12:25+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -3239,9 +3239,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Vorname"
 
@@ -4010,7 +4008,6 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "Postleitzahl"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -6148,6 +6145,9 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Verbinde..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Der eingegebene Anzeigename ist zu kurz."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Die eingegebene PIN hat eine ungültige Länge [7-10]."
 
@@ -6227,33 +6227,6 @@ msgstr "MXit-Kontoüberprüfung"
 msgid "Retrieving User Information..."
 msgstr "Abrufen der Benutzerinformationen..."
 
-msgid "Loading menu..."
-msgstr "Lade das Menü..."
-
-msgid "Status Message"
-msgstr "Status-Nachricht"
-
-msgid "Rejection Message"
-msgstr "Ablehnungsnachricht"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "Versteckte Nummer"
-
-msgid "Your MXit ID..."
-msgstr "Ihre MXit-ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP-Server"
-
-msgid "Connect via HTTP"
-msgstr "Über HTTP verbinden"
-
-msgid "Enable splash-screen popup"
-msgstr "Startbildschirm-Popup aktivieren"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "Sie wurden von MultiMX hinausgeworfen."
@@ -6267,6 +6240,43 @@ msgstr "_Raumname:"
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "Sie haben eingeladen"
+
+msgid "Loading menu..."
+msgstr "Lade das Menü..."
+
+msgid "Status Message"
+msgstr "Status-Nachricht"
+
+msgid "Rejection Message"
+msgstr "Ablehnungsnachricht"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Versteckte Nummer"
+
+msgid "No profile available"
+msgstr "Kein Profil verfügbar"
+
+msgid "This contact does not have a profile."
+msgstr "Dieser Kontakt hat kein Profil."
+
+msgid "Your MXit ID..."
+msgstr "Ihre MXit-ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Erneut einladen"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP-Server"
+
+msgid "Connect via HTTP"
+msgstr "Über HTTP verbinden"
+
+msgid "Enable splash-screen popup"
+msgstr "Startbildschirm-Popup aktivieren"
 
 msgid "Last Online"
 msgstr "Zuletzt online"
@@ -7571,6 +7581,14 @@ msgstr "Ihre AIM-Verbindung könnte unterbrochen sein."
 msgid "You have been disconnected from chat room %s."
 msgstr "Die Verbindung zum Raum %s wurde unterbrochen."
 
+msgid "The new formatting is invalid."
+msgstr "Die neue Formatierung ist ungültig."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Benutzernamen-Formatierung kann nur die Groß-/Kleinschreibung und "
+"Leerzeichen ändern."
+
 msgid "Pop-Up Message"
 msgstr "Pop-Up Nachricht"
 
@@ -7846,14 +7864,6 @@ msgstr "Web aware (Wenn Sie dies aktivieren, werden Sie SPAM erhalten!)"
 msgid "ICQ Privacy Options"
 msgstr "ICQ Privatsphärenoptionen"
 
-msgid "The new formatting is invalid."
-msgstr "Die neue Formatierung ist ungültig."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Benutzernamen-Formatierung kann nur die Groß-/Kleinschreibung und "
-"Leerzeichen ändern."
-
 msgid "Change Address To:"
 msgstr "Ändere die Adresse zu:"
 
@@ -7960,75 +7970,6 @@ msgstr ""
 "Dies erfordert eine direkte Verbindung zwischen den beiden Computern. Dies "
 "ist notwendig für IM-Bilder. Da Ihre IP-Adresse verwendet wird, kann dies "
 "eine Verletzung der Privatsphäre bedeuten."
-
-msgid "Invalid SNAC"
-msgstr "Ungültiger SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Server-Datenrate überschritten"
-
-msgid "Client rate limit exceeded"
-msgstr "Client-Datenrate überschritten"
-
-msgid "Service unavailable"
-msgstr "Dienst nicht verfügbar"
-
-msgid "Service not defined"
-msgstr "Dienst nicht definiert"
-
-msgid "Obsolete SNAC"
-msgstr "Obsoleter SNAC"
-
-msgid "Not supported by host"
-msgstr "Nicht unterstützt vom Host"
-
-msgid "Not supported by client"
-msgstr "Nicht unterstützt vom Client"
-
-msgid "Refused by client"
-msgstr "Abgelehnt vom Client"
-
-msgid "Reply too big"
-msgstr "Antwort zu groß"
-
-msgid "Responses lost"
-msgstr "Antworten verloren"
-
-msgid "Request denied"
-msgstr "Anfrage verweigert"
-
-msgid "Busted SNAC payload"
-msgstr "Ruinierte SNAC-Daten"
-
-msgid "Insufficient rights"
-msgstr "Ungenügende Rechte"
-
-msgid "In local permit/deny"
-msgstr "In lokaler erlaubt/verboten-Liste"
-
-msgid "Warning level too high (sender)"
-msgstr "Warnstufe zu hoch (Absender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Warnstufe zu hoch (Empfänger)"
-
-msgid "User temporarily unavailable"
-msgstr "Benutzer ist temporär nicht verfügbar"
-
-msgid "No match"
-msgstr "Keine Übereinstimmung"
-
-msgid "List overflow"
-msgstr "Listenüberlauf"
-
-msgid "Request ambiguous"
-msgstr "Anfrage ist nicht eindeutig"
-
-msgid "Queue full"
-msgstr "Warteschlange voll"
-
-msgid "Not while on AOL"
-msgstr "Nicht solange bei AOL angemeldet"
 
 #. Label
 msgid "Buddy Icon"
@@ -8147,6 +8088,75 @@ msgstr "Mitglied seit"
 
 msgid "Capabilities"
 msgstr "Fähigkeiten"
+
+msgid "Invalid SNAC"
+msgstr "Ungültiger SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Server-Datenrate überschritten"
+
+msgid "Client rate limit exceeded"
+msgstr "Client-Datenrate überschritten"
+
+msgid "Service unavailable"
+msgstr "Dienst nicht verfügbar"
+
+msgid "Service not defined"
+msgstr "Dienst nicht definiert"
+
+msgid "Obsolete SNAC"
+msgstr "Obsoleter SNAC"
+
+msgid "Not supported by host"
+msgstr "Nicht unterstützt vom Host"
+
+msgid "Not supported by client"
+msgstr "Nicht unterstützt vom Client"
+
+msgid "Refused by client"
+msgstr "Abgelehnt vom Client"
+
+msgid "Reply too big"
+msgstr "Antwort zu groß"
+
+msgid "Responses lost"
+msgstr "Antworten verloren"
+
+msgid "Request denied"
+msgstr "Anfrage verweigert"
+
+msgid "Busted SNAC payload"
+msgstr "Ruinierte SNAC-Daten"
+
+msgid "Insufficient rights"
+msgstr "Ungenügende Rechte"
+
+msgid "In local permit/deny"
+msgstr "In lokaler erlaubt/verboten-Liste"
+
+msgid "Warning level too high (sender)"
+msgstr "Warnstufe zu hoch (Absender)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Warnstufe zu hoch (Empfänger)"
+
+msgid "User temporarily unavailable"
+msgstr "Benutzer ist temporär nicht verfügbar"
+
+msgid "No match"
+msgstr "Keine Übereinstimmung"
+
+msgid "List overflow"
+msgstr "Listenüberlauf"
+
+msgid "Request ambiguous"
+msgstr "Anfrage ist nicht eindeutig"
+
+msgid "Queue full"
+msgstr "Warteschlange voll"
+
+msgid "Not while on AOL"
+msgstr "Nicht solange bei AOL angemeldet"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8761,6 +8771,9 @@ msgstr "Server-News anzeigen"
 
 msgid "Show chat room when msg comes"
 msgstr "Chatraum zeigen, wenn Nachricht empfangen wird"
+
+msgid "Use default font"
+msgstr "Standardschriftart benutzen"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervall zum Aufrechterhalten der Verbindung (Sekunden)"

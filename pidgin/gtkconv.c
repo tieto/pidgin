@@ -78,9 +78,9 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-typedef  enum
+typedef enum
 {
-	PIDGIN_CONV_SET_TITLE 			= 1 << 0,
+	PIDGIN_CONV_SET_TITLE			= 1 << 0,
 	PIDGIN_CONV_BUDDY_ICON			= 1 << 1,
 	PIDGIN_CONV_MENU			= 1 << 2,
 	PIDGIN_CONV_TAB_ICON			= 1 << 3,
@@ -141,8 +141,6 @@ static GList *available_list = NULL;
 static GList *away_list = NULL;
 static GList *busy_list = NULL;
 static GList *xa_list = NULL;
-static GList *login_list = NULL;
-static GList *logout_list = NULL;
 static GList *offline_list = NULL;
 static GHashTable *prpl_lists = NULL;
 
@@ -2192,9 +2190,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
 		(event->keyval == GDK_Page_Up) ||
- 		(event->keyval == GDK_KP_Page_Up) ||
+		(event->keyval == GDK_KP_Page_Up) ||
 		(event->keyval == GDK_Page_Down) ||
- 		(event->keyval == GDK_KP_Page_Down) ||
+		(event->keyval == GDK_KP_Page_Down) ||
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
@@ -2430,8 +2428,8 @@ pidgin_conv_get_tab_icons(PurpleConversation *conv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *b = purple_find_buddy(account, name);
 		if (b != NULL) {
-                	PurplePresence *p;
-	                p = purple_buddy_get_presence(b);
+			PurplePresence *p;
+			p = purple_buddy_get_presence(b);
 			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
 				return away_list;
 			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
@@ -6119,7 +6117,7 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 
 	/* Currently GTK+ maintains our sorted list after it's in the tree.
 	 * This may change if it turns out we can manage it faster ourselves.
- 	 */
+	 */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  CHAT_USERS_ALIAS_KEY_COLUMN,
 										 GTK_SORT_ASCENDING);
 }
@@ -6471,13 +6469,13 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_show(win->menu.get_info);
 		gtk_widget_hide(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
- 		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
- 			gtk_widget_hide(win->menu.unblock);
- 			gtk_widget_show(win->menu.block);
- 		} else {
- 			gtk_widget_hide(win->menu.block);
- 			gtk_widget_show(win->menu.unblock);
- 		}
+		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
+			gtk_widget_hide(win->menu.unblock);
+			gtk_widget_show(win->menu.block);
+		} else {
+			gtk_widget_hide(win->menu.block);
+			gtk_widget_show(win->menu.unblock);
+		}
 
 		if ((account == NULL) || purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(win->menu.add);
@@ -6698,7 +6696,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		char *title;
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
-	 	PurpleBuddy *buddy = NULL;
+		PurpleBuddy *buddy = NULL;
 		char *markup = NULL;
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
@@ -7559,33 +7557,11 @@ account_signing_off(PurpleConnection *gc)
 	}
 }
 
-struct _status_timeout_user {
-	gchar *name;
-	PurpleAccount *account;
-};
-
-static gboolean
-update_buddy_status_timeout(struct _status_timeout_user *user)
-{
-	/* To remove the signing-on/off door icon */
-	PurpleConversation *conv;
-
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, user->name, user->account);
-	if (conv)
-		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
-
-	g_free(user->name);
-	g_free(user);
-
-	return FALSE;
-}
-
 static void
 update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus *newstatus)
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
-	struct _status_timeout_user *user;
 
 	gtkconv = get_gtkconv_with_contact(purple_buddy_get_contact(buddy));
 	if (gtkconv)
@@ -7597,13 +7573,6 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 		if ((purple_status_is_online(old) ^ purple_status_is_online(newstatus)) != 0)
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
-
-	user = g_malloc(sizeof(struct _status_timeout_user));
-	user->name = g_strdup(buddy->name);
-	user->account = buddy->account;
-
-	/* In case a conversation is started after the buddy has signed-on/off */
-	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, user);
 }
 
 static void
@@ -9148,8 +9117,6 @@ create_icon_lists(GtkWidget *w)
 	available_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AVAILABLE, w);
 	busy_list = make_status_icon_list(PIDGIN_STOCK_STATUS_BUSY, w);
 	xa_list = make_status_icon_list(PIDGIN_STOCK_STATUS_XA, w);
-	login_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGIN, w);
-	logout_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGOUT, w);
 	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
 	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
 	prpl_lists = g_hash_table_new(g_str_hash, g_str_equal);

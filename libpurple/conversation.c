@@ -999,12 +999,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
-			purple_conv_im_set_typing_state(PURPLE_CONV_IM(conv), PURPLE_NOT_TYPING);
-		}
-	}
-
 	if (ops && ops->write_conv)
 		ops->write_conv(conv, who, alias, displayed, flags, mtime);
 
@@ -1223,6 +1217,10 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 	g_return_if_fail(message != NULL);
 
 	c = purple_conv_im_get_conversation(im);
+
+    if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
+		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
+	}
 
 	/* Pass this on to either the ops structure or the default write func. */
 	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)

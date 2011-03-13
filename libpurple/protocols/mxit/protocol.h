@@ -75,6 +75,8 @@
 #define		MXIT_CF_NO_AVATARS		0x200000
 #define		MXIT_CF_GAMING			0x400000
 #define		MXIT_CF_GAMING_UPDATE	0x800000
+#define		MXIT_CF_VOICE			0x1000000
+#define		MXIT_CF_VIDEO			0x2000000
 
 /* Client features supported by this implementation */
 #define		MXIT_CP_FEATURES		( MXIT_CF_FILE_TRANSFER | MXIT_CF_FILE_ACCESS | MXIT_CF_AUDIO | MXIT_CF_MARKUP | MXIT_CF_EXT_MARKUP | MXIT_CF_NO_GATEWAYS | MXIT_CF_IMAGES | MXIT_CF_COMMANDS | MXIT_CF_VIBES | MXIT_CF_MIDP2 )
@@ -82,14 +84,13 @@
 
 #define		MXIT_PING_INTERVAL		( 5 * 60 )				/* ping the server after X seconds of being idle (5 minutes) */
 #define		MXIT_ACK_TIMEOUT		( 30 )					/* timeout after waiting X seconds for an ack from the server (30 seconds) */
+#define		MXIT_TX_DELAY			( 100 )					/* delay between sending consecutive packets (100 ms) */
 
 /* MXit client version */
-#define		MXIT_CP_DISTCODE		"P"						/* client distribution code (magic, do not touch!) */
-#define		MXIT_CP_RELEASE			"5.9.0"					/* client version */
+#define		MXIT_CP_DISTCODE		'P'						/* client distribution code (magic, do not touch!) */
 #define		MXIT_CP_ARCH			"Y"						/* client architecture series (Y not for Yoda but for PC-client) */
 #define		MXIT_CLIENT_ID			"LP"					/* client ID as specified by MXit */
 #define		MXIT_CP_PLATFORM		"PURPLE"				/* client platform */
-#define		MXIT_CP_VERSION			MXIT_CP_DISTCODE"-"MXIT_CP_RELEASE"-"MXIT_CP_ARCH"-"MXIT_CP_PLATFORM
 #define		MXIT_CP_PROTO_VESION	60						/* client protocol version */
 
 /* set operating system name */
@@ -107,7 +108,7 @@
 #define		MXIT_CP_CAP				"utf8=true;cid="MXIT_CLIENT_ID
 
 /* Client settings */
-#define		MAX_QUEUE_SIZE			( 1 << 4 )				/* tx queue size (16 packets) */
+#define		MAX_QUEUE_SIZE			( 1 << 5 )				/* tx queue size (32 packets) */
 #define		MXIT_POPUP_WIN_NAME		"MXit Notification"		/* popup window name */
 #define		MXIT_MAX_ATTRIBS		10						/* maximum profile attributes supported */
 #define		MXIT_DEFAULT_LOCALE		"en"					/* default locale setting */
@@ -125,6 +126,7 @@
 #define		CP_CMD_TX_MSG			0x000A					/* (10) send new message */
 #define		CP_CMD_REGISTER			0x000B					/* (11) register */
 //#define	CP_CMD_PROFILE_SET		0x000C					/* (12) set profile (DEPRECATED see CP_CMD_EXTPROFILE_SET) */
+#define		CP_CMD_SUGGESTCONTACTS	0x000D					/* (13) suggest contacts */
 #define		CP_CMD_POLL				0x0011					/* (17) poll the HTTP server for an update */
 //#define	CP_CMD_PROFILE_GET		0x001A					/* (26) get profile (DEPRECATED see CP_CMD_EXTPROFILE_GET) */
 #define		CP_CMD_MEDIA			0x001B					/* (27) get multimedia message */
@@ -202,6 +204,12 @@
 /* profile flags */
 #define		CP_PROF_DOBLOCKED		0x40					/* date-of-birth cannot be changed */
 
+/* suggestion types */
+#define		CP_SUGGEST_ADDRESSBOOK	0						/* address book search */
+#define		CP_SUGGEST_FRIENDS		1						/* suggested friends */
+#define		CP_SUGGEST_SEARCH		2						/* free-text search */
+#define		CP_SUGGEST_MXITID		3						/* MXitId search */
+
 /* define this to enable protocol debugging (very verbose logging) */
 #define		DEBUG_PROTOCOL
 
@@ -277,7 +285,8 @@ void mxit_strip_domain( char* username );
 gboolean find_active_chat( const GList* chats, const char* who );
 
 void mxit_cb_rx( gpointer data, gint source, PurpleInputCondition cond );
-gboolean mxit_manage_queue( gpointer user_data );
+gboolean mxit_manage_queue_slow( gpointer user_data );
+gboolean mxit_manage_queue_fast( gpointer user_data );
 gboolean mxit_manage_polling( gpointer user_data );
 
 void mxit_send_register( struct MXitSession* session );
@@ -292,6 +301,9 @@ void mxit_send_message( struct MXitSession* session, const char* to, const char*
 
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes );
 void mxit_send_extprofile_request( struct MXitSession* session, const char* username, unsigned int nr_attrib, const char* attribute[] );
+
+void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] );
+void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] );
 
 void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
 void mxit_send_remove( struct MXitSession* session, const char* username );
@@ -314,6 +326,7 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 int mxit_parse_packet( struct MXitSession* session );
 void dump_bytes( struct MXitSession* session, const char* buf, int len );
 void mxit_close_connection( struct MXitSession* session );
+gint64 mxit_now_milli( void );
 
 
 #endif		/* _MXIT_PROTO_H_ */

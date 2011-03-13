@@ -110,11 +110,9 @@ msn_normalize(const PurpleAccount *account, const char *str)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	g_snprintf(buf, sizeof(buf), "%s%s", str,
-			   (strchr(str, '@') ? "" : "@hotmail.com"));
-
-	tmp = g_utf8_strdown(buf, -1);
-	strncpy(buf, tmp, sizeof(buf));
+	tmp = g_strchomp(g_utf8_strdown(str, -1));
+	g_snprintf(buf, sizeof(buf), "%s%s", tmp,
+			   (strchr(tmp, '@') ? "" : "@hotmail.com"));
 	g_free(tmp);
 
 	return buf;
@@ -931,8 +929,8 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 		if (session) {
 			MsnUser *user = msn_userlist_find_user(session->userlist, who);
 			if (user) {
-				/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
-				if ((user->clientid & MSN_CLIENT_CAP_WEBMSGR) ||
+				/* Include these too: MSN_CAP_MOBILE_ON|MSN_CAP_WEB_WATCH ? */
+				if ((user->clientid & MSN_CAP_VIA_WEBIM) ||
 						user->networkid == MSN_NETWORK_YAHOO)
 					ret = FALSE;
 				else
@@ -961,16 +959,16 @@ msn_list_emblems(PurpleBuddy *b)
 	MsnUser *user = purple_buddy_get_protocol_data(b);
 
 	if (user != NULL) {
-		if (user->clientid & MSN_CLIENT_CAP_BOT)
+		if (user->clientid & MSN_CAP_BOT)
 			return "bot";
-		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
+		if (user->clientid & MSN_CAP_VIA_MOBILE)
 			return "mobile";
 #if 0
 		/* XXX: Since we don't support this, there's no point in showing it just yet */
-		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
+		if (user->clientid & MSN_CAP_SCHANNEL)
 			return "secure";
 #endif
-		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
+		if (user->clientid & MSN_CAP_VIA_WEBIM)
 			return "external";
 		if (user->networkid == MSN_NETWORK_YAHOO)
 			return "yahoo";
@@ -1746,38 +1744,33 @@ add_pending_buddy(MsnSession *session,
                   MsnUser *user)
 {
 	char *group;
+	MsnUserList *userlist;
+	MsnUser *user2;
 
 	g_return_if_fail(user != NULL);
 
+	if (network == MSN_NETWORK_UNKNOWN) {
+		purple_debug_error("msn", "Network in FQY response was unknown.  "
+				"Assuming %s is a passport user and adding anyway.\n", who);
+		network = MSN_NETWORK_PASSPORT;
+	}
+
 	group = msn_user_remove_pending_group(user);
 
-	if (network != MSN_NETWORK_UNKNOWN) {
-		MsnUserList *userlist = session->userlist;
-		MsnUser *user2 = msn_userlist_find_user(userlist, who);
-		if (user2 != NULL) {
-			/* User already in userlist, so just update it. */
-			msn_user_unref(user);
-			user = user2;
-		} else {
-			msn_userlist_add_user(userlist, user);
-		}
-
-		msn_user_set_network(user, network);
-		msn_userlist_add_buddy(userlist, who, group);
-	}
-	else
-	{
-		PurpleBuddy * buddy = purple_find_buddy(session->account, who);
-		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), who);
-		if (!purple_conv_present_error(who, session->account, buf))
-			purple_notify_error(purple_account_get_connection(session->account), NULL, _("Unable to Add"), buf);
-		g_free(buf);
-
-		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
+	userlist = session->userlist;
+	user2 = msn_userlist_find_user(userlist, who);
+	if (user2 != NULL) {
+		/* User already in userlist, so just update it. */
+		msn_user_unref(user);
+		user = user2;
+	} else {
+		msn_userlist_add_user(userlist, user);
 		msn_user_unref(user);
 	}
+
+	msn_user_set_network(user, network);
+	msn_userlist_add_buddy(userlist, who, group);
+
 	g_free(group);
 }
 
@@ -1814,7 +1807,10 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
-	 * internal. */
+	 * internal.
+	 * KingAnt: But PurpleBuddys must always exist inside PurpleGroups, so
+	 * won't group always be non-NULL here?
+	 */
 	user = msn_userlist_find_user(userlist, who);
 	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
 		/* We already know this buddy and their network. This function knows
@@ -1829,10 +1825,13 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 		msn_user_set_invite_message(user, msg);
 		msn_user_set_pending_group(user, gname);
 		msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
+		/* Should probably re-use the msn_add_contact_xml function here */
 		tokens = g_strsplit(who, "@", 2);
 		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
 		                      tokens[1],
 		                      tokens[0]);
+		/* TODO: I think user will leak if we disconnect before receiving
+		         a response to this FQY request */
 		msn_notification_send_fqy(session, fqy, strlen(fqy),
 		                          (MsnFqyCb)add_pending_buddy, user);
 		g_free(fqy);

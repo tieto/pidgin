@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <glib.h>
+#include "qq.h"
 
 #include "debug.h"
 
@@ -40,8 +41,8 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 gchar *gen_ip_str(guint8 *ip);
 guint8 *str_ip_gen(gchar *str);
 
-guint32 purple_name_to_uid(const gchar *name);
-gchar *uid_to_purple_name(guint32 uid);
+UID purple_name_to_uid(const gchar *name);
+gchar *uid_to_purple_name(UID uid);
 
 gchar *try_dump_as_gbk(const guint8 *const data, gint len);
 

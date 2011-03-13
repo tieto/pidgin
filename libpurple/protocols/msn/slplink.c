@@ -289,7 +289,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	/* Maybe we will want to create a new msg for this slpmsg instead of
 	 * reusing the same one all the time. */
 	info = slpmsg->p2p_info;
-	part = msn_slpmsgpart_new(info);
+	part = msn_slpmsgpart_new(msn_p2p_info_dup(info));
 	part->ack_data = slpmsg;
 
 	real_size = (msn_p2p_info_get_flags(info) == P2P_ACK) ? 0 : slpmsg->size;

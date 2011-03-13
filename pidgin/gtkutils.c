@@ -2919,7 +2919,7 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 	GtkComboBox *ret = NULL;
 	GtkWidget *the_entry = NULL;
 
-	ret = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	ret = GTK_COMBO_BOX(gtk_combo_box_entry_new_text());
 	the_entry = gtk_entry_new();
 	gtk_container_add(GTK_CONTAINER(ret), the_entry);
 

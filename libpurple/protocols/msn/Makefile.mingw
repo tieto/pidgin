@@ -65,6 +65,7 @@ C_SRC =			cmdproc.c \
 			sbconn.c \
 			switchboard.c \
 			table.c \
+			tlv.c \
 			transaction.c \
 			user.c \
 			userlist.c \

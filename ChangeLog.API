@@ -15,7 +15,28 @@ version 2.8.0 (??/??/????):
 		Added:
 		* pidgin_make_scrollable (Gabriel Schulhof) (#10599)
 
-version 2.7.9 (??/??/????):
+version 2.7.12 (??/??/????):
+
+version 2.7.11 (03/10/2011):
+	* libpurple:
+		Added:
+		* Four entries in the GHashTable passed when joining
+		  an XMPP chat room which allow the UI to request a limited
+		  amount of history.  See XEP-0045 7.1.16 for details; the
+		  entries are named history_maxchars, history_maxstanzas,
+		  history_seconds, and history_since.  history_since must be
+		  interpretable by purple_str_to_time, and the prpl takes care
+		  of formatting the time properly.
+	* Perl:
+		Added:
+		* Purple::find_conversation_with_account
+		* Purple::Conversation::Chat::send_with_flags
+		* Purple::Conversation::IM::send_with_flags
+
+version 2.7.10 (02/06/2011):
+	* No changes
+
+version 2.7.9 (12/26/2010):
 	* No changes
 
 version 2.7.8 (12/19/2010):

@@ -1,17 +1,18 @@
+# Chinese (China) translation of Pidgin.
 # Pidgin 软件包的简体中文翻译。
-# Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+# Copyright (C) 2009, 2010, 2011 Free Software Foundation, Inc.
 # This file is distributed under the same license as the pidgin package.
 # Funda Wang <fundawang@linux.net.cn>, 2003, 2004.
-# Aron Xu <happyaron.xu@gmail.com>, 2009, 2010.
 # fujianwzh <fujianwzh@gmail.com>, 2009.
 # liyuekui <liyuekui@gmail.com>, 2009.
+# Aron Xu <happyaron.xu@gmail.com>, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-10-10 16:18+0800\n"
+"POT-Creation-Date: 2011-03-10 02:26-0800\n"
+"PO-Revision-Date: 2011-03-10 18:20+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -1697,7 +1698,7 @@ msgstr "证书签署机构"
 #. Scheme name
 #. Pool name
 msgid "SSL Peers Cache"
-msgstr ""
+msgstr "SSL 端点缓存"
 
 #. Make messages
 #, c-format
@@ -2124,7 +2125,7 @@ msgid "Plain text"
 msgstr "纯文本"
 
 msgid "Old flat format"
-msgstr ""
+msgstr "旧式平整格式"
 
 msgid "Logging of this conversation failed."
 msgstr "记录此对话的失败。"
@@ -2269,8 +2270,10 @@ msgstr ""
 "保存文件的路径\n"
 "(请提供完整路径)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "自动拒绝不在好友列表中的用户的请求"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "不在好友列表里的人发来文件传送请求时："
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2281,6 +2284,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "为每个用户创建新目录"
+
+msgid "Escape the filenames"
+msgstr "取消文件"
 
 msgid "Notes"
 msgstr "备注"
@@ -2622,7 +2628,7 @@ msgid "Offline Message Emulation"
 msgstr "离线消息模拟"
 
 msgid "Save messages sent to an offline user as pounce."
-msgstr ""
+msgstr "将发送给离线好友的消息设置为好友千里眼。"
 
 msgid ""
 "The rest of the messages will be saved as pounces. You can edit/delete the "
@@ -2648,10 +2654,10 @@ msgid "No"
 msgstr "否"
 
 msgid "Save offline messages in pounce"
-msgstr ""
+msgstr "保存离线为好友千里眼"
 
 msgid "Do not ask. Always save in pounce."
-msgstr ""
+msgstr "不要询问，总是保存为好友千里眼。"
 
 msgid "One Time Password"
 msgstr "一次性密码"
@@ -3095,9 +3101,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -3673,7 +3677,10 @@ msgstr "执行"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "服务器需要在不加密流上使用纯文本验证"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "服务器的响应无效。"
 
@@ -3751,9 +3758,8 @@ msgstr "无法对用户名进行规范化处理"
 msgid "Unable to canonicalize password"
 msgstr "无法对密码进行规范化处理"
 
-#, fuzzy
 msgid "Malicious challenge from server"
-msgstr "服务器的挑战无效"
+msgstr "恶意的服务器挑战"
 
 msgid "Unexpected response from server"
 msgstr "从服务器收到了意外的响应"
@@ -3809,7 +3815,6 @@ msgstr "区域"
 msgid "Postal Code"
 msgstr "邮政编码"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "国家"
 
@@ -4057,9 +4062,8 @@ msgstr "Ping 超时"
 msgid "Invalid XMPP ID"
 msgstr "无效 XMPP ID"
 
-#, fuzzy
 msgid "Invalid XMPP ID. Username portion must be set."
-msgstr "无效的 XMPP ID。您必须设置有效的域名。"
+msgstr "无效的 XMPP ID。您必须设置的用户名。"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "无效的 XMPP ID。您必须设置有效的域名。"
@@ -4691,7 +4695,7 @@ msgstr "无法给 %s 发送文件：未添加用户监视"
 
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
-msgstr ""
+msgstr "请选择您要发送文件的 %s 所使用的资源 ID"
 
 msgid "Afraid"
 msgstr "害怕"
@@ -4834,7 +4838,6 @@ msgstr "热恋"
 msgid "Indignant"
 msgstr "愤慨"
 
-#, fuzzy
 msgid "Interested"
 msgstr "兴趣"
 
@@ -5217,28 +5220,23 @@ msgstr "新的 MSN 友好名称太长。"
 msgid "Set friendly name for %s."
 msgstr "为 %s 设置友好名称。"
 
-#, fuzzy
 msgid "Set Friendly Name"
-msgstr "设置友好的名称..."
+msgstr "设置友好的名称"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "这是其他的 MSN 好友看到的名字。"
 
-#, fuzzy
 msgid "This Location"
-msgstr "用户位置"
+msgstr "这个位置"
 
-#, fuzzy
 msgid "This is the name that identifies this location"
-msgstr "这是其他的 MSN 好友看到的名字。"
+msgstr "这是识别此位置的名称"
 
-#, fuzzy
 msgid "Other Locations"
-msgstr "用户位置"
+msgstr "其他位置"
 
-#, fuzzy
 msgid "You can sign out from other locations here"
-msgstr "您在其它位置用此用户名登录了。"
+msgstr "您可以在这里退出在其他位置的登陆。"
 
 #. TODO: Due to limitations in our current request field API, the
 #. following string will show up with a trailing colon.  This should
@@ -5246,13 +5244,11 @@ msgstr "您在其它位置用此用户名登录了。"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "您在其它位置用此用户名登录了。"
+msgstr "所有其他位置的登陆均已退出。"
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "允许运行多个实例"
+msgstr "允许多点登陆？"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
@@ -5344,9 +5340,8 @@ msgstr "办公标题"
 msgid "Set Friendly Name..."
 msgstr "设置友好的名称..."
 
-#, fuzzy
 msgid "View Locations..."
-msgstr "选择位置..."
+msgstr "查看位置..."
 
 msgid "Set Home Phone Number..."
 msgstr "设置家庭电话号码..."
@@ -5360,9 +5355,8 @@ msgstr "设置移动电话号码..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "启用/禁用移动设备..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "允许/禁止移动寻呼..."
+msgstr "允许/禁止多点登陆..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "允许/禁止移动寻呼..."
@@ -5577,7 +5571,7 @@ msgid "Allow direct connections"
 msgstr "允许直连"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "允许从多个位置登陆"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge：向用户发送闪屏振动，以便引起他的注意"
@@ -5854,6 +5848,9 @@ msgstr "无法连接到 MXit 服务器。请检查您的服务器设置。"
 msgid "Connecting..."
 msgstr "正在连接..."
 
+msgid "The Display Name you entered is too short."
+msgstr "您输入的显示名称太短。"
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "您输入的 PIN 长度无效 [7-10]。"
 
@@ -5924,33 +5921,6 @@ msgstr "MXit 帐户验证"
 msgid "Retrieving User Information..."
 msgstr "正在检索用户信息..."
 
-msgid "Loading menu..."
-msgstr "正在载入菜单..."
-
-msgid "Status Message"
-msgstr "状态消息"
-
-msgid "Rejection Message"
-msgstr "拒绝消息"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "隐藏号码"
-
-msgid "Your MXit ID..."
-msgstr "您的 MXit ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP 服务器"
-
-msgid "Connect via HTTP"
-msgstr "通过 HTTP 连接"
-
-msgid "Enable splash-screen popup"
-msgstr "启用飞溅屏幕"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "您已被踢出此 MultiMX。"
@@ -5964,6 +5934,44 @@ msgstr "聊天室名称(_R)："
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "您已邀请"
+
+msgid "Loading menu..."
+msgstr "正在载入菜单..."
+
+msgid "Status Message"
+msgstr "状态消息"
+
+msgid "Rejection Message"
+msgstr "拒绝消息"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "隐藏号码"
+
+msgid "No profile available"
+msgstr "无可用配置文件"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "此帐号没有启用电子邮件。"
+
+msgid "Your MXit ID..."
+msgstr "您的 MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "重新邀请"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP 服务器"
+
+msgid "Connect via HTTP"
+msgstr "通过 HTTP 连接"
+
+msgid "Enable splash-screen popup"
+msgstr "启用飞溅屏幕"
 
 msgid "Last Online"
 msgstr "最后在线"
@@ -6358,15 +6366,15 @@ msgstr "拥抱 %s..."
 
 #. Slap means "to hit someone with an open/flat hand"
 msgid "Slap"
-msgstr ""
+msgstr "拍打"
 
 #, c-format
 msgid "%s has slapped you!"
-msgstr ""
+msgstr "%s 拍了你一下！"
 
 #, c-format
 msgid "Slapping %s..."
-msgstr ""
+msgstr "拍一下 %s..."
 
 #. Goose means "to pinch someone on their butt"
 msgid "Goose"
@@ -6697,7 +6705,7 @@ msgstr ""
 msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
-msgstr ""
+msgstr "您在帐号设置中要求加密，但所连接的服务器中有一个不支持加密。"
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -6705,9 +6713,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "请求 %s 时出错：%s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "无法连接：服务器返回空回应。"
+msgstr "服务器返回空回应"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7180,6 +7187,12 @@ msgstr "您的 AIM 连接可能已丢失。"
 msgid "You have been disconnected from chat room %s."
 msgstr "您已经断开与聊天室 %s 的连接。"
 
+msgid "The new formatting is invalid."
+msgstr "新格式化无效。"
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "用户名格式化只更改大写和空格。"
+
 msgid "Pop-Up Message"
 msgstr "弹出消息"
 
@@ -7415,12 +7428,6 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr "ICQ 隐私选项"
 
-msgid "The new formatting is invalid."
-msgstr "新格式化无效。"
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "用户名格式化只更改大写和空格。"
-
 msgid "Change Address To:"
 msgstr "将地址更改为："
 
@@ -7463,13 +7470,11 @@ msgstr "配置聊天转发(web)"
 msgid "Set Privacy Options..."
 msgstr "设置隐私选项..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "显示好友列表(_L)"
+msgstr "显示可见列表"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "邀请列表"
+msgstr "显示可见列表"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7487,9 +7492,8 @@ msgstr "显示正在等候认证的好友"
 msgid "Search for Buddy by Email Address..."
 msgstr "按电子邮件搜索好友..."
 
-#, fuzzy
 msgid "Don't use encryption"
-msgstr "需要加密"
+msgstr "不使用加密"
 
 msgid "Use clientLogin"
 msgstr "使用客户端登录"
@@ -7528,75 +7532,6 @@ msgid ""
 msgstr ""
 "现在需要在两台计算机之间建立直接连接，这对于即时传送图像是必要的。但是这将暴"
 "露您的 IP 地址，所以可能造成潜在的隐私风险。"
-
-msgid "Invalid SNAC"
-msgstr "无效 SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "服务不可用"
-
-msgid "Service not defined"
-msgstr "服务未定义"
-
-msgid "Obsolete SNAC"
-msgstr "废旧 SNAC"
-
-msgid "Not supported by host"
-msgstr "主机不支持"
-
-msgid "Not supported by client"
-msgstr "客户不支持"
-
-msgid "Refused by client"
-msgstr "客户拒绝"
-
-msgid "Reply too big"
-msgstr "回复太大"
-
-msgid "Responses lost"
-msgstr "响应丢失"
-
-msgid "Request denied"
-msgstr "请求被禁止"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC 有效负载激增"
-
-msgid "Insufficient rights"
-msgstr "权限不够"
-
-msgid "In local permit/deny"
-msgstr "本地许可/禁止"
-
-msgid "Warning level too high (sender)"
-msgstr "发送者警告级别过高"
-
-msgid "Warning level too high (receiver)"
-msgstr "接收者警告级别过高"
-
-msgid "User temporarily unavailable"
-msgstr "用户临时不可用"
-
-msgid "No match"
-msgstr "无匹配"
-
-msgid "List overflow"
-msgstr "列表溢出"
-
-msgid "Request ambiguous"
-msgstr "请求含糊"
-
-msgid "Queue full"
-msgstr "队列满"
-
-msgid "Not while on AOL"
-msgstr "不位于 AOL 上"
 
 #. Label
 msgid "Buddy Icon"
@@ -7716,36 +7651,102 @@ msgstr "注册时间"
 msgid "Capabilities"
 msgstr "容量"
 
+msgid "Invalid SNAC"
+msgstr "无效 SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "服务不可用"
+
+msgid "Service not defined"
+msgstr "服务未定义"
+
+msgid "Obsolete SNAC"
+msgstr "废旧 SNAC"
+
+msgid "Not supported by host"
+msgstr "主机不支持"
+
+msgid "Not supported by client"
+msgstr "客户不支持"
+
+msgid "Refused by client"
+msgstr "客户拒绝"
+
+msgid "Reply too big"
+msgstr "回复太大"
+
+msgid "Responses lost"
+msgstr "响应丢失"
+
+msgid "Request denied"
+msgstr "请求被禁止"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC 有效负载激增"
+
+msgid "Insufficient rights"
+msgstr "权限不够"
+
+msgid "In local permit/deny"
+msgstr "本地许可/禁止"
+
+msgid "Warning level too high (sender)"
+msgstr "发送者警告级别过高"
+
+msgid "Warning level too high (receiver)"
+msgstr "接收者警告级别过高"
+
+msgid "User temporarily unavailable"
+msgstr "用户临时不可用"
+
+msgid "No match"
+msgstr "无匹配"
+
+msgid "List overflow"
+msgstr "列表溢出"
+
+msgid "Request ambiguous"
+msgstr "请求含糊"
+
+msgid "Queue full"
+msgstr "队列已满"
+
+msgid "Not while on AOL"
+msgstr "不位于 AOL 上"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
 msgid "Appear Online"
-msgstr "显示为在线"
+msgstr "对其隐身可见"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
-#, fuzzy
 msgid "Don't Appear Online"
-msgstr "显示为在线"
+msgstr "对其在线不可见"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
 #. isn't Invisible).
 msgid "Appear Offline"
-msgstr "显示为离线"
+msgstr "对其隐身"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user if you are invisible, and
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
-#, fuzzy
 msgid "Don't Appear Offline"
-msgstr "显示为离线"
+msgstr "对其在线可见"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "您已被踢出此 MultiMX。"
+msgstr "此列表中没有好友"
 
 #, fuzzy, c-format
 msgid ""
@@ -7755,16 +7756,14 @@ msgstr ""
 "如果您想要向这些好友重新请求认证，只需用鼠标右键单击这些好友，然后单击“重新请"
 "求认证”。"
 
-#, fuzzy
 msgid "Visible List"
-msgstr "可见"
+msgstr "隐身可见列表"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "邀请列表"
+msgstr "隐身列表"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
@@ -8312,14 +8311,14 @@ msgstr "自动"
 msgid "Select Server"
 msgstr "选择服务器"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "通过 TCP 连接"
@@ -8332,6 +8331,9 @@ msgstr "显示服务器新闻"
 
 msgid "Show chat room when msg comes"
 msgstr "当消息到来时显示聊天室"
+
+msgid "Use default font"
+msgstr "使用默认字体"
 
 msgid "Keep alive interval (seconds)"
 msgstr "保持在线间隔(秒)"
@@ -9322,7 +9324,7 @@ msgid "Could not kill user"
 msgstr "无法杀死用户"
 
 msgid "WATCH"
-msgstr ""
+msgstr "监视"
 
 msgid "Cannot watch user"
 msgstr "无法监视您自己"
@@ -9880,7 +9882,7 @@ msgid "list: List rooms on the Yahoo network"
 msgstr "list： 列出 Yahoo 网络上的聊天室"
 
 msgid "doodle: Request user to start a Doodle session"
-msgstr ""
+msgstr "doodle: 请求用户开始一个 Doodle 会话"
 
 msgid "Yahoo ID..."
 msgstr "Yahoo ID..."
@@ -9914,7 +9916,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "忽略会议和聊天室邀请"
 
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr ""
+msgstr "为 HTTP 和 HTTPS 连接使用帐号代理"
 
 msgid "Chat room list URL"
 msgstr "聊天聊天室列表 URL"
@@ -10021,12 +10023,14 @@ msgstr "由于失败的尝试次数过多，您的帐号已被锁定，请尝试
 
 #, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
+msgstr "未知错误 52。重新连接应可以修复此问题。"
 
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
+"错误 1013: 您输入的用户名无效。最常见的可能是您输入了电子邮件地址，而没有输"
+"入 Yahoo! ID。"
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10062,7 +10066,7 @@ msgstr "无法连接：服务器返回空回应。"
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
-msgstr ""
+msgstr "无法连接：服务器回应中缺少必要信息"
 
 msgid "Not at Home"
 msgstr "不在家"
@@ -10228,7 +10232,7 @@ msgstr "不可用"
 msgid ""
 "Unknown error. You may need to logout and wait five minutes before being "
 "able to rejoin a chatroom"
-msgstr ""
+msgstr "未知错误。您可能需要退出帐号并等待五分钟再重新加入聊天室"
 
 #, c-format
 msgid "You are now chatting in %s."
@@ -10494,7 +10498,7 @@ msgid "Extended away"
 msgstr "远远离开"
 
 msgid "Feeling"
-msgstr ""
+msgstr "感情丰富"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10587,6 +10591,7 @@ msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
 msgstr ""
+"无法为来自 %s 的内容分配足够的内存。网页服务器端可能正在执行非正常操作。"
 
 #, c-format
 msgid "Error reading from %s: %s"
@@ -10640,7 +10645,7 @@ msgstr "读取您的 %s 时遇到了错误。该文件未载入，旧文件被�
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
-msgstr ""
+msgstr "互联网通讯程序。 支持 AIM、Google Talk、Jabber/XMPP、MSN、Yahoo 和更多"
 
 msgid "Internet Messenger"
 msgstr "互联网通讯程序"
@@ -10783,7 +10788,7 @@ msgid "Layout"
 msgstr "样式"
 
 msgid "The layout of icons, name, and status of the buddy list"
-msgstr ""
+msgstr "图标、名称和好友列表状态的样式"
 
 #. Group
 #. Note to translators: These two strings refer to the background color
@@ -10792,7 +10797,7 @@ msgid "Expanded Background Color"
 msgstr "背景颜色"
 
 msgid "The background color of an expanded group"
-msgstr ""
+msgstr "扩展组的背景颜色"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list group when in its expanded state
@@ -10838,26 +10843,26 @@ msgstr ""
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
 msgid "Online Text"
-msgstr "在线文字"
+msgstr "在线文本"
 
 msgid "The text information for when a buddy is online"
-msgstr "当一位好友上线时显示的文字信息"
+msgstr "当好友上线时显示的文本信息"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is away
 msgid "Away Text"
-msgstr "离开文字"
+msgstr "离开文本"
 
 msgid "The text information for when a buddy is away"
-msgstr ""
+msgstr "当好友离开时显示的文本信息"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
 msgid "Offline Text"
-msgstr "离线文字"
+msgstr "离线文本"
 
 msgid "The text information for when a buddy is offline"
-msgstr ""
+msgstr "当好友离线时显示的文本信息"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
@@ -10865,7 +10870,7 @@ msgid "Idle Text"
 msgstr "发呆文字"
 
 msgid "The text information for when a buddy is idle"
-msgstr ""
+msgstr "当好友发呆时显示的文本信息"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
@@ -11183,7 +11188,7 @@ msgstr "全部好友"
 
 #, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr "发呆中 (%d天%d小时%02d分)"
+msgstr "发呆(%d天%d小时%02d分)"
 
 #, c-format
 msgid "Idle %dh %02dm"
@@ -11738,9 +11743,6 @@ msgstr "错误 "
 msgid "Fatal Error"
 msgstr "致命错误"
 
-msgid "bug master"
-msgstr "Bug 主管"
-
 msgid "artist"
 msgstr "美工"
 
@@ -11921,6 +11923,10 @@ msgstr "老挝语"
 msgid "Maithili"
 msgstr "斯瓦希里语"
 
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "新邮件"
+
 msgid "Macedonian"
 msgstr "马其顿语"
 
@@ -12056,6 +12062,9 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>有用的资源</B></FONT><BR>\t<A HREF=\"%s\">网站</A><BR>"
+"\t<A HREF=\"%s\">常见问题</A><BR>\tIRC 频道：#pidgin (irc.freenode.net)<BR>"
+"\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12605,10 +12614,10 @@ msgstr ""
 "\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "目录"
 
 msgid "use DIR for config files"
-msgstr ""
+msgstr "使用指定目录作为配置文件目录"
 
 msgid "print debugging messages to stdout"
 msgstr "打印调试信息到标准输出"
@@ -12626,7 +12635,7 @@ msgid "don't automatically login"
 msgstr "不自动登录"
 
 msgid "NAME"
-msgstr ""
+msgstr "名称"
 
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
@@ -12655,6 +12664,16 @@ msgid ""
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
 msgstr ""
+"%s %s 发生了段错误并已尝试进行核心转储到文件。\n"
+"这是软件缺陷所导致的问题，不是您的失误所致。\n"
+"\n"
+"如果您能找到重现崩溃的具体步骤，请您通过以下地址提交缺陷报告，\n"
+"以便开发人员及时对齐进行修复：\n"
+"%ssimpleticket/\n"
+"\n"
+"请详细说明当时您正在执行的操作，并同时提供转储的核心文件的回溯信息。\n"
+"如果您不知道如何获得回溯信息，请参阅：\n"
+"%swiki/GetABacktrace\n"
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
@@ -12717,6 +12736,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">您有新邮件了！</span>"
 msgid "New Pounces"
 msgstr "好友千里眼提示"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "忽略"
 
@@ -13099,7 +13125,7 @@ msgid "Konqueror"
 msgstr "Konqueror"
 
 msgid "Google Chrome"
-msgstr ""
+msgstr "Google Chrome"
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
@@ -13123,11 +13149,11 @@ msgstr "Epiphany"
 
 #. Translators: please do not translate "chromium-browser" here!
 msgid "Chromium (chromium-browser)"
-msgstr ""
+msgstr "Chromium (chromium-browser)"
 
 #. Translators: please do not translate "chrome" here!
 msgid "Chromium (chrome)"
-msgstr ""
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "手工设置"
@@ -13438,7 +13464,7 @@ msgstr "%s 的状态"
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
-msgstr ""
+msgstr "自定义表情 %s 已存在，请使用其他快捷方式。"
 
 msgid "Custom Smiley"
 msgstr "自定义表情"
@@ -13493,7 +13519,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14447,6 +14473,8 @@ msgid ""
 "Icon for Contact/\n"
 "Icon for Unknown person"
 msgstr ""
+"联系人图标/\n"
+"陌生人图标"
 
 msgid "Icon for Chat"
 msgstr "聊天图标"
@@ -14809,7 +14837,7 @@ msgstr "在桌面上创建 Pidgin 的快捷方式"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "调试符号(用于报告崩溃错误)"
 
 #. Installer Subsection Text
 msgid "Desktop"
@@ -14821,12 +14849,16 @@ msgid ""
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"下载 GTK+ 运行时($R2)出错。$\\rPidgin 需要它方可工作，如果重试仍然失败，则您"
+"可能需要使用离线安装程序 http://pidgin.im/download/windows/"
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"安装调试符号($R2)出错。$\\r如果重试仍然失败，则您可能需要使用离线安装程序 "
+"http://pidgin.im/download/windows/"
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14835,6 +14867,9 @@ msgid ""
 "installation instructions are at: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"安装拼写检查功能($R3)失败。$\\r如果重试仍然失败，您可以考虑手工安装 http://"
+"developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
@@ -14857,6 +14892,8 @@ msgid ""
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"Pidgin 需要一个兼容的 GTK+ 运行时(您的系统上没有安装)。$\\r您确定不安装 GTK+ "
+"运行时吗？"
 
 #. Installer Subsection Text
 msgid "Shortcuts"
@@ -14894,14 +14931,20 @@ msgstr ""
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "无法卸载已安装版本的 Pidgin，新版将不删除已有文件而直接安装。"
 
 #. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr "浏览 Pidgin 网页"
+msgstr "访问 Pidgin 网站"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "自动拒绝不在好友列表中的用户的请求"
+
+#~ msgid "bug master"
+#~ msgstr "Bug 主管"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "打开文件时发生了错误。\n"

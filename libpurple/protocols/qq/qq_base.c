@@ -42,7 +42,7 @@
 #include "utils.h"
 
 /* generate a md5 key using uid and session_key */
-static void get_session_md5(guint8 *session_md5, guint32 uid, guint8 *session_key)
+static void get_session_md5(guint8 *session_md5, UID uid, guint8 *session_key)
 {
 	guint8 src[QQ_KEY_LENGTH + QQ_KEY_LENGTH];
 	gint bytes = 0;
@@ -60,7 +60,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	gint bytes;
 
 	guint8 ret;
-	guint32 uid;
+	UID uid;
 	struct in_addr ip;
 	guint16 port;
 	struct tm *tm_local;
@@ -151,7 +151,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	gint bytes;
 	struct {
 		guint8 result;
-		guint32 uid;
+		UID uid;
 		struct in_addr new_server_ip;
 		guint16 new_server_port;
 	} packet;
@@ -1236,7 +1236,7 @@ guint8 qq_process_login_2007( PurpleConnection *gc, guint8 *data, gint data_len)
 	qq_data *qd;
 	gint bytes;
 	guint8 ret;
-	guint32 uid;
+	UID uid;
 	gchar *error;
 	gchar *msg;
 	gchar *msg_utf8;
@@ -1427,7 +1427,7 @@ guint8 qq_process_login_2008( PurpleConnection *gc, guint8 *data, gint data_len)
 	qq_data *qd;
 	gint bytes;
 	guint8 ret;
-	guint32 uid;
+	UID uid;
 	gchar *error;
 	gchar *msg;
 	gchar *msg_utf8;

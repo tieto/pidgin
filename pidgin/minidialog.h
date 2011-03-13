@@ -148,7 +148,7 @@ void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 
 /** Shortcut for setting a mini-dialog's custom icon via GObject properties.
  *  @param mini_dialog a mini-dialog
- *  @param icon_name   the pixbuf to use as a custom icon
+ *  @param custom_icon the pixbuf to use as a custom icon
  */
 void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
 	GdkPixbuf *custom_icon);

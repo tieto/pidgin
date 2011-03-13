@@ -9,7 +9,70 @@ version 2.8.0 (??/??/????):
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
 
-version 2.7.10 (??/??/????):
+version 2.7.12 (??/??/????):
+	General:
+	* Implement simple silence suppression for voice calls, preventing wasted
+	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+
+	Gadu-Gadu:
+	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
+
+	Windows-Specific Changes:
+	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
+	  broken in 2.7.11.  Florian Quèze)
+
+version 2.7.11 (03/10/2011):
+	General:
+	* Our bundled libgadu should now build on HP-UX.
+	* Fix some instances of file transfers never completing. (Cristi Posoiu)
+	  (#12472)
+
+	Pidgin:
+	* Sort by Status no longer causes buddies to move around when you
+	  click them.
+	* Fix embedding in the system tray on older GTK+ releases (such as on
+	  CentOS 5.5 and older Fedora).
+	* No longer require libstartup-notification for startup notification
+	  support.  GTK+ has included support for years, so use it instead. (David
+	  Benjamin) (#13245)
+
+	AIM:
+	* Fix a bug where some buddies from your buddy list might not show up.
+	  Affected non-English ICQ users the most. (#13386)
+	* Send keepalives for all types of network connections.  Will hopefully
+	  make chat rooms more reliable. (#1449)
+
+	MSN:
+	* Fix bug that prevented added buddies to your buddy list in certain
+	  circumstances.  (#13298)
+
+	MXit:
+	* MXit plugin and reported client version now follow the libpurple
+	  version.
+	* Don't try to request profile information for non-user contacts.
+	* Allow Re-Invite for contacts in Deleted or Rejected state.
+	* Ensure we don't send packets too fast to the MXit server and trigger
+	  its flood-detection mechanism.  Also increased the internal packet queue
+	  to 32 packets.
+
+	XMPP:
+	* Fix building on platforms with an older glib (inadvertantly broken in
+	  2.7.10).  (#13329)
+	* Don't treat the on-join status storms as 'new arrivals'.  (Thijs
+	  Alkemade) (#a14527)
+	* Extend the /join command to support room JIDs, enabling you to join
+	  a room on any server.  (Solarius, Matěj Cepl, Tirtha 'wyuka'
+	  Chatterjee) (#4526)
+	* Add support for receiving a limited amount of history when joining a
+	  room (not currently supported by Pidgin and Finch).  (Thijs Alkemade)
+	  (#10986, #a14219)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Fix CVE-2011-1091, denials of service caused by NULL pointer
+	  dereferences due to improper handling of malformed YMSG packets.  Thanks
+	  to Marius Wachtler for reporting this and reviewing the fix!
+
+version 2.7.10 (02/06/2011):
 	General:
 	* Force video sources to all have the same capabilities.  This reduces the
 	  number of times video must be scaled down, saving CPU time. (Jakub Adam)
@@ -41,12 +104,18 @@ version 2.7.10 (??/??/????):
 	  Samstag) (#13073)
 	* Fixed bugs in purple_str_to_time() that caused the most recent 'make
 	  check' failures.  (Nader Morshed) (#13131)
+	* Correct an issue that caused some UIs other than Pidgin or Finch to
+	  leave a buddy in the "is typing" state.  (Jan Kaluza)
+	* Fix potential information disclosure issues in the Cipher code.  (Julia
+	  Lawall)
 
 	Pidgin:
 	* Support using the Page Up and Page Down keys on the numeric keypad in
 	  the conversation window.  (Ryan Flegel) (#13127)
 	* Fix a few memory leaks. (Nader Morshed) (#13162)
 	* Support rendering strikethrough when received as in-line CSS. (#13168)
+	* Editable comboboxes are now more friendly to some GTK+ themes. (Hugo
+	  Pereira Da Costa) (#13164).
 
 	Plugins:
 	* The Voice/Video Settings plugin no longer resets selected devices to
@@ -67,6 +136,9 @@ version 2.7.10 (??/??/????):
 	  (Nikita Kozlov) (#13136)
 	* Handle Connection: Close headers for BOSH, when the server does not
 	  terminate the connection itself. (#13008)
+	* Improved parsing for DIGEST-MD5, which should resolve issues
+	  connecting to some jabberd2 servers.  This corrects an issue parsing
+	  one-character or empty elements. (Noa Resare) (#a14514)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Fix a crash when an account disconnects before a p2p session is
@@ -304,6 +376,40 @@ version 2.7.4 (10/20/2010):
 	Windows:
 	* Bonjour support now requires Apple Bonjour Print Services version
 	  2.0.0 or newer (http://support.apple.com/kb/dl999).
+
+	libpurple:
+	* Fall back to an ordinary request if a UI does not support showing a
+	  request with an icon.  Fixes receiving MSN file transfer requests
+	  including a thumbnail in Finch.
+
+	Pidgin:
+	* Add support for the Gadu-Gadu protocol in the gevolution plugin to
+	  provide Evolution integration with contacts with GG IDs. (#10709)
+	* Remap the "Set User Mood" shortcut to Control-D, which does not
+	  conflict with the previous shortcut for Get Buddy Info on the
+	  selected buddy.
+	* Add a plugin action menu (under Tools) for the Voice and Video
+	  Settings plugin.
+
+	Finch:
+	* Add support for drop-down account options (like the SILC cipher
+	  and HMAC options or the QQ protocol version).
+
+	XMPP:
+	* Unify the connection security-related settings into one dropdown.
+	* Fix a crash when multiple accounts are simultaneously performing
+	  SASL authentication when built with Cyrus SASL support.  (thanks
+	  to Jan Kaluza) (#11560)
+	* Restore the ability to connect to XMPP servers that do not offer
+	  Stream ID. (#12331)
+	* Added support for using Google's relay servers when making voice and
+	  video calls to Google clients.
+
+	Yahoo/Yahoo JAPAN:
+	* Stop doing unnecessary lookups of certain alias information.  This
+	  solves deadlocks when a given Yahoo account has a ridiculously large
+	  (>500 buddies) list and may improve login speed for those on slow
+	  connections. (#12532)
 
 version 2.7.3 (08/10/2010):
 	General:

@@ -46,7 +46,7 @@ msn_session_new(PurpleAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 purple_account_get_username(account), NULL);
-	msn_userlist_add_user(session->userlist, msn_user_ref(session->user));
+	msn_userlist_add_user(session->userlist, session->user);
 	session->oim = msn_oim_new(session);
 
 	session->protocol_ver = 0;
