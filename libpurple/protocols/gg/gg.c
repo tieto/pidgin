@@ -49,6 +49,10 @@
 
 static PurplePlugin *my_protocol = NULL;
 
+/* Prototypes */
+static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
+static int ggp_to_gg_status(PurpleStatus *status, char **msg);
+
 /* ---------------------------------------------------------------------- */
 /* ----- EXTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -755,6 +759,61 @@ static void ggp_change_passwd(PurplePluginAction *action)
 	ggp_token_request(gc, ggp_change_passwd_dialog);
 }
 
+/* ----- CHANGE STATUS BROADCASTING ------------------------------------------------ */
+
+static void ggp_action_change_status_broadcasting_ok(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	GGPInfo *info = gc->proto_data;
+	int selected_field;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleStatus *status;
+
+	selected_field = purple_request_fields_get_choice(fields, "status_broadcasting");
+	
+	if (selected_field == 0)
+		info->status_broadcasting = TRUE;
+	else
+		info->status_broadcasting = FALSE;
+	
+	status = purple_account_get_active_status(account);
+	
+	ggp_set_status(account, status);
+}
+
+static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *)action->context;
+	GGPInfo *info = gc->proto_data;
+	
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+	
+	field = purple_request_field_choice_new("status_broadcasting", _("Show status to:"), 0);
+	purple_request_field_choice_add(field, _("All people"));
+	purple_request_field_choice_add(field, _("Only friends"));
+	purple_request_field_group_add_field(group, field);
+
+	if (info->status_broadcasting)
+		purple_request_field_choice_set_default_value(field, 0);
+	else
+		purple_request_field_choice_set_default_value(field, 1);
+
+	purple_request_fields(gc,
+		_("Change status broadcasting"),
+		_("Change status broadcasting"),
+		_("Please, select who can see your status"),
+		fields,
+		_("OK"), G_CALLBACK(ggp_action_change_status_broadcasting_ok),
+		_("Cancel"), NULL,
+		purple_connection_get_account(gc), NULL, NULL,
+		gc);
+}
+
 /* ----- CONFERENCES ---------------------------------------------------- */
 
 static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
@@ -855,10 +914,6 @@ static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 /* ---------------------------------------------------------------------- */
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
-
-/* Prototypes */
-static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
-static int ggp_to_gg_status(PurpleStatus *status, char **msg);
 
 struct gg_fetch_avatar_data
 {
@@ -1948,7 +2003,8 @@ static void ggp_login(PurpleAccount *account)
 	info->searches = ggp_search_new();
 	info->pending_richtext_messages = NULL;
 	info->pending_images = g_hash_table_new(g_int_hash, g_int_equal);
-
+	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
+	
 	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
@@ -1965,6 +2021,9 @@ static void ggp_login(PurpleAccount *account)
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
 
+	if (!info->status_broadcasting)
+		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
+	
 	address = purple_account_get_string(account, "gg_server", "");
 	if (address && *address) {
 		/* TODO: Make this non-blocking */
@@ -2020,6 +2079,8 @@ static void ggp_close(PurpleConnection *gc)
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
+
+		purple_account_set_bool(account, "status_broadcasting", info->status_broadcasting);
 
 		/* Immediately close any notifications on this handle since that process depends
 		 * upon the contents of info->searches, which we are about to destroy.
@@ -2243,6 +2304,9 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	new_status = ggp_to_gg_status(status, &new_msg);
 
+	if (!info->status_broadcasting)
+		new_status = new_status|GG_STATUS_FRIENDS_MASK;
+	
 	if (new_msg == NULL) {
 		gg_change_status(info->session, new_status);
 	} else {
@@ -2431,6 +2495,10 @@ static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 				     ggp_action_buddylist_load);
 	m = g_list_append(m, act);
 
+	act = purple_plugin_action_new(_("Change status broadcasting"),
+				     ggp_action_change_status_broadcasting);
+	m = g_list_append(m, act);
+	
 	return m;
 }
 
