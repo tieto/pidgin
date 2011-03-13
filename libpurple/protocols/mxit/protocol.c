@@ -37,6 +37,7 @@
 #include	"login.h"
 #include	"formcmds.h"
 #include	"http.h"
+#include	"voicevideo.h"
 
 
 #define		MXIT_MS_OFFSET		3
@@ -44,6 +45,18 @@
 /* configure the right record terminator char to use */
 #define		CP_REC_TERM			( ( session->http ) ? CP_HTTP_REC_TERM : CP_SOCK_REC_TERM )
 
+
+/*------------------------------------------------------------------------
+ * return the current timestamp in milliseconds
+ */
+gint64 mxit_now_milli( void )
+{
+	GTimeVal	now;
+
+	g_get_current_time( &now );
+
+	return ( ( now.tv_sec * 1000 ) + ( now.tv_usec / 1000 ) );
+}
 
 
 /*------------------------------------------------------------------------
@@ -411,7 +424,7 @@ static void mxit_send_packet( struct MXitSession* session, struct tx_packet* pac
 	}
 
 	/* update the timestamp of the last-transmitted packet */
-	session->last_tx = time( NULL );
+	session->last_tx = mxit_now_milli();
 
 	/*
 	 * we need to remember that we are still waiting for the ACK from
@@ -474,17 +487,13 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->datalen = datalen;
 
 
-	/*
-	 * shortcut: first check if there are any commands still outstanding.
-	 * if not, then we might as well just write this packet directly and
-	 * skip the whole queueing thing
-	 */
-	if ( session->outack == 0 ) {
-		/* no outstanding ACKs, so we might as well write it directly */
+	/* shortcut */
+	if ( ( session->queue.count == 0 ) && ( session->outack == 0 ) ) {
+		/* the queue is empty and there are no outstanding acks so we can write it directly */
 		mxit_send_packet( session, packet );
 	}
 	else {
-		/* ACK still outstanding, so we need to queue this request until we have the ACK */
+		/* we need to queue this packet */
 
 		if ( ( packet->cmd == CP_CMD_PING ) || ( packet->cmd == CP_CMD_POLL ) ) {
 			/* we do NOT queue HTTP poll nor socket ping packets */
@@ -503,38 +512,85 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 
 
 /*------------------------------------------------------------------------
- * Callback to manage the packet send queue (send next packet, timeout's, etc).
+ * Manage the packet send queue (send next packet, timeout's, etc).
  *
  *  @param session		The MXit session object
  */
-gboolean mxit_manage_queue( gpointer user_data )
+static void mxit_manage_queue( struct MXitSession* session )
 {
-	struct MXitSession* session		= (struct MXitSession*) user_data;
 	struct tx_packet*	packet		= NULL;
+	gint64				now			= mxit_now_milli();
 
 	if ( !( session->flags & MXIT_FLAG_CONNECTED ) ) {
 		/* we are not connected, so ignore the queue */
-		return TRUE;
+		return;
 	}
 	else if ( session->outack > 0 ) {
 		/* we are still waiting for an outstanding ACK from the MXit server */
-		if ( session->last_tx <= time( NULL ) - MXIT_ACK_TIMEOUT ) {
+		if ( session->last_tx <= mxit_now_milli() - ( MXIT_ACK_TIMEOUT * 1000 ) ) {
 			/* ack timeout! so we close the connection here */
 			purple_debug_info( MXIT_PLUGIN_ID, "mxit_manage_queue: Timeout awaiting ACK for command '%i'\n", session->outack );
 			purple_connection_error( session->con, _( "Timeout while waiting for a response from the MXit server." ) );
 		}
-		return TRUE;
+		return;
 	}
 
-	packet = pop_tx_packet( session );
-	if ( packet != NULL ) {
-		/* there was a packet waiting to be sent to the server, now is the time to do something about it */
-
-		/* send the packet to MXit server */
-		mxit_send_packet( session, packet );
+	/* 
+	 * the mxit server has flood detection and it prevents you from sending messages to fast.
+	 * this is a self defense mechanism, a very annoying feature. so the client must ensure that
+	 * it does not send messages too fast otherwise mxit will ignore the user for 30 seconds.
+	 * this is what we are trying to avoid here..
+	 */
+	if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
+		/* we need to wait a little before sending the next packet, so schedule a wakeup call */
+		gint64 tdiff = now - ( session->last_tx );
+		guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
+		if ( delay <= 0 )
+			delay = MXIT_TX_DELAY;
+		purple_timeout_add( delay, mxit_manage_queue_fast, session );
 	}
+	else {
+		/* get the next packet from the queue to send */
+		packet = pop_tx_packet( session );
+		if ( packet != NULL ) {
+			/* there was a packet waiting to be sent to the server, now is the time to do something about it */
 
+			/* send the packet to MXit server */
+			mxit_send_packet( session, packet );
+		}
+	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Slow callback to manage the packet send queue.
+ *
+ *  @param session		The MXit session object
+ */
+gboolean mxit_manage_queue_slow( gpointer user_data )
+{
+	struct MXitSession* session		= (struct MXitSession*) user_data;
+
+	mxit_manage_queue( session );
+
+	/* continue running */
 	return TRUE;
+}
+
+
+/*------------------------------------------------------------------------
+ * Fast callback to manage the packet send queue.
+ *
+ *  @param session		The MXit session object
+ */
+gboolean mxit_manage_queue_fast( gpointer user_data )
+{
+	struct MXitSession* session		= (struct MXitSession*) user_data;
+
+	mxit_manage_queue( session );
+
+	/* stop running */
+	return FALSE;
 }
 
 
@@ -547,9 +603,9 @@ gboolean mxit_manage_polling( gpointer user_data )
 {
 	struct MXitSession* session		= (struct MXitSession*) user_data;
 	gboolean			poll		= FALSE;
-	time_t				now			= time( NULL );
+	gint64				now			= mxit_now_milli();
 	int					polldiff;
-	int					rxdiff;
+	gint64				rxdiff;
 
 	if ( !( session->flags & MXIT_FLAG_LOGGEDIN ) ) {
 		/* we only poll if we are actually logged in */
@@ -579,7 +635,7 @@ gboolean mxit_manage_polling( gpointer user_data )
 
 	if ( poll ) {
 		/* send poll request */
-		session->http_last_poll = time( NULL );
+		session->http_last_poll = mxit_now_milli();
 		mxit_send_poll( session );
 	}
 
@@ -638,21 +694,36 @@ void mxit_send_register( struct MXitSession* session )
 	const char*			locale;
 	char				data[CP_MAX_PACKET];
 	int					datalen;
+	char*				clientVersion;
+	unsigned int		features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
+
+	/* Voice and Video supported */
+	if (mxit_audio_enabled() && mxit_video_enabled())
+		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
+	else if (mxit_audio_enabled())
+		features |= MXIT_CF_VOICE;
+
+	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
+	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
-								"%s%c%i%c%s%c%s",			/* dc\1features\1dialingcode\1locale */
-								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
+								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
+								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */	
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
-								session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale
+								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
+								CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_REGISTER );
+
+	g_free( clientVersion );
 }
 
 
@@ -663,12 +734,23 @@ void mxit_send_register( struct MXitSession* session )
  */
 void mxit_send_login( struct MXitSession* session )
 {
-	const char*	splashId;
-	const char*	locale;
-	char		data[CP_MAX_PACKET];
-	int			datalen;
+	const char*		splashId;
+	const char*		locale;
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	char*			clientVersion;
+	unsigned int	features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
+
+	/* Voice and Video supported */
+	if (mxit_audio_enabled() && mxit_video_enabled())
+		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
+	else if (mxit_audio_enabled())
+		features |= MXIT_CF_VOICE;
+
+	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
+	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
@@ -676,8 +758,8 @@ void mxit_send_login( struct MXitSession* session )
 								"%s%c%s%c%i%c"				/* capabilities\1dc\1features\1 */
 								"%s%c%s%c"					/* dialingcode\1locale\1 */
 								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
-								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, 1, CP_FLD_TERM,
-								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM,
+								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, 1, CP_FLD_TERM,
+								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, features, CP_FLD_TERM,
 								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
 								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
@@ -689,6 +771,8 @@ void mxit_send_login( struct MXitSession* session )
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_LOGIN );
+
+	g_free( clientVersion );
 }
 
 
@@ -732,7 +816,7 @@ void mxit_send_message( struct MXitSession* session, const char* to, const char*
  *  @param session		The MXit session object
  *  @param username		Username who's profile is being requested (NULL = our own)
  *  @param nr_attribs	Number of attributes being requested
- *  @param attributes	The names of the attributes
+ *  @param attribute	The names of the attributes
  */
 void mxit_send_extprofile_request( struct MXitSession* session, const char* username, unsigned int nr_attrib, const char* attribute[] )
 {
@@ -742,7 +826,8 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%i",		/* "ms="mxitid\1nr_attributes */
-								(username ? username : ""), CP_FLD_TERM, nr_attrib);
+								( username ? username : "" ), CP_FLD_TERM, nr_attrib
+	);
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
@@ -786,6 +871,63 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 
 	/* freeup the memory */
 	g_strfreev( parts );
+}
+
+
+/*------------------------------------------------------------------------
+ * Send packet to request list of suggested friends.
+ *
+ *  @param session		The MXit session object
+ *  @param max			Maximum number of results to return
+ *  @param nr_attribs	Number of attributes being requested
+ *  @param attribute	The names of the attributes  
+ */
+void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] )
+{
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	unsigned int	i;
+
+	/* convert the packet to a byte stream */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
+								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+
+	/* add attributes */
+	for ( i = 0; i < nr_attrib; i++ )
+		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+
+	/* queue packet for transmission */
+	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
+}
+
+
+/*------------------------------------------------------------------------
+ * Send packet to perform a search for users.
+ *
+ *  @param session		The MXit session object
+ *  @param max			Maximum number of results to return
+ *  @param text			The search text
+ *  @param nr_attribs	Number of attributes being requested
+ *  @param attribute	The names of the attributes
+ */
+void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] )
+{
+	char			data[CP_MAX_PACKET];
+	int				datalen;
+	unsigned int	i;
+
+	/* convert the packet to a byte stream */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
+								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+
+	/* add attributes */
+	for ( i = 0; i < nr_attrib; i++ )
+		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+
+	/* queue packet for transmission */
+	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
 }
 
 
@@ -1039,7 +1181,6 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
  *  @param nr_usernames	Number of users being invited
  *  @param usernames	The usernames of the users being invited
  */
-
 void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid, int nr_usernames, const char* usernames[] )
 {
 	char		data[CP_MAX_PACKET];
@@ -1271,7 +1412,7 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId, MXIT_AVATAR_SIZE );
+	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating get avatar chunk (%i)\n", size );
 		return;
@@ -1321,6 +1462,10 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	/* extract MXitId (from protocol 5.9) */
 	if ( records[1]->fcount >= 9 )
 		session->uid = g_strdup( records[1]->fields[8]->data );
+
+	/* extract VoIP server (from protocol 6.2) */
+	if ( records[1]->fcount >= 11 )
+		g_strlcpy( session->voip_server, records[1]->fields[10]->data, sizeof( session->voip_server ) );
 
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
@@ -1567,13 +1712,13 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
  */
 static void mxit_parse_cmd_presence( struct MXitSession* session, struct record** records, int rcount )
 {
-	struct record*		rec;
 	int					i;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_presence (%i recs)\n", rcount );
 
 	for ( i = 0; i < rcount; i++ ) {
-		rec = records[i];
+		struct record*	rec		= records[i];
+		int				flags	= 0;
 
 		if ( rec->fcount < 6 ) {
 			purple_debug_error( MXIT_PLUGIN_ID, "BAD PRESENCE RECORD! %i fields\n", rec->fcount );
@@ -1582,12 +1727,15 @@ static void mxit_parse_cmd_presence( struct MXitSession* session, struct record*
 
 		/*
 		 * The format of the record is:
-		 * contactAddressN\1presenceN\1moodN\1customMoodN\1statusMsgN\1avatarIdN
+		 * contactAddressN \1 presenceN \1 moodN \1 customMoodN \1 statusMsgN \1 avatarIdN [ \1 flagsN ]
 		 */
 		mxit_strip_domain( rec->fields[0]->data );		/* contactAddress */
 
+		if ( rec->fcount >= 7 )		/* flags field is included */
+			flags = atoi( rec->fields[6]->data );
+
 		mxit_update_buddy_presence( session, rec->fields[0]->data, atoi( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
-				rec->fields[3]->data, rec->fields[4]->data );
+				rec->fields[3]->data, rec->fields[4]->data, flags );
 		mxit_update_buddy_avatar( session, rec->fields[0]->data, rec->fields[5]->data );
 	}
 }
@@ -1908,7 +2056,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 {
 	/* ignore ping/poll packets */
 	if ( ( packet->cmd != CP_CMD_PING ) && ( packet->cmd != CP_CMD_POLL ) )
-		session->last_rx = time( NULL );
+		session->last_rx = mxit_now_milli();
 
 	/*
 	 * when we pass the packet records to the next level for parsing

@@ -363,10 +363,9 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *type;
 	char *member_id;
 	MsnUser *user;
-	xmlnode *annotation, *display;
+	xmlnode *annotation;
 	guint nid = MSN_NETWORK_UNKNOWN;
 	char *invite = NULL;
-	char *display_text;
 
 	passport = xmlnode_get_data(xmlnode_get_child(member, node));
 	if (!msn_email_is_valid(passport)) {
@@ -376,13 +375,8 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 
 	type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
-	if ((display = xmlnode_get_child(member, "DisplayName"))) {
-		display_text = xmlnode_get_data(display);
-	} else {
-		display_text = NULL;
-	}
 
-	user = msn_userlist_find_add_user(session->userlist, passport, display_text);
+	user = msn_userlist_find_add_user(session->userlist, passport, NULL);
 
 	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
 	     annotation;
@@ -423,7 +417,6 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	g_free(type);
 	g_free(member_id);
 	g_free(invite);
-	g_free(display_text);
 }
 
 static void

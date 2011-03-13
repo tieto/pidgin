@@ -1140,6 +1140,12 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	if(!who || !msg)
 		return 0;
 
+	if (purple_debug_is_verbose()) {
+		/* TODO: Maybe we need purple_debug_is_really_verbose? :) */
+		purple_debug_misc("jabber", "jabber_message_send_im: who='%s'\n"
+		                            "\tmsg='%s'\n", who, msg);
+	}
+
 	resource = jabber_get_resource(who);
 
 	jb = jabber_buddy_find(gc->proto_data, who, TRUE);

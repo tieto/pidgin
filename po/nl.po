@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-01-25 10:45+0100\n"
+"POT-Creation-Date: 2011-03-10 01:07-0800\n"
+"PO-Revision-Date: 2011-03-05 20:39+0100\n"
 "Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
@@ -3253,9 +3253,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Voornaam"
 
@@ -4018,7 +4016,6 @@ msgstr "Streek/Provincie"
 msgid "Postal Code"
 msgstr "Postcode"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -6115,6 +6112,10 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Bezig met Verbinden..."
 
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "De schermnaam die u invoerde is ongeldig."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "De PINcode die u invulde heeft een ongeldige lengte [7-10]."
 
@@ -6215,8 +6216,22 @@ msgstr "Afgewezen bericht"
 msgid "Hidden Number"
 msgstr "Verborgen nummer"
 
+# niet aanwezig/beschikbaar
+#, fuzzy
+msgid "No profile available"
+msgstr "Niet beschikbaar"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Dit hotmail account heeft geen ingeschakelde e-mail."
+
 msgid "Your MXit ID..."
 msgstr "Uw MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Uitnodigen"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -7517,6 +7532,14 @@ msgstr "Uw AIM-verbinding is misschien verbroken."
 msgid "You have been disconnected from chat room %s."
 msgstr "De verbinding met chatruimte %s is verbroken"
 
+msgid "The new formatting is invalid."
+msgstr "De nieuwe formattering is ongeldig."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Kan alleen hoofdletter en spaties veranderen aan de formattering van de "
+"gebruikersnaam."
+
 msgid "Pop-Up Message"
 msgstr "Pop-up bericht"
 
@@ -7786,14 +7809,6 @@ msgstr "Webaanwezig (u kunt SPAM ontvangen als gevolg hiervan)"
 
 msgid "ICQ Privacy Options"
 msgstr "ICQ privacy-opties"
-
-msgid "The new formatting is invalid."
-msgstr "De nieuwe formattering is ongeldig."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Kan alleen hoofdletter en spaties veranderen aan de formattering van de "
-"gebruikersnaam."
 
 msgid "Change Address To:"
 msgstr "Adres veranderen in: "
@@ -8707,6 +8722,9 @@ msgstr "Weergeven Servernieuws"
 
 msgid "Show chat room when msg comes"
 msgstr "Toon chatruimte wanneer msg binnenkomt"
+
+msgid "Use default font"
+msgstr "Gebruik standaard lettertype"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Keepalive-interval (seconden)"
@@ -14440,7 +14458,7 @@ msgid "Server does not support service discovery"
 msgstr "Server ondersteunt geen service discovery"
 
 msgid "XMPP Service Discovery"
-msgstr "XMPP Service Discovery"
+msgstr "XMPP Servicedetectie"
 
 msgid "Allows browsing and registering services."
 msgstr "Toestaan van browse en registatie services."

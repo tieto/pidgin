@@ -50,6 +50,13 @@ typedef struct {
 	guint8  opcode;
 	guint16 message_len;
 	guint32 base_id;
+	GSList *header_tlv;
+	guint8  data_header_len;
+	guint8  data_tf;
+	guint16 package_number;
+	guint32 session_id;
+	GSList *data_tlv;
+/*	guint8  body[1]; */
 } MsnP2Pv2Header;
 
 typedef struct
@@ -58,8 +65,18 @@ typedef struct
 } MsnP2PFooter;
 #define P2P_PACKET_FOOTER_SIZE (1 * 4)
 
+typedef enum
+{
+	MSN_P2P_VERSION_ONE = 0,
+	MSN_P2P_VERSION_TWO = 1,
+} MsnP2PVersion;
+
 typedef struct {
-	MsnP2PHeader header;
+	MsnP2PVersion version;
+	union {
+		MsnP2PHeader v1;
+		MsnP2Pv2Header v2;
+	} header;
 	MsnP2PFooter footer;
 } MsnP2PInfo;
 
@@ -93,8 +110,15 @@ typedef enum
 	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
 } MsnP2PAppId;
 
+typedef enum
+{
+	P2P_OPCODE_NONE = 0x00,
+	P2P_OPCODE_SYN  = 0x01,
+	P2P_OPCODE_RAK  = 0x02
+} MsnP2Pv2OpCode;
+
 MsnP2PInfo *
-msn_p2p_info_new(void);
+msn_p2p_info_new(MsnP2PVersion version);
 
 MsnP2PInfo *
 msn_p2p_info_dup(MsnP2PInfo *info);
@@ -103,7 +127,7 @@ void
 msn_p2p_info_free(MsnP2PInfo *info);
 
 size_t
-msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire);
+msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len);
 
 char *
 msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len);

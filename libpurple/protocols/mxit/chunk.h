@@ -152,7 +152,7 @@ int mxit_chunk_create_reject( char* chunkdata, const char* fileid );
 int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, int offset );
 int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status );
 int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, int datalen );
-int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId, unsigned int imgsize );
+int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId );
 
 /* Decode chunk */
 void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chunk* offer );

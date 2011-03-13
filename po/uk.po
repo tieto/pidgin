@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-01-30 21:27+0300\n"
+"POT-Creation-Date: 2011-03-10 02:21-0800\n"
+"PO-Revision-Date: 2011-03-09 00:11+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -3225,9 +3225,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Ім'я"
 
@@ -3986,7 +3984,6 @@ msgstr "Регіон"
 msgid "Postal Code"
 msgstr "Поштовий індекс"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Країна"
 
@@ -6083,6 +6080,9 @@ msgstr ""
 msgid "Connecting..."
 msgstr "З'єднання..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Введене відображуване ім'я закоротке."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Введений PIN має неправильну довжину [7-10]."
 
@@ -6178,8 +6178,18 @@ msgstr "Повідомлення відмови"
 msgid "Hidden Number"
 msgstr "Схований номер"
 
+msgid "No profile available"
+msgstr "Профіль не доступний"
+
+msgid "This contact does not have a profile."
+msgstr "Цей контакт не має профілю."
+
 msgid "Your MXit ID..."
 msgstr "Ваш MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Запросити ще раз"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -7499,6 +7509,12 @@ msgstr "Ваше з'єднання AIM можливо буде розірван�
 msgid "You have been disconnected from chat room %s."
 msgstr "Вас було від'єднано від кімнати балачки %s."
 
+msgid "The new formatting is invalid."
+msgstr "Нове форматування недопустиме."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Форматування імені користувача може змінити лише регістр та пробіли."
+
 msgid "Pop-Up Message"
 msgstr "Спливаюче повідомлення"
 
@@ -7767,12 +7783,6 @@ msgstr ""
 
 msgid "ICQ Privacy Options"
 msgstr "Параметри приватності ICQ"
-
-msgid "The new formatting is invalid."
-msgstr "Нове форматування недопустиме."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Форматування імені користувача може змінити лише регістр та пробіли."
 
 msgid "Change Address To:"
 msgstr "Змінити адресу на:"
@@ -8678,6 +8688,9 @@ msgstr "Показати новини сервера"
 
 msgid "Show chat room when msg comes"
 msgstr "Показати кімнату балачки, коли надійшло повідомлення"
+
+msgid "Use default font"
+msgstr "Використовувати типовий шрифт"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Час між повідомленнями присутності (с)"
@@ -13257,6 +13270,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Ви отримали пошту!<
 msgid "New Pounces"
 msgstr "Нове стеження"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Відкинути"
 

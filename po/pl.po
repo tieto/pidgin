@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-01-25 11:04+0100\n"
+"POT-Creation-Date: 2011-03-10 02:18-0800\n"
+"PO-Revision-Date: 2011-03-06 20:43+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -3241,9 +3241,7 @@ msgid "UIN"
 msgstr "Identyfikator użytkownika"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Imię"
 
@@ -4006,7 +4004,6 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "Kod pocztowy"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Kraj"
 
@@ -6118,6 +6115,9 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Łączenie..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Podana wyświetlana nazwa jest za krótka."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Podany kod PIN ma nieprawidłową długość [7-10]."
 
@@ -6218,8 +6218,18 @@ msgstr "Wiadomość odrzucenia"
 msgid "Hidden Number"
 msgstr "Ukryty numer"
 
+msgid "No profile available"
+msgstr "Brak dostępnego profilu"
+
+msgid "This contact does not have a profile."
+msgstr "Ten kontakt nie posiada profilu."
+
 msgid "Your MXit ID..."
 msgstr "Identyfikator MXit użytkownika..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Zaproś ponownie"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -7528,6 +7538,14 @@ msgstr "Połączenie AIM może zostać utracone."
 msgid "You have been disconnected from chat room %s."
 msgstr "Rozłączono z pokoju konferencji %s."
 
+msgid "The new formatting is invalid."
+msgstr "Nowe formatowanie jest nieprawidłowe."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Formatowanie nazwy użytkownika może zmienić wyłącznie wielkość liter i "
+"spacje."
+
 msgid "Pop-Up Message"
 msgstr "Wiadomość wyskakująca"
 
@@ -7804,14 +7822,6 @@ msgstr "W sieci WWW (włączenie spowoduje otrzymywanie niechcianych wiadomości
 msgid "ICQ Privacy Options"
 msgstr "Opcje prywatności ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Nowe formatowanie jest nieprawidłowe."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Formatowanie nazwy użytkownika może zmienić wyłącznie wielkość liter i "
-"spacje."
-
 msgid "Change Address To:"
 msgstr "Zmiana adresu na:"
 
@@ -7825,7 +7835,7 @@ msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
 msgstr ""
-"Można ponownie poprosić o upoważnienia od tych znajomych, naciskają ma nich "
+"Można ponownie poprosić o upoważnienia od tych znajomych, naciskają na nich "
 "prawym przyciskiem myszy i wybierając \"Ponownie poproś o upoważnienie\"."
 
 msgid "Find Buddy by Email"
@@ -8722,6 +8732,9 @@ msgstr "Wyświetlanie aktualności serwera"
 
 msgid "Show chat room when msg comes"
 msgstr "Wyświetlanie pokoju konferencji po nadejściu wiadomości"
+
+msgid "Use default font"
+msgstr "Użycie domyślnej czcionki"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Czas między wznowieniami (sekundy)"
@@ -13297,6 +13310,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Nowa wiadomość e-mail.</span>"
 msgid "New Pounces"
 msgstr "Nowe przechwytywanie zdarzeń"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Odrzuć"
 

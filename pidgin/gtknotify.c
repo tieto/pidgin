@@ -1592,8 +1592,15 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->edit_button = button;
 
-		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
-						_("Dismiss"), GTK_RESPONSE_NO);
+		/* Translators: Make sure you translate "Dismiss" differently than
+		   "close"!  This string is used in the "You have pounced" dialog
+		   that appears when one of your Buddy Pounces is triggered.  In
+		   this context "Dismiss" means "I acknowledge that I've seen that
+		   this pounce was triggered--remove it from this list."  Translating
+		   it as "Remove" is acceptable if you can't think of a more precise
+		   word. */
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Dismiss"),
+				GTK_RESPONSE_NO);
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->dismiss_button = button;
 

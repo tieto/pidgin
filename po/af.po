@@ -2,13 +2,13 @@
 # Copyright (C) 2006-2010
 # This file is distributed under the same license as the pidgin package.
 # Samuel Murray <afrikaans BY gmail.com>, 2007
-# F Wolff <friedel@translate.org.za>, 2006-2009, 2010.
+# F Wolff <friedel@translate.org.za>, 2006-2009, 2010, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-05-11 00:19+0200\n"
+"POT-Creation-Date: 2011-03-10 02:28-0800\n"
+"PO-Revision-Date: 2011-03-09 20:43+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
 "Language: af\n"
@@ -16,7 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.6.0\n"
+"X-Generator: Virtaal 0.7.0-beta4\n"
+"X-Project-Style: default\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -61,9 +62,8 @@ msgstr ""
 msgid "Error"
 msgstr "Fout"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Rekening is nie bygevoeg nie"
+msgstr "Rekening is nie gewysig nie"
 
 msgid "Account was not added"
 msgstr "Rekening is nie bygevoeg nie"
@@ -2352,8 +2352,11 @@ msgstr ""
 "Pad om die lêers in te stoor\n"
 "(Verskaf gerus die volledige pad)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Weier outomaties vir gebruikers wat nie in die vriendelys is nie"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "Wanneer 'n versoek tot lêeroordrag vanaf %s aankom"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2364,6 +2367,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Kies 'n nuwe gids vir elke gebruiker"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s het die lêeroordrag gekanselleer"
 
 msgid "Notes"
 msgstr "Notas"
@@ -3205,9 +3212,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Naam"
 
@@ -3818,7 +3823,10 @@ msgstr "uitvoer"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Bediener vereis skoonteksstawing oor 'n ongeënkripteerde stroom"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Ongeldige respons van die bediener"
 
@@ -3960,7 +3968,6 @@ msgstr "Streek"
 msgid "Postal Code"
 msgstr "Poskode"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -6065,6 +6072,10 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Koppel tans..."
 
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Die naam wat gegee is, is ongeldig."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Die PIN wat gegee is, het 'n ongeldige lengte [7-10]."
 
@@ -6135,35 +6146,6 @@ msgstr "MXit-rekeningvalidering"
 msgid "Retrieving User Information..."
 msgstr "Verkry tans gebruikerinligting..."
 
-msgid "Loading menu..."
-msgstr "Laai tans kieslys..."
-
-msgid "Status Message"
-msgstr "Statusboodskap"
-
-#, fuzzy
-msgid "Rejection Message"
-msgstr "Ontvangde boodskappe"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "Versteekte nommer"
-
-#, fuzzy
-msgid "Your MXit ID..."
-msgstr "Yahoo-ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP-bediener"
-
-msgid "Connect via HTTP"
-msgstr "Koppel via HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Aktiveer opsspring vir spatskerm"
-
 #. you were kicked
 #, fuzzy
 msgid "You have been kicked from this MultiMX."
@@ -6181,6 +6163,48 @@ msgstr "_Kamer:"
 #, fuzzy
 msgid "You have invited"
 msgstr "Daar is pos!"
+
+msgid "Loading menu..."
+msgstr "Laai tans kieslys..."
+
+msgid "Status Message"
+msgstr "Statusboodskap"
+
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Ontvangde boodskappe"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Versteekte nommer"
+
+#, fuzzy
+msgid "No profile available"
+msgstr "Nie beskikbaar nie"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Hierdie rekening het nie e-pos geaktiveer nie."
+
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "Yahoo-ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Nooi uit"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP-bediener"
+
+msgid "Connect via HTTP"
+msgstr "Koppel via HTTP"
+
+msgid "Enable splash-screen popup"
+msgstr "Aktiveer opsspring vir spatskerm"
 
 #, fuzzy
 msgid "Last Online"
@@ -7455,6 +7479,12 @@ msgstr "U AIM-koppeling is dalk ontkoppel."
 msgid "You have been disconnected from chat room %s."
 msgstr "U is uit geselsiekamer %s ontkoppel."
 
+msgid "The new formatting is invalid."
+msgstr "Die nuwe formatering ongeldig."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "gebruikernaam-formatering kan net hoofletters en spasies verander."
+
 msgid "Pop-Up Message"
 msgstr "Opspring-boodskap"
 
@@ -7722,12 +7752,6 @@ msgstr "Webbewus (as u dit aktiveer, sal u gemorspos ontvang!)"
 msgid "ICQ Privacy Options"
 msgstr "ICQ-privaatheidopsies"
 
-msgid "The new formatting is invalid."
-msgstr "Die nuwe formatering ongeldig."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "gebruikernaam-formatering kan net hoofletters en spasies verander."
-
 msgid "Change Address To:"
 msgstr "Verander adres na:"
 
@@ -7838,75 +7862,6 @@ msgstr ""
 "Hierdie vereis 'n direkte koppeling tussen twee rekenaars en is nodig vir "
 "kitsboodskapprente.  Omdat u IP-adres bekend gemaak sal word, kan dit 'n "
 "privaatheidrisiko wees."
-
-msgid "Invalid SNAC"
-msgstr "Ongeldige SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Diens nie beskikbaar nie"
-
-msgid "Service not defined"
-msgstr "Diens nie gedefinieer nie"
-
-msgid "Obsolete SNAC"
-msgstr "Verouderde SNAC"
-
-msgid "Not supported by host"
-msgstr "Word nie deur gasheer ondersteun nie"
-
-msgid "Not supported by client"
-msgstr "Word nie deur kliënt ondersteun nie"
-
-msgid "Refused by client"
-msgstr "Deur kliënt geweier"
-
-msgid "Reply too big"
-msgstr "Antwoord te groot"
-
-msgid "Responses lost"
-msgstr "Response verloor"
-
-msgid "Request denied"
-msgstr "Versoek geweier"
-
-msgid "Busted SNAC payload"
-msgstr "Gebreekte SNAC-afvoer"
-
-msgid "Insufficient rights"
-msgstr "Onvoldoende regte"
-
-msgid "In local permit/deny"
-msgstr "In plaaslike toelaat/weier"
-
-msgid "Warning level too high (sender)"
-msgstr "Waarskuwingvlak té hoog (sender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Waarskuwingvlak te hoog (ontvanger)"
-
-msgid "User temporarily unavailable"
-msgstr "Gebruiker tydelik nie beskikbaar nie"
-
-msgid "No match"
-msgstr "Geen passing nie"
-
-msgid "List overflow"
-msgstr "Lysoorvloed"
-
-msgid "Request ambiguous"
-msgstr "Versoek dubbelsinnig"
-
-msgid "Queue full"
-msgstr "Tou vol"
-
-msgid "Not while on AOL"
-msgstr "Nie terwyl op AOL nie"
 
 #. Label
 msgid "Buddy Icon"
@@ -8025,6 +7980,75 @@ msgstr "Lid sedert"
 
 msgid "Capabilities"
 msgstr "Vermoëns"
+
+msgid "Invalid SNAC"
+msgstr "Ongeldige SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Diens nie beskikbaar nie"
+
+msgid "Service not defined"
+msgstr "Diens nie gedefinieer nie"
+
+msgid "Obsolete SNAC"
+msgstr "Verouderde SNAC"
+
+msgid "Not supported by host"
+msgstr "Word nie deur gasheer ondersteun nie"
+
+msgid "Not supported by client"
+msgstr "Word nie deur kliënt ondersteun nie"
+
+msgid "Refused by client"
+msgstr "Deur kliënt geweier"
+
+msgid "Reply too big"
+msgstr "Antwoord te groot"
+
+msgid "Responses lost"
+msgstr "Response verloor"
+
+msgid "Request denied"
+msgstr "Versoek geweier"
+
+msgid "Busted SNAC payload"
+msgstr "Gebreekte SNAC-afvoer"
+
+msgid "Insufficient rights"
+msgstr "Onvoldoende regte"
+
+msgid "In local permit/deny"
+msgstr "In plaaslike toelaat/weier"
+
+msgid "Warning level too high (sender)"
+msgstr "Waarskuwingvlak té hoog (sender)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Waarskuwingvlak te hoog (ontvanger)"
+
+msgid "User temporarily unavailable"
+msgstr "Gebruiker tydelik nie beskikbaar nie"
+
+msgid "No match"
+msgstr "Geen passing nie"
+
+msgid "List overflow"
+msgstr "Lysoorvloed"
+
+msgid "Request ambiguous"
+msgstr "Versoek dubbelsinnig"
+
+msgid "Queue full"
+msgstr "Tou vol"
+
+msgid "Not while on AOL"
+msgstr "Nie terwyl op AOL nie"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8642,14 +8666,14 @@ msgstr "Outomaties"
 msgid "Select Server"
 msgstr "Kies bediener"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Koppel met TCP"
@@ -8662,6 +8686,10 @@ msgstr "Wys bedienernuus"
 
 msgid "Show chat room when msg comes"
 msgstr ""
+
+#, fuzzy
+msgid "Use default font"
+msgstr "Gebruik die stelselverstek"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Wakkerhou-interval (sekondes)"
@@ -12202,9 +12230,6 @@ msgstr "Fout "
 msgid "Fatal Error"
 msgstr "Fatale fout"
 
-msgid "bug master"
-msgstr "goggameester"
-
 msgid "artist"
 msgstr "kunstenaar"
 
@@ -12385,6 +12410,10 @@ msgstr "Lao"
 #, fuzzy
 msgid "Maithili"
 msgstr "Swahili"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Nuwe pos"
 
 msgid "Macedonian"
 msgstr "Masedonies"
@@ -13232,6 +13261,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">U het pos!</span>"
 msgid "New Pounces"
 msgstr "Nuwe vriendwagte"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -15491,6 +15527,12 @@ msgstr "Besoek die WinPidgin-webblad"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U het nie toestemming om hierdie toepassing te verwyder nie."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Weier outomaties vir gebruikers wat nie in die vriendelys is nie"
+
+#~ msgid "bug master"
+#~ msgstr "goggameester"
 
 #~ msgid "Transfer was closed."
 #~ msgstr "Oordrag is gesluit."

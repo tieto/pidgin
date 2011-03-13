@@ -46,7 +46,7 @@ freetlv(msn_tlv_t *oldtlv)
 }
 
 static GSList *
-msn_tlv_read(GSList *list, char *bs, size_t *bs_len)
+msn_tlv_read(GSList *list, const char *bs, size_t *bs_len)
 {
 	guint8 type, length;
 	msn_tlv_t *tlv;
@@ -76,7 +76,7 @@ msn_tlv_read(GSList *list, char *bs, size_t *bs_len)
 }
 
 GSList *
-msn_tlvlist_read(char *bs, size_t bs_len)
+msn_tlvlist_read(const char *bs, size_t bs_len)
 {
 	GSList *list = NULL;
 
@@ -302,10 +302,10 @@ msn_tlvlist_remove(GSList **list, const guint16 type)
 	}
 }
 
-#if 0
 int
-msn_tlvlist_write(ByteStream *bs, GSList **list)
+msn_tlvlist_write(char *bs, size_t bs_len, GSList *list)
 {
+#if 0
 	int goodbuflen;
 	GSList *cur;
 	msn_tlv_t *tlv;
@@ -325,9 +325,9 @@ msn_tlvlist_write(ByteStream *bs, GSList **list)
 			byte_stream_putraw(bs, tlv->value, tlv->length);
 	}
 
-	return 1; /* TODO: This is a nonsensical return */
-}
 #endif
+	return 0; /* TODO: This is a nonsensical return */
+}
 
 msn_tlv_t *
 msn_tlv_gettlv(GSList *list, const guint16 type, const int nth)

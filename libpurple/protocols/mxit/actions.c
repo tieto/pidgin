@@ -314,12 +314,11 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 {
 	char	version[256];
 
-	g_snprintf( version, sizeof( version ), "MXit libPurple Plugin v%s\n"
+	g_snprintf( version, sizeof( version ), 
 											"MXit Client Protocol v%i.%i\n\n"
 											"Author:\nPieter Loubser\n\n"
 											"Contributors:\nAndrew Victor\n\n"
 											"Testers:\nBraeme Le Roux\n\n",
-											MXIT_PLUGIN_VERSION,
 											( MXIT_CP_PROTO_VESION / 10 ), ( MXIT_CP_PROTO_VESION % 10 ) );
 
 	mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "About" ), version );

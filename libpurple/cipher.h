@@ -28,6 +28,7 @@
 #define PURPLE_CIPHER_H
 
 #include <glib.h>
+#include <string.h>
 
 #define PURPLE_CIPHER(obj)			((PurpleCipher *)(obj))			/**< PurpleCipher typecast helper			*/
 #define PURPLE_CIPHER_OPS(obj)		((PurpleCipherOps *)(obj))		/**< PurpleCipherInfo typecase helper		*/
@@ -129,9 +130,7 @@ struct _PurpleCipherOps {
 	void (*set_key_with_len)(PurpleCipherContext *context, const guchar *key, size_t len);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /*****************************************************************************/
 /** @name PurpleCipher API													 */
@@ -498,8 +497,6 @@ gchar *purple_cipher_http_digest_calculate_response(
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* PURPLE_CIPHER_H */

@@ -63,13 +63,12 @@
 /* Plugin details */
 #define		MXIT_PLUGIN_ID				"prpl-loubserp-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit"
-#define		MXIT_PLUGIN_VERSION			"2.4.0"
 #define		MXIT_PLUGIN_EMAIL			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
 #define		MXIT_PLUGIN_DESC			"MXit"
 
-#define		MXIT_HTTP_USERAGENT			"libpurple-"MXIT_PLUGIN_VERSION
+#define		MXIT_HTTP_USERAGENT			"libpurple-"DISPLAY_VERSION
 
 
 /* default connection settings */
@@ -111,7 +110,6 @@
 /* define this to enable the link clicking support */
 #define		MXIT_LINK_CLICK
 
-
 #ifdef		MXIT_LINK_CLICK
 #define		MXIT_LINK_PREFIX			"gopher://"
 #define		MXIT_LINK_KEY				"MXIT"
@@ -137,9 +135,12 @@ struct MXitSession {
 	unsigned int		http_seqno;					/* HTTP request sequence number */
 	guint				http_timer_id;				/* timer resource id (pidgin) */
 	int					http_interval;				/* poll inverval */
-	time_t				http_last_poll;				/* the last time a poll has been sent */
+	gint64				http_last_poll;				/* the last time a poll has been sent */
 	guint				http_handler;				/* HTTP connection handler */
 	void*				http_out_req;				/* HTTP outstanding request */
+
+	/* other servers */
+	char				voip_server[HOST_NAME_MAX];	/* voice/video server */
 
 	/* client */
 	struct login_data*	logindata;
@@ -159,7 +160,7 @@ struct MXitSession {
 
 	/* transmit */
 	struct tx_queue		queue;						/* transmit packet queue (FIFO mode) */
-	time_t				last_tx;					/* timestamp of last packet sent */
+	gint64				last_tx;					/* timestamp of last packet sent */
 	int					outack;						/* outstanding ack packet */
 	guint				q_timer;					/* timer handler for managing queue */
 
@@ -169,7 +170,7 @@ struct MXitSession {
 	unsigned int		rx_i;						/* receive buffer current index */
 	int					rx_res;						/* amount of bytes still outstanding for the current packet */
 	char				rx_state;					/* current receiver state */
-	time_t				last_rx;					/* timestamp of last packet received */
+	gint64				last_rx;					/* timestamp of last packet received */
 	GList*				active_chats;				/* list of all our contacts we received messages from (active chats) */
 
 	/* groupchat */

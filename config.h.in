@@ -256,9 +256,6 @@
 /* Define to 1 if you have the <ssl.h> header file. */
 #undef HAVE_SSL_H
 
-/* Define if we're using libstartup-notification. */
-#undef HAVE_STARTUP_NOTIFICATION
-
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
 

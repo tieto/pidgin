@@ -143,6 +143,7 @@ struct _PurpleAccount
 	 * buddies are added to your permit list.  Currently we have to
 	 * iterate through the entire list if we want to check if someone
 	 * is permitted or denied.  We should do this for 3.0.0.
+	 * Or maybe use a GTree.
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */

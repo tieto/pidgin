@@ -8,7 +8,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.661 2011/02/01 04:45:39 acli Exp $
+# $InternalId: zh_TW.po,v 1.665 2011/03/09 21:33:34 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -60,10 +60,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.9\n"
+"Project-Id-Version: Pidgin 2.7.11\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2010-12-16 19:32-0500\n"
+"POT-Creation-Date: 2011-03-10 01:17-0800\n"
+"PO-Revision-Date: 2011-03-09 16:19-0500\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "Language: zh_HK\n"
@@ -3305,9 +3305,7 @@ msgid "UIN"
 msgstr "帳號"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -4070,7 +4068,6 @@ msgstr "省／州"
 msgid "Postal Code"
 msgstr "郵遞編號"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "國家"
 
@@ -6374,6 +6371,9 @@ msgstr "無法連線至 MXit 伺服器，請檢查伺服器設定。"
 msgid "Connecting..."
 msgstr "連線中..."
 
+msgid "The Display Name you entered is too short."
+msgstr "你所輸入的網名太短。"
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "你所輸入的密碼過短或過長（長度應為 7 至 10 個數字）。"
 
@@ -6471,8 +6471,20 @@ msgstr "拒絕訊息"
 msgid "Hidden Number"
 msgstr "隱藏電話號碼"
 
+# NOTE "Only MXit users have profiles" - 視窗標題 - acli 20110309
+msgid "No profile available"
+msgstr "個人資料不存在"
+
+# NOTE "Only MXit users have profiles" - 錯誤訊息 - acli 20110309
+msgid "This contact does not have a profile."
+msgstr "這個帳號不存在相關的個人資料。"
+
 msgid "Your MXit ID..."
 msgstr "你的MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "重新邀請"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -7767,6 +7779,12 @@ msgstr "你的 AIM 可能斷線了。"
 msgid "You have been disconnected from chat room %s."
 msgstr "你已經由聊天室 %s 停止連線。"
 
+msgid "The new formatting is invalid."
+msgstr "新的格式是無效的。"
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "帳號格式化只能改變大寫以及空白。"
+
 # XXX 這是什麼 (情形下出現的)？ (好像是以前譯「訊息」的那個??)
 msgid "Pop-Up Message"
 msgstr "彈出訊息"
@@ -8021,12 +8039,6 @@ msgstr "允許在網絡上檢視你目前的狀態（會導致你收到垃圾訊
 
 msgid "ICQ Privacy Options"
 msgstr "ICQ 私隱選頊"
-
-msgid "The new formatting is invalid."
-msgstr "新的格式是無效的。"
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "帳號格式化只能改變大寫以及空白。"
 
 msgid "Change Address To:"
 msgstr "更改地址為："
@@ -9018,6 +9030,9 @@ msgstr "顯示伺服器是日訊息"
 
 msgid "Show chat room when msg comes"
 msgstr "收到聊天室訊息時自動顯示聊天室"
+
+msgid "Use default font"
+msgstr "使用預設字型"
 
 # XXX 20080810 acli - 譯文有待改進，原文也是
 msgid "Keep alive interval (seconds)"

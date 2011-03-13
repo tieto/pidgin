@@ -1099,7 +1099,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_object(user, msnobj);
 
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
+	user->mobile = (clientid & MSN_CAP_MOBILE_ON) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_extcaps(user, extcaps);
 	msn_user_set_network(user, networkid);
@@ -1274,7 +1274,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 		extcaps = 0;
 
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
+	user->mobile = (clientid & MSN_CAP_MOBILE_ON) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_extcaps(user, extcaps);

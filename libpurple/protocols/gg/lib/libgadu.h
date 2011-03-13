@@ -117,7 +117,7 @@ typedef unsigned char   uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int   uint32_t;
 
-#if !defined(__CYGWIN__) && !defined(__SunOS)
+#if !defined(__CYGWIN__) && !defined(__SunOS) && !defined(_INCLUDE_HPUX_SOURCE)
 #define __int8_t_defined
 typedef   signed char    int8_t;
 typedef   signed short  int16_t;
