@@ -21,7 +21,7 @@ version 2.7.12 (??/??/????):
 
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
-	  broken in 2.7.11.  Florian Quèze)
+	  broken in 2.7.11. (Florian Quèze)
 
 version 2.7.11 (03/10/2011):
 	General:
