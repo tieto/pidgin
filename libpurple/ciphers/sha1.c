@@ -252,14 +252,24 @@ sha1_digest(PurpleCipherContext *context, size_t in_len, guchar digest[20],
 }
 
 static PurpleCipherOps SHA1Ops = {
-	.set_option = sha1_set_opt,
-	.get_option = sha1_get_opt,
-	.init = sha1_init,
-	.reset = sha1_reset,
-	.uninit = sha1_uninit,
-	.append = sha1_append,
-	.digest = sha1_digest,
-	.get_block_size = sha1_get_block_size,
+	sha1_set_opt,		/* Set Option		*/
+	sha1_get_opt,		/* Get Option		*/
+	sha1_init,		/* init				*/
+	sha1_reset,		/* reset			*/
+	sha1_uninit,		/* uninit			*/
+	NULL,			/* set iv			*/
+	sha1_append,		/* append			*/
+	sha1_digest,	/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	sha1_get_block_size,	/* get block size */
+	NULL			/* set key with len */
 };
 
 PurpleCipherOps *
