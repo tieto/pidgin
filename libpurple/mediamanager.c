@@ -175,6 +175,7 @@ purple_media_manager_init (PurpleMediaManager *media)
 
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/audio");
+	purple_prefs_add_int("/purple/media/audio/silence_threshold", 5);
 	purple_prefs_add_none("/purple/media/audio/volume");
 	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
 	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
