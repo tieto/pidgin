@@ -5,6 +5,8 @@ version 2.8.0 (??/??/????):
 	* media: Allow obtaining active local and remote candidates. (#11830)
 	* media: Allow getting/setting video capabilities. (Jakub Adam) (half of
 	  #13095)
+	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
+	  of #13180)
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
