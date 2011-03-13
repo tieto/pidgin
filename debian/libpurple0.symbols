@@ -309,7 +309,6 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_conversation_destroy@Base 2.2.0
  purple_conversation_get_account@Base 2.2.0
  purple_conversation_get_chat_data@Base 2.2.0
- purple_conversation_get_data@Base 2.2.0
  purple_conversation_get_extended_menu@Base 2.2.0
  purple_conversation_get_features@Base 2.2.0
  purple_conversation_get_gc@Base 2.2.0
@@ -328,7 +327,6 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_conversation_new@Base 2.2.0
  purple_conversation_present@Base 2.2.0
  purple_conversation_set_account@Base 2.2.0
- purple_conversation_set_data@Base 2.2.0
  purple_conversation_set_features@Base 2.2.0
  purple_conversation_set_logging@Base 2.2.0
  purple_conversation_set_name@Base 2.2.0
@@ -346,7 +344,6 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_core_init@Base 2.2.0
  purple_core_migrate@Base 2.2.0
  purple_core_quit@Base 2.2.0
- purple_core_quit_cb@Base 2.2.0
  purple_core_set_ui_ops@Base 2.2.0
  purple_email_is_valid@Base 2.2.0
  purple_escape_filename@Base 2.2.0
@@ -473,7 +470,6 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_prefs_rename@Base 2.2.0
  purple_prefs_rename_boolean_toggle@Base 2.2.0
  purple_prefs_set_bool@Base 2.2.0
- purple_prefs_set_generic@Base 2.2.0
  purple_prefs_set_int@Base 2.2.0
  purple_prefs_set_path@Base 2.2.0
  purple_prefs_set_path_list@Base 2.2.0
@@ -681,7 +677,6 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_utf8_strip_unprintables@Base 2.6.0
  purple_utf8_try_convert@Base 2.2.0
  purple_util_fetch_url_cancel@Base 2.2.0
- purple_util_format_song_info@Base 2.4.0
  purple_util_init@Base 2.3.0
  purple_util_set_current_song@Base 2.4.0
  purple_util_set_user_dir@Base 2.2.0
@@ -1444,6 +1439,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_debug_set_unsafe@Base 2.6.0
  purple_debug_set_verbose@Base 2.6.0
  purple_debug_warning@Base 2.2.0
+ purple_des3_cipher_get_ops@Base 2.7.11
+ purple_des_cipher_get_ops@Base 2.7.11
  purple_desktop_item_copy@Base 2.2.0
  purple_desktop_item_get_entry_type@Base 2.2.0
  purple_desktop_item_get_string@Base 2.2.0
@@ -1488,6 +1485,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_group_get_name@Base 2.2.0
  purple_group_new@Base 2.2.0
  purple_group_on_account@Base 2.2.0
+ purple_hmac_cipher_get_ops@Base 2.7.11
  purple_home_dir@Base 2.2.0
  purple_idle_get_ui_ops@Base 2.2.0
  purple_idle_init@Base 2.2.0
@@ -1596,6 +1594,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_marshal_VOID__POINTER_POINTER_UINT@Base 2.2.0
  purple_marshal_VOID__POINTER_POINTER_UINT_UINT@Base 2.2.0
  purple_marshal_VOID__POINTER_UINT@Base 2.2.0
+ purple_md4_cipher_get_ops@Base 2.7.11
+ purple_md5_cipher_get_ops@Base 2.7.11
  purple_media_accepted@Base 2.6.0
  purple_media_add_remote_candidates@Base 2.6.0
  purple_media_add_stream@Base 2.6.0
@@ -2021,6 +2021,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_prpl_initiate_media@Base 2.6.0
  purple_prpl_send_attention@Base 2.5.0
  purple_quotedp_decode@Base 2.2.0
+ purple_rc4_cipher_get_ops@Base 2.7.11
  purple_request_action@Base 2.2.0
  purple_request_action_varg@Base 2.2.0
  purple_request_action_with_icon@Base 2.7.0
@@ -2190,6 +2191,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_serv_got_join_chat_failed@Base 2.5.0
  purple_serv_got_private_alias@Base 2.4.0
  purple_set_blist@Base 2.2.0
+ purple_sha1_cipher_get_ops@Base 2.7.11
+ purple_sha256_cipher_get_ops@Base 2.7.11
  purple_signal_connect@Base 2.2.0
  purple_signal_connect_priority@Base 2.2.0
  purple_signal_connect_priority_vargs@Base 2.2.0
