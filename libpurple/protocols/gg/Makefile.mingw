@@ -9,7 +9,6 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libgg
 CFLAGS += -include win32dep.h -DGG_IGNORE_DEPRECATED
-CFLAGS -= -mms-bitfields
 TYPE = PLUGIN
 
 # Static or Plugin...
