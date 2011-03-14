@@ -524,7 +524,7 @@ create_saved_status_list(StatusWindow *dialog)
 static gboolean
 configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
 {
-	if (GTK_WIDGET_VISIBLE(widget))
+	if (gtk_widget_get_visible(widget))
 	{
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/width",  event->width);
 		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/height", event->height);

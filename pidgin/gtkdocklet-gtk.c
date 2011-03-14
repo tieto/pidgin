@@ -167,18 +167,12 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 	if (icon_name) {
 		gtk_status_icon_set_from_icon_name(docklet, icon_name);
 	}
-
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
-		gtk_status_icon_set_blinking(docklet, (pending && !connecting));
-	} else if (gtk_status_icon_get_blinking(docklet)) {
-		gtk_status_icon_set_blinking(docklet, FALSE);
-	}
 }
 
 static void
 docklet_gtk_status_set_tooltip(gchar *tooltip)
 {
-	gtk_status_icon_set_tooltip(docklet, tooltip);
+	gtk_status_icon_set_tooltip_text(docklet, tooltip);
 }
 
 static void
