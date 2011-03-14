@@ -1203,22 +1203,23 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 			if ((id = xmlnode_get_attrib(payloadNode, "id")) != NULL) {
 				unsigned int trId = atol(id);
 				MsnTransaction *trans;
-				MsnMessage *msg;
 
 				trans = msn_history_find(cmdproc->history, trId);
-				msg = (MsnMessage *)trans->data;
+				if (trans) {
+					MsnMessage *msg = (MsnMessage *)trans->data;
 
-				if (msg) {
-					char *body_str = msn_message_to_string(msg);
-					char *body_enc = g_markup_escape_text(body_str, -1);
+					if (msg) {
+						char *body_str = msn_message_to_string(msg);
+						char *body_enc = g_markup_escape_text(body_str, -1);
 
-					purple_conversation_write(conv, NULL, body_enc,
-					                          PURPLE_MESSAGE_RAW, time(NULL));
+						purple_conversation_write(conv, NULL, body_enc,
+					                          	PURPLE_MESSAGE_RAW, time(NULL));
 
-					g_free(body_str);
-					g_free(body_enc);
-					msn_message_unref(msg);
-					trans->data = NULL;
+						g_free(body_str);
+						g_free(body_enc);
+						msn_message_unref(msg);
+						trans->data = NULL;
+					}
 				}
 			}
 		}
