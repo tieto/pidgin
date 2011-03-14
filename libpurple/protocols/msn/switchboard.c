@@ -726,6 +726,7 @@ nak_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_return_if_fail(msg != NULL);
 
 	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_NAK);
+	cmd->trans->data = NULL;
 }
 
 static void
@@ -743,6 +744,7 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (swboard)
 		swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
+	cmd->trans->data = NULL;
 }
 
 static void
