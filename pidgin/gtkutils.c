@@ -3433,7 +3433,7 @@ pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPol
 		if (width != -1 || height != -1)
 			gtk_widget_set_size_request(sw, width, height);
 		if (child) {
-			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
+			if (GTK_IS_SCROLLABLE(child))
 				gtk_container_add(GTK_CONTAINER(sw), child);
 			else
 				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);
