@@ -3501,7 +3501,6 @@ regenerate_plugins_items(PidginWindow *win)
 	g_object_set_data(G_OBJECT(win->window), "plugin-actions", action_items);
 }
 
-#if 0
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
@@ -3520,12 +3519,11 @@ focus_out_from_menubar(GtkWidget *wid, PidginWindow *win)
 {
 	/* The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
 	 * the 'Conversation' menu pops up. */
-	GtkWidget *menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
+	GtkWidget *menuitem = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/ConversationMenu");
 	g_signal_handlers_unblock_by_func(G_OBJECT(menuitem), G_CALLBACK(menubar_activated), win);
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->menu.menubar),
 				G_CALLBACK(focus_out_from_menubar), win);
 }
-#endif
 
 static GtkWidget *
 setup_menubar(PidginWindow *win)
@@ -3534,6 +3532,7 @@ setup_menubar(PidginWindow *win)
 	const char *method;
 	GtkActionGroup *action_group;
 	GError *error;
+	GtkWidget *menuitem;
 
 	action_group = gtk_action_group_new("ConversationActions");
 	gtk_action_group_add_actions(action_group,
@@ -3567,6 +3566,9 @@ setup_menubar(PidginWindow *win)
 
 	win->menu.menubar =
 		gtk_ui_manager_get_widget(win->menu.ui, "/Conversation");
+
+	menuitem = gtk_ui_manager_get_widget(win->menu.ui, "/Conversation/ConversationMenu");
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
 
 	win->menu.view_log =
 		gtk_ui_manager_get_action(win->menu.ui,
