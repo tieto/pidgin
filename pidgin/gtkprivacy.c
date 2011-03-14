@@ -133,12 +133,6 @@ build_list(PidginPrivacyDialog *dialog, GtkListStore *model,
 	GtkTreeViewColumn *column;
 	GtkTreeSelection *sel;
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	*ret_treeview = treeview;
 
@@ -150,7 +144,7 @@ build_list(PidginPrivacyDialog *dialog, GtkListStore *model,
 	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	sw = pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 200);
 
 	gtk_widget_show(treeview);
 
@@ -158,8 +152,6 @@ build_list(PidginPrivacyDialog *dialog, GtkListStore *model,
 
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(user_selected_cb), dialog);
-
-	gtk_widget_set_size_request(sw, -1, 200);
 
 	return sw;
 }

@@ -420,7 +420,30 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 
 #ifdef USE_GSTREAMER
 
-static GstCaps *
+void
+purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
+{
+#ifdef USE_VV
+	if (manager->priv->video_caps)
+		gst_caps_unref(manager->priv->video_caps);
+
+	manager->priv->video_caps = caps;
+
+	if (manager->priv->pipeline && manager->priv->video_src) {
+		gchar *id = purple_media_element_info_get_id(manager->priv->video_src);
+		GstElement *src = gst_bin_get_by_name(GST_BIN(manager->priv->pipeline), id);
+
+		if (src) {
+			GstElement *capsfilter = gst_bin_get_by_name(GST_BIN(src), "prpl_video_caps");
+			g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+		}
+
+		g_free(id);
+	}
+#endif
+}
+
+GstCaps *
 purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 {
 #ifdef USE_VV

@@ -330,6 +330,8 @@ void purple_marshal_INT__INT_INT(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_marshal_INT__POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
+void purple_marshal_INT__POINTER_POINTER_POINTER(
+		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 

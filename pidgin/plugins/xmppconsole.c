@@ -744,7 +744,6 @@ static void
 create_console(PurplePluginAction *action)
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
-	GtkWidget *sw = gtk_scrolled_window_new(NULL, NULL);
 	GtkWidget *label;
 	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
@@ -784,16 +783,13 @@ create_console(PurplePluginAction *action)
 	gtk_box_pack_start(GTK_BOX(console->hbox), console->dropdown, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(console->dropdown), "changed", G_CALLBACK(dropdown_changed_cb), NULL);
 
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_ETCHED_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
 	console->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	if (console->count == 0)
 		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
 				       _("<font color='#777777'>Not connected to XMPP</font>"), 0);
-	gtk_container_add(GTK_CONTAINER(sw), console->imhtml);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		pidgin_make_scrollable(console->imhtml, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1),
+		TRUE, TRUE, 0);
 
 	toolbar = gtk_toolbar_new();
 	button = gtk_tool_button_new(NULL, "<iq/>");
@@ -810,21 +806,16 @@ create_console(PurplePluginAction *action)
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_ETCHED_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
 	console->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(console->entry), TRUE);
 	g_signal_connect(G_OBJECT(console->entry),"message_send", G_CALLBACK(message_send_cb), console);
 
-	gtk_box_pack_start(GTK_BOX(vbox), sw, FALSE, FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(sw), console->entry);
+	console->sw = pidgin_make_scrollable(console->entry, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), console->sw, FALSE, FALSE, 0);
 	gtk_imhtml_set_editable(GTK_IMHTML(console->entry), TRUE);
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(entry_changed_cb), NULL);
-	console->sw = sw;
+
 	entry_changed_cb(buffer, NULL);
 
 	gtk_widget_show_all(console->window);

@@ -818,6 +818,21 @@ purple_marshal_INT__POINTER_POINTER(PurpleCallback cb, va_list args, void *data,
 		*return_val = GINT_TO_POINTER(ret_val);
 }
 
+	void
+purple_marshal_INT__POINTER_POINTER_POINTER(
+		PurpleCallback cb, va_list args, void *data, void **return_val)
+{
+	gint ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+
+	ret_val = ((gint (*)(void *, void *, void *, void *))cb)(arg1, arg2, arg3, data);
+
+	if (return_val != NULL)
+		*return_val = GINT_TO_POINTER(ret_val);
+}
+
 void
 purple_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val)

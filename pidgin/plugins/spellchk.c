@@ -2156,7 +2156,7 @@ static void whole_words_button_toggled(GtkToggleButton *complete_toggle, GtkTogg
 static GtkWidget *
 get_config_frame(PurplePlugin *plugin)
 {
-	GtkWidget *ret, *vbox, *win;
+	GtkWidget *ret, *vbox;
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
@@ -2172,15 +2172,6 @@ get_config_frame(PurplePlugin *plugin)
 	vbox = pidgin_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
 	gtk_widget_show(vbox);
-
-	win = gtk_scrolled_window_new(0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), win, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(win),
-										GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win),
-			GTK_POLICY_NEVER,
-			GTK_POLICY_ALWAYS);
-	gtk_widget_show(win);
 
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE);
@@ -2240,7 +2231,9 @@ get_config_frame(PurplePlugin *plugin)
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)),
 		 GTK_SELECTION_MULTIPLE);
-	gtk_container_add(GTK_CONTAINER(win), tree);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		pidgin_make_scrollable(tree, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1), 
+		TRUE, TRUE, 0);
 	gtk_widget_show(tree);
 
 	hbox = gtk_hbutton_box_new();

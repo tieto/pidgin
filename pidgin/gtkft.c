@@ -557,21 +557,11 @@ close_button_cb(GtkButton *button, PidginXferDialog *dialog)
 static GtkWidget *
 setup_tree(PidginXferDialog *dialog)
 {
-	GtkWidget *sw;
 	GtkWidget *tree;
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	GtkTreeSelection *selection;
-
-	/* Create the scrolled window. */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-						GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-	gtk_widget_show(sw);
 
 	/* Build the tree model */
 	/* Transfer type, Progress Bar, Filename, Size, Remaining */
@@ -636,10 +626,9 @@ setup_tree(PidginXferDialog *dialog)
 
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(tree));
 
-	gtk_container_add(GTK_CONTAINER(sw), tree);
 	gtk_widget_show(tree);
 
-	return sw;
+	return tree;
 }
 
 static GtkWidget *
@@ -713,7 +702,6 @@ pidgin_xfer_dialog_new(void)
 	PidginXferDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *vbox1, *vbox2;
-	GtkWidget *sw;
 	GtkWidget *expander;
 	GtkWidget *alignment;
 	GtkWidget *table;
@@ -744,9 +732,9 @@ pidgin_xfer_dialog_new(void)
 	gtk_widget_show(vbox2);
 
 	/* Setup the listbox */
-	sw = setup_tree(dialog);
-	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
-	gtk_widget_set_size_request(sw,-1, 140);
+	gtk_box_pack_start(GTK_BOX(vbox2), 
+		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140), 
+		TRUE, TRUE, 0);
 
 	/* "Close this window when all transfers finish" */
 	checkbox = gtk_check_button_new_with_mnemonic(

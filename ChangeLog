@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.12 (??/??/????):
+version 2.8.0 (??/??/????):
 	General:
 	* Implement simple silence suppression for voice calls, preventing wasted
 	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
@@ -8,9 +8,19 @@ version 2.7.12 (??/??/????):
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
 
+	libpurple:
+	* media: Allow obtaining active local and remote candidates. (#11830)
+	* media: Allow getting/setting video capabilities. (Jakub Adam) (half of
+	  #13095)
+	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
+	  of #13180)
+
+	Pidgin:
+	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
+
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
-	  broken in 2.7.11.  Florian Quèze)
+	  broken in 2.7.11. (Florian Quèze)
 
 version 2.7.11 (03/10/2011):
 	General:

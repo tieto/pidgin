@@ -59,6 +59,16 @@ typedef enum
 	PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
 } PurpleAccountRequestType;
 
+/**
+ * Account request response types
+ */
+typedef enum
+{
+	PURPLE_ACCOUNT_RESPONSE_IGNORE = -2,
+	PURPLE_ACCOUNT_RESPONSE_DENY = -1,
+	PURPLE_ACCOUNT_RESPONSE_PASS = 0,
+	PURPLE_ACCOUNT_RESPONSE_ACCEPT = 1
+} PurpleAccountRequestResponse;
 
 /**  Account UI operations, used to notify the user of status changes and when
  *   buddies add this account to their buddy lists.
@@ -501,6 +511,24 @@ void purple_account_set_public_alias(PurpleAccount *account,
 void purple_account_get_public_alias(PurpleAccount *account,
 	PurpleGetPublicAliasSuccessCallback success_cb,
 	PurpleGetPublicAliasFailureCallback failure_cb);
+
+/**
+ * Return whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if suppression is used, or @c FALSE if not.
+ */
+gboolean purple_account_get_silence_suppression(const PurpleAccount *account);
+
+/**
+ * Sets whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ * @param value   @c TRUE if suppression should be used.
+ */
+void purple_account_set_silence_suppression(PurpleAccount *account,
+											gboolean value);
 
 /**
  * Clears all protocol-specific settings on an account.

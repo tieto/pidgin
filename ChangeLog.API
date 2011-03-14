@@ -1,6 +1,19 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.12 (??/??/????):
+version 2.8.0 (??/??/????):
+	libpurple:
+		Added:
+		* account-authorization-requested-with-message signal (Stefan Ott)
+		  (#8690)
+		* purple_notify_user_info_add_pair_plaintext
+		* purple_media_get_active_local_candidates
+		* purple_media_get_active_remote_candidates
+		* purple_media_manager_get_video_caps (Jakub Adam) (#13095)
+		* purple_media_manager_set_video_caps (Jakub Adam) (#13095)
+
+	Pidgin:
+		Added:
+		* pidgin_make_scrollable (Gabriel Schulhof) (#10599)
 
 version 2.7.11 (03/10/2011):
 	* libpurple:

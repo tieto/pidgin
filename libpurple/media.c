@@ -1151,12 +1151,6 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 #endif
 }
 
-#if 0
-/*
- * These two functions aren't being used and I'd rather not lock in the API
- * until they are needed. If they ever are.
- */
-
 GList *
 purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant)
@@ -1186,7 +1180,6 @@ purple_media_get_active_remote_candidates(PurpleMedia *media,
 	return NULL;
 #endif
 }
-#endif
 
 gboolean
 purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,

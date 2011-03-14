@@ -139,7 +139,8 @@ typedef enum
 	PURPLE_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
 	PURPLE_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	PURPLE_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
-	PURPLE_CBFLAGS_TYPING        = 0x0010  /**< Currently typing             */
+	PURPLE_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
+	PURPLE_CBFLAGS_AWAY          = 0x0020  /**< Currently away. @since 2.8.0 */
 
 } PurpleConvChatBuddyFlags;
 
@@ -300,6 +301,9 @@ struct _PurpleConvChatBuddy
 	PurpleConvChatBuddyFlags flags;  /**< A bitwise OR of flags for this participant,
 	                                  *   such as whether they are a channel operator.
 	                                  */
+	GHashTable *attributes;          /**< A hash table of attributes about the user, such as
+                                    *   real name, user@host, etc.
+                                    */
 };
 
 /**
@@ -511,6 +515,46 @@ void purple_conversation_set_name(PurpleConversation *conv, const char *name);
  *         then it's the name of the PurpleBuddy.
  */
 const char *purple_conversation_get_name(const PurpleConversation *conv);
+
+/**
+ * Get an attribute of a chat buddy
+ *
+ * @param cb	The chat buddy.
+ * @param key	The key of the attribute.
+ *
+ * @return The value of the attribute key.
+ */
+const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key);
+
+/**
+ * Get the keys of all atributes of a chat buddy
+ *
+ * @param cb	The chat buddy.
+ *
+ * @return A list of the attributes of a chat buddy.
+ */
+GList *purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb);
+	
+/**
+ * Set an attribute of a chat buddy
+ *
+ * @param chat	The chat.
+ * @param cb	The chat buddy.
+ * @param key	The key of the attribute.
+ * @param value	The value of the attribute.
+ */
+void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb, const char *key, const char *value);
+
+/**
+ * Set attributes of a chat buddy
+ *
+ * @param chat	The chat.
+ * @param cb	The chat buddy.
+ * @param keys	A GList of the keys.
+ * @param values A GList of the values.
+ */
+void
+purple_conv_chat_cb_set_attributes(PurpleConvChat *chat, PurpleConvChatBuddy *cb, GList *keys, GList *values);
 
 /**
  * Enables or disables logging for this conversation.

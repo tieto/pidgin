@@ -1441,6 +1441,27 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 		return NULL;
 	}
 
+	plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(
+				purple_accounts_get_handle(),
+				"account-authorization-requested-with-message",
+				account, remote_user, message
+			));
+
+	switch (plugin_return)
+	{
+		case PURPLE_ACCOUNT_RESPONSE_IGNORE:
+			return NULL;
+		case PURPLE_ACCOUNT_RESPONSE_ACCEPT:
+			if (auth_cb != NULL)
+				auth_cb(user_data);
+			return NULL;
+		case PURPLE_ACCOUNT_RESPONSE_DENY:
+			if (deny_cb != NULL)
+				deny_cb(user_data);
+			return NULL;
+	}
+
 	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
 		info            = g_new0(PurpleAccountRequestInfo, 1);
 		info->type      = PURPLE_ACCOUNT_REQUEST_AUTHORIZATION;
@@ -1913,6 +1934,20 @@ purple_account_get_public_alias(PurpleAccount *account,
 		closure->failure_cb = failure_cb;
 		purple_timeout_add(0, get_public_alias_unsupported, closure);
 	}
+}
+
+gboolean
+purple_account_get_silence_suppression(const PurpleAccount *account)
+{
+	return purple_account_get_bool(account, "silence-suppression", FALSE);
+}
+
+void
+purple_account_set_silence_suppression(PurpleAccount *account, gboolean value)
+{
+	g_return_if_fail(account != NULL);
+
+	purple_account_set_bool(account, "silence-suppression", value);
 }
 
 void
@@ -3046,6 +3081,13 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_ACCOUNT),
 						purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "account-authorization-requested-with-message",
+						purple_marshal_INT__POINTER_POINTER_POINTER,
+						purple_value_new(PURPLE_TYPE_INT), 3,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING),
+						purple_value_new(PURPLE_TYPE_STRING));
 	purple_signal_register(handle, "account-authorization-denied",
 						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,
