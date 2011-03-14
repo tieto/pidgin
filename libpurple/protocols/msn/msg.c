@@ -613,7 +613,8 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		msn_slpmsgpart_to_string(msg->part, str);
+		if (msg->part)
+			msn_slpmsgpart_to_string(msg->part, str);
 
 		if (purple_debug_is_verbose() && body != NULL)
 		{
