@@ -6767,7 +6767,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			style = "tab-label-event";
 		} else {
-			style = NULL;
+			style = "tab-label";
 		}
 
 		gtk_widget_set_name(gtkconv->tab_label, style);
