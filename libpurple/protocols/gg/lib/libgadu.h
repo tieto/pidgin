@@ -33,10 +33,11 @@
 #ifndef __GG_LIBGADU_H
 #define __GG_LIBGADU_H
 
-#ifdef __cplusplus
 #ifdef _WIN32
 #pragma pack(push, 1)
 #endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -2056,9 +2057,10 @@ struct gg_dcc7_dunno1 {
 
 #ifdef __cplusplus
 }
+#endif
+
 #ifdef _WIN32
 #pragma pack(pop)
-#endif
 #endif
 
 #endif /* __GG_LIBGADU_H */
