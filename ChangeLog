@@ -14,6 +14,7 @@ version 2.8.0 (??/??/????):
 	  #13095)
 	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
 	  of #13180)
+	* Fix purple-url-handler being unable to find an account.
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
