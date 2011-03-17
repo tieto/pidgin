@@ -107,7 +107,6 @@ pidgin_headers = \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
 	gtkidle.h \
-	gtkgaim-compat.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \

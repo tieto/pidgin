@@ -117,7 +117,6 @@ purple_coreheaders = \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
-	gaim-compat.h \
 	idle.h \
 	imgstore.h \
 	log.h \
