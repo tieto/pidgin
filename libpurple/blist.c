@@ -465,9 +465,7 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
 	protocol = xmlnode_get_attrib(bnode, "protocol");
-	protocol = _purple_oscar_convert(acct_name, protocol); /* XXX: Remove */
 	proto = xmlnode_get_attrib(bnode, "proto");
-	proto = _purple_oscar_convert(acct_name, proto); /* XXX: Remove */
 
 	if (!acct_name || (!proto && !protocol))
 		return;
