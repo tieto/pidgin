@@ -43,7 +43,7 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [1])
+m4_define([purple_lt_current], [20])
 m4_define([purple_major_version], [3])
 m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [0])
@@ -2536,10 +2536,8 @@ AC_CONFIG_FILES([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
-		   pidgin/pidgin.pc
-		   pidgin/pidgin-uninstalled.pc
-		   pidgin/pidgin-2.pc
-		   pidgin/pidgin-2-uninstalled.pc
+		   pidgin/pidgin-3.pc
+		   pidgin/pidgin-3-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2556,10 +2554,8 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
-		   libpurple/purple.pc
-		   libpurple/purple-uninstalled.pc
-		   libpurple/purple-2.pc
-		   libpurple/purple-2-uninstalled.pc
+		   libpurple/purple-3.pc
+		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile

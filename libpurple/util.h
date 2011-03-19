@@ -1450,16 +1450,6 @@ const char *purple_unescape_filename(const char *str);
 const char *purple_escape_filename(const char *str);
 
 /**
- * This is added temporarily to assist the split of oscar into aim and icq.
- * This should not be used by plugins.
- *
- * @deprecated This function should not be used in new code and should be
- *             removed in 3.0.0.  The aim/icq prpl split happened a long
- *             time ago, and we don't need to keep migrating old data.
- */
-const char *_purple_oscar_convert(const char *act, const char *protocol);
-
-/**
  * Restore default signal handlers for signals which might reasonably have
  * handlers. This should be called by a fork()'d child process, since child processes
  * inherit the handlers of the parent.

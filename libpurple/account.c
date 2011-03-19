@@ -871,7 +871,7 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
+	ret = purple_account_new(name, protocol_id);
 	g_free(name);
 	g_free(protocol_id);
 
