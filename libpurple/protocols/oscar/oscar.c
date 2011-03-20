@@ -5060,16 +5060,22 @@ static void oscar_get_icqxstatusmsg(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
+	OscarData *od;
 	PurpleAccount *account;
+	const char *bname;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection(buddy->account);
-	account = purple_connection_get_account(gc);
-	purple_debug_info("oscar", "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
+	bname = purple_buddy_get_name(buddy);
 
-	icq_im_xstatus_request(gc->proto_data, purple_buddy_get_name(buddy));
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+	od = purple_connection_get_protocol_data(gc);
+
+	purple_debug_info("oscar", "Manual X-Status Get From %s to %s:\n", bname, purple_account_get_username(account));
+
+	icq_im_xstatus_request(od, bname);
 }
 
 static void
