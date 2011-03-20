@@ -912,8 +912,8 @@ struct aim_ssi_tmp
 /* 0x0007 */ int aim_ssi_enable(OscarData *od);
 /* 0x0011 */ int aim_ssi_modbegin(OscarData *od);
 /* 0x0012 */ int aim_ssi_modend(OscarData *od);
-/* 0x0018 */ int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg);
-/* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg);
+/* 0x0018 */ int aim_ssi_sendauthrequest(OscarData *od, const char *bn, const char *msg);
+/* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, const char *bn, guint8 reply, const char *msg);
 
 /* Client functions for retrieving SSI data */
 struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid);
@@ -1311,7 +1311,7 @@ void oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info);
 void oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo);
 
 /* authorization.c - OSCAR authorization requests */
-void oscar_auth_sendrequest(PurpleConnection *gc, const char *name);
+void oscar_auth_sendrequest(PurpleConnection *gc, const char *name, const char *msg);
 void oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored);
 void oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *reason);
 

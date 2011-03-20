@@ -3685,7 +3685,8 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 }
 
 void
-oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
+oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *msg)
+{
 	OscarData *od;
 	PurpleAccount *account;
 	const char *bname, *gname;
@@ -3725,7 +3726,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
 		                                  bname)) {
 			/* Not authorized -- Re-request authorization */
-			oscar_auth_sendrequest(gc, bname);
+			oscar_auth_sendrequest(gc, bname, msg);
 		}
 	}
 
@@ -4175,7 +4176,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 			case 0x000e: { /* buddy requires authorization */
 				if ((retval->action == SNAC_SUBTYPE_FEEDBAG_ADD) && (retval->name))
-					oscar_auth_sendrequest(gc, retval->name);
+					oscar_auth_sendrequest(gc, retval->name, NULL);
 			} break;
 
 			default: { /* La la la */

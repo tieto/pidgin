@@ -79,7 +79,7 @@ void oscar_get_info(PurpleConnection *gc, const char *name);
 void oscar_set_status(PurpleAccount *account, PurpleStatus *status);
 void oscar_set_idle(PurpleConnection *gc, int time);
 void oscar_change_passwd(PurpleConnection *gc, const char *old, const char *new);
-void oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *msg);
 void oscar_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void oscar_add_permit(PurpleConnection *gc, const char *who);
 void oscar_add_deny(PurpleConnection *gc, const char *who);
