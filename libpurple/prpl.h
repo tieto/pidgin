@@ -202,7 +202,14 @@ typedef enum
 	 * Used as a hint that unknown commands should not be sent as messages.
 	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an invitation.
+	 * @since 2.8.0
+	 */
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800
 
 } PurpleProtocolOptions;
 
