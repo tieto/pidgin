@@ -51,7 +51,7 @@ oscar_auth_request(struct name_data *data, char *msg)
 		purple_debug_info("oscar", "ssi: adding buddy %s to group %s\n",
 				   bname, gname);
 		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
-		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))
+		if (!aim_ssi_itemlist_finditem(&od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))
 		{
 			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, TRUE);
 
