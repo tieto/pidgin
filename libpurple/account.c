@@ -2540,8 +2540,37 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (prpl_info != NULL && prpl_info->add_buddy != NULL)
-		prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	if (prpl_info != NULL) {
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
+			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), NULL);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
+			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	}
+}
+
+void
+purple_account_add_buddy_with_invite(PurpleAccount *account, PurpleBuddy *buddy, const char *message)
+{
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc;
+	PurplePlugin *prpl = NULL;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		prpl = purple_connection_get_prpl(gc);
+
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info != NULL) {
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
+			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), message);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
+			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	}
 }
 
 void
@@ -2566,9 +2595,69 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (prpl_info->add_buddies != NULL)
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
+			prpl_info->add_buddies_with_invite(gc, buddies, groups, NULL);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
 			prpl_info->add_buddies(gc, buddies, groups);
-		else if (prpl_info->add_buddy != NULL) {
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, NULL);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy(gc, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+
+		g_list_free(groups);
+	}
+}
+
+void
+purple_account_add_buddies_with_invite(PurpleAccount *account, GList *buddies, const char *message)
+{
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+
+	if (gc != NULL)
+		prpl = purple_connection_get_prpl(gc);
+
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info) {
+		GList *cur, *groups = NULL;
+
+		/* Make a list of what group each buddy is in */
+		for (cur = buddies; cur != NULL; cur = cur->next) {
+			PurpleBuddy *buddy = cur->data;
+			groups = g_list_append(groups, purple_buddy_get_group(buddy));
+		}
+
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
+			prpl_info->add_buddies_with_invite(gc, buddies, groups, message);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, message);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
+			prpl_info->add_buddies(gc, buddies, groups);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {

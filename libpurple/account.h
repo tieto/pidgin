@@ -958,15 +958,40 @@ void purple_account_destroy_log(PurpleAccount *account);
  *
  * @param account The account.
  * @param buddy The buddy to add.
+ *
+ * @deprecated Use purple_account_add_buddy_with_invite and \c NULL message.
  */
 void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy);
+/**
+ * Adds a buddy to the server-side buddy list for the specified account.
+ *
+ * @param account The account.
+ * @param buddy The buddy to add.
+ * @param message The invite message.  This may be ignored by a prpl.
+ *
+ * @since 2.8.0
+ */
+void purple_account_add_buddy_with_invite(PurpleAccount *account, PurpleBuddy *buddy, const char *message);
+
 /**
  * Adds a list of buddies to the server-side buddy list.
  *
  * @param account The account.
  * @param buddies The list of PurpleBlistNodes representing the buddies to add.
+ *
+ * @deprecated Use purple_account_add_buddies_with_invite and \c NULL message.
  */
 void purple_account_add_buddies(PurpleAccount *account, GList *buddies);
+/**
+ * Adds a list of buddies to the server-side buddy list.
+ *
+ * @param account The account.
+ * @param buddies The list of PurpleBlistNodes representing the buddies to add.
+ * @param message The invite message.  This may be ignored by a prpl.
+ *
+ * @since 2.8.0
+ */
+void purple_account_add_buddies_with_invite(PurpleAccount *account, GList *buddies, const char *message);
 
 /**
  * Removes a buddy from the server-side buddy list.

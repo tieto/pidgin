@@ -333,6 +333,9 @@ struct _PurplePluginProtocolInfo
 	 * already in the specified group. If the protocol supports
 	 * authorization and the user is not already authorized to see the
 	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * @deprecated Since 2.8.0, add_buddy_with_invite is preferred.
+	 * @see add_buddy_with_invite
 	 */
 	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
@@ -622,6 +625,21 @@ struct _PurplePluginProtocolInfo
 	void (*get_public_alias)(PurpleConnection *gc,
 	                         PurpleGetPublicAliasSuccessCallback success_cb,
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
+
+	/**
+	 * Add a buddy to a group on the server.
+	 *
+	 * This PRPL function may be called in situations in which the buddy is
+	 * already in the specified group. If the protocol supports
+	 * authorization and the user is not already authorized to see the
+	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * If authorization is required, then use the supplied invite message.
+	 *
+	 * @since 2.8.0
+	 */
+	void (*add_buddy_with_invite)(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message);
+	void (*add_buddies_with_invite)(PurpleConnection *pc, GList *buddies, GList *groups, const char *message);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
