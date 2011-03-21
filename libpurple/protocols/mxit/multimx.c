@@ -239,16 +239,31 @@ static void member_kicked(struct MXitSession* session, struct multimx* multimx, 
 		return;
 	}
 
-	/* who was kicked? - compare to our original nickname */
-	if (purple_utf8_strcasecmp(nickname, multimx->nickname) == 0)
-	{
-		/* you were kicked */
-		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
-		purple_conv_chat_clear_users(PURPLE_CONV_CHAT(convo));
-		serv_got_chat_left(session->con, multimx->chatid);
+	purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), nickname, _("was kicked"));
+}
+
+
+/*------------------------------------------------------------------------
+ * You were kicked from the GroupChat.
+ *
+ *  @param session		The MXit session object
+ *  @param multimx		The MultiMX room object
+ */
+static void you_kicked(struct MXitSession* session, struct multimx* multimx)
+{
+	PurpleConversation *convo;
+
+	purple_debug_info(MXIT_PLUGIN_ID, "you_kicked\n");
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, multimx->roomname, session->acc);
+	if (convo == NULL) {
+		purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
+		return;
 	}
-	else
-		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), nickname, _("was kicked"));
+
+	purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "MXit", _("You have been kicked from this MultiMX."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conv_chat_clear_users(PURPLE_CONV_CHAT(convo));
+	serv_got_chat_left(session->con, multimx->chatid);
 }
 
 
@@ -419,6 +434,11 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 			/* Somebody has been kicked */
 			*ofs = '\0';
 			member_kicked(mx->session, multimx, msg);
+			mx->processed = TRUE;
+		}
+		else if (strcmp(msg, "You have been kicked.") == 0) {
+			/* You have been kicked */
+			you_kicked(mx->session, multimx);
 			mx->processed = TRUE;
 		}
 		else if (g_str_has_prefix(msg, "The following users are in this MultiMx:") == TRUE) {
