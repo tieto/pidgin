@@ -3660,7 +3660,9 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	purple_debug_info("oscar", "Set status to %s\n", purple_status_get_name(status));
 
-	if (!purple_status_is_active(status))
+	/* Either setting a new status active or setting a status inactive.
+	 * (Only possible for independent status (i.e. X-Status moods.) */
+	if (!purple_status_is_active(status) && !purple_status_is_independent(status))
 		return;
 
 	if (!purple_account_is_connected(account))
