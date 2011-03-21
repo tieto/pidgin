@@ -5,8 +5,8 @@ version 2.8.0 (??/??/????):
 	* Implement simple silence suppression for voice calls, preventing wasted
 	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
 
-	Gadu-Gadu:
-	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
+	Pidgin:
+	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
 
 	libpurple:
 	* media: Allow obtaining active local and remote candidates. (#11830)
@@ -16,8 +16,8 @@ version 2.8.0 (??/??/????):
 	  of #13180)
 	* Fix purple-url-handler being unable to find an account.
 
-	Pidgin:
-	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
+	Gadu-Gadu:
+	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
 
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
