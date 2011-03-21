@@ -22,6 +22,9 @@ version 2.8.0 (??/??/????):
 	ICQ:
 	* Fix unsetting your mood when "None" is selected. (#7431)
 
+	MXit:
+	* Support for an Invite Message when adding a buddy.
+
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
 	  broken in 2.7.11. (Florian Quèze)

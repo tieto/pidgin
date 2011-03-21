@@ -680,8 +680,9 @@ gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* user
  *  @param gc		The connection object
  *  @param buddy	The new buddy
  *  @param group	The group of the new buddy
+ *  @param message	The invite message
  */
-void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group )
+void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group, const char* message )
 {
 	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
 	GSList*				list	= NULL;
@@ -702,7 +703,7 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 		 * you accept an invite.  so in that case the user is already
 		 * in our blist and ready to be chatted to.
 		 */
-		mxit_send_invite( session, buddy_name, buddy_alias, group_name );
+		mxit_send_invite( session, buddy_name, buddy_alias, group_name, message );
 	}
 	else {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy (scenario 2) (list:%i)\n", g_slist_length( list ) );

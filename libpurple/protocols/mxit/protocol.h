@@ -305,7 +305,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] );
 void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] );
 
-void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
+void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname, const char* message );
 void mxit_send_remove( struct MXitSession* session, const char* username );
 void mxit_send_allow_sub( struct MXitSession* session, const char* username, const char* alias );
 void mxit_send_deny_sub( struct MXitSession* session, const char* username );

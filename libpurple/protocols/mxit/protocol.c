@@ -987,8 +987,9 @@ void mxit_send_mood( struct MXitSession* session, int mood )
  *  @param username		The username of the contact being invited
  *  @param alias		Our alias for the contact
  *  @param groupname	Group in which contact should be stored.
+ *  @param message		Invite message
  */
-void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname )
+void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname, const char* message )
 {
 	char		data[CP_MAX_PACKET];
 	int			datalen;
@@ -997,7 +998,7 @@ void mxit_send_invite( struct MXitSession* session, const char* username, const 
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%s%c%s%c%i%c%s",	/* "ms"=group\1username\1alias\1type\1msg */
 								groupname, CP_FLD_TERM, username, CP_FLD_TERM, alias,
-								CP_FLD_TERM, MXIT_TYPE_MXIT, CP_FLD_TERM, ""
+								CP_FLD_TERM, MXIT_TYPE_MXIT, CP_FLD_TERM, ( message ? message : "" )
 	);
 
 	/* queue packet for transmission */

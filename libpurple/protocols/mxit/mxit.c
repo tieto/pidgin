@@ -628,7 +628,7 @@ static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
 		return;
 
 	/* send a new invite */
-	mxit_send_invite( session, contact->username, contact->alias, contact->groupname );
+	mxit_send_invite( session, contact->username, contact->alias, contact->groupname, NULL );
 }
 
 
@@ -664,7 +664,7 @@ static GList* mxit_blist_menu( PurpleBlistNode *node )
 /*========================================================================================================================*/
 
 static PurplePluginProtocolInfo proto_info = {
-	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE,			/* options */
+	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE,			/* options */
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{						/* icon_spec */
@@ -692,7 +692,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_set_status,		/* set_status */
 	NULL,					/* set_idle */
 	NULL,					/* change_passwd */
-	mxit_add_buddy,			/* add_buddy				[roster.c] */
+	NULL,					/* add_buddy				[roster.c] */
 	NULL,					/* add_buddies */
 	mxit_remove_buddy,		/* remove_buddy				[roster.c] */
 	NULL,					/* remove_buddies */
@@ -743,7 +743,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
 	NULL,					/* get_public_alias */
-	NULL,					/* add_buddy_with_invite */
+	mxit_add_buddy,			/* add_buddy_with_invite */
 	NULL					/* add_buddies_with_invite */
 };
 
