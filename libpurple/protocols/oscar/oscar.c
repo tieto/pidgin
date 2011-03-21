@@ -3685,7 +3685,8 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 }
 
 void
-oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
+oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *msg)
+{
 	OscarData *od;
 	PurpleAccount *account;
 	const char *bname, *gname;
@@ -3725,7 +3726,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
 		                                  bname)) {
 			/* Not authorized -- Re-request authorization */
-			oscar_auth_sendrequest(gc, bname);
+			oscar_auth_sendrequest(gc, bname, msg);
 		}
 	}
 
@@ -4175,7 +4176,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 			case 0x000e: { /* buddy requires authorization */
 				if ((retval->action == SNAC_SUBTYPE_FEEDBAG_ADD) && (retval->name))
-					oscar_auth_sendrequest(gc, retval->name);
+					oscar_auth_sendrequest(gc, retval->name, NULL);
 			} break;
 
 			default: { /* La la la */
@@ -5060,16 +5061,22 @@ static void oscar_get_icqxstatusmsg(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
+	OscarData *od;
 	PurpleAccount *account;
+	const char *bname;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection(buddy->account);
-	account = purple_connection_get_account(gc);
-	purple_debug_info("oscar", "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
+	bname = purple_buddy_get_name(buddy);
 
-	icq_im_xstatus_request(gc->proto_data, purple_buddy_get_name(buddy));
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+	od = purple_connection_get_protocol_data(gc);
+
+	purple_debug_info("oscar", "Manual X-Status Get From %s to %s:\n", bname, purple_account_get_username(account));
+
+	icq_im_xstatus_request(od, bname);
 }
 
 static void

@@ -742,7 +742,9 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_media_caps,		/* get_media_caps */
 	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	NULL,					/* add_buddy_with_invite */
+	NULL					/* add_buddies_with_invite */
 };
 
 

@@ -364,7 +364,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  * Add autocompletion of screenames to an entry, supporting a filtering function.
  *
  * @param entry       The GtkEntry on which to setup autocomplete.
- * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ * @param optmenu     A menu for accounts, returned by pidgin_account_option_menu_new().
  *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @param filter_func A function for checking if an autocomplete entry

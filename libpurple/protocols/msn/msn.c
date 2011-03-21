@@ -95,13 +95,6 @@ typedef struct
 	MsnObject *obj;
 } MsnEmoticon;
 
-typedef struct
-{
-	PurpleConnection *pc;
-	PurpleBuddy *buddy;
-	PurpleGroup *group;
-} MsnAddReqData;
-
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -1775,29 +1768,18 @@ add_pending_buddy(MsnSession *session,
 }
 
 static void
-finish_auth_request(MsnAddReqData *data, char *msg)
+msn_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
-	PurpleConnection *pc;
-	PurpleBuddy *buddy;
-	PurpleGroup *group;
 	PurpleAccount *account;
+	const char *bname, *gname;
 	MsnSession *session;
 	MsnUserList *userlist;
-	const char *who, *gname;
 	MsnUser *user;
 
-	pc = data->pc;
-	buddy = data->buddy;
-	group = data->group;
-	g_free(data);
-
 	account = purple_connection_get_account(pc);
-	session = pc->proto_data;
-	userlist = session->userlist;
+	session = purple_connection_get_protocol_data(pc);
+	bname = purple_buddy_get_name(buddy);
 
-	who = msn_normalize(account, purple_buddy_get_name(buddy));
-	gname = group ? purple_group_get_name(group) : NULL;
-	purple_debug_info("msn", "Add user:%s to group:%s\n", who, gname ? gname : "(null)");
 	if (!session->logged_in)
 	{
 		purple_debug_error("msn", "msn_add_buddy called before connected\n");
@@ -1811,22 +1793,47 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 	 * KingAnt: But PurpleBuddys must always exist inside PurpleGroups, so
 	 * won't group always be non-NULL here?
 	 */
-	user = msn_userlist_find_user(userlist, who);
+	bname = msn_normalize(account, bname);
+	gname = group ? purple_group_get_name(group) : NULL;
+	purple_debug_info("msn", "Add user:%s to group:%s\n",
+	                  bname, gname ? gname : "(null)");
+
+	if (!msn_email_is_valid(bname)) {
+		gchar *buf;
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
+		if (!purple_conv_present_error(bname, account, buf))
+			purple_notify_error(pc, NULL, _("Unable to Add"), buf);
+		g_free(buf);
+
+		/* Remove from local list */
+		purple_blist_remove_buddy(buddy);
+
+		return;
+	}
+
+	/* Make sure name is normalized */
+	purple_blist_rename_buddy(buddy, bname);
+
+	userlist = session->userlist;
+	user = msn_userlist_find_user(userlist, bname);
+	if (user && user->authorized) {
+		message = NULL;
+	}
 	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
 		/* We already know this buddy and their network. This function knows
 		   what to do with users already in the list and stuff... */
-		msn_user_set_invite_message(user, msg);
-		msn_userlist_add_buddy(userlist, who, gname);
+		msn_user_set_invite_message(user, message);
+		msn_userlist_add_buddy(userlist, bname, gname);
 	} else {
 		char **tokens;
 		char *fqy;
 		/* We need to check the network for this buddy first */
-		user = msn_user_new(userlist, who, NULL);
-		msn_user_set_invite_message(user, msg);
+		user = msn_user_new(userlist, bname, NULL);
+		msn_user_set_invite_message(user, message);
 		msn_user_set_pending_group(user, gname);
 		msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
 		/* Should probably re-use the msn_add_contact_xml function here */
-		tokens = g_strsplit(who, "@", 2);
+		tokens = g_strsplit(bname, "@", 2);
 		fqy = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",
 		                      tokens[1],
 		                      tokens[0]);
@@ -1836,57 +1843,6 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 		                          (MsnFqyCb)add_pending_buddy, user);
 		g_free(fqy);
 		g_strfreev(tokens);
-	}
-}
-
-static void
-cancel_auth_request(MsnAddReqData *data, char *msg)
-{
-	/* Remove from local list */
-	purple_blist_remove_buddy(data->buddy);
-
-	g_free(data);
-}
-
-static void
-msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
-{
-	const char *bname;
-	MsnAddReqData *data;
-	MsnSession *session;
-	MsnUser *user;
-
-	bname = purple_buddy_get_name(buddy);
-
-	if (!msn_email_is_valid(bname)) {
-		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
-		if (!purple_conv_present_error(bname, purple_connection_get_account(gc), buf))
-			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
-		g_free(buf);
-
-		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
-
-		return;
-	}
-
-	data = g_new0(MsnAddReqData, 1);
-	data->pc = gc;
-	data->buddy = buddy;
-	data->group = group;
-
-	session = purple_connection_get_protocol_data(gc);
-	user = msn_userlist_find_user(session->userlist, bname);
-	if (user && user->authorized) {
-		finish_auth_request(data, NULL);
-	} else {
-		purple_request_input(gc, NULL, _("Authorization Request Message:"),
-		                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-		                     _("_OK"), G_CALLBACK(finish_auth_request),
-		                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
-		                     purple_connection_get_account(gc), bname, NULL,
-		                     data);
 	}
 }
 
@@ -2971,7 +2927,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 
 static PurplePluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_MAIL_CHECK,
+	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
 	NULL,                               /* user_splits */
 	NULL,                               /* protocol_options */
 	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},   /* icon_spec */
@@ -2992,7 +2948,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_set_status,                     /* set_away */
 	msn_set_idle,                       /* set_idle */
 	NULL,                               /* change_passwd */
-	msn_add_buddy,                      /* add_buddy */
+	NULL,                               /* add_buddy */
 	NULL,                               /* add_buddies */
 	msn_rem_buddy,                      /* remove_buddy */
 	NULL,                               /* remove_buddies */
@@ -3042,7 +2998,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* get_media_caps */
 	NULL,                               /* get_moods */
 	msn_set_public_alias,               /* set_public_alias */
-	msn_get_public_alias                /* get_public_alias */
+	msn_get_public_alias,               /* get_public_alias */
+	msn_add_buddy,                      /* add_buddy_with_invite */
+	NULL                                /* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =
