@@ -235,7 +235,6 @@ static void free_markupdata( struct RXMsgData* mx )
  */
 static void mxit_show_split_message( struct RXMsgData* mx )
 {
-	const char*		cont	= "<font color=\"#999999\">continuing...</font>\n";
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
 	int				pos		= 0;
@@ -245,7 +244,6 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 	int				l_gt	= 0;
 	int				stop	= 0;
 	int				tags	= 0;
-	int				segs	= 0;
 	gboolean		intag	= FALSE;
 
 	/*
@@ -319,21 +317,20 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 				stop--;
 			}
 
-			/* build the string */
-			if ( segs )
-				g_string_prepend( msg, cont );
-
 			/* push message to pidgin */
 			serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
 			g_string_free( msg, TRUE );
 			msg = NULL;
 
-			tags = 0;
-			segs++;
-			start = stop + 1;
-		}
+			/* next part need this flag set */
+			mx->flags |= PURPLE_MESSAGE_RAW;
 
-		pos++;
+			tags = 0;
+			start = stop + 1;
+			pos = start;
+		}
+		else
+			pos++;
 	}
 
 	if ( start != pos ) {
@@ -343,8 +340,6 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 		ch[pos] = '\0';
 		msg = g_string_new( &ch[start] );
 		ch[pos] = '\n';
-		if ( segs )
-			g_string_prepend( msg, cont );
 
 		/* push message to pidgin */
 		serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
