@@ -156,17 +156,6 @@ void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
 
 /**
- * Migrates from <tt>.gaim</tt> to <tt>.purple</tt>.
- *
- * UIs <strong>must not</strong> call this if they have been told to use a
- * custom user directory.
- *
- * @return A boolean indicating success or migration failure. On failure,
- *         the application must display an error to the user and then exit.
- */
-gboolean purple_core_migrate(void);
-
-/**
  * Ensures that only one instance is running.  If libpurple is built with D-Bus
  * support, this checks if another process owns the libpurple bus name and if
  * so whether that process is using the same configuration directory as this

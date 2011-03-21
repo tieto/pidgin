@@ -263,8 +263,8 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 				message = tmp;
 			}
 
-		} else if (aim_ssi_waitingforauth(od->ssi.local,
-			aim_ssi_itemlist_findparentname(od->ssi.local, purple_buddy_get_name(b)),
+		} else if (aim_ssi_waitingforauth(&od->ssi.local,
+			aim_ssi_itemlist_findparentname(&od->ssi.local, purple_buddy_get_name(b)),
 			purple_buddy_get_name(b)))
 		{
 			/* Note if an offline buddy is not authorized */
@@ -356,7 +356,7 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 	}
 
 	if ((b != NULL) && (bname != NULL) && (g != NULL) && (gname != NULL)) {
-		tmp = aim_ssi_getcomment(od->ssi.local, gname, bname);
+		tmp = aim_ssi_getcomment(&od->ssi.local, gname, bname);
 		if (tmp != NULL) {
 			char *tmp2 = g_markup_escape_text(tmp, strlen(tmp));
 			g_free(tmp);

@@ -4941,18 +4941,6 @@ purple_escape_filename(const char *str)
 	return buf;
 }
 
-const char *_purple_oscar_convert(const char *act, const char *protocol)
-{
-	if (act && purple_strequal(protocol, "prpl-oscar")) {
-		int i;
-		for (i = 0; act[i] != '\0'; i++)
-			if (!isdigit(act[i]))
-				return "prpl-aim";
-		return "prpl-icq";
-	}
-	return protocol;
-}
-
 void purple_restore_default_signal_handlers(void)
 {
 #ifndef _WIN32
