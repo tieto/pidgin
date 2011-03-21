@@ -1173,7 +1173,7 @@ static void
 add_voice_options(AccountPrefsDialog *dialog)
 {
 #ifdef USE_VV
-	if (!dialog->prpl_info || !dialog->prpl_info->initiate_media) {
+	if (!dialog->prpl_info || !PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, initiate_media)) {
 		if (dialog->voice_frame) {
 			gtk_widget_destroy(dialog->voice_frame);
 			dialog->voice_frame = NULL;
