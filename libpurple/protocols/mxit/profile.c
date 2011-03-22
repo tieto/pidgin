@@ -146,6 +146,11 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
 	purple_notify_user_info_add_pair( info, _( "Country" ), profile->regcountry );
 
+	if ( strlen( profile->aboutme ) > 0 )
+		purple_notify_user_info_add_pair( info, _( "About Me" ), profile->aboutme );
+	if ( strlen( profile->whereami ) > 0 )
+		purple_notify_user_info_add_pair( info, _( "Where I Live" ), profile->whereami );
+
 	purple_notify_user_info_add_section_break( info );
 
 	if ( contact ) {

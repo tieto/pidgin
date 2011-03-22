@@ -844,7 +844,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
  *  @param session		The MXit session object
  *  @param password		The new password to be used for logging in (optional)
  *	@param nr_attrib	The number of attributes
- *	@param attributes	String containing the attributes and settings seperated by '0x01'
+ *	@param attributes	String containing the attribute-name, attribute-type and value (seperated by '\01')
  */
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes )
 {
@@ -853,7 +853,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 	int				datalen;
 	unsigned int	i;
 
-	parts = g_strsplit( attributes, "\01", ( MXIT_MAX_ATTRIBS * 3 ) );
+	parts = g_strsplit( attributes, "\01", 1 + ( nr_attrib * 3 ) );
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
@@ -1442,7 +1442,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	const char*		statusmsg;
 	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
-									CP_PROFILE_MOBILENR, CP_PROFILE_FLAGS };
+									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_FLAGS };
 
 	purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
@@ -1850,6 +1850,14 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		else if ( strcmp( CP_PROFILE_LASTSEEN, fname ) == 0 ) {
 			/* last seen online */
 			profile->lastonline = strtoll( fvalue, NULL, 10 );
+		}
+		else if ( strcmp( CP_PROFILE_WHEREAMI, fname ) == 0 ) {
+			/* where am I */
+			g_strlcpy( profile->whereami, fvalue, sizeof( profile->whereami ) );
+		}
+		else if ( strcmp( CP_PROFILE_ABOUTME, fname ) == 0) {
+			/* about me */
+			g_strlcpy( profile->aboutme, fvalue, sizeof( profile->aboutme ) );
 		}
 		else {
 			/* invalid profile attribute */

@@ -110,7 +110,6 @@
 /* Client settings */
 #define		MAX_QUEUE_SIZE			( 1 << 5 )				/* tx queue size (32 packets) */
 #define		MXIT_POPUP_WIN_NAME		"MXit Notification"		/* popup window name */
-#define		MXIT_MAX_ATTRIBS		10						/* maximum profile attributes supported */
 #define		MXIT_DEFAULT_LOCALE		"en"					/* default locale setting */
 #define		MXIT_DEFAULT_LOC		"planetpurple"			/* the default location for registration */
 
@@ -194,14 +193,19 @@
 #define		CP_PROFILE_REGCOUNTRY	"registeredcountry"		/* Registered Country Code (UTF8 String) */
 #define		CP_PROFILE_FLAGS		"flags"					/* Profile flags (Bitset) */
 #define		CP_PROFILE_LASTSEEN		"lastseen"				/* Last-Online timestamp */
+#define		CP_PROFILE_WHEREAMI		"whereami"				/* Where am I / Where I live */
+#define		CP_PROFILE_ABOUTME		"aboutme"				/* About me */
 
 /* extended profile field types */
-#define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean profile attribute type */
-#define		CP_PROFILE_TYPE_INT		0x05					/* integer profile attribute type */
-#define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string profile attribute type */
-#define		CP_PROFILE_TYPE_DATE	0x0B					/* date-time profile attribute type */
+#define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean (0 or 1) */
+#define		CP_PROFILE_TYPE_INT		0x05					/* integer (32-bit) */
+#define		CP_PROFILE_TYPE_LONG	0x06					/* long (64-bit) */
+#define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string */
+#define		CP_PROFILE_TYPE_DATE	0x0B					/* date-time (ISO 8601 format) */
 
 /* profile flags */
+#define		CP_PROF_NOT_SEARCHABLE	0x02					/* user cannot be searched for */
+#define		CP_PROF_NOT_SUGGESTABLE	0x08					/* user cannot be suggested as friend */
 #define		CP_PROF_DOBLOCKED		0x40					/* date-of-birth cannot be changed */
 
 /* suggestion types */
