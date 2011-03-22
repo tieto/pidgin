@@ -890,8 +890,8 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
-								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
-								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+								"ms=%i%c%s%c%i%c%i%c%i",	/* inputType \1 input \1 maxSuggestions \1 startIndex \1 numAttributes \1 name0 \1 name1 ... \1 nameN */
+								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, 0, CP_FLD_TERM, nr_attrib );
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
@@ -919,8 +919,8 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
-								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
-								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+								"ms=%i%c%s%c%i%c%i%c%i",	/* inputType \1 input \1 maxSuggestions \1 startIndex \1 numAttributes \1 name0 \1 name1 ... \1 nameN */
+								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, 0, CP_FLD_TERM, nr_attrib );
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
