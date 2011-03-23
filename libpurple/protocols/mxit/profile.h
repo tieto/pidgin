@@ -32,7 +32,7 @@
 struct MXitProfile {
 	/* required */
 	char		loginname[64];						/* name user uses to log into MXit with (aka 'mxitid') */
-	char		nickname[51];						/* user's own display name (aka 'nickname', aka 'fullname', aka 'alias') in MXit */
+	char		nickname[101];						/* user's own display name (aka 'nickname', aka 'fullname', aka 'alias') in MXit */
 	char		birthday[16];						/* user's birthday "YYYY-MM-DD" */
 	gboolean	male;								/* true if the user's gender is male (otherwise female) */
 	char		pin[16];							/* user's password */
@@ -41,7 +41,7 @@ struct MXitProfile {
 	char		title[21];							/* user's title */
 	char		firstname[51];						/* user's first name */
 	char		lastname[51];						/* user's last name (aka 'surname') */
-	char		email[64];							/* user's email address */
+	char		email[201];							/* user's email address */
 	char		mobilenr[21];						/* user's mobile number */
 	char		regcountry[3];						/* user's registered country code */
 	char		whereami[51];						/* where am I / where I live */
