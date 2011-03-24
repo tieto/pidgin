@@ -595,8 +595,13 @@ pidgin_media_accept_cb(PurpleMedia *media, int index)
 static void
 pidgin_media_reject_cb(PurpleMedia *media, int index)
 {
-	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
-			NULL, NULL, TRUE);
+	GList *iter = purple_media_get_session_ids(media);
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		const gchar *sessionid = iter->data;
+		if (!purple_media_accepted(media, sessionid, NULL))
+			purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
+					sessionid, NULL, TRUE);
+	}
 }
 
 static gboolean
