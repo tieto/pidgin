@@ -43,9 +43,13 @@ C_SRC =	\
 	lib/common.c \
 	lib/dcc.c \
 	lib/dcc7.c \
+	lib/debug.c \
+	lib/encoding.c \
 	lib/events.c \
+	lib/handlers.c \
 	lib/http.c \
 	lib/libgadu.c \
+	lib/message.c \
 	lib/obsolete.c \
 	lib/pubdir.c \
 	lib/pubdir50.c \

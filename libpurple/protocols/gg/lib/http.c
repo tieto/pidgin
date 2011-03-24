@@ -1,4 +1,4 @@
-/* $Id: http.c 833 2009-10-01 20:48:01Z wojtekka $ */
+/* $Id: http.c 1036 2010-12-15 00:02:28Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -34,7 +34,6 @@
 #  include <arpa/inet.h>
 #endif
 
-#include "compat.h"
 #include "resolver.h"
 
 #include <ctype.h>
@@ -136,20 +135,25 @@ struct gg_http *gg_http_connect(const char *hostname, int port, int async, const
 		h->check = GG_CHECK_READ;
 		h->timeout = GG_DEFAULT_TIMEOUT;
 	} else {
-		struct in_addr addr;
+		struct in_addr *addr_list = NULL;
+		int addr_count;
 
-		if (gg_gethostbyname_real(hostname, &addr, 0) == -1) {
+		if (gg_gethostbyname_real(hostname, &addr_list, &addr_count, 0) == -1 || addr_count == 0) {
 			gg_debug(GG_DEBUG_MISC, "// gg_http_connect() host not found\n");
 			gg_http_free(h);
+			free(addr_list);
 			errno = ENOENT;
 			return NULL;
 		}
 
-		if ((h->fd = gg_connect(&addr, port, 0)) == -1) {
+		if ((h->fd = gg_connect(&addr_list[0], port, 0)) == -1) {
 			gg_debug(GG_DEBUG_MISC, "// gg_http_connect() connection failed (errno=%d, %s)\n", errno, strerror(errno));
 			gg_http_free(h);
+			free(addr_list);
 			return NULL;
 		}
+
+		free(addr_list);
 
 		h->state = GG_STATE_CONNECTING;
 
@@ -257,7 +261,7 @@ int gg_http_watch_fd(struct gg_http *h)
 	}
 
 	if (h->state == GG_STATE_SENDING_QUERY) {
-		ssize_t res;
+		size_t res;
 
 		if ((res = write(h->fd, h->query, strlen(h->query))) < 1) {
 			gg_debug(GG_DEBUG_MISC, "=> http, write() failed (len=%d, res=%d, errno=%d)\n", strlen(h->query), res, errno);
