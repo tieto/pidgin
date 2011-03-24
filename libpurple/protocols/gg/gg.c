@@ -1417,6 +1417,12 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	gchar *msg;
 	gchar *tmp;
 
+	if (ev->event.msg.message == NULL)
+	{
+		purple_debug_warning("gg", "ggp_recv_message_handler: NULL as message pointer\n");
+		return;
+	}
+
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
 	/*
