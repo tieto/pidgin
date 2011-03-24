@@ -31,19 +31,19 @@
 #include <arpa/nameser_compat.h>
 #endif
 #ifndef T_SRV
-#define T_SRV	33
+#define T_SRV	PurpleDnsTypeSrv
 #endif
 #ifndef T_TXT
-#define T_TXT	16
+#define T_TXT	PurpleDnsTypeTxt
 #endif
 #else /* WIN32 */
 #include <windns.h>
 /* Missing from the mingw headers */
 #ifndef DNS_TYPE_SRV
-# define DNS_TYPE_SRV 33
+# define DNS_TYPE_SRV PurpleDnsTypeSrv
 #endif
 #ifndef DNS_TYPE_TXT
-# define DNS_TYPE_TXT 16
+# define DNS_TYPE_TXT PurpleDnsTypeTxt
 #endif
 #endif
 
@@ -51,6 +51,8 @@
 #include "dnssrv.h"
 #include "eventloop.h"
 #include "network.h"
+
+static PurpleSrvTxtQueryUiOps *srv_txt_query_ui_ops = NULL;
 
 #ifndef _WIN32
 typedef union {
@@ -66,11 +68,7 @@ static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
-struct _PurpleTxtResponse {
-	char *content;
-};
-
-struct _PurpleSrvQueryData {
+struct _PurpleSrvTxtQueryData {
 	union {
 		PurpleSrvCallback srv;
 		PurpleTxtCallback txt;
@@ -79,9 +77,9 @@ struct _PurpleSrvQueryData {
 	gpointer extradata;
 	guint handle;
 	int type;
+	char *query;
 #ifdef _WIN32
 	GThread *resolver;
-	char *query;
 	char *error_message;
 	GList *results;
 #else
@@ -99,6 +97,8 @@ typedef struct _PurpleSrvResponseContainer {
 	PurpleSrvResponse *response;
 	int sum;
 } PurpleSrvResponseContainer;
+
+static gboolean purple_srv_txt_query_ui_resolve(PurpleSrvTxtQueryData *query_data);
 
 /**
  * Sort by priority, then by weight.  Strictly numerically--no
@@ -430,7 +430,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 {
 	int size;
 	int type;
-	PurpleSrvQueryData *query_data = (PurpleSrvQueryData*)data;
+	PurpleSrvTxtQueryData *query_data = (PurpleSrvTxtQueryData*)data;
 	int i;
 	int status;
 
@@ -532,7 +532,7 @@ static gboolean
 res_main_thread_cb(gpointer data)
 {
 	PurpleSrvResponse *srvres = NULL;
-	PurpleSrvQueryData *query_data = data;
+	PurpleSrvTxtQueryData *query_data = data;
 	if(query_data->error_message != NULL) {
 		purple_debug_error("dnssrv", "%s", query_data->error_message);
 		if (query_data->type == DNS_TYPE_SRV) {
@@ -592,7 +592,7 @@ res_thread(gpointer data)
 	PDNS_RECORD dr = NULL;
 	int type;
 	DNS_STATUS ds;
-	PurpleSrvQueryData *query_data = data;
+	PurpleSrvTxtQueryData *query_data = data;
 	type = query_data->type;
 	ds = MyDnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
@@ -672,12 +672,12 @@ res_thread(gpointer data)
 
 #endif
 
-PurpleSrvQueryData *
+PurpleSrvTxtQueryData *
 purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata)
 {
 	char *query;
 	char *hostname;
-	PurpleSrvQueryData *query_data;
+	PurpleSrvTxtQueryData *query_data;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
@@ -709,6 +709,17 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	purple_debug_info("dnssrv","querying SRV record for %s: %s\n", domain,
 			query);
 	g_free(hostname);
+	
+	query_data = g_new0(PurpleSrvTxtQueryData, 1);
+	query_data->type = T_SRV;
+	query_data->cb.srv = cb;
+	query_data->extradata = extradata;
+	query_data->query = query;
+	
+	if (purple_srv_txt_query_ui_resolve(query_data))
+	{
+		return query_data;
+	}
 
 #ifndef _WIN32
 	if(pipe(in) || pipe(out)) {
@@ -747,10 +758,6 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to SRV resolver\n");
 
-	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = T_SRV;
-	query_data->cb.srv = cb;
-	query_data->extradata = extradata;
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
 	query_data->fd_in = in[1];
@@ -767,7 +774,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 		initialized = TRUE;
 	}
 
-	query_data = g_new0(PurpleSrvQueryData, 1);
+	query_data = g_new0(PurpleSrvTxtQueryData, 1);
 	query_data->type = DNS_TYPE_SRV;
 	query_data->cb.srv = cb;
 	query_data->query = query;
@@ -793,11 +800,11 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 #endif
 }
 
-PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata)
+PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata)
 {
 	char *query;
 	char *hostname;
-	PurpleSrvQueryData *query_data;
+	PurpleSrvTxtQueryData *query_data;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
@@ -823,6 +830,18 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	purple_debug_info("dnssrv","querying TXT record for %s: %s\n", domain,
 			query);
 	g_free(hostname);
+	
+	query_data = g_new0(PurpleSrvTxtQueryData, 1);
+	query_data->type = T_TXT;
+	query_data->cb.txt = cb;
+	query_data->extradata = extradata;
+	query_data->query = query;
+	
+	if (purple_srv_txt_query_ui_resolve(query_data)) {
+		/* query intentionally not freed
+		 */
+		return query_data;
+	}
 
 #ifndef _WIN32
 	if(pipe(in) || pipe(out)) {
@@ -860,11 +879,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
-
-	query_data = g_new0(PurpleSrvQueryData, 1);
-	query_data->type = T_TXT;
-	query_data->cb.txt = cb;
-	query_data->extradata = extradata;
+	
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
 	query_data->fd_in = in[1];
@@ -881,7 +896,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 		initialized = TRUE;
 	}
 
-	query_data = g_new0(PurpleSrvQueryData, 1);
+	query_data = g_new0(PurpleSrvTxtQueryData, 1);
 	query_data->type = DNS_TYPE_TXT;
 	query_data->cb.txt = cb;
 	query_data->query = query;
@@ -908,8 +923,13 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 }
 
 void
-purple_srv_cancel(PurpleSrvQueryData *query_data)
+purple_srv_cancel(PurpleSrvTxtQueryData *query_data)
 {
+	PurpleSrvTxtQueryUiOps *ops = purple_srv_txt_query_get_ui_ops();
+
+	if (ops && ops->destroy)
+		ops->destroy(query_data);
+	
 	if (query_data->handle > 0)
 		purple_input_remove(query_data->handle);
 #ifdef _WIN32
@@ -933,7 +953,7 @@ purple_srv_cancel(PurpleSrvQueryData *query_data)
 }
 
 void
-purple_txt_cancel(PurpleSrvQueryData *query_data)
+purple_txt_cancel(PurpleSrvTxtQueryData *query_data)
 {
 	purple_srv_cancel(query_data);
 }
@@ -952,4 +972,86 @@ void purple_txt_response_destroy(PurpleTxtResponse *resp)
 
 	g_free(resp->content);
 	g_free(resp);
+}
+
+/*
+ * Only used as the callback for the ui ops.
+ */
+static void
+purple_srv_query_resolved(PurpleSrvTxtQueryData *query_data, GList *records)
+{
+	g_return_if_fail(records != NULL);
+	
+	purple_debug_info("dnssrv", "SRV records resolved for %s, count: %d\n", query_data->query, g_list_length(records));
+	
+	if (query_data->cb.srv != NULL)
+		query_data->cb.srv(purple_srv_sort(records)->data, g_list_length(records), query_data->extradata);
+}
+
+/*
+ * Only used as the callback for the ui ops.
+ */
+static void
+purple_txt_query_resolved(PurpleSrvTxtQueryData *query_data, GList *entries)
+{
+	g_return_if_fail(entries != NULL);
+
+	purple_debug_info("dnssrv", "TXT entries resolved for %s, count: %d\n", query_data->query, g_list_length(entries));
+
+	if (query_data->cb.txt != NULL)
+		query_data->cb.txt(entries, query_data->extradata);
+}
+
+static void
+purple_srv_query_failed(PurpleSrvTxtQueryData *query_data, const gchar *error_message)
+{
+	purple_debug_error("dnssrv", "%s\n", error_message);
+	
+	if (query_data->cb.srv != NULL)
+		query_data->cb.srv(NULL, 0, query_data->extradata);
+		
+	purple_srv_cancel(query_data);
+}
+
+static gboolean
+purple_srv_txt_query_ui_resolve(PurpleSrvTxtQueryData *query_data)
+{
+	PurpleSrvTxtQueryUiOps *ops = purple_srv_txt_query_get_ui_ops();
+
+	if (ops && ops->resolve)
+		return ops->resolve(query_data, (query_data->type == T_SRV ? purple_srv_query_resolved : purple_txt_query_resolved), purple_srv_query_failed);
+
+	return FALSE;
+}
+
+void
+purple_srv_txt_query_set_ui_ops(PurpleSrvTxtQueryUiOps *ops)
+{
+	srv_txt_query_ui_ops = ops;
+}
+
+PurpleSrvTxtQueryUiOps *
+purple_srv_txt_query_get_ui_ops(void)
+{
+	/* It is perfectly acceptable for srv_txt_query_ui_ops to be NULL; this just
+	 * means that the default platform-specific implementation will be used.
+	 */
+	return srv_txt_query_ui_ops;
+}
+
+char *
+purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data)
+{
+	g_return_val_if_fail(query_data != NULL, NULL);
+	
+	return query_data->query;
+}
+
+
+int
+purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data)
+{
+	g_return_val_if_fail(query_data != NULL, 0);
+	
+	return query_data->type;
 }

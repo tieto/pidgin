@@ -14,6 +14,9 @@ version 2.8.0 (??/??/????):
 		* purple_media_manager_set_video_caps (Jakub Adam) (#13095)
 		* Added add_buddy_with_invite to PurplePluginProtocolInfo
 		* Added add_buddies_with_invite to PurplePluginProtocolInfo
+		* Added PurpleSrvTxtQueryUiOps which allow UIs to specify their
+		  own mechanisms to resolve SRV and/or TXT queries. It works
+		  similar to PurpleDnsQueryUiOps
 
 		Deprecated:
 		* purple_account_add_buddy
