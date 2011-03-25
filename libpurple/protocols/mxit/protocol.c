@@ -541,22 +541,25 @@ static void mxit_manage_queue( struct MXitSession* session )
 	 * it does not send messages too fast otherwise mxit will ignore the user for 30 seconds.
 	 * this is what we are trying to avoid here..
 	 */
-	if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
-		/* we need to wait a little before sending the next packet, so schedule a wakeup call */
-		gint64 tdiff = now - ( session->last_tx );
-		guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
-		if ( delay <= 0 )
-			delay = MXIT_TX_DELAY;
-		purple_timeout_add( delay, mxit_manage_queue_fast, session );
-	}
-	else {
-		/* get the next packet from the queue to send */
-		packet = pop_tx_packet( session );
-		if ( packet != NULL ) {
-			/* there was a packet waiting to be sent to the server, now is the time to do something about it */
+	if ( session->q_fast_timer_id == 0 ) {
+		/* the fast timer has not been set yet */
+		if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
+			/* we need to wait a little before sending the next packet, so schedule a wakeup call */
+			gint64 tdiff = now - ( session->last_tx );
+			guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
+			if ( delay <= 0 )
+				delay = MXIT_TX_DELAY;
+			session->q_fast_timer_id = purple_timeout_add( delay, mxit_manage_queue_fast, session );
+		}
+		else {
+			/* get the next packet from the queue to send */
+			packet = pop_tx_packet( session );
+			if ( packet != NULL ) {
+				/* there was a packet waiting to be sent to the server, now is the time to do something about it */
 
-			/* send the packet to MXit server */
-			mxit_send_packet( session, packet );
+				/* send the packet to MXit server */
+				mxit_send_packet( session, packet );
+			}
 		}
 	}
 }
@@ -587,6 +590,7 @@ gboolean mxit_manage_queue_fast( gpointer user_data )
 {
 	struct MXitSession* session		= (struct MXitSession*) user_data;
 
+	session->q_fast_timer_id = 0;
 	mxit_manage_queue( session );
 
 	/* stop running */
@@ -2646,9 +2650,13 @@ void mxit_close_connection( struct MXitSession* session )
 	if ( session->http_timer_id > 0 )
 		purple_timeout_remove( session->http_timer_id );
 
-	/* remove queue manager timer */
-	if ( session->q_timer > 0 )
-		purple_timeout_remove( session->q_timer );
+	/* remove slow queue manager timer */
+	if ( session->q_slow_timer_id > 0 )
+		purple_timeout_remove( session->q_slow_timer_id );
+
+	/* remove fast queue manager timer */
+	if ( session->q_fast_timer_id > 0 )
+		purple_timeout_remove( session->q_fast_timer_id );
 
 	/* remove all groupchat rooms */
 	while ( session->rooms != NULL ) {
