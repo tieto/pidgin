@@ -1603,6 +1603,17 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 	}
 }
 
+static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int length) {
+    gchar *from;
+
+    from = g_strdup_printf("%u", uin);
+    if (length)
+	serv_got_typing(gc, from, 0, PURPLE_TYPING);
+    else
+	serv_got_typing(gc, from, 0, PURPLE_NOT_TYPING);
+    g_free(from);
+}
+
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
@@ -1715,6 +1726,10 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
+			break;
+		case GG_EVENT_TYPING_NOTIFICATION:
+			ggp_typing_notification_handler(gc, ev->event.typing_notification.uin,
+				ev->event.typing_notification.length);
 			break;
 		default:
 			purple_debug_error("gg",
@@ -2021,7 +2036,8 @@ static void ggp_login(PurpleAccount *account)
 	status = purple_presence_get_active_status(presence);
 
 	glp->encoding = GG_ENCODING_UTF8;
-	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC);
+	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC
+		|GG_FEATURE_TYPING_NOTIFICATION);
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
