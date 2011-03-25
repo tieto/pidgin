@@ -28,6 +28,8 @@ version 2.8.0 (??/??/????):
 	  Klinikowski) (#13525)
 	* Suppress blank messages that happen when sending inline images. (Tomasz
 	  Wasilczyk) (#13554)
+	* Fix sending inline images, including images larger than 256 KB, to remote
+	  users. (Tomasz Wasilczyk) (#13580)
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected. (#7431)
