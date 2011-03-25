@@ -1,5 +1,5 @@
 /*
- *  (C) Copyright 2008 Wojtek Kaniewski <wojtekka@irc.pl>
+ *  (C) Copyright 2009 Wojtek Kaniewski <wojtekka@irc.pl>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -16,13 +16,12 @@
  *  USA.
  */
 
-#ifndef LIBGADU_RESOLVER_H
-#define LIBGADU_RESOLVER_H
+#ifndef LIBGADU_DEBUG_H
+#define LIBGADU_DEBUG_H
 
-#ifndef _WIN32
-#  include <arpa/inet.h>
-#endif
+#include "libgadu.h"
 
-int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread);
+const char *gg_debug_state(enum gg_state_t state);
+void gg_debug_dump(struct gg_session *sess, int level, const char *buf, size_t len);
 
-#endif /* LIBGADU_RESOLVER_H */
+#endif /* LIBGADU_DEBUG_H */

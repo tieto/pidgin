@@ -841,7 +841,7 @@
 /* from dnssrv.h */
 
 #define GaimSrvResponse   PurpleSrvResponse
-#define GaimSrvQueryData  PurpleSrvQueryData
+#define GaimSrvQueryData  PurpleSrvTxtQueryData
 #define GaimSrvCallback   PurpleSrvCallback
 
 #define gaim_srv_resolve  purple_srv_resolve
