@@ -21,6 +21,60 @@
 #include "encoding.h"
 
 static gchar *
+encoding_multi_convert_to_utf8(const gchar *text, gssize textlen, const gchar *encodings, GError **error, gboolean fallback)
+{
+	gchar *utf8 = NULL;
+	const gchar *begin = encodings;
+	const gchar *end = NULL;
+	gchar *curr_encoding = NULL; /* allocated buffer for encoding name */
+	const gchar *curr_encoding_ro = NULL; /* read-only encoding name */
+
+	if (!encodings) {
+		purple_debug_error("oscar", "encodings is NULL");
+		return NULL;
+	}
+
+	for (;;)
+	{
+		/* extract next encoding */
+		end = strchr(begin, ',');
+		if (!end) {
+			curr_encoding_ro = begin;
+		}	else { /* allocate buffer for encoding */
+			curr_encoding = g_strndup(begin, end - begin);
+			if (!curr_encoding) {
+				purple_debug_error("oscar", "Error allocating memory for encoding");
+				break;
+			}
+			curr_encoding_ro = curr_encoding;
+		}
+
+		if (!g_ascii_strcasecmp(curr_encoding_ro, "utf-8") && g_utf8_validate(text, textlen, NULL)) {
+			break;
+		}
+
+		utf8 = g_convert(text, textlen, "UTF-8", curr_encoding_ro, NULL, NULL, NULL);
+
+		if (!end) /* last occurence. do not free curr_encoding: buffer was'nt allocated */
+			break;
+
+		g_free(curr_encoding); /* free allocated buffer for encoding here */
+
+		if (utf8) /* text was successfully converted */
+			break;
+
+		begin = end + 1;
+	}
+
+	if (!utf8 && fallback)
+	{ /* "begin" points to last encoding */
+		utf8 = g_convert_with_fallback(text, textlen, "UTF-8", begin, "?", NULL, NULL, error);
+	}
+
+	return utf8;
+}
+
+static gchar *
 encoding_extract(const char *encoding)
 {
 	char *begin, *end;
@@ -65,7 +119,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	}
 
 	if (glib_encoding != NULL) {
-		utf8 = g_convert(text, textlen, "UTF-8", glib_encoding, NULL, NULL, NULL);
+		utf8 = encoding_multi_convert_to_utf8(text, textlen, glib_encoding, NULL, FALSE);
 	}
 
 	/*
@@ -101,7 +155,7 @@ oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg)
 		charset = purple_account_get_string(account, "encoding", NULL);
 
 	if(charset && *charset)
-		ret = g_convert(msg, -1, "UTF-8", charset, NULL, NULL, NULL);
+		ret = encoding_multi_convert_to_utf8(msg, -1, charset, NULL, FALSE);
 
 	if(!ret)
 		ret = purple_utf8_try_convert(msg);
@@ -119,10 +173,7 @@ oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *charsetstr, 
 		return NULL;
 
 	if (g_ascii_strcasecmp("UTF-8", charsetstr)) {
-		if (fallback)
-			ret = g_convert_with_fallback(data, datalen, "UTF-8", charsetstr, "?", NULL, NULL, &err);
-		else
-			ret = g_convert(data, datalen, "UTF-8", charsetstr, NULL, NULL, &err);
+		ret = encoding_multi_convert_to_utf8(data, datalen, charsetstr, &err, fallback);
 		if (err != NULL) {
 			purple_debug_warning("oscar", "Conversion from %s failed: %s.\n",
 							   charsetstr, err->message);

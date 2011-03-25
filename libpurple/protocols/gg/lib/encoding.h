@@ -1,5 +1,6 @@
 /*
- *  (C) Copyright 2008 Wojtek Kaniewski <wojtekka@irc.pl>
+ *  (C) Copyright 2008-2009 Jakub Zawadzki <darkjames@darkjames.ath.cx>
+ *                          Wojtek Kaniewski <wojtekka@irc.pl>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -16,13 +17,11 @@
  *  USA.
  */
 
-#ifndef LIBGADU_RESOLVER_H
-#define LIBGADU_RESOLVER_H
+#ifndef LIBGADU_ENCODING_H
+#define LIBGADU_ENCODING_H
 
-#ifndef _WIN32
-#  include <arpa/inet.h>
-#endif
+#include "libgadu.h"
 
-int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread);
+char *gg_encoding_convert(const char *src, gg_encoding_t src_encoding, gg_encoding_t dst_encoding, int src_length, int dst_length);
 
-#endif /* LIBGADU_RESOLVER_H */
+#endif /* LIBGADU_SESSION_H */

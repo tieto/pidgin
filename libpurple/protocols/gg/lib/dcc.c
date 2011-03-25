@@ -1,4 +1,4 @@
-/* $Id: dcc.c 711 2009-04-16 00:52:47Z darkjames $ */
+/* $Id: dcc.c 1023 2010-11-16 18:27:35Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2008 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -421,7 +421,7 @@ struct gg_dcc *gg_dcc_socket_create(uin_t uin, uint16_t port)
 		return NULL;
 	}
 
-	if (!port)
+	if (port == 0 || port == -1)
 		port = GG_DEFAULT_DCC_PORT;
 
 	while (!bound) {
