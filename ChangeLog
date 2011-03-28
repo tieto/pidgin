@@ -35,7 +35,7 @@ version 2.8.0 (??/??/????):
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
-	  (#7431)
+	  (#11895)
 	* Ignore Daylight Saving Time when performing calculations related to
 	  birthdays. (Dustin Gathmann) (#13533)
 	* It is now possible to specify multiple encodings on the Advanced tab of
