@@ -39,8 +39,8 @@ version 2.8.0 (??/??/????):
 	* Ignore Daylight Saving Time when performing calculations related to
 	  birthdays. (Dustin Gathmann) (#13533)
 	* It is now possible to specify multiple encodings on the Advanced tab of
-	  an ICQ account's settings by using a comma-delimited list.  (loentar)
-	  (#13496)
+	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
+	  Utkin (#13496)
 
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test
