@@ -181,3 +181,43 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_userinfo( session->con, username, info, NULL, NULL );
 	purple_notify_user_info_destroy( info );
 }
+
+/*------------------------------------------------------------------------
+ * Display the profiles of search results.
+ *
+ *  @param session		The MXit session object
+ *  @param entries		The list of profile entries
+ */
+void mxit_show_search_results( struct MXitSession* session, GList* entries )
+{
+	PurpleNotifySearchResults*	results;
+	PurpleNotifySearchColumn*	column;
+
+	if ( !entries ) {
+		mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "No results" ), _( "No users found." ) );
+		return;
+	}
+
+	results = purple_notify_searchresults_new();
+	if ( !results )
+		return;
+
+	/* define columns */
+	column = purple_notify_searchresults_column_new( _( "UserId" ) );
+	purple_notify_searchresults_column_add( results, column );
+	
+	while (entries != NULL) {
+		struct MXitProfile* profile	= ( struct MXitProfile *) entries->data;
+		GList*	row;
+
+		/* column values */
+		row = g_list_append( NULL, g_strdup( profile->userid ) );
+
+		purple_notify_searchresults_row_add( results, row );
+		entries = g_list_next( entries );
+	}
+
+	// TODO: add buttons
+
+	purple_notify_searchresults( session->con, NULL, NULL, NULL, results, NULL, NULL );
+}

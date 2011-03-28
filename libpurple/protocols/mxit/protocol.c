@@ -535,7 +535,7 @@ static void mxit_manage_queue( struct MXitSession* session )
 		return;
 	}
 
-	/* 
+	/*
 	 * the mxit server has flood detection and it prevents you from sending messages to fast.
 	 * this is a self defense mechanism, a very annoying feature. so the client must ensure that
 	 * it does not send messages too fast otherwise mxit will ignore the user for 30 seconds.
@@ -717,7 +717,7 @@ void mxit_send_register( struct MXitSession* session )
 								"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
-								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */	
+								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */
 								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
 								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
@@ -884,7 +884,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
  *  @param session		The MXit session object
  *  @param max			Maximum number of results to return
  *  @param nr_attribs	Number of attributes being requested
- *  @param attribute	The names of the attributes  
+ *  @param attribute	The names of the attributes
  */
 void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] )
 {
@@ -1882,6 +1882,43 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 
 
 /*------------------------------------------------------------------------
+ * Process a received suggest-contacts packet.
+ *
+ *  @param session		The MXit session object
+ *  @param records		The packet's data records
+ *  @param rcount		The number of data records
+ */
+static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct record** records, int rcount )
+{
+	int i;
+	GList* entries = NULL;
+
+	/*
+	 * searchType \1 numSuggestions \1 total \1 numAttributes \1 name0 \1 name1 \1 ... \1 nameN \0
+	 * userid \1 contactType \1 value0 \1 value1 ... valueN \0
+	 * ...
+	 * userid \1 contactType \1 value0 \1 value1 ... valueN
+	 */
+
+	for ( i = 1; i < rcount; i ++ ) {
+		struct record*		rec		= records[i];
+		struct MXitProfile*	profile	= g_new0( struct MXitProfile, 1 );
+
+		g_strlcpy( profile->userid, rec->fields[0]->data, sizeof( profile->userid ) );
+		// TODO: Decoce other profile fields.
+
+		entries = g_list_append( entries, profile );
+	}
+
+	/* display */
+	mxit_show_search_results( session, entries );
+
+	/* cleanup */
+	g_list_foreach( entries, (GFunc)g_free, NULL );
+}
+
+
+/*------------------------------------------------------------------------
  * Return the length of a multimedia chunk
  *
  * @return		The actual chunk data length in bytes
@@ -2130,6 +2167,11 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 		case CP_CMD_EXTPROFILE_GET :
 				/* profile update */
 				mxit_parse_cmd_extprofile( session, &packet->records[2], packet->rcount - 2 );
+				break;
+
+		case CP_CMD_SUGGESTCONTACTS :
+				/* suggest contacts */
+				mxit_parse_cmd_suggestcontacts( session, &packet->records[2], packet->rcount - 2 );
 				break;
 
 		case CP_CMD_MOOD :
