@@ -711,7 +711,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	g_free(hostname);
 	
 	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = T_SRV;
+	query_data->type = PurpleDnsTypeSrv;
 	query_data->cb.srv = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
@@ -774,12 +774,6 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 		initialized = TRUE;
 	}
 
-	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = DNS_TYPE_SRV;
-	query_data->cb.srv = cb;
-	query_data->query = query;
-	query_data->extradata = extradata;
-
 	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
 		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
 	else {
@@ -832,7 +826,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain,
 	g_free(hostname);
 	
 	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = T_TXT;
+	query_data->type = PurpleDnsTypeTxt;
 	query_data->cb.txt = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
@@ -895,12 +889,6 @@ PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain,
 			"dnsapi.dll", "DnsRecordListFree");
 		initialized = TRUE;
 	}
-
-	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = DNS_TYPE_TXT;
-	query_data->cb.txt = cb;
-	query_data->query = query;
-	query_data->extradata = extradata;
 
 	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
 		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
