@@ -32,6 +32,7 @@
 struct MXitProfile {
 	/* required */
 	char		loginname[64];						/* name user uses to log into MXit with (aka 'mxitid') */
+	char		userid[51];							/* internal UserId (only in search results) */
 	char		nickname[101];						/* user's own display name (aka 'nickname', aka 'fullname', aka 'alias') in MXit */
 	char		birthday[16];						/* user's birthday "YYYY-MM-DD" */
 	gboolean	male;								/* true if the user's gender is male (otherwise female) */
@@ -54,6 +55,7 @@ struct MXitProfile {
 
 struct MXitSession;
 void mxit_show_profile( struct MXitSession* session, const char* username, struct MXitProfile* profile );
+void mxit_show_search_results( struct MXitSession* session, GList* entries );
 
 gboolean validateDate( const char* bday );
 

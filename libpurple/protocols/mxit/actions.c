@@ -389,6 +389,59 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 
 
 /*------------------------------------------------------------------------
+ * Request list of suggested friends.
+ *
+ *  @param action	The action object
+ */
+static void mxit_cb_suggested_friends( PurplePluginAction* action )
+{
+	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	const char*				profilelist[]	= {
+				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+
+	mxit_send_suggest_friends( session, 20, ARRAY_SIZE( profilelist ), profilelist );
+}
+
+
+/*------------------------------------------------------------------------
+ * Perform contact search.
+ *
+ *  @param action	The action object
+ */
+static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
+{
+	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	const char*				profilelist[]	= {
+				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+
+	mxit_send_suggest_search( session, 20, input, ARRAY_SIZE( profilelist ), profilelist );
+}
+
+
+/*------------------------------------------------------------------------
+ * Display the search input form.
+ *
+ *  @param action	The action object
+ */
+static void mxit_cb_search_begin( PurplePluginAction* action )
+{
+	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+
+	purple_request_input( gc, _( "Search for user" ),
+		_( "Search for a MXit contact" ),
+		_( "Type search information" ),
+		NULL, FALSE, FALSE, NULL,
+		_("_Search"), G_CALLBACK( mxit_user_search_cb ),
+		_("_Cancel"), NULL,
+		purple_connection_get_account( gc ), NULL, NULL,
+		gc);
+}
+
+
+/*------------------------------------------------------------------------
  * Associate actions with the MXit plugin.
  *
  *  @param plugin	The MXit protocol plugin
@@ -410,6 +463,14 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 
 	/* display plugin version */
 	action = purple_plugin_action_new( _( "About..." ), mxit_cb_action_about );
+	m = g_list_append( m, action );
+
+	/* suggested friends */
+	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_cb_suggested_friends );
+	m = g_list_append( m, action );
+
+	/* search for users */
+	action = purple_plugin_action_new( _( "Search for Users..." ), mxit_cb_search_begin );
 	m = g_list_append( m, action );
 
 	return m;
