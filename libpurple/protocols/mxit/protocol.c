@@ -535,28 +535,31 @@ static void mxit_manage_queue( struct MXitSession* session )
 		return;
 	}
 
-	/* 
+	/*
 	 * the mxit server has flood detection and it prevents you from sending messages to fast.
 	 * this is a self defense mechanism, a very annoying feature. so the client must ensure that
 	 * it does not send messages too fast otherwise mxit will ignore the user for 30 seconds.
 	 * this is what we are trying to avoid here..
 	 */
-	if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
-		/* we need to wait a little before sending the next packet, so schedule a wakeup call */
-		gint64 tdiff = now - ( session->last_tx );
-		guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
-		if ( delay <= 0 )
-			delay = MXIT_TX_DELAY;
-		purple_timeout_add( delay, mxit_manage_queue_fast, session );
-	}
-	else {
-		/* get the next packet from the queue to send */
-		packet = pop_tx_packet( session );
-		if ( packet != NULL ) {
-			/* there was a packet waiting to be sent to the server, now is the time to do something about it */
+	if ( session->q_fast_timer_id == 0 ) {
+		/* the fast timer has not been set yet */
+		if ( session->last_tx > ( now - MXIT_TX_DELAY ) ) {
+			/* we need to wait a little before sending the next packet, so schedule a wakeup call */
+			gint64 tdiff = now - ( session->last_tx );
+			guint delay = ( MXIT_TX_DELAY - tdiff ) + 9;
+			if ( delay <= 0 )
+				delay = MXIT_TX_DELAY;
+			session->q_fast_timer_id = purple_timeout_add( delay, mxit_manage_queue_fast, session );
+		}
+		else {
+			/* get the next packet from the queue to send */
+			packet = pop_tx_packet( session );
+			if ( packet != NULL ) {
+				/* there was a packet waiting to be sent to the server, now is the time to do something about it */
 
-			/* send the packet to MXit server */
-			mxit_send_packet( session, packet );
+				/* send the packet to MXit server */
+				mxit_send_packet( session, packet );
+			}
 		}
 	}
 }
@@ -587,6 +590,7 @@ gboolean mxit_manage_queue_fast( gpointer user_data )
 {
 	struct MXitSession* session		= (struct MXitSession*) user_data;
 
+	session->q_fast_timer_id = 0;
 	mxit_manage_queue( session );
 
 	/* stop running */
@@ -713,7 +717,7 @@ void mxit_send_register( struct MXitSession* session )
 								"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s"			/* dc\1features\1dialingcode\1locale */
-								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */	
+								"%c%i%c%i",					/* \1protocolVer\1lastRosterUpdate */
 								session->encpwd, CP_FLD_TERM, clientVersion, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
 								profile->birthday, CP_FLD_TERM, ( profile->male ) ? 1 : 0, CP_FLD_TERM, MXIT_DEFAULT_LOC, CP_FLD_TERM, MXIT_CP_CAP, CP_FLD_TERM,
 								session->distcode, CP_FLD_TERM, features, CP_FLD_TERM, session->dialcode, CP_FLD_TERM, locale,
@@ -844,7 +848,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
  *  @param session		The MXit session object
  *  @param password		The new password to be used for logging in (optional)
  *	@param nr_attrib	The number of attributes
- *	@param attributes	String containing the attributes and settings seperated by '0x01'
+ *	@param attributes	String containing the attribute-name, attribute-type and value (seperated by '\01')
  */
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes )
 {
@@ -853,7 +857,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 	int				datalen;
 	unsigned int	i;
 
-	parts = g_strsplit( attributes, "\01", ( MXIT_MAX_ATTRIBS * 3 ) );
+	parts = g_strsplit( attributes, "\01", 1 + ( nr_attrib * 3 ) );
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
@@ -880,7 +884,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
  *  @param session		The MXit session object
  *  @param max			Maximum number of results to return
  *  @param nr_attribs	Number of attributes being requested
- *  @param attribute	The names of the attributes  
+ *  @param attribute	The names of the attributes
  */
 void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] )
 {
@@ -890,8 +894,8 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
-								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
-								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+								"ms=%i%c%s%c%i%c%i%c%i",	/* inputType \1 input \1 maxSuggestions \1 startIndex \1 numAttributes \1 name0 \1 name1 ... \1 nameN */
+								CP_SUGGEST_FRIENDS, CP_FLD_TERM, "", CP_FLD_TERM, max, CP_FLD_TERM, 0, CP_FLD_TERM, nr_attrib );
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
@@ -919,8 +923,8 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),
-								"ms=%i%c%s%c%i%c%i",		/* inputType \1 input \ 1 maxSuggestions \1 numAttributes \1 name0 ... \1 nameN */
-								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, nr_attrib );
+								"ms=%i%c%s%c%i%c%i%c%i",	/* inputType \1 input \1 maxSuggestions \1 startIndex \1 numAttributes \1 name0 \1 name1 ... \1 nameN */
+								CP_SUGGEST_SEARCH, CP_FLD_TERM, text, CP_FLD_TERM, max, CP_FLD_TERM, 0, CP_FLD_TERM, nr_attrib );
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
@@ -987,8 +991,9 @@ void mxit_send_mood( struct MXitSession* session, int mood )
  *  @param username		The username of the contact being invited
  *  @param alias		Our alias for the contact
  *  @param groupname	Group in which contact should be stored.
+ *  @param message		Invite message
  */
-void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname )
+void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname, const char* message )
 {
 	char		data[CP_MAX_PACKET];
 	int			datalen;
@@ -997,7 +1002,7 @@ void mxit_send_invite( struct MXitSession* session, const char* username, const 
 	datalen = snprintf( data, sizeof( data ),
 								"ms=%s%c%s%c%s%c%i%c%s",	/* "ms"=group\1username\1alias\1type\1msg */
 								groupname, CP_FLD_TERM, username, CP_FLD_TERM, alias,
-								CP_FLD_TERM, MXIT_TYPE_MXIT, CP_FLD_TERM, ""
+								CP_FLD_TERM, MXIT_TYPE_MXIT, CP_FLD_TERM, ( message ? message : "" )
 	);
 
 	/* queue packet for transmission */
@@ -1441,7 +1446,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	const char*		statusmsg;
 	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
-									CP_PROFILE_MOBILENR, CP_PROFILE_FLAGS };
+									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_FLAGS };
 
 	purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
@@ -1850,6 +1855,14 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* last seen online */
 			profile->lastonline = strtoll( fvalue, NULL, 10 );
 		}
+		else if ( strcmp( CP_PROFILE_WHEREAMI, fname ) == 0 ) {
+			/* where am I */
+			g_strlcpy( profile->whereami, fvalue, sizeof( profile->whereami ) );
+		}
+		else if ( strcmp( CP_PROFILE_ABOUTME, fname ) == 0) {
+			/* about me */
+			g_strlcpy( profile->aboutme, fvalue, sizeof( profile->aboutme ) );
+		}
 		else {
 			/* invalid profile attribute */
 			purple_debug_error( MXIT_PLUGIN_ID, "Invalid profile attribute received '%s' \n", fname );
@@ -1865,6 +1878,43 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		mxit_show_profile( session, mxitId, profile );
 		g_free( profile );
 	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Process a received suggest-contacts packet.
+ *
+ *  @param session		The MXit session object
+ *  @param records		The packet's data records
+ *  @param rcount		The number of data records
+ */
+static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct record** records, int rcount )
+{
+	int i;
+	GList* entries = NULL;
+
+	/*
+	 * searchType \1 numSuggestions \1 total \1 numAttributes \1 name0 \1 name1 \1 ... \1 nameN \0
+	 * userid \1 contactType \1 value0 \1 value1 ... valueN \0
+	 * ...
+	 * userid \1 contactType \1 value0 \1 value1 ... valueN
+	 */
+
+	for ( i = 1; i < rcount; i ++ ) {
+		struct record*		rec		= records[i];
+		struct MXitProfile*	profile	= g_new0( struct MXitProfile, 1 );
+
+		g_strlcpy( profile->userid, rec->fields[0]->data, sizeof( profile->userid ) );
+		// TODO: Decoce other profile fields.
+
+		entries = g_list_append( entries, profile );
+	}
+
+	/* display */
+	mxit_show_search_results( session, entries );
+
+	/* cleanup */
+	g_list_foreach( entries, (GFunc)g_free, NULL );
 }
 
 
@@ -2117,6 +2167,11 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 		case CP_CMD_EXTPROFILE_GET :
 				/* profile update */
 				mxit_parse_cmd_extprofile( session, &packet->records[2], packet->rcount - 2 );
+				break;
+
+		case CP_CMD_SUGGESTCONTACTS :
+				/* suggest contacts */
+				mxit_parse_cmd_suggestcontacts( session, &packet->records[2], packet->rcount - 2 );
 				break;
 
 		case CP_CMD_MOOD :
@@ -2637,9 +2692,13 @@ void mxit_close_connection( struct MXitSession* session )
 	if ( session->http_timer_id > 0 )
 		purple_timeout_remove( session->http_timer_id );
 
-	/* remove queue manager timer */
-	if ( session->q_timer > 0 )
-		purple_timeout_remove( session->q_timer );
+	/* remove slow queue manager timer */
+	if ( session->q_slow_timer_id > 0 )
+		purple_timeout_remove( session->q_slow_timer_id );
+
+	/* remove fast queue manager timer */
+	if ( session->q_fast_timer_id > 0 )
+		purple_timeout_remove( session->q_fast_timer_id );
 
 	/* remove all groupchat rooms */
 	while ( session->rooms != NULL ) {

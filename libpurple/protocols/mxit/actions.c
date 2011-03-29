@@ -186,6 +186,43 @@ out:
 		g_string_append( attributes, attrib );
 		acount++;
 
+#if 0
+		/* update about me */
+		name = purple_request_fields_get_string( fields, "aboutme" );
+		if ( !name )
+			profile->aboutme[0] = '\0';
+		else
+			g_strlcpy( profile->aboutme, name, sizeof( profile->aboutme ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_ABOUTME, CP_PROFILE_TYPE_UTF8, profile->aboutme );
+		g_string_append( attributes, attrib );
+		acount++;
+
+		/* update where am i */
+		name = purple_request_fields_get_string( fields, "whereami" );
+		if ( !name)
+			profile->whereami[0] = '\0';
+		else
+			g_strlcpy( profile->whereami, name, sizeof( profile->whereami ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_WHEREAMI, CP_PROFILE_TYPE_UTF8, profile->whereami );
+		g_string_append( attributes, attrib );
+		acount++;
+#endif
+
+		/* update flags */
+		field = purple_request_fields_get_field( fields, "searchable" );
+		if ( purple_request_field_bool_get_value( field ) )		/* is searchable -> clear not-searchable flag */
+			profile->flags &= ~CP_PROF_NOT_SEARCHABLE;
+		else
+			profile->flags |= CP_PROF_NOT_SEARCHABLE;
+		field = purple_request_fields_get_field( fields, "suggestable" );
+		if ( purple_request_field_bool_get_value( field ) )		/* is suggestable -> clear not-suggestable flag */
+			profile->flags &= ~CP_PROF_NOT_SUGGESTABLE;
+		else
+			profile->flags |= CP_PROF_NOT_SUGGESTABLE;
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%i", CP_PROFILE_FLAGS, CP_PROFILE_TYPE_LONG, profile->flags);
+		g_string_append( attributes, attrib );
+		acount++;
+
 		/* send the profile update to MXit */
 		mxit_send_extprofile_update( session, session->encpwd, acount, attributes->str );
 		g_string_free( attributes, TRUE );
@@ -209,7 +246,6 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	struct MXitProfile*			profile	= session->profile;
 
 	PurpleRequestFields*		fields	= NULL;
-	PurpleRequestFieldGroup*	group	= NULL;
 	PurpleRequestField*			field	= NULL;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_action_profile\n" );
@@ -222,65 +258,92 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	}
 
 	fields = purple_request_fields_new();
-	group = purple_request_field_group_new( NULL );
-	purple_request_fields_add_group( fields, group );
 
-#if	0
-	/* UID (read-only) */
-	if ( session->uid ) {
-		field = purple_request_field_string_new( "mxitid", _( "Your UID" ), session->uid, FALSE );
-		purple_request_field_string_set_editable( field, FALSE );
-		purple_request_field_group_add_field( group, field );
+	/* Security information - PIN, etc */
+	{
+		PurpleRequestFieldGroup* security_group = purple_request_field_group_new( "PIN" );
+
+		/* pin */
+		field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
+		purple_request_field_string_set_masked( field, TRUE );
+		purple_request_field_group_add_field( security_group, field );
+
+		field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
+		purple_request_field_string_set_masked( field, TRUE );
+		purple_request_field_group_add_field( security_group, field );
+
+		purple_request_fields_add_group( fields, security_group );
 	}
-#endif
 
-	/* pin */
-	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
-	purple_request_field_string_set_masked( field, TRUE );
-	purple_request_field_group_add_field( group, field );
-	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
-	purple_request_field_string_set_masked( field, TRUE );
-	purple_request_field_group_add_field( group, field );
+	/* Public information - what other users can see */
+	{
+		PurpleRequestFieldGroup* public_group = purple_request_field_group_new( "Public information" );
 
-	/* display name */
-	field = purple_request_field_string_new( "name", _( "Display Name" ), profile->nickname, FALSE );
-	purple_request_field_group_add_field( group, field );
+		/* display name */
+		field = purple_request_field_string_new( "name", _( "Display Name" ), profile->nickname, FALSE );
+		purple_request_field_group_add_field( public_group, field );
 
-	/* birthday */
-	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
-	purple_request_field_group_add_field( group, field );
-	if ( profile->flags & CP_PROF_DOBLOCKED )
-		purple_request_field_string_set_editable( field, FALSE );
+		/* birthday */
+		field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
+		purple_request_field_group_add_field( public_group, field );
+		if ( profile->flags & CP_PROF_DOBLOCKED )
+			purple_request_field_string_set_editable( field, FALSE );
 
-	/* gender */
-	field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );
-	purple_request_field_choice_add( field, _( "Female" ) );		/* 0 */
-	purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
-	purple_request_field_group_add_field( group, field );
+		/* gender */
+		field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );
+		purple_request_field_choice_add( field, _( "Female" ) );		/* 0 */
+		purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
+		purple_request_field_group_add_field( public_group, field );
 
-	/* hidden */
-	field = purple_request_field_bool_new( "hidden", _( "Hide my number" ), profile->hidden );
-	purple_request_field_group_add_field( group, field );
+		/* first name */
+		field = purple_request_field_string_new( "firstname", _( "First Name" ), profile->firstname, FALSE );
+		purple_request_field_group_add_field( public_group, field );
 
-	/* title */
-	field = purple_request_field_string_new( "title", _( "Title" ), profile->title, FALSE );
-	purple_request_field_group_add_field( group, field );
+		/* last name */
+		field = purple_request_field_string_new( "lastname", _( "Last Name" ), profile->lastname, FALSE );
+		purple_request_field_group_add_field( public_group, field );
 
-	/* first name */
-	field = purple_request_field_string_new( "firstname", _( "First Name" ), profile->firstname, FALSE );
-	purple_request_field_group_add_field( group, field );
+		/* about me */
+		field = purple_request_field_string_new( "aboutme", _( "About Me" ), profile->aboutme, FALSE);
+		purple_request_field_group_add_field( public_group, field );
 
-	/* last name */
-	field = purple_request_field_string_new( "lastname", _( "Last Name" ), profile->lastname, FALSE );
-	purple_request_field_group_add_field( group, field );
+		/* where I live */
+		field = purple_request_field_string_new( "whereami", _( "Where I Live" ), profile->whereami, FALSE);
+		purple_request_field_group_add_field( public_group, field );
 
-	/* email */
-	field = purple_request_field_string_new( "email", _( "Email" ), profile->email, FALSE );
-	purple_request_field_group_add_field( group, field );
+		purple_request_fields_add_group( fields, public_group );
+	}
 
-	/* mobile number */
-	field = purple_request_field_string_new( "mobilenumber", _( "Mobile Number" ), profile->mobilenr, FALSE );
-	purple_request_field_group_add_field( group, field );
+	/* Private information - what only MXit can see */
+	{
+		PurpleRequestFieldGroup* private_group = purple_request_field_group_new( "Private information" );
+
+		/* title */
+		field = purple_request_field_string_new( "title", _( "Title" ), profile->title, FALSE );
+		purple_request_field_group_add_field( private_group, field );
+
+		/* email */
+		field = purple_request_field_string_new( "email", _( "Email" ), profile->email, FALSE );
+		purple_request_field_group_add_field( private_group, field );
+
+		/* mobile number */
+		field = purple_request_field_string_new( "mobilenumber", _( "Mobile Number" ), profile->mobilenr, FALSE );
+		purple_request_field_group_add_field( private_group, field );
+
+		/* hidden number */
+		field = purple_request_field_bool_new( "hidden", _( "Hide my number" ), profile->hidden );
+		purple_request_field_group_add_field( private_group, field );
+
+		/* is searchable */
+		field = purple_request_field_bool_new( "searchable", _( "Can be searched" ), ( ( profile->flags & CP_PROF_NOT_SEARCHABLE ) == 0) );
+		purple_request_field_group_add_field( private_group, field );
+
+		/* is suggestable */
+		field = purple_request_field_bool_new( "suggestable", _( "Can be suggested" ), ( ( profile->flags & CP_PROF_NOT_SUGGESTABLE ) == 0 ) );
+		purple_request_field_group_add_field( private_group, field );
+
+		purple_request_fields_add_group( fields, private_group );
+	}
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Profile" ), _( "Update your Profile" ), _( "Here you can update your MXit profile" ), fields, _( "Set" ),
@@ -314,7 +377,7 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 {
 	char	version[256];
 
-	g_snprintf( version, sizeof( version ), 
+	g_snprintf( version, sizeof( version ),
 											"MXit Client Protocol v%i.%i\n\n"
 											"Author:\nPieter Loubser\n\n"
 											"Contributors:\nAndrew Victor\n\n"
@@ -322,6 +385,59 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 											( MXIT_CP_PROTO_VESION / 10 ), ( MXIT_CP_PROTO_VESION % 10 ) );
 
 	mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "About" ), version );
+}
+
+
+/*------------------------------------------------------------------------
+ * Request list of suggested friends.
+ *
+ *  @param action	The action object
+ */
+static void mxit_cb_suggested_friends( PurplePluginAction* action )
+{
+	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	const char*				profilelist[]	= {
+				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+
+	mxit_send_suggest_friends( session, 20, ARRAY_SIZE( profilelist ), profilelist );
+}
+
+
+/*------------------------------------------------------------------------
+ * Perform contact search.
+ *
+ *  @param action	The action object
+ */
+static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
+{
+	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	const char*				profilelist[]	= {
+				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+
+	mxit_send_suggest_search( session, 20, input, ARRAY_SIZE( profilelist ), profilelist );
+}
+
+
+/*------------------------------------------------------------------------
+ * Display the search input form.
+ *
+ *  @param action	The action object
+ */
+static void mxit_cb_search_begin( PurplePluginAction* action )
+{
+	PurpleConnection*		gc				= (PurpleConnection*) action->context;
+
+	purple_request_input( gc, _( "Search for user" ),
+		_( "Search for a MXit contact" ),
+		_( "Type search information" ),
+		NULL, FALSE, FALSE, NULL,
+		_("_Search"), G_CALLBACK( mxit_user_search_cb ),
+		_("_Cancel"), NULL,
+		purple_connection_get_account( gc ), NULL, NULL,
+		gc);
 }
 
 
@@ -347,6 +463,14 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 
 	/* display plugin version */
 	action = purple_plugin_action_new( _( "About..." ), mxit_cb_action_about );
+	m = g_list_append( m, action );
+
+	/* suggested friends */
+	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_cb_suggested_friends );
+	m = g_list_append( m, action );
+
+	/* search for users */
+	action = purple_plugin_action_new( _( "Search for Users..." ), mxit_cb_search_begin );
 	m = g_list_append( m, action );
 
 	return m;

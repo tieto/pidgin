@@ -142,7 +142,7 @@ void mxit_update_blist( struct MXitSession* session );
 gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* username );
 
 /* libPurple callbacks */
-void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
+void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group, const char* message );
 void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
 void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias );
 void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_group, const char* new_group );
