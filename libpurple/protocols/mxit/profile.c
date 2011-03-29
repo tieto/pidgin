@@ -23,6 +23,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#define		_XOPEN_SOURCE
+#include	<time.h>
+
 #include    "internal.h"
 #include	"purple.h"
 
@@ -34,7 +37,7 @@
 /*------------------------------------------------------------------------
  * Returns true if it is a valid date.
  *
- * @param bday		Date-of-Birth string
+ * @param bday		Date-of-Birth string (YYYY-MM-DD)
  * @return			TRUE if valid, else FALSE
  */
 gboolean validateDate( const char* bday )
@@ -101,6 +104,40 @@ gboolean validateDate( const char* bday )
 
 
 /*------------------------------------------------------------------------
+ * Calculate an Age from the date-of-birth.
+ *
+ * @param date		Date-of-Birth string (YYYY-MM-DD)
+ * @return			The age
+ */
+static int calculateAge( const char* date )
+{
+	time_t t;
+	struct tm now, bdate;
+	int age;
+
+	if ( ( !date ) || ( strlen( date ) == 0 ) )
+		return 0;
+
+	/* current time */
+	t = time(NULL);
+	localtime_r( &t, &now );
+
+	/* decode hdate */
+	memset( &bdate, 0, sizeof( struct tm ) );
+	strptime( date, "%Y-%m-%d", &bdate );
+
+	/* calculate difference */
+	age = now.tm_year - bdate.tm_year;
+	if ( now.tm_mon < bdate.tm_mon )		/* is before month of birth */
+		age--;
+	else if ( (now.tm_mon == bdate.tm_mon ) && ( now.tm_mday < bdate.tm_mday ) )	/* before birthday in current month */
+		age--;
+
+	return age;
+}
+
+
+/*------------------------------------------------------------------------
  * Returns timestamp field in date & time format (DD-MM-YYYY HH:MM:SS)
  *
  * @param msecs		The timestamps (milliseconds since epoch)
@@ -120,9 +157,9 @@ static const char* datetime( gint64 msecs )
 /*------------------------------------------------------------------------
  * Display the profile information.
  *
- *  @param session		The MXit session object
- *  @param username		The username who's profile information this is
- *  @param profile		The profile
+ * @param session		The MXit session object
+ * @param username		The username who's profile information this is
+ * @param profile		The profile
  */
 void mxit_show_profile( struct MXitSession* session, const char* username, struct MXitProfile* profile )
 {
@@ -185,13 +222,16 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 /*------------------------------------------------------------------------
  * Display the profiles of search results.
  *
- *  @param session		The MXit session object
- *  @param entries		The list of profile entries
+ * @param session		The MXit session object
+ * @param searchType	The type of search (CP_SUGGEST_*)
+ * @param maxResults	The maximum number of results
+ * @param entries		The list of profile entries
  */
-void mxit_show_search_results( struct MXitSession* session, GList* entries )
+void mxit_show_search_results( struct MXitSession* session, int searchType, int maxResults, GList* entries )
 {
 	PurpleNotifySearchResults*	results;
 	PurpleNotifySearchColumn*	column;
+	gchar*						text;
 
 	if ( !entries ) {
 		mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "No results" ), _( "No users found." ) );
@@ -205,13 +245,25 @@ void mxit_show_search_results( struct MXitSession* session, GList* entries )
 	/* define columns */
 	column = purple_notify_searchresults_column_new( _( "UserId" ) );
 	purple_notify_searchresults_column_add( results, column );
-	
+	column = purple_notify_searchresults_column_new( _( "Display Name" ) );
+	purple_notify_searchresults_column_add( results, column );
+	column = purple_notify_searchresults_column_new( _( "Gender" ) );
+	purple_notify_searchresults_column_add( results, column );
+	column = purple_notify_searchresults_column_new( _( "Age" ) );
+	purple_notify_searchresults_column_add( results, column );
+	column = purple_notify_searchresults_column_new( _( "Where I live" ) );
+	purple_notify_searchresults_column_add( results, column );
+
 	while (entries != NULL) {
 		struct MXitProfile* profile	= ( struct MXitProfile *) entries->data;
 		GList*	row;
 
 		/* column values */
 		row = g_list_append( NULL, g_strdup( profile->userid ) );
+		row = g_list_append( row, g_strdup( profile->nickname ) );
+		row = g_list_append( row, g_strdup( profile->male ? "Male" : "Female" ) );
+		row = g_list_append( row, g_strdup_printf( "%i", calculateAge( profile->birthday ) ) );
+		row = g_list_append( row, g_strdup( profile->whereami ) );
 
 		purple_notify_searchresults_row_add( results, row );
 		entries = g_list_next( entries );
@@ -219,5 +271,9 @@ void mxit_show_search_results( struct MXitSession* session, GList* entries )
 
 	// TODO: add buttons
 
-	purple_notify_searchresults( session->con, NULL, NULL, NULL, results, NULL, NULL );
+	text = g_strdup_printf( _( "We found %i contacts that match your search." ), maxResults );
+
+	purple_notify_searchresults( session->con, NULL, text, NULL, results, NULL, NULL );
+
+	g_free( text);
 }

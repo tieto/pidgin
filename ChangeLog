@@ -42,12 +42,16 @@ version 2.8.0 (??/??/????):
 	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
 	  Utkin (#13496)
 
+	MXit:
+	* Support for an Invite Message when adding a buddy.
+	* Fix bug when splitting a long messages with lots of links.
+	* Fix detection of new kick message from a MultiMX room.
+	* Fix crash caused by fast-queue timer not being removed on session
+	  close. (broken in 2.7.11)
+
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test
 	  microphone settings. (Jakub Adam) (#13182)
-
-	MXit:
-	* Support for an Invite Message when adding a buddy.
 
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally

@@ -1890,8 +1890,11 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
  */
 static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct record** records, int rcount )
 {
-	int i;
 	GList* entries = NULL;
+	int searchType;
+	int maxResults;
+	int count;
+	int i;
 
 	/*
 	 * searchType \1 numSuggestions \1 total \1 numAttributes \1 name0 \1 name1 \1 ... \1 nameN \0
@@ -1900,18 +1903,57 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 	 * userid \1 contactType \1 value0 \1 value1 ... valueN
 	 */
 
+	/* the type of results */
+	searchType = atoi( records[0]->fields[0]->data );
+
+	/* the maximum number of results */
+	maxResults = atoi( records[0]->fields[2]->data );
+
+	/* set the count for attributes */
+	count = atoi( records[0]->fields[3]->data );
+
 	for ( i = 1; i < rcount; i ++ ) {
 		struct record*		rec		= records[i];
 		struct MXitProfile*	profile	= g_new0( struct MXitProfile, 1 );
+		int j;
 
 		g_strlcpy( profile->userid, rec->fields[0]->data, sizeof( profile->userid ) );
-		// TODO: Decoce other profile fields.
+		// TODO: ContactType - User or Service
+
+		for ( j = 0; j < count; j++ ) {
+			char* fname;
+			char* fvalue = "";
+
+			fname = records[0]->fields[4 + j]->data;		/* field name */
+			if ( records[i]->fcount > ( 2 + j ) )
+				fvalue = records[i]->fields[2 + j]->data;	/* field value */
+
+			purple_debug_info( MXIT_PLUGIN_ID, " %s: field='%s' value='%s'\n", profile->userid, fname, fvalue );
+
+			if ( strcmp( CP_PROFILE_BIRTHDATE, fname ) == 0 ) {
+				/* birthdate */
+				g_strlcpy( profile->birthday, fvalue, sizeof( profile->birthday ) );
+			}
+			else if ( strcmp( CP_PROFILE_GENDER, fname ) == 0 ) {
+				/* gender */
+				profile->male = ( fvalue[0] == '1' );
+			}
+			else if ( strcmp( CP_PROFILE_FULLNAME, fname ) == 0 ) {
+				/* nickname */
+				g_strlcpy( profile->nickname, fvalue, sizeof( profile->nickname ) );
+			}
+			else if ( strcmp( CP_PROFILE_WHEREAMI, fname ) == 0 ) {
+				/* where am I */
+				g_strlcpy( profile->whereami, fvalue, sizeof( profile->whereami ) );
+			}
+			/* ignore other attibutes */
+		}
 
 		entries = g_list_append( entries, profile );
 	}
 
 	/* display */
-	mxit_show_search_results( session, entries );
+	mxit_show_search_results( session, searchType, maxResults, entries );
 
 	/* cleanup */
 	g_list_foreach( entries, (GFunc)g_free, NULL );

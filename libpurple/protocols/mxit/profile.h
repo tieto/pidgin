@@ -55,7 +55,7 @@ struct MXitProfile {
 
 struct MXitSession;
 void mxit_show_profile( struct MXitSession* session, const char* username, struct MXitProfile* profile );
-void mxit_show_search_results( struct MXitSession* session, GList* entries );
+void mxit_show_search_results( struct MXitSession* session, int searchType, int maxResults, GList* entries );
 
 gboolean validateDate( const char* bday );
 
