@@ -46,6 +46,7 @@
 #include "gtkutils.h"
 #include "gtkstatusbox.h"
 #include "pidginstock.h"
+#include "minidialog.h"
 
 enum
 {
@@ -2501,6 +2502,28 @@ deny_no_add_cb(struct auth_request *ar)
 	ar->deny_cb(ar->data);
 }
 
+static gboolean
+get_user_info_cb(GtkWidget   *label,
+                 const gchar *uri,
+                 gpointer     data)
+{
+	struct auth_request *ar = data;
+	if (!strcmp(uri, "viewinfo")) {
+		pidgin_retrieve_user_info(purple_account_get_connection(ar->account), ar->username);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+send_im_cb(PidginMiniDialog *mini_dialog,
+           GtkButton *button,
+           gpointer data)
+{
+	struct auth_request *ar = data;
+	pidgin_dialogs_im_with_user(ar->account, ar->username);
+}
+
 static void *
 pidgin_accounts_request_authorization(PurpleAccount *account,
                                       const char *remote_user,
@@ -2515,27 +2538,47 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	char *buffer;
 	PurpleConnection *gc;
 	GtkWidget *alert;
+	PidginMiniDialog *dialog;
 	GdkPixbuf *prpl_icon;
 	struct auth_request *aa;
+	const char *our_name;
 	gboolean have_valid_alias = alias && *alias;
 
 	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
-	buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-				remote_user,
-				(have_valid_alias ? " ("  : ""),
-				(have_valid_alias ? alias : ""),
-				(have_valid_alias ? ")"   : ""),
-				(id != NULL
-				? id
-				: (purple_connection_get_display_name(gc) != NULL
-				? purple_connection_get_display_name(gc)
-				: purple_account_get_username(account))),
-				(message != NULL ? ": " : "."),
-				(message != NULL ? message  : ""));
+	our_name = (id != NULL) ? id :
+			(purple_connection_get_display_name(gc) != NULL) ? purple_connection_get_display_name(gc) :
+			purple_account_get_username(account);
 
+	if (pidgin_mini_dialog_links_supported()) {
+		char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
+		char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
+		char *escaped_our_name = g_markup_escape_text(our_name, -1);
+		char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
+		buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+					escaped_remote_user,
+					(have_valid_alias ? " ("  : ""),
+					escaped_alias,
+					(have_valid_alias ? ")"   : ""),
+					escaped_our_name,
+					(have_valid_alias ? ": " : "."),
+					escaped_message);
+		g_free(escaped_remote_user);
+		g_free(escaped_alias);
+		g_free(escaped_our_name);
+		g_free(escaped_message);
+	} else {
+		buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+					remote_user,
+					(have_valid_alias ? " ("  : ""),
+					(have_valid_alias ? alias : ""),
+					(have_valid_alias ? ")"   : ""),
+					our_name,
+					(message != NULL ? ": " : "."),
+					(message != NULL ? message  : ""));
+	}
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -2550,10 +2593,18 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 	alert = pidgin_make_mini_dialog_with_custom_icon(
 		gc, prpl_icon,
-		_("Authorize buddy?"), buffer, aa,
+		_("Authorize buddy?"), NULL, aa,
 		_("Authorize"), authorize_and_add_cb,
 		_("Deny"), deny_no_add_cb,
 		NULL);
+
+	dialog = PIDGIN_MINI_DIALOG(alert);
+	if (pidgin_mini_dialog_links_supported()) {
+		pidgin_mini_dialog_enable_description_markup(dialog);
+		pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
+	}
+	pidgin_mini_dialog_set_description(dialog, buffer);
+	pidgin_mini_dialog_add_non_closing_button(dialog, _("Send Instant Message"), send_im_cb, aa);
 
 	g_signal_connect_swapped(G_OBJECT(alert), "destroy", G_CALLBACK(free_auth_request), aa);
 	g_signal_connect(G_OBJECT(alert), "destroy", G_CALLBACK(purple_account_request_close), NULL);

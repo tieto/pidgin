@@ -5134,7 +5134,7 @@ add_generic_error_dialog(PurpleAccount *account,
 		account);
 
 	 if(err->type == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT)
-		pidgin_mini_dialog_add_button(PIDGIN_MINI_DIALOG(mini_dialog),
+		pidgin_mini_dialog_add_non_closing_button(PIDGIN_MINI_DIALOG(mini_dialog),
 				_("SSL FAQs"), ssl_faq_clicked_cb, NULL);
 
 	g_signal_connect_after(mini_dialog, "destroy",
