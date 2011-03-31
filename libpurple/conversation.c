@@ -575,6 +575,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
+	conv->ui_data = NULL;
 
 	purple_conversation_close_logs(conv);
 
@@ -2270,6 +2271,9 @@ void purple_conversation_clear_message_history(PurpleConversation *conv)
 	GList *list = conv->message_history;
 	message_history_free(list);
 	conv->message_history = NULL;
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"cleared-message-history", conv);
 }
 
 GList *purple_conversation_get_message_history(PurpleConversation *conv)
@@ -2625,6 +2629,11 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "cleared-message-history",
+	                       purple_marshal_VOID__POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_CONVERSATION));
 
 	purple_signal_register(handle, "conversation-extended-menu",
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
