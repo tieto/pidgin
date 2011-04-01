@@ -214,6 +214,26 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		/* hidden number */
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), ( contact->flags & MXIT_CFLAG_HIDDEN ) ? _( "Yes" ) : _( "No" ) );
 	}
+	else {
+		/* this is an invite */
+		contact = get_mxit_invite_contact( session, username );
+		if ( contact ) {
+			/* invite found */
+
+			if ( contact->msg )
+				purple_notify_user_info_add_pair( info, _( "Invite Message" ), contact->msg );
+
+			if ( contact->imgid ) {
+				/* this invite has a avatar */
+				char* img_text;
+				img_text = g_strdup_printf( "<img id='%d'>", contact->imgid );
+				purple_notify_user_info_add_pair( info, _( "Photo" ), img_text );
+			}
+
+			if ( contact->statusMsg )
+				purple_notify_user_info_add_pair( info, _( "Status Message" ), contact->statusMsg );
+		}
+	}
 
 	purple_notify_userinfo( session->con, username, info, NULL, NULL );
 	purple_notify_user_info_destroy( info );

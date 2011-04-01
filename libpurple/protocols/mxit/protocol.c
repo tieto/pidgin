@@ -1629,10 +1629,9 @@ static void mxit_parse_cmd_new_sub( struct MXitSession* session, struct record**
 
 		if ( rec->fcount >= 5 ) {
 			/* there is a personal invite message attached */
-			contact->msg = strdup( rec->fields[4]->data );
+			if ( ( rec->fields[4]->data ) && ( strlen( rec->fields[4]->data ) > 0 ) )
+				contact->msg = strdup( rec->fields[4]->data );
 		}
-		else
-			contact->msg = NULL;
 
 		/* handle the subscription */
 		if ( contact-> type == MXIT_TYPE_MULTIMX ) {		/* subscription to a MultiMX room */
@@ -1870,13 +1869,43 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 	}
 
 	if ( profile != session->profile ) {
-		/* update avatar (if necessary) */
-		if ( avatarId )
-			mxit_update_buddy_avatar( session, mxitId, avatarId );
+		/* not our own profile */
+		struct contact*		contact		= NULL;
 
-		/* if this is not our profile, just display it */
-		mxit_show_profile( session, mxitId, profile );
-		g_free( profile );
+		contact = get_mxit_invite_contact( session, mxitId );
+		if ( contact ) {
+			/* this is an invite, so update its profile info */
+			if ( ( statusMsg ) && ( strlen( statusMsg ) > 0 ) ) {
+				/* update the status message */
+				if ( contact->statusMsg )
+					g_free( contact->statusMsg );
+				contact->statusMsg = strdup( statusMsg );
+			}
+			else
+				contact->statusMsg = NULL;
+			if ( contact->profile )
+				g_free( contact->profile );
+			contact->profile = profile;
+			if ( ( avatarId ) && ( strlen( avatarId ) > 0 ) ) {
+				/* avatar must be requested for this invite before we can display it */
+				mxit_get_avatar( session, mxitId, avatarId );
+				if ( contact->avatarId )
+					g_free( contact->avatarId );
+				contact->avatarId = strdup( avatarId );
+			}
+			else {
+				/* display what we have */
+				contact->avatarId = NULL;
+				mxit_show_profile( session, mxitId, profile );
+			}
+		}
+		else {
+			/* this is a contact */
+			if ( avatarId )
+				mxit_update_buddy_avatar( session, mxitId, avatarId );
+			mxit_show_profile( session, mxitId, profile );
+			g_free( profile );
+		}
 	}
 }
 
@@ -2052,6 +2081,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 		case CP_CHUNK_GET_AVATAR :			/* get avatars */
 			{
 				struct getavatar_chunk chunk;
+				struct contact* contact = NULL;
 
 				/* decode the chunked data */
 				memset( &chunk, 0, sizeof ( struct getavatar_chunk ) );
@@ -2060,9 +2090,18 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				/* update avatar image */
 				if ( chunk.data ) {
 					purple_debug_info( MXIT_PLUGIN_ID, "updating avatar for contact '%s'\n", chunk.mxitid );
-					purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length), chunk.length, chunk.avatarid );
-				}
 
+					contact = get_mxit_invite_contact( session, chunk.mxitid );
+					if ( contact ) {
+						/* this is an invite (add image to the internal image store) */
+						contact->imgid = purple_imgstore_add_with_id( chunk.data, chunk.length, NULL );
+						mxit_show_profile( session, chunk.mxitid, contact->profile );
+					}
+					else {
+						/* this is a contact's avatar, so update it */
+						purple_buddy_icons_set_for_user( session->acc, chunk.mxitid, g_memdup( chunk.data, chunk.length), chunk.length, chunk.avatarid );
+					}
+				}
 			}
 			break;
 
@@ -2763,6 +2802,23 @@ void mxit_close_connection( struct MXitSession* session )
 	}
 	g_list_free( session->active_chats );
 	session->active_chats = NULL;
+
+	/* clear the internal invites */
+	while ( session->invites != NULL ) {
+		struct contact* contact = (struct contact*) session->invites->data;
+
+		session->invites = g_list_remove( session->invites, contact );
+
+		if ( contact->msg )
+			g_free( contact->msg );
+		if ( contact->statusMsg )
+			g_free( contact->statusMsg );
+		if ( contact->profile )
+			g_free( contact->profile );
+		g_free( contact );
+	}
+	g_list_free( session->invites );
+	session->invites = NULL;
 
 	/* free profile information */
 	if ( session->profile )

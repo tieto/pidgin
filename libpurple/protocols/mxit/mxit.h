@@ -173,6 +173,7 @@ struct MXitSession {
 	char				rx_state;					/* current receiver state */
 	gint64				last_rx;					/* timestamp of last packet received */
 	GList*				active_chats;				/* list of all our contacts we received messages from (active chats) */
+	GList*				invites;					/* list of all the invites that we have received */
 
 	/* groupchat */
 	GList*				rooms;						/* active groupchat rooms */
