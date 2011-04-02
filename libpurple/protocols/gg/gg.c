@@ -1417,6 +1417,12 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	gchar *msg;
 	gchar *tmp;
 
+	if (ev->event.msg.message == NULL)
+	{
+		purple_debug_warning("gg", "ggp_recv_message_handler: NULL as message pointer\n");
+		return;
+	}
+
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
 	/*
@@ -1576,9 +1582,9 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleStoredImage *image;
-	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, &ev->event.image_request.crc32));
+	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32)));
 
-	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u\n", ev->event.image_request.crc32);
+	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u, imgid: %d\n", ev->event.image_request.crc32, imgid);
 
 	if(imgid)
 	{
@@ -1593,8 +1599,19 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 		} else {
 			purple_debug_error("gg", "ggp_send_image_handler: image imgid: %i, crc: %u in hash but not found in imgstore!\n", imgid, ev->event.image_request.crc32);
 		}
-		g_hash_table_remove(info->pending_images, &ev->event.image_request.crc32);
+		g_hash_table_remove(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32));
 	}
+}
+
+static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int length) {
+    gchar *from;
+
+    from = g_strdup_printf("%u", uin);
+    if (length)
+	serv_got_typing(gc, from, 0, PURPLE_TYPING);
+    else
+	serv_got_typing(gc, from, 0, PURPLE_NOT_TYPING);
+    g_free(from);
 }
 
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
@@ -1709,6 +1726,10 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
+			break;
+		case GG_EVENT_TYPING_NOTIFICATION:
+			ggp_typing_notification_handler(gc, ev->event.typing_notification.uin,
+				ev->event.typing_notification.length);
 			break;
 		default:
 			purple_debug_error("gg",
@@ -2002,7 +2023,7 @@ static void ggp_login(PurpleAccount *account)
 	info->token = NULL;
 	info->searches = ggp_search_new();
 	info->pending_richtext_messages = NULL;
-	info->pending_images = g_hash_table_new(g_int_hash, g_int_equal);
+	info->pending_images = g_hash_table_new(g_direct_hash, g_direct_equal);
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
 	gc->proto_data = info;
@@ -2015,7 +2036,8 @@ static void ggp_login(PurpleAccount *account)
 	status = purple_presence_get_active_status(presence);
 
 	glp->encoding = GG_ENCODING_UTF8;
-	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC);
+	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC
+		|GG_FEATURE_TYPING_NOTIFICATION);
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
@@ -2143,9 +2165,9 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 				const char *image_filename = purple_imgstore_get_filename(image);
 				uint32_t crc32 = gg_crc32(0, image_bin, image_size);
 
-				g_hash_table_insert(info->pending_images, &crc32, GINT_TO_POINTER(atoi(id)));
+				g_hash_table_insert(info->pending_images, GINT_TO_POINTER(crc32), GINT_TO_POINTER(atoi(id)));
 				purple_imgstore_ref(image);
-				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %i for imgid: %i\n", crc32, atoi(id));
+				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %u for imgid: %i\n", crc32, atoi(id));
 
 				actformat.font = GG_FONT_IMAGE;
 				actformat.position = pos;
@@ -2156,15 +2178,14 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 
 				if (actimage.size > 255000) {
 					purple_debug_warning("gg", "ggp_send_im_richtext: image over 255kb!\n");
-					continue;
+				} else {
+					purple_debug_info("gg", "ggp_send_im_richtext: adding images to richtext, size: %i, crc32: %u, name: %s\n", actimage.size, actimage.crc32, image_filename);
+
+					memcpy(format + format_length, &actformat, sizeof(actformat));
+					format_length += sizeof(actformat);
+					memcpy(format + format_length, &actimage, sizeof(actimage));
+					format_length += sizeof(actimage);
 				}
-
-				purple_debug_info("gg", "ggp_send_im_richtext: adding images to richtext, size: %i, crc32: %u, name: %s\n", actimage.size, actimage.crc32, image_filename);
-
-				memcpy(format + format_length, &actformat, sizeof(actformat));
-				format_length += sizeof(actformat);
-				memcpy(format + format_length, &actimage, sizeof(actimage));
-				format_length += sizeof(actimage);
 			} else {
 				purple_debug_error("gg", "ggp_send_im_richtext: image not found in the image store!");
 			}

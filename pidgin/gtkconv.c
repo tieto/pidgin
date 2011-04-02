@@ -373,23 +373,21 @@ debug_command_cb(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
-static void clear_conversation_scrollback(PurpleConversation *conv)
+static void clear_conversation_scrollback_cb(PurpleConversation *conv,
+                                             void *data)
 {
 	PidginConversation *gtkconv = NULL;
-	GList *iter;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-	for (iter = gtkconv->convs; iter; iter = iter->next)
-		purple_conversation_clear_message_history(iter->data);
+	if (gtkconv)
+		gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 }
 
 static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -397,7 +395,7 @@ static PurpleCmdRet
 clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	purple_conversation_foreach(clear_conversation_scrollback);
+	purple_conversation_foreach(purple_conversation_clear_message_history);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -1113,7 +1111,7 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 }
 
 static void
@@ -8042,6 +8040,8 @@ pidgin_conversations_init(void)
 
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "cleared-message-history",
+	                      handle, G_CALLBACK(clear_conversation_scrollback_cb), NULL);
 
 	purple_conversations_set_ui_ops(&conversation_ui_ops);
 

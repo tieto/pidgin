@@ -93,7 +93,7 @@ struct _PidginMediaPrivate
 	GtkWidget *pause;
 
 	GtkWidget *send_progress;
-	GtkWidget *recv_progress;
+	GHashTable *recv_progressbars;
 
 	PidginMediaState state;
 
@@ -102,7 +102,7 @@ struct _PidginMediaPrivate
 	GtkWidget *recv_widget;
 	GtkWidget *button_widget;
 	GtkWidget *local_video;
-	GtkWidget *remote_video;
+	GHashTable *remote_videos;
 
 	guint timeout_id;
 	PurpleMediaSessionType request_type;
@@ -352,18 +352,110 @@ pidgin_media_init (PidginMedia *media)
 
 	g_signal_connect(G_OBJECT(media), "delete-event",
 			G_CALLBACK(pidgin_media_delete_event_cb), media);
+
+	media->priv->recv_progressbars =
+			g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	media->priv->remote_videos =
+			g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+}
+
+static gchar *
+create_key(const gchar *session_id, const gchar *participant)
+{
+	return g_strdup_printf("%s_%s", session_id, participant);
+}
+
+static void
+pidgin_media_insert_widget(PidginMedia *gtkmedia, GtkWidget *widget,
+		const gchar *session_id, const gchar *participant)
+{
+	gchar *key = create_key(session_id, participant);
+	PurpleMediaSessionType type =
+			purple_media_get_session_type(gtkmedia->priv->media, session_id);
+
+	if (type & PURPLE_MEDIA_AUDIO)
+		g_hash_table_insert(gtkmedia->priv->recv_progressbars, key, widget);
+	else if (type & PURPLE_MEDIA_VIDEO)
+		g_hash_table_insert(gtkmedia->priv->remote_videos, key, widget);
+}
+
+static GtkWidget *
+pidgin_media_get_widget(PidginMedia *gtkmedia,
+		const gchar *session_id, const gchar *participant)
+{
+	GtkWidget *widget = NULL;
+	gchar *key = create_key(session_id, participant);
+	PurpleMediaSessionType type =
+			purple_media_get_session_type(gtkmedia->priv->media, session_id);
+
+	if (type & PURPLE_MEDIA_AUDIO)
+		widget = g_hash_table_lookup(gtkmedia->priv->recv_progressbars, key);
+	else if (type & PURPLE_MEDIA_VIDEO)
+		widget = g_hash_table_lookup(gtkmedia->priv->remote_videos, key);
+
+	g_free(key);
+	return widget;
+}
+
+static void
+pidgin_media_remove_widget(PidginMedia *gtkmedia,
+		const gchar *session_id, const gchar *participant)
+{
+	GtkWidget *widget = pidgin_media_get_widget(gtkmedia, session_id, participant);
+
+	if (widget) {
+		PurpleMediaSessionType type =
+				purple_media_get_session_type(gtkmedia->priv->media, session_id);
+		gchar *key = create_key(session_id, participant);
+		GtkRequisition req;
+
+		if (type & PURPLE_MEDIA_AUDIO) {
+			g_hash_table_remove(gtkmedia->priv->recv_progressbars, key);
+
+			if (g_hash_table_size(gtkmedia->priv->recv_progressbars) == 0 &&
+				gtkmedia->priv->send_progress) {
+
+				gtk_widget_destroy(gtkmedia->priv->send_progress);
+				gtkmedia->priv->send_progress = NULL;
+
+				gtk_widget_destroy(gtkmedia->priv->mute);
+				gtkmedia->priv->mute = NULL;
+			}
+		} else if (type & PURPLE_MEDIA_VIDEO) {
+			g_hash_table_remove(gtkmedia->priv->remote_videos, key);
+
+			if (g_hash_table_size(gtkmedia->priv->remote_videos) == 0 &&
+				gtkmedia->priv->local_video) {
+
+				gtk_widget_destroy(gtkmedia->priv->local_video);
+				gtkmedia->priv->local_video = NULL;
+
+				gtk_widget_destroy(gtkmedia->priv->pause);
+				gtkmedia->priv->pause = NULL;
+			}
+		}
+
+		g_free(key);
+
+		gtk_widget_destroy(widget);
+
+		gtk_widget_size_request(GTK_WIDGET(gtkmedia), &req);
+		gtk_window_resize(GTK_WINDOW(gtkmedia), req.width, req.height);
+	}
 }
 
 static void
 level_message_cb(PurpleMedia *media, gchar *session_id, gchar *participant,
 		double level, PidginMedia *gtkmedia)
 {
-	GtkWidget *progress;
+	GtkWidget *progress = NULL;
 	if (participant == NULL)
 		progress = gtkmedia->priv->send_progress;
 	else
-		progress = gtkmedia->priv->recv_progress;
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), level * 5);
+		progress = pidgin_media_get_widget(gtkmedia, session_id, participant);
+
+	if (progress)
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), level * 5);
 }
 
 
@@ -402,6 +494,13 @@ pidgin_media_dispose(GObject *media)
 	if (gtkmedia->priv->timeout_id != 0)
 		g_source_remove(gtkmedia->priv->timeout_id);
 
+	if (gtkmedia->priv->recv_progressbars) {
+		g_hash_table_destroy(gtkmedia->priv->recv_progressbars);
+		g_hash_table_destroy(gtkmedia->priv->remote_videos);
+		gtkmedia->priv->recv_progressbars = NULL;
+		gtkmedia->priv->remote_videos = NULL;
+	}
+
 	G_OBJECT_CLASS(parent_class)->dispose(media);
 }
 
@@ -436,24 +535,30 @@ static gboolean
 realize_cb_cb(PidginMediaRealizeData *data)
 {
 	PidginMediaPrivate *priv = data->gtkmedia->priv;
-	gulong window_id;
+	GdkWindow *window = NULL;
 
+	if (data->participant == NULL)
+		window = gtk_widget_get_window(priv->local_video);
+	else {
+		GtkWidget *widget = pidgin_media_get_widget(data->gtkmedia,
+				data->session_id, data->participant);
+		if (widget)
+			window = gtk_widget_get_window(widget);
+	}
+
+	if (window) {
+		gulong window_id;
 #ifdef _WIN32
-	if (data->participant == NULL)
-		window_id = GDK_WINDOW_HWND(priv->local_video->window);
-	else
-		window_id = GDK_WINDOW_HWND(priv->remote_video->window);
+		window_id = GDK_WINDOW_HWND(window);
 #elif defined(HAVE_X11)
-	if (data->participant == NULL)
-		window_id = GDK_WINDOW_XWINDOW(priv->local_video->window);
-	else
-		window_id = GDK_WINDOW_XWINDOW(priv->remote_video->window);
+		window_id = GDK_WINDOW_XWINDOW(window);
 #else
-#	error "Unsupported windowing system"
+#		error "Unsupported windowing system"
 #endif
 
-	purple_media_set_output_window(priv->media, data->session_id,
-			data->participant, window_id);
+		purple_media_set_output_window(priv->media, data->session_id,
+				data->participant, window_id);
+	}
 
 	g_free(data->session_id);
 	g_free(data->participant);
@@ -490,8 +595,13 @@ pidgin_media_accept_cb(PurpleMedia *media, int index)
 static void
 pidgin_media_reject_cb(PurpleMedia *media, int index)
 {
-	purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
-			NULL, NULL, TRUE);
+	GList *iter = purple_media_get_session_ids(media);
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		const gchar *sessionid = iter->data;
+		if (!purple_media_accepted(media, sessionid, NULL))
+			purple_media_stream_info(media, PURPLE_MEDIA_INFO_REJECT,
+					sessionid, NULL, TRUE);
+	}
 }
 
 static gboolean
@@ -563,9 +673,17 @@ pidgin_media_output_volume_changed(GtkRange *range, PurpleMedia *media)
 	purple_media_set_output_volume(media, NULL, NULL, val);
 }
 
+static void
+destroy_parent_widget_cb(GtkWidget *widget, GtkWidget *parent)
+{
+	g_return_if_fail(GTK_IS_WIDGET(parent));
+
+	gtk_widget_destroy(parent);
+}
+
 static GtkWidget *
 pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
-		PurpleMediaSessionType type)
+		PurpleMediaSessionType type, const gchar *sid)
 {
 	GtkWidget *volume_widget, *progress_parent, *volume, *progress;
 	double value;
@@ -619,8 +737,13 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 		g_signal_connect (G_OBJECT(volume), "value-changed",
 				G_CALLBACK(pidgin_media_output_volume_changed),
 				gtkmedia->priv->media);
-		gtkmedia->priv->recv_progress = progress;
+
+		pidgin_media_insert_widget(gtkmedia, progress, sid, gtkmedia->priv->screenname);
 	}
+
+	g_signal_connect(G_OBJECT(progress), "destroy",
+			G_CALLBACK(destroy_parent_widget_cb),
+			volume_widget);
 
 	gtk_widget_show_all(volume_widget);
 
@@ -691,13 +814,17 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
 		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 320, 240);
+		g_signal_connect(G_OBJECT(remote_video), "destroy",
+				G_CALLBACK(destroy_parent_widget_cb), aspect);
+
 		gtk_widget_show(remote_video);
 		gtk_widget_show(aspect);
 
-		gtkmedia->priv->remote_video = remote_video;
+		pidgin_media_insert_widget(gtkmedia, remote_video,
+				data->session_id, data->participant);
 	}
 
-	if (type & PURPLE_MEDIA_SEND_VIDEO) {
+	if (type & PURPLE_MEDIA_SEND_VIDEO && !gtkmedia->priv->local_video) {
 		PidginMediaRealizeData *data;
 		GtkWidget *aspect;
 		GtkWidget *local_video;
@@ -718,6 +845,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 				G_CALLBACK(realize_cb), data);
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);
 		gtk_widget_set_size_request (GTK_WIDGET(local_video), 80, 60);
+		g_signal_connect(G_OBJECT(local_video), "destroy",
+				G_CALLBACK(destroy_parent_widget_cb), aspect);
 
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
@@ -736,7 +865,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 	if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
-				PURPLE_MEDIA_RECV_AUDIO), FALSE, FALSE, 0);
+				PURPLE_MEDIA_RECV_AUDIO, sid), FALSE, FALSE, 0);
 	}
 
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
@@ -751,7 +880,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
-				PURPLE_MEDIA_SEND_AUDIO), FALSE, FALSE, 0);
+				PURPLE_MEDIA_SEND_AUDIO, NULL), FALSE, FALSE, 0);
 	}
 
 	if (type & PURPLE_MEDIA_AUDIO &&
@@ -804,8 +933,10 @@ pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 {
 	purple_debug_info("gtkmedia", "state: %d sid: %s name: %s\n",
 			state, sid ? sid : "(null)", name ? name : "(null)");
-	if (sid == NULL && name == NULL) {
-		if (state == PURPLE_MEDIA_STATE_END) {
+	if (state == PURPLE_MEDIA_STATE_END) {
+		if (sid != NULL && name != NULL) {
+			pidgin_media_remove_widget(gtkmedia, sid, name);
+		} else if (sid == NULL && name == NULL) {
 			pidgin_media_emit_message(gtkmedia,
 					_("The call has been terminated."));
 			gtk_widget_destroy(GTK_WIDGET(gtkmedia));

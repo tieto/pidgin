@@ -1,5 +1,3 @@
-/* $Id: pubdir50.c 854 2009-10-12 21:06:28Z wojtekka $ */
-
 /*
  *  (C) Copyright 2003 Wojtek Kaniewski <wojtekka@irc.pl>
  *
@@ -22,6 +20,9 @@
  * \file pubdir50.c
  *
  * \brief Obsługa katalogu publicznego od wersji Gadu-Gadu 5.x
+ *
+ * \todo Zoptymalizować konwersję CP1250<->UTF8. Obecnie robiona jest
+ * testowa konwersja, żeby poznać długość tekstu wynikowego.
  */
 
 #include <errno.h>
@@ -31,6 +32,7 @@
 
 #include "libgadu.h"
 #include "libgadu-internal.h"
+#include "encoding.h"
 
 /**
  * Tworzy nowe zapytanie katalogu publicznego.
@@ -224,7 +226,8 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 		} else {
 			char *tmp;
 
-			tmp = gg_utf8_to_cp(req->entries[i].field);
+			// XXX \todo zoptymalizować
+			tmp = gg_encoding_convert(req->entries[i].field, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL)
 				return -1;
@@ -233,7 +236,8 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 
 			free(tmp);
 
-			tmp = gg_utf8_to_cp(req->entries[i].value);
+			// XXX \todo zoptymalizować
+			tmp = gg_encoding_convert(req->entries[i].value, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL)
 				return -1;
@@ -271,7 +275,8 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 		} else {
 			char *tmp;
 
-			tmp = gg_utf8_to_cp(req->entries[i].field);
+			// XXX \todo zoptymalizować
+			tmp = gg_encoding_convert(req->entries[i].field, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL) {
 				free(buf);
@@ -282,7 +287,9 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 			p += strlen(tmp) + 1;
 			free(tmp);
 
-			tmp = gg_utf8_to_cp(req->entries[i].value);
+			// XXX \todo zoptymalizować
+			tmp = gg_encoding_convert(req->entries[i].value, sess->encoding, GG_ENCODING_CP1250, -1, -1);
+
 
 			if (tmp == NULL) {
 				free(buf);
@@ -416,7 +423,7 @@ int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, c
 			} else {
 				char *tmp;
 
-				tmp = gg_cp_to_utf8(value);
+				tmp = gg_encoding_convert(value, GG_ENCODING_CP1250, sess->encoding, -1, -1);
 
 				if (tmp == NULL)
 					goto failure;

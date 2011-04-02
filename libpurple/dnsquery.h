@@ -58,7 +58,8 @@ typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, c
  */
 typedef struct
 {
-	/** If implemented, the UI is responsible for DNS queries */
+	/** If implemented, return TRUE if the UI takes responsibility for DNS
+	  * queries. When returning FALSE, the standard implementation is used. */
 	gboolean (*resolve_host)(PurpleDnsQueryData *query_data,
 	                         PurpleDnsQueryResolvedCallback resolved_cb,
 	                         PurpleDnsQueryFailedCallback failed_cb);
