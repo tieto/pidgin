@@ -1705,7 +1705,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	 * See #8477.
 	 */
 	if (filesize_64 > G_MAXSIZE) {
-		/* Shoudl this pop up a warning? */
+		/* Should this pop up a warning? */
 		purple_debug_warning("jabber", "Unable to transfer file (too large)"
 		                     " -- see #8477 for more details.");
 		return;
