@@ -2041,7 +2041,12 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
+#if defined(USE_GNUTLS) || !defined(USE_INTERNAL_LIBGADU)
+	glp->tls = 1;
+#else
 	glp->tls = 0;
+#endif
+	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;

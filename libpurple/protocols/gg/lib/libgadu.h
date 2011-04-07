@@ -72,7 +72,11 @@ extern "C" {
 #undef GG_CONFIG_HAVE_LONG_LONG
 
 /* Defined if libgadu was compiled and linked with GnuTLS support. */
-#undef GG_CONFIG_HAVE_GNUTLS
+#ifdef USE_GNUTLS
+#	define GG_CONFIG_HAVE_GNUTLS
+#else
+#	undef GG_CONFIG_HAVE_GNUTLS
+#endif
 
 /* Defined if libgadu was compiled and linked with OpenSSL support. */
 #undef GG_CONFIG_HAVE_OPENSSL
