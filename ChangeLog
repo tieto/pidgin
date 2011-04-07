@@ -45,6 +45,9 @@ version 2.8.0 (??/??/????):
 	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
 	  Utkin (#13496)
 
+	IRC:
+	* Add "authserv" service command.  (tomos) (#13337)
+
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test
 	  microphone settings. (Jakub Adam) (#13182)
