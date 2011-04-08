@@ -21,6 +21,8 @@ version 2.8.0 (??/??/????):
 	* Fix purple-url-handler being unable to find an account.
 	* media: Allow adding/removing streams on the fly. (Jakub Adam) (half of
 	  #13535)
+	* Support new connection states in NetworkManager 0.9. (Dan Williams)
+	  (#13505)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
