@@ -697,12 +697,15 @@ purple_pounce_destroy_all_by_account(PurpleAccount *account)
 void
 purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy)
 {
-	const char *pouncee;
-	PurpleAccount *pouncer;
+	const char *pouncee, *bname;
+	PurpleAccount *pouncer, *bacct;
 	PurplePounce *pounce;
 	GList *l, *l_next;
 
 	g_return_if_fail(buddy != NULL);
+
+	bacct = purple_buddy_get_account(buddy);
+	bname = purple_buddy_get_name(buddy);
 
 	for (l = purple_pounces_get_all(); l != NULL; l = l_next) {
 		pounce = (PurplePounce *)l->data;
@@ -711,7 +714,7 @@ purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy)
 		pouncer = purple_pounce_get_pouncer(pounce);
 		pouncee = purple_pounce_get_pouncee(pounce);
 
-		if ( (pouncer == buddy->account) && (strcmp(pouncee, buddy->name) == 0) )
+		if ( (pouncer == bacct) && (strcmp(pouncee, bname) == 0) )
 			purple_pounce_destroy(pounce);
 	}
 }
