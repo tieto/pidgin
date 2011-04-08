@@ -23,6 +23,8 @@ version 2.8.0 (??/??/????):
 	  #13535)
 	* Support new connection states in NetworkManager 0.9. (Dan Williams)
 	  (#13505)
+	* When removing a buddy, delete the pounces associated with it.
+	  (Kartik Mohta) (#1131)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
