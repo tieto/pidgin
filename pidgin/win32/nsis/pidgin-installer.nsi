@@ -536,6 +536,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Deutsche_Telekom_Root_CA_2.pem"
+    Delete "$INSTDIR\ca-certs\DigiCertHighAssuranceCA-3.pem"
     Delete "$INSTDIR\ca-certs\Entrust.net_Secure_Server_CA.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_Global_eBusiness_CA-1.pem"

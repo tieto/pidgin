@@ -4,6 +4,8 @@ version 2.8.0 (??/??/????):
 	General:
 	* Implement simple silence suppression for voice calls, preventing wasted
 	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+	* Added the DigiCert High Assurance CA-3 intermediate CA, needed for
+	  validation of the Facebook XMPP interface's certificate.
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
