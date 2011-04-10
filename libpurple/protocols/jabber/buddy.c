@@ -2229,6 +2229,16 @@ void jabber_user_search(JabberStream *js, const char *directory)
 		return;
 	}
 
+	/* If the value provided isn't the disco#info default, persist it.  Otherwise,
+	   make sure we aren't persisting an old value */
+	if(js->user_directories && js->user_directories->data &&
+	   !strcmp(directory, js->user_directories->data)) {
+		purple_account_set_string(js->gc->account, "user_directory", "");
+	}
+	else {
+		purple_account_set_string(js->gc->account, "user_directory", directory);
+	}
+
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:search");
 	xmlnode_set_attrib(iq->node, "to", directory);
 
@@ -2241,10 +2251,13 @@ void jabber_user_search_begin(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
+	const char *def_val = purple_account_get_string(js->gc->account, "user_directory", "");
+	if(!*def_val && js->user_directories)
+		def_val = js->user_directories->data;
 
 	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),
-			js->user_directories ? js->user_directories->data : NULL,
+			def_val,
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
