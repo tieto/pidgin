@@ -186,7 +186,6 @@ out:
 		g_string_append( attributes, attrib );
 		acount++;
 
-#if 0
 		/* update about me */
 		name = purple_request_fields_get_string( fields, "aboutme" );
 		if ( !name )
@@ -206,7 +205,6 @@ out:
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_WHEREAMI, CP_PROFILE_TYPE_UTF8, profile->whereami );
 		g_string_append( attributes, attrib );
 		acount++;
-#endif
 
 		/* update flags */
 		field = purple_request_fields_get_field( fields, "searchable" );
@@ -475,4 +473,3 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 
 	return m;
 }
-
