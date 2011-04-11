@@ -853,11 +853,12 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes )
 {
 	char			data[CP_MAX_PACKET];
-	gchar**			parts;
+	gchar**			parts					= NULL;
 	int				datalen;
 	unsigned int	i;
 
-	parts = g_strsplit( attributes, "\01", 1 + ( nr_attrib * 3 ) );
+	if ( attributes )
+		parts = g_strsplit( attributes, "\01", 1 + ( nr_attrib * 3 ) );
 
 	/* convert the packet to a byte stream */
 	datalen = snprintf( data, sizeof( data ),

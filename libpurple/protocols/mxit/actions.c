@@ -41,46 +41,19 @@
  *  @param gc		The connection object
  *  @param fields	The fields from the request pop-up
  */
-static void mxit_cb_set_profile( PurpleConnection* gc, PurpleRequestFields* fields )
+static void mxit_profile_cb( PurpleConnection* gc, PurpleRequestFields* fields )
 {
 	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
 	PurpleRequestField*		field	= NULL;
-	const char*				pin		= NULL;
-	const char*				pin2	= NULL;
 	const char*				name	= NULL;
 	const char*				bday	= NULL;
 	const char*				err		= NULL;
-	int						len;
-	int						i;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_set_profile\n" );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_profile_cb\n" );
 
 	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Unable to update profile; account offline.\n" );
 		return;
-	}
-
-	/* validate pin */
-	pin = purple_request_fields_get_string( fields, "pin" );
-	if ( !pin ) {
-		err = _( "The PIN you entered is invalid." );
-		goto out;
-	}
-	len = strlen( pin );
-	if ( ( len < 4 ) || ( len > 10 ) ) {
-		err = _( "The PIN you entered has an invalid length [4-10]." );
-		goto out;
-	}
-	for ( i = 0; i < len; i++ ) {
-		if ( !g_ascii_isdigit( pin[i] ) ) {
-			err = _( "The PIN is invalid. It should only consist of digits [0-9]." );
-			goto out;
-		}
-	}
-	pin2 = purple_request_fields_get_string( fields, "pin2" );
-	if ( ( !pin2 ) || ( strcmp( pin, pin2 ) != 0 ) ) {
-		err = _( "The two PINs you entered do not match." );
-		goto out;
 	}
 
 	/* validate name */
@@ -104,12 +77,6 @@ out:
 		char				attrib[512];
 		unsigned int		acount		= 0;
 
-		/* all good, so we can now update the profile */
-
-		/* update pin */
-		purple_account_set_password( session->acc, pin );
-		g_free( session->encpwd );
-		session->encpwd = mxit_encrypt_password( session );
 
 		/* update name */
 		g_strlcpy( profile->nickname, name, sizeof( profile->nickname ) );
@@ -222,7 +189,7 @@ out:
 		acount++;
 
 		/* send the profile update to MXit */
-		mxit_send_extprofile_update( session, session->encpwd, acount, attributes->str );
+		mxit_send_extprofile_update( session, NULL, acount, attributes->str );
 		g_string_free( attributes, TRUE );
 	}
 	else {
@@ -237,7 +204,7 @@ out:
  *
  *  @param action	The action object
  */
-static void mxit_cb_action_profile( PurplePluginAction* action )
+static void mxit_profile_action( PurplePluginAction* action )
 {
 	PurpleConnection*			gc		= (PurpleConnection*) action->context;
 	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
@@ -246,7 +213,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	PurpleRequestFields*		fields	= NULL;
 	PurpleRequestField*			field	= NULL;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_action_profile\n" );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_profile_action\n" );
 
 	/* ensure that we actually have the user's profile information */
 	if ( !profile ) {
@@ -256,22 +223,6 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	}
 
 	fields = purple_request_fields_new();
-
-	/* Security information - PIN, etc */
-	{
-		PurpleRequestFieldGroup* security_group = purple_request_field_group_new( "PIN" );
-
-		/* pin */
-		field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
-		purple_request_field_string_set_masked( field, TRUE );
-		purple_request_field_group_add_field( security_group, field );
-
-		field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
-		purple_request_field_string_set_masked( field, TRUE );
-		purple_request_field_group_add_field( security_group, field );
-
-		purple_request_fields_add_group( fields, security_group );
-	}
 
 	/* Public information - what other users can see */
 	{
@@ -341,7 +292,105 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 
 	/* (reference: "libpurple/request.h") */
 	purple_request_fields( gc, _( "Profile" ), _( "Update your MXit Profile" ), NULL, fields, _( "Set" ),
-			G_CALLBACK( mxit_cb_set_profile ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+			G_CALLBACK( mxit_profile_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
+}
+
+
+/*------------------------------------------------------------------------
+ * The user has selected to change their PIN.
+ *
+ *  @param gc		The connection object
+ *  @param fields	The fields from the request pop-up
+ */
+static void mxit_change_pin_cb( PurpleConnection* gc, PurpleRequestFields* fields )
+{
+	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	const char*				pin		= NULL;
+	const char*				pin2	= NULL;
+	const char*				err		= NULL;
+	int						len;
+	int						i;
+
+	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
+		purple_debug_error( MXIT_PLUGIN_ID, "Unable to update PIN; account offline.\n" );
+		return;
+	}
+
+	/* validate pin */
+	pin = purple_request_fields_get_string( fields, "pin" );
+	if ( !pin ) {
+		err = _( "The PIN you entered is invalid." );
+		goto out;
+	}
+	len = strlen( pin );
+	if ( ( len < 4 ) || ( len > 10 ) ) {
+		err = _( "The PIN you entered has an invalid length [4-10]." );
+		goto out;
+	}
+	for ( i = 0; i < len; i++ ) {
+		if ( !g_ascii_isdigit( pin[i] ) ) {
+			err = _( "The PIN is invalid. It should only consist of digits [0-9]." );
+			goto out;
+		}
+	}
+	pin2 = purple_request_fields_get_string( fields, "pin2" );
+	if ( ( !pin2 ) || ( strcmp( pin, pin2 ) != 0 ) ) {
+		err = _( "The two PINs you entered do not match." );
+		goto out;
+	}
+
+out:
+	if ( !err ) {
+		/* update PIN in account */
+		purple_account_set_password( session->acc, pin );
+
+		/* update session object */
+		g_free( session->encpwd );
+		session->encpwd = mxit_encrypt_password( session );
+
+		/* send the update request to MXit */
+		mxit_send_extprofile_update( session, session->encpwd, 0, NULL );
+	}
+	else {
+		/* show error to user */
+		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "PIN Update Error" ), err );
+	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Enable the user to change their PIN.
+ *
+ *  @param action	The action object
+ */
+static void mxit_change_pin_action( PurplePluginAction* action )
+{
+	PurpleConnection*			gc		= (PurpleConnection*) action->context;
+	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
+
+	PurpleRequestFields*		fields	= NULL;
+	PurpleRequestFieldGroup*	group	= NULL;
+	PurpleRequestField*			field	= NULL;
+
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_change_pin_action\n" );
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	/* pin */
+	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
+	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_group_add_field( group, field );
+
+	/* verify pin */
+	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), session->acc->password, FALSE );
+	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_group_add_field( group, field );
+
+	/* (reference: "libpurple/request.h") */
+	purple_request_fields( gc, _( "Change PIN" ), _( "Change MXit PIN" ), NULL, fields, _( "Set" ),
+			G_CALLBACK( mxit_change_pin_cb ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
 }
 
 
@@ -350,7 +399,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_cb_action_splash( PurplePluginAction* action )
+static void mxit_splash_action( PurplePluginAction* action )
 {
 	PurpleConnection*		gc		= (PurpleConnection*) action->context;
 	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
@@ -367,7 +416,7 @@ static void mxit_cb_action_splash( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_cb_action_about( PurplePluginAction* action )
+static void mxit_about_action( PurplePluginAction* action )
 {
 	char	version[256];
 
@@ -387,7 +436,7 @@ static void mxit_cb_action_about( PurplePluginAction* action )
  *
  *  @param action	The action object
  */
-static void mxit_cb_suggested_friends( PurplePluginAction* action )
+static void mxit_suggested_friends_action( PurplePluginAction* action )
 {
 	PurpleConnection*		gc				= (PurpleConnection*) action->context;
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
@@ -420,7 +469,7 @@ static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
  *
  *  @param action	The action object
  */
-static void mxit_cb_search_begin( PurplePluginAction* action )
+static void mxit_user_search_action( PurplePluginAction* action )
 {
 	PurpleConnection*		gc				= (PurpleConnection*) action->context;
 
@@ -448,23 +497,27 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 	GList*					m		= NULL;
 
 	/* display / change profile */
-	action = purple_plugin_action_new( _( "Change Profile..." ), mxit_cb_action_profile );
+	action = purple_plugin_action_new( _( "Change Profile..." ), mxit_profile_action );
 	m = g_list_append( m, action );
 
-	/* display splash-screen */
-	action = purple_plugin_action_new( _( "View Splash..." ), mxit_cb_action_splash );
-	m = g_list_append( m, action );
-
-	/* display plugin version */
-	action = purple_plugin_action_new( _( "About..." ), mxit_cb_action_about );
+	/* change PIN */
+	action = purple_plugin_action_new( _( "Change PIN..." ), mxit_change_pin_action );
 	m = g_list_append( m, action );
 
 	/* suggested friends */
-	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_cb_suggested_friends );
+	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_suggested_friends_action );
 	m = g_list_append( m, action );
 
 	/* search for users */
-	action = purple_plugin_action_new( _( "Search for Users..." ), mxit_cb_search_begin );
+	action = purple_plugin_action_new( _( "Search for Users..." ), mxit_user_search_action );
+	m = g_list_append( m, action );
+
+	/* display splash-screen */
+	action = purple_plugin_action_new( _( "View Splash..." ), mxit_splash_action );
+	m = g_list_append( m, action );
+
+	/* display plugin version */
+	action = purple_plugin_action_new( _( "About..." ), mxit_about_action );
 	m = g_list_append( m, action );
 
 	return m;
