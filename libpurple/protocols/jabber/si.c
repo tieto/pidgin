@@ -1683,6 +1683,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	PurpleXfer *xfer;
 	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
 	const char *stream_id, *filename, *filesize_c, *profile;
+	guint64 filesize_64 = 0;
 	size_t filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
@@ -1699,7 +1700,17 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 
 	if((filesize_c = xmlnode_get_attrib(file, "size")))
-		filesize = strtoul(filesize_c, NULL, 10);
+		filesize_64 = g_ascii_strtoull(filesize_c, NULL, 10);
+	/* TODO 3.0.0: When the core uses a guint64, this is redundant.
+	 * See #8477.
+	 */
+	if (filesize_64 > G_MAXSIZE) {
+		/* Should this pop up a warning? */
+		purple_debug_warning("jabber", "Unable to transfer file (too large)"
+		                     " -- see #8477 for more details.");
+		return;
+	}
+	filesize = filesize_64;
 
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;

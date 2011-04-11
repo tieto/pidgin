@@ -4,6 +4,8 @@ version 2.8.0 (??/??/????):
 	General:
 	* Implement simple silence suppression for voice calls, preventing wasted
 	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+	* Added the DigiCert High Assurance CA-3 intermediate CA, needed for
+	  validation of the Facebook XMPP interface's certificate.
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
@@ -21,6 +23,10 @@ version 2.8.0 (??/??/????):
 	* Fix purple-url-handler being unable to find an account.
 	* media: Allow adding/removing streams on the fly. (Jakub Adam) (half of
 	  #13535)
+	* Support new connection states in NetworkManager 0.9. (Dan Williams)
+	  (#13505)
+	* When removing a buddy, delete the pounces associated with it.
+	  (Kartik Mohta) (#1131)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
@@ -30,8 +36,11 @@ version 2.8.0 (??/??/????):
 	  images. (Tomasz Wasilczyk) (#13554)
 	* Fix sending inline images to remote users, don't crash when
 	  trying to send large (> 256kB) images. (Tomasz Wasilczyk) (#13580)
-	* Support incoming typing notifications. (Jan Zachorowski) (#13362)
+	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
+	  Krzysztof Klinikowski) (#13362, #13590)
 	* Require libgadu 1.10.1 to avoid using internal libgadu.
+	* SSL connection support for GNUTLS users (not on Windows yet!).
+	  (Tomasz Wasilczyk) (#13613)
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
@@ -42,12 +51,12 @@ version 2.8.0 (??/??/????):
 	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
 	  Utkin (#13496)
 
-	MXit:
-	* Support for an Invite Message when adding a buddy.
-	* Fix bug when splitting a long messages with lots of links.
-	* Fix detection of new kick message from a MultiMX room.
-	* Fix crash caused by fast-queue timer not being removed on session
-	  close. (broken in 2.7.11)
+	IRC:
+	* Add "authserv" service command.  (tomos) (#13337)
+
+	XMPP:
+	* Remember the previously entered user directory when searching.
+	  (Keith Moyer) (#12451)
 
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test

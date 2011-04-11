@@ -1610,7 +1610,7 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
     if (length)
 	serv_got_typing(gc, from, 0, PURPLE_TYPING);
     else
-	serv_got_typing(gc, from, 0, PURPLE_NOT_TYPING);
+	serv_got_typing_stopped(gc, from);
     g_free(from);
 }
 
@@ -2041,7 +2041,12 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
+#if defined(USE_GNUTLS) || !defined(USE_INTERNAL_LIBGADU)
+	glp->tls = 1;
+#else
 	glp->tls = 0;
+#endif
+	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
@@ -2239,6 +2244,26 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	g_free(tmp);
 
 	return ret;
+}
+
+static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+{
+	int dummy_length; // we don't send real length of typed message
+	
+	if (state == PURPLE_TYPED) // not supported
+		return 1;
+	
+	if (state == PURPLE_TYPING)
+		dummy_length = (int)g_random_int();
+	else // PURPLE_NOT_TYPING
+		dummy_length = 0;
+	
+	gg_typing_notification(
+		((GGPInfo*)gc->proto_data)->session,
+		ggp_str_to_uin(name),
+		dummy_length); 
+	
+	return 1; // wait 1 second before another notification
 }
 
 static void ggp_get_info(PurpleConnection *gc, const char *name)
@@ -2546,7 +2571,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_close,			/* close */
 	ggp_send_im,			/* send_im */
 	NULL,				/* set_info */
-	NULL,				/* send_typing */
+	ggp_send_typing,		/* send_typing */
 	ggp_get_info,			/* get_info */
 	ggp_set_status,			/* set_away */
 	NULL,				/* set_idle */
