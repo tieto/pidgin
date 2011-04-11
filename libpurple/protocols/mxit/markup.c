@@ -1090,10 +1090,15 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 				}
 				else if ( purple_str_has_prefix( &message[i], "<font size=" ) ) {
 					/* font size */
+					int fontsize;
+
 					tag = g_new0( struct tag, 1 );
 					tag->type = MXIT_TAG_SIZE;
 					tagstack = g_list_prepend( tagstack, tag );
 					// TODO: implement size control
+					if ( sscanf( &message[i+12], "%i", &fontsize ) ) {
+						purple_debug_info( MXIT_PLUGIN_ID, "Font size set to %i\n", fontsize );
+					}
 				}
 				else if ( purple_str_has_prefix( &message[i], "<font color=" ) ) {
 					/* font colour */
@@ -1144,6 +1149,17 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 			case '\\' :	/* MXit escape backslash */
 				g_string_append( mx, "\\" );				/* escape character */
 				g_string_append_c( mx, message[i] );		/* character to escape */
+				break;
+
+			case '.' : /* might be a MXit font size change, or custom emoticon */
+				if ( i + 1 < len ) {
+					if ( ( message[i+1] == '+' ) || ( message[i+1] == '-' ) )
+						g_string_append( mx, "\\." );		/* escape "." */
+					else
+						g_string_append_c( mx, '.' );
+				}
+				else
+					g_string_append_c( mx, '.' );
 				break;
 
 			default:
