@@ -1464,7 +1464,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 		session->http_sesid = atoi( records[0]->fields[0]->data );
 	}
 
-	/* extract MXitId (from protocol 5.9) */
+	/* extract UserId (from protocol 5.9) */
 	if ( records[1]->fcount >= 9 )
 		session->uid = g_strdup( records[1]->fields[8]->data );
 

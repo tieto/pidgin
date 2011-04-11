@@ -117,12 +117,12 @@ out:
 		g_string_append( attributes, attrib );
 		acount++;
 
-		/* update hidden */
-		field = purple_request_fields_get_field( fields, "hidden" );
-		profile->hidden = purple_request_field_bool_get_value( field );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
-		g_string_append( attributes, attrib );
-		acount++;
+		/* force hidden if disabled */
+		if ( profile->hidden == FALSE ) {
+			g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, "1" );
+			g_string_append( attributes, attrib );
+			acount++;
+		}
 
 		/* update birthday */
 		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
@@ -328,10 +328,6 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 		field = purple_request_field_string_new( "mobilenumber", _( "Mobile Number" ), profile->mobilenr, FALSE );
 		purple_request_field_group_add_field( private_group, field );
 
-		/* hidden number */
-		field = purple_request_field_bool_new( "hidden", _( "Hide my number" ), profile->hidden );
-		purple_request_field_group_add_field( private_group, field );
-
 		/* is searchable */
 		field = purple_request_field_bool_new( "searchable", _( "Can be searched" ), ( ( profile->flags & CP_PROF_NOT_SEARCHABLE ) == 0) );
 		purple_request_field_group_add_field( private_group, field );
@@ -344,7 +340,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	}
 
 	/* (reference: "libpurple/request.h") */
-	purple_request_fields( gc, _( "Profile" ), _( "Update your Profile" ), _( "Here you can update your MXit profile" ), fields, _( "Set" ),
+	purple_request_fields( gc, _( "Profile" ), _( "Update your MXit Profile" ), NULL, fields, _( "Set" ),
 			G_CALLBACK( mxit_cb_set_profile ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
 }
 
