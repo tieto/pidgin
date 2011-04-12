@@ -626,7 +626,7 @@ static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
 		return;
 
 	/* send a new invite */
-	mxit_send_invite( session, contact->username, contact->alias, contact->groupname, NULL );
+	mxit_send_invite( session, contact->username, TRUE, contact->alias, contact->groupname, NULL );
 }
 
 
