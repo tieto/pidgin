@@ -254,7 +254,7 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 	gchar*						text;
 
 	if ( !entries ) {
-		mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "No results" ), _( "No users found." ) );
+		mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "No results" ), _( "No contacts found." ) );
 		return;
 	}
 

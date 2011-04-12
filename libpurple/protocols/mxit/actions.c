@@ -508,8 +508,8 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 	action = purple_plugin_action_new( _( "Suggested friends..." ), mxit_suggested_friends_action );
 	m = g_list_append( m, action );
 
-	/* search for users */
-	action = purple_plugin_action_new( _( "Search for Users..." ), mxit_user_search_action );
+	/* search for contacts */
+	action = purple_plugin_action_new( _( "Search for contacts..." ), mxit_user_search_action );
 	m = g_list_append( m, action );
 
 	/* display splash-screen */
