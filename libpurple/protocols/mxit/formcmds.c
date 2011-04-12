@@ -238,9 +238,7 @@ static void command_clear(struct MXitSession* session, const char* from, GHashTa
 	clearmsgscreen = g_hash_table_lookup(hash, "clearmsgscreen");
 	if ( (clearmsgscreen) && (strcmp(clearmsgscreen, "true") == 0) ) {
 		/* this is a command to clear the chat screen */
-		purple_debug_info(MXIT_PLUGIN_ID, "Clear the screen\n");
-
-		purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+		purple_conversation_clear_message_history(conv);
 	}
 }
 
