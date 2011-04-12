@@ -54,6 +54,18 @@ version 2.8.0 (??/??/????):
 	IRC:
 	* Add "authserv" service command.  (tomos) (#13337)
 
+	MXit:
+	* Support for an Invite Message when adding a buddy.
+	* Fixed bug in splitting-up of messages that contain a lot of links.
+	* Fixed crash caused by timer not being disabled on disconnect.
+	  (introduced in 2.7.11)
+	* Clearing of the conversation window now works.
+	* When receiving an invite you can display the sender's profile
+	  information, avatar image, invite message.
+	* The Change PIN option was moved into separate action.
+	* New profile attributes added and shown.
+	* Update to protocol v6.3.
+
 	XMPP:
 	* Remember the previously entered user directory when searching.
 	  (Keith Moyer) (#12451)
