@@ -2088,7 +2088,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				struct contact* contact = NULL;
 
 				/* decode the chunked data */
-				memset( &chunk, 0, sizeof ( struct getavatar_chunk ) );
+				memset( &chunk, 0, sizeof( struct getavatar_chunk ) );
 				mxit_chunk_parse_get_avatar( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
 
 				/* update avatar image */
@@ -2114,7 +2114,18 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 			break;
 
 		case CP_CHUNK_DIRECT_SND :
-			/* this is a ack for a file send. no action is required */
+			/* this is a ack for a file send. */
+			{
+				struct sendfile_chunk chunk;
+
+				memset( &chunk, 0, sizeof( struct sendfile_chunk ) );
+				mxit_chunk_parse_sendfile( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
+
+				purple_debug_info( MXIT_PLUGIN_ID, "file-send send to '%s' [status=%i message='%s']\n", chunk.username, chunk.status, chunk.statusmsg );
+
+				if ( chunk.status != 0 )	/* not success */
+					mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "File Send Failed" ), chunk.statusmsg );
+			}
 			break;
 
 		case CP_CHUNK_RECEIVED :
@@ -2285,6 +2296,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 				/* HTTP poll reply */
 		case CP_CMD_EXTPROFILE_SET :
 				/* profile update */
+				// TODO: Protocol 6.2 indicates status for each attribute, and current value.
 		case CP_CMD_SPLASHCLICK :
 				/* splash-screen clickthrough */
 		case CP_CMD_MSGEVENT :

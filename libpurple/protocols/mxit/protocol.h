@@ -91,7 +91,7 @@
 #define		MXIT_CP_ARCH			"Y"						/* client architecture series (Y not for Yoda but for PC-client) */
 #define		MXIT_CLIENT_ID			"LP"					/* client ID as specified by MXit */
 #define		MXIT_CP_PLATFORM		"PURPLE"				/* client platform */
-#define		MXIT_CP_PROTO_VESION	60						/* client protocol version */
+#define		MXIT_CP_PROTO_VESION	63						/* client protocol version */
 
 /* set operating system name */
 #if defined( __APPLE__ )
