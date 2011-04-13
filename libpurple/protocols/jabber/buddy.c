@@ -467,8 +467,20 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 	/* if we haven't grabbed the remote vcard yet, we can't
 	 * assume that what we have here is correct */
-	if(!js->vcard_fetched)
+	if(!js->vcard_fetched) {
+		PurpleStoredImage *image;
+		g_free(js->initial_avatar_hash);
+		image = purple_buddy_icons_find_account_icon(purple_connection_get_account(gc));
+		if (image != NULL) {
+			js->initial_avatar_hash =
+					jabber_calculate_data_hash(purple_imgstore_get_data(image),
+			purple_imgstore_get_size(image), "sha1");
+			purple_imgstore_unref(image);
+		} else {
+			js->initial_avatar_hash = NULL;
+		}
 		return;
+	}
 
 	if (js->vcard_timer) {
 		purple_timeout_remove(js->vcard_timer);
