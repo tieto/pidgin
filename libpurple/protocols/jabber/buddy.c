@@ -465,7 +465,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	xmlnode *vc_node;
 	const struct tag_attr *tag_attr;
 
-	/* if we have't grabbed the remote vcard yet, we can't
+	/* if we haven't grabbed the remote vcard yet, we can't
 	 * assume that what we have here is correct */
 	if(!js->vcard_fetched)
 		return;
