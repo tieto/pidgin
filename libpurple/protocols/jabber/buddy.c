@@ -474,7 +474,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		if (image != NULL) {
 			js->initial_avatar_hash =
 					jabber_calculate_data_hash(purple_imgstore_get_data(image),
-			purple_imgstore_get_size(image), "sha1");
+					purple_imgstore_get_size(image), "sha1");
 			purple_imgstore_unref(image);
 		} else {
 			js->initial_avatar_hash = NULL;
