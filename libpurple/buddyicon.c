@@ -756,7 +756,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	else
 		g_hash_table_remove(pointer_icon_cache, account);
 
-	if (purple_account_is_connected(account))
+	if (!purple_account_is_disconnected(account))
 	{
 		PurpleConnection *gc;
 		PurplePluginProtocolInfo *prpl_info;
