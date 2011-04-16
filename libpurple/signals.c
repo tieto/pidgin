@@ -880,6 +880,20 @@ purple_marshal_BOOLEAN__POINTER_POINTER(PurpleCallback cb, va_list args,
 }
 
 void
+purple_marshal_BOOLEAN__POINTER_BOOLEAN(PurpleCallback cb, va_list args,
+									  void *data, void **return_val)
+{
+	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	gboolean arg2 = va_arg(args, gboolean);
+
+	ret_val = ((gboolean (*)(void *, gboolean, void *))cb)(arg1, arg2, data);
+
+	if (return_val != NULL)
+		*return_val = GINT_TO_POINTER(ret_val);
+}
+
+void
 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER(PurpleCallback cb, va_list args,
 											  void *data, void **return_val)
 {

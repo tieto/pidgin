@@ -7842,20 +7842,6 @@ pidgin_conversations_get_handle(void)
 	return &handle;
 }
 
-static void
-pidgin_marshal_BOOLEAN__POINTER_BOOLEAN(PurpleCallback cb, va_list args,
-									  void *data, void **return_val)
-{
-	gboolean ret_val;
-	void *arg1 = va_arg(args, void *);
-	gboolean arg2 = va_arg(args, gboolean);
-
-	ret_val = ((gboolean (*)(void *, gboolean, void *))cb)(arg1, arg2, data);
-
-	if (return_val != NULL)
-		*return_val = GINT_TO_POINTER(ret_val);
-}
-
 void
 pidgin_conversations_init(void)
 {
@@ -8043,7 +8029,7 @@ pidgin_conversations_init(void)
 										"PidginConversation *"));
 
 	purple_signal_register(handle, "chat-nick-autocomplete",
-						 pidgin_marshal_BOOLEAN__POINTER_BOOLEAN,
+						 purple_marshal_BOOLEAN__POINTER_BOOLEAN,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 							 			PURPLE_SUBTYPE_CONVERSATION));
