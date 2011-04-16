@@ -696,37 +696,6 @@ resolve_host(gpointer data)
 	return FALSE;
 }
 
-PurpleDnsQueryData *
-purple_dnsquery_a(const char *hostname, int port,
-				PurpleDnsQueryConnectFunction callback, gpointer data)
-{
-	PurpleDnsQueryData *query_data;
-
-	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port	  != 0, NULL);
-	g_return_val_if_fail(callback != NULL, NULL);
-
-	query_data = g_new(PurpleDnsQueryData, 1);
-	query_data->hostname = g_strdup(hostname);
-	g_strstrip(query_data->hostname);
-	query_data->port = port;
-	query_data->callback = callback;
-	query_data->data = data;
-	query_data->resolver = NULL;
-
-	if (*query_data->hostname == '\0')
-	{
-		purple_dnsquery_destroy(query_data);
-		g_return_val_if_reached(NULL);
-	}
-
-	purple_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
-
-	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
-
-	return query_data;
-}
-
 #elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK  */
 
 /*
@@ -873,37 +842,6 @@ resolve_host(gpointer data)
 	return FALSE;
 }
 
-PurpleDnsQueryData *
-purple_dnsquery_a(const char *hostname, int port,
-				PurpleDnsQueryConnectFunction callback, gpointer data)
-{
-	PurpleDnsQueryData *query_data;
-
-	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port	  != 0, NULL);
-	g_return_val_if_fail(callback != NULL, NULL);
-
-	purple_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
-
-	query_data = g_new0(PurpleDnsQueryData, 1);
-	query_data->hostname = g_strdup(hostname);
-	g_strstrip(query_data->hostname);
-	query_data->port = port;
-	query_data->callback = callback;
-	query_data->data = data;
-
-	if (strlen(query_data->hostname) == 0)
-	{
-		purple_dnsquery_destroy(query_data);
-		g_return_val_if_reached(NULL);
-	}
-
-	/* Don't call the callback before returning */
-	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
-
-	return query_data;
-}
-
 #else /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */
 
 /*
@@ -969,6 +907,8 @@ resolve_host(gpointer data)
 	return FALSE;
 }
 
+#endif /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */
+
 PurpleDnsQueryData *
 purple_dnsquery_a(const char *hostname, int port,
 				PurpleDnsQueryConnectFunction callback, gpointer data)
@@ -976,29 +916,29 @@ purple_dnsquery_a(const char *hostname, int port,
 	PurpleDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port	  != 0, NULL);
+	g_return_val_if_fail(port != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	query_data = g_new(PurpleDnsQueryData, 1);
+	purple_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
+
+	query_data = g_new0(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
 	query_data->callback = callback;
 	query_data->data = data;
 
-	if (strlen(query_data->hostname) == 0)
+	if (*query_data->hostname == '\0')
 	{
 		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
 
-	/* Don't call the callback before returning */
 	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
 
 	return query_data;
 }
 
-#endif /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */
 
 void
 purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
