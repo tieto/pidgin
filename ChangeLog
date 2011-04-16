@@ -43,6 +43,9 @@ version 2.8.0 (??/??/????):
 	  (Tomasz Wasilczyk) (#13613)
 	* Don't count received messages or statuses when determining whether
 	  to send a keepalive packet. (Jan Zachorowski) (#13699)
+	* Fix a crash when receiving images on Windows or an incorrect
+	  timestamp in the log when receiving images on Linux. (Tomasz
+	  Wasilczyk) (#10268)
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
