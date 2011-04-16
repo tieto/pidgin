@@ -19,7 +19,7 @@ version 2.8.0 (??/??/????):
 		* Added PurpleSrvTxtQueryUiOps which allow UIs to specify their
 		  own mechanisms to resolve SRV and/or TXT queries. It works
 		  similar to PurpleDnsQueryUiOps
-		* purple_marshal_BOOLEAN__POINTER_BOOLEAN (kawaii.neto) (#12599)
+		* purple_marshal_BOOLEAN__POINTER_BOOLEAN (kawaii.neko) (#12599)
 
 		Deprecated:
 		* purple_account_add_buddy
@@ -30,8 +30,8 @@ version 2.8.0 (??/??/????):
 	Pidgin:
 		Added:
 		* pidgin_make_scrollable (Gabriel Schulhof) (#10599)
-		* chat-nick-clicked signal (kawaii.neto) (#12599)
-		* chat-nick-autocomplete signal (kawaii.neto) (#12599)
+		* chat-nick-clicked signal (kawaii.neko) (#12599)
+		* chat-nick-autocomplete signal (kawaii.neko) (#12599)
 
 version 2.7.11 (03/10/2011):
 	* libpurple:
