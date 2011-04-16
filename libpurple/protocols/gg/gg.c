@@ -1383,8 +1383,8 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
 			info->pending_richtext_messages = g_list_remove(info->pending_richtext_messages, entry->data);
 			/* We don't have any more images to download */
 			if (strstr(text, "<IMG ID=\"IMGID_HANDLER") == NULL) {
-				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
-				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, ev->event.msg.time);
+				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.image_reply.sender);
+				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, time(NULL));
 				g_free(buf);
 				purple_debug_info("gg", "ggp_recv_image_handler: richtext message: %s\n", text);
 				g_free(text);
