@@ -239,6 +239,21 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_destroy( info );
 }
 
+
+/*------------------------------------------------------------------------
+ * Display the profiles of search results.
+ *
+ * @param gc			The connection object
+ * @param row			The selected row from search-results
+ * @param user_data		NULL (unused)
+ */
+static void mxit_search_results_add_cb( PurpleConnection *gc, GList *row, gpointer user_data )
+{
+	/* display add buddy dialog */
+	purple_blist_request_add_buddy( purple_connection_get_account( gc ), g_list_nth_data( row, 0 ), NULL, g_list_nth_data( row, 1 ) );
+}
+
+
 /*------------------------------------------------------------------------
  * Display the profiles of search results.
  *
@@ -289,9 +304,13 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 		entries = g_list_next( entries );
 	}
 
-	// TODO: add buttons
+	/* button */
+	purple_notify_searchresults_button_add( results, PURPLE_NOTIFY_BUTTON_INVITE, mxit_search_results_add_cb );
 
-	text = g_strdup_printf( _( "We found %i contacts that match your search." ), maxResults );
+	if ( searchType == CP_SUGGEST_FRIENDS )
+		text = g_strdup_printf( _( "You have %i suggested friends." ), maxResults );
+	else
+		text = g_strdup_printf( _( "We found %i contacts that match your search." ), maxResults );
 
 	purple_notify_searchresults( session->con, NULL, text, NULL, results, NULL, NULL );
 
