@@ -176,12 +176,6 @@ _purple_buddy_icons_account_loaded_cb(void);
 void
 _purple_buddy_icons_blist_loaded_cb(void);
 
-/* This is for the purple_core_migrate() code to tell the buddy
- * icon subsystem about the old icons directory so it can
- * migrate any icons in use. */
-void
-_purple_buddy_icon_set_old_icons_dir(const char *dirname);
-
 /**
  * Creates a connection to the specified account and either connects
  * or attempts to register a new account.  If you are logging in,

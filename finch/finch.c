@@ -334,29 +334,6 @@ init_libpurple(int argc, char **argv)
 	/* We don't want debug-messages to show up and corrupt the display */
 	purple_debug_set_enabled(debug_enabled);
 
-	/* If we're using a custom configuration directory, we
-	 * do NOT want to migrate, or weird things will happen. */
-	if (opt_config_dir_arg == NULL)
-	{
-		if (!purple_core_migrate())
-		{
-			char *old = g_strconcat(purple_home_dir(),
-			                        G_DIR_SEPARATOR_S ".gaim", NULL);
-			char *text = g_strdup_printf(_(
-				"%s encountered errors migrating your settings "
-				"from %s to %s. Please investigate and complete the "
-				"migration by hand. Please report this error at http://developer.pidgin.im"), _("Finch"),
-				old, purple_user_dir());
-
-			g_free(old);
-
-			purple_print_utf8_to_console(stderr, text);
-			g_free(text);
-
-			return 0;
-		}
-	}
-
 	purple_core_set_ui_ops(gnt_core_get_ui_ops());
 	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
