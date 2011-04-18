@@ -32,10 +32,6 @@ typedef struct _PurpleSrvTxtQueryData PurpleSrvTxtQueryData;
 typedef struct _PurpleSrvResponse PurpleSrvResponse;
 typedef struct _PurpleTxtResponse PurpleTxtResponse;
 
-/* For compatibility, should be removed for 3.0.0
- */
-typedef struct _PurpleSrvTxtQueryData PurpleSrvQueryData;
-
 #include <glib.h>
 
 enum PurpleDnsType {
