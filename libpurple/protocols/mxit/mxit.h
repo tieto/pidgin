@@ -107,6 +107,10 @@
 #define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been received and processed */
 
 
+/* Maximum number of search results */
+#define		MXIT_SEARCHRESULTS_MAX		30
+
+
 /* define this to enable the link clicking support */
 #define		MXIT_LINK_CLICK
 

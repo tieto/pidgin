@@ -442,9 +442,10 @@ static void mxit_suggested_friends_action( PurplePluginAction* action )
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
 	const char*				profilelist[]	= {
 				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
-				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR,
+				CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME };
 
-	mxit_send_suggest_friends( session, 20, ARRAY_SIZE( profilelist ), profilelist );
+	mxit_send_suggest_friends( session, MXIT_SEARCHRESULTS_MAX, ARRAY_SIZE( profilelist ), profilelist );
 }
 
 
@@ -458,9 +459,10 @@ static void mxit_user_search_cb( PurpleConnection *gc, const char *input )
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
 	const char*				profilelist[]	= {
 				CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME, CP_PROFILE_FIRSTNAME,
-				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
+				CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_STATUS, CP_PROFILE_AVATAR,
+				CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME };
 
-	mxit_send_suggest_search( session, 20, input, ARRAY_SIZE( profilelist ), profilelist );
+	mxit_send_suggest_search( session, MXIT_SEARCHRESULTS_MAX, input, ARRAY_SIZE( profilelist ), profilelist );
 }
 
 
