@@ -39,7 +39,8 @@ typedef enum
 	PURPLE_PROXY_HTTP,             /**< HTTP proxy.                       */
 	PURPLE_PROXY_SOCKS4,           /**< SOCKS 4 proxy.                    */
 	PURPLE_PROXY_SOCKS5,           /**< SOCKS 5 proxy.                    */
-	PURPLE_PROXY_USE_ENVVAR        /**< Use environmental settings.       */
+	PURPLE_PROXY_USE_ENVVAR,       /**< Use environmental settings.       */
+	PURPLE_PROXY_TOR               /**< Use a Tor proxy (SOCKS 5 really)  */
 
 } PurpleProxyType;
 

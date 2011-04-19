@@ -1021,6 +1021,12 @@ make_proxy_dropdown(void)
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
+			0, _("Tor/Privacy (SOCKS5)"),
+			1, PURPLE_PROXY_TOR,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
 			0, _("Use Environmental Settings"),
 			1, PURPLE_PROXY_USE_ENVVAR,
 			-1);
@@ -2254,7 +2260,7 @@ create_accounts_list(AccountsWindow *dialog)
 					 G_CALLBACK(account_treeview_double_click_cb), dialog);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook),
-		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
+		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1),
 		NULL);
 
 	add_columns(treeview, dialog);

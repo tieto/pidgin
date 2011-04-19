@@ -2137,6 +2137,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 			break;
 
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 			proxy_connect_socks5(connect_data, addr, addrlen);
 			break;
 
@@ -2299,6 +2300,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 		case PURPLE_PROXY_HTTP:
 		case PURPLE_PROXY_SOCKS4:
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 		case PURPLE_PROXY_USE_ENVVAR:
 			connecthost = purple_proxy_info_get_host(connect_data->gpi);
 			connectport = purple_proxy_info_get_port(connect_data->gpi);
@@ -2365,6 +2367,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 		case PURPLE_PROXY_HTTP:
 		case PURPLE_PROXY_SOCKS4:
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 		case PURPLE_PROXY_USE_ENVVAR:
 			purple_debug_info("proxy", "Ignoring Proxy type (%d) for UDP.\n",
 			                  purple_proxy_info_get_type(connect_data->gpi));
@@ -2470,6 +2473,8 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 			proxytype = PURPLE_PROXY_SOCKS4;
 		else if (purple_strequal(type, "socks5"))
 			proxytype = PURPLE_PROXY_SOCKS5;
+		else if (purple_strequal(type, "tor"))
+			proxytype = PURPLE_PROXY_TOR;
 		else if (purple_strequal(type, "envvar"))
 			proxytype = PURPLE_PROXY_USE_ENVVAR;
 		else
