@@ -30,12 +30,6 @@
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
 #endif
-#ifndef T_SRV
-#define T_SRV	PurpleDnsTypeSrv
-#endif
-#ifndef T_TXT
-#define T_TXT	PurpleDnsTypeTxt
-#endif
 #else /* WIN32 */
 #include <windns.h>
 /* Missing from the mingw headers */
@@ -45,6 +39,13 @@
 #ifndef DNS_TYPE_TXT
 # define DNS_TYPE_TXT PurpleDnsTypeTxt
 #endif
+#endif
+
+#ifndef T_SRV
+#define T_SRV	PurpleDnsTypeSrv
+#endif
+#ifndef T_TXT
+#define T_TXT	PurpleDnsTypeTxt
 #endif
 
 #include "debug.h"
