@@ -103,13 +103,31 @@ typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 /**
  * Queries an SRV record.
  *
+ * @param account the account that the query is being done for (or NULL)
  * @param protocol Name of the protocol (e.g. "sip")
  * @param transport Name of the transport ("tcp" or "udp")
  * @param domain Domain name to query (e.g. "blubb.com")
  * @param cb A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
+ *
+ * @since 2.8.0
+ */
+PurpleSrvTxtQueryData *purple_srv_resolve_account(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
+ * Queries an SRV record.
+ *
+ * @param protocol Name of the protocol (e.g. "sip")
+ * @param transport Name of the transport ("tcp" or "udp")
+ * @param domain Domain name to query (e.g. "blubb.com")
+ * @param cb A callback which will be called with the results
+ * @param extradata Extra data to be passed to the callback
+ *
+ * @deprecated Use purple_srv_resolve_account instead
  */
 PurpleSrvTxtQueryData *purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
+#endif
 
 /**
  * Cancel an SRV or DNS query.
@@ -121,14 +139,31 @@ void purple_srv_cancel(PurpleSrvTxtQueryData *query_data);
 /**
  * Queries an TXT record.
  *
+ * @param account the account that the query is being done for (or NULL)
  * @param owner Name of the protocol (e.g. "_xmppconnect")
  * @param domain Domain name to query (e.g. "blubb.com")
  * @param cb A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  *
+ * @since 2.8.0
+ */
+PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
+ * Queries an TXT record.
+ *
+ * @param owner Name of the protocol (e.g. "_xmppconnect")
+ * @param domain Domain name to query (e.g. "blubb.com")
+ * @param cb A callback which will be called with the results
+ * @param extradata Extra data to be passed to the callback
+ *
+ * @deprecated Use purple_txt_resolve_account instead
+ *
  * @since 2.6.0
  */
 PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
+#endif
 
 /**
  * Cancel an TXT DNS query.

@@ -54,6 +54,7 @@ struct _PurpleDnsQueryData {
 	PurpleDnsQueryConnectFunction callback;
 	gpointer data;
 	guint timeout;
+	PurpleAccount *account;
 
 #if defined(PURPLE_DNSQUERY_USE_FORK)
 	PurpleDnsQueryResolverProcess *resolver;
@@ -861,6 +862,7 @@ static gboolean
 initiate_resolving(gpointer data)
 {
 	PurpleDnsQueryData *query_data;
+	PurpleProxyType proxy_type;
 
 	query_data = data;
 	query_data->timeout = 0;
@@ -868,6 +870,14 @@ initiate_resolving(gpointer data)
 	if (resolve_ip(query_data))
 		/* resolve_ip calls purple_dnsquery_resolved */
 		return FALSE;
+
+	proxy_type = purple_proxy_info_get_type(
+		purple_proxy_get_setup(query_data->account));
+	if (proxy_type == PURPLE_PROXY_TOR) {
+		purple_dnsquery_failed(query_data,
+			_("Aborting DNS lookup in Tor Proxy mode."));
+		return FALSE;
+	}
 
 	if (purple_dnsquery_ui_resolve(query_data))
 		/* The UI is handling the resolve; we're done */
@@ -878,9 +888,8 @@ initiate_resolving(gpointer data)
 	return FALSE;
 }
 
-
 PurpleDnsQueryData *
-purple_dnsquery_a(const char *hostname, int port,
+purple_dnsquery_a_account(PurpleAccount *account, const char *hostname, int port,
 				PurpleDnsQueryConnectFunction callback, gpointer data)
 {
 	PurpleDnsQueryData *query_data;
@@ -897,6 +906,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	query_data->port = port;
 	query_data->callback = callback;
 	query_data->data = data;
+	query_data->account = account;
 
 	if (*query_data->hostname == '\0')
 	{
@@ -909,6 +919,12 @@ purple_dnsquery_a(const char *hostname, int port,
 	return query_data;
 }
 
+PurpleDnsQueryData *
+purple_dnsquery_a(const char *hostname, int port,
+				PurpleDnsQueryConnectFunction callback, gpointer data)
+{
+	return purple_dnsquery_a_account(NULL, hostname, port, callback, data);
+}
 
 void
 purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
