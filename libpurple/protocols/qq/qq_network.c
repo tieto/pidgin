@@ -987,7 +987,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 	}
 
 	purple_debug_info("QQ", "UDP Connect to %s:%d\n", server, port);
-	qd->udp_query_data = purple_dnsquery_a(server, port, udp_host_resolved, gc);
+	qd->udp_query_data = purple_dnsquery_a_account(account, server, port, udp_host_resolved, gc);
 	if ( qd->udp_query_data == NULL ) {
 		purple_debug_error("QQ", "Could not resolve hostname\n");
 		return FALSE;

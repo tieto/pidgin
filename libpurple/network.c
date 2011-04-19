@@ -991,7 +991,7 @@ purple_network_set_stun_server(const gchar *stun_server)
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a(stun_server, 3478, purple_network_ip_lookup_cb,
+			purple_dnsquery_a_account(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
 				&stun_ip);
 		} else {
 			purple_debug_info("network",
@@ -1009,7 +1009,7 @@ purple_network_set_turn_server(const gchar *turn_server)
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for TURN server\n");
-			purple_dnsquery_a(turn_server,
+			purple_dnsquery_a_account(NULL, turn_server,
 				purple_prefs_get_int("/purple/network/turn_port"),
 				purple_network_ip_lookup_cb, &turn_ip);
 		} else {

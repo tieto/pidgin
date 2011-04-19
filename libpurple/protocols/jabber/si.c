@@ -277,6 +277,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 
 	if(dstjid != NULL && streamhost->host && streamhost->port > 0) {
 		char *dstaddr, *hash;
+		PurpleAccount *account;
 		jsx->gpi = purple_proxy_info_new();
 		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
@@ -293,8 +294,9 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
 		hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
-		jsx->connect_data = purple_proxy_connect_socks5(NULL, jsx->gpi,
-				hash, 0,
+		account = purple_connection_get_account(jsx->js->gc);
+		jsx->connect_data = purple_proxy_connect_socks5_account(NULL, account,
+				jsx->gpi, hash, 0,
 				jabber_si_bytestreams_connect_cb, xfer);
 		g_free(hash);
 		g_free(dstaddr);
