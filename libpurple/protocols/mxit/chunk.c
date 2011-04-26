@@ -224,6 +224,7 @@ static int get_data( const char* chunkdata, char* dest, int datalen )
  *
  *  @param chunkdata		The chunked-data buffer
  *  @param str				A pointer to extracted string.  Must be g_free()'d.
+ *  @param maxstrlen		Maximum size of destination buffer.
  *  @return					The number of bytes consumed
  */
 static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
@@ -465,10 +466,10 @@ void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chun
 	pos += get_int32( &chunkdata[pos], &(offer->filesize) );
 
 	/* filename [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], offer->filename, sizeof( offer->filename) );
+	pos += get_utf8_string( &chunkdata[pos], offer->filename, sizeof( offer->filename ) );
 
 	/* mime type [UTF-8] */
-	/* not used by libPurple */
+	pos += get_utf8_string( &chunkdata[pos], offer->mimetype, sizeof( offer->mimetype ) );
 
 	/* timestamp [8 bytes] */
 	/* not used by libPurple */
@@ -602,6 +603,37 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
 		pos += chunk_length( chunk );
 		chunklen -= ( MXIT_CHUNK_HEADER_SIZE + chunk_length( chunk ) );
 	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Parse a received "send file direct" response chunk.  (Chunk 10)
+ *
+ *  @param chunkdata		Chunked data buffer
+ *  @param datalen			The length of the chunked data
+ *  @param sendfile			Decoded sendfile information
+ */
+void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_chunk* sendfile )
+{
+	int			pos		= 0;
+	short		entries	= 0;
+
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%i bytes)\n", datalen );
+
+	/* number of entries [2 bytes] */
+	pos += get_int16( &chunkdata[pos], &entries );
+
+	if ( entries < 1 )		/* no data */
+		return;
+
+	/* contactAddress [UTF-8 string] */
+	pos += get_utf8_string( &chunkdata[pos], sendfile->username, sizeof( sendfile->username ) );
+
+	/* status [4 bytes] */
+	pos += get_int32( &chunkdata[pos], &(sendfile->status) );
+
+	/* status message [UTF-8 string] */
+	pos += get_utf8_string( &chunkdata[pos], sendfile->statusmsg, sizeof( sendfile->statusmsg ) );
 }
 
 

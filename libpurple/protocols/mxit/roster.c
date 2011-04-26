@@ -564,8 +564,8 @@ void mxit_update_blist( struct MXitSession* session )
 		buddy = g_slist_nth_data( list, i );
 
 		if ( !purple_buddy_get_protocol_data( buddy ) ) {
-			const gchar *alias = purple_buddy_get_alias( buddy );
-			const gchar *name = purple_buddy_get_name( buddy );
+			const gchar* alias = purple_buddy_get_alias( buddy );
+			const gchar* name = purple_buddy_get_name( buddy );
 
 			/* this buddy should be removed, because we did not receive him in our roster update from MXit */
 			purple_debug_info( MXIT_PLUGIN_ID, "Removed 'old' buddy from the blist '%s' (%s)\n", alias, name );
@@ -592,9 +592,16 @@ static void mxit_cb_buddy_auth( gpointer user_data )
 	/* send a allow subscription packet to MXit */
 	mxit_send_allow_sub( invite->session, invite->contact->username, invite->contact->alias );
 
+	/* remove the invite from our internal invites list */
+	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
+
 	/* freeup invite object */
 	if ( invite->contact->msg )
 		g_free( invite->contact->msg );
+	if ( invite->contact->statusMsg )
+		g_free( invite->contact->statusMsg );
+	if ( invite->contact->profile )
+		g_free( invite->contact->profile );
 	g_free( invite->contact );
 	g_free( invite );
 }
@@ -614,9 +621,16 @@ static void mxit_cb_buddy_deny( gpointer user_data )
 	/* send a deny subscription packet to MXit */
 	mxit_send_deny_sub( invite->session, invite->contact->username );
 
+	/* remove the invite from our internal invites list */
+	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
+
 	/* freeup invite object */
 	if ( invite->contact->msg )
 		g_free( invite->contact->msg );
+	if ( invite->contact->statusMsg )
+		g_free( invite->contact->statusMsg );
+	if ( invite->contact->profile )
+		g_free( invite->contact->profile );
 	g_free( invite->contact );
 	g_free( invite );
 }
@@ -639,8 +653,38 @@ void mxit_new_subscription( struct MXitSession* session, struct contact* contact
 	invite->session = session;
 	invite->contact = contact;
 
+	/* add the invite to our internal invites list */
+	invite->session->invites = g_list_append( invite->session->invites, invite->contact );
+
 	/* (reference: "libpurple/account.h") */
 	purple_account_request_authorization( session->acc, contact->username, NULL, contact->alias, contact->msg, FALSE, mxit_cb_buddy_auth, mxit_cb_buddy_deny, invite );
+}
+
+
+/*------------------------------------------------------------------------
+ * Return the contact object for a mxit invite
+ *
+ *  @param session		The MXit session object
+ *  @param username		The username of the contact
+ *  @return				The contact object for the inviting user
+ */
+struct contact* get_mxit_invite_contact( struct MXitSession* session, const char* username )
+{
+	struct contact*		con		= NULL;
+	struct contact*		match	= NULL;
+	int					i;
+
+	/* run through all the invites and try and find the match */
+	for ( i = 0; i < g_list_length( session->invites ); i++ ) {
+		con = g_list_nth_data( session->invites, i );
+		if ( strcmp( con->username, username ) == 0 ) {
+			/* invite found */
+			match = con;
+			break;
+		}
+	}
+
+	return match;
 }
 
 
@@ -680,8 +724,9 @@ gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* user
  *  @param gc		The connection object
  *  @param buddy	The new buddy
  *  @param group	The group of the new buddy
+ *  @param message	The invite message
  */
-void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group )
+void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group, const char* message )
 {
 	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
 	GSList*				list	= NULL;
@@ -702,7 +747,7 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 		 * you accept an invite.  so in that case the user is already
 		 * in our blist and ready to be chatted to.
 		 */
-		mxit_send_invite( session, buddy_name, buddy_alias, group_name );
+		mxit_send_invite( session, buddy_name, TRUE, buddy_alias, group_name, message );
 	}
 	else {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy (scenario 2) (list:%i)\n", g_slist_length( list ) );
