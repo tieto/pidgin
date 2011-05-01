@@ -51,6 +51,9 @@ version 2.8.0 (??/??/????):
 	  Wasilczyk) (#10268)
 	* Support XML events, resulting in immediate update of other users'
 	  buddy icons. (Tomasz Wasilczyk) (#13739)
+	* Accept poorly formatted URLs from other third-party clients in
+	  the same manner as the official client.  (Tomasz Wasilczyk)
+	  (#13886)
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
