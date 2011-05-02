@@ -1042,8 +1042,14 @@ make_proxy_dropdown(void)
 static void
 proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 {
-	dialog->new_proxy_type =
-		gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) - 1;
+	GtkTreeIter iter;
+
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(menu), &iter)) {
+		int int_value;
+		gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(menu)), &iter,
+			1, &int_value, -1);
+		dialog->new_proxy_type = int_value;
+	}
 
 	if (dialog->new_proxy_type == PURPLE_PROXY_USE_GLOBAL ||
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
@@ -1085,6 +1091,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleProxyInfo *proxy_info;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
+	GtkTreeIter iter;
+	GtkTreeModel *proxy_model;
 
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
@@ -1131,21 +1139,10 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->account != NULL &&
 		(proxy_info = purple_account_get_proxy_info(dialog->account)) != NULL) {
-
-		PurpleProxyType type = purple_proxy_info_get_type(proxy_info);
 		const char *value;
 		int int_val;
 
-		/* Hah! */
-		/* I dunno what you're laughing about, fuzz ball. */
-		dialog->new_proxy_type = type;
-		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
-				type + 1);
-
-		if (type == PURPLE_PROXY_USE_GLOBAL || type == PURPLE_PROXY_NONE ||
-				type == PURPLE_PROXY_USE_ENVVAR)
-			gtk_widget_hide_all(vbox2);
-
+		dialog->new_proxy_type = purple_proxy_info_get_type(proxy_info);
 
 		if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
@@ -1163,13 +1160,25 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		if ((value = purple_proxy_info_get_password(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
-	}
-	else {
+
+	} else
 		dialog->new_proxy_type = PURPLE_PROXY_USE_GLOBAL;
-		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
-				dialog->new_proxy_type + 1);
-		gtk_widget_hide_all(vbox2);
+
+	proxy_model = gtk_combo_box_get_model(
+		GTK_COMBO_BOX(dialog->proxy_dropdown));
+	if (gtk_tree_model_get_iter_first(proxy_model, &iter)) {
+		int int_val;
+		do {
+			gtk_tree_model_get(proxy_model, &iter, 1, &int_val, -1);
+			if (int_val == dialog->new_proxy_type) {
+				gtk_combo_box_set_active_iter(
+					GTK_COMBO_BOX(dialog->proxy_dropdown), &iter);
+				break;
+			}
+		} while(gtk_tree_model_iter_next(proxy_model, &iter));
 	}
+
+	proxy_type_changed_cb(dialog->proxy_dropdown, dialog);
 
 	/* Connect signals. */
 	g_signal_connect(G_OBJECT(dialog->proxy_dropdown), "changed",
