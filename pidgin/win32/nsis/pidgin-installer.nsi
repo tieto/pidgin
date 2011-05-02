@@ -580,7 +580,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libmyspace.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
-    Delete "$INSTDIR\plugins\libqq.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
