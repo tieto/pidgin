@@ -1003,12 +1003,6 @@ make_proxy_dropdown(void)
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
-			0, _("HTTP"),
-			1, PURPLE_PROXY_HTTP,
-			-1);
-
-	gtk_list_store_append(model, &iter);
-	gtk_list_store_set(model, &iter,
 			0, _("SOCKS 4"),
 			1, PURPLE_PROXY_SOCKS4,
 			-1);
@@ -1023,6 +1017,12 @@ make_proxy_dropdown(void)
 	gtk_list_store_set(model, &iter,
 			0, _("Tor/Privacy (SOCKS5)"),
 			1, PURPLE_PROXY_TOR,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("HTTP"),
+			1, PURPLE_PROXY_HTTP,
 			-1);
 
 	gtk_list_store_append(model, &iter);
