@@ -713,6 +713,8 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 	g_return_val_if_fail(timestamp != NULL, 0);
 
+	memset(&t, 0, sizeof(struct tm));
+
 	str = timestamp;
 
 	/* Strip leading whitespace */
