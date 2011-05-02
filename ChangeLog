@@ -42,8 +42,8 @@ version 2.8.0 (??/??/????):
 	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
 	  Krzysztof Klinikowski) (#13362, #13590)
 	* Require libgadu 1.10.1 to avoid using internal libgadu.
-	* SSL connection support for GNUTLS users (not on Windows yet!).
-	  (Tomasz Wasilczyk) (#13613)
+	* Optional SSL connection support for GNUTLS users (not on Windows
+	  yet!). (Tomasz Wasilczyk) (#13613, #13894)
 	* Don't count received messages or statuses when determining whether
 	  to send a keepalive packet. (Jan Zachorowski) (#13699)
 	* Fix a crash when receiving images on Windows or an incorrect
