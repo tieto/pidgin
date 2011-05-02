@@ -1903,7 +1903,8 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		sip->query_data = purple_dnsquery_a_account(sip->account, hostname,
+			port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
 			purple_connection_error_reason(sip->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -1965,7 +1966,7 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	sip->srv_query_data = purple_srv_resolve("sip",
+	sip->srv_query_data = purple_srv_resolve_account(account, "sip",
 			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
 }
 

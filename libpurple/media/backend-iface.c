@@ -192,3 +192,20 @@ purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_send_codec(self,
 			sess_id, codec);
 }
+
+void
+purple_media_backend_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params)
+{
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND(self));
+	PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_params(self, num_params, params);
+}
+
+const gchar **
+purple_media_backend_get_available_params(PurpleMediaBackend *self)
+{
+	static const gchar *NULL_ARRAY[] = { NULL };
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), NULL_ARRAY);
+	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->get_available_params();
+}

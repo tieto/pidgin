@@ -1792,6 +1792,15 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
+	/* emit chat-nick-clicked signal */
+	if (event->type == GDK_BUTTON_PRESS) {
+		gint plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+					pidgin_conversations_get_handle(), "chat-nick-clicked",
+					conv, who, event->button));
+		if (plugin_return)
+			goto handled;
+	}
+
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
@@ -1806,6 +1815,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 					   event->button, event->time);
 	}
 
+handled:
 	g_free(who);
 	gtk_tree_path_free(path);
 
@@ -2122,7 +2132,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		case GDK_ISO_Left_Tab:
 			if (gtkconv->entry != entry)
 				break;
-			return tab_complete(conv);
+			{
+				gint plugin_return;
+				plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+							pidgin_conversations_get_handle(), "chat-nick-autocomplete",
+							conv, event->state & GDK_SHIFT_MASK));
+				return plugin_return ? TRUE : tab_complete(conv);
+			}
 			break;
 
 		case GDK_Page_Up:
@@ -5586,6 +5602,15 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 
 		buddyname = (tag->name) + 6;
 
+		/* emit chat-nick-clicked signal */
+		if (event->type == GDK_BUTTON_PRESS) {
+			gint plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+						pidgin_conversations_get_handle(), "chat-nick-clicked",
+						data, buddyname, btn_event->button));
+			if (plugin_return)
+				return TRUE;
+		}
+
 		if (btn_event->button == 1 &&
 				event->type == GDK_2BUTTON_PRESS) {
 			chat_do_im(PIDGIN_CONVERSATION(conv), buddyname);
@@ -8002,6 +8027,21 @@ pidgin_conversations_init(void)
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_BOXED,
 										"PidginConversation *"));
+
+	purple_signal_register(handle, "chat-nick-autocomplete",
+						 purple_marshal_BOOLEAN__POINTER_BOOLEAN,
+						 purple_value_new(PURPLE_TYPE_BOOLEAN), 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 			PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "chat-nick-clicked",
+						 purple_marshal_BOOLEAN__POINTER_POINTER_UINT,
+						 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 			PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_UINT));
+
 
 	/**********************************************************************
 	 * Register commands

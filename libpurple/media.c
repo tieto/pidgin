@@ -916,6 +916,47 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 #endif
 }
 
+void
+purple_media_set_params(PurpleMedia *media,
+		guint num_params, GParameter *params)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+	purple_media_backend_set_params(media->priv->backend, num_params, params);
+#endif
+}
+
+const gchar **
+purple_media_get_available_params(PurpleMedia *media)
+{
+	static const gchar *NULL_ARRAY[] = { NULL };
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL_ARRAY);
+
+	return purple_media_backend_get_available_params(media->priv->backend);
+#else
+	return NULL_ARRAY;
+#endif
+}
+
+gboolean
+purple_media_param_is_supported(PurpleMedia *media, const gchar *param)
+{
+#ifdef USE_VV
+	const gchar **params;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+	g_return_val_if_fail(param != NULL, FALSE);
+
+	params = purple_media_backend_get_available_params(media->priv->backend);
+	for (; *params != NULL; ++params)
+		if (!strcmp(*params, param))
+			return TRUE;
+#endif
+	return FALSE;
+}
+
 #ifdef USE_VV
 static void
 purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,

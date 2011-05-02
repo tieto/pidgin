@@ -365,7 +365,7 @@ static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
 	purple_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
 		results, servername, port);
 
-	purple_dnsquery_a(servername, port, hbn_cb, NULL);
+	purple_dnsquery_a_account(NULL, servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 
@@ -424,7 +424,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 	nattype.servername = g_strdup(servername);
 
 	callbacks = g_slist_append(callbacks, cb);
-	purple_srv_resolve("stun", "udp", servername, do_test1,
+	purple_srv_resolve_account(NULL, "stun", "udp", servername, do_test1,
 		(gpointer) servername);
 
 	return &nattype;

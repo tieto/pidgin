@@ -69,6 +69,7 @@ struct _PurpleProxyConnectData {
 	guchar *read_buffer;
 	gsize read_buf_len;
 	gsize read_len;
+	PurpleAccount *account;
 };
 
 static const char * const socks5errors[] = {
@@ -1367,7 +1368,8 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	} else {
-		connect_data->query_data = purple_dnsquery_a(connect_data->host,
+		connect_data->query_data = purple_dnsquery_a_account(
+				connect_data->account, connect_data->host,
 				connect_data->port, s4_host_resolved, connect_data);
 
 		if (connect_data->query_data == NULL) {
@@ -2137,6 +2139,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 			break;
 
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 			proxy_connect_socks5(connect_data, addr, addrlen);
 			break;
 
@@ -2281,6 +2284,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
 	connect_data->gpi = purple_proxy_get_setup(account);
+	connect_data->account = account;
 
 	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
@@ -2299,6 +2303,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 		case PURPLE_PROXY_HTTP:
 		case PURPLE_PROXY_SOCKS4:
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 		case PURPLE_PROXY_USE_ENVVAR:
 			connecthost = purple_proxy_info_get_host(connect_data->gpi);
 			connectport = purple_proxy_info_get_port(connect_data->gpi);
@@ -2311,7 +2316,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a(connecthost,
+	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
@@ -2347,6 +2352,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
 	connect_data->gpi = purple_proxy_get_setup(account);
+	connect_data->account = account;
 
 	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
 		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
@@ -2365,6 +2371,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 		case PURPLE_PROXY_HTTP:
 		case PURPLE_PROXY_SOCKS4:
 		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_TOR:
 		case PURPLE_PROXY_USE_ENVVAR:
 			purple_debug_info("proxy", "Ignoring Proxy type (%d) for UDP.\n",
 			                  purple_proxy_info_get_type(connect_data->gpi));
@@ -2377,7 +2384,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a(connecthost,
+	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
@@ -2399,6 +2406,19 @@ purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 						  PurpleProxyConnectFunction connect_cb,
 						  gpointer data)
 {
+	return purple_proxy_connect_socks5_account(NULL, handle, gpi,
+						  host, port, connect_cb, data);
+}
+/*
+ * Combine some of this code with purple_proxy_connect()
+ */
+PurpleProxyConnectData *
+purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
+						  PurpleProxyInfo *gpi,
+						  const char *host, int port,
+						  PurpleProxyConnectFunction connect_cb,
+						  gpointer data)
+{
 	PurpleProxyConnectData *connect_data;
 
 	g_return_val_if_fail(host       != NULL, NULL);
@@ -2414,9 +2434,11 @@ purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
 	connect_data->gpi = gpi;
+	connect_data->account = account;
 
 	connect_data->query_data =
-			purple_dnsquery_a(purple_proxy_info_get_host(gpi),
+			purple_dnsquery_a_account(account,
+					purple_proxy_info_get_host(gpi),
 					purple_proxy_info_get_port(gpi),
 					connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
@@ -2470,6 +2492,8 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 			proxytype = PURPLE_PROXY_SOCKS4;
 		else if (purple_strequal(type, "socks5"))
 			proxytype = PURPLE_PROXY_SOCKS5;
+		else if (purple_strequal(type, "tor"))
+			proxytype = PURPLE_PROXY_TOR;
 		else if (purple_strequal(type, "envvar"))
 			proxytype = PURPLE_PROXY_USE_ENVVAR;
 		else

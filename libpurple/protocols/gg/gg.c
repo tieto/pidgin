@@ -1044,6 +1044,29 @@ out:
 }
 
 /**
+ * Try to update avatar of the buddy.
+ *
+ * @param gc     PurpleConnection
+ * @param uin    UIN of the buddy.
+ */
+static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
+{
+	gchar *avatarurl;
+	PurpleUtilFetchUrlData *url_data;
+
+	purple_debug_info("gg", "ggp_update_buddy_avatar(gc, %u)\n", uin);
+
+	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%u/0.xml", uin);
+
+	url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), avatarurl, TRUE,
+			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
+			gg_get_avatar_url_cb, gc);
+
+	g_free(avatarurl);
+}
+
+/**
  * Handle change of the status of the buddy.
  *
  * @param gc     PurpleConnection
@@ -1056,18 +1079,10 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 {
 	gchar *from;
 	const char *st;
-	gchar *avatarurl;
-	PurpleUtilFetchUrlData *url_data;
+
+	ggp_update_buddy_avatar(gc, uin);
 
 	from = g_strdup_printf("%u", uin);
-	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%s/0.xml", from);
-
-	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), avatarurl, TRUE,
-			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
-			gg_get_avatar_url_cb, gc);
-
-	g_free(avatarurl);
 
 	switch (status) {
 		case GG_STATUS_NOT_AVAIL:
@@ -1383,8 +1398,8 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
 			info->pending_richtext_messages = g_list_remove(info->pending_richtext_messages, entry->data);
 			/* We don't have any more images to download */
 			if (strstr(text, "<IMG ID=\"IMGID_HANDLER") == NULL) {
-				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
-				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, ev->event.msg.time);
+				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.image_reply.sender);
+				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, time(NULL));
 				g_free(buf);
 				purple_debug_info("gg", "ggp_recv_image_handler: richtext message: %s\n", text);
 				g_free(text);
@@ -1614,6 +1629,75 @@ static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int
     g_free(from);
 }
 
+/**
+ * Handling of XML events.
+ *
+ * @param gc PurpleConnection.
+ * @param data Raw XML contents.
+ *
+ * @see http://toxygen.net/libgadu/protocol/#ch1.13
+ */
+static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
+{
+	xmlnode *xml = NULL;
+	xmlnode *xmlnode_next_event;
+
+	xml = xmlnode_from_str(data, -1);
+	if (xml == NULL)
+		goto out;
+
+	xmlnode_next_event = xmlnode_get_child(xml, "event");
+	while (xmlnode_next_event != NULL)
+	{
+		xmlnode *xmlnode_current_event = xmlnode_next_event;
+		
+		xmlnode *xmlnode_type;
+		char *event_type_raw;
+		int event_type = 0;
+		
+		xmlnode *xmlnode_sender;
+		char *event_sender_raw;
+		uin_t event_sender = 0;
+
+		xmlnode_next_event = xmlnode_get_next_twin(xmlnode_next_event);
+		
+		xmlnode_type = xmlnode_get_child(xmlnode_current_event, "type");
+		if (xmlnode_type == NULL)
+			continue;
+		event_type_raw = xmlnode_get_data(xmlnode_type);
+		if (event_type_raw != NULL)
+			event_type = atoi(event_type_raw);
+		g_free(event_type_raw);
+		
+		xmlnode_sender = xmlnode_get_child(xmlnode_current_event, "sender");
+		if (xmlnode_sender != NULL)
+		{
+			event_sender_raw = xmlnode_get_data(xmlnode_sender);
+			if (event_sender_raw != NULL)
+				event_sender = ggp_str_to_uin(event_sender_raw);
+			g_free(event_sender_raw);
+		}
+		
+		switch (event_type)
+		{
+			case 28: /* avatar update */
+				purple_debug_info("gg",
+					"ggp_xml_event_handler: avatar updated (uid: %u)\n",
+					event_sender);
+				ggp_update_buddy_avatar(gc, event_sender);
+				break;
+			default:
+				purple_debug_error("gg",
+					"ggp_xml_event_handler: unsupported event type=%d from=%u\n",
+					event_type, event_sender);
+		}
+	}
+	
+	out:
+		if (xml)
+			xmlnode_free(xml);
+}
+
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
@@ -1629,7 +1713,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			_("Unable to read from socket"));
 		return;
 	}
-	gc->last_received = time(NULL);
+
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -1731,6 +1815,10 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			ggp_typing_notification_handler(gc, ev->event.typing_notification.uin,
 				ev->event.typing_notification.length);
 			break;
+		case GG_EVENT_XML_EVENT:
+			purple_debug_info("gg", "GG_EVENT_XML_EVENT\n");
+			ggp_xml_event_handler(gc, ev->event.xml_event.data);
+			break;
 		default:
 			purple_debug_error("gg",
 				"unsupported event type=%d\n", ev->type);
@@ -1757,6 +1845,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_STATE_RESOLVING:
 			purple_debug_info("gg", "GG_STATE_RESOLVING\n");
 			break;
+		case GG_STATE_RESOLVING_GG:
+			purple_debug_info("gg", "GG_STATE_RESOLVING_GG\n");
+			break;
 		case GG_STATE_CONNECTING_HUB:
 			purple_debug_info("gg", "GG_STATE_CONNECTING_HUB\n");
 			break;
@@ -1771,6 +1862,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_STATE_READING_REPLY:
 			purple_debug_info("gg", "GG_STATE_READING_REPLY\n");
+			break;
+		case GG_STATE_TLS_NEGOTIATION:
+			purple_debug_info("gg", "GG_STATE_TLS_NEGOTIATION\n");
 			break;
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
@@ -1792,10 +1886,11 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	purple_input_remove(gc->inpa);
 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
-	gc->inpa = purple_input_add(info->session->fd,
-				  (info->session->check == 1) ? PURPLE_INPUT_WRITE
-							      : PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	if (info->session->fd >= 0)
+		gc->inpa = purple_input_add(info->session->fd,
+			(info->session->check == 1) ? PURPLE_INPUT_WRITE :
+				PURPLE_INPUT_READ,
+			ggp_async_login_handler, gc);
 
 	switch (ev->type) {
 		case GG_EVENT_NONE:
@@ -2008,6 +2103,7 @@ static void ggp_login(PurpleAccount *account)
 	struct gg_login_params *glp;
 	GGPInfo *info;
 	const char *address;
+	const gchar *encryption_type;
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
@@ -2041,11 +2137,13 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
-#if defined(USE_GNUTLS) || !defined(USE_INTERNAL_LIBGADU)
-	glp->tls = 1;
-#else
-	glp->tls = 0;
-#endif
+	
+	encryption_type = purple_account_get_string(account, "encryption", "none");
+	purple_debug_info("gg", "Requested encryption type: %s\n", encryption_type);
+	if (strcmp(encryption_type, "opportunistic_tls") == 0)
+		glp->tls = 1;
+	else
+		glp->tls = 0;
 	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
@@ -2692,6 +2790,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
+	GList *encryption_options = NULL;
 
 	option = purple_account_option_string_new(_("Nickname"),
 			"nick", _("Gadu-Gadu User"));
@@ -2702,6 +2801,26 @@ static void init_plugin(PurplePlugin *plugin)
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
+
+#define ADD_VALUE(list, desc, v) { \
+	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup((desc)); \
+	kvp->value = g_strdup((v)); \
+	list = g_list_append(list, kvp); \
+}
+
+	ADD_VALUE(encryption_options, _("Don't use encryption"), "none");
+	ADD_VALUE(encryption_options, _("Use encryption if available"),
+		"opportunistic_tls");
+#if 0
+	/* TODO */
+	ADD_VALUE(encryption_options, _("Require encryption"), "require_tls");
+#endif
+
+	option = purple_account_option_list_new(_("Connection security"),
+		"encryption", encryption_options);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
 
 	my_protocol = plugin;
 

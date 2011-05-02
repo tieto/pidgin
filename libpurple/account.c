@@ -294,6 +294,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 			 proxy_type == PURPLE_PROXY_HTTP       ? "http"   :
 			 proxy_type == PURPLE_PROXY_SOCKS4     ? "socks4" :
 			 proxy_type == PURPLE_PROXY_SOCKS5     ? "socks5" :
+			 proxy_type == PURPLE_PROXY_TOR        ? "tor" :
 			 proxy_type == PURPLE_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
 
 	if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
@@ -746,6 +747,8 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS4);
 		else if (purple_strequal(data, "socks5"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS5);
+		else if (purple_strequal(data, "tor"))
+			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_TOR);
 		else if (purple_strequal(data, "envvar"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
