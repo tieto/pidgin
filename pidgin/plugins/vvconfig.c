@@ -90,7 +90,17 @@ get_element_devices(const gchar *element_name)
 	}
 
 	element = gst_element_factory_make(element_name, "test");
+	if(!element) {
+		purple_debug_info("vvconfig", "'%s' - unable to find element\n", element_name);
+		return g_list_reverse(ret);
+	}
+
 	klass = G_OBJECT_GET_CLASS (element);
+	if(!klass) {
+		purple_debug_info("vvconfig", "'%s' - unable to find G_Object Class\n", element_name);
+		return g_list_reverse(ret);
+	}
+
 	if (!g_object_class_find_property(klass, "device") ||
 			!GST_IS_PROPERTY_PROBE(element) ||
 			!(probe = GST_PROPERTY_PROBE(element)) ||

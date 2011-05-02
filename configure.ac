@@ -1114,7 +1114,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1170,7 +1170,6 @@ for i in $STATIC_PRPLS ; do
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
 		icq)		static_oscar=yes ;;
-		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		silc10)		static_silc=yes ;;
@@ -1189,7 +1188,6 @@ AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
@@ -1201,7 +1199,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1230,7 +1228,6 @@ for i in $DYNAMIC_PRPLS ; do
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
 		icq)		dynamic_oscar=yes ;;
-		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		silc10)		dynamic_silc=yes ;;
@@ -2580,7 +2577,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
-		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/silc10/Makefile
