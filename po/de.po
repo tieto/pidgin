@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-03 20:09+0200\n"
-"PO-Revision-Date: 2011-05-03 20:09+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2011-05-03 22:53+0200\n"
+"PO-Revision-Date: 2011-05-03 22:55+0200\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -1958,7 +1958,7 @@ msgid "Unknown reason"
 msgstr "Unbekannter Grund"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
-msgstr ""
+msgstr "DNS-Anfrage im Tor-Proxy-Modus abgebrochen"
 
 #, c-format
 msgid ""
@@ -3218,10 +3218,10 @@ msgid "Show status to:"
 msgstr "Zeige Status:"
 
 msgid "All people"
-msgstr "allen Leuten"
+msgstr "Allen Leuten"
 
 msgid "Only buddies"
-msgstr "nur Buddys"
+msgstr "Nur Buddys"
 
 msgid "Change status broadcasting"
 msgstr "Statusveröffentlichung ändern"
@@ -5872,10 +5872,9 @@ msgstr "Kann den Benutzer nicht entfernen"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobile Nachricht wurde nicht gesendet, da sie zu lang war."
 
-#, fuzzy
 msgid "Mobile message was not sent because an unknown error occurred."
 msgstr ""
-"Nachricht konnte nicht gesendet werden, da ein unbekannter Fehler "
+"Mobile Nachricht konnte nicht gesendet werden, da ein unbekannter Fehler "
 "aufgetreten ist."
 
 #, c-format
@@ -6101,11 +6100,11 @@ msgstr "Handynummer"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "Kann gesucht werden"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "Kann vorgeschlagen werden"
 
 msgid "Update your MXit Profile"
 msgstr "Aktualisieren Sie Ihr MXit-Profil"
@@ -6123,9 +6122,8 @@ msgid "The two PINs you entered do not match."
 msgstr "Die beiden PINs, die Sie eingegeben haben, stimmen nicht überein."
 
 #. show error to user
-#, fuzzy
 msgid "PIN Update Error"
-msgstr "Profil-Aktualisierungsfehler"
+msgstr "PIN-Aktualisierungsfehler"
 
 #. pin
 #. pin (required)
@@ -6158,9 +6156,8 @@ msgstr "Suche nach einem Benutzer"
 msgid "Search for a MXit contact"
 msgstr "Suche nach einem MXit-Kontakt"
 
-#, fuzzy
 msgid "Type search information"
-msgstr "Benutzer-Information"
+msgstr "Eingabe der Benutzer-Information"
 
 msgid "_Search"
 msgstr "_Suchen"
@@ -6174,9 +6171,8 @@ msgid "Change PIN..."
 msgstr "PIN ändern..."
 
 #. suggested friends
-#, fuzzy
 msgid "Suggested friends..."
-msgstr "Setze Spitzname..."
+msgstr "Vorgeschlagene Freunde..."
 
 #. search for contacts
 msgid "Search for contacts..."
@@ -6357,20 +6353,19 @@ msgid "No contacts found."
 msgstr "Keine Kontakte gefunden."
 
 #. define columns
-#, fuzzy
 msgid "UserId"
-msgstr "Benutzer"
+msgstr "Benutzer-Id"
 
 msgid "Where I live"
 msgstr "Wo ich wohne"
 
 #, c-format
 msgid "You have %i suggested friends."
-msgstr ""
+msgstr "Sie haben %i vorgeschlagene(n) Freund(e)."
 
 #, c-format
 msgid "We found %i contacts that match your search."
-msgstr ""
+msgstr "Wir fanden %i Kontakt(e), die Ihner Suchanfrage entspricht/entsprechen."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10662,7 +10657,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 msgid "Tor/Privacy (SOCKS5)"
-msgstr ""
+msgstr "Tor/Privatsphäre (SOCKS5)"
 
 msgid "HTTP"
 msgstr "HTTP"
@@ -10694,16 +10689,14 @@ msgstr "_Port:"
 msgid "Pa_ssword:"
 msgstr "P_asswort:"
 
-#, fuzzy
 msgid "Use _silence suppression"
-msgstr "Sitzung wird fortgesetzt"
+msgstr "Benutze _Geräuschunterdrückung"
 
-#, fuzzy
 msgid "_Voice and Video"
-msgstr "Sprach- und Videoübertragung"
+msgstr "Sprache und _Video"
 
 msgid "Unable to save new account"
-msgstr "Kann neues Konto nicht speichern"
+msgstr "Sitzung wird fortgesetzt<"
 
 msgid "An account already exists with the specified criteria."
 msgstr "Ein Konto mit den angegebenen Daten existiert bereits."
@@ -11323,9 +11316,8 @@ msgstr "_Benutzername des Buddys:"
 msgid "(Optional) A_lias:"
 msgstr "(Optionaler) A_lias:"
 
-#, fuzzy
 msgid "(Optional) _Invite message:"
-msgstr "(Optionaler) A_lias:"
+msgstr "(Optionale) _Einladungsnachricht:"
 
 msgid "Add buddy to _group:"
 msgstr "Buddy zu folgender _Gruppe hinzufügen:"
@@ -14814,14 +14806,13 @@ msgid "D_evice"
 msgstr "G_erät"
 
 msgid "DROP"
-msgstr ""
+msgstr "VERWERFEN"
 
 msgid "Volume:"
 msgstr "Lautstärke:"
 
-#, fuzzy
 msgid "Silence threshold:"
-msgstr "Schwellwert:"
+msgstr "Schwellwert für Stille:"
 
 msgid "Input and Output Settings"
 msgstr "Ein- und Ausgabeeinstellungen"
