@@ -365,6 +365,7 @@ purple_request_field_destroy(PurpleRequestField *field)
 	g_free(field->id);
 	g_free(field->label);
 	g_free(field->type_hint);
+	g_free(field->tooltip);
 
 	if (field->type == PURPLE_REQUEST_FIELD_STRING)
 	{
@@ -425,6 +426,15 @@ purple_request_field_set_type_hint(PurpleRequestField *field,
 
 	g_free(field->type_hint);
 	field->type_hint = g_strdup(type_hint);
+}
+
+void
+purple_request_field_set_tooltip(PurpleRequestField *field, const char *tooltip)
+{
+	g_return_if_fail(field != NULL);
+
+	g_free(field->tooltip);
+	field->tooltip = g_strdup(tooltip);
 }
 
 void
@@ -500,6 +510,14 @@ purple_request_field_get_type_hint(const PurpleRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->type_hint;
+}
+
+const char *
+purple_request_field_get_tooltip(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+
+	return field->tooltip;
 }
 
 gboolean

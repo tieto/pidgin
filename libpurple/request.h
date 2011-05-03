@@ -180,6 +180,7 @@ struct _PurpleRequestField
 	} u;
 
 	void *ui_data;
+	char *tooltip;
 
 };
 #endif
@@ -517,6 +518,18 @@ void purple_request_field_set_type_hint(PurpleRequestField *field,
 									  const char *type_hint);
 
 /**
+ * Sets the tooltip for the field.
+ *
+ * This is optionally used by the UIs to provide a tooltip for
+ * the field.
+ *
+ * @param field     The field.
+ * @param tooltip   The tooltip text.
+ */
+void purple_request_field_set_tooltip(PurpleRequestField *field,
+									const char *tooltip);
+
+/**
  * Sets whether or not a field is required.
  *
  * @param field    The field.
@@ -580,6 +593,15 @@ gboolean purple_request_field_is_visible(const PurpleRequestField *field);
  * @return The field's type hint.
  */
 const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
+
+/**
+ * Returns the field's tooltip.
+ *
+ * @param field The field.
+ *
+ * @return The field's tooltip.
+ */
+const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a field is required.
