@@ -818,7 +818,6 @@ static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
 
 static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
 {
-	GGPInfo *info;
 	PurpleConnection *conn;
 	PurpleRequestField *field;
 	GList *sel;
@@ -826,8 +825,6 @@ static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields 
 	conn = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	g_return_if_fail(conn != NULL);
-
-	info = conn->proto_data;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);
@@ -2595,9 +2592,6 @@ static void ggp_keepalive(PurpleConnection *gc)
 static void ggp_register_user(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	GGPInfo *info;
-
-	info = gc->proto_data = g_new0(GGPInfo, 1);
 
 	ggp_token_request(gc, ggp_register_user_dialog);
 }

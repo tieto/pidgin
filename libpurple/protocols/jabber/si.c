@@ -1691,7 +1691,10 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
+	xmlnode *file, *feature, *x, *field, *option, *value;
+#if ENABLE_FT_THUMBNAILS
+	xmlnode *thumbnail;
+#endif
 	const char *stream_id, *filename, *filesize_c, *profile;
 	guint64 filesize_64 = 0;
 	size_t filesize = 0;
@@ -1802,7 +1805,6 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		purple_xfer_request(xfer);
 	}
 #else
-	thumbnail = NULL; /* Silence warning */
 	purple_xfer_request(xfer);
 #endif
 }
