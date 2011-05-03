@@ -34,6 +34,9 @@ version 2.8.0 (??/??/????):
 	  (Kartik Mohta) (#1131)
 	* media: Allow libpurple and plugins to set SDES properties for RTP
 	  conferences. (Jakub Adam) (#12981)
+	* proxy: Add new "Tor/Privacy" proxy type that can be used to restrict
+	  operations that could leak potentially sensitive data (e.g. DNS queries).
+	  (#11110, #13928)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
@@ -96,7 +99,7 @@ version 2.8.0 (??/??/????):
 	Windows-Specific Changes:
 	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
 	  broken in 2.7.11. (Florian Quèze)
-	* Build internal libgadu without -mms-bitfields, fixing several
+	* Build internal libgadu using packed structs, fixing several
 	  long-standing Gadu-Gadu issues. (#11958, #6297)
 
 version 2.7.11 (03/10/2011):
