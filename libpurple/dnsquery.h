@@ -102,7 +102,7 @@ extern "C" {
  */
 PurpleDnsQueryData *purple_dnsquery_a_account(PurpleAccount *account, const char *hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSQUERY_C_)
 /**
  * Perform an asynchronous DNS query.
  *

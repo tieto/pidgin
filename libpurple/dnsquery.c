@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
+#define _PURPLE_DNSQUERY_C_
 
 #include "internal.h"
 #include "debug.h"

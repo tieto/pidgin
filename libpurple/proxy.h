@@ -312,7 +312,7 @@ PurpleProxyConnectData *purple_proxy_connect_socks5_account(void *handle,
 			const char *host, int port,
 			PurpleProxyConnectFunction connect_cb, gpointer data);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PROXY_C_)
 /**
  * Makes a connection through a SOCKS5 proxy.
  *
