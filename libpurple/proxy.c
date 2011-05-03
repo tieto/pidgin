@@ -2398,9 +2398,6 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	return connect_data;
 }
 
-/*
- * Combine some of this code with purple_proxy_connect()
- */
 PurpleProxyConnectData *
 purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 						  const char *host, int port,
@@ -2410,6 +2407,42 @@ purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 	return purple_proxy_connect_socks5_account(NULL, handle, gpi,
 						  host, port, connect_cb, data);
 }
+
+
+/* This is called when we connect to the SOCKS5 proxy server (through any
+ * relevant account proxy)
+ */
+static void socks5_connected_to_proxy(gpointer data, gint source,
+		const gchar *error_message) {
+	/* This is the PurpleProxyConnectData for the overall SOCKS5 connection */
+	PurpleProxyConnectData *connect_data = data;
+
+	/* Check that the overall SOCKS5 connection wasn't cancelled while we were
+	 * connecting to it (we don't have a way of associating the process of
+	 * connecting to the SOCKS5 server to the overall PurpleProxyConnectData)
+	 */
+	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
+		return;
+
+	if (error_message != NULL) {
+		purple_debug_error("proxy", "Unable to connect to SOCKS5 host.\n");
+		connect_data->connect_cb(connect_data->data, source, error_message);
+		return;
+	}
+
+	purple_debug_info("proxy", "Initiating SOCKS5 negotiation.\n");
+
+	purple_debug_info("proxy",
+			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
+			   connect_data->host, connect_data->port,
+			   purple_proxy_info_get_host(connect_data->gpi),
+			   purple_proxy_info_get_port(connect_data->gpi));
+
+	connect_data->fd = source;
+
+	s5_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+}
+
 /*
  * Combine some of this code with purple_proxy_connect()
  */
@@ -2421,6 +2454,7 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 						  gpointer data)
 {
 	PurpleProxyConnectData *connect_data;
+	PurpleProxyConnectData *account_proxy_conn_data;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >= 0,    NULL);
@@ -2437,16 +2471,25 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 	connect_data->gpi = gpi;
 	connect_data->account = account;
 
-	connect_data->query_data =
-			purple_dnsquery_a_account(account,
-					purple_proxy_info_get_host(gpi),
-					purple_proxy_info_get_port(gpi),
-					connection_host_resolved, connect_data);
-	if (connect_data->query_data == NULL)
-	{
+	/* If there is an account proxy, use it to connect to the desired SOCKS5
+	 * proxy.
+	 */
+	account_proxy_conn_data = purple_proxy_connect(connect_data->handle,
+				connect_data->account,
+				purple_proxy_info_get_host(connect_data->gpi),
+				purple_proxy_info_get_port(connect_data->gpi),
+				socks5_connected_to_proxy, connect_data);
+
+	if (account_proxy_conn_data == NULL) {
+		purple_debug_error("proxy", "Unable to initiate connection to account proxy.\n");
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
+
+	/* The API doesn't really provide us with a way to cancel the specific
+	 * proxy connection attempt (account_proxy_conn_data) when the overall
+	 * SOCKS5 connection (connect_data) attempt is cancelled :(
+	 */
 
 	handles = g_slist_prepend(handles, connect_data);
 
