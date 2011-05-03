@@ -111,7 +111,8 @@ typedef enum
  */
 typedef struct
 {
-	char *title; /**< Title of the column. */
+	char *title;           /**< Title of the column. */
+	gboolean visible;
 
 } PurpleNotifySearchColumn;
 
@@ -273,6 +274,23 @@ PurpleNotifySearchResults *purple_notify_searchresults_new(void);
  * @return The new search column object.
  */
 PurpleNotifySearchColumn *purple_notify_searchresults_column_new(const char *title);
+
+/**
+ * Sets whether or not a search result column is visible.
+ *
+ * @param field   The search column object.
+ * @param visible TRUE if visible, or FALSE if not.
+ */
+void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible);
+
+/**
+ * Returns whether or not a search result column is visible.
+ *
+ * @param field The search column object.
+ *
+ * @return TRUE if the search result column is visible. FALSE otherwise.
+ */
+gboolean purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column);
 
 /**
  * Adds a new column to the search result object.
