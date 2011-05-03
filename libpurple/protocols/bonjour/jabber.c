@@ -836,8 +836,14 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		purple_debug_error("bonjour", "Error connecting to buddy %s at %s:%d (%s); Trying next IP address\n",
 				   purple_buddy_get_name(pb), bb->conversation->ip, bb->port_p2pj, error);
 
-		for (; strcmp(bb->conversation->ip, tmp->data) != 0; tmp = g_slist_next(tmp));
-		tmp = g_slist_next(tmp);
+		/* There may be multiple entries for the same IP - one per
+		 * presence recieved (e.g. multiple interfaces).
+		 * We need to make sure that we find the previously used entry.
+		 */
+		while (tmp && bb->conversation->ip_link != tmp->data)
+			tmp = g_slist_next(tmp);
+		if (tmp)
+			tmp = g_slist_next(tmp);
 
 		account = purple_buddy_get_account(pb);
 
@@ -845,7 +851,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 			const gchar *ip;
 			PurpleProxyConnectData *connect_data;
 
-			ip = tmp->data;
+			bb->conversation->ip_link = ip = tmp->data;
 
 			purple_debug_info("bonjour", "Starting conversation with %s at %s:%d\n",
 					  purple_buddy_get_name(pb), ip, bb->port_p2pj);
@@ -1047,6 +1053,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 
 		bb->conversation = bonjour_jabber_conv_new(pb, jdata->account, ip);
 		bb->conversation->connect_data = connect_data;
+		bb->conversation->ip_link = ip;
 		/* We don't want _send_data() to register the tx_handler;
 		 * that neeeds to wait until we're actually connected. */
 		bb->conversation->tx_handler = 0;
