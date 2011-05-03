@@ -450,21 +450,23 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 			g_free(nickname);
 		}
 
-		if ((photo = xmlnode_get_child(vcard, "PHOTO")) &&
-				(binval = xmlnode_get_child(photo, "BINVAL")) &&
-				(text = xmlnode_get_data(binval))) {
-			guchar *data;
-			gsize size;
+		if ((photo = xmlnode_get_child(vcard, "PHOTO"))) {
+			guchar *data = NULL;
+			gchar *hash = NULL;
+			gsize size = 0;
 
-			data = purple_base64_decode(text, &size);
-			if (data) {
-				gchar *hash = jabber_calculate_data_hash(data, size, "sha1");
-				purple_buddy_icons_set_for_user(js->gc->account, from, data,
-				                                size, hash);
-				g_free(hash);
+			if ((binval = xmlnode_get_child(photo, "BINVAL")) &&
+					(text = xmlnode_get_data(binval))) {
+				data = purple_base64_decode(text, &size);
+				g_free(text);
+
+				if (data)
+					hash = jabber_calculate_data_hash(data, size, "sha1");
 			}
 
-			g_free(text);
+			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+
+			g_free(hash);
 		}
 	}
 }
@@ -840,20 +842,22 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 		}
 	}
 
-	if(b && presence->vcard_avatar_hash) {
-		const char *avatar_hash2 = purple_buddy_icons_get_checksum_for_user(b);
-		if(!avatar_hash2 || strcmp(presence->vcard_avatar_hash, avatar_hash2)) {
-			JabberIq *iq;
-			xmlnode *vcard;
-
+	if (b && presence->vcard_avatar_hash) {
+		const char *ah = presence->vcard_avatar_hash[0] != '\0' ?
+				presence->vcard_avatar_hash : NULL;
+		const char *ah2 = purple_buddy_icons_get_checksum_for_user(b);
+		if (!purple_strequal(ah, ah2)) {
 			/* XXX this is a crappy way of trying to prevent
 			 * someone from spamming us with presence packets
 			 * and causing us to DoS ourselves...what we really
 			 * need is a queue system that can throttle itself,
 			 * but i'm too tired to write that right now */
 			if(!g_slist_find(js->pending_avatar_requests, presence->jb)) {
+				JabberIq *iq;
+				xmlnode *vcard;
 
-				js->pending_avatar_requests = g_slist_prepend(js->pending_avatar_requests, presence->jb);
+				js->pending_avatar_requests =
+					g_slist_prepend(js->pending_avatar_requests, presence->jb);
 
 				iq = jabber_iq_new(js, JABBER_IQ_GET);
 				xmlnode_set_attrib(iq->node, "to", buddy_name);
@@ -1206,9 +1210,13 @@ static void
 parse_vcard_avatar(JabberStream *js, JabberPresence *presence, xmlnode *x)
 {
 	xmlnode *photo = xmlnode_get_child(x, "photo");
+	char *hash_tmp;	
+
 	if (photo) {
 		g_free(presence->vcard_avatar_hash);
-		presence->vcard_avatar_hash = xmlnode_get_data(photo);
+		hash_tmp = xmlnode_get_data(photo);
+		presence->vcard_avatar_hash = 
+			hash_tmp ? hash_tmp : g_strdup("");
 	}
 }
 

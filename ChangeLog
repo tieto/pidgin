@@ -86,6 +86,8 @@ version 2.8.0 (??/??/????):
 	XMPP:
 	* Remember the previously entered user directory when searching.
 	  (Keith Moyer) (#12451)
+	* Correctly handle a buddy's unsetting his/her vCard-based avatar.
+	  (Matthew W.S. Bell) (#13370)
 
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test
