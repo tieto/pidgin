@@ -965,15 +965,23 @@ static void
 jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx;
+	PurpleProxyType proxy_type;
 
 	purple_xfer_ref(xfer);
 
 	jsx = xfer->data;
 
-	/* TODO: Should there be an option to not use the local host as a ft proxy?
-	 *       (to prevent revealing IP address, etc.) */
-	jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
+	/* TODO: This should probably be done with an account option instead of
+	 *       piggy-backing on the TOR proxy type. */
+	proxy_type = purple_proxy_info_get_type(
+		purple_proxy_get_setup(purple_connection_get_account(jsx->js->gc)));
+	if (proxy_type == PURPLE_PROXY_TOR) {
+		purple_debug_info("jabber", "Skipping attempting local streamhost.\n");
+		jsx->listen_data = NULL;
+	} else
+		jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 				jabber_si_xfer_bytestreams_listen_cb, xfer);
+
 	if (jsx->listen_data == NULL) {
 		/* We couldn't open a local port.  Perhaps we can use a proxy. */
 		jabber_si_xfer_bytestreams_listen_cb(-1, xfer);
