@@ -1210,12 +1210,12 @@ static void
 parse_vcard_avatar(JabberStream *js, JabberPresence *presence, xmlnode *x)
 {
 	xmlnode *photo = xmlnode_get_child(x, "photo");
-	char *hash_tmp;	
 
 	if (photo) {
-		g_free(presence->vcard_avatar_hash);
+		char *hash_tmp = xmlnode_get_data(photo);
 		hash_tmp = xmlnode_get_data(photo);
-		presence->vcard_avatar_hash = 
+		g_free(presence->vcard_avatar_hash);
+		presence->vcard_avatar_hash =
 			hash_tmp ? hash_tmp : g_strdup("");
 	}
 }
