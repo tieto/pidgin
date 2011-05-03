@@ -831,11 +831,38 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 	if (source < 0) {
 		PurpleConversation *conv = NULL;
 		PurpleAccount *account = NULL;
+		GSList *tmp = bb->ips;
 
-		purple_debug_error("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->conversation->ip, bb->port_p2pj, error ? error : "(null)");
+		purple_debug_error("bonjour", "Error connecting to buddy %s at %s:%d (%s); Trying next IP address\n",
+				   purple_buddy_get_name(pb), bb->conversation->ip, bb->port_p2pj, error);
+
+		for (; strcmp(bb->conversation->ip, tmp->data) != 0; tmp = g_slist_next(tmp));
+		tmp = g_slist_next(tmp);
 
 		account = purple_buddy_get_account(pb);
+
+		if (tmp != NULL) {
+			const gchar *ip;
+			PurpleProxyConnectData *connect_data;
+
+			ip = tmp->data;
+
+			purple_debug_info("bonjour", "Starting conversation with %s at %s:%d\n",
+					  purple_buddy_get_name(pb), ip, bb->port_p2pj);
+
+			connect_data = purple_proxy_connect(purple_account_get_connection(account),
+							    account, ip, bb->port_p2pj, _connected_to_buddy, pb);
+
+			if (connect_data != NULL) {
+				g_free(bb->conversation->ip);
+				bb->conversation->ip = g_strdup(ip);
+				bb->conversation->connect_data = connect_data;
+
+				return;
+			}
+		}
+
+		purple_debug_error("bonjour", "No more addresses for buddy %s. Aborting", purple_buddy_get_name(pb));
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, account);
 		if (conv != NULL)
@@ -995,10 +1022,9 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 	{
 		PurpleProxyConnectData *connect_data;
 		PurpleProxyInfo *proxy_info;
-		/* For better or worse, use the first IP*/
-		const char *ip = bb->ips->data;
+		const char *ip = bb->ips->data; /* Start with the first IP address. */
 
-		purple_debug_info("bonjour", "Starting conversation with %s\n", to);
+		purple_debug_info("bonjour", "Starting conversation with %s at %s:%d\n", to, ip, bb->port_p2pj);
 
 		/* Make sure that the account always has a proxy of "none".
 		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
