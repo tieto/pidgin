@@ -292,9 +292,10 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 	while (entries != NULL) {
 		struct MXitProfile* profile	= ( struct MXitProfile *) entries->data;
 		GList*	row;
+		gchar* tmp = purple_base64_encode( (unsigned char *) profile->userid, strlen( profile->userid ) );
 
 		/* column values */
-		row = g_list_append( NULL, g_strdup( profile->userid ) );
+		row = g_list_append( NULL, g_strdup_printf( "#%s", tmp ) );
 		row = g_list_append( row, g_strdup( profile->nickname ) );
 		row = g_list_append( row, g_strdup( profile->male ? "Male" : "Female" ) );
 		row = g_list_append( row, g_strdup_printf( "%i", calculateAge( profile->birthday ) ) );
@@ -302,6 +303,8 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 
 		purple_notify_searchresults_row_add( results, row );
 		entries = g_list_next( entries );
+
+		g_free( tmp );
 	}
 
 	/* button */
