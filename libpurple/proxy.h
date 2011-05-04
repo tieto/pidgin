@@ -289,11 +289,15 @@ PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
 /**
  * Makes a connection through a SOCKS5 proxy.
  *
+ * Note that if the account that is making the connection uses a proxy, this
+ * connection to a SOCKS5 proxy will be made through the account proxy.
+ *
  * @param handle     A handle that should be associated with this
  *                   connection attempt.  The handle can be used
  *                   to cancel the connection attempt using the
  *                   purple_proxy_connect_cancel_with_handle()
  *                   function.
+ * @param account    The account making the connection.
  * @param gpi        The PurpleProxyInfo specifying the proxy settings
  * @param host       The destination host.
  * @param port       The destination port.
@@ -312,7 +316,7 @@ PurpleProxyConnectData *purple_proxy_connect_socks5_account(void *handle,
 			const char *host, int port,
 			PurpleProxyConnectFunction connect_cb, gpointer data);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_PROXY_C_)
 /**
  * Makes a connection through a SOCKS5 proxy.
  *

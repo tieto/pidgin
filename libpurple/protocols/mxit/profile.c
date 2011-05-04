@@ -124,7 +124,7 @@ static int calculateAge( const char* date )
 
 	/* decode hdate */
 	memset( &bdate, 0, sizeof( struct tm ) );
-	strptime( date, "%Y-%m-%d", &bdate );
+	purple_str_to_time(date, FALSE, &bdate, NULL, NULL);
 
 	/* calculate difference */
 	age = now.tm_year - bdate.tm_year;

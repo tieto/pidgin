@@ -114,7 +114,7 @@ typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
  */
 PurpleSrvTxtQueryData *purple_srv_resolve_account(PurpleAccount *account, const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSSRV_C_)
 /**
  * Queries an SRV record.
  *
@@ -149,7 +149,7 @@ void purple_srv_cancel(PurpleSrvTxtQueryData *query_data);
  */
 PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account, const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSSRV_C_)
 /**
  * Queries an TXT record.
  *

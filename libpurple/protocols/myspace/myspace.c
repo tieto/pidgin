@@ -377,19 +377,13 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 static char *
 msim_status_text(PurpleBuddy *buddy)
 {
-	MsimSession *session;
 	MsimUser *user;
-	const gchar *display_name, *headline;
+	const gchar *display_name = NULL, *headline = NULL;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	account = purple_buddy_get_account(buddy);
-	gc = purple_account_get_connection(account);
-	session = (MsimSession *)gc->proto_data;
-
-	display_name = headline = NULL;
 
 	user = msim_get_user_from_buddy(buddy, FALSE);
 	if (user != NULL) {
@@ -859,7 +853,6 @@ static void
 msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer data)
 {
 	MsimMessage *body;
-	guint old_inbox_status;
 	guint i, n;
 	/* Information for each new inbox message type. */
 	static struct
@@ -895,8 +888,6 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 
 	if (body == NULL)
 		return;
-
-	old_inbox_status = session->inbox_status;
 
 	n = 0;
 
@@ -1357,7 +1348,6 @@ msim_incoming_status_mood(MsimSession *session, MsimMessage *msg) {
 static gboolean
 msim_incoming_status(MsimSession *session, MsimMessage *msg)
 {
-	PurpleBuddyList *blist;
 	MsimUser *user;
 	GList *list;
 	gchar *status_headline, *status_headline_escaped;
@@ -1390,8 +1380,6 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	status_code = msim_msg_get_integer_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
 	status_headline = msim_msg_get_string_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE));
-
-	blist = purple_get_blist();
 
 	/* Add buddy if not found.
 	 * TODO: Could this be responsible for #3444? */
@@ -2026,7 +2014,6 @@ static void
 msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc;
-	PurpleAccount *account;
 	MsimSession *session;
 	gchar *end;
 	int n;
@@ -2035,7 +2022,6 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	g_return_if_fail(source >= 0);  /* Note: 0 is a valid fd */
 
 	gc = (PurpleConnection *)(gc_uncasted);
-	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
 
 	/* libpurple/eventloop.h only defines these two */
@@ -3187,13 +3173,10 @@ static void msim_import_friends(PurplePluginAction *action)
  * Actions menu for account.
  */
 static GList *
-msim_actions(PurplePlugin *plugin, gpointer context)
+msim_actions(PurplePlugin *plugin, gpointer context /* PurpleConnection* */)
 {
-	PurpleConnection *gc;
 	GList *menu;
 	PurplePluginAction *act;
-
-	gc = (PurpleConnection *)context;
 
 	menu = NULL;
 
