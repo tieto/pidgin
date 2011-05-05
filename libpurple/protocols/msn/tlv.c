@@ -45,51 +45,50 @@ freetlv(msn_tlv_t *oldtlv)
 	g_free(oldtlv);
 }
 
-static GSList *
-msn_tlv_read(GSList *list, const char *bs, size_t *bs_len)
-{
-	guint8 type, length;
-	msn_tlv_t *tlv;
-
-	type = msn_read8(bs);
-	length = msn_read8(bs);
-	*bs_len -= 2;
-
-	if (length > *bs_len) {
-		msn_tlvlist_free(list);
-		return NULL;
-	}
-
-	tlv = createtlv(type, length, NULL);
-	if (length > 0) {
-		tlv->value = g_memdup(bs, length);
-		if (!tlv->value) {
-			freetlv(tlv);
-			msn_tlvlist_free(list);
-			return NULL;
-		}
-	}
-
-	*bs_len -= length;
-
-	return g_slist_prepend(list, tlv);
-}
-
 GSList *
 msn_tlvlist_read(const char *bs, size_t bs_len)
 {
 	GSList *list = NULL;
 
 	while (bs_len > 0) {
-		list = msn_tlv_read(list, bs, &bs_len);
-		if (list == NULL)
+		guint8 type, length;
+		msn_tlv_t *tlv;
+
+		if (bs_len < 2) {
+			msn_tlvlist_free(list);
 			return NULL;
+		}
+
+		type = msn_pop8(bs);
+		length = msn_pop8(bs);
+		bs_len -= 2;
+
+		if (length > bs_len) {
+			msn_tlvlist_free(list);
+			return NULL;
+		}
+
+		tlv = createtlv(type, length, NULL);
+		if (length > 0) {
+			tlv->value = g_memdup(bs, length);
+			if (!tlv->value) {
+				freetlv(tlv);
+				msn_tlvlist_free(list);
+				return NULL;
+			}
+		}
+
+		bs_len -= length;
+		bs += length;
+
+		list = g_slist_prepend(list, tlv);
 	}
 
 	return g_slist_reverse(list);
 }
 
-GSList *msn_tlvlist_copy(GSList *orig)
+GSList *
+msn_tlvlist_copy(GSList *orig)
 {
 	GSList *new = NULL;
 	msn_tlv_t *tlv;
@@ -302,31 +301,38 @@ msn_tlvlist_remove(GSList **list, const guint16 type)
 	}
 }
 
-int
-msn_tlvlist_write(char *bs, size_t bs_len, GSList *list)
+char *
+msn_tlvlist_write(GSList *list, size_t *out_len)
 {
-#if 0
-	int goodbuflen;
-	GSList *cur;
-	msn_tlv_t *tlv;
+	char *buf;
+	char *tmp;
+	size_t bytes_left;
+	size_t total_len;
 
-	/* do an initial run to test total length */
-	goodbuflen = msn_tlvlist_size(*list);
+	tmp = buf = g_malloc(256);
+	bytes_left = total_len = 256;
 
-	if (goodbuflen > byte_stream_bytes_left(bs))
-		return 0; /* not enough buffer */
+	for (; list; list = g_slist_next(list)) {
+		msn_tlv_t *tlv = (msn_tlv_t *)list->data;
 
-	/* do the real write-out */
-	for (cur = *list; cur; cur = cur->next) {
-		tlv = cur->data;
-		byte_stream_put16(bs, tlv->type);
-		byte_stream_put16(bs, tlv->length);
-		if (tlv->length > 0)
-			byte_stream_putraw(bs, tlv->value, tlv->length);
+		if (G_UNLIKELY(tlv->length + 2 > bytes_left)) {
+			buf = g_realloc(buf, total_len + 256);
+			bytes_left += 256;
+			total_len += 256;
+			tmp = buf + (total_len - bytes_left);
+		}
+
+		msn_push8(tmp, tlv->type);
+		msn_push8(tmp, tlv->length);
+		memcpy(tmp, tlv->value, tlv->length);
+		tmp += tlv->length;
+
+		bytes_left -= (tlv->length + 2);
 	}
 
-#endif
-	return 0; /* TODO: This is a nonsensical return */
+	*out_len = total_len - bytes_left;
+
+	return buf;
 }
 
 msn_tlv_t *

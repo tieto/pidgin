@@ -204,41 +204,43 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 
 		case MSN_P2P_VERSION_TWO: {
 			MsnP2Pv2Header *header = &info->header.v2;
+			char *header_wire = NULL;
+			char *data_header_wire = NULL;
 
 			if (header->header_tlv != NULL)
-				header->header_len = msn_tlvlist_size(header->header_tlv) + 8;
+				header_wire = msn_tlvlist_write(header->header_tlv, (size_t *)&header->header_len);
 			else
-				header->header_len = 8;
+				header->header_len = 0;
 
 			if (header->data_tlv != NULL)
-				header->data_header_len = msn_tlvlist_size(header->data_tlv) + 8;
+				data_header_wire = msn_tlvlist_write(header->data_tlv, (size_t *)&header->data_header_len);
 			else
-				header->data_header_len = 8;
+				header->data_header_len = 0;
 
-			tmp = wire = g_new(char, header->header_len + header->data_header_len);
+			tmp = wire = g_new(char, 16 + header->header_len + header->data_header_len);
 
-			msn_push8(tmp, header->header_len);
+			msn_push8(tmp, header->header_len + 8);
 			msn_push8(tmp, header->opcode);
-			msn_push16be(tmp, header->data_header_len + header->message_len);
+			msn_push16be(tmp, header->data_header_len + 8 + header->message_len);
 			msn_push32be(tmp, header->base_id);
 
-			if (header->header_tlv != NULL) {
-				msn_tlvlist_write(tmp, header->header_len - 8, header->header_tlv);
-				tmp += header->header_len - 8;
+			if (header_wire != NULL) {
+				memcpy(tmp, header_wire, header->header_len);
+				tmp += header->header_len;
 			}
 
-			msn_push8(tmp, header->data_header_len);
+			msn_push8(tmp, header->data_header_len + 8);
 			msn_push8(tmp, header->data_tf);
 			msn_push16be(tmp, header->package_number);
 			msn_push32be(tmp, header->session_id);
 
-			if (header->data_tlv != NULL) {
-				msn_tlvlist_write(tmp, header->data_header_len - 8, header->data_tlv);
-				tmp += header->data_header_len - 8;
+			if (data_header_wire != NULL) {
+				memcpy(tmp, data_header_wire, header->data_header_len);
+				tmp += header->data_header_len;
 			}
 
 			if (len)
-				*len = header->header_len + header->data_header_len;
+				*len = header->header_len + header->data_header_len + 16;
 
 			break;
 		}
@@ -248,7 +250,6 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 	}
 
 	return wire;
-
 }
 
 size_t
