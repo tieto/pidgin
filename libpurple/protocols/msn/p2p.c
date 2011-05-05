@@ -373,7 +373,7 @@ msn_p2p_info_get_session_id(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			session_id = info->header.v2.session_id;
 			break;
 
 		default:
@@ -394,7 +394,7 @@ msn_p2p_info_get_id(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			id = info->header.v2.base_id;
 			break;
 
 		default:
@@ -566,7 +566,7 @@ msn_p2p_info_set_session_id(MsnP2PInfo *info, guint32 session_id)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.session_id = session_id;
 			break;
 
 		default:
@@ -584,7 +584,7 @@ msn_p2p_info_set_id(MsnP2PInfo *info, guint32 id)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.base_id = id;
 			break;
 
 		default:
