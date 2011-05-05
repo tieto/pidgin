@@ -54,9 +54,21 @@ msn_tlvlist_read(const char *bs, size_t bs_len)
 		guint8 type, length;
 		msn_tlv_t *tlv;
 
-		if (bs_len < 2) {
-			msn_tlvlist_free(list);
-			return NULL;
+		if (bs_len == 3 && *bs == 0) {
+			/* Padding to multiple of 4 */
+			break;
+		} else if (bs_len == 2 && *bs == 0) {
+			/* Padding to multiple of 4 */
+			break;
+		} else if (bs_len == 1) {
+			if (*bs == 0) {
+				/* Padding to multiple of 4 */
+				break;
+			} else {
+				/* TLV is not small enough to fit here */
+				msn_tlvlist_free(list);
+				return NULL;
+			}
 		}
 
 		type = msn_pop8(bs);
@@ -330,7 +342,15 @@ msn_tlvlist_write(GSList *list, size_t *out_len)
 		bytes_left -= (tlv->length + 2);
 	}
 
-	*out_len = total_len - bytes_left;
+	/* Align length to multiple of 4 */
+	total_len = total_len - bytes_left;
+	bytes_left = 4 - total_len % 4;
+	if (bytes_left != 4)
+		memset(tmp, 0, bytes_left);
+	else
+		bytes_left = 0;
+
+	*out_len = total_len + bytes_left;
 
 	return buf;
 }
