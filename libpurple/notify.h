@@ -112,7 +112,7 @@ typedef enum
 typedef struct
 {
 	char *title;           /**< Title of the column. */
-	gboolean visible;
+	gboolean visible;      /**< Should the column be visible to the user. Defaults to TRUE. */
 
 } PurpleNotifySearchColumn;
 
@@ -267,7 +267,8 @@ void purple_notify_searchresults_button_add_labeled(PurpleNotifySearchResults *r
 PurpleNotifySearchResults *purple_notify_searchresults_new(void);
 
 /**
- * Returns a newly created search result column object.
+ * Returns a newly created search result column object.  The column defaults
+ * to being visible.
  *
  * @param title Title of the column. NOTE: Title will get g_strdup()ed.
  *
