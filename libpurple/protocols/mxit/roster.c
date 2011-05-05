@@ -474,7 +474,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	contact->capabilities = flags;
 
 	/* validate mood */
-	if (( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_STRESSED ))
+	if ( ( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_STRESSED ) )
 		contact->mood = MXIT_MOOD_NONE;
 
 	g_strlcpy( contact->customMood, customMood, sizeof( contact->customMood ) );
@@ -485,7 +485,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		g_free( contact->statusMsg );
 		contact->statusMsg = NULL;
 	}
-	if ( statusMsg[0] != '\0' )
+	if ( ( statusMsg ) && ( statusMsg[0] != '\0' ) )
 		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
 	/* update the buddy's status (reference: "libpurple/prpl.h") */

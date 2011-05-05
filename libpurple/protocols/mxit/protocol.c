@@ -1907,6 +1907,23 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* this is a contact */
 			if ( avatarId )
 				mxit_update_buddy_avatar( session, mxitId, avatarId );
+
+			if ( ( statusMsg ) && ( strlen( statusMsg ) > 0 ) ) {
+				/* update the status message */
+				PurpleBuddy*		buddy	= NULL;
+
+				buddy = purple_find_buddy( session->acc, mxitId );
+				if ( buddy ) {
+					contact = purple_buddy_get_protocol_data( buddy );
+					if ( contact ) {
+						if ( contact->statusMsg )
+							g_free( contact->statusMsg );
+						contact->statusMsg = strdup( statusMsg );
+					}
+				}
+			}
+
+			/* show the profile */
 			mxit_show_profile( session, mxitId, profile );
 			g_free( profile );
 		}
@@ -2099,6 +2116,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 					if ( contact ) {
 						/* this is an invite (add image to the internal image store) */
 						contact->imgid = purple_imgstore_add_with_id( chunk.data, chunk.length, NULL );
+						/* show the profile */
 						mxit_show_profile( session, chunk.mxitid, contact->profile );
 					}
 					else {
