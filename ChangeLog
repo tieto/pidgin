@@ -69,8 +69,8 @@ version 2.8.0 (??/??/????):
 	* Ignore Daylight Saving Time when performing calculations related to
 	  birthdays. (Dustin Gathmann) (#13533)
 	* It is now possible to specify multiple encodings on the Advanced
-	  Advanced tab of an ICQ account's settings by using a comma-delimited
-	  list.  (Dmitry Utkin (#13496)
+	  tab of an ICQ account's settings by using a comma-delimited list.
+	  (Dmitry Utkin (#13496)
 
 	IRC:
 	* Add "authserv" service command.  (tomos) (#13337)
