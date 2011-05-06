@@ -1213,7 +1213,6 @@ parse_vcard_avatar(JabberStream *js, JabberPresence *presence, xmlnode *x)
 
 	if (photo) {
 		char *hash_tmp = xmlnode_get_data(photo);
-		hash_tmp = xmlnode_get_data(photo);
 		g_free(presence->vcard_avatar_hash);
 		presence->vcard_avatar_hash =
 			hash_tmp ? hash_tmp : g_strdup("");
