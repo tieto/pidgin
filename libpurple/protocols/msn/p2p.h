@@ -59,6 +59,47 @@ typedef struct {
 /*	guint8  body[1]; */
 } MsnP2Pv2Header;
 
+typedef struct {
+	guint16 protocol_version;
+	guint16 implementation_id;
+	guint16 version;
+	guint16 reserved;
+	guint32 caps;
+} PeerInfo;
+
+typedef enum
+{
+	TF_FIRST    = 0x01,     /**< The first package. */
+	TF_MSNOBJ   = 0x04,     /**< Payload contains binary data for MsnObject. */
+	TF_FILE     = 0x06      /**< Payload contains binary data. */
+} TF;
+
+typedef enum
+{
+	TLP_PEER_INFO   = 0x01, /**< Client peer info */
+	TLP_ACK         = 0x02, /**< ACK */
+	TLP_NAK         = 0x03  /**< NAK */
+} TLP;
+
+typedef enum
+{
+	TLP_LEN_PEER_INFO   = 12,
+	TLP_LEN_ACK         = 4,
+	TLP_LEN_NAK         = 4
+} TLPLength;
+
+typedef enum
+{
+	PI_PVER     = 0x0200,
+	PI_IMP_ID   = 0,
+	PI_VER      = 0x0e00,
+	PI_RES      = 0,
+	PI_CAPS     = 0x0000010f
+} PeerInfoVal;
+
+#define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
+#define DLP_REMAINING_LEN 8
+
 typedef struct
 {
 	guint32 value;
@@ -211,4 +252,3 @@ void
 msn_p2p_info_set_app_id(MsnP2PInfo *info, guint32 app_id);
 
 #endif /* MSN_P2P_H */
-

@@ -1458,6 +1458,14 @@ void finch_conversation_init()
 				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
 								 "EXAMPLE:<br>    msgcolor send cyan default"),
 			NULL);
+	purple_cmd_register("msgcolour", "www", PURPLE_CMD_P_DEFAULT,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+			cmd_message_color, _("msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: "
+				                 "Set the color for different classes of messages in the conversation window.<br>"
+				                 "    &lt;class&gt;: receive, send, highlight, action, timestamp<br>"
+				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
+								 "EXAMPLE:<br>    msgcolor send cyan default"),
+			NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
 					PURPLE_CALLBACK(update_buddy_typing), NULL);
