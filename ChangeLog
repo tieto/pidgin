@@ -2,8 +2,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.8.0 (??/??/????):
 	General:
-	* Implement simple silence suppression for voice calls, preventing wasted
-	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+	* Implement simple silence suppression for voice calls, preventing
+	  wasted bandwidth for silent periods during a call. (Jakub Adam)
+	  (half of #13180)
 	* Added the DigiCert High Assurance CA-3 intermediate CA, needed for
 	  validation of the Facebook XMPP interface's certificate.
 	* Removed the QQ protocol plugin.  It hasn't worked in a long time and
@@ -11,32 +12,32 @@ version 2.8.0 (??/??/????):
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
-	* Voice/Video call window adapts correctly to adding or removing streams
-	  on the fly. (Jakub Adam) (half of #13535)
-	* Don't cancel an ongoing call when rejecting the addition of a stream to
-	  the existing call. (Jakub Adam) (#13537)
+	* Voice/Video call window adapts correctly to adding or removing
+	  streams on the fly. (Jakub Adam) (half of #13535)
+	* Don't cancel an ongoing call when rejecting the addition of a
+	  stream to the existing call. (Jakub Adam) (#13537)
 	* Pidgin plugins can now override tab completion and detect clicks on
 	  usernames in the chat userlist. (kawaii.neko) (#12599)
 
 	libpurple:
 	* media: Allow obtaining active local and remote candidates. (Jakub
 	  Adam) (#11830)
-	* media: Allow getting/setting video capabilities. (Jakub Adam) (half of
-	  #13095)
-	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
-	  of #13180)
+	* media: Allow getting/setting video capabilities. (Jakub Adam) (half
+	  of #13095)
+	* Simple Silence Suppression is optional per-account. (Jakub Adam)
+	  (half of #13180)
 	* Fix purple-url-handler being unable to find an account.
-	* media: Allow adding/removing streams on the fly. (Jakub Adam) (half of
-	  #13535)
+	* media: Allow adding/removing streams on the fly. (Jakub Adam)
+	  (half of #13535)
 	* Support new connection states in NetworkManager 0.9. (Dan Williams)
 	  (#13505)
 	* When removing a buddy, delete the pounces associated with it.
 	  (Kartik Mohta) (#1131)
 	* media: Allow libpurple and plugins to set SDES properties for RTP
 	  conferences. (Jakub Adam) (#12981)
-	* proxy: Add new "Tor/Privacy" proxy type that can be used to restrict
-	  operations that could leak potentially sensitive data (e.g. DNS queries).
-	  (#11110, #13928)
+	* proxy: Add new "Tor/Privacy" proxy type that can be used to
+	  restrict operations that could leak potentially sensitive data
+	  (e.g. DNS queries).  (#11110, #13928)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
@@ -67,9 +68,9 @@ version 2.8.0 (??/??/????):
 	  (#11895)
 	* Ignore Daylight Saving Time when performing calculations related to
 	  birthdays. (Dustin Gathmann) (#13533)
-	* It is now possible to specify multiple encodings on the Advanced tab of
-	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
-	  Utkin (#13496)
+	* It is now possible to specify multiple encodings on the Advanced
+	  Advanced tab of an ICQ account's settings by using a comma-delimited
+	  list.  (Dmitry Utkin (#13496)
 
 	IRC:
 	* Add "authserv" service command.  (tomos) (#13337)
@@ -99,8 +100,8 @@ version 2.8.0 (??/??/????):
 	  Settings plugin. (Pat Erley) (13290, #13774)
 
 	Windows-Specific Changes:
-	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
-	  broken in 2.7.11. (Florian Quèze)
+	* Fix building libpurple with Visual C++ .NET 2005. This was
+	  accidentally broken in 2.7.11. (Florian Quèze)
 	* Build internal libgadu using packed structs, fixing several
 	  long-standing Gadu-Gadu issues. (#11958, #6297)
 
