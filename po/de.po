@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 10:08+0200\n"
+"POT-Creation-Date: 2011-05-06 18:19+0200\n"
 "PO-Revision-Date: 2011-05-06 10:07+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -6366,7 +6366,7 @@ msgstr "Sie haben %i vorgeschlagene(n) Freund(e)."
 #, c-format
 msgid "We found %i contacts that match your search."
 msgstr ""
-"Wir fanden %i Kontakt(e), die Ihner Suchanfrage entspricht/entsprechen."
+"Wir fanden %i Kontakt(e), die Ihrer Suchanfrage entspricht/entsprechen."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
