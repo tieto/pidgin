@@ -1,4 +1,5 @@
 CERTIFICATES = \
+		AddTrust_External_Root.pem \
 		America_Online_Root_Certification_Authority_1.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
@@ -21,6 +22,7 @@ CERTIFICATES = \
 
 EXTRA_CERTS = \
 		AOL_Member_CA.pem \
+		DigiCertHighAssuranceCA-3.pem \
 		Microsoft_Internet_Authority.pem \
 		Microsoft_Internet_Authority_2010.pem \
 		Microsoft_Secure_Server_Authority.pem \

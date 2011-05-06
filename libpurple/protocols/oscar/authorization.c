@@ -25,20 +25,19 @@
 #include "oscar.h"
 #include "request.h"
 
-static void
-oscar_auth_request(struct name_data *data, char *msg)
+/* When you ask other people for authorization */
+void
+oscar_auth_sendrequest(PurpleConnection *gc, const char *bname, const char *msg)
 {
-	PurpleConnection *gc;
 	OscarData *od;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
-	const char *bname, *gname;
+	const char *gname;
 
-	gc = data->gc;
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
-	buddy = purple_find_buddy(account, data->name);
+	buddy = purple_find_buddy(account, bname);
 	if (buddy != NULL)
 		group = purple_buddy_get_group(buddy);
 	else
@@ -46,11 +45,10 @@ oscar_auth_request(struct name_data *data, char *msg)
 
 	if (group != NULL)
 	{
-		bname = purple_buddy_get_name(buddy);
 		gname = purple_group_get_name(group);
 		purple_debug_info("oscar", "ssi: adding buddy %s to group %s\n",
 				   bname, gname);
-		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
+		aim_ssi_sendauthrequest(od, bname, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY))
 		{
 			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, TRUE);
@@ -66,8 +64,6 @@ oscar_auth_request(struct name_data *data, char *msg)
 			}
 		}
 	}
-
-	oscar_free_name_data(data);
 }
 
 static void
@@ -89,7 +85,7 @@ oscar_auth_dontgrant(struct name_data *data, char *msg)
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
 	aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
-	
+
 	oscar_free_name_data(data);
 }
 
@@ -105,24 +101,6 @@ oscar_auth_dontgrant_msgprompt(gpointer cbdata)
 					   data);
 }
 
-/* When you ask other people for authorization */
-void
-oscar_auth_sendrequest(PurpleConnection *gc, const char *name)
-{
-	struct name_data *data;
-
-	data = g_new0(struct name_data, 1);
-	data->gc = gc;
-	data->name = g_strdup(name);
-
-	purple_request_input(data->gc, NULL, _("Authorization Request Message:"),
-					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-					   _("_OK"), G_CALLBACK(oscar_auth_request),
-					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
-					   purple_connection_get_account(gc), name, NULL,
-					   data);
-}
-
 void
 oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 {
@@ -133,7 +111,7 @@ oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	oscar_auth_sendrequest(gc, purple_buddy_get_name(buddy));
+	oscar_auth_sendrequest(gc, purple_buddy_get_name(buddy), NULL);
 }
 
 /* When other people ask you for authorization */

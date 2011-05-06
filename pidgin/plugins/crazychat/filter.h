@@ -10,7 +10,7 @@ typedef struct filter_bank {
 	float mouth_open[10];
 	float xfilt[10];
 	float yfilt[10];
-} filter_bank;	
+} filter_bank;
 
 filter_bank* Filter_Initialize (void);
 void Filter_Destroy (filter_bank *f);

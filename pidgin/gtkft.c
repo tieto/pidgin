@@ -557,21 +557,11 @@ close_button_cb(GtkButton *button, PidginXferDialog *dialog)
 static GtkWidget *
 setup_tree(PidginXferDialog *dialog)
 {
-	GtkWidget *sw;
 	GtkWidget *tree;
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	GtkTreeSelection *selection;
-
-	/* Create the scrolled window. */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-						GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-					GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_AUTOMATIC);
-	gtk_widget_show(sw);
 
 	/* Build the tree model */
 	/* Transfer type, Progress Bar, Filename, Size, Remaining */
@@ -636,10 +626,9 @@ setup_tree(PidginXferDialog *dialog)
 
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(tree));
 
-	gtk_container_add(GTK_CONTAINER(sw), tree);
 	gtk_widget_show(tree);
 
-	return sw;
+	return tree;
 }
 
 static GtkWidget *
@@ -713,7 +702,6 @@ pidgin_xfer_dialog_new(void)
 	PidginXferDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *vbox1, *vbox2;
-	GtkWidget *sw;
 	GtkWidget *expander;
 	GtkWidget *alignment;
 	GtkWidget *table;
@@ -744,9 +732,9 @@ pidgin_xfer_dialog_new(void)
 	gtk_widget_show(vbox2);
 
 	/* Setup the listbox */
-	sw = setup_tree(dialog);
-	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
-	gtk_widget_set_size_request(sw,-1, 140);
+	gtk_box_pack_start(GTK_BOX(vbox2), 
+		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140), 
+		TRUE, TRUE, 0);
 
 	/* "Close this window when all transfers finish" */
 	checkbox = gtk_check_button_new_with_mnemonic(
@@ -1156,11 +1144,11 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 
 static void
 pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
-{	
+{
 	purple_debug_info("ft", "creating thumbnail for transfer\n");
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
-		GdkPixbuf *thumbnail = 
+		GdkPixbuf *thumbnail =
 			gdk_pixbuf_new_from_file_at_size(
 				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
 
@@ -1172,7 +1160,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 			char *option_values[2] = {NULL, NULL};
 			int i;
 			gchar *format = NULL;
-			
+
 			for (i = 0; formats_split[i]; i++) {
 				if (purple_strequal(formats_split[i], "jpeg")) {
 					purple_debug_info("ft", "creating JPEG thumbnail\n");
@@ -1197,11 +1185,11 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 				format = formats_split[0];
 			}
 
-			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format, 
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format,
 				option_keys, option_values, NULL);
 
 			if (buffer) {
-				gchar *mimetype = g_strdup_printf("image/%s", format);				
+				gchar *mimetype = g_strdup_printf("image/%s", format);
 				purple_debug_info("ft",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);

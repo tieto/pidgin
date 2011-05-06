@@ -395,7 +395,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 		g_strfreev(parts);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "nonce: %s realm: %s\n",
 					 auth->nonce ? auth->nonce : "(null)",
-					 auth->realm ? auth->realm : "(null)"); 
+					 auth->realm ? auth->realm : "(null)");
 
 		if(auth->realm) {
 			auth->digest_session_key = purple_cipher_http_digest_calculate_session_key(
@@ -796,11 +796,11 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 				b->dialog->theirtag = g_strdup(theirtag);
 				b->dialog->callid = g_strdup(callid);
 
-				purple_debug_info("simple", "ourtag: %s\n", 
+				purple_debug_info("simple", "ourtag: %s\n",
 					ourtag);
-				purple_debug_info("simple", "theirtag: %s\n", 
+				purple_debug_info("simple", "theirtag: %s\n",
 					theirtag);
-				purple_debug_info("simple", "callid: %s\n", 
+				purple_debug_info("simple", "callid: %s\n",
 					callid);
 				g_free(theirtag);
 				g_free(ourtag);
@@ -982,7 +982,7 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 	}
 
 	/* publish status again if our last update is about to expire. */
-	if (sip->republish != -1 && 
+	if (sip->republish != -1 &&
 		sip->republish < curtime &&
 		purple_account_get_bool(sip->account, "dopublish", TRUE))
 	{
@@ -1272,9 +1272,9 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		isonline = TRUE;
 
 
-	if(isonline) 
+	if(isonline)
 		purple_prpl_got_user_status(sip->account, from, "available", NULL);
-	else 
+	else
 		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 
 	xmlnode_free(pidf);
@@ -1903,7 +1903,8 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		sip->query_data = purple_dnsquery_a_account(sip->account, hostname,
+			port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
 			purple_connection_error_reason(sip->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -1965,7 +1966,7 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	sip->srv_query_data = purple_srv_resolve("sip",
+	sip->srv_query_data = purple_srv_resolve_account(account, "sip",
 			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
 }
 
@@ -2112,7 +2113,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* get_media_caps */
 	NULL,					/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	NULL,					/* add_buddy_with_invite */
+	NULL					/* add_buddies_with_invite */
 };
 
 

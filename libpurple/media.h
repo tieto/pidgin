@@ -144,6 +144,52 @@ void purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		gboolean local);
 
 /**
+ * Sets various optional parameters of the media call.
+ *
+ * Currently supported are:
+ *   - "sdes-cname"    : The CNAME for the RTP sessions
+ *   - "sdes-name"     : Real name used to describe the source in SDES messages
+ *   - "sdes-tool"     : The TOOL to put in SDES messages
+ *   - "sdes-email"    : Email address to put in SDES messages
+ *   - "sdes-location" : The LOCATION to put in SDES messages
+ *   - "sdes-note"     : The NOTE to put in SDES messages
+ *   - "sdes-phone"    : The PHONE to put in SDES messages
+ *
+ * @param media The media object to set the parameters on.
+ * @param num_params The number of parameters to pass
+ * @param params Array of @c GParameter to pass
+ *
+ * @since 2.8.0
+ */
+void purple_media_set_params(PurpleMedia *media,
+		guint num_params, GParameter *params);
+
+/**
+ * Gets the list of optional parameters supported by the media backend.
+ *
+ * The list is owned by the @c PurpleMedia internals and should NOT be freed.
+ *
+ * @param media The media object
+ *
+ * @return NULL-terminated array of names of supported parameters.
+ *
+ * @since 2.8.0
+ */
+const gchar **purple_media_get_available_params(PurpleMedia *media);
+
+/**
+ * Checks if given optional parameter is supported by the media backend.
+ *
+ * @param media The media object
+ * @param param name of parameter
+ *
+ * @return @c TRUE if backend recognizes the parameter, @c FALSE otherwise.
+ *
+ * @since 2.8.0
+ */
+gboolean purple_media_param_is_supported(PurpleMedia *media, const gchar *param);
+
+/**
  * Adds a stream to a session.
  *
  * It only adds a stream to one audio session or video session as
@@ -230,12 +276,6 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *sess_id,
 					 const gchar *participant);
 
-#if 0
-/*
- * These two functions aren't being used and I'd rather not lock in the API
- * until they are needed. If they ever are.
- */
-
 /**
  * Gets the active local candidates for the stream.
  *
@@ -245,6 +285,8 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
  *                    from.
  *
  * @return The active candidates retrieved.
+ *
+ * @since 2.8.0
  */
 GList *purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant);
@@ -258,10 +300,11 @@ GList *purple_media_get_active_local_candidates(PurpleMedia *media,
  *                    from.
  *
  * @return The remote candidates retrieved.
+ *
+ * @since 2.8.0
  */
 GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant);
-#endif
 
 /**
  * Sets remote candidates from the stream.

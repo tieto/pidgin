@@ -1099,7 +1099,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_object(user, msnobj);
 
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
+	user->mobile = (clientid & MSN_CAP_MOBILE_ON) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_extcaps(user, extcaps);
 	msn_user_set_network(user, networkid);
@@ -1186,34 +1186,40 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	id = xmlnode_get_attrib(msg, "id");
 
-	if (id && !strcmp(id, "407")) {
+	if (id && strcmp(id, "1")) {
 		PurpleConversation *conv
 			= purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
 			                                        who, gc->account);
 		if (conv != NULL) {
-			purple_conversation_write(conv, NULL,
-			                          _("Mobile message was not sent because it was too long."),
+			const char *error;
+			if (!strcmp(id, "407"))
+				error = _("Mobile message was not sent because it was too long.");
+			else
+				error = _("Mobile message was not sent because an unknown error occurred.");
+
+			purple_conversation_write(conv, NULL, error,
 			                          PURPLE_MESSAGE_ERROR, time(NULL));
 
 			if ((id = xmlnode_get_attrib(payloadNode, "id")) != NULL) {
 				unsigned int trId = atol(id);
 				MsnTransaction *trans;
-				MsnMessage *msg;
 
 				trans = msn_history_find(cmdproc->history, trId);
-				msg = (MsnMessage *)trans->data;
+				if (trans) {
+					MsnMessage *msg = (MsnMessage *)trans->data;
 
-				if (msg) {
-					char *body_str = msn_message_to_string(msg);
-					char *body_enc = g_markup_escape_text(body_str, -1);
+					if (msg) {
+						char *body_str = msn_message_to_string(msg);
+						char *body_enc = g_markup_escape_text(body_str, -1);
 
-					purple_conversation_write(conv, NULL, body_enc,
-					                          PURPLE_MESSAGE_RAW, time(NULL));
+						purple_conversation_write(conv, NULL, body_enc,
+					                          	PURPLE_MESSAGE_RAW, time(NULL));
 
-					g_free(body_str);
-					g_free(body_enc);
-					msn_message_unref(msg);
-					trans->data = NULL;
+						g_free(body_str);
+						g_free(body_enc);
+						msn_message_unref(msg);
+						trans->data = NULL;
+					}
 				}
 			}
 		}
@@ -1274,7 +1280,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 		extcaps = 0;
 
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
+	user->mobile = (clientid & MSN_CAP_MOBILE_ON) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_extcaps(user, extcaps);
@@ -2216,7 +2222,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 /**************************************************************************
- * Dispatch server list management 
+ * Dispatch server list management
  **************************************************************************/
 typedef struct MsnAddRemoveListData {
 	MsnCmdProc *cmdproc;

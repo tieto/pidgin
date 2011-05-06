@@ -52,6 +52,7 @@ typedef struct _JabberChat {
 	void *config_dialog_handle;
 	GHashTable *members;
 	gboolean left;
+	time_t joined;
 } JabberChat;
 
 GList *jabber_chat_info(PurpleConnection *gc);

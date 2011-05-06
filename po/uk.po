@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the Pidgin package.
 #
 # Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2005.
-# Oleksandr Kovalenko <alx.kovalenko@gmail.com>, 2009-2010.
+# Oleksandr Kovalenko <alx.kovalenko@gmail.com>, 2009-2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-26 22:11-0500\n"
-"PO-Revision-Date: 2010-12-19 22:07+0300\n"
+"POT-Creation-Date: 2011-03-10 02:21-0800\n"
+"PO-Revision-Date: 2011-03-09 00:11+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -2360,8 +2360,12 @@ msgstr ""
 "Шлях де зберігати файли\n"
 "(Будь ласка, вкажіть повний шлях)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Автоматично відхилити від користувачів, які не в переліку контактів"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Коли запит на передавання файлу надходить від користувача,\n"
+"який *не* в вашому переліку контактів"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2373,6 +2377,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Створити нову теку для кожного користувача"
+
+msgid "Escape the filenames"
+msgstr "Екранувати назви файлів"
 
 msgid "Notes"
 msgstr "Примітки"
@@ -3218,9 +3225,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Ім'я"
 
@@ -3832,7 +3837,10 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер вимагає автентифікацію звичайним текстом через нешифрований потік"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Неправильна відповідь від сервера"
 
@@ -3976,7 +3984,6 @@ msgstr "Регіон"
 msgid "Postal Code"
 msgstr "Поштовий індекс"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Країна"
 
@@ -6073,6 +6080,9 @@ msgstr ""
 msgid "Connecting..."
 msgstr "З'єднання..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Введене відображуване ім'я закоротке."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Введений PIN має неправильну довжину [7-10]."
 
@@ -6141,33 +6151,6 @@ msgstr "Перевірка правильності облікового зап�
 msgid "Retrieving User Information..."
 msgstr "Отримання відомостей про користувача..."
 
-msgid "Loading menu..."
-msgstr "Завантаження меню..."
-
-msgid "Status Message"
-msgstr "Повідомлення стану"
-
-msgid "Rejection Message"
-msgstr "Повідомлення відмови"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "Схований номер"
-
-msgid "Your MXit ID..."
-msgstr "Ваш MXit ID..."
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "Сервер WAP"
-
-msgid "Connect via HTTP"
-msgstr "З'єднання через HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Увімкнути виринаючу екранну заставку"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "Вас викинули з цього MultiMX."
@@ -6181,6 +6164,43 @@ msgstr "_Назва кімнати:"
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "Вас запросили"
+
+msgid "Loading menu..."
+msgstr "Завантаження меню..."
+
+msgid "Status Message"
+msgstr "Повідомлення стану"
+
+msgid "Rejection Message"
+msgstr "Повідомлення відмови"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Схований номер"
+
+msgid "No profile available"
+msgstr "Профіль не доступний"
+
+msgid "This contact does not have a profile."
+msgstr "Цей контакт не має профілю."
+
+msgid "Your MXit ID..."
+msgstr "Ваш MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Запросити ще раз"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "Сервер WAP"
+
+msgid "Connect via HTTP"
+msgstr "З'єднання через HTTP"
+
+msgid "Enable splash-screen popup"
+msgstr "Увімкнути виринаючу екранну заставку"
 
 msgid "Last Online"
 msgstr "Востаннє в мережі"
@@ -7489,6 +7509,12 @@ msgstr "Ваше з'єднання AIM можливо буде розірван�
 msgid "You have been disconnected from chat room %s."
 msgstr "Вас було від'єднано від кімнати балачки %s."
 
+msgid "The new formatting is invalid."
+msgstr "Нове форматування недопустиме."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Форматування імені користувача може змінити лише регістр та пробіли."
+
 msgid "Pop-Up Message"
 msgstr "Спливаюче повідомлення"
 
@@ -7758,12 +7784,6 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr "Параметри приватності ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Нове форматування недопустиме."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Форматування імені користувача може змінити лише регістр та пробіли."
-
 msgid "Change Address To:"
 msgstr "Змінити адресу на:"
 
@@ -7869,75 +7889,6 @@ msgstr ""
 "Це вимагає встановлення безпосереднього підключення між двома комп'ютерами, "
 "та є необхідним для передавання зображень. Так як ваша ІР адреса буде "
 "розкрита, це може вважатись загрозою безпеці."
-
-msgid "Invalid SNAC"
-msgstr "Неправильний SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Досягнуто обмеження швидкості сервера"
-
-msgid "Client rate limit exceeded"
-msgstr "Досягнуто обмеження швидкості клієнта"
-
-msgid "Service unavailable"
-msgstr "Послуга недоступна"
-
-msgid "Service not defined"
-msgstr "Послуга не визначена"
-
-msgid "Obsolete SNAC"
-msgstr "Застарілий SNAC"
-
-msgid "Not supported by host"
-msgstr "Не підтримується вузлом"
-
-msgid "Not supported by client"
-msgstr "Не підтримується клієнтом"
-
-msgid "Refused by client"
-msgstr "Відкинута клієнтом"
-
-msgid "Reply too big"
-msgstr "Відповідь завелика"
-
-msgid "Responses lost"
-msgstr "Відповіді втрачені"
-
-msgid "Request denied"
-msgstr "Запит відхилений"
-
-msgid "Busted SNAC payload"
-msgstr "Зіпсовані дані SNAC"
-
-msgid "Insufficient rights"
-msgstr "Недостатньо прав"
-
-msgid "In local permit/deny"
-msgstr "В місцевому переліку дозволених/заборонених"
-
-msgid "Warning level too high (sender)"
-msgstr "Рівень попередження дуже високий (відправник)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Рівень попередження дуже високий (отримувач)"
-
-msgid "User temporarily unavailable"
-msgstr "Користувач тимчасово недоступний"
-
-msgid "No match"
-msgstr "Немає збігів"
-
-msgid "List overflow"
-msgstr "Перелік переповнений"
-
-msgid "Request ambiguous"
-msgstr "Запит незрозумілий"
-
-msgid "Queue full"
-msgstr "Черга переповнена"
-
-msgid "Not while on AOL"
-msgstr "Не тоді, коли у AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -8056,6 +8007,75 @@ msgstr "Член з"
 
 msgid "Capabilities"
 msgstr "Можливості"
+
+msgid "Invalid SNAC"
+msgstr "Неправильний SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Досягнуто обмеження швидкості сервера"
+
+msgid "Client rate limit exceeded"
+msgstr "Досягнуто обмеження швидкості клієнта"
+
+msgid "Service unavailable"
+msgstr "Послуга недоступна"
+
+msgid "Service not defined"
+msgstr "Послуга не визначена"
+
+msgid "Obsolete SNAC"
+msgstr "Застарілий SNAC"
+
+msgid "Not supported by host"
+msgstr "Не підтримується вузлом"
+
+msgid "Not supported by client"
+msgstr "Не підтримується клієнтом"
+
+msgid "Refused by client"
+msgstr "Відкинута клієнтом"
+
+msgid "Reply too big"
+msgstr "Відповідь завелика"
+
+msgid "Responses lost"
+msgstr "Відповіді втрачені"
+
+msgid "Request denied"
+msgstr "Запит відхилений"
+
+msgid "Busted SNAC payload"
+msgstr "Зіпсовані дані SNAC"
+
+msgid "Insufficient rights"
+msgstr "Недостатньо прав"
+
+msgid "In local permit/deny"
+msgstr "В місцевому переліку дозволених/заборонених"
+
+msgid "Warning level too high (sender)"
+msgstr "Рівень попередження дуже високий (відправник)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Рівень попередження дуже високий (отримувач)"
+
+msgid "User temporarily unavailable"
+msgstr "Користувач тимчасово недоступний"
+
+msgid "No match"
+msgstr "Немає збігів"
+
+msgid "List overflow"
+msgstr "Перелік переповнений"
+
+msgid "Request ambiguous"
+msgstr "Запит незрозумілий"
+
+msgid "Queue full"
+msgstr "Черга переповнена"
+
+msgid "Not while on AOL"
+msgstr "Не тоді, коли у AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8648,14 +8668,14 @@ msgstr "Автоматично"
 msgid "Select Server"
 msgstr "Виберіть сервер"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "З'єднання по TCP"
@@ -8668,6 +8688,9 @@ msgstr "Показати новини сервера"
 
 msgid "Show chat room when msg comes"
 msgstr "Показати кімнату балачки, коли надійшло повідомлення"
+
+msgid "Use default font"
+msgstr "Використовувати типовий шрифт"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Час між повідомленнями присутності (с)"
@@ -12222,9 +12245,6 @@ msgstr "Помилка"
 msgid "Fatal Error"
 msgstr "Фатальна помилка"
 
-msgid "bug master"
-msgstr "спеціаліст з вад"
-
 msgid "artist"
 msgstr "виконавець"
 
@@ -12403,6 +12423,9 @@ msgstr "Лао"
 
 msgid "Maithili"
 msgstr "Майтхілі"
+
+msgid "Meadow Mari"
+msgstr "Луговомарійська"
 
 msgid "Macedonian"
 msgstr "Македонська"
@@ -13247,6 +13270,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Ви отримали пошту!<
 msgid "New Pounces"
 msgstr "Нове стеження"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Відкинути"
 
@@ -15503,6 +15533,12 @@ msgstr "Відвідати сторінку тенет Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
+
+#~ msgid "bug master"
+#~ msgstr "спеціаліст з вад"
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Автоматично відхилити від користувачів, які не в переліку контактів"
 
 #~ msgid "Error requesting %s"
 #~ msgstr "Помилка запиту %s"

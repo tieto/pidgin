@@ -190,7 +190,7 @@ purple_media_class_init (PurpleMediaClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->dispose = purple_media_dispose;
 	gobject_class->finalize = purple_media_finalize;
 	gobject_class->set_property = purple_media_set_property;
@@ -416,7 +416,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_PRPL_DATA:
 			media->priv->prpl_data = g_value_get_pointer(value);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -427,7 +427,7 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 {
 	PurpleMedia *media;
 	g_return_if_fail(PURPLE_IS_MEDIA(object));
-	
+
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
@@ -450,8 +450,8 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_PRPL_DATA:
 			g_value_set_pointer(value, media->priv->prpl_data);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 
@@ -490,7 +490,7 @@ purple_media_get_streams(PurpleMedia *media, const gchar *session,
 {
 	GList *streams;
 	GList *ret = NULL;
-	
+
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 
 	streams = media->priv->streams;
@@ -535,7 +535,7 @@ purple_media_insert_stream(PurpleMediaSession *session,
 		const gchar *name, gboolean initiator)
 {
 	PurpleMediaStream *media_stream;
-	
+
 	g_return_val_if_fail(session != NULL, NULL);
 
 	media_stream = g_new0(PurpleMediaStream, 1);
@@ -916,6 +916,47 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 #endif
 }
 
+void
+purple_media_set_params(PurpleMedia *media,
+		guint num_params, GParameter *params)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+	purple_media_backend_set_params(media->priv->backend, num_params, params);
+#endif
+}
+
+const gchar **
+purple_media_get_available_params(PurpleMedia *media)
+{
+	static const gchar *NULL_ARRAY[] = { NULL };
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL_ARRAY);
+
+	return purple_media_backend_get_available_params(media->priv->backend);
+#else
+	return NULL_ARRAY;
+#endif
+}
+
+gboolean
+purple_media_param_is_supported(PurpleMedia *media, const gchar *param)
+{
+#ifdef USE_VV
+	const gchar **params;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+	g_return_val_if_fail(param != NULL, FALSE);
+
+	params = purple_media_backend_get_available_params(media->priv->backend);
+	for (; *params != NULL; ++params)
+		if (!strcmp(*params, param))
+			return TRUE;
+#endif
+	return FALSE;
+}
+
 #ifdef USE_VV
 static void
 purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
@@ -1151,12 +1192,6 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 #endif
 }
 
-#if 0
-/*
- * These two functions aren't being used and I'd rather not lock in the API
- * until they are needed. If they ever are.
- */
-
 GList *
 purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant)
@@ -1186,7 +1221,6 @@ purple_media_get_active_remote_candidates(PurpleMedia *media,
 	return NULL;
 #endif
 }
-#endif
 
 gboolean
 purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,

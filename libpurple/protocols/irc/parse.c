@@ -65,6 +65,7 @@ static struct _irc_msg {
 	{ "319", "nn:", irc_msg_whois },	/* Whois channels		*/
 	{ "320", "nn:", irc_msg_whois },	/* Whois (fn ident)		*/
 	{ "314", "nnnvv:", irc_msg_whois },	/* Whowas user			*/
+	{ "315", "nt:", irc_msg_who },      /* end of WHO channel   */
 	{ "369", "nt:", irc_msg_endwhois },	/* End of WHOWAS		*/
 	{ "321", "*", irc_msg_list },		/* Start of list		*/
 	{ "322", "ncv:", irc_msg_list },	/* List.			*/
@@ -73,6 +74,7 @@ static struct _irc_msg {
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
 	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
+	{ "352", "nvcvnvvv:", irc_msg_who },/* Channel WHO			*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
 	{ "367", "ncnnv", irc_msg_ban },	/* Ban list			*/
@@ -123,6 +125,7 @@ static struct _irc_user_cmd {
 	char *help;
 } _irc_cmds[] = {
 	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
+	{ "authserv", ":", irc_cmd_service, N_("authserv: Send a command to authserv") },
 	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
 	{ "ctcp", "t:", irc_cmd_ctcp, N_("ctcp <nick> <msg>: sends ctcp msg to nick.") },
 	{ "chanserv", ":", irc_cmd_service, N_("chanserv: Send a command to chanserv") },
@@ -657,7 +660,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	 * instead of a null terminated string.
 	 */
 	purple_signal_emit(_irc_plugin, "irc-receiving-text", gc, &input);
-	
+
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
 		irc_send(irc, msg);

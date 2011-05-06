@@ -43,10 +43,10 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [7])
+m4_define([purple_lt_current], [8])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [7])
-m4_define([purple_micro_version], [10])
+m4_define([purple_minor_version], [8])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [6])
+m4_define([gnt_micro_version], [8])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -263,6 +263,31 @@ int main()
 	AC_MSG_RESULT(no)
 ])
 
+# before gettexting, in case iconv matters
+case "$host_os" in
+darwin*)
+	AC_CHECK_LIB(resolv, res_query)
+
+	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
+		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
+			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
+			LIBS="$LIBS -framework IOKit -framework CoreFoundation"
+		], [])
+	], [])
+
+	AC_MSG_CHECKING([for fink])
+	if test -d /sw; then
+		AC_MSG_RESULT([found, adding /sw to search paths])
+		CPPFLAGS="$CPPFLAGS -I/sw/include"
+		LDFLAGS="$LDFLAGS -L/sw/lib"
+	else
+		AC_MSG_RESULT([not found])
+	fi
+	;;
+*)
+	;;
+esac
+
 dnl #######################################################################
 dnl # Disable creation and installation of translation files
 dnl #######################################################################
@@ -272,32 +297,6 @@ if test x$enable_i18n = xyes; then
 	AC_PROG_INTLTOOL
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
-
-
-	# before gettexting, in case iconv matters
-	case "$host_os" in
-	darwin*)
-		AC_CHECK_LIB(resolv, res_query)
-
-		AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
-			AC_CHECK_HEADER(IOKit/IOKitLib.h, [
-				AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
-				LIBS="$LIBS -framework IOKit -framework CoreFoundation"
-			], [])
-		], [])
-
-		AC_MSG_CHECKING([for fink])
-		if test -d /sw; then
-			AC_MSG_RESULT([found, adding /sw to search paths])
-			CPPFLAGS="$CPPFLAGS -I/sw/include"
-			LDFLAGS="$LDFLAGS -L/sw/lib"
-		else
-			AC_MSG_RESULT([not found])
-		fi
-		;;
-	*)
-		;;
-	esac
 
 	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
@@ -327,13 +326,13 @@ fi #enable_i18n
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
-dnl # Check for GLib 2.12 (required)
+dnl # Check for GLib 2.16 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.16.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have GLib 2.12.0 or newer development headers installed to build.
+You must have GLib 2.16.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -537,27 +536,6 @@ Use --disable-sm if you do not need session management support.
 	if test "x$enable_gestures" = "xyes"; then
 		if test "x$with_x" = "xno" ; then
 			enable_gestures=no
-		fi
-	fi
-
-	dnl #######################################################################
-	dnl # Check for startup notification
-	dnl #######################################################################
-	if test "x$enable_startup_notification" = "xyes"; then
-		PKG_CHECK_MODULES(STARTUP_NOTIFICATION, [libstartup-notification-1.0 >= 0.5], , [
-			AC_MSG_RESULT(no)
-			enable_startup_notification="no"
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-Startup notification development headers not found.
-Use --disable-startup-notification if you do not need it.
-])
-			fi])
-
-		if test "x$enable_startup_notification" = "xyes"; then
-			AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
-			AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
-			AC_SUBST(STARTUP_NOTIFICATION_LIBS)
 		fi
 	fi
 
@@ -1046,7 +1024,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.9.0], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= 1.10.1], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1080,7 +1058,7 @@ if test "x$gadu_libs" = "xyes"; then
 	]])], [
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
 #if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.9.0-rc2 or higher."
+#error "Your libgadu version is too old. libpurple requires 1.10.1 or higher."
 #endif
 		]])], [
 			AC_MSG_RESULT(yes)
@@ -1091,7 +1069,7 @@ if test "x$gadu_libs" = "xyes"; then
 			echo
 			echo
 			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.9.0-rc2 or newer."
+			echo "Install version 1.10.1 or newer."
 			echo "Then rerun this ./configure"
 			echo
 			echo "Falling back to using our own copy of libgadu"
@@ -1136,7 +1114,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1192,7 +1170,6 @@ for i in $STATIC_PRPLS ; do
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
 		icq)		static_oscar=yes ;;
-		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		silc10)		static_silc=yes ;;
@@ -1211,7 +1188,6 @@ AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
@@ -1223,7 +1199,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1252,7 +1228,6 @@ for i in $DYNAMIC_PRPLS ; do
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
 		icq)		dynamic_oscar=yes ;;
-		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		silc10)		dynamic_silc=yes ;;
@@ -2406,7 +2381,7 @@ fi
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
-AC_CHECK_FUNCS(gethostid lrand48)
+AC_CHECK_FUNCS(gethostid lrand48 timegm)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
 AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
@@ -2575,6 +2550,7 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
+		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
@@ -2601,7 +2577,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
-		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/silc10/Makefile

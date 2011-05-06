@@ -202,7 +202,14 @@ typedef enum
 	 * Used as a hint that unknown commands should not be sent as messages.
 	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an invitation.
+	 * @since 2.8.0
+	 */
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800
 
 } PurpleProtocolOptions;
 
@@ -274,7 +281,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
-	 * to default options as strings based on chat_name. The resulting 
+	 * to default options as strings based on chat_name. The resulting
 	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
 	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
 	 * to extract a chat name from a hashtable.
@@ -333,6 +340,9 @@ struct _PurplePluginProtocolInfo
 	 * already in the specified group. If the protocol supports
 	 * authorization and the user is not already authorized to see the
 	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * @deprecated Since 2.8.0, add_buddy_with_invite is preferred.
+	 * @see add_buddy_with_invite
 	 */
 	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
@@ -366,7 +376,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a chat name based on the information in components. Use
-	 * #chat_info_defaults if you instead need to generate a hashtable 
+	 * #chat_info_defaults if you instead need to generate a hashtable
 	 * from a chat name.
 	 *
 	 * @param components A hashtable containing information about the chat.
@@ -377,7 +387,7 @@ struct _PurplePluginProtocolInfo
 	 * Invite a user to join a chat.
 	 *
 	 * @param id      The id of the chat to invite the user to.
-	 * @param message A message displayed to the user when the invitation 
+	 * @param message A message displayed to the user when the invitation
 	 *                is received.
 	 * @param who     The name of the user to send the invation to.
 	 */
@@ -622,6 +632,21 @@ struct _PurplePluginProtocolInfo
 	void (*get_public_alias)(PurpleConnection *gc,
 	                         PurpleGetPublicAliasSuccessCallback success_cb,
 	                         PurpleGetPublicAliasFailureCallback failure_cb);
+
+	/**
+	 * Add a buddy to a group on the server.
+	 *
+	 * This PRPL function may be called in situations in which the buddy is
+	 * already in the specified group. If the protocol supports
+	 * authorization and the user is not already authorized to see the
+	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * If authorization is required, then use the supplied invite message.
+	 *
+	 * @since 2.8.0
+	 */
+	void (*add_buddy_with_invite)(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message);
+	void (*add_buddies_with_invite)(PurpleConnection *pc, GList *buddies, GList *groups, const char *message);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

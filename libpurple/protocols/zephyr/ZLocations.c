@@ -6,7 +6,7 @@
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -21,13 +21,13 @@
 Code_t ZSetLocation(exposure)
     char *exposure;
 {
-    return (Z_SendLocation(LOGIN_CLASS, exposure, ZAUTH, 
+    return (Z_SendLocation(LOGIN_CLASS, exposure, ZAUTH,
 			   "$sender logged in to $1 on $3 at $2"));
 }
 
 Code_t ZUnsetLocation()
 {
-    return (Z_SendLocation(LOGIN_CLASS, LOGIN_USER_LOGOUT, ZNOAUTH, 
+    return (Z_SendLocation(LOGIN_CLASS, LOGIN_USER_LOGOUT, ZNOAUTH,
 			   "$sender logged out of $1 on $3 at $2"));
 }
 
@@ -137,8 +137,8 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	}
 	ZFreeNotice(&retnotice);
 	return (ZERR_SERVNAK);
-    } 
-	
+    }
+
     if (retnotice.z_kind != SERVACK) {
 	ZFreeNotice(&retnotice);
 	return (ZERR_INTERNAL);
@@ -156,6 +156,6 @@ Code_t Z_SendLocation(class, opcode, auth, format)
     }
 
     ZFreeNotice(&retnotice);
-	
+
     return (ZERR_NONE);
 }

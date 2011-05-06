@@ -6,7 +6,7 @@
  *
  *	Copyright (c) 1987,1988 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -76,7 +76,7 @@ Z_Subscriptions(sublist, nitems, port, opcode, authit)
 
     /* nitems = 0 means cancel all subscriptions; still need to allocate a */
     /* array for one item so we can cancel, however. */
-  
+
     list = (char **)malloc((unsigned)((nitems==0)?1:nitems)*3*sizeof(char *));
     if (!list)
         return (ENOMEM);
@@ -173,10 +173,10 @@ int authit;
     retval = ZSendList(notice, lyst, num*3, ZAUTH);
     if (retval != ZERR_NONE && !authit)
 	retval = ZSendList(notice, lyst, num*3, ZNOAUTH);
-	
+
     if (retval != ZERR_NONE)
 	return (retval);
-    if ((retval = ZIfNotice(&retnotice, (struct sockaddr_in *)0, 
+    if ((retval = ZIfNotice(&retnotice, (struct sockaddr_in *)0,
 				ZCompareUIDPred, (char *)&notice->z_uid)) !=
 	ZERR_NONE)
 	return (retval);

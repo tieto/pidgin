@@ -347,7 +347,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	{
 		size_t siz;
 		char *body;
-		
+
 		body = msn_slpmsgpart_serialize(msg->part, &siz);
 
 		memcpy(n, body, siz);
@@ -613,15 +613,8 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		g_string_append_printf(str, "Session ID: %u\r\n", msg->part->header->session_id);
-		g_string_append_printf(str, "ID:         %u\r\n", msg->part->header->id);
-		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->part->header->offset);
-		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->part->header->total_size);
-		g_string_append_printf(str, "Length:     %u\r\n", msg->part->header->length);
-		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->part->header->flags);
-		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->part->header->ack_id);
-		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->part->header->ack_sub_id);
-		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->part->header->ack_size);
+		if (msg->part)
+			msn_slpmsgpart_to_string(msg->part, str);
 
 		if (purple_debug_is_verbose() && body != NULL)
 		{
@@ -638,27 +631,17 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			else
 			{
 				int i;
-				int bin_len;
-				
-				if (msg->part->footer->value == P2P_APPID_SESSION)
-					bin_len = P2P_PACKET_HEADER_SIZE;
-				else
-					bin_len = body_len;
 
-				for (i = 0; i < bin_len; i++)
+				for (i = 0; i < body_len; i++)
 				{
 					g_string_append_printf(str, "%.2hhX ", body[i]);
 					if ((i % 16) == 15)
 						g_string_append(str, "\r\n");
 				}
 
-				if (bin_len == P2P_PACKET_HEADER_SIZE)
-					g_string_append_printf(str, "%s ", body + P2P_PACKET_HEADER_SIZE);
 				g_string_append(str, "\r\n");
 			}
 		}
-
-		g_string_append_printf(str, "Footer:     0x%08X\r\n", msg->part->footer->value);
 	}
 	else
 	{
@@ -822,7 +805,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 		chat = FALSE;
 
 	if (swboard->conv == NULL) {
-		if (chat) 
+		if (chat)
 			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
 		else {
 			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
@@ -845,7 +828,7 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 }
 
 /* TODO: Make these not be such duplicates of each other */
-static void 
+static void
 got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	FILE *f = NULL;
@@ -871,7 +854,7 @@ got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 	g_free(path);
 }
 
-static void 
+static void
 got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	FILE *f = NULL;
@@ -1133,7 +1116,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				"Unable to parse invite msg body.\n");
 		return;
 	}
-	
+
 	/*
 	 * GUID is NOT always present but Invitation-Command and Invitation-Cookie
 	 * are mandatory.
@@ -1150,7 +1133,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	} else if (!strcmp(command, "INVITE")) {
 		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
-	
+
 		if (guid == NULL) {
 			purple_debug_warning("msn",
 			                     "Invite msg missing Application-GUID.\n");
@@ -1189,7 +1172,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
 			                     guid, application ? application : "(null)");
 		}
-		
+
 		if (!accepted) {
 			MsnSwitchBoard *swboard = cmdproc->data;
 			char *text;

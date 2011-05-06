@@ -71,6 +71,10 @@
 #include <dbus/dbus-glib.h>
 #include <NetworkManager.h>
 
+#if !defined(NM_CHECK_VERSION)
+#define NM_CHECK_VERSION(x,y,z) 0
+#endif
+
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
 static DBusGProxy *dbus_proxy = NULL;
@@ -271,7 +275,7 @@ purple_network_get_all_local_system_ips(void)
 
 			inet_ntop(AF_INET, &sinptr->sin_addr, dst,
 				sizeof(dst));
-			purple_debug_info("network", 
+			purple_debug_info("network",
 				"found local i/f with address %s on IPv4\n", dst);
 			if (!purple_strequal(dst, "127.0.0.1")) {
 				result = g_list_append(result, g_strdup(dst));
@@ -863,7 +867,13 @@ nm_update_state(NMState state)
 
 	switch(state)
 	{
+#if NM_CHECK_VERSION(0,8,992)
+		case NM_STATE_CONNECTED_LOCAL:
+		case NM_STATE_CONNECTED_SITE:
+		case NM_STATE_CONNECTED_GLOBAL:
+#else
 		case NM_STATE_CONNECTED:
+#endif
 			/* Call res_init in case DNS servers have changed */
 			res_init();
 			/* update STUN IP in case we it changed (theoretically we could
@@ -873,13 +883,16 @@ nm_update_state(NMState state)
 				purple_prefs_get_string("/purple/network/stun_server"));
 			purple_network_set_turn_server(
 				purple_prefs_get_string("/purple/network/turn_server"));
-			
+
 			if (ui_ops != NULL && ui_ops->network_connected != NULL)
 				ui_ops->network_connected();
 			break;
 		case NM_STATE_ASLEEP:
 		case NM_STATE_CONNECTING:
 		case NM_STATE_DISCONNECTED:
+#if NM_CHECK_VERSION(0,8,992)
+		case NM_STATE_DISCONNECTING:
+#endif
 			if (prev != NM_STATE_CONNECTED && prev != NM_STATE_UNKNOWN)
 				break;
 			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
@@ -936,10 +949,10 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 #endif
 
 static void
-purple_network_ip_lookup_cb(GSList *hosts, gpointer data, 
+purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 	const char *error_message)
 {
-	const gchar **ip = (const gchar **) data; 
+	const gchar **ip = (const gchar **) data;
 
 	if (error_message) {
 		purple_debug_error("network", "lookup of IP address failed: %s\n",
@@ -949,14 +962,14 @@ purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
 	}
 
 	if (hosts && g_slist_next(hosts)) {
-		struct sockaddr *addr = g_slist_next(hosts)->data; 
+		struct sockaddr *addr = g_slist_next(hosts)->data;
 		char dst[INET6_ADDRSTRLEN];
-		
+
 		if (addr->sa_family == AF_INET6) {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr, 
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr,
 				dst, sizeof(dst));
 		} else {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr,
 				dst, sizeof(dst));
 		}
 
@@ -978,10 +991,10 @@ purple_network_set_stun_server(const gchar *stun_server)
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a(stun_server, 3478, purple_network_ip_lookup_cb,
+			purple_dnsquery_a_account(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
 				&stun_ip);
 		} else {
-			purple_debug_info("network", 
+			purple_debug_info("network",
 				"network is unavailable, don't try to update STUN IP");
 		}
 	} else if (stun_ip) {
@@ -996,11 +1009,11 @@ purple_network_set_turn_server(const gchar *turn_server)
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for TURN server\n");
-			purple_dnsquery_a(turn_server, 
-				purple_prefs_get_int("/purple/network/turn_port"), 
+			purple_dnsquery_a_account(NULL, turn_server,
+				purple_prefs_get_int("/purple/network/turn_port"),
 				purple_network_ip_lookup_cb, &turn_ip);
 		} else {
-			purple_debug_info("network", 
+			purple_debug_info("network",
 				"network is unavailable, don't try to update TURN IP");
 		}
 	} else if (turn_ip) {

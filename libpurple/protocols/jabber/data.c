@@ -283,7 +283,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 	gchar *alt = request_data->alt;
 	gboolean ephemeral = request_data->ephemeral;
 	JabberDataRequestCallback *cb = request_data->cb;
-	
+
 	xmlnode *data_element = xmlnode_get_child(packet, "data");
 	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
 
@@ -308,7 +308,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 }
 
 void
-jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who, 
+jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
     gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
     gpointer userdata)
 {
@@ -328,7 +328,7 @@ jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
 	data->alt = alt;
 	data->ephemeral = ephemeral;
 	data->cb = cb;
-	
+
 	xmlnode_set_attrib(request->node, "to", who);
 	jabber_iq_set_callback(request, jabber_data_request_cb, data);
 	xmlnode_insert_child(request->node, data_request);
@@ -398,7 +398,7 @@ jabber_data_associate_remote(JabberStream *js, const gchar *who, JabberData *dat
 
 	purple_debug_info("jabber", "associating remote BoB object with cid = %s\n",
 		cid);
-	
+
 	g_hash_table_insert(remote_data_by_cid, cid, data);
 }
 

@@ -62,7 +62,7 @@ google_session_destroy(GoogleSession *session)
 
 	if (session->description)
 		xmlnode_free(session->description);
-	
+
 	g_free(session->session_data);
 	g_free(session);
 }
@@ -427,7 +427,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	session->remote_jid = jid;
 	session_data = g_new0(GoogleAVSessionData, 1);
 	session->session_data = session_data;
-	
+
 	if (type & PURPLE_MEDIA_VIDEO)
 		session_data->video = TRUE;
 
@@ -440,7 +440,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 		jabber_google_relay_response_session_initiate_cb(session, NULL, 0, 0, 0,
 			NULL, NULL);
 	}
-	
+
 	/* we don't actually know yet wether it succeeded... maybe this is very
 	 wrong... */
 	return TRUE;
@@ -464,7 +464,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		(GoogleAVSessionData *) session->session_data;
 
 	params =
-		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp, 
+		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp,
 	    	relay_ssltcp, relay_username, relay_password, &num_params);
 
 	if (purple_media_add_stream(session_data->media, "google-voice",
@@ -483,20 +483,20 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 
 		if (session_data->remote_audio_candidates) {
 			purple_media_add_remote_candidates(session_data->media,
-				"google-voice", session->remote_jid, 
+				"google-voice", session->remote_jid,
 			    session_data->remote_audio_candidates);
 			purple_media_candidate_list_free(session_data->remote_audio_candidates);
 			session_data->remote_audio_candidates = NULL;
 		}
 		if (session_data->remote_video_candidates) {
 			purple_media_add_remote_candidates(session_data->media,
-				"google-video", session->remote_jid, 
+				"google-video", session->remote_jid,
 			    session_data->remote_video_candidates);
 			purple_media_candidate_list_free(session_data->remote_video_candidates);
 			session_data->remote_video_candidates = NULL;
 		}
 	}
-		
+
 	g_free(params);
 
 	for (codec_element = xmlnode_get_child(session->description, "payload-type");
@@ -561,7 +561,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	const gchar *xmlns;
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
-	
+
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
 		return FALSE;
@@ -598,9 +598,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 			G_CALLBACK(google_session_stream_info_cb), session);
 
 	session->iq_id = g_strdup(iq_id);
-	
+
 	if (js->google_relay_host && js->google_relay_token) {
-		jabber_google_do_relay_request(js, session, 
+		jabber_google_do_relay_request(js, session,
 			jabber_google_relay_response_session_handle_initiate_cb);
 	} else {
 		jabber_google_relay_response_session_handle_initiate_cb(session, NULL,
@@ -621,7 +621,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	char n[4];
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
-	
+
 	for (cand = xmlnode_get_child(sess, "candidate"); cand;
 			cand = xmlnode_get_next_twin(cand)) {
 		PurpleMediaCandidate *info;
@@ -636,9 +636,9 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		if (cname && type && address && port) {
 			PurpleMediaCandidateType candidate_type;
 			guint prio = preference ? g_ascii_strtod(preference, NULL) * 1000 : 0;
-			
+
 			g_snprintf(n, sizeof(n), "S%d", name++);
-			
+
 			if (g_str_equal(type, "local"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
 			else if (g_str_equal(type, "stun"))
@@ -713,7 +713,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_VIDEO));
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
-	
+
 	for (; codec_element; codec_element = codec_element->next) {
 		const gchar *xmlns, *encoding_name, *id,
 				*clock_rate, *width, *height, *framerate;

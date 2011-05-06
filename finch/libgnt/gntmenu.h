@@ -63,7 +63,7 @@ struct _GntMenu
 {
 	GntTree parent;
 	GntMenuType type;
-	
+
 	GList *list;
 	int selected;
 

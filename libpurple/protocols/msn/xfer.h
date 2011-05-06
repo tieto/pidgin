@@ -22,6 +22,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifndef MSN_XFER_H
+#define MSN_XFER_H
 
 #include "slpcall.h"
 
@@ -56,8 +58,10 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 gchar *
-msn_file_context_to_wire(MsnFileContext *header);
+msn_file_context_to_wire(MsnFileContext *context);
 
 MsnFileContext *
 msn_file_context_from_wire(const char *buf, gsize len);
+
+#endif /* MSN_XFER_H */
 

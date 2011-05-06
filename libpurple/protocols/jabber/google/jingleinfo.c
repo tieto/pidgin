@@ -109,13 +109,15 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 			const gchar *udp = xmlnode_get_attrib(server, "udp");
 
 			if (host && udp) {
+				PurpleAccount *account;
 				int port = atoi(udp);
 				/* if there, would already be an ongoing query,
 				 cancel it */
 				if (js->stun_query)
 					purple_dnsquery_destroy(js->stun_query);
 
-				js->stun_query = purple_dnsquery_a(host, port,
+				account = purple_connection_get_account(js->gc);
+				js->stun_query = purple_dnsquery_a_account(account, host, port,
 					jabber_google_stun_lookup_cb, js);
 			}
 		}
@@ -124,7 +126,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 	if (relay) {
 		xmlnode *token = xmlnode_get_child(relay, "token");
 		xmlnode *server = xmlnode_get_child(relay, "server");
-		
+
 		if (token) {
 			gchar *relay_token = xmlnode_get_data(token);
 
@@ -133,7 +135,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 		}
 
 		if (server) {
-			js->google_relay_host = 
+			js->google_relay_host =
 				g_strdup(xmlnode_get_attrib(server, "host"));
 		}
 	}

@@ -35,7 +35,7 @@ key_pressed(GntEntry *entry, const char *text, gpointer null)
 			gnt_widget_show(widget);
 		}
 	}
-	
+
 	return TRUE;
 }
 
@@ -61,7 +61,7 @@ int main()
 	gnt_main();
 
 	gnt_quit();
-	
+
 	return 0;
 }
 

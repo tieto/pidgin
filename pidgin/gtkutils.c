@@ -245,12 +245,6 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 		gtk_widget_show(sep);
 	}
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
 	imhtml = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), editable);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
@@ -267,7 +261,8 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 	}
 	pidgin_setup_imhtml(imhtml);
 
-	gtk_container_add(GTK_CONTAINER(sw), imhtml);
+	sw = pidgin_make_scrollable(imhtml, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 	if (imhtml_ret != NULL)
 		*imhtml_ret = imhtml;
@@ -1463,6 +1458,7 @@ typedef struct {
 
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
+	const gchar *shortname;
 	gchar *filedata;
 	size_t size;
 	struct stat st;
@@ -1517,7 +1513,9 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			break;
 		}
-		id = purple_imgstore_add_with_id(filedata, size, data->filename);
+		shortname = strrchr(data->filename, G_DIR_SEPARATOR);
+		shortname = shortname ? shortname + 1 : data->filename;
+		id = purple_imgstore_add_with_id(filedata, size, shortname);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
@@ -2921,7 +2919,7 @@ pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
 	GtkComboBox *ret = NULL;
 	GtkWidget *the_entry = NULL;
 
-	ret = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	ret = GTK_COMBO_BOX(gtk_combo_box_entry_new_text());
 	the_entry = gtk_entry_new();
 	gtk_container_add(GTK_CONTAINER(ret), the_entry);
 
@@ -3491,6 +3489,29 @@ winpidgin_register_win32_url_handlers(void)
 						   ret);
 }
 #endif
+
+GtkWidget *
+pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPolicyType vscrollbar_policy, GtkShadowType shadow_type, int width, int height)
+{
+	GtkWidget *sw = gtk_scrolled_window_new(NULL, NULL);
+
+	if (G_LIKELY(sw)) {
+		gtk_widget_show(sw);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), hscrollbar_policy, vscrollbar_policy);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), shadow_type);
+		if (width != -1 || height != -1)
+			gtk_widget_set_size_request(sw, width, height);
+		if (child) {
+			if (GTK_WIDGET_GET_CLASS(child)->set_scroll_adjustments_signal)
+				gtk_container_add(GTK_CONTAINER(sw), child);
+			else
+				gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), child);
+		}
+		return sw;
+	}
+
+	return child;
+}
 
 void pidgin_utils_init(void)
 {

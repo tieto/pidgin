@@ -59,6 +59,16 @@ typedef enum
 	PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
 } PurpleAccountRequestType;
 
+/**
+ * Account request response types
+ */
+typedef enum
+{
+	PURPLE_ACCOUNT_RESPONSE_IGNORE = -2,
+	PURPLE_ACCOUNT_RESPONSE_DENY = -1,
+	PURPLE_ACCOUNT_RESPONSE_PASS = 0,
+	PURPLE_ACCOUNT_RESPONSE_ACCEPT = 1
+} PurpleAccountRequestResponse;
 
 /**  Account UI operations, used to notify the user of status changes and when
  *   buddies add this account to their buddy lists.
@@ -143,6 +153,7 @@ struct _PurpleAccount
 	 * buddies are added to your permit list.  Currently we have to
 	 * iterate through the entire list if we want to check if someone
 	 * is permitted or denied.  We should do this for 3.0.0.
+	 * Or maybe use a GTree.
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
@@ -500,6 +511,24 @@ void purple_account_set_public_alias(PurpleAccount *account,
 void purple_account_get_public_alias(PurpleAccount *account,
 	PurpleGetPublicAliasSuccessCallback success_cb,
 	PurpleGetPublicAliasFailureCallback failure_cb);
+
+/**
+ * Return whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if suppression is used, or @c FALSE if not.
+ */
+gboolean purple_account_get_silence_suppression(const PurpleAccount *account);
+
+/**
+ * Sets whether silence suppression is used during voice call.
+ *
+ * @param account The account.
+ * @param value   @c TRUE if suppression should be used.
+ */
+void purple_account_set_silence_suppression(PurpleAccount *account,
+											gboolean value);
 
 /**
  * Clears all protocol-specific settings on an account.
@@ -929,15 +958,40 @@ void purple_account_destroy_log(PurpleAccount *account);
  *
  * @param account The account.
  * @param buddy The buddy to add.
+ *
+ * @deprecated Use purple_account_add_buddy_with_invite and \c NULL message.
  */
 void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy);
+/**
+ * Adds a buddy to the server-side buddy list for the specified account.
+ *
+ * @param account The account.
+ * @param buddy The buddy to add.
+ * @param message The invite message.  This may be ignored by a prpl.
+ *
+ * @since 2.8.0
+ */
+void purple_account_add_buddy_with_invite(PurpleAccount *account, PurpleBuddy *buddy, const char *message);
+
 /**
  * Adds a list of buddies to the server-side buddy list.
  *
  * @param account The account.
  * @param buddies The list of PurpleBlistNodes representing the buddies to add.
+ *
+ * @deprecated Use purple_account_add_buddies_with_invite and \c NULL message.
  */
 void purple_account_add_buddies(PurpleAccount *account, GList *buddies);
+/**
+ * Adds a list of buddies to the server-side buddy list.
+ *
+ * @param account The account.
+ * @param buddies The list of PurpleBlistNodes representing the buddies to add.
+ * @param message The invite message.  This may be ignored by a prpl.
+ *
+ * @since 2.8.0
+ */
+void purple_account_add_buddies_with_invite(PurpleAccount *account, GList *buddies, const char *message);
 
 /**
  * Removes a buddy from the server-side buddy list.

@@ -240,7 +240,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 		jabber_send_raw(js,
 				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 		return TRUE;
-	} else { 
+	} else {
 		purple_debug_warning("jabber", "No libpurple TLS/SSL support found.");
 	}
 #endif
@@ -813,7 +813,8 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			try_srv_connect(js);
 		} else {
 			purple_debug_info("jabber","Couldn't connect directly to %s.  Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
-			js->srv_query_data = purple_txt_resolve("_xmppconnect",
+			js->srv_query_data = purple_txt_resolve_account(
+					purple_connection_get_account(gc), "_xmppconnect",
 					js->user->domain, txt_resolved_cb, js);
 		}
 		return;
@@ -1072,7 +1073,7 @@ jabber_stream_connect(JabberStream *js)
 		jabber_login_connect(js, js->user->domain, connect_server,
 				purple_account_get_int(account, "port", 5222), TRUE);
 	} else {
-		js->srv_query_data = purple_srv_resolve("xmpp-client",
+		js->srv_query_data = purple_srv_resolve_account(account, "xmpp-client",
 				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
 }
@@ -1717,8 +1718,8 @@ void jabber_close(PurpleConnection *gc)
 				(PurpleUtilFetchUrlData *) js->google_relay_requests->data;
 			purple_util_fetch_url_cancel(url_data);
 			g_free(url_data);
-			js->google_relay_requests = 
-				g_list_delete_link(js->google_relay_requests, 
+			js->google_relay_requests =
+				g_list_delete_link(js->google_relay_requests,
 					js->google_relay_requests);
 		}
 	}
@@ -2145,9 +2146,9 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 	if (jb) {
 		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
 		if (jbr) {
-			const gchar *client_type = 
+			const gchar *client_type =
 				jabber_resource_get_identity_category_type(jbr, "client");
-		
+
 			if (client_type) {
 				if (strcmp(client_type, "phone") == 0) {
 					return "mobile";
@@ -2162,7 +2163,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 			}
 		}
 	}
-		
+
 	return NULL;
 }
 
@@ -2312,7 +2313,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
 					g_free(moodplustext);
 				} else
-					purple_notify_user_info_add_pair(user_info, _("Mood"), 
+					purple_notify_user_info_add_pair(user_info, _("Mood"),
 					    description ? _(description) : mood);
 			}
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
@@ -2376,7 +2377,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_prepend(types, type);
 
-	
+
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD,
 	    "mood", NULL, TRUE, TRUE, TRUE,
 			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(PURPLE_TYPE_STRING),
@@ -2619,6 +2620,7 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 			if(!(server = g_hash_table_lookup(components, "server")))
 				continue;
 
+			/* FIXME: Collate is wrong in a few cases here; this should be prepped */
 			if(jid->node && jid->domain &&
 					!g_utf8_collate(room, jid->node) && !g_utf8_collate(server, jid->domain)) {
 				jabber_id_free(jid);
@@ -3007,21 +3009,44 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	GHashTable *components;
+	JabberID *jid;
+	const char *room = NULL, *server = NULL, *handle = NULL;
 
-	if(!chat || !args || !args[0])
+	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
-	g_hash_table_replace(components, "room", args[0]);
-	g_hash_table_replace(components, "server", chat->server);
-	g_hash_table_replace(components, "handle", chat->handle);
-	if(args[1])
-		g_hash_table_replace(components, "password", args[1]);
+	jid = jabber_id_new(args[0]);
+	if (jid) {
+		room   = jid->node;
+		server = jid->domain;
+		handle = jid->resource ? jid->resource : chat->handle;
+	} else {
+		/* If jabber_id_new failed, the user may have just passed in
+		 * a room name.  For backward compatibility, handle that here.
+		 */
+		if (strchr(args[0], '@')) {
+			*error = g_strdup(_("Invalid XMPP ID"));
+			return PURPLE_CMD_RET_FAILED;
+		}
+
+		room   = args[0];
+		server = chat->server;
+		handle = chat->handle;
+	}
+
+	g_hash_table_insert(components, "room", (gpointer)room);
+	g_hash_table_insert(components, "server", (gpointer)server);
+	g_hash_table_insert(components, "handle", (gpointer)handle);
+
+	if (args[1])
+		g_hash_table_insert(components, "password", args[1]);
 
 	jabber_chat_join(purple_conversation_get_gc(conv), components);
 
 	g_hash_table_destroy(components);
+	jabber_id_free(jid);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -3138,7 +3163,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 	gchar *description;
 	PurpleBuddy *buddy;
 	const char *alias;
-	PurpleAttentionType *attn = 
+	PurpleAttentionType *attn =
 		purple_get_attention_type_from_code(conv->account, 0);
 
 	if (!args || !args[0]) {
@@ -3157,10 +3182,10 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		alias = purple_buddy_get_contact_alias(buddy);
 	else
 		alias = who;
-	
-	description = 
+
+	description =
 		g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
-	purple_conversation_write(conv, NULL, description, 
+	purple_conversation_write(conv, NULL, description,
 		PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM, time(NULL));
 	g_free(description);
 	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
@@ -3518,7 +3543,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 		}
 
 		if (has_resources_without_caps) {
-			/* there is at least one resource which we don't have caps for, 
+			/* there is at least one resource which we don't have caps for,
 			 let's assume they can receive files... */
 			return TRUE;
 		} else {
@@ -3649,6 +3674,7 @@ static void jabber_register_commands(PurplePlugin *plugin)
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
+	                  /* _("join: &lt;room[@server]&gt; [password]:  Join a chat."), */
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 

@@ -1,7 +1,7 @@
 # translation of pidgin.po to Slovak
 # Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the Pidgin package.
-# loptosko <loptosko@gmail.com>, 2007, 2008, 2009, 2010.
+# loptosko <loptosko@gmail.com>, 2007, 2008, 2009, 2010, 2011.
 # Jozef Káčer <quickparser@gmail.com>, 2007.
 # Ivan Masár <helix84@centrum.sk>, 2007.
 # Pavol Klačanský <pavolzetor@gmail.com>, 2008.
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-05-05 19:21+0100\n"
+"POT-Creation-Date: 2011-03-10 02:23-0800\n"
+"PO-Revision-Date: 2011-03-09 11:03+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "Language: sk\n"
@@ -64,23 +64,22 @@ msgstr ""
 msgid "Error"
 msgstr "Chyba"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Účet sa nepridal do zoznamu"
+msgstr "Účet nebol zmenený"
 
 msgid "Account was not added"
-msgstr "Účet sa nepridal do zoznamu"
+msgstr "Účet nebol pridaný"
 
 msgid "Username of an account must be non-empty."
 msgstr "Používateľské meno účtu nesmie byť prázdne."
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "Protokol účtu sa nedá zmeniť počas prihlásenia na server."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "Prihlasovacie meno účtu sa nedá zmeniť počas prihlásenia na server."
 
 msgid "New mail notifications"
 msgstr "Upozornenia na novú poštu"
@@ -1686,13 +1685,14 @@ msgstr ""
 msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
-msgstr ""
+msgstr "Certifikát ešte nie je platný.  Skontrolujte váš dátum a čas."
 
-#, fuzzy
 msgid ""
 "The certificate has expired and should not be considered valid.  Check that "
 "your computer's date and time are accurate."
-msgstr "Certifikát vypršal a nie je platný."
+msgstr ""
+"Certifikát vypršal a nie je platný. Skontrolujte, či máte správne nastavený "
+"dátum a čas."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -2332,8 +2332,12 @@ msgstr ""
 "Miesto, kam ukladať súbory\n"
 "(Prosím, zadajte plnú cestu)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automaticky blokovať používateľov mimo môjho zoznamu kontaktov"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Keď posiela súbor používateľ, ktorý\n"
+"*nie je* na vašom zozname priateľov:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2345,6 +2349,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Vytvoriť nový priečinok pre každého používateľa"
+
+msgid "Escape the filenames"
+msgstr "Escapovať názvy súborov"
 
 msgid "Notes"
 msgstr "Poznámky"
@@ -3183,9 +3190,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Krstné meno"
 
@@ -3796,7 +3801,10 @@ msgstr "vykonať"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje textovú autentifikáciu cez nezašifrovaný prúd"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Chybná odpoveď zo servera"
 
@@ -3823,16 +3831,15 @@ msgstr "Chybná výzva zo servera"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Server považuje autentizáciu za dokončenú, ale klient nie"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "Server vyžaduje textovú autentifikáciu cez nezašifrovaný prúd"
+msgstr "Server môže vyžadovať textovú autentifikáciu cez nezašifrovaný prúd"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s vyžaduje plaintextovú autentifikáciu cez nezašifrované pripojenie.  "
+"%s môže vyžadovať plaintextovú autentifikáciu cez nezašifrované pripojenie.  "
 "Chcete ju povoliť a pokračovať v autentifikácii?"
 
 msgid "SASL authentication failed"
@@ -3938,7 +3945,6 @@ msgstr "Región"
 msgid "Postal Code"
 msgstr "Poštové smerovacie číslo"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Krajina"
 
@@ -4703,20 +4709,17 @@ msgstr "Modul protokolu XMPP"
 msgid "Domain"
 msgstr "Doména"
 
-#, fuzzy
 msgid "Require encryption"
-msgstr "Vyžadovať autorizáciu"
+msgstr "Vyžadovať šifrovanie"
 
-#, fuzzy
 msgid "Use encryption if available"
-msgstr "Podrobnosti o používateľovi %s nie sú dostupné"
+msgstr "Použiť šifrovanie ak je to možné"
 
 msgid "Use old-style SSL"
-msgstr ""
+msgstr "Použiť klasické SSL"
 
-#, fuzzy
 msgid "Connection security"
-msgstr "Obnovenie spojenia"
+msgstr "Bezpečnosť pripojenia"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Povoliť textovú autentifikáciu cez nezašifrované spojenia"
@@ -5375,28 +5378,23 @@ msgstr "Vaše nové MSN priateľské meno je príliš dlhé."
 msgid "Set friendly name for %s."
 msgstr "Vyplňte priateľské meno pre %s."
 
-#, fuzzy
 msgid "Set Friendly Name"
-msgstr "Nastaviť priateľské meno..."
+msgstr "Nastaviť priateľské meno"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Toto je názov, pod ktorým vás budú vidieť ostatní priatelia z MSN."
 
-#, fuzzy
 msgid "This Location"
-msgstr "Lokalita"
+msgstr "Toto miesto"
 
-#, fuzzy
 msgid "This is the name that identifies this location"
-msgstr "Toto je názov, pod ktorým vás budú vidieť ostatní priatelia z MSN."
+msgstr "Toto je meno, ktoré určuje toto miesto"
 
-#, fuzzy
 msgid "Other Locations"
-msgstr "Lokalita"
+msgstr "Iné miesta"
 
-#, fuzzy
 msgid "You can sign out from other locations here"
-msgstr "Prihlásili ste sa z iného miesta"
+msgstr "Tu sa môžete odhlásiť z iných miest"
 
 #. TODO: Due to limitations in our current request field API, the
 #. following string will show up with a trailing colon.  This should
@@ -5404,24 +5402,22 @@ msgstr "Prihlásili ste sa z iného miesta"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Prihlásili ste sa z iného miesta"
+msgstr "Nie ste prihlásení zo žiadneho iného miesta."
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Umožniť viacero spustení"
+msgstr "Umožniť viacnásobné prihlásenia?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
-msgstr ""
+msgstr "Chcete povoliť alebo zakázať pripájanie z viacerých miest súčastne?"
 
 msgid "Allow"
 msgstr "Povoliť"
 
 msgid "Disallow"
-msgstr "Nepovoliť"
+msgstr "Zakázať"
 
 msgid "Set your home phone number."
 msgstr "Vyplňte vaše telefónne číslo domov."
@@ -5502,9 +5498,8 @@ msgstr "Názov kancelárie"
 msgid "Set Friendly Name..."
 msgstr "Nastaviť priateľské meno..."
 
-#, fuzzy
 msgid "View Locations..."
-msgstr "Vyberte umiestnenie..."
+msgstr "Zobraziť miesta..."
 
 msgid "Set Home Phone Number..."
 msgstr "Nastaviť číslo telefónu domov..."
@@ -5518,9 +5513,8 @@ msgstr "Nastaviť číslo mobilného telefónu..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Povoliť/Zakázať mobilné zariadenia..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Povoliť/Zakázať mobilné stránky..."
+msgstr "Povoliť/Zakázať viacnásobné prihlásenia..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Povoliť/Zakázať mobilné stránky..."
@@ -5737,12 +5731,11 @@ msgstr "Server HTTP"
 msgid "Show custom smileys"
 msgstr "Zobraziť vlastných smajlíkov"
 
-#, fuzzy
 msgid "Allow direct connections"
-msgstr "Nedá sa vytvoriť spojenie"
+msgstr "Povoliť priame pripojenia"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Povoliť viacnásobné prihlasovanie"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: postrčte používateľa pre získanie ich pozornosti"
@@ -5946,9 +5939,8 @@ msgstr "PIN je neplatný. Mal by obsahovať iba číslice [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "Dva PINy ktoré ste zadali sa nezhodujú."
 
-#, fuzzy
 msgid "The Display Name you entered is invalid."
-msgstr "Zadané meno je neplatné"
+msgstr "Zadané používateľské meno je chybné."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5967,7 +5959,7 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Údaje z vášho profilu nie sú načítané. Prosím, skúste to znovu neskôr."
 
 msgid "Your UID"
-msgstr ""
+msgstr "Vaše UID"
 
 #. pin
 #. pin (required)
@@ -6039,12 +6031,15 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Pripája sa..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Zadané používateľské meno je príliš krátke."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Zadaný PIN má neplatnú dĺžku [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6074,14 +6069,11 @@ msgstr "Vaše prihlásenie vypršalo. Prosím, skúste to znovu neskôr."
 msgid "Invalid country selected. Please try again."
 msgstr "Vybraná chybná krajina. Prosím, skúste to znovu neskôr."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-"Používateľské meno nie je registrované. Prosím, najskôr sa zaregistrujte."
+msgstr "Zadané MXit ID nie je registrované. Prosím, najskôr sa zaregistrujte."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Používateľské meno už je registrované. Prosím, vyberte si iné."
+msgstr "Zadané MXit ID už je registrované. Prosím, vyberte si iné."
 
 msgid "Internal error. Please try again later."
 msgstr "Vnútorná chyba. Prosím, skúste to znovu neskôr."
@@ -6112,23 +6104,45 @@ msgstr "Overenie MXit účtu"
 msgid "Retrieving User Information..."
 msgstr "Načítavajú sa používateľské informácie..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Boli ste vykopnutý z tohoto MultiMX."
+
+msgid "was kicked"
+msgstr "bol vykopnutý"
+
+msgid "_Room Name:"
+msgstr "Názov _miestnosti:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Pozvali ste"
+
 msgid "Loading menu..."
 msgstr "Načítava sa ponuka..."
 
 msgid "Status Message"
 msgstr "Správa statusu"
 
-#, fuzzy
 msgid "Rejection Message"
-msgstr "Prijaté správy"
+msgstr "Správa odmietnutia"
 
 #. hidden number
 msgid "Hidden Number"
 msgstr "Skryté číslo"
 
-#, fuzzy
+msgid "No profile available"
+msgstr "Nedostupný profil"
+
+msgid "This contact does not have a profile."
+msgstr "Tento kontakt nemá profil."
+
 msgid "Your MXit ID..."
-msgstr "Yahoo ID..."
+msgstr "Váš MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Znovu pozvať"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6141,27 +6155,8 @@ msgstr "Pripojiť sa cez HTTP"
 msgid "Enable splash-screen popup"
 msgstr "Zapnúť úvodnú vyskakovaciu obrazovku"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Boli ste vykopnutý: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Nesprávny lístok"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Miestnosť:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "Máte poštu!"
-
-#, fuzzy
 msgid "Last Online"
-msgstr "Prihlásený"
+msgstr "Posledné prihlásenie"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6925,6 +6920,7 @@ msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
 msgstr ""
+"V nastaveniach účtov ste zvolili šifrovanie, ale jeden server ho nepodporuje."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -6932,9 +6928,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Chyba pri požadovaní %s: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "Nepodarilo sa pripojiť: Server vrátil prázdnu odpoveď."
+msgstr "Server vrátil prázdnu odpoveď"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7240,6 +7235,7 @@ msgid ""
 "You required encryption in your account settings, but encryption is not "
 "supported by your system."
 msgstr ""
+"V nastaveniach účtov ste zvolili šifrovanie, ale váš systém ho nepodporuje. "
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7436,6 +7432,14 @@ msgstr "Vaše AIM spojenie je zrejme prerušené."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Boli ste odpojení z miestnosti %s."
+
+msgid "The new formatting is invalid."
+msgstr "Nové formátovanie je chybné."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Formátovanie používateľského mena môže meniť iba veľkosť znakov alebo "
+"medzery."
 
 msgid "Pop-Up Message"
 msgstr "Vyskakovacia správa"
@@ -7712,20 +7716,11 @@ msgstr "Na webe (zapnutie tejto možnosti spôsobí, že budete dostávať SPAM!
 msgid "ICQ Privacy Options"
 msgstr "Nastavenie súkromia ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Nové formátovanie je chybné."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Formátovanie používateľského mena môže meniť iba veľkosť znakov alebo "
-"medzery."
-
 msgid "Change Address To:"
 msgstr "Zmeniť adresu na:"
 
-#, fuzzy
 msgid "you are not waiting for authorization"
-msgstr "<i>nečakáte na autorizáciu</i>"
+msgstr "nečakáte na autorizáciu"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Očakávate autorizáciu od nasledujúcich priateľov"
@@ -7763,13 +7758,11 @@ msgstr "Nastaviť preposielanie správ (web)"
 msgid "Set Privacy Options..."
 msgstr "Nastaviť možnosti súkromia..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Zobraziť z_oznam priateľov"
+msgstr "Zobraziť zoznam viditeľných"
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Zoznam pozvaných"
+msgstr "Zobraziť zoznam neviditeľných"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7787,9 +7780,8 @@ msgstr "Zobraziť priateľov, ktorí čakajú na autorizáciu"
 msgid "Search for Buddy by Email Address..."
 msgstr "Hľadať priateľa podľa e-mailovej adresy..."
 
-#, fuzzy
 msgid "Don't use encryption"
-msgstr "Vyžadovať autorizáciu"
+msgstr "Nepoužívať šifrovanie"
 
 msgid "Use clientLogin"
 msgstr "Použiť clientLogin"
@@ -7828,75 +7820,6 @@ msgstr ""
 "Na to je potrebné priame pripojenie medzi dvoma počítačmi a je nutné na "
 "prenos obrázkov v správach.  Pretože pri tom bude odhalená vaša IP adresa, "
 "môže to byť hodnotené ako ohrozenie súkromia."
-
-msgid "Invalid SNAC"
-msgstr "Chybné SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Služba nedostupná"
-
-msgid "Service not defined"
-msgstr "Služba nebola definovaná"
-
-msgid "Obsolete SNAC"
-msgstr "Zastaralé SNAC"
-
-msgid "Not supported by host"
-msgstr "Nepodporované hostiteľom"
-
-msgid "Not supported by client"
-msgstr "Nepodporované klientom"
-
-msgid "Refused by client"
-msgstr "Odmietnuté klientom"
-
-msgid "Reply too big"
-msgstr "Odpoveď je príliš veľká"
-
-msgid "Responses lost"
-msgstr "Odpovede stratené"
-
-msgid "Request denied"
-msgstr "Požiadavka zamietnutá"
-
-msgid "Busted SNAC payload"
-msgstr "Poškodené SNAC údaje"
-
-msgid "Insufficient rights"
-msgstr "Nedostatočné práva"
-
-msgid "In local permit/deny"
-msgstr "V miestne povolených/zakázaných"
-
-msgid "Warning level too high (sender)"
-msgstr "Úroveň upozornenia je príliš vysoká (odosielateľa)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Úroveň upozornenia je príliš vysoká (prijímateľa)"
-
-msgid "User temporarily unavailable"
-msgstr "Používateľ je dočasne nedostupný"
-
-msgid "No match"
-msgstr "Žiadny výskyt"
-
-msgid "List overflow"
-msgstr "Pretečenie zoznamu"
-
-msgid "Request ambiguous"
-msgstr "Nejednoznačná požiadavka"
-
-msgid "Queue full"
-msgstr "Rad je plný"
-
-msgid "Not while on AOL"
-msgstr "Nie, pokým ste na AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -8016,6 +7939,75 @@ msgstr "Člen od"
 msgid "Capabilities"
 msgstr "Schopnosti"
 
+msgid "Invalid SNAC"
+msgstr "Chybné SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Limit rýchlosti serveru prekročený"
+
+msgid "Client rate limit exceeded"
+msgstr "Limit rýchlosti klienta prekročený"
+
+msgid "Service unavailable"
+msgstr "Služba nedostupná"
+
+msgid "Service not defined"
+msgstr "Služba nebola definovaná"
+
+msgid "Obsolete SNAC"
+msgstr "Zastaralé SNAC"
+
+msgid "Not supported by host"
+msgstr "Nepodporované hostiteľom"
+
+msgid "Not supported by client"
+msgstr "Nepodporované klientom"
+
+msgid "Refused by client"
+msgstr "Odmietnuté klientom"
+
+msgid "Reply too big"
+msgstr "Odpoveď je príliš veľká"
+
+msgid "Responses lost"
+msgstr "Odpovede stratené"
+
+msgid "Request denied"
+msgstr "Požiadavka zamietnutá"
+
+msgid "Busted SNAC payload"
+msgstr "Poškodené SNAC údaje"
+
+msgid "Insufficient rights"
+msgstr "Nedostatočné práva"
+
+msgid "In local permit/deny"
+msgstr "V miestne povolených/zakázaných"
+
+msgid "Warning level too high (sender)"
+msgstr "Úroveň upozornenia je príliš vysoká (odosielateľa)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Úroveň upozornenia je príliš vysoká (prijímateľa)"
+
+msgid "User temporarily unavailable"
+msgstr "Používateľ je dočasne nedostupný"
+
+msgid "No match"
+msgstr "Žiadny výskyt"
+
+msgid "List overflow"
+msgstr "Pretečenie zoznamu"
+
+msgid "Request ambiguous"
+msgstr "Nejednoznačná požiadavka"
+
+msgid "Queue full"
+msgstr "Rad je plný"
+
+msgid "Not while on AOL"
+msgstr "Nie, pokým ste na AOL"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8025,9 +8017,8 @@ msgstr "Vyzerať prihlásený"
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
-#, fuzzy
 msgid "Don't Appear Online"
-msgstr "Vyzerať prihlásený"
+msgstr "Nevyzerať prihlásený"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
@@ -8039,35 +8030,29 @@ msgstr "Vyzerať odhlásený"
 #. you to appear offline to the chosen user if you are invisible, and
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
-#, fuzzy
 msgid "Don't Appear Offline"
-msgstr "Vyzerať odhlásený"
+msgstr "Nevyzerať odhlásený"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Boli ste vykopnutý: (%s)"
+msgstr "Na tomto zozname nemáte priateľov"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
-msgstr ""
-"Týchto priateľov môžete znovu požiadať o autorizáciu, keď na nich kliknete "
-"pravým tlačidlom a vyberiete možnosť „Znovu požiadať o autorizáciu“."
+msgstr "Priateľa do zoznamu môžete pridať pravým kliknutím a možnosťou \"%s\""
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Viditeľný"
+msgstr "Zoznam viditeľnosti"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr ""
+msgstr "Títo priatelia uvidia váš stav ak ste \"Neviditeľný\""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Zoznam pozvaných"
+msgstr "Zoznam neviditeľnosti"
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Títo priatelia vás vždy uvidia odhlásených."
 
 msgid "Aquarius"
 msgstr "Vodnár"
@@ -8247,9 +8232,9 @@ msgstr "Vaša požiadavka bola prijatá."
 msgid "Your request was rejected."
 msgstr "Vaša požiadavka bola zamietnutá."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requires verification: %s"
-msgstr "%u vyžaduje overenie"
+msgstr "%u vyžaduje overenie: %s"
 
 msgid "Add buddy question"
 msgstr "Pridať otázku priateľa"
@@ -8612,14 +8597,14 @@ msgstr "Automaticky"
 msgid "Select Server"
 msgstr "Vyberte server"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Pripojiť sa pomocou TCP"
@@ -8632,6 +8617,9 @@ msgstr "Zobraziť novinky servera"
 
 msgid "Show chat room when msg comes"
 msgstr "Pri prijatí správy zobraziť miestnosť"
+
+msgid "Use default font"
+msgstr "Použiť štandardné písmo"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Interval udržiavania spojenia (sekúnd)"
@@ -10268,9 +10256,8 @@ msgstr "Jazyk chatovacej miestnosti"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorovať pozvánky na konferencie a chatovacie miestnosti"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Používať proxy účtu pre SSL pripojenia"
+msgstr "Používať proxy účtu pre HTTP a HTTPS pripojenia"
 
 msgid "Chat room list URL"
 msgstr "URL zoznamu miestností chatu"
@@ -11180,11 +11167,10 @@ msgstr ""
 "toto okno otvoríte v ponuke <b>Účty->Spravovať účty</b> v okne Zoznam "
 "priateľov"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
-"%s%s%sPoužívateľ %s si chce pridať používateľa %s do svojho zoznamu priateľov"
-"%s%s"
+"Používateľ %s%s%s%s si chce vás (%s) pridať na svoj zoznam priateľov%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -12171,9 +12157,6 @@ msgstr "Chyba "
 msgid "Fatal Error"
 msgstr "Závažná chyba"
 
-msgid "bug master"
-msgstr "pán chýb"
-
 msgid "artist"
 msgstr "umelec"
 
@@ -12224,9 +12207,8 @@ msgstr "afrikánčina"
 msgid "Arabic"
 msgstr "arabčina"
 
-#, fuzzy
 msgid "Assamese"
-msgstr "Zahanbený"
+msgstr "asámčina"
 
 msgid "Belarusian Latin"
 msgstr "bieloruština, latinka"
@@ -12351,16 +12333,17 @@ msgstr "kurdčina"
 msgid "Lao"
 msgstr "laoština"
 
-#, fuzzy
 msgid "Maithili"
-msgstr "svahilčina"
+msgstr "maithilčina"
+
+msgid "Meadow Mari"
+msgstr "marijčina"
 
 msgid "Macedonian"
 msgstr "macedónčina"
 
-#, fuzzy
 msgid "Malayalam"
-msgstr "malajčina"
+msgstr "malajálamčina"
 
 msgid "Mongolian"
 msgstr "mongolčina"
@@ -13139,13 +13122,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Je spustený iný klient libpurple, ukončuje sa.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Médiá"
+msgstr "_Médiá"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Zložiť"
+msgstr "_Zložiť"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13202,6 +13183,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Máte poštu!</span>"
 msgid "New Pounces"
 msgstr "Nové sledovania"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Odvolať"
 
@@ -13564,9 +13552,8 @@ msgstr "Relay Server (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN server:"
 
-#, fuzzy
 msgid "_UDP Port:"
-msgstr "_Port:"
+msgstr "_UDP Port:"
 
 msgid "Use_rname:"
 msgstr "_Používateľské meno:"
@@ -13590,7 +13577,7 @@ msgid "Konqueror"
 msgstr "Konqueror"
 
 msgid "Google Chrome"
-msgstr ""
+msgstr "Google Chrome"
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
@@ -13614,11 +13601,11 @@ msgstr "Epiphany"
 
 #. Translators: please do not translate "chromium-browser" here!
 msgid "Chromium (chromium-browser)"
-msgstr ""
+msgstr "Chromium (chromium-browser)"
 
 #. Translators: please do not translate "chrome" here!
 msgid "Chromium (chrome)"
-msgstr ""
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Vlastné"
@@ -13985,7 +13972,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14154,9 +14141,8 @@ msgstr "žiadne"
 msgid "Small"
 msgstr "Malé"
 
-#, fuzzy
 msgid "Smaller versions of the default smileys"
-msgstr "Menší základní smajlíci"
+msgstr "Menšie verzie základných smajlíkov"
 
 msgid "Response Probability:"
 msgstr "Pravdepodobnosť odpovede:"
@@ -15183,7 +15169,6 @@ msgstr "Z_ariadenie"
 msgid "Voice/Video Settings"
 msgstr "Nastavenia hlasu a obrazu"
 
-#, fuzzy
 msgid "Voice and Video Settings"
 msgstr "Nastavenia hlasu a obrazu"
 
@@ -15345,7 +15330,7 @@ msgstr "Vytvoriť zástupcu pre Pidgin na pracovnej ploche"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "Ladiace symboly (na nahlasovanie chýb)"
 
 #. Installer Subsection Text
 msgid "Desktop"
@@ -15357,12 +15342,17 @@ msgid ""
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Chyba sťahovania prostredia GTK+ Runtime ($R2).$\\rJe vyžadované na "
+"fungovanie programu Pidgin; ak všetko zlyhá, môžete použiť 'Offline "
+"inštalátor' z http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Chyba inštalácie Ladiacich symbolov ($R2).$\\rAk všetko zlyhá, môžete použiť "
+"'Offline inštalátor' z http://pidgin.im/download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -15371,16 +15361,17 @@ msgid ""
 "installation instructions are at: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"Chyba inštalácie kontroly pravopisu ($R3).$\\rAk všetko zlyhá, návod na "
+"inštaláciu je na adrese: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime prostredie (nevyhnutné)"
+msgstr "GTK+ Runtime (vyžadované ak nedostupné)"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Localizations"
-msgstr "Lokalita"
+msgstr "Lokalizácie"
 
 #. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
@@ -15395,6 +15386,8 @@ msgid ""
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"Pidgin vyžaduje a kompatibilné GTK+ Runtime prostredie (ktoré nevyzerá byť "
+"dostupné).$\\rNaozaj chcete preskočiť inštalovanie GTK+ prostredia?"
 
 #. Installer Subsection Text
 msgid "Shortcuts"
@@ -15429,12 +15422,14 @@ msgstr ""
 
 #. Installer Subsection Text
 msgid "URI Handlers"
-msgstr ""
+msgstr "URI handlery"
 
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
+"Nedá sa odinštalovať momentálne nainštalovanú verziu Pidgin. Nová verzia "
+"bude nainštalovaná bez odstraňovania starej verzie."
 
 #. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
@@ -15442,6 +15437,12 @@ msgstr "Navštíviť webstránku Windows Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
+
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Automaticky blokovať používateľov mimo môjho zoznamu kontaktov"
+
+#~ msgid "bug master"
+#~ msgstr "pán chýb"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Na in-band bytestream prenose sa vyskytla chyba\n"

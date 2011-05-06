@@ -712,8 +712,8 @@ gconstpointer purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len);
  * @since 2.7.0
  */
 const gchar *purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer);
-	
-	
+
+
 /**
  * Sets the thumbnail data for a transfer
  *

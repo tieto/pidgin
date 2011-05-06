@@ -63,13 +63,12 @@
 /* Plugin details */
 #define		MXIT_PLUGIN_ID				"prpl-loubserp-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit"
-#define		MXIT_PLUGIN_VERSION			"2.4.0"
 #define		MXIT_PLUGIN_EMAIL			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
 #define		MXIT_PLUGIN_DESC			"MXit"
 
-#define		MXIT_HTTP_USERAGENT			"libpurple-"MXIT_PLUGIN_VERSION
+#define		MXIT_HTTP_USERAGENT			"libpurple-"DISPLAY_VERSION
 
 
 /* default connection settings */
@@ -108,9 +107,12 @@
 #define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been received and processed */
 
 
+/* Maximum number of search results */
+#define		MXIT_SEARCHRESULTS_MAX		30
+
+
 /* define this to enable the link clicking support */
 #define		MXIT_LINK_CLICK
-
 
 #ifdef		MXIT_LINK_CLICK
 #define		MXIT_LINK_PREFIX			"gopher://"
@@ -122,7 +124,7 @@
 
 
 /*
- * data structure containing all MXit session information 
+ * data structure containing all MXit session information
  */
 struct MXitSession {
 	/* socket connection */
@@ -137,9 +139,12 @@ struct MXitSession {
 	unsigned int		http_seqno;					/* HTTP request sequence number */
 	guint				http_timer_id;				/* timer resource id (pidgin) */
 	int					http_interval;				/* poll inverval */
-	time_t				http_last_poll;				/* the last time a poll has been sent */
+	gint64				http_last_poll;				/* the last time a poll has been sent */
 	guint				http_handler;				/* HTTP connection handler */
 	void*				http_out_req;				/* HTTP outstanding request */
+
+	/* other servers */
+	char				voip_server[HOST_NAME_MAX];	/* voice/video server */
 
 	/* client */
 	struct login_data*	logindata;
@@ -159,9 +164,10 @@ struct MXitSession {
 
 	/* transmit */
 	struct tx_queue		queue;						/* transmit packet queue (FIFO mode) */
-	time_t				last_tx;					/* timestamp of last packet sent */
+	gint64				last_tx;					/* timestamp of last packet sent */
 	int					outack;						/* outstanding ack packet */
-	guint				q_timer;					/* timer handler for managing queue */
+	guint				q_slow_timer_id;			/* timer handle for slow tx queue */
+	guint				q_fast_timer_id;			/* timer handle for fast tx queue */
 
 	/* receive */
 	char				rx_lbuf[16];				/* receive byte buffer (socket packet length) */
@@ -169,8 +175,9 @@ struct MXitSession {
 	unsigned int		rx_i;						/* receive buffer current index */
 	int					rx_res;						/* amount of bytes still outstanding for the current packet */
 	char				rx_state;					/* current receiver state */
-	time_t				last_rx;					/* timestamp of last packet received */
+	gint64				last_rx;					/* timestamp of last packet received */
 	GList*				active_chats;				/* list of all our contacts we received messages from (active chats) */
+	GList*				invites;					/* list of all the invites that we have received */
 
 	/* groupchat */
 	GList*				rooms;						/* active groupchat rooms */

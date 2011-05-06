@@ -156,7 +156,6 @@ pidgin_LDADD = \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
-	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
@@ -180,7 +179,6 @@ AM_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
-	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK

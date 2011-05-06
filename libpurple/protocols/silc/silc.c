@@ -654,6 +654,8 @@ silcpurple_close_final(gpointer *context)
 {
 	SilcPurple sg = (SilcPurple)context;
 
+	purple_debug_info("silc", "Finalizing SilcPurple %p\n", sg);
+
 	silc_client_stop(sg->client, NULL, NULL);
 	silc_client_free(sg->client);
 	if (sg->sha1hash)
@@ -678,12 +680,12 @@ silcpurple_close(PurpleConnection *gc)
 	g_return_if_fail(sg != NULL);
 
 	ui_info = purple_core_get_ui_info();
-	
+
 	if(ui_info) {
 		ui_name = g_hash_table_lookup(ui_info, "name");
 		ui_website = g_hash_table_lookup(ui_info, "website");
 	}
-	
+
 	if(!ui_name || !ui_website) {
 		ui_name = "Pidgin";
 		ui_website = PURPLE_WEBSITE;
@@ -714,6 +716,8 @@ silcpurple_close(PurpleConnection *gc)
 #endif /* __SILC_TOOLKIT_VERSION */
 
 	purple_timeout_remove(sg->scheduler);
+
+	purple_debug_info("silc", "Scheduling destruction of SilcPurple %p\n", sg);
 	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
@@ -1845,7 +1849,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 	GHashTable *ui_info;
 	const char *ui_name = NULL, *ui_website = NULL;
 	char *quit_msg;
-								   
+
 	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
@@ -1857,12 +1861,12 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	ui_info = purple_core_get_ui_info();
-	
+
 	if(ui_info) {
 		ui_name = g_hash_table_lookup(ui_info, "name");
 		ui_website = g_hash_table_lookup(ui_info, "website");
 	}
-	
+
 	if(!ui_name || !ui_website) {
 		ui_name = "Pidgin";
 		ui_website = PURPLE_WEBSITE;
@@ -2119,7 +2123,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				        /* get_media_caps */
 	NULL,				        /* get_moods */
 	NULL,				        /* set_public_alias */
-	NULL				        /* get_public_alias */
+	NULL,				        /* get_public_alias */
+	NULL,				        /* add_buddy_with_invite */
+	NULL				        /* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =

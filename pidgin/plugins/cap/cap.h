@@ -58,7 +58,7 @@ gboolean _sqlite_initialized;
 /* Prefs UI */
 typedef struct _CapPrefsUI CapPrefsUI;
 
-struct _CapPrefsUI { 
+struct _CapPrefsUI {
 	GtkWidget *ret;
 	GtkWidget *cap_vbox;
 	GtkWidget *table_layout;

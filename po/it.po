@@ -1,6 +1,6 @@
 # Pidgin Italian translation
 # Copyright (C) 2002, Salvatore di Maggio <titanicus@libero.it>
-# Copyright (C) 2003-2010, Claudio Satriano <satriano@na.infn.it>
+# Copyright (C) 2003-2011, Claudio Satriano <satriano@gmail.com>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
-"PO-Revision-Date: 2010-05-24 12:38+0100\n"
-"Last-Translator: Claudio Satriano <satriano@na.infn.it>\n"
+"POT-Creation-Date: 2011-03-10 01:39-0800\n"
+"PO-Revision-Date: 2011-03-07 15:26+0100\n"
+"Last-Translator: Claudio Satriano <satriano@gmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -61,9 +61,8 @@ msgstr ""
 msgid "Error"
 msgstr "Errore"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "L'account non è stato aggiunto"
+msgstr "L'account non è stato modificato"
 
 msgid "Account was not added"
 msgstr "L'account non è stato aggiunto"
@@ -74,10 +73,14 @@ msgstr "Il nome utente per un account non può essere vuoto."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Il protocollo dell'account non può essere cambiato mentre è connesso al "
+"server."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Il nome utente dell'account non può essere cambiato mentre è connesso al "
+"server."
 
 msgid "New mail notifications"
 msgstr "Notifica i nuovi messaggi di posta"
@@ -1704,13 +1707,15 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Il certificato non è ancora valido. Verifica che la data e l'ora del tuo "
+"computer siano accurate."
 
-#, fuzzy
 msgid ""
 "The certificate has expired and should not be considered valid.  Check that "
 "your computer's date and time are accurate."
 msgstr ""
-"Il certificato è scaduto e non dovrebbe essere considerato come valido."
+"Il certificato è scaduto e non dovrebbe essere considerato come valido. "
+"Verifica che la data e l'ora del tuo computer sono accurate."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -2371,9 +2376,12 @@ msgstr ""
 "Posizione in cui salvare i file\n"
 "(Digitare il percorso completo)"
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
-"Rifiuta automaticamente per gli utenti non presenti nella lista contatti"
+"Quando arriva una richiesta di trasferimento file da\n"
+"un utente che *non* è nella tua lista contatti:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2385,6 +2393,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Crea una nuova directory per ciascun utente"
+
+msgid "Escape the filenames"
+msgstr "Codifica i nomi dei file"
 
 msgid "Notes"
 msgstr "Note"
@@ -3232,9 +3243,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nome"
 
@@ -3849,7 +3858,10 @@ msgstr ""
 "Il server richiede l'autenticazione sotto forma di testo semplice su uno "
 "stream non criptato"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Risposta non valida da parte del server"
 
@@ -3868,7 +3880,7 @@ msgid "Plaintext Authentication"
 msgstr "Autenticazione come testo semplice"
 
 msgid "You require encryption, but it is not available on this server."
-msgstr "Hai richiesto la criptatura, ma non è disponibile su questo server."
+msgstr "Hai richiesto la crittografia, ma non è disponibile su questo server."
 
 msgid "Invalid challenge from server"
 msgstr "Challenge non valido dal server"
@@ -3876,18 +3888,17 @@ msgstr "Challenge non valido dal server"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Il server ritiene che l'autenticazione sia completa; il client no "
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
-"Il server richiede l'autenticazione sotto forma di testo semplice su uno "
-"stream non criptato"
+"Il server potrebbe richiedere l'autenticazione sotto forma di testo semplice "
+"su uno stream non criptato"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s richiede l'autenticazione sotto forma di testo semplice su una "
+"%s potrebbe richiedere l'autenticazione sotto forma di testo semplice su una "
 "connessione non criptata. Procedere con l'autenticazione?"
 
 msgid "SASL authentication failed"
@@ -3995,7 +4006,6 @@ msgstr "Regione"
 msgid "Postal Code"
 msgstr "Codice postale"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Paese"
 
@@ -4763,20 +4773,17 @@ msgstr "Plugin per il protocollo XMPP"
 msgid "Domain"
 msgstr "Dominio"
 
-#, fuzzy
 msgid "Require encryption"
-msgstr "Richiedi autorizzazione"
+msgstr "Richiedi crittografia"
 
-#, fuzzy
 msgid "Use encryption if available"
-msgstr "Informazioni sull'utente non disponibili: %s"
+msgstr "Usa crittografia, se disponibile"
 
 msgid "Use old-style SSL"
-msgstr ""
+msgstr "Utilizza SSL vecchio stile"
 
-#, fuzzy
 msgid "Connection security"
-msgstr "Connessione scaduta"
+msgstr "Sicurezza della connessione"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
@@ -5443,28 +5450,23 @@ msgstr "Il tuo nuovo alias MSN è troppo lungo."
 msgid "Set friendly name for %s."
 msgstr "Imposta un alias per %s."
 
-#, fuzzy
 msgid "Set Friendly Name"
-msgstr "Imposta un alias..."
+msgstr "Imposta un alias"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "Questo è il nome con il quale i contatti MSN ti vedranno."
 
-#, fuzzy
 msgid "This Location"
-msgstr "Località"
+msgstr "Questa postazione"
 
-#, fuzzy
 msgid "This is the name that identifies this location"
-msgstr "Questo è il nome con il quale i contatti MSN ti vedranno."
+msgstr "Questo è il nome che identifica questa postazione"
 
-#, fuzzy
 msgid "Other Locations"
-msgstr "Località"
+msgstr "Altre postazioni"
 
-#, fuzzy
 msgid "You can sign out from other locations here"
-msgstr "Sei connesso da un'altra postazione"
+msgstr "Da qui puoi disconnetterti dalle altre postazioni"
 
 #. TODO: Due to limitations in our current request field API, the
 #. following string will show up with a trailing colon.  This should
@@ -5472,18 +5474,17 @@ msgstr "Sei connesso da un'altra postazione"
 #. a separate purple_request_field_label_new_without_colon function,
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
-#, fuzzy
 msgid "You are not signed in from any other locations."
-msgstr "Sei connesso da un'altra postazione"
+msgstr "Non sei connesso da nessun'altra postazione"
 
-#, fuzzy
 msgid "Allow multiple logins?"
-msgstr "Consenti istanze multiple"
+msgstr "Consenti connessioni multiple?"
 
 msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
 msgstr ""
+"Vuoi consentire o vietare la connessione simultanea da diverse postazioni?"
 
 msgid "Allow"
 msgstr "Permetti"
@@ -5572,9 +5573,8 @@ msgstr "Nome del lavoro"
 msgid "Set Friendly Name..."
 msgstr "Imposta un alias..."
 
-#, fuzzy
 msgid "View Locations..."
-msgstr "Scegli posizione..."
+msgstr "Guarda le postazioni..."
 
 msgid "Set Home Phone Number..."
 msgstr "Imposta il telefono di casa..."
@@ -5588,9 +5588,8 @@ msgstr "Imposta il numero di cellulare..."
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Abilita/Disabilita i dispositivi portatili..."
 
-#, fuzzy
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Permetti/Vieta Mobile Pages..."
+msgstr "Permetti/Vieta le connessioni multiple..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "Permetti/Vieta Mobile Pages..."
@@ -5811,7 +5810,7 @@ msgid "Allow direct connections"
 msgstr "Consenti connessioni dirette"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "Consenti la connessione da diverse postazioni"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Richiama l'attenzione di un contatto con un trillo"
@@ -6026,9 +6025,8 @@ msgstr "Il PIN non è valido. Dovrebbe essere composto soltanto da cifre [0-9]."
 msgid "The two PINs you entered do not match."
 msgstr "I due PIN immessi non corrispondono."
 
-#, fuzzy
 msgid "The Display Name you entered is invalid."
-msgstr "Il nome immesso non è valido."
+msgstr "Il nome utente immesso non è valido."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -6050,9 +6048,8 @@ msgstr ""
 "L'informazione sul tuo profilo non è stata ancora recuperata. Riprova più "
 "tardi."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "Il tuo ID MXit"
+msgstr "Il tuo UID"
 
 #. pin
 #. pin (required)
@@ -6123,12 +6120,15 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Connessione in corso..."
 
+msgid "The Display Name you entered is too short."
+msgstr "Il nome utente immesso è troppo corto."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Il PIN immesso ha una lunghezza non valida [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "ID MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6157,13 +6157,11 @@ msgstr "La tua sessione è scaduta. Riprova più tardi."
 msgid "Invalid country selected. Please try again."
 msgstr "Paese selezionato non valido. Riprova più tardi."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Il nome utente non è registrato. Registrati prima."
+msgstr "L'ID MXit immesso non è registrato. Registrati prima."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Il nome utente è già registrato. Scegli un altro nome utente."
+msgstr "L'ID MXit immesso è già registrato. Scegline un altro."
 
 msgid "Internal error. Please try again later."
 msgstr "Errore interno. Riprovare più tardi"
@@ -6194,6 +6192,20 @@ msgstr "Convalida dell'account MXit"
 msgid "Retrieving User Information..."
 msgstr "Scaricamento in corso delle informazioni sull'utente..."
 
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Sei stato cacciato da questo MultiMX."
+
+msgid "was kicked"
+msgstr "è stato cacciato"
+
+msgid "_Room Name:"
+msgstr "Nome della _Stanza:"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr "Hai invitato"
+
 msgid "Loading menu..."
 msgstr "Caricamento del menu in corso..."
 
@@ -6207,9 +6219,18 @@ msgstr "Messaggio di rifiuto"
 msgid "Hidden Number"
 msgstr "Numero nascosto"
 
-#, fuzzy
+msgid "No profile available"
+msgstr "Nessun profilo disponibile"
+
+msgid "This contact does not have a profile."
+msgstr "Questo contatto non ha un profilo."
+
 msgid "Your MXit ID..."
-msgstr "Il tuo ID MXit"
+msgstr "Il tuo ID MXit..."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "Invita di nuovo"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6222,27 +6243,8 @@ msgstr "Connetti utilizzando HTTP"
 msgid "Enable splash-screen popup"
 msgstr "Abilita lo splash screen"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Sei stato cacciato: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Biglietto non valido"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Stanza:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "C'è posta per te!"
-
-#, fuzzy
 msgid "Last Online"
-msgstr "Online"
+msgstr "Connesso l'ultima volta"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7009,6 +7011,8 @@ msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
 msgstr ""
+"Hai richiesto la crittografia nelle impostazioni del tuo account, ma uno dei "
+"server non la supporta."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -7016,9 +7020,8 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Errore nella richiesta di %s: %s"
 
-#, fuzzy
 msgid "The server returned an empty response"
-msgstr "Impossibile connettersi: il server ha fornito una risposta vuota."
+msgstr "Il server ha fornito una risposta vuota"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7328,6 +7331,8 @@ msgid ""
 "You required encryption in your account settings, but encryption is not "
 "supported by your system."
 msgstr ""
+"Hai richiesto la crittografia nelle impostazioni del tuo account, ma la "
+"crittografia non è supportata dal tuo sistema."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7527,6 +7532,14 @@ msgstr "La tua connessione ad AIM potrebbe essere perduta."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Sei stato disconnesso dalla stanza di discussione %s."
+
+msgid "The new formatting is invalid."
+msgstr "La nuova formattazione non è valida."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"La formattazione del nome utente può modificare solo le maiuscole/minuscole "
+"e gli spazi bianchi."
 
 msgid "Pop-Up Message"
 msgstr "Messaggio pop-up"
@@ -7802,20 +7815,11 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr "Opzioni per la privacy di ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "La nuova formattazione non è valida."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"La formattazione del nome utente può modificare solo le maiuscole/minuscole "
-"e gli spazi bianchi."
-
 msgid "Change Address To:"
 msgstr "Cambia l'indirizzo in:"
 
-#, fuzzy
 msgid "you are not waiting for authorization"
-msgstr "<i>non stai attendendo nessuna autorizzazione</i>"
+msgstr "non stai attendendo nessuna autorizzazione"
 
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Stai attendendo autorizzazione dai seguenti contatti"
@@ -7853,13 +7857,11 @@ msgstr "Configura l'inoltro dei messaggi immediati (web)"
 msgid "Set Privacy Options..."
 msgstr "Imposta le opzioni per la privacy..."
 
-#, fuzzy
 msgid "Show Visible List"
-msgstr "Mostra la _lista contatti"
+msgstr "Mostra la lista \"visibile\""
 
-#, fuzzy
 msgid "Show Invisible List"
-msgstr "Lista degli inviti"
+msgstr "Mostra la lista \"invisibile\""
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7877,9 +7879,8 @@ msgstr "Mostra i contatti dai quali attendi autorizzazione"
 msgid "Search for Buddy by Email Address..."
 msgstr "Cerca un contatto per indirizzo email..."
 
-#, fuzzy
 msgid "Don't use encryption"
-msgstr "Richiedi autorizzazione"
+msgstr "Non usare la crittografia"
 
 msgid "Use clientLogin"
 msgstr "Usa clientLogin"
@@ -7921,86 +7922,6 @@ msgstr ""
 "Questo richiede una connessione diretta tra i due computer ed è necessario "
 "per le Immagini IM. Poiché verrà rivelato il tuo indirizzo IP, devi "
 "considerare la cosa come un potenziale rischio per la tua privacy."
-
-#, fuzzy
-msgid "Invalid SNAC"
-msgstr "ID non valido"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-#, fuzzy
-msgid "Service unavailable"
-msgstr "Servizio non disponibile"
-
-#, fuzzy
-msgid "Service not defined"
-msgstr "Conferenza non trovata"
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-#, fuzzy
-msgid "Not supported by host"
-msgstr "Non supportato"
-
-#, fuzzy
-msgid "Not supported by client"
-msgstr "Non supportato"
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-#, fuzzy
-msgid "Responses lost"
-msgstr "Probabilità di risposta:"
-
-#, fuzzy
-msgid "Request denied"
-msgstr "Richiesta in corso"
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-#, fuzzy
-msgid "User temporarily unavailable"
-msgstr "Servizio temporaneamente non disponibile"
-
-#, fuzzy
-msgid "No match"
-msgstr "Nessuna corrispondenza"
-
-#, fuzzy
-msgid "List overflow"
-msgstr "Lista piena"
-
-#, fuzzy
-msgid "Request ambiguous"
-msgstr "Richiesta in corso"
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
-msgstr ""
 
 #. Label
 msgid "Buddy Icon"
@@ -8046,7 +7967,7 @@ msgid "Old ICQ UTF8"
 msgstr "Vecchio ICQ UTF8"
 
 msgid "Trillian Encryption"
-msgstr "Crittazione di trillian"
+msgstr "Crittografia di Trillian"
 
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
@@ -8120,58 +8041,123 @@ msgstr "Membro da"
 msgid "Capabilities"
 msgstr "Capacità"
 
+msgid "Invalid SNAC"
+msgstr "SNAC non valido"
+
+msgid "Server rate limit exceeded"
+msgstr "Velocità del server superata"
+
+msgid "Client rate limit exceeded"
+msgstr "Velocità del client superata"
+
+msgid "Service unavailable"
+msgstr "Servizio non disponibile"
+
+msgid "Service not defined"
+msgstr "Servizio non definito"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC obsoleto"
+
+msgid "Not supported by host"
+msgstr "Non supportato dal server"
+
+msgid "Not supported by client"
+msgstr "Non supportato dal client"
+
+msgid "Refused by client"
+msgstr "Rifiutato dal client"
+
+msgid "Reply too big"
+msgstr "Risposta troppo grande"
+
+msgid "Responses lost"
+msgstr "Risposte perse"
+
+msgid "Request denied"
+msgstr "Richiesta negata"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr "Permessi insufficienti"
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr "Livello di allerta troppo elevato (mittente)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Livello di allerta troppo elevato (destinatario)"
+
+msgid "User temporarily unavailable"
+msgstr "Utente temporaneamente non disponibile"
+
+msgid "No match"
+msgstr "Nessuna corrispondenza"
+
+msgid "List overflow"
+msgstr "Overflow della lista"
+
+msgid "Request ambiguous"
+msgstr "Richiesta ambigua"
+
+msgid "Queue full"
+msgstr "Coda piena"
+
+msgid "Not while on AOL"
+msgstr "Non possibile su AOL"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
 msgid "Appear Online"
-msgstr "Appai come in linea"
+msgstr "Mostrati come in linea"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
-#, fuzzy
 msgid "Don't Appear Online"
-msgstr "Appai come in linea"
+msgstr "Non mostrarti come in linea"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
 #. isn't Invisible).
 msgid "Appear Offline"
-msgstr "Sembra non in linea"
+msgstr "Mostrati come non in linea"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user if you are invisible, and
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
-#, fuzzy
 msgid "Don't Appear Offline"
-msgstr "Sembra non in linea"
+msgstr "Non mostrarti come non in linea"
 
-#, fuzzy
 msgid "you have no buddies on this list"
-msgstr "Sei stato cacciato: (%s)"
+msgstr "non hai nessun contatto su questa lista"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You can add a buddy to this list by right-clicking on them and selecting \"%s"
 "\""
 msgstr ""
-"Puoi richiedere nuovamente autorizzazione da questi contatti cliccando col "
-"tasto destro su di essi e scegliendo \"Richiedi nuovamente autorizzazione\""
+"Puoi aggiungere un contatto a questa lista facendo clic con il pulsante "
+"destro sul suo nome e scegliendo \"%s\""
 
-#, fuzzy
 msgid "Visible List"
-msgstr "Visibile"
+msgstr "Lista \"visibile\""
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
+"Questi contatti potranno vedere il tuo stato quando passi a \"Invisibile\""
 
-#, fuzzy
 msgid "Invisible List"
-msgstr "Lista degli inviti"
+msgstr "Lista \"invisibile\""
 
 msgid "These buddies will always see you as offline"
-msgstr ""
+msgstr "Questi contatti ti vedranno sempre come non in linea"
 
 msgid "Aquarius"
 msgstr "Acquario"
@@ -8351,9 +8337,9 @@ msgstr "La tua richiesta è stata accettata."
 msgid "Your request was rejected."
 msgstr "La tua richiesta è stata rifiutata."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%u requires verification: %s"
-msgstr "%u necessita di verifica"
+msgstr "%u necessita di verifica: %s"
 
 msgid "Add buddy question"
 msgstr "Domanda per l'aggiunta del contatto"
@@ -8716,14 +8702,14 @@ msgstr "Automatico"
 msgid "Select Server"
 msgstr "Scegli un server"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Connetti utilizzando TCP"
@@ -8736,6 +8722,9 @@ msgstr "Mostra le news del server"
 
 msgid "Show chat room when msg comes"
 msgstr "Mostra la stanza di discussione all'arrivo di un messaggio"
+
+msgid "Use default font"
+msgstr "Usa il carattere predefinito"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervallo di \"Keep alive\" (secondi)"
@@ -10384,9 +10373,8 @@ msgstr "Lingua della stanza di discussione"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignora gli inviti a conferenze e a stanze di discussione"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Usa un account proxy per le connessioni SSL"
+msgstr "Usa un account proxy per le connessioni HTTP e HTTPS"
 
 msgid "Chat room list URL"
 msgstr "URL della lista delle stanze di discussione"
@@ -10578,7 +10566,7 @@ msgid "Not on server list"
 msgstr "Non è nella lista del server"
 
 msgid "Appear Permanently Offline"
-msgstr "Appai permanentemente come non in linea"
+msgstr "Appari permanentemente come non in linea"
 
 msgid "Presence"
 msgstr "Presenza"
@@ -11297,9 +11285,9 @@ msgstr ""
 "account, attraverso <b>Account->Gestisci account</b> nella finestra della "
 "Lista contatti."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
-msgstr "%s%s%s%s vuole aggiungere %s alla sua lista dei contatti%s%s"
+msgstr "%s%s%s%s vuole aggiungerti (%s) alla sua lista dei contatti%s%s"
 
 #. Buddy List
 msgid "Background Color"
@@ -12287,9 +12275,6 @@ msgstr "Errore"
 msgid "Fatal Error"
 msgstr "Errore fatale"
 
-msgid "bug master"
-msgstr "signore dei bug"
-
 msgid "artist"
 msgstr "artista"
 
@@ -12466,9 +12451,11 @@ msgstr "Curdo"
 msgid "Lao"
 msgstr "Lao"
 
-#, fuzzy
 msgid "Maithili"
-msgstr "Swahili"
+msgstr "Maithili"
+
+msgid "Meadow Mari"
+msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Macedone"
@@ -13259,13 +13246,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Uscita in corso, poiché è in esecuzione un altro client libpurple.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Media"
+msgstr "_Media"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Riaggancia"
+msgstr "_Riaggancia"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13323,7 +13308,7 @@ msgid "New Pounces"
 msgstr "Nuovi allarmi"
 
 msgid "Dismiss"
-msgstr "Chiudi"
+msgstr "Rimuovi"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Hai degli avvisi!</span>"
@@ -13686,9 +13671,8 @@ msgstr "Server di relay (TURN)"
 msgid "_TURN server:"
 msgstr "Server _TURN:"
 
-#, fuzzy
 msgid "_UDP Port:"
-msgstr "_Porta:"
+msgstr "Porta _UDP:"
 
 msgid "Use_rname:"
 msgstr "Nome u_tente:"
@@ -13712,7 +13696,7 @@ msgid "Konqueror"
 msgstr "Konqueror"
 
 msgid "Google Chrome"
-msgstr ""
+msgstr "Google Chrome"
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
@@ -13736,11 +13720,11 @@ msgstr "Epiphany"
 
 #. Translators: please do not translate "chromium-browser" here!
 msgid "Chromium (chromium-browser)"
-msgstr ""
+msgstr "Chromium (chromium-browser)"
 
 #. Translators: please do not translate "chrome" here!
 msgid "Chromium (chrome)"
-msgstr ""
+msgstr "Chromium (chrome)"
 
 msgid "Manual"
 msgstr "Manuale"
@@ -14111,7 +14095,7 @@ msgid "Google Talk"
 msgstr "Google Talk"
 
 msgid "Facebook (XMPP)"
-msgstr ""
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14281,9 +14265,8 @@ msgstr "nessuno"
 msgid "Small"
 msgstr "Piccolo"
 
-#, fuzzy
 msgid "Smaller versions of the default smileys"
-msgstr "Versione più piccola degli smiley predefiniti"
+msgstr "Versioni più piccole degli smiley predefiniti"
 
 msgid "Response Probability:"
 msgstr "Probabilità di risposta:"
@@ -15324,9 +15307,8 @@ msgstr "D_ispositivo"
 msgid "Voice/Video Settings"
 msgstr "Impostazioni Voce/Video"
 
-#, fuzzy
 msgid "Voice and Video Settings"
-msgstr "Impostazioni Voce/Video"
+msgstr "Impostazioni voce e video"
 
 #. *< name
 #. *< version
@@ -15605,64 +15587,3 @@ msgstr "Visita la pagina web di Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Non hai il permesso per rimuovere questa applicazione."
-
-#~ msgid "An error occurred on the in-band bytestream transfer\n"
-#~ msgstr ""
-#~ "Si è verificato un errore nel trasferimento del flusso di dati in-band\n"
-
-#~ msgid "Transfer was closed."
-#~ msgstr "Il trasferimento è stato chiuso."
-
-#~ msgid "Failed to open in-band bytestream"
-#~ msgstr "Impossibile aprire il flusso di byte in-band"
-
-#~ msgid "Set your friendly name."
-#~ msgstr "Imposta un alias."
-
-#~ msgid "Error requesting %s"
-#~ msgstr "Errore nella richiesta di %s"
-
-#~ msgid "Require SSL/TLS"
-#~ msgstr "Richiedi SSL/TLS"
-
-#~ msgid "Force old (port 5223) SSL"
-#~ msgstr "Forza il vecchio SSL (porta 5223)"
-
-#~ msgid "The name you entered is invalid."
-#~ msgstr "Il nome immesso non è valido."
-
-#~ msgid ""
-#~ "[Unable to display a message from this user because it contained invalid "
-#~ "characters.]"
-#~ msgstr ""
-#~ "[Impossibile mostrare un messaggio da questo utente poiché contiene "
-#~ "caratteri non validi.]"
-
-#~ msgid "Search for Buddy by Information"
-#~ msgstr "Cerca un contatto per informazione"
-
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "Il certificato non è ancora valido."
-
-#~ msgid "The nick name you entered is invalid."
-#~ msgstr "Il nickname immesso non è valido"
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Nome di login per MXit"
-
-#~ msgid "Nick Name"
-#~ msgstr "Nickname"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "Il tuo numero di cellulare..."
-
-#, fuzzy
-#~ msgid "Rate to host"
-#~ msgstr "Invita in chat"
-
-#, fuzzy
-#~ msgid "Rate to client"
-#~ msgstr "Ultimo client conosciuto"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/Media/_Riaggancia"

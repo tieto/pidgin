@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -13,7 +13,7 @@
 Code_t ZFlushLocations()
 {
 	int i;
-	
+
 	if (!__locate_list)
 		return (ZERR_NONE);
 
@@ -22,7 +22,7 @@ Code_t ZFlushLocations()
 		free(__locate_list[i].time);
 		free(__locate_list[i].tty);
 	}
-	
+
 	free((char *)__locate_list);
 
 	__locate_list = 0;

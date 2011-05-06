@@ -45,72 +45,57 @@ typedef struct {
 } MsnP2PHeader;
 #define P2P_PACKET_HEADER_SIZE (6 * 4 + 3 * 8)
 
-/* Used for DCs to store nonces */
-#define P2P_HEADER_ACK_ID_OFFSET (2*4 + 2*8 + 2*4)
-
 typedef struct {
 	guint8  header_len;
 	guint8  opcode;
 	guint16 message_len;
 	guint32 base_id;
-	GSList 	*tlv;
-	char 	*data;
+	GSList *header_tlv;
+	guint8  data_header_len;
+	guint8  data_tf;
+	guint16 package_number;
+	guint32 session_id;
+	GSList *data_tlv;
+/*	guint8  body[1]; */
 } MsnP2Pv2Header;
 
 typedef struct {
-	guint8 		length;
-	guint8 		TF; 			/**< Type-First combination */
-	guint16 	package_num;
-	guint32 	session;
-	GSList 		*tlv;
-	char 		*data;
-} MsnP2Pv2DataHeader;
-
-typedef struct {
-	guint16 	protocol_version;
-	guint16 	implementation_id;
-	guint16 	version;
-	guint16 	reserved;
-	guint32 	caps;
+	guint16 protocol_version;
+	guint16 implementation_id;
+	guint16 version;
+	guint16 reserved;
+	guint32 caps;
 } PeerInfo;
 
 typedef enum
 {
-	OP_NONE		= 0x00, 		/**< None, Nothing required. */
-	OP_SYN		= 0x01, 		/**< SYN, just like TCP. */
-	OP_RAK 		= 0x02 		/**< Request for Ack. */
-} OpCode;
-
-typedef enum
-{
-	TF_FIRST 	= 0x01, 	/**< The first package. */
-	TF_OBJ 		= 0x04, 	/**< Payload contains binary data for MsnObject. */
-	TF_FILE 	= 0x06 	/**< Payload contains binary data. */
+	TF_FIRST    = 0x01,     /**< The first package. */
+	TF_MSNOBJ   = 0x04,     /**< Payload contains binary data for MsnObject. */
+	TF_FILE     = 0x06      /**< Payload contains binary data. */
 } TF;
 
 typedef enum
 {
-	TLP_PEER_INFO 	= 0x01, 	/**< Client peer info */
-	TLP_ACK 		= 0x02, 	/**< ACK */
-	TLP_NAK 		= 0x03 	/**< NAK */
+	TLP_PEER_INFO   = 0x01, /**< Client peer info */
+	TLP_ACK         = 0x02, /**< ACK */
+	TLP_NAK         = 0x03  /**< NAK */
 } TLP;
 
 typedef enum
 {
-	TLP_LEN_PEER_INFO 	= 12,
-	TLP_LEN_ACK 		= 4,
-	TLP_LEN_NAK 		= 4
+	TLP_LEN_PEER_INFO   = 12,
+	TLP_LEN_ACK         = 4,
+	TLP_LEN_NAK         = 4
 } TLPLength;
 
 typedef enum
 {
-	PI_PVER 	= 0x0200,
-	PI_IMP_ID 	= 0,
-	PI_VER 		= 0x0e00,
-	PI_RES 		= 0,
-	PI_CAPS		= 0x0000010f
+	PI_PVER     = 0x0200,
+	PI_IMP_ID   = 0,
+	PI_VER      = 0x0e00,
+	PI_RES      = 0,
+	PI_CAPS     = 0x0000010f
 } PeerInfoVal;
-
 
 #define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
 #define DLP_REMAINING_LEN 8
@@ -120,6 +105,21 @@ typedef struct
 	guint32 value;
 } MsnP2PFooter;
 #define P2P_PACKET_FOOTER_SIZE (1 * 4)
+
+typedef enum
+{
+	MSN_P2P_VERSION_ONE = 0,
+	MSN_P2P_VERSION_TWO = 1,
+} MsnP2PVersion;
+
+typedef struct {
+	MsnP2PVersion version;
+	union {
+		MsnP2PHeader v1;
+		MsnP2Pv2Header v2;
+	} header;
+	MsnP2PFooter footer;
+} MsnP2PInfo;
 
 typedef enum
 {
@@ -151,19 +151,104 @@ typedef enum
 	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
 } MsnP2PAppId;
 
-MsnP2PHeader *
-msn_p2p_header_from_wire(const char *wire);
+typedef enum
+{
+	P2P_OPCODE_NONE = 0x00,
+	P2P_OPCODE_SYN  = 0x01,
+	P2P_OPCODE_RAK  = 0x02
+} MsnP2Pv2OpCode;
+
+MsnP2PInfo *
+msn_p2p_info_new(MsnP2PVersion version);
+
+MsnP2PInfo *
+msn_p2p_info_dup(MsnP2PInfo *info);
+
+void
+msn_p2p_info_free(MsnP2PInfo *info);
+
+size_t
+msn_p2p_header_from_wire(MsnP2PInfo *info, const char *wire, size_t max_len);
 
 char *
-msn_p2p_header_to_wire(MsnP2PHeader *header);
+msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len);
 
-MsnP2PFooter *
-msn_p2p_footer_from_wire(const char *wire);
+size_t
+msn_p2p_footer_from_wire(MsnP2PInfo *info, const char *wire);
 
 char *
-msn_p2p_footer_to_wire(MsnP2PFooter *footer);
+msn_p2p_footer_to_wire(MsnP2PInfo *info, size_t *len);
+
+void
+msn_p2p_info_to_string(MsnP2PInfo *info, GString *str);
 
 gboolean
 msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
+
+gboolean
+msn_p2p_info_is_valid(MsnP2PInfo *info);
+
+gboolean
+msn_p2p_info_is_final(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_session_id(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_id(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_offset(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_total_size(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_length(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_flags(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_ack_id(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_ack_sub_id(MsnP2PInfo *info);
+
+guint64
+msn_p2p_info_get_ack_size(MsnP2PInfo *info);
+
+guint32
+msn_p2p_info_get_app_id(MsnP2PInfo *info);
+
+void
+msn_p2p_info_set_session_id(MsnP2PInfo *info, guint32 session_id);
+
+void
+msn_p2p_info_set_id(MsnP2PInfo *info, guint32 id);
+
+void
+msn_p2p_info_set_offset(MsnP2PInfo *info, guint64 offset);
+
+void
+msn_p2p_info_set_total_size(MsnP2PInfo *info, guint64 total_size);
+
+void
+msn_p2p_info_set_length(MsnP2PInfo *info, guint32 length);
+
+void
+msn_p2p_info_set_flags(MsnP2PInfo *info, guint32 flags);
+
+void
+msn_p2p_info_set_ack_id(MsnP2PInfo *info, guint32 ack_id);
+
+void
+msn_p2p_info_set_ack_sub_id(MsnP2PInfo *info, guint32 ack_sub_id);
+
+void
+msn_p2p_info_set_ack_size(MsnP2PInfo *info, guint64 ack_size);
+
+void
+msn_p2p_info_set_app_id(MsnP2PInfo *info, guint32 app_id);
 
 #endif /* MSN_P2P_H */

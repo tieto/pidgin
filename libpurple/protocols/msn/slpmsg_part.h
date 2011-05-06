@@ -34,8 +34,7 @@ struct _MsnSlpMessagePart
 {
 	guint ref_count;
 
-	MsnP2PHeader *header;
-	MsnP2PFooter *footer;
+	MsnP2PInfo *info;
 
 	MsnSlpPartCb ack_cb;
 	MsnSlpPartCb nak_cb;
@@ -45,7 +44,7 @@ struct _MsnSlpMessagePart
 	size_t size;
 };
 
-MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer);
+MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PInfo *info);
 
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len);
 
@@ -60,4 +59,8 @@ char *msn_slpmsgpart_serialize(MsnSlpMessagePart *part, size_t *ret_size);
 void msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data);
 
 void msn_slpmsgpart_nak(MsnSlpMessagePart *part, void *data);
+
+void msn_slpmsgpart_to_string(MsnSlpMessagePart *part, GString *str);
+
 #endif /* MSN_SLPMSG_PART_H */
+

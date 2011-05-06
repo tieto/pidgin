@@ -69,7 +69,7 @@ static void init_cc_net_session(PurpleAccount *account,
 		struct cc_session *session);
 
 /**
- * Handles checking the network for new feature data and sending out the 
+ * Handles checking the network for new feature data and sending out the
  * latest features.
  * @param session		the session we're checking for network traffic
  */
@@ -99,7 +99,7 @@ void cc_net_send_invite(struct crazychat *cc, char *name, PurpleAccount *account
 	PurpleConversation *conv;
 	PurpleConvIm *im;
 	char buf[BUFSIZ];
-	
+
 	session = cc_find_session(cc, name);
 	if (session) return; /* already have a session with this guy */
 	session = cc_add_session(cc, name);
@@ -158,7 +158,7 @@ void cc_net_recv_invite(PurpleAccount *account, struct crazychat *cc, char *name
 
 		g_signal_connect(GTK_OBJECT(dialog), "response",
 				G_CALLBACK(invite_handler), args);
-		
+
 		gtk_widget_show_all(dialog);
 	}
 }
@@ -184,7 +184,7 @@ void cc_net_recv_accept(PurpleAccount *account, struct crazychat *cc, char *name
 static void cc_net_send_ready(PurpleAccount *account, struct cc_session *session)
 {
 	struct sock_accept_args *args;
-	
+
 	assert(session);
 	Debug("Initializing the server socket and sending ready message\n");
 	/* create the server socket */
@@ -261,7 +261,7 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 	char buf[BUFSIZ];
 	PurpleConversation *conv;
 	PurpleConvIm *im;
-	
+
 	if (response == GTK_RESPONSE_ACCEPT) {
 		assert(args);
 		session = cc_find_session(args->cc, args->name);
@@ -319,7 +319,7 @@ static gboolean accept_cb(struct sock_accept_args *args)
 		sock = accept(session->tcp_sock,
 				(struct sockaddr*)&client_addr, &sin_size);
 		assert(sock != -1);
-		
+
 		/* check if it's a match */
 		if (client_addr.sin_addr.s_addr == session->peer_ip) {
 			/* cool, we're set */
@@ -354,9 +354,9 @@ static void init_cc_net_session(PurpleAccount *account,
 	struct sockaddr_in my_addr;
 	struct sockaddr_in peer_addr;
 	int reuse;
-	
+
 	/* send/obtain the udp port information */
-	
+
 	assert(__send(session->tcp_sock, (char*)&session->cc->udp_port,
 			sizeof(session->cc->udp_port)) ==
 			sizeof(session->cc->udp_port));
@@ -365,14 +365,14 @@ static void init_cc_net_session(PurpleAccount *account,
 			sizeof(session->peer_port));
 
 	Debug("Established a CrazyChat session with %s!\n", session->name);
-	
+
 	/* connect the udp sockets */
-	
+
 	session->udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
 
 	assert(!setsockopt(session->udp_sock, SOL_SOCKET, SO_REUSEADDR,
 			&reuse, sizeof(reuse)));
-	
+
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(session->cc->udp_port);
 	assert(inet_aton(purple_network_get_my_ip(-1),
@@ -387,7 +387,7 @@ static void init_cc_net_session(PurpleAccount *account,
 
 	Debug("Bound udp sock to port %d, connecting to port %d\n",
 		session->cc->udp_port, session->peer_port);
-	
+
 	memset(&session->features, 0, sizeof(session->features));
 
 	session->output = init_output(&session->features, session);
@@ -452,7 +452,7 @@ static gboolean network_cb(struct cc_session *session)
 	assert(ret != -1);
 
 	features = &session->features;
-		
+
 	while (ret) { /* have data, let's copy it for output */
 		struct sockaddr_in from;
 		int fromlen;

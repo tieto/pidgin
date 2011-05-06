@@ -945,7 +945,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			const GList *iterator;
 			GList *valid_smileys = NULL;
 			gboolean has_too_large_smiley = FALSE;
-			
+
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
 				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
@@ -976,7 +976,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 							"(too large, max is %d)\n",
 							purple_smiley_get_shortcut(smiley),
 							JABBER_DATA_MAX_SIZE);
-				}				
+				}
 			}
 
 			if (has_too_large_smiley) {
@@ -1140,6 +1140,12 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	if(!who || !msg)
 		return 0;
 
+	if (purple_debug_is_verbose()) {
+		/* TODO: Maybe we need purple_debug_is_really_verbose? :) */
+		purple_debug_misc("jabber", "jabber_message_send_im: who='%s'\n"
+		                            "\tmsg='%s'\n", who, msg);
+	}
+
 	resource = jabber_get_resource(who);
 
 	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
@@ -1244,7 +1250,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *resource;	
+	char *resource;
 
 	js = purple_connection_get_protocol_data(gc);
 	jb = jabber_buddy_find(js, who, TRUE);

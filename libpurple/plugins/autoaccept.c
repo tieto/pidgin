@@ -105,7 +105,7 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	} else {
 		accept_setting = purple_prefs_get_int(PREF_STRANGER);
 	}
-    
+
 	switch (accept_setting)
 	{
 		case FT_ASK:
@@ -197,7 +197,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 		node = purple_blist_node_get_parent(node);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
-	message = g_strdup_printf(_("When a file-transfer request arrives from %s"), 
+	message = g_strdup_printf(_("When a file-transfer request arrives from %s"),
 					purple_contact_get_alias((PurpleContact *)node));
 	purple_request_choice(plugin, _("Set Autoaccept Setting"), message,
 						NULL, purple_blist_node_get_int(node, "autoaccept"),

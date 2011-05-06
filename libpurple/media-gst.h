@@ -159,6 +159,31 @@ gboolean purple_media_manager_set_active_element(PurpleMediaManager *manager,
 PurpleMediaElementInfo *purple_media_manager_get_active_element(
 		PurpleMediaManager *manager, PurpleMediaElementType type);
 
+/**
+ * Reduces media formats supported by the video source to given set.
+ *
+ * Useful to force negotiation of smaller picture resolution more suitable for
+ * use with particular codec and communication protocol without rescaling.
+ *
+ * @param manager The media manager to set the media formats.
+ * @param caps Set of allowed media formats.
+ *
+ * @since 2.8.0
+ */
+void purple_media_manager_set_video_caps(PurpleMediaManager *manager,
+		GstCaps *caps);
+
+/**
+ * Returns current set of media formats limiting the output from video source.
+ *
+ * @param manager The media manager to get the media formats from.
+ *
+ * @return @c GstCaps limiting the video source's formats.
+ *
+ * @since 2.8.0
+ */
+GstCaps *purple_media_manager_get_video_caps(PurpleMediaManager *manager);
+
 gchar *purple_media_element_info_get_id(PurpleMediaElementInfo *info);
 gchar *purple_media_element_info_get_name(PurpleMediaElementInfo *info);
 PurpleMediaElementType purple_media_element_info_get_element_type(

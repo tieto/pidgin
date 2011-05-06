@@ -21,7 +21,7 @@
 #define SHARK_IRIS_Y 1.67*SHARK_SCALE//.015
 #define SHARK_IRIS_Z 5.0*SHARK_SCALE//.08
 #define SHARK_PUP_X 0*SHARK_SCALE
-#define SHARK_PUP_Y 0*SHARK_SCALE 
+#define SHARK_PUP_Y 0*SHARK_SCALE
 #define SHARK_PUP_Z 2.5*SHARK_SCALE //.028
 #define SHARK_IRIS_SCALE .10*SHARK_SCALE
 #define SHARK_PUP_SCALE .08*SHARK_SCALE
@@ -120,7 +120,7 @@ void shark_eyes(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL righ
 	glTranslatef(0, 0, SHARK_EYES_Y);
 	glTranslatef(0, -SHARK_EYES_Z,0);
 	draw_shark_left_eye(f, left_open, max_eye);
-	draw_shark_right_eye(f, right_open, max_eye);	
+	draw_shark_right_eye(f, right_open, max_eye);
 	glPopMatrix();
 }
 
@@ -171,12 +171,12 @@ void draw_back_fins(FACE f){
 	glmSetMat(f->materials, f->mat_indeces[APPENDAGE]);
 	glCallList(shark->fins[2]);
 	glPopMatrix();
-	
+
 }
 
 void draw_shark(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL right_open, GLfloat open, DIRECTION dir, OUTPUT_MODE mode){
-	int next_face; 
-	struct shark_struct* shark;	
+	int next_face;
+	struct shark_struct* shark;
 
 	f->crazy_count--;
 	if(f->crazy_count==0){
@@ -198,7 +198,7 @@ void draw_shark(FACE f, GLfloat angle, GLfloat yangle, BOOL left_open, BOOL righ
 	glRotatef(-90, 1.0, 0.0, 0.0);
 	glRotatef(-yangle, 0.0, 0.0, -1.0);
 	glRotatef(-angle, 0, 1, 0);
-	shark_eyes(f, angle, yangle, left_open, right_open, dir);	
+	shark_eyes(f, angle, yangle, left_open, right_open, dir);
 	shark_fins(f, dir);
 	//draw_back_fins(f);
 	glmSetMat(f->materials, f->mat_indeces[HEAD]);
@@ -223,10 +223,10 @@ void init_shark(FACE f){
 	f->name = strdup("sharky");
 	f->draw_func = draw_shark;
 	shark = (struct shark_struct*)f->char_struct;
-	
+
 	printf("\nReading models: ");
 	fflush(0);
-	
+
 	//initialize the draw lists
 	init_lists(&shark->faces, &shark->m_faces, NUM_SHARKS, f->name, SHARK_HEAD_SCALE);
 	init_lists(&shark->lids, &shark->m_lids, NUM_SHARK_LIDS, "sharkylid", SHARK_LID_SCALE);
@@ -237,7 +237,7 @@ void init_shark(FACE f){
 
 	printf("\n");
 	fflush(0);
-		
+
 	shark->curr_face = 0;
 	shark->curr_fin = 1;
 	shark->curr_left_lid = 0;

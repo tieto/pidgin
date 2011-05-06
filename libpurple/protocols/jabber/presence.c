@@ -450,21 +450,23 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 			g_free(nickname);
 		}
 
-		if ((photo = xmlnode_get_child(vcard, "PHOTO")) &&
-				(binval = xmlnode_get_child(photo, "BINVAL")) &&
-				(text = xmlnode_get_data(binval))) {
-			guchar *data;
-			gsize size;
+		if ((photo = xmlnode_get_child(vcard, "PHOTO"))) {
+			guchar *data = NULL;
+			gchar *hash = NULL;
+			gsize size = 0;
 
-			data = purple_base64_decode(text, &size);
-			if (data) {
-				gchar *hash = jabber_calculate_data_hash(data, size, "sha1");
-				purple_buddy_icons_set_for_user(js->gc->account, from, data,
-				                                size, hash);
-				g_free(hash);
+			if ((binval = xmlnode_get_child(photo, "BINVAL")) &&
+					(text = xmlnode_get_data(binval))) {
+				data = purple_base64_decode(text, &size);
+				g_free(text);
+
+				if (data)
+					hash = jabber_calculate_data_hash(data, size, "sha1");
 			}
 
-			g_free(text);
+			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+
+			g_free(hash);
 		}
 	}
 }
@@ -588,7 +590,9 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			role = xmlnode_get_attrib(presence->chat_info.item, "role");
 		}
 
-		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)))
+		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)) ||
+				g_str_equal(presence->jid_from->resource, chat->handle) ||
+				purple_strequal(presence->to, jid))
 			is_our_resource = TRUE;
 
 		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(201))) {
@@ -639,10 +643,14 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 
 		if(!jabber_chat_find_buddy(chat->conv, presence->jid_from->resource))
 			purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
-					jid, flags, !presence->delayed);
+					jid, flags, chat->joined > 0 && ((!presence->delayed) || (presence->sent > chat->joined)));
 		else
 			purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), presence->jid_from->resource,
 					flags);
+
+		if (is_our_resource && chat->joined == 0)
+			chat->joined = time(NULL);
+
 	} else if (presence->type == JABBER_PRESENCE_UNAVAILABLE) {
 		gboolean nick_change = FALSE;
 		gboolean kick = FALSE;
@@ -661,7 +669,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			return FALSE;
 		}
 
-		is_our_resource = (0 == g_utf8_collate(presence->jid_from->resource, chat->handle));
+		is_our_resource = g_str_equal(presence->jid_from->resource, chat->handle);
 
 		jabber_buddy_remove_resource(presence->jb, presence->jid_from->resource);
 
@@ -669,8 +677,10 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			jid = xmlnode_get_attrib(presence->chat_info.item, "jid");
 
 		if (chat->muc) {
-			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)))
+			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110))) {
 				is_our_resource = TRUE;
+				chat->joined = 0;
+			}
 
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(301))) {
 				/* XXX: We got banned.  YAY! (No GIR, that's bad) */
@@ -691,6 +701,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 					if (g_str_equal(presence->jid_from->resource, chat->handle)) {
 						/* Changing our own nickname */
 						g_free(chat->handle);
+						/* TODO: This should be resourceprep'd */
 						chat->handle = g_strdup(nick);
 					}
 
@@ -831,20 +842,22 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 		}
 	}
 
-	if(b && presence->vcard_avatar_hash) {
-		const char *avatar_hash2 = purple_buddy_icons_get_checksum_for_user(b);
-		if(!avatar_hash2 || strcmp(presence->vcard_avatar_hash, avatar_hash2)) {
-			JabberIq *iq;
-			xmlnode *vcard;
-
+	if (b && presence->vcard_avatar_hash) {
+		const char *ah = presence->vcard_avatar_hash[0] != '\0' ?
+				presence->vcard_avatar_hash : NULL;
+		const char *ah2 = purple_buddy_icons_get_checksum_for_user(b);
+		if (!purple_strequal(ah, ah2)) {
 			/* XXX this is a crappy way of trying to prevent
 			 * someone from spamming us with presence packets
 			 * and causing us to DoS ourselves...what we really
 			 * need is a queue system that can throttle itself,
 			 * but i'm too tired to write that right now */
 			if(!g_slist_find(js->pending_avatar_requests, presence->jb)) {
+				JabberIq *iq;
+				xmlnode *vcard;
 
-				js->pending_avatar_requests = g_slist_prepend(js->pending_avatar_requests, presence->jb);
+				js->pending_avatar_requests =
+					g_slist_prepend(js->pending_avatar_requests, presence->jb);
 
 				iq = jabber_iq_new(js, JABBER_IQ_GET);
 				xmlnode_set_attrib(iq->node, "to", buddy_name);
@@ -1158,9 +1171,6 @@ parse_status(JabberStream *js, JabberPresence *presence, xmlnode *status)
 static void
 parse_delay(JabberStream *js, JabberPresence *presence, xmlnode *delay)
 {
-	/* XXX: compare the time.  Can happen on presence stanzas that aren't
-	 * actually delayed.
-	 */
 	const char *stamp = xmlnode_get_attrib(delay, "stamp");
 	presence->delayed = TRUE;
 	presence->sent = purple_str_to_time(stamp, TRUE, NULL, NULL, NULL);
@@ -1200,9 +1210,12 @@ static void
 parse_vcard_avatar(JabberStream *js, JabberPresence *presence, xmlnode *x)
 {
 	xmlnode *photo = xmlnode_get_child(x, "photo");
+
 	if (photo) {
+		char *hash_tmp = xmlnode_get_data(photo);
 		g_free(presence->vcard_avatar_hash);
-		presence->vcard_avatar_hash = xmlnode_get_data(photo);
+		presence->vcard_avatar_hash =
+			hash_tmp ? hash_tmp : g_strdup("");
 	}
 }
 

@@ -294,6 +294,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 			 proxy_type == PURPLE_PROXY_HTTP       ? "http"   :
 			 proxy_type == PURPLE_PROXY_SOCKS4     ? "socks4" :
 			 proxy_type == PURPLE_PROXY_SOCKS5     ? "socks5" :
+			 proxy_type == PURPLE_PROXY_TOR        ? "tor" :
 			 proxy_type == PURPLE_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
 
 	if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
@@ -746,6 +747,8 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS4);
 		else if (purple_strequal(data, "socks5"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS5);
+		else if (purple_strequal(data, "tor"))
+			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_TOR);
 		else if (purple_strequal(data, "envvar"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
@@ -1441,6 +1444,27 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 		return NULL;
 	}
 
+	plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(
+				purple_accounts_get_handle(),
+				"account-authorization-requested-with-message",
+				account, remote_user, message
+			));
+
+	switch (plugin_return)
+	{
+		case PURPLE_ACCOUNT_RESPONSE_IGNORE:
+			return NULL;
+		case PURPLE_ACCOUNT_RESPONSE_ACCEPT:
+			if (auth_cb != NULL)
+				auth_cb(user_data);
+			return NULL;
+		case PURPLE_ACCOUNT_RESPONSE_DENY:
+			if (deny_cb != NULL)
+				deny_cb(user_data);
+			return NULL;
+	}
+
 	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
 		info            = g_new0(PurpleAccountRequestInfo, 1);
 		info->type      = PURPLE_ACCOUNT_REQUEST_AUTHORIZATION;
@@ -1913,6 +1937,20 @@ purple_account_get_public_alias(PurpleAccount *account,
 		closure->failure_cb = failure_cb;
 		purple_timeout_add(0, get_public_alias_unsupported, closure);
 	}
+}
+
+gboolean
+purple_account_get_silence_suppression(const PurpleAccount *account)
+{
+	return purple_account_get_bool(account, "silence-suppression", FALSE);
+}
+
+void
+purple_account_set_silence_suppression(PurpleAccount *account, gboolean value)
+{
+	g_return_if_fail(account != NULL);
+
+	purple_account_set_bool(account, "silence-suppression", value);
 }
 
 void
@@ -2505,8 +2543,37 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (prpl_info != NULL && prpl_info->add_buddy != NULL)
-		prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	if (prpl_info != NULL) {
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
+			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), NULL);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
+			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	}
+}
+
+void
+purple_account_add_buddy_with_invite(PurpleAccount *account, PurpleBuddy *buddy, const char *message)
+{
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc;
+	PurplePlugin *prpl = NULL;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		prpl = purple_connection_get_prpl(gc);
+
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info != NULL) {
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite))
+			prpl_info->add_buddy_with_invite(gc, buddy, purple_buddy_get_group(buddy), message);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
+			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	}
 }
 
 void
@@ -2531,9 +2598,69 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (prpl_info->add_buddies != NULL)
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
+			prpl_info->add_buddies_with_invite(gc, buddies, groups, NULL);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
 			prpl_info->add_buddies(gc, buddies, groups);
-		else if (prpl_info->add_buddy != NULL) {
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, NULL);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy(gc, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+
+		g_list_free(groups);
+	}
+}
+
+void
+purple_account_add_buddies_with_invite(PurpleAccount *account, GList *buddies, const char *message)
+{
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+
+	if (gc != NULL)
+		prpl = purple_connection_get_prpl(gc);
+
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info) {
+		GList *cur, *groups = NULL;
+
+		/* Make a list of what group each buddy is in */
+		for (cur = buddies; cur != NULL; cur = cur->next) {
+			PurpleBuddy *buddy = cur->data;
+			groups = g_list_append(groups, purple_buddy_get_group(buddy));
+		}
+
+		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies_with_invite))
+			prpl_info->add_buddies_with_invite(gc, buddies, groups, message);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy_with_invite)) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy_with_invite(gc, curb->data, curg->data, message);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
+			prpl_info->add_buddies(gc, buddies, groups);
+		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
@@ -3046,6 +3173,13 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_ACCOUNT),
 						purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "account-authorization-requested-with-message",
+						purple_marshal_INT__POINTER_POINTER_POINTER,
+						purple_value_new(PURPLE_TYPE_INT), 3,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING),
+						purple_value_new(PURPLE_TYPE_STRING));
 	purple_signal_register(handle, "account-authorization-denied",
 						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						purple_value_new(PURPLE_TYPE_SUBTYPE,

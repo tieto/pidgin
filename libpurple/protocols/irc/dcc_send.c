@@ -129,14 +129,14 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 		purple_debug(PURPLE_DEBUG_INFO, "irc", "Receiving file (%s) from %s\n",
 			     filename->str, xd->ip);
 		purple_xfer_set_size(xfer, token[i+2] ? atoi(token[i+2]) : 0);
-		
+
 		purple_xfer_set_init_fnc(xfer, irc_dccsend_recv_init);
 		purple_xfer_set_ack_fnc(xfer, irc_dccsend_recv_ack);
-		
+
 		purple_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
 		purple_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
 		purple_xfer_set_cancel_recv_fnc(xfer, irc_dccsend_recv_destroy);
-		
+
 		purple_xfer_request(xfer);
 	}
 	g_strfreev(token);

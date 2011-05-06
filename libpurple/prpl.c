@@ -520,7 +520,7 @@ purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	got_attention(gc, -1, who, type_code);
-	conv = 
+	conv =
 		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
 	if (conv)
 		purple_prpl_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
@@ -565,14 +565,14 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	PurpleConnection *gc = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	
+
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
 		prpl = purple_connection_get_prpl(gc);
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	
+
 	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info,
 			get_media_caps)) {
 		return prpl_info->get_media_caps(account, who);
@@ -600,7 +600,7 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 		const gchar *bname = purple_buddy_get_name(buddy);
 		list = g_slist_delete_link(list, list);
 
-		
+
 		newcaps = purple_prpl_get_media_caps(account, bname);
 		purple_buddy_set_media_caps(buddy, newcaps);
 

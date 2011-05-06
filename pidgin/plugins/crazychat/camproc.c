@@ -116,19 +116,19 @@ OSErr CamProc(struct input_instance *inst, filter_bank *f)
 {
 	OSStatus error;
 	OSErr err = noErr;
-	
-	BailErr(err = InitializeMungData(mMungRect)); 
-	
+
+	BailErr(err = InitializeMungData(mMungRect));
+
 	bank = f;
-	
+
 	instance=inst;
 	mMyDataProcPtr 	= NewSGDataUPP(MiniMungDataProc);
 	mSeqGrab 		= OpenDefaultComponent(SeqGrabComponentType, 0);
-    BailErr((err = CreateNewSGChannelForRecording(	mSeqGrab, 
-                                    mMyDataProcPtr, 
+    BailErr((err = CreateNewSGChannelForRecording(	mSeqGrab,
+                                    mMyDataProcPtr,
                                     GetMungDataOffscreen(), // drawing destination
-                                    &mMungRect, 
-                                    &mSGChanVideo, 
+                                    &mMungRect,
+                                    &mSGChanVideo,
                                     NULL)));
 
 bail:
@@ -148,7 +148,7 @@ static pascal void SGIdlingTimer(EventLoopTimerRef inTimer, void *inUserData)
     {
         SGIdle(mSeqGrab);
     }
-    
+
     // Reschedule the event loop timer
     SetEventLoopTimerNextFireTime(inTimer, kMinimumIdleDurationInMillis);
 }
@@ -161,40 +161,40 @@ static pascal OSErr MiniMungDataProc(SGChannel c, Ptr p, long len, long *offset,
 	ComponentResult err = noErr;
 	CodecFlags 		ignore;
     GWorldPtr 		gWorld;
-    
+
 
 
 
 	if (!myMungData) goto bail;
-    
+
     gWorld = GetMungDataOffscreen();
 	if(gWorld)
 	{
 		if (mDecomSeq == 0)	// init a decompression sequence
 		{
 			Rect bounds;
-			
+
 			GetMungDataBoundsRect(&bounds);
-                    
+
             BailErr( CreateDecompSeqForSGChannelData(c, &bounds, gWorld, &mDecomSeq));
-    
+
 			if(1)
             //if ((!mUseOverlay) && (GetCurrentClamp() == -1) && (!mUseEffect))
             {
 				ImageSequence drawSeq;
-				
-                err = CreateDecompSeqForGWorldData(	gWorld, 
-                                                    &bounds, 
-                                                    nil, 
+
+                err = CreateDecompSeqForGWorldData(	gWorld,
+                                                    &bounds,
+                                                    nil,
                                                     GetMungDataWindowPort(),
                                                     &drawSeq);
 				SetMungDataDrawSeq(drawSeq);
             }
 		}
-        
+
         // decompress data to our offscreen gworld
 		BailErr(DecompressSequenceFrameS(mDecomSeq,p,len,0,&ignore,nil));
-		
+
 		// image is now in the GWorld - manipulate it at will!
 		//if ((mUseOverlay) || (GetCurrentClamp() != -1) || (mUseEffect))
         //{
@@ -208,9 +208,9 @@ static pascal OSErr MiniMungDataProc(SGChannel c, Ptr p, long len, long *offset,
 			// search for lobsters in our image data
             DetectLobster(gWorld);
         //}
-		
+
 	}
-	
+
 bail:
 	return err;
 }
@@ -221,7 +221,7 @@ void Die()
        // mSGTimerRef = nil;
       //  DisposeEventLoopTimerUPP(mSGTimerUPP);
        	DoCloseSG(mSeqGrab, mSGChanVideo, mMyDataProcPtr);
-	
+
 }
 
 
@@ -232,7 +232,7 @@ float Y_dev,E_mean,E_dev,S_mean,S_dev;
 */
 extern unsigned int (*colorBuf)[644];
 extern struct input_instance input_data;
-	
+
 static void DetectLobster(GWorldPtr mungDataOffscreen)
 {
     CGrafPtr	oldPort;
@@ -253,19 +253,19 @@ static void DetectLobster(GWorldPtr mungDataOffscreen)
     long R_total=0;
 	long G_total=0;
 	long B_total=0;
-	
 
 
-	//fprintf(stderr, "Starting to find some lobsters...\n");	
+
+	//fprintf(stderr, "Starting to find some lobsters...\n");
 
 
     GetPortBounds(mungDataOffscreen, &bounds);
     OffsetRect(&bounds, -bounds.left, -bounds.top);
-    
-	
+
+
 	UInt32			color;
 
-			
+
 	int sum_x,sum_y=0;
 	int count=0;
 	int k,j;
@@ -279,11 +279,11 @@ static void DetectLobster(GWorldPtr mungDataOffscreen)
 	colorBuf = GetPixBaseAddr(pix);
 
 	switch (detection_mode) {
-	
+
 	case PRE_CALIBRATE_MODE:
 		//drawbox(CALIB_TOP, CALIB_BOTTOM, CALIB_LEFT, CALIB_RIGHT);
 		break;
-	
+
 	case CALIBRATE_MODE:
 		SkinStats(pix, y_click-CALIB_RADIUS, y_click+CALIB_RADIUS, x_click-CALIB_RADIUS, x_click+CALIB_RADIUS);
 		scan_region_left=x_click-CALIB_RADIUS;//10;
@@ -295,7 +295,7 @@ static void DetectLobster(GWorldPtr mungDataOffscreen)
 		//fprintf(stderr, "scan left: %d scan right: %d \n",scan_region_left,scan_region_right);
 		head_size_old=50;
 		break;
-		
+
 	case SCAN_MODE:
 		ScanSkin(pix);
 		drawbox(face_top, face_bottom, face_left, face_right,1);
@@ -310,14 +310,14 @@ static void DetectLobster(GWorldPtr mungDataOffscreen)
 		break;
 	}
 
-	//fprintf(stderr, "Lobsters found...\n");	
+	//fprintf(stderr, "Lobsters found...\n");
 
 
 }
-	
-	
-			
-	
+
+
+
+
 void ScanSkin(PixMapHandle p)
 {
 	int y,x,j,k;
@@ -336,13 +336,13 @@ void ScanSkin(PixMapHandle p)
 	sum_x=sum_y=count=0;
 	int horz_count[480];
 	int vert_count[640];
-	
 
-	
+
+
 	memset(horz_count,0,480*sizeof(int));
 	memset(vert_count,0,640*sizeof(int));
-	
-	if (eye_search_frame_count<NUM_FRAMES_EYE_SEARCH) eye_search_frame_count++;  
+
+	if (eye_search_frame_count<NUM_FRAMES_EYE_SEARCH) eye_search_frame_count++;
 	else if (eye_search_frame_count==NUM_FRAMES_EYE_SEARCH && bozo_bit==0)
 	{
 	bozo_bit=1;
@@ -388,7 +388,7 @@ void ScanSkin(PixMapHandle p)
 					right_eye_pt_count++;
 					//colorBuf[y][x]=0x0000FF00;
 					}
-				}   
+				}
 			}
 
 			if(SkinDetect(Y,E,S))
@@ -396,27 +396,27 @@ void ScanSkin(PixMapHandle p)
 				sum_x+=x;
 				sum_y+=y;
 				count++;
-		
+
 				++horz_count[y];
 				++vert_count[x];
-				
+
 				if (horz_count[y]>max_horz) max_horz=horz_count[y];
 				if (vert_count[x]>max_vert) max_vert=vert_count[x];
-				
+
 				//colorBuf[y][x]=0x00FF0000;
 			}
 
 		}
 	}
-	
-	
+
+
 	left_eye_x=left_eye_x_sum/left_eye_pt_count;
 	left_eye_y=left_eye_y_sum/left_eye_pt_count;
 	right_eye_x=right_eye_x_sum/right_eye_pt_count;
 	right_eye_y=right_eye_y_sum/right_eye_pt_count;
 
 
-					
+
 	int width=right_eye_x-left_eye_x;
 	int height=right_eye_y-left_eye_y;
 	double face_ang;
@@ -424,9 +424,9 @@ void ScanSkin(PixMapHandle p)
 	else face_ang=0;
 	face_ang=face_ang*180/pi;
 	//fprintf(stderr,"face angle: %f \n",face_ang);
-			
-	if ((left_eye_pt_count<5 || right_eye_pt_count<5 || width==0 || face_ang > 30 || face_ang < -30 
-		|| left_eye_y < (face_top+.15*(face_bottom-face_top)) 
+
+	if ((left_eye_pt_count<5 || right_eye_pt_count<5 || width==0 || face_ang > 30 || face_ang < -30
+		|| left_eye_y < (face_top+.15*(face_bottom-face_top))
 		|| right_eye_y < (face_top+.15*(face_bottom-face_top)))
 		&& bozo_bit==1){
 		eye_unconfidence++;
@@ -449,17 +449,17 @@ void ScanSkin(PixMapHandle p)
 		eye_search_frame_count=0;
 		//fprintf(stderr, "Recalibrating eyes\n");
 	}
-	
+
 	if ((last_eye_count_left-left_eye_pt_count> BLINK_THRESHOLD) && eye_unconfidence==0)
 	{
-	left_eye_blink_count=BLINK_LENGTH;	
+	left_eye_blink_count=BLINK_LENGTH;
 	}
 	if (left_eye_blink_count>0){
 		instance->face.left_eye_open=0;
 		left_eye_blink_count--;
 	}
-	else instance->face.left_eye_open=1;	
-	
+	else instance->face.left_eye_open=1;
+
 	if ((last_eye_count_right-right_eye_pt_count> BLINK_THRESHOLD) && eye_unconfidence==0)
 	{
 	right_eye_blink_count=BLINK_LENGTH;
@@ -472,15 +472,15 @@ void ScanSkin(PixMapHandle p)
 
 	if (instance->face.right_eye_open==0) instance->face.left_eye_open=0;
 	if (instance->face.left_eye_open==0) instance->face.right_eye_open=0;
-	
+
 	last_eye_count_left=left_eye_pt_count;
 	last_eye_count_right=right_eye_pt_count;
 
 	float x_shift=0;
 	if (width!=0) x_shift= (float)height/(float)width; // --> note dependence on earlier data here
 
-	
-if (bozo_bit==1){	
+
+if (bozo_bit==1){
 	int mouth_search_start_y=face_top+(.6*(face_bottom-face_top));
 	int mouth_search_end_y=face_bottom;
 	int mouth_search_start_x=(left_eye_x+right_eye_x)/2 + (-x_shift*(mouth_search_start_y-((right_eye_y+left_eye_y)/2))) ;
@@ -495,14 +495,14 @@ for (y=mouth_search_start_y; y < mouth_search_end_y; y++)
 	G = (color & 0x0000FF00) >> 8;
 	B = (color & 0x000000FF) >> 0;
 	lum=R+G+B;
-	
+
 	if (lum<min_lum_mouth) {
 		min_lum_mouth=lum;
 		mouth_ctr_x=x;
 		mouth_ctr_y=y;
 	}
 }
-	
+
 	mouth_size=(face_right-face_left)*100/640;
 	mouth_left=mouth_ctr_x-mouth_size;
 	if (mouth_left < face_left) mouth_left=face_left;
@@ -512,7 +512,7 @@ for (y=mouth_search_start_y; y < mouth_search_end_y; y++)
 	if (mouth_top < face_top) mouth_top=face_top;
 	mouth_bottom=mouth_ctr_y+mouth_size;
 	if (mouth_bottom > face_bottom) mouth_bottom=face_bottom;
-	
+
 	white_count=0;
 
 	for (y=mouth_top; y< mouth_bottom; y++){
@@ -529,12 +529,12 @@ for (y=mouth_search_start_y; y < mouth_search_end_y; y++)
 			}
 		}
 	}
-	
+
 	}
 else white_count=10;
 
 // This next section finds the face region and sets the face_* parameters.
-	
+
 	int scan;
 	float thresh=.3;
 	scan=scan_region_left+1;
@@ -546,10 +546,10 @@ else white_count=10;
 			{
 				face_left=scan;
 				break;
-			}	
+			}
 		scan++;
 	}
-	
+
 	scan=scan_region_right-1;
 	if (scan>=640) scan=639;
 	while(1)
@@ -558,10 +558,10 @@ else white_count=10;
 			{
 				face_right=scan;
 				break;
-			}	
+			}
 		scan--;
 	}
-	
+
 	scan=scan_region_top+1;
 	if (scan<0) scan=0;
 	while(1)
@@ -570,11 +570,11 @@ else white_count=10;
 			{
 				face_top=scan;
 				break;
-			}	
+			}
 		scan++;
 	}
-	
-	
+
+
 	scan=scan_region_bottom-1;
 	if (scan>=480) scan=479;
 	while(1)
@@ -583,10 +583,10 @@ else white_count=10;
 			{
 				face_bottom=scan;
 				break;
-			}	
+			}
 		scan--;
 	}
-	
+
 	// Base scan region on face region here
 	scan_region_left=face_left-10;
 	if (scan_region_left <= 0) scan_region_left=1;
@@ -596,10 +596,10 @@ else white_count=10;
 	if (scan_region_top <= 0) scan_region_top=1;
 	scan_region_bottom=face_bottom+10;
 	if (scan_region_bottom >= 480) scan_region_bottom=479;
-	
-	
+
+
 	// Calculate some stats
-	
+
 	// face size
 	width=face_right-face_left;
 	guint8 temp=width*100/640;
@@ -610,7 +610,7 @@ else white_count=10;
 	instance->face.x=temp;
 	temp=((double)100/(double)480)*(double)(face_top+face_bottom)/2;
 	instance->face.y=temp;
-	
+
 	// face angle-Z
 	instance->face.head_z_rot=face_ang+50;
 
@@ -628,23 +628,23 @@ else white_count=10;
 	if (right_eye_strad > left_eye_strad) y_ang=-y_ang;
 	temp = (guint8) 50 + y_ang;
 	instance->face.head_y_rot=temp;
-	
+
 	if (abs (temp-50) > 15) instance->face.head_size=head_size_old;
 	else head_size_old=instance->face.head_size;
 
 	temp = (guint8) 100 * white_count / WHITE_COUNT_MAX;
 	if (temp > 100) temp=100;
 	instance->face.mouth_open = temp;
-	
+
 }
-	
+
 
 
 
 
 
  // draw bounding box for either calibration or face
-	
+
 
 void SetEyeSearchRegions(void)
 {
@@ -654,25 +654,25 @@ void SetEyeSearchRegions(void)
 				left_eye_bottom=face_top+(.6*(face_bottom-face_top));
 				left_eye_right=((face_left+face_right)/2);
 				left_eye_left=face_left+.15*(face_right-face_left);
-			
+
 				right_eye_top=face_top+(.25*(face_bottom-face_top));
 				right_eye_bottom=face_top+(.6*(face_bottom-face_top));
 				right_eye_right=face_right-.15*(face_right-face_left);
 				right_eye_left=((face_left+face_right)/2);
 			}
-			
+
 			if (bozo_bit==1)
 			{
 				left_eye_top=left_eye_y-20;
 				left_eye_bottom=left_eye_y+20;
 				left_eye_left=left_eye_x-20;
 				left_eye_right=left_eye_x+20;
-				
+
 				right_eye_top=right_eye_y-20;
 				right_eye_bottom=right_eye_y+20;
 				right_eye_left=right_eye_x-20;
 				right_eye_right=right_eye_x+20;
-			}	
+			}
 }
 
 
@@ -681,7 +681,7 @@ void drawbox(int top, int bottom, int left, int right, int color)
 	int y, x, j;
 
 	unsigned int col;
-	
+
 
 	if (color==1)
 		col=0x00FFFF00;
@@ -696,27 +696,27 @@ void drawbox(int top, int bottom, int left, int right, int color)
 	if (left>=640) left=639;
 	if (right<0) right =0;
 	if (right>=640) right=639;
-	
+
 	if (color==1){
 
 	for (y=top; y<bottom; y++)
 	{
-		for (j=0;j<5;j++){	
+		for (j=0;j<5;j++){
 			colorBuf[y][left+j] =  col;
 			colorBuf[y][right-j] = col;
 		}
 
 	}
-	
+
 	for (x=left; x<right; x++)
 	{
 
 	for (j=0;j<5;j++){
-		
+
 		colorBuf[bottom-j][x] = col;
 		colorBuf[top+j][x] = col;
 
-		}	
+		}
 
 	}
 
@@ -727,7 +727,7 @@ void drawbox(int top, int bottom, int left, int right, int color)
 
 	for (y=top; y<bottom; y++)
 	{
-		for (x=left;x<right;x++){	
+		for (x=left;x<right;x++){
 			colorBuf[y][x] =  col;
 			colorBuf[y][x] = col;
 		}
@@ -757,25 +757,25 @@ void SkinStats (PixMapHandle p, int top, int bottom, int left, int right)
 				{
 				count++;
 				color=baseAddr[x];
-					
+
 				R = (color & 0x00FF0000) >> 16;
 				G = (color & 0x0000FF00) >> 8;
 				B = (color & 0x000000FF) >> 0;
 				Y=.253*R+.684*G+.063*B;
 				E=.5*R-.5*G;
-				S=.25*R+.25*G-.5*B; 
+				S=.25*R+.25*G-.5*B;
 				Y_sum+=Y;
 				E_sum+=E;
 				S_sum+=S;
 				}
 			}
-				
+
 		Y_mean=Y_sum/count;
 		E_mean=E_sum/count;
 		S_mean=S_sum/count;
-				
+
 		Y_sum=E_sum=S_sum=0;
-				
+
 		for (y=top; y<bottom; y++)
 			{
 			baseAddr = (UInt32*)(GetPixBaseAddr(p) + y * GetPixRowBytes(p));
@@ -787,20 +787,20 @@ void SkinStats (PixMapHandle p, int top, int bottom, int left, int right)
 				B = (color & 0x000000FF) >> 0;
 				Y=.253*R+.684*G+.063*B;
 				E=.5*R-.5*G;
-				S=.25*R+.25*G-.5*B; 
-					
+				S=.25*R+.25*G-.5*B;
+
 				Y_sum+=(Y-Y_mean)*(Y-Y_mean);
 				E_sum+=(E-E_mean)*(E-E_mean);
 				S_sum+=(S-S_mean)*(S-S_mean);
 
 				}
 			}
-				
+
 		Y_dev=sqrt(Y_sum/(count-1));
 		E_dev=sqrt(E_sum/(count-1));
 		S_dev=sqrt(S_sum/(count-1));
-				
-		//fprintf(stderr,"Y: %f, %f\n E: %f, %f\nS: %f, %f\n",Y_mean,E_mean,S_mean,Y_dev,E_dev,S_dev);			
+
+		//fprintf(stderr,"Y: %f, %f\n E: %f, %f\nS: %f, %f\n",Y_mean,E_mean,S_mean,Y_dev,E_dev,S_dev);
 
 }
 

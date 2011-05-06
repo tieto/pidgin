@@ -626,6 +626,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 	const char *username = purple_request_fields_get_string(allfields, "screenname");
 	const char *alias = purple_request_fields_get_string(allfields, "alias");
 	const char *group = purple_request_fields_get_string(allfields, "group");
+	const char *invite = purple_request_fields_get_string(allfields, "invite");
 	PurpleAccount *account = purple_request_fields_get_account(allfields, "account");
 	const char *error = NULL;
 	PurpleGroup *grp;
@@ -662,7 +663,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_buddy(buddy, NULL, grp, NULL);
 	}
 
-	purple_account_add_buddy(account, buddy);
+	purple_account_add_buddy_with_invite(account, buddy, invite);
 }
 
 static void
@@ -678,6 +679,9 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("alias", _("Alias (optional)"), alias, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_string_new("invite", _("Invite message (optional)"), NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("group", _("Add in group"), grp, FALSE);
@@ -1807,7 +1811,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 			}
 		}
 	}
-	
+
 	tmp = purple_notify_user_info_get_text_with_newline(user_info, "<BR>");
 	purple_notify_user_info_destroy(user_info);
 
@@ -2066,7 +2070,7 @@ populate_buddylist(void)
 		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
 			(GCompareFunc)blist_node_compare_log);
 	}
-	
+
 	list = purple_get_blist();
 	node = purple_blist_get_root();
 	while (node)

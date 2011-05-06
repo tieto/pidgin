@@ -109,7 +109,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			js->stream_id = g_strdup("");
 			purple_debug_info("jabber", "Server failed to specify a stream "
 			                  "ID (underspecified in rfc3920, but intended "
-			                  "to be a MUST; digest legacy auth may fail.\n"); 
+			                  "to be a MUST; digest legacy auth may fail.\n");
 #endif
 		}
 	} else {

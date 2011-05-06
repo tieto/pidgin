@@ -175,7 +175,8 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 		if (faultcode_str) {
 			if (g_str_equal(faultcode_str, "q0:BadContextToken") ||
-				g_str_equal(faultcode_str, "AuthenticationFailed"))
+				g_str_equal(faultcode_str, "AuthenticationFailed") ||
+				g_str_equal(faultcode_str, "s:AuthenticationFailed"))
 				need_token_update = TRUE;
 			else if (g_str_equal(faultcode_str, "q0:AuthenticationFailed") &&
 				xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)
@@ -418,8 +419,8 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						str_reason = _("Message was not sent because an unknown "
 						               "error occurred.");
 					}
-					
-					msn_session_report_user(oim->session, msg->to_member, 
+
+					msn_session_report_user(oim->session, msg->to_member,
 						str_reason, PURPLE_MESSAGE_ERROR);
 					msn_session_report_user(oim->session, msg->to_member,
 						msg->oim_msg, PURPLE_MESSAGE_RAW);

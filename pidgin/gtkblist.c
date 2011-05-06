@@ -85,6 +85,7 @@ typedef struct
 	GtkWidget *combo;
 	GtkWidget *entry;
 	GtkWidget *entry_for_alias;
+	GtkWidget *entry_for_invite;
 
 } PidginAddBuddyData;
 
@@ -418,16 +419,13 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 {
 	GtkTreeIter iter;
 	GtkTreePath *path = NULL;
-	GValue val;
 	PurpleBlistNode *node;
 	const char *text = NULL;
 
 	path = gtk_tree_path_new_from_string (path_str);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	switch (purple_blist_node_get_type(node)) {
 	case PURPLE_BLIST_CONTACT_NODE:
@@ -573,7 +571,6 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	GValue val;
 	PurpleBlistNode *node;
 	PurpleGroup *dest;
 
@@ -581,9 +578,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	path = gtk_tree_path_new_from_string (arg1);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", FALSE, NULL);
 
@@ -968,7 +963,7 @@ pidgin_blist_joinchat_is_showable()
 
 static GtkWidget *
 make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
-	const char *title, const char *window_role, const char *label_text, 
+	const char *title, const char *window_role, const char *label_text,
 	GCallback callback_func, PurpleFilterAccountFunc filter_func,
 	GCallback response_cb)
 {
@@ -1160,12 +1155,8 @@ pidgin_blist_joinchat_show(void)
 static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
-
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &node, -1);
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
@@ -1186,12 +1177,8 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
-
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &node, -1);
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
@@ -1226,13 +1213,9 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	PurpleBlistNode *node;
 	GtkTreeIter iter;
-	GValue val;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy;
@@ -1510,7 +1493,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	}
 	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
-	
+
 #ifdef USE_VV
 	if (prpl_info && prpl_info->get_media_caps) {
 		PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -1531,9 +1514,9 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
 		}
 	}
-	
+
 #endif
-	
+
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
@@ -1595,7 +1578,6 @@ static gboolean
 gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter, parent;
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
@@ -1604,10 +1586,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
-			NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(event->state & GDK_CONTROL_MASK &&
 			(event->keyval == 'o' || event->keyval == 'O')) {
@@ -1762,8 +1741,7 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 	gboolean autojoin, persistent;
 
 	menu = gtk_menu_new();
-	autojoin = (purple_blist_node_get_bool(node, "gtk-autojoin") ||
-			(purple_blist_node_get_string(node, "gtk-autojoin") != NULL));
+	autojoin = purple_blist_node_get_bool(node, "gtk-autojoin");
 	persistent = purple_blist_node_get_bool(node, "gtk-persistent");
 
 	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
@@ -1948,7 +1926,6 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 {
 	GtkTreePath *path;
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	PurplePlugin *prpl = NULL;
@@ -1960,9 +1937,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 	gtknode = (struct _pidgin_blist_node *)node->ui_data;
 
 	/* Right click draws a context menu */
@@ -2021,7 +1996,6 @@ static gboolean
 pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 {
 	PurpleBlistNode *node;
-	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	gboolean handled = FALSE;
@@ -2030,10 +2004,7 @@ pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	if (!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel),
-							 &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	/* Shift+F10 draws a context menu */
 	handled = pidgin_blist_show_context_menu(node, pidgin_treeview_popup_menu_position_func, tv, 0, GDK_CURRENT_TIME);
@@ -2274,13 +2245,10 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
 		PurpleBlistNode *node = NULL;
-		GValue val;
 		if(!sourcerow)
 			return;
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-		node = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		gtk_selection_data_set (data,
 					gdk_atom_intern ("PURPLE_BLIST_NODE", FALSE),
 					8, /* bits */
@@ -2297,7 +2265,6 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 		PurpleBlistNode *node = NULL;
 		PurpleBuddy *buddy;
 		PurpleConnection *gc;
-		GValue val;
 		GString *str;
 		const char *protocol;
 
@@ -2309,11 +2276,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 								sourcerow);
-		val.g_type = 0;
-		gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
-								 NODE_COLUMN, &val);
-
-		node = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		{
@@ -2387,15 +2350,12 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 			struct _pidgin_blist_node *gtknode;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 					&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-					&iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+					&iter, NODE_COLUMN, &node, -1);
 			gtknode = node->ui_data;
 
 			if (PURPLE_BLIST_NODE_IS_CONTACT(n)) {
@@ -2540,14 +2500,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		{
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-									  &iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+				&iter, NODE_COLUMN, &node, -1);
 
 			if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 			{
@@ -2602,14 +2559,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 		{
 			GtkTreeIter iter;
 			PurpleBlistNode *node;
-			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
-			val.g_type = 0;
-			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-									  &iter, NODE_COLUMN, &val);
-			node = g_value_get_pointer(&val);
+			gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+				&iter, NODE_COLUMN, &node, -1);
 
 			if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 			{
@@ -2638,14 +2592,11 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 			{
 				GtkTreeIter iter;
 				PurpleBlistNode *node;
-				GValue val;
 
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 							&iter, path);
-				val.g_type = 0;
-				gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
-							  &iter, NODE_COLUMN, &val);
-				node = g_value_get_pointer(&val);
+				gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel),
+					&iter, NODE_COLUMN, &node, -1);
 
 				if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 					PurpleBuddy *b = PURPLE_BLIST_NODE_IS_BUDDY(node) ? PURPLE_BUDDY(node) : purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
@@ -3210,16 +3161,13 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
-	GValue val;
 	struct _pidgin_blist_node *gtknode;
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2),
 		&path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	if(!PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		gtk_tree_path_free(path);
@@ -3323,7 +3271,6 @@ pidgin_blist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 {
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
-	GValue val;
 	gboolean editable = FALSE;
 
 	/* If we're editing a cell (e.g. alias editing), don't show the tooltip */
@@ -3337,9 +3284,8 @@ pidgin_blist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 	}
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	val.g_type = 0;
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
+	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
+
 	return pidgin_blist_create_tooltip_for_node(widget, node, w, h);
 }
 
@@ -3461,13 +3407,13 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		}
 	}
 }
-	
+
 static void
 global_moods_for_each(gpointer key, gpointer value, gpointer user_data)
 {
 	GList **out_moods = (GList **) user_data;
 	PurpleMood *mood = (PurpleMood *) value;
-	
+
 	*out_moods = g_list_append(*out_moods, mood);
 }
 
@@ -3483,7 +3429,7 @@ get_global_moods(void)
 	GList *out_moods = NULL;
 	int i = 0;
 	int num_accounts = 0;
-	
+
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 		if (purple_account_is_connected(account)) {
@@ -3519,7 +3465,7 @@ get_global_moods(void)
 
 	while (out_moods) {
 		PurpleMood *mood = (PurpleMood *) out_moods->data;
-		int in_num_accounts = 
+		int in_num_accounts =
 			GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
 		if (in_num_accounts == num_accounts) {
@@ -3544,7 +3490,7 @@ get_global_mood_status(void)
 {
 	GList *accounts = purple_accounts_get_all_active();
 	const gchar *found_mood = NULL;
-	
+
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 
@@ -3579,7 +3525,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleMood *mood;
 	PurpleMood *global_moods = get_global_moods();
-	
+
 	if (account) {
 		PurplePresence *presence = purple_account_get_presence(account);
 		PurpleStatus *status = purple_presence_get_status(presence, "mood");
@@ -3653,7 +3599,7 @@ set_mood_show(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
-/* NOTE: Do not set any accelerator to Control+O. It is mapped by 
+/* NOTE: Do not set any accelerator to Control+O. It is mapped by
    gtk_blist_key_press_cb to "Get User Info" on the selected buddy. */
 
 	/* Buddies menu */
@@ -4109,7 +4055,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 		status = purple_presence_get_status(p, "mood");
 		name = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
-		
+
 		if (!(name && *name))
 			return NULL;
 
@@ -4419,7 +4365,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		}
 	} else {
 		if (name_color) {
-			text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>", 
+			text = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
 				name_font, name_color, nametext);
 		} else {
 			text = g_strdup_printf("<span font_desc='%s'>%s</span>", name_font,
@@ -5188,7 +5134,7 @@ add_generic_error_dialog(PurpleAccount *account,
 		account);
 
 	 if(err->type == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT)
-		pidgin_mini_dialog_add_button(PIDGIN_MINI_DIALOG(mini_dialog),
+		pidgin_mini_dialog_add_non_closing_button(PIDGIN_MINI_DIALOG(mini_dialog),
 				_("SSL FAQs"), ssl_faq_clicked_cb, NULL);
 
 	g_signal_connect_after(mini_dialog, "destroy",
@@ -5785,7 +5731,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
 	GtkWidget *ebox;
-	GtkWidget *sw;
 	GtkWidget *sep;
 	GtkWidget *label;
 	GtkWidget *close;
@@ -5936,11 +5881,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
 
 	/****************************** GtkTreeView **********************************/
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_widget_show(sw);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
 						 GDK_TYPE_PIXBUF, /* Status icon */
 						 G_TYPE_BOOLEAN,  /* Status icon visible */
@@ -6020,8 +5960,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview),
 			pidgin_blist_search_equal_func, NULL, NULL);
 
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), 
+		pidgin_make_scrollable(gtkblist->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
+		TRUE, TRUE, 0);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sep, FALSE, FALSE, 0);
@@ -6604,7 +6545,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 					ihrs, imin);
 			} else {
 				idle = g_strdup_printf("<span font_desc='%s'>%d:%02d</span>",
-					theme_font_get_face_default(pair, ""), 
+					theme_font_get_face_default(pair, ""),
 					ihrs, imin);
 			}
 		}
@@ -6709,7 +6650,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 				tmp = g_strdup_printf("<span font_desc='%s' color='%s'>%s</span>",
 						font, fg_color, mark);
 			} else {
-				tmp = g_strdup_printf("<span font_desc='%s'>%s</span>", font, 
+				tmp = g_strdup_printf("<span font_desc='%s'>%s</span>", font,
 					mark);
 			}
 			g_free(mark);
@@ -7026,8 +6967,24 @@ static void
 add_buddy_select_account_cb(GObject *w, PurpleAccount *account,
 							PidginAddBuddyData *data)
 {
+	PurpleConnection *pc = NULL;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	gboolean invite_enabled = TRUE;
+
 	/* Save our account */
 	data->rq_data.account = account;
+
+	if (account)
+		pc = purple_account_get_connection(account);
+	if (pc)
+		prpl = purple_connection_get_prpl(pc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info && !(prpl_info->options & OPT_PROTO_INVITE_MESSAGE))
+		invite_enabled = FALSE;
+
+	gtk_widget_set_sensitive(data->entry_for_invite, invite_enabled);
 }
 
 static void
@@ -7039,7 +6996,7 @@ destroy_add_buddy_dialog_cb(GtkWidget *win, PidginAddBuddyData *data)
 static void
 add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 {
-	const char *grp, *who, *whoalias;
+	const char *grp, *who, *whoalias, *invite;
 	PurpleAccount *account;
 	PurpleGroup *g;
 	PurpleBuddy *b;
@@ -7053,6 +7010,9 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		whoalias = gtk_entry_get_text(GTK_ENTRY(data->entry_for_alias));
 		if (*whoalias == '\0')
 			whoalias = NULL;
+		invite = gtk_entry_get_text(GTK_ENTRY(data->entry_for_invite));
+		if (*invite == '\0')
+			invite = NULL;
 
 		account = data->rq_data.account;
 
@@ -7078,7 +7038,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			purple_blist_add_buddy(b, NULL, g, NULL);
 		}
 
-		purple_account_add_buddy(account, b);
+		purple_account_add_buddy_with_invite(account, b, invite);
 
 		/* Offer to merge people with the same alias. */
 		if (whoalias != NULL && g != NULL)
@@ -7116,9 +7076,11 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 {
 	PidginAddBuddyData *data = g_new0(PidginAddBuddyData, 1);
 
+	if (account == NULL)
+		account = purple_connection_get_account(purple_connections_get_all()->data);
+
 	make_blist_request_dialog((PidginBlistRequestData *)data,
-		(account != NULL
-			? account : purple_connection_get_account(purple_connections_get_all()->data)),
+		account,
 		_("Add Buddy"), "add_buddy",
 		_("Add a buddy.\n"),
 		G_CALLBACK(add_buddy_select_account_cb), NULL,
@@ -7162,11 +7124,19 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	if (username != NULL)
 		gtk_widget_grab_focus(GTK_WIDGET(data->entry_for_alias));
 
+	data->entry_for_invite = gtk_entry_new();
+	pidgin_add_widget_to_vbox(data->rq_data.vbox, _("(Optional) _Invite message:"),
+	                          data->rq_data.sg, data->entry_for_invite, TRUE,
+	                          NULL);
+
 	data->combo = pidgin_text_combo_box_entry_new(group, groups_tree());
 	pidgin_add_widget_to_vbox(data->rq_data.vbox, _("Add buddy to _group:"),
 	                          data->rq_data.sg, data->combo, TRUE, NULL);
 
 	gtk_widget_show_all(data->rq_data.window);
+
+	/* Force update of invite message entry sensitivity */
+	add_buddy_select_account_cb(NULL, account, data);
 }
 
 static void
@@ -7477,9 +7447,7 @@ static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 			if(chat->account != account)
 				continue;
 
-			if(purple_blist_node_get_bool((PurpleBlistNode*)chat, "gtk-autojoin") ||
-					(purple_blist_node_get_string((PurpleBlistNode*)chat,
-					 "gtk-autojoin") != NULL))
+			if (purple_blist_node_get_bool((PurpleBlistNode*)chat, "gtk-autojoin"))
 				serv_join_chat(gc, chat->components);
 		}
 	}
@@ -7744,14 +7712,11 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		const char *this_name;
 		int cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			this_name = purple_contact_get_alias((PurpleContact*)n);
@@ -7774,7 +7739,6 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 				return;
 			}
 		}
-		g_value_unset(&val);
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
 
 	if(cur) {
@@ -7804,7 +7768,7 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
 		return;
 	} else {
-		sort_method_none(node, blist, groupiter, cur, iter);
+		sort_method_alphabetical(node, blist, groupiter, cur, iter);
 		return;
 	}
 
@@ -7815,14 +7779,11 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		gint name_cmp;
 		gint presence_cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
 			this_buddy = purple_contact_get_priority_buddy((PurpleContact*)n);
@@ -7858,8 +7819,6 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 				return;
 			}
 		}
-
-		g_value_unset(&val);
 	}
 	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel),
 									&more_z));
@@ -7916,15 +7875,12 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 	}
 
 	do {
-		GValue val;
 		PurpleBlistNode *n;
 		PurpleBlistNode *n2;
 		PurpleBuddy *buddy;
 		int cmp;
 
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &n, -1);
 		this_log_activity_score = 0;
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
@@ -7952,7 +7908,6 @@ static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *bli
 				return;
 			}
 		}
-		g_value_unset(&val);
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
 
 	if (cur != NULL) {
@@ -8155,7 +8110,7 @@ pidgin_blist_update_accounts_menu(void)
 		gc = purple_account_get_connection(account);
 		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
 		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
-		
+
 		if (prpl_info &&
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {

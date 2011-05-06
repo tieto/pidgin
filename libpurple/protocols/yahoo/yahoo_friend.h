@@ -55,7 +55,7 @@ typedef struct _YahooFriend {
 	gchar *ip;
 	gboolean bicon_sent_request;
 	YahooPresenceVisibility presence;
-	YahooFederation fed; 
+	YahooFederation fed;
 	long int version_id;
 	YahooPersonalDetails ypd;
 	YahooP2PStatus p2p_status;

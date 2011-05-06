@@ -17,7 +17,7 @@ GLint lidLists[NUM_LIDS];
 void initLids(){
 	GLint test;
 	int i;
-	
+
 	GLint[0]=Gen3DObjectListLid1();
 	GLint[1]=Gen3DObjectListLid2();
 	GLint[2]=Gen3DObjectListLid3();

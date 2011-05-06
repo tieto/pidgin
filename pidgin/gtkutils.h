@@ -364,7 +364,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  * Add autocompletion of screenames to an entry, supporting a filtering function.
  *
  * @param entry       The GtkEntry on which to setup autocomplete.
- * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ * @param optmenu     A menu for accounts, returned by pidgin_account_option_menu_new().
  *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @param filter_func A function for checking if an autocomplete entry
@@ -843,6 +843,19 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  * @since 2.5.0
  */
 GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+
+/**
+ * Add scrollbars to a widget
+ * @param widget      The child widget
+ * @hscrollbar_policy Horizontal scrolling policy
+ * @vscrollbar_policy Vertical scrolling policy
+ * @shadow            Shadow type
+ * @width             Desired widget width, or -1 for default
+ * @height            Desired widget height, or -1 for default
+ *
+ * @since 2.8.0
+ */
+GtkWidget *pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPolicyType vscrollbar_policy, GtkShadowType shadow_type, int width, int height);
 
 /**
  * Initialize some utility functions.

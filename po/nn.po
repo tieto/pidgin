@@ -1,19 +1,19 @@
 #
-# Yngve Spjeld Landro <l10n@landro.net>, 2010.
+# Yngve Spjeld Landro <l10n@landro.net>, 2010, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
-"PO-Revision-Date: 2010-12-14 04:02+0100\n"
+"POT-Creation-Date: 2011-03-10 01:13-0800\n"
+"PO-Revision-Date: 2011-02-08 17:03+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
-"Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
+"Language-Team: Norwegian Nynorsk <i18n-nn@lister.ping.uio.no>\n"
 "Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Content-Transfer-Encoding: 8-bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -36,7 +36,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 msgstr ""
 "%s\n"
-"Bruk: %s [VAL]…\n"
+"Bruk: %s [VAL] …\n"
 "\n"
 "  -c, --config=DIR    bruk DIR som mappe for innstillingsfilene\n"
 "  -d, --debug         skriv ut feilsøkingsmeldingar til standard utkanal\n"
@@ -272,7 +272,7 @@ msgid "Information"
 msgstr "Opplysningar"
 
 msgid "Retrieving..."
-msgstr "Hentar…"
+msgstr "Hentar …"
 
 msgid "Get Info"
 msgstr "Hent info"
@@ -346,7 +346,7 @@ msgid "On Mobile"
 msgstr "På mobil"
 
 msgid "New..."
-msgstr "Ny…"
+msgstr "Ny …"
 
 msgid "Saved..."
 msgstr "Lagra…"
@@ -2357,9 +2357,12 @@ msgstr ""
 "Fillagringsbane\n"
 "(før opp heile filbana)"
 
-# var: Automatisk avvising frå brukarar utanfor vennelista
-msgid "Automatically reject from users not in buddy list"
-msgstr "Automatisk avvising av brukarar utanfor vennelista"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr ""
+"Når ein filoverføringsførespurnad kjem frå ein brukar som\n"
+"*ikkje* er i vennelista di:"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2371,6 +2374,9 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Lag ein ny katalog for kvar brukar"
+
+msgid "Escape the filenames"
+msgstr "Vern filnamna (esc.-sekv.)"
 
 msgid "Notes"
 msgstr "Notat"
@@ -3211,9 +3217,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Førenamn"
 
@@ -3822,7 +3826,10 @@ msgstr "utfør"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Tenaren krev autentisering i klartekst over eit ukryptert samband"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Ugyldig svar frå tenaren"
 
@@ -3965,7 +3972,6 @@ msgstr "Fylke/region"
 msgid "Postal Code"
 msgstr "Postnummer"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -4140,7 +4146,7 @@ msgid "_Server:"
 msgstr "_Tenar:"
 
 msgid "_Handle:"
-msgstr "R_eferanse:"
+msgstr "Re_feranse:"
 
 #, c-format
 msgid "%s is not a valid room name"
@@ -6055,6 +6061,10 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Koplar til…"
 
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Visingsnamnet du skreiv er ugyldig."
+
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN-en du skreiv nyttar ei ulovleg lengd [7-10]."
 
@@ -6123,34 +6133,6 @@ msgstr "MXit-kontovalidering"
 msgid "Retrieving User Information..."
 msgstr "Hentar brukaropplysningar…"
 
-msgid "Loading menu..."
-msgstr "Lastar menyen…"
-
-msgid "Status Message"
-msgstr "Statusmelding"
-
-msgid "Rejection Message"
-msgstr "Avvisingsmelding"
-
-#. hidden number
-msgid "Hidden Number"
-msgstr "Skjult nummer"
-
-msgid "Your MXit ID..."
-msgstr "MXit-id-en din…"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP-tenar"
-
-msgid "Connect via HTTP"
-msgstr "Kopla til over HTTP"
-
-# ? treng gjennomsyn
-msgid "Enable splash-screen popup"
-msgstr "Bruk oppstartsvindauge"
-
 #. you were kicked
 msgid "You have been kicked from this MultiMX."
 msgstr "Du er blitt sparka ut frå denne MultiMX-en."
@@ -6164,6 +6146,47 @@ msgstr "Rom_namn:"
 #. Display system message in chat window
 msgid "You have invited"
 msgstr "Du har invitert "
+
+msgid "Loading menu..."
+msgstr "Lastar menyen…"
+
+msgid "Status Message"
+msgstr "Statusmelding"
+
+msgid "Rejection Message"
+msgstr "Avvisingsmelding"
+
+#. hidden number
+msgid "Hidden Number"
+msgstr "Skjult nummer"
+
+#, fuzzy
+msgid "No profile available"
+msgstr "Ikkje tilgjengeleg"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Denne kontoen har ikkje teke i bruk e-postfunksjonen."
+
+msgid "Your MXit ID..."
+msgstr "MXit-id-en din…"
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Inviter"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP-tenar"
+
+msgid "Connect via HTTP"
+msgstr "Kopla til over HTTP"
+
+# ? treng gjennomsyn
+msgid "Enable splash-screen popup"
+msgstr "Bruk oppstartsvindauge"
 
 msgid "Last Online"
 msgstr "Sist tilkopla"
@@ -7429,6 +7452,14 @@ msgstr "AIM-sambandet kan vera tapt."
 msgid "You have been disconnected from chat room %s."
 msgstr "Du er blitt fråkopla praterommet %s."
 
+msgid "The new formatting is invalid."
+msgstr "Den nye formateringa er ugyldig."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Formatering av brukarnamnet vil berre endra store/små bokstavar og "
+"blankteikn."
+
 msgid "Pop-Up Message"
 msgstr "Sprettoppmelding"
 
@@ -7695,14 +7726,6 @@ msgstr "Nettnærvær (å slå på dette gjer at du kjem til å få søppelpost!)
 msgid "ICQ Privacy Options"
 msgstr "ICQ personvernval"
 
-msgid "The new formatting is invalid."
-msgstr "Den nye formateringa er ugyldig."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Formatering av brukarnamnet vil berre endra store/små bokstavar og "
-"blankteikn."
-
 msgid "Change Address To:"
 msgstr "Endra adressa til:"
 
@@ -7808,75 +7831,6 @@ msgstr ""
 "Dette krev ei direktetilkopling mellom dei to datamaskinene og er nødvendig "
 "for lynmeldingsbilete. Fordi IP-adressa vil bli avslørt, blir dette sett på "
 "som ein tryggleiksrisiko."
-
-msgid "Invalid SNAC"
-msgstr "Ugyldig SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr "Overskriden tenargrense"
-
-msgid "Client rate limit exceeded"
-msgstr "Overskriden klientgrense"
-
-msgid "Service unavailable"
-msgstr "Tenesta er utilgjengeleg"
-
-msgid "Service not defined"
-msgstr "Tenesta er ikkje definert"
-
-msgid "Obsolete SNAC"
-msgstr "Forelda SNAC"
-
-msgid "Not supported by host"
-msgstr "Ikkje støtta av verten"
-
-msgid "Not supported by client"
-msgstr "Ikkje støtta av klienten"
-
-msgid "Refused by client"
-msgstr "Avvist av klienten"
-
-msgid "Reply too big"
-msgstr "Svaret er for stort"
-
-msgid "Responses lost"
-msgstr "Tapte svar"
-
-msgid "Request denied"
-msgstr "Førsepurnad avvist"
-
-msgid "Busted SNAC payload"
-msgstr "Ødelagt SNAC-pakkeinnhald"
-
-msgid "Insufficient rights"
-msgstr "Ikkje nok rettar"
-
-msgid "In local permit/deny"
-msgstr "I lokal tilgangs-/forbodsliste"
-
-msgid "Warning level too high (sender)"
-msgstr "For høgt åtvaringsnivå (sendar)"
-
-msgid "Warning level too high (receiver)"
-msgstr "For høgt åtvaringsnivå (mottakar)"
-
-msgid "User temporarily unavailable"
-msgstr "Brukaren er mellombels utilgjengeleg"
-
-msgid "No match"
-msgstr "Ikkje noko samsvar"
-
-msgid "List overflow"
-msgstr "Lista er full"
-
-msgid "Request ambiguous"
-msgstr "Uklar førespurnad"
-
-msgid "Queue full"
-msgstr "Køen er full"
-
-msgid "Not while on AOL"
-msgstr "Ikkje når pålogga AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -7996,6 +7950,75 @@ msgstr "Medlem sidan"
 
 msgid "Capabilities"
 msgstr "Evner"
+
+msgid "Invalid SNAC"
+msgstr "Ugyldig SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr "Overskriden tenargrense"
+
+msgid "Client rate limit exceeded"
+msgstr "Overskriden klientgrense"
+
+msgid "Service unavailable"
+msgstr "Tenesta er utilgjengeleg"
+
+msgid "Service not defined"
+msgstr "Tenesta er ikkje definert"
+
+msgid "Obsolete SNAC"
+msgstr "Forelda SNAC"
+
+msgid "Not supported by host"
+msgstr "Ikkje støtta av verten"
+
+msgid "Not supported by client"
+msgstr "Ikkje støtta av klienten"
+
+msgid "Refused by client"
+msgstr "Avvist av klienten"
+
+msgid "Reply too big"
+msgstr "Svaret er for stort"
+
+msgid "Responses lost"
+msgstr "Tapte svar"
+
+msgid "Request denied"
+msgstr "Førsepurnad avvist"
+
+msgid "Busted SNAC payload"
+msgstr "Ødelagt SNAC-pakkeinnhald"
+
+msgid "Insufficient rights"
+msgstr "Ikkje nok rettar"
+
+msgid "In local permit/deny"
+msgstr "I lokal tilgangs-/forbodsliste"
+
+msgid "Warning level too high (sender)"
+msgstr "For høgt åtvaringsnivå (sendar)"
+
+msgid "Warning level too high (receiver)"
+msgstr "For høgt åtvaringsnivå (mottakar)"
+
+msgid "User temporarily unavailable"
+msgstr "Brukaren er mellombels utilgjengeleg"
+
+msgid "No match"
+msgstr "Ikkje noko samsvar"
+
+msgid "List overflow"
+msgstr "Lista er full"
+
+msgid "Request ambiguous"
+msgstr "Uklar førespurnad"
+
+msgid "Queue full"
+msgstr "Køen er full"
+
+msgid "Not while on AOL"
+msgstr "Ikkje når pålogga AOL"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
@@ -8589,14 +8612,14 @@ msgstr "Auto"
 msgid "Select Server"
 msgstr "Vel tenar"
 
-msgid "QQ2005"
-msgstr "QQ2005"
+msgid "QQ2008"
+msgstr "QQ2008"
 
 msgid "QQ2007"
 msgstr "QQ2007"
 
-msgid "QQ2008"
-msgstr "QQ2008"
+msgid "QQ2005"
+msgstr "QQ2005"
 
 msgid "Connect by TCP"
 msgstr "Kopla til med TCP"
@@ -8610,6 +8633,10 @@ msgstr "Vis tenarnytt"
 
 msgid "Show chat room when msg comes"
 msgstr "Vis praterommet når meldinga kjem"
+
+#, fuzzy
+msgid "Use default font"
+msgstr "Bruk systemstandard"
 
 msgid "Keep alive interval (seconds)"
 msgstr "Intervall vedlikehaldstilkopling (sekund)"
@@ -11352,19 +11379,19 @@ msgid "Hide When Offline"
 msgstr "Skjul når du er fråkopla"
 
 msgid "Show When Offline"
-msgstr "Vis når du er fråkopla"
+msgstr "Vis når du er fr_åkopla"
 
 msgid "_Alias..."
-msgstr "Ka_llenamn…"
+msgstr "_Kallenamn …"
 
 msgid "_Remove"
 msgstr "_Fjern"
 
 msgid "Set Custom Icon"
-msgstr "Tilpassa ikon"
+msgstr "_Tilpassa ikon"
 
 msgid "Remove Custom Icon"
-msgstr "Fjern eige ikon"
+msgstr "Fjern tilpa_ssa ikon"
 
 msgid "Add _Buddy..."
 msgstr "Legg til _venn…"
@@ -11383,16 +11410,16 @@ msgid "_Join"
 msgstr "_Bli med"
 
 msgid "Auto-Join"
-msgstr "Automatisk pålogging"
+msgstr "Bli med auto_matisk"
 
 msgid "Persistent"
-msgstr "Varig"
+msgstr "_Varig"
 
 msgid "_Edit Settings..."
-msgstr "Endra _innstillingar…"
+msgstr "Endra _innstillingar …"
 
 msgid "_Collapse"
-msgstr "_Slå saman"
+msgstr "Sl_å saman"
 
 msgid "_Expand"
 msgstr "_Utvid"
@@ -11426,16 +11453,16 @@ msgid "/_Buddies"
 msgstr "/_Venner"
 
 msgid "/Buddies/New Instant _Message..."
-msgstr "/Venner/_Ny lynmelding…"
+msgstr "/Venner/_Ny lynmelding …"
 
 msgid "/Buddies/Join a _Chat..."
-msgstr "/Venner/Gå inn i eit prater_om…"
+msgstr "/Venner/Gå inn i eit prater_om …"
 
 msgid "/Buddies/Get User _Info..."
-msgstr "/Venner/Hent brukar_info…"
+msgstr "/Venner/Hent brukar_info …"
 
 msgid "/Buddies/View User _Log..."
-msgstr "/Venner/Vis brukar_logg…"
+msgstr "/Venner/Vis brukar_logg …"
 
 msgid "/Buddies/Sh_ow"
 msgstr "/Venner/Vi_s"
@@ -11459,10 +11486,10 @@ msgid "/Buddies/_Sort Buddies"
 msgstr "/Venner/Sort_er vennene"
 
 msgid "/Buddies/_Add Buddy..."
-msgstr "/Venner/Legg til _venn…"
+msgstr "/Venner/Legg til _venn …"
 
 msgid "/Buddies/Add C_hat..."
-msgstr "/Venner/Legg til _praterom…"
+msgstr "/Venner/Legg til _praterom …"
 
 msgid "/Buddies/Add _Group..."
 msgstr "/Venner/Legg til _gruppe…"
@@ -11868,7 +11895,7 @@ msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Samtale/T_øm historikken"
 
 msgid "/Conversation/M_edia"
-msgstr "/Samtale/M_edia"
+msgstr "/Samtale/Me_dia"
 
 msgid "/Conversation/Media/_Audio Call"
 msgstr "/Samtale/Media/_Lydsamtale"
@@ -11877,13 +11904,13 @@ msgid "/Conversation/Media/_Video Call"
 msgstr "/Samtale/Media/_Biletsamtale"
 
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/Samtale/Media/Lyd\\/_Biletsamtale"
+msgstr "/Samtale/Media/Lyd-\\/bilets_amtale"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Samtale/S_end fil…"
 
 msgid "/Conversation/Get _Attention"
-msgstr "/Samtale/Få _merksemd"
+msgstr "/Samtale/F_å merksemd"
 
 # var: /Samtale/Legg til _vennevarsling…
 msgid "/Conversation/Add Buddy _Pounce..."
@@ -11908,7 +11935,7 @@ msgid "/Conversation/_Unblock..."
 msgstr "/Samtale/_Avblokker…"
 
 msgid "/Conversation/_Add..."
-msgstr "/Samtale/Legg _til…"
+msgstr "/Samtale/Legg _til …"
 
 msgid "/Conversation/_Remove..."
 msgstr "/Samtale/F_jern…"
@@ -12149,9 +12176,6 @@ msgstr "Feil"
 msgid "Fatal Error"
 msgstr "Alvorleg feil"
 
-msgid "bug master"
-msgstr "feilrettingsansvarleg"
-
 msgid "artist"
 msgstr "kunstnar"
 
@@ -12331,6 +12355,10 @@ msgstr "Lao"
 
 msgid "Maithili"
 msgstr "Maithili"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Ny e-post"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
@@ -12625,7 +12653,7 @@ msgid "Remove Buddy"
 msgstr "Fjern venn"
 
 msgid "_Remove Buddy"
-msgstr "_Fjern venn"
+msgstr "Fje_rn venn"
 
 #, c-format
 msgid ""
@@ -13024,7 +13052,7 @@ msgid "Delete Log?"
 msgstr "Sletta loggen?"
 
 msgid "Delete Log..."
-msgstr "Sletta loggen…"
+msgstr "Sletta loggen …"
 
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
@@ -13300,7 +13328,7 @@ msgid "Brows_e..."
 msgstr "_Bla gjennom…"
 
 msgid "Br_owse..."
-msgstr "Bl_a gjennom…"
+msgstr "Bl_a gjennom …"
 
 # kanskje endra sidan "F_ørehandsvis" òg gjeld lydar?
 msgid "Pre_view"
@@ -13346,7 +13374,7 @@ msgid "Sent a message"
 msgstr "Sendt ei melding"
 
 msgid "Unknown.... Please report this!"
-msgstr "Ukjend… . Rapporter feilen."
+msgstr "Ukjend … . Rapporter feilen."
 
 msgid "(Custom)"
 msgstr "(tilpassa)"
@@ -13534,13 +13562,13 @@ msgid "_Enable automatic router port forwarding"
 msgstr "Slå på automatisk port_vidaresending"
 
 msgid "_Manually specify range of ports to listen on:"
-msgstr "Før opp _portrekkje det skal lyttast til:"
+msgstr "Før opp portr_ekkje det skal lyttast til:"
 
 msgid "_Start:"
-msgstr "_Start:"
+msgstr "_start:"
 
 msgid "_End:"
-msgstr "_Slutt:"
+msgstr "s_lutt:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -13743,7 +13771,7 @@ msgid "Play"
 msgstr "Spel"
 
 msgid "_Browse..."
-msgstr "Bla _gjennom…"
+msgstr "Bla _gjennom …"
 
 msgid "_Reset"
 msgstr "_Nullstill"
@@ -13870,7 +13898,7 @@ msgid "Choose New Name"
 msgstr "Vel nytt namn"
 
 msgid "Select Folder..."
-msgstr "Vel mappe…"
+msgstr "Vel mappe …"
 
 #. list button
 msgid "_Get List"
@@ -13959,10 +13987,10 @@ msgid "Waiting for network connection"
 msgstr "Ventar på nettverkssamband"
 
 msgid "New status..."
-msgstr "Ny tilstand…"
+msgstr "Ny tilstand …"
 
 msgid "Saved statuses..."
-msgstr "Lagra tilstandar…"
+msgstr "Lagra tilstandar …"
 
 msgid "Status Selector"
 msgstr "Tilstandsveljar"
@@ -14113,10 +14141,10 @@ msgid "_Invite"
 msgstr "_Inviter"
 
 msgid "_Modify..."
-msgstr "E_ndra…"
+msgstr "E_ndra …"
 
 msgid "_Add..."
-msgstr "L_egg til…"
+msgstr "L_egg til …"
 
 msgid "_Open Mail"
 msgstr "_Opna e-post"
@@ -14211,7 +14239,7 @@ msgid "Use last buddy when scores are equal"
 msgstr "Bruk siste vennen når poengstillinga er lik"
 
 msgid "Point values to use for account..."
-msgstr "Poengverdiar som kontoen kan nytta…"
+msgstr "Poengverdiar som kontoen kan nytta …"
 
 #. *< type
 #. *< ui_requirement
@@ -15092,7 +15120,7 @@ msgid "24 hour time format"
 msgstr "24-timars tidsformat"
 
 msgid "Show dates in..."
-msgstr "Vis datoar i…"
+msgstr "Vis datoar i …"
 
 msgid "Co_nversations:"
 msgstr "_Samtalar:"
@@ -15440,6 +15468,13 @@ msgstr "Besøk Pidgin sin nettstad"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
+
+#~ msgid "bug master"
+#~ msgstr "feilrettingsansvarleg"
+
+# var: Automatisk avvising frå brukarar utanfor vennelista
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Automatisk avvising av brukarar utanfor vennelista"
 
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Overføringa av samtidsdatastraumen feila\n"

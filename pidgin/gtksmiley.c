@@ -774,7 +774,6 @@ smiley_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 static GtkWidget *smiley_list_create(SmileyManager *dialog)
 {
-	GtkWidget *sw;
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
 	GtkTargetEntry te[3] = {
@@ -782,14 +781,6 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 		{"text/uri-list", 0, 1},
 		{"STRING", 0, 2}
 	};
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-			GTK_POLICY_AUTOMATIC,
-			GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-			GTK_SHADOW_IN);
-	gtk_widget_show(sw);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(N_COL,
@@ -807,7 +798,6 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
 
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smile_selected_cb), dialog);
 	g_signal_connect(G_OBJECT(treeview), "row_activated", G_CALLBACK(smiley_edit_cb), dialog);
@@ -822,7 +812,7 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 	add_columns(treeview, dialog);
 	populate_smiley_list(dialog);
 
-	return sw;
+	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1);
 }
 
 static void refresh_list()

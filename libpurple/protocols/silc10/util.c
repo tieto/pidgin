@@ -635,13 +635,13 @@ char *silcpurple_file2mime(const char *filename)
 		return strdup("image/gif");
 	else if (!g_ascii_strcasecmp(".tiff", ct))
 		return strdup("image/tiff");
-	
+
 	return NULL;
 }
 
-/* Checks if message has images, and assembles MIME message if it has. 
-   If only one image is present, creates simple MIME image message.  If 
-   there are multiple images and/or text with images multipart MIME 
+/* Checks if message has images, and assembles MIME message if it has.
+   If only one image is present, creates simple MIME image message.  If
+   there are multiple images and/or text with images multipart MIME
    message is created. */
 
 SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
@@ -747,7 +747,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 		silc_mime_add_field(mime, "MIME-Version", "1.0");
 		g_snprintf(b, sizeof(b), "b%4X%4X",
 			   (unsigned int)time(NULL),
-			   silc_dlist_count(parts)); 
+			   silc_dlist_count(parts));
 		silc_mime_set_multipart(mime, "mixed", b);
 		silc_dlist_start(parts);
 		while ((p = silc_dlist_get(parts)) != SILC_LIST_END)

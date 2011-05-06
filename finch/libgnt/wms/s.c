@@ -146,11 +146,11 @@ s_mouse_clicked(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widge
 	if (!widget)
 		return FALSE;
 		/* This might be a place to bring up a context menu */
-	
+
 	if (event != GNT_LEFT_MOUSE_DOWN ||
 			GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		return FALSE;
-	
+
 	gnt_widget_get_position(widget, &x, &y);
 	gnt_widget_get_size(widget, &w, &h);
 

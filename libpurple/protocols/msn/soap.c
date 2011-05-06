@@ -141,8 +141,7 @@ msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
 {
 	MsnSoapRequest *req = item;
 
-	if (req->cb)
-		req->cb(req->message, NULL, req->cb_data);
+	req->cb(req->message, NULL, req->cb_data);
 
 	msn_soap_request_destroy(req, FALSE);
 }
@@ -230,12 +229,6 @@ msn_soap_connection_handle_next(MsnSoapConnection *conn)
 	msn_soap_connection_sanitize(conn, FALSE);
 
 	conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
-
-	if (conn->current_request) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
-		msn_soap_connection_destroy_foreach_cb(req, conn);
-	}
 }
 
 static void
@@ -269,6 +262,7 @@ msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 	MsnSoapCallback cb, gpointer cb_data)
 {
 	g_return_if_fail(message != NULL);
+	g_return_if_fail(cb != NULL);
 
 	msn_soap_message_send_internal(session, message, host, path, secure,
 		cb, cb_data, FALSE);
@@ -281,12 +275,13 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 	char *path;
 
 	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
-		msn_soap_message_send_internal(conn->session, conn->current_request->message,
-			host, path, conn->current_request->secure,
-			conn->current_request->cb, conn->current_request->cb_data, TRUE);
-
-		msn_soap_request_destroy(conn->current_request, TRUE);
+		MsnSoapRequest *req = conn->current_request;
 		conn->current_request = NULL;
+
+		msn_soap_message_send_internal(conn->session, req->message, host, path,
+			req->secure, req->cb, req->cb_data, TRUE);
+
+		msn_soap_request_destroy(req, TRUE);
 
 		g_free(host);
 		g_free(path);
@@ -380,7 +375,6 @@ msn_soap_process(MsnSoapConnection *conn)
 					/* something horribly wrong */
 					purple_ssl_close(conn->ssl);
 					conn->ssl = NULL;
-					msn_soap_connection_handle_next(conn);
 					handled = TRUE;
 					break;
 				} else if (conn->response_code == 503 && conn->session->login_step < MSN_LOGIN_STEP_END) {
