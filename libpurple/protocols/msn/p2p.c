@@ -407,6 +407,31 @@ msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info)
 	}
 }
 
+gboolean
+msn_p2p_info_require_ack(MsnP2PInfo *info)
+{
+	gboolean ret = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			guint32 flags = msn_p2p_info_get_flags(info);
+
+			ret = flags == P2P_NO_FLAG || flags == P2P_WLM2009_COMP ||
+			      msn_p2p_msg_is_data(flags);
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			ret = (info->header.v2.opcode & P2P_OPCODE_RAK) > 0;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return ret;
+}
+
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info)
 {

@@ -502,7 +502,6 @@ static void
 process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PInfo *info)
 {
 	MsnSlpCall *slpcall;
-	guint32 flags;
 
 	slpcall = msn_slp_process_msg(slplink, slpmsg);
 
@@ -513,10 +512,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PInfo *inf
 
 	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-	flags = msn_p2p_info_get_flags(slpmsg->p2p_info);
-
-	if (flags == P2P_NO_FLAG || flags == P2P_WLM2009_COMP ||
-	    msn_p2p_msg_is_data(flags))
+	if (msn_p2p_info_require_ack(slpmsg->p2p_info))
 	{
 		/* Release all the messages and send the ACK */
 
