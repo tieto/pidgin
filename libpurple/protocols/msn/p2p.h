@@ -191,6 +191,9 @@ msn_p2p_info_is_valid(MsnP2PInfo *info);
 gboolean
 msn_p2p_info_is_final(MsnP2PInfo *info);
 
+void
+msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info);
+
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);
 
