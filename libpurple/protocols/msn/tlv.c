@@ -228,6 +228,12 @@ msn_tlvlist_add_empty(GSList **list, const guint8 type)
 }
 
 int
+msn_tlvlist_add_tlv(GSList **list, const msn_tlv_t *tlv)
+{
+	return msn_tlvlist_add_raw(list, tlv->type, tlv->length, (const char *)tlv->value);
+}
+
+int
 msn_tlvlist_replace_raw(GSList **list, const guint8 type, const guint8 length, const char *value)
 {
 	GSList *cur;
@@ -286,6 +292,12 @@ msn_tlvlist_replace_32(GSList **list, const guint8 type, const guint32 value)
 	msn_write32be(v32, value);
 
 	return msn_tlvlist_replace_raw(list, type, 4, v32);
+}
+
+int
+msn_tlvlist_replace_tlv(GSList **list, const msn_tlv_t *tlv)
+{
+	return msn_tlvlist_replace_raw(list, tlv->type, tlv->length, (const char *)tlv->value);
 }
 
 void
