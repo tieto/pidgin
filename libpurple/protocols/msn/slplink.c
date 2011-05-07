@@ -292,7 +292,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	part = msn_slpmsgpart_new(msn_p2p_info_dup(info));
 	part->ack_data = slpmsg;
 
-	real_size = (msn_p2p_info_get_flags(info) == P2P_ACK) ? 0 : slpmsg->size;
+	real_size = msn_p2p_info_is_ack(info) ? 0 : slpmsg->size;
 
 	offset = msn_p2p_info_get_offset(info);
 	if (offset < real_size)
@@ -330,8 +330,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	msn_slplink_send_part(slplink, part);
 
 
-	if (msn_p2p_msg_is_data(msn_p2p_info_get_flags(info)) &&
-		(slpmsg->slpcall != NULL))
+	if (msn_p2p_msg_is_data(info) && slpmsg->slpcall != NULL)
 	{
 		slpmsg->slpcall->progress = TRUE;
 
@@ -358,7 +357,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	{
 		msn_p2p_info_set_ack_id(info, rand() % 0xFFFFFF00);
 	}
-	else if (msn_p2p_msg_is_data(flags))
+	else if (msn_p2p_msg_is_data(info))
 	{
 		MsnSlpCall *slpcall;
 		slpcall = slpmsg->slpcall;
@@ -447,22 +446,19 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PInfo *info)
 {
 	MsnSlpMessage *slpmsg;
 	guint32 session_id;
-	guint32 flags;
 
 	slpmsg = msn_slpmsg_new(slplink);
 	slpmsg->id = msn_p2p_info_get_id(info);
 	session_id = msn_p2p_info_get_session_id(info);
-	msn_p2p_info_set_session_id(slpmsg->p2p_info, session_id);
 	slpmsg->size = msn_p2p_info_get_total_size(info);
-	flags = msn_p2p_info_get_flags(info);
-	msn_p2p_info_set_flags(slpmsg->p2p_info, flags);
+	msn_p2p_info_init_first(slpmsg->p2p_info, info);
 
 	if (session_id)
 	{
 		slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, session_id);
 		if (slpmsg->slpcall != NULL)
 		{
-			if (msn_p2p_msg_is_data(flags))
+			if (msn_p2p_msg_is_data(info))
 			{
 				PurpleXfer *xfer = slpmsg->slpcall->xfer;
 				if (xfer != NULL)
@@ -601,8 +597,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 
 	slpmsg_add_part(slpmsg, part);
 
-	if (msn_p2p_msg_is_data(msn_p2p_info_get_flags(slpmsg->p2p_info)) &&
-		(slpmsg->slpcall != NULL))
+	if (msn_p2p_msg_is_data(slpmsg->p2p_info) && slpmsg->slpcall != NULL)
 	{
 		slpmsg->slpcall->progress = TRUE;
 

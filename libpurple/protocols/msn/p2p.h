@@ -183,7 +183,7 @@ void
 msn_p2p_info_to_string(MsnP2PInfo *info, GString *str);
 
 gboolean
-msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
+msn_p2p_msg_is_data(const MsnP2PInfo *info);
 
 gboolean
 msn_p2p_info_is_valid(MsnP2PInfo *info);
@@ -196,6 +196,12 @@ msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info);
 
 gboolean
 msn_p2p_info_require_ack(MsnP2PInfo *info);
+
+gboolean
+msn_p2p_info_is_ack(MsnP2PInfo *info);
+
+void
+msn_p2p_info_init_first(MsnP2PInfo *new_info, MsnP2PInfo *old_info);
 
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);
