@@ -65,7 +65,7 @@ typedef struct {
 	guint16 version;
 	guint16 reserved;
 	guint32 caps;
-} PeerInfo;
+} P2PPeerInfo;
 
 typedef enum
 {
@@ -76,26 +76,26 @@ typedef enum
 
 typedef enum
 {
-	TLP_PEER_INFO   = 0x01, /**< Client peer info */
-	TLP_ACK         = 0x02, /**< ACK */
-	TLP_NAK         = 0x03  /**< NAK */
-} TLP;
+	P2P_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
+	P2P_TLV_TYPE_ACK        = 0x02, /**< ACK */
+	P2P_TLV_TYPE_NAK        = 0x03  /**< NAK */
+} P2PTLVType;
 
 typedef enum
 {
-	TLP_LEN_PEER_INFO   = 12,
-	TLP_LEN_ACK         = 4,
-	TLP_LEN_NAK         = 4
-} TLPLength;
+	P2P_TLV_LEN_PEER_INFO   = 12,
+	P2P_TLV_LEN_ACK         = 4,
+	P2P_TLV_LEN_NAK         = 4
+} P2PTLVLength;
 
 typedef enum
 {
-	PI_PVER     = 0x0200,
-	PI_IMP_ID   = 0,
-	PI_VER      = 0x0e00,
-	PI_RES      = 0,
-	PI_CAPS     = 0x0000010f
-} PeerInfoVal;
+	P2P_PI_PVER     = 0x0200,
+	P2P_PI_IMP_ID   = 0,
+	P2P_PI_VER      = 0x0e00,
+	P2P_PI_RES      = 0,
+	P2P_PI_CAPS     = 0x0000010f
+} P2PPeerInfoVal;
 
 #define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
 #define DLP_REMAINING_LEN 8
