@@ -741,7 +741,7 @@ oscar_login(PurpleAccount *account)
 	}
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
-	if (oscar_util_valid_name_icq((purple_account_get_username(account)))) {
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 	} else {
@@ -4581,32 +4581,18 @@ PurpleMood* oscar_get_purple_moods(PurpleAccount *account)
 const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b)
 {
 	const char *name = b ? purple_buddy_get_name(b) : NULL;
-	if ((b == NULL) || (name == NULL) || oscar_util_valid_name_sms(name))
-	{
-		if (a == NULL || oscar_util_valid_name_icq(purple_account_get_username(a)))
-			return "icq";
-		else
-			return "aim";
-	}
-
-	if (oscar_util_valid_name_icq(name))
+	if (name && !oscar_util_valid_name_sms(name) && oscar_util_valid_name_icq(name))
 		return "icq";
-	return "aim";
+
+	return "icq";
 }
 
 const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b)
 {
 	const char *name = b ? purple_buddy_get_name(b) : NULL;
-	if ((b == NULL) || (name == NULL) || oscar_util_valid_name_sms(name))
-	{
-		if (a != NULL && oscar_util_valid_name_icq(purple_account_get_username(a)))
-			return "icq";
-		else
-			return "aim";
-	}
-
-	if (oscar_util_valid_name_icq(name))
+	if (name && !oscar_util_valid_name_sms(name) && oscar_util_valid_name_icq(name))
 		return "icq";
+
 	return "aim";
 }
 
