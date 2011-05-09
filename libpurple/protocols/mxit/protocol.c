@@ -1763,7 +1763,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 	int						count;
 	int						i;
 	const char*				avatarId	= NULL;
-	const char*				statusMsg	= NULL;
+	char*					statusMsg	= NULL;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_extprofile: profile for '%s'\n", mxitId );
 
@@ -1820,7 +1820,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		}
 		else if ( strcmp( CP_PROFILE_STATUS, fname ) == 0 ) {
 			/* status message - just keep a reference to the value */
-			statusMsg = fvalue;
+			statusMsg = g_markup_escape_text( fvalue, -1 );
 		}
 		else if ( strcmp( CP_PROFILE_AVATAR, fname ) == 0 ) {
 			/* avatar id - just keep a reference to the value */
@@ -1928,6 +1928,8 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			g_free( profile );
 		}
 	}
+
+	g_free( statusMsg );
 }
 
 
