@@ -405,20 +405,10 @@ msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
 	}
 }
 
-static MsnSlpMessage *
-msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PInfo *info)
-{
-	MsnSlpMessage *slpmsg;
-
-	slpmsg = msn_slpmsg_ack_new(slplink, info);
-
-	return slpmsg;
-}
-
 static void
 msn_slplink_send_ack(MsnSlpLink *slplink, MsnP2PInfo *info)
 {
-	MsnSlpMessage *slpmsg = msn_slplink_create_ack(slplink, info);
+	MsnSlpMessage *slpmsg = msn_slpmsg_ack_new(slplink, info);
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 	msn_slpmsg_destroy(slpmsg);
@@ -520,7 +510,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PInfo *inf
 			 */
 			purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
 
-			slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, info);
+			slpcall->slplink->dc->prev_ack = msn_slpmsg_ack_new(slplink, info);
 		} else if (!slpcall->wasted) {
 			purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
 
