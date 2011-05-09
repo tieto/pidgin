@@ -1,19 +1,22 @@
-#
-# Yngve Spjeld Landro <l10n@landro.net>, 2010, 2011.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gtranslator\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-10 01:13-0800\n"
-"PO-Revision-Date: 2011-02-08 17:03+0100\n"
-"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
-"Language-Team: Norwegian Nynorsk <i18n-nn@lister.ping.uio.no>\n"
+"POT-Creation-Date: 2011-05-09 01:21-0700\n"
+"PO-Revision-Date: 2011-05-05 07:19+0000\n"
+"Last-Translator: yslandro <l10n@landro.net>\n"
+"Language-Team: Norwegian Nynorsk (http://www.transifex.net/projects/p/pidgin/"
+"team/nn/)\n"
 "Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8-bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -210,6 +213,9 @@ msgstr "Brukarnamn"
 msgid "Alias (optional)"
 msgstr "Kallenamn (valfritt)"
 
+msgid "Invite message (optional)"
+msgstr "Invitasjonsmelding (valfri)"
+
 msgid "Add in group"
 msgstr "Legg til i gruppe"
 
@@ -277,7 +283,6 @@ msgstr "Hentar …"
 msgid "Get Info"
 msgstr "Hent info"
 
-# var: varsling
 msgid "Add Buddy Pounce"
 msgstr "Legg til venneovervaking"
 
@@ -349,7 +354,7 @@ msgid "New..."
 msgstr "Ny …"
 
 msgid "Saved..."
-msgstr "Lagra…"
+msgstr "Lagra …"
 
 msgid "Plugins"
 msgstr "Tilleggsprogram"
@@ -406,16 +411,16 @@ msgid "Options"
 msgstr "Val"
 
 msgid "Send IM..."
-msgstr "Send lynmelding…"
+msgstr "Send lynmelding …"
 
 msgid "Block/Unblock..."
-msgstr "Blokker/avblokker…"
+msgstr "Blokker/avblokker …"
 
 msgid "Join Chat..."
-msgstr "Bli med i praterom…"
+msgstr "Bli med i praterom …"
 
 msgid "View Log..."
-msgstr "Sjå på loggen…"
+msgstr "Sjå på loggen …"
 
 msgid "View All Logs"
 msgstr "Vis alle loggane"
@@ -436,7 +441,7 @@ msgid "By Status"
 msgstr "Etter status"
 
 msgid "Alphabetically"
-msgstr "Alfabetisk "
+msgstr "Alfabetisk"
 
 msgid "By Log Size"
 msgstr "Etter loggstorleiken"
@@ -482,7 +487,7 @@ msgid ""
 "Check that you have write permission to the target path\n"
 msgstr ""
 "Klarte ikkje å eksportera til fila %s.\n"
-"Sjå til at du har skriverettar til målbana \n"
+"Sjå til at du har skriverettar til målbana\n"
 
 msgid "Certificate Export Error"
 msgstr "Feil under sertifikateksporten"
@@ -519,7 +524,6 @@ msgstr "Verkeleg sletta sertifikatet til %s?"
 msgid "Confirm certificate delete"
 msgstr "Stadfest sertifikatslettinga"
 
-# var: Sertifikatstyrar
 msgid "Certificate Manager"
 msgstr "Sertifikatbehandling"
 
@@ -554,7 +558,7 @@ msgstr ""
 "kontoen er teken i bruk att."
 
 msgid "Re-enable Account"
-msgstr "Ta kontoen i bruk att "
+msgstr "Ta kontoen i bruk att"
 
 msgid "No such command."
 msgstr "Kommandoen finst ikkje."
@@ -591,7 +595,7 @@ msgid ""
 "%s is typing..."
 msgstr ""
 "\n"
-"%s skriv…"
+"%s skriv …"
 
 msgid "You have left this chat."
 msgstr "Du har forlate dette praterommet."
@@ -625,12 +629,11 @@ msgstr "Tøm skjerm"
 msgid "Show Timestamps"
 msgstr "Vis tidsstempel"
 
-# var: varsling…
 msgid "Add Buddy Pounce..."
-msgstr "Legg til venneovervaking…"
+msgstr "Legg til venneovervaking …"
 
 msgid "Invite..."
-msgstr "Inviter…"
+msgstr "Inviter …"
 
 msgid "Enable Logging"
 msgstr "Slå på logging"
@@ -651,7 +654,7 @@ msgstr[0] "Liste av %d brukar:\n"
 msgstr[1] "Liste av %d brukarar:\n"
 
 msgid "Supported debug options are: plugins version"
-msgstr "Støtta feilsøkingsval er:  programtilleggsutgåver"
+msgstr "Støtta feilsøkingsval er: programtilleggsutgåver"
 
 msgid "No such command (in this context)."
 msgstr "Kommandoen finst ikkje (i denne samanhengen)."
@@ -679,7 +682,7 @@ msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
-"say &lt;melding&gt;: sender ei melding på normal måte, som om du ikkje nytta "
+"say &lt;melding&gt;: sender ei melding på normal måte som om du ikkje nytta "
 "ein kommando."
 
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
@@ -729,11 +732,10 @@ msgid ""
 "cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
 msgstr ""
 "msgcolor &lt;klasse&gt; &lt;forgrunn&gt; &lt;bakgrunn&gt;: vel fargen til "
-"dei forskjellige meldingsklassane i samtalevindauget.<br>    &lt;"
-"klasse&gt;:  ta i mot, send, marker, handling, tidsstempel<br>    &lt;"
-"forgrunn/bakgrunn&gt;: svart, raud, grøn, blå, kvit, grå, mørkegrå, "
-"magentaraud, cyanblå, standard<br><br>DØME:<br>    msgcolor send cyanblå "
-"standard"
+"dei forskjellige meldingsklassane i samtalevindauget.<br>    &lt;klasse&gt;: "
+"ta i mot, send, marker, handling, tidsstempel<br>    &lt;forgrunn/"
+"bakgrunn&gt;: svart, raud, grøn, blå, kvit, grå, mørkegrå, magentaraud, "
+"cyanblå, standard<br><br>DØME:<br>    msgcolor send cyanblå standard"
 
 msgid "Unable to open file."
 msgstr "Klarte ikkje å opna fila."
@@ -881,7 +883,7 @@ msgid "System Log"
 msgstr "Systemlogg"
 
 msgid "Calling..."
-msgstr "Ringjer…"
+msgstr "Ringjer …"
 
 msgid "Hangup"
 msgstr "Legg på"
@@ -1001,7 +1003,6 @@ msgid ""
 msgstr ""
 "Opna feilsøkingsvindauget og prøv igjen for å sjå den nøyaktige feilmeldinga."
 
-# For mykje tekst?
 msgid "Select plugin to install"
 msgstr "Vel kva for programtillegg som skal installerast"
 
@@ -1009,7 +1010,7 @@ msgid "You can (un)load plugins from the following list."
 msgstr "Du kan lasta inn/ut programtillegg frå den følgjande lista."
 
 msgid "Install Plugin..."
-msgstr "Installer programtillegg…"
+msgstr "Installer programtillegg …"
 
 msgid "Configure Plugin"
 msgstr "Endra programtillegget"
@@ -1020,21 +1021,17 @@ msgstr "Endra programtillegget"
 #. Back to instant-apply! I win!  BU-HAHAHA!
 #. Create the window
 msgid "Preferences"
-msgstr "Innstillingar "
+msgstr "Innstillingar"
 
-# var: Skriv inn vennen du vil bli varsla om.
 msgid "Please enter a buddy to pounce."
 msgstr "Skriv inn vennen du vil overvaka."
 
-# var: Nytt vennevarsel
 msgid "New Buddy Pounce"
 msgstr "Ny venneovervaking"
 
-# var: Endra vennevarsel
 msgid "Edit Buddy Pounce"
 msgstr "Endra venneovervakinga"
 
-# var: Varsling for
 msgid "Pounce Who"
 msgstr "Overvaka kven"
 
@@ -1045,10 +1042,9 @@ msgstr "Konto:"
 msgid "Buddy name:"
 msgstr "Vennenamn:"
 
-# merknad: her kan ein nok ikkje nytta ordet "overvaka" som er nytta i andre samanhengar
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
-msgstr "Varsla når vennen…"
+msgstr "Varsla når vennen …"
 
 msgid "Signs on"
 msgstr "Loggar på"
@@ -1099,26 +1095,21 @@ msgstr "Utfør ein kommando"
 msgid "Play a sound"
 msgstr "Spel ein lyd"
 
-# var: Vennevarsling berre når eg ikkje er tilgjengeleg
 msgid "Pounce only when my status is not Available"
 msgstr "Venneovervaking berre når statusen min er Ikkje tilgjengeleg"
 
-# Regelmessig?
 msgid "Recurring"
 msgstr "Gjentakande"
 
-# var: Klarer ikkje å oppretta vennevarsel
 msgid "Cannot create pounce"
 msgstr "Klarer ikkje å oppretta venneovervakinga"
 
 msgid "You do not have any accounts."
 msgstr "Du har ingen kontoar."
 
-# var: Du må først oppretta ein konto før du kan laga eit vennevarsel.
 msgid "You must create an account first before you can create a pounce."
 msgstr "Du må først oppretta ein konto før du kan laga ei venneovervaking."
 
-# Er du sikker på at du ønskjer å sletta varselet i %s  for %s?
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
 msgstr "Vil du verkeleg sletta overvakinga i %s av %s?"
@@ -1160,7 +1151,7 @@ msgstr "%s er blitt uverksam (%s)"
 
 #, c-format
 msgid "%s has gone away. (%s)"
-msgstr "%s har gått vekk . (%s)"
+msgstr "%s har gått vekk. (%s)"
 
 #, c-format
 msgid "%s has sent you a message. (%s)"
@@ -1227,13 +1218,13 @@ msgid "Not implemented yet."
 msgstr "Enno ikkje teken i bruk."
 
 msgid "Save File..."
-msgstr "Lagra fil…"
+msgstr "Lagra fila …"
 
 msgid "Open File..."
-msgstr "Opna fil…"
+msgstr "Opna fil …"
 
 msgid "Choose Location..."
-msgstr "Vel stad…"
+msgstr "Vel stad …"
 
 msgid "Hit 'Enter' to find more rooms of this category."
 msgstr "Trykk på returtasten for å finna fleire rom i denne kategorien."
@@ -1288,10 +1279,10 @@ msgid "(default)"
 msgstr "(standard)"
 
 msgid "Select Sound File ..."
-msgstr "Vel lydfil…"
+msgstr "Vel lydfil …"
 
 msgid "Sound Preferences"
-msgstr "Lydinnstillingar "
+msgstr "Lydinnstillingar"
 
 msgid "Profiles"
 msgstr "Profilar"
@@ -1358,7 +1349,7 @@ msgid "Reset"
 msgstr "Nullstill"
 
 msgid "Choose..."
-msgstr "Vel…"
+msgstr "Vel …"
 
 #, c-format
 msgid "Are you sure you want to delete \"%s\""
@@ -1543,21 +1534,20 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 "\n"
-"Hentar TinyURL…"
+"Hentar TinyURL …"
 
-# Sjekk!
 #, c-format
 msgid "TinyURL for above: %s"
 msgstr "TinyURL til adressa ovanfor: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Vent mens TinyURL hentar ein kortare URL …"
+msgstr "Vent mens TinyURL hentar ei kortare adresse …"
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Lag berre TinyURL-ar for adresser med denne eller større lengd"
 
 msgid "TinyURL (or other) address prefix"
-msgstr "TinyURL-adresseprefiks (eller annan) "
+msgstr "TinyURL-adresseprefiks (eller annan)"
 
 msgid "TinyURL"
 msgstr "TinyURL"
@@ -1684,7 +1674,6 @@ msgstr "venneliste"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "Sertifikatet er sjølvsignert og kan ikkje kontrollerast automatisk."
 
-# !?
 msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
@@ -1766,7 +1755,7 @@ msgid "SSL Certificate Verification"
 msgstr "SSL-sertifikatstadfesting"
 
 msgid "_View Certificate..."
-msgstr "Vis _sertifikat…"
+msgstr "Vis _sertifikat …"
 
 #, c-format
 msgid "The certificate for %s could not be validated."
@@ -1896,7 +1885,7 @@ msgstr "Klarte ikkje å henta tenarnamn: %s"
 
 msgid "Purple's D-BUS server is not running for the reason listed below"
 msgstr ""
-"Purple sin D-BUS-tenar kjører ikkje på grunn av årsaka som er nemnd nedanfor "
+"Purple sin D-BUS-tenar kjører ikkje på grunn av årsaka som er nemnd nedanfor"
 
 msgid "No name"
 msgstr "Ikkje noko namn"
@@ -1931,7 +1920,6 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Oppslagsprosessen blei avslutta utan vi fekk svar"
 
-# la:
 #, c-format
 msgid "Error converting %s to punycode: %d"
 msgstr "Konverteringa av %s til punycode feila: %d"
@@ -1942,6 +1930,9 @@ msgstr "Klarte ikkje å laga tråd: %s"
 
 msgid "Unknown reason"
 msgstr "Ukjend årsak"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr "Avbryt namnetenaroppslag i Tor mellomtenarmodus."
 
 #, c-format
 msgid ""
@@ -2306,7 +2297,6 @@ msgstr "Klarte ikkje å lasta det påkravde programtillegget %s."
 msgid "Unable to load your plugin."
 msgstr "Klarte ikkje å lasta programtillegget ditt."
 
-# Krøkkete formulert.
 #, c-format
 msgid "%s requires %s, but it failed to unload."
 msgstr "%s krev %s, men det kunne ikkja lastast ut."
@@ -2347,7 +2337,7 @@ msgid "Auto Reject"
 msgstr "Automatisk avvis"
 
 msgid "Autoaccept File Transfers..."
-msgstr "Godta automatisk filoverføringar…"
+msgstr "Godta automatisk filoverføringar …"
 
 #. XXX: Is there a better way than this? There really should be.
 msgid ""
@@ -2382,10 +2372,10 @@ msgid "Notes"
 msgstr "Notat"
 
 msgid "Enter your notes below..."
-msgstr "Skriv notata dine nedanfor…"
+msgstr "Skriv notata dine nedanfor …"
 
 msgid "Edit Notes..."
-msgstr "Endra notat…"
+msgstr "Endra notata …"
 
 #. *< major version
 #. *< minor version
@@ -2728,8 +2718,6 @@ msgstr "Emulering av fråkopla meldingar"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Lagra meldingar som er sende til ein fråkopla brukar som eit varsel."
 
-# `? '?
-# var: Resten av meldingane vil bli lagra som varsel. Du kan endra/sletta varselet frå `vennevarsel'-vindauget.
 msgid ""
 "The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
@@ -2820,7 +2808,7 @@ msgstr ""
 "meldingar til deg. Dette verkar for AIM, ICQ, XMPP, Sametime og Yahoo!"
 
 msgid "You feel a disturbance in the force..."
-msgstr "Du kjenner at noko kjem til å skje…"
+msgstr "Du kjenner at noko kjem til å skje …"
 
 msgid "Only enable for users on the buddy list"
 msgstr "Berre for brukarar på vennelista"
@@ -3062,7 +3050,7 @@ msgid "Unable to fetch the token.\n"
 msgstr "Klarte ikkje å henta markøren.\n"
 
 msgid "Save Buddylist..."
-msgstr "Lagra vennelista…"
+msgstr "Lagra vennelista …"
 
 msgid "Your buddylist is empty, nothing was written to the file."
 msgstr "Vennelista di er tom. Ingenting blei skrive til fila."
@@ -3078,17 +3066,16 @@ msgid "Couldn't load buddylist"
 msgstr "Klarte ikkje å henta fram vennelista"
 
 msgid "Load Buddylist..."
-msgstr "Hent vennelista…"
+msgstr "Hent vennelista …"
 
 msgid "Buddylist loaded successfully!"
 msgstr "Vennelista er henta inn."
 
-# var: Lagra venneliste…
 msgid "Save buddylist..."
-msgstr "Lagra vennelista…"
+msgstr "Lagra vennelista …"
 
 msgid "Load buddylist from file..."
-msgstr "Hent vennelista frå fil…"
+msgstr "Hent vennelista frå fil …"
 
 msgid "You must fill in all registration fields"
 msgstr "Du må fylla ut alle registreringsfelta"
@@ -3111,7 +3098,6 @@ msgstr "Passord"
 msgid "Password (again)"
 msgstr "Passord (om att)"
 
-# ?! ;-)
 msgid "Enter captcha text"
 msgstr "Skriv teksten til tastetestbiletet"
 
@@ -3186,12 +3172,27 @@ msgstr "Skriv inn det noverande og det nye passordet til UIN: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Endra Gadu-Gadu-passord"
 
+msgid "Show status to:"
+msgstr "Endra statusen til:"
+
+msgid "All people"
+msgstr "Alle"
+
+msgid "Only buddies"
+msgstr "Berre venner"
+
+msgid "Change status broadcasting"
+msgstr "Endra statuskringkasting"
+
+msgid "Please, select who can see your status"
+msgstr "Vel kven som kan sjå statusen din"
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Vel eit praterom for vennen: %s"
 
 msgid "Add to chat..."
-msgstr "Legg til praterom…"
+msgstr "Legg til praterom …"
 
 #. 0
 #. Global
@@ -3288,10 +3289,10 @@ msgid "Not connected to the server"
 msgstr "Ikkje tilkopla tenaren"
 
 msgid "Find buddies..."
-msgstr "Søk etter venner…"
+msgstr "Søk etter venner …"
 
 msgid "Change password..."
-msgstr "Endra passord…"
+msgstr "Endra passordet …"
 
 msgid "Upload buddylist to Server"
 msgstr "Last opp vennelista til tenaren"
@@ -3303,7 +3304,7 @@ msgid "Delete buddylist from Server"
 msgstr "Slett vennelista frå tenaren"
 
 msgid "Save buddylist to file..."
-msgstr "Lagra vennelista til fil…"
+msgstr "Lagra vennelista til fil …"
 
 #. magic
 #. major_version
@@ -3328,6 +3329,19 @@ msgstr "Gadu-Gadu-brukar"
 
 msgid "GG server"
 msgstr "GG-tenar"
+
+msgid "Don't use encryption"
+msgstr "Bruk ikkje kryptering"
+
+msgid "Use encryption if available"
+msgstr "Bruk kryptering om mogleg"
+
+#. TODO
+msgid "Require encryption"
+msgstr "Krev kryptering"
+
+msgid "Connection security"
+msgstr "Sambandstryggleik"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3364,7 +3378,6 @@ msgstr "\"Dagens melding\" frå %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3480,7 +3493,7 @@ msgid "Currently on"
 msgstr "Er no på"
 
 msgid "Idle for"
-msgstr "Uverksam i "
+msgstr "Uverksam i"
 
 msgid "Online since"
 msgstr "Tilkopla sidan"
@@ -3618,7 +3631,10 @@ msgid "Wallops from %s"
 msgstr "Banking frå %s"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
-msgstr "action &lt;handling å utføra&gt;:  utfører ei handling."
+msgstr "action &lt;handling å utføra&gt;: utfører ei handling."
+
+msgid "authserv: Send a command to authserv"
+msgstr "authserv: send ein kommando til authserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -3834,7 +3850,7 @@ msgid "Invalid response from server"
 msgstr "Ugyldig svar frå tenaren"
 
 msgid "Server does not use any supported authentication method"
-msgstr "Tenaren nyttar ikkje ein autentiseringsmetode som er støtta "
+msgstr "Tenaren nyttar ikkje ein autentiseringsmetode som er støtta"
 
 #, c-format
 msgid ""
@@ -4325,7 +4341,6 @@ msgstr "Ikkje godkjent"
 msgid "Mood"
 msgstr "Sinnsstemning"
 
-# var: Lyttar
 msgid "Now Listening"
 msgstr "Lyttar til"
 
@@ -4357,7 +4372,6 @@ msgstr "Sinnsstemningstekst"
 msgid "Allow Buzz"
 msgstr "Tillat alarm"
 
-# -namn?
 msgid "Mood Name"
 msgstr "Sinnsstemningsnamn"
 
@@ -4404,7 +4418,7 @@ msgid "Your password has been changed."
 msgstr "Passordet ditt er blitt endra."
 
 msgid "Error changing password"
-msgstr "Feil under  endringa av passordet"
+msgstr "Klarte ikkje å endra passordet"
 
 msgid "Change XMPP Password"
 msgstr "Endra XMPP-passord"
@@ -4413,15 +4427,15 @@ msgid "Please enter your new password"
 msgstr "Skriv inn det nye passordet ditt"
 
 msgid "Set User Info..."
-msgstr "Skriv inn brukarinfo…"
+msgstr "Skriv inn brukarinfo …"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 msgid "Change Password..."
-msgstr "Endra passord…"
+msgstr "Endra passordet …"
 
 #. }
 msgid "Search for Users..."
-msgstr "Søk etter brukarar…"
+msgstr "Søk etter brukarar …"
 
 msgid "Bad Request"
 msgstr "Ugyldig førespurnad"
@@ -4622,7 +4636,7 @@ msgstr "%s har alarmert deg!"
 
 #, c-format
 msgid "Buzzing %s..."
-msgstr "Alarmerer %s…"
+msgstr "Alarmerer %s …"
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4677,7 +4691,7 @@ msgid ""
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;brukar|eigar|admin|medlem|outcast|ingen&gt;[kallenamn1]"
-"[kallenamn2]…: hent brukarar med ei tilknyting til rommet eller lag slik "
+"[kallenamn2] …: hent brukarar med ei tilknyting til rommet eller lag slik "
 "tilknyting."
 
 msgid ""
@@ -4731,18 +4745,8 @@ msgstr "XMPP-protokolltillegg"
 msgid "Domain"
 msgstr "Domene"
 
-msgid "Require encryption"
-msgstr "Krev kryptering"
-
-# 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
-msgid "Use encryption if available"
-msgstr "Bruk kryptering om mogleg"
-
 msgid "Use old-style SSL"
 msgstr "Bruk gammal SSL-stil"
-
-msgid "Connection security"
-msgstr "Sambandstryggleik"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Tillat autentisering i klartekst over ukrypterte samband"
@@ -4762,7 +4766,6 @@ msgstr "Mellomtenar filoverføringar"
 msgid "BOSH URL"
 msgstr "BOSH-adresse"
 
-# ? custom = tilpassa
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
@@ -4788,7 +4791,6 @@ msgstr "Emnet er: %s"
 msgid "Message delivery to %s failed: %s"
 msgstr "Meldinga til %s kom ikkje fram: %s"
 
-# var: Jabber meldingsfeil
 msgid "XMPP Message Error"
 msgstr "XMPP-meldingsfeil"
 
@@ -4854,6 +4856,7 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "Klarte ikkje å senda fila til %s fordi brukaren ikkje støttar filoverføringar"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Filoverføringsfeil"
 
@@ -4975,7 +4978,6 @@ msgstr "Takknemleg"
 msgid "Grieving"
 msgstr "Sørgjer"
 
-# Grinete?
 msgid "Grumpy"
 msgstr "Sur"
 
@@ -5018,7 +5020,6 @@ msgstr "Indignert"
 msgid "Interested"
 msgstr "Interessert"
 
-# Berusa?
 msgid "Intoxicated"
 msgstr "Forgifta"
 
@@ -5145,7 +5146,7 @@ msgid "Set"
 msgstr "Vel"
 
 msgid "Set Nickname..."
-msgstr "Vel kallenamn…"
+msgstr "Vel kallenamn …"
 
 msgid "Actions"
 msgstr "Handlingar"
@@ -5302,7 +5303,7 @@ msgid "Not expected"
 msgstr "Uventa"
 
 msgid "Friendly name is changing too rapidly"
-msgstr "Visingsnamnet blir endra for kjapt."
+msgstr "Visingsnamnet blir endra for kjapt"
 
 msgid "Server too busy"
 msgstr "Tenaren er for oppteken"
@@ -5396,10 +5397,10 @@ msgstr "%s har gjeve deg ein dytt!"
 
 #, c-format
 msgid "Nudging %s..."
-msgstr "Dyttar %s…"
+msgstr "Dyttar %s …"
 
 msgid "Email Address..."
-msgstr "E-postadresse…"
+msgstr "E-postadresse …"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Det nye MSN-visingsnamnet ditt er for langt."
@@ -5514,7 +5515,7 @@ msgid "Busy"
 msgstr "Oppteken"
 
 msgid "On the Phone"
-msgstr "Taler i  telefonen"
+msgstr "Taler i telefonen"
 
 msgid "Out to Lunch"
 msgstr "Er ute til lunsj"
@@ -5526,31 +5527,31 @@ msgid "Office Title"
 msgstr "Kontortittel"
 
 msgid "Set Friendly Name..."
-msgstr "Vel visingsnamn…"
+msgstr "Vel visingsnamn …"
 
 msgid "View Locations..."
-msgstr "Vel stader…"
+msgstr "Vel stader …"
 
 msgid "Set Home Phone Number..."
-msgstr "Skriv inn heimetelefonnummer…"
+msgstr "Skriv inn heimetelefonnummer …"
 
 msgid "Set Work Phone Number..."
-msgstr "Skriv inn jobbtelefonnummer…"
+msgstr "Skriv inn jobbtelefonnummer …"
 
 msgid "Set Mobile Phone Number..."
-msgstr "Skriv inn mobiltelefonnummer…"
+msgstr "Skriv inn mobiltelefonnummer …"
 
 msgid "Enable/Disable Mobile Devices..."
-msgstr "Ta i bruk / ta vekk mobile einingar…"
+msgstr "Ta i bruk / ta vekk mobile einingar …"
 
 msgid "Allow/Disallow Multiple Logins..."
 msgstr "Tillat/avslå fleire samstundes påloggingar …"
 
 msgid "Allow/Disallow Mobile Pages..."
-msgstr "Tillat/avslå mobilsider…"
+msgstr "Tillat/avslå mobilsider …"
 
 msgid "View Blocked Text..."
-msgstr "Vis blokkert tekst…"
+msgstr "Vis blokkert tekst …"
 
 msgid "Open Hotmail Inbox"
 msgstr "Opna Hotmail-innkorga"
@@ -5571,18 +5572,6 @@ msgstr ""
 
 msgid "Unable to Add"
 msgstr "Klarer ikkje å leggja til"
-
-msgid "Authorization Request Message:"
-msgstr "Godtakingførespurnad:"
-
-msgid "Please authorize me!"
-msgstr "Gjer vel og godta meg."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
 
 msgid "Error retrieving profile"
 msgstr "Klarte ikkje å henta profilen"
@@ -5627,7 +5616,7 @@ msgid "Fashion"
 msgstr "Mote"
 
 msgid "Humor"
-msgstr "Humor"
+msgstr "Sinnsstemning"
 
 msgid "Music"
 msgstr "Musikk"
@@ -5653,7 +5642,6 @@ msgstr "Heimetelefon 2"
 msgid "Home Address"
 msgstr "Heimeadresse"
 
-# var: Personleg mobil
 msgid "Personal Mobile"
 msgstr "Privat mobil"
 
@@ -5663,7 +5651,6 @@ msgstr "Heimefaks"
 msgid "Personal Email"
 msgstr "Privat e-postadresse"
 
-# var: Personleg pratenett
 msgid "Personal IM"
 msgstr "Privat prateadresse"
 
@@ -5765,7 +5752,7 @@ msgid "Allow direct connections"
 msgstr "Tillat direkte samband"
 
 msgid "Allow connecting from multiple locations"
-msgstr "Tillat samstundes tilkoplingar frå fleire stader "
+msgstr "Tillat samstundes tilkoplingar frå fleire stader"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: dytta til ein brukar for å få merksemda hans/hennar"
@@ -5796,6 +5783,9 @@ msgstr "Klarer ikkje å fjerna brukaren"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobilmeldinga blei ikkje sendt sidan ho var for lang."
+
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Mobilmeldinga blei ikkje sendt grunna ein ukjend feil."
 
 #, c-format
 msgid ""
@@ -5957,18 +5947,6 @@ msgstr "Vil du sletta denne vennen frå adresseboka di òg?"
 msgid "The username specified is invalid."
 msgstr "Det oppgjevne brukarnamnet er ugyldig."
 
-msgid "The PIN you entered is invalid."
-msgstr "Du skreiv inn ein ugyldig PIN."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Du skreiv inn ein PIN med ulovleg lengd [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN er ugyldig - kan berre innehalda tala [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Dei to PIN-ane du skreiv inn samsvarer ikkje."
-
 msgid "The Display Name you entered is invalid."
 msgstr "Visingsnamnet du skreiv er ugyldig."
 
@@ -5989,35 +5967,65 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Profilopplysningane dine er ikkje henta enno. Prøv igjen seinare."
 
-msgid "Your UID"
-msgstr "UID-en din"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "Visingsnamn"
+
+#. about me
+msgid "About Me"
+msgstr "Om meg"
+
+#. where I live
+msgid "Where I Live"
+msgstr "Kor eg bur"
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Mobilnummer"
+
+#. is searchable
+msgid "Can be searched"
+msgstr "Kan bli søkt ig"
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr "Kan bli foreslått"
+
+msgid "Update your MXit Profile"
+msgstr "Oppdater MXit-profilen din"
+
+msgid "The PIN you entered is invalid."
+msgstr "Du skreiv inn ein ugyldig PIN."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Du skreiv inn ein PIN med ulovleg lengd [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "PIN er ugyldig - kan berre innehalda tala [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Dei to PIN-ane du skreiv inn samsvarer ikkje."
+
+#. show error to user
+msgid "PIN Update Error"
+msgstr "PIN-oppdateringsfeil"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "Stadfest PIN"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Visingsnamn"
+#. (reference: "libpurple/request.h")
+msgid "Change PIN"
+msgstr "Endra PIN"
 
-#. hidden
-msgid "Hide my number"
-msgstr "Skjul nummeret mitt"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Mobilnummer"
-
-msgid "Update your Profile"
-msgstr "Oppdater profilen din"
-
-msgid "Here you can update your MXit profile"
-msgstr "Her kan du oppdatera MXit-profilen din"
+msgid "Change MXit PIN"
+msgstr "Endra MXit-PIN"
 
 msgid "View Splash"
 msgstr "Syn oppstartsbilete"
@@ -6028,17 +6036,41 @@ msgstr "Ikkje noko oppstartsvindage er tilgjengeleg no"
 msgid "About"
 msgstr "Om"
 
+msgid "Search for user"
+msgstr "Søk etter brukar"
+
+msgid "Search for a MXit contact"
+msgstr "Søk etter MXit-kontakt"
+
+msgid "Type search information"
+msgstr "Skriv søkjeopplysningane"
+
+msgid "_Search"
+msgstr "_Søk"
+
 #. display / change profile
 msgid "Change Profile..."
-msgstr "Endra profilen…"
+msgstr "Endra profilen …"
+
+#. change PIN
+msgid "Change PIN..."
+msgstr "Endra PIN …"
+
+#. suggested friends
+msgid "Suggested friends..."
+msgstr "Føreslegne venner …"
+
+#. search for contacts
+msgid "Search for contacts..."
+msgstr "Søk etter kontaktar …"
 
 #. display splash-screen
 msgid "View Splash..."
-msgstr "Syn opningsbiletet…"
+msgstr "Syn opningsbiletet …"
 
 #. display plugin version
 msgid "About..."
-msgstr "Om…"
+msgstr "Om …"
 
 #. the file is too big
 msgid "The file you are trying to send is too large!"
@@ -6059,11 +6091,10 @@ msgstr ""
 "Klarer ikkje å kopla til MXit-tenaren. Kontroller tenarinnstillingane dine."
 
 msgid "Connecting..."
-msgstr "Koplar til…"
+msgstr "Koplar til …"
 
-#, fuzzy
 msgid "The Display Name you entered is too short."
-msgstr "Visingsnamnet du skreiv er ugyldig."
+msgstr "Visingsnamnet du skreiv er for kort."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN-en du skreiv nyttar ei ulovleg lengd [7-10]."
@@ -6131,24 +6162,23 @@ msgid "MXit account validation"
 msgstr "MXit-kontovalidering"
 
 msgid "Retrieving User Information..."
-msgstr "Hentar brukaropplysningar…"
-
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Du er blitt sparka ut frå denne MultiMX-en."
+msgstr "Hentar brukaropplysningar …"
 
 msgid "was kicked"
 msgstr "blei sparka ut"
+
+msgid "You have been kicked from this MultiMX."
+msgstr "Du er blitt sparka ut frå denne MultiMX-en."
 
 msgid "_Room Name:"
 msgstr "Rom_namn:"
 
 #. Display system message in chat window
 msgid "You have invited"
-msgstr "Du har invitert "
+msgstr "Du har invitert"
 
 msgid "Loading menu..."
-msgstr "Lastar menyen…"
+msgstr "Lastar menyen …"
 
 msgid "Status Message"
 msgstr "Statusmelding"
@@ -6160,21 +6190,18 @@ msgstr "Avvisingsmelding"
 msgid "Hidden Number"
 msgstr "Skjult nummer"
 
-#, fuzzy
 msgid "No profile available"
-msgstr "Ikkje tilgjengeleg"
+msgstr "Ingen profil er tilgjengeleg"
 
-#, fuzzy
 msgid "This contact does not have a profile."
-msgstr "Denne kontoen har ikkje teke i bruk e-postfunksjonen."
+msgstr "Denne kontakten har ingen profil."
 
 msgid "Your MXit ID..."
-msgstr "MXit-id-en din…"
+msgstr "MXit-id-en din …"
 
 #. contact is in Deleted, Rejected or None state
-#, fuzzy
 msgid "Re-Invite"
-msgstr "Inviter"
+msgstr "Inviter på nytt"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6184,18 +6211,44 @@ msgstr "WAP-tenar"
 msgid "Connect via HTTP"
 msgstr "Kopla til over HTTP"
 
-# ? treng gjennomsyn
 msgid "Enable splash-screen popup"
 msgstr "Bruk oppstartsvindauge"
 
 msgid "Last Online"
 msgstr "Sist tilkopla"
 
+msgid "Invite Message"
+msgstr "Invitasjonsmelding"
+
+msgid "No results"
+msgstr "Ingen resultat"
+
+msgid "No contacts found."
+msgstr "Fann ingen kontaktar."
+
+#. define columns
+msgid "UserId"
+msgstr "Brukar-id"
+
+msgid "Where I live"
+msgstr "Kor eg bur"
+
+#, fuzzy, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Du har %i føreslegne venner."
+msgstr[1] "Du har %i føreslegne venner."
+
+#, fuzzy, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Vi fann %i kontaktar som samsvarer med søket ditt."
+msgstr[1] "Vi fann %i kontaktar som samsvarer med søket ditt."
+
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
 msgstr "Det er ikkje samband med MXit. Kopla til att."
 
-# var: Jabber meldingsfeil
 #. packet could not be queued for transmission
 msgid "Message Send Error"
 msgstr "Sendingsfeil melding"
@@ -6207,7 +6260,7 @@ msgid "Timeout while waiting for a response from the MXit server."
 msgstr "Tidsavbrot medan ein venta på svar frå MXit-tenaren."
 
 msgid "Successfully Logged In..."
-msgstr "Du er pålogga…"
+msgstr "Du har logga på …"
 
 #, c-format
 msgid ""
@@ -6215,7 +6268,6 @@ msgid ""
 msgstr ""
 "%s har sendt deg ei kryptert melding, men klienten støttar ikkje dette."
 
-# var: Jabber meldingsfeil
 msgid "Message Error"
 msgstr "Meldingsfeil"
 
@@ -6233,11 +6285,9 @@ msgstr "Påloggingsfeil: %s (%i)"
 msgid "Logout error: %s (%i)"
 msgstr "Avloggingsfeil: %s (%i)"
 
-# Kontaktfeil? - Sannsynlegvis ikkje
 msgid "Contact Error"
 msgstr "Sambandsfeil"
 
-# var: Jabber meldingsfeil
 msgid "Message Sending Error"
 msgstr "Sendefeil melding"
 
@@ -6262,7 +6312,6 @@ msgstr "Kontaktoppdateringsfeil"
 msgid "File Transfer Error"
 msgstr "Filoverføringsfeil"
 
-# var: Klarer ikkje å oppretta vennevarsel
 msgid "Cannot create MultiMx room"
 msgstr "Klarer ikkje å laga MultiMx-rom"
 
@@ -6451,10 +6500,10 @@ msgstr "klarte ikkje å importera vennene"
 
 #. TODO: find out how
 msgid "Find people..."
-msgstr "Søk etter personar…"
+msgstr "Søk etter personar …"
 
 msgid "Change IM name..."
-msgstr "Endra lynmeldingsnamn…"
+msgstr "Endra lynmeldingsnamnet …"
 
 msgid "myim URL handler"
 msgstr "myim adressehandterar"
@@ -6544,7 +6593,7 @@ msgstr "%s har gjeve deg ein støyt."
 
 #, c-format
 msgid "Zapping %s..."
-msgstr "Gjev %s ein støyt…"
+msgstr "Gjev %s ein støyt …"
 
 #. Whack means "to hit or strike someone with a sharp blow"
 msgid "Whack"
@@ -6556,7 +6605,7 @@ msgstr "%s har gjeve deg ein kiilevink!"
 
 #, c-format
 msgid "Whacking %s..."
-msgstr "Gjev %s ein kilevink…"
+msgstr "Gjev %s ein kilevink …"
 
 #. Torch means "to set on fire."  Don't worry, this doesn't
 #. * make a whole lot of sense in English, either.  Feel free
@@ -6570,7 +6619,7 @@ msgstr "%s har sett lys på deg!"
 
 #, c-format
 msgid "Torching %s..."
-msgstr "Set lys på %s…"
+msgstr "Set lys på %s …"
 
 #. Smooch means "to kiss someone, often enthusiastically"
 msgid "Smooch"
@@ -6582,7 +6631,7 @@ msgstr "%s har kosekyssa deg!"
 
 #, c-format
 msgid "Smooching %s..."
-msgstr "Kosekysser %s…"
+msgstr "Kosekysser %s …"
 
 #. A hug is a display of affection; wrapping your arms around someone
 msgid "Hug"
@@ -6594,7 +6643,7 @@ msgstr "%s har omfamna deg!"
 
 #, c-format
 msgid "Hugging %s..."
-msgstr "Omfamnar %s…"
+msgstr "Omfamnar %s …"
 
 #. Slap means "to hit someone with an open/flat hand"
 msgid "Slap"
@@ -6606,7 +6655,7 @@ msgstr "%s har klaska til deg!"
 
 #, c-format
 msgid "Slapping %s..."
-msgstr "Klaskar til %s…"
+msgstr "Klaskar til %s …"
 
 #. Goose means "to pinch someone on their butt"
 msgid "Goose"
@@ -6618,7 +6667,7 @@ msgstr "%s har klypt deg!"
 
 #, c-format
 msgid "Goosing %s..."
-msgstr "Klyper %s…"
+msgstr "Klyper %s …"
 
 #. A high-five is when two people's hands slap each other
 #. * in the air above their heads.  It is done to celebrate
@@ -6632,7 +6681,7 @@ msgstr "%s har gratulert deg!"
 
 #, c-format
 msgid "High-fiving %s..."
-msgstr "Gratulerer %s…"
+msgstr "Gratulerer %s …"
 
 #. We're not entirely sure what the MySpace people mean by
 #. * this... but we think it's the equivalent of "prank."  Or, for
@@ -6646,7 +6695,7 @@ msgstr "%s har lurt deg!"
 
 #, c-format
 msgid "Punking %s..."
-msgstr "Lurer %s…"
+msgstr "Lurer %s …"
 
 #. Raspberry is a slang term for the vibrating sound made
 #. * when you stick your tongue out of your mouth with your
@@ -6664,7 +6713,7 @@ msgstr "%s har rekt deg tunga!"
 
 #, c-format
 msgid "Raspberrying %s..."
-msgstr "Rekkjer %s tunga…"
+msgstr "Rekkjer %s tunga …"
 
 msgid "Required parameters not passed in"
 msgstr "Påkravde parameter ikkje oppgjevne"
@@ -6810,7 +6859,7 @@ msgstr "Klarer ikkje å leggja brukar til personvernlista (%s)."
 
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "Klarer ikkje å leggja til %s  på blokkeringslista (%s)."
+msgstr "Klarer ikkje å leggja til %s på blokkeringslista (%s)."
 
 #, c-format
 msgid "Unable to add %s to permit list (%s)."
@@ -6857,10 +6906,10 @@ msgid "GroupWise Conference %d"
 msgstr "GroupWise-konferanse %d"
 
 msgid "Authenticating..."
-msgstr "Autentiserer…"
+msgstr "Autentiserer …"
 
 msgid "Waiting for response..."
-msgstr "Venatr på svar…"
+msgstr "Ventar på svar …"
 
 #, c-format
 msgid "%s has been invited to this conversation."
@@ -6924,6 +6973,12 @@ msgstr "Ingen årsak oppgjeven."
 
 msgid "Authorization Denied Message:"
 msgstr "Avvist godkjenning:"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
 
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -6999,7 +7054,6 @@ msgstr "Får ikkje ta i mot lynmeldingar grunna foreldrekontrollreglar"
 msgid "Cannot send SMS without accepting terms"
 msgstr "Kan ikkje senda teksmeldingar utan godkjenning av vilkåra"
 
-# tekstmeldinga? SMS-en?
 msgid "Cannot send SMS"
 msgstr "Klarer ikkje å senda meldinga"
 
@@ -7054,7 +7108,6 @@ msgstr "Tenkjer"
 msgid "Shopping"
 msgstr "Handlar"
 
-# Vindauge eller meldingsvindauge?
 msgid "Questioning"
 msgstr "Spørjande"
 
@@ -7279,7 +7332,6 @@ msgid "Received authorization"
 msgstr "Godkjenning motteken"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Brukarnamnet finst ikkje"
@@ -7563,11 +7615,10 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
+"Den høgste profilstorleiken på %d byte er overskriden. Han er blitt forkorta."
+msgstr[1] ""
 "Den høgste profilstorleiken på %d bytar er overskriden. Han er blitt "
 "forkorta."
-msgstr[1] ""
-"The maximum profile length of %d bytes has been exceeded.  It has been "
-"truncated for you."
 
 msgid "Profile too long."
 msgstr "Profilen er for lang."
@@ -7580,7 +7631,7 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Du har overskride maksimum lengd (%d bytar) på fråværsmeldinga. Meldinga er "
+"Du har overskride maksimum lengd (%d byte) på fråværsmeldinga. Meldinga er "
 "blitt forkorta."
 msgstr[1] ""
 "Du har overskride maksimum lengd (%d bytar) på fråværsmeldinga. Meldinga er "
@@ -7751,11 +7802,8 @@ msgstr "Søk etter ein venn utfrå e-postadressa"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Skriv inn e-postadressa til vennen du leiter etter."
 
-msgid "_Search"
-msgstr "_Søk"
-
 msgid "Set User Info (web)..."
-msgstr "Skriv inn brukarinfo (nett)…"
+msgstr "Skriv inn brukarinfo (nett) …"
 
 #. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
@@ -7766,7 +7814,7 @@ msgstr "Innstillingar for vidaresending (nett)"
 
 #. ICQ actions
 msgid "Set Privacy Options..."
-msgstr "Personvernval…"
+msgstr "Personvernval …"
 
 msgid "Show Visible List"
 msgstr "Vis synleg liste"
@@ -7782,16 +7830,13 @@ msgid "Display Currently Registered Email Address"
 msgstr "Vis noverande registrerte e-postadresse"
 
 msgid "Change Currently Registered Email Address..."
-msgstr "Endra noverande registrerte e-postadresse…"
+msgstr "Endra noverande registrerte e-postadresse …"
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Vis venner som ventar på godkjenning"
 
 msgid "Search for Buddy by Email Address..."
-msgstr "Finn venn utfrå e-postadressa…"
-
-msgid "Don't use encryption"
-msgstr "Bruk ikkje kryptering"
+msgstr "Finn venn utfrå e-postadressa …"
 
 msgid "Use clientLogin"
 msgstr "Bruk klientpålogging"
@@ -7911,7 +7956,6 @@ msgstr "Åtvaringsnivå"
 msgid "Buddy Comment"
 msgstr "Vennenotat"
 
-# 20101010 ylan meiner "mogleg" er betre enn "tilgjengeleg"
 #, c-format
 msgid "User information not available: %s"
 msgstr "Brukaropplysningar er ikkje tilgengelege: %s"
@@ -8060,732 +8104,13 @@ msgid "Visible List"
 msgstr "Synleg liste"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
-msgstr "Desse vennene vil sjå statusen din om du byter til \"Usynleg\" "
+msgstr "Desse vennene vil sjå statusen din om du byter til \"Usynleg\""
 
 msgid "Invisible List"
 msgstr "Usynleg liste"
 
 msgid "These buddies will always see you as offline"
 msgstr "Desse vennene vil alltid sjå deg som fråkopla"
-
-msgid "Aquarius"
-msgstr "Vassmannen"
-
-msgid "Pisces"
-msgstr "Fiskane"
-
-msgid "Aries"
-msgstr "Vêren"
-
-msgid "Taurus"
-msgstr "Tyren"
-
-msgid "Gemini"
-msgstr "Tvillingane"
-
-msgid "Cancer"
-msgstr "Krepsen"
-
-msgid "Leo"
-msgstr "Løva"
-
-msgid "Virgo"
-msgstr "Jomfrua"
-
-msgid "Libra"
-msgstr "Vekta"
-
-msgid "Scorpio"
-msgstr "Skorpionen"
-
-msgid "Sagittarius"
-msgstr "Skytten"
-
-msgid "Capricorn"
-msgstr "Steinbukken"
-
-msgid "Rat"
-msgstr "Rotta"
-
-msgid "Ox"
-msgstr "Tyren"
-
-msgid "Tiger"
-msgstr "Tigeren"
-
-msgid "Rabbit"
-msgstr "Haren"
-
-msgid "Dragon"
-msgstr "Draken"
-
-msgid "Snake"
-msgstr "Slangen"
-
-msgid "Horse"
-msgstr "Hesten"
-
-msgid "Goat"
-msgstr "Geita"
-
-msgid "Monkey"
-msgstr "Apa"
-
-msgid "Rooster"
-msgstr "Hanen"
-
-msgid "Dog"
-msgstr "Hunden"
-
-msgid "Pig"
-msgstr "Grisen"
-
-msgid "Other"
-msgstr "Anna"
-
-msgid "Visible"
-msgstr "Synleg"
-
-msgid "Friend Only"
-msgstr "Berre venn"
-
-msgid "Private"
-msgstr "Privat"
-
-msgid "QQ Number"
-msgstr "QQ-nummer"
-
-msgid "Country/Region"
-msgstr "Land/region"
-
-msgid "Province/State"
-msgstr "Fylke/stat"
-
-msgid "Zipcode"
-msgstr "Postnummer"
-
-msgid "Phone Number"
-msgstr "Telefonnummer"
-
-msgid "Authorize adding"
-msgstr "Godkjenn å leggja til"
-
-msgid "Cellphone Number"
-msgstr "Mobiltelefonnummer"
-
-msgid "Personal Introduction"
-msgstr "Personleg introdusering"
-
-msgid "City/Area"
-msgstr "By/område"
-
-msgid "Publish Mobile"
-msgstr "Publiser mobil"
-
-msgid "Publish Contact"
-msgstr "Pibliser kontakt"
-
-msgid "College"
-msgstr "Universitet"
-
-msgid "Horoscope"
-msgstr "Horoskop"
-
-msgid "Zodiac"
-msgstr "Stjerneteikn"
-
-msgid "Blood"
-msgstr "Blod"
-
-msgid "True"
-msgstr "Sann"
-
-msgid "False"
-msgstr "Usann"
-
-msgid "Modify Contact"
-msgstr "Endra kontakt"
-
-msgid "Modify Address"
-msgstr "Endra adressa"
-
-msgid "Modify Extended Information"
-msgstr "Endra utvida opplysningar"
-
-msgid "Modify Information"
-msgstr "Endra opplysningar"
-
-msgid "Update"
-msgstr "Oppdater"
-
-msgid "Could not change buddy information."
-msgstr "Klarte ikkje å endra venneopplysningane."
-
-msgid "Note"
-msgstr "Notat"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "Kontaktnotat"
-
-msgid "Change his/her memo as you like"
-msgstr "Endra hans/hennar notat som du vil"
-
-msgid "_Modify"
-msgstr "_Endra"
-
-msgid "Memo Modify"
-msgstr "Endra notat"
-
-msgid "Server says:"
-msgstr "Tenaren seier:"
-
-msgid "Your request was accepted."
-msgstr "Førespurnaden blei godteken."
-
-msgid "Your request was rejected."
-msgstr "Førespurnaden din blei avvist."
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr "%u krev stadfesting: %s"
-
-msgid "Add buddy question"
-msgstr "Legg til vennespørsmål"
-
-msgid "Enter answer here"
-msgstr "Skriv svaret her"
-
-msgid "Send"
-msgstr "Send"
-
-msgid "Invalid answer."
-msgstr "Ugyldig svar."
-
-msgid "Authorization denied message:"
-msgstr "Melding om avvist godkjenning:"
-
-msgid "Sorry, you're not my style."
-msgstr "Dessverre, du er ikkje min stil."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u treng godkjenning"
-
-msgid "Add buddy authorize"
-msgstr "Legg til vennegodkjenning"
-
-msgid "Enter request here"
-msgstr "Skriv førespurnaden her"
-
-msgid "Would you be my friend?"
-msgstr "Vil du vera venn med meg?"
-
-msgid "QQ Buddy"
-msgstr "QQ-venn"
-
-msgid "Add buddy"
-msgstr "Legg til venn"
-
-msgid "Invalid QQ Number"
-msgstr "Ugyldig QQ-nummer"
-
-msgid "Failed sending authorize"
-msgstr "Klarte ikkje å senda godkjenninga"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "Klarte ikkje å fjerna vennen %u"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Klarte ikkje å fjerna meg sjølv frå %d si venneliste"
-
-msgid "No reason given"
-msgstr "Gav ingen årsak"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s har lagt deg til"
-
-msgid "Would you like to add him?"
-msgstr "Vil du leggja han til?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "Avvist av %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Melding: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "Gruppe-id"
-
-msgid "QQ Qun"
-msgstr "QQ-gruppe"
-
-msgid "Please enter Qun number"
-msgstr "Skriv inn gruppenummeret"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Du kan berre søkja etter permanente grupper\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(Ugyldig UTF-8-streng)"
-
-msgid "Not member"
-msgstr "Ikkje medlem"
-
-msgid "Member"
-msgstr "Medlem"
-
-msgid "Requesting"
-msgstr "Spør etter"
-
-msgid "Admin"
-msgstr "Admin"
-
-#. XXX: Should this be "Topic"?
-msgid "Room Title"
-msgstr "Romtittel"
-
-msgid "Notice"
-msgstr "Merk"
-
-msgid "Detail"
-msgstr "Detalj"
-
-msgid "Creator"
-msgstr "Laga av"
-
-msgid "About me"
-msgstr "Om meg"
-
-msgid "Category"
-msgstr "Kategori"
-
-msgid "The Qun does not allow others to join"
-msgstr "Denne gruppa tillèt ikkje at andre blir med"
-
-msgid "Join QQ Qun"
-msgstr "Bli med i QQ Qun"
-
-msgid "Input request here"
-msgstr "Skriv førespurnaden her"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Blei med i Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "Blei med i Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u blei nekta å bli med"
-
-msgid "QQ Qun Operation"
-msgstr "QQ gruppehandling"
-
-msgid "Failed:"
-msgstr "Feila:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Blir med i gruppa, ukjent svar"
-
-msgid "Quit Qun"
-msgstr "Gå ut av QQ-gruppe"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Ver merksam på at om du har laga denne gruppa, \n"
-"vil denne handlinga fjerna ho."
-
-msgid "Sorry, you are not our style"
-msgstr "Dessverre, du er ikkje vår stil"
-
-msgid "Successfully changed Qun members"
-msgstr "Endra Qun-gruppemedlemmer"
-
-msgid "Successfully changed Qun information"
-msgstr "Endra Qun-gruppeopplysningar"
-
-msgid "You have successfully created a Qun"
-msgstr "Du har oppretta ei gruppe"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "Vil du skriva detaljopplysningane no?"
-
-msgid "Setup"
-msgstr "Innstillingar"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u spurde om å få bli med i Qun-gruppa %u til %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u spør om å bli med i Qun-gruppa %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Klarte ikkje å bli med i gruppa %u, styrt av admin %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Qun-rommedlemskap %u er godkjend av admin %u for %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Fjerna vennen %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>Den nye vennen %u blei med.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Ukjend-%d"
-
-msgid "Level"
-msgstr "Nivå"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr "Mobil"
-
-msgid " BindMobile"
-msgstr "Mobil"
-
-msgid " Video"
-msgstr "Video"
-
-msgid " Zone"
-msgstr "Sone"
-
-# Er indikator betre?
-msgid "Flag"
-msgstr "Flagg"
-
-msgid "Ver"
-msgstr "Ver"
-
-msgid "Invalid name"
-msgstr "Ugyldig brukarnamn"
-
-msgid "Select icon..."
-msgstr "Vel ikon…"
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Påloggingstid</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Tilkopla venner totalt</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Siste oppdatering</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Tenar</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Klientetikett</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Tilkoplingstilstand</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Internettadressa mi</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Sendt</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Send om att</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Tapt</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Motteke</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Motteke duplikat</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Tid</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Påloggingsinformasjon "
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Original forfattar</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Kodebidragsytarar</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Herlege lappeskrivarar</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>Hyllest</b>: %lu<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Grundige testarar</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "og meir, gjer vel og la meg få vita det… takk! ))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>Og alle gutane på bakrommet…</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Bli gjerne med oss!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "Om OpenQ %s"
-
-msgid "Change Icon"
-msgstr "Endra ikon"
-
-msgid "Change Password"
-msgstr "Endra passord"
-
-msgid "Account Information"
-msgstr "Kontoopplysningar"
-
-msgid "Update all QQ Quns"
-msgstr "Oppdater alle QQ Qun-romma"
-
-msgid "About OpenQ"
-msgstr "Om OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "Endra kontaktnotat"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "QQ-protokolltillegg"
-
-msgid "Auto"
-msgstr "Auto"
-
-msgid "Select Server"
-msgstr "Vel tenar"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "Connect by TCP"
-msgstr "Kopla til med TCP"
-
-# -merknad?
-msgid "Show server notice"
-msgstr "Vis tenarvarsel"
-
-msgid "Show server news"
-msgstr "Vis tenarnytt"
-
-msgid "Show chat room when msg comes"
-msgstr "Vis praterommet når meldinga kjem"
-
-#, fuzzy
-msgid "Use default font"
-msgstr "Bruk systemstandard"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Intervall vedlikehaldstilkopling (sekund)"
-
-msgid "Update interval (seconds)"
-msgstr "Oppdateringsintervall (sekund)"
-
-msgid "Unable to decrypt server reply"
-msgstr "Klarer ikkje å dekryptera tenarsvaret"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Feil i markørførespurnaden, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "Ugyldig markørlengd, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Førebels støttar ein ikkje Redirect_EX"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Må slåast på"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Får ikkje logga på. Ukjend svarkode (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "Spør etter tastetest (\"captcha\")"
-
-msgid "Checking captcha"
-msgstr "Undersøkjer tastetesten (\"captcha\")"
-
-msgid "Failed captcha verification"
-msgstr "Tastetesten (\"captcha\") feila"
-
-msgid "Captcha Image"
-msgstr "Tastetestbilete"
-
-msgid "Enter code"
-msgstr "Skriv inn koden"
-
-msgid "QQ Captcha Verification"
-msgstr "QQ-tastetest"
-
-msgid "Enter the text from the image"
-msgstr "Skriv inn teksten frå biletet"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Passordkontrollen gav ukjend svarkode (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Pålogginga gav ukjend feilkode (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Endepunktsfeil"
-
-msgid "Getting server"
-msgstr "Hentar tenar"
-
-msgid "Requesting token"
-msgstr "Spør etter symbol"
-
-msgid "Unable to resolve hostname"
-msgstr "Klarer ikkje å finna tenarnamnet"
-
-msgid "Invalid server or port"
-msgstr "Ugyldig tenar eller port"
-
-msgid "Connecting to server"
-msgstr "Koplar opp mot tenaren"
-
-msgid "QQ Error"
-msgstr "QQ-feil"
-
-# diskusjonsgrupper?
-# nyhende/nytt?
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Tenarnyhende:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "Frå %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Tenarmelding frå %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "Ukjend SERVER CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Feil i svar til %s(0x%02X)\n"
-"Rom %u, svar 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "QQ-gruppekommando"
-
-msgid "Unable to decrypt login reply"
-msgstr "Klarte ikkje å dekryptera påloggingssvaret"
-
-msgid "Unknown LOGIN CMD"
-msgstr "Ukjend LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "Ukjend CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d har nekta fila %s"
-
-msgid "File Send"
-msgstr "Filsending"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d stoppa overføringa av %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8803,7 +8128,7 @@ msgid "Notes Address Book Information"
 msgstr "Notes adressebokopplysningar"
 
 msgid "Invite Group to Conference..."
-msgstr "Inviter gruppe til konferanse…"
+msgstr "Inviter gruppe til konferanse …"
 
 msgid "Get Notes Address Book Info"
 msgstr "Hent Notes adressebokopplysningar"
@@ -8896,7 +8221,7 @@ msgid "Available Conferences"
 msgstr "Tilgjengelege konferansar"
 
 msgid "Create New Conference..."
-msgstr "Lag ny konferanse…"
+msgstr "Lag ny konferanse …"
 
 msgid "Invite user to a conference"
 msgstr "Inviter ein brukar til ein konferanse"
@@ -8915,7 +8240,7 @@ msgid "Invite to Conference"
 msgstr "Inviter til konferanse"
 
 msgid "Invite to Conference..."
-msgstr "Inviter til konferanse…"
+msgstr "Inviter til konferanse …"
 
 msgid "Send TEST Announcement"
 msgstr "Send TEST-melding"
@@ -9108,16 +8433,16 @@ msgid "User Search"
 msgstr "Brukarsøk"
 
 msgid "Import Sametime List..."
-msgstr "Importer Sametime-liste…"
+msgstr "Importer Sametime-liste …"
 
 msgid "Export Sametime List..."
-msgstr "Eksporter Sametime-liste…"
+msgstr "Eksporter Sametime-liste …"
 
 msgid "Add Notes Address Book Group..."
-msgstr "Legg til Notes adressebokgruppe…"
+msgstr "Legg til Notes adressebokgruppe …"
 
 msgid "User Search..."
-msgstr "Brukarsøk…"
+msgstr "Brukarsøk …"
 
 msgid "Force login (ignore server redirects)"
 msgstr "Tvungen pålogging (sjå vekk frå tenarvidaresending)"
@@ -9218,7 +8543,7 @@ msgstr ""
 
 #. Open file selector to select the public key.
 msgid "Open..."
-msgstr "Opna…"
+msgstr "Opna …"
 
 #, c-format
 msgid "The %s buddy is not present in the network"
@@ -9232,7 +8557,7 @@ msgstr ""
 "Trykk \"Importer\" for å importera ein offentleg nøkkel."
 
 msgid "_Import..."
-msgstr "_Importer…"
+msgstr "_Importer …"
 
 msgid "Select correct user"
 msgstr "Vel rett brukar"
@@ -9294,7 +8619,7 @@ msgid "IM with Password"
 msgstr "Lynmelding med passord"
 
 msgid "Get Public Key..."
-msgstr "Hent offentleg nøkkel…"
+msgstr "Hent offentleg nøkkel …"
 
 msgid "Kill User"
 msgstr "Kverk brukar"
@@ -9357,7 +8682,7 @@ msgstr "Legg til kanalen sin offentlege nøkkel"
 
 #. Add new public key
 msgid "Open Public Key..."
-msgstr "Opna offentleg nøkkel…"
+msgstr "Opna offentleg nøkkel …"
 
 msgid "Channel Passphrase"
 msgstr "Kanaltilgangsfrase"
@@ -9552,6 +8877,9 @@ msgstr "Organisasjon"
 msgid "Unit"
 msgstr "Eining"
 
+msgid "Note"
+msgstr "Notat"
+
 msgid "Join Chat"
 msgstr "Bli med i praterom"
 
@@ -9576,7 +8904,7 @@ msgid "Public Key Babbleprint"
 msgstr "Offentleg nøkkel skribleriavtrykk"
 
 msgid "_More..."
-msgstr "_Meir…"
+msgstr "_Meir …"
 
 msgid "Detach From Server"
 msgstr "Kopla frå tenar"
@@ -9709,7 +9037,7 @@ msgid "Verify Public Key"
 msgstr "Stadfest offentleg nøkkel"
 
 msgid "_View..."
-msgstr "_Vis…"
+msgstr "_Vis …"
 
 msgid "Unsupported public key type"
 msgstr "Denne offentlege nøkkel-typen er ikkje støtta"
@@ -9802,7 +9130,7 @@ msgid ""
 "about yourself."
 msgstr ""
 "Du kan la andre brukarar få sjå nettilkoplingsinformasjonen og dei "
-"personlege opplysningane dine. Før opp dei  opplysningane du vil at andre "
+"personlege opplysningane dine. Før opp dei opplysningane du vil at andre "
 "skal få tilgang til."
 
 msgid "Message of the Day"
@@ -9845,7 +9173,7 @@ msgid "View Message of the Day"
 msgstr "Sjå \"Dagens melding\""
 
 msgid "Create SILC Key Pair..."
-msgstr "Lag SILC-nøkkelpar…"
+msgstr "Lag SILC-nøkkelpar …"
 
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
@@ -10001,7 +9329,7 @@ msgstr "SILC-protokolltillegg"
 
 #. *  description
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr "Secure Internet Live Conferencing-protokollen (SILC) "
+msgstr "Secure Internet Live Conferencing-protokollen (SILC)"
 
 msgid "Network"
 msgstr "Nettverk"
@@ -10037,7 +9365,7 @@ msgid "Digitally sign and verify all messages"
 msgstr "Skriv under digitalt og stadfest alle meldingar"
 
 msgid "Creating SILC key pair..."
-msgstr "Lagar SILC-nøkkelpar…"
+msgstr "Lagar SILC-nøkkelpar …"
 
 msgid "Unable to create SILC key pair"
 msgstr "Klarer ikkje å laga SILC-nøkkelparet"
@@ -10203,6 +9531,9 @@ msgstr "Ukjent tenarsvar"
 msgid "Unable to create listen socket"
 msgstr "Klarte ikkje å laga lytteendepunktet"
 
+msgid "Unable to resolve hostname"
+msgstr "Klarer ikkje å finna tenarnamnet"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-brukarnamn kan ikkje innehalda mellomrom eller @-teikn"
 
@@ -10289,7 +9620,7 @@ msgid "Chat room list URL"
 msgstr "Prateromslisteadresse"
 
 msgid "Yahoo JAPAN ID..."
-msgstr "Yahoo JAPAN-id…"
+msgstr "Yahoo JAPAN-id …"
 
 #. *< type
 #. *< ui_requirement
@@ -10311,7 +9642,7 @@ msgstr ""
 "støtta."
 
 msgid "Your SMS was not delivered"
-msgstr "ra"
+msgstr "Tekstmeldinga di blei ikkje sendt"
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Yahoo!-meldinga di blei ikkje sendt."
@@ -10319,6 +9650,9 @@ msgstr "Yahoo!-meldinga di blei ikkje sendt."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Yahoo! systemmelding for %s:"
+
+msgid "Authorization denied message:"
+msgstr "Melding om avvist godkjenning:"
 
 #, c-format
 msgid ""
@@ -10500,10 +9834,10 @@ msgid "Join whom in chat?"
 msgstr "Bli med kven i praterommet?"
 
 msgid "Activate ID..."
-msgstr "Ta i bruk ID…"
+msgstr "Ta i bruk ID …"
 
 msgid "Join User in Chat..."
-msgstr "Bli med brukaren i praterommet…"
+msgstr "Bli med brukaren i praterommet …"
 
 msgid "Open Inbox"
 msgstr "Opna innkorga"
@@ -10692,7 +10026,7 @@ msgstr "_Mottakar:"
 
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
-msgstr "Klarte ikkje å abonnera på %s,%s,%s "
+msgstr "Klarte ikkje å abonnera på %s,%s,%s"
 
 msgid "zlocate &lt;nick&gt;: Locate user"
 msgstr "zlocate &lt;kallenamn&gt;: finn brukar"
@@ -10802,7 +10136,7 @@ msgstr "Feil i ambandet mot HTTP-mellomtenaren: %d"
 
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
-msgstr "Tilgang avvist: HTTP-mellomtenaren tillèt ikkje tunnel over port %d."
+msgstr "Tilgang avvist: HTTP-mellomtenaren tillèt ikkje tunnel over port %d"
 
 #, c-format
 msgid "Error resolving %s"
@@ -10810,11 +10144,11 @@ msgstr "Klarte ikkje å slå opp %s"
 
 #, c-format
 msgid "Requesting %s's attention..."
-msgstr "Ber om merksemda til %s…"
+msgstr "Ber om merksemda til %s …"
 
 #, c-format
 msgid "%s has requested your attention!"
-msgstr "%s har bede om å få merksemda di"
+msgstr "%s har bede om å få merksemda di."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -10846,7 +10180,7 @@ msgstr "lagra tilstandar"
 
 #, c-format
 msgid "%s is now known as %s.\n"
-msgstr "%s er no kjend som %s. \n"
+msgstr "%s er no kjend som %s.\n"
 
 #, c-format
 msgid ""
@@ -10940,7 +10274,7 @@ msgid "%x %X"
 msgstr "%x %X"
 
 msgid "Calculating..."
-msgstr "Reknar…"
+msgstr "Reknar …"
 
 msgid "Unknown."
 msgstr "Ukjend."
@@ -11019,7 +10353,7 @@ msgstr " - %s"
 
 #, c-format
 msgid " (%s)"
-msgstr "(%s)"
+msgstr " (%s)"
 
 #. 10053
 msgid "Connection interrupted by other software on your computer."
@@ -11104,14 +10438,17 @@ msgstr "Bruk globale mellomtenarinnstillingar"
 msgid "No Proxy"
 msgstr "Ingen mellomtenar"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr "Tor/Privat (SOCKS5)"
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Bruk miljøinnstillingar"
@@ -11139,6 +10476,12 @@ msgstr "Po_rt:"
 
 msgid "Pa_ssword:"
 msgstr "P_assord:"
+
+msgid "Use _silence suppression"
+msgstr "Bruk st_øydemping"
+
+msgid "_Voice and Video"
+msgstr "_Tale og video"
 
 msgid "Unable to save new account"
 msgstr "Klarte ikkje å lagra den nye kontoen"
@@ -11179,7 +10522,7 @@ msgstr ""
 "<span size='larger' weight='bold'>Velkomen til %s!</span>\n"
 "\n"
 "Du har ingen lynmeldingskontoar. For å kopla deg til %s, trykkjer du på "
-"<b>Legg til…</b>-knappen nedanfor og lagrar innstillingane for den første "
+"<b>Legg til …</b>-knappen nedanfor og lagrar innstillingane for den første "
 "kontoen din. Om du ønskjer at %s skal kopla seg mot fleire "
 "lynmeldingskontoar, trykkjer du på <b>Legg til…</b> igjen for å endra "
 "innstillingane for alle.\n"
@@ -11188,8 +10531,19 @@ msgstr ""
 "kontoar frå <b>Kontoar->Kontobehandling</b> i vennelistevindauget"
 
 #, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+"<a href=\"viewinfo\">%s</a>%s%s%s ønskjer å leggja deg (%s) til hans/hennar "
+"venneliste%s%s"
+
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s ønskjer å leggja deg (%s) til i vennelista si %s%s"
+
+msgid "Send Instant Message"
+msgstr "Send lynmelding"
 
 #. Buddy List
 msgid "Background Color"
@@ -11201,7 +10555,6 @@ msgstr "Bakgrunnsfargen til vennelista"
 msgid "Layout"
 msgstr "Utforming"
 
-# blist = vennelista?
 msgid "The layout of icons, name, and status of the buddy list"
 msgstr "Utforminga av ikona, namna og statusen til vennelista"
 
@@ -11366,11 +10719,10 @@ msgid "_Video Call"
 msgstr "_Biletsamtale"
 
 msgid "_Send File..."
-msgstr "_Send fil…"
+msgstr "_Send fil …"
 
-# var: Legg til _vennevarsling…
 msgid "Add Buddy _Pounce..."
-msgstr "Legg til _venneovervaking…"
+msgstr "Legg til _venneovervaking …"
 
 msgid "View _Log"
 msgstr "Vis l_ogg"
@@ -11394,10 +10746,10 @@ msgid "Remove Custom Icon"
 msgstr "Fjern tilpa_ssa ikon"
 
 msgid "Add _Buddy..."
-msgstr "Legg til _venn…"
+msgstr "Legg til _venn …"
 
 msgid "Add C_hat..."
-msgstr "Legg til prate_rom…"
+msgstr "Legg til prate_rom …"
 
 msgid "_Delete Group"
 msgstr "_Slett gruppa"
@@ -11416,7 +10768,7 @@ msgid "Persistent"
 msgstr "_Varig"
 
 msgid "_Edit Settings..."
-msgstr "Endra _innstillingar …"
+msgstr "Endra _innstillingane …"
 
 msgid "_Collapse"
 msgstr "Sl_å saman"
@@ -11492,7 +10844,7 @@ msgid "/Buddies/Add C_hat..."
 msgstr "/Venner/Legg til _praterom …"
 
 msgid "/Buddies/Add _Group..."
-msgstr "/Venner/Legg til _gruppe…"
+msgstr "/Venner/Legg til _gruppe …"
 
 msgid "/Buddies/_Quit"
 msgstr "/Venner/Avsl_utt"
@@ -11508,7 +10860,6 @@ msgstr "/Kontoar/Kontobehandling"
 msgid "/_Tools"
 msgstr "/V_erktøy"
 
-# var: /Verktøy/Venne_varsling
 msgid "/Tools/Buddy _Pounces"
 msgstr "/Verktøy/Venne_overvaking"
 
@@ -11610,7 +10961,7 @@ msgstr "Venner totalt"
 
 #, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr "Uverksam %dd  %dh %02dm"
+msgstr "Uverksam %dd %dh %02dm"
 
 #, c-format
 msgid "Idle %dh %02dm"
@@ -11621,22 +10972,22 @@ msgid "Idle %dm"
 msgstr "Uverksam %dm"
 
 msgid "/Buddies/New Instant Message..."
-msgstr "/Venner/Ny lynmelding…"
+msgstr "/Venner/Ny lynmelding …"
 
 msgid "/Buddies/Join a Chat..."
-msgstr "/Venner/Bli med  i eit praterom…"
+msgstr "/Venner/Bli med i eit praterom …"
 
 msgid "/Buddies/Get User Info..."
-msgstr "/Venner/Hent brukarinformasjon…"
+msgstr "/Venner/Hent brukarinformasjon …"
 
 msgid "/Buddies/Add Buddy..."
-msgstr "/Venner/Legg til venn…"
+msgstr "/Venner/Legg til venn …"
 
 msgid "/Buddies/Add Chat..."
-msgstr "/Venner/Legg til praterom…"
+msgstr "/Venner/Legg til praterom …"
 
 msgid "/Buddies/Add Group..."
-msgstr "/Venner/Legg til gruppe…"
+msgstr "/Venner/Legg til gruppe …"
 
 msgid "/Tools/Privacy"
 msgstr "/Verktøy/Personvern"
@@ -11671,13 +11022,13 @@ msgid "Reconnect"
 msgstr "Kopla til att"
 
 msgid "Re-enable"
-msgstr "Slå på  att "
+msgstr "Slå på att"
 
 msgid "SSL FAQs"
 msgstr "SSL OSS (FAQ)"
 
 msgid "Welcome back!"
-msgstr "Velkomen tilbake"
+msgstr "Velkomen tilbake."
 
 #, c-format
 msgid "%d account was disabled because you signed on from another location:"
@@ -11730,7 +11081,7 @@ msgid "/Buddies/Show/Idle Times"
 msgstr "/Venner/Vis/Uverksam tid"
 
 msgid "/Buddies/Show/Protocol Icons"
-msgstr "/venner/Vis/Protokollikon"
+msgstr "/Venner/Vis/Protokollikon"
 
 msgid "Add a buddy.\n"
 msgstr "Legg til venn.\n"
@@ -11739,7 +11090,10 @@ msgid "Buddy's _username:"
 msgstr "_Brukarnamnet til vennen:"
 
 msgid "(Optional) A_lias:"
-msgstr "Kalle_namn (valfritt) :"
+msgstr "Kalle_namn (valfritt):"
+
+msgid "(Optional) _Invite message:"
+msgstr "(Valfri) _invitasjonsmelding:"
 
 msgid "Add buddy to _group:"
 msgstr "Legg vennen til i _gruppa:"
@@ -11795,7 +11149,6 @@ msgstr "Ingen tilgjengelege handlingar"
 msgid "_Disable"
 msgstr "_Slå av"
 
-# skal det vera hurtigtast her?
 msgid "/Tools"
 msgstr "/V_erktøy"
 
@@ -11877,19 +11230,19 @@ msgid "/_Conversation"
 msgstr "/_Samtale"
 
 msgid "/Conversation/New Instant _Message..."
-msgstr "/Samtale/_Ny lynmelding…"
+msgstr "/Samtale/_Ny lynmelding …"
 
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Samtale/Bli med  i eit _praterom…"
+msgstr "/Samtale/Bli med  i eit _praterom …"
 
 msgid "/Conversation/_Find..."
-msgstr "/Samtale/_Finn…"
+msgstr "/Samtale/_Finn …"
 
 msgid "/Conversation/View _Log"
 msgstr "/Samtale/Vis l_ogg"
 
 msgid "/Conversation/_Save As..."
-msgstr "/Samtale/Lagra _som…"
+msgstr "/Samtale/Lagra _som …"
 
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Samtale/T_øm historikken"
@@ -11907,44 +11260,43 @@ msgid "/Conversation/Media/Audio\\/Video _Call"
 msgstr "/Samtale/Media/Lyd-\\/bilets_amtale"
 
 msgid "/Conversation/Se_nd File..."
-msgstr "/Samtale/S_end fil…"
+msgstr "/Samtale/S_end fil …"
 
 msgid "/Conversation/Get _Attention"
 msgstr "/Samtale/F_å merksemd"
 
-# var: /Samtale/Legg til _vennevarsling…
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Samtale/Legg til _venneovervaking…"
+msgstr "/Samtale/Legg til _venneovervaking …"
 
 msgid "/Conversation/_Get Info"
 msgstr "/Samtale/Hent opplysninga_r"
 
 msgid "/Conversation/In_vite..."
-msgstr "/Samtale/_Inviter…"
+msgstr "/Samtale/_Inviter …"
 
 msgid "/Conversation/M_ore"
 msgstr "/Samtale/_Meir"
 
 msgid "/Conversation/Al_ias..."
-msgstr "/Samtale/_Kallenamn…"
+msgstr "/Samtale/_Kallenamn …"
 
 msgid "/Conversation/_Block..."
-msgstr "/Samtale/_Blokker…"
+msgstr "/Samtale/_Blokker …"
 
 msgid "/Conversation/_Unblock..."
-msgstr "/Samtale/_Avblokker…"
+msgstr "/Samtale/_Avblokker …"
 
 msgid "/Conversation/_Add..."
 msgstr "/Samtale/Legg _til …"
 
 msgid "/Conversation/_Remove..."
-msgstr "/Samtale/F_jern…"
+msgstr "/Samtale/F_jern …"
 
 msgid "/Conversation/Insert Lin_k..."
-msgstr "/Samtale/Set inn _lenkje…"
+msgstr "/Samtale/Set inn _lenkje …"
 
 msgid "/Conversation/Insert Imag_e..."
-msgstr "/Samtale/Set inn b_ilete…"
+msgstr "/Samtale/Set inn b_ilete …"
 
 msgid "/Conversation/_Close"
 msgstr "/Samtale/L_ukk"
@@ -11992,47 +11344,46 @@ msgid "/Conversation/Media/Audio\\/Video Call"
 msgstr "/Samtale/Media/Lyd\\/Biletsamtale"
 
 msgid "/Conversation/Send File..."
-msgstr "/Samtale/Send fil…"
+msgstr "/Samtale/Send fil …"
 
 msgid "/Conversation/Get Attention"
 msgstr "/Samtale/Få merksemd"
 
-# var: /Samtale/Legg til vennevarsling…
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr "/Samtale/Legg til venneovervaking…"
+msgstr "/Samtale/Legg til venneovervaking …"
 
 msgid "/Conversation/Get Info"
 msgstr "/Samtale/Hent info"
 
 msgid "/Conversation/Invite..."
-msgstr "/Samtale/Inviter…"
+msgstr "/Samtale/Inviter …"
 
 msgid "/Conversation/Alias..."
-msgstr "/Samtale/Kallenamn…"
+msgstr "/Samtale/Kallenamn …"
 
 msgid "/Conversation/Block..."
-msgstr "/Samtale/Blokker…"
+msgstr "/Samtale/Blokker …"
 
 msgid "/Conversation/Unblock..."
-msgstr "/Samtale/Avblokker…"
+msgstr "/Samtale/Avblokker …"
 
 msgid "/Conversation/Add..."
-msgstr "/Samtale/Legg til…"
+msgstr "/Samtale/Legg til …"
 
 msgid "/Conversation/Remove..."
-msgstr "/Samtale/Fjern…"
+msgstr "/Samtale/Fjern …"
 
 msgid "/Conversation/Insert Link..."
-msgstr "/Samtale/Set inn lenkje…"
+msgstr "/Samtale/Set inn lenkje …"
 
 msgid "/Conversation/Insert Image..."
-msgstr "/Samtale/Set inn _bilete…"
+msgstr "/Samtale/Set inn _bilete …"
 
 msgid "/Options/Enable Logging"
-msgstr "/Val/Skru på logging"
+msgstr "/Val/Slå på logging"
 
 msgid "/Options/Enable Sounds"
-msgstr "/Vis/Skru på lyd"
+msgstr "/Vis/Slå på lyd"
 
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Val/Vis formateringsverktøya"
@@ -12041,7 +11392,7 @@ msgid "/Options/Show Timestamps"
 msgstr "/Val/Vis tidsstempel"
 
 msgid "User is typing..."
-msgstr "Brukaren skriv…"
+msgstr "Brukaren skriv …"
 
 #, c-format
 msgid ""
@@ -12156,7 +11507,7 @@ msgid "Right click for more options."
 msgstr "Høgreklikk viser fleire val."
 
 msgid "Level "
-msgstr "Nivå"
+msgstr "Nivå "
 
 msgid "Select the debug filter level."
 msgstr "Vel filternivå for feilretting."
@@ -12171,7 +11522,7 @@ msgid "Warning"
 msgstr "Åtvaring"
 
 msgid "Error "
-msgstr "Feil"
+msgstr "Feil "
 
 msgid "Fatal Error"
 msgstr "Alvorleg feil"
@@ -12247,7 +11598,6 @@ msgstr "Bosnisk"
 msgid "Catalan"
 msgstr "Katalansk"
 
-# Valensiansk er *ikkje* katalansk, men eit eige språk i den katalanske språkfamilen. Molt important!
 msgid "Valencian-Catalan"
 msgstr "Valensiansk"
 
@@ -12356,9 +11706,8 @@ msgstr "Lao"
 msgid "Maithili"
 msgstr "Maithili"
 
-#, fuzzy
 msgid "Meadow Mari"
-msgstr "Ny e-post"
+msgstr "Aust-marisk"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
@@ -12527,7 +11876,6 @@ msgstr "Om %s"
 msgid "Build Information"
 msgstr "Utgåvestegsopplysningar"
 
-# ???
 #. End of not to be translated section
 #, c-format
 msgid "%s Build Information"
@@ -12669,7 +12017,7 @@ msgid "_Remove Chat"
 msgstr "_Fjern praterom"
 
 msgid "Right-click for more unread messages...\n"
-msgstr "Høgreklikk for fleire ulesne meldingar…\n"
+msgstr "Høgreklikk for fleire ulesne meldingar …\n"
 
 msgid "_Change Status"
 msgstr "_Endra status"
@@ -12681,7 +12029,7 @@ msgid "_Unread Messages"
 msgstr "_Ulesne meldingar"
 
 msgid "New _Message..."
-msgstr "N_y melding…"
+msgstr "N_y melding …"
 
 msgid "_Accounts"
 msgstr "_Kontoar"
@@ -12690,7 +12038,7 @@ msgid "Plu_gins"
 msgstr "Program_tillegg"
 
 msgid "Pr_eferences"
-msgstr "_Innstillingar "
+msgstr "_Innstillingar"
 
 msgid "Mute _Sounds"
 msgstr "_Demp lydar"
@@ -12762,7 +12110,6 @@ msgstr "Filoverførings_detaljar"
 msgid "Paste as Plain _Text"
 msgstr "_Lim inn som rein tekst"
 
-# var: _Ta vekk formatering
 msgid "_Reset formatting"
 msgstr "Nulls_till formateringa"
 
@@ -12800,7 +12147,7 @@ msgid "Color to draw the name of a message you received."
 msgstr "Farge for å teikna namnet til ei melding du har motteke."
 
 msgid "\"Attention\" Name Color"
-msgstr "\"Merksemd\" "
+msgstr "\"Merksemd\""
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
@@ -12862,10 +12209,10 @@ msgid "Save Image"
 msgstr "Lagra bilete"
 
 msgid "_Save Image..."
-msgstr "_Lagra bilete…"
+msgstr "_Lagra bilete …"
 
 msgid "_Add Custom Smiley..."
-msgstr "_Legg til eige smilefjes…"
+msgstr "_Legg til eige smilefjes …"
 
 msgid "Select Font"
 msgstr "Vel skrifttype"
@@ -12914,7 +12261,6 @@ msgstr ""
 "til denne snarvegen:\n"
 "%s"
 
-# var: Smil!
 msgid "Smile!"
 msgstr "Smilefjes"
 
@@ -13011,11 +12357,9 @@ msgstr "_Lenkje"
 msgid "_Horizontal rule"
 msgstr "_Horisontal strek"
 
-# treng ikkje utropsteikn på norsk, skulle eg tru :-)
 msgid "_Smile!"
 msgstr "Smile_fjes"
 
-# var: _NB!
 msgid "_Attention!"
 msgstr "_Merksemd"
 
@@ -13210,11 +12554,16 @@ msgstr ""
 msgid "New Pounces"
 msgstr "Nye vennevarsel"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Avvis"
 
-# var: <span weight=\"bold\" size=\"larger\">Du har fått vennevarsel!</span>
-# verkar ikkje fungera :-(
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Du har slått til!</span>"
 
@@ -13325,12 +12674,11 @@ msgid "P_lay a sound"
 msgstr "Spel ein ly_d"
 
 msgid "Brows_e..."
-msgstr "_Bla gjennom…"
+msgstr "_Bla gjennom …"
 
 msgid "Br_owse..."
 msgstr "Bl_a gjennom …"
 
-# kanskje endra sidan "F_ørehandsvis" òg gjeld lydar?
 msgid "Pre_view"
 msgstr "F_ørehandsvis"
 
@@ -13427,7 +12775,6 @@ msgstr "Smilefjesdrakt:"
 msgid "Keyboard Shortcuts"
 msgstr "Tastatursnarvegar"
 
-# Trur det skal vera liten bokstav i escape :-)
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Lukk samtalar med _escape-tasten"
 
@@ -13837,7 +13184,6 @@ msgstr "Personvern"
 msgid "Changes to privacy settings take effect immediately."
 msgstr "Endringar i personvernet blir tekne i bruk med ein gong."
 
-# var: Personvern for:
 msgid "Set privacy for:"
 msgstr "Gjeld kontoen:"
 
@@ -13970,7 +13316,6 @@ msgstr "Smilefjes"
 msgid "Shortcut Text"
 msgstr "Snarvegstekst"
 
-# var: Tilpassa smilefjesbehandling
 msgid "Custom Smiley Manager"
 msgstr "Smilefjesbehandling"
 
@@ -14226,7 +13571,7 @@ msgid "Buddy is offline"
 msgstr "Vennen er fråkopla"
 
 msgid "Point values to use when..."
-msgstr "Verdiar som kan nyttast nårâ?¦"
+msgstr "Poengverdiar som kan nyttast når …"
 
 msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
@@ -14317,7 +13662,6 @@ msgstr "Finn tenester"
 msgid "Add to Buddy List"
 msgstr "Legg til vennelista"
 
-# Kanttenar?
 msgid "Gateway"
 msgstr "Sambandstenar"
 
@@ -14329,6 +13673,9 @@ msgstr "PubSub-samling"
 
 msgid "PubSub Leaf"
 msgstr "PubSub-teneste"
+
+msgid "Other"
+msgstr "Anna"
 
 msgid ""
 "\n"
@@ -14512,7 +13859,7 @@ msgstr "Vel alle kontoane du vil at vennene automatisk skal leggjast til i."
 #. *< priority
 #. *< id
 msgid "Evolution Integration"
-msgstr "Evolution-integrering "
+msgstr "Evolution-integrering"
 
 #. *< name
 #. *< version
@@ -14668,9 +14015,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Nytt varsel for"
 
-# \t_Berre når nokon seier brukarnamnet ditt
 msgid "\t_Only when someone says your username"
-msgstr "Berre når nokon seier brukarnamnet _ditt"
+msgstr "\tBerre når nokon seier brukarnamnet _ditt"
 
 msgid "_Focused windows"
 msgstr "_Fokuserte vindauge"
@@ -14727,7 +14073,7 @@ msgstr "Fjern når ei _melding blir sendt"
 
 #. Remove on conversation switch button
 msgid "Remove on switch to conversation ta_b"
-msgstr "Fjern når samtalef_ana får fokus "
+msgstr "Fjern når samtalef_ana får fokus"
 
 #. *< type
 #. *< ui_requirement
@@ -14793,7 +14139,6 @@ msgstr "Samtale"
 msgid "Conversation History"
 msgstr "Samtalehistorikk"
 
-# Vindauge eller meldingsvindauge?
 msgid "Request Dialog"
 msgstr "Førespurnadsvindauge"
 
@@ -15014,7 +14359,6 @@ msgstr "Opplysningsvindauge"
 msgid "Mail dialog"
 msgstr "E-postvindauge"
 
-# Vindauge eller meldingsvindauge?
 msgid "Question dialog"
 msgstr "Spørjevindauge"
 
@@ -15080,7 +14424,6 @@ msgstr "Rullande kontaktliste"
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "Ei rullande, vassrett utgåve av vennelista."
 
-# var: Vis tidsstempel kvar(t)
 msgid "Display Timestamps Every"
 msgstr "Vis tidsstempel kvart"
 
@@ -15101,7 +14444,7 @@ msgstr "Vis iChat-liknande tidsstempel"
 
 #. *  description
 msgid "Display iChat-style timestamps every N minutes."
-msgstr "Vis  iChat-liknande tidsstempel kvart N. minutt."
+msgstr "Vis iChat-liknande tidsstempel kvart N minutt."
 
 msgid "Timestamp Format Options"
 msgstr "Formateringsval for tidsstempel"
@@ -15125,11 +14468,9 @@ msgstr "Vis datoar i …"
 msgid "Co_nversations:"
 msgstr "_Samtalar:"
 
-# var: For forseinka meldingar
 msgid "For delayed messages"
 msgstr "Forseinka meldingar"
 
-# var: For forseinka meldingar og i praterom
 msgid "For delayed messages and in chats"
 msgstr "Forseinka meldingar og i praterom"
 
@@ -15183,6 +14524,21 @@ msgstr "_Programtillegg"
 msgid "D_evice"
 msgstr "_Eining"
 
+msgid "DROP"
+msgstr "Stille"
+
+msgid "Volume:"
+msgstr "Volum:"
+
+msgid "Silence threshold:"
+msgstr "Stillegrense:"
+
+msgid "Input and Output Settings"
+msgstr "Inn- og utkanalinnstillingar"
+
+msgid "Microphone Test"
+msgstr "Mikrofontest"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15194,9 +14550,6 @@ msgstr "_Eining"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "Lyd-/videoinnstillingar"
-
-msgid "Voice and Video Settings"
-msgstr "Lyd- og videoinnstillingar"
 
 #. *< name
 #. *< version
@@ -15337,7 +14690,7 @@ msgstr ""
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
-"Ei fleirplattform verktøysamling for grafiske brukargrensesnitt,  nytta av "
+"Ei fleirplattform verktøysamling for grafiske brukargrensesnitt, nytta av "
 "Pidgin"
 
 msgid ""
@@ -15468,25 +14821,3 @@ msgstr "Besøk Pidgin sin nettstad"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
-
-#~ msgid "bug master"
-#~ msgstr "feilrettingsansvarleg"
-
-# var: Automatisk avvising frå brukarar utanfor vennelista
-#~ msgid "Automatically reject from users not in buddy list"
-#~ msgstr "Automatisk avvising av brukarar utanfor vennelista"
-
-#~ msgid "An error occurred on the in-band bytestream transfer\n"
-#~ msgstr "Overføringa av samtidsdatastraumen feila\n"
-
-#~ msgid "Transfer was closed."
-#~ msgstr "Overføringa blei lukka."
-
-#~ msgid "Failed to open in-band bytestream"
-#~ msgstr "Klarte ikkje å opna samtidsdatastraum"
-
-#~ msgid "Error requesting %s"
-#~ msgstr "Klarte ikkje å spørja etter %s"
-
-#~ msgid "Set your friendly name."
-#~ msgstr "Vel visingsnamn."
