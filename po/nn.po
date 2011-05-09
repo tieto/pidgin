@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 01:21-0700\n"
+"POT-Creation-Date: 2011-05-09 01:47-0700\n"
 "PO-Revision-Date: 2011-05-05 07:19+0000\n"
 "Last-Translator: yslandro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.net/projects/p/pidgin/"
@@ -6233,17 +6233,13 @@ msgstr "Brukar-id"
 msgid "Where I live"
 msgstr "Kor eg bur"
 
-#, fuzzy, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "Du har %i føreslegne venner."
-msgstr[1] "Du har %i føreslegne venner."
+#, c-format
+msgid "You have %i suggested friends."
+msgstr "Du har %i føreslegne venner."
 
-#, fuzzy, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "Vi fann %i kontaktar som samsvarer med søket ditt."
-msgstr[1] "Vi fann %i kontaktar som samsvarer med søket ditt."
+#, c-format
+msgid "We found %i contacts that match your search."
+msgstr "Vi fann %i kontaktar som samsvarer med søket ditt."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
