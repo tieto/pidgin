@@ -79,6 +79,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
 	slplink->remote_user = g_strdup(username);
+	slplink->p2p_version = MSN_P2P_VERSION_ONE;
 
 	slplink->slp_msg_queue = g_queue_new();
 
@@ -262,6 +263,12 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 	}
 
 	return NULL;
+}
+
+MsnP2PVersion
+msn_slplink_get_p2p_version(MsnSlpLink *slplink)
+{
+	return slplink->p2p_version;
 }
 
 static void

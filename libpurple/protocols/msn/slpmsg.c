@@ -49,7 +49,7 @@ msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	msn_slpmsg_set_slplink(slpmsg, slplink);
 	slpmsg->slpcall = slpcall;
 
-	p2p = msn_p2p_get_user_support(slplink->remote_user);
+	p2p = msn_slplink_get_p2p_version(slplink);
 	slpmsg->p2p_info = msn_p2p_info_new(p2p);
 
 	return slpmsg;

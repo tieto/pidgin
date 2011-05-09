@@ -864,7 +864,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 	}
 
-	p2p = msn_p2p_get_user_support(msg->remote_user);
+	p2p = msn_slplink_get_p2p_version(slplink);
 	msg->part = msn_slpmsgpart_new_from_data(p2p, msg->body, msg->body_len);
 
 	if (msg->part)

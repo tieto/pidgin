@@ -489,12 +489,6 @@ msn_p2p_info_init_first(MsnP2PInfo *info, MsnP2PInfo *old_info)
 	}
 }
 
-MsnP2PVersion
-msn_p2p_get_user_support(const char *passport)
-{
-	return MSN_P2P_VERSION_ONE;
-}
-
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info)
 {
