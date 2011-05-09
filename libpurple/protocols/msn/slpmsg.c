@@ -34,7 +34,7 @@
  **************************************************************************/
 
 MsnSlpMessage *
-msn_slpmsg_new(MsnSlpLink *slplink)
+msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
 
@@ -47,6 +47,7 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 		msn_slpmsg_set_slplink(slpmsg, slplink);
 	else
 		slpmsg->slplink = NULL;
+	slpmsg->slpcall = slpcall;
 
 	slpmsg->p2p_info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
 
@@ -103,7 +104,6 @@ msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink)
 
 	slplink->slp_msgs =
 		g_list_append(slplink->slp_msgs, slpmsg);
-
 }
 
 void
@@ -188,10 +188,8 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		g_strlcat(body, content, body_len);
 	}
 
-	slpmsg = msn_slpmsg_new(slplink);
+	slpmsg = msn_slpmsg_new(slplink, slpcall);
 	msn_slpmsg_set_body(slpmsg, body, body_len);
-
-	slpmsg->slpcall = slpcall;
 
 	g_free(body);
 
@@ -203,7 +201,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *ack_info)
 	MsnSlpMessage *slpmsg;
 	MsnP2PInfo *new_info;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(NULL, NULL);
 
 	new_info = slpmsg->p2p_info;
 	msn_p2p_info_create_ack(ack_info, new_info);
@@ -217,8 +215,7 @@ MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
-	slpmsg->slpcall = slpcall;
+	slpmsg = msn_slpmsg_new(NULL, slpcall);
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_MSN_OBJ_DATA);
 	slpmsg->info = "SLP DATA";
 
@@ -231,9 +228,8 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(NULL, slpcall);
 
-	slpmsg->slpcall = slpcall;
 	msn_p2p_info_set_session_id(slpmsg->p2p_info, slpcall->session_id);
 	msn_slpmsg_set_body(slpmsg, NULL, 4);
 	slpmsg->info = "SLP DATA PREP";
@@ -246,9 +242,8 @@ MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(NULL, slpcall);
 
-	slpmsg->slpcall = slpcall;
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_FILE_DATA);
 	slpmsg->info = "SLP FILE";
 	slpmsg->size = size;

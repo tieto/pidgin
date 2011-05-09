@@ -447,7 +447,7 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PInfo *info)
 	MsnSlpMessage *slpmsg;
 	guint32 session_id;
 
-	slpmsg = msn_slpmsg_new(slplink);
+	slpmsg = msn_slpmsg_new(slplink, NULL);
 	slpmsg->id = msn_p2p_info_get_id(info);
 	session_id = msn_p2p_info_get_session_id(info);
 	slpmsg->size = msn_p2p_info_get_total_size(info);
