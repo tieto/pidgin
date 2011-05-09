@@ -2041,9 +2041,10 @@ proxy_page(void)
 		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
-					"SOCKS 4", "socks4",
-					"SOCKS 5", "socks5",
-					"HTTP", "http",
+					_("SOCKS 4"), "socks4",
+					_("SOCKS 5"), "socks5",
+					_("Tor/Privacy (SOCKS5)"), "tor",
+					_("HTTP"), "http",
 					_("Use Environmental Settings"), "envvar",
 					NULL);
 		gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);

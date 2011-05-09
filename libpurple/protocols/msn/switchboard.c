@@ -643,10 +643,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	PurpleAccount *account;
 	MsnSwitchBoard *swboard;
 
-	account = cmdproc->session->account;
 	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
@@ -658,14 +656,12 @@ static void
 joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
 	MsnSwitchBoard *swboard;
 	const char *passport;
 
 	passport = cmd->params[0];
 
 	session = cmdproc->session;
-	account = session->account;
 	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);

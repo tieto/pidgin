@@ -20,6 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#define _PURPLE_DNSSRV_C_
 
 #include "internal.h"
 #include "util.h"
@@ -30,12 +31,6 @@
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
 #endif
-#ifndef T_SRV
-#define T_SRV	PurpleDnsTypeSrv
-#endif
-#ifndef T_TXT
-#define T_TXT	PurpleDnsTypeTxt
-#endif
 #else /* WIN32 */
 #include <windns.h>
 /* Missing from the mingw headers */
@@ -45,6 +40,13 @@
 #ifndef DNS_TYPE_TXT
 # define DNS_TYPE_TXT PurpleDnsTypeTxt
 #endif
+#endif
+
+#ifndef T_SRV
+#define T_SRV	PurpleDnsTypeSrv
+#endif
+#ifndef T_TXT
+#define T_TXT	PurpleDnsTypeTxt
 #endif
 
 #include "debug.h"
@@ -673,11 +675,22 @@ res_thread(gpointer data)
 #endif
 
 PurpleSrvTxtQueryData *
-purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata)
+purple_srv_resolve(const char *protocol, const char *transport,
+	const char *domain, PurpleSrvCallback cb, gpointer extradata)
+{
+	return purple_srv_resolve_account(NULL, protocol, transport, domain,
+			cb, extradata);
+}
+
+PurpleSrvTxtQueryData *
+purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
+	const char *transport, const char *domain, PurpleSrvCallback cb,
+	gpointer extradata)
 {
 	char *query;
 	char *hostname;
 	PurpleSrvTxtQueryData *query_data;
+	PurpleProxyType proxy_type;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
@@ -691,6 +704,14 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 		purple_debug_error("dnssrv", "Wrong arguments\n");
 		cb(NULL, 0, extradata);
 		g_return_val_if_reached(NULL);
+	}
+
+	proxy_type = purple_proxy_info_get_type(
+		purple_proxy_get_setup(account));
+	if (proxy_type == PURPLE_PROXY_TOR) {
+		purple_debug_info("dnssrv", "Aborting SRV lookup in Tor Proxy mode.");
+		cb(NULL, 0, extradata);
+		return NULL;
 	}
 
 #ifdef USE_IDN
@@ -794,11 +815,20 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 #endif
 }
 
-PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata)
+PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner,
+	const char *domain, PurpleTxtCallback cb, gpointer extradata)
+{
+	return purple_txt_resolve_account(NULL, owner, domain, cb, extradata);
+}
+
+PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
+	const char *owner, const char *domain, PurpleTxtCallback cb,
+	gpointer extradata)
 {
 	char *query;
 	char *hostname;
 	PurpleSrvTxtQueryData *query_data;
+	PurpleProxyType proxy_type;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
 	int in[2], out[2];
@@ -807,6 +837,14 @@ PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain,
 	GError* err = NULL;
 	static gboolean initialized = FALSE;
 #endif
+
+	proxy_type = purple_proxy_info_get_type(
+		purple_proxy_get_setup(account));
+	if (proxy_type == PURPLE_PROXY_TOR) {
+		purple_debug_info("dnssrv", "Aborting TXT lookup in Tor Proxy mode.");
+		cb(NULL, extradata);
+		return NULL;
+	}
 
 #ifdef USE_IDN
 	if (!dns_str_is_ascii(domain)) {

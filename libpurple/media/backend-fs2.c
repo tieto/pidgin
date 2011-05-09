@@ -85,6 +85,9 @@ static gboolean purple_media_backend_fs2_set_remote_codecs(
 static gboolean purple_media_backend_fs2_set_send_codec(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		PurpleMediaCodec *codec);
+static void purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params);
+static const gchar **purple_media_backend_fs2_get_available_params(void);
 
 static void free_stream(PurpleMediaBackendFs2Stream *stream);
 static void free_session(PurpleMediaBackendFs2Session *session);
@@ -413,6 +416,8 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+	iface->set_params = purple_media_backend_fs2_set_params;
+	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 }
 
 static FsMediaType
@@ -2125,6 +2130,49 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 	}
 
 	return TRUE;
+}
+
+static void
+purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params)
+{
+	PurpleMediaBackendFs2Private *priv;
+	const gchar **supported = purple_media_backend_fs2_get_available_params();
+	const gchar **p;
+	guint i;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	if (priv->conference == NULL &&
+		!init_conference(PURPLE_MEDIA_BACKEND_FS2(self))) {
+		purple_debug_error("backend-fs2",
+				"Error initializing the conference.\n");
+		return;
+	}
+
+	for (i = 0; i != num_params; ++i) {
+		for (p = supported; *p != NULL; ++p) {
+			if (!strcmp(params[i].name, *p)) {
+				g_object_set(priv->conference,
+						params[i].name, g_value_get_string(&params[i].value),
+						NULL);
+				break;
+			}
+		}
+	}
+}
+
+static const gchar **
+purple_media_backend_fs2_get_available_params(void)
+{
+	static const gchar *supported_params[] = {
+		"sdes-cname", "sdes-email", "sdes-location", "sdes-name", "sdes-note",
+		"sdes-phone", "sdes-tool", NULL
+	};
+
+	return supported_params;
 }
 #else
 GType

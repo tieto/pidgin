@@ -677,7 +677,6 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 			purple_xfer_set_local_filename(xfer, filename);
 			purple_xfer_set_size(xfer, st.st_size);
 		} else {
-			utf8 = g_strdup(filename);
 			purple_xfer_set_local_filename(xfer, filename);
 		}
 

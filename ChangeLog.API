@@ -19,12 +19,16 @@ version 2.8.0 (??/??/????):
 		* cleared-message-history signal (conversation signals)
 		* purple_account_add_buddy_with_invite
 		* purple_account_add_buddies_with_invite
+		* purple_dnsquery_a_account
 		* purple_notify_user_info_add_pair_plaintext
 		* purple_media_get_active_local_candidates
 		* purple_media_get_active_remote_candidates
 		* purple_media_manager_get_video_caps (Jakub Adam) (#13095)
 		* purple_media_manager_set_video_caps (Jakub Adam) (#13095)
 		* purple_pounce_destroy_all_by_buddy (Kartik Mohta) (#1131)
+		* purple_proxy_connect_socks5_account
+		* purple_srv_resolve_account
+		* purple_txt_resolve_account
 		* Added add_buddy_with_invite to PurplePluginProtocolInfo
 		* Added add_buddies_with_invite to PurplePluginProtocolInfo
 		* Added PurpleSrvTxtQueryUiOps which allow UIs to specify their
@@ -35,6 +39,10 @@ version 2.8.0 (??/??/????):
 		Deprecated:
 		* purple_account_add_buddy
 		* purple_account_add_buddies_with_invite
+		* purple_dnsquery_a
+		* purple_proxy_connect_socks5
+		* purple_srv_resolve
+		* purple_txt_resolve
 		* add_buddy from PurplePluginProtocolInfo struct
 		* add_buddies from PurplePluginProtocolInfo struct
 

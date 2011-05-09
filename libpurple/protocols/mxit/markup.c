@@ -235,7 +235,6 @@ static void free_markupdata( struct RXMsgData* mx )
  */
 static void mxit_show_split_message( struct RXMsgData* mx )
 {
-	const char*		cont	= "<font color=\"#999999\">continuing...</font>\n";
 	GString*		msg		= NULL;
 	char*			ch		= NULL;
 	int				pos		= 0;
@@ -245,7 +244,6 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 	int				l_gt	= 0;
 	int				stop	= 0;
 	int				tags	= 0;
-	int				segs	= 0;
 	gboolean		intag	= FALSE;
 
 	/*
@@ -319,21 +317,20 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 				stop--;
 			}
 
-			/* build the string */
-			if ( segs )
-				g_string_prepend( msg, cont );
-
 			/* push message to pidgin */
 			serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
 			g_string_free( msg, TRUE );
 			msg = NULL;
 
-			tags = 0;
-			segs++;
-			start = stop + 1;
-		}
+			/* next part need this flag set */
+			mx->flags |= PURPLE_MESSAGE_RAW;
 
-		pos++;
+			tags = 0;
+			start = stop + 1;
+			pos = start;
+		}
+		else
+			pos++;
 	}
 
 	if ( start != pos ) {
@@ -343,8 +340,6 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 		ch[pos] = '\0';
 		msg = g_string_new( &ch[start] );
 		ch[pos] = '\n';
-		if ( segs )
-			g_string_prepend( msg, cont );
 
 		/* push message to pidgin */
 		serv_got_im( mx->session->con, mx->from, msg->str, mx->flags, mx->timestamp );
@@ -1095,10 +1090,15 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 				}
 				else if ( purple_str_has_prefix( &message[i], "<font size=" ) ) {
 					/* font size */
+					int fontsize;
+
 					tag = g_new0( struct tag, 1 );
 					tag->type = MXIT_TAG_SIZE;
 					tagstack = g_list_prepend( tagstack, tag );
 					// TODO: implement size control
+					if ( sscanf( &message[i+12], "%i", &fontsize ) ) {
+						purple_debug_info( MXIT_PLUGIN_ID, "Font size set to %i\n", fontsize );
+					}
 				}
 				else if ( purple_str_has_prefix( &message[i], "<font color=" ) ) {
 					/* font colour */
@@ -1149,6 +1149,17 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 			case '\\' :	/* MXit escape backslash */
 				g_string_append( mx, "\\" );				/* escape character */
 				g_string_append_c( mx, message[i] );		/* character to escape */
+				break;
+
+			case '.' : /* might be a MXit font size change, or custom emoticon */
+				if ( i + 1 < len ) {
+					if ( ( message[i+1] == '+' ) || ( message[i+1] == '-' ) )
+						g_string_append( mx, "\\." );		/* escape "." */
+					else
+						g_string_append_c( mx, '.' );
+				}
+				else
+					g_string_append_c( mx, '.' );
 				break;
 
 			default:

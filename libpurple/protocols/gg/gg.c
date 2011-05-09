@@ -818,7 +818,6 @@ static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
 
 static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
 {
-	GGPInfo *info;
 	PurpleConnection *conn;
 	PurpleRequestField *field;
 	GList *sel;
@@ -826,8 +825,6 @@ static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields 
 	conn = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	g_return_if_fail(conn != NULL);
-
-	info = conn->proto_data;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);
@@ -1845,6 +1842,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_STATE_RESOLVING:
 			purple_debug_info("gg", "GG_STATE_RESOLVING\n");
 			break;
+		case GG_STATE_RESOLVING_GG:
+			purple_debug_info("gg", "GG_STATE_RESOLVING_GG\n");
+			break;
 		case GG_STATE_CONNECTING_HUB:
 			purple_debug_info("gg", "GG_STATE_CONNECTING_HUB\n");
 			break;
@@ -1859,6 +1859,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_STATE_READING_REPLY:
 			purple_debug_info("gg", "GG_STATE_READING_REPLY\n");
+			break;
+		case GG_STATE_TLS_NEGOTIATION:
+			purple_debug_info("gg", "GG_STATE_TLS_NEGOTIATION\n");
 			break;
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
@@ -1880,10 +1883,11 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	purple_input_remove(gc->inpa);
 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
-	gc->inpa = purple_input_add(info->session->fd,
-				  (info->session->check == 1) ? PURPLE_INPUT_WRITE
-							      : PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	if (info->session->fd >= 0)
+		gc->inpa = purple_input_add(info->session->fd,
+			(info->session->check == 1) ? PURPLE_INPUT_WRITE :
+				PURPLE_INPUT_READ,
+			ggp_async_login_handler, gc);
 
 	switch (ev->type) {
 		case GG_EVENT_NONE:
@@ -2096,6 +2100,7 @@ static void ggp_login(PurpleAccount *account)
 	struct gg_login_params *glp;
 	GGPInfo *info;
 	const char *address;
+	const gchar *encryption_type;
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
@@ -2129,11 +2134,13 @@ static void ggp_login(PurpleAccount *account)
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
-#if defined(USE_GNUTLS) || !defined(USE_INTERNAL_LIBGADU)
-	glp->tls = 1;
-#else
-	glp->tls = 0;
-#endif
+	
+	encryption_type = purple_account_get_string(account, "encryption", "none");
+	purple_debug_info("gg", "Requested encryption type: %s\n", encryption_type);
+	if (strcmp(encryption_type, "opportunistic_tls") == 0)
+		glp->tls = 1;
+	else
+		glp->tls = 0;
 	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
@@ -2585,9 +2592,6 @@ static void ggp_keepalive(PurpleConnection *gc)
 static void ggp_register_user(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	GGPInfo *info;
-
-	info = gc->proto_data = g_new0(GGPInfo, 1);
 
 	ggp_token_request(gc, ggp_register_user_dialog);
 }
@@ -2780,6 +2784,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
+	GList *encryption_options = NULL;
 
 	option = purple_account_option_string_new(_("Nickname"),
 			"nick", _("Gadu-Gadu User"));
@@ -2790,6 +2795,26 @@ static void init_plugin(PurplePlugin *plugin)
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
+
+#define ADD_VALUE(list, desc, v) { \
+	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup((desc)); \
+	kvp->value = g_strdup((v)); \
+	list = g_list_append(list, kvp); \
+}
+
+	ADD_VALUE(encryption_options, _("Don't use encryption"), "none");
+	ADD_VALUE(encryption_options, _("Use encryption if available"),
+		"opportunistic_tls");
+#if 0
+	/* TODO */
+	ADD_VALUE(encryption_options, _("Require encryption"), "require_tls");
+#endif
+
+	option = purple_account_option_list_new(_("Connection security"),
+		"encryption", encryption_options);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
 
 	my_protocol = plugin;
 

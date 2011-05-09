@@ -6,34 +6,42 @@ version 3.0.0 (??/??/????):
 
 version 2.8.0 (??/??/????):
 	General:
-	* Implement simple silence suppression for voice calls, preventing wasted
-	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+	* Implement simple silence suppression for voice calls, preventing
+	  wasted bandwidth for silent periods during a call. (Jakub Adam)
+	  (half of #13180)
 	* Added the DigiCert High Assurance CA-3 intermediate CA, needed for
 	  validation of the Facebook XMPP interface's certificate.
+	* Removed the QQ protocol plugin.  It hasn't worked in a long time and
+	  isn't being maintained, therefore we no longer want it.
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
-	* Voice/Video call window adapts correctly to adding or removing streams
-	  on the fly. (Jakub Adam) (half of #13535)
-	* Don't cancel an ongoing call when rejecting the addition of a stream to
-	  the existing call. (Jakub Adam) (#13537)
+	* Voice/Video call window adapts correctly to adding or removing
+	  streams on the fly. (Jakub Adam) (half of #13535)
+	* Don't cancel an ongoing call when rejecting the addition of a
+	  stream to the existing call. (Jakub Adam) (#13537)
 	* Pidgin plugins can now override tab completion and detect clicks on
 	  usernames in the chat userlist. (kawaii.neko) (#12599)
 
 	libpurple:
 	* media: Allow obtaining active local and remote candidates. (Jakub
 	  Adam) (#11830)
-	* media: Allow getting/setting video capabilities. (Jakub Adam) (half of
-	  #13095)
-	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
-	  of #13180)
+	* media: Allow getting/setting video capabilities. (Jakub Adam) (half
+	  of #13095)
+	* Simple Silence Suppression is optional per-account. (Jakub Adam)
+	  (half of #13180)
 	* Fix purple-url-handler being unable to find an account.
-	* media: Allow adding/removing streams on the fly. (Jakub Adam) (half of
-	  #13535)
+	* media: Allow adding/removing streams on the fly. (Jakub Adam)
+	  (half of #13535)
 	* Support new connection states in NetworkManager 0.9. (Dan Williams)
 	  (#13505)
 	* When removing a buddy, delete the pounces associated with it.
 	  (Kartik Mohta) (#1131)
+	* media: Allow libpurple and plugins to set SDES properties for RTP
+	  conferences. (Jakub Adam) (#12981)
+	* proxy: Add new "Tor/Privacy" proxy type that can be used to
+	  restrict operations that could leak potentially sensitive data
+	  (e.g. DNS queries).  (#11110, #13928)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
@@ -46,8 +54,8 @@ version 2.8.0 (??/??/????):
 	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
 	  Krzysztof Klinikowski) (#13362, #13590)
 	* Require libgadu 1.10.1 to avoid using internal libgadu.
-	* SSL connection support for GNUTLS users (not on Windows yet!).
-	  (Tomasz Wasilczyk) (#13613)
+	* Optional SSL connection support for GNUTLS users (not on Windows
+	  yet!). (Tomasz Wasilczyk) (#13613, #13894)
 	* Don't count received messages or statuses when determining whether
 	  to send a keepalive packet. (Jan Zachorowski) (#13699)
 	* Fix a crash when receiving images on Windows or an incorrect
@@ -55,31 +63,50 @@ version 2.8.0 (??/??/????):
 	  Wasilczyk) (#10268)
 	* Support XML events, resulting in immediate update of other users'
 	  buddy icons. (Tomasz Wasilczyk) (#13739)
+	* Accept poorly formatted URLs from other third-party clients in
+	  the same manner as the official client.  (Tomasz Wasilczyk)
+	  (#13886)
 
 	ICQ:
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
 	  (#11895)
 	* Ignore Daylight Saving Time when performing calculations related to
 	  birthdays. (Dustin Gathmann) (#13533)
-	* It is now possible to specify multiple encodings on the Advanced tab of
-	  an ICQ account's settings by using a comma-delimited list.  (Dmitry
-	  Utkin (#13496)
+	* It is now possible to specify multiple encodings on the Advanced
+	  tab of an ICQ account's settings by using a comma-delimited list.
+	  (Dmitry Utkin (#13496)
 
 	IRC:
 	* Add "authserv" service command.  (tomos) (#13337)
 
+	MXit:
+	* Support for an Invite Message when adding a buddy.
+	* Fixed bug in splitting-up of messages that contain a lot of links.
+	* Fixed crash caused by timer not being disabled on disconnect.
+	  (introduced in 2.7.11)
+	* Clearing of the conversation window now works.
+	* When receiving an invite you can display the sender's profile
+	  information, avatar image, invite message.
+	* The Change PIN option was moved into separate action.
+	* New profile attributes added and shown.
+	* Update to protocol v6.3.
+
 	XMPP:
 	* Remember the previously entered user directory when searching.
 	  (Keith Moyer) (#12451)
+	* Correctly handle a buddy's unsetting his/her vCard-based avatar.
+	  (Matthew W.S. Bell) (#13370)
 
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test
 	  microphone settings. (Jakub Adam) (#13182)
+	* Fix a crash when handling some saved settings in the Voice/Video
+	  Settings plugin. (Pat Erley) (13290, #13774)
 
 	Windows-Specific Changes:
-	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
-	  broken in 2.7.11. (Florian Quèze)
-	* Build internal libgadu without -mms-bitfields, fixing several
+	* Fix building libpurple with Visual C++ .NET 2005. This was
+	  accidentally broken in 2.7.11. (Florian Quèze)
+	* Build internal libgadu using packed structs, fixing several
 	  long-standing Gadu-Gadu issues. (#11958, #6297)
 
 version 2.7.11 (03/10/2011):

@@ -206,12 +206,8 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *ack_info)
 	slpmsg = msn_slpmsg_new(NULL);
 
 	new_info = slpmsg->p2p_info;
-	msn_p2p_info_set_session_id(new_info, msn_p2p_info_get_session_id(ack_info));
+	msn_p2p_info_create_ack(ack_info, new_info);
 	slpmsg->size = msn_p2p_info_get_total_size(ack_info);
-	msn_p2p_info_set_flags(new_info, P2P_ACK);
-	msn_p2p_info_set_ack_id(new_info, msn_p2p_info_get_id(ack_info));
-	msn_p2p_info_set_ack_sub_id(new_info, msn_p2p_info_get_ack_id(ack_info));
-	msn_p2p_info_set_ack_size(new_info, msn_p2p_info_get_total_size(ack_info));
 	slpmsg->info = "SLP ACK";
 
 	return slpmsg;
