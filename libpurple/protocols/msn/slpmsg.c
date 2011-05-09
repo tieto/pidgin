@@ -37,6 +37,7 @@ MsnSlpMessage *
 msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
+	MsnP2PVersion p2p;
 
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
@@ -49,7 +50,8 @@ msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 		slpmsg->slplink = NULL;
 	slpmsg->slpcall = slpcall;
 
-	slpmsg->p2p_info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
+	p2p = msn_p2p_get_user_support(slplink->remote_user);
+	slpmsg->p2p_info = msn_p2p_info_new(p2p);
 
 	return slpmsg;
 }

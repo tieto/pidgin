@@ -203,6 +203,9 @@ msn_p2p_info_is_ack(MsnP2PInfo *info);
 void
 msn_p2p_info_init_first(MsnP2PInfo *new_info, MsnP2PInfo *old_info);
 
+MsnP2PVersion
+msn_p2p_get_user_support(const char *passport);
+
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);
 
