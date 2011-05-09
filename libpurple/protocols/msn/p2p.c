@@ -313,11 +313,28 @@ msn_p2p_info_to_string(MsnP2PInfo *info, GString *str)
 }
 
 gboolean
-msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags)
+msn_p2p_msg_is_data(const MsnP2PInfo *info)
 {
-	return (flags == P2P_MSN_OBJ_DATA ||
-	        flags == (P2P_WLM2009_COMP | P2P_MSN_OBJ_DATA) ||
-	        flags == P2P_FILE_DATA);
+	gboolean data = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			guint32 flags = info->header.v1.flags;
+			data = (flags == P2P_MSN_OBJ_DATA ||
+			        flags == (P2P_WLM2009_COMP | P2P_MSN_OBJ_DATA) ||
+			        flags == P2P_FILE_DATA);
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			data = info->header.v2.message_len > 0;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return data;
 }
 
 gboolean
@@ -360,6 +377,122 @@ msn_p2p_info_is_final(MsnP2PInfo *info)
 	}
 
 	return final;
+}
+
+void
+msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info)
+{
+	switch (old_info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			MsnP2PHeader *old = &old_info->header.v1;
+			MsnP2PHeader *new = &new_info->header.v1;
+
+			new->session_id = old->session_id;
+			new->flags = P2P_ACK;
+			new->ack_id = old->id;
+			new->ack_sub_id = old->ack_id;
+			new->ack_size = old->total_size;
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO: {
+			MsnP2Pv2Header *old = &old_info->header.v2;
+			MsnP2Pv2Header *new = &new_info->header.v2;
+
+			msn_tlvlist_add_32(&new->header_tlv, P2P_TLV_TYPE_ACK, old->base_id + old->message_len);
+			new->opcode = P2P_OPCODE_NONE;
+
+			if (old->message_len > 0) {
+				if (!msn_tlv_gettlv(old->header_tlv, P2P_TLV_TYPE_ACK, 1)) {
+					if (old->opcode & P2P_OPCODE_SYN) {
+						msn_tlv_t *ack_tlv;
+						new->opcode |= P2P_OPCODE_RAK;
+						
+						ack_tlv = msn_tlv_gettlv(old->header_tlv, P2P_TLV_TYPE_PEER_INFO, 1);
+						if (ack_tlv) {
+							msn_tlvlist_add_tlv(&new->header_tlv, ack_tlv);
+							new->opcode |= P2P_OPCODE_SYN;
+						}
+					}
+				}
+			}
+			break;
+		}
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", old_info->version);
+	}
+}
+
+gboolean
+msn_p2p_info_require_ack(MsnP2PInfo *info)
+{
+	gboolean ret = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			guint32 flags = msn_p2p_info_get_flags(info);
+
+			ret = flags == P2P_NO_FLAG || flags == P2P_WLM2009_COMP ||
+			      msn_p2p_msg_is_data(info);
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			ret = (info->header.v2.opcode & P2P_OPCODE_RAK) > 0;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return ret;
+}
+
+gboolean
+msn_p2p_info_is_ack(MsnP2PInfo *info)
+{
+	gboolean ret = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			ret = msn_p2p_info_get_flags(info) == P2P_ACK;
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			ret = msn_tlv_gettlv(info->header.v2.header_tlv, P2P_TLV_TYPE_ACK, 1) != NULL;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return ret;
+}
+
+void
+msn_p2p_info_init_first(MsnP2PInfo *info, MsnP2PInfo *old_info)
+{
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE:
+			info->header.v1.session_id = old_info->header.v1.session_id;
+			info->header.v1.flags = old_info->header.v1.flags;
+			break;
+
+		case MSN_P2P_VERSION_TWO:
+			info->header.v2.data_tf = TF_FIRST;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+}
+
+MsnP2PVersion
+msn_p2p_get_user_support(const char *passport)
+{
+	return MSN_P2P_VERSION_ONE;
 }
 
 guint32
@@ -478,7 +611,7 @@ msn_p2p_info_get_flags(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			flags = info->header.v2.data_tf;
 			break;
 
 		default:
@@ -653,7 +786,7 @@ msn_p2p_info_set_flags(MsnP2PInfo *info, guint32 flags)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.data_tf = flags;
 			break;
 
 		default:

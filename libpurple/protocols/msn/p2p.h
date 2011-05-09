@@ -65,7 +65,7 @@ typedef struct {
 	guint16 version;
 	guint16 reserved;
 	guint32 caps;
-} PeerInfo;
+} P2PPeerInfo;
 
 typedef enum
 {
@@ -76,26 +76,26 @@ typedef enum
 
 typedef enum
 {
-	TLP_PEER_INFO   = 0x01, /**< Client peer info */
-	TLP_ACK         = 0x02, /**< ACK */
-	TLP_NAK         = 0x03  /**< NAK */
-} TLP;
+	P2P_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
+	P2P_TLV_TYPE_ACK        = 0x02, /**< ACK */
+	P2P_TLV_TYPE_NAK        = 0x03  /**< NAK */
+} P2PTLVType;
 
 typedef enum
 {
-	TLP_LEN_PEER_INFO   = 12,
-	TLP_LEN_ACK         = 4,
-	TLP_LEN_NAK         = 4
-} TLPLength;
+	P2P_TLV_LEN_PEER_INFO   = 12,
+	P2P_TLV_LEN_ACK         = 4,
+	P2P_TLV_LEN_NAK         = 4
+} P2PTLVLength;
 
 typedef enum
 {
-	PI_PVER     = 0x0200,
-	PI_IMP_ID   = 0,
-	PI_VER      = 0x0e00,
-	PI_RES      = 0,
-	PI_CAPS     = 0x0000010f
-} PeerInfoVal;
+	P2P_PI_PVER     = 0x0200,
+	P2P_PI_IMP_ID   = 0,
+	P2P_PI_VER      = 0x0e00,
+	P2P_PI_RES      = 0,
+	P2P_PI_CAPS     = 0x0000010f
+} P2PPeerInfoVal;
 
 #define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
 #define DLP_REMAINING_LEN 8
@@ -183,13 +183,28 @@ void
 msn_p2p_info_to_string(MsnP2PInfo *info, GString *str);
 
 gboolean
-msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
+msn_p2p_msg_is_data(const MsnP2PInfo *info);
 
 gboolean
 msn_p2p_info_is_valid(MsnP2PInfo *info);
 
 gboolean
 msn_p2p_info_is_final(MsnP2PInfo *info);
+
+void
+msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info);
+
+gboolean
+msn_p2p_info_require_ack(MsnP2PInfo *info);
+
+gboolean
+msn_p2p_info_is_ack(MsnP2PInfo *info);
+
+void
+msn_p2p_info_init_first(MsnP2PInfo *new_info, MsnP2PInfo *old_info);
+
+MsnP2PVersion
+msn_p2p_get_user_support(const char *passport);
 
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);

@@ -253,8 +253,10 @@ msn_message_parse_payload(MsnMessage *msg,
 
 	if (content_type != NULL &&
 		!strcmp(content_type, "application/x-msnmsgrp2p")) {
+		MsnP2PVersion p2p;
 		msg->msnslp_message = TRUE;
-		msg->part = msn_slpmsgpart_new_from_data(tmp, payload_len - (tmp - tmp_base));
+		p2p = msn_p2p_get_user_support(msg->remote_user);
+		msg->part = msn_slpmsgpart_new_from_data(p2p, tmp, payload_len - (tmp - tmp_base));
 	}
 
 	if (payload_len - (tmp - tmp_base) > 0) {

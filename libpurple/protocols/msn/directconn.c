@@ -593,7 +593,9 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 	case DC_STATE_ESTABLISHED:
 		if (packet_length) {
-			part = msn_slpmsgpart_new_from_data(dc->in_buffer + 4, packet_length);
+			MsnP2PVersion p2p;
+			p2p = msn_p2p_get_user_support(dc->slplink->remote_user);
+			part = msn_slpmsgpart_new_from_data(p2p, dc->in_buffer + 4, packet_length);
 			if (part) {
 				msn_slplink_process_msg(dc->slplink, part);
 				msn_slpmsgpart_unref(part);
