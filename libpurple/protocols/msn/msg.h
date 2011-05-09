@@ -78,7 +78,6 @@ struct _MsnMessage
 
 	MsnMsgType type;
 
-	gboolean msnslp_message;
 	MsnSlpMessagePart *part;
 
 	char *remote_user;
