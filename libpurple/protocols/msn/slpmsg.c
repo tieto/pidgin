@@ -215,7 +215,7 @@ MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL, slpcall);
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_MSN_OBJ_DATA);
 	slpmsg->info = "SLP DATA";
 
@@ -228,7 +228,7 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL, slpcall);
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 
 	msn_p2p_info_set_session_id(slpmsg->p2p_info, slpcall->session_id);
 	msn_slpmsg_set_body(slpmsg, NULL, 4);
@@ -242,7 +242,7 @@ MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL, slpcall);
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_FILE_DATA);
 	slpmsg->info = "SLP FILE";
