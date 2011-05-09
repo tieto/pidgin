@@ -410,8 +410,7 @@ msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PInfo *info)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_ack_new(info);
-	msn_slpmsg_set_slplink(slpmsg, slplink);
+	slpmsg = msn_slpmsg_ack_new(slplink, info);
 
 	return slpmsg;
 }

@@ -196,12 +196,12 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *ack_info)
+MsnSlpMessage *msn_slpmsg_ack_new(MsnSlpLink *slplink, MsnP2PInfo *ack_info)
 {
 	MsnSlpMessage *slpmsg;
 	MsnP2PInfo *new_info;
 
-	slpmsg = msn_slpmsg_new(NULL, NULL);
+	slpmsg = msn_slpmsg_new(slplink, NULL);
 
 	new_info = slpmsg->p2p_info;
 	msn_p2p_info_create_ack(ack_info, new_info);
