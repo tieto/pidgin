@@ -1,21 +1,25 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# This file is distributed under the same license as the Pidgin package.
+# Gideon van Melle <translations@gvmelle.com>
+# Daniël Heres <danielheres@gmail.com>, 2008
+# Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006.
+# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin\n"
+"Project-Id-Version: pidgin 2.7.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 01:47-0700\n"
-"PO-Revision-Date: 2011-05-03 01:35+0000\n"
-"Last-Translator: Dingoe <translations@gvmelle.com>\n"
-"Language-Team: Dutch (http://www.transifex.net/projects/p/pidgin/team/nl/)\n"
+"POT-Creation-Date: 2011-05-09 21:40-0700\n"
+"PO-Revision-Date: 2011-05-02 18:45+0100\n"
+"Last-Translator: dingoe <translations@gvmelle.com>\n"
+"Language-Team: Dutch <translations@gvmelle.com>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: KBabel 1.11.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1396,6 +1400,7 @@ msgstr "Geef een titel voor de status."
 msgid "Duplicate title"
 msgstr "Dubbele titel"
 
+#  Different status message expander
 msgid "Please enter a different title for the status."
 msgstr "Geef een andere titel aan de status."
 
@@ -1411,6 +1416,7 @@ msgstr "Bericht:"
 msgid "Edit Status"
 msgstr "Status bewerken"
 
+#  Different status message expander
 msgid "Use different status for following accounts"
 msgstr "Een andere status gebruiken voor de volgende accounts"
 
@@ -1619,6 +1625,7 @@ msgstr "Wachtwoord nodig voor aanmelden."
 msgid "Enter password for %s (%s)"
 msgstr "Geef wachtwoord voor %s (%s)"
 
+# wachtwoord invoeren
 msgid "Enter Password"
 msgstr "Voer wachtwoord in"
 
@@ -1894,6 +1901,7 @@ msgstr "Kan serv naam niet ophalen: %s"
 msgid "Purple's D-BUS server is not running for the reason listed below"
 msgstr "Purple's D-BUS server is niet actief vanwege de volgende reden"
 
+# was eerst: geen
 msgid "No name"
 msgstr "Geen naam"
 
@@ -2415,6 +2423,12 @@ msgstr ""
 "Voegt de mogelijkheid toe om notities voor vrienden op te slaan op uw "
 "vriendenlijst"
 
+#  *< type
+#  *< ui_requirement
+#  *< flags
+#  *< dependencies
+#  *< priority
+#  *< id
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2424,6 +2438,10 @@ msgstr ""
 msgid "Cipher Test"
 msgstr "Codering testen"
 
+#  *< name
+#  *< version
+#  *  summary
+#  *  description
 #. *< name
 #. *< version
 #. *  summary
@@ -2431,6 +2449,10 @@ msgstr "Codering testen"
 msgid "Tests the ciphers that ship with libpurple."
 msgstr "De met libpurple meegeleverde coderingen testen."
 
+#  *< name
+#  *< version
+#  *  summary
+#  *  description
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -2440,6 +2462,10 @@ msgstr "De met libpurple meegeleverde coderingen testen."
 msgid "DBus Example"
 msgstr "DBus voorbeeld"
 
+#  *< name
+#  *< version
+#  *  summary
+#  *  description
 #. *< name
 #. *< version
 #. *  summary
@@ -2676,12 +2702,16 @@ msgstr "Map voor logboeken"
 msgid "Log Reader"
 msgstr "Log Lezer"
 
+#  *< name
+#  *< version
+#  * summary
 #. *< name
 #. *< version
 #. * summary
 msgid "Includes other IM clients' logs in the log viewer."
 msgstr "Logboeken van andere IM-cliënten tonen in de logviewer."
 
+#  * description
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
@@ -2773,6 +2803,7 @@ msgstr "Offline berichten in alarm opslaan."
 msgid "Do not ask. Always save in pounce."
 msgstr "Niet vragen. Altijd in alarm opslaan."
 
+# wachtwoord invoeren
 msgid "One Time Password"
 msgstr "Eenmalig wachtwoord"
 
@@ -3345,6 +3376,7 @@ msgstr "Vriendenlijst opslaan in bestand..."
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu Protocol plug-in"
 
+#  summary
 #. summary
 msgid "Polish popular IM"
 msgstr "Populaire Poolse IM-cliënt"
@@ -6021,11 +6053,11 @@ msgstr "Schermnaam"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "Over mij"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "Waar ik woon"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6033,14 +6065,14 @@ msgstr "Mobiele Nummer"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "Is te vinden"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "kan worden voorgesteld"
 
 msgid "Update your MXit Profile"
-msgstr ""
+msgstr "Werk uw MXit Profiel  bij"
 
 msgid "The PIN you entered is invalid."
 msgstr "De PINcode die u invulde is ongeldig."
@@ -6056,7 +6088,7 @@ msgstr "De twee PINcodes die u invulde zijn niet gelijk."
 
 #. show error to user
 msgid "PIN Update Error"
-msgstr ""
+msgstr "PIN Update fout"
 
 #. pin
 #. pin (required)
@@ -6069,10 +6101,10 @@ msgstr "PINcode verifiëren"
 
 #. (reference: "libpurple/request.h")
 msgid "Change PIN"
-msgstr ""
+msgstr "PIN veranderen"
 
 msgid "Change MXit PIN"
-msgstr ""
+msgstr "verander MXit PIN"
 
 msgid "View Splash"
 msgstr "Bekijk Splash"
@@ -6084,13 +6116,13 @@ msgid "About"
 msgstr "Over"
 
 msgid "Search for user"
-msgstr ""
+msgstr "Gebruiker zoeken"
 
 msgid "Search for a MXit contact"
-msgstr ""
+msgstr "MXit contact zoeken"
 
 msgid "Type search information"
-msgstr ""
+msgstr "Typ zoekinformatie"
 
 msgid "_Search"
 msgstr "_Zoeken"
@@ -6101,15 +6133,15 @@ msgstr "Profiel veranderen..."
 
 #. change PIN
 msgid "Change PIN..."
-msgstr ""
+msgstr "PIN veranderen..."
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr ""
+msgstr "Vooorgestelde vrienden..."
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr ""
+msgstr "Zoeken naar contacten..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6196,6 +6228,7 @@ msgstr "U heeft geen beveiligingscode ingevuld"
 msgid "Security Code"
 msgstr "Beveiligingscode"
 
+# wachtwoord invoeren
 #. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Vul beveiligingscode in"
@@ -6242,6 +6275,7 @@ msgstr "Afgewezen bericht"
 msgid "Hidden Number"
 msgstr "Verborgen nummer"
 
+# niet aanwezig/beschikbaar
 msgid "No profile available"
 msgstr "Geen profiel beschikbaar"
 
@@ -6270,28 +6304,28 @@ msgid "Last Online"
 msgstr "Laatste Online"
 
 msgid "Invite Message"
-msgstr ""
+msgstr "Uitnodiging"
 
 msgid "No results"
-msgstr ""
+msgstr "Geen resultaten"
 
 msgid "No contacts found."
-msgstr ""
+msgstr "Geen contacten gevonden."
 
 #. define columns
 msgid "UserId"
-msgstr ""
+msgstr "GebruikersID"
 
 msgid "Where I live"
-msgstr ""
+msgstr "Waar ik woon"
 
 #, c-format
 msgid "You have %i suggested friends."
-msgstr ""
+msgstr "Je hebt %i voorgestelde vrienden."
 
 #, c-format
 msgid "We found %i contacts that match your search."
-msgstr ""
+msgstr "We vonden %i contacten die aan uw critera voldoen"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6671,6 +6705,7 @@ msgstr "Torch"
 msgid "%s has torched you!"
 msgstr "%s u bent torched!"
 
+# msgstr "De gebruiker heeft u befakkeld"
 #, c-format
 msgid "Torching %s..."
 msgstr "Torching %s..."
@@ -7519,6 +7554,7 @@ msgstr "Wilt u deze persoon toevoegen aan uw vriendenlijst?"
 msgid "_Add"
 msgstr "Toe_voegen"
 
+# afzeggen/weigeren/afwijzen
 msgid "_Decline"
 msgstr "Af_wijzen"
 
@@ -7960,6 +7996,10 @@ msgstr ""
 "afbeeldingen via chatberichten). Dit zou als een inbreuk op de privacy "
 "beschouwd kunnen worden omdat de ander dan uw IP-adres te weten komt."
 
+# msgstr ""
+# "(Er is een fout opgetreden bij het ontvangen van het bericht. Of jij en %s "
+# "hebben verschillende coderingen geselecteerd of de andere persoon gebruikt "
+# "een chatprogramma met fouten.)"
 #. Label
 msgid "Buddy Icon"
 msgstr "pictogram"
@@ -8360,6 +8400,8 @@ msgstr "Onbekend (0x%04x)<br>"
 msgid "Last Known Client"
 msgstr "Laatst bekende client"
 
+# ui/epiphany.glade.h:126
+# ui/prompts.glade.h:3
 msgid "User Name"
 msgstr "Gebruikersnaam"
 
@@ -8531,6 +8573,7 @@ msgstr "Gebruiker zoeken..."
 msgid "Force login (ignore server redirects)"
 msgstr "Aanmelding forceren (server omleiding negeren)"
 
+#  pretend to be Sametime Connect
 #. pretend to be Sametime Connect
 msgid "Hide client identity"
 msgstr "Doen alsof we de echte client zijn"
@@ -10044,6 +10087,7 @@ msgstr "Onbekende ruimte"
 msgid "Maybe the room is full"
 msgstr "Misschien is de ruimte vol?"
 
+# niet aanwezig/beschikbaar
 #. -35
 msgid "Not available"
 msgstr "Niet beschikbaar"
@@ -11507,6 +11551,7 @@ msgstr ""
 msgid "S_end To"
 msgstr "_Verzenden aan"
 
+# verzenden/versturen
 msgid "_Send"
 msgstr "Ver_sturen"
 
@@ -11514,6 +11559,8 @@ msgstr "Ver_sturen"
 msgid "0 people in room"
 msgstr "0 personen in ruimte"
 
+# src/bookmarks_editor.c:945
+# src/menubar.c:91
 msgid "Close Find bar"
 msgstr "Sluit Zoekbalk"
 
@@ -11556,6 +11603,8 @@ msgstr "Alle tabbladen sluiten"
 msgid "Detach this tab"
 msgstr "Tabblad losmaken"
 
+# src/bookmarks_editor.c:945
+# src/menubar.c:91
 msgid "Close this tab"
 msgstr "Dit tabblad sluiten"
 
@@ -11601,6 +11650,7 @@ msgstr "Alleen _tekst"
 msgid "_Both Icon & Text"
 msgstr "P_laatje & tekst"
 
+# filteren?
 msgid "Filter"
 msgstr "Filter"
 
@@ -11885,12 +11935,14 @@ msgstr "Zweeds"
 msgid "Swahili"
 msgstr "Swahili"
 
+# ui/preferences.glade.h:192
 msgid "Tamil"
 msgstr "Tamil"
 
 msgid "Telugu"
 msgstr "Telugu"
 
+# ui/preferences.glade.h:192
 msgid "Thai"
 msgstr "Thais"
 
@@ -13382,6 +13434,7 @@ msgstr "_Titel:"
 msgid "_Status:"
 msgstr "_Status:"
 
+#  Different status message expander
 #. Different status message expander
 msgid "Use a _different status for some accounts"
 msgstr "Een _andere status gebruiken voor sommige accounts"
@@ -13878,6 +13931,12 @@ msgstr "Rechter muisknop"
 msgid "_Visual gesture display"
 msgstr "_Visuele gebarenweergave"
 
+#  *< type
+#  *< ui_requirement
+#  *< flags
+#  *< dependencies
+#  *< priority
+#  *< id
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -14109,6 +14168,14 @@ msgstr "Pad naar muziekeditor"
 msgid "_Apply"
 msgstr "Toe_passen"
 
+#  *< type
+#  *< ui_requirement
+#  *< flags
+#  *< dependencies
+#  *< priority
+#  *< id
+#  *< name
+#  *< version
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -14120,6 +14187,7 @@ msgstr "Toe_passen"
 msgid "Music Messaging Plugin for collaborative composition."
 msgstr "Muziek Messaging plug-in voor gezamenlijk componeren."
 
+#  *  summary
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
@@ -14262,6 +14330,7 @@ msgstr "Vraag"
 msgid "Notify Dialog"
 msgstr "Melding"
 
+# kleurselectie
 msgid "Select Color"
 msgstr "Kleur selecteren"
 
@@ -14416,6 +14485,7 @@ msgstr "U _typt:"
 msgid "You _send:"
 msgstr "U _zendt:"
 
+#  Created here so it can be passed to whole_words_button_toggled.
 #. Created here so it can be passed to whole_words_button_toggled.
 msgid "_Exact case match (uncheck for automatic case handling)"
 msgstr "_Hoofdlettergevoelig (uitzetten voor automatisch afhandelen)"
@@ -14596,6 +14666,12 @@ msgstr "Voor vertraagde berichten en in chatsessies"
 msgid "_Message Logs:"
 msgstr "_Berichten Logs:"
 
+#  *< type
+#  *< ui_requirement
+#  *< flags
+#  *< dependencies
+#  *< priority
+#  *< id
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -14605,12 +14681,16 @@ msgstr "_Berichten Logs:"
 msgid "Message Timestamp Formats"
 msgstr "Berichtentijdstempel Formaat"
 
+#  *< name
+#  *< version
+#  *  summary
 #. *< name
 #. *< version
 #. *  summary
 msgid "Customizes the message timestamp formats."
 msgstr "Aanpassen formaat van berichtentijdstempels."
 
+#  *  description
 #. *  description
 msgid ""
 "This plugin allows the user to customize conversation and logging message "
@@ -14754,6 +14834,7 @@ msgstr "_Dokbare vriendenlijst"
 msgid "_Keep Buddy List window on top:"
 msgstr "Vriendenlijst bovenop _houden:"
 
+#  XXX: Did this ever work?
 #. XXX: Did this ever work?
 msgid "Only when docked"
 msgstr "Alleen wanneer gedokt"
@@ -14946,3 +15027,564 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Tekst van toestemmingsaanvraag"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Geef mij toestemming, alstublieft!"
+
+#~ msgid "Your UID"
+#~ msgstr "Uw UID"
+
+#~ msgid "Hide my number"
+#~ msgstr "Verberg mijn nummer"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "Hier kunt u uw MXit profiel bijwerken"
+
+#~ msgid "Aquarius"
+#~ msgstr "Waterman"
+
+#~ msgid "Pisces"
+#~ msgstr "Vissen"
+
+#~ msgid "Aries"
+#~ msgstr "Ram"
+
+#~ msgid "Taurus"
+#~ msgstr "Stier"
+
+#~ msgid "Gemini"
+#~ msgstr "Tweelingen"
+
+#~ msgid "Cancer"
+#~ msgstr "Kreeft"
+
+#~ msgid "Leo"
+#~ msgstr "Leeuw"
+
+#~ msgid "Virgo"
+#~ msgstr "Maagd"
+
+#~ msgid "Libra"
+#~ msgstr "Weegschaal"
+
+#~ msgid "Scorpio"
+#~ msgstr "Schorpioen"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Boogschutter"
+
+#~ msgid "Capricorn"
+#~ msgstr "Steenbok"
+
+#~ msgid "Rat"
+#~ msgstr "Rat"
+
+#~ msgid "Ox"
+#~ msgstr "Rund"
+
+#~ msgid "Tiger"
+#~ msgstr "Tijger"
+
+#~ msgid "Rabbit"
+#~ msgstr "Konijn"
+
+#~ msgid "Dragon"
+#~ msgstr "Draak"
+
+#~ msgid "Snake"
+#~ msgstr "Slang"
+
+#~ msgid "Horse"
+#~ msgstr "Paard"
+
+#~ msgid "Goat"
+#~ msgstr "Geit"
+
+#~ msgid "Monkey"
+#~ msgstr "Aap"
+
+#~ msgid "Rooster"
+#~ msgstr "Haan"
+
+#~ msgid "Dog"
+#~ msgstr "Hond"
+
+#~ msgid "Pig"
+#~ msgstr "Varken"
+
+#~ msgid "Visible"
+#~ msgstr "Beschikbaar"
+
+#~ msgid "Friend Only"
+#~ msgstr "Alleen vrienden"
+
+#~ msgid "Private"
+#~ msgstr "Persoonlijk"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ Nummer"
+
+#~ msgid "Country/Region"
+#~ msgstr "Land/Regio"
+
+#~ msgid "Province/State"
+#~ msgstr "Provincie/Staat"
+
+#~ msgid "Zipcode"
+#~ msgstr "Postcode"
+
+#~ msgid "Phone Number"
+#~ msgstr "Telefoonnummer"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Toevoegen toestaan"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Mobiele nummer"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Persoonlijke introductie"
+
+#~ msgid "City/Area"
+#~ msgstr "Stad/ruimte"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "Mobiel publiceren"
+
+#~ msgid "Publish Contact"
+#~ msgstr "Contactpersoon publiceren"
+
+#~ msgid "College"
+#~ msgstr "School"
+
+#~ msgid "Horoscope"
+#~ msgstr "Horoscoop"
+
+#~ msgid "Zodiac"
+#~ msgstr "Dierenriem"
+
+#~ msgid "Blood"
+#~ msgstr "Bloed"
+
+#~ msgid "True"
+#~ msgstr "Juist"
+
+#~ msgid "False"
+#~ msgstr "Onjuist"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Contactpersoon bewerken"
+
+#~ msgid "Modify Address"
+#~ msgstr "Adres bewerken"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Uitgebreide Informatie wijzigen"
+
+#~ msgid "Modify Information"
+#~ msgstr "Informatie wijzigen"
+
+#~ msgid "Update"
+#~ msgstr "Bijwerken"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "Kon informatie over Vriend niet veranderen."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "Vriend Memo"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "Verander zijn/haar memo naar believen"
+
+#~ msgid "_Modify"
+#~ msgstr "_Bewerken"
+
+#~ msgid "Memo Modify"
+#~ msgstr "Memo wijzigen"
+
+#~ msgid "Server says:"
+#~ msgstr "Server zegt:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "De aanvraag werd geaccepteerd."
+
+#~ msgid "Your request was rejected."
+#~ msgstr "De aanvraag werd afgewezen."
+
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u vereist verificatie: %s"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Vraag van Vriend toevoegen"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Voer hier antwoord in"
+
+#~ msgid "Send"
+#~ msgstr "Verzenden"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Ongeldig antwoord."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Sorry, u bent niet mijn type."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u vereist Autorisatie"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Vriend-Autorisatie toevoegen"
+
+#~ msgid "Enter request here"
+#~ msgstr "Geef hier uw verzoek"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Wilt u mijn vriend zijn?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ-Vriend"
+
+#~ msgid "Add buddy"
+#~ msgstr "Vriend toevoegen"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Ongeldige QQ nummer"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Verzenden autorisatie mislukt"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Verwijderen vriend %u mislukt"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Verwijderen van %d's vriendenlijst mislukt"
+
+#~ msgid "No reason given"
+#~ msgstr "Geen reden gegeven"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "U bent toegevoegd door %s"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Wilt u hem/haar toevoegen?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Geannuleerd door %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "Bericht: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "Groep-ID"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Voer Qun-nummer in"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "U kunt alleen naar permanente Qun zoeken\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(Ongeldige UTF-8 tekenreeks)"
+
+#~ msgid "Not member"
+#~ msgstr "Geen lid"
+
+#~ msgid "Member"
+#~ msgstr "Lid"
+
+#~ msgid "Requesting"
+#~ msgstr "Aanvragen"
+
+#~ msgid "Admin"
+#~ msgstr "Beheerder"
+
+#~ msgid "Room Title"
+#~ msgstr "Ruimte titel"
+
+#~ msgid "Notice"
+#~ msgstr "Opmerking"
+
+#~ msgid "Detail"
+#~ msgstr "Detail"
+
+#~ msgid "Creator"
+#~ msgstr "Starter"
+
+#~ msgid "Category"
+#~ msgstr "Categorie"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "De Qun laat geen andere deelnemers toe"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Aansluiten bij QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Geef hier uw verzoek"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Succesvol aangesloten bij Qun %s (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Succesvol aangesloten bij Qun"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u afgewezen voor deelname"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun operatie"
+
+#~ msgid "Failed:"
+#~ msgstr "Mislukt:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Deelnemen aan Qun, onbekend antwoord"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Qun Afsluiten"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Opmerking: Als u de maker bent, \n"
+#~ "deze opdracht verwijdert deze Qun uiteindelijk."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Sorry, u bent niet ons type"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Qun-leden met succes veranderd"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Qun-informatie met succes veranderd"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "U heeft een Qun aangemaakt"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Wilt u de gedetailleerde informatie nu instellen?"
+
+#~ msgid "Setup"
+#~ msgstr "Instellen"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u wilde zich aansluiten bij Qun %u voor %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u verzoekt zich aan te sluiten bij Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Niet gelukt aan te sluiten bij Qun %u, uitgevoerd door admin %u "
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>aansluiten bij Qun %u is goedgekeurd door admin %u voor %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Vriend verwijderd %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>Nieuw vriend %u heeft zich aangesloten.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Onbekend-%d"
+
+#~ msgid "Level"
+#~ msgstr "Niveau"
+
+#~ msgid " VIP"
+#~ msgstr "VIP"
+
+#~ msgid " TCP"
+#~ msgstr "TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " Vanaf mobiel"
+
+#~ msgid " BindMobile"
+#~ msgstr "BiNDMobile"
+
+#~ msgid " Video"
+#~ msgstr "Video"
+
+#~ msgid " Zone"
+#~ msgstr "Zone"
+
+#~ msgid "Flag"
+#~ msgstr "Vlag"
+
+#~ msgid "Ver"
+#~ msgstr "Versie"
+
+#~ msgid "Invalid name"
+#~ msgstr "Ongeldige bijnaam"
+
+#~ msgid "Select icon..."
+#~ msgstr "Pictogram selecteren..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Tijd ingelogd</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Totaal online vrienden</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Laatst bijgewerkt</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Server</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Client Tag</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Verbinding</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Mijn IP-adres</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Verzonden</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Opnieuw verzenden</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Verloren</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Ontvangen</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr ""
+#~ "<b>Dubbel ontvangen</b>: %lu<br>\n"
+#~ "\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Tijd</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "Login Information"
+#~ msgstr "Aanmeldingsinformatie"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Oorspronkelijke auteur</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Bijdragers aan code</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Geweldige patchschrijvers</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>dankbetuiging</b>:<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Rigoureuze Testers</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "en meer, laat het me svp weten... Dank u!))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>En, alle jongens in de achterkamer...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Het staat u vrij zich bij ons aan te sluiten!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "Over OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Wachtwoord veranderen"
+
+#~ msgid "Account Information"
+#~ msgstr "Accountinformatie"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Alle QQ Quns vernieuwen"
+
+#~ msgid "About OpenQ"
+#~ msgstr "Over OpenQ"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Vriendmemo wijzigen"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ protocol plug-in"
+
+#~ msgid "Auto"
+#~ msgstr "Automatisch"
+
+#~ msgid "Select Server"
+#~ msgstr "Selecteer Server"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Verbinden via TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "Weergeven Serverberichten"
+
+#~ msgid "Show server news"
+#~ msgstr "Weergeven Servernieuws"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Toon chatruimte wanneer msg binnenkomt"
+
+#~ msgid "Use default font"
+#~ msgstr "Gebruik standaard lettertype"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Keepalive-interval (seconden)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Update-interval (in seconden)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Kan server antwoord niet decoderen"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Niet gelukt om een token te vragen, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Ongeldig token len, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX wordt nu niet ondersteund"
+
+#~ msgid "Activation required"
+#~ msgstr "Activering vereist"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Onbekende antwoordcode bij aanmelden (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "Captcha aanvragen"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Captcha controleren"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "Captcha controle mislukt"
+
+#~ msgid "Captcha Image"
+#~ msgstr "Captcha afbeelding"
