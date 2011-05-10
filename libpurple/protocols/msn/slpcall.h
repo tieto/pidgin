@@ -65,7 +65,7 @@ struct _MsnSlpCall
 	gboolean wait_for_socket;
 
 	void (*progress_cb)(MsnSlpCall *slpcall,
-						gsize total_length, gsize len, gsize offset);
+						gsize total_length, gsize len);
 	void (*session_init_cb)(MsnSlpCall *slpcall);
 
 	/* Can be checksum, or smile */

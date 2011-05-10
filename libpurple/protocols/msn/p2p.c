@@ -349,6 +349,7 @@ msn_p2p_info_is_valid(MsnP2PInfo *info)
 
 		case MSN_P2P_VERSION_TWO:
 			/* Nothing to do! */
+			valid = TRUE;
 			break;
 
 		default:
@@ -356,6 +357,28 @@ msn_p2p_info_is_valid(MsnP2PInfo *info)
 	}
 
 	return valid;
+}
+
+gboolean
+msn_p2p_info_is_first(MsnP2PInfo *info)
+{
+	gboolean first = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE:
+			first = info->header.v1.offset == 0;
+			break;
+
+		case MSN_P2P_VERSION_TWO:
+			/* Nothing to do! */
+			first = info->header.v2.data_tf & TF_FIRST;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return first;
 }
 
 gboolean
@@ -369,7 +392,7 @@ msn_p2p_info_is_final(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			final = msn_tlv_gettlv(info->header.v2.data_tlv, 0x01, 1) == NULL;
 			break;
 
 		default:

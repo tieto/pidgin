@@ -189,6 +189,9 @@ gboolean
 msn_p2p_info_is_valid(MsnP2PInfo *info);
 
 gboolean
+msn_p2p_info_is_first(MsnP2PInfo *info);
+
+gboolean
 msn_p2p_info_is_final(MsnP2PInfo *info);
 
 void
