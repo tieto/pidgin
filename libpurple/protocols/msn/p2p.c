@@ -392,7 +392,7 @@ msn_p2p_info_is_final(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			final = msn_tlv_gettlv(info->header.v2.data_tlv, 0x01, 1) == NULL;
+			final = msn_tlv_gettlv(info->header.v2.data_tlv, P2P_DATA_TLV_REMAINING, 1) == NULL;
 			break;
 
 		default:
@@ -422,16 +422,16 @@ msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info)
 			MsnP2Pv2Header *old = &old_info->header.v2;
 			MsnP2Pv2Header *new = &new_info->header.v2;
 
-			msn_tlvlist_add_32(&new->header_tlv, P2P_TLV_TYPE_ACK, old->base_id + old->message_len);
+			msn_tlvlist_add_32(&new->header_tlv, P2P_HEADER_TLV_TYPE_ACK, old->base_id + old->message_len);
 			new->opcode = P2P_OPCODE_NONE;
 
 			if (old->message_len > 0) {
-				if (!msn_tlv_gettlv(old->header_tlv, P2P_TLV_TYPE_ACK, 1)) {
+				if (!msn_tlv_gettlv(old->header_tlv, P2P_HEADER_TLV_TYPE_ACK, 1)) {
 					if (old->opcode & P2P_OPCODE_SYN) {
 						msn_tlv_t *ack_tlv;
 						new->opcode |= P2P_OPCODE_RAK;
 						
-						ack_tlv = msn_tlv_gettlv(old->header_tlv, P2P_TLV_TYPE_PEER_INFO, 1);
+						ack_tlv = msn_tlv_gettlv(old->header_tlv, P2P_HEADER_TLV_TYPE_PEER_INFO, 1);
 						if (ack_tlv) {
 							msn_tlvlist_add_tlv(&new->header_tlv, ack_tlv);
 							new->opcode |= P2P_OPCODE_SYN;
@@ -484,7 +484,7 @@ msn_p2p_info_is_ack(MsnP2PInfo *info)
 		}
 
 		case MSN_P2P_VERSION_TWO:
-			ret = msn_tlv_gettlv(info->header.v2.header_tlv, P2P_TLV_TYPE_ACK, 1) != NULL;
+			ret = msn_tlv_gettlv(info->header.v2.header_tlv, P2P_HEADER_TLV_TYPE_ACK, 1) != NULL;
 			break;
 
 		default:

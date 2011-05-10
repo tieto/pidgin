@@ -76,17 +76,15 @@ typedef enum
 
 typedef enum
 {
-	P2P_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
-	P2P_TLV_TYPE_ACK        = 0x02, /**< ACK */
-	P2P_TLV_TYPE_NAK        = 0x03  /**< NAK */
-} P2PTLVType;
+	P2P_HEADER_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
+	P2P_HEADER_TLV_TYPE_ACK        = 0x02, /**< ACK */
+	P2P_HEADER_TLV_TYPE_NAK        = 0x03  /**< NAK */
+} P2PHeaderTLVType;
 
 typedef enum
 {
-	P2P_TLV_LEN_PEER_INFO   = 12,
-	P2P_TLV_LEN_ACK         = 4,
-	P2P_TLV_LEN_NAK         = 4
-} P2PTLVLength;
+	P2P_DATA_TLV_REMAINING  = 0x01, /**< Indicates the remaining data to transfer.*/
+} P2PDataTLVType;
 
 typedef enum
 {
@@ -96,9 +94,6 @@ typedef enum
 	P2P_PI_RES      = 0,
 	P2P_PI_CAPS     = 0x0000010f
 } P2PPeerInfoVal;
-
-#define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
-#define DLP_REMAINING_LEN 8
 
 typedef struct
 {
