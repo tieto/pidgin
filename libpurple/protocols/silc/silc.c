@@ -1116,7 +1116,7 @@ silcpurple_create_keypair_cancel(PurpleConnection *gc, PurpleRequestFields *fiel
 static void
 silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg;
 	PurpleRequestField *f;
 	const char *val, *pkfile = NULL, *prfile = NULL;
 	const char *pass1 = NULL, *pass2 = NULL, *un = NULL, *hn = NULL;
