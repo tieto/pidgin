@@ -169,7 +169,7 @@ static void room_remove(struct MXitSession* session, struct multimx* multimx)
 		g_free(multimx->nickname);
 
 	/* Deallocate it */
-	free (multimx);
+	g_free (multimx);
 	multimx = NULL;
 }
 
