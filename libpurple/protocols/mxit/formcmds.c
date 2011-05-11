@@ -188,7 +188,6 @@ static GHashTable* command_tokenize(char* cmd)
 {
 	GHashTable* hash	= NULL;
 	gchar**		parts;
-	gchar*		part;
 	int			i		= 0;
 
 #ifdef MXIT_DEBUG_COMMANDS
@@ -201,7 +200,7 @@ static GHashTable* command_tokenize(char* cmd)
 	hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	/* now break part into a key & value */
-	while ((part = parts[i]) != NULL) {
+	while (parts[i] != NULL) {
 		char* value;
 
 		value = strchr(parts[i], '=');		/* find start of value */

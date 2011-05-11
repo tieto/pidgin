@@ -804,7 +804,6 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		if (end_of_headers) {
 			conn->headers_done = TRUE;
 			conn->handled_len = end_of_headers - conn->read_buf->str + 4;
-			cursor = end_of_headers + 4;
 		} else {
 			conn->handled_len = conn->read_buf->len;
 			return;
