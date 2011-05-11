@@ -51,6 +51,9 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 		purple_cipher_context_destroy(context);
 	} else if (type == DC_NONCE_PLAIN) {
 		memcpy(digest, nonce, 16);
+	} else {
+		nonce_hash[0] = '\0';
+		g_return_if_reached();
 	}
 
 	g_sprintf(nonce_hash,
