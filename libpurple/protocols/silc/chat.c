@@ -894,9 +894,10 @@ GList *silcpurple_chat_menu(PurpleChat *chat)
 
 	if (components)
 		chname = g_hash_table_lookup(components, "channel");
-	if (chname)
-		channel = silc_client_get_channel(sg->client, sg->conn,
-						  (char *)chname);
+	if (!chname)
+		return NULL;
+	channel = silc_client_get_channel(sg->client, sg->conn,
+					  (char *)chname);
 	if (channel) {
 		chu = silc_client_on_channel(channel, conn->local_entry);
 		if (chu)
