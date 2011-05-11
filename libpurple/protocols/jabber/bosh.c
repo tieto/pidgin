@@ -484,13 +484,7 @@ jabber_bosh_disable_pipelining(PurpleBOSHConnection *bosh)
 		/* Shouldn't happen; this should be the only place pipelining
 		 * is turned off.
 		 */
-#if GLIB_CHECK_VERSION(2,16,0)
 		g_warn_if_reached();
-#else
-		g_log(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
-				"(%s:%d):%s%s code should not be reached",
-				__FILE__, __LINE__, G_STRFUNC, G_STRFUNC[0] ? ":" : "");
-#endif
 	}
 }
 
