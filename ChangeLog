@@ -39,6 +39,10 @@ version 2.8.0 (??/??/????):
 	  restrict operations that could leak potentially sensitive data
 	  (e.g. DNS queries).  (#11110, #13928)
 
+	AIM:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
+
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
 	* Updated internal libgadu to version 1.10.1. (Robert Matusewicz,
@@ -64,6 +68,8 @@ version 2.8.0 (??/??/????):
 	  (#13886)
 
 	ICQ:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
 	  (#11895)
 	* Ignore Daylight Saving Time when performing calculations related to
