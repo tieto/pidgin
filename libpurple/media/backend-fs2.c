@@ -1081,6 +1081,22 @@ gst_handle_message_error(GstBus *bus, GstMessage *msg,
 	GstElement *lastElement = NULL;
 	GList *sessions;
 
+	GError *error = NULL;
+	gchar *debug_msg = NULL;
+
+	gst_message_parse_error(msg, &error, &debug_msg);
+	purple_debug_error("backend-fs2", "gst error %s\ndebugging: %s\n",
+			error->message, debug_msg);
+
+	g_error_free(error);
+	g_free(debug_msg);
+
+	/* Not entirely sure this is correct, but prevents a
+	 * NULL deref crash.
+	 */
+	if (!element)
+		return;
+
 	while (!GST_IS_PIPELINE(element)) {
 		if (element == priv->confbin)
 			break;
