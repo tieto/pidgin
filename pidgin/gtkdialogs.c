@@ -76,8 +76,6 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",           NULL,                  NULL},
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
-	/* feel free to not translate this */
-	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
 	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
 	{"Casey Harkins",                      NULL,                  NULL},
@@ -113,6 +111,8 @@ static const struct developer patch_writers[] = {
 static const struct developer retired_developers[] = {
 	{"Herman Bloggs",               N_("win32 port"),          "herman@bluedigits.com"},
 	{"Thomas Butter",               NULL,                      NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
