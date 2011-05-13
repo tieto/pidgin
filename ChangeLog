@@ -18,6 +18,8 @@ version 2.8.0 (??/??/????):
 	  stream to the existing call. (Jakub Adam) (#13537)
 	* Pidgin plugins can now override tab completion and detect clicks on
 	  usernames in the chat userlist. (kawaii.neko) (#12599)
+	* Fix the tooltip being destroyed when it is full of information and
+	  cover the mouse (dliang) (#10510)
 
 	libpurple:
 	* media: Allow obtaining active local and remote candidates. (Jakub
