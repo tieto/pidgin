@@ -166,6 +166,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	PurpleNotifyUserInfo*	info		= purple_notify_user_info_new();
 	struct contact*			contact		= NULL;
 	PurpleBuddy*			buddy;
+	gchar*					tmp			= NULL;
 
 	buddy = purple_find_buddy( session->acc, username );
 	if ( buddy ) {
@@ -175,7 +176,11 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	}
 
 	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
-	purple_notify_user_info_add_pair( info, _( "Birthday" ), profile->birthday );
+
+	tmp = g_strdup_printf("%s (%i)", profile->birthday, calculateAge( profile->birthday ) );
+	purple_notify_user_info_add_pair( info, _( "Birthday" ), tmp );
+	g_free( tmp );
+
 	purple_notify_user_info_add_pair( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
 
 	/* optional information */
