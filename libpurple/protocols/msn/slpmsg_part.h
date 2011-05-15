@@ -46,7 +46,7 @@ struct _MsnSlpMessagePart
 
 MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PInfo *info);
 
-MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len);
+MsnSlpMessagePart *msn_slpmsgpart_new_from_data(MsnP2PVersion p2p, const char *data, size_t data_len);
 
 MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part);
 

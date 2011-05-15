@@ -72,7 +72,7 @@ struct _MsnSlpMessage
  * If it's set to NULL, it is a temporary SlpMessage.
  * @return The created slp message.
  */
-MsnSlpMessage *msn_slpmsg_new(MsnSlpLink *slplink);
+MsnSlpMessage *msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall);
 
 /**
  * Destroys a slp message
@@ -104,7 +104,7 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
  *
  * @return A new SlpMessage with ACK headers
  */
-MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *info);
+MsnSlpMessage *msn_slpmsg_ack_new(MsnSlpLink *slplink, MsnP2PInfo *info);
 
 /**
  * Create a new SLP message for MsnObject data.
