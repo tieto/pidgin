@@ -282,6 +282,10 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 	purple_notify_searchresults_column_add( results, column );
 	column = purple_notify_searchresults_column_new( _( "Display Name" ) );
 	purple_notify_searchresults_column_add( results, column );
+	column = purple_notify_searchresults_column_new( _( "First Name" ) );
+	purple_notify_searchresults_column_add( results, column );
+	column = purple_notify_searchresults_column_new( _( "Last Name" ) );
+	purple_notify_searchresults_column_add( results, column );
 	column = purple_notify_searchresults_column_new( _( "Gender" ) );
 	purple_notify_searchresults_column_add( results, column );
 	column = purple_notify_searchresults_column_new( _( "Age" ) );
@@ -297,6 +301,8 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 		/* column values */
 		row = g_list_append( NULL, g_strdup_printf( "#%s", tmp ) );
 		row = g_list_append( row, g_strdup( profile->nickname ) );
+		row = g_list_append( row, g_strdup( profile->firstname ) );
+		row = g_list_append( row, g_strdup( profile->lastname ) );
 		row = g_list_append( row, g_strdup( profile->male ? "Male" : "Female" ) );
 		row = g_list_append( row, g_strdup_printf( "%i", calculateAge( profile->birthday ) ) );
 		row = g_list_append( row, g_strdup( profile->whereami ) );

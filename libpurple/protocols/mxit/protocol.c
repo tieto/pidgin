@@ -1986,6 +1986,14 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 				/* birthdate */
 				g_strlcpy( profile->birthday, fvalue, sizeof( profile->birthday ) );
 			}
+			else if ( strcmp( CP_PROFILE_FIRSTNAME, fname ) == 0 ) {
+				/* first name */
+				g_strlcpy( profile->firstname, fvalue, sizeof( profile->firstname ) );
+			}
+			else if ( strcmp( CP_PROFILE_LASTNAME, fname ) == 0 ) {
+				/* last name */
+				g_strlcpy( profile->lastname, fvalue, sizeof( profile->lastname ) );
+			}
 			else if ( strcmp( CP_PROFILE_GENDER, fname ) == 0 ) {
 				/* gender */
 				profile->male = ( fvalue[0] == '1' );
