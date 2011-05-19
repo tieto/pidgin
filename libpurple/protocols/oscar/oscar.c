@@ -4052,6 +4052,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					}
 
 					g_free(gname_utf8);
+					g_free(alias);
 					g_free(alias_utf8);
 				}
 			} break;
