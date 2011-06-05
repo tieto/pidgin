@@ -57,7 +57,7 @@ version 2.8.0 (??/??/????):
 	  trying to send large (> 256kB) images. (Tomasz Wasilczyk) (#13580)
 	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
 	  Krzysztof Klinikowski) (#13362, #13590)
-	* Require libgadu 1.10.1 to avoid using internal libgadu.
+	* Require libgadu 1.11.0 to avoid using internal libgadu.
 	* Optional SSL connection support for GNUTLS users (not on Windows
 	  yet!). (Tomasz Wasilczyk) (#13613, #13894)
 	* Don't count received messages or statuses when determining whether
