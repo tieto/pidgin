@@ -44,6 +44,7 @@ C_SRC =	\
 	lib/dcc.c \
 	lib/dcc7.c \
 	lib/debug.c \
+	lib/deflate.c \
 	lib/encoding.c \
 	lib/events.c \
 	lib/handlers.c \

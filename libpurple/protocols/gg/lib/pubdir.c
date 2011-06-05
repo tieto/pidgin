@@ -26,9 +26,6 @@
  * \brief Obsługa katalogu publicznego
  */
 
-#include "libgadu.h"
-#include "libgadu-config.h"
-
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -36,6 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "libgadu.h"
+#include "libgadu-config.h"
 
 /**
  * Rejestruje nowego użytkownika.
@@ -122,10 +122,10 @@ struct gg_http *gg_register3(const char *email, const char *password, const char
 
 	h->callback = gg_pubdir_watch_fd;
 	h->destroy = gg_pubdir_free;
-
+	
 	if (!async)
 		gg_pubdir_watch_fd(h);
-
+	
 	return h;
 }
 
@@ -193,7 +193,7 @@ struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *toke
 		errno = EFAULT;
 		return NULL;
 	}
-
+    
 	__pwd = gg_saprintf("%ld", random());
 	__fmpwd = gg_urlencode(password);
 	__tokenid = gg_urlencode(tokenid);
@@ -251,10 +251,10 @@ struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *toke
 
 	h->callback = gg_pubdir_watch_fd;
 	h->destroy = gg_pubdir_free;
-
+	
 	if (!async)
 		gg_pubdir_watch_fd(h);
-
+	
 	return h;
 }
 
@@ -324,7 +324,7 @@ struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *pass
 		errno = EFAULT;
 		return NULL;
 	}
-
+	
 	__fmpwd = gg_urlencode(passwd);
 	__pwd = gg_urlencode(newpasswd);
 	__email = gg_urlencode(email);
@@ -340,7 +340,7 @@ struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *pass
 		free(__tokenval);
 		return NULL;
 	}
-
+	
 	if (!(form = gg_saprintf("fmnumber=%d&fmpwd=%s&pwd=%s&email=%s&tokenid=%s&tokenval=%s&code=%u", uin, __fmpwd, __pwd, __email, __tokenid, __tokenval, gg_http_hash("ss", email, newpasswd)))) {
 		gg_debug(GG_DEBUG_MISC, "=> change, not enough memory for form fields\n");
 		free(__fmpwd);
@@ -351,13 +351,13 @@ struct gg_http *gg_change_passwd4(uin_t uin, const char *email, const char *pass
 
 		return NULL;
 	}
-
+	
 	free(__fmpwd);
 	free(__pwd);
 	free(__email);
 	free(__tokenid);
 	free(__tokenval);
-
+	
 	gg_debug(GG_DEBUG_MISC, "=> change, %s\n", form);
 
 	query = gg_saprintf(
@@ -460,7 +460,7 @@ struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *toke
 		errno = EFAULT;
 		return NULL;
 	}
-
+	
 	__tokenid = gg_urlencode(tokenid);
 	__tokenval = gg_urlencode(tokenval);
 	__email = gg_urlencode(email);
@@ -484,7 +484,7 @@ struct gg_http *gg_remind_passwd3(uin_t uin, const char *email, const char *toke
 	free(__tokenid);
 	free(__tokenval);
 	free(__email);
-
+	
 	gg_debug(GG_DEBUG_MISC, "=> remind, %s\n", form);
 
 	query = gg_saprintf(
@@ -588,7 +588,7 @@ int gg_pubdir_watch_fd(struct gg_http *h)
 		errno = EINVAL;
 		return -1;
 	}
-
+	
 	if (h->state != GG_STATE_PARSING) {
 		if (gg_http_watch_fd(h) == -1) {
 			gg_debug(GG_DEBUG_MISC, "=> pubdir, http failure\n");
@@ -599,9 +599,9 @@ int gg_pubdir_watch_fd(struct gg_http *h)
 
 	if (h->state != GG_STATE_PARSING)
 		return 0;
-
+	
 	h->state = GG_STATE_DONE;
-
+	
 	if (!(h->data = p = malloc(sizeof(struct gg_pubdir)))) {
 		gg_debug(GG_DEBUG_MISC, "=> pubdir, not enough memory for results\n");
 		return -1;
@@ -609,7 +609,7 @@ int gg_pubdir_watch_fd(struct gg_http *h)
 
 	p->success = 0;
 	p->uin = 0;
-
+	
 	gg_debug(GG_DEBUG_MISC, "=> pubdir, let's parse \"%s\"\n", h->body);
 
 	if ((tmp = strstr(h->body, "Tokens okregisterreply_packet.reg.dwUserId="))) {
@@ -636,7 +636,7 @@ void gg_pubdir_free(struct gg_http *h)
 {
 	if (!h)
 		return;
-
+	
 	free(h->data);
 	gg_http_free(h);
 }
@@ -674,10 +674,10 @@ struct gg_http *gg_token(int async)
 
 	h->callback = gg_token_watch_fd;
 	h->destroy = gg_token_free;
-
+	
 	if (!async)
 		gg_token_watch_fd(h);
-
+	
 	return h;
 }
 
@@ -706,7 +706,7 @@ int gg_token_watch_fd(struct gg_http *h)
 		errno = EINVAL;
 		return -1;
 	}
-
+	
 	if (h->state != GG_STATE_PARSING) {
 		if (gg_http_watch_fd(h) == -1) {
 			gg_debug(GG_DEBUG_MISC, "=> token, http failure\n");
@@ -717,7 +717,7 @@ int gg_token_watch_fd(struct gg_http *h)
 
 	if (h->state != GG_STATE_PARSING)
 		return 0;
-
+	
 	/* jeśli h->data jest puste, to ściągaliśmy tokenid i url do niego,
 	 * ale jeśli coś tam jest, to znaczy, że mamy drugi etap polegający
 	 * na pobieraniu tokenu. */
@@ -735,7 +735,7 @@ int gg_token_watch_fd(struct gg_http *h)
 			free(url);
 			return -1;
 		}
-
+		
 		if (!h->body || sscanf(h->body, "%d %d %d\r\n%s\r\n%s", &width, &height, &length, tokenid, url) != 5) {
 			gg_debug(GG_DEBUG_MISC, "=> token, parsing failed\n");
 			free(url);
@@ -743,7 +743,7 @@ int gg_token_watch_fd(struct gg_http *h)
 			errno = EINVAL;
 			return -1;
 		}
-
+		
 		/* dostaliśmy tokenid i wszystkie niezbędne informacje,
 		 * więc pobierzmy obrazek z tokenem */
 
@@ -779,7 +779,7 @@ int gg_token_watch_fd(struct gg_http *h)
 			free(url);
 			free(tokenid);
 			return -1;
-		}
+		}			
 
 		if (!(h2 = gg_http_connect(host, GG_REGISTER_PORT, h->async, "GET", path, headers))) {
 			gg_debug(GG_DEBUG_MISC, "=> token, gg_http_connect() failed mysteriously\n");
@@ -803,7 +803,7 @@ int gg_token_watch_fd(struct gg_http *h)
 
 		h->callback = gg_token_watch_fd;
 		h->destroy = gg_token_free;
-
+	
 		if (!h->async)
 			gg_token_watch_fd(h);
 
@@ -821,7 +821,7 @@ int gg_token_watch_fd(struct gg_http *h)
 		/* obrazek mamy w h->body */
 		h->state = GG_STATE_DONE;
 	}
-
+	
 	return 0;
 }
 
@@ -841,7 +841,7 @@ void gg_token_free(struct gg_http *h)
 
 	if ((t = h->data))
 		free(t->tokenid);
-
+	
 	free(h->data);
 	gg_http_free(h);
 }

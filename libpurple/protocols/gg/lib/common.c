@@ -1,4 +1,4 @@
-/* $Id: common.c 1037 2010-12-17 22:18:08Z wojtekka $ */
+/* $Id: common.c 1101 2011-05-05 21:17:28Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -24,10 +24,6 @@
  *
  * \brief Funkcje wykorzystywane przez różne moduły biblioteki
  */
-
-#include "libgadu.h"
-#include "libgadu-internal.h"
-
 #ifndef _WIN32
 #  include <sys/types.h>
 #  include <sys/ioctl.h>
@@ -41,17 +37,16 @@
 
 #include <errno.h>
 #include <fcntl.h>
-
 #ifndef _WIN32
 #  include <netdb.h>
 #endif
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "libgadu.h"
 
 /**
  * \internal Odpowiednik funkcji \c vsprintf alokujący miejsce na wynik.
@@ -329,7 +324,7 @@ void gg_chomp(char *line)
  * Zamienia znaki niedrukowalne, spoza ASCII i mające specjalne znaczenie
  * dla protokołu HTTP na encje postaci \c %XX, gdzie \c XX jest szesnastkową
  * wartością znaku.
- *
+ * 
  * \param str Ciąg znaków do zakodowania
  *
  * \return Zaalokowany bufor lub \c NULL w przypadku błędu.

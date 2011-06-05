@@ -1024,7 +1024,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.10.1], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1058,7 +1058,7 @@ if test "x$gadu_libs" = "xyes"; then
 	]])], [
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
 #if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.10.1 or higher."
+#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
 #endif
 		]])], [
 			AC_MSG_RESULT(yes)
@@ -1069,7 +1069,7 @@ if test "x$gadu_libs" = "xyes"; then
 			echo
 			echo
 			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.10.1 or newer."
+			echo "Install version 1.11.0 or newer."
 			echo "Then rerun this ./configure"
 			echo
 			echo "Falling back to using our own copy of libgadu"

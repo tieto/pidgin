@@ -1,11 +1,11 @@
-/* $Id: dcc7.c 1037 2010-12-17 22:18:08Z wojtekka $ */
+/* $Id: dcc7.c 1087 2011-04-14 20:53:25Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2010 Wojtek Kaniewski <wojtekka@irc.pl>
  *                          Tomasz Chiliński <chilek@chilan.com>
  *                          Adam Wysocki <gophi@ekg.chmurka.net>
  *                          Bartłomiej Zimoń <uzi18@o2.pl>
- *
+ *  
  *  Thanks to Jakub Zawadzki <darkjames@darkjames.ath.cx>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -29,13 +29,8 @@
  * \brief Obsługa połączeń bezpośrednich od wersji Gadu-Gadu 7.x
  */
 
-#include "libgadu.h"
-#include "libgadu-internal.h"
-#include "libgadu-debug.h"
-
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #ifndef _WIN32
 #  include <sys/ioctl.h>
 #  include <sys/socket.h>
@@ -45,7 +40,6 @@
 #    include <sys/filio.h>
 #  endif
 #endif
-
 #include <time.h>
 
 #include <ctype.h>
@@ -58,8 +52,11 @@
 #include <unistd.h>
 
 #include "compat.h"
+#include "libgadu.h"
 #include "protocol.h"
 #include "resolver.h"
+#include "libgadu-internal.h"
+#include "libgadu-debug.h"
 
 #define gg_debug_dcc(dcc, level, fmt...) \
 	gg_debug_session(((dcc) != NULL) ? (dcc)->sess : NULL, level, fmt)
@@ -223,13 +220,16 @@ static int gg_dcc7_connect(struct gg_dcc7 *dcc)
  * \internal Tworzy gniazdo nasłuchujące dla połączenia bezpośredniego
  *
  * \param dcc Struktura połączenia
- * \param port Preferowany port (jeśli równy 0 lub -1, próbuje się domyślnego)
+ * \param addr Preferowany adres (jeśli równy 0, nasłuchujemy na wszystkich interfejsach)
+ * \param port Preferowany port (jeśli równy 0, nasłuchujemy na losowym)
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu
  */
-static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint16_t port)
+static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint32_t addr, uint16_t port)
 {
 	struct sockaddr_in sin;
+	socklen_t sin_len = sizeof(sin);
+	int errsv;
 	int fd;
 
 	gg_debug_dcc(dcc, GG_DEBUG_FUNCTION, "** gg_dcc7_listen(%p, %d)\n", dcc, port);
@@ -245,45 +245,40 @@ static int gg_dcc7_listen(struct gg_dcc7 *dcc, uint16_t port)
 		return -1;
 	}
 
-	// XXX losować porty?
+	sin.sin_family = AF_INET;
+	sin.sin_addr.s_addr = addr;
+	sin.sin_port = htons(port);
 
-	if (!port)
-		port = GG_DEFAULT_DCC_PORT;
+	if (bind(fd, (struct sockaddr*) &sin, sizeof(sin)) == -1) {
+		gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_listen() unable to bind to %s:%d\n", inet_ntoa(sin.sin_addr), port);
+		goto fail;
+	}
 
-	while (1) {
-		sin.sin_family = AF_INET;
-		sin.sin_addr.s_addr = INADDR_ANY;
-		sin.sin_port = htons(port);
-
-		gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_listen() trying port %d\n", port);
-
-		if (!bind(fd, (struct sockaddr*) &sin, sizeof(sin)))
-			break;
-
-		if (port++ == 65535) {
-			gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_listen() no free port found\n");
-			close(fd);
-			errno = ENOENT;
-			return -1;
-		}
+	if (port == 0 && getsockname(fd, (struct sockaddr*) &sin, &sin_len) == -1) {
+		gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_listen() unable to bind to port %d\n", port);
+		goto fail;
 	}
 
 	if (listen(fd, 1)) {
-		int errsv = errno;
 		gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_listen() unable to listen (%s)\n", strerror(errno));
-		close(fd);
-		errno = errsv;
-		return -1;
+		goto fail;
 	}
 
 	dcc->fd = fd;
-	dcc->local_port = port;
-
+	dcc->local_addr = sin.sin_addr.s_addr;
+	dcc->local_port = ntohs(sin.sin_port);
+	
 	dcc->state = GG_STATE_LISTENING;
 	dcc->check = GG_CHECK_READ;
 	dcc->timeout = GG_DCC7_TIMEOUT_FILE_ACK;
 
 	return 0;
+
+fail:
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return -1;
 }
 
 /**
@@ -297,38 +292,34 @@ static int gg_dcc7_listen_and_send_info(struct gg_dcc7 *dcc)
 {
 	struct gg_dcc7_info pkt;
 	uint16_t external_port;
-	uint16_t local_port;
+	uint32_t external_addr;
+	struct in_addr addr;
 
 	gg_debug_dcc(dcc, GG_DEBUG_FUNCTION, "** gg_dcc7_listen_and_send_info(%p)\n", dcc);
 
-	if (!dcc->sess->client_port)
-		local_port = dcc->sess->external_port;
-	else
-		local_port = dcc->sess->client_port;
-
-	if (gg_dcc7_listen(dcc, local_port) == -1)
+	if (gg_dcc7_listen(dcc, dcc->sess->client_addr, dcc->sess->client_port) == -1)
 		return -1;
 	
-	if (!dcc->sess->external_port || dcc->local_port != local_port)
-		external_port = dcc->local_port;
-	else
+	if (dcc->sess->external_port != 0)
 		external_port = dcc->sess->external_port;
-
-	if (!dcc->sess->external_addr || dcc->local_port != local_port)
-		dcc->local_addr = dcc->sess->client_addr;
 	else
-		dcc->local_addr = dcc->sess->external_addr;
+		external_port = dcc->local_port;
 
-	gg_debug_dcc(dcc, GG_DEBUG_MISC, "// dcc7_listen_and_send_info() sending IP address %s and port %d\n", inet_ntoa(*((struct in_addr*) &dcc->local_addr)), external_port);
+	if (dcc->sess->external_addr != 0)
+		external_addr = dcc->sess->external_addr;
+	else 
+		external_addr = dcc->local_addr;
+
+	addr.s_addr = external_addr;
+
+	gg_debug_dcc(dcc, GG_DEBUG_MISC, "// dcc7_listen_and_send_info() sending IP address %s and port %d\n", inet_ntoa(addr), external_port);
 
 	memset(&pkt, 0, sizeof(pkt));
 	pkt.uin = gg_fix32(dcc->peer_uin);
 	pkt.type = GG_DCC7_TYPE_P2P;
 	pkt.id = dcc->cid;
-	snprintf((char*) pkt.info, sizeof(pkt.info), "%s %d", inet_ntoa(*((struct in_addr*) &dcc->local_addr)), external_port);
-	// TODO: implement hash count
-	// we MUST fill hash to recive from server request for server connection
-	snprintf((char*) pkt.hash, sizeof(pkt.hash), "0");
+	snprintf((char*) pkt.info, sizeof(pkt.info), "%s %d", inet_ntoa(addr), external_port);
+	snprintf((char*) pkt.hash, sizeof(pkt.hash), "%u", external_addr + external_port * rand());
 
 	return gg_send_packet(dcc->sess, GG_DCC7_INFO, &pkt, sizeof(pkt), NULL);
 }
@@ -388,7 +379,7 @@ static int gg_dcc7_request_id(struct gg_session *sess, uint32_t type)
 		errno = EINVAL;
 		return -1;
 	}
-
+	
 	memset(&pkt, 0, sizeof(pkt));
 	pkt.type = gg_fix32(type);
 
@@ -649,7 +640,7 @@ int gg_dcc7_handle_id(struct gg_session *sess, struct gg_event *e, const void *p
 
 		if (tmp->state != GG_STATE_REQUESTING_ID || tmp->dcc_type != gg_fix32(p->type))
 			continue;
-
+		
 		tmp->cid = p->id;
 
 		switch (tmp->dcc_type) {
@@ -708,9 +699,9 @@ int gg_dcc7_handle_accept(struct gg_session *sess, struct gg_event *e, const voi
 		e->event.dcc7_error = GG_ERROR_DCC7_HANDSHAKE;
 		return 0;
 	}
-
+	
 	// XXX czy dla odwrotnego połączenia powinniśmy wywołać już zdarzenie GG_DCC7_ACCEPT?
-
+	
 	dcc->offset = gg_fix32(p->offset);
 	dcc->state = GG_STATE_WAITING_FOR_INFO;
 
@@ -764,8 +755,10 @@ int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, const void 
 		}
 
 		if (dcc->state == GG_STATE_WAITING_FOR_INFO) {
-			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_info() wainting for info so send one\n");
+			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_info() waiting for info so send one\n");
 			gg_dcc7_listen_and_send_info(dcc);
+			e->type = GG_EVENT_DCC7_PENDING;
+			e->event.dcc7_pending.dcc7 = dcc;
 			return 0;
 		}
 
@@ -809,7 +802,7 @@ int gg_dcc7_handle_info(struct gg_session *sess, struct gg_event *e, const void 
 
 		gg_send_packet(dcc->sess, GG_DCC7_INFO, payload, len, NULL);
 
-		break;
+		return 0;
 
 	default:
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_info() unhandled transfer type (%d)\n", p->type);
@@ -877,7 +870,7 @@ int gg_dcc7_handle_reject(struct gg_session *sess, struct gg_event *e, const voi
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_reject() unknown dcc session\n");
 		return 0;
 	}
-
+	
 	if (dcc->state != GG_STATE_WAITING_FOR_ACCEPT) {
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_reject() invalid state\n");
 		e->type = GG_EVENT_DCC7_ERROR;
@@ -917,7 +910,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, const void *
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_new() not enough memory\n");
 				return -1;
 			}
-
+			
 			memset(dcc, 0, sizeof(struct gg_dcc7));
 			dcc->type = GG_SESSION_DCC7_GET;
 			dcc->dcc_type = GG_DCC7_TYPE_FILE;
@@ -949,7 +942,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, const void *
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_dcc7_handle_packet() not enough memory\n");
 				return -1;
 			}
-
+			
 			memset(dcc, 0, sizeof(struct gg_dcc7));
 
 			dcc->type = GG_SESSION_DCC7_VOICE;
@@ -984,7 +977,7 @@ int gg_dcc7_handle_new(struct gg_session *sess, struct gg_event *e, const void *
 /**
  * \internal Ustawia odpowiednie stany wewnętrzne w zależności od rodzaju
  * połączenia.
- *
+ * 
  * \param dcc Struktura połączenia
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu.
@@ -1381,6 +1374,9 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 			dcc->state = GG_STATE_CONNECTING_RELAY;
 			dcc->check = GG_CHECK_WRITE;
 			dcc->timeout = GG_DEFAULT_TIMEOUT;
+
+			e->type = GG_EVENT_DCC7_PENDING;
+			e->event.dcc7_pending.dcc7 = dcc;
 
 			return e;
 		}

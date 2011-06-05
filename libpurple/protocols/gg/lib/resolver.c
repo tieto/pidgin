@@ -29,17 +29,19 @@
 #ifndef _WIN32
 #  include <sys/wait.h>
 #  include <netdb.h>
+#endif
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#ifndef _WIN32
 #  include <signal.h>
 #  include <netinet/in.h>
 #  include <arpa/inet.h>
 #endif
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "libgadu.h"
+#include "libgadu-config.h"
 #include "resolver.h"
 #include "compat.h"
 #include "session.h"
@@ -212,7 +214,6 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 	struct hostent *he;
 	int i;
 
-
 	if (result == NULL || count == NULL) {
 		errno = EINVAL;
 		return -1;
@@ -256,7 +257,7 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu
  */
-int gg_resolver_run(int fd, const char *hostname)
+static int gg_resolver_run(int fd, const char *hostname)
 {
 	struct in_addr addr_ip[2], *addr_list;
 	int addr_count;
@@ -595,7 +596,7 @@ static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
  *
  * Połączenia asynchroniczne nie mogą blokować procesu w trakcie rozwiązywania
  * nazwy serwera. W tym celu tworzony jest potok, nowy proces i dopiero w nim
- * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu
+ * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu 
  * zapisuje się w strukturze sieci i czeka na dane w postaci struktury
  * \c in_addr. Jeśli nie znaleziono nazwy, zwracana jest \c INADDR_NONE.
  *
@@ -865,13 +866,13 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
+#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  ifdef _WIN32
 		type = GG_RESOLVER_WIN32;
-#else
+#  else
 		type = GG_RESOLVER_FORK;
-#endif
-
-#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  endif
+#else
 		type = GG_RESOLVER_PTHREAD;
 #endif
 	}
@@ -936,7 +937,7 @@ gg_resolver_t gg_session_get_resolver(struct gg_session *gs)
  *  - \c "int force" &mdash; flaga mówiąca o tym, że zasoby są zwalniane przed zakończeniem rozwiązywania nazwy, np. z powodu zamknięcia sesji.
  *
  * Własny kod rozwiązywania nazwy powinien stworzyć potok, parę gniazd lub
- * inny deskryptor pozwalający na co najmniej jednostronną komunikację i
+ * inny deskryptor pozwalający na co najmniej jednostronną komunikację i 
  * przekazać go w parametrze \c fd. Po zakończeniu rozwiązywania nazwy,
  * powinien wysłać otrzymany adres IP w postaci sieciowej (big-endian) do
  * deskryptora. Jeśli rozwiązywanie nazwy się nie powiedzie, należy wysłać
@@ -986,13 +987,13 @@ int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
+#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  ifdef _WIN32
 		type = GG_RESOLVER_WIN32;
-#else
+#  else
 		type = GG_RESOLVER_FORK;
-#endif
-
-#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  endif
+#else
 		type = GG_RESOLVER_PTHREAD;
 #endif
 	}
@@ -1082,19 +1083,17 @@ int gg_global_set_resolver(gg_resolver_t type)
 			gg_global_resolver_cleanup = NULL;
 			return 0;
 
-#ifndef _WIN32
-		case GG_RESOLVER_FORK:
-			gg_global_resolver_type = type;
-			gg_global_resolver_start = gg_resolver_fork_start;
-			gg_global_resolver_cleanup = gg_resolver_fork_cleanup;
-			return 0;
-#endif
-
 #ifdef _WIN32
 		case GG_RESOLVER_WIN32:
 			gg_global_resolver_type = type;
 			gg_global_resolver_start = gg_resolve_win32thread;
 			gg_global_resolver_cleanup = gg_resolve_win32thread_cleanup;
+			return 0;
+#else
+		case GG_RESOLVER_FORK:
+			gg_global_resolver_type = type;
+			gg_global_resolver_start = gg_resolver_fork_start;
+			gg_global_resolver_cleanup = gg_resolver_fork_cleanup;
 			return 0;
 #endif
 
