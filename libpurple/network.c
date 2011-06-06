@@ -1149,6 +1149,7 @@ purple_network_init(void)
 	purple_prefs_add_string("/purple/network/stun_server", "");
 	purple_prefs_add_string("/purple/network/turn_server", "");
 	purple_prefs_add_int   ("/purple/network/turn_port", 3478);
+	purple_prefs_add_int	 ("/purple/network/turn_port_tcp", 3478);
 	purple_prefs_add_string("/purple/network/turn_username", "");
 	purple_prefs_add_string("/purple/network/turn_password", "");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);

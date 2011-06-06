@@ -40,6 +40,8 @@ version 2.8.0 (??/??/????):
 	* proxy: Add new "Tor/Privacy" proxy type that can be used to
 	  restrict operations that could leak potentially sensitive data
 	  (e.g. DNS queries).  (#11110, #13928)
+	* media: Add support for using TCP relaying with TURN (will only work with
+	  libnice 0.1.0 and later).
 
 	AIM:
 	* Fix setting icons with dimensions greater than 64x64 pixels by scaling

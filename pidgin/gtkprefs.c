@@ -1794,6 +1794,9 @@ network_page(void)
 	pidgin_prefs_labeled_spin_button(hbox, _("_UDP Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
 
+	pidgin_prefs_labeled_spin_button(hbox, _("T_CP Port:"),
+		"/purple/network/turn_port_tcp", 0, 65535, NULL);
+
 	hbox = pidgin_prefs_labeled_entry(vbox, _("Use_rname:"),
 		"/purple/network/turn_username", sg);
 	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),
