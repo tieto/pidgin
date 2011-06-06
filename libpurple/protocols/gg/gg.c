@@ -1616,14 +1616,14 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 }
 
 static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int length) {
-    gchar *from;
+	gchar *from;
 
-    from = g_strdup_printf("%u", uin);
-    if (length)
-	serv_got_typing(gc, from, 0, PURPLE_TYPING);
-    else
-	serv_got_typing_stopped(gc, from);
-    g_free(from);
+	from = g_strdup_printf("%u", uin);
+	if (length)
+		serv_got_typing(gc, from, 0, PURPLE_TYPING);
+	else
+		serv_got_typing_stopped(gc, from);
+	g_free(from);
 }
 
 /**
@@ -1790,7 +1790,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 				GG_S(ev->event.status60.status), ev->event.status60.descr);
 			break;
 		case GG_EVENT_USERLIST:
-	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
+			if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
 				purple_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
 				purple_notify_info(gc, NULL,
 					_("Buddy list downloaded"),

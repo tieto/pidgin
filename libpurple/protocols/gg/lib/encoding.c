@@ -22,6 +22,7 @@
 #include <errno.h>
 
 #include "libgadu.h"
+#include "encoding.h"
 
 /**
  * \file encoding.c

@@ -39,18 +39,17 @@ msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	MsnSlpMessage *slpmsg;
 	MsnP2PVersion p2p;
 
+	g_return_val_if_fail(slplink != NULL, NULL);
+
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	if (slplink)
-		msn_slpmsg_set_slplink(slpmsg, slplink);
-	else
-		slpmsg->slplink = NULL;
+	msn_slpmsg_set_slplink(slpmsg, slplink);
 	slpmsg->slpcall = slpcall;
 
-	p2p = msn_p2p_get_user_support(slplink->remote_user);
+	p2p = msn_slplink_get_p2p_version(slplink);
 	slpmsg->p2p_info = msn_p2p_info_new(p2p);
 
 	return slpmsg;

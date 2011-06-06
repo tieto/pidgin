@@ -136,7 +136,7 @@ struct gg_recv_msg80 {
 #define GG_RECV_MSG_ACK 0x0046
 
 struct gg_recv_msg_ack {
-	uint32_t count;
+	uint32_t seq;
 } GG_PACKED;
 
 #define GG_USER_DATA 0x0044
@@ -191,6 +191,20 @@ struct gg_multilogon_disconnect {
 #define GG_MSG_OPTION_IMAGE_REQUEST 0x04
 #define GG_MSG_OPTION_IMAGE_REPLY 0x05
 #define GG_MSG_OPTION_IMAGE_REPLY_MORE 0x06
+
+#define GG_DCC7_ABORT 0x0025
+
+struct gg_dcc7_abort {
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+	uint32_t uin_from;		/* numer nadawcy */
+	uint32_t uin_to;		/* numer odbiorcy */
+} GG_PACKED;
+
+#define GG_DCC7_ABORTED 0x0025
+
+struct gg_dcc7_aborted {
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+} GG_PACKED;
 
 #define GG_DCC7_VOICE_RETRIES 0x11	/* 17 powtorzen */
 
@@ -275,6 +289,34 @@ struct gg_dcc7_welcome_server {
 
 struct gg_dcc7_welcome_p2p {
 	gg_dcc7_id_t id;		/* identyfikator połączenia */
+} GG_PACKED;
+
+#define GG_TIMEOUT_DISCONNECT 5	/**< Maksymalny czas oczekiwania na rozłączenie */
+
+#define GG_USERLIST100_VERSION 0x5c
+
+struct gg_userlist100_version {
+	uint32_t version;		/* numer wersji listy kontaktów */
+} GG_PACKED;
+
+#define GG_USERLIST100_REQUEST 0x0040
+
+struct gg_userlist100_request {
+	uint8_t type;			/* rodzaj żądania */
+	uint32_t version;		/* numer ostatniej znanej wersji listy kontaktów bądź 0 */
+	uint8_t format_type;		/* rodzaj żądanego typu formatu listy kontaktów */
+	uint8_t unknown1;		/* 0x01 */
+	/* char request[]; */
+} GG_PACKED;
+
+#define GG_USERLIST100_REPLY 0x41
+
+struct gg_userlist100_reply {
+	uint8_t type;			/* rodzaj odpowiedzi */
+	uint32_t version;		/* numer wersji listy kontaktów aktualnie przechowywanej przez serwer */
+	uint8_t format_type;		/* rodzaj przesyłanego typu formatu listy kontaktów */
+	uint8_t unknown1;		/* 0x01 */
+	/* char reply[]; */
 } GG_PACKED;
 
 #ifdef _WIN32

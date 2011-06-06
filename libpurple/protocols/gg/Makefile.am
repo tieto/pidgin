@@ -6,6 +6,7 @@ EXTRA_DIST = \
 	lib/dcc.c \
 	lib/dcc7.c \
 	lib/debug.c \
+	lib/deflate.c \
 	lib/encoding.c \
 	lib/encoding.h \
 	lib/events.c \
@@ -36,6 +37,7 @@ INTGGSOURCES = \
 	lib/dcc.c \
 	lib/dcc7.c \
 	lib/debug.c \
+	lib/deflate.c \
 	lib/encoding.c \
 	lib/encoding.h \
 	lib/events.c \
@@ -59,7 +61,6 @@ INTGGSOURCES = \
 INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED -DUSE_INTERNAL_LIBGADU
 
 if USE_GNUTLS
-INTGG_CFLAGS += -DUSE_GNUTLS
 GADU_LIBS += $(GNUTLS_LIBS)
 endif
 

@@ -135,8 +135,6 @@ msn_message_new_msnslp(void)
 
 	msn_message_set_header(msg, "User-Agent", NULL);
 
-	msg->msnslp_message = TRUE;
-
 	msn_message_set_flag(msg, 'D');
 	msn_message_set_content_type(msg, "application/x-msnmsgrp2p");
 
@@ -251,14 +249,6 @@ msn_message_parse_payload(MsnMessage *msg,
 	/* Now we *should* be at the body. */
 	content_type = msn_message_get_content_type(msg);
 
-	if (content_type != NULL &&
-		!strcmp(content_type, "application/x-msnmsgrp2p")) {
-		MsnP2PVersion p2p;
-		msg->msnslp_message = TRUE;
-		p2p = msn_p2p_get_user_support(msg->remote_user);
-		msg->part = msn_slpmsgpart_new_from_data(p2p, tmp, payload_len - (tmp - tmp_base));
-	}
-
 	if (payload_len - (tmp - tmp_base) > 0) {
 		msg->body_len = payload_len - (tmp - tmp_base);
 		g_free(msg->body);
@@ -345,26 +335,11 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	body = msn_message_get_bin_data(msg, &body_len);
 
-	if (msg->msnslp_message)
+	if (body != NULL)
 	{
-		size_t siz;
-		char *body;
-
-		body = msn_slpmsgpart_serialize(msg->part, &siz);
-
-		memcpy(n, body, siz);
-		n += siz;
-
-		g_free(body);
-	}
-	else
-	{
-		if (body != NULL)
-		{
-			memcpy(n, body, body_len);
-			n += body_len;
-			*n = '\0';
-		}
+		memcpy(n, body, body_len);
+		n += body_len;
+		*n = '\0';
 	}
 
 	if (ret_size != NULL)
@@ -613,44 +588,23 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	body = msn_message_get_bin_data(msg, &body_len);
 
-	if (msg->msnslp_message)
+	if (body != NULL)
 	{
-		if (msg->part)
-			msn_slpmsgpart_to_string(msg->part, str);
-
-		if (purple_debug_is_verbose() && body != NULL)
-		{
-			if (text_body)
-			{
-				g_string_append_len(str, body, body_len);
-				if (body[body_len - 1] == '\0')
-				{
-					str->len--;
-					g_string_append(str, " 0x00");
-				}
-				g_string_append(str, "\r\n");
-			}
-			else
-			{
-				int i;
-
-				for (i = 0; i < body_len; i++)
-				{
-					g_string_append_printf(str, "%.2hhX ", body[i]);
-					if ((i % 16) == 15)
-						g_string_append(str, "\r\n");
-				}
-
-				g_string_append(str, "\r\n");
-			}
-		}
-	}
-	else
-	{
-		if (body != NULL)
+		if (msg->type == MSN_MSG_TEXT)
 		{
 			g_string_append_len(str, body, body_len);
 			g_string_append(str, "\r\n");
+		}
+		else
+		{
+			size_t i;
+			for (i = 0; i < body_len; i++, body++)
+			{
+				g_string_append_printf(str, "%02x ", (unsigned char)*body);
+				if (i % 16 == 0 && i != 0)
+					g_string_append_c(str, '\n');
+			}
+			g_string_append_c(str, '\n');
 		}
 	}
 
@@ -887,6 +841,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	MsnSlpLink *slplink;
+	MsnP2PVersion p2p;
 
 	session = cmdproc->servconn->session;
 	slplink = msn_session_get_slplink(session, msg->remote_user);
@@ -909,11 +864,13 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 	}
 
-	if (msg->part) {
+	p2p = msn_slplink_get_p2p_version(slplink);
+	msg->part = msn_slpmsgpart_new_from_data(p2p, msg->body, msg->body_len);
+
+	if (msg->part)
 		msn_slplink_process_msg(slplink, msg->part);
-	}
-	else /* This should never happen. */
-		purple_debug_fatal("msn", "P2P message without a Part.\n");
+	else
+		purple_debug_warning("msn", "P2P message failed to parse.\n");
 }
 
 static void

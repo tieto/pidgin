@@ -484,13 +484,7 @@ jabber_bosh_disable_pipelining(PurpleBOSHConnection *bosh)
 		/* Shouldn't happen; this should be the only place pipelining
 		 * is turned off.
 		 */
-#if GLIB_CHECK_VERSION(2,16,0)
 		g_warn_if_reached();
-#else
-		g_log(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
-				"(%s:%d):%s%s code should not be reached",
-				__FILE__, __LINE__, G_STRFUNC, G_STRFUNC[0] ? ":" : "");
-#endif
 	}
 }
 
@@ -810,7 +804,6 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		if (end_of_headers) {
 			conn->headers_done = TRUE;
 			conn->handled_len = end_of_headers - conn->read_buf->str + 4;
-			cursor = end_of_headers + 4;
 		} else {
 			conn->handled_len = conn->read_buf->len;
 			return;

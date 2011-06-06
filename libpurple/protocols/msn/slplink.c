@@ -79,6 +79,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
 	slplink->remote_user = g_strdup(username);
+	slplink->p2p_version = MSN_P2P_VERSION_ONE;
 
 	slplink->slp_msg_queue = g_queue_new();
 
@@ -264,6 +265,12 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 	return NULL;
 }
 
+MsnP2PVersion
+msn_slplink_get_p2p_version(MsnSlpLink *slplink)
+{
+	return slplink->p2p_version;
+}
+
 static void
 msn_slplink_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 {
@@ -337,7 +344,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
-										 len, offset);
+										 len);
 		}
 	}
 
@@ -554,7 +561,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 {
 	MsnSlpMessage *slpmsg;
 	MsnP2PInfo *info;
-	guint64 offset;
 
 	info = part->info;
 
@@ -567,9 +573,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 		return;
 	}
 
-	offset = msn_p2p_info_get_offset(info);
-
-	if (offset == 0)
+	if (msn_p2p_info_is_first(info))
 		slpmsg = init_first_msg(slplink, info);
 	else {
 		guint32 session_id, id;
@@ -593,7 +597,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
-										 part->size, offset);
+										 part->size);
 		}
 	}
 

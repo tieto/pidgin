@@ -24,11 +24,16 @@
 
 #ifdef USE_PYTHON
 #include <Python.h>
-#else
-#define _GNU_SOURCE
-#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
-#define _XOPEN_SOURCE_EXTENDED
 #endif
+
+/* Python.h may define _GNU_SOURCE and _XOPEN_SOURCE_EXTENDED, so protect
+ * these checks with #ifndef/!defined() */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
+#if !defined _XOPEN_SOURCE_EXTENDED && (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__) && !defined(__OpenBSD__)
+#define _XOPEN_SOURCE_EXTENDED
 #endif
 
 #include <glib.h>

@@ -76,17 +76,15 @@ typedef enum
 
 typedef enum
 {
-	P2P_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
-	P2P_TLV_TYPE_ACK        = 0x02, /**< ACK */
-	P2P_TLV_TYPE_NAK        = 0x03  /**< NAK */
-} P2PTLVType;
+	P2P_HEADER_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
+	P2P_HEADER_TLV_TYPE_ACK        = 0x02, /**< ACK */
+	P2P_HEADER_TLV_TYPE_NAK        = 0x03  /**< NAK */
+} P2PHeaderTLVType;
 
 typedef enum
 {
-	P2P_TLV_LEN_PEER_INFO   = 12,
-	P2P_TLV_LEN_ACK         = 4,
-	P2P_TLV_LEN_NAK         = 4
-} P2PTLVLength;
+	P2P_DATA_TLV_REMAINING  = 0x01, /**< Indicates the remaining data to transfer.*/
+} P2PDataTLVType;
 
 typedef enum
 {
@@ -96,9 +94,6 @@ typedef enum
 	P2P_PI_RES      = 0,
 	P2P_PI_CAPS     = 0x0000010f
 } P2PPeerInfoVal;
-
-#define DLP_REMAINING 0x01; 	/**< Indicates the remaining data to transfer.*/
-#define DLP_REMAINING_LEN 8
 
 typedef struct
 {
@@ -189,6 +184,9 @@ gboolean
 msn_p2p_info_is_valid(MsnP2PInfo *info);
 
 gboolean
+msn_p2p_info_is_first(MsnP2PInfo *info);
+
+gboolean
 msn_p2p_info_is_final(MsnP2PInfo *info);
 
 void
@@ -202,9 +200,6 @@ msn_p2p_info_is_ack(MsnP2PInfo *info);
 
 void
 msn_p2p_info_init_first(MsnP2PInfo *new_info, MsnP2PInfo *old_info);
-
-MsnP2PVersion
-msn_p2p_get_user_support(const char *passport);
 
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);

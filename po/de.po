@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 00:19+0200\n"
-"PO-Revision-Date: 2011-05-08 00:17+0200\n"
+"POT-Creation-Date: 2011-05-12 09:37+0200\n"
+"PO-Revision-Date: 2011-05-12 09:37+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1689,6 +1689,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "Unbekannt"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Buddys"
 
@@ -11757,10 +11758,6 @@ msgstr "Schwerer Fehler"
 msgid "artist"
 msgstr "Künstler"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "Sprach- und Videoübertragung"
 
@@ -11772,6 +11769,10 @@ msgstr "Webmaster"
 
 msgid "win32 port"
 msgstr "Win32 Portierung"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "Maintainer"
@@ -11890,6 +11891,9 @@ msgstr "Hebräisch"
 
 msgid "Hindi"
 msgstr "Hindi"
+
+msgid "Croatian"
+msgstr "Kroatisch"
 
 msgid "Hungarian"
 msgstr "Ungarisch"

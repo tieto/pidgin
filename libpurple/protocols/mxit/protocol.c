@@ -2516,7 +2516,7 @@ static struct field* add_field( struct record* r )
 
 	field = g_new0( struct field, 1 );
 
-	r->fields = realloc( r->fields, sizeof( struct field* ) * ( r->fcount + 1 ) );
+	r->fields = g_realloc( r->fields, sizeof( struct field* ) * ( r->fcount + 1 ) );
 	r->fields[r->fcount] = field;
 	r->fcount++;
 
@@ -2536,7 +2536,7 @@ static struct record* add_record( struct rx_packet* p )
 
 	rec = g_new0( struct record, 1 );
 
-	p->records = realloc( p->records, sizeof( struct record* ) * ( p->rcount + 1 ) );
+	p->records = g_realloc( p->records, sizeof( struct record* ) * ( p->rcount + 1 ) );
 	p->records[p->rcount] = rec;
 	p->rcount++;
 

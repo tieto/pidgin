@@ -18,6 +18,8 @@ version 2.8.0 (??/??/????):
 	  stream to the existing call. (Jakub Adam) (#13537)
 	* Pidgin plugins can now override tab completion and detect clicks on
 	  usernames in the chat userlist. (kawaii.neko) (#12599)
+	* Fix the tooltip being destroyed when it is full of information and
+	  cover the mouse (dliang) (#10510)
 
 	libpurple:
 	* media: Allow obtaining active local and remote candidates. (Jakub
@@ -38,18 +40,26 @@ version 2.8.0 (??/??/????):
 	* proxy: Add new "Tor/Privacy" proxy type that can be used to
 	  restrict operations that could leak potentially sensitive data
 	  (e.g. DNS queries).  (#11110, #13928)
+	* media: Add support for using TCP relaying with TURN (will only work with
+	  libnice 0.1.0 and later).
+
+	AIM:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
 
 	Gadu-Gadu:
 	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
 	* Updated internal libgadu to version 1.10.1. (Robert Matusewicz,
 	  Krzysztof Klinikowski) (#13525)
+	* Updated internal libgadu to version 1.11.0. (Tomasz Wasilczyk)
+	  (#14248)
 	* Suppress blank messages that happen when receiving inline
 	  images. (Tomasz Wasilczyk) (#13554)
 	* Fix sending inline images to remote users, don't crash when
 	  trying to send large (> 256kB) images. (Tomasz Wasilczyk) (#13580)
 	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
 	  Krzysztof Klinikowski) (#13362, #13590)
-	* Require libgadu 1.10.1 to avoid using internal libgadu.
+	* Require libgadu 1.11.0 to avoid using internal libgadu.
 	* Optional SSL connection support for GNUTLS users (not on Windows
 	  yet!). (Tomasz Wasilczyk) (#13613, #13894)
 	* Don't count received messages or statuses when determining whether
@@ -64,6 +74,8 @@ version 2.8.0 (??/??/????):
 	  (#13886)
 
 	ICQ:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
 	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
 	  (#11895)
 	* Ignore Daylight Saving Time when performing calculations related to
@@ -96,6 +108,9 @@ version 2.8.0 (??/??/????):
 	  (Keith Moyer) (#12451)
 	* Correctly handle a buddy's unsetting his/her vCard-based avatar.
 	  (Matthew W.S. Bell) (#13370)
+	* Squash one more situation that resulted in duplicate entries in
+	  the roster (this one where the server reports the buddy as being
+	  in the same (empty) group.  (Reported by Danny Mayer)
 
 	Plugins:
 	* The Voice/Video Settings plugin now includes the ability to test

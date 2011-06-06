@@ -51,6 +51,9 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 		purple_cipher_context_destroy(context);
 	} else if (type == DC_NONCE_PLAIN) {
 		memcpy(digest, nonce, 16);
+	} else {
+		nonce_hash[0] = '\0';
+		g_return_if_reached();
 	}
 
 	g_sprintf(nonce_hash,
@@ -594,7 +597,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 	case DC_STATE_ESTABLISHED:
 		if (packet_length) {
 			MsnP2PVersion p2p;
-			p2p = msn_p2p_get_user_support(dc->slplink->remote_user);
+			p2p = msn_slplink_get_p2p_version(dc->slplink);
 			part = msn_slpmsgpart_new_from_data(p2p, dc->in_buffer + 4, packet_length);
 			if (part) {
 				msn_slplink_process_msg(dc->slplink, part);

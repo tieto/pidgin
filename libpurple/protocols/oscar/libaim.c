@@ -32,7 +32,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"gif,jpeg,bmp,ico", 0, 0, 100, 100, 7168, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"gif,jpeg,bmp,ico", 0, 0, 64, 64, 7168, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	oscar_list_icon_aim,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */

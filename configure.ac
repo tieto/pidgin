@@ -298,7 +298,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1024,7 +1024,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.10.1], [
+	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1058,7 +1058,7 @@ if test "x$gadu_libs" = "xyes"; then
 	]])], [
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
 #if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.10.1 or higher."
+#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
 #endif
 		]])], [
 			AC_MSG_RESULT(yes)
@@ -1069,7 +1069,7 @@ if test "x$gadu_libs" = "xyes"; then
 			echo
 			echo
 			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.10.1 or newer."
+			echo "Install version 1.11.0 or newer."
 			echo "Then rerun this ./configure"
 			echo
 			echo "Falling back to using our own copy of libgadu"

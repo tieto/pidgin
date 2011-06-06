@@ -76,8 +76,6 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",           NULL,                  NULL},
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
-	/* feel free to not translate this */
-	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
 	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
 	{"Casey Harkins",                      NULL,                  NULL},
@@ -113,6 +111,8 @@ static const struct developer patch_writers[] = {
 static const struct developer retired_developers[] = {
 	{"Herman Bloggs",               N_("win32 port"),          "herman@bluedigits.com"},
 	{"Thomas Butter",               NULL,                      NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
@@ -189,6 +189,7 @@ static const struct translator translators[] = {
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Sangeeta Kumari", "sangeeta_0975@yahoo.com"},
 	{N_("Hindi"),               "hi", "Rajesh Ranjan", "rajeshkajha@yahoo.com"},
+	{N_("Croatian"),            "hr", "Sabina Drempetić", "bina91991@googlemail.com"},
 	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
 	{N_("Armenian"),            "hy", "David Avsharyan", "avsharyan@gmail.com"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},

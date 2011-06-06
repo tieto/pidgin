@@ -45,6 +45,7 @@ struct _MsnSlpLink
 	guint refs;
 
 	char *remote_user;
+	MsnP2PVersion p2p_version;
 
 	int slp_seq_id;
 
@@ -75,6 +76,8 @@ void msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall);
 MsnSlpCall *msn_slplink_find_slp_call(MsnSlpLink *slplink,
 									  const char *id);
 MsnSlpCall *msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id);
+MsnP2PVersion msn_slplink_get_p2p_version(MsnSlpLink *slplink);
+
 void msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 							 MsnSlpMessage *slpmsg);
