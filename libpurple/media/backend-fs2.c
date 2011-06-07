@@ -1823,7 +1823,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		port = purple_prefs_get_int("/purple/network/turn_port_tcp");
 		if (port > 0) {
 			relay_info = append_relay_info(relay_info, turn_ip, port, username,
-				password, "udp");
+				password, "tcp");
 		}
 
 		/* TURN over SSL is only supported by libnice for Google's "psuedo" SSL mode
