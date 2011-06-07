@@ -7,6 +7,7 @@ EXTRA_DIST = \
 	lib/dcc7.c \
 	lib/debug.c \
 	lib/deflate.c \
+	lib/deflate.h \
 	lib/encoding.c \
 	lib/encoding.h \
 	lib/events.c \
@@ -38,6 +39,7 @@ INTGGSOURCES = \
 	lib/dcc7.c \
 	lib/debug.c \
 	lib/deflate.c \
+	lib/deflate.h \
 	lib/encoding.c \
 	lib/encoding.h \
 	lib/events.c \
