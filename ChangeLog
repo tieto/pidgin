@@ -87,6 +87,10 @@ version 2.8.0 (06/06/2011):
 	IRC:
 	* Add "authserv" service command.  (tomos) (#13337)
 
+	MSN:
+	* Fix a hard-to-exploit crash in the MSN protocol when using the
+	  HTTP connection method (Reported by Marius Wachtler).
+
 	MXit:
 	* Support for an Invite Message when adding a buddy.
 	* Fixed bug in splitting-up of messages that contain a lot of links.
