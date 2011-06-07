@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.8.0 (??/??/????):
+version 2.8.0 (06/06/2011):
 	libpurple:
 		Added:
 		* account-authorization-requested-with-message signal (Stefan Ott)
@@ -704,7 +704,7 @@ version 2.3.0 (11/24/2007):
 		* Added gnt_window_set_maximize and gnt_window_get_maximize, and
 		  GntWindowFlags enum.
 
-version 2.2.2 (??/??/????):
+version 2.2.2 (10/23/2007):
 	libpurple:
 		Changed:
 		* The size parameter of purple_util_write_data_to_file_absolute

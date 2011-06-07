@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.8.0 (??/??/????):
+version 2.8.0 (06/06/2011):
 	General:
 	* Implement simple silence suppression for voice calls, preventing
 	  wasted bandwidth for silent periods during a call. (Jakub Adam)
