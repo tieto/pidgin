@@ -13,7 +13,9 @@ libpurple-client.so.0 libpurple0 #MINVER#
  PURPLE_CONV_IM@Base 2.2.0
  _purple_oscar_convert@Base 2.6.0
  purple_account_add_buddies@Base 2.2.0
+ purple_account_add_buddies_with_invite@Base 2.8.0-1
  purple_account_add_buddy@Base 2.2.0
+ purple_account_add_buddy_with_invite@Base 2.8.0-1
  purple_account_change_password@Base 2.2.0
  purple_account_clear_current_error@Base 2.3.0
  purple_account_clear_settings@Base 2.2.0
@@ -39,6 +41,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_account_get_protocol_name@Base 2.2.0
  purple_account_get_proxy_info@Base 2.2.0
  purple_account_get_remember_password@Base 2.2.0
+ purple_account_get_silence_suppression@Base 2.8.0-1
  purple_account_get_status@Base 2.2.0
  purple_account_get_status_type@Base 2.2.0
  purple_account_get_status_type_with_primitive@Base 2.2.0
@@ -77,6 +80,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_account_set_protocol_id@Base 2.2.0
  purple_account_set_proxy_info@Base 2.2.0
  purple_account_set_remember_password@Base 2.2.0
+ purple_account_set_silence_suppression@Base 2.8.0-1
  purple_account_set_status_list@Base 2.2.0
  purple_account_set_status_types@Base 2.2.0
  purple_account_set_string@Base 2.2.0
@@ -253,8 +257,12 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_conv_chat_add_users@Base 2.2.0
  purple_conv_chat_cb_destroy@Base 2.2.0
  purple_conv_chat_cb_find@Base 2.2.0
+ purple_conv_chat_cb_get_attribute@Base 2.8.0-1
+ purple_conv_chat_cb_get_attribute_keys@Base 2.8.0-1
  purple_conv_chat_cb_get_name@Base 2.2.0
  purple_conv_chat_cb_new@Base 2.2.0
+ purple_conv_chat_cb_set_attribute@Base 2.8.0-1
+ purple_conv_chat_cb_set_attributes@Base 2.8.0-1
  purple_conv_chat_clear_users@Base 2.2.0
  purple_conv_chat_find_user@Base 2.2.0
  purple_conv_chat_get_conversation@Base 2.2.0
@@ -427,6 +435,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_notify_set_ui_ops@Base 2.2.0
  purple_notify_uninit@Base 2.2.0
  purple_notify_user_info_add_pair@Base 2.2.0
+ purple_notify_user_info_add_pair_plaintext@Base 2.8.0-1
  purple_notify_user_info_add_section_break@Base 2.2.0
  purple_notify_user_info_add_section_header@Base 2.2.0
  purple_notify_user_info_destroy@Base 2.2.0
@@ -873,6 +882,8 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleSoundUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvQueryData@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvResponse@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleSrvTxtQueryData@Base 2.8.0-1
+ PURPLE_DBUS_TYPE_PurpleSrvTxtQueryUiOps@Base 2.8.0-1
  PURPLE_DBUS_TYPE_PurpleSslConnection@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSslOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleStatus@Base 2.2.0
@@ -911,7 +922,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_GList_to_array@Base 2.2.0
  purple_GSList_to_array@Base 2.2.0
  purple_account_add_buddies@Base 2.2.0
+ purple_account_add_buddies_with_invite@Base 2.8.0-1
  purple_account_add_buddy@Base 2.2.0
+ purple_account_add_buddy_with_invite@Base 2.8.0-1
  purple_account_change_password@Base 2.2.0
  purple_account_clear_current_error@Base 2.3.0
  purple_account_clear_settings@Base 2.2.0
@@ -938,6 +951,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_account_get_proxy_info@Base 2.2.0
  purple_account_get_public_alias@Base 2.7.0
  purple_account_get_remember_password@Base 2.2.0
+ purple_account_get_silence_suppression@Base 2.8.0-1
  purple_account_get_status@Base 2.2.0
  purple_account_get_status_type@Base 2.2.0
  purple_account_get_status_type_with_primitive@Base 2.2.0
@@ -1001,6 +1015,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_account_set_public_alias@Base 2.7.0
  purple_account_set_register_callback@Base 2.2.0
  purple_account_set_remember_password@Base 2.2.0
+ purple_account_set_silence_suppression@Base 2.8.0-1
  purple_account_set_status@Base 2.2.0
  purple_account_set_status_list@Base 2.2.0
  purple_account_set_status_types@Base 2.2.0
@@ -1298,8 +1313,12 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_conv_chat_add_users@Base 2.2.0
  purple_conv_chat_cb_destroy@Base 2.2.0
  purple_conv_chat_cb_find@Base 2.2.0
+ purple_conv_chat_cb_get_attribute@Base 2.8.0-1
+ purple_conv_chat_cb_get_attribute_keys@Base 2.8.0-1
  purple_conv_chat_cb_get_name@Base 2.2.0
  purple_conv_chat_cb_new@Base 2.2.0
+ purple_conv_chat_cb_set_attribute@Base 2.8.0-1
+ purple_conv_chat_cb_set_attributes@Base 2.8.0-1
  purple_conv_chat_clear_users@Base 2.2.0
  purple_conv_chat_find_user@Base 2.2.0
  purple_conv_chat_get_conversation@Base 2.2.0
@@ -1448,6 +1467,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_desktop_item_new_from_file@Base 2.2.0
  purple_desktop_item_unref@Base 2.2.0
  purple_dnsquery_a@Base 2.2.0
+ purple_dnsquery_a_account@Base 2.8.0-1
  purple_dnsquery_destroy@Base 2.2.0
  purple_dnsquery_get_host@Base 2.2.0
  purple_dnsquery_get_port@Base 2.2.0
@@ -1560,6 +1580,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_markup_unescape_entity@Base 2.2.0
  purple_marshal_BOOLEAN__INT_POINTER@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER@Base 2.2.0
+ purple_marshal_BOOLEAN__POINTER_BOOLEAN@Base 2.8.0-1
  purple_marshal_BOOLEAN__POINTER_POINTER@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER@Base 2.2.0
@@ -1571,6 +1592,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_marshal_INT__INT@Base 2.2.0
  purple_marshal_INT__INT_INT@Base 2.2.0
  purple_marshal_INT__POINTER_POINTER@Base 2.3.0
+ purple_marshal_INT__POINTER_POINTER_POINTER@Base 2.8.0-1
  purple_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER@Base 2.2.0
  purple_marshal_POINTER__POINTER@Base 2.7.0
  purple_marshal_POINTER__POINTER_INT64@Base 2.2.0
@@ -1607,9 +1629,11 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_backend_fs2_get_type@Base 2.7.0
  purple_media_backend_fs2_set_input_volume@Base 2.7.0
  purple_media_backend_fs2_set_output_volume@Base 2.7.0
+ purple_media_backend_get_available_params@Base 2.8.0-1
  purple_media_backend_get_codecs@Base 2.7.0
  purple_media_backend_get_local_candidates@Base 2.7.0
  purple_media_backend_get_type@Base 2.7.0
+ purple_media_backend_set_params@Base 2.8.0-1
  purple_media_backend_set_remote_codecs@Base 2.7.0
  purple_media_backend_set_send_codec@Base 2.7.0
  purple_media_candidate_copy@Base 2.7.0
@@ -1656,6 +1680,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_end@Base 2.6.0
  purple_media_error@Base 2.6.0
  purple_media_get_account@Base 2.6.0
+ purple_media_get_active_local_candidates@Base 2.8.0-1
+ purple_media_get_active_remote_candidates@Base 2.8.0-1
+ purple_media_get_available_params@Base 2.8.0-1
  purple_media_get_codecs@Base 2.6.0
  purple_media_get_local_candidates@Base 2.6.0
  purple_media_get_manager@Base 2.6.0
@@ -1679,6 +1706,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_manager_get_pipeline@Base 2.6.0
  purple_media_manager_get_type@Base 2.6.0
  purple_media_manager_get_ui_caps@Base 2.6.0
+ purple_media_manager_get_video_caps@Base 2.8.0-1
  purple_media_manager_register_element@Base 2.6.0
  purple_media_manager_remove_media@Base 2.6.0
  purple_media_manager_remove_output_window@Base 2.6.0
@@ -1687,13 +1715,16 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_manager_set_backend_type@Base 2.7.0
  purple_media_manager_set_output_window@Base 2.6.0
  purple_media_manager_set_ui_caps@Base 2.6.0
+ purple_media_manager_set_video_caps@Base 2.8.0-1
  purple_media_manager_unregister_element@Base 2.6.0
  purple_media_network_protocol_get_type@Base 2.6.0
+ purple_media_param_is_supported@Base 2.8.0-1
  purple_media_remove_output_windows@Base 2.6.0
  purple_media_session_type_get_type@Base 2.6.0
  purple_media_set_input_volume@Base 2.6.0
  purple_media_set_output_volume@Base 2.6.0
  purple_media_set_output_window@Base 2.6.0
+ purple_media_set_params@Base 2.8.0-1
  purple_media_set_prpl_data@Base 2.6.0
  purple_media_set_remote_codecs@Base 2.6.0
  purple_media_set_send_codec@Base 2.6.0
@@ -1776,6 +1807,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_notify_uninit@Base 2.2.0
  purple_notify_uri@Base 2.2.0
  purple_notify_user_info_add_pair@Base 2.2.0
+ purple_notify_user_info_add_pair_plaintext@Base 2.8.0-1
  purple_notify_user_info_add_section_break@Base 2.2.0
  purple_notify_user_info_add_section_header@Base 2.2.0
  purple_notify_user_info_destroy@Base 2.2.0
@@ -1883,6 +1915,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_pounce_action_set_enabled@Base 2.2.0
  purple_pounce_destroy@Base 2.2.0
  purple_pounce_destroy_all_by_account@Base 2.2.0
+ purple_pounce_destroy_all_by_buddy@Base 2.8.0-1
  purple_pounce_execute@Base 2.2.0
  purple_pounce_get_data@Base 2.2.0
  purple_pounce_get_events@Base 2.2.0
@@ -1987,6 +2020,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_proxy_connect_cancel@Base 2.2.0
  purple_proxy_connect_cancel_with_handle@Base 2.2.0
  purple_proxy_connect_socks5@Base 2.2.0
+ purple_proxy_connect_socks5_account@Base 2.8.0-1
  purple_proxy_connect_udp@Base 2.6.0
  purple_proxy_get_handle@Base 2.2.0
  purple_proxy_get_setup@Base 2.2.0
@@ -2251,6 +2285,11 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_sounds_get_handle@Base 2.2.0
  purple_srv_cancel@Base 2.2.0
  purple_srv_resolve@Base 2.2.0
+ purple_srv_resolve_account@Base 2.8.0-1
+ purple_srv_txt_query_get_query@Base 2.8.0-1
+ purple_srv_txt_query_get_type@Base 2.8.0-1
+ purple_srv_txt_query_get_ui_ops@Base 2.8.0-1
+ purple_srv_txt_query_set_ui_ops@Base 2.8.0-1
  purple_ssl_close@Base 2.2.0
  purple_ssl_connect@Base 2.2.0
  purple_ssl_connect_fd@Base 2.2.0
@@ -2376,6 +2415,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_timeout_remove@Base 2.2.0
  purple_txt_cancel@Base 2.6.0
  purple_txt_resolve@Base 2.6.0
+ purple_txt_resolve_account@Base 2.8.0-1
  purple_txt_response_destroy@Base 2.6.0
  purple_txt_response_get_content@Base 2.6.0
  purple_unescape_filename@Base 2.2.0
