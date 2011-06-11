@@ -270,12 +270,24 @@ md4_get_block_size(PurpleCipherContext *context)
 }
 
 static PurpleCipherOps MD4Ops = {
-	.init = md4_init,
-	.reset = md4_reset,
-	.uninit = md4_uninit,
-	.append = md4_append,
-	.digest = md4_digest,
-	.get_block_size = md4_get_block_size,
+	NULL,                   /* Set option */
+	NULL,                   /* Get option */
+	md4_init,               /* init */
+	md4_reset,              /* reset */
+	md4_uninit,             /* uninit */
+	NULL,                   /* set iv */
+	md4_append,             /* append */
+	md4_digest,             /* digest */
+	NULL,                   /* encrypt */
+	NULL,                   /* decrypt */
+	NULL,                   /* set salt */
+	NULL,                   /* get salt size */
+	NULL,                   /* set key */
+	NULL,                   /* get key size */
+	NULL,                   /* set batch mode */
+	NULL,                   /* get batch mode */
+	md4_get_block_size,     /* get block size */
+	NULL                    /* set key with len */
 };
 
 PurpleCipherOps *

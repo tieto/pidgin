@@ -1120,9 +1120,11 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* get_account_text_table */
   NULL,                                /* initiate_media */
   NULL,                                /* get_media_caps */
+  NULL,                                /* get_moods */
   NULL,                                /* set_public_alias */
   NULL,                                /* get_public_alias */
-  NULL                                 /* get_moods */
+  NULL,                                /* add_buddy_with_invite */
+  NULL                                 /* add_buddies_with_invite */
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

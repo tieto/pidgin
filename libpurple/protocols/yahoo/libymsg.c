@@ -3990,7 +3990,6 @@ char *yahoo_status_text(PurpleBuddy *b)
 void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	YahooFriend *f;
-	char *escaped;
 	char *status = NULL;
 	const char *presence = NULL;
 	PurpleAccount *account;
@@ -4029,14 +4028,12 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	}
 
 	if (status != NULL) {
-		escaped = g_markup_escape_text(status, strlen(status));
-		purple_notify_user_info_add_pair(user_info, _("Status"), escaped);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status);
 		g_free(status);
-		g_free(escaped);
 	}
 
 	if (presence != NULL)
-		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Presence"), presence);
 
 	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;

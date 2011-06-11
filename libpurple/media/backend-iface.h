@@ -68,6 +68,9 @@ struct _PurpleMediaBackendIface
 		GList *codecs);
 	gboolean (*set_send_codec) (PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
+	void (*set_params) (PurpleMediaBackend *self,
+		guint num_params, GParameter *params);
+	const gchar **(*get_available_params) (void);
 };
 
 /**
@@ -190,6 +193,31 @@ gboolean purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
  */
 gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
+
+/**
+ * Sets various optional parameters of the media backend.
+ *
+ * @param self The media backend to set the parameters on.
+ * @param num_params The number of parameters to pass to backend
+ * @param params Array of @c GParameter to pass to backend
+ *
+ * @since 2.8.0
+ */
+void purple_media_backend_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params);
+
+/**
+ * Gets the list of optional parameters supported by the media backend.
+ *
+ * The list should NOT be freed.
+ *
+ * @param self The media backend
+ *
+ * @return NULL-terminated array of names of supported parameters.
+ *
+ * @since 2.8.0
+ */
+const gchar **purple_media_backend_get_available_params(PurpleMediaBackend *self);
 
 G_END_DECLS
 

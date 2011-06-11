@@ -600,7 +600,7 @@ static void
 msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
 	xmlnode *node;
-	gchar *begin, *inner, *end, *tmp;
+	gchar *begin, *end, *tmp;
 	int descended = nodes_processed;
 
 	if (!root || !root->name)
@@ -609,7 +609,7 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 	purple_debug_info("msim", "msim_convert_xmlnode: got root=%s\n",
 			root->name);
 
-	begin = inner = end = NULL;
+	begin = end = NULL;
 
 	if (descended == 0) /* We've not formatted this yet.. :) */
 		descended = f(session, root, &begin, &end); /* Get the value that our format function has already descended for us */

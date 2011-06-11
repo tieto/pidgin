@@ -29,10 +29,10 @@
 
 static PurplePluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE | OPT_PROTO_INVITE_MESSAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"gif,jpeg,bmp,ico", 0, 0, 100, 100, 7168, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"gif,jpeg,bmp,ico", 0, 0, 64, 64, 7168, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	oscar_list_icon_aim,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */
@@ -50,7 +50,7 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_set_status,		/* set_status */
 	oscar_set_idle,			/* set_idle */
 	oscar_change_passwd,	/* change_passwd */
-	oscar_add_buddy,		/* add_buddy */
+	NULL,					/* add_buddy */
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
@@ -100,7 +100,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* get_media_caps */
 	NULL,					/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL					/* get_public_alias */
+	NULL,					/* get_public_alias */
+	oscar_add_buddy,		/* add_buddy_with_invite */
+	NULL					/* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =

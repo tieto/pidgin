@@ -165,14 +165,24 @@ rc4_encrypt(PurpleCipherContext *context, const guchar data[],
 }
 
 static PurpleCipherOps RC4Ops = {
-	.set_option = rc4_set_opt,
-	.get_option = rc4_get_opt,
-	.init = rc4_init,
-	.reset = rc4_reset,
-	.uninit = rc4_uninit,
-	.encrypt = rc4_encrypt,
-	.set_key = rc4_set_key,
-	.get_key_size = rc4_get_key_size,
+	rc4_set_opt,   /* Set Option    */
+	rc4_get_opt,   /* Get Option    */
+	rc4_init,      /* init          */
+	rc4_reset,     /* reset         */
+	rc4_uninit,    /* uninit        */
+	NULL,          /* set iv        */
+	NULL,          /* append        */
+	NULL,          /* digest        */
+	rc4_encrypt,   /* encrypt       */
+	NULL,          /* decrypt       */
+	NULL,          /* set salt      */
+	NULL,          /* get salt size */
+	rc4_set_key,   /* set key       */
+	rc4_get_key_size, /* get key size  */
+	NULL,          /* set batch mode */
+	NULL,          /* get batch mode */
+	NULL,          /* get block size */
+	NULL           /* set key with len */
 };
 
 PurpleCipherOps *

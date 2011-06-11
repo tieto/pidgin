@@ -417,7 +417,6 @@ get_config_frame(PurplePlugin *plugin)
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *sw;
 	GtkWidget *treeview;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
@@ -439,17 +438,6 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	/* Scrolled window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_set_size_request(sw, 300, 300);
-	gtk_widget_show(sw);
-
 	/* Create the list model for the treeview. */
 	model = gtk_list_store_new(NUM_COLUMNS,
 							   G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF,
@@ -458,7 +446,9 @@ get_config_frame(PurplePlugin *plugin)
 	/* Setup the treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(treeview, GTK_POLICY_AUTO, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, 300, 300),
+		TRUE, TRUE, 0);
 	gtk_widget_show(treeview);
 
 	/* Setup the column */

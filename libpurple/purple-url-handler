@@ -73,7 +73,7 @@ def bring_account_online(account):
 def findaccount(protocolname, accountname="", matcher=None):
     if matcher:
         for account in cpurple.PurpleAccountsGetAll():
-            if (protocolname != cpurple.PurpleAccountGetProtocolID(account)) or \
+            if (protocolname != cpurple.PurpleAccountGetProtocolId(account)) or \
                (accountname != "" and accountname != cpurple.PurpleAccountGetUsername(account)):
                 continue
             if matcher(account):
@@ -188,7 +188,7 @@ def irc(uri):
         print "Invalid irc URI: %s" % uri
         return
 
-    server = urllib.unquote_plus(match.group(2)) or ""
+    server = urllib.unquote_plus(match.group(2) or "")
     target = match.group(3) or ""
     query = match.group(5) or ""
 

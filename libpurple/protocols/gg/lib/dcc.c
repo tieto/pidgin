@@ -1,4 +1,4 @@
-/* $Id: dcc.c 711 2009-04-16 00:52:47Z darkjames $ */
+/* $Id: dcc.c 1023 2010-11-16 18:27:35Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2008 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -25,11 +25,9 @@
  *
  * \brief Obsługa połączeń bezpośrednich do wersji Gadu-Gadu 6.x
  */
-#include "libgadu.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #ifndef _WIN32
 #  include <sys/ioctl.h>
 #  include <sys/socket.h>
@@ -50,6 +48,7 @@
 #include <unistd.h>
 
 #include "compat.h"
+#include "libgadu.h"
 
 #ifndef GG_DEBUG_DISABLE
 
@@ -421,7 +420,7 @@ struct gg_dcc *gg_dcc_socket_create(uin_t uin, uint16_t port)
 		return NULL;
 	}
 
-	if (!port)
+	if (port == 0 || port == (uint16_t)-1) /* XXX: port is unsigned */
 		port = GG_DEFAULT_DCC_PORT;
 
 	while (!bound) {

@@ -203,24 +203,22 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	emblems/16/free-for-chat.png emblems/16/game.png \
 	emblems/16/half-operator.png emblems/16/hiptop.png \
 	emblems/16/male.png emblems/16/not-authorized.png \
-	emblems/16/operator.png emblems/16/qq-member.png \
-	emblems/16/secure.png emblems/16/unavailable.png \
-	emblems/16/video.png emblems/16/voice.png \
-	emblems/scalable/aol-client.svg emblems/scalable/blocked.svg \
-	emblems/scalable/bot.svg emblems/scalable/external.svg \
-	emblems/scalable/female.svg emblems/scalable/free-for-chat.svg \
-	emblems/scalable/game.svg emblems/scalable/male.svg \
-	emblems/scalable/not-authorized.svg \
-	emblems/scalable/qq-member.svg emblems/scalable/secure.svg \
-	emblems/scalable/unavailable.svg emblems/scalable/video.svg \
-	emblems/scalable/voice.svg protocols/16/aim.png \
-	protocols/16/bonjour.png protocols/16/facebook.png \
-	protocols/16/gadu-gadu.png protocols/16/google-talk.png \
-	protocols/16/novell.png protocols/16/icq.png \
-	protocols/16/irc.png protocols/16/jabber.png \
-	protocols/16/meanwhile.png protocols/16/msn.png \
-	protocols/16/mxit.png protocols/16/myspace.png \
-	protocols/16/qq.png protocols/16/silc.png \
+	emblems/16/operator.png emblems/16/secure.png \
+	emblems/16/unavailable.png emblems/16/video.png \
+	emblems/16/voice.png emblems/scalable/aol-client.svg \
+	emblems/scalable/blocked.svg emblems/scalable/bot.svg \
+	emblems/scalable/external.svg emblems/scalable/female.svg \
+	emblems/scalable/free-for-chat.svg emblems/scalable/game.svg \
+	emblems/scalable/male.svg emblems/scalable/not-authorized.svg \
+	emblems/scalable/secure.svg emblems/scalable/unavailable.svg \
+	emblems/scalable/video.svg emblems/scalable/voice.svg \
+	protocols/16/aim.png protocols/16/bonjour.png \
+	protocols/16/facebook.png protocols/16/gadu-gadu.png \
+	protocols/16/google-talk.png protocols/16/novell.png \
+	protocols/16/icq.png protocols/16/irc.png \
+	protocols/16/jabber.png protocols/16/meanwhile.png \
+	protocols/16/msn.png protocols/16/mxit.png \
+	protocols/16/myspace.png protocols/16/silc.png \
 	protocols/16/simple.png protocols/16/yahoo.png \
 	protocols/16/zephyr.png protocols/22/aim.png \
 	protocols/22/bonjour.png protocols/22/facebook.png \
@@ -228,16 +226,15 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	protocols/22/novell.png protocols/22/icq.png \
 	protocols/22/irc.png protocols/22/jabber.png \
 	protocols/22/meanwhile.png protocols/22/msn.png \
-	protocols/22/myspace.png protocols/22/qq.png \
-	protocols/22/silc.png protocols/22/simple.png \
-	protocols/22/yahoo.png protocols/22/zephyr.png \
-	protocols/48/aim.png protocols/48/bonjour.png \
-	protocols/48/facebook.png protocols/48/gadu-gadu.png \
-	protocols/48/novell.png protocols/48/icq.png \
-	protocols/48/irc.png protocols/48/jabber.png \
-	protocols/48/meanwhile.png protocols/48/msn.png \
-	protocols/48/mxit.png protocols/48/myspace.png \
-	protocols/48/qq.png protocols/48/silc.png \
+	protocols/22/myspace.png protocols/22/silc.png \
+	protocols/22/simple.png protocols/22/yahoo.png \
+	protocols/22/zephyr.png protocols/48/aim.png \
+	protocols/48/bonjour.png protocols/48/facebook.png \
+	protocols/48/gadu-gadu.png protocols/48/novell.png \
+	protocols/48/icq.png protocols/48/irc.png \
+	protocols/48/jabber.png protocols/48/meanwhile.png \
+	protocols/48/msn.png protocols/48/mxit.png \
+	protocols/48/myspace.png protocols/48/silc.png \
 	protocols/48/simple.png protocols/48/yahoo.png \
 	protocols/48/zephyr.png protocols/scalable/aim.svg \
 	protocols/scalable/bonjour.svg \
@@ -246,56 +243,56 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	protocols/scalable/novell.svg protocols/scalable/icq.svg \
 	protocols/scalable/irc.svg protocols/scalable/jabber.svg \
 	protocols/scalable/meanwhile.svg protocols/scalable/msn.svg \
-	protocols/scalable/mxit.svg protocols/scalable/qq.svg \
-	protocols/scalable/silc.svg protocols/scalable/simple.svg \
-	protocols/scalable/yahoo.svg protocols/scalable/zephyr.svg \
-	status/11/available.png status/11/away.png status/11/busy.png \
-	status/11/chat.png status/11/extended-away.png \
-	status/11/invisible.png status/11/log-in.png \
-	status/11/log-out.png status/11/offline.png \
-	status/11/person.png status/11/rtl/extended-away.png \
-	status/11/rtl/log-in.png status/11/rtl/log-out.png \
-	status/16/available.png status/16/away.png status/16/busy.png \
-	status/16/chat.png status/16/extended-away.png \
-	status/16/invisible.png status/16/log-in.png \
-	status/16/log-out.png status/16/offline.png \
-	status/16/person.png status/16/rtl/extended-away.png \
-	status/16/rtl/log-in.png status/16/rtl/log-out.png \
-	status/22/available.png status/22/away.png status/22/busy.png \
-	status/22/chat.png status/22/extended-away.png \
-	status/22/invisible.png status/22/log-in.png \
-	status/22/log-out.png status/22/offline.png \
-	status/22/person.png status/22/rtl/extended-away.png \
-	status/22/rtl/log-in.png status/22/rtl/log-out.png \
-	status/32/available.png status/32/away.png status/32/busy.png \
-	status/32/chat.png status/32/extended-away.png \
-	status/32/invisible.png status/32/log-in.png \
-	status/32/log-out.png status/32/offline.png \
-	status/32/person.png status/32/rtl/extended-away.png \
-	status/32/rtl/log-in.png status/32/rtl/log-out.png \
-	status/48/available.png status/48/away.png status/48/busy.png \
-	status/48/chat.png status/48/extended-away.png \
-	status/48/invisible.png status/48/log-in.png \
-	status/48/log-out.png status/48/offline.png \
-	status/48/person.png status/48/rtl/extended-away.png \
-	status/48/rtl/log-in.png status/48/rtl/log-out.png \
-	toolbar/11/message-new.png toolbar/16/audio-call.png \
-	toolbar/16/change-bgcolor.png toolbar/16/change-fgcolor.png \
-	toolbar/16/emote-select.png toolbar/16/font-face.png \
-	toolbar/16/font-size-down.png toolbar/16/font-size-up.png \
-	toolbar/16/insert.png toolbar/16/insert-image.png \
-	toolbar/16/insert-link.png toolbar/16/message-new.png \
-	toolbar/16/plugins.png toolbar/16/send-file.png \
-	toolbar/16/transfer.png toolbar/16/unblock.png \
-	toolbar/16/video-call.png toolbar/16/get-attention.png \
-	toolbar/22/select-avatar.png toolbar/22/video-call.png \
-	toolbar/22/audio-call.png toolbar/32/video-call.png \
-	toolbar/32/audio-call.png toolbar/48/video-call.png \
-	toolbar/48/audio-call.png tray/hicolor/index.theme \
-	tray/16/available_4bit.ico tray/16/away_4bit.ico \
-	tray/16/busy_4bit.ico tray/16/connecting_4bit.ico \
-	tray/16/extended-away_4bit.ico tray/16/invisible_4bit.ico \
-	tray/16/message_4bit.ico tray/16/offline_4bit.ico \
+	protocols/scalable/mxit.svg protocols/scalable/silc.svg \
+	protocols/scalable/simple.svg protocols/scalable/yahoo.svg \
+	protocols/scalable/zephyr.svg status/11/available.png \
+	status/11/away.png status/11/busy.png status/11/chat.png \
+	status/11/extended-away.png status/11/invisible.png \
+	status/11/log-in.png status/11/log-out.png \
+	status/11/offline.png status/11/person.png \
+	status/11/rtl/extended-away.png status/11/rtl/log-in.png \
+	status/11/rtl/log-out.png status/16/available.png \
+	status/16/away.png status/16/busy.png status/16/chat.png \
+	status/16/extended-away.png status/16/invisible.png \
+	status/16/log-in.png status/16/log-out.png \
+	status/16/offline.png status/16/person.png \
+	status/16/rtl/extended-away.png status/16/rtl/log-in.png \
+	status/16/rtl/log-out.png status/22/available.png \
+	status/22/away.png status/22/busy.png status/22/chat.png \
+	status/22/extended-away.png status/22/invisible.png \
+	status/22/log-in.png status/22/log-out.png \
+	status/22/offline.png status/22/person.png \
+	status/22/rtl/extended-away.png status/22/rtl/log-in.png \
+	status/22/rtl/log-out.png status/32/available.png \
+	status/32/away.png status/32/busy.png status/32/chat.png \
+	status/32/extended-away.png status/32/invisible.png \
+	status/32/log-in.png status/32/log-out.png \
+	status/32/offline.png status/32/person.png \
+	status/32/rtl/extended-away.png status/32/rtl/log-in.png \
+	status/32/rtl/log-out.png status/48/available.png \
+	status/48/away.png status/48/busy.png status/48/chat.png \
+	status/48/extended-away.png status/48/invisible.png \
+	status/48/log-in.png status/48/log-out.png \
+	status/48/offline.png status/48/person.png \
+	status/48/rtl/extended-away.png status/48/rtl/log-in.png \
+	status/48/rtl/log-out.png toolbar/11/message-new.png \
+	toolbar/16/audio-call.png toolbar/16/change-bgcolor.png \
+	toolbar/16/change-fgcolor.png toolbar/16/emote-select.png \
+	toolbar/16/font-face.png toolbar/16/font-size-down.png \
+	toolbar/16/font-size-up.png toolbar/16/insert.png \
+	toolbar/16/insert-image.png toolbar/16/insert-link.png \
+	toolbar/16/message-new.png toolbar/16/plugins.png \
+	toolbar/16/send-file.png toolbar/16/transfer.png \
+	toolbar/16/unblock.png toolbar/16/video-call.png \
+	toolbar/16/get-attention.png toolbar/22/select-avatar.png \
+	toolbar/22/video-call.png toolbar/22/audio-call.png \
+	toolbar/32/video-call.png toolbar/32/audio-call.png \
+	toolbar/48/video-call.png toolbar/48/audio-call.png \
+	tray/hicolor/index.theme tray/16/available_4bit.ico \
+	tray/16/away_4bit.ico tray/16/busy_4bit.ico \
+	tray/16/connecting_4bit.ico tray/16/extended-away_4bit.ico \
+	tray/16/invisible_4bit.ico tray/16/message_4bit.ico \
+	tray/16/offline_4bit.ico \
 	tray/hicolor/16x16/status/pidgin-tray-away.png \
 	tray/hicolor/16x16/status/pidgin-tray-busy.png \
 	tray/hicolor/16x16/status/pidgin-tray-invisible.png \
@@ -716,7 +713,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		emblems/16/male.png \
 @INSTALL_PIXMAPS_TRUE@		emblems/16/not-authorized.png \
 @INSTALL_PIXMAPS_TRUE@		emblems/16/operator.png \
-@INSTALL_PIXMAPS_TRUE@		emblems/16/qq-member.png \
 @INSTALL_PIXMAPS_TRUE@		emblems/16/secure.png \
 @INSTALL_PIXMAPS_TRUE@		emblems/16/unavailable.png \
 @INSTALL_PIXMAPS_TRUE@		emblems/16/video.png \
@@ -732,7 +728,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/game.svg \
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/male.svg \
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/not-authorized.svg \
-@INSTALL_PIXMAPS_TRUE@		emblems/scalable/qq-member.svg \
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/secure.svg \
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/unavailable.svg \
 @INSTALL_PIXMAPS_TRUE@		emblems/scalable/video.svg \
@@ -794,7 +789,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/plate.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/poop.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/present.svg \
-@INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/qq.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/rainbow.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/rain.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/rose-dead.svg \
@@ -829,7 +823,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/jabber.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/meanwhile.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/msn.svg \
-@INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/qq.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/silc.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/simple.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/scalable/yahoo.svg \
@@ -849,7 +842,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/16/msn.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/mxit.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/myspace.png \
-@INSTALL_PIXMAPS_TRUE@		protocols/16/qq.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/silc.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/simple.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/16/yahoo.png \
@@ -880,7 +872,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/jabber.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/meanwhile.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/msn.svg \
-@INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/qq.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/silc.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/simple.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/scalable/yahoo.svg \
@@ -899,7 +890,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/22/meanwhile.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/msn.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/myspace.png \
-@INSTALL_PIXMAPS_TRUE@		protocols/22/qq.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/silc.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/simple.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/yahoo.png \
@@ -918,7 +908,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/48/msn.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/48/mxit.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/48/myspace.png \
-@INSTALL_PIXMAPS_TRUE@		protocols/48/qq.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/48/silc.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/48/simple.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/48/yahoo.png \
@@ -936,7 +925,6 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/meanwhile.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/msn.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/mxit.svg \
-@INSTALL_PIXMAPS_TRUE@		protocols/scalable/qq.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/silc.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/simple.svg \
 @INSTALL_PIXMAPS_TRUE@		protocols/scalable/yahoo.svg \

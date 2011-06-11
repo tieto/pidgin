@@ -314,7 +314,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 {
 	GevoAssociateBuddyDialog *dialog;
 	GtkWidget *button;
-	GtkWidget *sw;
 	GtkWidget *label;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -389,16 +388,6 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(clear_cb), dialog);
 
-	/* Scrolled Window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
 	/* Create the list model for the treeview. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 									   G_TYPE_STRING, G_TYPE_POINTER);
@@ -407,7 +396,9 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	dialog->treeview = gtk_tree_view_new_with_model(
 			GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
-	gtk_container_add(GTK_CONTAINER(sw), dialog->treeview);
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 0);
 	gtk_widget_show(dialog->treeview);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
@@ -437,19 +428,10 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 	 * User details
 	 */
 
-	/* Scrolled Window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_container_add(GTK_CONTAINER(expander), sw);
-	gtk_widget_show(sw);
-
 	/* Textview */
 	dialog->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(sw), dialog->imhtml);
+	gtk_container_add(GTK_CONTAINER(expander), 
+		pidgin_make_scrollable(dialog->imhtml, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
 	gtk_widget_show(dialog->imhtml);
 
 	/* Separator. */

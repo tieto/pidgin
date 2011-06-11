@@ -121,6 +121,10 @@ struct contact {
 	char		customMood[16];						/* custom mood */
 	char*		statusMsg;							/* status message */
 	char*		avatarId;							/* avatarId */
+
+	/* invites only */
+	void*		profile;							/* user's profile (if available) */
+	int			imgid;								/* avatar image id in the imgstore */
 };
 
 /* Presence / Status */
@@ -140,9 +144,10 @@ void mxit_update_buddy_avatar( struct MXitSession* session, const char* username
 void mxit_new_subscription( struct MXitSession* session, struct contact* contact );
 void mxit_update_blist( struct MXitSession* session );
 gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* username );
+struct contact* get_mxit_invite_contact( struct MXitSession* session, const char* username );
 
 /* libPurple callbacks */
-void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
+void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group, const char* message );
 void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
 void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias );
 void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_group, const char* new_group );

@@ -1682,7 +1682,7 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
  * granted, denied, or dropped.
  *
  */
-int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg)
+int aim_ssi_sendauthrequest(OscarData *od, const char *bn, const char *msg)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -1759,7 +1759,7 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
  * if reply=0x01 then grant
  *
  */
-int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg)
+int aim_ssi_sendauthreply(OscarData *od, const char *bn, guint8 reply, const char *msg)
 {
 	FlapConnection *conn;
 	ByteStream bs;

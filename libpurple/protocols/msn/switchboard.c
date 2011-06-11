@@ -643,10 +643,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	PurpleAccount *account;
 	MsnSwitchBoard *swboard;
 
-	account = cmdproc->session->account;
 	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
@@ -658,14 +656,12 @@ static void
 joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	PurpleAccount *account;
 	MsnSwitchBoard *swboard;
 	const char *passport;
 
 	passport = cmd->params[0];
 
 	session = cmdproc->session;
-	account = session->account;
 	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);
@@ -726,6 +722,7 @@ nak_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_return_if_fail(msg != NULL);
 
 	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_NAK);
+	cmd->trans->data = NULL;
 }
 
 static void
@@ -743,6 +740,7 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (swboard)
 		swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
+	cmd->trans->data = NULL;
 }
 
 static void

@@ -141,9 +141,9 @@ static void mxit_connected( struct MXitSession* session )
 	}
 
 	/* This timer might already exist if we're registering a new account */
-	if ( session->q_timer == 0 ) {
+	if ( session->q_slow_timer_id == 0 ) {
 		/* start the tx queue manager timer */
-		session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue_slow, session );
+		session->q_slow_timer_id = purple_timeout_add_seconds( 2, mxit_manage_queue_slow, session );
 	}
 }
 

@@ -138,4 +138,4 @@ Elliot Tobin <elliot@bha.udel.edu>
 Thanks to Jeroen van der Vegt for the initial smiley plugin and images.
 
 The OpenQ Team
-	Wrote the QQ plugin (see AUTHORS in the qq directory)
+	Wrote the QQ plugin dropped in 2.8.0 (see libpurple/qq/AUTHORS in 2.7.11)

@@ -883,8 +883,9 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	purple_proxy_info_set_type(xf->proxy_info, PURPLE_PROXY_SOCKS5);
 	purple_proxy_info_set_host(xf->proxy_info, xf->proxy_host);
 	purple_proxy_info_set_port(xf->proxy_info, xf->proxy_port);
-	xf->proxy_connection = purple_proxy_connect_socks5(
+	xf->proxy_connection = purple_proxy_connect_socks5_account(
 							   purple_account_get_connection(account),
+							   account,
 							   xf->proxy_info,
 							   dstaddr, 0,
 							   bonjour_bytestreams_connect_cb, xfer);

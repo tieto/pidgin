@@ -59,6 +59,42 @@ typedef struct {
 /*	guint8  body[1]; */
 } MsnP2Pv2Header;
 
+typedef struct {
+	guint16 protocol_version;
+	guint16 implementation_id;
+	guint16 version;
+	guint16 reserved;
+	guint32 caps;
+} P2PPeerInfo;
+
+typedef enum
+{
+	TF_FIRST    = 0x01,     /**< The first package. */
+	TF_MSNOBJ   = 0x04,     /**< Payload contains binary data for MsnObject. */
+	TF_FILE     = 0x06      /**< Payload contains binary data. */
+} TF;
+
+typedef enum
+{
+	P2P_HEADER_TLV_TYPE_PEER_INFO  = 0x01, /**< Client peer info */
+	P2P_HEADER_TLV_TYPE_ACK        = 0x02, /**< ACK */
+	P2P_HEADER_TLV_TYPE_NAK        = 0x03  /**< NAK */
+} P2PHeaderTLVType;
+
+typedef enum
+{
+	P2P_DATA_TLV_REMAINING  = 0x01, /**< Indicates the remaining data to transfer.*/
+} P2PDataTLVType;
+
+typedef enum
+{
+	P2P_PI_PVER     = 0x0200,
+	P2P_PI_IMP_ID   = 0,
+	P2P_PI_VER      = 0x0e00,
+	P2P_PI_RES      = 0,
+	P2P_PI_CAPS     = 0x0000010f
+} P2PPeerInfoVal;
+
 typedef struct
 {
 	guint32 value;
@@ -142,13 +178,28 @@ void
 msn_p2p_info_to_string(MsnP2PInfo *info, GString *str);
 
 gboolean
-msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
+msn_p2p_msg_is_data(const MsnP2PInfo *info);
 
 gboolean
 msn_p2p_info_is_valid(MsnP2PInfo *info);
 
 gboolean
+msn_p2p_info_is_first(MsnP2PInfo *info);
+
+gboolean
 msn_p2p_info_is_final(MsnP2PInfo *info);
+
+void
+msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info);
+
+gboolean
+msn_p2p_info_require_ack(MsnP2PInfo *info);
+
+gboolean
+msn_p2p_info_is_ack(MsnP2PInfo *info);
+
+void
+msn_p2p_info_init_first(MsnP2PInfo *new_info, MsnP2PInfo *old_info);
 
 guint32
 msn_p2p_info_get_session_id(MsnP2PInfo *info);
@@ -211,4 +262,3 @@ void
 msn_p2p_info_set_app_id(MsnP2PInfo *info, guint32 app_id);
 
 #endif /* MSN_P2P_H */
-

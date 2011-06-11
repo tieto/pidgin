@@ -1,22 +1,21 @@
-# Pidgin Hebrew translation
-# Copyright (C) 2005-2010, Shalom Craimer <scraimer at gmail dot com>
-# Copyright (C) 2003, Pavel Bibergal cyberkm@barak-online.net
-#
-# This file is distributed under the same license as the Pidgin package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: he\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
-"PO-Revision-Date: 2011-01-26 08:34+0200\n"
-"Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
-"Language-Team: Hebrew <he@li.org>\n"
+"POT-Creation-Date: 2011-05-13 00:10-0700\n"
+"PO-Revision-Date: 2011-05-13 00:26+0000\n"
+"Last-Translator: scraimer <s.transifex@craimer.org>\n"
+"Language-Team: Hebrew (http://www.transifex.net/projects/p/pidgin/team/he/)\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -210,6 +209,9 @@ msgstr "שם משתמש"
 msgid "Alias (optional)"
 msgstr "שם נוסף (לא חובה)"
 
+msgid "Invite message (optional)"
+msgstr "הודעת ההזמנה (לא חובה)"
+
 msgid "Add in group"
 msgstr "הוסף לקבוצה"
 
@@ -230,7 +232,7 @@ msgid "Name"
 msgstr "שם"
 
 msgid "Alias"
-msgstr "שם נוסף"
+msgstr "כינוי נוסף"
 
 msgid "Group"
 msgstr "קבוצה"
@@ -1076,7 +1078,7 @@ msgid "Pounce only when my status is not Available"
 msgstr "הגב רק כאשר אני לא מסומן כזמין"
 
 msgid "Recurring"
-msgstr "חוזר"
+msgstr "שוב ושוב"
 
 msgid "Cannot create pounce"
 msgstr "לא יכול ליצור תגובת-פעולה"
@@ -1633,6 +1635,7 @@ msgstr "פרוטוקול זה אינו תומך בשליפת שמות נוספי
 msgid "Unknown"
 msgstr "לא ידוע"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "אנשי קשר"
 
@@ -1889,6 +1892,9 @@ msgstr "כשל בעת יצירת חוט-תהליך חדש: %s"
 
 msgid "Unknown reason"
 msgstr "סיבה לא ידועה"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr "מבטל שאילתת DNS בעת שימוש במתווך Tor."
 
 #, c-format
 msgid ""
@@ -3100,6 +3106,21 @@ msgstr "יש להזין את סיסמתך הנוכחית וסיסמתך החדש
 msgid "Change Gadu-Gadu Password"
 msgstr "שינוי סיסמת Gadu-Gadu"
 
+msgid "Show status to:"
+msgstr "הצג סטטוס ל:"
+
+msgid "All people"
+msgstr "כולם"
+
+msgid "Only buddies"
+msgstr "רק חברים"
+
+msgid "Change status broadcasting"
+msgstr "שנה הגדרות שידור סטטוס"
+
+msgid "Please, select who can see your status"
+msgstr "יש לבחור מי יכול לראות את הסטטוס שלך"
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "בחר צ'אט עבור איש הקשר: %s"
@@ -3131,9 +3152,7 @@ msgid "UIN"
 msgstr "מספר זיהוי"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "שם פרטי"
 
@@ -3245,6 +3264,19 @@ msgstr "משתמש Gadu-Gadu"
 msgid "GG server"
 msgstr "שרת GG"
 
+msgid "Don't use encryption"
+msgstr "אין להשתמש בהצפנה"
+
+msgid "Use encryption if available"
+msgstr "השתמש בהצפנה אם זמין"
+
+#. TODO
+msgid "Require encryption"
+msgstr "דרוש הצפנה"
+
+msgid "Connection security"
+msgstr "אבטחת חיבור"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "פקודה בלתי מוכרת: %s"
@@ -3280,7 +3312,6 @@ msgstr "הודעת היום עבור %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3531,6 +3562,9 @@ msgstr "כאפה מ-%s"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;פעולה לביצוע&gt;: פעל פעולה ."
+
+msgid "authserv: Send a command to authserv"
+msgstr "authserv: שלח הודעה אל authserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -3873,7 +3907,6 @@ msgstr "איזור"
 msgid "Postal Code"
 msgstr "מיקוד"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "מדינה"
 
@@ -4622,17 +4655,8 @@ msgstr "תוסף פרוטוקול XMPP"
 msgid "Domain"
 msgstr "דומיין"
 
-msgid "Require encryption"
-msgstr "דרוש הצפנה"
-
-msgid "Use encryption if available"
-msgstr "השתמש בהצפנה אם זמין"
-
 msgid "Use old-style SSL"
 msgstr "השתמש בסגנון SSL ישן"
-
-msgid "Connection security"
-msgstr "אבטחת חיבור"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "אפשר אישרור לא מוצפן בתקשורת לא מוצפנת"
@@ -4740,6 +4764,7 @@ msgstr "שגיאה לא מוכרת בנוכחות"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "לא ניתן לשלוח את הקובץ אל %s, המשתמש לא תומך בהעברות קבצים"
 
+#. not success
 msgid "File Send Failed"
 msgstr "כשל בשליחת קובץ"
 
@@ -5448,18 +5473,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "לא ניתן להוסיף"
 
-msgid "Authorization Request Message:"
-msgstr "הודעת בקשה להרשאה:"
-
-msgid "Please authorize me!"
-msgstr "בבקשה, אני רוצה הרשאה!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "אישור"
-
 msgid "Error retrieving profile"
 msgstr "שגיאה בשליפת הפרופיל"
 
@@ -5669,6 +5682,9 @@ msgstr "לא ניתן להסיר משתמש"
 msgid "Mobile message was not sent because it was too long."
 msgstr "הודעת לנייד לא נשלחה מכיוון שהיא ארוכה מדי."
 
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "ההודעה למכשיר הנייד לא נשלחה עקב שגיאה לא-מוכרת"
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5822,18 +5838,6 @@ msgstr "האם ברצונך גם למחוק את המשתמש הזה מפנקס 
 msgid "The username specified is invalid."
 msgstr "שם המשתמש שהוזן אינו חוקי."
 
-msgid "The PIN you entered is invalid."
-msgstr "ה-PIN שהזנת אינו חוקי."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [4-10[."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "ה-PIN אינו חוקי. על הקוד להכיל רק ספרות [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "שני ה-PIN שהזנת אינם זהים."
-
 msgid "The Display Name you entered is invalid."
 msgstr "הזנת שם-תצוגה לא תקף."
 
@@ -5853,35 +5857,65 @@ msgstr "פרופיל"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "פרטי הפרופיל שלך עוד לא התקבלו. יש לנסות שנית מאוחר יותר."
 
-msgid "Your UID"
-msgstr "ה-UID שלך"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "שם תצוגה"
+
+#. about me
+msgid "About Me"
+msgstr ""
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "מספר טלפון נייד"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+msgid "Update your MXit Profile"
+msgstr ""
+
+msgid "The PIN you entered is invalid."
+msgstr "ה-PIN שהזנת אינו חוקי."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [4-10[."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "ה-PIN אינו חוקי. על הקוד להכיל רק ספרות [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "שני ה-PIN שהזנת אינם זהים."
+
+#. show error to user
+msgid "PIN Update Error"
+msgstr ""
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "מספר זיהוי"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "וידוא מספר מזהה"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "שם תצוגה"
+#. (reference: "libpurple/request.h")
+msgid "Change PIN"
+msgstr ""
 
-#. hidden
-msgid "Hide my number"
-msgstr "הסתר את מספרי"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "מספר טלפון נייד"
-
-msgid "Update your Profile"
-msgstr "עידכון הפרופיל שלך"
-
-msgid "Here you can update your MXit profile"
-msgstr "כאן יש ביכולתך לעדכן את פרופיל ה-MXit שלך"
+msgid "Change MXit PIN"
+msgstr ""
 
 msgid "View Splash"
 msgstr "הצג חלון-הקדמה"
@@ -5892,9 +5926,33 @@ msgstr "אין חלון-הקדמה זמין כרגע"
 msgid "About"
 msgstr "אודות"
 
+msgid "Search for user"
+msgstr ""
+
+msgid "Search for a MXit contact"
+msgstr ""
+
+msgid "Type search information"
+msgstr ""
+
+msgid "_Search"
+msgstr "חיפוש"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "שנה פרופיל..."
+
+#. change PIN
+msgid "Change PIN..."
+msgstr ""
+
+#. suggested friends
+msgid "Suggested friends..."
+msgstr ""
+
+#. search for contacts
+msgid "Search for contacts..."
+msgstr ""
 
 #. display splash-screen
 msgid "View Splash..."
@@ -5921,6 +5979,9 @@ msgstr "לא ניתן להתחבר לשרת ה-MXit. יש לוודא את הגד
 
 msgid "Connecting..."
 msgstr "מתחבר..."
+
+msgid "The Display Name you entered is too short."
+msgstr "שם-התצוגה שהזנת הינו קצר מדי."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [7-10[."
@@ -5990,12 +6051,11 @@ msgstr "אימות חשבון MXit"
 msgid "Retrieving User Information..."
 msgstr "שולף מידע משתמש..."
 
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "נבעטת מתוך MultiMX זה."
-
 msgid "was kicked"
 msgstr "נבעט/ה"
+
+msgid "You have been kicked from this MultiMX."
+msgstr "נבעטת מתוך MultiMX זה."
 
 msgid "_Room Name:"
 msgstr "שם _חדר:"
@@ -6017,8 +6077,18 @@ msgstr "הודעת דחייה"
 msgid "Hidden Number"
 msgstr "מספר סמוי"
 
+msgid "No profile available"
+msgstr "לא קיים פרופיל"
+
+msgid "This contact does not have a profile."
+msgstr "לאיש-קשר זה אין פרופיל."
+
 msgid "Your MXit ID..."
 msgstr "מזהה MXit שלך.."
+
+#. contact is in Deleted, Rejected or None state
+msgid "Re-Invite"
+msgstr "הזמן בשנית"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6033,6 +6103,30 @@ msgstr "אפשר פתיחת חלון-הקדמה"
 
 msgid "Last Online"
 msgstr "חיבור אחרון"
+
+msgid "Invite Message"
+msgstr ""
+
+msgid "No results"
+msgstr ""
+
+msgid "No contacts found."
+msgstr ""
+
+#. define columns
+msgid "UserId"
+msgstr ""
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friends."
+msgstr ""
+
+#, c-format
+msgid "We found %i contacts that match your search."
+msgstr ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6758,6 +6852,12 @@ msgstr "לא ניתנה סיבה."
 msgid "Authorization Denied Message:"
 msgstr "הודעת סירוב הרשאה"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "אישור"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "התקבלה תגובה לא-צפויה מאת %s: %s"
@@ -7105,7 +7205,6 @@ msgid "Received authorization"
 msgstr "התקבלה הרשאה"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "שם המשתמש אינו קיים"
@@ -7269,6 +7368,12 @@ msgstr "החיבור AIM שלך אולי יתנתק."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "נותקת מחדר הצ'אט %s."
+
+msgid "The new formatting is invalid."
+msgstr "הפורמט החדש אינו תקני."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "פירמוט של שם משתמש רק יכולה לשנות אותיות גדולות/קטנות ורווחים."
 
 msgid "Pop-Up Message"
 msgstr "הודעה קופצת"
@@ -7518,12 +7623,6 @@ msgstr "מכיר-אינטרנט (הפעלה של זה תביא לדואר שלך
 msgid "ICQ Privacy Options"
 msgstr "אפשרויות פרטיות של ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "הפורמט החדש אינו תקני."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "פירמוט של שם משתמש רק יכולה לשנות אותיות גדולות/קטנות ורווחים."
-
 msgid "Change Address To:"
 msgstr "שנה כתובת ל:"
 
@@ -7548,9 +7647,6 @@ msgstr "חפש איש קשר לפי כתובת בדואר האלרקטרוני �
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "הקלד את כתובת הדוא\"ל של איש הקשר אותו אתה מחפש."
-
-msgid "_Search"
-msgstr "חיפוש"
 
 msgid "Set User Info (web)..."
 msgstr "קבע את המידע על המשתמש (אתר)..."
@@ -7587,9 +7683,6 @@ msgstr "הצג את אנשי הקשר שמחכים לאישור"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "חפש איש-קשר עפ\"י כתובת דוא\"ל..."
-
-msgid "Don't use encryption"
-msgstr "אין להשתמש בהצפנה"
 
 msgid "Use clientLogin"
 msgstr "השתמש ב-clientLogin"
@@ -7864,717 +7957,6 @@ msgstr "רשימת בלתי-נראה"
 
 msgid "These buddies will always see you as offline"
 msgstr "החברים הללו יראו אותך כ\"לא-מחובר\""
-
-msgid "Aquarius"
-msgstr "דלי"
-
-msgid "Pisces"
-msgstr "דגים"
-
-msgid "Aries"
-msgstr "טלה"
-
-msgid "Taurus"
-msgstr "שור"
-
-msgid "Gemini"
-msgstr "תאומים"
-
-msgid "Cancer"
-msgstr "סרטן"
-
-msgid "Leo"
-msgstr "אריה"
-
-msgid "Virgo"
-msgstr "בתולה"
-
-msgid "Libra"
-msgstr "מאזניים"
-
-msgid "Scorpio"
-msgstr "עקרב"
-
-msgid "Sagittarius"
-msgstr "קשת"
-
-msgid "Capricorn"
-msgstr "גדי"
-
-msgid "Rat"
-msgstr "חולדה"
-
-msgid "Ox"
-msgstr "שור"
-
-msgid "Tiger"
-msgstr "נמר"
-
-msgid "Rabbit"
-msgstr "ארנב"
-
-msgid "Dragon"
-msgstr "דרקון"
-
-msgid "Snake"
-msgstr "נחש"
-
-msgid "Horse"
-msgstr "סוס"
-
-msgid "Goat"
-msgstr "עז"
-
-msgid "Monkey"
-msgstr "קוף"
-
-msgid "Rooster"
-msgstr "תרנגול"
-
-msgid "Dog"
-msgstr "כלב"
-
-msgid "Pig"
-msgstr "חזיר"
-
-msgid "Other"
-msgstr "אחר"
-
-msgid "Visible"
-msgstr "נראה"
-
-msgid "Friend Only"
-msgstr "חבר בלבד"
-
-msgid "Private"
-msgstr "פרטי"
-
-msgid "QQ Number"
-msgstr "מספר QQ"
-
-msgid "Country/Region"
-msgstr "מדינה/איזור"
-
-msgid "Province/State"
-msgstr "מחוז/מדינה"
-
-msgid "Zipcode"
-msgstr "מיקוד"
-
-msgid "Phone Number"
-msgstr "מםפר טלפון"
-
-msgid "Authorize adding"
-msgstr "אישור הוספה"
-
-msgid "Cellphone Number"
-msgstr "מםפר פלאפון"
-
-msgid "Personal Introduction"
-msgstr "הצגה אישית"
-
-msgid "City/Area"
-msgstr "עיר/איזור"
-
-msgid "Publish Mobile"
-msgstr "פרסם טל. נייד"
-
-msgid "Publish Contact"
-msgstr "פרסם איש-קשר"
-
-msgid "College"
-msgstr "מכללה"
-
-msgid "Horoscope"
-msgstr "הורוסקופ"
-
-msgid "Zodiac"
-msgstr "גלגל המזלות"
-
-msgid "Blood"
-msgstr "סוג דם"
-
-msgid "True"
-msgstr "אמת"
-
-msgid "False"
-msgstr "שקר"
-
-msgid "Modify Contact"
-msgstr "ערוך איש-קשר"
-
-msgid "Modify Address"
-msgstr "ערוך כתובת"
-
-msgid "Modify Extended Information"
-msgstr "ערוך מידע נוסף"
-
-msgid "Modify Information"
-msgstr "ערוך מידע"
-
-msgid "Update"
-msgstr "עדכן"
-
-msgid "Could not change buddy information."
-msgstr "לא ניתן לשנות מידע של החבר."
-
-msgid "Note"
-msgstr "הערה"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "מזכר חבר"
-
-msgid "Change his/her memo as you like"
-msgstr "ניתן לערוך את הטקסט של החבר כרצונך"
-
-msgid "_Modify"
-msgstr "_ערוך"
-
-msgid "Memo Modify"
-msgstr "עריכת מזכר"
-
-msgid "Server says:"
-msgstr "השרת אומר:"
-
-msgid "Your request was accepted."
-msgstr "בקשתך נתקבלה."
-
-msgid "Your request was rejected."
-msgstr "בקשתך נדחתה."
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr "%u דורש אימות: %s"
-
-msgid "Add buddy question"
-msgstr "הוסף שאלת חבר"
-
-msgid "Enter answer here"
-msgstr "יש להזין את התשובה כאן"
-
-msgid "Send"
-msgstr "שלח"
-
-msgid "Invalid answer."
-msgstr "תשובה לא תקפה."
-
-msgid "Authorization denied message:"
-msgstr "הודעת סירוב הרשאה:"
-
-msgid "Sorry, you're not my style."
-msgstr "סליחה, את/ה לא הטיפוס שלי."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u דורש אימות"
-
-msgid "Add buddy authorize"
-msgstr "הוסף אימות חבר"
-
-msgid "Enter request here"
-msgstr "יש להזין את הבקשה כאן"
-
-msgid "Would you be my friend?"
-msgstr "התרצ/י להיות ידיד/ה שלי?"
-
-msgid "QQ Buddy"
-msgstr "חבר QQ"
-
-msgid "Add buddy"
-msgstr "הוסף חבר"
-
-msgid "Invalid QQ Number"
-msgstr "מספר QQ לא תקף"
-
-msgid "Failed sending authorize"
-msgstr "כשל בשליחת אישור"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "כשל בהסרת חבר %u"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "כשל בהסרתי מרשימת החברים של %d"
-
-msgid "No reason given"
-msgstr "לא ניתנה סיבה"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "הוספת ע\"י %s"
-
-msgid "Would you like to add him?"
-msgstr "האם ברצונך להוסיף אותו?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "נדחה על ידי %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "הודעה: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ID לקבוצה"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "יש להזין מספר Qun"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "ניתן לחפש רק Qun קבועות\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(מחרוזת UTF-8 שגויה)"
-
-msgid "Not member"
-msgstr "לא חבר בקבוצה"
-
-msgid "Member"
-msgstr "חבר"
-
-msgid "Requesting"
-msgstr "מבקש"
-
-msgid "Admin"
-msgstr "מנהל"
-
-#. XXX: Should this be "Topic"?
-msgid "Room Title"
-msgstr "כותרת החדר"
-
-msgid "Notice"
-msgstr "הודעה"
-
-msgid "Detail"
-msgstr "פרטים"
-
-msgid "Creator"
-msgstr "יוצר"
-
-msgid "About me"
-msgstr "אודותי"
-
-msgid "Category"
-msgstr "קטגוריה"
-
-msgid "The Qun does not allow others to join"
-msgstr "ה-Qnn הזו לא מאשרת לאחרים להצטרף"
-
-msgid "Join QQ Qun"
-msgstr "הצטרף אל QQ Qun"
-
-msgid "Input request here"
-msgstr "יש להזין את הבקשה כאו"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "צורף בהצלחה אל Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "צורף בהצלחה אל Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u נאסר מלהצטרף"
-
-msgid "QQ Qun Operation"
-msgstr "פעולת QQ Qun"
-
-msgid "Failed:"
-msgstr "נכשל:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "תשובה לא מוכרת, Join Qun"
-
-msgid "Quit Qun"
-msgstr "יציאה מה-Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"יש לשים לב, כי אם את/ה היוצר/ת, \n"
-"פעולה זו תביא בסופו של דבר להסרת ה-Qun."
-
-msgid "Sorry, you are not our style"
-msgstr "סליחה, את/ה לא הטיפוס שלנו"
-
-msgid "Successfully changed Qun members"
-msgstr "שינית בהצלחה את חברי ה-Qun"
-
-msgid "Successfully changed Qun information"
-msgstr "שינית בהצלחה מידע של ה-Qun"
-
-msgid "You have successfully created a Qun"
-msgstr "יצרת בהצלחה Qun"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "האם ברצונך כעת לקבוע את הפרטים?"
-
-msgid "Setup"
-msgstr "הגדרות"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u ביקש להצטרף אל Qun %u בשביל %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u ביקש להצטרף אל Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "כשל בצטרפות אל Qun %u, המופעל על ידי המנהל %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>הצטרפות אל Qun %u מאושרת על ידי המנהל %u עבור %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>הוסר חבר %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>חבר חדש %u הצטרף.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "לא ידוע-%d"
-
-msgid "Level"
-msgstr "רמה"
-
-msgid " VIP"
-msgstr " אח\"מ"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " מתוךנייד"
-
-msgid " BindMobile"
-msgstr " קשרנייד"
-
-msgid " Video"
-msgstr " וידאו"
-
-msgid " Zone"
-msgstr "איזור"
-
-msgid "Flag"
-msgstr "דגל"
-
-msgid "Ver"
-msgstr "גרסא"
-
-msgid "Invalid name"
-msgstr "שם משתמש שגוי"
-
-msgid "Select icon..."
-msgstr "בחירת סמל..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>זמן כניסה</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>סך-הכל חברים מחוברים</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>עידכון אחרון</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>שרת</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>תגית לקוח</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>סוג החיבור</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>כתובתי באינטרנט</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>נשלח</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>נשלח שוב</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>אבד</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>התקבל</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>התקבל במכופל</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>זמן</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "מידע על הכניסה"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>מחבר מקורי</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>תורמי קוד</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>כותבי-טלאי נפלאים</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>הכרת-תודה</b>:<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>בודקי-תוכנה קפדניים</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "ועוד, אנא הודיעו לי... תודה!))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>וכן, כל החבר'ה בחדר האחורי...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>הרגישו חופשי להצטרף אלינו!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "אודות OpenQ %s"
-
-msgid "Change Icon"
-msgstr "שנה סמל"
-
-msgid "Change Password"
-msgstr "שנה סיסמא"
-
-msgid "Account Information"
-msgstr "מידע על החשבון"
-
-msgid "Update all QQ Quns"
-msgstr "עדכן את כל QQ Quns"
-
-msgid "About OpenQ"
-msgstr "אודות OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "ערוך מזכר על החבר"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "פרוטוקול תוסף QQ"
-
-msgid "Auto"
-msgstr "אוטומטי"
-
-msgid "Select Server"
-msgstr "בחר שרת"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "Connect by TCP"
-msgstr "התחבר בעזרת TCP"
-
-msgid "Show server notice"
-msgstr "הצג הודעת שרת"
-
-msgid "Show server news"
-msgstr "הצג חדשות שרת"
-
-msgid "Show chat room when msg comes"
-msgstr "הצג חדר-צ'אט כשמתקבלת הודעה"
-
-msgid "Keep alive interval (seconds)"
-msgstr "פרקי-זמן להודעות הישאר-בחיים (בשניות)"
-
-msgid "Update interval (seconds)"
-msgstr "פרק זמן בין עידכונים (שניות)"
-
-msgid "Unable to decrypt server reply"
-msgstr "אין אפשרות לפענוח המשוב מהשרת"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "כישלון בבקשת token, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "אורך סמל לא תקף, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX אינו נתמך כרגע"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "נדרשת הפעלה"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "משוב לא מוכר בעת התחברות (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "מבקש וידוא-אדם"
-
-msgid "Checking captcha"
-msgstr "בודק וידוא-אדם"
-
-msgid "Failed captcha verification"
-msgstr "כישלון וידוא-אדם"
-
-msgid "Captcha Image"
-msgstr "תמונת captcha"
-
-msgid "Enter code"
-msgstr "הזן קוד"
-
-msgid "QQ Captcha Verification"
-msgstr "וידוא-אדם של QQ"
-
-msgid "Enter the text from the image"
-msgstr "יש להזין את הטקסט מהתמונה"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "משוב לא מוכר בעת בדיקת סיסמא (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"קוד-משוב לא מוכר בעת התחברות (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "שגיאת שקע"
-
-msgid "Getting server"
-msgstr "שולף שרת"
-
-msgid "Requesting token"
-msgstr "מבקש סמלון"
-
-msgid "Unable to resolve hostname"
-msgstr "לא ניתן לתרגם את שם השרת לכתובת"
-
-msgid "Invalid server or port"
-msgstr "שרת או יציאה לא-חוקיים"
-
-msgid "Connecting to server"
-msgstr "מתחבר לשרת"
-
-msgid "QQ Error"
-msgstr "שגיאת QQ"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"חדשות שרת:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "מאת %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"הודעת שרת מאת %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "SERVER CMD לא מוכר"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"משוב שגיאה של %s(0x%02X)\n"
-"חדר %u, משוב 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "פקודת QQ Qun"
-
-msgid "Unable to decrypt login reply"
-msgstr "אין אפשרות לפענוח המשוב לניסיון ההתחברות"
-
-msgid "Unknown LOGIN CMD"
-msgstr "LOGIN CMD לא מוכר"
-
-msgid "Unknown CLIENT CMD"
-msgstr "CLIENT CMD לא מוכר"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d סרב לקבל את הקובץ %s"
-
-msgid "File Send"
-msgstr "שליחת קובץ"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d ביטל את העברת %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9330,6 +8712,9 @@ msgstr "אירגון"
 msgid "Unit"
 msgstr "יחידה"
 
+msgid "Note"
+msgstr "הערה"
+
 msgid "Join Chat"
 msgstr "הצטרף לצ'אט"
 
@@ -9958,6 +9343,9 @@ msgstr "תגובת שרת לא מוכרת"
 msgid "Unable to create listen socket"
 msgstr "אין אפשרות ליצור שקע-קשב"
 
+msgid "Unable to resolve hostname"
+msgstr "לא ניתן לתרגם את שם השרת לכתובת"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "אסור לשמות משתמשים של SIP להכיל רווחים או סמלי @"
 
@@ -10072,6 +9460,9 @@ msgstr "הודעת ה Yahoo שלך לא נשלחה."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "הודעת מערכת עבור %s מ-Yahoo!:"
+
+msgid "Authorization denied message:"
+msgstr "הודעת סירוב הרשאה:"
 
 #, c-format
 msgid ""
@@ -10833,14 +10224,17 @@ msgstr "השתמש בהגדרות פרוקסי כלליות"
 msgid "No Proxy"
 msgstr "ללא פרוקסי"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr "Tor/פרטיות (SOCKS5)"
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "השתמש בהגדרות הסביבה"
@@ -10868,6 +10262,12 @@ msgstr "_יציאה:"
 
 msgid "Pa_ssword:"
 msgstr "סי_סמא"
+
+msgid "Use _silence suppression"
+msgstr "השתמש ב_דיכוי שקט"
+
+msgid "_Voice and Video"
+msgstr "_קול וחוזי"
 
 msgid "Unable to save new account"
 msgstr "לא ניתן לשמור חשבון חדש"
@@ -10915,8 +10315,19 @@ msgstr ""
 "<b>חשבונות->נהל חשבונות</b> שבחלון רשימת החברים"
 
 #, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+"<a href=\"viewinfo\">%s</a>%s%s%s רוצה להוסיף אותך (%s) לרשימת החברים שלו או "
+"שלה%s%s"
+
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s רוצה להוסיף אותך (%s) לרשימת אנשי-הקשר שלו או שלה%s%s"
+
+msgid "Send Instant Message"
+msgstr "שלח הודעה מיידית"
 
 #. Buddy List
 msgid "Background Color"
@@ -11104,7 +10515,7 @@ msgid "Show When Offline"
 msgstr "הצג כאשר לא-מקוון"
 
 msgid "_Alias..."
-msgstr "_שם נוסף..."
+msgstr "_כינוי נוסף..."
 
 msgid "_Remove"
 msgstr "_הסר"
@@ -11461,6 +10872,9 @@ msgstr "שם מ_שתמש של איש-הקשר:"
 msgid "(Optional) A_lias:"
 msgstr "(לא חובה) כ_ינוי:"
 
+msgid "(Optional) _Invite message:"
+msgstr "(לא חובה) הודעת הה_זמנה"
+
 msgid "Add buddy to _group:"
 msgstr "הוספת איש קשר ל_קבוצה:"
 
@@ -11615,13 +11029,13 @@ msgid "/Conversation/M_edia"
 msgstr "/שיחה/_מדיה"
 
 msgid "/Conversation/Media/_Audio Call"
-msgstr "/שיחה _קולית/שיחה/מדיה"
+msgstr "/שיחה/מדיה/שיחה _קולית"
 
 msgid "/Conversation/Media/_Video Call"
-msgstr "/שיחת _וידאו/שיחה/מדיה"
+msgstr "/שיחה/מדיה/שיחת _וידאו"
 
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/שיחת ו_ידאו/\\קול/שיחה/מדיה"
+msgstr "/שיחה/מדיה/שיחת ו_ידאו/\\קול"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/שיחה/ש_לח קובץ..."
@@ -11894,10 +11308,6 @@ msgstr "שגיאה קטלנית"
 msgid "artist"
 msgstr "אמן"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "קא-הינג צ'אונג"
-
 msgid "voice and video"
 msgstr "קול ווידאו"
 
@@ -11909,6 +11319,10 @@ msgstr "מנהל אתר"
 
 msgid "win32 port"
 msgstr "גירסה לחלונות"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "קא-הינג צ'אונג"
 
 msgid "maintainer"
 msgstr "מתחזק"
@@ -12027,6 +11441,9 @@ msgstr "עברית"
 
 msgid "Hindi"
 msgstr "הינדית"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "הונגרית"
@@ -12897,8 +12314,15 @@ msgstr "<span weight=\"bold\" size=\"larger\">דואר חדש נכנס!</span>"
 msgid "New Pounces"
 msgstr "צור תגובות פעילות חדשות"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
-msgstr "סגור"
+msgstr "הסר"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">הפעלת פעולת-תגובה!</span>"
@@ -13020,7 +12444,7 @@ msgid "P_ounce only when my status is not Available"
 msgstr "הגב רק כאשר אני לא זמין"
 
 msgid "_Recurring"
-msgstr "חוזר"
+msgstr "_שוב ושוב"
 
 msgid "Pounce Target"
 msgstr "מטרת התגובה"
@@ -13942,7 +13366,6 @@ msgstr "צבעי שיחה"
 msgid "Customize colors in the conversation window"
 msgstr "התאם אישית את הצבעים בחלון השיחה"
 
-# prev line added per "msgfmt" recommendation
 msgid "Error Messages"
 msgstr "הודעות שגיאה"
 
@@ -13999,6 +13422,9 @@ msgstr "אוסף PubSub"
 
 msgid "PubSub Leaf"
 msgstr "עלה PubSub"
+
+msgid "Other"
+msgstr "אחר"
 
 msgid ""
 "\n"
@@ -14838,6 +14264,21 @@ msgstr "ת_וספים"
 msgid "D_evice"
 msgstr "מ_כשיר"
 
+msgid "DROP"
+msgstr "הפל"
+
+msgid "Volume:"
+msgstr "ווליום:"
+
+msgid "Silence threshold:"
+msgstr "סף השקט:"
+
+msgid "Input and Output Settings"
+msgstr "הגדרות קלט ופלט:"
+
+msgid "Microphone Test"
+msgstr "בדיקת מיקרופון"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -14849,9 +14290,6 @@ msgstr "מ_כשיר"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "הגדרות קול/וידאו"
-
-msgid "Voice and Video Settings"
-msgstr "הגדרות קול ווידאו"
 
 #. *< name
 #. *< version
@@ -15116,223 +14554,3 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
-
-#~ msgid "Automatically reject from users not in buddy list"
-#~ msgstr "דחה אוטומטית ממשתמשים שאינם ברשימת החברים שלי"
-
-#~ msgid "bug master"
-#~ msgstr "שר-הבאגים"
-
-#~ msgid "An error occurred on the in-band bytestream transfer\n"
-#~ msgstr "ארעה שגיאה בעת ההעברה בזרם בתווך\n"
-
-#~ msgid "Transfer was closed."
-#~ msgstr "העברת הקובץ נסגרה."
-
-#~ msgid "Failed to open in-band bytestream"
-#~ msgstr "כישלון בפתיחת תזרים מידע בתווך"
-
-#~ msgid "Set your friendly name."
-#~ msgstr "קבע/י את שמך הידידותי."
-
-#~ msgid "Error requesting %s"
-#~ msgstr "שגיאה בבקשת %s"
-
-#~ msgid "The certificate has expired and should not be considered valid."
-#~ msgstr "תוקף התעודה פג, ולכן אין להחשיבה כתקפה."
-
-#~ msgid "Require SSL/TLS"
-#~ msgstr "דרוש SSL/TLS"
-
-#~ msgid "Force old (port 5223) SSL"
-#~ msgstr "אלץ שימוש ב-SSL ישן )יציאה 5223("
-
-#~ msgid ""
-#~ "[Unable to display a message from this user because it contained invalid "
-#~ "characters.]"
-#~ msgstr "[לא ניתן להציג הודעה ממשתמש זה כיוון שהיא מכילה תווים לא חוקיים.]"
-
-#~ msgid "Search for Buddy by Information"
-#~ msgstr "חפש איש-קשר עפ\"י מידע"
-
-#~ msgid "The name you entered is invalid."
-#~ msgstr "השם שהזנת אינו חוקי."
-
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "התעודה עדיין אינה תקפה."
-
-#~ msgid "The nick name you entered is invalid."
-#~ msgstr "שם-הכינוי שהזנת אינו חוקי."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "שם משתמש MXit"
-
-#~ msgid "Nick Name"
-#~ msgstr "כינוי"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "מספר הנייד שלך..."
-
-#~ msgid "Rate to host"
-#~ msgstr "דירוג למארח"
-
-#~ msgid "Rate to client"
-#~ msgstr "דירוג ללקוח"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/מדיה/_ניתוק"
-
-#~ msgid "Current Mood"
-#~ msgstr "מצב הרוח הנוכחי"
-
-#~ msgid "New Mood"
-#~ msgstr "מצב-רוח חדש"
-
-#~ msgid "Change your Mood"
-#~ msgstr "שנה את מצב הרוח שלך"
-
-#~ msgid "How do you feel right now?"
-#~ msgstr "איך את/ה מרגיש/ה עכשיו?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "שינוי מצב-רוח..."
-
-#~ msgid "Unknown reason."
-#~ msgstr "סיבה לא ידועה."
-
-#~ msgid "Artist"
-#~ msgstr "אמן"
-
-#~ msgid "Album"
-#~ msgstr "אלבום"
-
-#~ msgid "Pager server"
-#~ msgstr "שרת ה-Pager"
-
-#~ msgid "Yahoo Chat server"
-#~ msgstr "שרת צ'אט של Yahoo"
-
-#~ msgid "Yahoo Chat port"
-#~ msgstr "כניסת שרת Yahoo"
-
-#~ msgid "Orientation"
-#~ msgstr "כיוון"
-
-#~ msgid "The orientation of the tray."
-#~ msgstr "כיוון מגש המערכת"
-
-#~ msgid "Error creating conference."
-#~ msgstr "שגיאה ביצירת שיחת הועידה."
-
-#~ msgid "Unable to bind socket to port: %s"
-#~ msgstr "לא ניתן לקבע את השקע ליציאה: %s"
-
-#~ msgid "Unable to listen on socket: %s"
-#~ msgstr "אין אפשרות ליצור שקע: %s"
-
-#~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s שלח לך הרגע דחיפה קלה!"
-
-#~ msgid "Friendly name changes too rapidly"
-#~ msgstr "השם הידידותי משתנה מהר מדי"
-
-#~ msgid "This Hotmail account may not be active."
-#~ msgstr "ייתכן וחשבון ה-Hotmail הזה אינו פעיל."
-
-#~ msgid "Profile URL"
-#~ msgstr "URL לפרופיל"
-
-#~ msgid "MSN Protocol Plugin"
-#~ msgstr "תוסף פרוטוקול MSN"
-
-#~ msgid "%s is not a valid group."
-#~ msgstr "%s אינה קבוצה תקפה."
-
-#~ msgid "Unknown error."
-#~ msgstr "שגיאה לא מוכרת."
-
-#~ msgid "%s on %s (%s)"
-#~ msgstr "%s על %s (%s)"
-
-#~ msgid "Unable to add user on %s (%s)"
-#~ msgstr "אין אפשרות להוסיף משתמש על %s (%s)"
-
-#~ msgid "Unable to block user on %s (%s)"
-#~ msgstr "אין אפשרות לחסום משתמש על %s (%s)"
-
-#~ msgid "Unable to permit user on %s (%s)"
-#~ msgstr "אין אפשרות לאשר משתמש על %s (%s)"
-
-#~ msgid "%s could not be added because your buddy list is full."
-#~ msgstr "לא ניתן להוסיף את %s מכיוון שרשימת אנשי הקשר שלך מלאה."
-
-#~ msgid "%s is not a valid passport account."
-#~ msgstr "%s אינו חשבון פספורט תקף."
-
-#~ msgid "Service Temporarily Unavailable."
-#~ msgstr "השירות אינו זמין כרגע."
-
-#~ msgid "Unable to rename group"
-#~ msgstr "אין אפשרות לשנות את שם הקבוצה"
-
-#~ msgid "Unable to delete group"
-#~ msgstr "אין אפשרות למחוק את הקבוצה"
-
-#~ msgid "%s has added you to his or her buddy list."
-#~ msgstr "%s הוסיפ/ה אותך לרשימת אנשי הקשר שלו או שלה."
-
-#~ msgid "%s has removed you from his or her buddy list."
-#~ msgstr "%s הסיר/ה אותך מרשימת אנשי הקשר שלו או שלה."
-
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">שו\"ת:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/"
-#~ "FAQ\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">ערוץ IRC:</FONT> #pidgin על irc.freenode.net<BR><BR>"
-
-#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-
-#~ msgid "Debugging Information"
-#~ msgstr "מידע לניפוי באגים"
-
-#~ msgid ""
-#~ "Unrecognized file type\n"
-#~ "\n"
-#~ "Defaulting to PNG."
-#~ msgstr ""
-#~ "סוג קובץ בלתי מזוהה\n"
-#~ "\n"
-#~ "מניח שזה מסוג PNG."
-
-#~ msgid ""
-#~ "Error saving image\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "אירעה שגיאה בשמירת התמונה:\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid "Failed to open file '%s': %s"
-#~ msgstr "כישלון בעת פתיחת הקובץ '%s': %s"
-
-#~ msgid ""
-#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
-#~ msgstr "כישלון בעת טעינת התמונה '%s': סיבה לא ידועה, כנראה קובץ תמונה פגום"
-
-#~ msgid "Insert an <iq/> stanza."
-#~ msgstr "הוסף סטנזת <iq/>."
-
-#~ msgid "Insert a <presence/> stanza."
-#~ msgstr "הוסף סטנזת <presence/>."
-
-#~ msgid "Insert a <message/> stanza."
-#~ msgstr "הוסף סטנזת <message/>."

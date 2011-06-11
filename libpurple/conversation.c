@@ -575,6 +575,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
+	conv->ui_data = NULL;
 
 	purple_conversation_close_logs(conv);
 
@@ -1218,7 +1219,7 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 
 	c = purple_conv_im_get_conversation(im);
 
-    if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
+	if ((flags & PURPLE_MESSAGE_RECV) == PURPLE_MESSAGE_RECV) {
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
 	}
 
@@ -2135,6 +2136,8 @@ purple_conv_chat_cb_new(const char *name, const char *alias, PurpleConvChatBuddy
 	cb->name = g_strdup(name);
 	cb->flags = flags;
 	cb->alias = g_strdup(alias);
+	cb->attributes = g_hash_table_new_full(g_str_hash, g_str_equal,
+										   g_free, g_free);
 
 	PURPLE_DBUS_REGISTER_POINTER(cb, PurpleConvChatBuddy);
 	return cb;
@@ -2167,6 +2170,7 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
+	g_hash_table_destroy(cb->attributes);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(cb);
 	g_free(cb);
@@ -2178,6 +2182,76 @@ purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
 	g_return_val_if_fail(cb != NULL, NULL);
 
 	return cb->name;
+}
+
+const char *
+purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+	g_return_val_if_fail(key != NULL, NULL);
+	
+	return g_hash_table_lookup(cb->attributes, key);
+}
+
+static void
+append_attribute_key(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **list = user_data;
+	*list = g_list_prepend(*list, key);
+}
+
+GList *
+purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb)
+{
+	GList *keys = NULL;
+	
+	g_return_val_if_fail(cb != NULL, NULL);
+	
+	g_hash_table_foreach(cb->attributes, (GHFunc)append_attribute_key, &keys);
+	
+	return keys;
+}
+
+void
+purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb, const char *key, const char *value)
+{
+	PurpleConversation *conv;
+	PurpleConversationUiOps *ops;
+	
+	g_return_if_fail(cb != NULL);
+	g_return_if_fail(key != NULL);
+	g_return_if_fail(value != NULL);
+	
+	g_hash_table_replace(cb->attributes, g_strdup(key), g_strdup(value));
+	
+	conv = purple_conv_chat_get_conversation(chat);
+	ops = purple_conversation_get_ui_ops(conv);
+	
+	if (ops != NULL && ops->chat_update_user != NULL)
+		ops->chat_update_user(conv, cb->name);
+}
+
+void
+purple_conv_chat_cb_set_attributes(PurpleConvChat *chat, PurpleConvChatBuddy *cb, GList *keys, GList *values)
+{
+	PurpleConversation *conv;
+	PurpleConversationUiOps *ops;
+	
+	g_return_if_fail(cb != NULL);
+	g_return_if_fail(keys != NULL);
+	g_return_if_fail(values != NULL);
+	
+	while (keys != NULL && values != NULL) {
+		g_hash_table_replace(cb->attributes, g_strdup(keys->data), g_strdup(values->data));
+		keys = g_list_next(keys);
+		values = g_list_next(values);
+	}
+	
+	conv = purple_conv_chat_get_conversation(chat);
+	ops = purple_conversation_get_ui_ops(conv);
+	
+	if (ops != NULL && ops->chat_update_user != NULL)
+		ops->chat_update_user(conv, cb->name);
 }
 
 GList *
@@ -2197,6 +2271,9 @@ void purple_conversation_clear_message_history(PurpleConversation *conv)
 	GList *list = conv->message_history;
 	message_history_free(list);
 	conv->message_history = NULL;
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"cleared-message-history", conv);
 }
 
 GList *purple_conversation_get_message_history(PurpleConversation *conv)
@@ -2552,6 +2629,11 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "cleared-message-history",
+	                       purple_marshal_VOID__POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_CONVERSATION));
 
 	purple_signal_register(handle, "conversation-extended-menu",
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,

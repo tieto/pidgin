@@ -178,7 +178,11 @@ struct _PidginConversation
 		GList *current;
 	} attach;
 
-	/* Quick Find (since 2.7.0) */
+	/**
+	 * Quick Find.
+	 *
+	 * @since 2.7.0
+	 */
 	struct {
 		GtkWidget *entry;
 		GtkWidget *container;
