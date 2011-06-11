@@ -10,7 +10,7 @@ Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool, gconf2,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
- xsltproc, doxygen, libsilc-dev (>= 1.1.1), libgstfarsight0.10-dev (>= 0.0.9),
+ xsltproc, doxygen, libgstfarsight0.10-dev (>= 0.0.9),
  libgstreamer-plugins-base0.10-dev,
  network-manager-dev (>= 0.5.0) [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates
@@ -29,7 +29,7 @@ Description: multi-protocol instant messaging library
  to write an IM client that connects to many IM networks.
  Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * tcl8.4, tk8.4:
@@ -44,7 +44,7 @@ Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular instant messaging client capable of using
  multiple networks at once. Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * gnome-panel | kdebase-workspace-bin | docker:
@@ -94,7 +94,7 @@ Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
  using multiple networks at once. Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
+ Bonjour, Groupwise, Sametime, SIMPLE, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * libx11-6
