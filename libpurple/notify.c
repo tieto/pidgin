@@ -363,8 +363,24 @@ purple_notify_searchresults_column_new(const char *title)
 
 	sc = g_new0(PurpleNotifySearchColumn, 1);
 	sc->title = g_strdup(title);
+	sc->visible = TRUE;
 
 	return sc;
+}
+
+void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible)
+{
+	g_return_if_fail(column != NULL);
+
+	column->visible = visible;
+}
+
+gboolean
+purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column)
+{
+	g_return_val_if_fail(column != NULL, FALSE);
+
+	return column->visible;
 }
 
 guint

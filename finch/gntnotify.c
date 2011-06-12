@@ -430,6 +430,9 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	{
 		PurpleNotifySearchColumn *column = iter->data;
 		gnt_tree_set_column_title(GNT_TREE(tree), i, column->title);
+
+		if (!purple_notify_searchresult_column_is_visible(column))
+			gnt_tree_set_column_visible(GNT_TREE(tree), i, FALSE);
 		i++;
 	}
 

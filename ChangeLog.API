@@ -1,5 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 3.0.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_notify_searchresult_column_set_visible
+		* purple_notify_searchresult_column_is_visible
+		* purple_request_field_set_tooltip
+		* purple_request_field_get_tooltip
+
+		Removed:
+		* purple_core_migrate
+
 version 2.8.0 (06/07/2011):
 	libpurple:
 		Added:
