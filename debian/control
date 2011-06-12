@@ -126,4 +126,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libpurple0, python, python-dbus
 Description: multi-protocol instant messaging library - extra utilities
  This package contains the utilities not included in the main libpurple0
  package. Currently included are: purple-remote, purple-send,
- purple-send-async, and purple-url-handler,
+ purple-send-async, and purple-url-handler.
