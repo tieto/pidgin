@@ -4848,6 +4848,11 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 
 	if (idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
+	else if (yd->current_status == YAHOO_STATUS_CUSTOM &&
+			!purple_status_is_available(status))
+		/* We are still unavailable in this case.
+		 * Make sure Yahoo knows that */
+		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
