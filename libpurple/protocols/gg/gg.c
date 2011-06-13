@@ -1914,6 +1914,17 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Connection failed"));
 			break;
+		case GG_EVENT_MSG:
+			if (ev->event.msg.sender == 0)
+				/* system messages are mostly ads */
+				purple_debug_info("gg", "System message:\n%s\n",
+					ev->event.msg.message);
+			else
+				purple_debug_warning("gg", "GG_EVENT_MSG: message from user %u "
+					"unexpected while connecting:\n%s\n",
+					ev->event.msg.sender,
+					ev->event.msg.message);
+			break;
 		default:
 			purple_debug_error("gg", "strange event: %d\n", ev->type);
 			break;
