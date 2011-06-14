@@ -3567,11 +3567,10 @@ static int get_yahoo_status_from_purple_status(PurpleStatus *status)
 	status_id = purple_status_get_id(status);
 	msg = purple_status_get_attr_string(status, "message");
 
-	if (!strcmp(status_id, YAHOO_STATUS_TYPE_AVAILABLE)) {
-		if ((msg != NULL) && (*msg != '\0'))
-			return YAHOO_STATUS_CUSTOM;
-		else
-			return YAHOO_STATUS_AVAILABLE;
+	if ((msg != NULL) && (*msg != '\0')) {
+		return YAHOO_STATUS_CUSTOM;
+	} else if (!strcmp(status_id, YAHOO_STATUS_TYPE_AVAILABLE)) {
+		return YAHOO_STATUS_AVAILABLE;
 	} else if (!strcmp(status_id, YAHOO_STATUS_TYPE_BRB)) {
 		return YAHOO_STATUS_BRB;
 	} else if (!strcmp(status_id, YAHOO_STATUS_TYPE_BUSY)) {
@@ -4849,6 +4848,11 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 
 	if (idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
+	else if (yd->current_status == YAHOO_STATUS_CUSTOM &&
+			!purple_status_is_available(status))
+		/* We are still unavailable in this case.
+		 * Make sure Yahoo knows that */
+		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -4876,7 +4880,10 @@ GList *yahoo_status_types(PurpleAccount *account)
 	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
 	types = g_list_append(types, type);
 
-	type = purple_status_type_new(PURPLE_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_BUSY,
+	                                       _("Busy"), TRUE, TRUE, FALSE,
+	                                       "message", _("Message"),
+	                                       purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not at Home"), TRUE);
