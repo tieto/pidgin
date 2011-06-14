@@ -123,6 +123,15 @@ void purple_pounce_destroy(PurplePounce *pounce);
 void purple_pounce_destroy_all_by_account(PurpleAccount *account);
 
 /**
+ * Destroys all buddy pounces for a buddy
+ *
+ * @param buddy The buddy whose pounces are to be removed
+ *
+ * @since 2.8.0
+ */
+void purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy);
+
+/**
  * Sets the events a pounce should watch for.
  *
  * @param pounce The buddy pounce.

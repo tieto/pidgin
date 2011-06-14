@@ -14,6 +14,7 @@
   @signal account-actions-changed
   @signal account-alias-changed
   @signal account-authorization-requested
+  @signal account-authorization-requested-with-message
   @signal account-authorization-denied
   @signal account-authorization-granted
   @signal account-error-changed
@@ -156,6 +157,23 @@ int (*account_authorization_requested)(PurpleAccount *account, const char *user)
           than zero if the request should be granted. If zero is returned,
           then the user will be prompted with the request.
   @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-authorization-requested-with-message
+  @signalproto
+int (*account_authorization_requested)(PurpleAccount *account, const char *user, const char *message);
+  @endsignalproto
+  @signaldesc
+   Emitted when a user requests authorization.
+  @param account The account.
+  @param user    The name of the user requesting authorization.
+  @param message The authorization request message
+  @return PURPLE_ACCOUNT_RESPONSE_IGNORE to silently ignore the request,
+          PURPLE_ACCOUNT_RESPONSE_DENY to block the request (the sender might
+          get informed, PURPLE_ACCOUNT_RESPONSE_ACCEPT if the request should be
+          granted. If PURPLE_ACCOUNT_RESPONSE_PASS is returned, then the user
+          will be prompted with the request.
+  @since 2.8.0
  @endsignaldef
 
  @signaldef account-authorization-denied

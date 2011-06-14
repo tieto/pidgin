@@ -191,16 +191,24 @@ hmac_get_block_size(PurpleCipherContext *context)
 }
 
 static PurpleCipherOps HMACOps = {
-	.set_option = hmac_set_opt,
-	.get_option = hmac_get_opt,
-	.init = hmac_init,
-	.reset = hmac_reset,
-	.uninit = hmac_uninit,
-	.append = hmac_append,
-	.digest = hmac_digest,
-	.set_key = hmac_set_key,
-	.get_block_size = hmac_get_block_size,
-	.set_key_with_len = hmac_set_key_with_len,
+	hmac_set_opt,           /* Set option */
+	hmac_get_opt,           /* Get option */
+	hmac_init,               /* init */
+	hmac_reset,              /* reset */
+	hmac_uninit,             /* uninit */
+	NULL,                   /* set iv */
+	hmac_append,             /* append */
+	hmac_digest,             /* digest */
+	NULL,                   /* encrypt */
+	NULL,                   /* decrypt */
+	NULL,                   /* set salt */
+	NULL,                   /* get salt size */
+	hmac_set_key,           /* set key */
+	NULL,                   /* get key size */
+	NULL,                   /* set batch mode */
+	NULL,                   /* get batch mode */
+	hmac_get_block_size,    /* get block size */
+	hmac_set_key_with_len   /* set key with len */
 };
 
 PurpleCipherOps *

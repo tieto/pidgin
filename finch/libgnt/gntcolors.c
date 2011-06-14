@@ -161,9 +161,9 @@ gnt_colors_get_color(char *key)
 		color = custom ? GNT_COLOR_BLUE : COLOR_BLUE;
 	else if (strcmp(key, "white") == 0)
 		color = custom ? GNT_COLOR_WHITE : COLOR_WHITE;
-	else if (strcmp(key, "gray") == 0)
+	else if (strcmp(key, "gray") == 0 || strcmp(key, "grey") == 0)
 		color = custom ? GNT_COLOR_GRAY : COLOR_YELLOW;  /* eh? */
-	else if (strcmp(key, "darkgray") == 0)
+	else if (strcmp(key, "darkgray") == 0 || strcmp(key, "darkgrey") == 0)
 		color = custom ? GNT_COLOR_DARK_GRAY : COLOR_BLACK;
 	else if (strcmp(key, "magenta") == 0)
 		color = COLOR_MAGENTA;

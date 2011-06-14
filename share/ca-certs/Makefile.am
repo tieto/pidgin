@@ -22,6 +22,7 @@ CERTIFICATES = \
 
 EXTRA_CERTS = \
 		AOL_Member_CA.pem \
+		DigiCertHighAssuranceCA-3.pem \
 		Microsoft_Internet_Authority.pem \
 		Microsoft_Internet_Authority_2010.pem \
 		Microsoft_Secure_Server_Authority.pem \

@@ -297,12 +297,24 @@ md5_digest(PurpleCipherContext *context, size_t in_len, guchar digest[16],
 }
 
 static PurpleCipherOps MD5Ops = {
-	.init = md5_init,
-	.reset = md5_reset,
-	.uninit = md5_uninit,
-	.append = md5_append,
-	.digest = md5_digest,
-	.get_block_size = md5_get_block_size,
+	NULL,			/* Set Option		*/
+	NULL,			/* Get Option		*/
+	md5_init,		/* init				*/
+	md5_reset,		/* reset			*/
+	md5_uninit,	/* uninit			*/
+	NULL,			/* set iv			*/
+	md5_append,	/* append			*/
+	md5_digest,		/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	md5_get_block_size,	/* get block size */
+	NULL			/* set key with len */
 };
 
 PurpleCipherOps *

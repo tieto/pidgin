@@ -565,7 +565,7 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 {
 	MsimMessage *body;
 	gchar *field_name;
-	guint rid, cmd, dsn, lid;
+	guint rid, dsn, lid;
 
 	g_return_if_fail(user != NULL);
 	/* Callback can be null to not call anything, just lookup & store information. */
@@ -578,8 +578,6 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	rid = msim_new_reply_callback(session, cb, data);
 
 	/* Send request */
-
-	cmd = MSIM_CMD_GET;
 
 	if (msim_is_userid(user)) {
 		field_name = "UserID";
@@ -602,7 +600,7 @@ msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb
 	g_return_if_fail(msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, 1,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
 			"dsn", MSIM_TYPE_INTEGER, dsn,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, lid,

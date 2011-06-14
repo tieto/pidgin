@@ -108,12 +108,24 @@ purple_g_checksum_digest(PurpleCipherContext *context, GChecksumType type,
 	} \
 	\
 	static PurpleCipherOps camel##Ops = { \
-		.init = lower##_init, \
-		.reset = lower##_reset, \
-		.uninit = purple_g_checksum_uninit, \
-		.append = purple_g_checksum_append, \
-		.digest = lower##_digest, \
-		.get_block_size = lower##_get_block_size, \
+		NULL,                     /* Set option */       \
+		NULL,                     /* Get option */       \
+		lower##_init,             /* init */             \
+		lower##_reset,            /* reset */            \
+		purple_g_checksum_uninit, /* uninit */           \
+		NULL,                     /* set iv */           \
+		purple_g_checksum_append, /* append */           \
+		lower##_digest,           /* digest */           \
+		NULL,                     /* encrypt */          \
+		NULL,                     /* decrypt */          \
+		NULL,                     /* set salt */         \
+		NULL,                     /* get salt size */    \
+		NULL,                     /* set key */          \
+		NULL,                     /* get key size */     \
+		NULL,                     /* set batch mode */   \
+		NULL,                     /* get batch mode */   \
+		lower##_get_block_size,   /* get block size */   \
+		NULL                      /* set key with len */ \
 	}; \
 	\
 	PurpleCipherOps * \

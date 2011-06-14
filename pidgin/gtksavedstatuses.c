@@ -438,19 +438,10 @@ saved_status_updated_cb(PurpleSavedStatus *status, StatusWindow *sw)
 static GtkWidget *
 create_saved_status_list(StatusWindow *dialog)
 {
-	GtkWidget *sw;
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
-
-	/* Create the scrolled window */
-	sw = gtk_scrolled_window_new(0, 0);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
@@ -471,8 +462,6 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(status_selected_cb), dialog);
-
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
 
 	/* Add columns */
 	column = gtk_tree_view_column_new();
@@ -527,9 +516,9 @@ create_saved_status_list(StatusWindow *dialog)
 	/* Populate list */
 	populate_saved_status_list(dialog);
 
-	gtk_widget_show_all(sw);
+	gtk_widget_show_all(treeview);
 
-	return sw;
+	return pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1);
 }
 
 static gboolean
@@ -1092,7 +1081,6 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	GtkWidget *entry;
 	GtkWidget *frame;
 	GtkWidget *hbox;
-	GtkWidget *sw;
 	GtkWidget *text;
 	GtkWidget *toolbar;
 	GtkWidget *vbox;
@@ -1181,14 +1169,6 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_add(GTK_CONTAINER(expander), dbox);
 
-	/* Different status message treeview */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(dbox), sw, TRUE, TRUE, 0);
-
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_EDITOR_NUM_COLUMNS,
 									   G_TYPE_POINTER,
@@ -1205,7 +1185,9 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
 	gtk_widget_set_size_request(dialog->treeview, -1, 150);
-	gtk_container_add(GTK_CONTAINER(sw), dialog->treeview);
+	gtk_box_pack_start(GTK_BOX(dbox), 
+		pidgin_make_scrollable(dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 0);
 
 	/* Add columns */
 	status_editor_add_columns(dialog);

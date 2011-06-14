@@ -1794,6 +1794,9 @@ network_page(void)
 	pidgin_prefs_labeled_spin_button(hbox, _("_UDP Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
 
+	pidgin_prefs_labeled_spin_button(hbox, _("T_CP Port:"),
+		"/purple/network/turn_port_tcp", 0, 65535, NULL);
+
 	hbox = pidgin_prefs_labeled_entry(vbox, _("Use_rname:"),
 		"/purple/network/turn_username", sg);
 	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),
@@ -2041,9 +2044,10 @@ proxy_page(void)
 		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
-					"SOCKS 4", "socks4",
-					"SOCKS 5", "socks5",
-					"HTTP", "http",
+					_("SOCKS 4"), "socks4",
+					_("SOCKS 5"), "socks5",
+					_("Tor/Privacy (SOCKS5)"), "tor",
+					_("HTTP"), "http",
 					_("Use Environmental Settings"), "envvar",
 					NULL);
 		gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);
@@ -2513,12 +2517,6 @@ sound_page(void)
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
 
 	/* SOUND SELECTION */
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_widget_set_size_request(sw, -1, 100);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 	for (j=0; j < PURPLE_NUM_SOUNDS; j++) {
@@ -2567,7 +2565,9 @@ sound_page(void)
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 	g_object_unref(G_OBJECT(event_store));
-	gtk_container_add(GTK_CONTAINER(sw), event_view);
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(event_view, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 100),
+		TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);

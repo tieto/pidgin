@@ -175,7 +175,8 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 		if (faultcode_str) {
 			if (g_str_equal(faultcode_str, "q0:BadContextToken") ||
-				g_str_equal(faultcode_str, "AuthenticationFailed"))
+				g_str_equal(faultcode_str, "AuthenticationFailed") ||
+				g_str_equal(faultcode_str, "s:AuthenticationFailed"))
 				need_token_update = TRUE;
 			else if (g_str_equal(faultcode_str, "q0:AuthenticationFailed") &&
 				xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)

@@ -34,6 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@USE_GNUTLS_TRUE@@USE_INTERNAL_LIBGADU_TRUE@am__append_1 = $(GNUTLS_LIBS)
 subdir = libpurple/protocols/gg
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -69,20 +70,30 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
+@USE_GNUTLS_TRUE@@USE_INTERNAL_LIBGADU_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_3 = $(am__DEPENDENCIES_2)
 @STATIC_GG_FALSE@libgg_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-@STATIC_GG_FALSE@	$(am__DEPENDENCIES_1)
-@STATIC_GG_TRUE@libgg_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+@STATIC_GG_FALSE@	$(am__DEPENDENCIES_3)
+@STATIC_GG_TRUE@libgg_la_DEPENDENCIES = $(am__DEPENDENCIES_3)
 am__libgg_la_SOURCES_DIST = lib/common.c lib/compat.h lib/dcc.c \
-	lib/dcc7.c lib/events.c lib/http.c lib/libgadu.c \
-	lib/libgadu-config.h lib/libgadu-internal.h lib/libgadu.h \
+	lib/dcc7.c lib/debug.c lib/deflate.c lib/deflate.h \
+	lib/encoding.c lib/encoding.h lib/events.c lib/handlers.c \
+	lib/http.c lib/libgadu.h lib/libgadu.c lib/libgadu-config.h \
+	lib/libgadu-internal.h lib/message.c lib/message.h \
 	lib/obsolete.c lib/protocol.h lib/pubdir.c lib/pubdir50.c \
-	lib/resolver.c lib/resolver.h lib/sha1.c gg-utils.h gg-utils.c \
-	confer.h confer.c search.h search.c buddylist.h buddylist.c \
-	gg.h gg.c
+	lib/resolver.c lib/resolver.h lib/session.h lib/sha1.c \
+	gg-utils.h gg-utils.c confer.h confer.c search.h search.c \
+	buddylist.h buddylist.c gg.h gg.c
 @USE_INTERNAL_LIBGADU_TRUE@am__objects_1 = libgg_la-common.lo \
 @USE_INTERNAL_LIBGADU_TRUE@	libgg_la-dcc.lo libgg_la-dcc7.lo \
-@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-events.lo libgg_la-http.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-debug.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-deflate.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-encoding.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-events.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-handlers.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-http.lo \
 @USE_INTERNAL_LIBGADU_TRUE@	libgg_la-libgadu.lo \
+@USE_INTERNAL_LIBGADU_TRUE@	libgg_la-message.lo \
 @USE_INTERNAL_LIBGADU_TRUE@	libgg_la-obsolete.lo \
 @USE_INTERNAL_LIBGADU_TRUE@	libgg_la-pubdir.lo \
 @USE_INTERNAL_LIBGADU_TRUE@	libgg_la-pubdir50.lo \
@@ -179,7 +190,7 @@ FARSIGHT_CFLAGS = @FARSIGHT_CFLAGS@
 FARSIGHT_LIBS = @FARSIGHT_LIBS@
 FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
-GADU_LIBS = @GADU_LIBS@
+GADU_LIBS = @GADU_LIBS@ $(am__append_1)
 GCONFTOOL = @GCONFTOOL@
 GCONF_SCHEMA_CONFIG_SOURCE = @GCONF_SCHEMA_CONFIG_SOURCE@
 GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
@@ -382,18 +393,28 @@ EXTRA_DIST = \
 	lib/COPYING \
 	lib/dcc.c \
 	lib/dcc7.c \
+	lib/debug.c \
+	lib/deflate.c \
+	lib/deflate.h \
+	lib/encoding.c \
+	lib/encoding.h \
 	lib/events.c \
+	lib/handlers.c \
 	lib/http.c \
+	lib/libgadu.h \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
+	lib/libgadu-debug.h \
 	lib/libgadu-internal.h \
-	lib/libgadu.h \
+	lib/message.c \
+	lib/message.h \
 	lib/obsolete.c \
 	lib/protocol.h \
 	lib/pubdir.c \
 	lib/pubdir50.c \
 	lib/resolver.c \
 	lib/resolver.h \
+	lib/session.h \
 	lib/sha1.c
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -402,21 +423,30 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 @USE_INTERNAL_LIBGADU_TRUE@	lib/compat.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/dcc.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/dcc7.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/debug.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/deflate.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/deflate.h \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/encoding.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/encoding.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/events.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/handlers.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/http.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/libgadu.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/libgadu.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/libgadu-config.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/libgadu-internal.h \
-@USE_INTERNAL_LIBGADU_TRUE@	lib/libgadu.h \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/message.c \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/message.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/obsolete.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/protocol.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/pubdir.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/pubdir50.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/resolver.c \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/resolver.h \
+@USE_INTERNAL_LIBGADU_TRUE@	lib/session.h \
 @USE_INTERNAL_LIBGADU_TRUE@	lib/sha1.c
 
-@USE_INTERNAL_LIBGADU_TRUE@INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED
+@USE_INTERNAL_LIBGADU_TRUE@INTGG_CFLAGS = -I$(top_srcdir)/libpurple/protocols/gg/lib -DGG_IGNORE_DEPRECATED -DUSE_INTERNAL_LIBGADU
 GGSOURCES = \
 	$(INTGGSOURCES) \
 	gg-utils.h \
@@ -536,11 +566,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-confer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-dcc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-dcc7.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-debug.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-deflate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-encoding.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-events.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-gg-utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-gg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-handlers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-http.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-libgadu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-message.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-obsolete.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-pubdir.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgg_la-pubdir50.Plo@am__quote@
@@ -596,6 +631,30 @@ libgg_la-dcc7.lo: lib/dcc7.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-dcc7.lo `test -f 'lib/dcc7.c' || echo '$(srcdir)/'`lib/dcc7.c
 
+libgg_la-debug.lo: lib/debug.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-debug.lo -MD -MP -MF $(DEPDIR)/libgg_la-debug.Tpo -c -o libgg_la-debug.lo `test -f 'lib/debug.c' || echo '$(srcdir)/'`lib/debug.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-debug.Tpo $(DEPDIR)/libgg_la-debug.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/debug.c' object='libgg_la-debug.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-debug.lo `test -f 'lib/debug.c' || echo '$(srcdir)/'`lib/debug.c
+
+libgg_la-deflate.lo: lib/deflate.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-deflate.lo -MD -MP -MF $(DEPDIR)/libgg_la-deflate.Tpo -c -o libgg_la-deflate.lo `test -f 'lib/deflate.c' || echo '$(srcdir)/'`lib/deflate.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-deflate.Tpo $(DEPDIR)/libgg_la-deflate.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/deflate.c' object='libgg_la-deflate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-deflate.lo `test -f 'lib/deflate.c' || echo '$(srcdir)/'`lib/deflate.c
+
+libgg_la-encoding.lo: lib/encoding.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-encoding.lo -MD -MP -MF $(DEPDIR)/libgg_la-encoding.Tpo -c -o libgg_la-encoding.lo `test -f 'lib/encoding.c' || echo '$(srcdir)/'`lib/encoding.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-encoding.Tpo $(DEPDIR)/libgg_la-encoding.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/encoding.c' object='libgg_la-encoding.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-encoding.lo `test -f 'lib/encoding.c' || echo '$(srcdir)/'`lib/encoding.c
+
 libgg_la-events.lo: lib/events.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-events.lo -MD -MP -MF $(DEPDIR)/libgg_la-events.Tpo -c -o libgg_la-events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-events.Tpo $(DEPDIR)/libgg_la-events.Plo
@@ -603,6 +662,14 @@ libgg_la-events.lo: lib/events.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/events.c' object='libgg_la-events.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-events.lo `test -f 'lib/events.c' || echo '$(srcdir)/'`lib/events.c
+
+libgg_la-handlers.lo: lib/handlers.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-handlers.lo -MD -MP -MF $(DEPDIR)/libgg_la-handlers.Tpo -c -o libgg_la-handlers.lo `test -f 'lib/handlers.c' || echo '$(srcdir)/'`lib/handlers.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-handlers.Tpo $(DEPDIR)/libgg_la-handlers.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/handlers.c' object='libgg_la-handlers.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-handlers.lo `test -f 'lib/handlers.c' || echo '$(srcdir)/'`lib/handlers.c
 
 libgg_la-http.lo: lib/http.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-http.lo -MD -MP -MF $(DEPDIR)/libgg_la-http.Tpo -c -o libgg_la-http.lo `test -f 'lib/http.c' || echo '$(srcdir)/'`lib/http.c
@@ -619,6 +686,14 @@ libgg_la-libgadu.lo: lib/libgadu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/libgadu.c' object='libgg_la-libgadu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-libgadu.lo `test -f 'lib/libgadu.c' || echo '$(srcdir)/'`lib/libgadu.c
+
+libgg_la-message.lo: lib/message.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-message.lo -MD -MP -MF $(DEPDIR)/libgg_la-message.Tpo -c -o libgg_la-message.lo `test -f 'lib/message.c' || echo '$(srcdir)/'`lib/message.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgg_la-message.Tpo $(DEPDIR)/libgg_la-message.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib/message.c' object='libgg_la-message.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -c -o libgg_la-message.lo `test -f 'lib/message.c' || echo '$(srcdir)/'`lib/message.c
 
 libgg_la-obsolete.lo: lib/obsolete.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgg_la_CFLAGS) $(CFLAGS) -MT libgg_la-obsolete.lo -MD -MP -MF $(DEPDIR)/libgg_la-obsolete.Tpo -c -o libgg_la-obsolete.lo `test -f 'lib/obsolete.c' || echo '$(srcdir)/'`lib/obsolete.c

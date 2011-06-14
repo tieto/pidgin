@@ -1,7 +1,9 @@
 /* $Id$ */
 
 /*
- *  (C) Copyright 2009 Jakub Zawadzki <darkjames@darkjames.ath.cx>
+ *  (C) Copyright 2009-2010 Jakub Zawadzki <darkjames@darkjames.ath.cx>
+ *                          Bartłomiej Zimoń <uzi18@o2.pl>
+ *                          Wojtek Kaniewski <wojtekka@irc.pl>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -39,7 +41,7 @@
 #define GG_FEATURE_STATUS80 		0x05
 
 #define GG8_LANG	"pl"
-#define GG8_VERSION	"Gadu-Gadu Client Build 8.0.0.8731"
+#define GG8_VERSION	"Gadu-Gadu Client Build "
 
 struct gg_login80 {
 	uint32_t uin;			/* mój numerek */
@@ -60,6 +62,22 @@ struct gg_login80 {
 #define GG_LOGIN_HASH_TYPE_INVALID 0x0016
 
 #define GG_LOGIN80_OK 0x0035
+
+/**
+ * Logowanie powiodło się (pakiet \c GG_LOGIN80_OK)
+ */
+struct gg_login80_ok {
+	uint32_t unknown1;		/* 0x00000001 */
+} GG_PACKED;
+
+/**
+ * Logowanie nie powiodło się (pakiet \c GG_LOGIN80_FAILED)
+ */
+#define GG_LOGIN80_FAILED 0x0043
+
+struct gg_login80_failed {
+	uint32_t unknown1;		/* 0x00000001 */
+} GG_PACKED;
 
 #define GG_NEW_STATUS80BETA 0x0028
 
@@ -83,12 +101,12 @@ struct gg_new_status80 {
 struct gg_notify_reply80 {
 	uint32_t uin;		/* numerek plus flagi w najstarszym bajcie */
 	uint32_t status;	/* status danej osoby */
-	uint32_t flags;		/* flagi (przeznaczenie nieznane) */
+	uint32_t features;	/* opcje protokołu */
 	uint32_t remote_ip;	/* adres IP bezpośrednich połączeń */
 	uint16_t remote_port;	/* port bezpośrednich połączeń */
 	uint8_t image_size;	/* maksymalny rozmiar obrazków w KB */
-	uint8_t unknown2;	/* 0x00 */
-	uint32_t unknown3;	/* 0x00000000 */
+	uint8_t unknown1;	/* 0x00 */
+	uint32_t flags;		/* flagi połączenia */
 	uint32_t descr_len;	/* rozmiar opisu */
 } GG_PACKED;
 
@@ -114,6 +132,79 @@ struct gg_recv_msg80 {
 } GG_PACKED;
 
 #define GG_DISCONNECT_ACK 0x000d
+
+#define GG_RECV_MSG_ACK 0x0046
+
+struct gg_recv_msg_ack {
+	uint32_t seq;
+} GG_PACKED;
+
+#define GG_USER_DATA 0x0044
+
+struct gg_user_data {
+	uint32_t type;
+	uint32_t user_count;
+} GG_PACKED;
+
+struct gg_user_data_user {
+	uint32_t uin;
+	uint32_t attr_count;
+} GG_PACKED;
+
+#define GG_TYPING_NOTIFICATION 0x0059
+
+struct gg_typing_notification {
+	uint16_t length;
+	uint32_t uin;
+} GG_PACKED;
+
+#define GG_XML_ACTION 0x002c
+
+#define GG_RECV_OWN_MSG 0x005a
+
+#define GG_MULTILOGON_INFO 0x005b
+
+struct gg_multilogon_info {
+	uint32_t count;
+} GG_PACKED;
+
+struct gg_multilogon_info_item {
+	uint32_t addr;
+	uint32_t flags;
+	uint32_t features;
+	uint32_t logon_time;
+	gg_multilogon_id_t conn_id;
+	uint32_t unknown1;
+	uint32_t name_size;
+} GG_PACKED;
+
+#define GG_MULTILOGON_DISCONNECT 0x0062
+
+struct gg_multilogon_disconnect {
+	gg_multilogon_id_t conn_id;
+} GG_PACKED;
+
+#define GG_MSG_CALLBACK 0x02	/**< Żądanie zwrotnego połączenia bezpośredniego */
+
+#define GG_MSG_OPTION_CONFERENCE 0x01
+#define GG_MSG_OPTION_ATTRIBUTES 0x02
+#define GG_MSG_OPTION_IMAGE_REQUEST 0x04
+#define GG_MSG_OPTION_IMAGE_REPLY 0x05
+#define GG_MSG_OPTION_IMAGE_REPLY_MORE 0x06
+
+#define GG_DCC7_ABORT 0x0025
+
+struct gg_dcc7_abort {
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+	uint32_t uin_from;		/* numer nadawcy */
+	uint32_t uin_to;		/* numer odbiorcy */
+} GG_PACKED;
+
+#define GG_DCC7_ABORTED 0x0025
+
+struct gg_dcc7_aborted {
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+} GG_PACKED;
 
 #define GG_DCC7_VOICE_RETRIES 0x11	/* 17 powtorzen */
 
@@ -156,6 +247,76 @@ struct gg_dcc7_voice_init {
 struct gg_dcc7_voice_init_confirm {
 	uint8_t type;			/* 0x05 */
 	uint32_t id;			/* id tego co potwierdzamy [0x1 - 0x5] */
+} GG_PACKED;
+
+#define GG_DCC7_RELAY_TYPE_SERVER 0x01	/* adres serwera, na który spytać o proxy */
+#define GG_DCC7_RELAY_TYPE_PROXY 0x08	/* adresy proxy, na które sie łączyć */
+
+#define GG_DCC7_RELAY_DUNNO1 0x02
+
+#define GG_DCC7_RELAY_REQUEST 0x0a
+
+struct gg_dcc7_relay_req {
+	uint32_t magic;			/* 0x0a */
+	uint32_t len;			/* długość całego pakietu */
+	gg_dcc7_id_t id;   		/* identyfikator połączenia */
+	uint16_t type;   		/* typ zapytania */
+	uint16_t dunno1;		/* 0x02 */
+} GG_PACKED;
+
+#define GG_DCC7_RELAY_REPLY_RCOUNT 0x02
+
+#define GG_DCC7_RELAY_REPLY 0x0b
+
+struct gg_dcc7_relay_reply {
+	uint32_t magic;			/* 0x0b */
+	uint32_t len;			/* długość całego pakietu */
+	uint32_t rcount;		/* ilość serwerów */
+} GG_PACKED;
+
+struct gg_dcc7_relay_reply_server {
+	uint32_t addr;		/* adres ip serwera */
+	uint16_t port;		/* port serwera */
+	uint8_t family;		/* rodzina adresów (na końcu?!) AF_INET=2 */
+} GG_PACKED;
+
+#define GG_DCC7_WELCOME_SERVER 0xc0debabe
+
+struct gg_dcc7_welcome_server {
+	uint32_t magic;			/* 0xc0debabe */
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+} GG_PACKED;
+
+struct gg_dcc7_welcome_p2p {
+	gg_dcc7_id_t id;		/* identyfikator połączenia */
+} GG_PACKED;
+
+#define GG_TIMEOUT_DISCONNECT 5	/**< Maksymalny czas oczekiwania na rozłączenie */
+
+#define GG_USERLIST100_VERSION 0x5c
+
+struct gg_userlist100_version {
+	uint32_t version;		/* numer wersji listy kontaktów */
+} GG_PACKED;
+
+#define GG_USERLIST100_REQUEST 0x0040
+
+struct gg_userlist100_request {
+	uint8_t type;			/* rodzaj żądania */
+	uint32_t version;		/* numer ostatniej znanej wersji listy kontaktów bądź 0 */
+	uint8_t format_type;		/* rodzaj żądanego typu formatu listy kontaktów */
+	uint8_t unknown1;		/* 0x01 */
+	/* char request[]; */
+} GG_PACKED;
+
+#define GG_USERLIST100_REPLY 0x41
+
+struct gg_userlist100_reply {
+	uint8_t type;			/* rodzaj odpowiedzi */
+	uint32_t version;		/* numer wersji listy kontaktów aktualnie przechowywanej przez serwer */
+	uint8_t format_type;		/* rodzaj przesyłanego typu formatu listy kontaktów */
+	uint8_t unknown1;		/* 0x01 */
+	/* char reply[]; */
 } GG_PACKED;
 
 #ifdef _WIN32

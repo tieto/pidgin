@@ -76,6 +76,7 @@ enum
 	PROP_DESCRIPTION,
 	PROP_ICON_NAME,
 	PROP_CUSTOM_ICON,
+	PROP_ENABLE_DESCRIPTION_MARKUP,
 
 	LAST_PROPERTY
 } HazeConnectionProperties;
@@ -87,6 +88,7 @@ typedef struct _PidginMiniDialogPrivate
 	GtkLabel *title;
 	GtkLabel *desc;
 	GtkBox *buttons;
+	gboolean enable_description_markup;
 
 	guint idle_destroy_cb_id;
 } PidginMiniDialogPrivate;
@@ -138,6 +140,27 @@ pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
 }
 
 void
+pidgin_mini_dialog_enable_description_markup(PidginMiniDialog *mini_dialog)
+{
+	g_object_set(G_OBJECT(mini_dialog), "enable-description-markup", TRUE, NULL);
+}
+
+gboolean
+pidgin_mini_dialog_links_supported()
+{
+#if GTK_CHECK_VERSION(2,18,0)
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallback cb, gpointer user_data)
+{
+	g_signal_connect(PIDGIN_MINI_DIALOG_GET_PRIVATE(mini_dialog)->desc, "activate-link", cb, user_data);
+}
+
+void
 pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
                                  const char *icon_name)
 {
@@ -155,6 +178,7 @@ struct _mini_dialog_button_clicked_cb_data
 	PidginMiniDialog *mini_dialog;
 	PidginMiniDialogCallback callback;
 	gpointer user_data;
+	gboolean close_dialog_after_click;
 };
 
 guint
@@ -178,12 +202,14 @@ mini_dialog_button_clicked_cb(GtkButton *button,
 	PidginMiniDialogPrivate *priv =
 		PIDGIN_MINI_DIALOG_GET_PRIVATE(data->mini_dialog);
 
-	/* Set up the destruction callback before calling the clicked callback,
-	 * so that if the mini-dialog gets destroyed during the clicked callback
-	 * the idle_destroy_cb is correctly removed by _finalize.
-	 */
-	priv->idle_destroy_cb_id =
-		g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
+	if (data->close_dialog_after_click) {
+		/* Set up the destruction callback before calling the clicked callback,
+		 * so that if the mini-dialog gets destroyed during the clicked callback
+		 * the idle_destroy_cb is correctly removed by _finalize.
+		 */
+		priv->idle_destroy_cb_id =
+			g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
+	}
 
 	if (data->callback != NULL)
 		data->callback(data->mini_dialog, button, data->user_data);
@@ -198,11 +224,12 @@ mini_dialog_button_destroy_cb(GtkButton *button,
 	g_free(data);
 }
 
-void
-pidgin_mini_dialog_add_button(PidginMiniDialog *self,
-                              const char *text,
-                              PidginMiniDialogCallback clicked_cb,
-                              gpointer user_data)
+static void
+mini_dialog_add_button(PidginMiniDialog *self,
+                       const char *text,
+                       PidginMiniDialogCallback clicked_cb,
+                       gpointer user_data,
+                       gboolean close_dialog_after_click)
 {
 	PidginMiniDialogPrivate *priv = PIDGIN_MINI_DIALOG_GET_PRIVATE(self);
 	struct _mini_dialog_button_clicked_cb_data *callback_data
@@ -218,6 +245,7 @@ pidgin_mini_dialog_add_button(PidginMiniDialog *self,
 	callback_data->mini_dialog = self;
 	callback_data->callback = clicked_cb;
 	callback_data->user_data = user_data;
+	callback_data->close_dialog_after_click = close_dialog_after_click;
 	g_signal_connect(G_OBJECT(button), "clicked",
 		(GCallback) mini_dialog_button_clicked_cb, callback_data);
 	g_signal_connect(G_OBJECT(button), "destroy",
@@ -229,6 +257,24 @@ pidgin_mini_dialog_add_button(PidginMiniDialog *self,
 	gtk_box_pack_end(GTK_BOX(priv->buttons), button, FALSE, FALSE,
 		0);
 	gtk_widget_show_all(GTK_WIDGET(button));
+}
+
+void
+pidgin_mini_dialog_add_button(PidginMiniDialog *self,
+                              const char *text,
+                              PidginMiniDialogCallback clicked_cb,
+                              gpointer user_data)
+{
+	mini_dialog_add_button(self, text, clicked_cb, user_data, TRUE);
+}
+
+void
+pidgin_mini_dialog_add_non_closing_button(PidginMiniDialog *self,
+                                          const char *text,
+                                          PidginMiniDialogCallback clicked_cb,
+                                          gpointer user_data)
+{
+	mini_dialog_add_button(self, text, clicked_cb, user_data, FALSE);
 }
 
 static void
@@ -257,6 +303,9 @@ pidgin_mini_dialog_get_property(GObject *object,
 		}
 		case PROP_CUSTOM_ICON:
 			g_value_set_object(value, gtk_image_get_pixbuf(priv->icon));
+			break;
+		case PROP_ENABLE_DESCRIPTION_MARKUP:
+			g_value_set_boolean(value, priv->enable_description_markup);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -287,7 +336,7 @@ mini_dialog_set_description(PidginMiniDialog *self,
 	PidginMiniDialogPrivate *priv = PIDGIN_MINI_DIALOG_GET_PRIVATE(self);
 	if(description)
 	{
-		char *desc_esc = g_markup_escape_text(description, -1);
+		char *desc_esc = priv->enable_description_markup ? g_strdup(description) : g_markup_escape_text(description, -1);
 		char *desc_markup = g_strdup_printf(
 			"<span size=\"smaller\">%s</span>", desc_esc);
 
@@ -332,6 +381,9 @@ pidgin_mini_dialog_set_property(GObject *object,
 			break;
 		case PROP_CUSTOM_ICON:
 			gtk_image_set_from_pixbuf(priv->icon, g_value_get_object(value));
+			break;
+		case PROP_ENABLE_DESCRIPTION_MARKUP:
+			priv->enable_description_markup = g_value_get_boolean(value);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -390,6 +442,12 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CUSTOM_ICON, param_spec);
+
+	param_spec = g_param_spec_boolean("enable-description-markup", "enable-description-markup",
+		"Use GMarkup in the description text", FALSE,
+		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
+		G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_ENABLE_DESCRIPTION_MARKUP, param_spec);
 }
 
 /* 16 is the width of the icon, due to PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL */

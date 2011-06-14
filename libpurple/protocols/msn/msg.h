@@ -78,7 +78,6 @@ struct _MsnMessage
 
 	MsnMsgType type;
 
-	gboolean msnslp_message;
 	MsnSlpMessagePart *part;
 
 	char *remote_user;
@@ -135,15 +134,6 @@ MsnMessage *msn_message_new_nudge(void);
  * @return A new plain message.
  */
 MsnMessage *msn_message_new_plain(const char *message);
-
-/**
- * Creates a MSNSLP ack message.
- *
- * @param acked_msg The message to acknowledge.
- *
- * @return A new MSNSLP ack message.
- */
-MsnMessage *msn_message_new_msnslp_ack(MsnMessage *acked_msg);
 
 /**
  * Creates a new message based off a command.

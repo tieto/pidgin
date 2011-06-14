@@ -99,14 +99,20 @@ static inline gchar* chunk_data( gchar* chunkheader )
 	return &chunkheader[MXIT_CHUNK_HEADER_SIZE];
 }
 
-
+/*
+ * Offer File chunk (6).
+ */
 struct offerfile_chunk {
 	char	fileid[MXIT_CHUNK_FILEID_LEN];
 	char	username[MXIT_CP_MAX_JID_LEN + 1];
 	int		filesize;
 	char	filename[FILENAME_MAX];
+	char	mimetype[64];
 };
 
+/*
+ * Get File chunk (8) response.
+ */
 struct getfile_chunk {
 	char	fileid[MXIT_CHUNK_FILEID_LEN];
 	int		offset;
@@ -115,6 +121,9 @@ struct getfile_chunk {
 	char*	data;
 };
 
+/*
+ * Custom Resource chunk (1).
+ */
 struct cr_chunk {
 	char	id[64];
 	char	handle[64];
@@ -122,6 +131,9 @@ struct cr_chunk {
 	GList*	resources;
 };
 
+/*
+ * Splash Image chunk (2)
+ */
 struct splash_chunk {
 	char	anchor;
 	char	showtime;
@@ -130,10 +142,16 @@ struct splash_chunk {
 	int		datalen;
 };
 
+/*
+ * Splash Click Through chunk (3)
+ */
 struct splash_click_chunk {
 	char	reserved[1];
 };
 
+/*
+ * Get Avatar chunk (14) response.
+ */
 struct getavatar_chunk {
 	char	mxitid[50];
 	char	avatarid[64];
@@ -144,6 +162,15 @@ struct getavatar_chunk {
 	int		height;
 	int		length;
 	char*	data;
+};
+
+/*
+ * Send File Direct chunk (10) response.
+ */
+struct sendfile_chunk {
+	char	username[MXIT_CP_MAX_JID_LEN + 1];
+	int		status;
+	char	statusmsg[1024];
 };
 
 /* Encode chunk */
@@ -158,6 +185,7 @@ int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const cha
 void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chunk* offer );
 void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* getfile );
 void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr );
+void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_chunk* sendfile );
 void mxit_chunk_parse_get_avatar( char* chunkdata, int datalen, struct getavatar_chunk* avatar );
 
 #endif		/* _MXIT_CHUNK_H_ */

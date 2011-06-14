@@ -1116,7 +1116,7 @@ silcpurple_create_keypair_cancel(PurpleConnection *gc, PurpleRequestFields *fiel
 static void
 silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg;
 	PurpleRequestField *f;
 	const char *val, *pkfile = NULL, *prfile = NULL;
 	const char *pass1 = NULL, *pass2 = NULL, *un = NULL, *hn = NULL;
@@ -2123,7 +2123,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				        /* get_media_caps */
 	NULL,				        /* get_moods */
 	NULL,				        /* set_public_alias */
-	NULL				        /* get_public_alias */
+	NULL,				        /* get_public_alias */
+	NULL,				        /* add_buddy_with_invite */
+	NULL				        /* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =

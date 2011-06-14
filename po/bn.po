@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-10 01:22-0800\n"
-"PO-Revision-Date: 2011-03-06 13:37+0600\n"
+"POT-Creation-Date: 2011-05-09 21:40-0700\n"
+"PO-Revision-Date: 2011-05-05 13:37+0600\n"
 "Last-Translator: israt <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
 "Language: bn\n"
@@ -227,6 +227,9 @@ msgstr "ব্যবহারকারীর নাম"
 
 msgid "Alias (optional)"
 msgstr "ডাকনাম (ঐচ্ছিক)"
+
+msgid "Invite message (optional)"
+msgstr "আমন্ত্রণ বার্তা (ঐচ্ছিক)"
 
 msgid "Add in group"
 msgstr "দলে যোগ"
@@ -2013,6 +2016,9 @@ msgstr "থ্রেড তৈরি করতে ব্যর্থ: %s"
 msgid "Unknown reason"
 msgstr "অজানা কারণ"
 
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr "Tor প্রক্সি মোডে DNS লুকআপ অগ্রাহ্য় করা হচ্ছে।"
+
 #, c-format
 msgid ""
 "Error reading %s: \n"
@@ -3333,6 +3339,21 @@ msgstr "অনুগ্রহ করে, UIN-এর জন্য আপনার
 msgid "Change Gadu-Gadu Password"
 msgstr "Gadu-Gadu এর পাসওয়ার্ড পরিবর্তন করুন"
 
+msgid "Show status to:"
+msgstr "অবস্থা প্রদর্শন:"
+
+msgid "All people"
+msgstr "সবাই"
+
+msgid "Only buddies"
+msgstr "শুধু বন্ধু"
+
+msgid "Change status broadcasting"
+msgstr "অবস্থার পরিবর্তন প্রকাশ"
+
+msgid "Please, select who can see your status"
+msgstr "কে কে আপনার অবস্থা দেখতে পারবে, অনুগ্রহ করে নির্বাচন করুন"
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "বন্ধুর জন্য আড্ডা নির্বাচন করুন: %s"
@@ -3477,6 +3498,20 @@ msgstr "Gadu-Gadu ব্যবহারকারী"
 msgid "GG server"
 msgstr "GG সার্ভার"
 
+msgid "Don't use encryption"
+msgstr "এনক্রিপশন ব্যবহার করা হবে না"
+
+msgid "Use encryption if available"
+msgstr "যদি পাওয়া যায় তবে এনক্রিপশন ব্যবহার"
+
+# tithi
+#. TODO
+msgid "Require encryption"
+msgstr "প্রয়োজনীয় এনক্রিপশন"
+
+msgid "Connection security"
+msgstr "সংযোগের নিরাপত্তা"
+
 # ***
 #, c-format
 msgid "Unknown command: %s"
@@ -3513,7 +3548,6 @@ msgstr "%s এর জন্য MOTD"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3777,6 +3811,9 @@ msgstr "%s থেকে Wallop"
 # tithi
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  একটি ক্রিয়া সম্পাদন করুন।"
+
+msgid "authserv: Send a command to authserv"
+msgstr "authserv: chanserv এ কমান্ড পাঠান"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -4979,18 +5016,8 @@ msgstr "XMPP প্রোটোকল প্লাগইন"
 msgid "Domain"
 msgstr "ডোমেইন"
 
-# tithi
-msgid "Require encryption"
-msgstr "প্রয়োজনীয় এনক্রিপশন"
-
-msgid "Use encryption if available"
-msgstr "যদি পাওয়া যায় তবে এনক্রিপশন ব্যবহার"
-
 msgid "Use old-style SSL"
 msgstr "পুরাতন শৈলীর SSL ব্যবহার"
-
-msgid "Connection security"
-msgstr "সংযোগের নিরাপত্তা"
 
 # tithi
 msgid "Allow plaintext auth over unencrypted streams"
@@ -5109,6 +5136,7 @@ msgstr "উপস্থিতিতে অজানা ত্রুটি"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s এ ফাইল পাঠাতে ব্যর্থ, ব্যবহাকারী ফাইল স্থানান্তর সমর্থন করে না"
 
+#. not success
 msgid "File Send Failed"
 msgstr "ফাইল পাঠানো ব্যর্থ হয়েছে"
 
@@ -5961,20 +5989,6 @@ msgid "Unable to Add"
 msgstr "যোগ করতে ব্যর্থ"
 
 # tithi
-msgid "Authorization Request Message:"
-msgstr "অনুমোদনের অনুরোধ:"
-
-# tithi
-msgid "Please authorize me!"
-msgstr "অনুগ্রহ করে আমাকে অনুমোদন দিন!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "ঠিক আছে (_O)"
-
-# tithi
 msgid "Error retrieving profile"
 msgstr "প্রোফাইল উদ্ধারে ত্রুটি"
 
@@ -6196,6 +6210,9 @@ msgstr "ব্যবহারকারী অপসারণ করতে ব্
 msgid "Mobile message was not sent because it was too long."
 msgstr "মোবাইল বার্তাটি অনেক বড় বিধায় পাঠানো হয়নি।"
 
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "অজানা ত্রুটি সংঘটিত হওয়ায় মোবাইল বার্তা পাঠানো যায়নি।"
+
 # tithi
 #, c-format
 msgid ""
@@ -6373,28 +6390,6 @@ msgstr "উল্লেখিত ব্যবহারকারীর নাম�
 #
 #
 # Translated by sadia
-msgid "The PIN you entered is invalid."
-msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তা অকার্যকর।"
-
-# tithi
-#
-#
-# Translated by sadia
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তার দৈর্ঘ্য অকার্যকর [৪-১০]।"
-
-# Translated by sadia
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "এই PIN-টি অকার্যকর। এটা শুধুমাত্র [০-৯] পর্যন্ত সংখ্যা দ্বারা গঠিত হতে হবে।"
-
-# Translated by sadia
-msgid "The two PINs you entered do not match."
-msgstr "আপনি যে দুটি PIN প্রবেশ করিয়েছেন তা মিলছে না।"
-
-# tithi
-#
-#
-# Translated by sadia
 msgid "The Display Name you entered is invalid."
 msgstr "আপনি যে নাম প্রবেশ করেছেন তা অকার্যকর।"
 
@@ -6419,9 +6414,64 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "আপনার প্রোফাইলের তথ্য এখনও খুঁজে পাওয়া যায়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
-# snigdha
-msgid "Your UID"
-msgstr "আপনার UID"
+# Translated by sadia
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "নাম প্রদর্শন করা হবে"
+
+#. about me
+msgid "About Me"
+msgstr "আমার পরিচিতি"
+
+#. where I live
+msgid "Where I Live"
+msgstr "আমার আবাস"
+
+# Translated by sadia
+#. mobile number
+msgid "Mobile Number"
+msgstr "মোবাইল নাম্বার"
+
+#. is searchable
+msgid "Can be searched"
+msgstr "খুঁজে পাওয়া যেতে পারে"
+
+# tithi
+#. is suggestable
+msgid "Can be suggested"
+msgstr "পরামর্শিত হতে পারে"
+
+# Translated by sadia
+msgid "Update your MXit Profile"
+msgstr "আপনার MXit প্রোফাইল হালনাগাদ করুন"
+
+# tithi
+#
+#
+# Translated by sadia
+msgid "The PIN you entered is invalid."
+msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তা অকার্যকর।"
+
+# tithi
+#
+#
+# Translated by sadia
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তার দৈর্ঘ্য অকার্যকর [৪-১০]।"
+
+# Translated by sadia
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "এই PIN-টি অকার্যকর। এটা শুধুমাত্র [০-৯] পর্যন্ত সংখ্যা দ্বারা গঠিত হতে হবে।"
+
+# Translated by sadia
+msgid "The two PINs you entered do not match."
+msgstr "আপনি যে দুটি PIN প্রবেশ করিয়েছেন তা মিলছে না।"
+
+# Translated by sadia
+#. show error to user
+msgid "PIN Update Error"
+msgstr "PIN হালনাগাদকরনে ত্রুটি "
 
 # Translated by sadia
 #. pin
@@ -6430,32 +6480,16 @@ msgid "PIN"
 msgstr "PIN"
 
 # Translated by sadia
+#. verify pin
 msgid "Verify PIN"
 msgstr "PIN যাচাই করা হবে"
 
-# Translated by sadia
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "নাম প্রদর্শন করা হবে"
+#. (reference: "libpurple/request.h")
+msgid "Change PIN"
+msgstr "PIN পরিবর্তন"
 
-# Translated by sadia
-#. hidden
-msgid "Hide my number"
-msgstr "আমার নাম্বার লুকিয়ে রাখা হবে"
-
-# Translated by sadia
-#. mobile number
-msgid "Mobile Number"
-msgstr "মোবাইল নাম্বার"
-
-# Translated by sadia
-msgid "Update your Profile"
-msgstr "আপনার প্রোফাইল হালনাগাদ করুন"
-
-# Translated by sadia
-msgid "Here you can update your MXit profile"
-msgstr "এখানে আপনি আপনার MXit প্রোফাইল হালনাগাদ করতে পারেন"
+msgid "Change MXit PIN"
+msgstr "MXit PIN পরিবর্তন"
 
 # Translated by sadia
 msgid "View Splash"
@@ -6469,10 +6503,35 @@ msgstr "এই মূহুর্তে কোন স্প্ল্যাশ �
 msgid "About"
 msgstr "পরিচিতি"
 
+msgid "Search for user"
+msgstr "ব্যবহারকারী অনুসন্ধান"
+
+msgid "Search for a MXit contact"
+msgstr "MXit ব্যবহারকারী অনুসন্ধান"
+
+msgid "Type search information"
+msgstr "অনুসন্ধান তথ্য লিখুন"
+
+msgid "_Search"
+msgstr "অনুসন্ধান (_S)"
+
 # Translated by sadia
 #. display / change profile
 msgid "Change Profile..."
 msgstr "প্রোফাইল পরিবর্তন করা হবে..."
+
+# Translated by sadia
+#. change PIN
+msgid "Change PIN..."
+msgstr "PIN পরিবর্তন..."
+
+#. suggested friends
+msgid "Suggested friends..."
+msgstr "পরামর্শিত বন্ধু..."
+
+#. search for contacts
+msgid "Search for contacts..."
+msgstr "পরিচিত অনুসন্ধান..."
 
 # Translated by sadia
 #. display splash-screen
@@ -6514,9 +6573,8 @@ msgstr "সংযুক্ত করা হচ্ছে..."
 #
 #
 # Translated by sadia
-#, fuzzy
 msgid "The Display Name you entered is too short."
-msgstr "আপনি যে নাম প্রবেশ করেছেন তা অকার্যকর।"
+msgstr "আপনি যে নাম প্রবেশ করেছেন তা খুব ছোট।"
 
 # tithi
 #
@@ -6621,14 +6679,13 @@ msgstr "MXit অ্যাকাউন্টের কার্যকারীত
 msgid "Retrieving User Information..."
 msgstr "ব্যবহারকারীর তথ্য খুঁজে আনা হচ্ছে..."
 
-# Kick =  তিরস্কার
-# OR  পদাঘাত
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "MultiMX হতে আপনাকে তিরস্কার করা হয়েছে।"
-
 msgid "was kicked"
 msgstr "তিরস্কার করা হয়েছে"
+
+# Kick =  তিরস্কার
+# OR  পদাঘাত
+msgid "You have been kicked from this MultiMX."
+msgstr "MultiMX হতে আপনাকে তিরস্কার করা হয়েছে।"
 
 msgid "_Room Name:"
 msgstr "আসরের নাম (_R):"
@@ -6654,23 +6711,20 @@ msgstr "প্রত্যাখ্যান বার্তা"
 msgid "Hidden Number"
 msgstr "লুকানো সংখ্যা"
 
-#, fuzzy
 msgid "No profile available"
-msgstr "অনুপস্থিত"
+msgstr "প্রোফাইল অনুপস্থিত"
 
 # tithi
-#, fuzzy
 msgid "This contact does not have a profile."
-msgstr "এই অ্যাকাউন্টটির কোন ইমেইল সক্রিয় নেই।"
+msgstr "এই পরিচিতিটির কোন প্রোফাইল নেই।"
 
 # snigdha
 msgid "Your MXit ID..."
 msgstr "আপনার MXit ID..."
 
 #. contact is in Deleted, Rejected or None state
-#, fuzzy
 msgid "Re-Invite"
-msgstr "আমন্ত্রণ জানান"
+msgstr "পুন-আমন্ত্রণ"
 
 # Translated by sadia
 #. Configuration options
@@ -6688,6 +6742,30 @@ msgstr "স্প্ল্যাশ স্ক্রীন পপ আপ সক�
 
 msgid "Last Online"
 msgstr "শেষ যখন অনলাইনে"
+
+msgid "Invite Message"
+msgstr "আমন্ত্রণ বার্তা"
+
+msgid "No results"
+msgstr "ফলাফল নেই"
+
+msgid "No contacts found."
+msgstr "কোনো ব্যবহারকারী পাওয়া যায়নি।"
+
+#. define columns
+msgid "UserId"
+msgstr "UserId"
+
+msgid "Where I live"
+msgstr "আমার আবাস"
+
+#, c-format
+msgid "You have %i suggested friends."
+msgstr "আপনার %i জন বন্ধুর পরামর্শ আছে।"
+
+#, c-format
+msgid "We found %i contacts that match your search."
+msgstr "আপনার অনুসন্ধানের সাথে মেলে এমন %i পরিচিতি পাওয়া গেছে।"
 
 # Translated by sadia
 #. we must have lost the connection, so terminate it so that we can reconnect
@@ -7528,6 +7606,12 @@ msgstr "কোনো কারণ দর্শানো হয়নি।"
 msgid "Authorization Denied Message:"
 msgstr "অনুমোদন প্রত্যাখ্যান:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "ঠিক আছে (_O)"
+
 # Translated by sadia
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -7943,7 +8027,6 @@ msgid "Received authorization"
 msgstr "অনুমোদন গৃহীত হয়েছে"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "ব্যবহারকারীর নাম বিদ্যমান নয়"
@@ -8484,9 +8567,6 @@ msgstr "ইমেইল ঠিকানার মাধ্যমে বন্ধ
 msgid "Type the email address of the buddy you are searching for."
 msgstr "আপনি যে বন্ধুর অনুসন্ধান করছেন তার ইমেইল ঠিকানা টাইপ করুন।"
 
-msgid "_Search"
-msgstr "অনুসন্ধান (_S)"
-
 msgid "Set User Info (web)..."
 msgstr "ব্যবহারকারী তথ্য নির্ধারণ (ওয়েব)..."
 
@@ -8528,9 +8608,6 @@ msgstr "অনুমোদন অপেক্ষমান বন্ধুদে�
 # tithi
 msgid "Search for Buddy by Email Address..."
 msgstr "ইমেইল ঠিকানার মাধ্যমে বন্ধু অনুসন্ধান..."
-
-msgid "Don't use encryption"
-msgstr "এনক্রিপশন ব্যবহার করা হবে না"
 
 msgid "Use clientLogin"
 msgstr "clientLogin ব্যবহার"
@@ -8847,800 +8924,6 @@ msgstr "অদৃশ্যদের তালিকা"
 
 msgid "These buddies will always see you as offline"
 msgstr "এই বন্ধুরা আপনাকে সবসময় অফলাইন হিসেবে দেখতে পাবেন"
-
-# tithi
-msgid "Aquarius"
-msgstr "কুম্ভ রাশি"
-
-# tithi
-msgid "Pisces"
-msgstr "মীন রাশি"
-
-msgid "Aries"
-msgstr "মেষ রাশি"
-
-# tithi
-msgid "Taurus"
-msgstr "বৃষ রাশি"
-
-msgid "Gemini"
-msgstr "মিথুন রাশি"
-
-msgid "Cancer"
-msgstr "কর্কট রাশি"
-
-# tithi
-msgid "Leo"
-msgstr "সিংহ রাশি"
-
-# tithi
-msgid "Virgo"
-msgstr "কন্যা রাশি"
-
-# tithi
-msgid "Libra"
-msgstr "তুলা রাশি"
-
-msgid "Scorpio"
-msgstr "বৃশ্চিক রাশি"
-
-# tithi
-msgid "Sagittarius"
-msgstr "ধনু রাশি"
-
-# tithi
-msgid "Capricorn"
-msgstr "মকর রাশি"
-
-msgid "Rat"
-msgstr "ইঁদুর"
-
-# tithi
-msgid "Ox"
-msgstr "ষাঁড়"
-
-msgid "Tiger"
-msgstr "বাঘ"
-
-# tithi
-msgid "Rabbit"
-msgstr "খরগোশ"
-
-# tithi
-msgid "Dragon"
-msgstr "ড্রাগন"
-
-msgid "Snake"
-msgstr "সাপ"
-
-msgid "Horse"
-msgstr "ঘোড়া"
-
-# tithi
-msgid "Goat"
-msgstr "ছাগল"
-
-msgid "Monkey"
-msgstr "বানর"
-
-msgid "Rooster"
-msgstr "মোরগ"
-
-# tithi
-msgid "Dog"
-msgstr "কুকুর"
-
-msgid "Pig"
-msgstr "শূকর"
-
-msgid "Other"
-msgstr "অন্যান্য"
-
-msgid "Visible"
-msgstr "দৃশ্যমান"
-
-# tithi
-msgid "Friend Only"
-msgstr "শুধুমাত্র বন্ধু"
-
-msgid "Private"
-msgstr "ব্যক্তিগত"
-
-# tithi
-msgid "QQ Number"
-msgstr "QQ নম্বর"
-
-msgid "Country/Region"
-msgstr "দেশ/এলাকা"
-
-# tithi
-msgid "Province/State"
-msgstr "প্রদেশ/রাজ্য"
-
-# tithi
-msgid "Zipcode"
-msgstr "জিপকোড"
-
-msgid "Phone Number"
-msgstr "টেলিফোন নম্বর"
-
-msgid "Authorize adding"
-msgstr "যোগ করা অনুমোদন করা হবে"
-
-msgid "Cellphone Number"
-msgstr "মোবাইলফোন নম্বর"
-
-msgid "Personal Introduction"
-msgstr "ব্যক্তিগত পরিচিতি"
-
-msgid "City/Area"
-msgstr "শহর/এলাকা"
-
-msgid "Publish Mobile"
-msgstr "মোবাইল প্রকাশ"
-
-msgid "Publish Contact"
-msgstr "পরিচিতি প্রকাশ"
-
-msgid "College"
-msgstr "কলেজ"
-
-msgid "Horoscope"
-msgstr "রাশি চক্র"
-
-# tithi
-msgid "Zodiac"
-msgstr "যোডিয়াক"
-
-msgid "Blood"
-msgstr "রক্ত"
-
-# tithi
-msgid "True"
-msgstr "সত্য"
-
-msgid "False"
-msgstr "মিথ্যা"
-
-msgid "Modify Contact"
-msgstr "পরিচিতি পরিবর্তন"
-
-msgid "Modify Address"
-msgstr "ঠিকানা পরিবর্তন"
-
-msgid "Modify Extended Information"
-msgstr "বর্ধিত তথ্য পরিবর্তন"
-
-msgid "Modify Information"
-msgstr "তথ্য পরিবর্তন"
-
-msgid "Update"
-msgstr "হালনাগাদ"
-
-msgid "Could not change buddy information."
-msgstr "বন্ধুর তথ্য পরিবর্তন করা সম্ভব হয়নি।"
-
-msgid "Note"
-msgstr "নোট"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "বন্ধুলিপি"
-
-msgid "Change his/her memo as you like"
-msgstr "তার লিপি ইচ্ছামত পরিবর্তন করুন"
-
-msgid "_Modify"
-msgstr "পরিবর্তন (M)"
-
-msgid "Memo Modify"
-msgstr "লিপি পরিবর্তন"
-
-msgid "Server says:"
-msgstr "সার্ভার বলছে:"
-
-msgid "Your request was accepted."
-msgstr "আপনার অনুরোধটি অনুমোদন করা হয়েছে।"
-
-msgid "Your request was rejected."
-msgstr "আপনার অনুরোধটি অনুমোদন করা যায়নি।"
-
-# tithi
-#, c-format
-msgid "%u requires verification: %s"
-msgstr "%u এর সত্যতা যাচাই করা প্রয়োজন: %s"
-
-msgid "Add buddy question"
-msgstr "বন্ধুর প্রশ্ন যোগ"
-
-# tithi
-msgid "Enter answer here"
-msgstr "এখানে উত্তর লিখুন"
-
-msgid "Send"
-msgstr "প্রেরণ"
-
-msgid "Invalid answer."
-msgstr "অকার্যকর উত্তর।"
-
-msgid "Authorization denied message:"
-msgstr "অনুমোদন প্রত্যাখ্যান বার্তা:"
-
-# tithi
-msgid "Sorry, you're not my style."
-msgstr "দুঃখিত, আপনি আমার ধাঁচের নন।"
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u এর অনুমোদন প্রয়োজন"
-
-msgid "Add buddy authorize"
-msgstr "বন্ধুর অনুমোদন যোগ"
-
-# tithi
-msgid "Enter request here"
-msgstr "এখানে অনুরোধ লিখুন"
-
-msgid "Would you be my friend?"
-msgstr "আপনি কি আমার বন্ধু হবেন?"
-
-msgid "QQ Buddy"
-msgstr "QQ বন্ধু"
-
-msgid "Add buddy"
-msgstr "বন্ধু যোগ"
-
-msgid "Invalid QQ Number"
-msgstr "অকার্যকর QQ নম্বর"
-
-msgid "Failed sending authorize"
-msgstr "অনুমোদন পাঠাতে ব্যর্থ"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "%u বন্ধুকে অপসারণ করতে ব্যর্থ"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "%d এর বন্ধু তালিকা থেকে আমাকে অপসারণ করতে ব্যর্থ"
-
-msgid "No reason given"
-msgstr "কোনো কারণ দর্শানো হয়নি"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "আপনাকে %s যোগ করেছেন"
-
-msgid "Would you like to add him?"
-msgstr "আপনি কি তাকে যোগ করতে চান?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "%s দ্বারা প্রত্যাখ্যাত"
-
-#, c-format
-msgid "Message: %s"
-msgstr "বার্তা: %s"
-
-# tithi
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "দলের ID"
-
-# tithi
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "অনুগ্রহ করে Qun নম্বর দিন"
-
-# tithi
-msgid "You can only search for permanent Qun\n"
-msgstr "আপনি শুধুমাত্র স্থায়ী Qun অনুসন্ধান করতে পারেন\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(অকার্যকর UTF-8 স্ট্রিং)"
-
-# tithi
-msgid "Not member"
-msgstr "সদস্য নয়"
-
-# tithi
-msgid "Member"
-msgstr "সদস্য"
-
-msgid "Requesting"
-msgstr "অনুরোধ করা হচ্ছে"
-
-msgid "Admin"
-msgstr "প্রশাসক"
-
-# snigdha
-#. XXX: Should this be "Topic"?
-msgid "Room Title"
-msgstr "আসরের শিরোনাম"
-
-msgid "Notice"
-msgstr "বিজ্ঞপ্তি"
-
-msgid "Detail"
-msgstr "বিস্তারিত"
-
-# tithi
-msgid "Creator"
-msgstr "নির্মাতা"
-
-msgid "About me"
-msgstr "আমার সম্পর্কে"
-
-msgid "Category"
-msgstr "শ্রেণী"
-
-# tithi
-msgid "The Qun does not allow others to join"
-msgstr "Qun অন্যদের যুক্ত হতে অনুমতি দেয় না"
-
-msgid "Join QQ Qun"
-msgstr "QQ Qun এ যোগ দিন"
-
-# tithi
-msgid "Input request here"
-msgstr "এখানে অনুরোধ ইনপুট দিন"
-
-# tithi
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "%s (%u) Qun এ সফলভাবে যুক্ত হয়েছে"
-
-msgid "Successfully joined Qun"
-msgstr "Qun এ সফলভাবে যুক্ত হয়েছে"
-
-# tithi
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "%u Qunএ যুক্তকরণ প্রত্যাখ্যন করা হয়েছে"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun অপারেশন"
-
-msgid "Failed:"
-msgstr "ব্যর্থ:"
-
-# tithi
-msgid "Join Qun, Unknown Reply"
-msgstr "Qun এ যোগদান, অজানা উত্তর"
-
-msgid "Quit Qun"
-msgstr "Qun প্রস্থান"
-
-# tithi
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"নোট, আপনি যদি এটি তৈরি করে থাকেন, \n"
-"এই অপারেশনটি অবশেষে এই Qunটি অপসারণ করবে।"
-
-# tithi
-msgid "Sorry, you are not our style"
-msgstr "দুঃখিত,আপনি আমাদের ধাঁচের নন"
-
-msgid "Successfully changed Qun members"
-msgstr "Qun সদস্যদের সফলভাবে পরিবর্তন করা হয়েছে"
-
-msgid "Successfully changed Qun information"
-msgstr "Qun তথ্য সফলভাবে পরিবর্তন করা হয়েছে"
-
-# tithi
-msgid "You have successfully created a Qun"
-msgstr "আপনি সফলভাবে একটি Qun তৈরি করেছেন"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "আপনি কি এখন বিস্তারিত তথ্য দিতে চান?"
-
-msgid "Setup"
-msgstr "সেটআপ"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%1$u %3$s এর জন্য %2$u Qunএ যুক্ত হতে অনুরোধ করছে"
-
-# If the localized string is intended to swap the parameters, the
-# correct syntax is "%2$u %1$u Qun blah"
-#
-#
-#
-#
-# Translated by sadia
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u Qun %u-কে যোগ দিতে অনুরোধ করেছে"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "%u প্রশাসক দ্বারা পরিচালিত, Qun %u যুক্ত হতে ব্যর্থ"
-
-# tithi
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>%3$s এর জন্য %2$u প্রশাসক %1$u Qunএ যুক্ত হওয়ার অনুমোদন দিয়েছে</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>%u বন্ধুকে অপসারণ করা হয়েছে।</b>"
-
-# tithi
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>নতুন বন্ধু %u যোগদান করেছে।</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "অজানা-%d"
-
-msgid "Level"
-msgstr "স্তর"
-
-# tithi
-msgid " VIP"
-msgstr " VIP"
-
-# tithi
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr "ভিডিও"
-
-msgid " Zone"
-msgstr "এলাকা"
-
-# tithi
-msgid "Flag"
-msgstr "পতাকা"
-
-# tithi
-msgid "Ver"
-msgstr "Ver"
-
-msgid "Invalid name"
-msgstr "অকার্যকর নাম"
-
-msgid "Select icon..."
-msgstr "আইকন নির্বাচন..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>লগইন সময়</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>মোট অনলাইন বন্ধু</b>: %d<br>\n"
-
-# fix me tithi
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>সর্বশেষ রিফ্রেশ</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>সার্ভার</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>ক্লায়েন্ট ট্যাগ</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>সংযোগ মোড</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>আমার ইন্টারনেট IP</b>: %1$s:%2$d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>প্রেরিত</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>পুনরায় প্রেরণ</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>হারিয়েছে</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>গৃহীত</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>অবিকল গৃহীত</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>সময়</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "লগইন তথ্য"
-
-# tithi
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>মূল লেখক</b>:<br>\n"
-
-# tithi
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>কোডিং-এ অংশগ্রহণকারীগণ</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>প্রিয় প্যাচ লেখকগণ </b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>কৃতজ্ঞতা</b>:<br>\n"
-
-# tithi
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>পারদর্শী পরীক্ষকগন</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "এবং আরও, অনুগ্রহ করে আমাকে জানান... ধন্যবাদ!))"
-
-# fix me tithi
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>এবং, সমস্ত পেছনের কামরার ছেলেরা...</i><br>\n"
-
-# tithi
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>আমাদের সাথে উন্মুক্তভাবে যোগদান করুন!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "%s OpenQ সম্পর্কে"
-
-msgid "Change Icon"
-msgstr "আইকন পরিবর্তন"
-
-msgid "Change Password"
-msgstr "পাসওয়ার্ড পরিবর্তন"
-
-msgid "Account Information"
-msgstr "অ্যাকাউন্ট তথ্য"
-
-# tithi
-msgid "Update all QQ Quns"
-msgstr "সব QQ Quns হালনাগাদ"
-
-msgid "About OpenQ"
-msgstr "OpenQ সম্পর্কে"
-
-msgid "Modify Buddy Memo"
-msgstr "বন্ধুলিপি পরিবর্তন"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "QQ প্রোটোকল প্লাগইন"
-
-msgid "Auto"
-msgstr "স্বয়ংক্রিয়"
-
-msgid "Select Server"
-msgstr "সার্ভার নির্বাচন"
-
-# tithi
-msgid "QQ2008"
-msgstr "QQ2008"
-
-# tithi
-msgid "QQ2007"
-msgstr "QQ2007"
-
-# tithi
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "Connect by TCP"
-msgstr "TCP দ্বারা সংযোগ করা হবে"
-
-msgid "Show server notice"
-msgstr "সার্ভারের নোটিশ প্রদর্শন করা হবে"
-
-msgid "Show server news"
-msgstr "সার্ভারের খবর প্রদর্শন করা হবে"
-
-msgid "Show chat room when msg comes"
-msgstr "বার্তা আসলে আড্ডার আসর প্রদর্শিত হবে "
-
-msgid "Use default font"
-msgstr "পূর্বনির্ধারিত ফন্টের ব্যবহার"
-
-# fix me tithi
-msgid "Keep alive interval (seconds)"
-msgstr "সক্রিয় রাখার সময়ের ব্যবধান (সেকেন্ড)"
-
-# tithi
-msgid "Update interval (seconds)"
-msgstr "হালনাগাদের সময়ের ব্যবধান (সেকেন্ড)"
-
-# fix me tithi
-msgid "Unable to decrypt server reply"
-msgstr "সার্ভারের উত্তর ডিক্রিপ্ট করা যাচ্ছে না"
-
-# tithi
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "টোকেন চাইতে ব্যর্থ, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "অকার্যকর টোকেন দৈর্ঘ্য, %d"
-
-# Fix me tithi
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "RedirectEX বর্তমানে সমর্থিত নয় (_E)"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "সক্রিয়করণ আবশ্যক"
-
-# tithi
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "লগইন করার সময় অজানা উত্তর কোড (0x%02X)"
-
-# tithi
-msgid "Requesting captcha"
-msgstr "ক্যাপচা অনুরোধ করা হচ্ছে"
-
-# tithi
-msgid "Checking captcha"
-msgstr "ক্যাপচা পরীক্ষা করা হচ্ছে"
-
-# tithi
-msgid "Failed captcha verification"
-msgstr "ক্যাপচা যাচাইকরণ ব্যর্থ হয়েছে"
-
-# fix me tithi
-msgid "Captcha Image"
-msgstr "ক্যাপচা চিত্র"
-
-msgid "Enter code"
-msgstr "কোড দিন"
-
-# tithi
-msgid "QQ Captcha Verification"
-msgstr "QQ ক্যাপচা যাচাইকরণ"
-
-msgid "Enter the text from the image"
-msgstr "চিত্রে যে টেক্সটটি আছে তা লিখুন"
-
-# tithi
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "পাসওয়ার্ড পরীক্ষা করার সময় অজানা উত্তর (0x%02X)"
-
-# tithi
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"লগইন করার সময় অজানা উত্তর কোড (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "সকেট ত্রুটি"
-
-msgid "Getting server"
-msgstr "সার্ভার খোঁজা হচ্ছে"
-
-msgid "Requesting token"
-msgstr "টোকেন অনুরোধ করা হচ্ছে"
-
-msgid "Unable to resolve hostname"
-msgstr "হোস্টের নাম নিরূপণ করতে ব্যর্থ"
-
-msgid "Invalid server or port"
-msgstr "অকার্যকর সার্ভার বা পোর্ট"
-
-# tithi
-msgid "Connecting to server"
-msgstr "সার্ভারে সংযুক্ত করা হচ্ছে"
-
-msgid "QQ Error"
-msgstr "QQ ত্রুটি"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"সার্ভারের খবর:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "%s থেকে:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"%1$s থেকে সার্ভার সংক্রান্ত বিজ্ঞপ্তি:\n"
-"%2$s"
-
-# tithi
-msgid "Unknown SERVER CMD"
-msgstr "অজানা SERVER CMD"
-
-# tithi
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"%1$s এর ত্রুটিপূর্ণ উত্তর (0x%2$02X)\n"
-"আসর %3$u, উত্তর 0x%4$02X"
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun কমান্ড"
-
-# tithi
-msgid "Unable to decrypt login reply"
-msgstr "লগইন উত্তর ডিক্রিপ্ট করা সম্ভব হয়নি"
-
-# fix me tithi
-msgid "Unknown LOGIN CMD"
-msgstr "অজানা LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "অজানা CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%1$d %2$s ফাইলটি প্রত্যাখ্যান করেছে"
-
-msgid "File Send"
-msgstr "ফাইল প্রেরণ"
-
-# Translated by sadia
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d %s-এর স্থানান্তর বাতিল করেছে "
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -10533,6 +9816,9 @@ msgstr "সংগঠন"
 msgid "Unit"
 msgstr "বিভাগ"
 
+msgid "Note"
+msgstr "নোট"
+
 msgid "Join Chat"
 msgstr "আড্ডায় যোগ দিন"
 
@@ -11259,6 +10545,9 @@ msgstr "অজানা সার্ভার উত্তর"
 msgid "Unable to create listen socket"
 msgstr "লিসেন সকেট তৈরি করতে ব্যর্থ"
 
+msgid "Unable to resolve hostname"
+msgstr "হোস্টের নাম নিরূপণ করতে ব্যর্থ"
+
 # tihi
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP এর ব্যবহারকারী নামগুলোতে হোয়াইটস্পেস অথবা @ চিহ্ন থাকতে পারবে না"
@@ -11381,6 +10670,9 @@ msgstr "আপনার ইয়াহু! বার্তাটি পৌঁ�
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "%s-এর জন্য ইয়াহু! সিস্টেম বার্তা:"
+
+msgid "Authorization denied message:"
+msgstr "অনুমোদন প্রত্যাখ্যান বার্তা:"
 
 # tithi
 #, c-format
@@ -12215,14 +11507,17 @@ msgstr "গ্লোবাল প্রক্সি সেটিং ব্যব
 msgid "No Proxy"
 msgstr "প্রক্সি নেই"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr "Tor/Privacy (SOCKS5)"
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "এনভায়রনমেন্টাল সেটিং ব্যবহার করা হবে"
@@ -12250,6 +11545,13 @@ msgstr "পোর্ট (_P):"
 
 msgid "Pa_ssword:"
 msgstr "পাসওয়ার্ড (_s):"
+
+# tithi
+msgid "Use _silence suppression"
+msgstr "সাইলেন্স সাপ্রেশন ব্যবহার (_s)"
+
+msgid "_Voice and Video"
+msgstr "ভয়েস এবং ভিডিও (_V)"
 
 msgid "Unable to save new account"
 msgstr "নতুন অ্যাকাউন্ট সংরক্ষণে ব্যর্থ"
@@ -12301,8 +11603,19 @@ msgstr ""
 "নিয়ন্ত্রন\" উইন্ডো থেকে নতুন অ্যাকাউন্ট যোগ, সম্পাদনা বা অপসারণ করতে পারেন।"
 
 #, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+"<a href=\"viewinfo\">%s</a>%s%s%s তার বন্ধু তালিকায় (%s) কে যোগ করতে চায় %s%s "
+"এই বন্ধু তালিকায়"
+
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s তার বন্ধু তালিকায় (%s) কে যোগ করতে চায় %s%s এই বন্ধু তালিকায়"
+
+msgid "Send Instant Message"
+msgstr "তাৎক্ষণিক বার্তা প্রেরণ"
 
 #. Buddy List
 msgid "Background Color"
@@ -12867,6 +12180,9 @@ msgstr "বন্ধুর নাম (_u):"
 
 msgid "(Optional) A_lias:"
 msgstr "ডাকনাম (ঐচ্ছিক) (_l):"
+
+msgid "(Optional) _Invite message:"
+msgstr "(ঐচ্ছিক) আমন্ত্রণ বার্তা (_I):"
 
 msgid "Add buddy to _group:"
 msgstr "বন্ধুকে দলে যোগ করুন (_g):"
@@ -14422,6 +13738,13 @@ msgid "New Pounces"
 msgstr "নতুন পাউন্স"
 
 # context?
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "বাতিল"
 
@@ -15621,6 +14944,9 @@ msgstr "PubSub সংগ্রহ"
 msgid "PubSub Leaf"
 msgstr "PubSub লিফ"
 
+msgid "Other"
+msgstr "অন্যান্য"
+
 msgid ""
 "\n"
 "<b>Description:</b> "
@@ -16524,6 +15850,23 @@ msgstr "প্লাগইন (_l)"
 msgid "D_evice"
 msgstr "ডিভাইস (_e)"
 
+msgid "DROP"
+msgstr "DROP"
+
+msgid "Volume:"
+msgstr "ভলিউম:"
+
+# tithi
+msgid "Silence threshold:"
+msgstr "সাইলেন্স থ্রেসহোল্ড:"
+
+msgid "Input and Output Settings"
+msgstr "ইনপুট এবং আউটপুট সেটিংসমূহ"
+
+# tithi
+msgid "Microphone Test"
+msgstr "মাইক্রোফোন পরীক্ষা"
+
 # Translated by sadia
 #. *< magic
 #. *< major version
@@ -16536,10 +15879,6 @@ msgstr "ডিভাইস (_e)"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "ভয়েস/ভিডিও সেটিংসমূহ  "
-
-# Translated by sadia
-msgid "Voice and Video Settings"
-msgstr "ভয়েস এবং ভিডিও সেটিং"
 
 # Translated by sadia
 #. *< name
@@ -16840,6 +16179,746 @@ msgstr "পিজিনের ওয়েব পেজ দেখুন"
 msgid "You do not have permission to uninstall this application."
 msgstr "আপনার এই অ্যাপ্লিকেশনটি আনইন্সটল করার অনুমতি নেই।"
 
+# tithi
+#~ msgid "Authorization Request Message:"
+#~ msgstr "অনুমোদনের অনুরোধ:"
+
+# tithi
+#~ msgid "Please authorize me!"
+#~ msgstr "অনুগ্রহ করে আমাকে অনুমোদন দিন!"
+
+# snigdha
+#~ msgid "Your UID"
+#~ msgstr "আপনার UID"
+
+# Translated by sadia
+#~ msgid "Hide my number"
+#~ msgstr "আমার নাম্বার লুকিয়ে রাখা হবে"
+
+# Translated by sadia
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "এখানে আপনি আপনার MXit প্রোফাইল হালনাগাদ করতে পারেন"
+
+# tithi
+#~ msgid "Aquarius"
+#~ msgstr "কুম্ভ রাশি"
+
+# tithi
+#~ msgid "Pisces"
+#~ msgstr "মীন রাশি"
+
+#~ msgid "Aries"
+#~ msgstr "মেষ রাশি"
+
+# tithi
+#~ msgid "Taurus"
+#~ msgstr "বৃষ রাশি"
+
+#~ msgid "Gemini"
+#~ msgstr "মিথুন রাশি"
+
+#~ msgid "Cancer"
+#~ msgstr "কর্কট রাশি"
+
+# tithi
+#~ msgid "Leo"
+#~ msgstr "সিংহ রাশি"
+
+# tithi
+#~ msgid "Virgo"
+#~ msgstr "কন্যা রাশি"
+
+# tithi
+#~ msgid "Libra"
+#~ msgstr "তুলা রাশি"
+
+#~ msgid "Scorpio"
+#~ msgstr "বৃশ্চিক রাশি"
+
+# tithi
+#~ msgid "Sagittarius"
+#~ msgstr "ধনু রাশি"
+
+# tithi
+#~ msgid "Capricorn"
+#~ msgstr "মকর রাশি"
+
+#~ msgid "Rat"
+#~ msgstr "ইঁদুর"
+
+# tithi
+#~ msgid "Ox"
+#~ msgstr "ষাঁড়"
+
+#~ msgid "Tiger"
+#~ msgstr "বাঘ"
+
+# tithi
+#~ msgid "Rabbit"
+#~ msgstr "খরগোশ"
+
+# tithi
+#~ msgid "Dragon"
+#~ msgstr "ড্রাগন"
+
+#~ msgid "Snake"
+#~ msgstr "সাপ"
+
+#~ msgid "Horse"
+#~ msgstr "ঘোড়া"
+
+# tithi
+#~ msgid "Goat"
+#~ msgstr "ছাগল"
+
+#~ msgid "Monkey"
+#~ msgstr "বানর"
+
+#~ msgid "Rooster"
+#~ msgstr "মোরগ"
+
+# tithi
+#~ msgid "Dog"
+#~ msgstr "কুকুর"
+
+#~ msgid "Pig"
+#~ msgstr "শূকর"
+
+#~ msgid "Visible"
+#~ msgstr "দৃশ্যমান"
+
+# tithi
+#~ msgid "Friend Only"
+#~ msgstr "শুধুমাত্র বন্ধু"
+
+#~ msgid "Private"
+#~ msgstr "ব্যক্তিগত"
+
+# tithi
+#~ msgid "QQ Number"
+#~ msgstr "QQ নম্বর"
+
+#~ msgid "Country/Region"
+#~ msgstr "দেশ/এলাকা"
+
+# tithi
+#~ msgid "Province/State"
+#~ msgstr "প্রদেশ/রাজ্য"
+
+# tithi
+#~ msgid "Zipcode"
+#~ msgstr "জিপকোড"
+
+#~ msgid "Phone Number"
+#~ msgstr "টেলিফোন নম্বর"
+
+#~ msgid "Authorize adding"
+#~ msgstr "যোগ করা অনুমোদন করা হবে"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "মোবাইলফোন নম্বর"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "ব্যক্তিগত পরিচিতি"
+
+#~ msgid "City/Area"
+#~ msgstr "শহর/এলাকা"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "মোবাইল প্রকাশ"
+
+#~ msgid "Publish Contact"
+#~ msgstr "পরিচিতি প্রকাশ"
+
+#~ msgid "College"
+#~ msgstr "কলেজ"
+
+#~ msgid "Horoscope"
+#~ msgstr "রাশি চক্র"
+
+# tithi
+#~ msgid "Zodiac"
+#~ msgstr "যোডিয়াক"
+
+#~ msgid "Blood"
+#~ msgstr "রক্ত"
+
+# tithi
+#~ msgid "True"
+#~ msgstr "সত্য"
+
+#~ msgid "False"
+#~ msgstr "মিথ্যা"
+
+#~ msgid "Modify Contact"
+#~ msgstr "পরিচিতি পরিবর্তন"
+
+#~ msgid "Modify Address"
+#~ msgstr "ঠিকানা পরিবর্তন"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "বর্ধিত তথ্য পরিবর্তন"
+
+#~ msgid "Modify Information"
+#~ msgstr "তথ্য পরিবর্তন"
+
+#~ msgid "Update"
+#~ msgstr "হালনাগাদ"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "বন্ধুর তথ্য পরিবর্তন করা সম্ভব হয়নি।"
+
+#~ msgid "Buddy Memo"
+#~ msgstr "বন্ধুলিপি"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "তার লিপি ইচ্ছামত পরিবর্তন করুন"
+
+#~ msgid "_Modify"
+#~ msgstr "পরিবর্তন (M)"
+
+#~ msgid "Memo Modify"
+#~ msgstr "লিপি পরিবর্তন"
+
+#~ msgid "Server says:"
+#~ msgstr "সার্ভার বলছে:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "আপনার অনুরোধটি অনুমোদন করা হয়েছে।"
+
+#~ msgid "Your request was rejected."
+#~ msgstr "আপনার অনুরোধটি অনুমোদন করা যায়নি।"
+
+# tithi
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u এর সত্যতা যাচাই করা প্রয়োজন: %s"
+
+#~ msgid "Add buddy question"
+#~ msgstr "বন্ধুর প্রশ্ন যোগ"
+
+# tithi
+#~ msgid "Enter answer here"
+#~ msgstr "এখানে উত্তর লিখুন"
+
+#~ msgid "Send"
+#~ msgstr "প্রেরণ"
+
+#~ msgid "Invalid answer."
+#~ msgstr "অকার্যকর উত্তর।"
+
+# tithi
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "দুঃখিত, আপনি আমার ধাঁচের নন।"
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u এর অনুমোদন প্রয়োজন"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "বন্ধুর অনুমোদন যোগ"
+
+# tithi
+#~ msgid "Enter request here"
+#~ msgstr "এখানে অনুরোধ লিখুন"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "আপনি কি আমার বন্ধু হবেন?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ বন্ধু"
+
+#~ msgid "Add buddy"
+#~ msgstr "বন্ধু যোগ"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "অকার্যকর QQ নম্বর"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "অনুমোদন পাঠাতে ব্যর্থ"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "%u বন্ধুকে অপসারণ করতে ব্যর্থ"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "%d এর বন্ধু তালিকা থেকে আমাকে অপসারণ করতে ব্যর্থ"
+
+#~ msgid "No reason given"
+#~ msgstr "কোনো কারণ দর্শানো হয়নি"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "আপনাকে %s যোগ করেছেন"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "আপনি কি তাকে যোগ করতে চান?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "%s দ্বারা প্রত্যাখ্যাত"
+
+#~ msgid "Message: %s"
+#~ msgstr "বার্তা: %s"
+
+# tithi
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "দলের ID"
+
+# tithi
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "অনুগ্রহ করে Qun নম্বর দিন"
+
+# tithi
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "আপনি শুধুমাত্র স্থায়ী Qun অনুসন্ধান করতে পারেন\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(অকার্যকর UTF-8 স্ট্রিং)"
+
+# tithi
+#~ msgid "Not member"
+#~ msgstr "সদস্য নয়"
+
+# tithi
+#~ msgid "Member"
+#~ msgstr "সদস্য"
+
+#~ msgid "Requesting"
+#~ msgstr "অনুরোধ করা হচ্ছে"
+
+#~ msgid "Admin"
+#~ msgstr "প্রশাসক"
+
+# snigdha
+#~ msgid "Room Title"
+#~ msgstr "আসরের শিরোনাম"
+
+#~ msgid "Notice"
+#~ msgstr "বিজ্ঞপ্তি"
+
+#~ msgid "Detail"
+#~ msgstr "বিস্তারিত"
+
+# tithi
+#~ msgid "Creator"
+#~ msgstr "নির্মাতা"
+
+#~ msgid "Category"
+#~ msgstr "শ্রেণী"
+
+# tithi
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun অন্যদের যুক্ত হতে অনুমতি দেয় না"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "QQ Qun এ যোগ দিন"
+
+# tithi
+#~ msgid "Input request here"
+#~ msgstr "এখানে অনুরোধ ইনপুট দিন"
+
+# tithi
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "%s (%u) Qun এ সফলভাবে যুক্ত হয়েছে"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Qun এ সফলভাবে যুক্ত হয়েছে"
+
+# tithi
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "%u Qunএ যুক্তকরণ প্রত্যাখ্যন করা হয়েছে"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun অপারেশন"
+
+#~ msgid "Failed:"
+#~ msgstr "ব্যর্থ:"
+
+# tithi
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Qun এ যোগদান, অজানা উত্তর"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Qun প্রস্থান"
+
+# tithi
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "নোট, আপনি যদি এটি তৈরি করে থাকেন, \n"
+#~ "এই অপারেশনটি অবশেষে এই Qunটি অপসারণ করবে।"
+
+# tithi
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "দুঃখিত,আপনি আমাদের ধাঁচের নন"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Qun সদস্যদের সফলভাবে পরিবর্তন করা হয়েছে"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Qun তথ্য সফলভাবে পরিবর্তন করা হয়েছে"
+
+# tithi
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "আপনি সফলভাবে একটি Qun তৈরি করেছেন"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "আপনি কি এখন বিস্তারিত তথ্য দিতে চান?"
+
+#~ msgid "Setup"
+#~ msgstr "সেটআপ"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%1$u %3$s এর জন্য %2$u Qunএ যুক্ত হতে অনুরোধ করছে"
+
+# If the localized string is intended to swap the parameters, the
+# correct syntax is "%2$u %1$u Qun blah"
+#
+#
+#
+#
+# Translated by sadia
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u Qun %u-কে যোগ দিতে অনুরোধ করেছে"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "%u প্রশাসক দ্বারা পরিচালিত, Qun %u যুক্ত হতে ব্যর্থ"
+
+# tithi
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>%3$s এর জন্য %2$u প্রশাসক %1$u Qunএ যুক্ত হওয়ার অনুমোদন দিয়েছে</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>%u বন্ধুকে অপসারণ করা হয়েছে।</b>"
+
+# tithi
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>নতুন বন্ধু %u যোগদান করেছে।</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "অজানা-%d"
+
+#~ msgid "Level"
+#~ msgstr "স্তর"
+
+# tithi
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+# tithi
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr "ভিডিও"
+
+#~ msgid " Zone"
+#~ msgstr "এলাকা"
+
+# tithi
+#~ msgid "Flag"
+#~ msgstr "পতাকা"
+
+# tithi
+#~ msgid "Ver"
+#~ msgstr "Ver"
+
+#~ msgid "Invalid name"
+#~ msgstr "অকার্যকর নাম"
+
+#~ msgid "Select icon..."
+#~ msgstr "আইকন নির্বাচন..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>লগইন সময়</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>মোট অনলাইন বন্ধু</b>: %d<br>\n"
+
+# fix me tithi
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>সর্বশেষ রিফ্রেশ</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>সার্ভার</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>ক্লায়েন্ট ট্যাগ</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>সংযোগ মোড</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>আমার ইন্টারনেট IP</b>: %1$s:%2$d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>প্রেরিত</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>পুনরায় প্রেরণ</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>হারিয়েছে</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>গৃহীত</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>অবিকল গৃহীত</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>সময়</b>: %1$d-%2$d-%3$d, %4$d:%5$d:%6$d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "Login Information"
+#~ msgstr "লগইন তথ্য"
+
+# tithi
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>মূল লেখক</b>:<br>\n"
+
+# tithi
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>কোডিং-এ অংশগ্রহণকারীগণ</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>প্রিয় প্যাচ লেখকগণ </b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>কৃতজ্ঞতা</b>:<br>\n"
+
+# tithi
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>পারদর্শী পরীক্ষকগন</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "এবং আরও, অনুগ্রহ করে আমাকে জানান... ধন্যবাদ!))"
+
+# fix me tithi
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>এবং, সমস্ত পেছনের কামরার ছেলেরা...</i><br>\n"
+
+# tithi
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>আমাদের সাথে উন্মুক্তভাবে যোগদান করুন!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "%s OpenQ সম্পর্কে"
+
+#~ msgid "Change Password"
+#~ msgstr "পাসওয়ার্ড পরিবর্তন"
+
+#~ msgid "Account Information"
+#~ msgstr "অ্যাকাউন্ট তথ্য"
+
+# tithi
+#~ msgid "Update all QQ Quns"
+#~ msgstr "সব QQ Quns হালনাগাদ"
+
+#~ msgid "About OpenQ"
+#~ msgstr "OpenQ সম্পর্কে"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "বন্ধুলিপি পরিবর্তন"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ প্রোটোকল প্লাগইন"
+
+#~ msgid "Auto"
+#~ msgstr "স্বয়ংক্রিয়"
+
+#~ msgid "Select Server"
+#~ msgstr "সার্ভার নির্বাচন"
+
+# tithi
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+# tithi
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+# tithi
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "TCP দ্বারা সংযোগ করা হবে"
+
+#~ msgid "Show server notice"
+#~ msgstr "সার্ভারের নোটিশ প্রদর্শন করা হবে"
+
+#~ msgid "Show server news"
+#~ msgstr "সার্ভারের খবর প্রদর্শন করা হবে"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "বার্তা আসলে আড্ডার আসর প্রদর্শিত হবে "
+
+#~ msgid "Use default font"
+#~ msgstr "পূর্বনির্ধারিত ফন্টের ব্যবহার"
+
+# fix me tithi
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "সক্রিয় রাখার সময়ের ব্যবধান (সেকেন্ড)"
+
+# tithi
+#~ msgid "Update interval (seconds)"
+#~ msgstr "হালনাগাদের সময়ের ব্যবধান (সেকেন্ড)"
+
+# fix me tithi
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "সার্ভারের উত্তর ডিক্রিপ্ট করা যাচ্ছে না"
+
+# tithi
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "টোকেন চাইতে ব্যর্থ, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "অকার্যকর টোকেন দৈর্ঘ্য, %d"
+
+# Fix me tithi
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "RedirectEX বর্তমানে সমর্থিত নয় (_E)"
+
+#~ msgid "Activation required"
+#~ msgstr "সক্রিয়করণ আবশ্যক"
+
+# tithi
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "লগইন করার সময় অজানা উত্তর কোড (0x%02X)"
+
+# tithi
+#~ msgid "Requesting captcha"
+#~ msgstr "ক্যাপচা অনুরোধ করা হচ্ছে"
+
+# tithi
+#~ msgid "Checking captcha"
+#~ msgstr "ক্যাপচা পরীক্ষা করা হচ্ছে"
+
+# tithi
+#~ msgid "Failed captcha verification"
+#~ msgstr "ক্যাপচা যাচাইকরণ ব্যর্থ হয়েছে"
+
+# fix me tithi
+#~ msgid "Captcha Image"
+#~ msgstr "ক্যাপচা চিত্র"
+
+#~ msgid "Enter code"
+#~ msgstr "কোড দিন"
+
+# tithi
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "QQ ক্যাপচা যাচাইকরণ"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "চিত্রে যে টেক্সটটি আছে তা লিখুন"
+
+# tithi
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "পাসওয়ার্ড পরীক্ষা করার সময় অজানা উত্তর (0x%02X)"
+
+# tithi
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "লগইন করার সময় অজানা উত্তর কোড (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "সকেট ত্রুটি"
+
+#~ msgid "Getting server"
+#~ msgstr "সার্ভার খোঁজা হচ্ছে"
+
+#~ msgid "Requesting token"
+#~ msgstr "টোকেন অনুরোধ করা হচ্ছে"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "অকার্যকর সার্ভার বা পোর্ট"
+
+# tithi
+#~ msgid "Connecting to server"
+#~ msgstr "সার্ভারে সংযুক্ত করা হচ্ছে"
+
+#~ msgid "QQ Error"
+#~ msgstr "QQ ত্রুটি"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "সার্ভারের খবর:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "%s থেকে:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "%1$s থেকে সার্ভার সংক্রান্ত বিজ্ঞপ্তি:\n"
+#~ "%2$s"
+
+# tithi
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "অজানা SERVER CMD"
+
+# tithi
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "%1$s এর ত্রুটিপূর্ণ উত্তর (0x%2$02X)\n"
+#~ "আসর %3$u, উত্তর 0x%4$02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun কমান্ড"
+
+# tithi
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "লগইন উত্তর ডিক্রিপ্ট করা সম্ভব হয়নি"
+
+# fix me tithi
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "অজানা LOGIN CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "অজানা CLIENT CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%1$d %2$s ফাইলটি প্রত্যাখ্যান করেছে"
+
+#~ msgid "File Send"
+#~ msgstr "ফাইল প্রেরণ"
+
+# Translated by sadia
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d %s-এর স্থানান্তর বাতিল করেছে "
+
+# Translated by sadia
+#~ msgid "Voice and Video Settings"
+#~ msgstr "ভয়েস এবং ভিডিও সেটিং"
+
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "বন্ধু তালিকার বহির্ভূত ব্যবহারকারী থেকে স্বয়ংক্রিয় ভাবে বাতিল করা হবে"
 
@@ -16949,10 +17028,6 @@ msgstr "আপনার এই অ্যাপ্লিকেশনটি আন
 # Translated by sadia
 #~ msgid "How do you feel right now?"
 #~ msgstr "এই মূহুর্তে আপনি কেমন বোধ করছেন?"
-
-# Translated by sadia
-#~ msgid "Change Mood..."
-#~ msgstr "মেজাজ পরিবর্তন করা হবে..."
 
 # page orientation
 #~ msgid "Orientation"
@@ -17153,9 +17228,6 @@ msgstr "আপনার এই অ্যাপ্লিকেশনটি আন
 
 #~ msgid "Auto-away"
 #~ msgstr "স্বয়ংক্রিয়ভাবে অন্যত্র"
-
-#~ msgid "Change _status to:"
-#~ msgstr "অবস্থা পরিবর্তন (_s):"
 
 # tithi
 #, fuzzy

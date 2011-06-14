@@ -460,11 +460,24 @@ des_uninit(PurpleCipherContext *context) {
 }
 
 static PurpleCipherOps DESOps = {
-	.init = des_init,
-	.uninit = des_uninit,
-	.encrypt = des_encrypt,
-	.decrypt = des_decrypt,
-	.set_key = des_set_key,
+	NULL,              /* Set option */
+	NULL,              /* Get option */
+	des_init,          /* init */
+ 	NULL,              /* reset */
+	des_uninit,        /* uninit */
+	NULL,              /* set iv */
+	NULL,              /* append */
+	NULL,              /* digest */
+	des_encrypt,       /* encrypt */
+	des_decrypt,       /* decrypt */
+	NULL,              /* set salt */
+	NULL,              /* get salt size */
+	des_set_key,       /* set key */
+	NULL,              /* get key size */
+	NULL,              /* set batch mode */
+	NULL,              /* get batch mode */
+	NULL,              /* get block size */
+	NULL               /* set key with len */
 };
 
 /******************************************************************************
@@ -798,14 +811,24 @@ des3_uninit(PurpleCipherContext *context)
 }
 
 static PurpleCipherOps DES3Ops = {
-	.init = des3_init,
-	.uninit = des3_uninit,
-	.set_iv = des3_set_iv,
-	.encrypt = des3_encrypt,
-	.decrypt = des3_decrypt,
-	.set_key = des3_set_key,
-	.set_batch_mode = des3_set_batch,
-	.get_batch_mode = des3_get_batch,
+	NULL,              /* Set option */
+	NULL,              /* Get option */
+	des3_init,         /* init */
+	NULL,              /* reset */
+	des3_uninit,       /* uninit */
+	des3_set_iv,       /* set iv */
+	NULL,              /* append */
+	NULL,              /* digest */
+	des3_encrypt,      /* encrypt */
+	des3_decrypt,      /* decrypt */
+	NULL,              /* set salt */
+	NULL,              /* get salt size */
+	des3_set_key,      /* set key */
+	NULL,              /* get key size */
+	des3_set_batch,    /* set batch mode */
+	des3_get_batch,    /* get batch mode */
+	NULL,              /* get block size */
+	NULL               /* set key with len */
 };
 
 /******************************************************************************

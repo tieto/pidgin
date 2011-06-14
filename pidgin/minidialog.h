@@ -139,6 +139,23 @@ void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialog,
 void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
 	const char *description);
 
+/** Enable GMarkup elements in the mini-dialog's description.
+ *  @param mini_dialog a mini-dialog
+ */
+void pidgin_mini_dialog_enable_description_markup(PidginMiniDialog *mini_dialog);
+
+/** Mini-dialogs support hyperlinks in their description
+ *  (you should first call pidgin_mini_dialog_enable_description_markup() on a given
+ *  dialog to enable them). */
+gboolean pidgin_mini_dialog_links_supported(void);
+
+/** Sets a callback which gets invoked when a hyperlink in the dialog's description is clicked on.
+ *  @param mini_dialog a mini-dialog
+ *  @param cb the callback to invoke
+ *  @param user_data the user data to pass to the callback
+ */
+void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallback cb, gpointer user_data);
+
 /** Shortcut for setting a mini-dialog's icon via GObject properties.
  *  @param mini_dialog a mini-dialog
  *  @param icon_name   the Gtk stock ID of an icon, or @c NULL for no icon.
@@ -148,7 +165,7 @@ void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 
 /** Shortcut for setting a mini-dialog's custom icon via GObject properties.
  *  @param mini_dialog a mini-dialog
- *  @param icon_name   the pixbuf to use as a custom icon
+ *  @param custom_icon the pixbuf to use as a custom icon
  */
 void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
 	GdkPixbuf *custom_icon);
@@ -163,6 +180,13 @@ void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
  *                     called.
  */
 void pidgin_mini_dialog_add_button(PidginMiniDialog *mini_dialog,
+	const char *text, PidginMiniDialogCallback clicked_cb,
+	gpointer user_data);
+
+/** Equivalent to pidgin_mini_dialog_add_button(), the only difference
+ *  is that the mini-dialog won't be closed after the button is clicked.
+ */
+void pidgin_mini_dialog_add_non_closing_button(PidginMiniDialog *mini_dialog,
 	const char *text, PidginMiniDialogCallback clicked_cb,
 	gpointer user_data);
 

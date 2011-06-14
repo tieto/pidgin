@@ -254,14 +254,24 @@ sha256_digest(PurpleCipherContext *context, size_t in_len, guchar digest[32],
 }
 
 static PurpleCipherOps SHA256Ops = {
-	.set_option = sha256_set_opt,
-	.get_option = sha256_get_opt,
-	.init = sha256_init,
-	.reset = sha256_reset,
-	.uninit = sha256_uninit,
-	.append = sha256_append,
-	.digest = sha256_digest,
-	.get_block_size = sha256_get_block_size,
+	sha256_set_opt,			/* Set Option		*/
+	sha256_get_opt,			/* Get Option		*/
+	sha256_init,	/* init				*/
+	sha256_reset,	/* reset			*/
+	sha256_uninit,	/* uninit			*/
+	NULL,			/* set iv			*/
+	sha256_append,	/* append			*/
+	sha256_digest,	/* digest			*/
+	NULL,			/* encrypt			*/
+	NULL,			/* decrypt			*/
+	NULL,			/* set salt			*/
+	NULL,			/* get salt size	*/
+	NULL,			/* set key			*/
+	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
+	sha256_get_block_size,	/* get block size */
+	NULL			/* set key with len */
 };
 
 PurpleCipherOps *

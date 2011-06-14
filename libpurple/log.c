@@ -1157,6 +1157,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			g_dir_close(username_dir);
 		}
 		g_free(protocol_path);
+		g_list_free(accounts);
 		g_dir_close(protocol_dir);
 	}
 	g_free(log_path);

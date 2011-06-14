@@ -373,23 +373,21 @@ debug_command_cb(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
-static void clear_conversation_scrollback(PurpleConversation *conv)
+static void clear_conversation_scrollback_cb(PurpleConversation *conv,
+                                             void *data)
 {
 	PidginConversation *gtkconv = NULL;
-	GList *iter;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-	for (iter = gtkconv->convs; iter; iter = iter->next)
-		purple_conversation_clear_message_history(iter->data);
+	if (gtkconv)
+		gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 }
 
 static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -397,7 +395,7 @@ static PurpleCmdRet
 clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	purple_conversation_foreach(clear_conversation_scrollback);
+	purple_conversation_foreach(purple_conversation_clear_message_history);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -1113,7 +1111,7 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 }
 
 static void
@@ -1794,6 +1792,15 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
+	/* emit chat-nick-clicked signal */
+	if (event->type == GDK_BUTTON_PRESS) {
+		gint plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+					pidgin_conversations_get_handle(), "chat-nick-clicked",
+					conv, who, event->button));
+		if (plugin_return)
+			goto handled;
+	}
+
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
@@ -1808,6 +1815,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 					   event->button, event->time);
 	}
 
+handled:
 	g_free(who);
 	gtk_tree_path_free(path);
 
@@ -2124,7 +2132,13 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		case GDK_ISO_Left_Tab:
 			if (gtkconv->entry != entry)
 				break;
-			return tab_complete(conv);
+			{
+				gint plugin_return;
+				plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+							pidgin_conversations_get_handle(), "chat-nick-autocomplete",
+							conv, event->state & GDK_SHIFT_MASK));
+				return plugin_return ? TRUE : tab_complete(conv);
+			}
 			break;
 
 		case GDK_Page_Up:
@@ -4693,7 +4707,7 @@ static void
 setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 {
 	PidginChatPane *gtkchat = gtkconv->u.chat;
-	GtkWidget *lbox, *sw, *list;
+	GtkWidget *lbox, *list;
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
@@ -4713,12 +4727,6 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_widget_show(gtkchat->count);
 
 	/* Setup the list of users. */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
 
 	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT,
@@ -4788,7 +4796,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	gtkchat->list = list;
 
-	gtk_container_add(GTK_CONTAINER(sw), list);
+	gtk_box_pack_start(GTK_BOX(lbox), 
+		pidgin_make_scrollable(list, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 0);
 }
 
 static gboolean
@@ -4895,7 +4905,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleBuddy *buddy;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
-	GtkPolicyType imhtml_sw_hscroll;
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
@@ -5012,10 +5021,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
 	g_object_set_data(G_OBJECT(gtkconv->imhtml), "gtkconv", gtkconv);
 
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               &imhtml_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
+	g_object_set(G_OBJECT(imhtml_sw), "vscrollbar-policy", GTK_POLICY_ALWAYS, NULL);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
@@ -5595,6 +5601,15 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 				&& (strlen(tag->name) > 6), FALSE);
 
 		buddyname = (tag->name) + 6;
+
+		/* emit chat-nick-clicked signal */
+		if (event->type == GDK_BUTTON_PRESS) {
+			gint plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+						pidgin_conversations_get_handle(), "chat-nick-clicked",
+						data, buddyname, btn_event->button));
+			if (plugin_return)
+				return TRUE;
+		}
 
 		if (btn_event->button == 1 &&
 				event->type == GDK_2BUTTON_PRESS) {
@@ -6775,7 +6790,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			style = "tab-label-event";
 		} else {
-			style = NULL;
+			style = "tab-label";
 		}
 
 		gtk_widget_set_name(gtkconv->tab_label, style);
@@ -8013,6 +8028,21 @@ pidgin_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_BOXED,
 										"PidginConversation *"));
 
+	purple_signal_register(handle, "chat-nick-autocomplete",
+						 purple_marshal_BOOLEAN__POINTER_BOOLEAN,
+						 purple_value_new(PURPLE_TYPE_BOOLEAN), 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 			PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "chat-nick-clicked",
+						 purple_marshal_BOOLEAN__POINTER_POINTER_UINT,
+						 purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 			PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_UINT));
+
+
 	/**********************************************************************
 	 * Register commands
 	 **********************************************************************/
@@ -8050,6 +8080,8 @@ pidgin_conversations_init(void)
 
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "cleared-message-history",
+	                      handle, G_CALLBACK(clear_conversation_scrollback_cb), NULL);
 
 	purple_conversations_set_ui_ops(&conversation_ui_ops);
 
