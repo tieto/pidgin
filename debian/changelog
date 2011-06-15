@@ -1,3 +1,10 @@
+pidgin (2.8.0-2) unstable; urgency=low
+
+  * Explicitly disable GG protocol since we don't have libgadu-dev 1.11.0 in
+    Debian yet (Closes: #630654)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 15 Jun 2011 19:19:58 -0400
+
 pidgin (2.8.0-1) unstable; urgency=low
 
   * Imported Upstream version 2.8.0 (Closes: #630124)
