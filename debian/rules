@@ -13,7 +13,8 @@ DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution \
 	    --enable-cap --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no \
 	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farsight \
-	    --enable-tcl --enable-tk
+	    --enable-tcl --enable-tk \
+	    --with-dynamic-prpls=bonjour,irc,jabber,msn,myspace,mxit,novell,oscar,sametime,simple,yahoo,zephyr # disable gg and silc
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
   auto DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
 else
