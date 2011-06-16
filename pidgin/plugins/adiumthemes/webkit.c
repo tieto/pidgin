@@ -26,7 +26,7 @@
  * A lot of this was originally written by Sean Egan, but I think I've 
  * rewrote enough to replace the author for now. 
  */
-#define PLUGIN_AUTHOR		"Arnold Noronha <arnstein87@gmail.com>" 
+#define PLUGIN_AUTHOR		"Arnold Noronha <arnstein87@gmail.com>"
 #define PURPLE_PLUGINS          "Hell yeah"
 
 /* System headers */
@@ -74,7 +74,7 @@ static void
 glist_free_all_string (GList *list)
 {
 	GList *first = list;
-	for (; list; list = g_list_next (list)) 
+	for (; list; list = g_list_next (list))
 		g_free (list->data);
 	g_list_free (first);
 }
@@ -95,13 +95,13 @@ static void webkit_plugin_free_handle ()
 
 static char *
 replace_message_tokens(
-	const char *text, 
-	gsize len, 
-	PurpleConversation *conv, 
-	const char *name, 
-	const char *alias, 
-	const char *message, 
-	PurpleMessageFlags flags, 
+	const char *text,
+	gsize len,
+	PurpleConversation *conv,
+	const char *name,
+	const char *alias,
+	const char *message,
+	PurpleMessageFlags flags,
 	time_t mtime)
 {
 	GString *str = g_string_new_len(NULL, len);
@@ -111,7 +111,7 @@ replace_message_tokens(
 	while ((cur = strchr(cur, '%'))) {
 		const char *replace = NULL;
 		char *fin = NULL;
-			
+
 		if (!strncmp(cur, "%message%", strlen("%message%"))) {
 			replace = message;
 		} else if (!strncmp(cur, "%messageClasses%", strlen("%messageClasses%"))) {
@@ -126,7 +126,7 @@ replace_message_tokens(
 					continue;
 				format = g_strndup(start, end - start);
 				fin = end + 1;
-			} 
+			}
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 		} else if (!strncmp(cur, "%userIconPath%", strlen("%userIconPath%"))) {
@@ -147,7 +147,7 @@ replace_message_tokens(
 					replace = g_build_filename("Incoming", "buddy_icon.png", NULL);
 				}
 			}
-			
+
 		} else if (!strncmp(cur, "%senderScreenName%", strlen("%senderScreenName%"))) {
 			replace = name;
 		} else if (!strncmp(cur, "%sender%", strlen("%sender%"))) {
@@ -165,13 +165,13 @@ replace_message_tokens(
 
 		/* And update the pointers */
 		if (fin) {
-			prev = cur = fin + 1;	
+			prev = cur = fin + 1;
 		} else {
 			prev = cur = strchr(cur + 1, '%') + 1;
 		}
 
 	}
-	
+
 	/* And wrap it up */
 	g_string_append(str, prev);
 	return g_string_free(str, FALSE);
@@ -191,24 +191,24 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 		const char *replace = NULL;
 		char *fin = NULL;
 
-  		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
+		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
 			replace = conv->name;
-  		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
+		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
 			replace = purple_account_get_alias(conv->account);
 			if (replace == NULL)
 				replace = purple_account_get_username(conv->account);
-  		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
+		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
 			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
 			if (buddy) {
 				replace = purple_buddy_get_alias(buddy);
 			} else {
 				replace = conv->name;
 			}
-  		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
+		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
 			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 			replace = purple_buddy_icon_get_full_path(icon);
-  		} else if (!strncmp(cur, "%outgoingIconPath%", strlen("%outgoingIconPath%"))) {
-  		} else if (!strncmp(cur, "%timeOpened", strlen("%timeOpened"))) {
+		} else if (!strncmp(cur, "%outgoingIconPath%", strlen("%outgoingIconPath%"))) {
+		} else if (!strncmp(cur, "%timeOpened", strlen("%timeOpened"))) {
 			char *format = NULL;
 			if (*(cur + strlen("%timeOpened")) == '{') {
 				char *start = cur + strlen("%timeOpened") + 1;
@@ -217,7 +217,7 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 					continue;
 				format = g_strndup(start, end - start);
 				fin = end + 1;
-			} 
+			}
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 		} else {
@@ -230,12 +230,12 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 
 		/* And update the pointers */
 		if (fin) {
-			prev = cur = fin + 1;	
+			prev = cur = fin + 1;
 		} else {
 			prev = cur = strchr(cur + 1, '%') + 1;
 		}
 	}
-	
+
 	/* And wrap it up */
 	g_string_append(str, prev);
 	return g_string_free(str, FALSE);
@@ -278,7 +278,7 @@ replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *he
 	if (footer)
 		g_string_append(str, footer);
 	g_string_append(str, ms[5]);
-	
+
 	g_strfreev(ms);
 	g_free (csspath);
 	return g_string_free (str, FALSE);
@@ -291,7 +291,7 @@ get_webkit(PurpleConversation *conv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	if (!gtkconv)
 		return NULL;
-	else 
+	else
 		return gtkconv->webview;
 }
 
@@ -302,7 +302,7 @@ static void set_theme_webkit_settings (WebKitWebView *webview, PidginMessageStyl
 	g_object_get (G_OBJECT(webview), "settings", &settings, NULL);
 	if (style->default_font_family)
 		g_object_set (G_OBJECT (settings), "default-font-family", style->default_font_family, NULL);
-	
+
 	if (style->default_font_size)
 		g_object_set (G_OBJECT (settings), "default-font-size", GINT_TO_POINTER (style->default_font_size), NULL);
 
@@ -347,7 +347,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	char* baseuri;
 	PidginMessageStyle *style, *oldStyle;
 	oldStyle = g_object_get_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY);
-	
+
 	if (oldStyle) return;
 
 	purple_debug_info ("webkit", "loading %s\n", style_dir);
@@ -363,7 +363,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
 	g_assert(template);
-	
+
 	purple_debug_info ("webkit", "template: %s\n", template);
 
 	set_theme_webkit_settings (WEBKIT_WEB_VIEW(webkit), style);
@@ -371,7 +371,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 
 	PidginMessageStyle *copy = pidgin_message_style_copy (style);
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, copy);
-	
+
 	pidgin_message_style_unref (style);
 	/* I need to unref this style when the webkit object destroys */
 	g_signal_connect (G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), copy);
@@ -425,7 +425,7 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	char *smileyed;
 	time_t mtime = time (NULL); /* FIXME: this should come from the write_conv calback, but the signal doesn't pass this to me */
 
-	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
+	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags"));
 	PidginMessageStyle *style;
 
 	fprintf (stderr, "hmm.. here %s %s\n", name, message);
@@ -510,7 +510,7 @@ get_dir_dir_list (const char* dirname)
 	while ((subdir = g_dir_read_name (dir))) {
 		ret = g_list_append (ret, g_build_filename (dirname, subdir, NULL));
 	}
-	
+
 	g_dir_close (dir);
 	return ret;
 }
@@ -533,11 +533,11 @@ get_style_directory_list ()
 
 	list1 = get_dir_dir_list (user_style_dir);
 	list2 = get_dir_dir_list (global_style_dir);
-	
+
 	g_free (global_style_dir);
 	g_free (user_style_dir);
 	g_free (user_dir);
-	
+
 	return g_list_concat (list1, list2);
 }
 
@@ -557,7 +557,7 @@ style_set_default ()
 	else {
 		purple_notify_error(handle, _("Webkit themes"),
 			_("Can't find installed styles"),
-			_("Please install some theme and verify the installation path")); 
+			_("Please install some theme and verify the installation path"));
 
 		return;
 	}
@@ -590,7 +590,7 @@ plugin_load(PurplePlugin *plugin)
 			       webkit_plugin_get_handle (),
 			       PURPLE_CALLBACK(webkit_on_displaying_im_msg),
 			       NULL);
-			    
+
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "displaying-chat-msg",
 			       webkit_plugin_get_handle (),
@@ -620,7 +620,7 @@ plugin_load(PurplePlugin *plugin)
 		GList* list = purple_get_conversations ();
 		for (;list; list = g_list_next(list))
 			init_theme_for_webkit (list->data, cur_style_dir);
-			
+
 	}
 	return TRUE;
 }
@@ -684,7 +684,7 @@ get_style_config_frame ()
 
 	for (iter = styles; iter; iter = g_list_next (iter)) {
 		PidginMessageStyle *style = pidgin_message_style_load (iter->data);
-		
+
 		if (style) {
 			char *text = g_path_get_basename (iter->data);
 			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), text);
@@ -729,7 +729,7 @@ variant_changed (GtkWidget* combobox, gpointer null)
 	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX (combobox));
 	pidgin_message_style_set_variant (style, name);
 	pidgin_message_style_save_state (style);
-	
+
 	/* update conversations */
 	list = purple_get_conversations ();
 	while (list) {
@@ -742,12 +742,12 @@ variant_changed (GtkWidget* combobox, gpointer null)
 }
 
 static GtkWidget *
-get_variant_config_frame() 
+get_variant_config_frame()
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
 	GList *variants = pidgin_message_style_get_variants (style), *iter;
 	char *cur_variant = pidgin_message_style_get_variant (style);
-	GtkWidget *combobox = gtk_combo_box_new_text();	
+	GtkWidget *combobox = gtk_combo_box_new_text();
 	int def = -1, index = 0;
 
 	pidgin_message_style_unref (style);
@@ -758,7 +758,7 @@ get_variant_config_frame()
 		if (g_str_equal (cur_variant, iter->data))
 			def = index;
 		index ++;
-		
+
 	}
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), def);
