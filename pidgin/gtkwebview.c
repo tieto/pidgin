@@ -83,8 +83,8 @@ get_image_filename_from_id (GtkWebView* view, int id)
 	return filename;
 }
 
-static void 
-clear_single_image (gpointer key, gpointer value, gpointer userdata) 
+static void
+clear_single_image (gpointer key, gpointer value, gpointer userdata)
 {
 	g_unlink ((char*) value);
 }
@@ -208,7 +208,7 @@ process_js_script_queue (GtkWebView *view)
 	return TRUE; /* there may be more for now */
 }
 
-static void 
+static void
 webview_load_started (WebKitWebView *view,
 		      WebKitWebFrame *frame,
 		      gpointer userdata)
@@ -241,14 +241,14 @@ gtk_webview_init (GtkWebView *view, gpointer userdata)
 			  G_CALLBACK (webview_link_clicked),
 			  view);
 
-	g_signal_connect (view, "load-started", 
+	g_signal_connect (view, "load-started",
 			  G_CALLBACK (webview_load_started),
 			  view);
 
 	g_signal_connect (view, "load-finished",
 			  G_CALLBACK (webview_load_finished),
 			  view);
-			  
+
 	view->priv->empty = TRUE;
 	view->priv->js_queue = g_queue_new ();
 }
@@ -274,7 +274,7 @@ char *gtk_webview_quote_js_string(const char *text)
         while (cur && *cur) {
                 switch (*cur) {
                 case '\\':
-                        g_string_append(str, "\\\\");   
+                        g_string_append(str, "\\\\");
                         break;
                 case '\"':
                         g_string_append(str, "\\\"");
