@@ -11,6 +11,10 @@ version 2.8.1 (MM/DD/YYYY):
 	Plugins:
 	* The Evolution Integration plugin compiles again.
 
+	Gadu-Gadu:
+	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
+	  (#5242)
+
 version 2.8.0 (06/07/2011):
 	General:
 	* Implement simple silence suppression for voice calls, preventing
