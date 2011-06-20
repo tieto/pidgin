@@ -3038,19 +3038,19 @@ purple_accounts_find(const char *name, const char *protocol_id)
 	g_return_val_if_fail(name != NULL, NULL);
 	g_return_val_if_fail(protocol_id != NULL, NULL);
 
-	who = g_strdup(purple_normalize(account, name));
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
 		if (!purple_strequal(account->protocol_id, protocol_id))
 			continue;
 
+		who = g_strdup(purple_normalize(account, name));
 		if (purple_strequal(purple_normalize(account, purple_account_get_username(account)), who)) {
 			g_free(who);
 			return account;
 		}
+		g_free(who);
 	}
 
-	g_free(who);
 	return NULL;
 }
 
