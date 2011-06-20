@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.8.1 (MM/DD/YYYY):
+  libpurple:
+  * media: Actually use the specified TCP port from the TURN configuration to
+    create a TCP relay candidate.
+
 version 2.8.0 (06/07/2011):
 	General:
 	* Implement simple silence suppression for voice calls, preventing
