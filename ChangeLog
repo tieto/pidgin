@@ -11,6 +11,10 @@ version 2.9.0 (06/23/2011):
 	* media: Actually use the specified TCP port from the TURN configuration to
 	  create a TCP relay candidate.
 
+	AIM and ICQ:
+	* Fix crashes on some non-mainstream OSes when attempting to
+	  printf("%s", NULL).  (Clemens Huebner) (#14297)
+
 	Plugins:
 	* The Evolution Integration plugin compiles again.
 
