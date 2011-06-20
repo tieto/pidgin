@@ -735,6 +735,7 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 	gboolean	tag_bold	= FALSE;
 	gboolean	tag_under	= FALSE;
 	gboolean	tag_italic	= FALSE;
+	int			font_size	= 0;
 
 #ifdef MXIT_DEBUG_MARKUP
 	purple_debug_info( MXIT_PLUGIN_ID, "Markup RX (original): '%s'\n", message );
@@ -862,59 +863,54 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 					}
 					break;
 			case '.' :
-					if ( !( msgflags & CP_MSG_EMOTICON ) ) {
-						g_string_append_c( mx->msg, message[i] );
-						break;
-					}
-					else if ( i + 1 >= len ) {
+					if ( i + 1 >= len ) {
 						/* message too short */
 						g_string_append_c( mx->msg, '.' );
 						break;
 					}
 
-					switch ( message[i+1] ) {
-						case '+' :
-								/* increment text size */
-								g_string_append( mx->msg, "<font size=\"+1\">" );
-								i++;
-								break;
-						case '-' :
-								/* decrement text size */
-								g_string_append( mx->msg, "<font size=\"-1\">" );
-								i++;
-								break;
-						case '{' :
-								/* custom emoticon */
-								if ( i + 2 >= len ) {
-									/* message too short */
-									g_string_append_c( mx->msg, '.' );
-									break;
-								}
+					if ( ( msgflags & CP_MSG_EMOTICON ) && ( message[i+1] == '{' ) ) {
+						/* custom emoticon */
+						if ( i + 2 >= len ) {
+							/* message too short */
+							g_string_append_c( mx->msg, '.' );
+							break;
+						}
 
-								parse_emoticon_str( &message[i+2], tmpstr1 );
-								if ( tmpstr1[0] != '\0' ) {
-									mx->got_img = TRUE;
+						parse_emoticon_str( &message[i+2], tmpstr1 );
+						if ( tmpstr1[0] != '\0' ) {
+							mx->got_img = TRUE;
 
-									if ( g_hash_table_lookup( mx->session->iimages, tmpstr1 ) ) {
-										/* emoticon found in the cache, so we do not have to request it from the WAPsite */
-									}
-									else {
-										/* request emoticon from the WAPsite */
-										mx->img_count++;
-										emoticon_request( mx, tmpstr1 );
-									}
+							if ( g_hash_table_lookup( mx->session->iimages, tmpstr1 ) ) {
+								/* emoticon found in the cache, so we do not have to request it from the WAPsite */
+							}
+							else {
+								/* request emoticon from the WAPsite */
+								mx->img_count++;
+								emoticon_request( mx, tmpstr1 );
+							}
 
-									g_string_append_printf( mx->msg, MXIT_II_TAG"%s>", tmpstr1 );
-									i += strlen( tmpstr1 ) + 2;
-								}
-								else
-									g_string_append_c( mx->msg, '.' );
-
-								break;
-						default :
-								g_string_append_c( mx->msg, '.' );
-								break;
+							g_string_append_printf( mx->msg, MXIT_II_TAG"%s>", tmpstr1 );
+							i += strlen( tmpstr1 ) + 2;
+						}
+						else
+							g_string_append_c( mx->msg, '.' );
 					}
+					else if ( ( msgflags & CP_MSG_MARKUP ) && ( message[i+1] == '+' ) ) {
+						/* increment text size */
+						font_size++;
+						g_string_append_printf( mx->msg, "<font size=\"%+i\">", font_size );
+						i++;
+					}
+					else if ( ( msgflags & CP_MSG_MARKUP ) && ( message[i+1] == '-' ) ) {
+						/* decrement text size */
+						font_size--;
+						g_string_append_printf( mx->msg, "<font size=\"%+i\">", font_size );
+						i++;
+					}
+					else
+						g_string_append_c( mx->msg, '.' );
+
 					break;
 			case '\\' :
 					if ( i + 1 >= len ) {
