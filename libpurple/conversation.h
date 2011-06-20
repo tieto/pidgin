@@ -271,7 +271,9 @@ struct _PurpleConvChat
 {
 	PurpleConversation *conv;          /**< The parent conversation.      */
 
-	GList *in_room;                  /**< The users in the room.        */
+	GList *in_room;                  /**< The users in the room.
+	                                  *   @deprecated Will be removed in 3.0.0
+									  */
 	GList *ignored;                  /**< Ignored users.                */
 	char  *who;                      /**< The person who set the topic. */
 	char  *topic;                    /**< The topic.                    */
@@ -279,6 +281,19 @@ struct _PurpleConvChat
 	char *nick;                      /**< Your nick in this chat.       */
 
 	gboolean left;                   /**< We left the chat and kept the window open */
+	GHashTable *users;               /**< Hash table of the users in the room.
+	                                  *   @since 2.9.0
+	                                  */
+	GHashFunc user_hash_func;        /**< Function used to hash entries into
+	                                  *   the users hash. Defaults to a
+	                                  *   case-insensitive collation function.
+	                                  *   @since 2.9.0
+	                                  */
+	GEqualFunc user_eq_func;         /**< Function used for equality in the
+	                                  *   users hash.  Defaults to a wrapper
+	                                  *   around purple_utf8_strcasecmp.
+	                                  *   @since 2.9.0
+	                                  */
 };
 
 /**
@@ -304,6 +319,7 @@ struct _PurpleConvChatBuddy
 	GHashTable *attributes;          /**< A hash table of attributes about the user, such as
                                     *   real name, user@host, etc.
                                     */
+	gpointer ui_data;                /** < The UI can put whatever it wants here. */
 };
 
 /**
@@ -1065,6 +1081,8 @@ PurpleConversation *purple_conv_chat_get_conversation(const PurpleConvChat *chat
  * @param users The list of users.
  *
  * @return The list passed.
+ *
+ * @deprecated This function will be removed in 3.0.0.  You shouldn't be using it anyway.
  */
 GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
 
