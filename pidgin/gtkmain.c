@@ -381,8 +381,10 @@ static GHashTable *pidgin_ui_get_info(void)
 		 * account "markdoliner."  Please don't use this key for other
 		 * applications.  You can either not specify a client key, in
 		 * which case the default "libpurple" key will be used, or you
-		 * can register for your own client key at
-		 * http://developer.aim.com/manageKeys.jsp
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
