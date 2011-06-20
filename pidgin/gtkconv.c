@@ -6589,7 +6589,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
-			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
+			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL) || (prpl_info->add_buddy_with_invite != NULL));
 			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
 			gtk_widget_set_sensitive(win->menu.send_file,
 									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
