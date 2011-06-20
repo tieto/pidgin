@@ -1,5 +1,18 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.9.0 (MM/DD/YYYY):
+	libpurple:
+		Added:
+		* Hash table and equivalence function to PurpleConvChat struct,
+		  which makes purple_conv_chat_cb_find O(1).  The equivalence
+		  function should only be set by a prpl, and must only be set
+		  before any occupants are in the room.
+		* ui_data opaque pointer to PurpleConvChatBuddy struct.
+
+		Deprecated:
+		* purple_conv_chat_set_users
+		* PurpleConvChat in_room list
+
 version 2.8.0 (06/07/2011):
 	libpurple:
 		Added:
