@@ -55,7 +55,6 @@ version-check: commit-check
 
 # For all releases, check the ChangeLogs.
 	head ChangeLog | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
-	head ChangeLog.win32 | grep "^version $(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" >/dev/null
 	head po/ChangeLog | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
