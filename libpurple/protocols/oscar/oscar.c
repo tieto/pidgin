@@ -1468,8 +1468,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message ? message : "(null)", itmsurl ? itmsurl : "(null)");
 		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
 	} else {
-		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message);
-		purple_prpl_got_user_status(account, info->bn, status_id, "message", message ? message : "(null)", NULL);
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message ? message : "(null)");
+		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, NULL);
 	}
 
 	g_free(message);
