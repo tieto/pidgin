@@ -412,8 +412,6 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		conv->u.chat = g_new0(PurpleConvChat, 1);
 		conv->u.chat->conv = conv;
-		conv->u.chat->user_hash_func = _purple_conversation_user_hash;
-		conv->u.chat->user_eq_func = _purple_conversation_user_equal;
 		conv->u.chat->users = g_hash_table_new_full(_purple_conversation_user_hash,
 				_purple_conversation_user_equal, NULL, NULL);
 		PURPLE_DBUS_REGISTER_POINTER(conv->u.chat, PurpleConvChat);

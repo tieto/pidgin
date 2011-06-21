@@ -284,16 +284,6 @@ struct _PurpleConvChat
 	GHashTable *users;               /**< Hash table of the users in the room.
 	                                  *   @since 2.9.0
 	                                  */
-	GHashFunc user_hash_func;        /**< Function used to hash entries into
-	                                  *   the users hash. Defaults to a
-	                                  *   case-insensitive collation function.
-	                                  *   @since 2.9.0
-	                                  */
-	GEqualFunc user_eq_func;         /**< Function used for equality in the
-	                                  *   users hash.  Defaults to a wrapper
-	                                  *   around purple_utf8_strcasecmp.
-	                                  *   @since 2.9.0
-	                                  */
 };
 
 /**
