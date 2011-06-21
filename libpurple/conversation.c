@@ -413,7 +413,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 		conv->u.chat = g_new0(PurpleConvChat, 1);
 		conv->u.chat->conv = conv;
 		conv->u.chat->users = g_hash_table_new_full(_purple_conversation_user_hash,
-				_purple_conversation_user_equal, NULL, NULL);
+				_purple_conversation_user_equal, g_free, NULL);
 		PURPLE_DBUS_REGISTER_POINTER(conv->u.chat, PurpleConvChat);
 
 		chats = g_list_prepend(chats, conv);
@@ -1702,7 +1702,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		cbuddy->buddy = purple_find_buddy(conv->account, user) != NULL;
 
 		chat->in_room = g_list_prepend(chat->in_room, cbuddy);
-		g_hash_table_replace(chat->users, cbuddy->name, cbuddy);
+		g_hash_table_replace(chat->users, g_strdup(cbuddy->name), cbuddy);
 
 		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
@@ -1796,7 +1796,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	cb->buddy = purple_find_buddy(conv->account, new_user) != NULL;
 
 	chat->in_room = g_list_prepend(chat->in_room, cb);
-	g_hash_table_replace(chat->users, cb->name, cb);
+	g_hash_table_replace(chat->users, g_strdup(cb->name), cb);
 
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(conv, old_user, new_user, new_alias);
@@ -1967,8 +1967,6 @@ purple_conv_chat_clear_users(PurpleConvChat *chat)
 		g_list_free(names);
 	}
 
-	g_hash_table_remove_all(chat->users);
-
 	for (l = users; l; l = l->next)
 	{
 		PurpleConvChatBuddy *cb = l->data;
@@ -1980,6 +1978,9 @@ purple_conv_chat_clear_users(PurpleConvChat *chat)
 
 		purple_conv_chat_cb_destroy(cb);
 	}
+
+	g_hash_table_remove_all(chat->users);
+	chat->users = NULL;
 
 	g_list_free(users);
 	chat->in_room = NULL;
