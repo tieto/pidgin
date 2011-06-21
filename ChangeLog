@@ -8,6 +8,7 @@ version 2.9.0 (MM/DD/YYYY):
 version 2.8.1 (MM/DD/YYYY):
 	Pidgin:
 	* Fix Conversation->Add on AIM and MSN.
+	* Entries in the chat user list are sorted properly again.
 
 	Finch:
 	* Fixed logging in to ICQ.
