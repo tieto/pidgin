@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-12 09:37+0200\n"
-"PO-Revision-Date: 2011-05-12 09:37+0200\n"
+"POT-Creation-Date: 2011-06-21 09:12+0200\n"
+"PO-Revision-Date: 2011-06-21 09:11+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -6361,13 +6361,16 @@ msgid "Where I live"
 msgstr "Wo ich wohne"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Sie haben %i vorgeschlagene(n) Freund(e)."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Sie haben %i vorgeschlagenen Freund."
+msgstr[1] "Sie haben %i vorgeschlagene Freunde."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr ""
-"Wir fanden %i Kontakt(e), die Ihrer Suchanfrage entspricht/entsprechen."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Wir fanden %i Kontakt, der Ihrer Suchanfrage entspricht."
+msgstr[1] "Wir fanden %i Kontakte, die Ihrer Suchanfrage entsprechen."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -13181,6 +13184,9 @@ msgstr "_TURN-Server:"
 
 msgid "_UDP Port:"
 msgstr "_UDP-Port:"
+
+msgid "T_CP Port:"
+msgstr "T_CP-Port:"
 
 msgid "Use_rname:"
 msgstr "_Benutzername:"
