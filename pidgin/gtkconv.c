@@ -6291,12 +6291,6 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 		g_free(val);
 	}
 
-	if (!purple_conv_chat_find_user(chat, user))
-	{
-		g_free(alias);
-		return;
-	}
-
 	g_return_if_fail(alias != NULL);
 
 	cbuddy = purple_conv_chat_cb_find(chat, user);
