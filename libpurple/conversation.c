@@ -1899,7 +1899,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 
 		if (cb) {
 			chat->in_room = g_list_remove(chat->in_room, cb);
-			g_hash_table_remove(chat->users, cb);
+			g_hash_table_remove(chat->users, cb->name);
 			purple_conv_chat_cb_destroy(cb);
 		}
 
