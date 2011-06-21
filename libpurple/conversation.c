@@ -2185,6 +2185,9 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	if (cb == NULL)
 		return;
 
+	purple_signal_emit(purple_conversations_get_handle(),
+			"deleting-chat-buddy", cb);
+
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
@@ -2590,6 +2593,11 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "deleting-chat-buddy",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CHATBUDDY));
 
 	purple_signal_register(handle, "chat-inviting-user",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
