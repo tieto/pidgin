@@ -5057,16 +5057,8 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 		data = imhtml->funcs->image_get_data(image);
 		len = imhtml->funcs->image_get_size(image);
-
-		if (data && len) {
-			GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-			gdk_pixbuf_loader_write(loader, data, len, NULL);
-			gdk_pixbuf_loader_close(loader, NULL);
-			anim = gdk_pixbuf_loader_get_animation(loader);
-			if (anim)
-				g_object_ref(G_OBJECT(anim));
-			g_object_unref(G_OBJECT(loader));
-		}
+		if (data && len)
+			anim = pidgin_pixbuf_anim_from_data(data, len);
 
 	}
 

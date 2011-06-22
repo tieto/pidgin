@@ -433,7 +433,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 
 	/* Generate a logo with a version number */
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file(filename);
 	g_free(filename);
 
 #if 0  /* Don't versionize the logo when the logo has the version in it */

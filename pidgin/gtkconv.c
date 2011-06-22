@@ -6408,8 +6408,8 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 {
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;
 	const char *sml;
+	GError *error = NULL;
 
 	sml = purple_account_get_protocol_name(conv->account);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6422,11 +6422,24 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 	g_memmove((guchar *)smiley->data + smiley->datasize, data, size);
 	smiley->datasize += size;
 
-	loader = smiley->loader;
-	if (!loader)
+	if (!smiley->loader)
 		return;
 
-	gdk_pixbuf_loader_write(loader, data, size, NULL);
+	if (!gdk_pixbuf_loader_write(smiley->loader, data, size, &error) || error) {
+		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_write() "
+				"failed with size=%zu: %s\n", size,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		/* We must stop using the GdkPixbufLoader because trying to load
+		   certain invalid GIFs with at least gdk-pixbuf 2.23.3 can return
+		   a GdkPixbuf that will cause some operations (like
+		   gdk_pixbuf_scale_simple()) to consume memory in an infinite loop.
+		   But we also don't want to set smiley->loader to NULL because our
+		   code might expect it to be set.  So create a new loader. */
+		g_object_unref(G_OBJECT(smiley->loader));
+		smiley->loader = gdk_pixbuf_loader_new();
+	}
 }
 
 static void
@@ -6434,8 +6447,8 @@ pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 {
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;
 	const char *sml;
+	GError *error = NULL;
 
 	g_return_if_fail(conv  != NULL);
 	g_return_if_fail(smile != NULL);
@@ -6447,17 +6460,27 @@ pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 	if (!smiley)
 		return;
 
-	loader = smiley->loader;
-
-	if (!loader)
+	if (!smiley->loader)
 		return;
-
-
 
 	purple_debug_info("gtkconv", "About to close the smiley pixbuf\n");
 
-	gdk_pixbuf_loader_close(loader, NULL);
-
+	if (!gdk_pixbuf_loader_close(smiley->loader, &error) || error) {
+		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_close() "
+				"failed: %s\n",
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		/* We must stop using the GdkPixbufLoader because if we tried to
+		   load certain invalid GIFs with all current versions of GDK (as
+		   of 2011-06-15) then it's possible the loader will contain data
+		   that could cause some operations (like gdk_pixbuf_scale_simple())
+		   to consume memory in an infinite loop.  But we also don't want
+		   to set smiley->loader to NULL because our code might expect it
+		   to be set.  So create a new loader. */
+		g_object_unref(G_OBJECT(smiley->loader));
+		smiley->loader = gdk_pixbuf_loader_new();
+	}
 }
 
 static void
@@ -6957,10 +6980,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	PurpleBuddy *buddy;
 
-	GdkPixbufLoader *loader;
-	GdkPixbufAnimation *anim;
-	GError *err = NULL;
-
 	PurpleStoredImage *custom_img = NULL;
 	gconstpointer data = NULL;
 	size_t len;
@@ -7038,7 +7057,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	if (data == NULL) {
 		icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
-
 		if (icon == NULL)
 		{
 			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
@@ -7047,7 +7065,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		}
 
 		data = purple_buddy_icon_get_data(icon, &len);
-
 		if (data == NULL)
 		{
 			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
@@ -7056,25 +7073,13 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		}
 	}
 
-	loader = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(loader, data, len, NULL);
-	gdk_pixbuf_loader_close(loader, &err);
-
+	gtkconv->u.im->anim = pidgin_pixbuf_anim_from_data(data, len);
 	purple_imgstore_unref(custom_img);
 
-	anim = gdk_pixbuf_loader_get_animation(loader);
-	if (anim)
-		g_object_ref(G_OBJECT(anim));
-	g_object_unref(loader);
-
-	if (!anim)
+	if (!gtkconv->u.im->anim) {
+		purple_debug_error("gtkconv", "Couldn't load icon for conv %s\n",
+				purple_conversation_get_name(conv));
 		return;
-	gtkconv->u.im->anim = anim;
-
-	if (err) {
-		purple_debug(PURPLE_DEBUG_ERROR, "gtkconv",
-				   "Buddy icon error: %s\n", err->message);
-		g_error_free(err);
 	}
 
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {

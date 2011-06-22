@@ -1149,8 +1149,8 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
 		GdkPixbuf *thumbnail =
-			gdk_pixbuf_new_from_file_at_size(
-				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
+			pidgin_pixbuf_new_from_file_at_size(
+					purple_xfer_get_local_filename(xfer), 128, 128);
 
 		if (thumbnail) {
 			gchar **formats_split = g_strsplit(formats, ",", 0);
