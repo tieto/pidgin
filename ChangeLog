@@ -2,14 +2,16 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.9.0 (06/23/2011):
 	Pidgin:
+	* Fix a potential remote denial-of-service bug related to displaying
+	  buddy icons.
 	* Significantly improved performance of larger IRC channels (regression
-	  introduced in 2.8.0)
+	  introduced in 2.8.0).
 	* Fix Conversation->Add on AIM and MSN.
 	* Entries in the chat user list are sorted properly again.  This was
 	  inadvertenly broken in 2.8.0.
 
 	Finch:
-	* Fixed logging in to ICQ.
+	* Fix logging in to ICQ.
 
 	libpurple:
 	* media: Actually use the specified TCP port from the TURN configuration to
