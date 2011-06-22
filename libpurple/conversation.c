@@ -73,20 +73,18 @@ static void _purple_conversations_hconv_free_key(struct _purple_hconv *hc)
 static guint _purple_conversation_user_hash(gconstpointer data)
 {
 	const gchar *name = data;
-	gchar *casefold, *collated;
+	gchar *collated;
 	guint hash;
 
-	casefold = g_utf8_casefold(name, -1);
-	collated = g_utf8_collate_key(casefold, -1);
+	collated = g_utf8_collate_key(name, -1);
 	hash     = g_str_hash(collated);
 	g_free(collated);
-	g_free(casefold);
 	return hash;
 }
 
 static gboolean _purple_conversation_user_equal(gconstpointer a, gconstpointer b)
 {
-	return !purple_utf8_strcasecmp(a, b);
+	return !g_utf8_collate(a, b);
 }
 
 void
