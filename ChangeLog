@@ -2,6 +2,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.9.0 (06/23/2011):
 	Pidgin:
+	* Significantly improved performance of larger IRC channels (regression
+	  introduced in 2.8.0)
 	* Fix Conversation->Add on AIM and MSN.
 	* Entries in the chat user list are sorted properly again.  This was
 	  inadvertenly broken in 2.8.0.
