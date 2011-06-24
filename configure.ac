@@ -43,9 +43,9 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [8])
+m4_define([purple_lt_current], [9])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [8])
+m4_define([purple_minor_version], [9])
 m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [8])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [8])
-m4_define([gnt_micro_version], [8])
+m4_define([gnt_micro_version], [9])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])

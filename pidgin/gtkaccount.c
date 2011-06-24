@@ -2135,7 +2135,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	gtk_list_store_clear(dialog->model);
 
 	if ((path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) != NULL) {
-		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+		GdkPixbuf *pixbuf = pidgin_pixbuf_new_from_file(path);
 		if (pixbuf != NULL) {
 			global_buddyicon = gdk_pixbuf_scale_simple(pixbuf, 22, 22, GDK_INTERP_HYPER);
 			g_object_unref(G_OBJECT(pixbuf));
