@@ -2643,7 +2643,6 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
                                               gboolean scaled, gboolean greyed)
 {
 	gsize len;
-	GdkPixbufLoader *loader;
 	PurpleBuddy *buddy = NULL;
 	PurpleGroup *group = NULL;
 	const guchar *data = NULL;
@@ -2710,21 +2709,20 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 			return NULL;
 	}
 
-	loader = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(loader, data, len, NULL);
-	gdk_pixbuf_loader_close(loader, NULL);
-
-	purple_imgstore_unref(custom_img);
+	buf = pidgin_pixbuf_from_data(data, len);
 	purple_buddy_icon_unref(icon);
-
-	buf = gdk_pixbuf_loader_get_pixbuf(loader);
-	if (buf)
-		g_object_ref(G_OBJECT(buf));
-	g_object_unref(G_OBJECT(loader));
-
 	if (!buf) {
+		purple_debug_warning("gtkblist", "Couldn't load buddy icon "
+				"on account %s (%s)  buddyname=%s  "
+				"custom_img_data=%p\n",
+				account ? purple_account_get_username(account) : "(no account)",
+				account ? purple_account_get_protocol_id(account) : "(no account)",
+				buddy ? purple_buddy_get_name(buddy) : "(no buddy)",
+				custom_img ? purple_imgstore_get_data(custom_img) : NULL);
+		purple_imgstore_unref(custom_img);
 		return NULL;
 	}
+	purple_imgstore_unref(custom_img);
 
 	if (greyed) {
 		gboolean offline = FALSE, idle = FALSE;
@@ -3952,7 +3950,7 @@ static GdkPixbuf * _pidgin_blist_get_cached_emblem(gchar *path) {
 		g_object_ref(pb);
 		g_free(path);
 	} else {
-		pb = gdk_pixbuf_new_from_file(path, NULL);
+		pb = pidgin_pixbuf_new_from_file(path);
 		if (pb != NULL) {
 			/* We don't want to own a ref to the pixbuf, but we need to keep clean up. */
 			/* I'm not sure if it would be better to just keep our ref and not let the emblem ever be destroyed */
