@@ -1,3 +1,12 @@
+pidgin (2.9.0-1) unstable; urgency=high
+
+  * Imported Upstream version 2.9.0
+    - Fixes denial-of-service vulnerability in buddy icon handling
+      (CVE-2011-2485)
+  * Re-enable GG and update libgadu-dev version
+
+ -- Ari Pollak <ari@debian.org>  Thu, 23 Jun 2011 21:56:01 -0400
+
 pidgin (2.8.0-2) unstable; urgency=low
 
   * Explicitly disable GG protocol since we don't have libgadu-dev 1.11.0 in
