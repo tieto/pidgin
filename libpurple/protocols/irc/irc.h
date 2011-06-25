@@ -106,6 +106,7 @@ struct irc_buddy {
 typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
 int irc_send(struct irc_conn *irc, const char *buf);
+int irc_send_len(struct irc_conn *irc, const char *buf, int len);
 gboolean irc_blist_timeout(struct irc_conn *irc);
 gboolean irc_who_channel_timeout(struct irc_conn *irc);
 void irc_buddy_query(struct irc_conn *irc);

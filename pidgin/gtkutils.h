@@ -834,6 +834,32 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
 
 /**
+ * Create a GdkPixbuf from a chunk of image data.
+ *
+ * @param buf The raw binary image data.
+ * @param count The length of buf in bytes.
+ *
+ * @return A GdkPixbuf created from the image data, or NULL if
+ *         there was an error parsing the data.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count);
+
+/**
+ * Create a GdkPixbufAnimation from a chunk of image data.
+ *
+ * @param buf The raw binary image data.
+ * @param count The length of buf in bytes.
+ *
+ * @return A GdkPixbufAnimation created from the image data, or NULL if
+ *         there was an error parsing the data.
+ *
+ * @since 2.9.0
+ */
+GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count);
+
+/**
  * Create a GdkPixbuf from a PurpleStoredImage.
  *
  * @param  image   A PurpleStoredImage.
@@ -843,6 +869,86 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  * @since 2.5.0
  */
 GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file() and checks both
+ * the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file(const char *filename);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file_at_size() and checks
+ * both the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file_at_size() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ * @param width The width the image should have or -1 to not constrain the width
+ * @param height The height the image should have or -1 to not constrain the height
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, int height);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file_at_scale() and checks
+ * both the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file_at_scale() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ * @param width The width the image should have or -1 to not constrain the width
+ * @param height The height the image should have or -1 to not constrain the height
+ * @param preserve_aspect_ratio TRUE to preserve the image's aspect ratio
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
 
 /**
  * Add scrollbars to a widget

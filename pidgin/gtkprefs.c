@@ -382,7 +382,7 @@ smileys_refresh_theme_list(void)
 		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
 		 * looks like it should be ok to me.  Anyone know what's up?  --Mark
 		 */
-		pixbuf = (theme->icon ? gdk_pixbuf_new_from_file(theme->icon, NULL) : NULL);
+		pixbuf = (theme->icon ? pidgin_pixbuf_new_from_file(theme->icon) : NULL);
 
 		gtk_list_store_set(prefs_smiley_themes, &iter,
 				   0, pixbuf,
@@ -452,7 +452,7 @@ prefs_themes_sort(PurpleTheme *theme)
 
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
-			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
+			pixbuf = pidgin_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE);
 			g_free(image_full);
 		} else
 			pixbuf = NULL;
@@ -473,7 +473,7 @@ prefs_themes_sort(PurpleTheme *theme)
 
 		image_full = purple_theme_get_image_full(theme);
 		if (image_full != NULL){
-			pixbuf = gdk_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
+			pixbuf = pidgin_pixbuf_new_from_file_at_scale(image_full, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE);
 			g_free(image_full);
 		} else
 			pixbuf = NULL;
@@ -529,7 +529,7 @@ prefs_themes_refresh(void)
 	purple_theme_manager_refresh();
 
 	tmp = g_build_filename(DATADIR, "icons", "hicolor", "32x32", "apps", "pidgin.png", NULL);
-	pixbuf = gdk_pixbuf_new_from_file_at_scale(tmp, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file_at_scale(tmp, PREFS_OPTIMAL_ICON_SIZE, PREFS_OPTIMAL_ICON_SIZE, TRUE);
 	g_free(tmp);
 
 	/* sound themes */

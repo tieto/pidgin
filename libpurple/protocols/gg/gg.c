@@ -1071,6 +1071,7 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 {
 	gchar *from;
 	const char *st;
+	char *status_msg = NULL;
 
 	ggp_update_buddy_avatar(gc, uin);
 
@@ -1108,14 +1109,24 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 			break;
 	}
 
-	purple_debug_info("gg", "st = %s\n", st);
-	//msg = charset_convert(descr, "CP1250", "UTF-8");
-	if (descr == NULL) {
+	if (descr != NULL) {
+		status_msg = g_strdup(descr);
+		g_strstrip(status_msg);
+		if (status_msg[0] == '\0') {
+			g_free(status_msg);
+			status_msg = NULL;
+		}
+	}
+
+	purple_debug_info("gg", "status of %u is %s [%s]\n", uin, st,
+		status_msg ? status_msg : "");
+	if (status_msg == NULL) {
 		purple_prpl_got_user_status(purple_connection_get_account(gc),
-		      from, st, NULL);
+			from, st, NULL);
 	} else {
 		purple_prpl_got_user_status(purple_connection_get_account(gc),
-		    from, st, "message", descr, NULL);
+			from, st, "message", status_msg, NULL);
+		g_free(status_msg);
 	}
 	g_free(from);
 }
@@ -1945,23 +1956,18 @@ static char *ggp_status_text(PurpleBuddy *b)
 	char *text;
 	char *tmp;
 
-	status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-
+	status = purple_presence_get_active_status(
+		purple_buddy_get_presence(b));
 	msg = purple_status_get_attr_string(status, "message");
 
-	if (msg != NULL) {
-		tmp = purple_markup_strip_html(msg);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+	if (msg == NULL)
+		return NULL;
 
-		return text;
-	} else {
-		tmp = purple_utf8_salvage(purple_status_get_name(status));
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+	tmp = purple_markup_strip_html(msg);
+	text = g_markup_escape_text(tmp, -1);
+	g_free(tmp);
 
-		return text;
-	}
+	return text;
 }
 
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
