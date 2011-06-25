@@ -1,10 +1,5 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.9.0 (MM/DD/YYYY):
-	Pidgin:
-	* Significantly improved performance of larger IRC channels (regression
-	  introduced in 2.8.0)
-
 version 2.9.1 (MM/DD/YYYY):
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
