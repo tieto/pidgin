@@ -6320,6 +6320,8 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 		gtk_tree_row_reference_free(ref);
 		cbuddy->ui_data = NULL;
+	}
+
 	if (cbuddy)
 		add_chat_buddy_common(conv, cbuddy, NULL);
 }
