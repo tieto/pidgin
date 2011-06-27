@@ -1978,7 +1978,6 @@ purple_conv_chat_clear_users(PurpleConvChat *chat)
 	}
 
 	g_hash_table_remove_all(chat->users);
-	chat->users = NULL;
 
 	g_list_free(users);
 	chat->in_room = NULL;
