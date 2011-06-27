@@ -62,7 +62,7 @@ new_node(const char *name, XMLNodeType type)
 xmlnode*
 xmlnode_new(const char *name)
 {
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	return new_node(name, XMLNODE_TYPE_TAG);
 }
@@ -73,7 +73,7 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	xmlnode *node;
 
 	g_return_val_if_fail(parent != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	node = new_node(name, XMLNODE_TYPE_TAG);
 

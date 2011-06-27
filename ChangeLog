@@ -6,6 +6,10 @@ version 2.9.1 (MM/DD/YYYY):
 	  (#5242)
 	* Better status message handling. (Tomasz Wasilczyk) (#14314)
 
+	XMPP:
+	* Do not generate malformed XML ("</>") when setting an empty mood.
+	  (#14342)
+
 version 2.9.0 (06/23/2011):
 	Pidgin:
 	* Fix a potential remote denial-of-service bug related to displaying
