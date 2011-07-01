@@ -5,6 +5,7 @@ version 2.9.1 (MM/DD/YYYY):
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
 	  (#5242)
 	* Better status message handling. (Tomasz Wasilczyk) (#14314)
+	* Merged two buddy blocking methods. (Tomasz Wasilczyk) (#5303)
 
 	XMPP:
 	* Do not generate malformed XML ("</>") when setting an empty mood.

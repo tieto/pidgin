@@ -877,30 +877,26 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 /* ----- BLOCK BUDDIES -------------------------------------------------- */
 
-static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
+static void ggp_add_deny(PurpleConnection *gc, const char *who)
 {
-	PurpleConnection *gc;
-	PurpleBuddy *buddy;
-	GGPInfo *info;
-	uin_t uin;
+	GGPInfo *info = gc->proto_data;
+	uin_t uin = ggp_str_to_uin(who);
+	
+	purple_debug_info("gg", "ggp_add_deny: %u\n", uin);
+	
+	gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
+	gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
+}
 
-	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = gc->proto_data;
-
-	uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
-
-	if (purple_blist_node_get_bool(node, "blocked")) {
-		purple_blist_node_set_bool(node, "blocked", FALSE);
-		gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
-		gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
-		purple_debug_info("gg", "send: uin=%d; mode=NORMAL\n", uin);
-	} else {
-		purple_blist_node_set_bool(node, "blocked", TRUE);
-		gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
-		gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
-		purple_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
-	}
+static void ggp_rem_deny(PurpleConnection *gc, const char *who)
+{
+	GGPInfo *info = gc->proto_data;
+	uin_t uin = ggp_str_to_uin(who);
+	
+	purple_debug_info("gg", "ggp_rem_deny: %u\n", uin);
+	
+	gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
+	gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -2074,20 +2070,6 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 		m = g_list_append(m, act);
 	}
 
-	/* Using a blist node boolean here is also wrong.
-	 * Once the Block and Unblock actions are added to the core,
-	 * this will have to go. -- rlaager */
-	if (purple_blist_node_get_bool(node, "blocked")) {
-		act = purple_menu_action_new(_("Unblock"),
-		                           PURPLE_CALLBACK(ggp_bmenu_block),
-		                           NULL, NULL);
-	} else {
-		act = purple_menu_action_new(_("Block"),
-		                           PURPLE_CALLBACK(ggp_bmenu_block),
-		                           NULL, NULL);
-	}
-	m = g_list_append(m, act);
-
 	return m;
 }
 
@@ -2684,9 +2666,9 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_remove_buddy,		/* remove_buddy */
 	NULL,				/* remove_buddies */
 	NULL,				/* add_permit */
-	NULL,				/* add_deny */
+	ggp_add_deny,			/* add_deny */
 	NULL,				/* rem_permit */
-	NULL,				/* rem_deny */
+	ggp_rem_deny,			/* rem_deny */
 	NULL,				/* set_permit_deny */
 	ggp_join_chat,			/* join_chat */
 	NULL,				/* reject_chat */
