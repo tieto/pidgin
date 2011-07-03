@@ -1,3 +1,13 @@
+pidgin (2.9.0-2~2.gbpe4b91f) unstable; urgency=low
+
+  ** SNAPSHOT build @e4b91f3786f2deb7a8fd49a1d4947f7274e99f59 **
+
+  * Fix missing epoch in libgadu-dev build-depends
+    (Closes: #630654) again
+  * Use hardening-wrapper (Closes: #632515)
+
+ -- Ari Pollak <ari@debian.org>  Sat, 02 Jul 2011 22:16:12 -0400
+
 pidgin (2.9.0-1) unstable; urgency=high
 
   * Imported Upstream version 2.9.0

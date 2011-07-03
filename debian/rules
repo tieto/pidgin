@@ -5,6 +5,8 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/utils.mk
 
+DEB_BUILD_HARDENING = 1
+
 # Build into a separate directory
 DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
