@@ -254,7 +254,9 @@ static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
 	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
 		
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Performing periodic who on %s", purple_conversation_get_name(conv));
+		purple_debug(PURPLE_DEBUG_INFO, "irc",
+			     "Performing periodic who on %s\n",
+			     purple_conversation_get_name(conv));
 		irc_send(irc, buf);
 		g_free(buf);
 	}
