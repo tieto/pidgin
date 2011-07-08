@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.9.1 (MM/DD/YYYY):
+	Pidgin:
+	* Make the max size of incoming smileys a pref instead of hardcoding it.
+	  (Quentin Brandon)(#5231)
+
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
 	  (#5242)
