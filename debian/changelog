@@ -1,3 +1,9 @@
+pidgin (2.9.0-3) unstable; urgency=low
+
+  * Oops, really enable hardening-wrapper
+
+ -- Ari Pollak <ari@debian.org>  Thu, 07 Jul 2011 22:14:38 -0400
+
 pidgin (2.9.0-2) unstable; urgency=low
 
   * Fix missing epoch in libgadu-dev build-depends (Closes: #630654 again)
