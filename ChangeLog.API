@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.10.0:
 	Pidgin:
 		Added:
-		* pidgin_dialogs_buildinfo (should not be used by anything but Pidgin)
+		* pidgin_dialogs_plugins_info (should not be used by anything but Pidgin)
 
 version 2.9.0:
 	libpurple:
