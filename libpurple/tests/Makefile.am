@@ -17,6 +17,7 @@ check_libpurple_SOURCES=\
 		test_oscar_util.c \
 		test_yahoo_util.c \
 		test_util.c \
+		test_xmlnode.c \
 		$(top_builddir)/libpurple/util.h
 
 check_libpurple_CFLAGS=\

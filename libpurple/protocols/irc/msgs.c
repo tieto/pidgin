@@ -445,7 +445,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		g_free(userhost);
 		g_free(realname);
 		
-		flags = purple_conv_chat_user_get_flags(chat, cb->name);
+		flags = cb->flags;
 
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
 			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);

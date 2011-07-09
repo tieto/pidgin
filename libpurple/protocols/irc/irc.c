@@ -101,7 +101,11 @@ static int do_send(struct irc_conn *irc, const char *buf, gsize len)
 static int irc_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	struct irc_conn *irc = (struct irc_conn*)gc->proto_data;
-	return do_send(irc, buf, len);
+	if (len == -1) {
+		len = strlen(buf);
+	}
+	irc_send_len(irc, buf, len);
+	return len;
 }
 
 static void
@@ -144,15 +148,17 @@ irc_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 int irc_send(struct irc_conn *irc, const char *buf)
 {
-	int ret, buflen;
+    return irc_send_len(irc, buf, strlen(buf));
+}
+
+int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
+{
+	int ret;
  	char *tosend= g_strdup(buf);
 
 	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
 	if (tosend == NULL)
 		return 0;
-
-	buflen = strlen(tosend);
-
 
 	/* If we're not buffering writes, try to send immediately */
 	if (!irc->writeh)
@@ -248,7 +254,9 @@ static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
 	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
 		
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Performing periodic who on %s", purple_conversation_get_name(conv));
+		purple_debug(PURPLE_DEBUG_INFO, "irc",
+			     "Performing periodic who on %s\n",
+			     purple_conversation_get_name(conv));
 		irc_send(irc, buf);
 		g_free(buf);
 	}
