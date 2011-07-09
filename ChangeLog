@@ -4,6 +4,8 @@ version 2.10.0 (MM/DD/YYYY):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.
 	  (Quentin Brandon)(#5231)
+	* Added a plugin information dialog to show information for plugins
+	  that aren't otherwise visible in the plugins dialog.
 
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
