@@ -1932,6 +1932,8 @@ static void simple_login(PurpleAccount *account)
 
 	gc->proto_data = sip = g_new0(struct simple_account_data, 1);
 	sip->gc = gc;
+	sip->fd = -1;
+	sip->listenfd = -1;
 	sip->account = account;
 	sip->registerexpire = 900;
 	sip->udp = purple_account_get_bool(account, "udp", FALSE);
