@@ -13,6 +13,9 @@ version 2.10.0 (MM/DD/YYYY):
 	* Better status message handling. (Tomasz Wasilczyk) (#14314)
 	* Merged two buddy blocking methods. (Tomasz Wasilczyk) (#5303)
 
+	MSN:
+	* Fix seemingly random crashing. (#14307)
+
 	XMPP:
 	* Do not generate malformed XML ("</>") when setting an empty mood.
 	  (#14342)
