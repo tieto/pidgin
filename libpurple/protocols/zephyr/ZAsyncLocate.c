@@ -45,8 +45,8 @@ Code_t ZRequestLocations(user, zald, kind, auth)
 	return(ENOMEM);
     }
     zald->uid = notice.z_multiuid;
-    strcpy(zald->user,user);
-    strcpy(zald->version,notice.z_version);
+    g_strlcpy(zald->user,user,strlen(user)+1);
+    g_strlcpy(zald->version,notice.z_version,strlen(notice.z_version)+1);
 
     return(ZERR_NONE);
 }
@@ -109,21 +109,21 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
        __locate_list[i].host = (char *) malloc(len);
        if (!__locate_list[i].host)
 	  return (ENOMEM);
-       (void) strcpy(__locate_list[i].host, ptr);
+       g_strlcpy(__locate_list[i].host, ptr,len);
        ptr += len;
 
        len = strlen (ptr) + 1;
        __locate_list[i].time = (char *) malloc(len);
        if (!__locate_list[i].time)
 	  return (ENOMEM);
-       (void) strcpy(__locate_list[i].time, ptr);
+       g_strlcpy(__locate_list[i].time, ptr,len);
        ptr += len;
 
        len = strlen (ptr) + 1;
        __locate_list[i].tty = (char *) malloc(len);
        if (!__locate_list[i].tty)
 	  return (ENOMEM);
-       (void) strcpy(__locate_list[i].tty, ptr);
+       g_strlcpy(__locate_list[i].tty, ptr,len);
        ptr += len;
     }
 
@@ -133,11 +133,11 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
 	if (zald) {
 	    if ((*user = (char *) malloc(strlen(zald->user)+1)) == NULL)
 		return(ENOMEM);
-	    strcpy(*user,zald->user);
+	    g_strlcpy(*user,zald->user,strlen(zald->user)+1);
 	} else {
 	    if ((*user = (char *) malloc(strlen(notice->z_class_inst)+1)) == NULL)
 		return(ENOMEM);
-	    strcpy(*user,notice->z_class_inst);
+	    g_strlcpy(*user,notice->z_class_inst,strlen(notice->z_class_inst)+1);
 	}
     }
     return (ZERR_NONE);

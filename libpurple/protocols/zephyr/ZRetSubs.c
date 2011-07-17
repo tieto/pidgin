@@ -147,7 +147,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 				ZFreeNotice(&retnotice);
 				return (ENOMEM);
 			}
-			(void) strcpy(__subscriptions_list[i].zsub_class,ptr);
+			g_strlcpy(__subscriptions_list[i].zsub_class,ptr,(unsigned)strlen(ptr));
 			ptr += strlen(ptr)+1;
 			__subscriptions_list[i].zsub_classinst = (char *)
 				malloc((unsigned)strlen(ptr)+1);
@@ -155,7 +155,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 				ZFreeNotice(&retnotice);
 				return (ENOMEM);
 			}
-			(void) strcpy(__subscriptions_list[i].zsub_classinst,ptr);
+			g_strlcpy(__subscriptions_list[i].zsub_classinst,ptr,(unsigned)strlen(ptr));
 			ptr += strlen(ptr)+1;
 			ptr2 = ptr;
 			if (!*ptr2)
@@ -166,7 +166,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 				ZFreeNotice(&retnotice);
 				return (ENOMEM);
 			}
-			(void) strcpy(__subscriptions_list[i].zsub_recipient,ptr2);
+			g_strlcpy(__subscriptions_list[i].zsub_recipient,ptr2,(unsigned)strlen(ptr2));
 			ptr += strlen(ptr)+1;
 		}
 		ZFreeNotice(&retnotice);

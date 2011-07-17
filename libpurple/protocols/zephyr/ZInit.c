@@ -101,14 +101,14 @@ Code_t ZInitialize()
 
 #ifdef ZEPHYR_USES_KERBEROS
     if (krealm) {
-	strcpy(__Zephyr_realm, krealm);
+      g_strlcpy(__Zephyr_realm, krealm, REALM_SZ-1);
     } else if ((krb_get_tf_fullname(TKT_FILE, d1, d2, __Zephyr_realm)
 		!= KSUCCESS) &&
 	       ((krbval = krb_get_lrealm(__Zephyr_realm, 1)) != KSUCCESS)) {
 	return (krbval);
     }
 #else
-    strcpy(__Zephyr_realm, "local-realm");
+    g_strlcpy(__Zephyr_realm, "local-realm", 12);
 #endif
 
     __My_addr.s_addr = INADDR_NONE;
