@@ -730,7 +730,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	purple_debug_info("dnssrv","querying SRV record for %s: %s\n", domain,
 			query);
 	g_free(hostname);
-	
+
 	query_data = g_new0(PurpleSrvTxtQueryData, 1);
 	query_data->type = PurpleDnsTypeSrv;
 	query_data->cb.srv = cb;
@@ -738,7 +738,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	query_data->query = query;
 	query_data->fd_in = -1;
 	query_data->fd_out = -1;
-	
+
 	if (purple_srv_txt_query_ui_resolve(query_data))
 	{
 		return query_data;
@@ -864,7 +864,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	purple_debug_info("dnssrv","querying TXT record for %s: %s\n", domain,
 			query);
 	g_free(hostname);
-	
+
 	query_data = g_new0(PurpleSrvTxtQueryData, 1);
 	query_data->type = PurpleDnsTypeTxt;
 	query_data->cb.txt = cb;
@@ -872,7 +872,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	query_data->query = query;
 	query_data->fd_in = -1;
 	query_data->fd_out = -1;
-	
+
 	if (purple_srv_txt_query_ui_resolve(query_data)) {
 		/* query intentionally not freed
 		 */
@@ -915,7 +915,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
-	
+
 	query_data->pid = pid;
 	query_data->fd_out = out[0];
 	query_data->fd_in = in[1];
@@ -959,7 +959,7 @@ purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data)
 
 	if (ops && ops->destroy)
 		ops->destroy(query_data);
-	
+
 	if (query_data->handle > 0)
 		purple_input_remove(query_data->handle);
 #ifdef _WIN32
@@ -1045,9 +1045,9 @@ purple_srv_query_resolved(PurpleSrvTxtQueryData *query_data, GList *records)
 	}
 
 	query_data->cb.srv(records_array, i, query_data->extradata);
-	
+
 	purple_srv_txt_query_destroy(query_data);
-	
+
 	g_list_foreach(sorted_records, (GFunc)g_free, NULL);
 	g_list_free(sorted_records);
 }
@@ -1070,7 +1070,7 @@ purple_txt_query_resolved(PurpleSrvTxtQueryData *query_data, GList *entries)
 		g_list_foreach(entries, (GFunc)g_free, NULL);
 		g_list_free(entries);
 	}
-	
+
 	purple_srv_txt_query_destroy(query_data);
 }
 
@@ -1078,10 +1078,10 @@ static void
 purple_srv_query_failed(PurpleSrvTxtQueryData *query_data, const gchar *error_message)
 {
 	purple_debug_error("dnssrv", "%s\n", error_message);
-	
+
 	if (query_data->cb.srv != NULL)
 		query_data->cb.srv(NULL, 0, query_data->extradata);
-		
+
 	purple_srv_txt_query_destroy(query_data);
 }
 
@@ -1115,7 +1115,7 @@ char *
 purple_srv_txt_query_get_query(PurpleSrvTxtQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, NULL);
-	
+
 	return query_data->query;
 }
 
@@ -1124,6 +1124,6 @@ int
 purple_srv_txt_query_get_type(PurpleSrvTxtQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, 0);
-	
+
 	return query_data->type;
 }
