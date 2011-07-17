@@ -58,28 +58,28 @@ jabber_win32_uname( struct utsname *uts )
   switch( OS_version.dwPlatformId )
   {
     case VER_PLATFORM_WIN32_NT:
-      strcat( uts->sysname, "WinNT" );
+      g_strlcat( uts->sysname, "WinNT", sizeof(uts->sysname) );
       MingwOS = WinNT;
       break;
     case VER_PLATFORM_WIN32_WINDOWS:
       switch ( OS_version.dwMinorVersion )
       {
         case 0:
-          strcat( uts->sysname, "Win95" );
+          g_strlcat( uts->sysname, "Win95", sizeof(uts->sysname) );
 	  MingwOS = Win95;
           break;
         case 10:
-          strcat( uts->sysname, "Win98" );
+          g_strlcat( uts->sysname, "Win98", sizeof(uts->sysname) );
 	  MingwOS = Win98;
           break;
         default:
-          strcat( uts->sysname, "Win??" );
+          g_strlcat( uts->sysname, "Win??", sizeof(uts->sysname) );
 	  MingwOS = unknown;
           break;
       }
       break;
     default:
-      strcat( uts->sysname, "Win??" );
+      g_strlcat( uts->sysname, "Win??", sizeof(uts->sysname) );
       MingwOS = unknown;
       break;
   }
