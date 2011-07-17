@@ -1018,38 +1018,41 @@ void purple_txt_response_destroy(PurpleTxtResponse *resp)
 static void
 purple_srv_query_resolved(PurpleSrvTxtQueryData *query_data, GList *records)
 {
-	GList *sorted_records, *l;
+	GList *l;
 	PurpleSrvResponse *records_array;
-	int i;
+	int i = 0, length;
 
 	g_return_if_fail(records != NULL);
 
 	if (query_data->cb.srv == NULL) {
 		purple_srv_txt_query_destroy(query_data);
 
-		g_list_foreach(records, (GFunc)g_free, NULL);
-		g_list_free(records);
+		while (records) {
+			g_free(records->data);
+			records = g_list_delete_link(records, records);
+		}
 		return;
 	}
 
-	sorted_records = purple_srv_sort(records);
+	records = purple_srv_sort(records);
+	length = g_list_length(records);
 
-	purple_debug_info("dnssrv", "SRV records resolved for %s, count: %d\n", query_data->query, g_list_length(sorted_records));
+	purple_debug_info("dnssrv", "SRV records resolved for %s, count: %d\n",
+	                            query_data->query, length);
 
-	records_array = g_new(PurpleSrvResponse, g_list_length(sorted_records));
-
-	i = 0;
-
-	for (l = sorted_records; l; l = l->next, i++) {
+	records_array = g_new(PurpleSrvResponse, length);
+	for (l = records; l; l = l->next, i++) {
 		records_array[i] = *(PurpleSrvResponse *)l->data;
 	}
 
-	query_data->cb.srv(records_array, i, query_data->extradata);
+	query_data->cb.srv(records_array, length, query_data->extradata);
 
 	purple_srv_txt_query_destroy(query_data);
 
-	g_list_foreach(sorted_records, (GFunc)g_free, NULL);
-	g_list_free(sorted_records);
+	while (records) {
+		g_free(records->data);
+		records = g_list_delete_link(records, records);
+	}
 }
 
 /*
@@ -1067,8 +1070,10 @@ purple_txt_query_resolved(PurpleSrvTxtQueryData *query_data, GList *entries)
 	if (query_data->cb.txt != NULL)
 		query_data->cb.txt(entries, query_data->extradata);
 	else {
-		g_list_foreach(entries, (GFunc)g_free, NULL);
-		g_list_free(entries);
+		while (entries) {
+			g_free(entries->data);
+			entries = g_list_delete_link(entries, entries);
+		}
 	}
 
 	purple_srv_txt_query_destroy(query_data);
