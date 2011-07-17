@@ -23,6 +23,8 @@ version 2.10.0 (MM/DD/YYYY):
 	XMPP:
 	* Do not generate malformed XML ("</>") when setting an empty mood.
 	  (#14342)
+	* Fix the /join <room> behavior.  (Broken when adding support for
+	  <room>@<server>)  (#14205)
 
 version 2.9.0 (06/23/2011):
 	Pidgin:

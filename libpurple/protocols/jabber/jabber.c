@@ -3009,7 +3009,7 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	GHashTable *components;
-	JabberID *jid;
+	JabberID *jid = NULL;
 	const char *room = NULL, *server = NULL, *handle = NULL;
 
 	if (!chat || !args || !args[0])
@@ -3017,7 +3017,8 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
-	jid = jabber_id_new(args[0]);
+	if (strchr(args[0], '@'))
+		jid = jabber_id_new(args[0]);
 	if (jid) {
 		room   = jid->node;
 		server = jid->domain;
@@ -3673,8 +3674,7 @@ static void jabber_register_commands(PurplePlugin *plugin)
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
-	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
-	                  /* _("join: &lt;room[@server]&gt; [password]:  Join a chat."), */
+	                  _("join: &lt;room[@server]&gt; [password]:  Join a chat."),
 	                  NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
