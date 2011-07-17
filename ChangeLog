@@ -8,9 +8,11 @@ version 2.10.0 (MM/DD/YYYY):
 	  that aren't otherwise visible in the plugins dialog.
 
 	Libpurple:
-	* Fix a large number of strcpy() invocations to use strlcpy(),
-	  forestalling an entire class of string buffer overrun bugs.
-	  (The Electronic Frontier Foundation)
+	* Fix a large number of strcpy() and strcat() invocations to use
+	  strlcpy() and strlcat(), etc., forestalling an entire class of
+	  string buffer overrun bugs.
+	  (The Electronic Frontier Foundation, Dan Auerbach, Chris Palmer,
+          Jacob Appelbaum)
 
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
