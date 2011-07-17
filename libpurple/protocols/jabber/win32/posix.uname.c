@@ -54,7 +54,7 @@ jabber_win32_uname( struct utsname *uts )
   GetVersionEx ( &OS_version );
   GetSystemInfo ( &System_Info );
 
-  strcpy( uts->sysname, "WIN32_" );
+  g_strlcpy( uts->sysname, "WIN32_" , sizeof(uts->sysname));
   switch( OS_version.dwPlatformId )
   {
     case VER_PLATFORM_WIN32_NT:
@@ -92,13 +92,13 @@ jabber_win32_uname( struct utsname *uts )
   switch( System_Info.wProcessorArchitecture )
   {
     case PROCESSOR_ARCHITECTURE_PPC:
-      strcpy( uts->machine, "ppc" );
+      g_strlcpy( uts->machine, "ppc" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_ALPHA:
-      strcpy( uts->machine, "alpha" );
+      g_strlcpy( uts->machine, "alpha" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_MIPS:
-      strcpy( uts->machine, "mips" );
+      g_strlcpy( uts->machine, "mips" , sizeof( uts->machine ) );
       break;
     case PROCESSOR_ARCHITECTURE_INTEL:
       /* dwProcessorType is only valid in Win95 and Win98
@@ -115,7 +115,7 @@ jabber_win32_uname( struct utsname *uts )
               sprintf( uts->machine, "i%ld", System_Info.dwProcessorType );
               break;
             default:
-              strcpy( uts->machine, "i386" );
+              g_strlcpy( uts->machine, "i386" , sizeof( uts->machine ) );
               break;
           }
           break;
@@ -123,12 +123,12 @@ jabber_win32_uname( struct utsname *uts )
 	  sprintf( uts->machine, "i%d86", System_Info.wProcessorLevel );
 	  break;
 	default:
-	  strcpy( uts->machine, "unknown" );
+	  g_strlcpy( uts->machine, "unknown" , sizeof( uts->machine ) );
 	  break;
       }
       break;
     default:
-      strcpy( uts->machine, "unknown" );
+      g_strlcpy( uts->machine, "unknown" , sizeof( uts->machine ) );
       break;
   }
 
