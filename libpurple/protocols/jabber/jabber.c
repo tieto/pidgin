@@ -199,7 +199,7 @@ static char *jabber_prep_resource(char *input) {
 		   hostname, so maybe we want to detect that and use it
 		   instead
 		*/
-		strcpy(hostname, "localhost");
+		g_strlcpy(hostname, "localhost", sizeof(hostname));
 	}
 	hostname[sizeof(hostname) - 1] = '\0';
 
