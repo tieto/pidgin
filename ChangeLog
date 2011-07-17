@@ -7,7 +7,7 @@ version 2.10.0 (MM/DD/YYYY):
 	* Added a plugin information dialog to show information for plugins
 	  that aren't otherwise visible in the plugins dialog.
 	* Fix building with GTK+ earlier than 2.14.0 (GTK+ 2.10 is still the
-	  minimum supportedat least 2.10 is still required). (#14261)
+	  minimum supported) (#14261)
 
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
