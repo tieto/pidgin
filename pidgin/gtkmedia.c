@@ -538,12 +538,20 @@ realize_cb_cb(PidginMediaRealizeData *data)
 	GdkWindow *window = NULL;
 
 	if (data->participant == NULL)
+#if GTK_CHECK_VERSION(2, 14, 0)
 		window = gtk_widget_get_window(priv->local_video);
+#else
+		window = (priv->local_video)->window;
+#endif
 	else {
 		GtkWidget *widget = pidgin_media_get_widget(data->gtkmedia,
 				data->session_id, data->participant);
 		if (widget)
+#if GTK_CHECK_VERSION(2, 14, 0)
 			window = gtk_widget_get_window(widget);
+#else
+			window = widget->window;
+#endif
 	}
 
 	if (window) {
