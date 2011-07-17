@@ -12,6 +12,8 @@ version 2.10.0 (MM/DD/YYYY):
 	  (#5242)
 	* Better status message handling. (Tomasz Wasilczyk) (#14314)
 	* Merged two buddy blocking methods. (Tomasz Wasilczyk) (#5303)
+	* Fix building of the bundled libgadu library with older versions
+	  of GnuTLS. (patch plucked from upstream) (#14365)
 
 	MSN:
 	* Fix seemingly random crashing. (#14307)
