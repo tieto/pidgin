@@ -523,7 +523,7 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	waitpid(query_data->pid, &status, 0);
-	purple_srv_cancel(query_data);
+	purple_srv_txt_query_destroy(query_data);
 }
 
 #else /* _WIN32 */
@@ -583,7 +583,7 @@ res_main_thread_cb(gpointer data)
 	query_data->resolver = NULL;
 	query_data->handle = 0;
 
-	purple_srv_cancel(query_data);
+	purple_srv_txt_query_destroy(query_data);
 
 	return FALSE;
 }
@@ -736,6 +736,8 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	query_data->cb.srv = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
+	query_data->fd_in = -1;
+	query_data->fd_out = -1;
 	
 	if (purple_srv_txt_query_ui_resolve(query_data))
 	{
@@ -868,6 +870,8 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	query_data->cb.txt = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
+	query_data->fd_in = -1;
+	query_data->fd_out = -1;
 	
 	if (purple_srv_txt_query_ui_resolve(query_data)) {
 		/* query intentionally not freed
@@ -949,7 +953,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 }
 
 void
-purple_srv_cancel(PurpleSrvTxtQueryData *query_data)
+purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data)
 {
 	PurpleSrvTxtQueryUiOps *ops = purple_srv_txt_query_get_ui_ops();
 
@@ -969,19 +973,27 @@ purple_srv_cancel(PurpleSrvTxtQueryData *query_data)
 		query_data->cb.srv = NULL;
 		return;
 	}
-	g_free(query_data->query);
 	g_free(query_data->error_message);
 #else
-	close(query_data->fd_out);
-	close(query_data->fd_in);
+	if (query_data->fd_out != -1)
+		close(query_data->fd_out);
+	if (query_data->fd_in != -1)
+		close(query_data->fd_in);
 #endif
+	g_free(query_data->query);
 	g_free(query_data);
 }
 
 void
 purple_txt_cancel(PurpleSrvTxtQueryData *query_data)
 {
-	purple_srv_cancel(query_data);
+	purple_srv_txt_query_destroy(query_data);
+}
+
+void
+purple_srv_cancel(PurpleSrvTxtQueryData *query_data)
+{
+	purple_srv_txt_query_destroy(query_data);
 }
 
 const gchar *
@@ -1006,12 +1018,38 @@ void purple_txt_response_destroy(PurpleTxtResponse *resp)
 static void
 purple_srv_query_resolved(PurpleSrvTxtQueryData *query_data, GList *records)
 {
+	GList *sorted_records, *l;
+	PurpleSrvResponse *records_array;
+	int i;
+
 	g_return_if_fail(records != NULL);
+
+	if (query_data->cb.srv == NULL) {
+		purple_srv_txt_query_destroy(query_data);
+
+		g_list_foreach(records, (GFunc)g_free, NULL);
+		g_list_free(records);
+		return;
+	}
+
+	sorted_records = purple_srv_sort(records);
+
+	purple_debug_info("dnssrv", "SRV records resolved for %s, count: %d\n", query_data->query, g_list_length(sorted_records));
+
+	records_array = g_new(PurpleSrvResponse, g_list_length(sorted_records));
+
+	i = 0;
+
+	for (l = sorted_records; l; l = l->next, i++) {
+		records_array[i] = *(PurpleSrvResponse *)l->data;
+	}
+
+	query_data->cb.srv(records_array, i, query_data->extradata);
 	
-	purple_debug_info("dnssrv", "SRV records resolved for %s, count: %d\n", query_data->query, g_list_length(records));
+	purple_srv_txt_query_destroy(query_data);
 	
-	if (query_data->cb.srv != NULL)
-		query_data->cb.srv(purple_srv_sort(records)->data, g_list_length(records), query_data->extradata);
+	g_list_foreach(sorted_records, (GFunc)g_free, NULL);
+	g_list_free(sorted_records);
 }
 
 /*
@@ -1024,8 +1062,16 @@ purple_txt_query_resolved(PurpleSrvTxtQueryData *query_data, GList *entries)
 
 	purple_debug_info("dnssrv", "TXT entries resolved for %s, count: %d\n", query_data->query, g_list_length(entries));
 
+	/* the callback should g_free the entries.
+	 */
 	if (query_data->cb.txt != NULL)
 		query_data->cb.txt(entries, query_data->extradata);
+	else {
+		g_list_foreach(entries, (GFunc)g_free, NULL);
+		g_list_free(entries);
+	}
+	
+	purple_srv_txt_query_destroy(query_data);
 }
 
 static void
@@ -1036,7 +1082,7 @@ purple_srv_query_failed(PurpleSrvTxtQueryData *query_data, const gchar *error_me
 	if (query_data->cb.srv != NULL)
 		query_data->cb.srv(NULL, 0, query_data->extradata);
 		
-	purple_srv_cancel(query_data);
+	purple_srv_txt_query_destroy(query_data);
 }
 
 static gboolean
