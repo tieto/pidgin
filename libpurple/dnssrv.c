@@ -748,6 +748,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	if(pipe(in) || pipe(out)) {
 		purple_debug_error("dnssrv", "Could not create pipe\n");
 		g_free(query);
+		g_free(query_data);
 		cb(NULL, 0, extradata);
 		return NULL;
 	}
@@ -755,8 +756,9 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	pid = fork();
 	if (pid == -1) {
 		purple_debug_error("dnssrv", "Could not create process!\n");
-		cb(NULL, 0, extradata);
 		g_free(query);
+		g_free(query_data);
+		cb(NULL, 0, extradata);
 		return NULL;
 	}
 
@@ -764,6 +766,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	if (pid == 0)
 	{
 		g_free(query);
+		g_free(query_data);
 
 		close(out[0]);
 		close(in[1]);
@@ -785,8 +788,6 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	query_data->fd_out = out[0];
 	query_data->fd_in = in[1];
 	query_data->handle = purple_input_add(out[0], PURPLE_INPUT_READ, resolved, query_data);
-
-	g_free(query);
 
 	return query_data;
 #else
@@ -883,6 +884,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	if(pipe(in) || pipe(out)) {
 		purple_debug_error("dnssrv", "Could not create pipe\n");
 		g_free(query);
+		g_free(query_data);
 		cb(NULL, extradata);
 		return NULL;
 	}
@@ -890,8 +892,9 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	pid = fork();
 	if (pid == -1) {
 		purple_debug_error("dnssrv", "Could not create process!\n");
-		cb(NULL, extradata);
 		g_free(query);
+		g_free(query_data);
+		cb(NULL, extradata);
 		return NULL;
 	}
 
@@ -899,6 +902,7 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	if (pid == 0)
 	{
 		g_free(query);
+		g_free(query_data);
 
 		close(out[0]);
 		close(in[1]);
@@ -920,8 +924,6 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	query_data->fd_out = out[0];
 	query_data->fd_in = in[1];
 	query_data->handle = purple_input_add(out[0], PURPLE_INPUT_READ, resolved, query_data);
-
-	g_free(query);
 
 	return query_data;
 #else
