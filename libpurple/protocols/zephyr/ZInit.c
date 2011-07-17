@@ -101,7 +101,7 @@ Code_t ZInitialize()
 
 #ifdef ZEPHYR_USES_KERBEROS
     if (krealm) {
-      g_strlcpy(__Zephyr_realm, krealm, REALM_SZ-1);
+      g_strlcpy(__Zephyr_realm, krealm, REALM_SZ);
     } else if ((krb_get_tf_fullname(TKT_FILE, d1, d2, __Zephyr_realm)
 		!= KSUCCESS) &&
 	       ((krbval = krb_get_lrealm(__Zephyr_realm, 1)) != KSUCCESS)) {

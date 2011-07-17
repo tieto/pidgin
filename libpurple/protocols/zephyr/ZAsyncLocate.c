@@ -18,6 +18,7 @@ Code_t ZRequestLocations(user, zald, kind, auth)
 {
     int retval;
     ZNotice_t notice;
+    size_t userlen, versionlen;
 
     if (ZGetFD() < 0)
 	if ((retval = ZOpenPort((unsigned short *)0)) != ZERR_NONE)
@@ -37,16 +38,18 @@ Code_t ZRequestLocations(user, zald, kind, auth)
     if ((retval = ZSendNotice(&notice, auth)) != ZERR_NONE)
 	return(retval);
 
-    if ((zald->user = (char *) malloc(strlen(user)+1)) == NULL) {
+    userlen = strlen(user) + 1;
+    versionlen = strlen(notice.z_version) + 1;
+    if ((zald->user = (char *) malloc(userlen)) == NULL) {
 	return(ENOMEM);
     }
-    if ((zald->version = (char *) malloc(strlen(notice.z_version)+1)) == NULL) {
+    if ((zald->version = (char *) malloc(versionlen)) == NULL) {
 	free(zald->user);
 	return(ENOMEM);
     }
     zald->uid = notice.z_multiuid;
-    g_strlcpy(zald->user,user,strlen(user)+1);
-    g_strlcpy(zald->version,notice.z_version,strlen(notice.z_version)+1);
+    g_strlcpy(zald->user,user,userlen);
+    g_strlcpy(zald->version,notice.z_version,versionlen);
 
     return(ZERR_NONE);
 }
@@ -130,14 +133,17 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
     __locate_next = 0;
     *nlocs = __locate_num;
     if (user) {
+	size_t len;    
 	if (zald) {
-	    if ((*user = (char *) malloc(strlen(zald->user)+1)) == NULL)
+	    len = strlen(zald->user) + 1;
+	    if ((*user = (char *) malloc(len)) == NULL)
 		return(ENOMEM);
-	    g_strlcpy(*user,zald->user,strlen(zald->user)+1);
+	    g_strlcpy(*user,zald->user,len);
 	} else {
-	    if ((*user = (char *) malloc(strlen(notice->z_class_inst)+1)) == NULL)
+	    len = strlen(notice->z_class_inst) + 1;
+	    if ((*user = (char *) malloc(len)) == NULL)
 		return(ENOMEM);
-	    g_strlcpy(*user,notice->z_class_inst,strlen(notice->z_class_inst)+1);
+	    g_strlcpy(*user,notice->z_class_inst,len);
 	}
     }
     return (ZERR_NONE);
