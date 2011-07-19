@@ -736,8 +736,10 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 	query_data->cb.srv = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
+#ifndef _WIN32
 	query_data->fd_in = -1;
 	query_data->fd_out = -1;
+#endif
 
 	if (purple_srv_txt_query_ui_resolve(query_data))
 	{
@@ -871,8 +873,10 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 	query_data->cb.txt = cb;
 	query_data->extradata = extradata;
 	query_data->query = query;
+#ifndef _WIN32
 	query_data->fd_in = -1;
 	query_data->fd_out = -1;
+#endif
 
 	if (purple_srv_txt_query_ui_resolve(query_data)) {
 		/* query intentionally not freed
