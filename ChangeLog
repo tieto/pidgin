@@ -17,6 +17,9 @@ version 2.10.0 (MM/DD/YYYY):
 	* Fix building of the bundled libgadu library with older versions
 	  of GnuTLS. (patch plucked from upstream) (#14365)
 
+	IRC:
+	* Fix the handling of formatting following mIRC ^O (#14436)
+
 	MSN:
 	* Fix seemingly random crashing. (#14307)
 
