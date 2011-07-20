@@ -250,6 +250,52 @@ purple_srv_sort(GList *list)
 	return list;
 }
 
+static PurpleSrvTxtQueryData *
+query_data_new(int type, gchar *query, gpointer extradata)
+{
+	PurpleSrvTxtQueryData *query_data = g_new0(PurpleSrvTxtQueryData, 1);
+	query_data->type = type;
+	query_data->extradata = extradata;
+	query_data->query = query;
+#ifndef _WIN32
+	query_data->fd_in = -1;
+	query_data->fd_out = -1;
+#endif
+	return query_data;
+}
+
+void
+purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data)
+{
+	PurpleSrvTxtQueryUiOps *ops = purple_srv_txt_query_get_ui_ops();
+
+	if (ops && ops->destroy)
+		ops->destroy(query_data);
+
+	if (query_data->handle > 0)
+		purple_input_remove(query_data->handle);
+#ifdef _WIN32
+	if (query_data->resolver != NULL)
+	{
+		/*
+		 * It's not really possible to kill a thread.  So instead we
+		 * just set the callback to NULL and let the DNS lookup
+		 * finish.
+		 */
+		query_data->cb.srv = NULL;
+		return;
+	}
+	g_free(query_data->error_message);
+#else
+	if (query_data->fd_out != -1)
+		close(query_data->fd_out);
+	if (query_data->fd_in != -1)
+		close(query_data->fd_in);
+#endif
+	g_free(query_data->query);
+	g_free(query_data);
+}
+
 #ifdef USE_IDN
 static gboolean
 dns_str_is_ascii(const char *name)
@@ -731,15 +777,8 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 			query);
 	g_free(hostname);
 
-	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = PurpleDnsTypeSrv;
+	query_data = query_data_new(PurpleDnsTypeSrv, extradata, query);
 	query_data->cb.srv = cb;
-	query_data->extradata = extradata;
-	query_data->query = query;
-#ifndef _WIN32
-	query_data->fd_in = -1;
-	query_data->fd_out = -1;
-#endif
 
 	if (purple_srv_txt_query_ui_resolve(query_data))
 	{
@@ -868,15 +907,8 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 			query);
 	g_free(hostname);
 
-	query_data = g_new0(PurpleSrvTxtQueryData, 1);
-	query_data->type = PurpleDnsTypeTxt;
+	query_data = query_data_new(PurpleDnsTypeTxt, query, extradata);
 	query_data->cb.txt = cb;
-	query_data->extradata = extradata;
-	query_data->query = query;
-#ifndef _WIN32
-	query_data->fd_in = -1;
-	query_data->fd_out = -1;
-#endif
 
 	if (purple_srv_txt_query_ui_resolve(query_data)) {
 		/* query intentionally not freed
@@ -956,38 +988,6 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 
 	return query_data;
 #endif
-}
-
-void
-purple_srv_txt_query_destroy(PurpleSrvTxtQueryData *query_data)
-{
-	PurpleSrvTxtQueryUiOps *ops = purple_srv_txt_query_get_ui_ops();
-
-	if (ops && ops->destroy)
-		ops->destroy(query_data);
-
-	if (query_data->handle > 0)
-		purple_input_remove(query_data->handle);
-#ifdef _WIN32
-	if (query_data->resolver != NULL)
-	{
-		/*
-		 * It's not really possible to kill a thread.  So instead we
-		 * just set the callback to NULL and let the DNS lookup
-		 * finish.
-		 */
-		query_data->cb.srv = NULL;
-		return;
-	}
-	g_free(query_data->error_message);
-#else
-	if (query_data->fd_out != -1)
-		close(query_data->fd_out);
-	if (query_data->fd_in != -1)
-		close(query_data->fd_in);
-#endif
-	g_free(query_data->query);
-	g_free(query_data);
 }
 
 void
