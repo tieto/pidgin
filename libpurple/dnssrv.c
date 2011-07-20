@@ -777,7 +777,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 			query);
 	g_free(hostname);
 
-	query_data = query_data_new(PurpleDnsTypeSrv, extradata, query);
+	query_data = query_data_new(PurpleDnsTypeSrv, query, extradata);
 	query_data->cb.srv = cb;
 
 	if (purple_srv_txt_query_ui_resolve(query_data))
