@@ -1901,7 +1901,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			start_log = new_line;
 		}
 
-		if (*c) {
+		if (c && *c) {
 			/* find EOF */
 			c = strchr(c, '\n');
 			c++;
