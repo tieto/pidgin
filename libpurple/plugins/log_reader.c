@@ -1454,8 +1454,13 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		const char *footer = NULL;
 		GString *temp = NULL;
 
-		/* The data is always terminated with a newline (see above) */
+		/* There's always a trailing '\n' at the end of the file (see above), so
+		 * just quit out if we don't find another, because we're at the end.
+		 */
 		c = strchr(c, '\n');
+		if (!c)
+			break;
+
 		*c = '\0';
 		c++;
 
@@ -1818,7 +1823,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 		gboolean add_new_log = FALSE;
 
-		if (*c) {
+		if (c && *c) {
 			if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE) ||
 				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE)) {
 
@@ -1903,8 +1908,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 		if (c && *c) {
 			/* find EOF */
-			c = strchr(c, '\n');
-			c++;
+			if ((c = strchr(c, '\n')))
+				c++;
 		}
 	}
 
