@@ -794,7 +794,8 @@ void pidgin_dialogs_plugins_info(void)
 	GList *l = NULL;
 	PurplePlugin *plugin = NULL;
 	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
-	const char *pname, *pauthor, *pver, *pwebsite, *pid;
+	char *pname = NULL, *pauthor = NULL;
+	const char *pver, *pwebsite, *pid;
 	gboolean ploaded, punloadable;
 	static GtkWidget *plugins_info = NULL;
 
@@ -806,8 +807,8 @@ void pidgin_dialogs_plugins_info(void)
 	for(l = purple_plugins_get_all(); l; l = l->next) {
 		plugin = (PurplePlugin *)l->data;
 
-		pname = purple_plugin_get_name(plugin);
-		pauthor = purple_plugin_get_author(plugin);
+		pname = g_markup_escape_text(purple_plugin_get_name(plugin), -1);
+		pauthor = g_markup_escape_text(purple_plugin_get_author(plugin), -1);
 		pver = purple_plugin_get_version(plugin);
 		pwebsite = purple_plugin_get_homepage(plugin);
 		pid = purple_plugin_get_id(plugin);
@@ -829,6 +830,8 @@ void pidgin_dialogs_plugins_info(void)
 	g_signal_connect(G_OBJECT(plugins_info), "destroy",
 			G_CALLBACK(gtk_widget_destroyed), &plugins_info);
 	g_free(title);
+	g_free(pname);
+	g_free(pauthor);
 }
 
 static void
