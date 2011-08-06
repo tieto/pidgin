@@ -21,7 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+#include "internal.h"
+
 #include "command.h"
 
 static gboolean
@@ -78,20 +79,10 @@ msn_command_from_string(const char *string)
 	return cmd;
 }
 
-void
+static void
 msn_command_destroy(MsnCommand *cmd)
 {
-	g_return_if_fail(cmd != NULL);
-
-	if (cmd->ref_count > 0)
-	{
-		msn_command_unref(cmd);
-		return;
-	}
-
-	if (cmd->payload != NULL)
-		g_free(cmd->payload);
-
+	g_free(cmd->payload);
 	g_free(cmd->command);
 	g_strfreev(cmd->params);
 	g_free(cmd);
@@ -106,19 +97,17 @@ msn_command_ref(MsnCommand *cmd)
 	return cmd;
 }
 
-MsnCommand *
+void
 msn_command_unref(MsnCommand *cmd)
 {
-	g_return_val_if_fail(cmd != NULL, NULL);
-	g_return_val_if_fail(cmd->ref_count > 0, NULL);
+	g_return_if_fail(cmd != NULL);
+	g_return_if_fail(cmd->ref_count > 0);
 
 	cmd->ref_count--;
 
 	if (cmd->ref_count == 0)
 	{
 		msn_command_destroy(cmd);
-		return NULL;
 	}
-
-	return cmd;
 }
+

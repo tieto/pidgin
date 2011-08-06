@@ -76,18 +76,6 @@
 
 #include <getopt.h>
 
-#ifdef HAVE_STARTUP_NOTIFICATION
-# define SN_API_NOT_YET_FROZEN
-# include <libsn/sn-launchee.h>
-# include <gdk/gdkx.h>
-#endif
-
-
-
-#ifdef HAVE_STARTUP_NOTIFICATION
-static SnLauncheeContext *sn_context = NULL;
-static SnDisplay *sn_display = NULL;
-#endif
 
 #ifdef HAVE_SIGNAL_H
 
@@ -97,7 +85,6 @@ static SnDisplay *sn_display = NULL;
  */
 static const int catch_sig_list[] = {
 	SIGSEGV,
-	SIGHUP,
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
@@ -167,7 +154,7 @@ clean_pid(void)
 
 	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
 		char errmsg[BUFSIZ];
-		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
+		snprintf(errmsg, sizeof(errmsg), "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
 }
@@ -223,9 +210,6 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	switch (sig) {
-	case SIGHUP:
-		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-		break;
 #if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
 /* By default, gstreamer forks when you initialize it, and waitpids for the
  * child.  But if libpurple reaps the child rather than leaving it to
@@ -286,7 +270,7 @@ ui_main(void)
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
 		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
-		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+		icon = pidgin_pixbuf_new_from_file(icon_path);
 		g_free(icon_path);
 		if (icon) {
 			icons = g_list_append(icons,icon);
@@ -397,8 +381,10 @@ static GHashTable *pidgin_ui_get_info(void)
 		 * account "markdoliner."  Please don't use this key for other
 		 * applications.  You can either not specify a client key, in
 		 * which case the default "libpurple" key will be used, or you
-		 * can register for your own client key at
-		 * http://developer.aim.com/manageKeys.jsp
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
@@ -476,42 +462,6 @@ show_usage(const char *name, gboolean terse)
 	g_free(text);
 }
 
-#ifdef HAVE_STARTUP_NOTIFICATION
-static void
-sn_error_trap_push(SnDisplay *display, Display *xdisplay)
-{
-	gdk_error_trap_push();
-}
-
-static void
-sn_error_trap_pop(SnDisplay *display, Display *xdisplay)
-{
-	gdk_error_trap_pop();
-}
-
-static void
-startup_notification_complete(void)
-{
-	Display *xdisplay;
-
-	xdisplay = GDK_DISPLAY();
-	sn_display = sn_display_new(xdisplay,
-								sn_error_trap_push,
-								sn_error_trap_pop);
-	sn_context =
-		sn_launchee_context_new_from_environment(sn_display,
-												 DefaultScreen(xdisplay));
-
-	if (sn_context != NULL)
-	{
-		sn_launchee_context_complete(sn_context);
-		sn_launchee_context_unref(sn_context);
-
-		sn_display_unref(sn_display);
-	}
-}
-#endif /* HAVE_STARTUP_NOTIFICATION */
-
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 /* suppress gcc "no previous prototype" warning */
@@ -539,21 +489,23 @@ int main(int argc, char *argv[])
 	char errmsg[BUFSIZ];
 	GIOChannel *signal_channel;
 	GIOStatus signal_status;
+	guint signal_channel_watcher;
 #ifndef DEBUG
 	char *segfault_message_tmp;
 #endif
-	GError *error = NULL;
+	GError *error;
 #endif
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
 	GList *active_accounts;
+	struct stat st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
 		{"debug",        no_argument,       NULL, 'd'},
-		{"force-online", no_argument,       NULL, 'd'},
+		{"force-online", no_argument,       NULL, 'f'},
 		{"help",         no_argument,       NULL, 'h'},
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},
@@ -608,6 +560,7 @@ int main(int argc, char *argv[])
 		/* we have to convert the message (UTF-8 to console
 		   charset) early because after a segmentation fault
 		   it's not a good practice to allocate memory */
+		error = NULL;
 		segfault_message = g_locale_from_utf8(segfault_message_tmp,
 						      -1, NULL, NULL, &error);
 		if (segfault_message != NULL) {
@@ -652,7 +605,8 @@ int main(int argc, char *argv[])
 				"binary: %s", error->message);
 		exit(1);
 	}
-	g_io_add_watch(signal_channel, G_IO_IN, mainloop_sighandler, NULL);
+	signal_channel_watcher = g_io_add_watch(signal_channel, G_IO_IN, mainloop_sighandler, NULL);
+	g_io_channel_unref(signal_channel);
 
 	/* Let's not violate any PLA's!!!! */
 	/* jseymour: whatever the fsck that means */
@@ -660,31 +614,31 @@ int main(int argc, char *argv[])
 	 * useful signals like SIGCHLD, so we unblock all the ones we  *
 	 * declare a handler for. thanks JSeymour and Vann.            */
 	if (sigemptyset(&sigset)) {
-		snprintf(errmsg, BUFSIZ, "Warning: couldn't initialise empty signal set");
+		snprintf(errmsg, sizeof(errmsg), "Warning: couldn't initialise empty signal set");
 		perror(errmsg);
 	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d for catching",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d for catching",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 		if(sigaddset(&sigset, catch_sig_list[sig_indx])) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't include signal %d for unblocking",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't include signal %d for unblocking",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 	}
 	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
-			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d to ignore",
+			snprintf(errmsg, sizeof(errmsg), "Warning: couldn't set signal %d to ignore",
 				ignore_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 	}
 
 	if (sigprocmask(SIG_UNBLOCK, &sigset, NULL)) {
-		snprintf(errmsg, BUFSIZ, "Warning: couldn't unblock signals");
+		snprintf(errmsg, sizeof(errmsg), "Warning: couldn't unblock signals");
 		perror(errmsg);
 	}
 #endif
@@ -805,9 +759,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(PIDGIN_NAME);
-#endif /* glib-2.0 >= 2.2.0 */
 
 #ifdef _WIN32
 	winpidgin_init(hint);
@@ -852,6 +804,8 @@ int main(int argc, char *argv[])
 	 * in user's home directory.
 	 */
 	search_path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(search_path, &st))
+		g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
 	purple_plugins_add_search_path(LIBDIR);
@@ -876,6 +830,7 @@ int main(int argc, char *argv[])
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
 		dbus_message_unref(message);
 #endif
+		gdk_notify_startup_complete();
 		purple_core_quit();
 		g_printerr(_("Exiting because another libpurple client is already running.\n"));
 #ifdef HAVE_SIGNAL_H
@@ -967,9 +922,10 @@ int main(int argc, char *argv[])
 		g_list_free(active_accounts);
 	}
 
-#ifdef HAVE_STARTUP_NOTIFICATION
-	startup_notification_complete();
-#endif
+	/* GTK clears the notification for us when opening the first window,
+	 * but we may have launched with only a status icon, so clear the it
+	 * just in case. */
+	gdk_notify_startup_complete();
 
 #ifdef _WIN32
 	winpidgin_post_init();
@@ -979,6 +935,9 @@ int main(int argc, char *argv[])
 
 #ifdef HAVE_SIGNAL_H
 	g_free(segfault_message);
+	g_source_remove(signal_channel_watcher);
+	close(signal_sockets[0]);
+	close(signal_sockets[1]);
 #endif
 
 #ifdef _WIN32

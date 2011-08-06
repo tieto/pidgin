@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
-#define _WIN32_IE 0x500
+#define _WIN32_IE 0x501
 #include "internal.h"
 #include <winuser.h>
 
@@ -30,20 +30,12 @@
 #include "notify.h"
 
 /*
- *  DEFINES & MACROS
- */
-
-/* For shfolder.dll */
-typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
-typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
-
-/*
  * LOCALS
  */
 static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
-static HINSTANCE libpurpledll_hInstance = 0;
+static HINSTANCE libpurpledll_hInstance = NULL;
 
 /*
  *  PUBLIC CODE
@@ -85,15 +77,22 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 	BOOL did_load = FALSE;
 	FARPROC proc = 0;
 
-	if(!(hmod = GetModuleHandle(dllname))) {
+	wchar_t *wc_dllname = g_utf8_to_utf16(dllname, -1, NULL, NULL, NULL);
+
+	if(!(hmod = GetModuleHandleW(wc_dllname))) {
 		purple_debug_warning("wpurple", "%s not already loaded; loading it...\n", dllname);
-		if(!(hmod = LoadLibrary(dllname))) {
-			purple_debug_error("wpurple", "Could not load: %s\n", dllname);
+		if(!(hmod = LoadLibraryW(wc_dllname))) {
+			purple_debug_error("wpurple", "Could not load: %s (%s)\n", dllname,
+				g_win32_error_message(GetLastError()));
+			g_free(wc_dllname);
 			return NULL;
 		}
 		else
 			did_load = TRUE;
 	}
+
+	g_free(wc_dllname);
+	wc_dllname = NULL;
 
 	if((proc = GetProcAddress(hmod, procedure))) {
 		purple_debug_info("wpurple", "This version of %s contains %s\n",
@@ -115,37 +114,12 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 
 /* Get paths to special Windows folders. */
 gchar *wpurple_get_special_folder(int folder_type) {
-	static LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
-	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
 	gchar *retval = NULL;
+	wchar_t utf_16_dir[MAX_PATH + 1];
 
-	if (!MySHGetFolderPathW) {
-		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
-			wpurple_find_and_loadproc("shfolder.dll", "SHGetFolderPathW");
-	}
-
-	if (MySHGetFolderPathW) {
-		wchar_t utf_16_dir[MAX_PATH + 1];
-
-		if (SUCCEEDED(MySHGetFolderPathW(NULL, folder_type, NULL,
-						SHGFP_TYPE_CURRENT, utf_16_dir))) {
-			retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
-		}
-	}
-
-	if (!retval) {
-		if (!MySHGetFolderPathA) {
-			MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA)
-				wpurple_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
-		}
-		if (MySHGetFolderPathA) {
-			char locale_dir[MAX_PATH + 1];
-
-			if (SUCCEEDED(MySHGetFolderPathA(NULL, folder_type, NULL,
-							SHGFP_TYPE_CURRENT, locale_dir))) {
-				retval = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
-			}
-		}
+	if (SUCCEEDED(SHGetFolderPathW(NULL, folder_type, NULL,
+					SHGFP_TYPE_CURRENT, utf_16_dir))) {
+		retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
 	}
 
 	return retval;
@@ -156,20 +130,11 @@ const char *wpurple_install_dir(void) {
 
 	if (!initialized) {
 		char *tmp = NULL;
-		if (G_WIN32_HAVE_WIDECHAR_API()) {
-			wchar_t winstall_dir[MAXPATHLEN];
-			if (GetModuleFileNameW(NULL, winstall_dir,
-					MAXPATHLEN) > 0) {
-				tmp = g_utf16_to_utf8(winstall_dir, -1,
-					NULL, NULL, NULL);
-			}
-		} else {
-			gchar cpinstall_dir[MAXPATHLEN];
-			if (GetModuleFileNameA(NULL, cpinstall_dir,
-					MAXPATHLEN) > 0) {
-				tmp = g_locale_to_utf8(cpinstall_dir,
-					-1, NULL, NULL, NULL);
-			}
+		wchar_t winstall_dir[MAXPATHLEN];
+		if (GetModuleFileNameW(libpurpledll_hInstance, winstall_dir,
+				MAXPATHLEN) > 0) {
+			tmp = g_utf16_to_utf8(winstall_dir, -1,
+				NULL, NULL, NULL);
 		}
 
 		if (tmp == NULL) {
@@ -246,61 +211,33 @@ gboolean wpurple_write_reg_string(HKEY rootkey, const char *subkey, const char *
 	HKEY reg_key;
 	gboolean success = FALSE;
 
-	if(G_WIN32_HAVE_WIDECHAR_API()) {
-		wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
-			NULL, NULL);
+	wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
+		NULL, NULL);
 
-		if(RegOpenKeyExW(rootkey, wc_subkey, 0,
-				KEY_SET_VALUE, &reg_key) == ERROR_SUCCESS) {
-			wchar_t *wc_valname = NULL;
+	if(RegOpenKeyExW(rootkey, wc_subkey, 0,
+			KEY_SET_VALUE, &reg_key) == ERROR_SUCCESS) {
+		wchar_t *wc_valname = NULL;
 
-			if (valname)
-				wc_valname = g_utf8_to_utf16(valname, -1,
-					NULL, NULL, NULL);
+		if (valname)
+			wc_valname = g_utf8_to_utf16(valname, -1,
+				NULL, NULL, NULL);
 
-			if(value) {
-				wchar_t *wc_value = g_utf8_to_utf16(value, -1,
-					NULL, NULL, NULL);
-				int len = (wcslen(wc_value) * sizeof(wchar_t)) + 1;
-				if(RegSetValueExW(reg_key, wc_valname, 0, REG_SZ,
-						(LPBYTE)wc_value, len
-						) == ERROR_SUCCESS)
-					success = TRUE;
-				g_free(wc_value);
-			} else
-				if(RegDeleteValueW(reg_key, wc_valname) ==  ERROR_SUCCESS)
-					success = TRUE;
+		if(value) {
+			wchar_t *wc_value = g_utf8_to_utf16(value, -1,
+				NULL, NULL, NULL);
+			int len = (wcslen(wc_value) * sizeof(wchar_t)) + 1;
+			if(RegSetValueExW(reg_key, wc_valname, 0, REG_SZ,
+					(LPBYTE)wc_value, len
+					) == ERROR_SUCCESS)
+				success = TRUE;
+			g_free(wc_value);
+		} else
+			if(RegDeleteValueW(reg_key, wc_valname) ==  ERROR_SUCCESS)
+				success = TRUE;
 
-			g_free(wc_valname);
-		}
-		g_free(wc_subkey);
-	} else {
-		char *cp_subkey = g_locale_from_utf8(subkey, -1, NULL,
-			NULL, NULL);
-		if(RegOpenKeyExA(rootkey, cp_subkey, 0,
-				KEY_SET_VALUE, &reg_key) == ERROR_SUCCESS) {
-			char *cp_valname = NULL;
-			if(valname)
-				cp_valname = g_locale_from_utf8(valname, -1,
-					NULL, NULL, NULL);
-
-			if (value) {
-				char *cp_value = g_locale_from_utf8(value, -1,
-					NULL, NULL, NULL);
-				int len = strlen(cp_value) + 1;
-				if(RegSetValueExA(reg_key, cp_valname, 0, REG_SZ,
-						cp_value, len
-						) == ERROR_SUCCESS)
-					success = TRUE;
-				g_free(cp_value);
-			} else
-				if(RegDeleteValueA(reg_key, cp_valname) ==  ERROR_SUCCESS)
-					success = TRUE;
-
-			g_free(cp_valname);
-		}
-		g_free(cp_subkey);
+		g_free(wc_valname);
 	}
+	g_free(wc_subkey);
 
 	if(reg_key != NULL)
 		RegCloseKey(reg_key);
@@ -312,17 +249,11 @@ static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
 	HKEY reg_key = NULL;
 	LONG rv;
 
-	if(G_WIN32_HAVE_WIDECHAR_API()) {
-		wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
-			NULL, NULL);
-		rv = RegOpenKeyExW(rootkey, wc_subkey, 0, access, &reg_key);
-		g_free(wc_subkey);
-	} else {
-		char *cp_subkey = g_locale_from_utf8(subkey, -1, NULL,
-			NULL, NULL);
-		rv = RegOpenKeyExA(rootkey, cp_subkey, 0, access, &reg_key);
-		g_free(cp_subkey);
-	}
+	wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
+		NULL, NULL);
+	rv = RegOpenKeyExW(rootkey, wc_subkey, 0, access, &reg_key);
+
+	g_free(wc_subkey);
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
@@ -340,19 +271,11 @@ static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
 static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYTE data, LPDWORD data_len) {
 	LONG rv;
 
-	if(G_WIN32_HAVE_WIDECHAR_API()) {
-		wchar_t *wc_valname = NULL;
-		if (valname)
-			wc_valname = g_utf8_to_utf16(valname, -1, NULL, NULL, NULL);
-		rv = RegQueryValueExW(reg_key, wc_valname, 0, type, data, data_len);
-		g_free(wc_valname);
-	} else {
-		char *cp_valname = NULL;
-		if(valname)
-			cp_valname = g_locale_from_utf8(valname, -1, NULL, NULL, NULL);
-		rv = RegQueryValueExA(reg_key, cp_valname, 0, type, data, data_len);
-		g_free(cp_valname);
-	}
+	wchar_t *wc_valname = NULL;
+	if (valname)
+		wc_valname = g_utf8_to_utf16(valname, -1, NULL, NULL, NULL);
+	rv = RegQueryValueExW(reg_key, wc_valname, 0, type, data, data_len);
+	g_free(wc_valname);
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
@@ -389,24 +312,13 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 
 	if(reg_key) {
 		if(_reg_read(reg_key, valname, &type, NULL, &nbytes) && type == REG_SZ) {
-			LPBYTE data;
-			if(G_WIN32_HAVE_WIDECHAR_API())
-				data = (LPBYTE) g_new(wchar_t, ((nbytes + 1) / sizeof(wchar_t)) + 1);
-			else
-				data = (LPBYTE) g_malloc(nbytes + 1);
+			LPBYTE data = (LPBYTE) g_new(wchar_t, ((nbytes + 1) / sizeof(wchar_t)) + 1);
 
 			if(_reg_read(reg_key, valname, &type, data, &nbytes)) {
-				if(G_WIN32_HAVE_WIDECHAR_API()) {
-					wchar_t *wc_temp = (wchar_t*) data;
-					wc_temp[nbytes / sizeof(wchar_t)] = '\0';
-					result = g_utf16_to_utf8(wc_temp, -1,
-						NULL, NULL, NULL);
-				} else {
-					char *cp_temp = (char*) data;
-					cp_temp[nbytes] = '\0';
-					result = g_locale_to_utf8(cp_temp, -1,
-						NULL, NULL, NULL);
-				}
+				wchar_t *wc_temp = (wchar_t*) data;
+				wc_temp[nbytes / sizeof(wchar_t)] = '\0';
+				result = g_utf16_to_utf8(wc_temp, -1,
+					NULL, NULL, NULL);
 			}
 			g_free(data);
 		}

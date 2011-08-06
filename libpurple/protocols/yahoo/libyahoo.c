@@ -264,7 +264,12 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	yahoo_get_account_text_table,    /* get_account_text_table */
 	NULL, /* initiate_media */
-	NULL  /* can_do_media */
+	NULL,  /* get_media_caps */
+	NULL,  /* get_moods */
+	NULL,  /* set_public_alias */
+	NULL,  /* get_public_alias */
+	NULL,  /* add_buddy_with_invite */
+	NULL   /* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =
@@ -306,9 +311,6 @@ init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 
-	option = purple_account_option_string_new(_("Pager server"), "server", YAHOO_PAGER_HOST);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
@@ -327,17 +329,11 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use account proxy for SSL connections"), "proxy_ssl", FALSE);
+	option = purple_account_option_bool_new(_("Use account proxy for HTTP and HTTPS connections"), "proxy_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 #if 0
 	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = purple_account_option_string_new(_("Yahoo Chat server"), "ycht-server", YAHOO_YCHT_HOST);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = purple_account_option_int_new(_("Yahoo Chat port"), "ycht-port", YAHOO_YCHT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 

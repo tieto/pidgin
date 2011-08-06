@@ -303,7 +303,6 @@ static int
 attach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
-	PidginWindow *gtkwin = NULL;
 	GSList *imhtml_ids = NULL, *entry_ids = NULL;
 	guint id;
 
@@ -312,8 +311,6 @@ attach_signals(PurpleConversation *conv)
 		purple_debug_misc("notify", "Failed to find gtkconv\n");
 		return 0;
 	}
-
-	gtkwin  = gtkconv->win;
 
 	if (purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus")) {
 		/* TODO should really find a way to make this work no matter
@@ -358,13 +355,11 @@ static void
 detach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
-	PidginWindow *gtkwin = NULL;
 	GSList *ids = NULL, *l;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	if (!gtkconv)
 		return;
-	gtkwin  = gtkconv->win;
 
 	ids = purple_conversation_get_data(conv, "notify-imhtml-signals");
 	for (l = ids; l != NULL; l = l->next)
@@ -547,7 +542,11 @@ handle_count_xprop(PidginWindow *purplewin)
 	}
 
 	count = count_messages(purplewin);
+#if GTK_CHECK_VERSION(2,14,0)
+	gdkwin = gtk_widget_get_window(window);
+#else
 	gdkwin = window->window;
+#endif
 
 	gdk_property_change(gdkwin, _PurpleUnseenCount, _Cardinal, 32,
 	                    GDK_PROP_MODE_REPLACE, (guchar *) &count, 1);
@@ -646,7 +645,6 @@ static void
 apply_method()
 {
 	GList *convs;
-	PidginWindow *purplewin = NULL;
 
 	for (convs = purple_get_conversations(); convs != NULL;
 	     convs = convs->next) {
@@ -655,7 +653,6 @@ apply_method()
 		/* remove notifications */
 		unnotify(conv, FALSE);
 
-		purplewin = PIDGIN_CONVERSATION(conv)->win;
 		if (GPOINTER_TO_INT(purple_conversation_get_data(conv, "notify-message-count")) != 0)
 			/* reattach appropriate notifications */
 			notify(conv, FALSE);

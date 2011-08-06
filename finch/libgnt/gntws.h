@@ -46,7 +46,7 @@ struct _GntWS
 	GList *list;
 	GList *ordered;
 	gpointer ui_data;
-	
+
 	void *res1;
 	void *res2;
 	void *res3;

@@ -21,18 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+
 #include "msn.h"
 #include "msnutils.h"
 
 #include "cipher.h"
 
-char *rand_guid(void);
-
 /**************************************************************************
  * Util
  **************************************************************************/
 char *
-rand_guid()
+rand_guid(void)
 {
 	return g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
 			rand() % 0xAAFF + 0x1111,
@@ -181,29 +182,40 @@ msn_encode_mime(const char *str)
  * We need this because we're only supposed to encode spaces in the font
  * names. purple_url_encode() isn't acceptable.
  */
-static const char *
-encode_spaces(const char *str)
+gboolean
+msn_encode_spaces(const char *str, char *buf, size_t len)
 {
-	static char buf[BUF_LEN];
-	const char *c;
-	char *d;
+	char *nonspace = buf;
 
-	g_return_val_if_fail(str != NULL, NULL);
+	while (isspace(*str))
+		str++;
 
-	for (c = str, d = buf; *c != '\0'; c++)
-	{
-		if (*c == ' ')
-		{
-			*d++ = '%';
-			*d++ = '2';
-			*d++ = '0';
+	for (; *str && len > 1; str++) {
+		if (*str == '%') {
+			if (len < 4)
+				break;
+			*buf++ = '%';
+			*buf++ = '2';
+			*buf++ = '5';
+			len -= 3;
+			nonspace = buf;
+		} else if (*str == ' ') {
+			if (len < 4)
+				break;
+			*buf++ = '%';
+			*buf++ = '2';
+			*buf++ = '0';
+			len -= 3;
+		} else {
+			*buf++ = *str;
+			len--;
+			nonspace = buf;
 		}
-		else
-			*d++ = *c;
 	}
-	*d = '\0';
 
-	return buf;
+	*nonspace = '\0';
+
+	return (*str == '\0');
 }
 
 /*
@@ -222,6 +234,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 	const char *c;
 	char *msg;
 	char *fontface = NULL;
+	char fontface_encoded[BUF_LEN];
 	char fonteffect[5];
 	char fontcolor[7];
 	char direction = '0';
@@ -448,8 +461,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 	if (fontface == NULL)
 		fontface = g_strdup("Segoe UI");
 
+	msn_encode_spaces(fontface, fontface_encoded, BUF_LEN);
 	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
-								  encode_spaces(fontface),
+								  fontface_encoded,
 								  fonteffect, fontcolor, direction);
 	*message = msg;
 
@@ -474,6 +488,29 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 
 	*ret_host = host;
 	*ret_port = port;
+}
+
+gboolean
+msn_email_is_valid(const char *passport)
+{
+	if (purple_email_is_valid(passport)) {
+		/* Special characters aren't allowed in domains, so only go to '@' */
+		while (*passport != '@') {
+			if (*passport == '/')
+				return FALSE;
+			else if (*passport == '?')
+				return FALSE;
+			else if (*passport == '=')
+				return FALSE;
+			/* MSN also doesn't like colons, but that's checked already */
+
+			passport++;
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /***************************************************************************
@@ -541,7 +578,7 @@ msn_handle_chl(char *input, char *output)
 	chlStringParts = (unsigned int *)buf;
 
 	/* this is magic */
-	for (i = 0; i < (strlen(buf) / 4); i += 2) {
+	for (i = 0; i < (len / 4); i += 2) {
 		long long temp;
 
 		chlStringParts[i] = GUINT_TO_LE(chlStringParts[i]);
@@ -578,5 +615,89 @@ msn_handle_chl(char *input, char *output)
 	}
 
 	output[32] = '\0';
+}
+
+guint8
+msn_read8(const char *buf)
+{
+	return (guint8)buf[0];
+}
+
+guint16
+msn_read16le(const char *buf)
+{
+	return GUINT16_FROM_LE(*(guint16 *)buf);
+}
+
+guint16
+msn_read16be(const char *buf)
+{
+	return GUINT16_FROM_BE(*(guint16 *)buf);
+}
+
+guint32
+msn_read32le(const char *buf)
+{
+	return GUINT32_FROM_LE(*(guint32 *)buf);
+}
+
+guint32
+msn_read32be(const char *buf)
+{
+	return GUINT32_FROM_BE(*(guint32 *)buf);
+}
+
+guint64
+msn_read64le(const char *buf)
+{
+	return GUINT64_FROM_LE(*(guint64 *)buf);
+}
+
+guint64
+msn_read64be(const char *buf)
+{
+	return GUINT64_FROM_BE(*(guint64 *)buf);
+}
+
+void
+msn_write8(char *buf, guint8 data)
+{
+	*(guint8 *)buf = data;
+}
+
+void
+msn_write16le(char *buf, guint16 data)
+{
+	*(guint16 *)buf = GUINT16_TO_LE(data);
+}
+
+void
+msn_write16be(char *buf, guint16 data)
+{
+	*(guint16 *)buf = GUINT16_TO_BE(data);
+}
+
+void
+msn_write32le(char *buf, guint32 data)
+{
+	*(guint32 *)buf = GUINT32_TO_LE(data);
+}
+
+void
+msn_write32be(char *buf, guint32 data)
+{
+	*(guint32 *)buf = GUINT32_TO_BE(data);
+}
+
+void
+msn_write64le(char *buf, guint64 data)
+{
+	*(guint64 *)buf = GUINT64_TO_LE(data);
+}
+
+void
+msn_write64be(char *buf, guint64 data)
+{
+	*(guint64 *)buf = GUINT64_TO_BE(data);
 }
 

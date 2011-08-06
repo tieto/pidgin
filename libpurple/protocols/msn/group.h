@@ -21,12 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_GROUP_H_
-#define _MSN_GROUP_H_
+#ifndef MSN_GROUP_H
+#define MSN_GROUP_H
 
 typedef struct _MsnGroup  MsnGroup;
 
-#include <stdio.h>
+#include "internal.h"
 
 #include "session.h"
 #include "user.h"
@@ -106,5 +106,4 @@ char* msn_group_get_id(const MsnGroup *group);
  */
 const char *msn_group_get_name(const MsnGroup *group);
 
-#endif /* _MSN_GROUP_H_ */
-
+#endif /* MSN_GROUP_H */

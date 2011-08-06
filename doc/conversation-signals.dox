@@ -32,7 +32,10 @@
   @signal chat-join-failed
   @signal chat-left
   @signal chat-topic-changed
+  @signal cleared-message-history
   @signal conversation-extended-menu
+  @signal sent-attention
+  @signal got-attention
  @endsignals
 
  @see conversation.h
@@ -475,6 +478,44 @@ void (*conversation_extended_menu)(PurpleConversation *conv, GList **list);
   @param conv   The conversation.
   @param list   A pointer to the list of actions.
   @since 2.1.0
+ @endsignaldef
+
+ @signaldef cleared-message-history
+  @signalproto
+void (*cleared_message_history)(PurpleConversation *conv);
+  @endsignalproto
+  @signaldesc
+    Emitted when the conversation history is cleared.
+  @param conv   The conversation.
+  @since 2.8.0
+ @endsignaldef
+
+ @signaldef sent-attention
+  @signalproto
+void (*got_attention)(PurpleAccount *account, const char *who, 
+	PurpleConversation *conv, guint type)
+  @endsignalproto
+  @signaldesc
+    Emitted when receiving an attention message (buzz, nudge, etc.).
+  @param account  The account
+  @param who      The name of the person receiving the attention
+  @param conv     The conversation
+  @param type     The attention type (an index starting at 0)
+  @since 2.7.0
+ @endsignaldef
+
+ @signaldef got-attention
+  @signalproto
+void (*got_attention)(PurpleAccount *account, const char *who, 
+	PurpleConversation *conv, guint type)
+  @endsignalproto
+  @signaldesc
+    Emitted when receiving an attention message (buzz, nudge, etc.).
+  @param account  The account
+  @param who      The name of the person sending the attention
+  @param conv     The conversation
+  @param type     The attention type (an index starting at 0)
+  @since 2.7.0
  @endsignaldef
 */
 // vim: syntax=c.doxygen tw=75 et

@@ -46,12 +46,11 @@ typedef struct {
 	char *birthyear;
 	char *gender;
 	char *active;
-	char *offset;
-
-	char *last_uin;
 
 	GGPSearchType search_type;
 	guint32 seq;
+	guint16 page_number;
+	guint16 page_size; /* how many contacts fits into one page of results */
 
 	void *user_data;
 	void *window;
@@ -141,7 +140,7 @@ ggp_search_start(PurpleConnection *gc, GGPSearchForm *form);
  * @param res    Public directory look-up result.
  * @param num    Id of the record.
  * @param fileld Name of the field.
- * 
+ *
  * @return UTF-8 encoded value of the field.
  */
 char *

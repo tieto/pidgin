@@ -6,16 +6,16 @@ Author=Hylke Bons
 
 # Default smileys
 [default]
-smile.png           :)      :-)
-smile-big.png       :-D     :-d     :D      :d
+happy.png           :)      :-)
+excited.png         :-D     :-d     :D      :d
 sad.png             :-(     :(
 wink.png            ;-)     ;)
-tongue.png          :P      :-P     :-p     :p
-shock.png           =-O     =-o
+tongue.png          :P      :p      :-P     :-p
+shocked.png         =-O     =-o
 kiss.png            :-*
 glasses-cool.png    8-)
 embarrassed.png     :-[
-crying.png          :'(
+crying.png          :'(     :'-(
 thinking.png        :-/     :-\\
 angel.png           O:-)    o:-)
 shut-mouth.png      :-X
@@ -23,20 +23,70 @@ moneymouth.png      :-$
 foot-in-mouth.png   :-!
 shout.png           >:o     >:O
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)     8-|)
-! cyclops.png       O-) o-)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
+
+
+[XMPP]
+# Following XEP-0038 + GTalk + our default set, in default set order
+# The GTalk strings come from ticket #3307.
+happy.png           :)      :-)     =)
+excited.png         :-D     :-d     :D      :d      =D      =d
+sad.png             :-(     :(
+wink.png            ;-)     ;)      ;^)
+tongue.png          :P      :p      :-P     :-p
+shocked.png         =-O     =-o     :-O     :-o
+kiss.png            :kiss:  :-*
+glasses-cool.png    8-)     B-)
+embarrassed.png     :-[
+crying.png          :'-(    :'(
+thinking.png        :-/     :-\\
+angel.png           O:-)    o:-)
+shut-mouth.png      :-X
+moneymouth.png      :-$
+foot-in-mouth.png   :-!
+shout.png           >:o     >:O
+
+# Following XEP-0038 + GTalk
+angry.png           >:-(    >:(     X-(    x-(
+good.png            :yes:
+bad.png             :no:
+stop.png            :wait:
+rose.png            @->--   :rose:
+phone.png           :telephone:
+mail.png            :email:
+lamp.png            :jabber:
+cake.png            :cake:
+in_love.png         :heart: :love:  <3
+love-over.png       :brokenheart:
+musical-note.png    :music:
+beer.png            :beer:
+coffee.png          :coffee:
+coins.png           :money:
+moon.png            :moon:
+sun.png             :sun:
+star.png            :star:
+
+# Others
+neutral.png         :|      :-|
+victory.png         \\m/
+
+# Hidden icons from the default set.
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 
 # Following AIM 6.1
 [AIM]
-smile.png           :-)     :)
+happy.png           :-)     :)
 wink.png            ;-)     ;)
 sad.png             :-(     :(
-tongue.png          :-P     :P      :-p    :p
-shock.png           =-O
+tongue.png          :P      :p      :-P     :-p
+shocked.png         =-O
 kiss.png            :-*
 shout.png           >:o
-smile-big.png       :-D     :D
+excited.png         :-D     :D
 moneymouth.png      :-$
 foot-in-mouth.png   :-!
 embarrassed.png     :-[
@@ -46,26 +96,27 @@ crying.png          :'(
 shut-mouth.png      :-X
 glasses-cool.png    8-)
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 
 # Following Windows Live Messenger 8.1
 [MSN]
-smile.png           :)      :-)
-smile-big.png       :D      :d :-D :-d
+happy.png           :)      :-)
+excited.png         :D      :d      :-D     :-d
 wink.png            ;)      ;-)
-shock.png           :-O     :-o :O :o
-tongue.png          :P      :p :-P :-p
+shocked.png         :-O     :-o     :O      :o
+tongue.png          :-P     :P      :-p     :p
 glasses-cool.png    (H)     (h)
 angry.png           :@      :-@
 embarrassed.png     :$      :-$
-confused.png        :S      :s :-S :-s
+confused.png        :S      :s      :-S     :-s
 sad.png             :(      :-(
 crying.png          :'(
 neutral.png         :|      :-|
 devil.png           (6)
 angel.png           (A)     (a)
-love.png            (L)     (l)
+in_love.png         (L)     (l)
 love-over.png       (U)     (u)
 msn.png             (M)     (m)
 cat.png             (@)
@@ -125,10 +176,11 @@ thinking.png        *-)
 thunder.png         (li)
 party.png           <:o)
 eyeroll.png         8-)
-yawn.png            |-) 
+sleepy.png          |-) 
 bunny.png           ('.')
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 # Hidden MSN emotes
 cigarette.png      	(ci)    (CI)
@@ -139,7 +191,7 @@ fingers-crossed.png	(yn)    (YN)
 
 # Following QQ 2006
 [QQ]
-shock.png           /:O      /jy       /surprised
+shocked.png         /:O      /jy       /surprised
 curl-lip.png        /:~      /pz       /curl_lip
 desire.png          /:*      /se       /desire
 dazed.png           /:|      /dazed
@@ -147,13 +199,13 @@ party.png           /8-)     /dy       /revel
 crying.png          /:<      /ll       /cry
 bashful.png         /:$      /hx       /bashful
 shut-mouth.png      /:X      /bz       /shut_mouth
-sleepy.png          /:Z      /shui     /sleep
+sleeping.png        /:Z      /shui     /sleep
 weep.png            /:'(     /dk       /weep
 embarrassed.png     /:-|     /gg       /embarassed
 pissed-off.png      /:@      /fn       /pissed_off
 act-up.png          /:P      /tp       /act_up
-smile-big.png       /:D      /cy       /toothy_smile
-smile.png           /:)      /wx       /small_smile
+excited.png         /:D      /cy       /toothy_smile
+happy.png           /:)      /wx       /small_smile
 sad.png             /:(      /ng       /sad
 glasses-cool.png    /:+      /kuk      /cool
 doctor.png          /:#      /feid     /SARS
@@ -164,9 +216,9 @@ cute.png            /;-D     /ka       /cute
 disdain.png         /;d      /by       /disdain
 arrogant.png        /;o      /am       /arrogant
 starving.png        /:g      /jie      /starving
-yawn.png            /|-)     /kun      /sleepy
+sleepy.png          /|-)     /kun      /sleepy
 terror.png          /:!      /jk       /terror
-sweat.png           /:L      /sweat
+hot.png             /:L      /sweat
 smirk.png           /:>      /hanx     /smirk
 soldier.png         /:;      /db       /soldier
 struggle.png        /;f      /fendou   /struggle
@@ -180,8 +232,8 @@ skeleton.png        /!!!     /kl       /skeleton
 hammer.png          /xx      /qiao     /hammer
 bye.png             /bye     /zj       /bye
 go-away.png         /go      /shan     /go
-tremble.png         /shake   /fad      /shake
-in-love.png         /love    /aiq      /love
+afraid.png          /shake   /fad      /shake
+amorous.png         /love    /aiq      /love
 jump.png            /jump    /tiao     /jump
 search.png          /find    /zhao     /search
 lashes.png          /&       /mm       /beautiful_eyebrows
@@ -200,12 +252,12 @@ soccerball.png      /footb   /zq       /soccer
 musical-note.png    /music   /yy       /music
 poop.png            /shit    /bb       /shit
 coffee.png          /coffee  /kf       /coffee
-eat.png             /eat     /fan      /eat
+hungry.png          /eat     /fan      /eat
 pill.png            /pill    /yw       /pill
 rose.png            /rose    /mg       /rose
 wilt.png            /fade    /dx       /wilt
 kiss.png            /kiss    /wen      /kiss
-love.png            /heart   /xin      /heart
+in_love.png         /heart   /xin      /heart
 love-over.png       /break   /xs       /broken_heart
 meeting.png         /meeting /hy       /meeting
 present.png         /gift    /lw       /gift
@@ -233,20 +285,21 @@ star.png            /<*>     /xixing   /star
 girl.png            /<00>    /nv       /woman
 boy.png             /<11>    /nan      /man
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 
 # Following ICQ 6.0
 [ICQ]
-smile.png           :-)     :)
+happy.png           :-)     :)
 neutral.png         :-$
 sad.png             :-(     :(
-shock.png           =-O
+shocked.png         =-O
 wink.png            ;-)     ;)
 tongue.png          :-P     :P      :-p     :p
 music.png           [:-}
 laugh.png           *JOKINGLY*
-sleepy.png          *TIRED*
+sleeping.png        *TIRED*
 crying.png          :'(    :'-(
 sick.png            :-!
 kissed.png          *KISSED*
@@ -265,26 +318,27 @@ thinking.png        :-\\    :-/
 good.png            *THUMBS\ UP*
 shout.png           >:o     >:O     :-@
 beer.png            *DRINK*
-smile-big.png       :-D     :D
+excited.png         :-D     :D
 glasses-cool.png    8-)
-in-love.png         *IN\ LOVE*
+amorous.png         *IN\ LOVE*
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 
 # Following Yahoo! Messenger 8.1
 [Yahoo]
-smile.png           :)      :-)
+happy.png           :)      :-)
 question.png        :-/     :-\\
-shock.png           :-O     :O      :-o     :o 
+shocked.png         :-O     :O      :-o     :o 
 devil.png           >:)
 angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
-yawn.png            (:|
+sleepy.png          (:|
 hypnotized.png      @-)
 on-the-phone.png    :)]
 sad.png             :(      :-(
-in-love.png         :x      :-x     :X      :-X
+amorous.png         :x      :-x     :X      :-X
 angry.png           X-(     x-(     X(      x(
 crying.png          :((
 glasses-nerdy.png   :-B     :-b
@@ -301,11 +355,11 @@ arrogant.png        [-(
 thinking.png        :-?
 waiting.png         :-w     :-W
 at-wits-end.png     ~x(     ~X(
-smile-big.png       :D      :-D     :d      :-d
+excited.png         :D      :-D     :d      :-d
 tongue.png          :-P     :P      :-p     :p
 glasses-cool.png    B-)     b-)
 neutral.png         :|      :-|
-sleepy.png          I-)     i-)     |-)
+sleeping.png        I-)     i-)     |-)
 clown.png           :o)     :O)
 doh.png             #-o     #-O
 weep.png            :-<
@@ -321,15 +375,16 @@ mad-tongue.png      >:P     >:p
 time-out.png        :-t     :-T
 hug-left.png        >:D<    >:d<
 love-over.png       =((
-sweat.png           #:-S    #:-s
+hot.png             #:-S    #:-s
 rotfl.png           =)) :-j :-J 
 loser.png           L-)     l-)
 party.png           <:-P    <:-p
-nailbiting.png      :-SS	:-Ss	:-sS	:-ss
+nervous.png         :-SS	:-Ss	:-sS	:-ss
 cowboy.png          <):)
 desire.png          8->
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
 
 # Hidden Yahoo emotes
 alien.png           =:)     >-)
@@ -366,17 +421,17 @@ yin-yang.png        (%)
 
 # Following Yahoo! Messenger 8.1
 [Yahoo JAPAN]
-smile.png           :)      :-)
+happy.png           :)      :-)
 question.png        :-/     :-\\
-shock.png           :-O     :O      :-o     :o 
+shocked.png         :-O     :O      :-o     :o 
 devil.png           >:)
 angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
-yawn.png            (:|
+sleepy.png          (:|
 hypnotized.png      @-)
 on-the-phone.png    :)]
 sad.png             :(      :-(
-in-love.png         :x      :-x     :X      :-X
+amorous.png         :x      :-x     :X      :-X
 angry.png           X-(     x-(     X(      x(
 crying.png          :((
 glasses-nerdy.png   :-B     :-b
@@ -393,11 +448,11 @@ arrogant.png        [-(
 thinking.png        :-?
 waiting.png         :-w     :-W
 at-wits-end.png     ~x(     ~X(
-smile-big.png       :D      :-D     :d      :-d
+excited.png         :D      :-D     :d      :-d
 tongue.png          :-P     :P      :-p     :p
 glasses-cool.png    B-)     b-)
 neutral.png         :|      :-|
-sleepy.png          I-)     i-)     |-)
+sleeping.png        I-)     i-)     |-)
 clown.png           :o)     :O)
 doh.png             #-o     #-O
 weep.png            :-<
@@ -413,11 +468,11 @@ mad-tongue.png      >:P     >:p
 time-out.png        :-t     :-T
 hug-left.png        >:D<    >:d<
 love-over.png       =((
-sweat.png           #:-S    #:-s
+hot.png             #:-S    #:-s
 rotfl.png           =)) :-j :-J 
 loser.png           L-)     l-)
 party.png           <:-P    <:-p
-nailbiting.png      :-SS	:-Ss	:-sS	:-ss
+nervous.png         :-SS       :-Ss    :-sS    :-ss
 cowboy.png          <):)
 desire.png          8->
 ! skywalker.png     C:-)    c:-)    C:)     c:)
@@ -459,14 +514,14 @@ yin-yang.png        (%)
 
 # Following MySpaceIM Beta 1.0.697.0
 [MySpaceIM]
-smile-big.png	    :D      :-D
+excited.png  	    :D      :-D
 devil.png	    }:)
 confused.png	    :Z
 glasses-nerdy.png   B)
 bulgy-eyes.png	    %)
 freaked-out.png	    :E
-smile.png	    :)      :-)
-in-love.png	    :X
+happy.png	    :)      :-)
+amorous.png	    :X
 laugh.png	    :))
 mohawk.png	    -:
 mad-tongue.png	    X(
@@ -474,7 +529,7 @@ messed.png	    X)
 glasses-nerdy.png   Q)
 doh.png		    :G
 pirate.png	    P)
-shock.png	    :O
+shocked.png	    :O
 sidefrown.png	    :{
 sinister.png	    :B
 smirk.png	    :,
@@ -484,23 +539,51 @@ pissed-off.png	    B|
 wink.png	    ;-)     ;)
 sad.png		    :[
 kiss.png            :x
-
-[XMPP]
-# XMPP emoticons
-smile.png                 :)    :-)    =)
-smile-big.png             :D    :-D    =D
-wink.png                  ;)    ;-)    ;^)
-shock.png                 :-o
-tongue.png                :P    :-P    :-p    :p
-glasses-cool.png          B-)
-angry.png                 X-(
-sad.png                   :(    :-(    =(
-crying.png                :'(
-neutral.png               :-|
-thinking.png              :-/
-love.png                  <3
-monkey.png                :(|)
-victory.png               \\m/
 ! skywalker.png     C:-)    c:-)    C:)     c:)
-! monkey.png        :-(|)  :(|)     8-|)
-! cyclops.png       O-) o-)
+! monkey.png        :-(|)   :(|)    8-|)
+! cyclops.png       O-)     o-)
+
+
+# MXit standard emoticons
+[MXit]
+happy.png           :-)     :)
+sad.png             :-(     :(
+wink.png            ;-)     ;)
+excited.png         :-D     :D     :->      :>
+neutral.png         :-|     :|
+shocked.png         :-O     :O
+tongue.png          :-P     :P
+embarrassed.png     :-$     :$
+glasses-cool.png    8-)
+in_love.png         (H)
+rose.png            (F)
+### Added in v3.0
+boy.png             (m)
+girl.png            (f)
+star.png            (*)
+chilli.png          (c)
+kiss.png            (x)
+lamp.png            (i)
+pissed-off.png      :e      :-e
+shut-mouth.png      :-x     :x
+thunder.png         (z)
+coffee.png          (U)
+mrgreen.png         (G)
+### Added in v5.0
+sick.png            :o(
+excruciating.png    :-{     :{
+amorous.png         :-}     :}
+eyeroll.png         8-o     8o
+crying.png          :'(
+thinking.png        :-?     :?
+drool.png           :-~     :~
+sleeping.png        :-z     :z
+lying.png           :L)
+glasses-nerdy.png   8-|     8|
+pirate.png          P-)
+### Added in v5.9.7
+bored.png           :-[     :[
+cold.png            :-<     :<
+confused.png        :-,     :,
+hungry.png          :-C     :C
+stressed.png        :-s     :s

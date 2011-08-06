@@ -62,7 +62,7 @@ new_node(const char *name, XMLNodeType type)
 xmlnode*
 xmlnode_new(const char *name)
 {
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	return new_node(name, XMLNODE_TYPE_TAG);
 }
@@ -73,7 +73,7 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	xmlnode *node;
 
 	g_return_val_if_fail(parent != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(name != NULL && *name != '\0', NULL);
 
 	node = new_node(name, XMLNODE_TYPE_TAG);
 
@@ -223,7 +223,7 @@ xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, cons
 
 
 const char *
-xmlnode_get_attrib(xmlnode *node, const char *attr)
+xmlnode_get_attrib(const xmlnode *node, const char *attr)
 {
 	xmlnode *x;
 
@@ -240,9 +240,9 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 }
 
 const char *
-xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
+xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const char *xmlns)
 {
-	xmlnode *x;
+	const xmlnode *x;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(attr != NULL, NULL);
@@ -590,7 +590,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_strndup((const char *)attributes[i+3], attrib_len);
 			txt = attrib;
-			attrib = purple_unescape_html(txt);
+			attrib = purple_unescape_text(txt);
 			g_free(txt);
 			xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
 			g_free(attrib);
@@ -606,7 +606,7 @@ xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
-       	if(!element_name || !xpd->current || xpd->error)
+	if(!element_name || !xpd->current || xpd->error)
 		return;
 
 	if(xpd->current->parent) {

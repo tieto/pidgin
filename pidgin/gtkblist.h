@@ -119,7 +119,7 @@ struct _PidginBuddyList {
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
-	GdkPixbuf *headline_close;      /**< Close image for closing the headline without triggering the callback */
+	GdkPixbuf *headline_close;      /**< @deprecated: Close image for closing the headline without triggering the callback */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
@@ -132,9 +132,9 @@ struct _PidginBuddyList {
 	gpointer priv;                   /**< Pointer to opaque private data */
 };
 
-#define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
+#define PIDGIN_BLIST(list) ((PidginBuddyList *)purple_blist_get_ui_data())
 #define PIDGIN_IS_PIDGIN_BLIST(list) \
-	((list)->ui_ops == pidgin_blist_get_ui_ops())
+	(purple_blist_get_ui_ops() == pidgin_blist_get_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Buddy List API
@@ -196,11 +196,14 @@ void pidgin_blist_update_columns(void);
 void pidgin_blist_update_refresh_timeout(void);
 
 /**
- * Returns the blist emblem
+ * Returns the blist emblem.
+ *
+ * This may be an existing pixbuf that has been given an additional ref,
+ * so it shouldn't be modified.
  *
  * @param node   The node to return an emblem for
  *
- * @return  A newly created GdkPixbuf, or NULL
+ * @return  A GdkPixbuf for the emblem to show, or NULL
  */
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node);

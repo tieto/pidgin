@@ -65,9 +65,13 @@ pidgin_scroll_book_get_type (void)
 }
 
 static gboolean
-scroll_left_cb(PidginScrollBook *scroll_book)
+scroll_left_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
 	int index;
+
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
 
 	if (index > 0)
@@ -76,15 +80,15 @@ scroll_left_cb(PidginScrollBook *scroll_book)
 }
 
 static gboolean
-scroll_right_cb(PidginScrollBook *scroll_book)
+scroll_right_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
 	int index, count;
+
+	if (event->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
-#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
-#else
-	count = g_list_length(GTK_NOTEBOOK(scroll_book->notebook)->children);
-#endif
 
 	if (index + 1 < count)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(scroll_book->notebook), index + 1);
@@ -130,18 +134,15 @@ page_count_change_cb(PidginScrollBook *scroll_book)
 {
 	int count;
 	int index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
-#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
-#else
-	count = g_list_length(GTK_NOTEBOOK(scroll_book->notebook)->children);
-#endif
 	refresh_scroll_box(scroll_book, index, count);
 }
 
 static gboolean
-scroll_close_cb(PidginScrollBook *scroll_book)
+scroll_close_cb(PidginScrollBook *scroll_book, GdkEventButton *event)
 {
-	gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
+	if (event->type == GDK_BUTTON_PRESS)
+		gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
 	return FALSE;
 }
 
@@ -149,11 +150,7 @@ static void
 switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, PidginScrollBook *scroll_book)
 {
 	int count;
-#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
-#else
-	count = g_list_length(GTK_NOTEBOOK(scroll_book->notebook)->children);
-#endif
 	refresh_scroll_box(scroll_book, page_num, count);
 }
 
@@ -268,9 +265,7 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 	/* Close */
 	eb = gtk_event_box_new();
 	gtk_box_pack_end(GTK_BOX(scroll_book->hbox), eb, FALSE, FALSE, 0);
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(eb), FALSE);
-#endif
 	gtk_widget_set_events(eb, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_button = gtk_label_new("×");
 	g_signal_connect(G_OBJECT(eb), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_button);

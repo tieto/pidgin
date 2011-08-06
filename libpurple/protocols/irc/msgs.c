@@ -110,6 +110,8 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	irc_blist_timeout(irc);
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+    if (!irc->who_channel_timer)
+        irc->who_channel_timer = purple_timeout_add_seconds(300, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -334,12 +336,12 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	PurpleNotifyUserInfo *user_info;
 
 	if (!irc->whois.nick) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of %s for %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of %s for %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS"
 											     , args[1]);
 		return;
 	}
 	if (purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of %s for %s, expecting %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of %s for %s, expecting %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS"
 													 , args[1], irc->whois.nick);
 		return;
 	}
@@ -398,6 +400,59 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 
 	g_free(irc->whois.nick);
 	memset(&irc->whois, 0, sizeof(irc->whois));
+}
+
+void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	if (!strcmp(name, "352")) {
+		PurpleConversation *conv;
+		PurpleConvChat *chat;
+		PurpleConvChatBuddy *cb;
+		
+		char *userhost, *realname;
+		
+		PurpleConvChatBuddyFlags flags;
+		GList *keys = NULL, *values = NULL;
+		
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+		if (!conv) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s, which doesn't exist\n", args[1]);
+			return;
+		}
+
+		cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), args[5]);
+		if (!cb) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s who isn't a buddy.\n", args[5]);
+			return;
+		}
+
+		chat = PURPLE_CONV_CHAT(conv);
+		
+		userhost = g_strdup_printf("%s@%s", args[2], args[3]);
+		realname = g_strdup(args[8]);
+		
+		keys = g_list_prepend(keys, "userhost");
+		values = g_list_prepend(values, userhost);
+		
+		keys = g_list_prepend(keys, "realname");
+		values = g_list_prepend(values, realname);
+		
+		purple_conv_chat_cb_set_attributes(chat, cb, keys, values);
+		
+		g_list_free(keys);
+		g_list_free(values);
+		
+		g_free(userhost);
+		g_free(realname);
+		
+		flags = cb->flags;
+
+		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
+			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
+		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
+			purple_conv_chat_user_set_flags(chat, cb->name, flags & ~PURPLE_CBFLAGS_AWAY);
+		}
+	}
 }
 
 void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -597,9 +652,6 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	if (!args || !args[0])
 		return;
 
-	if (!irc->motd)
-		irc->motd = g_string_new("");
-
 	if (!strcmp(name, "375")) {
 		if (irc->motd)
 			g_string_free(irc->motd, TRUE);
@@ -608,6 +660,15 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	} else if (!strcmp(name, "376")) {
 		/* dircproxy 1.0.5 does not send 251 on reconnection, so
 		 * finalize the connection here if it is not already done. */
+		irc_connected(irc, args[0]);
+		return;
+	} else if (!strcmp(name, "422")) {
+		/* in case there is no 251, and no MOTD set, finalize the connection.
+		 * (and clear the motd for good measure). */
+
+		if (irc->motd)
+			g_string_free(irc->motd, TRUE);
+
 		irc_connected(irc, args[0]);
 		return;
 	}
@@ -755,18 +816,19 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 
 	nicks = g_strsplit(args[1], " ", -1);
-
 	for (i = 0; nicks[i]; i++) {
 		if ((ib = g_hash_table_lookup(irc->buddies, (gconstpointer)nicks[i])) == NULL) {
 			continue;
 		}
-		ib->flag = TRUE;
+		ib->new_online_status = TRUE;
 	}
-
 	g_strfreev(nicks);
 
-	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
-	irc->ison_outstanding = FALSE;
+	if (irc->ison_outstanding)
+		irc_buddy_query(irc);
+
+	if (!irc->ison_outstanding)
+		g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
 }
 
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc)
@@ -777,10 +839,10 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 	if (!gc || !buddy)
 		return;
 
-	if (ib->online && !ib->flag) {
+	if (ib->online && !ib->new_online_status) {
 		purple_prpl_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
-	} else if (!ib->online && ib->flag) {
+	} else if (!ib->online && ib->new_online_status) {
 		purple_prpl_got_user_status(irc->account, name, "available", NULL);
 		ib->online = TRUE;
 	}
@@ -790,7 +852,10 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo;
-	char *nick = irc_mask_nick(from), *userhost;
+	PurpleConvChat *chat;
+	PurpleConvChatBuddy *cb;
+
+	char *nick = irc_mask_nick(from), *userhost, *buf;
 	struct irc_buddy *ib;
 	static int id = 1;
 
@@ -813,6 +878,12 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
+		
+		// Get the real name and user host for all participants.
+		buf = irc_format(irc, "vc", "WHO", args[0]);
+		irc_send(irc, buf);
+		g_free(buf);
+		
 		/* Until purple_conversation_present does something that
 		 * one would expect in Pidgin, this call produces buggy
 		 * behavior both for the /join and auto-join cases. */
@@ -828,10 +899,18 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo), nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
-
+	chat = PURPLE_CONV_CHAT(convo);
+	
+	purple_conv_chat_add_user(chat, nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
+	
+	cb = purple_conv_chat_cb_find(chat, nick);
+	
+	if (cb) {
+		purple_conv_chat_cb_set_attribute(chat, cb, "userhost", userhost);		
+	}
+	
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
-		ib->flag = TRUE;
+		ib->new_online_status = TRUE;
 		irc_buddy_status(nick, ib, irc);
 	}
 
@@ -851,7 +930,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	if (!convo) {
-		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Recieved a KICK for unknown channel %s\n", args[0]);
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Received a KICK for unknown channel %s\n", args[0]);
 		g_free(nick);
 		return;
 	}
@@ -1069,7 +1148,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 
 	nick = irc_mask_nick(from);
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
-		char *escaped = g_markup_escape_text(args[1], -1);
+		char *escaped = args[1] ? g_markup_escape_text(args[1], -1) : NULL;
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
 		                      (args[1] && *args[1]) ? ": " : "",
 		                      (escaped && *escaped) ? escaped : "");
@@ -1227,7 +1306,7 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
-		ib->flag = FALSE;
+		ib->new_online_status = FALSE;
 		irc_buddy_status(data[0], ib, irc);
 	}
 	g_free(data[0]);

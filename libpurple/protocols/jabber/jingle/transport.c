@@ -108,13 +108,10 @@ jingle_transport_finalize (GObject *transport)
 static void
 jingle_transport_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	JingleTransport *transport;
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
 
-	transport = JINGLE_TRANSPORT(object);
-
 	switch (prop_id) {
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -123,14 +120,11 @@ jingle_transport_set_property (GObject *object, guint prop_id, const GValue *val
 static void
 jingle_transport_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-	JingleTransport *transport;
 	g_return_if_fail(JINGLE_IS_TRANSPORT(object));
-	
-	transport = JINGLE_TRANSPORT(object);
 
 	switch (prop_id) {
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
@@ -165,8 +159,12 @@ jingle_transport_to_xml_internal(JingleTransport *transport, xmlnode *content, J
 JingleTransport *
 jingle_transport_parse(xmlnode *transport)
 {
-	const gchar *type = xmlnode_get_namespace(transport);
-	return JINGLE_TRANSPORT_CLASS(g_type_class_ref(jingle_get_type(type)))->parse(transport);
+	const gchar *type_name = xmlnode_get_namespace(transport);
+	GType type = jingle_get_type(type_name);
+	if (type == G_TYPE_NONE)
+		return NULL;
+	
+	return JINGLE_TRANSPORT_CLASS(g_type_class_ref(type))->parse(transport);
 }
 
 xmlnode *

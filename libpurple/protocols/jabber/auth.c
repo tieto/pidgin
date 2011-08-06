@@ -45,35 +45,6 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
                                xmlnode *packet, gpointer data);
 
-gboolean
-jabber_process_starttls(JabberStream *js, xmlnode *packet)
-{
-	PurpleAccount *account;
-	xmlnode *starttls;
-
-	account = purple_connection_get_account(js->gc);
-
-	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(purple_ssl_is_supported()) {
-			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return TRUE;
-		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
-			return TRUE;
-		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
-			purple_connection_error_reason(js->gc,
-				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("You require encryption, but no TLS/SSL support was found."));
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 static void finish_plaintext_authentication(JabberStream *js)
 {
 	JabberIq *iq;
@@ -152,7 +123,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
-	/* Disable the account as the user has canceled connecting */
+	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(purple_connection_get_account(gc), purple_core_get_ui(), FALSE);
 }
 #endif
@@ -187,7 +158,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 		if (mech_name && *mech_name)
 			mechanisms = g_slist_prepend(mechanisms, mech_name);
-		else if (mech_name)
+		else
 			g_free(mech_name);
 
 	}
@@ -206,6 +177,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			js->auth_mech = possible;
 			break;
 		}
+	}
+
+	while (mechanisms) {
+		g_free(mechanisms->data);
+		mechanisms = g_slist_delete_link(mechanisms, mechanisms);
 	}
 
 	if (js->auth_mech == NULL) {
@@ -275,7 +251,8 @@ static void auth_old_cb(JabberStream *js, const char *from,
 		g_free(msg);
 	} else if (type == JABBER_IQ_RESULT) {
 		query = xmlnode_get_child(packet, "query");
-		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+		if (js->stream_id && *js->stream_id &&
+				xmlnode_get_child(query, "digest")) {
 			char *s, *hash;
 
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -287,14 +264,16 @@ static void auth_old_cb(JabberStream *js, const char *from,
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-			hash = jabber_calculate_data_sha1sum(s, strlen(s));
+			hash = jabber_calculate_data_hash(s, strlen(s), "sha1");
 			xmlnode_insert_data(x, hash, -1);
 			g_free(hash);
 			g_free(s);
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
-
-		} else if(js->stream_id && (x = xmlnode_get_child(query, "crammd5"))) {
+		} else if ((x = xmlnode_get_child(query, "crammd5"))) {
+			/* For future reference, this appears to be a custom OS X extension
+			 * to non-SASL authentication.
+			 */
 			const char *challenge;
 			gchar digest[33];
 			PurpleCipherContext *hmac;
@@ -364,7 +343,8 @@ void jabber_auth_start_old(JabberStream *js)
 	 * is requiring SSL/TLS, we need to enforce it.
 	 */
 	if (!jabber_stream_is_ssl(js) &&
-			purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
+			g_str_equal("require_tls",
+				purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -485,9 +465,12 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 		xmlnode *stanza = NULL;
 		JabberSaslState state = js->auth_mech->handle_failure(js, packet, &stanza, &msg);
 
-		if (state != JABBER_SASL_STATE_FAIL && stanza) {
-			jabber_send(js, stanza);
-			xmlnode_free(stanza);
+		if (state != JABBER_SASL_STATE_FAIL) {
+			if (stanza) {
+				jabber_send(js, stanza);
+				xmlnode_free(stanza);
+			}
+
 			return;
 		}
 	}
@@ -519,20 +502,30 @@ static gint compare_mech(gconstpointer a, gconstpointer b)
 	return 0;
 }
 
+void jabber_auth_add_mech(JabberSaslMech *mech)
+{
+	auth_mechs = g_slist_insert_sorted(auth_mechs, mech, compare_mech);
+}
+
+void jabber_auth_remove_mech(JabberSaslMech *mech)
+{
+	auth_mechs = g_slist_remove(auth_mechs, mech);
+}
+
 void jabber_auth_init(void)
 {
 	JabberSaslMech **tmp;
 	gint count, i;
 
-	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_plain_mech(), compare_mech);
-	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_digest_md5_mech(), compare_mech);
+	jabber_auth_add_mech(jabber_auth_get_plain_mech());
+	jabber_auth_add_mech(jabber_auth_get_digest_md5_mech());
 #ifdef HAVE_CYRUS_SASL
-	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_cyrus_mech(), compare_mech);
+	jabber_auth_add_mech(jabber_auth_get_cyrus_mech());
 #endif
 
 	tmp = jabber_auth_get_scram_mechs(&count);
 	for (i = 0; i < count; ++i)
-		auth_mechs = g_slist_insert_sorted(auth_mechs, tmp[i], compare_mech);
+		jabber_auth_add_mech(tmp[i]);
 }
 
 void jabber_auth_uninit(void)

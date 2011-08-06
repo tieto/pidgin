@@ -9,17 +9,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
- 
+
 #ifndef PURPLE_JABBER_JINGLE_H
 #define PURPLE_JABBER_JINGLE_H
 
@@ -78,9 +78,13 @@ void jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 
 void jingle_terminate_sessions(JabberStream *js);
 
+#ifdef USE_VV
 /* create a GParam array given autoconfigured STUN (and later perhaps TURN).
 	if google_talk is TRUE, set compatability mode to GOOGLE_TALK */
-GParameter *jingle_get_params(JabberStream *js, guint *num_params);
+GParameter *jingle_get_params(JabberStream *js, const gchar *relay_ip,
+	guint relay_udp, guint relay_tcp, guint relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password, guint *num_params);
+#endif
 
 #ifdef __cplusplus
 }

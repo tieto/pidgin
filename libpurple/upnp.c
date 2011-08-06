@@ -142,6 +142,7 @@ struct _UPnPMappingAddRemove
 	gboolean add;
 	PurpleUPnPCallback cb;
 	gpointer cb_data;
+	gboolean success;
 	guint tima; /* purple_timeout_add handle */
 	PurpleUtilFetchUrlData *gfud;
 };
@@ -156,15 +157,28 @@ static void purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd);
 static void lookup_public_ip(void);
 static void lookup_internal_ip(void);
 
+static gboolean
+fire_ar_cb_async_and_free(gpointer data)
+{
+	UPnPMappingAddRemove *ar = data;
+	if (ar) {
+		if (ar->cb)
+			ar->cb(ar->success, ar->cb_data);
+		g_free(ar);
+	}
+
+	return FALSE;
+}
+
 static void
 fire_discovery_callbacks(gboolean success)
 {
 	while(discovery_callbacks) {
 		gpointer data;
 		PurpleUPnPCallback cb = discovery_callbacks->data;
-		discovery_callbacks = g_slist_remove(discovery_callbacks, cb);
+		discovery_callbacks = g_slist_delete_link(discovery_callbacks, discovery_callbacks);
 		data = discovery_callbacks->data;
-		discovery_callbacks = g_slist_remove(discovery_callbacks, data);
+		discovery_callbacks = g_slist_delete_link(discovery_callbacks, discovery_callbacks);
 		cb(success, data);
 	}
 }
@@ -403,6 +417,11 @@ upnp_parse_description_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		lookup_internal_ip();
 	}
 
+	if (dd->inpa > 0)
+		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
+
 	g_free(dd);
 }
 
@@ -506,6 +525,8 @@ purple_upnp_discover_timeout(gpointer data)
 
 	if (dd->inpa)
 		purple_input_remove(dd->inpa);
+	if (dd->tima > 0)
+		purple_timeout_remove(dd->tima);
 	dd->inpa = 0;
 	dd->tima = 0;
 
@@ -542,7 +563,7 @@ purple_upnp_discover_udp_read(gpointer data, gint sock, PurpleInputCondition con
 		len = recv(dd->fd, buf,
 			sizeof(buf) - 1, 0);
 
-		if(len > 0) {
+		if(len >= 0) {
 			buf[len] = '\0';
 			break;
 		} else if(errno != EINTR) {
@@ -610,7 +631,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 
 	/* We have already done all our retries. Make sure that the callback
 	 * doesn't get called before the original function returns */
-	purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+	dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 }
 
 void
@@ -647,7 +668,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In sock creation\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -659,7 +680,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In gethostbyname\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -856,9 +877,8 @@ done_port_mapping_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	} else
 		purple_debug_info("upnp", "Successfully completed port mapping operation\n");
 
-	if (ar->cb)
-		ar->cb(success, ar->cb_data);
-	g_free(ar);
+	ar->success = success;
+	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static void
@@ -875,10 +895,8 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 			if(!(internal_ip = purple_upnp_get_internal_ip())) {
 				purple_debug_error("upnp",
 					"purple_upnp_set_port_mapping(): couldn't get local ip\n");
-				/* UGLY */
-				if (ar->cb)
-					ar->cb(FALSE, ar->cb_data);
-				g_free(ar);
+				ar->success = FALSE;
+				ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 				return;
 			}
 			strncpy(action_name, "AddPortMapping",
@@ -901,15 +919,16 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 		return;
 	}
 
-
-	if (ar->cb)
-		ar->cb(FALSE, ar->cb_data);
-	g_free(ar);
+	ar->success = FALSE;
+	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static gboolean
 fire_port_mapping_failure_cb(gpointer data)
 {
+	UPnPMappingAddRemove *ar = data;
+
+	ar->tima = 0;
 	do_port_mapping_cb(FALSE, data);
 	return FALSE;
 }
@@ -919,16 +938,20 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
 	GSList *l;
 
 	/* Remove ar from discovery_callbacks if present; it was inserted after a cb.
-	 * The same cb may be in the list multple times, so be careful to remove the one assocaited with ar. */
-	l  = discovery_callbacks;
+	 * The same cb may be in the list multiple times, so be careful to remove
+	 * the one associated with ar. */
+	l = discovery_callbacks;
 	while (l)
 	{
-		if (l->next && (l->next->data == ar)) {
-			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l->next);
+		GSList *next = l->next;
+
+		if (next && (next->data == ar)) {
+			discovery_callbacks = g_slist_delete_link(discovery_callbacks, next);
+			next = l->next;
 			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l);
 		}
 
-		l = l->next;
+		l = next;
 	}
 
 	if (ar->tima > 0)

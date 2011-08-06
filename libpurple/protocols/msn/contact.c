@@ -1,5 +1,5 @@
 /**
- * @file contact.c 
+ * @file contact.c
  * 	get MSN contacts via SOAP request
  *	created by MaYuan<mayuan2006@gmail.com>
  *
@@ -24,12 +24,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 
-#include "msn.h"
+#include "internal.h"
+#include "debug.h"
+
 #include "contact.h"
 #include "xmlnode.h"
 #include "group.h"
+#include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
+#include "user.h"
 
 const char *MsnSoapPartnerScenarioText[] =
 {
@@ -37,7 +41,8 @@ const char *MsnSoapPartnerScenarioText[] =
 	"ContactSave",
 	"MessengerPendingList",
 	"ContactMsgrAPI",
-	"BlockUnblock"
+	"BlockUnblock",
+	"Timer"
 };
 
 const char *MsnMemberRole[] =
@@ -185,6 +190,8 @@ msn_contact_operation_str(MsnCallbackAction action)
 		strcat(buf, "Renaming Group,");
 	if (action & MSN_UPDATE_INFO)
 		strcat(buf, "Updating Contact Info,");
+	if (action & MSN_ANNOTATE_USER)
+		strcat(buf, "Annotating Contact,");
 
 	return buf;
 }
@@ -332,7 +339,7 @@ msn_create_address_book(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->user != NULL);
 	g_return_if_fail(session->user->passport != NULL);
-	
+
 	purple_debug_info("msn", "Creating an Address Book.\n");
 
 	body = g_strdup_printf(MSN_ADD_ADDRESSBOOK_TEMPLATE,
@@ -356,10 +363,9 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *type;
 	char *member_id;
 	MsnUser *user;
-	xmlnode *annotation, *display;
+	xmlnode *annotation;
 	guint nid = MSN_NETWORK_UNKNOWN;
 	char *invite = NULL;
-	char *display_text;
 
 	passport = xmlnode_get_data(xmlnode_get_child(member, node));
 	if (!msn_email_is_valid(passport)) {
@@ -369,13 +375,8 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 
 	type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
-	if ((display = xmlnode_get_child(member, "DisplayName"))) {
-		display_text = xmlnode_get_data(display);
-	} else {
-		display_text = NULL;
-	}
 
-	user = msn_userlist_find_add_user(session->userlist, passport, display_text);
+	user = msn_userlist_find_add_user(session->userlist, passport, NULL);
 
 	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
 	     annotation;
@@ -406,8 +407,8 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	msn_user_set_network(user, nid);
 	msn_user_set_invite_message(user, invite);
 
-	if (member_id) {
-		user->membership_id[list] = atoi(member_id);
+	if (list == MSN_LIST_PL && member_id) {
+		user->member_id_on_pending_list = atoi(member_id);
 	}
 
 	msn_got_lst_user(session, user, 1 << list, NULL);
@@ -416,7 +417,6 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	g_free(type);
 	g_free(member_id);
 	g_free(invite);
-	g_free(display_text);
 }
 
 static void
@@ -527,16 +527,20 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_return_if_fail(session != NULL);
 
 	if (resp != NULL) {
+#ifdef MSN_PARTIAL_LISTS
 		const char *abLastChange;
 		const char *dynamicItemLastChange;
+#endif
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
 		msn_parse_contact_list(session, resp->xml);
+#ifdef MSN_PARTIAL_LISTS
 		abLastChange = purple_account_get_string(session->account,
 			"ablastChange", NULL);
 		dynamicItemLastChange = purple_account_get_string(session->account,
-			"dynamicItemLastChange", NULL);
+			"DynamicItemLastChanged", NULL);
+#endif
 
 		if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
@@ -684,25 +688,26 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *annotation;
 		MsnUser *user;
 
+		g_free(passport);
+		g_free(Name);
+		g_free(uid);
+		g_free(type);
+		g_free(mobile_number);
+		g_free(alias);
+		passport = Name = uid = type = mobile_number = alias = NULL;
+		mobile = FALSE;
+
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
 				|| !(contactType = xmlnode_get_child(contactInfo, "contactType")))
 			continue;
 
-		g_free(passport);
-		g_free(Name);
-		g_free(alias);
-		g_free(uid);
-		g_free(type);
-		g_free(mobile_number);
-		passport = Name = uid = type = mobile_number = alias = NULL;
-		mobile = FALSE;
-
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
 
-		/*setup the Display Name*/
+		/* Find out our settings */
 		if (type && !strcmp(type, "Me")) {
+			/* setup the Display Name */
 			if (purple_connection_get_display_name(pc) == NULL) {
 				char *friendly = NULL;
 				if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
@@ -711,6 +716,23 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 					friendly ? purple_url_decode(friendly) : NULL);
 				g_free(friendly);
 			}
+
+			for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
+			     annotation;
+			     annotation = xmlnode_get_next_twin(annotation)) {
+				char *name, *value;
+				name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+				value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+				if (!strcmp(name, "MSN.IM.MPOP")) {
+					if (!value || atoi(value) != 0)
+						session->enable_mpop = TRUE;
+					else
+						session->enable_mpop = FALSE;
+				}
+				g_free(name);
+				g_free(value);
+			}
+
 			continue; /* Not adding own account as buddy to buddylist */
 		}
 
@@ -836,6 +858,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 	g_free(uid);
 	g_free(type);
 	g_free(mobile_number);
+	g_free(alias);
 }
 
 static gboolean
@@ -885,7 +908,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		msn_parse_addressbook_groups(session, groups);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add an "Other Contacts" group for buddies who aren't in a group */
 	msn_group_new(session->userlist, MSN_INDIVIDUALS_GROUP_ID,
 				  MSN_INDIVIDUALS_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n",
@@ -895,7 +918,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 		purple_blist_add_group(g, NULL);
 	}
 
-	/*add a default No group to set up the no group Membership*/
+	/* Add a "Non-IM Contacts" group */
 	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
@@ -1063,18 +1086,6 @@ msn_add_contact(MsnSession *session, MsnCallbackState *state, const char *passpo
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
 
-#if 0
-	gchar *escaped_displayname;
-
-
-	 if (displayname != NULL) {
-		escaped_displayname = g_markup_decode_text(displayname, -1);
-	 } else {
-		escaped_displayname = passport;
-	 }
-	contact_xml = g_strdup_printf(MSN_XML_ADD_CONTACT, escaped_displayname, passport);
-#endif
-
 	purple_debug_info("msn", "Adding contact %s to contact list\n", passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1167,7 +1178,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
+		if (msn_user_is_in_list(user, MSN_LIST_PL)) {
 			msn_del_contact_from_list(state->session, NULL, state->who, MSN_LIST_PL);
 			return;
 		}
@@ -1488,6 +1499,101 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode_insert_child(contact, contact_info);
 	xmlnode_insert_child(contact, changes);
 
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	if (user) {
+		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
+		msn_callback_state_set_uid(state, user->uid);
+		xmlnode_insert_data(contactId, state->uid, -1);
+	} else {
+		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
+		xmlnode_insert_data(contactType, "Me", -1);
+	}
+
+	msn_contact_request(state);
+}
+
+static void
+msn_annotate_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
+	gpointer data)
+{
+	MsnCallbackState *state = (MsnCallbackState *)data;
+	xmlnode *fault;
+
+	/* We don't know how to respond to this faultcode, so log it */
+	fault = xmlnode_get_child(resp->xml, "Body/Fault");
+	if (fault != NULL) {
+		char *fault_str = xmlnode_to_str(fault, NULL);
+		purple_debug_error("msn", "Operation {%s} Failed, SOAP Fault was: %s\n",
+		                   msn_contact_operation_str(state->action), fault_str);
+		g_free(fault_str);
+		return;
+	}
+
+	purple_debug_info("msn", "Contact annotated successfully\n");
+}
+
+/* Update a contact's annotations */
+void
+msn_annotate_contact(MsnSession *session, const char *passport, ...)
+{
+	va_list params;
+	MsnCallbackState *state;
+	xmlnode *contact;
+	xmlnode *contact_info;
+	xmlnode *annotations;
+	MsnUser *user = NULL;
+
+	g_return_if_fail(passport != NULL);
+
+	if (strcmp(passport, "Me") != 0) {
+		user = msn_userlist_find_user(session->userlist, passport);
+		if (!user)
+			return;
+	}
+
+	contact_info = xmlnode_new("contactInfo");
+	annotations = xmlnode_new_child(contact_info, "annotations");
+
+	va_start(params, passport);
+	while (TRUE) {
+		const char *name;
+		const char *value;
+		xmlnode *a, *n, *v;
+
+		name = va_arg(params, const char *);
+		if (!name)
+			break;
+
+		value = va_arg(params, const char *);
+		if (!value)
+			break;
+
+		a = xmlnode_new_child(annotations, "Annotation");
+		n = xmlnode_new_child(a, "Name");
+		xmlnode_insert_data(n, name, -1);
+		v = xmlnode_new_child(a, "Value");
+		xmlnode_insert_data(v, value, -1);
+	}
+	va_end(params);
+
+	state = msn_callback_state_new(session);
+
+	state->body = xmlnode_from_str(MSN_CONTACT_ANNOTATE_TEMPLATE, -1);
+	state->action = MSN_ANNOTATE_USER;
+	state->post_action = MSN_CONTACT_ANNOTATE_SOAP_ACTION;
+	state->post_url = MSN_ADDRESS_BOOK_POST_URL;
+	state->cb = msn_annotate_contact_read_cb;
+
+	xmlnode_insert_data(xmlnode_get_child(state->body,
+	                                      "Header/ABApplicationHeader/PartnerScenario"),
+	                    MsnSoapPartnerScenarioText[MSN_PS_SAVE_CONTACT], -1);
+
+	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
+	xmlnode_insert_child(contact, contact_info);
+
 	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
 		msn_callback_state_set_uid(state, user->uid);
@@ -1561,17 +1667,17 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	
+
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		if (user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 		else
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "PassportMember", "Passport",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;
@@ -1765,7 +1871,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			} else if (state->action & MSN_MOVE_BUDDY) {
 				/* This will be freed when the add contact callback fires */
 				MsnCallbackState *new_state = msn_callback_state_dup(state);
-				msn_add_contact_to_group(session, new_state, state->who, guid); 
+				msn_add_contact_to_group(session, new_state, state->who, guid);
 				g_free(guid);
 				return;
 			}

@@ -16,7 +16,7 @@
 
 
 int main(void)
-{	
+{
     EnterMovies();
     CamProc(); // change this prototype-> no windows
     fprintf(stderr, "you have just murdered 1000 people.");

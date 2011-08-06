@@ -31,31 +31,34 @@ awk 'BEGIN {FS="."} { \
     exit; \
 }' VERSION)
 
-GTK_INSTALL_VERSION = $(shell \
-  source ../gtk_installer/version.sh; \
-  echo $$gtk_version \
-)
+GTK_INSTALL_VERSION = 2.16.6.0
 
 STRIPPED_RELEASE_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-win32bin
+DEBUG_SYMBOLS_DIR = $(PIDGIN_TREE_TOP)/pidgin-$(PIDGIN_VERSION)-dbgsym
 
 
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
 EXTERNAL_DLLS = \
 	comerr32.dll \
+	exchndl.dll \
 	freebl3.dll \
 	gssapi32.dll \
 	k5sprt32.dll \
 	krb5_32.dll \
-	libgtkspell.dll \
+	libenchant.dll \
+	libenchant_ispell.dll \
+	libenchant_myspell.dll \
+	libgtkspell-0.dll \
 	libmeanwhile-1.dll \
+	libnspr4.dll \
+	libplc4.dll \
+	libplds4.dll \
 	libsasl.dll \
-	libxml2.dll \
-	nspr4.dll \
+	libxml2-2.dll \
 	nss3.dll \
 	nssckbi.dll \
-	plc4.dll \
-	plds4.dll \
+	nssutil3.dll \
 	saslANONYMOUS.dll \
 	saslCRAMMD5.dll \
 	saslDIGESTMD5.dll \
@@ -66,12 +69,15 @@ EXTERNAL_DLLS = \
 	libsilcclient-1-1-2.dll \
 	smime3.dll \
 	softokn3.dll \
+	sqlite3.dll \
 	ssl3.dll
 
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
-.PHONY: all docs install installer installer_nogtk installer_debug installers clean uninstall create_release_install_dir
+include $(PIDGIN_COMMON_RULES)
+
+.PHONY: all docs install installer installer_offline installer_zip debug_symbols_zip installers clean uninstall create_release_install_dir generate_installer_includes $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT)
 
 all: $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
@@ -88,33 +94,74 @@ ifndef DISABLE_NLS
 endif
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
+	mkdir -p $(PIDGIN_INSTALL_DIR)/spellcheck
+	cp $(GTKSPELL_TOP)/bin/libgtkspell-0.dll $(PIDGIN_INSTALL_DIR)/spellcheck
+	cp $(ENCHANT_TOP)/bin/libenchant.dll $(PIDGIN_INSTALL_DIR)/spellcheck
+	cp -R $(ENCHANT_TOP)/lib $(PIDGIN_INSTALL_DIR)/spellcheck
+	cp $(WIN32_DEV_TOP)/pidgin-inst-deps-20100315/exchndl.dll $(PIDGIN_INSTALL_DIR)
+
+pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip:
+	pidgin/win32/nsis/generate_gtk_zip.sh `pwd`
+
+generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
+	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
+	find $(STRIPPED_RELEASE_DIR)/locale -maxdepth 1 -mindepth 1 \
+	 -exec basename {} ';' \
+	 | LC_ALL=C sort | sed -e s/^/\!insertmacro\ LANG_SECTION\ \"/ -e s/$$/\"/ \
+	 > pidgin/win32/nsis/pidgin-translations.nsh
+	#Convert the available.lst lines to "!insertmacro SPELLCHECK_SECTION lang lang_name lang_file"
+	sed -e "/^#/d" -e "s/^[^,]\{1,\},[^,]\{1,\},/\"/" \
+	 -e "s/,/\"\ \"/" -e "s/,/\"\ \"/" -e "s/[\ \t]*$$/\"/" \
+	 -e "s/^/\!insertmacro\ SPELLCHECK_SECTION\ /" \
+         pidgin/win32/nsis/available.lst \
+         > pidgin/win32/nsis/pidgin-spellcheck.nsh
+	#Convert the lines to "!insertmacro CHECK_SPELLCHECK_SECTION lang"
+	iconv -f latin1 -t utf-8 pidgin/win32/nsis/pidgin-spellcheck.nsh | \
+	 sed -e "s/SPELLCHECK_SECTION/CHECK_SPELLCHECK_SECTION/" \
+	 -e "s/ \"[^\"]*\"\ \"[^\"]*\"[\t\ ]*$$//" | \
+         iconv -f utf-8 -t latin1 \
+        > pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
+	#Generate the Installer translations
+	echo "!define GCOMPRIS_NSIS_INCLUDE_PATH \".\"" > $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh
+	echo "@INSERT_TRANSLATIONS@" >> $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh
+	$(PERL) $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/create_nsis_translations.pl \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/translations
 
 create_release_install_dir: install
 	rm -rf $(STRIPPED_RELEASE_DIR)
-	cp -R $(PIDGIN_INSTALL_DIR) $(STRIPPED_RELEASE_DIR)
+	mkdir $(STRIPPED_RELEASE_DIR)
+	tar -cf - $(PIDGIN_INSTALL_DIR) --exclude=Gtk --exclude=spellcheck/share \
+	 | tar --strip 2 -xC $(STRIPPED_RELEASE_DIR) -f -
 	find $(STRIPPED_RELEASE_DIR) \( -name '*.dll' -o -name '*.exe' \) \
-	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -exec $(STRIP) --strip-unneeded {} ';'
+	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) \
+	 -exec $(STRIP) --strip-unneeded {} ';'
 
-installer: create_release_install_dir
-	$(MAKENSIS) $(MAKENSISOPT)V3 $(MAKENSISOPT)DPIDGIN_VERSION="$(PIDGIN_VERSION)" $(MAKENSISOPT)DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" $(MAKENSISOPT)DWITH_GTK $(MAKENSISOPT)DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" $(MAKENSISOPT)DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+installer: generate_installer_includes
+	$(MAKENSIS) $(MAKENSISOPT)V3 $(MAKENSISOPT)DPIDGIN_VERSION="$(PIDGIN_VERSION)" $(MAKENSISOPT)DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" $(MAKENSISOPT)DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" $(MAKENSISOPT)DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
 	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION).exe ./
 
-installer_nogtk: create_release_install_dir
-	$(MAKENSIS) $(MAKENSISOPT)V3 $(MAKENSISOPT)DPIDGIN_VERSION="$(PIDGIN_VERSION)" $(MAKENSISOPT)DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" $(MAKENSISOPT)DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" $(MAKENSISOPT)DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
-	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-no-gtk.exe ./
-
-installer_debug: install
-	$(MAKENSIS) $(MAKENSISOPT)V3 $(MAKENSISOPT)DPIDGIN_VERSION="$(PIDGIN_VERSION)" $(MAKENSISOPT)DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" $(MAKENSISOPT)DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR)" $(MAKENSISOPT)DDEBUG $(MAKENSISOPT)DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
-	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-debug.exe ./
+installer_offline: generate_installer_includes
+	$(MAKENSIS) $(MAKENSISOPT)V3 $(MAKENSISOPT)DPIDGIN_VERSION="$(PIDGIN_VERSION)" $(MAKENSISOPT)DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" $(MAKENSISOPT)DOFFLINE_INSTALLER $(MAKENSISOPT)DPIDGIN_INSTALL_DIR="$(STRIPPED_RELEASE_DIR)" $(MAKENSISOPT)DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	mv pidgin/win32/nsis/pidgin-$(PIDGIN_VERSION)-offline.exe ./
 
 installer_zip: create_release_install_dir
 	rm -f pidgin-$(PIDGIN_VERSION)-win32-bin.zip
 	zip -9 -r pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(STRIPPED_RELEASE_DIR)
 
-installers: installer installer_nogtk installer_debug installer_zip
+debug_symbols_zip: install
+	rm -rf $(DEBUG_SYMBOLS_DIR) $(DEBUG_SYMBOLS_DIR).zip
+	mkdir $(DEBUG_SYMBOLS_DIR)
+	tar -cf - `find $(PIDGIN_INSTALL_DIR) \( -name '*.dll' -o -name '*.exe' \) \
+	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -print` \
+	 | tar --strip 2 --xform s/$$/.dbgsym/ -xC $(DEBUG_SYMBOLS_DIR) -f -
+	zip -9 -r $(DEBUG_SYMBOLS_DIR).zip $(DEBUG_SYMBOLS_DIR) 
+
+installers: installer installer_offline debug_symbols_zip installer_zip
 
 Doxyfile.mingw: Doxyfile.in
-	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" Doxyfile.in > Doxyfile.mingw
+	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" $< > $@
 
 docs: Doxyfile.mingw
 	@echo "Running doxygen..."
@@ -125,13 +172,12 @@ clean:
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
-	rm -f $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip
+	rm -f $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip $(DEBUG_SYMBOLS_DIR).zip
 	rm -rf doc/html Doxyfile.mingw
 
 uninstall:
-	rm -rf $(PURPLE_INSTALL_PERL_DIR) $(PIDGIN_INSTALL_PLUGINS_DIR) $(PURPLE_INSTALL_PO_DIR) $(PIDGIN_INSTALL_DIR) $(STRIPPED_RELEASE_DIR)
+	rm -rf $(PURPLE_INSTALL_PERL_DIR) $(PIDGIN_INSTALL_PLUGINS_DIR) $(PURPLE_INSTALL_PO_DIR) $(PIDGIN_INSTALL_DIR) $(STRIPPED_RELEASE_DIR) $(DEBUG_SYMBOLS_DIR)
 	rm -f ./VERSION
 
 include $(PIDGIN_COMMON_TARGETS)
 
-.PHONY: $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT)

@@ -23,9 +23,11 @@
  */
 
 #include "internal.h"
+#include "debug.h"
+
 #include "core.h"
 
-#include "msn.h"
+#include "notification.h"
 #include "state.h"
 
 static const char *away_text[] =
@@ -42,10 +44,6 @@ static const char *away_text[] =
 	N_("Available")
 };
 
-/* Local Function Prototype*/
-static char *msn_build_psm(const char *psmstr,const char *mediastr,
-						   const char *guidstr);
-
 /*
  * WLM media PSM info build prcedure
  *
@@ -55,7 +53,7 @@ static char *msn_build_psm(const char *psmstr,const char *mediastr,
  *	<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
  */
 static char *
-msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
+msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr, guint protocol_ver)
 {
 	xmlnode *dataNode,*psmNode,*mediaNode,*guidNode;
 	char *result;
@@ -81,131 +79,49 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 	}
 	xmlnode_insert_child(dataNode, guidNode);
 
+	if (protocol_ver >= 16) {
+		/* TODO: What is this for? */
+		xmlnode *ddpNode = xmlnode_new("DDP");
+		xmlnode_insert_child(dataNode, ddpNode);
+	}
+
 	result = xmlnode_to_str(dataNode, &length);
 	xmlnode_free(dataNode);
 	return result;
 }
 
-/* parse CurrentMedia string */
-gboolean
-msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
-{
-	char **cmedia_array;
-	int strings = 0;
-	gboolean parsed = FALSE;
-
-	if ((cmedia == NULL) || (*cmedia == '\0')) {
-		purple_debug_info("msn", "No currentmedia string\n");
-		return FALSE;
-	}
-
-	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
-
-	cmedia_array = g_strsplit(cmedia, "\\0", 0);
-
-	/*
-	 * 0: Application
-	 * 1: 'Music'/'Games'/'Office'
-	 * 2: '1' if enabled, '0' if not
-	 * 3: Format (eg. {0} by {1})
-	 * 4: Title
-	 * If 'Music':
-	 *  5: Artist
-	 *  6: Album
-	 *  7: ?
-	 */
-#if GLIB_CHECK_VERSION(2,6,0)
-	strings  = g_strv_length(cmedia_array);
-#else
-	while (cmedia_array[++strings] != NULL);
-#endif
-
-	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
-		parsed = TRUE;
-
-		if (!strcmp(cmedia_array[1], "Music"))
-			media->type = CURRENT_MEDIA_MUSIC;
-		else if (!strcmp(cmedia_array[1], "Games"))
-			media->type = CURRENT_MEDIA_GAMES;
-		else if (!strcmp(cmedia_array[1], "Office"))
-			media->type = CURRENT_MEDIA_OFFICE;
-		else
-			media->type = CURRENT_MEDIA_UNKNOWN;
-
-		g_free(media->title);
-		if (strings == 4) {
-			media->title = g_strdup(cmedia_array[3]);
-		} else {
-			media->title = g_strdup(cmedia_array[4]);
-		}
-
-		g_free(media->artist);
-		if (strings > 5)
-			media->artist = g_strdup(cmedia_array[5]);
-		else
-			media->artist = NULL;
-
-		g_free(media->album);
-		if (strings > 6)
-			media->album = g_strdup(cmedia_array[6]);
-		else
-			media->album = NULL;
-
-	}
-
-	g_strfreev(cmedia_array);
-
-	return parsed;
-}
-
-/* get the CurrentMedia info from the XML string */
+/* get the CurrentMedia info from the XML node */
 char *
-msn_get_currentmedia(char *xml_str, gsize len)
+msn_get_currentmedia(xmlnode *payloadNode)
 {
-	xmlnode *payloadNode, *currentmediaNode;
+	xmlnode *currentmediaNode;
 	char *currentmedia;
 
 	purple_debug_info("msn", "Get CurrentMedia\n");
-	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
-		return NULL;
-	}
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
 	if (currentmediaNode == NULL) {
 		purple_debug_info("msn", "No CurrentMedia Node\n");
-		xmlnode_free(payloadNode);
 		return NULL;
 	}
 	currentmedia = xmlnode_get_data(currentmediaNode);
 
-	xmlnode_free(payloadNode);
-
 	return currentmedia;
 }
 
-/*get the PSM info from the XML string*/
+/* Get the PSM info from the XML node */
 char *
-msn_get_psm(char *xml_str, gsize len)
+msn_get_psm(xmlnode *payloadNode)
 {
-	xmlnode *payloadNode, *psmNode;
+	xmlnode *psmNode;
 	char *psm;
 
 	purple_debug_info("msn", "msn get PSM\n");
-	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
-		return NULL;
-	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL) {
 		purple_debug_info("msn", "No PSM status Node\n");
-		xmlnode_free(payloadNode);
 		return NULL;
 	}
 	psm = xmlnode_get_data(psmNode);
-
-	xmlnode_free(payloadNode);
 
 	return psm;
 }
@@ -246,14 +162,12 @@ create_media_string(PurplePresence *presence)
 /* set the MSN's PSM info,Currently Read from the status Line
  * Thanks for Cris Code
  */
-void
+static void
 msn_set_psm(MsnSession *session)
 {
 	PurpleAccount *account;
 	PurplePresence *presence;
 	PurpleStatus *status;
-	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
 	char *payload;
 	const char *statusline;
 	gchar *statusline_stripped, *media = NULL;
@@ -262,7 +176,6 @@ msn_set_psm(MsnSession *session)
 	g_return_if_fail(session->notification != NULL);
 
 	account = session->account;
-	cmdproc = session->notification->cmdproc;
 
 	/* Get the PSM string from Purple's Status Line */
 	presence = purple_account_get_presence(account);
@@ -273,13 +186,11 @@ msn_set_psm(MsnSession *session)
 	statusline_stripped = purple_markup_strip_html(statusline);
 	media = create_media_string(presence);
 	g_free(session->psm);
-	session->psm = msn_build_psm(statusline_stripped, media, NULL);
+	session->psm = msn_build_psm(statusline_stripped, media, session->protocol_ver >= 16 ? session->guid : NULL, session->protocol_ver);
 
 	payload = session->psm;
-	purple_debug_misc("msn", "Sending UUX command with payload: %s\n", payload);
-	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-	msn_cmdproc_send_trans(cmdproc, trans);
+
+	msn_notification_send_uux(session, payload);
 
 	g_free(statusline_stripped);
 	g_free(media);
@@ -290,6 +201,7 @@ msn_change_status(MsnSession *session)
 {
 	PurpleAccount *account;
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state_text;
@@ -305,13 +217,13 @@ msn_change_status(MsnSession *session)
 		if (client_type) {
 			if (strcmp(client_type, "phone") == 0 ||
 				strcmp(client_type, "handheld") == 0) {
-				caps |= MSN_CLIENT_CAP_WIN_MOBILE;
+				caps |= MSN_CAP_VIA_MOBILE;
 			} else if (strcmp(client_type, "web") == 0) {
-				caps |= MSN_CLIENT_CAP_WEBMSGR;
+				caps |= MSN_CAP_VIA_WEBIM;
 			} else if (strcmp(client_type, "bot") == 0) {
-				caps |= MSN_CLIENT_CAP_BOT;
+				caps |= MSN_CAP_BOT;
 			}
-			/* MSN doesn't a "console" type... 
+			/* MSN doesn't a "console" type...
 			 What, they have no ncurses UI? :-) */
 		}
 	}
@@ -327,11 +239,16 @@ msn_change_status(MsnSession *session)
 	if (!session->logged_in)
 		return;
 
+	msn_set_psm(session);
+
 	msnobj = msn_user_get_object(user);
 
 	if (msnobj == NULL)
 	{
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text, caps);
+		if (session->protocol_ver >= 16)
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u 0", state_text, caps, MSN_CLIENT_ID_EXT_CAPS);
+		else
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u", state_text, caps);
 	}
 	else
 	{
@@ -339,12 +256,17 @@ msn_change_status(MsnSession *session)
 
 		msnobj_str = msn_object_to_string(msnobj);
 
-		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
-						 caps, purple_url_encode(msnobj_str));
+		if (session->protocol_ver >= 16)
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u %s", state_text,
+							 caps, MSN_CLIENT_ID_EXT_CAPS, purple_url_encode(msnobj_str));
+		else
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u %s", state_text,
+							 caps, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}
-	msn_set_psm(session);
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 const char *

@@ -154,7 +154,7 @@ g_utf8_strrcasestr (const gchar *haystack, const gchar *needle)
 	p = g_utf8_offset_to_pointer (caseless_haystack, i);
 	needle_len = strlen (needle);
 
-	while (p >= caseless_haystack)
+	while (1)
 	{
 		if (strncmp (p, needle, needle_len) == 0)
 		{
@@ -162,7 +162,11 @@ g_utf8_strrcasestr (const gchar *haystack, const gchar *needle)
 			goto finally_1;
 		}
 
-		p = g_utf8_prev_char (p);
+		if (p > caseless_haystack)
+			p = g_utf8_prev_char (p);
+		else
+			goto finally_1;
+
 		i--;
 	}
 

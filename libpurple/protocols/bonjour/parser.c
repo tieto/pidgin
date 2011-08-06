@@ -102,7 +102,7 @@ bonjour_parser_element_start_libxml(void *user_data,
 			attrib[attrib_len] = '\0';
 
 			txt = attrib;
-			attrib = purple_unescape_html(txt);
+			attrib = purple_unescape_text(txt);
 			g_free(txt);
 			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);

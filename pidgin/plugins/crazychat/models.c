@@ -11,9 +11,9 @@ void init_lists(GLint** lists, GLMmodel*** models, int num_lists, char* name, fl
 	GLint* temp_lists;
 	GLMmodel** temp_models;
 	char* temp = (char*)malloc(sizeof(char) * (strlen(name) + strlen(".obj" + 3)));
-	GLMmodel* model;	
+	GLMmodel* model;
 	float dum;
-	temp_lists = (GLint*)malloc(sizeof(GLint) * num_lists);	
+	temp_lists = (GLint*)malloc(sizeof(GLint) * num_lists);
 	temp_models = (GLMmodel**)malloc(sizeof(GLMmodel*) * num_lists);
 
 	for(i=0;i<num_lists;i++) {
@@ -38,7 +38,7 @@ void init_lists(GLint** lists, GLMmodel*** models, int num_lists, char* name, fl
 
 	*lists = temp_lists;
 	*models = temp_models;
-	free(temp);	
+	free(temp);
 }
 
 int compute_lid(BOOL open, int curr_lid, int max){
@@ -51,7 +51,7 @@ int compute_lid(BOOL open, int curr_lid, int max){
 	}
 	else {
 		if(curr_lid >=2){
-			curr_lid-=2;	
+			curr_lid-=2;
 		}
 		else if(curr_lid==1){
 			curr_lid--;

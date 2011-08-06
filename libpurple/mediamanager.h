@@ -213,6 +213,28 @@ void purple_media_manager_set_ui_caps(PurpleMediaManager *manager,
  */
 PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager *manager);
 
+/**
+ * Sets which media backend type media objects will use.
+ *
+ * @param manager The manager to set the caps on.
+ * @param backend_type The media backend type to use.
+ *
+ * @since 2.7.0
+ */
+void purple_media_manager_set_backend_type(PurpleMediaManager *manager,
+		GType backend_type);
+
+/**
+ * Gets which media backend type media objects will use.
+ *
+ * @param manager The manager to get the media backend type from.
+ *
+ * @return The type of media backend type media objects will use.
+ *
+ * @since 2.7.0
+ */
+GType purple_media_manager_get_backend_type(PurpleMediaManager *manager);
+
 /*}@*/
 
 #ifdef __cplusplus

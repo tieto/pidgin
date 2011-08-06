@@ -19,6 +19,7 @@
 */
 
 /* From the oscar PRPL */
+#include "encoding.h"
 #include "oscar.h"
 #include "peer.h"
 
@@ -89,7 +90,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	ByteStream bs;
 
 	purple_debug_info("oscar", "Outgoing ODC frame to %s with "
-		"type=0x%04x, flags=0x%04x, payload length=%u\n",
+		"type=0x%04x, flags=0x%04x, payload length=%" G_GSIZE_FORMAT "\n",
 		conn->bn, frame->type, frame->flags, frame->payload.len);
 
 	account = purple_connection_get_account(conn->od->gc);
@@ -111,7 +112,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put32(&bs, frame->payload.len);
 	byte_stream_put16(&bs, frame->encoding);
-	byte_stream_put16(&bs, 0x0000);	
+	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, frame->flags);
 	byte_stream_put16(&bs, 0x0000);
@@ -366,8 +367,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		g_datalist_clear(&attributes);
 
 		/* Append the message up to the tag */
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
-				encoding, 0x0000, tmp, start - tmp);
+		utf8 = oscar_decode_im(account, conn->bn, encoding, tmp, start - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
 			g_free(utf8);
@@ -386,8 +386,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	/* Append any remaining message data */
 	if (tmp <= msgend)
 	{
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
-				encoding, 0x0000, tmp, msgend - tmp);
+		utf8 = oscar_decode_im(account, conn->bn, encoding, tmp, msgend - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
 			g_free(utf8);
@@ -506,7 +505,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	byte_stream_getrawbuf(bs, frame->bn, 32);
 
 	purple_debug_info("oscar", "Incoming ODC frame from %s with "
-			"type=0x%04x, flags=0x%04x, payload length=%u\n",
+			"type=0x%04x, flags=0x%04x, payload length=%" G_GSIZE_FORMAT "\n",
 			frame->bn, frame->type, frame->flags, frame->payload.len);
 
 	if (!conn->ready)

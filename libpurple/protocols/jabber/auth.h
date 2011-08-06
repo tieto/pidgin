@@ -45,7 +45,6 @@ struct _JabberSaslMech {
 	void (*dispose)(JabberStream *js);
 };
 
-gboolean jabber_process_starttls(JabberStream *js, xmlnode *packet);
 void jabber_auth_start(JabberStream *js, xmlnode *packet);
 void jabber_auth_start_old(JabberStream *js);
 void jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet);
@@ -58,6 +57,9 @@ JabberSaslMech **jabber_auth_get_scram_mechs(gint *count);
 #ifdef HAVE_CYRUS_SASL
 JabberSaslMech *jabber_auth_get_cyrus_mech(void);
 #endif
+
+void jabber_auth_add_mech(JabberSaslMech *);
+void jabber_auth_remove_mech(JabberSaslMech *);
 
 void jabber_auth_init(void);
 void jabber_auth_uninit(void);

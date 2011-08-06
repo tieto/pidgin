@@ -42,13 +42,26 @@
 typedef enum
 {
 	MXIT_CMD_UNKNOWN = 0,		/* Unknown command */
-	MXIT_CMD_CLRSCR,			/* Clear screen (clrmsgscreen) */
+	MXIT_CMD_CLEAR,				/* Clear (clear) */
 	MXIT_CMD_SENDSMS,			/* Send SMS (sendsms) */
 	MXIT_CMD_REPLY,				/* Reply (reply) */
 	MXIT_CMD_PLATREQ,			/* Platform Request (platreq) */
 	MXIT_CMD_SELECTCONTACT,		/* Select Contact (selc) */
-	MXIT_CMD_IMAGE				/* Inline image (img) */
+	MXIT_CMD_IMAGE,				/* Inline image (img) */
+	MXIT_CMD_SCREENCONFIG,		/* Chat-screen config (csc) */
+	MXIT_CMD_SCREENINFO,		/* Chat-screen info (csi) */
+	MXIT_CMD_IMAGESTRIP,		/* Image Strip (is) */
+	MXIT_CMD_TABLE				/* Table (tbl) */
 } MXitCommandType;
+
+/* Chat-screen behaviours (bhvr) */
+#define SCREEN_NO_HEADINGS		0x01
+#define SCREEN_FULLSCREEN		0x02
+#define SCREEN_AUTOCLEAR		0x04
+#define SCREEN_NO_AUDIO			0x08
+#define SCREEN_NO_MSGPREFIX		0x10
+#define SCREEN_NOTIFY			0x20
+#define SCREEN_PROGRESSBAR		0x40
 
 
 /*
@@ -87,7 +100,7 @@ static void mxit_cb_ii_returned(PurpleUtilFetchUrlData* url_data, gpointer user_
 		goto done;
 	}
 
-	/* lets first see if we dont have the inline image already in cache */
+	/* lets first see if we don't have the inline image already in cache */
 	if (g_hash_table_lookup(iireq->mx->session->iimages, iireq->url)) {
 		/* inline image found in the cache, so we just ignore this reply */
 		goto done;
@@ -138,8 +151,8 @@ static MXitCommandType command_type(GHashTable* hash)
 			type = g_hash_table_lookup(hash, "type");
 			if (type == NULL)								/* no command provided */
 				return MXIT_CMD_UNKNOWN;
-			else if (strcmp(type, "clrmsgscreen") == 0)		/* clear the screen */
-				return MXIT_CMD_CLRSCR;
+			else if (strcmp(type, "clear") == 0)			/* clear */
+				return MXIT_CMD_CLEAR;
 			else if (strcmp(type, "sendsms") == 0)			/* send an SMS */
 				return MXIT_CMD_SENDSMS;
 			else if (strcmp(type, "reply") == 0)			/* list of options */
@@ -149,8 +162,16 @@ static MXitCommandType command_type(GHashTable* hash)
 			else if (strcmp(type, "selc") == 0)				/* select contact */
 				return MXIT_CMD_SELECTCONTACT;
 		}
-		else if (strcmp(op, "img") == 0)
-				return MXIT_CMD_IMAGE;
+		else if (strcmp(op, "img") == 0)					/* inline image */
+			return MXIT_CMD_IMAGE;
+		else if (strcmp(op, "csc") == 0)					/* chat-screen config */
+			return MXIT_CMD_SCREENCONFIG;
+		else if (strcmp(op, "csi") == 0)					/* chat-screen info */
+			return MXIT_CMD_SCREENINFO;
+		else if (strcmp(op, "is") == 0)						/* image-strip */
+			return MXIT_CMD_IMAGESTRIP;
+		else if (strcmp(op, "tbl") == 0)					/* table */
+			return MXIT_CMD_TABLE;
 	}
 
 	return MXIT_CMD_UNKNOWN;
@@ -167,7 +188,6 @@ static GHashTable* command_tokenize(char* cmd)
 {
 	GHashTable* hash	= NULL;
 	gchar**		parts;
-	gchar*		part;
 	int			i		= 0;
 
 #ifdef MXIT_DEBUG_COMMANDS
@@ -180,7 +200,7 @@ static GHashTable* command_tokenize(char* cmd)
 	hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	/* now break part into a key & value */
-	while ((part = parts[i]) != NULL) {
+	while (parts[i] != NULL) {
 		char* value;
 
 		value = strchr(parts[i], '=');		/* find start of value */
@@ -205,27 +225,36 @@ static GHashTable* command_tokenize(char* cmd)
 
 
 /*------------------------------------------------------------------------
- * Process a ClearScreen MXit command.
+ * Process a Clear MXit command.
+ *  [::op=cmd|type=clear|clearmsgscreen=true|auto=true|id=12345:]
  *
- *  @param session			The MXit session object
- *  @param from				The sender of the message.
+ *  @param session		The MXit session object
+ *  @param from			The sender of the message.
+ *  @param hash			The MXit command <key,value> map
  */
-static void command_clearscreen(struct MXitSession* session, const char* from)
+static void command_clear(struct MXitSession* session, const char* from, GHashTable* hash)
 {
 	PurpleConversation *conv;
+	char* clearmsgscreen;
 
-    conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
-    if (conv == NULL) {
-        purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
-        return;
-    }
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
+	if (conv == NULL) {
+		purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
+		return;
+	}
 
-	purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+	clearmsgscreen = g_hash_table_lookup(hash, "clearmsgscreen");
+	if ( (clearmsgscreen) && (strcmp(clearmsgscreen, "true") == 0) ) {
+		/* this is a command to clear the chat screen */
+		purple_conversation_clear_message_history(conv);
+	}
 }
 
 
 /*------------------------------------------------------------------------
  * Process a Reply MXit command.
+ *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
+ *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -234,10 +263,21 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 {
 	char* replymsg;
 	char* selmsg;
+	char* nm;
 
 	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
 	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
-	if ((selmsg) && (replymsg)) {
+	nm = g_hash_table_lookup(hash, "nm");					/* name parameter */
+	if ((selmsg) && (replymsg) && (nm)) {
+		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
+		gchar*	replycmd = g_strdup_printf("::type=reply|nm=%s|res=%s|err=0:", nm, replymsg);
+
+		mxit_add_html_link( mx, replycmd, seltext );
+
+		g_free(seltext);
+		g_free(replycmd);
+	}
+	else if ((selmsg) && (replymsg)) {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
 
 		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
@@ -249,6 +289,7 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 
 /*------------------------------------------------------------------------
  * Process a PlatformRequest MXit command.
+ *  [::op=cmd|type=platreq|selmsg=Upgrade MXit|dest=http%3a//m.mxit.com|id=12345:]
  *
  *  @param hash			The MXit command <key,value> map
  *  @param msg			The message to display (as generated so far)
@@ -311,7 +352,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 			g_string_append_printf(msg, "%s%s>", MXIT_II_TAG, iireq->url);
 			mx->got_img = TRUE;
 
-			/* lets first see if we dont have the inline image already in cache */
+			/* lets first see if we don't have the inline image already in cache */
 			if (g_hash_table_lookup(mx->session->iimages, iireq->url)) {
 				/* inline image found in the cache, so we do not have to request it from the web */
 				g_free(iireq);
@@ -332,6 +373,173 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	if (reply) {
 		g_string_append_printf(msg, "\n");
 		mxit_add_html_link(mx, reply, _( "click here" ));
+	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Process an Imagestrip MXit command.
+ *  [::op=is|nm=status|dat=iVBORw0KGgoAAAA%3d%3d|v=63398792426788|fw=8|fh=8|layer=0:]
+ *
+ *  @param from			The sender of the message.
+ *  @param hash			The MXit command <key,value> map
+ */
+static void command_imagestrip(struct MXitSession* session, const char* from, GHashTable* hash)
+{
+	const char* name;
+	const char* validator;
+	const char* tmp;
+	int width, height, layer;
+
+	purple_debug_info(MXIT_PLUGIN_ID, "ImageStrip received from %s\n", from);
+
+	/* image strip name */
+	name = g_hash_table_lookup(hash, "nm");
+
+	/* validator */
+	validator = g_hash_table_lookup(hash, "v");
+
+	/* image data */
+	tmp = g_hash_table_lookup(hash, "dat");
+	if (tmp) {
+		guchar*		rawimg;
+		gsize		rawimglen;
+		char*		dir;
+		char*		filename;
+
+		/* base64 decode the image data */
+		rawimg = purple_base64_decode(tmp, &rawimglen);
+
+		/* save it to a file */
+		dir = g_strdup_printf("%s/mxit/imagestrips", purple_user_dir());
+		purple_build_dir(dir, S_IRUSR | S_IWUSR | S_IXUSR);		/* ensure directory exists */
+
+		filename = g_strdup_printf("%s/%s-%s-%s.png", dir, from, name, validator);
+		purple_util_write_data_to_file_absolute(filename, (char*) rawimg, rawimglen);
+
+		g_free(dir);
+		g_free(filename);
+	}
+
+	tmp = g_hash_table_lookup(hash, "fw");
+	width = atoi(tmp);
+
+	tmp = g_hash_table_lookup(hash, "fh");
+	height = atoi(tmp);
+
+	tmp = g_hash_table_lookup(hash, "layer");
+	layer = atoi(tmp);
+
+	purple_debug_info(MXIT_PLUGIN_ID, "ImageStrip %s from %s: [w=%i h=%i l=%i validator=%s]\n", name, from, width, height, layer, validator);
+}
+
+
+/*------------------------------------------------------------------------
+ * Process a Chat-Screen-Info MXit command.
+ *  [::op=csi:]
+ *
+ *  @param session		The MXit session object
+ *  @param from			The sender of the message.
+ */
+static void command_screeninfo(struct MXitSession* session, const char* from)
+{
+	char* response;
+
+	purple_debug_info(MXIT_PLUGIN_ID, "Chat Screen Info received from %s\n", from);
+
+	// TODO: Determine width, height, colors of chat-screen.
+
+	response = g_strdup_printf("::type=csi|res=bhvr,0;w,%i;h,%i;col,0.ffffffff,29.ff000000:", 300, 400);
+
+	/* send response back to MXit */
+    mxit_send_message( session, from, response, FALSE, TRUE );
+
+	g_free(response);
+}
+
+
+/*------------------------------------------------------------------------
+ * Process a Chat-Screen-Configure MXit command.
+ *  [::op=csc|bhvr=|menu=<menu>|col=<colors>:]
+ *  where:
+ *   menu ::= <menuitem> { ";" <menuitem> }
+ *     menuitem ::= { type "," <text> "," <name> "," <meta> }
+ *   colors ::= <color> { ";" <color> }
+ *     color ::= <colorid> "," <ARGB hex color>   
+ *
+ *  @param session		The MXit session object
+ *  @param from			The sender of the message.
+ *  @param hash			The MXit command <key,value> map
+ */
+static void command_screenconfig(struct MXitSession* session, const char* from, GHashTable* hash)
+{
+	const char* tmp;
+
+	purple_debug_info(MXIT_PLUGIN_ID, "Chat Screen Configure received from %s\n", from);
+
+	/* Behaviour */
+	tmp = g_hash_table_lookup(hash, "bhvr");
+	if (tmp) {
+		purple_debug_info(MXIT_PLUGIN_ID, "  behaviour = %s\n", tmp);
+		// TODO: Re-configure conversation screen.
+	}
+
+	/* Menu */
+	tmp = g_hash_table_lookup(hash, "menu");
+	if (tmp) {
+		purple_debug_info(MXIT_PLUGIN_ID, "  menu = %s\n", tmp);
+		// TODO: Implement conversation-specific sub-menu.
+	}
+
+	/* Colours */
+	tmp = g_hash_table_lookup(hash, "col");
+	if (tmp) {
+		purple_debug_info(MXIT_PLUGIN_ID, "  colours = %s\n", tmp);
+		// TODO: Re-configuration conversation colors.
+	}
+}
+
+
+/*------------------------------------------------------------------------
+ * Process a Table Markup MXit command.
+ *
+ *  @param mx			The received message data object
+ *  @param hash			The MXit command <key,value> map
+ */
+static void command_table(struct RXMsgData* mx, GHashTable* hash)
+{
+	const char* tmp;
+	const char* name;
+	int mode;
+	int nr_columns = 0, nr_rows = 0;
+	gchar** coldata;
+	int i, j;
+
+	/* table name */
+	name = g_hash_table_lookup(hash, "nm");
+
+	/* number of columns */
+	tmp = g_hash_table_lookup(hash, "col");
+	nr_columns = atoi(tmp);	
+
+	/* number of rows */
+	tmp = g_hash_table_lookup(hash, "row");
+	nr_rows = atoi(tmp);
+
+	/* mode */
+	tmp = g_hash_table_lookup(hash, "mode");
+	mode = atoi(tmp);
+
+	/* table data */
+	tmp = g_hash_table_lookup(hash, "d");
+	coldata = g_strsplit(tmp, "~", 0);			/* split into entries for each row & column */
+
+	purple_debug_info(MXIT_PLUGIN_ID, "Table %s from %s: [cols=%i rows=%i mode=%i]\n", name, mx->from, nr_columns, nr_rows, mode);
+
+	for (i = 0; i < nr_rows; i++) {
+		for (j = 0; j < nr_columns; j++) {
+			purple_debug_info(MXIT_PLUGIN_ID, " Row %i Column %i = %s\n", i, j, coldata[i*nr_columns + j]);
+		}
 	}
 }
 
@@ -366,8 +574,8 @@ int mxit_parse_command(struct RXMsgData* mx, char* message)
 			MXitCommandType type = command_type(hash);
 
 			switch (type) {
-				case MXIT_CMD_CLRSCR :
-					command_clearscreen(mx->session, mx->from);
+				case MXIT_CMD_CLEAR :
+					command_clear(mx->session, mx->from, hash);
 					break;
 				case MXIT_CMD_REPLY :
 					command_reply(mx, hash);
@@ -377,6 +585,18 @@ int mxit_parse_command(struct RXMsgData* mx, char* message)
 					break;
 				case MXIT_CMD_IMAGE :
 					command_image(mx, hash, mx->msg);
+					break;
+				case MXIT_CMD_SCREENCONFIG :
+					command_screenconfig(mx->session, mx->from, hash);
+					break;
+				case MXIT_CMD_SCREENINFO :
+					command_screeninfo(mx->session, mx->from);
+					break;
+				case MXIT_CMD_IMAGESTRIP :
+					command_imagestrip(mx->session, mx->from, hash);
+					break;
+				case MXIT_CMD_TABLE :
+					command_table(mx, hash);
 					break;
 				default :
 					/* command unknown, or not currently supported */

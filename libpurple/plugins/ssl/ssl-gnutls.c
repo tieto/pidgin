@@ -36,11 +36,25 @@ typedef struct
 {
 	gnutls_session session;
 	guint handshake_handler;
+	guint handshake_timer;
 } PurpleSslGnutlsData;
 
 #define PURPLE_SSL_GNUTLS_DATA(gsc) ((PurpleSslGnutlsData *)gsc->private_data)
 
-static gnutls_certificate_client_credentials xcred;
+static gnutls_certificate_client_credentials xcred = NULL;
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+/* Priority strings.  The default one is, well, the default (and is always
+ * set).  The hash table is of the form hostname => priority (both
+ * char *).
+ *
+ * We only use a gnutls_priority_t for the default on the assumption that
+ * that's the more common case.  Improvement patches (like matching on
+ * subdomains) welcome.
+ */
+static gnutls_priority_t default_priority = NULL;
+static GHashTable *host_priorities = NULL;
+#endif
 
 static void
 ssl_gnutls_log(int level, const char *str)
@@ -53,6 +67,7 @@ static void
 ssl_gnutls_init_gnutls(void)
 {
 	const char *debug_level;
+	const char *host_priorities_str;
 
 	/* Configure GnuTLS to use glib memory management */
 	/* I expect that this isn't really necessary, but it may prevent
@@ -82,6 +97,80 @@ ssl_gnutls_init_gnutls(void)
 		gnutls_global_set_log_function(ssl_gnutls_log);
 	}
 
+	/* Expected format: host=priority;host2=priority;*=priority
+	 * where "*" is used to override the default priority string for
+	 * libpurple.
+	 */
+	host_priorities_str = g_getenv("PURPLE_GNUTLS_PRIORITIES");
+	if (host_priorities_str) {
+#ifndef HAVE_GNUTLS_PRIORITY_FUNCS
+		purple_debug_warning("gnutls", "Warning, PURPLE_GNUTLS_PRIORITIES "
+		                     "environment variable set, but we were built "
+		                     "against an older GnuTLS that doesn't support "
+		                     "this. :-(");
+#else /* HAVE_GNUTLS_PRIORITY_FUNCS */
+		char **entries = g_strsplit(host_priorities_str, ";", -1);
+		char *default_priority_str = NULL;
+		guint i;
+
+		host_priorities = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                        g_free, g_free);
+
+		for (i = 0; entries[i]; ++i) {
+			char *host = entries[i];
+			char *equals = strchr(host, '=');
+			char *prio_str;
+
+			if (equals) {
+				*equals = '\0';
+				prio_str = equals + 1;
+
+				/* Empty? */
+				if (*prio_str == '\0') {
+					purple_debug_warning("gnutls", "Ignoring empty priority "
+					                               "string for %s\n", host);
+				} else {
+					/* TODO: Validate each of these and complain */
+					if (g_str_equal(host, "*")) {
+						/* Override the default priority */
+						g_free(default_priority_str);
+						default_priority_str = g_strdup(prio_str);
+					} else
+						g_hash_table_insert(host_priorities, g_strdup(host),
+						                    g_strdup(prio_str));
+				}
+			}
+		}
+
+		if (default_priority_str) {
+			if (gnutls_priority_init(&default_priority, default_priority_str, NULL)) {
+				purple_debug_warning("gnutls", "Unable to set default priority to %s\n",
+				                     default_priority_str);
+				/* Versions of GnuTLS as of 2.8.6 (2010-03-31) don't free/NULL
+				 * this on error.
+				 */
+				gnutls_free(default_priority);
+				default_priority = NULL;
+			}
+
+			g_free(default_priority_str);
+		}
+
+		g_strfreev(entries);
+#endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
+	}
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+	/* Make sure we set have a default priority! */
+	if (!default_priority) {
+		if (gnutls_priority_init(&default_priority, "NORMAL:%SSL3_RECORD_VERSION", NULL)) {
+			/* See comment above about memory leak */
+			gnutls_free(default_priority);
+			gnutls_priority_init(&default_priority, "NORMAL", NULL);
+		}
+	}
+#endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
+
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
@@ -103,6 +192,17 @@ ssl_gnutls_uninit(void)
 	gnutls_global_deinit();
 
 	gnutls_certificate_free_credentials(xcred);
+	xcred = NULL;
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+	if (host_priorities) {
+		g_hash_table_destroy(host_priorities);
+		host_priorities = NULL;
+	}
+
+	gnutls_priority_deinit(default_priority);
+	default_priority = NULL;
+#endif
 }
 
 static void
@@ -268,6 +368,19 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 }
 
+static gboolean
+start_handshake_cb(gpointer data)
+{
+	PurpleSslConnection *gsc = data;
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+
+	purple_debug_info("gnutls", "Starting handshake with %s\n", gsc->host);
+
+	gnutls_data->handshake_timer = 0;
+
+	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	return FALSE;
+}
 
 static void
 ssl_gnutls_connect(PurpleSslConnection *gsc)
@@ -280,9 +393,22 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 
 	gnutls_init(&gnutls_data->session, GNUTLS_CLIENT);
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-	if (gnutls_priority_set_direct(gnutls_data->session,
-		                             "NORMAL:%SSL3_RECORD_VERSION", NULL))
-		gnutls_priority_set_direct(gnutls_data->session, "NORMAL", NULL);
+	{
+		const char *prio_str = NULL;
+		gboolean set = FALSE;
+
+		/* Let's see if someone has specified a specific priority */
+		if (gsc->host && host_priorities)
+			prio_str = g_hash_table_lookup(host_priorities, gsc->host);
+
+		if (prio_str)
+			set = (GNUTLS_E_SUCCESS ==
+					gnutls_priority_set_direct(gnutls_data->session, prio_str,
+				                               NULL));
+
+		if (!set)
+			gnutls_priority_set(gnutls_data->session, default_priority);
+	}
 #else
 	gnutls_set_default_priority(gnutls_data->session);
 #endif
@@ -298,10 +424,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
 
-	purple_debug_info("gnutls", "Starting handshake with %s\n", gsc->host);
-
 	/* Orborde asks: Why are we configuring a callback, then
-	   immediately calling it?
+	   (almost) immediately calling it?
 
 	   Answer: gnutls_handshake (up in handshake_cb) needs to be called
 	   once in order to get the ball rolling on the SSL connection.
@@ -312,7 +436,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	   and subsequent calls, we'll just fire the callback immediately to
 	   accomplish this.
 	*/
-	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	gnutls_data->handshake_timer = purple_timeout_add(0, start_handshake_cb,
+	                                                  gsc);
 }
 
 static void
@@ -325,6 +450,8 @@ ssl_gnutls_close(PurpleSslConnection *gsc)
 
 	if(gnutls_data->handshake_handler)
 		purple_input_remove(gnutls_data->handshake_handler);
+	if (gnutls_data->handshake_timer)
+		purple_timeout_remove(gnutls_data->handshake_timer);
 
 	gnutls_bye(gnutls_data->session, GNUTLS_SHUT_RDWR);
 
@@ -393,11 +520,18 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 /* Forward declarations are fun! */
 static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum dt, gnutls_x509_crt_fmt mode);
+/* indeed! */
+static gboolean
+x509_certificate_signed_by(PurpleCertificate * crt,
+			   PurpleCertificate * issuer);
+static void
+x509_destroy_certificate(PurpleCertificate * crt);
 
 static GList *
 ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 {
 	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+	PurpleCertificate *prvcrt = NULL;
 
 	/* List of Certificate instances to return */
 	GList * peer_certs = NULL;
@@ -423,7 +557,17 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 		/* Append is somewhat inefficient on linked lists, but is easy
 		   to read. If someone complains, I'll change it.
 		   TODO: Is anyone complaining? (Maybe elb?) */
-		peer_certs = g_list_append(peer_certs, newcrt);
+		/* only append if previous cert was actually signed by this one.
+		 * Thanks Microsoft. */
+		if ((prvcrt == NULL) || x509_certificate_signed_by(prvcrt, newcrt)) {
+			peer_certs = g_list_append(peer_certs, newcrt);
+			prvcrt = newcrt;
+		} else {
+			x509_destroy_certificate(newcrt);
+			purple_debug_error("gnutls", "Dropping further peer certificates "
+			                             "because the chain is broken!\n");
+			break;
+		}
 	}
 
 	/* cert_list doesn't need free()-ing */
@@ -546,6 +690,55 @@ x509_import_from_file(const gchar * filename)
 	g_free(buf);
 
 	return crt;
+}
+
+/** Imports a number of PEM-formatted X.509 certificates from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A newly allocated GSList of Certificate structures of the x509_gnutls scheme
+ */
+static GSList *
+x509_importcerts_from_file(const gchar * filename)
+{
+	PurpleCertificate *crt;  /* Certificate being constructed */
+	gchar *buf;        /* Used to load the raw file data */
+	gchar *begin, *end;
+	GSList *crts = NULL;
+	gsize buf_sz;      /* Size of the above */
+	gnutls_datum dt; /* Struct to pass down to GnuTLS */
+
+	purple_debug_info("gnutls",
+			  "Attempting to load X.509 certificates from %s\n",
+			  filename);
+
+	/* Next, we'll simply yank the entire contents of the file
+	   into memory */
+	/* TODO: Should I worry about very large files here? */
+	g_return_val_if_fail(
+		g_file_get_contents(filename,
+			    &buf,
+			    &buf_sz,
+			    NULL      /* No error checking for now */
+		),
+		NULL);
+
+	begin = buf;
+	while((end = strstr(begin, "-----END CERTIFICATE-----")) != NULL) {
+		end += sizeof("-----END CERTIFICATE-----")-1;
+		/* Load the datum struct */
+		dt.data = (unsigned char *) begin;
+		dt.size = (end-begin);
+
+		/* Perform the conversion; files should be in PEM format */
+		crt = x509_import_from_datum(dt, GNUTLS_X509_FMT_PEM);
+		crts = g_slist_prepend(crts, crt);
+		begin = end;
+	}
+
+	/* Cleanup */
+	g_free(buf);
+
+	return crts;
 }
 
 /**
@@ -964,8 +1157,8 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
+	x509_importcerts_from_file,      /* Multiple certificates import function */
 
-	NULL,
 	NULL,
 	NULL,
 	NULL

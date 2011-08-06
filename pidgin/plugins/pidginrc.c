@@ -201,17 +201,13 @@ static void
 purplerc_make_changes(void)
 {
 	GString *str = make_gtkrc_string();
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkSettings *setting = NULL;
-#endif
 
 	gtk_rc_parse_string(str->str);
 	g_string_free(str, TRUE);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	setting = gtk_settings_get_default();
 	gtk_rc_reset_styles(setting);
-#endif
 }
 
 static void
@@ -246,7 +242,12 @@ purplerc_color_response(GtkDialog *color_dialog, gint response, gpointer data)
 	if (response == GTK_RESPONSE_OK) {
 		GdkColor color;
 		gchar colorstr[8];
+#if GTK_CHECK_VERSION(2,14,0)
+		GtkWidget *colorsel =
+			gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog));
+#else
 		GtkWidget *colorsel = GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel;
+#endif
 
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
 
@@ -277,7 +278,13 @@ purplerc_set_color(GtkWidget *widget, gpointer data)
 
 	if (pref != NULL && strcmp(pref, "")) {
 		if (gdk_color_parse(pref, &color)) {
+#if GTK_CHECK_VERSION(2,14,0)
+			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
+				gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(color_dialog))),
+				&color);
+#else
 			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel), &color);
+#endif
 		}
 	}
 
@@ -331,7 +338,7 @@ purplerc_set_font(GtkWidget *widget, gpointer data)
 	pref = purple_prefs_get_string(prefpath);
 
 	if (pref != NULL && strcmp(pref, "")) {
-		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), pref);
+		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(font_dialog), pref);
 	}
 
 	gtk_window_present(GTK_WINDOW(font_dialog));

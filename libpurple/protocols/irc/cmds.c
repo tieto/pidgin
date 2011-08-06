@@ -73,7 +73,7 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 	/* we have defined args as args[0] is target and args[1] is ctcp command */
 	char *buf;
 	GString *string;
-	
+
 	/* check if we have args */
 	if (!args || !args[0] || !args[1])
 		return 0;
@@ -89,7 +89,7 @@ int irc_cmd_ctcp(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 	irc_send(irc, buf);
 	g_free(buf);
-	
+
 	return 1;
 }
 
@@ -238,16 +238,16 @@ int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, cons
 		if (!args[0] && irc_ischannel(target))
 			buf = irc_format(irc, "vc", "MODE", target);
 		else if (args[0] && (*args[0] == '+' || *args[0] == '-'))
-			buf = irc_format(irc, "vcv", "MODE", target, args[0]);
+			buf = irc_format(irc, "vcn", "MODE", target, args[0]);
 		else if (args[0])
-			buf = irc_format(irc, "vv", "MODE", args[0]);
+			buf = irc_format(irc, "vn", "MODE", args[0]);
 		else
 			return 0;
 	} else if (!strcmp(cmd, "umode")) {
 		if (!args[0])
 			return 0;
 		gc = purple_account_get_connection(irc->account);
-		buf = irc_format(irc, "vnv", "MODE", purple_connection_get_display_name(gc), args[0]);
+		buf = irc_format(irc, "vnc", "MODE", purple_connection_get_display_name(gc), args[0]);
 	} else {
 		return 0;
 	}
@@ -437,7 +437,7 @@ int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	buf = irc_format(irc, "v", args[0]);
+	buf = irc_format(irc, "n", args[0]);
 	irc_send(irc, buf);
 	g_free(buf);
 
@@ -600,7 +600,7 @@ int irc_cmd_whowas(struct irc_conn *irc, const char *cmd, const char *target, co
 		return 0;
 
 	buf = irc_format(irc, "vn", "WHOWAS", args[0]);
-	
+
 	irc->whois.nick = g_strdup(args[0]);
 	irc_send(irc, buf);
 	g_free(buf);

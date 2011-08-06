@@ -46,7 +46,14 @@
 
 static char *default_firstname;
 static char *default_lastname;
-static char *default_hostname;
+
+const char *
+bonjour_get_jid(PurpleAccount *account)
+{
+	PurpleConnection *conn = purple_account_get_connection(account);
+	BonjourData *bd = conn->proto_data;
+	return bd->jid;
+}
 
 static void
 bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
@@ -70,7 +77,6 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -101,6 +107,8 @@ bonjour_login(PurpleAccount *account)
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
+	bd->jabber_data->socket = -1;
+	bd->jabber_data->socket6 = -1;
 	bd->jabber_data->port = purple_account_get_int(account, "port", BONJOUR_DEFAULT_PORT);
 	bd->jabber_data->account = account;
 
@@ -170,7 +178,9 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Delete the bonjour group */
+	/* Delete the bonjour group
+	 * (purple_blist_remove_group will bail out if the group isn't empty)
+	 */
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
@@ -179,6 +189,8 @@ bonjour_close(PurpleConnection *connection)
 		purple_xfer_cancel_local(bd->xfer_lists->data);
 	}
 
+	if (bd != NULL)
+		g_free(bd->jid);
 	g_free(bd);
 	connection->proto_data = NULL;
 }
@@ -203,18 +215,12 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	BonjourData *bd;
-	gboolean disconnected;
-	PurpleStatusType *type;
-	int primitive;
 	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
 	bd = gc->proto_data;
-	disconnected = purple_account_is_disconnected(account);
-	type = purple_status_get_type(status);
-	primitive = purple_status_type_get_primitive(type);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");
@@ -392,7 +398,8 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 
-static void bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
+static void
+bonjour_do_group_change(PurpleBuddy *buddy, const char *new_group) {
 	PurpleBlistNodeFlags oldflags;
 
 	if (buddy == NULL)
@@ -448,7 +455,6 @@ plugin_unload(PurplePlugin *plugin)
 
 	g_free(default_firstname);
 	g_free(default_lastname);
-	g_free(default_hostname);
 
 	return TRUE;
 }
@@ -525,7 +531,12 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	NULL,                                                    /* get_account_text_table */
 	NULL,                                                    /* initiate_media */
-	NULL                                                     /* can_do_media */
+	NULL,                                                    /* get_media_caps */
+	NULL,                                                    /* get_moods */
+	NULL,                                                    /* set_public_alias */
+	NULL,                                                    /* get_public_alias */
+	NULL,                                                    /* add_buddy_with_invite */
+	NULL                                                     /* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info =
@@ -566,7 +577,8 @@ static PurplePluginInfo info =
 };
 
 #ifdef WIN32
-static gboolean _set_default_name_cb(gpointer data) {
+static gboolean
+_set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
 	GList *tmp = prpl_info.protocol_options;
@@ -603,7 +615,8 @@ static gboolean _set_default_name_cb(gpointer data) {
 	return FALSE;
 }
 
-static gpointer _win32_name_lookup_thread(gpointer data) {
+static gpointer
+_win32_name_lookup_thread(gpointer data) {
 	gchar *fullname = NULL;
 	wchar_t username[UNLEN + 1];
 	DWORD dwLenUsername = UNLEN + 1;
@@ -707,23 +720,14 @@ initialize_default_account_values(void)
 	}
 
 	g_free(conv);
-
-	/* Try to figure out a good host name to use */
-	/* TODO: Avoid 'localhost,' if possible */
-	default_hostname = g_strdup(purple_get_host_name());
 }
 
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 
 	initialize_default_account_values();
-
-	/* Creating the user splits */
-	split = purple_account_user_split_new(_("Hostname"), default_hostname, '@');
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);

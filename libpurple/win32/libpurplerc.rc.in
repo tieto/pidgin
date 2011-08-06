@@ -18,7 +18,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "FileDescription", "LibPurple Library"
         VALUE "FileVersion", "@PURPLE_VERSION@"
         VALUE "InternalName", "libpurple"
-        VALUE "LegalCopyright", "Copyright (C) 1998-2007 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "LegalCopyright", "Copyright (C) 1998-2010 The Pidgin developer community (See the COPYRIGHT file in the source distribution)."
         VALUE "OriginalFilename", "libpurple.dll"
         VALUE "ProductName", "LibPurple"
         VALUE "ProductVersion", "@PURPLE_VERSION@"

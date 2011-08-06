@@ -5,9 +5,6 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		pidgin.pc.in \
 		pidgin-uninstalled.pc.in \
-		win32/IdleTracker/Makefile.mingw \
-		win32/IdleTracker/idletrack.c \
-		win32/IdleTracker/idletrack.h \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
@@ -21,47 +18,16 @@ EXTRA_DIST = \
 		win32/winpidgin.c \
 		win32/wspell.c \
 		win32/wspell.h \
+		win32/nsis/generate_gtk_zip.sh \
+		win32/nsis/rpm2zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
+		win32/nsis/available.lst \
 		win32/nsis/pidgin-installer.nsi \
 		win32/nsis/pidgin-plugin.nsh \
-		win32/nsis/langmacros.nsh \
-		win32/nsis/translations/afrikaans.nsh \
-		win32/nsis/translations/albanian.nsh \
-		win32/nsis/translations/arabic.nsh \
-		win32/nsis/translations/basque.nsh \
-		win32/nsis/translations/bulgarian.nsh \
-		win32/nsis/translations/catalan.nsh \
-		win32/nsis/translations/czech.nsh \
-		win32/nsis/translations/danish.nsh \
-		win32/nsis/translations/dutch.nsh \
-		win32/nsis/translations/english.nsh \
-		win32/nsis/translations/finnish.nsh \
-		win32/nsis/translations/french.nsh \
-		win32/nsis/translations/german.nsh \
-		win32/nsis/translations/hebrew.nsh \
-		win32/nsis/translations/hungarian.nsh \
-		win32/nsis/translations/italian.nsh \
-		win32/nsis/translations/japanese.nsh \
-		win32/nsis/translations/korean.nsh \
-		win32/nsis/translations/kurdish.nsh \
-		win32/nsis/translations/lithuanian.nsh \
-		win32/nsis/translations/norwegian.nsh \
-		win32/nsis/translations/persian.nsh \
-		win32/nsis/translations/polish.nsh \
-		win32/nsis/translations/portuguese.nsh \
-		win32/nsis/translations/portuguese-br.nsh \
-		win32/nsis/translations/romanian.nsh \
-		win32/nsis/translations/russian.nsh \
-		win32/nsis/translations/serbian-latin.nsh \
-		win32/nsis/translations/simp-chinese.nsh \
-		win32/nsis/translations/slovak.nsh \
-		win32/nsis/translations/slovenian.nsh \
-		win32/nsis/translations/spanish.nsh \
-		win32/nsis/translations/swedish.nsh \
-		win32/nsis/translations/trad-chinese.nsh \
-		win32/nsis/translations/vietnamese.nsh
+		win32/nsis/create_nsis_translations.pl \
+		win32/nsis/nsis_translations.desktop.in
 
 if ENABLE_GTK
 
@@ -73,18 +39,12 @@ SUBDIRS = pixmaps plugins
 bin_PROGRAMS = pidgin
 
 pidgin_SOURCES = \
-	eggtrayicon.c \
-	pidgincombobox.c \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
 	gtkblist-theme.c \
 	gtkblist-theme-loader.c \
-	gtkcelllayout.c \
 	gtkcellrendererexpander.c \
-	gtkcellrendererprogress.c \
-	gtkcellview.c \
-	gtkcellviewmenuitem.c \
 	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
@@ -92,9 +52,8 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkdocklet-x11.c \
+	gtkdocklet-gtk.c \
 	gtkeventloop.c \
-	gtkexpander.c \
 	gtkft.c \
 	gtkicon-theme.c \
 	gtkicon-theme-loader.c \
@@ -132,18 +91,12 @@ pidgin_SOURCES = \
 	smileyparser.c
 
 pidgin_headers = \
-	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
 	gtkblist-theme.h \
 	gtkblist-theme-loader.h \
-	gtkcelllayout.h \
 	gtkcellrendererexpander.h \
-	gtkcellrendererprogress.h \
-	gtkcellview.h \
-	gtkcellviewmenuitem.h \
 	gtkcertmgr.h \
-	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
@@ -152,7 +105,6 @@ pidgin_headers = \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
 	gtkeventloop.h \
-	gtkexpander.h \
 	gtkft.h \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
@@ -208,7 +160,6 @@ pidgin_LDADD = \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
-	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
@@ -233,7 +184,6 @@ AM_CPPFLAGS = \
 	$(GTK_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
-	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
 	$(INTGG_CFLAGS)

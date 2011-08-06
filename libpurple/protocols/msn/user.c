@@ -21,9 +21,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+#include "util.h"
+
 #include "user.h"
 #include "slp.h"
+
+static void free_user_endpoint(MsnUserEndpoint *data)
+{
+	g_free(data->id);
+	g_free(data->name);
+	g_free(data);
+}
 
 /*new a user object*/
 MsnUser *
@@ -39,14 +50,17 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	msn_user_set_passport(user, passport);
 	msn_user_set_friendly_name(user, friendly_name);
 
-	return user;
+	return msn_user_ref(user);
 }
 
 /*destroy a user object*/
-void
+static void
 msn_user_destroy(MsnUser *user)
 {
-	g_return_if_fail(user != NULL);
+	while (user->endpoints != NULL) {
+		free_user_endpoint(user->endpoints->data);
+		user->endpoints = g_slist_delete_link(user->endpoints, user->endpoints);
+	}
 
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
@@ -67,16 +81,40 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->passport);
 	g_free(user->friendly_name);
 	g_free(user->uid);
-	g_free(user->phone.home);
-	g_free(user->phone.work);
-	g_free(user->phone.mobile);
-	g_free(user->media.artist);
-	g_free(user->media.title);
-	g_free(user->media.album);
+	if (user->extinfo) {
+		g_free(user->extinfo->media_album);
+		g_free(user->extinfo->media_artist);
+		g_free(user->extinfo->media_title);
+		g_free(user->extinfo->phone_home);
+		g_free(user->extinfo->phone_mobile);
+		g_free(user->extinfo->phone_work);
+		g_free(user->extinfo);
+	}
 	g_free(user->statusline);
 	g_free(user->invite_message);
 
 	g_free(user);
+}
+
+MsnUser *
+msn_user_ref(MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	user->refcount++;
+
+	return user;
+}
+
+void
+msn_user_unref(MsnUser *user)
+{
+	g_return_if_fail(user != NULL);
+
+	user->refcount--;
+
+	if(user->refcount == 0)
+		msn_user_destroy(user);
 }
 
 void
@@ -107,24 +145,24 @@ msn_user_update(MsnUser *user)
 		purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
 	}
 
-	if (!offline && user->media.type != CURRENT_MEDIA_UNKNOWN) {
-		if (user->media.type == CURRENT_MEDIA_MUSIC) {
+	if (!offline && user->extinfo && user->extinfo->media_type != CURRENT_MEDIA_UNKNOWN) {
+		if (user->extinfo->media_type == CURRENT_MEDIA_MUSIC) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
-			                            PURPLE_TUNE_ARTIST, user->media.artist,
-			                            PURPLE_TUNE_ALBUM, user->media.album,
-			                            PURPLE_TUNE_TITLE, user->media.title,
+			                            PURPLE_TUNE_ARTIST, user->extinfo->media_artist,
+			                            PURPLE_TUNE_ALBUM, user->extinfo->media_album,
+			                            PURPLE_TUNE_TITLE, user->extinfo->media_title,
 			                            NULL);
-		} else if (user->media.type == CURRENT_MEDIA_GAMES) {
+		} else if (user->extinfo->media_type == CURRENT_MEDIA_GAMES) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
-			                            "game", user->media.title,
+			                            "game", user->extinfo->media_title,
 			                            NULL);
-		} else if (user->media.type == CURRENT_MEDIA_OFFICE) {
+		} else if (user->extinfo->media_type == CURRENT_MEDIA_OFFICE) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
-			                            "office", user->media.title,
+			                            "office", user->extinfo->media_title,
 			                            NULL);
 		} else {
 			purple_debug_warning("msn", "Got CurrentMedia with unknown type %d.\n",
-			                     user->media.type);
+			                     user->extinfo->media_type);
 		}
 	} else {
 		purple_prpl_got_user_status_deactive(account, user->passport, "tune");
@@ -158,6 +196,8 @@ msn_user_set_state(MsnUser *user, const char *state)
 		status = "phone";
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status = "lunch";
+	else if (!g_ascii_strcasecmp(state, "HDN"))
+		status = NULL;
 	else
 		status = "available";
 
@@ -183,7 +223,10 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	g_return_val_if_fail(user != NULL, FALSE);
 
-	if (user->friendly_name && name && (!strcmp(user->friendly_name, name) ||
+	if (!name)
+		return FALSE;
+
+	if (user->friendly_name && (!strcmp(user->friendly_name, name) ||
 				!strcmp(user->passport, name)))
 		return FALSE;
 
@@ -205,21 +248,6 @@ msn_user_set_statusline(MsnUser *user, const char *statusline)
 }
 
 void
-msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
-{
-	g_return_if_fail(user != NULL);
-
-	g_free(user->media.title);
-	g_free(user->media.album);
-	g_free(user->media.artist);
-
-	user->media.type   = media ? media->type : CURRENT_MEDIA_UNKNOWN;
-	user->media.title  = media ? g_strdup(media->title) : NULL;
-	user->media.artist = media ? g_strdup(media->artist) : NULL;
-	user->media.album  = media ? g_strdup(media->album) : NULL;
-}
-
-void
 msn_user_set_uid(MsnUser *user, const char *uid)
 {
 	g_return_if_fail(user != NULL);
@@ -229,7 +257,64 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_op(MsnUser *user, int list_op)
+msn_user_set_endpoint_data(MsnUser *user, const char *input, MsnUserEndpoint *newep)
+{
+	MsnUserEndpoint *ep;
+	char *endpoint;
+	GSList *l;
+
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(input != NULL);
+
+	endpoint = g_ascii_strdown(input, -1);
+
+	for (l = user->endpoints; l; l = l->next) {
+		ep = l->data;
+		if (g_str_equal(ep->id, endpoint)) {
+			/* We have info about this endpoint! */
+
+			g_free(endpoint);
+
+			if (newep == NULL) {
+				/* Delete it and exit */
+				user->endpoints = g_slist_delete_link(user->endpoints, l);
+				free_user_endpoint(ep);
+				return;
+			}
+
+			/* Break out of our loop and update it */
+			break;
+		}
+	}
+	if (l == NULL) {
+		/* Need to add a new endpoint */
+		ep = g_new0(MsnUserEndpoint, 1);
+		ep->id = endpoint;
+		user->endpoints = g_slist_prepend(user->endpoints, ep);
+	}
+
+	ep->clientid = newep->clientid;
+	ep->extcaps = newep->extcaps;
+}
+
+void
+msn_user_clear_endpoints(MsnUser *user)
+{
+	MsnUserEndpoint *ep;
+	GSList *l;
+
+	g_return_if_fail(user != NULL);
+
+	for (l = user->endpoints; l; l = g_slist_delete_link(l, l)) {
+		ep = l->data;
+		free_user_endpoint(ep);
+	}
+
+	user->endpoints = NULL;
+}
+
+void
+msn_user_set_op(MsnUser *user, MsnListOp list_op)
 {
 	g_return_if_fail(user != NULL);
 
@@ -237,7 +322,7 @@ msn_user_set_op(MsnUser *user, int list_op)
 }
 
 void
-msn_user_unset_op(MsnUser *user, int list_op)
+msn_user_unset_op(MsnUser *user, MsnListOp list_op)
 {
 	g_return_if_fail(user != NULL);
 
@@ -366,8 +451,15 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.home);
-	user->phone.home = g_strdup(number);
+	if (!number && !user->extinfo)
+		return;
+
+	if (user->extinfo)
+		g_free(user->extinfo->phone_home);
+	else
+		user->extinfo = g_new0(MsnUserExtendedInfo, 1);
+
+	user->extinfo->phone_home = g_strdup(number);
 }
 
 void
@@ -375,8 +467,15 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.work);
-	user->phone.work = g_strdup(number);
+	if (!number && !user->extinfo)
+		return;
+
+	if (user->extinfo)
+		g_free(user->extinfo->phone_work);
+	else
+		user->extinfo = g_new0(MsnUserExtendedInfo, 1);
+
+	user->extinfo->phone_work = g_strdup(number);
 }
 
 void
@@ -384,8 +483,15 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.mobile);
-	user->phone.mobile = g_strdup(number);
+	if (!number && !user->extinfo)
+		return;
+
+	if (user->extinfo)
+		g_free(user->extinfo->phone_mobile);
+	else
+		user->extinfo = g_new0(MsnUserExtendedInfo, 1);
+
+	user->extinfo->phone_mobile = g_strdup(number);
 }
 
 void
@@ -397,6 +503,14 @@ msn_user_set_clientid(MsnUser *user, guint clientid)
 }
 
 void
+msn_user_set_extcaps(MsnUser *user, guint extcaps)
+{
+	g_return_if_fail(user != NULL);
+
+	user->extcaps = extcaps;
+}
+
+void
 msn_user_set_network(MsnUser *user, MsnNetwork network)
 {
 	g_return_if_fail(user != NULL);
@@ -404,18 +518,83 @@ msn_user_set_network(MsnUser *user, MsnNetwork network)
 	user->networkid = network;
 }
 
+static gboolean
+buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
+{
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
+	const char *old;
+	const char *new;
+
+	g_return_val_if_fail(obj != NULL, FALSE);
+
+	account = purple_connection_get_account(gc);
+
+	buddy = purple_find_buddy(account, msn_object_get_creator(obj));
+	if (buddy == NULL)
+		return FALSE;
+
+	old = purple_buddy_icons_get_checksum_for_user(buddy);
+	new = msn_object_get_sha1(obj);
+
+	if (new == NULL)
+		return FALSE;
+
+	/* If the old and new checksums are the same, and the file actually exists,
+	 * then return TRUE */
+	if (old != NULL && !strcmp(old, new))
+		return TRUE;
+
+	return FALSE;
+}
+
+static void
+queue_buddy_icon_request(MsnUser *user)
+{
+	PurpleAccount *account;
+	MsnObject *obj;
+	GQueue *queue;
+
+	g_return_if_fail(user != NULL);
+
+	account = user->userlist->session->account;
+
+	obj = msn_user_get_object(user);
+
+	if (obj == NULL) {
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
+		return;
+	}
+
+	if (!buddy_icon_cached(account->gc, obj)) {
+		MsnUserList *userlist;
+
+		userlist = user->userlist;
+		queue = userlist->buddy_icon_requests;
+
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
+			                  user->passport, userlist->buddy_icon_window);
+
+		g_queue_push_tail(queue, user);
+
+		if (userlist->buddy_icon_window > 0)
+			msn_release_buddy_icon_request(userlist);
+	}
+}
+
 void
 msn_user_set_object(MsnUser *user, MsnObject *obj)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->msnobj != NULL)
+	if (user->msnobj != NULL && !msn_object_find_local(msn_object_get_sha1(obj)))
 		msn_object_destroy(user->msnobj);
 
 	user->msnobj = obj;
 
 	if (user->list_op & MSN_LIST_FL_OP)
-		msn_queue_buddy_icon_request(user);
+		queue_buddy_icon_request(user);
 }
 
 void
@@ -460,7 +639,7 @@ msn_user_get_home_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.home;
+	return user->extinfo ? user->extinfo->phone_home : NULL;
 }
 
 const char *
@@ -468,7 +647,7 @@ msn_user_get_work_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.work;
+	return user->extinfo ? user->extinfo->phone_work : NULL;
 }
 
 const char *
@@ -476,7 +655,7 @@ msn_user_get_mobile_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.mobile;
+	return user->extinfo ? user->extinfo->phone_mobile : NULL;
 }
 
 guint
@@ -485,6 +664,39 @@ msn_user_get_clientid(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, 0);
 
 	return user->clientid;
+}
+
+guint
+msn_user_get_extcaps(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, 0);
+
+	return user->extcaps;
+}
+
+MsnUserEndpoint *
+msn_user_get_endpoint_data(MsnUser *user, const char *input)
+{
+	char *endpoint;
+	GSList *l;
+	MsnUserEndpoint *ep;
+
+	g_return_val_if_fail(user != NULL, NULL);
+	g_return_val_if_fail(input != NULL, NULL);
+
+	endpoint = g_ascii_strdown(input, -1);
+
+	for (l = user->endpoints; l; l = l->next) {
+		ep = l->data;
+		if (g_str_equal(ep->id, endpoint)) {
+			g_free(endpoint);
+			return ep;
+		}
+	}
+
+	g_free(endpoint);
+
+	return NULL;
 }
 
 MsnObject *
@@ -509,5 +721,73 @@ msn_user_get_invite_message(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->invite_message;
+}
+
+gboolean
+msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extcap)
+{
+	g_return_val_if_fail(user != NULL, FALSE);
+
+	if (endpoint != NULL) {
+		MsnUserEndpoint *ep = msn_user_get_endpoint_data(user, endpoint);
+		if (ep != NULL)
+			return (ep->clientid & capability) && (ep->extcaps & extcap);
+		else
+			return FALSE;
+	}
+
+	return (user->clientid & capability) && (user->extcaps & extcap);
+}
+
+/**************************************************************************
+ * Utility functions
+ **************************************************************************/
+
+int
+msn_user_passport_cmp(MsnUser *user, const char *passport)
+{
+	const char *str;
+	char *pass;
+	int result;
+
+	str = purple_normalize_nocase(NULL, msn_user_get_passport(user));
+	pass = g_strdup(str);
+
+#if GLIB_CHECK_VERSION(2,16,0)
+	result = g_strcmp0(pass, purple_normalize_nocase(NULL, passport));
+#else
+	str = purple_normalize_nocase(NULL, passport);
+	if (!pass)
+		result = -(pass != str);
+	else if (!str)
+		result = pass != str;
+	else
+		result = strcmp(pass, str);
+#endif /* GLIB < 2.16.0 */
+
+	g_free(pass);
+
+	return result;
+}
+
+gboolean
+msn_user_is_in_group(MsnUser *user, const char * group_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	if (group_id == NULL)
+		return FALSE;
+
+	return (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp)) != NULL;
+}
+
+gboolean
+msn_user_is_in_list(MsnUser *user, MsnListId list_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	return (user->list_op & (1 << list_id));
 }
 

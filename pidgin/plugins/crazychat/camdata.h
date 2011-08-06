@@ -6,7 +6,7 @@
  *  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
  *
  */
- 
+
 #pragma once
 
 #ifdef __APPLE_CC__
@@ -17,12 +17,12 @@
 	#include <QuickTime.h>
 #endif
 
-typedef struct 
+typedef struct
 {
 	GWorldPtr 				gw;
 	GWorldPtr 				overlay;
 	GWorldPtr 				histoWorld;
-	
+
 	Rect 					bounds;
 	WindowPtr				window;
 	ImageSequence 			drawSeq;

@@ -396,10 +396,18 @@ finch_conv_get_handle(void)
 }
 
 static void
+cleared_message_history_cb(PurpleConversation *conv, gpointer data)
+{
+	FinchConv *ggc = FINCH_GET_DATA(conv);
+	if (ggc)
+		gnt_text_view_clear(GNT_TEXT_VIEW(ggc->tv));
+}
+
+static void
 clear_scrollback_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	gnt_text_view_clear(GNT_TEXT_VIEW(ggc->tv));
+	purple_conversation_clear_message_history(ggc->active_conv);
 }
 
 static void
@@ -1155,7 +1163,7 @@ finch_conv_has_focus(PurpleConversation *conv)
 	return FALSE;
 }
 
-static PurpleConversationUiOps conv_ui_ops = 
+static PurpleConversationUiOps conv_ui_ops =
 {
 	finch_create_conversation,
 	finch_destroy_conversation,
@@ -1264,8 +1272,6 @@ static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	FinchConv *ggconv = FINCH_GET_DATA(conv);
-	gnt_text_view_clear(GNT_TEXT_VIEW(ggconv->tv));
 	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_RET_OK;
 }
@@ -1318,7 +1324,6 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 	return PURPLE_CMD_RET_OK;
 }
 
-#if GLIB_CHECK_VERSION(2,6,0)
 static PurpleCmdRet
 cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
 {
@@ -1359,7 +1364,6 @@ cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char *
 
 	return PURPLE_CMD_RET_OK;
 }
-#endif
 
 static PurpleCmdRet
 users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
@@ -1445,7 +1449,6 @@ void finch_conversation_init()
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
 
-#if GLIB_CHECK_VERSION(2,6,0)
 	/* Allow customizing the message colors using a command during run-time */
 	purple_cmd_register("msgcolor", "www", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
@@ -1455,7 +1458,14 @@ void finch_conversation_init()
 				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
 								 "EXAMPLE:<br>    msgcolor send cyan default"),
 			NULL);
-#endif
+	purple_cmd_register("msgcolour", "www", PURPLE_CMD_P_DEFAULT,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+			cmd_message_color, _("msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: "
+				                 "Set the color for different classes of messages in the conversation window.<br>"
+				                 "    &lt;class&gt;: receive, send, highlight, action, timestamp<br>"
+				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
+								 "EXAMPLE:<br>    msgcolor send cyan default"),
+			NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
 					PURPLE_CALLBACK(update_buddy_typing), NULL);
@@ -1463,6 +1473,8 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(update_buddy_typing), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "chat-left", finch_conv_get_handle(),
 					PURPLE_CALLBACK(chat_left_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "cleared-message-history", finch_conv_get_handle(),
+					PURPLE_CALLBACK(cleared_message_history_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", finch_conv_get_handle(),
 					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", finch_conv_get_handle(),

@@ -19,6 +19,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#if !GTK_CHECK_VERSION(2,14,0)
+#define gtk_widget_get_window(x) x->window
+#endif
 
 static void gstroke_invisible_window_init (GtkWidget *widget);
 /*FIXME: Maybe these should be put in a structure, and not static...*/
@@ -75,7 +78,8 @@ record_stroke_segment (GtkWidget *widget)
       /* FIXME: this does not work. It will only work if we create a
          corresponding GDK window for stroke_window and draw on
          that... */
-      gdk_draw_line (widget->window, widget->style->fg_gc[GTK_STATE_NORMAL],
+      gdk_draw_line (gtk_widget_get_window(widget),
+                     widget->style->fg_gc[GTK_STATE_NORMAL],
                      last_mouse_position.last_point.x,
                      last_mouse_position.last_point.y,
                      x,
@@ -107,7 +111,7 @@ gstroke_timeout (gpointer data)
 	return TRUE;
 }
 
-static void gstroke_cancel(GdkEvent *event) 
+static void gstroke_cancel(GdkEvent *event)
 {
 	last_mouse_position.invalid = TRUE;
 
@@ -141,7 +145,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 			 * clicked after the middle button is clicked (but possibly
 			 * not released)
 			 */
-			gstroke_cancel(event);	
+			gstroke_cancel(event);
 			original_widget = NULL;
 			break;
 		}
@@ -156,7 +160,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 	  if (cursor == NULL)
 		  cursor = gdk_cursor_new(GDK_PENCIL);
 
-      gdk_pointer_grab (widget->window, FALSE,
+      gdk_pointer_grab (gtk_widget_get_window(widget), FALSE,
 			GDK_BUTTON_RELEASE_MASK, NULL, cursor,
 			event->button.time);
       timer_id = g_timeout_add (GSTROKE_TIMEOUT_DURATION,
@@ -295,7 +299,7 @@ gstroke_execute (GtkWidget *widget, const gchar *name)
 #if 0
   purple_debug(PURPLE_DEBUG_MISC, "gestures", "gstroke %s\n", name);
 #endif
-  
+
   if (hash_table)
     {
       struct gstroke_func_and_data *fd =
@@ -334,8 +338,8 @@ gstroke_invisible_window_init (GtkWidget *widget)
   unsigned long mask, col_border, col_background;
   unsigned int border_width;
   XSizeHints hints;
-  Display *disp = GDK_WINDOW_XDISPLAY(widget->window);
-  Window wind = GDK_WINDOW_XWINDOW (widget->window);
+  Display *disp = GDK_WINDOW_XDISPLAY(gtk_widget_get_window(widget));
+  Window wind = GDK_WINDOW_XWINDOW (gtk_widget_get_window(widget));
   int screen = DefaultScreen (disp);
 
 	if (!gstroke_draw_strokes())

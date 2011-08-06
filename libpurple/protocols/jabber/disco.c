@@ -22,6 +22,7 @@
  */
 
 #include "internal.h"
+#include "network.h"
 #include "prefs.h"
 #include "debug.h"
 #include "request.h"
@@ -29,7 +30,9 @@
 #include "adhoccommands.h"
 #include "buddy.h"
 #include "disco.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/gmail.h"
+#include "google/jingleinfo.h"
 #include "iq.h"
 #include "jabber.h"
 #include "jingle/jingle.h"
@@ -255,7 +258,7 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 				} else if(!strcmp(category, "directory") && !strcmp(type, "user")) {
 					/* we found a JUD */
 					js->user_directories = g_list_prepend(js->user_directories, g_strdup(from));
-				} else if(!strcmp(category, "proxy") && !strcmp(type, NS_BYTESTREAMS)) {
+				} else if(!strcmp(category, "proxy") && !strcmp(type, "bytestreams")) {
 					/* This is a bytestream proxy */
 					JabberIq *iq;
 					JabberBytestreamsStreamhost *sh;
@@ -477,10 +480,12 @@ jabber_disco_stun_srv_resolve_cb(PurpleSrvResponse *resp, int results, gpointer 
 	js->srv_query_data = NULL;
 
 	if (results > 0) {
-		purple_debug_info("jabber", "looking up IP for %s:%d\n", 
+		PurpleAccount *account;
+		purple_debug_info("jabber", "looking up IP for %s:%d\n",
 			resp[0].hostname, resp[0].port);
-		js->stun_query = 
-			purple_dnsquery_a(resp[0].hostname, resp[0].port, 
+		account = purple_connection_get_account(js->gc);
+		js->stun_query =
+			purple_dnsquery_a_account(account, resp[0].hostname, resp[0].port,
 				jabber_disco_stun_lookup_cb, js);
 	}
 }
@@ -516,8 +521,12 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
 		type = xmlnode_get_attrib(child, "type");
-		if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep"))
+		if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep")) {
+			PurpleConnection *gc = js->gc;
 			js->pep = TRUE;
+			gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS |
+				PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES;
+		}
 		if (!category || strcmp(category, "server"))
 			continue;
 		if (!type || strcmp(type, "im"))
@@ -534,10 +543,16 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			jabber_google_send_jingle_info(js);
-		} else {
-			js->srv_query_data = 
-				purple_srv_resolve("stun", "udp", js->user->domain,
+			if (purple_network_get_stun_ip() == NULL ||
+		    	purple_strequal(purple_network_get_stun_ip(), "")) {
+				jabber_google_send_jingle_info(js);
+			}
+		} else if (purple_network_get_stun_ip() == NULL ||
+		    purple_strequal(purple_network_get_stun_ip(), "")) {
+			js->srv_query_data =
+				purple_srv_resolve_account(
+					purple_connection_get_account(js->gc), "stun", "udp",
+					js->user->domain,
 					jabber_disco_stun_srv_resolve_cb, js);
 			/* TODO: add TURN support later... */
 		}
@@ -588,14 +603,14 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 	for(child = xmlnode_get_child(query, "item"); child;
 			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
-		const char *jid, *node;
+		const char *jid;
 
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
 			continue;
 
 		/* we don't actually care about the specific nodes,
 		 * so we won't query them */
-		if((node = xmlnode_get_attrib(child, "node")))
+		if(xmlnode_get_attrib(child, "node") != NULL)
 			continue;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_INFO);

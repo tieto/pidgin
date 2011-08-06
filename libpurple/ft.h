@@ -58,8 +58,8 @@ typedef enum
 	PURPLE_XFER_STATUS_ACCEPTED,      /**< Receive accepted, but destination file not selected yet */
 	PURPLE_XFER_STATUS_STARTED,       /**< purple_xfer_start has been called. */
 	PURPLE_XFER_STATUS_DONE,          /**< The xfer completed successfully. */
-	PURPLE_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was canceled by us. */
-	PURPLE_XFER_STATUS_CANCEL_REMOTE  /**< The xfer was canceled by the other end, or we couldn't connect. */
+	PURPLE_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was cancelled by us. */
+	PURPLE_XFER_STATUS_CANCEL_REMOTE  /**< The xfer was cancelled by the other end, or we couldn't connect. */
 } PurpleXferStatusType;
 
 /**
@@ -120,7 +120,12 @@ typedef struct
 	 */
 	void (*data_not_sent)(PurpleXfer *xfer, const guchar *buffer, gsize size);
 
-	void (*_purple_reserved1)(void);
+	/**
+	 * Op to create a thumbnail image for a file transfer
+	 *
+	 * @param xfer   The file transfer structure
+	 */
+	void (*add_thumbnail)(PurpleXfer *xfer, const gchar *formats);
 } PurpleXferUiOps;
 
 /**
@@ -299,11 +304,12 @@ const char *purple_xfer_get_remote_user(const PurpleXfer *xfer);
 PurpleXferStatusType purple_xfer_get_status(const PurpleXfer *xfer);
 
 /**
- * Returns true if the file transfer was canceled.
+ * Returns true if the file transfer was cancelled.
  *
  * @param xfer The file transfer.
  *
- * @return Whether or not the transfer was canceled.
+ * @return Whether or not the transfer was cancelled.
+ * FIXME: This should be renamed using cancelled for 3.0.0.
  */
 gboolean purple_xfer_is_canceled(const PurpleXfer *xfer);
 
@@ -686,6 +692,51 @@ void purple_xfer_ui_ready(PurpleXfer *xfer);
  * @since 2.6.0
  */
 void purple_xfer_prpl_ready(PurpleXfer *xfer);
+
+/**
+ * Gets the thumbnail data for a transfer
+ *
+ * @param xfer The file transfer to get the thumbnail for
+ * @param len  If not @c NULL, the length of the thumbnail data returned
+ *             will be set in the location pointed to by this.
+ * @return The thumbnail data, or NULL if there is no thumbnail
+ * @since 2.7.0
+ */
+gconstpointer purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len);
+
+/**
+ * Gets the mimetype of the thumbnail preview for a transfer
+ *
+ * @param xfer The file transfer to get the mimetype for
+ * @return The mimetype of the thumbnail, or @c NULL if not thumbnail is set
+ * @since 2.7.0
+ */
+const gchar *purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer);
+
+
+/**
+ * Sets the thumbnail data for a transfer
+ *
+ * @param xfer The file transfer to set the data for
+ * @param thumbnail A pointer to the thumbnail data, this will be copied
+ * @param size The size in bytes of the passed in thumbnail data
+ * @param mimetype The mimetype of the generated thumbnail
+ * @since 2.7.0
+ */
+void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
+	gsize size, const gchar *mimetype);
+
+/**
+ * Prepare a thumbnail for a transfer (if the UI supports it)
+ * will be no-op in case the UI doesn't implement thumbnail creation
+ *
+ * @param xfer The file transfer to create a thumbnail for
+ * @param formats A comma-separated list of mimetypes for image formats
+ *	 	  the protocols can use for thumbnails.
+ * @since 2.7.0
+ */
+void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
+
 
 /*@}*/
 

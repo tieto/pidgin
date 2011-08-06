@@ -137,7 +137,7 @@ GtkWidget *cc_new_gl_area(gl_init_func init, gl_config_func config,
 	GtkWidget *drawing_area;
 
 	assert(data);
-	
+
 	drawing_area = gtk_drawing_area_new();
 	assert(drawing_area);
 
@@ -183,7 +183,7 @@ static gboolean configure_event(GtkWidget *widget,
 	GLfloat aspect;
 
 //	Debug("configuring\n");
-	
+
 	/*** OpenGL BEGIN ***/
 	if (!gdk_gl_drawable_gl_begin(gldrawable, glcontext))
 		return FALSE;
@@ -212,7 +212,7 @@ static int map_event(GtkWidget *widget, GdkEventAny *event, void *data)
 {
 	struct draw_info *info = (struct draw_info*)data;
 	Debug("map\n");
-	
+
 	if (info->timeout) {
 		widget_draw_timer_add(widget, info);
 	}
@@ -223,7 +223,7 @@ static int unmap_event(GtkWidget *widget, GdkEventAny *event, void *data)
 {
 	struct draw_info *info = (struct draw_info*)data;
 	Debug("unmap\n");
-	
+
 	if (info->timeout) {
 		widget_draw_timer_remove(widget, info);
 	}
@@ -235,7 +235,7 @@ static int visibility_notify_event(GtkWidget *widget, GdkEventVisibility *event,
 {
 	struct draw_info *info = (struct draw_info*)data;
 	Debug("visibility\n");
-	
+
 	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED) {
 		Debug("obscured\n");
 		if (info->timeout) {
@@ -280,7 +280,7 @@ static gboolean widget_draw_timer(GtkWidget *widget)
 static void destroy_event(GtkWidget *widget, struct draw_info *data)
 {
 	Debug("destroying widget\n");
-	
+
 	if (data) {
 		widget_draw_timer_remove(widget, data);
 		free(data);

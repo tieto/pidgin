@@ -540,11 +540,26 @@ char *purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_i
  *                   a colon.  If NULL, value will be displayed without a
  *                   label.
  * @param value      The value, which might be displayed by a UI after
- *                   the label.  If NULL, label will still be displayed;
- *                   the UI should then treat label as independent and not
+ *                   the label.  This should be valid HTML.  If you want
+ *                   to insert plaintext then use
+ *                   purple_notify_user_info_add_pair_plaintext(), instead.
+ *                   If this is NULL the label will still be displayed;
+ *                   the UI should treat label as independent and not
  *                   include a colon if it would otherwise.
  */
+/*
+ * TODO: In 3.0.0 this function should be renamed to
+ *       purple_notify_user_info_add_pair_html().  And optionally
+ *       purple_notify_user_info_add_pair_plaintext() could be renamed to
+ *       purple_notify_user_info_add_pair().
+ */
 void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
+
+/**
+ * Like purple_notify_user_info_add_pair, but value should be plaintext
+ * and will be escaped using g_markup_escape_text().
+ */
+void purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
  * Prepend a label/value pair to a PurpleNotifyUserInfo object

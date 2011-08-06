@@ -158,7 +158,7 @@ void gnt_keys_del_combination(const char *key);
  */
 int gnt_keys_find_combination(const char *key);
 
-/* A lot of commonly used variable names are defined in <term.h>. 
+/* A lot of commonly used variable names are defined in <term.h>.
  * #undef them to make life easier for everyone. */
 
 #undef columns

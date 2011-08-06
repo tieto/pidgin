@@ -21,19 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SWITCHBOARD_H_
-#define _MSN_SWITCHBOARD_H_
+#ifndef MSN_SWITCHBOARD_H
+#define MSN_SWITCHBOARD_H
 
 typedef struct _MsnSwitchBoard MsnSwitchBoard;
-
-#include "conversation.h"
-
-#include "msg.h"
-#include "user.h"
-
-#include "servconn.h"
-
-#include "slplink.h"
 
 /**
  * A switchboard error.
@@ -48,7 +39,6 @@ typedef enum
 	MSN_SB_ERROR_TOO_FAST, /**< We are sending too fast */
 	MSN_SB_ERROR_AUTHFAILED, /**< Authentication failed joining the switchboard session */
 	MSN_SB_ERROR_UNKNOWN /**< An unknown error occurred. */
-
 } MsnSBErrorType;
 
 /**
@@ -58,8 +48,12 @@ typedef enum
 {
 	MSN_SB_FLAG_IM = 0x01, /**< This switchboard is being used for a conversation. */
 	MSN_SB_FLAG_FT = 0x02  /**< This switchboard is being used for file transfer. */
-
 } MsnSBFlag;
+
+#include "cmdproc.h"
+#include "msg.h"
+#include "servconn.h"
+#include "session.h"
 
 /**
  * A switchboard.
@@ -250,35 +244,14 @@ gboolean msn_switchboard_can_send(MsnSwitchBoard *swboard);
 void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 							  gboolean queue);
 
+void
+msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error);
+
 gboolean msn_switchboard_chat_leave(MsnSwitchBoard *swboard);
 gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
 
 void msn_switchboard_request(MsnSwitchBoard *swboard);
 void msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user);
-
-/**
- * Processes peer to peer messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-/**
- * Processes emoticon messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-/**
- * Processes INVITE messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 /**
  * Shows an ink message from this switchboard.
@@ -290,4 +263,4 @@ void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 void msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
                               const char *data);
 
-#endif /* _MSN_SWITCHBOARD_H_ */
+#endif /* MSN_SWITCHBOARD_H */

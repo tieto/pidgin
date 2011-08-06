@@ -116,7 +116,7 @@ struct input_instance *init_input(struct crazychat *cc)
 
   /*pthread_t userinput_t; // should we put this in a nicer wrapper?*/
 	struct draw_info *info;
-	struct input_instance *instance; 
+	struct input_instance *instance;
 	info = (struct draw_info*)malloc(sizeof(*info));
 	assert(info);
 	memset(info, 0, sizeof(*info));
@@ -196,7 +196,7 @@ struct input_instance *init_input(struct crazychat *cc)
 	hbox = gtk_hbox_new(TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(ret.vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
-	
+
 	glist = NULL;
 	glist = g_list_append(glist, "Red");
 	glist = g_list_append(glist, "Dark Brown");
@@ -306,7 +306,7 @@ static gboolean config_wrapper(GtkWidget *widget, GdkEventConfigure *event,
 	/*** OpenGL BEGIN ***/
 	if (!gdk_gl_drawable_gl_begin(gldrawable, glcontext))
 		return FALSE;
-	
+
 
 /* Undo all of the Model lighting here*/
 
@@ -329,8 +329,8 @@ static gboolean config_wrapper(GtkWidget *widget, GdkEventConfigure *event,
 	glLoadIdentity();
 
 
-	
-	
+
+
 	gdk_gl_drawable_gl_end(gldrawable);
 	/*** OpenGL END ***/
 
@@ -352,7 +352,7 @@ static gboolean mydraw(GtkWidget *widget, GdkEventExpose *event,
 	} else if (!strcmp(string, "Shark")) {
 		features->kind = 1;
 	}
-	
+
 	material_set(GTK_ENTRY(GTK_COMBO(instance->head)->entry),
 			&features->head_color);
 	material_set(GTK_ENTRY(GTK_COMBO(instance->appendage)->entry),
@@ -369,7 +369,7 @@ static gboolean mydraw(GtkWidget *widget, GdkEventExpose *event,
 	} else {
 		instance->face.mode = 0;
 	}
-	
+
 	if (mode_change>0){
 		mode_change--;
 		config_wrapper(widget, event, data);
@@ -392,7 +392,7 @@ static gboolean mydraw(GtkWidget *widget, GdkEventExpose *event,
 	//	fprintf(stderr, "We're fucked this time.\n");
 		return FALSE;
 	}
-	
+
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -402,11 +402,11 @@ static gboolean mydraw(GtkWidget *widget, GdkEventExpose *event,
 		gdk_gl_drawable_swap_buffers(gldrawable);
 	else
 		glFlush();
-	
+
 	gdk_gl_drawable_gl_end(gldrawable);
-	
+
 	/*** OpenGL END ***/
-	
+
 	return TRUE;
 }
 

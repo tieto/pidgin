@@ -1,4 +1,6 @@
 /*
+ * purple - Jabber Service Discovery
+ *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -11,11 +13,12 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
 
 #ifndef PURPLE_JABBER_DATA_H
@@ -26,20 +29,32 @@
 
 #include <glib.h>
 
+#define JABBER_DATA_MAX_SIZE 8192
+
+
 typedef struct {
 	char *cid;
 	char *type;
 	gsize size;
 	gpointer data;
+	gboolean ephemeral;
 } JabberData;
+
+typedef void (JabberDataRequestCallback)(JabberData *data, gchar *alt,
+    gpointer userdata);
+
 
 /* creates a JabberData instance from raw data */
 JabberData *jabber_data_create_from_data(gconstpointer data, gsize size,
-										 const char *type, JabberStream *js);
+	const char *type, gboolean ephemeral, JabberStream *js);
 
 /* create a JabberData instance from an XML "data" element (as defined by
   XEP 0231 */
 JabberData *jabber_data_create_from_xml(xmlnode *tag);
+
+/* destroy a JabberData instance, NOT to be used on data that has been
+	associated, since they get "owned" */
+void jabber_data_destroy(JabberData *data);
 
 const char *jabber_data_get_cid(const JabberData *data);
 const char *jabber_data_get_type(const JabberData *data);
@@ -53,18 +68,20 @@ xmlnode *jabber_data_get_xml_definition(const JabberData *data);
 /* returns an XHTML-IM "img" tag given a data instance */
 xmlnode *jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt);
 
-/* returns a data request element (to be included in an iq stanza) for requesting
-  data */
-xmlnode *jabber_data_get_xml_request(const gchar *cid);
+void jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
+    gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
+    gpointer userdata);
 
 /* lookup functions */
 const JabberData *jabber_data_find_local_by_alt(const gchar *alt);
 const JabberData *jabber_data_find_local_by_cid(const gchar *cid);
-const JabberData *jabber_data_find_remote_by_cid(const gchar *cid);
+const JabberData *jabber_data_find_remote_by_cid(JabberStream *js,
+    const gchar *who, const gchar *cid);
 
 /* store data objects */
 void jabber_data_associate_local(JabberData *data, const gchar *alt);
-void jabber_data_associate_remote(JabberData *data);
+void jabber_data_associate_remote(JabberStream *js, const gchar *who,
+    JabberData *data);
 
 /* handles iq requests */
 void jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,

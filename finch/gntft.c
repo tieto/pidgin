@@ -356,7 +356,7 @@ finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 
 	if (xfer_dialog->num_transfers == 0 && !xfer_dialog->keep_open)
 		finch_xfer_dialog_destroy();
-	else 
+	else
 		update_title_progress();
 	purple_xfer_unref(xfer);
 }
@@ -383,12 +383,10 @@ finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 		return;
 	}
 
-	data = FINCHXFER(xfer);
-
 	update_title_progress();
 
 	if (purple_xfer_is_canceled(xfer))
-		status = _("Canceled");
+		status = _("Cancelled");
 	else
 		status = _("Failed");
 
@@ -402,7 +400,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	char *size_str, *remaining_str;
 	time_t current_time;
 	char prog_str[5];
-	double kb_sent, kb_rem;
+	double kb_sent;
 	double kbps = 0.0;
 	time_t elapsed, now;
 	char *kbsec;
@@ -412,7 +410,6 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 		now = time(NULL);
 
 	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
-	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
 	elapsed = (purple_xfer_get_start_time(xfer) > 0 ? now - purple_xfer_get_start_time(xfer) : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 

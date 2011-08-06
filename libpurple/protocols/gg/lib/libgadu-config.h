@@ -27,6 +27,13 @@
 /* We don't like pthreads. */
 #undef __GG_LIBGADU_HAVE_PTHREAD
 
+/* Defined if libgadu was compiled and linked with GnuTLS encryption support. */
+#ifdef HAVE_GNUTLS
+#  define GG_CONFIG_HAVE_GNUTLS
+#else
+#  undef GG_CONFIG_HAVE_GNUTLS
+#endif
+
 /* Defined if libgadu was compiled and linked with TLS support. */
 /* Always undefined in Purple. */
 #undef __GG_LIBGADU_HAVE_OPENSSL

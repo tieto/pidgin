@@ -38,6 +38,8 @@ GGPSearchForm *ggp_search_form_new(GGPSearchType st)
 	form->window = NULL;
 	form->user_data = NULL;
 	form->seq = 0;
+	form->page_number = 0;
+	form->page_size = 0;
 
 	form->uin = NULL;
 	form->lastname = NULL;
@@ -47,8 +49,6 @@ GGPSearchForm *ggp_search_form_new(GGPSearchType st)
 	form->birthyear = NULL;
 	form->gender = NULL;
 	form->active = NULL;
-	form->offset = NULL;
-	form->last_uin = NULL;
 
 	return form;
 }
@@ -62,6 +62,8 @@ void ggp_search_form_destroy(GGPSearchForm *form)
 	form->window = NULL;
 	form->user_data = NULL;
 	form->seq = 0;
+	form->page_number = 0;
+	form->page_size = 0;
 
 	g_free(form->uin);
 	g_free(form->lastname);
@@ -71,8 +73,6 @@ void ggp_search_form_destroy(GGPSearchForm *form)
 	g_free(form->birthyear);
 	g_free(form->gender);
 	g_free(form->active);
-	g_free(form->offset);
-	g_free(form->last_uin);
 	g_free(form);
 }
 /* }}} */
@@ -137,7 +137,7 @@ guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 {
 	GGPInfo *info = gc->proto_data;
 	gg_pubdir50_t req;
-	guint seq;
+	guint seq, offset;
 
 	purple_debug_info("gg", "It's time to perform a search...\n");
 
@@ -187,8 +187,10 @@ guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 		}
 	}
 
-	purple_debug_info("gg", "offset: %s\n", form->offset);
-	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup(form->offset));
+	offset = form->page_size * form->page_number;
+	purple_debug_info("gg", "page number: %u, page size: %u, offset: %u\n",
+		form->page_number, form->page_size, offset);
+	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup_printf("%u", offset));
 
 	if ((seq = gg_pubdir50(info->session, req)) == 0) {
 		purple_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
@@ -207,7 +209,7 @@ char *ggp_search_get_result(gg_pubdir50_t res, int num, const char *field)
 {
 	char *tmp;
 
-	tmp = charset_convert(gg_pubdir50_get(res, num, field), "CP1250", "UTF-8");
+	tmp = g_strdup(gg_pubdir50_get(res, num, field));
 
 	return (tmp == NULL) ? g_strdup("") : tmp;
 }

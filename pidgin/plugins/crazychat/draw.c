@@ -40,35 +40,35 @@ void CalculateMouthPoints(GLshort[][][] ctrlpoints, struct Packet* p)
     ctrlpoints[0][0][0]=points[0][0];
     ctrlpoints[0][0][1]=points[0][1];
     ctrlpoints[0][0][2]=points[0][2];
-    
+
     ctrlpoints[0][1][0]=points[1][0];
     ctrlpoints[0][1][1]=points[1][1];
     ctrlpoints[0][1][2]=points[1][2];
-    
+
     ctrlpoints[0][2][0]=points[2][0];
     ctrlpoints[0][2][1]=points[2][1];
     ctrlpoints[0][2][2]=points[2][2];
-    
+
     ctrlpoints[1][0][0]=points[0][0];
     ctrlpoints[1][0][1]=points[0][1];
     ctrlpoints[1][0][2]=points[0][2];
-    
+
     ctrlpoints[1][1][0]=0;
     ctrlpoints[1][1][1]=0;
     ctrlpoints[1][1][2]=back;
-    
+
     ctrlpoints[1][2][0]=points[2][0];
     ctrlpoints[1][2][1]=points[2][1];
     ctrlpoints[1][2][2]=points[2][2];
-    
+
     ctrlpoints[2][0][0]=points[0][0];
     ctrlpoints[2][0][1]=points[0][1];
     ctrlpoints[2][0][2]=points[0][2];
-    
+
     ctrlpoints[2][1][0]=points[3][0];
     ctrlpoints[2][1][1]=points[3][1];
     ctrlpoints[2][1][2]=points[3][2];
-    
+
     ctrlpoints[2][2][0]=points[2][0];
     ctrlpoints[2][2][1]=points[2][1];
     ctrlpoints[2][2][2]=points[2][2];
@@ -78,7 +78,7 @@ void drawMouth(struct Packet* p)
 {
     GLshort[4][3][3] ctrlpoints;
     CalculateMouthPoints(ctrlpoints, p);
-    
+
     glMap2f(GL_MAP2_VERTEX_3, 0, 10, 3, 3, 0.0, 10.0, 9, 3, &ctrlpoints[0][0][0]);
     glEnable(GL_MAP2_VERTEX_3);
     glMapGrid2f(10, 0, 10, 10, 0, 10);
@@ -87,7 +87,7 @@ void drawMouth(struct Packet* p)
 }
 
 void initEyes(){
-	
+
 
 void drawEyes(struct Packet* p){
     GLshort eye[3][3][3];
@@ -95,12 +95,12 @@ void drawEyes(struct Packet* p){
     glMap2f(GL_MAP2_VERTEX_3, 0, 10, 3, 3, 0.0, 10.0, 9, 3, &eyep[0][0][0]);
     glMapGrid2f(10, 0, 10, 10, 0, 10);
     glEvalMesh2(GL_FILL, 0, 10, 0, 10);
-    
+
     CalculateEyePoints(eye, p, RIGHT);
     glMap2f(GL_MAP2_VERTEX_3, 0, 10, 3, 3, 0.0, 10.0, 9, 3, &eyep[0][0][0]);
     glMapGrid2f(10, 0, 10, 10, 0, 10);
     glEvalMesh2(GL_FILL, 0, 10, 0, 10);
-    
+
 }
 
 void drawHead(struct Packet* p){

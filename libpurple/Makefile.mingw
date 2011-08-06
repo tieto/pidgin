@@ -8,7 +8,7 @@ PIDGIN_TREE_TOP := ..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libpurple
-NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2.dll
+NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2-2.dll
 
 ##
 ## INCLUDE PATHS
@@ -20,7 +20,7 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(LIBXML2_TOP)/include
+			-I$(LIBXML2_TOP)/include/libxml2
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib
@@ -35,6 +35,14 @@ C_SRC =	\
 			buddyicon.c \
 			certificate.c \
 			cipher.c \
+			ciphers/des.c \
+			ciphers/gchecksum.c \
+			ciphers/hmac.c \
+			ciphers/md4.c \
+			ciphers/md5.c \
+			ciphers/rc4.c \
+			ciphers/sha1.c \
+			ciphers/sha256.c \
 			circbuffer.c \
 			cmds.c \
 			connection.c \
@@ -48,8 +56,8 @@ C_SRC =	\
 			idle.c \
 			imgstore.c \
 			log.c \
-			media.c \
 			mediamanager.c \
+			media.c \
 			mime.c \
 			nat-pmp.c \
 			network.c \

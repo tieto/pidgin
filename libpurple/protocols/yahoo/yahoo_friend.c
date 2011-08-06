@@ -152,7 +152,7 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *who = NULL;
 	int value = 0;
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
-	
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
@@ -175,7 +175,7 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 		purple_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
 		return;
 	}
-	
+
 	switch (fed) {
 		case YAHOO_FEDERATION_MSN:
 			who = g_strconcat("msn/", temp, NULL);
@@ -185,6 +185,9 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case YAHOO_FEDERATION_IBM:
 			who = g_strconcat("ibm/", temp, NULL);
+			break;
+		case YAHOO_FEDERATION_PBX:
+			who = g_strconcat("pbx/", temp, NULL);
 			break;
 		case YAHOO_FEDERATION_NONE:
 			who = g_strdup(temp);
@@ -235,12 +238,12 @@ void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 	f = yahoo_friend_find(gc, name);
 	if (!f)
 		return;
-	
+
 	if(f->fed != YAHOO_FEDERATION_NONE)
 		temp = name+4;
 	else
 		temp = name;
-    
+
 	/* No need to change the value if it is already correct */
 	if (f->presence == presence) {
 		purple_debug_info("yahoo", "Not setting presence because there are no changes.\n");

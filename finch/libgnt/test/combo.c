@@ -37,7 +37,7 @@ int main()
 	freopen(".error", "w", stderr);
 	gnt_init();
 #endif
-	
+
 	box = gnt_box_new(FALSE, TRUE);
 	gnt_widget_set_name(box, "box");
 	gnt_box_set_alignment(GNT_BOX(box), GNT_ALIGN_MID);

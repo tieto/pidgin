@@ -109,6 +109,16 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a small button
+ *
+ * @param  image   A button image.
+ *
+ * @return   A GtkButton created from the image.
+ * @since 2.7.0
+ */
+GtkWidget *pidgin_create_small_button(GtkWidget *image);
+
+/**
  * Creates a new window
  *
  * @param title        The window title, or @c NULL
@@ -354,7 +364,7 @@ void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *
  * Add autocompletion of screenames to an entry, supporting a filtering function.
  *
  * @param entry       The GtkEntry on which to setup autocomplete.
- * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ * @param optmenu     A menu for accounts, returned by pidgin_account_option_menu_new().
  *                    If @a optmenu is not @c NULL, it'll be updated when a username is chosen
  *                    from the autocomplete list.
  * @param filter_func A function for checking if an autocomplete entry
@@ -400,6 +410,9 @@ void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, 
  * @param filesel The file selection window.
  *
  * @return TRUE if given path is a directory, FALSE otherwise.
+ * @deprecated Pidgin no longer uses GtkFileSelection internally. It has also
+ *             been deprecated by GTK+. Use GtkFileChooser instead and ignore
+ *             this function.
  */
 gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
 
@@ -648,17 +661,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  */
 gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
 
-#if !GTK_CHECK_VERSION(2,6,0)
-/**
- * Creates a new pixbuf by loading an image from a file. The image will
- * be scaled to fit in the requested size, optionally preserving the image's
- * aspect ratio.
- */
-GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
-											 gboolean preserve_aspect_ratio,
-											 GError **error);
-#endif
-
 #if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKUTILS_C_)
 /**
  * Set or unset a custom buddyicon for a user.
@@ -716,6 +718,17 @@ GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
 	void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
+ * Does exactly what pidgin_make_mini_dialog() does, except you can specify
+ * a custom icon for the dialog.
+ */
+GtkWidget *pidgin_make_mini_dialog_with_custom_icon(PurpleConnection *gc,
+	GdkPixbuf *custom_icon,
+	const char *primary,
+	const char *secondary,
+	void *user_data,
+	...) G_GNUC_NULL_TERMINATED;
+
+/**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
  * Sample Use:
  * 		gtk_tree_view_set_search_equal_func(treeview,
@@ -759,20 +772,6 @@ void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
  * @return The dim grey string
  */
 const char *pidgin_get_dim_grey_string(GtkWidget *widget);
-
-#if !GTK_CHECK_VERSION(2,2,0)
-/**
- * This is copied from Gtk to support Gtk 2.0
- *
- * Creates a new path with @a first_index and the varargs as indices.
- *
- * @param first_index    first integer
- * @param ...            list of integers terminated by -1
- *
- * @return               A newly created GtkTreePath.
- */
-GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
-#endif
 
 /**
  * Create a simple text GtkComboBoxEntry equivalent
@@ -835,6 +834,32 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
 
 /**
+ * Create a GdkPixbuf from a chunk of image data.
+ *
+ * @param buf The raw binary image data.
+ * @param count The length of buf in bytes.
+ *
+ * @return A GdkPixbuf created from the image data, or NULL if
+ *         there was an error parsing the data.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count);
+
+/**
+ * Create a GdkPixbufAnimation from a chunk of image data.
+ *
+ * @param buf The raw binary image data.
+ * @param count The length of buf in bytes.
+ *
+ * @return A GdkPixbufAnimation created from the image data, or NULL if
+ *         there was an error parsing the data.
+ *
+ * @since 2.9.0
+ */
+GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count);
+
+/**
  * Create a GdkPixbuf from a PurpleStoredImage.
  *
  * @param  image   A PurpleStoredImage.
@@ -844,6 +869,99 @@ GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, Gtk
  * @since 2.5.0
  */
 GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file() and checks both
+ * the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file(const char *filename);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file_at_size() and checks
+ * both the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file_at_size() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ * @param width The width the image should have or -1 to not constrain the width
+ * @param height The height the image should have or -1 to not constrain the height
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, int height);
+
+/**
+ * Helper function that calls gdk_pixbuf_new_from_file_at_scale() and checks
+ * both the return code and the GError and returns NULL if either one failed.
+ *
+ * The gdk-pixbuf documentation implies that it is sufficient to check
+ * the return value of gdk_pixbuf_new_from_file_at_scale() to determine
+ * whether the image was able to be loaded.  However, this is not the case
+ * with gdk-pixbuf 2.23.3 and probably many earlier versions.  In some
+ * cases a GdkPixbuf object is returned that will cause some operations
+ * (like gdk_pixbuf_scale_simple()) to rapidly consume memory in an
+ * infinite loop.
+ *
+ * This function shouldn't be necessary once Pidgin requires a version of
+ * gdk-pixbuf where the aforementioned bug is fixed.  However, it might be
+ * nice to keep this function around for the debug message that it logs.
+ *
+ * @param filename Name of file to load, in the GLib file name encoding
+ * @param width The width the image should have or -1 to not constrain the width
+ * @param height The height the image should have or -1 to not constrain the height
+ * @param preserve_aspect_ratio TRUE to preserve the image's aspect ratio
+ *
+ * @return The GdkPixbuf if successful.  Otherwise NULL is returned and
+ *         a warning is logged.
+ *
+ * @since 2.9.0
+ */
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio);
+
+/**
+ * Add scrollbars to a widget
+ * @param widget      The child widget
+ * @hscrollbar_policy Horizontal scrolling policy
+ * @vscrollbar_policy Vertical scrolling policy
+ * @shadow            Shadow type
+ * @width             Desired widget width, or -1 for default
+ * @height            Desired widget height, or -1 for default
+ *
+ * @since 2.8.0
+ */
+GtkWidget *pidgin_make_scrollable(GtkWidget *child, GtkPolicyType hscrollbar_policy, GtkPolicyType vscrollbar_policy, GtkShadowType shadow_type, int width, int height);
 
 /**
  * Initialize some utility functions.

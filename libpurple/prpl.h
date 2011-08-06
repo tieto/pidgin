@@ -52,6 +52,13 @@ typedef enum {
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /**
+ * A description of a file transfer thumbnail specification.
+ * This tells the UI if and what image formats the prpl support for file
+ * transfer thumbnails.
+ */
+typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
+
+/**
  * This \#define exists just to make it easier to fill out the buddy icon
  * field in the prpl info struct for protocols that couldn't care less.
  */
@@ -195,7 +202,14 @@ typedef enum
 	 * Used as a hint that unknown commands should not be sent as messages.
 	 * @since 2.1.0
 	 */
-	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
+
+	/**
+	 * Indicates that this protocol supports sending a user-supplied message
+	 * along with an invitation.
+	 * @since 2.8.0
+	 */
+	OPT_PROTO_INVITE_MESSAGE = 0x00000800
 
 } PurpleProtocolOptions;
 
@@ -267,7 +281,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
-	 * to default options as strings based on chat_name. The resulting 
+	 * to default options as strings based on chat_name. The resulting
 	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
 	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
 	 * to extract a chat name from a hashtable.
@@ -326,6 +340,9 @@ struct _PurplePluginProtocolInfo
 	 * already in the specified group. If the protocol supports
 	 * authorization and the user is not already authorized to see the
 	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * @deprecated Since 2.8.0, add_buddy_with_invite is preferred.
+	 * @see add_buddy_with_invite
 	 */
 	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
@@ -359,7 +376,7 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns a chat name based on the information in components. Use
-	 * #chat_info_defaults if you instead need to generate a hashtable 
+	 * #chat_info_defaults if you instead need to generate a hashtable
 	 * from a chat name.
 	 *
 	 * @param components A hashtable containing information about the chat.
@@ -370,7 +387,7 @@ struct _PurplePluginProtocolInfo
 	 * Invite a user to join a chat.
 	 *
 	 * @param id      The id of the chat to invite the user to.
-	 * @param message A message displayed to the user when the invitation 
+	 * @param message A message displayed to the user when the invitation
 	 *                is received.
 	 * @param who     The name of the user to send the invation to.
 	 */
@@ -569,6 +586,67 @@ struct _PurplePluginProtocolInfo
 	 */
 	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
 					  const char *who);
+
+	/**
+	 * Returns an array of "PurpleMood"s, with the last one having
+	 * "mood" set to @c NULL.
+	 * @since 2.7.0
+	 */
+	PurpleMood *(*get_moods)(PurpleAccount *account);
+
+	/**
+	 * Set the user's "friendly name" (or alias or nickname or
+	 * whatever term you want to call it) on the server.  The
+	 * protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (if it knows immediately that the set will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is set successfully.
+	 *
+	 * @param gc    The connection for which to set an alias
+	 * @param alias The new server-side alias/nickname for this account,
+	 *              or NULL to unset the alias/nickname (or return it to
+	 *              a protocol-specific "default").
+	 * @param success_cb Callback to be called if the public alias is set
+	 * @param failure_cb Callback to be called if setting the public alias
+	 *                   fails
+	 * @see purple_account_set_public_alias
+	 * @since 2.7.0
+	 */
+	void (*set_public_alias)(PurpleConnection *gc, const char *alias,
+	                         PurpleSetPublicAliasSuccessCallback success_cb,
+	                         PurpleSetPublicAliasFailureCallback failure_cb);
+	/**
+	 * Retrieve the user's "friendly name" as set on the server.
+	 * The protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (even if it knows immediately that the get will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is retrieved.
+	 *
+	 * @param gc    The connection for which to retireve the alias
+	 * @param success_cb Callback to be called with the retrieved alias
+	 * @param failure_cb Callback to be called if the prpl is unable to
+	 *                   retrieve the alias
+	 * @see purple_account_get_public_alias
+	 * @since 2.7.0
+	 */
+	void (*get_public_alias)(PurpleConnection *gc,
+	                         PurpleGetPublicAliasSuccessCallback success_cb,
+	                         PurpleGetPublicAliasFailureCallback failure_cb);
+
+	/**
+	 * Add a buddy to a group on the server.
+	 *
+	 * This PRPL function may be called in situations in which the buddy is
+	 * already in the specified group. If the protocol supports
+	 * authorization and the user is not already authorized to see the
+	 * status of \a buddy, \a add_buddy should request authorization.
+	 *
+	 * If authorization is required, then use the supplied invite message.
+	 *
+	 * @since 2.8.0
+	 */
+	void (*add_buddy_with_invite)(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message);
+	void (*add_buddies_with_invite)(PurpleConnection *pc, GList *buddies, GList *groups, const char *message);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
@@ -902,6 +980,17 @@ PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount *account,
 gboolean purple_prpl_initiate_media(PurpleAccount *account,
 					const char *who,
 					PurpleMediaSessionType type);
+
+/**
+ * Signals that the prpl received capabilities for the given contact.
+ *
+ * This function is intended to be used only by prpls.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact for which capabilities have been received.
+ * @since 2.7.0
+ */
+void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
 
 /*@}*/
 

@@ -99,11 +99,13 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "that can verify it is currently trusted.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
-			return _("The certificate is not valid yet.");
+			return _("The certificate is not valid yet.  Check that your "
+			         "computer's date and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_EXPIRED:
 			return _("The certificate has expired and should not be "
-			         "considered valid.");
+			         "considered valid.  Check that your computer's date "
+			         "and time are accurate.");
 			break;
 		case PURPLE_CERTIFICATE_NAME_MISMATCH:
 			/* Translators: "domain" refers to a DNS domain (e.g. talk.google.com) */
@@ -312,7 +314,7 @@ purple_certificate_check_signature_chain_with_failing(GList *chain,
 		uid = purple_certificate_get_unique_id(issuer);
 
 		ret = purple_certificate_get_times(issuer, &activation, &expiration);
-		if (!ret || now < activation || now > expiration) { 
+		if (!ret || now < activation || now > expiration) {
 			if (!ret)
 				purple_debug_error("certificate",
 						"...Failed to get validity times for certificate %s\n"
@@ -377,6 +379,16 @@ purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename
 	return (scheme->import_certificate)(filename);
 }
 
+GSList *
+purple_certificates_import(PurpleCertificateScheme *scheme, const gchar *filename)
+{
+	g_return_val_if_fail(scheme, NULL);
+	g_return_val_if_fail(scheme->import_certificates, NULL);
+	g_return_val_if_fail(filename, NULL);
+
+	return (scheme->import_certificates)(filename);
+}
+
 gboolean
 purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
 {
@@ -401,7 +413,7 @@ byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
 	return (array1->len == array2->len) &&
 		(0 == memcmp(array1->data, array2->data, array1->len));
 }
-	
+
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -704,6 +716,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		x509_singleuse_verify_cb );
 
 	/* Cleanup */
+	g_free(cn);
 	g_free(primary);
 	g_free(secondary);
 	g_free(sha_asc);
@@ -800,8 +813,9 @@ x509_ca_lazy_init(void)
 	PurpleCertificateScheme *x509;
 	GDir *certdir;
 	const gchar *entry;
-	GPatternSpec *pempat;
+	GPatternSpec *pempat, *crtpat;
 	GList *iter = NULL;
+	GSList *crts = NULL;
 
 	if (x509_ca_initialized) return TRUE;
 
@@ -817,6 +831,7 @@ x509_ca_lazy_init(void)
 
 	/* Use a glob to only read .pem files */
 	pempat = g_pattern_spec_new("*.pem");
+	crtpat = g_pattern_spec_new("*.crt");
 
 	/* Populate the certificates pool from the search path(s) */
 	for (iter = x509_ca_paths; iter; iter = iter->next) {
@@ -830,32 +845,40 @@ x509_ca_lazy_init(void)
 			gchar *fullpath;
 			PurpleCertificate *crt;
 
-			if ( !g_pattern_match_string(pempat, entry) ) {
+			if (!g_pattern_match_string(pempat, entry) && !g_pattern_match_string(crtpat, entry)) {
 				continue;
 			}
 
 			fullpath = g_build_filename(iter->data, entry, NULL);
 
 			/* TODO: Respond to a failure in the following? */
-			crt = purple_certificate_import(x509, fullpath);
+			crts = purple_certificates_import(x509, fullpath);
 
-			if (x509_ca_quiet_put_cert(crt)) {
-				purple_debug_info("certificate/x509/ca",
-						  "Loaded %s\n",
-						  fullpath);
-			} else {
-				purple_debug_error("certificate/x509/ca",
-						  "Failed to load %s\n",
-						  fullpath);
+			while (crts && crts->data) {
+				crt = crts->data;
+				if (x509_ca_quiet_put_cert(crt)) {
+					gchar *name;
+					name = purple_certificate_get_subject_name(crt);
+					purple_debug_info("certificate/x509/ca",
+							  "Loaded %s from %s\n",
+							  name ? name : "(unknown)", fullpath);
+					g_free(name);
+				} else {
+					purple_debug_error("certificate/x509/ca",
+							  "Failed to load certificate from %s\n",
+							  fullpath);
+				}
+				purple_certificate_destroy(crt);
+				crts = g_slist_delete_link(crts, crts);
 			}
 
-			purple_certificate_destroy(crt);
 			g_free(fullpath);
 		}
 		g_dir_close(certdir);
 	}
 
 	g_pattern_spec_free(pempat);
+	g_pattern_spec_free(crtpat);
 
 	purple_debug_info("certificate/x509/ca",
 			  "Lazy init completed.\n");
@@ -874,7 +897,6 @@ x509_ca_init(void)
 #else
 # ifdef SSL_CERTIFICATES_DIR
 		x509_ca_paths = g_list_append(NULL, g_strdup(SSL_CERTIFICATES_DIR));
-# else
 # endif
 		x509_ca_paths = g_list_append(x509_ca_paths,
 			g_build_filename(DATADIR, "purple", "ca-certs", NULL));
@@ -925,6 +947,22 @@ x509_ca_locate_cert(GList *lst, const gchar *dn)
 	return NULL;
 }
 
+static GSList *
+x509_ca_locate_certs(GList *lst, const gchar *dn)
+{
+	GList *cur;
+	GSList *crts = NULL;
+
+	for (cur = lst; cur; cur = cur->next) {
+		x509_ca_element *el = cur->data;
+		if (purple_strequal(dn, el->dn)) {
+			crts = g_slist_prepend(crts, el);
+		}
+	}
+	return crts;
+}
+
+
 static gboolean
 x509_ca_cert_in_pool(const gchar *id)
 {
@@ -961,6 +999,31 @@ x509_ca_get_cert(const gchar *id)
 	}
 
 	return crt;
+}
+
+static GSList *
+x509_ca_get_certs(const gchar *id)
+{
+	GSList *crts = NULL, *els = NULL;
+
+	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
+	g_return_val_if_fail(id, NULL);
+
+	/* Search the memory-cached pool */
+	els = x509_ca_locate_certs(x509_ca_certs, id);
+
+	if (els != NULL) {
+		GSList *cur;
+		/* Make a copy of the memcached ones for the function caller
+		   to play with */
+		for (cur = els; cur; cur = cur->next) {
+			x509_ca_element *el = cur->data;
+			crts = g_slist_prepend(crts, purple_certificate_copy(el->crt));
+		}
+		g_slist_free(els);
+	}
+
+	return crts;
 }
 
 static gboolean
@@ -1517,6 +1580,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
+		g_free(sn);
 	}
 
 	x509_tls_cached_complete(vrq, flags);
@@ -1535,8 +1599,10 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	PurpleCertificate *ca_crt, *end_crt;
 	PurpleCertificate *failing_crt;
 	GList *chain = vrq->cert_chain;
+	GSList *ca_crts, *cur;
 	GByteArray *last_fpr, *ca_fpr;
-	gchar *ca_id;
+	gboolean valid = FALSE;
+	gchar *ca_id, *ca2_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
 
@@ -1553,7 +1619,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (self signed) */
 
-	/* Next, attempt to verify the last certificate against a CA */
 	ca = purple_certificate_find_pool(x509_tls_cached.scheme_name, "ca");
 
 	/* Next, check that the certificate chain is valid */
@@ -1603,6 +1668,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (signature chain not good) */
 
+	/* Next, attempt to verify the last certificate is signed by a trusted
+	 * CA, or is a trusted CA (based on fingerprint).
+	 */
 	/* If, for whatever reason, there is no Certificate Authority pool
 	   loaded, we'll verify the subject name and then warn about thsi. */
 	if ( !ca ) {
@@ -1618,26 +1686,30 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 
 	end_crt = g_list_last(chain)->data;
 
-	/* Attempt to look up the last certificate's issuer */
-	ca_id = purple_certificate_get_issuer_unique_id(end_crt);
+	/* Attempt to look up the last certificate, and the last certificate's
+	 * issuer. 
+	 */
+	ca_id  = purple_certificate_get_issuer_unique_id(end_crt);
+	ca2_id = purple_certificate_get_unique_id(end_crt);
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for a CA with DN=%s\n",
 			  ca_id);
-	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
-	if ( NULL == ca_crt ) {
+	purple_debug_info("certificate/x509/tls_cached",
+			  "Also checking for a CA with DN=%s\n",
+			  ca2_id);
+	ca_crts = g_slist_concat(x509_ca_get_certs(ca_id), x509_ca_get_certs(ca2_id));
+	g_free(ca_id);
+	g_free(ca2_id);
+	if ( NULL == ca_crts ) {
 		flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 
 		purple_debug_warning("certificate/x509/tls_cached",
-				  "Certificate Authority with DN='%s' not "
-				  "found. I'll prompt the user, I guess.\n",
-				  ca_id);
-		g_free(ca_id);
+				  "No Certificate Authorities with either DN found "
+				  "found. I'll prompt the user, I guess.\n");
 
 		x509_tls_cached_check_subject_name(vrq, flags);
 		return;
 	}
-
-	g_free(ca_id);
 
 	/*
 	 * Check the fingerprints; if they match, then this certificate *is* one
@@ -1648,29 +1720,34 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	 *
 	 * If the fingerprints don't match, we'll fall back to checking the
 	 * signature.
-	 *
-	 * GnuTLS doesn't seem to include the final root in the verification
-	 * list, so this check will never succeed.  NSS *does* include it in
-	 * the list, so here we are.
 	 */
 	last_fpr = purple_certificate_get_fingerprint_sha1(end_crt);
-	ca_fpr   = purple_certificate_get_fingerprint_sha1(ca_crt);
+	for (cur = ca_crts; cur; cur = cur->next) {
+		ca_crt = cur->data;
+		ca_fpr = purple_certificate_get_fingerprint_sha1(ca_crt);
 
-	if ( !byte_arrays_equal(last_fpr, ca_fpr) &&
-			!purple_certificate_signed_by(end_crt, ca_crt) )
-	{
-		/* TODO: If signed_by ever returns a reason, maybe mention
-		   that, too. */
-		/* TODO: Also mention the CA involved. While I could do this
-		   now, a full DN is a little much with which to assault the
-		   user's poor, leaky eyes. */
-		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+		if ( byte_arrays_equal(last_fpr, ca_fpr) ||
+				purple_certificate_signed_by(end_crt, ca_crt) )
+		{
+			/* TODO: If signed_by ever returns a reason, maybe mention
+			   that, too. */
+			/* TODO: Also mention the CA involved. While I could do this
+			   now, a full DN is a little much with which to assault the
+			   user's poor, leaky eyes. */
+			valid = TRUE;
+			g_byte_array_free(ca_fpr, TRUE);
+			break;
+		}
+
+		g_byte_array_free(ca_fpr, TRUE);
 	}
 
-	g_byte_array_free(ca_fpr, TRUE);
-	g_byte_array_free(last_fpr, TRUE);
+	if (valid == FALSE)
+		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
 
-	purple_certificate_destroy(ca_crt);
+	g_slist_foreach(ca_crts, (GFunc)purple_certificate_destroy, NULL);
+	g_slist_free(ca_crts);
+	g_byte_array_free(last_fpr, TRUE);
 
 	x509_tls_cached_check_subject_name(vrq, flags);
 }

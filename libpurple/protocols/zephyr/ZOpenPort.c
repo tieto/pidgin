@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -20,7 +20,7 @@ Code_t ZOpenPort(port)
 {
     struct sockaddr_in bindin;
     socklen_t len;
-    
+
     (void) ZClosePort();
 
     if ((__Zephyr_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -32,7 +32,7 @@ Code_t ZOpenPort(port)
     {
       int on = 1;
 
-      setsockopt(__Zephyr_fd, SOL_SOCKET, SO_BSDCOMPAT, (char *)&on, 
+      setsockopt(__Zephyr_fd, SOL_SOCKET, SO_BSDCOMPAT, (char *)&on,
 		 sizeof(on));
     }
 #endif
@@ -58,7 +58,7 @@ Code_t ZOpenPort(port)
 	if (getsockname(__Zephyr_fd, (struct sockaddr *)&bindin, &len))
 	    return (errno);
     }
-    
+
     __Zephyr_port = bindin.sin_port;
     __Zephyr_open = 1;
 

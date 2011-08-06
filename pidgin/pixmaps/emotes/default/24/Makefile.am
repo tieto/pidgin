@@ -2,6 +2,7 @@ SMILEYS = \
     act-up.png \
     airplane.png \
     alien.png \
+    amorous.png \
     angel.png \
     angry.png \
     arrogant.png \
@@ -13,6 +14,7 @@ SMILEYS = \
     beer.png \
     blowkiss.png \
     bomb.png \
+    bored.png \
     bowl.png \
     boy.png \
     brb.png \
@@ -26,6 +28,7 @@ SMILEYS = \
     car.png \
     cat.png \
     chicken.png \
+    chilli.png \
     cigarette.png \
     clap.png \
     clock.png \
@@ -34,6 +37,7 @@ SMILEYS = \
     clown.png \
     coffee.png \
     coins.png \
+    cold.png \
     computer.png \
     confused.png \
     console.png \
@@ -56,8 +60,9 @@ SMILEYS = \
     dont-know.png \
     drink.png \
     drool.png \
-    eat.png \
+    hungry.png \
     embarrassed.png \
+    excited.png \
     excruciating.png \
     eyeroll.png \
     female-fighter.png \
@@ -81,7 +86,7 @@ SMILEYS = \
     hug-left.png \
     hug-right.png \
     hypnotized.png \
-    in-love.png \
+    in_love.png \
     island.png \
     jump.png \
     kissed.png \
@@ -94,7 +99,6 @@ SMILEYS = \
     liquor.png \
     loser.png \
     love-over.png \
-    love.png \
     lying.png \
     mad-tongue.png \
     mail.png \
@@ -108,13 +112,14 @@ SMILEYS = \
     moneymouth.png \
     monkey.png \
     moon.png \
+    mrgreen.png \
     msn-away.png \
     msn-busy.png \
     msn_online.png \
     msn.png \
     musical-note.png \
     music.png \
-    nailbiting.png \
+    nervous.png \
     neutral.png \
     on-the-phone.png \
     party.png \
@@ -130,7 +135,6 @@ SMILEYS = \
     pray.png \
     present.png \
     pumpkin.png \
-    qq.png \
     question.png \
     quiet.png \
     rainbow.png \
@@ -144,7 +148,7 @@ SMILEYS = \
     secret.png \
     shame.png \
     sheep.png \
-    shock.png \
+    shocked.png \
     shout.png \
     shut-mouth.png \
     sick.png \
@@ -153,9 +157,9 @@ SMILEYS = \
     sinister.png \
     skeleton.png \
     skywalker.png \
+    sleeping.png \
     sleepy.png \
-    smile-big.png \
-    smile.png \
+    happy.png \
     smirk.png \
     snail.png \
     snicker.png \
@@ -165,9 +169,10 @@ SMILEYS = \
     star.png \
     starving.png \
     stop.png \
+    stressed.png \
     struggle.png \
     sun.png \
-    sweat.png \
+    hot.png \
     talktohand.png \
     teeth.png \
     terror.png \
@@ -175,7 +180,7 @@ SMILEYS = \
     thunder.png \
     time-out.png \
     tongue.png \
-    tremble.png \
+    afraid.png \
     turtle.png \
     tv.png \
     umbrella.png \
@@ -188,7 +193,6 @@ SMILEYS = \
     wilt.png \
     wink.png \
     worship.png \
-    yawn.png \
     yin-yang.png
 
 

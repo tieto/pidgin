@@ -449,7 +449,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
 			   ident->realname ? ident->realname : ident->username ?
 			   ident->username : "", fingerprint, babbleprint);
-		purple_request_field_list_add(f, tmp2, pubkey);
+		purple_request_field_list_add_icon(f, tmp2, NULL, pubkey);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
@@ -1065,7 +1065,7 @@ void silcpurple_chat_join_done(SilcClient client,
 char *silcpurple_get_chat_name(GHashTable *data)
 {
 	return g_strdup(g_hash_table_lookup(data, "channel"));
-}	
+}
 
 void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 {
@@ -1417,7 +1417,7 @@ PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 	if (sg->roomlist)
 		purple_roomlist_unref(sg->roomlist);
 
-	sg->roomlist_canceled = FALSE;
+	sg->roomlist_cancelled = FALSE;
 
 	sg->roomlist = purple_roomlist_new(purple_connection_get_account(gc));
 	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
@@ -1451,6 +1451,6 @@ void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 	if (sg->roomlist == list) {
 		purple_roomlist_unref(sg->roomlist);
 		sg->roomlist = NULL;
-		sg->roomlist_canceled = TRUE;
+		sg->roomlist_cancelled = TRUE;
 	}
 }

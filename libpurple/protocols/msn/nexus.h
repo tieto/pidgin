@@ -21,8 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_NEXUS_H_
-#define _MSN_NEXUS_H_
+#ifndef MSN_NEXUS_H
+#define MSN_NEXUS_H
+
+#include "internal.h"
+
+typedef struct _MsnNexus MsnNexus;
+typedef struct _MsnTicketToken MsnTicketToken;
 
 /* Index into ticket_tokens in nexus.c Keep updated! */
 typedef enum
@@ -183,31 +188,12 @@ typedef enum
 	"</Body>"\
 "</Envelope>"
 
-typedef struct _MsnUsrKey MsnUsrKey;
-struct _MsnUsrKey
-{
-	int size; /* 28. Does not count data */
-	int crypt_mode; /* CRYPT_MODE_CBC (1) */
-	int cipher_type; /* TripleDES (0x6603) */
-	int hash_type; /* SHA1 (0x8004) */
-	int iv_len;    /* 8 */
-	int hash_len;  /* 20 */
-	int cipher_len; /* 72 */
-	/* Data */
-	char iv[8];
-	char hash[20];
-	char cipher[72];
-};
-
-typedef struct _MsnTicketToken MsnTicketToken;
 struct _MsnTicketToken {
 	GHashTable *token;
 	char *secret;
 	time_t expiry;
 	GSList *updates;
 };
-
-typedef struct _MsnNexus MsnNexus;
 
 struct _MsnNexus
 {
@@ -230,5 +216,5 @@ void msn_nexus_destroy(MsnNexus *nexus);
 GHashTable *msn_nexus_get_token(MsnNexus *nexus, MsnAuthDomains id);
 const char *msn_nexus_get_token_str(MsnNexus *nexus, MsnAuthDomains id);
 void msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data);
-#endif /* _MSN_NEXUS_H_ */
 
+#endif /* MSN_NEXUS_H */

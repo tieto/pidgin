@@ -68,7 +68,6 @@ typedef struct _MsnSoapConnection {
 
 	GQueue *queue;
 	MsnSoapRequest *current_request;
-	gboolean unsafe_debug;
 } MsnSoapConnection;
 
 static gboolean msn_soap_connection_run(gpointer data);
@@ -80,7 +79,6 @@ msn_soap_connection_new(MsnSession *session, const char *host)
 	conn->session = session;
 	conn->host = g_strdup(host);
 	conn->queue = g_queue_new();
-	conn->unsafe_debug = purple_debug_is_unsafe();
 	return conn;
 }
 
@@ -143,8 +141,7 @@ msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
 {
 	MsnSoapRequest *req = item;
 
-	if (req->cb)
-		req->cb(req->message, NULL, req->cb_data);
+	req->cb(req->message, NULL, req->cb_data);
 
 	msn_soap_request_destroy(req, FALSE);
 }
@@ -232,12 +229,6 @@ msn_soap_connection_handle_next(MsnSoapConnection *conn)
 	msn_soap_connection_sanitize(conn, FALSE);
 
 	conn->run_timer = purple_timeout_add(0, msn_soap_connection_run, conn);
-
-	if (conn->current_request) {
-		MsnSoapRequest *req = conn->current_request;
-		conn->current_request = NULL;
-		msn_soap_connection_destroy_foreach_cb(req, conn);
-	}
 }
 
 static void
@@ -271,6 +262,7 @@ msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 	MsnSoapCallback cb, gpointer cb_data)
 {
 	g_return_if_fail(message != NULL);
+	g_return_if_fail(cb != NULL);
 
 	msn_soap_message_send_internal(session, message, host, path, secure,
 		cb, cb_data, FALSE);
@@ -283,12 +275,13 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 	char *path;
 
 	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
-		msn_soap_message_send_internal(conn->session, conn->current_request->message,
-			host, path, conn->current_request->secure,
-			conn->current_request->cb, conn->current_request->cb_data, TRUE);
-
-		msn_soap_request_destroy(conn->current_request, TRUE);
+		MsnSoapRequest *req = conn->current_request;
 		conn->current_request = NULL;
+
+		msn_soap_message_send_internal(conn->session, req->message, host, path,
+			req->secure, req->cb, req->cb_data, TRUE);
+
+		msn_soap_request_destroy(req, TRUE);
 
 		g_free(host);
 		g_free(path);
@@ -382,7 +375,6 @@ msn_soap_process(MsnSoapConnection *conn)
 					/* something horribly wrong */
 					purple_ssl_close(conn->ssl);
 					conn->ssl = NULL;
-					msn_soap_connection_handle_next(conn);
 					handled = TRUE;
 					break;
 				} else if (conn->response_code == 503 && conn->session->login_step < MSN_LOGIN_STEP_END) {
@@ -509,7 +501,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
 
 	if (conn->current_request && conn->current_request->secure &&
-		!conn->unsafe_debug)
+		!purple_debug_is_unsafe())
 		purple_debug_misc("soap", "Received secure request.\n");
 	else if (count != 0)
 		purple_debug_misc("soap", "current %s\n", conn->buf->str + cursor);
@@ -659,7 +651,7 @@ msn_soap_connection_run(gpointer data)
 			g_string_append(conn->buf, "\r\n");
 			g_string_append(conn->buf, body);
 
-			if (req->secure && !conn->unsafe_debug)
+			if (req->secure && !purple_debug_is_unsafe())
 				purple_debug_misc("soap", "Sending secure request.\n");
 			else
 				purple_debug_misc("soap", "%s\n", conn->buf->str);

@@ -670,15 +670,11 @@ create_details()
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	website_button = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(website_button), FALSE);
-#endif
 
 	plugin_website = GTK_LABEL(gtk_label_new(NULL));
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(G_OBJECT(plugin_website),
 		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
-#endif
 	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
 	gtk_container_add(GTK_CONTAINER(website_button),
 		GTK_WIDGET(plugin_website));
@@ -710,7 +706,6 @@ create_details()
 
 void pidgin_plugin_dialog_show()
 {
-	GtkWidget *sw;
 	GtkWidget *event_view;
 	GtkListStore *ls;
 	GtkCellRenderer *rend, *rendt;
@@ -732,12 +727,6 @@ void pidgin_plugin_dialog_show()
 						GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 	gtk_widget_set_sensitive(pref_button, FALSE);
 	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), sw, TRUE, TRUE, 0);
 
 	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
@@ -778,14 +767,14 @@ void pidgin_plugin_dialog_show()
 							"markup", 1,
 							"foreground-set", 3,
 							NULL);
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (col, TRUE);
 	g_object_set(rendt, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
-	gtk_container_add(GTK_CONTAINER(sw), event_view);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), 
+		pidgin_make_scrollable(event_view, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1), 
+		TRUE, TRUE, 0);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(event_view), 1);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(event_view),
 				pidgin_tree_view_search_equal_func, NULL, NULL);
@@ -806,5 +795,8 @@ void pidgin_plugin_dialog_show()
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);
 	g_signal_connect(G_OBJECT(plugin_dialog), "response", G_CALLBACK(plugin_dialog_response_cb), sel);
 	gtk_window_set_default_size(GTK_WINDOW(plugin_dialog), 430, 530);
+
+	pidgin_auto_parent_window(plugin_dialog);
+
 	gtk_widget_show_all(plugin_dialog);
 }

@@ -23,7 +23,7 @@ mungDataPtr myMungData = NULL;
 long		mWorlds[20];
 UInt32		mRedCount[256], mGreenCound[256], mBlueCount[256];
 
-static void DecompressSequencePreflight(GWorldPtr srcGWorld, 
+static void DecompressSequencePreflight(GWorldPtr srcGWorld,
                                         ImageSequence *imageSeq,
                                         GWorldPtr destGWorld,
                                         Rect *srcRect);
@@ -38,25 +38,25 @@ static void DecompressSequencePreflight(GWorldPtr srcGWorld,
 OSErr InitializeMungData(Rect bounds)
 {
 	OSErr err = noErr;
-    
-	if(myMungData) 
+
+	if(myMungData)
     {
         DisposeMungData();
 	}
-    
+
 	myMungData = (mungDataPtr)NewPtrClear(sizeof(mungDataRecord));
-	if (myMungData == nil) 
+	if (myMungData == nil)
     {
         err = MemError();
         goto bail;
     }
 
 	myMungData->effect = 0; // always
-    
+
 
 	BailErr(QTNewGWorld(&(myMungData->gw),bitdepth,&bounds,0,0,0));
 	LockPixels(GetGWorldPixMap(myMungData->gw));
-    
+
     SetMungDataColorDefaults();
 
 
@@ -66,8 +66,8 @@ OSErr InitializeMungData(Rect bounds)
 
 	SetCurrentClamp(-1);
 
-            
-	
+
+
 	myMungData->bounds = bounds;
 
 	SetRect(&bounds, 0, 0, 256*2+4, 128*3 + 20);
@@ -81,32 +81,32 @@ bail:
 OSErr DisposeMungData(void)
 {  // check this out
     OSErr err = noErr;
-    
-    if(myMungData) 
+
+    if(myMungData)
     {
-        //if(myMungData->drawSeq) 
+        //if(myMungData->drawSeq)
         //{
         //    CDSequenceEnd(myMungData->drawSeq);
         //}
-        
-        if(myMungData->gw) 
+
+        if(myMungData->gw)
         {
-            DisposeGWorld(myMungData->gw); 
+            DisposeGWorld(myMungData->gw);
             myMungData->gw = nil;
         }
-        
-        if(myMungData->overlay) 
+
+        if(myMungData->overlay)
         {
-            DisposeGWorld(myMungData->overlay); 
+            DisposeGWorld(myMungData->overlay);
             myMungData->overlay = nil;
         }
-        
-        if(myMungData->histoWorld) 
+
+        if(myMungData->histoWorld)
         {
-            DisposeGWorld(myMungData->histoWorld); 
+            DisposeGWorld(myMungData->histoWorld);
             myMungData->histoWorld = nil;
         }
-    
+
         if (myMungData->effectTimeBase)
         {
             DisposeTimeBase(myMungData->effectTimeBase);
@@ -126,28 +126,28 @@ OSErr DisposeMungData(void)
     return err;
 }
 
-static void DecompressSequencePreflight(GWorldPtr srcGWorld, 
+static void DecompressSequencePreflight(GWorldPtr srcGWorld,
                                         ImageSequence *imageSeq,
                                         GWorldPtr destGWorld,
                                         Rect *srcRect)
 // might not need this one
-										
+
 {
     ImageDescriptionHandle imageDesc = nil;
-    
+
     BailErr(MakeImageDescriptionForPixMap (GetGWorldPixMap(srcGWorld), &imageDesc));
-    
+
     // use our built-in decompressor to draw
    // (**imageDesc).cType = kCustomDecompressorType;
-	
+
 // *********** MIGHT BE MAKING A BIG MISTAKE ******************
     // pass a compressed sample so a codec can perform preflighting before the first DecompressSequenceFrameWhen call
 
-    BailErr(DecompressSequenceBegin(imageSeq, 
-                                    imageDesc, 
+    BailErr(DecompressSequenceBegin(imageSeq,
+                                    imageDesc,
                                     destGWorld,
                                     0,
-                                    srcRect, 
+                                    srcRect,
                                     nil,
                                     srcCopy,
                                     nil,
@@ -169,7 +169,7 @@ ImageSequence GetMungDataDrawSeq()
 
 void SetMungDataColorDefaults()
 {
-	if(myMungData) 
+	if(myMungData)
     {
         myMungData->redMin = 2;
         myMungData->redMax = 254;
@@ -183,15 +183,15 @@ void SetMungDataColorDefaults()
 void GetMungDataBoundsRect(Rect *boundsRect)
 // might not need this one
 {
-	MacSetRect (boundsRect, 
-			myMungData->bounds.left, 
-			myMungData->bounds.top, 
-			myMungData->bounds.right, 
+	MacSetRect (boundsRect,
+			myMungData->bounds.left,
+			myMungData->bounds.top,
+			myMungData->bounds.right,
 			myMungData->bounds.bottom
 	);
 }
 
-void SetCurrentClamp(short index)     // :crazy:20040426 
+void SetCurrentClamp(short index)     // :crazy:20040426
 {
     myMungData->selectedIndex = index;
 }

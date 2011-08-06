@@ -74,7 +74,7 @@ static void
 _sync_privacy_lists(NMUser *user);
 
 static void
-_show_info(PurpleConnection * gc, NMUserRecord * user_record);
+_show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name);
 
 const char *
 _get_conference_name(int id);
@@ -678,7 +678,7 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 				ur = nm_conference_get_participant(conference, i);
 				if (ur) {
 					name = nm_user_record_get_display_id(ur);
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL, 
+					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
 											PURPLE_CBFLAGS_NONE, TRUE);
 				}
 			}
@@ -705,7 +705,7 @@ _get_details_resp_show_info(NMUser * user, NMERR_T ret_code,
 		user_record = (NMUserRecord *) resp_data;
 		if (user_record) {
 			_show_info(purple_account_get_connection(user->client_data),
-					   user_record);
+					   user_record, g_strdup(name));
 		}
 	} else {
 		gc = purple_account_get_connection(user->client_data);
@@ -1458,7 +1458,7 @@ _sync_privacy_lists(NMUser *user)
 		for (node = rem_list; node; node = node->next) {
 			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
 		}
-		g_free(rem_list);
+		g_slist_free(rem_list);
 		rem_list = NULL;
 	}
 
@@ -1494,7 +1494,7 @@ _map_property_tag(const char *tag)
 	else if (strcmp(tag, "personalTitle") == 0)
 		return _("Personal Title");
 	else if (strcmp(tag, "Title") == 0)
-		return _("Title");
+		return _("Job Title");
 	else if (strcmp(tag, "mailstop") == 0)
 		return _("Mailstop");
 	else if (strcmp(tag, "Internet EMail Address") == 0)
@@ -1505,7 +1505,7 @@ _map_property_tag(const char *tag)
 
 /* Display a dialog box showing the properties for the given user record */
 static void
-_show_info(PurpleConnection * gc, NMUserRecord * user_record)
+_show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name)
 {
 	PurpleNotifyUserInfo *user_info =	purple_notify_user_info_new();
 	int count, i;
@@ -1544,9 +1544,10 @@ _show_info(PurpleConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
-	purple_notify_userinfo(gc, nm_user_record_get_userid(user_record), 
-						 user_info, NULL, NULL);
+	purple_notify_userinfo(gc, name, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
+
+	g_free(name);
 }
 
 /* Send a join conference, the first item in the parms list is the
@@ -1965,7 +1966,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 					nm_conference_set_data(conference, (gpointer) chat);
 
 					name = nm_user_record_get_display_id(ur);
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL, 
+					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
 											PURPLE_CBFLAGS_NONE, TRUE);
 
 				}
@@ -1977,7 +1978,7 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			if (ur) {
 				name = nm_user_record_get_display_id(ur);
 				if (!purple_conv_chat_find_user(PURPLE_CONV_CHAT(chat), name)) {
-					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL, 
+					purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat), name, NULL,
 											PURPLE_CBFLAGS_NONE, TRUE);
 				}
 			}
@@ -2860,7 +2861,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 			}
 
 			purple_notify_user_info_add_pair(user_info, _("Status"), status_str);
-			
+
 			if (text)
 				purple_notify_user_info_add_pair(user_info, _("Message"), text);
 		}
@@ -2912,11 +2913,9 @@ novell_get_info(PurpleConnection * gc, const char *name)
 
 		user_record = nm_find_user_record(user, name);
 		if (user_record) {
-
-			_show_info(gc, user_record);
+			_show_info(gc, user_record, g_strdup(name));
 
 		} else {
-
 			rc = nm_send_get_details(user, name,
 									 _get_details_resp_show_info, g_strdup(name));
 
@@ -3529,7 +3528,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,						/* get_account_text_table */
 	NULL,						/* initiate_media */
-	NULL						/* can_do_media */
+	NULL,						/* get_media_caps */
+	NULL,						/* get_moods */
+	NULL,						/* set_public_alias */
+	NULL,						/* get_public_alias */
+	NULL,						/* add_buddy_with_invite */
+	NULL						/* add_buddies_with_invite */
 };
 
 static PurplePluginInfo info = {

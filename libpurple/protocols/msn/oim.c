@@ -23,7 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "soap.h"
 #include "oim.h"
 #include "msnutils.h"
@@ -163,20 +166,17 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	xmlnode *fault = NULL;
 	xmlnode *faultcode = NULL;
 
-	if (response == NULL)
-		return;
+	if (response != NULL)
+		fault = xmlnode_get_child(response->xml, "Body/Fault");
 
-	fault = xmlnode_get_child(response->xml, "Body/Fault");
-	if (fault)
-		faultcode = xmlnode_get_child(fault, "faultcode");
-
-	if (faultcode) {
+	if (fault && (faultcode = xmlnode_get_child(fault, "faultcode"))) {
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
 		gboolean need_token_update = FALSE;
 
 		if (faultcode_str) {
 			if (g_str_equal(faultcode_str, "q0:BadContextToken") ||
-				g_str_equal(faultcode_str, "AuthenticationFailed"))
+				g_str_equal(faultcode_str, "AuthenticationFailed") ||
+				g_str_equal(faultcode_str, "s:AuthenticationFailed"))
 				need_token_update = TRUE;
 			else if (g_str_equal(faultcode_str, "q0:AuthenticationFailed") &&
 				xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)
@@ -419,8 +419,8 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						str_reason = _("Message was not sent because an unknown "
 						               "error occurred.");
 					}
-					
-					msn_session_report_user(oim->session, msg->to_member, 
+
+					msn_session_report_user(oim->session, msg->to_member,
 						str_reason, PURPLE_MESSAGE_ERROR);
 					msn_session_report_user(oim->session, msg->to_member,
 						msg->oim_msg, PURPLE_MESSAGE_RAW);
@@ -618,7 +618,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("msn", "oim body:{%s}\n", message->body);
 
-	boundary = msn_message_get_attr(message, "boundary");
+	boundary = msn_message_get_header_value(message, "boundary");
 
 	if (boundary != NULL) {
 		char *bounds;
@@ -638,10 +638,10 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 			type = msn_message_get_content_type(multipart);
 			if (type && !strcmp(type, "text/plain")) {
 				decode_msg = (char *)purple_base64_decode(multipart->body, &body_len);
-				msn_message_destroy(multipart);
+				msn_message_unref(multipart);
 				break;
 			}
-			msn_message_destroy(multipart);
+			msn_message_unref(multipart);
 		}
 
 		g_strfreev(tokens);
@@ -649,14 +649,14 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 		if (decode_msg == NULL) {
 			purple_debug_error("msn", "Couldn't find text/plain OIM message.\n");
-			msn_message_destroy(message);
+			msn_message_unref(message);
 			return;
 		}
 	} else {
 		decode_msg = (char *)purple_base64_decode(message->body, &body_len);
 	}
 
-	from = msn_message_get_attr(message, "X-OIM-originatingSource");
+	from = msn_message_get_header_value(message, "X-OIM-originatingSource");
 
 	/* Match number to user's mobile number, FROM is a phone number
 	   if the other side pages you using your phone number */
@@ -671,7 +671,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	if (passport == NULL) {
 		char *start, *end;
 
-		from = msn_message_get_attr(message, "From");
+		from = msn_message_get_header_value(message, "From");
 
 		tokens = g_strsplit(from, " ", 2);
 		if (tokens[1] != NULL)
@@ -690,7 +690,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		g_strfreev(tokens);
 	}
 
-	date = msn_message_get_attr(message, "Date");
+	date = msn_message_get_header_value(message, "Date");
 	stamp = msn_oim_parse_timestamp(date);
 	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
 	                  date, passport);
@@ -705,7 +705,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	g_free(passport);
 	g_free(decode_msg);
-	msn_message_destroy(message);
+	msn_message_unref(message);
 }
 
 /* Parse the XML data,

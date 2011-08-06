@@ -109,6 +109,6 @@ void pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image);
  *
  * @since 2.6.0
  */
-void pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer *data, gsize datasize);
+void pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize);
 
 #endif /* PIDGIN_GTKSMILEY_H */

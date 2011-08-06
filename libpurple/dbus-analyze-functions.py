@@ -3,7 +3,7 @@ import string
 import sys
 
 # types translated into "int"
-simpletypes = ["int", "gint", "guint", "gboolean", "gpointer", "size_t", "gssize", "time_t"]
+simpletypes = ["int", "gint", "guint", "gboolean", "size_t", "gssize", "time_t"]
 
 # List "excluded" contains functions that shouldn't be exported via
 # DBus.  If you remove a function from this list, please make sure
@@ -170,7 +170,7 @@ class Binding:
                 return self.inputpurplestructure(type, name)
 
             # special case for *_get_data functions, be careful here...
-            elif (type[0] == "size_t") and (name == "len"):
+            elif (type[0] == "size_t" or type[0] == "gsize") and name == "len":
                 return self.inputgetdata(type, name)
             
             # unknown pointers are always replaced with NULL

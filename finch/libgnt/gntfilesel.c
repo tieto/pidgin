@@ -245,7 +245,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 	GDir *dir;
 	GntFile *file;
 	const char *str;
-	
+
 	dir = g_dir_open(path, 0, error);
 	if (dir == NULL || (error && *error)) {
 		return FALSE;
@@ -315,7 +315,7 @@ location_changed(GntFileSel *sel, GError **err)
 		success = sel->read_fn(sel->current, &files, err);
 	else
 		success = local_read_fn(sel->current, &files, err);
-	
+
 	if (!success || *err) {
 		gnt_warning("error opening location %s (%s)",
 			sel->current, *err ? (*err)->message : "reason unknown");
@@ -356,7 +356,7 @@ dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 
 		if (!str)
 			return TRUE;
-		
+
 		path = g_build_filename(sel->current, str, NULL);
 		dir = g_path_get_basename(sel->current);
 		if (!gnt_file_sel_set_current_location(sel, path)) {
@@ -597,7 +597,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 	orig_size_request = kl->size_request;
 	kl->size_request = gnt_file_sel_size_request;
 
-	signals[SIG_FILE_SELECTED] = 
+	signals[SIG_FILE_SELECTED] =
 		g_signal_new("file_selected",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,

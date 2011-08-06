@@ -46,12 +46,14 @@ BuildRequires: gtk2-devel, libidn-devel
 %if "%{_vendor}" == "suse"
 # For SuSE:
 BuildRequires: gnutls-devel
+%define sslopts --enable-gnutls=yes --enable-nss=no
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
 Requires(pre): gconf2
 Requires(post): gconf2
 Requires(preun): gconf2
 %else
+%define sslopts --enable-gnutls=no --enable-nss=yes
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 Requires(pre): GConf2
@@ -230,6 +232,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
+                                    %{sslopts} \
                                     %{!?_with_vv:--disable-vv} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
@@ -241,7 +244,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
-                                    %{?_without_text:--disable-consoleui}
+                                    %{?_without_text:--disable-consoleui} \
+                                    %{?_with_trayiconcompat:--enable-trayicon-compat}
 
 make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
@@ -415,7 +419,7 @@ fi
 %doc PLUGIN_HOWTO
 
 %dir %{_includedir}/libpurple
-%{_includedir}/libpurple/*.h
+%{_includedir}/libpurple/*
 %{_libdir}/libpurple.so
 %{_libdir}/pkgconfig/purple.pc
 %{_datadir}/aclocal/purple.m4
@@ -470,6 +474,16 @@ fi
 %endif
 
 %changelog
+* Wed Sep 01 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Ensure predictable use of SSL libs
+
+* Wed Jun 02 2010 Stu Tomlinson <stu@nosnilmot.com>
+- add an option to build RPMs using --enable-trayicon-compat
+  (--with trayiconcompat)
+
+* Thu May 13 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Include all libpurple headers in libpurple-devel
+
 * Sat Sep 05 2009 Stu Tomlinson <stu@nosnilmot.com>
 - Disable Voice & Video unless --with vv is used
 - Add BuildRequires for libidn-devel

@@ -73,6 +73,8 @@ G_BEGIN_DECLS
  *   <dd>The Gtk stock id of an icon for the dialog, or @c NULL for no icon.
  *       @see pidginstock.h
  *   </dd>
+ *   <dt><tt>"custom-icon"</tt> (<tt>GdkPixbuf *</tt>)</dt>
+ *   <dd>The custom icon to use instead of a stock one (overrides the "icon-name" property).</dd>
  * </dl>
  */
 typedef struct {
@@ -108,12 +110,19 @@ typedef void (*PidginMiniDialogCallback)(PidginMiniDialog *mini_dialog,
 /** Get the GType of #PidginMiniDialog. */
 GType pidgin_mini_dialog_get_type (void);
 
-/** Creates a new #PidginMiniDialog.  This is a shortcut for creating the dialog
+/** Creates a new #PidginMiniDialog with a stock icon. This is a shortcut for creating the dialog
  *  with @c g_object_new() then setting each property yourself.
  *  @return a new #PidginMiniDialog.
  */
 PidginMiniDialog *pidgin_mini_dialog_new(const gchar *title,
 	const gchar *description, const gchar *icon_name);
+
+/** Creates a new #PidginMiniDialog with a custom icon. This is a shortcut for creating the dialog
+ *  with @c g_object_new() then setting each property yourself.
+ *  @return a new #PidginMiniDialog.
+ */
+PidginMiniDialog *pidgin_mini_dialog_new_with_custom_icon(const gchar *title,
+	const gchar *description, GdkPixbuf *custom_icon);
 
 /** Shortcut for setting a mini-dialog's title via GObject properties.
  *  @param mini_dialog a mini-dialog
@@ -130,12 +139,36 @@ void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialog,
 void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
 	const char *description);
 
+/** Enable GMarkup elements in the mini-dialog's description.
+ *  @param mini_dialog a mini-dialog
+ */
+void pidgin_mini_dialog_enable_description_markup(PidginMiniDialog *mini_dialog);
+
+/** Mini-dialogs support hyperlinks in their description
+ *  (you should first call pidgin_mini_dialog_enable_description_markup() on a given
+ *  dialog to enable them). */
+gboolean pidgin_mini_dialog_links_supported(void);
+
+/** Sets a callback which gets invoked when a hyperlink in the dialog's description is clicked on.
+ *  @param mini_dialog a mini-dialog
+ *  @param cb the callback to invoke
+ *  @param user_data the user data to pass to the callback
+ */
+void pidgin_mini_dialog_set_link_callback(PidginMiniDialog *mini_dialog, GCallback cb, gpointer user_data);
+
 /** Shortcut for setting a mini-dialog's icon via GObject properties.
  *  @param mini_dialog a mini-dialog
  *  @param icon_name   the Gtk stock ID of an icon, or @c NULL for no icon.
  */
 void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 	const char *icon_name);
+
+/** Shortcut for setting a mini-dialog's custom icon via GObject properties.
+ *  @param mini_dialog a mini-dialog
+ *  @param custom_icon the pixbuf to use as a custom icon
+ */
+void pidgin_mini_dialog_set_custom_icon(PidginMiniDialog *mini_dialog,
+	GdkPixbuf *custom_icon);
 
 /** Adds a new button to a mini-dialog, and attaches the supplied callback to
  *  its <tt>clicked</tt> signal.  After a button is clicked, the dialog is
@@ -147,6 +180,13 @@ void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
  *                     called.
  */
 void pidgin_mini_dialog_add_button(PidginMiniDialog *mini_dialog,
+	const char *text, PidginMiniDialogCallback clicked_cb,
+	gpointer user_data);
+
+/** Equivalent to pidgin_mini_dialog_add_button(), the only difference
+ *  is that the mini-dialog won't be closed after the button is clicked.
+ */
+void pidgin_mini_dialog_add_non_closing_button(PidginMiniDialog *mini_dialog,
 	const char *text, PidginMiniDialogCallback clicked_cb,
 	gpointer user_data);
 

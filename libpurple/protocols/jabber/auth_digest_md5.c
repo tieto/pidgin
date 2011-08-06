@@ -27,6 +27,7 @@
 #include "util.h"
 #include "xmlnode.h"
 
+#include "auth_digest_md5.h"
 #include "auth.h"
 #include "jabber.h"
 
@@ -43,7 +44,7 @@ digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
 }
 
 /* Parts of this algorithm are inspired by stuff in libgsasl */
-static GHashTable* parse_challenge(const char *challenge)
+GHashTable* jabber_auth_digest_md5_parse(const char *challenge)
 {
 	const char *token_start, *val_start, *val_end, *cur;
 	GHashTable *ret = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -77,12 +78,12 @@ static GHashTable* parse_challenge(const char *challenge)
 					val_start++;
 
 				val_end = cur;
-				while (val_end != val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
+				while (val_end >= val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
 						|| *val_end == '\r' || *val_end == '\n'
 						|| *val_end == '"'  || *val_end == '\0'))
 					val_end--;
 
-				if (val_start != val_end)
+				if (val_end - val_start + 1 >= 0)
 					value = g_strndup(val_start, val_end - val_start + 1);
 			}
 
@@ -182,22 +183,25 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 
 	dec_in = (char *)purple_base64_decode(enc_in, NULL);
 	purple_debug_misc("jabber", "decoded challenge (%"
-			G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
+			G_GSIZE_FORMAT "): %s\n",
+			dec_in != NULL ? strlen(dec_in) : 0,
+			dec_in != NULL  ? dec_in : "(null)");
 
-	parts = parse_challenge(dec_in);
+	parts = jabber_auth_digest_md5_parse(dec_in);
 
 	if (g_hash_table_lookup(parts, "rspauth")) {
 		char *rspauth = g_hash_table_lookup(parts, "rspauth");
+		char *expected_rspauth = js->auth_mech_data;
 
-		if (rspauth && purple_strequal(rspauth, js->expected_rspauth)) {
+		if (rspauth && purple_strequal(rspauth, expected_rspauth)) {
 			reply = xmlnode_new("response");
 			xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
 			*msg = g_strdup(_("Invalid challenge from server"));
 			state = JABBER_SASL_STATE_FAIL;
 		}
-		g_free(js->expected_rspauth);
-		js->expected_rspauth = NULL;
+		g_free(js->auth_mech_data);
+		js->auth_mech_data = NULL;
 	} else {
 		/* assemble a response, and send it */
 		/* see RFC 2831 */
@@ -235,7 +239,7 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 			g_free(a2);
 
 			a2 = g_strdup_printf(":xmpp/%s", realm);
-			js->expected_rspauth = generate_response_value(js->user,
+			js->auth_mech_data = generate_response_value(js->user,
 					purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
 			g_free(a2);
 
@@ -276,6 +280,13 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 	return state;
 }
 
+static void
+digest_md5_dispose(JabberStream *js)
+{
+	g_free(js->auth_mech_data);
+	js->auth_mech_data = NULL;
+}
+
 static JabberSaslMech digest_md5_mech = {
 	10, /* priority */
 	"DIGEST-MD5", /* name */
@@ -283,7 +294,7 @@ static JabberSaslMech digest_md5_mech = {
 	digest_md5_handle_challenge,
 	NULL, /* handle_success */
 	NULL, /* handle_failure */
-	NULL  /* handle_dispose */
+	digest_md5_dispose,
 };
 
 JabberSaslMech *jabber_auth_get_digest_md5_mech(void)

@@ -627,12 +627,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						PIDGIN_MAIL_DATA, &data, -1);
 				if (data && data->account == account) {
 					if (clear) {
-#if GTK_CHECK_VERSION(2,2,0)
 						advanced = gtk_tree_store_remove(treemodel, &iter);
-#else
-						gtk_tree_store_remove(treemodel, &iter);
-						advanced = (iter.stamp == 0) ? FALSE : TRUE;
-#endif
 						mail_dialog->total_count -= data->count;
 
 						if (data->purple_has_handle)
@@ -950,7 +945,6 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *sw;
 	PidginNotifySearchResultsData *data;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
@@ -1006,15 +1000,6 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	model = gtk_list_store_newv(col_num, col_types);
 	g_free(col_types);
 
-	/* Setup the scrolled window containing the treeview */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
 	/* Setup the treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	g_object_unref(G_OBJECT(model));
@@ -1023,7 +1008,9 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
 								GTK_SELECTION_SINGLE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), TRUE);
-	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 0);
 	gtk_widget_show(treeview);
 
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -1362,11 +1349,32 @@ pidgin_notify_uri(const char *uri)
 			command = g_strdup_printf("opera %s", escaped);
 
 	}
+	else if (!strcmp(web_browser, "google-chrome"))
+	{
+		/* Google Chrome doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Google Chrome. */
+		command = g_strdup_printf("google-chrome %s", escaped);
+	}
+	else if (!strcmp(web_browser, "chrome"))
+	{
+		/* Chromium doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Chromium. */
+		command = g_strdup_printf("chrome %s", escaped);
+	}
+	else if (!strcmp(web_browser, "chromium-browser"))
+	{
+		/* Chromium doesn't have command-line arguments that control the
+		 * opening of links from external calls.  This is controlled solely from
+		 * a preference within Chromium. */
+		command = g_strdup_printf("chromium-browser %s", escaped);
+	}
 	else if (!strcmp(web_browser, "custom"))
 	{
 		const char *web_command;
 
-		web_command = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command");
+		web_command = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/manual_command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{
@@ -1462,7 +1470,6 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	GtkTreeStore *model = NULL;
 	GtkWidget *dialog = NULL;
 	GtkWidget *label = NULL;
-	GtkWidget *sw;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *button = NULL;
@@ -1500,10 +1507,6 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	/* Golden ratio it up! */
 	gtk_widget_set_size_request(dialog, 550, 400);
 
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-
 	spec_dialog = g_new0(PidginNotifyDialog, 1);
 	spec_dialog->dialog = dialog;
 
@@ -1512,7 +1515,6 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	g_object_unref(G_OBJECT(model));
 
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(spec_dialog->treeview), TRUE);
-	gtk_container_add(GTK_CONTAINER(sw), spec_dialog->treeview);
 
 	if (type == PIDGIN_NOTIFY_MAIL) {
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Mail"));
@@ -1566,8 +1568,15 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->edit_button = button;
 
-		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
-						_("Dismiss"), GTK_RESPONSE_NO);
+		/* Translators: Make sure you translate "Dismiss" differently than
+		   "close"!  This string is used in the "You have pounced" dialog
+		   that appears when one of your Buddy Pounces is triggered.  In
+		   this context "Dismiss" means "I acknowledge that I've seen that
+		   this pounce was triggered--remove it from this list."  Translating
+		   it as "Remove" is acceptable if you can't think of a more precise
+		   word. */
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog), _("Dismiss"),
+				GTK_RESPONSE_NO);
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->dismiss_button = button;
 
@@ -1627,7 +1636,9 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		pidgin_make_scrollable(spec_dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
+		TRUE, TRUE, 2);
 
 	return spec_dialog;
 }

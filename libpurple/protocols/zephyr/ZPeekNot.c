@@ -5,7 +5,7 @@
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
- *	"mit-copyright.h". 
+ *	"mit-copyright.h".
  */
 
 #include "internal.h"
@@ -17,7 +17,7 @@ Code_t ZPeekNotice(notice, from)
     char *buffer;
     int len;
     Code_t retval;
-	
+
     if ((retval = ZPeekPacket(&buffer, &len, from)) != ZERR_NONE)
 	return (retval);
 

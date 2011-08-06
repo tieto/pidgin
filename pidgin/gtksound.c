@@ -72,7 +72,8 @@ static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your username in chat"), "nick_said", "alert.wav"}
+	{N_("Someone says your username in chat"), "nick_said", "alert.wav"},
+	{N_("Attention received"), "got_attention", "alert.wav"}
 };
 
 static gboolean
@@ -144,7 +145,7 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 				   char *message, PurpleConversation *conv,
 				   PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	if (flags & PURPLE_MESSAGE_DELAYED)
+	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
 		return;
 
 	if (conv==NULL)
@@ -199,7 +200,7 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 {
 	PurpleConvChat *chat;
 
-	if (flags & PURPLE_MESSAGE_DELAYED)
+	if (flags & PURPLE_MESSAGE_DELAYED || flags & PURPLE_MESSAGE_NOTIFY)
 		return;
 
 	chat = purple_conversation_get_chat_data(conv);
@@ -217,6 +218,13 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);
+}
+
+static void
+got_attention_cb(PurpleAccount *account, const char *who,
+	PurpleConversation *conv, guint type, PurpleSoundEventID event)
+{
+	play_conv_event(conv, event);
 }
 
 /*
@@ -299,6 +307,10 @@ pidgin_sound_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/theme", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/sent_attention", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/sent_attention", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/got_attention", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/got_attention", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
@@ -345,6 +357,12 @@ pidgin_sound_init(void)
 	purple_signal_connect(conv_handle, "received-chat-msg",
 						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
+	purple_signal_connect(conv_handle, "got-attention", gtk_sound_handle,
+						PURPLE_CALLBACK(got_attention_cb),
+						  GINT_TO_POINTER(PURPLE_SOUND_GOT_ATTENTION));
+	/* for the time being, don't handle sent-attention here, since playing a
+	 sound would result induplicate sounds. And fixing that would require changing the
+	 conversation signal for msg-recv */
 }
 
 static void
@@ -539,18 +557,12 @@ pidgin_sound_play_file(const char *filename)
 #else /* _WIN32 */
 	purple_debug_info("sound", "Playing %s\n", filename);
 
-	if (G_WIN32_HAVE_WIDECHAR_API ()) {
+	{
 		wchar_t *wc_filename = g_utf8_to_utf16(filename,
 				-1, NULL, NULL, NULL);
 		if (!PlaySoundW(wc_filename, NULL, SND_ASYNC | SND_FILENAME))
 			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
 		g_free(wc_filename);
-	} else {
-		char *l_filename = g_locale_from_utf8(filename,
-				-1, NULL, NULL, NULL);
-		if (!PlaySoundA(l_filename, NULL, SND_ASYNC | SND_FILENAME))
-			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
-		g_free(l_filename);
 	}
 #endif /* _WIN32 */
 

@@ -509,9 +509,6 @@ static gssize yahoo_xfer_write(const guchar *buffer, size_t size, PurpleXfer *xf
 		return 0;
 	}
 
-	if ((purple_xfer_get_bytes_sent(xfer) + len) >= purple_xfer_get_size(xfer))
-		purple_xfer_set_completed(xfer, TRUE);
-
 	return len;
 }
 
@@ -986,8 +983,8 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	struct yahoo_xfer_data *xd;
 	struct sockaddr_in *addr;
 	struct yahoo_packet *pkt;
-	long actaddr;
-	long a,b,c,d;
+	unsigned long actaddr;
+	unsigned char a,b,c,d;
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	YahooData *yd;
@@ -1021,19 +1018,19 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	/* TODO:actually, u must try with addr no.1 , if its not working addr no.2 ..... */
 	addr = hosts->data;
 	actaddr = addr->sin_addr.s_addr;
-	d = actaddr % 256;
-	actaddr = (actaddr - d) / 256;
-	c = actaddr % 256;
-	actaddr = (actaddr - c) / 256;
-	b = actaddr % 256;
-	actaddr = (actaddr - b) / 256;
-	a = actaddr;
+	d = actaddr & 0xff;
+	actaddr >>= 8;
+	c = actaddr & 0xff;
+	actaddr >>= 8;
+	b = actaddr & 0xff;
+	actaddr >>= 8;
+	a = actaddr & 0xff;
 	if(yd->jp)
 		xd->port = YAHOOJP_XFER_RELAY_PORT;
 	else
 		xd->port = YAHOO_XFER_RELAY_PORT;
 
-	url = g_strdup_printf("%ld.%ld.%ld.%ld", d, c, b, a);
+	url = g_strdup_printf("%u.%u.%u.%u", d, c, b, a);
 
 	/* Free the address... */
 	g_free(hosts->data);
@@ -1238,14 +1235,14 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xd;
 	PurpleAccount *account;
-	YahooData* yd;
+	PurpleConnection *gc;
 
 	if (!(xfer = data))
 		return;
 	if (!(xd = xfer->data))
 		return;
-	yd = xd->gc->proto_data;
-	account = purple_connection_get_account(xd->gc);
+	gc = xd->gc;
+	account = purple_connection_get_account(gc);
 	if ((source < 0) || (xd->path == NULL) || (xd->host == NULL)) {
 		purple_xfer_error(PURPLE_XFER_RECEIVE, purple_xfer_get_account(xfer),
 			xfer->who, _("Unable to connect."));
@@ -1256,7 +1253,14 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 	if (xd->txbuflen == 0)
 	{
 		gchar* cookies;
-		cookies = yahoo_get_cookies(xd->gc);
+		YahooData *yd = gc->proto_data;
+
+		/* cookies = yahoo_get_cookies(gc);
+		 * This doesn't seem to be working. The function is returning NULL, which yahoo servers don't like
+		 * For now let us not use this function */
+
+		cookies = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
+
 		if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && xd->status_15 == ACCEPTED)
 		{
 			if(xd->info_val_249 == 2)
@@ -1656,6 +1660,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 	if(val_222 == 3)
 	{
+		PurpleAccount *account;
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
 								   xfer_peer_idstring);
 		if(!xfer)
@@ -1675,14 +1680,17 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 			return;
 		}
 
+		account = purple_connection_get_account(gc);
 		if (yd->jp)
 		{
-			purple_dnsquery_a(YAHOOJP_XFER_RELAY_HOST, YAHOOJP_XFER_RELAY_PORT,
+			purple_dnsquery_a_account(account, YAHOOJP_XFER_RELAY_HOST,
+							YAHOOJP_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}
 		else
 		{
-			purple_dnsquery_a(YAHOO_XFER_RELAY_HOST, YAHOO_XFER_RELAY_PORT,
+			purple_dnsquery_a_account(account, YAHOO_XFER_RELAY_HOST,
+							YAHOO_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}
 		return;
@@ -1780,7 +1788,6 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	char *xfer_idstring_for_relay = NULL;
 	GSList *l;
 	struct yahoo_packet *pkt_to_send;
-	PurpleAccount *account;
 	struct yahoo_p2p_data *p2p_data;
 
 	yd = gc->proto_data;
@@ -1834,7 +1841,8 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 
 	xfer_data->info_val_249 = val_249;
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
-	if(val_249 == 1 || val_249 == 3)	{
+	if(val_249 == 1 || val_249 == 3) {
+		PurpleAccount *account;
 		if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
 			purple_xfer_cancel_remote(xfer);
 			return;

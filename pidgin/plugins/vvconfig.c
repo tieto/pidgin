@@ -28,6 +28,9 @@
 
 #include <gst/interfaces/propertyprobe.h>
 
+/* container window for showing a stand-alone configurator */
+static GtkWidget *window = NULL;
+
 static PurpleMediaElementInfo *old_video_src = NULL, *old_video_sink = NULL,
 		*old_audio_src = NULL, *old_audio_sink = NULL;
 
@@ -79,24 +82,25 @@ get_element_devices(const gchar *element_name)
 	GstPropertyProbe *probe;
 	const GParamSpec *pspec;
 
-	if (!strcmp(element_name, "<custom>")) {
-		ret = g_list_prepend(ret, NULL);
-		ret = g_list_prepend(ret, (gpointer)_("Default"));
-		ret = g_list_prepend(ret, "");
-		return ret;
-	}
-
 	ret = g_list_prepend(ret, (gpointer)_("Default"));
 	ret = g_list_prepend(ret, "");
 
-	if (*element_name == '\0') {
-		ret = g_list_prepend(ret, NULL);
-		ret = g_list_reverse(ret);
-		return ret;
+	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
+		return g_list_reverse(ret);
 	}
 
 	element = gst_element_factory_make(element_name, "test");
+	if(!element) {
+		purple_debug_info("vvconfig", "'%s' - unable to find element\n", element_name);
+		return g_list_reverse(ret);
+	}
+
 	klass = G_OBJECT_GET_CLASS (element);
+	if(!klass) {
+		purple_debug_info("vvconfig", "'%s' - unable to find G_Object Class\n", element_name);
+		return g_list_reverse(ret);
+	}
+
 	if (!g_object_class_find_property(klass, "device") ||
 			!GST_IS_PROPERTY_PROBE(element) ||
 			!(probe = GST_PROPERTY_PROBE(element)) ||
@@ -117,11 +121,9 @@ get_element_devices(const gchar *element_name)
 		array = gst_property_probe_probe_and_get_values (probe, pspec);
 		if (array == NULL) {
 			purple_debug_info("vvconfig", "'%s' has no devices\n", element_name);
-			ret = g_list_prepend(ret, NULL);
-			ret = g_list_reverse(ret);
-			return ret;
+			return g_list_reverse(ret);
 		}
-			
+
 		for (n=0; n < array->n_values; ++n) {
 			GValue *device;
 			const gchar *name;
@@ -149,11 +151,8 @@ get_element_devices(const gchar *element_name)
 		}
 	}
 	gst_object_unref(element);
-	
-	ret = g_list_prepend(ret, NULL);
-	ret = g_list_reverse(ret);
 
-	return ret;
+	return g_list_reverse(ret);
 }
 
 static GList *
@@ -170,7 +169,6 @@ get_element_plugins(const gchar **plugins)
 			ret = g_list_prepend(ret, (gpointer)plugins[0]);
 		}
 	}
-	ret = g_list_prepend(ret, NULL);
 	ret = g_list_reverse(ret);
 	return ret;
 }
@@ -233,7 +231,8 @@ device_changed_cb(const gchar *name, PurplePrefType type,
 	pref = g_strdup(name);
 	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
 	devices = get_element_devices(value);
-	if (g_list_find(devices, purple_prefs_get_string(pref)) == NULL)
+	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
+			(GCompareFunc)strcmp) == NULL)
 		purple_prefs_set_string(pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(parent,
 			label, PURPLE_PREF_STRING,
@@ -270,7 +269,8 @@ get_plugin_frame(GtkWidget *parent, GtkSizeGroup *sg,
 
 	/* Setup device preference */
 	devices = get_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find(devices, purple_prefs_get_string(device_pref)) == NULL)
+	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+			(GCompareFunc) strcmp) == NULL)
 		purple_prefs_set_string(device_pref, g_list_next(devices)->data);
 	widget = pidgin_prefs_dropdown_from_list(vbox, device_label,
 			PURPLE_PREF_STRING, device_pref, devices);
@@ -502,6 +502,242 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
+static void
+config_destroy(GtkObject *w, gpointer nul)
+{
+	purple_debug_info("vvconfig", "closing vv configuration window\n");
+	window = NULL;
+}
+
+static void
+config_close(GtkObject *w, gpointer nul)
+{
+	gtk_widget_destroy(GTK_WIDGET(window));
+}
+
+typedef GtkWidget *(*FrameCreateCb)(PurplePlugin *plugin);
+
+static void
+show_config(PurplePluginAction *action)
+{
+	if (!window) {
+		FrameCreateCb create_frame = action->user_data;
+		GtkWidget *vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+		GtkWidget *hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+		GtkWidget *config_frame = create_frame(NULL);
+		GtkWidget *close = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+
+		gtk_container_add(GTK_CONTAINER(vbox), config_frame);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		window = pidgin_create_window(action->label,
+			PIDGIN_HIG_BORDER, NULL, FALSE);
+		g_signal_connect(G_OBJECT(window), "destroy",
+			G_CALLBACK(config_destroy), NULL);
+		g_signal_connect(G_OBJECT(close), "clicked",
+		    G_CALLBACK(config_close), NULL);
+		gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, PIDGIN_HIG_BORDER);
+		gtk_container_add(GTK_CONTAINER(window), vbox);
+		gtk_widget_show(GTK_WIDGET(close));
+		gtk_widget_show(GTK_WIDGET(vbox));
+		gtk_widget_show(GTK_WIDGET(hbox));
+	}
+	gtk_window_present(GTK_WINDOW(window));
+}
+
+static GstElement *
+create_pipeline()
+{
+	GstElement *pipeline = gst_pipeline_new("voicetest");
+	GstElement *src = create_audio_src(NULL, NULL, NULL);
+	GstElement *sink = create_audio_sink(NULL, NULL, NULL);
+	GstElement *volume = gst_element_factory_make("volume", "volume");
+	GstElement *level = gst_element_factory_make("level", "level");
+	GstElement *valve = gst_element_factory_make("valve", "valve");
+
+	gst_bin_add_many(GST_BIN(pipeline), src, volume, level, valve, sink, NULL);
+	gst_element_link_many(src, volume, level, valve, sink, NULL);
+
+	gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+
+	return pipeline;
+}
+
+static void
+on_volume_change_cb(GtkRange *range, GstBin *pipeline)
+{
+	GstElement *volume;
+
+	g_return_if_fail(pipeline != NULL);
+
+	volume = gst_bin_get_by_name(pipeline, "volume");
+	g_object_set(volume, "volume", gtk_range_get_value(range) / 10.0, NULL);
+}
+
+static gdouble
+gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
+{
+	const GValue *list;
+	const GValue *value;
+	gdouble value_db;
+	gdouble percent;
+
+	list = gst_structure_get_value(
+				gst_message_get_structure(msg), value_name);
+	value = gst_value_list_get_value(list, 0);
+	value_db = g_value_get_double(value);
+	percent = pow(10, value_db / 20);
+	return (percent > 1.0) ? 1.0 : percent;
+}
+
+typedef struct
+{
+	GtkProgressBar *level;
+	GtkRange *threshold;
+} BusCbCtx;
+
+static gboolean
+gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
+{
+	if (GST_MESSAGE_TYPE(msg) == GST_MESSAGE_ELEMENT &&
+		gst_structure_has_name(msg->structure, "level")) {
+
+		GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+		gchar *name = gst_element_get_name(src);
+
+		if (!strcmp(name, "level")) {
+			gdouble percent;
+			gdouble threshold;
+			GstElement *valve;
+
+			percent = gst_msg_db_to_percent(msg, "rms");
+			gtk_progress_bar_set_fraction(ctx->level, percent * 5);
+
+			percent = gst_msg_db_to_percent(msg, "decay");
+			threshold = gtk_range_get_value(ctx->threshold) / 100.0;
+			valve = gst_bin_get_by_name(GST_BIN(GST_ELEMENT_PARENT(src)), "valve");
+			g_object_set(valve, "drop", (percent < threshold), NULL);
+			g_object_set(ctx->level,
+					"text", (percent < threshold) ? _("DROP") : " ", NULL);
+		}
+
+		g_free(name);
+	}
+
+	return TRUE;
+}
+
+static void
+voice_test_frame_destroy_cb(GtkObject *w, GstElement *pipeline)
+{
+	g_return_if_fail(GST_IS_ELEMENT(pipeline));
+
+	gst_element_set_state(pipeline, GST_STATE_NULL);
+	gst_object_unref(pipeline);
+}
+
+static void
+volume_scale_destroy_cb(GtkRange *volume, gpointer nul)
+{
+	purple_prefs_set_int("/purple/media/audio/volume/input",
+			gtk_range_get_value(volume));
+}
+
+static gchar*
+threshold_value_format_cb(GtkScale *scale, gdouble value)
+{
+	return g_strdup_printf ("%.*f%%", gtk_scale_get_digits(scale), value);
+}
+
+static void
+threshold_scale_destroy_cb(GtkRange *threshold, gpointer nul)
+{
+	purple_prefs_set_int("/purple/media/audio/silence_threshold",
+			gtk_range_get_value(threshold));
+}
+
+static GtkWidget *
+get_voice_test_frame(PurplePlugin *plugin)
+{
+	GtkWidget *vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	GtkWidget *level = gtk_progress_bar_new();
+	GtkWidget *volume = gtk_hscale_new_with_range(0, 100, 1);
+	GtkWidget *threshold = gtk_hscale_new_with_range(0, 100, 1);
+	GtkWidget *label;
+	GtkTable *table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
+
+	GstElement *pipeline;
+	GstBus *bus;
+	BusCbCtx *ctx;
+
+	g_object_set(vbox, "width-request", 500, NULL);
+
+	gtk_table_set_row_spacings(table, PIDGIN_HIG_BOX_SPACE);
+	gtk_table_set_col_spacings(table, PIDGIN_HIG_BOX_SPACE);
+
+	label = gtk_label_new(_("Volume:"));
+	g_object_set(label, "xalign", 0.0, NULL);
+	gtk_table_attach(table, label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_table_attach_defaults(table, volume, 1, 2, 0, 1);
+	label = gtk_label_new(_("Silence threshold:"));
+	g_object_set(label, "xalign", 0.0, "yalign", 1.0, NULL);
+	gtk_table_attach(table, label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(table, threshold, 1, 2, 1, 2);
+
+	gtk_container_add(GTK_CONTAINER(vbox), level);
+	gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(table));
+	gtk_widget_show_all(vbox);
+
+	pipeline = create_pipeline();
+	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+	gst_bus_add_signal_watch(bus);
+	ctx = g_new(BusCbCtx, 1);
+	ctx->level = GTK_PROGRESS_BAR(level);
+	ctx->threshold = GTK_RANGE(threshold);
+	g_signal_connect_data(bus, "message", G_CALLBACK(gst_bus_cb),
+			ctx, (GClosureNotify)g_free, 0);
+	gst_object_unref(bus);
+
+	g_signal_connect(volume, "value-changed",
+			(GCallback)on_volume_change_cb, pipeline);
+
+	gtk_range_set_value(GTK_RANGE(volume),
+			purple_prefs_get_int("/purple/media/audio/volume/input"));
+	gtk_widget_set(volume, "draw-value", FALSE, NULL);
+
+	gtk_range_set_value(GTK_RANGE(threshold),
+			purple_prefs_get_int("/purple/media/audio/silence_threshold"));
+
+	g_signal_connect(vbox, "destroy",
+			G_CALLBACK(voice_test_frame_destroy_cb), pipeline);
+	g_signal_connect(volume, "destroy",
+			G_CALLBACK(volume_scale_destroy_cb), NULL);
+	g_signal_connect(threshold, "format-value",
+			G_CALLBACK(threshold_value_format_cb), NULL);
+	g_signal_connect(threshold, "destroy",
+			G_CALLBACK(threshold_scale_destroy_cb), NULL);
+
+	return vbox;
+}
+
+static GList *
+actions(PurplePlugin *plugin, gpointer context)
+{
+	GList *l = NULL;
+	PurplePluginAction *act = NULL;
+
+	act = purple_plugin_action_new(_("Input and Output Settings"),
+		show_config);
+	act->user_data = get_plugin_config_frame;
+	l = g_list_append(l, act);
+
+	act = purple_plugin_action_new(_("Microphone Test"),
+		show_config);
+	act->user_data = get_voice_test_frame;
+	l = g_list_append(l, act);
+
+	return l;
+}
+
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
@@ -525,32 +761,32 @@ static PidginPluginUiInfo ui_info = {
 
 static PurplePluginInfo info =
 {
-	PURPLE_PLUGIN_MAGIC,			/**< magic		*/
-	PURPLE_MAJOR_VERSION,			/**< major version	*/
-	PURPLE_MINOR_VERSION,			/**< minor version	*/
-	PURPLE_PLUGIN_STANDARD,			/**< type		*/
-	PIDGIN_PLUGIN_TYPE,			/**< ui_requirement	*/
-	0,					/**< flags		*/
-	NULL,					/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,		/**< priority		*/
+	PURPLE_PLUGIN_MAGIC,                         /**< magic          */
+	PURPLE_MAJOR_VERSION,                        /**< major version  */
+	PURPLE_MINOR_VERSION,                        /**< minor version  */
+	PURPLE_PLUGIN_STANDARD,                      /**< type           */
+	PIDGIN_PLUGIN_TYPE,                          /**< ui_requirement */
+	0,                                           /**< flags          */
+	NULL,                                        /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                     /**< priority       */
 
-	"gtk-maiku-vvconfig",			/**< id			*/
-	N_("Voice/Video Settings"),		/**< name		*/
-	DISPLAY_VERSION,			/**< version		*/
-	N_("Configure your microphone and webcam."), /**< summary	*/
+	"gtk-maiku-vvconfig",                        /**< id             */
+	N_("Voice/Video Settings"),                  /**< name           */
+	DISPLAY_VERSION,                             /**< version        */
+	N_("Configure your microphone and webcam."), /**< summary        */
 	N_("Configure microphone and webcam "
-	   "settings for voice/video calls."),	/**< description	*/
-	"Mike Ruprecht <cmaiku@gmail.com>",	/**< author		*/
-	PURPLE_WEBSITE,				/**< homepage		*/
+	   "settings for voice/video calls."),       /**< description    */
+	"Mike Ruprecht <cmaiku@gmail.com>",          /**< author         */
+	PURPLE_WEBSITE,                              /**< homepage       */
 
-	plugin_load,				/**< load		*/
-	plugin_unload,				/**< unload		*/
-	NULL,					/**< destroy		*/
+	plugin_load,                                 /**< load           */
+	plugin_unload,                               /**< unload         */
+	NULL,                                        /**< destroy        */
 
-	&ui_info,				/**< ui_info		*/
-	NULL,					/**< extra_info		*/
-	NULL,					/**< prefs_info		*/
-	NULL,					/**< actions		*/
+	&ui_info,                                    /**< ui_info        */
+	NULL,                                        /**< extra_info     */
+	NULL,                                        /**< prefs_info     */
+	actions,                                     /**< actions        */
 
 	/* padding */
 	NULL,

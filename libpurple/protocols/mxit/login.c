@@ -67,7 +67,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	/* configure the connection (reference: "libpurple/connection.h") */
 	con = purple_account_get_connection( account );
 	con->proto_data = session;
-	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML;
+	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_SUPPORT_MOODS;
 	session->con = con;
 
 	/* add account */
@@ -84,7 +84,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	session->iimages = g_hash_table_new( g_str_hash, g_str_equal );
 	session->rx_state = RX_STATE_RLEN;
 	session->http_interval = MXIT_HTTP_POLL_MIN;
-	session->http_last_poll = time( NULL );
+	session->http_last_poll = mxit_now_milli();
 
 	return session;
 }
@@ -106,12 +106,12 @@ static void mxit_connected( struct MXitSession* session )
 	purple_connection_update_progress( session->con, _( "Logging In..." ), 2, 4 );
 
 	/* create a timer to send a ping packet if the connection is idle */
-	session->last_tx = time( NULL );
+	session->last_tx = mxit_now_milli();
 
 	/* encrypt the user password */
 	session->encpwd = mxit_encrypt_password( session );
 
-	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN ); 
+	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 	if ( state == MXIT_STATE_LOGIN ) {
 		/* create and send login packet */
 		mxit_send_login( session );
@@ -141,9 +141,10 @@ static void mxit_connected( struct MXitSession* session )
 	}
 
 	/* This timer might already exist if we're registering a new account */
-	if ( session->q_timer == 0 )
+	if ( session->q_slow_timer_id == 0 ) {
 		/* start the tx queue manager timer */
-		session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue, session );
+		session->q_slow_timer_id = purple_timeout_add_seconds( 2, mxit_manage_queue_slow, session );
+	}
 }
 
 
@@ -238,7 +239,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	/* nickname */
 	str = purple_request_fields_get_string( fields, "nickname" );
 	if ( ( !str ) || ( strlen( str ) < 3 ) ) {
-		err = _( "The nick name you entered is invalid." );
+		err = _( "The Display Name you entered is too short." );
 		goto out;
 	}
 	g_strlcpy( profile->nickname, str, sizeof( profile->nickname ) );
@@ -329,17 +330,19 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_fields_add_group( fields, group );
 
 	/* mxit login name */
-	field = purple_request_field_string_new( "loginname", _( "MXit Login Name" ), purple_account_get_username( session->acc ), FALSE );
+	field = purple_request_field_string_new( "loginname", _( "MXit ID" ), purple_account_get_username( session->acc ), FALSE );
 	purple_request_field_string_set_editable( field, FALSE );
 	purple_request_field_group_add_field( group, field );
 
-	/* nick name */
-	field = purple_request_field_string_new( "nickname", _( "Nick Name" ), profile->nickname, FALSE );
+	/* nick name (required) */
+	field = purple_request_field_string_new( "nickname", _( "Display Name" ), profile->nickname, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
-	/* birthday */
+	/* birthday (required) */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_string_set_default_value( field, "YYYY-MM-DD" );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* gender */
@@ -348,12 +351,14 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
 	purple_request_field_group_add_field( group, field );
 
-	/* pin */
+	/* pin (required) */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), profile->pin, FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), "", FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* show the form to the user to complete */
@@ -414,10 +419,10 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 				purple_connection_error( session->con, _( "Invalid country selected. Please try again." ) );
 				return;
 			case '6' :
-				purple_connection_error( session->con, _( "Username is not registered. Please register first." ) );
+				purple_connection_error( session->con, _( "The MXit ID you entered is not registered. Please register first." ) );
 				return;
 			case '7' :
-				purple_connection_error( session->con, _( "Username is already registered. Please choose another username." ) );
+				purple_connection_error( session->con, _( "The MXit ID you entered is already registered. Please choose another." ) );
 				/* this user's account already exists, so we need to change the registration login flag to be login */
 				purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 				return;
@@ -542,8 +547,8 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
 	/* get state */
 	state = purple_account_get_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
-	url = g_strdup_printf( "%s?type=getpid&sessionid=%s&login=%s&ver=%s&clientid=%s&cat=%s&chalresp=%s&cc=%s&loc=%s&path=%i&brand=%s&model=%s&h=%i&w=%i&ts=%li",
-			session->logindata->wapserver, session->logindata->sessionid, purple_url_encode( session->acc->username ), MXIT_CP_RELEASE, MXIT_CLIENT_ID, MXIT_CP_ARCH,
+	url = g_strdup_printf( "%s?type=getpid&sessionid=%s&login=%s&ver=%i.%i.%i&clientid=%s&cat=%s&chalresp=%s&cc=%s&loc=%s&path=%i&brand=%s&model=%s&h=%i&w=%i&ts=%li",
+			session->logindata->wapserver, session->logindata->sessionid, purple_url_encode( session->acc->username ), PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CLIENT_ID, MXIT_CP_ARCH,
 			captcha_resp, session->logindata->cc, session->logindata->locale, ( state == MXIT_STATE_REGISTER1 ) ? 0 : 1, MXIT_CP_PLATFORM, MXIT_CP_OS,
 			MXIT_CAPTCHA_HEIGHT, MXIT_CAPTCHA_WIDTH, time( NULL ) );
 	url_data = purple_util_fetch_url_request( url, TRUE, MXIT_HTTP_USERAGENT, TRUE, NULL, FALSE, mxit_cb_clientinfo2, session );
@@ -633,11 +638,12 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	/* add the captcha */
 	logindata->captcha = purple_base64_decode( parts[3], &logindata->captcha_size );
-	field = purple_request_field_image_new( "capcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
+	field = purple_request_field_image_new( "captcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
 	purple_request_field_group_add_field( group, field );
 
-	/* ask for input */
+	/* ask for input (required) */
 	field = purple_request_field_string_new( "code", _( "Enter Security Code" ), NULL, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* choose your country, but be careful, we already know your IP! ;-) */
@@ -654,7 +660,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 		}
 		purple_request_field_list_add( field, country[1], g_strdup( country[0] ) );
 		if ( strcmp( country[1], parts[6] ) == 0 ) {
-			/* based on the user's ip, this is his current country code, so we default to it */
+			/* based on the user's IP, this is his current country code, so we default to it */
 			purple_request_field_list_add_selected( field, country[1] );
 		}
 		g_strfreev( country );
@@ -756,6 +762,12 @@ void mxit_login( PurpleAccount* account )
 void mxit_reconnect( struct MXitSession* session )
 {
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_reconnect\n" );
+
+	/* remove the input cb function */
+	if ( session->con->inpa ) {
+		purple_input_remove( session->con->inpa );
+		session->con->inpa = 0;
+	}
 
 	/* close existing connection */
 	session->flags &= ~MXIT_FLAG_CONNECTED;

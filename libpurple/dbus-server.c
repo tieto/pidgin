@@ -501,7 +501,9 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 
 	g_string_append(str, "<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>\n");
 	g_string_append_printf(str, "<node name='%s'>\n", DBUS_PATH_PURPLE);
-	g_string_append_printf(str, "<interface name='%s'>\n", DBUS_INTERFACE_PURPLE);
+	g_string_append(str, "  <interface name='org.freedesktop.DBus.Introspectable'>\n    <method name='Introspect'>\n      <arg name='data' direction='out' type='s'/>\n    </method>\n  </interface>\n\n");
+
+	g_string_append_printf(str, "  <interface name='%s'>\n", DBUS_INTERFACE_PURPLE);
 
 	bindings_list = NULL;
 	purple_signal_emit(purple_dbus_get_handle(), "dbus-introspect", &bindings_list);
@@ -517,7 +519,7 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 		{
 			const char *text;
 
-			g_string_append_printf(str, "<method name='%s'>\n", bindings[i].name);
+			g_string_append_printf(str, "    <method name='%s'>\n", bindings[i].name);
 
 			text = bindings[i].parameters;
 			while (*text)
@@ -529,10 +531,10 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 				name = dbus_gettext(&text);
 
 				g_string_append_printf(str,
-						"<arg name='%s' type='%s' direction='%s'/>\n",
+						"      <arg name='%s' type='%s' direction='%s'/>\n",
 						name, type, direction);
 			}
-			g_string_append(str, "</method>\n");
+			g_string_append(str, "    </method>\n");
 		}
 	}
 
@@ -549,7 +551,7 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 	}
 	g_string_append(str, signals);
 
-	g_string_append(str, "</interface>\n</node>\n");
+	g_string_append(str, "  </interface>\n</node>\n");
 
 	reply = dbus_message_new_method_return(message);
 	dbus_message_append_args(reply, DBUS_TYPE_STRING, &(str->str),
@@ -568,10 +570,8 @@ purple_dbus_dispatch(DBusConnection *connection,
 			"dbus-method-called", connection, message))
 		return DBUS_HANDLER_RESULT_HANDLED;
 
-	if (dbus_message_get_type(message) == DBUS_MESSAGE_TYPE_METHOD_CALL &&
-			dbus_message_has_path(message, DBUS_PATH_PURPLE) &&
-			dbus_message_has_interface(message, DBUS_INTERFACE_INTROSPECTABLE) &&
-			dbus_message_has_member(message, "Introspect"))
+	if (dbus_message_is_method_call(message, DBUS_INTERFACE_INTROSPECTABLE, "Introspect") &&
+			dbus_message_has_path(message, DBUS_PATH_PURPLE))
 	{
 		DBusMessage *reply;
 		reply = purple_dbus_introspect(message);

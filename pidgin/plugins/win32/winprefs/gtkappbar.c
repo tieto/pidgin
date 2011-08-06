@@ -167,7 +167,7 @@ static void set_toolbar(HWND hwnd, gboolean val) {
         SetWindowLong(hwnd, GWL_EXSTYLE, style);
 	SetWindowPos(hwnd, 0, 0, 0, 0, 0,
 		SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-	
+
 /*	This really should be the following, but SWP_FRAMECHANGED strangely causes initermittent problems "Show Desktop" done more than once.
  *	Not having SWP_FRAMECHANGED *should* cause the Style not to be applied, but i haven't noticed any problems
  *			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);

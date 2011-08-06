@@ -30,100 +30,102 @@
 #include "request.h"
 #include "debug.h"
 
-static const char * const moodstrings[] = {
-	"afraid",
-	"amazed",
-	"amorous",
-	"angry",
-	"annoyed",
-	"anxious",
-	"aroused",
-	"ashamed",
-	"bored",
-	"brave",
-	"calm",
-	"cautious",
-	"cold",
-	"confident",
-	"confused",
-	"contemplative",
-	"contented",
-	"cranky",
-	"crazy",
-	"creative",
-	"curious",
-	"dejected",
-	"depressed",
-	"disappointed",
-	"disgusted",
-	"dismayed",
-	"distracted",
-	"embarrassed",
-	"envious",
-	"excited",
-	"flirtatious",
-	"frustrated",
-	"grumpy",
-	"guilty",
-	"happy",
-	"hopeful",
-	"hot",
-	"humbled",
-	"humiliated",
-	"hungry",
-	"hurt",
-	"impressed",
-	"in_awe",
-	"in_love",
-	"indignant",
-	"interested",
-	"intoxicated",
-	"invincible",
-	"jealous",
-	"lonely",
-	"lucky",
-	"mean",
-	"moody",
-	"nervous",
-	"neutral",
-	"offended",
-	"outraged",
-	"playful",
-	"proud",
-	"relaxed",
-	"relieved",
-	"remorseful",
-	"restless",
-	"sad",
-	"sarcastic",
-	"serious",
-	"shocked",
-	"shy",
-	"sick",
-	"sleepy",
-	"spontaneous",
-	"stressed",
-	"strong",
-	"surprised",
-	"thankful",
-	"thirsty",
-	"tired",
-	"weak",
-	"worried"
+static PurpleMood moods[] = {
+	{"afraid", N_("Afraid"), NULL},
+	{"amazed", N_("Amazed"), NULL},
+	{"amorous", N_("Amorous"), NULL},
+	{"angry", N_("Angry"), NULL},
+	{"annoyed", N_("Annoyed"), NULL},
+	{"anxious", N_("Anxious"), NULL},
+	{"aroused", N_("Aroused"), NULL},
+	{"ashamed", N_("Ashamed"), NULL},
+	{"bored", N_("Bored"), NULL},
+	{"brave", N_("Brave"), NULL},
+	{"calm", N_("Calm"), NULL},
+	{"cautious", N_("Cautious"), NULL},
+	{"cold", N_("Cold"), NULL},
+	{"confident", N_("Confident"), NULL},
+	{"confused", N_("Confused"), NULL},
+	{"contemplative", N_("Contemplative"), NULL},
+	{"contented", N_("Contented"), NULL},
+	{"cranky", N_("Cranky"), NULL},
+	{"crazy", N_("Crazy"), NULL},
+	{"creative", N_("Creative"), NULL},
+	{"curious", N_("Curious"), NULL},
+	{"dejected", N_("Dejected"), NULL},
+	{"depressed", N_("Depressed"), NULL},
+	{"disappointed", N_("Disappointed"), NULL},
+	{"disgusted", N_("Disgusted"), NULL},
+	{"dismayed", N_("Dismayed"), NULL},
+	{"distracted", N_("Distracted"), NULL},
+	{"embarrassed", N_("Embarrassed"), NULL},
+	{"envious", N_("Envious"), NULL},
+	{"excited", N_("Excited"), NULL},
+	{"flirtatious", N_("Flirtatious"), NULL},
+	{"frustrated", N_("Frustrated"), NULL},
+	{"grateful", N_("Grateful"), NULL},
+	{"grieving", N_("Grieving"), NULL},
+	{"grumpy", N_("Grumpy"), NULL},
+	{"guilty", N_("Guilty"), NULL},
+	{"happy", N_("Happy"), NULL},
+	{"hopeful", N_("Hopeful"), NULL},
+	{"hot", N_("Hot"), NULL},
+	{"humbled", N_("Humbled"), NULL},
+	{"humiliated", N_("Humiliated"), NULL},
+	{"hungry", N_("Hungry"), NULL},
+	{"hurt", N_("Hurt"), NULL},
+	{"impressed", N_("Impressed"), NULL},
+	{"in_awe", N_("In awe"), NULL},
+	{"in_love", N_("In love"), NULL},
+	{"indignant", N_("Indignant"), NULL},
+	{"interested", N_("Interested"), NULL},
+	{"intoxicated", N_("Intoxicated"), NULL},
+	{"invincible", N_("Invincible"), NULL},
+	{"jealous", N_("Jealous"), NULL},
+	{"lonely", N_("Lonely"), NULL},
+	{"lost", N_("Lost"), NULL},
+	{"lucky", N_("Lucky"), NULL},
+	{"mean", N_("Mean"), NULL},
+	{"moody", N_("Moody"), NULL},
+	{"nervous", N_("Nervous"), NULL},
+	{"neutral", N_("Neutral"), NULL},
+	{"offended", N_("Offended"), NULL},
+	{"outraged", N_("Outraged"), NULL},
+	{"playful", N_("Playful"), NULL},
+	{"proud", N_("Proud"), NULL},
+	{"relaxed", N_("Relaxed"), NULL},
+	{"relieved", N_("Relieved"), NULL},
+	{"remorseful", N_("Remorseful"), NULL},
+	{"restless", N_("Restless"), NULL},
+	{"sad", N_("Sad"), NULL},
+	{"sarcastic", N_("Sarcastic"), NULL},
+	{"satisfied", N_("Satisfied"), NULL},
+	{"serious", N_("Serious"), NULL},
+	{"shocked", N_("Shocked"), NULL},
+	{"shy", N_("Shy"), NULL},
+	{"sick", N_("Sick"), NULL},
+	{"sleepy", N_("Sleepy"), NULL},
+	{"spontaneous", N_("Spontaneous"), NULL},
+	{"stressed", N_("Stressed"), NULL},
+	{"strong", N_("Strong"), NULL},
+	{"surprised", N_("Surprised"), NULL},
+	{"thankful", N_("Thankful"), NULL},
+	{"thirsty", N_("Thirsty"), NULL},
+	{"tired", N_("Tired"), NULL},
+	{"undefined", N_("Undefined"), NULL},
+	{"weak", N_("Weak"), NULL},
+	{"worried", N_("Worried"), NULL},
+	/* Mark the last record. */
+	{NULL, NULL, NULL}
 };
 
-static void
-jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items)
-{
-	xmlnode *item;
-	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
+static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
+	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
+	xmlnode *item = xmlnode_get_child(items, "item");
 	const char *newmood = NULL;
 	char *moodtext = NULL;
-	xmlnode *child, *mood;
-
-	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
-	item = xmlnode_get_child(items, "item");
-
+	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
+	xmlnode *moodinfo, *mood;
 	/* ignore the mood of people not on our buddy list */
 	if (!buddy || !item)
 		return;
@@ -131,39 +133,34 @@ jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items)
 	mood = xmlnode_get_child_with_namespace(item, "mood", "http://jabber.org/protocol/mood");
 	if (!mood)
 		return;
-	for (child = mood->child; child; child = child->next) {
-		if (child->type != XMLNODE_TYPE_TAG)
-			continue;
-
-		if (g_str_equal("text", child->name) && moodtext == NULL)
-				moodtext = xmlnode_get_data(child);
-		else {
-			int i;
-			for (i = 0; i < G_N_ELEMENTS(moodstrings); ++i) {
-				/* verify that the mood is known (valid) */
-				if (g_str_equal(child->name, moodstrings[i])) {
-					newmood = moodstrings[i];
-					break;
+	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
+		if (moodinfo->type == XMLNODE_TYPE_TAG) {
+			if (!strcmp(moodinfo->name, "text")) {
+				if (!moodtext) /* only pick the first one */
+					moodtext = xmlnode_get_data(moodinfo);
+			} else {
+				int i;
+				for (i = 0; moods[i].mood; ++i) {
+					/* verify that the mood is known (valid) */
+					if (!strcmp(moodinfo->name, moods[i].mood)) {
+						newmood = moods[i].mood;
+						break;
+					}
 				}
 			}
+			if (newmood != NULL && moodtext != NULL)
+			   break;
 		}
 		if (newmood != NULL && moodtext != NULL)
 		   break;
 	}
 	if (newmood != NULL) {
-		PurpleAccount *account;
-		const char *status_id;
-		JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
-		if (!resource) { /* huh? */
-			g_free(moodtext);
-			return;
-		}
-		status_id = jabber_buddy_state_get_status_id(resource->state);
-
-		account = purple_connection_get_account(js->gc);
-		purple_prpl_got_user_status(account, from, status_id, "mood",
-		                            _(newmood), "moodtext",
-		                            moodtext ? moodtext : "", NULL);
+		purple_prpl_got_user_status(js->gc->account, from, "mood",
+				PURPLE_MOOD_NAME, newmood,
+				PURPLE_MOOD_COMMENT, moodtext,
+				NULL);
+	} else {
+		purple_prpl_got_user_status_deactive(js->gc->account, from, "mood");
 	}
 	g_free(moodtext);
 }
@@ -173,79 +170,19 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
-static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
-	JabberStream *js;
-	int selected_mood = purple_request_fields_get_choice(fields, "mood");
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_debug_error("jabber", "Unable to set mood; account offline.\n");
-		return;
-	}
-
-	js = gc->proto_data;
-
-	if (selected_mood < 0 || selected_mood >= G_N_ELEMENTS(moodstrings)) {
-		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
-		return;
-	}
-
-	jabber_mood_set(js, moodstrings[selected_mood], purple_request_fields_get_string(fields, "text"));
-}
-
-static void do_mood_set_mood(PurplePluginAction *action) {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
-
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-	int i;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_choice_new("mood",
-											_("Mood"), 0);
-
-	for(i = 0; i < G_N_ELEMENTS(moodstrings); ++i)
-		purple_request_field_choice_add(field, _(moodstrings[i]));
-
-	purple_request_field_set_required(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("text",
-											_("Description"), NULL,
-											FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	purple_request_fields(gc, _("Edit User Mood"),
-						  _("Edit User Mood"),
-						  _("Please select your mood from the list."),
-						  fields,
-						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
-						  _("Cancel"), NULL,
-						  purple_connection_get_account(gc), NULL, NULL,
-						  gc);
-
-}
-
-void jabber_mood_init_action(GList **m) {
-	PurplePluginAction *act = purple_plugin_action_new(_("Set Mood..."), do_mood_set_mood);
-	*m = g_list_append(*m, act);
-}
-
 void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
-
-	g_return_if_fail(mood != NULL);
 
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
 	moodnode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "mood");
 	xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
-	xmlnode_new_child(moodnode, mood);
+	if (mood && *mood) {
+		/* if mood is NULL, set an empty mood node, meaning: unset mood */
+	    xmlnode_new_child(moodnode, mood);
+	}
 
-	if (text && text[0] != '\0') {
+	if (text && *text) {
 		xmlnode *textnode = xmlnode_new_child(moodnode, "text");
 		xmlnode_insert_data(textnode, text, -1);
 	}
@@ -253,4 +190,9 @@ void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	jabber_pep_publish(js, publish);
 	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
 	   (yay for well-defined memory management rules) */
+}
+
+PurpleMood *jabber_get_moods(PurpleAccount *account)
+{
+	return moods;
 }

@@ -1,10 +1,10 @@
 /*
 	File:		Utilities.c
-	
+
 	Description: Miscellaneous Utility routines.
 
 	Copyright: 	© Copyright 2003 Apple Computer, Inc. All rights reserved.
-	
+
 	Disclaimer:	IMPORTANT:  This Apple software is supplied to you by Apple Computer, Inc.
 				("Apple") in consideration of your agreement to the following terms, and your
 				use, installation, modification or redistribution of this Apple software
@@ -39,7 +39,7 @@
 				OF THE APPLE SOFTWARE, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT
 				(INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN
 				ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-				
+
 	Change History (most recent first):
 
 */
@@ -60,9 +60,9 @@ const StringPtr kApplicationName = "\pYourAppNameHere";
 //
 // Note that both StandardGetFilePreview and NavGetFile use the function specified by theFilterProc as a
 // file filter. This framework always passes NULL in the theFilterProc parameter. If you use this function
-// in your own code, keep in mind that on Windows the function specifier must be of type FileFilterUPP and 
+// in your own code, keep in mind that on Windows the function specifier must be of type FileFilterUPP and
 // on Macintosh it must be of type NavObjectFilterUPP. (You can use the QTFrame_GetFileFilterUPP to create
-// a function specifier of the appropriate type.) Also keep in mind that Navigation Services expects a file 
+// a function specifier of the appropriate type.) Also keep in mind that Navigation Services expects a file
 // filter function to return true if a file is to be displayed, while the Standard File Package expects the
 // filter to return false if a file is to be displayed.
 //
@@ -70,7 +70,7 @@ const StringPtr kApplicationName = "\pYourAppNameHere";
 
 OSErr GetOneFileWithPreview (short theNumTypes, TypeListPtr theTypeList, FSSpecPtr theFSSpecPtr, void *theFilterProc)
 {
-	
+
 #if TARGET_OS_WIN32
 	StandardFileReply	myReply;
 #endif
@@ -81,7 +81,7 @@ OSErr GetOneFileWithPreview (short theNumTypes, TypeListPtr theTypeList, FSSpecP
 	NavEventUPP		myEventUPP = NewNavEventUPP(HandleNavEvent);
 #endif
 	OSErr				myErr = noErr;
-	
+
 	if (theFSSpecPtr == NULL)
 		return(paramErr);
 
@@ -90,7 +90,7 @@ OSErr GetOneFileWithPreview (short theNumTypes, TypeListPtr theTypeList, FSSpecP
 	StandardGetFilePreview((FileFilterUPP)theFilterProc, theNumTypes, (ConstSFTypeListPtr)theTypeList, &myReply);
 	if (!myReply.sfGood)
 		return(userCanceledErr);
-	
+
 	// make an FSSpec record
 	myErr = FSMakeFSSpec(myReply.sfFile.vRefNum, myReply.sfFile.parID, myReply.sfFile.name, theFSSpecPtr);
 #endif
@@ -101,34 +101,34 @@ OSErr GetOneFileWithPreview (short theNumTypes, TypeListPtr theTypeList, FSSpecP
 	myDialogOptions.dialogOptionFlags -= kNavNoTypePopup;
 	myDialogOptions.dialogOptionFlags -= kNavAllowMultipleFiles;
 	BlockMoveData(kApplicationName, myDialogOptions.clientName, kApplicationName[0] + 1);
-	
+
 	// create a handle to an 'open' resource
 	myOpenList = (NavTypeListHandle)CreateOpenHandle(kApplicationSignature, theNumTypes, theTypeList);
 	if (myOpenList != NULL)
 		HLock((Handle)myOpenList);
-	
+
 	// prompt the user for a file
 	myErr = NavGetFile(NULL, &myReply, &myDialogOptions, myEventUPP, NULL, (NavObjectFilterUPP)theFilterProc, myOpenList, NULL);
 	if ((myErr == noErr) && myReply.validRecord) {
 		AEKeyword		myKeyword;
 		DescType		myActualType;
 		Size			myActualSize = 0;
-		
+
 		// get the FSSpec for the selected file
 		if (theFSSpecPtr != NULL)
 			myErr = AEGetNthPtr(&(myReply.selection), 1, typeFSS, &myKeyword, &myActualType, theFSSpecPtr, sizeof(FSSpec), &myActualSize);
 
 		NavDisposeReply(&myReply);
 	}
-	
+
 	if (myOpenList != NULL) {
 		HUnlock((Handle)myOpenList);
 		DisposeHandle((Handle)myOpenList);
 	}
-	
+
 	DisposeNavEventUPP(myEventUPP);
 #endif
- 
+
 	return(myErr);
 }
 
@@ -142,7 +142,7 @@ OSErr GetOneFileWithPreview (short theNumTypes, TypeListPtr theTypeList, FSSpecP
 Handle CreateOpenHandle (OSType theApplicationSignature, short theNumTypes, TypeListPtr theTypeList)
 {
 	Handle			myHandle = NULL;
-	
+
 	// see if we have an 'open' resource...
 	myHandle = Get1Resource('open', 128);
 	if ( myHandle != NULL && ResError() == noErr ) {
@@ -151,22 +151,22 @@ Handle CreateOpenHandle (OSType theApplicationSignature, short theNumTypes, Type
 	} else {
 		myHandle = NULL;
 	}
-	
+
 	// nope, use the passed in types and dynamically create the NavTypeList
 	if (theTypeList == NULL)
 		return myHandle;
-	
+
 	if (theNumTypes > 0) {
 		myHandle = NewHandle(sizeof(NavTypeList) + (theNumTypes * sizeof(OSType)));
 		if (myHandle != NULL) {
 			NavTypeListHandle 	myOpenResHandle	= (NavTypeListHandle)myHandle;
-			
+
 			(*myOpenResHandle)->componentSignature = theApplicationSignature;
 			(*myOpenResHandle)->osTypeCount = theNumTypes;
 			BlockMoveData(theTypeList, (*myOpenResHandle)->osType, theNumTypes * sizeof(OSType));
 		}
 	}
-	
+
 	return myHandle;
 }
 
@@ -180,7 +180,7 @@ Handle CreateOpenHandle (OSType theApplicationSignature, short theNumTypes, Type
 PASCAL_RTN void HandleNavEvent(NavEventCallbackMessage theCallBackSelector, NavCBRecPtr theCallBackParms, void *theCallBackUD)
 {
 #pragma unused(theCallBackUD)
-	
+
 	if (theCallBackSelector == kNavCBEvent) {
 		switch (theCallBackParms->eventData.eventDataParms.event->what) {
 			case updateEvt:
@@ -212,27 +212,27 @@ OSErr PutFile (ConstStr255Param thePrompt, ConstStr255Param theFileName, FSSpecP
 
 	if ((theFSSpecPtr == NULL) || (theIsSelected == NULL) || (theIsReplacing == NULL))
 		return(paramErr);
-	
+
 	// assume we are not replacing an existing file
 	*theIsReplacing = false;
-	
+
         *theIsSelected = false;
-        
+
 	// specify the options for the dialog box
 	NavGetDefaultDialogOptions(&myDialogOptions);
 	myDialogOptions.dialogOptionFlags += kNavNoTypePopup;
 	myDialogOptions.dialogOptionFlags += kNavDontAutoTranslate;
 	BlockMoveData(theFileName, myDialogOptions.savedFileName, theFileName[0] + 1);
 	BlockMoveData(thePrompt, myDialogOptions.message, thePrompt[0] + 1);
-	
+
 	// prompt the user for a file
 	myErr = NavPutFile(NULL, &myReply, &myDialogOptions, myEventUPP, MovieFileType, sigMoviePlayer, NULL);
-	if ((myErr == noErr) && myReply.validRecord) 
+	if ((myErr == noErr) && myReply.validRecord)
     {
 		AEKeyword		myKeyword;
 		DescType		myActualType;
 		Size			myActualSize = 0;
-		
+
 		// get the FSSpec for the selected file
 		if (theFSSpecPtr != NULL)
 			myErr = AEGetNthPtr(&(myReply.selection), 1, typeFSS, &myKeyword, &myActualType, theFSSpecPtr, sizeof(FSSpec), &myActualSize);
@@ -245,7 +245,7 @@ OSErr PutFile (ConstStr255Param thePrompt, ConstStr255Param theFileName, FSSpecP
 
 		NavDisposeReply(&myReply);
 	}
-		
+
 
 	DisposeNavEventUPP(myEventUPP);
 
@@ -268,7 +268,7 @@ void DrawLobsterPICTtoGWorld(CGrafPtr destGWorld, Rect *srcRect)
         CGrafPtr	oldPort;
         GDHandle	oldDevice;
         Rect		frame = (**pict).picFrame;
-        
+
         GetGWorld(&oldPort, &oldDevice);
         SetGWorld(destGWorld, nil);
         // normalize coordinates

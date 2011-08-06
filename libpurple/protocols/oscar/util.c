@@ -35,6 +35,40 @@
 #include "win32dep.h"
 #endif
 
+static const char * const msgerrreason[] = {
+	N_("Invalid error"),
+	N_("Invalid SNAC"),
+	N_("Server rate limit exceeded"),
+	N_("Client rate limit exceeded"),
+	N_("Not logged in"),
+	N_("Service unavailable"),
+	N_("Service not defined"),
+	N_("Obsolete SNAC"),
+	N_("Not supported by host"),
+	N_("Not supported by client"),
+	N_("Refused by client"),
+	N_("Reply too big"),
+	N_("Responses lost"),
+	N_("Request denied"),
+	N_("Busted SNAC payload"),
+	N_("Insufficient rights"),
+	N_("In local permit/deny"),
+	N_("Warning level too high (sender)"),
+	N_("Warning level too high (receiver)"),
+	N_("User temporarily unavailable"),
+	N_("No match"),
+	N_("List overflow"),
+	N_("Request ambiguous"),
+	N_("Queue full"),
+	N_("Not while on AOL")
+};
+static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
+
+const char *oscar_get_msgerr_reason(size_t reason)
+{
+	return (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason");
+}
+
 int oscar_get_ui_info_int(const char *str, int default_value)
 {
 	GHashTable *ui_info;
@@ -71,91 +105,6 @@ gchar *oscar_get_clientstring(void)
 	version = oscar_get_ui_info_string("version", VERSION);
 
 	return g_strdup_printf("%s/%s", name, version);;
-}
-
-/*
- * Tokenizing functions.  Used to portably replace strtok/sep.
- *   -- DMP.
- *
- */
-/* TODO: Get rid of this and use glib functions */
-int
-aimutil_tokslen(char *toSearch, int theindex, char dl)
-{
-	int curCount = 1;
-	char *next;
-	char *last;
-	int toReturn;
-
-	last = toSearch;
-	next = strchr(toSearch, dl);
-
-	while(curCount < theindex && next != NULL) {
-		curCount++;
-		last = next + 1;
-		next = strchr(last, dl);
-	}
-
-	if ((curCount < theindex) || (next == NULL))
-		toReturn = strlen(toSearch) - (curCount - 1);
-	else
-		toReturn = next - toSearch - (curCount - 1);
-
-	return toReturn;
-}
-
-int
-aimutil_itemcnt(char *toSearch, char dl)
-{
-	int curCount;
-	char *next;
-
-	curCount = 1;
-
-	next = strchr(toSearch, dl);
-
-	while(next != NULL) {
-		curCount++;
-		next = strchr(next + 1, dl);
-	}
-
-	return curCount;
-}
-
-char *
-aimutil_itemindex(char *toSearch, int theindex, char dl)
-{
-	int curCount;
-	char *next;
-	char *last;
-	char *toReturn;
-
-	curCount = 0;
-
-	last = toSearch;
-	next = strchr(toSearch, dl);
-
-	while (curCount < theindex && next != NULL) {
-		curCount++;
-		last = next + 1;
-		next = strchr(last, dl);
-	}
-	next = strchr(last, dl);
-
-	if (curCount < theindex) {
-		toReturn = g_malloc(sizeof(char));
-		*toReturn = '\0';
-	} else {
-		if (next == NULL) {
-			toReturn = g_malloc((strlen(last) + 1) * sizeof(char));
-			strcpy(toReturn, last);
-		} else {
-			toReturn = g_malloc((next - last + 1) * sizeof(char));
-			memcpy(toReturn, last, (next - last));
-			toReturn[next - last] = '\0';
-		}
-	}
-	return toReturn;
 }
 
 /**
@@ -288,4 +237,90 @@ oscar_util_name_compare(const char *name1, const char *name2)
 	} while ((*name1 != '\0') && name1++ && name2++);
 
 	return 0;
+}
+
+/**
+ * Looks for %n, %d, or %t in a string, and replaces them with the
+ * specified name, date, and time, respectively.
+ *
+ * @param str  The string that may contain the special variables.
+ * @param name The sender name.
+ *
+ * @return A newly allocated string where the special variables are
+ *         expanded.  This should be g_free'd by the caller.
+ */
+gchar *
+oscar_util_format_string(const char *str, const char *name)
+{
+	char *c;
+	GString *cpy;
+	time_t t;
+	struct tm *tme;
+
+	g_return_val_if_fail(str  != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	/* Create an empty GString that is hopefully big enough for most messages */
+	cpy = g_string_sized_new(1024);
+
+	t = time(NULL);
+	tme = localtime(&t);
+
+	c = (char *)str;
+	while (*c) {
+		switch (*c) {
+		case '%':
+			if (*(c + 1)) {
+				switch (*(c + 1)) {
+				case 'n':
+					/* append name */
+					g_string_append(cpy, name);
+					c++;
+					break;
+				case 'd':
+					/* append date */
+					g_string_append(cpy, purple_date_format_short(tme));
+					c++;
+					break;
+				case 't':
+					/* append time */
+					g_string_append(cpy, purple_time_format(tme));
+					c++;
+					break;
+				default:
+					g_string_append_c(cpy, *c);
+				}
+			} else {
+				g_string_append_c(cpy, *c);
+			}
+			break;
+		default:
+			g_string_append_c(cpy, *c);
+		}
+		c++;
+	}
+
+	return g_string_free(cpy, FALSE);
+}
+
+gchar *
+oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message)
+{
+	GSList *cur;
+	GString *result;
+	if (!buddies) {
+		return g_strdup_printf("<i>%s</i>", no_buddies_message);
+	}
+	result = g_string_new("");
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		PurpleBuddy *buddy = cur->data;
+		const gchar *bname = purple_buddy_get_name(buddy);
+		const gchar *alias = purple_buddy_get_alias_only(buddy);
+		g_string_append(result, bname);
+		if (alias) {
+			g_string_append_printf(result, " (%s)", alias);
+		}
+		g_string_append(result, "<br>");
+	}
+	return g_string_free(result, FALSE);
 }
