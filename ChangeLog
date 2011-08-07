@@ -36,8 +36,9 @@ version 2.10.0 (MM/DD/YYYY):
 	* Fix the /join <room> behavior.  (Broken when adding support for
 	  <room>@<server>)  (#14205)
 
-	Yahoo:
+	Yahoo!/Yahoo! JAPAN:
 	* Fix coming out of idle while in an unavailable state
+	* Fix logging into Yahoo! JAPAN.  (#14259)
 
 version 2.9.0 (06/23/2011):
 	Pidgin:
