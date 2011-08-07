@@ -743,10 +743,14 @@ oscar_login(PurpleAccount *account)
 	gc->flags |= PURPLE_CONNECTION_HTML;
 	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
-		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
+
+	/* Set this flag based on the protocol_id rather than the username,
+	   because that is what's tied to the get_moods prpl callback. */
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
+		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
@@ -1465,10 +1469,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		} else if (previous_status != NULL && purple_status_is_available(previous_status)) {
 			itmsurl = g_strdup(purple_status_get_attr_string(previous_status, "itmsurl"));
 		}
-		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message, itmsurl);
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s', itmsurl = '%s'\n", status_id, info->bn, message ? message : "(null)", itmsurl ? itmsurl : "(null)");
 		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, "itmsurl", itmsurl, NULL);
 	} else {
-		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message);
+		purple_debug_info("oscar", "Activating status '%s' for buddy %s, message = '%s'\n", status_id, info->bn, message ? message : "(null)");
 		purple_prpl_got_user_status(account, info->bn, status_id, "message", message, NULL);
 	}
 

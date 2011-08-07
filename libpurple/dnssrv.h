@@ -129,6 +129,8 @@ PurpleSrvTxtQueryData *purple_srv_resolve(const char *protocol, const char *tran
  * Cancel an SRV or DNS query.
  *
  * @param query_data The request to cancel.
+ *
+ * @deprecated Use purple_srv_txt_query_destroy instead
  */
 void purple_srv_cancel(PurpleSrvTxtQueryData *query_data);
 
@@ -166,6 +168,8 @@ PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner, const char *domain,
  *
  * @param query_data The request to cancel.
  * @since 2.6.0
+ *
+ * @deprecated Use purple_srv_txt_query_destroy instead
  */
 void purple_txt_cancel(PurpleSrvTxtQueryData *query_data);
 

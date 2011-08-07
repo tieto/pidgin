@@ -16,6 +16,7 @@ Suite * jabber_scram_suite(void);
 Suite * oscar_util_suite(void);
 Suite * yahoo_util_suite(void);
 Suite * util_suite(void);
+Suite * xmlnode_suite(void);
 
 /* helper macros */
 #define assert_int_equal(expected, actual) { \

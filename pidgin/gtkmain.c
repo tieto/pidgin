@@ -270,7 +270,7 @@ ui_main(void)
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
 		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
-		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+		icon = pidgin_pixbuf_new_from_file(icon_path);
 		g_free(icon_path);
 		if (icon) {
 			icons = g_list_append(icons,icon);
@@ -381,8 +381,10 @@ static GHashTable *pidgin_ui_get_info(void)
 		 * account "markdoliner."  Please don't use this key for other
 		 * applications.  You can either not specify a client key, in
 		 * which case the default "libpurple" key will be used, or you
-		 * can register for your own client key at
-		 * http://developer.aim.com/manageKeys.jsp
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");

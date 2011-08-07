@@ -571,7 +571,6 @@ Use --disable-gtkspell if you do not need it.
 			evo_deps="libebook-1.0 libedata-book-1.0"
 			PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 				enable_gevolution="yes"
-			], [
 			])
 		fi
 		if test "x$enable_gevolution" = "xyes"; then

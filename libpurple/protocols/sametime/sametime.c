@@ -922,6 +922,11 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
   alias = mwSametimeGroup_getAlias(stgroup);
   type = mwSametimeGroup_getType(stgroup);
 
+  if (!name) {
+    DEBUG_WARN("Can't ensure a null group\n");
+    return;
+  }
+
   DEBUG_INFO("attempting to ensure group %s, called %s\n",
 	     NSTR(name), NSTR(alias));
 

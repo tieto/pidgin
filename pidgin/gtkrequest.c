@@ -653,35 +653,30 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 
 	/* Dialog icon. */
 	if (icon_data) {
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-		GdkPixbuf *pixbuf = NULL;
-		if (gdk_pixbuf_loader_write(loader, icon_data, icon_size, NULL)) {
-			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-			if (pixbuf) {
-				/* scale the image if it is too large */
-				int width = gdk_pixbuf_get_width(pixbuf);
-				int height = gdk_pixbuf_get_height(pixbuf);
-				if (width > 128 || height > 128) {
-					int scaled_width = width > height ? 128 : (128 * width) / height;
-					int scaled_height = height > width ? 128 : (128 * height) / width;
-					GdkPixbuf *scaled =
-							gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
-							    GDK_INTERP_BILINEAR);
+		GdkPixbuf *pixbuf = pidgin_pixbuf_from_data(icon_data, icon_size);
+		if (pixbuf) {
+			/* scale the image if it is too large */
+			int width = gdk_pixbuf_get_width(pixbuf);
+			int height = gdk_pixbuf_get_height(pixbuf);
+			if (width > 128 || height > 128) {
+				int scaled_width = width > height ? 128 : (128 * width) / height;
+				int scaled_height = height > width ? 128 : (128 * height) / width;
+				GdkPixbuf *scaled =
+						gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
+						    GDK_INTERP_BILINEAR);
 
-					purple_debug_info("pidgin",
-					    "dialog icon was too large, scale it down\n");
-					if (scaled) {
-						g_object_unref(pixbuf);
-						pixbuf = scaled;
-					}
+				purple_debug_info("pidgin",
+				    "dialog icon was too large, scaled it down\n");
+				if (scaled) {
+					g_object_unref(pixbuf);
+					pixbuf = scaled;
 				}
-				img = gtk_image_new_from_pixbuf(pixbuf);
 			}
+			img = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(pixbuf);
 		} else {
 			purple_debug_info("pidgin", "failed to parse dialog icon\n");
 		}
-		gdk_pixbuf_loader_close(loader, NULL);
-		g_object_unref(loader);
 	}
 
 	if (!img) {
@@ -1040,22 +1035,17 @@ create_image_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
 	GdkPixbuf *buf, *scale;
-	GdkPixbufLoader *loader;
 
-	loader = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(loader,
-							(const guchar *)purple_request_field_image_get_buffer(field),
-							purple_request_field_image_get_size(field),
-							NULL);
-	gdk_pixbuf_loader_close(loader, NULL);
-	buf = gdk_pixbuf_loader_get_pixbuf(loader);
+	buf = pidgin_pixbuf_from_data(
+			(const guchar *)purple_request_field_image_get_buffer(field),
+			purple_request_field_image_get_size(field));
 
 	scale = gdk_pixbuf_scale_simple(buf,
 			purple_request_field_image_get_scale_x(field) * gdk_pixbuf_get_width(buf),
 			purple_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
 			GDK_INTERP_BILINEAR);
 	widget = gtk_image_new_from_pixbuf(scale);
-	g_object_unref(G_OBJECT(loader));
+	g_object_unref(G_OBJECT(buf));
 	g_object_unref(G_OBJECT(scale));
 
 #if GTK_CHECK_VERSION(2,12,0)
@@ -1164,7 +1154,7 @@ create_list_field(PurpleRequestField *field)
 			GdkPixbuf* pixbuf = NULL;
 
 			if (icon_path)
-				pixbuf = gdk_pixbuf_new_from_file(icon_path, NULL);
+				pixbuf = pidgin_pixbuf_new_from_file(icon_path);
 
 			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),

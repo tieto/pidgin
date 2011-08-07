@@ -615,7 +615,7 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 				    tmp, NULL);
 	g_free(tmp);
 
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file(filename);
 	g_free(filename);
 
 	return pixbuf;
@@ -704,7 +704,7 @@ create_protocols_menu(const char *default_proto_id)
 			                                  "16", "google-talk.png", NULL);
 			GtkWidget *item;
 
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			pixbuf = pidgin_pixbuf_new_from_file(filename);
 			g_free(filename);
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
@@ -723,7 +723,7 @@ create_protocols_menu(const char *default_proto_id)
 			                                  "16", "facebook.png", NULL);
 			GtkWidget *item;
 
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			pixbuf = pidgin_pixbuf_new_from_file(filename);
 			g_free(filename);
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
@@ -1593,7 +1593,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 		}
 
 		/* Are we dealing with an image? */
-		pb = gdk_pixbuf_new_from_file(filename, NULL);
+		pb = pidgin_pixbuf_new_from_file(filename);
 		if (pb) {
 			_DndData *data = g_malloc(sizeof(_DndData));
 			gboolean ft = FALSE, im = FALSE;
@@ -2265,7 +2265,7 @@ icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
 	filename = gtk_file_chooser_get_preview_filename(
 					GTK_FILE_CHOOSER(dialog->icon_filesel));
 
-	if (!filename || g_stat(filename, &st) || !(pixbuf = gdk_pixbuf_new_from_file(filename, NULL)))
+	if (!filename || g_stat(filename, &st) || !(pixbuf = pidgin_pixbuf_new_from_file(filename)))
 	{
 		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
 		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
@@ -3086,17 +3086,134 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 #endif
 }
 
-GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+static GObject *pidgin_pixbuf_from_data_helper(const guchar *buf, gsize count, gboolean animated)
+{
+	GObject *pixbuf;
+	GdkPixbufLoader *loader;
+	GError *error = NULL;
+
+	loader = gdk_pixbuf_loader_new();
+
+	if (!gdk_pixbuf_loader_write(loader, buf, count, &error) || error) {
+		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_write() "
+				"failed with size=%zu: %s\n", count,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		g_object_unref(G_OBJECT(loader));
+		return NULL;
+	}
+
+	if (!gdk_pixbuf_loader_close(loader, &error) || error) {
+		purple_debug_warning("gtkutils", "gdk_pixbuf_loader_close() "
+				"failed for image of size %zu: %s\n", count,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		g_object_unref(G_OBJECT(loader));
+		return NULL;
+	}
+
+	if (animated)
+		pixbuf = G_OBJECT(gdk_pixbuf_loader_get_animation(loader));
+	else
+		pixbuf = G_OBJECT(gdk_pixbuf_loader_get_pixbuf(loader));
+	if (!pixbuf) {
+		purple_debug_warning("gtkutils", "%s() returned NULL for image "
+				"of size %zu\n",
+				animated ? "gdk_pixbuf_loader_get_animation"
+					: "gdk_pixbuf_loader_get_pixbuf", count);
+		g_object_unref(G_OBJECT(loader));
+		return NULL;
+	}
+
+	g_object_ref(pixbuf);
+	g_object_unref(G_OBJECT(loader));
+
+	return pixbuf;
+}
+
+GdkPixbuf *pidgin_pixbuf_from_data(const guchar *buf, gsize count)
+{
+	return GDK_PIXBUF(pidgin_pixbuf_from_data_helper(buf, count, FALSE));
+}
+
+GdkPixbufAnimation *pidgin_pixbuf_anim_from_data(const guchar *buf, gsize count)
+{
+	return GDK_PIXBUF_ANIMATION(pidgin_pixbuf_from_data_helper(buf, count, TRUE));
+}
+
+GdkPixbuf *pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+{
+	return pidgin_pixbuf_from_data(purple_imgstore_get_data(image),
+			purple_imgstore_get_size(image));
+}
+
+GdkPixbuf *pidgin_pixbuf_new_from_file(const gchar *filename)
 {
 	GdkPixbuf *pixbuf;
-	GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(image),
-			purple_imgstore_get_size(image), NULL);
-	gdk_pixbuf_loader_close(loader, NULL);
-	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-	if (pixbuf)
-		g_object_ref(pixbuf);
-	g_object_unref(loader);
+	GError *error = NULL;
+
+	pixbuf = gdk_pixbuf_new_from_file(filename, &error);
+	if (!pixbuf || error) {
+		purple_debug_warning("gtkutils", "gdk_pixbuf_new_from_file() "
+				"returned %s for file %s: %s\n",
+				pixbuf ? "something" : "nothing",
+				filename,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		if (pixbuf)
+			g_object_unref(G_OBJECT(pixbuf));
+		return NULL;
+	}
+
+	return pixbuf;
+}
+
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_size(const char *filename, int width, int height)
+{
+	GdkPixbuf *pixbuf;
+	GError *error = NULL;
+
+	pixbuf = gdk_pixbuf_new_from_file_at_size(filename,
+			width, height, &error);
+	if (!pixbuf || error) {
+		purple_debug_warning("gtkutils", "gdk_pixbuf_new_from_file_at_size() "
+				"returned %s for file %s: %s\n",
+				pixbuf ? "something" : "nothing",
+				filename,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		if (pixbuf)
+			g_object_unref(G_OBJECT(pixbuf));
+		return NULL;
+	}
+
+	return pixbuf;
+}
+
+GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width, int height, gboolean preserve_aspect_ratio)
+{
+	GdkPixbuf *pixbuf;
+	GError *error = NULL;
+
+	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename,
+			width, height, preserve_aspect_ratio, &error);
+	if (!pixbuf || error) {
+		purple_debug_warning("gtkutils", "gdk_pixbuf_new_from_file_at_scale() "
+				"returned %s for file %s: %s\n",
+				pixbuf ? "something" : "nothing",
+				filename,
+				error ? error->message : "(no error message)");
+		if (error)
+			g_error_free(error);
+		if (pixbuf)
+			g_object_unref(G_OBJECT(pixbuf));
+		return NULL;
+	}
+
 	return pixbuf;
 }
 

@@ -155,7 +155,6 @@ purple_coreheaders = \
 	theme-manager.h \
 	upnp.h \
 	util.h \
-	valgrind.h \
 	value.h \
 	xmlnode.h \
 	whiteboard.h

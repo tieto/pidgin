@@ -535,7 +535,7 @@ purple_upnp_discover_timeout(gpointer data)
 		dd->retry_count++;
 		purple_upnp_discover_send_broadcast(dd);
 	} else {
-		if (dd->fd)
+		if (dd->fd != -1)
 			close(dd->fd);
 
 		control_info.status = PURPLE_UPNP_STATUS_UNABLE_TO_DISCOVER;
@@ -662,7 +662,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 	}
 
 	/* Set up the sockets */
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	dd->fd = sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1) {
 		purple_debug_error("upnp",
 			"purple_upnp_discover(): Failed In sock creation\n");
@@ -671,8 +671,6 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
-
-	dd->fd = sock;
 
 	/* TODO: Non-blocking! */
 	if((hp = gethostbyname(HTTPMU_HOST_ADDRESS)) == NULL) {
@@ -820,7 +818,7 @@ purple_upnp_get_internal_ip(void)
 static void
 looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 {
-	if (source) {
+	if (source != -1) {
 		strncpy(control_info.internalip,
 			purple_network_get_local_system_ip(source),
 			sizeof(control_info.internalip));
