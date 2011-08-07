@@ -230,7 +230,7 @@ close_this_sucker(gpointer data)
 }
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv)
+close_conv_cb(GtkButton *button, PidginConversation *gtkconv)
 {
 	/* We are going to destroy the conversations immediately only if the 'close immediately'
 	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
@@ -379,6 +379,12 @@ static void clear_conversation_scrollback(PurpleConversation *conv)
 		purple_conversation_clear_message_history(iter->data);
 }
 
+
+static void clear_conversation_scrollback_cb(PurpleConversation *conv,
+		void *data)
+{
+	clear_conversation_scrollback(conv);
+}
 static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
@@ -1543,7 +1549,7 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 static GtkTextMark *
 get_mark_for_user(PidginConversation *gtkconv, const char *who)
 {
-	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
+	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->webview));
 	char *tmp = g_strconcat("user:", who, NULL);
 	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
 
@@ -3970,7 +3976,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	if (is_me) {
 		GtkTextTag *tag = gtk_text_tag_table_lookup(
-				gtk_text_buffer_get_tag_table(GTK_IMHTML(gtkconv->imhtml)->text_buffer),
+				gtk_text_buffer_get_tag_table(GTK_IMHTML(gtkconv->webview)->text_buffer),
 				"send-name");
 		g_object_get(tag, "foreground-gdk", &color, NULL);
 	} else {
@@ -4797,7 +4803,7 @@ pidgin_conv_end_quickfind(PidginConversation *gtkconv)
 {
 	gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
 
-	gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->imhtml));
+	gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->webview));
 	gtk_widget_hide_all(gtkconv->quickfind.container);
 
 	gtk_widget_grab_focus(gtkconv->entry);
@@ -4810,7 +4816,7 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 	switch (event->keyval) {
 		case GDK_Return:
 		case GDK_KP_Enter:
-			if (gtk_imhtml_search_find(GTK_IMHTML(gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(entry)))) {
+			if (gtk_imhtml_search_find(GTK_IMHTML(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)))) {
 				gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
 			} else {
 				GdkColor col;
@@ -5245,7 +5251,7 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 
 static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
 {
-/* FIXME
+/* FIXME */
 #if 0
 	static PangoFontDescription *font_desc = NULL;
 	static GdkColor *color = NULL;
@@ -5791,7 +5797,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	length = strlen(displaying) + 1;
 
 
-	win = gtkconv->win;
 	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
 	/* if the buffer is not empty add a <br> */
@@ -5847,7 +5852,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
 	{
 		/* We want to see our own smileys. Need to revert it after send*/
-		pidgin_themes_smiley_themeize_custom(gtkconv->imhtml);
+		pidgin_themes_smiley_themeize_custom(gtkconv->webview);
 	}
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
@@ -5942,24 +5947,26 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
+		/* FIXME: */
+#if 0
 		if (tagname)
 			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
 		else
 			tag = get_buddy_tag(conv, name, flags, TRUE);
 
-		/* FIXME:
-		if (GTK_IMHTML(gtkconv->imhtml)->show_comments) {*/
+		if (GTK_IMHTML(gtkconv->imhtml)->show_comments) {
 		{
 			/* The color for the timestamp has to be set in the font-tags, unfortunately.
 			 * Applying the nick-tag to timestamps would work, but that can make it
 			 * bold. I thought applying the "comment" tag again, which has "weight" set
 			 * to PANGO_WEIGHT_NORMAL, would remove the boldness. But it doesn't. So
 			 * this will have to do. I don't terribly like it.  -- sadrul */
-			const char *color = get_text_tag_color(tag);
+			/* const char *color = get_text_tag_color(tag); */
 			g_snprintf(buf2, BUF_LONG, "<FONT %s%s%s SIZE=\"2\"><!--%s --></FONT>",
 					color ? "COLOR=\"" : "", color ? color : "", color ? "\"" : "", mdate);
 			gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), buf2);
 		}
+#endif
 		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
@@ -6004,7 +6011,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
 	{
 		/* Restore the smiley-data */
-		pidgin_themes_smiley_themeize(gtkconv->imhtml);
+		pidgin_themes_smiley_themeize(gtkconv->webview);
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
@@ -6277,7 +6284,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 		}
 	}
 
-	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->imhtml), sml, smile))
+	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->webview), sml, smile))
 		return FALSE;
 
 	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
@@ -6645,7 +6652,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 	}
 
 	if (fields & PIDGIN_CONV_SMILEY_THEME)
-		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
+		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->webview);
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
 			(fields & PIDGIN_CONV_SET_TITLE) ||
@@ -7228,7 +7235,7 @@ show_timestamps_pref_cb(const char *name, PurplePrefType type,
 		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 		        (gboolean)GPOINTER_TO_INT(value));
 
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->webview),
 			(gboolean)GPOINTER_TO_INT(value));
 	}
 }
