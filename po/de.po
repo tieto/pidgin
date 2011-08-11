@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-21 09:12+0200\n"
-"PO-Revision-Date: 2011-06-21 09:11+0200\n"
+"POT-Creation-Date: 2011-08-11 10:27+0200\n"
+"PO-Revision-Date: 2011-08-11 10:12+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1959,7 +1959,7 @@ msgid "Unknown reason"
 msgstr "Unbekannter Grund"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
-msgstr "DNS-Anfrage im Tor-Proxy-Modus abgebrochen"
+msgstr "DNS-Anfrage im Tor-Proxy-Modus abgebrochen."
 
 #, c-format
 msgid ""
@@ -4778,8 +4778,8 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 "invite &lt;Benutzer&gt; [Nachricht]:  Lade einen Benutzer in den Raum ein."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;Raum&gt; [Passwort]:  Betrete einen Chat auf diesem Server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;Raum[@Server]&gt; [Passwort]:  Betrete einen Chat."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;Benutzer&gt; [Grund]:  Kickt einen Benutzer aus dem Raum."
@@ -11134,6 +11134,9 @@ msgstr "/Hilfe/_Debug-Fenster"
 msgid "/Help/De_veloper Information"
 msgstr "/Hilfe/_Entwickler-Informationen"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Hilfe/_Plugin-Informationen"
+
 msgid "/Help/_Translator Information"
 msgstr "/Hilfe/Über_setzer-Informationen"
 
@@ -12149,6 +12152,13 @@ msgstr "Frühere Übersetzer"
 msgid "%s Translator Information"
 msgstr "%s-Übersetzer-Informationen"
 
+#, c-format
+msgid "%s Plugin Information"
+msgstr "%s Plugin-Informationen"
+
+msgid "Plugin Information"
+msgstr "Plugin-Informationen"
+
 msgid "_Name"
 msgstr "_Name"
 
@@ -12750,7 +12760,7 @@ msgstr ""
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
-msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft\n"
+msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft.\n"
 
 msgid "_Media"
 msgstr "_Medien"
@@ -13115,6 +13125,12 @@ msgstr "Weiches Scrollen aktivieren"
 
 msgid "F_lash window when IMs are received"
 msgstr "Fenster b_linkt, wenn IM-Nachrichten empfangen werden"
+
+msgid "Resize incoming custom smileys"
+msgstr "Erhaltene benutzerdefinierte Smileys skalieren"
+
+msgid "Maximum size:"
+msgstr "Maximale Größe:"
 
 msgid "Minimum input area height in lines:"
 msgstr "Minimale Höhe des Eingabefeldes in Zeilen:"

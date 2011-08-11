@@ -3,9 +3,14 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.10.0 (MM/DD/YYYY):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.
-	  (Quentin Brandon)(#5231)
+	  (Quentin Brandon) (#5231)
 	* Added a plugin information dialog to show information for plugins
 	  that aren't otherwise visible in the plugins dialog.
+	* Fix building with GTK+ earlier than 2.14.0 (GTK+ 2.10 is still the
+	  minimum supported) (#14261)
+
+	libpurple:
+	* Fix a potential crash in the Log Reader plugin when reading QIP logs.
 
 	Libpurple:
 	* Fix a large number of strcpy() and strcat() invocations to use
@@ -19,6 +24,15 @@ version 2.10.0 (MM/DD/YYYY):
 	  (#5242)
 	* Better status message handling. (Tomasz Wasilczyk) (#14314)
 	* Merged two buddy blocking methods. (Tomasz Wasilczyk) (#5303)
+	* Fix building of the bundled libgadu library with older versions
+	  of GnuTLS. (patch plucked from upstream) (#14365)
+
+	ICQ:
+	* Fix crash selecting Tools->Set Mood when you're online with an
+	  ICQ account that is configured as an AIM account. (#14437)
+
+	IRC:
+	* Fix the handling of formatting following mIRC ^O (#14436)
 
 	MSN:
 	* Fix seemingly random crashing. (#14307)
@@ -26,6 +40,12 @@ version 2.10.0 (MM/DD/YYYY):
 	XMPP:
 	* Do not generate malformed XML ("</>") when setting an empty mood.
 	  (#14342)
+	* Fix the /join <room> behavior.  (Broken when adding support for
+	  <room>@<server>)  (#14205)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Fix coming out of idle while in an unavailable state
+	* Fix logging into Yahoo! JAPAN.  (#14259)
 
 version 2.9.0 (06/23/2011):
 	Pidgin:
