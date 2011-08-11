@@ -11,8 +11,6 @@ version 2.10.0 (MM/DD/YYYY):
 
 	libpurple:
 	* Fix a potential crash in the Log Reader plugin when reading QIP logs.
-
-	Libpurple:
 	* Fix a large number of strcpy() and strcat() invocations to use
 	  strlcpy() and strlcat(), etc., forestalling an entire class of
 	  string buffer overrun bugs.
