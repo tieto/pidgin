@@ -16,6 +16,9 @@ version 2.10.0 (MM/DD/YYYY):
 	  string buffer overrun bugs.
 	  (The Electronic Frontier Foundation, Dan Auerbach, Chris Palmer,
           Jacob Appelbaum)
+	* Change some filename manipulations in filectl.c to use MAXPATHLEN
+	  instead of arbitrary length constants.  (The Electronic Frontier
+	  Foundation, Dan Auerbach, Chris Palmer, Jacob Appelbaum)
 
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
