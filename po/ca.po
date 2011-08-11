@@ -9,32 +9,30 @@
 # This file is distributed under the same license as the Pidgin package.
 #
 # There were translation notes here by Xan, (look in older CVS revisions),
-# those notes have been replaced by the guidelines of Softcatalà:
-# http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
-# And the translation of related terms is here:
-# http://www.softcatala.org/projectes/eines/recull/recull.htm
-# We also use the officialy accepted neologisms from Termcat:
-# http://www.termcat.net/cercaterm/
+# those notes have been replaced by the guidelines [1] and the list of
+# computer related terms [2] of Softcatalà. We also use the officialy
+# accepted neologisms from Termcat [3].
 #
 # En Xan havia escrit uns apunts quant a la traducció (mireu versions antigues
-# al CVS), els apunts s'han substituït per la guia d'estil de Softcatalà:
-# http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
-# També es fa servir el recull de termes de softcatalà per a la terminologia:
-# http://www.softcatala.org/projectes/eines/recull/recull.htm
-# així com les resolucions del Termcat quant als neologismes (que tenen
-# preferència en cas de contradicció amb el recull de Softcatalà):
-# http://www.termcat.net/cercaterm/
+# al CVS), els apunts s'han substituït per la guia d'estil [1] i el recull de
+# termes [2] de Softcatalà, així com les resolucions del Termcat [3] quant als
+# neologismes (que tenen preferència en cas de contradicció amb el recull de
+# Softcatalà).
 #
 # NOTE: adjectives in catalan go [almost] always to the end, for instance:
 # NOTA: els adjectius en català acostumen a anar al final, per exemple:
 #  "New file" --> "Fitxer nou"
 #
+# [1] http://www.softcatala.org/wiki/Guia_d'estil/Guia_2010
+# [2] http://www.softcatala.org/recull.html
+# [3] http://www.termcat.net/cercaterm/
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-07 10:31+0200\n"
-"PO-Revision-Date: 2011-05-07 10:48+0200\n"
+"POT-Creation-Date: 2011-08-11 20:14+0200\n"
+"PO-Revision-Date: 2011-08-11 20:26+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "Language: ca\n"
@@ -1707,6 +1705,7 @@ msgstr "Aquest protocol no permet aconseguir l'àlies públic."
 msgid "Unknown"
 msgstr "Desconegut"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Amics"
 
@@ -4778,8 +4777,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;usuari&gt; [sala]:  convida un usuari a la sala."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;sala&gt; [contrasenya]:  entra en un xat d'aquest servidor."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;sala[@servidor]&gt; [contrasenya]:  entra en un xat."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;usuari&gt; [motiu]:  fa fora de la sala un usuari."
@@ -6344,12 +6343,16 @@ msgid "Where I live"
 msgstr "On visc"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Teniu %i suggeriments d'amics."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Se us ha suggerit %i amic."
+msgstr[1] "Se us han suggerit %i amics."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Hem trobat %i contactes que coincideixen amb la cerca."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "S'ha trobat %i contacte que coincideix amb la cerca."
+msgstr[1] "S'han trobat %i contactes que coincideixen amb la cerca."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11076,6 +11079,9 @@ msgstr "/Ajuda/Finestra de _depuració"
 msgid "/Help/De_veloper Information"
 msgstr "/Ajuda/Informació sobre els d_esenvolupadors"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Ajuda/Informació sobre els _controladors"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ajuda/Informació sobre els _traductors"
 
@@ -11367,7 +11373,7 @@ msgid "Get Away Message"
 msgstr "Aconsegueix el missatge d'absència"
 
 msgid "Last Said"
-msgstr "El darrer que es digué"
+msgstr "El darrer que digué"
 
 msgid "Unable to save icon file to disk."
 msgstr "No s'ha pogut desar el fitxer de la icona al disc."
@@ -11702,10 +11708,6 @@ msgstr "Error fatal"
 msgid "artist"
 msgstr "artista"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "veu i vídeo"
 
@@ -11717,6 +11719,10 @@ msgstr "administrador del web"
 
 msgid "win32 port"
 msgstr "adaptació a win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "mantenidor"
@@ -11837,6 +11843,9 @@ msgstr "Hebreu"
 
 msgid "Hindi"
 msgstr "Hindi"
+
+msgid "Croatian"
+msgstr "Croat"
 
 msgid "Hungarian"
 msgstr "Hongarès"
@@ -12084,6 +12093,13 @@ msgstr "Antics traductors"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informació sobre els traductors del %s"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Informació sobre el connector %s"
+
+msgid "Plugin Information"
+msgstr "Informació sobre el connector"
 
 msgid "_Name"
 msgstr "_Nom"
@@ -13062,6 +13078,13 @@ msgstr "Empra el desplaçament suau"
 msgid "F_lash window when IMs are received"
 msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
 
+msgid "Resize incoming custom smileys"
+msgstr "Redimensiona les emoticones personalitzades rebudes"
+
+# He hagut de ser una mica flexible per mantenir-ho "curt"
+msgid "Maximum size:"
+msgstr "Mida màxima:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Alçada mínima en línies de l'àrea d'entrada:"
 
@@ -13131,6 +13154,9 @@ msgstr "Servidor _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Port _UDP:"
+
+msgid "T_CP Port:"
+msgstr "Port _TCP:"
 
 msgid "Use_rname:"
 msgstr "Nom d'_usuari:"
@@ -15513,9 +15539,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "<b>IP</b>: %s<br>\n"
 #~ msgstr "<b>IP</b>: %s<br>\n"
-
-#~ msgid "Login Information"
-#~ msgstr "Informació de la connexió"
 
 #~ msgid "<p><b>Original Author</b>:<br>\n"
 #~ msgstr "<p><b>Autor original</b>:<br>\n"
