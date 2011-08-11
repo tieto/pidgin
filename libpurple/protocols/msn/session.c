@@ -288,6 +288,8 @@ void
 msn_session_activate_login_timeout(MsnSession *session)
 {
 	if (!session->logged_in && session->connected) {
+		if (session->login_timeout)
+			purple_timeout_remove(session->login_timeout);
 		session->login_timeout =
 			purple_timeout_add_seconds(MSN_LOGIN_FQY_TIMEOUT,
 			                           msn_login_timeout_cb, session);

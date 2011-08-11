@@ -198,6 +198,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		/* RPS authentication */
 
+		if (session->nexus)
+			msn_nexus_destroy(session->nexus);
+
 		session->nexus = msn_nexus_new(session);
 
 		session->nexus->policy = g_strdup(cmd->params[3]);

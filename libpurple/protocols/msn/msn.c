@@ -265,9 +265,9 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 		}
 
 		if (real_alias[0] == '\0')
-			strcpy(real_alias, purple_account_get_username(account));
+			g_strlcpy(real_alias, purple_account_get_username(account), sizeof(real_alias));
 	} else
-		strcpy(real_alias, purple_account_get_username(account));
+		g_strlcpy(real_alias, purple_account_get_username(account), sizeof(real_alias));
 
 	closure = g_new0(struct public_alias_closure, 1);
 	closure->account = account;

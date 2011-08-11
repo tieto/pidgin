@@ -259,8 +259,9 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					vals[i] = ckalloc(1);
 					*(char *)vals[i] = '\0';
 				} else {
-					vals[i] = ckalloc(strlen(*strs[i]) + 1);
-					strcpy(vals[i], *strs[i]);
+					size_t len = strlen(*strs[i]) + 1;
+					vals[i] = ckalloc(len);
+					g_strlcpy(vals[i], *strs[i], len);
 				}
 				Tcl_LinkVar(handler->interp, name->str,
 					    (char *)&vals[i], TCL_LINK_STRING);

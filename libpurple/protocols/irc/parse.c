@@ -459,6 +459,7 @@ char *irc_mirc2html(const char *string)
 				decoded = g_string_append(decoded, "</U>");
 			if (font)
 				decoded = g_string_append(decoded, "</FONT>");
+			bold = italic = underline = font = FALSE;
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Unexpected mIRC formatting character %d\n", *cur);

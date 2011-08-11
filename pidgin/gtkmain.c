@@ -270,7 +270,7 @@ ui_main(void)
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
 		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
-		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+		icon = pidgin_pixbuf_new_from_file(icon_path);
 		g_free(icon_path);
 		if (icon) {
 			icons = g_list_append(icons,icon);
