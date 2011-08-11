@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-31 12:34+0200\n"
-"PO-Revision-Date: 2011-07-31 12:33+0200\n"
+"POT-Creation-Date: 2011-08-11 10:27+0200\n"
+"PO-Revision-Date: 2011-08-11 10:12+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -1959,7 +1959,7 @@ msgid "Unknown reason"
 msgstr "Unbekannter Grund"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
-msgstr "DNS-Anfrage im Tor-Proxy-Modus abgebrochen"
+msgstr "DNS-Anfrage im Tor-Proxy-Modus abgebrochen."
 
 #, c-format
 msgid ""
@@ -12760,7 +12760,7 @@ msgstr ""
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
-msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft\n"
+msgstr "Wird geschlossen, da bereits ein anderer libpurple-Client läuft.\n"
 
 msgid "_Media"
 msgstr "_Medien"
