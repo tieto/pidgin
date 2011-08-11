@@ -5651,7 +5651,10 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 
 	tmp1 = g_utf8_strdown(buf, -1);
 	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
-	strcpy(buf, tmp2);
+	if (strlen(tmp2) > sizeof(buf) - 1) {
+		purple_debug_error("oscar", "normalized string exceeds buffer length!\n");
+	}
+	g_strlcpy(buf, tmp2, sizeof(buf));
 	g_free(tmp2);
 	g_free(tmp1);
 
