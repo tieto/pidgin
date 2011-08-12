@@ -182,7 +182,7 @@
 /* extended profile attribute fields */
 #define		CP_PROFILE_BIRTHDATE	"birthdate"				/* Birthdate (String - ISO 8601 format) */
 #define		CP_PROFILE_GENDER		"gender"				/* Gender (Boolean - 0=female, 1=male) */
-#define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) */
+// #define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) (DEPRECATED) */
 #define		CP_PROFILE_FULLNAME		"fullname"				/* Fullname (UTF8 String) */
 #define		CP_PROFILE_STATUS		"statusmsg"				/* Status Message (UTF8 String) */
 #define		CP_PROFILE_PREVSTATUS	"prevstatusmsgs"		/* Previous Status Messages (UTF8 String) */
