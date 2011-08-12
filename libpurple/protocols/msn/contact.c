@@ -474,7 +474,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 }
 
 /*parse contact list*/
-static void
+static gboolean
 msn_parse_contact_list(MsnSession *session, xmlnode *node)
 {
 	xmlnode *fault, *faultnode;
@@ -499,13 +499,14 @@ msn_parse_contact_list(MsnSession *session, xmlnode *node)
 			if (g_str_equal(errorcode, "ABDoesNotExist")) {
 				msn_create_address_book(session);
 				g_free(errorcode);
-				return;
+				return FALSE;
 			}
 
 			g_free(errorcode);
 		}
 
 		msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
+		return FALSE;
 	} else {
 		xmlnode *service;
 
@@ -514,6 +515,7 @@ msn_parse_contact_list(MsnSession *session, xmlnode *node)
 			 service; service = xmlnode_get_next_twin(service)) {
 			msn_parse_each_service(session, service);
 		}
+		return TRUE;
 	}
 }
 
@@ -534,23 +536,24 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 		purple_debug_misc("msn", "Got the contact list!\n");
 
-		msn_parse_contact_list(session, resp->xml);
+		if (msn_parse_contact_list(session, resp->xml)) {
 #ifdef MSN_PARTIAL_LISTS
-		abLastChange = purple_account_get_string(session->account,
-			"ablastChange", NULL);
-		dynamicItemLastChange = purple_account_get_string(session->account,
-			"DynamicItemLastChanged", NULL);
+			abLastChange = purple_account_get_string(session->account,
+				"ablastChange", NULL);
+			dynamicItemLastChange = purple_account_get_string(session->account,
+				"DynamicItemLastChanged", NULL);
 #endif
 
-		if (state->partner_scenario == MSN_PS_INITIAL) {
+			if (state->partner_scenario == MSN_PS_INITIAL) {
 #ifdef MSN_PARTIAL_LISTS
-			/* XXX: this should be enabled when we can correctly do partial
-			   syncs with the server. Currently we need to retrieve the whole
-			   list to detect sync issues */
-			msn_get_address_book(session, MSN_PS_INITIAL, abLastChange, dynamicItemLastChange);
+				/* XXX: this should be enabled when we can correctly do partial
+				   syncs with the server. Currently we need to retrieve the whole
+				   list to detect sync issues */
+				msn_get_address_book(session, MSN_PS_INITIAL, abLastChange, dynamicItemLastChange);
 #else
-			msn_get_address_book(session, MSN_PS_INITIAL, NULL, NULL);
+				msn_get_address_book(session, MSN_PS_INITIAL, NULL, NULL);
 #endif
+			}
 		}
 	}
 }

@@ -85,12 +85,12 @@ char* mxit_encrypt_password( struct MXitSession* session )
 	pass[sizeof( pass ) - 1] = '\0';
 
 	/* build the custom AES encryption key */
-	strcpy( key, INITIAL_KEY );
+	g_strlcpy( key, INITIAL_KEY, sizeof( key ) );
 	memcpy( key, session->clientkey, strlen( session->clientkey ) );
 	ExpandKey( (unsigned char*) key, (unsigned char*) exkey );
 
 	/* build the custom data to be encrypted */
-	strcpy( pass, SECRET_HEADER );
+	g_strlcpy( pass, SECRET_HEADER, sizeof( pass ) );
 	strcat( pass, session->acc->password );
 
 	/* pad the secret data */

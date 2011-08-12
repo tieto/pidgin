@@ -677,7 +677,7 @@ Code_t Z_FormatRawHeader(notice, buffer, buffer_len, len, cstart, cend)
     if (buffer_len < strlen(notice->z_version)+1)
 	return (ZERR_HEADERLEN);
 
-    (void) strcpy(ptr, notice->z_version);
+    g_strlcpy(ptr, notice->z_version, buffer_len);
     ptr += strlen(ptr)+1;
 
     if (ZMakeAscii32(ptr, end-ptr, Z_NUMFIELDS + notice->z_num_other_fields)
@@ -767,9 +767,9 @@ Z_AddField(char **ptr, const char *field, char *end)
     if (*ptr+len > end)
 	return 1;
     if (field)
-	(void) strcpy(*ptr, field);
+      g_strlcpy(*ptr, field, len);
     else
-	**ptr = '\0';
+      **ptr = '\0';
     *ptr += len;
 
     return 0;

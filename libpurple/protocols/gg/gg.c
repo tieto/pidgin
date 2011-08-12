@@ -918,6 +918,9 @@ static void gg_fetch_avatar_cb(PurpleUtilFetchUrlData *url_data, gpointer user_d
 	PurpleBuddy *buddy;
 	gpointer buddy_icon_data;
 
+	purple_debug_info("gg", "gg_fetch_avatar_cb: got avatar image for %s\n",
+		d->uin);
+
 	/* FIXME: This shouldn't be necessary */
 	if (!PURPLE_CONNECTION_IS_VALID(d->gc)) {
 		g_free(d->uin);
@@ -936,7 +939,8 @@ static void gg_fetch_avatar_cb(PurpleUtilFetchUrlData *url_data, gpointer user_d
 
 	purple_buddy_icons_set_for_user(account, purple_buddy_get_name(buddy),
 			buddy_icon_data, len, d->avatar_url);
-	purple_debug_info("gg", "UIN: %s should have avatar now\n", d->uin);
+	purple_debug_info("gg", "gg_fetch_avatar_cb: UIN %s should have avatar "
+		"now\n", d->uin);
 
 out:
 	g_free(d->uin);
@@ -1018,6 +1022,8 @@ static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user
 				data->uin = g_strdup(uin);
 				data->avatar_url = g_strdup(bigavatar);
 
+				purple_debug_info("gg", "gg_get_avatar_url_cb: "
+					"requesting avatar for %s\n", uin);
 				url_data = purple_util_fetch_url_request_len_with_account(account,
 						bigavatar, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)",
 						FALSE, NULL, FALSE, -1, gg_fetch_avatar_cb, data);

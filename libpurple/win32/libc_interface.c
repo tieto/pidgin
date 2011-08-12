@@ -982,7 +982,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched zone */
-			strcpy(localtzname, keyname);
+			g_strlcpy(localtzname, keyname, sizeof(localtzname));
 			RegCloseKey(key);
 			break;
 		}
@@ -997,7 +997,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched DST zone */
-			strcpy(localtzname, keyname);
+			g_strlcpy(localtzname, keyname, sizeof(localtzname));
 			RegCloseKey(key);
 			break;
 		}

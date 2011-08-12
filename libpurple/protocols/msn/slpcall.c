@@ -490,12 +490,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (img != NULL) {
 			/* DATA PREP */
 			slpmsg = msn_slpmsg_dataprep_new(slpcall);
-			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 
 			/* DATA */
 			slpmsg = msn_slpmsg_obj_new(slpcall, img);
-			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 			purple_imgstore_unref(img);
 

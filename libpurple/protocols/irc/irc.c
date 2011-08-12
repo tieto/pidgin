@@ -251,7 +251,9 @@ gboolean irc_who_channel_timeout(struct irc_conn *irc)
 
 static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
 {
-	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+	if (purple_conversation_get_account(conv) == irc->account
+	    && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT
+	    && !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
 		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
 		
 		purple_debug(PURPLE_DEBUG_INFO, "irc",
