@@ -13,7 +13,7 @@ Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool, gconf2,
  libgadu-dev (>= 1:1.11.0-2),
  xsltproc, doxygen, libgstfarsight0.10-dev (>= 0.0.9),
  libgstreamer-plugins-base0.10-dev,
- network-manager-dev (>= 0.5.0) [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386],
+ network-manager-dev (>= 0.5.0) [linux-any],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates
 Standards-Version: 3.8.3
 Vcs-Git: git://git.debian.org/git/collab-maint/pidgin.git
