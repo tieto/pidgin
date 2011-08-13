@@ -75,10 +75,10 @@ static void* mxit_link_click( const char* link64 )
 	link = (gchar*) purple_base64_decode( link64 + strlen( MXIT_LINK_PREFIX ), &len );
 	purple_debug_info( MXIT_PLUGIN_ID, "Clicked Link: '%s'\n", link );
 
-	parts = g_strsplit( link, "|", 5 );
+	parts = g_strsplit( link, "|", 6 );
 
 	/* check if this is a valid mxit link */
-	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) ) {
+	if ( ( !parts ) || ( !parts[0] ) || ( !parts[1] ) || ( !parts[2] ) || ( !parts[3] ) || ( !parts[4] ) || ( !parts[5] ) ) {
 		/* this is not for us */
 		goto skip;
 	}
@@ -96,10 +96,10 @@ static void* mxit_link_click( const char* link64 )
 		goto skip;
 
 	/* determine if it's a command-response to send */
-	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+	is_command = ( atoi( parts[4] ) == 1 );
 
 	/* send click message back to MXit */
-	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
+	mxit_send_message( con->proto_data, parts[3], parts[5], FALSE, is_command );
 
 	g_free( link );
 	link = NULL;
@@ -309,19 +309,18 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
  */
 char* mxit_status_text( PurpleBuddy* buddy )
 {
+	char* text = NULL;
 	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return NULL;
 
-	if ( contact->statusMsg ) {
-		/* status message */
-		return g_strdup( contact-> statusMsg );
-	}
-	else {
-		/* mood */
-		return g_strdup( mxit_convert_mood_to_name( contact->mood ) );
-	}
+	if ( contact->statusMsg )							/* status message */
+		text = g_strdup( contact-> statusMsg );
+	else if ( contact->mood != MXIT_MOOD_NONE )			/* mood */
+		text = g_strdup( mxit_convert_mood_to_name( contact->mood ) );
+
+	return text;
 }
 
 
@@ -358,10 +357,6 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	/* rejection message */
 	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
 		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
-
-	/* hidden number */
-	if ( contact->flags & MXIT_CFLAG_HIDDEN )
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
 }
 
 

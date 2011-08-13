@@ -34,6 +34,7 @@
 /* password encryption */
 #define		INITIAL_KEY		"6170383452343567"
 #define		SECRET_HEADER	"<mxit/>"
+#define		ENCRYPT_HEADER	"<mxitencrypted ver=\"5.2\"/>"
 
 
 /*------------------------------------------------------------------------
@@ -106,3 +107,67 @@ char* mxit_encrypt_password( struct MXitSession* session )
 	return base64;
 }
 
+
+/*------------------------------------------------------------------------
+ * Decrypt a transport-layer encryptede message.
+ *
+ *  @param session	The MXit session object
+ *	@param message	The encrypted message data.
+ *  @return			The decrypted message.  Must be g_free'd when no longer needed.
+ */
+char* mxit_decrypt_message( struct MXitSession* session, char* message )
+{
+	gsize		raw_len;
+	guchar*		raw_message;
+	char		key[64];
+	int			pwdlen		= strlen( session->acc->password );
+	char		exkey[512];
+	int			i;
+	GString*	decoded		= NULL;
+
+	/* remove optional header: <mxitencrypted ver="5.2"/> */
+	if ( strncmp( message, ENCRYPT_HEADER, strlen( ENCRYPT_HEADER ) ) == 0 )
+		message += strlen( ENCRYPT_HEADER );
+
+	/* base64 decode the message */
+	raw_message = purple_base64_decode( message, &raw_len );
+
+	/* build the key - Client key, appended with last 8 characters of the PIN. (no padding) */
+	memset( key, 0x00, sizeof( key ) );
+	memcpy( key, session->clientkey, strlen( session->clientkey ) );
+	if ( pwdlen <= 8 )
+		strcat( key, session->acc->password );
+	else
+		strncat( key, session->acc->password + ( pwdlen - 8 ), 8 );
+	ExpandKey( (unsigned char*) key, (unsigned char*) exkey );
+
+	/* decode each block */
+	decoded = g_string_sized_new( raw_len );
+	for ( i = 0; i < raw_len; i += 16 ) {
+		char	block[16];
+
+		Decrypt( (unsigned char*) raw_message + i, (unsigned char*) exkey, (unsigned char*) block );
+		g_string_append_len( decoded, block, 16 );
+	}
+	g_free( raw_message );
+
+	purple_debug_info( MXIT_PLUGIN_ID, "decrypted: '%s'\n", decoded->str );
+
+	/* check that the decrypted message starts with header: <mxit/> */
+	if ( strncmp( decoded->str, SECRET_HEADER, strlen( SECRET_HEADER ) != 0 ) ) {
+		g_string_free( decoded, TRUE );
+		return NULL;			/* message could not be decoded */
+	}
+
+	/* remove ISO10126 padding */
+	{
+		/* last byte indicates the number of padding bytes */
+		unsigned int padding = decoded->str[decoded->len - 1];
+		g_string_truncate( decoded, decoded->len - padding );
+	}
+
+	/* remove encryption header */
+	g_string_erase( decoded, 0, strlen( SECRET_HEADER ) );
+
+	return g_string_free( decoded, FALSE );
+}
