@@ -149,7 +149,6 @@ char* mxit_decrypt_message( struct MXitSession* session, char* message )
 		Decrypt( (unsigned char*) raw_message + i, (unsigned char*) exkey, (unsigned char*) block );
 		g_string_append_len( decoded, block, 16 );
 	}
-
 	g_free( raw_message );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "decrypted: '%s'\n", decoded->str );
@@ -159,10 +158,16 @@ char* mxit_decrypt_message( struct MXitSession* session, char* message )
 		g_string_free( decoded, TRUE );
 		return NULL;			/* message could not be decoded */
 	}
-	g_string_erase( decoded, 0, strlen( SECRET_HEADER ) );		/* remove header */
 
 	/* remove ISO10126 padding */
-// TODO
+	{
+		/* last byte indicates the number of padding bytes */
+		unsigned int padding = decoded->str[decoded->len - 1];
+		g_string_truncate( decoded, decoded->len - padding );
+	}
+
+	/* remove encryption header */
+	g_string_erase( decoded, 0, strlen( SECRET_HEADER ) );
 
 	return g_string_free( decoded, FALSE );
 }
