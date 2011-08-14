@@ -33,6 +33,6 @@ struct MXitSession;
 char* mxit_encrypt_password( struct MXitSession* session );
 
 char* mxit_decrypt_message( struct MXitSession* session, char* message );
-
+char* mxit_encrypt_message( struct MXitSession* session, char* message );
 
 #endif		/* _MXIT_CIPHER_H_ */
