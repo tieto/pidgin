@@ -109,21 +109,22 @@ show_debug_cmd(MsnCmdProc *cmdproc, gboolean incoming, const char *command)
 	g_free(show);
 }
 
-void
+gboolean
 msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
 	MsnServConn *servconn;
 	char *data;
 	size_t len;
+	gboolean ret;
 
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(trans != NULL);
+	g_return_val_if_fail(cmdproc != NULL, TRUE);
+	g_return_val_if_fail(trans != NULL, TRUE);
 
 	servconn = cmdproc->servconn;
 
 	if (!servconn->connected) {
 		msn_transaction_destroy(trans);
-		return;
+		return FALSE;
 	}
 
 	if (trans->saveable)
@@ -154,11 +155,12 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		trans->payload_len = 0;
 	}
 
-	msn_servconn_write(servconn, data, len);
+	ret = msn_servconn_write(servconn, data, len) != -1;
 
 	if (!trans->saveable)
 		msn_transaction_destroy(trans);
 	g_free(data);
+	return ret;
 }
 
 void
