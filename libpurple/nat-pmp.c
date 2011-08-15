@@ -182,7 +182,6 @@ default_gw()
     struct rt_msghdr *rtm;
     struct sockaddr *sa;
 	struct sockaddr_in *sin = NULL;
-	gboolean found = FALSE;
 
     mib[0] = CTL_NET;
     mib[1] = PF_ROUTE; /* entire routing table or a subset of it */
@@ -207,6 +206,7 @@ default_gw()
 	/* Read the routing table into buf */
     if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0)
 	{
+		free(buf);
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump\n");
 		return NULL;
     }
@@ -220,9 +220,10 @@ default_gw()
 
 		if (sa->sa_family == AF_INET)
 		{
-			sin = (struct sockaddr_in*) sa;
+			struct sockaddr_in *cursin = (struct sockaddr_in*) sa;
 
-			if ((rtm->rtm_flags & RTF_GATEWAY) && sin->sin_addr.s_addr == INADDR_ANY)
+			if ((rtm->rtm_flags & RTF_GATEWAY)
+			    && cursin->sin_addr.s_addr == INADDR_ANY)
 			{
 				/* We found the default route. Now get the destination address and netmask. */
 	            struct sockaddr *rti_info[RTAX_MAX];
@@ -251,7 +252,6 @@ default_gw()
 						memcpy(sin, rti_info[RTAX_GATEWAY], sizeof(struct sockaddr_in));
 
 						purple_debug_info("nat-pmp", "Found a default gateway\n");
-						found = TRUE;
 						break;
 					}
 				}
@@ -259,7 +259,8 @@ default_gw()
 		}
     }
 
-	return (found ? sin : NULL);
+	free(buf);
+	return sin;
 }
 
 /*!
