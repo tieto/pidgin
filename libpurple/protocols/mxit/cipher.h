@@ -1,7 +1,7 @@
 /*
  *					MXit Protocol libPurple Plugin
  *
- *					-- user password encryption --
+ *						-- encryption --
  *
  *				Pieter Loubser	<libpurple@mxit.com>
  *
