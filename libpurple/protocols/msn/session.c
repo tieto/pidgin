@@ -263,8 +263,10 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 	{
 		swboard = msn_switchboard_new(session);
 		swboard->im_user = g_strdup(username);
-		msn_switchboard_request(swboard);
-		msn_switchboard_request_add_user(swboard, username);
+		if (msn_switchboard_request(swboard))
+			msn_switchboard_request_add_user(swboard, username);
+		else
+			return NULL;
 	}
 
 	swboard->flag |= flag;
