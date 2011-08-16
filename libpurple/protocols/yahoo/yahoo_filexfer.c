@@ -1428,7 +1428,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 
 	unix_time = time(NULL);
 	time_str = ctime(&unix_time);
-	strcpy(time_str + strlen(time_str) - 1, "\0");
+	time_str[strlen(time_str) - 1] = '\0';
 
 	if (xd->txbuflen == 0)	{
 		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\n"

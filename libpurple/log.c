@@ -1838,7 +1838,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 			g_snprintf(convostart, length, "%s", temp);
 			memset(&tm, 0, sizeof(tm));
-			sscanf(convostart, "%*s %s %d %d:%d:%d %d",
+			sscanf(convostart, "%*s %3s %d %d:%d:%d %d",
 			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
 			/* Ugly hack, in case current locale is not English */
 			if (purple_strequal(month, "Jan")) {

@@ -277,7 +277,11 @@ void multimx_invite(struct MXitSession* session, struct contact* contact, const 
 	GHashTable *components;
 	struct multimx* multimx = NULL;
 
-	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat invite to '%s' by '%s'\n", contact->alias, creator);
+	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat invite to '%s' (roomid='%s') by '%s'\n", contact->alias, contact->username, creator);
+
+	/* Check if the room already exists (ie, already joined or invite pending) */
+	if (find_room_by_username(session, contact->username) != NULL)
+		return;
 
 	/* Create a new room */
 	multimx = room_create(session, contact->username, contact->alias, STATE_INVITED);
@@ -307,7 +311,7 @@ void multimx_created(struct MXitSession* session, struct contact* contact)
 	multimx = find_room_by_username(session, contact->username);
 	if (multimx == NULL) {
 		multimx = room_create(session, contact->username, contact->alias, TRUE);
-		}
+	}
 	else if (multimx->state == STATE_INVITED) {
 		/* After successfully accepting an invitation */
 		multimx->state = STATE_JOINED;

@@ -95,7 +95,7 @@ PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 
 	/* and only when they're online */
 	if (contact->presence == MXIT_PRESENCE_OFFLINE)
-		return MXIT_PRESENCE_OFFLINE;
+		return PURPLE_MEDIA_CAPS_NONE;
 
 	/* they support voice-only */
 	if (contact->capabilities & MXIT_PFLAG_VOICE)

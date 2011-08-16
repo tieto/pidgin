@@ -84,13 +84,6 @@ out:
 		g_string_append( attributes, attrib );
 		acount++;
 
-		/* force hidden if disabled */
-		if ( profile->hidden == FALSE ) {
-			g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, "1" );
-			g_string_append( attributes, attrib );
-			acount++;
-		}
-
 		/* update birthday */
 		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROFILE_TYPE_UTF8, profile->birthday );
