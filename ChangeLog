@@ -33,6 +33,7 @@ version 2.10.0 (MM/DD/YYYY):
 	ICQ:
 	* Fix crash selecting Tools->Set Mood when you're online with an
 	  ICQ account that is configured as an AIM account. (#14437)
+	* Fix crash when NAMES is empty. (James McLaughlin) (#14518)
 
 	IRC:
 	* Fix the handling of formatting following mIRC ^O (#14436)

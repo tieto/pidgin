@@ -587,7 +587,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			else
 				purple_conv_im_write(PURPLE_CONV_IM(convo), "", msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
-		} else {
+		} else if (cur != NULL) {
 			GList *users = NULL;
 			GList *flags = NULL;
 
