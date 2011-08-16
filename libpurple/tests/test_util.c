@@ -216,6 +216,13 @@ START_TEST(test_mime_decode_field)
 }
 END_TEST
 
+START_TEST(test_strdup_withhtml)
+{
+	gchar *result = purple_strdup_withhtml("hi\r\nthere\n");
+	assert_string_equal_free("hi<BR>there<BR>", result);
+}
+END_TEST
+
 Suite *
 util_suite(void)
 {
@@ -262,6 +269,10 @@ util_suite(void)
 
 	tc = tcase_create("MIME");
 	tcase_add_test(tc, test_mime_decode_field);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("strdup_withhtml");
+	tcase_add_test(tc, test_strdup_withhtml);
 	suite_add_tcase(s, tc);
 
 	return s;
