@@ -1085,7 +1085,7 @@ msn_switchboard_request(MsnSwitchBoard *swboard)
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
 
-	g_return_if_fail(swboard != NULL);
+	g_return_val_if_fail(swboard != NULL, FALSE);
 
 	cmdproc = swboard->session->notification->cmdproc;
 
