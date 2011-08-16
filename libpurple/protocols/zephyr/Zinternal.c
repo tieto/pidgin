@@ -767,7 +767,7 @@ Z_AddField(char **ptr, const char *field, char *end)
     if (*ptr+len > end)
 	return 1;
     if (field)
-      g_strlcpy(*ptr, field, len);
+        strcpy(*ptr, field);
     else
       **ptr = '\0';
     *ptr += len;
