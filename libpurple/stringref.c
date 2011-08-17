@@ -65,12 +65,15 @@ static gboolean gs_idle_cb(gpointer data);
 PurpleStringref *purple_stringref_new(const char *value)
 {
 	PurpleStringref *newref;
+	size_t len;
 
 	if (value == NULL)
 		return NULL;
 
-	newref = g_malloc(sizeof(PurpleStringref) + strlen(value));
-	strcpy(newref->value, value);
+	len = strlen(value);
+
+	newref = g_malloc(sizeof(PurpleStringref) + len);
+	g_strlcpy(newref->value, value, len);
 	newref->ref = 1;
 
 	return newref;
