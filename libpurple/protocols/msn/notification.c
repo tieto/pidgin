@@ -570,6 +570,7 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 		payload = xmlnode_to_str(adl_node, &payload_len);
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 		g_free(payload);
+		xmlnode_free(adl_node);
 	} else {
 		purple_debug_error("msn",
 		                   "Got FQY update for unknown user %s on network %d.\n",
