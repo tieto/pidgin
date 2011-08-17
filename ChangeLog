@@ -15,7 +15,7 @@ version 2.10.0 (MM/DD/YYYY):
 	  strlcpy() and strlcat(), etc., forestalling an entire class of
 	  string buffer overrun bugs.
 	  (The Electronic Frontier Foundation, Dan Auerbach, Chris Palmer,
-          Jacob Appelbaum)
+	  Jacob Appelbaum)
 	* Change some filename manipulations in filectl.c to use MAXPATHLEN
 	  instead of arbitrary length constants.  (The Electronic Frontier
 	  Foundation, Dan Auerbach, Chris Palmer, Jacob Appelbaum)
