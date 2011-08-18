@@ -61,8 +61,8 @@ version 2.10.0 (08/18/2011):
 	Windows-Specific Changes:
 	* Open an explorer.exe window at the location of the file when clicking
 	  on a file link instead of executing the file, because executing a file
-	  can be potentially dangerous.  Problem discovered by James Burton of
-	  Insomnia Security.  Fixed by Eion Robb.
+	  can be potentially dangerous.  (Discovered by James Burton of
+	  Insomnia Security) (Fixed by Eion Robb)
 
 version 2.9.0 (06/23/2011):
 	Pidgin:
