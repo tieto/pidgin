@@ -1448,6 +1448,9 @@ conv_page(void)
 	GtkWidget *iconpref2;
 	GtkWidget *imhtml;
 	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *checkbox;
+	GtkWidget *spin_button;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -1480,6 +1483,24 @@ conv_page(void)
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
 #endif
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	checkbox = pidgin_prefs_checkbox(_("Resize incoming custom smileys"),
+			PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys", hbox);
+
+	spin_button = pidgin_prefs_labeled_spin_button(hbox,
+		_("Maximum size:"),
+		PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size",
+		16, 512, NULL);
+
+	if (!purple_prefs_get_bool(
+				PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys"))
+		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
+
+	g_signal_connect(G_OBJECT(checkbox), "clicked",
+					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), NULL, NULL, hbox, TRUE, NULL);
 
 	pidgin_prefs_labeled_spin_button(vbox,
 		_("Minimum input area height in lines:"),

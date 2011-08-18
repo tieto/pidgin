@@ -3647,6 +3647,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Help/_Build Information"), NULL, pidgin_dialogs_buildinfo, 0, "<Item>", NULL },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ N_("/Help/De_veloper Information"), NULL, pidgin_dialogs_developers, 0, "<Item>", NULL },
+	{ N_("/Help/_Plugin Information"), NULL, pidgin_dialogs_plugins_info, 0, "<Item>", NULL },
 	{ N_("/Help/_Translator Information"), NULL, pidgin_dialogs_translators, 0, "<Item>", NULL },
 	{ "/Help/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },

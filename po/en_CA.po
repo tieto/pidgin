@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-05 03:14-0400\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-05-05 02:50-0400\n"
 "Last-Translator: Elliott Sales de Andrade <qulogic@pidgin.im>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
@@ -1589,6 +1589,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -4465,7 +4466,7 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -5944,12 +5945,16 @@ msgid "Where I live"
 msgstr ""
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr ""
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr ""
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10301,6 +10306,9 @@ msgstr ""
 msgid "/Help/De_veloper Information"
 msgstr ""
 
+msgid "/Help/_Plugin Information"
+msgstr ""
+
 msgid "/Help/_Translator Information"
 msgstr ""
 
@@ -10904,10 +10912,6 @@ msgstr ""
 msgid "artist"
 msgstr ""
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
-
 msgid "voice and video"
 msgstr ""
 
@@ -10918,6 +10922,10 @@ msgid "webmaster"
 msgstr ""
 
 msgid "win32 port"
+msgstr ""
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
 msgstr ""
 
 msgid "maintainer"
@@ -11036,6 +11044,9 @@ msgid "Hebrew"
 msgstr ""
 
 msgid "Hindi"
+msgstr ""
+
+msgid "Croatian"
 msgstr ""
 
 msgid "Hungarian"
@@ -11262,6 +11273,13 @@ msgstr ""
 
 #, c-format
 msgid "%s Translator Information"
+msgstr ""
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr ""
+
+msgid "Plugin Information"
 msgstr ""
 
 msgid "_Name"
@@ -12161,6 +12179,12 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr ""
 
+msgid "Resize incoming custom smileys"
+msgstr ""
+
+msgid "Maximum size:"
+msgstr ""
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12226,6 +12250,9 @@ msgid "_TURN server:"
 msgstr ""
 
 msgid "_UDP Port:"
+msgstr ""
+
+msgid "T_CP Port:"
 msgstr ""
 
 msgid "Use_rname:"

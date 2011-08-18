@@ -43,9 +43,9 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [9])
+m4_define([purple_lt_current], [10])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [9])
+m4_define([purple_minor_version], [10])
 m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
@@ -565,15 +565,12 @@ Use --disable-gtkspell if you do not need it.
 	if test "x$enable_gevolution" = "xyes"; then
 		evo_deps="libebook-1.2 libedata-book-1.2"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, , [
-			AC_MSG_RESULT(yes)
 			enable_gevolution="no"
 		])
 		if test "x$enable_gevolution" = "xno"; then
 			evo_deps="libebook-1.0 libedata-book-1.0"
 			PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 				enable_gevolution="yes"
-			], [
-				AC_MSG_RESULT(yes)
 			])
 		fi
 		if test "x$enable_gevolution" = "xyes"; then

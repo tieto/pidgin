@@ -177,55 +177,56 @@ static struct sockaddr_in *
 default_gw()
 {
 	int mib[6];
-    size_t needed;
-    char *buf, *next, *lim;
-    struct rt_msghdr *rtm;
-    struct sockaddr *sa;
+	size_t needed;
+	char *buf, *next, *lim;
+	struct rt_msghdr *rtm;
+	struct sockaddr *sa;
 	struct sockaddr_in *sin = NULL;
-	gboolean found = FALSE;
 
-    mib[0] = CTL_NET;
-    mib[1] = PF_ROUTE; /* entire routing table or a subset of it */
-    mib[2] = 0; /* protocol number - always 0 */
-    mib[3] = 0; /* address family - 0 for all addres families */
-    mib[4] = NET_RT_DUMP;
-    mib[5] = 0;
+	mib[0] = CTL_NET;
+	mib[1] = PF_ROUTE; /* entire routing table or a subset of it */
+	mib[2] = 0; /* protocol number - always 0 */
+	mib[3] = 0; /* address family - 0 for all addres families */
+	mib[4] = NET_RT_DUMP;
+	mib[5] = 0;
 
 	/* Determine the buffer side needed to get the full routing table */
-    if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0)
+	if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0)
 	{
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate\n");
 		return NULL;
-    }
+	}
 
-    if (!(buf = malloc(needed)))
+	if (!(buf = malloc(needed)))
 	{
 		purple_debug_warning("nat-pmp", "Failed to malloc %" G_GSIZE_FORMAT "\n", needed);
 		return NULL;
-    }
+	}
 
 	/* Read the routing table into buf */
-    if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0)
+	if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0)
 	{
+		free(buf);
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump\n");
 		return NULL;
-    }
+	}
 
-    lim = buf + needed;
+	lim = buf + needed;
 
-    for (next = buf; next < lim; next += rtm->rtm_msglen)
+	for (next = buf; next < lim; next += rtm->rtm_msglen)
 	{
 		rtm = (struct rt_msghdr *)next;
 		sa = (struct sockaddr *)(rtm + 1);
 
 		if (sa->sa_family == AF_INET)
 		{
-			sin = (struct sockaddr_in*) sa;
+			struct sockaddr_in *cursin = (struct sockaddr_in*) sa;
 
-			if ((rtm->rtm_flags & RTF_GATEWAY) && sin->sin_addr.s_addr == INADDR_ANY)
+			if ((rtm->rtm_flags & RTF_GATEWAY)
+			    && cursin->sin_addr.s_addr == INADDR_ANY)
 			{
 				/* We found the default route. Now get the destination address and netmask. */
-	            struct sockaddr *rti_info[RTAX_MAX];
+				struct sockaddr *rti_info[RTAX_MAX];
 				struct sockaddr addr, mask;
 
 				get_rtaddrs(rtm->rtm_addrs, sa, rti_info);
@@ -251,15 +252,15 @@ default_gw()
 						memcpy(sin, rti_info[RTAX_GATEWAY], sizeof(struct sockaddr_in));
 
 						purple_debug_info("nat-pmp", "Found a default gateway\n");
-						found = TRUE;
 						break;
 					}
 				}
 			}
 		}
-    }
+	}
 
-	return (found ? sin : NULL);
+	free(buf);
+	return sin;
 }
 
 /*!

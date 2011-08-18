@@ -285,6 +285,7 @@ PROTOCOLS_22 = \
 		protocols/22/jabber.png \
 		protocols/22/meanwhile.png \
 		protocols/22/msn.png \
+		protocols/22/mxit.png \
 		protocols/22/myspace.png \
 		protocols/22/silc.png \
 		protocols/22/simple.png \

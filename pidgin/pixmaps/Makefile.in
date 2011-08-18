@@ -226,18 +226,18 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	protocols/22/novell.png protocols/22/icq.png \
 	protocols/22/irc.png protocols/22/jabber.png \
 	protocols/22/meanwhile.png protocols/22/msn.png \
-	protocols/22/myspace.png protocols/22/silc.png \
-	protocols/22/simple.png protocols/22/yahoo.png \
-	protocols/22/zephyr.png protocols/48/aim.png \
-	protocols/48/bonjour.png protocols/48/facebook.png \
-	protocols/48/gadu-gadu.png protocols/48/novell.png \
-	protocols/48/icq.png protocols/48/irc.png \
-	protocols/48/jabber.png protocols/48/meanwhile.png \
-	protocols/48/msn.png protocols/48/mxit.png \
-	protocols/48/myspace.png protocols/48/silc.png \
-	protocols/48/simple.png protocols/48/yahoo.png \
-	protocols/48/zephyr.png protocols/scalable/aim.svg \
-	protocols/scalable/bonjour.svg \
+	protocols/22/mxit.png protocols/22/myspace.png \
+	protocols/22/silc.png protocols/22/simple.png \
+	protocols/22/yahoo.png protocols/22/zephyr.png \
+	protocols/48/aim.png protocols/48/bonjour.png \
+	protocols/48/facebook.png protocols/48/gadu-gadu.png \
+	protocols/48/novell.png protocols/48/icq.png \
+	protocols/48/irc.png protocols/48/jabber.png \
+	protocols/48/meanwhile.png protocols/48/msn.png \
+	protocols/48/mxit.png protocols/48/myspace.png \
+	protocols/48/silc.png protocols/48/simple.png \
+	protocols/48/yahoo.png protocols/48/zephyr.png \
+	protocols/scalable/aim.svg protocols/scalable/bonjour.svg \
 	protocols/scalable/gadu-gadu.svg \
 	protocols/scalable/google-talk.svg \
 	protocols/scalable/novell.svg protocols/scalable/icq.svg \
@@ -889,6 +889,7 @@ SUBDIRS = emotes/default/24 emotes/none emotes/small/16
 @INSTALL_PIXMAPS_TRUE@		protocols/22/jabber.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/meanwhile.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/msn.png \
+@INSTALL_PIXMAPS_TRUE@		protocols/22/mxit.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/myspace.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/silc.png \
 @INSTALL_PIXMAPS_TRUE@		protocols/22/simple.png \

@@ -9,32 +9,30 @@
 # This file is distributed under the same license as the Pidgin package.
 #
 # There were translation notes here by Xan, (look in older CVS revisions),
-# those notes have been replaced by the guidelines of Softcatalà:
-# http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
-# And the translation of related terms is here:
-# http://www.softcatala.org/projectes/eines/recull/recull.htm
-# We also use the officialy accepted neologisms from Termcat:
-# http://www.termcat.net/cercaterm/
+# those notes have been replaced by the guidelines [1] and the list of
+# computer related terms [2] of Softcatalà. We also use the officialy
+# accepted neologisms from Termcat [3].
 #
 # En Xan havia escrit uns apunts quant a la traducció (mireu versions antigues
-# al CVS), els apunts s'han substituït per la guia d'estil de Softcatalà:
-# http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
-# També es fa servir el recull de termes de softcatalà per a la terminologia:
-# http://www.softcatala.org/projectes/eines/recull/recull.htm
-# així com les resolucions del Termcat quant als neologismes (que tenen
-# preferència en cas de contradicció amb el recull de Softcatalà):
-# http://www.termcat.net/cercaterm/
+# al CVS), els apunts s'han substituït per la guia d'estil [1] i el recull de
+# termes [2] de Softcatalà, així com les resolucions del Termcat [3] quant als
+# neologismes (que tenen preferència en cas de contradicció amb el recull de
+# Softcatalà).
 #
 # NOTE: adjectives in catalan go [almost] always to the end, for instance:
 # NOTA: els adjectius en català acostumen a anar al final, per exemple:
 #  "New file" --> "Fitxer nou"
 #
+# [1] http://www.softcatala.org/wiki/Guia_d'estil/Guia_2010
+# [2] http://www.softcatala.org/recull.html
+# [3] http://www.termcat.net/cercaterm/
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-07 10:31+0200\n"
-"PO-Revision-Date: 2011-05-07 10:48+0200\n"
+"POT-Creation-Date: 2011-08-11 20:14+0200\n"
+"PO-Revision-Date: 2011-08-14 22:12+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "Language: ca\n"
@@ -1707,6 +1705,7 @@ msgstr "Aquest protocol no permet aconseguir l'àlies públic."
 msgid "Unknown"
 msgstr "Desconegut"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Amics"
 
@@ -4778,8 +4777,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;usuari&gt; [sala]:  convida un usuari a la sala."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;sala&gt; [contrasenya]:  entra en un xat d'aquest servidor."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;sala[@servidor]&gt; [contrasenya]:  entra en un xat."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;usuari&gt; [motiu]:  fa fora de la sala un usuari."
@@ -6344,12 +6343,16 @@ msgid "Where I live"
 msgstr "On visc"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Teniu %i suggeriments d'amics."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Se us ha suggerit %i amic."
+msgstr[1] "Se us han suggerit %i amics."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Hem trobat %i contactes que coincideixen amb la cerca."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "S'ha trobat %i contacte que coincideix amb la cerca."
+msgstr[1] "S'han trobat %i contactes que coincideixen amb la cerca."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6495,7 +6498,7 @@ msgid "Logging in"
 msgstr "S'està entrant"
 
 msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - No s'ha establer cap nom d'usuari"
+msgstr "MySpaceIM - No s'ha establert cap nom d'usuari"
 
 msgid "You appear to have no MySpace username."
 msgstr "No sembla que tingueu cap nom d'usuari del MySpace."
@@ -6689,7 +6692,7 @@ msgstr "Proveu un altre nom d'usuari:"
 
 #. Protocol won't log in now without a username set.. Disconnect
 msgid "No username set"
-msgstr "No s'ha establer cap nom d'usuari"
+msgstr "No s'ha establert cap nom d'usuari"
 
 msgid "Please enter a username to check its availability:"
 msgstr "Introduïu un nom d'usuari per a comprovar-ne la disponibilitat:"
@@ -9852,7 +9855,7 @@ msgstr ""
 
 #. username or password missing
 msgid "Username or password missing"
-msgstr "Manquen el nom d'uruari o la contrasenya"
+msgstr "Manquen el nom d'usuari o la contrasenya"
 
 #, c-format
 msgid ""
@@ -9998,7 +10001,7 @@ msgstr ""
 "No es poden enviar SMS, no s'ha pogut obtenir l'operador de telefonia mòbil."
 
 msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "No es poden enviar SMS, no es coneix l'operador de telefona mòbil."
+msgstr "No es poden enviar SMS, no es coneix l'operador de telefonia mòbil."
 
 msgid "Getting mobile carrier to send the SMS."
 msgstr "S'està obtenint l'operador de telefonia mòbil per a poder enviar SMS."
@@ -11076,6 +11079,9 @@ msgstr "/Ajuda/Finestra de _depuració"
 msgid "/Help/De_veloper Information"
 msgstr "/Ajuda/Informació sobre els d_esenvolupadors"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Ajuda/Informació sobre els _controladors"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ajuda/Informació sobre els _traductors"
 
@@ -11367,7 +11373,7 @@ msgid "Get Away Message"
 msgstr "Aconsegueix el missatge d'absència"
 
 msgid "Last Said"
-msgstr "El darrer que es digué"
+msgstr "El darrer que digué"
 
 msgid "Unable to save icon file to disk."
 msgstr "No s'ha pogut desar el fitxer de la icona al disc."
@@ -11702,10 +11708,6 @@ msgstr "Error fatal"
 msgid "artist"
 msgstr "artista"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "veu i vídeo"
 
@@ -11717,6 +11719,10 @@ msgstr "administrador del web"
 
 msgid "win32 port"
 msgstr "adaptació a win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "mantenidor"
@@ -11838,6 +11844,9 @@ msgstr "Hebreu"
 msgid "Hindi"
 msgstr "Hindi"
 
+msgid "Croatian"
+msgstr "Croat"
+
 msgid "Hungarian"
 msgstr "Hongarès"
 
@@ -11957,7 +11966,7 @@ msgid "Swedish"
 msgstr "Suec"
 
 msgid "Swahili"
-msgstr " Suahili"
+msgstr "Suahili"
 
 msgid "Tamil"
 msgstr "Tàmil"
@@ -12084,6 +12093,13 @@ msgstr "Antics traductors"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informació sobre els traductors del %s"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Informació sobre el connector %s"
+
+msgid "Plugin Information"
+msgstr "Informació sobre el connector"
 
 msgid "_Name"
 msgstr "_Nom"
@@ -12481,7 +12497,7 @@ msgid "Strikethrough"
 msgstr "Ratlla"
 
 msgid "Increase Font Size"
-msgstr "Augmenta mida de la lletra"
+msgstr "Augmenta la mida de la lletra"
 
 msgid "Decrease Font Size"
 msgstr "Disminueix la mida de la lletra"
@@ -13062,6 +13078,13 @@ msgstr "Empra el desplaçament suau"
 msgid "F_lash window when IMs are received"
 msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
 
+msgid "Resize incoming custom smileys"
+msgstr "Redimensiona les emoticones personalitzades rebudes"
+
+# He hagut de ser una mica flexible per mantenir-ho "curt"
+msgid "Maximum size:"
+msgstr "Mida màxima:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Alçada mínima en línies de l'àrea d'entrada:"
 
@@ -13131,6 +13154,9 @@ msgstr "Servidor _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Port _UDP:"
+
+msgid "T_CP Port:"
+msgstr "Port _TCP:"
 
 msgid "Use_rname:"
 msgstr "Nom d'_usuari:"
@@ -13227,7 +13253,7 @@ msgstr "Servidor intermediari"
 
 msgid "Proxy preferences are configured in GNOME preferences"
 msgstr ""
-"Les preferències del servidor intermediari es configuren a través el GNOME"
+"Les preferències del servidor intermediari es configuren a través del GNOME"
 
 msgid "<b>Proxy configuration program was not found.</b>"
 msgstr ""
@@ -14738,7 +14764,7 @@ msgid "Audio"
 msgstr "Àudio"
 
 msgid "Video"
-msgstr " Vídeo"
+msgstr "Vídeo"
 
 msgid "Output"
 msgstr "Sortida"
@@ -14765,7 +14791,7 @@ msgid "Volume:"
 msgstr "Volum:"
 
 msgid "Silence threshold:"
-msgstr "Llindar per al sileici:"
+msgstr "Llindar per al silenci:"
 
 msgid "Input and Output Settings"
 msgstr "Paràmetres d'entrada i sortida"
@@ -14848,7 +14874,7 @@ msgid ""
 "\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
-"Aquest connector habilita la transparència variables en finestres de "
+"Aquest connector habilita la transparència variable en finestres de "
 "conversa, i la llista d'amics.\n"
 "\n"
 "* Nota: aquest connector requereix Windows 2000 o superior."
@@ -14859,7 +14885,7 @@ msgstr "Inicialització"
 
 #, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Inicia el %s en iniciar Windows"
+msgstr "_Inicia el %s en iniciar el Windows"
 
 # FIXME: entrades/registres?
 msgid "Allow multiple instances"
@@ -14880,13 +14906,13 @@ msgid "Windows Pidgin Options"
 msgstr "Opcions del Pidgin per al Windows"
 
 msgid "Options specific to Pidgin for Windows."
-msgstr "Opcions específiques de la versió del Pidgin per al Windows"
+msgstr "Opcions específiques de la versió del Pidgin per a Windows"
 
 msgid ""
 "Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
-"Proporciona opcions específiques per a la versió Windows del Pidgin, com ara "
-"l'acoblament de la llista d'amics."
+"Proporciona opcions específiques de la versió per a Windows del Pidgin, com "
+"ara l'acoblament de la llista d'amics."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Desconnectat.</font>"
@@ -14921,31 +14947,31 @@ msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
-"$(^Name) és distribuït sota llicència GPL. Podeu consultar la llicència, "
-"només per proposits informatius, aquí.  $_CLICK"
+"El $(^Name) es distribueix sota llicència GPL. Podeu consultar la llicència "
+"aquí, només per propòsits informatius.  $_CLICK"
 
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Una eina IGU multiplataforma, utilitzada per Pidgin"
+msgstr "Un joc d'eines GUI multiplataforma utilitzada per el Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
 msgstr ""
-"Hi ha una instància del Pidgin executant-se. Surt del Pidgin i torna a "
-"intentar-ho."
+"Ja hi ha una instància del Pidgin executant-se. Sortiu del Pidgin i torneu-"
+"ho a intentar."
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
-msgstr "Fitxers i dlls del nucli de Pidgin"
+msgstr "Fitxers i DLL del nucli del Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr "Crear una entrada Pidgin al Menu Inici"
+msgstr "Crea una entrada Pidgin al menú d'inici"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr "Afegir un enllaç directe al Pidgin a l'Escriptori"
+msgstr "Afegeix un enllaç directe al Pidgin a l'escriptori"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
@@ -14989,7 +15015,7 @@ msgstr ""
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Entorn d'Execució GTK+ (necessari si no està instal·lat)"
+msgstr "Entorn d'execució GTK+ (necessari si no està instal·lat)"
 
 #. Installer Subsection Text
 msgid "Localizations"
@@ -15001,7 +15027,7 @@ msgstr "Següent >"
 
 #. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Client Pidgin de Missatgeria Instantània (necessari)"
+msgstr "Client de missatgeria instantània Pidgin (necessari)"
 
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
@@ -15021,28 +15047,28 @@ msgstr "Enllaços directes per iniciar el Pidgin"
 
 #. Installer Subsection Text
 msgid "Spellchecking Support"
-msgstr "Suport a la Verificació de l'Ortografia "
+msgstr "Assistència en la verificació de l'ortografia"
 
 #. Installer Subsection Text
 msgid "Start Menu"
-msgstr "Menu Inici"
+msgstr "Menu d'inici"
 
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
-"Suport per a Verificació de l'Ortografia.  (és necesaria connexió a internet "
-"per dur a terme la instal.lació)"
+"Assistència en la verificació de l'ortografia. (Cal una connexió a internet "
+"per dur a terme la instal·lació)"
 
 msgid "The installer is already running."
-msgstr "L'instal.lador encara està executant-se."
+msgstr "L'instal·lador ja s'està executant."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
-"L'instal.lador podria no trobar les entrades del registre de Pidgin.$"
-"\\rProbablement un altre usuari ha instal.lat aquesta aplicació."
+"L'instal·lador no ha pogut trobar entrades del Pidgin al registre.$"
+"\\rProbablement un altre usuari ha instal·lat aquesta aplicació."
 
 #. Installer Subsection Text
 msgid "URI Handlers"
@@ -15052,15 +15078,15 @@ msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
-"No s'ha pogut desinstal·lar la versió actual del Pidgin. La nova versió "
-"s'instal·larà sense suprimir-ne la que hi ha actualment instal·lada."
+"No s'ha pogut desinstal·lar la versió actualment instal·lada del Pidgin. La "
+"nova versió s'instal·larà sense suprimir-ne la que ja hi ha instal·lada."
 
 #. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr "Visita la pàgina web de Pidgin per Windows"
+msgstr "Visiteu la pàgina web del Pidgin per a Windows"
 
 msgid "You do not have permission to uninstall this application."
-msgstr "No tens permís per desinstal.lar aquesta aplicació."
+msgstr "No teniu permís per desinstal·lar aquesta aplicació."
 
 #~ msgid "Authorization Request Message:"
 #~ msgstr "Missatge de petició d'autorització:"
@@ -15173,9 +15199,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Phone Number"
 #~ msgstr "Número de telèfon"
 
-#~ msgid "Authorize adding"
-#~ msgstr "Autoritzar que us afegeixin"
-
 #~ msgid "Cellphone Number"
 #~ msgstr "Número de mòbil"
 
@@ -15208,18 +15231,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "False"
 #~ msgstr "Fals"
-
-#~ msgid "Modify Contact"
-#~ msgstr "Modifica el contacte"
-
-#~ msgid "Modify Address"
-#~ msgstr "Modifica l'adreça"
-
-#~ msgid "Modify Extended Information"
-#~ msgstr "Modifica la informació estesa"
-
-#~ msgid "Modify Information"
-#~ msgstr "Modifica la informació"
 
 #~ msgid "Update"
 #~ msgstr "Actualitza"
@@ -15513,9 +15524,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "<b>IP</b>: %s<br>\n"
 #~ msgstr "<b>IP</b>: %s<br>\n"
-
-#~ msgid "Login Information"
-#~ msgstr "Informació de la connexió"
 
 #~ msgid "<p><b>Original Author</b>:<br>\n"
 #~ msgstr "<p><b>Autor original</b>:<br>\n"
@@ -16026,10 +16034,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Your account is locked, please log in to the Yahoo! website."
 #~ msgstr "El vostre compte està blocat, entreu al web de Yahoo!"
 
-# Èuscar, millor? (josep)
-#~ msgid "Euskera(Basque)"
-#~ msgstr "Basc"
-
 #~ msgid ""
 #~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
 #~ "im\">support@pidgin.im</A><BR/><BR/>"
@@ -16151,21 +16155,12 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Couldn't connect to host"
 #~ msgstr "No s'ha pogut connectar a l'ordinador"
 
-#~ msgid "Read error"
-#~ msgstr "Error de lectura"
-
 #~ msgid ""
 #~ "Could not establish a connection with the server:\n"
 #~ "%s"
 #~ msgstr ""
 #~ "No s'ha pogut establir una connexió amb el servidor:\n"
 #~ "%s"
-
-#~ msgid "Write error"
-#~ msgstr "Error d'escriptura"
-
-#~ msgid "Read Error"
-#~ msgstr "Error de lectura"
 
 #~ msgid "Failed to connect to server."
 #~ msgstr "No s'ha pogut connectar al servidor."
@@ -16179,17 +16174,11 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Couldn't connect to host: %s (%d)"
 #~ msgstr "No s'ha pogut connectar a l'ordinador: %s (%d)"
 
-#~ msgid "Login failed (%s)."
-#~ msgstr "Ha fallat l'entrada (%s)."
-
 #~ msgid ""
 #~ "You have been logged out because you logged in at another workstation."
 #~ msgstr ""
 #~ "Se us ha desconnectat perquè heu entrat a través d'una altra estació de "
 #~ "treball."
-
-#~ msgid "Error. SSL support is not installed."
-#~ msgstr "Error. No hi ha instal·lades les biblioteques per a SSL."
 
 #~ msgid "Incorrect password."
 #~ msgstr "La contrasenya no és correcta."
@@ -16493,9 +16482,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ "Heu perdut un missatge instantani de %s perquè s'ha enviat massa de "
 #~ "pressa."
 
-#~ msgid "Failure."
-#~ msgstr "Fallada."
-
 #~ msgid "Too many matches."
 #~ msgstr "Massa coincidències."
 
@@ -16742,9 +16728,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgid "Block this buddy"
 #~ msgstr "Bloca aquest usuari"
 
-#~ msgid "Error password: %s"
-#~ msgstr "Error en la contrasenya: %s"
-
 #~ msgid "Failed to connect all servers"
 #~ msgstr "No s'han pogut connectar tots els servidors"
 
@@ -16764,7 +16747,7 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgstr "Amic QQ"
 
 #~ msgid "Requestion approved by %s"
-#~ msgstr "%s ha aprovat la sol.licitud"
+#~ msgstr "%s ha aprovat la sol·licitud"
 
 #~ msgid "%s wants to add you [%s] as a friend"
 #~ msgstr "%s us vol afegir [%s] com a amic"
@@ -17007,12 +16990,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgstr ""
 #~ "Les ordres encara no estan implementades. No s'ha enviat el missatge."
 
-#~ msgid "Timestamps"
-#~ msgstr "Marques horàries"
-
-#~ msgid "..."
-#~ msgstr "..."
-
 #~ msgid "Still need to do something about this."
 #~ msgstr "Encara cal fer-hi alguna cosa."
 
@@ -17064,9 +17041,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "When my account is _idle"
 #~ msgstr "Quan el meu compte estigui _inactiu"
-
-#~ msgid "_Default reply"
-#~ msgstr "Resposta predeterminada"
 
 #~ msgid "Autoreply with status message"
 #~ msgstr "Respon automàticament amb el missatge d'estat"
@@ -17130,9 +17104,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 #~ msgstr ""
 #~ "Per motius desconeguts no s'ha pogut afegir l'amic %s. El motiu més comú "
 #~ "és que ja heu ocupat el nombre màxim d'amics a la llista d'amics."
-
-#~ msgid "_Connect"
-#~ msgstr "_Connecta"
 
 #~ msgid "Are you sure to exit this Qun?"
 #~ msgstr "Esteu segur que voleu sortir d'aquest Qun?"
@@ -17202,9 +17173,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "Norwegian"
 #~ msgstr "Noruec"
-
-#~ msgid "Slovack"
-#~ msgstr "Eslovac"
 
 #~ msgid ""
 #~ "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
@@ -17386,12 +17354,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "The user %s wants to add %s to his or her buddy list."
 #~ msgstr "L'usuari %s vol afegir %s a la seva llista d'amics."
-
-#~ msgid "_Authorize"
-#~ msgstr "_Autoritza"
-
-#~ msgid "_Deny"
-#~ msgstr "_Denega"
 
 #~ msgid "<b>Alias:</b> %s<br>"
 #~ msgstr "<b>Àlies:</b> %s<br>"

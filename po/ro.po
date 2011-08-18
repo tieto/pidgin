@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Mișu Moldovan <dumol@gnome.org>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 01:47-0700\n"
-"PO-Revision-Date: 2011-05-07 13:56+0000\n"
+"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"PO-Revision-Date: 2011-08-11 08:24+0000\n"
 "Last-Translator: dumol <dumol@gnome.org>\n"
 "Language-Team: Romanian (http://www.transifex.net/projects/p/pidgin/team/"
 "ro/)\n"
@@ -1681,6 +1681,7 @@ msgstr "Acest protocol nu suportă descărcarea unui alias public."
 msgid "Unknown"
 msgstr "Necunoscut"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contacte"
 
@@ -4749,8 +4750,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;utilizator&gt; [mesaj]:  Invitați un utilizator în canal."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;canal&gt; [parolă]:  Intrați într-un canal pe acest server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;chat[@server]&gt; [parolă]:  Intră într-un chat."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;utilizator&gt; [motiv]:  Dați un utilizator afară din canal ."
@@ -6298,12 +6299,18 @@ msgid "Where I live"
 msgstr "Unde locuiesc"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Aveți %i contacte sugerate."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Vi se sugerează %i prieten"
+msgstr[1] "Vi se sugerează %i prieteni"
+msgstr[2] "Vi se sugerează %i de prieteni"
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "S-au găsit %i contacte ce se potrivesc."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "În urma căutării s-a găsit %i contact "
+msgstr[1] "În urma căutării s-au găsit %i contacte "
+msgstr[2] "În urma căutării s-au găsit %i de contacte "
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11036,6 +11043,9 @@ msgstr "/Ajutor/_Fereastră de depanare"
 msgid "/Help/De_veloper Information"
 msgstr "/Ajutor/Informații despre de_zvoltatori"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Ajutor/D_etalii despre modul"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ajutor/Informații despre _traducători"
 
@@ -11665,10 +11675,6 @@ msgstr "Erori fatale"
 msgid "artist"
 msgstr "artist"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "voce și video"
 
@@ -11680,6 +11686,10 @@ msgstr "programator web"
 
 msgid "win32 port"
 msgstr "portare win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "coordonator"
@@ -11798,6 +11808,9 @@ msgstr "Ebraică"
 
 msgid "Hindi"
 msgstr "Hindi"
+
+msgid "Croatian"
+msgstr "Croată"
 
 msgid "Hungarian"
 msgstr "Maghiară"
@@ -12041,6 +12054,13 @@ msgstr "Traducători inactivi"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informații despre traducătorii %s"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Detalii despre modulul %s"
+
+msgid "Plugin Information"
+msgstr "Detalii despre modul"
 
 msgid "_Name"
 msgstr "_Nume"
@@ -13002,6 +13022,12 @@ msgstr "Derulare cu efect"
 msgid "F_lash window when IMs are received"
 msgstr "_Evidențiază fereastra la primirea de mesaje"
 
+msgid "Resize incoming custom smileys"
+msgstr "Redimensionează iconițele simbolice primite"
+
+msgid "Maximum size:"
+msgstr "Mărime maximă:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Înălțime minimă pentru zona de introducere de text:"
 
@@ -13070,6 +13096,9 @@ msgstr "Server _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Port _UDP:"
+
+msgid "T_CP Port:"
+msgstr "_Port TCP:"
 
 msgid "Use_rname:"
 msgstr "_Nume de utilizator:"

@@ -31,6 +31,7 @@
 
 #include "debug.h"
 #include "notify.h"
+#include "plugin.h"
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
@@ -785,6 +786,52 @@ void pidgin_dialogs_translators(void)
 	translator_info = pidgin_build_help_dialog(tmp, "translator_info", str);
 	g_signal_connect(G_OBJECT(translator_info), "destroy", G_CALLBACK(gtk_widget_destroyed), &translator_info);
 	g_free(tmp);
+}
+
+void pidgin_dialogs_plugins_info(void)
+{
+	GString *str;
+	GList *l = NULL;
+	PurplePlugin *plugin = NULL;
+	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
+	char *pname = NULL, *pauthor = NULL;
+	const char *pver, *pwebsite, *pid;
+	gboolean ploaded, punloadable;
+	static GtkWidget *plugins_info = NULL;
+
+	str = g_string_sized_new(4096);
+
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><BR/>",
+			_("Plugin Information"));
+
+	for(l = purple_plugins_get_all(); l; l = l->next) {
+		plugin = (PurplePlugin *)l->data;
+
+		pname = g_markup_escape_text(purple_plugin_get_name(plugin), -1);
+		pauthor = g_markup_escape_text(purple_plugin_get_author(plugin), -1);
+		pver = purple_plugin_get_version(plugin);
+		pwebsite = purple_plugin_get_homepage(plugin);
+		pid = purple_plugin_get_id(plugin);
+		punloadable = purple_plugin_is_unloadable(plugin);
+		ploaded = purple_plugin_is_loaded(plugin);
+
+		g_string_append_printf(str,
+				"<FONT SIZE=\"3\"><B>%s</B></FONT><BR/><FONT SIZE=\"2\">"
+				"\t<B>Author:</B> %s<BR/>\t<B>Version:</B> %s<BR/>"
+				"\t<B>Website:</B> %s<BR/>\t<B>ID String:</B> %s<BR/>"
+				"\t<B>Loadable:</B> %s<BR/>\t<B>Loaded:</B> %s<BR/>"
+				"<BR/></FONT>", pname, pauthor ? pauthor : "(null)",
+				pver, pwebsite, pid,
+				punloadable ? "<FONT COLOR=\"#FF0000\"><B>No</B></FONT>" : "Yes",
+				ploaded ? "Yes" : "No");
+	}
+
+	plugins_info = pidgin_build_help_dialog(title, "plugins_info", str);
+	g_signal_connect(G_OBJECT(plugins_info), "destroy",
+			G_CALLBACK(gtk_widget_destroyed), &plugins_info);
+	g_free(title);
+	g_free(pname);
+	g_free(pauthor);
 }
 
 static void

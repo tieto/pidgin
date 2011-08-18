@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2010-03-12 17:32+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -216,6 +216,10 @@ msgstr "Tên đăng nhập"
 
 msgid "Alias (optional)"
 msgstr "Bí danh (tùy chọn)"
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "Thông điệp (tùy chọn)"
 
 msgid "Add in group"
 msgstr "Thêm vào nhóm"
@@ -1673,6 +1677,7 @@ msgstr "Giao thức này không hỗ trợ phòng chát."
 msgid "Unknown"
 msgstr "Không rõ"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Bạn bè"
 
@@ -1933,6 +1938,9 @@ msgstr "Lỗi tạo mạch: %s"
 
 msgid "Unknown reason"
 msgstr "Lý do không rõ"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2348,8 +2356,11 @@ msgstr ""
 "Đường dẫn vào đó cần lưu các tập tin\n"
 "(Hãy cung cấp đường dẫn đầy đủ)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Tự động từ chối yêu cầu từ người dùng không nằm trên danh sách bạn bè"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "Khi nhận được yêu cầu truyền tập tin từ %s"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2360,6 +2371,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Tạo một thư mục mới cho mỗi người dùng"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s đã thôi tiến trình truyền tập tin"
 
 msgid "Notes"
 msgstr "Ghi chú"
@@ -3182,6 +3197,24 @@ msgstr "Hãy nhập mật khẩu hiện tại và mật khẩu mới của bạn
 msgid "Change Gadu-Gadu Password"
 msgstr "Đổi mật khẩu Gadu-Gadu"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Đổi t_rạng thái thành:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Bạn chát trực tuyến"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Đổi trạng thái thành"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Chọn cuộc chát cho bạn chát: %s"
@@ -3213,9 +3246,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Tên"
 
@@ -3328,6 +3359,23 @@ msgstr "Người dùng Gadu-Gadu"
 msgid "GG server"
 msgstr "Máy phục vụ GG"
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Cần thiết sự cho phép"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Không có sẵn thông tin về người dùng %s:"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "Cần thiết sự cho phép"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Quá hạn tạo kết nối"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Lệnh không rõ : %s"
@@ -3364,7 +3412,6 @@ msgstr "MOTD cho %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3620,6 +3667,10 @@ msgstr "Tin nhẳn gửi cho mọi quản trị từ %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;việc cần làm&gt;:  Thực hiện một hành động."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: gửi một câu lệnh cho trình phục vụ kênh"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3829,7 +3880,10 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Máy phục vụ yêu cầu xác thực bằng nhập thô qua luồng dữ liệu không mật mã"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Máy phục vụ sai đáp ứng"
 
@@ -3975,7 +4029,6 @@ msgstr "Vùng"
 msgid "Postal Code"
 msgstr "Mã vùng"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Quốc gia"
 
@@ -4713,7 +4766,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;người_dùng&gt; [thông_điệp]:  Mời một người dùng vào phòng."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;phòng&gt; [mật_khẩu]:  Tham gia chát trên máy phục vụ này."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4756,20 +4810,8 @@ msgstr "Phần bổ sung giao thức XMPP"
 msgid "Domain"
 msgstr "Miền"
 
-#, fuzzy
-msgid "Require encryption"
-msgstr "Cần thiết sự cho phép"
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "Không có sẵn thông tin về người dùng %s:"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "Quá hạn tạo kết nối"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Cho phép xác thực bằng nhập thô qua luồng dữ liệu không mật mã"
@@ -4879,6 +4921,7 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "Không thể gửi tập tin cho %s, người dùng không hỗ trợ truyền tải tập tin"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Không gửi được tập tin"
 
@@ -5603,18 +5646,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Không thể thêm"
 
-msgid "Authorization Request Message:"
-msgstr "Thông điệp yêu cầu sự cho phép:"
-
-msgid "Please authorize me!"
-msgstr "Xin hãy cho phép tôi."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Error retrieving profile"
 msgstr "Lỗi lấy lý lịch"
 
@@ -5827,6 +5858,10 @@ msgstr "Không thể gỡ bỏ người dùng"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Tin nhẳn di động chưa gửi đi được vì quá dài."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Tin nhẳn chưa đi được vì gặp một lỗi không được nhận ra."
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5977,18 +6012,6 @@ msgstr "Bạn cũng muốn xoá bạn chát này khỏi sổ địa chỉ không
 msgid "The username specified is invalid."
 msgstr "Bạn đã ghi rõ một tên người dùng không hợp lệ."
 
-msgid "The PIN you entered is invalid."
-msgstr "Bạn đã gõ một mã PIN không đúng."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Bạn đã gõ một mã PIN có chiều dài sai [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "Mã PIN này không phải đúng. Nó chỉ nên chứa chữ số [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Bạn đã gõ hai mã PIN không trùng."
-
 #, fuzzy
 msgid "The Display Name you entered is invalid."
 msgstr "Bạn đã gõ một tên không đúng."
@@ -6010,35 +6033,70 @@ msgstr "Lý lịch"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Thông tin về hồ sơ của bạn chưa được lấy. Hãy thử lại về sau."
 
-msgid "Your UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "Tên hiển thị"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "Giới thiệu mình"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Số điện thoại di động"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Cập nhật hồ sơ của bạn"
+
+msgid "The PIN you entered is invalid."
+msgstr "Bạn đã gõ một mã PIN không đúng."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Bạn đã gõ một mã PIN có chiều dài sai [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "Mã PIN này không phải đúng. Nó chỉ nên chứa chữ số [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Bạn đã gõ hai mã PIN không trùng."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Lỗi cập nhật hồ sơ"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "Thẩm tra PIN"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Tên hiển thị"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Đổi biểu tượng"
 
-#. hidden
-msgid "Hide my number"
-msgstr "Ẩn số của tôi"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Số điện thoại di động"
-
-msgid "Update your Profile"
-msgstr "Cập nhật hồ sơ của bạn"
-
-msgid "Here you can update your MXit profile"
-msgstr "Ở đây thì bạn có thể cập nhật hồ sơ MXit của mình"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Đổi biểu tượng"
 
 msgid "View Splash"
 msgstr "Xem Màn hình Giật gân"
@@ -6049,9 +6107,39 @@ msgstr "Hiện thời không có màn hình giật gân sẵn sàng"
 msgid "About"
 msgstr "Giới thiệu"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Tìm người dùng"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Tìm người dùng"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Thông tin người dùng"
+
+msgid "_Search"
+msgstr "_Tìm kiếm"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "Đổi hồ sơ..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Đổi tâm trạng..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Đặt tên thân mật..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Tìm người dùng..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6082,6 +6170,10 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Đang kết nối..."
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Bạn đã gõ một tên không đúng."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Bạn đã gõ một mã PIN có chiều dài không đúng [7-10]."
@@ -6155,6 +6247,23 @@ msgstr "Thẩm tra tài khoản MXit"
 msgid "Retrieving User Information..."
 msgstr "Đang lấy thông tin về người dùng..."
 
+#, fuzzy
+msgid "was kicked"
+msgstr "Phiếu sai"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Bạn bị đá: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Phòng:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Bạn có thư mới !"
+
 msgid "Loading menu..."
 msgstr "Đang nạp trình đơn..."
 
@@ -6170,8 +6279,21 @@ msgid "Hidden Number"
 msgstr "Con số bị ẩn"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "Không sẵn sàng"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Tài khoản này chưa hiệu lực thư điện tử."
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "Yahoo ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Mời"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6184,27 +6306,39 @@ msgstr "Kết nối qua HTTP"
 msgid "Enable splash-screen popup"
 msgstr "Bật tự mở màn hình giật gân"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Bạn bị đá: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Phiếu sai"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Phòng:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "Bạn có thư mới !"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "Trực tuyến"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Tin nhẳn đã gửi"
+
+#, fuzzy
+msgid "No results"
+msgstr "Kết quả tìm kiếm"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Không tìm thấy người dùng nào"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Người dùng"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6942,6 +7076,12 @@ msgstr "Không nêu lý do."
 msgid "Authorization Denied Message:"
 msgstr "Thông điệp từ chối cho phép:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Nhận được đáp ứng bất thường từ %s: %s"
@@ -7295,7 +7435,6 @@ msgid "Received authorization"
 msgstr "Nhận được sự cho phép"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Tên người dùng không tồn tại"
@@ -7458,6 +7597,12 @@ msgstr "Bạn có thể đã bị ngắt kết nối với AIM"
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Bạn đã bị ngắt kết nối với phòng Chat %s."
+
+msgid "The new formatting is invalid."
+msgstr "Định dạng mới không hợp lệ."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Định dạng cho tên người dùng chỉ đổi chữ viết hoa và khoảng trống."
 
 msgid "Pop-Up Message"
 msgstr "Thông điệp tự mở"
@@ -7712,12 +7857,6 @@ msgstr "Kiến thức Web (hiệu lực tùy chọn này sẽ gây ra bạn nh�
 msgid "ICQ Privacy Options"
 msgstr "Tùy chọn riêng tư ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Định dạng mới không hợp lệ."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Định dạng cho tên người dùng chỉ đổi chữ viết hoa và khoảng trống."
-
 msgid "Change Address To:"
 msgstr "Đổi địa chỉ thành:"
 
@@ -7743,9 +7882,6 @@ msgstr "Tìm kiếm bạn chát dựa theo địa chỉ thư điện tử"
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Hãy nhập địa chỉ thư điện tử của bạn chát mà bạn cần tìm."
-
-msgid "_Search"
-msgstr "_Tìm kiếm"
 
 msgid "Set User Info (web)..."
 msgstr "Đặt thông tin người dùng (Web)..."
@@ -7784,10 +7920,6 @@ msgstr "Hiển thị các bạn chát chờ sự cho phép"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Tìm kiếm bạn chát theo địa chỉ thư..."
-
-#, fuzzy
-msgid "Don't use encryption"
-msgstr "Cần thiết sự cho phép"
 
 msgid "Use clientLogin"
 msgstr "Dùng clientLogin"
@@ -7828,75 +7960,6 @@ msgstr ""
 "Điều này đòi hỏi một kết nối trực tiếp giữa hai máy tính và là cần thiết để "
 "dùng nhắn tin nhanh có hình ảnh. Tuy nhiên, người ta sẽ thấy địa chỉ IP của "
 "bạn, là nguy cơ ảnh hưởng đến quyền riêng tư."
-
-msgid "Invalid SNAC"
-msgstr "SNAC không hợp lệ"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Dịch vụ không sẵn sàng"
-
-msgid "Service not defined"
-msgstr "Chưa xác định dịch vụ"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC quá cũ"
-
-msgid "Not supported by host"
-msgstr "Máy không hỗ trợ"
-
-msgid "Not supported by client"
-msgstr "Trình khách không hỗ trợ"
-
-msgid "Refused by client"
-msgstr "Trình khách từ chối"
-
-msgid "Reply too big"
-msgstr "Trả lời lại quá lớn"
-
-msgid "Responses lost"
-msgstr "Mất trả lời"
-
-msgid "Request denied"
-msgstr "Yêu cầu bị từ chối"
-
-msgid "Busted SNAC payload"
-msgstr "Làm mất trọng tải SNAC"
-
-msgid "Insufficient rights"
-msgstr "Không đủ quyền"
-
-msgid "In local permit/deny"
-msgstr "Nằm trong phạm vi bị giới hạn/từ chối cục bộ"
-
-msgid "Warning level too high (sender)"
-msgstr "Cấp cảnh báo quá cao (người gửi)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Cấp cảnh báo quá cao (người nhận)"
-
-msgid "User temporarily unavailable"
-msgstr "Tạm thời không có người dùng"
-
-msgid "No match"
-msgstr "Không tìm thấy"
-
-msgid "List overflow"
-msgstr "Tràn danh sách"
-
-msgid "Request ambiguous"
-msgstr "Yêu cầu không rõ ràng"
-
-msgid "Queue full"
-msgstr "Hàng đợi đã đầy"
-
-msgid "Not while on AOL"
-msgstr "Không phải khi trên AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -8019,6 +8082,75 @@ msgstr "Là thành viên từ"
 msgid "Capabilities"
 msgstr "Khả năng"
 
+msgid "Invalid SNAC"
+msgstr "SNAC không hợp lệ"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Dịch vụ không sẵn sàng"
+
+msgid "Service not defined"
+msgstr "Chưa xác định dịch vụ"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC quá cũ"
+
+msgid "Not supported by host"
+msgstr "Máy không hỗ trợ"
+
+msgid "Not supported by client"
+msgstr "Trình khách không hỗ trợ"
+
+msgid "Refused by client"
+msgstr "Trình khách từ chối"
+
+msgid "Reply too big"
+msgstr "Trả lời lại quá lớn"
+
+msgid "Responses lost"
+msgstr "Mất trả lời"
+
+msgid "Request denied"
+msgstr "Yêu cầu bị từ chối"
+
+msgid "Busted SNAC payload"
+msgstr "Làm mất trọng tải SNAC"
+
+msgid "Insufficient rights"
+msgstr "Không đủ quyền"
+
+msgid "In local permit/deny"
+msgstr "Nằm trong phạm vi bị giới hạn/từ chối cục bộ"
+
+msgid "Warning level too high (sender)"
+msgstr "Cấp cảnh báo quá cao (người gửi)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Cấp cảnh báo quá cao (người nhận)"
+
+msgid "User temporarily unavailable"
+msgstr "Tạm thời không có người dùng"
+
+msgid "No match"
+msgstr "Không tìm thấy"
+
+msgid "List overflow"
+msgstr "Tràn danh sách"
+
+msgid "Request ambiguous"
+msgstr "Yêu cầu không rõ ràng"
+
+msgid "Queue full"
+msgstr "Hàng đợi đã đầy"
+
+msgid "Not while on AOL"
+msgstr "Không phải khi trên AOL"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8071,718 +8203,6 @@ msgstr "Danh sách mời"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr "Bảo Bình"
-
-msgid "Pisces"
-msgstr "Song Ngư"
-
-msgid "Aries"
-msgstr "Bạch Dương"
-
-msgid "Taurus"
-msgstr "Kim Ngưu"
-
-msgid "Gemini"
-msgstr "Song Tử"
-
-msgid "Cancer"
-msgstr "Cự Giải"
-
-msgid "Leo"
-msgstr "Sư Tử"
-
-msgid "Virgo"
-msgstr "Xử Nữ"
-
-msgid "Libra"
-msgstr "Thiên Bình"
-
-msgid "Scorpio"
-msgstr "Thần Nông"
-
-msgid "Sagittarius"
-msgstr "Nhân Mã"
-
-msgid "Capricorn"
-msgstr "Ma Kết"
-
-msgid "Rat"
-msgstr "Tý"
-
-msgid "Ox"
-msgstr "Sừu"
-
-msgid "Tiger"
-msgstr "Đân"
-
-msgid "Rabbit"
-msgstr "Mão"
-
-msgid "Dragon"
-msgstr "Thìn"
-
-msgid "Snake"
-msgstr "Ty"
-
-msgid "Horse"
-msgstr "Ngọ"
-
-msgid "Goat"
-msgstr "Mùi"
-
-msgid "Monkey"
-msgstr "Thân"
-
-msgid "Rooster"
-msgstr "Dậu"
-
-msgid "Dog"
-msgstr "Tuất"
-
-msgid "Pig"
-msgstr "Hợi"
-
-msgid "Other"
-msgstr "Khác"
-
-msgid "Visible"
-msgstr "Hiện rõ"
-
-msgid "Friend Only"
-msgstr "Chỉ người bạn"
-
-msgid "Private"
-msgstr "Riêng"
-
-msgid "QQ Number"
-msgstr "Số QQ"
-
-msgid "Country/Region"
-msgstr "Quốc gia/Vùng"
-
-msgid "Province/State"
-msgstr "Tỉnh/Bang"
-
-msgid "Zipcode"
-msgstr "Mã bưu điện"
-
-msgid "Phone Number"
-msgstr "Điện thoại"
-
-msgid "Authorize adding"
-msgstr "Cho phép thêm"
-
-msgid "Cellphone Number"
-msgstr "Điện thoại di động"
-
-msgid "Personal Introduction"
-msgstr "Giới thiệu cá nhân"
-
-msgid "City/Area"
-msgstr "T.P./Vùng"
-
-msgid "Publish Mobile"
-msgstr "Xuất số di động"
-
-msgid "Publish Contact"
-msgstr "Xuất liên lạc"
-
-msgid "College"
-msgstr "Cao đẳng"
-
-msgid "Horoscope"
-msgstr "Tử vi"
-
-msgid "Zodiac"
-msgstr "Hoàng đạo"
-
-msgid "Blood"
-msgstr "Máu"
-
-msgid "True"
-msgstr "Đúng"
-
-msgid "False"
-msgstr "Sai"
-
-msgid "Modify Contact"
-msgstr "Sửa liên lạc"
-
-msgid "Modify Address"
-msgstr "Sửa địa chỉ"
-
-msgid "Modify Extended Information"
-msgstr "Sửa thông tin mở rộng"
-
-msgid "Modify Information"
-msgstr "Sửa thông tin"
-
-msgid "Update"
-msgstr "Cập nhật"
-
-msgid "Could not change buddy information."
-msgstr "Không thể sửa đổi thông tin về bạn chát."
-
-msgid "Note"
-msgstr "Ghi chú"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "Ghi nhớ bạn chát"
-
-msgid "Change his/her memo as you like"
-msgstr "Sửa đổi bản ghi nhớ của họ theo ý kiến của bạn"
-
-msgid "_Modify"
-msgstr "_Sửa"
-
-msgid "Memo Modify"
-msgstr "Sửa ghi nhớ"
-
-msgid "Server says:"
-msgstr "Máy phục vụ nói:"
-
-msgid "Your request was accepted."
-msgstr "Yêu cầu của bạn đã được chấp nhận."
-
-msgid "Your request was rejected."
-msgstr "Yêu cầu của bạn bị từ chối."
-
-#, fuzzy, c-format
-msgid "%u requires verification: %s"
-msgstr "%u cần thiết sự thẩm tra"
-
-msgid "Add buddy question"
-msgstr "Hỏi câu cho bạn chát"
-
-msgid "Enter answer here"
-msgstr "Gõ đáp ứng vào đây"
-
-msgid "Send"
-msgstr "Gửi"
-
-msgid "Invalid answer."
-msgstr "Sai đáp ứng."
-
-msgid "Authorization denied message:"
-msgstr "Thông điệp từ chối cho phép:"
-
-msgid "Sorry, you're not my style."
-msgstr "Tiếc là tôi quá bận."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u yêu cầu sự cho phép"
-
-msgid "Add buddy authorize"
-msgstr "Thêm sự cho phép bạn chát"
-
-msgid "Enter request here"
-msgstr "Gõ yêu cầu vào đây"
-
-msgid "Would you be my friend?"
-msgstr "Bạn có muốn nói chuyện phải không?"
-
-msgid "QQ Buddy"
-msgstr "Bạn chát QQ"
-
-msgid "Add buddy"
-msgstr "Thêm bạn chát"
-
-msgid "Invalid QQ Number"
-msgstr "Con số QQ không hợp lệ"
-
-msgid "Failed sending authorize"
-msgstr "Lỗi gửi sự cho phép"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "Lỗi gỡ bỏ bạn chát %u"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Lỗi gỡ bỏ mình khỏi danh sách bạn chát của %d"
-
-msgid "No reason given"
-msgstr "Không nêu lý do"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Bạn đã được %s thêm"
-
-msgid "Would you like to add him?"
-msgstr "Bạn có muốn thêm họ không?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "Bị %s từ chối"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Tin nhẳn: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ID nhóm"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "Hãy gõ con số Qun"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Bạn chỉ có khả năng tìm kiếm QQ bên bỉ\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(Chuỗi UTF-8 không hợp lệ)"
-
-msgid "Not member"
-msgstr "Không phải thành viên"
-
-msgid "Member"
-msgstr "Thành viên"
-
-msgid "Requesting"
-msgstr " Đăng yêu cầu"
-
-msgid "Admin"
-msgstr "Quản trị"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "Danh sách phòng"
-
-msgid "Notice"
-msgstr "Thông báo"
-
-msgid "Detail"
-msgstr "Chi tiết"
-
-msgid "Creator"
-msgstr "Người tạo"
-
-msgid "About me"
-msgstr "Giới thiệu mình"
-
-msgid "Category"
-msgstr "Loại"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun này không cho phép người khác tham gia"
-
-msgid "Join QQ Qun"
-msgstr "Tham gia QQ Qun"
-
-msgid "Input request here"
-msgstr "Gõ yêu cầu vào đây"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Đã tham gia thành công Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "Đã tham gia thành công Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u từ chối tham gia"
-
-msgid "QQ Qun Operation"
-msgstr "Thao tác QQ Qun"
-
-msgid "Failed:"
-msgstr "Bị lỗi:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Tham gia Qun, Đáp ứng không rõ"
-
-msgid "Quit Qun"
-msgstr "Thoát khỏi Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Ghi chú : nếu bạn là người tạo, \n"
-"cuối cùng thao tác này sẽ gỡ bỏ Qun này."
-
-msgid "Sorry, you are not our style"
-msgstr "Tiếc là nhóm này quá đầy"
-
-msgid "Successfully changed Qun members"
-msgstr "Đã thay đổi thành công thành viên Qun"
-
-msgid "Successfully changed Qun information"
-msgstr "Đã sửa đổi thành công thông tin Qun"
-
-msgid "You have successfully created a Qun"
-msgstr "Bạn đã tạo thành công một Qun"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "Bạn có muốn thiết lập thông tin chi tiết ngay bây giờ không?"
-
-msgid "Setup"
-msgstr "Thiết lập"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u đã yêu cầu tham gia Qun %u cho %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u yêu cầu tham gia Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Lỗi tham gia Qun %u, được %u quản trị"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Tham gia Qun %u được %u tán thành cho %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Đã gỡ bỏ bạn chát %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>Bạn chát mới %u đã tham gia.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Không rõ %d"
-
-msgid "Level"
-msgstr "Cấp"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr " Phim"
-
-msgid " Zone"
-msgstr " Vùng"
-
-msgid "Flag"
-msgstr "Cờ"
-
-msgid "Ver"
-msgstr "Pb"
-
-msgid "Invalid name"
-msgstr "Tên không hợp lệ"
-
-msgid "Select icon..."
-msgstr "Chọn biểu tượng..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Thời gian đăng nhập</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Tổng các bạn chát trực tuyến</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Cập nhật cuối:</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Máy phục vụ</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Thẻ ứng dụng khách</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Chế độ kết nối</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Địa chỉ IP Internet của mình</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Đã gửi</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Gửi lại</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Bị mất</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Đã nhận</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Đã nhận bản sao</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Thời gian</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Thông tin đăng nhập"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Tác giả gốc</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Người đóng góp mã nguồn</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Người tạo đắp vá rất hữu ích</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>Công trạng</b>:<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Người thữ kỹ</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "và các người khác (xin gửi chi tiết))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>Và tất cả các người nghiên cứu bí mật...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Mời bạn tham gia !</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "Giới thiệu OpenQ %s"
-
-msgid "Change Icon"
-msgstr "Đổi biểu tượng"
-
-msgid "Change Password"
-msgstr "Đổi mật khẩu"
-
-msgid "Account Information"
-msgstr "Thông tin Tài khoản"
-
-msgid "Update all QQ Quns"
-msgstr "Cập nhật mọi QQ Qun"
-
-msgid "About OpenQ"
-msgstr "Giới thiệu OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "Sửa ghi nhớ bạn chát"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "Phần bổ sung giao thức QQ"
-
-msgid "Auto"
-msgstr "Tự động"
-
-msgid "Select Server"
-msgstr "Chọn máy phục vụ"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "Kết nối qua TCP"
-
-msgid "Show server notice"
-msgstr "Hiện thông báo máy phục vụ"
-
-msgid "Show server news"
-msgstr "Hiện tin tức máy phục vụ"
-
-msgid "Show chat room when msg comes"
-msgstr "Nhận được tin nhẳn thì cũng hiển thị phòng chát"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Khoảng giữ cho kết nối hoạt động (giây)"
-
-msgid "Update interval (seconds)"
-msgstr "Khoảng cập nhật (giây)"
-
-msgid "Unable to decrypt server reply"
-msgstr "Không thể giải mật mã đáp ứng máy phục vụ"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Lỗi yêu cầu hiệu bài, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "Chiều dài hiệu bài không hợp lệ, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX hiện thời không được hỗ trợ"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Yêu cầu kích hoạt"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Gặp mã đáp ứng không được nhận ra khi đăng nhập (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "Đang yêu cầu Captcha"
-
-msgid "Checking captcha"
-msgstr "Đang kiểm tra Captcha"
-
-msgid "Failed captcha verification"
-msgstr "Lỗi thẩm tra Captcha"
-
-msgid "Captcha Image"
-msgstr "Ảnh Captcha"
-
-msgid "Enter code"
-msgstr "Gõ mã"
-
-msgid "QQ Captcha Verification"
-msgstr "Thẩm tra Captcha QQ"
-
-msgid "Enter the text from the image"
-msgstr "Hãy nhập chuỗi từ ảnh"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Không nhận ra đáp ứng khi kiểm tra mật khẩu (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Gặp mã đáp ứng không được nhận ra khi đăng nhập vào (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Lỗi ổ cắm"
-
-msgid "Getting server"
-msgstr "Đang lấy máy phục vụ"
-
-msgid "Requesting token"
-msgstr "Đang yêu cầu hiệu bài"
-
-msgid "Unable to resolve hostname"
-msgstr "Không thể quyết định tên máy"
-
-msgid "Invalid server or port"
-msgstr "Sai máy phục vụ hay cổng"
-
-msgid "Connecting to server"
-msgstr "Đang kết nối tới máy phục vụ"
-
-msgid "QQ Error"
-msgstr "Lỗi QQ"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Tin tức Máy phục vụ :\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "Từ  %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Thông báo máy phục vụ Từ %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "Câu lệnh máy phục vụ (SERVER CMD) không rõ"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Lỗi đáp ứng %s(0x%02X)\n"
-"Phòng %u, đáp ứng 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "Lệnh QQ Qun"
-
-msgid "Unable to decrypt login reply"
-msgstr "Không thể giải mật mã đáp ứng đăng nhập"
-
-msgid "Unknown LOGIN CMD"
-msgstr "Câu lệnh đăng nhập (LOGIN CMD) không rõ"
-
-msgid "Unknown CLIENT CMD"
-msgstr "Câu lệnh ứng dụng khách (CLIENT CMD) không rõ"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d đã từ chối nhận tập tin %s"
-
-msgid "File Send"
-msgstr "Gửi tập tin"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d đã thôi tiến trình truyền %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9549,6 +8969,9 @@ msgstr "Tổ chức"
 msgid "Unit"
 msgstr "Đơn vị"
 
+msgid "Note"
+msgstr "Ghi chú"
+
 msgid "Join Chat"
 msgstr "Tham gia chát"
 
@@ -10208,6 +9631,9 @@ msgstr "Không nhận ra đáp ứng máy phục vụ"
 msgid "Unable to create listen socket"
 msgstr "Không thể tạo ổ cắm lắng nghe"
 
+msgid "Unable to resolve hostname"
+msgstr "Không thể quyết định tên máy"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Tên người dùng SIP không được chứa dấu cách hay ký hiệu @"
 
@@ -10323,6 +9749,9 @@ msgstr "Tin nhẳn Yahoo! của bạn đã không được gửi."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Thông điệp hệ thống Yahoo! cho %s:"
+
+msgid "Authorization denied message:"
+msgstr "Thông điệp từ chối cho phép:"
 
 #, c-format
 msgid ""
@@ -11103,14 +10532,17 @@ msgstr "Dùng thiết lập ủy nhiệm toàn cục"
 msgid "No Proxy"
 msgstr "Không ủy nhiệm"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Dùng thiết lập môi trường"
@@ -11138,6 +10570,14 @@ msgstr "_Cổng:"
 
 msgid "Pa_ssword:"
 msgstr "_Mật khẩu :"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Đang tiếp tục lại phiên chạy"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "thoại và phim"
 
 msgid "Unable to save new account"
 msgstr "Không thể lưu tài khoản mới"
@@ -11186,8 +10626,18 @@ msgstr ""
 "dụng mục <b>Tài khoản > Quản lý Tài khoản</b> trong cửa sổ Danh sách Bạn chát"
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s muốn thêm %s vào danh sách bạn bè của họ%s%s"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s muốn thêm %s vào danh sách bạn bè của họ%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Tin nhắn mới"
 
 #. Buddy List
 msgid "Background Color"
@@ -11554,6 +11004,10 @@ msgstr "/Trợ giúp/Cửa sổ gỡ _rối"
 msgid "/Help/De_veloper Information"
 msgstr "/Trợ giúp/Thông tin nhà _phát triển"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/Trợ giúp/Thông tin _xây dựng"
+
 msgid "/Help/_Translator Information"
 msgstr "/Trợ giúp/Thông tin người _dịch"
 
@@ -11733,6 +11187,10 @@ msgid "Buddy's _username:"
 msgstr "Tên người _dùng bạn chát:"
 
 msgid "(Optional) A_lias:"
+msgstr "(Tùy chọn) Bí d_anh:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
 msgstr "(Tùy chọn) Bí d_anh:"
 
 msgid "Add buddy to _group:"
@@ -12168,15 +11626,8 @@ msgstr "Lỗi "
 msgid "Fatal Error"
 msgstr "Lỗi nghiêm trọng"
 
-msgid "bug master"
-msgstr "chủ lỗi"
-
 msgid "artist"
 msgstr "nghệ sĩ"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
 
 msgid "voice and video"
 msgstr "thoại và phim"
@@ -12189,6 +11640,10 @@ msgstr "chủ Web"
 
 msgid "win32 port"
 msgstr "bản cho win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "nhà duy trì"
@@ -12310,6 +11765,9 @@ msgstr "Tiếng Do Thái"
 msgid "Hindi"
 msgstr "Tiếng Hin-đi"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "Tiếng Hung-ga-ri"
 
@@ -12352,6 +11810,10 @@ msgstr "Tiếng Lào"
 #, fuzzy
 msgid "Maithili"
 msgstr "Tiếng Xouă-hi-li"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Thư mới"
 
 msgid "Macedonian"
 msgstr "Tiếng Ma-xê-đô-ni"
@@ -12555,6 +12017,14 @@ msgstr "Dịch giả trước đây"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Thông tin người dịch %s"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Thông tin bạn xây dựng %s"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Thông tin đăng nhập"
 
 msgid "_Name"
 msgstr "Tê_n"
@@ -13197,6 +12667,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Có thư mới !</span>"
 msgid "New Pounces"
 msgstr "Thông báo mới"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Hủy"
 
@@ -13495,6 +12972,14 @@ msgstr "Cuộn mịn"
 msgid "F_lash window when IMs are received"
 msgstr "Nhấp nhá_y cửa sổ khi nhận tin nhắn"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Quản lý các hình cười tự chọn"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Thời hạn đáp ứng tối đa:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Bề cao vùng nhập tối thiểu theo dòng:"
 
@@ -13563,6 +13048,10 @@ msgstr "Máy phục vụ _TURN:"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "_Cổng:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_Cổng:"
 
 msgid "Use_rname:"
@@ -14322,6 +13811,9 @@ msgstr "Tập hợp PubSub"
 
 msgid "PubSub Leaf"
 msgstr "PubSub Leaf"
+
+msgid "Other"
+msgstr "Khác"
 
 msgid ""
 "\n"
@@ -15179,6 +14671,24 @@ msgstr "Phần bổ _sung"
 msgid "D_evice"
 msgstr "Thiết _bị"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "Â_m lượng:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Ngưỡng:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Máy vi âm"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15189,10 +14699,6 @@ msgstr "Thiết _bị"
 #. *< priority
 #. *< id
 msgid "Voice/Video Settings"
-msgstr "Thiết lập Thoại/Phim"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "Thiết lập Thoại/Phim"
 
 #. *< name
@@ -15456,6 +14962,661 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr ""
+#~ "Tự động từ chối yêu cầu từ người dùng không nằm trên danh sách bạn bè"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Thông điệp yêu cầu sự cho phép:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Xin hãy cho phép tôi."
+
+#~ msgid "Hide my number"
+#~ msgstr "Ẩn số của tôi"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "Ở đây thì bạn có thể cập nhật hồ sơ MXit của mình"
+
+#~ msgid "Aquarius"
+#~ msgstr "Bảo Bình"
+
+#~ msgid "Pisces"
+#~ msgstr "Song Ngư"
+
+#~ msgid "Aries"
+#~ msgstr "Bạch Dương"
+
+#~ msgid "Taurus"
+#~ msgstr "Kim Ngưu"
+
+#~ msgid "Gemini"
+#~ msgstr "Song Tử"
+
+#~ msgid "Cancer"
+#~ msgstr "Cự Giải"
+
+#~ msgid "Leo"
+#~ msgstr "Sư Tử"
+
+#~ msgid "Virgo"
+#~ msgstr "Xử Nữ"
+
+#~ msgid "Libra"
+#~ msgstr "Thiên Bình"
+
+#~ msgid "Scorpio"
+#~ msgstr "Thần Nông"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Nhân Mã"
+
+#~ msgid "Capricorn"
+#~ msgstr "Ma Kết"
+
+#~ msgid "Rat"
+#~ msgstr "Tý"
+
+#~ msgid "Ox"
+#~ msgstr "Sừu"
+
+#~ msgid "Tiger"
+#~ msgstr "Đân"
+
+#~ msgid "Rabbit"
+#~ msgstr "Mão"
+
+#~ msgid "Dragon"
+#~ msgstr "Thìn"
+
+#~ msgid "Snake"
+#~ msgstr "Ty"
+
+#~ msgid "Horse"
+#~ msgstr "Ngọ"
+
+#~ msgid "Goat"
+#~ msgstr "Mùi"
+
+#~ msgid "Monkey"
+#~ msgstr "Thân"
+
+#~ msgid "Rooster"
+#~ msgstr "Dậu"
+
+#~ msgid "Dog"
+#~ msgstr "Tuất"
+
+#~ msgid "Pig"
+#~ msgstr "Hợi"
+
+#~ msgid "Visible"
+#~ msgstr "Hiện rõ"
+
+#~ msgid "Friend Only"
+#~ msgstr "Chỉ người bạn"
+
+#~ msgid "Private"
+#~ msgstr "Riêng"
+
+#~ msgid "QQ Number"
+#~ msgstr "Số QQ"
+
+#~ msgid "Country/Region"
+#~ msgstr "Quốc gia/Vùng"
+
+#~ msgid "Province/State"
+#~ msgstr "Tỉnh/Bang"
+
+#~ msgid "Zipcode"
+#~ msgstr "Mã bưu điện"
+
+#~ msgid "Phone Number"
+#~ msgstr "Điện thoại"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Cho phép thêm"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Điện thoại di động"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Giới thiệu cá nhân"
+
+#~ msgid "City/Area"
+#~ msgstr "T.P./Vùng"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "Xuất số di động"
+
+#~ msgid "Publish Contact"
+#~ msgstr "Xuất liên lạc"
+
+#~ msgid "College"
+#~ msgstr "Cao đẳng"
+
+#~ msgid "Horoscope"
+#~ msgstr "Tử vi"
+
+#~ msgid "Zodiac"
+#~ msgstr "Hoàng đạo"
+
+#~ msgid "Blood"
+#~ msgstr "Máu"
+
+#~ msgid "True"
+#~ msgstr "Đúng"
+
+#~ msgid "False"
+#~ msgstr "Sai"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Sửa liên lạc"
+
+#~ msgid "Modify Address"
+#~ msgstr "Sửa địa chỉ"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Sửa thông tin mở rộng"
+
+#~ msgid "Modify Information"
+#~ msgstr "Sửa thông tin"
+
+#~ msgid "Update"
+#~ msgstr "Cập nhật"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "Không thể sửa đổi thông tin về bạn chát."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "Ghi nhớ bạn chát"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "Sửa đổi bản ghi nhớ của họ theo ý kiến của bạn"
+
+#~ msgid "_Modify"
+#~ msgstr "_Sửa"
+
+#~ msgid "Memo Modify"
+#~ msgstr "Sửa ghi nhớ"
+
+#~ msgid "Server says:"
+#~ msgstr "Máy phục vụ nói:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "Yêu cầu của bạn đã được chấp nhận."
+
+#~ msgid "Your request was rejected."
+#~ msgstr "Yêu cầu của bạn bị từ chối."
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u cần thiết sự thẩm tra"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Hỏi câu cho bạn chát"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Gõ đáp ứng vào đây"
+
+#~ msgid "Send"
+#~ msgstr "Gửi"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Sai đáp ứng."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Tiếc là tôi quá bận."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u yêu cầu sự cho phép"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Thêm sự cho phép bạn chát"
+
+#~ msgid "Enter request here"
+#~ msgstr "Gõ yêu cầu vào đây"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Bạn có muốn nói chuyện phải không?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "Bạn chát QQ"
+
+#~ msgid "Add buddy"
+#~ msgstr "Thêm bạn chát"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Con số QQ không hợp lệ"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Lỗi gửi sự cho phép"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Lỗi gỡ bỏ bạn chát %u"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Lỗi gỡ bỏ mình khỏi danh sách bạn chát của %d"
+
+#~ msgid "No reason given"
+#~ msgstr "Không nêu lý do"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "Bạn đã được %s thêm"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Bạn có muốn thêm họ không?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Bị %s từ chối"
+
+#~ msgid "Message: %s"
+#~ msgstr "Tin nhẳn: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "ID nhóm"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Hãy gõ con số Qun"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Bạn chỉ có khả năng tìm kiếm QQ bên bỉ\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(Chuỗi UTF-8 không hợp lệ)"
+
+#~ msgid "Not member"
+#~ msgstr "Không phải thành viên"
+
+#~ msgid "Member"
+#~ msgstr "Thành viên"
+
+#~ msgid "Requesting"
+#~ msgstr " Đăng yêu cầu"
+
+#~ msgid "Admin"
+#~ msgstr "Quản trị"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Danh sách phòng"
+
+#~ msgid "Notice"
+#~ msgstr "Thông báo"
+
+#~ msgid "Detail"
+#~ msgstr "Chi tiết"
+
+#~ msgid "Creator"
+#~ msgstr "Người tạo"
+
+#~ msgid "Category"
+#~ msgstr "Loại"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun này không cho phép người khác tham gia"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Tham gia QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Gõ yêu cầu vào đây"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Đã tham gia thành công Qun %s (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Đã tham gia thành công Qun"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u từ chối tham gia"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "Thao tác QQ Qun"
+
+#~ msgid "Failed:"
+#~ msgstr "Bị lỗi:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Tham gia Qun, Đáp ứng không rõ"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Thoát khỏi Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Ghi chú : nếu bạn là người tạo, \n"
+#~ "cuối cùng thao tác này sẽ gỡ bỏ Qun này."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Tiếc là nhóm này quá đầy"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Đã thay đổi thành công thành viên Qun"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Đã sửa đổi thành công thông tin Qun"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Bạn đã tạo thành công một Qun"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Bạn có muốn thiết lập thông tin chi tiết ngay bây giờ không?"
+
+#~ msgid "Setup"
+#~ msgstr "Thiết lập"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u đã yêu cầu tham gia Qun %u cho %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u yêu cầu tham gia Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Lỗi tham gia Qun %u, được %u quản trị"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Tham gia Qun %u được %u tán thành cho %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Đã gỡ bỏ bạn chát %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>Bạn chát mới %u đã tham gia.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Không rõ %d"
+
+#~ msgid "Level"
+#~ msgstr "Cấp"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr " Phim"
+
+#~ msgid " Zone"
+#~ msgstr " Vùng"
+
+#~ msgid "Flag"
+#~ msgstr "Cờ"
+
+#~ msgid "Ver"
+#~ msgstr "Pb"
+
+#~ msgid "Invalid name"
+#~ msgstr "Tên không hợp lệ"
+
+#~ msgid "Select icon..."
+#~ msgstr "Chọn biểu tượng..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Thời gian đăng nhập</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Tổng các bạn chát trực tuyến</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Cập nhật cuối:</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Máy phục vụ</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Thẻ ứng dụng khách</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Chế độ kết nối</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Địa chỉ IP Internet của mình</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Đã gửi</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Gửi lại</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Bị mất</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Đã nhận</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Đã nhận bản sao</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Thời gian</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Tác giả gốc</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Người đóng góp mã nguồn</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Người tạo đắp vá rất hữu ích</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>Công trạng</b>:<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Người thữ kỹ</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "và các người khác (xin gửi chi tiết))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>Và tất cả các người nghiên cứu bí mật...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Mời bạn tham gia !</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "Giới thiệu OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Đổi mật khẩu"
+
+#~ msgid "Account Information"
+#~ msgstr "Thông tin Tài khoản"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Cập nhật mọi QQ Qun"
+
+#~ msgid "About OpenQ"
+#~ msgstr "Giới thiệu OpenQ"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Sửa ghi nhớ bạn chát"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "Phần bổ sung giao thức QQ"
+
+#~ msgid "Auto"
+#~ msgstr "Tự động"
+
+#~ msgid "Select Server"
+#~ msgstr "Chọn máy phục vụ"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Kết nối qua TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "Hiện thông báo máy phục vụ"
+
+#~ msgid "Show server news"
+#~ msgstr "Hiện tin tức máy phục vụ"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Nhận được tin nhẳn thì cũng hiển thị phòng chát"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Khoảng giữ cho kết nối hoạt động (giây)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Khoảng cập nhật (giây)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Không thể giải mật mã đáp ứng máy phục vụ"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Lỗi yêu cầu hiệu bài, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Chiều dài hiệu bài không hợp lệ, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX hiện thời không được hỗ trợ"
+
+#~ msgid "Activation required"
+#~ msgstr "Yêu cầu kích hoạt"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Gặp mã đáp ứng không được nhận ra khi đăng nhập (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "Đang yêu cầu Captcha"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Đang kiểm tra Captcha"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "Lỗi thẩm tra Captcha"
+
+#~ msgid "Captcha Image"
+#~ msgstr "Ảnh Captcha"
+
+#~ msgid "Enter code"
+#~ msgstr "Gõ mã"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "Thẩm tra Captcha QQ"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "Hãy nhập chuỗi từ ảnh"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Không nhận ra đáp ứng khi kiểm tra mật khẩu (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Gặp mã đáp ứng không được nhận ra khi đăng nhập vào (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Lỗi ổ cắm"
+
+#~ msgid "Getting server"
+#~ msgstr "Đang lấy máy phục vụ"
+
+#~ msgid "Requesting token"
+#~ msgstr "Đang yêu cầu hiệu bài"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "Sai máy phục vụ hay cổng"
+
+#~ msgid "Connecting to server"
+#~ msgstr "Đang kết nối tới máy phục vụ"
+
+#~ msgid "QQ Error"
+#~ msgstr "Lỗi QQ"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Tin tức Máy phục vụ :\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "Từ  %s:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Thông báo máy phục vụ Từ %s: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Câu lệnh máy phục vụ (SERVER CMD) không rõ"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Lỗi đáp ứng %s(0x%02X)\n"
+#~ "Phòng %u, đáp ứng 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "Lệnh QQ Qun"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Không thể giải mật mã đáp ứng đăng nhập"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Câu lệnh đăng nhập (LOGIN CMD) không rõ"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Câu lệnh ứng dụng khách (CLIENT CMD) không rõ"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d đã từ chối nhận tập tin %s"
+
+#~ msgid "File Send"
+#~ msgstr "Gửi tập tin"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d đã thôi tiến trình truyền %s"
+
+#~ msgid "bug master"
+#~ msgstr "chủ lỗi"
+
+#, fuzzy
+#~ msgid "Voice and Video Settings"
+#~ msgstr "Thiết lập Thoại/Phim"
+
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Gặp lỗi trong khi truyền luồng byte bên trong băng\n"
 
@@ -15536,9 +15697,6 @@ msgstr ""
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "Bây giờ bạn cẩm thấy như thế nào?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "Đổi tâm trạng..."
 
 #~ msgid "Pager server"
 #~ msgstr "Máy phục vụ nhắn tin"
@@ -15687,9 +15845,6 @@ msgstr ""
 
 #~ msgid "Auto-away"
 #~ msgstr "Tự động vắng mặt"
-
-#~ msgid "Change _status to:"
-#~ msgstr "Đổi t_rạng thái thành:"
 
 #~ msgid "Failed to open file '%s': %s"
 #~ msgstr "Không mở được tập tin « %s »: %s"

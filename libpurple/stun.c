@@ -226,7 +226,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 				memcpy(&in.s_addr, tmp + 4, 4);
 				ip = inet_ntoa(in);
 				if(ip)
-					strcpy(nattype.publicip, ip);
+					g_strlcpy(nattype.publicip, ip, sizeof(nattype.publicip));
 			}
 
 			tmp += ntohs(attrib->len);

@@ -111,8 +111,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			return TRUE;
 		}
 
-		buf = s;
 		size -= (s - buf);
+		buf = s;
 	}
 
 	if ((s = strstr(buf, "\r\n\r\n")) == NULL)

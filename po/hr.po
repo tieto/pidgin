@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-11 20:15-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-03-27 15:42+0100\n"
 "Last-Translator: Sabina Drempetić <bina91991@googlemail.com>\n"
 "Language-Team: Croatian <LL@li.org>\n"
@@ -4492,7 +4492,7 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -5974,12 +5974,16 @@ msgid "Where I live"
 msgstr ""
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr ""
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr ""
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10349,6 +10353,10 @@ msgstr ""
 msgid "/Help/De_veloper Information"
 msgstr ""
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Informacije o Prijatelju"
+
 msgid "/Help/_Translator Information"
 msgstr ""
 
@@ -11318,6 +11326,14 @@ msgstr ""
 msgid "%s Translator Information"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Informacije"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Informacije"
+
 msgid "_Name"
 msgstr ""
 
@@ -12217,6 +12233,12 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr ""
 
+msgid "Resize incoming custom smileys"
+msgstr ""
+
+msgid "Maximum size:"
+msgstr ""
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12282,6 +12304,9 @@ msgid "_TURN server:"
 msgstr ""
 
 msgid "_UDP Port:"
+msgstr ""
+
+msgid "T_CP Port:"
 msgstr ""
 
 msgid "Use_rname:"

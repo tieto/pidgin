@@ -40,12 +40,12 @@ void
 run_commands()
 {
 	struct stat finfo;
-	char filename[256];
+	char filename[MAXPATHLEN];
 	char buffer[1024];
 	char *command, *arg1, *arg2;
 	FILE *file;
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
+	snprintf(filename, MAXPATHLEN, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	file = g_fopen(filename, "r+");
 	while (fgets(buffer, sizeof(buffer), file)) {
@@ -144,9 +144,9 @@ init_file()
 {
 	/* most of this was taken from Bash v2.04 by the FSF */
 	struct stat finfo;
-	char filename[256];
+	char filename[MAXPATHLEN];
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
+	snprintf(filename, MAXPATHLEN, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 		run_commands();
@@ -160,9 +160,9 @@ check_file()
 {
 	/* most of this was taken from Bash v2.04 by the FSF */
 	struct stat finfo;
-	char filename[256];
+	char filename[MAXPATHLEN];
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
+	snprintf(filename, MAXPATHLEN, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 	{

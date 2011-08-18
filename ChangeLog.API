@@ -1,5 +1,14 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.0:
+	libpurple:
+		Added:
+		* purple_srv_txt_query_destroy (accidentally left out of 2.8.0)
+
+	Pidgin:
+		Added:
+		* pidgin_dialogs_plugins_info (should not be used by anything but Pidgin)
+
 version 2.9.0:
 	libpurple:
 		Added:

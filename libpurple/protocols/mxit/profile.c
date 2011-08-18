@@ -322,9 +322,9 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 	purple_notify_searchresults_button_add( results, PURPLE_NOTIFY_BUTTON_INVITE, mxit_search_results_add_cb );
 
 	if ( searchType == CP_SUGGEST_FRIENDS )
-		text = g_strdup_printf( _( "You have %i suggested friends." ), maxResults );
+		text = g_strdup_printf( dngettext( PACKAGE, "You have %i suggested friend.", "You have %i suggested friends.", maxResults ), maxResults );
 	else
-		text = g_strdup_printf( _( "We found %i contacts that match your search." ), maxResults );
+		text = g_strdup_printf( dngettext( PACKAGE, "We found %i contact that matches your search.", "We found %i contacts that match your search.", maxResults ), maxResults );
 
 	purple_notify_searchresults( session->con, NULL, text, NULL, results, NULL, NULL );
 

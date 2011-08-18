@@ -189,10 +189,9 @@ am__libpurpleinclude_HEADERS_DIST = account.h accountopt.h blist.h \
 	savedstatuses.h server.h signals.h smiley.h dnsquery.h \
 	dnssrv.h status.h stringref.h stun.h sound.h sound-theme.h \
 	sound-theme-loader.h sslconn.h theme.h theme-loader.h \
-	theme-manager.h upnp.h util.h valgrind.h value.h xmlnode.h \
-	whiteboard.h purple.h version.h marshallers.h dbus-bindings.h \
-	dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h \
-	dbus-types.h
+	theme-manager.h upnp.h util.h value.h xmlnode.h whiteboard.h \
+	purple.h version.h marshallers.h dbus-bindings.h dbus-purple.h \
+	dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 HEADERS = $(libpurpleinclude_HEADERS) $(mediainclude_HEADERS) \
 	$(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -624,7 +623,6 @@ purple_coreheaders = \
 	theme-manager.h \
 	upnp.h \
 	util.h \
-	valgrind.h \
 	value.h \
 	xmlnode.h \
 	whiteboard.h

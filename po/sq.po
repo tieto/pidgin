@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 21:40-0700\n"
-"PO-Revision-Date: 2011-03-13 10:26+0200\n"
+"POT-Creation-Date: 2011-08-17 22:40-0700\n"
+"PO-Revision-Date: 2011-08-11 13:02+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <besnik@programeshqip.org>\n"
 "Language: sq\n"
@@ -220,9 +220,8 @@ msgstr "Emër përdoruesi"
 msgid "Alias (optional)"
 msgstr "Alias (opsional)"
 
-#, fuzzy
 msgid "Invite message (optional)"
-msgstr "Mesazh (opsional)"
+msgstr "Mesazh ftese (opsional)"
 
 msgid "Add in group"
 msgstr "Shto në grup"
@@ -1711,6 +1710,7 @@ msgstr "Ky protokoll nuk mbulon dhënie aliasi publik."
 msgid "Unknown"
 msgstr "E panjohur"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Shokë"
 
@@ -1981,7 +1981,7 @@ msgid "Unknown reason"
 msgstr "Arsye e panjohur"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
-msgstr ""
+msgstr "Po ndërpritet kërkim DNS-je nën mënyrën Ndërmjetës Tor."
 
 #, c-format
 msgid ""
@@ -3386,23 +3386,20 @@ msgstr ""
 msgid "Change Gadu-Gadu Password"
 msgstr "Ndrysho fjalëkalim Gadu-Gadu"
 
-#, fuzzy
 msgid "Show status to:"
-msgstr "Ndrysho _gjendje si:"
+msgstr "Shfaja gjendjen:"
 
 msgid "All people"
-msgstr ""
+msgstr "Krejt njerëzve"
 
-#, fuzzy
 msgid "Only buddies"
-msgstr "Shokë të Lidhur"
+msgstr "Vetëm shokëve"
 
-#, fuzzy
 msgid "Change status broadcasting"
-msgstr "Ndryshoji gjendjen si"
+msgstr "Ndryshoji gjendje transmetimi"
 
 msgid "Please, select who can see your status"
-msgstr ""
+msgstr "Ju lutem, përzgjidhni cilët mund ta shohin gjendjen tuaj"
 
 #, c-format
 msgid "Select a chat for buddy: %s"
@@ -3881,9 +3878,8 @@ msgstr "\"Wallops\" prej %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "veprim &lt;veprim për t'u kryer&gt;:  Kryej një veprim."
 
-#, fuzzy
 msgid "authserv: Send a command to authserv"
-msgstr "chanserv:  Dërgo një urdhër te chanserv."
+msgstr "authserv:  Dërgoni një urdhër te authserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -4982,9 +4978,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;përdorues&gt; [mesazh]:  Fto një përdorues te dhoma."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr ""
-"join: &lt;dhomë&gt; [fjalëkalim]:  Hyni një një fjalosje te ky shërbyes."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;dhomë[@shërbyes]&gt; [fjalëkalim]:  Hyni një një fjalosje."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;përdorues&gt; [arsye]:  Përzër një përdorues prej dhomës."
@@ -6110,9 +6105,9 @@ msgstr "I pazoti të heqë përdoruesin"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mesazhi për celular nuk u dërgua dot, ngaqë qe shumë i gjatë."
 
-#, fuzzy
 msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur."
+msgstr ""
+"Mesazhi për celular nuk u dërgua dot, ngaqë ndodhi një gabim i panjohur."
 
 #, c-format
 msgid ""
@@ -6300,13 +6295,12 @@ msgid "Display Name"
 msgstr "Emër në Ekran"
 
 #. about me
-#, fuzzy
 msgid "About Me"
-msgstr "Rreth meje"
+msgstr "Rreth Meje"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "Ku Banoj"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6314,15 +6308,14 @@ msgstr "Numër Telefoni Celular"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "Mund të kërkohet për të"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "Mund të jepen sugjerime për të"
 
-#, fuzzy
 msgid "Update your MXit Profile"
-msgstr "Përditëso Profilin Tim"
+msgstr "Përditësoni Profilin tuaj MXit"
 
 msgid "The PIN you entered is invalid."
 msgstr "PIN-i që dhatë është i mangët."
@@ -6339,9 +6332,8 @@ msgid "The two PINs you entered do not match."
 msgstr "Dy PIN-et që dhatë nuk përputhen."
 
 #. show error to user
-#, fuzzy
 msgid "PIN Update Error"
-msgstr "Gabim Përditësimi Profili"
+msgstr "Gabim Përditësimi PIN-i"
 
 #. pin
 #. pin (required)
@@ -6353,13 +6345,11 @@ msgid "Verify PIN"
 msgstr "Verifikoni PIN-in"
 
 #. (reference: "libpurple/request.h")
-#, fuzzy
 msgid "Change PIN"
-msgstr "Ndrysho Ikonë"
+msgstr "Ndërroni PIN-in"
 
-#, fuzzy
 msgid "Change MXit PIN"
-msgstr "Ndrysho Ikonë"
+msgstr "Ndërroni PIN-in e MXit-it"
 
 msgid "View Splash"
 msgstr "Shihni Siglën"
@@ -6370,17 +6360,14 @@ msgstr "Hëpëhrë nuk ka shfaqje sigle të mundshme"
 msgid "About"
 msgstr "Rreth"
 
-#, fuzzy
 msgid "Search for user"
 msgstr "Kërko për përdorues"
 
-#, fuzzy
 msgid "Search for a MXit contact"
-msgstr "Kërko për përdorues"
+msgstr "Kërko për një kontakt MXit"
 
-#, fuzzy
 msgid "Type search information"
-msgstr "Të dhëna Përdoruesi"
+msgstr ""
 
 msgid "_Search"
 msgstr "_Kërko"
@@ -6390,19 +6377,16 @@ msgid "Change Profile..."
 msgstr "Ndryshoni Profil..."
 
 #. change PIN
-#, fuzzy
 msgid "Change PIN..."
-msgstr "Ndryshoni Humor..."
+msgstr "Ndërroni PIN-in..."
 
 #. suggested friends
-#, fuzzy
 msgid "Suggested friends..."
-msgstr "Caktoni Emër Miqësor..."
+msgstr "Miq të këshilluar..."
 
 #. search for contacts
-#, fuzzy
 msgid "Search for contacts..."
-msgstr "Kërkoni për Përdoruesa..."
+msgstr "Kërko për kontakte..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6575,33 +6559,33 @@ msgstr "Aktivizo flluskën e siglës"
 msgid "Last Online"
 msgstr "Së fundi Online"
 
-#, fuzzy
 msgid "Invite Message"
-msgstr "Mesazhe të Dërguar"
+msgstr "Mesazh Ftimi"
 
-#, fuzzy
 msgid "No results"
-msgstr "Përfundime kërkimi"
+msgstr "Pa përfundime"
 
-#, fuzzy
 msgid "No contacts found."
-msgstr "S'u gjetën përdorues"
+msgstr "S'u gjetën kontakte"
 
 #. define columns
-#, fuzzy
 msgid "UserId"
-msgstr "Përdorues"
+msgstr ""
 
 msgid "Where I live"
-msgstr ""
+msgstr "Ku Banoj"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr ""
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Keni %i sugjerim për shok."
+msgstr[1] "Keni %i sugjerime për shokë."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr ""
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Gjetëm %i kontakt që përputhet me kërkimin tuaj."
+msgstr[1] "Gjetëm %i kontakte që përputhen me kërkimin tuaj."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10967,7 +10951,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 msgid "Tor/Privacy (SOCKS5)"
-msgstr ""
+msgstr "Tor/Vetësi (SOCKS5)"
 
 #  HTTP
 msgid "HTTP"
@@ -11000,13 +10984,11 @@ msgstr "_Portë:"
 msgid "Pa_ssword:"
 msgstr "Fjalë_kalim:"
 
-#, fuzzy
 msgid "Use _silence suppression"
-msgstr "Po rikthehet sesioni"
+msgstr "Përdor heqje _heshtjeje"
 
-#, fuzzy
 msgid "_Voice and Video"
-msgstr "zë dhe figurë"
+msgstr "_Zë dhe Video"
 
 msgid "Unable to save new account"
 msgstr "I pazoti të ruajë llogari të re"
@@ -11054,19 +11036,20 @@ msgstr ""
 "Mund t'i riktheheni kësaj dritareje për shtim, përpunim apo heqje llogarish "
 "nga <b>Llogari->Administroni Llogarira</b> te dritarja e Listave të Shokëve"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
 "list%s%s"
-msgstr "%s%s%s%s don t'ju shtojë (%s) te lista e tij e shokëve %s%s"
+msgstr ""
+"<a href=\"viewinfo\">%s</a>%s%s%s dëshiron t'ju shtojë juve (%s) te lista e "
+"tij ose e saj e shokëve%s%s"
 
 #, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s don t'ju shtojë (%s) te lista e tij e shokëve %s%s"
 
-#, fuzzy
 msgid "Send Instant Message"
-msgstr "Mesazh i Ri i Atypëratyshëm"
+msgstr "Dërgoni Mesazh të Atypëratyshëm"
 
 #. Buddy List
 msgid "Background Color"
@@ -11441,6 +11424,10 @@ msgstr "/Ndihmë/Dritare _Diagnostikimi"
 msgid "/Help/De_veloper Information"
 msgstr "/Ndihmë/Të dhëna _Zhvilluesi"
 
+#  res[0] == username
+msgid "/Help/_Plugin Information"
+msgstr "/Ndihmë/_Të dhëna Shtojce"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ndihmë/Të dhëna _Përkthyesi"
 
@@ -11628,9 +11615,8 @@ msgid "(Optional) A_lias:"
 msgstr "(Opsionale) A_lias:"
 
 #  Optional Information section
-#, fuzzy
 msgid "(Optional) _Invite message:"
-msgstr "(Opsionale) A_lias:"
+msgstr "(Opsionale) Mesazh _Ftimi:"
 
 msgid "Add buddy to _group:"
 msgstr "Shto shok te _grupi:"
@@ -12075,10 +12061,6 @@ msgstr "Gabim Fatal"
 msgid "artist"
 msgstr "artist"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "zë dhe figurë"
 
@@ -12090,6 +12072,10 @@ msgstr "\"webmaster\""
 
 msgid "win32 port"
 msgstr "portë win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "mirëmbajtës"
@@ -12208,6 +12194,9 @@ msgstr "Hebraisht"
 
 msgid "Hindi"
 msgstr "Indiane"
+
+msgid "Croatian"
+msgstr "Kroate"
 
 msgid "Hungarian"
 msgstr "Hungareze"
@@ -12454,6 +12443,14 @@ msgstr "Përkthyesa të Dikurshëm"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Të dhëna Përkthyesi %s"
+
+#  res[0] == username
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Të dhëna Shtojce %s"
+
+msgid "Plugin Information"
+msgstr "Të dhëna Shtojce"
 
 msgid "_Name"
 msgstr "_Emër"
@@ -13419,6 +13416,12 @@ msgstr "Përdor rrëshqitje të butë"
 msgid "F_lash window when IMs are received"
 msgstr "_Xixëllo dritaren kur merren mesazhe të rinj MA"
 
+msgid "Resize incoming custom smileys"
+msgstr "Ripërmaso emotikone të personalizuar që i dërgon dikush"
+
+msgid "Maximum size:"
+msgstr "Madhësia maksimum:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Lartësia minimum e fushës së futjeve, në rreshta:"
 
@@ -13488,6 +13491,9 @@ msgstr "Shërbyes _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Portë _UDP:"
+
+msgid "T_CP Port:"
+msgstr "Portë T_CP:"
 
 msgid "Use_rname:"
 msgstr "_Emër përdoruesi:"
@@ -15272,20 +15278,17 @@ msgstr "Pa_jisje"
 msgid "DROP"
 msgstr ""
 
-#, fuzzy
 msgid "Volume:"
-msgstr "_Volum:"
+msgstr "Volum:"
 
-#, fuzzy
 msgid "Silence threshold:"
-msgstr "Prag :"
+msgstr "Prag heshtjeje:"
 
 msgid "Input and Output Settings"
-msgstr ""
+msgstr "Rregullime për Në Hyrje dhe Në Dalje"
 
-#, fuzzy
 msgid "Microphone Test"
-msgstr "Mikrofon"
+msgstr "Provë Mikrofoni"
 
 #. *< magic
 #. *< major version
@@ -15399,7 +15402,7 @@ msgstr "_Mbaj dritare Liste Shokësh sipër:"
 
 #. XXX: Did this ever work?
 msgid "Only when docked"
-msgstr ""
+msgstr "Vetëm kur gjendet në një panel"
 
 msgid "Windows Pidgin Options"
 msgstr "Mundësi për Pidgin-in nën Windows."
@@ -16025,9 +16028,6 @@ msgstr "Nuk keni leje të çinstaloni këtë zbatim."
 
 #~ msgid "<b>IP</b>: %s<br>\n"
 #~ msgstr "<b>IP</b>: %s<br>\n"
-
-#~ msgid "Login Information"
-#~ msgstr "Të dhëna Hyrjeje"
 
 #~ msgid "<p><b>Original Author</b>:<br>\n"
 #~ msgstr "<p><b>Autori Origjinal</b>:<br>\n"

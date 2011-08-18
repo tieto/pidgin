@@ -743,10 +743,14 @@ oscar_login(PurpleAccount *account)
 	gc->flags |= PURPLE_CONNECTION_HTML;
 	if (oscar_util_valid_name_icq((purple_account_get_username(account)))) {
 		od->icq = TRUE;
-		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
+
+	/* Set this flag based on the protocol_id rather than the username,
+	   because that is what's tied to the get_moods prpl callback. */
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
+		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
@@ -5647,7 +5651,10 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 
 	tmp1 = g_utf8_strdown(buf, -1);
 	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
-	strcpy(buf, tmp2);
+	if (strlen(tmp2) > sizeof(buf) - 1) {
+		purple_debug_error("oscar", "normalized string exceeds buffer length!\n");
+	}
+	g_strlcpy(buf, tmp2, sizeof(buf));
 	g_free(tmp2);
 	g_free(tmp1);
 
