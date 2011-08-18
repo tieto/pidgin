@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2006-04-04 15:35+0700\n"
 "Last-Translator: Isriya Paireepairit <markpeak@gmail.com>\n"
 "Language-Team: Thai <l10n@opentle.org>\n"
@@ -207,6 +207,10 @@ msgstr "ชื่อผู้ใช้"
 
 msgid "Alias (optional)"
 msgstr ""
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "การแจ้งเตือนข้อความ"
 
 #, fuzzy
 msgid "Add in group"
@@ -1723,6 +1727,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "ไม่มีข้อมูล"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "คู่สนทนา"
 
@@ -1977,6 +1982,9 @@ msgstr ""
 #, fuzzy
 msgid "Unknown reason"
 msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2360,8 +2368,10 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Automatically reject from users not in buddy list"
-msgstr "อนุญาตเฉพาะผู้ใช้ในรายการคู่สนทนาเท่านั้น"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "ตอบรับการส่งแฟ้มจาก %s หรือไม่?"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2370,6 +2380,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr ""
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s ยกเลิกการส่งแฟ้ม"
 
 msgid "Notes"
 msgstr "บันทึก"
@@ -3163,6 +3177,24 @@ msgstr ""
 msgid "Change Gadu-Gadu Password"
 msgstr ""
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "เปลี่ยน_สถานะเป็น:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "ค้นหาคู่สนทนา"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "เปลี่ยน_สถานะเป็น:"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr ""
@@ -3194,9 +3226,7 @@ msgid "UIN"
 msgstr ""
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr ""
 
@@ -3311,6 +3341,21 @@ msgstr ""
 msgid "GG server"
 msgstr "แก้ข้อมูลผู้ใช้..."
 
+msgid "Don't use encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "ใช้ TLS เมื่อเป็นไปได้"
+
+#. TODO
+msgid "Require encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "เกิดข้อผิดพลาดในการเชื่อมต่อ"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "ไม่รู้จักคำสั่ง: %s"
@@ -3347,7 +3392,6 @@ msgstr ""
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3603,6 +3647,9 @@ msgstr ""
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
 
+msgid "authserv: Send a command to authserv"
+msgstr ""
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3771,7 +3818,10 @@ msgstr "ลบ"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 #, fuzzy
 msgid "Invalid response from server"
 msgstr "เซิร์ฟเวอร์ไม่ถูกต้อง"
@@ -3918,7 +3968,6 @@ msgstr ""
 msgid "Postal Code"
 msgstr "รหัสไปรษณีย์"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "ประเทศ"
 
@@ -4648,7 +4697,7 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4689,19 +4738,8 @@ msgstr "ปลั๊กอิน Jabber"
 msgid "Domain"
 msgstr "เรียกคำสั่ง"
 
-msgid "Require encryption"
-msgstr ""
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "ใช้ TLS เมื่อเป็นไปได้"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "เกิดข้อผิดพลาดในการเชื่อมต่อ"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "อนุญาตให้ล็อกอินผ่านการเชื่อมต่อที่ไม่เข้ารหัส"
@@ -4813,6 +4851,7 @@ msgstr ""
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 
+#. not success
 msgid "File Send Failed"
 msgstr ""
 
@@ -5581,19 +5620,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "ไม่สามารถส่งอีเมลได้"
 
-msgid "Authorization Request Message:"
-msgstr ""
-
-msgid "Please authorize me!"
-msgstr ""
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-#, fuzzy
-msgid "_OK"
-msgstr "ตกลง"
-
 msgid "Error retrieving profile"
 msgstr "เกิดปัญหาในการอ่านแฟ้มประวัติ"
 
@@ -5811,6 +5837,9 @@ msgstr "ไม่สามารถส่งข้อความได้"
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
 
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr ""
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5952,19 +5981,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-msgid "The PIN you entered is invalid."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-#, fuzzy
-msgid "The two PINs you entered do not match."
-msgstr "รหัสผ่านใหม่ไม่ตรงกัน"
-
 msgid "The Display Name you entered is invalid."
 msgstr ""
 
@@ -5985,25 +6001,19 @@ msgstr "แฟ้มประวัติ MSN"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your UID"
-msgstr ""
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr ""
-
-msgid "Verify PIN"
-msgstr ""
-
 #. display name
 #. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "นามสกุล"
 
-#. hidden
-msgid "Hide my number"
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "เกี่ยวกับ Pidgin"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
 
 #. mobile number
@@ -6011,12 +6021,53 @@ msgstr ""
 msgid "Mobile Number"
 msgstr "ตั้งหมายเลขโทรศัพท์มือถือ"
 
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
 #, fuzzy
-msgid "Update your Profile"
+msgid "Update your MXit Profile"
 msgstr "แฟ้มประวัติ MSN"
 
-msgid "Here you can update your MXit profile"
+msgid "The PIN you entered is invalid."
 msgstr ""
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr ""
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "รหัสผ่านใหม่ไม่ตรงกัน"
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "เกิดข้อผิดพลาดในการเชื่อมต่อ"
+
+#. pin
+#. pin (required)
+msgid "PIN"
+msgstr ""
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "บันทึกไอคอน"
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "บันทึกไอคอน"
 
 msgid "View Splash"
 msgstr ""
@@ -6028,10 +6079,40 @@ msgstr ""
 msgid "About"
 msgstr "เกี่ยวกับ Pidgin"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "ค้นหาผู้ใช้ Jabber"
+
+msgid "Search for a MXit contact"
+msgstr ""
+
+#, fuzzy
+msgid "Type search information"
+msgstr "เปลี่ยนข้อมูลผู้ใช้ของ %s"
+
+#, fuzzy
+msgid "_Search"
+msgstr "หา"
+
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
 msgstr "เปลี่ยนรหัสผ่าน"
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "เปลี่ยนรหัสผ่าน..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "เปลี่ยนชื่อเรียก..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "ค้นหาผู้ใช้..."
 
 #. display splash-screen
 #, fuzzy
@@ -6064,6 +6145,10 @@ msgstr "ไม่สามารถติดต่อไปยังโฮสต
 #, fuzzy
 msgid "Connecting..."
 msgstr "กำลังเชื่อมต่อ"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "รหัสผ่านใหม่ไม่ตรงกัน"
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -6138,6 +6223,22 @@ msgstr ""
 msgid "Retrieving User Information..."
 msgstr "แก้ข้อมูลผู้ใช้..."
 
+msgid "was kicked"
+msgstr ""
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "%s เปลี่ยนสถานะเป็นไม่ได้ใช้งาน (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_ห้อง:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "%s เปลี่ยนสถานะเป็นไม่ได้ใช้งาน (%s)"
+
 #, fuzzy
 msgid "Loading menu..."
 msgstr "บันทึกเหตุการณ์"
@@ -6156,8 +6257,20 @@ msgid "Hidden Number"
 msgstr "ชื่อกลาง"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "ไม่มีรายการ"
+
+msgid "This contact does not have a profile."
+msgstr ""
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "เลือก..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "เ_ชิญ"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6172,26 +6285,39 @@ msgstr "กำลังเชื่อมต่อ"
 msgid "Enable splash-screen popup"
 msgstr ""
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "%s เปลี่ยนสถานะเป็นไม่ได้ใช้งาน (%s)"
-
-msgid "was kicked"
-msgstr ""
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_ห้อง:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "%s เปลี่ยนสถานะเป็นไม่ได้ใช้งาน (%s)"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "นามสกุล"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "เปิดข้อความทั้งหมด"
+
+#, fuzzy
+msgid "No results"
+msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "ไม่มีบันทึก"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "ผู้ใช้"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6938,6 +7064,13 @@ msgstr ""
 msgid "Authorization Denied Message:"
 msgstr ""
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+#, fuzzy
+msgid "_OK"
+msgstr "ตกลง"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "มีข้อความใหม่ %d ข้อความจาก %s\n"
@@ -7302,7 +7435,6 @@ msgid "Received authorization"
 msgstr ""
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -7446,6 +7578,12 @@ msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
+msgstr ""
+
+msgid "The new formatting is invalid."
+msgstr ""
+
+msgid "Username formatting can change only capitalization and whitespace."
 msgstr ""
 
 msgid "Pop-Up Message"
@@ -7681,12 +7819,6 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr ""
 
-msgid "The new formatting is invalid."
-msgstr ""
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-
 msgid "Change Address To:"
 msgstr ""
 
@@ -7709,10 +7841,6 @@ msgstr ""
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr ""
-
-#, fuzzy
-msgid "_Search"
-msgstr "หา"
 
 #, fuzzy
 msgid "Set User Info (web)..."
@@ -7754,9 +7882,6 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr ""
 
-msgid "Don't use encryption"
-msgstr ""
-
 msgid "Use clientLogin"
 msgstr ""
 
@@ -7788,75 +7913,6 @@ msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
-msgstr ""
-
-msgid "Invalid SNAC"
-msgstr ""
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr ""
-
-msgid "Service not defined"
-msgstr ""
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr ""
-
-msgid "Not supported by client"
-msgstr ""
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-msgid "Responses lost"
-msgstr ""
-
-msgid "Request denied"
-msgstr ""
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr ""
-
-msgid "No match"
-msgstr ""
-
-msgid "List overflow"
-msgstr ""
-
-msgid "Request ambiguous"
-msgstr ""
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
 msgstr ""
 
 #. Label
@@ -7978,6 +8034,75 @@ msgstr ""
 msgid "Capabilities"
 msgstr ""
 
+msgid "Invalid SNAC"
+msgstr ""
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr ""
+
+msgid "Service not defined"
+msgstr ""
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr ""
+
+msgid "Not supported by client"
+msgstr ""
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+msgid "Responses lost"
+msgstr ""
+
+msgid "Request denied"
+msgstr ""
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr ""
+
+msgid "No match"
+msgstr ""
+
+msgid "List overflow"
+msgstr ""
+
+msgid "Request ambiguous"
+msgstr ""
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
+msgstr ""
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8026,804 +8151,6 @@ msgstr "ไม่แสดงตัว"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr ""
-
-#, fuzzy
-msgid "Pisces"
-msgstr "สัตว์เลี้ยง"
-
-#, fuzzy
-msgid "Aries"
-msgstr "ที่อยู่"
-
-msgid "Taurus"
-msgstr ""
-
-#, fuzzy
-msgid "Gemini"
-msgstr "เหลืออีก"
-
-#, fuzzy
-msgid "Cancer"
-msgstr "ยกเลิก"
-
-msgid "Leo"
-msgstr ""
-
-msgid "Virgo"
-msgstr ""
-
-msgid "Libra"
-msgstr ""
-
-msgid "Scorpio"
-msgstr ""
-
-msgid "Sagittarius"
-msgstr ""
-
-msgid "Capricorn"
-msgstr ""
-
-msgid "Rat"
-msgstr ""
-
-msgid "Ox"
-msgstr ""
-
-#, fuzzy
-msgid "Tiger"
-msgstr "ชื่อ"
-
-msgid "Rabbit"
-msgstr ""
-
-msgid "Dragon"
-msgstr ""
-
-#, fuzzy
-msgid "Snake"
-msgstr "บันทึก"
-
-#, fuzzy
-msgid "Horse"
-msgstr "พอร์ต"
-
-msgid "Goat"
-msgstr ""
-
-msgid "Monkey"
-msgstr ""
-
-#, fuzzy
-msgid "Rooster"
-msgstr "ลงทะเบียน"
-
-msgid "Dog"
-msgstr ""
-
-msgid "Pig"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-#, fuzzy
-msgid "Visible"
-msgstr "ไม่แสดงตัว"
-
-msgid "Friend Only"
-msgstr ""
-
-#, fuzzy
-msgid "Private"
-msgstr "ความเป็นส่วนตัว"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "ประเทศ"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Zipcode"
-msgstr ""
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "_อนุญาต"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "ตั้งหมายเลขโทรศัพท์มือถือ"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "IM ส่วนตัว"
-
-#, fuzzy
-msgid "City/Area"
-msgstr "เมือง"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "โทรศัพท์มือถือส่วนตัว"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "คนอื่นคุยในการสนทนากลุ่ม"
-
-#, fuzzy
-msgid "College"
-msgstr "_ย่อ"
-
-#, fuzzy
-msgid "Horoscope"
-msgstr "พอร์ต"
-
-msgid "Zodiac"
-msgstr ""
-
-#, fuzzy
-msgid "Blood"
-msgstr "ถูกบล็อค"
-
-msgid "True"
-msgstr ""
-
-#, fuzzy
-msgid "False"
-msgstr "ล้มเหลว"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "แก้ไขบัญชีผู้ใช้"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "ที่อยู่บ้าน"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "ข้อมูลคู่สนทนา"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "ข้อมูลคู่สนทนา"
-
-msgid "Update"
-msgstr ""
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "ดูข้อมูลของคู่สนทนา"
-
-msgid "Note"
-msgstr ""
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
-msgstr "ไอคอนในการสนทนา"
-
-msgid "Change his/her memo as you like"
-msgstr ""
-
-#, fuzzy
-msgid "_Modify"
-msgstr "แ_ก้ไข"
-
-#, fuzzy
-msgid "Memo Modify"
-msgstr "แ_ก้ไข"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "เซิ_ร์ฟเวอร์:"
-
-msgid "Your request was accepted."
-msgstr ""
-
-msgid "Your request was rejected."
-msgstr ""
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr ""
-
-#, fuzzy
-msgid "Add buddy question"
-msgstr "เพิ่มคู่สนทนาในรายการคู่สนทนาของคุณ?"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "ใส่เซิร์ฟเวอร์สำหรับประชุม"
-
-#, fuzzy
-msgid "Send"
-msgstr "_ส่ง"
-
-#, fuzzy
-msgid "Invalid answer."
-msgstr "ชื่อผู้ใช้ไม่ถูกต้อง"
-
-msgid "Authorization denied message:"
-msgstr ""
-
-msgid "Sorry, you're not my style."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%u needs authorization"
-msgstr "เริ่มการตรวจสอบผู้ใช้"
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "เพิ่มคู่สนทนาในรายการคู่สนทนาของคุณ?"
-
-#, fuzzy
-msgid "Enter request here"
-msgstr "ใส่เซิร์ฟเวอร์สำหรับประชุม"
-
-#, fuzzy
-msgid "Would you be my friend?"
-msgstr "ต้องการเขียนทับหรือไม่"
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "เพิ่มคู่สนทนา"
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "เพิ่มคู่สนทนา"
-
-#, fuzzy
-msgid "Invalid QQ Number"
-msgstr "ใส่ชื่อห้องไม่ถูกต้อง"
-
-msgid "Failed sending authorize"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Failed removing buddy %u"
-msgstr "กำลังรับรายการคู่สนทนา"
-
-#, fuzzy, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "กำลังรับรายการคู่สนทนา"
-
-msgid "No reason given"
-msgstr ""
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to add him?"
-msgstr "ต้องการเขียนทับหรือไม่"
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "คืนค่าเดิม"
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "_ข้อความ:"
-
-msgid "ID: "
-msgstr ""
-
-#, fuzzy
-msgid "Group ID"
-msgstr "กลุ่ม:"
-
-msgid "QQ Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "ใส่รหัสผ่านใหม่ที่ต้องการ"
-
-msgid "You can only search for permanent Qun\n"
-msgstr ""
-
-msgid "(Invalid UTF-8 string)"
-msgstr ""
-
-msgid "Not member"
-msgstr ""
-
-msgid "Member"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting"
-msgstr "เหลืออีก"
-
-msgid "Admin"
-msgstr ""
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "รายชื่อห้อง"
-
-#, fuzzy
-msgid "Notice"
-msgstr "บันทึก"
-
-#, fuzzy
-msgid "Detail"
-msgstr "ค่าปริยายของ GNOME"
-
-#, fuzzy
-msgid "Creator"
-msgstr "ล้าง"
-
-#, fuzzy
-msgid "About me"
-msgstr "เกี่ยวกับ Pidgin"
-
-#, fuzzy
-msgid "Category"
-msgstr "ล้าง"
-
-msgid "The Qun does not allow others to join"
-msgstr ""
-
-msgid "Join QQ Qun"
-msgstr ""
-
-msgid "Input request here"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
-
-msgid "Successfully joined Qun"
-msgstr ""
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Operation"
-msgstr "ตั้งค่าเสียง"
-
-#, fuzzy
-msgid "Failed:"
-msgstr "ล้มเหลว"
-
-msgid "Join Qun, Unknown Reply"
-msgstr ""
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "ออก"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-msgid "Sorry, you are not our style"
-msgstr ""
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "เปลี่ยนข้อมูลผู้ใช้ของ %s"
-
-msgid "You have successfully created a Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to set up detailed information now?"
-msgstr "ต้องการเขียนทับหรือไม่"
-
-msgid "Setup"
-msgstr ""
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr ""
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr ""
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr ""
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "ลบคู่สนทนา"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "ลบคู่สนทนา"
-
-#, fuzzy, c-format
-msgid "Unknown-%d"
-msgstr "ไม่มีข้อมูล"
-
-#, fuzzy
-msgid "Level"
-msgstr "ไม่ต้อง"
-
-msgid " VIP"
-msgstr ""
-
-msgid " TCP"
-msgstr ""
-
-#, fuzzy
-msgid " FromMobile"
-msgstr "ใช้ผ่านมือถือ"
-
-#, fuzzy
-msgid " BindMobile"
-msgstr "ใช้ผ่านมือถือ"
-
-msgid " Video"
-msgstr ""
-
-#, fuzzy
-msgid " Zone"
-msgstr "โทรศัพท์"
-
-msgid "Flag"
-msgstr ""
-
-msgid "Ver"
-msgstr ""
-
-#, fuzzy
-msgid "Invalid name"
-msgstr "ชื่อผู้ใช้ไม่ถูกต้อง"
-
-#, fuzzy
-msgid "Select icon..."
-msgstr "เลือกโฟลเดอร์..."
-
-#, fuzzy, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>บันทึกการสนทนากับ %s เมื่อ %s:</b><br>"
-
-#, fuzzy, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>บันทึกการสนทนากับ %s เมื่อ %s:</b><br>"
-
-#, fuzzy, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy
-msgid "Login Information"
-msgstr "ข้อมูลคู่สนทนา"
-
-#, fuzzy
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<br><b>ส่วนตัว</b><br>%s"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
-
-#, fuzzy
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>นามแฝง:</b> %s<br>"
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<br><b>ส่วนตัว</b><br>%s"
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "About OpenQ %s"
-msgstr "เกี่ยวกับ Pidgin"
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "บันทึกไอคอน"
-
-msgid "Change Password"
-msgstr ""
-
-#, fuzzy
-msgid "Account Information"
-msgstr "ข้อมูลคู่สนทนา"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-#, fuzzy
-msgid "About OpenQ"
-msgstr "เกี่ยวกับ Pidgin"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "ที่อยู่บ้าน"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "QQ Protocol Plugin"
-msgstr "ปลั๊กอิน Jabber"
-
-#, fuzzy
-msgid "Auto"
-msgstr "โฮสต์เชื่อมต่อ"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "เซิร์ฟเวอร์"
-
-msgid "QQ2005"
-msgstr ""
-
-msgid "QQ2007"
-msgstr ""
-
-msgid "QQ2008"
-msgstr ""
-
-#, fuzzy
-msgid "Connect by TCP"
-msgstr "กำลังเชื่อมต่อ"
-
-#, fuzzy
-msgid "Show server notice"
-msgstr "พอร์ตเซิร์ฟเวอร์"
-
-#, fuzzy
-msgid "Show server news"
-msgstr "ที่อยู่เซิร์ฟเวอร์"
-
-msgid "Show chat room when msg comes"
-msgstr ""
-
-msgid "Keep alive interval (seconds)"
-msgstr ""
-
-#, fuzzy
-msgid "Update interval (seconds)"
-msgstr "ข้อมูลคู่สนทนา"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "เซิร์ฟเวอร์"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "เซิร์ฟเวอร์ไม่ถูกต้อง"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr ""
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting captcha"
-msgstr "เหลืออีก"
-
-msgid "Checking captcha"
-msgstr ""
-
-msgid "Failed captcha verification"
-msgstr ""
-
-# msgstr ""
-# "เกิดข้อผิดพลาดขณะบันทึกรูป: %s\n"
-# "%s"
-#, fuzzy
-msgid "Captcha Image"
-msgstr "บันทึกรูปภาพ"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "ใส่รหัสผ่าน"
-
-msgid "QQ Captcha Verification"
-msgstr ""
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "กรุณาใส่ชื่อของกลุ่มที่ต้องการเพิ่ม"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-
-msgid "Socket error"
-msgstr ""
-
-#, fuzzy
-msgid "Getting server"
-msgstr "แก้ข้อมูลผู้ใช้..."
-
-#, fuzzy
-msgid "Requesting token"
-msgstr "เหลืออีก"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "ไม่สามารถส่งข้อความได้"
-
-#, fuzzy
-msgid "Invalid server or port"
-msgstr "เซิร์ฟเวอร์ไม่ถูกต้อง"
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "เซิร์ฟเวอร์"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "เกิดข้อผิดพลาดในการเชื่อมต่อ"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr "ที่อยู่เซิร์ฟเวอร์"
-
-#, c-format
-msgid "%s:%s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "จาก"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-
-#, fuzzy
-msgid "Unknown SERVER CMD"
-msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Command"
-msgstr "เรียกคำสั่ง"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "เซิร์ฟเวอร์"
-
-#, fuzzy
-msgid "Unknown LOGIN CMD"
-msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
-
-#, fuzzy
-msgid "Unknown CLIENT CMD"
-msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
-
-#, fuzzy, c-format
-msgid "%d has declined the file %s"
-msgstr "%s ยกเลิกการส่งแฟ้ม"
-
-#, fuzzy
-msgid "File Send"
-msgstr "ล้มเหลว"
-
-#, fuzzy, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%s ยกเลิกการส่งแฟ้ม %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9549,6 +8876,9 @@ msgstr ""
 msgid "Unit"
 msgstr ""
 
+msgid "Note"
+msgstr ""
+
 msgid "Join Chat"
 msgstr ""
 
@@ -10152,6 +9482,10 @@ msgid "Unable to create listen socket"
 msgstr "ไม่สามารถส่งข้อความถึง %s ได้"
 
 #, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "ไม่สามารถส่งข้อความได้"
+
+#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "ชื่อเล่นของ IRC ไม่อนุญาตให้มีช่องว่าง"
 
@@ -10271,6 +9605,9 @@ msgstr ""
 
 #, c-format
 msgid "Yahoo! system message for %s:"
+msgstr ""
+
+msgid "Authorization denied message:"
 msgstr ""
 
 #, c-format
@@ -11033,13 +10370,16 @@ msgstr "ใช้ค่าพร็อกซีของ Pidgin"
 msgid "No Proxy"
 msgstr "ไม่ใช้พร็อกซี"
 
-msgid "HTTP"
-msgstr ""
-
 msgid "SOCKS 4"
 msgstr ""
 
 msgid "SOCKS 5"
+msgstr ""
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
 msgstr ""
 
 msgid "Use Environmental Settings"
@@ -11068,6 +10408,13 @@ msgstr "_พอร์ต:"
 
 msgid "Pa_ssword:"
 msgstr "_รหัสผ่าน:"
+
+msgid "Use _silence suppression"
+msgstr ""
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "ใช้ค่าของระบบ"
 
 #, fuzzy
 msgid "Unable to save new account"
@@ -11109,8 +10456,18 @@ msgid ""
 msgstr ""
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "ผู้ใช้ %s ต้องการเพิ่ม %s ในรายการคู่สนทนา"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "ผู้ใช้ %s ต้องการเพิ่ม %s ในรายการคู่สนทนา"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "ส่งข้อความใหม่"
 
 #. Buddy List
 #, fuzzy
@@ -11513,6 +10870,10 @@ msgid "/Help/De_veloper Information"
 msgstr "ข้อมูลคู่สนทนา"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "ข้อมูลคู่สนทนา"
 
@@ -11708,6 +11069,10 @@ msgstr "_ชื่อคู่สนทนา:"
 #, fuzzy
 msgid "(Optional) A_lias:"
 msgstr "ข้อมูลอื่นๆ:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "เปิดข้อความทั้งหมด"
 
 #, fuzzy
 msgid "Add buddy to _group:"
@@ -12166,16 +11531,9 @@ msgstr ""
 msgid "Fatal Error"
 msgstr ""
 
-msgid "bug master"
-msgstr ""
-
 #, fuzzy
 msgid "artist"
 msgstr "ที่อยู่"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
 
 msgid "voice and video"
 msgstr ""
@@ -12187,6 +11545,10 @@ msgid "webmaster"
 msgstr ""
 
 msgid "win32 port"
+msgstr ""
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
 msgstr ""
 
 msgid "maintainer"
@@ -12309,6 +11671,9 @@ msgstr ""
 msgid "Hindi"
 msgstr ""
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr ""
 
@@ -12352,6 +11717,10 @@ msgstr ""
 
 msgid "Maithili"
 msgstr ""
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "มีเมลใหม่"
 
 msgid "Macedonian"
 msgstr ""
@@ -12539,6 +11908,14 @@ msgstr "ผู้แปลในอดีต"
 
 #, fuzzy, c-format
 msgid "%s Translator Information"
+msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
+msgid "Plugin Information"
 msgstr "ข้อมูลคู่สนทนา"
 
 msgid "_Name"
@@ -13194,6 +12571,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">คุณมีเมลใหม�
 msgid "New Pounces"
 msgstr "เพิ่มการเตือนสถานะคู่สนทนา"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -13517,6 +12901,13 @@ msgstr "ใช้ smooth-scrolling"
 msgid "F_lash window when IMs are received"
 msgstr ""
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "แสดงหน้าแสดงอารมณ์พิเศษที่คู่สนทนาส่งมา"
+
+msgid "Maximum size:"
+msgstr ""
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -13593,6 +12984,10 @@ msgstr "เซิร์ฟเวอร์ ST_UN:"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "พอร์ต UDP"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "พอร์ต UDP"
 
 #, fuzzy
@@ -14381,6 +13776,9 @@ msgid "PubSub Collection"
 msgstr ""
 
 msgid "PubSub Leaf"
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 #, fuzzy
@@ -15236,6 +14634,22 @@ msgstr "ปลั๊กอิน"
 msgid "D_evice"
 msgstr ""
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "ระดับเสียง:"
+
+msgid "Silence threshold:"
+msgstr ""
+
+msgid "Input and Output Settings"
+msgstr ""
+
+msgid "Microphone Test"
+msgstr ""
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15247,10 +14661,6 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
-msgstr "ใช้ค่าของระบบ"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "ใช้ค่าของระบบ"
 
 #. *< name
@@ -15505,6 +14915,501 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "อนุญาตเฉพาะผู้ใช้ในรายการคู่สนทนาเท่านั้น"
+
+#, fuzzy
+#~ msgid "Pisces"
+#~ msgstr "สัตว์เลี้ยง"
+
+#, fuzzy
+#~ msgid "Aries"
+#~ msgstr "ที่อยู่"
+
+#, fuzzy
+#~ msgid "Gemini"
+#~ msgstr "เหลืออีก"
+
+#, fuzzy
+#~ msgid "Cancer"
+#~ msgstr "ยกเลิก"
+
+#, fuzzy
+#~ msgid "Tiger"
+#~ msgstr "ชื่อ"
+
+#, fuzzy
+#~ msgid "Snake"
+#~ msgstr "บันทึก"
+
+#, fuzzy
+#~ msgid "Horse"
+#~ msgstr "พอร์ต"
+
+#, fuzzy
+#~ msgid "Rooster"
+#~ msgstr "ลงทะเบียน"
+
+#, fuzzy
+#~ msgid "Visible"
+#~ msgstr "ไม่แสดงตัว"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "ความเป็นส่วนตัว"
+
+#, fuzzy
+#~ msgid "Country/Region"
+#~ msgstr "ประเทศ"
+
+#, fuzzy
+#~ msgid "Phone Number"
+#~ msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "_อนุญาต"
+
+#, fuzzy
+#~ msgid "Cellphone Number"
+#~ msgstr "ตั้งหมายเลขโทรศัพท์มือถือ"
+
+#, fuzzy
+#~ msgid "Personal Introduction"
+#~ msgstr "IM ส่วนตัว"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "เมือง"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "โทรศัพท์มือถือส่วนตัว"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "คนอื่นคุยในการสนทนากลุ่ม"
+
+#, fuzzy
+#~ msgid "College"
+#~ msgstr "_ย่อ"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "พอร์ต"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "ถูกบล็อค"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "ล้มเหลว"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "แก้ไขบัญชีผู้ใช้"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "ที่อยู่บ้าน"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "ดูข้อมูลของคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "ไอคอนในการสนทนา"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "แ_ก้ไข"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "แ_ก้ไข"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "เซิ_ร์ฟเวอร์:"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "เพิ่มคู่สนทนาในรายการคู่สนทนาของคุณ?"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "ใส่เซิร์ฟเวอร์สำหรับประชุม"
+
+#, fuzzy
+#~ msgid "Send"
+#~ msgstr "_ส่ง"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "ชื่อผู้ใช้ไม่ถูกต้อง"
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "เริ่มการตรวจสอบผู้ใช้"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "เพิ่มคู่สนทนาในรายการคู่สนทนาของคุณ?"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "ใส่เซิร์ฟเวอร์สำหรับประชุม"
+
+#, fuzzy
+#~ msgid "Would you be my friend?"
+#~ msgstr "ต้องการเขียนทับหรือไม่"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "เพิ่มคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "เพิ่มคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "ใส่ชื่อห้องไม่ถูกต้อง"
+
+#, fuzzy
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "กำลังรับรายการคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "กำลังรับรายการคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Would you like to add him?"
+#~ msgstr "ต้องการเขียนทับหรือไม่"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "คืนค่าเดิม"
+
+#, fuzzy
+#~ msgid "Message: %s"
+#~ msgstr "_ข้อความ:"
+
+#, fuzzy
+#~ msgid "Group ID"
+#~ msgstr "กลุ่ม:"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "ใส่รหัสผ่านใหม่ที่ต้องการ"
+
+#, fuzzy
+#~ msgid "Requesting"
+#~ msgstr "เหลืออีก"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "รายชื่อห้อง"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "บันทึก"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "ค่าปริยายของ GNOME"
+
+#, fuzzy
+#~ msgid "Creator"
+#~ msgstr "ล้าง"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "ล้าง"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
+
+#, fuzzy
+#~ msgid "QQ Qun Operation"
+#~ msgstr "ตั้งค่าเสียง"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "ล้มเหลว"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "ออก"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "ตั้งหมายเลขโทรศัพท์บ้าน"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "เปลี่ยนข้อมูลผู้ใช้ของ %s"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "ต้องการเขียนทับหรือไม่"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "ลบคู่สนทนา"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "ลบคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Unknown-%d"
+#~ msgstr "ไม่มีข้อมูล"
+
+#, fuzzy
+#~ msgid "Level"
+#~ msgstr "ไม่ต้อง"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "ใช้ผ่านมือถือ"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "ใช้ผ่านมือถือ"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "โทรศัพท์"
+
+#, fuzzy
+#~ msgid "Invalid name"
+#~ msgstr "ชื่อผู้ใช้ไม่ถูกต้อง"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "เลือกโฟลเดอร์..."
+
+#, fuzzy
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>บันทึกการสนทนากับ %s เมื่อ %s:</b><br>"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>บันทึกการสนทนากับ %s เมื่อ %s:</b><br>"
+
+#, fuzzy
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<br><b>ส่วนตัว</b><br>%s"
+
+#, fuzzy
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<b>นามแฝง:</b> %s<br>"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<br><b>ส่วนตัว</b><br>%s"
+
+#, fuzzy
+#~ msgid "About OpenQ %s"
+#~ msgstr "เกี่ยวกับ Pidgin"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
+#~ msgid "About OpenQ"
+#~ msgstr "เกี่ยวกับ Pidgin"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "ที่อยู่บ้าน"
+
+#, fuzzy
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "ปลั๊กอิน Jabber"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "โฮสต์เชื่อมต่อ"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "กำลังเชื่อมต่อ"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "พอร์ตเซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "Show server news"
+#~ msgstr "ที่อยู่เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "ข้อมูลคู่สนทนา"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "เซิร์ฟเวอร์ไม่ถูกต้อง"
+
+#, fuzzy
+#~ msgid "Requesting captcha"
+#~ msgstr "เหลืออีก"
+
+# msgstr ""
+# "เกิดข้อผิดพลาดขณะบันทึกรูป: %s\n"
+# "%s"
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "บันทึกรูปภาพ"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "ใส่รหัสผ่าน"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "กรุณาใส่ชื่อของกลุ่มที่ต้องการเพิ่ม"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "แก้ข้อมูลผู้ใช้..."
+
+#, fuzzy
+#~ msgid "Requesting token"
+#~ msgstr "เหลืออีก"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "เซิร์ฟเวอร์ไม่ถูกต้อง"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "เกิดข้อผิดพลาดในการเชื่อมต่อ"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "ที่อยู่เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "From %s:"
+#~ msgstr "จาก"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "เรียกคำสั่ง"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "เซิร์ฟเวอร์"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "เกิดข้อผิดพลาดไม่ทราบสาเหตุ"
+
+#, fuzzy
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%s ยกเลิกการส่งแฟ้ม"
+
+#, fuzzy
+#~ msgid "File Send"
+#~ msgstr "ล้มเหลว"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%s ยกเลิกการส่งแฟ้ม %s"
+
+#, fuzzy
 #~ msgid "Transfer was closed."
 #~ msgstr "การส่งแฟ้มล้มเหลว"
 
@@ -15551,10 +15456,6 @@ msgstr ""
 #~ msgstr "ตอนนี้ฉันไม่อยู่ที่เครื่อง"
 
 #, fuzzy
-#~ msgid "Change Mood..."
-#~ msgstr "เปลี่ยนรหัสผ่าน..."
-
-#, fuzzy
 #~ msgid "Pager server"
 #~ msgstr "เซิร์ฟเวอร์พร็อกซี"
 
@@ -15594,9 +15495,6 @@ msgstr ""
 
 #~ msgid "Auto-away"
 #~ msgstr "ตั้งไม่อยู่อัตโนมัติ"
-
-#~ msgid "Change _status to:"
-#~ msgstr "เปลี่ยน_สถานะเป็น:"
 
 #, fuzzy
 #~ msgid "Failed to open file '%s': %s"
@@ -15740,10 +15638,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Japan file transfer server"
 #~ msgstr "การส่งแฟ้มสำเร็จ"
-
-#, fuzzy
-#~ msgid "Invite message"
-#~ msgstr "เปิดข้อความทั้งหมด"
 
 #, fuzzy
 #~ msgid ""

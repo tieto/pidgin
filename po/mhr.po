@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2010-11-22 14:17+0300\n"
 "Last-Translator: Andrey Chemyshev <chemyshev.andrey@gmail.com>\n"
 "Language-Team: Mari <muter@lists.linux-ink.ru>\n"
@@ -217,6 +217,10 @@ msgstr "Пайдаланыше лӱм"
 
 msgid "Alias (optional)"
 msgstr "Шолыплӱм (ешартыш)"
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "Каласымаш (ешартыш)"
 
 msgid "Add in group"
 msgstr "Тӱшкаш ешараш"
@@ -1675,6 +1679,7 @@ msgstr "Тиде ойвозыш тототлымвер-влаклан ок эҥ�
 msgid "Unknown"
 msgstr "Палыме огыл"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Мутланыше-влак"
 
@@ -1936,6 +1941,9 @@ msgstr "Толкыным ыштыме годым йоҥылыш: %s"
 
 msgid "Unknown reason"
 msgstr "Амал пале огыл"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2336,8 +2344,11 @@ msgstr ""
 "Файл-влакым аныклаш\n"
 "(тӱрыс корным ончыкто)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Мутланыше лӱмер гыч улдымо пайдаланыше-влакымвигак ӧрдыжтараш"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "%s деч файлым колташ йодмаш пурымо годым"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2349,6 +2360,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Кажне пайдаланышылан у папкым ыште"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s файл колтымашым чарен"
 
 msgid "Notes"
 msgstr "Палемдымаш-влак"
@@ -3160,6 +3175,25 @@ msgstr "UIN-лан кызытсе да у шолыпмутым пурто: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Gadu-Gadu шолыпмутым вашталташ"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "_Могай улмым алмашташ (могайлан):"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Мутланыше-влак вотышто"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Могай улмым алмашташ"
+
+#, fuzzy
+msgid "Please, select who can see your status"
+msgstr "Шырийлан сӱретым ойыро."
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Тототлымверым мутланышылан ойыро: %s"
@@ -3191,9 +3225,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Лӱм"
 
@@ -3305,6 +3337,23 @@ msgstr "Gadu-Gadu пайдаланыше"
 msgid "GG server"
 msgstr "GG сервер"
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Авторизацийым пеҥгыдын йодаш"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Пайдаланыше увераҥар %s -лан лиймеямде огыл"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "Авторизацийым пеҥгыдын йодаш"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Ушнымашым кудалташ"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Палыдыме команде: %s"
@@ -3340,7 +3389,6 @@ msgstr "%s-лан MOTD"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3596,6 +3644,10 @@ msgstr "%s деч рашкалтымаш"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;ыштымашым шукташлан&gt;:  Ыштымашым шукташ."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: chanserv -лан командым колташ"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3805,7 +3857,10 @@ msgstr "шукташ"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Сервер тыглай текст дене шифрдыме йогын гыч чылыкым тергаш кӱшта"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "Сервер деч йоҥылыш вашмут"
 
@@ -3949,7 +4004,6 @@ msgstr "Кундем"
 msgid "Postal Code"
 msgstr "Почто код"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Эл"
 
@@ -4667,7 +4721,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;пайдаланыше&gt; [каласымаш]:  пайдаланышым пӧлемыш ӱжаш."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;пӧлем&gt; [шолыпмут]:  Тиде серверыште тототлымверыш ушнаш."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4709,20 +4764,8 @@ msgstr "XMPP ойвозыш плагин"
 msgid "Domain"
 msgstr "Домен"
 
-#, fuzzy
-msgid "Require encryption"
-msgstr "Авторизацийым пеҥгыдын йодаш"
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "Пайдаланыше увераҥар %s -лан лиймеямде огыл"
-
 msgid "Use old-style SSL"
 msgstr "Тошто SSL сыным кучылташ"
-
-#, fuzzy
-msgid "Connection security"
-msgstr "Ушнымашым кудалташ"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Тыглай текст дене шифрдыме толкын-влак гыч идентификаций дене кӧнаш"
@@ -4831,6 +4874,7 @@ msgstr "Палыдыме йоҥылыш лийын"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s -лан файлым колташ ыш лий, пайдаланыше файл налмашлан ок эҥерте"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Файлым колтен кертме огыл"
 
@@ -5577,18 +5621,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Ешараш огеш лий"
 
-msgid "Authorization Request Message:"
-msgstr "Авторизаций йодмаш нерген каласымаш:"
-
-msgid "Please authorize me!"
-msgstr "Мыйым авторизироватле!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Error retrieving profile"
 msgstr "Йоҥылыш профильым пуртымаш"
 
@@ -5803,6 +5835,10 @@ msgstr "Пайдаланышым кораҥден кертме огыл"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Мобил каласымашым колтымо огыл, тудо пеш кужу."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Палыдыме йоҥылыш лиймылан кӧра каласымашым колтымо огыл."
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5963,18 +5999,6 @@ msgstr "Тиде мутланышымат тыйын адрес кнага гы�
 msgid "The username specified is invalid."
 msgstr "Пайдаланышын ончыктымо лӱмжӧ чын огыл."
 
-msgid "The PIN you entered is invalid."
-msgstr "Пуртымо PIN-код чын огыл."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Пуртымо PIN-код чын огыл кужытан [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN-код чын огыл. Тудо цифр-влак дене гына лийшаш [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Кок пуртымо PIN-код икгай огытыл."
-
 #, fuzzy
 msgid "The Display Name you entered is invalid."
 msgstr "Пуртымо лӱм чын огыл."
@@ -5995,35 +6019,70 @@ msgstr "Профиль"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Тыйын профиль нерген увераҥарым эше налме огыл. Варарак ыштен ончо."
 
-msgid "Your UID"
-msgstr "Тыйын UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "Лӱмым ончыкташ"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "Мыйын нерген"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Мобил номер"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Тыйын профильым уэмдымаш"
+
+msgid "The PIN you entered is invalid."
+msgstr "Пуртымо PIN-код чын огыл."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Пуртымо PIN-код чын огыл кужытан [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "PIN-код чын огыл. Тудо цифр-влак дене гына лийшаш [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Кок пуртымо PIN-код икгай огытыл."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Профильым уэмдымаш-влак йоҥылыш"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "PIN-ым терге"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Лӱмым ончыкташ"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Изисӱретым вашталташ"
 
-#. hidden
-msgid "Hide my number"
-msgstr "Мыйын номерым шылташ"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Мобил номер"
-
-msgid "Update your Profile"
-msgstr "Тыйын профильым уэмдымаш"
-
-msgid "Here you can update your MXit profile"
-msgstr "Тыште тый Mxit-профильетым уэмден кертат"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Изисӱретым вашталташ"
 
 msgid "View Splash"
 msgstr "Заставкым ончыкташ"
@@ -6034,9 +6093,39 @@ msgstr "Кызыт лиймеямде экран-заставке-влак ук�
 msgid "About"
 msgstr "Нерген"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Пайдаланышым кычалаш"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Пайдаланышым кычалаш"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Пайдаланыше увераҥар"
+
+msgid "_Search"
+msgstr "_Кычалаш"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "Профильым вашталташ..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Кумылым вашталташ..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Йолташ лӱмым пурташ..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Пайдаланыше-влакым кычалаш..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6067,6 +6156,10 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Ушымаш..."
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Пуртымо лӱм чын огыл."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6140,6 +6233,23 @@ msgstr "Mxit шотыш налме возышым пеҥгыдемдаш"
 msgid "Retrieving User Information..."
 msgstr "Пайдаланыше нерген увераҥарым налмаш..."
 
+#, fuzzy
+msgid "was kicked"
+msgstr "Йоҥылыш билет"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Тыйым поктен луктыныт: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Пӧлем:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Тыланет серыш толын!"
+
 msgid "Loading menu..."
 msgstr "Меню налмаш..."
 
@@ -6155,8 +6265,21 @@ msgid "Hidden Number"
 msgstr "Шылтыме номер"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "Лиймеямде огыл"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Тиде E-mail-лан шотыш налме возышым чӱктымӧ огыл."
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "Yahoo ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Ӱжаш"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6169,27 +6292,41 @@ msgstr "HTTP гоч ушымаш"
 msgid "Enable splash-screen popup"
 msgstr "Экран-заставкын лекше менюм чӱкташ"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Тыйым поктен луктыныт: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Йоҥылыш билет"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Пӧлем:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "Тыланет серыш толын!"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "Вотышто"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Ӱжмаш каласымаш"
+
+#, fuzzy
+msgid "No results"
+msgstr "Кычалме лектыш"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Пайдаланыше-влакым муымо огыл"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Пайдаланыше"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6946,6 +7083,12 @@ msgstr "Амалым ончыктымо огыл."
 msgid "Authorization Denied Message:"
 msgstr "Авторизацийым ӧрдыжтарыме нерген каласымаш:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "%s деч вучыдымо вашмутым налме: %s"
@@ -7299,7 +7442,6 @@ msgid "Received authorization"
 msgstr "Авторизацийым налме"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Тыгай пайдаланыше лӱм уке"
@@ -7471,6 +7613,14 @@ msgstr "Тыйын AIM ушымаш йомдарыме лийын кертеш."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "%s тототлымвер гыч тыйым кораҥдыме."
+
+msgid "The new formatting is invalid."
+msgstr "У форматирований чын огыл."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Пайдаланыше лӱмым форматирований буква да яравер регистрлан веле влиятлен "
+"кертеш."
 
 msgid "Pop-Up Message"
 msgstr "Ийын лекше каласымаш"
@@ -7736,14 +7886,6 @@ msgstr "Могай улмо web-лаштыклаште (СПАМ койылал�
 msgid "ICQ Privacy Options"
 msgstr "ICQ приватлык ойыркалыме йӧн-влак"
 
-msgid "The new formatting is invalid."
-msgstr "У форматирований чын огыл."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Пайдаланыше лӱмым форматирований буква да яравер регистрлан веле влиятлен "
-"кертеш."
-
 msgid "Change Address To:"
 msgstr "Адресым вашталташ (могайлан):"
 
@@ -7769,9 +7911,6 @@ msgstr "Е-mail дене мутланышым кычалаш"
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Мутланышын E-mail адресшым савыкте, кудым тый кычалат."
-
-msgid "_Search"
-msgstr "_Кычалаш"
 
 msgid "Set User Info (web)..."
 msgstr "Пайдаланыше увераҥарым (web) шындаш..."
@@ -7812,10 +7951,6 @@ msgid "Search for Buddy by Email Address..."
 msgstr "E-mail дене мутланышым кычалаш..."
 
 #, fuzzy
-msgid "Don't use encryption"
-msgstr "Авторизацийым пеҥгыдын йодаш"
-
-#, fuzzy
 msgid "Use clientLogin"
 msgstr "clientLogin-ым кучылташ"
 
@@ -7853,75 +7988,6 @@ msgid ""
 msgstr ""
 "Тиде кок компьютерым вияш ушаш кӱшта да IM сӱрет-влаклан кӱлеш. Тыйын IP-"
 "адресет почмо лиеш, сандене тиде приватлыклан азапан пашам конден кертеш."
-
-msgid "Invalid SNAC"
-msgstr "SNAC чын огыл"
-
-msgid "Server rate limit exceeded"
-msgstr "Сервер писылык шырым эртен"
-
-msgid "Client rate limit exceeded"
-msgstr "Клиент писылык шырым эртен"
-
-msgid "Service unavailable"
-msgstr "Службо лиймеямде огыл"
-
-msgid "Service not defined"
-msgstr "Службо рашемдыме огыл"
-
-msgid "Obsolete SNAC"
-msgstr "Тошто SNAC"
-
-msgid "Not supported by host"
-msgstr "Хостлан ок эҥерте"
-
-msgid "Not supported by client"
-msgstr "Клиентлан ок эҥерте"
-
-msgid "Refused by client"
-msgstr "Клиент ӧрдыжтарен"
-
-msgid "Reply too big"
-msgstr "Пеш кугу вашмут"
-
-msgid "Responses lost"
-msgstr "Вашмут-влак йомыныт"
-
-msgid "Request denied"
-msgstr "Йодмашым ӧрдыжтарыме"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC пайдале нелытым пудыртымо"
-
-msgid "Insufficient rights"
-msgstr "Йӧн ок сите"
-
-msgid "In local permit/deny"
-msgstr "Верыште ышташ пуымаш/кораҥдаш"
-
-msgid "Warning level too high (sender)"
-msgstr "Шижтарымаш кӱкшыт утыж ден кугу (колтышо)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Шижтарымаш кӱкшыт утыж ден кугу (налше)"
-
-msgid "User temporarily unavailable"
-msgstr "Пайдаланыше жаплан лиймеямде огыл"
-
-msgid "No match"
-msgstr "Икгай уке"
-
-msgid "List overflow"
-msgstr "Лӱмер тичмаш темын"
-
-msgid "Request ambiguous"
-msgstr "Коктеланыше йодмаш"
-
-msgid "Queue full"
-msgstr "Черет темын"
-
-msgid "Not while on AOL"
-msgstr "AOL-ышто огыл"
 
 #. Label
 msgid "Buddy Icon"
@@ -8041,6 +8107,75 @@ msgstr "Йыжъеҥ"
 msgid "Capabilities"
 msgstr "Ыҥгайлык-влак"
 
+msgid "Invalid SNAC"
+msgstr "SNAC чын огыл"
+
+msgid "Server rate limit exceeded"
+msgstr "Сервер писылык шырым эртен"
+
+msgid "Client rate limit exceeded"
+msgstr "Клиент писылык шырым эртен"
+
+msgid "Service unavailable"
+msgstr "Службо лиймеямде огыл"
+
+msgid "Service not defined"
+msgstr "Службо рашемдыме огыл"
+
+msgid "Obsolete SNAC"
+msgstr "Тошто SNAC"
+
+msgid "Not supported by host"
+msgstr "Хостлан ок эҥерте"
+
+msgid "Not supported by client"
+msgstr "Клиентлан ок эҥерте"
+
+msgid "Refused by client"
+msgstr "Клиент ӧрдыжтарен"
+
+msgid "Reply too big"
+msgstr "Пеш кугу вашмут"
+
+msgid "Responses lost"
+msgstr "Вашмут-влак йомыныт"
+
+msgid "Request denied"
+msgstr "Йодмашым ӧрдыжтарыме"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC пайдале нелытым пудыртымо"
+
+msgid "Insufficient rights"
+msgstr "Йӧн ок сите"
+
+msgid "In local permit/deny"
+msgstr "Верыште ышташ пуымаш/кораҥдаш"
+
+msgid "Warning level too high (sender)"
+msgstr "Шижтарымаш кӱкшыт утыж ден кугу (колтышо)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Шижтарымаш кӱкшыт утыж ден кугу (налше)"
+
+msgid "User temporarily unavailable"
+msgstr "Пайдаланыше жаплан лиймеямде огыл"
+
+msgid "No match"
+msgstr "Икгай уке"
+
+msgid "List overflow"
+msgstr "Лӱмер тичмаш темын"
+
+msgid "Request ambiguous"
+msgstr "Коктеланыше йодмаш"
+
+msgid "Queue full"
+msgstr "Черет темын"
+
+msgid "Not while on AOL"
+msgstr "AOL-ышто огыл"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8093,785 +8228,6 @@ msgstr "Ӱжмаш лӱмер"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr "Вӱдйоктарыше"
-
-msgid "Pisces"
-msgstr "Кол"
-
-msgid "Aries"
-msgstr "Шорык"
-
-msgid "Taurus"
-msgstr "Презе"
-
-msgid "Gemini"
-msgstr "Йыгыр"
-
-msgid "Cancer"
-msgstr "Рак"
-
-msgid "Leo"
-msgstr "Лев"
-
-msgid "Virgo"
-msgstr "Ӱдыр"
-
-msgid "Libra"
-msgstr "Виса"
-
-msgid "Scorpio"
-msgstr "Скорпион"
-
-msgid "Sagittarius"
-msgstr "Пикшызе"
-
-msgid "Capricorn"
-msgstr "Ирказа"
-
-msgid "Rat"
-msgstr "Комак"
-
-msgid "Ox"
-msgstr "Ӱшкыж"
-
-msgid "Tiger"
-msgstr "Тигр"
-
-msgid "Rabbit"
-msgstr "Кролик"
-
-msgid "Dragon"
-msgstr "Дракон"
-
-msgid "Snake"
-msgstr "Кишке"
-
-msgid "Horse"
-msgstr "Имне"
-
-msgid "Goat"
-msgstr "Каза"
-
-msgid "Monkey"
-msgstr "Маймыл"
-
-msgid "Rooster"
-msgstr "Агытан"
-
-msgid "Dog"
-msgstr "Пий"
-
-msgid "Pig"
-msgstr "Сӧсна"
-
-msgid "Other"
-msgstr "Весе"
-
-#, fuzzy
-msgid "Visible"
-msgstr "Ужаш лийме"
-
-msgid "Friend Only"
-msgstr "Йолташ гына"
-
-#, fuzzy
-msgid "Private"
-msgstr "Приват"
-
-msgid "QQ Number"
-msgstr "QQ номер"
-
-msgid "Country/Region"
-msgstr "Эл/Кундем"
-
-msgid "Province/State"
-msgstr "Кундем/Штат"
-
-msgid "Zipcode"
-msgstr "Индекс"
-
-msgid "Phone Number"
-msgstr "Телефон номер"
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "Правам пуэн ешарымаш"
-
-msgid "Cellphone Number"
-msgstr "Мобил телефон номер"
-
-msgid "Personal Introduction"
-msgstr "Шке нерген палымым ышташ"
-
-#, fuzzy
-msgid "City/Area"
-msgstr "Ола/Кундем"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "Мобил телефоным савыкташ"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "Вашкылым савыкташ"
-
-msgid "College"
-msgstr "Колледж"
-
-#, fuzzy
-msgid "Horoscope"
-msgstr "Гороскоп"
-
-#, fuzzy
-msgid "Zodiac"
-msgstr "Зодиак тамга"
-
-#, fuzzy
-msgid "Blood"
-msgstr "Вӱр"
-
-#, fuzzy
-msgid "True"
-msgstr "Чын"
-
-#, fuzzy
-msgid "False"
-msgstr "Йоҥылыш"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "Вашкылым вашталташ"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "Адресым вашталташ"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "Кумдаҥдыме увераҥарым вашталташ"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "Увераҥарым вашталташ"
-
-#, fuzzy
-msgid "Update"
-msgstr "Уэмдаш"
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "Мутланыше нерген увераҥарым вашталтен ом керт."
-
-msgid "Note"
-msgstr "Палемдымаш"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "Мутланышын изисерышыже"
-
-msgid "Change his/her memo as you like"
-msgstr "Тудын изисерышыжым кузе шонет, туге вашталте"
-
-msgid "_Modify"
-msgstr "Вашталташ"
-
-msgid "Memo Modify"
-msgstr "Изисерышым вашталташ"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "Сервер ойла:"
-
-msgid "Your request was accepted."
-msgstr "Йодмашетым кумылаҥдыме."
-
-msgid "Your request was rejected."
-msgstr "Йодмашетым ӧрдыжтарыме."
-
-#, fuzzy, c-format
-msgid "%u requires verification: %s"
-msgstr "%u тергымашым пеҥгыдын йодеш: %s"
-
-#, fuzzy
-msgid "Add buddy question"
-msgstr "Мутланышын йодышыжым ешараш"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "Вашмутым тыште пурто"
-
-msgid "Send"
-msgstr "Колташ"
-
-#, fuzzy
-msgid "Invalid answer."
-msgstr "Чын огыл вашмут."
-
-msgid "Authorization denied message:"
-msgstr "Авторизацийым ӧрдыжтарымаш нерген каласымаш:"
-
-#, fuzzy
-msgid "Sorry, you're not my style."
-msgstr "Вуеш ит нал, тый сынет дене мылам от келше..."
-
-#, fuzzy, c-format
-msgid "%u needs authorization"
-msgstr "%u авторизацийым пеҥгыдын йодеш"
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "Мутланышын авторизацийым ешараш"
-
-#, fuzzy
-msgid "Enter request here"
-msgstr "Йодмашым тыште пурто"
-
-msgid "Would you be my friend?"
-msgstr "Йолташем лият?"
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "QQ мутланыше"
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "Мутланышым ешараш"
-
-#, fuzzy
-msgid "Invalid QQ Number"
-msgstr "Чын огыл QQ номер"
-
-#, fuzzy
-msgid "Failed sending authorize"
-msgstr "Авторизацийым колтен кертме огыл"
-
-#, fuzzy, c-format
-msgid "Failed removing buddy %u"
-msgstr "%u мутланышым кораҥдаш ыш лий"
-
-#, fuzzy, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "%d мутланыше лӱмер гыч мыйым кораҥден кертме огыл"
-
-#, fuzzy
-msgid "No reason given"
-msgstr "Амалже пале огыл"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s тыйым ешарен"
-
-msgid "Would you like to add him?"
-msgstr "Тудым ешарынет?"
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "%s ӧрдыжтарыме"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Каласымаш: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "Тӱшкан ID-же"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "Qun номерым пурто"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Тый эреак лийше Qun-лан гына кычалын кертат\n"
-
-#, fuzzy
-msgid "(Invalid UTF-8 string)"
-msgstr "(Йоҥылыш UTF-8 корно)"
-
-#, fuzzy
-msgid "Not member"
-msgstr "Йыжъеҥ огыл"
-
-#, fuzzy
-msgid "Member"
-msgstr "Йыжъеҥ"
-
-#, fuzzy
-msgid "Requesting"
-msgstr "Йодмаш"
-
-#, fuzzy
-msgid "Admin"
-msgstr "Виктарыше"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "Пӧлем лӱмер"
-
-#, fuzzy
-msgid "Notice"
-msgstr "Увертарымаш"
-
-#, fuzzy
-msgid "Detail"
-msgstr "Рашлык"
-
-msgid "Creator"
-msgstr "Ыштыше"
-
-#, fuzzy
-msgid "About me"
-msgstr "Мыйын нерген"
-
-#, fuzzy
-msgid "Category"
-msgstr "Категорий"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun весе-влаклан ушаш ок келше"
-
-#, fuzzy
-msgid "Join QQ Qun"
-msgstr "QQ Qun деке ушаш"
-
-msgid "Input request here"
-msgstr "Йодмашым тыште пурто"
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Qun %s (%u) деке эсен ушалтынат"
-
-msgid "Successfully joined Qun"
-msgstr "Qun деке эсен ушалтынат"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u ушнашлан чарымашым шынден"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun операций"
-
-#, fuzzy
-msgid "Failed:"
-msgstr "Кертме огыл:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Qun ушнаш, Палыдыме вашмут"
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "Qun гыч лекташ"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Палемдыман, тый негызлыше улат гын, \n"
-"тиде операций мучашлан тиде Qun -ым кораҥда."
-
-#, fuzzy
-msgid "Sorry, you are not our style"
-msgstr "Вуеш ит нал, тый мыланна сынет дене от келше..."
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "Qun йыжъеҥ-влак эсен вашталтыныт"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "Qun увераҥар эсен вашталтын"
-
-msgid "You have successfully created a Qun"
-msgstr "Тый Qun-м эсен ыштышыч"
-
-#, fuzzy
-msgid "Would you like to set up detailed information now?"
-msgstr "Тый  кызыт рашлык увераҥарым шындынет?"
-
-msgid "Setup"
-msgstr "Шындымаш"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u Qun %u -м %s -лан ушаш йодын"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u Qun %u ушаш йодмаш"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Qun %u ушен кертме огыл, кудым %u виктарыше ыштен"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Qun %u ушымашым %u виктарыше дене %s -лан налме</b>"
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>%u мутланышым кораҥдыме.</b>"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>%u у мутланышым ушымо.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Палыдыме-%d"
-
-msgid "Level"
-msgstr "Кӱкшыт"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " Мобил гыч"
-
-msgid " BindMobile"
-msgstr " Мобил дене"
-
-msgid " Video"
-msgstr " Видео"
-
-msgid " Zone"
-msgstr " Зона"
-
-msgid "Flag"
-msgstr "Тисте"
-
-msgid "Ver"
-msgstr "Вер"
-
-msgid "Invalid name"
-msgstr "Чын огыл лӱм"
-
-msgid "Select icon..."
-msgstr "Изисӱретым ойыраш..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Вотышто жап</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Вотышто чыла мутланыше</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Пытартыш уэмдымаш</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Сервер</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Клиент тег</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Ушымаш режим</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Мыйын интернет IP</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Колтымо</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Угыч колташ</b>: %lu<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Йомдарыме</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Налме</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Копийым налме</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Жап</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Пурымаш увераҥар"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Шкешотан серышоза</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Программист-влак</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Патчым йӧратен шындыше серызе-влак</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>Пеҥгыдемдымаш</b>:<br>\n"
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Скурпулёз тестер-влак</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "да эше, мыйым палдаре... тау!))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>Чыла пӧръеҥ-влак шеҥгел пӧлемыште улыт...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Мемнан деке ушно, эрыкан лий!</i> :)"
-
-#, fuzzy, c-format
-msgid "About OpenQ %s"
-msgstr "%s OpenQ нерген"
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "Изисӱретым вашталташ"
-
-msgid "Change Password"
-msgstr "Шолыпмутым вашталташ"
-
-#, fuzzy
-msgid "Account Information"
-msgstr "Шотыш налме возыш нерген увераҥар"
-
-msgid "Update all QQ Quns"
-msgstr "Чыла QQ Quns-м уэмдаш"
-
-#, fuzzy
-msgid "About OpenQ"
-msgstr "OpenQ нерген"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "Мутланышын изисерышыжым вашталташ"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "QQ Protocol Plugin"
-msgstr "QQ ойвозыш плагин"
-
-#, fuzzy
-msgid "Auto"
-msgstr "Вигак"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "Серверым ойыро"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "TCP дене ушнымаш"
-
-msgid "Show server notice"
-msgstr "Сервер увертарымашым ончыкташ"
-
-msgid "Show server news"
-msgstr "Серверын увер-влакшым ончыкташ"
-
-msgid "Show chat room when msg comes"
-msgstr "Каласымаш толмо годым тототлымвер пӧлемым ончыкташ"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Чонан коклам кучаш (тат-влак)"
-
-msgid "Update interval (seconds)"
-msgstr "Коклам уэмдаш (тат-влак)"
-
-msgid "Unable to decrypt server reply"
-msgstr "Сервер вашмут шифрым почын кертме огыл"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Йоҥылыш йодмашым налме, 0x%02X"
-
-#, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "Чын огыл кужытым налме, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX-лан кызыт ок эҥерте"
-
-#. need activation
-#. need activation
-#. need activation
-#, fuzzy
-msgid "Activation required"
-msgstr "Шотыш налаш кӱлеш"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Пурымо годым палыдыме вашмут код (0x%02X)"
-
-#, fuzzy
-msgid "Requesting captcha"
-msgstr "Чынле кодым йодмаш"
-
-msgid "Checking captcha"
-msgstr "Чынле кодым тергымаш"
-
-#, fuzzy
-msgid "Failed captcha verification"
-msgstr "Чынле кодым терген кертме огыл"
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "Чынлымаш изисӱрет"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "Кодым пурто"
-
-#, fuzzy
-msgid "QQ Captcha Verification"
-msgstr "QQ чынле кодым тергымаш"
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "Сӱрет дене текстым пурто"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Шолыпмутым тергыме годым палыдыме вашмут код (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Пурымо годым палыдыме вашмут код (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Сокет йоҥылыш"
-
-#, fuzzy
-msgid "Getting server"
-msgstr "Серверым налмаш"
-
-#, fuzzy
-msgid "Requesting token"
-msgstr "Маркерым йодмаш"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "Хостлӱмым налын кертме огыл"
-
-#, fuzzy
-msgid "Invalid server or port"
-msgstr "Сервер але порт чын огыл"
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "Сервер дене ушымаш"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "QQ йоҥылыш"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Сервер деч увер-влак:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "%s деч:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"%s деч сервер увертарымаш: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "СЕРВЕРЫН палыдыме КОМАНДЕ"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Вашмут йоҥылыш ответа %s(0x%02X)\n"
-"%u пӧлем, 0x%02X вашмут"
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun команде"
-
-msgid "Unable to decrypt login reply"
-msgstr "Пурымаш вашмутын шифрым почын кертме огыл"
-
-msgid "Unknown LOGIN CMD"
-msgstr "ПУРЫМАШЫН палыдыме КОМАНДЕ"
-
-msgid "Unknown CLIENT CMD"
-msgstr "КЛИЕНТЫН палыдыме КОМАНДЕ"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d %s файлым йӧрыктен"
-
-msgid "File Send"
-msgstr "Файлым колтымаш"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d %s колтымым чарен"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9639,6 +8995,9 @@ msgstr "Организаций"
 msgid "Unit"
 msgstr "Пӧлка"
 
+msgid "Note"
+msgstr "Палемдымаш"
+
 msgid "Join Chat"
 msgstr "Тототлымверыш ушнаш"
 
@@ -10289,6 +9648,10 @@ msgstr "Палыдыме сервер вашмут"
 msgid "Unable to create listen socket"
 msgstr "Сокетым колыштын кертме огыл"
 
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Хостлӱмым налын кертме огыл"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP пайдаланыше лӱмыштӧ яравер але @ символ лийын ок керт"
 
@@ -10406,6 +9769,9 @@ msgstr "Тыйын Yahoo! каласымашым колтымо огыл."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "%s -лан Yahoo! систем каласымаш:"
+
+msgid "Authorization denied message:"
+msgstr "Авторизацийым ӧрдыжтарымаш нерген каласымаш:"
 
 #, c-format
 msgid ""
@@ -11196,14 +10562,17 @@ msgstr "Чыла вере лийше прокси келыштарымаш-вл�
 msgid "No Proxy"
 msgstr "Прокси уке"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Йырвел келыштарымаш-влакым кучылташ"
@@ -11231,6 +10600,14 @@ msgstr "_Порт:"
 
 msgid "Pa_ssword:"
 msgstr "Шолуп_мут:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Сессийым угыч шуяш"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "йӱк да видео"
 
 msgid "Unable to save new account"
 msgstr "У шке шотан возышым аныклен кертме огыл"
@@ -11280,8 +10657,18 @@ msgstr ""
 "кертат."
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s ешарынеже %s шке мутланыше лӱмерышкыже%s%s"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s ешарынеже %s шке мутланыше лӱмерышкыже%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "У писе каласымаш"
 
 #. Buddy List
 msgid "Background Color"
@@ -11661,6 +11048,10 @@ msgid "/Help/De_veloper Information"
 msgstr "Сревер нерген увераҥар"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Мутланыше нерген увераҥар"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "Шке увераҥар"
 
@@ -11843,6 +11234,10 @@ msgstr "Мутланыше _пайдаланышын лӱмжӧ:"
 
 msgid "(Optional) A_lias:"
 msgstr "_Шолыплӱм (ешартыш):"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "Ӱжмаш каласымаш"
 
 msgid "Add buddy to _group:"
 msgstr "Мутланышым _тӱшкаш ешараш:"
@@ -12280,15 +11675,8 @@ msgstr "Йоҥылыш "
 msgid "Fatal Error"
 msgstr "Тӧрлаташ лийдыме йоҥылыш"
 
-msgid "bug master"
-msgstr "баг мастар"
-
 msgid "artist"
 msgstr "шоктышо але мурызо"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ка-Хин Чон"
 
 msgid "voice and video"
 msgstr "йӱк да видео"
@@ -12301,6 +11689,10 @@ msgstr "вот-мастар"
 
 msgid "win32 port"
 msgstr "win32 порт"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ка-Хин Чон"
 
 msgid "maintainer"
 msgstr "ужатен кайыше"
@@ -12422,6 +11814,9 @@ msgstr "Иврит"
 msgid "Hindi"
 msgstr "Хинди"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "Венгыр"
 
@@ -12464,6 +11859,10 @@ msgstr "Лаос"
 #, fuzzy
 msgid "Maithili"
 msgstr "Суахили"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "У серыш"
 
 msgid "Macedonian"
 msgstr "Македон"
@@ -12666,6 +12065,14 @@ msgstr "Ондакысе кусарыше-влак"
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "Шукырак увераҥар"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Мутланыше нерген увераҥар"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Пурымаш увераҥар"
 
 msgid "_Name"
 msgstr "_Лӱм"
@@ -13318,6 +12725,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Тыланет серыш толы
 msgid "New Pounces"
 msgstr "У правил-влак"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Шалаташ"
 
@@ -13616,6 +13030,14 @@ msgstr "Шыма кондыштарымашым кучылташ"
 msgid "F_lash window when IMs are received"
 msgstr "Писе каласымашым налме годым тӧрза дене _волгенчалташ"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "Шке шырий-влак дене _виктараш"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Вашмутын эн кугу вучымо жап:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Пуртымо кундемын эн изи кӱкшытшӧ (корно дене):"
 
@@ -13685,6 +13107,10 @@ msgstr "_TURN сервер:"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "_UDP порт:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_UDP порт:"
 
 msgid "Use_rname:"
@@ -14444,6 +13870,9 @@ msgstr "PubSub коллекций"
 
 msgid "PubSub Leaf"
 msgstr "PubSub лаштык"
+
+msgid "Other"
+msgstr "Весе"
 
 msgid ""
 "\n"
@@ -15309,6 +14738,24 @@ msgstr "_Плагин"
 msgid "D_evice"
 msgstr "_Йӧндартыш"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "_Йӱк кугыт:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Лондем кугыт:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Микрофон"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15319,10 +14766,6 @@ msgstr "_Йӧндартыш"
 #. *< priority
 #. *< id
 msgid "Voice/Video Settings"
-msgstr "Йӱк/Видео келыштарымаш-влак"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "Йӱк/Видео келыштарымаш-влак"
 
 #. *< name
@@ -15592,6 +15035,743 @@ msgstr "Pidgin вот-лаштыкыш пурен лек"
 msgid "You do not have permission to uninstall this application."
 msgstr "Тиде приложенийым кораҥдашлан тыйын прават уке."
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Мутланыше лӱмер гыч улдымо пайдаланыше-влакымвигак ӧрдыжтараш"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Авторизаций йодмаш нерген каласымаш:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Мыйым авторизироватле!"
+
+#~ msgid "Your UID"
+#~ msgstr "Тыйын UID"
+
+#~ msgid "Hide my number"
+#~ msgstr "Мыйын номерым шылташ"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "Тыште тый Mxit-профильетым уэмден кертат"
+
+#~ msgid "Aquarius"
+#~ msgstr "Вӱдйоктарыше"
+
+#~ msgid "Pisces"
+#~ msgstr "Кол"
+
+#~ msgid "Aries"
+#~ msgstr "Шорык"
+
+#~ msgid "Taurus"
+#~ msgstr "Презе"
+
+#~ msgid "Gemini"
+#~ msgstr "Йыгыр"
+
+#~ msgid "Cancer"
+#~ msgstr "Рак"
+
+#~ msgid "Leo"
+#~ msgstr "Лев"
+
+#~ msgid "Virgo"
+#~ msgstr "Ӱдыр"
+
+#~ msgid "Libra"
+#~ msgstr "Виса"
+
+#~ msgid "Scorpio"
+#~ msgstr "Скорпион"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Пикшызе"
+
+#~ msgid "Capricorn"
+#~ msgstr "Ирказа"
+
+#~ msgid "Rat"
+#~ msgstr "Комак"
+
+#~ msgid "Ox"
+#~ msgstr "Ӱшкыж"
+
+#~ msgid "Tiger"
+#~ msgstr "Тигр"
+
+#~ msgid "Rabbit"
+#~ msgstr "Кролик"
+
+#~ msgid "Dragon"
+#~ msgstr "Дракон"
+
+#~ msgid "Snake"
+#~ msgstr "Кишке"
+
+#~ msgid "Horse"
+#~ msgstr "Имне"
+
+#~ msgid "Goat"
+#~ msgstr "Каза"
+
+#~ msgid "Monkey"
+#~ msgstr "Маймыл"
+
+#~ msgid "Rooster"
+#~ msgstr "Агытан"
+
+#~ msgid "Dog"
+#~ msgstr "Пий"
+
+#~ msgid "Pig"
+#~ msgstr "Сӧсна"
+
+#, fuzzy
+#~ msgid "Visible"
+#~ msgstr "Ужаш лийме"
+
+#~ msgid "Friend Only"
+#~ msgstr "Йолташ гына"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "Приват"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ номер"
+
+#~ msgid "Country/Region"
+#~ msgstr "Эл/Кундем"
+
+#~ msgid "Province/State"
+#~ msgstr "Кундем/Штат"
+
+#~ msgid "Zipcode"
+#~ msgstr "Индекс"
+
+#~ msgid "Phone Number"
+#~ msgstr "Телефон номер"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "Правам пуэн ешарымаш"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Мобил телефон номер"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Шке нерген палымым ышташ"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "Ола/Кундем"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "Мобил телефоным савыкташ"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "Вашкылым савыкташ"
+
+#~ msgid "College"
+#~ msgstr "Колледж"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "Гороскоп"
+
+#, fuzzy
+#~ msgid "Zodiac"
+#~ msgstr "Зодиак тамга"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "Вӱр"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "Чын"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "Йоҥылыш"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "Вашкылым вашталташ"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "Адресым вашталташ"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "Кумдаҥдыме увераҥарым вашталташ"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "Увераҥарым вашталташ"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "Уэмдаш"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "Мутланыше нерген увераҥарым вашталтен ом керт."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "Мутланышын изисерышыже"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "Тудын изисерышыжым кузе шонет, туге вашталте"
+
+#~ msgid "_Modify"
+#~ msgstr "Вашталташ"
+
+#~ msgid "Memo Modify"
+#~ msgstr "Изисерышым вашталташ"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "Сервер ойла:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "Йодмашетым кумылаҥдыме."
+
+#~ msgid "Your request was rejected."
+#~ msgstr "Йодмашетым ӧрдыжтарыме."
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u тергымашым пеҥгыдын йодеш: %s"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "Мутланышын йодышыжым ешараш"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "Вашмутым тыште пурто"
+
+#~ msgid "Send"
+#~ msgstr "Колташ"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "Чын огыл вашмут."
+
+#, fuzzy
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Вуеш ит нал, тый сынет дене мылам от келше..."
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "%u авторизацийым пеҥгыдын йодеш"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "Мутланышын авторизацийым ешараш"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "Йодмашым тыште пурто"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Йолташем лият?"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ мутланыше"
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "Мутланышым ешараш"
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Чын огыл QQ номер"
+
+#, fuzzy
+#~ msgid "Failed sending authorize"
+#~ msgstr "Авторизацийым колтен кертме огыл"
+
+#, fuzzy
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "%u мутланышым кораҥдаш ыш лий"
+
+#, fuzzy
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "%d мутланыше лӱмер гыч мыйым кораҥден кертме огыл"
+
+#, fuzzy
+#~ msgid "No reason given"
+#~ msgstr "Амалже пале огыл"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "%s тыйым ешарен"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Тудым ешарынет?"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "%s ӧрдыжтарыме"
+
+#~ msgid "Message: %s"
+#~ msgstr "Каласымаш: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "Тӱшкан ID-же"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "Qun номерым пурто"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Тый эреак лийше Qun-лан гына кычалын кертат\n"
+
+#, fuzzy
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(Йоҥылыш UTF-8 корно)"
+
+#, fuzzy
+#~ msgid "Not member"
+#~ msgstr "Йыжъеҥ огыл"
+
+#, fuzzy
+#~ msgid "Member"
+#~ msgstr "Йыжъеҥ"
+
+#, fuzzy
+#~ msgid "Requesting"
+#~ msgstr "Йодмаш"
+
+#, fuzzy
+#~ msgid "Admin"
+#~ msgstr "Виктарыше"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Пӧлем лӱмер"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "Увертарымаш"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "Рашлык"
+
+#~ msgid "Creator"
+#~ msgstr "Ыштыше"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "Категорий"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun весе-влаклан ушаш ок келше"
+
+#, fuzzy
+#~ msgid "Join QQ Qun"
+#~ msgstr "QQ Qun деке ушаш"
+
+#~ msgid "Input request here"
+#~ msgstr "Йодмашым тыште пурто"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Qun %s (%u) деке эсен ушалтынат"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Qun деке эсен ушалтынат"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u ушнашлан чарымашым шынден"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun операций"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "Кертме огыл:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Qun ушнаш, Палыдыме вашмут"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "Qun гыч лекташ"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Палемдыман, тый негызлыше улат гын, \n"
+#~ "тиде операций мучашлан тиде Qun -ым кораҥда."
+
+#, fuzzy
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Вуеш ит нал, тый мыланна сынет дене от келше..."
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Qun йыжъеҥ-влак эсен вашталтыныт"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Qun увераҥар эсен вашталтын"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Тый Qun-м эсен ыштышыч"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Тый  кызыт рашлык увераҥарым шындынет?"
+
+#~ msgid "Setup"
+#~ msgstr "Шындымаш"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u Qun %u -м %s -лан ушаш йодын"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u Qun %u ушаш йодмаш"
+
+#, fuzzy
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Qun %u ушен кертме огыл, кудым %u виктарыше ыштен"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Qun %u ушымашым %u виктарыше дене %s -лан налме</b>"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>%u мутланышым кораҥдыме.</b>"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>%u у мутланышым ушымо.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Палыдыме-%d"
+
+#~ msgid "Level"
+#~ msgstr "Кӱкшыт"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " Мобил гыч"
+
+#~ msgid " BindMobile"
+#~ msgstr " Мобил дене"
+
+#~ msgid " Video"
+#~ msgstr " Видео"
+
+#~ msgid " Zone"
+#~ msgstr " Зона"
+
+#~ msgid "Flag"
+#~ msgstr "Тисте"
+
+#~ msgid "Ver"
+#~ msgstr "Вер"
+
+#~ msgid "Invalid name"
+#~ msgstr "Чын огыл лӱм"
+
+#~ msgid "Select icon..."
+#~ msgstr "Изисӱретым ойыраш..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Вотышто жап</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Вотышто чыла мутланыше</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Пытартыш уэмдымаш</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Сервер</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Клиент тег</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Ушымаш режим</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Мыйын интернет IP</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Колтымо</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Угыч колташ</b>: %lu<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Йомдарыме</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Налме</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Копийым налме</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Жап</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Шкешотан серышоза</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Программист-влак</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Патчым йӧратен шындыше серызе-влак</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>Пеҥгыдемдымаш</b>:<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Скурпулёз тестер-влак</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "да эше, мыйым палдаре... тау!))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>Чыла пӧръеҥ-влак шеҥгел пӧлемыште улыт...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Мемнан деке ушно, эрыкан лий!</i> :)"
+
+#, fuzzy
+#~ msgid "About OpenQ %s"
+#~ msgstr "%s OpenQ нерген"
+
+#~ msgid "Change Password"
+#~ msgstr "Шолыпмутым вашталташ"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "Шотыш налме возыш нерген увераҥар"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Чыла QQ Quns-м уэмдаш"
+
+#, fuzzy
+#~ msgid "About OpenQ"
+#~ msgstr "OpenQ нерген"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Мутланышын изисерышыжым вашталташ"
+
+#, fuzzy
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ ойвозыш плагин"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "Вигак"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "Серверым ойыро"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "TCP дене ушнымаш"
+
+#~ msgid "Show server notice"
+#~ msgstr "Сервер увертарымашым ончыкташ"
+
+#~ msgid "Show server news"
+#~ msgstr "Серверын увер-влакшым ончыкташ"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Каласымаш толмо годым тототлымвер пӧлемым ончыкташ"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Чонан коклам кучаш (тат-влак)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Коклам уэмдаш (тат-влак)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Сервер вашмут шифрым почын кертме огыл"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Йоҥылыш йодмашым налме, 0x%02X"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Чын огыл кужытым налме, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX-лан кызыт ок эҥерте"
+
+#, fuzzy
+#~ msgid "Activation required"
+#~ msgstr "Шотыш налаш кӱлеш"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Пурымо годым палыдыме вашмут код (0x%02X)"
+
+#, fuzzy
+#~ msgid "Requesting captcha"
+#~ msgstr "Чынле кодым йодмаш"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Чынле кодым тергымаш"
+
+#, fuzzy
+#~ msgid "Failed captcha verification"
+#~ msgstr "Чынле кодым терген кертме огыл"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "Чынлымаш изисӱрет"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "Кодым пурто"
+
+#, fuzzy
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "QQ чынле кодым тергымаш"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "Сӱрет дене текстым пурто"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Шолыпмутым тергыме годым палыдыме вашмут код (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Пурымо годым палыдыме вашмут код (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Сокет йоҥылыш"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "Серверым налмаш"
+
+#, fuzzy
+#~ msgid "Requesting token"
+#~ msgstr "Маркерым йодмаш"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "Сервер але порт чын огыл"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "Сервер дене ушымаш"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "QQ йоҥылыш"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Сервер деч увер-влак:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "%s деч:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "%s деч сервер увертарымаш: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "СЕРВЕРЫН палыдыме КОМАНДЕ"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Вашмут йоҥылыш ответа %s(0x%02X)\n"
+#~ "%u пӧлем, 0x%02X вашмут"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun команде"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Пурымаш вашмутын шифрым почын кертме огыл"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "ПУРЫМАШЫН палыдыме КОМАНДЕ"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "КЛИЕНТЫН палыдыме КОМАНДЕ"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d %s файлым йӧрыктен"
+
+#~ msgid "File Send"
+#~ msgstr "Файлым колтымаш"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d %s колтымым чарен"
+
+#~ msgid "bug master"
+#~ msgstr "баг мастар"
+
+#, fuzzy
+#~ msgid "Voice and Video Settings"
+#~ msgstr "Йӱк/Видео келыштарымаш-влак"
+
 #~ msgid "The certificate has expired and should not be considered valid."
 #~ msgstr "Сертификатым кучылтмо жап эртен, ынде тудым чынлан шотлыман огыл."
 
@@ -15678,9 +15858,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "Кызыт тый кӧ?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "Кумылым вашталташ..."
 
 #~ msgid "Orientation"
 #~ msgstr "Ориентаций"
@@ -15858,9 +16035,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 
 #~ msgid "Auto-away"
 #~ msgstr "Авто-\"Жаплан кораҥын\""
-
-#~ msgid "Change _status to:"
-#~ msgstr "_Могай улмым алмашташ (могайлан):"
 
 #, fuzzy
 #~ msgid "The root certificate this one claims to be issued by is unknown."
@@ -16299,10 +16473,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 #~ msgid "Please provide a shortcut to associate with the smiley."
 #~ msgstr "Шырий дене кылдалтше ярлыкым ыште."
 
-#, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Шырийлан сӱретым ойыро."
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Могай ID тыршышым ышташ?"
 
@@ -16317,9 +16487,6 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Виджет кугыт"
-
-#~ msgid "Invite message"
-#~ msgstr "Ӱжмаш каласымаш"
 
 #, fuzzy
 #~ msgid ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 01:47-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-05-07 13:56+0000\n"
 "Last-Translator: dumol <dumol@gnome.org>\n"
 "Language-Team: Romanian (http://www.transifex.net/projects/p/pidgin/team/"
@@ -1681,6 +1681,7 @@ msgstr "Acest protocol nu suportă descărcarea unui alias public."
 msgid "Unknown"
 msgstr "Necunoscut"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contacte"
 
@@ -4749,7 +4750,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;utilizator&gt; [mesaj]:  Invitați un utilizator în canal."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;canal&gt; [parolă]:  Intrați într-un canal pe acest server."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -6297,13 +6299,19 @@ msgstr "UserId"
 msgid "Where I live"
 msgstr "Unde locuiesc"
 
-#, c-format
-msgid "You have %i suggested friends."
-msgstr "Aveți %i contacte sugerate."
+#, fuzzy, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Aveți %i contacte sugerate."
+msgstr[1] "Aveți %i contacte sugerate."
+msgstr[2] "Aveți %i contacte sugerate."
 
-#, c-format
-msgid "We found %i contacts that match your search."
-msgstr "S-au găsit %i contacte ce se potrivesc."
+#, fuzzy, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "S-au găsit %i contacte ce se potrivesc."
+msgstr[1] "S-au găsit %i contacte ce se potrivesc."
+msgstr[2] "S-au găsit %i contacte ce se potrivesc."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11036,6 +11044,10 @@ msgstr "/Ajutor/_Fereastră de depanare"
 msgid "/Help/De_veloper Information"
 msgstr "/Ajutor/Informații despre de_zvoltatori"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/Ajutor/Informații de _versiune"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ajutor/Informații despre _traducători"
 
@@ -11665,10 +11677,6 @@ msgstr "Erori fatale"
 msgid "artist"
 msgstr "artist"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "voce și video"
 
@@ -11680,6 +11688,10 @@ msgstr "programator web"
 
 msgid "win32 port"
 msgstr "portare win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "coordonator"
@@ -11798,6 +11810,9 @@ msgstr "Ebraică"
 
 msgid "Hindi"
 msgstr "Hindi"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "Maghiară"
@@ -12041,6 +12056,14 @@ msgstr "Traducători inactivi"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informații despre traducătorii %s"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Informații de versiune %s"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Informații de versiune"
 
 msgid "_Name"
 msgstr "_Nume"
@@ -13002,6 +13025,14 @@ msgstr "Derulare cu efect"
 msgid "F_lash window when IMs are received"
 msgstr "_Evidențiază fereastra la primirea de mesaje"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "Ad_ministrare iconițe simbolice personalizate"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Timp maxim de răspuns:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Înălțime minimă pentru zona de introducere de text:"
 
@@ -13069,6 +13100,10 @@ msgid "_TURN server:"
 msgstr "Server _TURN:"
 
 msgid "_UDP Port:"
+msgstr "Port _UDP:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "Port _UDP:"
 
 msgid "Use_rname:"

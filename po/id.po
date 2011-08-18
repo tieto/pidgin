@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -218,6 +218,10 @@ msgstr "Nama Pengguna"
 
 #, fuzzy
 msgid "Alias (optional)"
+msgstr "Kontak Alias"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "Kontak Alias"
 
 #, fuzzy
@@ -1701,6 +1705,7 @@ msgstr "Protokol ini tidak mendukung kamar percakapan."
 msgid "Unknown"
 msgstr "Tidak Diketahui"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Teman-teman"
 
@@ -1969,6 +1974,9 @@ msgstr "Kegagalan pembuatan thread: %s"
 
 msgid "Unknown reason"
 msgstr "Alasan tidak jelas"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2385,8 +2393,11 @@ msgstr ""
 "Path untuk menyimipan file in\n"
 "(Mohon sediakan path lengkap)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Tolak otomatis dari pengguna yang tidak terdapat dalam daftar teman"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "Ketika permohonan transfer file tiba dari %s"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2398,6 +2409,10 @@ msgstr ""
 #, fuzzy
 msgid "Create a new directory for each user"
 msgstr "Pilih Direktori Pengguna untuk dicari"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s membatalkan transfer file"
 
 msgid "Notes"
 msgstr "Catatan"
@@ -3216,6 +3231,25 @@ msgstr ""
 msgid "Change Gadu-Gadu Password"
 msgstr "Ganti kata sandi Gadu-Gadu"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Rubah _status pada:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Teman yang Offline"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Rubah status pada"
+
+#, fuzzy
+msgid "Please, select who can see your status"
+msgstr "Mohon pilih mood anda dari daftar."
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Pilih percakapan untuk teman: %s"
@@ -3247,9 +3281,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nama Depan"
 
@@ -3363,6 +3395,23 @@ msgstr "Pengguna Gadu-Gadu"
 msgid "GG server"
 msgstr "Atur Info Pengguna..."
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Memerlukan Otorisasi"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Iformasi untuk pengguna %s tidak tersedia"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "Memerlukan Otorisasi"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Sambungan di-reset"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Perintah tidak dikenal: %s"
@@ -3399,7 +3448,6 @@ msgstr "MOTD untuk %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3660,6 +3708,10 @@ msgstr "Bantingan dari %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "aksi &lt;action to perform&gt;:  Lakukan sebuah aksi."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Kirim perintah ke chanserv"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3874,7 +3926,10 @@ msgstr ""
 "Server memerlukan otentifikasi teks biasa melalui aliran yang tidak "
 "dienkripsi"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 #, fuzzy
 msgid "Invalid response from server"
 msgstr "Respon tidak valid dari server"
@@ -4035,7 +4090,6 @@ msgstr "Daerah"
 msgid "Postal Code"
 msgstr "Kode Pos"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Negara"
 
@@ -4776,7 +4830,7 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "undang &lt;user&gt; [pesan]:  Undang pengguna ke kamar."
 
 #, fuzzy
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "gabung: &lt;room&gt; [server]:  Gabung percakapan pada server ini."
 
 #, fuzzy
@@ -4818,20 +4872,8 @@ msgstr "Plugin Protokol XMPP"
 msgid "Domain"
 msgstr "Domain"
 
-#, fuzzy
-msgid "Require encryption"
-msgstr "Memerlukan Otorisasi"
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "Iformasi untuk pengguna %s tidak tersedia"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "Sambungan di-reset"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Ijinkan otorisasi teks biasa melalui aliran tanpa enkripsi "
@@ -4945,6 +4987,7 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "Tidak dapat mengirim file ke %s, pengguna tidak mendukung transfer file"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Pengiriman File Gagal"
 
@@ -5739,18 +5782,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Tidak Dapat Menambahkan"
 
-msgid "Authorization Request Message:"
-msgstr "Pesan Permohonan Otorisasi:"
-
-msgid "Please authorize me!"
-msgstr "Mohon otorisasi saya!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Error retrieving profile"
 msgstr "Kesalahan pemanggilan profil"
 
@@ -5968,6 +5999,10 @@ msgstr "Tidak dapat menambahkan pengguna"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Pesan tidak dapat dikirim, karena anda tidak tersambung."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -6133,21 +6168,6 @@ msgid "The username specified is invalid."
 msgstr "Nama layar yang ditentukan tidak valid."
 
 #, fuzzy
-msgid "The PIN you entered is invalid."
-msgstr "Kunci SecurID yang dimasukkan tidak valid."
-
-#, fuzzy
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Kunci SecurID yang dimasukkan tidak valid."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-#, fuzzy
-msgid "The two PINs you entered do not match."
-msgstr "Kata sandi baru tidak sama."
-
-#, fuzzy
 msgid "The Display Name you entered is invalid."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
@@ -6168,26 +6188,19 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your UID"
-msgstr ""
-
-#. pin
-#. pin (required)
-#, fuzzy
-msgid "PIN"
-msgstr "UIN"
-
-msgid "Verify PIN"
-msgstr ""
-
 #. display name
 #. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Nama Keluarga"
 
-#. hidden
-msgid "Hide my number"
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "Tentang %s"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
 
 #. mobile number
@@ -6195,12 +6208,56 @@ msgstr ""
 msgid "Mobile Number"
 msgstr "Atur Nomor Telepon Seluler..."
 
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
 #, fuzzy
-msgid "Update your Profile"
+msgid "Update your MXit Profile"
 msgstr "Profil Pengguna"
 
-msgid "Here you can update your MXit profile"
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "Kunci SecurID yang dimasukkan tidak valid."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Kunci SecurID yang dimasukkan tidak valid."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
 msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Kata sandi baru tidak sama."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Kesalahan Penulisan"
+
+#. pin
+#. pin (required)
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Simpan Ikon"
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Simpan Ikon"
 
 msgid "View Splash"
 msgstr ""
@@ -6212,10 +6269,40 @@ msgstr ""
 msgid "About"
 msgstr "Tentang %s"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Cari seorang pengguna"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Cari seorang pengguna"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Informasi Pengguna"
+
+msgid "_Search"
+msgstr "_Cari"
+
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
 msgstr "Ganti Kata Sandi..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Ganti kata sandi..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Atur Nama Bersahabat..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Cari Pengguna..."
 
 #. display splash-screen
 #, fuzzy
@@ -6253,6 +6340,10 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Menyambungkan"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Kunci SecurID yang dimasukkan tidak valid."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6333,6 +6424,23 @@ msgid "Retrieving User Information..."
 msgstr "Informasi Server"
 
 #, fuzzy
+msgid "was kicked"
+msgstr "Tiket buruk"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Anda telah ditendang oleh %s: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Kamar:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Anda mendapatkan email"
+
+#, fuzzy
 msgid "Loading menu..."
 msgstr "Logging masuk"
 
@@ -6350,8 +6458,21 @@ msgid "Hidden Number"
 msgstr "Nama Tengah"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "Tidak tersedia"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Akun Hotmail ini mungkin tidak aktif."
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "ID Yahoo!"
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Undang"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6366,27 +6487,41 @@ msgstr "Menyambung menggunakan TCP"
 msgid "Enable splash-screen popup"
 msgstr ""
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Anda telah ditendang oleh %s: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Tiket buruk"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Kamar:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "Anda mendapatkan email"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "Online"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Masukkan dalam pesan"
+
+#, fuzzy
+msgid "No results"
+msgstr "Hasil pencarian"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Pengguna yang sesuai tidak ditemukan"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Pengguna"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7157,6 +7292,12 @@ msgstr "Tidak diberikan alasan."
 msgid "Authorization Denied Message:"
 msgstr "Pesan Penolakan Otorisasi:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Menerima respon HTTP tidak terduga dari server."
@@ -7536,7 +7677,6 @@ msgid "Received authorization"
 msgstr "Menerima Otorisasi"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -7713,6 +7853,13 @@ msgstr "Sambungan AIM anda mungkin hilang."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Anda telah diputuskan dari kamar percakapan %s."
+
+msgid "The new formatting is invalid."
+msgstr "Pemformatan baru tidak valid."
+
+#, fuzzy
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "Pemformatan nama layar dapar hanya merubah kapitalisasi dan sepasi."
 
 msgid "Pop-Up Message"
 msgstr "Pesan Popup"
@@ -7989,13 +8136,6 @@ msgstr "Web aware (mengaktifkan ini akan menyebabkan anda meneriam SPAM!)"
 msgid "ICQ Privacy Options"
 msgstr "Pilihan Privasi ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Pemformatan baru tidak valid."
-
-#, fuzzy
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "Pemformatan nama layar dapar hanya merubah kapitalisasi dan sepasi."
-
 msgid "Change Address To:"
 msgstr "Rubah Alamat Ke:"
 
@@ -8021,9 +8161,6 @@ msgstr "Cari teman berdasarkan alamat email"
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Ketika alamat email dari teman yang sedang anda cari."
-
-msgid "_Search"
-msgstr "_Cari"
 
 #, fuzzy
 msgid "Set User Info (web)..."
@@ -8067,10 +8204,6 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Cari Teman berdasarkan Alamat Email..."
 
 #, fuzzy
-msgid "Don't use encryption"
-msgstr "Memerlukan Otorisasi"
-
-#, fuzzy
 msgid "Use clientLogin"
 msgstr "Pengguna tidak sedang login"
 
@@ -8109,75 +8242,6 @@ msgstr ""
 "Ini memerlukan sambungan langsung antara dua komputer dan wajib untuk gambar "
 "PI.  Karena alamat IP anda akan terungkap, ini dianggap sebagai resiko "
 "privasi."
-
-msgid "Invalid SNAC"
-msgstr "SNAC tidak valid"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Layanan tidak tersedia"
-
-msgid "Service not defined"
-msgstr "Layanan tidak didefinisikan"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC yang Usang"
-
-msgid "Not supported by host"
-msgstr "Tidak didukung oleh host"
-
-msgid "Not supported by client"
-msgstr "Tidak didukung oleh klien"
-
-msgid "Refused by client"
-msgstr "Ditolak oleh klien"
-
-msgid "Reply too big"
-msgstr "Jawaban terlalu besar"
-
-msgid "Responses lost"
-msgstr "Tanggapan hilang"
-
-msgid "Request denied"
-msgstr "Permintaan ditolak"
-
-msgid "Busted SNAC payload"
-msgstr "Muatan SNAC rusak"
-
-msgid "Insufficient rights"
-msgstr "Hak tidak cukup"
-
-msgid "In local permit/deny"
-msgstr "Ijinkan/tolak dalam lokal"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Pengguna sementara tidak ada"
-
-msgid "No match"
-msgstr "Tidak ada yang cocok"
-
-msgid "List overflow"
-msgstr "Overflow Daftar"
-
-msgid "Request ambiguous"
-msgstr "Permintaan tidak jelas"
-
-msgid "Queue full"
-msgstr "Antrian penuh"
-
-msgid "Not while on AOL"
-msgstr "Tidak sementara pada AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -8298,6 +8362,75 @@ msgstr "Anggota Sejak"
 msgid "Capabilities"
 msgstr "Kemampuan"
 
+msgid "Invalid SNAC"
+msgstr "SNAC tidak valid"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Layanan tidak tersedia"
+
+msgid "Service not defined"
+msgstr "Layanan tidak didefinisikan"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC yang Usang"
+
+msgid "Not supported by host"
+msgstr "Tidak didukung oleh host"
+
+msgid "Not supported by client"
+msgstr "Tidak didukung oleh klien"
+
+msgid "Refused by client"
+msgstr "Ditolak oleh klien"
+
+msgid "Reply too big"
+msgstr "Jawaban terlalu besar"
+
+msgid "Responses lost"
+msgstr "Tanggapan hilang"
+
+msgid "Request denied"
+msgstr "Permintaan ditolak"
+
+msgid "Busted SNAC payload"
+msgstr "Muatan SNAC rusak"
+
+msgid "Insufficient rights"
+msgstr "Hak tidak cukup"
+
+msgid "In local permit/deny"
+msgstr "Ijinkan/tolak dalam lokal"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Pengguna sementara tidak ada"
+
+msgid "No match"
+msgstr "Tidak ada yang cocok"
+
+msgid "List overflow"
+msgstr "Overflow Daftar"
+
+msgid "Request ambiguous"
+msgstr "Permintaan tidak jelas"
+
+msgid "Queue full"
+msgstr "Antrian penuh"
+
+msgid "Not while on AOL"
+msgstr "Tidak sementara pada AOL"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8350,800 +8483,6 @@ msgstr "Daftar Undangan"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr "Aquarius"
-
-msgid "Pisces"
-msgstr "Pisces"
-
-msgid "Aries"
-msgstr "Aries"
-
-msgid "Taurus"
-msgstr "Taurus"
-
-msgid "Gemini"
-msgstr "Gemini"
-
-msgid "Cancer"
-msgstr "Cancer"
-
-msgid "Leo"
-msgstr "Leo"
-
-msgid "Virgo"
-msgstr "Virgo"
-
-msgid "Libra"
-msgstr "Libra"
-
-msgid "Scorpio"
-msgstr "Scorpio"
-
-msgid "Sagittarius"
-msgstr "Sagittarius"
-
-msgid "Capricorn"
-msgstr "Capricorn"
-
-msgid "Rat"
-msgstr "Tikus"
-
-msgid "Ox"
-msgstr "Banteng"
-
-msgid "Tiger"
-msgstr "Macan"
-
-msgid "Rabbit"
-msgstr "Kelinci"
-
-msgid "Dragon"
-msgstr "Naga"
-
-msgid "Snake"
-msgstr "Ular"
-
-msgid "Horse"
-msgstr "Kuda"
-
-msgid "Goat"
-msgstr "Kambing"
-
-msgid "Monkey"
-msgstr "Monyet"
-
-msgid "Rooster"
-msgstr "Ayam Jagor"
-
-msgid "Dog"
-msgstr "Anjing"
-
-msgid "Pig"
-msgstr "Babi"
-
-msgid "Other"
-msgstr "Lain"
-
-#, fuzzy
-msgid "Visible"
-msgstr "Tak Terlihat"
-
-msgid "Friend Only"
-msgstr ""
-
-#, fuzzy
-msgid "Private"
-msgstr "Privasi"
-
-msgid "QQ Number"
-msgstr "Nomor QQ"
-
-msgid "Country/Region"
-msgstr "Negara/Wilayah"
-
-msgid "Province/State"
-msgstr "Negara/Propinsi"
-
-msgid "Zipcode"
-msgstr "Kode Pos"
-
-msgid "Phone Number"
-msgstr "Nomor Telepon"
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "Berikan otorisasi kepada teman?"
-
-msgid "Cellphone Number"
-msgstr "Nomor Telepon Selular"
-
-msgid "Personal Introduction"
-msgstr "Perkenalan Pribadi"
-
-#, fuzzy
-msgid "City/Area"
-msgstr "Kota"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "Ponsel Pribadi"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "Kontak Alias"
-
-msgid "College"
-msgstr "ST/Universitas"
-
-#, fuzzy
-msgid "Horoscope"
-msgstr "Simbol Horoskop"
-
-#, fuzzy
-msgid "Zodiac"
-msgstr "Tanda Zodiak"
-
-#, fuzzy
-msgid "Blood"
-msgstr "Diblokir"
-
-#, fuzzy
-msgid "True"
-msgstr "Taurus"
-
-#, fuzzy
-msgid "False"
-msgstr "Gagal"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "Modifikasi Akun"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "Alamat Rumah"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "Modifikasi Informasi Saya"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "Modifikasi informasi saya"
-
-#, fuzzy
-msgid "Update"
-msgstr "Pembaharuan Terakhir"
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "Mohon masukkan informasi teman."
-
-msgid "Note"
-msgstr "Catatan"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
-msgstr "Ikon Teman"
-
-msgid "Change his/her memo as you like"
-msgstr ""
-
-#, fuzzy
-msgid "_Modify"
-msgstr "Modifikasi"
-
-#, fuzzy
-msgid "Memo Modify"
-msgstr "Modifikasi"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "Server sibuk"
-
-msgid "Your request was accepted."
-msgstr ""
-
-msgid "Your request was rejected."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%u requires verification: %s"
-msgstr "Memerlukan Otorisasi"
-
-#, fuzzy
-msgid "Add buddy question"
-msgstr "Tambahkan teman kepada daftar anda?"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "Masukkan permohonan di sini"
-
-msgid "Send"
-msgstr "Kirim"
-
-#, fuzzy
-msgid "Invalid answer."
-msgstr "Nama tidak valid"
-
-msgid "Authorization denied message:"
-msgstr "Otorisasi menolak pesan:"
-
-#, fuzzy
-msgid "Sorry, you're not my style."
-msgstr "Maaf, anda bukan jenis saya..."
-
-#, fuzzy, c-format
-msgid "%u needs authorization"
-msgstr "Pengguna %d memerlukan otentikasi"
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "Tambahkan teman kepada daftar anda?"
-
-#, fuzzy
-msgid "Enter request here"
-msgstr "Masukkan permohonan di sini"
-
-msgid "Would you be my friend?"
-msgstr "Maukah anda menjadi teman saya?"
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "Tambahkan Teman"
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "Tambahkan Teman"
-
-#, fuzzy
-msgid "Invalid QQ Number"
-msgstr "Mukaa QQ Tidak Valid"
-
-#, fuzzy
-msgid "Failed sending authorize"
-msgstr "Mohon otorisasi saya!"
-
-#, fuzzy, c-format
-msgid "Failed removing buddy %u"
-msgstr "Gagal menghapus teman"
-
-#, fuzzy, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "%s menghilangkan anda dari daftar temannya."
-
-#, fuzzy
-msgid "No reason given"
-msgstr "Tidak diberikan alasan."
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Anda telah ditambahkan oleh %s"
-
-msgid "Would you like to add him?"
-msgstr "Apakah anda ingin menambahkan orang ini?"
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "Tolak"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Pesan: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ID Kelompok"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "Mohon masukkan nama baru untuk %s"
-
-#, fuzzy
-msgid "You can only search for permanent Qun\n"
-msgstr "Anda hanya dapat mencari kelompok QQ permanen\n"
-
-#, fuzzy
-msgid "(Invalid UTF-8 string)"
-msgstr "Pengaturan proxy tidak valid"
-
-#, fuzzy
-msgid "Not member"
-msgstr "Saya bukan anggota"
-
-#, fuzzy
-msgid "Member"
-msgstr "Anggota Sejak"
-
-#, fuzzy
-msgid "Requesting"
-msgstr "Dialog Pengajuan"
-
-#, fuzzy
-msgid "Admin"
-msgstr "Adium"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "Daftar Kamar"
-
-#, fuzzy
-msgid "Notice"
-msgstr "Catatan"
-
-#, fuzzy
-msgid "Detail"
-msgstr "Standar"
-
-msgid "Creator"
-msgstr "Pencipta"
-
-#, fuzzy
-msgid "About me"
-msgstr "Tentang %s"
-
-#, fuzzy
-msgid "Category"
-msgstr "Kesalahan percakapan"
-
-#, fuzzy
-msgid "The Qun does not allow others to join"
-msgstr "Kelompok ini tidak mengijinkan orang lain bergabung"
-
-#, fuzzy
-msgid "Join QQ Qun"
-msgstr "Gabung Percakapan"
-
-msgid "Input request here"
-msgstr "Masukkan permohonan di sini"
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Anda telah sukses memodifikasi anggota Qun"
-
-#, fuzzy
-msgid "Successfully joined Qun"
-msgstr "Anda telah sukses memodifikasi anggota Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr ""
-
-msgid "QQ Qun Operation"
-msgstr "Operasi QQ Qun"
-
-#, fuzzy
-msgid "Failed:"
-msgstr "Gagal"
-
-msgid "Join Qun, Unknown Reply"
-msgstr ""
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "QQ Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Catatan: apabila anda pencipta, \n"
-"operasi ini pada akhirnya akan menghilangkan Qun ini."
-
-#, fuzzy
-msgid "Sorry, you are not our style"
-msgstr "Maaf, anda bukan jenis saya..."
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "Anda telah sukses memodifikasi anggota Qun"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "Anda telah sukses memodifikasi informasi Qun"
-
-msgid "You have successfully created a Qun"
-msgstr "Anda telah sukses menciptakan sebuah Qun"
-
-#, fuzzy
-msgid "Would you like to set up detailed information now?"
-msgstr "Apakah anda ingin mengatur detail Qun sekarang?"
-
-msgid "Setup"
-msgstr "Atur"
-
-#, fuzzy, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "Pengguna %d mengajukan untuk bergabung ke kelompok %d"
-
-#, fuzzy, c-format
-msgid "%u request to join Qun %u"
-msgstr "Pengguna %d mengajukan untuk bergabung ke kelompok %d"
-
-#, fuzzy, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Gagal menggabungkan teman dlam percakapan"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "Hilangkan Teman"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "Hilangkan Teman"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Tidak dikenal-%d"
-
-msgid "Level"
-msgstr "Tingkat"
-
-msgid " VIP"
-msgstr ""
-
-msgid " TCP"
-msgstr ""
-
-#, fuzzy
-msgid " FromMobile"
-msgstr "Mobile"
-
-#, fuzzy
-msgid " BindMobile"
-msgstr "Mobile"
-
-#, fuzzy
-msgid " Video"
-msgstr "Video Langsung"
-
-#, fuzzy
-msgid " Zone"
-msgstr "Tidak Ada"
-
-msgid "Flag"
-msgstr ""
-
-msgid "Ver"
-msgstr ""
-
-msgid "Invalid name"
-msgstr "Nama tidak valid"
-
-#, fuzzy
-msgid "Select icon..."
-msgstr "Pilih Map..."
-
-#, fuzzy, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Waktu Login</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Sedang Online</b>: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>IP Server</b>: %s: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Waktu Login</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Mode Sambungan</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Mode Sambungan</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Sedang Online</b>: %d<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>IP Publik Saya</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Waktu Login</b>: %s<br>\n"
-
-#, fuzzy, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP Server</b>: %s: %d<br>\n"
-
-msgid "Login Information"
-msgstr "Informasi Login"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
-
-#, fuzzy
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-#, fuzzy
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>Sedang Online</b>: %d<br>\n"
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "About OpenQ %s"
-msgstr "Tentang %s"
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "Simpan Ikon"
-
-msgid "Change Password"
-msgstr "Rubah Kata Sandi"
-
-#, fuzzy
-msgid "Account Information"
-msgstr "Informasi Login"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-#, fuzzy
-msgid "About OpenQ"
-msgstr "Tentang %s"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "Alamat Rumah"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "QQ Protocol Plugin"
-msgstr "Protokol QQ\tPlugin"
-
-#, fuzzy
-msgid "Auto"
-msgstr "Otorisasi"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "Pilih Pengguna"
-
-msgid "QQ2005"
-msgstr ""
-
-msgid "QQ2007"
-msgstr ""
-
-msgid "QQ2008"
-msgstr ""
-
-#, fuzzy
-msgid "Connect by TCP"
-msgstr "Menyambung menggunakan TCP"
-
-#, fuzzy
-msgid "Show server notice"
-msgstr "Port Server"
-
-#, fuzzy
-msgid "Show server news"
-msgstr "Alamat Server"
-
-msgid "Show chat room when msg comes"
-msgstr ""
-
-#, fuzzy
-msgid "Keep alive interval (seconds)"
-msgstr "Pertahankan kesalahan"
-
-#, fuzzy
-msgid "Update interval (seconds)"
-msgstr "Pertahankan kesalahan"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "Tidak bisa mendapatkan informasi server"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "Judul tidak Valid"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-#, fuzzy
-msgid "Activation required"
-msgstr "Disyaratkan Pendaftaran"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting captcha"
-msgstr "Memohon perhatian %s ..."
-
-#, fuzzy
-msgid "Checking captcha"
-msgstr "Memohon perhatian %s ..."
-
-#, fuzzy
-msgid "Failed captcha verification"
-msgstr "Otentikasi Yahoo! Gagal"
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "Simpan Gambar"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "Masukkan kata sandi"
-
-#, fuzzy
-msgid "QQ Captcha Verification"
-msgstr "Verfikasi Sertifikat SSL"
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "Masukan nama dari kelompok tersebut"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-
-msgid "Socket error"
-msgstr "Kesalahan Soket"
-
-#, fuzzy
-msgid "Getting server"
-msgstr "Atur Info Pengguna..."
-
-#, fuzzy
-msgid "Requesting token"
-msgstr "Permintaan ditolak"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "Tidak dapat menyambung ke server."
-
-#, fuzzy
-msgid "Invalid server or port"
-msgstr "Kesalahan tidak valid"
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "Menyambung ke Server SILC"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "Kesalahan QQid"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr "Relay Server ICQ"
-
-#, fuzzy, c-format
-msgid "%s:%s"
-msgstr "%s (%s)"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "Dari"
-
-#, fuzzy, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr "Instruksi Server: %s"
-
-#, fuzzy
-msgid "Unknown SERVER CMD"
-msgstr "Alasan tidak jelas"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Command"
-msgstr "Perintah"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "Tidak bisa mendapatkan informasi server"
-
-#, fuzzy
-msgid "Unknown LOGIN CMD"
-msgstr "Alasan tidak jelas"
-
-#, fuzzy
-msgid "Unknown CLIENT CMD"
-msgstr "Alasan tidak jelas"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d telah menolak file %s"
-
-msgid "File Send"
-msgstr "File Terkirim"
-
-#, fuzzy, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d membatalkan trasnfer dari %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9915,6 +9254,9 @@ msgstr "Organisasi"
 msgid "Unit"
 msgstr "Unit"
 
+msgid "Note"
+msgstr "Catatan"
+
 msgid "Join Chat"
 msgstr "Gabung Percakapan"
 
@@ -10562,6 +9904,10 @@ msgid "Unable to create listen socket"
 msgstr "Tidak dapat menciptakan soket"
 
 #, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Tidak dapat menyambung ke server."
+
+#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Nama layar SIP tidak dapat mengandung sepasi atau simbol @"
 
@@ -10681,6 +10027,9 @@ msgstr "Pesan Yahoo! anda tidak terkirim."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Pesan sistem Yahoo! untuk %s:"
+
+msgid "Authorization denied message:"
+msgstr "Otorisasi menolak pesan:"
 
 #, c-format
 msgid ""
@@ -11487,14 +10836,17 @@ msgstr "Gunakan Pengaturan Proxy Global"
 msgid "No Proxy"
 msgstr "Tanpa Proxy"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Gunakan Pengaturan Lingkungan"
@@ -11522,6 +10874,14 @@ msgstr "_Port:"
 
 msgid "Pa_ssword:"
 msgstr "Kata _sandi:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Meneruskan sesi"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "Rubah Pengaturan"
 
 msgid "Unable to save new account"
 msgstr "Tidak dapat menyimpan akun baru"
@@ -11572,8 +10932,18 @@ msgstr ""
 "akun-akun dari <b>Accounts->Tambahkan/Ubah</b> pada jendela Daftar Teman"
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s ingin menambahkan %s pada daftar temannya%s%s"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s ingin menambahkan %s pada daftar temannya%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Pesan Instan Baru"
 
 #. Buddy List
 msgid "Background Color"
@@ -11977,6 +11347,10 @@ msgid "/Help/De_veloper Information"
 msgstr "Informasi Server"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Informasi Teman"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "Informasi Pribadi"
 
@@ -12168,6 +11542,10 @@ msgstr "Nama Teman:"
 #, fuzzy
 msgid "(Optional) A_lias:"
 msgstr "Informasi Pilihan:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "Masukkan dalam pesan"
 
 #, fuzzy
 msgid "Add buddy to _group:"
@@ -12623,16 +12001,9 @@ msgstr "Kesalahan "
 msgid "Fatal Error"
 msgstr "Kesalahan Fatal"
 
-msgid "bug master"
-msgstr ""
-
 #, fuzzy
 msgid "artist"
 msgstr "Artis-artis"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
 
 msgid "voice and video"
 msgstr ""
@@ -12646,6 +12017,10 @@ msgstr "pengembang & webmaster"
 
 msgid "win32 port"
 msgstr "port ke win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr ""
 
 msgid "maintainer"
 msgstr "pemelihara"
@@ -12768,6 +12143,9 @@ msgstr "Hebrew"
 msgid "Hindi"
 msgstr "Hindi"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "Hongaria"
 
@@ -12812,6 +12190,10 @@ msgstr "Lao"
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Surat Baru"
 
 msgid "Macedonian"
 msgstr "Makedonia"
@@ -13010,6 +12392,14 @@ msgstr "Penerjemah di Masa Lalu"
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "Informasi Pekerjaan"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Informasi Teman"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Informasi Login"
 
 msgid "_Name"
 msgstr "_Nama"
@@ -13684,6 +13074,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Anda memiliki email!</span>"
 msgid "New Pounces"
 msgstr "Tos Teman Baru"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -14009,6 +13406,14 @@ msgstr "Gunakan scrolling-halus"
 msgid "F_lash window when IMs are received"
 msgstr "K_edipkan jendela saat PI diterima"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "Tampilkan senyuman kustom"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Timeout respon maksimal:"
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -14084,6 +13489,10 @@ msgstr "Server ST_UN:"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "_Port:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_Port:"
 
 #, fuzzy
@@ -14886,6 +14295,9 @@ msgstr "Pilihan Suara"
 #, fuzzy
 msgid "PubSub Leaf"
 msgstr "Layanan PubSub"
+
+msgid "Other"
+msgstr "Lain"
 
 #, fuzzy
 msgid ""
@@ -15789,6 +15201,24 @@ msgstr "Plug-ins"
 msgid "D_evice"
 msgstr "Perangkat"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "Volume:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Batasan:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Mikrofon"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15800,10 +15230,6 @@ msgstr "Perangkat"
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Rubah Pengaturan"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "Rubah Pengaturan"
 
 #. *< name
@@ -16066,6 +15492,671 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Tolak otomatis dari pengguna yang tidak terdapat dalam daftar teman"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Pesan Permohonan Otorisasi:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Mohon otorisasi saya!"
+
+#~ msgid "Aquarius"
+#~ msgstr "Aquarius"
+
+#~ msgid "Pisces"
+#~ msgstr "Pisces"
+
+#~ msgid "Aries"
+#~ msgstr "Aries"
+
+#~ msgid "Taurus"
+#~ msgstr "Taurus"
+
+#~ msgid "Gemini"
+#~ msgstr "Gemini"
+
+#~ msgid "Cancer"
+#~ msgstr "Cancer"
+
+#~ msgid "Leo"
+#~ msgstr "Leo"
+
+#~ msgid "Virgo"
+#~ msgstr "Virgo"
+
+#~ msgid "Libra"
+#~ msgstr "Libra"
+
+#~ msgid "Scorpio"
+#~ msgstr "Scorpio"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Sagittarius"
+
+#~ msgid "Capricorn"
+#~ msgstr "Capricorn"
+
+#~ msgid "Rat"
+#~ msgstr "Tikus"
+
+#~ msgid "Ox"
+#~ msgstr "Banteng"
+
+#~ msgid "Tiger"
+#~ msgstr "Macan"
+
+#~ msgid "Rabbit"
+#~ msgstr "Kelinci"
+
+#~ msgid "Dragon"
+#~ msgstr "Naga"
+
+#~ msgid "Snake"
+#~ msgstr "Ular"
+
+#~ msgid "Horse"
+#~ msgstr "Kuda"
+
+#~ msgid "Goat"
+#~ msgstr "Kambing"
+
+#~ msgid "Monkey"
+#~ msgstr "Monyet"
+
+#~ msgid "Rooster"
+#~ msgstr "Ayam Jagor"
+
+#~ msgid "Dog"
+#~ msgstr "Anjing"
+
+#~ msgid "Pig"
+#~ msgstr "Babi"
+
+#, fuzzy
+#~ msgid "Visible"
+#~ msgstr "Tak Terlihat"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "Privasi"
+
+#~ msgid "QQ Number"
+#~ msgstr "Nomor QQ"
+
+#~ msgid "Country/Region"
+#~ msgstr "Negara/Wilayah"
+
+#~ msgid "Province/State"
+#~ msgstr "Negara/Propinsi"
+
+#~ msgid "Zipcode"
+#~ msgstr "Kode Pos"
+
+#~ msgid "Phone Number"
+#~ msgstr "Nomor Telepon"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "Berikan otorisasi kepada teman?"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Nomor Telepon Selular"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Perkenalan Pribadi"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "Kota"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "Ponsel Pribadi"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "Kontak Alias"
+
+#~ msgid "College"
+#~ msgstr "ST/Universitas"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "Simbol Horoskop"
+
+#, fuzzy
+#~ msgid "Zodiac"
+#~ msgstr "Tanda Zodiak"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "Diblokir"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "Taurus"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "Gagal"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "Modifikasi Akun"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "Alamat Rumah"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "Modifikasi Informasi Saya"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "Modifikasi informasi saya"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "Pembaharuan Terakhir"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "Mohon masukkan informasi teman."
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "Ikon Teman"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "Modifikasi"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "Modifikasi"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "Server sibuk"
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "Memerlukan Otorisasi"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "Tambahkan teman kepada daftar anda?"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "Masukkan permohonan di sini"
+
+#~ msgid "Send"
+#~ msgstr "Kirim"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "Nama tidak valid"
+
+#, fuzzy
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Maaf, anda bukan jenis saya..."
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "Pengguna %d memerlukan otentikasi"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "Tambahkan teman kepada daftar anda?"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "Masukkan permohonan di sini"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Maukah anda menjadi teman saya?"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "Tambahkan Teman"
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "Tambahkan Teman"
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Mukaa QQ Tidak Valid"
+
+#, fuzzy
+#~ msgid "Failed sending authorize"
+#~ msgstr "Mohon otorisasi saya!"
+
+#, fuzzy
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Gagal menghapus teman"
+
+#, fuzzy
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "%s menghilangkan anda dari daftar temannya."
+
+#, fuzzy
+#~ msgid "No reason given"
+#~ msgstr "Tidak diberikan alasan."
+
+#~ msgid "You have been added by %s"
+#~ msgstr "Anda telah ditambahkan oleh %s"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Apakah anda ingin menambahkan orang ini?"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "Tolak"
+
+#~ msgid "Message: %s"
+#~ msgstr "Pesan: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "ID Kelompok"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "Mohon masukkan nama baru untuk %s"
+
+#, fuzzy
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Anda hanya dapat mencari kelompok QQ permanen\n"
+
+#, fuzzy
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "Pengaturan proxy tidak valid"
+
+#, fuzzy
+#~ msgid "Not member"
+#~ msgstr "Saya bukan anggota"
+
+#, fuzzy
+#~ msgid "Member"
+#~ msgstr "Anggota Sejak"
+
+#, fuzzy
+#~ msgid "Requesting"
+#~ msgstr "Dialog Pengajuan"
+
+#, fuzzy
+#~ msgid "Admin"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Daftar Kamar"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "Catatan"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "Standar"
+
+#~ msgid "Creator"
+#~ msgstr "Pencipta"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "Kesalahan percakapan"
+
+#, fuzzy
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Kelompok ini tidak mengijinkan orang lain bergabung"
+
+#, fuzzy
+#~ msgid "Join QQ Qun"
+#~ msgstr "Gabung Percakapan"
+
+#~ msgid "Input request here"
+#~ msgstr "Masukkan permohonan di sini"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Anda telah sukses memodifikasi anggota Qun"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Anda telah sukses memodifikasi anggota Qun"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "Operasi QQ Qun"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "Gagal"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Catatan: apabila anda pencipta, \n"
+#~ "operasi ini pada akhirnya akan menghilangkan Qun ini."
+
+#, fuzzy
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Maaf, anda bukan jenis saya..."
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Anda telah sukses memodifikasi anggota Qun"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Anda telah sukses memodifikasi informasi Qun"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Anda telah sukses menciptakan sebuah Qun"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Apakah anda ingin mengatur detail Qun sekarang?"
+
+#~ msgid "Setup"
+#~ msgstr "Atur"
+
+#, fuzzy
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "Pengguna %d mengajukan untuk bergabung ke kelompok %d"
+
+#, fuzzy
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "Pengguna %d mengajukan untuk bergabung ke kelompok %d"
+
+#, fuzzy
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Gagal menggabungkan teman dlam percakapan"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "Hilangkan Teman"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "Hilangkan Teman"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Tidak dikenal-%d"
+
+#~ msgid "Level"
+#~ msgstr "Tingkat"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "Mobile"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "Mobile"
+
+#, fuzzy
+#~ msgid " Video"
+#~ msgstr "Video Langsung"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "Tidak Ada"
+
+#~ msgid "Invalid name"
+#~ msgstr "Nama tidak valid"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "Pilih Map..."
+
+#, fuzzy
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Waktu Login</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Sedang Online</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>IP Server</b>: %s: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Waktu Login</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Mode Sambungan</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Mode Sambungan</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Sedang Online</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>IP Publik Saya</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Waktu Login</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP Server</b>: %s: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<b>Sedang Online</b>: %d<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
+
+#, fuzzy
+#~ msgid "About OpenQ %s"
+#~ msgstr "Tentang %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Rubah Kata Sandi"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "Informasi Login"
+
+#, fuzzy
+#~ msgid "About OpenQ"
+#~ msgstr "Tentang %s"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Alamat Rumah"
+
+#, fuzzy
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "Protokol QQ\tPlugin"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "Otorisasi"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "Pilih Pengguna"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "Menyambung menggunakan TCP"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "Port Server"
+
+#, fuzzy
+#~ msgid "Show server news"
+#~ msgstr "Alamat Server"
+
+#, fuzzy
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Pertahankan kesalahan"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Pertahankan kesalahan"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Tidak bisa mendapatkan informasi server"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Judul tidak Valid"
+
+#, fuzzy
+#~ msgid "Activation required"
+#~ msgstr "Disyaratkan Pendaftaran"
+
+#, fuzzy
+#~ msgid "Requesting captcha"
+#~ msgstr "Memohon perhatian %s ..."
+
+#, fuzzy
+#~ msgid "Checking captcha"
+#~ msgstr "Memohon perhatian %s ..."
+
+#, fuzzy
+#~ msgid "Failed captcha verification"
+#~ msgstr "Otentikasi Yahoo! Gagal"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "Simpan Gambar"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "Masukkan kata sandi"
+
+#, fuzzy
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "Verfikasi Sertifikat SSL"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "Masukan nama dari kelompok tersebut"
+
+#~ msgid "Socket error"
+#~ msgstr "Kesalahan Soket"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "Atur Info Pengguna..."
+
+#, fuzzy
+#~ msgid "Requesting token"
+#~ msgstr "Permintaan ditolak"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "Kesalahan tidak valid"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "Menyambung ke Server SILC"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "Kesalahan QQid"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "Relay Server ICQ"
+
+#, fuzzy
+#~ msgid "%s:%s"
+#~ msgstr "%s (%s)"
+
+#, fuzzy
+#~ msgid "From %s:"
+#~ msgstr "Dari"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr "Instruksi Server: %s"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Alasan tidak jelas"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "Perintah"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Tidak bisa mendapatkan informasi server"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Alasan tidak jelas"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Alasan tidak jelas"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d telah menolak file %s"
+
+#~ msgid "File Send"
+#~ msgstr "File Terkirim"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d membatalkan trasnfer dari %s"
+
 #, fuzzy
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Kesalahan terjadi ketika membuka file."
@@ -16149,10 +16240,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "How do you feel right now?"
 #~ msgstr "Saya tidak ada di sini sekarang"
-
-#, fuzzy
-#~ msgid "Change Mood..."
-#~ msgstr "Ganti kata sandi..."
 
 #~ msgid "Pager server"
 #~ msgstr "Server Penyeranta"
@@ -16295,9 +16382,6 @@ msgstr ""
 
 #~ msgid "Auto-away"
 #~ msgstr "Menjauh-otomatis"
-
-#~ msgid "Change _status to:"
-#~ msgstr "Rubah _status pada:"
 
 #~ msgid "Failed to open file '%s': %s"
 #~ msgstr "Gagal membuka file \"%s\": %s"
@@ -16741,10 +16825,6 @@ msgstr ""
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "Persembunyian Jendela Percakapan"
 
-#, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Mohon pilih mood anda dari daftar."
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Aktifkan ID yang mana?"
 
@@ -16759,10 +16839,6 @@ msgstr ""
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Ukuran Widget"
-
-#, fuzzy
-#~ msgid "Invite message"
-#~ msgstr "Masukkan dalam pesan"
 
 #, fuzzy
 #~ msgid ""

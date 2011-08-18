@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-13 00:16-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-05-13 00:26+0000\n"
 "Last-Translator: aalam <apreet.alam@gmail.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.net/projects/p/pidgin/"
@@ -4621,7 +4621,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [room]:  ਯੂਜ਼ਰ ਨੂੰ ਰੂਮ 'ਚ ਸੱਦੋ।"
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;room&gt; [password]:  Join a chat on this server."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -6129,12 +6130,16 @@ msgid "Where I live"
 msgstr ""
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr ""
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr ""
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10707,6 +10712,10 @@ msgstr "/ਮੱਦਦ/ਡੀਬੱਗ ਵਿੰਡੋ(_D)"
 msgid "/Help/De_veloper Information"
 msgstr "/ਮੱਦਦ/ਡਿਵੈਲਪਰ ਜਾਣਕਾਰੀ(_v)"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/ਮੱਦਦ/ਬਿਲਡ ਜਾਣਕਾਰੀ(_B)"
+
 msgid "/Help/_Translator Information"
 msgstr "/ਮੱਦਦ/ਅਨੁਵਾਦਕ ਜਾਣਕਾਰੀ(_T)"
 
@@ -11703,6 +11712,14 @@ msgstr "ਪੁਰਾਣੀ ਅਨੁਵਾਦਕ"
 msgid "%s Translator Information"
 msgstr "%s ਅਨੁਵਾਦ ਜਾਣਕਾਰੀ"
 
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "%s ਬਿਲਡ ਜਾਣਕਾਰੀ"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "ਬਿਲਡ ਜਾਣਕਾਰੀ"
+
 msgid "_Name"
 msgstr "ਨਾਂ(_N)"
 
@@ -12638,6 +12655,14 @@ msgstr "ਸਮੂਥਿੰਗ-ਸਕੋਰਿੰਗ ਵਰਤੋਂ"
 msgid "F_lash window when IMs are received"
 msgstr "IM ਪ੍ਰਾਪਤ ਹੋਣ ਉੱਤੇ ਵਿੰਡੋ ਝਲਕਾਓ(_l)"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "ਕਸਟਮ ਸਮਾਇਲੀ ਪਰਬੰਧ(_M)"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "ਵੱਧੋ-ਵੱਧ ਜਵਾਬ ਟਾਈਮ-ਆਉਟ:"
+
 msgid "Minimum input area height in lines:"
 msgstr "ਲਾਈਨਾਂ ਵਿੱਚ ਘੱਟੋ-ਘੱਟੋ ਇੰਪੁੱਟ ਏਰੀਆ ਹਾਈਲਾਈਟ:"
 
@@ -12705,6 +12730,10 @@ msgid "_TURN server:"
 msgstr "_TURN ਸਰਵਰ:"
 
 msgid "_UDP Port:"
+msgstr "_UDP ਪੋਰਟ:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_UDP ਪੋਰਟ:"
 
 msgid "Use_rname:"
