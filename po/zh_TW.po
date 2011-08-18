@@ -6,7 +6,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.673 2011/05/09 18:55:33 acli Exp $
+# $InternalId: zh_TW.po,v 1.675 2011/08/17 20:26:30 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -58,10 +58,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.7.11\n"
+"Project-Id-Version: Pidgin 2.10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 21:40-0700\n"
-"PO-Revision-Date: 2011-03-09 16:19-0500\n"
+"POT-Creation-Date: 2011-08-17 22:55-0700\n"
+"PO-Revision-Date: 2011-08-17 16:19-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -1764,6 +1764,7 @@ msgstr "這個通訊協定不支援讀取公開別名。"
 msgid "Unknown"
 msgstr "未知"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "好友"
 
@@ -4922,8 +4923,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;使用者&gt; [訊息]：邀請使用者進入聊天室"
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;聊天室&gt; [密碼]：加入位於這個伺服器的一個聊天室"
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;聊天室[@伺服器]&gt; [密碼]：加入聊天室"
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;使用者&gt; [理由]：將使用者從聊天室中踢出。"
@@ -6575,13 +6576,17 @@ msgid "Where I live"
 msgstr "住處"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "您有 %i 個好友建議。"
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "您有 %i 個好友建議。"
+msgstr[1] "您有 %i 個好友建議。"
 
 # XXX 譯文有待改進 acli 20110507
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "找到了 %i 個相符搜尋條件的聯絡人。"
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "找到了 %i 個相符搜尋條件的聯絡人。"
+msgstr[1] "找到了 %i 個相符搜尋條件的聯絡人。"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11347,6 +11352,9 @@ msgstr "/說明/除錯視窗(_D)"
 msgid "/Help/De_veloper Information"
 msgstr "/說明/開發者名單(_V)"
 
+msgid "/Help/_Plugin Information"
+msgstr "/說明/模組資訊(_P)"
+
 msgid "/Help/_Translator Information"
 msgstr "/說明/譯者名單(_T)"
 
@@ -11999,10 +12007,6 @@ msgstr "嚴重錯誤訊息"
 msgid "artist"
 msgstr "平面設計"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "張家興"
-
 msgid "voice and video"
 msgstr "語音及視像功能"
 
@@ -12014,6 +12018,10 @@ msgstr "網站管理員"
 
 msgid "win32 port"
 msgstr "Windows 版本移植"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "張家興"
 
 msgid "maintainer"
 msgstr "維護者"
@@ -12144,6 +12152,10 @@ msgstr "希伯來文"
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=H
 msgid "Hindi"
 msgstr "印度文"
+
+#  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=C
+msgid "Croatian"
+msgstr "克羅埃西亞文"
 
 msgid "Hungarian"
 msgstr "匈牙利文"
@@ -12428,6 +12440,13 @@ msgstr "前任譯者"
 #, c-format
 msgid "%s Translator Information"
 msgstr "%s 譯者名單"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "%s 模組資訊"
+
+msgid "Plugin Information"
+msgstr "模組資訊"
 
 # NOTE 只能譯「名稱」，因為同時解作「人名」及「模組名稱」
 msgid "_Name"
@@ -13386,6 +13405,14 @@ msgstr "使用平滑捲軸"
 msgid "F_lash window when IMs are received"
 msgstr "收到即時訊息後閃動視窗(_F)"
 
+# FIXME 譯文有待改進 - 20110817
+msgid "Resize incoming custom smileys"
+msgstr "對收到的自訂表情的大小作出調整"
+
+#  NOTE 參閱 gtk/plugins/cap/README
+msgid "Maximum size:"
+msgstr "大小上限："
+
 msgid "Minimum input area height in lines:"
 msgstr "文字輸入區的最少行數："
 
@@ -13455,6 +13482,9 @@ msgstr "TURN 伺服器(_U)："
 
 msgid "_UDP Port:"
 msgstr "UDP 通訊埠(_U)："
+
+msgid "T_CP Port:"
+msgstr "TCP 通訊埠(_C)："
 
 msgid "Use_rname:"
 msgstr "帳號(_R)："
@@ -15903,10 +15933,6 @@ msgstr "您沒有權限移除程式。"
 
 #~ msgid "<b>IP</b>: %s<br>\n"
 #~ msgstr "<b>IP位址</b>：%s<br>\n"
-
-# XXX - 20061027
-#~ msgid "Login Information"
-#~ msgstr "登入資訊"
 
 #~ msgid "<p><b>Original Author</b>:<br>\n"
 #~ msgstr "<p><b>原作者</b>：<br>\n"
