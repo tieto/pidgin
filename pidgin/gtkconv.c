@@ -7883,6 +7883,8 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", TRUE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys", TRUE);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size", 96);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines", 2);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps", TRUE);

@@ -2235,7 +2235,7 @@ static const char *zephyr_normalize(const PurpleAccount *account, const char *wh
 		return NULL;
 	}
 
-	strcpy(buf, tmp);
+	g_strlcpy(buf, tmp, sizeof(buf));
 	g_free(tmp);
 
 	return buf;

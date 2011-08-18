@@ -5691,18 +5691,19 @@ static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data
 static void
 gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
 {
-#define CUSTOM_SMILEY_SIZE 96	/* XXX: Should this be a theme setting? */
-	if (width <= CUSTOM_SMILEY_SIZE && height <= CUSTOM_SMILEY_SIZE)
-		return;
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/resize_custom_smileys")) {
+		int custom_smileys_size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/custom_smileys_size");
+		if (width <= custom_smileys_size && height <= custom_smileys_size)
+			return;
 
-	if (width >= height) {
-		height = height * CUSTOM_SMILEY_SIZE / width;
-		width = CUSTOM_SMILEY_SIZE;
-	} else {
-		width = width * CUSTOM_SMILEY_SIZE / height;
-		height = CUSTOM_SMILEY_SIZE;
+		if (width >= height) {
+			height = height * custom_smileys_size / width;
+			width = custom_smileys_size;
+		} else {
+			width = width * custom_smileys_size / height;
+			height = custom_smileys_size;
+		}
 	}
-
 	gdk_pixbuf_loader_set_size(loader, width, height);
 }
 

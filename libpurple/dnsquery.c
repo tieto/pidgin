@@ -154,8 +154,27 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 static gboolean
 resolve_ip(PurpleDnsQueryData *query_data)
 {
+#if defined(HAVE_GETADDRINFO) && defined(AI_NUMERICHOST)
+	struct addrinfo hints, *res;
+	char servname[20];
+
+	g_snprintf(servname, sizeof(servname), "%d", query_data->port);
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_flags |= AI_NUMERICHOST;
+
+	if (0 == getaddrinfo(query_data->hostname, servname, &hints, &res))
+	{
+		GSList *hosts = NULL;
+		hosts = g_slist_append(hosts, GINT_TO_POINTER(res->ai_addrlen));
+		hosts = g_slist_append(hosts, g_memdup(res->ai_addr, res->ai_addrlen));
+		purple_dnsquery_resolved(query_data, hosts);
+
+		freeaddrinfo(res);
+		return TRUE;
+	}
+#else /* defined(HAVE_GETADDRINFO) && defined(AI_NUMERICHOST) */
 	struct sockaddr_in sin;
-	/* TODO: Use inet_pton for IPv6 support */
 	if (inet_aton(query_data->hostname, &sin.sin_addr))
 	{
 		/*
@@ -171,6 +190,7 @@ resolve_ip(PurpleDnsQueryData *query_data)
 
 		return TRUE;
 	}
+#endif
 
 	return FALSE;
 }

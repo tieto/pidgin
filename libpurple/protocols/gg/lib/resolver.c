@@ -249,6 +249,7 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *co
 #endif /* GG_CONFIG_HAVE_GETHOSTBYNAME_R */
 }
 
+#if defined(GG_CONFIG_HAVE_PTHREAD) || !defined(_WIN32)
 /**
  * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
  *
@@ -286,6 +287,7 @@ static int gg_resolver_run(int fd, const char *hostname)
 
 	return res;
 }
+#endif
 
 /**
  * \internal Odpowiednik \c gethostbyname zapewniający współbieżność.

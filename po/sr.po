@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -216,6 +216,10 @@ msgid "Username"
 msgstr "Корисничко име"
 
 msgid "Alias (optional)"
+msgstr "Надимак (необавезно)"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "Надимак (необавезно)"
 
 msgid "Add in group"
@@ -1654,6 +1658,7 @@ msgstr "Ово издање протокола не подржава прича�
 msgid "Unknown"
 msgstr "Непознато"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Другари"
 
@@ -1921,6 +1926,9 @@ msgstr "Неуспело прављење нити: %s"
 
 msgid "Unknown reason"
 msgstr "Непознат разлог"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2323,8 +2331,11 @@ msgstr ""
 "Путања за чување датотека\n"
 "(Унесите пуну путању)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "Дозволи само корисницима са мог списка другара"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "Када захтев за пренос датотеке долази од %s"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2335,6 +2346,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "Направи нови директоријум за сваког корисника"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s обустави пренос датотеке"
 
 msgid "Notes"
 msgstr "Белешке"
@@ -3147,6 +3162,25 @@ msgstr "Молим вас унесите текућу лозинку и нову
 msgid "Change Gadu-Gadu Password"
 msgstr "Измени Гаду-Гаду лозинку"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Промени _стање у:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Доступне другове"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Промени стање у:"
+
+#, fuzzy
+msgid "Please, select who can see your status"
+msgstr "Изаберите слику за смешак."
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Изаберите ћаскање за другара: %s"
@@ -3178,9 +3212,7 @@ msgid "UIN"
 msgstr "Кориснички број"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Име"
 
@@ -3294,6 +3326,23 @@ msgstr "Гаду-Гаду корисник"
 msgid "GG server"
 msgstr "Добављам сервер"
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "Захтевај овлашћење"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "Подаци о кориснику %s недоступни"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "Захтевај овлашћење"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "Понављање везе"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Непозната наредба: %s"
@@ -3330,7 +3379,6 @@ msgstr "Порука дана за %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3591,6 +3639,10 @@ msgstr "Wallops са %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;акција&gt;:  Изведи одређену акцију."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Шаље команду за chanserv"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3797,7 +3849,10 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер захтева слање лозинке у обичном тексту преко везе која није шифрована."
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 #, fuzzy
 msgid "Invalid response from server"
 msgstr "Неисправан одговор сервера."
@@ -3957,7 +4012,6 @@ msgstr "Област"
 msgid "Postal Code"
 msgstr "Поштански број"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Држава"
 
@@ -4703,7 +4757,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;корисник&gt; [порука]:  Позива корисника у причаоницу."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 "join: &lt;причаоница&gt; [лозинка]:  Прикључује вас ћаскању на овом серверу."
 
@@ -4745,20 +4800,8 @@ msgstr "Додатак за Џабер протокол"
 msgid "Domain"
 msgstr "Домен"
 
-#, fuzzy
-msgid "Require encryption"
-msgstr "Захтевај овлашћење"
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "Подаци о кориснику %s недоступни"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "Понављање везе"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Дозволи нескривене лозинке на нешифрованим токовима"
@@ -4870,6 +4913,7 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "Слање датотеке кориснику %s није успело. Корисник не подржава пренос датотека"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Неуспешно слање датотеке"
 
@@ -5654,18 +5698,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Не могу да додам"
 
-msgid "Authorization Request Message:"
-msgstr "Порука уз захтев за овлашћење:"
-
-msgid "Please authorize me!"
-msgstr "Овласти ме!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_У реду"
-
 msgid "Error retrieving profile"
 msgstr "Грешка при читању са сервера"
 
@@ -5880,6 +5912,10 @@ msgstr "Не могу да забраним корисника"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Порука за мобилни није послата јер је предугачка."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Порука није послата зато што је дошло до непознате грешке:"
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -6054,21 +6090,6 @@ msgid "The username specified is invalid."
 msgstr "Унето корисничко име је неисправно."
 
 #, fuzzy
-msgid "The PIN you entered is invalid."
-msgstr "Унети SecurID кључ је неисправан."
-
-#, fuzzy
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Унети SecurID кључ је неисправан."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-#, fuzzy
-msgid "The two PINs you entered do not match."
-msgstr "Нове лозинке се не поклапају."
-
-#, fuzzy
 msgid "The Display Name you entered is invalid."
 msgstr "Унети SecurID кључ је неисправан."
 
@@ -6089,26 +6110,19 @@ msgstr "Профил"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your UID"
-msgstr ""
-
-#. pin
-#. pin (required)
-#, fuzzy
-msgid "PIN"
-msgstr "Кориснички број"
-
-msgid "Verify PIN"
-msgstr ""
-
 #. display name
 #. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Презиме"
 
-#. hidden
-msgid "Hide my number"
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "О мени"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
 
 #. mobile number
@@ -6116,12 +6130,56 @@ msgstr ""
 msgid "Mobile Number"
 msgstr "Број мобилног телефона"
 
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
 #, fuzzy
-msgid "Update your Profile"
+msgid "Update your MXit Profile"
 msgstr "Корисников профил"
 
-msgid "Here you can update your MXit profile"
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "Унети SecurID кључ је неисправан."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Унети SecurID кључ је неисправан."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
 msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Нове лозинке се не поклапају."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Грешка при писању"
+
+#. pin
+#. pin (required)
+#, fuzzy
+msgid "PIN"
+msgstr "Кориснички број"
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Сачувај иконицу"
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Сачувај иконицу"
 
 msgid "View Splash"
 msgstr ""
@@ -6133,10 +6191,40 @@ msgstr ""
 msgid "About"
 msgstr "О мени"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Тражи другара"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Тражи другара"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Подаци о кориснику"
+
+msgid "_Search"
+msgstr "_Тражи"
+
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
 msgstr "Промени лозинку..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Промени лозинку..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Постави пријатељско име..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Тражи другарe..."
 
 #. display splash-screen
 #, fuzzy
@@ -6174,6 +6262,10 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "Успостављање везе"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "Унети SecurID кључ је неисправан."
 
 #, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6254,6 +6346,23 @@ msgid "Retrieving User Information..."
 msgstr "Подаци о серверу"
 
 #, fuzzy
+msgid "was kicked"
+msgstr "Неисправна карта"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Избацио Вас је %s: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Соба:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Имате е-пошту!"
+
+#, fuzzy
 msgid "Loading menu..."
 msgstr "Повезујем се"
 
@@ -6276,8 +6385,21 @@ msgid "Hidden Number"
 msgstr "Средње име"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "Недоступан"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "На овом налогу није омогућена е-пошта."
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "Јаху ИБ..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Позови"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6292,27 +6414,45 @@ msgstr "Повежи се помоћу ТЦП-а"
 msgid "Enable splash-screen popup"
 msgstr ""
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "Избацио Вас је %s: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "Неисправна карта"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_Соба:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "Имате е-пошту!"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "На вези"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Позивна порука"
+
+#, fuzzy
+msgid "No results"
+msgstr "Резултати претраге"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Нема нађених корисника"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Корисник"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7075,6 +7215,12 @@ msgstr "Разлог није наведен."
 msgid "Authorization Denied Message:"
 msgstr "Разлог одбијања овлашћења:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_У реду"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Добијен је неочекиван одговор HTTP сервера."
@@ -7451,7 +7597,6 @@ msgid "Received authorization"
 msgstr "Примио овлашћење"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -7633,6 +7778,13 @@ msgstr "Можда АИМ веза прекинута."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Веза са причаоницом %s је прекинута."
+
+msgid "The new formatting is invalid."
+msgstr "Нови запис је неисправан."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"Можете изменити само величину слова и броју размака у корисничком имену."
 
 msgid "Pop-Up Message"
 msgstr "Искачућа порука"
@@ -7918,13 +8070,6 @@ msgstr "Свесност веба (омогућавање овога ће иза
 msgid "ICQ Privacy Options"
 msgstr "Поставке приватности за ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "Нови запис је неисправан."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"Можете изменити само величину слова и броју размака у корисничком имену."
-
 msgid "Change Address To:"
 msgstr "Промена адресе у:"
 
@@ -7950,9 +8095,6 @@ msgstr "Пронађи другара помоћу адресе е-поште"
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Укуцајте е-поштанску адресу другара кога тражите."
-
-msgid "_Search"
-msgstr "_Тражи"
 
 msgid "Set User Info (web)..."
 msgstr "Постави податке (преко веба)..."
@@ -7993,10 +8135,6 @@ msgid "Search for Buddy by Email Address..."
 msgstr "Пронађи другара према адреси е-поште..."
 
 #, fuzzy
-msgid "Don't use encryption"
-msgstr "Захтевај овлашћење"
-
-#, fuzzy
 msgid "Use clientLogin"
 msgstr "Корисник није пријављен"
 
@@ -8035,75 +8173,6 @@ msgstr ""
 "Ово захтева непосредну везу између два рачунара и неопходно је за слање "
 "слика. Пошто ће се Ваша ИП адреса приказати, ово се може сматрати "
 "нарушавањем приватности."
-
-msgid "Invalid SNAC"
-msgstr "Неисправан SNAC"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "Услуга је недоступна"
-
-msgid "Service not defined"
-msgstr "Услуга није установљена"
-
-msgid "Obsolete SNAC"
-msgstr "Превазиђени SNAC"
-
-msgid "Not supported by host"
-msgstr "Домаћин не подржава"
-
-msgid "Not supported by client"
-msgstr "Програм не подржава"
-
-msgid "Refused by client"
-msgstr "Програм је одбио"
-
-msgid "Reply too big"
-msgstr "Одговор је предугачак"
-
-msgid "Responses lost"
-msgstr "Одговори су изгубљени"
-
-msgid "Request denied"
-msgstr "Захтев је одбијен"
-
-msgid "Busted SNAC payload"
-msgstr "Упропашћен је SNAC користан пакет"
-
-msgid "Insufficient rights"
-msgstr "Недовољно овлашћења"
-
-msgid "In local permit/deny"
-msgstr "Дозволи/забрани у локалу"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Корисник привремено недоступан"
-
-msgid "No match"
-msgstr "Нема поклапања"
-
-msgid "List overflow"
-msgstr "Прекорачење списка"
-
-msgid "Request ambiguous"
-msgstr "Захтев је двосмислен"
-
-msgid "Queue full"
-msgstr "Ред је пун"
-
-msgid "Not while on AOL"
-msgstr "Не док је на АОЛ-у"
 
 #. Label
 msgid "Buddy Icon"
@@ -8224,6 +8293,75 @@ msgstr "Члан од"
 msgid "Capabilities"
 msgstr "Могућности"
 
+msgid "Invalid SNAC"
+msgstr "Неисправан SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "Услуга је недоступна"
+
+msgid "Service not defined"
+msgstr "Услуга није установљена"
+
+msgid "Obsolete SNAC"
+msgstr "Превазиђени SNAC"
+
+msgid "Not supported by host"
+msgstr "Домаћин не подржава"
+
+msgid "Not supported by client"
+msgstr "Програм не подржава"
+
+msgid "Refused by client"
+msgstr "Програм је одбио"
+
+msgid "Reply too big"
+msgstr "Одговор је предугачак"
+
+msgid "Responses lost"
+msgstr "Одговори су изгубљени"
+
+msgid "Request denied"
+msgstr "Захтев је одбијен"
+
+msgid "Busted SNAC payload"
+msgstr "Упропашћен је SNAC користан пакет"
+
+msgid "Insufficient rights"
+msgstr "Недовољно овлашћења"
+
+msgid "In local permit/deny"
+msgstr "Дозволи/забрани у локалу"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Корисник привремено недоступан"
+
+msgid "No match"
+msgstr "Нема поклапања"
+
+msgid "List overflow"
+msgstr "Прекорачење списка"
+
+msgid "Request ambiguous"
+msgstr "Захтев је двосмислен"
+
+msgid "Queue full"
+msgstr "Ред је пун"
+
+msgid "Not while on AOL"
+msgstr "Не док је на АОЛ-у"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8276,728 +8414,6 @@ msgstr "Списак позваних"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr "Водолија"
-
-msgid "Pisces"
-msgstr "Рибе"
-
-# Ovo je svrha ovog polja kod nas, pa neka ostane ovako
-msgid "Aries"
-msgstr "Ован"
-
-msgid "Taurus"
-msgstr "Бик"
-
-msgid "Gemini"
-msgstr "Близанци"
-
-msgid "Cancer"
-msgstr "Рак"
-
-msgid "Leo"
-msgstr "Лав"
-
-msgid "Virgo"
-msgstr "Девица"
-
-msgid "Libra"
-msgstr "Вага"
-
-msgid "Scorpio"
-msgstr "Шкорпија"
-
-msgid "Sagittarius"
-msgstr "Стрелац"
-
-msgid "Capricorn"
-msgstr "Јарац"
-
-msgid "Rat"
-msgstr "Пацов"
-
-msgid "Ox"
-msgstr "Бик"
-
-msgid "Tiger"
-msgstr "Тигар"
-
-msgid "Rabbit"
-msgstr "Зец"
-
-msgid "Dragon"
-msgstr "Змај"
-
-msgid "Snake"
-msgstr "Змија"
-
-msgid "Horse"
-msgstr "Коњ"
-
-msgid "Goat"
-msgstr "Коза"
-
-msgid "Monkey"
-msgstr "Мајмун"
-
-msgid "Rooster"
-msgstr "Певац"
-
-msgid "Dog"
-msgstr "Пас"
-
-msgid "Pig"
-msgstr "Свиња"
-
-msgid "Other"
-msgstr "Остало"
-
-msgid "Visible"
-msgstr "Видљив"
-
-msgid "Friend Only"
-msgstr "Само пријатељ"
-
-msgid "Private"
-msgstr "Приватно"
-
-msgid "QQ Number"
-msgstr "QQ број"
-
-msgid "Country/Region"
-msgstr "Држава/Регион"
-
-msgid "Province/State"
-msgstr "Провинција/Држава"
-
-msgid "Zipcode"
-msgstr "Поштански број"
-
-msgid "Phone Number"
-msgstr "Број телефона"
-
-msgid "Authorize adding"
-msgstr "Давање овлашћења"
-
-msgid "Cellphone Number"
-msgstr "Број мобилног телефона"
-
-msgid "Personal Introduction"
-msgstr "Лично представљање"
-
-msgid "City/Area"
-msgstr "Град/Област"
-
-msgid "Publish Mobile"
-msgstr ""
-
-msgid "Publish Contact"
-msgstr ""
-
-msgid "College"
-msgstr "Факултет"
-
-msgid "Horoscope"
-msgstr "Хороскоп"
-
-msgid "Zodiac"
-msgstr "Зодијак"
-
-# Треба видети на шта се односи (милош)
-#, fuzzy
-msgid "Blood"
-msgstr "Сродство"
-
-msgid "True"
-msgstr "Тачно"
-
-msgid "False"
-msgstr "Нетачно"
-
-msgid "Modify Contact"
-msgstr "Измени контакт"
-
-msgid "Modify Address"
-msgstr "Измени адресу"
-
-msgid "Modify Extended Information"
-msgstr "Измени исрпне податке"
-
-msgid "Modify Information"
-msgstr "Измени податке"
-
-msgid "Update"
-msgstr "Ажурирај"
-
-msgid "Could not change buddy information."
-msgstr "Не могу да променим податке о другару."
-
-msgid "Note"
-msgstr "Белешка"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
-msgstr "Сличица другара"
-
-msgid "Change his/her memo as you like"
-msgstr ""
-
-#, fuzzy
-msgid "_Modify"
-msgstr "Измени"
-
-#, fuzzy
-msgid "Memo Modify"
-msgstr "Измени"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "Сервер је заузет"
-
-msgid "Your request was accepted."
-msgstr ""
-
-msgid "Your request was rejected."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%u requires verification: %s"
-msgstr "%u захтева проверу"
-
-msgid "Add buddy question"
-msgstr "Додај питање за другара"
-
-msgid "Enter answer here"
-msgstr "Унесите одговор овде"
-
-msgid "Send"
-msgstr "Пошаљи"
-
-msgid "Invalid answer."
-msgstr "Неисправан одговор."
-
-msgid "Authorization denied message:"
-msgstr "Разлог одбијања овлашћења:"
-
-msgid "Sorry, you're not my style."
-msgstr "Извини, ниси мој тип."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u захтева овлашћење"
-
-msgid "Add buddy authorize"
-msgstr "Дај овлашћење другару"
-
-msgid "Enter request here"
-msgstr "Унесите ваш захтев овде"
-
-msgid "Would you be my friend?"
-msgstr "Да ли желите да ми будете другар?"
-
-msgid "QQ Buddy"
-msgstr "QQ другар"
-
-msgid "Add buddy"
-msgstr "Додај другара"
-
-msgid "Invalid QQ Number"
-msgstr "Неисправан QQ број"
-
-msgid "Failed sending authorize"
-msgstr "Не могу да пошаљем овлашћење"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "Не могу да уклоним другара %u"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Не могу да се уклоним са списка корисника %d"
-
-msgid "No reason given"
-msgstr "Није наведен разлог"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s вас је додао у листу другова"
-
-msgid "Would you like to add him?"
-msgstr "Да ли желите да и Ви додате њега?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "Одбачен од стране %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Порука: %s"
-
-msgid "ID: "
-msgstr "Број: "
-
-msgid "Group ID"
-msgstr "Групна идентификација"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "Унесите Qun број"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Можете да претражујете само привремени Qun\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(неисправна УТФ-8 ниска)"
-
-msgid "Not member"
-msgstr "Није члан"
-
-msgid "Member"
-msgstr "Члан"
-
-msgid "Requesting"
-msgstr "Захтевам"
-
-msgid "Admin"
-msgstr "Администратор"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "Списак соба"
-
-msgid "Notice"
-msgstr "Објава"
-
-msgid "Detail"
-msgstr "Детаљи"
-
-msgid "Creator"
-msgstr "Творац"
-
-msgid "About me"
-msgstr "О мени"
-
-msgid "Category"
-msgstr "Категорија"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun не дозвољава осталима да се прикључе"
-
-msgid "Join QQ Qun"
-msgstr "Прикључи се на QQ Qun"
-
-msgid "Input request here"
-msgstr "Улазни захтев овде"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Успешно сте се прикључили на Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "Успешно сте се прикључили на Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u није допустио прикључивање"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun операције"
-
-msgid "Failed:"
-msgstr "Неуспело:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Прикључивање на Qun, непознат одговор"
-
-msgid "Quit Qun"
-msgstr "Напусти Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Примедба, уколико сте творац, \n"
-"ова опција ће напокон уклонити овај Qun."
-
-msgid "Sorry, you are not our style"
-msgstr "Извини, али ниси мој тип"
-
-msgid "Successfully changed Qun members"
-msgstr "Успешно су измењени чланови за Qun"
-
-msgid "Successfully changed Qun information"
-msgstr "Успешно су измењени подаци за Qun"
-
-msgid "You have successfully created a Qun"
-msgstr "Успено сте направили Qun"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "Желите ли да сада поставите исцрпне податке?"
-
-msgid "Setup"
-msgstr "Подеси"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u је захтевао да се прикључи на Qun %u за %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u захтева да се прикључи на Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Не могу да се прикључим на Qun %u, чији је администратор %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Прикључење на Qun %u је одобрио %u за %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Уклоњен другар %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>Нови другар %u се прикључио.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Непознат-%d"
-
-msgid "Level"
-msgstr "Ниво"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " Са мобилног"
-
-msgid " BindMobile"
-msgstr " Мобилни телефон"
-
-msgid " Video"
-msgstr " Видео"
-
-msgid " Zone"
-msgstr " Зона"
-
-msgid "Flag"
-msgstr "Заставица"
-
-msgid "Ver"
-msgstr "Издање"
-
-msgid "Invalid name"
-msgstr "Неисправно име"
-
-msgid "Select icon..."
-msgstr "Изабери иконицу..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Време пријаве</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Укупно повезаних другова</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Последње освежавање</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Сервер</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Ознака клијента</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Режим повезивања</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Моја ИП адреса</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Послато</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Поново послато</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Загубљено</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Примљено</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Дупло примљено</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Време</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>ИП</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Подаци о пријави"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Оригинални аутор</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Допринели програму</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Аутори закрпа</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr ""
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Оригинални аутор</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>И остали људи у позадини...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Слободно нам се прикључите!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "О OpenQ-у %s"
-
-msgid "Change Icon"
-msgstr "Сачувај иконицу"
-
-msgid "Change Password"
-msgstr "Промена лозинке"
-
-msgid "Account Information"
-msgstr "Подаци о налогу"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-msgid "About OpenQ"
-msgstr "О OpenQ"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "Измени адресу"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "Додатак за QQ протокол"
-
-msgid "Auto"
-msgstr "Аутоматски"
-
-msgid "Select Server"
-msgstr "Изабери сервер"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "Повежи се помоћу ТЦП-а"
-
-msgid "Show server notice"
-msgstr "Прикажи објаву са сервера"
-
-msgid "Show server news"
-msgstr "Прикажи вести са сервера"
-
-msgid "Show chat room when msg comes"
-msgstr "Прикачи собе за ћаскање када стигну поруке"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Интервал одржавања везе (у секундама)"
-
-msgid "Update interval (seconds)"
-msgstr "Интервал ажурирања (у секундама)"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "Не могу да дешифрујем одговор са сервера"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr ""
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Потребна је активација"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Непознат одговор при пријави (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr ""
-
-msgid "Checking captcha"
-msgstr ""
-
-msgid "Failed captcha verification"
-msgstr ""
-
-msgid "Captcha Image"
-msgstr ""
-
-msgid "Enter code"
-msgstr "Унесите код"
-
-msgid "QQ Captcha Verification"
-msgstr ""
-
-msgid "Enter the text from the image"
-msgstr "Унесите текст са слчике"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Непознат одговор при провери лозинке (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Непознат одговор при пројави (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Грешка у утичници"
-
-msgid "Getting server"
-msgstr "Добављам сервер"
-
-msgid "Requesting token"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "Не могу да се повежем на сервер."
-
-msgid "Invalid server or port"
-msgstr "Неисправан сервер или порт"
-
-msgid "Connecting to server"
-msgstr "Повезујем се на сервер"
-
-msgid "QQ Error"
-msgstr "QQ грешка"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Новости са сервера:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "Од %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Објава са сервера од %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "Непознат SERVER CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun наредба"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "Не могу да дешифрујем одговор приликом пријаве"
-
-msgid "Unknown LOGIN CMD"
-msgstr "Непознат LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "Непознат CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d је одбио датотеку %s"
-
-msgid "File Send"
-msgstr "Датотека послата"
-
-#, fuzzy, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d је прекинуо пренос датотеке %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9764,6 +9180,9 @@ msgstr "Организација"
 msgid "Unit"
 msgstr "Јединица"
 
+msgid "Note"
+msgstr "Белешка"
+
 msgid "Join Chat"
 msgstr "Прикључи се ћаскању"
 
@@ -10410,6 +9829,10 @@ msgstr "Непознат одговор сервера."
 msgid "Unable to create listen socket"
 msgstr "Не могу начинити утичницу"
 
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Не могу да се повежем на сервер."
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "СИП корисничка имена несмеју садржати размак или @ симболе"
 
@@ -10529,6 +9952,9 @@ msgstr "Ваша Јаху! порука није послата."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Јаху! системска порука за %s:"
+
+msgid "Authorization denied message:"
+msgstr "Разлог одбијања овлашћења:"
 
 #, c-format
 msgid ""
@@ -11327,14 +10753,17 @@ msgstr "Користи општа подешавања проксија"
 msgid "No Proxy"
 msgstr "Без проксија"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Користи подешавања окружења"
@@ -11362,6 +10791,14 @@ msgstr "_Порт:"
 
 msgid "Pa_ssword:"
 msgstr "_Лозинка:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Настављам сесију"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "Измени поставке"
 
 msgid "Unable to save new account"
 msgstr "Не могу да сачувам нови налог."
@@ -11411,8 +10848,18 @@ msgstr ""
 "налоге из менија <b>Налози->Уреди налоге</b> у прозору са списком другара."
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s жели да дода %s у свој списак другара%s%s"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s жели да дода %s у свој списак другара%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Нова брза порука"
 
 #. Buddy List
 msgid "Background Color"
@@ -11804,6 +11251,10 @@ msgid "/Help/De_veloper Information"
 msgstr "Подаци о серверу"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "Подаци о другару"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "Подаци о профилу"
 
@@ -11990,6 +11441,10 @@ msgstr "_Корисничко име другара:"
 
 msgid "(Optional) A_lias:"
 msgstr "_Надимак (необавезно):"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "Позивна порука"
 
 msgid "Add buddy to _group:"
 msgstr "Додај другара у _групу:"
@@ -12440,14 +11895,7 @@ msgstr "Грешка"
 msgid "Fatal Error"
 msgstr "Кобна грешка"
 
-msgid "bug master"
-msgstr ""
-
 msgid "artist"
-msgstr ""
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
 msgstr ""
 
 msgid "voice and video"
@@ -12461,6 +11909,10 @@ msgstr "веб уредник"
 
 msgid "win32 port"
 msgstr "Windows издање"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr ""
 
 msgid "maintainer"
 msgstr "одржавалац"
@@ -12582,6 +12034,9 @@ msgstr "хебрејски"
 msgid "Hindi"
 msgstr "хинду"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "мађарски"
 
@@ -12626,6 +12081,10 @@ msgstr "лао"
 #, fuzzy
 msgid "Maithili"
 msgstr "Нихилиста"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "Нова е-пошта"
 
 msgid "Macedonian"
 msgstr "македонски"
@@ -12824,6 +12283,14 @@ msgstr "Претходни преводиоци"
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "Подаци о послу"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Подаци о другару"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Подаци о пријави"
 
 msgid "_Name"
 msgstr "_Име"
@@ -13475,6 +12942,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">Имате е-пошту!</span>"
 msgid "New Pounces"
 msgstr "Нова заседа другару"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -13795,6 +13269,14 @@ msgstr "Користи глатко клизање"
 msgid "F_lash window when IMs are received"
 msgstr "_Засијај прозор када пристигне нова порука"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Уреди произвољне смешке"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Највеће време за одговор:"
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -13869,6 +13351,10 @@ msgstr "С_ТУН Сервер:"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "_Порт:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_Порт:"
 
 #, fuzzy
@@ -14643,6 +14129,9 @@ msgstr "Избор звука"
 #, fuzzy
 msgid "PubSub Leaf"
 msgstr "PubSub сервис"
+
+msgid "Other"
+msgstr "Остало"
 
 #, fuzzy
 msgid ""
@@ -15528,6 +15017,24 @@ msgstr "Додаци"
 msgid "D_evice"
 msgstr "Уређај"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "_Јачина звука:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Осетљивост:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Микрофон"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15539,10 +15046,6 @@ msgstr "Уређај"
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Измени поставке"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "Измени поставке"
 
 #. *< name
@@ -15805,6 +15308,601 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "Дозволи само корисницима са мог списка другара"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Порука уз захтев за овлашћење:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Овласти ме!"
+
+#~ msgid "Aquarius"
+#~ msgstr "Водолија"
+
+#~ msgid "Pisces"
+#~ msgstr "Рибе"
+
+# Ovo je svrha ovog polja kod nas, pa neka ostane ovako
+#~ msgid "Aries"
+#~ msgstr "Ован"
+
+#~ msgid "Taurus"
+#~ msgstr "Бик"
+
+#~ msgid "Gemini"
+#~ msgstr "Близанци"
+
+#~ msgid "Cancer"
+#~ msgstr "Рак"
+
+#~ msgid "Leo"
+#~ msgstr "Лав"
+
+#~ msgid "Virgo"
+#~ msgstr "Девица"
+
+#~ msgid "Libra"
+#~ msgstr "Вага"
+
+#~ msgid "Scorpio"
+#~ msgstr "Шкорпија"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Стрелац"
+
+#~ msgid "Capricorn"
+#~ msgstr "Јарац"
+
+#~ msgid "Rat"
+#~ msgstr "Пацов"
+
+#~ msgid "Ox"
+#~ msgstr "Бик"
+
+#~ msgid "Tiger"
+#~ msgstr "Тигар"
+
+#~ msgid "Rabbit"
+#~ msgstr "Зец"
+
+#~ msgid "Dragon"
+#~ msgstr "Змај"
+
+#~ msgid "Snake"
+#~ msgstr "Змија"
+
+#~ msgid "Horse"
+#~ msgstr "Коњ"
+
+#~ msgid "Goat"
+#~ msgstr "Коза"
+
+#~ msgid "Monkey"
+#~ msgstr "Мајмун"
+
+#~ msgid "Rooster"
+#~ msgstr "Певац"
+
+#~ msgid "Dog"
+#~ msgstr "Пас"
+
+#~ msgid "Pig"
+#~ msgstr "Свиња"
+
+#~ msgid "Visible"
+#~ msgstr "Видљив"
+
+#~ msgid "Friend Only"
+#~ msgstr "Само пријатељ"
+
+#~ msgid "Private"
+#~ msgstr "Приватно"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ број"
+
+#~ msgid "Country/Region"
+#~ msgstr "Држава/Регион"
+
+#~ msgid "Province/State"
+#~ msgstr "Провинција/Држава"
+
+#~ msgid "Zipcode"
+#~ msgstr "Поштански број"
+
+#~ msgid "Phone Number"
+#~ msgstr "Број телефона"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Давање овлашћења"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Број мобилног телефона"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Лично представљање"
+
+#~ msgid "City/Area"
+#~ msgstr "Град/Област"
+
+#~ msgid "College"
+#~ msgstr "Факултет"
+
+#~ msgid "Horoscope"
+#~ msgstr "Хороскоп"
+
+#~ msgid "Zodiac"
+#~ msgstr "Зодијак"
+
+# Треба видети на шта се односи (милош)
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "Сродство"
+
+#~ msgid "True"
+#~ msgstr "Тачно"
+
+#~ msgid "False"
+#~ msgstr "Нетачно"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Измени контакт"
+
+#~ msgid "Modify Address"
+#~ msgstr "Измени адресу"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Измени исрпне податке"
+
+#~ msgid "Modify Information"
+#~ msgstr "Измени податке"
+
+#~ msgid "Update"
+#~ msgstr "Ажурирај"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "Не могу да променим податке о другару."
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "Сличица другара"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "Измени"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "Измени"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "Сервер је заузет"
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u захтева проверу"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Додај питање за другара"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Унесите одговор овде"
+
+#~ msgid "Send"
+#~ msgstr "Пошаљи"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Неисправан одговор."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Извини, ниси мој тип."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u захтева овлашћење"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Дај овлашћење другару"
+
+#~ msgid "Enter request here"
+#~ msgstr "Унесите ваш захтев овде"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Да ли желите да ми будете другар?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ другар"
+
+#~ msgid "Add buddy"
+#~ msgstr "Додај другара"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Неисправан QQ број"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Не могу да пошаљем овлашћење"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Не могу да уклоним другара %u"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Не могу да се уклоним са списка корисника %d"
+
+#~ msgid "No reason given"
+#~ msgstr "Није наведен разлог"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "%s вас је додао у листу другова"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Да ли желите да и Ви додате њега?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Одбачен од стране %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "Порука: %s"
+
+#~ msgid "ID: "
+#~ msgstr "Број: "
+
+#~ msgid "Group ID"
+#~ msgstr "Групна идентификација"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Унесите Qun број"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Можете да претражујете само привремени Qun\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(неисправна УТФ-8 ниска)"
+
+#~ msgid "Not member"
+#~ msgstr "Није члан"
+
+#~ msgid "Member"
+#~ msgstr "Члан"
+
+#~ msgid "Requesting"
+#~ msgstr "Захтевам"
+
+#~ msgid "Admin"
+#~ msgstr "Администратор"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Списак соба"
+
+#~ msgid "Notice"
+#~ msgstr "Објава"
+
+#~ msgid "Detail"
+#~ msgstr "Детаљи"
+
+#~ msgid "Creator"
+#~ msgstr "Творац"
+
+#~ msgid "Category"
+#~ msgstr "Категорија"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun не дозвољава осталима да се прикључе"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Прикључи се на QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Улазни захтев овде"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Успешно сте се прикључили на Qun %s (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Успешно сте се прикључили на Qun"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u није допустио прикључивање"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun операције"
+
+#~ msgid "Failed:"
+#~ msgstr "Неуспело:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Прикључивање на Qun, непознат одговор"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Напусти Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Примедба, уколико сте творац, \n"
+#~ "ова опција ће напокон уклонити овај Qun."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Извини, али ниси мој тип"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Успешно су измењени чланови за Qun"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Успешно су измењени подаци за Qun"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Успено сте направили Qun"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Желите ли да сада поставите исцрпне податке?"
+
+#~ msgid "Setup"
+#~ msgstr "Подеси"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u је захтевао да се прикључи на Qun %u за %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u захтева да се прикључи на Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Не могу да се прикључим на Qun %u, чији је администратор %u"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Прикључење на Qun %u је одобрио %u за %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Уклоњен другар %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>Нови другар %u се прикључио.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Непознат-%d"
+
+#~ msgid "Level"
+#~ msgstr "Ниво"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " Са мобилног"
+
+#~ msgid " BindMobile"
+#~ msgstr " Мобилни телефон"
+
+#~ msgid " Video"
+#~ msgstr " Видео"
+
+#~ msgid " Zone"
+#~ msgstr " Зона"
+
+#~ msgid "Flag"
+#~ msgstr "Заставица"
+
+#~ msgid "Ver"
+#~ msgstr "Издање"
+
+#~ msgid "Invalid name"
+#~ msgstr "Неисправно име"
+
+#~ msgid "Select icon..."
+#~ msgstr "Изабери иконицу..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Време пријаве</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Укупно повезаних другова</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Последње освежавање</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Сервер</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Ознака клијента</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Режим повезивања</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Моја ИП адреса</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Послато</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Поново послато</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Загубљено</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Примљено</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Дупло примљено</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Време</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>ИП</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Оригинални аутор</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Допринели програму</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Аутори закрпа</b>:<br>\n"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Оригинални аутор</b>:<br>\n"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>И остали људи у позадини...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Слободно нам се прикључите!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "О OpenQ-у %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Промена лозинке"
+
+#~ msgid "Account Information"
+#~ msgstr "Подаци о налогу"
+
+#~ msgid "About OpenQ"
+#~ msgstr "О OpenQ"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Измени адресу"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "Додатак за QQ протокол"
+
+#~ msgid "Auto"
+#~ msgstr "Аутоматски"
+
+#~ msgid "Select Server"
+#~ msgstr "Изабери сервер"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Повежи се помоћу ТЦП-а"
+
+#~ msgid "Show server notice"
+#~ msgstr "Прикажи објаву са сервера"
+
+#~ msgid "Show server news"
+#~ msgstr "Прикажи вести са сервера"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Прикачи собе за ћаскање када стигну поруке"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Интервал одржавања везе (у секундама)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Интервал ажурирања (у секундама)"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Не могу да дешифрујем одговор са сервера"
+
+#~ msgid "Activation required"
+#~ msgstr "Потребна је активација"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Непознат одговор при пријави (0x%02X)"
+
+#~ msgid "Enter code"
+#~ msgstr "Унесите код"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "Унесите текст са слчике"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Непознат одговор при провери лозинке (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Непознат одговор при пројави (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Грешка у утичници"
+
+#~ msgid "Getting server"
+#~ msgstr "Добављам сервер"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "Неисправан сервер или порт"
+
+#~ msgid "Connecting to server"
+#~ msgstr "Повезујем се на сервер"
+
+#~ msgid "QQ Error"
+#~ msgstr "QQ грешка"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Новости са сервера:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "Од %s:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Објава са сервера од %s: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Непознат SERVER CMD"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun наредба"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Не могу да дешифрујем одговор приликом пријаве"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Непознат LOGIN CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Непознат CLIENT CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d је одбио датотеку %s"
+
+#~ msgid "File Send"
+#~ msgstr "Датотека послата"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d је прекинуо пренос датотеке %s"
+
 #, fuzzy
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "Дошло је до грешке при отварању датотеке."
@@ -15885,10 +15983,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "How do you feel right now?"
 #~ msgstr "Тренутно нисам ту"
-
-#, fuzzy
-#~ msgid "Change Mood..."
-#~ msgstr "Промени лозинку..."
 
 #~ msgid "Pager server"
 #~ msgstr "Пејџер сервер"
@@ -16036,9 +16130,6 @@ msgstr ""
 
 #~ msgid "Auto-away"
 #~ msgstr "Аутоматско одуство"
-
-#~ msgid "Change _status to:"
-#~ msgstr "Промени _стање у:"
 
 #~ msgid "Failed to open file '%s': %s"
 #~ msgstr "Не могу да отворим датотеку „%s“: %s"
@@ -16470,9 +16561,6 @@ msgstr ""
 #~ msgid "More Data needed"
 #~ msgstr "Потребно је више података"
 
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Изаберите слику за смешак."
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Који ИД да активирам?"
 
@@ -16487,9 +16575,6 @@ msgstr ""
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Величина елемента"
-
-#~ msgid "Invite message"
-#~ msgstr "Позивна порука"
 
 #~ msgid ""
 #~ "Please enter the name of the user you wish to invite,\n"
