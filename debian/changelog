@@ -1,3 +1,13 @@
+pidgin (2.10.0-1) unstable; urgency=high
+
+  * Imported Upstream version 2.10.0
+    - Fixes a remote crash in IRC
+    - Fixes a remote crash in MSN
+  * Use linux-any instead of hardcoded list of non-Linux architectures
+    (Closes: #634612)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 18 Aug 2011 08:18:02 -0400
+
 pidgin (2.9.0-3) unstable; urgency=low
 
   * Oops, really enable hardening-wrapper
