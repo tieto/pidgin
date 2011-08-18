@@ -409,14 +409,21 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		PurpleConvChat *chat;
 		PurpleConvChatBuddy *cb;
 		
-		char *userhost, *realname;
+		char *cur, *userhost, *realname;
 		
 		PurpleConvChatBuddyFlags flags;
 		GList *keys = NULL, *values = NULL;
-		
+
+		if (!args || !args[0] || !args[1] || !args[2] || !args[3]
+		    || !args[4] || !args[5] || !args[6] || !args[7]) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc",
+				     "Got a WHO response with not enough arguments\n");
+			return;
+		}
+
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 		if (!conv) {
-			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s, which doesn't exist\n", args[1]);
+			purple_debug(PURPLE_DEBUG_ERROR, "irc","Got a WHO response for %s, which doesn't exist\n", args[1]);
 			return;
 		}
 
@@ -429,7 +436,16 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		chat = PURPLE_CONV_CHAT(conv);
 		
 		userhost = g_strdup_printf("%s@%s", args[2], args[3]);
-		realname = g_strdup(args[8]);
+
+		/* The final argument is a :-argument, but annoyingly
+		 * contains two "words", the hop count and real name. */
+		for (cur = args[7]; *cur; cur++) {
+			if (*cur == ' ') {
+				cur++;
+				break;
+			}
+		}
+		realname = g_strdup(cur);
 		
 		keys = g_list_prepend(keys, "userhost");
 		values = g_list_prepend(values, userhost);

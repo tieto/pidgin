@@ -35,6 +35,8 @@ version 2.10.0 (08/18/2011):
 	  ICQ account that is configured as an AIM account. (#14437)
 
 	IRC:
+	* Fix a crash when remote users have certain characters in their
+	  nicknames. (Discovered by Djego Ibanez) (#14341)
 	* Fix the handling of formatting following mIRC ^O (#14436)
 	* Fix crash when NAMES is empty. (James McLaughlin) (#14518)
 
