@@ -41,6 +41,9 @@ version 2.10.0 (08/18/2011):
 	* Fix crash when NAMES is empty. (James McLaughlin) (#14518)
 
 	MSN:
+	* Fix incorrect handling of HTTP 100 responses when using the HTTP
+	  connection method.  This can lead to a crash. (Discovered by Marius
+	  Wachtler)
 	* Fix seemingly random crashing. (#14307)
 	* Fix a crash when the account is disconnected at the time we are doing a
 	  SB request. (Hanzz, ported by shlomif) (#12431)
