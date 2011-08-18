@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Shalom Craimer <s.transifex@craimer.org>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
-"PO-Revision-Date: 2011-05-13 00:26+0000\n"
+"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"PO-Revision-Date: 2011-07-26 04:31+0000\n"
 "Last-Translator: scraimer <s.transifex@craimer.org>\n"
 "Language-Team: Hebrew (http://www.transifex.net/projects/p/pidgin/team/he/)\n"
 "Language: he\n"
@@ -4616,9 +4616,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;משתמש&gt; [חדר]:  הזמן משתמש לחדר."
 
-#, fuzzy
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr "join: &lt;חדר&gt; [סיסמא]:  הצטרף לצ'אט בשרת זה."
+msgstr "join: <חדר[@שרת]> [סיסמא]:  להצטרף לחדר בצ'אט."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;משתמש&gt; [סיבה]:  בעט משתמש מהחדר."
@@ -5865,11 +5864,11 @@ msgstr "שם תצוגה"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "אודותי"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "היכן אני גר/ה"
 
 #. mobile number
 msgid "Mobile Number"
@@ -5877,14 +5876,14 @@ msgstr "מספר טלפון נייד"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "ניתנ/ת לחיפוש"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "ניתנ/ת להמלצה"
 
 msgid "Update your MXit Profile"
-msgstr ""
+msgstr "לעדכן את פרופיל ה-MXit שלך"
 
 msgid "The PIN you entered is invalid."
 msgstr "ה-PIN שהזנת אינו חוקי."
@@ -5900,7 +5899,7 @@ msgstr "שני ה-PIN שהזנת אינם זהים."
 
 #. show error to user
 msgid "PIN Update Error"
-msgstr ""
+msgstr "שגיאה בעידכון PIN"
 
 #. pin
 #. pin (required)
@@ -5913,10 +5912,10 @@ msgstr "וידוא מספר מזהה"
 
 #. (reference: "libpurple/request.h")
 msgid "Change PIN"
-msgstr ""
+msgstr "שינוי PIN"
 
 msgid "Change MXit PIN"
-msgstr ""
+msgstr "שינוי PIN MXit"
 
 msgid "View Splash"
 msgstr "הצג חלון-הקדמה"
@@ -5928,13 +5927,13 @@ msgid "About"
 msgstr "אודות"
 
 msgid "Search for user"
-msgstr ""
+msgstr "חיפוש משתמש"
 
 msgid "Search for a MXit contact"
-msgstr ""
+msgstr "חיפוש איש-קשר ב-MXit"
 
 msgid "Type search information"
-msgstr ""
+msgstr "נא להזין פרטי חיפוש"
 
 msgid "_Search"
 msgstr "חיפוש"
@@ -5945,15 +5944,15 @@ msgstr "שנה פרופיל..."
 
 #. change PIN
 msgid "Change PIN..."
-msgstr ""
+msgstr "שינוי PIN..."
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr ""
+msgstr "המלצות לחברים..."
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr ""
+msgstr "חיפוש אנשי-קשר..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6106,32 +6105,32 @@ msgid "Last Online"
 msgstr "חיבור אחרון"
 
 msgid "Invite Message"
-msgstr ""
+msgstr "הודעת-הזמנה"
 
 msgid "No results"
-msgstr ""
+msgstr "אין תוצאות"
 
 msgid "No contacts found."
-msgstr ""
+msgstr "לא נמצאו אנשי-קשר."
 
 #. define columns
 msgid "UserId"
-msgstr ""
+msgstr "מזהה משתמש"
 
 msgid "Where I live"
-msgstr ""
+msgstr "היכן אני גר/ה"
 
 #, c-format
 msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "יש לך המלצה %i לחבר."
+msgstr[1] "יש לך %i המלצות לחברים."
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "מצאנו איש-קשר %i התואם לחיפושך."
+msgstr[1] "מצאנו %i אנשי-קשר התואמים לחיפושך."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10695,9 +10694,8 @@ msgstr "/עזרה/_חלון ניפוי באגים"
 msgid "/Help/De_veloper Information"
 msgstr "/עזרה/פרטי מפת_חים"
 
-#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr "/עזרה/_גירסת תוכנה"
+msgstr "/עזרה/מי_דע אודות התוספים"
 
 msgid "/Help/_Translator Information"
 msgstr "/עזרה/פרטי מתר_גמים"
@@ -11452,7 +11450,7 @@ msgid "Hindi"
 msgstr "הינדית"
 
 msgid "Croatian"
-msgstr ""
+msgstr "קרואטית"
 
 msgid "Hungarian"
 msgstr "הונגרית"
@@ -11694,13 +11692,12 @@ msgstr "מתרגמים לשעבר"
 msgid "%s Translator Information"
 msgstr "%s פרטי מתרגם"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "%s פרטי גרסת תוכנה"
+msgstr "מידע אודות התוסף %s "
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "פרטי גרסת תוכנה"
+msgstr "מידע אודות התוסף"
 
 msgid "_Name"
 msgstr "שם_"
@@ -12633,13 +12630,11 @@ msgstr "התשתמש בגלילה-חלקה"
 msgid "F_lash window when IMs are received"
 msgstr "_הבהב את חלון השיחה בעת קבלת הודעות"
 
-#, fuzzy
 msgid "Resize incoming custom smileys"
-msgstr "נהל סמייליים שלי"
+msgstr "התאם את גודלם של חייכנים שמתקבלים"
 
-#, fuzzy
 msgid "Maximum size:"
-msgstr "זמן מירבי לחכות לתגובה:"
+msgstr "גודל מירבי:"
 
 msgid "Minimum input area height in lines:"
 msgstr "גובה מינימלי בשורות של איזור הקלט:"
@@ -12710,9 +12705,8 @@ msgstr "שרת TURN:"
 msgid "_UDP Port:"
 msgstr "יציאת UDP:"
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "יציאת UDP:"
+msgstr "ש_קע TCP:"
 
 msgid "Use_rname:"
 msgstr "שם משתמש:"

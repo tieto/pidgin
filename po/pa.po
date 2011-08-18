@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# A S Alam <apreet.alam@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
-"PO-Revision-Date: 2011-05-13 00:26+0000\n"
+"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"PO-Revision-Date: 2011-07-18 00:03+0000\n"
 "Last-Translator: aalam <apreet.alam@gmail.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.net/projects/p/pidgin/"
 "team/pa/)\n"
@@ -4621,9 +4621,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [room]:  ਯੂਜ਼ਰ ਨੂੰ ਰੂਮ 'ਚ ਸੱਦੋ।"
 
-#, fuzzy
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -5873,11 +5872,11 @@ msgstr "ਵੇਖਾਉਣ ਲਈ ਨਾਂ"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "ਮੇਰੇ ਬਾਰੇ"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "ਜਿੱਥੇ ਮੈਂ ਰਹਿੰਦਾ/ਰਹਿੰਦੀ ਹਾਂ"
 
 #. mobile number
 msgid "Mobile Number"
@@ -5885,11 +5884,11 @@ msgstr "ਮੋਬਾਇਲ ਨੰਬਰ"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "ਖੋਜਿਆ ਜਾ ਸਕਾਂ"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "ਸੁਝਾਇਆ ਜਾ ਸਕਾਂ"
 
 msgid "Update your MXit Profile"
 msgstr ""
@@ -5908,7 +5907,7 @@ msgstr "ਤੁਹਾਡੇ ਵਲੋਂ ਦਿੱਤੇ ਦੋਵੇਂ ਪਿ�
 
 #. show error to user
 msgid "PIN Update Error"
-msgstr ""
+msgstr "ਪਿੰਨ ਅੱਪਡੇਟ ਗਲਤੀ"
 
 #. pin
 #. pin (required)
@@ -5921,7 +5920,7 @@ msgstr "PIN ਜਾਂਚ"
 
 #. (reference: "libpurple/request.h")
 msgid "Change PIN"
-msgstr ""
+msgstr "ਪਿੰਨ ਬਦਲੋ"
 
 msgid "Change MXit PIN"
 msgstr ""
@@ -5936,7 +5935,7 @@ msgid "About"
 msgstr "ਇਸ ਬਾਰੇ"
 
 msgid "Search for user"
-msgstr ""
+msgstr "ਯੂਜ਼ਰ ਲਈ ਖੋਜ"
 
 msgid "Search for a MXit contact"
 msgstr ""
@@ -10712,9 +10711,8 @@ msgstr "/ਮੱਦਦ/ਡੀਬੱਗ ਵਿੰਡੋ(_D)"
 msgid "/Help/De_veloper Information"
 msgstr "/ਮੱਦਦ/ਡਿਵੈਲਪਰ ਜਾਣਕਾਰੀ(_v)"
 
-#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr "/ਮੱਦਦ/ਬਿਲਡ ਜਾਣਕਾਰੀ(_B)"
+msgstr ""
 
 msgid "/Help/_Translator Information"
 msgstr "/ਮੱਦਦ/ਅਨੁਵਾਦਕ ਜਾਣਕਾਰੀ(_T)"
@@ -11712,13 +11710,12 @@ msgstr "ਪੁਰਾਣੀ ਅਨੁਵਾਦਕ"
 msgid "%s Translator Information"
 msgstr "%s ਅਨੁਵਾਦ ਜਾਣਕਾਰੀ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "%s ਬਿਲਡ ਜਾਣਕਾਰੀ"
+msgstr ""
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "ਬਿਲਡ ਜਾਣਕਾਰੀ"
+msgstr ""
 
 msgid "_Name"
 msgstr "ਨਾਂ(_N)"
@@ -12655,13 +12652,11 @@ msgstr "ਸਮੂਥਿੰਗ-ਸਕੋਰਿੰਗ ਵਰਤੋਂ"
 msgid "F_lash window when IMs are received"
 msgstr "IM ਪ੍ਰਾਪਤ ਹੋਣ ਉੱਤੇ ਵਿੰਡੋ ਝਲਕਾਓ(_l)"
 
-#, fuzzy
 msgid "Resize incoming custom smileys"
-msgstr "ਕਸਟਮ ਸਮਾਇਲੀ ਪਰਬੰਧ(_M)"
+msgstr ""
 
-#, fuzzy
 msgid "Maximum size:"
-msgstr "ਵੱਧੋ-ਵੱਧ ਜਵਾਬ ਟਾਈਮ-ਆਉਟ:"
+msgstr ""
 
 msgid "Minimum input area height in lines:"
 msgstr "ਲਾਈਨਾਂ ਵਿੱਚ ਘੱਟੋ-ਘੱਟੋ ਇੰਪੁੱਟ ਏਰੀਆ ਹਾਈਲਾਈਟ:"
@@ -12732,9 +12727,8 @@ msgstr "_TURN ਸਰਵਰ:"
 msgid "_UDP Port:"
 msgstr "_UDP ਪੋਰਟ:"
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "_UDP ਪੋਰਟ:"
+msgstr ""
 
 msgid "Use_rname:"
 msgstr "ਯੂਜ਼ਰ ਨਾਂ(_r):"

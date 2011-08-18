@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# kelemeng <kelemeng@gnome.hu>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
-"PO-Revision-Date: 2011-05-13 00:26+0000\n"
+"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"PO-Revision-Date: 2011-07-18 00:04+0000\n"
 "Last-Translator: kelemeng <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian (http://www.transifex.net/projects/p/pidgin/team/"
 "hu/)\n"
@@ -4739,9 +4739,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;felhasználó&gt; [üzenet]:  Felhasználó meghívása a szobába."
 
-#, fuzzy
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr "join: &lt;szoba&gt; [jelszó]:  Csatlakozás csevegéshez a kiszolgálón."
+msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;felhasználó&gt; [ok]:  Felhasználó kirúgása a szobából."
@@ -11003,9 +11002,8 @@ msgstr "/Súgó/_Hibakereső ablak"
 msgid "/Help/De_veloper Information"
 msgstr "/Súgó/_Fejlesztői információk"
 
-#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr "/Súgó/Build _információk"
+msgstr ""
 
 msgid "/Help/_Translator Information"
 msgstr "/Súgó/F_ordítóinformációk"
@@ -12012,13 +12010,12 @@ msgstr "Korábbi fordítók"
 msgid "%s Translator Information"
 msgstr "%s fordítóinformációi"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "%s build információi"
+msgstr ""
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "Build információk"
+msgstr ""
 
 msgid "_Name"
 msgstr "_Név"
@@ -12970,13 +12967,11 @@ msgstr "Finom görgetés használata"
 msgid "F_lash window when IMs are received"
 msgstr "_Villanjon az ablak új üzenetek fogadásakor"
 
-#, fuzzy
 msgid "Resize incoming custom smileys"
-msgstr "Egyéni hangulatjelek _kezelése"
+msgstr ""
 
-#, fuzzy
 msgid "Maximum size:"
-msgstr "Legnagyobb válasz-időkorlát:"
+msgstr ""
 
 msgid "Minimum input area height in lines:"
 msgstr "Beviteli terület minimális magassága sorokban:"
@@ -13047,9 +13042,8 @@ msgstr "_TURN kiszolgáló:"
 msgid "_UDP Port:"
 msgstr "_UDP port:"
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "_UDP port:"
+msgstr ""
 
 msgid "Use_rname:"
 msgstr "_Felhasználónév:"
