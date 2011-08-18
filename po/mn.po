@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 00:02-0700\n"
+"POT-Creation-Date: 2011-08-18 00:17-0700\n"
 "PO-Revision-Date: 2005-06-17 23:22-0800\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1096,13 +1096,13 @@ msgstr ""
 msgid "Buddy Pounces"
 msgstr "Харилцагчийн сануулга"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has started typing to you (%s)"
-msgstr "%s бичиж эхлэсэн"
+msgstr "%s  (%s) тан руу бичиж байгаад зогссон"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has paused while typing to you (%s)"
-msgstr "%s бичиж байгаад түр зогссон"
+msgstr "%s  (%s) тан руу бичиж байгаад зогссон"
 
 #, c-format
 msgid "%s has signed on (%s)"
@@ -1132,9 +1132,9 @@ msgstr "%s идэвхгүй болсон (%s)"
 msgid "%s has gone away. (%s)"
 msgstr "%s гарсан. (%s)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr "%s мессеж илгээсэн."
+msgstr "%s тан руу мессеж илгээсэн"
 
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
@@ -1952,9 +1952,9 @@ msgstr ""
 "Алсын хост: %s\n"
 "Алсын порт: %d"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s is offering to send file %s"
-msgstr "%s нь файл илгээхийг хүсэж байна"
+msgstr "%s рүү %s ийг илгээхийг хүсэж байна "
 
 #, c-format
 msgid "%s is not a valid filename.\n"
@@ -1964,9 +1964,9 @@ msgstr "%s файлын нэр буруу байна.\n"
 msgid "Offering to send %s to %s"
 msgstr "%s рүү %s ийг илгээхийг хүсэж байна "
 
-#, c-format
+#, fuzzy, c-format
 msgid "Starting transfer of %s from %s"
-msgstr "%s ээс файл шилжүүлэлтийг эхлүүлж байна"
+msgstr "%s ийн файл илгээх хүсэлтийг хүлээж авах уу?"
 
 #, fuzzy, c-format
 msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
@@ -6816,9 +6816,9 @@ msgstr ""
 msgid "Unable to login: %s"
 msgstr "Нэвтрэх боломжгүй байна"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
-msgstr "Мессеж илгээх боломжгүй. "
+msgstr "Мессеж илгээх боломжгүй. Зөвлөгөөнийг үүсгэж чадсангүй (%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -7035,8 +7035,6 @@ msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
-"(Энэ мессежийг хүлээж авахад алдаа гарлаа. %s, та хоёр өөр өөр кодчилол "
-"ашиглаж байна.)"
 
 msgid "Could not join chat room"
 msgstr "Чат өрөөнд холбогдох боломжгүй"
@@ -7379,7 +7377,7 @@ msgstr ""
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "Таны ашиглаж байгаа хувилбар хуучин байна. Шинэчилнэ үү."
+msgstr ""
 
 #. IP address connecting too frequently
 msgid ""
@@ -10064,12 +10062,10 @@ msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr ""
-"%s чат өрөөнд  %s урьж байна:\n"
-"%s"
 
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
-msgstr "%s чат өрөөнд %s урьж байна\n"
+msgstr ""
 
 msgid "Accept chat invitation?"
 msgstr "Чатын урилгыг хүлээж авах уу?"
