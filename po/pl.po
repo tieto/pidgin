@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 21:40-0700\n"
-"PO-Revision-Date: 2011-05-05 17:10+0200\n"
+"POT-Creation-Date: 2011-08-17 22:32-0700\n"
+"PO-Revision-Date: 2011-08-11 18:08+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -1689,6 +1689,7 @@ msgstr "Ten protokół nie obsługuje pobierania publicznego pseudonimu."
 msgid "Unknown"
 msgstr "Nieznany"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Znajomi"
 
@@ -4767,8 +4768,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;użytkownik&gt; [wiadomość]: zaprasza użytkownika do pokoju."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;pokój&gt; [hasło]: dołącza do konferencji na tym serwerze."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;pokój[@serwer]&gt; [hasło]: dołącza do konferencji."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;użytkownik&gt; [powód]: wyrzuca użytkownika z pokoju."
@@ -6322,12 +6323,18 @@ msgid "Where I live"
 msgstr "Gdzie mieszkam"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Zaproponowano %i znajomych."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Zaproponowano %i znajomego."
+msgstr[1] "Zaproponowano %i znajomych."
+msgstr[2] "Zaproponowano %i znajomych."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Odnaleziono %i kontaktów pasujących do wyszukiwania."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Odnaleziono %i kontakt pasujący do wyszukiwania."
+msgstr[1] "Odnaleziono %i kontakty pasujące do wyszukiwania."
+msgstr[2] "Odnaleziono %i kontaktów pasujących do wyszukiwania."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11051,6 +11058,9 @@ msgstr "/Pomoc/Okno _debugowania"
 msgid "/Help/De_veloper Information"
 msgstr "/Pomoc/Infor_macje o programistach"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Pomoc/Informacje o _wtyczkach"
+
 msgid "/Help/_Translator Information"
 msgstr "/Pomoc/Inform_acje o tłumaczach"
 
@@ -11677,10 +11687,6 @@ msgstr "Błąd krytyczny"
 msgid "artist"
 msgstr "artysta"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "dźwięk i wideo"
 
@@ -11692,6 +11698,10 @@ msgstr "webmaster"
 
 msgid "win32 port"
 msgstr "port dla Win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "opiekun"
@@ -11810,6 +11820,9 @@ msgstr "hebrajski"
 
 msgid "Hindi"
 msgstr "hindi"
+
+msgid "Croatian"
+msgstr "chorwacki"
 
 msgid "Hungarian"
 msgstr "węgierski"
@@ -12055,6 +12068,13 @@ msgstr "Poprzedni tłumacze"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informacje o tłumaczach programu %s"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Informacje o wtyczce %s"
+
+msgid "Plugin Information"
+msgstr "Informacje o wtyczce"
 
 msgid "_Name"
 msgstr "_Nazwa"
@@ -13014,6 +13034,12 @@ msgstr "Płynne przewijanie"
 msgid "F_lash window when IMs are received"
 msgstr "_Migotanie okna po odebraniu wiadomości"
 
+msgid "Resize incoming custom smileys"
+msgstr "Zmiana rozmiaru przychodzących własnych emotikon"
+
+msgid "Maximum size:"
+msgstr "Maksymalny rozmiar:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Minimalna wysokość pola wprowadzania tekstu w wierszach:"
 
@@ -13053,7 +13079,7 @@ msgid "ST_UN server:"
 msgstr "Serwer ST_UN:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Przykład: serwer_stun.org</span>"
+msgstr "<span style=\"italic\">Przykład: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Publiczne _IP:"
@@ -13082,6 +13108,9 @@ msgstr "Serwer _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Port _UDP:"
+
+msgid "T_CP Port:"
+msgstr "Port T_CP:"
 
 msgid "Use_rname:"
 msgstr "Na_zwa użytkownika:"
@@ -14841,7 +14870,7 @@ msgid "Account: "
 msgstr "Konto: "
 
 msgid "<font color='#777777'>Not connected to XMPP</font>"
-msgstr "<font color='#777777'>Niepołączono z XMPP</font>"
+msgstr "<font color='#777777'>Nie połączono z XMPP</font>"
 
 #. *< name
 #. *< version
