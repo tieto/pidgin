@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 0.60 \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2003-04-08 09:23:11+EDT\n"
 "Last-Translator: Ge'ez Frontier Foundation <locales@geez.org>\n"
 "Language-Team: Amharic <locales@geez.org>\n"
@@ -211,6 +211,10 @@ msgstr "ተጠቃሚ፦ (_U)"
 
 #, fuzzy
 msgid "Alias (optional)"
+msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "የጌም ማውሪያ"
 
 #, fuzzy
@@ -1724,6 +1728,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "ያልታወቀ"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -1975,6 +1980,9 @@ msgstr ""
 #, fuzzy
 msgid "Unknown reason"
 msgstr "ያልታወቀ ስህተት"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2354,7 +2362,9 @@ msgid ""
 "(Please provide the full path)"
 msgstr ""
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
 
 msgid ""
@@ -2365,6 +2375,10 @@ msgstr ""
 #, fuzzy
 msgid "Create a new directory for each user"
 msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "ተገናኝቷል"
 
 #, fuzzy
 msgid "Notes"
@@ -3185,6 +3199,24 @@ msgstr ""
 msgid "Change Gadu-Gadu Password"
 msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "የቤት አድራሻ፦"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "ኦንላይን"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "የቤት አድራሻ፦"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr ""
@@ -3217,9 +3249,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "ስም፦"
 
@@ -3345,6 +3375,21 @@ msgstr "የጌም ተጠቃሚ"
 msgid "GG server"
 msgstr "ተገናኝቷል"
 
+msgid "Don't use encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "የቢሮ መረጃ፦"
+
+#. TODO
+msgid "Require encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "ተገናኝቷል"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr ""
@@ -3382,7 +3427,6 @@ msgstr ""
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3647,6 +3691,9 @@ msgstr ""
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
 
+msgid "authserv: Send a command to authserv"
+msgstr ""
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3817,7 +3864,10 @@ msgstr "አጥፉ"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 #, fuzzy
 msgid "Invalid response from server"
 msgstr "ተገናኝቷል"
@@ -3965,7 +4015,6 @@ msgstr "አካባቢ"
 msgid "Postal Code"
 msgstr ""
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "አገር"
 
@@ -4734,7 +4783,7 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4775,19 +4824,8 @@ msgstr ""
 msgid "Domain"
 msgstr "ትእዛዝ"
 
-msgid "Require encryption"
-msgstr ""
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "የቢሮ መረጃ፦"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "ተገናኝቷል"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
@@ -4904,6 +4942,7 @@ msgstr ""
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 
+#. not success
 #, fuzzy
 msgid "File Send Failed"
 msgstr "ፋይልን ላክ"
@@ -5685,19 +5724,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "ተገናኝቷል"
 
-msgid "Authorization Request Message:"
-msgstr ""
-
-msgid "Please authorize me!"
-msgstr ""
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-#, fuzzy
-msgid "_OK"
-msgstr "እሺ"
-
 msgid "Error retrieving profile"
 msgstr ""
 
@@ -5936,6 +5962,9 @@ msgstr "ተገናኝቷል"
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
 
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr ""
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -6079,18 +6108,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-msgid "The PIN you entered is invalid."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-msgid "The two PINs you entered do not match."
-msgstr ""
-
 msgid "The Display Name you entered is invalid."
 msgstr ""
 
@@ -6112,26 +6129,21 @@ msgstr "የJabber ስህተት %s"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your UID"
-msgstr ""
-
-#. pin
-#. pin (required)
-#, fuzzy
-msgid "PIN"
-msgstr "UIN"
-
-msgid "Verify PIN"
-msgstr ""
-
 #. display name
 #. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "አሳይ"
 
-#. hidden
-msgid "Hide my number"
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
 
 #. mobile number
@@ -6139,12 +6151,53 @@ msgstr ""
 msgid "Mobile Number"
 msgstr "የሞቢል ስልክ፦"
 
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
 #, fuzzy
-msgid "Update your Profile"
+msgid "Update your MXit Profile"
 msgstr "የJabber ስህተት %s"
 
-msgid "Here you can update your MXit profile"
+msgid "The PIN you entered is invalid."
 msgstr ""
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr ""
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+msgid "The two PINs you entered do not match."
+msgstr ""
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "የIRC ስህተት"
+
+#. pin
+#. pin (required)
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+#. verify pin
+msgid "Verify PIN"
+msgstr ""
+
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "View Splash"
 msgstr ""
@@ -6158,10 +6211,40 @@ msgstr ""
 "\n"
 "<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "የቢሮ መረጃ፦"
+
+msgid "_Search"
+msgstr ""
+
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
 msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "እስክሪን ስም"
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. display splash-screen
 #, fuzzy
@@ -6192,6 +6275,9 @@ msgstr "ተገናኝቷል"
 #, fuzzy
 msgid "Connecting..."
 msgstr "ተገናኝቷል"
+
+msgid "The Display Name you entered is too short."
+msgstr ""
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -6269,6 +6355,20 @@ msgstr ""
 msgid "Retrieving User Information..."
 msgstr "የቢሮ መረጃ፦"
 
+msgid "was kicked"
+msgstr ""
+
+msgid "You have been kicked from this MultiMX."
+msgstr ""
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "ቤት፦"
+
+#. Display system message in chat window
+msgid "You have invited"
+msgstr ""
+
 #, fuzzy
 msgid "Loading menu..."
 msgstr "የዝምብለህ ይግባ መርጫዎች"
@@ -6287,8 +6387,20 @@ msgid "Hidden Number"
 msgstr "የሞቢል ስልክ፦"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "ሰርቨርን የለም"
+
+msgid "This contact does not have a profile."
+msgstr ""
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "ምረጡ..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "አስገባ"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6303,24 +6415,41 @@ msgstr "ተገናኝቷል"
 msgid "Enable splash-screen popup"
 msgstr ""
 
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr ""
-
-msgid "was kicked"
-msgstr ""
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "ቤት፦"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr ""
-
 #, fuzzy
 msgid "Last Online"
 msgstr "ኦንላይን"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "(1 መልዕክት)"
+
+#, fuzzy
+msgid "No results"
+msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "ድምፆች"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "ተጠቃሚ (_U)"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7081,6 +7210,13 @@ msgstr ""
 msgid "Authorization Denied Message:"
 msgstr ""
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+#, fuzzy
+msgid "_OK"
+msgstr "እሺ"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr ""
@@ -7439,7 +7575,6 @@ msgid "Received authorization"
 msgstr ""
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -7588,6 +7723,12 @@ msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
+msgstr ""
+
+msgid "The new formatting is invalid."
+msgstr ""
+
+msgid "Username formatting can change only capitalization and whitespace."
 msgstr ""
 
 #, fuzzy
@@ -7828,12 +7969,6 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr "የመክፈቻዎች ምርጫዎች"
 
-msgid "The new formatting is invalid."
-msgstr ""
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-
 #, fuzzy
 msgid "Change Address To:"
 msgstr "የቤት አድራሻ፦"
@@ -7856,9 +7991,6 @@ msgid "Search for a buddy by email address"
 msgstr ""
 
 msgid "Type the email address of the buddy you are searching for."
-msgstr ""
-
-msgid "_Search"
 msgstr ""
 
 #, fuzzy
@@ -7902,9 +8034,6 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr "የቢሮ መረጃ፦"
 
-msgid "Don't use encryption"
-msgstr ""
-
 msgid "Use clientLogin"
 msgstr ""
 
@@ -7937,75 +8066,6 @@ msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
-msgstr ""
-
-msgid "Invalid SNAC"
-msgstr ""
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr ""
-
-msgid "Service not defined"
-msgstr ""
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr ""
-
-msgid "Not supported by client"
-msgstr ""
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-msgid "Responses lost"
-msgstr ""
-
-msgid "Request denied"
-msgstr ""
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr ""
-
-msgid "No match"
-msgstr ""
-
-msgid "List overflow"
-msgstr ""
-
-msgid "Request ambiguous"
-msgstr ""
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
 msgstr ""
 
 #. Label
@@ -8144,6 +8204,75 @@ msgstr ""
 "\n"
 "<b>ሁኔታ፦</b>"
 
+msgid "Invalid SNAC"
+msgstr ""
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr ""
+
+msgid "Service not defined"
+msgstr ""
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr ""
+
+msgid "Not supported by client"
+msgstr ""
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+msgid "Responses lost"
+msgstr ""
+
+msgid "Request denied"
+msgstr ""
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr ""
+
+msgid "No match"
+msgstr ""
+
+msgid "List overflow"
+msgstr ""
+
+msgid "Request ambiguous"
+msgstr ""
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
+msgstr ""
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -8193,807 +8322,6 @@ msgstr ""
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr ""
-
-#, fuzzy
-msgid "Pisces"
-msgstr "ሥዕሎች"
-
-#, fuzzy
-msgid "Aries"
-msgstr "አድራሻ፦"
-
-#, fuzzy
-msgid "Taurus"
-msgstr "መክፈቻዎች"
-
-msgid "Gemini"
-msgstr ""
-
-#, fuzzy
-msgid "Cancer"
-msgstr "ተወው"
-
-#, fuzzy
-msgid "Leo"
-msgstr "ዝምብለህ ይግባ"
-
-msgid "Virgo"
-msgstr ""
-
-msgid "Libra"
-msgstr ""
-
-#, fuzzy
-msgid "Scorpio"
-msgstr "መግለጫ"
-
-msgid "Sagittarius"
-msgstr ""
-
-msgid "Capricorn"
-msgstr ""
-
-msgid "Rat"
-msgstr ""
-
-msgid "Ox"
-msgstr ""
-
-#, fuzzy
-msgid "Tiger"
-msgstr "አርእስት"
-
-msgid "Rabbit"
-msgstr ""
-
-msgid "Dragon"
-msgstr ""
-
-#, fuzzy
-msgid "Snake"
-msgstr "አስቀምጥ"
-
-#, fuzzy
-msgid "Horse"
-msgstr "ፖርት"
-
-msgid "Goat"
-msgstr ""
-
-#, fuzzy
-msgid "Monkey"
-msgstr "ምንም"
-
-#, fuzzy
-msgid "Rooster"
-msgstr "የIRC ስህተት"
-
-#, fuzzy
-msgid "Dog"
-msgstr "ዝምብለህ ይግባ"
-
-#, fuzzy
-msgid "Pig"
-msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
-
-#, fuzzy
-msgid "Other"
-msgstr "ኦፔራ"
-
-msgid "Visible"
-msgstr ""
-
-msgid "Friend Only"
-msgstr ""
-
-#, fuzzy
-msgid "Private"
-msgstr "ቀን"
-
-msgid "QQ Number"
-msgstr ""
-
-#, fuzzy
-msgid "Country/Region"
-msgstr "አገር"
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Zipcode"
-msgstr ""
-
-#, fuzzy
-msgid "Phone Number"
-msgstr "ስልክ"
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "ተዉት"
-
-#, fuzzy
-msgid "Cellphone Number"
-msgstr "ስልክ"
-
-#, fuzzy
-msgid "Personal Introduction"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "City/Area"
-msgstr "ከተማ"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "ድረ-ገጽ፦"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "የጌም ማውሪያ"
-
-msgid "College"
-msgstr ""
-
-#, fuzzy
-msgid "Horoscope"
-msgstr "ፖርት"
-
-msgid "Zodiac"
-msgstr ""
-
-#, fuzzy
-msgid "Blood"
-msgstr "ደማቅ"
-
-#, fuzzy
-msgid "True"
-msgstr "መክፈቻዎች"
-
-#, fuzzy
-msgid "False"
-msgstr "ሴት"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "የጌም ማውሪያ"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "የቤት አድራሻ፦"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Update"
-msgstr "የአባት ስም"
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Note"
-msgstr "ምንም"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "Change his/her memo as you like"
-msgstr ""
-
-#, fuzzy
-msgid "_Modify"
-msgstr "ለውጡ (_M)"
-
-#, fuzzy
-msgid "Memo Modify"
-msgstr "ለውጡ (_M)"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "ሰርቨር፦"
-
-msgid "Your request was accepted."
-msgstr ""
-
-msgid "Your request was rejected."
-msgstr ""
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr ""
-
-#, fuzzy
-msgid "Add buddy question"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "የጌም ማውሪያ"
-
-#, fuzzy
-msgid "Send"
-msgstr "ላክ"
-
-#, fuzzy
-msgid "Invalid answer."
-msgstr "እስክሪን ስም"
-
-msgid "Authorization denied message:"
-msgstr ""
-
-msgid "Sorry, you're not my style."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%u needs authorization"
-msgstr "መድረክን አስወግድ"
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Enter request here"
-msgstr "የጌም ማውሪያ"
-
-msgid "Would you be my friend?"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
-
-#, fuzzy
-msgid "Invalid QQ Number"
-msgstr "የውስጥ ብልሽት"
-
-#, fuzzy
-msgid "Failed sending authorize"
-msgstr "ፋይልን ላክ"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr ""
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr ""
-
-msgid "No reason given"
-msgstr ""
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-msgid "Would you like to add him?"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "እንደነበረ አድረግ"
-
-#, fuzzy, c-format
-msgid "Message: %s"
-msgstr "መልእክት፦ (_M)"
-
-msgid "ID: "
-msgstr ""
-
-#, fuzzy
-msgid "Group ID"
-msgstr "መድረክ፦ (_G)"
-
-msgid "QQ Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "You can only search for permanent Qun\n"
-msgstr ""
-
-msgid "(Invalid UTF-8 string)"
-msgstr ""
-
-msgid "Not member"
-msgstr ""
-
-msgid "Member"
-msgstr ""
-
-msgid "Requesting"
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "አርእስት"
-
-#, fuzzy
-msgid "Notice"
-msgstr "ምንም"
-
-#, fuzzy
-msgid "Detail"
-msgstr "ዝርዝሮች"
-
-#, fuzzy
-msgid "Creator"
-msgstr "ሰርዝ"
-
-msgid "About me"
-msgstr ""
-
-#, fuzzy
-msgid "Category"
-msgstr "የIRC ስህተት"
-
-msgid "The Qun does not allow others to join"
-msgstr ""
-
-#, fuzzy
-msgid "Join QQ Qun"
-msgstr "ውሪን አገጣጥም"
-
-msgid "Input request here"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "ስልክ"
-
-msgid "Successfully joined Qun"
-msgstr ""
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Operation"
-msgstr "የድምፅ ምርጫዎች"
-
-#, fuzzy
-msgid "Failed:"
-msgstr "ሴት"
-
-msgid "Join Qun, Unknown Reply"
-msgstr ""
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "ውሪን አገጣጥም"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-msgid "Sorry, you are not our style"
-msgstr ""
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "ስልክ"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "You have successfully created a Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to set up detailed information now?"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Setup"
-msgstr "አድርግ"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr ""
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr ""
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr ""
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "አስወግድ (_R)"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "አስወግድ (_R)"
-
-#, fuzzy, c-format
-msgid "Unknown-%d"
-msgstr "ያልታወቀ"
-
-#, fuzzy
-msgid "Level"
-msgstr "ሰርቨር፦"
-
-msgid " VIP"
-msgstr ""
-
-msgid " TCP"
-msgstr ""
-
-#, fuzzy
-msgid " FromMobile"
-msgstr "የሞቢል ስልክ፦"
-
-#, fuzzy
-msgid " BindMobile"
-msgstr "የሞቢል ስልክ፦"
-
-#, fuzzy
-msgid " Video"
-msgstr "ውሪ"
-
-#, fuzzy
-msgid " Zone"
-msgstr "ምንም"
-
-msgid "Flag"
-msgstr ""
-
-msgid "Ver"
-msgstr ""
-
-#, fuzzy
-msgid "Invalid name"
-msgstr "እስክሪን ስም"
-
-#, fuzzy
-msgid "Select icon..."
-msgstr "የፊደል ቅርጽ ምረጡ"
-
-#, fuzzy, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy
-msgid "Login Information"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
-
-#, fuzzy
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-#, fuzzy
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<b>ሁኔታ፦</b> %s"
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr ""
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
-
-msgid "Change Password"
-msgstr "ሚስጢራዊ ቃልን ለውጥ"
-
-#, fuzzy
-msgid "Account Information"
-msgstr "የቢሮ መረጃ፦"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-msgid "About OpenQ"
-msgstr ""
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "የቤት አድራሻ፦"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr ""
-
-#, fuzzy
-msgid "Auto"
-msgstr "አውቶማቲክ"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "የፊደል ቅርጽ ምረጡ"
-
-msgid "QQ2005"
-msgstr ""
-
-msgid "QQ2007"
-msgstr ""
-
-msgid "QQ2008"
-msgstr ""
-
-#, fuzzy
-msgid "Connect by TCP"
-msgstr "ተገናኝቷል"
-
-#, fuzzy
-msgid "Show server notice"
-msgstr "ሰርቨር፦"
-
-#, fuzzy
-msgid "Show server news"
-msgstr "የቤት አድራሻ፦"
-
-msgid "Show chat room when msg comes"
-msgstr ""
-
-#, fuzzy
-msgid "Keep alive interval (seconds)"
-msgstr "የIRC ስህተት"
-
-#, fuzzy
-msgid "Update interval (seconds)"
-msgstr "የIRC ስህተት"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "ተገናኝቷል"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Invalid token len, %d"
-msgstr "ሰርቨር፦"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr ""
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-msgid "Requesting captcha"
-msgstr ""
-
-msgid "Checking captcha"
-msgstr ""
-
-msgid "Failed captcha verification"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "ምስሉን አስቀምጥ... (_S)"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "ሚስጢራዊ ቃልን ለውጥ"
-
-msgid "QQ Captcha Verification"
-msgstr ""
-
-#, fuzzy
-msgid "Enter the text from the image"
-msgstr "ተገናኝቷል"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-
-#, fuzzy
-msgid "Socket error"
-msgstr "ያልታወቀ ስህተት"
-
-#, fuzzy
-msgid "Getting server"
-msgstr "ተገናኝቷል"
-
-msgid "Requesting token"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "ተገናኝቷል"
-
-#, fuzzy
-msgid "Invalid server or port"
-msgstr "ሰርቨር፦"
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "ተገናኝቷል"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "የIRC ስህተት"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr "የቤት አድራሻ፦"
-
-#, fuzzy, c-format
-msgid "%s:%s"
-msgstr ""
-"%s\n"
-"%s፦ %s"
-
-#, c-format
-msgid "From %s:"
-msgstr ""
-
-#, fuzzy, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr "የቢሮ መረጃ፦"
-
-#, fuzzy
-msgid "Unknown SERVER CMD"
-msgstr "ያልታወቀ ስህተት"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Command"
-msgstr "ትእዛዝ"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "ተገናኝቷል"
-
-#, fuzzy
-msgid "Unknown LOGIN CMD"
-msgstr "ያልታወቀ ስህተት"
-
-#, fuzzy
-msgid "Unknown CLIENT CMD"
-msgstr "ያልታወቀ ስህተት"
-
-#, fuzzy, c-format
-msgid "%d has declined the file %s"
-msgstr "ተገናኝቷል"
-
-#, fuzzy
-msgid "File Send"
-msgstr "ፋይልን ላክ"
-
-#, fuzzy, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "ተገናኝቷል"
 
 #, fuzzy, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9777,6 +9105,10 @@ msgid "Unit"
 msgstr ""
 
 #, fuzzy
+msgid "Note"
+msgstr "ምንም"
+
+#, fuzzy
 msgid "Join Chat"
 msgstr "ውሪን አገጣጥም"
 
@@ -10404,6 +9736,10 @@ msgstr "ያልታወቀ ስህተት"
 msgid "Unable to create listen socket"
 msgstr "ተገናኝቷል"
 
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "ተገናኝቷል"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 
@@ -10527,6 +9863,9 @@ msgstr ""
 
 #, c-format
 msgid "Yahoo! system message for %s:"
+msgstr ""
+
+msgid "Authorization denied message:"
 msgstr ""
 
 #, c-format
@@ -11304,13 +10643,16 @@ msgstr ""
 msgid "No Proxy"
 msgstr ""
 
-msgid "HTTP"
-msgstr ""
-
 msgid "SOCKS 4"
 msgstr ""
 
 msgid "SOCKS 5"
+msgstr ""
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
 msgstr ""
 
 msgid "Use Environmental Settings"
@@ -11340,6 +10682,12 @@ msgstr "ፖርት፦"
 
 msgid "Pa_ssword:"
 msgstr "ሚስጢራዊ ቃል፦ (_S)"
+
+msgid "Use _silence suppression"
+msgstr ""
+
+msgid "_Voice and Video"
+msgstr ""
 
 #, fuzzy
 msgid "Unable to save new account"
@@ -11383,8 +10731,18 @@ msgid ""
 msgstr ""
 
 #, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "አዲስ መልእክት"
 
 #. Buddy List
 #, fuzzy
@@ -11802,6 +11160,10 @@ msgid "/Help/De_veloper Information"
 msgstr "የቢሮ መረጃ፦"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "የቢሮ መረጃ፦"
 
@@ -12002,6 +11364,10 @@ msgstr "የቢሮ መረጃ፦"
 #, fuzzy
 msgid "(Optional) A_lias:"
 msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "(1 መልዕክት)"
 
 #, fuzzy
 msgid "Add buddy to _group:"
@@ -12481,16 +11847,9 @@ msgstr "የIRC ስህተት"
 msgid "Fatal Error"
 msgstr "የውስጥ ብልሽት"
 
-msgid "bug master"
-msgstr ""
-
 #, fuzzy
 msgid "artist"
 msgstr "አድራሻ፦"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
 
 msgid "voice and video"
 msgstr ""
@@ -12502,6 +11861,10 @@ msgid "webmaster"
 msgstr ""
 
 msgid "win32 port"
+msgstr ""
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
 msgstr ""
 
 #, fuzzy
@@ -12632,6 +11995,9 @@ msgstr ""
 msgid "Hindi"
 msgstr ""
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr ""
 
@@ -12679,6 +12045,10 @@ msgstr "ዝምብለህ ይግባ"
 #, fuzzy
 msgid "Maithili"
 msgstr "Nihilist"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "ኢሜይል"
 
 msgid "Macedonian"
 msgstr ""
@@ -12872,6 +12242,14 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s Translator Information"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+msgid "Plugin Information"
 msgstr "የቢሮ መረጃ፦"
 
 #, fuzzy
@@ -13536,6 +12914,13 @@ msgstr ""
 msgid "New Pounces"
 msgstr "የቢሮ መረጃ፦"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -13861,6 +13246,12 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr ""
 
+msgid "Resize incoming custom smileys"
+msgstr ""
+
+msgid "Maximum size:"
+msgstr ""
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -13937,6 +13328,10 @@ msgstr "ሰርቨር፦"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "ፖርት፦"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "ፖርት፦"
 
 #, fuzzy
@@ -14746,6 +14141,10 @@ msgstr ""
 
 msgid "PubSub Leaf"
 msgstr ""
+
+#, fuzzy
+msgid "Other"
+msgstr "ኦፔራ"
 
 #, fuzzy
 msgid ""
@@ -15618,6 +15017,21 @@ msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 msgid "D_evice"
 msgstr ""
 
+msgid "DROP"
+msgstr ""
+
+msgid "Volume:"
+msgstr ""
+
+msgid "Silence threshold:"
+msgstr ""
+
+msgid "Input and Output Settings"
+msgstr ""
+
+msgid "Microphone Test"
+msgstr ""
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15628,9 +15042,6 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Voice/Video Settings"
-msgstr ""
-
-msgid "Voice and Video Settings"
 msgstr ""
 
 #. *< name
@@ -15887,6 +15298,505 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "Pisces"
+#~ msgstr "ሥዕሎች"
+
+#, fuzzy
+#~ msgid "Aries"
+#~ msgstr "አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Taurus"
+#~ msgstr "መክፈቻዎች"
+
+#, fuzzy
+#~ msgid "Cancer"
+#~ msgstr "ተወው"
+
+#, fuzzy
+#~ msgid "Leo"
+#~ msgstr "ዝምብለህ ይግባ"
+
+#, fuzzy
+#~ msgid "Scorpio"
+#~ msgstr "መግለጫ"
+
+#, fuzzy
+#~ msgid "Tiger"
+#~ msgstr "አርእስት"
+
+#, fuzzy
+#~ msgid "Snake"
+#~ msgstr "አስቀምጥ"
+
+#, fuzzy
+#~ msgid "Horse"
+#~ msgstr "ፖርት"
+
+#, fuzzy
+#~ msgid "Monkey"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Rooster"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Dog"
+#~ msgstr "ዝምብለህ ይግባ"
+
+#, fuzzy
+#~ msgid "Pig"
+#~ msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "ቀን"
+
+#, fuzzy
+#~ msgid "Country/Region"
+#~ msgstr "አገር"
+
+#, fuzzy
+#~ msgid "Phone Number"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "ተዉት"
+
+#, fuzzy
+#~ msgid "Cellphone Number"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Personal Introduction"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "ከተማ"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "ድረ-ገጽ፦"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "ፖርት"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "ደማቅ"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "መክፈቻዎች"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "ሴት"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "የአባት ስም"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "ለውጡ (_M)"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "ለውጡ (_M)"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Send"
+#~ msgstr "ላክ"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "Failed sending authorize"
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "እንደነበረ አድረግ"
+
+#, fuzzy
+#~ msgid "Message: %s"
+#~ msgstr "መልእክት፦ (_M)"
+
+#, fuzzy
+#~ msgid "Group ID"
+#~ msgstr "መድረክ፦ (_G)"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "አርእስት"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "ዝርዝሮች"
+
+#, fuzzy
+#~ msgid "Creator"
+#~ msgstr "ሰርዝ"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Join QQ Qun"
+#~ msgstr "ውሪን አገጣጥም"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "QQ Qun Operation"
+#~ msgstr "የድምፅ ምርጫዎች"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "ሴት"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "ውሪን አገጣጥም"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Setup"
+#~ msgstr "አድርግ"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "አስወግድ (_R)"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "አስወግድ (_R)"
+
+#, fuzzy
+#~ msgid "Unknown-%d"
+#~ msgstr "ያልታወቀ"
+
+#, fuzzy
+#~ msgid "Level"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid " Video"
+#~ msgstr "ውሪ"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Invalid name"
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#~ msgid "Change Password"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "አውቶማቲክ"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Show server news"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "ምስሉን አስቀምጥ... (_S)"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Socket error"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "%s:%s"
+#~ msgstr ""
+#~ "%s\n"
+#~ "%s፦ %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "ትእዛዝ"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "%d has declined the file %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "File Send"
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
 #~ msgid "Transfer was closed."
 #~ msgstr "ፋይልን ላክ"
 
@@ -15924,10 +15834,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Change your Mood"
-#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
-
-#, fuzzy
-#~ msgid "Change Mood..."
 #~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #, fuzzy
@@ -15990,10 +15896,6 @@ msgstr ""
 
 #~ msgid "Icon"
 #~ msgstr "ምልክት"
-
-#, fuzzy
-#~ msgid "Change _status to:"
-#~ msgstr "የቤት አድራሻ፦"
 
 #, fuzzy
 #~ msgid "Insert a <message/> stanza."
@@ -16159,10 +16061,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Interface colors"
 #~ msgstr "የውስጥ ብልሽት"
-
-#, fuzzy
-#~ msgid "Invite message"
-#~ msgstr "(1 መልዕክት)"
 
 #, fuzzy
 #~ msgid "Unable to retrieve MSN Address Book"

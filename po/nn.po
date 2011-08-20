@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Yngve Spjeld Landro <l10n@landro.net>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 01:47-0700\n"
-"PO-Revision-Date: 2011-05-05 07:19+0000\n"
+"POT-Creation-Date: 2011-08-18 00:38-0700\n"
+"PO-Revision-Date: 2011-07-28 16:21+0000\n"
 "Last-Translator: yslandro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.net/projects/p/pidgin/"
 "team/nn/)\n"
@@ -1665,6 +1665,7 @@ msgstr "Protokollen kan ikkje nytta offentlege aliasar."
 msgid "Unknown"
 msgstr "Ukjend"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Venner"
 
@@ -4704,8 +4705,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;brukar&gt; [melding]:  Inviter ein brukar til rommet."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr "join: &lt;rom&gt; [passord]:  gå inn i eit praterom på denne tenaren."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;rom[@tenarr]&gt; [passord]: bli med i eit praterom."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;brukar&gt; [årsak]:  spark ein brukar frå rommet."
@@ -6234,12 +6235,16 @@ msgid "Where I live"
 msgstr "Kor eg bur"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Du har %i føreslegne venner."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Du har %i føreslegen venn."
+msgstr[1] "Du har %i føreslegne venner."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Vi fann %i kontaktar som samsvarer med søket ditt."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Vi fann %i kontakt som samsvarer med søket ditt."
+msgstr[1] "Vi fann %i kontaktar som samsvarer med søket ditt."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10905,6 +10910,9 @@ msgstr "/Hjelp/_Feilsøkingsvindauge"
 msgid "/Help/De_veloper Information"
 msgstr "/Hjelp/Ut_viklaropplysningar"
 
+msgid "/Help/_Plugin Information"
+msgstr "/Hjelp/_Programtilleggsopplysningar"
+
 msgid "/Help/_Translator Information"
 msgstr "/Hjelp/Om_setjaropplysningar"
 
@@ -11526,10 +11534,6 @@ msgstr "Alvorleg feil"
 msgid "artist"
 msgstr "kunstnar"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "tale og video"
 
@@ -11541,6 +11545,10 @@ msgstr "nettansvarleg"
 
 msgid "win32 port"
 msgstr "win32-port"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "ansvarleg"
@@ -11659,6 +11667,9 @@ msgstr "Hebraisk"
 
 msgid "Hindi"
 msgstr "Hindi"
+
+msgid "Croatian"
+msgstr "Kroatisk"
 
 msgid "Hungarian"
 msgstr "Ungarsk"
@@ -11902,6 +11913,13 @@ msgstr "Tidlegare omsetjarar"
 #, c-format
 msgid "%s Translator Information"
 msgstr "%s omsetjaropplysningar"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "%s programtilleggsopplysningar"
+
+msgid "Plugin Information"
+msgstr "Programtilleggsopplysningar"
 
 msgid "_Name"
 msgstr "_Namn"
@@ -12854,6 +12872,12 @@ msgstr "Bruk jamn rulling"
 msgid "F_lash window when IMs are received"
 msgstr "La vindauget _blinka når nye lynmmeldingar kjem"
 
+msgid "Resize incoming custom smileys"
+msgstr "Endra storleiken på innkomande tilpassa smilefjes"
+
+msgid "Maximum size:"
+msgstr "Største storleik:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Minimumshøgda til inndataområdet (i linjer):"
 
@@ -12922,6 +12946,9 @@ msgstr "_TURN-tenar:"
 
 msgid "_UDP Port:"
 msgstr "_UDP-port:"
+
+msgid "T_CP Port:"
+msgstr "T_CP-port:"
 
 msgid "Use_rname:"
 msgstr "_Brukarnamn:"

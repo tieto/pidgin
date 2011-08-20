@@ -4425,7 +4425,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 
 		purple_debug_info("yahoo", "SMS validate data: %s\n", webdata);
 
-		if (status && g_str_equal(status, "Valid") == 0) {
+		if (status && g_str_equal(status, "Valid")) {
 			g_hash_table_insert(yd->sms_carrier,
 					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
 			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who,

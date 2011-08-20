@@ -924,7 +924,7 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
 
   if (!name) {
     DEBUG_WARN("Can't ensure a null group\n");
-    return;
+    return NULL;
   }
 
   DEBUG_INFO("attempting to ensure group %s, called %s\n",

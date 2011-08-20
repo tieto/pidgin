@@ -3282,13 +3282,26 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 #ifdef _WIN32
 	/* If using Win32... */
 	int code;
-	wchar_t *wc_filename = g_utf8_to_utf16(
-			uri, -1, NULL, NULL, NULL);
+	if (purple_str_has_prefix(uri, "file://"))
+	{
+		gchar *escaped = g_shell_quote(uri);
+		gchar *param = g_strconcat("/select,\"", uri, "\"", NULL);
+		gchar *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
 
-	code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
-			SW_SHOW);
+		code = (int)ShellExecuteW(NULL, "OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
 
-	g_free(wc_filename);
+		g_free(wc_param);
+		g_free(param);
+		g_free(escaped);
+	} else {
+		wchar_t *wc_filename = g_utf8_to_utf16(
+				uri, -1, NULL, NULL, NULL);
+
+		code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(wc_filename);
+	}
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
