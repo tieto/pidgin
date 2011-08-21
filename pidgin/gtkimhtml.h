@@ -135,16 +135,6 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKIMHTML_C_)
-	/** @deprecated */
-	char *clipboard_text_string;
-	/** @deprecated */
-	char *clipboard_html_string;
-#else
-	char *depr1;
-	char *depr2;
-#endif
-
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
 	GtkSourceUndoManager *undo_manager;

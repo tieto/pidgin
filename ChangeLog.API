@@ -13,6 +13,8 @@ version 3.0.0 (??/??/????):
 		  the first parameter
 
 		Removed:
+		* pidgin_blist_update_account_error_state
+		* PIDGIN_DIALOG
 		* purple_core_migrate
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
@@ -24,6 +26,9 @@ version 3.0.0 (??/??/????):
 		* purple_strlcpy
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request_len, insetad.
+		* The 'clipboard_text_string' and 'clipboard_html_string' members of
+		  GtkIMHtml
+		* The 'sg' member of PidginConversation
 
 version 2.10.0:
 	libpurple:

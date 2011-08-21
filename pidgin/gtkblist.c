@@ -5343,6 +5343,28 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 }
 
 
+/**
+ * Was used by the connection API to tell the blist if an account has a
+ * connection error or no longer has a connection error, but the blist now does
+ * this itself with the @ref account-error-changed signal.
+ *
+ * @param account The account that either has a connection error
+ *        or no longer has a connection error.
+ * @param message The connection error message, or NULL if this
+ *        account is no longer in an error state.
+ */
+static void
+pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
+{
+	/* connection_errors isn't actually used anywhere; it's just kept in
+	 * sync with reality in case a plugin uses it.
+	 */
+	if (text == NULL)
+		g_hash_table_remove(gtkblist->connection_errors, account);
+	else
+		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
+}
+
 /* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
@@ -5425,18 +5447,6 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
 
 		update_account_error_state(account, NULL, err, gtkblist);
 	}
-}
-
-void
-pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
-{
-	/* connection_errors isn't actually used anywhere; it's just kept in
-	 * sync with reality in case a plugin uses it.
-	 */
-	if (text == NULL)
-		g_hash_table_remove(gtkblist->connection_errors, account);
-	else
-		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
 }
 
 static gboolean
