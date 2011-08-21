@@ -117,27 +117,27 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	/* Useful to identify the account the tooltip refers to.
 	 *  Other prpls show this. */
 	if (user->username) {
-		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("User"), user->username);
 	}
 
 	/* a/s/l...the vitals */
 	if (user->age) {
 		char age[16];
 		g_snprintf(age, sizeof(age), "%d", user->age);
-		purple_notify_user_info_add_pair(user_info, _("Age"), age);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Age"), age);
 	}
 
 	if (user->gender && *user->gender) {
-		purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Gender"), user->gender);
 	}
 
 	if (user->location && *user->location) {
-		purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Location"), user->location);
 	}
 
 	/* Other information */
 	if (user->headline && *user->headline) {
-		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Headline"), user->headline);
 	}
 
 	if (user->buddy != NULL) {
@@ -153,7 +153,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 			str = msim_format_now_playing(artist, title);
 			if (str && *str) {
-				purple_notify_user_info_add_pair(user_info, _("Song"), str);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Song"), str);
 			}
 			g_free(str);
 		}
@@ -163,7 +163,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	if (user->total_friends) {
 		char friends[16];
 		g_snprintf(friends, sizeof(friends), "%d", user->total_friends);
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"), friends);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Total Friends"), friends);
 	}
 
 	if (full) {
@@ -181,7 +181,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 			client = g_strdup_printf("Build %d", cv);
 		}
 		if (client && *client)
-			purple_notify_user_info_add_pair(user_info, _("Client Version"), client);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Client Version"), client);
 		g_free(client);
 	}
 

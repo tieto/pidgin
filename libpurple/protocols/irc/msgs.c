@@ -357,39 +357,35 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	g_free(tmp);
 
 	if (irc->whois.away) {
-		tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Away"), irc->whois.away);
 		g_free(irc->whois.away);
-		purple_notify_user_info_add_pair(user_info, _("Away"), tmp);
-		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
-		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
-		g_free(irc->whois.name);
-		purple_notify_user_info_add_pair(user_info, _("Username"), irc->whois.userhost);
-		purple_notify_user_info_add_pair(user_info, _("Real name"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Username"), irc->whois.userhost);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.name);
 		g_free(irc->whois.userhost);
-		g_free(tmp);
+		g_free(irc->whois.name);
 	}
 	if (irc->whois.server) {
 		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
-		purple_notify_user_info_add_pair(user_info, _("Server"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Server"), tmp);
 		g_free(tmp);
 		g_free(irc->whois.server);
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		purple_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels->str);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Currently on"), irc->whois.channels->str);
 		g_string_free(irc->whois.channels, TRUE);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = purple_str_seconds_to_string(irc->whois.idle);
-		purple_notify_user_info_add_pair(user_info, _("Idle for"), timex);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Idle for"), timex);
 		g_free(timex);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_plaintext(user_info,
 														_("Online since"), purple_date_format_full(localtime(&irc->whois.signon)));
 	}
-	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
-		purple_notify_user_info_add_pair(user_info,
+	if (!strcmp(irc->whois.nick, "elb")) {
+		purple_notify_user_info_add_pair_plaintext(user_info,
 																   _("<b>Defining adjective:</b>"), _("Glorious"));
 	}
 

@@ -4037,11 +4037,11 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
 		if (ypd->phone.home && *ypd->phone.home)
-			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), ypd->phone.home);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Home Phone Number"), ypd->phone.home);
 		if (ypd->phone.work && *ypd->phone.work)
-			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), ypd->phone.work);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Work Phone Number"), ypd->phone.work);
 		if (ypd->phone.mobile && *ypd->phone.mobile)
-			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), ypd->phone.mobile);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Mobile Phone Number"), ypd->phone.mobile);
 	}
 }
 

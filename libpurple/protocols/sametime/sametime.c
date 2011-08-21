@@ -3334,9 +3334,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   status = status_text(b);
 
   if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
-    tmp = g_markup_escape_text(message, -1);
-	purple_notify_user_info_add_pair(user_info, status, tmp);
-    g_free(tmp);
+	purple_notify_user_info_add_pair_plaintext(user_info, status, message);
 
   } else {
 	purple_notify_user_info_add_pair(user_info, _("Status"), status);
@@ -3350,7 +3348,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
     }
 
     if(buddy_is_external(b)) {
-	  purple_notify_user_info_add_pair(user_info, NULL, _("External User"));
+	  purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("External User"));
     }
   }
 }

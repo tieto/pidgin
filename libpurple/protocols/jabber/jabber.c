@@ -2238,7 +2238,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 		gchar *idle_str =
 			purple_str_seconds_to_string(time(NULL) - jbr->idle);
 		label = g_strdup_printf("%s%s", _("Idle"), (res ? res : ""));
-		purple_notify_user_info_add_pair(user_info, label, idle_str);
+		purple_notify_user_info_add_pair_plaintext(user_info, label, idle_str);
 		g_free(idle_str);
 		g_free(label);
 	}

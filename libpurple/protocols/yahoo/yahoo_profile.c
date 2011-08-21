@@ -1228,7 +1228,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			str = _("The user's profile is empty.");
 		}
 
-		purple_notify_user_info_add_pair(user_info, NULL, str);
+		purple_notify_user_info_add_pair_plaintext(user_info, NULL, str);
 	}
 
 	/* put a link to the actual profile URL */
