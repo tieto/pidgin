@@ -408,7 +408,7 @@ static void mxit_send_packet( struct MXitSession* session, struct tx_packet* pac
 		res = mxit_write_sock_packet( session->fd, data, datalen );
 		if ( res < 0 ) {
 			/* we must have lost the connection, so terminate it so that we can reconnect */
-			purple_connection_error( session->con, _( "We have lost the connection to MXit. Please reconnect." ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "We have lost the connection to MXit. Please reconnect." ) );
 		}
 	}
 	else {
@@ -530,7 +530,7 @@ static void mxit_manage_queue( struct MXitSession* session )
 		if ( session->last_tx <= mxit_now_milli() - ( MXIT_ACK_TIMEOUT * 1000 ) ) {
 			/* ack timeout! so we close the connection here */
 			purple_debug_info( MXIT_PLUGIN_ID, "mxit_manage_queue: Timeout awaiting ACK for command '%i'\n", session->outack );
-			purple_connection_error( session->con, _( "Timeout while waiting for a response from the MXit server." ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Timeout while waiting for a response from the MXit server." ) );
 		}
 		return;
 	}
@@ -2192,7 +2192,7 @@ static void mxit_perform_redirect( struct MXitSession* session, const char* url 
 		session->port = atoi( host[2] );
 	}
 	else {
-		purple_connection_error( session->con, _( "Cannot perform redirect using the specified protocol" ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Cannot perform redirect using the specified protocol" ) );
 		goto redirect_fail;
 	}
 
@@ -2361,7 +2361,7 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 
 	if ( packet->errcode == MXIT_ERRCODE_LOGGEDOUT ) {
 		/* we are not currently logged in, so we need to reconnect */
-		purple_connection_error( session->con, _( errdesc ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( errdesc ) );
 	}
 
 	/* packet command */
@@ -2375,7 +2375,7 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 				}
 				else {
 					snprintf( errmsg, sizeof( errmsg ), _( "Login error: %s (%i)" ), errdesc, packet->errcode );
-					purple_connection_error( session->con, errmsg );
+					purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, errmsg );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
@@ -2643,7 +2643,7 @@ int mxit_parse_packet( struct MXitSession* session )
 
 		if ( packet.rcount < 2 ) {
 			/* bad packet */
-			purple_connection_error( session->con, _( "Invalid packet received from MXit." ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Invalid packet received from MXit." ) );
 			free_rx_packet( &packet );
 			continue;
 		}
@@ -2708,12 +2708,12 @@ void mxit_cb_rx( gpointer user_data, gint source, PurpleInputCondition cond )
 		len = read( session->fd, &ch, 1 );
 		if ( len < 0 ) {
 			/* connection error */
-			purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x01)" ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x01)" ) );
 			return;
 		}
 		else if ( len == 0 ) {
 			/* connection closed */
-			purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x02)" ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x02)" ) );
 			return;
 		}
 		else {
@@ -2723,7 +2723,7 @@ void mxit_cb_rx( gpointer user_data, gint source, PurpleInputCondition cond )
 				session->rx_lbuf[session->rx_i] = '\0';
 				session->rx_res = atoi( &session->rx_lbuf[3] );
 				if ( session->rx_res > CP_MAX_PACKET ) {
-					purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x03)" ) );
+					purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x03)" ) );
 				}
 				session->rx_state = RX_STATE_DATA;
 				session->rx_i = 0;
@@ -2734,7 +2734,7 @@ void mxit_cb_rx( gpointer user_data, gint source, PurpleInputCondition cond )
 				session->rx_i++;
 				if ( session->rx_i >= sizeof( session->rx_lbuf ) ) {
 					/* malformed packet length record (too long) */
-					purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x04)" ) );
+					purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x04)" ) );
 					return;
 				}
 			}
@@ -2745,12 +2745,12 @@ void mxit_cb_rx( gpointer user_data, gint source, PurpleInputCondition cond )
 		len = read( session->fd, &session->rx_dbuf[session->rx_i], session->rx_res );
 		if ( len < 0 ) {
 			/* connection error */
-			purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x05)" ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x05)" ) );
 			return;
 		}
 		else if ( len == 0 ) {
 			/* connection closed */
-			purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x06)" ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "A connection error occurred to MXit. (read stage 0x06)" ) );
 			return;
 		}
 		else {

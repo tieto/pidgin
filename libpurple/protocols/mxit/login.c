@@ -165,7 +165,7 @@ static void mxit_cb_connect( gpointer user_data, gint source, const gchar* error
 	/* source is the file descriptor of the new connection */
 	if ( source < 0 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_connect failed: %s\n", error_message );
-		purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 		return;
 	}
 
@@ -202,7 +202,7 @@ static void mxit_login_connect( struct MXitSession* session )
 		/* socket connection */
 		data = purple_proxy_connect( session->con, session->acc, session->server, session->port, mxit_cb_connect, session );
 		if ( !data ) {
-			purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
+			purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 			return;
 		}
 	}
@@ -391,7 +391,7 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
-		purple_connection_error( session->con, _( "Error contacting the MXit WAP site. Please try again later." ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;
 	}
 
@@ -400,7 +400,7 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !parts ) {
 		/* wapserver error */
-		purple_connection_error( session->con, _( "MXit is currently unable to process the request. Please try again later." ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "MXit is currently unable to process the request. Please try again later." ) );
 		return;
 	}
 
@@ -410,26 +410,26 @@ static void mxit_cb_clientinfo2( PurpleUtilFetchUrlData* url_data, gpointer user
 				/* valid reply! */
 				break;
 			case '1' :
-				purple_connection_error( session->con, _( "Wrong security code entered. Please try again later." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Wrong security code entered. Please try again later." ) );
 				return;
 			case '2' :
-				purple_connection_error( session->con, _( "Your session has expired. Please try again later." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Your session has expired. Please try again later." ) );
 				return;
 			case '5' :
-				purple_connection_error( session->con, _( "Invalid country selected. Please try again." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Invalid country selected. Please try again." ) );
 				return;
 			case '6' :
-				purple_connection_error( session->con, _( "The MXit ID you entered is not registered. Please register first." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "The MXit ID you entered is not registered. Please register first." ) );
 				return;
 			case '7' :
-				purple_connection_error( session->con, _( "The MXit ID you entered is already registered. Please choose another." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "The MXit ID you entered is already registered. Please choose another." ) );
 				/* this user's account already exists, so we need to change the registration login flag to be login */
 				purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 				return;
 			case '3' :
 			case '4' :
 			default :
-				purple_connection_error( session->con, _( "Internal error. Please try again later." ) );
+				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Internal error. Please try again later." ) );
 				return;
 	}
 
@@ -611,7 +611,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( !url_text ) {
 		/* no reply from the WAP site */
-		purple_connection_error( session->con, _( "Error contacting the MXit WAP site. Please try again later." ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Error contacting the MXit WAP site. Please try again later." ) );
 		return;
 	}
 
@@ -620,7 +620,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	if ( ( !parts ) || ( parts[0][0] != '0' ) ) {
 		/* server could not find the user */
-		purple_connection_error( session->con, _( "MXit is currently unable to process the request. Please try again later." ) );
+		purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "MXit is currently unable to process the request. Please try again later." ) );
 		return;
 	}
 

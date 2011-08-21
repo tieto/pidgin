@@ -273,7 +273,7 @@ static void mxit_cb_http_connect( gpointer user_data, gint source, const gchar* 
 	/* source is the file descriptor of the new connection */
 	if ( source < 0 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_http_connect failed: %s\n", error_message );
-		purple_connection_error( req->session->con, _( "Unable to connect to the MXit HTTP server. Please check your server settings." ) );
+		purple_connection_error_reason( req->session->con, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _( "Unable to connect to the MXit HTTP server. Please check your server settings." ) );
 		return;
 	}
 
