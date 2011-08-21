@@ -420,7 +420,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 
 	msn_session_disconnect(session);
 
-	purple_connection_error_reason(gc, reason, msg);
+	purple_connection_error(gc, reason, msg);
 
 	g_free(msg);
 }

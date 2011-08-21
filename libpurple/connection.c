@@ -528,7 +528,7 @@ purple_connection_disconnect_cb(gpointer data)
 }
 
 void
-purple_connection_error_reason (PurpleConnection *gc,
+purple_connection_error (PurpleConnection *gc,
                                 PurpleConnectionError reason,
                                 const char *description)
 {
@@ -542,13 +542,13 @@ purple_connection_error_reason (PurpleConnection *gc,
 	 */
 	if (reason > PURPLE_CONNECTION_ERROR_OTHER_ERROR) {
 		purple_debug_error("connection",
-			"purple_connection_error_reason: reason %u isn't a "
+			"purple_connection_error: reason %u isn't a "
 			"valid reason\n", reason);
 		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}
 
 	if (description == NULL) {
-		purple_debug_error("connection", "purple_connection_error_reason called with NULL description\n");
+		purple_debug_error("connection", "purple_connection_error called with NULL description\n");
 		description = _("Unknown error");
 	}
 
@@ -595,7 +595,7 @@ purple_connection_ssl_error (PurpleConnection *gc,
 			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 	}
 
-	purple_connection_error_reason (gc, reason,
+	purple_connection_error (gc, reason,
 		purple_ssl_strerror(ssl_error));
 }
 

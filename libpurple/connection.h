@@ -128,7 +128,7 @@ typedef enum
 	/** Some other error occurred which fits into none of the other
 	 *  categories.
 	 */
-	/* purple_connection_error_reason() in connection.c uses the fact that
+	/* purple_connection_error() in connection.c uses the fact that
 	 * this is the last member of the enum when sanity-checking; if other
 	 * reasons are added after it, the check must be updated.
 	 */
@@ -215,7 +215,7 @@ typedef struct
 	 *                #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
 	 * @param text  a localized message describing the disconnection
 	 *              in more detail to the user.
-	 * @see #purple_connection_error_reason
+	 * @see #purple_connection_error
 	 *
 	 * @since 2.3.0
 	 */
@@ -252,7 +252,7 @@ struct _PurpleConnection
 	/** Wants to Die state.  This is set when the user chooses to log out, or
 	 * when the protocol is disconnected and should not be automatically
 	 * reconnected (incorrect password, etc.).  prpls should rely on
-	 * purple_connection_error_reason() to set this for them rather than
+	 * purple_connection_error() to set this for them rather than
 	 * setting it themselves.
 	 * @see purple_connection_error_is_fatal
 	 */
@@ -465,14 +465,14 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  * @since 2.3.0
  */
 void
-purple_connection_error_reason (PurpleConnection *gc,
-                                PurpleConnectionError reason,
-                                const char *description);
+purple_connection_error(PurpleConnection *gc,
+                        PurpleConnectionError reason,
+                        const char *description);
 
 /**
  * Closes a connection due to an SSL error; this is basically a shortcut to
  * turning the #PurpleSslErrorType into a #PurpleConnectionError and a
- * human-readable string and then calling purple_connection_error_reason().
+ * human-readable string and then calling purple_connection_error().
  *
  * @since 2.3.0
  */

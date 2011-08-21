@@ -94,7 +94,7 @@ bonjour_login(PurpleAccount *account)
 
 #ifdef _WIN32
 	if (!dns_sd_available()) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
 				  "http://d.pidgin.im/BonjourWindows for more information."));
@@ -114,7 +114,7 @@ bonjour_login(PurpleAccount *account)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to listen for incoming IM connections"));
 		return;
@@ -141,7 +141,7 @@ bonjour_login(PurpleAccount *account)
 	bd->dns_sd_data->account = account;
 	if (!bonjour_dns_sd_start(bd->dns_sd_data))
 	{
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to establish connection with the local mDNS server.  Is it running?"));
 		return;

@@ -1075,7 +1075,7 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
 
 	} else {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}

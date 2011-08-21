@@ -159,7 +159,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NAME_IN_USE,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NAME_IN_USE,
 			_("You have signed on from another location"));
 		return;
 	}
@@ -1803,7 +1803,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		g_free(auth_data->seed);
 		g_free(auth_data);
 		return;
@@ -1890,7 +1890,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_
 			if(error_reason) {
 				purple_debug_error("yahoo", "Authentication error: %s. "
 				                   "Code %d\n", error_reason, response_no);
-				purple_connection_error_reason(gc, error, error_reason);
+				purple_connection_error(gc, error, error_reason);
 				g_free(error_reason);
 				g_free(auth_data->seed);
 				g_free(auth_data);
@@ -1919,7 +1919,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		g_free(auth_data->seed);
 		g_free(auth_data);
 		return;
@@ -2000,7 +2000,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 			}
 			purple_debug_error("yahoo", "Authentication error: %s. Code %d\n",
 			                   error_reason, response_no);
-			purple_connection_error_reason(gc, error, error_reason);
+			purple_connection_error(gc, error, error_reason);
 			g_free(error_reason);
 			g_free(auth_data->seed);
 			g_free(auth_data);
@@ -2040,7 +2040,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
 	if(!purple_ssl_is_supported()) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, _("SSL support unavailable"));
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, _("SSL support unavailable"));
 		return;
 	}
 
@@ -2285,7 +2285,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	else
 		fullmsg = g_strdup(msg);
 
-	purple_connection_error_reason(gc, reason, fullmsg);
+	purple_connection_error(gc, reason, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
 }
@@ -3147,11 +3147,11 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 
 		tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Server closed the connection"));
 		return;
 	}
@@ -3235,7 +3235,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	if (source < 0) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Unable to connect: %s"), error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -3261,7 +3261,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	if (source < 0) {
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Unable to connect: %s"), error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -3301,11 +3301,11 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 
 		tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Server closed the connection"));
 		return;
 	}
@@ -3321,7 +3321,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 
 	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Received unexpected HTTP response from server"));
 		purple_debug_misc("yahoo", "Unexpected HTTP response: %s\n", buf);
 		return;
@@ -3351,7 +3351,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 	if (purple_proxy_connect(gc, account, "wcs2.msg.dcn.yahoo.com",
 	                         purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 	                         yahoo_got_web_connected, gc) == NULL) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                               _("Unable to connect"));
 		return;
 	}
@@ -3380,7 +3380,7 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 		gc->inpa = 0;
 		tmp = g_strdup_printf(_("Lost connection with %s: %s"),
 				"login.yahoo.com:80", g_strerror(errno));
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -3405,7 +3405,7 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Unable to establish a connection with %s: %s"),
 				"login.yahoo.com:80", error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -3489,7 +3489,7 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (error_message != NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                               error_message);
 		return;
 	}
@@ -3539,7 +3539,7 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	g_hash_table_destroy(hash);
 	yd->auth = g_string_free(url, FALSE);
 	if (purple_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                               _("Unable to connect"));
 		return;
 	}
@@ -3619,12 +3619,12 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 				error_message ? error_message : "(null)");
 
 		if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Unable to connect: The server returned an empty response."));
 		} else {
 				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
 							yahoo_got_connected, gc) == NULL) {
-					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 							_("Unable to connect"));
 				}
 		}
@@ -3646,20 +3646,20 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 
 		if(cs_server) { /* got an address; get on with connecting */
 			if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 								_("Unable to connect"));
 		} else {
 			purple_debug_error("yahoo", "No CS address retrieved!  Server "
 					"response:\n%s\n", url_text ? url_text : "(null)");
 
 			if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 						_("Unable to connect: The server's response did not contain "
 							"the necessary information"));
 			} else
 				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
 							yahoo_got_connected, gc) == NULL) {
-					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 							_("Unable to connect"));
 				}
 		}

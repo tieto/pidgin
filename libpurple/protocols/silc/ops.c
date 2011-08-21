@@ -72,7 +72,7 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 		gc = client->application;
 
 	if (gc != NULL)
-		purple_connection_error_reason(gc, reason, tmp);
+		purple_connection_error(gc, reason, tmp);
 	else
 		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
 }

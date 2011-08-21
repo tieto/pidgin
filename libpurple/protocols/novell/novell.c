@@ -140,7 +140,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		}
 
-		purple_connection_error_reason(gc, reason, err);
+		purple_connection_error(gc, reason, err);
 		g_free(err);
 	}
 }
@@ -1126,7 +1126,7 @@ _check_for_disconnect(NMUser * user, NMERR_T err)
 
 	if (_is_disconnect_error(err)) {
 
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Error communicating with server. Closing connection."));
 		return TRUE;
@@ -1702,7 +1702,7 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 
 		if (_is_disconnect_error(rc)) {
 
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with server. Closing connection."));
 		} else {
@@ -1743,7 +1743,7 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 		conn->connected = TRUE;
 		purple_ssl_input_add(gsc, novell_ssl_recv_cb, gc);
 	} else {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 	}
@@ -2028,7 +2028,7 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	{
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NAME_IN_USE,
 			_("You have signed on from another location"));
 	}
@@ -2184,7 +2184,7 @@ novell_login(PurpleAccount * account)
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
 			  "address of the server to which you wish to connect."));
@@ -2213,7 +2213,7 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}

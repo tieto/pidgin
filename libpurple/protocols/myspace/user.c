@@ -636,7 +636,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	if (!body) {
 		purple_debug_info("msim_username_is_set_cb", "No body");
 		/* Error: No body! */
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 	username = msim_msg_get_string(body, "UserName");
 	code = msim_msg_get_integer(body,"Code");
@@ -678,13 +678,13 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 					NULL)) {
 			/* Error! */
 			/* Can't set... Disconnect */
-			purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+			purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 		}
 
 	} else {
 		/* Error! */
 		purple_debug_info("msim","username_is_set Error: Invalid cmd/dsn/lid combination");
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 }
 
@@ -782,7 +782,7 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
-		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		purple_connection_error(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("An error occurred while trying to set the username.  "
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 				"fuseaction=profile.username to set your username."));
@@ -867,7 +867,7 @@ void msim_do_not_set_username_cb(PurpleConnection *gc)
 	purple_debug_info("msim", "Don't set username");
 
 	/* Protocol won't log in now without a username set.. Disconnect */
-	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
+	purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
 }
 
 /**

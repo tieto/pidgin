@@ -308,7 +308,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 		gchar *msg;
 		msg = g_strdup_printf(_("Unable to connect to authentication server: %s"),
 				error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
@@ -316,7 +316,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 		gchar *msg;
 		msg = g_strdup_printf(_("Unable to connect to BOS server: %s"),
 				error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 	}
 	else
@@ -735,7 +735,7 @@ oscar_login(PurpleAccount *account)
 	if (!oscar_util_valid_name(purple_account_get_username(account))) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
 	}
@@ -756,7 +756,7 @@ oscar_login(PurpleAccount *account)
 
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
-		purple_connection_error_reason(
+		purple_connection_error(
 			gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("You required encryption in your account settings, but encryption is not supported by your system."));
@@ -825,7 +825,7 @@ oscar_login(PurpleAccount *account)
 		}
 
 		if (newconn->gsc == NULL && newconn->connect_data == NULL) {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Unable to connect"));
 			return;
 		}
@@ -1048,7 +1048,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 
 	if (conn->gsc == NULL && conn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1087,41 +1087,41 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered username */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Username does not exist"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Username does not exist"));
 			break;
 		case 0x05:
 			/* Incorrect password */
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
 			break;
 		case 0x11:
 			/* Suspended account */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended"));
 			break;
 		case 0x02:
 		case 0x14:
 			/* service temporarily unavailable */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
 			break;
 		case 0x18:
 			/* username connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your username has been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your username has been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 		{
 			/* client too old */
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"),
 					oscar_get_ui_info_string("website", PURPLE_WEBSITE));
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
 			break;
 		}
 		case 0x1d:
 			/* IP address connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your IP address has been connecting and disconnecting too frequently. Wait a minute and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your IP address has been connecting and disconnecting too frequently. Wait a minute and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Unknown reason"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Unknown reason"));
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
@@ -1169,7 +1169,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_free(host);
 	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1199,7 +1199,7 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	PurpleConnection *gc = user_data;
 
 	/* Disconnect */
-	purple_connection_error_reason(gc,
+	purple_connection_error(gc,
 		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 		_("The SecurID key entered is invalid"));
 }
@@ -1292,7 +1292,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
 		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
 			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
-			purple_connection_error_reason(
+			purple_connection_error(
 				gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You required encryption in your account settings, but one of the servers doesn't support it."));
