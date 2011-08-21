@@ -328,6 +328,9 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.16 (required)
 dnl #######################################################################
+# TODO: gmodule-2.0 is only needed if enable_plugins is 'yes'.  It
+#       might ben ice to change this check so that it's not required
+#       if enable_plugins is 'no'.
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.16.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
