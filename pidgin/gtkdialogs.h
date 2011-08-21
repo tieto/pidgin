@@ -42,14 +42,6 @@ void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
 void pidgin_dialogs_info(void);
 void pidgin_dialogs_log(void);
 
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKDIALOGS_C_)
-/**
- * @deprecated This function is no longer used and will be removed in
- *             Pidgin 3.0.0 unless there is sufficient demand to keep it.
- */
-void pidgin_dialogs_alias_contact(PurpleContact *);
-#endif
-
 void pidgin_dialogs_alias_buddy(PurpleBuddy *);
 void pidgin_dialogs_alias_chat(PurpleChat *);
 void pidgin_dialogs_remove_buddy(PurpleBuddy *);
