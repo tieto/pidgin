@@ -4038,16 +4038,15 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 		YahooPersonalDetails *ypd = &f->ypd;
 		int i;
 		struct {
-			char *id;
 			char *text;
 			char *value;
 		} yfields[] = {
-			{"hp", N_("Home Phone Number"), ypd->phone.home},
-			{"wp", N_("Work Phone Number"), ypd->phone.work},
-			{"mo", N_("Mobile Phone Number"), ypd->phone.mobile},
-			{NULL, NULL, NULL}
+			{N_("Home Phone Number"), ypd->phone.home},
+			{N_("Work Phone Number"), ypd->phone.work},
+			{N_("Mobile Phone Number"), ypd->phone.mobile},
+			{NULL, NULL}
 		};
-		for (i = 0; yfields[i].id; i++) {
+		for (i = 0; yfields[i].text; i++) {
 			if (!yfields[i].value || !*yfields[i].value)
 				continue;
 			purple_notify_user_info_add_pair(user_info, _(yfields[i].text), yfields[i].value);
