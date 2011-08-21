@@ -14,6 +14,8 @@ version 3.0.0 (??/??/????):
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
 		* purple_notify_searchresults_row_get
+		* purple_status_type_get_primary_attr
+		* purple_status_type_set_primary_attr
 		* purple_strlcat
 		* purple_strlcpy
 
