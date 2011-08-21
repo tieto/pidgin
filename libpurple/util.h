@@ -1177,6 +1177,7 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
  * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
  * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
+ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
  */
 PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(
 		PurpleAccount *account, const gchar *url,
