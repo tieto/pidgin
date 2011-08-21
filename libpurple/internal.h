@@ -151,12 +151,6 @@
 
 #include <glib-object.h>
 
-/* Safer ways to work with static buffers. When using non-static
- * buffers, either use g_strdup_* functions (preferred) or use
- * g_strlcpy/g_strlcpy directly. */
-#define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
-#define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
-
 #define PURPLE_WEBSITE "http://pidgin.im/"
 #define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
 

@@ -612,7 +612,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	}
 	else
 	{
-		purple_strlcpy(buf, utf8);
+		g_strlcpy(buf, utf8, sizeof(buf));
 		g_free(utf8);
 	}
 
