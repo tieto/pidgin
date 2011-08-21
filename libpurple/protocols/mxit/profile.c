@@ -119,12 +119,12 @@ static int calculateAge( const char* date )
 		return 0;
 
 	/* current time */
-	t = time(NULL);
+	t = time( NULL );
 	localtime_r( &t, &now );
 
 	/* decode hdate */
 	memset( &bdate, 0, sizeof( struct tm ) );
-	purple_str_to_time(date, FALSE, &bdate, NULL, NULL);
+	purple_str_to_time( date, FALSE, &bdate, NULL, NULL );
 
 	/* calculate difference */
 	age = now.tm_year - bdate.tm_year;
@@ -172,7 +172,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	if ( buddy ) {
 		purple_notify_user_info_add_pair( info, _( "Alias" ), purple_buddy_get_alias( buddy ) );
 		purple_notify_user_info_add_section_break( info );
-		contact = purple_buddy_get_protocol_data(buddy);
+		contact = purple_buddy_get_protocol_data( buddy );
 	}
 
 	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
@@ -296,7 +296,7 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 	column = purple_notify_searchresults_column_new( _( "Where I live" ) );
 	purple_notify_searchresults_column_add( results, column );
 
-	while (entries != NULL) {
+	while ( entries != NULL ) {
 		struct MXitProfile* profile	= ( struct MXitProfile *) entries->data;
 		GList*	row;
 		gchar* tmp = purple_base64_encode( (unsigned char *) profile->userid, strlen( profile->userid ) );
@@ -326,5 +326,5 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 
 	purple_notify_searchresults( session->con, NULL, text, NULL, results, NULL, NULL );
 
-	g_free( text);
+	g_free( text );
 }

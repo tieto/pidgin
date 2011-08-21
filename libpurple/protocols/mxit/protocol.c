@@ -86,7 +86,7 @@ void mxit_popup( int type, const char* heading, const char* message )
 void mxit_strip_domain( char* username )
 {
 	if ( g_str_has_suffix( username, "@m" ) )
-		username[ strlen(username) - 2 ] = '\0';
+		username[ strlen( username ) - 2 ] = '\0';
 }
 
 
@@ -704,9 +704,9 @@ void mxit_send_register( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
-	else if (mxit_audio_enabled())
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
@@ -748,9 +748,9 @@ void mxit_send_login( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
-	else if (mxit_audio_enabled())
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
@@ -835,7 +835,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
@@ -868,7 +868,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 
 	/* add attributes */
 	for ( i = 1; i < nr_attrib * 3; i+=3 )
-		datalen += sprintf(	data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
+		datalen += sprintf( data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
 								CP_FLD_TERM, parts[i], CP_FLD_TERM, parts[i + 1], CP_FLD_TERM, parts[i + 2] );
 
 	/* queue packet for transmission */
@@ -900,7 +900,7 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -929,7 +929,7 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -1175,7 +1175,7 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_CREATE );
@@ -1204,7 +1204,7 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_INVITE );
@@ -2281,7 +2281,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 
 		case CP_CMD_PRESENCE :
 				/* presence update */
-				mxit_parse_cmd_presence(session, &packet->records[2], packet->rcount - 3 );
+				mxit_parse_cmd_presence( session, &packet->records[2], packet->rcount - 3 );
 				break;
 
 		case CP_CMD_RX_MSG :
