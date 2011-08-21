@@ -14,7 +14,11 @@ version 3.0.0 (??/??/????):
 
 		Removed:
 		* pidgin_blist_update_account_error_state
+		* pidgin_check_if_dir
 		* PIDGIN_DIALOG
+		* pidgin_dialogs_alias_contact
+		* pidgin_set_custom_buddy_icon
+		* pidgin_setup_screenname_autocomplete
 		* purple_core_migrate
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
@@ -26,6 +30,7 @@ version 3.0.0 (??/??/????):
 		* purple_strlcpy
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request_len, insetad.
+		* struct _GtkIMHtmlFontDetail
 		* The 'clipboard_text_string' and 'clipboard_html_string' members of
 		  GtkIMHtml
 		* The 'sg' member of PidginConversation
