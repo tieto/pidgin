@@ -4036,21 +4036,12 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 
 	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
-		int i;
-		struct {
-			char *text;
-			char *value;
-		} yfields[] = {
-			{N_("Home Phone Number"), ypd->phone.home},
-			{N_("Work Phone Number"), ypd->phone.work},
-			{N_("Mobile Phone Number"), ypd->phone.mobile},
-			{NULL, NULL}
-		};
-		for (i = 0; yfields[i].text; i++) {
-			if (!yfields[i].value || !*yfields[i].value)
-				continue;
-			purple_notify_user_info_add_pair(user_info, _(yfields[i].text), yfields[i].value);
-		}
+		if (ypd->phone.home && *ypd->phone.home)
+			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), ypd->phone.home);
+		if (ypd->phone.work && *ypd->phone.work)
+			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), ypd->phone.work);
+		if (ypd->phone.mobile && *ypd->phone.mobile)
+			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), ypd->phone.mobile);
 	}
 }
 
