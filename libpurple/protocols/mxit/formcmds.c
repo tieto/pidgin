@@ -253,8 +253,8 @@ static void command_clear(struct MXitSession* session, const char* from, GHashTa
 
 /*------------------------------------------------------------------------
  * Process a Reply MXit command.
- *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
- *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
+ *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|displaymsg=Processing|id=12345:]
+ *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|displaymsg=Processing|id=12345:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -265,22 +265,26 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 	char* selmsg;
 	char* nm;
 
-	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
-	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
+	selmsg = g_hash_table_lookup(hash, "selmsg");			/* selection message */
+	replymsg = g_hash_table_lookup(hash, "replymsg");		/* reply message */
 	nm = g_hash_table_lookup(hash, "nm");					/* name parameter */
-	if ((selmsg) && (replymsg) && (nm)) {
-		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replycmd = g_strdup_printf("::type=reply|nm=%s|res=%s|err=0:", nm, replymsg);
 
-		mxit_add_html_link( mx, replycmd, seltext );
+	if ((selmsg == NULL) || (replymsg == NULL))
+		return;		/* these parameters are required */
+
+	if (nm) {		/* indicates response must be a structured response */
+		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
+		gchar*	replycmd = g_strdup_printf("type=reply|nm=%s|res=%s|err=0", nm, replymsg);
+
+		mxit_add_html_link( mx, replycmd, TRUE, seltext );
 
 		g_free(seltext);
 		g_free(replycmd);
 	}
-	else if ((selmsg) && (replymsg)) {
+	else {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
 
-		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
+		mxit_add_html_link( mx, purple_url_decode(replymsg), FALSE, seltext );
 
 		g_free(seltext);
 	}
@@ -317,6 +321,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 
 /*------------------------------------------------------------------------
  * Process an inline image MXit command.
+ *  [::op=img|dat=ASDF23408asdflkj2309flkjsadf%3d%3d|algn=1|w=120|h=12|t=100|replymsg=text:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -372,7 +377,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, _( "click here" ));
+		mxit_add_html_link(mx, reply, FALSE, _( "click here" ));
 	}
 }
 

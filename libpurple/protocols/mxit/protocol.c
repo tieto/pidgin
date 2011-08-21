@@ -86,7 +86,7 @@ void mxit_popup( int type, const char* heading, const char* message )
 void mxit_strip_domain( char* username )
 {
 	if ( g_str_has_suffix( username, "@m" ) )
-		username[ strlen(username) - 2 ] = '\0';
+		username[ strlen( username ) - 2 ] = '\0';
 }
 
 
@@ -704,9 +704,9 @@ void mxit_send_register( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
-	else if (mxit_audio_enabled())
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
@@ -748,9 +748,9 @@ void mxit_send_login( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* Voice and Video supported */
-	if (mxit_audio_enabled() && mxit_video_enabled())
-		features |= (MXIT_CF_VOICE | MXIT_CF_VIDEO);
-	else if (mxit_audio_enabled())
+	if ( mxit_audio_enabled() && mxit_video_enabled() )
+		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
+	else if ( mxit_audio_enabled() )
 		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
@@ -835,7 +835,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_EXTPROFILE_GET );
@@ -868,7 +868,7 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 
 	/* add attributes */
 	for ( i = 1; i < nr_attrib * 3; i+=3 )
-		datalen += sprintf(	data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
+		datalen += sprintf( data + datalen, "%c%s%c%s%c%s",		/* \1name\1type\1value  */
 								CP_FLD_TERM, parts[i], CP_FLD_TERM, parts[i + 1], CP_FLD_TERM, parts[i + 2] );
 
 	/* queue packet for transmission */
@@ -900,7 +900,7 @@ void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned i
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -929,7 +929,7 @@ void mxit_send_suggest_search( struct MXitSession* session, int max, const char*
 
 	/* add attributes */
 	for ( i = 0; i < nr_attrib; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, attribute[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_SUGGESTCONTACTS );
@@ -1175,7 +1175,7 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_CREATE );
@@ -1204,7 +1204,7 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 
 	/* add usernames */
 	for ( i = 0; i < nr_usernames; i++ )
-		datalen += sprintf(	data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
+		datalen += sprintf( data + datalen, "%c%s", CP_FLD_TERM, usernames[i] );
 
 	/* queue packet for transmission */
 	mxit_queue_packet( session, data, datalen, CP_CMD_GRPCHAT_INVITE );
@@ -1448,7 +1448,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	PurpleStatus*	status;
 	int				presence;
 	const char*		statusmsg;
-	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
+	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
 									CP_PROFILE_MOBILENR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME, CP_PROFILE_FLAGS };
 
@@ -1516,6 +1516,7 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 {
 	struct RXMsgData*	mx			= NULL;
 	char*				message		= NULL;
+	char*				sender		= NULL;
 	int					msglen		= 0;
 	int					msgflags	= 0;
 	int					msgtype		= 0;
@@ -1529,10 +1530,11 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 	msglen = strlen( message );
 
 	/* strip off dummy domain */
-	mxit_strip_domain( records[0]->fields[0]->data );
+	sender = records[0]->fields[0]->data;
+	mxit_strip_domain( sender );
 
 #ifdef	DEBUG_PROTOCOL
-	purple_debug_info( MXIT_PLUGIN_ID, "Message received from '%s'\n", records[0]->fields[0]->data );
+	purple_debug_info( MXIT_PLUGIN_ID, "Message received from '%s'\n", sender );
 #endif
 
 	/* decode message flags (if any) */
@@ -1540,33 +1542,42 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		msgflags = atoi( records[0]->fields[4]->data );
 	msgtype = atoi( records[0]->fields[2]->data );
 
-	if ( msgflags & CP_MSG_ENCRYPTED ) {
-		/* this is an encrypted message. we do not currently support those so ignore it */
+	if ( msgflags & CP_MSG_PWD_ENCRYPTED ) {
+		/* this is a password encrypted message. we do not currently support those so ignore it */
 		PurpleBuddy*	buddy;
 		const char*		name;
 		char			msg[128];
 
-		buddy = purple_find_buddy( session->acc, records[0]->fields[0]->data );
+		buddy = purple_find_buddy( session->acc, sender );
 		if ( buddy )
 			name = purple_buddy_get_alias( buddy );
 		else
-			name = records[0]->fields[0]->data;
+			name = sender;
 		g_snprintf( msg, sizeof( msg ), _( "%s sent you an encrypted message, but it is not supported on this client." ), name );
 		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), msg );
 		return;
+	}
+	else if ( msgflags & CP_MSG_TL_ENCRYPTED ) {
+		/* this is a transport-layer encrypted message. */
+		message = mxit_decrypt_message( session, message );
+		if ( !message ) {
+			/* could not be decrypted */
+			serv_got_im( session->con, sender, _( "An encrypted message was received which could not be decrypted." ), PURPLE_MESSAGE_ERROR, time( NULL ) );
+			return;
+		}
 	}
 
 	if ( msgflags & CP_MSG_NOTIFY_DELIVERY ) {
 		/* delivery notification is requested */
 		if ( records[0]->fcount >= 4 )
-			mxit_send_msgevent( session, records[0]->fields[0]->data, records[0]->fields[3]->data, CP_MSGEVENT_DELIVERED );
+			mxit_send_msgevent( session, sender, records[0]->fields[3]->data, CP_MSGEVENT_DELIVERED );
 	}
 
 	/* create and initialise new markup struct */
 	mx = g_new0( struct RXMsgData, 1 );
 	mx->msg = g_string_sized_new( msglen );
 	mx->session = session;
-	mx->from = g_strdup( records[0]->fields[0]->data );
+	mx->from = g_strdup( sender );
 	mx->timestamp = atoi( records[0]->fields[1]->data );
 	mx->got_img = FALSE;
 	mx->chatid = -1;
@@ -1597,6 +1608,10 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		 * so the image received callback function will eventually display
 		 * the message. */
 	}
+
+	/* cleanup */
+	if ( msgflags & CP_MSG_TL_ENCRYPTED )
+		g_free( message );
 }
 
 
@@ -1809,10 +1824,6 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		else if ( strcmp( CP_PROFILE_GENDER, fname ) == 0 ) {
 			/* gender */
 			profile->male = ( fvalue[0] == '1' );
-		}
-		else if ( strcmp( CP_PROFILE_HIDENUMBER, fname ) == 0 ) {
-			/* hide number */
-			profile->hidden = ( fvalue[0] == '1' );
 		}
 		else if ( strcmp( CP_PROFILE_FULLNAME, fname ) == 0 ) {
 			/* nickname */
@@ -2270,7 +2281,7 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 
 		case CP_CMD_PRESENCE :
 				/* presence update */
-				mxit_parse_cmd_presence(session, &packet->records[2], packet->rcount - 3 );
+				mxit_parse_cmd_presence( session, &packet->records[2], packet->rcount - 3 );
 				break;
 
 		case CP_CMD_RX_MSG :
