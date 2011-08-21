@@ -24,6 +24,7 @@ version 3.0.0 (??/??/????):
 		* pidgin_set_custom_buddy_icon
 		* pidgin_setup_screenname_autocomplete
 		* PidginConversation.sg
+		* purple_connection_error
 		* purple_core_migrate
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count

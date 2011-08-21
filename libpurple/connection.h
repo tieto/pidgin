@@ -453,21 +453,6 @@ void purple_connection_update_progress(PurpleConnection *gc, const char *text,
 void purple_connection_notice(PurpleConnection *gc, const char *text);
 
 /**
- * Closes a connection with an error.
- *
- * @param gc     The connection.
- * @param reason The error text, which may not be @c NULL.
- * @deprecated in favour of #purple_connection_error_reason.  Calling
- *  @c purple_connection_error(gc, text) is equivalent to calling
- *  @c purple_connection_error_reason(gc, reason, text) where @c reason is
- *  #PURPLE_CONNECTION_ERROR_OTHER_ERROR if @c gc->wants_to_die is @c TRUE, and
- *  #PURPLE_CONNECTION_ERROR_NETWORK_ERROR if not.  (This is to keep
- *  auto-reconnection behaviour the same when using old prpls which don't use
- *  reasons yet.)
- */
-void purple_connection_error(PurpleConnection *gc, const char *reason);
-
-/**
  * Closes a connection with an error and a human-readable description of the
  * error.  It also sets @c gc->wants_to_die to the value of
  * #purple_connection_error_is_fatal(@a reason), mainly for
