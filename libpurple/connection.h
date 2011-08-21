@@ -219,9 +219,9 @@ typedef struct
 	 *
 	 * @since 2.3.0
 	 */
-	void (*report_disconnect_reason)(PurpleConnection *gc,
-	                                 PurpleConnectionError reason,
-	                                 const char *text);
+	void (*report_disconnect)(PurpleConnection *gc,
+	                          PurpleConnectionError reason,
+	                          const char *text);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);

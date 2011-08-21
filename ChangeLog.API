@@ -11,6 +11,8 @@ version 3.0.0 (??/??/????):
 		Changed:
 		* purple_util_fetch_url_request_len now takes a PurpleAccount as
 		  the first parameter
+		* PurpleConnectionUiOps.report_disconnect now passes a
+		  PurpleConnectionError as the second parameter
 
 		Removed:
 		* GtkIMHtml.clipboard_html_string
@@ -33,7 +35,7 @@ version 3.0.0 (??/??/????):
 		* purple_strlcpy
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request_len, insetad.
-		* PurpleConnectionUiOps.report_disconnect
+		* PurpleConnectionUiOps.report_disconnect_reason
 		* struct _GtkIMHtmlFontDetail
 
 version 2.10.0:
