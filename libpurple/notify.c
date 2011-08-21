@@ -383,40 +383,6 @@ purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *col
 	return column->visible;
 }
 
-guint
-purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *results)
-{
-	g_return_val_if_fail(results != NULL, 0);
-
-	return g_list_length(results->columns);
-}
-
-guint
-purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *results)
-{
-	g_return_val_if_fail(results != NULL, 0);
-
-	return g_list_length(results->rows);
-}
-
-char *
-purple_notify_searchresults_column_get_title(PurpleNotifySearchResults *results,
-										   unsigned int column_id)
-{
-	g_return_val_if_fail(results != NULL, NULL);
-
-	return ((PurpleNotifySearchColumn *)g_list_nth_data(results->columns, column_id))->title;
-}
-
-GList *
-purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
-								  unsigned int row_id)
-{
-	g_return_val_if_fail(results != NULL, NULL);
-
-	return g_list_nth_data(results->rows, row_id);
-}
-
 void *
 purple_notify_userinfo(PurpleConnection *gc, const char *who,
 						   PurpleNotifyUserInfo *user_info, PurpleNotifyCloseCallback cb, gpointer user_data)
