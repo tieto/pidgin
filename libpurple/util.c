@@ -4115,17 +4115,6 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 }
 
 PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
-			user_agent, http11, request, include_headers, max_len, callback,
-			user_data);
-}
-
-PurpleUtilFetchUrlData *
 purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
