@@ -152,7 +152,7 @@ do_check(void)
 				url,
 				host);
 
-		purple_util_fetch_url_request_len_with_account(NULL, url, TRUE, NULL, FALSE,
+		purple_util_fetch_url_request_len(NULL, url, TRUE, NULL, FALSE,
 			request, TRUE, -1, version_fetch_cb, NULL);
 
 		g_free(request);

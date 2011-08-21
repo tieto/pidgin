@@ -2014,7 +2014,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 			gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data = purple_util_fetch_url_request_len_with_account(
+			url_data = purple_util_fetch_url_request_len(
 					proxy_ssl ? account : NULL, url, TRUE, YAHOO_CLIENT_USERAGENT,
 					TRUE, NULL, TRUE, -1, yahoo_auth16_stage2, auth_data);
 			if (url_data)
@@ -2055,7 +2055,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	g_free(encoded_password);
 	g_free(encoded_username);
 
-	url_data = purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len(
 			proxy_ssl ? account : NULL, url, TRUE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 			yahoo_auth16_stage1_cb, auth_data);
@@ -3708,7 +3708,7 @@ void yahoo_login(PurpleAccount *account) {
 
 	/* Get the pager server.  Actually start connecting in the callback since we
 	 * must have the contents of the HTTP response to proceed. */
-	url_data = purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len(
 			proxy_ssl ? purple_connection_get_account(gc) : NULL,
 			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
 			use_whole_url ? TRUE : FALSE,
@@ -4296,7 +4296,7 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		use_whole_url ? base_url : "",
 		yd->cookie_t, yd->cookie_y);
 
-	url_data = purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len(
 			purple_connection_get_account(gc), base_url, use_whole_url,
 			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_get_inbox_token_cb, gc);
@@ -4488,7 +4488,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
-	url_data = purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len(
 			purple_connection_get_account(gc), YAHOO_SMS_CARRIER_URL, use_whole_url,
 			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_get_sms_carrier_cb, data);

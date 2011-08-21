@@ -8,6 +8,10 @@ version 3.0.0 (??/??/????):
 		* purple_request_field_set_tooltip
 		* purple_request_field_get_tooltip
 
+		Changed:
+		* purple_util_fetch_url_request_len now takes a PurpleAccount as
+		  the first parameter
+
 		Removed:
 		* purple_core_migrate
 		* purple_notify_searchresults_column_get_title
@@ -18,6 +22,8 @@ version 3.0.0 (??/??/????):
 		* purple_status_type_set_primary_attr
 		* purple_strlcat
 		* purple_strlcpy
+		* purple_util_fetch_url_request_len_with_account.  Use
+		  purple_util_fetch_url_request_len, insetad.
 
 version 2.10.0:
 	libpurple:
