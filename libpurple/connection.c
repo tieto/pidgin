@@ -578,13 +578,8 @@ purple_connection_error_reason (PurpleConnection *gc,
 
 	ops = purple_connections_get_ui_ops();
 
-	if (ops != NULL)
-	{
-		if (ops->report_disconnect_reason != NULL)
-			ops->report_disconnect_reason (gc, reason, description);
-		if (ops->report_disconnect != NULL)
-			ops->report_disconnect (gc, description);
-	}
+	if (ops && ops->report_disconnect_reason)
+		ops->report_disconnect_reason(gc, reason, description);
 
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);

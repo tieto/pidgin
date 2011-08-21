@@ -194,16 +194,6 @@ typedef struct
 	void (*notice)(PurpleConnection *gc, const char *text);
 
 	/**
-	 * Called when an error causes a connection to be disconnected.
-	 * Called before #disconnected.
-	 * @param text  a localized error message.
-	 * @see #purple_connection_error
-	 * @deprecated in favour of
-	 *             #PurpleConnectionUiOps.report_disconnect_reason.
-	 */
-	void (*report_disconnect)(PurpleConnection *gc, const char *text);
-
-	/**
 	 * Called when libpurple discovers that the computer's network
 	 * connection is active.  On Linux, this uses Network Manager if
 	 * available; on Windows, it uses Win32's network change notification
@@ -219,17 +209,15 @@ typedef struct
 
 	/**
 	 * Called when an error causes a connection to be disconnected.
-	 *  Called before #disconnected.  This op is intended to replace
-	 *  #report_disconnect.  If both are implemented, this will be called
-	 *  first; however, there's no real reason to implement both.
+	 * Called before #disconnected.
 	 *
-	 *  @param reason  why the connection ended, if known, or
-	 *                 #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
-	 *  @param text  a localized message describing the disconnection
-	 *               in more detail to the user.
-	 *  @see #purple_connection_error_reason
+	 * @param reason  why the connection ended, if known, or
+	 *                #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
+	 * @param text  a localized message describing the disconnection
+	 *              in more detail to the user.
+	 * @see #purple_connection_error_reason
 	 *
-	 *  @since 2.3.0
+	 * @since 2.3.0
 	 */
 	void (*report_disconnect_reason)(PurpleConnection *gc,
 	                                 PurpleConnectionError reason,
