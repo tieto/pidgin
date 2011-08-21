@@ -281,6 +281,7 @@ void mxit_show_search_results( struct MXitSession* session, int searchType, int 
 
 	/* define columns */
 	column = purple_notify_searchresults_column_new( _( "UserId" ) );
+	purple_notify_searchresult_column_set_visible( column, FALSE );
 	purple_notify_searchresults_column_add( results, column );
 	column = purple_notify_searchresults_column_new( _( "Display Name" ) );
 	purple_notify_searchresults_column_add( results, column );
