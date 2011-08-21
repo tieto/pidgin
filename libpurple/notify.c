@@ -363,42 +363,24 @@ purple_notify_searchresults_column_new(const char *title)
 
 	sc = g_new0(PurpleNotifySearchColumn, 1);
 	sc->title = g_strdup(title);
+	sc->visible = TRUE;
 
 	return sc;
 }
 
-guint
-purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *results)
+void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible)
 {
-	g_return_val_if_fail(results != NULL, 0);
+	g_return_if_fail(column != NULL);
 
-	return g_list_length(results->columns);
+	column->visible = visible;
 }
 
-guint
-purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *results)
+gboolean
+purple_notify_searchresult_column_is_visible(const PurpleNotifySearchColumn *column)
 {
-	g_return_val_if_fail(results != NULL, 0);
+	g_return_val_if_fail(column != NULL, FALSE);
 
-	return g_list_length(results->rows);
-}
-
-char *
-purple_notify_searchresults_column_get_title(PurpleNotifySearchResults *results,
-										   unsigned int column_id)
-{
-	g_return_val_if_fail(results != NULL, NULL);
-
-	return ((PurpleNotifySearchColumn *)g_list_nth_data(results->columns, column_id))->title;
-}
-
-GList *
-purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
-								  unsigned int row_id)
-{
-	g_return_val_if_fail(results != NULL, NULL);
-
-	return g_list_nth_data(results->rows, row_id);
+	return column->visible;
 }
 
 void *

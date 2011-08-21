@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.0 (MM/DD/YYYY):
+version 3.0.0 (??/??/????):
+	AIM and ICQ:
+	* Make buddy list management code more efficient. (Oliver) (#4816)
+	* Don't try to format ICQ usernames entered as email addresses.
+	  Gets rid of an "Unable to format username" error at login. (#13883)
+
+version 2.10.0 (08/18/2011):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.
 	  (Quentin Brandon) (#5231)
@@ -15,10 +21,12 @@ version 2.10.0 (MM/DD/YYYY):
 	  strlcpy() and strlcat(), etc., forestalling an entire class of
 	  string buffer overrun bugs.
 	  (The Electronic Frontier Foundation, Dan Auerbach, Chris Palmer,
-          Jacob Appelbaum)
+	  Jacob Appelbaum)
 	* Change some filename manipulations in filectl.c to use MAXPATHLEN
 	  instead of arbitrary length constants.  (The Electronic Frontier
 	  Foundation, Dan Auerbach, Chris Palmer, Jacob Appelbaum)
+	* Fix endianness-related crash in NTLM authentication (Jon Goldberg)
+	  (#14163)
 
 	Gadu-Gadu:
 	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
@@ -33,9 +41,15 @@ version 2.10.0 (MM/DD/YYYY):
 	  ICQ account that is configured as an AIM account. (#14437)
 
 	IRC:
+	* Fix a crash when remote users have certain characters in their
+	  nicknames. (Discovered by Djego Ibanez) (#14341)
 	* Fix the handling of formatting following mIRC ^O (#14436)
+	* Fix crash when NAMES is empty. (James McLaughlin) (#14518)
 
 	MSN:
+	* Fix incorrect handling of HTTP 100 responses when using the HTTP
+	  connection method.  This can lead to a crash. (Discovered by Marius
+	  Wachtler)
 	* Fix seemingly random crashing. (#14307)
 	* Fix a crash when the account is disconnected at the time we are doing a
 	  SB request. (Hanzz, ported by shlomif) (#12431)
@@ -49,6 +63,12 @@ version 2.10.0 (MM/DD/YYYY):
 	Yahoo!/Yahoo! JAPAN:
 	* Fix coming out of idle while in an unavailable state
 	* Fix logging into Yahoo! JAPAN.  (#14259)
+
+	Windows-Specific Changes:
+	* Open an explorer.exe window at the location of the file when clicking
+	  on a file link instead of executing the file, because executing a file
+	  can be potentially dangerous.  (Discovered by James Burton of
+	  Insomnia Security) (Fixed by Eion Robb)
 
 version 2.9.0 (06/23/2011):
 	Pidgin:

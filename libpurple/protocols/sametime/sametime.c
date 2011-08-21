@@ -413,7 +413,7 @@ static int mw_session_io_write(struct mwSession *session,
 			g_strerror(errno));
     DEBUG_ERROR("write returned %" G_GSSIZE_FORMAT ", %" G_GSIZE_FORMAT
 			" bytes left unwritten\n", ret, len);
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    tmp);
 	g_free(tmp);
@@ -1613,7 +1613,7 @@ static void mw_session_stateChange(struct mwSession *session,
       default:
         reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
       }
-      purple_connection_error_reason(gc, reason, err);
+      purple_connection_error(gc, reason, err);
       g_free(err);
     }
     break;
@@ -1762,7 +1762,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
   if(! ret) {
     DEBUG_INFO("connection reset\n");
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Server closed the connection"));
 
@@ -1773,7 +1773,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     DEBUG_INFO("error in read callback: %s\n", err_str);
 
     msg = g_strdup_printf(_("Lost connection with server: %s"), err_str);
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    msg);
     g_free(msg);
@@ -1799,7 +1799,7 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
       /* this is a regular connect, error out */
       gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
           error_message);
-      purple_connection_error_reason(pd->gc,
+      purple_connection_error(pd->gc,
                                      PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                      tmp);
       g_free(tmp);
@@ -3691,7 +3691,7 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
   const char *msg = _("No Sametime Community Server specified");
-  purple_connection_error_reason(gc,
+  purple_connection_error(gc,
                                  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
                                  msg);
 }
@@ -3806,7 +3806,7 @@ static void mw_prpl_login(PurpleAccount *account) {
   purple_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
   if (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL) {
-    purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+    purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Unable to connect"));
   }
 }

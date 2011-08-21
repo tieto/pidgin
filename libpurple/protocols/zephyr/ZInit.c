@@ -108,7 +108,7 @@ Code_t ZInitialize()
 	return (krbval);
     }
 #else
-    g_strlcpy(__Zephyr_realm, "local-realm", 12);
+    g_strlcpy(__Zephyr_realm, "local-realm", REALM_SZ);
 #endif
 
     __My_addr.s_addr = INADDR_NONE;

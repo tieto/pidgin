@@ -857,6 +857,10 @@ create_string_field(PurpleRequestField *field)
 			gtk_text_buffer_set_text(buffer, value, -1);
 		}
 
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(textview, purple_request_field_get_tooltip(field));
+#endif
+
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
 			purple_request_field_string_is_editable(field));
 
@@ -880,6 +884,10 @@ create_string_field(PurpleRequestField *field)
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(widget), value);
+
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
 
 		if (purple_request_field_string_is_masked(field))
 		{
@@ -921,6 +929,10 @@ create_int_field(PurpleRequestField *field)
 		gtk_entry_set_text(GTK_ENTRY(widget), buf);
 	}
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
+
 	g_signal_connect(G_OBJECT(widget), "focus-out-event",
 					 G_CALLBACK(field_int_focus_out_cb), field);
 
@@ -934,6 +946,10 @@ create_bool_field(PurpleRequestField *field)
 
 	widget = gtk_check_button_new_with_label(
 		purple_request_field_get_label(field));
+
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
 		purple_request_field_bool_get_default_value(field));
@@ -965,6 +981,10 @@ create_choice_field(PurpleRequestField *field)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
 						purple_request_field_choice_get_default_value(field));
 
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
+
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
 	}
@@ -981,6 +1001,10 @@ create_choice_field(PurpleRequestField *field)
 			box = gtk_vbox_new(FALSE, 0);
 
 		widget = box;
+
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
 
 		for (l = labels, i = 0; l != NULL; l = l->next, i++)
 		{
@@ -1024,6 +1048,10 @@ create_image_field(PurpleRequestField *field)
 	g_object_unref(G_OBJECT(buf));
 	g_object_unref(G_OBJECT(scale));
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
+
 	return widget;
 }
 
@@ -1038,6 +1066,10 @@ create_account_field(PurpleRequestField *field)
 		G_CALLBACK(field_account_cb),
 		purple_request_field_account_get_filter(field),
 		field);
+
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(widget, purple_request_field_get_tooltip(field));
+#endif
 
 	return widget;
 }

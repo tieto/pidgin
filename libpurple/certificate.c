@@ -1704,7 +1704,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 		flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 
 		purple_debug_warning("certificate/x509/tls_cached",
-				  "No Certificate Authorities with either DN found "
+				  "No Certificate Authorities with either DN "
 				  "found. I'll prompt the user, I guess.\n");
 
 		x509_tls_cached_check_subject_name(vrq, flags);

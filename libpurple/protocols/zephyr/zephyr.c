@@ -146,7 +146,7 @@ struct _zephyr_triple {
 					return TRUE;
 
 #define z_call_s(func, err)	if (func != ZERR_NONE) {\
-					purple_connection_error(gc, err);\
+					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, err);\
 					return;\
 				}
 
@@ -1585,7 +1585,7 @@ static void zephyr_login(PurpleAccount * account)
 	/* XXX z_call_s should actually try to report the com_err determined error */
 	if (use_tzc(zephyr)) {
 		pid_t pid;
-		/*		  purple_connection_error(gc,"tzc not supported yet"); */
+		/*		  purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "tzc not supported yet"); */
 		if ((pipe(zephyr->totzc) != 0) || (pipe(zephyr->fromtzc) != 0)) {
 			purple_debug_error("zephyr", "pipe creation failed. killing\n");
 			exit(-1);
@@ -1706,7 +1706,7 @@ static void zephyr_login(PurpleAccount * account)
 				ptr++;
 			}
 			if (ptr >=bufcur) {
-				purple_connection_error(gc,"invalid output by tzc (or bad parsing code)");
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "invalid output by tzc (or bad parsing code)");
 				free(buf);
 				return;
 			}
@@ -1821,7 +1821,7 @@ static void zephyr_login(PurpleAccount * account)
 		purple_debug_info("zephyr","realm: %s\n",zephyr->realm);
 	}
 	else {
-		purple_connection_error(gc,"Only ZEPH0.2 supported currently");
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "Only ZEPH0.2 supported currently");
 		return;
 	}
 	purple_debug_info("zephyr","does it get here\n");

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-10 02:23-0800\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-03-09 11:03+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -215,6 +215,10 @@ msgstr "Prihlasovacie meno"
 
 msgid "Alias (optional)"
 msgstr "Prezývka (voliteľná)"
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "Správa (voliteľná)"
 
 msgid "Add in group"
 msgstr "Pridať v skupine"
@@ -1665,6 +1669,7 @@ msgstr "Tento protokol nepodporuje zistenie verejnej prezývky."
 msgid "Unknown"
 msgstr "Neznáma"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Priatelia"
 
@@ -1928,6 +1933,9 @@ msgstr "Nepodarilo sa vytvoriť vlákno: %s"
 
 msgid "Unknown reason"
 msgstr "Neznáma príčina"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -3159,6 +3167,25 @@ msgstr "Zadajte, prosím, svoje súčasné heslo a vaše nové heslo pre UIN: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Zmeniť Gadu-Gadu heslo"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Zmeniť _status na:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Prihlásení priatelia"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Zmeniť status na:"
+
+#, fuzzy
+msgid "Please, select who can see your status"
+msgstr "Prosím, vyberte obrázok pre smajlíka."
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Vyberte chat pre priateľa: %s"
@@ -3302,6 +3329,19 @@ msgstr "Používateľ Gadu-Gadu"
 msgid "GG server"
 msgstr "GG server"
 
+msgid "Don't use encryption"
+msgstr "Nepoužívať šifrovanie"
+
+msgid "Use encryption if available"
+msgstr "Použiť šifrovanie ak je to možné"
+
+#. TODO
+msgid "Require encryption"
+msgstr "Vyžadovať šifrovanie"
+
+msgid "Connection security"
+msgstr "Bezpečnosť pripojenia"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Neznámy príkaz: %s"
@@ -3337,7 +3377,6 @@ msgstr "Správa dňa pre %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3590,6 +3629,10 @@ msgstr "Operátori %s"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;akcia, ktorú vykonať&gt;:  Vykonanie akcie."
+
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Odošle príkaz na chanserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -4668,7 +4711,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [správa]: Pozve používateľa do miestnosti."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;miestnosť&gt; [heslo]: Vstúpiť do diskusie na tomto serveri."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4709,17 +4753,8 @@ msgstr "Modul protokolu XMPP"
 msgid "Domain"
 msgstr "Doména"
 
-msgid "Require encryption"
-msgstr "Vyžadovať šifrovanie"
-
-msgid "Use encryption if available"
-msgstr "Použiť šifrovanie ak je to možné"
-
 msgid "Use old-style SSL"
 msgstr "Použiť klasické SSL"
-
-msgid "Connection security"
-msgstr "Bezpečnosť pripojenia"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Povoliť textovú autentifikáciu cez nezašifrované spojenia"
@@ -4828,6 +4863,7 @@ msgstr "Prítomná neznáma chyba"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Nedá sa odoslať súbor používateľovi %s, nepodporuje prenosy súborov"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Odoslanie súboru zlyhalo"
 
@@ -5544,18 +5580,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Nepodarilo sa pridať"
 
-msgid "Authorization Request Message:"
-msgstr "Žiadosť o autorizáciu:"
-
-msgid "Please authorize me!"
-msgstr "Autorizujte ma, prosím!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Error retrieving profile"
 msgstr "Chyba pri získavaní profilu"
 
@@ -5767,6 +5791,10 @@ msgstr "Nebolo možné odstrániť používateľa"
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobilná správa nebola odoslaná, pretože bola príliš dlhá."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "Správu sa nepodarilo odoslať, pretože sa vyskytla neznáma chyba."
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5927,18 +5955,6 @@ msgstr "Chcete tohoto priateľa odstrániť aj z vášho adresára?"
 msgid "The username specified is invalid."
 msgstr "Dané používateľské meno je chybné."
 
-msgid "The PIN you entered is invalid."
-msgstr "Zadaný PIN je neplatný"
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Zadaný PIN má chybnú dĺžku [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN je neplatný. Mal by obsahovať iba číslice [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Dva PINy ktoré ste zadali sa nezhodujú."
-
 msgid "The Display Name you entered is invalid."
 msgstr "Zadané používateľské meno je chybné."
 
@@ -5958,35 +5974,70 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Údaje z vášho profilu nie sú načítané. Prosím, skúste to znovu neskôr."
 
-msgid "Your UID"
-msgstr "Vaše UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "Používateľské meno"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "O mne"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Číslo na mobilný telefón"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Aktualizovať váš profil"
+
+msgid "The PIN you entered is invalid."
+msgstr "Zadaný PIN je neplatný"
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Zadaný PIN má chybnú dĺžku [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "PIN je neplatný. Mal by obsahovať iba číslice [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Dva PINy ktoré ste zadali sa nezhodujú."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Chyba aktualizácie profilu"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "Overiť PIN"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Používateľské meno"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Zmeniť ikonu"
 
-#. hidden
-msgid "Hide my number"
-msgstr "Skryť moje číslo"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Číslo na mobilný telefón"
-
-msgid "Update your Profile"
-msgstr "Aktualizovať váš profil"
-
-msgid "Here you can update your MXit profile"
-msgstr "Tu môžete aktualizovať váš MXit profil"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Zmeniť ikonu"
 
 msgid "View Splash"
 msgstr "Zobraziť úvod"
@@ -5997,9 +6048,39 @@ msgstr "Nie je dostupná žiadna úvodná obrazovka"
 msgid "About"
 msgstr "O module"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Hľadanie používateľa"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Hľadanie používateľa"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Podrobnosti o používateľovi"
+
+msgid "_Search"
+msgstr "_Hľadať"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "Zmeniť profil..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Zmeniť náladu..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Nastaviť priateľské meno..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Hľadať používateľov..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6104,12 +6185,11 @@ msgstr "Overenie MXit účtu"
 msgid "Retrieving User Information..."
 msgstr "Načítavajú sa používateľské informácie..."
 
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Boli ste vykopnutý z tohoto MultiMX."
-
 msgid "was kicked"
 msgstr "bol vykopnutý"
+
+msgid "You have been kicked from this MultiMX."
+msgstr "Boli ste vykopnutý z tohoto MultiMX."
 
 msgid "_Room Name:"
 msgstr "Názov _miestnosti:"
@@ -6157,6 +6237,40 @@ msgstr "Zapnúť úvodnú vyskakovaciu obrazovku"
 
 msgid "Last Online"
 msgstr "Posledné prihlásenie"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Správa pozvánky"
+
+#, fuzzy
+msgid "No results"
+msgstr "Výsledky vyhľadávania"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "Nenájdení žiadni používatelia"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Používateľ"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6901,6 +7015,12 @@ msgstr "Nebol uvedený dôvod."
 msgid "Authorization Denied Message:"
 msgstr "Správa zamietnutia autorizácie:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Bola prijatá neočakávaná odpoveď od %s: %s"
@@ -7252,7 +7372,6 @@ msgid "Received authorization"
 msgstr "Prijatá autorizácia"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "Používateľské meno neexistuje"
@@ -7741,9 +7860,6 @@ msgstr "Vyhľadávať priateľov podľa e-mailovej adresy"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Zadajte e-mailovú adresu priateľa, ktorého hľadáte."
 
-msgid "_Search"
-msgstr "_Hľadať"
-
 msgid "Set User Info (web)..."
 msgstr "Nastaviť podrobnosti používateľa (web)..."
 
@@ -7779,9 +7895,6 @@ msgstr "Zobraziť priateľov, ktorí čakajú na autorizáciu"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Hľadať priateľa podľa e-mailovej adresy..."
-
-msgid "Don't use encryption"
-msgstr "Nepoužívať šifrovanie"
 
 msgid "Use clientLogin"
 msgstr "Použiť clientLogin"
@@ -8053,720 +8166,6 @@ msgstr "Zoznam neviditeľnosti"
 
 msgid "These buddies will always see you as offline"
 msgstr "Títo priatelia vás vždy uvidia odhlásených."
-
-msgid "Aquarius"
-msgstr "Vodnár"
-
-msgid "Pisces"
-msgstr "Ryby"
-
-msgid "Aries"
-msgstr "Baran"
-
-msgid "Taurus"
-msgstr "Býk"
-
-msgid "Gemini"
-msgstr "Blíženci"
-
-msgid "Cancer"
-msgstr "Rak"
-
-msgid "Leo"
-msgstr "Lev"
-
-msgid "Virgo"
-msgstr "Panna"
-
-msgid "Libra"
-msgstr "Váhy"
-
-msgid "Scorpio"
-msgstr "Škorpión"
-
-msgid "Sagittarius"
-msgstr "Strelec"
-
-msgid "Capricorn"
-msgstr "Kozorožec"
-
-msgid "Rat"
-msgstr "Potkan"
-
-msgid "Ox"
-msgstr "Osol"
-
-msgid "Tiger"
-msgstr "Tiger"
-
-msgid "Rabbit"
-msgstr "Zajac"
-
-msgid "Dragon"
-msgstr "Drak"
-
-msgid "Snake"
-msgstr "Had"
-
-msgid "Horse"
-msgstr "Kôň"
-
-msgid "Goat"
-msgstr "Koza"
-
-msgid "Monkey"
-msgstr "Opica"
-
-msgid "Rooster"
-msgstr "Kohút"
-
-msgid "Dog"
-msgstr "Pes"
-
-msgid "Pig"
-msgstr "Prasa"
-
-msgid "Other"
-msgstr "Iné"
-
-msgid "Visible"
-msgstr "Viditeľný"
-
-msgid "Friend Only"
-msgstr "Len priateľ"
-
-msgid "Private"
-msgstr "Súkromné"
-
-msgid "QQ Number"
-msgstr "QQ číslo"
-
-msgid "Country/Region"
-msgstr "Krajina/Región"
-
-msgid "Province/State"
-msgstr "Provincia/Štát"
-
-msgid "Zipcode"
-msgstr "PSČ"
-
-msgid "Phone Number"
-msgstr "Telefónne číslo"
-
-msgid "Authorize adding"
-msgstr "Autorizovať pridanie"
-
-msgid "Cellphone Number"
-msgstr "Mobilné číslo"
-
-msgid "Personal Introduction"
-msgstr "Osobné predstavenie"
-
-msgid "City/Area"
-msgstr "Mesto/Oblasť"
-
-msgid "Publish Mobile"
-msgstr "Zverejniť mobil"
-
-msgid "Publish Contact"
-msgstr "Zverejniť kontakt"
-
-msgid "College"
-msgstr "Stredná škola"
-
-msgid "Horoscope"
-msgstr "Horoskop"
-
-msgid "Zodiac"
-msgstr "Zverokruh"
-
-msgid "Blood"
-msgstr "Krv"
-
-msgid "True"
-msgstr "Pravda"
-
-msgid "False"
-msgstr "Nepravda"
-
-msgid "Modify Contact"
-msgstr "Upraviť kontakt"
-
-msgid "Modify Address"
-msgstr "Upraviť adresu"
-
-msgid "Modify Extended Information"
-msgstr "Upraviť rozšírené informácie"
-
-msgid "Modify Information"
-msgstr "Upraviť informácie"
-
-msgid "Update"
-msgstr "Obnoviť"
-
-msgid "Could not change buddy information."
-msgstr "Nebolo možné zmeniť informácie o priateľovi."
-
-msgid "Note"
-msgstr "Poznámka"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "Popisok priateľa"
-
-msgid "Change his/her memo as you like"
-msgstr "Upravte jeho/jej popisok ako si želáte"
-
-msgid "_Modify"
-msgstr "_Upraviť"
-
-msgid "Memo Modify"
-msgstr "Upraviť popisok"
-
-msgid "Server says:"
-msgstr "Server vraví:"
-
-msgid "Your request was accepted."
-msgstr "Vaša požiadavka bola prijatá."
-
-msgid "Your request was rejected."
-msgstr "Vaša požiadavka bola zamietnutá."
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr "%u vyžaduje overenie: %s"
-
-msgid "Add buddy question"
-msgstr "Pridať otázku priateľa"
-
-msgid "Enter answer here"
-msgstr "Sem zadajte odpoveď"
-
-msgid "Send"
-msgstr "Odoslať"
-
-msgid "Invalid answer."
-msgstr "Nesprávna odpoveď."
-
-msgid "Authorization denied message:"
-msgstr "Správa odmietnutia autorizácie"
-
-msgid "Sorry, you're not my style."
-msgstr "Prepáč, nie si môj štýl."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u vyžaduje autorizáciu"
-
-msgid "Add buddy authorize"
-msgstr "Autorizovať pridanie priateľa"
-
-msgid "Enter request here"
-msgstr "Sem napíšte žiadosť"
-
-msgid "Would you be my friend?"
-msgstr "Chceš byť mojím priateľom?"
-
-msgid "QQ Buddy"
-msgstr "QQ Priateľ"
-
-msgid "Add buddy"
-msgstr "Pridať priateľa"
-
-msgid "Invalid QQ Number"
-msgstr "Chybné QQ číslo"
-
-msgid "Failed sending authorize"
-msgstr "Odoslanie autorizácie zlyhalo"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "Odstránenie priateľa %u zlyhalo"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Zlyhalo odstránenie seba zo zoznamu priateľa %d"
-
-msgid "No reason given"
-msgstr "Nebol uvedený dôvod"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "%s vás pridal"
-
-msgid "Would you like to add him?"
-msgstr "Chcete pridať používateľa?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "Zamietnuté používateľom %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Správa: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ID skupiny"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "Zadajte, prosím, Qun číslo"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Môžete hľadať len trvalé Qun skupiny\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(Chybný UTF-8 reťazec)"
-
-msgid "Not member"
-msgstr "Nie je člen"
-
-msgid "Member"
-msgstr "Člen"
-
-msgid "Requesting"
-msgstr "Vyžiadava sa"
-
-msgid "Admin"
-msgstr "Administrátor"
-
-#. XXX: Should this be "Topic"?
-msgid "Room Title"
-msgstr "Titulok miestnosti"
-
-msgid "Notice"
-msgstr "Poznámka"
-
-msgid "Detail"
-msgstr "Detail"
-
-msgid "Creator"
-msgstr "Zakladateľ"
-
-msgid "About me"
-msgstr "O mne"
-
-msgid "Category"
-msgstr "Kategória"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun nedovoľuje iným pripojiť sa"
-
-msgid "Join QQ Qun"
-msgstr "Pripojiť sa do QQ Qun"
-
-msgid "Input request here"
-msgstr "Sem zadajte požiadavku"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Podarilo sa pripojiť do Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "Podarilo sa pripojiť do Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Vstup do Qun %u zamietnutý"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun Operácia"
-
-msgid "Failed:"
-msgstr "Zlyhalo:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Vstúpiť do Qun, neznáma odpoveď"
-
-msgid "Quit Qun"
-msgstr "Opustiť Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Ak ste tvorca, \n"
-"táto operácia nakoniec odstráni tento Qun."
-
-msgid "Sorry, you are not our style"
-msgstr "Prepáč, nie si náš štýl"
-
-msgid "Successfully changed Qun members"
-msgstr "Členovia Qun boli úspešne zmenení"
-
-msgid "Successfully changed Qun information"
-msgstr "Informácie Qun boli úspešne zmenené"
-
-msgid "You have successfully created a Qun"
-msgstr "Úspešne ste vytvorili Qun"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "Chcete teraz nastaviť podrobné informácie?"
-
-msgid "Setup"
-msgstr "Nastavenie"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "Používateľ %u požiadal o vstup do Qun %u pre %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "Používateľ %u požiadal o vstup do Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Vstup do Qun %u, ovládaného správcom %u, zlyhal."
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Pripojenie ku Qun %u je odsúhlasené správcom %u pre %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Odstránený priateľ %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>Nový priateľ %u sa pripojil.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Neznáme-%d"
-
-msgid "Level"
-msgstr "Úroveň"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr " Video"
-
-msgid " Zone"
-msgstr " Zóna"
-
-msgid "Flag"
-msgstr "Značka"
-
-msgid "Ver"
-msgstr "Verzia"
-
-msgid "Invalid name"
-msgstr "Chybný názov"
-
-msgid "Select icon..."
-msgstr "Vyberte ikonu..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Čas pripojenia</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Prihlásených priateľov</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Posledné obnovenie</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Server</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Značka klienta</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Režim pripojenia</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Moja internetová adresa</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Odoslané</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Znovu poslané</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Stratené</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Prijaté</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Prijaté viackrát</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Čas</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Informácie o prihlásení"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Pôvodný autor</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Prispievatelia kódu</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Písači krásnych patchov</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>Uznanie</b>:<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Opatrní testeri</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "a ďalší, prosím dajte mi vedieť... ďakujem!))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>A všetci chalani zo zákulisia...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>Pokojne sa k nám pridajte!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "O OpenQ %s"
-
-msgid "Change Icon"
-msgstr "Zmeniť ikonu"
-
-msgid "Change Password"
-msgstr "Zmeniť heslo"
-
-msgid "Account Information"
-msgstr "Informácie o účte"
-
-msgid "Update all QQ Quns"
-msgstr "Obnoviť všetky QQ Quny"
-
-msgid "About OpenQ"
-msgstr "O OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "Upraviť popisok priateľa"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "QQ Protokol Modul"
-
-msgid "Auto"
-msgstr "Automaticky"
-
-msgid "Select Server"
-msgstr "Vyberte server"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "Connect by TCP"
-msgstr "Pripojiť sa pomocou TCP"
-
-msgid "Show server notice"
-msgstr "Zobraziť oznámenie servera"
-
-msgid "Show server news"
-msgstr "Zobraziť novinky servera"
-
-msgid "Show chat room when msg comes"
-msgstr "Pri prijatí správy zobraziť miestnosť"
-
-msgid "Use default font"
-msgstr "Použiť štandardné písmo"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Interval udržiavania spojenia (sekúnd)"
-
-msgid "Update interval (seconds)"
-msgstr "Interval obnovovania (sekúnd)"
-
-msgid "Unable to decrypt server reply"
-msgstr "Nedá sa dešifrovať odpoveď serveru"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Vyžiadanie tokenu zlyhalo, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "Chybná dĺžka tokenu, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX teraz nie je podporované"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Je vyžadovaná aktivácia"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Neznámy kód odpovede pri prihlasovaní (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "Získava sa captcha"
-
-msgid "Checking captcha"
-msgstr "Kontroluje sa kód captcha"
-
-msgid "Failed captcha verification"
-msgstr "Overenie captcha zlyhalo"
-
-msgid "Captcha Image"
-msgstr "Obrázok captcha"
-
-msgid "Enter code"
-msgstr "Zadajte kód"
-
-msgid "QQ Captcha Verification"
-msgstr "Kontrola QQ captcha"
-
-msgid "Enter the text from the image"
-msgstr "Zadajte text z obrázku"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Neznámy kód odpovede pri kontrole hesla (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Neznámy kód odpovede pri prihlasovaní (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Chyba socketu"
-
-msgid "Getting server"
-msgstr "Získava sa server"
-
-msgid "Requesting token"
-msgstr "Vyžiadava sa token"
-
-msgid "Unable to resolve hostname"
-msgstr "Nepodarilo sa preložiť meno hostiteľa"
-
-msgid "Invalid server or port"
-msgstr "Chybný server alebo port"
-
-msgid "Connecting to server"
-msgstr "Pripája sa na server"
-
-msgid "QQ Error"
-msgstr "Chyba QQ"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Novinky servera:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "Od %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Oznámenie serveru od %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "Neznámy SERVER CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Chyba odpoveď %s(0x%02X)\n"
-"Miestnosť %u, odpoveď 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun príkaz"
-
-msgid "Unable to decrypt login reply"
-msgstr "Nedá sa dešifrovať odpoveď prihlásenia"
-
-msgid "Unknown LOGIN CMD"
-msgstr "Neznámy LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "Neznámy CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d odmietol súbor %s"
-
-msgid "File Send"
-msgstr "Súbor odoslaný"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "používateľ %d prerušil prenos %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9536,6 +8935,9 @@ msgstr "Organizácia"
 msgid "Unit"
 msgstr "Jednotka"
 
+msgid "Note"
+msgstr "Poznámka"
+
 msgid "Join Chat"
 msgstr "Pripojiť sa k rozhovoru"
 
@@ -10176,6 +9578,9 @@ msgstr "Neznáma odpoveď serveru"
 msgid "Unable to create listen socket"
 msgstr "Nepodarilo sa vytvoriť socket"
 
+msgid "Unable to resolve hostname"
+msgstr "Nepodarilo sa preložiť meno hostiteľa"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Používateľské mená SIP nemôžu obsahovať čisté znaky alebo znaky @"
 
@@ -10291,6 +9696,9 @@ msgstr "Vaša Yahoo! správa nebola odoslaná."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Systémová správa Yahoo! pre %s:"
+
+msgid "Authorization denied message:"
+msgstr "Správa odmietnutia autorizácie"
 
 #, c-format
 msgid ""
@@ -11083,14 +10491,17 @@ msgstr "Použiť Globálne nastavenie proxy"
 msgid "No Proxy"
 msgstr "Bez proxy"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Použiť nastavenie prostredia"
@@ -11118,6 +10529,14 @@ msgstr "_Port:"
 
 msgid "Pa_ssword:"
 msgstr "He_slo:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Obnovuje sa relácia"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "hlas a video"
 
 msgid "Unable to save new account"
 msgstr "Nebolo možné uložiť nový účet"
@@ -11167,10 +10586,21 @@ msgstr ""
 "toto okno otvoríte v ponuke <b>Účty->Spravovať účty</b> v okne Zoznam "
 "priateľov"
 
+#, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+"Používateľ %s%s%s%s si chce vás (%s) pridať na svoj zoznam priateľov%s%s"
+
 #, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
 "Používateľ %s%s%s%s si chce vás (%s) pridať na svoj zoznam priateľov%s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Nová správa"
 
 #. Buddy List
 msgid "Background Color"
@@ -11539,6 +10969,10 @@ msgstr "/Pomocník/_Ladiace okno"
 msgid "/Help/De_veloper Information"
 msgstr "/Pomocník/Informácie o _vývojarovi"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/Pomocník/Informácie o _zostave"
+
 msgid "/Help/_Translator Information"
 msgstr "/Pomocník/Informácie o _prekladateľovi"
 
@@ -11723,6 +11157,10 @@ msgstr "_Používateľské meno priateľa:"
 
 msgid "(Optional) A_lias:"
 msgstr "(Voliteľné) _Prezývka:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "Správa pozvánky"
 
 msgid "Add buddy to _group:"
 msgstr "Pridať priateľa do sk_upiny:"
@@ -12160,10 +11598,6 @@ msgstr "Závažná chyba"
 msgid "artist"
 msgstr "umelec"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "hlas a video"
 
@@ -12175,6 +11609,10 @@ msgstr "webmaster"
 
 msgid "win32 port"
 msgstr "port na win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "správca"
@@ -12293,6 +11731,9 @@ msgstr "hebrejčina"
 
 msgid "Hindi"
 msgstr "hindčina"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "maďarčina"
@@ -12537,6 +11978,14 @@ msgstr "Bývalí prekladatelia"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informácie o prekladateľovi %s"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Informácie o zostave %s"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Informácie o prihlásení"
 
 msgid "_Name"
 msgstr "_Meno"
@@ -13486,6 +12935,14 @@ msgstr "Používať hladké posúvanie"
 msgid "F_lash window when IMs are received"
 msgstr "Blikanie okna po prijatí správy"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Spravovať vlastných smajlíkov"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Najdlhší interval do odpovede:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Minimálna výška textového poľa v riadkoch:"
 
@@ -13553,6 +13010,10 @@ msgid "_TURN server:"
 msgstr "_TURN server:"
 
 msgid "_UDP Port:"
+msgstr "_UDP Port:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_UDP Port:"
 
 msgid "Use_rname:"
@@ -14301,6 +13762,9 @@ msgstr "PubSub kolekcia"
 
 msgid "PubSub Leaf"
 msgstr "PubSub list"
+
+msgid "Other"
+msgstr "Iné"
 
 msgid ""
 "\n"
@@ -15157,6 +14621,24 @@ msgstr "_Modul"
 msgid "D_evice"
 msgstr "Z_ariadenie"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "Hlasit_osť:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Prah:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Mikrofón"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15167,9 +14649,6 @@ msgstr "Z_ariadenie"
 #. *< priority
 #. *< id
 msgid "Voice/Video Settings"
-msgstr "Nastavenia hlasu a obrazu"
-
-msgid "Voice and Video Settings"
 msgstr "Nastavenia hlasu a obrazu"
 
 #. *< name
@@ -15438,6 +14917,657 @@ msgstr "Navštíviť webstránku Windows Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Žiadosť o autorizáciu:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "Autorizujte ma, prosím!"
+
+#~ msgid "Your UID"
+#~ msgstr "Vaše UID"
+
+#~ msgid "Hide my number"
+#~ msgstr "Skryť moje číslo"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "Tu môžete aktualizovať váš MXit profil"
+
+#~ msgid "Aquarius"
+#~ msgstr "Vodnár"
+
+#~ msgid "Pisces"
+#~ msgstr "Ryby"
+
+#~ msgid "Aries"
+#~ msgstr "Baran"
+
+#~ msgid "Taurus"
+#~ msgstr "Býk"
+
+#~ msgid "Gemini"
+#~ msgstr "Blíženci"
+
+#~ msgid "Cancer"
+#~ msgstr "Rak"
+
+#~ msgid "Leo"
+#~ msgstr "Lev"
+
+#~ msgid "Virgo"
+#~ msgstr "Panna"
+
+#~ msgid "Libra"
+#~ msgstr "Váhy"
+
+#~ msgid "Scorpio"
+#~ msgstr "Škorpión"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Strelec"
+
+#~ msgid "Capricorn"
+#~ msgstr "Kozorožec"
+
+#~ msgid "Rat"
+#~ msgstr "Potkan"
+
+#~ msgid "Ox"
+#~ msgstr "Osol"
+
+#~ msgid "Tiger"
+#~ msgstr "Tiger"
+
+#~ msgid "Rabbit"
+#~ msgstr "Zajac"
+
+#~ msgid "Dragon"
+#~ msgstr "Drak"
+
+#~ msgid "Snake"
+#~ msgstr "Had"
+
+#~ msgid "Horse"
+#~ msgstr "Kôň"
+
+#~ msgid "Goat"
+#~ msgstr "Koza"
+
+#~ msgid "Monkey"
+#~ msgstr "Opica"
+
+#~ msgid "Rooster"
+#~ msgstr "Kohút"
+
+#~ msgid "Dog"
+#~ msgstr "Pes"
+
+#~ msgid "Pig"
+#~ msgstr "Prasa"
+
+#~ msgid "Visible"
+#~ msgstr "Viditeľný"
+
+#~ msgid "Friend Only"
+#~ msgstr "Len priateľ"
+
+#~ msgid "Private"
+#~ msgstr "Súkromné"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ číslo"
+
+#~ msgid "Country/Region"
+#~ msgstr "Krajina/Región"
+
+#~ msgid "Province/State"
+#~ msgstr "Provincia/Štát"
+
+#~ msgid "Zipcode"
+#~ msgstr "PSČ"
+
+#~ msgid "Phone Number"
+#~ msgstr "Telefónne číslo"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Autorizovať pridanie"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Mobilné číslo"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Osobné predstavenie"
+
+#~ msgid "City/Area"
+#~ msgstr "Mesto/Oblasť"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "Zverejniť mobil"
+
+#~ msgid "Publish Contact"
+#~ msgstr "Zverejniť kontakt"
+
+#~ msgid "College"
+#~ msgstr "Stredná škola"
+
+#~ msgid "Horoscope"
+#~ msgstr "Horoskop"
+
+#~ msgid "Zodiac"
+#~ msgstr "Zverokruh"
+
+#~ msgid "Blood"
+#~ msgstr "Krv"
+
+#~ msgid "True"
+#~ msgstr "Pravda"
+
+#~ msgid "False"
+#~ msgstr "Nepravda"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Upraviť kontakt"
+
+#~ msgid "Modify Address"
+#~ msgstr "Upraviť adresu"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Upraviť rozšírené informácie"
+
+#~ msgid "Modify Information"
+#~ msgstr "Upraviť informácie"
+
+#~ msgid "Update"
+#~ msgstr "Obnoviť"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "Nebolo možné zmeniť informácie o priateľovi."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "Popisok priateľa"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "Upravte jeho/jej popisok ako si želáte"
+
+#~ msgid "_Modify"
+#~ msgstr "_Upraviť"
+
+#~ msgid "Memo Modify"
+#~ msgstr "Upraviť popisok"
+
+#~ msgid "Server says:"
+#~ msgstr "Server vraví:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "Vaša požiadavka bola prijatá."
+
+#~ msgid "Your request was rejected."
+#~ msgstr "Vaša požiadavka bola zamietnutá."
+
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u vyžaduje overenie: %s"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Pridať otázku priateľa"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Sem zadajte odpoveď"
+
+#~ msgid "Send"
+#~ msgstr "Odoslať"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Nesprávna odpoveď."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Prepáč, nie si môj štýl."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u vyžaduje autorizáciu"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Autorizovať pridanie priateľa"
+
+#~ msgid "Enter request here"
+#~ msgstr "Sem napíšte žiadosť"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "Chceš byť mojím priateľom?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ Priateľ"
+
+#~ msgid "Add buddy"
+#~ msgstr "Pridať priateľa"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Chybné QQ číslo"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Odoslanie autorizácie zlyhalo"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "Odstránenie priateľa %u zlyhalo"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Zlyhalo odstránenie seba zo zoznamu priateľa %d"
+
+#~ msgid "No reason given"
+#~ msgstr "Nebol uvedený dôvod"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "%s vás pridal"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "Chcete pridať používateľa?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Zamietnuté používateľom %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "Správa: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "ID skupiny"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Zadajte, prosím, Qun číslo"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Môžete hľadať len trvalé Qun skupiny\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(Chybný UTF-8 reťazec)"
+
+#~ msgid "Not member"
+#~ msgstr "Nie je člen"
+
+#~ msgid "Member"
+#~ msgstr "Člen"
+
+#~ msgid "Requesting"
+#~ msgstr "Vyžiadava sa"
+
+#~ msgid "Admin"
+#~ msgstr "Administrátor"
+
+#~ msgid "Room Title"
+#~ msgstr "Titulok miestnosti"
+
+#~ msgid "Notice"
+#~ msgstr "Poznámka"
+
+#~ msgid "Detail"
+#~ msgstr "Detail"
+
+#~ msgid "Creator"
+#~ msgstr "Zakladateľ"
+
+#~ msgid "Category"
+#~ msgstr "Kategória"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun nedovoľuje iným pripojiť sa"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Pripojiť sa do QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Sem zadajte požiadavku"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Podarilo sa pripojiť do Qun %s (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Podarilo sa pripojiť do Qun"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Vstup do Qun %u zamietnutý"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun Operácia"
+
+#~ msgid "Failed:"
+#~ msgstr "Zlyhalo:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Vstúpiť do Qun, neznáma odpoveď"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Opustiť Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Ak ste tvorca, \n"
+#~ "táto operácia nakoniec odstráni tento Qun."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Prepáč, nie si náš štýl"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Členovia Qun boli úspešne zmenení"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Informácie Qun boli úspešne zmenené"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Úspešne ste vytvorili Qun"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "Chcete teraz nastaviť podrobné informácie?"
+
+#~ msgid "Setup"
+#~ msgstr "Nastavenie"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "Používateľ %u požiadal o vstup do Qun %u pre %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "Používateľ %u požiadal o vstup do Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Vstup do Qun %u, ovládaného správcom %u, zlyhal."
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Pripojenie ku Qun %u je odsúhlasené správcom %u pre %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Odstránený priateľ %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>Nový priateľ %u sa pripojil.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Neznáme-%d"
+
+#~ msgid "Level"
+#~ msgstr "Úroveň"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr " Video"
+
+#~ msgid " Zone"
+#~ msgstr " Zóna"
+
+#~ msgid "Flag"
+#~ msgstr "Značka"
+
+#~ msgid "Ver"
+#~ msgstr "Verzia"
+
+#~ msgid "Invalid name"
+#~ msgstr "Chybný názov"
+
+#~ msgid "Select icon..."
+#~ msgstr "Vyberte ikonu..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Čas pripojenia</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Prihlásených priateľov</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Posledné obnovenie</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Server</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Značka klienta</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Režim pripojenia</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Moja internetová adresa</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Odoslané</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Znovu poslané</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Stratené</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Prijaté</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Prijaté viackrát</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Čas</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Pôvodný autor</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Prispievatelia kódu</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Písači krásnych patchov</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>Uznanie</b>:<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Opatrní testeri</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "a ďalší, prosím dajte mi vedieť... ďakujem!))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>A všetci chalani zo zákulisia...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>Pokojne sa k nám pridajte!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "O OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Zmeniť heslo"
+
+#~ msgid "Account Information"
+#~ msgstr "Informácie o účte"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Obnoviť všetky QQ Quny"
+
+#~ msgid "About OpenQ"
+#~ msgstr "O OpenQ"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Upraviť popisok priateľa"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ Protokol Modul"
+
+#~ msgid "Auto"
+#~ msgstr "Automaticky"
+
+#~ msgid "Select Server"
+#~ msgstr "Vyberte server"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Pripojiť sa pomocou TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "Zobraziť oznámenie servera"
+
+#~ msgid "Show server news"
+#~ msgstr "Zobraziť novinky servera"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Pri prijatí správy zobraziť miestnosť"
+
+#~ msgid "Use default font"
+#~ msgstr "Použiť štandardné písmo"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Interval udržiavania spojenia (sekúnd)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Interval obnovovania (sekúnd)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Nedá sa dešifrovať odpoveď serveru"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Vyžiadanie tokenu zlyhalo, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Chybná dĺžka tokenu, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX teraz nie je podporované"
+
+#~ msgid "Activation required"
+#~ msgstr "Je vyžadovaná aktivácia"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Neznámy kód odpovede pri prihlasovaní (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "Získava sa captcha"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Kontroluje sa kód captcha"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "Overenie captcha zlyhalo"
+
+#~ msgid "Captcha Image"
+#~ msgstr "Obrázok captcha"
+
+#~ msgid "Enter code"
+#~ msgstr "Zadajte kód"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "Kontrola QQ captcha"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "Zadajte text z obrázku"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Neznámy kód odpovede pri kontrole hesla (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Neznámy kód odpovede pri prihlasovaní (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Chyba socketu"
+
+#~ msgid "Getting server"
+#~ msgstr "Získava sa server"
+
+#~ msgid "Requesting token"
+#~ msgstr "Vyžiadava sa token"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "Chybný server alebo port"
+
+#~ msgid "Connecting to server"
+#~ msgstr "Pripája sa na server"
+
+#~ msgid "QQ Error"
+#~ msgstr "Chyba QQ"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Novinky servera:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "Od %s:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Oznámenie serveru od %s: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "Neznámy SERVER CMD"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Chyba odpoveď %s(0x%02X)\n"
+#~ "Miestnosť %u, odpoveď 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun príkaz"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Nedá sa dešifrovať odpoveď prihlásenia"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "Neznámy LOGIN CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "Neznámy CLIENT CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d odmietol súbor %s"
+
+#~ msgid "File Send"
+#~ msgstr "Súbor odoslaný"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "používateľ %d prerušil prenos %s"
+
+#~ msgid "Voice and Video Settings"
+#~ msgstr "Nastavenia hlasu a obrazu"
+
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr "Automaticky blokovať používateľov mimo môjho zoznamu kontaktov"
 
@@ -15516,9 +15646,6 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "Ako sa práve cítite?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "Zmeniť náladu..."
 
 #~ msgid "Artist"
 #~ msgstr "Interpret"
@@ -15713,9 +15840,6 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
 #~ msgid "Auto-away"
 #~ msgstr "Automatická neprítomnosť"
-
-#~ msgid "Change _status to:"
-#~ msgstr "Zmeniť _status na:"
 
 #, fuzzy
 #~ msgid "The root certificate this one claims to be issued by is unknown."
@@ -16146,9 +16270,6 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 #~ msgid "Please provide a shortcut to associate with the smiley."
 #~ msgstr "Zadajte, prosím, skratku pre tohoto smajlíka."
 
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Prosím, vyberte obrázok pre smajlíka."
-
 #~ msgid "Cursor Color"
 #~ msgstr "Farba kurzoru"
 
@@ -16160,9 +16281,6 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
 #~ msgid "Widget Sizes"
 #~ msgstr "Veľkosť ovládacích prvkov"
-
-#~ msgid "Invite message"
-#~ msgstr "Správa pozvánky"
 
 #~ msgid ""
 #~ "Please enter the name of the user you wish to invite,\n"

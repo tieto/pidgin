@@ -285,7 +285,7 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 /*
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(purple_account_get_connection(irc->account),
+		purple_connection_error(purple_account_get_connection(irc->account),
 			      PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 */

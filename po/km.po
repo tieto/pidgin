@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: km\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:33-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2010-02-25 15:29+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
@@ -210,6 +210,10 @@ msgid "Username"
 msgstr "ឈ្មោះ​អ្នក​ប្រើ"
 
 msgid "Alias (optional)"
+msgstr "ឈ្មោះ​ក្លែងក្លាយ (ជម្រើស)"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "ឈ្មោះ​ក្លែងក្លាយ (ជម្រើស)"
 
 msgid "Add in group"
@@ -1636,6 +1640,7 @@ msgstr "ពិធីការ​នេះ​មិន​គាំទ្រ​ប
 msgid "Unknown"
 msgstr "មិន​ស្គាល់"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "មិត្តភក្ដិ"
 
@@ -1899,6 +1904,9 @@ msgstr "បានបរាជ័យ​ក្នុងការ​បង្កើ
 
 msgid "Unknown reason"
 msgstr "មិនស្គាល់​ហេតុផល"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2297,8 +2305,11 @@ msgstr ""
 "ផ្លូវ​ត្រូវ​រក្សាទុក​ឯកសារ​នៅ​ក្នុង\n"
 "(សូម​ផ្ដល់ផ្លូវ​ពេញលេញ)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "ច្រានចោល​ដោយ​ស្វ័យ​ប្រវត្តិ​ពី​អ្នក​ប្រើ​មិន​នៅ​ក្នុង​បញ្ជី​មិត្តភក្ដិទេ"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "នៅពេល​សំណើ​ការ​ផ្ទេរ​ឯកសារ​មក​ដល់ពី %s"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2309,6 +2320,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "បង្កើត​ថត​ថ្មី​សម្រាប់​អ្នក​ប្រើ​នីមួយៗ"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s បាន​បោះបង់​ការ​ផ្ទេរ​ឯកសារ"
 
 msgid "Notes"
 msgstr "ចំណាំ"
@@ -3107,6 +3122,24 @@ msgstr "សូម​បញ្ចូល​ពាក្យ​សម្ងាត់
 msgid "Change Gadu-Gadu Password"
 msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់ Gadu-Gadu"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "ផ្លាស់ប្ដូរ​ស្ថានភាព​ទៅជា"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "មិត្តភក្ដិ​លើបណ្ដាញ"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "ផ្លាស់ប្ដូរ​ស្ថានភាព​ទៅជា"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "ជ្រើស​ការ​ជជែក​សម្រាប់មិត្តភក្ដិ ៖ %s"
@@ -3138,9 +3171,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "នាម​ខ្លួន"
 
@@ -3253,6 +3284,23 @@ msgstr "អ្នក​ប្រើ Gadu-Gadu"
 msgid "GG server"
 msgstr "ម៉ាស៊ីន​បម្រើ GG"
 
+#, fuzzy
+msgid "Don't use encryption"
+msgstr "តម្រូវ​ឲ្យ​មានការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "មិនមាន​ព័ត៌មាន​អ្នក​ប្រើ​ ៖ %s"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "តម្រូវ​ឲ្យ​មានការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "អស់​ពេល​​តភ្ជាប់"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "មិនស្គាល់​ពាក្យ​បញ្ជា ៖ %s"
@@ -3288,7 +3336,6 @@ msgstr "MOTD សម្រាប់ %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3542,6 +3589,10 @@ msgstr "វាយ​ពី %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "សកម្មភាព &lt;សកម្មភាព​ត្រូវ​អនុវត្ត&gt; ៖  អនុវត្ត​សកម្មភាព ។"
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv ៖ ផ្ញើល​ពាក្យ​បញ្ជា​ទៅកាន់ chanserv"
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3741,7 +3792,10 @@ msgstr "ប្រតិបត្តិ"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "ម៉ាស៊ីន​បម្រើ​ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ជា​អត្ថបទ​ធម្មតា​លើ​ស្ទ្រីម​ដែល​មិនបានអ៊ិនគ្រីប"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "កា​រឆ្លើយ​តប​មិនត្រឹមត្រូវ ​ពី​ម៉ាស៊ីន​បម្រើ ។"
 
@@ -3890,7 +3944,6 @@ msgstr "តំបន់"
 msgid "Postal Code"
 msgstr "លេខប្រៃសណីយ៍"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "ប្រទេស"
 
@@ -4605,7 +4658,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "អញ្ជើញ &lt;អ្នក​ប្រើ&gt; [សារ] ៖  អញ្ជើញ​អ្នក​ប្រើ​ឲ្យ​ចូល​បន្ទប់ ។"
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "ចូល ៖ &lt;បន្ទប់&gt; [ពាក្យ​សម្ងាត់] ៖  ចូល​ក្នុងការជជែក​នៅ​លើ​ម៉ាស៊ីន​បម្រើ​នេះ ។"
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4645,20 +4699,8 @@ msgstr "កម្មវិធី​ជំនួយ​ពិធីការ XMPP"
 msgid "Domain"
 msgstr "ដែន"
 
-#, fuzzy
-msgid "Require encryption"
-msgstr "តម្រូវ​ឲ្យ​មានការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "មិនមាន​ព័ត៌មាន​អ្នក​ប្រើ​ ៖ %s"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "អស់​ពេល​​តភ្ជាប់"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "អនុញ្ញាត​ឲ្យ​អត្ថបទ​ធម្មតា​លើ​ស្ទ្រីម​ដែល​មិន​បានអ៊ិនគ្រីប"
@@ -4765,6 +4807,7 @@ msgstr "មិន​ស្គាល់​កំហុស​នៅ​ក្នុ
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "មិនអាច​ផ្ញើសារ​ទៅ​កាន់ %s អ្នក​ប្រើ​មិន​គាំទ្រ​កា​រផ្ទេរ​ឯកសារ​ទេ"
 
+#. not success
 msgid "File Send Failed"
 msgstr "បានបរាជ័យ​ក្នុងកា​រផ្ញើ​ឯកសារ"
 
@@ -5538,18 +5581,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "មិនអាច​បន្ថែម"
 
-msgid "Authorization Request Message:"
-msgstr "សារ​សំណើ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖"
-
-msgid "Please authorize me!"
-msgstr "សូម​អនុញ្ញាត​ខ្ញុំ !"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "យល់ព្រម"
-
 msgid "Error retrieving profile"
 msgstr "កំហុសក្នុងការ​ទៅ​ទទួល​យក​ទម្រង់"
 
@@ -5760,6 +5791,10 @@ msgstr "មិនអាច​យក​អ្នក​ប្រើ​ចេញប
 msgid "Mobile message was not sent because it was too long."
 msgstr "សារ​ចល័ត​មិនត្រូវ​បានផ្ញើ​ទេ ដោយ​សារ​តែ​វា​វែង​ពេក ។"
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "សារ​មិន​ត្រូវ​បាន​ផ្ញើ​បានទេ ពីព្រោះ​មាន​កំហុស​ដែលមិនស្គាល់​បានកើត​ឡើង ។"
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5907,18 +5942,6 @@ msgstr "តើ​អ្នក​ចង់​លុប​មិត្តភក្
 msgid "The username specified is invalid."
 msgstr "ឈ្មោះ​អ្នកប្រើ​ដែល​បាន​បញ្ជាក់​មិន​ត្រឹមត្រូវ ។"
 
-msgid "The PIN you entered is invalid."
-msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មិនត្រឹមត្រូវទេ ។"
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មាន​ប្រវែង​​មិន​​ត្រឹមត្រូវ [4-10] ។"
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN មិនត្រឹមត្រូវ​ទេ ។ វា​គួរ​តែ​មាន​តួលេខ​ [0-9]​ ប៉ុណ្ណោះ​ ។"
-
-msgid "The two PINs you entered do not match."
-msgstr "PIN ពីរ ដែល​អ្នក​បាន​បញ្ចូល​​​មិន​ត្រូវ​គ្នា ។"
-
 #, fuzzy
 msgid "The Display Name you entered is invalid."
 msgstr "ឈ្មោះ​ដែល​អ្នក​​បាន​បញ្ចូល​មិនត្រឹមត្រូវ​ទេ ។"
@@ -5939,35 +5962,70 @@ msgstr "ទម្រង់"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "ទម្រង់​ព័ត៌មាន​របស់​អ្នក​មិន​ត្រូវបាន​​ទៅយក​នៅ​​ឡើយ​ទេ ។ សូម​ព្យាយាម​​ម្តងទៀត នៅ​ពេល​ក្រោយ ។"
 
-msgid "Your UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "បង្ហាញ​ឈ្មោះ​"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "អំពី​ខ្ញុំ"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "ធ្វើ​ឲ្យ​ទម្រង់​របស់​អ្នក​ទាន់​សម័យ​"
+
+msgid "The PIN you entered is invalid."
+msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មិនត្រឹមត្រូវទេ ។"
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មាន​ប្រវែង​​មិន​​ត្រឹមត្រូវ [4-10] ។"
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "PIN មិនត្រឹមត្រូវ​ទេ ។ វា​គួរ​តែ​មាន​តួលេខ​ [0-9]​ ប៉ុណ្ណោះ​ ។"
+
+msgid "The two PINs you entered do not match."
+msgstr "PIN ពីរ ដែល​អ្នក​បាន​បញ្ចូល​​​មិន​ត្រូវ​គ្នា ។"
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "កំហុសក្នុងការ​​​ធ្វើ​ឲ្យ​ទម្រង់​​ទាន់​សម័យ​"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "ផ្ទៀងផ្ទាត់ PIN"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "បង្ហាញ​ឈ្មោះ​"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "ផ្លាស់ប្ដូរ​រូបតំណាង"
 
-#. hidden
-msgid "Hide my number"
-msgstr "លាក់​លេខ​របស់​ខ្ញុំ"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
-
-msgid "Update your Profile"
-msgstr "ធ្វើ​ឲ្យ​ទម្រង់​របស់​អ្នក​ទាន់​សម័យ​"
-
-msgid "Here you can update your MXit profile"
-msgstr "ទីនេះ​ អ្នក​អាច​ធ្វើ​ឲ្យ​​​ទម្រង់​ MXit របស់​​អ្នក​​ទាន់​សម័យ"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "ផ្លាស់ប្ដូរ​រូបតំណាង"
 
 msgid "View Splash"
 msgstr "មើលការ​ស្វាគមន៍"
@@ -5978,9 +6036,39 @@ msgstr "បច្ចុប្បន្ន​មិនមាន​អេក្រ
 msgid "About"
 msgstr "អំពី"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "ស្វែងរក​អ្នកប្រើ"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "ស្វែងរក​អ្នកប្រើ"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "ព័ត៌មាន​អ្នក​អ្នកប្រើ"
+
+msgid "_Search"
+msgstr "ស្វែងរក"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "ផ្លាស់ប្ដូរ​ទម្រង់..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "ប្ដូរ​អារម្មណ៍..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "កំណត់​​ឈ្មោះ​មិត្តភក្តិ..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "ស្វែងរក​អ្នកប្រើ..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6007,6 +6095,10 @@ msgstr "មិន​អាច​តភ្ជាប់​ទៅ​កាន់​
 
 msgid "Connecting..."
 msgstr "កំពុង​តភ្ជាប់..."
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "ឈ្មោះ​ដែល​អ្នក​​បាន​បញ្ចូល​មិនត្រឹមត្រូវ​ទេ ។"
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​​មាន​ប្រវែង​មិន​ត្រឹមត្រូវ [៧-១០] ។"
@@ -6078,6 +6170,23 @@ msgstr "កា​រធ្វើ​ឲ្យ​គណនី MXit មាន​ស
 msgid "Retrieving User Information..."
 msgstr "កំពុង​ទៅ​យក​ព័ត៌មាន​របស់​​អ្នកប្រើ​..."
 
+#, fuzzy
+msgid "was kicked"
+msgstr "សំបុត្រ​មិន​ល្អ"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "អ្នក​ត្រូ​វបាន​ធាក់ចេញ​ដោយ ៖ (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "បន្ទប់ ៖"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "អ្នកមាន​សំបុត្រ !"
+
 msgid "Loading menu..."
 msgstr "កំពុង​ផ្ទុក​ម៉ឺនុយ..."
 
@@ -6093,8 +6202,21 @@ msgid "Hidden Number"
 msgstr "លេខ​ដែល​លាក់​"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "មិនមាន"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "គណនី​នេះ​មិន​មាន​អាសយដ្ឋាន​បានបើក​ទេ ។"
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "លេខ​សម្គាល់​របស់​យ៉ាហ៊ូ..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "អញ្ជើញ"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6107,27 +6229,39 @@ msgstr "តភ្ជាប់​តាមរយៈ HTTP"
 msgid "Enable splash-screen popup"
 msgstr "បើក​​អេក្រង់​ស្វាគមន៍​លេច​ឡើង"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "អ្នក​ត្រូ​វបាន​ធាក់ចេញ​ដោយ ៖ (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "សំបុត្រ​មិន​ល្អ"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "បន្ទប់ ៖"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "អ្នកមាន​សំបុត្រ !"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "លើ​បណ្ដាញ"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "សារ​បានផ្ញើ"
+
+#, fuzzy
+msgid "No results"
+msgstr "លទ្ធផល​ស្វែងរក"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "រក​មិនឃើញ​អ្នក​ប្រើ"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "អ្នក​ប្រើ"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6851,6 +6985,12 @@ msgstr "គ្មាន​ហេតុផល​បានផ្ដល់ ។"
 msgid "Authorization Denied Message:"
 msgstr "សារ​បដិសេធ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "យល់ព្រម"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "បាន​ទទួល​ការ​ឆ្លើយ​តប​ដែលមិន​រំពឹង​ទុក​ពី %s: %s"
@@ -7219,7 +7359,6 @@ msgid "Received authorization"
 msgstr "បានទទួល​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "មិនមាន​​ឈ្មោះ​អ្នក​ប្រើ"
@@ -7378,6 +7517,12 @@ msgstr "កា​រតភ្ជាប់ AIM របស់​អ្នក​អ�
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "អ្នក​ត្រូវ​បានផ្ដាច់​ចេញ​ពី​បន្ទប់​ជជែក %s ។"
+
+msgid "The new formatting is invalid."
+msgstr "កា​រធ្វើ​ទ្រង់ទ្រាយ​ថ្មី​មិន​ត្រឹមត្រូវ​ទេ ។"
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr "កា​រធ្វើ​ទ្រង់ទ្រាយឈ្មោះ​អ្នកប្រើ​អាច​ផ្លាស់ប្ដូរ​តែ​​ក្នុង​ករណី​មានអក្សរ​ធំ និង​ចន្លោះមិនឃើញ ។"
 
 msgid "Pop-Up Message"
 msgstr "សារ​លេច​ឡើង"
@@ -7630,12 +7775,6 @@ msgstr "ការ​យល់​ដឹង​អំពីបណ្ដាញ (ក�
 msgid "ICQ Privacy Options"
 msgstr "ជម្រើស​ឯកជន​របស់ ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "កា​រធ្វើ​ទ្រង់ទ្រាយ​ថ្មី​មិន​ត្រឹមត្រូវ​ទេ ។"
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr "កា​រធ្វើ​ទ្រង់ទ្រាយឈ្មោះ​អ្នកប្រើ​អាច​ផ្លាស់ប្ដូរ​តែ​​ក្នុង​ករណី​មានអក្សរ​ធំ និង​ចន្លោះមិនឃើញ ។"
-
 msgid "Change Address To:"
 msgstr "ផ្លាស់ប្ដូរ​អាសយដ្ឋាន​ ជូន​ចំពោះ ៖"
 
@@ -7661,9 +7800,6 @@ msgstr "រក​មិត្តភក្ដិ​តាម​អាសយដ្
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr "វាយ​អាសយដ្ឋាន​អ៊ីមែល​របស់​មិត្តភក្ដិ​ដែល​អ្នកកំពុង​ស្វែងរក ។"
-
-msgid "_Search"
-msgstr "ស្វែងរក"
 
 msgid "Set User Info (web)..."
 msgstr "កំណត់​ព័ត៌មាន​របស់​អ្នកប្រើ (បណ្ដាញ)..."
@@ -7703,10 +7839,6 @@ msgstr "បង្ហាញ​ការ​ផ្ទៀងផ្ទាត់​រ
 msgid "Search for Buddy by Email Address..."
 msgstr "ស្វែងរក​មិត្តភក្ដិ​តាម​អាសយដ្ឋាន​អ៊ីមែល..."
 
-#, fuzzy
-msgid "Don't use encryption"
-msgstr "តម្រូវ​ឲ្យ​មានការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
 msgid "Use clientLogin"
 msgstr "ប្រើការ​​ចូល​ម៉ាស៊ីន​ភ្ញៀវ"
 
@@ -7743,75 +7875,6 @@ msgid ""
 msgstr ""
 "វា​ត្រូវការ​ការ​តភ្ជាប់​ដោយ​ផ្ទាល់​រវាង​កុំព្យូទ័រ​ពីរ ហើយ​ចាំបាច់​សម្រាប់​រូបភាព IM ។ ពីព្រោះ​អាសយដ្ឋាន IP "
 "របស់​អ្នក​នឹង​ត្រូវ​បានដឹង វា​អាច​ចាត់​ទុក​ថា​គ្រោះថ្នាក់ ។"
-
-msgid "Invalid SNAC"
-msgstr "SNAC មិន​ត្រឹមត្រូវ"
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr "សេវា​មិនអាច​ប្រើបាន"
-
-msgid "Service not defined"
-msgstr "សេវា​មិនបានកំណត់"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC ពេញលេញ"
-
-msgid "Not supported by host"
-msgstr "មិនបានគាំទ្រ​ដោយ​ម៉ាស៊ីន​ទេ"
-
-msgid "Not supported by client"
-msgstr "មិនបាន​គាំទ្រ​ដោយ​ម៉ាស៊ីន​ភ្ញៀវទេ"
-
-msgid "Refused by client"
-msgstr "បាន​បដិសេធ​ដោយ​ម៉ាស៊ីន​ភ្ញៀវ"
-
-msgid "Reply too big"
-msgstr "ការ​ឆ្លើយតប​ធំពេក"
-
-msgid "Responses lost"
-msgstr "បាត់បង់ការ​ឆ្លើយតប"
-
-msgid "Request denied"
-msgstr "បដិសេធ​សំណើ"
-
-msgid "Busted SNAC payload"
-msgstr "Busted SNAC payload"
-
-msgid "Insufficient rights"
-msgstr "សិទ្ធិ​មិន​គ្រប់គ្រាន់"
-
-msgid "In local permit/deny"
-msgstr "នៅ​ក្នុង​ការ​បដិសេធ/អនុញ្ញាត"
-
-msgid "Warning level too high (sender)"
-msgstr "កម្រិត​ព្រមាន​ខ្ពស់​ពេក (អ្នក​ផ្ញើ)"
-
-msgid "Warning level too high (receiver)"
-msgstr "កម្រិត​ព្រមាន​ខ្ពស់​ពេក (អ្នក​ទទួល)"
-
-msgid "User temporarily unavailable"
-msgstr "អ្នក​ប្រើ​មិនអាច​ប្រើបាន​ជា​បណ្ដោះអាសន្ន"
-
-msgid "No match"
-msgstr "គ្មានការ​ផ្គូផ្គង"
-
-msgid "List overflow"
-msgstr "បញ្ជី​លើស​ចំណុះ"
-
-msgid "Request ambiguous"
-msgstr "ការ​ស្នើ​មិន​ប្រាកដ"
-
-msgid "Queue full"
-msgstr "ជួរ​​ពេញ"
-
-msgid "Not while on AOL"
-msgstr "មិន​សម្រាក​នៅ​លើ AOL"
 
 #. Label
 msgid "Buddy Icon"
@@ -7931,6 +7994,75 @@ msgstr "សមាជិក​តាំង​ពី"
 msgid "Capabilities"
 msgstr "សមត្ថភាព"
 
+msgid "Invalid SNAC"
+msgstr "SNAC មិន​ត្រឹមត្រូវ"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "សេវា​មិនអាច​ប្រើបាន"
+
+msgid "Service not defined"
+msgstr "សេវា​មិនបានកំណត់"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC ពេញលេញ"
+
+msgid "Not supported by host"
+msgstr "មិនបានគាំទ្រ​ដោយ​ម៉ាស៊ីន​ទេ"
+
+msgid "Not supported by client"
+msgstr "មិនបាន​គាំទ្រ​ដោយ​ម៉ាស៊ីន​ភ្ញៀវទេ"
+
+msgid "Refused by client"
+msgstr "បាន​បដិសេធ​ដោយ​ម៉ាស៊ីន​ភ្ញៀវ"
+
+msgid "Reply too big"
+msgstr "ការ​ឆ្លើយតប​ធំពេក"
+
+msgid "Responses lost"
+msgstr "បាត់បង់ការ​ឆ្លើយតប"
+
+msgid "Request denied"
+msgstr "បដិសេធ​សំណើ"
+
+msgid "Busted SNAC payload"
+msgstr "Busted SNAC payload"
+
+msgid "Insufficient rights"
+msgstr "សិទ្ធិ​មិន​គ្រប់គ្រាន់"
+
+msgid "In local permit/deny"
+msgstr "នៅ​ក្នុង​ការ​បដិសេធ/អនុញ្ញាត"
+
+msgid "Warning level too high (sender)"
+msgstr "កម្រិត​ព្រមាន​ខ្ពស់​ពេក (អ្នក​ផ្ញើ)"
+
+msgid "Warning level too high (receiver)"
+msgstr "កម្រិត​ព្រមាន​ខ្ពស់​ពេក (អ្នក​ទទួល)"
+
+msgid "User temporarily unavailable"
+msgstr "អ្នក​ប្រើ​មិនអាច​ប្រើបាន​ជា​បណ្ដោះអាសន្ន"
+
+msgid "No match"
+msgstr "គ្មានការ​ផ្គូផ្គង"
+
+msgid "List overflow"
+msgstr "បញ្ជី​លើស​ចំណុះ"
+
+msgid "Request ambiguous"
+msgstr "ការ​ស្នើ​មិន​ប្រាកដ"
+
+msgid "Queue full"
+msgstr "ជួរ​​ពេញ"
+
+msgid "Not while on AOL"
+msgstr "មិន​សម្រាក​នៅ​លើ AOL"
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -7983,716 +8115,6 @@ msgstr "អញ្ជើញ​បញ្ជី"
 
 msgid "These buddies will always see you as offline"
 msgstr ""
-
-msgid "Aquarius"
-msgstr "Aquarius"
-
-msgid "Pisces"
-msgstr "Pisces"
-
-msgid "Aries"
-msgstr "Aries"
-
-msgid "Taurus"
-msgstr "Taurus"
-
-msgid "Gemini"
-msgstr "Gemini"
-
-msgid "Cancer"
-msgstr "មហារីក"
-
-msgid "Leo"
-msgstr "Leo"
-
-msgid "Virgo"
-msgstr "Virgo"
-
-msgid "Libra"
-msgstr "Libra"
-
-msgid "Scorpio"
-msgstr "Scorpio"
-
-msgid "Sagittarius"
-msgstr "Sagittarius"
-
-msgid "Capricorn"
-msgstr "Capricorn"
-
-msgid "Rat"
-msgstr "កណ្ដុរ"
-
-msgid "Ox"
-msgstr "គោ"
-
-msgid "Tiger"
-msgstr "ខ្លា"
-
-msgid "Rabbit"
-msgstr "ទន្សាយ"
-
-msgid "Dragon"
-msgstr "នាគ"
-
-msgid "Snake"
-msgstr "ពស់"
-
-msgid "Horse"
-msgstr "សេះ"
-
-msgid "Goat"
-msgstr "ពពែ"
-
-msgid "Monkey"
-msgstr "ស្វា"
-
-msgid "Rooster"
-msgstr "មាន់​គក"
-
-msgid "Dog"
-msgstr "ឆ្កែ"
-
-msgid "Pig"
-msgstr "ជ្រូក"
-
-msgid "Other"
-msgstr "ផ្សេងៗទៀត"
-
-msgid "Visible"
-msgstr "​មើលឃើញ"
-
-msgid "Friend Only"
-msgstr "តែមិត្តភក្ដិ"
-
-msgid "Private"
-msgstr "ឯកជន"
-
-msgid "QQ Number"
-msgstr "ចំនួន QQ"
-
-msgid "Country/Region"
-msgstr "ប្រទេស​/​តំបន់"
-
-msgid "Province/State"
-msgstr "ខេត្ត/រដ្ឋ"
-
-msgid "Zipcode"
-msgstr "កូដ​តំបន់"
-
-msgid "Phone Number"
-msgstr "លេខ​ទូរស័ព្ទ"
-
-msgid "Authorize adding"
-msgstr "ផ្ទៀងផ្ទាត់​ការ​បន្ថែម"
-
-msgid "Cellphone Number"
-msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
-
-msgid "Personal Introduction"
-msgstr "សេចក្ដី​ណែនាំ​ផ្ទាល់ខ្លួន"
-
-msgid "City/Area"
-msgstr "ទីក្រុង​/តំបន់"
-
-msgid "Publish Mobile"
-msgstr "បោះពុម្ព​ចល័ត"
-
-msgid "Publish Contact"
-msgstr "បោះពុម្ព​ផ្សាយ​ទំនាក់"
-
-msgid "College"
-msgstr "មហាវិទ្យាល័យ"
-
-msgid "Horoscope"
-msgstr "ផែនចក្ររាសី"
-
-msgid "Zodiac"
-msgstr "រាសីចក្រ"
-
-msgid "Blood"
-msgstr "ឈាម"
-
-msgid "True"
-msgstr "ពិត"
-
-msgid "False"
-msgstr "មិន​ពិត"
-
-msgid "Modify Contact"
-msgstr "កែប្រែ​ទំនាក់ទំនង"
-
-msgid "Modify Address"
-msgstr "កែប្រែ​អាសយដ្ឋាន"
-
-msgid "Modify Extended Information"
-msgstr "កែប្រែ​ព័ត៌មាន​ដែល​បា​នពង្រីក"
-
-msgid "Modify Information"
-msgstr "កែប្រែ​ព័ត៌មាន"
-
-msgid "Update"
-msgstr "ធ្វើ​​ឲ្យ​​ទាន់សម័យ\t"
-
-msgid "Could not change buddy information."
-msgstr "មិនអាច​ផ្លាស់ប្ដូរ​ព័ត៌មាន​មិត្តភក្ដិ​បានទេ ។"
-
-msgid "Note"
-msgstr "ចំណាំ"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "អនុស្សារណ​មិត្តភក្ដិ"
-
-msgid "Change his/her memo as you like"
-msgstr "ផ្លាស់ប្ដូរ​កំណត់​ហេតុ​រំលឹក​របស​គាត់​តាម​ដែល​អ្នក​ពេញ​ចិត្ត"
-
-msgid "_Modify"
-msgstr "កែប្រែ "
-
-msgid "Memo Modify"
-msgstr "កែប្រែ​កំណត់​ហេតុ​រំលឹក"
-
-msgid "Server says:"
-msgstr "ម៉ាស៊ីនបម្រើ​​និយាយ ៖"
-
-msgid "Your request was accepted."
-msgstr "សំណើ​របស់​អ្នក​ត្រូវបាន​ទទួល​យក ។"
-
-msgid "Your request was rejected."
-msgstr "សំណើ​របស់​អ្នក​ត្រូវ​បាន​ច្រានចោល ។"
-
-#, fuzzy, c-format
-msgid "%u requires verification: %s"
-msgstr "%u ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-msgid "Add buddy question"
-msgstr "បន្ថែម​សំណួរ​មិត្តភក្ដិ"
-
-msgid "Enter answer here"
-msgstr "បញ្ចូល​ចម្លើយ​នៅ​ទីនេះ"
-
-msgid "Send"
-msgstr "ផ្ញើ"
-
-msgid "Invalid answer."
-msgstr "ចម្លើយ​មិន​ត្រឹមត្រូវ ។"
-
-msgid "Authorization denied message:"
-msgstr "ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​បានបដិសេធ​សារ ៖"
-
-msgid "Sorry, you're not my style."
-msgstr "សូម​អភ័យទោស អ្នក​មិនមែន​ជា​រចនាប័ទ្ម​របស់​ខ្ញុំ​ទេ ។"
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-msgid "Add buddy authorize"
-msgstr "បន្ថែម​ការ​ផ្ទៀងផ្ទាត់​មិត្តភក្ដិ"
-
-msgid "Enter request here"
-msgstr "បញ្ចូល​សំណើ​នៅ​ទីនេះ"
-
-msgid "Would you be my friend?"
-msgstr "តើអ្នក​នឹង​ជា​មិត្តភក្ដិ​របស់​ខ្ញុំ ?"
-
-msgid "QQ Buddy"
-msgstr "មិត្តភក្ដិ QQ"
-
-msgid "Add buddy"
-msgstr "បន្ថែម​មិត្តភក្ដិ"
-
-msgid "Invalid QQ Number"
-msgstr "ចំនួន QQ មិន​ត្រឹមត្រូវ"
-
-msgid "Failed sending authorize"
-msgstr "បានបរាជ័យ​​ក្នុងការ​ផ្ញើ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "បាន​បរាជ័យ​ក្នុងកា​រយក​មិត្តភក្ដិ​ %u ចេញ"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "បានបរាជ័យ​ក្នុងការ​យក​ខ្ញុំ​ចេញ​ពី​បញ្ជីមិត្តភក្ដិ​របស់ %d"
-
-msgid "No reason given"
-msgstr "គ្មាន​ហេតុផល​បាន​ផ្ដល់"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "អ្នក​ត្រូវ​បាន​បន្ថែម​ដោយ %s"
-
-msgid "Would you like to add him?"
-msgstr "តើ​អ្នក​ចង់​បន្ថែម​គាត់​ទេ ?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "បាន​ច្រាន​ចេញ​ដោយ %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "សារ ៖ %s"
-
-msgid "ID: "
-msgstr "លេខ​សម្គាល់ ៖"
-
-msgid "Group ID"
-msgstr "លេខ​សម្គាល់ក្រុម"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "សូម​បញ្ចូល​លេខ Qun"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "អ្នក​អាច​ស្វែងរក​សម្រាប់តែ​ Qun អចិន្ត្រៃយ៍​ប៉ុណ្ណោះ\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(ខ្សែអក្សរ UTF-8 មិន​ត្រឹមត្រូវ)"
-
-msgid "Not member"
-msgstr "មិន​ចងចាំ"
-
-msgid "Member"
-msgstr "ចងចាំ"
-
-msgid "Requesting"
-msgstr "សំណើ"
-
-msgid "Admin"
-msgstr "គ្រប់គ្រង"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "បញ្ជី​បន្ទប់"
-
-msgid "Notice"
-msgstr "ចំណាំ"
-
-msgid "Detail"
-msgstr "សេចក្ដី​លម្អិត"
-
-msgid "Creator"
-msgstr "អ្នកបង្កើត"
-
-msgid "About me"
-msgstr "អំពី​ខ្ញុំ"
-
-msgid "Category"
-msgstr "ប្រភេទ"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun មិនអនុញ្ញាត​ឲ្យ​អ្នកផ្សេង​ចូលរួម"
-
-msgid "Join QQ Qun"
-msgstr "ចូលរួម QQ Qun"
-
-msgid "Input request here"
-msgstr "បញ្ចូល​សំណើ​នៅ​ទីនេះ"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "បាន​ចូលដោយ​ជោគជ័យ Qun %s (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "បានចូល​ដោយ​ជោគជ័យ Qun"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u បាន​បដិសេធ​ពី​ការ​ចូលរួម"
-
-msgid "QQ Qun Operation"
-msgstr "ប្រតិបត្តិការ QQ Qun"
-
-msgid "Failed:"
-msgstr "បាន​បរាជ័យ ៖"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "ចូលរួម Qun មិន​ស្គាល់ការ​ឆ្លើយតប"
-
-msgid "Quit Qun"
-msgstr "ចេញពី Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr "ចំណាំ ប្រសិនបើ​អ្នក​ជា​អ្នកបង្កើត ប្រតិបត្តិការ​នេះ​នឹង​យក Qun នេះ​ចេញ​ ។"
-
-msgid "Sorry, you are not our style"
-msgstr "សូម​អភ័យ​ទោស អ្នក​មិន​ស្ថិត​នៅ​ក្នុងរចនាប័ទ្ម​របស់​យើង​ទេ"
-
-msgid "Successfully changed Qun members"
-msgstr "បានផ្លាស់ប្ដូរ​សមាជិក Qun ដោយ​ជោគជ័យ"
-
-msgid "Successfully changed Qun information"
-msgstr "បាន​ផ្លាស់ប្ដូរ​ព័ត៌មាន Qun ដោយ​ជោគជ័យ"
-
-msgid "You have successfully created a Qun"
-msgstr "អ្នកបានបង្កើត Qun ដោយ​ជោគជ័យ"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "តើអ្នក​ចង់​រៀបចំ​ព័ត៌មានលម្អិត​ឥឡូវ​ដែរឬទេ ?"
-
-msgid "Setup"
-msgstr "រៀបចំ"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u បានស្នើ​ឲ្យ​ចូលរួម Qun %u សម្រាប់ %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u ស្នើ​ឲ្យ​ចូលរួម Qun %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​ចូលរួម Qun %u បាន​ប្រតិបត្តិ​ដោយ​អ្នក​គ្រប់គ្រង %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>ចូលរួម Qun %u ត្រូវ​បាន​អនុម័ត​ដោយ​អ្នក​គ្រប់គ្រង %u សម្រាប់ %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>បាន​យក​មិត្តភក្ដិ %u ចេញ ។</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>បាន​ចូល​រួម​មិត្តភក្ដិ​ថ្មី %u ។</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "មិនស្គាល់ %d"
-
-msgid "Level"
-msgstr "កម្រិត"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr " វីដែអូ"
-
-msgid " Zone"
-msgstr " តំបន់"
-
-msgid "Flag"
-msgstr "ទង់"
-
-msgid "Ver"
-msgstr "កំណែ"
-
-msgid "Invalid name"
-msgstr "ឈ្មោះ​មិន​ត្រឹមត្រូវ"
-
-msgid "Select icon..."
-msgstr "ជ្រើស​រូបតំណាង..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ពេលវេលា​ចូល</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>មិត្តភក្ដិ​លើ​បណ្ដាញ​សរុប</b> ៖ %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ធ្វើ​ឲ្យ​ស្រស់​ចុងក្រោយ</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>ម៉ាស៊ីន​បម្រើ</b> ៖ %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>ទង់​ម៉ាស៊ីន​ភ្ញៀវ</b> ៖ %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>របៀប​តភ្ជាប់</b> ៖ %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>IP អ៊ីនធឺណិត​របស់​ខ្ញុំ</b> ៖ %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>បានផ្ញើ</b> ៖ %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>ផ្ញើ​ឡើង​វិញ</b> ៖ %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>បាត់បង់</b> ៖ %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>បាន​ទទួល</b> ៖ %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>បាន​ស្ទួន</b> ៖ %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>ពេលវេលា</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b> ៖ %s<br>\n"
-
-msgid "Login Information"
-msgstr "ព័ត៌មាន​ចូល"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>អ្នក​និពន្ធ​ដើម</b> ៖<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>អ្នក​ចែកចាយ​កូដ</b> ៖<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>អ្នក​សរសេរ​បំណះ​ដែល​ជា​ទីស្រឡាញ់</b> ៖<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>ទទួល​ស្គាល់</b> ៖<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>អ្នក​សាកល្បង​ហ្មតចត់</b> ៖<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "និង​ផ្សេងៗ​ទៀត សូម​ឲ្យ​ខ្ញុំ​ដឹង... អរគុណ !))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>ប្រុសៗ​ទាំង​អស់​នៅ​ក្នុង​បន្ទប់...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>ចូលរួម​ជា​មួយ​យើង​ដោយ​សេរី !</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "អំពី OpenQ %s"
-
-msgid "Change Icon"
-msgstr "ផ្លាស់ប្ដូរ​រូបតំណាង"
-
-msgid "Change Password"
-msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់"
-
-msgid "Account Information"
-msgstr "ព័ត៌មាន​គណនី"
-
-msgid "Update all QQ Quns"
-msgstr "ធ្វើ​ឲ្យ QQ Quns ទាន់សម័យ"
-
-msgid "About OpenQ"
-msgstr "អំពី OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "កែប្រែ មិត្តភក្ដិ"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "កម្មវិធី​ជំនួយ​ពិធីការ QQ"
-
-msgid "Auto"
-msgstr "ស្វ័យ​ប្រវត្តិ"
-
-msgid "Select Server"
-msgstr "ជ្រើស​ម៉ាស៊ីន​បម្រើ"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "តភ្ជាប់​តាម TCP"
-
-msgid "Show server notice"
-msgstr "បង្ហាញ​​​កំណត់​ចំណាំ​របស់​ម៉ាស៊ីន​បម្រើ"
-
-msgid "Show server news"
-msgstr "បង្ហាញ​ព័ត៌មាន​របស់​ម៉ាស៊ីនបម្រើ"
-
-msgid "Show chat room when msg comes"
-msgstr "បង្ហាញ​"
-
-msgid "Keep alive interval (seconds)"
-msgstr "ទុក​ខាងក្នុង (វិនាទី)"
-
-msgid "Update interval (seconds)"
-msgstr "ធ្វើ​ឲ្យ​ចន្លោះ​ទាន់សម័យ (វិនាទី)"
-
-msgid "Unable to decrypt server reply"
-msgstr "មិនអាច​ឌិគ្រីប​ការ​ឆ្លើយ​តប​​ម៉ាស៊ីន​បម្រើ​បានទេ"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "បានបរាជ័យ​ក្នុងកា​រស្នើ​ថូខឹន 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "ថូខឹន​មិនត្រឹមត្រូវ %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX បច្ចុប្បន្ន​មិនត្រូវ​បានគាំទ្រ​ទេ"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "ត្រូវការ​ធ្វើ​ឲ្យ​សកម្ម"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "កូដ​ឆ្លើយតប​មិន​​ស្គាល់​នៅ​ពេល​ចូល (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "ស្នើ captcha"
-
-msgid "Checking captcha"
-msgstr "ពិនិត្យ​មើល captcha"
-
-msgid "Failed captcha verification"
-msgstr "បានបរាជ័យក្នុងការ​ផ្ទៀងផ្ទាត់ captcha"
-
-msgid "Captcha Image"
-msgstr "រូបភាព Captcha"
-
-msgid "Enter code"
-msgstr "បញ្ចូល​កូដ"
-
-msgid "QQ Captcha Verification"
-msgstr "ការ​ផ្ទៀងផ្ទាត់ QQ Captcha"
-
-msgid "Enter the text from the image"
-msgstr "បញ្ចូល​អត្ថបទ​ពី​រូបភាព"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "មិនស្គាល់​ការ​ឆ្លើយតប​នៅពេល​ពិនិត្យមើលពាក្យ​សម្ងាត់ (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"កូដ​ឆ្លើយតប​មិនស្គាល់ នៅពេល​ចូល (0x%02X) ៖\n"
-"%s"
-
-msgid "Socket error"
-msgstr "កំហុស​រន្ធ"
-
-msgid "Getting server"
-msgstr "យក​ម៉ាស៊ីនបម្រើ"
-
-msgid "Requesting token"
-msgstr "ស្នើ​ថូខឹន"
-
-msgid "Unable to resolve hostname"
-msgstr "មិន​អាច​ដោះស្រាយ​ឈ្មោះ​ម៉ាស៊ីន​បាន​ឡើយ"
-
-msgid "Invalid server or port"
-msgstr "ម៉ាស៊ីន​បម្រើ ឬ​ច្រក​មិន​ត្រឹមត្រូវ"
-
-msgid "Connecting to server"
-msgstr "តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីនបម្រើ"
-
-msgid "QQ Error"
-msgstr "កំហុស QQ"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"ព័ត៌មាន​ម៉ាស៊ីន​បម្រើ ៖\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "ពី %s ៖"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"កំណត់​ចំណាំ​ម៉ាស៊ីន​បម្រើពី %s ៖ \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "មិនស្គាល់​ម៉ាស៊ីន​បម្រើ CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"កំហុស​ក្នុងការ​ឆ្លើយ​តប %s(0x%02X)\n"
-"បន្ទប់ %u ឆ្លើយតប 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "ពាក្យ​បញ្ជា QQ Qun"
-
-msgid "Unable to decrypt login reply"
-msgstr "មិន​អាច​ឌិគ្រីប​ការ​ឆ្លើយ​តប​​ចូល​បាន​ឡើយ"
-
-msgid "Unknown LOGIN CMD"
-msgstr "មិនស្គាល់​ការ​ចូល CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "មិនស្គាល់​ម៉ាស៊ីន​ភ្ញៀវ CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d បានបដិសេធ​ឯកសារ %s"
-
-msgid "File Send"
-msgstr "ផ្ញើ​ឯកសារ"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d បាន​បោះបង់​ការ​ផ្ទេរ​របស់​ %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9448,6 +8870,9 @@ msgstr "អង្គការ"
 msgid "Unit"
 msgstr "ផ្នែក"
 
+msgid "Note"
+msgstr "ចំណាំ"
+
 msgid "Join Chat"
 msgstr "ចូលរួម​ជជែក"
 
@@ -10078,6 +9503,9 @@ msgstr "មិន​ស្គាល់​ការ​ឆ្លើយតប​រ
 msgid "Unable to create listen socket"
 msgstr "មិន​អាច​បង្កើតការ​​ស្តាប់​រន្ធ​​បានទេ​"
 
+msgid "Unable to resolve hostname"
+msgstr "មិន​អាច​ដោះស្រាយ​ឈ្មោះ​ម៉ាស៊ីន​បាន​ឡើយ"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "ឈ្មោះអ្នកប្រើ SIP អាច​មិនមាន​ចន្លោះ​មិនឃើញ ឬ​និមិត្តសញ្ញា @"
 
@@ -10193,6 +9621,9 @@ msgstr "យ៉ាហ៊ូ​របស់​អ្នក ! សារ​មិន
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "យ៉ាហ៊ូ ! សារ​ប្រព័ន្ធ​សម្រាប់ %s ៖"
+
+msgid "Authorization denied message:"
+msgstr "ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​បានបដិសេធ​សារ ៖"
 
 #, c-format
 msgid ""
@@ -10952,14 +10383,17 @@ msgstr "ប្រើ​ការ​កំណត់​ប្រូកស៊ី​
 msgid "No Proxy"
 msgstr "គ្មានប្រូកស៊ី"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "ការ​កំណត់​បរិស្ថាន​អ្នក​ប្រើ"
@@ -10987,6 +10421,14 @@ msgstr "ច្រក ៖"
 
 msgid "Pa_ssword:"
 msgstr "ពាក្យ​សម្ងាត់ ៖"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "បន្ត​សម័យ"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "សំឡេង និង​វីដេអូ"
 
 msgid "Unable to save new account"
 msgstr "មិនអាច​រក្សាទុក​គណនី​ថ្មី​បានទេ"
@@ -11034,8 +10476,18 @@ msgstr ""
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 
 #, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s ចង់​បន្ថែម %s ទៅ​កាន់​បញ្ជី​មិត្តភក្ដិ​របស់​គាត់ %s%s"
+
+#, fuzzy, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s ចង់​បន្ថែម %s ទៅ​កាន់​បញ្ជី​មិត្តភក្ដិ​របស់​គាត់ %s%s"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "សារ​បន្ទាន់​ថ្មី"
 
 #. Buddy List
 msgid "Background Color"
@@ -11402,6 +10854,10 @@ msgid "/Help/De_veloper Information"
 msgstr "ព័ត៌មាន​ម៉ាស៊ីនបម្រើ"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "ព័ត៌មាន​អំពី​មិត្តភក្ដិ"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "ព័ត៌មាន​ផ្ទាល់ខ្លួន"
 
@@ -11579,6 +11035,10 @@ msgid "Buddy's _username:"
 msgstr "ឈ្មោះ​អ្នក​ប្រើ​របស់​មិត្តភក្ដិ ៖"
 
 msgid "(Optional) A_lias:"
+msgstr "ឈ្មោះ​ក្លែងក្លាយ (ជម្រើស) ៖"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
 msgstr "ឈ្មោះ​ក្លែងក្លាយ (ជម្រើស) ៖"
 
 msgid "Add buddy to _group:"
@@ -12016,15 +11476,8 @@ msgstr "កំហុស"
 msgid "Fatal Error"
 msgstr "កំហុស​ធ្ងន់ធ្ងរ"
 
-msgid "bug master"
-msgstr "កំហុស​មេ"
-
 msgid "artist"
 msgstr "សិល្បករ"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
 
 msgid "voice and video"
 msgstr "សំឡេង និង​វីដេអូ"
@@ -12037,6 +11490,10 @@ msgstr "ប្រធាន​បណ្ដាញ"
 
 msgid "win32 port"
 msgstr "ច្រក win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "អ្នក​ថែទា"
@@ -12158,6 +11615,9 @@ msgstr "ហេប្រូ"
 msgid "Hindi"
 msgstr "ហិណ្ឌូ"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "ហុងគ្រី"
 
@@ -12200,6 +11660,10 @@ msgstr "ឡាវ"
 #, fuzzy
 msgid "Maithili"
 msgstr "ស្វាហ៊ីលី"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "សំបុត្រ​ថ្មីុត្រ"
 
 msgid "Macedonian"
 msgstr "​ម៉ាសេដូនី"
@@ -12396,6 +11860,14 @@ msgstr "អ្នក​បកប្រែ​មុន"
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "ព័ត៌មាន​បន្ថែម​"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "ព័ត៌មាន​អំពី​មិត្តភក្ដិ"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "ព័ត៌មាន​ចូល"
 
 msgid "_Name"
 msgstr "ឈ្មោះ"
@@ -13026,6 +12498,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">អ្នក​មាន​សំ�
 msgid "New Pounces"
 msgstr "ក្រុម​មិត្តភក្ដិ​ថ្មី"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "បណ្ដេញ​ចេញ"
 
@@ -13321,6 +12800,14 @@ msgstr "ប្រើ​រមូរ​រលូន"
 msgid "F_lash window when IMs are received"
 msgstr "បង្អួច Flash នៅពេល​បានទទួល IMs"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "គ្រប់គ្រង​សញ្ញាណ​អារម្មណ៍​ផ្ទាល់ខ្លួន"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "អស់ពេល​ឆ្លើយតប​អតិបរមា ៖"
+
 msgid "Minimum input area height in lines:"
 msgstr "បង្រួម​កម្ពស់​ផ្ទៃ​បញ្ចូល​គិតជា​បន្ទាត់ ៖"
 
@@ -13388,6 +12875,10 @@ msgstr "ម៉ាស៊ីន​បម្រើ TURN ៖"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "ច្រក ៖"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "ច្រក ៖"
 
 msgid "Use_rname:"
@@ -14128,6 +13619,9 @@ msgstr "ការ​ជ្រើសរើស PubSub"
 
 msgid "PubSub Leaf"
 msgstr "សន្លឹក PubSub"
+
+msgid "Other"
+msgstr "ផ្សេងៗទៀត"
 
 msgid ""
 "\n"
@@ -14966,6 +14460,24 @@ msgstr "កម្មវិធី​ជំនួយ"
 msgid "D_evice"
 msgstr "ឧបករណ៍​"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "កម្រិត​សំឡេង​ ៖"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "កម្រិត​ពន្លឺ ៖"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "មេក្រូ"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -14976,10 +14488,6 @@ msgstr "ឧបករណ៍​"
 #. *< priority
 #. *< id
 msgid "Voice/Video Settings"
-msgstr "ការ​កំណត់​សំឡេង​/​វីដេអូ"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "ការ​កំណត់​សំឡេង​/​វីដេអូ"
 
 #. *< name
@@ -15237,6 +14745,658 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "ច្រានចោល​ដោយ​ស្វ័យ​ប្រវត្តិ​ពី​អ្នក​ប្រើ​មិន​នៅ​ក្នុង​បញ្ជី​មិត្តភក្ដិទេ"
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "សារ​សំណើ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "សូម​អនុញ្ញាត​ខ្ញុំ !"
+
+#~ msgid "Hide my number"
+#~ msgstr "លាក់​លេខ​របស់​ខ្ញុំ"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "ទីនេះ​ អ្នក​អាច​ធ្វើ​ឲ្យ​​​ទម្រង់​ MXit របស់​​អ្នក​​ទាន់​សម័យ"
+
+#~ msgid "Aquarius"
+#~ msgstr "Aquarius"
+
+#~ msgid "Pisces"
+#~ msgstr "Pisces"
+
+#~ msgid "Aries"
+#~ msgstr "Aries"
+
+#~ msgid "Taurus"
+#~ msgstr "Taurus"
+
+#~ msgid "Gemini"
+#~ msgstr "Gemini"
+
+#~ msgid "Cancer"
+#~ msgstr "មហារីក"
+
+#~ msgid "Leo"
+#~ msgstr "Leo"
+
+#~ msgid "Virgo"
+#~ msgstr "Virgo"
+
+#~ msgid "Libra"
+#~ msgstr "Libra"
+
+#~ msgid "Scorpio"
+#~ msgstr "Scorpio"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Sagittarius"
+
+#~ msgid "Capricorn"
+#~ msgstr "Capricorn"
+
+#~ msgid "Rat"
+#~ msgstr "កណ្ដុរ"
+
+#~ msgid "Ox"
+#~ msgstr "គោ"
+
+#~ msgid "Tiger"
+#~ msgstr "ខ្លា"
+
+#~ msgid "Rabbit"
+#~ msgstr "ទន្សាយ"
+
+#~ msgid "Dragon"
+#~ msgstr "នាគ"
+
+#~ msgid "Snake"
+#~ msgstr "ពស់"
+
+#~ msgid "Horse"
+#~ msgstr "សេះ"
+
+#~ msgid "Goat"
+#~ msgstr "ពពែ"
+
+#~ msgid "Monkey"
+#~ msgstr "ស្វា"
+
+#~ msgid "Rooster"
+#~ msgstr "មាន់​គក"
+
+#~ msgid "Dog"
+#~ msgstr "ឆ្កែ"
+
+#~ msgid "Pig"
+#~ msgstr "ជ្រូក"
+
+#~ msgid "Visible"
+#~ msgstr "​មើលឃើញ"
+
+#~ msgid "Friend Only"
+#~ msgstr "តែមិត្តភក្ដិ"
+
+#~ msgid "Private"
+#~ msgstr "ឯកជន"
+
+#~ msgid "QQ Number"
+#~ msgstr "ចំនួន QQ"
+
+#~ msgid "Country/Region"
+#~ msgstr "ប្រទេស​/​តំបន់"
+
+#~ msgid "Province/State"
+#~ msgstr "ខេត្ត/រដ្ឋ"
+
+#~ msgid "Zipcode"
+#~ msgstr "កូដ​តំបន់"
+
+#~ msgid "Phone Number"
+#~ msgstr "លេខ​ទូរស័ព្ទ"
+
+#~ msgid "Authorize adding"
+#~ msgstr "ផ្ទៀងផ្ទាត់​ការ​បន្ថែម"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "សេចក្ដី​ណែនាំ​ផ្ទាល់ខ្លួន"
+
+#~ msgid "City/Area"
+#~ msgstr "ទីក្រុង​/តំបន់"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "បោះពុម្ព​ចល័ត"
+
+#~ msgid "Publish Contact"
+#~ msgstr "បោះពុម្ព​ផ្សាយ​ទំនាក់"
+
+#~ msgid "College"
+#~ msgstr "មហាវិទ្យាល័យ"
+
+#~ msgid "Horoscope"
+#~ msgstr "ផែនចក្ររាសី"
+
+#~ msgid "Zodiac"
+#~ msgstr "រាសីចក្រ"
+
+#~ msgid "Blood"
+#~ msgstr "ឈាម"
+
+#~ msgid "True"
+#~ msgstr "ពិត"
+
+#~ msgid "False"
+#~ msgstr "មិន​ពិត"
+
+#~ msgid "Modify Contact"
+#~ msgstr "កែប្រែ​ទំនាក់ទំនង"
+
+#~ msgid "Modify Address"
+#~ msgstr "កែប្រែ​អាសយដ្ឋាន"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "កែប្រែ​ព័ត៌មាន​ដែល​បា​នពង្រីក"
+
+#~ msgid "Modify Information"
+#~ msgstr "កែប្រែ​ព័ត៌មាន"
+
+#~ msgid "Update"
+#~ msgstr "ធ្វើ​​ឲ្យ​​ទាន់សម័យ\t"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "មិនអាច​ផ្លាស់ប្ដូរ​ព័ត៌មាន​មិត្តភក្ដិ​បានទេ ។"
+
+#~ msgid "Buddy Memo"
+#~ msgstr "អនុស្សារណ​មិត្តភក្ដិ"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "ផ្លាស់ប្ដូរ​កំណត់​ហេតុ​រំលឹក​របស​គាត់​តាម​ដែល​អ្នក​ពេញ​ចិត្ត"
+
+#~ msgid "_Modify"
+#~ msgstr "កែប្រែ "
+
+#~ msgid "Memo Modify"
+#~ msgstr "កែប្រែ​កំណត់​ហេតុ​រំលឹក"
+
+#~ msgid "Server says:"
+#~ msgstr "ម៉ាស៊ីនបម្រើ​​និយាយ ៖"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "សំណើ​របស់​អ្នក​ត្រូវបាន​ទទួល​យក ។"
+
+#~ msgid "Your request was rejected."
+#~ msgstr "សំណើ​របស់​អ្នក​ត្រូវ​បាន​ច្រានចោល ។"
+
+#, fuzzy
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#~ msgid "Add buddy question"
+#~ msgstr "បន្ថែម​សំណួរ​មិត្តភក្ដិ"
+
+#~ msgid "Enter answer here"
+#~ msgstr "បញ្ចូល​ចម្លើយ​នៅ​ទីនេះ"
+
+#~ msgid "Send"
+#~ msgstr "ផ្ញើ"
+
+#~ msgid "Invalid answer."
+#~ msgstr "ចម្លើយ​មិន​ត្រឹមត្រូវ ។"
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "សូម​អភ័យទោស អ្នក​មិនមែន​ជា​រចនាប័ទ្ម​របស់​ខ្ញុំ​ទេ ។"
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u ត្រូវការ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "បន្ថែម​ការ​ផ្ទៀងផ្ទាត់​មិត្តភក្ដិ"
+
+#~ msgid "Enter request here"
+#~ msgstr "បញ្ចូល​សំណើ​នៅ​ទីនេះ"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "តើអ្នក​នឹង​ជា​មិត្តភក្ដិ​របស់​ខ្ញុំ ?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "មិត្តភក្ដិ QQ"
+
+#~ msgid "Add buddy"
+#~ msgstr "បន្ថែម​មិត្តភក្ដិ"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "ចំនួន QQ មិន​ត្រឹមត្រូវ"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "បានបរាជ័យ​​ក្នុងការ​ផ្ញើ​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "បាន​បរាជ័យ​ក្នុងកា​រយក​មិត្តភក្ដិ​ %u ចេញ"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "បានបរាជ័យ​ក្នុងការ​យក​ខ្ញុំ​ចេញ​ពី​បញ្ជីមិត្តភក្ដិ​របស់ %d"
+
+#~ msgid "No reason given"
+#~ msgstr "គ្មាន​ហេតុផល​បាន​ផ្ដល់"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "អ្នក​ត្រូវ​បាន​បន្ថែម​ដោយ %s"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "តើ​អ្នក​ចង់​បន្ថែម​គាត់​ទេ ?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "បាន​ច្រាន​ចេញ​ដោយ %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "សារ ៖ %s"
+
+#~ msgid "ID: "
+#~ msgstr "លេខ​សម្គាល់ ៖"
+
+#~ msgid "Group ID"
+#~ msgstr "លេខ​សម្គាល់ក្រុម"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "សូម​បញ្ចូល​លេខ Qun"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "អ្នក​អាច​ស្វែងរក​សម្រាប់តែ​ Qun អចិន្ត្រៃយ៍​ប៉ុណ្ណោះ\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(ខ្សែអក្សរ UTF-8 មិន​ត្រឹមត្រូវ)"
+
+#~ msgid "Not member"
+#~ msgstr "មិន​ចងចាំ"
+
+#~ msgid "Member"
+#~ msgstr "ចងចាំ"
+
+#~ msgid "Requesting"
+#~ msgstr "សំណើ"
+
+#~ msgid "Admin"
+#~ msgstr "គ្រប់គ្រង"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "បញ្ជី​បន្ទប់"
+
+#~ msgid "Notice"
+#~ msgstr "ចំណាំ"
+
+#~ msgid "Detail"
+#~ msgstr "សេចក្ដី​លម្អិត"
+
+#~ msgid "Creator"
+#~ msgstr "អ្នកបង្កើត"
+
+#~ msgid "Category"
+#~ msgstr "ប្រភេទ"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun មិនអនុញ្ញាត​ឲ្យ​អ្នកផ្សេង​ចូលរួម"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "ចូលរួម QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "បញ្ចូល​សំណើ​នៅ​ទីនេះ"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "បាន​ចូលដោយ​ជោគជ័យ Qun %s (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "បានចូល​ដោយ​ជោគជ័យ Qun"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u បាន​បដិសេធ​ពី​ការ​ចូលរួម"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "ប្រតិបត្តិការ QQ Qun"
+
+#~ msgid "Failed:"
+#~ msgstr "បាន​បរាជ័យ ៖"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "ចូលរួម Qun មិន​ស្គាល់ការ​ឆ្លើយតប"
+
+#~ msgid "Quit Qun"
+#~ msgstr "ចេញពី Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr "ចំណាំ ប្រសិនបើ​អ្នក​ជា​អ្នកបង្កើត ប្រតិបត្តិការ​នេះ​នឹង​យក Qun នេះ​ចេញ​ ។"
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "សូម​អភ័យ​ទោស អ្នក​មិន​ស្ថិត​នៅ​ក្នុងរចនាប័ទ្ម​របស់​យើង​ទេ"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "បានផ្លាស់ប្ដូរ​សមាជិក Qun ដោយ​ជោគជ័យ"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "បាន​ផ្លាស់ប្ដូរ​ព័ត៌មាន Qun ដោយ​ជោគជ័យ"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "អ្នកបានបង្កើត Qun ដោយ​ជោគជ័យ"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "តើអ្នក​ចង់​រៀបចំ​ព័ត៌មានលម្អិត​ឥឡូវ​ដែរឬទេ ?"
+
+#~ msgid "Setup"
+#~ msgstr "រៀបចំ"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u បានស្នើ​ឲ្យ​ចូលរួម Qun %u សម្រាប់ %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u ស្នើ​ឲ្យ​ចូលរួម Qun %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "បាន​បរាជ័យ​ក្នុងការ​ចូលរួម Qun %u បាន​ប្រតិបត្តិ​ដោយ​អ្នក​គ្រប់គ្រង %u"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>ចូលរួម Qun %u ត្រូវ​បាន​អនុម័ត​ដោយ​អ្នក​គ្រប់គ្រង %u សម្រាប់ %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>បាន​យក​មិត្តភក្ដិ %u ចេញ ។</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>បាន​ចូល​រួម​មិត្តភក្ដិ​ថ្មី %u ។</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "មិនស្គាល់ %d"
+
+#~ msgid "Level"
+#~ msgstr "កម្រិត"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr " វីដែអូ"
+
+#~ msgid " Zone"
+#~ msgstr " តំបន់"
+
+#~ msgid "Flag"
+#~ msgstr "ទង់"
+
+#~ msgid "Ver"
+#~ msgstr "កំណែ"
+
+#~ msgid "Invalid name"
+#~ msgstr "ឈ្មោះ​មិន​ត្រឹមត្រូវ"
+
+#~ msgid "Select icon..."
+#~ msgstr "ជ្រើស​រូបតំណាង..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ពេលវេលា​ចូល</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>មិត្តភក្ដិ​លើ​បណ្ដាញ​សរុប</b> ៖ %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ធ្វើ​ឲ្យ​ស្រស់​ចុងក្រោយ</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>ម៉ាស៊ីន​បម្រើ</b> ៖ %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>ទង់​ម៉ាស៊ីន​ភ្ញៀវ</b> ៖ %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>របៀប​តភ្ជាប់</b> ៖ %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>IP អ៊ីនធឺណិត​របស់​ខ្ញុំ</b> ៖ %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>បានផ្ញើ</b> ៖ %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>ផ្ញើ​ឡើង​វិញ</b> ៖ %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>បាត់បង់</b> ៖ %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>បាន​ទទួល</b> ៖ %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>បាន​ស្ទួន</b> ៖ %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ពេលវេលា</b> ៖ %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b> ៖ %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>អ្នក​និពន្ធ​ដើម</b> ៖<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>អ្នក​ចែកចាយ​កូដ</b> ៖<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>អ្នក​សរសេរ​បំណះ​ដែល​ជា​ទីស្រឡាញ់</b> ៖<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>ទទួល​ស្គាល់</b> ៖<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>អ្នក​សាកល្បង​ហ្មតចត់</b> ៖<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "និង​ផ្សេងៗ​ទៀត សូម​ឲ្យ​ខ្ញុំ​ដឹង... អរគុណ !))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>ប្រុសៗ​ទាំង​អស់​នៅ​ក្នុង​បន្ទប់...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>ចូលរួម​ជា​មួយ​យើង​ដោយ​សេរី !</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "អំពី OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់"
+
+#~ msgid "Account Information"
+#~ msgstr "ព័ត៌មាន​គណនី"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "ធ្វើ​ឲ្យ QQ Quns ទាន់សម័យ"
+
+#~ msgid "About OpenQ"
+#~ msgstr "អំពី OpenQ"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "កែប្រែ មិត្តភក្ដិ"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "កម្មវិធី​ជំនួយ​ពិធីការ QQ"
+
+#~ msgid "Auto"
+#~ msgstr "ស្វ័យ​ប្រវត្តិ"
+
+#~ msgid "Select Server"
+#~ msgstr "ជ្រើស​ម៉ាស៊ីន​បម្រើ"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "តភ្ជាប់​តាម TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "បង្ហាញ​​​កំណត់​ចំណាំ​របស់​ម៉ាស៊ីន​បម្រើ"
+
+#~ msgid "Show server news"
+#~ msgstr "បង្ហាញ​ព័ត៌មាន​របស់​ម៉ាស៊ីនបម្រើ"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "បង្ហាញ​"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "ទុក​ខាងក្នុង (វិនាទី)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "ធ្វើ​ឲ្យ​ចន្លោះ​ទាន់សម័យ (វិនាទី)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "មិនអាច​ឌិគ្រីប​ការ​ឆ្លើយ​តប​​ម៉ាស៊ីន​បម្រើ​បានទេ"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "បានបរាជ័យ​ក្នុងកា​រស្នើ​ថូខឹន 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "ថូខឹន​មិនត្រឹមត្រូវ %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX បច្ចុប្បន្ន​មិនត្រូវ​បានគាំទ្រ​ទេ"
+
+#~ msgid "Activation required"
+#~ msgstr "ត្រូវការ​ធ្វើ​ឲ្យ​សកម្ម"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "កូដ​ឆ្លើយតប​មិន​​ស្គាល់​នៅ​ពេល​ចូល (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "ស្នើ captcha"
+
+#~ msgid "Checking captcha"
+#~ msgstr "ពិនិត្យ​មើល captcha"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "បានបរាជ័យក្នុងការ​ផ្ទៀងផ្ទាត់ captcha"
+
+#~ msgid "Captcha Image"
+#~ msgstr "រូបភាព Captcha"
+
+#~ msgid "Enter code"
+#~ msgstr "បញ្ចូល​កូដ"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "ការ​ផ្ទៀងផ្ទាត់ QQ Captcha"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "បញ្ចូល​អត្ថបទ​ពី​រូបភាព"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "មិនស្គាល់​ការ​ឆ្លើយតប​នៅពេល​ពិនិត្យមើលពាក្យ​សម្ងាត់ (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "កូដ​ឆ្លើយតប​មិនស្គាល់ នៅពេល​ចូល (0x%02X) ៖\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "កំហុស​រន្ធ"
+
+#~ msgid "Getting server"
+#~ msgstr "យក​ម៉ាស៊ីនបម្រើ"
+
+#~ msgid "Requesting token"
+#~ msgstr "ស្នើ​ថូខឹន"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "ម៉ាស៊ីន​បម្រើ ឬ​ច្រក​មិន​ត្រឹមត្រូវ"
+
+#~ msgid "Connecting to server"
+#~ msgstr "តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីនបម្រើ"
+
+#~ msgid "QQ Error"
+#~ msgstr "កំហុស QQ"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "ព័ត៌មាន​ម៉ាស៊ីន​បម្រើ ៖\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "ពី %s ៖"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "កំណត់​ចំណាំ​ម៉ាស៊ីន​បម្រើពី %s ៖ \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "មិនស្គាល់​ម៉ាស៊ីន​បម្រើ CMD"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "កំហុស​ក្នុងការ​ឆ្លើយ​តប %s(0x%02X)\n"
+#~ "បន្ទប់ %u ឆ្លើយតប 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "ពាក្យ​បញ្ជា QQ Qun"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "មិន​អាច​ឌិគ្រីប​ការ​ឆ្លើយ​តប​​ចូល​បាន​ឡើយ"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "មិនស្គាល់​ការ​ចូល CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "មិនស្គាល់​ម៉ាស៊ីន​ភ្ញៀវ CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d បានបដិសេធ​ឯកសារ %s"
+
+#~ msgid "File Send"
+#~ msgstr "ផ្ញើ​ឯកសារ"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d បាន​បោះបង់​ការ​ផ្ទេរ​របស់​ %s"
+
+#~ msgid "bug master"
+#~ msgstr "កំហុស​មេ"
+
+#, fuzzy
+#~ msgid "Voice and Video Settings"
+#~ msgstr "ការ​កំណត់​សំឡេង​/​វីដេអូ"
+
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "កំហុស​មួយ​បានកើតឡើង​នៅ​លើ​កា​រផ្ទេរ​ស្ទ្រីមបៃ​ក្នុង​ក្រុម\n"
 
@@ -15314,9 +15474,6 @@ msgstr ""
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "តើ​អ្នក​មាន​អារម្មណ៍​ដូច​ម្តេច​ពេល​​នេះ​ ?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "ប្ដូរ​អារម្មណ៍..."
 
 #~ msgid "Pager server"
 #~ msgstr "ម៉ាស៊ីនបម្រើ​ភេយ័រ"

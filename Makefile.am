@@ -11,8 +11,6 @@ EXTRA_DIST = \
 		config.h.mingw \
 		doxy2devhelp.xsl \
 		fix-casts.sh \
-		gaim.pc.in \
-		gaim-uninstalled.pc.in \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
@@ -41,13 +39,6 @@ commit-check:
 version-check: commit-check
 # We don't want to release development versions.
 	test x`echo $(PACKAGE_VERSION) | grep dev` = x
-
-# Make sure there is a NEWS entry for this version
-	head NEWS | grep "^$(PACKAGE_VERSION) (`date +%m/%d/%Y`):$$" > /dev/null
-
-# Ensure NEWS has no spaces at the start of a line.
-# Using spaces instead of tabs there is a common mistake.
-	test x`grep "^ " NEWS` = x
 
 # When doing a new minor (or major) release (X.Y.0), there must be a section in
 # ChangeLog.API.

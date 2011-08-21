@@ -612,7 +612,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	}
 	else
 	{
-		purple_strlcpy(buf, utf8);
+		g_strlcpy(buf, utf8, sizeof(buf));
 		g_free(utf8);
 	}
 
@@ -4108,25 +4108,14 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
+	return purple_util_fetch_url_request_len(NULL, url, full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
 }
 
 PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
-			user_agent, http11, request, include_headers, max_len, callback,
-			user_data);
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+purple_util_fetch_url_request_len(PurpleAccount *account,
 		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
@@ -4941,18 +4930,6 @@ purple_escape_filename(const char *str)
 	buf[j] = '\0';
 
 	return buf;
-}
-
-const char *_purple_oscar_convert(const char *act, const char *protocol)
-{
-	if (act && purple_strequal(protocol, "prpl-oscar")) {
-		int i;
-		for (i = 0; act[i] != '\0'; i++)
-			if (!isdigit(act[i]))
-				return "prpl-aim";
-		return "prpl-icq";
-	}
-	return protocol;
 }
 
 void purple_restore_default_signal_handlers(void)

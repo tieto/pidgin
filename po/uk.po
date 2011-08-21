@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 21:40-0700\n"
-"PO-Revision-Date: 2011-05-07 19:18+0300\n"
+"POT-Creation-Date: 2011-08-17 22:43-0700\n"
+"PO-Revision-Date: 2011-08-11 10:21+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "Language: uk\n"
@@ -1678,6 +1678,7 @@ msgstr "Цей протокол не підтримує отримання за�
 msgid "Unknown"
 msgstr "Невідомо"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Користувачі"
 
@@ -4736,9 +4737,8 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 "invite &lt;користувач&gt; [повідомлення]:  Запросити користувача у кімнату."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
-msgstr ""
-"join &lt;кімната&gt; [пароль]:  приєднатися до балачки на цьому сервері."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
+msgstr "join: &lt;кімната[@сервер]&gt; [пароль]:  приєднатися до балачки."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;користувач&gt; [причина]:  викинути користувача з кімнати."
@@ -6279,12 +6279,18 @@ msgid "Where I live"
 msgstr "Де я живу"
 
 #, c-format
-msgid "You have %i suggested friends."
-msgstr "Ви маєте %i запропонованих друзів."
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Ви маєте %i запропонованого друга."
+msgstr[1] "Ви маєте %i запропонованих друзів."
+msgstr[2] "Ви маєте %i запропонованих друзів."
 
 #, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Ви знайшли %i контактів, що збігаються в вашими критеріями."
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Ми знайшли %i контакт, що збігається в вашими критеріями."
+msgstr[1] "Ми знайшли %i контакти, що збігаються в вашими критеріями."
+msgstr[2] "Ми знайшли %i контактів, що збігаються в вашими критеріями."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -11014,6 +11020,9 @@ msgstr "/Довідка/Вікно _зневадження"
 msgid "/Help/De_veloper Information"
 msgstr "Довідка/Відомості про _розробників"
 
+msgid "/Help/_Plugin Information"
+msgstr "Довідка/Відомості _додатку"
+
 msgid "/Help/_Translator Information"
 msgstr "Довідка/Відомості про _перекладачів"
 
@@ -11642,10 +11651,6 @@ msgstr "Фатальна помилка"
 msgid "artist"
 msgstr "виконавець"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "голос та відео"
 
@@ -11657,6 +11662,10 @@ msgstr "Розробник сторінки тенет"
 
 msgid "win32 port"
 msgstr "порт win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "особа, що підтримує"
@@ -11775,6 +11784,9 @@ msgstr "Іврит"
 
 msgid "Hindi"
 msgstr "Хінді"
+
+msgid "Croatian"
+msgstr "Хорватська"
 
 msgid "Hungarian"
 msgstr "Угорська"
@@ -12018,6 +12030,13 @@ msgstr "Попередні перекладачі"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Відомості про перекладачів %s"
+
+#, c-format
+msgid "%s Plugin Information"
+msgstr "Відомості додатку %s"
+
+msgid "Plugin Information"
+msgstr "Відомості про додаток"
 
 msgid "_Name"
 msgstr "_Ім'я"
@@ -12970,6 +12989,12 @@ msgstr "Використати плавне прокручування"
 msgid "F_lash window when IMs are received"
 msgstr "_Блимати вікном, коли отримано повідомлення"
 
+msgid "Resize incoming custom smileys"
+msgstr "Змінювати розмір нетипових усмішок у вхідних повідомленнях"
+
+msgid "Maximum size:"
+msgstr "Найбільший розмір:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Найменша висота області введення в рядках:"
 
@@ -13038,6 +13063,9 @@ msgstr "Сервер _TURN:"
 
 msgid "_UDP Port:"
 msgstr "Порт _UDP:"
+
+msgid "T_CP Port:"
+msgstr "Порт _TCP:"
 
 msgid "Use_rname:"
 msgstr "_Ім'я користувача:"

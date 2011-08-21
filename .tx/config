@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.net
+
+[pidgin.pidgin]
+file_filter = po/<lang>.po
+source_file = po/pidgin.pot
+source_lang = en
+

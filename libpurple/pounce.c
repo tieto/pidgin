@@ -405,12 +405,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 
 	if (purple_strequal(element_name, "account")) {
-		char *tmp;
 		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
-		tmp = data->protocol_id;
-		data->protocol_id = g_strdup(_purple_oscar_convert(buffer, tmp));
-		g_free(tmp);
 	}
 	else if (purple_strequal(element_name, "pouncee")) {
 		g_free(data->pouncee);

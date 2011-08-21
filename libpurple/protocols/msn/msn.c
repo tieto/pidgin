@@ -1333,7 +1333,7 @@ msn_login(PurpleAccount *account)
 
 	if (!purple_ssl_is_supported())
 	{
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
 			  "SSL library."));
@@ -1374,7 +1374,7 @@ msn_login(PurpleAccount *account)
 	}
 
 	if (!msn_session_connect(session, host, port, http_method))
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 }

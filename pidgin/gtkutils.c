@@ -922,24 +922,6 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	return optmenu;
 }
 
-gboolean
-pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
-{
-	char *dirname = NULL;
-
-	if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
-		/* append a / if needed */
-		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
-			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
-		}
-		gtk_file_selection_set_filename(filesel, (dirname != NULL) ? dirname : path);
-		g_free(dirname);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 void
 pidgin_setup_gtkspell(GtkTextView *textview)
 {
@@ -2181,13 +2163,6 @@ pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *
 	}
 }
 
-void
-pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all) {
-	pidgin_setup_screenname_autocomplete_with_filter(entry, accountopt, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all));
-}
-
-
-
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
 	GdkCursor *cursor;
@@ -2531,21 +2506,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	g_free(tmp);
 
 	return NULL;
-}
-
-void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
-{
-	PurpleBuddy *buddy;
-	PurpleContact *contact;
-
-	buddy = purple_find_buddy(account, who);
-	if (!buddy) {
-		purple_debug_info("custom-icon", "You can only set custom icon for someone in your buddylist.\n");
-		return;
-	}
-
-	contact = purple_buddy_get_contact(buddy);
-	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)
@@ -3282,13 +3242,26 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 #ifdef _WIN32
 	/* If using Win32... */
 	int code;
-	wchar_t *wc_filename = g_utf8_to_utf16(
-			uri, -1, NULL, NULL, NULL);
+	if (purple_str_has_prefix(uri, "file://"))
+	{
+		gchar *escaped = g_shell_quote(uri);
+		gchar *param = g_strconcat("/select,\"", uri, "\"", NULL);
+		gchar *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
 
-	code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
-			SW_SHOW);
+		code = (int)ShellExecuteW(NULL, "OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
 
-	g_free(wc_filename);
+		g_free(wc_param);
+		g_free(param);
+		g_free(escaped);
+	} else {
+		wchar_t *wc_filename = g_utf8_to_utf16(
+				uri, -1, NULL, NULL, NULL);
+
+		code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(wc_filename);
+	}
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{

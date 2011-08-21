@@ -273,23 +273,6 @@ void purple_status_type_destroy(PurpleStatusType *status_type);
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
- * Sets a status type's primary attribute.
- *
- * The value for the primary attribute is used as the description for
- * the particular status type. An example is an away message. The message
- * would be the primary attribute.
- *
- * @param status_type The status type.
- * @param attr_id     The ID of the primary attribute.
- *
- * @deprecated This function isn't used and should be removed in 3.0.0.
- */
-void purple_status_type_set_primary_attr(PurpleStatusType *status_type,
-									   const char *attr_id);
-#endif
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
-/**
  * Adds an attribute to a status type.
  *
  * @param status_type The status type to add the attribute to.
@@ -418,19 +401,6 @@ gboolean purple_status_type_is_exclusive(const PurpleStatusType *status_type);
  * @return TRUE if the status is available, or FALSE otherwise.
  */
 gboolean purple_status_type_is_available(const PurpleStatusType *status_type);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
-/**
- * Returns a status type's primary attribute ID.
- *
- * @param type The status type.
- *
- * @return The primary attribute's ID.
- *
- * @deprecated This function isn't used and should be removed in 3.0.0.
- */
-const char *purple_status_type_get_primary_attr(const PurpleStatusType *type);
-#endif
 
 /**
  * Returns the attribute with the specified ID.

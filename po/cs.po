@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 21:40-0700\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-05-02 20:24+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -1660,6 +1660,7 @@ msgstr "Tento protokol nepodporuje získávání veřejných aliasů."
 msgid "Unknown"
 msgstr "Neznámé"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Kamarádi"
 
@@ -4691,7 +4692,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;uživatel&gt; [zpráva]: Pozvat uživatele do místnosti."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 "join: &lt;místnost&gt; [heslo]: Připojit se k diskusi na tomto serveru."
 
@@ -6214,13 +6216,19 @@ msgstr "UserId"
 msgid "Where I live"
 msgstr "Kde bydlím"
 
-#, c-format
-msgid "You have %i suggested friends."
-msgstr "Máte %i doporučených přátel."
+#, fuzzy, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] "Máte %i doporučených přátel."
+msgstr[1] "Máte %i doporučených přátel."
+msgstr[2] "Máte %i doporučených přátel."
 
-#, c-format
-msgid "We found %i contacts that match your search."
-msgstr "Nalezeno %i kontaktů odpovídajících hledání."
+#, fuzzy, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] "Nalezeno %i kontaktů odpovídajících hledání."
+msgstr[1] "Nalezeno %i kontaktů odpovídajících hledání."
+msgstr[2] "Nalezeno %i kontaktů odpovídajících hledání."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -10892,6 +10900,10 @@ msgstr "/Nápověda/_Ladicí okno"
 msgid "/Help/De_veloper Information"
 msgstr "/Nápověda/Informace o vývojářích"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/Nápověda/Informace o sestavení"
+
 msgid "/Help/_Translator Information"
 msgstr "/Nápověda/Informace o _překladatelích"
 
@@ -11515,10 +11527,6 @@ msgstr "Fatální chyba"
 msgid "artist"
 msgstr "umělec"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "hlas a video"
 
@@ -11530,6 +11538,10 @@ msgstr "webmaster"
 
 msgid "win32 port"
 msgstr "port na win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "správce"
@@ -11648,6 +11660,9 @@ msgstr "Hebrejština"
 
 msgid "Hindi"
 msgstr "Hindština"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "Maďarština"
@@ -11889,6 +11904,14 @@ msgstr "Dřívější překladatelé"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Informace o překladatelích %s"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Informace o sestavení %s"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Informace o přihlášení"
 
 msgid "_Name"
 msgstr "_Název"
@@ -12837,6 +12860,14 @@ msgstr "Používat hladké posouvání"
 msgid "F_lash window when IMs are received"
 msgstr "_Bliknout oknem, když jsou přijaty IM"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Spravovat uživatelské smajlíky"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Maximální čas na odpověď:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Minimální výška plochy pro zadání v řádcích:"
 
@@ -12904,6 +12935,10 @@ msgid "_TURN server:"
 msgstr "Server _TURN:"
 
 msgid "_UDP Port:"
+msgstr "_UDP Port:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "_UDP Port:"
 
 msgid "Use_rname:"
@@ -15240,9 +15275,6 @@ msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 
 #~ msgid "<b>IP</b>: %s<br>\n"
 #~ msgstr "<b>IP</b>: %s<br>\n"
-
-#~ msgid "Login Information"
-#~ msgstr "Informace o přihlášení"
 
 #~ msgid "<p><b>Original Author</b>:<br>\n"
 #~ msgstr "<p><b>Originální autor</b>:<br>\n"

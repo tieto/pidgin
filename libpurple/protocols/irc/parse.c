@@ -74,7 +74,7 @@ static struct _irc_msg {
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
 	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
-	{ "352", "nvcvnvvv:", irc_msg_who },/* Channel WHO			*/
+	{ "352", "ncvvvnv:", irc_msg_who },	/* Channel WHO			*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
 	{ "367", "ncnnv", irc_msg_ban },	/* Ban list			*/
@@ -670,11 +670,11 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Disconnected."));
 		return;

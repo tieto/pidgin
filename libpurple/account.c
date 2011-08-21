@@ -874,7 +874,7 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
+	ret = purple_account_new(name, protocol_id);
 	g_free(name);
 	g_free(protocol_id);
 
@@ -923,15 +923,6 @@ parse_account(xmlnode *node)
 		if (g_file_get_contents(filename, &contents, &len, NULL))
 		{
 			purple_buddy_icons_set_account_icon(ret, (guchar *)contents, len);
-		}
-		else
-		{
-			/* Try to see if the icon got left behind in the old cache. */
-			g_free(filename);
-			filename = g_build_filename(g_get_home_dir(), ".gaim", "icons", data, NULL);
-			if (g_file_get_contents(filename, &contents, &len, NULL)) {
-				purple_buddy_icons_set_account_icon(ret, (guchar*)contents, len);
-			}
 		}
 
 		g_free(filename);

@@ -13,7 +13,6 @@
 .*\.loT$
 Doxyfile(\.mingw)?$
 VERSION$
-\.tx
 aclocal.m4
 autogen.args
 compile

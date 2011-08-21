@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: si\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-19 13:34-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2008-05-17 11:08+0530\n"
 "Last-Translator: Yajith Ajantha Dayarathna <yajith@gmail.com>\n"
 "Language-Team: Sinhala <sinhala@linux.lk>\n"
@@ -203,6 +203,10 @@ msgstr "පරිශීලක නම"
 
 msgid "Alias (optional)"
 msgstr ""
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "දිනයේ පණිවුඩය"
 
 #, fuzzy
 msgid "Add in group"
@@ -1614,6 +1618,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "නොදන්නා"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "මිතුරන්"
 
@@ -1856,6 +1861,9 @@ msgstr ""
 
 msgid "Unknown reason"
 msgstr "නොදන්නා හේතුවක්"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2230,7 +2238,9 @@ msgid ""
 "(Please provide the full path)"
 msgstr ""
 
-msgid "Automatically reject from users not in buddy list"
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
 msgstr ""
 
 msgid ""
@@ -2239,6 +2249,9 @@ msgid ""
 msgstr ""
 
 msgid "Create a new directory for each user"
+msgstr ""
+
+msgid "Escape the filenames"
 msgstr ""
 
 msgid "Notes"
@@ -3020,6 +3033,24 @@ msgstr ""
 msgid "Change Gadu-Gadu Password"
 msgstr ""
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "තත්වය:"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "නොබැඳි මිතුරන්"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "රහස්පදය වෙනස් කරන්න"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr ""
@@ -3051,9 +3082,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "පළමු නම"
 
@@ -3167,6 +3196,21 @@ msgstr ""
 msgid "GG server"
 msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
 
+msgid "Don't use encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "නව සංස්කරණයක් නිකුත් වී ඇත"
+
+#. TODO
+msgid "Require encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Connection security"
+msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr ""
@@ -3203,7 +3247,6 @@ msgstr ""
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, fuzzy, c-format
 msgid "Lost connection with server: %s"
@@ -3456,6 +3499,9 @@ msgstr ""
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
 
+msgid "authserv: Send a command to authserv"
+msgstr ""
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3623,7 +3669,10 @@ msgstr ""
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 #, fuzzy
 msgid "Invalid response from server"
 msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
@@ -3765,7 +3814,6 @@ msgstr "කළාපය"
 msgid "Postal Code"
 msgstr "තැපැල් අංකය"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "රට"
 
@@ -4479,7 +4527,7 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4518,19 +4566,8 @@ msgstr ""
 msgid "Domain"
 msgstr "කළාපය"
 
-msgid "Require encryption"
-msgstr ""
-
-#, fuzzy
-msgid "Use encryption if available"
-msgstr "නව සංස්කරණයක් නිකුත් වී ඇත"
-
 msgid "Use old-style SSL"
 msgstr ""
-
-#, fuzzy
-msgid "Connection security"
-msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
@@ -4638,6 +4675,7 @@ msgstr ""
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 
+#. not success
 msgid "File Send Failed"
 msgstr ""
 
@@ -5392,18 +5430,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "පිවිසුම සක්‍රීය කරන්න"
 
-msgid "Authorization Request Message:"
-msgstr ""
-
-msgid "Please authorize me!"
-msgstr ""
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "හරි (_O)"
-
 msgid "Error retrieving profile"
 msgstr ""
 
@@ -5614,6 +5640,9 @@ msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
 
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr ""
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -5754,19 +5783,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-msgid "The PIN you entered is invalid."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-#, fuzzy
-msgid "The two PINs you entered do not match."
-msgstr "රහස්පද ගැල පෙන්නේ නැත."
-
 msgid "The Display Name you entered is invalid."
 msgstr ""
 
@@ -5786,7 +5802,52 @@ msgstr ""
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your UID"
+#. display name
+#. nick name (required)
+#, fuzzy
+msgid "Display Name"
+msgstr "පෙලපත් නාමය"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "%s සම්බන්ධව"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "ජංගම දුරකථනය"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+msgid "Update your MXit Profile"
+msgstr ""
+
+msgid "The PIN you entered is invalid."
+msgstr ""
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr ""
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "රහස්පද ගැල පෙන්නේ නැත."
+
+#. show error to user
+msgid "PIN Update Error"
 msgstr ""
 
 #. pin
@@ -5795,29 +5856,18 @@ msgstr ""
 msgid "PIN"
 msgstr "UIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr ""
 
-#. display name
-#. nick name (required)
+#. (reference: "libpurple/request.h")
 #, fuzzy
-msgid "Display Name"
-msgstr "පෙලපත් නාමය"
+msgid "Change PIN"
+msgstr "රහස්පදය වෙනස් කරන්න"
 
-#. hidden
-msgid "Hide my number"
-msgstr ""
-
-#. mobile number
 #, fuzzy
-msgid "Mobile Number"
-msgstr "ජංගම දුරකථනය"
-
-msgid "Update your Profile"
-msgstr ""
-
-msgid "Here you can update your MXit profile"
-msgstr ""
+msgid "Change MXit PIN"
+msgstr "රහස්පදය වෙනස් කරන්න"
 
 msgid "View Splash"
 msgstr ""
@@ -5829,10 +5879,37 @@ msgstr ""
 msgid "About"
 msgstr "%s සම්බන්ධව"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "සඳහා සොයන්න (_S):"
+
+msgid "Search for a MXit contact"
+msgstr ""
+
+#, fuzzy
+msgid "Type search information"
+msgstr "පරිශීලක තොරතුරු"
+
+msgid "_Search"
+msgstr "සොයන්න (_S)"
+
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
 msgstr "ගොනුව සුරකින්න..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "රහස්පදය වෙනස් කරන්න"
+
+#. suggested friends
+msgid "Suggested friends..."
+msgstr ""
+
+#. search for contacts
+msgid "Search for contacts..."
+msgstr ""
 
 #. display splash-screen
 #, fuzzy
@@ -5863,6 +5940,10 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "සම්බන්ධ (_o)"
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "රහස්පද ගැල පෙන්නේ නැත."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -5938,6 +6019,22 @@ msgstr ""
 msgid "Retrieving User Information..."
 msgstr "සේවාදායකයේ තොරතුරු"
 
+msgid "was kicked"
+msgstr ""
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "%s අභාවිත විය (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "කාමරය (_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "ඔබට තැපෑලක් ඇත!"
+
 #, fuzzy
 msgid "Loading menu..."
 msgstr "පිවිසීම"
@@ -5956,8 +6053,20 @@ msgid "Hidden Number"
 msgstr "ගෘහස්ථ දුරකථනය 2"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "භාවිතයට නැත"
+
+msgid "This contact does not have a profile."
+msgstr ""
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "තෝරන්න..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "ඇරයුම"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5972,26 +6081,41 @@ msgstr "සම්බන්ධ (_o)"
 msgid "Enable splash-screen popup"
 msgstr ""
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "%s අභාවිත විය (%s)"
-
-msgid "was kicked"
-msgstr ""
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "කාමරය (_R):"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "ඔබට තැපෑලක් ඇත!"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "අවසන් නම"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "අන්තර්ජාල පණිවිඩකරු"
+
+#, fuzzy
+msgid "No results"
+msgstr "සොයාගත් ප්‍රතිඵල"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "සබඳතාවය ඉවත්කරන්න"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "පරිශිලක"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6719,6 +6843,12 @@ msgstr ""
 msgid "Authorization Denied Message:"
 msgstr ""
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "හරි (_O)"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr ""
@@ -7068,7 +7198,6 @@ msgid "Received authorization"
 msgstr ""
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 #, fuzzy
 msgid "Username does not exist"
@@ -7214,6 +7343,12 @@ msgstr ""
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
+msgstr ""
+
+msgid "The new formatting is invalid."
+msgstr ""
+
+msgid "Username formatting can change only capitalization and whitespace."
 msgstr ""
 
 msgid "Pop-Up Message"
@@ -7446,12 +7581,6 @@ msgstr ""
 msgid "ICQ Privacy Options"
 msgstr ""
 
-msgid "The new formatting is invalid."
-msgstr ""
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-
 msgid "Change Address To:"
 msgstr ""
 
@@ -7474,9 +7603,6 @@ msgstr ""
 
 msgid "Type the email address of the buddy you are searching for."
 msgstr ""
-
-msgid "_Search"
-msgstr "සොයන්න (_S)"
 
 #, fuzzy
 msgid "Set User Info (web)..."
@@ -7517,9 +7643,6 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr ""
 
-msgid "Don't use encryption"
-msgstr ""
-
 msgid "Use clientLogin"
 msgstr ""
 
@@ -7551,75 +7674,6 @@ msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
-msgstr ""
-
-msgid "Invalid SNAC"
-msgstr ""
-
-msgid "Server rate limit exceeded"
-msgstr ""
-
-msgid "Client rate limit exceeded"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr ""
-
-msgid "Service not defined"
-msgstr ""
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr ""
-
-msgid "Not supported by client"
-msgstr ""
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-msgid "Responses lost"
-msgstr ""
-
-msgid "Request denied"
-msgstr ""
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr ""
-
-msgid "No match"
-msgstr ""
-
-msgid "List overflow"
-msgstr ""
-
-msgid "Request ambiguous"
-msgstr ""
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
 msgstr ""
 
 #. Label
@@ -7740,6 +7794,75 @@ msgstr ""
 msgid "Capabilities"
 msgstr ""
 
+msgid "Invalid SNAC"
+msgstr ""
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr ""
+
+msgid "Service not defined"
+msgstr ""
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr ""
+
+msgid "Not supported by client"
+msgstr ""
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+msgid "Responses lost"
+msgstr ""
+
+msgid "Request denied"
+msgstr ""
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr ""
+
+msgid "No match"
+msgstr ""
+
+msgid "List overflow"
+msgstr ""
+
+msgid "Request ambiguous"
+msgstr ""
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
+msgstr ""
+
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
@@ -7786,768 +7909,6 @@ msgid "Invisible List"
 msgstr ""
 
 msgid "These buddies will always see you as offline"
-msgstr ""
-
-msgid "Aquarius"
-msgstr ""
-
-msgid "Pisces"
-msgstr ""
-
-msgid "Aries"
-msgstr ""
-
-msgid "Taurus"
-msgstr ""
-
-msgid "Gemini"
-msgstr ""
-
-msgid "Cancer"
-msgstr ""
-
-msgid "Leo"
-msgstr ""
-
-msgid "Virgo"
-msgstr ""
-
-msgid "Libra"
-msgstr ""
-
-msgid "Scorpio"
-msgstr ""
-
-msgid "Sagittarius"
-msgstr ""
-
-msgid "Capricorn"
-msgstr ""
-
-msgid "Rat"
-msgstr ""
-
-msgid "Ox"
-msgstr ""
-
-msgid "Tiger"
-msgstr ""
-
-msgid "Rabbit"
-msgstr ""
-
-msgid "Dragon"
-msgstr ""
-
-msgid "Snake"
-msgstr ""
-
-msgid "Horse"
-msgstr ""
-
-msgid "Goat"
-msgstr ""
-
-msgid "Monkey"
-msgstr ""
-
-msgid "Rooster"
-msgstr ""
-
-msgid "Dog"
-msgstr ""
-
-msgid "Pig"
-msgstr ""
-
-msgid "Other"
-msgstr "වෙනත්"
-
-#, fuzzy
-msgid "Visible"
-msgstr "අක්‍රීය (_D)"
-
-msgid "Friend Only"
-msgstr ""
-
-#, fuzzy
-msgid "Private"
-msgstr "පෞද්ගලිකත්වය"
-
-msgid "QQ Number"
-msgstr ""
-
-msgid "Country/Region"
-msgstr ""
-
-msgid "Province/State"
-msgstr ""
-
-msgid "Zipcode"
-msgstr ""
-
-msgid "Phone Number"
-msgstr ""
-
-#, fuzzy
-msgid "Authorize adding"
-msgstr "අනුමත මිතුරකුද?"
-
-msgid "Cellphone Number"
-msgstr ""
-
-msgid "Personal Introduction"
-msgstr ""
-
-#, fuzzy
-msgid "City/Area"
-msgstr "නගරය"
-
-#, fuzzy
-msgid "Publish Mobile"
-msgstr "පොදු යතුරු ගොනුව"
-
-#, fuzzy
-msgid "Publish Contact"
-msgstr "සබඳතාවයට වෙනත් නමක්"
-
-msgid "College"
-msgstr ""
-
-msgid "Horoscope"
-msgstr ""
-
-msgid "Zodiac"
-msgstr ""
-
-#, fuzzy
-msgid "Blood"
-msgstr "තදකුරු"
-
-msgid "True"
-msgstr ""
-
-#, fuzzy
-msgid "False"
-msgstr "අසමත් විය"
-
-#, fuzzy
-msgid "Modify Contact"
-msgstr "ගිණුම වෙනස් කරන්න"
-
-#, fuzzy
-msgid "Modify Address"
-msgstr "ලිපිනය"
-
-#, fuzzy
-msgid "Modify Extended Information"
-msgstr "මිතුරු තොරතුරු"
-
-#, fuzzy
-msgid "Modify Information"
-msgstr "මිතුරු තොරතුරු"
-
-#, fuzzy
-msgid "Update"
-msgstr "දිනය"
-
-#, fuzzy
-msgid "Could not change buddy information."
-msgstr "මිතුරාගේ තොරතුරු ඇතුළත් කරන්න."
-
-msgid "Note"
-msgstr "සටහන"
-
-#. callback
-#, fuzzy
-msgid "Buddy Memo"
-msgstr "මිතුරකු එක් කරන්න"
-
-msgid "Change his/her memo as you like"
-msgstr ""
-
-#, fuzzy
-msgid "_Modify"
-msgstr "සකසන්න"
-
-#, fuzzy
-msgid "Memo Modify"
-msgstr "සකසන්න"
-
-#, fuzzy
-msgid "Server says:"
-msgstr "සේවාදායකය (_S):"
-
-msgid "Your request was accepted."
-msgstr ""
-
-msgid "Your request was rejected."
-msgstr ""
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr ""
-
-#, fuzzy
-msgid "Add buddy question"
-msgstr "මබගේ ලැයිස්තුවට මිතුරා එක් කළ යුතුද?"
-
-#, fuzzy
-msgid "Enter answer here"
-msgstr "රහස්පදය ඇතුළත් කරන්න"
-
-msgid "Send"
-msgstr "යවන්න"
-
-msgid "Invalid answer."
-msgstr ""
-
-msgid "Authorization denied message:"
-msgstr ""
-
-msgid "Sorry, you're not my style."
-msgstr ""
-
-#, c-format
-msgid "%u needs authorization"
-msgstr ""
-
-#, fuzzy
-msgid "Add buddy authorize"
-msgstr "මබගේ ලැයිස්තුවට මිතුරා එක් කළ යුතුද?"
-
-msgid "Enter request here"
-msgstr ""
-
-msgid "Would you be my friend?"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Buddy"
-msgstr "මිතුරකු එක් කරන්න"
-
-#, fuzzy
-msgid "Add buddy"
-msgstr "මිතුරකු එක් කරන්න"
-
-msgid "Invalid QQ Number"
-msgstr ""
-
-msgid "Failed sending authorize"
-msgstr ""
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr ""
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr ""
-
-msgid "No reason given"
-msgstr ""
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr ""
-
-msgid "Would you like to add him?"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Rejected by %s"
-msgstr "අනුමත නොකරන්න"
-
-#, c-format
-msgid "Message: %s"
-msgstr ""
-
-msgid "ID: "
-msgstr ""
-
-msgid "Group ID"
-msgstr ""
-
-msgid "QQ Qun"
-msgstr ""
-
-#, fuzzy
-msgid "Please enter Qun number"
-msgstr "මිතුරාගේ තොරතුරු ඇතුළත් කරන්න."
-
-msgid "You can only search for permanent Qun\n"
-msgstr ""
-
-msgid "(Invalid UTF-8 string)"
-msgstr ""
-
-msgid "Not member"
-msgstr ""
-
-msgid "Member"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting"
-msgstr "ඉතිරිය"
-
-#, fuzzy
-msgid "Admin"
-msgstr "Adium"
-
-#. XXX: Should this be "Topic"?
-#, fuzzy
-msgid "Room Title"
-msgstr "කාමර ලැයිස්තුව"
-
-#, fuzzy
-msgid "Notice"
-msgstr "සටහන"
-
-#, fuzzy
-msgid "Detail"
-msgstr "ප්‍රකෘතිය"
-
-msgid "Creator"
-msgstr ""
-
-#, fuzzy
-msgid "About me"
-msgstr "%s සම්බන්ධව"
-
-msgid "Category"
-msgstr ""
-
-msgid "The Qun does not allow others to join"
-msgstr ""
-
-msgid "Join QQ Qun"
-msgstr ""
-
-msgid "Input request here"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "පිවිසුම් තොරතුරු"
-
-msgid "Successfully joined Qun"
-msgstr ""
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr ""
-
-msgid "QQ Qun Operation"
-msgstr ""
-
-#, fuzzy
-msgid "Failed:"
-msgstr "අසමත් විය"
-
-msgid "Join Qun, Unknown Reply"
-msgstr ""
-
-#, fuzzy
-msgid "Quit Qun"
-msgstr "පිටවීම"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-
-msgid "Sorry, you are not our style"
-msgstr ""
-
-#, fuzzy
-msgid "Successfully changed Qun members"
-msgstr "පිවිසුම් තොරතුරු"
-
-#, fuzzy
-msgid "Successfully changed Qun information"
-msgstr "පිවිසුම් තොරතුරු"
-
-msgid "You have successfully created a Qun"
-msgstr ""
-
-msgid "Would you like to set up detailed information now?"
-msgstr ""
-
-msgid "Setup"
-msgstr ""
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr ""
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr ""
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr ""
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "මිතුරා ඉවත්කරන්න"
-
-#, fuzzy, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "මිතුරා ඉවත්කරන්න"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr ""
-
-msgid "Level"
-msgstr ""
-
-msgid " VIP"
-msgstr ""
-
-msgid " TCP"
-msgstr ""
-
-#, fuzzy
-msgid " FromMobile"
-msgstr "ජංගම"
-
-#, fuzzy
-msgid " BindMobile"
-msgstr "ජංගම"
-
-msgid " Video"
-msgstr ""
-
-#, fuzzy
-msgid " Zone"
-msgstr "කිසිවක් නැත"
-
-msgid "Flag"
-msgstr ""
-
-msgid "Ver"
-msgstr ""
-
-msgid "Invalid name"
-msgstr ""
-
-#, fuzzy
-msgid "Select icon..."
-msgstr "අක්‍ෂර තෝරන්න"
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr ""
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr ""
-
-msgid "Login Information"
-msgstr "පිවිසුම් තොරතුරු"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr ""
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr ""
-
-msgid "and more, please let me know... thank you!))"
-msgstr ""
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr ""
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "About OpenQ %s"
-msgstr "%s සම්බන්ධව"
-
-#, fuzzy
-msgid "Change Icon"
-msgstr "රහස්පදය වෙනස් කරන්න"
-
-msgid "Change Password"
-msgstr "රහස්පදය වෙනස් කරන්න"
-
-#, fuzzy
-msgid "Account Information"
-msgstr "පිවිසුම් තොරතුරු"
-
-msgid "Update all QQ Quns"
-msgstr ""
-
-#, fuzzy
-msgid "About OpenQ"
-msgstr "%s සම්බන්ධව"
-
-#, fuzzy
-msgid "Modify Buddy Memo"
-msgstr "ලිපිනය"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "QQ Protocol Plugin"
-msgstr "නියමාවලිය"
-
-#, fuzzy
-msgid "Auto"
-msgstr "අනුමත"
-
-#, fuzzy
-msgid "Select Server"
-msgstr "පරිශීලක තෝරන්න"
-
-msgid "QQ2005"
-msgstr ""
-
-msgid "QQ2007"
-msgstr ""
-
-msgid "QQ2008"
-msgstr ""
-
-#, fuzzy
-msgid "Connect by TCP"
-msgstr "සම්බන්ධ (_o)"
-
-#, fuzzy
-msgid "Show server notice"
-msgstr "සේවාදායකයේ තොරතුරු"
-
-msgid "Show server news"
-msgstr ""
-
-msgid "Show chat room when msg comes"
-msgstr ""
-
-msgid "Keep alive interval (seconds)"
-msgstr ""
-
-#, fuzzy
-msgid "Update interval (seconds)"
-msgstr "පරිශීලක තොරතුරු"
-
-#, fuzzy
-msgid "Unable to decrypt server reply"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr ""
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr ""
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr ""
-
-#. need activation
-#. need activation
-#. need activation
-#, fuzzy
-msgid "Activation required"
-msgstr "සත්‍යාපනය අසමත් විය"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr ""
-
-#, fuzzy
-msgid "Requesting captcha"
-msgstr "ඉතිරිය"
-
-msgid "Checking captcha"
-msgstr ""
-
-msgid "Failed captcha verification"
-msgstr ""
-
-#, fuzzy
-msgid "Captcha Image"
-msgstr "පිළිඹිබුව සුරකින්න"
-
-#, fuzzy
-msgid "Enter code"
-msgstr "රහස්පදය ඇතුළත් කරන්න"
-
-msgid "QQ Captcha Verification"
-msgstr ""
-
-msgid "Enter the text from the image"
-msgstr ""
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr ""
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-
-msgid "Socket error"
-msgstr ""
-
-#, fuzzy
-msgid "Getting server"
-msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
-
-#, fuzzy
-msgid "Requesting token"
-msgstr "ඉතිරිය"
-
-#, fuzzy
-msgid "Unable to resolve hostname"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-msgid "Invalid server or port"
-msgstr ""
-
-#, fuzzy
-msgid "Connecting to server"
-msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
-
-#, fuzzy
-msgid "QQ Error"
-msgstr "දෝෂය"
-
-#, fuzzy, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr "සේවා දායකය"
-
-#, fuzzy, c-format
-msgid "%s:%s"
-msgstr "%s (%s)"
-
-#, fuzzy, c-format
-msgid "From %s:"
-msgstr "වෙතින්"
-
-#, fuzzy, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr "%s සඳහා සහතිකය"
-
-#, fuzzy
-msgid "Unknown SERVER CMD"
-msgstr "නොදන්නා හේතුවක්"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-
-#, fuzzy
-msgid "QQ Qun Command"
-msgstr "විධානය"
-
-#, fuzzy
-msgid "Unable to decrypt login reply"
-msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
-
-#, fuzzy
-msgid "Unknown LOGIN CMD"
-msgstr "නොදන්නා හේතුවක්"
-
-#, fuzzy
-msgid "Unknown CLIENT CMD"
-msgstr "නොදන්නා හේතුවක්"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr ""
-
-msgid "File Send"
-msgstr ""
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
 msgstr ""
 
 #, c-format
@@ -9270,6 +8631,9 @@ msgstr ""
 msgid "Unit"
 msgstr "ඒකකය"
 
+msgid "Note"
+msgstr "සටහන"
+
 msgid "Join Chat"
 msgstr ""
 
@@ -9867,6 +9231,10 @@ msgstr "නොදන්නා හේතුවක්"
 msgid "Unable to create listen socket"
 msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 
@@ -9985,6 +9353,9 @@ msgstr ""
 
 #, c-format
 msgid "Yahoo! system message for %s:"
+msgstr ""
+
+msgid "Authorization denied message:"
 msgstr ""
 
 #, c-format
@@ -10722,14 +10093,17 @@ msgstr ""
 msgid "No Proxy"
 msgstr ""
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr ""
 
 msgid "SOCKS 5"
 msgstr ""
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr ""
@@ -10757,6 +10131,13 @@ msgstr "තොට (_P):"
 
 msgid "Pa_ssword:"
 msgstr ""
+
+msgid "Use _silence suppression"
+msgstr ""
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "සකසුම් සැකසීම්"
 
 msgid "Unable to save new account"
 msgstr ""
@@ -10796,8 +10177,18 @@ msgid ""
 msgstr ""
 
 #, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr ""
+
+#, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "නව ක්‍ෂණික පණිවිඩය"
 
 #. Buddy List
 msgid "Background Color"
@@ -11176,6 +10567,10 @@ msgid "/Help/De_veloper Information"
 msgstr "සේවාදායකයේ තොරතුරු"
 
 #, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "මිතුරු තොරතුරු"
+
+#, fuzzy
 msgid "/Help/_Translator Information"
 msgstr "පෞද්ගලික තොරතුරු"
 
@@ -11352,6 +10747,10 @@ msgstr "පරිශීලක නම (_U):"
 #, fuzzy
 msgid "(Optional) A_lias:"
 msgstr "වෛකල්පිත තොරතුරු:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
+msgstr "අන්තර්ජාල පණිවිඩකරු"
 
 #, fuzzy
 msgid "Add buddy to _group:"
@@ -11788,16 +11187,9 @@ msgstr ""
 msgid "Fatal Error"
 msgstr ""
 
-msgid "bug master"
-msgstr ""
-
 #, fuzzy
 msgid "artist"
 msgstr "ශිල්පියා"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr ""
 
 msgid "voice and video"
 msgstr ""
@@ -11809,6 +11201,10 @@ msgid "webmaster"
 msgstr ""
 
 msgid "win32 port"
+msgstr ""
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
 msgstr ""
 
 msgid "maintainer"
@@ -11932,6 +11328,9 @@ msgstr "හීබෲ"
 msgid "Hindi"
 msgstr "හින්දි"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "හංගේරියානු"
 
@@ -11975,6 +11374,10 @@ msgstr ""
 
 msgid "Maithili"
 msgstr ""
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "නව පණිවිඩය"
 
 msgid "Macedonian"
 msgstr "මැසඩෝනියානු"
@@ -12163,6 +11566,14 @@ msgstr "අතීයේ දායකත්වයක් ලබාදුන් ප
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "මිතුරු තොරතුරු"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "මිතුරු තොරතුරු"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "පිවිසුම් තොරතුරු"
 
 msgid "_Name"
 msgstr "_නාමය"
@@ -12795,6 +12206,13 @@ msgstr ""
 msgid "New Pounces"
 msgstr "මිතුරකු අල්ලාගන්න"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr ""
 
@@ -13105,6 +12523,12 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr ""
 
+msgid "Resize incoming custom smileys"
+msgstr ""
+
+msgid "Maximum size:"
+msgstr ""
+
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -13176,6 +12600,10 @@ msgstr "සේවාදායකය (_S):"
 
 #, fuzzy
 msgid "_UDP Port:"
+msgstr "තොට (_P):"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "තොට (_P):"
 
 #, fuzzy
@@ -13932,6 +13360,9 @@ msgstr ""
 
 msgid "PubSub Leaf"
 msgstr ""
+
+msgid "Other"
+msgstr "වෙනත්"
 
 #, fuzzy
 msgid ""
@@ -14783,6 +14214,22 @@ msgstr "ප්ලගීන"
 msgid "D_evice"
 msgstr "මෙවලම්"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "පරිමාව:"
+
+msgid "Silence threshold:"
+msgstr ""
+
+msgid "Input and Output Settings"
+msgstr ""
+
+msgid "Microphone Test"
+msgstr ""
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -14794,10 +14241,6 @@ msgstr "මෙවලම්"
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
-msgstr "සකසුම් සැකසීම්"
-
-#, fuzzy
-msgid "Voice and Video Settings"
 msgstr "සකසුම් සැකසීම්"
 
 #. *< name
@@ -15055,6 +14498,294 @@ msgid "You do not have permission to uninstall this application."
 msgstr ""
 
 #, fuzzy
+#~ msgid "Visible"
+#~ msgstr "අක්‍රීය (_D)"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "පෞද්ගලිකත්වය"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "අනුමත මිතුරකුද?"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "නගරය"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "පොදු යතුරු ගොනුව"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "සබඳතාවයට වෙනත් නමක්"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "තදකුරු"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "අසමත් විය"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "ගිණුම වෙනස් කරන්න"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "ලිපිනය"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "මිතුරු තොරතුරු"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "මිතුරු තොරතුරු"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "දිනය"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "මිතුරාගේ තොරතුරු ඇතුළත් කරන්න."
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "මිතුරකු එක් කරන්න"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "සකසන්න"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "සකසන්න"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "සේවාදායකය (_S):"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "මබගේ ලැයිස්තුවට මිතුරා එක් කළ යුතුද?"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "රහස්පදය ඇතුළත් කරන්න"
+
+#~ msgid "Send"
+#~ msgstr "යවන්න"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "මබගේ ලැයිස්තුවට මිතුරා එක් කළ යුතුද?"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "මිතුරකු එක් කරන්න"
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "මිතුරකු එක් කරන්න"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "අනුමත නොකරන්න"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "මිතුරාගේ තොරතුරු ඇතුළත් කරන්න."
+
+#, fuzzy
+#~ msgid "Requesting"
+#~ msgstr "ඉතිරිය"
+
+#, fuzzy
+#~ msgid "Admin"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "කාමර ලැයිස්තුව"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "සටහන"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "ප්‍රකෘතිය"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "පිවිසුම් තොරතුරු"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "අසමත් විය"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "පිටවීම"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "පිවිසුම් තොරතුරු"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "පිවිසුම් තොරතුරු"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "මිතුරා ඉවත්කරන්න"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "මිතුරා ඉවත්කරන්න"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "ජංගම"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "ජංගම"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "කිසිවක් නැත"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "අක්‍ෂර තෝරන්න"
+
+#, fuzzy
+#~ msgid "About OpenQ %s"
+#~ msgstr "%s සම්බන්ධව"
+
+#~ msgid "Change Password"
+#~ msgstr "රහස්පදය වෙනස් කරන්න"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "පිවිසුම් තොරතුරු"
+
+#, fuzzy
+#~ msgid "About OpenQ"
+#~ msgstr "%s සම්බන්ධව"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "ලිපිනය"
+
+#, fuzzy
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "නියමාවලිය"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "අනුමත"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "පරිශීලක තෝරන්න"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "සම්බන්ධ (_o)"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "සේවාදායකයේ තොරතුරු"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "පරිශීලක තොරතුරු"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+#, fuzzy
+#~ msgid "Activation required"
+#~ msgstr "සත්‍යාපනය අසමත් විය"
+
+#, fuzzy
+#~ msgid "Requesting captcha"
+#~ msgstr "ඉතිරිය"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "පිළිඹිබුව සුරකින්න"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "රහස්පදය ඇතුළත් කරන්න"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
+
+#, fuzzy
+#~ msgid "Requesting token"
+#~ msgstr "ඉතිරිය"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "SILC සේවාදායක සමඟ සම්බන්ධ වෙමින් පවතී"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "දෝෂය"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "සේවා දායකය"
+
+#, fuzzy
+#~ msgid "%s:%s"
+#~ msgstr "%s (%s)"
+
+#, fuzzy
+#~ msgid "From %s:"
+#~ msgstr "වෙතින්"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr "%s සඳහා සහතිකය"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "නොදන්නා හේතුවක්"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "විධානය"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "නොදන්නා හේතුවක්"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "නොදන්නා හේතුවක්"
+
+#, fuzzy
 #~ msgid "An error occurred on the in-band bytestream transfer\n"
 #~ msgstr "ගොනුව විවෘත කිරීමේදී දෝශයක් ඇතිවිය."
 
@@ -15083,10 +14814,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Change your Mood"
-#~ msgstr "රහස්පදය වෙනස් කරන්න"
-
-#, fuzzy
-#~ msgid "Change Mood..."
 #~ msgstr "රහස්පදය වෙනස් කරන්න"
 
 #~ msgid "Orientation"
@@ -15163,10 +14890,6 @@ msgstr ""
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "දෙබස් කවුඵව සැඟවීම"
-
-#, fuzzy
-#~ msgid "Invite message"
-#~ msgstr "අන්තර්ජාල පණිවිඩකරු"
 
 #, fuzzy
 #~ msgid "Add buddy Q&A"
