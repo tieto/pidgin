@@ -17,7 +17,7 @@ version 3.0.0 (??/??/????):
 		* purple_notify_user_info_get_entries returns a GQueue instead of
 		  a GList
 		* purple_notify_user_info_prepend_pair renamed to
-		  purple_notify_user_info_prepend_pair_html_html
+		  purple_notify_user_info_prepend_pair_html
 		* purple_util_fetch_url_request_len now takes a PurpleAccount as
 		  the first parameter
 		* PurpleConnectionUiOps.report_disconnect now passes a
