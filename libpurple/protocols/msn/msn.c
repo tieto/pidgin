@@ -1091,16 +1091,18 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 				}
 			} else {
 				if (purple_presence_is_idle(presence)) {
-					purple_notify_user_info_add_pair(user_info, _("Status"),
-						_("Idle"));
+					purple_notify_user_info_add_pair_plaintext(user_info,
+							_("Status"), _("Idle"));
 				} else {
-					purple_notify_user_info_add_pair(user_info, _("Status"),
-						purple_status_get_name(status));
+					purple_notify_user_info_add_pair_plaintext(user_info,
+							_("Status"), purple_status_get_name(status));
 				}
 			}
 		}
 
 		if (currentmedia) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
@@ -1119,23 +1121,32 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	{
 		const char *phone;
 
-		purple_notify_user_info_add_pair(user_info, _("Has you"),
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Has you"),
 									   ((user->list_op & (1 << MSN_LIST_RL)) ? _("Yes") : _("No")));
 
-		purple_notify_user_info_add_pair(user_info, _("Blocked"),
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
 
 		phone = msn_user_get_home_phone(user);
-		if (phone != NULL)
+		if (phone != NULL) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), phone);
+		}
 
 		phone = msn_user_get_work_phone(user);
-		if (phone != NULL)
+		if (phone != NULL) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), phone);
+		}
 
 		phone = msn_user_get_mobile_phone(user);
-		if (phone != NULL)
+		if (phone != NULL) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), phone);
+		}
 	}
 }
 
@@ -2705,7 +2716,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 				(purple_connection_get_account(info_data->gc), info_data->name);
 		purple_notify_user_info_add_pair(user_info,
 				_("Error retrieving profile"), NULL);
-		purple_notify_user_info_add_pair(user_info, NULL,
+		purple_notify_user_info_add_pair_plaintext(user_info, NULL,
 				((p && b) ? _("The user has not created a public profile.") :
 					(p ? _("MSN reported not being able to find the user's profile. "
 							"This either means that the user does not exist, "

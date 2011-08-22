@@ -340,23 +340,29 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 
 	/* status (reference: "libpurple/notify.h") */
 	if ( contact->presence != MXIT_PRESENCE_OFFLINE )
-		purple_notify_user_info_add_pair( info, _( "Status" ), mxit_convert_presence_to_name( contact->presence ) );
+		purple_notify_user_info_add_pair_plaintext( info, _( "Status" ), mxit_convert_presence_to_name( contact->presence ) );
 
 	/* status message */
-	if ( contact->statusMsg )
+	if ( contact->statusMsg ) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair( info, _( "Status Message" ), contact->statusMsg );
+	}
 
 	/* mood */
 	if ( contact->mood != MXIT_MOOD_NONE )
-		purple_notify_user_info_add_pair( info, _( "Mood" ), mxit_convert_mood_to_name( contact->mood ) );
+		purple_notify_user_info_add_pair_plaintext( info, _( "Mood" ), mxit_convert_mood_to_name( contact->mood ) );
 
 	/* subscription type */
 	if ( contact->subtype != 0 )
-		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
+		purple_notify_user_info_add_pair_plaintext( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
 
 	/* rejection message */
-	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
+	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) ) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
+	}
 }
 
 

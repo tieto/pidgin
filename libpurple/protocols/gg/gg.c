@@ -1194,26 +1194,36 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
 	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	purple_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
 	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
 	purple_notify_user_info_add_pair(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
 	purple_notify_user_info_add_pair(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
 	purple_notify_user_info_add_pair(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
 	if (strncmp(val, "0", 1)) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair(user_info, _("Birth Year"), val);
 	}
 	g_free(val);
@@ -1225,15 +1235,12 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	if (NULL != buddy) {
 		PurpleStatus *status;
 		const char *msg;
-		char *text;
 
 		status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (msg != NULL) {
-			text = g_markup_escape_text(msg, -1);
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
-			g_free(text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
 	}
 
@@ -1975,7 +1982,7 @@ static char *ggp_status_text(PurpleBuddy *b)
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
-	char *text, *tmp;
+	char *tmp;
 	const char *msg, *name, *alias;
 
 	g_return_if_fail(b != NULL);
@@ -1985,21 +1992,19 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	name = purple_status_get_name(status);
 	alias = purple_buddy_get_alias(b);
 
-	purple_notify_user_info_add_pair (user_info, _("Alias"), alias);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 
 	if (msg != NULL) {
-		text = g_markup_escape_text(msg, -1);
 		if (PURPLE_BUDDY_IS_ONLINE(b)) {
-			tmp = g_strdup_printf("%s: %s", name, text);
-			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			tmp = g_strdup_printf("%s: %s", name, msg);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), tmp);
 			g_free(tmp);
 		} else {
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
-		g_free(text);
 	/* We don't want to duplicate 'Status: Offline'. */
 	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
-		purple_notify_user_info_add_pair(user_info, _("Status"), name);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);
 	}
 }
 
@@ -2030,7 +2035,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
- 	/*
+	/*
 	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because
 	 * libpurple can't support Chatty status) and Nie przeszkadzac
 	 */

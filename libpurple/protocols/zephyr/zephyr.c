@@ -791,18 +791,21 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				char *tmp;
 				const char *balias;
 
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
 				purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
 				balias = purple_buddy_get_local_buddy_alias(b);
 				if (b && balias)
-					purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+					purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 
 				if (!nlocs) {
-					purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+					purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
 					/* XXX add real error reporting */
 
 					ZGetLocations(&locs, &one);
+					/* TODO: Need to escape locs.host and locs.time? */
 					tmp = g_strdup_printf(_("<br>At %s since %s"), locs.host, locs.time);
 					purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
 					g_free(tmp);
@@ -1173,15 +1176,18 @@ static gint check_notify_tzc(gpointer data)
 					char *tmp;
 					const char *balias;
 
+					/* TODO: Check whether it's correct to call add_pair_html,
+					         or if we should be using add_pair_plaintext */
 					purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
 
 					balias = b ? purple_buddy_get_local_buddy_alias(b) : NULL;
 					if (balias)
-						purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+						purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 
 					if (!nlocs) {
-						purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+						purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("Hidden or not logged-in"));
 					} else {
+						/* TODO: Need to escape the two strings that make up tmp? */
 						tmp = g_strdup_printf(_("<br>At %s since %s"),
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents,
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);

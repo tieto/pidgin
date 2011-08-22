@@ -2278,7 +2278,7 @@ purple_parse_clientauto_ch2(OscarData *od, const char *who, guint16 reason, cons
 	return 0;
 }
 
-static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason, guint32 state, char *msg) {
+static int purple_parse_clientauto_ch4(OscarData *od, const char *who, guint16 reason, guint32 state, char *msg) {
 	PurpleConnection *gc = od->gc;
 
 	switch(reason) {
@@ -2286,13 +2286,17 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 			char *statusmsg, **splitmsg;
 			PurpleNotifyUserInfo *user_info;
 
-			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			/* TODO: Don't we need to escape each piece? */
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
 			user_info = purple_notify_user_info_new();
 
-			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
 			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
@@ -2309,13 +2313,17 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 			char *statusmsg, **splitmsg;
 			PurpleNotifyUserInfo *user_info;
 
-			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			/* TODO: Don't we need to escape each piece? */
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
 			user_info = purple_notify_user_info_new();
 
-			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
 			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));

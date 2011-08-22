@@ -258,6 +258,8 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
     char *msg = nullprpl_status_text(buddy);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
     purple_notify_user_info_add_pair(info, purple_status_get_name(status),
                                      msg);
     g_free(msg);
@@ -265,12 +267,14 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     if (full) {
       const char *user_info = purple_account_get_user_info(gc->account);
       if (user_info)
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
         purple_notify_user_info_add_pair(info, _("User info"), user_info);
     }
 
   } else {
     /* they're not logged in */
-    purple_notify_user_info_add_pair(info, _("User info"), _("not logged in"));
+    purple_notify_user_info_add_pair_plaintext(info, _("User info"), _("not logged in"));
   }
 
   purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
@@ -510,6 +514,8 @@ static void nullprpl_get_info(PurpleConnection *gc, const char *username) {
     body = purple_account_get_user_info(acct);
   else
     body = _("No user info.");
+  /* TODO: Check whether it's correct to call add_pair_html,
+           or if we should be using add_pair_plaintext */
   purple_notify_user_info_add_pair(info, "Info", body);
 
   /* show a buddy's user info in a nice dialog box */

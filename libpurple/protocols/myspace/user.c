@@ -128,15 +128,21 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	}
 
 	if (user->gender && *user->gender) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Gender"), user->gender);
 	}
 
 	if (user->location && *user->location) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Location"), user->location);
 	}
 
 	/* Other information */
 	if (user->headline && *user->headline) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Headline"), user->headline);
 	}
 
@@ -153,6 +159,8 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 			str = msim_format_now_playing(artist, title);
 			if (str && *str) {
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Song"), str);
 			}
 			g_free(str);
@@ -180,8 +188,11 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		} else if (cv) {
 			client = g_strdup_printf("Build %d", cv);
 		}
-		if (client && *client)
+		if (client && *client) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair_plaintext(user_info, _("Client Version"), client);
+		}
 		g_free(client);
 	}
 

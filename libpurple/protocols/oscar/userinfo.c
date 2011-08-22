@@ -131,20 +131,15 @@ oscar_caps_to_string(guint64 caps)
 }
 
 static void
-oscar_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *name, const char *value)
-{
-	if (value && value[0]) {
-		purple_notify_user_info_add_pair(user_info, name, value);
-	}
-}
-
-static void
 oscar_user_info_convert_and_add(PurpleAccount *account, OscarData *od, PurpleNotifyUserInfo *user_info,
 					const char *name, const char *value)
 {
 	gchar *utf8;
 
 	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, od, value))) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext.  Will
+		         need to check callers of this function. */
 		purple_notify_user_info_add_pair(user_info, name, utf8);
 		g_free(utf8);
 	}
@@ -158,6 +153,9 @@ oscar_user_info_convert_and_add_hyperlink(PurpleAccount *account, OscarData *od,
 
 	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, od, value))) {
 		gchar *tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>", url_prefix, utf8, utf8);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext.  Will
+		         need to check callers of this function. */
 		purple_notify_user_info_add_pair(user_info, name, tmp);
 		g_free(utf8);
 		g_free(tmp);
@@ -340,19 +338,19 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, userinfo->bn));
 
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-						(bi->ipaddr & 0xff000000) >> 24,
-						(bi->ipaddr & 0x00ff0000) >> 16,
-						(bi->ipaddr & 0x0000ff00) >> 8,
-						(bi->ipaddr & 0x000000ff));
-		oscar_user_info_add_pair(user_info, _("IP Address"), tmp);
-		g_free(tmp);
+		char tmp2[40];
+		sprintf(tmp2, "%hhu.%hhu.%hhu.%hhu",
+				(bi->ipaddr & 0xff000000) >> 24,
+				(bi->ipaddr & 0x00ff0000) >> 16,
+				(bi->ipaddr & 0x0000ff00) >> 8,
+				(bi->ipaddr & 0x000000ff));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("IP Address"), tmp2);
 	}
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
-		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
-		oscar_user_info_add_pair(user_info, _("Warning Level"), tmp);
-		g_free(tmp);
+		char tmp2[12];
+		sprintf(tmp2, "%d", (int)(userinfo->warnlevel/10.0 + .5));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Warning Level"), tmp2);
 	}
 
 	if ((b != NULL) && (bname != NULL) && (g != NULL) && (gname != NULL)) {
@@ -372,7 +370,7 @@ oscar_user_info_display_error(OscarData *od, guint16 error_reason, gchar *buddy)
 {
 	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 	gchar *buf = g_strdup_printf(_("User information not available: %s"), oscar_get_msgerr_reason(error_reason));
-	purple_notify_user_info_add_pair(user_info, NULL, buf);
+	purple_notify_user_info_add_pair_plaintext(user_info, NULL, buf);
 	purple_notify_userinfo(od->gc, buddy, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
 	purple_conv_present_error(buddy, purple_connection_get_account(od->gc), buf);
@@ -402,16 +400,16 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	else
 		bi = NULL;
 
-	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
 	oscar_user_info_convert_and_add(account, od, user_info, _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-						(bi->ipaddr & 0xff000000) >> 24,
-						(bi->ipaddr & 0x00ff0000) >> 16,
-						(bi->ipaddr & 0x0000ff00) >> 8,
-						(bi->ipaddr & 0x000000ff));
-		purple_notify_user_info_add_pair(user_info, _("IP Address"), tstr);
-		g_free(tstr);
+		char tstr[40];
+		sprintf(tstr, "%hhu.%hhu.%hhu.%hhu",
+				(bi->ipaddr & 0xff000000) >> 24,
+				(bi->ipaddr & 0x00ff0000) >> 16,
+				(bi->ipaddr & 0x0000ff00) >> 8,
+				(bi->ipaddr & 0x000000ff));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("IP Address"), tstr);
 	}
 	oscar_user_info_convert_and_add(account, od, user_info, _("First Name"), info->first);
 	oscar_user_info_convert_and_add(account, od, user_info, _("Last Name"), info->last);
@@ -425,7 +423,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	oscar_user_info_convert_and_add(account, od, user_info, _("Mobile Phone"), info->mobile);
 
 	if (info->gender != 0)
-		purple_notify_user_info_add_pair(user_info, _("Gender"), (info->gender == 1 ? _("Female") : _("Male")));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Gender"), (info->gender == 1 ? _("Female") : _("Male")));
 
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		/* Initialize the struct properly or strftime() will crash
@@ -437,7 +435,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 		tm->tm_mon  = (int)info->birthmonth - 1;
 		tm->tm_year = (int)info->birthyear - 1900;
 
-		/* Ignore dst setting of today to avoid timezone shift between 
+		/* Ignore dst setting of today to avoid timezone shift between
 		 * dates in summer and winter time. */
 		tm->tm_isdst = -1;
 
@@ -451,8 +449,9 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		purple_notify_user_info_add_pair(user_info, _("Age"), age);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Age"), age);
 	}
+	/* TODO: Is it correct to pass info->email here...? */
 	oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Personal Web Page"), info->email, "");
 	if (buddy != NULL)
 		oscar_user_info_append_status(gc, user_info, buddy, /* aim_userinfo_t */ NULL, /* use_html_status */ TRUE);
@@ -482,6 +481,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 		oscar_user_info_convert_and_add(account, od, user_info, _("Company"), info->workcompany);
 		oscar_user_info_convert_and_add(account, od, user_info, _("Division"), info->workdivision);
 		oscar_user_info_convert_and_add(account, od, user_info, _("Position"), info->workposition);
+		/* TODO: Is it correct to pass info->email here...? */
 		oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Web Page"), info->email, "");
 	}
 
@@ -505,7 +505,7 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 
 	if ((userinfo->present & AIM_USERINFO_PRESENT_IDLE) && userinfo->idletime != 0) {
 		tmp = purple_str_seconds_to_string(userinfo->idletime*60);
-		oscar_user_info_add_pair(user_info, _("Idle"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), tmp);
 		g_free(tmp);
 	}
 
@@ -514,17 +514,18 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 	if ((userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) && !oscar_util_valid_name_sms(userinfo->bn)) {
 		/* An SMS contact is always online; its Online Since value is not useful */
 		time_t t = userinfo->onlinesince;
-		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince;
-		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->capabilities != 0) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_user_info_add_pair(user_info, _("Capabilities"), tmp);
+		if (tmp && *tmp)
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Capabilities"), tmp);
 		g_free(tmp);
 	}
 
@@ -533,7 +534,11 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 		info_utf8 = oscar_encoding_to_utf8(userinfo->info_encoding, userinfo->info, userinfo->info_len);
 		tmp = oscar_util_format_string(info_utf8, purple_account_get_username(account));
 		purple_notify_user_info_add_section_break(user_info);
-		oscar_user_info_add_pair(user_info, _("Profile"), tmp);
+		if (tmp && *tmp) {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair(user_info, _("Profile"), tmp);
+		}
 		g_free(tmp);
 		g_free(info_utf8);
 	}

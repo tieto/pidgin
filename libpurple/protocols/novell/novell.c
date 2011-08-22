@@ -1515,19 +1515,26 @@ _show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name)
 	tag = _("User ID");
 	value = nm_user_record_get_userid(user_record);
 	if (value) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair(user_info, tag, value);
 	}
 
-/*	tag = _("DN");
+#if 0
+	tag = _("DN");
 	value = nm_user_record_get_dn(user_record);
 	if (value) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair(user_info, tag, value);
 	}
-*/
+#endif /* if 0 */
 
 	tag = _("Full name");
 	value = nm_user_record_get_full_name(user_record);
 	if (value) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair(user_info, tag, value);
 	}
 
@@ -1538,6 +1545,8 @@ _show_info(PurpleConnection * gc, NMUserRecord * user_record, char * name)
 			tag = _map_property_tag(nm_property_get_tag(property));
 			value = nm_property_get_value(property);
 			if (tag && value) {
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
 				purple_notify_user_info_add_pair(user_info, tag, value);
 			}
 			nm_release_property(property);
@@ -2860,10 +2869,13 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 					break;
 			}
 
-			purple_notify_user_info_add_pair(user_info, _("Status"), status_str);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status_str);
 
-			if (text)
+			if (text) {
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
 				purple_notify_user_info_add_pair(user_info, _("Message"), text);
+			}
 		}
 	}
 }
