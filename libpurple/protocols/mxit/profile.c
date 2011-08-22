@@ -175,39 +175,25 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		contact = purple_buddy_get_protocol_data( buddy );
 	}
 
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html( info, _( "Display Name" ), profile->nickname );
+	purple_notify_user_info_add_pair_plaintext( info, _( "Display Name" ), profile->nickname );
 
 	tmp = g_strdup_printf("%s (%i)", profile->birthday, calculateAge( profile->birthday ) );
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html( info, _( "Birthday" ), tmp );
+	purple_notify_user_info_add_pair_plaintext( info, _( "Birthday" ), tmp );
 	g_free( tmp );
 
 	purple_notify_user_info_add_pair_plaintext( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
 
 	/* optional information */
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html( info, _( "First Name" ), profile->firstname );
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html( info, _( "Last Name" ), profile->lastname );
-	/* TODO: Check whether it's correct to call add_pair_html,
-	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair_html( info, _( "Country" ), profile->regcountry );
+	purple_notify_user_info_add_pair_plaintext( info, _( "First Name" ), profile->firstname );
+	purple_notify_user_info_add_pair_plaintext( info, _( "Last Name" ), profile->lastname );
 
-	if ( *profile->aboutme ) {
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html( info, _( "About Me" ), profile->aboutme );
-	}
-	if ( *profile->whereami ) {
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html( info, _( "Where I Live" ), profile->whereami );
-	}
+	purple_notify_user_info_add_pair_plaintext( info, _( "Country" ), profile->regcountry );
+
+	if ( *profile->aboutme )
+		purple_notify_user_info_add_pair_plaintext( info, _( "About Me" ), profile->aboutme );
+
+	if ( *profile->whereami )
+		purple_notify_user_info_add_pair_plaintext( info, _( "Where I Live" ), profile->whereami );
 
 	purple_notify_user_info_add_section_break( info );
 
@@ -241,11 +227,8 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		if ( contact ) {
 			/* invite found */
 
-			if ( contact->msg ) {
-				/* TODO: Check whether it's correct to call add_pair_html,
-				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair_html( info, _( "Invite Message" ), contact->msg );
-			}
+			if ( contact->msg )
+				purple_notify_user_info_add_pair_plaintext( info, _( "Invite Message" ), contact->msg );
 
 			if ( contact->imgid ) {
 				/* this invite has a avatar */
