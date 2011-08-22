@@ -733,7 +733,7 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		const char *status_name = jabber_buddy_state_get_name(jbr->state);
 
 		g_snprintf(priority, sizeof(priority), "%d", jbr->priority);
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Priority"), priority);
+		purple_notify_user_info_add_pair_html(user_info, _("Priority"), priority);
 
 		if (jbr->status) {
 			tmp = purple_markup_escape_text(jbr->status, -1);
@@ -752,12 +752,12 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		g_free(tmp);
 		g_free(purdy);
 	} else {
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Unknown"));
+		purple_notify_user_info_add_pair_html(user_info, _("Status"), _("Unknown"));
 	}
 
 	if (jbir && jbir->idle_seconds > 0) {
 		char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), idle);
+		purple_notify_user_info_add_pair_html(user_info, _("Idle"), idle);
 		g_free(idle);
 	}
 
@@ -774,7 +774,7 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		                    jbr->tz_off < 0 ? '-' : '+',
 		                    abs(jbr->tz_off / (60*60)),
 		                    abs((jbr->tz_off % (60*60)) / 60));
-		purple_notify_user_info_add_pair_plaintext(user_info, _("Local Time"), timestamp);
+		purple_notify_user_info_add_pair_html(user_info, _("Local Time"), timestamp);
 		g_free(timestamp);
 	}
 
