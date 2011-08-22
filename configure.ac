@@ -941,25 +941,6 @@ if test "x$silc_manual_check" = "xno"; then
 	], [
 		have_silc="no"
 	])
-	if test "x$have_silc" = "xno"; then
-		PKG_CHECK_MODULES(SILC, silcclient, [
-			have_silc="yes"
-			silc10includes="yes"
-			silc10client="yes"
-		], [
-			have_silc="no"
-		])
-		dnl If silcclient.pc wasn't found, check for just silc.pc
-		if test "x$have_silc" = "xno"; then
-			PKG_CHECK_MODULES(SILC, silc, [
-				have_silc="yes"
-				silc10includes="yes"
-				silc10client="yes"
-			], [
-				have_silc="no"
-			])
-		fi
-	fi
 else
 	if test "$ac_silc_includes" != "no"; then
 		SILC_CFLAGS="-I$ac_silc_includes"
@@ -977,17 +958,6 @@ else
 
 	if test "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes"; then
 		have_silc="yes"
-	else
-		CPPFLAGS_save="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-		AC_CHECK_HEADER(silcincludes.h, [silc10includes=yes])
-		CPPFLAGS="$CPPFLAGS_save"
-
-		SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
-		AC_CHECK_LIB(silcclient, silc_client_init, [silc10client=yes], , $SILC_LIBS)
-		if test "x$silc10includes" = "xyes" -a "x$silc10client" = "xyes"; then
-			have_silc="yes"
-		fi
 	fi
 fi
 AC_SUBST(SILC_LIBS)
@@ -995,20 +965,6 @@ AC_SUBST(SILC_CFLAGS)
 dnl SILC Toolkit >= 1.0.1 has a new MIME API
 if test "x$silcclient" = "xyes"; then
 	AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
-elif test "x$silc10client" = "xyes"; then
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-		AC_MSG_CHECKING(for silcmime.h)
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <silcincludes.h>
-#include <silcmime.h>
-		]], [[]])], [
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
-		], [
-		AC_MSG_RESULT(no)
-		])
-	CPPFLAGS="$CPPFLAGS_save"
 fi
 
 dnl #######################################################################
@@ -1123,10 +1079,7 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
-fi
-if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc10//'`
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -1150,8 +1103,6 @@ for i in $STATIC_PRPLS ; do
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
-		elif test "x$i" = "xsilc10"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.la"
 		else
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 		fi
@@ -1172,7 +1123,6 @@ for i in $STATIC_PRPLS ; do
 		icq)		static_oscar=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
-		silc10)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
 		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
@@ -1208,10 +1158,7 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
-fi
-if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc10//'`
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -1230,7 +1177,6 @@ for i in $DYNAMIC_PRPLS ; do
 		icq)		dynamic_oscar=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
-		silc10)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
@@ -2575,7 +2521,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
-		   libpurple/protocols/silc10/Makefile
 		   libpurple/protocols/simple/Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
