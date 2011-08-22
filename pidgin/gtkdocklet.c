@@ -188,7 +188,6 @@ docklet_update_status(void)
 	for(l = purple_accounts_get_all(); l != NULL; l = l->next) {
 
 		PurpleAccount *account = (PurpleAccount*)l->data;
-		PurpleStatus *account_status;
 
 		if (!purple_account_get_enabled(account, PIDGIN_UI))
 			continue;
@@ -196,7 +195,6 @@ docklet_update_status(void)
 		if (purple_account_is_disconnected(account))
 			continue;
 
-		account_status = purple_account_get_active_status(account);
 		if (purple_account_is_connecting(account))
 			newconnecting = TRUE;
 	}
