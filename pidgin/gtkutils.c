@@ -867,6 +867,8 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	g_object_set_data(G_OBJECT(optmenu), "filter_func", filter_func);
 
 	return optmenu;
+}
+
 void
 pidgin_setup_gtkspell(GtkTextView *textview)
 {
