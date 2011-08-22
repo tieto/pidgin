@@ -147,7 +147,7 @@ purple_base16_decode(const char *str, gsize *ret_len)
 
 	len = strlen(str);
 
-	g_return_val_if_fail(strlen(str) > 0, 0);
+	g_return_val_if_fail(*str, 0);
 	g_return_val_if_fail(len % 2 == 0,    0);
 
 	data = g_malloc(len / 2);
@@ -2267,7 +2267,7 @@ purple_markup_linkify(const char *text)
 					url_buf = g_string_free(gurl_buf, FALSE);
 
 					/* strip off trailing periods */
-					if (strlen(url_buf) > 0) {
+					if (*url_buf) {
 						for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 							*d = '\0';
 					}

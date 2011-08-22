@@ -2085,7 +2085,7 @@ static char* zephyr_tzc_escape_msg(const char *message)
 	int pos2 = 0;
 	char *newmsg;
 
-	if (message && (strlen(message) > 0)) {
+	if (message && *message) {
 		newmsg = g_new0(char,1+strlen(message)*2);
 		while(pos < strlen(message)) {
 			if (message[pos]=='\\') {
@@ -2117,7 +2117,7 @@ char* zephyr_tzc_deescape_str(const char *message)
 	int pos2 = 0;
 	char *newmsg;
 
-	if (message && (strlen(message) > 0)) {
+	if (message && *message) {
 		newmsg = g_new0(char,strlen(message)+1);
 		while(pos < strlen(message)) {
 			if (message[pos]=='\\') {

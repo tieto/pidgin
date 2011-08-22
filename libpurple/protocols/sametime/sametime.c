@@ -861,7 +861,7 @@ static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
   enum mwSametimeUserType type = mwSametimeUser_getType(stuser);
 
   g_return_val_if_fail(id != NULL, NULL);
-  g_return_val_if_fail(strlen(id) > 0, NULL);
+  g_return_val_if_fail(*id, NULL);
 
   buddy = purple_find_buddy_in_group(acct, id, group);
   if(! buddy) {

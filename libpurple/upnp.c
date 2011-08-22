@@ -744,7 +744,7 @@ purple_upnp_get_public_ip()
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
 			&& control_info.publicip
-			&& strlen(control_info.publicip) > 0)
+			&& *control_info.publicip)
 		return control_info.publicip;
 
 	/* Trigger another UPnP discovery if 5 minutes have elapsed since the
@@ -803,7 +803,7 @@ purple_upnp_get_internal_ip(void)
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
 			&& control_info.internalip
-			&& strlen(control_info.internalip) > 0)
+			&& *control_info.internalip)
 		return control_info.internalip;
 
 	/* Trigger another UPnP discovery if 5 minutes have elapsed since the

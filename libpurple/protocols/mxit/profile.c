@@ -198,12 +198,12 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	         or if we should be using add_pair_plaintext */
 	purple_notify_user_info_add_pair( info, _( "Country" ), profile->regcountry );
 
-	if ( strlen( profile->aboutme ) > 0 ) {
+	if ( *profile->aboutme ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair( info, _( "About Me" ), profile->aboutme );
 	}
-	if ( strlen( profile->whereami ) > 0 ) {
+	if ( *profile->whereami ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
 		purple_notify_user_info_add_pair( info, _( "Where I Live" ), profile->whereami );

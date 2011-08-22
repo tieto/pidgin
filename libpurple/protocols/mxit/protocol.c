@@ -1648,7 +1648,7 @@ static void mxit_parse_cmd_new_sub( struct MXitSession* session, struct record**
 
 		if ( rec->fcount >= 5 ) {
 			/* there is a personal invite message attached */
-			if ( ( rec->fields[4]->data ) && ( strlen( rec->fields[4]->data ) > 0 ) )
+			if ( ( rec->fields[4]->data ) && ( *rec->fields[4]->data ) )
 				contact->msg = strdup( rec->fields[4]->data );
 		}
 
@@ -1890,7 +1890,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		contact = get_mxit_invite_contact( session, mxitId );
 		if ( contact ) {
 			/* this is an invite, so update its profile info */
-			if ( ( statusMsg ) && ( strlen( statusMsg ) > 0 ) ) {
+			if ( ( statusMsg ) && ( *statusMsg ) ) {
 				/* update the status message */
 				if ( contact->statusMsg )
 					g_free( contact->statusMsg );
@@ -1901,7 +1901,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			if ( contact->profile )
 				g_free( contact->profile );
 			contact->profile = profile;
-			if ( ( avatarId ) && ( strlen( avatarId ) > 0 ) ) {
+			if ( ( avatarId ) && ( *avatarId ) ) {
 				/* avatar must be requested for this invite before we can display it */
 				mxit_get_avatar( session, mxitId, avatarId );
 				if ( contact->avatarId )
@@ -1919,7 +1919,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			if ( avatarId )
 				mxit_update_buddy_avatar( session, mxitId, avatarId );
 
-			if ( ( statusMsg ) && ( strlen( statusMsg ) > 0 ) ) {
+			if ( ( statusMsg ) && ( *statusMsg ) ) {
 				/* update the status message */
 				PurpleBuddy*		buddy	= NULL;
 

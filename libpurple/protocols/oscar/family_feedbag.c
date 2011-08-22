@@ -990,7 +990,7 @@ int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char
 		return -EINVAL;
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
-	if ((alias != NULL) && (strlen(alias) > 0))
+	if (alias && *alias)
 		aim_tlvlist_replace_str(&tmp->data, 0x0131, alias);
 	else
 		aim_tlvlist_remove(&tmp->data, 0x0131);
@@ -1020,7 +1020,7 @@ int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const cha
 		return -EINVAL;
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
-	if ((comment != NULL) && (strlen(comment) > 0))
+	if (comment && *comment)
 		aim_tlvlist_replace_str(&tmp->data, 0x013c, comment);
 	else
 		aim_tlvlist_remove(&tmp->data, 0x013c);

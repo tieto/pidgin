@@ -234,7 +234,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
     const char *message = purple_status_get_attr_string(status, "message");
 
     char *text;
-    if (message && strlen(message) > 0)
+    if (message && *message)
       text = g_strdup_printf("%s: %s", name, message);
     else
       text = g_strdup(name);
@@ -933,7 +933,7 @@ static void set_chat_topic_fn(PurpleConvChat *from, PurpleConvChat *to,
 
   purple_conv_chat_set_topic(to, username, topic);
 
-  if (topic && strlen(topic) > 0)
+  if (topic && *topic)
     msg = g_strdup_printf(_("%s sets topic to: %s"), username, topic);
   else
     msg = g_strdup_printf(_("%s clears topic"), username);
