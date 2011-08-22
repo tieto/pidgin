@@ -85,6 +85,12 @@ static gboolean purple_media_backend_fs2_set_remote_codecs(
 static gboolean purple_media_backend_fs2_set_send_codec(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		PurpleMediaCodec *codec);
+static void purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params);
+static const gchar **purple_media_backend_fs2_get_available_params(void);
+
+static void free_stream(PurpleMediaBackendFs2Stream *stream);
+static void free_session(PurpleMediaBackendFs2Session *session);
 
 struct _PurpleMediaBackendFs2Class
 {
@@ -110,6 +116,8 @@ struct _PurpleMediaBackendFs2Stream
 	GstElement *tee;
 	GstElement *volume;
 	GstElement *level;
+	GstElement *fakesink;
+	GstElement *queue;
 
 	GList *local_candidates;
 	GList *remote_candidates;
@@ -300,20 +308,7 @@ purple_media_backend_fs2_finalize(GObject *obj)
 	for (; priv->streams; priv->streams =
 			g_list_delete_link(priv->streams, priv->streams)) {
 		PurpleMediaBackendFs2Stream *stream = priv->streams->data;
-
-		/* Remove the connected_cb timeout */
-		if (stream->connected_cb_id != 0)
-			purple_timeout_remove(stream->connected_cb_id);
-
-		g_free(stream->participant);
-
-		if (stream->local_candidates)
-			fs_candidate_list_destroy(stream->local_candidates);
-
-		if (stream->remote_candidates)
-			fs_candidate_list_destroy(stream->remote_candidates);
-
-		g_free(stream);
+		free_stream(stream);
 	}
 
 	if (priv->sessions) {
@@ -323,8 +318,7 @@ purple_media_backend_fs2_finalize(GObject *obj)
 				g_list_delete_link(sessions, sessions)) {
 			PurpleMediaBackendFs2Session *session =
 					sessions->data;
-			g_free(session->id);
-			g_free(session);
+			free_session(session);
 		}
 
 		g_hash_table_destroy(priv->sessions);
@@ -422,6 +416,8 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+	iface->set_params = purple_media_backend_fs2_set_params;
+	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 }
 
 static FsMediaType
@@ -1085,7 +1081,17 @@ gst_handle_message_error(GstBus *bus, GstMessage *msg,
 	GstElement *lastElement = NULL;
 	GList *sessions;
 
-	while (!GST_IS_PIPELINE(element)) {
+	GError *error = NULL;
+	gchar *debug_msg = NULL;
+
+	gst_message_parse_error(msg, &error, &debug_msg);
+	purple_debug_error("backend-fs2", "gst error %s\ndebugging: %s\n",
+			error->message, debug_msg);
+
+	g_error_free(error);
+	g_free(debug_msg);
+
+	while (element && !GST_IS_PIPELINE(element)) {
 		if (element == priv->confbin)
 			break;
 
@@ -1093,7 +1099,7 @@ gst_handle_message_error(GstBus *bus, GstMessage *msg,
 		element = GST_ELEMENT_PARENT(element);
 	}
 
-	if (!GST_IS_PIPELINE(element))
+	if (!element || !GST_IS_PIPELINE(element))
 		return;
 
 	sessions = purple_media_get_session_ids(priv->media);
@@ -1138,9 +1144,62 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self)
 }
 
 static void
+remove_element(GstElement *element)
+{
+	if (element) {
+		gst_element_set_locked_state(element, TRUE);
+		gst_element_set_state(element, GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(element)), element);
+	}
+}
+
+static void
 state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self)
 {
+	if (state == PURPLE_MEDIA_STATE_END) {
+		PurpleMediaBackendFs2Private *priv =
+				PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+		if (sid && name) {
+			PurpleMediaBackendFs2Stream *stream = get_stream(self, sid, name);
+			gst_object_unref(stream->stream);
+
+			priv->streams = g_list_remove(priv->streams, stream);
+
+			remove_element(stream->src);
+			remove_element(stream->tee);
+			remove_element(stream->volume);
+			remove_element(stream->level);
+			remove_element(stream->fakesink);
+			remove_element(stream->queue);
+
+			free_stream(stream);
+		} else if (sid && !name) {
+			PurpleMediaBackendFs2Session *session = get_session(self, sid);
+			GstPad *pad;
+
+			g_object_get(session->session, "sink-pad", &pad, NULL);
+			gst_pad_unlink(GST_PAD_PEER(pad), pad);
+			gst_object_unref(pad);
+
+			gst_object_unref(session->session);
+			g_hash_table_remove(priv->sessions, session->id);
+
+			pad = gst_pad_get_peer(session->srcpad);
+			gst_element_remove_pad(GST_ELEMENT_PARENT(pad), pad);
+			gst_object_unref(pad);
+			gst_object_unref(session->srcpad);
+
+			remove_element(session->srcvalve);
+			remove_element(session->tee);
+
+			free_session(session);
+		}
+
+		purple_media_manager_remove_output_windows(
+				purple_media_get_manager(media), media, sid, name);
+	}
 }
 
 static void
@@ -1420,6 +1479,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 			  ? "success" : "failure");
 	gst_element_set_locked_state(session->src, FALSE);
 	gst_object_unref(session->src);
+	gst_object_unref(sinkpad);
 
 	gst_element_set_state(session->src, GST_STATE_PLAYING);
 
@@ -1536,6 +1596,13 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	return TRUE;
 }
 
+static void
+free_session(PurpleMediaBackendFs2Session *session)
+{
+	g_free(session->id);
+	g_free(session);
+}
+
 static gboolean
 create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 {
@@ -1603,7 +1670,6 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		GstElement *sink = NULL;
 
 		if (codec->media_type == FS_MEDIA_TYPE_AUDIO) {
-			GstElement *queue = NULL;
 			double output_volume = purple_prefs_get_int(
 					"/purple/media/audio/volume/output")/10.0;
 			/*
@@ -1611,7 +1677,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			 *  audioconvert ! audioresample ! liveadder !
 			 *   audioresample ! audioconvert ! realsink
 			 */
-			queue = gst_element_factory_make("queue", NULL);
+			stream->queue = gst_element_factory_make("queue", NULL);
 			stream->volume = gst_element_factory_make(
 					"volume", NULL);
 			g_object_set(stream->volume, "volume",
@@ -1625,18 +1691,18 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 					PURPLE_MEDIA_RECV_AUDIO, priv->media,
 					stream->session->id,
 					stream->participant);
-			gst_bin_add(GST_BIN(priv->confbin), queue);
+			gst_bin_add(GST_BIN(priv->confbin), stream->queue);
 			gst_bin_add(GST_BIN(priv->confbin), stream->volume);
 			gst_bin_add(GST_BIN(priv->confbin), stream->level);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
 			gst_element_set_state(sink, GST_STATE_PLAYING);
 			gst_element_set_state(stream->level, GST_STATE_PLAYING);
 			gst_element_set_state(stream->volume, GST_STATE_PLAYING);
-			gst_element_set_state(queue, GST_STATE_PLAYING);
+			gst_element_set_state(stream->queue, GST_STATE_PLAYING);
 			gst_element_link(stream->level, sink);
 			gst_element_link(stream->volume, stream->level);
-			gst_element_link(queue, stream->volume);
-			sink = queue;
+			gst_element_link(stream->queue, stream->volume);
+			sink = stream->queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
 					"fsfunnel", NULL);
@@ -1645,6 +1711,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
 			gst_element_set_state(sink, GST_STATE_PLAYING);
+			stream->fakesink = sink;
 		}
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
@@ -1751,9 +1818,16 @@ create_stream(PurpleMediaBackendFs2 *self,
 			relay_info = append_relay_info(relay_info, turn_ip, port, username,
 				password, "udp");
 		}
+		
+		/* TCP */
+		port = purple_prefs_get_int("/purple/network/turn_port_tcp");
+		if (port > 0) {
+			relay_info = append_relay_info(relay_info, turn_ip, port, username,
+				password, "tcp");
+		}
 
-		/* should add TCP and perhaps TLS relaying options when these are
-		 supported by libnice using non-google mode */
+		/* TURN over SSL is only supported by libnice for Google's "psuedo" SSL mode
+			at this time */
 
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
@@ -1812,6 +1886,24 @@ create_stream(PurpleMediaBackendFs2 *self,
 			G_CALLBACK(src_pad_added_cb), stream);
 
 	return TRUE;
+}
+
+static void
+free_stream(PurpleMediaBackendFs2Stream *stream)
+{
+	/* Remove the connected_cb timeout */
+	if (stream->connected_cb_id != 0)
+		purple_timeout_remove(stream->connected_cb_id);
+
+	g_free(stream->participant);
+
+	if (stream->local_candidates)
+		fs_candidate_list_destroy(stream->local_candidates);
+
+	if (stream->remote_candidates)
+		fs_candidate_list_destroy(stream->remote_candidates);
+
+	g_free(stream);
 }
 
 static gboolean
@@ -2055,6 +2147,49 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 	}
 
 	return TRUE;
+}
+
+static void
+purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
+		guint num_params, GParameter *params)
+{
+	PurpleMediaBackendFs2Private *priv;
+	const gchar **supported = purple_media_backend_fs2_get_available_params();
+	const gchar **p;
+	guint i;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	if (priv->conference == NULL &&
+		!init_conference(PURPLE_MEDIA_BACKEND_FS2(self))) {
+		purple_debug_error("backend-fs2",
+				"Error initializing the conference.\n");
+		return;
+	}
+
+	for (i = 0; i != num_params; ++i) {
+		for (p = supported; *p != NULL; ++p) {
+			if (!strcmp(params[i].name, *p)) {
+				g_object_set(priv->conference,
+						params[i].name, g_value_get_string(&params[i].value),
+						NULL);
+				break;
+			}
+		}
+	}
+}
+
+static const gchar **
+purple_media_backend_fs2_get_available_params(void)
+{
+	static const gchar *supported_params[] = {
+		"sdes-cname", "sdes-email", "sdes-location", "sdes-name", "sdes-note",
+		"sdes-phone", "sdes-tool", NULL
+	};
+
+	return supported_params;
 }
 #else
 GType

@@ -284,7 +284,6 @@ send_file_cb(MsnSlpCall *slpcall)
 	purple_xfer_unref(xfer);
 
 	slpmsg = msn_slpmsg_file_new(slpcall, purple_xfer_get_size(xfer));
-	msn_slpmsg_set_slplink(slpmsg, slpcall->slplink);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }

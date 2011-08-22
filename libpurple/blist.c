@@ -28,6 +28,7 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "notify.h"
+#include "pounce.h"
 #include "prefs.h"
 #include "privacy.h"
 #include "prpl.h"
@@ -460,19 +461,16 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	char *name = NULL, *alias = NULL;
-	const char *acct_name, *proto, *protocol;
+	const char *acct_name, *proto;
 	xmlnode *x;
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
-	protocol = xmlnode_get_attrib(bnode, "protocol");
-	protocol = _purple_oscar_convert(acct_name, protocol); /* XXX: Remove */
 	proto = xmlnode_get_attrib(bnode, "proto");
-	proto = _purple_oscar_convert(acct_name, proto); /* XXX: Remove */
 
-	if (!acct_name || (!proto && !protocol))
+	if (!acct_name || !proto)
 		return;
 
-	account = purple_accounts_find(acct_name, proto ? proto : protocol);
+	account = purple_accounts_find(acct_name, proto);
 
 	if (!account)
 		return;
@@ -531,19 +529,18 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 {
 	PurpleChat *chat;
 	PurpleAccount *account;
-	const char *acct_name, *proto, *protocol;
+	const char *acct_name, *proto;
 	xmlnode *x;
 	char *alias = NULL;
 	GHashTable *components;
 
 	acct_name = xmlnode_get_attrib(cnode, "account");
-	protocol = xmlnode_get_attrib(cnode, "protocol");
 	proto = xmlnode_get_attrib(cnode, "proto");
 
-	if (!acct_name || (!proto && !protocol))
+	if (!acct_name || !proto)
 		return;
 
-	account = purple_accounts_find(acct_name, proto ? proto : protocol);
+	account = purple_accounts_find(acct_name, proto);
 
 	if (!account)
 		return;
@@ -629,17 +626,16 @@ purple_blist_load()
 			xmlnode *x;
 			PurpleAccount *account;
 			int imode;
-			const char *acct_name, *proto, *mode, *protocol;
+			const char *acct_name, *proto, *mode;
 
 			acct_name = xmlnode_get_attrib(anode, "name");
-			protocol = xmlnode_get_attrib(anode, "protocol");
 			proto = xmlnode_get_attrib(anode, "proto");
 			mode = xmlnode_get_attrib(anode, "mode");
 
-			if (!acct_name || (!proto && !protocol) || !mode)
+			if (!acct_name || !proto || !mode)
 				continue;
 
-			account = purple_accounts_find(acct_name, proto ? proto : protocol);
+			account = purple_accounts_find(acct_name, proto);
 
 			if (!account)
 				continue;
@@ -2183,6 +2179,9 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	if (ops && ops->remove_node)
 		ops->remove_node(node);
+
+	/* Remove this buddy's pounces */
+	purple_pounce_destroy_all_by_buddy(buddy);
 
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);

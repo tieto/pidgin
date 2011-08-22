@@ -332,7 +332,7 @@ static void do_add_file_cb(const char *filename, gpointer data)
 
 	g_free(s->filename);
 	s->filename = g_strdup(filename);
-	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename, 64, 64, FALSE, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file_at_scale(filename, 64, 64, FALSE);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
 	if (pixbuf)
 		g_object_unref(G_OBJECT(pixbuf));
@@ -691,7 +691,6 @@ smiley_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	FILE *f;
 	gchar *path;
 	size_t wc;
-	GError *err = NULL;
 	PidginSmiley *ps;
 	GdkPixbuf *image;
 
@@ -710,13 +709,11 @@ smiley_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	}
 	fclose(f);
 
-	image = gdk_pixbuf_new_from_file(path, &err);
+	image = pidgin_pixbuf_new_from_file(path);
 	g_unlink(path);
 	g_free(path);
-	if (err) {
-		g_error_free(err);
+	if (!image)
 		return;
-	}
 
 	ps = pidgin_smiley_edit(dialog->window, NULL);
 	pidgin_smiley_editor_set_image(ps, image);

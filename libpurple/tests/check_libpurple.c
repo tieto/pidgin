@@ -89,9 +89,9 @@ int main(void)
 	srunner_add_suite(sr, jabber_jutil_suite());
 	srunner_add_suite(sr, jabber_scram_suite());
 	srunner_add_suite(sr, oscar_util_suite());
-	srunner_add_suite(sr, qq_suite());
 	srunner_add_suite(sr, yahoo_util_suite());
 	srunner_add_suite(sr, util_suite());
+	srunner_add_suite(sr, xmlnode_suite());
 
 	/* make this a libpurple "ui" */
 	purple_check_init();

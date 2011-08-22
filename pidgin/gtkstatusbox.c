@@ -2237,22 +2237,45 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 
 	if (status_box->buddy_icon_img != NULL)
 	{
-		GdkPixbuf *buf, *scale;
-		int scale_width, scale_height;
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		GdkPixbufLoader *loader;
+		GError *error = NULL;
+
+		loader = gdk_pixbuf_loader_new();
+
 		g_signal_connect(G_OBJECT(loader), "size-prepared", G_CALLBACK(pixbuf_size_prepared_cb), NULL);
-		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(status_box->buddy_icon_img),
-		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
-		gdk_pixbuf_loader_close(loader, NULL);
-		buf = gdk_pixbuf_loader_get_pixbuf(loader);
-		scale_width = gdk_pixbuf_get_width(buf);
-		scale_height = gdk_pixbuf_get_height(buf);
-		scale = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, scale_width, scale_height);
-		gdk_pixbuf_fill(scale, 0x00000000);
-		gdk_pixbuf_copy_area(buf, 0, 0, scale_width, scale_height, scale, 0, 0);
-		if (pidgin_gdk_pixbuf_is_opaque(scale))
-			pidgin_gdk_pixbuf_make_round(scale);
-		status_box->buddy_icon = scale;
+		if (!gdk_pixbuf_loader_write(loader,
+				purple_imgstore_get_data(status_box->buddy_icon_img),
+				purple_imgstore_get_size(status_box->buddy_icon_img),
+				&error) || error)
+		{
+			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_write() "
+					"failed with size=%zu: %s\n",
+					purple_imgstore_get_size(status_box->buddy_icon_img),
+					error ? error->message : "(no error message)");
+			if (error)
+				g_error_free(error);
+		} else if (!gdk_pixbuf_loader_close(loader, &error) || error) {
+			purple_debug_warning("gtkstatusbox", "gdk_pixbuf_loader_close() "
+					"failed for image of size %zu: %s\n",
+					purple_imgstore_get_size(status_box->buddy_icon_img),
+					error ? error->message : "(no error message)");
+			if (error)
+				g_error_free(error);
+		} else {
+			GdkPixbuf *buf, *scale;
+			int scale_width, scale_height;
+
+			buf = gdk_pixbuf_loader_get_pixbuf(loader);
+			scale_width = gdk_pixbuf_get_width(buf);
+			scale_height = gdk_pixbuf_get_height(buf);
+			scale = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, scale_width, scale_height);
+			gdk_pixbuf_fill(scale, 0x00000000);
+			gdk_pixbuf_copy_area(buf, 0, 0, scale_width, scale_height, scale, 0, 0);
+			if (pidgin_gdk_pixbuf_is_opaque(scale))
+				pidgin_gdk_pixbuf_make_round(scale);
+			status_box->buddy_icon = scale;
+		}
+
 		g_object_unref(loader);
 	}
 

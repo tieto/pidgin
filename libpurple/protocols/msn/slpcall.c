@@ -490,12 +490,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (img != NULL) {
 			/* DATA PREP */
 			slpmsg = msn_slpmsg_dataprep_new(slpcall);
-			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 
 			/* DATA */
 			slpmsg = msn_slpmsg_obj_new(slpcall, img);
-			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 			purple_imgstore_unref(img);
 
@@ -1130,7 +1128,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		g_free(body_str);
 	}
-	 else if (msn_p2p_msg_is_data(flags))
+	 else if (msn_p2p_msg_is_data(slpmsg->p2p_info))
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, session_id);
 
@@ -1147,7 +1145,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			slpcall->wasted = TRUE;
 		}
 	}
-	else if (flags == P2P_ACK)
+	else if (msn_p2p_info_is_ack(slpmsg->p2p_info))
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
 	}

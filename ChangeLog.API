@@ -1,29 +1,136 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.8.0 (??/??/????):
+version 3.0.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_notify_searchresult_column_set_visible
+		* purple_notify_searchresult_column_is_visible
+		* purple_notify_user_info_prepend_pair_plaintext
+		* purple_request_field_set_tooltip
+		* purple_request_field_get_tooltip
+
+		Changed:
+		* purple_connection_error now takes a PurpleConnectionError
+		  as the second parameter
+		* purple_notify_user_info_add_pair renamed to
+		  purple_notify_user_info_add_pair_html
+		* purple_notify_user_info_get_entries returns a GQueue instead of
+		  a GList
+		* purple_notify_user_info_prepend_pair renamed to
+		  purple_notify_user_info_prepend_pair_html
+		* purple_util_fetch_url_request_len now takes a PurpleAccount as
+		  the first parameter
+		* PurpleConnectionUiOps.report_disconnect now passes a
+		  PurpleConnectionError as the second parameter
+
+		Removed:
+		* _GntFileType
+		* _GntKeyPressMode
+		* _GntMouseEvent
+		* _GntParamFlags
+		* _GntProgressBarOrientation
+		* _GntTreeColumnFlag
+		* _GntWidgetFlags
+		* _PurpleCipherBatchMode
+		* _PurpleCipherCaps
+		* _PurpleCmdFlag
+		* _PurpleCmdPriority
+		* _PurpleCmdRet
+		* _PurpleCmdStatus
+		* _PurplePrefType
+		* _PurplePrivacyType
+		* _PurpleSoundEventID
+		* _XMLNodeType
+		* GtkIMHtml.clipboard_html_string
+		* GtkIMHtml.clipboard_text_string
+		* pidgin_blist_update_account_error_state
+		* pidgin_check_if_dir
+		* PIDGIN_DIALOG
+		* pidgin_dialogs_alias_contact
+		* pidgin_set_custom_buddy_icon
+		* pidgin_setup_screenname_autocomplete
+		* PidginConversation.sg
+		* purple_connection_error_reason
+		* purple_core_migrate
+		* purple_notify_searchresults_column_get_title
+		* purple_notify_searchresults_get_columns_count
+		* purple_notify_searchresults_get_rows_count
+		* purple_notify_searchresults_row_get
+		* purple_status_type_get_primary_attr
+		* purple_status_type_set_primary_attr
+		* purple_strlcat
+		* purple_strlcpy
+		* purple_util_fetch_url_request_len_with_account.  Use
+		  purple_util_fetch_url_request_len, insetad.
+		* PurpleConnectionUiOps.report_disconnect_reason
+		* struct _GtkIMHtmlFontDetail
+
+version 2.10.0:
+	libpurple:
+		Added:
+		* purple_srv_txt_query_destroy (accidentally left out of 2.8.0)
+
+	Pidgin:
+		Added:
+		* pidgin_dialogs_plugins_info (should not be used by anything but Pidgin)
+
+version 2.9.0:
+	libpurple:
+		Added:
+		* Hash table to PurpleConvChat struct, used to make
+		  purple_conv_chat_cb_find O(1).
+		* ui_data pointer to PurpleConvChatBuddy struct.
+		* deleting-chat-buddy signal (conversation signals)
+		* pidgin_pixbuf_from_data
+		* pidgin_pixbuf_anim_from_data
+		* pidgin_pixbuf_new_from_file
+		* pidgin_pixbuf_new_from_file_at_size
+		* pidgin_pixbuf_new_from_file_at_scale
+
+		Deprecated:
+		* purple_conv_chat_set_users
+		* PurpleConvChat in_room list
+
+version 2.8.0 (06/07/2011):
 	libpurple:
 		Added:
 		* account-authorization-requested-with-message signal (Stefan Ott)
 		  (#8690)
+		* cleared-message-history signal (conversation signals)
 		* purple_account_add_buddy_with_invite
 		* purple_account_add_buddies_with_invite
+		* purple_dnsquery_a_account
 		* purple_notify_user_info_add_pair_plaintext
 		* purple_media_get_active_local_candidates
 		* purple_media_get_active_remote_candidates
 		* purple_media_manager_get_video_caps (Jakub Adam) (#13095)
 		* purple_media_manager_set_video_caps (Jakub Adam) (#13095)
+		* purple_pounce_destroy_all_by_buddy (Kartik Mohta) (#1131)
+		* purple_proxy_connect_socks5_account
+		* purple_srv_resolve_account
+		* purple_txt_resolve_account
 		* Added add_buddy_with_invite to PurplePluginProtocolInfo
 		* Added add_buddies_with_invite to PurplePluginProtocolInfo
+		* Added PurpleSrvTxtQueryUiOps which allow UIs to specify their
+		  own mechanisms to resolve SRV and/or TXT queries. It works
+		  similar to PurpleDnsQueryUiOps
+		* purple_marshal_BOOLEAN__POINTER_BOOLEAN (kawaii.neko) (#12599)
 
 		Deprecated:
 		* purple_account_add_buddy
 		* purple_account_add_buddies_with_invite
+		* purple_dnsquery_a
+		* purple_proxy_connect_socks5
+		* purple_srv_resolve
+		* purple_txt_resolve
 		* add_buddy from PurplePluginProtocolInfo struct
 		* add_buddies from PurplePluginProtocolInfo struct
 
 	Pidgin:
 		Added:
 		* pidgin_make_scrollable (Gabriel Schulhof) (#10599)
+		* chat-nick-clicked signal (kawaii.neko) (#12599)
+		* chat-nick-autocomplete signal (kawaii.neko) (#12599)
 
 version 2.7.11 (03/10/2011):
 	* libpurple:
@@ -688,7 +795,7 @@ version 2.3.0 (11/24/2007):
 		* Added gnt_window_set_maximize and gnt_window_get_maximize, and
 		  GntWindowFlags enum.
 
-version 2.2.2 (??/??/????):
+version 2.2.2 (10/23/2007):
 	libpurple:
 		Changed:
 		* The size parameter of purple_util_write_data_to_file_absolute

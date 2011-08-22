@@ -2,7 +2,18 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.8.0 (??/??/????):
+2.8.0 (06/07/2011):
+	Paul: I fixed a few things in this release, and committed some
+	patches, but am being vague because I can't remember any specifics.
+	Hopefully you enjoy this, and happy May!
+
+	John: Wow, this release has taken forever.  But there are a crapload
+	of patches that have been committed this time around, a lot of them by
+	me.  The infamous MSN bugs are still outstanding, but otherwise this
+	release has brought some excellent progress.  Oh, and we dropped the
+	hasn't-quite-worked-in-ages QQ plugin, too.  Enjoy!
+
+	Jorge: I managed to get one patch applied! Wii for end of semester!
 
 2.7.11 (03/10/2011):
 	John: Yet another release.  This time around we finally fixed that

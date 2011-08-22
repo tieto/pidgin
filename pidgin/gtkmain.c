@@ -270,7 +270,7 @@ ui_main(void)
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
 		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
-		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+		icon = pidgin_pixbuf_new_from_file(icon_path);
 		g_free(icon_path);
 		if (icon) {
 			icons = g_list_append(icons,icon);
@@ -381,8 +381,10 @@ static GHashTable *pidgin_ui_get_info(void)
 		 * account "markdoliner."  Please don't use this key for other
 		 * applications.  You can either not specify a client key, in
 		 * which case the default "libpurple" key will be used, or you
-		 * can register for your own client key at
-		 * http://developer.aim.com/manageKeys.jsp
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
@@ -496,7 +498,6 @@ int main(int argc, char *argv[])
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
-	gboolean migration_failed = FALSE;
 	GList *active_accounts;
 	struct stat st;
 
@@ -728,16 +729,6 @@ int main(int argc, char *argv[])
 
 	purple_debug_set_enabled(debug_enabled);
 
-	/* If we're using a custom configuration directory, we
-	 * do NOT want to migrate, or weird things will happen. */
-	if (opt_config_dir_arg == NULL)
-	{
-		if (!purple_core_migrate())
-		{
-			migration_failed = TRUE;
-		}
-	}
-
 	search_path = g_build_filename(purple_user_dir(), "gtkrc-2.0", NULL);
 	gtk_rc_add_default_file(search_path);
 	g_free(search_path);
@@ -762,37 +753,6 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	winpidgin_init(hint);
 #endif
-
-	if (migration_failed)
-	{
-		char *old = g_strconcat(purple_home_dir(),
-		                        G_DIR_SEPARATOR_S ".gaim", NULL);
-		const char *text = _(
-			"%s encountered errors migrating your settings "
-			"from %s to %s. Please investigate and complete the "
-			"migration by hand. Please report this error at http://developer.pidgin.im");
-		GtkWidget *dialog;
-
-		dialog = gtk_message_dialog_new(NULL,
-		                                0,
-		                                GTK_MESSAGE_ERROR,
-		                                GTK_BUTTONS_CLOSE,
-		                                text, PIDGIN_NAME,
-		                                old, purple_user_dir());
-		g_free(old);
-
-		g_signal_connect_swapped(dialog, "response",
-		                         G_CALLBACK(gtk_main_quit), NULL);
-
-		gtk_widget_show_all(dialog);
-
-		gtk_main();
-
-#ifdef HAVE_SIGNAL_H
-		g_free(segfault_message);
-#endif
-		return 0;
-	}
 
 	purple_core_set_ui_ops(pidgin_core_get_ui_ops());
 	purple_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());

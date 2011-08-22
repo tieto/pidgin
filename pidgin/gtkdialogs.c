@@ -31,6 +31,7 @@
 
 #include "debug.h"
 #include "notify.h"
+#include "plugin.h"
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
@@ -76,8 +77,6 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",           NULL,                  NULL},
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
-	/* feel free to not translate this */
-	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
 	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
 	{"Casey Harkins",                      NULL,                  NULL},
@@ -101,8 +100,11 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
+	{"Jakub 'haakon' Adam",            NULL,                        NULL},
+	{"Krzysztof Klinikowski",          NULL,                        NULL},
 	{"Peter 'Fmoo' Ruibal",            NULL,                        NULL},
 	{"Gabriel 'Nix' Schulhof",         NULL,                        NULL},
+	{"Tomasz Wasilczyk",               NULL,                        NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -110,6 +112,8 @@ static const struct developer patch_writers[] = {
 static const struct developer retired_developers[] = {
 	{"Herman Bloggs",               N_("win32 port"),          "herman@bluedigits.com"},
 	{"Thomas Butter",               NULL,                      NULL},
+	/* feel free to not translate this */
+	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
@@ -184,12 +188,14 @@ static const struct translator translators[] = {
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
 	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
+	{N_("Hindi"),               "hi", "Sangeeta Kumari", "sangeeta_0975@yahoo.com"},
 	{N_("Hindi"),               "hi", "Rajesh Ranjan", "rajeshkajha@yahoo.com"},
+	{N_("Croatian"),            "hr", "Sabina Drempetić", "bina91991@googlemail.com"},
 	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
 	{N_("Armenian"),            "hy", "David Avsharyan", "avsharyan@gmail.com"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
-	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
-	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
+	{N_("Italian"),             "it", "Claudio Satriano", "satriano@gmail.com"},
+	{N_("Japanese"),            "ja", "Takayuki Kusano", "AE5T-KSN@asahi-net.or.jp"},
 	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
 	{N_("Khmer"),               "km", "Khoem Sokhem", "khoemsokhem@khmeros.info"},
 	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
@@ -199,6 +205,7 @@ static const struct translator translators[] = {
 	{N_("Kurdish"),             "ku", "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
 	{N_("Lao"),                 "lo", "Anousak Souphavah", "anousak@gmail.com"},
 	{N_("Maithili"),            "mai", "Sangeeta Kumari", "sangeeta_0975@yahoo.com"},
+	{N_("Maithili"),            "mai", "Rajesh Ranjan", "rajeshkajha@yahoo.com"},
 	{N_("Meadow Mari"),         "mhr", "David Preece", "davidpreece1@gmail.com"},
 	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
 	{N_("Macedonian"),          "mk", "Ivana Kirkovska", "ivana.kirkovska@gmail.com"},
@@ -279,6 +286,7 @@ static const struct translator past_translators[] = {
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", NULL},
 	{N_("Hungarian"),           "hu", "Zoltan Sutto", NULL},
 	{N_("Italian"),             "it", "Salvatore di Maggio", NULL},
+	{N_("Japanese"),            "ja", "Takashi Aihana", NULL},
 	{N_("Japanese"),            "ja", "Ryosuke Kutsuna", NULL},
 	{N_("Japanese"),            "ja", "Taku Yasui", NULL},
 	{N_("Japanese"),            "ja", "Junichi Uekawa", NULL},
@@ -426,7 +434,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 
 	/* Generate a logo with a version number */
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	pixbuf = pidgin_pixbuf_new_from_file(filename);
 	g_free(filename);
 
 #if 0  /* Don't versionize the logo when the logo has the version in it */
@@ -780,6 +788,52 @@ void pidgin_dialogs_translators(void)
 	g_free(tmp);
 }
 
+void pidgin_dialogs_plugins_info(void)
+{
+	GString *str;
+	GList *l = NULL;
+	PurplePlugin *plugin = NULL;
+	char *title = g_strdup_printf(_("%s Plugin Information"), PIDGIN_NAME);
+	char *pname = NULL, *pauthor = NULL;
+	const char *pver, *pwebsite, *pid;
+	gboolean ploaded, punloadable;
+	static GtkWidget *plugins_info = NULL;
+
+	str = g_string_sized_new(4096);
+
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><BR/>",
+			_("Plugin Information"));
+
+	for(l = purple_plugins_get_all(); l; l = l->next) {
+		plugin = (PurplePlugin *)l->data;
+
+		pname = g_markup_escape_text(purple_plugin_get_name(plugin), -1);
+		pauthor = g_markup_escape_text(purple_plugin_get_author(plugin), -1);
+		pver = purple_plugin_get_version(plugin);
+		pwebsite = purple_plugin_get_homepage(plugin);
+		pid = purple_plugin_get_id(plugin);
+		punloadable = purple_plugin_is_unloadable(plugin);
+		ploaded = purple_plugin_is_loaded(plugin);
+
+		g_string_append_printf(str,
+				"<FONT SIZE=\"3\"><B>%s</B></FONT><BR/><FONT SIZE=\"2\">"
+				"\t<B>Author:</B> %s<BR/>\t<B>Version:</B> %s<BR/>"
+				"\t<B>Website:</B> %s<BR/>\t<B>ID String:</B> %s<BR/>"
+				"\t<B>Loadable:</B> %s<BR/>\t<B>Loaded:</B> %s<BR/>"
+				"<BR/></FONT>", pname, pauthor ? pauthor : "(null)",
+				pver, pwebsite, pid,
+				punloadable ? "<FONT COLOR=\"#FF0000\"><B>No</B></FONT>" : "Yes",
+				ploaded ? "Yes" : "No");
+	}
+
+	plugins_info = pidgin_build_help_dialog(title, "plugins_info", str);
+	g_signal_connect(G_OBJECT(plugins_info), "destroy",
+			G_CALLBACK(gtk_widget_destroyed), &plugins_info);
+	g_free(title);
+	g_free(pname);
+	g_free(pauthor);
+}
+
 static void
 pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 {
@@ -1060,26 +1114,6 @@ pidgin_dialogs_log(void)
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
 						NULL);
-}
-
-static void
-pidgin_dialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
-{
-	purple_blist_alias_contact(contact, new_alias);
-}
-
-void
-pidgin_dialogs_alias_contact(PurpleContact *contact)
-{
-	g_return_if_fail(contact != NULL);
-
-	purple_request_input(NULL, _("Alias Contact"), NULL,
-					   _("Enter an alias for this contact."),
-					   contact->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
-					   _("Cancel"), NULL,
-					   NULL, purple_contact_get_alias(contact), NULL,
-					   contact);
 }
 
 static void

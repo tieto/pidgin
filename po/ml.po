@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin.ml\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2010-04-09 11:28+0530\n"
 "Last-Translator: \n"
 "Language-Team:  <en@li.org>\n"
@@ -212,6 +212,10 @@ msgid "Username"
 msgstr "ഉപയോക്തൃനാമം"
 
 msgid "Alias (optional)"
+msgstr "വിളിപ്പേരു് (ആവശ്യമെങ്കില്‍)"
+
+#, fuzzy
+msgid "Invite message (optional)"
 msgstr "വിളിപ്പേരു് (ആവശ്യമെങ്കില്‍)"
 
 msgid "Add in group"
@@ -524,7 +528,6 @@ msgstr "സര്‍ട്ടിഫിക്കേറ്റ് വെട്ട�
 msgid "Certificate Manager"
 msgstr "സര്‍ട്ടിഫിക്കേറ്റ് മാനേജര്‍"
 
-#. Creating the user splits
 msgid "Hostname"
 msgstr "ഹോസ്റ്റ്നാമം"
 
@@ -1651,6 +1654,7 @@ msgstr "ഈ സമ്പ്രദായം ചാറ്റ് റൂമുകള
 msgid "Unknown"
 msgstr "അപരിചിതം"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "സുഹൃത്തുക്കള്‍"
 
@@ -1672,7 +1676,10 @@ msgid ""
 "are accurate."
 msgstr ""
 
-msgid "The certificate has expired and should not be considered valid."
+#, fuzzy
+msgid ""
+"The certificate has expired and should not be considered valid.  Check that "
+"your computer's date and time are accurate."
 msgstr "സര്‍ട്ടിഫിക്കേറ്റിന്റെ കാലാവധി കഴിഞ്ഞിരിക്കുന്നു, അതുകൊണ്ടു് സാധുതയുമില്ല."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
@@ -1910,6 +1917,9 @@ msgstr "ത്രെഡ് ഉണ്ടാക്കുന്നതില്‍ �
 
 msgid "Unknown reason"
 msgstr "അപരിചിതമായ കാരണം"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -2321,8 +2331,11 @@ msgstr ""
 "ഫയലുകള്‍ സൂക്ഷിക്കുന്നതിനുള്ള പാഥ്\n"
 "(ദയവായി പൂര്‍ണ്ണ പാഥ് ലഭ്യമാക്കുക)"
 
-msgid "Automatically reject from users not in buddy list"
-msgstr "സുഹൃത്ത് പട്ടികയിലില്ലാത്ത ഉപയോക്താക്കളില്‍ നിന്നും സ്വയം നിരസിക്കുക"
+#, fuzzy
+msgid ""
+"When a file-transfer request arrives from a user who is\n"
+"*not* on your buddy list:"
+msgstr "%s-ല്‍ നിന്നും ഒരു ഫയല്‍ ഇടപാടിനുള്ള ആവശ്യം വരുമ്പോള്‍"
 
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
@@ -2333,6 +2346,10 @@ msgstr ""
 
 msgid "Create a new directory for each user"
 msgstr "ഓരോ ഉപയോക്താക്കള്‍ക്കും പുതിയ ഒരു ഡയറക്ടറി ഉണ്ടാക്കുക"
+
+#, fuzzy
+msgid "Escape the filenames"
+msgstr "%s ഫയല്‍ നീക്കം ചെയ്യല്‍ റദ്ദാക്കിയിരിക്കുന്നു"
 
 msgid "Notes"
 msgstr "കുറിപ്പുകള്‍"
@@ -3141,6 +3158,24 @@ msgstr "ദയവായി UIN-നുള്ള നിങ്ങളുടെ ന�
 msgid "Change Gadu-Gadu Password"
 msgstr "ഗാഡു-ഗാഡു രഗസ്യവാക്ക് മാറ്റുക"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "ഏതു് അവസ്ഥയിലേക്കു് മാറ്റണം"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "ഓണ്‍ലൈന്‍ സുഹൃത്തുക്കള്‍"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "ഏതു് അവസ്ഥയിലേക്കു് മാറ്റണം"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "സുഹൃത്തിനു് ഒരു ചാറ്റ് തെരഞ്ഞെടുക്കുക: %s"
@@ -3172,9 +3207,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "ആദ്യ പേരു്"
 
@@ -3286,6 +3319,22 @@ msgstr "ഗാഡു-ഗാഡു ഉപയോക്താവു്"
 msgid "GG server"
 msgstr "ജിജി സര്‍വര്‍"
 
+msgid "Don't use encryption"
+msgstr ""
+
+#, fuzzy
+msgid "Use encryption if available"
+msgstr "ഉപയോക്താവിനെപ്പറ്റിയുള്ള വിവരം ലഭ്യമല്ല: %s"
+
+#. TODO
+#, fuzzy
+msgid "Require encryption"
+msgstr "ആധികാരികത ഉറപ്പാക്കല്‍ ആവശ്യപ്പെടുക"
+
+#, fuzzy
+msgid "Connection security"
+msgstr "കണക്ഷന്‍ സമയപരിധി കഴിഞ്ഞിരിക്കുന്നു"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "അപരിചിതമായ കമാന്‍ഡ്: %s"
@@ -3321,7 +3370,6 @@ msgstr "%s-നുള്ള MOTD"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3577,6 +3625,10 @@ msgstr "Wallops from %s"
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;action to perform&gt;:  ഒരു പ്രവര്‍ത്തി നടപ്പിലാക്കുക."
 
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: chanserv-ലേക്കു് ഒരു കമാന്‍ഡ് അയയ്ക്കുക."
+
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
@@ -3783,7 +3835,10 @@ msgstr ""
 "എന്‍ക്രിപ്റ്റ് ചെയ്തിട്ടില്ലാത്ത ഒരു സ്ട്രീമില്‍ സര്‍വറിനു് പ്ലെയിന്‍ടെക്സ്റ്റ് ആധികാരികത ഉറപ്പാക്കല്‍ "
 "ആവശ്യമുണ്ടു്"
 
-#. This should never happen!
+#. This happens when the server sends back jibberish
+#. * in the "additional data with success" case.
+#. * Seen with Wildfire 3.0.1.
+#.
 msgid "Invalid response from server"
 msgstr "സര്‍വറില്‍ നിന്നും തെറ്റായ മറുപടി"
 
@@ -3930,7 +3985,6 @@ msgstr "പ്രദേശം"
 msgid "Postal Code"
 msgstr "പോസ്റ്റല്‍ കോഡ്"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "രാജ്യം"
 
@@ -4652,7 +4706,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [message]:  ഒരു ഉപയോക്താവിനെ റൂമിലേക്കു് ക്ഷണിക്കുക."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr "join: &lt;room&gt; [password]:  ഈ സര്‍വറിലുള്ള ഒരു ചാറ്റില്‍ പങ്കു ചേരുക."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
@@ -4693,11 +4748,8 @@ msgstr "XMPP പ്രോട്ടോക്കോള്‍ പ്ലഗിന്
 msgid "Domain"
 msgstr "ഡൊമെയിന്‍"
 
-msgid "Require SSL/TLS"
-msgstr "SSL/TLS ആവശ്യമുണ്ടു്"
-
-msgid "Force old (port 5223) SSL"
-msgstr "പഴയ (പോര്‍ട്ട് 5223) SSL നിര്‍ബന്ധമാക്കുക"
+msgid "Use old-style SSL"
+msgstr ""
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "അണ്‍എന്‍ക്രിപ്റ്റഡ് സ്ട്രീമുകളില്‍ പ്ലെയിന്‍ടെക്സ്റ്റ്  auth അനുവദിക്കുക"
@@ -4803,20 +4855,12 @@ msgstr "പുറത്തു് കളഞ്ഞു (%s)"
 msgid "Unknown Error in presence"
 msgstr "സാനിദ്ധ്യത്തില്‍ അപരിചിതമായ പിശക്"
 
-msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "ഇന്‍-ബാന്‍ഡ് ബൈറ്റ്സ്ട്രീം നീക്കം ചെയ്യലില്‍ ഒരു പിശകുണ്ടായിരിക്കുന്നു\n"
-
-msgid "Transfer was closed."
-msgstr "നീക്കം ചെയ്യല്‍ അടച്ചുപൂട്ടിയിരിക്കുന്നു."
-
-msgid "Failed to open in-band bytestream"
-msgstr "ഇന്‍-ബാന്‍ഡ് ബൈറ്റ്സ്ട്രീം തുറക്കുന്നതില്‍ പരാജയം"
-
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "%s-ലേക്കു് ഫയല്‍ നീക്കം ചെയ്യുവാന്‍ സാധ്യമായില്ല, ഉപയോക്താവു് ഫയല്‍ നീക്കം ചെയ്യല്‍ പിന്തുണയ്ക്കുന്നില്ല"
 
+#. not success
 msgid "File Send Failed"
 msgstr "ഫയല്‍ അയയ്ക്കുന്നതില്‍ പരാജയപ്പെട്ടു"
 
@@ -5180,24 +5224,6 @@ msgstr "സുഹൃത്തിനെ ചേര്‍ക്കുന്നത�
 msgid "The username specified does not exist."
 msgstr "വ്യക്തമാക്കിയ ഉപയോക്തൃനാമം നിലവിലില്ല."
 
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "%s-ല്‍ ബഡ്ഡി ലിസ്റ്റ് സിന്‍ക്രൊണൈസേഷന്‍ പ്രശ്നം (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"ലോക്കല്‍ പട്ടികയിലുള്ള %s, \"%s\" ഗ്രൂപ്പിലാണു്, സര്‍വര്‍ പട്ടികയിലില്ല.നിങ്ങള്‍ക്കു് ഈ സുഹൃത്തിനെ "
-"ചേര്‍ക്കണമോ?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr "%s ലോക്കല്‍ പട്ടികയിലാണു്, സര്‍വര്‍ പട്ടികയിലില്ല. നിങ്ങള്‍ക്കു് ഈ സുഹൃത്തിനെ ചേര്‍ക്കണമോ?"
-
 msgid "Unable to parse message"
 msgstr "സന്ദേശം പാഴ്സ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
 
@@ -5368,6 +5394,24 @@ msgstr "അപരിചിതമായ പിശക് കോഡ് %d"
 msgid "MSN Error: %s\n"
 msgstr "MSN പിശക്: %s\n"
 
+#, c-format
+msgid "Buddy list synchronization issue in %s (%s)"
+msgstr "%s-ല്‍ ബഡ്ഡി ലിസ്റ്റ് സിന്‍ക്രൊണൈസേഷന്‍ പ്രശ്നം (%s)"
+
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr ""
+"ലോക്കല്‍ പട്ടികയിലുള്ള %s, \"%s\" ഗ്രൂപ്പിലാണു്, സര്‍വര്‍ പട്ടികയിലില്ല.നിങ്ങള്‍ക്കു് ഈ സുഹൃത്തിനെ "
+"ചേര്‍ക്കണമോ?"
+
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr "%s ലോക്കല്‍ പട്ടികയിലാണു്, സര്‍വര്‍ പട്ടികയിലില്ല. നിങ്ങള്‍ക്കു് ഈ സുഹൃത്തിനെ ചേര്‍ക്കണമോ?"
+
 msgid "Other Contacts"
 msgstr "മറ്റു് വിലാസങ്ങള്‍"
 
@@ -5419,11 +5463,53 @@ msgstr "നിങ്ങളുടെ MSN-ലുള്ള പേരു് വള�
 msgid "Set friendly name for %s."
 msgstr "%s-നുള്ള പേരു് സജ്ജമാക്കുക."
 
-msgid "Set your friendly name."
-msgstr "നിങ്ങളുടെ പേരു് സജ്ജമാക്കുക."
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "പേരു് സജ്ജമാക്കുക..."
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "നിങ്ങളുടെ മറ്റു് MSN സുഹൃത്തുക്കള്‍ നിങ്ങളെ കാണുന്നതു് ഈ പേരിലാണു്."
+
+#, fuzzy
+msgid "This Location"
+msgstr "സ്ഥലം"
+
+#, fuzzy
+msgid "This is the name that identifies this location"
+msgstr "നിങ്ങളുടെ മറ്റു് MSN സുഹൃത്തുക്കള്‍ നിങ്ങളെ കാണുന്നതു് ഈ പേരിലാണു്."
+
+#, fuzzy
+msgid "Other Locations"
+msgstr "സ്ഥലം"
+
+#, fuzzy
+msgid "You can sign out from other locations here"
+msgstr "നിങ്ങള്‍ മറ്റൊരിടത്തു് നിന്നും പ്രവേശിച്ചിരിക്കുന്നു"
+
+#. TODO: Due to limitations in our current request field API, the
+#. following string will show up with a trailing colon.  This should
+#. be fixed either by adding an "include_colon" boolean, or creating
+#. a separate purple_request_field_label_new_without_colon function,
+#. or by never automatically adding the colon and requiring that
+#. callers add the colon themselves.
+#, fuzzy
+msgid "You are not signed in from any other locations."
+msgstr "നിങ്ങള്‍ മറ്റൊരിടത്തു് നിന്നും പ്രവേശിച്ചിരിക്കുന്നു"
+
+#, fuzzy
+msgid "Allow multiple logins?"
+msgstr "അനവധി ഇന്‍സ്റ്റന്‍സുകള്‍ അനുവദിക്കുക"
+
+msgid ""
+"Do you want to allow or disallow connecting from multiple locations "
+"simultaneously?"
+msgstr ""
+
+msgid "Allow"
+msgstr "അനുവദിക്കുക"
+
+msgid "Disallow"
+msgstr "അനവദിക്കരുതു്"
 
 msgid "Set your home phone number."
 msgstr "ഫോണ്‍ നംബര്‍ സജ്ജമാക്കുക."
@@ -5443,12 +5529,6 @@ msgid ""
 msgstr ""
 "നിങ്ങളുടെ സെല്‍ ഫോണ്‍ അല്ലെങ്കില്‍ മറ്റേതെങ്കിലും മൊബില്‍ ഡിവൈസിലോട്ടു് MSN മൊബൈല്‍ താളുകള്‍ "
 "അയയ്ക്കുന്നതിനായി മറ്റുള്ളവരെ അനവദിക്കണമോ വേണ്ടയോ?"
-
-msgid "Allow"
-msgstr "അനുവദിക്കുക"
-
-msgid "Disallow"
-msgstr "അനവദിക്കരുതു്"
 
 #, c-format
 msgid "Blocked Text for %s"
@@ -5510,6 +5590,10 @@ msgstr "ഓഫീസിന്റെ പേരു്"
 msgid "Set Friendly Name..."
 msgstr "പേരു് സജ്ജമാക്കുക..."
 
+#, fuzzy
+msgid "View Locations..."
+msgstr "സ്ഥാനം തെരഞ്ഞെടുക്കുക..."
+
 msgid "Set Home Phone Number..."
 msgstr "വീട്ടിലെ ഫോണ്‍ നംബര്‍ സജ്ജമാക്കുക..."
 
@@ -5521,6 +5605,10 @@ msgstr "മൊബൈല്‍ ഫോണ്‍ നംബര്‍ സജ്ജമ
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "മൊബൈല്‍ ഡിവൈസുകള്‍ പ്രവര്‍ത്തന സജ്ജമാക്കുക/രഹിതമാക്കുക..."
+
+#, fuzzy
+msgid "Allow/Disallow Multiple Logins..."
+msgstr "മൊബൈല്‍ താളുകള്‍ അനുവദിക്കുക/എതിര്‍ക്കുക..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "മൊബൈല്‍ താളുകള്‍ അനുവദിക്കുക/എതിര്‍ക്കുക..."
@@ -5547,18 +5635,6 @@ msgstr ""
 
 msgid "Unable to Add"
 msgstr "ചേര്‍ക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Authorization Request Message:"
-msgstr "ആധികാരികത ഉറപ്പാക്കുവാന്‍ ആവശ്യപ്പെടുന്ന സന്ദേശം:"
-
-msgid "Please authorize me!"
-msgstr "ദയവായി അധികാരപ്പെടുത്തുക!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_ശരി"
 
 msgid "Error retrieving profile"
 msgstr "പ്രൊഫൈല്‍ ലഭ്യമാക്കുന്നതില്‍ പിശക്"
@@ -5739,6 +5815,9 @@ msgstr "ഇഷ്ടമുള്ള സ്മൈലികള്‍ കാണി�
 msgid "Allow direct connections"
 msgstr "കണക്ഷന്‍ ഉണ്ടാക്കുവാന്‍ സാധ്യമല്ല"
 
+msgid "Allow connecting from multiple locations"
+msgstr ""
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: nudge a user to get their attention"
 
@@ -5768,6 +5847,10 @@ msgstr "ഉപയോക്താവു് നീക്കം ചെയ്യു�
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "മൊബൈല്‍ സന്ദേശം അയയ്ക്കുവാന്‍ സാധിച്ചില്ല കാരണം സന്ദേശം വളരെ വലുതാണു്."
+
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "ഒരു അപരിചിത പിശകുണ്ടായതിനാല്‍ സന്ദേശം അയയ്ക്കുവാന്‍ സാധിച്ചില്ല."
 
 #, c-format
 msgid ""
@@ -5921,19 +6004,8 @@ msgstr "നിങ്ങള്‍ക്കു് ഈ സുഹൃത്തിന�
 msgid "The username specified is invalid."
 msgstr "വ്യക്തമാക്കിയ ഉപയോക്തൃനാമം തെറ്റാണു്."
 
-msgid "The PIN you entered is invalid."
-msgstr "നിങ്ങള്‍ നല്‍കിയ പിന്‍ തെറ്റാണു്."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "നിങ്ങള്‍ നല്‍കിയ പിന്‍ വ്യാപ്തി തെറ്റാണു് [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "പിന്‍ തെറ്റാണു്. ഇതില്‍ അക്കങ്ങളെ പാടുള്ളൂ [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "നിങ്ങള്‍ നല്‍കിയ രണ്ടു് പിനുകള്‍ തമ്മില്‍ പൊരുത്തപ്പെടുന്നില്ല."
-
-msgid "The name you entered is invalid."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
 msgstr "നിങ്ങള്‍ നല്‍കിയ പേരു് തെറ്റാണു്."
 
 msgid ""
@@ -5952,35 +6024,70 @@ msgstr "പ്രൊഫൈല്‍"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "നിങ്ങളുടെ പ്രൊഫൈല്‍ വിവരം ഇതു് വരെ ലഭ്യമായിട്ടില്ല. ദയവായി പിന്നീടു് വീണ്ടും ശ്രമിക്കുക."
 
-msgid "Your UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "കാണിക്കേണ്ട പേരു്"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "എന്നെപ്പറ്റി"
+
+#. where I live
+msgid "Where I Live"
 msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "മൊബൈല്‍ നംബര്‍"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "നിങ്ങളുടെ പ്രൊഫൈല്‍ പരിഷ്കരിക്കുക"
+
+msgid "The PIN you entered is invalid."
+msgstr "നിങ്ങള്‍ നല്‍കിയ പിന്‍ തെറ്റാണു്."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "നിങ്ങള്‍ നല്‍കിയ പിന്‍ വ്യാപ്തി തെറ്റാണു് [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "പിന്‍ തെറ്റാണു്. ഇതില്‍ അക്കങ്ങളെ പാടുള്ളൂ [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "നിങ്ങള്‍ നല്‍കിയ രണ്ടു് പിനുകള്‍ തമ്മില്‍ പൊരുത്തപ്പെടുന്നില്ല."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "പ്രൊഫൈലിന്റെ പരിഷ്കരണത്തില്‍ പിശക്"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "പിന്‍"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "പിന്‍ ഉറപ്പാക്കുക"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "കാണിക്കേണ്ട പേരു്"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "ചിഹ്നം മാറ്റുക"
 
-#. hidden
-msgid "Hide my number"
-msgstr "എന്റെ നംബര്‍ അദൃശ്യമാക്കുക"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "മൊബൈല്‍ നംബര്‍"
-
-msgid "Update your Profile"
-msgstr "നിങ്ങളുടെ പ്രൊഫൈല്‍ പരിഷ്കരിക്കുക"
-
-msgid "Here you can update your MXit profile"
-msgstr "ഇവിടെ നിങ്ങളുടെ MXit പ്രൊഫൈല്‍ പരിഷ്കരിക്കുവാന്‍ സാധിക്കുന്നു"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "ചിഹ്നം മാറ്റുക"
 
 msgid "View Splash"
 msgstr "സ്പ്ലാഷ് കാണുക"
@@ -5991,9 +6098,39 @@ msgstr "നിലവില്‍ സ്പ്ലാഷ് സ്ക്രീന�
 msgid "About"
 msgstr "സംബന്ധിച്ചു്"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "ഒരു ഉപയോക്താവിനായി തെരയുക"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "ഒരു ഉപയോക്താവിനായി തെരയുക"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "ഉപയോക്താവിനെപ്പറ്റിയുള്ള വിവരം"
+
+msgid "_Search"
+msgstr "_തെരയുക"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "പ്രൊഫൈല്‍ മാറ്റുക..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "മൂഡ് മാറ്റുക..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "പേരു് സജ്ജമാക്കുക..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "ഉപയോക്താക്കള്‍ക്കായി തെരയുക..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6026,7 +6163,7 @@ msgid "Connecting..."
 msgstr "കണക്ട് ചെയ്യുന്നു..."
 
 #, fuzzy
-msgid "The Display Name you entered is invalid."
+msgid "The Display Name you entered is too short."
 msgstr "നിങ്ങള്‍ നല്‍കിയ പേരു് തെറ്റാണു്."
 
 msgid "The PIN you entered has an invalid length [7-10]."
@@ -6099,6 +6236,23 @@ msgstr "MXit അക്കൌണ്ട് ഉറപ്പാക്കല്‍"
 msgid "Retrieving User Information..."
 msgstr "ഉപയോക്താവിന്റെ വിവരം ലഭ്യമാക്കുന്നു..."
 
+#, fuzzy
+msgid "was kicked"
+msgstr "തെറ്റായ ടിക്കറ്റ്"
+
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "നിങ്ങളെ പുറത്തു് കളഞ്ഞിരിക്കുന്നു: (%s)"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_റൂം:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "നിങ്ങള്‍ക്കു് മെയിലുണ്ടു്!"
+
 msgid "Loading menu..."
 msgstr "മെനു ലഭ്യമാക്കുന്നു..."
 
@@ -6114,8 +6268,21 @@ msgid "Hidden Number"
 msgstr "അദൃശ്യമായ നംബര്‍"
 
 #, fuzzy
+msgid "No profile available"
+msgstr "ലഭ്യമല്ല"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "ഈ അക്കൌണ്ടിനു് ശരിയായ ഒരു ഈമെയില്‍ സജ്ജമാക്കിയിട്ടില്ല."
+
+#, fuzzy
 msgid "Your MXit ID..."
 msgstr "യാഹൂ വിലാസം..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "ക്ഷണിക്കുക"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6128,27 +6295,41 @@ msgstr "HTTP വഴി കണക്ട് ചെയ്യുന്നു"
 msgid "Enable splash-screen popup"
 msgstr "സ്പ്ലാഷ്-സ്ക്രീന്‍ പോപ്പപ്പ് പ്രവര്‍ത്തന സജ്ജമാക്കുക"
 
-#. you were kicked
-#, fuzzy
-msgid "You have been kicked from this MultiMX."
-msgstr "നിങ്ങളെ പുറത്തു് കളഞ്ഞിരിക്കുന്നു: (%s)"
-
-#, fuzzy
-msgid "was kicked"
-msgstr "തെറ്റായ ടിക്കറ്റ്"
-
-#, fuzzy
-msgid "_Room Name:"
-msgstr "_റൂം:"
-
-#. Display system message in chat window
-#, fuzzy
-msgid "You have invited"
-msgstr "നിങ്ങള്‍ക്കു് മെയിലുണ്ടു്!"
-
 #, fuzzy
 msgid "Last Online"
 msgstr "ഓണ്‍ലൈന്‍"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "അയച്ച സന്ദേശങ്ങള്‍"
+
+#, fuzzy
+msgid "No results"
+msgstr "തെരച്ചില്‍ ഫലങ്ങള്‍"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "ഉപയോക്താക്കള്‍ ലഭ്യമായില്ല"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "ഉപയോക്താവു്"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6871,6 +7052,21 @@ msgstr "സര്‍വറിന്റെ വിലാസം"
 msgid "Server port"
 msgstr "സര്‍വര്‍ പോര്‍ട്ട്"
 
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "നിങ്ങളെ എന്റെ സുഹൃത്തു് പട്ടികയില്‍ ചേര്‍ക്കുന്നതിനു് ദയവായി എനിക്കു് അധികാരം നല്‍കുക."
+
+msgid "No reason given."
+msgstr "കാരണം ലഭ്യമല്ല."
+
+msgid "Authorization Denied Message:"
+msgstr "ആധികാരികത നിഷേധിക്കുന്ന സന്ദേശം:"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_ശരി"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "%s-ല്‍ നിന്നും അപ്രതീക്ഷിതമായ മറുപടി: %s"
@@ -6884,11 +7080,22 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr "നിങ്ങളുടെ കണക്ഷനില്‍ എന്തോ തകരാറുണ്ടു്. അല്‍പ നേരത്തിനു് ശേഷം വീണ്ടും ശ്രമിക്കുക. "
 
+msgid ""
+"You required encryption in your account settings, but one of the servers "
+"doesn't support it."
+msgstr ""
+
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "%s ആവശ്യപ്പെടുന്നതില്‍ പിശക്: %s"
+
+#, fuzzy
+msgid "The server returned an empty response"
+msgstr ""
+"MXit സര്‍വറിലേക്കു് കണക്ട് ചെയ്യുവാന്‍ സാധ്യമല്ല. ദയവായി നിങ്ങളുടെ സര്‍വര്‍ സജ്ജീകരണങ്ങള്‍ "
+"പരിശോധിക്കുക."
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6898,9 +7105,24 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "നിങ്ങളുടെ സ്ക്രീന്‍ നാമം ഇവിടെ ആധികാരപ്പെടുത്തുന്നതിനായി AOL അനുവദിക്കുന്നില്ല"
 
-#, fuzzy, c-format
-msgid "Error requesting %s"
-msgstr "%s ആവശ്യപ്പെടുന്നതില്‍ പിശക്: %s"
+msgid ""
+"(There was an error receiving this message.  The buddy you are speaking with "
+"is probably using a different encoding than expected.  If you know what "
+"encoding he is using, you can specify it in the advanced account options for "
+"your AIM/ICQ account.)"
+msgstr ""
+"(ഈ സന്ദേശം ലഭിക്കുന്നതില്‍ ഒരു പിശകുണ്ടായിരുന്നു.  നിങ്ങള്‍ സംസാരിച്ചുകൊണ്ടിരിക്കുന്ന സുഹൃത്തു് ഒരു "
+"പക്ഷേ മറ്റൊരു എന്‍കോഡിങാവും ഉപയോഗിക്കുന്നതു്.  ഏതു് എന്‍കോഡിങാണു് ഉപയോഗിക്കുന്നതു് എന്നു് "
+"അറിയാമെങ്കില്‍, നിങ്ങളുടെ AIM/ICQ അക്കൌണ്ടിലുള്ള അധികമായ അക്കൌണ്ട് ഉപാധികളില്‍ അതു് "
+"വ്യക്തമാക്കുക.)"
+
+#, c-format
+msgid ""
+"(There was an error receiving this message.  Either you and %s have "
+"different encodings selected, or %s has a buggy client.)"
+msgstr ""
+"(ഈ സന്ദേശം ലഭിക്കുന്നതില്‍ ഒരു പിശകുണ്ടായിരുന്നു.  ഒന്നുകിള്‍ നിങ്ങളും %s-ഉം തെരഞ്ഞെടുത്തിരിക്കുന്നതു് "
+"പല എന്‍കോഡിങുകളാണു്, അല്ലെങ്കില്‍ %s-നു് ഒരു പിശകുള്ള ക്ലയന്റുണ്ടു്.)"
 
 msgid "Could not join chat room"
 msgstr "ചാറ്റ് റൂമില്‍ ചേരുവാന്‍ സാധ്യമായില്ല"
@@ -7131,95 +7353,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ഫയല്‍ %s %s ആണു്, ഇതു് ഏറ്റവും വലിയ വ്യാപ്തിയായ %s-നേക്കാള്‍ വലുതാണു്."
 
-msgid ""
-"(There was an error receiving this message.  The buddy you are speaking with "
-"is probably using a different encoding than expected.  If you know what "
-"encoding he is using, you can specify it in the advanced account options for "
-"your AIM/ICQ account.)"
-msgstr ""
-"(ഈ സന്ദേശം ലഭിക്കുന്നതില്‍ ഒരു പിശകുണ്ടായിരുന്നു.  നിങ്ങള്‍ സംസാരിച്ചുകൊണ്ടിരിക്കുന്ന സുഹൃത്തു് ഒരു "
-"പക്ഷേ മറ്റൊരു എന്‍കോഡിങാവും ഉപയോഗിക്കുന്നതു്.  ഏതു് എന്‍കോഡിങാണു് ഉപയോഗിക്കുന്നതു് എന്നു് "
-"അറിയാമെങ്കില്‍, നിങ്ങളുടെ AIM/ICQ അക്കൌണ്ടിലുള്ള അധികമായ അക്കൌണ്ട് ഉപാധികളില്‍ അതു് "
-"വ്യക്തമാക്കുക.)"
-
-#, c-format
-msgid ""
-"(There was an error receiving this message.  Either you and %s have "
-"different encodings selected, or %s has a buggy client.)"
-msgstr ""
-"(ഈ സന്ദേശം ലഭിക്കുന്നതില്‍ ഒരു പിശകുണ്ടായിരുന്നു.  ഒന്നുകിള്‍ നിങ്ങളും %s-ഉം തെരഞ്ഞെടുത്തിരിക്കുന്നതു് "
-"പല എന്‍കോഡിങുകളാണു്, അല്ലെങ്കില്‍ %s-നു് ഒരു പിശകുള്ള ക്ലയന്റുണ്ടു്.)"
-
-#. Label
-msgid "Buddy Icon"
-msgstr "സുഹൃത്തു് ചിഹ്നം"
-
-msgid "Voice"
-msgstr "ശബ്ദം"
-
-msgid "AIM Direct IM"
-msgstr "AIM നേരിട്ടുള്ള IM"
-
-msgid "Get File"
-msgstr "ഫയല്‍ ലഭ്യമാക്കുക"
-
-msgid "Games"
-msgstr "കളികള്‍"
-
-msgid "ICQ Xtraz"
-msgstr ""
-
-msgid "Add-Ins"
-msgstr "ആഡ്-ഇനുകള്‍"
-
-msgid "Send Buddy List"
-msgstr "സുഹൃത്തു് പട്ടിക അയയ്ക്കുക"
-
-msgid "ICQ Direct Connect"
-msgstr "ICQ ഡയറക്ട് കണക്ട്"
-
-msgid "AP User"
-msgstr "AP ഉപയോക്താവു്"
-
-msgid "ICQ RTF"
-msgstr "ICQ RTF"
-
-msgid "Nihilist"
-msgstr "Nihilist"
-
-msgid "ICQ Server Relay"
-msgstr "ICQ സര്‍വര്‍ തയ്യാര്‍"
-
-msgid "Old ICQ UTF8"
-msgstr "പഴയ ICQ UTF8"
-
-msgid "Trillian Encryption"
-msgstr "ട്രില്ലിയന്‍ എന്‍ക്രിപ്ഷന്‍"
-
-msgid "ICQ UTF8"
-msgstr "ICQ UTF8"
-
-msgid "Hiptop"
-msgstr "Hiptop"
-
-msgid "Security Enabled"
-msgstr "സുരക്ഷാ പ്രവര്‍ത്തന സജ്ജം"
-
-msgid "Video Chat"
-msgstr "വീഡിയോ ചാറ്റ്"
-
-msgid "iChat AV"
-msgstr "iChat AV"
-
-msgid "Live Video"
-msgstr "ലൈവ് വീഡിയോ"
-
-msgid "Camera"
-msgstr "ക്യാമറാ"
-
-msgid "Screen Sharing"
-msgstr "സ്ക്രീന്‍ പങ്കിടുന്നു"
-
 msgid "Free For Chat"
 msgstr "ചാറ്റിനു് ലഭ്യം"
 
@@ -7255,15 +7388,6 @@ msgstr "നെറ്റ്‌വര്‍ക്ക്"
 msgid "At lunch"
 msgstr "ഊണിനു് പോയിരിക്കുന്നു"
 
-msgid "IP Address"
-msgstr "IP വിലാസം"
-
-msgid "Warning Level"
-msgstr "മുന്നറിയിപ്പു്"
-
-msgid "Buddy Comment"
-msgstr "സുുഹൃത്തു് അഭിപ്രായം"
-
 #, c-format
 msgid "Unable to connect to authentication server: %s"
 msgstr "ആധികാരികത ഉറപ്പാക്കുന്ന സര്‍വറുമായി കണക്ട് ചെയ്യുവാന്‍ സാധ്യമല്ല: %s"
@@ -7292,6 +7416,11 @@ msgstr ""
 "ഇങ്ങനെയാകണം: ശരിയായ ഈമെയില്‍ വിലാസം അല്ലെങ്കില്‍ ഒരു അക്ഷരത്തില്‍ ആരംഭിക്കണം, കൂടാതെ അതില്‍ "
 "അക്ഷരങ്ങള്‍, അക്കങ്ങള്‍, സ്പെയിസുകള്‍ മാത്രമേ ഉണ്ടാകുവാന്‍ പാടുള്ളൂ, അല്ലെങ്കില്‍ അക്കങ്ങള്‍ മാത്രം."
 
+msgid ""
+"You required encryption in your account settings, but encryption is not "
+"supported by your system."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7308,7 +7437,6 @@ msgid "Received authorization"
 msgstr "ആധികാരികത ലഭിച്ചിരിക്കുന്നു"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "ഉപയോക്തൃനാമം ലഭ്യമല്ല"
@@ -7358,15 +7486,6 @@ msgstr "രഹസ്യവാക്ക് അയച്ചിരിക്കു�
 
 msgid "Unable to initialize connection"
 msgstr "കണക്ഷന്‍ ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Please authorize me so I can add you to my buddy list."
-msgstr "നിങ്ങളെ എന്റെ സുഹൃത്തു് പട്ടികയില്‍ ചേര്‍ക്കുന്നതിനു് ദയവായി എനിക്കു് അധികാരം നല്‍കുക."
-
-msgid "No reason given."
-msgstr "കാരണം ലഭ്യമല്ല."
-
-msgid "Authorization Denied Message:"
-msgstr "ആധികാരികത നിഷേധിക്കുന്ന സന്ദേശം:"
 
 #, c-format
 msgid ""
@@ -7487,58 +7606,19 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "നിങ്ങള്‍ക്കു് %hu സന്ദേശം നഷ്ടമായി, അതു് %s-ല്‍ നിന്നുള്ളതാണു്. കാരണം അപരിചിതം."
 msgstr[1] "നിങ്ങള്‍ക്കു് %hu സന്ദേശങ്ങള്‍ നഷ്ടമായി, അതു് %s-ല്‍ നിന്നുള്ളതാണു്. കാരണം അപരിചിതം."
 
-#, c-format
-msgid "User information not available: %s"
-msgstr "ഉപയോക്താവിനെപ്പറ്റിയുള്ള വിവരം ലഭ്യമല്ല: %s"
-
-msgid "Online Since"
-msgstr "എപ്പോള്‍ മുതല്‍ ഓണ്‍ലൈന്‍"
-
-msgid "Member Since"
-msgstr "അംഗമായതു് എന്നു് മുതല്‍"
-
-msgid "Capabilities"
-msgstr "വിശേഷതകള്‍"
-
 msgid "Your AIM connection may be lost."
 msgstr "നിങ്ങളുടെ AIM കണക്ഷന്‍ നഷ്ടമായേക്കാം."
-
-#. The conversion failed!
-msgid ""
-"[Unable to display a message from this user because it contained invalid "
-"characters.]"
-msgstr ""
-"[ഈ ഉപയോക്താവില്‍ നിന്നുള്ള സന്ദേശം കാണിക്കുവാന്‍ സാധ്യമല്ല, കാരണം അതില്‍ തെറ്റായ അക്ഷരങ്ങളുണ്ടു്.]"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "നിങ്ങള്‍ %s ചാറ്റ് റൂമില്‍ നിന്നും വിഛേദിച്ചിരിക്കുന്നു."
 
-msgid "Mobile Phone"
-msgstr "മൊബൈല്‍ ഫോണ്‍"
+msgid "The new formatting is invalid."
+msgstr "പുതിയ ശൈലി തെറ്റാണു്."
 
-msgid "Personal Web Page"
-msgstr "സ്വകാര്യം വെബ് താള്‍"
-
-#. aim_userinfo_t
-#. strip_html_tags
-msgid "Additional Information"
-msgstr "കൂടുതല്‍ വിവരം"
-
-msgid "Zip Code"
-msgstr "സിപ് കോഡ്"
-
-msgid "Work Information"
-msgstr "ജോലി വിവരം"
-
-msgid "Division"
-msgstr "വിഭാഗം"
-
-msgid "Position"
-msgstr "സ്ഥാനം"
-
-msgid "Web Page"
-msgstr "വെബ് താള്‍"
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"ഉപയോക്തൃനാമം ഫോര്‍മാറ്റ് ചെയ്യുന്നതു് കാപ്പിറ്റല്‍ അക്ഷരങ്ങളും വൈറ്റ്സ്പെയിസുകളും മാത്രം മാറ്റുന്നു."
 
 msgid "Pop-Up Message"
 msgstr "പോപ്പപ്പ് സന്ദേശം"
@@ -7802,17 +7882,11 @@ msgstr "Web aware (enabling this will cause you to receive SPAM!)"
 msgid "ICQ Privacy Options"
 msgstr "ICQ സ്വകാര്യത ഉപാധികള്‍"
 
-msgid "The new formatting is invalid."
-msgstr "പുതിയ ശൈലി തെറ്റാണു്."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"ഉപയോക്തൃനാമം ഫോര്‍മാറ്റ് ചെയ്യുന്നതു് കാപ്പിറ്റല്‍ അക്ഷരങ്ങളും വൈറ്റ്സ്പെയിസുകളും മാത്രം മാറ്റുന്നു."
-
 msgid "Change Address To:"
 msgstr "വിലാസം മാറ്റേണ്ടതു്:"
 
-msgid "<i>you are not waiting for authorization</i>"
+#, fuzzy
+msgid "you are not waiting for authorization"
 msgstr "<i>നിങ്ങള്‍ കാത്തിരിക്കുന്നതു് ആധികാരികത ഉറപ്പാക്കുന്നതിനല്ല</i>"
 
 msgid "You are awaiting authorization from the following buddies"
@@ -7834,9 +7908,6 @@ msgstr "ഈമെയില്‍ വിലാസം വഴി ഒരു സു�
 msgid "Type the email address of the buddy you are searching for."
 msgstr "നിങ്ങള്‍ തെരയുന്ന സുഹൃത്തിന്റെ ഈമെയില്‍ വിലാസം ടൈപ്പ് ചെയ്യുക."
 
-msgid "_Search"
-msgstr "_തെരയുക"
-
 msgid "Set User Info (web)..."
 msgstr "ഉപയോക്താവിനുള്ള വിവരം സജ്ജമാക്കുക (വെബ്)..."
 
@@ -7850,6 +7921,14 @@ msgstr "IM ഫോര്‍വേഡിങ് ക്രമീകരിക്ക�
 #. ICQ actions
 msgid "Set Privacy Options..."
 msgstr "സ്വകാര്യത ഉപാധികള്‍ സജ്ജമാക്കുക..."
+
+#, fuzzy
+msgid "Show Visible List"
+msgstr "സുഹൃത്തുക്കളുടെ _പട്ടിക കാണിക്കുക"
+
+#, fuzzy
+msgid "Show Invisible List"
+msgstr "ഇന്‍വൈറ്റ് ലിസ്റ്റ്"
 
 #. AIM actions
 msgid "Confirm Account"
@@ -7866,9 +7945,6 @@ msgstr "ആധികാരികത ഉറപ്പാക്കുവാന്�
 
 msgid "Search for Buddy by Email Address..."
 msgstr "ഈമെയില്‍ വിലാസം വഴി സുഹൃത്തിനെ തെരയുക..."
-
-msgid "Search for Buddy by Information"
-msgstr "വിവരം അനുസരിച്ചു് സുഹൃത്തിനെ തെരയുക"
 
 msgid "Use clientLogin"
 msgstr "clientLogin ഉപയോഗിക്കുക"
@@ -7907,6 +7983,124 @@ msgid ""
 msgstr ""
 "ഇതിനു് രണ്ടു കമ്പ്യൂട്ടറുകള്‍ തമ്മില്‍ നേരിട്ടുള്ള കണക്ഷന്‍ ആവശ്യമുണ്ടു്, കൂടാതെ IM ചിത്രങ്ങള്‍ക്കും "
 "ആവശ്യമാണു്. നിങ്ങളുടെ IP വിലാസം കാണിക്കുന്നതാണു്, അതിനാല്‍ പ്രത്യേകം ശ്രദ്ധിക്കുക."
+
+#. Label
+msgid "Buddy Icon"
+msgstr "സുഹൃത്തു് ചിഹ്നം"
+
+msgid "Voice"
+msgstr "ശബ്ദം"
+
+msgid "AIM Direct IM"
+msgstr "AIM നേരിട്ടുള്ള IM"
+
+msgid "Get File"
+msgstr "ഫയല്‍ ലഭ്യമാക്കുക"
+
+msgid "Games"
+msgstr "കളികള്‍"
+
+msgid "ICQ Xtraz"
+msgstr ""
+
+msgid "Add-Ins"
+msgstr "ആഡ്-ഇനുകള്‍"
+
+msgid "Send Buddy List"
+msgstr "സുഹൃത്തു് പട്ടിക അയയ്ക്കുക"
+
+msgid "ICQ Direct Connect"
+msgstr "ICQ ഡയറക്ട് കണക്ട്"
+
+msgid "AP User"
+msgstr "AP ഉപയോക്താവു്"
+
+msgid "ICQ RTF"
+msgstr "ICQ RTF"
+
+msgid "Nihilist"
+msgstr "Nihilist"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ സര്‍വര്‍ തയ്യാര്‍"
+
+msgid "Old ICQ UTF8"
+msgstr "പഴയ ICQ UTF8"
+
+msgid "Trillian Encryption"
+msgstr "ട്രില്ലിയന്‍ എന്‍ക്രിപ്ഷന്‍"
+
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+msgid "Hiptop"
+msgstr "Hiptop"
+
+msgid "Security Enabled"
+msgstr "സുരക്ഷാ പ്രവര്‍ത്തന സജ്ജം"
+
+msgid "Video Chat"
+msgstr "വീഡിയോ ചാറ്റ്"
+
+msgid "iChat AV"
+msgstr "iChat AV"
+
+msgid "Live Video"
+msgstr "ലൈവ് വീഡിയോ"
+
+msgid "Camera"
+msgstr "ക്യാമറാ"
+
+msgid "Screen Sharing"
+msgstr "സ്ക്രീന്‍ പങ്കിടുന്നു"
+
+msgid "IP Address"
+msgstr "IP വിലാസം"
+
+msgid "Warning Level"
+msgstr "മുന്നറിയിപ്പു്"
+
+msgid "Buddy Comment"
+msgstr "സുുഹൃത്തു് അഭിപ്രായം"
+
+#, c-format
+msgid "User information not available: %s"
+msgstr "ഉപയോക്താവിനെപ്പറ്റിയുള്ള വിവരം ലഭ്യമല്ല: %s"
+
+msgid "Mobile Phone"
+msgstr "മൊബൈല്‍ ഫോണ്‍"
+
+msgid "Personal Web Page"
+msgstr "സ്വകാര്യം വെബ് താള്‍"
+
+#. aim_userinfo_t
+#. use_html_status
+msgid "Additional Information"
+msgstr "കൂടുതല്‍ വിവരം"
+
+msgid "Zip Code"
+msgstr "സിപ് കോഡ്"
+
+msgid "Work Information"
+msgstr "ജോലി വിവരം"
+
+msgid "Division"
+msgstr "വിഭാഗം"
+
+msgid "Position"
+msgstr "സ്ഥാനം"
+
+msgid "Web Page"
+msgstr "വെബ് താള്‍"
+
+msgid "Online Since"
+msgstr "എപ്പോള്‍ മുതല്‍ ഓണ്‍ലൈന്‍"
+
+msgid "Member Since"
+msgstr "അംഗമായതു് എന്നു് മുതല്‍"
+
+msgid "Capabilities"
+msgstr "വിശേഷതകള്‍"
 
 msgid "Invalid SNAC"
 msgstr "തെറ്റായ SNAC"
@@ -7977,717 +8171,58 @@ msgstr "ക്യൂ പൂര്‍ണ്ണം"
 msgid "Not while on AOL"
 msgstr "AOL-ല്‍ ഉള്ളപ്പോള്‍ സാധ്യമല്ല"
 
-msgid "Aquarius"
-msgstr "അക്വേറിയസ്"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear online to the chosen user even when your status is set to
+#. Invisible.
+msgid "Appear Online"
+msgstr "ഓണ്‍ലൈന്‍ ആകുക"
 
-msgid "Pisces"
-msgstr "പൈസസ്"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user when your status is set to
+#. Invisible (this is the default).
+#, fuzzy
+msgid "Don't Appear Online"
+msgstr "ഓണ്‍ലൈന്‍ ആകുക"
 
-msgid "Aries"
-msgstr "ആരീസ്"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to always appear offline to the chosen user (even when your status
+#. isn't Invisible).
+msgid "Appear Offline"
+msgstr "ഓഫ്‌ലൈനായി കാണിക്കുക"
 
-msgid "Taurus"
-msgstr "ടൌറസ്"
+#. Translators: This string is a menu option that, if selected, will cause
+#. you to appear offline to the chosen user if you are invisible, and
+#. appear online to the chosen user if you are not invisible (this is the
+#. default).
+#, fuzzy
+msgid "Don't Appear Offline"
+msgstr "ഓഫ്‌ലൈനായി കാണിക്കുക"
 
-msgid "Gemini"
-msgstr "ജെമിനി"
+#, fuzzy
+msgid "you have no buddies on this list"
+msgstr "നിങ്ങളെ പുറത്തു് കളഞ്ഞിരിക്കുന്നു: (%s)"
 
-msgid "Cancer"
-msgstr "കാന്‍സര്‍"
+#, fuzzy, c-format
+msgid ""
+"You can add a buddy to this list by right-clicking on them and selecting \"%s"
+"\""
+msgstr ""
+"ഈ സുഹൃത്തുക്കളില്‍ റൈറ്റ്-ക്ലിക്ക് ചെയ്തു്  \"ആധികാരികത ഉറപ്പാക്കാല്‍ വീണ്ടും ആവശ്യപ്പെടുക\"‌ "
+"തെരഞ്ഞെടുത്തു് നിങ്ങള്‍ക്കു് ആധികാരികത ഉറപ്പാക്കാന്‍ വീണ്ടും ആവശ്യപ്പെടാം."
 
-msgid "Leo"
-msgstr "ലിയോ"
-
-msgid "Virgo"
-msgstr "വിര്‍ഗോ"
-
-msgid "Libra"
-msgstr "ലിബ്രാ"
-
-msgid "Scorpio"
-msgstr "സ്കോര്‍പിയോ"
-
-msgid "Sagittarius"
-msgstr "സാഗിറ്റേറിയസ്"
-
-msgid "Capricorn"
-msgstr "കാപ്രിക്കോണ്‍"
-
-msgid "Rat"
-msgstr "എലി"
-
-msgid "Ox"
-msgstr "എരുമ"
-
-msgid "Tiger"
-msgstr "പുലി"
-
-msgid "Rabbit"
-msgstr "റാബിറ്റ്"
-
-msgid "Dragon"
-msgstr "ഡ്രാഗണ്‍"
-
-msgid "Snake"
-msgstr "സര്‍പ്പം"
-
-msgid "Horse"
-msgstr "കുതിര"
-
-msgid "Goat"
-msgstr "ആടു്"
-
-msgid "Monkey"
-msgstr "കുരങ്ങു്"
-
-msgid "Rooster"
-msgstr "കോഴി"
-
-msgid "Dog"
-msgstr "പട്ടി"
-
-msgid "Pig"
-msgstr "പന്നി"
-
-msgid "Other"
-msgstr "മറ്റുള്ളവ"
-
-msgid "Visible"
+#, fuzzy
+msgid "Visible List"
 msgstr "ദൃശ്യമാകുക"
 
-msgid "Friend Only"
-msgstr "സുഹൃത്ത് മാത്രം"
+msgid "These buddies will see your status when you switch to \"Invisible\""
+msgstr ""
 
-msgid "Private"
-msgstr "സ്വകാര്യം"
-
-msgid "QQ Number"
-msgstr "QQ നംബര്‍"
-
-msgid "Country/Region"
-msgstr "രാജ്യം/പ്രദേശം"
-
-msgid "Province/State"
-msgstr "സംസ്ഥാനം"
-
-msgid "Zipcode"
-msgstr "സിപ്പ്കോഡ്"
-
-msgid "Phone Number"
-msgstr "ഫോണ്‍ നംബര്‍"
-
-msgid "Authorize adding"
-msgstr "അധികാരപ്പെടുത്തുക"
-
-msgid "Cellphone Number"
-msgstr "സെല്‍ഫോണ്‍ നംബര്‍"
-
-msgid "Personal Introduction"
-msgstr "അവതരണം"
-
-msgid "City/Area"
-msgstr "സിറ്റി"
-
-msgid "Publish Mobile"
-msgstr "മൊബൈല്‍"
-
-msgid "Publish Contact"
-msgstr "വിലാസം പ്രസിദ്ധപ്പെടുത്തുക"
-
-msgid "College"
-msgstr "കോളേജ്"
-
-msgid "Horoscope"
-msgstr "ജാതകം"
-
-msgid "Zodiac"
-msgstr "നക്ഷത്രം"
-
-msgid "Blood"
-msgstr "രക്തം"
-
-msgid "True"
-msgstr "True"
-
-msgid "False"
-msgstr "False"
-
-msgid "Modify Contact"
-msgstr "വിലാസത്തില്‍ മാറ്റം വരുത്തുക"
-
-msgid "Modify Address"
-msgstr "വിലാസത്തില്‍ മാറ്റം വരുത്തുക "
-
-msgid "Modify Extended Information"
-msgstr "കൂടുതല്‍ വിവരങ്ങളില്‍ മാറ്റം വരുത്തുക "
-
-msgid "Modify Information"
-msgstr "വിവരങ്ങളില്‍ മാറ്റം വരുത്തുക"
-
-msgid "Update"
-msgstr "പരിഷ്കരിക്കുക"
-
-msgid "Could not change buddy information."
-msgstr "നിങ്ങളുടെ സുഹൃത്തിന്റെ വിവരം മാറ്റുവാന്‍ സാധ്യമല്ല."
-
-msgid "Note"
-msgstr "കുറിപ്പു്"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "സുഹൃത്തിനുള്ള മെമ്മോ"
-
-msgid "Change his/her memo as you like"
-msgstr "നിങ്ങള്‍ക്കിഷ്ടമുള്ളതു് പോലെ മെമ്മോ മാറ്റുക"
-
-msgid "_Modify"
-msgstr "_മാറ്റം വരുത്തുക"
-
-msgid "Memo Modify"
-msgstr "മെമ്മോ മാറ്റം വരുത്തുക"
-
-msgid "Server says:"
-msgstr "സര്‍വര്‍ പറയുന്നതു്:"
-
-msgid "Your request was accepted."
-msgstr "നിങ്ങളുടെ ആവശ്യം സ്വീകരിച്ചിരിക്കുന്നു"
-
-msgid "Your request was rejected."
-msgstr "നിങ്ങളുടെ ആവശ്യം നിരസിച്ചിരിക്കുന്നു"
-
-#, c-format
-msgid "%u requires verification"
-msgstr "%u-നു് ഉറപ്പുവരുത്തല്‍ ആവശ്യമുണ്ടു്"
-
-msgid "Add buddy question"
-msgstr "Add buddy question"
-
-msgid "Enter answer here"
-msgstr "ഉത്തരം ഇവിടെ നല്‍കുക"
-
-msgid "Send"
-msgstr "അയയ്ക്കുക"
-
-msgid "Invalid answer."
-msgstr "തെറ്റായ ഉത്തരം."
-
-msgid "Authorization denied message:"
-msgstr "ആധികാരികത നിഷേധിക്കുന്ന സന്ദേശം:"
-
-msgid "Sorry, you're not my style."
-msgstr "ക്ഷമിക്കണം, നമ്മള്‍ തമ്മില്‍ ചേരില്ല."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "%u-നു് ആധികാരികത ഉറപ്പാക്കേണ്ടതുണ്ടു്"
-
-msgid "Add buddy authorize"
-msgstr "Add buddy authorize"
-
-msgid "Enter request here"
-msgstr "ആവശ്യം ഇവിടെ നല്‍കുക"
-
-msgid "Would you be my friend?"
-msgstr "എന്റെ സുഹൃത്താകുമോ?"
-
-msgid "QQ Buddy"
-msgstr "QQ Buddy"
-
-msgid "Add buddy"
-msgstr "സുഹൃത്തിനെ ചേര്‍ക്കുക"
-
-msgid "Invalid QQ Number"
-msgstr "തെറ്റായ QQ നംബര്‍"
-
-msgid "Failed sending authorize"
-msgstr "ആധികാരികത അയയ്ക്കുന്നതില്‍ പരാജയപ്പെട്ടു"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "%u സുഹൃത്തിനെ നീക്കം ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "%d-ന്റെ സുഹൃത്ത് പട്ടികയില്‍ നിന്നും എന്നെ നീക്കം ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
-
-msgid "No reason given"
-msgstr "കാരണം നല്‍കിയിട്ടില്ല"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "നിങ്ങളെ %s ചേര്‍ത്തിരിക്കുന്നു"
-
-msgid "Would you like to add him?"
-msgstr "നിങ്ങള്‍ക്കു് ഇദ്ദേഹത്തെ ചേര്‍ക്കണമോ?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "%s നിഷേധിച്ചിരിക്കുന്നു"
-
-#, c-format
-msgid "Message: %s"
-msgstr "സന്ദേശം: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ഗ്രൂപ്പ് ID"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "ദയവായി Qun നംബര്‍ നല്‍കുക"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "നിങ്ങള്‍ക്കു് സ്ഥിരമായ Qun മാത്രമേ തെരയുവാന്‍ സാധിക്കൂ\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(തെറ്റായ UTF-8 സ്ട്രിങ്)"
-
-msgid "Not member"
-msgstr "അംഗമല്ല"
-
-msgid "Member"
-msgstr "അംഗം"
-
-msgid "Requesting"
-msgstr "ആവശ്യപ്പെടുന്നു"
-
-msgid "Admin"
-msgstr "അഡ്മിന്‍"
-
-#. XXX: Should this be "Topic"?
 #, fuzzy
-msgid "Room Title"
-msgstr "മുറിയുടെ പട്ടിക"
+msgid "Invisible List"
+msgstr "ഇന്‍വൈറ്റ് ലിസ്റ്റ്"
 
-msgid "Notice"
-msgstr "അറിയിപ്പു്"
-
-msgid "Detail"
-msgstr "വിശദാംശം"
-
-msgid "Creator"
-msgstr "സൃഷ്ടാവു്"
-
-msgid "About me"
-msgstr "എന്നെപ്പറ്റി"
-
-msgid "Category"
-msgstr "വിഭാഗം"
-
-msgid "The Qun does not allow others to join"
-msgstr "Qun മറ്റുള്ളവരെ ചേരുന്നതിനായി അനുവദിക്കുന്നില്ല"
-
-msgid "Join QQ Qun"
-msgstr "QQ Qun-ല്‍ ചേരുക"
-
-msgid "Input request here"
-msgstr "Input request here"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "വിജയകരമായ Qun %s-ല്‍ ചേര്‍ന്നിരിക്കുന്നു (%u)"
-
-msgid "Successfully joined Qun"
-msgstr "വിജയകരമായ Qun-ല്‍ ചേര്‍ന്നിരിക്കുന്നു"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u ചേരുന്നതില്‍ നിഷേധിച്ചിരിക്കുന്നു"
-
-msgid "QQ Qun Operation"
-msgstr "QQ Qun പ്രക്രിയ"
-
-msgid "Failed:"
-msgstr "പരാജയപ്പെട്ടു:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Qun-ല്‍ ചേരുക അപരിചിതം മറുപടി"
-
-msgid "Quit Qun"
-msgstr "Qun-ല്‍ നിന്നും പുറത്തു് കടക്കുക"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
+msgid "These buddies will always see you as offline"
 msgstr ""
-"ശ്രദ്ധിക്കുക: നിങ്ങളാണു് സൃഷ്ടാവെങ്കില്‍, \n"
-"ഈ പ്രക്രിയ Qun നീക്കം ചെയ്യുന്നു."
-
-msgid "Sorry, you are not our style"
-msgstr "ക്ഷമിക്കണം, നമ്മള്‍ തമ്മില്‍ ചേരില്ല"
-
-msgid "Successfully changed Qun members"
-msgstr "Qun അംഗങ്ങളെ വിജയകരമായി മാറ്റിയിരിക്കുന്നു"
-
-msgid "Successfully changed Qun information"
-msgstr "Qun വിവരം വിജയകരമായി മാറ്റിയിരിക്കുന്നു"
-
-msgid "You have successfully created a Qun"
-msgstr "നിങ്ങള്‍ വിജയകരമായ ഒരു Qun തയ്യാറാക്കിയിരിക്കുന്നു"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "നിങ്ങള്‍ക്കു് ഇനി വിശദമായ വിവരം സജ്ജമാക്കണമോ?"
-
-msgid "Setup"
-msgstr "തയ്യാറെടുപ്പു്"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "%u Qun %u %s-നായി ചേരുന്നതില്‍ ആവശ്യപ്പെട്ടിരിക്കുന്നു"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "%u Qun %u-ലേക്കു് ചേരുന്നു"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "Qun %u-ല്‍ ചേരുന്നതില്‍ പരാജയപ്പെട്ടു, അഡ്മിന്‍ %u പ്രവര്‍ത്തിപ്പിക്കുന്നു"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Qun %u-ല്‍ ചേരുന്നതു് അഡ്മിന്‍ %u സമ്മതിച്ചിരിക്കുന്നു, %s-നു് ആണിതു്</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>%u സുഹൃത്തിനെ നീക്കം ചെയ്തിരിക്കുന്നു.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>പുതിയ സുഹൃത്ത് %u ചേര്‍ന്നിരിക്കുന്നു.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "അപരിചിതം-%d"
-
-msgid "Level"
-msgstr "പരിധി"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " FromMobile"
-
-msgid " BindMobile"
-msgstr " BindMobile"
-
-msgid " Video"
-msgstr " വീഡിയോ"
-
-msgid " Zone"
-msgstr " മേഘല"
-
-msgid "Flag"
-msgstr "ഫ്ലാഗ്"
-
-msgid "Ver"
-msgstr "പതിപ്പു്"
-
-msgid "Invalid name"
-msgstr "തെറ്റായ പേരു്"
-
-msgid "Select icon..."
-msgstr "ചിഹ്നം തെരഞ്ഞെടുക്കുക..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>പ്രവേശന സമയം</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>മൊത്തമുള്ള ഓണ്‍ലൈന്‍ സുഹൃത്തുക്കള്‍</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>അവസാനം പുതുക്കിയതു്</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>സര്‍വര്‍</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>ക്ലയന്റ് റ്റാഗ്</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>കണക്ഷന്‍ മോഡ്</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>എന്റ് ഇന്റര്‍നെറ്റ് IP</b>: %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>അയച്ചതു്</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>വീണ്ടും അയയ്ക്കുക</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>നഷ്ടപ്പെട്ടതു്</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>ലഭിച്ചതു്</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>ഡൂപ്ലിക്കേറ്റ് ലഭിച്ചിരിക്കുന്നു</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>സമയം</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "ലോഗിന്‍ വിവരം"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>യഥാര്‍ത്ഥ രചയിതാവു്</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>കോഡ് സംഭാവനക്കാര്‍</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>പാച്ച് തയ്യാറാക്കുന്നവര്‍</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>മറുപടി</b>:<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>പരീക്ഷിക്കുന്നവര്‍</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "ഇനിയുമുള്ള വിവരങ്ങള്‍ ദയവായി അറിയിക്കുക.. നന്ദി!))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>എല്ലാവരും തിരികെ റൂമില്‍...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>എപ്പോഴും സ്വാഗതം!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "OpenQ %s സംബന്ധിച്ചു്"
-
-msgid "Change Icon"
-msgstr "ചിഹ്നം മാറ്റുക"
-
-msgid "Change Password"
-msgstr "രഹസ്യവാക്ക് മാറ്റുക"
-
-msgid "Account Information"
-msgstr "അക്കൌണ്ട് വിവരം"
-
-msgid "Update all QQ Quns"
-msgstr "എല്ലാ QQ Quns പരിഷ്കരിക്കുക"
-
-msgid "About OpenQ"
-msgstr "OpenQ സംബന്ധിച്ചു്"
-
-msgid "Modify Buddy Memo"
-msgstr "സുഹൃത്തു് മെമ്മോയില്‍ മാറ്റം വരുത്തുക "
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "QQ പ്രോട്ടോക്കോള്‍ പ്ലഗിന്‍"
-
-msgid "Auto"
-msgstr "ഓട്ടോ"
-
-msgid "Select Server"
-msgstr "സര്‍വര്‍ തെരഞ്ഞെടുക്കുക"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "Connect by TCP"
-msgstr "TCP വഴി കണക്ട് ചെയ്യുക"
-
-msgid "Show server notice"
-msgstr "സര്‍വര്‍ അറിയിപ്പു് കാണിക്കുക"
-
-msgid "Show server news"
-msgstr "സര്‍വര്‍ വാര്‍ത്തകള്‍ കാണിക്കുക"
-
-msgid "Show chat room when msg comes"
-msgstr "സന്ദേശം വരുമ്പോള്‍ ചാറ്റ് റൂം കാണിക്കുക"
-
-msgid "Keep alive interval (seconds)"
-msgstr "സജീവമാക്കുന്നതിനുള്ള ഇടവേള (സെക്കന്‍ഡുകളില്‍)"
-
-msgid "Update interval (seconds)"
-msgstr "പരിഷ്കരിക്കുന്നതിനുള്ള ഇടവേള (സെക്കന്‍ഡുകളില്‍)"
-
-msgid "Unable to decrypt server reply"
-msgstr "സര്‍വറിന്റെ മറുപടി ഡീക്രിപ്റ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "ടോക്കന്‍ ആവശ്യപ്പെടുന്നതില്‍ പരാജയപ്പെട്ടു, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "തെറ്റായ ടോക്കന്‍ len, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Redirect_EX ഇപ്പോള്‍ പിന്തുണയ്ക്കുന്നില്ല"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "ആക്ടിവേഷന്‍ ആവശ്യമുണ്ടു്"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "പ്രവേശിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി കോഡ് (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "captcha ആവശ്യപ്പെടുന്നു"
-
-msgid "Checking captcha"
-msgstr "captcha പരിശോധിക്കുന്നു"
-
-msgid "Failed captcha verification"
-msgstr "captcha ഉറപ്പാക്കല്‍ പരാജയപ്പെട്ടു"
-
-msgid "Captcha Image"
-msgstr "captcha ചിത്രം"
-
-msgid "Enter code"
-msgstr "കോഡ് നല്‍കുക"
-
-msgid "QQ Captcha Verification"
-msgstr "QQ captcha ഉറപ്പാക്കല്‍"
-
-msgid "Enter the text from the image"
-msgstr "ചിത്രത്തില്‍ നിന്നും വാചകം നല്‍കുക"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "രഹസ്യവാക്ക് പരിശോധിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"പ്രവേശിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി  (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "സോക്കറ്റ് പിശക്"
-
-msgid "Getting server"
-msgstr "സര്‍വര്‍ ലഭ്യമാക്കുന്നു"
-
-msgid "Requesting token"
-msgstr "ടോക്കന്‍ ആവശ്യപ്പെടുന്നു"
-
-msgid "Unable to resolve hostname"
-msgstr "ഹോസ്റ്റ്നാമം റിസോള്‍വ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
-
-msgid "Invalid server or port"
-msgstr "തെറ്റായ സര്‍വര്‍ അല്ലെങ്കില്‍ പോര്‍ട്ട്"
-
-msgid "Connecting to server"
-msgstr "സര്‍വറിലേക്ക് കണക്ട് ചെയ്യുന്നു"
-
-msgid "QQ Error"
-msgstr "QQ പിശക്"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"സര്‍വര്‍ വാര്‍ത്തകള്‍:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr " ന-ല്‍ിന്%sനും:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"%s-ല്‍ നിന്നും സര്‍വര്‍ കുറിപ്പു്: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "അപരിചിതമായ SERVER CMD"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "QQ Qun കമാന്‍ഡ്"
-
-msgid "Unable to decrypt login reply"
-msgstr "ലോഗിന്‍ മറുപടി ഡീക്രിപ്റ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
-
-msgid "Unknown LOGIN CMD"
-msgstr "അപരിചിതമായ LOGIN CMD"
-
-msgid "Unknown CLIENT CMD"
-msgstr "അപരിചിതമായ CLIENT CMD"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d ഫയല്‍ %s അവസാനിപ്പിച്ചിരിക്കുന്നു"
-
-msgid "File Send"
-msgstr "അയച്ച ഫയല്‍"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d %s മറ്റൊരിടത്തേക്കു് നീക്കുന്നതു് റദ്ദാക്കിയിരിക്കുന്നു"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9453,6 +8988,9 @@ msgstr "സ്ഥാപനം"
 msgid "Unit"
 msgstr "യൂണിറ്റ്"
 
+msgid "Note"
+msgstr "കുറിപ്പു്"
+
 msgid "Join Chat"
 msgstr "ചാറ്റില്‍ ചേരുക"
 
@@ -10093,6 +9631,9 @@ msgstr "അപരിചിതമായ സര്‍വര്‍ മറുപട�
 msgid "Unable to create listen socket"
 msgstr "സോക്കറ്റ് ഉണ്ടാക്കുവാന്‍ സാധ്യമായില്ല"
 
+msgid "Unable to resolve hostname"
+msgstr "ഹോസ്റ്റ്നാമം റിസോള്‍വ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP ഉപയോക്തൃനാമങ്ങളില്‍ വൈറ്റ്സ്പെയിസുകള്‍ അല്ലെങ്കില്‍ @ ചിഹ്നങ്ങള്‍ പാടില്ല"
 
@@ -10208,6 +9749,9 @@ msgstr "നിങ്ങളുടെ യാഹൂ! സന്ദേശം അയ�
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "%s-നുള്ള യാഹൂ! സിസ്റ്റം സന്ദേശം:"
+
+msgid "Authorization denied message:"
+msgstr "ആധികാരികത നിഷേധിക്കുന്ന സന്ദേശം:"
 
 #, c-format
 msgid ""
@@ -10358,17 +9902,11 @@ msgstr "പുറത്തു് കടന്നു"
 msgid "Not on server list"
 msgstr "സര്‍വര്‍ പട്ടികയിലില്ല"
 
-msgid "Appear Online"
-msgstr "ഓണ്‍ലൈന്‍ ആകുക"
-
 msgid "Appear Permanently Offline"
 msgstr "എന്നേക്കുമായി ഓഫ്‌ലൈനായി കാണിക്കുക"
 
 msgid "Presence"
 msgstr "സാനിദ്ധ്യം"
-
-msgid "Appear Offline"
-msgstr "ഓഫ്‌ലൈനായി കാണിക്കുക"
 
 msgid "Don't Appear Permanently Offline"
 msgstr "എന്നന്നേക്കുമായി ഓഫ്‌ലൈനായി കാണിക്കുക"
@@ -10912,27 +10450,22 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "നിങ്ങളുടെ കമ്പ്യൂട്ടറിലുള്ള മറ്റൊരു സോഫ്റ്റ്‌വെയര്‍ കണക്ഷന്‍ തടസ്സപ്പെടുത്തിയിരിക്കുന്നു."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "റിമോട്ട് ഹോസ്റ്റ് കണക്ഷന്‍ അടച്ചു പൂട്ടിയിരിക്കുന്നു."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "കണക്ഷനുള്ള സമയം കഴിഞ്ഞിരിക്കുന്നു."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "കണക്ഷന്‍ നിരസിച്ചിരിക്കുന്നു."
 
 #. 10048
-#, c-format
 msgid "Address already in use."
 msgstr "വിലാസം ഉപയോഗത്തിലുണ്ടു്."
 
@@ -10998,14 +10531,17 @@ msgstr "ഗ്ലോബല്‍ പ്രോക്സി സജ്ജീകര�
 msgid "No Proxy"
 msgstr "പ്രോക്സിയില്ല"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "എന്‍വയോണ്മെന്റ് സജ്ജീകരണങ്ങള്‍ ഉപയോഗിക്കുക"
@@ -11033,6 +10569,14 @@ msgstr "_പോര്‍ട്ട്: "
 
 msgid "Pa_ssword:"
 msgstr "രഹ_സ്യവാക്ക്:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "സെഷന്‍ വീണ്ടും ആരംഭിക്കുന്നു"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "ശബ്ദവും വീഡിയോയും"
 
 msgid "Unable to save new account"
 msgstr "പുതിയ അക്കൌണ്ട് സൂക്ഷിക്കുവാന്‍ സാധ്യമല്ല"
@@ -11078,6 +10622,20 @@ msgstr ""
 "\n"
 "നിങ്ങള്‍ക്കു് സുഹൃത്തുക്കളുടെ പട്ടികയ്ക്കുള്ള ജാലകത്തിലുള്ള <b>അക്കൌണ്ടുകള്‍>അക്കൌണ്ടുകള്‍ കൈകാര്യം ചെയ്യുക</"
 "b> നിന്നും അക്കൌണ്ടുകള്‍ ചേര്‍ക്കുകയോ ചിട്ടപ്പെടുത്തുകയോ നീക്കം ചെയ്യുകയോ ചെയ്യാം."
+
+#, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s-നു് %s-നെ സുഹൃത്തു് പട്ടിക%s%s-ലേക്കു് ചേര്‍ക്കണം"
+
+#, fuzzy, c-format
+msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
+msgstr "%s%s%s%s-നു് %s-നെ സുഹൃത്തു് പട്ടിക%s%s-ലേക്കു് ചേര്‍ക്കണം"
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "പുതിയ സന്ദേശം"
 
 #. Buddy List
 msgid "Background Color"
@@ -11332,6 +10890,8 @@ msgstr "വിളിപ്പേരു് (ആവശ്യമെങ്കില�
 msgid "Edit User Mood"
 msgstr "യൂസര്‍ മൂഡ് ചിട്ടപ്പെടുത്തുക"
 
+#. NOTE: Do not set any accelerator to Control+O. It is mapped by
+#. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_സുഹൃത്തുക്കള്‍"
@@ -11443,6 +11003,10 @@ msgstr "/സഹായം/_ഡീബഗ് ജാലകം"
 #, fuzzy
 msgid "/Help/De_veloper Information"
 msgstr "സര്‍വര്‍ വിവരം"
+
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "സുഹൃത്തിന്റെ വിവരം"
 
 #, fuzzy
 msgid "/Help/_Translator Information"
@@ -11626,6 +11190,10 @@ msgid "Buddy's _username:"
 msgstr "സുഹൃത്തിന്റെ _ഉപയോക്തൃനാമം:"
 
 msgid "(Optional) A_lias:"
+msgstr "(ആവശ്യമെങ്കില്‍) വിളി_പ്പേരു്:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
 msgstr "(ആവശ്യമെങ്കില്‍) വിളി_പ്പേരു്:"
 
 msgid "Add buddy to _group:"
@@ -12064,15 +11632,8 @@ msgstr "പിശക് "
 msgid "Fatal Error"
 msgstr "കാര്യമായ പിശക്"
 
-msgid "bug master"
-msgstr "ബഗ് മാസ്റ്റര്‍"
-
 msgid "artist"
 msgstr "രചയിതാവു്"
-
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "കാ-ഹിങ് ചെയുങ്"
 
 msgid "voice and video"
 msgstr "ശബ്ദവും വീഡിയോയും"
@@ -12083,11 +11644,12 @@ msgstr "പിന്തുണ"
 msgid "webmaster"
 msgstr "വെബ്മാസ്റ്റര്‍"
 
-msgid "Senior Contributor/QA"
-msgstr "സീനിയര്‍ കോണ്ട്രിബ്യൂട്ടര്‍/QA"
-
 msgid "win32 port"
 msgstr "win32 പോര്‍ട്ട്"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "കാ-ഹിങ് ചെയുങ്"
 
 msgid "maintainer"
 msgstr "പാലകന്‍"
@@ -12110,6 +11672,9 @@ msgstr "യഥാര്‍ത്ഥ രചയിതാവു്"
 
 msgid "lead developer"
 msgstr "പ്രധാനപ്പെട്ട ഡവലപ്പര്‍മാര്‍"
+
+msgid "Senior Contributor/QA"
+msgstr "സീനിയര്‍ കോണ്ട്രിബ്യൂട്ടര്‍/QA"
 
 msgid "Afrikaans"
 msgstr "ആഫ്രിക്കാന്‍സ്"
@@ -12161,11 +11726,11 @@ msgstr "ഗ്രീക്ക്"
 msgid "Australian English"
 msgstr "ഓസ്ട്രേലിയന്‍ ഇംഗ്ലീഷ്"
 
-msgid "Canadian English"
-msgstr "കനേഡിയന്‍ ഇംഗ്ലീഷ്"
-
 msgid "British English"
 msgstr "ബ്രിട്ടീഷ് ഇംഗ്ലീഷ്"
+
+msgid "Canadian English"
+msgstr "കനേഡിയന്‍ ഇംഗ്ലീഷ്"
 
 msgid "Esperanto"
 msgstr "എസ്പറാന്റോ"
@@ -12206,6 +11771,9 @@ msgstr "ഹീബ്രൂ"
 msgid "Hindi"
 msgstr "ഹിന്ദി"
 
+msgid "Croatian"
+msgstr ""
+
 msgid "Hungarian"
 msgstr "ഹംഗേറിയന്‍"
 
@@ -12244,6 +11812,14 @@ msgstr "കേര്‍ഡിഷ്"
 
 msgid "Lao"
 msgstr "ലാവോ"
+
+#, fuzzy
+msgid "Maithili"
+msgstr "സ്വാഹിലി"
+
+#, fuzzy
+msgid "Meadow Mari"
+msgstr "പുതിയ മെയില്‍"
 
 msgid "Macedonian"
 msgstr "മസിഡോണിയന്‍"
@@ -12443,6 +12019,14 @@ msgstr "മുമ്പുള്ള പരിഭാഷകര്‍"
 #, fuzzy, c-format
 msgid "%s Translator Information"
 msgstr "കൂടുതല്‍ വിവരങ്ങള്‍"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "സുഹൃത്തിന്റെ വിവരം"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "ലോഗിന്‍ വിവരം"
 
 msgid "_Name"
 msgstr "_പേരു്"
@@ -13089,6 +12673,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">നിങ്ങള്‍ക്ക�
 msgid "New Pounces"
 msgstr "പുതിയ പൌണ്‍സുകള്‍"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "പിരിച്ചുവിടുക"
 
@@ -13386,6 +12977,14 @@ msgstr "ആയാസമായ സ്ക്രോളിങ് ഉപയോഗി�
 msgid "F_lash window when IMs are received"
 msgstr "IM ലഭ്യമാകുമ്പോള്‍ ജാലകം _മിന്നുക"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "യഥേഷ്ടമുള്ള സ്മൈലികള്‍ _കൈകാര്യം ചെയ്യുക"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "മറുപടിയ്ക്കുള്ള ഏറ്റവും കൂടുതല്‍ സമയപരിധി:"
+
 msgid "Minimum input area height in lines:"
 msgstr "ഇന്‍പുട്ടിനുള്ള ഏറ്റവും കുറഞ്ഞ സ്ഥലം വരികളില്‍:"
 
@@ -13452,6 +13051,14 @@ msgstr "റിലേ സര്‍വര്‍ (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN server:"
 
+#, fuzzy
+msgid "_UDP Port:"
+msgstr "_പോര്‍ട്ട്: "
+
+#, fuzzy
+msgid "T_CP Port:"
+msgstr "_പോര്‍ട്ട്: "
+
 msgid "Use_rname:"
 msgstr "_ഉപയോക്തൃനാമം:"
 
@@ -13473,6 +13080,11 @@ msgstr "മോസിലാ"
 msgid "Konqueror"
 msgstr "കോണ്‍ക്വറര്‍"
 
+msgid "Google Chrome"
+msgstr ""
+
+#. Do not move the line below.  Code below expects gnome-open to be in
+#. * this list immediately after xdg-open!
 msgid "Desktop Default"
 msgstr "പണിയിടത്തില്‍ സ്വതവേയുള്ളതു്"
 
@@ -13490,6 +13102,14 @@ msgstr "ഫയര്‍ബേര്‍ഡ്"
 
 msgid "Epiphany"
 msgstr "എപിഫനി"
+
+#. Translators: please do not translate "chromium-browser" here!
+msgid "Chromium (chromium-browser)"
+msgstr ""
+
+#. Translators: please do not translate "chrome" here!
+msgid "Chromium (chrome)"
+msgstr ""
 
 msgid "Manual"
 msgstr "മാനുവല്‍"
@@ -13854,6 +13474,9 @@ msgstr "അവസ്ഥ തെരഞ്ഞെടുക്കല്‍ സംവ�
 msgid "Google Talk"
 msgstr "ഗൂഗിള്‍ ടോക്ക്"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ലഭ്യമാക്കുമ്പോള്‍ ഈ പിശകുണ്ടായിരിക്കുന്നു: %s"
@@ -14020,7 +13643,8 @@ msgstr "ഒന്നുമില്ല"
 msgid "Small"
 msgstr "ചെറുതു്"
 
-msgid "Smaller versions of the default smilies"
+#, fuzzy
+msgid "Smaller versions of the default smileys"
 msgstr "സ്വതവേയുള്ള സ്മൈലികളുടെ ചെറിയ പതിപ്പുകള്‍"
 
 msgid "Response Probability:"
@@ -14179,6 +13803,9 @@ msgstr "PubSub കലക്ഷന്‍"
 
 msgid "PubSub Leaf"
 msgstr "PubSub Leaf"
+
+msgid "Other"
+msgstr "മറ്റുള്ളവ"
 
 msgid ""
 "\n"
@@ -15036,6 +14663,24 @@ msgstr "പ്ല_ഗിന്‍"
 msgid "D_evice"
 msgstr "ഡി_വൈസ്"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "_ശബ്ദം:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "ത്രെഷ്ഹോള്‍ഡ്:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "മൈക്രോഫോണ്‍"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15176,7 +14821,7 @@ msgstr "റോ XMPP സ്റ്റാന്‍സകള്‍ അയയ്ക�
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "XMPP സര്‍വറുകള്‍ അല്ലെങ്കില്‍ ക്ലയന്റുകള്‍ ഡീബഗ്ഗ് ചെയ്യുന്നതിനായി ഈ പ്ലഗിന്‍ ഉപയോഗപ്പെടുന്നു."
 
-#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."  DO NOT translate the CLICK in $_CLICK.  It will break the installer.
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15306,6 +14951,687 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#~ msgid "Automatically reject from users not in buddy list"
+#~ msgstr "സുഹൃത്ത് പട്ടികയിലില്ലാത്ത ഉപയോക്താക്കളില്‍ നിന്നും സ്വയം നിരസിക്കുക"
+
+#~ msgid "Require SSL/TLS"
+#~ msgstr "SSL/TLS ആവശ്യമുണ്ടു്"
+
+#~ msgid "Force old (port 5223) SSL"
+#~ msgstr "പഴയ (പോര്‍ട്ട് 5223) SSL നിര്‍ബന്ധമാക്കുക"
+
+#~ msgid "An error occurred on the in-band bytestream transfer\n"
+#~ msgstr "ഇന്‍-ബാന്‍ഡ് ബൈറ്റ്സ്ട്രീം നീക്കം ചെയ്യലില്‍ ഒരു പിശകുണ്ടായിരിക്കുന്നു\n"
+
+#~ msgid "Transfer was closed."
+#~ msgstr "നീക്കം ചെയ്യല്‍ അടച്ചുപൂട്ടിയിരിക്കുന്നു."
+
+#~ msgid "Failed to open in-band bytestream"
+#~ msgstr "ഇന്‍-ബാന്‍ഡ് ബൈറ്റ്സ്ട്രീം തുറക്കുന്നതില്‍ പരാജയം"
+
+#~ msgid "Set your friendly name."
+#~ msgstr "നിങ്ങളുടെ പേരു് സജ്ജമാക്കുക."
+
+#~ msgid "Authorization Request Message:"
+#~ msgstr "ആധികാരികത ഉറപ്പാക്കുവാന്‍ ആവശ്യപ്പെടുന്ന സന്ദേശം:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "ദയവായി അധികാരപ്പെടുത്തുക!"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "നിങ്ങള്‍ നല്‍കിയ പേരു് തെറ്റാണു്."
+
+#~ msgid "Hide my number"
+#~ msgstr "എന്റെ നംബര്‍ അദൃശ്യമാക്കുക"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "ഇവിടെ നിങ്ങളുടെ MXit പ്രൊഫൈല്‍ പരിഷ്കരിക്കുവാന്‍ സാധിക്കുന്നു"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "%s ആവശ്യപ്പെടുന്നതില്‍ പിശക്: %s"
+
+#~ msgid ""
+#~ "[Unable to display a message from this user because it contained invalid "
+#~ "characters.]"
+#~ msgstr ""
+#~ "[ഈ ഉപയോക്താവില്‍ നിന്നുള്ള സന്ദേശം കാണിക്കുവാന്‍ സാധ്യമല്ല, കാരണം അതില്‍ തെറ്റായ "
+#~ "അക്ഷരങ്ങളുണ്ടു്.]"
+
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "വിവരം അനുസരിച്ചു് സുഹൃത്തിനെ തെരയുക"
+
+#~ msgid "Aquarius"
+#~ msgstr "അക്വേറിയസ്"
+
+#~ msgid "Pisces"
+#~ msgstr "പൈസസ്"
+
+#~ msgid "Aries"
+#~ msgstr "ആരീസ്"
+
+#~ msgid "Taurus"
+#~ msgstr "ടൌറസ്"
+
+#~ msgid "Gemini"
+#~ msgstr "ജെമിനി"
+
+#~ msgid "Cancer"
+#~ msgstr "കാന്‍സര്‍"
+
+#~ msgid "Leo"
+#~ msgstr "ലിയോ"
+
+#~ msgid "Virgo"
+#~ msgstr "വിര്‍ഗോ"
+
+#~ msgid "Libra"
+#~ msgstr "ലിബ്രാ"
+
+#~ msgid "Scorpio"
+#~ msgstr "സ്കോര്‍പിയോ"
+
+#~ msgid "Sagittarius"
+#~ msgstr "സാഗിറ്റേറിയസ്"
+
+#~ msgid "Capricorn"
+#~ msgstr "കാപ്രിക്കോണ്‍"
+
+#~ msgid "Rat"
+#~ msgstr "എലി"
+
+#~ msgid "Ox"
+#~ msgstr "എരുമ"
+
+#~ msgid "Tiger"
+#~ msgstr "പുലി"
+
+#~ msgid "Rabbit"
+#~ msgstr "റാബിറ്റ്"
+
+#~ msgid "Dragon"
+#~ msgstr "ഡ്രാഗണ്‍"
+
+#~ msgid "Snake"
+#~ msgstr "സര്‍പ്പം"
+
+#~ msgid "Horse"
+#~ msgstr "കുതിര"
+
+#~ msgid "Goat"
+#~ msgstr "ആടു്"
+
+#~ msgid "Monkey"
+#~ msgstr "കുരങ്ങു്"
+
+#~ msgid "Rooster"
+#~ msgstr "കോഴി"
+
+#~ msgid "Dog"
+#~ msgstr "പട്ടി"
+
+#~ msgid "Pig"
+#~ msgstr "പന്നി"
+
+#~ msgid "Friend Only"
+#~ msgstr "സുഹൃത്ത് മാത്രം"
+
+#~ msgid "Private"
+#~ msgstr "സ്വകാര്യം"
+
+#~ msgid "QQ Number"
+#~ msgstr "QQ നംബര്‍"
+
+#~ msgid "Country/Region"
+#~ msgstr "രാജ്യം/പ്രദേശം"
+
+#~ msgid "Province/State"
+#~ msgstr "സംസ്ഥാനം"
+
+#~ msgid "Zipcode"
+#~ msgstr "സിപ്പ്കോഡ്"
+
+#~ msgid "Phone Number"
+#~ msgstr "ഫോണ്‍ നംബര്‍"
+
+#~ msgid "Authorize adding"
+#~ msgstr "അധികാരപ്പെടുത്തുക"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "സെല്‍ഫോണ്‍ നംബര്‍"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "അവതരണം"
+
+#~ msgid "City/Area"
+#~ msgstr "സിറ്റി"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "മൊബൈല്‍"
+
+#~ msgid "Publish Contact"
+#~ msgstr "വിലാസം പ്രസിദ്ധപ്പെടുത്തുക"
+
+#~ msgid "College"
+#~ msgstr "കോളേജ്"
+
+#~ msgid "Horoscope"
+#~ msgstr "ജാതകം"
+
+#~ msgid "Zodiac"
+#~ msgstr "നക്ഷത്രം"
+
+#~ msgid "Blood"
+#~ msgstr "രക്തം"
+
+#~ msgid "True"
+#~ msgstr "True"
+
+#~ msgid "False"
+#~ msgstr "False"
+
+#~ msgid "Modify Contact"
+#~ msgstr "വിലാസത്തില്‍ മാറ്റം വരുത്തുക"
+
+#~ msgid "Modify Address"
+#~ msgstr "വിലാസത്തില്‍ മാറ്റം വരുത്തുക "
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "കൂടുതല്‍ വിവരങ്ങളില്‍ മാറ്റം വരുത്തുക "
+
+#~ msgid "Modify Information"
+#~ msgstr "വിവരങ്ങളില്‍ മാറ്റം വരുത്തുക"
+
+#~ msgid "Update"
+#~ msgstr "പരിഷ്കരിക്കുക"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "നിങ്ങളുടെ സുഹൃത്തിന്റെ വിവരം മാറ്റുവാന്‍ സാധ്യമല്ല."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "സുഹൃത്തിനുള്ള മെമ്മോ"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "നിങ്ങള്‍ക്കിഷ്ടമുള്ളതു് പോലെ മെമ്മോ മാറ്റുക"
+
+#~ msgid "_Modify"
+#~ msgstr "_മാറ്റം വരുത്തുക"
+
+#~ msgid "Memo Modify"
+#~ msgstr "മെമ്മോ മാറ്റം വരുത്തുക"
+
+#~ msgid "Server says:"
+#~ msgstr "സര്‍വര്‍ പറയുന്നതു്:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "നിങ്ങളുടെ ആവശ്യം സ്വീകരിച്ചിരിക്കുന്നു"
+
+#~ msgid "Your request was rejected."
+#~ msgstr "നിങ്ങളുടെ ആവശ്യം നിരസിച്ചിരിക്കുന്നു"
+
+#~ msgid "%u requires verification"
+#~ msgstr "%u-നു് ഉറപ്പുവരുത്തല്‍ ആവശ്യമുണ്ടു്"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Add buddy question"
+
+#~ msgid "Enter answer here"
+#~ msgstr "ഉത്തരം ഇവിടെ നല്‍കുക"
+
+#~ msgid "Send"
+#~ msgstr "അയയ്ക്കുക"
+
+#~ msgid "Invalid answer."
+#~ msgstr "തെറ്റായ ഉത്തരം."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "ക്ഷമിക്കണം, നമ്മള്‍ തമ്മില്‍ ചേരില്ല."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "%u-നു് ആധികാരികത ഉറപ്പാക്കേണ്ടതുണ്ടു്"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Add buddy authorize"
+
+#~ msgid "Enter request here"
+#~ msgstr "ആവശ്യം ഇവിടെ നല്‍കുക"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "എന്റെ സുഹൃത്താകുമോ?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "QQ Buddy"
+
+#~ msgid "Add buddy"
+#~ msgstr "സുഹൃത്തിനെ ചേര്‍ക്കുക"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "തെറ്റായ QQ നംബര്‍"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "ആധികാരികത അയയ്ക്കുന്നതില്‍ പരാജയപ്പെട്ടു"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "%u സുഹൃത്തിനെ നീക്കം ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "%d-ന്റെ സുഹൃത്ത് പട്ടികയില്‍ നിന്നും എന്നെ നീക്കം ചെയ്യുന്നതില്‍ പരാജയപ്പെട്ടു"
+
+#~ msgid "No reason given"
+#~ msgstr "കാരണം നല്‍കിയിട്ടില്ല"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "നിങ്ങളെ %s ചേര്‍ത്തിരിക്കുന്നു"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "നിങ്ങള്‍ക്കു് ഇദ്ദേഹത്തെ ചേര്‍ക്കണമോ?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "%s നിഷേധിച്ചിരിക്കുന്നു"
+
+#~ msgid "Message: %s"
+#~ msgstr "സന്ദേശം: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "ഗ്രൂപ്പ് ID"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "ദയവായി Qun നംബര്‍ നല്‍കുക"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "നിങ്ങള്‍ക്കു് സ്ഥിരമായ Qun മാത്രമേ തെരയുവാന്‍ സാധിക്കൂ\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(തെറ്റായ UTF-8 സ്ട്രിങ്)"
+
+#~ msgid "Not member"
+#~ msgstr "അംഗമല്ല"
+
+#~ msgid "Member"
+#~ msgstr "അംഗം"
+
+#~ msgid "Requesting"
+#~ msgstr "ആവശ്യപ്പെടുന്നു"
+
+#~ msgid "Admin"
+#~ msgstr "അഡ്മിന്‍"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "മുറിയുടെ പട്ടിക"
+
+#~ msgid "Notice"
+#~ msgstr "അറിയിപ്പു്"
+
+#~ msgid "Detail"
+#~ msgstr "വിശദാംശം"
+
+#~ msgid "Creator"
+#~ msgstr "സൃഷ്ടാവു്"
+
+#~ msgid "Category"
+#~ msgstr "വിഭാഗം"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Qun മറ്റുള്ളവരെ ചേരുന്നതിനായി അനുവദിക്കുന്നില്ല"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "QQ Qun-ല്‍ ചേരുക"
+
+#~ msgid "Input request here"
+#~ msgstr "Input request here"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "വിജയകരമായ Qun %s-ല്‍ ചേര്‍ന്നിരിക്കുന്നു (%u)"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "വിജയകരമായ Qun-ല്‍ ചേര്‍ന്നിരിക്കുന്നു"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u ചേരുന്നതില്‍ നിഷേധിച്ചിരിക്കുന്നു"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "QQ Qun പ്രക്രിയ"
+
+#~ msgid "Failed:"
+#~ msgstr "പരാജയപ്പെട്ടു:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Qun-ല്‍ ചേരുക അപരിചിതം മറുപടി"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Qun-ല്‍ നിന്നും പുറത്തു് കടക്കുക"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "ശ്രദ്ധിക്കുക: നിങ്ങളാണു് സൃഷ്ടാവെങ്കില്‍, \n"
+#~ "ഈ പ്രക്രിയ Qun നീക്കം ചെയ്യുന്നു."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "ക്ഷമിക്കണം, നമ്മള്‍ തമ്മില്‍ ചേരില്ല"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Qun അംഗങ്ങളെ വിജയകരമായി മാറ്റിയിരിക്കുന്നു"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Qun വിവരം വിജയകരമായി മാറ്റിയിരിക്കുന്നു"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "നിങ്ങള്‍ വിജയകരമായ ഒരു Qun തയ്യാറാക്കിയിരിക്കുന്നു"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "നിങ്ങള്‍ക്കു് ഇനി വിശദമായ വിവരം സജ്ജമാക്കണമോ?"
+
+#~ msgid "Setup"
+#~ msgstr "തയ്യാറെടുപ്പു്"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "%u Qun %u %s-നായി ചേരുന്നതില്‍ ആവശ്യപ്പെട്ടിരിക്കുന്നു"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "%u Qun %u-ലേക്കു് ചേരുന്നു"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "Qun %u-ല്‍ ചേരുന്നതില്‍ പരാജയപ്പെട്ടു, അഡ്മിന്‍ %u പ്രവര്‍ത്തിപ്പിക്കുന്നു"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr "<b>Qun %u-ല്‍ ചേരുന്നതു് അഡ്മിന്‍ %u സമ്മതിച്ചിരിക്കുന്നു, %s-നു് ആണിതു്</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>%u സുഹൃത്തിനെ നീക്കം ചെയ്തിരിക്കുന്നു.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>പുതിയ സുഹൃത്ത് %u ചേര്‍ന്നിരിക്കുന്നു.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "അപരിചിതം-%d"
+
+#~ msgid "Level"
+#~ msgstr "പരിധി"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " FromMobile"
+
+#~ msgid " BindMobile"
+#~ msgstr " BindMobile"
+
+#~ msgid " Video"
+#~ msgstr " വീഡിയോ"
+
+#~ msgid " Zone"
+#~ msgstr " മേഘല"
+
+#~ msgid "Flag"
+#~ msgstr "ഫ്ലാഗ്"
+
+#~ msgid "Ver"
+#~ msgstr "പതിപ്പു്"
+
+#~ msgid "Invalid name"
+#~ msgstr "തെറ്റായ പേരു്"
+
+#~ msgid "Select icon..."
+#~ msgstr "ചിഹ്നം തെരഞ്ഞെടുക്കുക..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>പ്രവേശന സമയം</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>മൊത്തമുള്ള ഓണ്‍ലൈന്‍ സുഹൃത്തുക്കള്‍</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>അവസാനം പുതുക്കിയതു്</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>സര്‍വര്‍</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>ക്ലയന്റ് റ്റാഗ്</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>കണക്ഷന്‍ മോഡ്</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>എന്റ് ഇന്റര്‍നെറ്റ് IP</b>: %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>അയച്ചതു്</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>വീണ്ടും അയയ്ക്കുക</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>നഷ്ടപ്പെട്ടതു്</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>ലഭിച്ചതു്</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>ഡൂപ്ലിക്കേറ്റ് ലഭിച്ചിരിക്കുന്നു</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>സമയം</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>യഥാര്‍ത്ഥ രചയിതാവു്</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>കോഡ് സംഭാവനക്കാര്‍</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>പാച്ച് തയ്യാറാക്കുന്നവര്‍</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>മറുപടി</b>:<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>പരീക്ഷിക്കുന്നവര്‍</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "ഇനിയുമുള്ള വിവരങ്ങള്‍ ദയവായി അറിയിക്കുക.. നന്ദി!))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>എല്ലാവരും തിരികെ റൂമില്‍...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>എപ്പോഴും സ്വാഗതം!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "OpenQ %s സംബന്ധിച്ചു്"
+
+#~ msgid "Change Password"
+#~ msgstr "രഹസ്യവാക്ക് മാറ്റുക"
+
+#~ msgid "Account Information"
+#~ msgstr "അക്കൌണ്ട് വിവരം"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "എല്ലാ QQ Quns പരിഷ്കരിക്കുക"
+
+#~ msgid "About OpenQ"
+#~ msgstr "OpenQ സംബന്ധിച്ചു്"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "സുഹൃത്തു് മെമ്മോയില്‍ മാറ്റം വരുത്തുക "
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "QQ പ്രോട്ടോക്കോള്‍ പ്ലഗിന്‍"
+
+#~ msgid "Auto"
+#~ msgstr "ഓട്ടോ"
+
+#~ msgid "Select Server"
+#~ msgstr "സര്‍വര്‍ തെരഞ്ഞെടുക്കുക"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "TCP വഴി കണക്ട് ചെയ്യുക"
+
+#~ msgid "Show server notice"
+#~ msgstr "സര്‍വര്‍ അറിയിപ്പു് കാണിക്കുക"
+
+#~ msgid "Show server news"
+#~ msgstr "സര്‍വര്‍ വാര്‍ത്തകള്‍ കാണിക്കുക"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "സന്ദേശം വരുമ്പോള്‍ ചാറ്റ് റൂം കാണിക്കുക"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "സജീവമാക്കുന്നതിനുള്ള ഇടവേള (സെക്കന്‍ഡുകളില്‍)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "പരിഷ്കരിക്കുന്നതിനുള്ള ഇടവേള (സെക്കന്‍ഡുകളില്‍)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "സര്‍വറിന്റെ മറുപടി ഡീക്രിപ്റ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "ടോക്കന്‍ ആവശ്യപ്പെടുന്നതില്‍ പരാജയപ്പെട്ടു, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "തെറ്റായ ടോക്കന്‍ len, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Redirect_EX ഇപ്പോള്‍ പിന്തുണയ്ക്കുന്നില്ല"
+
+#~ msgid "Activation required"
+#~ msgstr "ആക്ടിവേഷന്‍ ആവശ്യമുണ്ടു്"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "പ്രവേശിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി കോഡ് (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "captcha ആവശ്യപ്പെടുന്നു"
+
+#~ msgid "Checking captcha"
+#~ msgstr "captcha പരിശോധിക്കുന്നു"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "captcha ഉറപ്പാക്കല്‍ പരാജയപ്പെട്ടു"
+
+#~ msgid "Captcha Image"
+#~ msgstr "captcha ചിത്രം"
+
+#~ msgid "Enter code"
+#~ msgstr "കോഡ് നല്‍കുക"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "QQ captcha ഉറപ്പാക്കല്‍"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "ചിത്രത്തില്‍ നിന്നും വാചകം നല്‍കുക"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "രഹസ്യവാക്ക് പരിശോധിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "പ്രവേശിക്കുമ്പോള്‍ അപരിചിതമായ മറുപടി  (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "സോക്കറ്റ് പിശക്"
+
+#~ msgid "Getting server"
+#~ msgstr "സര്‍വര്‍ ലഭ്യമാക്കുന്നു"
+
+#~ msgid "Requesting token"
+#~ msgstr "ടോക്കന്‍ ആവശ്യപ്പെടുന്നു"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "തെറ്റായ സര്‍വര്‍ അല്ലെങ്കില്‍ പോര്‍ട്ട്"
+
+#~ msgid "Connecting to server"
+#~ msgstr "സര്‍വറിലേക്ക് കണക്ട് ചെയ്യുന്നു"
+
+#~ msgid "QQ Error"
+#~ msgstr "QQ പിശക്"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "സര്‍വര്‍ വാര്‍ത്തകള്‍:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr " ന-ല്‍ിന്%sനും:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "%s-ല്‍ നിന്നും സര്‍വര്‍ കുറിപ്പു്: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "അപരിചിതമായ SERVER CMD"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "QQ Qun കമാന്‍ഡ്"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "ലോഗിന്‍ മറുപടി ഡീക്രിപ്റ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "അപരിചിതമായ LOGIN CMD"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "അപരിചിതമായ CLIENT CMD"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d ഫയല്‍ %s അവസാനിപ്പിച്ചിരിക്കുന്നു"
+
+#~ msgid "File Send"
+#~ msgstr "അയച്ച ഫയല്‍"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d %s മറ്റൊരിടത്തേക്കു് നീക്കുന്നതു് റദ്ദാക്കിയിരിക്കുന്നു"
+
+#~ msgid "bug master"
+#~ msgstr "ബഗ് മാസ്റ്റര്‍"
+
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "സര്‍ട്ടിഫിക്കേറ്റ് ഇതു് വരെ സാധുതയുള്ളതല്ല."
 
@@ -15413,9 +15739,6 @@ msgstr ""
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "ഇപ്പോള്‍ എങ്ങനുണ്ടു്?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "മൂഡ് മാറ്റുക..."
 
 #~ msgid ""
 #~ "The last action you attempted could not be performed because you are over "

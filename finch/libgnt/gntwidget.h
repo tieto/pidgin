@@ -49,7 +49,7 @@ typedef struct _GntWidget			GntWidget;
 typedef struct _GntWidgetPriv		GntWidgetPriv;
 typedef struct _GntWidgetClass		GntWidgetClass;
 
-typedef enum _GntWidgetFlags
+typedef enum
 {
 	GNT_WIDGET_DESTROYING     = 1 << 0,
 	GNT_WIDGET_CAN_TAKE_FOCUS = 1 << 1,
@@ -69,7 +69,7 @@ typedef enum _GntWidgetFlags
 } GntWidgetFlags;
 
 /* XXX: This will probably move elsewhere */
-typedef enum _GntMouseEvent
+typedef enum
 {
 	GNT_LEFT_MOUSE_DOWN = 1,
 	GNT_RIGHT_MOUSE_DOWN,
@@ -80,7 +80,7 @@ typedef enum _GntMouseEvent
 } GntMouseEvent;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */
-typedef enum _GntParamFlags
+typedef enum
 {
 	GNT_PARAM_SERIALIZABLE	= 1 << G_PARAM_USER_SHIFT
 } GntParamFlags;

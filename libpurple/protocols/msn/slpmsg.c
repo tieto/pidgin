@@ -34,21 +34,23 @@
  **************************************************************************/
 
 MsnSlpMessage *
-msn_slpmsg_new(MsnSlpLink *slplink)
+msn_slpmsg_new(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
+	MsnP2PVersion p2p;
+
+	g_return_val_if_fail(slplink != NULL, NULL);
 
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	if (slplink)
-		msn_slpmsg_set_slplink(slpmsg, slplink);
-	else
-		slpmsg->slplink = NULL;
+	msn_slpmsg_set_slplink(slpmsg, slplink);
+	slpmsg->slpcall = slpcall;
 
-	slpmsg->p2p_info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
+	p2p = msn_slplink_get_p2p_version(slplink);
+	slpmsg->p2p_info = msn_p2p_info_new(p2p);
 
 	return slpmsg;
 }
@@ -103,7 +105,6 @@ msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink)
 
 	slplink->slp_msgs =
 		g_list_append(slplink->slp_msgs, slpmsg);
-
 }
 
 void
@@ -188,30 +189,24 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 		g_strlcat(body, content, body_len);
 	}
 
-	slpmsg = msn_slpmsg_new(slplink);
+	slpmsg = msn_slpmsg_new(slplink, slpcall);
 	msn_slpmsg_set_body(slpmsg, body, body_len);
-
-	slpmsg->slpcall = slpcall;
 
 	g_free(body);
 
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PInfo *ack_info)
+MsnSlpMessage *msn_slpmsg_ack_new(MsnSlpLink *slplink, MsnP2PInfo *ack_info)
 {
 	MsnSlpMessage *slpmsg;
 	MsnP2PInfo *new_info;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(slplink, NULL);
 
 	new_info = slpmsg->p2p_info;
-	msn_p2p_info_set_session_id(new_info, msn_p2p_info_get_session_id(ack_info));
+	msn_p2p_info_create_ack(ack_info, new_info);
 	slpmsg->size = msn_p2p_info_get_total_size(ack_info);
-	msn_p2p_info_set_flags(new_info, P2P_ACK);
-	msn_p2p_info_set_ack_id(new_info, msn_p2p_info_get_id(ack_info));
-	msn_p2p_info_set_ack_sub_id(new_info, msn_p2p_info_get_ack_id(ack_info));
-	msn_p2p_info_set_ack_size(new_info, msn_p2p_info_get_total_size(ack_info));
 	slpmsg->info = "SLP ACK";
 
 	return slpmsg;
@@ -221,8 +216,7 @@ MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
-	slpmsg->slpcall = slpcall;
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_MSN_OBJ_DATA);
 	slpmsg->info = "SLP DATA";
 
@@ -235,9 +229,8 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 
-	slpmsg->slpcall = slpcall;
 	msn_p2p_info_set_session_id(slpmsg->p2p_info, slpcall->session_id);
 	msn_slpmsg_set_body(slpmsg, NULL, 4);
 	slpmsg->info = "SLP DATA PREP";
@@ -250,9 +243,8 @@ MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg = msn_slpmsg_new(slpcall->slplink, slpcall);
 
-	slpmsg->slpcall = slpcall;
 	msn_p2p_info_set_flags(slpmsg->p2p_info, P2P_FILE_DATA);
 	slpmsg->info = "SLP FILE";
 	slpmsg->size = size;

@@ -377,19 +377,13 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 static char *
 msim_status_text(PurpleBuddy *buddy)
 {
-	MsimSession *session;
 	MsimUser *user;
-	const gchar *display_name, *headline;
+	const gchar *display_name = NULL, *headline = NULL;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	account = purple_buddy_get_account(buddy);
-	gc = purple_account_get_connection(account);
-	session = (MsimSession *)gc->proto_data;
-
-	display_name = headline = NULL;
 
 	user = msim_get_user_from_buddy(buddy, FALSE);
 	if (user != NULL) {
@@ -704,7 +698,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	if (nc_len != MSIM_AUTH_CHALLENGE_LENGTH) {
 		purple_debug_info("msim", "bad nc length: %" G_GSIZE_MODIFIER
 				"x != 0x%x\n", nc_len, MSIM_AUTH_CHALLENGE_LENGTH);
-		purple_connection_error_reason (session->gc,
+		purple_connection_error (session->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unexpected challenge length from server"));
 		return FALSE;
@@ -841,7 +835,7 @@ msim_check_alive(gpointer data)
 		purple_debug_info("msim",
 				"msim_check_alive: %zu > interval of %d, presumed dead\n",
 				delta, MSIM_KEEPALIVE_INTERVAL);
-		purple_connection_error_reason(session->gc,
+		purple_connection_error(session->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Lost connection with server"));
 
@@ -859,7 +853,6 @@ static void
 msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer data)
 {
 	MsimMessage *body;
-	guint old_inbox_status;
 	guint i, n;
 	/* Information for each new inbox message type. */
 	static struct
@@ -895,8 +888,6 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 
 	if (body == NULL)
 		return;
-
-	old_inbox_status = session->inbox_status;
 
 	n = 0;
 
@@ -1357,7 +1348,6 @@ msim_incoming_status_mood(MsimSession *session, MsimMessage *msg) {
 static gboolean
 msim_incoming_status(MsimSession *session, MsimMessage *msg)
 {
-	PurpleBuddyList *blist;
 	MsimUser *user;
 	GList *list;
 	gchar *status_headline, *status_headline_escaped;
@@ -1390,8 +1380,6 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	status_code = msim_msg_get_integer_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
 	status_headline = msim_msg_get_string_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE));
-
-	blist = purple_get_blist();
 
 	/* Add buddy if not found.
 	 * TODO: Could this be responsible for #3444? */
@@ -1878,7 +1866,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					purple_account_set_password(session->account, NULL);
 				break;
 		}
-		purple_connection_error_reason(session->gc, reason, full_errmsg);
+		purple_connection_error(session->gc, reason, full_errmsg);
 	} else {
 		purple_notify_error(session->account, _("MySpaceIM Error"), full_errmsg, NULL);
 	}
@@ -2026,7 +2014,6 @@ static void
 msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc;
-	PurpleAccount *account;
 	MsimSession *session;
 	gchar *end;
 	int n;
@@ -2035,13 +2022,12 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	g_return_if_fail(source >= 0);  /* Note: 0 is a valid fd */
 
 	gc = (PurpleConnection *)(gc_uncasted);
-	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
 
 	/* libpurple/eventloop.h only defines these two */
 	if (cond != PURPLE_INPUT_READ && cond != PURPLE_INPUT_WRITE) {
 		purple_debug_info("msim_input_cb", "unknown condition=%d\n", cond);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid input condition"));
 		return;
@@ -2083,12 +2069,12 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 
 		tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (n == 0) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Server closed the connection"));
 		return;
@@ -2106,7 +2092,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		purple_debug_info("msim", "msim_input_cb: strlen=%d, but read %d bytes"
 				"--null byte encountered?\n",
 				strlen(session->rxbuf + session->rxoff), n);
-		/*purple_connection_error_reason (gc,
+		/*purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				"Invalid message - null byte on input"); */
 		return;
@@ -2131,7 +2117,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		msg = msim_parse(session->rxbuf);
 		if (!msg) {
 			purple_debug_info("msim", "msim_input_cb: couldn't parse rxbuf\n");
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to parse message"));
 			break;
@@ -2176,7 +2162,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 				error_message);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		return;
@@ -2233,7 +2219,7 @@ msim_login(PurpleAccount *acct)
 	if (!purple_proxy_connect(gc, acct, host, port, msim_connect_cb, gc)) {
 		/* TODO: try other ports if in auto mode, then save
 		 * working port and try that first next time. */
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 		return;
@@ -3187,13 +3173,10 @@ static void msim_import_friends(PurplePluginAction *action)
  * Actions menu for account.
  */
 static GList *
-msim_actions(PurplePlugin *plugin, gpointer context)
+msim_actions(PurplePlugin *plugin, gpointer context /* PurpleConnection* */)
 {
-	PurpleConnection *gc;
 	GList *menu;
 	PurplePluginAction *act;
-
-	gc = (PurpleConnection *)context;
 
 	menu = NULL;
 

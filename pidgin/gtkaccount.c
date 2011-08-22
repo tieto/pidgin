@@ -46,6 +46,7 @@
 #include "gtkutils.h"
 #include "gtkstatusbox.h"
 #include "pidginstock.h"
+#include "minidialog.h"
 
 enum
 {
@@ -1036,12 +1037,6 @@ make_proxy_dropdown(void)
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
-			0, _("HTTP"),
-			1, PURPLE_PROXY_HTTP,
-			-1);
-
-	gtk_list_store_append(model, &iter);
-	gtk_list_store_set(model, &iter,
 			0, _("SOCKS 4"),
 			1, PURPLE_PROXY_SOCKS4,
 			-1);
@@ -1050,6 +1045,18 @@ make_proxy_dropdown(void)
 	gtk_list_store_set(model, &iter,
 			0, _("SOCKS 5"),
 			1, PURPLE_PROXY_SOCKS5,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("Tor/Privacy (SOCKS5)"),
+			1, PURPLE_PROXY_TOR,
+			-1);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			0, _("HTTP"),
+			1, PURPLE_PROXY_HTTP,
 			-1);
 
 	gtk_list_store_append(model, &iter);
@@ -1069,8 +1076,14 @@ make_proxy_dropdown(void)
 static void
 proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 {
-	dialog->new_proxy_type =
-		gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) - 1;
+	GtkTreeIter iter;
+
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(menu), &iter)) {
+		int int_value;
+		gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(menu)), &iter,
+			1, &int_value, -1);
+		dialog->new_proxy_type = int_value;
+	}
 
 	if (dialog->new_proxy_type == PURPLE_PROXY_USE_GLOBAL ||
 		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
@@ -1112,6 +1125,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleProxyInfo *proxy_info;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
+	GtkTreeIter iter;
+	GtkTreeModel *proxy_model;
 
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
@@ -1158,21 +1173,10 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->account != NULL &&
 		(proxy_info = purple_account_get_proxy_info(dialog->account)) != NULL) {
-
-		PurpleProxyType type = purple_proxy_info_get_type(proxy_info);
 		const char *value;
 		int int_val;
 
-		/* Hah! */
-		/* I dunno what you're laughing about, fuzz ball. */
-		dialog->new_proxy_type = type;
-		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
-				type + 1);
-
-		if (type == PURPLE_PROXY_USE_GLOBAL || type == PURPLE_PROXY_NONE ||
-				type == PURPLE_PROXY_USE_ENVVAR)
-			gtk_widget_hide(vbox2);
-
+		dialog->new_proxy_type = purple_proxy_info_get_type(proxy_info);
 
 		if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
@@ -1190,13 +1194,25 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		if ((value = purple_proxy_info_get_password(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
-	}
-	else {
+
+	} else
 		dialog->new_proxy_type = PURPLE_PROXY_USE_GLOBAL;
-		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
-				dialog->new_proxy_type + 1);
-		gtk_widget_hide(vbox2);
+
+	proxy_model = gtk_combo_box_get_model(
+		GTK_COMBO_BOX(dialog->proxy_dropdown));
+	if (gtk_tree_model_get_iter_first(proxy_model, &iter)) {
+		int int_val;
+		do {
+			gtk_tree_model_get(proxy_model, &iter, 1, &int_val, -1);
+			if (int_val == dialog->new_proxy_type) {
+				gtk_combo_box_set_active_iter(
+					GTK_COMBO_BOX(dialog->proxy_dropdown), &iter);
+				break;
+			}
+		} while(gtk_tree_model_iter_next(proxy_model, &iter));
 	}
+
+	proxy_type_changed_cb(dialog->proxy_dropdown, dialog);
 
 	/* Connect signals. */
 	g_signal_connect(G_OBJECT(dialog->proxy_dropdown), "changed",
@@ -2158,7 +2174,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	gtk_list_store_clear(dialog->model);
 
 	if ((path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) != NULL) {
-		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+		GdkPixbuf *pixbuf = pidgin_pixbuf_new_from_file(path);
 		if (pixbuf != NULL) {
 			global_buddyicon = gdk_pixbuf_scale_simple(pixbuf, 22, 22, GDK_INTERP_HYPER);
 			g_object_unref(G_OBJECT(pixbuf));
@@ -2292,7 +2308,7 @@ create_accounts_list(AccountsWindow *dialog)
 					 G_CALLBACK(account_treeview_double_click_cb), dialog);
 
 	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook),
-		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
+		pidgin_make_scrollable(treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1),
 		NULL);
 
 	add_columns(treeview, dialog);
@@ -2540,6 +2556,28 @@ deny_no_add_cb(struct auth_request *ar)
 	ar->deny_cb(ar->data);
 }
 
+static gboolean
+get_user_info_cb(GtkWidget   *label,
+                 const gchar *uri,
+                 gpointer     data)
+{
+	struct auth_request *ar = data;
+	if (!strcmp(uri, "viewinfo")) {
+		pidgin_retrieve_user_info(purple_account_get_connection(ar->account), ar->username);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+send_im_cb(PidginMiniDialog *mini_dialog,
+           GtkButton *button,
+           gpointer data)
+{
+	struct auth_request *ar = data;
+	pidgin_dialogs_im_with_user(ar->account, ar->username);
+}
+
 static void *
 pidgin_accounts_request_authorization(PurpleAccount *account,
                                       const char *remote_user,
@@ -2554,27 +2592,47 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 	char *buffer;
 	PurpleConnection *gc;
 	GtkWidget *alert;
+	PidginMiniDialog *dialog;
 	GdkPixbuf *prpl_icon;
 	struct auth_request *aa;
+	const char *our_name;
 	gboolean have_valid_alias = alias && *alias;
 
 	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
-	buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
-				remote_user,
-				(have_valid_alias ? " ("  : ""),
-				(have_valid_alias ? alias : ""),
-				(have_valid_alias ? ")"   : ""),
-				(id != NULL
-				? id
-				: (purple_connection_get_display_name(gc) != NULL
-				? purple_connection_get_display_name(gc)
-				: purple_account_get_username(account))),
-				(message != NULL ? ": " : "."),
-				(message != NULL ? message  : ""));
+	our_name = (id != NULL) ? id :
+			(purple_connection_get_display_name(gc) != NULL) ? purple_connection_get_display_name(gc) :
+			purple_account_get_username(account);
 
+	if (pidgin_mini_dialog_links_supported()) {
+		char *escaped_remote_user = g_markup_escape_text(remote_user, -1);
+		char *escaped_alias = alias != NULL ? g_markup_escape_text(alias, -1) : g_strdup("");
+		char *escaped_our_name = g_markup_escape_text(our_name, -1);
+		char *escaped_message = message != NULL ? g_markup_escape_text(message, -1) : g_strdup("");
+		buffer = g_strdup_printf(_("<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+					escaped_remote_user,
+					(have_valid_alias ? " ("  : ""),
+					escaped_alias,
+					(have_valid_alias ? ")"   : ""),
+					escaped_our_name,
+					(have_valid_alias ? ": " : "."),
+					escaped_message);
+		g_free(escaped_remote_user);
+		g_free(escaped_alias);
+		g_free(escaped_our_name);
+		g_free(escaped_message);
+	} else {
+		buffer = g_strdup_printf(_("%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"),
+					remote_user,
+					(have_valid_alias ? " ("  : ""),
+					(have_valid_alias ? alias : ""),
+					(have_valid_alias ? ")"   : ""),
+					our_name,
+					(message != NULL ? ": " : "."),
+					(message != NULL ? message  : ""));
+	}
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
@@ -2589,10 +2647,18 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 	alert = pidgin_make_mini_dialog_with_custom_icon(
 		gc, prpl_icon,
-		_("Authorize buddy?"), buffer, aa,
+		_("Authorize buddy?"), NULL, aa,
 		_("Authorize"), authorize_and_add_cb,
 		_("Deny"), deny_no_add_cb,
 		NULL);
+
+	dialog = PIDGIN_MINI_DIALOG(alert);
+	if (pidgin_mini_dialog_links_supported()) {
+		pidgin_mini_dialog_enable_description_markup(dialog);
+		pidgin_mini_dialog_set_link_callback(dialog, G_CALLBACK(get_user_info_cb), aa);
+	}
+	pidgin_mini_dialog_set_description(dialog, buffer);
+	pidgin_mini_dialog_add_non_closing_button(dialog, _("Send Instant Message"), send_im_cb, aa);
 
 	g_signal_connect_swapped(G_OBJECT(alert), "destroy", G_CALLBACK(free_auth_request), aa);
 	g_signal_connect(G_OBJECT(alert), "destroy", G_CALLBACK(purple_account_request_close), NULL);

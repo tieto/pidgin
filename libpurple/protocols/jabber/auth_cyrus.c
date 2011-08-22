@@ -34,7 +34,7 @@ static void jabber_sasl_build_callbacks(JabberStream *);
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	purple_connection_error_reason(purple_account_get_connection(account),
+	purple_connection_error(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		_("Server may require plaintext authentication over an unencrypted stream"));
 }
@@ -46,7 +46,7 @@ static void start_cyrus_wrapper(JabberStream *js)
 	JabberSaslState state = jabber_auth_start_cyrus(js, &response, &error);
 
 	if (state == JABBER_SASL_STATE_FAIL) {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 				error);
 		g_free(error);
@@ -174,7 +174,6 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		return;
 
 	account = purple_connection_get_account(gc);
-	js = purple_connection_get_protocol_data(gc);
 
 	/* Disable the account as the user has cancelled connecting */
 	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);

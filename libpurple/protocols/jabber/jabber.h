@@ -100,7 +100,7 @@ struct _JabberStream
 {
 	int fd;
 
-	PurpleSrvQueryData *srv_query_data;
+	PurpleSrvTxtQueryData *srv_query_data;
 
 	xmlParserCtxt *context;
 	xmlnode *current;

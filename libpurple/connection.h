@@ -128,7 +128,7 @@ typedef enum
 	/** Some other error occurred which fits into none of the other
 	 *  categories.
 	 */
-	/* purple_connection_error_reason() in connection.c uses the fact that
+	/* purple_connection_error() in connection.c uses the fact that
 	 * this is the last member of the enum when sanity-checking; if other
 	 * reasons are added after it, the check must be updated.
 	 */
@@ -194,16 +194,6 @@ typedef struct
 	void (*notice)(PurpleConnection *gc, const char *text);
 
 	/**
-	 * Called when an error causes a connection to be disconnected.
-	 * Called before #disconnected.
-	 * @param text  a localized error message.
-	 * @see #purple_connection_error
-	 * @deprecated in favour of
-	 *             #PurpleConnectionUiOps.report_disconnect_reason.
-	 */
-	void (*report_disconnect)(PurpleConnection *gc, const char *text);
-
-	/**
 	 * Called when libpurple discovers that the computer's network
 	 * connection is active.  On Linux, this uses Network Manager if
 	 * available; on Windows, it uses Win32's network change notification
@@ -219,21 +209,19 @@ typedef struct
 
 	/**
 	 * Called when an error causes a connection to be disconnected.
-	 *  Called before #disconnected.  This op is intended to replace
-	 *  #report_disconnect.  If both are implemented, this will be called
-	 *  first; however, there's no real reason to implement both.
+	 * Called before #disconnected.
 	 *
-	 *  @param reason  why the connection ended, if known, or
-	 *                 #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
-	 *  @param text  a localized message describing the disconnection
-	 *               in more detail to the user.
-	 *  @see #purple_connection_error_reason
+	 * @param reason  why the connection ended, if known, or
+	 *                #PURPLE_CONNECTION_ERROR_OTHER_ERROR, if not.
+	 * @param text  a localized message describing the disconnection
+	 *              in more detail to the user.
+	 * @see #purple_connection_error
 	 *
-	 *  @since 2.3.0
+	 * @since 2.3.0
 	 */
-	void (*report_disconnect_reason)(PurpleConnection *gc,
-	                                 PurpleConnectionError reason,
-	                                 const char *text);
+	void (*report_disconnect)(PurpleConnection *gc,
+	                          PurpleConnectionError reason,
+	                          const char *text);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -264,7 +252,7 @@ struct _PurpleConnection
 	/** Wants to Die state.  This is set when the user chooses to log out, or
 	 * when the protocol is disconnected and should not be automatically
 	 * reconnected (incorrect password, etc.).  prpls should rely on
-	 * purple_connection_error_reason() to set this for them rather than
+	 * purple_connection_error() to set this for them rather than
 	 * setting it themselves.
 	 * @see purple_connection_error_is_fatal
 	 */
@@ -465,21 +453,6 @@ void purple_connection_update_progress(PurpleConnection *gc, const char *text,
 void purple_connection_notice(PurpleConnection *gc, const char *text);
 
 /**
- * Closes a connection with an error.
- *
- * @param gc     The connection.
- * @param reason The error text, which may not be @c NULL.
- * @deprecated in favour of #purple_connection_error_reason.  Calling
- *  @c purple_connection_error(gc, text) is equivalent to calling
- *  @c purple_connection_error_reason(gc, reason, text) where @c reason is
- *  #PURPLE_CONNECTION_ERROR_OTHER_ERROR if @c gc->wants_to_die is @c TRUE, and
- *  #PURPLE_CONNECTION_ERROR_NETWORK_ERROR if not.  (This is to keep
- *  auto-reconnection behaviour the same when using old prpls which don't use
- *  reasons yet.)
- */
-void purple_connection_error(PurpleConnection *gc, const char *reason);
-
-/**
  * Closes a connection with an error and a human-readable description of the
  * error.  It also sets @c gc->wants_to_die to the value of
  * #purple_connection_error_is_fatal(@a reason), mainly for
@@ -492,14 +465,14 @@ void purple_connection_error(PurpleConnection *gc, const char *reason);
  * @since 2.3.0
  */
 void
-purple_connection_error_reason (PurpleConnection *gc,
-                                PurpleConnectionError reason,
-                                const char *description);
+purple_connection_error(PurpleConnection *gc,
+                        PurpleConnectionError reason,
+                        const char *description);
 
 /**
  * Closes a connection due to an SSL error; this is basically a shortcut to
  * turning the #PurpleSslErrorType into a #PurpleConnectionError and a
- * human-readable string and then calling purple_connection_error_reason().
+ * human-readable string and then calling purple_connection_error().
  *
  * @since 2.3.0
  */

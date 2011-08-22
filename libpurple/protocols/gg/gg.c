@@ -354,14 +354,14 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 
 	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("You must fill in all registration fields"));
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 			_("Passwords do not match"));
 		goto exit_err;
@@ -371,7 +371,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 			token->id, t);
 	h = gg_register3(email, p1, token->id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("Unable to register new account.  An unknown error occurred."));
 		goto exit_err;
@@ -487,15 +487,16 @@ static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer us
 	GGPSearchForm *form = user_data;
 	guint32 seq;
 
-	g_free(form->offset);
-	form->offset = g_strdup(form->last_uin);
+	form->page_number++;
 
 	ggp_search_remove(info->searches, form->seq);
-	purple_debug_info("gg", "ggp_callback_show_next(): Removed seq %u", form->seq);
+	purple_debug_info("gg", "ggp_callback_show_next(): Removed seq %u\n",
+		form->seq);
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
-	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u", seq);
+	purple_debug_info("gg", "ggp_callback_show_next(): Added seq %u\n",
+		seq);
 }
 
 static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data)
@@ -526,21 +527,16 @@ static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields 
 	form = ggp_search_form_new(GGP_SEARCH_TYPE_FULL);
 
 	form->user_data = info;
-	form->lastname  = charset_convert(
-				purple_request_fields_get_string(fields, "lastname"),
-				"UTF-8", "CP1250");
-	form->firstname = charset_convert(
-				purple_request_fields_get_string(fields, "firstname"),
-				"UTF-8", "CP1250");
-	form->nickname  = charset_convert(
-				purple_request_fields_get_string(fields, "nickname"),
-				"UTF-8", "CP1250");
-	form->city      = charset_convert(
-				purple_request_fields_get_string(fields, "city"),
-				"UTF-8", "CP1250");
-	form->birthyear = charset_convert(
-				purple_request_fields_get_string(fields, "year"),
-				"UTF-8", "CP1250");
+	form->lastname = g_strdup(
+		purple_request_fields_get_string(fields, "lastname"));
+	form->firstname = g_strdup(
+		purple_request_fields_get_string(fields, "firstname"));
+	form->nickname = g_strdup(
+		purple_request_fields_get_string(fields, "nickname"));
+	form->city = g_strdup(
+		purple_request_fields_get_string(fields, "city"));
+	form->birthyear = g_strdup(
+		purple_request_fields_get_string(fields, "year"));
 
 	switch (purple_request_fields_get_choice(fields, "gender")) {
 		case 1:
@@ -557,11 +553,10 @@ static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields 
 	form->active = purple_request_fields_get_bool(fields, "active")
 				   ? g_strdup(GG_PUBDIR50_ACTIVE_TRUE) : NULL;
 
-	form->offset = g_strdup("0");
-
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
-	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u", seq);
+	purple_debug_info("gg", "ggp_callback_find_buddies(): Added seq %u\n",
+		seq);
 }
 
 static void ggp_find_buddies(PurplePluginAction *action)
@@ -818,7 +813,6 @@ static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
 
 static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields *fields)
 {
-	GGPInfo *info;
 	PurpleConnection *conn;
 	PurpleRequestField *field;
 	GList *sel;
@@ -826,8 +820,6 @@ static void ggp_callback_add_to_chat_ok(PurpleBuddy *buddy, PurpleRequestFields 
 	conn = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	g_return_if_fail(conn != NULL);
-
-	info = conn->proto_data;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);
@@ -885,30 +877,26 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 /* ----- BLOCK BUDDIES -------------------------------------------------- */
 
-static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
+static void ggp_add_deny(PurpleConnection *gc, const char *who)
 {
-	PurpleConnection *gc;
-	PurpleBuddy *buddy;
-	GGPInfo *info;
-	uin_t uin;
+	GGPInfo *info = gc->proto_data;
+	uin_t uin = ggp_str_to_uin(who);
+	
+	purple_debug_info("gg", "ggp_add_deny: %u\n", uin);
+	
+	gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
+	gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
+}
 
-	buddy = (PurpleBuddy *)node;
-	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = gc->proto_data;
-
-	uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
-
-	if (purple_blist_node_get_bool(node, "blocked")) {
-		purple_blist_node_set_bool(node, "blocked", FALSE);
-		gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
-		gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
-		purple_debug_info("gg", "send: uin=%d; mode=NORMAL\n", uin);
-	} else {
-		purple_blist_node_set_bool(node, "blocked", TRUE);
-		gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
-		gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
-		purple_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
-	}
+static void ggp_rem_deny(PurpleConnection *gc, const char *who)
+{
+	GGPInfo *info = gc->proto_data;
+	uin_t uin = ggp_str_to_uin(who);
+	
+	purple_debug_info("gg", "ggp_rem_deny: %u\n", uin);
+	
+	gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
+	gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -930,6 +918,9 @@ static void gg_fetch_avatar_cb(PurpleUtilFetchUrlData *url_data, gpointer user_d
 	PurpleBuddy *buddy;
 	gpointer buddy_icon_data;
 
+	purple_debug_info("gg", "gg_fetch_avatar_cb: got avatar image for %s\n",
+		d->uin);
+
 	/* FIXME: This shouldn't be necessary */
 	if (!PURPLE_CONNECTION_IS_VALID(d->gc)) {
 		g_free(d->uin);
@@ -948,7 +939,8 @@ static void gg_fetch_avatar_cb(PurpleUtilFetchUrlData *url_data, gpointer user_d
 
 	purple_buddy_icons_set_for_user(account, purple_buddy_get_name(buddy),
 			buddy_icon_data, len, d->avatar_url);
-	purple_debug_info("gg", "UIN: %s should have avatar now\n", d->uin);
+	purple_debug_info("gg", "gg_fetch_avatar_cb: UIN %s should have avatar "
+		"now\n", d->uin);
 
 out:
 	g_free(d->uin);
@@ -1030,7 +1022,9 @@ static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user
 				data->uin = g_strdup(uin);
 				data->avatar_url = g_strdup(bigavatar);
 
-				url_data = purple_util_fetch_url_request_len_with_account(account,
+				purple_debug_info("gg", "gg_get_avatar_url_cb: "
+					"requesting avatar for %s\n", uin);
+				url_data = purple_util_fetch_url_request_len(account,
 						bigavatar, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)",
 						FALSE, NULL, FALSE, -1, gg_fetch_avatar_cb, data);
 			}
@@ -1041,6 +1035,29 @@ out:
 	if (xml)
 		xmlnode_free(xml);
 	g_free(bigavatar);
+}
+
+/**
+ * Try to update avatar of the buddy.
+ *
+ * @param gc     PurpleConnection
+ * @param uin    UIN of the buddy.
+ */
+static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
+{
+	gchar *avatarurl;
+	PurpleUtilFetchUrlData *url_data;
+
+	purple_debug_info("gg", "ggp_update_buddy_avatar(gc, %u)\n", uin);
+
+	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%u/0.xml", uin);
+
+	url_data = purple_util_fetch_url_request_len(
+			purple_connection_get_account(gc), avatarurl, TRUE,
+			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
+			gg_get_avatar_url_cb, gc);
+
+	g_free(avatarurl);
 }
 
 /**
@@ -1056,18 +1073,11 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 {
 	gchar *from;
 	const char *st;
-	gchar *avatarurl;
-	PurpleUtilFetchUrlData *url_data;
+	char *status_msg = NULL;
+
+	ggp_update_buddy_avatar(gc, uin);
 
 	from = g_strdup_printf("%u", uin);
-	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%s/0.xml", from);
-
-	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), avatarurl, TRUE,
-			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
-			gg_get_avatar_url_cb, gc);
-
-	g_free(avatarurl);
 
 	switch (status) {
 		case GG_STATUS_NOT_AVAIL:
@@ -1101,14 +1111,24 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 			break;
 	}
 
-	purple_debug_info("gg", "st = %s\n", st);
-	//msg = charset_convert(descr, "CP1250", "UTF-8");
-	if (descr == NULL) {
+	if (descr != NULL) {
+		status_msg = g_strdup(descr);
+		g_strstrip(status_msg);
+		if (status_msg[0] == '\0') {
+			g_free(status_msg);
+			status_msg = NULL;
+		}
+	}
+
+	purple_debug_info("gg", "status of %u is %s [%s]\n", uin, st,
+		status_msg ? status_msg : "");
+	if (status_msg == NULL) {
 		purple_prpl_got_user_status(purple_connection_get_account(gc),
-		      from, st, NULL);
+			from, st, NULL);
 	} else {
 		purple_prpl_got_user_status(purple_connection_get_account(gc),
-		    from, st, "message", descr, NULL);
+			from, st, "message", status_msg, NULL);
+		g_free(status_msg);
 	}
 	g_free(from);
 }
@@ -1119,7 +1139,8 @@ static void ggp_sr_close_cb(gpointer user_data)
 	GGPInfo *info = form->user_data;
 
 	ggp_search_remove(info->searches, form->seq);
-	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u", form->seq);
+	purple_debug_info("gg", "ggp_sr_close_cb(): Removed seq %u\n",
+		form->seq);
 	ggp_search_form_destroy(form);
 }
 
@@ -1173,27 +1194,37 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
 	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	purple_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
-	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
-	purple_notify_user_info_add_pair(user_info, _("First Name"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
-	purple_notify_user_info_add_pair(user_info, _("Nickname"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
-	purple_notify_user_info_add_pair(user_info, _("City"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
 	if (strncmp(val, "0", 1)) {
-		purple_notify_user_info_add_pair(user_info, _("Birth Year"), val);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Birth Year"), val);
 	}
 	g_free(val);
 
@@ -1204,15 +1235,12 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	if (NULL != buddy) {
 		PurpleStatus *status;
 		const char *msg;
-		char *text;
 
 		status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (msg != NULL) {
-			text = g_markup_escape_text(msg, -1);
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
-			g_free(text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
 	}
 
@@ -1234,6 +1262,8 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 
 	res_count = gg_pubdir50_count(req);
 	res_count = (res_count > PUBDIR_RESULTS_MAX) ? PUBDIR_RESULTS_MAX : res_count;
+	if (form->page_size == 0)
+		form->page_size = res_count;
 
 	results = purple_notify_searchresults_new();
 
@@ -1243,7 +1273,8 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 		purple_notify_error(gc, NULL,
 				  _("Unable to display the search results."),
 				  NULL);
-		ggp_sr_close_cb(form);
+		if (form->window == NULL)
+			ggp_sr_close_cb(form);
 		return;
 	}
 
@@ -1285,11 +1316,6 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 			(birth && strncmp(birth, "0", 1)) ? birth : g_strdup("-"));
 
 		purple_notify_searchresults_row_add(results, row);
-
-		if (i == res_count - 1) {
-			g_free(form->last_uin);
-			form->last_uin = ggp_search_get_result(req, i, GG_PUBDIR50_UIN);
-		}
 	}
 
 	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_CONTINUE,
@@ -1330,7 +1356,8 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 
 	seq = gg_pubdir50_seq(req);
 	form = ggp_search_get(info->searches, seq);
-	purple_debug_info("gg", "ggp_pubdir_reply_handler(): seq %u --> form %p", seq, form);
+	purple_debug_info("gg",
+		"ggp_pubdir_reply_handler(): seq %u --> form %p\n", seq, form);
 	/*
 	 * this can happen when user will request more results
 	 * and close the results window before they arrive.
@@ -1343,7 +1370,8 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 		purple_notify_error(gc, NULL,
 			_("No matching users found"),
 			_("There are no users matching your search criteria."));
-		ggp_sr_close_cb(form);
+		if (form->window == NULL)
+			ggp_sr_close_cb(form);
 		return;
 	}
 
@@ -1383,8 +1411,8 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
 			info->pending_richtext_messages = g_list_remove(info->pending_richtext_messages, entry->data);
 			/* We don't have any more images to download */
 			if (strstr(text, "<IMG ID=\"IMGID_HANDLER") == NULL) {
-				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
-				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, ev->event.msg.time);
+				gchar *buf = g_strdup_printf("%lu", (unsigned long int)ev->event.image_reply.sender);
+				serv_got_im(gc, buf, text, PURPLE_MESSAGE_IMAGES, time(NULL));
 				g_free(buf);
 				purple_debug_info("gg", "ggp_recv_image_handler: richtext message: %s\n", text);
 				g_free(text);
@@ -1416,6 +1444,12 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
+
+	if (ev->event.msg.message == NULL)
+	{
+		purple_debug_warning("gg", "ggp_recv_message_handler: NULL as message pointer\n");
+		return;
+	}
 
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
@@ -1576,9 +1610,9 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleStoredImage *image;
-	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, &ev->event.image_request.crc32));
+	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32)));
 
-	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u\n", ev->event.image_request.crc32);
+	purple_debug_info("gg", "ggp_send_image_handler: image request received, crc32: %u, imgid: %d\n", ev->event.image_request.crc32, imgid);
 
 	if(imgid)
 	{
@@ -1593,8 +1627,88 @@ static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *
 		} else {
 			purple_debug_error("gg", "ggp_send_image_handler: image imgid: %i, crc: %u in hash but not found in imgstore!\n", imgid, ev->event.image_request.crc32);
 		}
-		g_hash_table_remove(info->pending_images, &ev->event.image_request.crc32);
+		g_hash_table_remove(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32));
 	}
+}
+
+static void ggp_typing_notification_handler(PurpleConnection *gc, uin_t uin, int length) {
+	gchar *from;
+
+	from = g_strdup_printf("%u", uin);
+	if (length)
+		serv_got_typing(gc, from, 0, PURPLE_TYPING);
+	else
+		serv_got_typing_stopped(gc, from);
+	g_free(from);
+}
+
+/**
+ * Handling of XML events.
+ *
+ * @param gc PurpleConnection.
+ * @param data Raw XML contents.
+ *
+ * @see http://toxygen.net/libgadu/protocol/#ch1.13
+ */
+static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
+{
+	xmlnode *xml = NULL;
+	xmlnode *xmlnode_next_event;
+
+	xml = xmlnode_from_str(data, -1);
+	if (xml == NULL)
+		goto out;
+
+	xmlnode_next_event = xmlnode_get_child(xml, "event");
+	while (xmlnode_next_event != NULL)
+	{
+		xmlnode *xmlnode_current_event = xmlnode_next_event;
+		
+		xmlnode *xmlnode_type;
+		char *event_type_raw;
+		int event_type = 0;
+		
+		xmlnode *xmlnode_sender;
+		char *event_sender_raw;
+		uin_t event_sender = 0;
+
+		xmlnode_next_event = xmlnode_get_next_twin(xmlnode_next_event);
+		
+		xmlnode_type = xmlnode_get_child(xmlnode_current_event, "type");
+		if (xmlnode_type == NULL)
+			continue;
+		event_type_raw = xmlnode_get_data(xmlnode_type);
+		if (event_type_raw != NULL)
+			event_type = atoi(event_type_raw);
+		g_free(event_type_raw);
+		
+		xmlnode_sender = xmlnode_get_child(xmlnode_current_event, "sender");
+		if (xmlnode_sender != NULL)
+		{
+			event_sender_raw = xmlnode_get_data(xmlnode_sender);
+			if (event_sender_raw != NULL)
+				event_sender = ggp_str_to_uin(event_sender_raw);
+			g_free(event_sender_raw);
+		}
+		
+		switch (event_type)
+		{
+			case 28: /* avatar update */
+				purple_debug_info("gg",
+					"ggp_xml_event_handler: avatar updated (uid: %u)\n",
+					event_sender);
+				ggp_update_buddy_avatar(gc, event_sender);
+				break;
+			default:
+				purple_debug_error("gg",
+					"ggp_xml_event_handler: unsupported event type=%d from=%u\n",
+					event_type, event_sender);
+		}
+	}
+	
+	out:
+		if (xml)
+			xmlnode_free(xml);
 }
 
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
@@ -1607,12 +1721,12 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg",
 			"ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read from socket"));
 		return;
 	}
-	gc->last_received = time(NULL);
+
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -1692,7 +1806,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 				GG_S(ev->event.status60.status), ev->event.status60.descr);
 			break;
 		case GG_EVENT_USERLIST:
-	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
+			if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
 				purple_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
 				purple_notify_info(gc, NULL,
 					_("Buddy list downloaded"),
@@ -1709,6 +1823,14 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
+			break;
+		case GG_EVENT_TYPING_NOTIFICATION:
+			ggp_typing_notification_handler(gc, ev->event.typing_notification.uin,
+				ev->event.typing_notification.length);
+			break;
+		case GG_EVENT_XML_EVENT:
+			purple_debug_info("gg", "GG_EVENT_XML_EVENT\n");
+			ggp_xml_event_handler(gc, ev->event.xml_event.data);
 			break;
 		default:
 			purple_debug_error("gg",
@@ -1736,6 +1858,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_STATE_RESOLVING:
 			purple_debug_info("gg", "GG_STATE_RESOLVING\n");
 			break;
+		case GG_STATE_RESOLVING_GG:
+			purple_debug_info("gg", "GG_STATE_RESOLVING_GG\n");
+			break;
 		case GG_STATE_CONNECTING_HUB:
 			purple_debug_info("gg", "GG_STATE_CONNECTING_HUB\n");
 			break;
@@ -1751,6 +1876,9 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_STATE_READING_REPLY:
 			purple_debug_info("gg", "GG_STATE_READING_REPLY\n");
 			break;
+		case GG_STATE_TLS_NEGOTIATION:
+			purple_debug_info("gg", "GG_STATE_TLS_NEGOTIATION\n");
+			break;
 		default:
 			purple_debug_error("gg", "unknown state = %d\n",
 					 info->session->state);
@@ -1759,7 +1887,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg", "login_handler: gg_watch_fd failed!\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read from socket"));
 		return;
@@ -1771,10 +1899,11 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	purple_input_remove(gc->inpa);
 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
-	gc->inpa = purple_input_add(info->session->fd,
-				  (info->session->check == 1) ? PURPLE_INPUT_WRITE
-							      : PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	if (info->session->fd >= 0)
+		gc->inpa = purple_input_add(info->session->fd,
+			(info->session->check == 1) ? PURPLE_INPUT_WRITE :
+				PURPLE_INPUT_READ,
+			ggp_async_login_handler, gc);
 
 	switch (ev->type) {
 		case GG_EVENT_NONE:
@@ -1797,9 +1926,20 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_EVENT_CONN_FAILED:
 			purple_input_remove(gc->inpa);
 			gc->inpa = 0;
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Connection failed"));
+			break;
+		case GG_EVENT_MSG:
+			if (ev->event.msg.sender == 0)
+				/* system messages are mostly ads */
+				purple_debug_info("gg", "System message:\n%s\n",
+					ev->event.msg.message);
+			else
+				purple_debug_warning("gg", "GG_EVENT_MSG: message from user %u "
+					"unexpected while connecting:\n%s\n",
+					ev->event.msg.sender,
+					ev->event.msg.message);
 			break;
 		default:
 			purple_debug_error("gg", "strange event: %d\n", ev->type);
@@ -1825,29 +1965,24 @@ static char *ggp_status_text(PurpleBuddy *b)
 	char *text;
 	char *tmp;
 
-	status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-
+	status = purple_presence_get_active_status(
+		purple_buddy_get_presence(b));
 	msg = purple_status_get_attr_string(status, "message");
 
-	if (msg != NULL) {
-		tmp = purple_markup_strip_html(msg);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+	if (msg == NULL)
+		return NULL;
 
-		return text;
-	} else {
-		tmp = purple_utf8_salvage(purple_status_get_name(status));
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+	tmp = purple_markup_strip_html(msg);
+	text = g_markup_escape_text(tmp, -1);
+	g_free(tmp);
 
-		return text;
-	}
+	return text;
 }
 
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
-	char *text, *tmp;
+	char *tmp;
 	const char *msg, *name, *alias;
 
 	g_return_if_fail(b != NULL);
@@ -1857,21 +1992,19 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	name = purple_status_get_name(status);
 	alias = purple_buddy_get_alias(b);
 
-	purple_notify_user_info_add_pair (user_info, _("Alias"), alias);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 
 	if (msg != NULL) {
-		text = g_markup_escape_text(msg, -1);
 		if (PURPLE_BUDDY_IS_ONLINE(b)) {
-			tmp = g_strdup_printf("%s: %s", name, text);
-			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			tmp = g_strdup_printf("%s: %s", name, msg);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), tmp);
 			g_free(tmp);
 		} else {
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
-		g_free(text);
 	/* We don't want to duplicate 'Status: Offline'. */
 	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
-		purple_notify_user_info_add_pair(user_info, _("Status"), name);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);
 	}
 }
 
@@ -1902,7 +2035,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
- 	/*
+	/*
 	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because
 	 * libpurple can't support Chatty status) and Nie przeszkadzac
 	 */
@@ -1948,20 +2081,6 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 		m = g_list_append(m, act);
 	}
 
-	/* Using a blist node boolean here is also wrong.
-	 * Once the Block and Unblock actions are added to the core,
-	 * this will have to go. -- rlaager */
-	if (purple_blist_node_get_bool(node, "blocked")) {
-		act = purple_menu_action_new(_("Unblock"),
-		                           PURPLE_CALLBACK(ggp_bmenu_block),
-		                           NULL, NULL);
-	} else {
-		act = purple_menu_action_new(_("Block"),
-		                           PURPLE_CALLBACK(ggp_bmenu_block),
-		                           NULL, NULL);
-	}
-	m = g_list_append(m, act);
-
 	return m;
 }
 
@@ -1987,6 +2106,7 @@ static void ggp_login(PurpleAccount *account)
 	struct gg_login_params *glp;
 	GGPInfo *info;
 	const char *address;
+	const gchar *encryption_type;
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
@@ -2002,7 +2122,7 @@ static void ggp_login(PurpleAccount *account)
 	info->token = NULL;
 	info->searches = ggp_search_new();
 	info->pending_richtext_messages = NULL;
-	info->pending_images = g_hash_table_new(g_int_hash, g_int_equal);
+	info->pending_images = g_hash_table_new(g_direct_hash, g_direct_equal);
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
 	gc->proto_data = info;
@@ -2015,11 +2135,19 @@ static void ggp_login(PurpleAccount *account)
 	status = purple_presence_get_active_status(presence);
 
 	glp->encoding = GG_ENCODING_UTF8;
-	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC);
+	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC
+		|GG_FEATURE_TYPING_NOTIFICATION);
 
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
-	glp->tls = 0;
+	
+	encryption_type = purple_account_get_string(account, "encryption", "none");
+	purple_debug_info("gg", "Requested encryption type: %s\n", encryption_type);
+	if (strcmp(encryption_type, "opportunistic_tls") == 0)
+		glp->tls = 1;
+	else
+		glp->tls = 0;
+	purple_debug_info("gg", "TLS enabled: %d\n", glp->tls);
 
 	if (!info->status_broadcasting)
 		glp->status = glp->status|GG_STATUS_FRIENDS_MASK;
@@ -2034,7 +2162,7 @@ static void ggp_login(PurpleAccount *account)
 		if (addr == NULL) {
 			gchar *tmp = g_strdup_printf(_("Unable to resolve hostname '%s': %s"),
 					address, g_strerror(errno));
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, /* should this be a settings error? */
 				tmp);
 			g_free(tmp);
@@ -2049,7 +2177,7 @@ static void ggp_login(PurpleAccount *account)
 	info->session = gg_login(glp);
 	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
 	if (info->session == NULL) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Connection failed"));
 		g_free(glp);
@@ -2143,9 +2271,9 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 				const char *image_filename = purple_imgstore_get_filename(image);
 				uint32_t crc32 = gg_crc32(0, image_bin, image_size);
 
-				g_hash_table_insert(info->pending_images, &crc32, GINT_TO_POINTER(atoi(id)));
+				g_hash_table_insert(info->pending_images, GINT_TO_POINTER(crc32), GINT_TO_POINTER(atoi(id)));
 				purple_imgstore_ref(image);
-				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %i for imgid: %i\n", crc32, atoi(id));
+				purple_debug_info("gg", "ggp_send_im_richtext: got crc: %u for imgid: %i\n", crc32, atoi(id));
 
 				actformat.font = GG_FONT_IMAGE;
 				actformat.position = pos;
@@ -2156,15 +2284,14 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 
 				if (actimage.size > 255000) {
 					purple_debug_warning("gg", "ggp_send_im_richtext: image over 255kb!\n");
-					continue;
+				} else {
+					purple_debug_info("gg", "ggp_send_im_richtext: adding images to richtext, size: %i, crc32: %u, name: %s\n", actimage.size, actimage.crc32, image_filename);
+
+					memcpy(format + format_length, &actformat, sizeof(actformat));
+					format_length += sizeof(actformat);
+					memcpy(format + format_length, &actimage, sizeof(actimage));
+					format_length += sizeof(actimage);
 				}
-
-				purple_debug_info("gg", "ggp_send_im_richtext: adding images to richtext, size: %i, crc32: %u, name: %s\n", actimage.size, actimage.crc32, image_filename);
-
-				memcpy(format + format_length, &actformat, sizeof(actformat));
-				format_length += sizeof(actformat);
-				memcpy(format + format_length, &actimage, sizeof(actimage));
-				format_length += sizeof(actimage);
 			} else {
 				purple_debug_error("gg", "ggp_send_im_richtext: image not found in the image store!");
 			}
@@ -2220,6 +2347,26 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 	return ret;
 }
 
+static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+{
+	int dummy_length; // we don't send real length of typed message
+	
+	if (state == PURPLE_TYPED) // not supported
+		return 1;
+	
+	if (state == PURPLE_TYPING)
+		dummy_length = (int)g_random_int();
+	else // PURPLE_NOT_TYPING
+		dummy_length = 0;
+	
+	gg_typing_notification(
+		((GGPInfo*)gc->proto_data)->session,
+		ggp_str_to_uin(name),
+		dummy_length); 
+	
+	return 1; // wait 1 second before another notification
+}
+
 static void ggp_get_info(PurpleConnection *gc, const char *name)
 {
 	GGPInfo *info = gc->proto_data;
@@ -2230,8 +2377,6 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 
 	form->user_data = info;
 	form->uin = g_strdup(name);
-	form->offset = g_strdup("0");
-	form->last_uin = g_strdup("0");
 
 	seq = ggp_search_start(gc, form);
 	ggp_search_add(info->searches, seq, form);
@@ -2442,7 +2587,7 @@ static void ggp_keepalive(PurpleConnection *gc)
 	if (gg_ping(info->session) < 0) {
 		purple_debug_info("gg", "Not connected to the server "
 				"or gg_session is not correct\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Not connected to the server"));
 	}
@@ -2451,9 +2596,6 @@ static void ggp_keepalive(PurpleConnection *gc)
 static void ggp_register_user(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	GGPInfo *info;
-
-	info = gc->proto_data = g_new0(GGPInfo, 1);
 
 	ggp_token_request(gc, ggp_register_user_dialog);
 }
@@ -2525,7 +2667,7 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_close,			/* close */
 	ggp_send_im,			/* send_im */
 	NULL,				/* set_info */
-	NULL,				/* send_typing */
+	ggp_send_typing,		/* send_typing */
 	ggp_get_info,			/* get_info */
 	ggp_set_status,			/* set_away */
 	NULL,				/* set_idle */
@@ -2535,9 +2677,9 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_remove_buddy,		/* remove_buddy */
 	NULL,				/* remove_buddies */
 	NULL,				/* add_permit */
-	NULL,				/* add_deny */
+	ggp_add_deny,			/* add_deny */
 	NULL,				/* rem_permit */
-	NULL,				/* rem_deny */
+	ggp_rem_deny,			/* rem_deny */
 	NULL,				/* set_permit_deny */
 	ggp_join_chat,			/* join_chat */
 	NULL,				/* reject_chat */
@@ -2646,6 +2788,7 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
+	GList *encryption_options = NULL;
 
 	option = purple_account_option_string_new(_("Nickname"),
 			"nick", _("Gadu-Gadu User"));
@@ -2656,6 +2799,26 @@ static void init_plugin(PurplePlugin *plugin)
 			"gg_server", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
+
+#define ADD_VALUE(list, desc, v) { \
+	PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup((desc)); \
+	kvp->value = g_strdup((v)); \
+	list = g_list_append(list, kvp); \
+}
+
+	ADD_VALUE(encryption_options, _("Don't use encryption"), "none");
+	ADD_VALUE(encryption_options, _("Use encryption if available"),
+		"opportunistic_tls");
+#if 0
+	/* TODO */
+	ADD_VALUE(encryption_options, _("Require encryption"), "require_tls");
+#endif
+
+	option = purple_account_option_list_new(_("Connection security"),
+		"encryption", encryption_options);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+		option);
 
 	my_protocol = plugin;
 

@@ -70,6 +70,23 @@ static void _purple_conversations_hconv_free_key(struct _purple_hconv *hc)
 	g_free(hc);
 }
 
+static guint _purple_conversation_user_hash(gconstpointer data)
+{
+	const gchar *name = data;
+	gchar *collated;
+	guint hash;
+
+	collated = g_utf8_collate_key(name, -1);
+	hash     = g_str_hash(collated);
+	g_free(collated);
+	return hash;
+}
+
+static gboolean _purple_conversation_user_equal(gconstpointer a, gconstpointer b)
+{
+	return !g_utf8_collate(a, b);
+}
+
 void
 purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
 {
@@ -393,6 +410,8 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		conv->u.chat = g_new0(PurpleConvChat, 1);
 		conv->u.chat->conv = conv;
+		conv->u.chat->users = g_hash_table_new_full(_purple_conversation_user_hash,
+				_purple_conversation_user_equal, g_free, NULL);
 		PURPLE_DBUS_REGISTER_POINTER(conv->u.chat, PurpleConvChat);
 
 		chats = g_list_prepend(chats, conv);
@@ -547,6 +566,8 @@ purple_conversation_destroy(PurpleConversation *conv)
 		conv->u.im = NULL;
 	}
 	else if (conv->type == PURPLE_CONV_TYPE_CHAT) {
+		g_hash_table_destroy(conv->u.chat->users);
+		conv->u.chat->users = NULL;
 
 		g_list_foreach(conv->u.chat->in_room, (GFunc)purple_conv_chat_cb_destroy, NULL);
 		g_list_free(conv->u.chat->in_room);
@@ -575,6 +596,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
+	conv->ui_data = NULL;
 
 	purple_conversation_close_logs(conv);
 
@@ -1676,9 +1698,9 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 
 		cbuddy = purple_conv_chat_cb_new(user, alias, flag);
 		cbuddy->buddy = purple_find_buddy(conv->account, user) != NULL;
-		/* This seems dumb. Why should we set users thousands of times? */
-		purple_conv_chat_set_users(chat,
-				g_list_prepend(chat->in_room, cbuddy));
+
+		chat->in_room = g_list_prepend(chat->in_room, cbuddy);
+		g_hash_table_replace(chat->users, g_strdup(cbuddy->name), cbuddy);
 
 		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
@@ -1770,8 +1792,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	flags = purple_conv_chat_user_get_flags(chat, old_user);
 	cb = purple_conv_chat_cb_new(new_user, new_alias, flags);
 	cb->buddy = purple_find_buddy(conv->account, new_user) != NULL;
-	purple_conv_chat_set_users(chat,
-		g_list_prepend(chat->in_room, cb));
+
+	chat->in_room = g_list_prepend(chat->in_room, cb);
+	g_hash_table_replace(chat->users, g_strdup(cb->name), cb);
 
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(conv, old_user, new_user, new_alias);
@@ -1779,8 +1802,8 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	cb = purple_conv_chat_cb_find(chat, old_user);
 
 	if (cb) {
-		purple_conv_chat_set_users(chat,
-				g_list_remove(chat->in_room, cb));
+		chat->in_room = g_list_remove(chat->in_room, cb);
+		g_hash_table_remove(chat->users, cb->name);
 		purple_conv_chat_cb_destroy(cb);
 	}
 
@@ -1873,8 +1896,8 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 		cb = purple_conv_chat_cb_find(chat, user);
 
 		if (cb) {
-			purple_conv_chat_set_users(chat,
-					g_list_remove(chat->in_room, cb));
+			chat->in_room = g_list_remove(chat->in_room, cb);
+			g_hash_table_remove(chat->users, cb->name);
 			purple_conv_chat_cb_destroy(cb);
 		}
 
@@ -1954,8 +1977,10 @@ purple_conv_chat_clear_users(PurpleConvChat *chat)
 		purple_conv_chat_cb_destroy(cb);
 	}
 
+	g_hash_table_remove_all(chat->users);
+
 	g_list_free(users);
-	purple_conv_chat_set_users(chat, NULL);
+	chat->in_room = NULL;
 }
 
 
@@ -2145,19 +2170,10 @@ purple_conv_chat_cb_new(const char *name, const char *alias, PurpleConvChatBuddy
 PurpleConvChatBuddy *
 purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 {
-	GList *l;
-	PurpleConvChatBuddy *cb = NULL;
-
 	g_return_val_if_fail(chat != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	for (l = purple_conv_chat_get_users(chat); l; l = l->next) {
-		cb = l->data;
-		if (!g_utf8_collate(cb->name, name))
-			return cb;
-	}
-
-	return NULL;
+	return g_hash_table_lookup(chat->users, name);
 }
 
 void
@@ -2165,6 +2181,9 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 {
 	if (cb == NULL)
 		return;
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"deleting-chat-buddy", cb);
 
 	g_free(cb->alias);
 	g_free(cb->alias_key);
@@ -2270,6 +2289,9 @@ void purple_conversation_clear_message_history(PurpleConversation *conv)
 	GList *list = conv->message_history;
 	message_history_free(list);
 	conv->message_history = NULL;
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"cleared-message-history", conv);
 }
 
 GList *purple_conversation_get_message_history(PurpleConversation *conv)
@@ -2569,6 +2591,11 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "deleting-chat-buddy",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CHATBUDDY));
+
 	purple_signal_register(handle, "chat-inviting-user",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
@@ -2625,6 +2652,11 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "cleared-message-history",
+	                       purple_marshal_VOID__POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_CONVERSATION));
 
 	purple_signal_register(handle, "conversation-extended-menu",
 			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,

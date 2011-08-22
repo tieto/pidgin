@@ -139,6 +139,7 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 {
 	int sig;
 	int scr_w, scr_h, x, y, dy;
+	int preserved_x, preserved_y;
 	int mon_num;
 	GdkScreen *screen = NULL;
 	GdkRectangle mon_size;
@@ -158,6 +159,9 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 
 	if (h > mon_size.height)
 		h = mon_size.height - 10;
+
+	preserved_x = x;
+	preserved_y = y;
 
 	x -= ((w >> 1) + 4);
 
@@ -179,6 +183,12 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 		if (x < mon_size.x)
 			x = mon_size.x;
 	}
+
+	/* If the mouse covered by the tipwindow, move the tipwindow
+	 * to the righ side of the it */
+	if ((preserved_x >= x) && (preserved_x <= (x + w))
+			&& (preserved_y >= y) && (preserved_y <= (y + h)))
+		x = preserved_x + dy;
 
 	gtk_widget_set_size_request(tipwindow, w, h);
 	gtk_window_move(GTK_WINDOW(tipwindow), x, y);

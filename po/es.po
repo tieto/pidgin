@@ -53,7 +53,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-02 23:34-0500\n"
+"POT-Creation-Date: 2011-08-18 00:02-0700\n"
 "PO-Revision-Date: 2011-01-30 21:28+0100\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
@@ -318,6 +318,10 @@ msgstr "Nombre de usuario"
 
 msgid "Alias (optional)"
 msgstr "Apodo (opcional)"
+
+#, fuzzy
+msgid "Invite message (optional)"
+msgstr "Mensaje (opcional)"
 
 msgid "Add in group"
 msgstr "Añadir a un grupo"
@@ -1785,6 +1789,7 @@ msgstr "Este protocolo no permite obtener los apodos públicos."
 msgid "Unknown"
 msgstr "Desconocido"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Amigos"
 
@@ -2053,6 +2058,9 @@ msgstr "Falló en la creación de hilos: %s"
 
 msgid "Unknown reason"
 msgstr "Razón desconocida"
+
+msgid "Aborting DNS lookup in Tor Proxy mode."
+msgstr ""
 
 #, c-format
 msgid ""
@@ -3313,6 +3321,24 @@ msgstr "Introduzca su contraseña actual y la contraseña nueva para UIN: "
 msgid "Change Gadu-Gadu Password"
 msgstr "Cambiar la contraseña Gadu-Gadu"
 
+#, fuzzy
+msgid "Show status to:"
+msgstr "Cambiar estado a"
+
+msgid "All people"
+msgstr ""
+
+#, fuzzy
+msgid "Only buddies"
+msgstr "Amigos conectados"
+
+#, fuzzy
+msgid "Change status broadcasting"
+msgstr "Cambiar estado a"
+
+msgid "Please, select who can see your status"
+msgstr ""
+
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Seleccione un chat para el amigo: %s"
@@ -3344,9 +3370,7 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
-#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 #. optional information
-#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nombre"
 
@@ -3458,6 +3482,19 @@ msgstr "Usuario de Gadu-Gadu"
 msgid "GG server"
 msgstr "Servidor GG"
 
+msgid "Don't use encryption"
+msgstr "No utilizar cifrado"
+
+msgid "Use encryption if available"
+msgstr "Utilizar cifrado si es posible"
+
+#. TODO
+msgid "Require encryption"
+msgstr "Solicitar cifrado"
+
+msgid "Connection security"
+msgstr "Seguridad de la conexión"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Orden desconocida: %s"
@@ -3493,7 +3530,6 @@ msgstr "MOTD para %s"
 #. * buffer that stores what is "being sent" until the
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
-#. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
 #, c-format
 msgid "Lost connection with server: %s"
@@ -3749,6 +3785,10 @@ msgstr "Mensajes globales de %s"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;acción a realizar&gt;: Realiza una acción."
+
+#, fuzzy
+msgid "authserv: Send a command to authserv"
+msgstr "chanserv: Enviar un comando al servidor"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -4110,7 +4150,6 @@ msgstr "Región"
 msgid "Postal Code"
 msgstr "Código postal"
 
-#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "País"
 
@@ -4835,7 +4874,8 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;usuario&gt; [mensaje]:  Invitar a un usuario a la sala."
 
-msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+#, fuzzy
+msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
 msgstr ""
 "join: &lt;sala&gt; [contraseña]:  Unirse a una sala en el servidor indicado."
 
@@ -4877,17 +4917,8 @@ msgstr "Complemento de protocolo XMPP"
 msgid "Domain"
 msgstr "Dominio"
 
-msgid "Require encryption"
-msgstr "Solicitar cifrado"
-
-msgid "Use encryption if available"
-msgstr "Utilizar cifrado si es posible"
-
 msgid "Use old-style SSL"
 msgstr "Utilizar SSL antiguo"
-
-msgid "Connection security"
-msgstr "Seguridad de la conexión"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Permitir autenticación en claro sobre canales no cifrados"
@@ -4999,6 +5030,7 @@ msgstr ""
 "No se pudo enviar el archivo a %s, el usuario no soporta transferencias de "
 "archivos"
 
+#. not success
 msgid "File Send Failed"
 msgstr "Fallo en el envío del archivo"
 
@@ -5729,18 +5761,6 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "No se pudo añadir"
 
-msgid "Authorization Request Message:"
-msgstr "Mensaje de solicitud de autorización:"
-
-msgid "Please authorize me!"
-msgstr "¡Por favor, autoríceme!"
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_Aceptar"
-
 msgid "Error retrieving profile"
 msgstr "Error al obtener el perfil"
 
@@ -5954,6 +5974,10 @@ msgstr "No puede eliminar el usuario"
 msgid "Mobile message was not sent because it was too long."
 msgstr "No se pudo enviar el mensaje al móvil porque es demasiado largo."
 
+#, fuzzy
+msgid "Mobile message was not sent because an unknown error occurred."
+msgstr "No se pudo enviar el mensaje porque se produjo un error desconocido."
+
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -6124,18 +6148,6 @@ msgstr "¿Desea también borrar este amigo de su agenda?"
 msgid "The username specified is invalid."
 msgstr "El nombre de usuario especificado no es válido."
 
-msgid "The PIN you entered is invalid."
-msgstr "La clave PIN introducida es inválida."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "El PIN que introdujo tiene una longitud inválida [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "El PIN es inválido. Debería sólo consistir dígitos [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Las dos PINes que introdujo no coinciden."
-
 msgid "The Display Name you entered is invalid."
 msgstr "El nombre que introdujo es inválido."
 
@@ -6158,35 +6170,70 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Su información del perfil no es aún recuperable. Intente otra vez más tarde."
 
-msgid "Your UID"
-msgstr "Su UID"
+#. display name
+#. nick name (required)
+msgid "Display Name"
+msgstr "Mostrar nombre"
+
+#. about me
+#, fuzzy
+msgid "About Me"
+msgstr "Sobre mí"
+
+#. where I live
+msgid "Where I Live"
+msgstr ""
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Número de teléfono móvil"
+
+#. is searchable
+msgid "Can be searched"
+msgstr ""
+
+#. is suggestable
+msgid "Can be suggested"
+msgstr ""
+
+#, fuzzy
+msgid "Update your MXit Profile"
+msgstr "Actualizar su perfil"
+
+msgid "The PIN you entered is invalid."
+msgstr "La clave PIN introducida es inválida."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "El PIN que introdujo tiene una longitud inválida [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "El PIN es inválido. Debería sólo consistir dígitos [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Las dos PINes que introdujo no coinciden."
+
+#. show error to user
+#, fuzzy
+msgid "PIN Update Error"
+msgstr "Error de actualización de perfil"
 
 #. pin
 #. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
+#. verify pin
 msgid "Verify PIN"
 msgstr "Verifique el PIN"
 
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Mostrar nombre"
+#. (reference: "libpurple/request.h")
+#, fuzzy
+msgid "Change PIN"
+msgstr "Cambiar icono"
 
-#. hidden
-msgid "Hide my number"
-msgstr "Ocultar mi número"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Número de teléfono móvil"
-
-msgid "Update your Profile"
-msgstr "Actualizar su perfil"
-
-msgid "Here you can update your MXit profile"
-msgstr "Donde quieres actualizar el perfil MXit"
+#, fuzzy
+msgid "Change MXit PIN"
+msgstr "Cambiar icono"
 
 msgid "View Splash"
 msgstr "Mostrar pantalla de bienvenida"
@@ -6197,9 +6244,39 @@ msgstr "No hay ninguna pantalla de bienvenida disponible"
 msgid "About"
 msgstr "Sobre"
 
+#, fuzzy
+msgid "Search for user"
+msgstr "Buscar un usuario"
+
+#, fuzzy
+msgid "Search for a MXit contact"
+msgstr "Buscar un usuario"
+
+#, fuzzy
+msgid "Type search information"
+msgstr "Información de usuario"
+
+msgid "_Search"
+msgstr "_Buscar"
+
 #. display / change profile
 msgid "Change Profile..."
 msgstr "Cambiar perfil..."
+
+#. change PIN
+#, fuzzy
+msgid "Change PIN..."
+msgstr "Cambiar su estado de ánimo..."
+
+#. suggested friends
+#, fuzzy
+msgid "Suggested friends..."
+msgstr "Establecer su nombre de amigo..."
+
+#. search for contacts
+#, fuzzy
+msgid "Search for contacts..."
+msgstr "Buscar usuarios..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6230,6 +6307,10 @@ msgstr ""
 
 msgid "Connecting..."
 msgstr "Conectando..."
+
+#, fuzzy
+msgid "The Display Name you entered is too short."
+msgstr "El nombre que introdujo es inválido."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "El PIN que ha introducido no tiene una longitud válida [7-10]."
@@ -6306,12 +6387,11 @@ msgstr "Validación de cuenta MXit"
 msgid "Retrieving User Information..."
 msgstr "Obteniendo la información del usuario..."
 
-#. you were kicked
-msgid "You have been kicked from this MultiMX."
-msgstr "Ha sido expulsado de este MultiMX."
-
 msgid "was kicked"
 msgstr "fue expulsado"
+
+msgid "You have been kicked from this MultiMX."
+msgstr "Ha sido expulsado de este MultiMX."
 
 msgid "_Room Name:"
 msgstr "Nombre de _Sala:"
@@ -6333,8 +6413,21 @@ msgstr "Mensajes de rechazo"
 msgid "Hidden Number"
 msgstr "Número oculto"
 
+#, fuzzy
+msgid "No profile available"
+msgstr "No disponible"
+
+#, fuzzy
+msgid "This contact does not have a profile."
+msgstr "Esta cuenta no tiene correo activado."
+
 msgid "Your MXit ID..."
 msgstr "Su MXit ID..."
+
+#. contact is in Deleted, Rejected or None state
+#, fuzzy
+msgid "Re-Invite"
+msgstr "Invitar"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6349,6 +6442,38 @@ msgstr "Activar la pantalla de bienvenida"
 
 msgid "Last Online"
 msgstr "Última conexión"
+
+#, fuzzy
+msgid "Invite Message"
+msgstr "Mensajes enviados"
+
+#, fuzzy
+msgid "No results"
+msgstr "Resultados de la búsqueda"
+
+#, fuzzy
+msgid "No contacts found."
+msgstr "No se encontraron usuarios"
+
+#. define columns
+#, fuzzy
+msgid "UserId"
+msgstr "Usuario"
+
+msgid "Where I live"
+msgstr ""
+
+#, c-format
+msgid "You have %i suggested friend."
+msgid_plural "You have %i suggested friends."
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
+msgid "We found %i contact that matches your search."
+msgid_plural "We found %i contacts that match your search."
+msgstr[0] ""
+msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7092,6 +7217,12 @@ msgstr "No se indicó una razón."
 msgid "Authorization Denied Message:"
 msgstr "Mensaje de autorización denegada:"
 
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_Aceptar"
+
 #, c-format
 msgid "Received unexpected response from %s: %s"
 msgstr "Se recibió una respuesta que no se esperaba de %s: %s"
@@ -7451,7 +7582,6 @@ msgid "Received authorization"
 msgstr "Se recibió la autorización"
 
 #. Unregistered username
-#. uid is not exist
 #. the username does not exist
 msgid "Username does not exist"
 msgstr "El nombre de usuario no existe"
@@ -7629,6 +7759,14 @@ msgstr "Su conexión AIM puede haberse perdido."
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Ha sido desconectado de la sala de chat %s."
+
+msgid "The new formatting is invalid."
+msgstr "El nuevo formato es inválido."
+
+msgid "Username formatting can change only capitalization and whitespace."
+msgstr ""
+"El formato del nombre de usuario sólo puede cambiar en la capitalización y "
+"espacios en blanco."
 
 msgid "Pop-Up Message"
 msgstr "Mensaje emergente"
@@ -7899,14 +8037,6 @@ msgstr "Capacidad web (¡si activa esto hará que recibe SPAM!)"
 msgid "ICQ Privacy Options"
 msgstr "Opciones de privacidad de ICQ"
 
-msgid "The new formatting is invalid."
-msgstr "El nuevo formato es inválido."
-
-msgid "Username formatting can change only capitalization and whitespace."
-msgstr ""
-"El formato del nombre de usuario sólo puede cambiar en la capitalización y "
-"espacios en blanco."
-
 msgid "Change Address To:"
 msgstr "Cambiar dirección a:"
 
@@ -7932,9 +8062,6 @@ msgstr "Buscar amigo por la dirección correo electrónico"
 msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 "Escriba la dirección de correo electrónico del amigo que está buscando."
-
-msgid "_Search"
-msgstr "_Buscar"
 
 msgid "Set User Info (web)..."
 msgstr "Establecer su información de usuario (web)..."
@@ -7971,9 +8098,6 @@ msgstr "Mostrar amigos pendientes de autorización"
 
 msgid "Search for Buddy by Email Address..."
 msgstr "Buscar un amigo por correo electrónico..."
-
-msgid "Don't use encryption"
-msgstr "No utilizar cifrado"
 
 msgid "Use clientLogin"
 msgstr "Utilizar «clientLogin»"
@@ -8249,718 +8373,6 @@ msgstr "Lista invisible"
 
 msgid "These buddies will always see you as offline"
 msgstr "Estos amigos siempre le verán como desconectado"
-
-msgid "Aquarius"
-msgstr "Acuario"
-
-msgid "Pisces"
-msgstr "Piscis"
-
-msgid "Aries"
-msgstr "Aries"
-
-msgid "Taurus"
-msgstr "Tauro"
-
-msgid "Gemini"
-msgstr "Géminis"
-
-msgid "Cancer"
-msgstr "Cáncer"
-
-msgid "Leo"
-msgstr "Leo"
-
-msgid "Virgo"
-msgstr "Virgo"
-
-msgid "Libra"
-msgstr "Libra"
-
-msgid "Scorpio"
-msgstr "Escorpio"
-
-msgid "Sagittarius"
-msgstr "Sagitario"
-
-msgid "Capricorn"
-msgstr "Capricornio"
-
-msgid "Rat"
-msgstr "Rata"
-
-msgid "Ox"
-msgstr "Buey"
-
-msgid "Tiger"
-msgstr "Tigre"
-
-msgid "Rabbit"
-msgstr "Conejo"
-
-msgid "Dragon"
-msgstr "Dragón"
-
-msgid "Snake"
-msgstr "Serpiente"
-
-msgid "Horse"
-msgstr "Caballo"
-
-msgid "Goat"
-msgstr "Cabra"
-
-msgid "Monkey"
-msgstr "Mono"
-
-msgid "Rooster"
-msgstr "Gallo"
-
-msgid "Dog"
-msgstr "Perro"
-
-msgid "Pig"
-msgstr "Cerdo"
-
-msgid "Other"
-msgstr "Otro"
-
-msgid "Visible"
-msgstr "Visible"
-
-msgid "Friend Only"
-msgstr "Sólo amigos"
-
-msgid "Private"
-msgstr "Privado"
-
-msgid "QQ Number"
-msgstr "Número QQ"
-
-msgid "Country/Region"
-msgstr "País/Región"
-
-msgid "Province/State"
-msgstr "Provincia/Estado"
-
-msgid "Zipcode"
-msgstr "Código postal"
-
-msgid "Phone Number"
-msgstr "Número de teléfono"
-
-msgid "Authorize adding"
-msgstr "Autorizar añadir"
-
-msgid "Cellphone Number"
-msgstr "Número de móvil"
-
-msgid "Personal Introduction"
-msgstr "Introducción personal"
-
-msgid "City/Area"
-msgstr "Ciudad/Área"
-
-msgid "Publish Mobile"
-msgstr "Publicar móvil"
-
-msgid "Publish Contact"
-msgstr "Publicar contacto"
-
-msgid "College"
-msgstr "Universidad"
-
-msgid "Horoscope"
-msgstr "Horóscopo"
-
-msgid "Zodiac"
-msgstr "Zodiaco"
-
-msgid "Blood"
-msgstr "Sangre"
-
-msgid "True"
-msgstr "Verdadero"
-
-msgid "False"
-msgstr "Falso"
-
-msgid "Modify Contact"
-msgstr "Modificar la cuenta"
-
-msgid "Modify Address"
-msgstr "Modificar el domicilio"
-
-msgid "Modify Extended Information"
-msgstr "Modificar la información extendida"
-
-msgid "Modify Information"
-msgstr "Modificar la información"
-
-msgid "Update"
-msgstr "Actualizar"
-
-msgid "Could not change buddy information."
-msgstr "No se pudo cambiar la información del amigo."
-
-msgid "Note"
-msgstr "Nota"
-
-#. callback
-msgid "Buddy Memo"
-msgstr "Memo de amigo"
-
-msgid "Change his/her memo as you like"
-msgstr "Cambiar su memo como desee"
-
-msgid "_Modify"
-msgstr "_Modificar"
-
-msgid "Memo Modify"
-msgstr "Modificar Memo"
-
-msgid "Server says:"
-msgstr "El servidor dice:"
-
-msgid "Your request was accepted."
-msgstr "Su solicitud fué aceptada."
-
-msgid "Your request was rejected."
-msgstr "Su solicitud fué rechazada."
-
-#, c-format
-msgid "%u requires verification: %s"
-msgstr "%u solicita verificación: %s"
-
-msgid "Add buddy question"
-msgstr "Añadir una pregunta para el amigo"
-
-msgid "Enter answer here"
-msgstr "Introduzca aquí la respuesta"
-
-msgid "Send"
-msgstr "Enviar"
-
-msgid "Invalid answer."
-msgstr "Respuesta inválida."
-
-msgid "Authorization denied message:"
-msgstr "Mensaje de autorización denegada:"
-
-msgid "Sorry, you're not my style."
-msgstr "Lo siento, no eres mi tipo."
-
-#, c-format
-msgid "%u needs authorization"
-msgstr "El usuario %u necesita autorización"
-
-msgid "Add buddy authorize"
-msgstr "Añadir autorización de amigo"
-
-msgid "Enter request here"
-msgstr "Introduzca su solicitud a continuación"
-
-msgid "Would you be my friend?"
-msgstr "¿Quieres ser mi amigo?"
-
-msgid "QQ Buddy"
-msgstr "Amigo QQ"
-
-msgid "Add buddy"
-msgstr "Añadir amigo"
-
-msgid "Invalid QQ Number"
-msgstr "Número QQ inválido"
-
-msgid "Failed sending authorize"
-msgstr "Fallo al enviar la autorización"
-
-#, c-format
-msgid "Failed removing buddy %u"
-msgstr "No se pudo eliminar al amigo %u"
-
-#, c-format
-msgid "Failed removing me from %d's buddy list"
-msgstr "Fallo al eliminarme de la lista de amigos de %d"
-
-msgid "No reason given"
-msgstr "No se indicó una razón"
-
-#. only need to get value
-#, c-format
-msgid "You have been added by %s"
-msgstr "Ha sido añadido por %s"
-
-msgid "Would you like to add him?"
-msgstr "¿Desea añadirle?"
-
-#, c-format
-msgid "Rejected by %s"
-msgstr "Rechazado por %s"
-
-#, c-format
-msgid "Message: %s"
-msgstr "Mensaje: %s"
-
-msgid "ID: "
-msgstr "ID: "
-
-msgid "Group ID"
-msgstr "ID de grupo:"
-
-msgid "QQ Qun"
-msgstr "QQ Qun"
-
-msgid "Please enter Qun number"
-msgstr "Introduzca un número Qun"
-
-msgid "You can only search for permanent Qun\n"
-msgstr "Sólo puede buscar Quns permanentes\n"
-
-msgid "(Invalid UTF-8 string)"
-msgstr "(cadena UTF-8 inválida)"
-
-msgid "Not member"
-msgstr "No es miembro"
-
-msgid "Member"
-msgstr "Miembro"
-
-msgid "Requesting"
-msgstr "Solicitando"
-
-msgid "Admin"
-msgstr "Administrador"
-
-#. XXX: Should this be "Topic"?
-msgid "Room Title"
-msgstr "Título de la sala"
-
-msgid "Notice"
-msgstr "Nota"
-
-msgid "Detail"
-msgstr "Detalle"
-
-msgid "Creator"
-msgstr "Creador"
-
-msgid "About me"
-msgstr "Sobre mí"
-
-msgid "Category"
-msgstr "Categoría"
-
-msgid "The Qun does not allow others to join"
-msgstr "Este Qun no permite que otros se unan"
-
-msgid "Join QQ Qun"
-msgstr "Unirse a un QQ Qun"
-
-msgid "Input request here"
-msgstr "Introduzca su solicitud a continuación"
-
-#, c-format
-msgid "Successfully joined Qun %s (%u)"
-msgstr "Se ha unido al Qun %s (%u) con éxito"
-
-msgid "Successfully joined Qun"
-msgstr "Se ha unido a Qun con éxito"
-
-#, c-format
-msgid "Qun %u denied from joining"
-msgstr "Qun %u impidió la solicitud para unirse"
-
-msgid "QQ Qun Operation"
-msgstr "Opciones QQ Qun"
-
-msgid "Failed:"
-msgstr "Falló:"
-
-msgid "Join Qun, Unknown Reply"
-msgstr "Unirse a Qun, respuesta desconocida"
-
-msgid "Quit Qun"
-msgstr "Salir del Qun"
-
-msgid ""
-"Note, if you are the creator, \n"
-"this operation will eventually remove this Qun."
-msgstr ""
-"Tenga en cuenta que si vd. lo ha creado\n"
-"esta operación eliminará este Qun eventualmente."
-
-msgid "Sorry, you are not our style"
-msgstr "Lo siento, no eres mi tipo"
-
-msgid "Successfully changed Qun members"
-msgstr "Se han modificado los miembros del Qun con éxito"
-
-msgid "Successfully changed Qun information"
-msgstr "Ha modificado la información Qun con éxito"
-
-msgid "You have successfully created a Qun"
-msgstr "Ha creado un Qun con éxito"
-
-msgid "Would you like to set up detailed information now?"
-msgstr "¿Desea establecer la información detallada ahora?"
-
-msgid "Setup"
-msgstr "Configurar"
-
-#, c-format
-msgid "%u requested to join Qun %u for %s"
-msgstr "El usuario %u solicitó entrar en el Qun %u para %s"
-
-#, c-format
-msgid "%u request to join Qun %u"
-msgstr "El usuario %u solicitó entrar en el Qun  %u"
-
-#, c-format
-msgid "Failed to join Qun %u, operated by admin %u"
-msgstr "No se pudo unir al Qun %u, administrador por %u"
-
-#, c-format
-msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr ""
-"<b>La unión a Qun %u ha sido aprobada por el administrador %u parar %s</b>"
-
-#, c-format
-msgid "<b>Removed buddy %u.</b>"
-msgstr "<b>Eliminado al amigo %u.</b>"
-
-#, c-format
-msgid "<b>New buddy %u joined.</b>"
-msgstr "<b>El amigo nuevo %u se unió.</b>"
-
-#, c-format
-msgid "Unknown-%d"
-msgstr "Desconocido-%d"
-
-msgid "Level"
-msgstr "Nivel"
-
-msgid " VIP"
-msgstr " VIP"
-
-msgid " TCP"
-msgstr " TCP"
-
-msgid " FromMobile"
-msgstr " DeMóvil"
-
-msgid " BindMobile"
-msgstr " AsociarMóvil"
-
-msgid " Video"
-msgstr " Vídeo"
-
-msgid " Zone"
-msgstr "Zona"
-
-msgid "Flag"
-msgstr "Marca"
-
-msgid "Ver"
-msgstr "Ver"
-
-msgid "Invalid name"
-msgstr "Nombre inválido"
-
-msgid "Select icon..."
-msgstr "Seleccione un icono..."
-
-#, c-format
-msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Hora de conexión</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Total Online Buddies</b>: %d<br>\n"
-msgstr "<b>Amigos conectados actualmente</b>: %d<br>\n"
-
-#, c-format
-msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Última actualización</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>Server</b>: %s<br>\n"
-msgstr "<b>Servidor</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Client Tag</b>: %s<br>\n"
-msgstr "<b>Marca de cliente</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Modo de conexión</b>: %s<br>\n"
-
-#, c-format
-msgid "<b>My Internet IP</b>: %s:%d<br>\n"
-msgstr "<b>Mi dirección IP:</b> %s:%d<br>\n"
-
-#, c-format
-msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>Enviado</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>Reenviar</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>Perdido</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>Recibido</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>Duplicados recibidos</b>: %lu<br>\n"
-
-#, c-format
-msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>Hora</b>: %d-%d-%d, %d:%d:%d<br>\n"
-
-#, c-format
-msgid "<b>IP</b>: %s<br>\n"
-msgstr "<b>IP</b>: %s<br>\n"
-
-msgid "Login Information"
-msgstr "Información de conexión"
-
-msgid "<p><b>Original Author</b>:<br>\n"
-msgstr "<p><b>Autor original</b>:<br>\n"
-
-msgid "<p><b>Code Contributors</b>:<br>\n"
-msgstr "<p><b>Personas que han contribuído código</b>:<br>\n"
-
-msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
-msgstr "<p><b>Encantadores escritores de parches</b>:<br>\n"
-
-msgid "<p><b>Acknowledgement</b>:<br>\n"
-msgstr "<p><b>Agradecimientos</b>:<br>\n"
-
-msgid "<p><b>Scrupulous Testers</b>:<br>\n"
-msgstr "<p><b>Probadores escrupulosos</b>:<br>\n"
-
-msgid "and more, please let me know... thank you!))"
-msgstr "y más, por favor, háganoslo saber.. ¡gracias!))"
-
-msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
-msgstr "<p><i>Y, todos los chicos entre bastidores...</i><br>\n"
-
-msgid "<i>Feel free to join us!</i> :)"
-msgstr "<i>¡Siéntase libre de unirse a nosotros!</i> :)"
-
-#, c-format
-msgid "About OpenQ %s"
-msgstr "Acerca de OpenQ %s"
-
-msgid "Change Icon"
-msgstr "Cambiar icono"
-
-msgid "Change Password"
-msgstr "Cambiar contraseña"
-
-msgid "Account Information"
-msgstr "Información de la cuenta"
-
-msgid "Update all QQ Quns"
-msgstr "Actualizar todos los Quns QQ"
-
-msgid "About OpenQ"
-msgstr "Acerca de OpenQ"
-
-msgid "Modify Buddy Memo"
-msgstr "Modiciar memo de amigo"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "QQ Protocol Plugin"
-msgstr "Complemento de protocolo QQ"
-
-msgid "Auto"
-msgstr "Automático"
-
-msgid "Select Server"
-msgstr "Seleccionar servidor"
-
-msgid "QQ2008"
-msgstr "QQ2008"
-
-msgid "QQ2007"
-msgstr "QQ2007"
-
-msgid "QQ2005"
-msgstr "QQ2005"
-
-msgid "Connect by TCP"
-msgstr "Conectar por TCP"
-
-msgid "Show server notice"
-msgstr "Mostrar notas del servidor"
-
-msgid "Show server news"
-msgstr "Mostrar noticias del servidor"
-
-msgid "Show chat room when msg comes"
-msgstr "Mostrar la sala de chat cuando venga un mensaje"
-
-msgid "Keep alive interval (seconds)"
-msgstr "Intervalo de comprobación de conexión (segundos)"
-
-msgid "Update interval (seconds)"
-msgstr "Intervalo de actualización (segundos)"
-
-msgid "Unable to decrypt server reply"
-msgstr "No se pudo descifrar la respuesta del servidor"
-
-#, c-format
-msgid "Failed requesting token, 0x%02X"
-msgstr "Fallo al solicitar el testigo, 0x%02X"
-
-#, c-format
-msgid "Invalid token len, %d"
-msgstr "Longitud de token no válida, %d"
-
-#. extend redirect used in QQ2006
-msgid "Redirect_EX is not currently supported"
-msgstr "Actualmente no se soporta «Redirect_EX»"
-
-#. need activation
-#. need activation
-#. need activation
-msgid "Activation required"
-msgstr "Es necesaria la activación"
-
-#, c-format
-msgid "Unknown reply code when logging in (0x%02X)"
-msgstr "Código de respuesta desconocido al conectarse (0x%02X)"
-
-msgid "Requesting captcha"
-msgstr "Solicitando el «captcha»"
-
-msgid "Checking captcha"
-msgstr "Comprobando el «captcha»"
-
-msgid "Failed captcha verification"
-msgstr "¡Falló la autenticación del «captcha»!"
-
-msgid "Captcha Image"
-msgstr "Imagen captcha"
-
-msgid "Enter code"
-msgstr "Introduzca el código"
-
-msgid "QQ Captcha Verification"
-msgstr "Verificación «Captcha» de QQ"
-
-msgid "Enter the text from the image"
-msgstr "Introduzca el texto de la imagen"
-
-#, c-format
-msgid "Unknown reply when checking password (0x%02X)"
-msgstr "Respuesta desconocida al comprobar la contraseña (0x%02X)"
-
-#, c-format
-msgid ""
-"Unknown reply code when logging in (0x%02X):\n"
-"%s"
-msgstr ""
-"Respuesta desconocida al conectarse (0x%02X):\n"
-"%s"
-
-msgid "Socket error"
-msgstr "Error de socket"
-
-msgid "Getting server"
-msgstr "Obteniendo el servidor"
-
-msgid "Requesting token"
-msgstr "Solicitando testigo"
-
-msgid "Unable to resolve hostname"
-msgstr "No se pudo resolver el nombre del sistema"
-
-msgid "Invalid server or port"
-msgstr "Puerto o servidor no válido"
-
-msgid "Connecting to server"
-msgstr "Conectando con el servidor"
-
-msgid "QQ Error"
-msgstr "Error QQ"
-
-#, c-format
-msgid ""
-"Server News:\n"
-"%s\n"
-"%s\n"
-"%s"
-msgstr ""
-"Noticias del servidor:\n"
-"%s\n"
-"%s\n"
-"%s"
-
-#, c-format
-msgid "%s:%s"
-msgstr "%s:%s"
-
-#, c-format
-msgid "From %s:"
-msgstr "De %s:"
-
-#, c-format
-msgid ""
-"Server notice From %s: \n"
-"%s"
-msgstr ""
-"Nota del servidor De %s: \n"
-"%s"
-
-msgid "Unknown SERVER CMD"
-msgstr "SERVER CMD desconocido"
-
-#, c-format
-msgid ""
-"Error reply of %s(0x%02X)\n"
-"Room %u, reply 0x%02X"
-msgstr ""
-"Respuesta de error de %s(0x%02X )\n"
-"Sala %u, respuesta 0x%02X"
-
-msgid "QQ Qun Command"
-msgstr "Orden QQ Qun"
-
-msgid "Unable to decrypt login reply"
-msgstr "No se pudo descifrar la respuesta a la solicitud conexión"
-
-msgid "Unknown LOGIN CMD"
-msgstr "LOGIN CMD desconocido"
-
-msgid "Unknown CLIENT CMD"
-msgstr "CLIENT CMD desconocido"
-
-#, c-format
-msgid "%d has declined the file %s"
-msgstr "%d ha rechazado el archivo %s"
-
-msgid "File Send"
-msgstr "Archivo enviado"
-
-#, c-format
-msgid "%d cancelled the transfer of %s"
-msgstr "%d canceló la transferencia de %s"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -9739,6 +9151,9 @@ msgstr "Organización"
 msgid "Unit"
 msgstr "Unidad"
 
+msgid "Note"
+msgstr "Nota"
+
 msgid "Join Chat"
 msgstr "Unirse a un chat"
 
@@ -10387,6 +9802,9 @@ msgstr "Respuesta desconocida del servidor"
 msgid "Unable to create listen socket"
 msgstr "No se pudo crear el puerto para escuchar peticiones"
 
+msgid "Unable to resolve hostname"
+msgstr "No se pudo resolver el nombre del sistema"
+
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
@@ -10504,6 +9922,9 @@ msgstr "Su mensaje Yahoo! no se envió."
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Mensaje del sistema Yahoo! para %s:"
+
+msgid "Authorization denied message:"
+msgstr "Mensaje de autorización denegada:"
 
 #, c-format
 msgid ""
@@ -11293,14 +10714,17 @@ msgstr "Usar configuración global del proxy"
 msgid "No Proxy"
 msgstr "Sin proxy"
 
-msgid "HTTP"
-msgstr "HTTP"
-
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
+
+msgid "Tor/Privacy (SOCKS5)"
+msgstr ""
+
+msgid "HTTP"
+msgstr "HTTP"
 
 msgid "Use Environmental Settings"
 msgstr "Usar configuración del entorno"
@@ -11328,6 +10752,14 @@ msgstr "_Puerto:"
 
 msgid "Pa_ssword:"
 msgstr "_Contraseña:"
+
+#, fuzzy
+msgid "Use _silence suppression"
+msgstr "Reanudando la sesión"
+
+#, fuzzy
+msgid "_Voice and Video"
+msgstr "voz y vídeo"
 
 msgid "Unable to save new account"
 msgstr "No se pudo guardar la nueva cuenta"
@@ -11375,9 +10807,19 @@ msgstr ""
 "Puede volver a esta ventana para añadir, editar o eliminar cuentas desde la "
 "ventana de lista de amigos seleccionando <b>Cuentas->Gestionar Cuentas</b>"
 
+#, fuzzy, c-format
+msgid ""
+"<a href=\"viewinfo\">%s</a>%s%s%s wants to add you (%s) to his or her buddy "
+"list%s%s"
+msgstr "%s%s%s%s quiere añadirle (%s) a su lista de amigos%s%s."
+
 #, c-format
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr "%s%s%s%s quiere añadirle (%s) a su lista de amigos%s%s."
+
+#, fuzzy
+msgid "Send Instant Message"
+msgstr "Mensaje instantáneo nuevo"
 
 #. Buddy List
 msgid "Background Color"
@@ -11742,6 +11184,10 @@ msgstr "/Ayuda/Ventana de _depuración"
 msgid "/Help/De_veloper Information"
 msgstr "/Ayuda/Información de desa_rrollador"
 
+#, fuzzy
+msgid "/Help/_Plugin Information"
+msgstr "/Ayuda/Información de _compilación"
+
 msgid "/Help/_Translator Information"
 msgstr "/Ayuda/Información de _traducción"
 
@@ -11925,6 +11371,10 @@ msgid "Buddy's _username:"
 msgstr "Nombre de _usuario del amigo:"
 
 msgid "(Optional) A_lias:"
+msgstr "(Opcional) A_podo:"
+
+#, fuzzy
+msgid "(Optional) _Invite message:"
 msgstr "(Opcional) A_podo:"
 
 msgid "Add buddy to _group:"
@@ -12364,10 +11814,6 @@ msgstr "Error fatal"
 msgid "artist"
 msgstr "artista"
 
-#. feel free to not translate this
-msgid "Ka-Hing Cheung"
-msgstr "Ka-Hing Cheung"
-
 msgid "voice and video"
 msgstr "voz y vídeo"
 
@@ -12379,6 +11825,10 @@ msgstr "webmaster"
 
 msgid "win32 port"
 msgstr "adaptación a win32"
+
+#. feel free to not translate this
+msgid "Ka-Hing Cheung"
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "mantenedor"
@@ -12498,6 +11948,9 @@ msgstr "Hebreo"
 
 msgid "Hindi"
 msgstr "Hindú"
+
+msgid "Croatian"
+msgstr ""
 
 msgid "Hungarian"
 msgstr "Húngaro"
@@ -12743,6 +12196,14 @@ msgstr "Traductores anteriores"
 #, c-format
 msgid "%s Translator Information"
 msgstr "Información de traducción de %s"
+
+#, fuzzy, c-format
+msgid "%s Plugin Information"
+msgstr "Información de compilación de %s"
+
+#, fuzzy
+msgid "Plugin Information"
+msgstr "Información de conexión"
 
 msgid "_Name"
 msgstr "_Nombre"
@@ -13399,6 +12860,13 @@ msgstr "<span weight=\"bold\" size=\"larger\">¡Tiene correo!</span>"
 msgid "New Pounces"
 msgstr "Nuevos avisos"
 
+#. Translators: Make sure you translate "Dismiss" differently than
+#. "close"!  This string is used in the "You have pounced" dialog
+#. that appears when one of your Buddy Pounces is triggered.  In
+#. this context "Dismiss" means "I acknowledge that I've seen that
+#. this pounce was triggered--remove it from this list."  Translating
+#. it as "Remove" is acceptable if you can't think of a more precise
+#. word.
 msgid "Dismiss"
 msgstr "Descartar"
 
@@ -13699,6 +13167,14 @@ msgstr "Utilizar paginado suave"
 msgid "F_lash window when IMs are received"
 msgstr "_Destello de ventana cuando se reciben MIs"
 
+#, fuzzy
+msgid "Resize incoming custom smileys"
+msgstr "_Gestionar emoticonos a medida"
+
+#, fuzzy
+msgid "Maximum size:"
+msgstr "Tiempo de espera máximo para respuestas:"
+
 msgid "Minimum input area height in lines:"
 msgstr "Altura mínima del área de entrada en líneas:"
 
@@ -13767,6 +13243,10 @@ msgid "_TURN server:"
 msgstr "Servidor _TURN:"
 
 msgid "_UDP Port:"
+msgstr "Puerto _UDP:"
+
+#, fuzzy
+msgid "T_CP Port:"
 msgstr "Puerto _UDP:"
 
 msgid "Use_rname:"
@@ -14526,6 +14006,9 @@ msgstr "Colección PubSub"
 
 msgid "PubSub Leaf"
 msgstr "Rama PubSub"
+
+msgid "Other"
+msgstr "Otro"
 
 msgid ""
 "\n"
@@ -15401,6 +14884,24 @@ msgstr "Comp_lementos"
 msgid "D_evice"
 msgstr "Di_spositivo"
 
+msgid "DROP"
+msgstr ""
+
+#, fuzzy
+msgid "Volume:"
+msgstr "V_olumen:"
+
+#, fuzzy
+msgid "Silence threshold:"
+msgstr "Umbral:"
+
+msgid "Input and Output Settings"
+msgstr ""
+
+#, fuzzy
+msgid "Microphone Test"
+msgstr "Micrófono"
+
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15412,9 +14913,6 @@ msgstr "Di_spositivo"
 #. *< id
 msgid "Voice/Video Settings"
 msgstr "Configuración de voz/vídeo"
-
-msgid "Voice and Video Settings"
-msgstr "Configuración de voz y vídeo"
 
 #. *< name
 #. *< version
@@ -15693,6 +15191,655 @@ msgstr "Visite la página Web de Pidgin"
 msgid "You do not have permission to uninstall this application."
 msgstr "No tiene permisos para desinstalar esta aplicación."
 
+#~ msgid "Authorization Request Message:"
+#~ msgstr "Mensaje de solicitud de autorización:"
+
+#~ msgid "Please authorize me!"
+#~ msgstr "¡Por favor, autoríceme!"
+
+#~ msgid "Your UID"
+#~ msgstr "Su UID"
+
+#~ msgid "Hide my number"
+#~ msgstr "Ocultar mi número"
+
+#~ msgid "Here you can update your MXit profile"
+#~ msgstr "Donde quieres actualizar el perfil MXit"
+
+#~ msgid "Aquarius"
+#~ msgstr "Acuario"
+
+#~ msgid "Pisces"
+#~ msgstr "Piscis"
+
+#~ msgid "Aries"
+#~ msgstr "Aries"
+
+#~ msgid "Taurus"
+#~ msgstr "Tauro"
+
+#~ msgid "Gemini"
+#~ msgstr "Géminis"
+
+#~ msgid "Cancer"
+#~ msgstr "Cáncer"
+
+#~ msgid "Leo"
+#~ msgstr "Leo"
+
+#~ msgid "Virgo"
+#~ msgstr "Virgo"
+
+#~ msgid "Libra"
+#~ msgstr "Libra"
+
+#~ msgid "Scorpio"
+#~ msgstr "Escorpio"
+
+#~ msgid "Sagittarius"
+#~ msgstr "Sagitario"
+
+#~ msgid "Capricorn"
+#~ msgstr "Capricornio"
+
+#~ msgid "Rat"
+#~ msgstr "Rata"
+
+#~ msgid "Ox"
+#~ msgstr "Buey"
+
+#~ msgid "Tiger"
+#~ msgstr "Tigre"
+
+#~ msgid "Rabbit"
+#~ msgstr "Conejo"
+
+#~ msgid "Dragon"
+#~ msgstr "Dragón"
+
+#~ msgid "Snake"
+#~ msgstr "Serpiente"
+
+#~ msgid "Horse"
+#~ msgstr "Caballo"
+
+#~ msgid "Goat"
+#~ msgstr "Cabra"
+
+#~ msgid "Monkey"
+#~ msgstr "Mono"
+
+#~ msgid "Rooster"
+#~ msgstr "Gallo"
+
+#~ msgid "Dog"
+#~ msgstr "Perro"
+
+#~ msgid "Pig"
+#~ msgstr "Cerdo"
+
+#~ msgid "Visible"
+#~ msgstr "Visible"
+
+#~ msgid "Friend Only"
+#~ msgstr "Sólo amigos"
+
+#~ msgid "Private"
+#~ msgstr "Privado"
+
+#~ msgid "QQ Number"
+#~ msgstr "Número QQ"
+
+#~ msgid "Country/Region"
+#~ msgstr "País/Región"
+
+#~ msgid "Province/State"
+#~ msgstr "Provincia/Estado"
+
+#~ msgid "Zipcode"
+#~ msgstr "Código postal"
+
+#~ msgid "Phone Number"
+#~ msgstr "Número de teléfono"
+
+#~ msgid "Authorize adding"
+#~ msgstr "Autorizar añadir"
+
+#~ msgid "Cellphone Number"
+#~ msgstr "Número de móvil"
+
+#~ msgid "Personal Introduction"
+#~ msgstr "Introducción personal"
+
+#~ msgid "City/Area"
+#~ msgstr "Ciudad/Área"
+
+#~ msgid "Publish Mobile"
+#~ msgstr "Publicar móvil"
+
+#~ msgid "Publish Contact"
+#~ msgstr "Publicar contacto"
+
+#~ msgid "College"
+#~ msgstr "Universidad"
+
+#~ msgid "Horoscope"
+#~ msgstr "Horóscopo"
+
+#~ msgid "Zodiac"
+#~ msgstr "Zodiaco"
+
+#~ msgid "Blood"
+#~ msgstr "Sangre"
+
+#~ msgid "True"
+#~ msgstr "Verdadero"
+
+#~ msgid "False"
+#~ msgstr "Falso"
+
+#~ msgid "Modify Contact"
+#~ msgstr "Modificar la cuenta"
+
+#~ msgid "Modify Address"
+#~ msgstr "Modificar el domicilio"
+
+#~ msgid "Modify Extended Information"
+#~ msgstr "Modificar la información extendida"
+
+#~ msgid "Modify Information"
+#~ msgstr "Modificar la información"
+
+#~ msgid "Update"
+#~ msgstr "Actualizar"
+
+#~ msgid "Could not change buddy information."
+#~ msgstr "No se pudo cambiar la información del amigo."
+
+#~ msgid "Buddy Memo"
+#~ msgstr "Memo de amigo"
+
+#~ msgid "Change his/her memo as you like"
+#~ msgstr "Cambiar su memo como desee"
+
+#~ msgid "_Modify"
+#~ msgstr "_Modificar"
+
+#~ msgid "Memo Modify"
+#~ msgstr "Modificar Memo"
+
+#~ msgid "Server says:"
+#~ msgstr "El servidor dice:"
+
+#~ msgid "Your request was accepted."
+#~ msgstr "Su solicitud fué aceptada."
+
+#~ msgid "Your request was rejected."
+#~ msgstr "Su solicitud fué rechazada."
+
+#~ msgid "%u requires verification: %s"
+#~ msgstr "%u solicita verificación: %s"
+
+#~ msgid "Add buddy question"
+#~ msgstr "Añadir una pregunta para el amigo"
+
+#~ msgid "Enter answer here"
+#~ msgstr "Introduzca aquí la respuesta"
+
+#~ msgid "Send"
+#~ msgstr "Enviar"
+
+#~ msgid "Invalid answer."
+#~ msgstr "Respuesta inválida."
+
+#~ msgid "Sorry, you're not my style."
+#~ msgstr "Lo siento, no eres mi tipo."
+
+#~ msgid "%u needs authorization"
+#~ msgstr "El usuario %u necesita autorización"
+
+#~ msgid "Add buddy authorize"
+#~ msgstr "Añadir autorización de amigo"
+
+#~ msgid "Enter request here"
+#~ msgstr "Introduzca su solicitud a continuación"
+
+#~ msgid "Would you be my friend?"
+#~ msgstr "¿Quieres ser mi amigo?"
+
+#~ msgid "QQ Buddy"
+#~ msgstr "Amigo QQ"
+
+#~ msgid "Add buddy"
+#~ msgstr "Añadir amigo"
+
+#~ msgid "Invalid QQ Number"
+#~ msgstr "Número QQ inválido"
+
+#~ msgid "Failed sending authorize"
+#~ msgstr "Fallo al enviar la autorización"
+
+#~ msgid "Failed removing buddy %u"
+#~ msgstr "No se pudo eliminar al amigo %u"
+
+#~ msgid "Failed removing me from %d's buddy list"
+#~ msgstr "Fallo al eliminarme de la lista de amigos de %d"
+
+#~ msgid "No reason given"
+#~ msgstr "No se indicó una razón"
+
+#~ msgid "You have been added by %s"
+#~ msgstr "Ha sido añadido por %s"
+
+#~ msgid "Would you like to add him?"
+#~ msgstr "¿Desea añadirle?"
+
+#~ msgid "Rejected by %s"
+#~ msgstr "Rechazado por %s"
+
+#~ msgid "Message: %s"
+#~ msgstr "Mensaje: %s"
+
+#~ msgid "ID: "
+#~ msgstr "ID: "
+
+#~ msgid "Group ID"
+#~ msgstr "ID de grupo:"
+
+#~ msgid "QQ Qun"
+#~ msgstr "QQ Qun"
+
+#~ msgid "Please enter Qun number"
+#~ msgstr "Introduzca un número Qun"
+
+#~ msgid "You can only search for permanent Qun\n"
+#~ msgstr "Sólo puede buscar Quns permanentes\n"
+
+#~ msgid "(Invalid UTF-8 string)"
+#~ msgstr "(cadena UTF-8 inválida)"
+
+#~ msgid "Not member"
+#~ msgstr "No es miembro"
+
+#~ msgid "Member"
+#~ msgstr "Miembro"
+
+#~ msgid "Requesting"
+#~ msgstr "Solicitando"
+
+#~ msgid "Admin"
+#~ msgstr "Administrador"
+
+#~ msgid "Room Title"
+#~ msgstr "Título de la sala"
+
+#~ msgid "Notice"
+#~ msgstr "Nota"
+
+#~ msgid "Detail"
+#~ msgstr "Detalle"
+
+#~ msgid "Creator"
+#~ msgstr "Creador"
+
+#~ msgid "Category"
+#~ msgstr "Categoría"
+
+#~ msgid "The Qun does not allow others to join"
+#~ msgstr "Este Qun no permite que otros se unan"
+
+#~ msgid "Join QQ Qun"
+#~ msgstr "Unirse a un QQ Qun"
+
+#~ msgid "Input request here"
+#~ msgstr "Introduzca su solicitud a continuación"
+
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "Se ha unido al Qun %s (%u) con éxito"
+
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Se ha unido a Qun con éxito"
+
+#~ msgid "Qun %u denied from joining"
+#~ msgstr "Qun %u impidió la solicitud para unirse"
+
+#~ msgid "QQ Qun Operation"
+#~ msgstr "Opciones QQ Qun"
+
+#~ msgid "Failed:"
+#~ msgstr "Falló:"
+
+#~ msgid "Join Qun, Unknown Reply"
+#~ msgstr "Unirse a Qun, respuesta desconocida"
+
+#~ msgid "Quit Qun"
+#~ msgstr "Salir del Qun"
+
+#~ msgid ""
+#~ "Note, if you are the creator, \n"
+#~ "this operation will eventually remove this Qun."
+#~ msgstr ""
+#~ "Tenga en cuenta que si vd. lo ha creado\n"
+#~ "esta operación eliminará este Qun eventualmente."
+
+#~ msgid "Sorry, you are not our style"
+#~ msgstr "Lo siento, no eres mi tipo"
+
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "Se han modificado los miembros del Qun con éxito"
+
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "Ha modificado la información Qun con éxito"
+
+#~ msgid "You have successfully created a Qun"
+#~ msgstr "Ha creado un Qun con éxito"
+
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "¿Desea establecer la información detallada ahora?"
+
+#~ msgid "Setup"
+#~ msgstr "Configurar"
+
+#~ msgid "%u requested to join Qun %u for %s"
+#~ msgstr "El usuario %u solicitó entrar en el Qun %u para %s"
+
+#~ msgid "%u request to join Qun %u"
+#~ msgstr "El usuario %u solicitó entrar en el Qun  %u"
+
+#~ msgid "Failed to join Qun %u, operated by admin %u"
+#~ msgstr "No se pudo unir al Qun %u, administrador por %u"
+
+#~ msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
+#~ msgstr ""
+#~ "<b>La unión a Qun %u ha sido aprobada por el administrador %u parar %s</b>"
+
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "<b>Eliminado al amigo %u.</b>"
+
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "<b>El amigo nuevo %u se unió.</b>"
+
+#~ msgid "Unknown-%d"
+#~ msgstr "Desconocido-%d"
+
+#~ msgid "Level"
+#~ msgstr "Nivel"
+
+#~ msgid " VIP"
+#~ msgstr " VIP"
+
+#~ msgid " TCP"
+#~ msgstr " TCP"
+
+#~ msgid " FromMobile"
+#~ msgstr " DeMóvil"
+
+#~ msgid " BindMobile"
+#~ msgstr " AsociarMóvil"
+
+#~ msgid " Video"
+#~ msgstr " Vídeo"
+
+#~ msgid " Zone"
+#~ msgstr "Zona"
+
+#~ msgid "Flag"
+#~ msgstr "Marca"
+
+#~ msgid "Ver"
+#~ msgstr "Ver"
+
+#~ msgid "Invalid name"
+#~ msgstr "Nombre inválido"
+
+#~ msgid "Select icon..."
+#~ msgstr "Seleccione un icono..."
+
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Hora de conexión</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>Amigos conectados actualmente</b>: %d<br>\n"
+
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Última actualización</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>Servidor</b>: %s<br>\n"
+
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>Marca de cliente</b>: %s<br>\n"
+
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>Modo de conexión</b>: %s<br>\n"
+
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>Mi dirección IP:</b> %s:%d<br>\n"
+
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>Enviado</b>: %lu<br>\n"
+
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>Reenviar</b>: %lu<br>\n"
+
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>Perdido</b>: %lu<br>\n"
+
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>Recibido</b>: %lu<br>\n"
+
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>Duplicados recibidos</b>: %lu<br>\n"
+
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>Hora</b>: %d-%d-%d, %d:%d:%d<br>\n"
+
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>IP</b>: %s<br>\n"
+
+#~ msgid "<p><b>Original Author</b>:<br>\n"
+#~ msgstr "<p><b>Autor original</b>:<br>\n"
+
+#~ msgid "<p><b>Code Contributors</b>:<br>\n"
+#~ msgstr "<p><b>Personas que han contribuído código</b>:<br>\n"
+
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<p><b>Encantadores escritores de parches</b>:<br>\n"
+
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<p><b>Agradecimientos</b>:<br>\n"
+
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<p><b>Probadores escrupulosos</b>:<br>\n"
+
+#~ msgid "and more, please let me know... thank you!))"
+#~ msgstr "y más, por favor, háganoslo saber.. ¡gracias!))"
+
+#~ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
+#~ msgstr "<p><i>Y, todos los chicos entre bastidores...</i><br>\n"
+
+#~ msgid "<i>Feel free to join us!</i> :)"
+#~ msgstr "<i>¡Siéntase libre de unirse a nosotros!</i> :)"
+
+#~ msgid "About OpenQ %s"
+#~ msgstr "Acerca de OpenQ %s"
+
+#~ msgid "Change Password"
+#~ msgstr "Cambiar contraseña"
+
+#~ msgid "Account Information"
+#~ msgstr "Información de la cuenta"
+
+#~ msgid "Update all QQ Quns"
+#~ msgstr "Actualizar todos los Quns QQ"
+
+#~ msgid "About OpenQ"
+#~ msgstr "Acerca de OpenQ"
+
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "Modiciar memo de amigo"
+
+#~ msgid "QQ Protocol Plugin"
+#~ msgstr "Complemento de protocolo QQ"
+
+#~ msgid "Auto"
+#~ msgstr "Automático"
+
+#~ msgid "Select Server"
+#~ msgstr "Seleccionar servidor"
+
+#~ msgid "QQ2008"
+#~ msgstr "QQ2008"
+
+#~ msgid "QQ2007"
+#~ msgstr "QQ2007"
+
+#~ msgid "QQ2005"
+#~ msgstr "QQ2005"
+
+#~ msgid "Connect by TCP"
+#~ msgstr "Conectar por TCP"
+
+#~ msgid "Show server notice"
+#~ msgstr "Mostrar notas del servidor"
+
+#~ msgid "Show server news"
+#~ msgstr "Mostrar noticias del servidor"
+
+#~ msgid "Show chat room when msg comes"
+#~ msgstr "Mostrar la sala de chat cuando venga un mensaje"
+
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "Intervalo de comprobación de conexión (segundos)"
+
+#~ msgid "Update interval (seconds)"
+#~ msgstr "Intervalo de actualización (segundos)"
+
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "No se pudo descifrar la respuesta del servidor"
+
+#~ msgid "Failed requesting token, 0x%02X"
+#~ msgstr "Fallo al solicitar el testigo, 0x%02X"
+
+#~ msgid "Invalid token len, %d"
+#~ msgstr "Longitud de token no válida, %d"
+
+#~ msgid "Redirect_EX is not currently supported"
+#~ msgstr "Actualmente no se soporta «Redirect_EX»"
+
+#~ msgid "Activation required"
+#~ msgstr "Es necesaria la activación"
+
+#~ msgid "Unknown reply code when logging in (0x%02X)"
+#~ msgstr "Código de respuesta desconocido al conectarse (0x%02X)"
+
+#~ msgid "Requesting captcha"
+#~ msgstr "Solicitando el «captcha»"
+
+#~ msgid "Checking captcha"
+#~ msgstr "Comprobando el «captcha»"
+
+#~ msgid "Failed captcha verification"
+#~ msgstr "¡Falló la autenticación del «captcha»!"
+
+#~ msgid "Captcha Image"
+#~ msgstr "Imagen captcha"
+
+#~ msgid "Enter code"
+#~ msgstr "Introduzca el código"
+
+#~ msgid "QQ Captcha Verification"
+#~ msgstr "Verificación «Captcha» de QQ"
+
+#~ msgid "Enter the text from the image"
+#~ msgstr "Introduzca el texto de la imagen"
+
+#~ msgid "Unknown reply when checking password (0x%02X)"
+#~ msgstr "Respuesta desconocida al comprobar la contraseña (0x%02X)"
+
+#~ msgid ""
+#~ "Unknown reply code when logging in (0x%02X):\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Respuesta desconocida al conectarse (0x%02X):\n"
+#~ "%s"
+
+#~ msgid "Socket error"
+#~ msgstr "Error de socket"
+
+#~ msgid "Getting server"
+#~ msgstr "Obteniendo el servidor"
+
+#~ msgid "Requesting token"
+#~ msgstr "Solicitando testigo"
+
+#~ msgid "Invalid server or port"
+#~ msgstr "Puerto o servidor no válido"
+
+#~ msgid "Connecting to server"
+#~ msgstr "Conectando con el servidor"
+
+#~ msgid "QQ Error"
+#~ msgstr "Error QQ"
+
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Noticias del servidor:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+
+#~ msgid "%s:%s"
+#~ msgstr "%s:%s"
+
+#~ msgid "From %s:"
+#~ msgstr "De %s:"
+
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr ""
+#~ "Nota del servidor De %s: \n"
+#~ "%s"
+
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "SERVER CMD desconocido"
+
+#~ msgid ""
+#~ "Error reply of %s(0x%02X)\n"
+#~ "Room %u, reply 0x%02X"
+#~ msgstr ""
+#~ "Respuesta de error de %s(0x%02X )\n"
+#~ "Sala %u, respuesta 0x%02X"
+
+#~ msgid "QQ Qun Command"
+#~ msgstr "Orden QQ Qun"
+
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "No se pudo descifrar la respuesta a la solicitud conexión"
+
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "LOGIN CMD desconocido"
+
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "CLIENT CMD desconocido"
+
+#~ msgid "%d has declined the file %s"
+#~ msgstr "%d ha rechazado el archivo %s"
+
+#~ msgid "File Send"
+#~ msgstr "Archivo enviado"
+
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "%d canceló la transferencia de %s"
+
+#~ msgid "Voice and Video Settings"
+#~ msgstr "Configuración de voz y vídeo"
+
 #~ msgid "Automatically reject from users not in buddy list"
 #~ msgstr ""
 #~ "Rechazar automáticamente las transferencias de usuarios que no están en "
@@ -15783,10 +15930,6 @@ msgstr "No tiene permisos para desinstalar esta aplicación."
 
 #~ msgid "How do you feel right now?"
 #~ msgstr "¿Cómo se encuentra justo ahora?"
-
-#, fuzzy
-#~ msgid "Change Mood..."
-#~ msgstr "Cambiar su estado de ánimo..."
 
 #~ msgid "Pager server"
 #~ msgstr "Servidor buscapersonas"

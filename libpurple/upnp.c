@@ -464,7 +464,7 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 	purple_timeout_remove(dd->tima);
 	dd->tima = 0;
 
-	purple_util_fetch_url_request_len(descriptionURL, TRUE, NULL, TRUE, httpRequest,
+	purple_util_fetch_url_request_len(NULL, descriptionURL, TRUE, NULL, TRUE, httpRequest,
 			TRUE, MAX_UPNP_DOWNLOAD, upnp_parse_description_cb, dd);
 
 	g_free(httpRequest);
@@ -535,7 +535,7 @@ purple_upnp_discover_timeout(gpointer data)
 		dd->retry_count++;
 		purple_upnp_discover_send_broadcast(dd);
 	} else {
-		if (dd->fd)
+		if (dd->fd != -1)
 			close(dd->fd);
 
 		control_info.status = PURPLE_UPNP_STATUS_UNABLE_TO_DISCOVER;
@@ -662,7 +662,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 	}
 
 	/* Set up the sockets */
-	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	dd->fd = sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1) {
 		purple_debug_error("upnp",
 			"purple_upnp_discover(): Failed In sock creation\n");
@@ -671,8 +671,6 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
-
-	dd->fd = sock;
 
 	/* TODO: Non-blocking! */
 	if((hp = gethostbyname(HTTPMU_HOST_ADDRESS)) == NULL) {
@@ -732,7 +730,7 @@ purple_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gfud = purple_util_fetch_url_request_len(control_info.control_url, FALSE, NULL, TRUE,
+	gfud = purple_util_fetch_url_request_len(NULL, control_info.control_url, FALSE, NULL, TRUE,
 				totalSendMessage, TRUE, MAX_UPNP_DOWNLOAD, cb, cb_data);
 
 	g_free(totalSendMessage);
@@ -746,7 +744,7 @@ purple_upnp_get_public_ip()
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
 			&& control_info.publicip
-			&& strlen(control_info.publicip) > 0)
+			&& *control_info.publicip)
 		return control_info.publicip;
 
 	/* Trigger another UPnP discovery if 5 minutes have elapsed since the
@@ -805,7 +803,7 @@ purple_upnp_get_internal_ip(void)
 {
 	if (control_info.status == PURPLE_UPNP_STATUS_DISCOVERED
 			&& control_info.internalip
-			&& strlen(control_info.internalip) > 0)
+			&& *control_info.internalip)
 		return control_info.internalip;
 
 	/* Trigger another UPnP discovery if 5 minutes have elapsed since the
@@ -820,7 +818,7 @@ purple_upnp_get_internal_ip(void)
 static void
 looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 {
-	if (source) {
+	if (source != -1) {
 		strncpy(control_info.internalip,
 			purple_network_get_local_system_ip(source),
 			sizeof(control_info.internalip));

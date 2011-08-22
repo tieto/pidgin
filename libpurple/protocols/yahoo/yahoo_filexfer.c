@@ -1428,7 +1428,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 
 	unix_time = time(NULL);
 	time_str = ctime(&unix_time);
-	strcpy(time_str + strlen(time_str) - 1, "\0");
+	time_str[strlen(time_str) - 1] = '\0';
 
 	if (xd->txbuflen == 0)	{
 		xd->txbuf = g_strdup_printf("HTTP/1.0 200 OK\r\n"
@@ -1660,6 +1660,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 	if(val_222 == 3)
 	{
+		PurpleAccount *account;
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
 								   xfer_peer_idstring);
 		if(!xfer)
@@ -1679,14 +1680,17 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 			return;
 		}
 
+		account = purple_connection_get_account(gc);
 		if (yd->jp)
 		{
-			purple_dnsquery_a(YAHOOJP_XFER_RELAY_HOST, YAHOOJP_XFER_RELAY_PORT,
+			purple_dnsquery_a_account(account, YAHOOJP_XFER_RELAY_HOST,
+							YAHOOJP_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}
 		else
 		{
-			purple_dnsquery_a(YAHOO_XFER_RELAY_HOST, YAHOO_XFER_RELAY_PORT,
+			purple_dnsquery_a_account(account, YAHOO_XFER_RELAY_HOST,
+							YAHOO_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}
 		return;
@@ -1784,7 +1788,6 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	char *xfer_idstring_for_relay = NULL;
 	GSList *l;
 	struct yahoo_packet *pkt_to_send;
-	PurpleAccount *account;
 	struct yahoo_p2p_data *p2p_data;
 
 	yd = gc->proto_data;
@@ -1838,7 +1841,8 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 
 	xfer_data->info_val_249 = val_249;
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
-	if(val_249 == 1 || val_249 == 3)	{
+	if(val_249 == 1 || val_249 == 3) {
+		PurpleAccount *account;
 		if (!purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL)) {
 			purple_xfer_cancel_remote(xfer);
 			return;

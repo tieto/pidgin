@@ -107,6 +107,10 @@
 #define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been received and processed */
 
 
+/* Maximum number of search results */
+#define		MXIT_SEARCHRESULTS_MAX		30
+
+
 /* define this to enable the link clicking support */
 #define		MXIT_LINK_CLICK
 
@@ -162,7 +166,8 @@ struct MXitSession {
 	struct tx_queue		queue;						/* transmit packet queue (FIFO mode) */
 	gint64				last_tx;					/* timestamp of last packet sent */
 	int					outack;						/* outstanding ack packet */
-	guint				q_timer;					/* timer handler for managing queue */
+	guint				q_slow_timer_id;			/* timer handle for slow tx queue */
+	guint				q_fast_timer_id;			/* timer handle for fast tx queue */
 
 	/* receive */
 	char				rx_lbuf[16];				/* receive byte buffer (socket packet length) */
@@ -172,6 +177,7 @@ struct MXitSession {
 	char				rx_state;					/* current receiver state */
 	gint64				last_rx;					/* timestamp of last packet received */
 	GList*				active_chats;				/* list of all our contacts we received messages from (active chats) */
+	GList*				invites;					/* list of all the invites that we have received */
 
 	/* groupchat */
 	GList*				rooms;						/* active groupchat rooms */
@@ -185,7 +191,7 @@ char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );
 
 #ifdef	MXIT_LINK_CLICK
-void mxit_register_uri_handler(void);
+void mxit_register_uri_handler( void );
 #endif
 
 

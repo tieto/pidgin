@@ -94,7 +94,7 @@ bonjour_login(PurpleAccount *account)
 
 #ifdef _WIN32
 	if (!dns_sd_available()) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
 				  "http://d.pidgin.im/BonjourWindows for more information."));
@@ -114,7 +114,7 @@ bonjour_login(PurpleAccount *account)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to listen for incoming IM connections"));
 		return;
@@ -141,7 +141,7 @@ bonjour_login(PurpleAccount *account)
 	bd->dns_sd_data->account = account;
 	if (!bonjour_dns_sd_start(bd->dns_sd_data))
 	{
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to establish connection with the local mDNS server.  Is it running?"));
 		return;
@@ -371,9 +371,12 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	else
 		status_description = purple_status_get_name(status);
 
-	purple_notify_user_info_add_pair(user_info, _("Status"), status_description);
-	if (message != NULL)
-		purple_notify_user_info_add_pair(user_info, _("Message"), message);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status_description);
+	if (message != NULL) {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Message"), message);
+	}
 
 	if (bb == NULL) {
 		purple_debug_error("bonjour", "Got tooltip request for a buddy without protocol data.\n");
@@ -382,20 +385,35 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 
 	/* Only show first/last name if there is a nickname set (to avoid duplication) */
 	if (bb->nick != NULL && *bb->nick != '\0') {
-		if (bb->first != NULL && *bb->first != '\0')
-			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
-		if (bb->last != NULL && *bb->last != '\0')
-			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
+		if (bb->first != NULL && *bb->first != '\0') {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("First name"), bb->first);
+		}
+		if (bb->last != NULL && *bb->last != '\0') {
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Last name"), bb->last);
+		}
 	}
 
-	if (bb->email != NULL && *bb->email != '\0')
-		purple_notify_user_info_add_pair(user_info, _("Email"), bb->email);
+	if (bb->email != NULL && *bb->email != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Email"), bb->email);
+	}
 
-	if (bb->AIM != NULL && *bb->AIM != '\0')
-		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
+	if (bb->AIM != NULL && *bb->AIM != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("AIM Account"), bb->AIM);
+	}
 
-	if (bb->jid != NULL && *bb->jid != '\0')
-		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
+	if (bb->jid != NULL && *bb->jid != '\0') {
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("XMPP Account"), bb->jid);
+	}
 }
 
 static void

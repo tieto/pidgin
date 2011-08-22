@@ -147,7 +147,7 @@ purple_base16_decode(const char *str, gsize *ret_len)
 
 	len = strlen(str);
 
-	g_return_val_if_fail(strlen(str) > 0, 0);
+	g_return_val_if_fail(*str, 0);
 	g_return_val_if_fail(len % 2 == 0,    0);
 
 	data = g_malloc(len / 2);
@@ -612,7 +612,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	}
 	else
 	{
-		purple_strlcpy(buf, utf8);
+		g_strlcpy(buf, utf8, sizeof(buf));
 		g_free(utf8);
 	}
 
@@ -712,6 +712,8 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		*rest = NULL;
 
 	g_return_val_if_fail(timestamp != NULL, 0);
+
+	memset(&t, 0, sizeof(struct tm));
 
 	str = timestamp;
 
@@ -1319,7 +1321,7 @@ purple_markup_extract_info_field(const char *str, int len, PurpleNotifyUserInfo 
 				g_string_append_len(dest, p, q - p);
 		}
 
-		purple_notify_user_info_add_pair(user_info, display_name, dest->str);
+		purple_notify_user_info_add_pair_html(user_info, display_name, dest->str);
 		g_string_free(dest, TRUE);
 
 		return TRUE;
@@ -2265,7 +2267,7 @@ purple_markup_linkify(const char *text)
 					url_buf = g_string_free(gurl_buf, FALSE);
 
 					/* strip off trailing periods */
-					if (strlen(url_buf) > 0) {
+					if (*url_buf) {
 						for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
 							*d = '\0';
 					}
@@ -4106,25 +4108,14 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
+	return purple_util_fetch_url_request_len(NULL, url, full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
 }
 
 PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
-			user_agent, http11, request, include_headers, max_len, callback,
-			user_data);
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+purple_util_fetch_url_request_len(PurpleAccount *account,
 		const char *url, gboolean full,	const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
@@ -4939,18 +4930,6 @@ purple_escape_filename(const char *str)
 	buf[j] = '\0';
 
 	return buf;
-}
-
-const char *_purple_oscar_convert(const char *act, const char *protocol)
-{
-	if (act && purple_strequal(protocol, "prpl-oscar")) {
-		int i;
-		for (i = 0; act[i] != '\0'; i++)
-			if (!isdigit(act[i]))
-				return "prpl-aim";
-		return "prpl-icq";
-	}
-	return protocol;
 }
 
 void purple_restore_default_signal_handlers(void)

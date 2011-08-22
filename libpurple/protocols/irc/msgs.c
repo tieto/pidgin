@@ -352,44 +352,40 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	tmp = g_strdup_printf("%s%s%s", tmp2,
 				(irc->whois.ircop ? _(" <i>(ircop)</i>") : ""),
 				(irc->whois.identified ? _(" <i>(identified)</i>") : ""));
-	purple_notify_user_info_add_pair(user_info, _("Nick"), tmp);
+	purple_notify_user_info_add_pair_html(user_info, _("Nick"), tmp);
 	g_free(tmp2);
 	g_free(tmp);
 
 	if (irc->whois.away) {
-		tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Away"), irc->whois.away);
 		g_free(irc->whois.away);
-		purple_notify_user_info_add_pair(user_info, _("Away"), tmp);
-		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
-		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
-		g_free(irc->whois.name);
-		purple_notify_user_info_add_pair(user_info, _("Username"), irc->whois.userhost);
-		purple_notify_user_info_add_pair(user_info, _("Real name"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Username"), irc->whois.userhost);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Real name"), irc->whois.name);
 		g_free(irc->whois.userhost);
-		g_free(tmp);
+		g_free(irc->whois.name);
 	}
 	if (irc->whois.server) {
 		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
-		purple_notify_user_info_add_pair(user_info, _("Server"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Server"), tmp);
 		g_free(tmp);
 		g_free(irc->whois.server);
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		purple_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels->str);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Currently on"), irc->whois.channels->str);
 		g_string_free(irc->whois.channels, TRUE);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = purple_str_seconds_to_string(irc->whois.idle);
-		purple_notify_user_info_add_pair(user_info, _("Idle for"), timex);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Idle for"), timex);
 		g_free(timex);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_plaintext(user_info,
 														_("Online since"), purple_date_format_full(localtime(&irc->whois.signon)));
 	}
-	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
-		purple_notify_user_info_add_pair(user_info,
+	if (!strcmp(irc->whois.nick, "elb")) {
+		purple_notify_user_info_add_pair_plaintext(user_info,
 																   _("<b>Defining adjective:</b>"), _("Glorious"));
 	}
 
@@ -409,14 +405,21 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		PurpleConvChat *chat;
 		PurpleConvChatBuddy *cb;
 		
-		char *userhost, *realname;
+		char *cur, *userhost, *realname;
 		
 		PurpleConvChatBuddyFlags flags;
 		GList *keys = NULL, *values = NULL;
-		
+
+		if (!args || !args[0] || !args[1] || !args[2] || !args[3]
+		    || !args[4] || !args[5] || !args[6] || !args[7]) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc",
+				     "Got a WHO response with not enough arguments\n");
+			return;
+		}
+
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
 		if (!conv) {
-			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s, which doesn't exist\n", args[1]);
+			purple_debug(PURPLE_DEBUG_ERROR, "irc","Got a WHO response for %s, which doesn't exist\n", args[1]);
 			return;
 		}
 
@@ -429,7 +432,16 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		chat = PURPLE_CONV_CHAT(conv);
 		
 		userhost = g_strdup_printf("%s@%s", args[2], args[3]);
-		realname = g_strdup(args[8]);
+
+		/* The final argument is a :-argument, but annoyingly
+		 * contains two "words", the hop count and real name. */
+		for (cur = args[7]; *cur; cur++) {
+			if (*cur == ' ') {
+				cur++;
+				break;
+			}
+		}
+		realname = g_strdup(cur);
 		
 		keys = g_list_prepend(keys, "userhost");
 		values = g_list_prepend(values, userhost);
@@ -445,7 +457,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		g_free(userhost);
 		g_free(realname);
 		
-		flags = purple_conv_chat_user_get_flags(chat, cb->name);
+		flags = cb->flags;
 
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
 			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
@@ -587,7 +599,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			else
 				purple_conv_im_write(PURPLE_CONV_IM(convo), "", msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
-		} else {
+		} else if (cur != NULL) {
 			GList *users = NULL;
 			GList *flags = NULL;
 
@@ -1059,7 +1071,7 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
 
 	} else {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 				  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}

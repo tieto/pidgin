@@ -1,27 +1,234 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.8.0 (??/??/????):
-	General:
-	* Implement simple silence suppression for voice calls, preventing wasted
-	  bandwidth for silent periods during a call. (Jakub Adam) (half of #13180)
+version 3.0.0 (??/??/????):
+	AIM and ICQ:
+	* Make buddy list management code more efficient. (Oliver) (#4816)
+	* Don't try to format ICQ usernames entered as email addresses.
+	  Gets rid of an "Unable to format username" error at login. (#13883)
 
-	Gadu-Gadu:
-	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
+	MXit:
+	* Remove all reference to Hidden Number.
+	* Fix decoding of font-size changes in the markup of received messages.
+	* Ignore new invites to join a GroupChat if you're already joined, or
+	  still have a pending invite.
+	* The buddy's name was not centered vertically in the buddy-list if they
+	  did not have a status-message or mood set.
+
+version 2.10.0 (08/18/2011):
+	Pidgin:
+	* Make the max size of incoming smileys a pref instead of hardcoding it.
+	  (Quentin Brandon) (#5231)
+	* Added a plugin information dialog to show information for plugins
+	  that aren't otherwise visible in the plugins dialog.
+	* Fix building with GTK+ earlier than 2.14.0 (GTK+ 2.10 is still the
+	  minimum supported) (#14261)
 
 	libpurple:
-	* media: Allow obtaining active local and remote candidates. (#11830)
-	* media: Allow getting/setting video capabilities. (Jakub Adam) (half of
-	  #13095)
-	* Simple Silence Suppression is optional per-account. (Jakub Adam) (half
-	  of #13180)
-	* Fix purple-url-handler being unable to find an account.
+	* Fix a potential crash in the Log Reader plugin when reading QIP logs.
+	* Fix a large number of strcpy() and strcat() invocations to use
+	  strlcpy() and strlcat(), etc., forestalling an entire class of
+	  string buffer overrun bugs.
+	  (The Electronic Frontier Foundation, Dan Auerbach, Chris Palmer,
+	  Jacob Appelbaum)
+	* Change some filename manipulations in filectl.c to use MAXPATHLEN
+	  instead of arbitrary length constants.  (The Electronic Frontier
+	  Foundation, Dan Auerbach, Chris Palmer, Jacob Appelbaum)
+	* Fix endianness-related crash in NTLM authentication (Jon Goldberg)
+	  (#14163)
+
+	Gadu-Gadu:
+	* Fixed searching for buddies in public directory. (Tomasz Wasilczyk)
+	  (#5242)
+	* Better status message handling. (Tomasz Wasilczyk) (#14314)
+	* Merged two buddy blocking methods. (Tomasz Wasilczyk) (#5303)
+	* Fix building of the bundled libgadu library with older versions
+	  of GnuTLS. (patch plucked from upstream) (#14365)
+
+	ICQ:
+	* Fix crash selecting Tools->Set Mood when you're online with an
+	  ICQ account that is configured as an AIM account. (#14437)
+
+	IRC:
+	* Fix a crash when remote users have certain characters in their
+	  nicknames. (Discovered by Djego Ibanez) (#14341)
+	* Fix the handling of formatting following mIRC ^O (#14436)
+	* Fix crash when NAMES is empty. (James McLaughlin) (#14518)
+
+	MSN:
+	* Fix incorrect handling of HTTP 100 responses when using the HTTP
+	  connection method.  This can lead to a crash. (Discovered by Marius
+	  Wachtler)
+	* Fix seemingly random crashing. (#14307)
+	* Fix a crash when the account is disconnected at the time we are doing a
+	  SB request. (Hanzz, ported by shlomif) (#12431)
+
+	XMPP:
+	* Do not generate malformed XML ("</>") when setting an empty mood.
+	  (#14342)
+	* Fix the /join <room> behavior.  (Broken when adding support for
+	  <room>@<server>)  (#14205)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Fix coming out of idle while in an unavailable state
+	* Fix logging into Yahoo! JAPAN.  (#14259)
+
+	Windows-Specific Changes:
+	* Open an explorer.exe window at the location of the file when clicking
+	  on a file link instead of executing the file, because executing a file
+	  can be potentially dangerous.  (Discovered by James Burton of
+	  Insomnia Security) (Fixed by Eion Robb)
+
+version 2.9.0 (06/23/2011):
+	Pidgin:
+	* Fix a potential remote denial-of-service bug related to displaying
+	  buddy icons.
+	* Significantly improved performance of larger IRC channels (regression
+	  introduced in 2.8.0).
+	* Fix Conversation->Add on AIM and MSN.
+	* Entries in the chat user list are sorted properly again.  This was
+	  inadvertenly broken in 2.8.0.
+
+	Finch:
+	* Fix logging in to ICQ.
+
+	libpurple:
+	* media: Actually use the specified TCP port from the TURN configuration to
+	  create a TCP relay candidate.
+
+	AIM and ICQ:
+	* Fix crashes on some non-mainstream OSes when attempting to
+	  printf("%s", NULL).  (Clemens Huebner) (#14297)
+
+	Plugins:
+	* The Evolution Integration plugin compiles again.
+
+version 2.8.0 (06/07/2011):
+	General:
+	* Implement simple silence suppression for voice calls, preventing
+	  wasted bandwidth for silent periods during a call. (Jakub Adam)
+	  (half of #13180)
+	* Added the DigiCert High Assurance CA-3 intermediate CA, needed for
+	  validation of the Facebook XMPP interface's certificate.
+	* Removed the QQ protocol plugin.  It hasn't worked in a long time and
+	  isn't being maintained, therefore we no longer want it.
 
 	Pidgin:
 	* Duplicate code cleanup.  (Gabriel Schulhof) (#10599)
+	* Voice/Video call window adapts correctly to adding or removing
+	  streams on the fly. (Jakub Adam) (half of #13535)
+	* Don't cancel an ongoing call when rejecting the addition of a
+	  stream to the existing call. (Jakub Adam) (#13537)
+	* Pidgin plugins can now override tab completion and detect clicks on
+	  usernames in the chat userlist. (kawaii.neko) (#12599)
+	* Fix the tooltip being destroyed when it is full of information and
+	  cover the mouse (dliang) (#10510)
+
+	libpurple:
+	* media: Allow obtaining active local and remote candidates. (Jakub
+	  Adam) (#11830)
+	* media: Allow getting/setting video capabilities. (Jakub Adam) (half
+	  of #13095)
+	* Simple Silence Suppression is optional per-account. (Jakub Adam)
+	  (half of #13180)
+	* Fix purple-url-handler being unable to find an account.
+	* media: Allow adding/removing streams on the fly. (Jakub Adam)
+	  (half of #13535)
+	* Support new connection states in NetworkManager 0.9. (Dan Williams)
+	  (#13505)
+	* When removing a buddy, delete the pounces associated with it.
+	  (Kartik Mohta) (#1131)
+	* media: Allow libpurple and plugins to set SDES properties for RTP
+	  conferences. (Jakub Adam) (#12981)
+	* proxy: Add new "Tor/Privacy" proxy type that can be used to
+	  restrict operations that could leak potentially sensitive data
+	  (e.g. DNS queries).  (#11110, #13928)
+	* media: Add support for using TCP relaying with TURN (will only work with
+	  libnice 0.1.0 and later).
+
+	AIM:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
+
+	Gadu-Gadu:
+	* Allow showing your status only to buddies. (Mateusz Piękos) (#13358)
+	* Updated internal libgadu to version 1.10.1. (Robert Matusewicz,
+	  Krzysztof Klinikowski) (#13525)
+	* Updated internal libgadu to version 1.11.0. (Tomasz Wasilczyk)
+	  (#14248)
+	* Suppress blank messages that happen when receiving inline
+	  images. (Tomasz Wasilczyk) (#13554)
+	* Fix sending inline images to remote users, don't crash when
+	  trying to send large (> 256kB) images. (Tomasz Wasilczyk) (#13580)
+	* Support typing notifications. (Jan Zachorowski, Tomasz Wasilczyk,
+	  Krzysztof Klinikowski) (#13362, #13590)
+	* Require libgadu 1.11.0 to avoid using internal libgadu.
+	* Optional SSL connection support for GNUTLS users (not on Windows
+	  yet!). (Tomasz Wasilczyk) (#13613, #13894)
+	* Don't count received messages or statuses when determining whether
+	  to send a keepalive packet. (Jan Zachorowski) (#13699)
+	* Fix a crash when receiving images on Windows or an incorrect
+	  timestamp in the log when receiving images on Linux. (Tomasz
+	  Wasilczyk) (#10268)
+	* Support XML events, resulting in immediate update of other users'
+	  buddy icons. (Tomasz Wasilczyk) (#13739)
+	* Accept poorly formatted URLs from other third-party clients in
+	  the same manner as the official client.  (Tomasz Wasilczyk)
+	  (#13886)
+
+	ICQ:
+	* Fix setting icons with dimensions greater than 64x64 pixels by scaling
+	  them down to at most 64x64. (#12874, #13165)
+	* Fix unsetting your mood when "None" is selected.  (Dustin Gathmann)
+	  (#11895)
+	* Ignore Daylight Saving Time when performing calculations related to
+	  birthdays. (Dustin Gathmann) (#13533)
+	* It is now possible to specify multiple encodings on the Advanced
+	  tab of an ICQ account's settings by using a comma-delimited list.
+	  (Dmitry Utkin) (#13496)
+
+	IRC:
+	* Add "authserv" service command.  (tomos) (#13337)
+
+	MSN:
+	* Fix a hard-to-exploit crash in the MSN protocol when using the
+	  HTTP connection method (Reported by Marius Wachtler).
+
+	MXit:
+	* Support for an Invite Message when adding a buddy.
+	* Fixed bug in splitting-up of messages that contain a lot of links.
+	* Fixed crash caused by timer not being disabled on disconnect.
+	  (introduced in 2.7.11)
+	* Clearing of the conversation window now works.
+	* When receiving an invite you can display the sender's profile
+	  information, avatar image, invite message.
+	* The Change PIN option was moved into separate action.
+	* New profile attributes added and shown.
+	* Update to protocol v6.3.
+	* Added the ability to view and invite your Suggested Friends,
+	  and to search for contacts.
+	* Also display the Status Message of offline contacts in their
+	  profile information.
+
+	XMPP:
+	* Remember the previously entered user directory when searching.
+	  (Keith Moyer) (#12451)
+	* Correctly handle a buddy's unsetting his/her vCard-based avatar.
+	  (Matthew W.S. Bell) (#13370)
+	* Squash one more situation that resulted in duplicate entries in
+	  the roster (this one where the server reports the buddy as being
+	  in the same (empty) group.  (Reported by Danny Mayer)
+
+	Plugins:
+	* The Voice/Video Settings plugin now includes the ability to test
+	  microphone settings. (Jakub Adam) (#13182)
+	* Fix a crash when handling some saved settings in the Voice/Video
+	  Settings plugin. (Pat Erley) (13290, #13774)
 
 	Windows-Specific Changes:
-	* Fix building libpurple with Visual C++ .NET 2005. This was accidentally
-	  broken in 2.7.11. (Florian Quèze)
+	* Fix building libpurple with Visual C++ .NET 2005. This was
+	  accidentally broken in 2.7.11. (Florian Quèze)
+	* Build internal libgadu using packed structs, fixing several
+	  long-standing Gadu-Gadu issues. (#11958, #6297)
 
 version 2.7.11 (03/10/2011):
 	General:

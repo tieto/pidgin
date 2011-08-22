@@ -413,7 +413,7 @@ static int mw_session_io_write(struct mwSession *session,
 			g_strerror(errno));
     DEBUG_ERROR("write returned %" G_GSSIZE_FORMAT ", %" G_GSIZE_FORMAT
 			" bytes left unwritten\n", ret, len);
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    tmp);
 	g_free(tmp);
@@ -861,7 +861,7 @@ static PurpleBuddy *buddy_ensure(PurpleConnection *gc, PurpleGroup *group,
   enum mwSametimeUserType type = mwSametimeUser_getType(stuser);
 
   g_return_val_if_fail(id != NULL, NULL);
-  g_return_val_if_fail(strlen(id) > 0, NULL);
+  g_return_val_if_fail(*id, NULL);
 
   buddy = purple_find_buddy_in_group(acct, id, group);
   if(! buddy) {
@@ -921,6 +921,11 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
   name = mwSametimeGroup_getName(stgroup);
   alias = mwSametimeGroup_getAlias(stgroup);
   type = mwSametimeGroup_getType(stgroup);
+
+  if (!name) {
+    DEBUG_WARN("Can't ensure a null group\n");
+    return NULL;
+  }
 
   DEBUG_INFO("attempting to ensure group %s, called %s\n",
 	     NSTR(name), NSTR(alias));
@@ -1608,7 +1613,7 @@ static void mw_session_stateChange(struct mwSession *session,
       default:
         reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
       }
-      purple_connection_error_reason(gc, reason, err);
+      purple_connection_error(gc, reason, err);
       g_free(err);
     }
     break;
@@ -1757,7 +1762,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
   if(! ret) {
     DEBUG_INFO("connection reset\n");
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Server closed the connection"));
 
@@ -1768,7 +1773,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     DEBUG_INFO("error in read callback: %s\n", err_str);
 
     msg = g_strdup_printf(_("Lost connection with server: %s"), err_str);
-    purple_connection_error_reason(pd->gc,
+    purple_connection_error(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    msg);
     g_free(msg);
@@ -1794,7 +1799,7 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
       /* this is a regular connect, error out */
       gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
           error_message);
-      purple_connection_error_reason(pd->gc,
+      purple_connection_error(pd->gc,
                                      PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                      tmp);
       g_free(tmp);
@@ -3329,23 +3334,21 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   status = status_text(b);
 
   if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
-    tmp = g_markup_escape_text(message, -1);
-	purple_notify_user_info_add_pair(user_info, status, tmp);
-    g_free(tmp);
+	purple_notify_user_info_add_pair_plaintext(user_info, status, message);
 
   } else {
-	purple_notify_user_info_add_pair(user_info, _("Status"), status);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status);
   }
 
   if(full && pd != NULL) {
     tmp = user_supports_text(pd->srvc_aware, purple_buddy_get_name(b));
     if(tmp) {
-	  purple_notify_user_info_add_pair(user_info, _("Supports"), tmp);
+	  purple_notify_user_info_add_pair_plaintext(user_info, _("Supports"), tmp);
       g_free(tmp);
     }
 
     if(buddy_is_external(b)) {
-	  purple_notify_user_info_add_pair(user_info, NULL, _("External User"));
+	  purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("External User"));
     }
   }
 }
@@ -3686,7 +3689,7 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
   const char *msg = _("No Sametime Community Server specified");
-  purple_connection_error_reason(gc,
+  purple_connection_error(gc,
                                  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
                                  msg);
 }
@@ -3801,7 +3804,7 @@ static void mw_prpl_login(PurpleAccount *account) {
   purple_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
   if (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL) {
-    purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+    purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Unable to connect"));
   }
 }
@@ -4195,46 +4198,47 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
   user_info = purple_notify_user_info_new();
 
   if(purple_str_has_prefix(who, "@E ")) {
-	purple_notify_user_info_add_pair(user_info, _("External User"), NULL);
+	purple_notify_user_info_add_pair_html(user_info, _("External User"), NULL);
   }
 
-  purple_notify_user_info_add_pair(user_info, _("User ID"), who);
+  purple_notify_user_info_add_pair_plaintext(user_info, _("User ID"), who);
 
   if(b) {
     guint32 type;
 
     if(purple_buddy_get_server_alias(b)) {
-		purple_notify_user_info_add_pair(user_info, _("Full Name"), purple_buddy_get_server_alias(b));
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Full Name"), purple_buddy_get_server_alias(b));
     }
 
     type = purple_blist_node_get_int((PurpleBlistNode *) b, BUDDY_KEY_CLIENT);
     if(type) {
-	  tmp = g_strdup(mw_client_name(type));
-	  if (!tmp)
+	  tmp2 = mw_client_name(type);
+	  if (tmp2) {
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Last Known Client"), tmp2);
+	  } else {
 		tmp = g_strdup_printf(_("Unknown (0x%04x)<br>"), type);
-
-	  purple_notify_user_info_add_pair(user_info, _("Last Known Client"), tmp);
-
-	  g_free(tmp);
+		purple_notify_user_info_add_pair_html(user_info, _("Last Known Client"), tmp);
+	    g_free(tmp);
+	  }
     }
   }
 
   tmp = user_supports_text(pd->srvc_aware, who);
   if(tmp) {
-	purple_notify_user_info_add_pair(user_info, _("Supports"), tmp);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Supports"), tmp);
 	g_free(tmp);
   }
 
   if(b) {
-	purple_notify_user_info_add_pair(user_info, _("Status"), status_text(b));
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), status_text(b));
 
 	/* XXX Is this adding a status message in its own section rather than with the "Status" label? */
     tmp2 = mwServiceAware_getText(pd->srvc_aware, &idb);
     if(tmp2 && g_utf8_validate(tmp2, -1, NULL)) {
-      tmp = g_markup_escape_text(tmp2, -1);
 	  purple_notify_user_info_add_section_break(user_info);
-	  purple_notify_user_info_add_pair(user_info, NULL, tmp);
-      g_free(tmp);
+	  purple_notify_user_info_add_pair_plaintext(user_info, NULL, tmp2);
     }
   }
 

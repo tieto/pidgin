@@ -74,7 +74,7 @@
 
 
 /* MXit contact flags */
-#define		MXIT_CFLAG_HIDDEN			0x02
+//#define		MXIT_CFLAG_HIDDEN			0x02		/* (DEPRECATED) */
 #define		MXIT_CFLAG_GATEWAY			0x04
 #define		MXIT_CFLAG_FOCUS_SEND_BLANK	0x20000
 
@@ -96,7 +96,7 @@
 /* client protocol constants */
 #define		MXIT_CP_MAX_JID_LEN			64
 #define		MXIT_CP_MAX_GROUP_LEN		32
-#define		MXIT_CP_MAX_ALIAS_LEN		48
+#define		MXIT_CP_MAX_ALIAS_LEN		100
 
 #define		MXIT_DEFAULT_GROUP			"MXit"
 
@@ -106,8 +106,8 @@
  */
 struct contact {
 	char		username[MXIT_CP_MAX_JID_LEN+1];	/* unique contact name (with domain) */
-	char		alias[MXIT_CP_MAX_GROUP_LEN+1];		/* contact alias (what will be seen) */
-	char		groupname[MXIT_CP_MAX_ALIAS_LEN+1];	/* contact group name */
+	char		alias[MXIT_CP_MAX_ALIAS_LEN+1];		/* contact alias (what will be seen) */
+	char		groupname[MXIT_CP_MAX_GROUP_LEN+1];	/* contact group name */
 
 	short		type;								/* contact type */
 	short		mood;								/* contact current mood */
@@ -121,6 +121,10 @@ struct contact {
 	char		customMood[16];						/* custom mood */
 	char*		statusMsg;							/* status message */
 	char*		avatarId;							/* avatarId */
+
+	/* invites only */
+	void*		profile;							/* user's profile (if available) */
+	int			imgid;								/* avatar image id in the imgstore */
 };
 
 /* Presence / Status */
@@ -140,9 +144,10 @@ void mxit_update_buddy_avatar( struct MXitSession* session, const char* username
 void mxit_new_subscription( struct MXitSession* session, struct contact* contact );
 void mxit_update_blist( struct MXitSession* session );
 gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* username );
+struct contact* get_mxit_invite_contact( struct MXitSession* session, const char* username );
 
 /* libPurple callbacks */
-void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
+void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group, const char* message );
 void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group );
 void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias );
 void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_group, const char* new_group );

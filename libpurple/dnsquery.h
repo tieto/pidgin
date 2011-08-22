@@ -58,7 +58,8 @@ typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, c
  */
 typedef struct
 {
-	/** If implemented, the UI is responsible for DNS queries */
+	/** If implemented, return TRUE if the UI takes responsibility for DNS
+	  * queries. When returning FALSE, the standard implementation is used. */
 	gboolean (*resolve_host)(PurpleDnsQueryData *query_data,
 	                         PurpleDnsQueryResolvedCallback resolved_cb,
 	                         PurpleDnsQueryFailedCallback failed_cb);
@@ -87,6 +88,7 @@ extern "C" {
 /**
  * Perform an asynchronous DNS query.
  *
+ * @param account the account that the query is being done for (or NULL)
  * @param hostname The hostname to resolve.
  * @param port     A port number which is stored in the struct sockaddr.
  * @param callback The callback function to call after resolving.
@@ -95,8 +97,28 @@ extern "C" {
  * @return NULL if there was an error, otherwise return a reference to
  *         a data structure that can be used to cancel the pending
  *         DNS query, if needed.
+ *
+ * @since 2.8.0
+ */
+PurpleDnsQueryData *purple_dnsquery_a_account(PurpleAccount *account, const char *hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data);
+
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_DNSQUERY_C_)
+/**
+ * Perform an asynchronous DNS query.
+ *
+ * @param hostname The hostname to resolve.
+ * @param port     A port number which is stored in the struct sockaddr.
+ * @param callback The callback function to call after resolving.
+ * @param data     Extra data to pass to the callback function.
+ *
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
+ *
+ * @deprecated Use purple_dnsquery_a_account instead
  */
 PurpleDnsQueryData *purple_dnsquery_a(const char *hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data);
+#endif
 
 /**
  * Cancel a DNS query and destroy the associated data structure.

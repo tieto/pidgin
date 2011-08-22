@@ -71,6 +71,10 @@
 #include <dbus/dbus-glib.h>
 #include <NetworkManager.h>
 
+#if !defined(NM_CHECK_VERSION)
+#define NM_CHECK_VERSION(x,y,z) 0
+#endif
+
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
 static DBusGProxy *dbus_proxy = NULL;
@@ -863,7 +867,13 @@ nm_update_state(NMState state)
 
 	switch(state)
 	{
+#if NM_CHECK_VERSION(0,8,992)
+		case NM_STATE_CONNECTED_LOCAL:
+		case NM_STATE_CONNECTED_SITE:
+		case NM_STATE_CONNECTED_GLOBAL:
+#else
 		case NM_STATE_CONNECTED:
+#endif
 			/* Call res_init in case DNS servers have changed */
 			res_init();
 			/* update STUN IP in case we it changed (theoretically we could
@@ -880,6 +890,9 @@ nm_update_state(NMState state)
 		case NM_STATE_ASLEEP:
 		case NM_STATE_CONNECTING:
 		case NM_STATE_DISCONNECTED:
+#if NM_CHECK_VERSION(0,8,992)
+		case NM_STATE_DISCONNECTING:
+#endif
 			if (prev != NM_STATE_CONNECTED && prev != NM_STATE_UNKNOWN)
 				break;
 			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
@@ -978,7 +991,7 @@ purple_network_set_stun_server(const gchar *stun_server)
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a(stun_server, 3478, purple_network_ip_lookup_cb,
+			purple_dnsquery_a_account(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
 				&stun_ip);
 		} else {
 			purple_debug_info("network",
@@ -996,7 +1009,7 @@ purple_network_set_turn_server(const gchar *turn_server)
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
 			purple_debug_info("network", "running DNS query for TURN server\n");
-			purple_dnsquery_a(turn_server,
+			purple_dnsquery_a_account(NULL, turn_server,
 				purple_prefs_get_int("/purple/network/turn_port"),
 				purple_network_ip_lookup_cb, &turn_ip);
 		} else {
@@ -1136,6 +1149,7 @@ purple_network_init(void)
 	purple_prefs_add_string("/purple/network/stun_server", "");
 	purple_prefs_add_string("/purple/network/turn_server", "");
 	purple_prefs_add_int   ("/purple/network/turn_port", 3478);
+	purple_prefs_add_int	 ("/purple/network/turn_port_tcp", 3478);
 	purple_prefs_add_string("/purple/network/turn_username", "");
 	purple_prefs_add_string("/purple/network/turn_password", "");
 	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);

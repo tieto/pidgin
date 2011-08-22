@@ -136,8 +136,8 @@ struct _PidginConversation
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 	gboolean auto_resize;   /* this is set to TRUE if the conversation
-		 	 	 * is being resized by a non-user-initiated
-		 		 * event, such as the buddy icon appearing
+				 * is being resized by a non-user-initiated
+				 * event, such as the buddy icon appearing
 				 */
 	gboolean entry_growing; /* True if the size of the entry was set
 				 * automatically by typing too much to fit
@@ -148,12 +148,6 @@ struct _PidginConversation
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;
 	GtkWidget *menu_label;
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKCONV_C_)
-	/** @deprecated */
-	GtkSizeGroup *sg;
-#else
-	gpointer depr1;
-#endif
 
 	GtkWidget *lower_hbox;
 

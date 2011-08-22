@@ -32,6 +32,7 @@
   @signal chat-join-failed
   @signal chat-left
   @signal chat-topic-changed
+  @signal cleared-message-history
   @signal conversation-extended-menu
   @signal sent-attention
   @signal got-attention
@@ -477,6 +478,16 @@ void (*conversation_extended_menu)(PurpleConversation *conv, GList **list);
   @param conv   The conversation.
   @param list   A pointer to the list of actions.
   @since 2.1.0
+ @endsignaldef
+
+ @signaldef cleared-message-history
+  @signalproto
+void (*cleared_message_history)(PurpleConversation *conv);
+  @endsignalproto
+  @signaldesc
+    Emitted when the conversation history is cleared.
+  @param conv   The conversation.
+  @since 2.8.0
  @endsignaldef
 
  @signaldef sent-attention

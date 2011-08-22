@@ -405,12 +405,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 
 	if (purple_strequal(element_name, "account")) {
-		char *tmp;
 		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
-		tmp = data->protocol_id;
-		data->protocol_id = g_strdup(_purple_oscar_convert(buffer, tmp));
-		g_free(tmp);
 	}
 	else if (purple_strequal(element_name, "pouncee")) {
 		g_free(data->pouncee);
@@ -690,6 +686,31 @@ purple_pounce_destroy_all_by_account(PurpleAccount *account)
 
 		pouncer = purple_pounce_get_pouncer(pounce);
 		if (pouncer == account)
+			purple_pounce_destroy(pounce);
+	}
+}
+
+void
+purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy)
+{
+	const char *pouncee, *bname;
+	PurpleAccount *pouncer, *bacct;
+	PurplePounce *pounce;
+	GList *l, *l_next;
+
+	g_return_if_fail(buddy != NULL);
+
+	bacct = purple_buddy_get_account(buddy);
+	bname = purple_buddy_get_name(buddy);
+
+	for (l = purple_pounces_get_all(); l != NULL; l = l_next) {
+		pounce = (PurplePounce *)l->data;
+		l_next = l->next;
+
+		pouncer = purple_pounce_get_pouncer(pounce);
+		pouncee = purple_pounce_get_pouncee(pounce);
+
+		if ( (pouncer == bacct) && (strcmp(pouncee, bname) == 0) )
 			purple_pounce_destroy(pounce);
 	}
 }

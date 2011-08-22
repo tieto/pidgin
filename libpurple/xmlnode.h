@@ -35,7 +35,7 @@ extern "C" {
 /**
  * The valid types for an xmlnode
  */
-typedef enum _XMLNodeType
+typedef enum
 {
 	XMLNODE_TYPE_TAG,		/**< Just a tag */
 	XMLNODE_TYPE_ATTRIB,		/**< Has attributes */

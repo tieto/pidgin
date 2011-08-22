@@ -277,6 +277,12 @@ prefs_start_element_handler (GMarkupParseContext *context,
 		}
 	}
 
+	if ((pref_type == PURPLE_PREF_BOOLEAN || pref_type == PURPLE_PREF_INT) &&
+			pref_value == NULL) {
+		/* Missing a value attribute */
+		return;
+	}
+
 	if(purple_strequal(element_name, "item")) {
 		struct purple_pref *pref;
 

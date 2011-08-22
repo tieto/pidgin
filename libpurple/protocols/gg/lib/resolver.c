@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  *  (C) Copyright 2001-2009 Wojtek Kaniewski <wojtekka@irc.pl>
  *                          Robert J. Woźny <speedy@ziew.org>
@@ -31,19 +29,22 @@
 #ifndef _WIN32
 #  include <sys/wait.h>
 #  include <netdb.h>
+#endif
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#ifndef _WIN32
 #  include <signal.h>
 #  include <netinet/in.h>
 #  include <arpa/inet.h>
 #endif
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "libgadu.h"
+#include "libgadu-config.h"
 #include "resolver.h"
 #include "compat.h"
+#include "session.h"
 
 /** Sposób rozwiązywania nazw serwerów */
 static gg_resolver_t gg_global_resolver_type = GG_RESOLVER_DEFAULT;
@@ -80,15 +81,17 @@ static void gg_gethostbyname_cleaner(void *data)
  * \internal Odpowiednik \c gethostbyname zapewniający współbieżność.
  *
  * Jeśli dany system dostarcza \c gethostbyname_r, używa się tej wersji, jeśli
- * nie, to zwykłej \c gethostbyname.
+ * nie, to zwykłej \c gethostbyname. Wynikiem jest tablica adresów zakończona
+ * wartością INADDR_NONE, którą należy zwolnić po użyciu.
  *
  * \param hostname Nazwa serwera
- * \param addr Wskaźnik na rezultat rozwiązywania nazwy
+ * \param result Wskaźnik na wskaźnik z tablicą adresów zakończoną INADDR_NONE
+ * \param count Wskaźnik na zmienną, do ktorej zapisze się liczbę wyników
  * \param pthread Flaga blokowania unicestwiania wątku podczas alokacji pamięci
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu
  */
-int gg_gethostbyname_real(const char *hostname, struct in_addr *addr, int pthread)
+int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread)
 {
 #ifdef GG_CONFIG_HAVE_GETHOSTBYNAME_R
 	char *buf = NULL;
@@ -96,12 +99,17 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr *addr, int pthrea
 	struct hostent he;
 	struct hostent *he_ptr = NULL;
 	size_t buf_len = 1024;
-	int result = -1;
+	int res = -1;
 	int h_errnop;
 	int ret = 0;
 #ifdef GG_CONFIG_HAVE_PTHREAD
 	int old_state;
 #endif
+
+	if (result == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
 
 #ifdef GG_CONFIG_HAVE_PTHREAD
 	pthread_cleanup_push(gg_gethostbyname_cleaner, &buf);
@@ -146,9 +154,41 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr *addr, int pthrea
 			}
 		}
 
-		if (ret == 0 && he_ptr != NULL) {
-			memcpy(addr, he_ptr->h_addr, sizeof(struct in_addr));
-			result = 0;
+		if (ret == 0 && he_ptr != NULL && he_ptr->h_addr_list[0] != NULL) {
+			int i;
+
+			/* Policz liczbę adresów */
+
+			for (i = 0; he_ptr->h_addr_list[i] != NULL; i++)
+				;
+
+			/* Zaalokuj */
+
+#ifdef GG_CONFIG_HAVE_PTHREAD
+			if (pthread)
+				pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &old_state);
+#endif
+
+			*result = malloc((i + 1) * sizeof(struct in_addr));
+
+#ifdef GG_CONFIG_HAVE_PTHREAD
+			if (pthread)
+				pthread_setcancelstate(old_state, NULL);
+#endif
+
+			if (*result == NULL)
+				return -1;
+
+			/* Kopiuj */
+
+			for (i = 0; he_ptr->h_addr_list[i] != NULL; i++)
+				memcpy(&((*result)[i]), he_ptr->h_addr_list[i], sizeof(struct in_addr));
+
+			(*result)[i].s_addr = INADDR_NONE;
+
+			*count = i;
+
+			res = 0;
 		}
 
 #ifdef GG_CONFIG_HAVE_PTHREAD
@@ -169,26 +209,93 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr *addr, int pthrea
 	pthread_cleanup_pop(1);
 #endif
 
-	return result;
-#else
+	return res;
+#else /* GG_CONFIG_HAVE_GETHOSTBYNAME_R */
 	struct hostent *he;
+	int i;
+
+	if (result == NULL || count == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
 
 	he = gethostbyname(hostname);
 
-	if (he == NULL)
+	if (he == NULL || he->h_addr_list[0] == NULL)
 		return -1;
 
-	memcpy(addr, he->h_addr, sizeof(struct in_addr));
+	/* Policz liczbę adresów */
+
+	for (i = 0; he->h_addr_list[i] != NULL; i++)
+		;
+
+	/* Zaalokuj */
+
+	*result = malloc((i + 1) * sizeof(struct in_addr));
+
+	if (*result == NULL)
+		return -1;
+
+	/* Kopiuj */
+
+	for (i = 0; he->h_addr_list[i] != NULL; i++)
+		memcpy(&((*result)[i]), he->h_addr_list[0], sizeof(struct in_addr));
+
+	(*result)[i].s_addr = INADDR_NONE;
+
+	*count = i;
 
 	return 0;
 #endif /* GG_CONFIG_HAVE_GETHOSTBYNAME_R */
 }
 
+#if defined(GG_CONFIG_HAVE_PTHREAD) || !defined(_WIN32)
+/**
+ * \internal Rozwiązuje nazwę i zapisuje wynik do podanego desktyptora.
+ *
+ * \param fd Deskryptor
+ * \param hostname Nazwa serwera
+ *
+ * \return 0 jeśli się powiodło, -1 w przypadku błędu
+ */
+static int gg_resolver_run(int fd, const char *hostname)
+{
+	struct in_addr addr_ip[2], *addr_list;
+	int addr_count;
+	int res = 0;
+
+	gg_debug(GG_DEBUG_MISC, "// gg_resolver_run(%d, %s)\n", fd, hostname);
+
+	if ((addr_ip[0].s_addr = inet_addr(hostname)) == INADDR_NONE) {
+		if (gg_gethostbyname_real(hostname, &addr_list, &addr_count, 1) == -1) {
+			addr_list = addr_ip;
+			/* addr_ip[0] już zawiera INADDR_NONE */
+		}
+	} else {
+		addr_list = addr_ip;
+		addr_ip[1].s_addr = INADDR_NONE;
+		addr_count = 1;
+	}
+
+	gg_debug(GG_DEBUG_MISC, "// gg_resolver_run() count = %d\n", addr_count);
+
+	if (write(fd, addr_list, (addr_count + 1) * sizeof(struct in_addr)) != (addr_count + 1) * sizeof(struct in_addr))
+		res = -1;
+
+	if (addr_list != addr_ip)
+		free(addr_list);
+
+	return res;
+}
+#endif
+
 /**
  * \internal Odpowiednik \c gethostbyname zapewniający współbieżność.
  *
  * Jeśli dany system dostarcza \c gethostbyname_r, używa się tej wersji, jeśli
- * nie, to zwykłej \c gethostbyname.
+ * nie, to zwykłej \c gethostbyname. Funkcja służy do zachowania zgodności
+ * ABI i służy do pobierania tylko pierwszego adresu -- pozostałe mogą
+ * zostać zignorowane przez aplikację.
  *
  * \param hostname Nazwa serwera
  *
@@ -196,16 +303,13 @@ int gg_gethostbyname_real(const char *hostname, struct in_addr *addr, int pthrea
  */
 struct in_addr *gg_gethostbyname(const char *hostname)
 {
-	struct in_addr *addr;
+	struct in_addr *result;
+	int count;
 
-	if (!(addr = malloc(sizeof(struct in_addr))))
+	if (gg_gethostbyname_real(hostname, &result, &count, 0) == -1)
 		return NULL;
 
-	if (gg_gethostbyname_real(hostname, addr, 0)) {
-		free(addr);
-		return NULL;
-	}
-	return addr;
+	return result;
 }
 
 /**
@@ -214,8 +318,6 @@ struct in_addr *gg_gethostbyname(const char *hostname)
 struct gg_resolver_fork_data {
 	int pid;		/*< Identyfikator procesu */
 };
-
-
 
 #ifdef _WIN32
 /**
@@ -353,35 +455,37 @@ struct gg_resolve_win32thread_data {
 static DWORD WINAPI gg_resolve_win32thread_thread(LPVOID arg)
 {
 	struct gg_resolve_win32thread_data *d = arg;
-	struct in_addr a;
+	struct in_addr addr_ip[2], *addr_list;
+	int addr_count;
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() host: %s, fd: %i called\n", d->hostname, d->fd);
 
-	if ((a.s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
+	if ((addr_ip[0].s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
 		/* W przypadku błędu gg_gethostbyname_real() zwróci -1
 					 * i nie zmieni &addr. Tam jest już INADDR_NONE,
 					 * więc nie musimy robić nic więcej. */
-		gg_gethostbyname_real(d->hostname, &a, 0);
+		if (gg_gethostbyname_real(d->hostname, &addr_list, &addr_count, 0) == -1)
+		{
+		    addr_list = addr_ip;
+		}
+	} else {
+		addr_list = addr_ip;
+		addr_ip[1].s_addr = INADDR_NONE;
+		addr_count = 1;
 	}
 
-	// if ((a.s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
-		// struct in_addr *hn;
+	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() count = %d\n", addr_count);
 
-		// if (!(hn = gg_gethostbyname(d->hostname)))
-			// a.s_addr = INADDR_NONE;
-		// else {
-			// a.s_addr = hn->s_addr;
-			// free(hn);
-		// }
-	// }
-
-	write(d->fd, &a, sizeof(a));
+	write(d->fd, addr_list, (addr_count+1) * sizeof(struct in_addr));
 	close(d->fd);
 
 	free(d->hostname);
 	d->hostname = NULL;
 
 	free(d);
+
+    if (addr_list != addr_ip)
+		free(addr_list);
 
 	gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread_thread() done\n");
 
@@ -494,7 +598,7 @@ static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
  *
  * Połączenia asynchroniczne nie mogą blokować procesu w trakcie rozwiązywania
  * nazwy serwera. W tym celu tworzony jest potok, nowy proces i dopiero w nim
- * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu
+ * przeprowadzane jest rozwiązywanie nazwy. Deskryptor strony do odczytu 
  * zapisuje się w strukturze sieci i czeka na dane w postaci struktury
  * \c in_addr. Jeśli nie znaleziono nazwy, zwracana jest \c INADDR_NONE.
  *
@@ -509,7 +613,6 @@ static void gg_resolve_win32thread_cleanup(void **priv_data, int force)
 static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostname)
 {
 	struct gg_resolver_fork_data *data = NULL;
-	struct in_addr addr;
 	int pipes[2], new_errno;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_resolver_fork_start(%p, %p, \"%s\");\n", fd, priv_data, hostname);
@@ -543,17 +646,10 @@ static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostnam
 	if (data->pid == 0) {
 		close(pipes[0]);
 
-		if ((addr.s_addr = inet_addr(hostname)) == INADDR_NONE) {
-			/* W przypadku błędu gg_gethostbyname_real() zwróci -1
-                         * i nie zmieni &addr. Tam jest już INADDR_NONE,
-                         * więc nie musimy robić nic więcej. */
-			gg_gethostbyname_real(hostname, &addr, 0);
-		}
-
-		if (write(pipes[1], &addr, sizeof(addr)) != sizeof(addr))
+		if (gg_resolver_run(pipes[1], hostname) == -1)
 			_exit(1);
-
-		_exit(0);
+		else
+			_exit(0);
 	}
 
 	close(pipes[1]);
@@ -660,21 +756,13 @@ static void gg_resolver_pthread_cleanup(void **priv_data, int force)
 static void *gg_resolver_pthread_thread(void *arg)
 {
 	struct gg_resolver_pthread_data *data = arg;
-	struct in_addr addr;
 
 	pthread_detach(pthread_self());
 
-	if ((addr.s_addr = inet_addr(data->hostname)) == INADDR_NONE) {
-		/* W przypadku błędu gg_gethostbyname_real() zwróci -1
-                 * i nie zmieni &addr. Tam jest już INADDR_NONE,
-                 * więc nie musimy robić nic więcej. */
-		gg_gethostbyname_real(data->hostname, &addr, 1);
-	}
-
-	if (write(data->wfd, &addr, sizeof(addr)) == sizeof(addr))
-		pthread_exit(NULL);
-	else
+	if (gg_resolver_run(data->wfd, data->hostname) == -1)
 		pthread_exit((void*) -1);
+	else
+		pthread_exit(NULL);
 
 	return NULL;	/* żeby kompilator nie marudził */
 }
@@ -745,10 +833,10 @@ static int gg_resolver_pthread_start(int *fd, void **priv_data, const char *host
 	return 0;
 
 cleanup:
-	if (data) {
+	if (data != NULL)
 		free(data->hostname);
-		free(data);
-	}
+
+	free(data);
 
 	close(pipes[0]);
 	close(pipes[1]);
@@ -770,10 +858,7 @@ cleanup:
  */
 int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 {
-	if (gs == NULL) {
-		errno = EINVAL;
-		return -1;
-	}
+	GG_SESSION_CHECK(gs, -1);
 
 	if (type == GG_RESOLVER_DEFAULT) {
 		if (gg_global_resolver_type != GG_RESOLVER_DEFAULT) {
@@ -783,26 +868,26 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
+#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  ifdef _WIN32
 		type = GG_RESOLVER_WIN32;
-#else
+#  else
 		type = GG_RESOLVER_FORK;
-#endif
-
-#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  endif
+#else
 		type = GG_RESOLVER_PTHREAD;
 #endif
 	}
 
 	switch (type) {
 #ifdef _WIN32
-	case GG_RESOLVER_WIN32:
+		case GG_RESOLVER_WIN32:
 			gs->resolver_type = type;
 			gs->resolver_start = gg_resolve_win32thread;
 			gs->resolver_cleanup = gg_resolve_win32thread_cleanup;
 			return 0;
 #else
-	case GG_RESOLVER_FORK:
+		case GG_RESOLVER_FORK:
 			gs->resolver_type = type;
 			gs->resolver_start = gg_resolver_fork_start;
 			gs->resolver_cleanup = gg_resolver_fork_cleanup;
@@ -832,10 +917,7 @@ int gg_session_set_resolver(struct gg_session *gs, gg_resolver_t type)
  */
 gg_resolver_t gg_session_get_resolver(struct gg_session *gs)
 {
-	if (gs == NULL) {
-		errno = EINVAL;
-		return GG_RESOLVER_INVALID;
-	}
+	GG_SESSION_CHECK(gs, (gg_resolver_t) -1);
 
 	return gs->resolver_type;
 }
@@ -847,11 +929,32 @@ gg_resolver_t gg_session_get_resolver(struct gg_session *gs)
  * \param resolver_start Funkcja rozpoczynająca rozwiązywanie nazwy
  * \param resolver_cleanup Funkcja zwalniająca zasoby
  *
+ * Parametry funkcji rozpoczynającej rozwiązywanie nazwy wyglądają następująco:
+ *  - \c "int *fd" &mdash; wskaźnik na zmienną, gdzie zostanie umieszczony deskryptor potoku
+ *  - \c "void **priv_data" &mdash; wskaźnik na zmienną, gdzie można umieścić wskaźnik do prywatnych danych na potrzeby rozwiązywania nazwy
+ *  - \c "const char *name" &mdash; nazwa serwera do rozwiązania
+ *
+ * Parametry funkcji zwalniającej zasoby wyglądają następująco:
+ *  - \c "void **priv_data" &mdash; wskaźnik na zmienną przechowującą wskaźnik do prywatnych danych, należy go ustawić na \c NULL po zakończeniu
+ *  - \c "int force" &mdash; flaga mówiąca o tym, że zasoby są zwalniane przed zakończeniem rozwiązywania nazwy, np. z powodu zamknięcia sesji.
+ *
+ * Własny kod rozwiązywania nazwy powinien stworzyć potok, parę gniazd lub
+ * inny deskryptor pozwalający na co najmniej jednostronną komunikację i 
+ * przekazać go w parametrze \c fd. Po zakończeniu rozwiązywania nazwy,
+ * powinien wysłać otrzymany adres IP w postaci sieciowej (big-endian) do
+ * deskryptora. Jeśli rozwiązywanie nazwy się nie powiedzie, należy wysłać
+ * \c INADDR_NONE. Następnie zostanie wywołana funkcja zwalniająca zasoby
+ * z parametrem \c force równym \c 0. Gdyby sesja została zakończona przed
+ * rozwiązaniem nazwy, np. za pomocą funkcji \c gg_logoff(), funkcja
+ * zwalniająca zasoby zostanie wywołana z parametrem \c force równym \c 1.
+ *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu
  */
 int gg_session_set_custom_resolver(struct gg_session *gs, int (*resolver_start)(int*, void**, const char*), void (*resolver_cleanup)(void**, int))
 {
-	if (gs == NULL || resolver_start == NULL || resolver_cleanup == NULL) {
+	GG_SESSION_CHECK(gs, -1);
+
+	if (resolver_start == NULL || resolver_cleanup == NULL) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -886,26 +989,26 @@ int gg_http_set_resolver(struct gg_http *gh, gg_resolver_t type)
 			return 0;
 		}
 
-#ifdef _WIN32
+#if !defined(GG_CONFIG_HAVE_PTHREAD) || !defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  ifdef _WIN32
 		type = GG_RESOLVER_WIN32;
-#else
+#  else
 		type = GG_RESOLVER_FORK;
-#endif
-
-#if defined(GG_CONFIG_HAVE_PTHREAD) || defined(GG_CONFIG_PTHREAD_DEFAULT)
+#  endif
+#else
 		type = GG_RESOLVER_PTHREAD;
 #endif
 	}
 
 	switch (type) {
 #ifdef _WIN32
-	case GG_RESOLVER_WIN32:
+		case GG_RESOLVER_WIN32:
 			gh->resolver_type = type;
 			gh->resolver_start = gg_resolve_win32thread;
 			gh->resolver_cleanup = gg_resolve_win32thread_cleanup;
 			return 0;
 #else
-	case GG_RESOLVER_FORK:
+		case GG_RESOLVER_FORK:
 			gh->resolver_type = type;
 			gh->resolver_start = gg_resolver_fork_start;
 			gh->resolver_cleanup = gg_resolver_fork_cleanup;
@@ -982,19 +1085,17 @@ int gg_global_set_resolver(gg_resolver_t type)
 			gg_global_resolver_cleanup = NULL;
 			return 0;
 
-#ifndef _WIN32
-		case GG_RESOLVER_FORK:
-			gg_global_resolver_type = type;
-			gg_global_resolver_start = gg_resolver_fork_start;
-			gg_global_resolver_cleanup = gg_resolver_fork_cleanup;
-			return 0;
-#endif
-
 #ifdef _WIN32
 		case GG_RESOLVER_WIN32:
 			gg_global_resolver_type = type;
 			gg_global_resolver_start = gg_resolve_win32thread;
 			gg_global_resolver_cleanup = gg_resolve_win32thread_cleanup;
+			return 0;
+#else
+		case GG_RESOLVER_FORK:
+			gg_global_resolver_type = type;
+			gg_global_resolver_start = gg_resolver_fork_start;
+			gg_global_resolver_cleanup = gg_resolver_fork_cleanup;
 			return 0;
 #endif
 
@@ -1028,24 +1129,7 @@ gg_resolver_t gg_global_get_resolver(void)
  * \param resolver_start Funkcja rozpoczynająca rozwiązywanie nazwy
  * \param resolver_cleanup Funkcja zwalniająca zasoby
  *
- * Parametry funkcji rozpoczynającej rozwiązywanie nazwy wyglądają następująco:
- *  - \c "int *fd" &mdash; wskaźnik na zmienną, gdzie zostanie umieszczony deskryptor potoku
- *  - \c "void **priv_data" &mdash; wskaźnik na zmienną, gdzie można umieścić wskaźnik do prywatnych danych na potrzeby rozwiązywania nazwy
- *  - \c "const char *name" &mdash; nazwa serwera do rozwiązania
- *
- * Parametry funkcji zwalniającej zasoby wyglądają następująco:
- *  - \c "void **priv_data" &mdash; wskaźnik na zmienną przechowującą wskaźnik do prywatnych danych, należy go ustawić na \c NULL po zakończeniu
- *  - \c "int force" &mdash; flaga mówiąca o tym, że zasoby są zwalniane przed zakończeniem rozwiązywania nazwy, np. z powodu zamknięcia sesji.
- *
- * Własny kod rozwiązywania nazwy powinien stworzyć potok, parę gniazd lub
- * inny deskryptor pozwalający na co najmniej jednostronną komunikację i
- * przekazać go w parametrze \c fd. Po zakończeniu rozwiązywania nazwy,
- * powinien wysłać otrzymany adres IP w postaci sieciowej (big-endian) do
- * deskryptora. Jeśli rozwiązywanie nazwy się nie powiedzie, należy wysłać
- * \c INADDR_NONE. Następnie zostanie wywołana funkcja zwalniająca zasoby
- * z parametrem \c force równym \c 0. Gdyby sesja została zakończona przed
- * rozwiązaniem nazwy, np. za pomocą funkcji \c gg_logoff(), funkcja
- * zwalniająca zasoby zostanie wywołana z parametrem \c force równym \c 1.
+ * Patrz \ref gg_session_set_custom_resolver.
  *
  * \return 0 jeśli się powiodło, -1 w przypadku błędu
  */

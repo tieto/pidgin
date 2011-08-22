@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  *  (C) Copyright 2008 Wojtek Kaniewski <wojtekka@irc.pl>
  *
@@ -25,6 +23,6 @@
 #  include <arpa/inet.h>
 #endif
 
-int gg_gethostbyname_real(const char *hostname, struct in_addr *result, int pthread);
+int gg_gethostbyname_real(const char *hostname, struct in_addr **result, int *count, int pthread);
 
 #endif /* LIBGADU_RESOLVER_H */

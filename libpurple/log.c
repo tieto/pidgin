@@ -1157,6 +1157,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			g_dir_close(username_dir);
 		}
 		g_free(protocol_path);
+		g_list_free(accounts);
 		g_dir_close(protocol_dir);
 	}
 	g_free(log_path);
@@ -1837,7 +1838,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 			g_snprintf(convostart, length, "%s", temp);
 			memset(&tm, 0, sizeof(tm));
-			sscanf(convostart, "%*s %s %d %d:%d:%d %d",
+			sscanf(convostart, "%*s %3s %d %d:%d:%d %d",
 			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
 			/* Ugly hack, in case current locale is not English */
 			if (purple_strequal(month, "Jan")) {

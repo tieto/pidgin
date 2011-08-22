@@ -204,41 +204,43 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 
 		case MSN_P2P_VERSION_TWO: {
 			MsnP2Pv2Header *header = &info->header.v2;
+			char *header_wire = NULL;
+			char *data_header_wire = NULL;
 
 			if (header->header_tlv != NULL)
-				header->header_len = msn_tlvlist_size(header->header_tlv) + 8;
+				header_wire = msn_tlvlist_write(header->header_tlv, (size_t *)&header->header_len);
 			else
-				header->header_len = 8;
+				header->header_len = 0;
 
 			if (header->data_tlv != NULL)
-				header->data_header_len = msn_tlvlist_size(header->data_tlv) + 8;
+				data_header_wire = msn_tlvlist_write(header->data_tlv, (size_t *)&header->data_header_len);
 			else
-				header->data_header_len = 8;
+				header->data_header_len = 0;
 
-			tmp = wire = g_new(char, header->header_len + header->data_header_len);
+			tmp = wire = g_new(char, 16 + header->header_len + header->data_header_len);
 
-			msn_push8(tmp, header->header_len);
+			msn_push8(tmp, header->header_len + 8);
 			msn_push8(tmp, header->opcode);
-			msn_push16be(tmp, header->data_header_len + header->message_len);
+			msn_push16be(tmp, header->data_header_len + 8 + header->message_len);
 			msn_push32be(tmp, header->base_id);
 
-			if (header->header_tlv != NULL) {
-				msn_tlvlist_write(tmp, header->header_len - 8, header->header_tlv);
-				tmp += header->header_len - 8;
+			if (header_wire != NULL) {
+				memcpy(tmp, header_wire, header->header_len);
+				tmp += header->header_len;
 			}
 
-			msn_push8(tmp, header->data_header_len);
+			msn_push8(tmp, header->data_header_len + 8);
 			msn_push8(tmp, header->data_tf);
 			msn_push16be(tmp, header->package_number);
 			msn_push32be(tmp, header->session_id);
 
-			if (header->data_tlv != NULL) {
-				msn_tlvlist_write(tmp, header->data_header_len - 8, header->data_tlv);
-				tmp += header->data_header_len - 8;
+			if (data_header_wire != NULL) {
+				memcpy(tmp, data_header_wire, header->data_header_len);
+				tmp += header->data_header_len;
 			}
 
 			if (len)
-				*len = header->header_len + header->data_header_len;
+				*len = header->header_len + header->data_header_len + 16;
 
 			break;
 		}
@@ -248,7 +250,6 @@ msn_p2p_header_to_wire(MsnP2PInfo *info, size_t *len)
 	}
 
 	return wire;
-
 }
 
 size_t
@@ -312,11 +313,28 @@ msn_p2p_info_to_string(MsnP2PInfo *info, GString *str)
 }
 
 gboolean
-msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags)
+msn_p2p_msg_is_data(const MsnP2PInfo *info)
 {
-	return (flags == P2P_MSN_OBJ_DATA ||
-	        flags == (P2P_WLM2009_COMP | P2P_MSN_OBJ_DATA) ||
-	        flags == P2P_FILE_DATA);
+	gboolean data = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			guint32 flags = info->header.v1.flags;
+			data = (flags == P2P_MSN_OBJ_DATA ||
+			        flags == (P2P_WLM2009_COMP | P2P_MSN_OBJ_DATA) ||
+			        flags == P2P_FILE_DATA);
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			data = info->header.v2.message_len > 0;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return data;
 }
 
 gboolean
@@ -331,6 +349,7 @@ msn_p2p_info_is_valid(MsnP2PInfo *info)
 
 		case MSN_P2P_VERSION_TWO:
 			/* Nothing to do! */
+			valid = TRUE;
 			break;
 
 		default:
@@ -338,6 +357,28 @@ msn_p2p_info_is_valid(MsnP2PInfo *info)
 	}
 
 	return valid;
+}
+
+gboolean
+msn_p2p_info_is_first(MsnP2PInfo *info)
+{
+	gboolean first = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE:
+			first = info->header.v1.offset == 0;
+			break;
+
+		case MSN_P2P_VERSION_TWO:
+			/* Nothing to do! */
+			first = info->header.v2.data_tf & TF_FIRST;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return first;
 }
 
 gboolean
@@ -351,7 +392,7 @@ msn_p2p_info_is_final(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			final = msn_tlv_gettlv(info->header.v2.data_tlv, P2P_DATA_TLV_REMAINING, 1) == NULL;
 			break;
 
 		default:
@@ -359,6 +400,116 @@ msn_p2p_info_is_final(MsnP2PInfo *info)
 	}
 
 	return final;
+}
+
+void
+msn_p2p_info_create_ack(MsnP2PInfo *old_info, MsnP2PInfo *new_info)
+{
+	switch (old_info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			MsnP2PHeader *old = &old_info->header.v1;
+			MsnP2PHeader *new = &new_info->header.v1;
+
+			new->session_id = old->session_id;
+			new->flags = P2P_ACK;
+			new->ack_id = old->id;
+			new->ack_sub_id = old->ack_id;
+			new->ack_size = old->total_size;
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO: {
+			MsnP2Pv2Header *old = &old_info->header.v2;
+			MsnP2Pv2Header *new = &new_info->header.v2;
+
+			msn_tlvlist_add_32(&new->header_tlv, P2P_HEADER_TLV_TYPE_ACK, old->base_id + old->message_len);
+			new->opcode = P2P_OPCODE_NONE;
+
+			if (old->message_len > 0) {
+				if (!msn_tlv_gettlv(old->header_tlv, P2P_HEADER_TLV_TYPE_ACK, 1)) {
+					if (old->opcode & P2P_OPCODE_SYN) {
+						msn_tlv_t *ack_tlv;
+						new->opcode |= P2P_OPCODE_RAK;
+						
+						ack_tlv = msn_tlv_gettlv(old->header_tlv, P2P_HEADER_TLV_TYPE_PEER_INFO, 1);
+						if (ack_tlv) {
+							msn_tlvlist_add_tlv(&new->header_tlv, ack_tlv);
+							new->opcode |= P2P_OPCODE_SYN;
+						}
+					}
+				}
+			}
+			break;
+		}
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", old_info->version);
+	}
+}
+
+gboolean
+msn_p2p_info_require_ack(MsnP2PInfo *info)
+{
+	gboolean ret = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			guint32 flags = msn_p2p_info_get_flags(info);
+
+			ret = flags == P2P_NO_FLAG || flags == P2P_WLM2009_COMP ||
+			      msn_p2p_msg_is_data(info);
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			ret = (info->header.v2.opcode & P2P_OPCODE_RAK) > 0;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return ret;
+}
+
+gboolean
+msn_p2p_info_is_ack(MsnP2PInfo *info)
+{
+	gboolean ret = FALSE;
+
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE: {
+			ret = msn_p2p_info_get_flags(info) == P2P_ACK;
+			break;
+		}
+
+		case MSN_P2P_VERSION_TWO:
+			ret = msn_tlv_gettlv(info->header.v2.header_tlv, P2P_HEADER_TLV_TYPE_ACK, 1) != NULL;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
+
+	return ret;
+}
+
+void
+msn_p2p_info_init_first(MsnP2PInfo *info, MsnP2PInfo *old_info)
+{
+	switch (info->version) {
+		case MSN_P2P_VERSION_ONE:
+			info->header.v1.session_id = old_info->header.v1.session_id;
+			info->header.v1.flags = old_info->header.v1.flags;
+			break;
+
+		case MSN_P2P_VERSION_TWO:
+			info->header.v2.data_tf = TF_FIRST;
+			break;
+
+		default:
+			purple_debug_error("msn", "Invalid P2P Info version: %d\n", info->version);
+	}
 }
 
 guint32
@@ -372,7 +523,7 @@ msn_p2p_info_get_session_id(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			session_id = info->header.v2.session_id;
 			break;
 
 		default:
@@ -393,7 +544,7 @@ msn_p2p_info_get_id(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			id = info->header.v2.base_id;
 			break;
 
 		default:
@@ -477,7 +628,7 @@ msn_p2p_info_get_flags(MsnP2PInfo *info)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			flags = info->header.v2.data_tf;
 			break;
 
 		default:
@@ -565,7 +716,7 @@ msn_p2p_info_set_session_id(MsnP2PInfo *info, guint32 session_id)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.session_id = session_id;
 			break;
 
 		default:
@@ -583,7 +734,7 @@ msn_p2p_info_set_id(MsnP2PInfo *info, guint32 id)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.base_id = id;
 			break;
 
 		default:
@@ -652,7 +803,7 @@ msn_p2p_info_set_flags(MsnP2PInfo *info, guint32 flags)
 			break;
 
 		case MSN_P2P_VERSION_TWO:
-			/* Nothing to do! */
+			info->header.v2.data_tf = flags;
 			break;
 
 		default:

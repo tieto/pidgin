@@ -111,8 +111,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			return TRUE;
 		}
 
-		buf = s;
 		size -= (s - buf);
+		buf = s;
 	}
 
 	if ((s = strstr(buf, "\r\n\r\n")) == NULL)
@@ -217,7 +217,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		g_free(tmp);
 
-		t = strchr(full_session_id, '.');
+		t = full_session_id ? strchr(full_session_id, '.') : NULL;
 		if (t != NULL)
 			session_id = g_strndup(full_session_id, t - full_session_id);
 		else {

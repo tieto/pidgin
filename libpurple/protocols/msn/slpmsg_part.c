@@ -42,14 +42,15 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PInfo *info)
 	return msn_slpmsgpart_ref(part);
 }
 
-MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len)
+MsnSlpMessagePart *
+msn_slpmsgpart_new_from_data(MsnP2PVersion p2p, const char *data, size_t data_len)
 {
 	MsnSlpMessagePart *part;
 	MsnP2PInfo *info;
 	size_t len;
 	int body_len;
 
-	info = msn_p2p_info_new(MSN_P2P_VERSION_ONE);
+	info = msn_p2p_info_new(p2p);
 
 	/* Extract the binary SLP header */
 	len = msn_p2p_header_from_wire(info, data, data_len);
@@ -175,7 +176,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 
 	slpmsg = data;
 
-	real_size = (msn_p2p_info_get_flags(slpmsg->p2p_info) == P2P_ACK) ? 0 : slpmsg->size;
+	real_size = msn_p2p_info_is_ack(slpmsg->p2p_info) ? 0 : slpmsg->size;
 
 	offset = msn_p2p_info_get_offset(slpmsg->p2p_info);
 	offset += msn_p2p_info_get_length(part->info);
@@ -197,7 +198,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 	else
 	{
 		/* The whole message has been sent */
-		if (msn_p2p_msg_is_data(msn_p2p_info_get_flags(slpmsg->p2p_info)))
+		if (msn_p2p_msg_is_data(slpmsg->p2p_info))
 		{
 			if (slpmsg->slpcall != NULL)
 			{

@@ -487,7 +487,7 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (tmp != NULL)
 		{
-			purple_connection_error_reason(od->gc, reason, tmp);
+			purple_connection_error(od->gc, reason, tmp);
 			g_free(tmp);
 		}
 	}

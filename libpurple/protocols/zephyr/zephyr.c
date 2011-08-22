@@ -146,7 +146,7 @@ struct _zephyr_triple {
 					return TRUE;
 
 #define z_call_s(func, err)	if (func != ZERR_NONE) {\
-					purple_connection_error(gc, err);\
+					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, err);\
 					return;\
 				}
 
@@ -791,20 +791,23 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				char *tmp;
 				const char *balias;
 
-				purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
+				/* TODO: Check whether it's correct to call add_pair_html,
+				         or if we should be using add_pair_plaintext */
+				purple_notify_user_info_add_pair_html(user_info, _("User"), (b ? bname : user));
 				balias = purple_buddy_get_local_buddy_alias(b);
 				if (b && balias)
-					purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+					purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 
 				if (!nlocs) {
-					purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+					purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
 					/* XXX add real error reporting */
 
 					ZGetLocations(&locs, &one);
+					/* TODO: Need to escape locs.host and locs.time? */
 					tmp = g_strdup_printf(_("<br>At %s since %s"), locs.host, locs.time);
-					purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
+					purple_notify_user_info_add_pair_html(user_info, _("Location"), tmp);
 					g_free(tmp);
 				}
 				purple_notify_userinfo(gc, (b ? bname : user),
@@ -1161,7 +1164,7 @@ static gint check_notify_tzc(gpointer data)
 				locations = find_node(newparsetree,"locations");
 				locval = tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents;
 
-				if (!locval || !g_ascii_strcasecmp(locval," ") || (strlen(locval) == 0)) {
+				if (!locval || !g_ascii_strcasecmp(locval," ") || !*locval) {
 					nlocs = 0;
 				} else {
 					nlocs = 1;
@@ -1173,19 +1176,22 @@ static gint check_notify_tzc(gpointer data)
 					char *tmp;
 					const char *balias;
 
-					purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
+					/* TODO: Check whether it's correct to call add_pair_html,
+					         or if we should be using add_pair_plaintext */
+					purple_notify_user_info_add_pair_html(user_info, _("User"), (b ? bname : user));
 
 					balias = b ? purple_buddy_get_local_buddy_alias(b) : NULL;
 					if (balias)
-						purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+						purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 
 					if (!nlocs) {
-						purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+						purple_notify_user_info_add_pair_plaintext(user_info, NULL, _("Hidden or not logged-in"));
 					} else {
+						/* TODO: Need to escape the two strings that make up tmp? */
 						tmp = g_strdup_printf(_("<br>At %s since %s"),
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents,
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);
-						purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
+						purple_notify_user_info_add_pair_html(user_info, _("Location"), tmp);
 						g_free(tmp);
 					}
 
@@ -1585,7 +1591,7 @@ static void zephyr_login(PurpleAccount * account)
 	/* XXX z_call_s should actually try to report the com_err determined error */
 	if (use_tzc(zephyr)) {
 		pid_t pid;
-		/*		  purple_connection_error(gc,"tzc not supported yet"); */
+		/*		  purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "tzc not supported yet"); */
 		if ((pipe(zephyr->totzc) != 0) || (pipe(zephyr->fromtzc) != 0)) {
 			purple_debug_error("zephyr", "pipe creation failed. killing\n");
 			exit(-1);
@@ -1706,7 +1712,7 @@ static void zephyr_login(PurpleAccount * account)
 				ptr++;
 			}
 			if (ptr >=bufcur) {
-				purple_connection_error(gc,"invalid output by tzc (or bad parsing code)");
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "invalid output by tzc (or bad parsing code)");
 				free(buf);
 				return;
 			}
@@ -1821,7 +1827,7 @@ static void zephyr_login(PurpleAccount * account)
 		purple_debug_info("zephyr","realm: %s\n",zephyr->realm);
 	}
 	else {
-		purple_connection_error(gc,"Only ZEPH0.2 supported currently");
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "Only ZEPH0.2 supported currently");
 		return;
 	}
 	purple_debug_info("zephyr","does it get here\n");
@@ -2079,7 +2085,7 @@ static char* zephyr_tzc_escape_msg(const char *message)
 	int pos2 = 0;
 	char *newmsg;
 
-	if (message && (strlen(message) > 0)) {
+	if (message && *message) {
 		newmsg = g_new0(char,1+strlen(message)*2);
 		while(pos < strlen(message)) {
 			if (message[pos]=='\\') {
@@ -2111,7 +2117,7 @@ char* zephyr_tzc_deescape_str(const char *message)
 	int pos2 = 0;
 	char *newmsg;
 
-	if (message && (strlen(message) > 0)) {
+	if (message && *message) {
 		newmsg = g_new0(char,strlen(message)+1);
 		while(pos < strlen(message)) {
 			if (message[pos]=='\\') {
@@ -2235,7 +2241,7 @@ static const char *zephyr_normalize(const PurpleAccount *account, const char *wh
 		return NULL;
 	}
 
-	strcpy(buf, tmp);
+	g_strlcpy(buf, tmp, sizeof(buf));
 	g_free(tmp);
 
 	return buf;

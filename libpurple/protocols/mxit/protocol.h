@@ -91,7 +91,7 @@
 #define		MXIT_CP_ARCH			"Y"						/* client architecture series (Y not for Yoda but for PC-client) */
 #define		MXIT_CLIENT_ID			"LP"					/* client ID as specified by MXit */
 #define		MXIT_CP_PLATFORM		"PURPLE"				/* client platform */
-#define		MXIT_CP_PROTO_VESION	60						/* client protocol version */
+#define		MXIT_CP_PROTO_VESION	63						/* client protocol version */
 
 /* set operating system name */
 #if defined( __APPLE__ )
@@ -110,7 +110,6 @@
 /* Client settings */
 #define		MAX_QUEUE_SIZE			( 1 << 5 )				/* tx queue size (32 packets) */
 #define		MXIT_POPUP_WIN_NAME		"MXit Notification"		/* popup window name */
-#define		MXIT_MAX_ATTRIBS		10						/* maximum profile attributes supported */
 #define		MXIT_DEFAULT_LOCALE		"en"					/* default locale setting */
 #define		MXIT_DEFAULT_LOC		"planetpurple"			/* the default location for registration */
 
@@ -156,7 +155,10 @@
 /* message flags */
 #define		CP_MSG_NOTIFY_DELIVERY	0x0002					/* request delivery notification */
 #define		CP_MSG_NOTIFY_READ		0x0004					/* request read notification */
-#define		CP_MSG_ENCRYPTED		0x0010					/* message is encrypted */
+#define		CP_MSG_PWD_ENCRYPTED	0x0010					/* message is password encrypted */
+#define		CP_MSG_TL_ENCRYPTED		0x0020					/* message is transport encrypted */
+#define		CP_MSG_RPLY_PWD_ENCRYPT	0x0040					/* reply should be password encrypted */
+#define		CP_MSG_RPLY_TL_ENCRYPT	0x0080					/* reply should be transport encrypted */
 #define		CP_MSG_MARKUP			0x0200					/* message may contain markup */
 #define		CP_MSG_EMOTICON			0x0400					/* message may contain custom emoticons */
 
@@ -180,7 +182,7 @@
 /* extended profile attribute fields */
 #define		CP_PROFILE_BIRTHDATE	"birthdate"				/* Birthdate (String - ISO 8601 format) */
 #define		CP_PROFILE_GENDER		"gender"				/* Gender (Boolean - 0=female, 1=male) */
-#define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) */
+// #define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) (DEPRECATED) */
 #define		CP_PROFILE_FULLNAME		"fullname"				/* Fullname (UTF8 String) */
 #define		CP_PROFILE_STATUS		"statusmsg"				/* Status Message (UTF8 String) */
 #define		CP_PROFILE_PREVSTATUS	"prevstatusmsgs"		/* Previous Status Messages (UTF8 String) */
@@ -194,14 +196,19 @@
 #define		CP_PROFILE_REGCOUNTRY	"registeredcountry"		/* Registered Country Code (UTF8 String) */
 #define		CP_PROFILE_FLAGS		"flags"					/* Profile flags (Bitset) */
 #define		CP_PROFILE_LASTSEEN		"lastseen"				/* Last-Online timestamp */
+#define		CP_PROFILE_WHEREAMI		"whereami"				/* Where am I / Where I live */
+#define		CP_PROFILE_ABOUTME		"aboutme"				/* About me */
 
 /* extended profile field types */
-#define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean profile attribute type */
-#define		CP_PROFILE_TYPE_INT		0x05					/* integer profile attribute type */
-#define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string profile attribute type */
-#define		CP_PROFILE_TYPE_DATE	0x0B					/* date-time profile attribute type */
+#define		CP_PROFILE_TYPE_BOOL	0x02					/* boolean (0 or 1) */
+#define		CP_PROFILE_TYPE_INT		0x05					/* integer (32-bit) */
+#define		CP_PROFILE_TYPE_LONG	0x06					/* long (64-bit) */
+#define		CP_PROFILE_TYPE_UTF8	0x0A					/* UTF8 string */
+#define		CP_PROFILE_TYPE_DATE	0x0B					/* date-time (ISO 8601 format) */
 
 /* profile flags */
+#define		CP_PROF_NOT_SEARCHABLE	0x02					/* user cannot be searched for */
+#define		CP_PROF_NOT_SUGGESTABLE	0x08					/* user cannot be suggested as friend */
 #define		CP_PROF_DOBLOCKED		0x40					/* date-of-birth cannot be changed */
 
 /* suggestion types */
@@ -305,7 +312,7 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 void mxit_send_suggest_friends( struct MXitSession* session, int max, unsigned int nr_attrib, const char* attribute[] );
 void mxit_send_suggest_search( struct MXitSession* session, int max, const char* text, unsigned int nr_attrib, const char* attribute[] );
 
-void mxit_send_invite( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
+void mxit_send_invite( struct MXitSession* session, const char* username, gboolean mxitid, const char* alias, const char* groupname, const char* message );
 void mxit_send_remove( struct MXitSession* session, const char* username );
 void mxit_send_allow_sub( struct MXitSession* session, const char* username, const char* alias );
 void mxit_send_deny_sub( struct MXitSession* session, const char* username );

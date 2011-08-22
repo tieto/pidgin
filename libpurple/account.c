@@ -294,6 +294,7 @@ proxy_settings_to_xmlnode(PurpleProxyInfo *proxy_info)
 			 proxy_type == PURPLE_PROXY_HTTP       ? "http"   :
 			 proxy_type == PURPLE_PROXY_SOCKS4     ? "socks4" :
 			 proxy_type == PURPLE_PROXY_SOCKS5     ? "socks5" :
+			 proxy_type == PURPLE_PROXY_TOR        ? "tor" :
 			 proxy_type == PURPLE_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
 
 	if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
@@ -746,6 +747,8 @@ parse_proxy_info(xmlnode *node, PurpleAccount *account)
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS4);
 		else if (purple_strequal(data, "socks5"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_SOCKS5);
+		else if (purple_strequal(data, "tor"))
+			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_TOR);
 		else if (purple_strequal(data, "envvar"))
 			purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_USE_ENVVAR);
 		else
@@ -871,7 +874,7 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
+	ret = purple_account_new(name, protocol_id);
 	g_free(name);
 	g_free(protocol_id);
 
@@ -920,15 +923,6 @@ parse_account(xmlnode *node)
 		if (g_file_get_contents(filename, &contents, &len, NULL))
 		{
 			purple_buddy_icons_set_account_icon(ret, (guchar *)contents, len);
-		}
-		else
-		{
-			/* Try to see if the icon got left behind in the old cache. */
-			g_free(filename);
-			filename = g_build_filename(g_get_home_dir(), ".gaim", "icons", data, NULL);
-			if (g_file_get_contents(filename, &contents, &len, NULL)) {
-				purple_buddy_icons_set_account_icon(ret, (guchar*)contents, len);
-			}
 		}
 
 		g_free(filename);

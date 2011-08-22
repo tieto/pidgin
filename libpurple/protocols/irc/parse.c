@@ -74,7 +74,7 @@ static struct _irc_msg {
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
 	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
-	{ "352", "nvcvnvvv:", irc_msg_who },/* Channel WHO			*/
+	{ "352", "ncvvvnv:", irc_msg_who },	/* Channel WHO			*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
 	{ "367", "ncnnv", irc_msg_ban },	/* Ban list			*/
@@ -125,6 +125,7 @@ static struct _irc_user_cmd {
 	char *help;
 } _irc_cmds[] = {
 	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
+	{ "authserv", ":", irc_cmd_service, N_("authserv: Send a command to authserv") },
 	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
 	{ "ctcp", "t:", irc_cmd_ctcp, N_("ctcp <nick> <msg>: sends ctcp msg to nick.") },
 	{ "chanserv", ":", irc_cmd_service, N_("chanserv: Send a command to chanserv") },
@@ -458,6 +459,7 @@ char *irc_mirc2html(const char *string)
 				decoded = g_string_append(decoded, "</U>");
 			if (font)
 				decoded = g_string_append(decoded, "</FONT>");
+			bold = italic = underline = font = FALSE;
 			break;
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Unexpected mIRC formatting character %d\n", *cur);
@@ -668,11 +670,11 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Disconnected."));
 		return;

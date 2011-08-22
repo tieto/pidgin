@@ -370,20 +370,6 @@ void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc,
 void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
- * Was used by the connection API to tell the blist if an account has a
- * connection error or no longer has a connection error, but the blist now does
- * this itself with the @ref account-error-changed signal.
- *
- * @param account The account that either has a connection error
- *        or no longer has a connection error.
- * @param message The connection error message, or NULL if this
- *        account is no longer in an error state.
- * @deprecated There was no good reason for code other than gtkconn to call
- *             this.
- */
-void pidgin_blist_update_account_error_state(PurpleAccount *account, const char *message);
-
-/**
  * Sets a headline notification
  *
  * This is currently used for mail notification, but could theoretically be used for anything.

@@ -432,7 +432,7 @@ static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition 
 		/*TODO: do we really want to disconnect on a failure to write?*/
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -451,7 +451,7 @@ static void send_later_cb(gpointer data, gint source, const gchar *error_message
 	if(source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 				error_message);
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -479,7 +479,7 @@ static void sendlater(PurpleConnection *gc, const char *buf) {
 	if(!sip->connecting) {
 		purple_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
 		if (purple_proxy_connect(gc, sip->account, sip->realhostname, sip->realport, send_later_cb, gc) == NULL) {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		}
 		sip->connecting = TRUE;
 	}
@@ -1122,7 +1122,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
 					if (!purple_account_get_remember_password(sip->gc->account))
 						purple_account_set_password(sip->gc->account, NULL);
-					purple_connection_error_reason(sip->gc,
+					purple_connection_error(sip->gc,
 						PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 						_("Incorrect password"));
 					return TRUE;
@@ -1137,7 +1137,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if (sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "Unrecognized return code for REGISTER.\n");
 				if (sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
-					purple_connection_error_reason(sip->gc,
+					purple_connection_error(sip->gc,
 						PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 						_("Unknown server response"));
 					return TRUE;
@@ -1739,7 +1739,7 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 	if(source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 				error_message);
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -1775,7 +1775,7 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listen_data = NULL;
 
 	if(listenfd == -1) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to create listen socket"));
 		return;
@@ -1804,7 +1804,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->query_data = NULL;
 
 	if (!hosts || !hosts->data) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to resolve hostname"));
 		return;
@@ -1825,7 +1825,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_DGRAM,
 				simple_udp_host_resolved_listen_cb, sip);
 	if (sip->listen_data == NULL) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to create listen socket"));
 		return;
@@ -1840,7 +1840,7 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 
 	sip->listenfd = listenfd;
 	if(sip->listenfd == -1) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to create listen socket"));
 		return;
@@ -1855,7 +1855,7 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	/* open tcp connection to the server */
 	if (purple_proxy_connect(sip->gc, sip->account, sip->realhostname,
 			sip->realport, login_cb, sip->gc) == NULL) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 	}
@@ -1895,7 +1895,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 		sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_STREAM,
 					simple_tcp_connect_listen_cb, sip);
 		if (sip->listen_data == NULL) {
-			purple_connection_error_reason(sip->gc,
+			purple_connection_error(sip->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to create listen socket"));
 			return;
@@ -1903,9 +1903,10 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		sip->query_data = purple_dnsquery_a_account(sip->account, hostname,
+			port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
-			purple_connection_error_reason(sip->gc,
+			purple_connection_error(sip->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to resolve hostname"));
 		}
@@ -1923,7 +1924,7 @@ static void simple_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("SIP usernames may not contain whitespaces or @ symbols"));
 		return;
@@ -1931,6 +1932,8 @@ static void simple_login(PurpleAccount *account)
 
 	gc->proto_data = sip = g_new0(struct simple_account_data, 1);
 	sip->gc = gc;
+	sip->fd = -1;
+	sip->listenfd = -1;
 	sip->account = account;
 	sip->registerexpire = 900;
 	sip->udp = purple_account_get_bool(account, "udp", FALSE);
@@ -1940,7 +1943,7 @@ static void simple_login(PurpleAccount *account)
 
 	userserver = g_strsplit(username, "@", 2);
 	if (userserver[1] == NULL || userserver[1][0] == '\0') {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("SIP connect server not specified"));
 		return;
@@ -1965,7 +1968,7 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	sip->srv_query_data = purple_srv_resolve("sip",
+	sip->srv_query_data = purple_srv_resolve_account(account, "sip",
 			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
 }
 

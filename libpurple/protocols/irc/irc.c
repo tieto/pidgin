@@ -101,7 +101,11 @@ static int do_send(struct irc_conn *irc, const char *buf, gsize len)
 static int irc_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	struct irc_conn *irc = (struct irc_conn*)gc->proto_data;
-	return do_send(irc, buf, len);
+	if (len == -1) {
+		len = strlen(buf);
+	}
+	irc_send_len(irc, buf, len);
+	return len;
 }
 
 static void
@@ -126,7 +130,7 @@ irc_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 			g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -144,15 +148,17 @@ irc_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 int irc_send(struct irc_conn *irc, const char *buf)
 {
-	int ret, buflen;
+    return irc_send_len(irc, buf, strlen(buf));
+}
+
+int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
+{
+	int ret;
  	char *tosend= g_strdup(buf);
 
 	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
 	if (tosend == NULL)
 		return 0;
-
-	buflen = strlen(tosend);
-
 
 	/* If we're not buffering writes, try to send immediately */
 	if (!irc->writeh)
@@ -168,7 +174,7 @@ int irc_send(struct irc_conn *irc, const char *buf)
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 			g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 	} else if (ret < buflen) {
@@ -245,10 +251,14 @@ gboolean irc_who_channel_timeout(struct irc_conn *irc)
 
 static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
 {
-	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+	if (purple_conversation_get_account(conv) == irc->account
+	    && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT
+	    && !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
 		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
 		
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Performing periodic who on %s", purple_conversation_get_name(conv));
+		purple_debug(PURPLE_DEBUG_INFO, "irc",
+			     "Performing periodic who on %s\n",
+			     purple_conversation_get_name(conv));
 		irc_send(irc, buf);
 		g_free(buf);
 	}
@@ -349,7 +359,7 @@ static void irc_login(PurpleAccount *account)
 	gc->flags |= PURPLE_CONNECTION_NO_NEWLINES;
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("IRC nick and server may not contain whitespace"));
 		return;
@@ -380,7 +390,7 @@ static void irc_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
 					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 		} else {
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 			return;
@@ -393,7 +403,7 @@ static void irc_login(PurpleAccount *account)
 				 purple_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc) == NULL)
 		{
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect"));
 			return;
@@ -403,8 +413,7 @@ static void irc_login(PurpleAccount *account)
 
 static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
-	char *hostname, *server;
-	const char *hosttmp;
+	char *server;
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
 	const char *pass = purple_connection_get_password(gc);
@@ -432,17 +441,6 @@ static gboolean do_login(PurpleConnection *gc) {
 		}
 	}
 
-	hosttmp = purple_get_host_name();
-	if (*hosttmp == ':') {
-		/* This is either an IPv6 address, or something which
-		 * doesn't belong here.  Either way, we need to escape
-		 * it. */
-		hostname = g_strdup_printf("0%s", hosttmp);
-	} else {
-		/* Ugly, I know. */
-		hostname = g_strdup(hosttmp);
-	}
-
 	if (*irc->server == ':') {
 		/* Same as hostname, above. */
 		server = g_strdup_printf("0%s", irc->server);
@@ -450,10 +448,9 @@ static gboolean do_login(PurpleConnection *gc) {
 		server = g_strdup(irc->server);
 	}
 
-	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, hostname, server,
+	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : username, "*", server,
 	                 strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	g_free(tmp);
-	g_free(hostname);
 	g_free(server);
 	if (irc_send(irc, buf) < 0) {
 		g_free(buf);
@@ -493,7 +490,7 @@ static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 			error_message);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -702,12 +699,12 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	} else if (len < 0) {
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Server closed the connection"));
 		return;
@@ -733,12 +730,12 @@ static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond)
 	} else if (len < 0) {
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Server closed the connection"));
 		return;

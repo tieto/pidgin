@@ -277,6 +277,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 
 	if(dstjid != NULL && streamhost->host && streamhost->port > 0) {
 		char *dstaddr, *hash;
+		PurpleAccount *account;
 		jsx->gpi = purple_proxy_info_new();
 		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
@@ -293,8 +294,9 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
 		hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
-		jsx->connect_data = purple_proxy_connect_socks5(NULL, jsx->gpi,
-				hash, 0,
+		account = purple_connection_get_account(jsx->js->gc);
+		jsx->connect_data = purple_proxy_connect_socks5_account(NULL, account,
+				jsx->gpi, hash, 0,
 				jabber_si_bytestreams_connect_cb, xfer);
 		g_free(hash);
 		g_free(dstaddr);
@@ -963,15 +965,23 @@ static void
 jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx;
+	PurpleProxyType proxy_type;
 
 	purple_xfer_ref(xfer);
 
 	jsx = xfer->data;
 
-	/* TODO: Should there be an option to not use the local host as a ft proxy?
-	 *       (to prevent revealing IP address, etc.) */
-	jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
+	/* TODO: This should probably be done with an account option instead of
+	 *       piggy-backing on the TOR proxy type. */
+	proxy_type = purple_proxy_info_get_type(
+		purple_proxy_get_setup(purple_connection_get_account(jsx->js->gc)));
+	if (proxy_type == PURPLE_PROXY_TOR) {
+		purple_debug_info("jabber", "Skipping attempting local streamhost.\n");
+		jsx->listen_data = NULL;
+	} else
+		jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 				jabber_si_xfer_bytestreams_listen_cb, xfer);
+
 	if (jsx->listen_data == NULL) {
 		/* We couldn't open a local port.  Perhaps we can use a proxy. */
 		jabber_si_xfer_bytestreams_listen_cb(-1, xfer);
@@ -1681,8 +1691,12 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
+	xmlnode *file, *feature, *x, *field, *option, *value;
+#if ENABLE_FT_THUMBNAILS
+	xmlnode *thumbnail;
+#endif
 	const char *stream_id, *filename, *filesize_c, *profile;
+	guint64 filesize_64 = 0;
 	size_t filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
@@ -1699,7 +1713,17 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		return;
 
 	if((filesize_c = xmlnode_get_attrib(file, "size")))
-		filesize = strtoul(filesize_c, NULL, 10);
+		filesize_64 = g_ascii_strtoull(filesize_c, NULL, 10);
+	/* TODO 3.0.0: When the core uses a guint64, this is redundant.
+	 * See #8477.
+	 */
+	if (filesize_64 > G_MAXSIZE) {
+		/* Should this pop up a warning? */
+		purple_debug_warning("jabber", "Unable to transfer file (too large)"
+		                     " -- see #8477 for more details.");
+		return;
+	}
+	filesize = filesize_64;
 
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;
@@ -1774,16 +1798,12 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		if (cid) {
 			jabber_data_request(js, cid, purple_xfer_get_remote_user(xfer),
 			    NULL, TRUE, jabber_si_thumbnail_cb, xfer);
-		} else {
-			purple_xfer_request(xfer);
+			return;
 		}
-	} else {
-		purple_xfer_request(xfer);
 	}
-#else
-	thumbnail = NULL; /* Silence warning */
-	purple_xfer_request(xfer);
 #endif
+
+	purple_xfer_request(xfer);
 }
 
 void

@@ -74,11 +74,28 @@ static GHashTable *finch_ui_get_info(void)
 		 * account "markdoliner."  Please don't use this key for other
 		 * applications.  You can either not specify a client key, in
 		 * which case the default "libpurple" key will be used, or you
-		 * can register for your own client key at
-		 * http://developer.aim.com/manageKeys.jsp
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma19sqWV9ymU6UYc");
-		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma19sqWV9ymU6UYc");
+
+		/*
+		 * This is the client key for "Pidgin."  It is owned by the AIM
+		 * account "markdoliner."  Please don't use this key for other
+		 * applications.  You can either not specify a client key, in
+		 * which case the default "libpurple" key will be used, or you
+		 * can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's
+		 * possible it has been re-added).  AOL's old key management
+		 * page is http://developer.aim.com/manageKeys.jsp
+		 *
+		 * We used to have a Finch-specific devId/clientkey
+		 * (ma19sqWV9ymU6UYc), but it stopped working, so we switched
+		 * to this one.
+		 */
+		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
 
 		/*
 		 * This is the distid for Finch, given to us by AOL.  Please
@@ -333,29 +350,6 @@ init_libpurple(int argc, char **argv)
 
 	/* We don't want debug-messages to show up and corrupt the display */
 	purple_debug_set_enabled(debug_enabled);
-
-	/* If we're using a custom configuration directory, we
-	 * do NOT want to migrate, or weird things will happen. */
-	if (opt_config_dir_arg == NULL)
-	{
-		if (!purple_core_migrate())
-		{
-			char *old = g_strconcat(purple_home_dir(),
-			                        G_DIR_SEPARATOR_S ".gaim", NULL);
-			char *text = g_strdup_printf(_(
-				"%s encountered errors migrating your settings "
-				"from %s to %s. Please investigate and complete the "
-				"migration by hand. Please report this error at http://developer.pidgin.im"), _("Finch"),
-				old, purple_user_dir());
-
-			g_free(old);
-
-			purple_print_utf8_to_console(stderr, text);
-			g_free(text);
-
-			return 0;
-		}
-	}
 
 	purple_core_set_ui_ops(gnt_core_get_ui_ops());
 	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
