@@ -781,10 +781,10 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
   to_username = args[0];
   message = args[1];
 
-  if (!to_username || strlen(to_username) == 0) {
+  if (!to_username || !*to_username) {
     *error = g_strdup(_("Whisper is missing recipient."));
     return PURPLE_CMD_RET_FAILED;
-  } else if (!message || strlen(message) == 0) {
+  } else if (!message || !*message) {
     *error = g_strdup(_("Whisper is missing message."));
     return PURPLE_CMD_RET_FAILED;
   }

@@ -115,7 +115,7 @@ static int calculateAge( const char* date )
 	struct tm now, bdate;
 	int age;
 
-	if ( ( !date ) || ( strlen( date ) == 0 ) )
+	if ( ( !date ) || ( !*date ) )
 		return 0;
 
 	/* current time */

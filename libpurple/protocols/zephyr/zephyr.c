@@ -1164,7 +1164,7 @@ static gint check_notify_tzc(gpointer data)
 				locations = find_node(newparsetree,"locations");
 				locval = tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents;
 
-				if (!locval || !g_ascii_strcasecmp(locval," ") || (strlen(locval) == 0)) {
+				if (!locval || !g_ascii_strcasecmp(locval," ") || !*locval) {
 					nlocs = 0;
 				} else {
 					nlocs = 1;
