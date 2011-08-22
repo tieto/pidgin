@@ -2812,7 +2812,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 			purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
-			purple_notify_user_info_prepend_pair(user_info, NULL, buf);
+			purple_notify_user_info_prepend_pair_html(user_info, NULL, buf);
 		}
 	}
 

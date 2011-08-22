@@ -733,13 +733,13 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		                    (jbr->client.version ? jbr->client.version : ""));
 		/* TODO: Check whether it's correct to call prepend_pair_html,
 		         or if we should be using prepend_pair_plaintext */
-		purple_notify_user_info_prepend_pair(user_info, _("Client"), tmp);
+		purple_notify_user_info_prepend_pair_html(user_info, _("Client"), tmp);
 		g_free(tmp);
 
 		if (jbr->client.os) {
 			/* TODO: Check whether it's correct to call prepend_pair_html,
 			         or if we should be using prepend_pair_plaintext */
-			purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
+			purple_notify_user_info_prepend_pair_html(user_info, _("Operating System"), jbr->client.os);
 		}
 	}
 
@@ -784,7 +784,7 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
 						((status_name && purdy) ? ": " : ""),
 						(purdy ? purdy : ""));
-		purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
+		purple_notify_user_info_prepend_pair_html(user_info, _("Status"), tmp);
 
 		g_snprintf(priority, sizeof(priority), "%d", jbr->priority);
 		purple_notify_user_info_prepend_pair_plaintext(user_info, _("Priority"), priority);
@@ -835,7 +835,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			if (jbr->name) {
 				/* TODO: Check whether it's correct to call prepend_pair_html,
 				         or if we should be using prepend_pair_plaintext */
-				purple_notify_user_info_prepend_pair(user_info, _("Resource"), jbr->name);
+				purple_notify_user_info_prepend_pair_html(user_info, _("Resource"), jbr->name);
 			}
 		}
 	}
@@ -868,7 +868,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				                jbi->last_message ? jbi->last_message : "");
 			/* TODO: Check whether it's correct to call prepend_pair_html,
 			         or if we should be using prepend_pair_plaintext */
-			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
+			purple_notify_user_info_prepend_pair_html(user_info, _("Status"), status);
 			g_free(status);
 		}
 	}

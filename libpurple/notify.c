@@ -594,12 +594,22 @@ purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, cons
 }
 
 void
-purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+purple_notify_user_info_prepend_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *entry;
 
 	entry = purple_notify_user_info_entry_new(label, value);
 	g_queue_push_head(&user_info->entries, entry);
+}
+
+void
+purple_notify_user_info_prepend_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	gchar *escaped;
+
+	escaped = g_markup_escape_text(value, -1);
+	purple_notify_user_info_prepend_pair_html(user_info, label, escaped);
+	g_free(escaped);
 }
 
 void
