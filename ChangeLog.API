@@ -24,6 +24,23 @@ version 3.0.0 (??/??/????):
 		  PurpleConnectionError as the second parameter
 
 		Removed:
+		* _GntFileType
+		* _GntKeyPressMode
+		* _GntMouseEvent
+		* _GntParamFlags
+		* _GntProgressBarOrientation
+		* _GntTreeColumnFlag
+		* _GntWidgetFlags
+		* _PurpleCipherBatchMode
+		* _PurpleCipherCaps
+		* _PurpleCmdFlag
+		* _PurpleCmdPriority
+		* _PurpleCmdRet
+		* _PurpleCmdStatus
+		* _PurplePrefType
+		* _PurplePrivacyType
+		* _PurpleSoundEventID
+		* _XMLNodeType
 		* GtkIMHtml.clipboard_html_string
 		* GtkIMHtml.clipboard_text_string
 		* pidgin_blist_update_account_error_state

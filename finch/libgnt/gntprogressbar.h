@@ -37,7 +37,7 @@
 #define GNT_IS_PROGRESS_BAR_CLASS(k)   (G_TYPE_CHECK_CLASS_TYPE ((k), GNT_TYPE_PROGRESS_BAR))
 #define GNT_PROGRESS_BAR_GET_CLASS(o)  (G_TYPE_INSTANCE_GET_CLASS ((o), GNT_TYPE_PROGRESS_BAR, GntProgressBarClass))
 
-typedef enum _GntProgressBarOrientation
+typedef enum
 {
    GNT_PROGRESS_LEFT_TO_RIGHT,
    GNT_PROGRESS_RIGHT_TO_LEFT,
