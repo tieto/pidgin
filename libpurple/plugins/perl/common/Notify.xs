@@ -145,7 +145,7 @@ purple_notify_user_info_get_text_with_newline(user_info, newline)
 	Purple::NotifyUserInfo user_info
 	const char *newline
 
-void purple_notify_user_info_add_pair(user_info, label, value)
+void purple_notify_user_info_add_pair_html(user_info, label, value)
 	Purple::NotifyUserInfo user_info
 	const char *label
 	const char *value
