@@ -698,7 +698,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	if (nc_len != MSIM_AUTH_CHALLENGE_LENGTH) {
 		purple_debug_info("msim", "bad nc length: %" G_GSIZE_MODIFIER
 				"x != 0x%x\n", nc_len, MSIM_AUTH_CHALLENGE_LENGTH);
-		purple_connection_error_reason (session->gc,
+		purple_connection_error (session->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unexpected challenge length from server"));
 		return FALSE;
@@ -835,7 +835,7 @@ msim_check_alive(gpointer data)
 		purple_debug_info("msim",
 				"msim_check_alive: %zu > interval of %d, presumed dead\n",
 				delta, MSIM_KEEPALIVE_INTERVAL);
-		purple_connection_error_reason(session->gc,
+		purple_connection_error(session->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Lost connection with server"));
 
@@ -1866,7 +1866,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 					purple_account_set_password(session->account, NULL);
 				break;
 		}
-		purple_connection_error_reason(session->gc, reason, full_errmsg);
+		purple_connection_error(session->gc, reason, full_errmsg);
 	} else {
 		purple_notify_error(session->account, _("MySpaceIM Error"), full_errmsg, NULL);
 	}
@@ -2027,7 +2027,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	/* libpurple/eventloop.h only defines these two */
 	if (cond != PURPLE_INPUT_READ && cond != PURPLE_INPUT_WRITE) {
 		purple_debug_info("msim_input_cb", "unknown condition=%d\n", cond);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid input condition"));
 		return;
@@ -2069,12 +2069,12 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 
 		tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (n == 0) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Server closed the connection"));
 		return;
@@ -2092,7 +2092,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		purple_debug_info("msim", "msim_input_cb: strlen=%d, but read %d bytes"
 				"--null byte encountered?\n",
 				strlen(session->rxbuf + session->rxoff), n);
-		/*purple_connection_error_reason (gc,
+		/*purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				"Invalid message - null byte on input"); */
 		return;
@@ -2117,7 +2117,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		msg = msim_parse(session->rxbuf);
 		if (!msg) {
 			purple_debug_info("msim", "msim_input_cb: couldn't parse rxbuf\n");
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to parse message"));
 			break;
@@ -2162,7 +2162,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
 				error_message);
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		return;
@@ -2219,7 +2219,7 @@ msim_login(PurpleAccount *acct)
 	if (!purple_proxy_connect(gc, acct, host, port, msim_connect_cb, gc)) {
 		/* TODO: try other ports if in auto mode, then save
 		 * working port and try that first next time. */
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 		return;

@@ -44,7 +44,6 @@ struct _PurpleStatusType
 
 	char *id;
 	char *name;
-	char *primary_attr_id;
 
 	gboolean saveable;
 	gboolean user_settable;
@@ -294,22 +293,12 @@ purple_status_type_destroy(PurpleStatusType *status_type)
 
 	g_free(status_type->id);
 	g_free(status_type->name);
-	g_free(status_type->primary_attr_id);
 
 	g_list_foreach(status_type->attrs, (GFunc)purple_status_attr_destroy, NULL);
 	g_list_free(status_type->attrs);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(status_type);
 	g_free(status_type);
-}
-
-void
-purple_status_type_set_primary_attr(PurpleStatusType *status_type, const char *id)
-{
-	g_return_if_fail(status_type != NULL);
-
-	g_free(status_type->primary_attr_id);
-	status_type->primary_attr_id = g_strdup(id);
 }
 
 void
@@ -433,14 +422,6 @@ purple_status_type_is_available(const PurpleStatusType *status_type)
 	primitive = purple_status_type_get_primitive(status_type);
 
 	return (primitive == PURPLE_STATUS_AVAILABLE);
-}
-
-const char *
-purple_status_type_get_primary_attr(const PurpleStatusType *status_type)
-{
-	g_return_val_if_fail(status_type != NULL, NULL);
-
-	return status_type->primary_attr_id;
 }
 
 PurpleStatusAttr *

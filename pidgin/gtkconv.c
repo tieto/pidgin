@@ -578,7 +578,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	if (strlen(clean) == 0) {
+	if (!*clean) {
 		g_free(buf);
 		g_free(clean);
 		return;

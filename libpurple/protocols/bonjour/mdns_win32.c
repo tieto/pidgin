@@ -105,7 +105,7 @@ _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
 		purple_debug_error("bonjour", "Error (%d) handling mDNS response.\n", errorCode);
 		/* This happens when the mDNSResponder goes down, I haven't seen it happen any other time (in my limited testing) */
 		if (errorCode == kDNSServiceErr_Unknown) {
-			purple_connection_error_reason(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with local mDNSResponder."));
 		}
 	}

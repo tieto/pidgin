@@ -234,7 +234,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
     const char *message = purple_status_get_attr_string(status, "message");
 
     char *text;
-    if (message && strlen(message) > 0)
+    if (message && *message)
       text = g_strdup_printf("%s: %s", name, message);
     else
       text = g_strdup(name);
@@ -258,6 +258,8 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
     char *msg = nullprpl_status_text(buddy);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
     purple_notify_user_info_add_pair(info, purple_status_get_name(status),
                                      msg);
     g_free(msg);
@@ -265,12 +267,14 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     if (full) {
       const char *user_info = purple_account_get_user_info(gc->account);
       if (user_info)
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
         purple_notify_user_info_add_pair(info, _("User info"), user_info);
     }
 
   } else {
     /* they're not logged in */
-    purple_notify_user_info_add_pair(info, _("User info"), _("not logged in"));
+    purple_notify_user_info_add_pair_plaintext(info, _("User info"), _("not logged in"));
   }
 
   purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
@@ -510,6 +514,8 @@ static void nullprpl_get_info(PurpleConnection *gc, const char *username) {
     body = purple_account_get_user_info(acct);
   else
     body = _("No user info.");
+  /* TODO: Check whether it's correct to call add_pair_html,
+           or if we should be using add_pair_plaintext */
   purple_notify_user_info_add_pair(info, "Info", body);
 
   /* show a buddy's user info in a nice dialog box */
@@ -775,10 +781,10 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
   to_username = args[0];
   message = args[1];
 
-  if (!to_username || strlen(to_username) == 0) {
+  if (!to_username || !*to_username) {
     *error = g_strdup(_("Whisper is missing recipient."));
     return PURPLE_CMD_RET_FAILED;
-  } else if (!message || strlen(message) == 0) {
+  } else if (!message || !*message) {
     *error = g_strdup(_("Whisper is missing message."));
     return PURPLE_CMD_RET_FAILED;
   }
@@ -927,7 +933,7 @@ static void set_chat_topic_fn(PurpleConvChat *from, PurpleConvChat *to,
 
   purple_conv_chat_set_topic(to, username, topic);
 
-  if (topic && strlen(topic) > 0)
+  if (topic && *topic)
     msg = g_strdup_printf(_("%s sets topic to: %s"), username, topic);
   else
     msg = g_strdup_printf(_("%s clears topic"), username);

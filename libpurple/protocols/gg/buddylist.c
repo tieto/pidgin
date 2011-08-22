@@ -90,7 +90,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 		gchar **data_tbl;
 		gchar *name, *show, *g;
 
-		if (strlen(users_tbl[i]) == 0)
+		if (!*users_tbl[i])
 			continue;
 
 		data_tbl = g_strsplit(users_tbl[i], ";", 8);

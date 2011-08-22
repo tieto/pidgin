@@ -1547,54 +1547,72 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		return;
 
 	if (client_entry->nickname)
-		purple_notify_user_info_add_pair(user_info, _("Nickname"),
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Nickname"),
 					       client_entry->nickname);
 	if (client_entry->username && client_entry->hostname) {
 		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
-		purple_notify_user_info_add_pair(user_info, _("Username"), tmp);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Username"), tmp);
 	}
 	if (client_entry->mode) {
 		memset(tmp, 0, sizeof(tmp));
 		silcpurple_get_umode_string(client_entry->mode,
 					  tmp, sizeof(tmp) - strlen(tmp));
-		purple_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("User Modes"), tmp);
 	}
 
 	silcpurple_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 
 	if (statusstr) {
-		purple_notify_user_info_add_pair(user_info, _("Message"), statusstr);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Message"), statusstr);
 		g_free(statusstr);
 	}
 
 	if (full) {
 		if (moodstr) {
-			purple_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Mood"), moodstr);
 			g_free(moodstr);
 		}
 
 		if (contactstr) {
-			purple_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Preferred Contact"), contactstr);
 			g_free(contactstr);
 		}
 
 		if (langstr) {
-			purple_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Preferred Language"), langstr);
 			g_free(langstr);
 		}
 
 		if (devicestr) {
-			purple_notify_user_info_add_pair(user_info, _("Device"), devicestr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Device"), devicestr);
 			g_free(devicestr);
 		}
 
 		if (tzstr) {
-			purple_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Timezone"), tzstr);
 			g_free(tzstr);
 		}
 
 		if (geostr) {
-			purple_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Geolocation"), geostr);
 			g_free(geostr);
 		}
 	}

@@ -384,39 +384,6 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
 gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
 
 /**
- * Add autocompletion of screenames to an entry.
- *
- * @deprecated
- *   For new code, use the equivalent:
- *   #pidgin_setup_screenname_autocomplete_with_filter(@a entry, @a optmenu,
- *   #pidgin_screenname_autocomplete_default_filter, <tt>GINT_TO_POINTER(@a
- *   all)</tt>)
- *
- * @param entry     The GtkEntry on which to setup autocomplete.
- * @param optmenu   A menu for accounts, returned by
- *                  pidgin_account_option_menu_new().  If @a optmenu is not @c
- *                  NULL, it'll be updated when a username is chosen from the
- *                  autocomplete list.
- * @param all       Whether to include usernames from disconnected accounts.
- */
-void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
-
-/**
- * Check if the given path is a directory or not.  If it is, then modify
- * the given GtkFileSelection dialog so that it displays the given path.
- * If the given path is not a directory, then do nothing.
- *
- * @param path    The path entered in the file selection window by the user.
- * @param filesel The file selection window.
- *
- * @return TRUE if given path is a directory, FALSE otherwise.
- * @deprecated Pidgin no longer uses GtkFileSelection internally. It has also
- *             been deprecated by GTK+. Use GtkFileChooser instead and ignore
- *             this function.
- */
-gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
-
-/**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
  * if encountered.
  *
@@ -660,19 +627,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  * @return           The converted image data, or @c NULL if an error occurred.
  */
 gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
-
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKUTILS_C_)
-/**
- * Set or unset a custom buddyicon for a user.
- *
- * @param account   The account the user belongs to.
- * @param who       The name of the user.
- * @param filename  The path of the custom icon. If this is @c NULL, then any
- *                  previously set custom buddy icon for the user is removed.
- * @deprecated See purple_buddy_icons_node_set_custom_icon_from_file()
- */
-void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename);
-#endif
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing

@@ -213,7 +213,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  (gc->password == NULL)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));
 				return FALSE;
 			}
@@ -256,7 +256,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  (gc->password == NULL)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
-				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));
 				return FALSE;
 			}

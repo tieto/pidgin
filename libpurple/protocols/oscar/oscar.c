@@ -308,7 +308,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 		gchar *msg;
 		msg = g_strdup_printf(_("Unable to connect to authentication server: %s"),
 				error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
@@ -316,7 +316,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 		gchar *msg;
 		msg = g_strdup_printf(_("Unable to connect to BOS server: %s"),
 				error_message);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
 	}
 	else
@@ -578,7 +578,7 @@ idle_reporting_pref_cb(const char *name, PurplePrefType type,
 	gc = data;
 	od = purple_connection_get_protocol_data(gc);
 	report_idle = strcmp((const char *)value, "none") != 0;
-	presence = aim_ssi_getpresence(od->ssi.local);
+	presence = aim_ssi_getpresence(&od->ssi.local);
 
 	if (report_idle)
 		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
@@ -600,7 +600,7 @@ recent_buddies_pref_cb(const char *name, PurplePrefType type,
 
 	gc = data;
 	od = purple_connection_get_protocol_data(gc);
-	presence = aim_ssi_getpresence(od->ssi.local);
+	presence = aim_ssi_getpresence(&od->ssi.local);
 
 	if (value)
 		aim_ssi_setpresence(od, presence & ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
@@ -735,13 +735,13 @@ oscar_login(PurpleAccount *account)
 	if (!oscar_util_valid_name(purple_account_get_username(account))) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
 	}
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
-	if (oscar_util_valid_name_icq((purple_account_get_username(account)))) {
+	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
@@ -756,7 +756,7 @@ oscar_login(PurpleAccount *account)
 
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
-		purple_connection_error_reason(
+		purple_connection_error(
 			gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("You required encryption in your account settings, but encryption is not supported by your system."));
@@ -825,7 +825,7 @@ oscar_login(PurpleAccount *account)
 		}
 
 		if (newconn->gsc == NULL && newconn->connect_data == NULL) {
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Unable to connect"));
 			return;
 		}
@@ -1048,7 +1048,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 
 	if (conn->gsc == NULL && conn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1087,41 +1087,41 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered username */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Username does not exist"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Username does not exist"));
 			break;
 		case 0x05:
 			/* Incorrect password */
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
 			break;
 		case 0x11:
 			/* Suspended account */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended"));
 			break;
 		case 0x02:
 		case 0x14:
 			/* service temporarily unavailable */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
 			break;
 		case 0x18:
 			/* username connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your username has been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your username has been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 		{
 			/* client too old */
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"),
 					oscar_get_ui_info_string("website", PURPLE_WEBSITE));
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
 			break;
 		}
 		case 0x1d:
 			/* IP address connecting too frequently */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your IP address has been connecting and disconnecting too frequently. Wait a minute and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("Your IP address has been connecting and disconnecting too frequently. Wait a minute and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Unknown reason"));
+			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Unknown reason"));
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
@@ -1169,7 +1169,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_free(host);
 	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
+		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1199,7 +1199,7 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	PurpleConnection *gc = user_data;
 
 	/* Disconnect */
-	purple_connection_error_reason(gc,
+	purple_connection_error(gc,
 		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 		_("The SecurID key entered is invalid"));
 }
@@ -1292,7 +1292,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
 		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
 			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
-			purple_connection_error_reason(
+			purple_connection_error(
 				gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You required encryption in your account settings, but one of the servers doesn't support it."));
@@ -2278,7 +2278,7 @@ purple_parse_clientauto_ch2(OscarData *od, const char *who, guint16 reason, cons
 	return 0;
 }
 
-static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason, guint32 state, char *msg) {
+static int purple_parse_clientauto_ch4(OscarData *od, const char *who, guint16 reason, guint32 state, char *msg) {
 	PurpleConnection *gc = od->gc;
 
 	switch(reason) {
@@ -2286,16 +2286,20 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 			char *statusmsg, **splitmsg;
 			PurpleNotifyUserInfo *user_info;
 
-			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			/* TODO: Don't we need to escape each piece? */
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
 			user_info = purple_notify_user_info_new();
 
-			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
-			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
-			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+			purple_notify_user_info_add_pair_html(user_info, NULL, g_strjoinv("<BR>", splitmsg));
 
 			g_free(statusmsg);
 			g_strfreev(splitmsg);
@@ -2309,16 +2313,20 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 			char *statusmsg, **splitmsg;
 			PurpleNotifyUserInfo *user_info;
 
-			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			/* TODO: Don't we need to escape each piece? */
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
 			user_info = purple_notify_user_info_new();
 
-			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
-			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
+			/* TODO: Check whether it's correct to call add_pair_html,
+			         or if we should be using add_pair_plaintext */
+			purple_notify_user_info_add_pair_html(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
-			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+			purple_notify_user_info_add_pair_html(user_info, NULL, g_strjoinv("<BR>", splitmsg));
 
 			g_free(statusmsg);
 			g_strfreev(splitmsg);
@@ -3716,7 +3724,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, co
 	}
 
 	if (od->ssi.received_data) {
-		if (!aim_ssi_itemlist_finditem(od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY)) {
+		if (!aim_ssi_itemlist_finditem(&od->ssi.local, gname, bname, AIM_SSI_TYPE_BUDDY)) {
 			purple_debug_info("oscar",
 					   "ssi: adding buddy %s to group %s\n", bname, gname);
 			aim_ssi_addbuddy(od, bname, gname, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
@@ -3728,8 +3736,8 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, co
 				purple_prpl_got_user_status(account, bname,
 						OSCAR_STATUS_ID_MOBILE, NULL);
 			}
-		} else if (aim_ssi_waitingforauth(od->ssi.local,
-		                                  aim_ssi_itemlist_findparentname(od->ssi.local, bname),
+		} else if (aim_ssi_waitingforauth(&od->ssi.local,
+		                                  aim_ssi_itemlist_findparentname(&od->ssi.local, bname),
 		                                  bname)) {
 			/* Not authorized -- Re-request authorization */
 			oscar_auth_sendrequest(gc, bname, msg);
@@ -3767,7 +3775,7 @@ void oscar_alias_buddy(PurpleConnection *gc, const char *name, const char *alias
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
 	if (od->ssi.received_data) {
-		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
+		char *gname = aim_ssi_itemlist_findparentname(&od->ssi.local, name);
 		if (gname) {
 			purple_debug_info("oscar",
 					   "ssi: changing the alias for buddy %s to %s\n", name, alias ? alias : "(none)");
@@ -3784,7 +3792,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 
 	if (od->ssi.received_data) {
 		const char *gname = purple_group_get_name(group);
-		if (aim_ssi_itemlist_finditem(od->ssi.local, gname, NULL, AIM_SSI_TYPE_GROUP)) {
+		if (aim_ssi_itemlist_finditem(&od->ssi.local, gname, NULL, AIM_SSI_TYPE_GROUP)) {
 			GList *cur, *groups = NULL;
 			PurpleAccount *account = purple_connection_get_account(gc);
 
@@ -3935,7 +3943,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		gname = purple_group_get_name(g);
 		bname = purple_buddy_get_name(b);
 
-		if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
+		if (aim_ssi_itemlist_exists(&od->ssi.local, bname)) {
 			/* If the buddy is an ICQ user then load his nickname */
 			const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
 			char *alias;
@@ -3944,7 +3952,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				serv_got_alias(gc, bname, servernick);
 
 			/* Store local alias on server */
-			alias = aim_ssi_getalias(od->ssi.local, gname, bname);
+			alias = aim_ssi_getalias(&od->ssi.local, gname, bname);
 			balias = purple_buddy_get_local_buddy_alias(b);
 			if (!alias && balias && *balias)
 				aim_ssi_aliasbuddy(od, gname, bname, balias);
@@ -3967,7 +3975,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		while (next != NULL) {
 			cur = next;
 			next = next->next;
-			if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
+			if (!aim_ssi_itemlist_finditem(&od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 				purple_debug_info("oscar",
 						"ssi: removing permit %s from local list\n", (const char *)cur->data);
 				purple_privacy_permit_remove(account, cur->data, TRUE);
@@ -3980,7 +3988,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	while (next != NULL) {
 		cur = next;
 		next = next->next;
-		if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, deny_entry_type)) {
+		if (!aim_ssi_itemlist_finditem(&od->ssi.local, NULL, cur->data, deny_entry_type)) {
 			purple_debug_info("oscar",
 					"ssi: removing deny %s from local list\n", (const char *)cur->data);
 			purple_privacy_deny_remove(account, cur->data, TRUE);
@@ -3988,7 +3996,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	}
 
 	/* Presence settings (idle time visibility) */
-	tmp = aim_ssi_getpresence(od->ssi.local);
+	tmp = aim_ssi_getpresence(&od->ssi.local);
 	if (tmp != 0xFFFFFFFF) {
 		const char *idle_reporting_pref;
 		gboolean report_idle;
@@ -4006,7 +4014,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/*** Begin code for adding from server list to local list ***/
 
-	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
+	for (curitem=od->ssi.local.data; curitem; curitem=curitem->next) {
 		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL)) {
 			/* Got node with invalid UTF-8 in the name.  Skip it. */
 			purple_debug_warning("oscar", "ssi: server list contains item of "
@@ -4020,7 +4028,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					struct aim_ssi_item *groupitem;
 					char *gname, *gname_utf8, *alias, *alias_utf8;
 
-					groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
+					groupitem = aim_ssi_itemlist_find(&od->ssi.local, curitem->gid, 0x0000);
 					gname = groupitem ? groupitem->name : NULL;
 					gname_utf8 = oscar_utf8_try_convert(account, od, gname);
 
@@ -4030,7 +4038,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 						purple_blist_add_group(g, NULL);
 					}
 
-					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
+					alias = aim_ssi_getalias_from_item(curitem);
 					alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 
 					b = purple_find_buddy_in_group(account, curitem->name, g);
@@ -4099,7 +4107,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				 * a part of your status and not really related to blocking.
 				 */
 				if (!od->icq && curitem->data) {
-					guint8 perm_deny = aim_ssi_getpermdeny(od->ssi.local);
+					guint8 perm_deny = aim_ssi_getpermdeny(&od->ssi.local);
 					if (perm_deny != 0 && perm_deny != account->perm_deny)
 					{
 						purple_debug_info("oscar",
@@ -4228,10 +4236,10 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if ((type != 0x0000) || (name == NULL))
 		return 1;
 
-	gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
+	gname = aim_ssi_itemlist_findparentname(&od->ssi.local, name);
 	gname_utf8 = gname ? oscar_utf8_try_convert(account, od, gname) : NULL;
 
-	alias = aim_ssi_getalias(od->ssi.local, gname, name);
+	alias = aim_ssi_getalias(&od->ssi.local, gname, name);
 	alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 	g_free(alias);
 
@@ -4269,7 +4277,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	}
 
-	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+	ssi_item = aim_ssi_itemlist_finditem(&od->ssi.local,
 			gname, name, AIM_SSI_TYPE_BUDDY);
 	if (ssi_item == NULL)
 	{
@@ -4586,32 +4594,18 @@ PurpleMood* oscar_get_purple_moods(PurpleAccount *account)
 const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b)
 {
 	const char *name = b ? purple_buddy_get_name(b) : NULL;
-	if ((b == NULL) || (name == NULL) || oscar_util_valid_name_sms(name))
-	{
-		if (a == NULL || oscar_util_valid_name_icq(purple_account_get_username(a)))
-			return "icq";
-		else
-			return "aim";
-	}
-
-	if (oscar_util_valid_name_icq(name))
+	if (name && !oscar_util_valid_name_sms(name) && oscar_util_valid_name_icq(name))
 		return "icq";
-	return "aim";
+
+	return "icq";
 }
 
 const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b)
 {
 	const char *name = b ? purple_buddy_get_name(b) : NULL;
-	if ((b == NULL) || (name == NULL) || oscar_util_valid_name_sms(name))
-	{
-		if (a != NULL && oscar_util_valid_name_icq(purple_account_get_username(a)))
-			return "icq";
-		else
-			return "aim";
-	}
-
-	if (oscar_util_valid_name_icq(name))
+	if (name && !oscar_util_valid_name_sms(name) && oscar_util_valid_name_icq(name))
 		return "icq";
+
 	return "aim";
 }
 
@@ -4642,8 +4636,8 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 	if (purple_presence_is_online(presence) == FALSE) {
 		char *gname;
 		if ((name) && (od) && (od->ssi.received_data) &&
-			(gname = aim_ssi_itemlist_findparentname(od->ssi.local, name)) &&
-			(aim_ssi_waitingforauth(od->ssi.local, gname, name))) {
+			(gname = aim_ssi_itemlist_findparentname(&od->ssi.local, name)) &&
+			(aim_ssi_waitingforauth(&od->ssi.local, gname, name))) {
 			return "not-authorized";
 		}
 	}
@@ -4710,8 +4704,8 @@ char *oscar_status_text(PurpleBuddy *b)
 	if ((od != NULL) && !purple_presence_is_online(presence))
 	{
 		const char *name = purple_buddy_get_name(b);
-		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
-		if (aim_ssi_waitingforauth(od->ssi.local, gname, name))
+		char *gname = aim_ssi_itemlist_findparentname(&od->ssi.local, name);
+		if (aim_ssi_waitingforauth(&od->ssi.local, gname, name))
 			ret = g_strdup(_("Not Authorized"));
 		else
 			ret = g_strdup(_("Offline"));
@@ -4954,7 +4948,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	data = g_new(struct name_data, 1);
 
-	comment = aim_ssi_getcomment(od->ssi.local, purple_group_get_name(g), name);
+	comment = aim_ssi_getcomment(&od->ssi.local, purple_group_get_name(g), name);
 	comment_utf8 = comment ? oscar_utf8_try_convert(account, od, comment) : NULL;
 
 	data->gc = gc;
@@ -5175,8 +5169,8 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		 * waiting for authorization.
 		 */
 		char *gname;
-		gname = aim_ssi_itemlist_findparentname(od->ssi.local, bname);
-		if (gname && aim_ssi_waitingforauth(od->ssi.local, gname, bname))
+		gname = aim_ssi_itemlist_findparentname(&od->ssi.local, bname);
+		if (gname && aim_ssi_waitingforauth(&od->ssi.local, gname, bname))
 		{
 			act = purple_menu_action_new(_("Re-request Authorization"),
 			                           PURPLE_CALLBACK(oscar_auth_sendrequest_menu),
@@ -5327,7 +5321,7 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 		buddy = cur->data;
 		bname = purple_buddy_get_name(buddy);
 		gname = purple_group_get_name(purple_buddy_get_group(buddy));
-		if (aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
+		if (aim_ssi_waitingforauth(&od->ssi.local, gname, bname)) {
 			filtered_buddies = g_slist_prepend(filtered_buddies, buddy);
 		}
 	}

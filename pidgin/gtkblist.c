@@ -3774,10 +3774,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		connections = purple_connections_get_all();
 		if (full && connections && connections->next)
 		{
-			tmp = g_markup_escape_text(purple_account_get_username(
-									   purple_buddy_get_account(b)), -1);
-			purple_notify_user_info_add_pair(user_info, _("Account"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Account"),
+					purple_account_get_username(purple_buddy_get_account(b)));
 		}
 
 		/* Alias */
@@ -3787,9 +3785,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		    (c->alias != NULL && c->alias[0] != '\0') &&
 		    strcmp(c->alias, b->alias) != 0)
 		{
-			tmp = g_markup_escape_text(b->alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Buddy Alias"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Buddy Alias"), b->alias);
 		}
 
 		/* Nickname/Server Alias */
@@ -3799,9 +3796,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		 * to look at the tooltip. */
 		if (full && b->server_alias != NULL && b->server_alias[0] != '\0')
 		{
-			tmp = g_markup_escape_text(b->server_alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Nickname"), b->server_alias);
 		}
 
 		/* Logged In */
@@ -3817,7 +3813,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 				tmp = g_strdup(purple_date_format_long(localtime(&signon)));
 			} else
 				tmp = purple_str_seconds_to_string(time(NULL) - signon);
-			purple_notify_user_info_add_pair(user_info, _("Logged In"), tmp);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Logged In"), tmp);
 			g_free(tmp);
 		}
 
@@ -3828,7 +3824,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			if (idle_secs > 0)
 			{
 				tmp = purple_str_seconds_to_string(time(NULL) - idle_secs);
-				purple_notify_user_info_add_pair(user_info, _("Idle"), tmp);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -3863,7 +3859,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			if (lastseen > 0)
 			{
 				tmp = purple_str_seconds_to_string(time(NULL) - lastseen);
-				purple_notify_user_info_add_pair(user_info, _("Last Seen"), tmp);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Last Seen"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -3873,7 +3869,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		/* FIXME: Why is this status special-cased by the core? --rlaager
 		 * FIXME: Alternatively, why not have the core do all of them? --rlaager */
 		if (!PURPLE_BUDDY_IS_ONLINE(b)) {
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Offline"));
 		}
 
 		if (purple_account_is_connected(b->account) &&
@@ -3885,11 +3881,11 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */
 		if (!g_ascii_strcasecmp(b->name, "robflynn"))
-			purple_notify_user_info_add_pair(user_info, _("Description"), _("Spooky"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Description"), _("Spooky"));
 		if (!g_ascii_strcasecmp(b->name, "seanegn"))
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Awesome"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Awesome"));
 		if (!g_ascii_strcasecmp(b->name, "chipx86"))
-			purple_notify_user_info_add_pair(user_info, _("Status"), _("Rockin'"));
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), _("Rockin'"));
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
@@ -3904,24 +3900,21 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		count = purple_blist_get_group_online_count(group);
-
 		if (count != 0) {
 			/* Online buddies in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Online Buddies"),
-			                                 tmp);
-			g_free(tmp);
+			char tmp2[12];
+			sprintf(tmp2, "%d", count);
+			purple_notify_user_info_add_pair_plaintext(user_info,
+					_("Online Buddies"), tmp2);
 		}
 
 		count = purple_blist_get_group_size(group, FALSE);
 		if (count != 0) {
 			/* Total buddies (from online accounts) in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Total Buddies"),
-			                                 tmp);
-			g_free(tmp);
+			char tmp2[12];
+			sprintf(tmp2, "%d", count);
+			purple_notify_user_info_add_pair_html(user_info,
+					_("Total Buddies"), tmp2);
 		}
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
@@ -5343,6 +5336,28 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 }
 
 
+/**
+ * Was used by the connection API to tell the blist if an account has a
+ * connection error or no longer has a connection error, but the blist now does
+ * this itself with the @ref account-error-changed signal.
+ *
+ * @param account The account that either has a connection error
+ *        or no longer has a connection error.
+ * @param message The connection error message, or NULL if this
+ *        account is no longer in an error state.
+ */
+static void
+pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
+{
+	/* connection_errors isn't actually used anywhere; it's just kept in
+	 * sync with reality in case a plugin uses it.
+	 */
+	if (text == NULL)
+		g_hash_table_remove(gtkblist->connection_errors, account);
+	else
+		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
+}
+
 /* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
@@ -5425,18 +5440,6 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
 
 		update_account_error_state(account, NULL, err, gtkblist);
 	}
-}
-
-void
-pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
-{
-	/* connection_errors isn't actually used anywhere; it's just kept in
-	 * sync with reality in case a plugin uses it.
-	 */
-	if (text == NULL)
-		g_hash_table_remove(gtkblist->connection_errors, account);
-	else
-		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
 }
 
 static gboolean

@@ -155,7 +155,10 @@
 /* message flags */
 #define		CP_MSG_NOTIFY_DELIVERY	0x0002					/* request delivery notification */
 #define		CP_MSG_NOTIFY_READ		0x0004					/* request read notification */
-#define		CP_MSG_ENCRYPTED		0x0010					/* message is encrypted */
+#define		CP_MSG_PWD_ENCRYPTED	0x0010					/* message is password encrypted */
+#define		CP_MSG_TL_ENCRYPTED		0x0020					/* message is transport encrypted */
+#define		CP_MSG_RPLY_PWD_ENCRYPT	0x0040					/* reply should be password encrypted */
+#define		CP_MSG_RPLY_TL_ENCRYPT	0x0080					/* reply should be transport encrypted */
 #define		CP_MSG_MARKUP			0x0200					/* message may contain markup */
 #define		CP_MSG_EMOTICON			0x0400					/* message may contain custom emoticons */
 
@@ -179,7 +182,7 @@
 /* extended profile attribute fields */
 #define		CP_PROFILE_BIRTHDATE	"birthdate"				/* Birthdate (String - ISO 8601 format) */
 #define		CP_PROFILE_GENDER		"gender"				/* Gender (Boolean - 0=female, 1=male) */
-#define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) */
+// #define		CP_PROFILE_HIDENUMBER	"hidenumber"			/* Hide Number (Boolean - 0=false, 1=true) (DEPRECATED) */
 #define		CP_PROFILE_FULLNAME		"fullname"				/* Fullname (UTF8 String) */
 #define		CP_PROFILE_STATUS		"statusmsg"				/* Status Message (UTF8 String) */
 #define		CP_PROFILE_PREVSTATUS	"prevstatusmsgs"		/* Previous Status Messages (UTF8 String) */
