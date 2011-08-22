@@ -731,11 +731,16 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 			g_strdup_printf("%s%s%s", jbr->client.name,
 		                    (jbr->client.version ? " " : ""),
 		                    (jbr->client.version ? jbr->client.version : ""));
+		/* TODO: Check whether it's correct to call prepend_pair_html,
+		         or if we should be using prepend_pair_plaintext */
 		purple_notify_user_info_prepend_pair(user_info, _("Client"), tmp);
 		g_free(tmp);
 
-		if (jbr->client.os)
+		if (jbr->client.os) {
+			/* TODO: Check whether it's correct to call prepend_pair_html,
+			         or if we should be using prepend_pair_plaintext */
 			purple_notify_user_info_prepend_pair(user_info, _("Operating System"), jbr->client.os);
+		}
 	}
 
 	if (jbr && jbr->tz_off != PURPLE_NO_TZ_OFF) {
@@ -751,13 +756,13 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		                    jbr->tz_off < 0 ? '-' : '+',
 		                    abs(jbr->tz_off / (60*60)),
 		                    abs((jbr->tz_off % (60*60)) / 60));
-		purple_notify_user_info_prepend_pair(user_info, _("Local Time"), timestamp);
+		purple_notify_user_info_prepend_pair_plaintext(user_info, _("Local Time"), timestamp);
 		g_free(timestamp);
 	}
 
 	if (jbir && jbir->idle_seconds > 0) {
 		char *idle = purple_str_seconds_to_string(jbir->idle_seconds);
-		purple_notify_user_info_prepend_pair(user_info, _("Idle"), idle);
+		purple_notify_user_info_prepend_pair_plaintext(user_info, _("Idle"), idle);
 		g_free(idle);
 	}
 
@@ -782,12 +787,12 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
 
 		g_snprintf(priority, sizeof(priority), "%d", jbr->priority);
-		purple_notify_user_info_prepend_pair(user_info, _("Priority"), priority);
+		purple_notify_user_info_prepend_pair_plaintext(user_info, _("Priority"), priority);
 
 		g_free(tmp);
 		g_free(purdy);
 	} else {
-		purple_notify_user_info_prepend_pair(user_info, _("Status"), _("Unknown"));
+		purple_notify_user_info_prepend_pair_plaintext(user_info, _("Status"), _("Unknown"));
 	}
 }
 
@@ -827,8 +832,11 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 			add_jbr_info(jbi, jbr->name, jbr);
 
-			if (jbr->name)
+			if (jbr->name) {
+				/* TODO: Check whether it's correct to call prepend_pair_html,
+				         or if we should be using prepend_pair_plaintext */
 				purple_notify_user_info_prepend_pair(user_info, _("Resource"), jbr->name);
+			}
 		}
 	}
 
@@ -848,7 +856,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				title = _("Logged Off");
 				message = g_strdup_printf(_("%s ago"), last);
 			}
-			purple_notify_user_info_prepend_pair(user_info, title, message);
+			purple_notify_user_info_prepend_pair_plaintext(user_info, title, message);
 			g_free(last);
 			g_free(message);
 		}
@@ -858,6 +866,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				g_strdup_printf("%s%s%s",	_("Offline"),
 				                jbi->last_message ? ": " : "",
 				                jbi->last_message ? jbi->last_message : "");
+			/* TODO: Check whether it's correct to call prepend_pair_html,
+			         or if we should be using prepend_pair_plaintext */
 			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
 			g_free(status);
 		}
