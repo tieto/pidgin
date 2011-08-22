@@ -2225,7 +2225,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	label = g_strdup_printf("%s%s", _("Status"), (res ? res : ""));
 	value = g_strdup_printf("%s%s%s", state, (text ? ": " : ""), (text ? text : ""));
 
-	purple_notify_user_info_add_pair(user_info, label, value);
+	purple_notify_user_info_add_pair_html(user_info, label, value);
 	g_free(label);
 	g_free(value);
 	g_free(text);
@@ -2310,10 +2310,10 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					char *moodplustext =
 						g_strdup_printf("%s (%s)", description ? _(description) : mood, moodtext);
 
-					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
+					purple_notify_user_info_add_pair_html(user_info, _("Mood"), moodplustext);
 					g_free(moodplustext);
 				} else
-					purple_notify_user_info_add_pair(user_info, _("Mood"),
+					purple_notify_user_info_add_pair_html(user_info, _("Mood"),
 					    description ? _(description) : mood);
 			}
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
@@ -2323,7 +2323,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
 				char *playing = purple_util_format_song_info(title, artist, album, NULL);
 				if (playing) {
-					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
+					purple_notify_user_info_add_pair_html(user_info, _("Now Listening"), playing);
 					g_free(playing);
 				}
 			}
@@ -2344,12 +2344,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					sub = _("None");
 			}
 
-			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
+			purple_notify_user_info_add_pair_html(user_info, _("Subscription"), sub);
 
 		}
 
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
+			purple_notify_user_info_add_pair_html(user_info, _("Error"), jb->error_msg);
 		}
 	}
 }

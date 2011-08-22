@@ -1078,7 +1078,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			if (psm != NULL && *psm) {
 				purple_notify_user_info_add_pair_plaintext(user_info, tmp2, psm);
 			} else {
-				purple_notify_user_info_add_pair(user_info, _("Status"), tmp2);
+				purple_notify_user_info_add_pair_html(user_info, _("Status"), tmp2);
 			}
 
 			g_free(tmp2);
@@ -1103,7 +1103,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (currentmedia) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, mediatype, currentmedia);
+			purple_notify_user_info_add_pair_html(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
 	}
@@ -1131,21 +1131,21 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		if (phone != NULL) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), phone);
+			purple_notify_user_info_add_pair_html(user_info, _("Home Phone Number"), phone);
 		}
 
 		phone = msn_user_get_work_phone(user);
 		if (phone != NULL) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), phone);
+			purple_notify_user_info_add_pair_html(user_info, _("Work Phone Number"), phone);
 		}
 
 		phone = msn_user_get_mobile_phone(user);
 		if (phone != NULL) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), phone);
+			purple_notify_user_info_add_pair_html(user_info, _("Mobile Phone Number"), phone);
 		}
 	}
 }
@@ -2273,7 +2273,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		{
 			char *nicktext = g_markup_escape_text(alias, -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font>", nicktext);
-			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
+			purple_notify_user_info_add_pair_html(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 			g_free(nicktext);
 		}
@@ -2372,7 +2372,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
 
 		purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
@@ -2691,7 +2691,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	if (user_url != NULL)
 	{
 		tmp = g_strdup_printf("<a href=\"%s\">%s</a>", user_url, user_url);
-		purple_notify_user_info_add_pair(user_info, _("Homepage"), tmp);
+		purple_notify_user_info_add_pair_html(user_info, _("Homepage"), tmp);
 		g_free(tmp);
 		g_free(user_url);
 
@@ -2714,7 +2714,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
 		purple_notify_user_info_add_pair_plaintext(user_info, NULL,
 				((p && b) ? _("The user has not created a public profile.") :
@@ -2731,7 +2731,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_notify_user_info_add_section_break(user_info);
 	tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>",
 			PROFILE_URL, info_data->name, _("View web profile"));
-	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 	g_free(tmp);
 
 #if PHOTO_SUPPORT

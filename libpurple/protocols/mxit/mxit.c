@@ -346,7 +346,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	if ( contact->statusMsg ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair( info, _( "Status Message" ), contact->statusMsg );
+		purple_notify_user_info_add_pair_html( info, _( "Status Message" ), contact->statusMsg );
 	}
 
 	/* mood */
@@ -361,7 +361,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
+		purple_notify_user_info_add_pair_html( info, _( "Rejection Message" ), contact->msg );
 	}
 }
 

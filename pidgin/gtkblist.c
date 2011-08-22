@@ -3913,7 +3913,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			/* Total buddies (from online accounts) in group */
 			char tmp2[12];
 			sprintf(tmp2, "%d", count);
-			purple_notify_user_info_add_pair(user_info,
+			purple_notify_user_info_add_pair_html(user_info,
 					_("Total Buddies"), tmp2);
 		}
 

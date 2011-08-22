@@ -1136,7 +1136,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						char *mailto;
 						escaped = g_markup_escape_text(userid, -1);
 						mailto = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", escaped, escaped);
-						purple_notify_user_info_add_pair(user_info, _("Email"), mailto);
+						purple_notify_user_info_add_pair_html(user_info, _("Email"), mailto);
 
 						g_free(mailto);
 						g_free(escaped);
@@ -1149,7 +1149,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 					escaped = g_markup_escape_text(userid, -1);
 					mailto = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", escaped, escaped);
-					purple_notify_user_info_add_pair(user_info, _("Email"), mailto);
+					purple_notify_user_info_add_pair_html(user_info, _("Email"), mailto);
 
 					g_free(mailto);
 					g_free(escaped);
@@ -1196,7 +1196,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
 						img_text = g_strdup_printf("<img id='%d'>", GPOINTER_TO_INT(jbi->vcard_imgids->data));
 
-						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
+						purple_notify_user_info_add_pair_html(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
 						hash = jabber_calculate_data_hash(data, size, "sha1");
 						purple_buddy_icons_set_for_user(account, bare_jid, data, size, hash);

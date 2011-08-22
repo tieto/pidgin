@@ -1202,14 +1202,14 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 							    tmp, sizeof(tmp) - strlen(tmp));
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
+				purple_notify_user_info_add_pair_html(user_info, _("User Modes"), tmp);
 			}
 
 			silcpurple_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 			if (moodstr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
+				purple_notify_user_info_add_pair_html(user_info, _("Mood"), moodstr);
 				g_free(moodstr);
 			}
 
@@ -1221,42 +1221,42 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (contactstr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
+				purple_notify_user_info_add_pair_html(user_info, _("Preferred Contact"), contactstr);
 				g_free(contactstr);
 			}
 
 			if (langstr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
+				purple_notify_user_info_add_pair_html(user_info, _("Preferred Language"), langstr);
 				g_free(langstr);
 			}
 
 			if (devicestr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Device"), devicestr);
+				purple_notify_user_info_add_pair_html(user_info, _("Device"), devicestr);
 				g_free(devicestr);
 			}
 
 			if (tzstr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
+				purple_notify_user_info_add_pair_html(user_info, _("Timezone"), tzstr);
 				g_free(tzstr);
 			}
 
 			if (geostr) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
+				purple_notify_user_info_add_pair_html(user_info, _("Geolocation"), geostr);
 				g_free(geostr);
 			}
 
 			if (*client_entry->server) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Server"), client_entry->server);
+				purple_notify_user_info_add_pair_html(user_info, _("Server"), client_entry->server);
 			}
 
 			if (channels && user_modes) {
@@ -1344,7 +1344,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (client_entry && *client_entry->server) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair(user_info, _("Server"), client_entry->server);
+				purple_notify_user_info_add_pair_html(user_info, _("Server"), client_entry->server);
 			}
 
 

@@ -805,7 +805,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 * to send back HTML, with a 200 status code.
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
-		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
+		purple_notify_user_info_add_pair_html(user_info, _("Error retrieving profile"), NULL);
 		purple_notify_userinfo(info_data->gc, info_data->name,
 			user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
@@ -840,7 +840,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 						 _("If you wish to view this profile, "
 						"you will need to visit this link in your web browser:"),
 						 profile_url_text, profile_url_text);
-		purple_notify_user_info_add_pair(user_info, NULL, tmp);
+		purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 		g_free(tmp);
 
 		purple_notify_userinfo(info_data->gc, info_data->name,
@@ -1048,7 +1048,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
-			purple_notify_user_info_add_pair(user_info, NULL, tmp);
+			purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 			g_free(tmp);
 		}
 	}
@@ -1195,7 +1195,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *str;
 
 		purple_notify_user_info_add_section_break(user_info);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
 
 		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
@@ -1235,7 +1235,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_notify_user_info_add_section_break(user_info);
 	tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 			profile_url_text, _("View web profile"));
-	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 	g_free(tmp);
 
 	g_free(stripped);

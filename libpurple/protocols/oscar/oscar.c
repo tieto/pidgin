@@ -2297,9 +2297,9 @@ static int purple_parse_clientauto_ch4(OscarData *od, const char *who, guint16 r
 			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			purple_notify_user_info_add_pair_html(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
-			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+			purple_notify_user_info_add_pair_html(user_info, NULL, g_strjoinv("<BR>", splitmsg));
 
 			g_free(statusmsg);
 			g_strfreev(splitmsg);
@@ -2324,9 +2324,9 @@ static int purple_parse_clientauto_ch4(OscarData *od, const char *who, guint16 r
 			purple_notify_user_info_add_pair_plaintext(user_info, _("UIN"), who);
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			purple_notify_user_info_add_pair_html(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
-			purple_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+			purple_notify_user_info_add_pair_html(user_info, NULL, g_strjoinv("<BR>", splitmsg));
 
 			g_free(statusmsg);
 			g_strfreev(splitmsg);

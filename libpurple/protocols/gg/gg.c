@@ -1200,31 +1200,31 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+	purple_notify_user_info_add_pair_html(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair(user_info, _("First Name"), val);
+	purple_notify_user_info_add_pair_html(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair(user_info, _("Nickname"), val);
+	purple_notify_user_info_add_pair_html(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair(user_info, _("City"), val);
+	purple_notify_user_info_add_pair_html(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
 	if (strncmp(val, "0", 1)) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair(user_info, _("Birth Year"), val);
+		purple_notify_user_info_add_pair_html(user_info, _("Birth Year"), val);
 	}
 	g_free(val);
 

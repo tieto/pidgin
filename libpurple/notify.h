@@ -480,16 +480,10 @@ char *purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_i
  *                   the UI should treat label as independent and not
  *                   include a colon if it would otherwise.
  */
-/*
- * TODO: In 3.0.0 this function should be renamed to
- *       purple_notify_user_info_add_pair_html().  And optionally
- *       purple_notify_user_info_add_pair_plaintext() could be renamed to
- *       purple_notify_user_info_add_pair().
- */
-void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
+void purple_notify_user_info_add_pair_html(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
- * Like purple_notify_user_info_add_pair, but value should be plaintext
+ * Like purple_notify_user_info_add_pair_html, but value should be plaintext
  * and will be escaped using g_markup_escape_text().
  */
 void purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
@@ -530,7 +524,8 @@ void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, Purpl
  *
  * If added to a PurpleNotifyUserInfo object, this should not be free()'d,
  * as PurpleNotifyUserInfo will do so when destroyed.
- * purple_notify_user_info_add_pair() and
+ * purple_notify_user_info_add_pair_html(),
+ * purple_notify_user_info_add_pair_plaintext() and
  * purple_notify_user_info_prepend_pair() are convenience methods for
  * creating entries and adding them to a PurpleNotifyUserInfo.
  *

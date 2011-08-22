@@ -4198,7 +4198,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
   user_info = purple_notify_user_info_new();
 
   if(purple_str_has_prefix(who, "@E ")) {
-	purple_notify_user_info_add_pair(user_info, _("External User"), NULL);
+	purple_notify_user_info_add_pair_html(user_info, _("External User"), NULL);
   }
 
   purple_notify_user_info_add_pair_plaintext(user_info, _("User ID"), who);
@@ -4209,7 +4209,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
     if(purple_buddy_get_server_alias(b)) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair(user_info, _("Full Name"), purple_buddy_get_server_alias(b));
+		purple_notify_user_info_add_pair_html(user_info, _("Full Name"), purple_buddy_get_server_alias(b));
     }
 
     type = purple_blist_node_get_int((PurpleBlistNode *) b, BUDDY_KEY_CLIENT);
@@ -4219,7 +4219,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 		purple_notify_user_info_add_pair_plaintext(user_info, _("Last Known Client"), tmp2);
 	  } else {
 		tmp = g_strdup_printf(_("Unknown (0x%04x)<br>"), type);
-		purple_notify_user_info_add_pair(user_info, _("Last Known Client"), tmp);
+		purple_notify_user_info_add_pair_html(user_info, _("Last Known Client"), tmp);
 	    g_free(tmp);
 	  }
     }

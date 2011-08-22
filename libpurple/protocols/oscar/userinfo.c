@@ -140,7 +140,7 @@ oscar_user_info_convert_and_add(PurpleAccount *account, OscarData *od, PurpleNot
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext.  Will
 		         need to check callers of this function. */
-		purple_notify_user_info_add_pair(user_info, name, utf8);
+		purple_notify_user_info_add_pair_html(user_info, name, utf8);
 		g_free(utf8);
 	}
 }
@@ -156,7 +156,7 @@ oscar_user_info_convert_and_add_hyperlink(PurpleAccount *account, OscarData *od,
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext.  Will
 		         need to check callers of this function. */
-		purple_notify_user_info_add_pair(user_info, name, tmp);
+		purple_notify_user_info_add_pair_html(user_info, name, tmp);
 		g_free(utf8);
 		g_free(tmp);
 	}
@@ -293,12 +293,12 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 			} else {
 				description = g_strdup(_(mood));
 			}
-			purple_notify_user_info_add_pair(user_info, _("Mood"), description);
+			purple_notify_user_info_add_pair_html(user_info, _("Mood"), description);
 			g_free(description);
 		}
 	}
 
-	purple_notify_user_info_add_pair(user_info, _("Status"), message);
+	purple_notify_user_info_add_pair_html(user_info, _("Status"), message);
 	g_free(message);
 }
 
@@ -537,7 +537,7 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 		if (tmp && *tmp) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair(user_info, _("Profile"), tmp);
+			purple_notify_user_info_add_pair_html(user_info, _("Profile"), tmp);
 		}
 		g_free(tmp);
 		g_free(info_utf8);
@@ -547,7 +547,7 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 	base_profile_url = oscar_util_valid_name_icq(userinfo->bn) ? "http://www.icq.com/people" : "http://profiles.aim.com";
 	tmp = g_strdup_printf("<a href=\"%s/%s\">%s</a>",
 			base_profile_url, purple_normalize(account, userinfo->bn), _("View web profile"));
-	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 	g_free(tmp);
 
 	purple_notify_userinfo(gc, userinfo->bn, user_info, NULL, NULL);

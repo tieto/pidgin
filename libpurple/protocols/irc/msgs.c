@@ -352,7 +352,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	tmp = g_strdup_printf("%s%s%s", tmp2,
 				(irc->whois.ircop ? _(" <i>(ircop)</i>") : ""),
 				(irc->whois.identified ? _(" <i>(identified)</i>") : ""));
-	purple_notify_user_info_add_pair(user_info, _("Nick"), tmp);
+	purple_notify_user_info_add_pair_html(user_info, _("Nick"), tmp);
 	g_free(tmp2);
 	g_free(tmp);
 

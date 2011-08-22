@@ -1321,7 +1321,7 @@ purple_markup_extract_info_field(const char *str, int len, PurpleNotifyUserInfo 
 				g_string_append_len(dest, p, q - p);
 		}
 
-		purple_notify_user_info_add_pair(user_info, display_name, dest->str);
+		purple_notify_user_info_add_pair_html(user_info, display_name, dest->str);
 		g_string_free(dest, TRUE);
 
 		return TRUE;

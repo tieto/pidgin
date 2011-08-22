@@ -206,7 +206,7 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		else
 			profile = g_strdup_printf("<a href=\"http://myspace.com/%d\">%s</a>",
 					user->id, _("View web profile"));
-		purple_notify_user_info_add_pair(user_info, NULL, profile);
+		purple_notify_user_info_add_pair_html(user_info, NULL, profile);
 		g_free(profile);
 	}
 }

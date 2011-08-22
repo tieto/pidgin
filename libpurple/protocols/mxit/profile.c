@@ -177,12 +177,12 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
+	purple_notify_user_info_add_pair_html( info, _( "Display Name" ), profile->nickname );
 
 	tmp = g_strdup_printf("%s (%i)", profile->birthday, calculateAge( profile->birthday ) );
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair( info, _( "Birthday" ), tmp );
+	purple_notify_user_info_add_pair_html( info, _( "Birthday" ), tmp );
 	g_free( tmp );
 
 	purple_notify_user_info_add_pair_plaintext( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
@@ -190,23 +190,23 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	/* optional information */
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair( info, _( "First Name" ), profile->firstname );
+	purple_notify_user_info_add_pair_html( info, _( "First Name" ), profile->firstname );
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
+	purple_notify_user_info_add_pair_html( info, _( "Last Name" ), profile->lastname );
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-	purple_notify_user_info_add_pair( info, _( "Country" ), profile->regcountry );
+	purple_notify_user_info_add_pair_html( info, _( "Country" ), profile->regcountry );
 
 	if ( *profile->aboutme ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair( info, _( "About Me" ), profile->aboutme );
+		purple_notify_user_info_add_pair_html( info, _( "About Me" ), profile->aboutme );
 	}
 	if ( *profile->whereami ) {
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair( info, _( "Where I Live" ), profile->whereami );
+		purple_notify_user_info_add_pair_html( info, _( "Where I Live" ), profile->whereami );
 	}
 
 	purple_notify_user_info_add_section_break( info );
@@ -229,7 +229,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		if ( contact->statusMsg ) {
 			/* TODO: Check whether it's correct to call add_pair_html,
 			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair( info, _( "Status Message" ), contact->statusMsg );
+			purple_notify_user_info_add_pair_html( info, _( "Status Message" ), contact->statusMsg );
 		}
 
 		/* subscription type */
@@ -244,21 +244,21 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 			if ( contact->msg ) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair( info, _( "Invite Message" ), contact->msg );
+				purple_notify_user_info_add_pair_html( info, _( "Invite Message" ), contact->msg );
 			}
 
 			if ( contact->imgid ) {
 				/* this invite has a avatar */
 				char* img_text;
 				img_text = g_strdup_printf( "<img id='%d'>", contact->imgid );
-				purple_notify_user_info_add_pair( info, _( "Photo" ), img_text );
+				purple_notify_user_info_add_pair_html( info, _( "Photo" ), img_text );
 				g_free(img_text);
 			}
 
 			if ( contact->statusMsg ) {
 				/* TODO: Check whether it's correct to call add_pair_html,
 				         or if we should be using add_pair_plaintext */
-				purple_notify_user_info_add_pair( info, _( "Status Message" ), contact->statusMsg );
+				purple_notify_user_info_add_pair_html( info, _( "Status Message" ), contact->statusMsg );
 			}
 		}
 	}
