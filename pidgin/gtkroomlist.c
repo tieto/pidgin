@@ -359,8 +359,9 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	int current_height, max_width;
 	int max_text_width;
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
+	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(grl->tipwindow));
 
-	style = grl->tipwindow->style;
+	style = gtk_widget_get_style(grl->tipwindow);
 
 	max_text_width = MAX(grl->tip_width, grl->tip_name_width);
 	max_width = TOOLTIP_BORDER + SMALL_SPACE + max_text_width + TOOLTIP_BORDER;
@@ -368,26 +369,28 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	current_height = 12;
 
 	if (dir == GTK_TEXT_DIR_RTL) {
-		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, grl->tipwindow, "tooltip",
+		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+				grl->tipwindow, "tooltip",
 				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
 				current_height, grl->tip_name_layout);
 	} else {
-		gtk_paint_layout (style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, grl->tipwindow, "tooltip",
+		gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
+				grl->tipwindow, "tooltip",
 				TOOLTIP_BORDER + SMALL_SPACE, current_height, grl->tip_name_layout);
 	}
 	if (dir != GTK_TEXT_DIR_RTL) {
-		gtk_paint_layout (style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, grl->tipwindow, "tooltip",
+		gtk_paint_layout (style, cr, GTK_STATE_NORMAL, FALSE,
+				grl->tipwindow, "tooltip",
 				TOOLTIP_BORDER + SMALL_SPACE, current_height + grl->tip_name_height, grl->tip_layout);
 	} else {
-		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, grl->tipwindow, "tooltip",
+		gtk_paint_layout(style, cr, GTK_STATE_NORMAL, FALSE,
+				grl->tipwindow, "tooltip",
 				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
 				current_height + grl->tip_name_height,
 				grl->tip_layout);
 	}
+	cairo_destroy(cr);
+
 	return FALSE;
 }
 

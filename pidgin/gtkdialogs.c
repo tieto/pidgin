@@ -462,7 +462,7 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
 	                G_CALLBACK(destroy_win), win);
 
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_set_can_default(button, TRUE);
 	gtk_widget_grab_default(button);
 
 	gtk_widget_show_all(win);
@@ -947,12 +947,15 @@ pidgin_dialogs_ee(const char *ee)
 
 	gtk_container_set_border_width (GTK_CONTAINER(window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BOX_SPACE);
+	/* TODO: figure out how to set no separator in a dialog in GTK+ 3.0 */
+	/*gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);*/
+	gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(window))),
+	                    PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))),
+	                               PIDGIN_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(window))), hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
