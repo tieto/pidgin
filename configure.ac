@@ -545,6 +545,8 @@ Use --disable-sm if you do not need session management support.
 	dnl #######################################################################
 	dnl # Check for GtkSpell
 	dnl #######################################################################
+	dnl GtkSpell is not GTK+3 compatible yet
+	enable_gtkspell="no"
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
