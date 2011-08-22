@@ -1290,7 +1290,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
-	push_in = FALSE;
+	*push_in = FALSE;
 
 	/*
 	 * The placement of popup menus horizontally works like this (with
