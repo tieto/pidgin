@@ -290,7 +290,7 @@ purple_notify_user_info_get_xhtml(PurpleNotifyUserInfo *user_info)
 
 	text = g_string_new("<span>");
 
-	for (l = purple_notify_user_info_get_entries(user_info); l != NULL;
+	for (l = purple_notify_user_info_get_entries(user_info)->head; l != NULL;
 			l = l->next) {
 		PurpleNotifyUserInfoEntry *user_info_entry = l->data;
 		PurpleNotifyUserInfoEntryType type = purple_notify_user_info_entry_get_type(user_info_entry);

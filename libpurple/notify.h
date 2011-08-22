@@ -439,20 +439,20 @@ void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
  * Retrieve the array of PurpleNotifyUserInfoEntry objects from a
  * PurpleNotifyUserInfo
  *
- * This GList may be manipulated directly with normal GList functions such
- * as g_list_insert(). Only PurpleNotifyUserInfoEntry are allowed in the
- * list.  If a PurpleNotifyUserInfoEntry item is added to the list, it
- * should not be g_free()'d by the caller; PurpleNotifyUserInfo will g_free
- * it when destroyed.
+ * This GQueue may be manipulated directly with normal GQueue functions such
+ * as g_queue_push_tail(). Only PurpleNotifyUserInfoEntry are allowed in the
+ * queue.  If a PurpleNotifyUserInfoEntry item is added to the queue, it
+ * should not be freed by the caller; PurpleNotifyUserInfo will free it when
+ * destroyed.
  *
  * To remove a PurpleNotifyUserInfoEntry, use
- * purple_notify_user_info_remove_entry(). Do not use the GList directly.
+ * purple_notify_user_info_remove_entry(). Do not use the GQueue directly.
  *
  * @param user_info  The PurpleNotifyUserInfo
  *
- * @constreturn A GList of PurpleNotifyUserInfoEntry objects
+ * @constreturn A GQueue of PurpleNotifyUserInfoEntry objects.
  */
-GList *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
+GQueue *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
 
 /**
  * Create a textual representation of a PurpleNotifyUserInfo, separating

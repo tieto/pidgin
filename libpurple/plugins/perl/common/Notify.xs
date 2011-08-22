@@ -135,7 +135,7 @@ purple_notify_user_info_get_entries(user_info)
 PREINIT:
 	GList *l;
 PPCODE:
-	l = purple_notify_user_info_get_entries(user_info);
+	l = purple_notify_user_info_get_entries(user_info)->head;
 	for (; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::NotifyUserInfoEntry")));
 	}

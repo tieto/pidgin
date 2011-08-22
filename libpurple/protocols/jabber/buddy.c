@@ -806,7 +806,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	resource_name = jabber_get_resource(jbi->jid);
 
 	/* If we have one or more pairs from the vcard, put a section break above it */
-	if (purple_notify_user_info_get_entries(user_info))
+	if (g_queue_get_length(purple_notify_user_info_get_entries(user_info)))
 		purple_notify_user_info_prepend_section_break(user_info);
 
 	/* Add the information about the user's resource(s) */
