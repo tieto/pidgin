@@ -293,13 +293,14 @@ static void dump_contact( struct contact* contact )
  */
 static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, PurpleBuddy* buddy, PurpleGroup* group )
 {
-	struct contact*		contact			= NULL;
 	PurpleGroup*		current_group	= purple_buddy_get_group( buddy );
-	PurpleBuddy*		newbuddy		= NULL;
 
 	/* make sure the groups actually differs */
 	if ( strcmp( current_group->name, group->name ) != 0 ) {
 		/* groupnames does not match, so we need to make the update */
+
+		struct contact*		contact		= purple_buddy_get_protocol_data( buddy );
+		PurpleBuddy*		newbuddy	= NULL;
 
 		purple_debug_info( MXIT_PLUGIN_ID, "Moving '%s' from group '%s' to '%s'\n", buddy->alias, current_group->name, group->name );
 
@@ -310,9 +311,9 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 		 * again. This is really not ideal and very irritating, but how else then?
 		 */
 
-		/* create new buddy */
+		/* create new buddy, and transfer 'contact' data */
 		newbuddy = purple_buddy_new( session->acc, buddy->name, buddy->alias );
-		purple_buddy_set_protocol_data( newbuddy, purple_buddy_get_protocol_data( buddy ) );
+		purple_buddy_set_protocol_data( newbuddy, contact );
 		purple_buddy_set_protocol_data( buddy, NULL );
 
 		/* remove the buddy */
@@ -322,7 +323,6 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 		purple_blist_add_buddy( newbuddy, NULL, group, NULL );
 
 		/* now re-instate his presence again */
-		contact = newbuddy->proto_data;
 		if ( contact ) {
 
 			/* update the buddy's status (reference: "libpurple/prpl.h") */
