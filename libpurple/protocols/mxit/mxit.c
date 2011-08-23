@@ -58,7 +58,7 @@ static int not_link_ref_count = 0;
 static void* mxit_link_click( const char* link64 )
 {
 	PurpleAccount*		account;
-	PurpleConnection*	con;
+	PurpleConnection*	gc;
 	gchar**				parts		= NULL;
 	gchar*				link		= NULL;
 	gsize				len;
@@ -91,15 +91,15 @@ static void* mxit_link_click( const char* link64 )
 	account = purple_accounts_find( parts[1], parts[2] );
 	if ( !account )
 		goto skip;
-	con = purple_account_get_connection( account );
-	if ( !con )
+	gc = purple_account_get_connection( account );
+	if ( !gc )
 		goto skip;
 
 	/* determine if it's a command-response to send */
 	is_command = ( atoi( parts[4] ) == 1 );
 
 	/* send click message back to MXit */
-	mxit_send_message( con->proto_data, parts[3], parts[5], FALSE, is_command );
+	mxit_send_message( purple_connection_get_protocol_data( gc ), parts[3], parts[5], FALSE, is_command );
 
 	g_free( link );
 	link = NULL;
@@ -370,7 +370,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
  */
 static void mxit_close( PurpleConnection* gc )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	/* disable signals */
 	mxit_disable_signals( session );
@@ -406,7 +406,7 @@ static int mxit_send_im( PurpleConnection* gc, const char* who, const char* mess
 {
 	purple_debug_info( MXIT_PLUGIN_ID, "Sending message '%s' to buddy '%s'\n", message, who );
 
-	mxit_send_message( gc->proto_data, who, message, TRUE, FALSE );
+	mxit_send_message( purple_connection_get_protocol_data( gc ), who, message, TRUE, FALSE );
 
 	return 1;		/* echo to conversation window */
 }
@@ -420,7 +420,7 @@ static int mxit_send_im( PurpleConnection* gc, const char* who, const char* mess
  */
 static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 {
-	struct MXitSession*		session =	purple_account_get_connection( account )->proto_data;
+	struct MXitSession*		session =	purple_connection_get_protocol_data( purple_account_get_connection( account ) );
 	const char*				statusid;
 	int						presence;
 	char*					statusmsg1;
@@ -513,7 +513,7 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
  */
 static void mxit_keepalive( PurpleConnection *gc )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	/* if not logged in, there is nothing to do */
 	if ( !( session->flags & MXIT_FLAG_LOGGEDIN ) )
@@ -541,7 +541,7 @@ static void mxit_keepalive( PurpleConnection *gc )
  */
 static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 
 	if ( img == NULL )
 		mxit_set_avatar( session, NULL, 0 );
@@ -560,7 +560,7 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
 	PurpleBuddy*			buddy;
 	struct contact*			contact;
-	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session			= purple_connection_get_protocol_data( gc );
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
 												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
 												CP_PROFILE_STATUS, CP_PROFILE_AVATAR, CP_PROFILE_WHEREAMI, CP_PROFILE_ABOUTME };
@@ -611,12 +611,9 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 static void mxit_reinvite( PurpleBlistNode *node, gpointer ignored )
 {
 	PurpleBuddy*		buddy		= (PurpleBuddy *) node;
-	PurpleConnection*	gc;
-	struct MXitSession*	session;
+	PurpleConnection*	gc			= purple_account_get_connection( purple_buddy_get_account( buddy ) );
+	struct MXitSession*	session		= purple_connection_get_protocol_data( gc );
 	struct contact*		contact;
-
-	gc = purple_account_get_connection( purple_buddy_get_account( buddy ) );
-	session = gc->proto_data;
 
 	contact = purple_buddy_get_protocol_data( (PurpleBuddy*) node );
 	if ( !contact )

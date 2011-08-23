@@ -295,7 +295,7 @@ gboolean mxit_xfer_enabled( PurpleConnection* gc, const char* who )
  */
 PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 {
-	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data( gc );
 	PurpleXfer*			xfer	= NULL;
 	struct mxitxfer*	mx		= NULL;
 

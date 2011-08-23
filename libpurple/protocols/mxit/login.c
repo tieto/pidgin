@@ -49,8 +49,8 @@ static void get_clientinfo( struct MXitSession* session );
  */
 static struct MXitSession* mxit_create_object( PurpleAccount* account )
 {
+	PurpleConnection*	con			= purple_account_get_connection( account );
 	struct MXitSession*	session		= NULL;
-	PurpleConnection*	con			= NULL;
 
 	/* currently the wapsite does not handle a '+' in front of the username (mxitid) so we just strip it */
 	if ( account->username[0] == '+' ) {
@@ -63,15 +63,12 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	}
 
 	session = g_new0( struct MXitSession, 1 );
+	session->con = con;
+	session->acc = account;
 
 	/* configure the connection (reference: "libpurple/connection.h") */
-	con = purple_account_get_connection( account );
-	con->proto_data = session;
+	purple_connection_set_protocol_data( con, session );
 	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_SUPPORT_MOODS;
-	session->con = con;
-
-	/* add account */
-	session->acc = account;
 
 	/* configure the session (reference: "libpurple/account.h") */
 	g_strlcpy( session->server, purple_account_get_string( account, MXIT_CONFIG_SERVER_ADDR, DEFAULT_SERVER ), sizeof( session->server ) );
@@ -221,7 +218,7 @@ static void mxit_login_connect( struct MXitSession* session )
  */
 static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fields )
 {
-	struct MXitSession*		session		= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session		= purple_connection_get_protocol_data( gc );
 	struct MXitProfile*		profile		= session->profile;
 	const char*				str;
 	const char*				pin;
@@ -507,7 +504,7 @@ static void free_logindata( struct login_data* data )
  */
 static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 	PurpleUtilFetchUrlData*	url_data;
 	PurpleRequestField*		field;
 	const char*				captcha_resp;
@@ -571,7 +568,7 @@ static void mxit_cb_captcha_ok( PurpleConnection* gc, PurpleRequestFields* field
  */
 static void mxit_cb_captcha_cancel( PurpleConnection* gc, PurpleRequestFields* fields )
 {
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
+	struct MXitSession*		session	= purple_connection_get_protocol_data( gc );
 
 	/* free up the login resources */
 	free_logindata( session->logindata );
