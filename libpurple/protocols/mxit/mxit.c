@@ -358,11 +358,8 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 		purple_notify_user_info_add_pair_plaintext( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
 
 	/* rejection message */
-	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) ) {
-		/* TODO: Check whether it's correct to call add_pair_html,
-		         or if we should be using add_pair_plaintext */
-		purple_notify_user_info_add_pair_html( info, _( "Rejection Message" ), contact->msg );
-	}
+	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
+		purple_notify_user_info_add_pair_plaintext( info, _( "Rejection Message" ), contact->msg );
 }
 
 
