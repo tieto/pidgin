@@ -57,7 +57,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 		const char* username	= purple_account_get_username( account );
 
 		if ( username[0] == '+' ) {
-			char* fixed	= g_strdup( &account->username[1] );
+			char* fixed	= g_strdup( &username[1] );
 			purple_account_set_username( account, fixed );
 			g_free( fixed );
 		}
