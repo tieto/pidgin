@@ -184,12 +184,19 @@ webview_link_clicked (WebKitWebView *view,
 		      WebKitWebPolicyDecision *policy_decision)
 {
 	const gchar *uri;
+	WebKitWebNavigationReason reason;
 
 	uri = webkit_network_request_get_uri (request);
+	reason = webkit_web_navigation_action_get_reason(navigation_action);
 
-	/* the gtk imhtml way was to create an idle cb, not sure
-	 * why, so right now just using purple_notify_uri directly */
-	purple_notify_uri (NULL, uri);
+	if (reason == WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED) {
+		/* the gtk imhtml way was to create an idle cb, not sure
+		 * why, so right now just using purple_notify_uri directly */
+		purple_notify_uri (NULL, uri);
+	}
+
+	webkit_web_policy_decision_use(policy_decision);
+
 	return TRUE;
 }
 
