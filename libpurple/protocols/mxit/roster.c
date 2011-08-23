@@ -312,8 +312,8 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 
 		/* create new buddy */
 		newbuddy = purple_buddy_new( session->acc, buddy->name, buddy->alias );
-		newbuddy->proto_data = buddy->proto_data;
-		buddy->proto_data = NULL;
+		purple_buddy_set_protocol_data( newbuddy, purple_buddy_get_protocol_data( buddy ) );
+		purple_buddy_set_protocol_data( buddy, NULL );
 
 		/* remove the buddy */
 		purple_blist_remove_buddy( buddy );
@@ -396,7 +396,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 
 		/* create new buddy */
 		buddy = purple_buddy_new( session->acc, contact->username, contact->alias );
-		purple_buddy_set_protocol_data(buddy, contact);
+		purple_buddy_set_protocol_data( buddy, contact );
 
 		/* add new buddy to list */
 		purple_blist_add_buddy( buddy, NULL, group, NULL );
