@@ -559,7 +559,6 @@ style_set_default ()
 			_("Can't find installed styles"),
 			_("Please install some theme and verify the installation path"));
 
-		return;
 	}
 
 	/* pick any one that works. Note that we have first preference
