@@ -300,7 +300,7 @@ static void mxit_cb_register_cancel( PurpleConnection *gc, PurpleRequestFields *
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_register_cancel\n" );
 
 	/* disconnect */
-	purple_account_disconnect( gc->account );
+	purple_account_disconnect( purple_connection_get_account( gc ) );
 }
 
 

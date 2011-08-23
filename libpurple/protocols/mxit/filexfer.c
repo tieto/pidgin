@@ -395,7 +395,7 @@ static PurpleXfer* find_mxit_xfer( struct MXitSession* session, const char* file
 	while ( item ) {
 		xfer = item->data;
 
-		if ( xfer->account == session->acc ) {
+		if ( purple_xfer_get_account( xfer ) == session->acc ) {
 			/* transfer is associated with this MXit account */
 			struct mxitxfer* mx	= xfer->data;
 
