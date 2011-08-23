@@ -126,7 +126,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
 
 		if ( purple_xfer_get_size( xfer ) > CP_MAX_FILESIZE ) {
 			/* the file is too big */
-			purple_xfer_error( xfer->type, xfer->account, xfer->who, _( "The file you are trying to send is too large!" ) );
+			purple_xfer_error( purple_xfer_get_type( xfer ), purple_xfer_get_account( xfer ), purple_xfer_get_remote_user( xfer ), _( "The file you are trying to send is too large!" ) );
 			purple_xfer_cancel_local( xfer );
 			return;
 		}
@@ -151,6 +151,7 @@ static void mxit_xfer_init( PurpleXfer* xfer )
  */
 static void mxit_xfer_start( PurpleXfer* xfer )
 {
+	size_t			filesize;
 	unsigned char*	buffer;
 	int				size;
 	int				wrote;
@@ -163,10 +164,12 @@ static void mxit_xfer_start( PurpleXfer* xfer )
 		 * a buffer and copy the file data into memory and then we can send it to
 		 * the contact. we will send the whole file with one go.
 		 */
-		buffer = g_malloc( xfer->bytes_remaining );
-		size = fread( buffer, xfer->bytes_remaining, 1, xfer->dest_fp );
+		filesize = purple_xfer_get_bytes_remaining( xfer );
+		buffer = g_malloc( filesize );
+		size = fread( buffer, filesize, 1, xfer->dest_fp );
+		// TODO: If (size != 1) -> file read error
 
-		wrote = purple_xfer_write( xfer, buffer, xfer->bytes_remaining );
+		wrote = purple_xfer_write( xfer, buffer, filesize );
 		if ( wrote > 0 )
 			purple_xfer_set_bytes_sent( xfer, wrote );
 
@@ -437,6 +440,7 @@ void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const c
 		purple_xfer_ref( xfer );
 		purple_xfer_start( xfer, -1, NULL, 0 );
 		fwrite( data, datalen, 1, xfer->dest_fp );
+		// TODO: Handle error from fwrite()
 		purple_xfer_unref( xfer );
 		purple_xfer_set_completed( xfer, TRUE );
 		purple_xfer_end( xfer );
