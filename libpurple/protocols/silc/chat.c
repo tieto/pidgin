@@ -1419,7 +1419,8 @@ PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 
 void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 {
-	PurpleConnection *gc = purple_account_get_connection(list->account);
+	PurpleAccount *account = purple_roomlist_get_account(list);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	SilcPurple sg;
 
 	if (!gc)

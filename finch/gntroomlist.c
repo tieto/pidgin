@@ -41,6 +41,12 @@
 
 #define PREF_ROOT "/finch/roomlist"
 
+#undef FINCH_GET_DATA
+#undef FINCH_SET_DATA
+#define FINCH_GET_DATA(obj)  purple_roomlist_get_ui_data(obj)
+#define FINCH_SET_DATA(obj, data)  purple_roomlist_set_ui_data(obj, data)
+
+
 /* Yes, just one roomlist at a time. Let's not get greedy. Aight? */
 struct _FinchRoomlist
 {
@@ -146,9 +152,9 @@ roomlist_activated(GntWidget *widget)
 			purple_roomlist_room_join(froomlist.roomlist, room);
 			break;
 		case PURPLE_ROOMLIST_ROOMTYPE_CATEGORY:
-			if (!room->expanded_once) {
+			if (!purple_roomlist_room_get_expanded_once(room)) {
 				purple_roomlist_expand_category(froomlist.roomlist, room);
-				room->expanded_once = TRUE;
+				purple_roomlist_room_set_expanded_once(room, TRUE);
 			}
 			break;
 	}

@@ -890,7 +890,8 @@ static PurpleRoomlist *irc_roomlist_get_list(PurpleConnection *gc)
 
 static void irc_roomlist_cancel(PurpleRoomlist *list)
 {
-	PurpleConnection *gc = purple_account_get_connection(list->account);
+	PurpleAccount *account = purple_roomlist_get_account(list);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	struct irc_conn *irc;
 
 	if (gc == NULL)

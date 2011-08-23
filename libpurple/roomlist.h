@@ -64,40 +64,6 @@ typedef enum
 /**************************************************************************/
 
 /**
- * Represents a list of rooms for a given connection on a given protocol.
- */
-struct _PurpleRoomlist {
-	PurpleAccount *account; /**< The account this list belongs to. */
-	GList *fields; /**< The fields. */
-	GList *rooms; /**< The list of rooms. */
-	gboolean in_progress; /**< The listing is in progress. */
-	gpointer ui_data; /**< UI private data. */
-	gpointer proto_data; /** Prpl private data. */
-	guint ref; /**< The reference count. */
-};
-
-/**
- * Represents a room.
- */
-struct _PurpleRoomlistRoom {
-	PurpleRoomlistRoomType type; /**< The type of room. */
-	gchar *name; /**< The name of the room. */
-	GList *fields; /**< Other fields. */
-	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
-	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
-};
-
-/**
- * A field a room might have.
- */
-struct _PurpleRoomlistField {
-	PurpleRoomlistFieldType type; /**< The type of field. */
-	gchar *label; /**< The i18n user displayed name of the field. */
-	gchar *name; /**< The internal name of the field. */
-	gboolean hidden; /**< Hidden? */
-};
-
-/**
  * The room list ops to be filled out by the UI.
  */
 struct _PurpleRoomlistUiOps {
@@ -161,6 +127,14 @@ void purple_roomlist_ref(PurpleRoomlist *list);
  *             destroy.
  */
 void purple_roomlist_unref(PurpleRoomlist *list);
+
+/**
+ * Retrieve the PurpleAccount that was given when the room list was
+ * created.
+ *
+ * @return The PurpleAccount tied to this room list.
+ */
+PurpleAccount *purple_roomlist_get_account(PurpleRoomlist *list);
 
 /**
  * Set the different field types and their names for this protocol.
@@ -241,11 +215,49 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 /**
  * Get the list of fields for a roomlist.
  *
- * @param roomlist  The roomlist, which must not be @c NULL.
+ * @param roomlist The roomlist, which must not be @c NULL.
  * @constreturn A list of fields
  * @since 2.4.0
  */
-GList * purple_roomlist_get_fields(PurpleRoomlist *roomlist);
+GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
+
+/**
+ * Get the protocol data associated with this room list.
+ *
+ * @param roomlist The roomlist, which must not be @c NULL.
+ *
+ * @return The protocol data associated with this room list.  This is a
+ *         convenience field provided to the protocol plugin--it is not
+ *         used the libuprple core.
+ */
+gpointer purple_roomlist_get_proto_data(PurpleRoomlist *list);
+
+/**
+ * Set the protocol data associated with this room list.
+ *
+ * @param list The roomlist, which must not be @c NULL.
+ * @param proto_data A pointer to associate with this room list.
+ */
+void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data);
+
+/**
+ * Get the UI data associated with this room list.
+ *
+ * @param roomlist The roomlist, which must not be @c NULL.
+ *
+ * @return The UI data associated with this room list.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libuprple core.
+ */
+gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list);
+
+/**
+ * Set the UI data associated with this room list.
+ *
+ * @param list The roomlist, which must not be @c NULL.
+ * @param UI_data A pointer to associate with this room list.
+ */
+void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 
 /*@}*/
 
@@ -306,6 +318,23 @@ const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room);
  * @since 2.4.0
  */
 PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room);
+
+/**
+ * Get the value of the expanded_once flag.
+ *
+ * @param room  The room, which must not be @c NULL.
+ *
+ * @return The value of the expanded_once flag.
+ */
+gboolean purple_roomlist_room_get_expanded_once(PurpleRoomlistRoom *room);
+
+/**
+ * Set the expanded_once flag.
+ *
+ * @param room The room, which must not be @c NULL.
+ * @param expanded_once The new value of the expanded_once flag.
+ */
+void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean expanded_once);
 
 /**
  * Get the list of fields for a room.

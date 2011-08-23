@@ -8,6 +8,13 @@ version 3.0.0 (??/??/????):
 		* purple_notify_user_info_prepend_pair_plaintext
 		* purple_request_field_set_tooltip
 		* purple_request_field_get_tooltip
+		* purple_roomlist_get_account
+		* purple_roomlist_get_proto_data
+		* purple_roomlist_get_ui_data
+		* purple_roomlist_room_get_expanded_once
+		* purple_roomlist_room_set_expanded_once
+		* purple_roomlist_set_proto_data
+		* purple_roomlist_set_ui_data
 
 		Changed:
 		* purple_connection_error now takes a PurpleConnectionError
@@ -65,6 +72,9 @@ version 3.0.0 (??/??/????):
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* struct _GtkIMHtmlFontDetail
 		* struct _PurpleRequestField
+		* struct _PurpleRoomlist
+		* struct _PurpleRoomlistField
+		* struct _PurpleRoomlistRoom
 
 version 2.10.0:
 	libpurple:
