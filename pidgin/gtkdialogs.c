@@ -1114,26 +1114,6 @@ pidgin_dialogs_log(void)
 }
 
 static void
-pidgin_dialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
-{
-	purple_blist_alias_contact(contact, new_alias);
-}
-
-void
-pidgin_dialogs_alias_contact(PurpleContact *contact)
-{
-	g_return_if_fail(contact != NULL);
-
-	purple_request_input(NULL, _("Alias Contact"), NULL,
-					   _("Enter an alias for this contact."),
-					   contact->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
-					   _("Cancel"), NULL,
-					   NULL, purple_contact_get_alias(contact), NULL,
-					   contact);
-}
-
-static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
 	purple_blist_alias_buddy(buddy, new_alias);

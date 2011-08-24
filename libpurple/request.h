@@ -96,94 +96,6 @@ typedef struct
 
 } PurpleRequestFieldGroup;
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_REQUEST_C_)
-/**
- * A request field.
- */
-struct _PurpleRequestField
-{
-	PurpleRequestFieldType type;
-	PurpleRequestFieldGroup *group;
-
-	char *id;
-	char *label;
-	char *type_hint;
-
-	gboolean visible;
-	gboolean required;
-
-	union
-	{
-		struct
-		{
-			gboolean multiline;
-			gboolean masked;
-			gboolean editable;
-			char *default_value;
-			char *value;
-
-		} string;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-		} integer;
-
-		struct
-		{
-			gboolean default_value;
-			gboolean value;
-
-		} boolean;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-			GList *labels;
-
-		} choice;
-
-		struct
-		{
-			GList *items;
-			GList *icons;
-			GHashTable *item_data;
-			GList *selected;
-			GHashTable *selected_table;
-
-			gboolean multiple_selection;
-
-		} list;
-
-		struct
-		{
-			PurpleAccount *default_account;
-			PurpleAccount *account;
-			gboolean show_all;
-
-			PurpleFilterAccountFunc filter_func;
-
-		} account;
-
-		struct
-		{
-			unsigned int scale_x;
-			unsigned int scale_y;
-			const char *buffer;
-			gsize size;
-		} image;
-
-	} u;
-
-	void *ui_data;
-
-};
-#endif
-
 /**
  * Request UI operations.
  */
@@ -517,6 +429,18 @@ void purple_request_field_set_type_hint(PurpleRequestField *field,
 									  const char *type_hint);
 
 /**
+ * Sets the tooltip for the field.
+ *
+ * This is optionally used by the UIs to provide a tooltip for
+ * the field.
+ *
+ * @param field     The field.
+ * @param tooltip   The tooltip text.
+ */
+void purple_request_field_set_tooltip(PurpleRequestField *field,
+									const char *tooltip);
+
+/**
  * Sets whether or not a field is required.
  *
  * @param field    The field.
@@ -580,6 +504,15 @@ gboolean purple_request_field_is_visible(const PurpleRequestField *field);
  * @return The field's type hint.
  */
 const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
+
+/**
+ * Returns the field's tooltip.
+ *
+ * @param field The field.
+ *
+ * @return The field's tooltip.
+ */
+const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a field is required.

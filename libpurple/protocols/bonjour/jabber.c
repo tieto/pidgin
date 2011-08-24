@@ -929,7 +929,8 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 		while(tmp) {
 			ip = tmp->data;
 			if (ip != NULL && g_ascii_strcasecmp(ip, bconv->ip) == 0) {
-				BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+				PurpleConnection *pc = purple_account_get_connection(bconv->account);
+				BonjourJabber *jdata = ((BonjourData *)pc->proto_data)->jabber_data;
 
 				purple_debug_info("bonjour", "Matched buddy %s to incoming conversation \"from\" attrib and IP (%s)\n",
 					purple_buddy_get_name(pb), bconv->ip);
@@ -962,7 +963,8 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 
 void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	PurpleConnection *pc = purple_account_get_connection(bconv->account);
+	BonjourJabber *jdata = ((BonjourData *)pc->proto_data)->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
 	GSList *buddies;
 
@@ -1122,7 +1124,8 @@ _async_bonjour_jabber_close_conversation_cb(gpointer data) {
 
 void
 async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	PurpleConnection *pc = purple_account_get_connection(bconv->account);
+	BonjourJabber *jdata = ((BonjourData *)pc->proto_data)->jabber_data;
 
 	jdata->pending_conversations = g_slist_remove(jdata->pending_conversations, bconv);
 
@@ -1142,8 +1145,9 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 	if (bconv != NULL) {
 		BonjourData *bd = NULL;
 
-		if(PURPLE_CONNECTION_IS_VALID(bconv->account->gc)) {
-			bd = bconv->account->gc->proto_data;
+		PurpleConnection *pc = purple_account_get_connection(bconv->account);
+		if (PURPLE_CONNECTION_IS_VALID(pc)) {
+			bd = pc->proto_data;
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
 
@@ -1215,7 +1219,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		purple_input_remove(jdata->watcher_id6);
 
 	/* Close all the conversation sockets and remove all the watchers after sending end streams */
-	if (jdata->account->gc != NULL) {
+	if (!purple_account_is_disconnected(jdata->account)) {
 		GSList *buddies, *l;
 
 		buddies = purple_find_buddies(jdata->account, NULL);

@@ -1035,6 +1035,10 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 
 		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1,
 				column->title, renderer, "text", i, NULL);
+
+		if (!purple_notify_searchresult_column_is_visible(column))
+			gtk_tree_view_column_set_visible(gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i), FALSE);
+
 		i++;
 	}
 

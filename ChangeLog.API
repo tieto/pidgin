@@ -1,5 +1,81 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 3.0.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_notify_searchresult_column_set_visible
+		* purple_notify_searchresult_column_is_visible
+		* purple_notify_user_info_prepend_pair_plaintext
+		* purple_request_field_set_tooltip
+		* purple_request_field_get_tooltip
+		* purple_roomlist_get_account
+		* purple_roomlist_get_proto_data
+		* purple_roomlist_get_ui_data
+		* purple_roomlist_room_get_expanded_once
+		* purple_roomlist_room_set_expanded_once
+		* purple_roomlist_set_proto_data
+		* purple_roomlist_set_ui_data
+
+		Changed:
+		* purple_connection_error now takes a PurpleConnectionError
+		  as the second parameter
+		* purple_notify_user_info_add_pair renamed to
+		  purple_notify_user_info_add_pair_html
+		* purple_notify_user_info_get_entries returns a GQueue instead of
+		  a GList
+		* purple_notify_user_info_prepend_pair renamed to
+		  purple_notify_user_info_prepend_pair_html
+		* purple_util_fetch_url_request_len now takes a PurpleAccount as
+		  the first parameter
+		* PurpleConnectionUiOps.report_disconnect now passes a
+		  PurpleConnectionError as the second parameter
+
+		Removed:
+		* _GntFileType
+		* _GntKeyPressMode
+		* _GntMouseEvent
+		* _GntParamFlags
+		* _GntProgressBarOrientation
+		* _GntTreeColumnFlag
+		* _GntWidgetFlags
+		* _PurpleCipherBatchMode
+		* _PurpleCipherCaps
+		* _PurpleCmdFlag
+		* _PurpleCmdPriority
+		* _PurpleCmdRet
+		* _PurpleCmdStatus
+		* _PurplePrefType
+		* _PurplePrivacyType
+		* _PurpleSoundEventID
+		* _XMLNodeType
+		* GtkIMHtml.clipboard_html_string
+		* GtkIMHtml.clipboard_text_string
+		* pidgin_blist_update_account_error_state
+		* pidgin_check_if_dir
+		* PIDGIN_DIALOG
+		* pidgin_dialogs_alias_contact
+		* pidgin_set_custom_buddy_icon
+		* pidgin_setup_screenname_autocomplete
+		* PidginConversation.sg
+		* purple_connection_error_reason
+		* purple_core_migrate
+		* purple_notify_searchresults_column_get_title
+		* purple_notify_searchresults_get_columns_count
+		* purple_notify_searchresults_get_rows_count
+		* purple_notify_searchresults_row_get
+		* purple_status_type_get_primary_attr
+		* purple_status_type_set_primary_attr
+		* purple_strlcat
+		* purple_strlcpy
+		* purple_util_fetch_url_request_len_with_account.  Use
+		  purple_util_fetch_url_request_len, insetad.
+		* PurpleConnectionUiOps.report_disconnect_reason
+		* struct _GtkIMHtmlFontDetail
+		* struct _PurpleRequestField
+		* struct _PurpleRoomlist
+		* struct _PurpleRoomlistField
+		* struct _PurpleRoomlistRoom
+
 version 2.10.0:
 	libpurple:
 		Added:

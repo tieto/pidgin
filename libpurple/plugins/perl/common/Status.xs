@@ -397,10 +397,6 @@ const char *
 purple_status_type_get_name(status_type)
 	Purple::StatusType status_type
 
-const char *
-purple_status_type_get_primary_attr(status_type)
-	Purple::StatusType status_type
-
 Purple::StatusPrimitive
 purple_status_type_get_primitive(status_type)
 	Purple::StatusType status_type
@@ -440,8 +436,3 @@ purple_status_type_new_full(primitive, id, name, saveable, user_settable, indepe
 	gboolean saveable
 	gboolean user_settable
 	gboolean independent
-
-void
-purple_status_type_set_primary_attr(status_type, attr_id)
-	Purple::StatusType status_type
-	const char *attr_id

@@ -119,7 +119,7 @@ jabber_session_initialized_cb(JabberStream *js, const char *from,
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
 	} else {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			("Error initializing session"));
 	}
@@ -153,7 +153,7 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 
 			js->user = jabber_id_new(full_jid);
 			if (js->user == NULL) {
-				purple_connection_error_reason(js->gc,
+				purple_connection_error(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid response from server"));
 				g_free(full_jid);
@@ -170,7 +170,7 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
-		purple_connection_error_reason(js->gc, reason, msg);
+		purple_connection_error(js->gc, reason, msg);
 		g_free(msg);
 
 		return;
@@ -247,14 +247,14 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 	starttls = xmlnode_get_child(packet, "starttls");
 	if(xmlnode_get_child(starttls, "required")) {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
 		return TRUE;
 	}
 
 	if (g_str_equal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
 		return TRUE;
@@ -275,7 +275,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 	} else if (g_str_equal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
 		return;
@@ -320,7 +320,7 @@ static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	char *msg = jabber_parse_error(js, packet, &reason);
 
-	purple_connection_error_reason(js->gc, reason, msg);
+	purple_connection_error(js->gc, reason, msg);
 
 	g_free(msg);
 }
@@ -407,7 +407,7 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 	else if (ret <= 0) {
 		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
@@ -443,7 +443,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 		if (!account->disconnecting) {
 			gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
-			purple_connection_error_reason(js->gc,
+			purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		}
@@ -544,7 +544,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 				purple_debug_error("jabber",
 					"sasl_encode error %d: %s\n", rc,
 					sasl_errdetail(js->sasl));
-				purple_connection_error_reason(gc,
+				purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					error);
 				g_free(error);
@@ -617,7 +617,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
-	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+	purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timed out"));
 	js->keepalive_timeout = 0;
 	return FALSE;
@@ -670,7 +670,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 		else
 			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 	}
@@ -702,7 +702,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 				purple_debug_error("jabber",
 					"sasl_decode_error %d: %s\n", rc,
 					sasl_errdetail(js->sasl));
-				purple_connection_error_reason(gc,
+				purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					error);
 			} else if (olen > 0) {
@@ -728,7 +728,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		else
 			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					g_strerror(errno));
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 	}
@@ -789,7 +789,7 @@ txt_resolved_cb(GList *responses, gpointer data)
 	if (!found) {
 		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
 				  "methods after failing to connect directly.\n");
-		purple_connection_error_reason(js->gc,
+		purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect"));
 		return;
@@ -874,7 +874,7 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc),
 			host, port, jabber_login_callback, js->gc) == NULL) {
 		if (fatal_failure) {
-			purple_connection_error_reason(js->gc,
+			purple_connection_error(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect"));
 		}
@@ -940,7 +940,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->user = jabber_id_new(user);
 
 	if (!js->user) {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		g_free(user);
@@ -949,7 +949,7 @@ jabber_stream_new(PurpleAccount *account)
 	}
 
 	if (!js->user->node || *(js->user->node) == '\0') {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Username portion must be set."));
 		g_free(user);
@@ -958,7 +958,7 @@ jabber_stream_new(PurpleAccount *account)
 	}
 
 	if (!js->user->domain || *(js->user->domain) == '\0') {
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		g_free(user);
@@ -978,7 +978,7 @@ jabber_stream_new(PurpleAccount *account)
 	g_free(user);
 	if (!js->user_jb) {
 		/* This basically *can't* fail, but for good measure... */
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		/* Destroying the connection will free the JabberStream */
@@ -1037,7 +1037,7 @@ jabber_stream_connect(JabberStream *js)
 		if (js->bosh)
 			jabber_bosh_connection_connect(js->bosh);
 		else {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Malformed BOSH URL"));
 		}
@@ -1054,12 +1054,12 @@ jabber_stream_connect(JabberStream *js)
 					purple_account_get_int(account, "port", 5223),
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 			if (!js->gsc) {
-				purple_connection_error_reason(gc,
+				purple_connection_error(gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 					_("Unable to establish SSL connection"));
 			}
 		} else {
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
@@ -2225,7 +2225,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	label = g_strdup_printf("%s%s", _("Status"), (res ? res : ""));
 	value = g_strdup_printf("%s%s%s", state, (text ? ": " : ""), (text ? text : ""));
 
-	purple_notify_user_info_add_pair(user_info, label, value);
+	purple_notify_user_info_add_pair_html(user_info, label, value);
 	g_free(label);
 	g_free(value);
 	g_free(text);
@@ -2238,7 +2238,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 		gchar *idle_str =
 			purple_str_seconds_to_string(time(NULL) - jbr->idle);
 		label = g_strdup_printf("%s%s", _("Idle"), (res ? res : ""));
-		purple_notify_user_info_add_pair(user_info, label, idle_str);
+		purple_notify_user_info_add_pair_plaintext(user_info, label, idle_str);
 		g_free(idle_str);
 		g_free(label);
 	}
@@ -2310,10 +2310,10 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					char *moodplustext =
 						g_strdup_printf("%s (%s)", description ? _(description) : mood, moodtext);
 
-					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
+					purple_notify_user_info_add_pair_html(user_info, _("Mood"), moodplustext);
 					g_free(moodplustext);
 				} else
-					purple_notify_user_info_add_pair(user_info, _("Mood"),
+					purple_notify_user_info_add_pair_html(user_info, _("Mood"),
 					    description ? _(description) : mood);
 			}
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
@@ -2323,7 +2323,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
 				char *playing = purple_util_format_song_info(title, artist, album, NULL);
 				if (playing) {
-					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
+					purple_notify_user_info_add_pair_html(user_info, _("Now Listening"), playing);
 					g_free(playing);
 				}
 			}
@@ -2344,12 +2344,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					sub = _("None");
 			}
 
-			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
+			purple_notify_user_info_add_pair_html(user_info, _("Subscription"), sub);
 
 		}
 
 		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
+			purple_notify_user_info_add_pair_html(user_info, _("Error"), jb->error_msg);
 		}
 	}
 }

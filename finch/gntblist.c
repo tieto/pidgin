@@ -1268,7 +1268,7 @@ gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
 {
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
 	gpointer uihandle;
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_user_info_add_pair_plaintext(info, _("Information"), _("Retrieving..."));
 	uihandle = purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
 
@@ -1783,15 +1783,13 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	presence = purple_buddy_get_presence(buddy);
 
 	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias)) {
-		char *esc = g_markup_escape_text(alias, -1);
-		purple_notify_user_info_add_pair(user_info, _("Nickname"), esc);
-		g_free(esc);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Nickname"), alias);
 	}
 
 	tmp = g_strdup_printf("%s (%s)",
 			purple_account_get_username(account),
 			purple_account_get_protocol_name(account));
-	purple_notify_user_info_add_pair(user_info, _("Account"), tmp);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Account"), tmp);
 	g_free(tmp);
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -1806,7 +1804,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 			time_t idle = purple_presence_get_idle_time(pre);
 			if (idle > 0) {
 				char *st = purple_str_seconds_to_string(time(NULL) - idle);
-				purple_notify_user_info_add_pair(user_info, _("Idle"), st);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), st);
 				g_free(st);
 			}
 		}

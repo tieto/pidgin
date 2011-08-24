@@ -1078,7 +1078,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			if (psm != NULL && *psm) {
 				purple_notify_user_info_add_pair_plaintext(user_info, tmp2, psm);
 			} else {
-				purple_notify_user_info_add_pair(user_info, _("Status"), tmp2);
+				purple_notify_user_info_add_pair_html(user_info, _("Status"), tmp2);
 			}
 
 			g_free(tmp2);
@@ -1091,17 +1091,17 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 				}
 			} else {
 				if (purple_presence_is_idle(presence)) {
-					purple_notify_user_info_add_pair(user_info, _("Status"),
-						_("Idle"));
+					purple_notify_user_info_add_pair_plaintext(user_info,
+							_("Status"), _("Idle"));
 				} else {
-					purple_notify_user_info_add_pair(user_info, _("Status"),
-						purple_status_get_name(status));
+					purple_notify_user_info_add_pair_plaintext(user_info,
+							_("Status"), purple_status_get_name(status));
 				}
 			}
 		}
 
 		if (currentmedia) {
-			purple_notify_user_info_add_pair(user_info, mediatype, currentmedia);
+			purple_notify_user_info_add_pair_html(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
 	}
@@ -1119,23 +1119,26 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	{
 		const char *phone;
 
-		purple_notify_user_info_add_pair(user_info, _("Has you"),
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Has you"),
 									   ((user->list_op & (1 << MSN_LIST_RL)) ? _("Yes") : _("No")));
 
-		purple_notify_user_info_add_pair(user_info, _("Blocked"),
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
 
 		phone = msn_user_get_home_phone(user);
-		if (phone != NULL)
-			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), phone);
+		if (phone != NULL) {
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Home Phone Number"), phone);
+		}
 
 		phone = msn_user_get_work_phone(user);
-		if (phone != NULL)
-			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), phone);
+		if (phone != NULL) {
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Work Phone Number"), phone);
+		}
 
 		phone = msn_user_get_mobile_phone(user);
-		if (phone != NULL)
-			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), phone);
+		if (phone != NULL) {
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Mobile Phone Number"), phone);
+		}
 	}
 }
 
@@ -1333,7 +1336,7 @@ msn_login(PurpleAccount *account)
 
 	if (!purple_ssl_is_supported())
 	{
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
 			  "SSL library."));
@@ -1374,7 +1377,7 @@ msn_login(PurpleAccount *account)
 	}
 
 	if (!msn_session_connect(session, host, port, http_method))
-		purple_connection_error_reason(gc,
+		purple_connection_error(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect"));
 }
@@ -2262,7 +2265,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		{
 			char *nicktext = g_markup_escape_text(alias, -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font>", nicktext);
-			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
+			purple_notify_user_info_add_pair_html(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 			g_free(nicktext);
 		}
@@ -2361,7 +2364,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
 
 		purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
@@ -2680,7 +2683,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	if (user_url != NULL)
 	{
 		tmp = g_strdup_printf("<a href=\"%s\">%s</a>", user_url, user_url);
-		purple_notify_user_info_add_pair(user_info, _("Homepage"), tmp);
+		purple_notify_user_info_add_pair_html(user_info, _("Homepage"), tmp);
 		g_free(tmp);
 		g_free(user_url);
 
@@ -2703,9 +2706,9 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
-		purple_notify_user_info_add_pair(user_info,
+		purple_notify_user_info_add_pair_html(user_info,
 				_("Error retrieving profile"), NULL);
-		purple_notify_user_info_add_pair(user_info, NULL,
+		purple_notify_user_info_add_pair_plaintext(user_info, NULL,
 				((p && b) ? _("The user has not created a public profile.") :
 					(p ? _("MSN reported not being able to find the user's profile. "
 							"This either means that the user does not exist, "
@@ -2720,7 +2723,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_notify_user_info_add_section_break(user_info);
 	tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>",
 			PROFILE_URL, info_data->name, _("View web profile"));
-	purple_notify_user_info_add_pair(user_info, NULL, tmp);
+	purple_notify_user_info_add_pair_html(user_info, NULL, tmp);
 	g_free(tmp);
 
 #if PHOTO_SUPPORT
@@ -2801,7 +2804,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 			purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
-			purple_notify_user_info_prepend_pair(user_info, NULL, buf);
+			purple_notify_user_info_prepend_pair_html(user_info, NULL, buf);
 		}
 	}
 

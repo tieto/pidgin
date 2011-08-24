@@ -354,14 +354,14 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 
 	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("You must fill in all registration fields"));
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 			_("Passwords do not match"));
 		goto exit_err;
@@ -371,7 +371,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 			token->id, t);
 	h = gg_register3(email, p1, token->id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("Unable to register new account.  An unknown error occurred."));
 		goto exit_err;
@@ -1024,7 +1024,7 @@ static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user
 
 				purple_debug_info("gg", "gg_get_avatar_url_cb: "
 					"requesting avatar for %s\n", uin);
-				url_data = purple_util_fetch_url_request_len_with_account(account,
+				url_data = purple_util_fetch_url_request_len(account,
 						bigavatar, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)",
 						FALSE, NULL, FALSE, -1, gg_fetch_avatar_cb, data);
 			}
@@ -1052,7 +1052,7 @@ static void ggp_update_buddy_avatar(PurpleConnection *gc, uin_t uin)
 
 	avatarurl = g_strdup_printf("http://api.gadu-gadu.pl/avatars/%u/0.xml", uin);
 
-	url_data = purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len(
 			purple_connection_get_account(gc), avatarurl, TRUE,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE, NULL, FALSE, -1,
 			gg_get_avatar_url_cb, gc);
@@ -1194,27 +1194,37 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
 	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	purple_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
-	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
-	purple_notify_user_info_add_pair(user_info, _("First Name"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
-	purple_notify_user_info_add_pair(user_info, _("Nickname"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
-	purple_notify_user_info_add_pair(user_info, _("City"), val);
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+	purple_notify_user_info_add_pair_html(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
 	if (strncmp(val, "0", 1)) {
-		purple_notify_user_info_add_pair(user_info, _("Birth Year"), val);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+		purple_notify_user_info_add_pair_html(user_info, _("Birth Year"), val);
 	}
 	g_free(val);
 
@@ -1225,15 +1235,12 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 	if (NULL != buddy) {
 		PurpleStatus *status;
 		const char *msg;
-		char *text;
 
 		status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (msg != NULL) {
-			text = g_markup_escape_text(msg, -1);
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
-			g_free(text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
 	}
 
@@ -1714,7 +1721,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg",
 			"ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read from socket"));
 		return;
@@ -1880,7 +1887,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg", "login_handler: gg_watch_fd failed!\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read from socket"));
 		return;
@@ -1919,7 +1926,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_EVENT_CONN_FAILED:
 			purple_input_remove(gc->inpa);
 			gc->inpa = 0;
-			purple_connection_error_reason (gc,
+			purple_connection_error (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Connection failed"));
 			break;
@@ -1975,7 +1982,7 @@ static char *ggp_status_text(PurpleBuddy *b)
 static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleStatus *status;
-	char *text, *tmp;
+	char *tmp;
 	const char *msg, *name, *alias;
 
 	g_return_if_fail(b != NULL);
@@ -1985,21 +1992,19 @@ static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	name = purple_status_get_name(status);
 	alias = purple_buddy_get_alias(b);
 
-	purple_notify_user_info_add_pair (user_info, _("Alias"), alias);
+	purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 
 	if (msg != NULL) {
-		text = g_markup_escape_text(msg, -1);
 		if (PURPLE_BUDDY_IS_ONLINE(b)) {
-			tmp = g_strdup_printf("%s: %s", name, text);
-			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			tmp = g_strdup_printf("%s: %s", name, msg);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), tmp);
 			g_free(tmp);
 		} else {
-			purple_notify_user_info_add_pair(user_info, _("Message"), text);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Message"), msg);
 		}
-		g_free(text);
 	/* We don't want to duplicate 'Status: Offline'. */
 	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
-		purple_notify_user_info_add_pair(user_info, _("Status"), name);
+		purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), name);
 	}
 }
 
@@ -2030,7 +2035,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
- 	/*
+	/*
 	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because
 	 * libpurple can't support Chatty status) and Nie przeszkadzac
 	 */
@@ -2157,7 +2162,7 @@ static void ggp_login(PurpleAccount *account)
 		if (addr == NULL) {
 			gchar *tmp = g_strdup_printf(_("Unable to resolve hostname '%s': %s"),
 					address, g_strerror(errno));
-			purple_connection_error_reason(gc,
+			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, /* should this be a settings error? */
 				tmp);
 			g_free(tmp);
@@ -2172,7 +2177,7 @@ static void ggp_login(PurpleAccount *account)
 	info->session = gg_login(glp);
 	purple_connection_update_progress(gc, _("Connecting"), 0, 2);
 	if (info->session == NULL) {
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Connection failed"));
 		g_free(glp);
@@ -2582,7 +2587,7 @@ static void ggp_keepalive(PurpleConnection *gc)
 	if (gg_ping(info->session) < 0) {
 		purple_debug_info("gg", "Not connected to the server "
 				"or gg_session is not correct\n");
-		purple_connection_error_reason (gc,
+		purple_connection_error (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Not connected to the server"));
 	}

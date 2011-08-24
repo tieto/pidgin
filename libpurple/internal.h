@@ -151,12 +151,6 @@
 
 #include <glib-object.h>
 
-/* Safer ways to work with static buffers. When using non-static
- * buffers, either use g_strdup_* functions (preferred) or use
- * g_strlcpy/g_strlcpy directly. */
-#define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
-#define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
-
 #define PURPLE_WEBSITE "http://pidgin.im/"
 #define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
 
@@ -175,12 +169,6 @@ _purple_buddy_icons_account_loaded_cb(void);
  * it's done loading.  We may want to replace this with a signal. */
 void
 _purple_buddy_icons_blist_loaded_cb(void);
-
-/* This is for the purple_core_migrate() code to tell the buddy
- * icon subsystem about the old icons directory so it can
- * migrate any icons in use. */
-void
-_purple_buddy_icon_set_old_icons_dir(const char *dirname);
 
 /**
  * Creates a connection to the specified account and either connects

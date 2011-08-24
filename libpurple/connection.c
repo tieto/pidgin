@@ -528,22 +528,7 @@ purple_connection_disconnect_cb(gpointer data)
 }
 
 void
-purple_connection_error(PurpleConnection *gc, const char *text)
-{
-	/* prpls that have not been updated to use disconnection reasons will
-	 * be setting wants_to_die before calling this function, so choose
-	 * PURPLE_CONNECTION_ERROR_OTHER_ERROR (which is fatal) if it's true,
-	 * and PURPLE_CONNECTION_ERROR_NETWORK_ERROR (which isn't) if not.  See
-	 * the documentation in connection.h.
-	 */
-	PurpleConnectionError reason = gc->wants_to_die
-	                             ? PURPLE_CONNECTION_ERROR_OTHER_ERROR
-	                             : PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-	purple_connection_error_reason (gc, reason, text);
-}
-
-void
-purple_connection_error_reason (PurpleConnection *gc,
+purple_connection_error (PurpleConnection *gc,
                                 PurpleConnectionError reason,
                                 const char *description)
 {
@@ -557,13 +542,13 @@ purple_connection_error_reason (PurpleConnection *gc,
 	 */
 	if (reason > PURPLE_CONNECTION_ERROR_OTHER_ERROR) {
 		purple_debug_error("connection",
-			"purple_connection_error_reason: reason %u isn't a "
+			"purple_connection_error: reason %u isn't a "
 			"valid reason\n", reason);
 		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}
 
 	if (description == NULL) {
-		purple_debug_error("connection", "purple_connection_error_reason called with NULL description\n");
+		purple_debug_error("connection", "purple_connection_error called with NULL description\n");
 		description = _("Unknown error");
 	}
 
@@ -578,13 +563,8 @@ purple_connection_error_reason (PurpleConnection *gc,
 
 	ops = purple_connections_get_ui_ops();
 
-	if (ops != NULL)
-	{
-		if (ops->report_disconnect_reason != NULL)
-			ops->report_disconnect_reason (gc, reason, description);
-		if (ops->report_disconnect != NULL)
-			ops->report_disconnect (gc, description);
-	}
+	if (ops && ops->report_disconnect)
+		ops->report_disconnect(gc, reason, description);
 
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
@@ -615,7 +595,7 @@ purple_connection_ssl_error (PurpleConnection *gc,
 			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 	}
 
-	purple_connection_error_reason (gc, reason,
+	purple_connection_error (gc, reason,
 		purple_ssl_strerror(ssl_error));
 }
 

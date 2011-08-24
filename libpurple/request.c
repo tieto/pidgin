@@ -42,6 +42,92 @@ typedef struct
 
 } PurpleRequestInfo;
 
+/**
+ * A request field.
+ */
+struct _PurpleRequestField
+{
+	PurpleRequestFieldType type;
+	PurpleRequestFieldGroup *group;
+
+	char *id;
+	char *label;
+	char *type_hint;
+
+	gboolean visible;
+	gboolean required;
+
+	union
+	{
+		struct
+		{
+			gboolean multiline;
+			gboolean masked;
+			gboolean editable;
+			char *default_value;
+			char *value;
+
+		} string;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+		} integer;
+
+		struct
+		{
+			gboolean default_value;
+			gboolean value;
+
+		} boolean;
+
+		struct
+		{
+			int default_value;
+			int value;
+
+			GList *labels;
+
+		} choice;
+
+		struct
+		{
+			GList *items;
+			GList *icons;
+			GHashTable *item_data;
+			GList *selected;
+			GHashTable *selected_table;
+
+			gboolean multiple_selection;
+
+		} list;
+
+		struct
+		{
+			PurpleAccount *default_account;
+			PurpleAccount *account;
+			gboolean show_all;
+
+			PurpleFilterAccountFunc filter_func;
+
+		} account;
+
+		struct
+		{
+			unsigned int scale_x;
+			unsigned int scale_y;
+			const char *buffer;
+			gsize size;
+		} image;
+
+	} u;
+
+	void *ui_data;
+	char *tooltip;
+
+};
 
 PurpleRequestFields *
 purple_request_fields_new(void)
@@ -365,6 +451,7 @@ purple_request_field_destroy(PurpleRequestField *field)
 	g_free(field->id);
 	g_free(field->label);
 	g_free(field->type_hint);
+	g_free(field->tooltip);
 
 	if (field->type == PURPLE_REQUEST_FIELD_STRING)
 	{
@@ -425,6 +512,15 @@ purple_request_field_set_type_hint(PurpleRequestField *field,
 
 	g_free(field->type_hint);
 	field->type_hint = g_strdup(type_hint);
+}
+
+void
+purple_request_field_set_tooltip(PurpleRequestField *field, const char *tooltip)
+{
+	g_return_if_fail(field != NULL);
+
+	g_free(field->tooltip);
+	field->tooltip = g_strdup(tooltip);
 }
 
 void
@@ -500,6 +596,14 @@ purple_request_field_get_type_hint(const PurpleRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->type_hint;
+}
+
+const char *
+purple_request_field_get_tooltip(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+
+	return field->tooltip;
 }
 
 gboolean

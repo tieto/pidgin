@@ -32,7 +32,7 @@
 /**
  * Preference data types.
  */
-typedef enum _PurplePrefType
+typedef enum
 {
 	PURPLE_PREF_NONE,        /**< No type.         */
 	PURPLE_PREF_BOOLEAN,     /**< Boolean.         */

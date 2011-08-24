@@ -5367,9 +5367,9 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 			tag = sl->data;
 			/** don't worry about non-printing tags ending */
 			if (tag_ends_here(tag, &iter, &next_iter) &&
-					strlen(tag_to_html_end(tag)) > 0 &&
-					strlen(tag_to_html_start(tag)) > 0) {
-
+					*tag_to_html_end(tag) &&
+					*tag_to_html_start(tag))
+			{
 				PidginTextTagData *tmp;
 				GQueue *r = g_queue_new();
 

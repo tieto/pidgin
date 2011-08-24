@@ -2882,8 +2882,6 @@ pidgin_prefs_update_old(void)
 {
 	const char *str = NULL;
 
-	purple_prefs_rename("/gaim/gtk", PIDGIN_PREFS_ROOT);
-
 	/* Rename some old prefs */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/purple/logging/log_ims");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/purple/logging/log_chats");
@@ -2906,12 +2904,6 @@ pidgin_prefs_update_old(void)
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/manual_command", str);
 		purple_prefs_remove(PIDGIN_PREFS_ROOT "/browsers/command");
 	}
-
-	/* this string pref moved into the core, try to be friendly */
-	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
-	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
-			strcmp(str, "gaim") == 0)
-		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 
 	/* Remove some no-longer-used prefs */
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/auto_expand_contacts");

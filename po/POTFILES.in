@@ -160,14 +160,6 @@ libpurple/protocols/silc/pk.c
 libpurple/protocols/silc/silc.c
 libpurple/protocols/silc/util.c
 libpurple/protocols/silc/wb.c
-libpurple/protocols/silc10/buddy.c
-libpurple/protocols/silc10/chat.c
-libpurple/protocols/silc10/ft.c
-libpurple/protocols/silc10/ops.c
-libpurple/protocols/silc10/pk.c
-libpurple/protocols/silc10/silc.c
-libpurple/protocols/silc10/util.c
-libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
 libpurple/protocols/yahoo/libyahoo.c
 libpurple/protocols/yahoo/libyahoojp.c
