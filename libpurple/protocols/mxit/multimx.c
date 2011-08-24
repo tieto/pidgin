@@ -458,7 +458,7 @@ GList* mxit_chat_info(PurpleConnection *gc)
  */
 void mxit_chat_join(PurpleConnection *gc, GHashTable *components)
 {
-	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	const char* roomname = NULL;
 	struct multimx* multimx = NULL;
 
@@ -500,7 +500,7 @@ void mxit_chat_join(PurpleConnection *gc, GHashTable *components)
  */
 void mxit_chat_reject(PurpleConnection *gc, GHashTable* components)
 {
-	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	const char* roomname = NULL;
 	struct multimx* multimx = NULL;
 
@@ -543,7 +543,7 @@ char* mxit_chat_name(GHashTable *components)
  */
 void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char *username)
 {
-	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	struct multimx* multimx = NULL;
 	PurpleBuddy* buddy;
 	PurpleConversation *convo;
@@ -589,7 +589,7 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
  */
 void mxit_chat_leave(PurpleConnection *gc, int id)
 {
-	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	struct multimx* multimx = NULL;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat %i leave\n", id);
@@ -620,7 +620,7 @@ void mxit_chat_leave(PurpleConnection *gc, int id)
  */
 int mxit_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
-	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
+	struct MXitSession* session = purple_connection_get_protocol_data(gc);
 	struct multimx* multimx = NULL;
 	const char* nickname;
 

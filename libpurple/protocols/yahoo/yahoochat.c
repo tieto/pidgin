@@ -1375,7 +1375,9 @@ static void yahoo_roomlist_cleanup(PurpleRoomlist *list, struct yahoo_roomlist *
 	purple_roomlist_set_in_progress(list, FALSE);
 
 	if (yrl) {
-		list->proto_data = g_list_remove(list->proto_data, yrl);
+		GList *proto_data = purple_roomlist_get_proto_data(list);
+		proto_data = g_list_remove(proto_data, yrl);
+		purple_roomlist_set_proto_data(list, proto_data);
 		yahoo_roomlist_destroy(yrl);
 	}
 
@@ -1451,7 +1453,7 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, PurpleInputCondit
 		yrl->inpa = 0;
 		g_free(yrl->txbuf);
 		yrl->txbuf = NULL;
-		purple_notify_error(purple_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		purple_notify_error(purple_account_get_connection(purple_roomlist_get_account(list)), NULL, _("Unable to connect"), _("Fetching the room list failed."));
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
@@ -1474,10 +1476,12 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar
 {
 	struct yahoo_roomlist *yrl = data;
 	PurpleRoomlist *list = yrl->list;
-	YahooData *yd = purple_account_get_connection(list->account)->proto_data;
+	PurpleAccount *account = purple_roomlist_get_account(list);
+	PurpleConnection *pc = purple_account_get_connection(account);
+	YahooData *yd = pc->proto_data;
 
 	if (source < 0) {
-		purple_notify_error(purple_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		purple_notify_error(pc, NULL, _("Unable to connect"), _("Fetching the room list failed."));
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
@@ -1506,6 +1510,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 	struct yahoo_roomlist *yrl;
 	const char *rll, *rlurl;
 	char *url;
+	GList *proto_data;
 
 	account = purple_connection_get_account(gc);
 
@@ -1556,7 +1561,9 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 		return NULL;
 	}
 
-	rl->proto_data = g_list_append(rl->proto_data, yrl);
+	proto_data = purple_roomlist_get_proto_data(rl);
+	proto_data = g_list_append(proto_data, yrl);
+	purple_roomlist_set_proto_data(rl, proto_data);
 
 	purple_roomlist_set_in_progress(rl, TRUE);
 	return rl;
@@ -1566,8 +1573,8 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list)
 {
 	GList *l, *k;
 
-	k = l = list->proto_data;
-	list->proto_data = NULL;
+	k = l = purple_roomlist_get_proto_data(list);
+	purple_roomlist_set_proto_data(list, NULL);
 
 	purple_roomlist_set_in_progress(list, FALSE);
 
@@ -1580,36 +1587,42 @@ void yahoo_roomlist_cancel(PurpleRoomlist *list)
 
 void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
+	PurpleAccount *account;
 	struct yahoo_roomlist *yrl;
 	char *url;
 	char *id;
 	const char *rll;
+	GList *proto_data;
 
-	if (category->type != PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
+	if (purple_roomlist_room_get_type(category) != PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
 		return;
 
-	if (!(id = g_list_nth_data(category->fields, 1))) {
+	if (!(id = g_list_nth_data(purple_roomlist_room_get_fields(category), 1))) {
 		purple_roomlist_set_in_progress(list, FALSE);
 		return;
 	}
 
-	rll = purple_account_get_string(list->account, "room_list_locale",
+	account = purple_roomlist_get_account(list);
+	rll = purple_account_get_string(account, "room_list_locale",
 								  YAHOO_ROOMLIST_LOCALE);
 
 	if (rll != NULL && *rll != '\0') {
 		url = g_strdup_printf("%s?chatroom_%s=0&intl=%s",
-	       purple_account_get_string(list->account,"room_list",
+	       purple_account_get_string(account,"room_list",
 	       YAHOO_ROOMLIST_URL), id, rll);
 	} else {
 		url = g_strdup_printf("%s?chatroom_%s=0",
-	       purple_account_get_string(list->account,"room_list",
+	       purple_account_get_string(account,"room_list",
 	       YAHOO_ROOMLIST_URL), id);
 	}
 
 	yrl = g_new0(struct yahoo_roomlist, 1);
 	yrl->list = list;
 	yrl->cat = category;
-	list->proto_data = g_list_append(list->proto_data, yrl);
+
+	proto_data = purple_roomlist_get_proto_data(list);
+	proto_data = g_list_append(proto_data, yrl);
+	purple_roomlist_set_proto_data(list, proto_data);
 
 	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
@@ -1617,11 +1630,11 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	yrl->ucat = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
 	purple_roomlist_room_add(list, yrl->ucat);
 
-	if (purple_proxy_connect(purple_account_get_connection(list->account),
-			list->account, yrl->host, 80,
+	if (purple_proxy_connect(purple_account_get_connection(account),
+			account, yrl->host, 80,
 			yahoo_roomlist_got_connected, yrl) == NULL)
 	{
-		purple_notify_error(purple_account_get_connection(list->account),
+		purple_notify_error(purple_account_get_connection(account),
 		                  NULL, _("Connection problem"), _("Unable to fetch room list."));
 		purple_roomlist_ref(list);
 		yahoo_roomlist_cleanup(list, yrl);

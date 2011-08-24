@@ -887,8 +887,8 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room)
 {
-
-	return g_strdup_printf("%s@%s", (char*)room->fields->data, (char*)room->fields->next->data);
+	GList *fields = purple_roomlist_room_get_fields(room);
+	return g_strdup_printf("%s@%s", (char*)fields->data, (char*)fields->next->data);
 }
 
 PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
@@ -928,10 +928,12 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 
 void jabber_roomlist_cancel(PurpleRoomlist *list)
 {
+	PurpleAccount *account;
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	gc = purple_account_get_connection(list->account);
+	account = purple_roomlist_get_account(list);
+	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
 
 	purple_roomlist_set_in_progress(list, FALSE);
