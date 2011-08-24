@@ -3286,9 +3286,9 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 	{
 		gchar *escaped = g_shell_quote(uri);
 		gchar *param = g_strconcat("/select,\"", uri, "\"", NULL);
-		gchar *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
+		wchar_t *wc_param = g_utf8_to_utf16(param, -1, NULL, NULL, NULL);
 
-		code = (int)ShellExecuteW(NULL, "OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
+		code = (int)ShellExecuteW(NULL, L"OPEN", L"explorer.exe", wc_param, NULL, SW_NORMAL);
 
 		g_free(wc_param);
 		g_free(param);
