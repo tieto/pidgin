@@ -356,8 +356,32 @@ debug_command_cb(PurpleConversation *conv,
 		}
 
 		tmp = g_string_free(str, FALSE);
+	} else if (!g_ascii_strcasecmp(args[0], "unsafe")) {
+		if (purple_debug_is_unsafe()) {
+			purple_debug_set_unsafe(FALSE);
+			purple_conversation_write(conv, NULL, _("Unsafe debugging is now disabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		} else {
+			purple_debug_set_unsafe(TRUE);
+			purple_conversation_write(conv, NULL, _("Unsafe debugging is now enabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+
+		return PURPLE_CMD_RET_OK;
+	} else if (!g_ascii_strcasecmp(args[0], "verbose")) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_set_verbose(FALSE);
+			purple_conversation_write(conv, NULL, _("Verbose debugging is now disabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		} else {
+			purple_debug_set_verbose(TRUE);
+			purple_conversation_write(conv, NULL, _("Verbose debugging is now enabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+
+		return PURPLE_CMD_RET_OK;
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
+		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version unsafe verbose"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
 		return PURPLE_CMD_RET_OK;
 	}
