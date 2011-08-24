@@ -297,6 +297,10 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
 		if (rc < 0) {
+			if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK) {
+				/* Try again */
+				continue;
+			}
 			fprintf(stderr, "dns[%d]: Error: Could not read dns_params: "
 					"%s\n", getpid(), strerror(errno));
 			break;
