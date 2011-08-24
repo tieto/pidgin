@@ -1101,8 +1101,6 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 
 		if (currentmedia) {
-			/* TODO: Check whether it's correct to call add_pair_html,
-			         or if we should be using add_pair_plaintext */
 			purple_notify_user_info_add_pair_html(user_info, mediatype, currentmedia);
 			g_free(currentmedia);
 		}
@@ -1129,23 +1127,17 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 
 		phone = msn_user_get_home_phone(user);
 		if (phone != NULL) {
-			/* TODO: Check whether it's correct to call add_pair_html,
-			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair_html(user_info, _("Home Phone Number"), phone);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Home Phone Number"), phone);
 		}
 
 		phone = msn_user_get_work_phone(user);
 		if (phone != NULL) {
-			/* TODO: Check whether it's correct to call add_pair_html,
-			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair_html(user_info, _("Work Phone Number"), phone);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Work Phone Number"), phone);
 		}
 
 		phone = msn_user_get_mobile_phone(user);
 		if (phone != NULL) {
-			/* TODO: Check whether it's correct to call add_pair_html,
-			         or if we should be using add_pair_plaintext */
-			purple_notify_user_info_add_pair_html(user_info, _("Mobile Phone Number"), phone);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Mobile Phone Number"), phone);
 		}
 	}
 }
