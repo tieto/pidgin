@@ -53,13 +53,14 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	struct MXitSession*	session		= NULL;
 
 	/* currently the wapsite does not handle a '+' in front of the username (mxitid) so we just strip it */
-	if ( account->username[0] == '+' ) {
-		char*		fixed;
+	{
+		const char* username	= purple_account_get_username( account );
 
-		/* cut off the '+' */
-		fixed = g_strdup( &account->username[1] );
-		purple_account_set_username( account, fixed );
-		g_free( fixed );
+		if ( username[0] == '+' ) {
+			char* fixed	= g_strdup( &username[1] );
+			purple_account_set_username( account, fixed );
+			g_free( fixed );
+		}
 	}
 
 	session = g_new0( struct MXitSession, 1 );
