@@ -763,29 +763,29 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 
 		specified_attr_ids = g_list_prepend(specified_attr_ids, (gpointer)id);
 
-		if (value->type == PURPLE_TYPE_STRING)
+		if (purple_value_get_type(value) == PURPLE_TYPE_STRING)
 		{
 			const gchar *string_data = l->data;
 			l = l->next;
-			if (purple_strequal(string_data, value->data.string_data))
+			if (purple_strequal(string_data, purple_value_get_string(value)))
 				continue;
 			purple_status_set_attr_string(status, id, string_data);
 			changed = TRUE;
 		}
-		else if (value->type == PURPLE_TYPE_INT)
+		else if (purple_value_get_type(value) == PURPLE_TYPE_INT)
 		{
 			int int_data = GPOINTER_TO_INT(l->data);
 			l = l->next;
-			if (int_data == value->data.int_data)
+			if (int_data == purple_value_get_int(value))
 				continue;
 			purple_status_set_attr_int(status, id, int_data);
 			changed = TRUE;
 		}
-		else if (value->type == PURPLE_TYPE_BOOLEAN)
+		else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN)
 		{
 			gboolean boolean_data = GPOINTER_TO_INT(l->data);
 			l = l->next;
-			if (boolean_data == value->data.boolean_data)
+			if (boolean_data == purple_value_get_boolean(value))
 				continue;
 			purple_status_set_attr_boolean(status, id, boolean_data);
 			changed = TRUE;
@@ -809,7 +809,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
 			PurpleValue *default_value;
 			default_value = purple_status_attr_get_value(attr);
-			if (default_value->type == PURPLE_TYPE_STRING) {
+			if (purple_value_get_type(default_value) == PURPLE_TYPE_STRING) {
 				const char *cur = purple_status_get_attr_string(status, attr->id);
 				const char *def = purple_value_get_string(default_value);
 				if ((cur == NULL && def == NULL)
@@ -819,14 +819,14 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 				}
 
 				purple_status_set_attr_string(status, attr->id, def);
-			} else if (default_value->type == PURPLE_TYPE_INT) {
+			} else if (purple_value_get_type(default_value) == PURPLE_TYPE_INT) {
 				int cur = purple_status_get_attr_int(status, attr->id);
 				int def = purple_value_get_int(default_value);
 				if (cur == def)
 					continue;
 
 				purple_status_set_attr_int(status, attr->id, def);
-			} else if (default_value->type == PURPLE_TYPE_BOOLEAN) {
+			} else if (purple_value_get_type(default_value) == PURPLE_TYPE_BOOLEAN) {
 				gboolean cur = purple_status_get_attr_boolean(status, attr->id);
 				gboolean def = purple_value_get_boolean(default_value);
 				if (cur == def)

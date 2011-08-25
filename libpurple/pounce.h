@@ -59,31 +59,6 @@ typedef enum
 /** A pounce callback. */
 typedef void (*PurplePounceCb)(PurplePounce *, PurplePounceEvent, void *);
 
-/**
- * A buddy pounce structure.
- *
- * Buddy pounces are actions triggered by a buddy-related event. For
- * example, a sound can be played or an IM window opened when a buddy
- * signs on or returns from away. Such responses are handled in the
- * UI. The events themselves are done in the core.
- */
-struct _PurplePounce
-{
-	char *ui_type;                /**< The type of UI.            */
-
-	PurplePounceEvent events;       /**< The event(s) to pounce on. */
-	PurplePounceOption options;     /**< The pounce options         */
-	PurpleAccount *pouncer;         /**< The user who is pouncing.  */
-
-	char *pouncee;                /**< The buddy to pounce on.    */
-
-	GHashTable *actions;          /**< The registered actions.    */
-
-	gboolean save;                /**< Whether or not the pounce should
-	                                   be saved after activation. */
-	void *data;                   /**< Pounce-specific data.      */
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
