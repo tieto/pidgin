@@ -56,7 +56,7 @@ enum {
 };
 
 #define PIDGIN_CONVERSATION(conv) \
-	((PidginConversation *)(conv)->ui_data)
+	((PidginConversation *)purple_conversation_get_ui_data(conv))
 
 #define PIDGIN_IS_PIDGIN_CONVERSATION(conv) \
 	(purple_conversation_get_ui_ops(conv) == \

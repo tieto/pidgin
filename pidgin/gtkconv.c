@@ -5277,8 +5277,8 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
 		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, b->account))) {
-			if (conv->ui_data)
-				return conv->ui_data;
+			if (PIDGIN_CONVERSATION(conv))
+				return PIDGIN_CONVERSATION(conv);
 		}
 	}
 
@@ -5366,7 +5366,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	PurpleValue *value;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
-		conv->ui_data = gtkconv;
+		purple_conversation_set_ui_data(conv, gtkconv);
 		if (!g_list_find(gtkconv->convs, conv))
 			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 		pidgin_conv_switch_active_conversation(conv);
@@ -5374,7 +5374,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	gtkconv = g_new0(PidginConversation, 1);
-	conv->ui_data = gtkconv;
+	purple_conversation_set_ui_data(conv, gtkconv);
 	gtkconv->active_conv = conv;
 	gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 	gtkconv->send_history = g_list_append(NULL, NULL);
@@ -5401,7 +5401,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 			g_free(gtkconv->u.im);
 
 		g_free(gtkconv);
-		conv->ui_data = NULL;
+		purple_conversation_set_ui_data(conv, NULL);
 		return;
 	}
 
