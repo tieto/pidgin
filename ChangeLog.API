@@ -19,6 +19,8 @@ version 3.0.0 (??/??/????):
 		* purple_xfer_set_protocol_data
 		* purple_xfer_get_ui_data
 		* purple_xfer_set_ui_data
+		* purple_conversation_get_ui_data
+		* purple_conversation_set_ui_data
 
 		Changed:
 		* purple_connection_error now takes a PurpleConnectionError

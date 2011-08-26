@@ -802,6 +802,25 @@ PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
  */
 time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg);
 
+/**
+ * Set the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ * @param ui_data		A pointer to associate with this conversation.
+ */
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this conversation.
+ *
+ * @param conv			The conversation.
+ *
+ * @return The UI data associated with this conversation.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_conversation_get_ui_data(PurpleConversation *conv);
+
 /*@}*/
 
 

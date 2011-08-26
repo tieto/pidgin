@@ -2323,6 +2323,21 @@ time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
 	return msg->when;
 }
 
+void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
+{
+	g_return_if_fail(conv != NULL);
+
+	conv->ui_data = ui_data;
+}
+
+gpointer purple_conversation_get_ui_data(PurpleConversation *conv)
+{
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	return conv->ui_data;
+}
+
+
 gboolean
 purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 				const gchar *markup, gchar **error)
