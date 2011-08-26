@@ -168,7 +168,7 @@ notify(PurpleConversation *conv, const char *fmt, ...)
 		beep();
 
 	if (conv != NULL) {
-		FinchConv *fc = conv->ui_data;
+		FinchConv *fc = FINCH_CONV(conv);
 		if (gnt_widget_has_focus(fc->window))
 			return;
 	}

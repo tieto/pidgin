@@ -1060,7 +1060,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 						purple_buddy_get_account(buddy),
 						purple_buddy_get_name(buddy));
 		} else {
-			FinchConv *ggconv = FINCH_GET_DATA(conv);
+			FinchConv *ggconv = FINCH_CONV(conv);
 			gnt_window_present(ggconv->window);
 		}
 		finch_conversation_set_active(conv);
