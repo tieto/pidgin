@@ -90,7 +90,7 @@ static void bonjour_xfer_cancel_send(PurpleXfer *xfer)
 
 static void bonjour_xfer_request_denied(PurpleXfer *xfer)
 {
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 
 	purple_debug_info("bonjour", "Bonjour-xfer-request-denied.\n");
 
@@ -162,7 +162,7 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 		xfer = xfers->data;
 		if(xfer == NULL)
 			break;
-		xf = xfer->data;
+		xf = purple_xfer_get_protocol_data(xfer);
 		if(xf == NULL)
 			break;
 		if(xf->sid && xfer->who && !strcmp(xf->sid, sid) &&
@@ -180,7 +180,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 {
 	xmlnode *si_node, *feature, *field, *file, *x;
 	XepIq *iq;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	BonjourData *bd = NULL;
 	char buf[32];
 
@@ -249,7 +249,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 
 	if(!to || !xfer)
 		return;
-	xf = xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(!xf)
 		return;
 
@@ -292,7 +292,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 
 	purple_debug_info("bonjour", "bonjour-free-xfer-%p.\n", xfer);
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(xf != NULL) {
 		BonjourData *bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
@@ -311,7 +311,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->buddy_ip);
 		g_free(xf->sid);
 		g_free(xf);
-		xfer->data = NULL;
+		purple_xfer_set_protocol_data(xfer, NULL);
 	}
 
 	purple_debug_info("bonjour", "Need close socket=%d.\n", xfer->fd);
@@ -334,7 +334,8 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 
 	/* Build the file transfer handle */
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
-	xfer->data = xep_xfer = g_new0(XepXfer, 1);
+	xep_xfer = g_new0(XepXfer, 1);
+	purple_xfer_set_protocol_data(xfer, xep_xfer);
 	xep_xfer->data = bd;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
@@ -379,7 +380,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	BonjourBuddy *bb;
 	XepXfer *xf;
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(xf == NULL)
 		return;
 
@@ -530,7 +531,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				int portnum;
 				XepXfer *xf = NULL;
 
-				xf = (XepXfer*)xfer->data;
+				xf = purple_xfer_get_protocol_data(xfer);
 				for(streamhost = xmlnode_get_child(query, "streamhost");
 						streamhost;
 						streamhost = xmlnode_get_next_twin(streamhost)) {
@@ -592,7 +593,8 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 
 	/* Build the file transfer handle */
 	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
-	xfer->data = xf = g_new0(XepXfer, 1);
+	xf = g_new0(XepXfer, 1);
+	purple_xfer_set_protocol_data(xfer, xf);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
 	xf->iq_id = g_strdup(id);
@@ -614,7 +616,7 @@ static void
 bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	int acceptfd;
 	int len = 0;
 
@@ -759,7 +761,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 
 	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
 					 bonjour_sock5_request_cb, xfer);
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	xf->listen_data = NULL;
 
 	bd = xf->data;
@@ -797,7 +799,7 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 		return;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
-	xf = xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 
 	purple_network_listen_map_external(FALSE);
 	xf->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
@@ -813,7 +815,7 @@ static void
 bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = xfer->data;
+	XepXfer *xf = purple_xfer_get_protocol_data(xfer);
 	XepIq *iq;
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
@@ -862,7 +864,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 
 	purple_debug_info("bonjour", "bonjour-bytestreams-connect.\n");
 
-	xf = (XepXfer*)xfer->data;
+	xf = purple_xfer_get_protocol_data(xfer);
 	if(!xf)
 		return;
 
