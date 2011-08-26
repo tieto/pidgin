@@ -737,6 +737,26 @@ void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
  */
 void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
 
+/**
+ * Sets the protocol data for a file transfer.
+ *
+ * @param xfer			The file transfer.
+ * @param protol_data	The protocol data to set for the file transfer.
+ *
+ * @since 3.0.0
+ */
+void purple_xfer_set_protocol_data(PurpleXfer *xfer, void *proto_data);
+ 
+/**
+ * Gets the protocol data for a file transfer.
+ *
+ * @param xfer			The file transfer.
+ *
+ * @return The protocol data for the file transfer.
+ *
+ * @since 3.0.0
+ */
+void *purple_xfer_get_protocol_data(PurpleXfer *xfer);
 
 /*@}*/
 
