@@ -819,7 +819,7 @@ void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
-gpointer purple_conversation_get_ui_data(PurpleConversation *conv);
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
 
 /*@}*/
 

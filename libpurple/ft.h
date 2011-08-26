@@ -756,7 +756,7 @@ void purple_xfer_set_protocol_data(PurpleXfer *xfer, gpointer proto_data);
  *
  * @since 3.0.0
  */
-gpointer purple_xfer_get_protocol_data(PurpleXfer *xfer);
+gpointer purple_xfer_get_protocol_data(const PurpleXfer *xfer);
 
 /**
  * Set the UI data associated with this file transfer.
@@ -775,7 +775,7 @@ void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data);
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
-gpointer purple_xfer_get_ui_data(PurpleXfer *xfer);
+gpointer purple_xfer_get_ui_data(const PurpleXfer *xfer);
 
 /*@}*/
 

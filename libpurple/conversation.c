@@ -2330,7 +2330,7 @@ void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
 	conv->ui_data = ui_data;
 }
 
-gpointer purple_conversation_get_ui_data(PurpleConversation *conv)
+gpointer purple_conversation_get_ui_data(const PurpleConversation *conv)
 {
 	g_return_val_if_fail(conv != NULL, NULL);
 
