@@ -2139,7 +2139,7 @@ static struct mwServiceConference *mw_srvc_conf_new(struct mwSession *s) {
 
 static void ft_incoming_cancel(PurpleXfer *xfer) {
   /* incoming transfer rejected or cancelled in-progress */
-  struct mwFileTransfer *ft = xfer->data;
+  struct mwFileTransfer *ft = purple_xfer_get_protocol_data(xfer);
   if(ft) mwFileTransfer_reject(ft);
 }
 
@@ -2155,7 +2155,7 @@ static void ft_incoming_init(PurpleXfer *xfer) {
   struct mwFileTransfer *ft;
   FILE *fp;
 
-  ft = xfer->data;
+  ft = purple_xfer_get_protocol_data(xfer);
 
   fp = g_fopen(xfer->local_filename, "wb");
   if(! fp) {
@@ -2202,7 +2202,7 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
   {
 	purple_xfer_ref(xfer);
 	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
-	xfer->data = ft;
+	purple_xfer_set_protocol_data(xfer, ft);
 
 	purple_xfer_set_init_fnc(xfer, ft_incoming_init);
 	purple_xfer_set_cancel_recv_fnc(xfer, ft_incoming_cancel);
@@ -2281,7 +2281,7 @@ static void mw_ft_closed(struct mwFileTransfer *ft, guint32 code) {
 
   xfer = mwFileTransfer_getClientData(ft);
   if(xfer) {
-    xfer->data = NULL;
+    purple_xfer_set_protocol_data(xfer, NULL);
 
     if(! mwFileTransfer_getRemaining(ft)) {
       purple_xfer_set_completed(xfer, TRUE);
@@ -5106,14 +5106,14 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
 
   purple_xfer_ref(xfer);
   mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) purple_xfer_unref);
-  xfer->data = ft;
+  purple_xfer_set_protocol_data(xfer, ft);
 
   mwFileTransfer_offer(ft);
 }
 
 
 static void ft_outgoing_cancel(PurpleXfer *xfer) {
-  struct mwFileTransfer *ft = xfer->data;
+  struct mwFileTransfer *ft = purple_xfer_get_protocol_data(xfer);
 
   DEBUG_INFO("ft_outgoing_cancel called\n");
 
