@@ -71,6 +71,7 @@ version 3.0.0 (??/??/????):
 		  purple_util_fetch_url_request_len, insetad.
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* struct _GtkIMHtmlFontDetail
+		* struct _PurplePounce
 		* struct _PurpleRequestField
 		* struct _PurpleRoomlist
 		* struct _PurpleRoomlistField
