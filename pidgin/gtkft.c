@@ -37,9 +37,6 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
-#define PIDGINXFER(xfer) \
-	(PidginXferUiData *)(xfer)->ui_data
-
 /* the maximum size of files we will try to make a thumbnail for */
 #define PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL 10 * 1024 * 1024
 
@@ -243,7 +240,7 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 	if (dialog == NULL || xfer == NULL)
 		return;
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
@@ -869,7 +866,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	purple_xfer_ref(xfer);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
 
 	pidgin_xfer_dialog_show(dialog);
@@ -926,7 +923,7 @@ pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -957,7 +954,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -970,7 +967,7 @@ pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 		return;
 	}
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	update_detailed_info(dialog, xfer);
 	update_title_progress(dialog);
@@ -1007,7 +1004,7 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	if ((data = PIDGINXFER(xfer)) == NULL)
+	if ((data = purple_xfer_get_ui_data(xfer)) == NULL)
 		return;
 
 	if (data->in_list == FALSE)
@@ -1095,9 +1092,9 @@ pidgin_xfer_new_xfer(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
-	/* This is where we're setting xfer->ui_data for the first time. */
+	/* This is where we're setting xfer's "ui_data" for the first time. */
 	data = g_new0(PidginXferUiData, 1);
-	xfer->ui_data = data;
+	purple_xfer_set_ui_data(xfer, data);
 }
 
 static void
@@ -1105,11 +1102,11 @@ pidgin_xfer_destroy(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
-	data = PIDGINXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	if (data) {
 		g_free(data->name);
 		g_free(data);
-		xfer->ui_data = NULL;
+		purple_xfer_set_ui_data(xfer, NULL);
 	}
 }
 
