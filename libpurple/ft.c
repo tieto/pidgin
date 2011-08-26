@@ -1717,6 +1717,21 @@ purple_xfer_get_protocol_data(PurpleXfer *xfer)
 	return xfer->proto_data;
 }
 
+void purple_xfer_set_ui_data(PurpleXfer *xfer, gpointer ui_data)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->ui_data = ui_data;
+}
+
+gpointer purple_xfer_get_ui_data(PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, NULL);
+
+	return xfer->ui_data;
+}
+
+
 /**************************************************************************
  * File Transfer Subsystem API
  **************************************************************************/
