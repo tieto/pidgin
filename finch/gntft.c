@@ -42,9 +42,6 @@
 #include "gntft.h"
 #include "prefs.h"
 
-#define FINCHXFER(xfer) \
-	(PurpleGntXferUiData *)FINCH_GET_DATA(xfer)
-
 typedef struct
 {
 	gboolean keep_open;
@@ -262,7 +259,7 @@ finch_xfer_dialog_new(void)
 
 	for (iter = purple_xfers_get_all(); iter; iter = iter->next) {
 		PurpleXfer *xfer = (PurpleXfer *)iter->data;
-		PurpleGntXferUiData *data = FINCHXFER(xfer);
+		PurpleGntXferUiData *data = purple_xfer_get_ui_data(xfer);
 		if (data->in_list) {
 			finch_xfer_dialog_add_xfer(xfer);
 			finch_xfer_dialog_update_xfer(xfer);
@@ -302,7 +299,7 @@ finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 
 	purple_xfer_ref(xfer);
 
-	data = FINCHXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	data->in_list = TRUE;
 
 	finch_xfer_dialog_show();
@@ -340,7 +337,7 @@ finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = FINCHXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -370,7 +367,7 @@ finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = FINCHXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 
 	if (data == NULL)
 		return;
@@ -416,7 +413,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	if ((data = FINCHXFER(xfer)) == NULL)
+	if ((data = purple_xfer_get_ui_data(xfer)) == NULL)
 		return;
 
 	if (data->in_list == FALSE || data->notified)
@@ -471,9 +468,9 @@ finch_xfer_new_xfer(PurpleXfer *xfer)
 {
 	PurpleGntXferUiData *data;
 
-	/* This is where we're setting xfer->ui_data for the first time. */
+	/* This is where we're setting xfer's "ui_data" for the first time. */
 	data = g_new0(PurpleGntXferUiData, 1);
-	FINCH_SET_DATA(xfer, data);
+	purple_xfer_set_ui_data(xfer, data);
 }
 
 static void
@@ -481,11 +478,11 @@ finch_xfer_destroy(PurpleXfer *xfer)
 {
 	PurpleGntXferUiData *data;
 
-	data = FINCHXFER(xfer);
+	data = purple_xfer_get_ui_data(xfer);
 	if (data) {
 		g_free(data->name);
 		g_free(data);
-		FINCH_SET_DATA(xfer, NULL);
+		purple_xfer_set_ui_data(xfer, NULL);
 	}
 }
 
