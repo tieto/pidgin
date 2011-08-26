@@ -589,7 +589,7 @@ peer_oft_recvcb_init(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 	peer_connection_trynext(conn);
 }
@@ -599,7 +599,7 @@ peer_oft_recvcb_end(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	/* Tell the other person that we've received everything */
 	conn->fd = conn->xfer->fd;
@@ -617,7 +617,7 @@ peer_oft_recvcb_ack_recv(PurpleXfer *xfer, const guchar *buffer, size_t size)
 	PeerConnection *conn;
 
 	/* Update our rolling checksum.  Like Walmart, yo. */
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->xferdata.recvcsum = peer_oft_checksum_chunk(buffer,
 			size, conn->xferdata.recvcsum, purple_xfer_get_bytes_sent(xfer) & 1);
 }
@@ -653,7 +653,7 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 	PeerConnection *conn;
 	size_t size;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 
 	/* Make sure the file size can be represented in 32 bits */
@@ -713,7 +713,7 @@ peer_oft_sendcb_ack(PurpleXfer *xfer, const guchar *buffer, size_t size)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	/*
 	 * If we're done sending, intercept the socket from the core ft code
@@ -742,7 +742,7 @@ peer_oft_cb_generic_cancel(PurpleXfer *xfer)
 {
 	PeerConnection *conn;
 
-	conn = xfer->data;
+	conn = purple_xfer_get_protocol_data(xfer);
 
 	if (conn == NULL)
 		return;

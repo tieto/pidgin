@@ -5476,7 +5476,7 @@ oscar_new_xfer(PurpleConnection *gc, const char *who)
 		conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
 		aim_icbm_makecookie(conn->cookie);
 		conn->xfer = xfer;
-		xfer->data = conn;
+		purple_xfer_set_protocol_data(xfer, conn);
 	}
 
 	return xfer;
