@@ -185,7 +185,7 @@ struct _PurpleXfer
 	PurpleXferUiOps *ui_ops;            /**< UI-specific operations. */
 	void *ui_data;                    /**< UI-specific data.       */
 
-	void *data;                       /**< prpl-specific data.     */
+	void *proto_data;                 /**< prpl-specific data.     */
 };
 
 #ifdef __cplusplus
@@ -745,7 +745,7 @@ void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
  *
  * @since 3.0.0
  */
-void purple_xfer_set_protocol_data(PurpleXfer *xfer, void *proto_data);
+void purple_xfer_set_protocol_data(PurpleXfer *xfer, gpointer proto_data);
  
 /**
  * Gets the protocol data for a file transfer.
@@ -756,7 +756,7 @@ void purple_xfer_set_protocol_data(PurpleXfer *xfer, void *proto_data);
  *
  * @since 3.0.0
  */
-void *purple_xfer_get_protocol_data(PurpleXfer *xfer);
+gpointer purple_xfer_get_protocol_data(PurpleXfer *xfer);
 
 /*@}*/
 
