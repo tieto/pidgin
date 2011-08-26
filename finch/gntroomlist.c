@@ -41,11 +41,6 @@
 
 #define PREF_ROOT "/finch/roomlist"
 
-#undef FINCH_GET_DATA
-#undef FINCH_SET_DATA
-#define FINCH_GET_DATA(obj)  purple_roomlist_get_ui_data(obj)
-#define FINCH_SET_DATA(obj, data)  purple_roomlist_set_ui_data(obj, data)
-
 
 /* Yes, just one roomlist at a time. Let's not get greedy. Aight? */
 struct _FinchRoomlist
@@ -349,7 +344,7 @@ fl_show_with_account(PurpleAccount *account)
 static void
 fl_create(PurpleRoomlist *list)
 {
-	FINCH_SET_DATA(list, &froomlist);
+	purple_roomlist_set_ui_data(list, &froomlist);
 	setup_roomlist(NULL);
 	update_roomlist(list);
 }
