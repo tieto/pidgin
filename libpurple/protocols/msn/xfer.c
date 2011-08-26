@@ -42,7 +42,7 @@ msn_xfer_init(PurpleXfer *xfer)
 
 	purple_debug_info("msn", "xfer_init\n");
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 
 	/* Send Ok */
 	content = g_strdup_printf("SessionID: %lu\r\n\r\n",
@@ -62,9 +62,9 @@ msn_xfer_cancel(PurpleXfer *xfer)
 	char *content;
 
 	g_return_if_fail(xfer != NULL);
-	g_return_if_fail(xfer->data != NULL);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
+	g_return_if_fail(slpcall != NULL);
 
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL)
 	{
@@ -102,7 +102,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 
 	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND, -1);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */
 	g_return_val_if_fail(slpcall != NULL, -1);
 
@@ -126,7 +126,7 @@ msn_xfer_read(guchar **data, PurpleXfer *xfer)
 
 	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE, -1);
 
-	slpcall = xfer->data;
+	slpcall = purple_xfer_get_protocol_data(xfer);
 	/* Not sure I trust it'll be there */
 	g_return_val_if_fail(slpcall != NULL, -1);
 

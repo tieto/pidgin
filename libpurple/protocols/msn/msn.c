@@ -869,7 +869,7 @@ t_msn_xfer_init(PurpleXfer *xfer)
 static void
 t_msn_xfer_cancel_send(PurpleXfer *xfer)
 {
-	MsnSlpLink *slplink = xfer->data;
+	MsnSlpLink *slplink = purple_xfer_get_protocol_data(xfer);
 	msn_slplink_unref(slplink);
 }
 
@@ -885,7 +885,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	g_return_val_if_fail(xfer != NULL, NULL);
 
-	xfer->data = msn_slplink_ref(msn_session_get_slplink(session, who));
+	purple_xfer_set_protocol_data(xfer, msn_slplink_ref(msn_session_get_slplink(session, who)));
 
 	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 	purple_xfer_set_cancel_send_fnc(xfer, t_msn_xfer_cancel_send);
