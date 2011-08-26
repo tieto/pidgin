@@ -97,11 +97,11 @@ const char* file_mime_type( const char* filename, const char* buf, int buflen )
  */
 static void mxit_xfer_free( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx		= (struct mxitxfer*) xfer->data;;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	if ( mx ) {
+		purple_xfer_set_protocol_data( xfer, NULL );
 		g_free( mx );
-		xfer->data = NULL;
 	}
 }
 
@@ -117,7 +117,7 @@ static void mxit_xfer_free( PurpleXfer* xfer )
  */
 static void mxit_xfer_init( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx	= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_init\n" );
 
@@ -218,7 +218,7 @@ static void mxit_xfer_cancel_send( PurpleXfer* xfer )
  */
 static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx	= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx	= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_write\n" );
 
@@ -248,7 +248,7 @@ static gssize mxit_xfer_write( const guchar* buffer, size_t size, PurpleXfer* xf
  */
 static void mxit_xfer_request_denied( PurpleXfer* xfer )
 {
-	struct mxitxfer*	mx		= (struct mxitxfer*) xfer->data;
+	struct mxitxfer*	mx		= purple_xfer_get_protocol_data( xfer );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_xfer_request_denied\n" );
 
@@ -308,7 +308,7 @@ PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who )
 	/* create file info and attach it to the file transfer */
 	mx = g_new0( struct mxitxfer, 1 );
 	mx->session = session;
-	xfer->data = mx;
+	purple_xfer_set_protocol_data( xfer, mx );
 
 	/* configure callbacks (reference: "libpurple/ft.h") */
 	purple_xfer_set_init_fnc( xfer, mxit_xfer_init );
@@ -365,7 +365,7 @@ void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, cons
 		mx = g_new0( struct mxitxfer, 1 );
 		mx->session = session;
 		memcpy( mx->fileid, fileid, MXIT_CHUNK_FILEID_LEN );
-		xfer->data = mx;
+		purple_xfer_set_protocol_data( xfer, mx );
 
 		purple_xfer_set_filename( xfer, filename );
 		if( filesize > 0 )
@@ -400,7 +400,7 @@ static PurpleXfer* find_mxit_xfer( struct MXitSession* session, const char* file
 
 		if ( purple_xfer_get_account( xfer ) == session->acc ) {
 			/* transfer is associated with this MXit account */
-			struct mxitxfer* mx	= xfer->data;
+			struct mxitxfer* mx	= purple_xfer_get_protocol_data( xfer );
 
 			/* does the fileid match? */
 			if ( ( mx ) && ( memcmp( mx->fileid, fileid, MXIT_CHUNK_FILEID_LEN ) == 0 ) )
@@ -434,7 +434,7 @@ void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const c
 	/* find the file-transfer object */
 	xfer = find_mxit_xfer( session, fileid );
 	if ( xfer ) {
-		mx = xfer->data;
+		mx = purple_xfer_get_protocol_data( xfer );
 
 		/* this is the transfer we have been looking for */
 		purple_xfer_ref( xfer );
