@@ -399,14 +399,14 @@ PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room)
 
 gboolean purple_roomlist_room_get_expanded_once(PurpleRoomlistRoom *room)
 {
-	g_return_val_if_fail(room != NULL, NULL);
+	g_return_val_if_fail(room != NULL, FALSE);
 
 	return room->expanded_once;
 }
 
 void purple_roomlist_room_set_expanded_once(PurpleRoomlistRoom *room, gboolean expanded_once)
 {
-	g_return_val_if_fail(room != NULL, NULL);
+	g_return_if_fail(room != NULL);
 
 	room->expanded_once = expanded_once;
 }
