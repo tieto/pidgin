@@ -34,6 +34,7 @@
 
 struct irc_xfer_rx_data {
 	gchar *ip;
+	unsigned int remote_port;
 };
 
 static void irc_dccsend_recv_destroy(PurpleXfer *xfer)
@@ -51,10 +52,10 @@ static void irc_dccsend_recv_destroy(PurpleXfer *xfer)
  */
 static void irc_dccsend_recv_ack(PurpleXfer *xfer, const guchar *data, size_t size) {
 	guint32 l;
-	size_t result;
+	gssize result;
 
-	l = htonl(xfer->bytes_sent);
-	result = write(xfer->fd, &l, sizeof(l));
+	l = htonl(purple_xfer_get_bytes_sent(xfer));
+	result = purple_xfer_write(xfer, (guchar *)&l, sizeof(l));
 	if (result != sizeof(l)) {
 		purple_debug_error("irc", "unable to send acknowledgement: %s\n", g_strerror(errno));
 		/* TODO: We should probably close the connection here or something. */
@@ -64,7 +65,7 @@ static void irc_dccsend_recv_ack(PurpleXfer *xfer, const guchar *data, size_t si
 static void irc_dccsend_recv_init(PurpleXfer *xfer) {
 	struct irc_xfer_rx_data *xd = purple_xfer_get_protocol_data(xfer);
 
-	purple_xfer_start(xfer, -1, xd->ip, xfer->remote_port);
+	purple_xfer_start(xfer, -1, xd->ip, xd->remote_port);
 	g_free(xd->ip);
 	xd->ip = NULL;
 }
@@ -117,7 +118,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 		purple_xfer_set_protocol_data(xfer, xd);
 
 		purple_xfer_set_filename(xfer, filename->str);
-		xfer->remote_port = atoi(token[i+1]);
+		xd->remote_port = atoi(token[i+1]);
 
 		nip = strtoul(token[i], NULL, 10);
 		if (nip) {
@@ -228,13 +229,13 @@ static void irc_dccsend_send_read(gpointer data, int source, PurpleInputConditio
 static gssize irc_dccsend_send_write(const guchar *buffer, size_t size, PurpleXfer *xfer)
 {
 	gssize s;
-	int ret;
+	gssize ret;
 
 	s = MIN(purple_xfer_get_bytes_remaining(xfer), size);
 	if (!s)
 		return 0;
 
-	ret = write(xfer->fd, buffer, s);
+	ret = purple_xfer_write(xfer, buffer, s);
 
 	if (ret < 0 && errno == EAGAIN)
 		ret = 0;
@@ -316,11 +317,11 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	                                 irc_dccsend_send_connected, xfer);
 
 	/* Send the intended recipient the DCC request */
-	arg[0] = xfer->who;
+	arg[0] = purple_xfer_get_remote_user(xfer);
 	inet_aton(purple_network_get_my_ip(irc->fd), &addr);
 	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GSIZE_FORMAT "\001",
-	                               xfer->filename, ntohl(addr.s_addr),
-	                               port, xfer->size);
+	                               purple_xfer_get_filename(xfer), ntohl(addr.s_addr),
+	                               port, purple_xfer_get_size(xfer));
 
 	irc_cmd_privmsg(gc->proto_data, "msg", NULL, arg);
 	g_free(tmp);
@@ -333,7 +334,7 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 	PurpleConnection *gc = purple_account_get_connection(purple_xfer_get_account(xfer));
 	struct irc_xfer_send_data *xd = purple_xfer_get_protocol_data(xfer);
 
-	xfer->filename = g_path_get_basename(xfer->local_filename);
+	purple_xfer_set_filename(xfer, g_path_get_basename(purple_xfer_get_local_filename(xfer)));
 
 	purple_xfer_ref(xfer);
 

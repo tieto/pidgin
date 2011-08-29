@@ -2157,7 +2157,7 @@ static void ft_incoming_init(PurpleXfer *xfer) {
 
   ft = purple_xfer_get_protocol_data(xfer);
 
-  fp = g_fopen(xfer->local_filename, "wb");
+  fp = g_fopen(purple_xfer_get_local_filename(xfer), "wb");
   if(! fp) {
     mwFileTransfer_cancel(ft);
     return;
@@ -2231,8 +2231,7 @@ static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
   if(fread(buf, (size_t) o.len, 1, fp)) {
 
     /* calculate progress and display it */
-    xfer->bytes_sent += o.len;
-    xfer->bytes_remaining -= o.len;
+    purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + o.len);
     purple_xfer_update_progress(xfer);
 
     mwFileTransfer_send(ft, &o);
@@ -2264,7 +2263,7 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
   }
 
   if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
-    xfer->dest_fp = g_fopen(xfer->local_filename, "rb");
+    xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer), "rb");
     ft_send(ft, xfer->dest_fp);
   }
 }
@@ -2334,8 +2333,7 @@ static void mw_ft_recv(struct mwFileTransfer *ft,
   }
 
   /* update the progress */
-  xfer->bytes_sent += data->len;
-  xfer->bytes_remaining -= data->len;
+  purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + data->len);
   purple_xfer_update_progress(xfer);
 
   /* let the other side know we got it, and to send some more */
@@ -5082,7 +5080,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
 
   filename = purple_xfer_get_local_filename(xfer);
   filesize = purple_xfer_get_size(xfer);
-  idb.user = xfer->who;
+  idb.user = purple_xfer_get_remote_user(xfer);
 
   purple_xfer_update_progress(xfer);
 
@@ -5091,7 +5089,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   if(! fp) {
     char *msg = g_strdup_printf(_("Error reading file %s: \n%s\n"),
 				filename, g_strerror(errno));
-    purple_xfer_error(purple_xfer_get_type(xfer), acct, xfer->who, msg);
+    purple_xfer_error(purple_xfer_get_type(xfer), acct, purple_xfer_get_remote_user(xfer), msg);
     g_free(msg);
     return;
   }

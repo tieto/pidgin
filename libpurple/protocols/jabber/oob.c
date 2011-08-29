@@ -76,7 +76,7 @@ static void jabber_oob_xfer_end(PurpleXfer *xfer)
 	JabberIq *iq;
 
 	iq = jabber_iq_new(jox->js, JABBER_IQ_RESULT);
-	xmlnode_set_attrib(iq->node, "to", xfer->who);
+	xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
 	jabber_iq_set_id(iq, jox->iq_id);
 
 	jabber_iq_send(iq);
@@ -89,7 +89,7 @@ static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInput
 	JabberOOBXfer *jox = purple_xfer_get_protocol_data(xfer);
 	int len, total_len = strlen(jox->write_buffer);
 
-	len = write(xfer->fd, jox->write_buffer + jox->written_len,
+	len = purple_xfer_write(xfer, (guchar*) jox->write_buffer + jox->written_len,
 		total_len - jox->written_len);
 
 	if(len < 0 && errno == EAGAIN)
@@ -163,7 +163,7 @@ static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
 	xmlnode *y, *z;
 
 	iq = jabber_iq_new(jox->js, JABBER_IQ_ERROR);
-	xmlnode_set_attrib(iq->node, "to", xfer->who);
+	xmlnode_set_attrib(iq->node, "to", purple_xfer_get_remote_user(xfer));
 	jabber_iq_set_id(iq, jox->iq_id);
 	y = xmlnode_new_child(iq->node, "error");
 	xmlnode_set_attrib(y, "code", code);

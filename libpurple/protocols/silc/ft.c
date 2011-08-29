@@ -132,8 +132,7 @@ silcpurple_ftp_monitor(SilcClient client,
 	if (!offset && filesize)
 		purple_xfer_set_size(xfer->xfer, filesize);
 	if (offset && filesize) {
-		xfer->xfer->bytes_sent = offset;
-		xfer->xfer->bytes_remaining = filesize - offset;
+		purple_xfer_set_bytes_sent(xfer->xfer, offset);
 	}
 	purple_xfer_update_progress(xfer->xfer);
 
