@@ -328,7 +328,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer to %s.\n", who);
-	bd = (BonjourData*) gc->proto_data;
+	bd = purple_connection_get_protocol_data(gc);
 	if(bd == NULL)
 		return NULL;
 
@@ -417,7 +417,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
@@ -503,7 +503,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
@@ -585,7 +585,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	if(pc == NULL || id == NULL || from == NULL)
 		return;
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = purple_connection_get_protocol_data(pc);
 	if(bd == NULL)
 		return;
 
