@@ -51,7 +51,7 @@ const char *
 bonjour_get_jid(PurpleAccount *account)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	return bd->jid;
 }
 
@@ -103,7 +103,8 @@ bonjour_login(PurpleAccount *account)
 #endif /* _WIN32 */
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
-	gc->proto_data = bd = g_new0(BonjourData, 1);
+	bd = g_new0(BonjourData, 1);
+	purple_connection_set_protocol_data(gc, bd);
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
@@ -157,7 +158,7 @@ static void
 bonjour_close(PurpleConnection *connection)
 {
 	PurpleGroup *bonjour_group;
-	BonjourData *bd = connection->proto_data;
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
 
 	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 
@@ -192,7 +193,7 @@ bonjour_close(PurpleConnection *connection)
 	if (bd != NULL)
 		g_free(bd->jid);
 	g_free(bd);
-	connection->proto_data = NULL;
+	purple_connection_set_protocol_data(connection, NULL);
 }
 
 static const char *
@@ -204,10 +205,12 @@ bonjour_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 static int
 bonjour_send_im(PurpleConnection *connection, const char *to, const char *msg, PurpleMessageFlags flags)
 {
+	BonjourData *bd = purple_connection_get_protocol_data(connection);
+
 	if(!to || !msg)
 		return 0;
 
-	return bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
+	return bonjour_jabber_send_message(bd->jabber_data, to, msg);
 }
 
 static void
@@ -220,7 +223,7 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
-	bd = gc->proto_data;
+	bd = purple_connection_get_protocol_data(gc);
 	presence = purple_account_get_presence(account);
 
 	message = purple_status_get_attr_string(status, "message");
@@ -325,7 +328,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 static
 void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
 {
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_connection_get_protocol_data(conn);
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 }
 

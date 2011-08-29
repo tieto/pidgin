@@ -97,7 +97,7 @@ static int ggp_setup_proxy(PurpleAccount *account)
 static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPToken *token = info->token;
 	GGPTokenCallback cb;
 
@@ -170,7 +170,7 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 	if (ggp_setup_proxy(account) == -1)
 		return;
 
-	info = gc->proto_data;
+	info = purple_connection_get_protocol_data(gc);
 
 	if ((req = gg_token(1)) == NULL) {
 		purple_notify_error(account,
@@ -199,7 +199,7 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 static void ggp_action_buddylist_get(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("gg", "Downloading...\n");
 
@@ -214,7 +214,7 @@ static void ggp_action_buddylist_get(PurplePluginAction *action)
 static void ggp_action_buddylist_put(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
 
@@ -235,7 +235,7 @@ static void ggp_action_buddylist_put(PurplePluginAction *action)
 static void ggp_action_buddylist_delete(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("gg", "Deleting...\n");
 
@@ -334,7 +334,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 					     PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	struct gg_http *h = NULL;
 	struct gg_pubdir *s;
 	uin_t uin;
@@ -415,7 +415,7 @@ exit_err:
 static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 						 PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPToken *token = info->token;
 
 	purple_account_disconnect(gc->account);
@@ -433,7 +433,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPToken *token = info->token;
 
 
@@ -483,7 +483,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 
 static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPSearchForm *form = user_data;
 	guint32 seq;
 
@@ -520,7 +520,7 @@ static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data
 
 static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPSearchForm *form;
 	guint32 seq;
 
@@ -621,7 +621,7 @@ static void ggp_find_buddies(PurplePluginAction *action)
 static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	struct gg_http *h;
 	gchar *cur, *p1, *p2, *t;
 
@@ -696,7 +696,7 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPToken *token = info->token;
 
 	char *msg;
@@ -758,7 +758,7 @@ static void ggp_change_passwd(PurplePluginAction *action)
 
 static void ggp_action_change_status_broadcasting_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int selected_field;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleStatus *status;
@@ -778,7 +778,7 @@ static void ggp_action_change_status_broadcasting_ok(PurpleConnection *gc, Purpl
 static void ggp_action_change_status_broadcasting(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -848,7 +848,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = gc->proto_data;
+	info = purple_connection_get_protocol_data(gc);
 
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
@@ -879,7 +879,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 static void ggp_add_deny(PurpleConnection *gc, const char *who)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	uin_t uin = ggp_str_to_uin(who);
 	
 	purple_debug_info("gg", "ggp_add_deny: %u\n", uin);
@@ -890,7 +890,7 @@ static void ggp_add_deny(PurpleConnection *gc, const char *who)
 
 static void ggp_rem_deny(PurpleConnection *gc, const char *who)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	uin_t uin = ggp_str_to_uin(who);
 	
 	purple_debug_info("gg", "ggp_rem_deny: %u\n", uin);
@@ -1349,7 +1349,7 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 
 static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPSearchForm *form;
 	int res_count;
 	guint32 seq;
@@ -1391,7 +1391,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	gint imgid = 0;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GList *entry = g_list_first(info->pending_richtext_messages);
 	gchar *handlerid = g_strdup_printf("IMGID_HANDLER-%i", ev->event.image_reply.crc32);
 
@@ -1439,7 +1439,7 @@ static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *
  */
 static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleConversation *conv;
 	gchar *from;
 	gchar *msg;
@@ -1608,7 +1608,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 
 static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleStoredImage *image;
 	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, GINT_TO_POINTER(ev->event.image_request.crc32)));
 
@@ -1714,7 +1714,7 @@ static void ggp_xml_event_handler(PurpleConnection *gc, char *data)
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	struct gg_event *ev;
 	int i;
 
@@ -1849,7 +1849,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	info = gc->proto_data;
+	info = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
@@ -2067,13 +2067,15 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 	PurpleMenuAction *act;
 	GList *m = NULL;
 	PurpleAccount *account;
+	PurpleConnection *gc;
 	GGPInfo *info;
 
 	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 		return NULL;
 
 	account = purple_buddy_get_account((PurpleBuddy *) node);
-	info = purple_account_get_connection(account)->proto_data;
+	gc = purple_account_get_connection(account);
+	info = purple_connection_get_protocol_data(gc);
 	if (info->chats) {
 		act = purple_menu_action_new(_("Add to chat"),
 			PURPLE_CALLBACK(ggp_bmenu_add_to_chat),
@@ -2125,7 +2127,7 @@ static void ggp_login(PurpleAccount *account)
 	info->pending_images = g_hash_table_new(g_direct_hash, g_direct_equal);
 	info->status_broadcasting = purple_account_get_bool(account, "status_broadcasting", TRUE);
 	
-	gc->proto_data = info;
+	purple_connection_set_protocol_data(gc, info);
 
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
@@ -2189,18 +2191,19 @@ static void ggp_login(PurpleAccount *account)
 
 static void ggp_close(PurpleConnection *gc)
 {
+	PurpleAccount *account;
+	GGPInfo *info;;
 
 	if (gc == NULL) {
 		purple_debug_info("gg", "gc == NULL\n");
 		return;
 	}
 
-	if (gc->proto_data) {
-		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleStatus *status;
-		GGPInfo *info = gc->proto_data;
+	account = purple_connection_get_account(gc);
+	info = purple_connection_get_protocol_data(gc);
 
-		status = purple_account_get_active_status(account);
+	if (info) {
+		PurpleStatus *status = purple_account_get_active_status(account);
 
 		if (info->session != NULL) {
 			ggp_set_status(account, status);
@@ -2219,7 +2222,7 @@ static void ggp_close(PurpleConnection *gc)
 		g_list_free(info->pending_richtext_messages);
 		g_hash_table_destroy(info->pending_images);
 		g_free(info);
-		gc->proto_data = NULL;
+		purple_connection_set_protocol_data(gc, NULL);
 	}
 
 	if (gc->inpa > 0)
@@ -2231,7 +2234,7 @@ static void ggp_close(PurpleConnection *gc)
 static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		       PurpleMessageFlags flags)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	char *tmp, *plain;
 	int ret = 1;
 	unsigned char format[1024];
@@ -2349,6 +2352,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 
 static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
 {
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	int dummy_length; // we don't send real length of typed message
 	
 	if (state == PURPLE_TYPED) // not supported
@@ -2360,7 +2364,7 @@ static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, Purp
 		dummy_length = 0;
 	
 	gg_typing_notification(
-		((GGPInfo*)gc->proto_data)->session,
+		info->session,
 		ggp_str_to_uin(name),
 		dummy_length); 
 	
@@ -2369,7 +2373,7 @@ static unsigned int ggp_send_typing(PurpleConnection *gc, const char *name, Purp
 
 static void ggp_get_info(PurpleConnection *gc, const char *name)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPSearchForm *form;
 	guint32 seq;
 
@@ -2445,7 +2449,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	gc = purple_account_get_connection(account);
-	info = gc->proto_data;
+	info = purple_connection_get_protocol_data(gc);
 
 	new_status = ggp_to_gg_status(status, &new_msg);
 
@@ -2466,7 +2470,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	const gchar *name = purple_buddy_get_name(buddy);
 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
@@ -2480,14 +2484,14 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 						 PurpleGroup *group)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	gg_remove_notify(info->session, ggp_str_to_uin(purple_buddy_get_name(buddy)));
 }
 
 static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat;
 	char *chat_name;
 	GList *l;
@@ -2525,7 +2529,7 @@ static char *ggp_get_chat_name(GHashTable *data) {
 static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	PurpleConversation *conv;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	GGPChat *chat = NULL;
 	GList *l;
 	/* char *msg, *plain; */
@@ -2580,7 +2584,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 
 static void ggp_keepalive(PurpleConnection *gc)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 
 	/* purple_debug_info("gg", "Keeping connection alive....\n"); */
 

@@ -758,7 +758,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	user_msg = msim_msg_new(
 			"user", MSIM_TYPE_STRING, g_strdup(msim_username_to_set),
@@ -851,7 +851,7 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("msim_check_username_availability_cb", "Checking username: %s\n", username_to_check);
 

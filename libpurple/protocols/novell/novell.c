@@ -1629,7 +1629,7 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -1685,7 +1685,7 @@ novell_ssl_connect_error(PurpleSslConnection * gsc,
 	NMUser *user;
 
 	gc = data;
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	user->conn->ssl_conn->data = NULL;
 
 	purple_connection_ssl_error (gc, error);
@@ -1702,7 +1702,7 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -1736,7 +1736,7 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 	if (gc == NULL || gsc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if ((user == NULL) || (conn = user->conn) == NULL)
 		return;
 
@@ -2206,7 +2206,7 @@ novell_login(PurpleAccount * account)
 	user = nm_initialize_user(name, server, port, account, _event_callback);
 	if (user && user->conn) {
 		/* save user */
-		gc->proto_data = user;
+		purple_connection_set_protocol_data(gc, user);
 
 		/* connect to the server */
 		purple_connection_update_progress(gc, _("Connecting"),
@@ -2238,7 +2238,7 @@ novell_close(PurpleConnection * gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user) {
 		conn = user->conn;
 		if (conn && conn->ssl_conn) {
@@ -2246,7 +2246,7 @@ novell_close(PurpleConnection * gc)
 		}
 		nm_deinitialize_user(user);
 	}
-	gc->proto_data = NULL;
+	purple_connection_set_protocol_data(gc, NULL);
 }
 
 static int
@@ -2266,7 +2266,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 		message_body == NULL || *message_body == '\0')
 		return 0;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return 0;
 
@@ -2352,7 +2352,7 @@ novell_send_typing(PurpleConnection * gc, const char *name, PurpleTypingState st
 	if (gc == NULL || name == NULL)
 		return 0;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return 0;
 
@@ -2386,7 +2386,7 @@ novell_convo_closed(PurpleConnection * gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user && (dn = nm_lookup_dn(user, who))) {
 		conf = nm_find_conversation(user, dn);
 		if (conf) {
@@ -2408,7 +2408,7 @@ novell_chat_leave(PurpleConnection * gc, int id)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2440,7 +2440,7 @@ novell_chat_invite(PurpleConnection *gc, int id,
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2479,7 +2479,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	if (gc == NULL || text == NULL)
 		return -1;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return -1;
 
@@ -2619,7 +2619,7 @@ novell_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user && (dn = nm_lookup_dn(user, purple_buddy_get_name(buddy)))) {
 		gname = purple_group_get_name(group);
 		if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
@@ -2651,7 +2651,7 @@ novell_remove_group(PurpleConnection * gc, PurpleGroup *group)
 	if (gc == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user) {
 		NMFolder *folder = nm_find_folder(user, purple_group_get_name(group));
 
@@ -2676,7 +2676,7 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 	if (gc == NULL || name == NULL || alias == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Alias all of instances of the contact */
@@ -2735,7 +2735,7 @@ novell_group_buddy(PurpleConnection * gc,
 		old_group_name == NULL || new_group_name == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Find the old folder */
@@ -2793,7 +2793,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 		return;
 	}
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user) {
 		const char *gname = purple_group_get_name(group);
 		/* Does new folder exist already? */
@@ -2839,7 +2839,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 		return;
 
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	if (gc == NULL || (user = gc->proto_data) == NULL)
+	if (gc == NULL || (user = purple_connection_get_protocol_data(gc)) == NULL)
 		return;
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
@@ -2891,7 +2891,7 @@ novell_set_idle(PurpleConnection * gc, int time)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2920,7 +2920,7 @@ novell_get_info(PurpleConnection * gc, const char *name)
 	if (gc == NULL || name == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user) {
 
 		user_record = nm_find_user_record(user, name);
@@ -2949,17 +2949,19 @@ novell_status_text(PurpleBuddy * buddy)
 	if (buddy && account) {
 		PurpleConnection *gc = purple_account_get_connection(account);
 
-		if (gc && gc->proto_data) {
-			NMUser *user = gc->proto_data;
+		if (gc) {
+			NMUser *user = purple_connection_get_protocol_data(gc);
 
-			dn = nm_lookup_dn(user, purple_buddy_get_name(buddy));
-			if (dn) {
-				NMUserRecord *user_record = nm_find_user_record(user, dn);
+			if (user) {
+				dn = nm_lookup_dn(user, purple_buddy_get_name(buddy));
+				if (dn) {
+					NMUserRecord *user_record = nm_find_user_record(user, dn);
 
-				if (user_record) {
-					text = nm_user_record_get_status_text(user_record);
-					if (text)
-						return g_strdup(text);
+					if (user_record) {
+						text = nm_user_record_get_status_text(user_record);
+						if (text)
+							return g_strdup(text);
+					}
 				}
 			}
 		}
@@ -3035,7 +3037,7 @@ novell_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	gc = purple_account_get_connection(account);
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3082,7 +3084,7 @@ novell_add_permit(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3126,7 +3128,7 @@ novell_add_deny(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3170,7 +3172,7 @@ novell_rem_permit(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3200,7 +3202,7 @@ novell_rem_deny(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3235,7 +3237,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -3463,7 +3465,7 @@ novell_keepalive(PurpleConnection *gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
