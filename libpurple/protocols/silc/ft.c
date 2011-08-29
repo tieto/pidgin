@@ -76,7 +76,7 @@ silcpurple_ftp_monitor(SilcClient client,
 
 	if (status == SILC_CLIENT_FILE_MONITOR_CLOSED) {
 		/* All started sessions terminate here */
-		xfer->xfer->data = NULL;
+		purple_xfer_set_protocol_data(xfer->xfer, NULL);
 		purple_xfer_unref(xfer->xfer);
 		silc_free(xfer);
 		return;
@@ -150,7 +150,7 @@ silcpurple_ftp_monitor(SilcClient client,
 static void
 silcpurple_ftp_cancel(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 
 	if (!xfer)
 		return;
@@ -163,7 +163,7 @@ silcpurple_ftp_cancel(PurpleXfer *x)
 static void
 silcpurple_ftp_ask_name_cancel(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 
 	if (!xfer)
 		return;
@@ -176,7 +176,7 @@ silcpurple_ftp_ask_name_cancel(PurpleXfer *x)
 static void
 silcpurple_ftp_ask_name_ok(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 	const char *name;
 
 	if (!xfer)
@@ -212,7 +212,7 @@ silcpurple_ftp_ask_name(SilcClient client,
 static void
 silcpurple_ftp_request_result(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 	SilcClientFileError status;
 	PurpleConnection *gc = xfer->sg->gc;
 	SilcClientConnectionParams params;
@@ -337,7 +337,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 	purple_xfer_set_cancel_recv_fnc(xfer->xfer, silcpurple_ftp_cancel);
 	xfer->xfer->remote_ip = g_strdup(hostname);
 	xfer->xfer->remote_port = port;
-	xfer->xfer->data = xfer;
+	purple_xfer_set_protocol_data(xfer->xfer, xfer);
 
 	/* File transfer request */
 	purple_xfer_request(xfer->xfer);
@@ -346,7 +346,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 static void
 silcpurple_ftp_send_cancel(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 
 	if (!xfer)
 		return;
@@ -358,7 +358,7 @@ silcpurple_ftp_send_cancel(PurpleXfer *x)
 static void
 silcpurple_ftp_send(PurpleXfer *x)
 {
-	SilcPurpleXfer xfer = x->data;
+	SilcPurpleXfer xfer = purple_xfer_get_protocol_data(x);
 	const char *name;
 	char *local_ip = NULL, *remote_ip = NULL;
 	gboolean local = TRUE;
@@ -467,7 +467,7 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 	purple_xfer_set_init_fnc(xfer->xfer, silcpurple_ftp_send);
 	purple_xfer_set_request_denied_fnc(xfer->xfer, silcpurple_ftp_request_denied);
 	purple_xfer_set_cancel_send_fnc(xfer->xfer, silcpurple_ftp_send_cancel);
-	xfer->xfer->data = xfer;
+	purple_xfer_set_protocol_data(xfer->xfer, xfer);
 
 	silc_free(clients);
 
