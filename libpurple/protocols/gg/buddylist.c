@@ -38,7 +38,7 @@
 /* void ggp_buddylist_send(PurpleConnection *gc) {{{ */
 void ggp_buddylist_send(PurpleConnection *gc)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	GSList *buddies;
 	uin_t *userlist;
