@@ -260,7 +260,7 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     char *msg = nullprpl_status_text(buddy);
 	/* TODO: Check whether it's correct to call add_pair_html,
 	         or if we should be using add_pair_plaintext */
-    purple_notify_user_info_add_pair(info, purple_status_get_name(status),
+    purple_notify_user_info_add_pair_html(info, purple_status_get_name(status),
                                      msg);
     g_free(msg);
 
@@ -269,7 +269,7 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
       if (user_info)
 		/* TODO: Check whether it's correct to call add_pair_html,
 		         or if we should be using add_pair_plaintext */
-        purple_notify_user_info_add_pair(info, _("User info"), user_info);
+        purple_notify_user_info_add_pair_html(info, _("User info"), user_info);
     }
 
   } else {
@@ -516,7 +516,7 @@ static void nullprpl_get_info(PurpleConnection *gc, const char *username) {
     body = _("No user info.");
   /* TODO: Check whether it's correct to call add_pair_html,
            or if we should be using add_pair_plaintext */
-  purple_notify_user_info_add_pair(info, "Info", body);
+  purple_notify_user_info_add_pair_html(info, "Info", body);
 
   /* show a buddy's user info in a nice dialog box */
   purple_notify_userinfo(gc,        /* connection the buddy info came through */
@@ -1019,14 +1019,17 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
 }
 
 static void nullprpl_roomlist_cancel(PurpleRoomlist *list) {
+ PurpleAccount *account = purple_roomlist_get_account(list);
  purple_debug_info("nullprpl", "%s asked to cancel room list request\n",
-                   list->account->username);
+                   purple_account_get_username(account));
 }
 
 static void nullprpl_roomlist_expand_category(PurpleRoomlist *list,
                                               PurpleRoomlistRoom *category) {
+ PurpleAccount *account = purple_roomlist_get_account(list);
  purple_debug_info("nullprpl", "%s asked to expand room list category %s\n",
-                   list->account->username, category->name);
+                   purple_account_get_username(account),
+                   purple_roomlist_room_get_name(category));
 }
 
 /* nullprpl doesn't support file transfer...yet... */
