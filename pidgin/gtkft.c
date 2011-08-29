@@ -113,14 +113,17 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 	double kbps = 0.0;
 	time_t elapsed, now;
 
-	if (xfer->end_time != 0)
-		now = xfer->end_time;
-	else
+	now = purple_xfer_get_end_time(xfer);
+	if (now == 0)
 		now = time(NULL);
 
 	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
 	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
-	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
+	elapsed = purple_xfer_get_start_time(xfer);
+	if (elapsed > 0)
+		elapsed = now - elapsed;
+	else
+		elapsed = 0;
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
@@ -132,9 +135,9 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 		int h, m, s;
 		int secs_elapsed;
 
-		if (xfer->start_time > 0)
+		if (purple_xfer_get_start_time(xfer) > 0)
 		{
-			secs_elapsed = now - xfer->start_time;
+			secs_elapsed = now - purple_xfer_get_start_time(xfer);
 
 			h = secs_elapsed / 3600;
 			m = (secs_elapsed % 3600) / 60;
@@ -278,10 +281,10 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 	}
 
 	gtk_label_set_text(GTK_LABEL(dialog->local_user_label),
-								 purple_account_get_username(xfer->account));
-	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), xfer->who);
+								 purple_account_get_username(purple_xfer_get_account(xfer)));
+	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), purple_xfer_get_remote_user(xfer));
 	gtk_label_set_text(GTK_LABEL(dialog->protocol_label),
-								 purple_account_get_protocol_name(xfer->account));
+								 purple_account_get_protocol_name(purple_xfer_get_account(xfer)));
 
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
@@ -729,8 +732,8 @@ pidgin_xfer_dialog_new(void)
 	gtk_widget_show(vbox2);
 
 	/* Setup the listbox */
-	gtk_box_pack_start(GTK_BOX(vbox2), 
-		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140), 
+	gtk_box_pack_start(GTK_BOX(vbox2),
+		pidgin_make_scrollable(setup_tree(dialog), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, 140),
 		TRUE, TRUE, 0);
 
 	/* "Close this window when all transfers finish" */
