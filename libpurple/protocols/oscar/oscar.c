@@ -5040,7 +5040,7 @@ oscar_close_directim(gpointer object, gpointer ignored)
 	name = purple_buddy_get_name(buddy);
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
-	od = gc->proto_data;
+	od = purple_connection_get_protocol_data(gc);
 	conn = peer_connection_find_by_type(od, name, OSCAR_CAPABILITY_DIRECTIM);
 
 	if (conn != NULL)
