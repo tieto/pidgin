@@ -4848,7 +4848,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	gtkchat->list = list;
 
-	gtk_box_pack_start(GTK_BOX(lbox), 
+	gtk_box_pack_start(GTK_BOX(lbox),
 		pidgin_make_scrollable(list, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 }
@@ -6451,7 +6451,7 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 
 	if (!gdk_pixbuf_loader_write(smiley->loader, data, size, &error) || error) {
 		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_write() "
-				"failed with size=%zu: %s\n", size,
+				"failed with size=%" G_GSIZE_FORMAT ": %s\n", size,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
