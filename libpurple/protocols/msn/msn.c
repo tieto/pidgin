@@ -119,7 +119,7 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 	MsnSwitchBoard *swboard;
 
 	msg = msn_message_new_nudge();
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
@@ -326,7 +326,7 @@ msn_set_prp(PurpleConnection *gc, const char *type, const char *entry)
 	MsnSession *session;
 	MsnTransaction *trans;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	cmdproc = session->notification->cmdproc;
 
 	if (entry == NULL || *entry == '\0')
@@ -384,7 +384,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	const char *mobile_number = NULL;
 	gsize payload_len;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	cmdproc = session->notification->cmdproc;
 
 	page = msn_page_new();
@@ -647,7 +647,7 @@ msn_show_set_home_phone(PurplePluginAction *action)
 	MsnSession *session;
 
 	gc = (PurpleConnection *) action->context;
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your home phone number."), NULL,
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
@@ -664,7 +664,7 @@ msn_show_set_work_phone(PurplePluginAction *action)
 	MsnSession *session;
 
 	gc = (PurpleConnection *) action->context;
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your work phone number."), NULL,
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
@@ -681,7 +681,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 	MsnSession *session;
 
 	gc = (PurpleConnection *) action->context;
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	purple_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
@@ -719,7 +719,7 @@ msn_show_blocked_text(PurplePluginAction *action)
 	MsnSession *session;
 	char *title;
 
-	session = pc->proto_data;
+	session = purple_connection_get_protocol_data(pc);
 
 	title = g_strdup_printf(_("Blocked Text for %s"), session->account->username);
 	if (session->blocked_text == NULL) {
@@ -743,7 +743,7 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 	MsnSession *session;
 
 	gc = (PurpleConnection *) action->context;
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	if (!session->passport_info.email_enabled) {
 		purple_notify_error(gc, NULL,
@@ -810,7 +810,7 @@ msn_send_privacy(PurpleConnection *gc)
 	MsnTransaction *trans;
 
 	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	cmdproc = session->notification->cmdproc;
 
 	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
@@ -840,7 +840,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	swboard = msn_switchboard_new(session);
 	msn_switchboard_request(swboard);
@@ -879,7 +879,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 	MsnSession *session;
 	PurpleXfer *xfer;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
@@ -918,7 +918,7 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 	g_free(normal);
 
 	if (ret) {
-		MsnSession *session = gc->proto_data;
+		MsnSession *session = purple_connection_get_protocol_data(gc);
 		if (session) {
 			MsnUser *user = msn_userlist_find_user(session->userlist, who);
 			if (user) {
@@ -1216,7 +1216,7 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	gc = (PurpleConnection *) context;
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	act = purple_plugin_action_new(_("Set Friendly Name..."),
 								 msn_show_set_friendly_name);
@@ -1353,7 +1353,7 @@ msn_login(PurpleAccount *account)
 
 	session = msn_session_new(account);
 
-	gc->proto_data = session;
+	purple_connection_set_protocol_data(gc, session);
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR |
 		PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 
@@ -1387,13 +1387,13 @@ msn_close(PurpleConnection *gc)
 {
 	MsnSession *session;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	g_return_if_fail(session != NULL);
 
 	msn_session_destroy(session);
 
-	gc->proto_data = NULL;
+	purple_connection_set_protocol_data(gc, NULL);
 }
 
 static gboolean
@@ -1539,7 +1539,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	swboard = msn_session_find_swboard(session, who);
 
 	if (!strncmp("tel:+", who, 5)) {
@@ -1666,7 +1666,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 	MsnMessage *msg;
 
 	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	/*
 	 * TODO: I feel like this should be "if (state != PURPLE_TYPING)"
@@ -1715,7 +1715,7 @@ msn_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (gc != NULL)
 	{
-		session = gc->proto_data;
+		session = purple_connection_get_protocol_data(gc);
 		msn_change_status(session);
 	}
 }
@@ -1725,7 +1725,7 @@ msn_set_idle(PurpleConnection *gc, int idle)
 {
 	MsnSession *session;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	msn_change_status(session);
 }
@@ -1855,7 +1855,7 @@ msn_rem_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsnSession *session;
 	MsnUserList *userlist;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 
 	if (!session->logged_in)
@@ -1872,7 +1872,7 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 	MsnUserList *userlist;
 	MsnUser *user;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
@@ -1900,7 +1900,7 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 	MsnUserList *userlist;
 	MsnUser *user;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
@@ -1927,7 +1927,7 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 	MsnUserList *userlist;
 	MsnUser *user;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 
 	if (!session->logged_in)
@@ -1950,7 +1950,7 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 	MsnUserList *userlist;
 	MsnUser *user;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 
 	if (!session->logged_in)
@@ -1979,7 +1979,7 @@ msn_chat_invite(PurpleConnection *gc, int id, const char *msg,
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	swboard = msn_session_find_swboard_with_id(session, id);
 
@@ -2004,7 +2004,7 @@ msn_chat_leave(PurpleConnection *gc, int id)
 	MsnSwitchBoard *swboard;
 	PurpleConversation *conv;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	swboard = msn_session_find_swboard_with_id(session, id);
 
@@ -2041,7 +2041,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	GString *emoticons = NULL;
 
 	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	username = purple_account_get_username(account);
 	swboard = msn_session_find_swboard_with_id(session, id);
 
@@ -2107,7 +2107,7 @@ msn_keepalive(PurpleConnection *gc)
 	MsnSession *session;
 	MsnTransaction *trans;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	if (!session->http_method)
 	{
@@ -2125,7 +2125,7 @@ static void msn_alias_buddy(PurpleConnection *pc, const char *name, const char *
 {
 	MsnSession *session;
 
-	session = pc->proto_data;
+	session = purple_connection_get_protocol_data(pc);
 
 	msn_update_contact(session, name, MSN_UPDATE_ALIAS, alias);
 }
@@ -2137,7 +2137,7 @@ msn_group_buddy(PurpleConnection *gc, const char *who,
 	MsnSession *session;
 	MsnUserList *userlist;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	userlist = session->userlist;
 
 	msn_userlist_move_buddy(userlist, who, old_group_name, new_group_name);
@@ -2150,7 +2150,7 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 	MsnSession *session;
 	const char *gname;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->userlist != NULL);
@@ -2174,7 +2174,7 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 	MsnSwitchBoard *swboard;
 	PurpleConversation *conv;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 
 	swboard = msn_session_find_swboard(session, who);
 
@@ -2210,7 +2210,7 @@ msn_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	MsnSession *session;
 	MsnUser *user;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	user = session->user;
 
 	msn_user_set_buddy_icon(user, img);
@@ -2224,7 +2224,7 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 	MsnSession *session;
 	const char *gname;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(gc);
 	gname = purple_group_get_name(group);
 
 	purple_debug_info("msn", "Remove group %s\n", gname);
