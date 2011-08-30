@@ -5,11 +5,14 @@ version 3.0.0 (??/??/????):
 		Added:
 		* purple_conversation_get_ui_data
 		* purple_conversation_set_ui_data
-		* purple_notify_searchresult_column_set_visible
 		* purple_notify_searchresult_column_is_visible
+		* purple_notify_searchresult_column_set_visible
 		* purple_notify_user_info_prepend_pair_plaintext
-		* purple_request_field_set_tooltip
 		* purple_request_field_get_tooltip
+		* purple_request_field_group_get_fields_list
+		* purple_request_field_set_tooltip
+		* purple_request_fields_get_ui_data
+		* purple_request_fields_set_ui_data
 		* purple_roomlist_get_account
 		* purple_roomlist_get_proto_data
 		* purple_roomlist_get_ui_data
