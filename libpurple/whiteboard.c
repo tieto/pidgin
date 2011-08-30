@@ -90,6 +90,34 @@ void purple_whiteboard_destroy(PurpleWhiteboard *wb)
 	g_free(wb);
 }
 
+PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb)
+{
+	g_return_val_if_fail(wb != NULL, NULL);
+
+	return wb->account;
+}
+
+const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb)
+{
+	g_return_val_if_fail(wb != NULL, NULL);
+
+	return wb->who;	
+}
+
+void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state)
+{
+	g_return_if_fail(wb != NULL);
+
+	wb->state = state;
+}
+
+int purple_whiteboard_get_state(const PurpleWhiteboard *wb)
+{
+	g_return_val_if_fail(wb != NULL, -1);
+
+	return wb->state;
+}
+
 void purple_whiteboard_start(PurpleWhiteboard *wb)
 {
 	/* Create frontend for whiteboard */
@@ -204,6 +232,20 @@ void purple_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
 	if (whiteboard_ui_ops && whiteboard_ui_ops->set_brush)
 		whiteboard_ui_ops->set_brush(wb, size, color);
+}
+
+GList *purple_whiteboard_get_draw_list(const PurpleWhiteboard *wb)
+{
+	g_return_val_if_fail(wb != NULL, NULL);
+
+	return wb->draw_list;
+}
+
+void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list)
+{
+	g_return_if_fail(wb != NULL);
+
+	wb->draw_list = draw_list;
 }
 
 void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data)

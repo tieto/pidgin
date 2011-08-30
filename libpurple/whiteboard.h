@@ -135,6 +135,41 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 void purple_whiteboard_destroy(PurpleWhiteboard *wb);
 
 /**
+ * Returns the whiteboard's account.
+ *
+ * @param wb		The whiteboard.
+ *
+ * @return The whiteboard's account.
+ */
+PurpleAccount *purple_whiteboard_get_account(const PurpleWhiteboard *wb);
+
+/**
+ * Return who you're drawing with.
+ *
+ * @param wb		The whiteboard
+ *
+ * @return Who you're drawing with.
+ */
+const char *purple_whiteboard_get_who(const PurpleWhiteboard *wb);
+
+/**
+ * Set the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ * @param state		The state
+ */
+void purple_whiteboard_set_state(PurpleWhiteboard *wb, int state);
+
+/**
+ * Return the state of the whiteboard.
+ *
+ * @param wb		The whiteboard.
+ *
+ * @return The state of the whiteboard.
+ */
+int purple_whiteboard_get_state(const PurpleWhiteboard *wb);
+
+/**
  * Starts a whiteboard
  *
  * @param wb The whiteboard.
@@ -252,6 +287,23 @@ gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int 
  * @param color	The color of the brush
  */
 void purple_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color);
+
+/**
+ * Return the drawing list.
+ *
+ * @param wb			The whiteboard.
+ *
+ * @return The drawing list
+ */
+GList *purple_whiteboard_get_draw_list(const PurpleWhiteboard *wb);
+
+/**
+ * Set the drawing list.
+ *
+ * @param wb			The whiteboard
+ * @param draw_list		The drawing list.
+ */
+void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list);
 
 /**
  * Sets the protocol data for a whiteboard.
