@@ -375,7 +375,7 @@ void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 	SilcPurple sg;
 
 	g_return_if_fail(draw_list);
-	gc = purple_account_get_connection(wb->account);
+	gc = purple_account_get_connection(purple_whiteboard_get_account(wb));
 	g_return_if_fail(gc);
  	sg = purple_connection_get_protocol_data(gc);
 	g_return_if_fail(sg);
@@ -482,7 +482,7 @@ void silcpurple_wb_clear(PurpleWhiteboard *wb)
 	PurpleConnection *gc;
 	SilcPurple sg;
 
-	gc = purple_account_get_connection(wb->account);
+	gc = purple_account_get_connection(purple_whiteboard_get_account(wb));
 	g_return_if_fail(gc);
  	sg = purple_connection_get_protocol_data(gc);
 	g_return_if_fail(sg);
