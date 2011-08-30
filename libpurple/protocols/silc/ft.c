@@ -309,7 +309,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 			    const char *hostname, SilcUInt16 port)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurpleXfer xfer;
 
 	xfer = silc_calloc(1, sizeof(*xfer));
@@ -434,7 +434,7 @@ silcpurple_ftp_send_file_resolved(SilcClient client,
 
 PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcDList clients;

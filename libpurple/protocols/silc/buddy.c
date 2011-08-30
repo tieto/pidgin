@@ -72,7 +72,7 @@ silcpurple_buddy_keyagr_cb(SilcClient client,
 			   void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	if (!sg->conn)
 		return;
@@ -146,7 +146,7 @@ static void
 silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
 			   gboolean force_local)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcDList clients;
 	SilcClientEntry client_entry;
 	SilcClientConnectionParams params;
@@ -346,7 +346,7 @@ silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	/* Find client entry */
 	clients = silc_client_get_clients_local(sg->client, sg->conn,
@@ -426,7 +426,7 @@ silcpurple_buddy_privkey_resolved(SilcClient client,
 static void
 silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurplePrivkey p;
 	SilcDList clients;
 	SilcClientEntry client_entry;
@@ -554,7 +554,7 @@ silcpurple_buddy_getkey_resolved(SilcClient client,
 static void
 silcpurple_buddy_getkey(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry client_entry;
@@ -618,7 +618,7 @@ silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	pkfile = purple_blist_node_get_string(node, "public-key");
 	if (!silc_pkcs_load_public_key(pkfile, &public_key)) {
@@ -669,7 +669,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 
 void silcpurple_get_info(PurpleConnection *gc, const char *who)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry client_entry;
@@ -1338,7 +1338,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 static void
 silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcPurpleBuddyRes r;
@@ -1437,7 +1437,7 @@ void silcpurple_idle_set(PurpleConnection *gc, int idle)
 	const char *server;
 	int port;
 
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 	if (sg == NULL)
 		return;
 
@@ -1467,7 +1467,7 @@ char *silcpurple_status_text(PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
@@ -1533,7 +1533,7 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
@@ -1629,7 +1629,7 @@ silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 
 	b = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(b));
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	/* Call KILL */
 	silc_client_command_call(sg->client, sg->conn, NULL, "KILL",
@@ -1653,7 +1653,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 {
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClientConnection conn = sg->conn;
 	const char *pkfile = NULL;
 	SilcClientEntry client_entry = NULL;
@@ -1719,7 +1719,7 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcMime mime;

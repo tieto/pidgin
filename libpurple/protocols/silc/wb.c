@@ -105,7 +105,7 @@ typedef struct {
 
 PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry)
 {
-        SilcClientConnection conn;
+	SilcClientConnection conn;
 	PurpleWhiteboard *wb;
 	SilcPurpleWb wbs;
 
@@ -238,8 +238,8 @@ silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 {
 	PurpleWhiteboard *wb;
 
-        if (id != 1)
-                goto out;
+	if (id != 1)
+		goto out;
 
 	if (!req->channel)
 		wb = silcpurple_wb_init(req->sg, req->sender);
@@ -264,7 +264,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	SilcPurple sg;
 
 	gc = client->application;
-	sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	/* Open whiteboard automatically if requested */
 	if (purple_account_get_bool(sg->account, "open-wb", FALSE)) {
@@ -318,12 +318,12 @@ void silcpurple_wb_receive(SilcClient client, SilcClientConnection conn,
 			 SilcUInt32 message_len)
 {
 	SilcPurple sg;
-        PurpleConnection *gc;
+	PurpleConnection *gc;
 	PurpleWhiteboard *wb;
 	SilcPurpleWb wbs;
 
 	gc = client->application;
-        sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	wb = purple_whiteboard_get_session(sg->account, sender->nickname);
 	if (!wb) {
@@ -347,12 +347,12 @@ void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 			    SilcUInt32 message_len)
 {
 	SilcPurple sg;
-        PurpleConnection *gc;
+	PurpleConnection *gc;
 	PurpleWhiteboard *wb;
 	SilcPurpleWb wbs;
 
 	gc = client->application;
-        sg = gc->proto_data;
+	sg = purple_connection_get_protocol_data(gc);
 
 	wb = purple_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb) {
@@ -374,13 +374,13 @@ void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 	SilcBuffer packet;
 	GList *list;
 	int len;
-        PurpleConnection *gc;
-        SilcPurple sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
 	g_return_if_fail(draw_list);
 	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
- 	sg = gc->proto_data;
+ 	sg = purple_connection_get_protocol_data(gc);
 	g_return_if_fail(sg);
 
 	len = SILCPURPLE_WB_HEADER;
@@ -480,12 +480,12 @@ void silcpurple_wb_clear(PurpleWhiteboard *wb)
 	SilcPurpleWb wbs = wb->proto_data;
 	SilcBuffer packet;
 	int len;
-        PurpleConnection *gc;
-        SilcPurple sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
 	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
- 	sg = gc->proto_data;
+ 	sg = purple_connection_get_protocol_data(gc);
 	g_return_if_fail(sg);
 
 	len = SILCPURPLE_WB_HEADER;

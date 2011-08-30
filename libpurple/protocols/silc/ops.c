@@ -88,7 +88,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 			gboolean recursive)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	const char *type;
 	const unsigned char *data;
 	SilcUInt32 data_len;
@@ -264,7 +264,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -354,7 +354,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -431,7 +431,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 {
 	va_list va;
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
@@ -941,7 +941,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 	     SilcUInt32 argc, unsigned char **argv)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	switch (command) {
 
@@ -1078,7 +1078,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		   SilcStatus error, va_list ap)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	PurpleConversation *convo;
 
 	switch (command) {
@@ -1724,7 +1724,7 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 		     SilcGetAuthMeth completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 	SilcPurpleAskPassphrase internal;
 	const char *password;
 
@@ -1775,7 +1775,7 @@ silc_verify_public_key(SilcClient client, SilcClientConnection conn,
 		       SilcVerifyPublicKey completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_connection_get_protocol_data(gc);
 
 	if (!sg->conn && (conn_type == SILC_CONN_SERVER ||
 			  conn_type == SILC_CONN_ROUTER)) {
