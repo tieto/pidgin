@@ -20,6 +20,10 @@ version 3.0.0 (??/??/????):
 		* purple_roomlist_room_set_expanded_once
 		* purple_roomlist_set_proto_data
 		* purple_roomlist_set_ui_data
+		* purple_whiteboard_get_protocol_data
+		* purple_whiteboard_set_protocol_data
+		* purple_whiteboard_get_ui_data
+		* purple_whiteboard_set_ui_data
 		* purple_xfer_get_protocol_data
 		* purple_xfer_get_ui_data
 		* purple_xfer_set_protocol_data

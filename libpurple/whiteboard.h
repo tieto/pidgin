@@ -253,6 +253,42 @@ gboolean purple_whiteboard_get_brush(const PurpleWhiteboard *wb, int *size, int 
  */
 void purple_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color);
 
+/**
+ * Sets the protocol data for a whiteboard.
+ *
+ * @param wb			The whiteboard.
+ * @param protocol_data	The protocol data to set for the whiteboard.
+ */
+void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data);
+ 
+/**
+ * Gets the protocol data for a whiteboard.
+ *
+ * @param wb			The whiteboard.
+ *
+ * @return The protocol data for the whiteboard.
+ */
+gpointer purple_whiteboard_get_protocol_data(const PurpleWhiteboard *wb);
+
+/**
+ * Set the UI data associated with this whiteboard.
+ *
+ * @param wb			The whiteboard.
+ * @param ui_data		A pointer to associate with this whiteboard.
+ */
+void purple_whiteboard_set_ui_data(PurpleWhiteboard *wb, gpointer ui_data);
+
+/**
+ * Get the UI data associated with this whiteboard.
+ *
+ * @param wb			The whiteboard..
+ *
+ * @return The UI data associated with this whiteboard.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libpurple core.
+ */
+gpointer purple_whiteboard_get_ui_data(const PurpleWhiteboard *wb);
+
 /*@}*/
 
 #ifdef __cplusplus
