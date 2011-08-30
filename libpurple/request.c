@@ -126,7 +126,26 @@ struct _PurpleRequestField
 
 	void *ui_data;
 	char *tooltip;
+};
 
+struct _PurpleRequestFields
+{
+	GList *groups;
+
+	GHashTable *fields;
+
+	GList *required_fields;
+
+	void *ui_data;
+};
+
+struct _PurpleRequestFieldGroup
+{
+	PurpleRequestFields *fields_list;
+
+	char *title;
+
+	GList *fields;
 };
 
 PurpleRequestFields *
@@ -357,6 +376,20 @@ purple_request_fields_get_account(const PurpleRequestFields *fields,
 	return purple_request_field_account_get_value(field);
 }
 
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return fields->ui_data;
+}
+
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data)
+{
+	g_return_if_fail(fields != NULL);
+
+	fields->ui_data = ui_data;
+}
+
 PurpleRequestFieldGroup *
 purple_request_field_group_new(const char *title)
 {
@@ -421,6 +454,14 @@ purple_request_field_group_get_fields(const PurpleRequestFieldGroup *group)
 	g_return_val_if_fail(group != NULL, NULL);
 
 	return group->fields;
+}
+
+PurpleRequestFields *
+purple_request_field_group_get_fields_list(const PurpleRequestFieldGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->fields_list;
 }
 
 PurpleRequestField *

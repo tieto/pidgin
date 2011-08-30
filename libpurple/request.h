@@ -33,6 +33,16 @@
 /** @copydoc _PurpleRequestField */
 typedef struct _PurpleRequestField PurpleRequestField;
 
+/**
+ * Multiple fields request data.
+ */
+typedef struct _PurpleRequestFields PurpleRequestFields;
+
+/**
+ * A group of fields with a title.
+ */
+typedef struct _PurpleRequestFieldGroup PurpleRequestFieldGroup;
+
 #include "account.h"
 
 #define PURPLE_DEFAULT_ACTION_NONE	-1
@@ -67,34 +77,6 @@ typedef enum
 	PURPLE_REQUEST_FIELD_ACCOUNT
 
 } PurpleRequestFieldType;
-
-/**
- * Multiple fields request data.
- */
-typedef struct
-{
-	GList *groups;
-
-	GHashTable *fields;
-
-	GList *required_fields;
-
-	void *ui_data;
-
-} PurpleRequestFields;
-
-/**
- * A group of fields with a title.
- */
-typedef struct
-{
-	PurpleRequestFields *fields_list;
-
-	char *title;
-
-	GList *fields;
-
-} PurpleRequestFieldGroup;
 
 /**
  * Request UI operations.
@@ -322,6 +304,25 @@ int purple_request_fields_get_choice(const PurpleRequestFields *fields,
 PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fields,
 											 const char *id);
 
+/**
+ * Returns the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ *
+ * @return The UI data associated with this object.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libuprple core.
+ */
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
+
+/**
+ * Set the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ * @param ui_data A pointer to associate with this object.
+ */
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer data);
+
 /*@}*/
 
 /**************************************************************************/
@@ -372,6 +373,16 @@ const char *purple_request_field_group_get_title(
  * @constreturn The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
+		const PurpleRequestFieldGroup *group);
+
+/**
+ * Returns a list of all fields in a group.
+ *
+ * @param group The group.
+ *
+ * @constreturn The list of fields in the group.
+ */
+PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
 
 /*@}*/
