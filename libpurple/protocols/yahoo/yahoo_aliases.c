@@ -74,7 +74,7 @@ static void
 yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message)
 {
 	PurpleConnection *gc = user_data;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -186,7 +186,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 void
 yahoo_fetch_aliases(PurpleConnection *gc)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *url;
 	gchar *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
@@ -230,7 +230,7 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, cons
 	PurpleConnection *gc = cb->gc;
 	YahooData *yd;
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (len == 0 || error_message != NULL) {
@@ -310,7 +310,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		return;
 	}
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);

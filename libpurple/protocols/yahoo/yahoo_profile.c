@@ -789,7 +789,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
-	yd = info_data->gc->proto_data;
+	yd = purple_connection_get_protocol_data(info_data->gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
@@ -983,7 +983,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
-	yd = info_data->gc->proto_data;
+	yd = purple_connection_get_protocol_data(info_data->gc);
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
@@ -1262,7 +1262,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;

@@ -63,8 +63,9 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 	char firstflag = 1;
 	gchar *t1,*t2,*t3;
 	GSList *tmp;
-	GSList *cookies;
-	cookies = ((YahooData*)(gc->proto_data))->cookies;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
+	GSList *cookies = yd->cookies;
+
 	tmp = cookies;
 	while(tmp)
 	{
@@ -129,7 +130,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
  */
 char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *to_codeset;
 
@@ -158,7 +159,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *from_codeset;
 

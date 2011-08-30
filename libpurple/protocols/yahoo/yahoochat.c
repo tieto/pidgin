@@ -53,7 +53,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 /* special function to log us on to the yahoo chat service */
 static void yahoo_chat_online(PurpleConnection *gc)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	const char *rll;
 
@@ -101,7 +101,7 @@ static PurpleConversation *yahoo_find_conference(PurpleConnection *gc, const cha
 	YahooData *yd;
 	GSList *l;
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	for (l = yd->confs; l; l = l->next) {
 		PurpleConversation *c = l->data;
@@ -372,7 +372,7 @@ void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet 
 
 static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *room, const char *topic, const char *id)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	char *room2;
 	gboolean utf8 = TRUE;
@@ -400,7 +400,7 @@ static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *ro
 /* this is a confirmation of yahoo_chat_online(); */
 void yahoo_process_chat_online(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	YahooData *yd = (YahooData *) gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (pkt->status == 1) {
 		yd->chat_online = TRUE;
@@ -432,7 +432,7 @@ void yahoo_process_chat_online(PurpleConnection *gc, struct yahoo_packet *pkt)
 /* this is basicly the opposite of chat_online */
 void yahoo_process_chat_logout(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	YahooData *yd = (YahooData *) gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	GSList *l;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -462,7 +462,7 @@ void yahoo_process_chat_logout(PurpleConnection *gc, struct yahoo_packet *pkt)
 void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	YahooData *yd = (YahooData *) gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleConversation *c = NULL;
 	GSList *l;
 	GList *members = NULL;
@@ -786,7 +786,7 @@ void yahoo_conf_leave(YahooData *yd, const char *room, const char *dn, GList *wh
 static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *room,
 							GList *members, const char *what)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	GList *who;
 	char *msg, *msg2;
@@ -843,7 +843,7 @@ static void yahoo_conf_join(YahooData *yd, PurpleConversation *c, const char *dn
 static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 		const char *dn, const char *buddy, const char *room, const char *msg)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	GList *members;
 	char *msg2 = NULL;
@@ -873,7 +873,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 
 static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char *dn, gboolean logout)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 
 	char *eroom;
@@ -924,7 +924,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 
 static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *room, const char *what, PurpleMessageFlags flags)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	int me = 0;
 	char *msg1, *msg2, *room2;
@@ -969,7 +969,7 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 static void yahoo_chat_invite(PurpleConnection *gc, const char *dn, const char *buddy,
 							const char *room, const char *msg)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;
 	char *room2, *msg2 = NULL;
 	gboolean utf8 = TRUE;
@@ -997,7 +997,7 @@ void yahoo_chat_goto(PurpleConnection *gc, const char *name)
 	YahooData *yd;
 	struct yahoo_packet *pkt;
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
@@ -1029,7 +1029,7 @@ void yahoo_chat_goto(PurpleConnection *gc, const char *name)
 
 void yahoo_c_leave(PurpleConnection *gc, int id)
 {
-	YahooData *yd = (YahooData *) gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleConversation *c;
 
 	if (!yd)
@@ -1056,7 +1056,7 @@ int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	int ret;
 	YahooData *yd;
 
-	yd = (YahooData *) gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 	if (!yd)
 		return -1;
 
@@ -1114,7 +1114,7 @@ void yahoo_c_join(PurpleConnection *gc, GHashTable *data)
 	char *room, *topic, *type;
 	PurpleConversation *c;
 
-	yd = (YahooData *) gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 	if (!yd)
 		return;
 
@@ -1478,7 +1478,7 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar
 	PurpleRoomlist *list = yrl->list;
 	PurpleAccount *account = purple_roomlist_get_account(list);
 	PurpleConnection *pc = purple_account_get_connection(account);
-	YahooData *yd = pc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(pc);
 
 	if (source < 0) {
 		purple_notify_error(pc, NULL, _("Unable to connect"), _("Fetching the room list failed."));

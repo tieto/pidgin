@@ -389,7 +389,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);

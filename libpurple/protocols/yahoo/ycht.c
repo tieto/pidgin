@@ -53,7 +53,7 @@
 static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 {
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (ycht->logged_in)
 		return;
@@ -68,7 +68,7 @@ static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 {
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	yd->chat_online = FALSE;
 	ycht->logged_in = FALSE;
@@ -173,7 +173,7 @@ static void ycht_progress_online_friends(YchtConn *ycht, YchtPkt *pkt)
 {
 #if 0
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	if (ycht->logged_in)
 		return;
@@ -429,7 +429,7 @@ static void ycht_packet_free(YchtPkt *pkt)
 
 void ycht_connection_close(YchtConn *ycht)
 {
-	YahooData *yd = ycht->gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(ycht->gc);
 
 	if (yd) {
 		yd->ycht = NULL;
@@ -541,7 +541,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 {
 	YchtConn *ycht = data;
 	PurpleConnection *gc = ycht->gc;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	YchtPkt *pkt;
 	char *buf;
 
@@ -568,7 +568,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 void ycht_connection_open(PurpleConnection *gc)
 {
 	YchtConn *ycht;
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	ycht = g_new0(YchtConn, 1);
