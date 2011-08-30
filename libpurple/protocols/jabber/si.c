@@ -1615,7 +1615,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 	PurpleXfer *xfer;
 	JabberSIXfer *jsx;
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 	if (xfer)

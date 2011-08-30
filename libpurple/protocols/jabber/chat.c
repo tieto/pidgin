@@ -70,7 +70,7 @@ GList *jabber_chat_info(PurpleConnection *gc)
 GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
 
@@ -146,7 +146,7 @@ JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 	int id;
 	if (!gc)
 		return NULL;
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 	return jabber_chat_find_by_id(js, id);
 }
@@ -154,7 +154,7 @@ JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		const char *name)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat;
 	xmlnode *message, *body, *x, *invite;
 	char *room_jid;
@@ -360,7 +360,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 {
 	char *room, *server, *handle, *passwd;
 	JabberID *jid;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	char *tmp;
 
 	room = g_hash_table_lookup(data, "room");
@@ -418,9 +418,8 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 
 void jabber_chat_leave(PurpleConnection *gc, int id)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
-
 
 	if(!chat)
 		return;
@@ -459,7 +458,7 @@ gboolean jabber_chat_find_buddy(PurpleConversation *conv, const char *name)
 
 char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberChat *chat;
 	JabberChatMember *jcm;
 
@@ -893,7 +892,7 @@ char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room)
 
 PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	GList *fields = NULL;
 	PurpleRoomlistField *f;
 
@@ -934,7 +933,7 @@ void jabber_roomlist_cancel(PurpleRoomlist *list)
 
 	account = purple_roomlist_get_account(list);
 	gc = purple_account_get_connection(account);
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 
 	purple_roomlist_set_in_progress(list, FALSE);
 

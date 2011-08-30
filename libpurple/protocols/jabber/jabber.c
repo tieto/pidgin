@@ -616,7 +616,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timed out"));
 	js->keepalive_timeout = 0;
@@ -642,7 +642,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 		PurpleInputCondition cond)
 {
 	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	int len;
 	static char buf[4096];
 
@@ -747,7 +747,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 		g_return_if_reached();
 	}
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
@@ -842,7 +842,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	/* If the connection is already disconnected, we don't need to do anything else */
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 	js->gsc = NULL;
 
 	purple_connection_ssl_error (gc, error);
@@ -928,7 +928,8 @@ jabber_stream_new(PurpleAccount *account)
 	gchar *user;
 	gchar *slash;
 
-	js = gc->proto_data = g_new0(JabberStream, 1);
+	js = g_new0(JabberStream, 1);
+	purple_connection_set_protocol_data(gc, js);
 	js->gc = gc;
 	js->fd = -1;
 
@@ -1559,14 +1560,14 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	if(gc->state != PURPLE_CONNECTED) {
 		if(gc->state != PURPLE_CONNECTING)
 			jabber_login(account);
-		js = gc->proto_data;
+		js = purple_connection_get_protocol_data(gc);
 		js->unregistration = TRUE;
 		js->unregistration_cb = cb;
 		js->unregistration_user_data = user_data;
 		return;
 	}
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 
 	if (js->unregistration) {
 		purple_debug_error("jabber", "Unregistration in process; ignoring duplicate request.\n");
@@ -1726,7 +1727,7 @@ void jabber_close(PurpleConnection *gc)
 
 	g_free(js);
 
-	gc->proto_data = NULL;
+	purple_connection_set_protocol_data(gc, NULL);
 }
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
@@ -1780,7 +1781,7 @@ char *jabber_get_next_id(JabberStream *js)
 
 void jabber_idle_set(PurpleConnection *gc, int idle)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	js->idle = idle ? time(NULL) - idle : idle;
 
@@ -2133,7 +2134,7 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 	if(!gc)
 		return NULL;
 
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 	if(js)
 		jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
@@ -2174,8 +2175,8 @@ char *jabber_status_text(PurpleBuddy *b)
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
 
-	if (gc && gc->proto_data)
-		jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
+	if (gc && purple_connection_get_protocol_data(gc))
+		jb = jabber_buddy_find(purple_connection_get_protocol_data(gc), purple_buddy_get_name(b), FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -2250,6 +2251,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 	JabberBuddy *jb;
 	PurpleAccount *account;
 	PurpleConnection *gc;
+	JabberStream *js;
 
 	g_return_if_fail(b != NULL);
 
@@ -2258,9 +2260,11 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
-	g_return_if_fail(gc->proto_data != NULL);
 
-	jb = jabber_buddy_find(gc->proto_data, purple_buddy_get_name(b), FALSE);
+	js = purple_connection_get_protocol_data(gc);
+	g_return_if_fail(js != NULL);
+
+	jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
@@ -2531,7 +2535,7 @@ static void jabber_password_change(PurplePluginAction *action)
 {
 
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -2563,7 +2567,7 @@ static void jabber_password_change(PurplePluginAction *action)
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 {
 	PurpleConnection *gc = (PurpleConnection *) context;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	GList *m = NULL;
 	PurplePluginAction *act;
 
@@ -2634,7 +2638,7 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 
 void jabber_convo_closed(PurpleConnection *gc, const char *who)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
@@ -3159,7 +3163,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberStream *js = conv->account->gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(conv->account->gc);
 	const gchar *who;
 	gchar *description;
 	PurpleBuddy *buddy;
@@ -3206,7 +3210,7 @@ GList *jabber_attention_types(PurpleAccount *account)
 
 gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	gchar *error = NULL;
 
 	if (!_jabber_send_buzz(js, username, &error)) {
@@ -3289,8 +3293,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		      PurpleMediaSessionType type)
 {
 #ifdef USE_VV
-	JabberStream *js = (JabberStream *)
-			purple_account_get_connection(account)->proto_data;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	char *resource;
@@ -3300,7 +3304,6 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 				"jabber_initiate_media: NULL stream\n");
 		return FALSE;
 	}
-
 
 	if((resource = jabber_get_resource(who)) != NULL) {
 		/* they've specified a resource, no need to ask or
@@ -3432,8 +3435,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 {
 #ifdef USE_VV
-	JabberStream *js = (JabberStream *)
-			purple_account_get_connection(account)->proto_data;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	PurpleMediaCaps total = PURPLE_MEDIA_CAPS_NONE;
@@ -3521,7 +3524,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 
 gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	if (js) {
 		JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
@@ -3571,7 +3574,7 @@ static PurpleCmdRet
 jabber_cmd_mood(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberStream *js = conv->account->gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(conv->account->gc);
 
 	if (js->pep) {
 		/* if no argument was given, unset mood */
@@ -3755,7 +3758,7 @@ jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
 
 	if (!purple_account_is_connected(account))
 		return FALSE;
-	js = gc->proto_data;
+	js = purple_connection_get_protocol_data(gc);
 
 	if (!(resource = jabber_get_resource(jid)) ||
 	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||

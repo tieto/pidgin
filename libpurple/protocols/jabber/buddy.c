@@ -557,7 +557,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* Publish the avatar as specified in XEP-0084 */
-	jabber_avatar_set(gc->proto_data, img);
+	jabber_avatar_set(purple_connection_get_protocol_data(gc), img);
 	/* Set the image in our vCard */
 	jabber_set_info(gc, purple_account_get_user_info(account));
 
