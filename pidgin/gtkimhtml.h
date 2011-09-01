@@ -50,9 +50,6 @@ extern "C" {
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
-#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
-typedef struct _GtkIMHtmlFontDetail	GtkIMHtmlFontDetail;	/* The five elements contained in a FONT tag */
-#endif
 typedef struct _GtkSmileyTree		GtkSmileyTree;
 typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;

@@ -90,8 +90,7 @@ struct _GtkIMHtmlLink
 	GtkTextTag *tag;
 };
 
-typedef struct _GtkIMHtmlProtocol
-{
+typedef struct {
 	char *name;
 	int length;
 
@@ -99,7 +98,8 @@ typedef struct _GtkIMHtmlProtocol
 	gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu);
 } GtkIMHtmlProtocol;
 
-typedef struct _GtkIMHtmlFontDetail {
+/* The five elements contained in a FONT tag */
+typedef struct {
 	gushort size;
 	gchar *face;
 	gchar *fore;

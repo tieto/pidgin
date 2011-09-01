@@ -82,6 +82,7 @@ version 3.0.0 (??/??/????):
 		* _XMLNodeType
 		* GtkIMHtml.clipboard_html_string
 		* GtkIMHtml.clipboard_text_string
+		* GtkIMHtmlFontDetail
 		* pidgin_blist_update_account_error_state
 		* pidgin_check_if_dir
 		* PIDGIN_DIALOG
