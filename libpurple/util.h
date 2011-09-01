@@ -103,7 +103,7 @@ char * purple_menu_action_get_label(const PurpleMenuAction *act);
  *
  * @return The callback function.
  */
-PurpleCallback purple_menu_action_get_callback(const PurpleMenuAction *act);
+PurpleCallback *purple_menu_action_get_callback(const PurpleMenuAction *act);
 
 /**
  * Returns the data stored in the PurpleMenuAction.
