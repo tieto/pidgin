@@ -266,6 +266,24 @@ void purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename);
 void purple_xfer_request_denied(PurpleXfer *xfer);
 
 /**
+ * Returns the socket file descriptor.
+ *
+ * @param xfer The file transfer.
+ *
+ * @return The socket file descriptor.
+ */
+int purple_xfer_get_fd(PurpleXfer *xfer);
+
+/**
+ * Returns the Watcher for the transfer.
+ *
+ * @param xfer The file transfer.
+ *
+ * @return The watcher.
+ */
+int purple_xfer_get_watcher(PurpleXfer *xfer);
+
+/**
  * Returns the type of file transfer.
  *
  * @param xfer The file transfer.
@@ -426,12 +444,36 @@ time_t purple_xfer_get_start_time(const PurpleXfer *xfer);
 time_t purple_xfer_get_end_time(const PurpleXfer *xfer);
 
 /**
+ * Sets the socket file descriptor.
+ *
+ * @param xfer      The file transfer.
+ * @param fd        The file descriptor.
+ */
+void purple_xfer_set_fd(PurpleXfer *xfer, int fd);
+
+/**
+ * Sets the watcher for the file transfer.
+ *
+ * @param xfer      The file transfer.
+ * @param watcher   The watcher.
+ */
+void purple_xfer_set_watcher(PurpleXfer *xfer, int watcher);
+
+/**
  * Sets the completed state for the file transfer.
  *
  * @param xfer      The file transfer.
  * @param completed The completed state.
  */
 void purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed);
+
+/**
+ * Sets the current status for the file transfer.
+ *
+ * @param xfer      The file transfer.
+ * @param status    The current status.
+ */
+void purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status);
 
 /**
  * Sets the filename for the file transfer.
@@ -464,6 +506,14 @@ void purple_xfer_set_local_filename(PurpleXfer *xfer, const char *filename);
  * @param size The size of the file.
  */
 void purple_xfer_set_size(PurpleXfer *xfer, size_t size);
+
+/**
+ * Sets the local port of the file transfer.
+ *
+ * @param xfer          The file transfer.
+ * @param local_port    The local port.
+ */
+void purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port);
 
 /**
  * Sets the current working position in the active file transfer.  This
