@@ -161,7 +161,6 @@ void purple_menu_action_set_children(PurpleMenuAction *act, GList *children);
  * @param title     The title of the song, @c NULL to unset the value.
  * @param artist    The artist of the song, can be @c NULL.
  * @param album     The album of the song, can be @c NULL.
- * @since 2.4.0
  */
 void purple_util_set_current_song(const char *title, const char *artist,
 		const char *album);
@@ -175,7 +174,6 @@ void purple_util_set_current_song(const char *title, const char *artist,
  * @param unused    Currently unused, must be @c NULL.
  *
  * @return   The formatted string. The caller must g_free the returned string.
- * @since 2.4.0
  */
 char * purple_util_format_song_info(const char *title, const char *artist,
 		const char *album, gpointer unused);
@@ -187,15 +185,11 @@ char * purple_util_format_song_info(const char *title, const char *artist,
 
 /**
  * Initializes the utility subsystem.
- *
- * @since 2.3.0
  */
 void purple_util_init(void);
 
 /**
  * Uninitializes the util subsystem.
- *
- * @since 2.3.0
  */
 void purple_util_uninit(void);
 
@@ -489,8 +483,6 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
  * This is exactly the same as g_markup_escape_text(), except that it
  * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
  * and is displayed literally in IE7.
- *
- * @since 2.6.0
  */
 gchar *purple_markup_escape_text(const gchar *text, gssize length);
 
@@ -591,7 +583,6 @@ char *purple_markup_linkify(const char *str);
  *         this string when finished with it.
  *
  * @see purple_unescape_html()
- * @since 2.7.0
  */
 char *purple_unescape_text(const char *text);
 
@@ -684,8 +675,6 @@ char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
  * @param html  The HTML text.
  *
  * @return  TRUE if the text contains RTL text, FALSE otherwise.
- *
- * @since 2.6.0
  */
 gboolean purple_markup_is_rtl(const char *html);
 
@@ -886,7 +875,6 @@ char *purple_fd_get_ip(int fd);
  *
  * @return The address family of the socket (AF_INET, AF_INET6, etc) or -1
  *         on error.
- * @since 2.7.0
  */
 int purple_socket_get_family(int fd);
 
@@ -898,7 +886,6 @@ int purple_socket_get_family(int fd);
  *
  * @param fd The socket file descriptor
  * @return TRUE if a socket can speak IPv4.
- * @since 2.7.0
  */
 gboolean purple_socket_speaks_ipv4(int fd);
 
@@ -920,8 +907,6 @@ gboolean purple_socket_speaks_ipv4(int fd);
  * @param right A string to compare with left
  *
  * @return @c TRUE if the strings are the same, else @c FALSE.
- *
- * @since 2.6.0
  */
 gboolean purple_strequal(const gchar *left, const gchar *right);
 
@@ -1302,7 +1287,6 @@ gboolean purple_ip_address_is_valid(const char *ip);
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
- * @since 2.6.0
  */
 gboolean purple_ipv4_address_is_valid(const char *ip);
 
@@ -1312,7 +1296,6 @@ gboolean purple_ipv4_address_is_valid(const char *ip);
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
- * @since 2.6.0
  */
 gboolean purple_ipv6_address_is_valid(const char *ip);
 
@@ -1380,7 +1363,6 @@ gchar *purple_utf8_salvage(const char *str);
  * @param str A valid UTF-8 string.
  *
  * @return A newly allocated UTF-8 string without the unprintable characters.
- * @since 2.6.0
  */
 gchar *purple_utf8_strip_unprintables(const gchar *str);
 
@@ -1392,7 +1374,6 @@ gchar *purple_utf8_strip_unprintables(const gchar *str);
  * @param errnum The error code.
  *
  * @return The UTF-8 error message.
- * @since 2.4.0
  */
 G_CONST_RETURN gchar *purple_gai_strerror(gint errnum);
 
@@ -1506,7 +1487,6 @@ const gchar *purple_get_host_name(void);
  * Returns a type 4 (random) UUID
  *
  * @return A UUID, caller is responsible for freeing it
- * @since 2.7.0
  */
 gchar *purple_uuid_random(void);
 
