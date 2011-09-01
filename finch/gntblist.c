@@ -1078,9 +1078,10 @@ context_menu_callback(GntMenuItem *item, gpointer data)
 	PurpleBlistNode *node = ggblist->cnode;
 	if (action) {
 		void (*callback)(PurpleBlistNode *, gpointer);
-		callback = (void (*)(PurpleBlistNode *, gpointer))action->callback;
+		callback = (void (*)(PurpleBlistNode *, gpointer))
+			purple_menu_action_get_callback(action);
 		if (callback)
-			callback(node, action->data);
+			callback(node, purple_menu_action_get_data(action));
 		else
 			return;
 	}
@@ -1095,15 +1096,17 @@ gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer parent)
 	if (action == NULL)
 		return;
 
-	item = gnt_menuitem_new(action->label);
-	if (action->callback)
+	item = gnt_menuitem_new(purple_menu_action_get_label(action));
+	if (purple_menu_action_get_callback(action))
 		gnt_menuitem_set_callback(GNT_MENU_ITEM(item), context_menu_callback, action);
 	gnt_menu_add_item(menu, GNT_MENU_ITEM(item));
 
-	if (action->children) {
+	list = purple_menu_action_get_children(action);
+
+	if (list) {
 		GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
 		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
-		for (list = action->children; list; list = list->next)
+		for (; list; list = list->next)
 			gnt_append_menu_action(GNT_MENU(sub), list->data, action);
 	}
 }
@@ -1123,7 +1126,7 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
 		if (!act)
 			continue;
-		act->data = node;
+		purple_menu_action_set_data(act, node);
 		gnt_append_menu_action(menu, act, NULL);
 		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
 			G_CALLBACK(purple_menu_action_free), act);
@@ -1216,7 +1219,7 @@ static void
 autojoin_toggled(GntMenuItem *item, gpointer data)
 {
 	PurpleMenuAction *action = data;
-	purple_blist_node_set_bool(action->data, "gnt-autojoin",
+	purple_blist_node_set_bool(purple_menu_action_get_data(action), "gnt-autojoin",
 				gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item)));
 }
 
@@ -1224,7 +1227,8 @@ static void
 create_chat_menu(GntMenu *menu, PurpleChat *chat)
 {
 	PurpleMenuAction *action = purple_menu_action_new(_("Auto-join"), NULL, chat, NULL);
-	GntMenuItem *check = gnt_menuitem_check_new(action->label);
+	GntMenuItem *check = gnt_menuitem_check_new(
+			purple_menu_action_get_label(action));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(check),
 				purple_blist_node_get_bool((PurpleBlistNode*)chat, "gnt-autojoin"));
 	gnt_menu_add_item(menu, check);

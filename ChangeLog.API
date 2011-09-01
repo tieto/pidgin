@@ -8,6 +8,13 @@ version 3.0.0 (??/??/????):
 		* purple_notify_searchresult_column_is_visible
 		* purple_notify_searchresult_column_set_visible
 		* purple_notify_user_info_prepend_pair_plaintext
+		* purple_menu_action_get_callback
+		* purple_menu_action_get_children
+		* purple_menu_action_get_data
+		* purple_menu_action_set_label
+		* purple_menu_action_set_data
+		* purple_menu_action_set_callback
+		* purple_menu_action_set_children
 		* purple_request_field_get_tooltip
 		* purple_request_field_group_get_fields_list
 		* purple_request_field_set_tooltip
@@ -90,6 +97,7 @@ version 3.0.0 (??/??/????):
 		  purple_util_fetch_url_request_len, insetad.
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* struct _GtkIMHtmlFontDetail
+		* struct _PurpleMenuAction
 		* struct _PurplePounce
 		* struct _PurpleRequestField
 		* struct _PurpleRoomlist

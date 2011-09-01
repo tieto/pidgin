@@ -1816,21 +1816,27 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                             gpointer object)
 {
 	GtkWidget *menuitem;
+	GList *list;
 
 	if (act == NULL) {
 		return pidgin_separator(menu);
 	}
 
-	if (act->children == NULL) {
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+	list = purple_menu_action_get_children(act);
+	menuitem = gtk_menu_item_new_with_mnemonic(purple_menu_action_get_label(act));
 
-		if (act->callback != NULL) {
+	if (list == NULL) {
+		PurpleCallback callback;
+
+		callback = purple_menu_action_get_callback(act);
+
+		if (callback != NULL) {
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallback",
-							  act->callback);
+							  callback);
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallbackdata",
-							  act->data);
+							  purple_menu_action_get_data(act));
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 							 G_CALLBACK(menu_action_cb),
 							 object);
@@ -1844,7 +1850,6 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 		GtkWidget *submenu = NULL;
 		GtkAccelGroup *group;
 
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
@@ -1852,19 +1857,20 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 
 		group = gtk_menu_get_accel_group(GTK_MENU(menu));
 		if (group) {
-			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
+			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path,
+					purple_menu_action_get_label(act));
 			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 			g_free(path);
 			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 		}
 
-		for (l = act->children; l; l = l->next) {
+		for (l = list; l; l = l->next) {
 			PurpleMenuAction *act = (PurpleMenuAction *)l->data;
 
 			pidgin_append_menu_action(submenu, act, object);
 		}
-		g_list_free(act->children);
-		act->children = NULL;
+		g_list_free(list);
+		purple_menu_action_set_children(act, NULL);
 	}
 	purple_menu_action_free(act);
 	return menuitem;

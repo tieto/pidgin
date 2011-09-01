@@ -51,14 +51,6 @@ typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 extern "C" {
 #endif
 
-struct _PurpleMenuAction
-{
-	char *label;
-	PurpleCallback callback;
-	gpointer data;
-	GList *children;
-};
-
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
 /**
@@ -94,6 +86,74 @@ PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callb
  * @param act The PurpleMenuAction to free.
  */
 void purple_menu_action_free(PurpleMenuAction *act);
+
+/**
+ * Returns the label of the PurpleMenuAction.
+ *
+ * @param act	The PurpleMenuAction.
+ *
+ * @return The label string.
+ */
+char * purple_menu_action_get_label(const PurpleMenuAction *act);
+
+/**
+ * Returns the callback of the PurpleMenuAction.
+ *
+ * @param act	The PurpleMenuAction.
+ *
+ * @return The callback function.
+ */
+PurpleCallback purple_menu_action_get_callback(const PurpleMenuAction *act);
+
+/**
+ * Returns the data stored in the PurpleMenuAction.
+ *
+ * @param act	The PurpleMenuAction.
+ *
+ * @return The data.
+ */
+gpointer purple_menu_action_get_data(const PurpleMenuAction *act);
+
+/**
+ * Returns the children of the PurpleMenuAction.
+ *
+ * @param act	The PurpleMenuAction.
+ *
+ * @return The  GList of children.
+ */
+GList* purple_menu_action_get_children(const PurpleMenuAction *act);
+
+/**
+ * Set the label to the PurpleMenuAction.
+ *
+ * @param act   The menu action.
+ * @param label The label for the menu action.
+ */
+void purple_menu_action_set_label(PurpleMenuAction *act, char *label);
+
+/**
+ * Set the callback that will be used by the PurpleMenuAction.
+ *
+ * @param act        The menu action.
+ * @param callback   The callback.
+ */
+void purple_menu_action_set_callback(PurpleMenuAction *act, PurpleCallback callback);
+
+/**
+ * Set the label to the PurpleMenuAction.
+ *
+ * @param act   The menu action.
+ * @param data  The data used by this PurpleMenuAction
+ */
+void purple_menu_action_set_data(PurpleMenuAction *act, gpointer data);
+
+/**
+ * Set the children of the PurpleMenuAction.
+ *
+ * @param act       The menu action.
+ * @param children  The PurpleMenuAtion children
+ */
+void purple_menu_action_set_children(PurpleMenuAction *act, GList *children);
 
 /**
  * Set the appropriate presence values for the currently playing song.
