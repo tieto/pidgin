@@ -323,19 +323,6 @@ PPCODE:
 	}
 	XPUSHs(sv_2mortal(newRV_noinc((SV *)lines)));
 
-MODULE = Pidgin::IMHtml  PACKAGE = Pidgin::IMHtml::Scalable  PREFIX = gtk_imhtml_image_
-PROTOTYPES: ENABLE
-
-void
-gtk_imhtml_image_free(scale)
-	Pidgin::IMHtml::Scalable scale
-
-void
-gtk_imhtml_image_scale(scale, width, height)
-	Pidgin::IMHtml::Scalable scale
-	int width
-	int height
-
 MODULE = Pidgin::IMHtml  PACKAGE = Pidgin::IMHtml::Hr  PREFIX = gtk_imhtml_hr_
 PROTOTYPES: ENABLE
 

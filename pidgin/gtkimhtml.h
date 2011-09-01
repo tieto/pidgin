@@ -427,62 +427,6 @@ GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
 GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
 
 /**
- * Creates and returns a new GTK+ IM/HTML scalable object with an
- * animated image.
- *
- * @param img      A GdkPixbufAnimation of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- *
- * @since 2.1.0
- */
-/*
- * TODO: All this animation code could be combined much better with
- *       the image code.  It couldn't be done when it was written
- *       because it requires breaking backward compatibility.  It
- *       would be good to do it for 3.0.0.
- */
-GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *img, const gchar *filename, int id);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable image.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_free(GtkIMHtmlScalable *scale);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable animation.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale);
-
-/**
- * Rescales a GTK+ IM/HTML scalable image to a given size.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param width  The new width.
- * @param height The new height.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height);
-
-/**
- * Adds a GTK+ IM/HTML scalable image to a given GTK+ IM/HTML at a given iter.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param imhtml The GTK+ IM/HTML.
- * @param iter   The GtkTextIter at which to add the scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
-
-/**
  * Creates and returns an new GTK+ IM/HTML scalable with a horizontal rule.
  *
  * @return A new IM/HTML Scalable object with an image.
