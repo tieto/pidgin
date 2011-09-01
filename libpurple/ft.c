@@ -220,7 +220,7 @@ purple_xfer_unref(PurpleXfer *xfer)
 		purple_xfer_destroy(xfer);
 }
 
-static void
+void
 purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
@@ -720,6 +720,20 @@ purple_xfer_request_denied(PurpleXfer *xfer)
 	purple_xfer_unref(xfer);
 }
 
+int purple_xfer_get_fd(PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->fd;
+}
+
+int purple_xfer_get_watcher(PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->watcher;
+}
+
 PurpleXferType
 purple_xfer_get_type(const PurpleXfer *xfer)
 {
@@ -864,6 +878,20 @@ purple_xfer_get_end_time(const PurpleXfer *xfer)
 	return xfer->end_time;
 }
 
+void purple_xfer_set_fd(PurpleXfer *xfer, int fd)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->fd = fd;
+}
+
+void purple_xfer_set_watcher(PurpleXfer *xfer, int watcher)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->watcher = watcher;
+}
+
 void
 purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 {
@@ -944,6 +972,14 @@ purple_xfer_set_size(PurpleXfer *xfer, size_t size)
 
 	xfer->size = size;
 	xfer->bytes_remaining = xfer->size - purple_xfer_get_bytes_sent(xfer);
+}
+
+void
+purple_xfer_set_local_port(PurpleXfer *xfer, unsigned int local_port)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->local_port = local_port;
 }
 
 void
