@@ -87,6 +87,7 @@ version 3.0.0 (??/??/????):
 		* gtk_imhtml_animation_new
 		* gtk_imhtml_image_add_to
 		* gtk_imhtml_image_free
+		* gtk_imhtml_image_new
 		* gtk_imhtml_image_scale
 		* pidgin_blist_update_account_error_state
 		* pidgin_check_if_dir

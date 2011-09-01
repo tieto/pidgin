@@ -416,17 +416,6 @@ void gtk_imhtml_page_down(GtkIMHtml *imhtml);
 GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
 
 /**
- * Creates and returns a new GTK+ IM/HTML scalable object with an image.
- *
- * @param img      A GdkPixbuf of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
-
-/**
  * Creates and returns an new GTK+ IM/HTML scalable with a horizontal rule.
  *
  * @return A new IM/HTML Scalable object with an image.

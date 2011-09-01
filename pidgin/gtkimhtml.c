@@ -3903,8 +3903,16 @@ static void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml,
 	g_object_set_data_full(G_OBJECT(box), "image-save-data", save, (GDestroyNotify)g_free);
 }
 
-/* GtkIMHtmlScalable, gtk_imhtml_image, gtk_imhtml_hr */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
+/**
+ * Creates and returns a new GTK+ IM/HTML scalable object with an image.
+ *
+ * @param img      A GdkPixbuf of the image to add.
+ * @param filename The filename to associate with the image.
+ * @param id       The id to associate with the image.
+ *
+ * @return A new IM/HTML Scalable object with an image.
+ */
+static GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
 {
 	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
 
