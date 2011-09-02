@@ -191,18 +191,6 @@ xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 }
 
 void
-xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value)
-{
-	xmlnode_set_attrib_full(node, attr, xmlns, NULL, value);
-}
-
-void
-xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value)
-{
-	xmlnode_set_attrib_full(node, attr, NULL, prefix, value);
-}
-
-void
 xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns, const char *prefix, const char *value)
 {
 	xmlnode *attrib_node;

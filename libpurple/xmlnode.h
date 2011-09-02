@@ -157,42 +157,14 @@ char *xmlnode_get_data_unescaped(const xmlnode *node);
  */
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_XMLNODE_C_)
-/**
- * Sets a prefixed attribute for a node
- *
- * @param node   The node to set an attribute for.
- * @param attr   The name of the attribute to set
- * @param prefix The prefix of the attribute to ste
- * @param value  The value of the attribute
- *
- * @deprecated Use xmlnode_set_attrib_full instead.
- */
-void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
-
-/**
- * Sets a namespaced attribute for a node
- *
- * @param node  The node to set an attribute for.
- * @param attr  The name of the attribute to set
- * @param xmlns The namespace of the attribute to ste
- * @param value The value of the attribute
- *
- * @deprecated Use xmlnode_set_attrib_full instead.
- */
-void xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value);
-#endif /* PURPLE_DISABLE_DEPRECATED */
-
 /**
  * Sets a namespaced attribute for a node
  *
  * @param node   The node to set an attribute for.
  * @param attr   The name of the attribute to set
- * @param xmlns  The namespace of the attribute to ste
- * @param prefix The prefix of the attribute to ste
+ * @param xmlns  The namespace of the attribute to set
+ * @param prefix The prefix of the attribute to set
  * @param value  The value of the attribute
- *
- * @since 2.6.0
  */
 void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
 	const char *prefix, const char *value);
@@ -273,8 +245,6 @@ const char *xmlnode_get_prefix(const xmlnode *node);
  * @param child The child node.
  *
  * @return The parent or NULL.
- *
- * @since 2.6.0
  */
 xmlnode *xmlnode_get_parent(const xmlnode *child);
 
@@ -343,8 +313,6 @@ void xmlnode_free(xmlnode *node);
  * 			the category for debugging.
  *
  * @return The new node or NULL if an error occurred.
- *
- * @since 2.6.0
  */
 xmlnode *xmlnode_from_file(const char *dir, const char *filename,
 			   const char *description, const char *process);
@@ -354,3 +322,4 @@ xmlnode *xmlnode_from_file(const char *dir, const char *filename,
 #endif
 
 #endif /* _PURPLE_XMLNODE_H_ */
+
