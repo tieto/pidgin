@@ -970,7 +970,7 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 
-		msn_object_destroy(obj);
+		msn_object_destroy(obj, FALSE);
 		obj =   NULL;
 		who =   NULL;
 		sha1 = NULL;
@@ -1025,7 +1025,7 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		slplink = msn_session_get_slplink(session, who);
 		msn_slplink_request_object(slplink, data, got_wink_cb, NULL, obj);
 
-		msn_object_destroy(obj);
+		msn_object_destroy(obj, FALSE);
 
 
 	} else if (!strcmp(id, "3")) {
@@ -1045,7 +1045,7 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		slplink = msn_session_get_slplink(session, who);
 		msn_slplink_request_object(slplink, data, got_voiceclip_cb, NULL, obj);
 
-		msn_object_destroy(obj);
+		msn_object_destroy(obj, FALSE);
 
 	} else if (!strcmp(id, "4")) {
 		/* Action */

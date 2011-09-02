@@ -485,7 +485,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			if (img)
 				purple_imgstore_ref(img);
 		}
-		msn_object_destroy(obj);
+		msn_object_destroy(obj, FALSE);
 
 		if (img != NULL) {
 			/* DATA PREP */

@@ -1453,7 +1453,7 @@ msn_send_emoticons(MsnSwitchBoard *swboard, GString *body)
 static void msn_emoticon_destroy(MsnEmoticon *emoticon)
 {
 	if (emoticon->obj)
-		msn_object_destroy(emoticon->obj);
+		msn_object_destroy(emoticon->obj, FALSE);
 	g_free(emoticon->smile);
 	g_free(emoticon);
 }

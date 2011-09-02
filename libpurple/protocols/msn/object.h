@@ -86,9 +86,10 @@ MsnObject *msn_object_new_from_image(PurpleStoredImage *img,
 /**
  * Destroys an MsnObject structure.
  *
- * @param obj The object structure.
+ * @param obj         The object structure.
+ * @param only_remote Only destroy non-local objects.
  */
-void msn_object_destroy(MsnObject *obj);
+void msn_object_destroy(MsnObject *obj, gboolean only_remote);
 
 /**
  * Outputs a string representation of an MsnObject.

@@ -76,7 +76,7 @@ msn_user_destroy(MsnUser *user)
 	}
 
 	if (user->msnobj != NULL)
-		msn_object_destroy(user->msnobj);
+		msn_object_destroy(user->msnobj, FALSE);
 
 	g_free(user->passport);
 	g_free(user->friendly_name);
@@ -588,8 +588,8 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->msnobj != NULL && !msn_object_find_local(msn_object_get_sha1(obj)))
-		msn_object_destroy(user->msnobj);
+	if (user->msnobj != NULL)
+		msn_object_destroy(user->msnobj, TRUE);
 
 	user->msnobj = obj;
 
