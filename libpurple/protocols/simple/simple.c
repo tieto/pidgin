@@ -1904,7 +1904,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a_account(sip->account, hostname,
+		sip->query_data = purple_dnsquery_a(sip->account, hostname,
 			port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
 			purple_connection_error(sip->gc,

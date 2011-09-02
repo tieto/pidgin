@@ -365,7 +365,7 @@ static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
 	purple_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
 		results, servername, port);
 
-	purple_dnsquery_a_account(NULL, servername, port, hbn_cb, NULL);
+	purple_dnsquery_a(NULL, servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 

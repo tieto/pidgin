@@ -61,6 +61,7 @@ version 3.0.0 (??/??/????):
 		  the first parameter
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
+		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
 
 		Removed:
 		* _GntFileType
@@ -98,6 +99,7 @@ version 3.0.0 (??/??/????):
 		* PidginConversation.sg
 		* purple_connection_error_reason
 		* purple_core_migrate
+		* purple_dnsquery_a_account
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
@@ -107,7 +109,7 @@ version 3.0.0 (??/??/????):
 		* purple_strlcat
 		* purple_strlcpy
 		* purple_util_fetch_url_request_len_with_account.  Use
-		  purple_util_fetch_url_request_len, insetad.
+		  purple_util_fetch_url_request_len, instead.
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* struct _GtkIMHtmlFontDetail
 		* struct _PurpleMenuAction

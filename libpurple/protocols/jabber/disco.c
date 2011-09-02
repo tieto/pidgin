@@ -485,7 +485,7 @@ jabber_disco_stun_srv_resolve_cb(PurpleSrvResponse *resp, int results, gpointer 
 			resp[0].hostname, resp[0].port);
 		account = purple_connection_get_account(js->gc);
 		js->stun_query =
-			purple_dnsquery_a_account(account, resp[0].hostname, resp[0].port,
+			purple_dnsquery_a(account, resp[0].hostname, resp[0].port,
 				jabber_disco_stun_lookup_cb, js);
 	}
 }

@@ -1369,7 +1369,7 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	} else {
-		connect_data->query_data = purple_dnsquery_a_account(
+		connect_data->query_data = purple_dnsquery_a(
 				connect_data->account, connect_data->host,
 				connect_data->port, s4_host_resolved, connect_data);
 
@@ -2088,7 +2088,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 
 /**
  * This function attempts to connect to the next IP address in the list
- * of IP addresses returned to us by purple_dnsquery_a() and attemps
+ * of IP addresses returned to us by purple_dnsquery_a() and attempts
  * to connect to each one.  This is called after the hostname is
  * resolved, and each time a connection attempt fails (assuming there
  * is another IP address to try).
@@ -2317,7 +2317,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
+	connect_data->query_data = purple_dnsquery_a(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
@@ -2385,7 +2385,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a_account(account, connecthost,
+	connect_data->query_data = purple_dnsquery_a(account, connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
