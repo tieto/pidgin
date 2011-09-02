@@ -109,6 +109,12 @@ version 3.0.0 (??/??/????):
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
 		* purple_notify_searchresults_row_get
+		* purple_plugins_register_load_notify_cb
+		* purple_plugins_register_probe_notify_cb
+		* purple_plugins_register_unload_notify_cb
+		* purple_plugins_unregister_load_notify_cb
+		* purple_plugins_unregister_probe_notify_cb
+		* purple_plugins_unregister_unload_notify_cb
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* purple_srv_cancel
