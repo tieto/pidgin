@@ -41,6 +41,16 @@
 #include "proxy.h"
 #include "util.h"
 
+struct _PurpleProxyInfo
+{
+	PurpleProxyType type;   /**< The proxy type.  */
+
+	char *host;           /**< The host.        */
+	int   port;           /**< The port number. */
+	char *username;       /**< The username.    */
+	char *password;       /**< The password.    */
+};
+
 struct _PurpleProxyConnectData {
 	void *handle;
 	PurpleProxyConnectFunction connect_cb;

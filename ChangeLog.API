@@ -114,6 +114,7 @@ version 3.0.0 (??/??/????):
 		* struct _GtkIMHtmlFontDetail
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
+		* struct _PurpleProxyInfo
 		* struct _PurpleRequestField
 		* struct _PurpleRoomlist
 		* struct _PurpleRoomlistField

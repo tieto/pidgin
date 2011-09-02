@@ -4476,7 +4476,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((gc->account->proxy_info) && (purple_proxy_info_get_type(gc->account->proxy_info) == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request_len(
