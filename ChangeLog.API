@@ -131,6 +131,8 @@ version 3.0.0 (??/??/????):
 		* serv_got_attention
 		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail
+		* struct _PidginChatPane
+		* struct _PidginImPane
 		* struct _PurpleAttentionType
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
