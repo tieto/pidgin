@@ -32,6 +32,20 @@
 /**************************************************************************/
 /** @name Attention Type API                                              */
 /**************************************************************************/
+
+/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
+ *  their attention (or vice-versa).
+ */
+struct _PurpleAttentionType
+{
+	const char *name;                  /**< Shown in GUI elements */
+	const char *incoming_description;  /**< Shown when sent */
+	const char *outgoing_description;  /**< Shown when receied */
+	const char *icon_name;             /**< Icon to display (optional) */
+	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
+};
+
+
 PurpleAttentionType *
 purple_attention_type_new(const char *ulname, const char *name,
 						const char *inc_desc, const char *out_desc)
