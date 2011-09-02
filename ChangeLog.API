@@ -117,6 +117,8 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request_len, instead.
 		* PurpleConnectionUiOps.report_disconnect_reason
+		* serv_got_attention
+		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
