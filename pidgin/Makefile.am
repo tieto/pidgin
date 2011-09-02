@@ -52,7 +52,6 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkdocklet-gtk.c \
 	gtkeventloop.c \
 	gtkft.c \
 	gtkicon-theme.c \
@@ -181,3 +180,4 @@ AM_CPPFLAGS = \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
+

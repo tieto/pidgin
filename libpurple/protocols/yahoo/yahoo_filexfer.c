@@ -1681,13 +1681,13 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		account = purple_connection_get_account(gc);
 		if (yd->jp)
 		{
-			purple_dnsquery_a_account(account, YAHOOJP_XFER_RELAY_HOST,
+			purple_dnsquery_a(account, YAHOOJP_XFER_RELAY_HOST,
 							YAHOOJP_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}
 		else
 		{
-			purple_dnsquery_a_account(account, YAHOO_XFER_RELAY_HOST,
+			purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
 							YAHOO_XFER_RELAY_PORT,
 							yahoo_xfer_dns_connected_15, xfer);
 		}

@@ -61,6 +61,9 @@ version 3.0.0 (??/??/????):
 		  the first parameter
 		* PurpleConnectionUiOps.report_disconnect now passes a
 		  PurpleConnectionError as the second parameter
+		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
+		* purple_srv_resolve now takes a PurpleAccount as the first parameter
+		* purple_txt_resolve now takes a PurpleAccount as the first parameter
 
 		Removed:
 		* _GntFileType
@@ -96,22 +99,44 @@ version 3.0.0 (??/??/????):
 		* pidgin_set_custom_buddy_icon
 		* pidgin_setup_screenname_autocomplete
 		* PidginConversation.sg
+		* purple_buddy_icons_has_custom_icon
+		* purple_buddy_icons_find_custom_icon
+		* purple_buddy_icons_set_custom_icon
 		* purple_connection_error_reason
 		* purple_core_migrate
+		* purple_dnsquery_a_account
 		* purple_notify_searchresults_column_get_title
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
 		* purple_notify_searchresults_row_get
+		* purple_presence_add_status
+		* purple_presence_add_list
+		* purple_srv_cancel
+		* purple_srv_resolve_account
+		* purple_status_set_attr_boolean
+		* purple_status_set_attr_int
+		* purple_status_set_attr_string
+		* purple_status_type_add_attr
+		* purple_status_type_add_attrs
+		* purple_status_type_add_attrs_vargs
 		* purple_status_type_get_primary_attr
 		* purple_status_type_set_primary_attr
 		* purple_strlcat
 		* purple_strlcpy
+		* purple_txt_cancel
+		* purple_txt_resolve_account
 		* purple_util_fetch_url_request_len_with_account.  Use
-		  purple_util_fetch_url_request_len, insetad.
+		  purple_util_fetch_url_request_len, instead.
 		* PurpleConnectionUiOps.report_disconnect_reason
+		* serv_got_attention
+		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail
+		* struct _PidginChatPane
+		* struct _PidginImPane
+		* struct _PurpleAttentionType
 		* struct _PurpleMenuAction
 		* struct _PurplePounce
+		* struct _PurpleProxyInfo
 		* struct _PurpleRequestField
 		* struct _PurpleRoomlist
 		* struct _PurpleRoomlistField

@@ -111,23 +111,6 @@ struct proto_chat_entry {
 	gboolean secret;         /**< True if the entry is secret (password) */
 };
 
-/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
- *  their attention (or vice-versa).
- */
-struct _PurpleAttentionType
-{
-	const char *name;                  /**< Shown in GUI elements */
-	const char *incoming_description;  /**< Shown when sent */
-	const char *outgoing_description;  /**< Shown when receied */
-	const char *icon_name;             /**< Icon to display (optional) */
-	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
-
-	/* Reserved fields for future purposes */
-	gpointer _reserved2;
-	gpointer _reserved3;
-	gpointer _reserved4;
-};
-
 /**
  * Protocol options
  *
@@ -680,8 +663,8 @@ extern "C" {
  *             should be the same string as @a ulname, with localization.
  * @param inc_desc A localized description shown when the event is received.
  * @param out_desc A localized description shown when the event is sent.
+ *
  * @return A pointer to the new object.
- * @since 2.4.0
  */
 PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *name,
 								const char *inc_desc, const char *out_desc);
@@ -693,7 +676,6 @@ PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *n
  * @param name The localized name that will be displayed by UIs. This should be
  *             the same string given as the unlocalized name, but with
  *             localization.
- * @since 2.4.0
  */
 void purple_attention_type_set_name(PurpleAttentionType *type, const char *name);
 
@@ -703,7 +685,6 @@ void purple_attention_type_set_name(PurpleAttentionType *type, const char *name)
  *
  * @param type The attention type.
  * @param desc The localized description for incoming events.
- * @since 2.4.0
  */
 void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const char *desc);
 
@@ -713,7 +694,6 @@ void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const ch
  *
  * @param type The attention type.
  * @param desc The localized description for outgoing events.
- * @since 2.4.0
  */
 void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const char *desc);
 
@@ -723,7 +703,6 @@ void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const ch
  * @param type The attention type.
  * @param name The icon's name.
  * @note Icons are optional for attention events.
- * @since 2.4.0
  */
 void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name);
 
@@ -734,7 +713,6 @@ void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *
  * @param type The attention type.
  * @param ulname The unlocalized name.  This should be the same string given as
  *               the localized name, but without localization.
- * @since 2.4.0
  */
 void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char *ulname);
 
@@ -742,8 +720,8 @@ void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const
  * Get the attention type's name as displayed by the UI.
  *
  * @param type The attention type.
+ *
  * @return The name.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_name(const PurpleAttentionType *type);
 
@@ -752,7 +730,6 @@ const char *purple_attention_type_get_name(const PurpleAttentionType *type);
  *
  * @param type The attention type.
  * @return The description.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *type);
 
@@ -761,7 +738,6 @@ const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *t
  *
  * @param type The attention type.
  * @return The description.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type);
 
@@ -771,7 +747,6 @@ const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *t
  * @param type The attention type.
  * @return The icon name or @c NULL if unset/empty.
  * @note Icons are optional for attention events.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type);
 
@@ -780,7 +755,6 @@ const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type)
  *
  * @param type The attention type
  * @return The unlocalized name.
- * @since 2.4.0
  */
 const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 

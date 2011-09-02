@@ -813,7 +813,7 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			try_srv_connect(js);
 		} else {
 			purple_debug_info("jabber","Couldn't connect directly to %s.  Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
-			js->srv_query_data = purple_txt_resolve_account(
+			js->srv_query_data = purple_txt_resolve(
 					purple_connection_get_account(gc), "_xmppconnect",
 					js->user->domain, txt_resolved_cb, js);
 		}
@@ -1074,7 +1074,7 @@ jabber_stream_connect(JabberStream *js)
 		jabber_login_connect(js, js->user->domain, connect_server,
 				purple_account_get_int(account, "port", 5222), TRUE);
 	} else {
-		js->srv_query_data = purple_srv_resolve_account(account, "xmpp-client",
+		js->srv_query_data = purple_srv_resolve(account, "xmpp-client",
 				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
 }
@@ -1599,7 +1599,7 @@ void jabber_close(PurpleConnection *gc)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
-		purple_srv_cancel(js->srv_query_data);
+		purple_srv_txt_query_destroy(js->srv_query_data);
 
 	if(js->gsc) {
 		purple_ssl_close(js->gsc);

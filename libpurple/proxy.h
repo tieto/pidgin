@@ -47,16 +47,7 @@ typedef enum
 /**
  * Information on proxy settings.
  */
-typedef struct
-{
-	PurpleProxyType type;   /**< The proxy type.  */
-
-	char *host;           /**< The host.        */
-	int   port;           /**< The port number. */
-	char *username;       /**< The username.    */
-	char *password;       /**< The password.    */
-
-} PurpleProxyInfo;
+typedef struct _PurpleProxyInfo PurpleProxyInfo;
 
 typedef struct _PurpleProxyConnectData PurpleProxyConnectData;
 

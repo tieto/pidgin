@@ -725,15 +725,7 @@ res_thread(gpointer data)
 #endif
 
 PurpleSrvTxtQueryData *
-purple_srv_resolve(const char *protocol, const char *transport,
-	const char *domain, PurpleSrvCallback cb, gpointer extradata)
-{
-	return purple_srv_resolve_account(NULL, protocol, transport, domain,
-			cb, extradata);
-}
-
-PurpleSrvTxtQueryData *
-purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
+purple_srv_resolve(PurpleAccount *account, const char *protocol,
 	const char *transport, const char *domain, PurpleSrvCallback cb,
 	gpointer extradata)
 {
@@ -869,13 +861,7 @@ purple_srv_resolve_account(PurpleAccount *account, const char *protocol,
 #endif
 }
 
-PurpleSrvTxtQueryData *purple_txt_resolve(const char *owner,
-	const char *domain, PurpleTxtCallback cb, gpointer extradata)
-{
-	return purple_txt_resolve_account(NULL, owner, domain, cb, extradata);
-}
-
-PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
+PurpleSrvTxtQueryData *purple_txt_resolve(PurpleAccount *account,
 	const char *owner, const char *domain, PurpleTxtCallback cb,
 	gpointer extradata)
 {
@@ -1004,18 +990,6 @@ PurpleSrvTxtQueryData *purple_txt_resolve_account(PurpleAccount *account,
 
 	return query_data;
 #endif
-}
-
-void
-purple_txt_cancel(PurpleSrvTxtQueryData *query_data)
-{
-	purple_srv_txt_query_destroy(query_data);
-}
-
-void
-purple_srv_cancel(PurpleSrvTxtQueryData *query_data)
-{
-	purple_srv_txt_query_destroy(query_data);
 }
 
 const gchar *

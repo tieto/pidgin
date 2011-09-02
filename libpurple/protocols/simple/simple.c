@@ -1904,7 +1904,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a_account(sip->account, hostname,
+		sip->query_data = purple_dnsquery_a(sip->account, hostname,
 			port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
 			purple_connection_error(sip->gc,
@@ -1970,7 +1970,7 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	sip->srv_query_data = purple_srv_resolve_account(account, "sip",
+	sip->srv_query_data = purple_srv_resolve(account, "sip",
 			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
 }
 
@@ -2007,7 +2007,7 @@ static void simple_close(PurpleConnection *gc)
 		purple_dnsquery_destroy(sip->query_data);
 
 	if (sip->srv_query_data != NULL)
-		purple_srv_cancel(sip->srv_query_data);
+		purple_srv_txt_query_destroy(sip->srv_query_data);
 
 	if (sip->listen_data != NULL)
 		purple_network_listen_cancel(sip->listen_data);
