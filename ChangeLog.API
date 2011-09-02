@@ -106,8 +106,16 @@ version 3.0.0 (??/??/????):
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
 		* purple_notify_searchresults_row_get
+		* purple_presence_add_status
+		* purple_presence_add_list
 		* purple_srv_cancel
 		* purple_srv_resolve_account
+		* purple_status_set_attr_boolean
+		* purple_status_set_attr_int
+		* purple_status_set_attr_string
+		* purple_status_type_add_attr
+		* purple_status_type_add_attrs
+		* purple_status_type_add_attrs_vargs
 		* purple_status_type_get_primary_attr
 		* purple_status_type_set_primary_attr
 		* purple_strlcat
