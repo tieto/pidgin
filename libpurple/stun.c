@@ -424,7 +424,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 	nattype.servername = g_strdup(servername);
 
 	callbacks = g_slist_append(callbacks, cb);
-	purple_srv_resolve_account(NULL, "stun", "udp", servername, do_test1,
+	purple_srv_resolve(NULL, "stun", "udp", servername, do_test1,
 		(gpointer) servername);
 
 	return &nattype;
