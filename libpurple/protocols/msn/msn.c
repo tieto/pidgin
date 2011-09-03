@@ -2930,6 +2930,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),	/* struct_size */
 	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
 	NULL,                               /* user_splits */
 	NULL,                               /* protocol_options */
@@ -2995,7 +2996,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* unregister_user */
 	msn_send_attention,                 /* send_attention */
 	msn_attention_types,                /* attention_types */
-	sizeof(PurplePluginProtocolInfo),	/* struct_size */
 	msn_get_account_text_table,         /* get_account_text_table */
 	NULL,                               /* initiate_media */
 	NULL,                               /* get_media_caps */

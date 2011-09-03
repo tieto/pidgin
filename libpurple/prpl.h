@@ -205,6 +205,27 @@ typedef enum
  */
 struct _PurplePluginProtocolInfo
 {
+	/**
+	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
+	 * This allows adding more functions to this struct without requiring a major version bump.
+	 */
+	unsigned long struct_size;
+
+	/* NOTE:
+	 * If more functions are added, they should accessed using the following syntax:
+	 *
+	 *		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, new_function))
+	 *			prpl->new_function(...);
+	 *
+	 * instead of
+	 *
+	 *		if (prpl->new_function != NULL)
+	 *			prpl->new_function(...);
+	 *
+	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
+	 * functions (e.g. login, send_im etc.) too.
+	 */
+
 	PurpleProtocolOptions options;  /**< Protocol options.          */
 
 	GList *user_splits;      /**< A GList of PurpleAccountUserSplit */
@@ -517,27 +538,6 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	/**
-	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
-	 * This allows adding more functions to this struct without requiring a major version bump.
-	 */
-	unsigned long struct_size;
-
-	/* NOTE:
-	 * If more functions are added, they should accessed using the following syntax:
-	 *
-	 *		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, new_function))
-	 *			prpl->new_function(...);
-	 *
-	 * instead of
-	 *
-	 *		if (prpl->new_function != NULL)
-	 *			prpl->new_function(...);
-	 *
-	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
-	 * functions (e.g. login, send_im etc.) too.
-	 */
-
 	/** This allows protocols to specify additional strings to be used for
 	 * various purposes.  The idea is to stuff a bunch of strings in this hash
 	 * table instead of expanding the struct for every addition.  This hash
@@ -618,8 +618,7 @@ struct _PurplePluginProtocolInfo
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
-	(((G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < G_STRUCT_OFFSET(PurplePluginProtocolInfo, struct_size)) \
-	  || (G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size)) && \
+	(G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size && \
 	 prpl->member != NULL)
 
 

@@ -3007,6 +3007,7 @@ msim_get_account_text_table(PurpleAccount *unused)
  * Callbacks called by Purple, to access this plugin.
  */
 static PurplePluginProtocolInfo prpl_info = {
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,
@@ -3076,7 +3077,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	msim_get_account_text_table,              /* get_account_text_table */
 	NULL,                   /* initiate_media */
 	NULL,                   /* get_media_caps */

@@ -2853,6 +2853,7 @@ static GList *zephyr_actions(PurplePlugin *plugin, gpointer context)
 static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info = {
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
 	NULL,					/* ??? user_splits */
 	NULL,					/* ??? protocol_options */
@@ -2919,7 +2920,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	NULL,
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,					/* get_account_text_table */
 	NULL,					/* initate_media */
 	NULL,					/* get_media_caps */

@@ -5154,6 +5154,7 @@ static void mw_prpl_send_file(PurpleConnection *gc,
 
 
 static PurplePluginProtocolInfo mw_prpl_info = {
+  .struct_size               = sizeof(PurplePluginProtocolInfo),
   .options                   = OPT_PROTO_IM_IMAGE,
   .user_splits               = NULL, /*< set in mw_plugin_init */
   .protocol_options          = NULL, /*< set in mw_plugin_init */
@@ -5213,8 +5214,7 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .new_xfer                  = mw_prpl_new_xfer,
   .offline_message           = NULL,
   .whiteboard_prpl_ops       = NULL,
-  .send_raw                  = NULL,
-  .struct_size               = sizeof(PurplePluginProtocolInfo)
+  .send_raw                  = NULL
 };
 
 

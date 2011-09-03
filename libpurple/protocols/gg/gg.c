@@ -2655,6 +2655,7 @@ static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_IM_IMAGE,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
@@ -2720,7 +2721,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				/* unregister_user */
 	NULL,				/* send_attention */
 	NULL,				/* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,                           /* get_account_text_table */
 	NULL,                           /* initiate_media */
 	NULL,                            /* can_do_media */
