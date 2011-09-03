@@ -2951,7 +2951,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_set_status,                     /* set_away */
 	msn_set_idle,                       /* set_idle */
 	NULL,                               /* change_passwd */
-	NULL,                               /* add_buddy */
+	msn_add_buddy,                      /* add_buddy */
 	NULL,                               /* add_buddies */
 	msn_rem_buddy,                      /* remove_buddy */
 	NULL,                               /* remove_buddies */
@@ -3001,9 +3001,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* get_media_caps */
 	NULL,                               /* get_moods */
 	msn_set_public_alias,               /* set_public_alias */
-	msn_get_public_alias,               /* get_public_alias */
-	msn_add_buddy,                      /* add_buddy_with_invite */
-	NULL                                /* add_buddies_with_invite */
+	msn_get_public_alias                /* get_public_alias */
 };
 
 static PurplePluginInfo info =

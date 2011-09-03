@@ -607,7 +607,7 @@ static void irc_set_status(PurpleAccount *account, PurpleStatus *status)
 	}
 }
 
-static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	struct irc_conn *irc = purple_connection_get_protocol_data(gc);
 	struct irc_buddy *ib;
@@ -989,9 +989,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					 /* get_media_caps */
 	NULL,					 /* get_moods */
 	NULL,					 /* set_public_alias */
-	NULL,					 /* get_public_alias */
-	NULL,					 /* add_buddy_with_invite */
-	NULL					 /* add_buddies_with_invite */
+	NULL					 /* get_public_alias */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

@@ -4513,7 +4513,8 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 
 static void mw_prpl_add_buddy(PurpleConnection *gc,
 			      PurpleBuddy *buddy,
-			      PurpleGroup *group) {
+			      PurpleGroup *group,
+			      const char *message) {
 
   struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
   struct mwServiceResolve *srvc;
@@ -4560,7 +4561,8 @@ static void foreach_add_buddies(PurpleGroup *group, GList *buddies,
 
 static void mw_prpl_add_buddies(PurpleConnection *gc,
 				GList *buddies,
-				GList *groups) {
+				GList *groups,
+				const char *message) {
 
   struct mwPurplePluginData *pd;
   GHashTable *group_sets;

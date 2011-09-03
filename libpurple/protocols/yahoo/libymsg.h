@@ -371,7 +371,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
 void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 void yahoo_set_idle(PurpleConnection *gc, int idle);
-void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g);
+void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, const char *message);
 void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void yahoo_add_deny(PurpleConnection *gc, const char *who);
 void yahoo_rem_deny(PurpleConnection *gc, const char *who);

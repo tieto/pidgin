@@ -59,7 +59,7 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_set_status,		/* set_status */
 	oscar_set_idle,			/* set_idle */
 	oscar_change_passwd,	/* change_passwd */
-	NULL,					/* add_buddy */
+	oscar_add_buddy,		/* add_buddy */
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
@@ -110,9 +110,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* can_do_media */
 	oscar_get_purple_moods, /* get_moods */
 	NULL,					/* set_public_alias */
-	NULL,					/* get_public_alias */
-	oscar_add_buddy,		/* add_buddy_with_invite */
-	NULL					/* add_buddies_with_invite */
+	NULL					/* get_public_alias */
 };
 
 static PurplePluginInfo info =

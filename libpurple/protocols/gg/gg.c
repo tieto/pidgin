@@ -2467,7 +2467,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 
 }
 
-static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	PurpleAccount *account;
 	GGPInfo *info = purple_connection_get_protocol_data(gc);
@@ -2726,9 +2726,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                            /* can_do_media */
 	NULL,				/* get_moods */
 	NULL,				/* set_public_alias */
-	NULL,				/* get_public_alias */
-	NULL,				/* add_buddy_with_invite */
-	NULL				/* add_buddies_with_invite */
+	NULL				/* get_public_alias */
 };
 
 static PurplePluginInfo info = {

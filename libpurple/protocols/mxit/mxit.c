@@ -696,7 +696,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_set_status,		/* set_status */
 	NULL,					/* set_idle */
 	NULL,					/* change_passwd */
-	NULL,					/* add_buddy				[roster.c] */
+	mxit_add_buddy,			/* add_buddy				[roster.c] */
 	NULL,					/* add_buddies */
 	mxit_remove_buddy,		/* remove_buddy				[roster.c] */
 	NULL,					/* remove_buddies */
@@ -746,9 +746,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_media_caps,		/* get_media_caps */
 	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
-	NULL,					/* get_public_alias */
-	mxit_add_buddy,			/* add_buddy_with_invite */
-	NULL					/* add_buddies_with_invite */
+	NULL					/* get_public_alias */
 };
 
 

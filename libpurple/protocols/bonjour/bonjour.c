@@ -256,7 +256,7 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
  * if there is no add_buddy callback.
  */
 static void
-bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message) {
 	purple_debug_error("bonjour", "Buddy '%s' manually added; removing.  "
 				      "Bonjour buddies must be discovered and not manually added.\n",
 			   purple_buddy_get_name(buddy));
@@ -555,9 +555,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* get_media_caps */
 	NULL,                                                    /* get_moods */
 	NULL,                                                    /* set_public_alias */
-	NULL,                                                    /* get_public_alias */
-	NULL,                                                    /* add_buddy_with_invite */
-	NULL                                                     /* add_buddies_with_invite */
+	NULL                                                     /* get_public_alias */
 };
 
 static PurplePluginInfo info =

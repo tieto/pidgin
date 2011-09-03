@@ -2627,7 +2627,7 @@ msim_update_blocklist_for_buddy(MsimSession *session, const char *name, gboolean
  * Add a buddy to user's buddy list.
  */
 static void
-msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	MsimSession *session;
 	MsimMessage *msg;
@@ -3082,9 +3082,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* get_media_caps */
 	NULL,                   /* get_moods */
 	NULL,                   /* set_public_alias */
-	NULL,                   /* get_public_alias */
-	NULL,                   /* add_buddy_with_invite */
-	NULL                    /* add_buddies_with_invite */
+	NULL                    /* get_public_alias */
 };
 
 /**

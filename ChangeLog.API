@@ -64,6 +64,10 @@ version 3.0.0 (??/??/????):
 		* purple_dnsquery_a now takes a PurpleAccount as the first parameter
 		* purple_srv_resolve now takes a PurpleAccount as the first parameter
 		* purple_txt_resolve now takes a PurpleAccount as the first parameter
+		* purple_account_add_buddy now takes an invite message as the last
+		  parameter
+		* purple_account_add_buddies now takes an invite message as the last
+		  parameter
 
 		Removed:
 		* _GntFileType
@@ -99,6 +103,8 @@ version 3.0.0 (??/??/????):
 		* pidgin_set_custom_buddy_icon
 		* pidgin_setup_screenname_autocomplete
 		* PidginConversation.sg
+		* purple_account_add_buddies_with_invite
+		* purple_account_add_buddy_with_invite
 		* purple_buddy_icons_has_custom_icon
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
@@ -134,6 +140,8 @@ version 3.0.0 (??/??/????):
 		* purple_util_fetch_url_request_len_with_account.  Use
 		  purple_util_fetch_url_request_len, instead.
 		* PurpleConnectionUiOps.report_disconnect_reason
+		* PurplePluginProtocolInfo.add_buddy_with_invite
+		* PurplePluginProtocolInfo.add_buddies_with_invite
 		* serv_got_attention
 		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail

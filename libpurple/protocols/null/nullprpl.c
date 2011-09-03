@@ -548,7 +548,7 @@ static void nullprpl_change_passwd(PurpleConnection *gc, const char *old_pass,
 }
 
 static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
-                               PurpleGroup *group)
+                               PurpleGroup *group, const char *message)
 {
   const char *username = gc->account->username;
   PurpleConnection *buddy_gc = get_nullprpl_gc(buddy->name);
@@ -571,20 +571,20 @@ static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
                                  username,
                                  NULL,   /* local account id (rarely used) */
                                  NULL,   /* alias */
-                                 NULL);  /* message */
+                                 message);  /* message */
     }
   }
 }
 
 static void nullprpl_add_buddies(PurpleConnection *gc, GList *buddies,
-                                 GList *groups) {
+                                 GList *groups, const char *message) {
   GList *buddy = buddies;
   GList *group = groups;
 
   purple_debug_info("nullprpl", "adding multiple buddies\n");
 
   while (buddy && group) {
-    nullprpl_add_buddy(gc, (PurpleBuddy *)buddy->data, (PurpleGroup *)group->data);
+    nullprpl_add_buddy(gc, (PurpleBuddy *)buddy->data, (PurpleGroup *)group->data, message);
     buddy = g_list_next(buddy);
     group = g_list_next(group);
   }
@@ -1131,9 +1131,7 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* get_media_caps */
   NULL,                                /* get_moods */
   NULL,                                /* set_public_alias */
-  NULL,                                /* get_public_alias */
-  NULL,                                /* add_buddy_with_invite */
-  NULL                                 /* add_buddies_with_invite */
+  NULL                                 /* get_public_alias */
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

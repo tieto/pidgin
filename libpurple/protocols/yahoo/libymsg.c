@@ -4056,7 +4056,7 @@ static void yahoo_addbuddyfrommenu_cb(PurpleBlistNode *node, gpointer data)
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	yahoo_add_buddy(gc, buddy, NULL);
+	yahoo_add_buddy(gc, buddy, NULL, NULL);
 }
 
 
@@ -4945,7 +4945,7 @@ void yahoo_keepalive(PurpleConnection *gc)
 
 }
 
-void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
+void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, const char *message)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	struct yahoo_packet *pkt;

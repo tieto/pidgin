@@ -1313,7 +1313,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 				purple_account_remove_buddies(account, buddies, groups);
 				g_list_free(groups);
-				purple_account_add_buddies(account, buddies);
+				purple_account_add_buddies(account, buddies, NULL);
 			}
 
 			g_list_free(buddies);

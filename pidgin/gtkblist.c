@@ -7040,7 +7040,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			purple_blist_add_buddy(b, NULL, g, NULL);
 		}
 
-		purple_account_add_buddy_with_invite(account, b, invite);
+		purple_account_add_buddy(account, b, invite);
 
 		/* Offer to merge people with the same alias. */
 		if (whoalias != NULL && g != NULL)
