@@ -1398,7 +1398,7 @@ static void blist_init(PurpleAccount *acct) {
   }
 
   if(add_buds) {
-    purple_account_add_buddies(acct, add_buds);
+    purple_account_add_buddies(acct, add_buds, NULL);
     g_list_free(add_buds);
   }
 }
