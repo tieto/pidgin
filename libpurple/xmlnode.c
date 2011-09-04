@@ -78,6 +78,19 @@ xmlnode_new_child(xmlnode *parent, const char *name)
 	node = new_node(name, XMLNODE_TYPE_TAG);
 
 	xmlnode_insert_child(parent, node);
+#if 0
+	/* This would give xmlnodes more appropriate namespacing
+	 * when creating them.  Otherwise, unless an explicit namespace
+	 * is set, xmlnode_get_namespace() will return NULL, when
+	 * there may be a default namespace.
+	 *
+	 * I'm unconvinced that it's useful, and concerned it may break things.
+	 *
+	 * _insert_child would need the same thing, probably (assuming
+	 * xmlns->node == NULL)
+	 */
+	xmlnode_set_namespace(node, xmlnode_get_default_namespace(node))
+#endif
 
 	return node;
 }
@@ -255,11 +268,32 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 	node->xmlns = g_strdup(xmlns);
 }
 
-const char *xmlnode_get_namespace(xmlnode *node)
+const char *xmlnode_get_namespace(const xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 
 	return node->xmlns;
+}
+
+const char *xmlnode_get_default_namespace(const xmlnode *node)
+{
+	const char *ns = NULL;
+	g_return_val_if_fail(node != NULL, NULL);
+
+	/* If this node does *not* have a prefix, node->xmlns is the default
+	 * namespace.  Otherwise, it's the prefix namespace.
+	 */
+	if (!node->prefix && node->xmlns) {
+		return node->xmlns;
+	} else if (node->namespace_map) {
+		ns = g_hash_table_lookup(node->namespace_map, "");
+	}
+
+	/* No default ns found?  Walk up the tree looking for one */
+	if (!(ns && *ns) && node->parent)
+		ns = xmlnode_get_default_namespace(node->parent);
+
+	return ns;
 }
 
 void xmlnode_set_prefix(xmlnode *node, const char *prefix)
@@ -443,12 +477,22 @@ xmlnode_to_str_helper(const xmlnode *node, int *len, gboolean formatting, int de
 	if (node->namespace_map) {
 		g_hash_table_foreach(node->namespace_map,
 			(GHFunc)xmlnode_to_str_foreach_append_ns, text);
-	} else if (node->xmlns) {
-		if(!node->parent || !purple_strequal(node->xmlns, node->parent->xmlns))
+	} else {
+		/* Figure out if this node has a different default namespace from parent */
+		const char *xmlns = NULL;
+		const char *parent_xmlns = NULL;
+		if (!prefix)
+			xmlns = node->xmlns;
+
+		if (!xmlns)
+			xmlns = xmlnode_get_default_namespace(node);
+		if (node->parent)
+			parent_xmlns = xmlnode_get_default_namespace(node->parent);
+		if (!purple_strequal(xmlns, parent_xmlns))
 		{
-			char *xmlns = g_markup_escape_text(node->xmlns, -1);
-			g_string_append_printf(text, " xmlns='%s'", xmlns);
-			g_free(xmlns);
+			char *escaped_xmlns = g_markup_escape_text(xmlns, -1);
+			g_string_append_printf(text, " xmlns='%s'", escaped_xmlns);
+			g_free(escaped_xmlns);
 		}
 	}
 	for(c = node->child; c; c = c->next)

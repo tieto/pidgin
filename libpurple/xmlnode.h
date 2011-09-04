@@ -221,7 +221,26 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns);
  * @param node The node to get the namepsace from
  * @return The namespace of this node
  */
-const char *xmlnode_get_namespace(xmlnode *node);
+const char *xmlnode_get_namespace(const xmlnode *node);
+
+/**
+ * Returns the current default namespace.  The default
+ * namespace is the current namespace which applies to child
+ * elements which are unprefixed and which do not contain their
+ * own namespace.
+ *
+ * For example, given:
+ * <iq type='get' xmlns='jabber:client' xmlns:ns1='http://example.org/ns1'>
+ *     <ns1:element><child1/></ns1:element>
+ * </iq>
+ *
+ * The default namespace of all nodes (including 'child1') is "jabber:client",
+ * though the namespace for 'element' is "http://example.org/ns1".
+ *
+ * @param node The node for which to return the default namespace
+ * @return The default namespace of this node
+ */
+const char *xmlnode_get_default_namespace(const xmlnode *node);
 
 /**
  * Sets the prefix of a node
