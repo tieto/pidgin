@@ -81,6 +81,41 @@ START_TEST(test_xmlnode_prefixes)
 }
 END_TEST
 
+
+START_TEST(test_strip_prefixes)
+{
+	const char *xml_doc = "<message xmlns='jabber:client' from='user@gmail.com/resource' to='another_user@darkrain42.org' type='chat' id='purple'>"
+		"<cha:active xmlns:cha='http://jabber.org/protocol/chatstates'/>"
+		"<body>xvlc xvlc</body>"
+		"<im:html xmlns:im='http://jabber.org/protocol/xhtml-im'>"
+			"<xht:body xmlns:xht='http://www.w3.org/1999/xhtml'>"
+				"<xht:p>xvlc <xht:span style='font-weight: bold;'>xvlc</xht:span></xht:p>"
+			"</xht:body>"
+		"</im:html>"
+	"</message>";
+	const char *out = "<message xmlns='jabber:client' from='user@gmail.com/resource' to='another_user@darkrain42.org' type='chat' id='purple'>"
+		"<active xmlns:cha='http://jabber.org/protocol/chatstates' xmlns='http://jabber.org/protocol/chatstates'/>"
+		"<body>xvlc xvlc</body>"
+		"<html xmlns:im='http://jabber.org/protocol/xhtml-im' xmlns='http://jabber.org/protocol/xhtml-im'>"
+			"<body xmlns:xht='http://www.w3.org/1999/xhtml' xmlns='http://www.w3.org/1999/xhtml'>"
+				"<p>xvlc <span style='font-weight: bold;'>xvlc</span></p>"
+			"</body>"
+		"</html>"
+	"</message>";
+	char *str;
+	xmlnode *xml;
+
+	xml = xmlnode_from_str(xml_doc, -1);
+	fail_if(xml == NULL, "Failed to parse XML");
+
+	xmlnode_strip_prefixes(xml);
+	str = xmlnode_to_str(xml, NULL);
+	assert_string_equal_free(out, str);
+
+	xmlnode_free(xml);
+}
+END_TEST
+
 Suite *
 xmlnode_suite(void)
 {
@@ -89,6 +124,7 @@ xmlnode_suite(void)
 	TCase *tc = tcase_create("xmlnode");
 	tcase_add_test(tc, test_xmlnode_billion_laughs_attack);
 	tcase_add_test(tc, test_xmlnode_prefixes);
+	tcase_add_test(tc, test_strip_prefixes);
 
 	suite_add_tcase(s, tc);
 

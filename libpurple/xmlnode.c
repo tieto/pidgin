@@ -262,10 +262,18 @@ xmlnode_get_attrib_with_namespace(const xmlnode *node, const char *attr, const c
 
 void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 {
+	char *tmp;
 	g_return_if_fail(node != NULL);
 
-	g_free(node->xmlns);
+	tmp = node->xmlns;
 	node->xmlns = g_strdup(xmlns);
+
+	if (node->namespace_map) {
+		g_hash_table_insert(node->namespace_map,
+			g_strdup(""), g_strdup(xmlns));
+	}
+
+	g_free(tmp);
 }
 
 const char *xmlnode_get_namespace(const xmlnode *node)
@@ -277,21 +285,26 @@ const char *xmlnode_get_namespace(const xmlnode *node)
 
 const char *xmlnode_get_default_namespace(const xmlnode *node)
 {
+	const xmlnode *current_node;
 	const char *ns = NULL;
+
 	g_return_val_if_fail(node != NULL, NULL);
 
-	/* If this node does *not* have a prefix, node->xmlns is the default
-	 * namespace.  Otherwise, it's the prefix namespace.
-	 */
-	if (!node->prefix && node->xmlns) {
-		return node->xmlns;
-	} else if (node->namespace_map) {
-		ns = g_hash_table_lookup(node->namespace_map, "");
-	}
+	current_node = node;
+	while (current_node) {
+		/* If this node does *not* have a prefix, node->xmlns is the default
+		 * namespace.  Otherwise, it's the prefix namespace.
+		 */
+		if (!current_node->prefix && current_node->xmlns) {
+			return current_node->xmlns;
+		} else if (current_node->namespace_map) {
+			ns = g_hash_table_lookup(current_node->namespace_map, "");
+			if (ns && *ns)
+				return ns;
+		}
 
-	/* No default ns found?  Walk up the tree looking for one */
-	if (!(ns && *ns) && node->parent)
-		ns = xmlnode_get_default_namespace(node->parent);
+		current_node = current_node->parent;
+	}
 
 	return ns;
 }
@@ -308,6 +321,53 @@ const char *xmlnode_get_prefix(const xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 	return node->prefix;
+}
+
+const char *xmlnode_get_prefix_namespace(const xmlnode *node, const char *prefix)
+{
+	const xmlnode *current_node;
+
+	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(prefix != NULL, xmlnode_get_default_namespace(node));
+
+	current_node = node;
+	while (current_node) {
+		if (current_node->prefix && g_str_equal(prefix, current_node->prefix) &&
+				current_node->xmlns) {
+			return current_node->xmlns;
+		} else if (current_node->namespace_map) {
+			const char *ns = g_hash_table_lookup(current_node->namespace_map, prefix);
+			if (ns && *ns) {
+				return ns;
+			}
+		}
+
+		current_node = current_node->parent;
+	}
+
+	return NULL;
+}
+
+void xmlnode_strip_prefixes(xmlnode *node)
+{
+	xmlnode *child;
+	const char *prefix;
+
+	g_return_if_fail(node != NULL);
+
+	for (child = node->child; child; child = child->next) {
+		if (child->type == XMLNODE_TYPE_TAG)
+			xmlnode_strip_prefixes(child);
+	}
+
+	prefix = xmlnode_get_prefix(node);
+	if (prefix) {
+		const char *ns = xmlnode_get_prefix_namespace(node, prefix);
+		xmlnode_set_namespace(node, ns);
+		xmlnode_set_prefix(node, NULL);
+	} else {
+		xmlnode_set_namespace(node, xmlnode_get_default_namespace(node));
+	}
 }
 
 xmlnode *xmlnode_get_parent(const xmlnode *child)

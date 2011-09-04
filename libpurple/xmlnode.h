@@ -243,6 +243,15 @@ const char *xmlnode_get_namespace(const xmlnode *node);
 const char *xmlnode_get_default_namespace(const xmlnode *node);
 
 /**
+ * Returns the defined namespace for a prefix.
+ *
+ * @param node The node from which to start the search.
+ * @param prefix The prefix for which to return the associated namespace.
+ * @return The namespace for this prefix.
+ */
+const char *xmlnode_get_prefix_namespace(const xmlnode *node, const char *prefix);
+
+/**
  * Sets the prefix of a node
  *
  * @param node   The node to qualify
@@ -257,6 +266,19 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix);
  * @return The prefix of this node
  */
 const char *xmlnode_get_prefix(const xmlnode *node);
+
+/**
+ * Remove all element prefixes from an xmlnode tree.  The prefix's
+ * namespace is transformed into the default namespace for an element.
+ *
+ * Note that this will not necessarily remove all prefixes in use
+ * (prefixed attributes may still exist), and that this usage may
+ * break some applications (SOAP / XPath apparently often rely on
+ * the prefixes having the same name.
+ *
+ * @param node The node from which to strip prefixes
+ */
+void xmlnode_strip_prefixes(xmlnode *node);
 
 /**
  * Gets the parent node.
