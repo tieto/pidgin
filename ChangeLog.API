@@ -46,7 +46,9 @@ version 3.0.0 (??/??/????):
 		* purple_xfer_set_protocol_data
 		* purple_xfer_set_status
 		* purple_xfer_set_ui_data
-		* purple_xfer_set_watcher 
+		* purple_xfer_set_watcher
+		* xmlnode_get_default_namespace
+		* xmlnode_strip_prefixes
 
 		Changed:
 		* purple_connection_error now takes a PurpleConnectionError
