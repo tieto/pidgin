@@ -338,24 +338,6 @@ purple_conv_chat_get_conversation(chat)
 	Purple::Conversation::Chat chat
 
 void
-purple_conv_chat_set_users(chat, users)
-	Purple::Conversation::Chat chat
-	SV * users
-PREINIT:
-	GList *l, *t_GL;
-	int i, t_len;
-PPCODE:
-	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(users));
-
-	for (i = 0; i <= t_len; i++)
-		t_GL = g_list_append(t_GL, SvPVutf8_nolen(*av_fetch((AV *)SvRV(users), i, 0)));
-
-	for (l = purple_conv_chat_set_users(chat, t_GL); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
-	}
-
-void
 purple_conv_chat_get_users(chat)
 	Purple::Conversation::Chat chat
 PREINIT:
