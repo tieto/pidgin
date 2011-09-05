@@ -149,6 +149,7 @@ version 3.0.0 (??/??/????):
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite
+		* PurplePluginProtocolInfo.get_cb_away
 		* serv_got_attention
 		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail

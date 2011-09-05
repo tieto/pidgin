@@ -5195,7 +5195,6 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .keepalive                 = mw_prpl_keepalive,
   .register_user             = NULL,
   .get_cb_info               = NULL,
-  .get_cb_away               = NULL,
   .alias_buddy               = mw_prpl_alias_buddy,
   .group_buddy               = mw_prpl_group_buddy,
   .rename_group              = mw_prpl_rename_group,

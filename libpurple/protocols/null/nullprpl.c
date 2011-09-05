@@ -1101,7 +1101,6 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* keepalive */
   nullprpl_register_user,              /* register_user */
   nullprpl_get_cb_info,                /* get_cb_info */
-  NULL,                                /* get_cb_away */
   nullprpl_alias_buddy,                /* alias_buddy */
   nullprpl_group_buddy,                /* group_buddy */
   nullprpl_rename_group,               /* rename_group */

@@ -448,11 +448,6 @@ struct _PurplePluginProtocolInfo
 	 * @deprecated Use #PurplePluginProtocolInfo.get_info instead.
 	 */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
-	/**
-	 * @deprecated Use #PurplePluginProtocolInfo.get_cb_real_name and
-	 *             #PurplePluginProtocolInfo.status_text instead.
-	 */
-	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
 	/** save/store buddy's alias on server list/roster */
 	void (*alias_buddy)(PurpleConnection *, const char *who,

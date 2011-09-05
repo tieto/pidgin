@@ -2971,7 +2971,6 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_keepalive,                      /* keepalive */
 	NULL,                               /* register_user */
 	NULL,                               /* get_cb_info */
-	NULL,                               /* get_cb_away */
 	msn_alias_buddy,                    /* alias_buddy */
 	msn_group_buddy,                    /* group_buddy */
 	msn_rename_group,                   /* rename_group */

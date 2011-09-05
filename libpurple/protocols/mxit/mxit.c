@@ -716,7 +716,6 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_keepalive,			/* keepalive */
 	mxit_register,			/* register_user */
 	NULL,					/* get_cb_info */
-	NULL,					/* get_cb_away */
 	mxit_buddy_alias,		/* alias_buddy				[roster.c] */
 	mxit_buddy_group,		/* group_buddy				[roster.c] */
 	mxit_rename_group,		/* rename_group				[roster.c] */
