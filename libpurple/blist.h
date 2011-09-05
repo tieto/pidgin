@@ -852,19 +852,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Returns the correct alias for this user, ignoring server aliases.  Used
- * when a user-recognizable name is required.  In order: buddy's alias; buddy's
- * contact alias; buddy's user name.
- *
- * @param buddy  The buddy whose alias will be returned.
- * @return       The appropriate name or alias.
- * @deprecated   Try purple_buddy_get_alias(), if server aliases are okay.
- */
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
-#endif
-
 /**
  * Returns the correct name to display for a buddy. In order of precedence:
  * the buddy's alias; the buddy's server alias; the buddy's contact alias;

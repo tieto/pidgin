@@ -2364,26 +2364,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 	return NULL;
 }
 
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
-{
-	PurpleContact *c;
-
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	/* Search for an alias for the buddy. In order of precedence: */
-	/* The buddy alias */
-	if (buddy->alias != NULL)
-		return buddy->alias;
-
-	/* The contact alias */
-	c = purple_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
-
-	/* The buddy's user name (i.e. no alias) */
-	return buddy->name;
-}
-
 const char *purple_chat_get_name(PurpleChat *chat)
 {
 	char *ret = NULL;

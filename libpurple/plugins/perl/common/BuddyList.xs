@@ -421,9 +421,5 @@ purple_buddy_get_contact_alias(buddy)
 	Purple::BuddyList::Buddy buddy
 
 const char *
-purple_buddy_get_local_alias(buddy)
-	Purple::BuddyList::Buddy buddy
-
-const char *
 purple_buddy_get_alias(buddy)
 	Purple::BuddyList::Buddy buddy
