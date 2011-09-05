@@ -112,6 +112,7 @@ version 3.0.0 (??/??/????):
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
 		* purple_connection_error_reason
+		* purple_contact_set_alias
 		* purple_core_migrate
 		* purple_dnsquery_a_account
 		* purple_notify_searchresults_column_get_title

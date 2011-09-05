@@ -762,18 +762,6 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Sets the alias for a contact.
- *
- * @param contact  The contact
- * @param alias    The alias to set, or NULL to unset
- *
- * @deprecated Use purple_blist_alias_contact() instead.
- */
-void purple_contact_set_alias(PurpleContact *contact, const char *alias);
-#endif
-
 /**
  * Gets the alias for a contact.
  *

@@ -1737,11 +1737,6 @@ purple_contact_get_group(const PurpleContact *contact)
 	return (PurpleGroup *)(((PurpleBlistNode *)contact)->parent);
 }
 
-void purple_contact_set_alias(PurpleContact *contact, const char *alias)
-{
-	purple_blist_alias_contact(contact,alias);
-}
-
 const char *purple_contact_get_alias(PurpleContact* contact)
 {
 	g_return_val_if_fail(contact != NULL, NULL);

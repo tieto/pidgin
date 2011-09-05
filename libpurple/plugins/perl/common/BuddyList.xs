@@ -82,11 +82,6 @@ Purple::BuddyList::Buddy
 purple_contact_get_priority_buddy(contact)
 	Purple::BuddyList::Contact contact
 
-void
-purple_contact_set_alias(contact, alias)
-	Purple::BuddyList::Contact contact
-	const char * alias
-
 const char *
 purple_contact_get_alias(contact)
 	Purple::BuddyList::Contact contact
