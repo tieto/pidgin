@@ -956,12 +956,6 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
 		ops->update(purplebuddylist, node);
 }
 
-void
-purple_blist_update_buddy_icon(PurpleBuddy *buddy)
-{
-	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
-}
-
 /*
  * TODO: Maybe remove the call to this from server.c and call it
  * from oscar.c and toc.c instead?

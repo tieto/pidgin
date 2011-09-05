@@ -454,20 +454,8 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  * Updates a node's custom icon.
  *
  * @param node  The PurpleBlistNode whose custom icon has changed.
- *
- * @since 2.5.0
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Updates a buddy's icon.
- *
- * @param buddy  The buddy whose buddy icon has changed
- * @deprecated Use purple_blist_update_node_icon() instead.
- */
-void purple_blist_update_buddy_icon(PurpleBuddy *buddy);
-#endif
 
 /**
  * Renames a buddy in the buddy list.

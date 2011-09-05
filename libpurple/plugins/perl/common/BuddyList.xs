@@ -200,10 +200,6 @@ purple_blist_update_buddy_status(buddy, old_status)
 	Purple::Status old_status
 
 void
-purple_blist_update_buddy_icon(buddy)
-	Purple::BuddyList::Buddy buddy
-
-void
 purple_blist_rename_buddy(buddy, name)
 	Purple::BuddyList::Buddy buddy
 	const char * name
