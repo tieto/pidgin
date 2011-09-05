@@ -129,6 +129,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unregister_unload_notify_cb
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* purple_proxy_connect_socks5
 		* purple_srv_cancel
 		* purple_srv_resolve_account
 		* purple_status_set_attr_boolean
