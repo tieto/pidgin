@@ -278,6 +278,8 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		if (*i == '[' && strchr(i, ']') && load) {
 			struct smiley_list *child = g_new0(struct smiley_list, 1);
 			child->sml = g_strndup(i+1, strchr(i, ']') - i - 1);
+			child->files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
 			if (theme->list)
 				list->next = child;
 			else
@@ -320,6 +322,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				} else {
 					GtkIMHtmlSmiley *smiley = gtk_imhtml_smiley_create(sfile, l, hidden, 0);
 					list->smileys = g_slist_prepend(list->smileys, smiley);
+					g_hash_table_insert (list->files, g_strdup(l), g_strdup(sfile));
 				}
 				while (isspace(*i))
 					i++;
@@ -358,7 +361,6 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
 				/* We want to see our custom smileys on our entry if we write the shortcut */
-				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 				pidgin_themes_smiley_themeize_custom(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}

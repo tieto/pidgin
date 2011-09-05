@@ -95,7 +95,7 @@ struct _PidginConversation
 	GtkWidget *tabby;
 	GtkWidget *menu_tabby;
 
-	GtkWidget *imhtml;
+	GtkWidget *webview;
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
 	gboolean auto_resize;   /* this is set to TRUE if the conversation
