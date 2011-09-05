@@ -358,7 +358,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 }
 
 void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
-		PurpleGroup *group)
+		PurpleGroup *group, const char *message)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	char *who;

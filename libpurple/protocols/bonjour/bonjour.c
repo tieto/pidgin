@@ -256,7 +256,7 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
  * if there is no add_buddy callback.
  */
 static void
-bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group, const char *message) {
 	purple_debug_error("bonjour", "Buddy '%s' manually added; removing.  "
 				      "Bonjour buddies must be discovered and not manually added.\n",
 			   purple_buddy_get_name(buddy));
@@ -484,6 +484,7 @@ static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
@@ -549,15 +550,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* unregister_user */
 	NULL,                                                    /* send_attention */
 	NULL,                                                    /* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	NULL,                                                    /* get_account_text_table */
 	NULL,                                                    /* initiate_media */
 	NULL,                                                    /* get_media_caps */
 	NULL,                                                    /* get_moods */
 	NULL,                                                    /* set_public_alias */
-	NULL,                                                    /* get_public_alias */
-	NULL,                                                    /* add_buddy_with_invite */
-	NULL                                                     /* add_buddies_with_invite */
+	NULL                                                     /* get_public_alias */
 };
 
 static PurplePluginInfo info =

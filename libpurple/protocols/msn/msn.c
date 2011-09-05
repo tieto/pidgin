@@ -2930,6 +2930,7 @@ static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),	/* struct_size */
 	OPT_PROTO_MAIL_CHECK|OPT_PROTO_INVITE_MESSAGE,
 	NULL,                               /* user_splits */
 	NULL,                               /* protocol_options */
@@ -2951,7 +2952,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_set_status,                     /* set_away */
 	msn_set_idle,                       /* set_idle */
 	NULL,                               /* change_passwd */
-	NULL,                               /* add_buddy */
+	msn_add_buddy,                      /* add_buddy */
 	NULL,                               /* add_buddies */
 	msn_rem_buddy,                      /* remove_buddy */
 	NULL,                               /* remove_buddies */
@@ -2995,15 +2996,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* unregister_user */
 	msn_send_attention,                 /* send_attention */
 	msn_attention_types,                /* attention_types */
-	sizeof(PurplePluginProtocolInfo),	/* struct_size */
 	msn_get_account_text_table,         /* get_account_text_table */
 	NULL,                               /* initiate_media */
 	NULL,                               /* get_media_caps */
 	NULL,                               /* get_moods */
 	msn_set_public_alias,               /* set_public_alias */
-	msn_get_public_alias,               /* get_public_alias */
-	msn_add_buddy,                      /* add_buddy_with_invite */
-	NULL                                /* add_buddies_with_invite */
+	msn_get_public_alias                /* get_public_alias */
 };
 
 static PurplePluginInfo info =

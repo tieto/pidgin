@@ -638,6 +638,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jabber_message_add_remote_smileys(js, to, packet);
 				}
 
+				xmlnode_strip_prefixes(child);
+
 				/* reformat xhtml so that img tags with a "cid:" src gets
 				  translated to the bare text of the emoticon (the "alt" attrib) */
 				/* this is done also when custom smiley retrieval is turned off,

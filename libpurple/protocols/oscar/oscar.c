@@ -3806,7 +3806,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 			}
 
 			purple_account_remove_buddies(account, moved_buddies, groups);
-			purple_account_add_buddies(account, moved_buddies);
+			purple_account_add_buddies(account, moved_buddies, NULL);
 			g_list_free(groups);
 			purple_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, gname);

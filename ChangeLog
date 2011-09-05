@@ -14,6 +14,11 @@ version 3.0.0 (??/??/????):
 	* The buddy's name was not centered vertically in the buddy-list if they
 	  did not have a status-message or mood set.
 
+	XMPP:
+	* Strip element prefixes from XHTML-IM messages as they're presented
+	  to the core (and UIs) as incoming messages (Thijs Alkemade).
+	  (#14529)
+
 version 2.10.0 (08/18/2011):
 	Pidgin:
 	* Make the max size of incoming smileys a pref instead of hardcoding it.

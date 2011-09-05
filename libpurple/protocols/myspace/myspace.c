@@ -2627,7 +2627,7 @@ msim_update_blocklist_for_buddy(MsimSession *session, const char *name, gboolean
  * Add a buddy to user's buddy list.
  */
 static void
-msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message)
 {
 	MsimSession *session;
 	MsimMessage *msg;
@@ -3007,6 +3007,7 @@ msim_get_account_text_table(PurpleAccount *unused)
  * Callbacks called by Purple, to access this plugin.
  */
 static PurplePluginProtocolInfo prpl_info = {
+	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,
@@ -3076,15 +3077,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	msim_get_account_text_table,              /* get_account_text_table */
 	NULL,                   /* initiate_media */
 	NULL,                   /* get_media_caps */
 	NULL,                   /* get_moods */
 	NULL,                   /* set_public_alias */
-	NULL,                   /* get_public_alias */
-	NULL,                   /* add_buddy_with_invite */
-	NULL                    /* add_buddies_with_invite */
+	NULL                    /* get_public_alias */
 };
 
 /**

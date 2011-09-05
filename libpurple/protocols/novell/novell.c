@@ -2545,7 +2545,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 }
 
 static void
-novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
+novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group, const char *message)
 {
 	NMFolder *folder = NULL;
 	NMContact *contact;
@@ -3474,6 +3474,7 @@ novell_keepalive(PurpleConnection *gc)
 }
 
 static PurplePluginProtocolInfo prpl_info = {
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
@@ -3539,15 +3540,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* unregister_user */
 	NULL,						/* send_attention */
 	NULL,						/* get_attention_types */
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,						/* get_account_text_table */
 	NULL,						/* initiate_media */
 	NULL,						/* get_media_caps */
 	NULL,						/* get_moods */
 	NULL,						/* set_public_alias */
-	NULL,						/* get_public_alias */
-	NULL,						/* add_buddy_with_invite */
-	NULL						/* add_buddies_with_invite */
+	NULL						/* get_public_alias */
 };
 
 static PurplePluginInfo info = {

@@ -663,7 +663,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_buddy(buddy, NULL, grp, NULL);
 	}
 
-	purple_account_add_buddy_with_invite(account, buddy, invite);
+	purple_account_add_buddy(account, buddy, invite);
 }
 
 static void

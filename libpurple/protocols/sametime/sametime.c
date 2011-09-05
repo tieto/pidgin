@@ -1398,7 +1398,7 @@ static void blist_init(PurpleAccount *acct) {
   }
 
   if(add_buds) {
-    purple_account_add_buddies(acct, add_buds);
+    purple_account_add_buddies(acct, add_buds, NULL);
     g_list_free(add_buds);
   }
 }
@@ -4513,7 +4513,8 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 
 static void mw_prpl_add_buddy(PurpleConnection *gc,
 			      PurpleBuddy *buddy,
-			      PurpleGroup *group) {
+			      PurpleGroup *group,
+			      const char *message) {
 
   struct mwPurplePluginData *pd = purple_connection_get_protocol_data(gc);
   struct mwServiceResolve *srvc;
@@ -4560,7 +4561,8 @@ static void foreach_add_buddies(PurpleGroup *group, GList *buddies,
 
 static void mw_prpl_add_buddies(PurpleConnection *gc,
 				GList *buddies,
-				GList *groups) {
+				GList *groups,
+				const char *message) {
 
   struct mwPurplePluginData *pd;
   GHashTable *group_sets;
@@ -5152,6 +5154,7 @@ static void mw_prpl_send_file(PurpleConnection *gc,
 
 
 static PurplePluginProtocolInfo mw_prpl_info = {
+  .struct_size               = sizeof(PurplePluginProtocolInfo),
   .options                   = OPT_PROTO_IM_IMAGE,
   .user_splits               = NULL, /*< set in mw_plugin_init */
   .protocol_options          = NULL, /*< set in mw_plugin_init */
@@ -5211,8 +5214,7 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .new_xfer                  = mw_prpl_new_xfer,
   .offline_message           = NULL,
   .whiteboard_prpl_ops       = NULL,
-  .send_raw                  = NULL,
-  .struct_size               = sizeof(PurplePluginProtocolInfo)
+  .send_raw                  = NULL
 };
 
 

@@ -105,7 +105,7 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 				  SilcVerifyPublicKey completion,
 				  void *context);
 GList *silcpurple_buddy_menu(PurpleBuddy *buddy);
-void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group, const char *message);
 void silcpurple_send_buddylist(PurpleConnection *gc);
 void silcpurple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void silcpurple_buddy_keyagr_request(SilcClient client,
