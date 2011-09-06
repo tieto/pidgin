@@ -858,6 +858,7 @@ docklet_gtk_recreate_cb(gpointer data)
 	return FALSE;
 }
 
+#ifndef _WIN32
 static gboolean
 docklet_gtk_embed_timeout_cb(gpointer data)
 {
@@ -890,6 +891,7 @@ docklet_gtk_embed_timeout_cb(gpointer data)
 	return TRUE;
 #endif
 }
+#endif
 
 #if GTK_CHECK_VERSION(2,12,0)
 static gboolean
@@ -1005,7 +1007,7 @@ docklet_gtk_status_create(gboolean recreate)
 	 */
 	if (!recreate) {
 		pidgin_docklet_embedded();
-#ifdef _WIN32
+#ifndef _WIN32
 #if GTK_CHECK_VERSION(2,12,0)
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded")) {
 			embed_timeout = purple_timeout_add_seconds(LONG_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
