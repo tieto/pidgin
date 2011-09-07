@@ -440,7 +440,8 @@ static void clear_conversation_scrollback(PurpleConversation *conv)
 static void clear_conversation_scrollback_cb(PurpleConversation *conv,
 		void *data)
 {
-	clear_conversation_scrollback(conv);
+	if (PIDGIN_CONVERSATION(conv))
+		clear_conversation_scrollback(conv);
 }
 static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
