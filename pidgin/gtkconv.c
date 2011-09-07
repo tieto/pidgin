@@ -432,8 +432,6 @@ static void clear_conversation_scrollback(PurpleConversation *conv)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (gtkconv->webview), "", "");
-	for (iter = gtkconv->convs; iter; iter = iter->next)
-		purple_conversation_clear_message_history(iter->data);
 }
 
 
@@ -447,7 +445,7 @@ static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -455,7 +453,7 @@ static PurpleCmdRet
 clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
-	purple_conversation_foreach(clear_conversation_scrollback);
+	purple_conversation_foreach(purple_conversation_clear_message_history);
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -1148,7 +1146,7 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 	PurpleConversation *conv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 }
 
 static void
