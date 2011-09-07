@@ -424,22 +424,15 @@ debug_command_cb(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
-static void clear_conversation_scrollback(PurpleConversation *conv)
-{
-	PidginConversation *gtkconv = NULL;
-	GList *iter;
-
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (gtkconv->webview), "", "");
-}
-
-
 static void clear_conversation_scrollback_cb(PurpleConversation *conv,
 		void *data)
 {
+	PidginConversation *gtkconv = NULL;
+
+	gtkconv = PIDGIN_CONVERSATION(conv);
+
 	if (PIDGIN_CONVERSATION(conv))
-		clear_conversation_scrollback(conv);
+		webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (gtkconv->webview), "", "");
 }
 static PurpleCmdRet
 clear_command_cb(PurpleConversation *conv,
