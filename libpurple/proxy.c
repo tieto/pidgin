@@ -2408,17 +2408,6 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	return connect_data;
 }
 
-PurpleProxyConnectData *
-purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
-						  const char *host, int port,
-						  PurpleProxyConnectFunction connect_cb,
-						  gpointer data)
-{
-	return purple_proxy_connect_socks5_account(NULL, handle, gpi,
-						  host, port, connect_cb, data);
-}
-
-
 /* This is called when we connect to the SOCKS5 proxy server (through any
  * relevant account proxy)
  */

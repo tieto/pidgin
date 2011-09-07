@@ -956,12 +956,6 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
 		ops->update(purplebuddylist, node);
 }
 
-void
-purple_blist_update_buddy_icon(PurpleBuddy *buddy)
-{
-	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
-}
-
 /*
  * TODO: Maybe remove the call to this from server.c and call it
  * from oscar.c and toc.c instead?
@@ -1743,11 +1737,6 @@ purple_contact_get_group(const PurpleContact *contact)
 	return (PurpleGroup *)(((PurpleBlistNode *)contact)->parent);
 }
 
-void purple_contact_set_alias(PurpleContact *contact, const char *alias)
-{
-	purple_blist_alias_contact(contact,alias);
-}
-
 const char *purple_contact_get_alias(PurpleContact* contact)
 {
 	g_return_val_if_fail(contact != NULL, NULL);
@@ -2373,26 +2362,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 	    return buddy->server_alias;
 
 	return NULL;
-}
-
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
-{
-	PurpleContact *c;
-
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	/* Search for an alias for the buddy. In order of precedence: */
-	/* The buddy alias */
-	if (buddy->alias != NULL)
-		return buddy->alias;
-
-	/* The contact alias */
-	c = purple_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
-
-	/* The buddy's user name (i.e. no alias) */
-	return buddy->name;
 }
 
 const char *purple_chat_get_name(PurpleChat *chat)

@@ -1379,16 +1379,6 @@ purple_conv_chat_get_conversation(const PurpleConvChat *chat)
 }
 
 GList *
-purple_conv_chat_set_users(PurpleConvChat *chat, GList *users)
-{
-	g_return_val_if_fail(chat != NULL, NULL);
-
-	chat->in_room = users;
-
-	return users;
-}
-
-GList *
 purple_conv_chat_get_users(const PurpleConvChat *chat)
 {
 	g_return_val_if_fail(chat != NULL, NULL);

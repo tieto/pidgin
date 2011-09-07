@@ -95,8 +95,6 @@ PIDGIN_C_SRC =	\
 			minidialog.c \
 			pidginstock.c \
 			pidgintooltip.c \
-			win32/MinimizeToTray.c \
-			win32/gtkdocklet-win32.c \
 			win32/gtkwin32dep.c \
 			win32/untar.c \
 			win32/wspell.c

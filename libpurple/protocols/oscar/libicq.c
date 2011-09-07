@@ -79,7 +79,6 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_keepalive,		/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
-	NULL,					/* get_cb_away */
 	oscar_alias_buddy,		/* alias_buddy */
 	oscar_move_buddy,		/* group_buddy */
 	oscar_rename_group,		/* rename_group */

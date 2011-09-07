@@ -715,6 +715,7 @@ docklet_menu(void)
 {
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
+	GtkMenuPositionFunc pos_func = gtk_status_icon_position_menu;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -790,10 +791,11 @@ docklet_menu(void)
 #ifdef _WIN32
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
 	g_signal_connect(menu, "enter-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
+	pos_func = NULL;
 #endif
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-		       gtk_status_icon_position_menu,
+		       pos_func,
 		       docklet, 0, gtk_get_current_event_time());
 }
 
@@ -856,6 +858,7 @@ docklet_gtk_recreate_cb(gpointer data)
 	return FALSE;
 }
 
+#ifndef _WIN32
 static gboolean
 docklet_gtk_embed_timeout_cb(gpointer data)
 {
@@ -888,6 +891,7 @@ docklet_gtk_embed_timeout_cb(gpointer data)
 	return TRUE;
 #endif
 }
+#endif
 
 #if GTK_CHECK_VERSION(2,12,0)
 static gboolean
@@ -1003,6 +1007,7 @@ docklet_gtk_status_create(gboolean recreate)
 	 */
 	if (!recreate) {
 		pidgin_docklet_embedded();
+#ifndef _WIN32
 #if GTK_CHECK_VERSION(2,12,0)
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded")) {
 			embed_timeout = purple_timeout_add_seconds(LONG_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
@@ -1011,6 +1016,7 @@ docklet_gtk_status_create(gboolean recreate)
 		}
 #else
 		embed_timeout = purple_timeout_add_seconds(SHORT_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
+#endif
 #endif
 	}
 
@@ -1036,6 +1042,7 @@ pidgin_docklet_init()
 	void *accounts_handle = purple_accounts_get_handle();
 	void *status_handle = purple_savedstatuses_get_handle();
 	void *docklet_handle = pidgin_docklet_get_handle();
+	gchar *tmp;
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/blink", FALSE);
@@ -1051,8 +1058,9 @@ pidgin_docklet_init()
 		purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded", FALSE);
 	}
 
-	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
-		DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "pidgin" G_DIR_SEPARATOR_S "tray");
+	tmp = g_build_path(G_DIR_SEPARATOR_S, DATADIR, "pixmaps", "pidgin", "tray", NULL);
+	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), tmp);
+	g_free(tmp);
 
 	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always"))
 		docklet_gtk_status_create(FALSE);

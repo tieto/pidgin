@@ -412,7 +412,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
  *
  * @param session
  * @param msg The user information reply, with any amount of information.
- * @param user The structure to save to, or NULL to save in PurpleBuddy->proto_data.
+ * @param user The structure to save to, or NULL to save in PurpleBuddy's protocol_data.
  *
  * Variable information is saved to the passed MsimUser structure. Permanent
  * information (UserID) is stored in the blist node of the buddy list (and

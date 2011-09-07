@@ -113,8 +113,7 @@ char * purple_menu_action_get_label(const PurpleMenuAction *act)
 	return act->label;
 }
 
-PurpleCallback *
-purple_menu_action_get_callback(const PurpleMenuAction *act)
+PurpleCallback purple_menu_action_get_callback(const PurpleMenuAction *act)
 {
 	g_return_val_if_fail(act != NULL, NULL);
 
