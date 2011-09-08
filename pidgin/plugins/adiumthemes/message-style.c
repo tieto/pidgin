@@ -32,10 +32,8 @@
 static void
 glist_free_all_string(GList *list)
 {
-	GList *first = list;
-	for (; list; list = g_list_next(list))
+	for (; list; list = g_list_delete_link(list, list))
 		g_free(list->data);
-	g_list_free(first);
 }
 
 static PidginMessageStyle *
