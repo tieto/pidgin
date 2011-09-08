@@ -34,6 +34,7 @@ contact_priority_la_LDFLAGS = -module -avoid-version
 extplacement_la_LDFLAGS     = -module -avoid-version
 gtk_signals_test_la_LDFLAGS = -module -avoid-version
 gtkbuddynote_la_LDFLAGS     = -module -avoid-version
+history_la_LDFLAGS          = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
 notify_la_LDFLAGS           = -module -avoid-version
 pidginrc_la_LDFLAGS         = -module -avoid-version
@@ -50,6 +51,7 @@ plugin_LTLIBRARIES = \
 	convcolors.la       \
 	extplacement.la     \
 	gtkbuddynote.la     \
+	history.la          \
 	iconaway.la         \
 	notify.la           \
 	pidginrc.la         \
@@ -72,6 +74,7 @@ contact_priority_la_SOURCES = contact_priority.c
 extplacement_la_SOURCES     = extplacement.c
 gtk_signals_test_la_SOURCES = gtk-signals-test.c
 gtkbuddynote_la_SOURCES     = gtkbuddynote.c
+history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
 notify_la_SOURCES           = notify.c
 pidginrc_la_SOURCES         = pidginrc.c
@@ -86,6 +89,7 @@ contact_priority_la_LIBADD  = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
 gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
 gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
+history_la_LIBADD           = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
 notify_la_LIBADD            = $(GTK_LIBS)
 pidginrc_la_LIBADD          = $(GTK_LIBS)
@@ -116,6 +120,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
