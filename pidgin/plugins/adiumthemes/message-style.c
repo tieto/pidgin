@@ -49,43 +49,6 @@ pidgin_message_style_new(const char *styledir)
 	return ret;
 }
 
-/**
- * deallocate any memory used for info.plist options
- */
-static void
-pidgin_message_style_unset_info_plist(PidginMessageStyle *style)
-{
-	style->message_view_version = 0;
-	g_free(style->cf_bundle_name);
-	style->cf_bundle_name = NULL;
-
-	g_free(style->cf_bundle_identifier);
-	style->cf_bundle_identifier = NULL;
-
-	g_free(style->cf_bundle_get_info_string);
-	style->cf_bundle_get_info_string = NULL;
-
-	g_free(style->default_font_family);
-	style->default_font_family = NULL;
-
-	style->default_font_size = 0;
-	style->shows_user_icons = TRUE;
-	style->disable_combine_consecutive = FALSE;
-	style->default_background_is_transparent = FALSE;
-	style->disable_custom_background = FALSE;
-
-	g_free(style->default_background_color);
-	style->default_background_color = NULL;
-
-	style->allow_text_colors = TRUE;
-
-	g_free(style->image_mask);
-	style->image_mask = NULL;
-	g_free(style->default_variant);
-	style->default_variant = NULL;
-}
-
-
 void
 pidgin_message_style_unref(PidginMessageStyle *style)
 {
@@ -96,6 +59,14 @@ pidgin_message_style_unref(PidginMessageStyle *style)
 	style->ref_counter--;
 	if (style->ref_counter)
 		return;
+
+	g_free(style->cf_bundle_name);
+	g_free(style->cf_bundle_identifier);
+	g_free(style->cf_bundle_get_info_string);
+	g_free(style->default_font_family);
+	g_free(style->default_background_color);
+	g_free(style->image_mask);
+	g_free(style->default_variant);
 
 	g_free(style->style_dir);
 	g_free(style->template_path);
@@ -108,8 +79,6 @@ pidgin_message_style_unref(PidginMessageStyle *style)
 	g_free(style->basestyle_css);
 
 	g_free(style);
-
-	pidgin_message_style_unset_info_plist(style);
 }
 
 void
