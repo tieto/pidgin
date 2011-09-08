@@ -1,3 +1,24 @@
+/* pidgin
+ *
+ * Pidgin is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
+ */
 
 #include <glib.h>
 
@@ -47,13 +68,14 @@ typedef struct _PidginMessageStyle {
 	char    *basestyle_css;
 } PidginMessageStyle;
 
-PidginMessageStyle* pidgin_message_style_load (const char* styledir);
-PidginMessageStyle* pidgin_message_style_copy (const PidginMessageStyle *style);
-void pidgin_message_style_save_state (const PidginMessageStyle *style);
-void pidgin_message_style_unref (PidginMessageStyle *style);
-void pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant);
-char* pidgin_message_style_get_variant (PidginMessageStyle *style);
-GList* pidgin_message_style_get_variants (PidginMessageStyle *style);
-void pidgin_message_style_set_variant (PidginMessageStyle *style, const char *variant);
+PidginMessageStyle *pidgin_message_style_load(const char *styledir);
+PidginMessageStyle *pidgin_message_style_copy(const PidginMessageStyle *style);
+void pidgin_message_style_save_state(const PidginMessageStyle *style);
+void pidgin_message_style_unref(PidginMessageStyle *style);
+void pidgin_message_style_read_info_plist(PidginMessageStyle *style, const char *variant);
+char *pidgin_message_style_get_variant(PidginMessageStyle *style);
+GList *pidgin_message_style_get_variants(PidginMessageStyle *style);
+void pidgin_message_style_set_variant(PidginMessageStyle *style, const char *variant);
 
-char* pidgin_message_style_get_css (PidginMessageStyle *style);
+char *pidgin_message_style_get_css(PidginMessageStyle *style);
+

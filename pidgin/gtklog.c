@@ -130,7 +130,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 		populate_log_tree(lv);
 		g_free(lv->search);
 		lv->search = NULL;
-		webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(lv->web_view)); 
+		webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(lv->web_view));
 		select_first_log(lv);
 		return;
 	}
@@ -138,7 +138,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	if (lv->search != NULL && !strcmp(lv->search, search_term))
 	{
 		/* Searching for the same term acts as "Find Next" */
-		webkit_web_view_search_text (WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, TRUE, TRUE);
+		webkit_web_view_search_text(WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, TRUE, TRUE);
 		return;
 	}
 
@@ -148,7 +148,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	lv->search = g_strdup(search_term);
 
 	gtk_tree_store_clear(lv->treestore);
-	webkit_web_view_open (WEBKIT_WEB_VIEW (lv->web_view), "about:blank"); /* clear the view */
+	webkit_web_view_open(WEBKIT_WEB_VIEW(lv->web_view), "about:blank"); /* clear the view */
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = purple_log_read((PurpleLog*)logs->data, NULL);
@@ -419,9 +419,9 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 static gboolean search_find_cb(gpointer data)
 {
 	PidginLogViewer *viewer = data;
-	webkit_web_view_mark_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), viewer->search, FALSE, 0);
-	webkit_web_view_set_highlight_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), TRUE);
-	webkit_web_view_search_text (WEBKIT_WEB_VIEW (viewer->web_view), viewer->search, FALSE, TRUE, TRUE);
+	webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(viewer->web_view), viewer->search, FALSE, 0);
+	webkit_web_view_set_highlight_text_matches(WEBKIT_WEB_VIEW(viewer->web_view), TRUE);
+	webkit_web_view_search_text(WEBKIT_WEB_VIEW(viewer->web_view), viewer->search, FALSE, TRUE, TRUE);
 	return FALSE;
 }
 
@@ -462,11 +462,11 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	read = purple_log_read(log, &flags);
 	viewer->flags = flags;
 
-	webkit_web_view_open (WEBKIT_WEB_VIEW(viewer->web_view), "about:blank");
+	webkit_web_view_open(WEBKIT_WEB_VIEW(viewer->web_view), "about:blank");
 
 	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
 
-	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW(viewer->web_view), read, "");
+	webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(viewer->web_view), read, "");
 	g_free(read);
 
 	if (viewer->search != NULL) {
@@ -614,7 +614,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
-	gtk_paned_add1(GTK_PANED(pane), 
+	gtk_paned_add1(GTK_PANED(pane),
 		pidgin_make_scrollable(lv->treeview, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
 
 	populate_log_tree(lv);
@@ -649,7 +649,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
-	/*
+	/* FIXME:
 	sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
