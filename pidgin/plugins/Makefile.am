@@ -35,6 +35,7 @@ extplacement_la_LDFLAGS     = -module -avoid-version
 gtk_signals_test_la_LDFLAGS = -module -avoid-version
 gtkbuddynote_la_LDFLAGS     = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
+notify_la_LDFLAGS           = -module -avoid-version
 pidginrc_la_LDFLAGS         = -module -avoid-version
 relnot_la_LDFLAGS           = -module -avoid-version
 sendbutton_la_LDFLAGS       = -module -avoid-version
@@ -50,6 +51,7 @@ plugin_LTLIBRARIES = \
 	extplacement.la     \
 	gtkbuddynote.la     \
 	iconaway.la         \
+	notify.la           \
 	pidginrc.la         \
 	relnot.la           \
 	sendbutton.la       \
@@ -71,6 +73,7 @@ extplacement_la_SOURCES     = extplacement.c
 gtk_signals_test_la_SOURCES = gtk-signals-test.c
 gtkbuddynote_la_SOURCES     = gtkbuddynote.c
 iconaway_la_SOURCES         = iconaway.c
+notify_la_SOURCES           = notify.c
 pidginrc_la_SOURCES         = pidginrc.c
 relnot_la_SOURCES           = relnot.c
 sendbutton_la_SOURCES       = sendbutton.c
@@ -84,6 +87,7 @@ extplacement_la_LIBADD      = $(GTK_LIBS)
 gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
 gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
+notify_la_LIBADD            = $(GTK_LIBS)
 pidginrc_la_LIBADD          = $(GTK_LIBS)
 relnot_la_LIBADD            = $(GLIB_LIBS)
 sendbutton_la_LIBADD        = $(GTK_LIBS)
