@@ -434,6 +434,16 @@ running configure.
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
+	PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+You must have WebKit 1.1.1 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
+])])
+	AC_SUBST(WEBKIT_CFLAGS)
+	AC_SUBST(WEBKIT_LIBS)
+
 	dnl #######################################################################
 	dnl # Check if we should compile with X support
 	dnl #######################################################################
@@ -709,8 +719,6 @@ AC_SUBST(GNT_CFLAGS)
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_consoleui" = "xyes")
 
 #AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
-
-PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1]);
 
 dnl #######################################################################
 dnl # Check for LibXML2 (required)
