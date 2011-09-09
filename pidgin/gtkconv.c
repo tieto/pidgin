@@ -4875,7 +4875,7 @@ pidgin_conv_end_quickfind(PidginConversation *gtkconv)
 {
 	gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
 
-	gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->webview));
+	webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(gtkconv->webview));
 	gtk_widget_hide_all(gtkconv->quickfind.container);
 
 	gtk_widget_grab_focus(gtkconv->entry);
@@ -4888,7 +4888,7 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 	switch (event->keyval) {
 		case GDK_Return:
 		case GDK_KP_Enter:
-			if (gtk_imhtml_search_find(GTK_IMHTML(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)))) {
+			if (webkit_web_view_search_text(WEBKIT_WEB_VIEW(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)), FALSE, TRUE, TRUE)) {
 				gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
 			} else {
 				GdkColor col;
