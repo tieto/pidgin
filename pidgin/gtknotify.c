@@ -819,7 +819,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *web_view;
-	GtkWidget *scrolled_window;
+	GtkWidget *frame;
 	char label_text[2048];
 	char *linked_text, *primary_esc, *secondary_esc;
 
@@ -855,17 +855,11 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(label);
 
 	/* Add the webview */
-	scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-	web_view = gtk_webview_new();
-	gtk_container_add(GTK_CONTAINER(scrolled_window), web_view);
-
+	frame = pidgin_create_webview(FALSE, &web_view, NULL, NULL);
 	gtk_widget_set_name(web_view, "pidgin_notify_webview");
 	gtk_widget_set_size_request(web_view, 300, 250);
-	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
-	gtk_widget_show_all(scrolled_window);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
 	/* Add the Close button. */
 	button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
@@ -1138,7 +1132,6 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	if (pinfo != NULL) {
 		GtkWidget *webview = g_object_get_data(G_OBJECT(pinfo->window), "webview-widget");
 		char *linked_text = purple_markup_linkify(info);
-		g_assert(webview);
 		gtk_webview_load_html_string_with_imgstore(GTK_WEBVIEW(webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
