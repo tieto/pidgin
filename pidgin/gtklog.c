@@ -649,18 +649,11 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
-	/* FIXME:
-	sw = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-	lv->web_view = gtk_webview_new ();
-	gtk_container_add (GTK_CONTAINER (sw), lv->web_view);
-	*/
-	frame = pidgin_create_imhtml(FALSE, &lv->web_view, NULL, NULL);
+	frame = pidgin_create_webview(FALSE, &lv->web_view, NULL, NULL);
 	gtk_widget_set_name(lv->web_view, "pidgin_log_web_view");
 	gtk_widget_set_size_request(lv->web_view, 320, 200);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
 	/* Search box **********/
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
