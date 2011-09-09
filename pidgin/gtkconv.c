@@ -4947,7 +4947,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleBuddy *buddy;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
-	GtkPolicyType webview_sw_hscroll;
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
@@ -5039,16 +5038,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	/* Setup the webkit widget */
-	/* TODO: create a pidgin_create_webview() function in utils*/
-	webview_sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(webview_sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(webview_sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-	gtkconv->webview = gtk_webview_new();
-	gtk_webview_set_vadjustment(GTK_WEBVIEW(gtkconv->webview),
-			gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(webview_sw)));
-	gtk_container_add(GTK_CONTAINER(webview_sw), gtkconv->webview);
-
+	frame = pidgin_create_webview(FALSE, &gtkconv->webview, NULL, &webview_sw);
 	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
 
 	if (chat) {
@@ -5061,22 +5051,17 @@ setup_common_pane(PidginConversation *gtkconv)
 		hpaned = gtk_hpaned_new();
 		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 		gtk_widget_show(hpaned);
-		gtk_paned_pack1(GTK_PANED(hpaned), webview_sw, TRUE, TRUE);
+		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
 
 		/* Now add the userlist */
 		setup_chat_userlist(gtkconv, hpaned);
 	} else {
-		gtk_box_pack_start(GTK_BOX(vbox), webview_sw, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	}
-	gtk_widget_show_all(webview_sw);
+	gtk_widget_show_all(frame);
 
 	gtk_widget_set_name(gtkconv->webview, "pidgin_conv_webview");
 	g_object_set_data(G_OBJECT(gtkconv->webview), "gtkconv", gtkconv);
-
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(webview_sw),
-	                               &webview_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(webview_sw),
-	                               webview_sw_hscroll, GTK_POLICY_ALWAYS);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->webview), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
