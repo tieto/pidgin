@@ -74,6 +74,39 @@
 
 #include "gtknickcolors.h"
 
+/**
+ * A GTK+ Instant Message pane.
+ */
+struct _PidginImPane
+{
+	GtkWidget *block;
+	GtkWidget *send_file;
+	GtkWidget *sep1;
+	GtkWidget *sep2;
+	GtkWidget *check;
+	GtkWidget *progress;
+	guint32 typing_timer;
+
+	/* Buddy icon stuff */
+	GtkWidget *icon_container;
+	GtkWidget *icon;
+	gboolean show_icon;
+	gboolean animate;
+	GdkPixbufAnimation *anim;
+	GdkPixbufAnimationIter *iter;
+	guint32 icon_timer;
+};
+
+/**
+ * GTK+ Chat panes.
+ */
+struct _PidginChatPane
+{
+	GtkWidget *count;
+	GtkWidget *list;
+	GtkWidget *topic_text;
+};
+
 #define CLOSE_CONV_TIMEOUT_SECS  (10 * 60)
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
@@ -356,8 +389,32 @@ debug_command_cb(PurpleConversation *conv,
 		}
 
 		tmp = g_string_free(str, FALSE);
+	} else if (!g_ascii_strcasecmp(args[0], "unsafe")) {
+		if (purple_debug_is_unsafe()) {
+			purple_debug_set_unsafe(FALSE);
+			purple_conversation_write(conv, NULL, _("Unsafe debugging is now disabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		} else {
+			purple_debug_set_unsafe(TRUE);
+			purple_conversation_write(conv, NULL, _("Unsafe debugging is now enabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+
+		return PURPLE_CMD_RET_OK;
+	} else if (!g_ascii_strcasecmp(args[0], "verbose")) {
+		if (purple_debug_is_verbose()) {
+			purple_debug_set_verbose(FALSE);
+			purple_conversation_write(conv, NULL, _("Verbose debugging is now disabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		} else {
+			purple_debug_set_verbose(TRUE);
+			purple_conversation_write(conv, NULL, _("Verbose debugging is now enabled."),
+			                          PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+
+		return PURPLE_CMD_RET_OK;
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
+		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version unsafe verbose"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
 		return PURPLE_CMD_RET_OK;
 	}
@@ -578,7 +635,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	if (strlen(clean) == 0) {
+	if (!*clean) {
 		g_free(buf);
 		g_free(clean);
 		return;
@@ -4824,7 +4881,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	gtkchat->list = list;
 
-	gtk_box_pack_start(GTK_BOX(lbox), 
+	gtk_box_pack_start(GTK_BOX(lbox),
 		pidgin_make_scrollable(list, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 }
@@ -5253,8 +5310,8 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
 		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, b->account))) {
-			if (conv->ui_data)
-				return conv->ui_data;
+			if (PIDGIN_CONVERSATION(conv))
+				return PIDGIN_CONVERSATION(conv);
 		}
 	}
 
@@ -5342,7 +5399,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	PurpleValue *value;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
-		conv->ui_data = gtkconv;
+		purple_conversation_set_ui_data(conv, gtkconv);
 		if (!g_list_find(gtkconv->convs, conv))
 			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 		pidgin_conv_switch_active_conversation(conv);
@@ -5350,7 +5407,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 
 	gtkconv = g_new0(PidginConversation, 1);
-	conv->ui_data = gtkconv;
+	purple_conversation_set_ui_data(conv, gtkconv);
 	gtkconv->active_conv = conv;
 	gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 	gtkconv->send_history = g_list_append(NULL, NULL);
@@ -5377,7 +5434,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 			g_free(gtkconv->u.im);
 
 		g_free(gtkconv);
-		conv->ui_data = NULL;
+		purple_conversation_set_ui_data(conv, NULL);
 		return;
 	}
 
@@ -6427,7 +6484,7 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 
 	if (!gdk_pixbuf_loader_write(smiley->loader, data, size, &error) || error) {
 		purple_debug_warning("gtkconv", "gdk_pixbuf_loader_write() "
-				"failed with size=%zu: %s\n", size,
+				"failed with size=%" G_GSIZE_FORMAT ": %s\n", size,
 				error ? error->message : "(no error message)");
 		if (error)
 			g_error_free(error);
@@ -6633,7 +6690,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
-			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL) || (prpl_info->add_buddy_with_invite != NULL));
+			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
 			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
 			gtk_widget_set_sensitive(win->menu.send_file,
 									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||

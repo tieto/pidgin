@@ -922,24 +922,6 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	return optmenu;
 }
 
-gboolean
-pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
-{
-	char *dirname = NULL;
-
-	if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
-		/* append a / if needed */
-		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
-			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
-		}
-		gtk_file_selection_set_filename(filesel, (dirname != NULL) ? dirname : path);
-		g_free(dirname);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 void
 pidgin_setup_gtkspell(GtkTextView *textview)
 {
@@ -1002,7 +984,7 @@ static void
 show_retrieveing_info(PurpleConnection *conn, const char *name)
 {
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_user_info_add_pair_plaintext(info, _("Information"), _("Retrieving..."));
 	purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
 }
@@ -1308,7 +1290,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
-	push_in = FALSE;
+	*push_in = FALSE;
 
 	/*
 	 * The placement of popup menus horizontally works like this (with
@@ -1834,21 +1816,27 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                             gpointer object)
 {
 	GtkWidget *menuitem;
+	GList *list;
 
 	if (act == NULL) {
 		return pidgin_separator(menu);
 	}
 
-	if (act->children == NULL) {
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+	list = purple_menu_action_get_children(act);
+	menuitem = gtk_menu_item_new_with_mnemonic(purple_menu_action_get_label(act));
 
-		if (act->callback != NULL) {
+	if (list == NULL) {
+		PurpleCallback callback;
+
+		callback = purple_menu_action_get_callback(act);
+
+		if (callback != NULL) {
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallback",
-							  act->callback);
+							  callback);
 			g_object_set_data(G_OBJECT(menuitem),
 							  "purplecallbackdata",
-							  act->data);
+							  purple_menu_action_get_data(act));
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 							 G_CALLBACK(menu_action_cb),
 							 object);
@@ -1862,7 +1850,6 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 		GtkWidget *submenu = NULL;
 		GtkAccelGroup *group;
 
-		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
@@ -1870,19 +1857,20 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 
 		group = gtk_menu_get_accel_group(GTK_MENU(menu));
 		if (group) {
-			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
+			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path,
+					purple_menu_action_get_label(act));
 			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 			g_free(path);
 			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 		}
 
-		for (l = act->children; l; l = l->next) {
+		for (l = list; l; l = l->next) {
 			PurpleMenuAction *act = (PurpleMenuAction *)l->data;
 
 			pidgin_append_menu_action(submenu, act, object);
 		}
-		g_list_free(act->children);
-		act->children = NULL;
+		g_list_free(list);
+		purple_menu_action_set_children(act, NULL);
 	}
 	purple_menu_action_free(act);
 	return menuitem;
@@ -2180,13 +2168,6 @@ pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *
 		return all || (completion_entry->entry.logged_buddy->account != NULL && purple_account_is_connected(completion_entry->entry.logged_buddy->account));
 	}
 }
-
-void
-pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all) {
-	pidgin_setup_screenname_autocomplete_with_filter(entry, accountopt, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all));
-}
-
-
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
@@ -2531,21 +2512,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	g_free(tmp);
 
 	return NULL;
-}
-
-void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
-{
-	PurpleBuddy *buddy;
-	PurpleContact *contact;
-
-	buddy = purple_find_buddy(account, who);
-	if (!buddy) {
-		purple_debug_info("custom-icon", "You can only set custom icon for someone in your buddylist.\n");
-		return;
-	}
-
-	contact = purple_buddy_get_contact(buddy);
-	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)

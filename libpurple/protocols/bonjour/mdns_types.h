@@ -37,7 +37,7 @@ typedef struct _BonjourDnsSd {
 	gchar *msg;
 } BonjourDnsSd;
 
-typedef enum _PublishType {
+typedef enum {
 	PUBLISH_START,
 	PUBLISH_UPDATE
 } PublishType;

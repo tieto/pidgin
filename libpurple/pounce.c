@@ -32,6 +32,31 @@
 #include "pounce.h"
 #include "util.h"
 
+/**
+ * A buddy pounce structure.
+ *
+ * Buddy pounces are actions triggered by a buddy-related event. For
+ * example, a sound can be played or an IM window opened when a buddy
+ * signs on or returns from away. Such responses are handled in the
+ * UI. The events themselves are done in the core.
+ */
+struct _PurplePounce
+{
+	char *ui_type;                /**< The type of UI.            */
+
+	PurplePounceEvent events;       /**< The event(s) to pounce on. */
+	PurplePounceOption options;     /**< The pounce options         */
+	PurpleAccount *pouncer;         /**< The user who is pouncing.  */
+
+	char *pouncee;                /**< The buddy to pounce on.    */
+
+	GHashTable *actions;          /**< The registered actions.    */
+
+	gboolean save;                /**< Whether or not the pounce should
+	                                   be saved after activation. */
+	void *data;                   /**< Pounce-specific data.      */
+};
+
 typedef struct
 {
 	GString *buffer;
@@ -405,12 +430,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 
 	if (purple_strequal(element_name, "account")) {
-		char *tmp;
 		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
-		tmp = data->protocol_id;
-		data->protocol_id = g_strdup(_purple_oscar_convert(buffer, tmp));
-		g_free(tmp);
 	}
 	else if (purple_strequal(element_name, "pouncee")) {
 		g_free(data->pouncee);

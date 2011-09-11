@@ -63,7 +63,7 @@ gboolean mxit_video_enabled(void)
  */
 PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 {
-	struct MXitSession*	session	= purple_account_get_connection(account)->proto_data;
+	struct MXitSession*	session	= purple_connection_get_protocol_data(purple_account_get_connection(account));
 	PurpleBuddy*		buddy;
 	struct contact*		contact;
 	PurpleMediaCaps		capa	= PURPLE_MEDIA_CAPS_NONE;
@@ -71,7 +71,7 @@ PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 	purple_debug_info(MXIT_PLUGIN_ID, "mxit_media_caps: buddy '%s'\n", who);
 
 	/* We need to have a voice/video server */
-	if (strlen(session->voip_server) == 0)
+	if (!*session->voip_server)
 		return PURPLE_MEDIA_CAPS_NONE;
 
 	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
@@ -95,7 +95,7 @@ PurpleMediaCaps mxit_media_caps(PurpleAccount *account, const char *who)
 
 	/* and only when they're online */
 	if (contact->presence == MXIT_PRESENCE_OFFLINE)
-		return MXIT_PRESENCE_OFFLINE;
+		return PURPLE_MEDIA_CAPS_NONE;
 
 	/* they support voice-only */
 	if (contact->capabilities & MXIT_PFLAG_VOICE)

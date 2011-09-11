@@ -90,6 +90,7 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 
 static PurplePluginProtocolInfo prpl_info =
 {
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
@@ -157,15 +158,12 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_send_attention,
 	yahoo_attention_types,
 
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	yahoojp_get_account_text_table,    /* get_account_text_table */
 	NULL, /* initiate_media */
 	NULL, /* get_media_caps */
 	NULL, /* get_moods */
 	NULL, /* set_public_alias */
-	NULL, /* get_public_alias */
-	NULL, /* add_buddy_with_invite */
-	NULL  /* add_buddies_with_invite */
+	NULL  /* get_public_alias */
 };
 
 static PurplePluginInfo info =

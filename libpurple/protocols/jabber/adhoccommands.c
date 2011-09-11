@@ -228,7 +228,8 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleAccount *account = purple_buddy_get_account(buddy);
-		JabberStream *js = purple_account_get_connection(account)->proto_data;
+		PurpleConnection *gc = purple_account_get_connection(account);
+		JabberStream *js = purple_connection_get_protocol_data(gc);
 
 		jabber_adhoc_execute(js, cmd);
 	}
@@ -321,7 +322,7 @@ static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;
-		JabberStream *js = gc->proto_data;
+		JabberStream *js = purple_connection_get_protocol_data(gc);
 
 		jabber_adhoc_execute(js, cmd);
 	}

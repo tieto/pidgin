@@ -161,7 +161,7 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 		*/
 
 		wb = purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
-		ds = wb->proto_data;
+		ds = purple_whiteboard_get_protocol_data(wb);
 		ds->imv_key = g_strdup(imv_key);
 
 		yahoo_doodle_command_send_ready(gc, from, imv_key);
@@ -189,19 +189,19 @@ static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *fro
 	if(wb == NULL)
 		return;
 
-	if(wb->state == DOODLE_STATE_REQUESTING)
+	if(purple_whiteboard_get_state(wb) == DOODLE_STATE_REQUESTING)
 	{
-		doodle_session *ds = wb->proto_data;
+		doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
 		purple_whiteboard_start(wb);
 
-		wb->state = DOODLE_STATE_ESTABLISHED;
+		purple_whiteboard_set_state(wb, DOODLE_STATE_ESTABLISHED);
 
 		yahoo_doodle_command_send_confirm(gc, from, imv_key);
 		/* Let's steal the imv_key and reuse it */
 		g_free(ds->imv_key);
 		ds->imv_key = g_strdup(imv_key);
 	}
-	else if(wb->state == DOODLE_STATE_ESTABLISHED)
+	else if(purple_whiteboard_get_state(wb) == DOODLE_STATE_ESTABLISHED)
 	{
 		/* TODO Ask whether to save picture too */
 		purple_whiteboard_clear(wb);
@@ -211,7 +211,7 @@ static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *fro
 	 * already thinks we're in a session with them (when their chat message
 	 * contains the doodle imv key)
 	 */
-	else if(wb->state == DOODLE_STATE_REQUESTED)
+	else if(purple_whiteboard_get_state(wb) == DOODLE_STATE_REQUESTED)
 	{
 		/* purple_whiteboard_start(wb); */
 		yahoo_doodle_command_send_ready(gc, from, imv_key);
@@ -292,7 +292,7 @@ static void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *fro
 	if(wb == NULL)
 		return;
 
-	if(wb->state == DOODLE_STATE_ESTABLISHED)
+	if(purple_whiteboard_get_state(wb) == DOODLE_STATE_ESTABLISHED)
 	{
 		/* TODO Ask user whether to save the image before clearing it */
 
@@ -333,9 +333,9 @@ static void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *f
 	/* TODO Combine the following IF's? */
 
 	/* Check if we requested a doodle session */
-	/*if(wb->state == DOODLE_STATE_REQUESTING)
+	/*if(purple_whiteboard_get_state(wb) == DOODLE_STATE_REQUESTING)
 	{
-		wb->state = DOODLE_STATE_ESTABLISHED;
+		purple_whiteboard_set_state(wb, DOODLE_STATE_ESTABLISHED);
 
 		purple_whiteboard_start(wb);
 
@@ -343,9 +343,9 @@ static void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *f
 	}*/
 
 	/* Check if we accepted a request for a doodle session */
-	if(wb->state == DOODLE_STATE_REQUESTED)
+	if(purple_whiteboard_get_state(wb) == DOODLE_STATE_REQUESTED)
 	{
-		wb->state = DOODLE_STATE_ESTABLISHED;
+		purple_whiteboard_set_state(wb, DOODLE_STATE_ESTABLISHED);
 
 		purple_whiteboard_start(wb);
 	}
@@ -372,7 +372,7 @@ void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from)
 
 	/* TODO Ask if user wants to save picture before the session is closed */
 
-	wb->state = DOODLE_STATE_CANCELLED;
+	purple_whiteboard_set_state(wb, DOODLE_STATE_CANCELLED);
 	purple_whiteboard_destroy(wb);
 }
 
@@ -389,7 +389,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
 
-	yd = gc->proto_data;
+	yd = purple_connection_get_protocol_data(gc);
 
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -450,21 +450,23 @@ void yahoo_doodle_start(PurpleWhiteboard *wb)
 	ds->brush_size  = DOODLE_BRUSH_SMALL;
 	ds->brush_color = DOODLE_COLOR_RED;
 
-	wb->proto_data = ds;
+	purple_whiteboard_set_protocol_data(wb, ds);
 }
 
 void yahoo_doodle_end(PurpleWhiteboard *wb)
 {
-	PurpleConnection *gc = purple_account_get_connection(wb->account);
-	doodle_session *ds = wb->proto_data;
+	PurpleAccount *account = purple_whiteboard_get_account(wb);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
-	if (gc && wb->state != DOODLE_STATE_CANCELLED)
-		yahoo_doodle_command_send_shutdown(gc, wb->who);
+	if (gc && (purple_whiteboard_get_state(wb) != DOODLE_STATE_CANCELLED))
+		yahoo_doodle_command_send_shutdown(gc, purple_whiteboard_get_who(wb));
 
 	g_free(ds->imv_key);
-	g_free(wb->proto_data);
+	g_free(ds);
+	purple_whiteboard_set_protocol_data(wb, NULL);
 }
 
 void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
@@ -494,20 +496,25 @@ static char *yahoo_doodle_build_draw_string(doodle_session *ds, GList *draw_list
 
 void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list)
 {
-	doodle_session *ds = wb->proto_data;
+	PurpleAccount *account = purple_whiteboard_get_account(wb);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
 	char *message;
 
 	g_return_if_fail(draw_list != NULL);
 
 	message = yahoo_doodle_build_draw_string(ds, draw_list);
-	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message, ds->imv_key);
+	yahoo_doodle_command_send_draw(gc, purple_whiteboard_get_who(wb), message, ds->imv_key);
 	g_free(message);
 }
 
 void yahoo_doodle_clear(PurpleWhiteboard *wb)
 {
-	doodle_session *ds = wb->proto_data;
-	yahoo_doodle_command_send_clear(wb->account->gc, wb->who, ds->imv_key);
+	PurpleAccount *account = purple_whiteboard_get_account(wb);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
+
+	yahoo_doodle_command_send_clear(gc, purple_whiteboard_get_who(wb), ds->imv_key);
 }
 
 
@@ -560,14 +567,14 @@ void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 
 void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
 	*size = ds->brush_size;
 	*color = ds->brush_color;
 }
 
 void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_whiteboard_get_protocol_data(wb);
 	ds->brush_size = size;
 	ds->brush_color = color;
 

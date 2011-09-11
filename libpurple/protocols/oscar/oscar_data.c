@@ -47,6 +47,12 @@ oscar_data_new(void)
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	od->handlerlist = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
 
+	od->ssi.local.idx_gid_bid = g_hash_table_new(g_direct_hash, g_direct_equal);
+	od->ssi.local.idx_all_named_items = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	od->ssi.official.idx_gid_bid = g_hash_table_new(g_direct_hash, g_direct_equal);
+	od->ssi.official.idx_all_named_items = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
 	/*
 	 * Register all the modules for this session...
 	 */
@@ -125,6 +131,12 @@ oscar_data_destroy(OscarData *od)
 
 	g_hash_table_destroy(od->buddyinfo);
 	g_hash_table_destroy(od->handlerlist);
+
+	g_hash_table_destroy(od->ssi.local.idx_gid_bid);
+	g_hash_table_destroy(od->ssi.local.idx_all_named_items);
+
+	g_hash_table_destroy(od->ssi.official.idx_gid_bid);
+	g_hash_table_destroy(od->ssi.official.idx_all_named_items);
 
 	g_free(od);
 }

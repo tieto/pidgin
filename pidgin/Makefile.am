@@ -3,8 +3,8 @@ EXTRA_DIST = \
 		getopt.h \
 		getopt1.c \
 		Makefile.mingw \
-		pidgin.pc.in \
-		pidgin-uninstalled.pc.in \
+		pidgin-3.pc.in \
+		pidgin-3-uninstalled.pc.in \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
@@ -32,7 +32,7 @@ EXTRA_DIST = \
 if ENABLE_GTK
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = pidgin.pc
+pkgconfig_DATA = pidgin-3.pc
 
 SUBDIRS = pixmaps plugins
 
@@ -52,7 +52,6 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkdocklet-gtk.c \
 	gtkeventloop.c \
 	gtkft.c \
 	gtkicon-theme.c \
@@ -107,7 +106,6 @@ pidgin_headers = \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
 	gtkidle.h \
-	gtkgaim-compat.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
@@ -182,3 +180,4 @@ AM_CPPFLAGS = \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
+

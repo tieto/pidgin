@@ -191,7 +191,7 @@ char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );
 
 #ifdef	MXIT_LINK_CLICK
-void mxit_register_uri_handler(void);
+void mxit_register_uri_handler( void );
 #endif
 
 

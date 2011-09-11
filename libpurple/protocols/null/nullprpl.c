@@ -234,7 +234,7 @@ static char *nullprpl_status_text(PurpleBuddy *buddy) {
     const char *message = purple_status_get_attr_string(status, "message");
 
     char *text;
-    if (message && strlen(message) > 0)
+    if (message && *message)
       text = g_strdup_printf("%s: %s", name, message);
     else
       text = g_strdup(name);
@@ -258,19 +258,23 @@ static void nullprpl_tooltip_text(PurpleBuddy *buddy,
     PurplePresence *presence = purple_buddy_get_presence(buddy);
     PurpleStatus *status = purple_presence_get_active_status(presence);
     char *msg = nullprpl_status_text(buddy);
-    purple_notify_user_info_add_pair(info, purple_status_get_name(status),
+	/* TODO: Check whether it's correct to call add_pair_html,
+	         or if we should be using add_pair_plaintext */
+    purple_notify_user_info_add_pair_html(info, purple_status_get_name(status),
                                      msg);
     g_free(msg);
 
     if (full) {
       const char *user_info = purple_account_get_user_info(gc->account);
       if (user_info)
-        purple_notify_user_info_add_pair(info, _("User info"), user_info);
+		/* TODO: Check whether it's correct to call add_pair_html,
+		         or if we should be using add_pair_plaintext */
+        purple_notify_user_info_add_pair_html(info, _("User info"), user_info);
     }
 
   } else {
     /* they're not logged in */
-    purple_notify_user_info_add_pair(info, _("User info"), _("not logged in"));
+    purple_notify_user_info_add_pair_plaintext(info, _("User info"), _("not logged in"));
   }
 
   purple_debug_info("nullprpl", "showing %s tooltip for %s\n",
@@ -510,7 +514,9 @@ static void nullprpl_get_info(PurpleConnection *gc, const char *username) {
     body = purple_account_get_user_info(acct);
   else
     body = _("No user info.");
-  purple_notify_user_info_add_pair(info, "Info", body);
+  /* TODO: Check whether it's correct to call add_pair_html,
+           or if we should be using add_pair_plaintext */
+  purple_notify_user_info_add_pair_html(info, "Info", body);
 
   /* show a buddy's user info in a nice dialog box */
   purple_notify_userinfo(gc,        /* connection the buddy info came through */
@@ -542,7 +548,7 @@ static void nullprpl_change_passwd(PurpleConnection *gc, const char *old_pass,
 }
 
 static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
-                               PurpleGroup *group)
+                               PurpleGroup *group, const char *message)
 {
   const char *username = gc->account->username;
   PurpleConnection *buddy_gc = get_nullprpl_gc(buddy->name);
@@ -565,20 +571,20 @@ static void nullprpl_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
                                  username,
                                  NULL,   /* local account id (rarely used) */
                                  NULL,   /* alias */
-                                 NULL);  /* message */
+                                 message);  /* message */
     }
   }
 }
 
 static void nullprpl_add_buddies(PurpleConnection *gc, GList *buddies,
-                                 GList *groups) {
+                                 GList *groups, const char *message) {
   GList *buddy = buddies;
   GList *group = groups;
 
   purple_debug_info("nullprpl", "adding multiple buddies\n");
 
   while (buddy && group) {
-    nullprpl_add_buddy(gc, (PurpleBuddy *)buddy->data, (PurpleGroup *)group->data);
+    nullprpl_add_buddy(gc, (PurpleBuddy *)buddy->data, (PurpleGroup *)group->data, message);
     buddy = g_list_next(buddy);
     group = g_list_next(group);
   }
@@ -775,10 +781,10 @@ static PurpleCmdRet send_whisper(PurpleConversation *conv, const gchar *cmd,
   to_username = args[0];
   message = args[1];
 
-  if (!to_username || strlen(to_username) == 0) {
+  if (!to_username || !*to_username) {
     *error = g_strdup(_("Whisper is missing recipient."));
     return PURPLE_CMD_RET_FAILED;
-  } else if (!message || strlen(message) == 0) {
+  } else if (!message || !*message) {
     *error = g_strdup(_("Whisper is missing message."));
     return PURPLE_CMD_RET_FAILED;
   }
@@ -927,7 +933,7 @@ static void set_chat_topic_fn(PurpleConvChat *from, PurpleConvChat *to,
 
   purple_conv_chat_set_topic(to, username, topic);
 
-  if (topic && strlen(topic) > 0)
+  if (topic && *topic)
     msg = g_strdup_printf(_("%s sets topic to: %s"), username, topic);
   else
     msg = g_strdup_printf(_("%s clears topic"), username);
@@ -1013,14 +1019,17 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
 }
 
 static void nullprpl_roomlist_cancel(PurpleRoomlist *list) {
+ PurpleAccount *account = purple_roomlist_get_account(list);
  purple_debug_info("nullprpl", "%s asked to cancel room list request\n",
-                   list->account->username);
+                   purple_account_get_username(account));
 }
 
 static void nullprpl_roomlist_expand_category(PurpleRoomlist *list,
                                               PurpleRoomlistRoom *category) {
+ PurpleAccount *account = purple_roomlist_get_account(list);
  purple_debug_info("nullprpl", "%s asked to expand room list category %s\n",
-                   list->account->username, category->name);
+                   purple_account_get_username(account),
+                   purple_roomlist_room_get_name(category));
 }
 
 /* nullprpl doesn't support file transfer...yet... */
@@ -1043,6 +1052,7 @@ static gboolean nullprpl_offline_message(const PurpleBuddy *buddy) {
 
 static PurplePluginProtocolInfo prpl_info =
 {
+  sizeof(PurplePluginProtocolInfo),    /* struct_size */
   OPT_PROTO_NO_PASSWORD | OPT_PROTO_CHAT_TOPIC,  /* options */
   NULL,               /* user_splits, initialized in nullprpl_init() */
   NULL,               /* protocol_options, initialized in nullprpl_init() */
@@ -1116,15 +1126,12 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* unregister_user */
   NULL,                                /* send_attention */
   NULL,                                /* get_attention_types */
-  sizeof(PurplePluginProtocolInfo),    /* struct_size */
   NULL,                                /* get_account_text_table */
   NULL,                                /* initiate_media */
   NULL,                                /* get_media_caps */
   NULL,                                /* get_moods */
   NULL,                                /* set_public_alias */
-  NULL,                                /* get_public_alias */
-  NULL,                                /* add_buddy_with_invite */
-  NULL                                 /* add_buddies_with_invite */
+  NULL                                 /* get_public_alias */
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

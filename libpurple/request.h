@@ -33,6 +33,16 @@
 /** @copydoc _PurpleRequestField */
 typedef struct _PurpleRequestField PurpleRequestField;
 
+/**
+ * Multiple fields request data.
+ */
+typedef struct _PurpleRequestFields PurpleRequestFields;
+
+/**
+ * A group of fields with a title.
+ */
+typedef struct _PurpleRequestFieldGroup PurpleRequestFieldGroup;
+
 #include "account.h"
 
 #define PURPLE_DEFAULT_ACTION_NONE	-1
@@ -67,122 +77,6 @@ typedef enum
 	PURPLE_REQUEST_FIELD_ACCOUNT
 
 } PurpleRequestFieldType;
-
-/**
- * Multiple fields request data.
- */
-typedef struct
-{
-	GList *groups;
-
-	GHashTable *fields;
-
-	GList *required_fields;
-
-	void *ui_data;
-
-} PurpleRequestFields;
-
-/**
- * A group of fields with a title.
- */
-typedef struct
-{
-	PurpleRequestFields *fields_list;
-
-	char *title;
-
-	GList *fields;
-
-} PurpleRequestFieldGroup;
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_REQUEST_C_)
-/**
- * A request field.
- */
-struct _PurpleRequestField
-{
-	PurpleRequestFieldType type;
-	PurpleRequestFieldGroup *group;
-
-	char *id;
-	char *label;
-	char *type_hint;
-
-	gboolean visible;
-	gboolean required;
-
-	union
-	{
-		struct
-		{
-			gboolean multiline;
-			gboolean masked;
-			gboolean editable;
-			char *default_value;
-			char *value;
-
-		} string;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-		} integer;
-
-		struct
-		{
-			gboolean default_value;
-			gboolean value;
-
-		} boolean;
-
-		struct
-		{
-			int default_value;
-			int value;
-
-			GList *labels;
-
-		} choice;
-
-		struct
-		{
-			GList *items;
-			GList *icons;
-			GHashTable *item_data;
-			GList *selected;
-			GHashTable *selected_table;
-
-			gboolean multiple_selection;
-
-		} list;
-
-		struct
-		{
-			PurpleAccount *default_account;
-			PurpleAccount *account;
-			gboolean show_all;
-
-			PurpleFilterAccountFunc filter_func;
-
-		} account;
-
-		struct
-		{
-			unsigned int scale_x;
-			unsigned int scale_y;
-			const char *buffer;
-			gsize size;
-		} image;
-
-	} u;
-
-	void *ui_data;
-
-};
-#endif
 
 /**
  * Request UI operations.
@@ -410,6 +304,25 @@ int purple_request_fields_get_choice(const PurpleRequestFields *fields,
 PurpleAccount *purple_request_fields_get_account(const PurpleRequestFields *fields,
 											 const char *id);
 
+/**
+ * Returns the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ *
+ * @return The UI data associated with this object.  This is a
+ *         convenience field provided to the UIs--it is not
+ *         used by the libuprple core.
+ */
+gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
+
+/**
+ * Set the UI data associated with this object.
+ *
+ * @param fields The fields list.
+ * @param ui_data A pointer to associate with this object.
+ */
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer data);
+
 /*@}*/
 
 /**************************************************************************/
@@ -460,6 +373,16 @@ const char *purple_request_field_group_get_title(
  * @constreturn The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
+		const PurpleRequestFieldGroup *group);
+
+/**
+ * Returns a list of all fields in a group.
+ *
+ * @param group The group.
+ *
+ * @constreturn The list of fields in the group.
+ */
+PurpleRequestFields *purple_request_field_group_get_fields_list(
 		const PurpleRequestFieldGroup *group);
 
 /*@}*/
@@ -515,6 +438,18 @@ void purple_request_field_set_visible(PurpleRequestField *field, gboolean visibl
  */
 void purple_request_field_set_type_hint(PurpleRequestField *field,
 									  const char *type_hint);
+
+/**
+ * Sets the tooltip for the field.
+ *
+ * This is optionally used by the UIs to provide a tooltip for
+ * the field.
+ *
+ * @param field     The field.
+ * @param tooltip   The tooltip text.
+ */
+void purple_request_field_set_tooltip(PurpleRequestField *field,
+									const char *tooltip);
 
 /**
  * Sets whether or not a field is required.
@@ -580,6 +515,15 @@ gboolean purple_request_field_is_visible(const PurpleRequestField *field);
  * @return The field's type hint.
  */
 const char *purple_request_field_get_type_hint(const PurpleRequestField *field);
+
+/**
+ * Returns the field's tooltip.
+ *
+ * @param field The field.
+ *
+ * @return The field's tooltip.
+ */
+const char *purple_request_field_get_tooltip(const PurpleRequestField *field);
 
 /**
  * Returns whether or not a field is required.

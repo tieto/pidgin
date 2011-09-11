@@ -117,7 +117,7 @@ void jabber_tune_init(void) {
 
 void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo) {
 	xmlnode *publish, *tunenode;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/tune");

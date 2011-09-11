@@ -50,9 +50,6 @@ extern "C" {
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
-#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
-typedef struct _GtkIMHtmlFontDetail	GtkIMHtmlFontDetail;	/* The five elements contained in a FONT tag */
-#endif
 typedef struct _GtkSmileyTree		GtkSmileyTree;
 typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
@@ -135,16 +132,6 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-#if !(defined PIDGIN_DISABLE_DEPRECATED) || (defined _PIDGIN_GTKIMHTML_C_)
-	/** @deprecated */
-	char *clipboard_text_string;
-	/** @deprecated */
-	char *clipboard_html_string;
-#else
-	char *depr1;
-	char *depr2;
-#endif
-
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
 	GtkSourceUndoManager *undo_manager;
@@ -163,20 +150,6 @@ struct _GtkIMHtmlClass {
 	void (*redo)(GtkIMHtml *);
 	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
-
-#if !(defined PIDGIN_DISABLE_DEPRECATED) && !(defined _PIDGIN_GTKIMHTML_C_)
-/** @deprecated as of 2.7.10 */
-struct _GtkIMHtmlFontDetail {
-	gushort size;
-	gchar *face;
-	gchar *fore;
-	gchar *back;
-	gchar *bg;
-	gchar *sml;
-	gboolean underline;
-	gshort bold;
-};
-#endif
 
 struct _GtkSmileyTree {
 	GString *values;
@@ -441,73 +414,6 @@ void gtk_imhtml_page_down(GtkIMHtml *imhtml);
  * @return A new IM/HTML Scalable object.
  */
 GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
-
-/**
- * Creates and returns a new GTK+ IM/HTML scalable object with an image.
- *
- * @param img      A GdkPixbuf of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
-
-/**
- * Creates and returns a new GTK+ IM/HTML scalable object with an
- * animated image.
- *
- * @param img      A GdkPixbufAnimation of the image to add.
- * @param filename The filename to associate with the image.
- * @param id       The id to associate with the image.
- *
- * @return A new IM/HTML Scalable object with an image.
- *
- * @since 2.1.0
- */
-/*
- * TODO: All this animation code could be combined much better with
- *       the image code.  It couldn't be done when it was written
- *       because it requires breaking backward compatibility.  It
- *       would be good to do it for 3.0.0.
- */
-GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *img, const gchar *filename, int id);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable image.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_free(GtkIMHtmlScalable *scale);
-
-/**
- * Destroys and frees a GTK+ IM/HTML scalable animation.
- *
- * @param scale The GTK+ IM/HTML scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale);
-
-/**
- * Rescales a GTK+ IM/HTML scalable image to a given size.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param width  The new width.
- * @param height The new height.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height);
-
-/**
- * Adds a GTK+ IM/HTML scalable image to a given GTK+ IM/HTML at a given iter.
- *
- * @param scale  The GTK+ IM/HTML scalable.
- * @param imhtml The GTK+ IM/HTML.
- * @param iter   The GtkTextIter at which to add the scalable.
- */
-/* TODO: Is there any reason this isn't private? */
-void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
 
 /**
  * Creates and returns an new GTK+ IM/HTML scalable with a horizontal rule.

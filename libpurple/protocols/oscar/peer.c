@@ -212,7 +212,7 @@ peer_connection_destroy_cb(gpointer data)
 	if (conn->xfer != NULL)
 	{
 		PurpleXferStatusType status;
-		conn->xfer->data = NULL;
+		purple_xfer_set_protocol_data(conn->xfer, NULL);
 		status = purple_xfer_get_status(conn->xfer);
 		if ((status != PURPLE_XFER_STATUS_DONE) &&
 			(status != PURPLE_XFER_STATUS_CANCEL_LOCAL) &&
@@ -1072,7 +1072,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *bn, const gchar *mes
 		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, bn);
 		if (conn->xfer)
 		{
-			conn->xfer->data = conn;
+			purple_xfer_set_protocol_data(conn->xfer, conn);
 			purple_xfer_ref(conn->xfer);
 			purple_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
 
