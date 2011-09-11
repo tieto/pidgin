@@ -6308,6 +6308,13 @@ add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smi
 }
 
 static gboolean
+add_custom_smiley_for_webview(GtkWebView *webview, const char *sml, const char *smile)
+{
+	/* FIXME: Smileys need to be added to webkit stuff */
+	return TRUE;
+}
+
+static gboolean
 pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
 {
 	PidginConversation *gtkconv;
@@ -6334,7 +6341,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 		}
 	}
 
-	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->webview), sml, smile))
+	if (!add_custom_smiley_for_webview(GTK_WEBVIEW(gtkconv->webview), sml, smile))
 		return FALSE;
 
 	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
