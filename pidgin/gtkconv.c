@@ -4047,10 +4047,13 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	g_free(tmp);
 
 	if (is_me) {
+#if 0
+		/* FIXME: No tags in webkit stuff, yet. */
 		GtkTextTag *tag = gtk_text_tag_table_lookup(
 				gtk_text_buffer_get_tag_table(GTK_IMHTML(gtkconv->webview)->text_buffer),
 				"send-name");
 		g_object_get(tag, "foreground-gdk", &color, NULL);
+#endif
 	} else {
 		GtkTextTag *tag;
 		if ((tag = get_buddy_tag(conv, name, 0, FALSE)))
