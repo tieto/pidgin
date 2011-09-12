@@ -107,10 +107,14 @@ version 3.0.0 (??/??/????):
 		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
+		* purple_blist_update_buddy_icon
+		* purple_buddy_get_local_alias
 		* purple_buddy_icons_has_custom_icon
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
 		* purple_connection_error_reason
+		* purple_contact_set_alias
+		* purple_conv_chat_set_users
 		* purple_core_migrate
 		* purple_dnsquery_a_account
 		* purple_notify_searchresults_column_get_title
@@ -125,6 +129,7 @@ version 3.0.0 (??/??/????):
 		* purple_plugins_unregister_unload_notify_cb
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* purple_proxy_connect_socks5
 		* purple_srv_cancel
 		* purple_srv_resolve_account
 		* purple_status_set_attr_boolean
@@ -144,6 +149,7 @@ version 3.0.0 (??/??/????):
 		* PurpleConnectionUiOps.report_disconnect_reason
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite
+		* PurplePluginProtocolInfo.get_cb_away
 		* serv_got_attention
 		* serv_send_attention
 		* struct _GtkIMHtmlFontDetail

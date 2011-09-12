@@ -454,20 +454,8 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  * Updates a node's custom icon.
  *
  * @param node  The PurpleBlistNode whose custom icon has changed.
- *
- * @since 2.5.0
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Updates a buddy's icon.
- *
- * @param buddy  The buddy whose buddy icon has changed
- * @deprecated Use purple_blist_update_node_icon() instead.
- */
-void purple_blist_update_buddy_icon(PurpleBuddy *buddy);
-#endif
 
 /**
  * Renames a buddy in the buddy list.
@@ -774,18 +762,6 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Sets the alias for a contact.
- *
- * @param contact  The contact
- * @param alias    The alias to set, or NULL to unset
- *
- * @deprecated Use purple_blist_alias_contact() instead.
- */
-void purple_contact_set_alias(PurpleContact *contact, const char *alias);
-#endif
-
 /**
  * Gets the alias for a contact.
  *
@@ -875,19 +851,6 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  *
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
-
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
-/**
- * Returns the correct alias for this user, ignoring server aliases.  Used
- * when a user-recognizable name is required.  In order: buddy's alias; buddy's
- * contact alias; buddy's user name.
- *
- * @param buddy  The buddy whose alias will be returned.
- * @return       The appropriate name or alias.
- * @deprecated   Try purple_buddy_get_alias(), if server aliases are okay.
- */
-const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
-#endif
 
 /**
  * Returns the correct name to display for a buddy. In order of precedence:

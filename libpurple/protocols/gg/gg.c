@@ -2696,7 +2696,6 @@ static PurplePluginProtocolInfo prpl_info =
 	ggp_keepalive,			/* keepalive */
 	ggp_register_user,		/* register_user */
 	NULL,				/* get_cb_info */
-	NULL,				/* get_cb_away */
 	NULL,				/* alias_buddy */
 	NULL,				/* group_buddy */
 	NULL,				/* rename_group */

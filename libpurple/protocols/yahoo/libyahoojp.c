@@ -131,7 +131,6 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_keepalive,
 	NULL, /* register_user */
 	NULL, /* get_cb_info */
-	NULL, /* get_cb_away */
 	yahoo_update_alias, /* alias_buddy */
 	yahoo_change_buddys_group,
 	yahoo_rename_group,

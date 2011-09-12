@@ -1080,22 +1080,6 @@ void purple_conv_custom_smiley_close(PurpleConversation *conv, const char *smile
 PurpleConversation *purple_conv_chat_get_conversation(const PurpleConvChat *chat);
 
 /**
- * Sets the list of users in the chat room.
- *
- * @note Calling this function will not update the display of the users.
- *       Please use purple_conv_chat_add_user(), purple_conv_chat_add_users(),
- *       purple_conv_chat_remove_user(), and purple_conv_chat_remove_users() instead.
- *
- * @param chat  The chat.
- * @param users The list of users.
- *
- * @return The list passed.
- *
- * @deprecated This function will be removed in 3.0.0.  You shouldn't be using it anyway.
- */
-GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
-
-/**
  * Returns a list of users in the chat room.  The members of the list
  * are PurpleConvChatBuddy objects.
  *

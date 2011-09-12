@@ -109,6 +109,28 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Create an GtkWebView widget and associated GtkIMHtmlToolbar widget.  This
+ * function puts both widgets in a nice GtkFrame.  They're separated by an
+ * attractive GtkSeparator.
+ * FIXME: There is no editable GtkWebView yet.
+ *
+ * @param editable @c TRUE if this webview should be editable.  If this is
+ *        @c FALSE, then the toolbar will NOT be created.  If this webview
+ *        should be read-only at first, but may become editable later, then
+ *        pass in @c TRUE here and then manually call gtk_webview_set_editable()
+ *        later.
+ * @param webview_ret A pointer to a pointer to a GtkWidget.  This pointer
+ *        will be set to the webview when this function exits.
+ * @param toolbar_ret A pointer to a pointer to a GtkWidget.  If editable is
+ *        TRUE then this will be set to the toolbar when this function exits.
+ *        Otherwise this will be set to @c NULL.
+ * @param sw_ret This will be filled with a pointer to the scrolled window
+ *        widget which contains the webview.
+ * @return The GtkFrame containing the toolbar and webview.
+ */
+GtkWidget *pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
+
+/**
  * Creates a small button
  *
  * @param  image   A button image.

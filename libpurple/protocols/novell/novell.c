@@ -3515,7 +3515,6 @@ static PurplePluginProtocolInfo prpl_info = {
 	novell_keepalive,			/* keepalive */
 	NULL,						/* register_user */
 	NULL,						/* get_cb_info */
-	NULL,						/* get_cb_away */
 	novell_alias_buddy,			/* alias_buddy */
 	novell_group_buddy,			/* group_buddy */
 	novell_rename_group,		/* rename_group */

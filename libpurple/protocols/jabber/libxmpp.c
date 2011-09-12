@@ -98,7 +98,6 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
 	NULL,							/* get_cb_info */
-	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
 	jabber_roster_group_rename,		/* rename_group */
