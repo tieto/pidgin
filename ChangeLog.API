@@ -104,6 +104,7 @@ version 3.0.0 (??/??/????):
 		* pidgin_dialogs_alias_contact
 		* pidgin_set_custom_buddy_icon
 		* pidgin_setup_screenname_autocomplete
+		* PidginBuddyList.connection_errors
 		* PidginConversation.sg
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite

@@ -4763,8 +4763,6 @@ static void pidgin_blist_new_list(PurpleBuddyList *blist)
 	PidginBuddyList *gtkblist;
 
 	gtkblist = g_new0(PidginBuddyList, 1);
-	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
-												g_direct_equal, NULL, g_free);
 	gtkblist->priv = g_new0(PidginBuddyListPrivate, 1);
 
 	blist->ui_data = gtkblist;
@@ -5078,7 +5076,6 @@ static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
-	g_hash_table_remove(gtkblist->connection_errors, account);
 	/* If the error dialog is being destroyed in response to the
 	 * account-error-changed signal, we don't want to clear the current
 	 * error.
@@ -5336,28 +5333,6 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 }
 
 
-/**
- * Was used by the connection API to tell the blist if an account has a
- * connection error or no longer has a connection error, but the blist now does
- * this itself with the @ref account-error-changed signal.
- *
- * @param account The account that either has a connection error
- *        or no longer has a connection error.
- * @param message The connection error message, or NULL if this
- *        account is no longer in an error state.
- */
-static void
-pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
-{
-	/* connection_errors isn't actually used anywhere; it's just kept in
-	 * sync with reality in case a plugin uses it.
-	 */
-	if (text == NULL)
-		g_hash_table_remove(gtkblist->connection_errors, account);
-	else
-		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
-}
-
 /* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
@@ -5370,12 +5345,6 @@ update_account_error_state(PurpleAccount *account,
 
 	if (old == NULL && new == NULL)
 		return;
-
-	/* For backwards compatibility: */
-	if (new)
-		pidgin_blist_update_account_error_state(account, new->description);
-	else
-		pidgin_blist_update_account_error_state(account, NULL);
 
 	if (new != NULL)
 		pidgin_blist_select_notebook_page(gtkblist);
@@ -6884,7 +6853,6 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	if (gtkblist->drag_timeout)
 		g_source_remove(gtkblist->drag_timeout);
 
-	g_hash_table_destroy(gtkblist->connection_errors);
 	gtkblist->refresh_timer = 0;
 	gtkblist->timeout = 0;
 	gtkblist->drag_timeout = 0;

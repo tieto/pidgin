@@ -86,15 +86,6 @@ struct _PidginBuddyList {
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
 
-	/** Caches connection error messages; keys are #PurpleAccount and
-	 *  values are non-@c NULL <tt>const char *</tt>s containing localised
-	 *  error messages.  (If an account does not have an error, it will not
-	 *  appear in the table.)
-	 *  @deprecated in favour of purple_account_get_current_error(), which also
-	 *              gives you the #PurpleConnectionError value.
-	 */
-	GHashTable *connection_errors;
-
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
