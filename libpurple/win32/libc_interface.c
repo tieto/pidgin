@@ -1041,15 +1041,3 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 	purple_debug_warning("wpurple", "could not find a match for Windows timezone \"%s\"\n", tzname);
 	return "";
 }
-
-int wpurple_g_access (const gchar *filename, int mode);
-/**
- * @deprecated - remove for 3.0.0
- */
-int
-wpurple_g_access (const gchar *filename, int mode)
-{
-	return g_access(filename, mode);
-}
-
-

@@ -163,6 +163,7 @@ version 3.0.0 (??/??/????):
 		* struct _PurpleRoomlist
 		* struct _PurpleRoomlistField
 		* struct _PurpleRoomlistRoom
+		* wpurple_g_access
 		* xmlnode_set_attrib_with_namespace
 		* xmlnode_set_attrib_with_prefix
 
