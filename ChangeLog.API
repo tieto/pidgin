@@ -132,6 +132,7 @@ version 3.0.0 (??/??/????):
 		* purple_proxy_connect_socks5
 		* purple_srv_cancel
 		* purple_srv_resolve_account
+		* purple_ssl_connect_fd
 		* purple_status_set_attr_boolean
 		* purple_status_set_attr_int
 		* purple_status_set_attr_string

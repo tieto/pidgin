@@ -211,26 +211,6 @@ PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, cons
 									const char *ssl_host,
 									void *data);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_SSLCONN_C_)
-/**
- * Makes a SSL connection using an already open file descriptor.
- *
- * @deprecated Use purple_ssl_connect_with_host_fd() instead.
- *
- * @param account    The account making the connection.
- * @param fd         The file descriptor.
- * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.
- * @param data       User-defined data.
- *
- * @return The SSL connection handle.
- */
-PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
-									   PurpleSslInputFunction func,
-									   PurpleSslErrorFunction error_func,
- 									   void *data);
-#endif
-
 /**
  * Makes a SSL connection using an already open file descriptor.
  *
