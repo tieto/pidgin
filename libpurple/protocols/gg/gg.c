@@ -857,7 +857,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 	field = purple_request_field_list_new("name", "Chat name");
 	for (l = info->chats; l != NULL; l = l->next) {
 		GGPChat *chat = l->data;
-		purple_request_field_list_add(field, chat->name, chat->name);
+		purple_request_field_list_add_icon(field, chat->name, NULL, chat->name);
 	}
 	purple_request_field_group_add_field(group, field);
 

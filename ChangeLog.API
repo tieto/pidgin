@@ -130,6 +130,7 @@ version 3.0.0 (??/??/????):
 		* purple_presence_add_status
 		* purple_presence_add_list
 		* purple_proxy_connect_socks5
+		* purple_request_field_list_add
 		* purple_srv_cancel
 		* purple_srv_resolve_account
 		* purple_ssl_connect_fd

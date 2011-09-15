@@ -656,7 +656,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 			/* oops, this is not good, time to bail */
 			break;
 		}
-		purple_request_field_list_add( field, country[1], g_strdup( country[0] ) );
+		purple_request_field_list_add_icon( field, country[1], NULL, g_strdup( country[0] ) );
 		if ( strcmp( country[1], parts[6] ) == 0 ) {
 			/* based on the user's IP, this is his current country code, so we default to it */
 			purple_request_field_list_add_selected( field, country[1] );
@@ -677,7 +677,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 			/* oops, this is not good, time to bail */
 			break;
 		}
-		purple_request_field_list_add( field, locale[1], g_strdup( locale[0] ) );
+		purple_request_field_list_add_icon( field, locale[1], NULL, g_strdup( locale[0] ) );
 		g_strfreev( locale );
 	}
 	purple_request_field_list_add_selected( field, "English" );

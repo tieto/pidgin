@@ -905,18 +905,6 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  *
  * @param field The list field.
  * @param item  The list item.
- * @param data  The associated data.
- *
- * @deprecated Use purple_request_field_list_add_icon() instead.
- */
-void purple_request_field_list_add(PurpleRequestField *field,
-								 const char *item, void *data);
-
-/**
- * Adds an item to a list field.
- *
- * @param field The list field.
- * @param item  The list item.
  * @param icon_path The path to icon file, or @c NULL for no icon.
  * @param data  The associated data.
  */

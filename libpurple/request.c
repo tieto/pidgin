@@ -992,13 +992,6 @@ purple_request_field_list_get_data(const PurpleRequestField *field,
 }
 
 void
-purple_request_field_list_add(PurpleRequestField *field, const char *item,
-							void *data)
-{
-	purple_request_field_list_add_icon(field, item, NULL, data);
-}
-
-void
 purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, const char* icon_path,
 							void *data)
 {
