@@ -43,6 +43,7 @@ sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 themeedit_la_LDFLAGS        = -module -avoid-version
 vvconfig_la_LDFLAGS         = -module -avoid-version
+webkit_la_LDFLAGS           = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
 
 if PLUGINS
@@ -58,7 +59,8 @@ plugin_LTLIBRARIES = \
 	relnot.la           \
 	sendbutton.la       \
 	spellchk.la         \
-	themeedit.la         \
+	themeedit.la        \
+	webkit.la           \
 	xmppconsole.la
 
 if USE_VV
@@ -82,6 +84,7 @@ relnot_la_SOURCES           = relnot.c
 sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
+webkit_la_SOURCES           = webkit.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
@@ -97,6 +100,7 @@ relnot_la_LIBADD            = $(GLIB_LIBS)
 sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
+webkit_la_LIBADD            = $(GTK_LIBS) $(WEBKIT_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
