@@ -1,24 +1,24 @@
 
-webkittemplatedir = $(datadir)/pidgin/webkit
-webkittemplate_DATA = Template.html
+adiumtemplatedir = $(datadir)/pidgin/webkit
+adiumtemplate_DATA = Template.html
 
-webkitdir = $(libdir)/pidgin
+adiumdir = $(libdir)/pidgin
 
-webkit_la_LDFLAGS = -module -avoid-version
+adium_la_LDFLAGS = -module -avoid-version
 
 EXTRA_DIST = $(webkittemplate_DATA)
 
 if PLUGINS
 
-webkit_LTLIBRARIES = webkit.la
+adium_LTLIBRARIES = adium.la
 
-webkit_la_SOURCES = webkit.c \
+adium_la_SOURCES = webkit.c \
 	message-style.h \
 	message-style.c
 
 endif
 
-webkit_la_LIBADD = $(GTK_LIBS) $(WEBKIT_LIBS)
+adium_la_LIBADD = $(GTK_LIBS) $(WEBKIT_LIBS)
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
