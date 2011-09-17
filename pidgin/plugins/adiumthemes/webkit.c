@@ -555,12 +555,6 @@ style_set_default(void)
 
 	if (stylepath && *stylepath)
 		styles = g_list_prepend(styles, g_strdup(stylepath));
-	else {
-		purple_notify_error(handle, _("Webkit themes"),
-			_("Can't find installed styles"),
-			_("Please install some theme and verify the installation path"));
-
-	}
 
 	/* pick any one that works. Note that we have first preference
 	 * for the one in the userdir */
