@@ -95,7 +95,6 @@ webkit_plugin_free_handle(void)
 static char *
 replace_message_tokens(
 	const char *text,
-	gsize len,
 	PurpleConversation *conv,
 	const char *name,
 	const char *alias,
@@ -103,7 +102,7 @@ replace_message_tokens(
 	PurpleMessageFlags flags,
 	time_t mtime)
 {
-	GString *str = g_string_new_len(NULL, len);
+	GString *str = g_string_new(NULL);
 	const char *cur = text;
 	const char *prev = cur;
 
@@ -177,9 +176,9 @@ replace_message_tokens(
 }
 
 static char *
-replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
+replace_header_tokens(char *text, PurpleConversation *conv)
 {
-	GString *str = g_string_new_len(NULL, len);
+	GString *str = g_string_new(NULL);
 	char *cur = text;
 	char *prev = cur;
 
@@ -241,9 +240,9 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 }
 
 static char *
-replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *header, char *footer)
+replace_template_tokens(PidginMessageStyle *style, char *text, char *header, char *footer)
 {
-	GString *str = g_string_new_len(NULL, len);
+	GString *str = g_string_new(NULL);
 
 	char **ms = g_strsplit(text, "%@", 6);
 	char *base = NULL;
@@ -358,10 +357,10 @@ init_theme_for_webkit(PurpleConversation *conv, char *style_dir)
 
 	basedir = g_build_filename(style->style_dir, "Contents", "Resources", "Template.html", NULL);
 	baseuri = g_strdup_printf("file://%s", basedir);
-	header = replace_header_tokens(style->header_html, strlen(style->header_html), conv);
+	header = replace_header_tokens(style->header_html, conv);
 	g_assert(style);
-	footer = replace_header_tokens(style->footer_html, strlen(style->footer_html), conv);
-	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
+	footer = replace_header_tokens(style->footer_html, conv);
+	template = replace_template_tokens(style, style->template_html, header, footer);
 
 	g_assert(template);
 
@@ -452,7 +451,7 @@ webkit_on_displaying_im_msg(PurpleAccount *account,
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
 	smileyed = smiley_parse_markup(stripped, conv->account->protocol_id);
-	msg = replace_message_tokens(message_html, 0, conv, name, alias, smileyed, flags, mtime);
+	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
 	escape = gtk_webview_quote_js_string(msg);
 	script = g_strdup_printf("%s(%s)", func, escape);
 
