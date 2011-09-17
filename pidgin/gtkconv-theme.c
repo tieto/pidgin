@@ -21,7 +21,6 @@
  */
 
 #include "gtkconv-theme.h"
-#include "pidginstock.h"
 
 #include <gtk/gtk.h>
 
@@ -69,7 +68,7 @@ pidgin_conv_theme_finalize(GObject *obj)
 }
 
 static void
-pidgin_conv_theme_class_init(PidginIconThemeClass *klass)
+pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
