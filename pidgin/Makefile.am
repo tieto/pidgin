@@ -48,6 +48,8 @@ pidgin_SOURCES = \
 	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
+	gtkconv-theme.c \
+	gtkconv-theme-loader.c \
 	gtkdebug.c \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
@@ -99,6 +101,8 @@ pidgin_headers = \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
+	gtkconv-theme.h \
+	gtkconv-theme-loader.h \
 	gtkdebug.h \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
