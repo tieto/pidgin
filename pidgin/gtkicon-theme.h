@@ -50,7 +50,6 @@ typedef struct _PidginIconThemeClass   PidginIconThemeClass;
 struct _PidginIconTheme
 {
 	PurpleTheme parent;
-	gpointer priv;
 };
 
 struct _PidginIconThemeClass

@@ -24,7 +24,7 @@
 #include "gtkblist-theme.h"
 
 #define PIDGIN_BLIST_THEME_GET_PRIVATE(Gobject) \
-	((PidginBlistThemePrivate *) ((PIDGIN_BLIST_THEME(Gobject))->priv))
+	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_BLIST_THEME, PidginBlistThemePrivate))
 
 /******************************************************************************
  * Structs
@@ -189,13 +189,6 @@ pidgin_theme_font_get_color_describe(PidginThemeFont *font)
  *****************************************************************************/
 
 static void
-pidgin_blist_theme_init(GTypeInstance *instance,
-		gpointer klass)
-{
-	(PIDGIN_BLIST_THEME(instance))->priv = g_new0(PidginBlistThemePrivate, 1);
-}
-
-static void
 pidgin_blist_theme_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *psec)
 {
@@ -349,8 +342,6 @@ pidgin_blist_theme_finalize(GObject *obj)
 	pidgin_theme_font_free(priv->message_nick_said);
 	pidgin_theme_font_free(priv->status);
 
-	g_free(priv);
-
 	parent_class->finalize (obj);
 }
 
@@ -361,6 +352,8 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent (klass);
+
+	g_type_class_add_private(klass, sizeof(PidginBlistThemePrivate));
 
 	obj_class->get_property = pidgin_blist_theme_get_property;
 	obj_class->set_property = pidgin_blist_theme_set_property;
@@ -484,7 +477,7 @@ pidgin_blist_theme_get_type (void)
 			NULL, /* class_data */
 			sizeof(PidginBlistTheme),
 			0, /* n_preallocs */
-			pidgin_blist_theme_init, /* instance_init */
+			NULL, /* instance_init */
 			NULL, /* value table */
 		};
 		type = g_type_register_static (PURPLE_TYPE_THEME,
