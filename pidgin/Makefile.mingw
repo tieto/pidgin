@@ -58,6 +58,8 @@ PIDGIN_C_SRC =	\
 			gtkcertmgr.c \
 			gtkconn.c \
 			gtkconv.c \
+			gtkconv-theme.c \
+			gtkconv-theme-loader.c \
 			gtkdebug.c \
 			gtkdialogs.c \
 			gtkdnd-hints.c \
