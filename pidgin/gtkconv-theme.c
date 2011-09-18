@@ -22,14 +22,20 @@
 
 #include "gtkconv-theme.h"
 
+#include "conversation.h"
 #include "debug.h"
 #include "prefs.h"
 #include "xmlnode.h"
 
-#include <gtk/gtk.h>
+#include "pidgin.h"
+#include "gtkconv.h"
+#include "gtkwebview.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+/* GObject data keys - this will probably go away soon... */
+#define MESSAGE_STYLE_KEY "message-style"
 
 #define PIDGIN_CONV_THEME_GET_PRIVATE(Gobject) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_CONV_THEME, PidginConvThemePrivate))
@@ -62,7 +68,6 @@ typedef struct {
 
 	/* paths */
 	char    *style_dir;
-	char    *template_path;
 
 	/* caches */
 	char    *template_html;
@@ -111,7 +116,6 @@ pidgin_conv_theme_finalize(GObject *obj)
 	g_free(priv->default_variant);
 
 	g_free(priv->style_dir);
-	g_free(priv->template_path);
 
 	g_free(priv->template_html);
 	g_free(priv->incoming_content_html);
@@ -156,8 +160,8 @@ pidgin_conversation_theme_get_type(void)
 	return type;
 }
 
-/*****************************************************************************
- * Public API functions
+/******************************************************************************
+ * Helper Functions
  *****************************************************************************/
 
 static PidginConvTheme *
@@ -171,6 +175,315 @@ pidgin_conversation_theme_new(const char *styledir)
 
 	return ret;
 }
+
+static const char *
+get_template_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->template_html)
+		return priv->template_html;
+
+	/* The template path can either come from the theme, or can
+	 * be stock Template.html that comes with the plugin */
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+
+	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
+		g_free(file);
+		file = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
+	}
+
+	if (!g_file_get_contents(file, &priv->template_html, NULL, NULL)) {
+		purple_debug_error("webkit", "Could not locate a Template.html (%s)\n", file);
+		priv->template_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->template_html;
+}
+
+static const char *
+get_status_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->status_html)
+		return priv->status_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Status.html", NULL);
+	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s could not find Resources/Status.html", priv->style_dir);
+		priv->status_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->status_html;
+}
+
+static const char *
+get_basestyle_css(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->basestyle_css)
+		return priv->basestyle_css;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "main.css", NULL);
+	if (!g_file_get_contents(file, &priv->basestyle_css, NULL, NULL))
+		priv->basestyle_css = g_strdup("");
+	g_free(file);
+
+	return priv->basestyle_css;
+}
+
+static const char *
+get_header_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->header_html)
+		return priv->header_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Header.html", NULL);
+	if (!g_file_get_contents(file, &priv->header_html, NULL, NULL))
+		priv->header_html = g_strdup("");
+	g_free(file);
+
+	return priv->header_html;
+}
+
+static const char *
+get_footer_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->footer_html)
+		return priv->footer_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Footer.html", NULL);
+	if (!g_file_get_contents(file, &priv->footer_html, NULL, NULL))
+		priv->footer_html = g_strdup("");
+	g_free(file);
+
+	return priv->footer_html;
+}
+
+static const char *
+get_incoming_content_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->incoming_content_html)
+		return priv->incoming_content_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
+	if (!g_file_get_contents(file, &priv->incoming_content_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s did not have a Incoming/Content.html\n", priv->style_dir);
+		priv->incoming_content_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->incoming_content_html;
+}
+
+static const char *
+get_incoming_next_content_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->incoming_next_content_html)
+		return priv->incoming_next_content_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &priv->incoming_next_content_html, NULL, NULL)) {
+		priv->incoming_next_content_html = g_strdup(priv->incoming_content_html);
+	}
+	g_free(file);
+
+	return priv->incoming_next_content_html;
+}
+
+static const char *
+get_outgoing_content_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->outgoing_content_html)
+		return priv->outgoing_content_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
+	if (!g_file_get_contents(file, &priv->outgoing_content_html, NULL, NULL)) {
+		priv->outgoing_content_html = g_strdup(priv->incoming_content_html);
+	}
+	g_free(file);
+
+	return priv->outgoing_content_html;
+}
+
+static const char *
+get_outgoing_next_content_html(PidginConvThemePrivate *priv)
+{
+	char *file;
+
+	if (priv->outgoing_next_content_html)
+		return priv->outgoing_next_content_html;
+
+	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &priv->outgoing_next_content_html, NULL, NULL)) {
+		priv->outgoing_next_content_html = g_strdup(priv->outgoing_content_html);
+	}
+
+	return priv->outgoing_next_content_html;
+}
+
+static char *
+replace_header_tokens(const char *text, PurpleConversation *conv)
+{
+	GString *str = g_string_new(NULL);
+	const char *cur = text;
+	const char *prev = cur;
+
+	if (text == NULL)
+		return NULL;
+
+	while ((cur = strchr(cur, '%'))) {
+		const char *replace = NULL;
+		char *fin = NULL;
+
+		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
+			replace = conv->name;
+		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
+			replace = purple_account_get_alias(conv->account);
+			if (replace == NULL)
+				replace = purple_account_get_username(conv->account);
+		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
+			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+			if (buddy) {
+				replace = purple_buddy_get_alias(buddy);
+			} else {
+				replace = conv->name;
+			}
+		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
+			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+			replace = purple_buddy_icon_get_full_path(icon);
+		} else if (!strncmp(cur, "%outgoingIconPath%", strlen("%outgoingIconPath%"))) {
+		} else if (!strncmp(cur, "%timeOpened", strlen("%timeOpened"))) {
+			char *format = NULL;
+			if (*(cur + strlen("%timeOpened")) == '{') {
+				const char *start = cur + strlen("%timeOpened") + 1;
+				char *end = strstr(start, "}%");
+				if (!end) /* Invalid string */
+					continue;
+				format = g_strndup(start, end - start);
+				fin = end + 1;
+			}
+			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+			g_free(format);
+		} else {
+			continue;
+		}
+
+		/* Here we have a replacement to make */
+		g_string_append_len(str, prev, cur - prev);
+		g_string_append(str, replace);
+
+		/* And update the pointers */
+		if (fin) {
+			prev = cur = fin + 1;
+		} else {
+			prev = cur = strchr(cur + 1, '%') + 1;
+		}
+	}
+
+	/* And wrap it up */
+	g_string_append(str, prev);
+	return g_string_free(str, FALSE);
+}
+
+static char *
+replace_template_tokens(PidginConvTheme *theme, const char *text, const char *header, const char *footer)
+{
+	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+	GString *str = g_string_new(NULL);
+
+	char **ms = g_strsplit(text, "%@", 6);
+	char *base = NULL;
+	char *csspath = pidgin_conversation_theme_get_css(theme);
+	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
+		g_strfreev(ms);
+		g_string_free(str, TRUE);
+		return NULL;
+	}
+
+	g_string_append(str, ms[0]);
+	g_string_append(str, "file://");
+	base = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+	g_string_append(str, base);
+	g_free(base);
+
+	g_string_append(str, ms[1]);
+
+	g_string_append(str, get_basestyle_css(priv));
+
+	g_string_append(str, ms[2]);
+
+	g_string_append(str, "file://");
+	g_string_append(str, csspath);
+
+	g_string_append(str, ms[3]);
+	if (header)
+		g_string_append(str, header);
+	g_string_append(str, ms[4]);
+	if (footer)
+		g_string_append(str, footer);
+	g_string_append(str, ms[5]);
+
+	g_strfreev(ms);
+	g_free(csspath);
+	return g_string_free(str, FALSE);
+}
+
+static void
+set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
+{
+	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+	WebKitWebSettings *settings;
+
+	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
+	if (priv->default_font_family)
+		g_object_set(G_OBJECT(settings), "default-font-family", priv->default_font_family, NULL);
+
+	if (priv->default_font_size)
+		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(priv->default_font_size), NULL);
+
+	/* this does not work :( */
+	webkit_web_view_set_transparent(webview, priv->default_background_is_transparent);
+}
+
+/*
+ * The style specification says that if the conversation is a group
+ * chat then the <div id="Chat"> element will be given a class
+ * 'groupchat'. I can't add another '%@' in Template.html because
+ * that breaks style-specific Template.html's. I have to either use libxml
+ * or conveniently play with WebKit's javascript engine. The javascript
+ * engine should work, but it's not an identical behavior.
+ */
+static void
+webkit_set_groupchat(GtkWebView *webview)
+{
+	gtk_webview_safe_execute_script(webview, "document.getElementById('Chat').className = 'groupchat'");
+}
+
+static void
+webkit_on_webview_destroy(GtkObject *object, gpointer data)
+{
+	g_object_unref(G_OBJECT(data));
+	g_object_set_data(G_OBJECT(object), MESSAGE_STYLE_KEY, NULL);
+}
+
+/*****************************************************************************
+ * Public API functions
+ *****************************************************************************/
 
 void
 pidgin_conversation_theme_save_state(const PidginConvTheme *theme)
@@ -345,7 +658,6 @@ pidgin_conversation_theme_load(const char *styledir)
 	 * and if that does not exist, we choose the first one in the
 	 * directory.
 	 */
-	char *file;
 	PidginConvTheme *theme = NULL;
 	PidginConvThemePrivate *priv;
 
@@ -354,73 +666,6 @@ pidgin_conversation_theme_load(const char *styledir)
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	/* load all other files */
-
-	/* The template path can either come from the theme, or can
-	 * be stock Template.html that comes with the plugin */
-	priv->template_path = g_build_filename(styledir, "Contents", "Resources", "Template.html", NULL);
-
-	if (!g_file_test(priv->template_path, G_FILE_TEST_EXISTS)) {
-		g_free(priv->template_path);
-		priv->template_path = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
-	}
-
-	if (!g_file_get_contents(priv->template_path, &priv->template_html, NULL, NULL)) {
-		purple_debug_error("webkit", "Could not locate a Template.html (%s)\n", priv->template_path);
-		g_object_unref(G_OBJECT(theme));
-		return NULL;
-	}
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Status.html", NULL);
-	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s could not find Resources/Status.html", styledir);
-		g_object_unref(G_OBJECT(theme));
-		g_free(file);
-		return NULL;
-	}
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "main.css", NULL);
-	if (!g_file_get_contents(file, &priv->basestyle_css, NULL, NULL))
-		priv->basestyle_css = g_strdup("");
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Header.html", NULL);
-	if (!g_file_get_contents(file, &priv->header_html, NULL, NULL))
-		priv->header_html = g_strdup("");
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Footer.html", NULL);
-	if (!g_file_get_contents(file, &priv->footer_html, NULL, NULL))
-		priv->footer_html = g_strdup("");
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "Content.html", NULL);
-	if (!g_file_get_contents(file, &priv->incoming_content_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s did not have a Incoming/Content.html\n", styledir);
-		g_object_unref(G_OBJECT(theme));
-		g_free(file);
-		return NULL;
-	}
-	g_free(file);
-
-
-	/* according to the spec, the following are optional files */
-	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
-	if (!g_file_get_contents(file, &priv->incoming_next_content_html, NULL, NULL)) {
-		priv->incoming_next_content_html = g_strdup(priv->incoming_content_html);
-	}
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
-	if (!g_file_get_contents(file, &priv->outgoing_content_html, NULL, NULL)) {
-		priv->outgoing_content_html = g_strdup(priv->incoming_content_html);
-	}
-	g_free(file);
-
-	file = g_build_filename(styledir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
-	if (!g_file_get_contents(file, &priv->outgoing_next_content_html, NULL, NULL)) {
-		priv->outgoing_next_content_html = g_strdup(priv->outgoing_content_html);
-	}
 
 	pidgin_conversation_theme_read_info_plist(theme, NULL);
 	pidgin_conversation_theme_load_state(theme);
@@ -472,7 +717,6 @@ pidgin_conversation_theme_copy(const PidginConvTheme *theme)
 	new->image_mask = g_strdup(old->image_mask);
 	new->default_variant = g_strdup(old->default_variant);
 
-	new->template_path = g_strdup(old->template_path);
 	new->template_html = g_strdup(old->template_html);
 	new->header_html = g_strdup(old->header_html);
 	new->footer_html = g_strdup(old->footer_html);
@@ -563,5 +807,65 @@ pidgin_conversation_theme_get_css(PidginConvTheme *theme)
 		g_free(file);
 		return ret;
 	}
+}
+
+/**
+ * Called when either a new PurpleConversation is created
+ * or when a PidginConversation changes its active PurpleConversation
+ * This will not change the theme if the theme is already set.
+ * (This is to prevent accidental theme changes if a new
+ * PurpleConversation gets added.
+ *
+ * FIXME: it's not at all clear to me as to how
+ * Adium themes handle the case when the PurpleConversation
+ * changes.
+ */
+void
+pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv)
+{
+	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
+	char *header, *footer;
+	char *template;
+	char *basedir;
+	char *baseuri;
+	PidginConvTheme *oldTheme;
+	PidginConvTheme *copy;
+	PidginConvThemePrivate *priv;
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	oldTheme = g_object_get_data(G_OBJECT(webkit), MESSAGE_STYLE_KEY);
+	if (oldTheme)
+		return;
+
+	g_assert(theme);
+
+	header = replace_header_tokens(get_header_html(priv), conv);
+	footer = replace_header_tokens(get_footer_html(priv), conv);
+	template = replace_template_tokens(theme, get_template_html(priv), header, footer);
+
+	g_assert(template);
+
+	purple_debug_info("webkit", "template: %s\n", template);
+
+	set_theme_webkit_settings(WEBKIT_WEB_VIEW(webkit), theme);
+	basedir = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+	baseuri = g_strdup_printf("file://%s", basedir);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
+
+	copy = pidgin_conversation_theme_copy(theme);
+	g_object_set_data(G_OBJECT(webkit), MESSAGE_STYLE_KEY, copy);
+
+	g_object_unref(G_OBJECT(theme));
+	/* I need to unref this style when the webkit object destroys */
+	g_signal_connect(G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), copy);
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		webkit_set_groupchat(GTK_WEBVIEW(webkit));
+	g_free(basedir);
+	g_free(baseuri);
+	g_free(header);
+	g_free(footer);
+	g_free(template);
 }
 

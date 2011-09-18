@@ -28,6 +28,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include "conversation.h"
 #include "theme.h"
 
 /**
@@ -77,6 +78,9 @@ GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
 
 char *pidgin_conversation_theme_get_css(PidginConvTheme *theme);
+
+void
+pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv);
 
 G_END_DECLS
 #endif /* PIDGIN_CONV_THEME_H */
