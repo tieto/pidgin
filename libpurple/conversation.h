@@ -318,7 +318,7 @@ struct _PurpleConvChatBuddy
 
 	/**
 	 * A hash table of attributes about the user, such as real name,
-	 * user@host, etc.
+	 * user\@host, etc.
 	 */
 	GHashTable *attributes;
 
