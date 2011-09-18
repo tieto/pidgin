@@ -291,25 +291,39 @@ struct _PurpleConvChat
  */
 struct _PurpleConvChatBuddy
 {
-	char *name;                      /**< The chat participant's name in the chat. */
-	char *alias;                     /**< The chat participant's alias, if known;
-	                                  *   @a NULL otherwise.
-	                                  */
-	char *alias_key;                 /**< A string by which this buddy will be sorted,
-	                                  *   or @c NULL if the buddy should be sorted by
-	                                  *   its @c name.  (This is currently always @c
-	                                  *   NULL.)
-	                                  */
-	gboolean buddy;                  /**< @a TRUE if this chat participant is on the
-	                                  *   buddy list; @a FALSE otherwise.
-	                                  */
-	PurpleConvChatBuddyFlags flags;  /**< A bitwise OR of flags for this participant,
-	                                  *   such as whether they are a channel operator.
-	                                  */
-	GHashTable *attributes;          /**< A hash table of attributes about the user, such as
-                                    *   real name, user@host, etc.
-                                    */
-	gpointer ui_data;                /** < The UI can put whatever it wants here. */
+	/** The chat participant's name in the chat. */
+	char *name;
+
+	/** The chat participant's alias, if known; @a NULL otherwise. */
+	char *alias;
+
+	/**
+	 * A string by which this buddy will be sorted, or @c NULL if the
+	 * buddy should be sorted by its @c name.  (This is currently always
+	 * @c NULL.
+	 */
+	char *alias_key;
+
+	/**
+	 * @a TRUE if this chat participant is on the buddy list;
+	 * @a FALSE otherwise.
+	 */
+	gboolean buddy;
+
+	/**
+	 * A bitwise OR of flags for this participant, such as whether they
+	 * are a channel operator.
+	 */
+	PurpleConvChatBuddyFlags flags;
+
+	/**
+	 * A hash table of attributes about the user, such as real name,
+	 * user@host, etc.
+	 */
+	GHashTable *attributes;
+
+	/** The UI can put whatever it wants here. */
+	gpointer ui_data;
 };
 
 /**
