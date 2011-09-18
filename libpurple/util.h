@@ -37,7 +37,6 @@
   */
 typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
 
-/** @copydoc _PurpleMenuAction */
 typedef struct _PurpleMenuAction PurpleMenuAction;
 
 /**
