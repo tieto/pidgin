@@ -592,9 +592,6 @@ pidgin_conversation_theme_load_state(PidginConvTheme *theme)
 	g_free(priv->variant);
 	priv->variant = g_strdup(value);
 
-	if (changed)
-		pidgin_conversation_theme_read_info_plist(theme, priv->variant);
-
 	g_free(prefname);
 	g_free(variant);
 }
