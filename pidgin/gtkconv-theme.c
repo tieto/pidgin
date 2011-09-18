@@ -48,7 +48,8 @@ typedef struct {
 	/* current config options */
 	char     *variant; /* allowed to be NULL if there are no variants */
 
-	/* Info.plist keys that change with Variant */
+	/* Info.plist keys/values */
+	GHashTable *info;
 
 	/* Static Info.plist keys */
 	int      message_view_version;
@@ -88,8 +89,49 @@ typedef struct {
 static GObjectClass *parent_class = NULL;
 
 /******************************************************************************
+ * Enums
+ *****************************************************************************/
+
+enum {
+	PROP_ZERO = 0,
+	PROP_INFO,
+};
+
+/******************************************************************************
  * GObject Stuff
  *****************************************************************************/
+
+static void
+pidgin_conv_theme_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *psec)
+{
+	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
+
+	switch (param_id) {
+		case PROP_INFO:
+			g_value_set_boxed(value, (gpointer)pidgin_conversation_theme_get_info(theme));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
+			break;
+	}
+}
+
+static void
+pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *psec)
+{
+	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
+
+	switch (param_id) {
+		case PROP_INFO:
+			pidgin_conversation_theme_set_info(theme, g_value_get_boxed(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
+			break;
+	}
+}
 
 static void
 pidgin_conv_theme_init(GTypeInstance *instance,
@@ -124,6 +166,9 @@ pidgin_conv_theme_finalize(GObject *obj)
 	g_free(priv->status_html);
 	g_free(priv->basestyle_css);
 
+	if (priv->info)
+		g_hash_table_destroy(priv->info);
+
 	parent_class->finalize(obj);
 }
 
@@ -131,10 +176,23 @@ static void
 pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
+	g_type_class_add_private(klass, sizeof(PidginConvThemePrivate));
+
+	obj_class->get_property = pidgin_conv_theme_get_property;
+	obj_class->set_property = pidgin_conv_theme_set_property;
 	obj_class->finalize = pidgin_conv_theme_finalize;
+
+	/* INFO */
+	pspec = g_param_spec_boxed("info", "Info",
+			"The information about this theme",
+			G_TYPE_HASH_TABLE,
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_INFO, pspec);
+
 }
 
 GType
@@ -155,7 +213,7 @@ pidgin_conversation_theme_get_type(void)
 			NULL, /* value table */
 		};
 		type = g_type_register_static(PURPLE_TYPE_THEME,
-				"PidginConvTheme", &info, G_TYPE_FLAG_ABSTRACT);
+				"PidginConvTheme", &info, 0);
 	}
 	return type;
 }
@@ -163,18 +221,6 @@ pidgin_conversation_theme_get_type(void)
 /******************************************************************************
  * Helper Functions
  *****************************************************************************/
-
-static PidginConvTheme *
-pidgin_conversation_theme_new(const char *styledir)
-{
-	PidginConvTheme *ret = g_object_new(PIDGIN_TYPE_CONV_THEME, NULL);
-	PidginConvThemePrivate *priv;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(ret);
-	priv->style_dir = g_strdup(styledir);
-
-	return ret;
-}
 
 static const char *
 get_template_html(PidginConvThemePrivate *priv)
@@ -485,6 +531,26 @@ webkit_on_webview_destroy(GtkObject *object, gpointer data)
  * Public API functions
  *****************************************************************************/
 
+const GHashTable *
+pidgin_conversation_theme_get_info(const PidginConvTheme *theme)
+{
+	PidginConvThemePrivate *priv;
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+	return priv->info;
+}
+
+void
+pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
+{
+	PidginConvThemePrivate *priv;
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	if (priv->info)
+		g_hash_table_destroy(priv->info);
+
+	priv->info = info;
+}
+
 void
 pidgin_conversation_theme_save_state(const PidginConvTheme *theme)
 {
@@ -533,164 +599,6 @@ pidgin_conversation_theme_load_state(PidginConvTheme *theme)
 	g_free(variant);
 }
 
-
-static gboolean
-parse_info_plist_key_value(xmlnode *key, gpointer destination, const char *expected)
-{
-	xmlnode *val = key->next;
-
-	for (; val && val->type != XMLNODE_TYPE_TAG; val = val->next)
-		;
-	if (!val)
-		return FALSE;
-
-	if (expected == NULL || g_str_equal(expected, "string")) {
-		char **dest = (char **)destination;
-		if (!g_str_equal(val->name, "string"))
-			return FALSE;
-		if (*dest)
-			g_free(*dest);
-		*dest = xmlnode_get_data_unescaped(val);
-	} else if (g_str_equal(expected, "integer")) {
-		int *dest = (int *)destination;
-		char *value = xmlnode_get_data_unescaped(val);
-
-		if (!g_str_equal(val->name, "integer"))
-			return FALSE;
-		*dest = atoi(value);
-		g_free(value);
-	} else if (g_str_equal(expected, "boolean")) {
-		gboolean *dest = (gboolean *)destination;
-		if (g_str_equal(val->name, "true"))
-			*dest = TRUE;
-		else if (g_str_equal(val->name, "false"))
-			*dest = FALSE;
-		else
-			return FALSE;
-	} else return FALSE;
-
-	return TRUE;
-}
-
-static gboolean
-str_for_key(const char *key, const char *found, const char *variant)
-{
-	if (g_str_equal(key, found))
-		return TRUE;
-	if (!variant)
-		return FALSE;
-	return (g_str_has_prefix(found, key)
-		&& g_str_has_suffix(found, variant)
-		&& strlen(found) == strlen(key) + strlen(variant) + 1);
-}
-
-/**
- * Info.plist should be re-read every time the variant changes, this is because
- * the keys that take precedence depend on the value of the current variant.
- */
-void
-pidgin_conversation_theme_read_info_plist(PidginConvTheme *theme, const char *variant)
-{
-	PidginConvThemePrivate *priv;
-	char *contents;
-	xmlnode *plist, *iter;
-	xmlnode *dict;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	/* note that if a variant is used the option:VARIANTNAME takes precedence */
-	contents = g_build_filename(priv->style_dir, "Contents", NULL);
-	plist = xmlnode_from_file(contents, "Info.plist", "Info.plist", "webkit");
-	dict = xmlnode_get_child(plist, "dict");
-
-	g_assert (dict);
-	for (iter = xmlnode_get_child(dict, "key"); iter; iter = xmlnode_get_next_twin(iter)) {
-		char* key = xmlnode_get_data_unescaped(iter);
-		gboolean pr = TRUE;
-
-		if (g_str_equal("MessageViewVersion", key))
-			pr = parse_info_plist_key_value(iter, &priv->message_view_version, "integer");
-		else if (g_str_equal("CFBundleName", key))
-			pr = parse_info_plist_key_value(iter, &priv->cf_bundle_name, "string");
-		else if (g_str_equal("CFBundleIdentifier", key))
-			pr = parse_info_plist_key_value(iter, &priv->cf_bundle_identifier, "string");
-		else if (g_str_equal("CFBundleGetInfoString", key))
-			pr = parse_info_plist_key_value(iter, &priv->cf_bundle_get_info_string, "string");
-		else if (str_for_key("DefaultFontFamily", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->default_font_family, "string");
-		else if (str_for_key("DefaultFontSize", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->default_font_size, "integer");
-		else if (str_for_key("ShowsUserIcons", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->shows_user_icons, "boolean");
-		else if (str_for_key("DisableCombineConsecutive", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->disable_combine_consecutive, "boolean");
-		else if (str_for_key("DefaultBackgroundIsTransparent", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->default_background_is_transparent, "boolean");
-		else if (str_for_key("DisableCustomBackground", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->disable_custom_background, "boolean");
-		else if (str_for_key("DefaultBackgroundColor", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->default_background_color, "string");
-		else if (str_for_key("AllowTextColors", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->allow_text_colors, "integer");
-		else if (str_for_key("ImageMask", key, variant))
-			pr = parse_info_plist_key_value(iter, &priv->image_mask, "string");
-
-		if (!pr)
-			purple_debug_warning("webkit", "Failed to parse key %s\n", key);
-		g_free(key);
-	}
-
-	xmlnode_free(plist);
-}
-
-PidginConvTheme *
-pidgin_conversation_theme_load(const char *styledir)
-{
-	/*
-	 * the loading process described:
-	 *
-	 * First we load all the style .html files, etc.
-	 * The we load any config options that have been stored for
-	 * this variant.
-	 * Then we load the Info.plist, for the currently decided variant.
-	 * At this point, if we find that variants exist, yet
-	 * we don't have a variant selected, we choose DefaultVariant
-	 * and if that does not exist, we choose the first one in the
-	 * directory.
-	 */
-	PidginConvTheme *theme = NULL;
-	PidginConvThemePrivate *priv;
-
-	theme = pidgin_conversation_theme_new(styledir);
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	/* load all other files */
-
-	pidgin_conversation_theme_read_info_plist(theme, NULL);
-	pidgin_conversation_theme_load_state(theme);
-
-	/* non variant dependent Info.plist checks */
-	if (priv->message_view_version < 3) {
-		purple_debug_info("webkit", "%s is a legacy style (version %d) and will not be loaded\n", priv->cf_bundle_name, priv->message_view_version);
-		g_object_unref(G_OBJECT(theme));
-		return NULL;
-	}
-
-	if (!priv->variant)
-	{
-		GList *variants = pidgin_conversation_theme_get_variants(theme);
-
-		if (variants)
-			pidgin_conversation_theme_set_variant(theme, variants->data);
-
-		for (; variants; variants = g_list_delete_link(variants, variants))
-			g_free(variants->data);
-	}
-
-	return theme;
-}
-
 PidginConvTheme *
 pidgin_conversation_theme_copy(const PidginConvTheme *theme)
 {
@@ -698,7 +606,7 @@ pidgin_conversation_theme_copy(const PidginConvTheme *theme)
 	PidginConvThemePrivate *old, *new;
 
 	old = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-	ret = pidgin_conversation_theme_new(old->style_dir);
+	ret = g_object_new(PIDGIN_TYPE_CONV_THEME, "directory", old->style_dir, NULL);
 	new = PIDGIN_CONV_THEME_GET_PRIVATE(ret);
 
 	new->variant = g_strdup(old->variant);
@@ -740,8 +648,6 @@ pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *varian
 	/* I'm not going to test whether this variant is valid! */
 	g_free(priv->variant);
 	priv->variant = g_strdup(variant);
-
-	pidgin_conversation_theme_read_info_plist(theme, variant);
 
 	/* todo, the style has "changed". Ideally, I would like to use signals at this point. */
 }

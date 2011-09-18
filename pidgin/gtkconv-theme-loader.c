@@ -30,13 +30,143 @@
  * Conversation Theme Builder
  *****************************************************************************/
 
+static GHashTable *
+read_info_plist(xmlnode *plist)
+{
+	GHashTable *info;
+	xmlnode *key, *value;
+	gboolean fail = FALSE;
+
+	info = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for (key = xmlnode_get_child(plist, "dict/key");
+	     key;
+	     key = xmlnode_get_next_twin(key)) {
+		char *keyname;
+		GValue *val;
+
+		;
+		for (value = key->next; value && value->type != XMLNODE_TYPE_TAG; value = value->next)
+			;
+		if (!value) {
+			fail = TRUE;
+			break;
+		}
+
+		val = g_new0(GValue, 1);
+		if (g_str_equal(value->name, "string")) {
+			g_value_init(val, G_TYPE_STRING);
+			g_value_take_string(val, xmlnode_get_data_unescaped(value));
+
+		} else if (g_str_equal(value->name, "true")) {
+			g_value_init(val, G_TYPE_BOOLEAN);
+			g_value_set_boolean(val, TRUE);
+
+		} else if (g_str_equal(value->name, "false")) {
+			g_value_init(val, G_TYPE_BOOLEAN);
+			g_value_set_boolean(val, FALSE);
+
+		} else if (g_str_equal(value->name, "real")) {
+			char *temp = xmlnode_get_data_unescaped(value);
+			g_value_init(val, G_TYPE_FLOAT);
+			g_value_set_float(val, atof(temp));
+			g_free(temp);
+
+		} else if (g_str_equal(value->name, "integer")) {
+			char *temp = xmlnode_get_data_unescaped(value);
+			g_value_init(val, G_TYPE_INT);
+			g_value_set_int(val, atoi(temp));
+			g_free(temp);
+
+		} else {
+			/* NOTE: We don't support array, data, date, or dict as values,
+			   since they don't seem to be needed for styles. */
+			g_free(val);
+			fail = TRUE;
+			break;
+		}
+
+		keyname = xmlnode_get_data_unescaped(key);
+		g_hash_table_insert(info, keyname, val);
+	}
+
+	if (fail) {
+		g_hash_table_destroy(info);
+		info = NULL;
+	}
+
+	return info;
+}
+
 static PurpleTheme *
 pidgin_conv_loader_build(const gchar *dir)
 {
 	PidginConvTheme *theme = NULL;
+	char *contents;
+	xmlnode *plist;
+	GHashTable *info;
+	GValue *val;
+	int MessageViewVersion;
+	const char *CFBundleName;
+	const char *CFBundleIdentifier;
 
-	/* Find the theme file */
 	g_return_val_if_fail(dir != NULL, NULL);
+
+	/* Load Info.plist for theme information */
+	contents = g_build_filename(dir, "Contents", NULL);
+	plist = xmlnode_from_file(contents, "Info.plist", "Info.plist", "gtkconv-theme-loader");
+	g_free(contents);
+	if (plist == NULL) {
+		purple_debug_error("gtkconv-theme", "Failed to load Contents/Info.plist in %s\n", dir);
+		return NULL;
+	}
+
+	info = read_info_plist(plist);
+	xmlnode_free(plist);
+	if (info == NULL) {
+		purple_debug_error("gtkconv-theme", "Failed to load Contents/Info.plist in %s\n", dir);
+		return NULL;
+	}
+
+	/* Check for required keys: CFBundleName */
+	val = g_hash_table_lookup(info, "CFBundleName");
+	if (!val) {
+		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key CFBundleName.\n", dir);
+		g_hash_table_destroy(info);
+		return NULL;
+	}
+	CFBundleName = g_value_get_string(val);
+
+	/* Check for required keys: CFBundleIdentifier */
+	val = g_hash_table_lookup(info, "CFBundleIdentifier");
+	if (!val) {
+		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key CFBundleIdentifier.\n", dir);
+		g_hash_table_destroy(info);
+		return NULL;
+	}
+	CFBundleIdentifier = g_value_get_string(val);
+
+	/* Check for required keys: MessageViewVersion */
+	val = g_hash_table_lookup(info, "MessageViewVersion");
+	if (!val) {
+		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key MessageViewVersion.\n", dir);
+		g_hash_table_destroy(info);
+		return NULL;
+	}
+
+	MessageViewVersion = g_value_get_int(val);
+	if (MessageViewVersion < 3) {
+		purple_debug_error("gtkconv-theme", "%s is a legacy style (version %d) and will not be loaded.\n",
+		                  CFBundleName, MessageViewVersion);
+		g_hash_table_destroy(info);
+		return NULL;
+	}
+
+	theme = g_object_new(PIDGIN_TYPE_CONV_THEME,
+	                     "type", "conversation",
+	                     "name", CFBundleName,
+	                     "directory", dir,
+	                     "info", info, NULL);
 
 	return PURPLE_THEME(theme);
 }

@@ -69,6 +69,9 @@ G_BEGIN_DECLS
  */
 GType pidgin_conversation_theme_get_type(void);
 
+const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *theme);
+void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
+
 PidginConvTheme *pidgin_conversation_theme_load(const char *styledir);
 PidginConvTheme *pidgin_conversation_theme_copy(const PidginConvTheme *theme);
 void pidgin_conversation_theme_save_state(const PidginConvTheme *theme);
