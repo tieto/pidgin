@@ -37,6 +37,11 @@
   */
 typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
 
+/**
+ * A generic structure that contains information about an "action."  One
+ * place this is is used is by PRPLs to tell the core the list of available
+ * right-click actions for a buddy list row.
+ */
 typedef struct _PurpleMenuAction PurpleMenuAction;
 
 /**
