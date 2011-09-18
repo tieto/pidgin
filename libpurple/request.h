@@ -30,7 +30,9 @@
 #include <glib-object.h>
 #include <glib.h>
 
-/** @copydoc _PurpleRequestField */
+/**
+ * A request field.
+ */
 typedef struct _PurpleRequestField PurpleRequestField;
 
 /**
@@ -321,7 +323,7 @@ gpointer purple_request_fields_get_ui_data(const PurpleRequestFields *fields);
  * @param fields The fields list.
  * @param ui_data A pointer to associate with this object.
  */
-void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer data);
+void purple_request_fields_set_ui_data(PurpleRequestFields *fields, gpointer ui_data);
 
 /*@}*/
 

@@ -309,10 +309,10 @@ void purple_whiteboard_set_draw_list(PurpleWhiteboard *wb, GList* draw_list);
  * Sets the protocol data for a whiteboard.
  *
  * @param wb			The whiteboard.
- * @param protocol_data	The protocol data to set for the whiteboard.
+ * @param proto_data	The protocol data to set for the whiteboard.
  */
 void purple_whiteboard_set_protocol_data(PurpleWhiteboard *wb, gpointer proto_data);
- 
+
 /**
  * Gets the protocol data for a whiteboard.
  *

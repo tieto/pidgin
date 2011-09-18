@@ -224,7 +224,7 @@ GList *purple_roomlist_get_fields(PurpleRoomlist *roomlist);
 /**
  * Get the protocol data associated with this room list.
  *
- * @param roomlist The roomlist, which must not be @c NULL.
+ * @param list The roomlist, which must not be @c NULL.
  *
  * @return The protocol data associated with this room list.  This is a
  *         convenience field provided to the protocol plugin--it is not
@@ -243,7 +243,7 @@ void purple_roomlist_set_proto_data(PurpleRoomlist *list, gpointer proto_data);
 /**
  * Get the UI data associated with this room list.
  *
- * @param roomlist The roomlist, which must not be @c NULL.
+ * @param list The roomlist, which must not be @c NULL.
  *
  * @return The UI data associated with this room list.  This is a
  *         convenience field provided to the UIs--it is not
@@ -255,7 +255,7 @@ gpointer purple_roomlist_get_ui_data(PurpleRoomlist *list);
  * Set the UI data associated with this room list.
  *
  * @param list The roomlist, which must not be @c NULL.
- * @param UI_data A pointer to associate with this room list.
+ * @param ui_data A pointer to associate with this room list.
  */
 void purple_roomlist_set_ui_data(PurpleRoomlist *list, gpointer ui_data);
 

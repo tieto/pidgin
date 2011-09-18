@@ -791,7 +791,7 @@ void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
  * Sets the protocol data for a file transfer.
  *
  * @param xfer			The file transfer.
- * @param protocol_data	The protocol data to set for the file transfer.
+ * @param proto_data	The protocol data to set for the file transfer.
  *
  * @since 3.0.0
  */

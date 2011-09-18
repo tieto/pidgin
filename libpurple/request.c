@@ -42,9 +42,6 @@ typedef struct
 
 } PurpleRequestInfo;
 
-/**
- * A request field.
- */
 struct _PurpleRequestField
 {
 	PurpleRequestFieldType type;

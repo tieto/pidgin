@@ -928,12 +928,12 @@ GdkPixbuf *pidgin_pixbuf_new_from_file_at_scale(const char *filename, int width,
 
 /**
  * Add scrollbars to a widget
- * @param widget      The child widget
- * @hscrollbar_policy Horizontal scrolling policy
- * @vscrollbar_policy Vertical scrolling policy
- * @shadow            Shadow type
- * @width             Desired widget width, or -1 for default
- * @height            Desired widget height, or -1 for default
+ * @param child              The child widget
+ * @param hscrollbar_policy  Horizontal scrolling policy
+ * @param vscrollbar_policy  Vertical scrolling policy
+ * @param shadow_type        Shadow type
+ * @param width              Desired widget width, or -1 for default
+ * @param height             Desired widget height, or -1 for default
  *
  * @since 2.8.0
  */

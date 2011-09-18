@@ -31,7 +31,10 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
-/** @copydoc _PurpleAttentionType */
+
+/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
+ *  their attention (or vice-versa).
+ */
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/

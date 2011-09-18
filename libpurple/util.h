@@ -36,9 +36,16 @@
   * the request.
   */
 typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
+
 /** @copydoc _PurpleMenuAction */
 typedef struct _PurpleMenuAction PurpleMenuAction;
-/** @copydoc _PurpleKeyValuePair */
+
+/**
+ * A key-value pair.
+ *
+ * This is used by, among other things, purple_gtk_combo* functions to pass in a
+ * list of key-value pairs so it can display a user-friendly value.
+ */
 typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 
 #include "account.h"
@@ -53,12 +60,6 @@ extern "C" {
 
 typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
-/**
- * A key-value pair.
- *
- * This is used by, among other things, purple_gtk_combo* functions to pass in a
- * list of key-value pairs so it can display a user-friendly value.
- */
 struct _PurpleKeyValuePair
 {
 	gchar *key;

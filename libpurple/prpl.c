@@ -33,9 +33,6 @@
 /** @name Attention Type API                                              */
 /**************************************************************************/
 
-/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
- *  their attention (or vice-versa).
- */
 struct _PurpleAttentionType
 {
 	const char *name;                  /**< Shown in GUI elements */

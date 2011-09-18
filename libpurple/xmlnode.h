@@ -230,9 +230,11 @@ const char *xmlnode_get_namespace(const xmlnode *node);
  * own namespace.
  *
  * For example, given:
+ * \verbatim
  * <iq type='get' xmlns='jabber:client' xmlns:ns1='http://example.org/ns1'>
  *     <ns1:element><child1/></ns1:element>
  * </iq>
+ * \endverbatim
  *
  * The default namespace of all nodes (including 'child1') is "jabber:client",
  * though the namespace for 'element' is "http://example.org/ns1".

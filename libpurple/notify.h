@@ -279,7 +279,7 @@ PurpleNotifySearchColumn *purple_notify_searchresults_column_new(const char *tit
 /**
  * Sets whether or not a search result column is visible.
  *
- * @param field   The search column object.
+ * @param column  The search column object.
  * @param visible TRUE if visible, or FALSE if not.
  */
 void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *column, gboolean visible);
@@ -287,7 +287,7 @@ void purple_notify_searchresult_column_set_visible(PurpleNotifySearchColumn *col
 /**
  * Returns whether or not a search result column is visible.
  *
- * @param field The search column object.
+ * @param column The search column object.
  *
  * @return TRUE if the search result column is visible. FALSE otherwise.
  */
