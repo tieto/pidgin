@@ -70,7 +70,7 @@ typedef struct
 
 	/** Called just before @a query_data is freed; this should cancel any
 	 *  further use of @a query_data the UI would make. Unneeded if
-	 *  #resolve_host is not implemented.
+	 *  #resolve is not implemented.
 	 */
 	void (*destroy)(PurpleSrvTxtQueryData *query_data);
 
