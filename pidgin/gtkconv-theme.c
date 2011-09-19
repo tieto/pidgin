@@ -47,6 +47,7 @@
 typedef struct {
 	/* current config options */
 	char     *variant; /* allowed to be NULL if there are no variants */
+	GList    *variants;
 
 	/* Info.plist keys/values */
 	GHashTable *info;
@@ -552,49 +553,48 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 }
 
 void
-pidgin_conversation_theme_save_state(const PidginConvTheme *theme)
+pidgin_conversation_theme_add_variant(PidginConvTheme *theme, const char *variant)
 {
 	PidginConvThemePrivate *priv;
-	const GValue *val;
-	char *prefname;
-	char *variant;
-
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s", g_value_get_string(val));
-	variant = g_strdup_printf("%s/variant", prefname);
-
-	purple_debug_info("webkit", "saving state with variant %s\n", priv->variant);
-	purple_prefs_add_none(prefname);
-	purple_prefs_add_string(variant, "");
-	purple_prefs_set_string(variant, priv->variant);
-
-	g_free(prefname);
-	g_free(variant);
+	priv->variants = g_list_prepend(priv->variants, g_strdup(variant));
 }
 
-static void
-pidgin_conversation_theme_load_state(PidginConvTheme *theme)
+const char *
+pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
+{
+	PidginConvThemePrivate *priv;
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	return g_strdup(priv->variant);
+}
+
+void
+pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
 {
 	PidginConvThemePrivate *priv;
 	const GValue *val;
 	char *prefname;
-	const char* value;
-	gboolean changed;
-
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s/variant", g_value_get_string(val));
-
-	value = purple_prefs_get_string(prefname);
-	changed = !priv->variant || !g_str_equal(priv->variant, value);
-
 	g_free(priv->variant);
-	priv->variant = g_strdup(value);
+	priv->variant = g_strdup(variant);
 
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s/variant",
+	                           g_value_get_string(val));
+	purple_prefs_set_string(prefname, variant);
 	g_free(prefname);
+}
+
+const GList *
+pidgin_conversation_theme_get_variants(PidginConvTheme *theme)
+{
+	PidginConvThemePrivate *priv;
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	return priv->variants;
 }
 
 PidginConvTheme *
@@ -619,65 +619,6 @@ pidgin_conversation_theme_copy(const PidginConvTheme *theme)
 	new->status_html = g_strdup(old->status_html);
 	new->basestyle_css = g_strdup(old->basestyle_css);
 
-	return ret;
-}
-
-void
-pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant)
-{
-	PidginConvThemePrivate *priv;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	/* I'm not going to test whether this variant is valid! */
-	g_free(priv->variant);
-	priv->variant = g_strdup(variant);
-
-	/* todo, the style has "changed". Ideally, I would like to use signals at this point. */
-}
-
-char *
-pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
-{
-	PidginConvThemePrivate *priv;
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	return g_strdup(priv->variant);
-}
-
-/**
- * Get a list of variants supported by the style.
- */
-GList *
-pidgin_conversation_theme_get_variants(PidginConvTheme *theme)
-{
-	PidginConvThemePrivate *priv;
-	GList *ret = NULL;
-	GDir *variants;
-	const char *css_file;
-	char *css;
-	char *variant_dir;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	variant_dir = g_build_filename(purple_theme_get_dir(PURPLE_THEME(theme)), "Contents", "Resources", "Variants", NULL);
-
-	variants = g_dir_open(variant_dir, 0, NULL);
-	if (!variants)
-		return NULL;
-
-	while ((css_file = g_dir_read_name(variants)) != NULL) {
-		if (!g_str_has_suffix(css_file, ".css"))
-			continue;
-
-		css = g_strndup(css_file, strlen(css_file) - 4);
-		ret = g_list_append(ret, css);
-	}
-
-	g_dir_close(variants);
-	g_free(variant_dir);
-
-	ret = g_list_sort(ret, (GCompareFunc)g_strcmp0);
 	return ret;
 }
 

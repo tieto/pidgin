@@ -496,7 +496,7 @@ prefs_themes_sort(PurpleTheme *theme)
 			g_object_unref(G_OBJECT(pixbuf));
 
 	} else if (PIDGIN_IS_CONV_THEME(theme)) {
-		GList *variants;
+		const GList *variants;
 
 		/* No image available? */
 
@@ -509,14 +509,12 @@ prefs_themes_sort(PurpleTheme *theme)
 		 */
 		for (variants = pidgin_conversation_theme_get_variants(PIDGIN_CONV_THEME(theme));
 		     variants;
-		     variants = g_list_delete_link(variants, variants)) {
+		     variants = g_list_next(variants)) {
 
 			markup = get_theme_markup(name, FALSE, NULL, variants->data);
 
 			gtk_list_store_append(prefs_conv_themes, &iter);
 			gtk_list_store_set(prefs_conv_themes, &iter, 1, markup, 2, name, -1);
-
-			g_free(variants->data);
 		}
 	}
 }

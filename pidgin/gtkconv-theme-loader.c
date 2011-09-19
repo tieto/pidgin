@@ -109,6 +109,8 @@ pidgin_conv_loader_build(const gchar *dir)
 	int MessageViewVersion;
 	const char *CFBundleName;
 	const char *CFBundleIdentifier;
+	GDir *variants;
+	char *variant_dir;
 
 	g_return_val_if_fail(dir != NULL, NULL);
 
@@ -167,6 +169,29 @@ pidgin_conv_loader_build(const gchar *dir)
 	                     "name", CFBundleName,
 	                     "directory", dir,
 	                     "info", info, NULL);
+
+	/* Read list of variants */
+	variant_dir = g_build_filename(dir, "Contents", "Resources", "Variants", NULL);
+	variants = g_dir_open(variant_dir, 0, NULL);
+	g_free(variant_dir);
+
+	if (variants) {
+		const char *file;
+		char *name;
+
+		while ((file = g_dir_read_name(variants)) != NULL) {
+			const char *end = g_strrstr(file, ".css");
+			char *name;
+
+			if ((end == NULL) || (*(end + 4) != '\0'))
+				continue;
+
+			name = g_strndup(file, end - file);
+			pidgin_conversation_theme_add_variant(theme, name);
+		}
+
+		g_dir_close(variants);
+	}
 
 	return PURPLE_THEME(theme);
 }
