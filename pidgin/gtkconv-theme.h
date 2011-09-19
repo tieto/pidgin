@@ -77,9 +77,7 @@ const char *pidgin_conversation_theme_get_variant(PidginConvTheme *theme);
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 
-PidginConvTheme *pidgin_conversation_theme_load(const char *styledir);
 PidginConvTheme *pidgin_conversation_theme_copy(const PidginConvTheme *theme);
-void pidgin_conversation_theme_save_state(const PidginConvTheme *theme);
 
 char *pidgin_conversation_theme_get_css(PidginConvTheme *theme);
 
