@@ -51,25 +51,6 @@ typedef struct {
 	/* Info.plist keys/values */
 	GHashTable *info;
 
-	/* Static Info.plist keys */
-	int      message_view_version;
-	char     *cf_bundle_name;
-	char     *cf_bundle_identifier;
-	char     *cf_bundle_get_info_string;
-	char     *default_font_family;
-	int      default_font_size;
-	gboolean shows_user_icons;
-	gboolean disable_combine_consecutive;
-	gboolean default_background_is_transparent;
-	gboolean disable_custom_background;
-	char     *default_background_color;
-	gboolean allow_text_colors;
-	char     *image_mask;
-	char     *default_variant;
-
-	/* paths */
-	char    *style_dir;
-
 	/* caches */
 	char    *template_html;
 	char    *header_html;
@@ -149,16 +130,6 @@ pidgin_conv_theme_finalize(GObject *obj)
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(obj);
 
-	g_free(priv->cf_bundle_name);
-	g_free(priv->cf_bundle_identifier);
-	g_free(priv->cf_bundle_get_info_string);
-	g_free(priv->default_font_family);
-	g_free(priv->default_background_color);
-	g_free(priv->image_mask);
-	g_free(priv->default_variant);
-
-	g_free(priv->style_dir);
-
 	g_free(priv->template_html);
 	g_free(priv->incoming_content_html);
 	g_free(priv->outgoing_content_html);
@@ -222,8 +193,28 @@ pidgin_conversation_theme_get_type(void)
  * Helper Functions
  *****************************************************************************/
 
+static const GValue *
+get_key(PidginConvThemePrivate *priv, const char *key, gboolean specific)
+{
+	GValue *val = NULL;
+
+	/* Try variant-specific key */
+	if (specific && priv->variant) {
+		char *name = g_strdup_printf("%s:%s", key, priv->variant);
+		val = g_hash_table_lookup(priv->info, name);
+		g_free(name);
+	}
+
+	/* Try generic key */
+	if (!val) {
+		val = g_hash_table_lookup(priv->info, key);
+	}
+
+	return val;
+}
+
 static const char *
-get_template_html(PidginConvThemePrivate *priv)
+get_template_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
@@ -232,7 +223,7 @@ get_template_html(PidginConvThemePrivate *priv)
 
 	/* The template path can either come from the theme, or can
 	 * be stock Template.html that comes with the plugin */
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
 
 	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
 		g_free(file);
@@ -249,16 +240,16 @@ get_template_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_status_html(PidginConvThemePrivate *priv)
+get_status_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->status_html)
 		return priv->status_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Status.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Status.html", NULL);
 	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s could not find Resources/Status.html", priv->style_dir);
+		purple_debug_info("webkit", "%s could not find Resources/Status.html", dir);
 		priv->status_html = g_strdup("");
 	}
 	g_free(file);
@@ -267,14 +258,14 @@ get_status_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_basestyle_css(PidginConvThemePrivate *priv)
+get_basestyle_css(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->basestyle_css)
 		return priv->basestyle_css;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "main.css", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "main.css", NULL);
 	if (!g_file_get_contents(file, &priv->basestyle_css, NULL, NULL))
 		priv->basestyle_css = g_strdup("");
 	g_free(file);
@@ -283,14 +274,14 @@ get_basestyle_css(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_header_html(PidginConvThemePrivate *priv)
+get_header_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->header_html)
 		return priv->header_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Header.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Header.html", NULL);
 	if (!g_file_get_contents(file, &priv->header_html, NULL, NULL))
 		priv->header_html = g_strdup("");
 	g_free(file);
@@ -299,14 +290,14 @@ get_header_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_footer_html(PidginConvThemePrivate *priv)
+get_footer_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->footer_html)
 		return priv->footer_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Footer.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Footer.html", NULL);
 	if (!g_file_get_contents(file, &priv->footer_html, NULL, NULL))
 		priv->footer_html = g_strdup("");
 	g_free(file);
@@ -315,16 +306,16 @@ get_footer_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_incoming_content_html(PidginConvThemePrivate *priv)
+get_incoming_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->incoming_content_html)
 		return priv->incoming_content_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
 	if (!g_file_get_contents(file, &priv->incoming_content_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s did not have a Incoming/Content.html\n", priv->style_dir);
+		purple_debug_info("webkit", "%s did not have a Incoming/Content.html\n", dir);
 		priv->incoming_content_html = g_strdup("");
 	}
 	g_free(file);
@@ -333,14 +324,14 @@ get_incoming_content_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_incoming_next_content_html(PidginConvThemePrivate *priv)
+get_incoming_next_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->incoming_next_content_html)
 		return priv->incoming_next_content_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &priv->incoming_next_content_html, NULL, NULL)) {
 		priv->incoming_next_content_html = g_strdup(priv->incoming_content_html);
 	}
@@ -350,14 +341,14 @@ get_incoming_next_content_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_outgoing_content_html(PidginConvThemePrivate *priv)
+get_outgoing_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->outgoing_content_html)
 		return priv->outgoing_content_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
 	if (!g_file_get_contents(file, &priv->outgoing_content_html, NULL, NULL)) {
 		priv->outgoing_content_html = g_strdup(priv->incoming_content_html);
 	}
@@ -367,14 +358,14 @@ get_outgoing_content_html(PidginConvThemePrivate *priv)
 }
 
 static const char *
-get_outgoing_next_content_html(PidginConvThemePrivate *priv)
+get_outgoing_next_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
 
 	if (priv->outgoing_next_content_html)
 		return priv->outgoing_next_content_html;
 
-	file = g_build_filename(priv->style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
+	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &priv->outgoing_next_content_html, NULL, NULL)) {
 		priv->outgoing_next_content_html = g_strdup(priv->outgoing_content_html);
 	}
@@ -451,6 +442,7 @@ replace_template_tokens(PidginConvTheme *theme, const char *text, const char *he
 {
 	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 	GString *str = g_string_new(NULL);
+	const char *themedir;
 
 	char **ms = g_strsplit(text, "%@", 6);
 	char *base = NULL;
@@ -461,15 +453,17 @@ replace_template_tokens(PidginConvTheme *theme, const char *text, const char *he
 		return NULL;
 	}
 
+	themedir = purple_theme_get_dir(PURPLE_THEME(theme));
+
 	g_string_append(str, ms[0]);
 	g_string_append(str, "file://");
-	base = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+	base = g_build_filename(themedir, "Contents", "Resources", "Template.html", NULL);
 	g_string_append(str, base);
 	g_free(base);
 
 	g_string_append(str, ms[1]);
 
-	g_string_append(str, get_basestyle_css(priv));
+	g_string_append(str, get_basestyle_css(priv, themedir));
 
 	g_string_append(str, ms[2]);
 
@@ -494,16 +488,22 @@ set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 	WebKitWebSettings *settings;
+	const GValue *val;
 
 	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
-	if (priv->default_font_family)
-		g_object_set(G_OBJECT(settings), "default-font-family", priv->default_font_family, NULL);
 
-	if (priv->default_font_size)
-		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(priv->default_font_size), NULL);
+	val = get_key(priv, "DefaultFontFamily", TRUE);
+	if (val)
+		g_object_set(G_OBJECT(settings), "default-font-family", g_value_get_string(val), NULL);
 
-	/* this does not work :( */
-	webkit_web_view_set_transparent(webview, priv->default_background_is_transparent);
+	val = get_key(priv, "DefaultFontSize", TRUE);
+	if (val)
+		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(g_value_get_int(val)), NULL);
+
+	val = get_key(priv, "DefaultBackgroundIsTransparent", TRUE);
+	if (val)
+		/* this does not work :( */
+		webkit_web_view_set_transparent(webview, g_value_get_boolean(val));
 }
 
 /*
@@ -555,12 +555,14 @@ void
 pidgin_conversation_theme_save_state(const PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+	const GValue *val;
 	char *prefname;
 	char *variant;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", priv->cf_bundle_identifier);
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", g_value_get_string(val));
 	variant = g_strdup_printf("%s/variant", prefname);
 
 	purple_debug_info("webkit", "saving state with variant %s\n", priv->variant);
@@ -576,6 +578,7 @@ static void
 pidgin_conversation_theme_load_state(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+	const GValue *val;
 	char *prefname;
 	char *variant;
 	const char* value;
@@ -583,7 +586,8 @@ pidgin_conversation_theme_load_state(PidginConvTheme *theme)
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", priv->cf_bundle_identifier);
+	val = get_key(priv, "CFBundleIdentifier", FALSE);
+	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", g_value_get_string(val));
 	variant = g_strdup_printf("%s/variant", prefname);
 
 	value = purple_prefs_get_string(variant);
@@ -603,24 +607,10 @@ pidgin_conversation_theme_copy(const PidginConvTheme *theme)
 	PidginConvThemePrivate *old, *new;
 
 	old = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-	ret = g_object_new(PIDGIN_TYPE_CONV_THEME, "directory", old->style_dir, NULL);
+	ret = g_object_new(PIDGIN_TYPE_CONV_THEME, "directory", purple_theme_get_dir(PURPLE_THEME(theme)), NULL);
 	new = PIDGIN_CONV_THEME_GET_PRIVATE(ret);
 
 	new->variant = g_strdup(old->variant);
-	new->message_view_version = old->message_view_version;
-	new->cf_bundle_name = g_strdup(old->cf_bundle_name);
-	new->cf_bundle_identifier = g_strdup(old->cf_bundle_identifier);
-	new->cf_bundle_get_info_string = g_strdup(old->cf_bundle_get_info_string);
-	new->default_font_family = g_strdup(old->default_font_family);
-	new->default_font_size = old->default_font_size;
-	new->shows_user_icons = old->shows_user_icons;
-	new->disable_combine_consecutive = old->disable_combine_consecutive;
-	new->default_background_is_transparent = old->default_background_is_transparent;
-	new->disable_custom_background = old->disable_custom_background;
-	new->default_background_color = g_strdup(old->default_background_color);
-	new->allow_text_colors = old->allow_text_colors;
-	new->image_mask = g_strdup(old->image_mask);
-	new->default_variant = g_strdup(old->default_variant);
 
 	new->template_html = g_strdup(old->template_html);
 	new->header_html = g_strdup(old->header_html);
@@ -673,8 +663,7 @@ pidgin_conversation_theme_get_variants(PidginConvTheme *theme)
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	g_assert(priv->style_dir);
-	variant_dir = g_build_filename(priv->style_dir, "Contents", "Resources", "Variants", NULL);
+	variant_dir = g_build_filename(purple_theme_get_dir(PURPLE_THEME(theme)), "Contents", "Resources", "Variants", NULL);
 
 	variants = g_dir_open(variant_dir, 0, NULL);
 	if (!variants)
@@ -699,14 +688,16 @@ char *
 pidgin_conversation_theme_get_css(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+	const char *dir;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
+	dir = purple_theme_get_dir(PURPLE_THEME(theme));
 	if (!priv->variant) {
-		return g_build_filename(priv->style_dir, "Contents", "Resources", "main.css", NULL);
+		return g_build_filename(dir, "Contents", "Resources", "main.css", NULL);
 	} else {
 		char *file = g_strdup_printf("%s.css", priv->variant);
-		char *ret = g_build_filename(priv->style_dir, "Contents", "Resources", "Variants",  file, NULL);
+		char *ret = g_build_filename(dir, "Contents", "Resources", "Variants",  file, NULL);
 		g_free(file);
 		return ret;
 	}
@@ -727,6 +718,7 @@ void
 pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv)
 {
 	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
+	const char *themedir;
 	char *header, *footer;
 	char *template;
 	char *basedir;
@@ -743,16 +735,18 @@ pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv
 
 	g_assert(theme);
 
-	header = replace_header_tokens(get_header_html(priv), conv);
-	footer = replace_header_tokens(get_footer_html(priv), conv);
-	template = replace_template_tokens(theme, get_template_html(priv), header, footer);
+	themedir = purple_theme_get_dir(PURPLE_THEME(theme));
+
+	header = replace_header_tokens(get_header_html(priv, themedir), conv);
+	footer = replace_header_tokens(get_footer_html(priv, themedir), conv);
+	template = replace_template_tokens(theme, get_template_html(priv, themedir), header, footer);
 
 	g_assert(template);
 
 	purple_debug_info("webkit", "template: %s\n", template);
 
 	set_theme_webkit_settings(WEBKIT_WEB_VIEW(webkit), theme);
-	basedir = g_build_filename(priv->style_dir, "Contents", "Resources", "Template.html", NULL);
+	basedir = g_build_filename(themedir, "Contents", "Resources", "Template.html", NULL);
 	baseuri = g_strdup_printf("file://%s", basedir);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
