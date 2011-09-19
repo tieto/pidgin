@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "pidgin.h"
 #include "gtkconv-theme-loader.h"
 #include "gtkconv-theme.h"
 
@@ -185,8 +186,31 @@ pidgin_conv_loader_build(const gchar *dir)
 	g_free(variant_dir);
 
 	if (variants) {
+		char *prefname;
+		const char *default_variant = NULL;
 		const char *file;
-		char *name;
+
+		/* Try user-set variant */
+		prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
+		                           CFBundleIdentifier);
+		default_variant = purple_prefs_get_string(prefname);
+		g_free(prefname);
+
+		if (default_variant && *default_variant) {
+			pidgin_conversation_theme_set_variant(theme, default_variant);
+
+		} else {
+			/* Try theme default */
+			val = g_hash_table_lookup(info, "DefaultVariant");
+			if (val && G_VALUE_HOLDS_STRING(val)) {
+				default_variant = g_value_get_string(val);
+				if (default_variant && *default_variant)
+					pidgin_conversation_theme_set_variant(theme, default_variant);
+				else
+					default_variant = NULL;
+			} else
+				default_variant = NULL;
+		}
 
 		while ((file = g_dir_read_name(variants)) != NULL) {
 			const char *end = g_strrstr(file, ".css");
@@ -197,6 +221,12 @@ pidgin_conv_loader_build(const gchar *dir)
 
 			name = g_strndup(file, end - file);
 			pidgin_conversation_theme_add_variant(theme, name);
+
+			/* Set variant with first found */
+			if (!default_variant) {
+				pidgin_conversation_theme_set_variant(theme, name);
+				default_variant = name;
+			}
 		}
 
 		g_dir_close(variants);
