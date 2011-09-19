@@ -69,12 +69,65 @@ G_BEGIN_DECLS
  */
 GType pidgin_conversation_theme_get_type(void);
 
+/**
+ * Get the Info.plist hash table from a conversation theme.
+ *
+ * @param theme The conversation theme
+ *
+ * @return The hash table. Keys are strings as outlined for message styles,
+ *         values are GValue*s. This is an internal structure. Take a ref if
+ *         necessary, but don't destroy it yourself.
+ */
 const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *theme);
+
+/**
+ * Set the Info.plist hash table for a conversation theme.
+ *
+ * @param theme The conversation theme
+ * @param info  The new hash table. The theme will take ownership of this hash
+ *              table. Do not use it yourself afterwards with holding a ref.
+ *              For key and value specifications, @see pidgin_conversation_theme_get_info.
+ *
+ */
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
+/**
+ * Add an available variant name to a conversation theme.
+ *
+ * @param theme   The conversation theme
+ * @param variant The name of the variant
+ *
+ * @Note The conversation theme will take ownership of the variant name string.
+ *       This function should normally only be called by the theme loader.
+ */
 void pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant);
+
+/**
+ * Get the currently set variant name for a conversation theme.
+ *
+ * @param theme The conversation theme
+ *
+ * @return The current variant name.
+ */
 const char *pidgin_conversation_theme_get_variant(PidginConvTheme *theme);
+
+/**
+ * Set the variant name for a conversation theme.
+ *
+ * @param theme   The conversation theme
+ * @param variant The name of the variant
+ *
+ */
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
+
+/**
+ * Get a list of available variants for a conversation theme.
+ *
+ * @param theme The conversation theme
+ *
+ * @return The list of variants. This GList and the string data are owned by
+ *         the theme and should not be freed by the caller.
+ */
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 
 PidginConvTheme *pidgin_conversation_theme_copy(const PidginConvTheme *theme);
