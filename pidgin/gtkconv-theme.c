@@ -562,7 +562,7 @@ pidgin_conversation_theme_save_state(const PidginConvTheme *theme)
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", g_value_get_string(val));
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s", g_value_get_string(val));
 	variant = g_strdup_printf("%s/variant", prefname);
 
 	purple_debug_info("webkit", "saving state with variant %s\n", priv->variant);
@@ -580,24 +580,21 @@ pidgin_conversation_theme_load_state(PidginConvTheme *theme)
 	PidginConvThemePrivate *priv;
 	const GValue *val;
 	char *prefname;
-	char *variant;
 	const char* value;
 	gboolean changed;
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf("/plugins/gtk/adiumthemes/%s", g_value_get_string(val));
-	variant = g_strdup_printf("%s/variant", prefname);
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s/variant", g_value_get_string(val));
 
-	value = purple_prefs_get_string(variant);
+	value = purple_prefs_get_string(prefname);
 	changed = !priv->variant || !g_str_equal(priv->variant, value);
 
 	g_free(priv->variant);
 	priv->variant = g_strdup(value);
 
 	g_free(prefname);
-	g_free(variant);
 }
 
 PidginConvTheme *
