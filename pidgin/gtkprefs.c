@@ -45,6 +45,7 @@
 
 #include "gtkblist.h"
 #include "gtkconv.h"
+#include "gtkconv-theme.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
@@ -83,6 +84,7 @@ static GtkWidget *sample_imhtml = NULL;
 /* Themes page */
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
+static GtkWidget *prefs_conv_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
@@ -94,6 +96,7 @@ static gboolean prefs_sound_themes_loading;
 /* These exist outside the lifetime of the prefs dialog */
 static GtkListStore *prefs_sound_themes;
 static GtkListStore *prefs_blist_themes;
+static GtkListStore *prefs_conv_themes;
 static GtkListStore *prefs_status_icon_themes;
 static GtkListStore *prefs_smiley_themes;
 
@@ -339,6 +342,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	prefs_sound_themes_combo_box = NULL;
 	prefs_blist_themes_combo_box = NULL;
+	prefs_conv_themes_combo_box = NULL;
 	prefs_status_themes_combo_box = NULL;
 	prefs_smiley_themes_combo_box = NULL;
 
@@ -490,6 +494,30 @@ prefs_themes_sort(PurpleTheme *theme)
 		g_free(markup);
 		if (pixbuf != NULL)
 			g_object_unref(G_OBJECT(pixbuf));
+
+	} else if (PIDGIN_IS_CONV_THEME(theme)) {
+		GList *variants;
+
+		/* No image available? */
+
+		name = purple_theme_get_name(theme);
+		/* No author available */
+		/* No description available */
+
+		/* We'll re-use the description field to show variants... 
+		 * This is probably too long to be useful... Will fix later...
+		 */
+		for (variants = pidgin_conversation_theme_get_variants(PIDGIN_CONV_THEME(theme));
+		     variants;
+		     variants = g_list_delete_link(variants, variants)) {
+
+			markup = get_theme_markup(name, FALSE, NULL, variants->data);
+
+			gtk_list_store_append(prefs_conv_themes, &iter);
+			gtk_list_store_set(prefs_conv_themes, &iter, 1, markup, 2, name, -1);
+
+			g_free(variants->data);
+		}
 	}
 }
 
@@ -545,6 +573,9 @@ prefs_themes_refresh(void)
 	gtk_list_store_set(prefs_blist_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
 
+	/* conversation themes */
+	gtk_list_store_clear(prefs_conv_themes);
+
 	/* status icon themes */
 	gtk_list_store_clear(prefs_status_icon_themes);
 	gtk_list_store_append(prefs_status_icon_themes, &iter);
@@ -565,6 +596,7 @@ prefs_themes_refresh(void)
 	/* set active */
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
+	prefs_set_active_theme_combo(prefs_conv_themes_combo_box, prefs_conv_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversation/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
 	prefs_set_active_theme_combo(prefs_smiley_themes_combo_box, prefs_smiley_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme"));
 	prefs_sound_themes_loading = FALSE;
@@ -577,6 +609,8 @@ prefs_themes_init(void)
 	prefs_sound_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+
+	prefs_conv_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	prefs_status_icon_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -1019,6 +1053,27 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	}
 }
 
+/* sets the current conversation theme */
+static void
+prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginConvTheme *theme =  NULL;
+	GtkTreeIter iter;
+	gchar *name = NULL;
+
+	if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
+
+		if(!name || !g_str_equal(name, ""))
+			theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+
+		g_free(name);
+
+		purple_debug_info("theme", "Setting conversation theme...\n");
+	}
+}
+
 /* sets the current icon theme */
 static void
 prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
@@ -1100,6 +1155,12 @@ theme_page(void)
 		vbox, combo_sg, label_sg, prefs_blist_themes,
 		(GCallback)prefs_set_blist_theme_cb, NULL,
 		_("Buddy List Theme:"), PIDGIN_PREFS_ROOT "/blist/theme", "blist");
+
+	/* Conversation Themes */
+	prefs_conv_themes_combo_box = add_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_conv_themes,
+		(GCallback)prefs_set_conv_theme_cb, NULL,
+		_("Conversation Theme:"), PIDGIN_PREFS_ROOT "/conversation/theme", "conversation");
 
 	/* Status Icon Themes */
 	prefs_status_themes_combo_box = add_theme_prefs_combo(
@@ -2865,6 +2926,10 @@ pidgin_prefs_init(void)
 
 	/* Themes */
 	prefs_themes_init();
+
+	/* Conversation Themes */
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversation");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversation/theme", "Default");
 
 	/* Smiley Themes */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/smileys");
