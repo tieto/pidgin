@@ -594,7 +594,7 @@ prefs_themes_refresh(void)
 	/* set active */
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
-	prefs_set_active_theme_combo(prefs_conv_themes_combo_box, prefs_conv_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversation/theme"));
+	prefs_set_active_theme_combo(prefs_conv_themes_combo_box, prefs_conv_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
 	prefs_set_active_theme_combo(prefs_smiley_themes_combo_box, prefs_smiley_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme"));
 	prefs_sound_themes_loading = FALSE;
@@ -1158,7 +1158,7 @@ theme_page(void)
 	prefs_conv_themes_combo_box = add_theme_prefs_combo(
 		vbox, combo_sg, label_sg, prefs_conv_themes,
 		(GCallback)prefs_set_conv_theme_cb, NULL,
-		_("Conversation Theme:"), PIDGIN_PREFS_ROOT "/conversation/theme", "conversation");
+		_("Conversation Theme:"), PIDGIN_PREFS_ROOT "/conversations/theme", "conversation");
 
 	/* Status Icon Themes */
 	prefs_status_themes_combo_box = add_theme_prefs_combo(
@@ -2926,8 +2926,8 @@ pidgin_prefs_init(void)
 	prefs_themes_init();
 
 	/* Conversation Themes */
-	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversation");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversation/theme", "Default");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/theme", "Default");
 
 	/* Smiley Themes */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/smileys");

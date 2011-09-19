@@ -582,7 +582,7 @@ pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *varian
 	priv->variant = g_strdup(variant);
 
 	val = get_key(priv, "CFBundleIdentifier", FALSE);
-	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversation/themes/%s/variant",
+	prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
 	                           g_value_get_string(val));
 	purple_prefs_set_string(prefname, variant);
 	g_free(prefname);
