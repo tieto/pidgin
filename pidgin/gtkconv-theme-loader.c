@@ -193,7 +193,8 @@ pidgin_conv_loader_build(const gchar *dir)
 		/* Try user-set variant */
 		prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
 		                           CFBundleIdentifier);
-		default_variant = purple_prefs_get_string(prefname);
+		if (purple_prefs_exists(prefname))
+			default_variant = purple_prefs_get_string(prefname);
 		g_free(prefname);
 
 		if (default_variant && *default_variant) {
