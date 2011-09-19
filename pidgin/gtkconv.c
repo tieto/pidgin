@@ -52,6 +52,8 @@
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
+#include "theme-loader.h"
+#include "theme-manager.h"
 #include "util.h"
 #include "version.h"
 
@@ -59,6 +61,8 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkconvwin.h"
+#include "gtkconv-theme.h"
+#include "gtkconv-theme-loader.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
@@ -8119,6 +8123,8 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", handle,
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
+
+	purple_theme_manager_register_type(g_object_new(PIDGIN_TYPE_CONV_THEME_LOADER, "type", "conversation", NULL));
 
 	{
 		/* Set default tab colors */
