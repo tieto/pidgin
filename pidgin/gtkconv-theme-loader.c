@@ -119,21 +119,25 @@ pidgin_conv_loader_build(const gchar *dir)
 	plist = xmlnode_from_file(contents, "Info.plist", "Info.plist", "gtkconv-theme-loader");
 	g_free(contents);
 	if (plist == NULL) {
-		purple_debug_error("gtkconv-theme", "Failed to load Contents/Info.plist in %s\n", dir);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "Failed to load Contents/Info.plist in %s\n", dir);
 		return NULL;
 	}
 
 	info = read_info_plist(plist);
 	xmlnode_free(plist);
 	if (info == NULL) {
-		purple_debug_error("gtkconv-theme", "Failed to load Contents/Info.plist in %s\n", dir);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "Failed to load Contents/Info.plist in %s\n", dir);
 		return NULL;
 	}
 
 	/* Check for required keys: CFBundleName */
 	val = g_hash_table_lookup(info, "CFBundleName");
 	if (!val) {
-		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key CFBundleName.\n", dir);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "%s/Contents/Info.plist missing required key CFBundleName.\n",
+		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;
 	}
@@ -142,7 +146,9 @@ pidgin_conv_loader_build(const gchar *dir)
 	/* Check for required keys: CFBundleIdentifier */
 	val = g_hash_table_lookup(info, "CFBundleIdentifier");
 	if (!val) {
-		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key CFBundleIdentifier.\n", dir);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "%s/Contents/Info.plist missing required key CFBundleIdentifier.\n",
+		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;
 	}
@@ -151,15 +157,18 @@ pidgin_conv_loader_build(const gchar *dir)
 	/* Check for required keys: MessageViewVersion */
 	val = g_hash_table_lookup(info, "MessageViewVersion");
 	if (!val) {
-		purple_debug_error("gtkconv-theme", "%s/Contents/Info.plist missing required key MessageViewVersion.\n", dir);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "%s/Contents/Info.plist missing required key MessageViewVersion.\n",
+		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;
 	}
 
 	MessageViewVersion = g_value_get_int(val);
 	if (MessageViewVersion < 3) {
-		purple_debug_error("gtkconv-theme", "%s is a legacy style (version %d) and will not be loaded.\n",
-		                  CFBundleName, MessageViewVersion);
+		purple_debug_error("gtkconv-theme-loader",
+		                   "%s is a legacy style (version %d) and will not be loaded.\n",
+		                   CFBundleName, MessageViewVersion);
 		g_hash_table_destroy(info);
 		return NULL;
 	}
