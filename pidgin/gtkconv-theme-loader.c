@@ -134,9 +134,9 @@ pidgin_conv_loader_build(const gchar *dir)
 
 	/* Check for required keys: CFBundleName */
 	val = g_hash_table_lookup(info, "CFBundleName");
-	if (!val) {
+	if (!val || !G_VALUE_HOLDS_STRING(val)) {
 		purple_debug_error("gtkconv-theme-loader",
-		                   "%s/Contents/Info.plist missing required key CFBundleName.\n",
+		                   "%s/Contents/Info.plist missing required string key CFBundleName.\n",
 		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;
@@ -145,9 +145,9 @@ pidgin_conv_loader_build(const gchar *dir)
 
 	/* Check for required keys: CFBundleIdentifier */
 	val = g_hash_table_lookup(info, "CFBundleIdentifier");
-	if (!val) {
+	if (!val || !G_VALUE_HOLDS_STRING(val)) {
 		purple_debug_error("gtkconv-theme-loader",
-		                   "%s/Contents/Info.plist missing required key CFBundleIdentifier.\n",
+		                   "%s/Contents/Info.plist missing required string key CFBundleIdentifier.\n",
 		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;
@@ -156,9 +156,9 @@ pidgin_conv_loader_build(const gchar *dir)
 
 	/* Check for required keys: MessageViewVersion */
 	val = g_hash_table_lookup(info, "MessageViewVersion");
-	if (!val) {
+	if (!val || !G_VALUE_HOLDS_INT(val)) {
 		purple_debug_error("gtkconv-theme-loader",
-		                   "%s/Contents/Info.plist missing required key MessageViewVersion.\n",
+		                   "%s/Contents/Info.plist missing required integer key MessageViewVersion.\n",
 		                   dir);
 		g_hash_table_destroy(info);
 		return NULL;

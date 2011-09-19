@@ -494,15 +494,15 @@ set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
 	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
 
 	val = get_key(priv, "DefaultFontFamily", TRUE);
-	if (val)
+	if (val && G_VALUE_HOLDS_STRING(val))
 		g_object_set(G_OBJECT(settings), "default-font-family", g_value_get_string(val), NULL);
 
 	val = get_key(priv, "DefaultFontSize", TRUE);
-	if (val)
+	if (val && G_VALUE_HOLDS_INT(val))
 		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(g_value_get_int(val)), NULL);
 
 	val = get_key(priv, "DefaultBackgroundIsTransparent", TRUE);
-	if (val)
+	if (val && G_VALUE_HOLDS_BOOLEAN(val))
 		/* this does not work :( */
 		webkit_web_view_set_transparent(webview, g_value_get_boolean(val));
 }
