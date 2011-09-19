@@ -553,12 +553,12 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 }
 
 void
-pidgin_conversation_theme_add_variant(PidginConvTheme *theme, const char *variant)
+pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant)
 {
 	PidginConvThemePrivate *priv;
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
-	priv->variants = g_list_prepend(priv->variants, g_strdup(variant));
+	priv->variants = g_list_prepend(priv->variants, variant);
 }
 
 const char *

@@ -72,7 +72,7 @@ GType pidgin_conversation_theme_get_type(void);
 const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *theme);
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
-void pidgin_conversation_theme_add_variant(PidginConvTheme *theme, const char *variant);
+void pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant);
 const char *pidgin_conversation_theme_get_variant(PidginConvTheme *theme);
 void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *variant);
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
