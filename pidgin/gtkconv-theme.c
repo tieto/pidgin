@@ -733,6 +733,9 @@ pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTe
 		case PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTEXT:
 			html = get_outgoing_next_context_html(priv, dir);
 			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_BASESTYLE_CSS:
+			html = get_basestyle_css(priv, dir);
+			break;
 		default:
 			purple_debug_error("gtkconv-theme",
 			                   "Requested invalid template type (%d) for theme %s.\n",
