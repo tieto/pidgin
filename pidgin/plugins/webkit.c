@@ -46,6 +46,7 @@ create_gtk_window_around_it(WebKitWebInspector *inspector,
 	gtk_window_set_title(GTK_WINDOW(win), title);
 	g_free(title);
 	gtk_window_set_default_size(GTK_WINDOW(win), 600, 400);
+	g_signal_connect_swapped(G_OBJECT(gtkconv->tab_cont), "destroy", G_CALLBACK(gtk_widget_destroy), win);
 
 	view = webkit_web_view_new();
 	gtk_container_add(GTK_CONTAINER(win), view);
@@ -91,14 +92,12 @@ remove_inspector(PidginConversation *gtkconv)
 	GtkWidget *webview = gtkconv->webview;
 	GtkWidget *win;
 	WebKitWebSettings *settings;
-	WebKitWebInspector *inspector;
 
 	win = g_object_get_data(G_OBJECT(webview), "inspector-window");
 	gtk_widget_destroy(win);
 	g_object_set_data(G_OBJECT(webview), "inspector-window", NULL);
 
 	settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webview));
-	inspector = webkit_web_view_get_inspector(WEBKIT_WEB_VIEW(webview));
 
 	g_object_set(G_OBJECT(settings), "enable-developer-extras", FALSE, NULL);
 }
