@@ -173,12 +173,23 @@ void pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *v
  */
 const GList *pidgin_conversation_theme_get_variants(PidginConvTheme *theme);
 
-PidginConvTheme *pidgin_conversation_theme_copy(const PidginConvTheme *theme);
+/**
+ * Get the path to the template HTML file.
+ *
+ * @param theme The conversation theme
+ *
+ * @return The path to the HTML file.
+ */
+char *pidgin_conversation_theme_get_template_path(PidginConvTheme *theme);
 
-char *pidgin_conversation_theme_get_css(PidginConvTheme *theme);
-
-void
-pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv);
+/**
+ * Get the path to the current variant CSS file.
+ *
+ * @param theme The conversation theme
+ *
+ * @return The path to the CSS file.
+ */
+char *pidgin_conversation_theme_get_css_path(PidginConvTheme *theme);
 
 G_END_DECLS
 #endif /* PIDGIN_CONV_THEME_H */

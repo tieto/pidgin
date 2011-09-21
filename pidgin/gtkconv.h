@@ -65,6 +65,7 @@ enum {
 #include "pidgin.h"
 #include "conversation.h"
 #include "gtkconvwin.h"
+#include "gtkconv-theme.h"
 
 /**************************************************************************
  * @name Structures
@@ -95,6 +96,8 @@ struct _PidginConversation
 	GtkWidget *tabby;
 	GtkWidget *menu_tabby;
 
+	PidginConvTheme *theme;
+	PurpleMessageFlags last_flags;
 	GtkWidget *webview;
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;

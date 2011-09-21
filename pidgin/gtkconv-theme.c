@@ -34,9 +34,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* GObject data keys - this will probably go away soon... */
-#define MESSAGE_STYLE_KEY "message-style"
-
 #define PIDGIN_CONV_THEME_GET_PRIVATE(Gobject) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_CONV_THEME, PidginConvThemePrivate))
 
@@ -493,160 +490,6 @@ get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
 	return priv->outgoing_next_context_html;
 }
 
-static char *
-replace_header_tokens(const char *text, PurpleConversation *conv)
-{
-	GString *str = g_string_new(NULL);
-	const char *cur = text;
-	const char *prev = cur;
-
-	if (text == NULL)
-		return NULL;
-
-	while ((cur = strchr(cur, '%'))) {
-		const char *replace = NULL;
-		char *fin = NULL;
-
-		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
-			replace = conv->name;
-		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
-			replace = purple_account_get_alias(conv->account);
-			if (replace == NULL)
-				replace = purple_account_get_username(conv->account);
-		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
-			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
-			if (buddy) {
-				replace = purple_buddy_get_alias(buddy);
-			} else {
-				replace = conv->name;
-			}
-		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
-			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
-			replace = purple_buddy_icon_get_full_path(icon);
-		} else if (!strncmp(cur, "%outgoingIconPath%", strlen("%outgoingIconPath%"))) {
-		} else if (!strncmp(cur, "%timeOpened", strlen("%timeOpened"))) {
-			char *format = NULL;
-			if (*(cur + strlen("%timeOpened")) == '{') {
-				const char *start = cur + strlen("%timeOpened") + 1;
-				char *end = strstr(start, "}%");
-				if (!end) /* Invalid string */
-					continue;
-				format = g_strndup(start, end - start);
-				fin = end + 1;
-			}
-			replace = purple_utf8_strftime(format ? format : "%X", NULL);
-			g_free(format);
-		} else {
-			continue;
-		}
-
-		/* Here we have a replacement to make */
-		g_string_append_len(str, prev, cur - prev);
-		g_string_append(str, replace);
-
-		/* And update the pointers */
-		if (fin) {
-			prev = cur = fin + 1;
-		} else {
-			prev = cur = strchr(cur + 1, '%') + 1;
-		}
-	}
-
-	/* And wrap it up */
-	g_string_append(str, prev);
-	return g_string_free(str, FALSE);
-}
-
-static char *
-replace_template_tokens(PidginConvTheme *theme, const char *text, const char *header, const char *footer)
-{
-	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-	GString *str = g_string_new(NULL);
-	const char *themedir;
-
-	char **ms = g_strsplit(text, "%@", 6);
-	char *base = NULL;
-	char *csspath = pidgin_conversation_theme_get_css(theme);
-	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
-		g_strfreev(ms);
-		g_string_free(str, TRUE);
-		return NULL;
-	}
-
-	themedir = purple_theme_get_dir(PURPLE_THEME(theme));
-
-	g_string_append(str, ms[0]);
-	g_string_append(str, "file://");
-	base = g_build_filename(themedir, "Contents", "Resources", "Template.html", NULL);
-	g_string_append(str, base);
-	g_free(base);
-
-	g_string_append(str, ms[1]);
-
-	g_string_append(str, get_basestyle_css(priv, themedir));
-
-	g_string_append(str, ms[2]);
-
-	g_string_append(str, "file://");
-	g_string_append(str, csspath);
-
-	g_string_append(str, ms[3]);
-	if (header)
-		g_string_append(str, header);
-	g_string_append(str, ms[4]);
-	if (footer)
-		g_string_append(str, footer);
-	g_string_append(str, ms[5]);
-
-	g_strfreev(ms);
-	g_free(csspath);
-	return g_string_free(str, FALSE);
-}
-
-static void
-set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
-{
-	PidginConvThemePrivate *priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-	WebKitWebSettings *settings;
-	const GValue *val;
-
-	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
-
-	val = get_key(priv, "DefaultFontFamily", TRUE);
-	if (val && G_VALUE_HOLDS_STRING(val))
-		g_object_set(G_OBJECT(settings), "default-font-family", g_value_get_string(val), NULL);
-
-	val = get_key(priv, "DefaultFontSize", TRUE);
-	if (val && G_VALUE_HOLDS_INT(val))
-		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(g_value_get_int(val)), NULL);
-
-	val = get_key(priv, "DefaultBackgroundIsTransparent", TRUE);
-	if (val && G_VALUE_HOLDS_BOOLEAN(val))
-		/* this does not work :( */
-		webkit_web_view_set_transparent(webview, g_value_get_boolean(val));
-}
-
-/*
- * The style specification says that if the conversation is a group
- * chat then the <div id="Chat"> element will be given a class
- * 'groupchat'. I can't add another '%@' in Template.html because
- * that breaks style-specific Template.html's. I have to either use libxml
- * or conveniently play with WebKit's javascript engine. The javascript
- * engine should work, but it's not an identical behavior.
- */
-static void
-webkit_set_groupchat(GtkWebView *webview)
-{
-	gtk_webview_safe_execute_script(webview, "document.getElementById('Chat').className = 'groupchat'");
-}
-
-static void
-webkit_on_webview_destroy(GtkObject *object, gpointer data)
-{
-	g_object_unref(G_OBJECT(data));
-	g_object_set_data(G_OBJECT(object), MESSAGE_STYLE_KEY, NULL);
-}
-
 /*****************************************************************************
  * Public API functions
  *****************************************************************************/
@@ -791,33 +634,25 @@ pidgin_conversation_theme_get_variants(PidginConvTheme *theme)
 	return priv->variants;
 }
 
-PidginConvTheme *
-pidgin_conversation_theme_copy(const PidginConvTheme *theme)
+char *
+pidgin_conversation_theme_get_template_path(PidginConvTheme *theme)
 {
-	PidginConvTheme *ret;
-	PidginConvThemePrivate *old, *new;
+	const char *dir;
+	char *filename;
 
-	old = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-	ret = g_object_new(PIDGIN_TYPE_CONV_THEME, "directory", purple_theme_get_dir(PURPLE_THEME(theme)), NULL);
-	new = PIDGIN_CONV_THEME_GET_PRIVATE(ret);
+	dir = purple_theme_get_dir(PURPLE_THEME(theme));
+	filename = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
 
-	new->variant = g_strdup(old->variant);
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
+		g_free(filename);
+		filename = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
+	}
 
-	new->template_html = g_strdup(old->template_html);
-	new->header_html = g_strdup(old->header_html);
-	new->footer_html = g_strdup(old->footer_html);
-	new->incoming_content_html = g_strdup(old->incoming_content_html);
-	new->outgoing_content_html = g_strdup(old->outgoing_content_html);
-	new->incoming_next_content_html = g_strdup(old->incoming_next_content_html);
-	new->outgoing_next_content_html = g_strdup(old->outgoing_next_content_html);
-	new->status_html = g_strdup(old->status_html);
-	new->basestyle_css = g_strdup(old->basestyle_css);
-
-	return ret;
+	return filename;
 }
 
 char *
-pidgin_conversation_theme_get_css(PidginConvTheme *theme)
+pidgin_conversation_theme_get_css_path(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
 	const char *dir;
@@ -833,68 +668,5 @@ pidgin_conversation_theme_get_css(PidginConvTheme *theme)
 		g_free(file);
 		return ret;
 	}
-}
-
-/**
- * Called when either a new PurpleConversation is created
- * or when a PidginConversation changes its active PurpleConversation
- * This will not change the theme if the theme is already set.
- * (This is to prevent accidental theme changes if a new
- * PurpleConversation gets added.
- *
- * FIXME: it's not at all clear to me as to how
- * Adium themes handle the case when the PurpleConversation
- * changes.
- */
-void
-pidgin_conversation_theme_apply(PidginConvTheme *theme, PurpleConversation *conv)
-{
-	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
-	const char *themedir;
-	char *header, *footer;
-	char *template;
-	char *basedir;
-	char *baseuri;
-	PidginConvTheme *oldTheme;
-	PidginConvTheme *copy;
-	PidginConvThemePrivate *priv;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
-
-	oldTheme = g_object_get_data(G_OBJECT(webkit), MESSAGE_STYLE_KEY);
-	if (oldTheme)
-		return;
-
-	g_assert(theme);
-
-	themedir = purple_theme_get_dir(PURPLE_THEME(theme));
-
-	header = replace_header_tokens(get_header_html(priv, themedir), conv);
-	footer = replace_header_tokens(get_footer_html(priv, themedir), conv);
-	template = replace_template_tokens(theme, get_template_html(priv, themedir), header, footer);
-
-	g_assert(template);
-
-	purple_debug_info("webkit", "template: %s\n", template);
-
-	set_theme_webkit_settings(WEBKIT_WEB_VIEW(webkit), theme);
-	basedir = g_build_filename(themedir, "Contents", "Resources", "Template.html", NULL);
-	baseuri = g_strdup_printf("file://%s", basedir);
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
-
-	copy = pidgin_conversation_theme_copy(theme);
-	g_object_set_data(G_OBJECT(webkit), MESSAGE_STYLE_KEY, copy);
-
-	g_object_unref(G_OBJECT(theme));
-	/* I need to unref this style when the webkit object destroys */
-	g_signal_connect(G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), copy);
-
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-		webkit_set_groupchat(GTK_WEBVIEW(webkit));
-	g_free(basedir);
-	g_free(baseuri);
-	g_free(header);
-	g_free(footer);
-	g_free(template);
 }
 

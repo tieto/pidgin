@@ -76,6 +76,7 @@
 #include "gtkwebview.h"
 #include "pidginstock.h"
 #include "pidgintooltip.h"
+#include "smileyparser.h"
 
 #include "gtknickcolors.h"
 
@@ -4945,6 +4946,152 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 
 /* }}} */
 
+static char *
+replace_header_tokens(PurpleConversation *conv, const char *text)
+{
+	GString *str;
+	const char *cur = text;
+	const char *prev = cur;
+
+	if (text == NULL || *text == '\0')
+		return NULL;
+
+	str = g_string_new(NULL);
+	while ((cur = strchr(cur, '%'))) {
+		const char *replace = NULL;
+		const char *fin = NULL;
+
+		if (g_str_has_prefix(cur, "%chatName%")) {
+			replace = conv->name;
+
+		} else if (g_str_has_prefix(cur, "%sourceName%")) {
+			replace = purple_account_get_alias(conv->account);
+			if (replace == NULL)
+				replace = purple_account_get_username(conv->account);
+
+		} else if (g_str_has_prefix(cur, "%destinationName%")) {
+			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+			if (buddy) {
+				replace = purple_buddy_get_alias(buddy);
+			} else {
+				replace = conv->name;
+			}
+
+		} else if (g_str_has_prefix(cur, "%incomingIconPath%")) {
+			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+			if (icon)
+				replace = purple_buddy_icon_get_full_path(icon);
+
+		} else if (g_str_has_prefix(cur, "%outgoingIconPath%")) {
+			replace = purple_account_get_buddy_icon_path(conv->account);
+
+		} else if (g_str_has_prefix(cur, "%timeOpened")) {
+			const char *tmp = cur + strlen("%timeOpened");
+			char *format = NULL;
+			if (*tmp == '{') {
+				const char *end;
+				tmp++;
+				end = strstr(tmp, "}%");
+				if (!end) /* Invalid string */
+					continue;
+				format = g_strndup(tmp, end - tmp);
+				fin = end + 1;
+			}
+			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+			g_free(format);
+
+		} else {
+			continue;
+		}
+
+		/* Here we have a replacement to make */
+		g_string_append_len(str, prev, cur - prev);
+		if (replace)
+			g_string_append(str, replace);
+
+		/* And update the pointers */
+		if (fin) {
+			prev = cur = fin + 1;
+		} else {
+			prev = cur = strchr(cur + 1, '%') + 1;
+		}
+	}
+
+	/* And wrap it up */
+	g_string_append(str, prev);
+	return g_string_free(str, FALSE);
+}
+
+static char *
+replace_template_tokens(PidginConvTheme *theme, const char *header, const char *footer)
+{
+	GString *str;
+	const char *text;
+	char **ms;
+	char *path;
+
+	text = pidgin_conversation_theme_get_template(theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_MAIN);
+	ms = g_strsplit(text, "%@", 6);
+	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
+		g_strfreev(ms);
+		return NULL;
+	}
+
+	str = g_string_new(NULL);
+
+	g_string_append(str, ms[0]);
+	g_string_append(str, "file://");
+	path = pidgin_conversation_theme_get_template_path(theme);
+	g_string_append(str, path);
+	g_free(path);
+
+	g_string_append(str, ms[1]);
+
+	text = pidgin_conversation_theme_get_template(theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_BASESTYLE_CSS);
+	g_string_append(str, text);
+
+	g_string_append(str, ms[2]);
+
+	g_string_append(str, "file://");
+	path = pidgin_conversation_theme_get_css_path(theme);
+	g_string_append(str, path);
+	g_free(path);
+
+	g_string_append(str, ms[3]);
+	if (header)
+		g_string_append(str, header);
+	g_string_append(str, ms[4]);
+	if (footer)
+		g_string_append(str, footer);
+	g_string_append(str, ms[5]);
+
+	g_strfreev(ms);
+
+	return g_string_free(str, FALSE);
+}
+
+static void
+set_theme_webkit_settings(WebKitWebView *webview, PidginConvTheme *theme)
+{
+	WebKitWebSettings *settings;
+	const GValue *val;
+
+	g_object_get(G_OBJECT(webview), "settings", &settings, NULL);
+
+	val = pidgin_conversation_theme_lookup(theme, "DefaultFontFamily", TRUE);
+	if (val && G_VALUE_HOLDS_STRING(val))
+		g_object_set(G_OBJECT(settings), "default-font-family", g_value_get_string(val), NULL);
+
+	val = pidgin_conversation_theme_lookup(theme, "DefaultFontSize", TRUE);
+	if (val && G_VALUE_HOLDS_INT(val))
+		g_object_set(G_OBJECT(settings), "default-font-size", GINT_TO_POINTER(g_value_get_int(val)), NULL);
+
+	val = pidgin_conversation_theme_lookup(theme, "DefaultBackgroundIsTransparent", TRUE);
+	if (val && G_VALUE_HOLDS_BOOLEAN(val))
+		/* this does not work :( */
+		webkit_web_view_set_transparent(webview, g_value_get_boolean(val));
+}
+
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -4955,6 +5102,8 @@ setup_common_pane(PidginConversation *gtkconv)
 	PurpleBuddy *buddy;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
 	int buddyicon_size = 0;
+	char *header, *footer;
+	char *template;
 
 	/* Setup the top part of the pane */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5047,6 +5196,34 @@ setup_common_pane(PidginConversation *gtkconv)
 	/* Setup the webkit widget */
 	frame = pidgin_create_webview(FALSE, &gtkconv->webview, NULL, &webview_sw);
 	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
+
+	header = replace_header_tokens(conv,
+		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_HEADER));
+	footer = replace_header_tokens(conv,
+		pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_FOOTER));
+	template = replace_template_tokens(gtkconv->theme, header, footer);
+	g_free(header);
+	g_free(footer);
+
+	if (template != NULL) {
+		char *basedir;
+		char *baseuri;
+
+		purple_debug_info("webkit", "template: %s\n", template);
+
+		set_theme_webkit_settings(WEBKIT_WEB_VIEW(gtkconv->webview), gtkconv->theme);
+
+		basedir = pidgin_conversation_theme_get_template_path(gtkconv->theme);
+		baseuri = g_strdup_printf("file://%s", basedir);
+		webkit_web_view_load_string(WEBKIT_WEB_VIEW(gtkconv->webview), template, "text/html", "UTF-8", baseuri);
+
+		if (chat)
+			gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), "document.getElementById('Chat').className = 'groupchat'");
+
+		g_free(basedir);
+		g_free(baseuri);
+		g_free(template);
+	}
 
 	if (chat) {
 		GtkWidget *hpaned;
@@ -5357,6 +5534,7 @@ static void
 private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 {
 	PidginConversation *gtkconv;
+	PurpleTheme *theme;
 	PurpleConversationType conv_type = purple_conversation_get_type(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
@@ -5381,6 +5559,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->tooltips = gtk_tooltips_new();
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
+	theme = purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/theme"), "conversation");
+	if (!theme)
+		theme = purple_theme_manager_find_theme("Default", "conversation");
+	gtkconv->theme = PIDGIN_CONV_THEME(theme);
+	gtkconv->last_flags = 0;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(PidginImPane));
@@ -5611,6 +5794,7 @@ pidgin_conv_write_im(PurpleConversation *conv, const char *who,
 	purple_conversation_write(conv, who, message, flags, mtime);
 }
 
+#if 0
 static const char *
 get_text_tag_color(GtkTextTag *tag)
 {
@@ -5691,6 +5875,7 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 
 	return FALSE;
 }
+#endif
 
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag,
 		gboolean create)
@@ -5734,6 +5919,7 @@ static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, Purp
 	return NULL;
 }
 
+#if 0
 static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mtime)
 {
 	struct tm *tm = localtime(&mtime);
@@ -5779,6 +5965,101 @@ str_embed_direction_chars(char **str)
 	*str = ret;
 #endif
 }
+#endif
+
+static char *
+replace_message_tokens(
+	const char *text,
+	PurpleConversation *conv,
+	const char *name,
+	const char *alias,
+	const char *message,
+	PurpleMessageFlags flags,
+	time_t mtime)
+{
+	GString *str = g_string_new(NULL);
+	const char *cur = text;
+	const char *prev = cur;
+
+	while ((cur = strchr(cur, '%'))) {
+		const char *replace = NULL;
+		const char *fin = NULL;
+
+		if (g_str_has_prefix(cur, "%message%")) {
+			replace = message;
+
+		} else if (g_str_has_prefix(cur, "%messageClasses%")) {
+			replace = flags & PURPLE_MESSAGE_SEND ? "outgoing" :
+				  flags & PURPLE_MESSAGE_RECV ? "incoming" : "event";
+
+		} else if (g_str_has_prefix(cur, "%time")) {
+			const char *tmp = cur + strlen("%time");
+			char *format = NULL;
+			if (*tmp == '{') {
+				char *end;
+				tmp++;
+				end = strstr(tmp, "}%");
+				if (!end) /* Invalid string */
+					continue;
+				format = g_strndup(tmp, end - tmp);
+				fin = end + 1;
+			}
+			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+			g_free(format);
+
+		} else if (g_str_has_prefix(cur, "%userIconPath%")) {
+			if (flags & PURPLE_MESSAGE_SEND) {
+				if (purple_account_get_bool(conv->account, "use-global-buddyicon", TRUE)) {
+					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+				} else {
+					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(conv->account);
+					replace = purple_imgstore_get_filename(img);
+				}
+				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
+					replace = g_build_filename("Outgoing", "buddy_icon.png", NULL);
+				}
+			} else if (flags & PURPLE_MESSAGE_RECV) {
+				PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+				if (icon)
+					replace = purple_buddy_icon_get_full_path(icon);
+				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
+					replace = g_build_filename("Incoming", "buddy_icon.png", NULL);
+				}
+			}
+
+		} else if (g_str_has_prefix(cur, "%senderScreenName%")) {
+			replace = name;
+
+		} else if (g_str_has_prefix(cur, "%sender%")) {
+			replace = alias;
+
+		} else if (g_str_has_prefix(cur, "%service%")) {
+			replace = purple_account_get_protocol_name(conv->account);
+
+		} else {
+			cur++;
+			continue;
+		}
+
+		/* Here we have a replacement to make */
+		g_string_append_len(str, prev, cur - prev);
+		if (replace)
+			g_string_append(str, replace);
+
+		/* And update the pointers */
+		if (fin) {
+			prev = cur = fin + 1;
+		} else {
+			prev = cur = strchr(cur + 1, '%') + 1;
+		}
+
+	}
+
+	/* And wrap it up */
+	g_string_append(str, prev);
+
+	return g_string_free(str, FALSE);
+}
 
 static void
 pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *alias,
@@ -5788,6 +6069,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	PidginConversation *gtkconv;
 	PurpleConnection *gc;
 	PurpleAccount *account;
+#if 0
 	int gtk_font_options = 0;
 	int gtk_font_options_all = 0;
 	char buf2[BUF_LONG];
@@ -5796,11 +6078,22 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *str;
 	char *with_font_tag;
 	char *sml_attrib = NULL;
+#endif
 	size_t length;
 	PurpleConversationType type;
 	char *displaying;
 	gboolean plugin_return;
+#if 0
 	gboolean is_rtl_message = FALSE;
+#endif
+
+	const char *message_html;
+	char *msg;
+	char *escape;
+	char *script;
+	char *smileyed;
+	PurpleMessageFlags old_flags;
+	const char *func = "appendMessage";
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5857,6 +6150,36 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 	length = strlen(displaying) + 1;
 
+	old_flags = gtkconv->last_flags;
+	if ((flags & PURPLE_MESSAGE_SEND) && (old_flags & PURPLE_MESSAGE_SEND)) {
+		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTENT);
+		func = "appendNextMessage";
+	} else if (flags & PURPLE_MESSAGE_SEND) {
+		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTENT);
+	} else if ((flags & PURPLE_MESSAGE_RECV) && (old_flags & PURPLE_MESSAGE_RECV)) {
+		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT);
+		func = "appendNextMessage";
+	} else if (flags & PURPLE_MESSAGE_RECV) {
+		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTENT);
+	} else {
+		message_html = pidgin_conversation_theme_get_template(gtkconv->theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_STATUS);
+	}
+	gtkconv->last_flags = flags;
+
+	smileyed = smiley_parse_markup(message, purple_account_get_protocol_id(account));
+	msg = replace_message_tokens(message_html, conv, name, alias, smileyed, flags, mtime);
+	escape = gtk_webview_quote_js_string(msg);
+	script = g_strdup_printf("%s(%s)", func, escape);
+
+	purple_debug_info("webkit", "JS: %s\n", script);
+	gtk_webview_safe_execute_script(GTK_WEBVIEW(gtkconv->webview), script);
+
+	g_free(script);
+	g_free(smileyed);
+	g_free(msg);
+	g_free(escape);
+
+#if 0
 	/* if the buffer is not empty add a <br> */
 	if (!gtk_webview_is_empty(GTK_WEBVIEW(gtkconv->webview)))
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<br />");
@@ -6048,6 +6371,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	g_free(mdate);
 	g_free(sml_attrib);
 
+#endif
+
 	/* Tab highlighting stuff */
 	if (!(flags & PURPLE_MESSAGE_SEND) && !pidgin_conv_has_focus(conv))
 	{
@@ -6066,11 +6391,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtkconv_set_unseen(gtkconv, unseen);
 	}
 
+#if 0
 	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
 	{
 		/* Restore the smiley-data */
 		pidgin_themes_smiley_themeize(gtkconv->webview);
 	}
+#endif
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
 		(type == PURPLE_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
@@ -6715,8 +7042,10 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		}
 	}
 
+#if 0
 	if (fields & PIDGIN_CONV_SMILEY_THEME)
 		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->webview);
+#endif
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
 			(fields & PIDGIN_CONV_SET_TITLE) ||
