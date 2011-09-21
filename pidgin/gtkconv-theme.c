@@ -498,6 +498,9 @@ const GHashTable *
 pidgin_conversation_theme_get_info(const PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_val_if_fail(theme != NULL, NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 	return priv->info;
 }
@@ -506,6 +509,9 @@ void
 pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_if_fail(theme != NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	if (priv->info)
@@ -518,6 +524,9 @@ const GValue *
 pidgin_conversation_theme_lookup(PidginConvTheme *theme, const char *key, gboolean specific)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_val_if_fail(theme != NULL, NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	return get_key(priv, key, specific);
@@ -529,6 +538,8 @@ pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTe
 	PidginConvThemePrivate *priv;
 	const char *dir;
 	const char *html;
+
+	g_return_val_if_fail(theme != NULL, NULL);
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 	dir = purple_theme_get_dir(PURPLE_THEME(theme));
@@ -593,6 +604,10 @@ void
 pidgin_conversation_theme_add_variant(PidginConvTheme *theme, char *variant)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_if_fail(theme != NULL);
+	g_return_if_fail(variant != NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	priv->variants = g_list_prepend(priv->variants, variant);
@@ -602,6 +617,9 @@ const char *
 pidgin_conversation_theme_get_variant(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_val_if_fail(theme != NULL, NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	return g_strdup(priv->variant);
@@ -613,6 +631,10 @@ pidgin_conversation_theme_set_variant(PidginConvTheme *theme, const char *varian
 	PidginConvThemePrivate *priv;
 	const GValue *val;
 	char *prefname;
+
+	g_return_if_fail(theme != NULL);
+	g_return_if_fail(variant != NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	g_free(priv->variant);
@@ -629,6 +651,9 @@ const GList *
 pidgin_conversation_theme_get_variants(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
+
+	g_return_val_if_fail(theme != NULL, NULL);
+
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 
 	return priv->variants;
@@ -639,6 +664,8 @@ pidgin_conversation_theme_get_template_path(PidginConvTheme *theme)
 {
 	const char *dir;
 	char *filename;
+
+	g_return_val_if_fail(theme != NULL, NULL);
 
 	dir = purple_theme_get_dir(PURPLE_THEME(theme));
 	filename = g_build_filename(dir, "Contents", "Resources", "Template.html", NULL);
@@ -656,6 +683,8 @@ pidgin_conversation_theme_get_css_path(PidginConvTheme *theme)
 {
 	PidginConvThemePrivate *priv;
 	const char *dir;
+
+	g_return_val_if_fail(theme != NULL, NULL);
 
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
 

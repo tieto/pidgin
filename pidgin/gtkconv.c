@@ -5031,6 +5031,9 @@ replace_template_tokens(PidginConvTheme *theme, const char *header, const char *
 	char *path;
 
 	text = pidgin_conversation_theme_get_template(theme, PIDGIN_CONVERSATION_THEME_TEMPLATE_MAIN);
+	if (text == NULL)
+		return NULL;
+
 	ms = g_strsplit(text, "%@", 6);
 	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
 		g_strfreev(ms);
@@ -5977,10 +5980,14 @@ replace_message_tokens(
 	PurpleMessageFlags flags,
 	time_t mtime)
 {
-	GString *str = g_string_new(NULL);
+	GString *str;
 	const char *cur = text;
 	const char *prev = cur;
 
+	if (text == NULL)
+		return g_strdup("");
+
+	str = g_string_new(NULL);
 	while ((cur = strchr(cur, '%'))) {
 		const char *replace = NULL;
 		const char *fin = NULL;
