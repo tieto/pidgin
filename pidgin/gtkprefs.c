@@ -573,6 +573,11 @@ prefs_themes_refresh(void)
 
 	/* conversation themes */
 	gtk_list_store_clear(prefs_conv_themes);
+	gtk_list_store_append(prefs_conv_themes, &iter);
+	tmp = get_theme_markup(_("Default"), FALSE, _("Penguin Pimps"),
+		_("The default Pidgin conversation theme"));
+	gtk_list_store_set(prefs_conv_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
+	g_free(tmp);
 
 	/* status icon themes */
 	gtk_list_store_clear(prefs_status_icon_themes);
