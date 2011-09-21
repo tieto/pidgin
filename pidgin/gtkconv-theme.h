@@ -109,6 +109,15 @@ const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *them
  */
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
+/**
+ * Get the template data from a conversation theme.
+ *
+ * @param theme The conversation theme
+ * @param type  The type of template data
+ *
+ * @return The template data requested. Fallback is made as required by styles.
+ *         Subsequent calls to this function will return cached values.
+ */
 const char *pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type);
 
 /**
