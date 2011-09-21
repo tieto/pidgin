@@ -58,6 +58,24 @@ struct _PidginConvThemeClass
 	PurpleThemeClass parent_class;
 };
 
+typedef enum {
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_MAIN,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_HEADER,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_FOOTER,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_TOPIC,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_STATUS,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_CONTENT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTENT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTEXT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTEXT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTENT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTENT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTEXT,
+	PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTEXT
+
+} PidginConvThemeTemplateType;
+
 /**************************************************************************/
 /** @name Pidgin Conversation Theme API                                   */
 /**************************************************************************/
@@ -90,6 +108,8 @@ const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *them
  *
  */
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
+
+const char *pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type);
 
 /**
  * Add an available variant name to a conversation theme.

@@ -56,11 +56,17 @@ typedef struct {
 	char    *template_html;
 	char    *header_html;
 	char    *footer_html;
+	char    *topic_html;
+	char    *status_html;
+	char    *content_html;
 	char    *incoming_content_html;
 	char    *outgoing_content_html;
 	char    *incoming_next_content_html;
 	char    *outgoing_next_content_html;
-	char    *status_html;
+	char    *incoming_context_html;
+	char    *outgoing_context_html;
+	char    *incoming_next_context_html;
+	char    *outgoing_next_context_html;
 	char    *basestyle_css;
 } PidginConvThemePrivate;
 
@@ -132,10 +138,19 @@ pidgin_conv_theme_finalize(GObject *obj)
 	priv = PIDGIN_CONV_THEME_GET_PRIVATE(obj);
 
 	g_free(priv->template_html);
+	g_free(priv->header_html);
+	g_free(priv->footer_html);
+	g_free(priv->topic_html);
+	g_free(priv->status_html);
+	g_free(priv->content_html);
 	g_free(priv->incoming_content_html);
 	g_free(priv->outgoing_content_html);
+	g_free(priv->incoming_next_content_html);
 	g_free(priv->outgoing_next_content_html);
-	g_free(priv->status_html);
+	g_free(priv->incoming_context_html);
+	g_free(priv->outgoing_context_html);
+	g_free(priv->incoming_next_context_html);
+	g_free(priv->outgoing_next_context_html);
 	g_free(priv->basestyle_css);
 
 	if (priv->info)
@@ -241,24 +256,6 @@ get_template_html(PidginConvThemePrivate *priv, const char *dir)
 }
 
 static const char *
-get_status_html(PidginConvThemePrivate *priv, const char *dir)
-{
-	char *file;
-
-	if (priv->status_html)
-		return priv->status_html;
-
-	file = g_build_filename(dir, "Contents", "Resources", "Status.html", NULL);
-	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s could not find Resources/Status.html", dir);
-		priv->status_html = g_strdup("");
-	}
-	g_free(file);
-
-	return priv->status_html;
-}
-
-static const char *
 get_basestyle_css(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
@@ -307,6 +304,60 @@ get_footer_html(PidginConvThemePrivate *priv, const char *dir)
 }
 
 static const char *
+get_topic_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->topic_html)
+		return priv->topic_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Topic.html", NULL);
+	if (!g_file_get_contents(file, &priv->topic_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s could not find Resources/Topic.html", dir);
+		priv->topic_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->topic_html;
+}
+
+static const char *
+get_status_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->status_html)
+		return priv->status_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Status.html", NULL);
+	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s could not find Resources/Status.html", dir);
+		priv->status_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->status_html;
+}
+
+static const char *
+get_content_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->content_html)
+		return priv->content_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Content.html", NULL);
+	if (!g_file_get_contents(file, &priv->content_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s did not have a Content.html\n", dir);
+		priv->content_html = g_strdup("");
+	}
+	g_free(file);
+
+	return priv->content_html;
+}
+
+static const char *
 get_incoming_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
@@ -317,7 +368,7 @@ get_incoming_content_html(PidginConvThemePrivate *priv, const char *dir)
 	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
 	if (!g_file_get_contents(file, &priv->incoming_content_html, NULL, NULL)) {
 		purple_debug_info("webkit", "%s did not have a Incoming/Content.html\n", dir);
-		priv->incoming_content_html = g_strdup("");
+		priv->incoming_content_html = g_strdup(get_content_html(priv, dir));
 	}
 	g_free(file);
 
@@ -334,11 +385,46 @@ get_incoming_next_content_html(PidginConvThemePrivate *priv, const char *dir)
 
 	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &priv->incoming_next_content_html, NULL, NULL)) {
-		priv->incoming_next_content_html = g_strdup(priv->incoming_content_html);
+		priv->incoming_next_content_html = g_strdup(get_incoming_content_html(priv, dir));
 	}
 	g_free(file);
 
 	return priv->incoming_next_content_html;
+}
+
+static const char *
+get_incoming_context_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->incoming_context_html)
+		return priv->incoming_context_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "Context.html", NULL);
+	if (!g_file_get_contents(file, &priv->incoming_context_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s did not have a Incoming/Context.html\n", dir);
+		priv->incoming_context_html = g_strdup(get_incoming_content_html(priv, dir));
+	}
+	g_free(file);
+
+	return priv->incoming_context_html;
+}
+
+static const char *
+get_incoming_next_context_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->incoming_next_context_html)
+		return priv->incoming_next_context_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Incoming", "NextContext.html", NULL);
+	if (!g_file_get_contents(file, &priv->incoming_next_context_html, NULL, NULL)) {
+		priv->incoming_next_context_html = g_strdup(get_incoming_context_html(priv, dir));
+	}
+	g_free(file);
+
+	return priv->incoming_next_context_html;
 }
 
 static const char *
@@ -351,7 +437,7 @@ get_outgoing_content_html(PidginConvThemePrivate *priv, const char *dir)
 
 	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
 	if (!g_file_get_contents(file, &priv->outgoing_content_html, NULL, NULL)) {
-		priv->outgoing_content_html = g_strdup(priv->incoming_content_html);
+		priv->outgoing_content_html = g_strdup(get_incoming_content_html(priv, dir));
 	}
 	g_free(file);
 
@@ -368,10 +454,43 @@ get_outgoing_next_content_html(PidginConvThemePrivate *priv, const char *dir)
 
 	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &priv->outgoing_next_content_html, NULL, NULL)) {
-		priv->outgoing_next_content_html = g_strdup(priv->outgoing_content_html);
+		priv->outgoing_next_content_html = g_strdup(get_outgoing_content_html(priv, dir));
 	}
 
 	return priv->outgoing_next_content_html;
+}
+
+static const char *
+get_outgoing_context_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->outgoing_context_html)
+		return priv->outgoing_context_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "Context.html", NULL);
+	if (!g_file_get_contents(file, &priv->outgoing_context_html, NULL, NULL)) {
+		priv->outgoing_context_html = g_strdup(get_incoming_context_html(priv, dir));
+	}
+	g_free(file);
+
+	return priv->outgoing_context_html;
+}
+
+static const char *
+get_outgoing_next_context_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->outgoing_next_context_html)
+		return priv->outgoing_next_context_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Outgoing", "NextContext.html", NULL);
+	if (!g_file_get_contents(file, &priv->outgoing_next_context_html, NULL, NULL)) {
+		priv->outgoing_next_context_html = g_strdup(get_outgoing_context_html(priv, dir));
+	}
+
+	return priv->outgoing_next_context_html;
 }
 
 static char *
@@ -550,6 +669,69 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 		g_hash_table_destroy(priv->info);
 
 	priv->info = info;
+}
+
+const char *
+pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type)
+{
+	PidginConvThemePrivate *priv;
+	const char *dir;
+	const char *html;
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+	dir = purple_theme_get_dir(PURPLE_THEME(theme));
+
+	switch (type) {
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_MAIN:
+			html = get_template_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_HEADER:
+			html = get_header_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_FOOTER:
+			html = get_footer_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_TOPIC:
+			html = get_topic_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_STATUS:
+			html = get_status_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_CONTENT:
+			html = get_content_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTENT:
+			html = get_incoming_content_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTENT:
+			html = get_incoming_next_content_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_CONTEXT:
+			html = get_incoming_context_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_INCOMING_NEXT_CONTEXT:
+			html = get_incoming_next_context_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTENT:
+			html = get_outgoing_content_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTENT:
+			html = get_outgoing_next_content_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_CONTEXT:
+			html = get_outgoing_context_html(priv, dir);
+			break;
+		case PIDGIN_CONVERSATION_THEME_TEMPLATE_OUTGOING_NEXT_CONTEXT:
+			html = get_outgoing_next_context_html(priv, dir);
+			break;
+		default:
+			purple_debug_error("gtkconv-theme",
+			                   "Requested invalid template type (%d) for theme %s.\n",
+			                   type, purple_theme_get_name(PURPLE_THEME(theme)));
+			html = NULL;
+	}
+
+	return html;
 }
 
 void
