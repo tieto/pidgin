@@ -122,7 +122,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 
 static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 {
-	/* FIXME: move imhtml dependency to use webview. */
+	/* TODO WEBKIT: move imhtml dependency to use webview. */
 #if 0
 	struct smiley_list *list;
 	if (!current_smiley_theme)
@@ -149,7 +149,7 @@ static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 
 		list = list->next;
 	}
-#endif
+#endif /* if 0 */
 }
 
 void pidgin_themes_smiley_themeize(GtkWidget *imhtml)

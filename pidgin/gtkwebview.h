@@ -103,9 +103,9 @@ void gtk_webview_append_html(GtkWebView *webview, const char *markup);
 void gtk_webview_load_html_string_with_imgstore(GtkWebView *webview, const char *html);
 
 /**
- * FIXME: (To be changed, right now it just tests whether an append has been
- * called since the last clear or since the Widget was created. So it
- * does not test for load_string's called in between.
+ * TODO WEBKIT: Right now this just tests whether an append has been called
+ * since the last clear or since the Widget was created.  So it does not
+ * test for load_string's called in between.
  *
  * @param webview The GtkWebView object
  *

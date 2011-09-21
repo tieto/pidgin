@@ -450,13 +450,13 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_webview(FALSE, &webview, NULL, NULL);
-	/* FIXME: Compile now and fix it later when we have a proper replacement for this function
+	/* TODO WEBKIT: Compile now and fix it later when we have a proper replacement for this function
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
 	*/
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	gtk_webview_append_html(GTK_WEBVIEW(webview), string->str);
-	/* FIXME: This doesn't seem to stay at the top. */
+	/* TODO WEBKIT: This doesn't seem to stay at the top. */
 	webkit_web_view_move_cursor(WEBKIT_WEB_VIEW(webview), GTK_MOVEMENT_BUFFER_ENDS, -1);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,

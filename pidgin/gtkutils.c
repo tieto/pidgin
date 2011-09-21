@@ -308,9 +308,9 @@ pidgin_create_webview(gboolean editable, GtkWidget **webview_ret, GtkWidget **to
 
 	webview = gtk_webview_new();
 #if 0
-	/* FIXME: Don't have editable webview yet. */
+	/* TODO WEBKIT: Don't have editable webview yet. */
 	gtk_webview_set_editable(GTK_WEBVIEW(webview), editable);
-#endif
+#endif /* if 0 */
 #ifdef USE_GTKSPELL
 	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(webview));

@@ -43,7 +43,7 @@ static WebKitWebViewClass *parent_class = NULL;
 
 struct GtkWebViewPriv {
 	GHashTable *images; /**< a map from id to temporary file for the image */
-	gboolean    empty;  /**< whether anything has been appended **/
+	gboolean empty;  /**< whether anything has been appended **/
 
 	/* JS execute queue */
 	GQueue *js_queue;

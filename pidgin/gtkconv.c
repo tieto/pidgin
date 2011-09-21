@@ -1052,7 +1052,35 @@ menu_join_chat_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
-	/* TODO: I don't know how to support this using webkit yet. */
+	/* TODO WEBKIT: I don't know how to support this using webkit yet. */
+#if 0
+	PurpleConversation *conv = (PurpleConversation *)user_data;
+	FILE *fp;
+	const char *name;
+	char **lines;
+	gchar *text;
+
+	if ((fp = g_fopen(filename, "w+")) == NULL) {
+		purple_notify_error(PIDGIN_CONVERSATION(conv), NULL, _("Unable to open file."), NULL);
+		return;
+	}
+
+	name = purple_conversation_get_name(conv);
+	fprintf(fp, "<html>\n<head>\n");
+	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
+	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
+
+	lines = gtk_imhtml_get_markup_lines(
+		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
+	text = g_strjoinv("<br>\n", lines);
+	fprintf(fp, "%s", text);
+	g_free(text);
+	g_strfreev(lines);
+
+	fprintf(fp, "\n</body>\n</html>\n");
+	fclose(fp);
+#endif /* if 0 */
 }
 
 /*
@@ -1594,7 +1622,7 @@ get_mark_for_user(PidginConversation *gtkconv, const char *who)
 static void
 menu_last_said_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
-/* FIXME: This doesn't work yet, of course... */
+/* TODO WEBKIT: This doesn't work yet, of course... */
 #if 0
 	GtkTextMark *mark;
 	const char *who;
@@ -1606,7 +1634,7 @@ menu_last_said_cb(GtkWidget *w, PidginConversation *gtkconv)
 		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
 	else
 		g_return_if_reached();
-#endif
+#endif /* if 0 */
 }
 
 static GtkWidget *
@@ -1811,13 +1839,13 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
 		/* Move to user's anchor */
-/* FIXME: This isn't implemented yet. */
+/* TODO WEBKIT: This isn't implemented yet. */
 #if 0
 		GtkTextMark *mark = get_mark_for_user(gtkconv, who);
 
 		if(mark != NULL)
 			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
-#endif
+#endif /* if 0 */
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -2152,19 +2180,19 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		case GDK_Page_Up:
 		case GDK_KP_Page_Up:
-/* FIXME: Write this. */
+/* TODO WEBKIT: Write this. */
 #if 0
 			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
-#endif
+#endif /* if 0 */
 			return TRUE;
 			break;
 
 		case GDK_Page_Down:
 		case GDK_KP_Page_Down:
-/* FIXME: Write this. */
+/* TODO WEBKIT: Write this. */
 #if 0
 			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
-#endif
+#endif /* if 0 */
 			return TRUE;
 			break;
 
@@ -2274,7 +2302,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	entry = GTK_IMHTML(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(conv->account);
 	gtk_imhtml_set_protocol_name(entry, protocol_name);
-	/* FIXME: gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name); */
+	/* TODO WEBKIT: gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name); */
 
 	if (!(conv->features & PURPLE_CONNECTION_HTML))
 		gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
@@ -3663,7 +3691,7 @@ typing_animation(gpointer data) {
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
 {
-	/* FIXME: this is not handled at all */
+	/* TODO WEBKIT: this is not handled at all */
 #if 0
 	GtkTextBuffer *buffer;
 	GtkTextMark *stmark, *enmark;
@@ -3697,7 +3725,7 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gtk_text_buffer_create_mark(buffer, "typing-notification-end", &iter, TRUE);
 	}
-#endif
+#endif /* if 0 */
 }
 
 static void
@@ -3939,7 +3967,7 @@ generate_send_to_items(PidginWindow *win)
 						continue;
 
 					account = purple_buddy_get_account(buddy);
-					/* FIXME: */
+					/* TODO WEBKIT: (I'm not actually sure if this is webkit-related --Mark Doliner) */
 					if (purple_account_is_connected(account) /*|| account == gtkconv->active_conv->account*/)
 					{
 						/* Use the PurplePresence to get unique buddies. */
@@ -4053,12 +4081,12 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	if (is_me) {
 #if 0
-		/* FIXME: No tags in webkit stuff, yet. */
+		/* TODO WEBKIT: No tags in webkit stuff, yet. */
 		GtkTextTag *tag = gtk_text_tag_table_lookup(
 				gtk_text_buffer_get_tag_table(GTK_IMHTML(gtkconv->webview)->text_buffer),
 				"send-name");
 		g_object_get(tag, "foreground-gdk", &color, NULL);
-#endif
+#endif /* if 0 */
 	} else {
 		GtkTextTag *tag;
 		if ((tag = get_buddy_tag(conv, name, 0, FALSE)))
@@ -5495,7 +5523,7 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 
 static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
 {
-/* FIXME */
+/* TODO WEBKIT */
 #if 0
 	static PangoFontDescription *font_desc = NULL;
 	static GdkColor *color = NULL;
@@ -5527,7 +5555,7 @@ static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversati
 	}
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), set_typing_font, gtkconv);
-#endif
+#endif /* if 0 */
 }
 
 /**************************************************************************
@@ -5883,7 +5911,7 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag,
 		gboolean create)
 {
-/* FIXME */
+/* TODO WEBKIT */
 #if 0
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	GtkTextTag *buddytag;
@@ -5918,7 +5946,7 @@ static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, Purp
 	g_free(str);
 
 	return buddytag;
-#endif
+#endif /* if 0 */
 	return NULL;
 }
 
@@ -6335,7 +6363,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
-		/* FIXME: */
+		/* TODO WEBKIT */
 #if 0
 		if (tagname)
 			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
@@ -6354,7 +6382,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					color ? "COLOR=\"" : "", color ? color : "", color ? "\"" : "", mdate);
 			gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), buf2);
 		}
-#endif
+#endif /* if 0 */
 		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
@@ -6651,7 +6679,7 @@ add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smi
 static gboolean
 add_custom_smiley_for_webview(GtkWebView *webview, const char *sml, const char *smile)
 {
-	/* FIXME: Smileys need to be added to webkit stuff */
+	/* TODO WEBKIT: Smileys need to be added to webkit stuff */
 	return TRUE;
 }
 
@@ -6696,7 +6724,7 @@ static void
 pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
                                       const guchar *data, gsize size)
 {
-/* FIXME */
+/* TODO WEBKIT */
 #if 0
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
@@ -6732,13 +6760,13 @@ pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
 		g_object_unref(G_OBJECT(smiley->loader));
 		smiley->loader = gdk_pixbuf_loader_new();
 	}
-#endif
+#endif /* if 0 */
 }
 
 static void
 pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 {
-/* FIXME*/
+/* TODO WEBKIT */
 #if 0
 	PidginConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
@@ -6776,7 +6804,7 @@ pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 		g_object_unref(G_OBJECT(smiley->loader));
 		smiley->loader = gdk_pixbuf_loader_new();
 	}
-#endif
+#endif /* if 0 */
 }
 
 static void
@@ -7630,11 +7658,11 @@ show_timestamps_pref_cb(const char *name, PurplePrefType type,
 		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 		        (gboolean)GPOINTER_TO_INT(value));
 
-/* FIXME: Use WebKit version of this. */
+/* TODO WEBKIT: Use WebKit version of this. */
 #if 0
 		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			(gboolean)GPOINTER_TO_INT(value));
-#endif
+#endif /* if 0 */
 	}
 }
 
