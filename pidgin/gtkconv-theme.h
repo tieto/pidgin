@@ -110,6 +110,19 @@ const GHashTable *pidgin_conversation_theme_get_info(const PidginConvTheme *them
 void pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info);
 
 /**
+ * Lookup a key in a theme
+ *
+ * @param theme    The conversation theme
+ * @param key      The key to find
+ * @param specific Whether to search variant-specific keys
+ *
+ * @return The key information. If @a specific is @c TRUE, then keys are first
+ *         searched by variant, then by general ones. Otherwise, only general
+ *         key values are returned.
+ */
+const GValue *pidgin_conversation_theme_lookup(PidginConvTheme *theme, const char *key, gboolean specific);
+
+/**
  * Get the template data from a conversation theme.
  *
  * @param theme The conversation theme

@@ -671,6 +671,15 @@ pidgin_conversation_theme_set_info(PidginConvTheme *theme, GHashTable *info)
 	priv->info = info;
 }
 
+const GValue *
+pidgin_conversation_theme_lookup(PidginConvTheme *theme, const char *key, gboolean specific)
+{
+	PidginConvThemePrivate *priv;
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(theme);
+
+	return get_key(priv, key, specific);
+}
+
 const char *
 pidgin_conversation_theme_get_template(PidginConvTheme *theme, PidginConvThemeTemplateType type)
 {
