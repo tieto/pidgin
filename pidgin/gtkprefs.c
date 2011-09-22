@@ -85,6 +85,7 @@ static GtkWidget *sample_imhtml = NULL;
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_conv_themes_combo_box;
+static GtkWidget *prefs_conv_variants_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
@@ -97,6 +98,7 @@ static gboolean prefs_sound_themes_loading;
 static GtkListStore *prefs_sound_themes;
 static GtkListStore *prefs_blist_themes;
 static GtkListStore *prefs_conv_themes;
+static GtkListStore *prefs_conv_variants;
 static GtkListStore *prefs_status_icon_themes;
 static GtkListStore *prefs_smiley_themes;
 
@@ -343,6 +345,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_sound_themes_combo_box = NULL;
 	prefs_blist_themes_combo_box = NULL;
 	prefs_conv_themes_combo_box = NULL;
+	prefs_conv_variants_combo_box = NULL;
 	prefs_status_themes_combo_box = NULL;
 	prefs_smiley_themes_combo_box = NULL;
 
@@ -496,26 +499,16 @@ prefs_themes_sort(PurpleTheme *theme)
 			g_object_unref(G_OBJECT(pixbuf));
 
 	} else if (PIDGIN_IS_CONV_THEME(theme)) {
-		const GList *variants;
-
 		/* No image available? */
 
 		name = purple_theme_get_name(theme);
 		/* No author available */
 		/* No description available */
 
-		/* We'll re-use the description field to show variants... 
-		 * This is probably too long to be useful... Will fix later...
-		 */
-		for (variants = pidgin_conversation_theme_get_variants(PIDGIN_CONV_THEME(theme));
-		     variants;
-		     variants = g_list_next(variants)) {
+		markup = get_theme_markup(name, FALSE, NULL, NULL);
 
-			markup = get_theme_markup(name, FALSE, NULL, variants->data);
-
-			gtk_list_store_append(prefs_conv_themes, &iter);
-			gtk_list_store_set(prefs_conv_themes, &iter, 1, markup, 2, name, -1);
-		}
+		gtk_list_store_append(prefs_conv_themes, &iter);
+		gtk_list_store_set(prefs_conv_themes, &iter, 1, markup, 2, name, -1);
 	}
 }
 
@@ -579,6 +572,9 @@ prefs_themes_refresh(void)
 	gtk_list_store_set(prefs_conv_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
 
+	/* conversation theme variants */
+	gtk_list_store_clear(prefs_conv_variants);
+
 	/* status icon themes */
 	gtk_list_store_clear(prefs_status_icon_themes);
 	gtk_list_store_append(prefs_status_icon_themes, &iter);
@@ -614,6 +610,8 @@ prefs_themes_init(void)
 	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	prefs_conv_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+
+	prefs_conv_variants = gtk_list_store_new(1, G_TYPE_STRING);
 
 	prefs_status_icon_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -1065,15 +1063,60 @@ prefs_set_conv_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	gchar *name = NULL;
 
 	if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
+		const GList *variants;
+		const char *current_variant;
+		gboolean unset = TRUE;
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
+		if (!name || !*name) {
+			g_free(name);
+			return;
+		}
 
-		if(!name || !g_str_equal(name, ""))
-			theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/theme", name);
+
+		/* Update list of variants */
+		gtk_list_store_clear(prefs_conv_variants);
+
+		theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		current_variant = pidgin_conversation_theme_get_variant(theme);
+
+		variants = pidgin_conversation_theme_get_variants(theme);
+		for (; variants && current_variant; variants = g_list_next(variants)) {
+			gtk_list_store_append(prefs_conv_variants, &iter);
+			gtk_list_store_set(prefs_conv_variants, &iter, 0, variants->data, -1);
+
+			if (g_str_equal(variants->data, current_variant)) {
+				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(prefs_conv_variants_combo_box), &iter);
+				unset = FALSE;
+			}
+		}
+
+		if (unset)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(prefs_conv_variants_combo_box), 0);
 
 		g_free(name);
+	}
+}
 
-		purple_debug_info("theme", "Setting conversation theme...\n");
+/* sets the current conversation theme variant */
+static void
+prefs_set_conv_variant_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginConvTheme *theme =  NULL;
+	GtkTreeIter iter;
+	gchar *name = NULL;
+
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(prefs_conv_themes_combo_box), &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_themes), &iter, 2, &name, -1);
+		theme = PIDGIN_CONV_THEME(purple_theme_manager_find_theme(name, "conversation"));
+		g_free(name);
+
+		if (gtk_combo_box_get_active_iter(combo_box, &iter)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(prefs_conv_variants), &iter, 0, &name, -1);
+			pidgin_conversation_theme_set_variant(theme, name);
+			g_free(name);
+		}
 	}
 }
 
@@ -1130,6 +1173,40 @@ add_theme_prefs_combo(GtkWidget *vbox,
 }
 
 static GtkWidget *
+add_child_theme_prefs_combo(GtkWidget *vbox, GtkSizeGroup *combo_sg,
+                             GtkSizeGroup *label_sg, GtkListStore *theme_store,
+                             GCallback combo_box_cb, gpointer combo_box_cb_user_data,
+                             const char *label_str)
+{
+	GtkWidget *label;
+	GtkWidget *combo_box;
+	GtkWidget *themesel_hbox;
+	GtkCellRenderer *cell_rend;
+
+	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(label_str);
+	gtk_misc_set_alignment(GTK_MISC(label), 1, 0.5);
+	gtk_size_group_add_widget(label_sg, label);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
+
+	combo_box = gtk_combo_box_new_with_model(GTK_TREE_MODEL(theme_store));
+
+	cell_rend = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo_box), cell_rend, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "text", 0, NULL);
+	g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+
+	g_signal_connect(G_OBJECT(combo_box), "changed",
+						(GCallback)combo_box_cb, combo_box_cb_user_data);
+	gtk_size_group_add_widget(combo_sg, combo_box);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), combo_box, TRUE, TRUE, 0);
+
+	return combo_box;
+}
+
+static GtkWidget *
 theme_page(void)
 {
 	GtkWidget *label;
@@ -1164,6 +1241,11 @@ theme_page(void)
 		vbox, combo_sg, label_sg, prefs_conv_themes,
 		(GCallback)prefs_set_conv_theme_cb, NULL,
 		_("Conversation Theme:"), PIDGIN_PREFS_ROOT "/conversations/theme", "conversation");
+
+	/* Conversation Theme Variants */
+	prefs_conv_variants_combo_box = add_child_theme_prefs_combo(
+		vbox, combo_sg, label_sg, prefs_conv_variants,
+		(GCallback)prefs_set_conv_variant_cb, NULL, _("\tVariant:"));
 
 	/* Status Icon Themes */
 	prefs_status_themes_combo_box = add_theme_prefs_combo(
