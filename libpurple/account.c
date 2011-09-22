@@ -1086,7 +1086,8 @@ purple_account_destroy(PurpleAccount *account)
 
 	purple_account_set_status_types(account, NULL);
 
-	purple_presence_destroy(account->presence);
+	if (account->presence)
+		purple_presence_destroy(account->presence);
 
 	if(account->system_log)
 		purple_log_free(account->system_log);
