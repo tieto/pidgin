@@ -1247,6 +1247,9 @@ theme_page(void)
 		vbox, combo_sg, label_sg, prefs_conv_variants,
 		(GCallback)prefs_set_conv_variant_cb, NULL, _("\tVariant:"));
 
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(prefs_conv_variants),
+	                                     0, GTK_SORT_ASCENDING);
+
 	/* Status Icon Themes */
 	prefs_status_themes_combo_box = add_theme_prefs_combo(
 		vbox, combo_sg, label_sg, prefs_status_icon_themes,
