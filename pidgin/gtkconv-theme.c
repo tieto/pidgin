@@ -319,24 +319,6 @@ get_topic_html(PidginConvThemePrivate *priv, const char *dir)
 }
 
 static const char *
-get_status_html(PidginConvThemePrivate *priv, const char *dir)
-{
-	char *file;
-
-	if (priv->status_html)
-		return priv->status_html;
-
-	file = g_build_filename(dir, "Contents", "Resources", "Status.html", NULL);
-	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
-		purple_debug_info("webkit", "%s could not find Resources/Status.html\n", dir);
-		priv->status_html = g_strdup("");
-	}
-	g_free(file);
-
-	return priv->status_html;
-}
-
-static const char *
 get_content_html(PidginConvThemePrivate *priv, const char *dir)
 {
 	char *file;
@@ -352,6 +334,24 @@ get_content_html(PidginConvThemePrivate *priv, const char *dir)
 	g_free(file);
 
 	return priv->content_html;
+}
+
+static const char *
+get_status_html(PidginConvThemePrivate *priv, const char *dir)
+{
+	char *file;
+
+	if (priv->status_html)
+		return priv->status_html;
+
+	file = g_build_filename(dir, "Contents", "Resources", "Status.html", NULL);
+	if (!g_file_get_contents(file, &priv->status_html, NULL, NULL)) {
+		purple_debug_info("webkit", "%s could not find Resources/Status.html\n", dir);
+		priv->status_html = g_strdup(get_content_html(priv, dir));
+	}
+	g_free(file);
+
+	return priv->status_html;
 }
 
 static const char *
