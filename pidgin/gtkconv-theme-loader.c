@@ -190,6 +190,12 @@ pidgin_conv_loader_build(const gchar *dir)
 		const char *default_variant = NULL;
 		const char *file;
 
+		/* Make sure prefs exist */
+		prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s",
+		                           CFBundleIdentifier);
+		purple_prefs_add_none(prefname);
+		g_free(prefname);
+
 		/* Try user-set variant */
 		prefname = g_strdup_printf(PIDGIN_PREFS_ROOT "/conversations/themes/%s/variant",
 		                           CFBundleIdentifier);
