@@ -92,12 +92,6 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 }
 
 void
-purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
-{
-	_purple_connection_new(account, regist, password);
-}
-
-void
 _purple_connection_new(PurpleAccount *account, gboolean regist, const char *password)
 {
 	PurpleConnection *gc;
@@ -171,11 +165,6 @@ _purple_connection_new(PurpleAccount *account, gboolean regist, const char *pass
 		prpl_info->login(account);
 	}
 }
-void
-purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
-{
-	_purple_connection_new_unregister(account, password, cb, user_data);
-}
 
 void
 _purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
@@ -231,12 +220,6 @@ _purple_connection_new_unregister(PurpleAccount *account, const char *password, 
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 
 	prpl_info->unregister_user(account, cb, user_data);
-}
-
-void
-purple_connection_destroy(PurpleConnection *gc)
-{
-	_purple_connection_destroy(gc);
 }
 
 void

@@ -29,7 +29,6 @@ excluded = [\
     # Similar to the above:
     "purple_account_set_register_callback",
     "purple_account_unregister",
-    "purple_connection_new_unregister",
 
     # Similar to the above, again
     "purple_menu_action_new",

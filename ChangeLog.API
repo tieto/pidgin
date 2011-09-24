@@ -118,6 +118,9 @@ version 3.0.0 (??/??/????):
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
 		* purple_connection_error_reason
+		* purple_connection_new
+		* purple_connection_new_unregister
+		* purple_connection_destroy
 		* purple_contact_set_alias
 		* purple_conv_chat_set_users
 		* purple_core_migrate
