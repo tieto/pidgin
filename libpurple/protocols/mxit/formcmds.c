@@ -362,7 +362,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 				purple_debug_info(MXIT_PLUGIN_ID, "sending request for inline image '%s'\n", iireq->url);
 
 				/* request the image (reference: "libpurple/util.h") */
-				purple_util_fetch_url_request(iireq->url, TRUE, NULL, TRUE, NULL, FALSE, mxit_cb_ii_returned, iireq);
+				purple_util_fetch_url(iireq->url, TRUE, NULL, TRUE, -1, mxit_cb_ii_returned, iireq);
 				mx->img_count++;
 			}
 		}

@@ -891,7 +891,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			purple_util_fetch_url(name, TRUE, NULL, FALSE, theme_got_url, info);
+			purple_util_fetch_url(name, TRUE, NULL, FALSE, -1, theme_got_url, info);
 		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
 			/* purple_util_fetch_url() doesn't support HTTPS, but we want users
 			 * to be able to drag and drop links from the SF trackers, so
@@ -902,7 +902,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			tmp[2] = 't';
 			tmp[3] = 'p';
 
-			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, theme_got_url, info);
+			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, -1, theme_got_url, info);
 			g_free(tmp);
 		} else
 			free_theme_info(info);

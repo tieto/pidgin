@@ -2742,7 +2742,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text)
 	{
-		url_data = purple_util_fetch_url_len(photo_url_text, FALSE, NULL, FALSE,
+		url_data = purple_util_fetch_url(photo_url_text, FALSE, NULL, FALSE,
 		                                     MAX_HTTP_BUDDYICON_BYTES,
 		                                     msn_got_photo, info2_data);
 		session->url_datas = g_slist_prepend(session->url_datas, url_data);
@@ -2841,7 +2841,7 @@ msn_get_info(PurpleConnection *gc, const char *name)
 
 	url_data = purple_util_fetch_url(url, FALSE,
 	                                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
-	                                 TRUE, msn_got_info, data);
+	                                 TRUE, -1, msn_got_info, data);
 	session->url_datas = g_slist_prepend(session->url_datas, url_data);
 
 	g_free(url);
