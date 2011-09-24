@@ -142,7 +142,18 @@ void purple_network_listen_map_external(gboolean map_external);
  * close the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
+ * Libpurple does not currently do any port mapping (stateful firewall hole
+ * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
+ * addresses, a mapping is done).
+ *
  * @param port The port number to bind to.  Must be greater than 0.
+ * @param socket_family The protocol family of the socket.  This should be
+ *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
+ *                      may or may not be able to accept IPv4 connections
+ *                      based on the system configuration (use
+ *                      purple_socket_speaks_ipv4 to check).  If an IPv6
+ *                      socket doesn't accept V4-mapped addresses, you will
+ *                      need a second listener to support both v4 and v6.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  * @param cb The callback to be invoked when the port to listen on is available.
@@ -155,26 +166,6 @@ void purple_network_listen_map_external(gboolean map_external);
  *         socket to listen on.
  */
 PurpleNetworkListenData *purple_network_listen(unsigned short port,
-		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
-
-/**
- * \copydoc purple_network_listen
- *
- * Libpurple does not currently do any port mapping (stateful firewall hole
- * poking) for IPv6-only listeners (if an IPv6 socket supports v4-mapped
- * addresses, a mapping is done).
- *
- * @param socket_family The protocol family of the socket.  This should be
- *                      AF_INET for IPv4 or AF_INET6 for IPv6.  IPv6 sockets
- *                      may or may not be able to accept IPv4 connections
- *                      based on the system configuration (use
- *                      purple_socket_speaks_ipv4 to check).  If an IPv6
- *                      socket doesn't accept V4-mapped addresses, you will
- *                      need a second listener to support both v4 and v6.
- * @since 2.7.0
- * @deprecated This function will be renamed to purple_network_listen in 3.0.0.
- */
-PurpleNetworkListenData *purple_network_listen_family(unsigned short port,
 	int socket_family, int socket_type, PurpleNetworkListenCallback cb,
 	gpointer cb_data);
 

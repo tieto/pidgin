@@ -1216,7 +1216,7 @@ static void yahoo_xfer_send_cb_15(gpointer data, gint source, PurpleInputConditi
 		close(source);
 		xfer->fd = -1;
 		/* start local server, listen for connections */
-		purple_network_listen(xd->yahoo_local_p2p_ft_server_port, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer);
+		purple_network_listen(xd->yahoo_local_p2p_ft_server_port, AF_UNSPEC, SOCK_STREAM, yahoo_p2p_ft_server_listen_cb, xfer);
 	}
 	else
 	{

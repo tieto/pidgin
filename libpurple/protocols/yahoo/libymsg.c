@@ -2770,7 +2770,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	if (yd->listen_data)
 		purple_debug_warning("yahoo","p2p: Failed to create p2p server - server already exists\n");
 	else {
-		yd->listen_data = purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
+		yd->listen_data = purple_network_listen(YAHOO_PAGER_PORT_P2P, AF_UNSPEC, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
 		if (yd->listen_data == NULL)
 			purple_debug_warning("yahoo","p2p: Failed to created p2p server\n");
 	}

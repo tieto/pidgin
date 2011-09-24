@@ -744,7 +744,7 @@ start_serversocket_listening(int port, int socket, struct sockaddr *addr, size_t
 
 #if 0
 	/* TODO: Why isn't this being used? */
-	data->socket = purple_network_listen(jdata->port, SOCK_STREAM);
+	data->socket = purple_network_listen(jdata->port, AF_UNSPEC, SOCK_STREAM);
 
 	if (jdata->socket == -1)
 	{

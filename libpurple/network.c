@@ -531,7 +531,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 }
 
 PurpleNetworkListenData *
-purple_network_listen_family(unsigned short port, int socket_family,
+purple_network_listen(unsigned short port, int socket_family,
                              int socket_type, PurpleNetworkListenCallback cb,
                              gpointer cb_data)
 {
@@ -539,14 +539,6 @@ purple_network_listen_family(unsigned short port, int socket_family,
 
 	return purple_network_do_listen(port, socket_family, socket_type,
 	                                cb, cb_data);
-}
-
-PurpleNetworkListenData *
-purple_network_listen(unsigned short port, int socket_type,
-		PurpleNetworkListenCallback cb, gpointer cb_data)
-{
-	return purple_network_listen_family(port, AF_UNSPEC, socket_type,
-	                                    cb, cb_data);
 }
 
 PurpleNetworkListenData *
