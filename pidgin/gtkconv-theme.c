@@ -37,8 +37,6 @@
 #define PIDGIN_CONV_THEME_GET_PRIVATE(Gobject) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((Gobject), PIDGIN_TYPE_CONV_THEME, PidginConvThemePrivate))
 
-static void _set_variant(PidginConvTheme *theme, const char *variant);
-
 /******************************************************************************
  * Structs
  *****************************************************************************/
@@ -86,144 +84,6 @@ enum {
 
 static GObjectClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
-
-/******************************************************************************
- * GObject Stuff
- *****************************************************************************/
-
-static void
-pidgin_conv_theme_get_property(GObject *obj, guint param_id, GValue *value,
-		GParamSpec *psec)
-{
-	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
-
-	switch (param_id) {
-		case PROP_INFO:
-			g_value_set_boxed(value, (gpointer)pidgin_conversation_theme_get_info(theme));
-			break;
-
-		case PROP_VARIANT:
-			g_value_set_string(value, pidgin_conversation_theme_get_variant(theme));
-			break;
-
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
-			break;
-	}
-}
-
-static void
-pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value,
-		GParamSpec *psec)
-{
-	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
-
-	switch (param_id) {
-		case PROP_INFO:
-			pidgin_conversation_theme_set_info(theme, g_value_get_boxed(value));
-			break;
-
-		case PROP_VARIANT:
-			_set_variant(theme, g_value_get_string(value));
-			break;
-
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
-			break;
-	}
-}
-
-static void
-pidgin_conv_theme_init(GTypeInstance *instance,
-		gpointer klass)
-{
-	PidginConvThemePrivate *priv;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(instance);
-}
-
-static void
-pidgin_conv_theme_finalize(GObject *obj)
-{
-	PidginConvThemePrivate *priv;
-
-	priv = PIDGIN_CONV_THEME_GET_PRIVATE(obj);
-
-	g_free(priv->template_html);
-	g_free(priv->header_html);
-	g_free(priv->footer_html);
-	g_free(priv->topic_html);
-	g_free(priv->status_html);
-	g_free(priv->content_html);
-	g_free(priv->incoming_content_html);
-	g_free(priv->outgoing_content_html);
-	g_free(priv->incoming_next_content_html);
-	g_free(priv->outgoing_next_content_html);
-	g_free(priv->incoming_context_html);
-	g_free(priv->outgoing_context_html);
-	g_free(priv->incoming_next_context_html);
-	g_free(priv->outgoing_next_context_html);
-	g_free(priv->basestyle_css);
-
-	if (priv->info)
-		g_hash_table_destroy(priv->info);
-
-	parent_class->finalize(obj);
-}
-
-static void
-pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
-{
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	GParamSpec *pspec;
-
-	parent_class = g_type_class_peek_parent(klass);
-
-	g_type_class_add_private(klass, sizeof(PidginConvThemePrivate));
-
-	obj_class->get_property = pidgin_conv_theme_get_property;
-	obj_class->set_property = pidgin_conv_theme_set_property;
-	obj_class->finalize = pidgin_conv_theme_finalize;
-
-	/* INFO */
-	pspec = g_param_spec_boxed("info", "Info",
-			"The information about this theme",
-			G_TYPE_HASH_TABLE,
-			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
-	g_object_class_install_property(obj_class, PROP_INFO, pspec);
-	properties[PROP_INFO] = pspec;
-
-	/* VARIANT */
-	pspec = g_param_spec_string("variant", "Variant",
-			"The current variant for this theme",
-			NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
-	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
-	properties[PROP_VARIANT] = pspec;
-
-}
-
-GType
-pidgin_conversation_theme_get_type(void)
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(PidginConvThemeClass),
-			NULL, /* base_init */
-			NULL, /* base_finalize */
-			(GClassInitFunc)pidgin_conv_theme_class_init, /* class_init */
-			NULL, /* class_finalize */
-			NULL, /* class_data */
-			sizeof(PidginConvTheme),
-			0, /* n_preallocs */
-			pidgin_conv_theme_init, /* instance_init */
-			NULL, /* value table */
-		};
-		type = g_type_register_static(PURPLE_TYPE_THEME,
-				"PidginConvTheme", &info, 0);
-	}
-	return type;
-}
 
 /******************************************************************************
  * Helper Functions
@@ -533,6 +393,144 @@ _set_variant(PidginConvTheme *theme, const char *variant)
 	                           g_value_get_string(val));
 	purple_prefs_set_string(prefname, variant);
 	g_free(prefname);
+}
+
+/******************************************************************************
+ * GObject Stuff
+ *****************************************************************************/
+
+static void
+pidgin_conv_theme_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *psec)
+{
+	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
+
+	switch (param_id) {
+		case PROP_INFO:
+			g_value_set_boxed(value, (gpointer)pidgin_conversation_theme_get_info(theme));
+			break;
+
+		case PROP_VARIANT:
+			g_value_set_string(value, pidgin_conversation_theme_get_variant(theme));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
+			break;
+	}
+}
+
+static void
+pidgin_conv_theme_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *psec)
+{
+	PidginConvTheme *theme = PIDGIN_CONV_THEME(obj);
+
+	switch (param_id) {
+		case PROP_INFO:
+			pidgin_conversation_theme_set_info(theme, g_value_get_boxed(value));
+			break;
+
+		case PROP_VARIANT:
+			_set_variant(theme, g_value_get_string(value));
+			break;
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
+			break;
+	}
+}
+
+static void
+pidgin_conv_theme_init(GTypeInstance *instance,
+		gpointer klass)
+{
+	PidginConvThemePrivate *priv;
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(instance);
+}
+
+static void
+pidgin_conv_theme_finalize(GObject *obj)
+{
+	PidginConvThemePrivate *priv;
+
+	priv = PIDGIN_CONV_THEME_GET_PRIVATE(obj);
+
+	g_free(priv->template_html);
+	g_free(priv->header_html);
+	g_free(priv->footer_html);
+	g_free(priv->topic_html);
+	g_free(priv->status_html);
+	g_free(priv->content_html);
+	g_free(priv->incoming_content_html);
+	g_free(priv->outgoing_content_html);
+	g_free(priv->incoming_next_content_html);
+	g_free(priv->outgoing_next_content_html);
+	g_free(priv->incoming_context_html);
+	g_free(priv->outgoing_context_html);
+	g_free(priv->incoming_next_context_html);
+	g_free(priv->outgoing_next_context_html);
+	g_free(priv->basestyle_css);
+
+	if (priv->info)
+		g_hash_table_destroy(priv->info);
+
+	parent_class->finalize(obj);
+}
+
+static void
+pidgin_conv_theme_class_init(PidginConvThemeClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GParamSpec *pspec;
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	g_type_class_add_private(klass, sizeof(PidginConvThemePrivate));
+
+	obj_class->get_property = pidgin_conv_theme_get_property;
+	obj_class->set_property = pidgin_conv_theme_set_property;
+	obj_class->finalize = pidgin_conv_theme_finalize;
+
+	/* INFO */
+	pspec = g_param_spec_boxed("info", "Info",
+			"The information about this theme",
+			G_TYPE_HASH_TABLE,
+			G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_INFO, pspec);
+	properties[PROP_INFO] = pspec;
+
+	/* VARIANT */
+	pspec = g_param_spec_string("variant", "Variant",
+			"The current variant for this theme",
+			NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_VARIANT, pspec);
+	properties[PROP_VARIANT] = pspec;
+
+}
+
+GType
+pidgin_conversation_theme_get_type(void)
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PidginConvThemeClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc)pidgin_conv_theme_class_init, /* class_init */
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof(PidginConvTheme),
+			0, /* n_preallocs */
+			pidgin_conv_theme_init, /* instance_init */
+			NULL, /* value table */
+		};
+		type = g_type_register_static(PURPLE_TYPE_THEME,
+				"PidginConvTheme", &info, 0);
+	}
+	return type;
 }
 
 /*****************************************************************************
