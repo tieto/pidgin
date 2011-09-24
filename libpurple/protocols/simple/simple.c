@@ -1823,7 +1823,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	}
 
 	/* create socket for incoming connections */
-	sip->listen_data = purple_network_listen_range(5060, 5160, AF_UNSPEC, SOCK_DGRAM,
+	sip->listen_data = purple_network_listen_range(5060, 5160, AF_UNSPEC, SOCK_DGRAM, TRUE,
 				simple_udp_host_resolved_listen_cb, sip);
 	if (sip->listen_data == NULL) {
 		purple_connection_error(sip->gc,
@@ -1893,7 +1893,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	/* TCP case */
 	if(!sip->udp) {
 		/* create socket for incoming connections */
-		sip->listen_data = purple_network_listen_range(5060, 5160, AF_UNSPEC, SOCK_STREAM,
+		sip->listen_data = purple_network_listen_range(5060, 5160, AF_UNSPEC, SOCK_STREAM, TRUE,
 					simple_tcp_connect_listen_cb, sip);
 		if (sip->listen_data == NULL) {
 			purple_connection_error(sip->gc,

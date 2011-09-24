@@ -792,10 +792,8 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
 	xf = purple_xfer_get_protocol_data(xfer);
 
-	purple_network_listen_map_external(FALSE);
-	xf->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM,
+	xf->listen_data = purple_network_listen_range(0, 0, AF_UNSPEC, SOCK_STREAM, FALSE,
 						      bonjour_bytestreams_listen, xfer);
-	purple_network_listen_map_external(TRUE);
 	if (xf->listen_data == NULL)
 		purple_xfer_cancel_local(xfer);
 

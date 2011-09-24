@@ -23,19 +23,21 @@ purple_network_ip_atoi(ip)
 	const char *ip
 
 Purple::NetworkListenData
-purple_network_listen(port, socket_family, socket_type, cb, cb_data)
+purple_network_listen(port, socket_family, socket_type, map_external, cb, cb_data)
 	unsigned short port
 	int socket_family
 	int socket_type
+	gboolean map_external
 	Purple::NetworkListenCallback cb
 	gpointer cb_data
 
 Purple::NetworkListenData
-purple_network_listen_range(start, end, socket_family, socket_type, cb, cb_data)
+purple_network_listen_range(start, end, socket_family, socket_type, map_external, cb, cb_data)
 	unsigned short start
 	unsigned short end
 	int socket_family
 	int socket_type
+	gboolean map_external
 	Purple::NetworkListenCallback cb
 	gpointer cb_data
 

@@ -733,6 +733,7 @@ got_invite(MsnSlpCall *slpcall,
 				0, 0,
 				AF_UNSPEC,
 				SOCK_STREAM,
+				TRUE,
 				msn_dc_listen_socket_created_cb,
 				dc
 			);
@@ -835,6 +836,7 @@ got_ok(MsnSlpCall *slpcall,
 			0, 0,
 			AF_UNSPEC,
 			SOCK_STREAM,
+			TRUE,
 			msn_dc_listen_socket_created_cb,
 			dc
 		);

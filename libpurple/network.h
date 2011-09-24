@@ -118,18 +118,6 @@ GList *purple_network_get_all_local_system_ips(void);
 const char *purple_network_get_my_ip(int fd);
 
 /**
- * Should calls to purple_network_listen() and purple_network_listen_range()
- * map the port externally using NAT-PMP or UPnP?
- * The default value is TRUE
- *
- * @param map_external Should the open port be mapped externally?
- * @deprecated In 3.0.0 a boolean will be added to the functions mentioned
- *             above to perform the same function.
- * @since 2.3.0
- */
-void purple_network_listen_map_external(gboolean map_external);
-
-/**
  * Attempts to open a listening port ONLY on the specified port number.
  * You probably want to use purple_network_listen_range() instead of this.
  * This function is useful, for example, if you wanted to write a telnet
@@ -156,6 +144,8 @@ void purple_network_listen_map_external(gboolean map_external);
  *                      need a second listener to support both v4 and v6.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ * @param map_external Should the open port be mapped externally using
+ *           NAT-PNP or UPnP?  (default should be TRUE)
  * @param cb The callback to be invoked when the port to listen on is available.
  *           The file descriptor of the listening socket will be specified in
  *           this callback, or -1 if no socket could be established.
@@ -166,8 +156,8 @@ void purple_network_listen_map_external(gboolean map_external);
  *         socket to listen on.
  */
 PurpleNetworkListenData *purple_network_listen(unsigned short port,
-	int socket_family, int socket_type, PurpleNetworkListenCallback cb,
-	gpointer cb_data);
+	int socket_family, int socket_type, gboolean map_external,
+	PurpleNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -201,6 +191,8 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  *                      need a second listener to support both v4 and v6.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ * @param map_external Should the open port be mapped externally using
+ *           NAT-PNP or UPnP?  (default should be TRUE)
  * @param cb The callback to be invoked when the port to listen on is available.
  *           The file descriptor of the listening socket will be specified in
  *           this callback, or -1 if no socket could be established.
@@ -212,7 +204,8 @@ PurpleNetworkListenData *purple_network_listen(unsigned short port,
  */
 PurpleNetworkListenData *purple_network_listen_range(
 	unsigned short start, unsigned short end, int socket_family,
-	int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
+	int socket_type, gboolean map_external,
+	PurpleNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * This can be used to cancel any in-progress listener connection

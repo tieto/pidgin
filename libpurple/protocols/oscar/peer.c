@@ -842,7 +842,7 @@ peer_connection_trynext(PeerConnection *conn)
 		 */
 		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
 
-		conn->listen_data = purple_network_listen_range(5190, 5290, AF_UNSPEC, SOCK_STREAM,
+		conn->listen_data = purple_network_listen_range(5190, 5290, AF_UNSPEC, SOCK_STREAM, TRUE,
 				peer_connection_establish_listener_cb, conn);
 		if (conn->listen_data != NULL)
 		{
