@@ -202,6 +202,14 @@ gboolean
 purple_ip_address_is_valid(ip)
 	const char* ip
 
+gboolean
+purple_ipv4_address_is_valid(ip)
+	const char* ip
+
+gboolean
+purple_ipv6_address_is_valid(ip)
+	const char* ip
+
 const char*
 purple_normalize_nocase(account, str)
 	Purple::Account account

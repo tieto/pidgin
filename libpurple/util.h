@@ -1238,14 +1238,15 @@ const char *purple_url_encode(const char *str);
 gboolean purple_email_is_valid(const char *address);
 
 /**
- * Checks if the given IP address is a syntactically valid IPv4 address.
+ * Checks if the given IP address is a syntactically valid IPv4 or
+ * IPv6 address.
+ * If you specifically want to check for an IPv4 address use
+ * purple_ipv4_address_is_valid(), or for an IPv6 address use
+ * purple_ipv6_address_is_valid().
  *
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
- * @deprecated This function will be replaced with one that validates
- *             as either IPv4 or IPv6 in 3.0.0. If you don't want this,
- *             behavior, use one of the more specific functions.
  */
 gboolean purple_ip_address_is_valid(const char *ip);
 

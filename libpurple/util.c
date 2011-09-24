@@ -4454,11 +4454,10 @@ purple_ipv6_address_is_valid(const gchar *ip)
 	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
 }
 
-/* TODO 3.0.0: Add ipv6 check, too */
 gboolean
 purple_ip_address_is_valid(const char *ip)
 {
-	return purple_ipv4_address_is_valid(ip);
+	return (purple_ipv4_address_is_valid(ip) || purple_ipv6_address_is_valid(ip));
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
